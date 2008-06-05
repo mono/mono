@@ -548,7 +548,6 @@ namespace System.Linq.Expressions {
 		void EmitLiftedUserDefinedOperator (EmitContext ec)
 		{
 			var ig = ec.ig;
-			var eq = NodeType == ExpressionType.Equal;
 
 			var ret_true = ig.DefineLabel ();
 			var ret_false = ig.DefineLabel ();
