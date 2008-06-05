@@ -1,3 +1,8 @@
+2008-06-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : now we can use roundtrip format for float/double.
+	  Fixed bug #320424.
+
 2008-06-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextReader2.cs : added FIXME comment which won't fix, that

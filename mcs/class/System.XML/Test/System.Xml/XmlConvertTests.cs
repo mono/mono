@@ -212,6 +212,14 @@ namespace MonoTests.System.Xml
 		}
 		
 		[Test]
+		public void ToDoubleRoundtrip ()
+		{
+			// bug #320424
+			string s = XmlConvert.ToString (double.MaxValue);
+			AssertEquals (double.MaxValue, XmlConvert.ToDouble (s));
+		}
+		
+		[Test]
 		public void ToGuid ()
 		{
 			AssertEquals (new Guid ("ca761232-ed42-11ce-bacd-00aa0057b223"), XmlConvert.ToGuid ("ca761232-ed42-11ce-bacd-00aa0057b223"));
