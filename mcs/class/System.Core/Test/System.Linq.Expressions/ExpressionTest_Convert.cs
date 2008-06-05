@@ -502,5 +502,19 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.AreEqual (42, convert (42));
 			Assert.AreEqual (null, convert (null));
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConvertCheckedNullableIntToInt ()
+		{
+			var p = Expression.Parameter (typeof (int?), "i");
+
+			var node = Expression.ConvertChecked (p, typeof (int));
+			Assert.AreEqual (ExpressionType.ConvertChecked, node.NodeType);
+			Assert.IsTrue (node.IsLifted);
+			Assert.IsFalse (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (int), node.Type);
+			Assert.IsNull (node.Method);
+		}
 	}
 }
