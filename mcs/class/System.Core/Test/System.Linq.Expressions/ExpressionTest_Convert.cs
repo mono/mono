@@ -452,6 +452,25 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+		public void ConvertImplicitToShortToNullableInt ()
+		{
+			var a = Expression.Parameter (typeof (ImplicitToShort?), "a");
+
+			var method = typeof (ImplicitToShort).GetMethod ("op_Implicit");
+
+			var conv = Expression.Lambda<Func<ImplicitToShort?, int?>> (
+				Expression.Convert (
+					Expression.Convert (a, typeof (short), method),
+					typeof (int?)), a).Compile ();
+
+			Assert.AreEqual ((int?) 42, new ImplicitToShort (42));
+
+			Action convnull = () => Assert.AreEqual (null, conv (null));
+
+			convnull.AssertThrows (typeof (InvalidOperationException));
+		}
+
+		[Test]
 		public void NullableImplicitToShort ()
 		{
 			var i = Expression.Parameter (typeof (ImplicitToShort?), "i");
