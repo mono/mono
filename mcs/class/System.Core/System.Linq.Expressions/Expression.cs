@@ -42,12 +42,12 @@ namespace System.Linq.Expressions {
 		ExpressionType node_type;
 		Type type;
 
-		const BindingFlags PublicInstance = BindingFlags.Public | BindingFlags.Instance;
-		const BindingFlags NonPublicInstance = BindingFlags.NonPublic | BindingFlags.Instance;
-		const BindingFlags PublicStatic = BindingFlags.Public | BindingFlags.Static;
-		const BindingFlags AllInstance = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-		const BindingFlags AllStatic = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-		const BindingFlags All = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
+		protected const BindingFlags PublicInstance = BindingFlags.Public | BindingFlags.Instance;
+		protected const BindingFlags NonPublicInstance = BindingFlags.NonPublic | BindingFlags.Instance;
+		protected const BindingFlags PublicStatic = BindingFlags.Public | BindingFlags.Static;
+		protected const BindingFlags AllInstance = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+		protected const BindingFlags AllStatic = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+		protected const BindingFlags All = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
 
 		public ExpressionType NodeType {
 			get { return node_type; }
@@ -637,7 +637,7 @@ namespace System.Linq.Expressions {
 				var opfalse = left.Type.GetMethod ("op_False", AllStatic);
 
 				if (optrue == null || opfalse == null)
-					throw new ArgumentException ("Operator true and false are required but not defined");
+					throw new ArgumentException ("Operators true and false are required but not defined");
 			}
 
 			return method;
