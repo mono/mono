@@ -516,14 +516,14 @@ namespace System.Web.UI
 				sb.AppendLine ("if (typeof(Sys) === 'undefined') throw new Error('ASP.NET Ajax client-side framework failed to load.');");
 
 				ScriptingProfileServiceSection profileService = (ScriptingProfileServiceSection) WebConfigurationManager.GetSection ("system.web.extensions/scripting/webServices/profileService");
-				if (profileService.Enabled)
+				if (profileService != null && profileService.Enabled)
 					sb.AppendLine ("Sys.Services._ProfileService.DefaultWebServicePath = '" + ResolveClientUrl ("~" + System.Web.Script.Services.ProfileService.DefaultWebServicePath) + "';");
 				string profileServicePath = GetProfileServicePath ();
 				if (!String.IsNullOrEmpty (profileServicePath))
 					sb.AppendLine ("Sys.Services.ProfileService.set_path('" + profileServicePath + "');");
 
 				ScriptingAuthenticationServiceSection authenticationService = (ScriptingAuthenticationServiceSection) WebConfigurationManager.GetSection ("system.web.extensions/scripting/webServices/authenticationService");
-				if (authenticationService.Enabled) {
+				if (authenticationService != null && authenticationService.Enabled) {
 					sb.AppendLine ("Sys.Services._AuthenticationService.DefaultWebServicePath = '" + ResolveClientUrl ("~/Authentication_JSON_AppService.axd") + "';");
 					if (Page.User.Identity.IsAuthenticated)
 						sb.AppendLine ("Sys.Services.AuthenticationService._setAuthenticated(true);");

@@ -1,3 +1,8 @@
+2008-06-05  Marek Habersack  <mhabersack@novell.com>
+
+	* ScriptManager.cs: do not throw NREX when there are no profile or
+	authentication service sections in the config files.
+
 2008-05-15  Marek Habersack  <mhabersack@novell.com>
 
 	* AsyncPostBackTrigger.cs: don't thrown an exception if EventName
