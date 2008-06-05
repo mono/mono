@@ -285,11 +285,6 @@ namespace System.Linq.Expressions {
 			return method;
 		}
 
-		static Type GetResultType (Expression expression, MethodInfo method)
-		{
-			return method == null ? expression.Type : method.ReturnType;
-		}
-
 		static BinaryExpression MakeSimpleBinary (ExpressionType et, Expression left, Expression right, MethodInfo method)
 		{
 			bool is_lifted;
