@@ -139,5 +139,25 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (MemberClass.GetStaticPropertyInfo(), expr.Member, "Bind#16");
 		}
 
+		struct Slot {
+			public int Integer { get; set; }
+			public short Short { get; set; }
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void BindValueTypes ()
+		{
+			var i = Expression.Parameter (typeof (int), "i");
+			var s = Expression.Parameter (typeof (short), "s");
+
+			var gslot = Expression.Lambda<Func<int, short, Slot>> (
+				Expression.MemberInit (
+					Expression.New (typeof (Slot)),
+					Expression.Bind (typeof (Slot).GetProperty ("Integer"), i),
+					Expression.Bind (typeof (Slot).GetProperty ("Short"), s)), i, s).Compile ();
+
+			Assert.AreEqual (new Slot { Integer = 42, Short = -1 }, gslot (42, -1));
+		}
 	}
 }
