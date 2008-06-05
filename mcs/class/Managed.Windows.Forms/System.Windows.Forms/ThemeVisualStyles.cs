@@ -856,6 +856,10 @@ namespace System.Windows.Forms
 		#region ScrollBar
 		public override void DrawScrollBar (Graphics dc, Rectangle clip, ScrollBar bar)
 		{
+			if (!ScrollBarAreElementsDefined) {
+				base.DrawScrollBar (dc, clip, bar);
+				return;
+			}
 			VisualStyleElement element;
 			VisualStyleRenderer renderer;
 			int scroll_button_width = bar.scrollbutton_width;
@@ -1044,12 +1048,12 @@ namespace System.Windows.Forms
 		}
 		public override bool ScrollBarHasHotElementStyles {
 			get {
-				return true;
+				return ScrollBarAreElementsDefined;
 			}
 		}
 		public override bool ScrollBarHasPressedThumbStyle {
 			get {
-				return true;
+				return ScrollBarAreElementsDefined;
 			}
 		}
 		const int WindowsVistaMajorVersion = 6;
@@ -1058,8 +1062,23 @@ namespace System.Windows.Forms
 		public override bool ScrollBarHasHoverArrowButtonStyle {
 			get {
 				if (ScrollBarHasHoverArrowButtonStyleVisualStyles)
-					return true;
+					return ScrollBarAreElementsDefined;
 				return base.ScrollBarHasHoverArrowButtonStyle;
+			}
+		}
+		static bool ScrollBarAreElementsDefined {
+			get {
+				return
+					VisualStyleRenderer.IsElementDefined (VisualStyleElement.ScrollBar.ArrowButton.DownDisabled) &&
+					VisualStyleRenderer.IsElementDefined (VisualStyleElement.ScrollBar.GripperHorizontal.Normal) &&
+					VisualStyleRenderer.IsElementDefined (VisualStyleElement.ScrollBar.GripperVertical.Normal) &&
+					VisualStyleRenderer.IsElementDefined (VisualStyleElement.ScrollBar.LeftTrackHorizontal.Disabled) &&
+					VisualStyleRenderer.IsElementDefined (VisualStyleElement.ScrollBar.LowerTrackVertical.Disabled) &&
+					VisualStyleRenderer.IsElementDefined (VisualStyleElement.ScrollBar.RightTrackHorizontal.Disabled) &&
+					VisualStyleRenderer.IsElementDefined (VisualStyleElement.ScrollBar.SizeBox.LeftAlign) &&
+					VisualStyleRenderer.IsElementDefined (VisualStyleElement.ScrollBar.ThumbButtonHorizontal.Disabled) &&
+					VisualStyleRenderer.IsElementDefined (VisualStyleElement.ScrollBar.ThumbButtonVertical.Disabled) &&
+					VisualStyleRenderer.IsElementDefined (VisualStyleElement.ScrollBar.UpperTrackVertical.Disabled);
 			}
 		}
 		#endregion

@@ -1,3 +1,8 @@
+2008-06-05  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* ThemeVisualStyles.cs: ScrollBar is now rendered with the VisualStyles API
+	only if the elements are defined. 
+
 2008-06-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ComboBox.cs: I'm an idiiot - forgot to commit the last ComboBox
