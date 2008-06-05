@@ -247,6 +247,11 @@ namespace System.Linq.Expressions {
 						return null;
 				}
 
+				if (oper_name == "op_LeftShift" || oper_name == "op_RightShift") {
+					if (IsInt (ultype) && rtype == typeof (int))
+						return null;
+				}
+
 				throw new InvalidOperationException (
 					String.Format ("Operation {0} not defined for {1} and {2}", oper_name != null ? oper_name.Substring (3) : "is", ltype, rtype));
 			}
