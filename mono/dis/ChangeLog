@@ -1,3 +1,8 @@
+2008-06-05  Jb Evain  <jbevain@novell.com>
+
+	* get.c (get_token): properly stringify tokens that
+	are methoddefs.
+
 2008-05-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* get.c: Use accessor functions for accessing method->generic_container.	
