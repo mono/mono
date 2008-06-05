@@ -125,7 +125,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void LeftShiftNullableLongAndInt ()
 		{
 			var l = Expression.Parameter (typeof (long?), "l");
