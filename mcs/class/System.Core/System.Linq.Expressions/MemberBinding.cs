@@ -60,7 +60,7 @@ namespace System.Linq.Expressions {
 
 		internal LocalBuilder EmitLoadMember (EmitContext ec, LocalBuilder local)
 		{
-			ec.EmitLoad (local);
+			ec.EmitLoadSubject (local);
 
 			return member.OnFieldOrProperty<LocalBuilder> (
 				field => EmitLoadField (ec, field),
