@@ -389,5 +389,25 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ((bool?) true, eq (new SlotFromNullableToNullable (2), new SlotFromNullableToNullable (2)));
 			Assert.AreEqual ((bool?) false, eq (new SlotFromNullableToNullable (2), new SlotFromNullableToNullable (-2)));
 		}*/
+
+		[Test]
+		[Category ("NotWorking")]
+		public void NullableBoolEqualToBool ()
+		{
+			var l = Expression.Parameter (typeof (bool?), "l");
+			var r = Expression.Parameter (typeof (bool?), "r");
+
+			var node = Expression.Equal (l, r);
+			Assert.IsTrue (node.IsLifted);
+			Assert.IsFalse (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (bool), node.Type);
+			Assert.IsNull (node.Method);
+
+			var eq = Expression.Lambda<Func<bool?, bool?, bool>> (node, l, r).Compile ();
+
+			Assert.AreEqual (false, eq (true, null));
+			Assert.AreEqual (true, eq (null, null));
+			Assert.AreEqual (true, eq (false, false));
+		}
 	}
 }
