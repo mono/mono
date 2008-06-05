@@ -148,7 +148,6 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ((bool?) true, not (false));
 		}
 
-
 		struct Slot {
 			public int Value;
 
@@ -164,7 +163,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void UserDefinedNotNullable ()
 		{
 			var s = Expression.Parameter (typeof (Slot?), "s");
