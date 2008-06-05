@@ -632,6 +632,12 @@ namespace System.Linq.Expressions {
 				// The method should have identical parameter and return types.
 				if (left.Type != right.Type || method.ReturnType != left.Type)
 					throw new ArgumentException ("left, right and return type must match");
+
+				var optrue = left.Type.GetMethod ("op_True", AllStatic);
+				var opfalse = left.Type.GetMethod ("op_False", AllStatic);
+
+				if (optrue == null || opfalse == null)
+					throw new ArgumentException ("Operator true and false are required but not defined");
 			}
 
 			return method;
