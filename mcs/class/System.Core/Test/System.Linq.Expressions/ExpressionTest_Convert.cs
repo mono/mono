@@ -240,7 +240,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CompileConvertClassWithExplicitOp ()
 		{
 			var p = Expression.Parameter (typeof (Klang), "klang");
@@ -285,7 +284,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CompileConvertStructWithImplicitOp ()
 		{
 			var p = Expression.Parameter (typeof (Kling), "kling");
