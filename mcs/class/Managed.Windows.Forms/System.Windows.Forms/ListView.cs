@@ -1324,9 +1324,6 @@ namespace System.Windows.Forms
 
 		private void CalculateScrollBars ()
 		{
-			if (!IsHandleCreated)
-				return;
-
 			Rectangle client_area = ClientRectangle;
 			int height = client_area.Height;
 			int width = client_area.Width;

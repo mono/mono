@@ -1,3 +1,10 @@
+2008-06-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: We need to calculate the scrollbars even if the handle
+	hasn't been created - this is needed when methods using scrollbars
+	info, such EnsureVisible, are called before control has been created.
+	Fixes #397272.
+
 2008-06-05  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* ThemeVisualStyles.cs: ScrollBar is now rendered with the VisualStyles API
