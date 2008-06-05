@@ -1782,7 +1782,7 @@ namespace System.Linq.Expressions {
 		{
 			method = UnaryCoreCheck ("op_UnaryNegation", expression, method, type => IsSignedNumber (type));
 
-			return MakeSimpleUnary (ExpressionType.Negate, expression, method);
+			return MakeSimpleUnary (ExpressionType.NegateChecked, expression, method);
 		}
 
 		public static NewExpression New (ConstructorInfo constructor)
