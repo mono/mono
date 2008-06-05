@@ -556,7 +556,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertNullableImplictToIntToNullableLong ()
 		{
 			var i = Expression.Parameter (typeof (ImplicitToInt?), "i");
