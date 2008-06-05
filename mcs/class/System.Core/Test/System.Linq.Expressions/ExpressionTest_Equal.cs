@@ -391,7 +391,6 @@ namespace MonoTests.System.Linq.Expressions
 		}*/
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NullableBoolEqualToBool ()
 		{
 			var l = Expression.Parameter (typeof (bool?), "l");
