@@ -1,5 +1,12 @@
 2008-06-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ComboBox.cs: I'm an idiiot - forgot to commit the last ComboBox
+	section. Also, when setting bounds, snap height as well as save the
+	requested height if Dock has any value affecting the height: Left,
+	Right and Bottom - important if using IntegralHeight as true.
+
+2008-06-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ComboBox.cs: When calling UpdateComboBoxBounds, adjust the height
 	passed to SetBounds to reflect the new adjusted height (Integral-wise), 
 	instead of doing that only in our SetBoundsCore override, since the 

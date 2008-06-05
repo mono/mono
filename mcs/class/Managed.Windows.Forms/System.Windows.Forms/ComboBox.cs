@@ -1284,24 +1284,13 @@ namespace System.Windows.Forms
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
 			bool vertically_anchored = (Anchor & AnchorStyles.Top) != 0 && (Anchor & AnchorStyles.Bottom) != 0;
+			bool vertically_docked = Dock == DockStyle.Left || Dock == DockStyle.Right || Dock == DockStyle.Fill;
 
 			if ((specified & BoundsSpecified.Height) != 0 ||
-				(specified == BoundsSpecified.None && vertically_anchored)) {
+				(specified == BoundsSpecified.None && (vertically_anchored || vertically_docked))) {
 
 				requested_height = height;
-
-				if (DropDownStyle == ComboBoxStyle.Simple && height > PreferredHeight) {
-					if (IntegralHeight) {
-						int border = ThemeEngine.Current.Border3DSize.Height;
-						int lb_height = height - PreferredHeight - 2;
-						if (lb_height - 2 * border > ItemHeight) {
-							int partial = (lb_height - 2 * border) % ItemHeight;
-							height -= partial;
-						} else
-							height = PreferredHeight;
-					}
-				} else
-					height = PreferredHeight;
+				height = SnapHeight (height);
 			}
 
 			base.SetBoundsCore (x, y, width, height, specified);
@@ -1839,8 +1828,27 @@ namespace System.Windows.Forms
 
 			// Save the requested height since set bounds can destroy it
 			int save_height = requested_height;
-			SetBounds (bounds.X, bounds.Y, bounds.Width, requested_height, BoundsSpecified.Height);
+			SetBounds (bounds.X, bounds.Y, bounds.Width, SnapHeight (requested_height),
+				BoundsSpecified.Height);
 			requested_height = save_height;
+		}
+
+		int SnapHeight (int height)
+		{
+			if (DropDownStyle == ComboBoxStyle.Simple && height > PreferredHeight) {
+				if (IntegralHeight) {
+					int border = ThemeEngine.Current.Border3DSize.Height;
+					int lb_height = height - PreferredHeight - 2;
+					if (lb_height - 2 * border > ItemHeight) {
+						int partial = (lb_height - 2 * border) % ItemHeight;
+						height -= partial;
+					} else
+						height = PreferredHeight;
+				}
+			} else
+				height = PreferredHeight;
+
+			return height;
 		}
 
 		private void UpdatedItems ()
