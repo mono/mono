@@ -1,5 +1,9 @@
 2008-06-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (mono_dynamic_image_free): Free MonoDynamicImage::public_key.
+
+2008-06-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_type_get_full): Add a work-around for generic type definitions.
 
 2008-06-04  Mark Probst  <mark.probst@gmail.com>
