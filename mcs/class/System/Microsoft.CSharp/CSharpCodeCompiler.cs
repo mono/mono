@@ -222,7 +222,6 @@ namespace Mono.CSharp
 			mcs.StartInfo.RedirectStandardOutput=true;
 			mcs.StartInfo.RedirectStandardError=true;
 #if NET_2_0
-			mcs.OutputDataReceived += new DataReceivedEventHandler (McsStdoutDataReceived);
 			mcs.ErrorDataReceived += new DataReceivedEventHandler (McsStderrDataReceived);
 #endif
 			
@@ -302,13 +301,6 @@ namespace Mono.CSharp
 		}
 
 #if NET_2_0
-		void McsStdoutDataReceived (object sender, DataReceivedEventArgs args)
-		{
-			mcsOutMutex.WaitOne ();
-			mcsOutput.Add (args.Data);
-			mcsOutMutex.ReleaseMutex ();
-		}
-
 		void McsStderrDataReceived (object sender, DataReceivedEventArgs args)
 		{
 			mcsOutMutex.WaitOne ();
