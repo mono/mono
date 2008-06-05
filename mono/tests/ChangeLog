@@ -1,3 +1,10 @@
+2008-06-05  Jonathan Chambers  <joncham@gmail.com>
+
+	* Makefile.am: Disable async-exc-compilation.exe on Win32 as it is
+	hanging the runtime tests.
+
+	Code is contributed under MIT/X11 license.
+
 2008-06-05  Bill Holmes  <billholmes54@gmail.com>
 	* libtest.c, Makefile.am, winx64structs.cs :
 	  Adding marshaling tests for structs.  These tests
