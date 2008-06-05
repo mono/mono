@@ -437,5 +437,39 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.AreEqual ((long?) 3, test ((sbyte?) 3));
 			Assert.AreEqual (null, test (null));
 		}
+
+		struct ImplicitToShort {
+			short value;
+
+			public ImplicitToShort (short v)
+			{
+				value = v;
+			}
+
+			public static implicit operator short (ImplicitToShort i)
+			{
+				return i.value;
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void NullableImplicitToShort ()
+		{
+			var i = Expression.Parameter (typeof (ImplicitToShort?), "i");
+
+			var method = typeof (ImplicitToShort).GetMethod ("op_Implicit");
+
+			var node = Expression.Convert (i, typeof (short?), method);
+
+			Assert.IsTrue (node.IsLifted);
+			Assert.IsTrue (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (short?), node.Type);
+			Assert.AreEqual (method, node.Method);
+
+			var convert = Expression.Lambda<Func<ImplicitToShort?, short?>> (node, i).Compile ();
+
+			Assert.AreEqual ((short?) 42, convert (new ImplicitToShort (42)));
+		}
 	}
 }
