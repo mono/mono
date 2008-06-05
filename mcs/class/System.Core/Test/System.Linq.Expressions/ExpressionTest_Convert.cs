@@ -459,12 +459,18 @@ namespace MonoTests.System.Linq.Expressions {
 
 			var method = typeof (ImplicitToShort).GetMethod ("op_Implicit");
 
+			var node = Expression.Convert (a, typeof (short), method);
+			Assert.IsTrue (node.IsLifted);
+			Assert.IsFalse (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (short), node.Type);
+			Assert.AreEqual (method, node.Method);
+
 			var conv = Expression.Lambda<Func<ImplicitToShort?, int?>> (
 				Expression.Convert (
-					Expression.Convert (a, typeof (short), method),
+					node,
 					typeof (int?)), a).Compile ();
 
-			Assert.AreEqual ((int?) 42, new ImplicitToShort (42));
+			Assert.AreEqual ((int?) 42, conv (new ImplicitToShort (42)));
 
 			Action convnull = () => Assert.AreEqual (null, conv (null));
 
