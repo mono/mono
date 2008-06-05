@@ -471,7 +471,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertLongToDecimal ()
 		{
 			var p = Expression.Parameter (typeof (long), "l");
@@ -488,7 +487,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertNullableULongToNullableDecimal ()
 		{
 			var p = Expression.Parameter (typeof (ulong?), "l");
