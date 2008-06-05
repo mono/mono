@@ -504,7 +504,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertCheckedNullableIntToInt ()
 		{
 			var p = Expression.Parameter (typeof (int?), "i");
