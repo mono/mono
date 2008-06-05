@@ -18,6 +18,7 @@
 //
 // Authors:
 //		Federico Di Gregorio <fog@initd.org>
+//		Jb Evain <jbevain@novell.com>
 
 using System;
 using System.Reflection;
@@ -114,13 +115,27 @@ namespace MonoTests.System.Linq.Expressions
 		[Test]
 		public void CompileRightShift ()
 		{
-			ParameterExpression l = Expression.Parameter (typeof (int), "l"), r = Expression.Parameter (typeof (int), "r");
+			var l = Expression.Parameter (typeof (int), "l");
+			var r = Expression.Parameter (typeof (int), "r");
 
 			var rs = Expression.Lambda<Func<int, int, int>> (
 				Expression.RightShift (l, r), l, r).Compile ();
 
 			Assert.AreEqual (3, rs (6, 1));
 			Assert.AreEqual (1, rs (12, 3));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void IntRightShiftSByte ()
+		{
+			var l = Expression.Parameter (typeof (long?), "l");
+			var r = Expression.Parameter (typeof (int), "r");
+
+			var node = Expression.RightShift (l, r);
+			Assert.IsTrue (node.IsLifted);
+			Assert.IsTrue (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (long?), node.Type);
 		}
 	}
 }
