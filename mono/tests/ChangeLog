@@ -1,3 +1,10 @@
+2008-06-05  Bill Holmes  <billholmes54@gmail.com>
+	* libtest.c, Makefile.am, winx64structs.cs :
+	  Adding marshaling tests for structs.  These tests
+	  represent the different cases to consider on Winx64.
+
+	Contributed under MIT/X11 license.
+
 2008-06-04  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-array-exc.2.il: Test case for generic array type in
