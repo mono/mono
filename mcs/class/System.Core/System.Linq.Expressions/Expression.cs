@@ -236,12 +236,16 @@ namespace System.Linq.Expressions {
 						return method;
 				}
 
-				//
-				// == and != allow reference types without operators defined.
-				//
-				if (!ltype.IsValueType && !rtype.IsValueType &&
-					(oper_name == "op_Equality" || oper_name == "op_Inequality"))
-					return null;
+				if (oper_name == "op_Equality" || oper_name == "op_Inequality") {
+					//
+					// == and != allow reference types without operators defined.
+					//
+					if (!ltype.IsValueType && !rtype.IsValueType)
+						return null;
+
+					if (ltype == rtype && ultype == typeof (bool))
+						return null;
+				}
 
 				throw new InvalidOperationException (
 					String.Format ("Operation {0} not defined for {1} and {2}", oper_name != null ? oper_name.Substring (3) : "is", ltype, rtype));
