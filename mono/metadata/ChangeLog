@@ -1,5 +1,9 @@
 2008-06-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c: Kill stack_top function.
+
+2008-06-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: Kill stack_get function.
 
 2008-06-05 Rodrigo Kumpera  <rkumpera@novell.com>
