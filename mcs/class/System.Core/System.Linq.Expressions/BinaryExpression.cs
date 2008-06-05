@@ -180,6 +180,36 @@ namespace System.Linq.Expressions {
 			ig.MarkLabel (done);
 		}
 
+		MethodInfo GetFalseOperator ()
+		{
+			return left.Type.GetMethod ("op_False", AllStatic);
+		}
+
+		MethodInfo GetTrueOperator ()
+		{
+			return left.Type.GetMethod ("op_True", AllStatic);
+		}
+
+		void EmitUserDefinedLogicalShortCircuit (EmitContext ec)
+		{
+			var ig = ec.ig;
+			var and = NodeType == ExpressionType.AndAlso;
+
+			var done = ig.DefineLabel ();
+
+			var left = ec.EmitStored (this.left);
+
+			ec.EmitLoad (left);
+			ig.Emit (OpCodes.Dup);
+			ec.EmitCall (and ? GetFalseOperator () : GetTrueOperator ());
+			ig.Emit (OpCodes.Brtrue, done);
+
+			ec.Emit (this.right);
+			ec.EmitCall (method);
+
+			ig.MarkLabel (done);
+		}
+
 		void EmitLiftedLogicalShortCircuit (EmitContext ec)
 		{
 			var ig = ec.ig;
@@ -578,15 +608,36 @@ namespace System.Linq.Expressions {
 			ig.MarkLabel (done);
 		}
 
+		void EmitUserDefinedLiftedLogicalShortCircuit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+
 		void EmitUserDefinedOperator (EmitContext ec)
 		{
 			if (!IsLifted) {
-				left.Emit (ec);
-				right.Emit (ec);
-				ec.EmitCall (method);
-			} else if (IsLiftedToNull)
-				EmitLiftedToNullUserDefinedOperator (ec);
-			else
+				switch (NodeType) {
+				case ExpressionType.AndAlso:
+				case ExpressionType.OrElse:
+					EmitUserDefinedLogicalShortCircuit (ec);
+					break;
+				default:
+					left.Emit (ec);
+					right.Emit (ec);
+					ec.EmitCall (method);
+					break;
+				}
+			} else if (IsLiftedToNull) {
+				switch (NodeType) {
+				case ExpressionType.AndAlso:
+				case ExpressionType.OrElse:
+					EmitUserDefinedLiftedLogicalShortCircuit (ec);
+					break;
+				default:
+					EmitLiftedToNullUserDefinedOperator (ec);
+					break;
+				}
+			}  else
 				EmitLiftedUserDefinedOperator (ec);
 		}
 
