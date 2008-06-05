@@ -5648,28 +5648,28 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class TemporaryVariable : Expression, IMemoryLocation
+	public class TemporaryVariable : VariableReference
 	{
 		LocalInfo li;
 		Variable var;
-		
+
 		public TemporaryVariable (Type type, Location loc)
 		{
 			this.type = type;
 			this.loc = loc;
-			eclass = ExprClass.Value;
+			eclass = ExprClass.Variable;
 		}
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
 			throw new NotSupportedException ("ET");
 		}
-		
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			if (li != null)
 				return this;
-			
+
 			TypeExpr te = new TypeExpression (type, loc);
 			li = ec.CurrentBlock.AddTemporaryVariable (te, loc);
 			if (!li.Resolve (ec))
@@ -5680,46 +5680,34 @@ namespace Mono.CSharp {
 				var = scope.AddLocal (li);
 				type = var.Type;
 			}
-			
+
 			return this;
 		}
 
-		public Variable Variable {
-			get { return var != null ? var : li.Variable; }
-		}
-		
 		public override void Emit (EmitContext ec)
 		{
-			Variable.EmitInstance (ec);
-			Variable.Emit (ec);
+			Emit (ec, false);
 		}
-		
-		public void EmitLoadAddress (EmitContext ec)
+
+		public void EmitAssign (EmitContext ec, Expression source)
 		{
-			Variable.EmitInstance (ec);
-			Variable.EmitAddressOf (ec);
+			EmitAssign (ec, source, false, false);
 		}
-		
-		public void Store (EmitContext ec, Expression right_side)
-		{
-			Variable.EmitInstance (ec);
-			right_side.Emit (ec);
-			Variable.EmitAssign (ec);
+
+		public override bool IsFixed {
+			get { return true; }
 		}
-		
-		public void EmitThis (EmitContext ec)
-		{
-			Variable.EmitInstance (ec);
+
+		public override bool IsRef {
+			get { return false; }
 		}
-		
-		public void EmitStore (EmitContext ec)
-		{
-			Variable.EmitAssign (ec);
+
+		public override Variable Variable {
+			get { return var != null ? var : li.Variable; }
 		}
-		
-		public void AddressOf (EmitContext ec, AddressOp mode)
-		{
-			EmitLoadAddress (ec);
+
+		public override VariableInfo VariableInfo {
+			get { throw new NotImplementedException (); }
 		}
 	}
 

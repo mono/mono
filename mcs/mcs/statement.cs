@@ -3991,7 +3991,7 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
-			temp.Store (ec, expr);
+			temp.EmitAssign (ec, expr);
 			temp.Emit (ec);
 			ig.Emit (OpCodes.Call, TypeManager.void_monitor_enter_object);
 		}
@@ -4782,7 +4782,7 @@ namespace Mono.CSharp {
 
 		protected override void EmitPreTryBody (EmitContext ec)
 		{
-			local_copy.Store (ec, expr);
+			local_copy.EmitAssign (ec, expr);
 		}
 
 		protected override void EmitTryBody (EmitContext ec)
@@ -5058,24 +5058,22 @@ namespace Mono.CSharp {
 
 		protected class ArrayCounter : TemporaryVariable
 		{
+			StatementExpression increment;
+
 			public ArrayCounter (Location loc)
 				: base (TypeManager.int32_type, loc)
-			{ }
-
-			public void Initialize (EmitContext ec)
 			{
-				EmitThis (ec);
-				ec.ig.Emit (OpCodes.Ldc_I4_0);
-				EmitStore (ec);
 			}
 
-			public void Increment (EmitContext ec)
+			public void ResolveIncrement (EmitContext ec)
 			{
-				EmitThis (ec);
-				Emit (ec);
-				ec.ig.Emit (OpCodes.Ldc_I4_1);
-				ec.ig.Emit (OpCodes.Add);
-				EmitStore (ec);
+				increment = new StatementExpression (new UnaryMutator (UnaryMutator.Mode.PostIncrement, this, loc));
+				increment.Resolve (ec);
+			}
+
+			public void EmitIncrement (EmitContext ec)
+			{
+				increment.Emit (ec);
 			}
 		}
 
@@ -5118,7 +5116,7 @@ namespace Mono.CSharp {
 				ArrayList list = new ArrayList (rank);
 				for (int i = 0; i < rank; i++) {
 					counter [i] = new ArrayCounter (loc);
-					counter [i].Resolve (ec);
+					counter [i].ResolveIncrement (ec);					
 
 					lengths [i] = new TemporaryVariable (TypeManager.int32_type, loc);
 					lengths [i].Resolve (ec);
@@ -5178,7 +5176,7 @@ namespace Mono.CSharp {
 			{
 				ILGenerator ig = ec.ig;
 
-				copy.Store (ec, expr);
+				copy.EmitAssign (ec, expr);
 
 				Label[] test = new Label [rank];
 				Label[] loop = new Label [rank];
@@ -5187,11 +5185,12 @@ namespace Mono.CSharp {
 					test [i] = ig.DefineLabel ();
 					loop [i] = ig.DefineLabel ();
 
-					lengths [i].Store (ec, length_exprs [i]);
+					lengths [i].EmitAssign (ec, length_exprs [i]);
 				}
 
+				IntConstant zero = new IntConstant (0, loc);
 				for (int i = 0; i < rank; i++) {
-					counter [i].Initialize (ec);
+					counter [i].EmitAssign (ec, zero);
 
 					ig.Emit (OpCodes.Br, test [i]);
 					ig.MarkLabel (loop [i]);
@@ -5204,7 +5203,7 @@ namespace Mono.CSharp {
 				ig.MarkLabel (ec.LoopBegin);
 
 				for (int i = rank - 1; i >= 0; i--){
-					counter [i].Increment (ec);
+					counter [i].EmitIncrement (ec);
 
 					ig.MarkLabel (test [i]);
 					counter [i].Emit (ec);
@@ -5658,7 +5657,7 @@ namespace Mono.CSharp {
 
 			void EmitLoopInit (EmitContext ec)
 			{
-				enumerator.Store (ec, init);
+				enumerator.EmitAssign (ec, init);
 			}
 
 			void EmitLoopBody (EmitContext ec)
@@ -5673,7 +5672,7 @@ namespace Mono.CSharp {
 				if (enumerator_type.IsValueType) {
 					MethodInfo mi = FetchMethodDispose (enumerator_type);
 					if (mi != null) {
-						enumerator.EmitLoadAddress (ec);
+						enumerator.AddressOf (ec, AddressOp.Load);
 						ig.Emit (OpCodes.Call, mi);
 					} else {
 						enumerator.Emit (ec);

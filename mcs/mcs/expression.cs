@@ -4054,6 +4054,8 @@ namespace Mono.CSharp {
 				temp.Emit (ec);
 				temp.Release (ec);
 			}
+			
+			prepared = false;			
 		}
 		
 		public void AddressOf (EmitContext ec, AddressOp mode)
