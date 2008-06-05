@@ -1,5 +1,14 @@
 2008-06-05  Jb Evain  <jbevain@novell.com>
 
+	* Extensions.cs: Add Type.MakeNullableType helper.
+	* Expression.cs (MakeSimpleBinary, MakeBoolBinar): Properly
+	creat lifted/lifted to null/not lifted
+	user defined binary expressions.
+	* BinaryExpression.cs (Emit): implement compilation of
+	lifted and lifted to null user defined binary operators.
+
+2008-06-05  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs (MakeSimpleUnary): properly create lifted/not lifted
 	unary expressions with user defined operators.
 	* UnaryExpression.cs (Emit): fix compilation of lifted user operators.

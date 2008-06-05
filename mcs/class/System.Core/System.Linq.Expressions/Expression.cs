@@ -284,23 +284,33 @@ namespace System.Linq.Expressions {
 		static BinaryExpression MakeSimpleBinary (ExpressionType et, Expression left, Expression right, MethodInfo method)
 		{
 			bool is_lifted;
+			Type type;
 
 			if (method == null) {
-				if (left.Type.IsNullable ()) {
-					if (!right.Type.IsNullable ())
-						throw new InvalidOperationException ("Assertion, internal error: left is nullable, requires right to be as well");
+				is_lifted = left.Type.IsNullable ();
+				type = left.Type;
+			} else {
+				var parameters = method.GetParameters ();
+
+				var lp = parameters [0];
+				var rp = parameters [1];
+
+				if (left.Type == lp.ParameterType && right.Type == rp.ParameterType) {
+					is_lifted = false;
+					type = method.ReturnType;
+				} else if (left.Type.IsNullable ()
+					&& right.Type.IsNullable ()
+					&& GetNotNullableOf (left.Type) == lp.ParameterType
+					&& GetNotNullableOf (right.Type) == rp.ParameterType
+					&& !method.ReturnType.IsNullable ()) {
 
 					is_lifted = true;
+					type = method.ReturnType.MakeNullableType ();
 				} else
-					is_lifted = false;
-			} else {
-				//
-				// FIXME: implement
-				//
-				is_lifted = false;
+					throw new InvalidOperationException ();
 			}
 
-			return new BinaryExpression (et, GetResultType (left, method), left, right, is_lifted, is_lifted, method, null);
+			return new BinaryExpression (et, type, left, right, is_lifted, is_lifted, method, null);
 		}
 
 		static UnaryExpression MakeSimpleUnary (ExpressionType et, Expression expression, MethodInfo method)
@@ -322,7 +332,7 @@ namespace System.Linq.Expressions {
 					&& !method.ReturnType.IsNullable ()) {
 
 					is_lifted = true;
-					type = typeof (Nullable<>).MakeGenericType (method.ReturnType);
+					type = method.ReturnType.MakeNullableType ();
 				} else
 					throw new InvalidOperationException ();
 			}
@@ -332,40 +342,39 @@ namespace System.Linq.Expressions {
 
 		static BinaryExpression MakeBoolBinary (ExpressionType et, Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
-			Type result;
-			Type ltype = left.Type;
-			Type rtype = right.Type;
-			bool lnullable = ltype.IsNullable ();
-			bool rnullable = rtype.IsNullable ();
 			bool is_lifted;
+			Type type;
 
-			// Implement the rules as described in "Expression.Equal" method.
 			if (method == null) {
-				if (!lnullable && !rnullable) {
+				if (!left.Type.IsNullable () && !right.Type.IsNullable ()) {
 					is_lifted = false;
 					liftToNull = false;
-					result = typeof (bool);
-				} else if (lnullable && rnullable) {
+					type = typeof (bool);
+				} else if (left.Type.IsNullable () && right.Type.IsNullable ()) {
 					is_lifted = true;
-					result = liftToNull ? typeof(bool?) : typeof (bool);
+					type = liftToNull ? typeof (bool?) : typeof (bool);
 				} else
-					throw new InvalidOperationException ("Internal error: this should have been caught in BinaryCoreCheck");
+					throw new InvalidOperationException ();
 			} else {
-				ParameterInfo [] pi = method.GetParameters ();
-				Type mltype = pi [0].ParameterType;
-				Type mrtype = pi [1].ParameterType;
+				var parameters = method.GetParameters ();
 
-				if (ltype == mltype && rtype == mrtype) {
+				var lp = parameters [0];
+				var rp = parameters [1];
+
+				if (left.Type == lp.ParameterType && right.Type == rp.ParameterType) {
 					is_lifted = false;
 					liftToNull = false;
-					result = method.ReturnType;
-				} else if (ltype.IsValueType && rtype.IsValueType &&
-					   ((lnullable && GetNullableArgumentType (ltype) == mltype) ||
-						(rnullable && GetNullableArgumentType (rtype) == mrtype))){
+					type = method.ReturnType;
+				} else if (left.Type.IsNullable ()
+					&& right.Type.IsNullable ()
+					&& GetNotNullableOf (left.Type) == lp.ParameterType
+					&& GetNotNullableOf (right.Type) == rp.ParameterType) {
+
 					is_lifted = true;
-					if (method.ReturnType == typeof(bool)){
-						result = liftToNull ? typeof(bool?) : typeof(bool);
-					} else {
+
+					if (method.ReturnType == typeof (bool))
+						type = liftToNull ? typeof (bool?) : typeof (bool);
+					else if (!method.ReturnType.IsNullable ()) {
 						//
 						// This behavior is not documented: what
 						// happens if the result is not typeof(bool), but
@@ -374,16 +383,15 @@ namespace System.Linq.Expressions {
 						//
 						// See:
 						// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=323139
-						result = typeof (Nullable<>).MakeGenericType (method.ReturnType);
-					}
-				} else {
-					is_lifted = false;
-					liftToNull = false;
-					result = method.ReturnType;
-				}
+
+						type = method.ReturnType.MakeNullableType ();
+					} else
+						throw new InvalidOperationException ();
+				} else
+					throw new InvalidOperationException ();
 			}
 
-			return new BinaryExpression (et, result, left, right, liftToNull, is_lifted, method, null);
+			return new BinaryExpression (et, type, left, right, liftToNull, is_lifted, method, null);
 		}
 
 		//

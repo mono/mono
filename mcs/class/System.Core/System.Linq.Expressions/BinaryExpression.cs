@@ -97,13 +97,6 @@ namespace System.Linq.Expressions {
 			this.is_lifted = is_lifted;
 		}
 
-		void EmitMethod (EmitContext ec)
-		{
-			left.Emit (ec);
-			right.Emit (ec);
-			ec.EmitCall (method);
-		}
-
 		void EmitArrayAccess (EmitContext ec)
 		{
 			left.Emit (ec);
@@ -485,10 +478,85 @@ namespace System.Linq.Expressions {
 				EmitLiftedRelationalBinary (ec);
 		}
 
+		void EmitLiftedUserDefinedOperator (EmitContext ec)
+		{
+			var ig = ec.ig;
+			var eq = NodeType == ExpressionType.Equal;
+
+			var ret_true = ig.DefineLabel ();
+			var ret_false = ig.DefineLabel ();
+			var done = ig.DefineLabel ();
+
+			var left = ec.EmitStored (this.left);
+			var right = ec.EmitStored (this.right);
+
+			ec.EmitNullableHasValue (left);
+			ec.EmitNullableHasValue (right);
+			ig.Emit (OpCodes.Bne_Un, eq ? ret_false : ret_true);
+
+			ec.EmitNullableHasValue (left);
+			ig.Emit (OpCodes.Brfalse, eq ? ret_true : ret_false);
+
+			ec.EmitNullableGetValueOrDefault (left);
+			ec.EmitNullableGetValueOrDefault (right);
+			ec.EmitCall (method);
+			ig.Emit (OpCodes.Br, done);
+
+			ig.MarkLabel (ret_true);
+			ig.Emit (OpCodes.Ldc_I4_1);
+			ig.Emit (OpCodes.Br, done);
+
+			ig.MarkLabel (ret_false);
+			ig.Emit (OpCodes.Ldc_I4_0);
+			ig.Emit (OpCodes.Br, done);
+
+			ig.MarkLabel (done);
+		}
+
+		void EmitLiftedToNullUserDefinedOperator (EmitContext ec)
+		{
+			var ig = ec.ig;
+
+			var ret = ig.DefineLabel ();
+			var done = ig.DefineLabel ();
+
+			var left = ec.EmitStored (this.left);
+			var right = ec.EmitStored (this.right);
+
+			ec.EmitNullableHasValue (left);
+			ec.EmitNullableHasValue (right);
+			ig.Emit (OpCodes.And);
+			ig.Emit (OpCodes.Brfalse, ret);
+
+			ec.EmitNullableGetValueOrDefault (left);
+			ec.EmitNullableGetValueOrDefault (right);
+			ec.EmitCall (method);
+			ec.EmitNullableNew (Type);
+			ig.Emit (OpCodes.Br, done);
+
+			ig.MarkLabel (ret);
+			var temp = ig.DeclareLocal (Type);
+			ec.EmitNullableInitialize (temp);
+
+			ig.MarkLabel (done);
+		}
+
+		void EmitUserDefinedOperator (EmitContext ec)
+		{
+			if (!IsLifted) {
+				left.Emit (ec);
+				right.Emit (ec);
+				ec.EmitCall (method);
+			} else if (IsLiftedToNull)
+				EmitLiftedToNullUserDefinedOperator (ec);
+			else
+				EmitLiftedUserDefinedOperator (ec);
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
 			if (method != null){
-				EmitMethod (ec);
+				EmitUserDefinedOperator (ec);
 				return;
 			}
 

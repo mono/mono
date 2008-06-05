@@ -72,6 +72,11 @@ namespace System.Linq.Expressions {
 			return self.MakeGenericType (type.GetGenericArguments ());
 		}
 
+		public static Type MakeNullableType (this Type self)
+		{
+			return typeof (Nullable<>).MakeGenericType (self);
+		}
+
 		public static MethodInfo MakeGenericMethodFrom (this MethodInfo self, MethodInfo method)
 		{
 			return self.MakeGenericMethod (method.GetGenericArguments ());
