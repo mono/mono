@@ -1,3 +1,9 @@
+2008-06-05  Bill Holmes <billholmes54@gmail.com>
+
+	* decimal.c:  Adding MSVC implementation to my_g_bit_nth_msf.
+
+	Contributed under MIT/X11 license.
+	
 2008-06-05  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.c
@@ -549,14 +555,14 @@
 	* reflection.c (mono_image_create_token): Add a 'register_token' argument, and use
 	it to avoid registering tokens during metadata generation. Fixes #390023.
 
-2008-05-14  Kornél Pál  <kornelpal@gmail.com>
+2008-05-14  KornÃ©l PÃ¡l  <kornelpal@gmail.com>
 
 	* coree.c: Rename dwOldProtect to OldProtect that makes naming convention
 	consistent.
 
 	Contributed under MIT/X11 license.
 
-2008-05-14  Kornél Pál  <kornelpal@gmail.com>
+2008-05-14  KornÃ©l PÃ¡l  <kornelpal@gmail.com>
 
 	* domain.c (mono_init_internal): Enable LoadLibrary support. Load EXE image
 	even when get_runtimes_from_exe didn't load it that allows mono_fixup_exe_image
@@ -712,13 +718,13 @@
 	(MONO_SYMBOL_FILE_COMPATIBILITY_VERSION): Removed; dropped support
 	for old pre-terrania symbol files.
 
-2008-05-05  Andreas Färber  <andreas.faerber@web.de>
+2008-05-05  Andreas FÃ¤rber  <andreas.faerber@web.de>
 
 	* mono-config.c: Add ppc64 architecture.
 
 	Code is contributed under MIT/X11 license.
 
-2008-05-05  Andreas Färber  <andreas.faerber@web.de>
+2008-05-05  Andreas FÃ¤rber  <andreas.faerber@web.de>
 
 	* object.c (mono_create_ftnptr, mono_get_addr_from_ftnptr):
 	  PPC64 uses function descriptors as well.
@@ -801,7 +807,7 @@
 	* verify.c (mono_method_verify): Check the bounds of
 	all access of the code array.
 
-2008-04-29  Kornél Pál  <kornelpal@gmail.com>
+2008-04-29  KornÃ©l PÃ¡l  <kornelpal@gmail.com>
 
 	* appdomain.c: Use HAVE_SYS_UTIME_H that fixes MSVC build.
 
@@ -810,7 +816,7 @@
 	* image.c (mono_image_strong_name_position): Fix return value when the rva is
 	not valid.
 
-2008-04-28  Kornél Pál  <kornelpal@gmail.com>
+2008-04-28  KornÃ©l PÃ¡l  <kornelpal@gmail.com>
 
 	* loader.c (mono_get_method_from_token, mono_method_signature): Add
 	support for METHOD_IMPL_ATTRIBUTE_NATIVE.
@@ -1176,7 +1182,7 @@
 
 	* verify.c: Implemented readonly prefix and verify controled mutability pointers.
 
-2008-03-20  Kornél Pál  <kornelpal@gmail.com>
+2008-03-20  KornÃ©l PÃ¡l  <kornelpal@gmail.com>
 
 	* file-io.c, filewatcher.c, threadpool.c, threads.c: Removed Windows
 	version macros.
@@ -3029,7 +3035,7 @@ Thu Nov 8 15:31:21 CET 2007 Paolo Molaro <lupus@ximian.com>
 	* socket-io.c: Apple requires sin(6)_len to be set for getnameinfo
 	to succeed
 
-2007-11-05  Kornél Pál  <kornelpal@gmail.com>
+2007-11-05  KornÃ©l PÃ¡l  <kornelpal@gmail.com>
 
 	* process.c: Added run-time GetProcessId API detection for Windows.
 
@@ -7340,7 +7346,7 @@ Fri Jul 28 19:04:34 CEST 2006 Paolo Molaro <lupus@ximian.com>
 	* threads.c (start_wrapper): Do the thread cleanup while we still
 	hold a reference to its object.  Fixes bug 78123.
 
-2006-07-18  Kornél Pál  <kornelpal@gmail.com>
+2006-07-18  KornÃ©l PÃ¡l  <kornelpal@gmail.com>
 
 	* class-internals.h: Added MONO_WRAPPER_MANAGED_TO_MANAGED wrapper type.
 	* debug-helpers.c: Map MONO_WRAPPER_MANAGED_TO_MANAGED to
@@ -11181,7 +11187,7 @@ Wed Jun 8 19:26:38 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
 	* threads.c: avoid segfault when an unstarted thread is aborted.
 
-2005-06-05  Kornél Pál <kornelpal@hotmail.com>
+2005-06-05  KornÃ©l PÃ¡l <kornelpal@hotmail.com>
 
 	* icall.c: Added ves_icall_Mono_Runtime_GetDisplayName:
 	Returns the name and version of the runtime for reporting.
