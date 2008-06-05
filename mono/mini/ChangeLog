@@ -1,3 +1,17 @@
+2008-06-05  Bill Holmes  <billholmes54@gmail.com>
+
+	* mini-amd64.c:merge_argument_class_from_type: When marshaling 
+	  structs with floats on Winx64 the float registers are not used.  
+	  The integer registers are always used..
+	* mini-amd64.c:add_valuetype:  When marshaling structs on Winx64 
+	  only one register will be used and only if the size of the struct 
+	  is 1,2,4, or 8 bytes.
+
+	* tramp-amd64.c :  Adjusting size used for mono_global_codeman_reserve
+	  to work for Winx64.
+
+	Contributed under MIT/X11 license.
+
 2008-06-05  Martin Baulig  <martin@ximian.com>
 
 	* debug-debugger.c (debugger_lookup_class): Also call
