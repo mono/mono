@@ -1,5 +1,9 @@
 2008-06-05  Marek Safar  <marek.safar@gmail.com>
 
+	* statement.cs: Emit catch variable assignment using variable expression.
+	
+2008-06-05  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs, expression.cs, statement.cs: Make TemporaryVariable compatible
 	with other variable types.
 

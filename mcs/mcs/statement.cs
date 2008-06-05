@@ -4488,19 +4488,21 @@ namespace Mono.CSharp {
 				VarBlock.Emit (ec);
 
 			if (Name != null) {
-				LocalInfo vi = Block.GetLocalInfo (Name);
-				if (vi == null)
-					throw new Exception ("Variable does not exist in this block");
+				// TODO: Move to resolve
+				LocalVariableReference lvr = new LocalVariableReference (Block, Name, loc);
+				lvr.Resolve (ec);
 
-				if (vi.Variable.NeedsTemporary) {
-					LocalBuilder e = ig.DeclareLocal (vi.VariableType);
-					ig.Emit (OpCodes.Stloc, e);
+				Expression source;
+				if (lvr.local_info.IsCaptured) {
+					LocalTemporary lt = new LocalTemporary (lvr.Type);
+					lt.Store (ec);
+					source = lt;
+				} else {
+					// Variable is at the top of the stack
+					source = EmptyExpression.Null;
+				}
 
-					vi.Variable.EmitInstance (ec);
-					ig.Emit (OpCodes.Ldloc, e);
-					vi.Variable.EmitAssign (ec);
-				} else
-					vi.Variable.EmitAssign (ec);
+				lvr.EmitAssign (ec, source, false, false);
 			} else
 				ig.Emit (OpCodes.Pop);
 
