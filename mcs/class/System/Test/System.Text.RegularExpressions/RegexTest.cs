@@ -79,6 +79,17 @@ namespace MonoTests.System.Text.RegularExpressions
 			Assert.AreEqual ("go-mono.com", m.Groups ["domain"].Value, "#m06");
 		}
 
+		[Test]
+		public void Match2 ()
+		{
+			Regex regex = new Regex(@"(?<tab>\t)|(?<text>[^\t]*)");
+			MatchCollection col = regex.Matches("\tjust a text");
+			Assert.AreEqual(3, col.Count);
+			Assert.AreEqual (col [0].Value, "\t");
+			Assert.AreEqual (col [1].Value, "just a text");
+			Assert.AreEqual(col[2].Value, string.Empty);
+		}
+
 		static string story =
 			"Two little dragons lived in the forest\n" +
 			"They spent their days collecting honey suckle,\n" +
