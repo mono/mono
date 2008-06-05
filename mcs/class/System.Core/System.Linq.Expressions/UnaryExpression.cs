@@ -126,8 +126,11 @@ namespace System.Linq.Expressions {
 					ig.Emit (OpCodes.Not);
 				break;
 			case ExpressionType.Negate:
-			case ExpressionType.NegateChecked:
 				ig.Emit (OpCodes.Neg);
+				break;
+			case ExpressionType.NegateChecked:
+				ig.Emit (OpCodes.Ldc_I4_M1);
+				ig.Emit (IsUnsigned (operand.Type) ? OpCodes.Mul_Ovf_Un : OpCodes.Mul_Ovf);
 				break;
 			case ExpressionType.Convert:
 			case ExpressionType.ConvertChecked:
