@@ -18,6 +18,7 @@
 //
 // Authors:
 //		Federico Di Gregorio <fog@initd.org>
+//		Jb Evain <jbevain@novell.com>
 
 using System;
 using System.Reflection;
@@ -121,6 +122,18 @@ namespace MonoTests.System.Linq.Expressions
 
 			Assert.AreEqual (12, ls (6, 1));
 			Assert.AreEqual (96, ls (12, 3));
+		}
+
+		[Test]
+		public void LeftShiftNullableLongAndInt ()
+		{
+			var l = Expression.Parameter (typeof (long?), "l");
+			var r = Expression.Parameter (typeof (int), "r");
+
+			var node = Expression.LeftShift (l, r);
+			Assert.IsTrue (node.IsLifted);
+			Assert.IsTrue (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (long?), node.Type);
 		}
 	}
 }

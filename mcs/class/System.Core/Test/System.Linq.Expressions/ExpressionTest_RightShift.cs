@@ -127,7 +127,7 @@ namespace MonoTests.System.Linq.Expressions
 
 		[Test]
 		[Category ("NotWorking")]
-		public void IntRightShiftSByte ()
+		public void RightShiftNullableLongAndInt ()
 		{
 			var l = Expression.Parameter (typeof (long?), "l");
 			var r = Expression.Parameter (typeof (int), "r");
