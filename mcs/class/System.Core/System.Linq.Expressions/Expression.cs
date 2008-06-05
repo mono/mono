@@ -42,12 +42,12 @@ namespace System.Linq.Expressions {
 		ExpressionType node_type;
 		Type type;
 
-		protected const BindingFlags PublicInstance = BindingFlags.Public | BindingFlags.Instance;
-		protected const BindingFlags NonPublicInstance = BindingFlags.NonPublic | BindingFlags.Instance;
-		protected const BindingFlags PublicStatic = BindingFlags.Public | BindingFlags.Static;
-		protected const BindingFlags AllInstance = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-		protected const BindingFlags AllStatic = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-		protected const BindingFlags All = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
+		internal const BindingFlags PublicInstance = BindingFlags.Public | BindingFlags.Instance;
+		internal const BindingFlags NonPublicInstance = BindingFlags.NonPublic | BindingFlags.Instance;
+		internal const BindingFlags PublicStatic = BindingFlags.Public | BindingFlags.Static;
+		internal const BindingFlags AllInstance = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+		internal const BindingFlags AllStatic = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+		internal const BindingFlags All = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
 
 		public ExpressionType NodeType {
 			get { return node_type; }
