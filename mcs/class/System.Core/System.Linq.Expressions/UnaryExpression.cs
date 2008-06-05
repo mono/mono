@@ -332,7 +332,7 @@ namespace System.Linq.Expressions {
 				EmitLiftedUnary (ec);
 		}
 
-		void EmitLiftedUserDefinedOperator (EmitContext ec)
+		void EmitUserDefinedLiftedToNullOperator (EmitContext ec)
 		{
 			var ig = ec.ig;
 			var local = ec.EmitStored (operand);
@@ -356,13 +356,28 @@ namespace System.Linq.Expressions {
 			ig.MarkLabel (done);
 		}
 
+		void EmitUserDefinedLiftedOperator (EmitContext ec)
+		{
+			var ig = ec.ig;
+
+			// that seems like a bug in MS's implementation
+			// they don't bail out if the operand is null
+			// and force the GetValue instead
+
+			var local = ec.EmitStored (operand);
+			ec.EmitNullableGetValue (local);
+			ec.EmitCall (method);
+		}
+
 		void EmitUserDefinedOperator (EmitContext ec)
 		{
 			if (!IsLifted) {
 				ec.Emit (operand);
 				ec.EmitCall (method);
+			} else if (IsLiftedToNull) {
+				EmitUserDefinedLiftedToNullOperator (ec);
 			} else
-				EmitLiftedUserDefinedOperator (ec);
+				EmitUserDefinedLiftedOperator (ec);
 		}
 
 		internal override void Emit (EmitContext ec)
