@@ -336,9 +336,7 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ((SlotFromNullableToNullable?) new SlotFromNullableToNullable (0), add (new SlotFromNullableToNullable (2), new SlotFromNullableToNullable (-2)));
 		}*/
 
-
 		[Test]
-		[Category ("NotWorking")]
 		public void AddStrings ()
 		{
 			var l = Expression.Parameter (typeof (string), "l");
