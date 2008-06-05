@@ -1,3 +1,12 @@
+2008-06-05  Andreas Färber  <andreas.faerber@web.de>
+
+	* mini.c (mini_init): Add DTrace probes ves-init-{begin,end}.
+	(mini_method_compile) Add DTrace probes method-compile-{begin,end}.
+	* Makefile.am (libmono_la_LIBADD,libmono_static_la_LIBADD,mono_LDADD):
+	Post-process object files and add dtrace-generated object, if necessary.
+
+	Contributed under MIT/X11 license.
+
 2008-06-04  Mark Probst  <mark.probst@gmail.com>
 
 	* inssel.brg, mini-ops.h: Added opcode for unboxcast with computed

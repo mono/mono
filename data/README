@@ -11,6 +11,11 @@ Files in this directory:
 		basis what kind of features it can depend on when
 		producing the HTML code.
 
+	mono.d
+		This is a DTrace file listing available probes.
+		This is used by dtrace to generate a C header file,
+		and on Solaris for postprocessing object files.
+
 	mono.supp
 		This is a valgrind data file, it lists the warnings
 		that should be supressed when reporting Mono-related
