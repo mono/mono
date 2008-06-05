@@ -1,3 +1,11 @@
+2008-06-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (verify_type_compatibility_full): Make SZARRAY checks
+	more reliable.
+
+	* verify.c (mono_method_verify): Inflate params and locals to avoid
+	mismatch when checking for compatibility.
+
 2008-06-05  Jonathan Chambers  <joncham@gmail.com>
 
 	* metadata.c (mono_string_from_bstr): Fix BSTR marshalling.
