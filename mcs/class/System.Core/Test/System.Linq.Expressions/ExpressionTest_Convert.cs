@@ -469,5 +469,40 @@ namespace MonoTests.System.Linq.Expressions {
 
 			Assert.AreEqual ((short?) 42, convert (new ImplicitToShort (42)));
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConvertLongToDecimal ()
+		{
+			var p = Expression.Parameter (typeof (long), "l");
+
+			var node = Expression.Convert (p, typeof (decimal));
+			Assert.IsFalse (node.IsLifted);
+			Assert.IsFalse (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (decimal), node.Type);
+			Assert.IsNotNull (node.Method);
+
+			var convert = Expression.Lambda<Func<long, decimal>> (node, p).Compile ();
+
+			Assert.AreEqual (42, convert (42));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConvertNullableULongToNullableDecimal ()
+		{
+			var p = Expression.Parameter (typeof (ulong?), "l");
+
+			var node = Expression.Convert (p, typeof (decimal?));
+			Assert.IsTrue (node.IsLifted);
+			Assert.IsTrue (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (decimal?), node.Type);
+			Assert.IsNotNull (node.Method);
+
+			var convert = Expression.Lambda<Func<ulong?, decimal?>> (node, p).Compile ();
+
+			Assert.AreEqual (42, convert (42));
+			Assert.AreEqual (null, convert (null));
+		}
 	}
 }
