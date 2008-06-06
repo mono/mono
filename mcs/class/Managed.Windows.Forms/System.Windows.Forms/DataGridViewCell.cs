@@ -572,189 +572,29 @@ namespace System.Windows.Forms {
 				throw new InvalidOperationException ("Cell is not in a DataGridView. The cell cannot retrieve the inherited cell style.");
 
 			if (rowIndex < 0 || rowIndex >= DataGridView.Rows.Count)
-				throw new ArgumentOutOfRangeException ("rowIndex", "Specified argument was out of the range of valid values.");
+				throw new ArgumentOutOfRangeException ("rowIndex");
 
-			DataGridViewCellStyle result = new DataGridViewCellStyle ();
-			if (style != null && style.Alignment != DataGridViewContentAlignment.NotSet) {
-				result.Alignment = style.Alignment;
-			} else if (OwningRow != null && OwningRow.DefaultCellStyle.Alignment != DataGridViewContentAlignment.NotSet) {
-				result.Alignment = OwningRow.DefaultCellStyle.Alignment;
-			} else if (DataGridView != null) {
-				if ((RowIndex % 2) == 1 && DataGridView.AlternatingRowsDefaultCellStyle.Alignment != DataGridViewContentAlignment.NotSet) {
-					result.Alignment = DataGridView.AlternatingRowsDefaultCellStyle.Alignment;
-				} else if (DataGridView.RowsDefaultCellStyle.Alignment != DataGridViewContentAlignment.NotSet) {
-					result.Alignment = DataGridView.RowsDefaultCellStyle.Alignment;
-				} else if (ColumnIndex >= 0 && DataGridView.Columns [ColumnIndex].DefaultCellStyle.Alignment != DataGridViewContentAlignment.NotSet) {
-					result.Alignment = DataGridView.Columns [ColumnIndex].DefaultCellStyle.Alignment;
-				} else {
-					result.Alignment = DataGridView.DefaultCellStyle.Alignment;
-				}
-			}
-			if (style != null && style.BackColor != Color.Empty) {
-				result.BackColor = style.BackColor;
-			} else if (OwningRow != null && OwningRow.DefaultCellStyle.BackColor != Color.Empty) {
-				result.BackColor = OwningRow.DefaultCellStyle.BackColor;
-			} else if (DataGridView != null) {
-				if ((RowIndex % 2) == 1 && DataGridView.AlternatingRowsDefaultCellStyle.BackColor != Color.Empty) {
-					result.BackColor = DataGridView.AlternatingRowsDefaultCellStyle.BackColor;
-				} else if (DataGridView.RowsDefaultCellStyle.BackColor != Color.Empty) {
-					result.BackColor = DataGridView.RowsDefaultCellStyle.BackColor;
-				} else if (ColumnIndex >= 0 && DataGridView.Columns [ColumnIndex].DefaultCellStyle.BackColor != Color.Empty) {
-					result.BackColor = DataGridView.Columns [ColumnIndex].DefaultCellStyle.BackColor;
-				} else {
-					result.BackColor = DataGridView.DefaultCellStyle.BackColor;
-				}
-			}
-			if (style != null && style.Font != null) {
-				result.Font = style.Font;
-			} else if (OwningRow != null && OwningRow.DefaultCellStyle.Font != null) {
-				result.Font = OwningRow.DefaultCellStyle.Font;
-			} else if (DataGridView != null) {
-				if ((RowIndex % 2) == 1 && DataGridView.AlternatingRowsDefaultCellStyle.Font != null) {
-					result.Font = DataGridView.AlternatingRowsDefaultCellStyle.Font;
-				} else if (DataGridView.RowsDefaultCellStyle.Font != null) {
-					result.Font = DataGridView.RowsDefaultCellStyle.Font;
-				} else if (ColumnIndex >= 0 && DataGridView.Columns [ColumnIndex].DefaultCellStyle.Font != null) {
-					result.Font = DataGridView.Columns [ColumnIndex].DefaultCellStyle.Font;
-				} else {
-					result.Font = DataGridView.DefaultCellStyle.Font;
-				}
-			}
-			if (style != null && style.ForeColor != Color.Empty) {
-				result.ForeColor = style.ForeColor;
-			} else if (OwningRow != null && OwningRow.DefaultCellStyle.ForeColor != Color.Empty) {
-				result.ForeColor = OwningRow.DefaultCellStyle.ForeColor;
-			} else if (DataGridView != null) {
-				if ((RowIndex % 2) == 1 && DataGridView.AlternatingRowsDefaultCellStyle.ForeColor != Color.Empty) {
-					result.ForeColor = DataGridView.AlternatingRowsDefaultCellStyle.ForeColor;
-				} else if (DataGridView.RowsDefaultCellStyle.ForeColor != Color.Empty) {
-					result.ForeColor = DataGridView.RowsDefaultCellStyle.ForeColor;
-				} else if (ColumnIndex >= 0 && DataGridView.Columns [ColumnIndex].DefaultCellStyle.ForeColor != Color.Empty) {
-					result.ForeColor = DataGridView.Columns [ColumnIndex].DefaultCellStyle.ForeColor;
-				} else {
-					result.ForeColor = DataGridView.DefaultCellStyle.ForeColor;
-				}
-			}
-			if (style != null && style.Format != String.Empty) {
-				result.Format = style.Format;
-			} else if (OwningRow != null && OwningRow.DefaultCellStyle.Format != String.Empty) {
-				result.Format = OwningRow.DefaultCellStyle.Format;
-			} else if (DataGridView != null) {
-				if ((RowIndex % 2) == 1 && DataGridView.AlternatingRowsDefaultCellStyle.Format != String.Empty) {
-					result.Format = DataGridView.AlternatingRowsDefaultCellStyle.Format;
-				} else if (DataGridView.RowsDefaultCellStyle.Format != String.Empty) {
-					result.Format = DataGridView.RowsDefaultCellStyle.Format;
-				} else if (ColumnIndex >= 0 && DataGridView.Columns [ColumnIndex].DefaultCellStyle.Format != String.Empty) {
-					result.Format = DataGridView.Columns [ColumnIndex].DefaultCellStyle.Format;
-				} else {
-					result.Format = DataGridView.DefaultCellStyle.Format;
-				}
-			}
-			if (style != null && style.FormatProvider != System.Globalization.CultureInfo.CurrentUICulture) {
-				result.FormatProvider = style.FormatProvider;
-			} else if (OwningRow != null && OwningRow.DefaultCellStyle.FormatProvider != System.Globalization.CultureInfo.CurrentUICulture) {
-				result.FormatProvider = OwningRow.DefaultCellStyle.FormatProvider;
-			} else if (DataGridView != null) {
-				if ((RowIndex % 2) == 1 && DataGridView.AlternatingRowsDefaultCellStyle.FormatProvider != System.Globalization.CultureInfo.CurrentUICulture) {
-					result.FormatProvider = DataGridView.AlternatingRowsDefaultCellStyle.FormatProvider;
-				} else if (DataGridView.RowsDefaultCellStyle.FormatProvider != System.Globalization.CultureInfo.CurrentUICulture) {
-					result.FormatProvider = DataGridView.RowsDefaultCellStyle.FormatProvider;
-				} else if (ColumnIndex >= 0 && DataGridView.Columns [ColumnIndex].DefaultCellStyle.FormatProvider != System.Globalization.CultureInfo.CurrentUICulture) {
-					result.FormatProvider = DataGridView.Columns [ColumnIndex].DefaultCellStyle.FormatProvider;
-				} else {
-					result.FormatProvider = DataGridView.DefaultCellStyle.FormatProvider;
-				}
-			}
-			if (style != null && (string)style.NullValue != "(null)") {
-				result.NullValue = style.NullValue;
-			} else if (OwningRow != null && (string)OwningRow.DefaultCellStyle.NullValue != "(null)") {
-				result.NullValue = OwningRow.DefaultCellStyle.NullValue;
-			} else if (DataGridView != null) {
-				if ((RowIndex % 2) == 1 && (string)DataGridView.AlternatingRowsDefaultCellStyle.NullValue != "(null)") {
-					result.NullValue = DataGridView.AlternatingRowsDefaultCellStyle.NullValue;
-				} else if ((string)DataGridView.RowsDefaultCellStyle.NullValue != "(null)") {
-					result.NullValue = DataGridView.RowsDefaultCellStyle.NullValue;
-				} else if (ColumnIndex >= 0 && (string)DataGridView.Columns [ColumnIndex].DefaultCellStyle.NullValue != "(null)") {
-					result.NullValue = DataGridView.Columns [ColumnIndex].DefaultCellStyle.NullValue;
-				} else {
-					result.NullValue = DataGridView.DefaultCellStyle.NullValue;
-				}
-			}
-			if (style != null && style.Padding != Padding.Empty) {
-				result.Padding = style.Padding;
-			} else if (OwningRow != null && OwningRow.DefaultCellStyle.Padding != Padding.Empty) {
-				result.Padding = OwningRow.DefaultCellStyle.Padding;
-			} else if (DataGridView != null) {
-				if ((RowIndex % 2) == 1 && DataGridView.AlternatingRowsDefaultCellStyle.Padding != Padding.Empty) {
-					result.Padding = DataGridView.AlternatingRowsDefaultCellStyle.Padding;
-				} else if (DataGridView.RowsDefaultCellStyle.Padding != Padding.Empty) {
-					result.Padding = DataGridView.RowsDefaultCellStyle.Padding;
-				} else if (ColumnIndex >= 0 && DataGridView.Columns [ColumnIndex].DefaultCellStyle.Padding != Padding.Empty) {
-					result.Padding = DataGridView.Columns [ColumnIndex].DefaultCellStyle.Padding;
-				} else {
-					result.Padding = DataGridView.DefaultCellStyle.Padding;
-				}
-			}
-			if (style != null && style.SelectionBackColor != Color.Empty) {
-				result.SelectionBackColor = style.SelectionBackColor;
-			} else if (OwningRow != null && OwningRow.DefaultCellStyle.SelectionBackColor != Color.Empty) {
-				result.SelectionBackColor = OwningRow.DefaultCellStyle.SelectionBackColor;
-			} else if (DataGridView != null) {
-				if ((RowIndex % 2) == 1 && DataGridView.AlternatingRowsDefaultCellStyle.SelectionBackColor != Color.Empty) {
-					result.SelectionBackColor = DataGridView.AlternatingRowsDefaultCellStyle.SelectionBackColor;
-				} else if (DataGridView.RowsDefaultCellStyle.SelectionBackColor != Color.Empty) {
-					result.SelectionBackColor = DataGridView.RowsDefaultCellStyle.SelectionBackColor;
-				} else if (ColumnIndex >= 0 && DataGridView.Columns [ColumnIndex].DefaultCellStyle.SelectionBackColor != Color.Empty) {
-					result.SelectionBackColor = DataGridView.Columns [ColumnIndex].DefaultCellStyle.SelectionBackColor;
-				} else {
-					result.SelectionBackColor = DataGridView.DefaultCellStyle.SelectionBackColor;
-				}
-			}
-			if (style != null && style.SelectionForeColor != Color.Empty) {
-				result.SelectionForeColor = style.SelectionForeColor;
-			} else if (OwningRow != null && OwningRow.DefaultCellStyle.SelectionForeColor != Color.Empty) {
-				result.SelectionForeColor = OwningRow.DefaultCellStyle.SelectionForeColor;
-			} else if (DataGridView != null) {
-				if ((RowIndex % 2) == 1 && DataGridView.AlternatingRowsDefaultCellStyle.SelectionForeColor != Color.Empty) {
-					result.SelectionForeColor = DataGridView.AlternatingRowsDefaultCellStyle.SelectionForeColor;
-				} else if (DataGridView.RowsDefaultCellStyle.SelectionForeColor != Color.Empty) {
-					result.SelectionForeColor = DataGridView.RowsDefaultCellStyle.SelectionForeColor;
-				} else if (ColumnIndex >= 0 && DataGridView.Columns [ColumnIndex].DefaultCellStyle.SelectionForeColor != Color.Empty) {
-					result.SelectionForeColor = DataGridView.Columns [ColumnIndex].DefaultCellStyle.SelectionForeColor;
-				} else {
-					result.SelectionForeColor = DataGridView.DefaultCellStyle.SelectionForeColor;
-				}
-			}
-			if (style != null && style.Tag != null) {
-				result.Tag = style.Tag;
-			} else if (OwningRow != null && OwningRow.DefaultCellStyle.Tag != null) {
-				result.Tag = OwningRow.DefaultCellStyle.Tag;
-			} else if (DataGridView != null) {
-				if ((RowIndex % 2) == 1 && DataGridView.AlternatingRowsDefaultCellStyle.Tag != null) {
-					result.Tag = DataGridView.AlternatingRowsDefaultCellStyle.Tag;
-				} else if (DataGridView.RowsDefaultCellStyle.Tag != null) {
-					result.Tag = DataGridView.RowsDefaultCellStyle.Tag;
-				} else if (ColumnIndex >= 0 && DataGridView.Columns [ColumnIndex].DefaultCellStyle.Tag != null) {
-					result.Tag = DataGridView.Columns [ColumnIndex].DefaultCellStyle.Tag;
-				} else {
-					result.Tag = DataGridView.DefaultCellStyle.Tag;
-				}
-			}
-			if (style != null && style.WrapMode != DataGridViewTriState.NotSet) {
-				result.WrapMode = style.WrapMode;
-			} else if (OwningRow != null && OwningRow.DefaultCellStyle.WrapMode != DataGridViewTriState.NotSet) {
-				result.WrapMode = OwningRow.DefaultCellStyle.WrapMode;
-			} else if (DataGridView != null) {
-				if ((RowIndex % 2) == 1 && DataGridView.AlternatingRowsDefaultCellStyle.WrapMode != DataGridViewTriState.NotSet) {
-					result.WrapMode = DataGridView.AlternatingRowsDefaultCellStyle.WrapMode;
-				} else if (DataGridView.RowsDefaultCellStyle.WrapMode != DataGridViewTriState.NotSet) {
-					result.WrapMode = DataGridView.RowsDefaultCellStyle.WrapMode;
-				} else if (ColumnIndex >= 0 && DataGridView.Columns [ColumnIndex].DefaultCellStyle.WrapMode != DataGridViewTriState.NotSet) {
-					result.WrapMode = DataGridView.Columns [ColumnIndex].DefaultCellStyle.WrapMode;
-				} else {
-					result.WrapMode = DataGridView.DefaultCellStyle.WrapMode;
-				}
-			}
+			// Start with DataGridView.DefaultCellStyle
+			DataGridViewCellStyle result = new DataGridViewCellStyle (DataGridView.DefaultCellStyle);
+
+			// If we have a column, add OwningColumn.DefaultCellStyle
+			if (OwningColumn != null)
+				result.ApplyStyle (OwningColumn.DefaultCellStyle);
+
+			// Add DataGridView.RowsDefaultCellStyle
+			result.ApplyStyle (DataGridView.RowsDefaultCellStyle);
+
+			// If we are an odd row, add DataGridView.AlternatingRowsDefaultCellStyle
+			if (rowIndex % 2 == 1)
+				result.ApplyStyle (DataGridView.AlternatingRowsDefaultCellStyle);
+
+			// Add Row.DefaultCellStyle
+			result.ApplyStyle (DataGridView.Rows.SharedRow (rowIndex).DefaultCellStyle);
+			
+			// Add cell's style
+			if (HasStyle)
+				result.ApplyStyle (Style);
+			
 			return result;
 		}
 
