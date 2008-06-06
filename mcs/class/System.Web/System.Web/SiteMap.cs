@@ -49,7 +49,6 @@ namespace System.Web {
 						throw new InvalidOperationException ("This feature is currently disabled.  Please enable it in the system.web/siteMap section in the web.config file.");
 
 					providers = section.ProvidersInternal;
-
 					provider = providers[section.DefaultProvider];
 
 					if (provider == null)
@@ -60,7 +59,7 @@ namespace System.Web {
 		}
 		
 		public static SiteMapNode CurrentNode { 
-			get { return FindCurrentNode (); }
+			get { return Provider.CurrentNode; }
 		}
 
 		public static SiteMapNode RootNode { 
@@ -91,16 +90,7 @@ namespace System.Web {
 				SiteMapSection section = (SiteMapSection) WebConfigurationManager.GetSection ("system.web/siteMap");
 				return section.Enabled;
 			}
-		}
-		
-		static SiteMapNode FindCurrentNode ()
-		{
-			SiteMapNode node = Provider.CurrentNode;
-			if (node != null)
-				return node;
-			
-			return null;
-		}
+		}		
 
 #if TARGET_JVM
 		const string SiteMap_provider = "SiteMap_provider";

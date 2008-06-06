@@ -57,7 +57,7 @@ namespace System.Web
 				throw new ArgumentNullException ("node");
 
 			lock (this_lock) {
-				if (FindSiteMapNodeFromKey (node.Key) != null)
+				if (FindSiteMapNodeFromKey (node.Key) != null && node.Provider == this)
 					throw new InvalidOperationException (string.Format ("A node with key '{0}' already exists.",node.Key));
 
 				if (!String.IsNullOrEmpty (node.Url)) {
@@ -159,18 +159,30 @@ namespace System.Web
 		{
 			if (node == null)
 				throw new ArgumentNullException("node");
+
+			string key = node.Key;
+			string url;
 			
 			lock (this_lock) {
-				keyToNode.Remove (node.Key);
-				if (!String.IsNullOrEmpty (node.Url))
-					urlToNode.Remove (MapUrl (node.Url));
-
+				if (keyToNode.ContainsKey (key))
+					keyToNode.Remove (key);
+				url = node.Url;
+				if (!String.IsNullOrEmpty (url)) {
+					url = MapUrl (url);
+					if (urlToNode.ContainsKey (url))
+						urlToNode.Remove (url);
+				}
+				
 				if (node == RootNode)
 					return;
 
-				SiteMapNode parent = nodeToParent [node];
-				nodeToParent.Remove (node);
-				nodeToChildren [parent].Remove (node);
+				SiteMapNode parent;
+				if (nodeToParent.TryGetValue (node, out parent)) {
+					nodeToParent.Remove (node);
+
+					if (nodeToChildren.ContainsKey (parent))
+						nodeToChildren [parent].Remove (node);
+				}
 			}
 		}
 		

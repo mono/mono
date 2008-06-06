@@ -1,3 +1,16 @@
+2008-06-06  Marek Habersack  <mhabersack@novell.com>
+
+	* SiteMap.cs: FindCurrentNode is no longer needed. CurrentNode
+	uses Provider.CurrentNode to find the return value.
+	AddNode doesn't throw a duplicate key exception for nodes not
+	belonging to the current provider.
+	Check whether keys exist before removing entries from the
+	dictionaries.
+
+	* XmlSiteMapProvider.cs: implemented support for child providers
+	(the AddProvider method). FindSiteMapNode* methods look for the
+	node also in the collection of child providers. Fixes bug #397040
+
 2008-06-04  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpResponse.cs: correctly modify virtual path to include the

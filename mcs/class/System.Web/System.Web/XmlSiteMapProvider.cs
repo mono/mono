@@ -32,8 +32,10 @@
 
 #if NET_2_0
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Configuration.Provider;
 using System.Globalization;
 using System.Text;
 using System.Xml;
@@ -51,7 +53,27 @@ namespace System.Web
 		string file;
 		SiteMapNode root = null;
 		FileSystemWatcher watcher;
+		Dictionary <string, bool> _childProvidersPresent;
+		List <SiteMapProvider> _childProviders;
+		
+		Dictionary <string, bool> ChildProvidersPresent {
+			get {
+				if (_childProvidersPresent == null)
+					_childProvidersPresent = new Dictionary <string, bool> ();
 
+				return _childProvidersPresent;
+			}
+		}
+
+		List <SiteMapProvider> ChildProviders {
+			get {
+				if (_childProviders == null)
+					_childProviders = new List <SiteMapProvider> ();
+
+				return _childProviders;
+			}
+		}
+		
 		protected internal override void AddNode (SiteMapNode node, SiteMapNode parentNode)
 		{
 			base.AddNode (node, parentNode);
@@ -59,9 +81,31 @@ namespace System.Web
 
 		protected virtual void AddProvider (string providerName, SiteMapNode parentNode)
 		{
-			throw new NotImplementedException ();
+			if (parentNode == null)
+				throw new ArgumentNullException ("parentNode");
+
+			if (parentNode.Provider != this)
+				throw new ArgumentException ("The Provider property of the parentNode does not reference the current provider.", "parentNode");
+
+			SiteMapProvider smp = SiteMap.Providers [providerName];
+			if (smp == null)
+				throw new ProviderException ("Provider with name [" + providerName + "] was not found.");
+
+			AddNode (smp.GetRootNodeCore ());
+			RegisterChildProvider (providerName, smp);
 		}
 
+		void RegisterChildProvider (string name, SiteMapProvider smp)
+		{
+			Dictionary <string, bool> childProvidersPresent = ChildProvidersPresent;
+			
+			if (childProvidersPresent.ContainsKey (name))
+				return;
+
+			childProvidersPresent.Add (name, true);
+			ChildProviders.Add (smp);
+		}
+		
 		XmlNode FindStartingNode (string file, out bool enableLocalization)
 		{
 			if (String.Compare (Path.GetExtension (file), ".sitemap", stringComparison) != 0)
@@ -109,6 +153,7 @@ namespace System.Web
 				} finally {
 					building = false;
 				}
+				
 				return root;
 			}
 		}
@@ -204,13 +249,15 @@ namespace System.Web
 			string siteMapFile = GetNonEmptyOptionalAttribute (xmlNode, "siteMapFile");
 			
 			if (provider != null) {
-				foreach (SiteMapProvider smp in SiteMap.Providers) {
-					if (string.Equals(smp.Name,provider, StringComparison.InvariantCulture)) {
-						smp.ParentProvider = this;
-						return smp.GetRootNodeCore();
-					}
-				}
-				throw new ConfigurationException("Provider with name [" + provider + "] was not found.");
+				SiteMapProvider smp = SiteMap.Providers [provider];
+				if (smp == null)
+					throw new ProviderException ("Provider with name [" + provider + "] was not found.");
+
+				smp.ParentProvider = this;
+				SiteMapNode root = smp.GetRootNodeCore();
+				RegisterChildProvider (provider, smp);
+				
+				return root;
 			} else if (siteMapFile != null) {
 				bool enableLocalization;
 				XmlNode node = FindStartingNode (HttpContext.Current.Request.MapPath (siteMapFile),
@@ -277,6 +324,8 @@ namespace System.Web
 		{
 			base.Clear ();
 			root = null;
+			ChildProviders.Clear ();
+			ChildProvidersPresent.Clear ();
 		}
 
 		protected virtual void Dispose (bool disposing)
@@ -292,12 +341,32 @@ namespace System.Web
 		
 		public override SiteMapNode FindSiteMapNode (string rawUrl)
 		{
-			return base.FindSiteMapNode (rawUrl); // why did they override this method!?
+			SiteMapNode node = base.FindSiteMapNode (rawUrl);
+			if (node != null)
+				return node;
+
+			foreach (SiteMapProvider smp in ChildProviders) {
+				node = smp.FindSiteMapNode (rawUrl);
+				if (node != null)
+					return node;
+			}
+
+			return null;
 		}
 
 		public override SiteMapNode FindSiteMapNodeFromKey (string key)
 		{
-			return base.FindSiteMapNodeFromKey (key); // why did they override this method!?
+			SiteMapNode node = base.FindSiteMapNodeFromKey (key);
+			if (node != null)
+				return node;
+
+			foreach (SiteMapProvider smp in ChildProviders) {
+				node = smp.FindSiteMapNodeFromKey (key);
+				if (node != null)
+					return node;
+			}
+
+			return null;
 		}
 
 		public override void Initialize (string name, NameValueCollection attributes)
