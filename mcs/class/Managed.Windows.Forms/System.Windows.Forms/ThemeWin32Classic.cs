@@ -6080,9 +6080,9 @@ namespace System.Windows.Forms
 
 			bool draw_icon = false;
 #if NET_2_0
-			draw_icon = !wm.IsToolWindow && form.Icon != null && form.ShowIcon;
+			draw_icon = !wm.IsToolWindow && form.ShowIcon;
 #else
-			draw_icon = !wm.IsToolWindow && form.Icon != null;
+			draw_icon = !wm.IsToolWindow;
 #endif
 			if (draw_icon) {
 				Rectangle icon = ManagedWindowGetTitleBarIconArea (wm);

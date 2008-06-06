@@ -422,9 +422,6 @@ namespace System.Windows.Forms {
 
 		public bool IconRectangleContains (int x, int y)
 		{
-			if (form.Icon == null)
-				return false;
-
 			Rectangle icon = ThemeEngine.Current.ManagedWindowGetTitleBarIconArea (this);
 			return icon.Contains (x, y);
 		}

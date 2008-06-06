@@ -1,5 +1,10 @@
 2008-06-06  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* InternalWindowManager.cs, ThemeWin32Classic.cs: Removed useless Form.Icon
+	null checks.
+
+2008-06-06  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* Theme.cs: Added #region around the managed window code. Made the managed
 	window methods abstract.
 	* ThemeWin32Classic.cs: Added #region around the managed window code.
