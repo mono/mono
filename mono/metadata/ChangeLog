@@ -1,3 +1,7 @@
+2008-06-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Revert changes to see if it helps with weird buildbot crashes.
+
 2008-06-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* monitor.c: Redefine GetCurrentThreadId () with a macro on !win32.
