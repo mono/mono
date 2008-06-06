@@ -895,7 +895,7 @@ namespace System.Reflection.Emit {
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		public static readonly OpCode Constrained = new OpCode (
 			0xFE << 0 | 0x16 << 8 | (byte) StackBehaviour.Push0 << 16 | (byte) StackBehaviour.Pop0 << 24,
-			2 << 0 | (byte) OpCodeType.Prefix << 8 | (byte) OperandType.InlineTok << 16 | (byte) FlowControl.Next << 24);
+			2 << 0 | (byte) OpCodeType.Prefix << 8 | (byte) OperandType.InlineType << 16 | (byte) FlowControl.Next << 24);
 #endif
 		public static readonly OpCode Cpblk = new OpCode (
 			0xFE << 0 | 0x17 << 8 | (byte) StackBehaviour.Push0 << 16 | (byte) StackBehaviour.Popi_popi_popi << 24,

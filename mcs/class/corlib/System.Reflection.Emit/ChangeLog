@@ -1,3 +1,7 @@
+2008-06-06  Jb Evain  <jbevain@novell.com>
+
+	* OpCodes.cs: OpCode constrained. is of type InlineType.
+
 2008-05-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeBuilder.cs (IsAssignableTo): When an interface is passed as
