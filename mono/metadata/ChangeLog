@@ -1,5 +1,7 @@
 2008-06-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* monitor.c: Add some micro optimizations.
+
 	* icall.c (type_from_typename): Handle 'bool'.
 
 2008-06-06 Rodrigo Kumpera  <rkumpera@novell.com>
