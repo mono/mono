@@ -1,3 +1,8 @@
+2008-06-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c (mono_assembly_loaded_full): Avoid calling the search hooks while
+	holding the assemblies lock here too.
+
 2008-06-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: Kill stack_top function.
