@@ -1,3 +1,7 @@
+2008-06-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (type_from_typename): Handle 'bool'.
+
 2008-06-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: Implement constructor verification per P III 1.8.1.4.
