@@ -168,7 +168,7 @@ namespace System.Windows.Forms {
 				TypeConverter dest = null;
 				
 				if (ValueType != null)
-					source = TypeDescriptor.GetConverter (valueType);
+					source = TypeDescriptor.GetConverter (ValueType);
 					
 				if (FormattedValueType != null)
 					dest = TypeDescriptor.GetConverter (FormattedValueType);

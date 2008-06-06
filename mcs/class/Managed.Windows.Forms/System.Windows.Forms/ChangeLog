@@ -1,3 +1,7 @@
+2008-06-06  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewCell.cs: Use property instead of field.
+
 2008-06-06  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* InternalWindowManager.cs, ThemeWin32Classic.cs: Removed useless Form.Icon
