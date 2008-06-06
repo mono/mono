@@ -557,7 +557,7 @@
 			<opcode name="volatile." op1="0xfe" op2="0x13" flowcontrol="Meta" opcodetype="Prefix" operandtype="InlineNone" stackbehaviourpop="Pop0" stackbehaviourpush="Push0" />
 			<opcode name="tail." op1="0xfe" op2="0x14" flowcontrol="Meta" opcodetype="Prefix" operandtype="InlineNone" stackbehaviourpop="Pop0" stackbehaviourpush="Push0" />
 			<opcode name="initobj" op1="0xfe" op2="0x15" flowcontrol="Next" opcodetype="Objmodel" operandtype="InlineType" stackbehaviourpop="Popi" stackbehaviourpush="Push0" />
-			<opcode name="constrained." op1="0xfe" op2="0x16" flowcontrol="Next" opcodetype="Prefix" operandtype="InlineTok" stackbehaviourpop="Pop0" stackbehaviourpush="Push0" />
+			<opcode name="constrained." op1="0xfe" op2="0x16" flowcontrol="Next" opcodetype="Prefix" operandtype="InlineType" stackbehaviourpop="Pop0" stackbehaviourpush="Push0" />
 			<opcode name="cpblk" op1="0xfe" op2="0x17" flowcontrol="Next" opcodetype="Primitive" operandtype="InlineNone" stackbehaviourpop="Popi_popi_popi" stackbehaviourpush="Push0" />
 			<opcode name="initblk" op1="0xfe" op2="0x18" flowcontrol="Next" opcodetype="Primitive" operandtype="InlineNone" stackbehaviourpop="Popi_popi_popi" stackbehaviourpush="Push0" />
 			<opcode name="no." op1="0xfe" op2="0x19" flowcontrol="Next" opcodetype="Prefix" operandtype="ShortInlineI" stackbehaviourpop="Pop0" stackbehaviourpush="Push0" />

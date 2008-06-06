@@ -1,3 +1,8 @@
+2008-06-06  Jb Evain  <jbevain@novell.com>
+
+	* CodeGen/cecil.xml: constrained. is of type InlineType.
+	* Mono.Cecil.Cil/OpCodes.cs: re-generate.
+
 2008-05-14  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/ReflectionWriter.cs:
