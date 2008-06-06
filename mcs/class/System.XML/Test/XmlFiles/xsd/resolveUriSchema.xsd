@@ -7,7 +7,7 @@
 	xmlns:mstns="http://tempuri.org/resolveUriSchema.xsd"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-	<xs:import namespace="http://www.mynamespace.net" schemaLocation="asembly://MyAssembly.Name/MyProjectNameSpace/objects.xsd"/>
+	<xs:import namespace="http://www.mynamespace.net" schemaLocation="assembly://MyAssembly.Name/MyProjectNameSpace/objects.xsd"/>
 
 	<xs:complexType name="randomType">
 		<xs:sequence>

@@ -1,3 +1,8 @@
+2008-06-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* resolveUriSchema.xsd : (actually I've incorrectly added it before
+	  the actual test checkin) Fixed schemaLocation.
+
 2008-05-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* resolveUriSchema.xsd : forgot to add.

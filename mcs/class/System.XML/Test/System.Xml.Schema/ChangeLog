@@ -1,3 +1,9 @@
+2008-06-06  James Fitzsimons <james.fitzsimons@gmail.com>
+
+	* XmlSchemaTests.cs: added test to support change to 
+	  GetResolvedUri to return Uri in correct case
+	  to make compatible with the Microsoft.NET framework.
+
 2008-02-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaTests.cs: added test for bug #361818.

@@ -9,13 +9,14 @@
 
 using System;
 using System.IO;
+using System.Net;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using NUnit.Framework;
 
 namespace MonoTests.System.Xml
-{
+{	
 	[TestFixture]
 	public class XmlSchemaTests : XmlSchemaAssertion
 	{
@@ -418,5 +419,64 @@ namespace MonoTests.System.Xml
 				r.Close ();
 			}
 		}
+		
+#if NET_2_0
+
+		internal class XmlTestResolver : XmlResolver
+		{			
+			Uri receivedUri;
+
+			public override ICredentials Credentials
+			{
+			    set { throw new NotSupportedException (); }
+			}
+
+			public override Uri ResolveUri (Uri baseUri, string relativeUri)
+			{
+			    return new Uri (relativeUri);
+			}
+			
+			public Uri ReceivedUri
+			{
+				get { return receivedUri; }
+			}
+
+			public override object GetEntity (Uri absoluteUri, string role, Type ofObjectToReturn)
+			{
+				receivedUri = absoluteUri;
+				
+				return null;
+			}
+		}	
+		
+		[Test]
+		public void TestResolveUri ()
+		{
+			XmlSchemaSet schemaSet = new XmlSchemaSet ();
+			FileStream stream = new FileStream ("Test/XmlFiles/xsd/resolveUriSchema.xsd", FileMode.Open);
+			schemaSet.Add ("http://tempuri.org/resolveUriSchema.xsd", new XmlTextReader (stream));
+
+			XmlTestResolver resolver = new XmlTestResolver ();		
+			
+			XmlReaderSettings settings = new XmlReaderSettings ();			
+			settings.Schemas.XmlResolver = resolver; 
+			settings.Schemas.Add (schemaSet);
+			settings.ValidationType = ValidationType.Schema;
+			settings.ValidationFlags = XmlSchemaValidationFlags.ProcessInlineSchema | XmlSchemaValidationFlags.ProcessSchemaLocation;
+			XmlReader reader = XmlReader.Create (stream, settings);
+			
+			try
+			{
+				reader.Read ();		
+			}
+			catch (XmlException)
+			{
+				// do nothing - we are expecting this exception because the test xmlresolver returns null from its 
+				// GetEntity method.
+			}
+			
+			AssertEquals ("assembly://MyAssembly.Name/MyProjectNameSpace/objects.xsd", resolver.ReceivedUri.OriginalString);
+		}
+#endif
 	}
 }
