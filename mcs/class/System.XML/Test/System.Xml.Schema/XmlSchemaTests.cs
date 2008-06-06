@@ -489,7 +489,7 @@ namespace MonoTests.System.Xml
 			settings.Schemas.Add (schemaSet);
 			settings.ValidationType = ValidationType.Schema;
 			
-			XmlReader reader = XmlReader.Create ("Test/XmlFiles/xsdimporttest.xml", settings);
+			XmlReader reader = XmlReader.Create ("Test/XmlFiles/xsd/xsdimporttest.xml", settings);
 			
 			// Parse the file. 
 			while (reader.Read()) {}
