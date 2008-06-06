@@ -1,5 +1,7 @@
 2008-06-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* monitor.c: Redefine GetCurrentThreadId () with a macro on !win32.
+	
 	* monitor.c: Add some micro optimizations.
 
 	* icall.c (type_from_typename): Handle 'bool'.
