@@ -423,8 +423,7 @@ namespace System.Windows.Forms {
 			if (form.Icon == null)
 				return false;
 
-			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
-			Rectangle icon = new Rectangle (bw + 3, bw + 2, IconWidth, IconWidth);
+			Rectangle icon = ThemeEngine.Current.ManagedWindowGetTitleBarIconArea (this);
 			return icon.Contains (x, y);
 		}
 

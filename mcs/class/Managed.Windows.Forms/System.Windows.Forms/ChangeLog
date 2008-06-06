@@ -1,3 +1,8 @@
+2008-06-06  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* InternalWindowManager.cs, Theme.cs, ThemeWin32Classic.cs: Refactored:
+	Extracted ManagedWindowGetTitleBarIconArea.
+
 2008-06-05  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewCellStyle.cs: Don't clone the font.

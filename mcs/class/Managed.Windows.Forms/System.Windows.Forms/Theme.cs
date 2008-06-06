@@ -1044,6 +1044,8 @@ namespace System.Windows.Forms
 			// Just making virtual for now so all the themes still build.
 		}
 
+		public abstract Rectangle ManagedWindowGetTitleBarIconArea (InternalWindowManager wm);
+
 		#region	ControlPaint Methods
 		public abstract void CPDrawBorder (Graphics graphics, Rectangle bounds, Color leftColor, int leftWidth,
 			ButtonBorderStyle leftStyle, Color topColor, int topWidth, ButtonBorderStyle topStyle,

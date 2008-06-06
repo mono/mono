@@ -6087,8 +6087,7 @@ namespace System.Windows.Forms
 				draw_icon = !wm.IsToolWindow && form.Icon != null;
 #endif
 				if (draw_icon) {
-					Rectangle icon = new Rectangle (bdwidth + 3,
-							bdwidth + 2, wm.IconWidth, wm.IconWidth);
+					Rectangle icon = ManagedWindowGetTitleBarIconArea (wm);
 					if (icon.IntersectsWith (clip))
 						dc.DrawIcon (form.Icon, icon);
 				}
@@ -6128,6 +6127,12 @@ namespace System.Windows.Forms
 
 			ControlPaint.DrawCaptionButton (dc, button.Rectangle,
 					button.Caption, button.State);
+		}
+
+		public override Rectangle ManagedWindowGetTitleBarIconArea (InternalWindowManager wm)
+		{
+			int bw = ManagedWindowBorderWidth (wm);
+			return new Rectangle (bw + 3, bw + 2, wm.IconWidth, wm.IconWidth);
 		}
 
 		#region ControlPaint
