@@ -3,28 +3,3 @@
 		xmlns:obj="http://tempuri.org/importedNamespace.xsd">
 	<feisty/>
 </root>
-
-<?xml version="1.0" encoding="utf-8" ?>
-<root xmlns="http://tempuri.org/importNamespaceTest.xsd"
-		xmlns:obj="http://tempuri.org/importedNamespace.xsd">
-	<feisty/>
-</root>
-
-<?xml version="1.0" encoding="utf-8" ?>
-<root xmlns="http://tempuri.org/importNamespaceTest.xsd"
-		xmlns:obj="http://tempuri.org/importedNamespace.xsd">
-	<feisty/>
-</root>
-
-<?xml version="1.0" encoding="utf-8" ?>
-<root xmlns="http://tempuri.org/importNamespaceTest.xsd"
-		xmlns:obj="http://tempuri.org/importedNamespace.xsd">
-	<feisty/>
-</root>
-
-<?xml version="1.0" encoding="utf-8" ?>
-<root xmlns="http://tempuri.org/importNamespaceTest.xsd"
-		xmlns:obj="http://tempuri.org/importedNamespace.xsd">
-	<feisty/>
-</root>
-

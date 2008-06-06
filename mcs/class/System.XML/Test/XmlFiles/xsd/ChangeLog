@@ -1,6 +1,11 @@
 2008-06-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* importNamespaceTest.xsd, xsdimporttest.xml, importedNamespace.xsd:
+	  ugh, I did a couple of broken patch -i operations.
+
+2008-06-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* importNamespaceTest.xsd, xsdimporttest.xml, importedNamespace.xsd:
 	  new test files.
 
 2008-06-06  Atsushi Enomoto  <atsushi@ximian.com>
