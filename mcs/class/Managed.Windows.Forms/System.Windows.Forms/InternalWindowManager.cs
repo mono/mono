@@ -259,10 +259,12 @@ namespace System.Windows.Forms {
 
 				form.ActiveMenu.Draw (pe, new Rectangle (pnt.X, pnt.Y, form.ClientSize.Width, 0));
 			}
-			// clip region is not correct on win32.
-			// use the entire form's area.
-			clip = new Rectangle (0, 0, form.Width, form.Height);
-			ThemeEngine.Current.DrawManagedWindowDecorations (pe.Graphics, clip, this);
+			if (HasBorders) {
+				// clip region is not correct on win32.
+				// use the entire form's area.
+				clip = new Rectangle (0, 0, form.Width, form.Height);
+				ThemeEngine.Current.DrawManagedWindowDecorations (pe.Graphics, clip, this);
+			}
 			XplatUI.PaintEventEnd (ref m, form.Handle, false);
 			return true;
 		}

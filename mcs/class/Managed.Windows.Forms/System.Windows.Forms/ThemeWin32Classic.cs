@@ -6020,17 +6020,15 @@ namespace System.Windows.Forms
 			dc.FillRectangle (Brushes.Black, clip);
 #endif
 			
-			if (wm.HasBorders) {
-				Pen pen = ResPool.GetPen (ColorControl);
-				Rectangle borders = new Rectangle (0, 0, form.Width, form.Height);
-				ControlPaint.DrawBorder3D (dc, borders, Border3DStyle.Raised);
-				// The 3d border is only 2 pixels wide, so we draw the innermost pixels ourselves
-				borders = new Rectangle (2, 2, form.Width - 5, form.Height - 5);
-				for (int i = 2; i < bdwidth; i++) {
-					dc.DrawRectangle (pen, borders);
-					borders.Inflate (-1, -1);
-				}				
-			}
+			Pen pen = ResPool.GetPen (ColorControl);
+			Rectangle borders = new Rectangle (0, 0, form.Width, form.Height);
+			ControlPaint.DrawBorder3D (dc, borders, Border3DStyle.Raised);
+			// The 3d border is only 2 pixels wide, so we draw the innermost pixels ourselves
+			borders = new Rectangle (2, 2, form.Width - 5, form.Height - 5);
+			for (int i = 2; i < bdwidth; i++) {
+				dc.DrawRectangle (pen, borders);
+				borders.Inflate (-1, -1);
+			}				
 
 
 			bool draw_titlebar_enabled = false;
@@ -6079,22 +6077,20 @@ namespace System.Windows.Forms
 						tb, format);
 			}
 
-			if (wm.HasBorders) {
-				bool draw_icon = false;
+			bool draw_icon = false;
 #if NET_2_0
-				draw_icon = !wm.IsToolWindow && form.Icon != null && form.ShowIcon;
+			draw_icon = !wm.IsToolWindow && form.Icon != null && form.ShowIcon;
 #else
-				draw_icon = !wm.IsToolWindow && form.Icon != null;
+			draw_icon = !wm.IsToolWindow && form.Icon != null;
 #endif
-				if (draw_icon) {
-					Rectangle icon = ManagedWindowGetTitleBarIconArea (wm);
-					if (icon.IntersectsWith (clip))
-						dc.DrawIcon (form.Icon, icon);
-				}
-				
-				foreach (TitleButton button in wm.TitleButtons.AllButtons) {
-					DrawTitleButton (dc, button, clip);
-				}
+			if (draw_icon) {
+				Rectangle icon = ManagedWindowGetTitleBarIconArea (wm);
+				if (icon.IntersectsWith (clip))
+					dc.DrawIcon (form.Icon, icon);
+			}
+			
+			foreach (TitleButton button in wm.TitleButtons.AllButtons) {
+				DrawTitleButton (dc, button, clip);
 			}
 		}
 

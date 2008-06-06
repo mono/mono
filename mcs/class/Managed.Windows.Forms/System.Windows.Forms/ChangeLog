@@ -1,5 +1,12 @@
 2008-06-06  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* InternalWindowManager.cs: Now only calls Theme.DrawManagedWindowDecorations
+	if it has borders.
+	* ThemeWin32Classic.cs: Removed HasBorders checks in
+	DrawManagedWindowDecorations.
+
+2008-06-06  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* InternalWindowManager.cs, Theme.cs, ThemeWin32Classic.cs: Refactored:
 	Extracted ManagedWindowGetTitleBarIconArea.
 
