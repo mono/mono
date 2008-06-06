@@ -56,34 +56,18 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static bool Monitor_try_enter(object obj, int ms);
 
-		public static void Enter(object obj) {
-			if(obj==null) {
-				throw new ArgumentNullException("obj");
-			}
-			//if(obj.GetType().IsValueType==true) {
-			//	throw new ArgumentException("Value type");
-			//}
+		// Enter/Exit are implemented directly as icalls for performance reasons
 
-			Monitor_try_enter(obj, Timeout.Infinite);
-		}
+		// Acquires the mutex on object 'obj'
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static void Enter(object obj);
 
 		// Releases the mutex on object 'obj'
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void Monitor_exit(object obj);
-
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
-		public static void Exit(object obj) {
-			if(obj==null) {
-				throw new ArgumentNullException("obj");
-			}
-			//if(obj.GetType().IsValueType==true) {
-			//	throw new ArgumentException("Value type");
-			//}
-
-			Monitor_exit(obj);
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static void Exit(object obj);
 
 		// Signals one of potentially many objects waiting on
 		// object 'obj'

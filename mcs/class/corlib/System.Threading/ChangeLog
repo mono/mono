@@ -1,3 +1,8 @@
+2008-06-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* Monitor.cs: Implement Enter/Exit directly as icalls without managed wrapper
+	methods.
+
 2008-04-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* Thread.cs: Make in_currentculture non-static. Fixes #378892.
