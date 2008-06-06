@@ -1,3 +1,8 @@
+2008-06-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Implement constructor verification per P III 1.8.1.4.
+	Fixes #396716.
+
 2008-06-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* assembly.c (mono_assembly_loaded_full): Avoid calling the search hooks while
