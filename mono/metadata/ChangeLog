@@ -1,3 +1,7 @@
+2008-06-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Reaplied a small part of the reverted changes.
+
 2008-06-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
