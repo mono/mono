@@ -489,59 +489,59 @@ namespace System.Xml.Schema
 				return;
 			
 			XmlSchema includedSchema = null;
-		if (ext.SchemaLocation != null)
-		{
-			Stream stream = null;
-			string url = null;
-			if (resolver != null) {
-				url = GetResolvedUri (resolver, ext.SchemaLocation);
-				if (handledUris.Contains (url))
-					// This schema is already handled, so simply skip (otherwise, duplicate definition errrors occur.
-					return;
-				handledUris.Add (url, url);
-				try {
-					stream = resolver.GetEntity (new Uri (url), null, typeof (Stream)) as Stream;
-				} catch (Exception) {
-				// LAMESPEC: This is not good way to handle errors, but since we cannot know what kind of XmlResolver will come, so there are no mean to avoid this ugly catch.
-					warn (handler, "Could not resolve schema location URI: " + url);
-					stream = null;
+			if (ext.SchemaLocation != null)
+			{
+				Stream stream = null;
+				string url = null;
+				if (resolver != null) {
+					url = GetResolvedUri (resolver, ext.SchemaLocation);
+					if (handledUris.Contains (url))
+						// This schema is already handled, so simply skip (otherwise, duplicate definition errrors occur.
+						return;
+					handledUris.Add (url, url);
+					try {
+						stream = resolver.GetEntity (new Uri (url), null, typeof (Stream)) as Stream;
+					} catch (Exception) {
+					// LAMESPEC: This is not good way to handle errors, but since we cannot know what kind of XmlResolver will come, so there are no mean to avoid this ugly catch.
+						warn (handler, "Could not resolve schema location URI: " + url);
+						stream = null;
+					}
 				}
-			}
 		
-			// Process redefinition children in advance.
-			XmlSchemaRedefine redefine = ext as XmlSchemaRedefine;
-			if (redefine != null) {
-				for (int j = 0; j < redefine.Items.Count; j++) {
-					XmlSchemaObject redefinedObj = redefine.Items [j];
-					redefinedObj.isRedefinedComponent = true;
-					redefinedObj.isRedefineChild = true;
-					if (redefinedObj is XmlSchemaType ||
-						redefinedObj is XmlSchemaGroup ||
-						redefinedObj is XmlSchemaAttributeGroup)
-						compilationItems.Add (redefinedObj);
-					else
-						error (handler, "Redefinition is only allowed to simpleType, complexType, group and attributeGroup.");
+				// Process redefinition children in advance.
+				XmlSchemaRedefine redefine = ext as XmlSchemaRedefine;
+				if (redefine != null) {
+					for (int j = 0; j < redefine.Items.Count; j++) {
+						XmlSchemaObject redefinedObj = redefine.Items [j];
+						redefinedObj.isRedefinedComponent = true;
+						redefinedObj.isRedefineChild = true;
+						if (redefinedObj is XmlSchemaType ||
+							redefinedObj is XmlSchemaGroup ||
+							redefinedObj is XmlSchemaAttributeGroup)
+							compilationItems.Add (redefinedObj);
+						else
+							error (handler, "Redefinition is only allowed to simpleType, complexType, group and attributeGroup.");
+					}
 				}
-			}
 
-			if (stream == null) {
-				// It is missing schema components.
-				missedSubComponents = true;
-				return;
-			} else {
-				XmlTextReader xtr = null;
-				try {
-					xtr = new XmlTextReader (url, stream, nameTable);
-					includedSchema = XmlSchema.Read (xtr, handler);
-				} finally {
-					if (xtr != null)
-						xtr.Close ();
+				if (stream == null) {
+					// It is missing schema components.
+					missedSubComponents = true;
+					return;
+				} else {
+					XmlTextReader xtr = null;
+					try {
+						xtr = new XmlTextReader (url, stream, nameTable);
+						includedSchema = XmlSchema.Read (xtr, handler);
+					} finally {
+						if (xtr != null)
+							xtr.Close ();
+					}
+					includedSchema.schemas = schemas;
 				}
-				includedSchema.schemas = schemas;
+				includedSchema.SetParent ();
+				ext.Schema = includedSchema;
 			}
-			includedSchema.SetParent ();
-			ext.Schema = includedSchema;
-		}
 
 			// Set - actual - target namespace for the included schema * before compilation*.
 			if (import != null) {

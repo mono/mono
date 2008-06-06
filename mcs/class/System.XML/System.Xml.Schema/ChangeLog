@@ -1,5 +1,10 @@
 2008-06-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSchema.cs : indent (I slightly modified the previous patch
+	  to expose the actual changes).
+
+2008-06-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSchema.cs : fixed bug #397612, patch by James Fitzsimons.
 	  in ProcessExternal(), Make xs:import without schemaLocation work
 	  fine as if it were with schemaLocation.
