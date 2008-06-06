@@ -20,7 +20,10 @@ namespace MonoTests.System.Xml
 	{
 		protected XmlSchema GetSchema (string path)
 		{
-			return XmlSchema.Read (new XmlTextReader (path), null);
+			XmlTextReader reader = new XmlTextReader (path);
+			XmlSchema schema = XmlSchema.Read (reader, null);
+			reader.Close ();
+			return schema;
 		}
 
 		protected XmlQualifiedName QName (string name, string ns)

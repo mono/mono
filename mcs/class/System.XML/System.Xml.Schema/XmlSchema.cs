@@ -368,7 +368,7 @@ namespace System.Xml.Schema
 			// First, we run into inclusion schemas to collect 
 			// compilation target items into compiledItems.
 			for (int i = 0; i < Includes.Count; i++)
-				ProcessExternal (handler, handledUris, resolver, Includes [i] as XmlSchemaExternal);
+				ProcessExternal (handler, handledUris, resolver, Includes [i] as XmlSchemaExternal, col);
 
 			// Compilation phase.
 			// At least each Compile() must give unique (qualified) name for each component.
@@ -476,18 +476,21 @@ namespace System.Xml.Schema
 #endif
 		}
 
-		void ProcessExternal (ValidationEventHandler handler, Hashtable handledUris, XmlResolver resolver, XmlSchemaExternal ext)
+		void ProcessExternal (ValidationEventHandler handler, Hashtable handledUris, XmlResolver resolver, XmlSchemaExternal ext, XmlSchemaSet col)
 		{
 			if (ext == null) {
 				error (handler, String.Format ("Object of Type {0} is not valid in Includes Property of XmlSchema", ext.GetType().Name));
 				return;
 			}
 
-			if (ext.SchemaLocation == null) 
+			// The only case we want to handle where the SchemaLocation is null is if the external is an import.
+			XmlSchemaImport import = ext as XmlSchemaImport;
+			if (ext.SchemaLocation == null && import == null)
 				return;
-//			if (ext.Schema != null) // already read
-//				return;
-
+			
+			XmlSchema includedSchema = null;
+		if (ext.SchemaLocation != null)
+		{
 			Stream stream = null;
 			string url = null;
 			if (resolver != null) {
@@ -504,7 +507,7 @@ namespace System.Xml.Schema
 					stream = null;
 				}
 			}
-
+		
 			// Process redefinition children in advance.
 			XmlSchemaRedefine redefine = ext as XmlSchemaRedefine;
 			if (redefine != null) {
@@ -521,7 +524,6 @@ namespace System.Xml.Schema
 				}
 			}
 
-			XmlSchema includedSchema = null;
 			if (stream == null) {
 				// It is missing schema components.
 				missedSubComponents = true;
@@ -539,16 +541,35 @@ namespace System.Xml.Schema
 			}
 			includedSchema.SetParent ();
 			ext.Schema = includedSchema;
+		}
 
 			// Set - actual - target namespace for the included schema * before compilation*.
-			XmlSchemaImport import = ext as XmlSchemaImport;
 			if (import != null) {
-				if (TargetNamespace == includedSchema.TargetNamespace) {
-					error (handler, "Target namespace must be different from that of included schema.");
-					return;
-				} else if (includedSchema.TargetNamespace != import.Namespace) {
-					error (handler, "Attribute namespace and its importing schema's target namespace must be the same.");
-					return;
+				if (ext.Schema == null && ext.SchemaLocation == null) {
+					// if a schema location wasn't specified, check the other schemas we have to see if one of those
+					// is a match.
+					foreach(XmlSchema schema in col.Schemas())
+					{
+						if (schema.TargetNamespace == import.Namespace)
+						{
+							includedSchema = schema;
+							includedSchema.schemas = schemas;
+							includedSchema.SetParent ();
+							ext.Schema = includedSchema;
+							break;
+						}
+					}
+					// handle case where target namespace doesn't exist in schema collection - i.e can't find it at all
+					if (includedSchema == null)
+						return;
+				} else {
+					if (TargetNamespace == includedSchema.TargetNamespace) {
+						error (handler, "Target namespace must be different from that of included schema.");
+						return;
+					} else if (includedSchema.TargetNamespace != import.Namespace) {
+						error (handler, "Attribute namespace and its importing schema's target namespace must be the same.");
+						return;
+					}
 				}
 			} else {
 				if (TargetNamespace == null && 
@@ -563,13 +584,14 @@ namespace System.Xml.Schema
 
 			// Do not compile included schema here.
 
-			AddExternalComponentsTo (includedSchema, compilationItems, handler, handledUris, resolver);
+			AddExternalComponentsTo (includedSchema, compilationItems, handler, handledUris, resolver, col);
 		}
 
-		void AddExternalComponentsTo (XmlSchema s, XmlSchemaObjectCollection items, ValidationEventHandler handler, Hashtable handledUris, XmlResolver resolver)
+
+		void AddExternalComponentsTo (XmlSchema s, XmlSchemaObjectCollection items, ValidationEventHandler handler, Hashtable handledUris, XmlResolver resolver, XmlSchemaSet col)
 		{
 			foreach (XmlSchemaExternal ext in s.Includes)
-				ProcessExternal (handler, handledUris, resolver, ext);
+				ProcessExternal (handler, handledUris, resolver, ext, col);
 //				if (ext.Schema != null)
 //					AddExternalComponentsTo (ext.Schema, items);
 			foreach (XmlSchemaObject obj in s.Items)

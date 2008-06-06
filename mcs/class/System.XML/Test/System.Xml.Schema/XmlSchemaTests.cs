@@ -477,6 +477,23 @@ namespace MonoTests.System.Xml
 			
 			AssertEquals ("assembly://MyAssembly.Name/MyProjectNameSpace/objects.xsd", resolver.ReceivedUri.OriginalString);
 		}
+
+		[Test]
+		public void TestImportNoSchemaLocation()
+		{
+			XmlSchemaSet schemaSet = new XmlSchemaSet ();
+			schemaSet.Add (GetSchema ("Test/XmlFiles/xsd/importNamespaceTest.xsd"));
+			schemaSet.Add (GetSchema ("Test/XmlFiles/xsd/importedNamespace.xsd"));
+			
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.Schemas.Add (schemaSet);
+			settings.ValidationType = ValidationType.Schema;
+			
+			XmlReader reader = XmlReader.Create ("Test/XmlFiles/xsdimporttest.xml", settings);
+			
+			// Parse the file. 
+			while (reader.Read()) {}
+		}
 #endif
 	}
 }

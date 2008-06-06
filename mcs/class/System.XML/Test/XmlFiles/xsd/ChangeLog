@@ -1,5 +1,10 @@
 2008-06-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* importNamespaceTest.xsd, xsdimporttest.xml, importedNamespace.xsd:
+	  new test files.
+
+2008-06-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* resolveUriSchema.xsd : (actually I've incorrectly added it before
 	  the actual test checkin) Fixed schemaLocation.
 

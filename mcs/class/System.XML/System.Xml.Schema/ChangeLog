@@ -1,3 +1,9 @@
+2008-06-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchema.cs : fixed bug #397612, patch by James Fitzsimons.
+	  in ProcessExternal(), Make xs:import without schemaLocation work
+	  fine as if it were with schemaLocation.
+
 2008-06-06  James Fitzsimons <james.fitzsimons@gmail.com>
 
 	* XmlSchema.cs : Changed GetResolvedUri to return Uri in correct case
