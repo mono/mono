@@ -125,11 +125,7 @@ namespace System.Windows.Forms {
 			get { return font; }
 			set {
 				if (font != value) {
-					// FIXME:
-					// We actually shouldn't clone here.  We are
-					// somehow supposed to keep the same Font,
-					// but draw correctly if the font has been disposed.
-					font = (Font)value.Clone ();
+					font = value;
 					OnStyleChanged();
 				}
 			}

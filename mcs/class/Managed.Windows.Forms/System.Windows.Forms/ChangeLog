@@ -1,5 +1,9 @@
 2008-06-05  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewCellStyle.cs: Don't clone the font.
+
+2008-06-05  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewCell.cs: Ensure we don't pass null to GetConverter.
 
 2008-06-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
