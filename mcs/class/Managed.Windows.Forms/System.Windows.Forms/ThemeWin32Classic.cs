@@ -5908,6 +5908,7 @@ namespace System.Windows.Forms
 		}
 		#endregion
 
+		#region Managed window
 		public override int ManagedWindowTitleBarHeight (InternalWindowManager wm)
 		{
 			if (wm.IsToolWindow && !wm.IsMinimized)
@@ -6130,6 +6131,7 @@ namespace System.Windows.Forms
 			int bw = ManagedWindowBorderWidth (wm);
 			return new Rectangle (bw + 3, bw + 2, wm.IconWidth, wm.IconWidth);
 		}
+		#endregion
 
 		#region ControlPaint
 		public override void CPDrawBorder (Graphics graphics, Rectangle bounds, Color leftColor, int leftWidth,

@@ -1010,41 +1010,15 @@ namespace System.Windows.Forms
 		public abstract void TreeViewDrawNodePlusMinus (TreeView treeView, TreeNode node, Graphics dc, int x, int middle);
 		#endregion
 
-		public virtual void DrawManagedWindowDecorations (Graphics dc, Rectangle clip, InternalWindowManager wm)
-		{
-			// Just making virtual for now so all the themes still build.
-		}
-
-		public virtual int ManagedWindowTitleBarHeight (InternalWindowManager wm)
-		{
-			// Just making virtual for now so all the themes still build.
-			return 15;
-		}
-
-		public virtual int ManagedWindowBorderWidth (InternalWindowManager wm)
-		{
-			// Just making virtual for now so all the themes still build.
-			return 3;
-		}
-
-		public virtual int ManagedWindowIconWidth (InternalWindowManager wm)
-		{
-			// Just making virtual for now so all the themes still build.
-			return ManagedWindowTitleBarHeight (wm) - 5;
-		}
-
-		public virtual Size ManagedWindowButtonSize (InternalWindowManager wm)
-		{
-			// Just making virtual for now so all the themes still build.
-			return new Size (10, 10);
-		}
-
-		public virtual void ManagedWindowSetButtonLocations (InternalWindowManager wm)
-		{
-			// Just making virtual for now so all the themes still build.
-		}
-
+		#region Managed window
+		public abstract void DrawManagedWindowDecorations (Graphics dc, Rectangle clip, InternalWindowManager wm);
+		public abstract int ManagedWindowTitleBarHeight (InternalWindowManager wm);
+		public abstract int ManagedWindowBorderWidth (InternalWindowManager wm);
+		public abstract int ManagedWindowIconWidth (InternalWindowManager wm);
+		public abstract Size ManagedWindowButtonSize (InternalWindowManager wm);
+		public abstract void ManagedWindowSetButtonLocations (InternalWindowManager wm);
 		public abstract Rectangle ManagedWindowGetTitleBarIconArea (InternalWindowManager wm);
+		#endregion
 
 		#region	ControlPaint Methods
 		public abstract void CPDrawBorder (Graphics graphics, Rectangle bounds, Color leftColor, int leftWidth,
