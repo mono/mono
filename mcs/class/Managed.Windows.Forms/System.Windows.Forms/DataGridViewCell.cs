@@ -164,8 +164,14 @@ namespace System.Windows.Forms {
 					
 				DataGridViewCellStyle style = InheritedStyle;
 
-				TypeConverter source = TypeDescriptor.GetConverter (valueType);
-				TypeConverter dest = TypeDescriptor.GetConverter (FormattedValueType);
+				TypeConverter source = null;
+				TypeConverter dest = null;
+				
+				if (ValueType != null)
+					source = TypeDescriptor.GetConverter (valueType);
+					
+				if (FormattedValueType != null)
+					dest = TypeDescriptor.GetConverter (FormattedValueType);
 				
 				return GetFormattedValue (Value, RowIndex, ref style, source, dest, DataGridViewDataErrorContexts.Formatting);
 			}
