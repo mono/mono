@@ -1,3 +1,11 @@
+2008-06-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (emit_call_body): Align the call displacement to 4 bytes to
+	avoid problems during code patching on SMP systems.
+	(emit_call): Avoid adding a patch info which is already added by 
+	emit_call_body.
+	(mono_arch_emit_exceptions): Ditto.
+
 2008-06-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-*.c (mono_arch_get_unbox_trampoline): No need to check for ret->byref,
