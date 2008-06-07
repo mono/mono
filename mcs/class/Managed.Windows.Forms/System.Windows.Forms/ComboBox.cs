@@ -1838,11 +1838,11 @@ namespace System.Windows.Forms
 			if (DropDownStyle == ComboBoxStyle.Simple && height > PreferredHeight) {
 				if (IntegralHeight) {
 					int border = ThemeEngine.Current.Border3DSize.Height;
-					int lb_height = height - PreferredHeight - 2;
-					if (lb_height - 2 * border > ItemHeight) {
-						int partial = (lb_height - 2 * border) % ItemHeight;
+					int lb_height = (height - PreferredHeight - 2) - border * 2;
+					if (lb_height > ItemHeight) {
+						int partial = (lb_height) % ItemHeight;
 						height -= partial;
-					} else
+					} else if (lb_height < ItemHeight)
 						height = PreferredHeight;
 				}
 			} else

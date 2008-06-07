@@ -1,3 +1,12 @@
+2008-06-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: When snaping height -because of IntegralHeight set to
+	true- with ComboBoxStyle.Simple, set the height to PreferredHeight
+	if the requested height leaves the listbox area with *less* than the
+	required are to see one item. We were setting it to PreferredHeight
+	even for values matching the height for a single item.
+	Fixes #396297.
+
 2008-06-06  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewCell.cs: Simplify GetInheritedStyle by using ApplyStyle.
