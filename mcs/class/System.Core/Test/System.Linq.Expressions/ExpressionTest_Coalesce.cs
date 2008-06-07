@@ -18,6 +18,7 @@
 //
 // Authors:
 //		Federico Di Gregorio <fog@initd.org>
+//		Jb Evain <jbevain@novell.com>
 
 using System;
 using System.Reflection;
@@ -128,6 +129,118 @@ namespace MonoTests.System.Linq.Expressions
 
 			Assert.AreEqual (5, coalesce (5));
 			Assert.AreEqual (99, coalesce (null));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=349822
+		public void CoalesceUserDefinedConversion ()
+		{
+			var s = Expression.Parameter (typeof (string), "s");
+
+			var coalesce = Expression.Lambda<Func<string, int>> (
+				Expression.Coalesce (
+					s,
+					Expression.Constant (42),
+					Expression.Lambda<Func<string, int>> (
+						Expression.Call (typeof (int).GetMethod ("Parse", new [] { typeof (string) }), s), s)), s).Compile ();
+
+			Assert.AreEqual (12, coalesce ("12"));
+			Assert.AreEqual (42, coalesce (null));
+		}
+
+		struct Slot {
+			int Value;
+
+			public Slot (int v)
+			{
+				Value = v;
+			}
+
+			public static implicit operator int (Slot s)
+			{
+				return s.Value;
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CoalesceNullableSlotIntoInteger ()
+		{
+			var s = Expression.Parameter (typeof (Slot?), "s");
+
+			var method = typeof (Slot).GetMethod ("op_Implicit");
+
+			var coalesce = Expression.Lambda<Func<Slot?, int>> (
+				Expression.Coalesce (
+					s,
+					Expression.Constant (-3),
+					Expression.Lambda (
+						Expression.Convert (s, typeof (int), method),
+						s)), s).Compile ();
+
+			Assert.AreEqual (-3, coalesce (null));
+			Assert.AreEqual (42, coalesce (new Slot (42)));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentException))]
+		public void WrongCoalesceConversionParameterCount ()
+		{
+			var s = Expression.Parameter (typeof (string), "s");
+			var p = Expression.Parameter (typeof (string), "foo");
+
+			Expression.Coalesce (
+				s,
+				42.ToConstant (),
+				Expression.Lambda<Func<string, string, int>> (
+					Expression.Call (typeof (int).GetMethod ("Parse", new [] { typeof (string) }), s), s, p));
+
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void WrongCoalesceConversionParameterType ()
+		{
+			var s = Expression.Parameter (typeof (string), "s");
+			var i = Expression.Parameter (typeof (int), "i");
+
+			Expression.Coalesce (
+				s,
+				42.ToConstant (),
+				Expression.Lambda<Func<int, int>> (
+					i, i));
+
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void WrongCoalesceConversionReturnType ()
+		{
+			var s = Expression.Parameter (typeof (string), "s");
+
+			Expression.Coalesce (
+				s,
+				42.ToConstant (),
+				Expression.Lambda<Func<string, string>> (
+					s, s));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CoalesceVoidUserDefinedConversion ()
+		{
+			var s = Expression.Parameter (typeof (string), "s");
+
+			Expression.Coalesce (
+				s,
+				42.ToConstant (),
+				Expression.Lambda<Action<string>> (
+					Expression.Call (typeof (int).GetMethod ("Parse", new [] { typeof (string) }), s), s));
 		}
 	}
 }

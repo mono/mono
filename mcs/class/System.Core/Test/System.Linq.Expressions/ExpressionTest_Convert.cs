@@ -563,13 +563,10 @@ namespace MonoTests.System.Linq.Expressions {
 			var method = typeof (ImplicitToInt).GetMethod ("op_Implicit");
 
 			var node = Expression.Convert (i, typeof (int), method);
-
 			node = Expression.Convert (node, typeof (long?));
-
 			var conv = Expression.Lambda<Func<ImplicitToInt?, long?>> (node, i).Compile ();
 
 			Assert.AreEqual ((long?) 42, conv (new ImplicitToInt (42)));
-
 			Action convnull = () => Assert.AreEqual (null, conv (null));
 			convnull.AssertThrows (typeof (InvalidOperationException));
 		}
