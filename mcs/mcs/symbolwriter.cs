@@ -176,6 +176,7 @@ namespace Mono.CSharp {
 				symwriter.SetRealMethodName (name);
 		}
 
+		[Obsolete ("Duplicates corlib infrastructure")]
 		public static void SetCompilerGenerated ()
 		{
 			if (symwriter != null)
