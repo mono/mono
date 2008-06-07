@@ -89,7 +89,7 @@ namespace Mono.Cecil.Mdb {
 				if (instr == null)
 					continue;
 
-				Document doc = GetDocument (entry.SourceFile);
+				Document doc = GetDocument (entry.CompileUnit.SourceFile);
 				instr.SequencePoint = new SequencePoint (doc);
 				instr.SequencePoint.StartLine = line.Row;
 				instr.SequencePoint.EndLine = line.Row;

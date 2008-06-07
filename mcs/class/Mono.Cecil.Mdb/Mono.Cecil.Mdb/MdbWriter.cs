@@ -69,7 +69,10 @@ namespace Mono.Cecil.Mdb {
 			if (file != null)
 				return file;
 
-			file = new SourceFile (m_writer.DefineDocument (url));
+			SourceFileEntry entry = m_writer.DefineDocument (url);
+			CompileUnitEntry comp_unit = m_writer.DefineCompilationUnit (entry);
+
+			file = new SourceFile (comp_unit, entry);
 			m_documents [url] = file;
 			return file;
 		}
@@ -115,12 +118,10 @@ namespace Mono.Cecil.Mdb {
 
 			Populate (instructions, offsets, startRows, startCols, endRows, endCols, out file);
 
-			m_writer.OpenMethod (file, meth,
-				startRows [0], startCols [0],
-				endRows [length - 1], endCols [length - 1]);
+			m_writer.OpenMethod (file.CompilationUnit, meth);
 
 			for (int i = 0; i < length; i++)
-				m_writer.MarkSequencePoint (offsets [i], startRows [i], startCols [i]);
+				m_writer.MarkSequencePoint (0, offsets [i], startRows [i], startCols [i]);
 
 			MarkVariables (body, variables);
 
@@ -141,16 +142,21 @@ namespace Mono.Cecil.Mdb {
 		}
 
 		class SourceFile : ISourceFile {
-
-			SourceFileEntry m_entry;
+			CompileUnitEntry comp_unit;
+			SourceFileEntry entry;
 
 			public SourceFileEntry Entry {
-				get { return m_entry; }
+				get { return entry; }
 			}
 
-			public SourceFile (SourceFileEntry entry)
+			public CompileUnitEntry CompilationUnit {
+				get { return comp_unit; }
+			}
+
+			public SourceFile (CompileUnitEntry comp_unit, SourceFileEntry entry)
 			{
-				m_entry = entry;
+				this.comp_unit = comp_unit;
+				this.entry = entry;
 			}
 		}
 
