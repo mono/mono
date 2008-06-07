@@ -132,7 +132,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=349822
 		public void CoalesceUserDefinedConversion ()
 		{
@@ -164,7 +163,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CoalesceNullableSlotIntoInteger ()
 		{
 			var s = Expression.Parameter (typeof (Slot?), "s");
