@@ -1,5 +1,9 @@
 2008-06-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c: Reaplied more of the reverted changes.
+
+2008-06-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c (lookup_custom_attr): Clean the cached flag or
 	nobody will free it. Fixes a memleak in MonoCustomAttrs::IsDefinedInternal
 	for SRE types.
