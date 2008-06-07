@@ -1,3 +1,12 @@
+2008-06-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ServiceContainer.cs: In AddService, first check parent and end flow
+	after adding service to parent, throw ArgumentNullException when
+	serviceInstance or callback is null. In RemoveService, when promote is
+	false the service must be removed from current container. Fixes bug
+	#397824. On 1.0 profile, IServiceContainer is a default service offered
+	by containers. Minor code formatting.
+
 2008-01-06  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ServiceContainer.cs: Check DefaultServices in GetService in 2.0.

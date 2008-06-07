@@ -1,3 +1,9 @@
+2008-06-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ServiceContainerTest.cs: Added test for argument checks in
+	AddService and RemoveService overloads. Added tests for AddService
+	and RemoveService.
+
 2008-01-06  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ServiceContainerTest.cs: Test that DefaultServices is checked in

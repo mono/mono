@@ -36,18 +36,16 @@ using System.Collections;
 
 namespace System.ComponentModel.Design
 {
-
 #if NET_2_0
 	public class ServiceContainer : IServiceContainer, IServiceProvider, IDisposable
 #else
 	public sealed class ServiceContainer : IServiceContainer, IServiceProvider
 #endif
 	{
-
 		private IServiceProvider parentProvider;
 		private Hashtable services = new Hashtable ();
 #if NET_2_0
-		private bool _disposed = false;
+		private bool _disposed;
 #endif
 		
 		public ServiceContainer()
@@ -75,18 +73,25 @@ namespace System.ComponentModel.Design
 #else
 		public
 #endif
-		void AddService (Type serviceType, 
+		void AddService (Type serviceType,
 					object serviceInstance,
 					bool promote)
 		{
-			if (serviceType == null)
-				throw new ArgumentNullException ("serviceType", "Cannot be null");
-			if (promote)
-				if (parentProvider != null)
-					((IServiceContainer)parentProvider.GetService(typeof(IServiceContainer))).AddService (serviceType, serviceInstance, promote);
-			if (services.Contains (serviceType)) {
-					throw new ArgumentException (string.Format ("The service {0} already exists in the service container.", serviceType.ToString()));
+			if (promote && parentProvider != null) {
+				IServiceContainer container = (IServiceContainer)
+					parentProvider.GetService (typeof (IServiceContainer));
+				container.AddService (serviceType, serviceInstance, promote);
+				return;
 			}
+
+			if (serviceType == null)
+				throw new ArgumentNullException ("serviceType");
+			if (serviceInstance == null)
+				throw new ArgumentNullException ("serviceInstance");
+			if (services.Contains (serviceType))
+				throw new ArgumentException (string.Format (
+					"The service {0} already exists in the service container.",
+					serviceType.ToString ()), "serviceType");
 			services.Add (serviceType, serviceInstance);
 		}
 
@@ -99,14 +104,21 @@ namespace System.ComponentModel.Design
 					ServiceCreatorCallback callback,
 					bool promote)
 		{
-			if (serviceType == null)
-				throw new ArgumentNullException ("serviceType", "Cannot be null");
-			if (promote)
-				if (parentProvider != null)
-					((IServiceContainer)parentProvider.GetService(typeof(IServiceContainer))).AddService (serviceType, callback, promote);
-			if (services.Contains (serviceType)) {
-					throw new ArgumentException (string.Format ("The service {0} already exists in the service container.", serviceType.ToString()));
+			if (promote && parentProvider != null) {
+				IServiceContainer container = (IServiceContainer)
+					parentProvider.GetService (typeof (IServiceContainer));
+				container.AddService (serviceType, callback, promote);
+				return;
 			}
+
+			if (serviceType == null)
+				throw new ArgumentNullException ("serviceType");
+			if (callback == null)
+				throw new ArgumentNullException ("callback");
+			if (services.Contains (serviceType))
+				throw new ArgumentException (string.Format (
+					"The service {0} already exists in the service container.",
+					serviceType.ToString ()), "serviceType");
 			services.Add (serviceType, callback);
 		}
 
@@ -114,20 +126,23 @@ namespace System.ComponentModel.Design
 		{
 			RemoveService (serviceType, false);
 		}
-        
+
 #if NET_2_0
 		public virtual void RemoveService (Type serviceType, bool promote)
 #else
-        public void RemoveService (Type serviceType, bool promote)
+		public void RemoveService (Type serviceType, bool promote)
 #endif
 		{
+			if (promote && parentProvider != null) {
+				IServiceContainer container = (IServiceContainer)
+					parentProvider.GetService (typeof (IServiceContainer));
+				container.RemoveService (serviceType, promote);
+				return;
+			}
+
 			if (serviceType == null)
-				throw new ArgumentNullException ("serviceType", "Cannot be null");
-			if (promote)
-				if (parentProvider != null)
-					((IServiceContainer)parentProvider.GetService(typeof(IServiceContainer))).RemoveService (serviceType, promote);
-			else
-				services.Remove (serviceType);
+				throw new ArgumentNullException ("serviceType");
+			services.Remove (serviceType);
 		}
 
 #if NET_2_0
@@ -137,8 +152,8 @@ namespace System.ComponentModel.Design
 #endif
 		object GetService (Type serviceType)
 		{
-#if NET_2_0
 			object result = null;
+
 			Type[] defaultServices = this.DefaultServices;
 			for (int i=0; i < defaultServices.Length; i++) {
 				if (defaultServices[i] == serviceType) {
@@ -147,51 +162,55 @@ namespace System.ComponentModel.Design
 				}
 			}
 			if (result == null)
-				result = services[serviceType];
-#else
-			object result = services[serviceType];
-#endif
+				result = services [serviceType];
 			if (result == null && parentProvider != null)
 				result = parentProvider.GetService (serviceType);
 			if (result != null) {
-				ServiceCreatorCallback	cb = result as ServiceCreatorCallback;
+				ServiceCreatorCallback cb = result as ServiceCreatorCallback;
 				if (cb != null) {
 					result = cb (this, serviceType);
-					services[serviceType] = result;
+					services [serviceType] = result;
 				}
-				
 			}
 			return result;
 		}
 
 #if NET_2_0
-		protected virtual Type [] DefaultServices {
-			get { return new Type [] { typeof (IServiceContainer), typeof (ServiceContainer)}; }
+		protected virtual
+#endif
+		Type [] DefaultServices {
+			get {
+#if NET_2_0
+				return new Type [] { typeof (IServiceContainer), typeof (ServiceContainer)};
+#else
+				return new Type [] { typeof (IServiceContainer) };
+#endif
+			}
 		}
 
+#if NET_2_0
 		public void Dispose ()
 		{
 			this.Dispose (true);
-			GC.SuppressFinalize(this);
+			GC.SuppressFinalize (this);
 		}
 
 		protected virtual void Dispose (bool disposing)
 		{
 			if (!_disposed) {
 				if (disposing) {
-					if (this.services != null) {
-						foreach (object obj in this.services) {
+					if (services != null) {
+						foreach (object obj in services) {
 							if (obj is IDisposable) {
 								((IDisposable) obj).Dispose ();
 							}
 						}
-						this.services = null;
+						services = null;
 					}
 				}
 				_disposed = true;
 			}
 		}
 #endif
-		
 	}
 }
