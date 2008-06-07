@@ -1,3 +1,8 @@
+2008-06-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* boehm-gc.c (mono_gc_base_init): Set GC_no_dls before calling GC_init () since
+	it can trigger a collection.
+
 2008-06-06  Martin Baulig  <martin@ximian.com>
 
 	Merged the `debugger-kahalo' branch.
@@ -30,12 +35,12 @@
 2008-06-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata.c (free_generic_class): Release the inflated
-	MonoClass of dynamic geneic classes if it's not a generic
+	MonoClass of dynamic generic classes if it's not a generic
 	type definition.
 
 2008-06-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
-	* verify.c: Reaplied more of the reverted changes.
+	* verify.c: Reapplied more of the reverted changes.
 
 2008-06-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
@@ -45,7 +50,7 @@
 
 2008-06-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
-	* verify.c: Reaplied a small part of the reverted changes.
+	* verify.c: Reapplied a small part of the reverted changes.
 
 2008-06-07  Zoltan Varga  <vargaz@gmail.com>
 
