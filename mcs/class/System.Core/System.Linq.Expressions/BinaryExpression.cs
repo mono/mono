@@ -293,6 +293,11 @@ namespace System.Linq.Expressions {
 			ig.MarkLabel (done);
 		}
 
+		void EmitConvertedCoalesce (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+
 		static bool IsInt32OrInt64 (Type type)
 		{
 			return type == typeof (int) || type == typeof (long);
@@ -664,7 +669,10 @@ namespace System.Linq.Expressions {
 				EmitArrayAccess (ec);
 				return;
 			case ExpressionType.Coalesce:
-				EmitCoalesce (ec);
+				if (conversion != null)
+					EmitConvertedCoalesce (ec);
+				else
+					EmitCoalesce (ec);
 				return;
 			case ExpressionType.Power:
 			case ExpressionType.Add:

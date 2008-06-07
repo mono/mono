@@ -758,19 +758,8 @@ namespace System.Linq.Expressions {
 			return Coalesce (left, right, null);
 		}
 
-		public static BinaryExpression Coalesce (Expression left, Expression right, LambdaExpression conversion)
+		static BinaryExpression MakeCoalesce (Expression left, Expression right)
 		{
-			if (left == null)
-				throw new ArgumentNullException ("left");
-			if (right == null)
-				throw new ArgumentNullException ("right");
-
-			//
-			// First arg must ne nullable (either Nullable<T> or a reference type
-			//
-			if (left.Type.IsValueType && !left.Type.IsNullable ())
-				throw new InvalidOperationException ("Left expression can never be null");
-
 			Type result = null;
 
 			if (left.Type.IsNullable ()) {
@@ -791,10 +780,46 @@ namespace System.Linq.Expressions {
 			if (result == null)
 				throw new ArgumentException ("Incompatible argument types");
 
+			return new BinaryExpression (ExpressionType.Coalesce, result, left, right, false, false, null, null);
+		}
+
+		static BinaryExpression MakeConvertedCoalesce (Expression left, Expression right, LambdaExpression conversion)
+		{
+			var invoke = conversion.Type.GetMethod ("Invoke");
+
+			CheckNotVoid (invoke.ReturnType);
+
+			if (invoke.ReturnType != right.Type)
+				throw new InvalidOperationException ("Conversion return type doesn't march right type");
+
+			var parameters = invoke.GetParameters ();
+
+			if (parameters.Length != 1)
+				throw new ArgumentException ("Conversion has wrong number of parameters");
+
+			if (!IsAssignableToParameterType (left.Type, parameters [0]))
+				throw new InvalidOperationException ("Conversion argument doesn't marcht left type");
+
+			return new BinaryExpression (ExpressionType.Coalesce, right.Type, left, right, false, false, null, conversion);
+		}
+
+		public static BinaryExpression Coalesce (Expression left, Expression right, LambdaExpression conversion)
+		{
+			if (left == null)
+				throw new ArgumentNullException ("left");
+			if (right == null)
+				throw new ArgumentNullException ("right");
+
 			//
-			// FIXME: What do we do with "conversion"?
+			// First arg must ne nullable (either Nullable<T> or a reference type
 			//
-			return new BinaryExpression (ExpressionType.Coalesce, result, left, right, false, false, null, conversion);
+			if (left.Type.IsValueType && !left.Type.IsNullable ())
+				throw new InvalidOperationException ("Left expression can never be null");
+
+			if (conversion != null)
+				return MakeConvertedCoalesce (left, right, conversion);
+
+			return MakeCoalesce (left, right);
 		}
 
 		//
