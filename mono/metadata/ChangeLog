@@ -1,5 +1,12 @@
 2008-06-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* threads.c (mono_set_pending_exception): New internal function to set the
+	pending exception of the current thread.
+	(mono_thread_get_and_clear_pending_exception): Check for 
+	thread->pending_exception as well.
+
+	* object-internals.h (struct _MonoThread): Add 'pending_exception' field.
+
 	* boehm-gc.c (mono_gc_base_init): Set GC_no_dls before calling GC_init () since
 	it can trigger a collection.
 
