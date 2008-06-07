@@ -184,7 +184,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void WrongCoalesceConversionParameterCount ()
 		{
@@ -200,7 +199,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void WrongCoalesceConversionParameterType ()
 		{
@@ -216,7 +214,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void WrongCoalesceConversionReturnType ()
 		{
@@ -230,7 +227,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void CoalesceVoidUserDefinedConversion ()
 		{
