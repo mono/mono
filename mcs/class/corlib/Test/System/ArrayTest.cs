@@ -1381,6 +1381,9 @@ public class ArrayTest : Assertion
 	{
 		DataEqual[] test = new DataEqual [] { new DataEqual () };
 		AssertEquals (0, Array.IndexOf (test, "asdfas", 0));
+		
+		IList array = (IList)test;
+		AssertEquals (0, array.IndexOf ("asdfas"));
 	}
 	
 	[Test]
