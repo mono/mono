@@ -4,4 +4,3 @@ Assembly/AssemblyInfo.cs
 MonoSymbolWriter.cs
 MonoSymbolTable.cs
 MonoSymbolFile.cs
-SymbolWriterImpl.cs

@@ -45,6 +45,13 @@ namespace Mono.CompilerServices.SymbolWriter
 		}
 	}
 
+	public interface ICompileUnit
+	{
+		CompileUnitEntry Entry {
+			get;
+		}
+	}
+
 	public interface ISourceMethod
 	{
 		string Name {
@@ -62,22 +69,14 @@ namespace Mono.CompilerServices.SymbolWriter
 
 	public class MonoSymbolWriter
 	{
-		protected ArrayList locals = null;
-		protected ArrayList methods = null;
-		protected ArrayList sources = null;
+		ArrayList methods = null;
+		ArrayList sources = null;
+		ArrayList comp_units = null;
 		protected readonly MonoSymbolFile file;
-		private string filename = null;
+		string filename = null;
 		
 		LineNumberEntry [] current_method_lines;
 		int current_method_lines_pos = 0;
-
-		internal ISourceFile[] Sources {
-			get {
-				ISourceFile[] retval = new ISourceFile [sources.Count];
-				sources.CopyTo (retval, 0);
-				return retval;
-			}
-		}
 
 		private SourceMethod current_method = null;
 
@@ -85,7 +84,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		{
 			this.methods = new ArrayList ();
 			this.sources = new ArrayList ();
-			this.locals = new ArrayList ();
+			this.comp_units = new ArrayList ();
 			this.file = new MonoSymbolFile ();
 
 			this.filename = filename + ".mdb";
@@ -135,7 +134,13 @@ namespace Mono.CompilerServices.SymbolWriter
 			current_method.AddScopeVariable (scope, index);
 		}
 
+		[Obsolete]
 		public void MarkSequencePoint (int offset, int line, int column)
+		{
+			MarkSequencePoint (offset, 0, line, column);
+		}
+
+		public void MarkSequencePoint (int offset, int file, int line, int column)
 		{
 			if (current_method == null)
 				return;
@@ -145,16 +150,28 @@ namespace Mono.CompilerServices.SymbolWriter
 				current_method_lines = new LineNumberEntry [current_method_lines.Length * 2];
 				Array.Copy (tmp, current_method_lines, current_method_lines_pos);
 			}
-			
-			current_method_lines [current_method_lines_pos++] = new LineNumberEntry (line, offset);
+
+			current_method_lines [current_method_lines_pos++] = new LineNumberEntry (file, line, offset);
 		}
 
-		public void OpenMethod (ISourceFile file, ISourceMethod method,
-					int startRow, int startColumn,
-					int endRow, int endColumn)
+		public void MarkSequencePoint (int offset, int file, int line, int column, bool is_hidden)
 		{
-			SourceMethod source = new SourceMethod (
-				file, method, startRow, startColumn, endRow, endColumn);
+			if (current_method == null)
+				return;
+
+			if (current_method_lines_pos == current_method_lines.Length) {
+				LineNumberEntry [] tmp = current_method_lines;
+				current_method_lines = new LineNumberEntry [current_method_lines.Length * 2];
+				Array.Copy (tmp, current_method_lines, current_method_lines_pos);
+			}
+
+			current_method_lines [current_method_lines_pos++] = new LineNumberEntry (
+				file, line, offset, is_hidden);
+		}
+
+		public void OpenMethod (ICompileUnit file, ISourceMethod method)
+		{
+			SourceMethod source = new SourceMethod (file, method);
 
 			current_method = source;
 			methods.Add (current_method);
@@ -163,6 +180,11 @@ namespace Mono.CompilerServices.SymbolWriter
 		public void SetRealMethodName (string name)
 		{
 			current_method.RealMethodName = name;
+		}
+
+		public void SetCompilerGenerated ()
+		{
+			current_method.SetCompilerGenerated ();
 		}
 
 		public void CloseMethod ()
@@ -181,13 +203,27 @@ namespace Mono.CompilerServices.SymbolWriter
 			return entry;
 		}
 
-		public int DefineNamespace (string name, SourceFileEntry source,
+		public SourceFileEntry DefineDocument (string url, byte[] guid, byte[] checksum)
+		{
+			SourceFileEntry entry = new SourceFileEntry (file, url, guid, checksum);
+			sources.Add (entry);
+			return entry;
+		}
+
+		public CompileUnitEntry DefineCompilationUnit (SourceFileEntry source)
+		{
+			CompileUnitEntry entry = new CompileUnitEntry (file, source);
+			comp_units.Add (entry);
+			return entry;
+		}
+
+		public int DefineNamespace (string name, CompileUnitEntry unit,
 					    string[] using_clauses, int parent)
 		{
-			if ((source == null) || (using_clauses == null))
+			if ((unit == null) || (using_clauses == null))
 				throw new NullReferenceException ();
 
-			return source.DefineNamespace (name, using_clauses, parent);
+			return unit.DefineNamespace (name, using_clauses, parent);
 		}
 
 		public int OpenScope (int start_offset)
@@ -253,13 +289,8 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		public void WriteSymbolFile (Guid guid)
 		{
-			foreach (SourceMethod method in methods) {
-				method.SourceFile.Entry.DefineMethod (
-					method.Method.Token, method.ScopeVariables, method.Locals,
-					method.Lines, method.Blocks, method.RealMethodName,
-					method.Start.Row, method.End.Row,
-					method.Method.NamespaceID);
-			}
+			foreach (SourceMethod method in methods)
+				method.DefineMethod (file);
 
 			try {
 				// We mmap the file, so unlink the previous version since it may be in use
@@ -281,18 +312,13 @@ namespace Mono.CompilerServices.SymbolWriter
 			private Stack _block_stack;
 			private string _real_name;
 			private ISourceMethod _method;
-			private ISourceFile _file;
-			private LineNumberEntry _start, _end;
+			private ICompileUnit _comp_unit;
+			private MethodEntry.Flags _method_flags;
 
-			public SourceMethod (ISourceFile file, ISourceMethod method,
-					     int startLine, int startColumn,
-					     int endLine, int endColumn)
+			public SourceMethod (ICompileUnit comp_unit, ISourceMethod method)
 			{
-				this._file = file;
+				this._comp_unit = comp_unit;
 				this._method = method;
-
-				this._start = new LineNumberEntry (startLine, 0);
-				this._end = new LineNumberEntry (endLine, 0);
 			}
 
 			public void StartBlock (CodeBlockEntry.Type type, int start_offset)
@@ -388,52 +414,33 @@ namespace Mono.CompilerServices.SymbolWriter
 				set { _real_name = value; }
 			}
 
-			public ISourceFile SourceFile {
-				get { return _file; }
+			public void SetCompilerGenerated ()
+			{
+				_method_flags |= MethodEntry.Flags.IsCompilerGenerated;
+			}
+
+			public ICompileUnit SourceFile {
+				get { return _comp_unit; }
 			}
 
 			public ISourceMethod Method {
 				get { return _method; }
 			}
 
-			public LineNumberEntry Start {
-				get { return _start; }
-			}
-
-			public LineNumberEntry End {
-				get { return _end; }
-			}
-
-			//
-			// Passes on the lines from the MonoSymbolWriter. This method is
-			// free to mutate the lns array, and it does.
-			//
 			internal void SetLineNumbers (LineNumberEntry [] lns, int count)
 			{
-				int pos = 0;
+				lines = new LineNumberEntry [count];
+				Array.Copy (lns, lines, count);
+			}
 
-				int last_offset = -1;
-				int last_row = -1;
-				for (int i = 0; i < count; i++) {
-					LineNumberEntry line = lns [i];
+			public void DefineMethod (MonoSymbolFile file)
+			{
+				MethodEntry entry = new MethodEntry (
+					file, _comp_unit.Entry, _method.Token, ScopeVariables,
+					Locals, Lines, Blocks, RealMethodName, _method_flags,
+					_method.NamespaceID);
 
-					if (line.Offset > last_offset) {
-						if (last_row >= 0)
-							lns [pos++] = new LineNumberEntry (
-								last_row, last_offset);
-
-						last_row = line.Row;
-						last_offset = line.Offset;
-					} else if (line.Row > last_row) {
-						last_row = line.Row;
-					}
-				}
-			
-				lines = new LineNumberEntry [count + ((last_row >= 0) ? 1 : 0)];
-				Array.Copy (lns, lines, pos);
-				if (last_row >= 0)
-					lines [pos] = new LineNumberEntry (
-						last_row, last_offset);
+				file.AddMethod (entry);
 			}
 		}
 	}

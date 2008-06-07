@@ -71,6 +71,17 @@ namespace Mono.CompilerServices.SymbolWriter
 		{
 			return base.Read7BitEncodedInt ();
 		}
+
+		public string ReadString (int offset)
+		{
+			long old_pos = BaseStream.Position;
+			BaseStream.Position = offset;
+
+			string text = ReadString ();
+
+			BaseStream.Position = old_pos;
+			return text;
+		}
 	}
 
 #if !CECIL
@@ -129,27 +140,36 @@ namespace Mono.CompilerServices.SymbolWriter
 	{
 		ArrayList methods = new ArrayList ();
 		ArrayList sources = new ArrayList ();
-		Hashtable method_source_hash = new Hashtable ();
+		ArrayList comp_units = new ArrayList ();
 		Hashtable type_hash = new Hashtable ();
 		Hashtable anonymous_scopes;
 
 		OffsetTable ot;
 		int last_type_index;
 		int last_method_index;
-		int last_source_index;
 		int last_namespace_index;
 
-		public readonly int Version = OffsetTable.Version;
+		public readonly string FileName = "<dynamic>";
+		public readonly int MajorVersion = OffsetTable.MajorVersion;
+		public readonly int MinorVersion = OffsetTable.MinorVersion;
 
 		public int NumLineNumbers;
 
-		public MonoSymbolFile ()
-		{ }
+		internal MonoSymbolFile ()
+		{
+			ot = new OffsetTable ();
+		}
 
 		internal int AddSource (SourceFileEntry source)
 		{
 			sources.Add (source);
-			return ++last_source_index;
+			return sources.Count;
+		}
+
+		internal int AddCompileUnit (CompileUnitEntry entry)
+		{
+			comp_units.Add (entry);
+			return comp_units.Count;
 		}
 
 		internal int DefineType (Type type)
@@ -203,22 +223,12 @@ namespace Mono.CompilerServices.SymbolWriter
 			return ++last_namespace_index;
 		}
 		
-		internal string ReadString (int offset)
-		{
-			int old_pos = (int) reader.BaseStream.Position;
-			reader.BaseStream.Position = offset;
-
-			string text = reader.ReadString ();
-
-			reader.BaseStream.Position = old_pos;
-			return text;
-		}
-
 		void Write (MyBinaryWriter bw, Guid guid)
 		{
 			// Magic number and file version.
 			bw.Write (OffsetTable.Magic);
-			bw.Write (Version);
+			bw.Write (MajorVersion);
+			bw.Write (MinorVersion);
 
 			bw.Write (guid.ToByteArray ());
 
@@ -227,7 +237,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			// writing the whole file, so we just reserve the space for it here.
 			//
 			long offset_table_offset = bw.BaseStream.Position;
-			ot.Write (bw, Version);
+			ot.Write (bw, MajorVersion, MinorVersion);
 
 			//
 			// Sort the methods according to their tokens and update their index.
@@ -242,6 +252,10 @@ namespace Mono.CompilerServices.SymbolWriter
 			ot.DataSectionOffset = (int) bw.BaseStream.Position;
 			foreach (SourceFileEntry source in sources)
 				source.WriteData (bw);
+			foreach (CompileUnitEntry comp_unit in comp_units)
+				comp_unit.WriteData (bw);
+			foreach (MethodEntry method in methods)
+				method.WriteData (this, bw);
 			ot.DataSectionSize = (int) bw.BaseStream.Position - ot.DataSectionOffset;
 
 			//
@@ -250,7 +264,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			ot.MethodTableOffset = (int) bw.BaseStream.Position;
 			for (int i = 0; i < methods.Count; i++) {
 				MethodEntry entry = (MethodEntry) methods [i];
-				entry.WriteIndex (bw);
+				entry.Write (bw);
 			}
 			ot.MethodTableSize = (int) bw.BaseStream.Position - ot.MethodTableOffset;
 
@@ -263,6 +277,16 @@ namespace Mono.CompilerServices.SymbolWriter
 				source.Write (bw);
 			}
 			ot.SourceTableSize = (int) bw.BaseStream.Position - ot.SourceTableOffset;
+
+			//
+			// Write compilation unit table.
+			//
+			ot.CompileUnitTableOffset = (int) bw.BaseStream.Position;
+			for (int i = 0; i < comp_units.Count; i++) {
+				CompileUnitEntry unit = (CompileUnitEntry) comp_units [i];
+				unit.Write (bw);
+			}
+			ot.CompileUnitTableSize = (int) bw.BaseStream.Position - ot.CompileUnitTableOffset;
 
 			//
 			// Write anonymous scope table.
@@ -281,14 +305,19 @@ namespace Mono.CompilerServices.SymbolWriter
 			ot.TypeCount = last_type_index;
 			ot.MethodCount = methods.Count;
 			ot.SourceCount = sources.Count;
+			ot.CompileUnitCount = comp_units.Count;
 
 			//
 			// Write offset table.
 			//
 			ot.TotalFileSize = (int) bw.BaseStream.Position;
 			bw.Seek ((int) offset_table_offset, SeekOrigin.Begin);
-			ot.Write (bw, Version);
+			ot.Write (bw, MajorVersion, MinorVersion);
 			bw.Seek (0, SeekOrigin.End);
+
+			Console.WriteLine ("TOTAL: {0} line numbes, {1} bytes, extended {2} bytes, " +
+					   "{3} methods.", NumLineNumbers, LineNumberSize,
+					   ExtendedLineNumberSize, methods.Count);
 		}
 
 		public void CreateSymbolFile (Guid guid, FileStream fs)
@@ -300,9 +329,10 @@ namespace Mono.CompilerServices.SymbolWriter
 		}
 
 		MyBinaryReader reader;
-		Hashtable method_hash;
 		Hashtable source_file_hash;
+		Hashtable compile_unit_hash;
 
+		ArrayList method_list;
 		Hashtable method_token_hash;
 		Hashtable source_name_hash;
 
@@ -310,33 +340,43 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		MonoSymbolFile (string filename)
 		{
+			this.FileName = filename;
 			FileStream stream = new FileStream (filename, FileMode.Open, FileAccess.Read);
 			reader = new MyBinaryReader (stream);
 
 			try {
 				long magic = reader.ReadInt64 ();
-				long version = reader.ReadInt32 ();
+				int major_version = reader.ReadInt32 ();
+				int minor_version = reader.ReadInt32 ();
+
 				if (magic != OffsetTable.Magic)
 					throw new MonoSymbolFileException (
 						"Symbol file `{0}' is not a valid " +
 						"Mono symbol file", filename);
-				if (version != OffsetTable.Version)
+				if (major_version != OffsetTable.MajorVersion)
 					throw new MonoSymbolFileException (
 						"Symbol file `{0}' has version {1}, " +
-						"but expected {2}", filename, version,
-						OffsetTable.Version);
+						"but expected {2}", filename, major_version,
+						OffsetTable.MajorVersion);
+				if (minor_version != OffsetTable.MinorVersion)
+					throw new MonoSymbolFileException (
+						"Symbol file `{0}' has version {1}.{2}, " +
+						"but expected {3}.{4}", filename, major_version,
+						minor_version, OffsetTable.MajorVersion,
+						OffsetTable.MinorVersion);
 
-				Version = (int) version;
+				MajorVersion = major_version;
+				MinorVersion = minor_version;
 				guid = new Guid (reader.ReadBytes (16));
 
-				ot = new OffsetTable (reader, (int) version);
+				ot = new OffsetTable (reader, major_version, minor_version);
 			} catch {
 				throw new MonoSymbolFileException (
 					"Cannot read symbol file `{0}'", filename);
 			}
 
-			method_hash = new Hashtable ();
 			source_file_hash = new Hashtable ();
+			compile_unit_hash = new Hashtable ();
 		}
 
 		void CheckGuidMatch (Guid other, string filename, string assembly)
@@ -391,6 +431,10 @@ namespace Mono.CompilerServices.SymbolWriter
 			return new MonoSymbolFile (mdbFilename, null);
 		}
 
+		public int CompileUnitCount {
+			get { return ot.CompileUnitCount; }
+		}
+
 		public int SourceCount {
 			get { return ot.SourceCount; }
 		}
@@ -415,9 +459,16 @@ namespace Mono.CompilerServices.SymbolWriter
 			get { return guid; }
 		}
 
+		public OffsetTable OffsetTable {
+			get { return ot; }
+		}
+
 		internal int LineNumberCount = 0;
 		internal int LocalCount = 0;
 		internal int StringSize = 0;
+
+		internal int LineNumberSize = 0;
+		internal int ExtendedLineNumberSize = 0;
 
 		public SourceFileEntry GetSourceFile (int index)
 		{
@@ -426,15 +477,21 @@ namespace Mono.CompilerServices.SymbolWriter
 			if (reader == null)
 				throw new InvalidOperationException ();
 
-			SourceFileEntry source = (SourceFileEntry) source_file_hash [index];
-			if (source != null)
-				return source;
+			lock (this) {
+				SourceFileEntry source = (SourceFileEntry) source_file_hash [index];
+				if (source != null)
+					return source;
 
-			reader.BaseStream.Position = ot.SourceTableOffset +
-				SourceFileEntry.Size * (index - 1);
-			source = new SourceFileEntry (this, reader);
-			source_file_hash.Add (index, source);
-			return source;
+				long old_pos = reader.BaseStream.Position;
+
+				reader.BaseStream.Position = ot.SourceTableOffset +
+					SourceFileEntry.Size * (index - 1);
+				source = new SourceFileEntry (this, reader);
+				source_file_hash.Add (index, source);
+
+				reader.BaseStream.Position = old_pos;
+				return source;
+			}
 		}
 
 		public SourceFileEntry[] Sources {
@@ -449,14 +506,62 @@ namespace Mono.CompilerServices.SymbolWriter
 			}
 		}
 
-		public MethodIndexEntry GetMethodIndexEntry (int index)
+		public CompileUnitEntry GetCompileUnit (int index)
 		{
-			int old_pos = (int) reader.BaseStream.Position;
-			reader.BaseStream.Position = ot.MethodTableOffset +
-				MethodIndexEntry.Size * (index - 1);
-			MethodIndexEntry ie = new MethodIndexEntry (reader);
-			reader.BaseStream.Position = old_pos;
-			return ie;
+			if ((index < 1) || (index > ot.CompileUnitCount))
+				throw new ArgumentException ();
+			if (reader == null)
+				throw new InvalidOperationException ();
+
+			lock (this) {
+				CompileUnitEntry unit = (CompileUnitEntry) compile_unit_hash [index];
+				if (unit != null)
+					return unit;
+
+				long old_pos = reader.BaseStream.Position;
+
+				reader.BaseStream.Position = ot.CompileUnitTableOffset +
+					CompileUnitEntry.Size * (index - 1);
+				unit = new CompileUnitEntry (this, reader);
+				compile_unit_hash.Add (index, unit);
+
+				reader.BaseStream.Position = old_pos;
+				return unit;
+			}
+		}
+
+		public CompileUnitEntry[] CompileUnits {
+			get {
+				if (reader == null)
+					throw new InvalidOperationException ();
+
+				CompileUnitEntry[] retval = new CompileUnitEntry [CompileUnitCount];
+				for (int i = 0; i < CompileUnitCount; i++)
+					retval [i] = GetCompileUnit (i + 1);
+				return retval;
+			}
+		}
+
+		void read_methods ()
+		{
+			lock (this) {
+				if (method_token_hash != null)
+					return;
+
+				method_token_hash = new Hashtable ();
+				method_list = new ArrayList ();
+
+				long old_pos = reader.BaseStream.Position;
+				reader.BaseStream.Position = ot.MethodTableOffset;
+
+				for (int i = 0; i < MethodCount; i++) {
+					MethodEntry entry = new MethodEntry (this, reader, i + 1);
+					method_token_hash.Add (entry.Token, entry);
+					method_list.Add (entry);
+				}
+
+				reader.BaseStream.Position = old_pos;
+			}
 		}
 
 		public MethodEntry GetMethodByToken (int token)
@@ -464,33 +569,12 @@ namespace Mono.CompilerServices.SymbolWriter
 			if (reader == null)
 				throw new InvalidOperationException ();
 
-			if (method_token_hash == null) {
-				method_token_hash = new Hashtable ();
-
-				for (int i = 0; i < MethodCount; i++) {
-					MethodIndexEntry ie = GetMethodIndexEntry (i + 1);
-
-					method_token_hash.Add (ie.Token, i + 1);
-				}
+			lock (this) {
+				read_methods ();
+				return (MethodEntry) method_token_hash [token];
 			}
-
-			object value = method_token_hash [token];
-			if (value == null)
-				return null;
-
-			return GetMethod ((int) value);
 		}
 
-#if !CECIL
-		public MethodEntry GetMethod (MethodBase method)
-		{
-			if (reader == null)
-				throw new InvalidOperationException ();
-			int token = MonoDebuggerSupport.GetMethodToken (method);
-			return GetMethodByToken (token);
-		}
-#endif
-		
 		public MethodEntry GetMethod (int index)
 		{
 			if ((index < 1) || (index > ot.MethodCount))
@@ -498,16 +582,10 @@ namespace Mono.CompilerServices.SymbolWriter
 			if (reader == null)
 				throw new InvalidOperationException ();
 
-			MethodEntry entry = (MethodEntry) method_hash [index];
-			if (entry != null)
-				return entry;
-
-			MethodIndexEntry ie = GetMethodIndexEntry (index);
-			reader.BaseStream.Position = ie.FileOffset;
-
-			entry = new MethodEntry (this, reader, index);
-			method_hash.Add (index, entry);
-			return entry;
+			lock (this) {
+				read_methods ();
+				return (MethodEntry) method_list [index - 1];
+			}
 		}
 
 		public MethodEntry[] Methods {
@@ -515,33 +593,13 @@ namespace Mono.CompilerServices.SymbolWriter
 				if (reader == null)
 					throw new InvalidOperationException ();
 
-				MethodEntry[] retval = new MethodEntry [MethodCount];
-				for (int i = 0; i < MethodCount; i++)
-					retval [i] = GetMethod (i + 1);
-				return retval;
-			}
-		}
-
-		public MethodSourceEntry GetMethodSource (int index)
-		{
-			if ((index < 1) || (index > ot.MethodCount))
-				throw new ArgumentException ();
-			if (reader == null)
-				throw new InvalidOperationException ();
-
-			object entry = method_source_hash [index];
-			if (entry != null)
-				return (MethodSourceEntry) entry;
-
-			MethodEntry method = GetMethod (index);
-			foreach (MethodSourceEntry source in method.SourceFile.Methods) {
-				if (source.Index == index) {
-					method_source_hash.Add (index, source);
-					return source;
+				lock (this) {
+					read_methods ();
+					MethodEntry[] retval = new MethodEntry [MethodCount];
+					method_list.CopyTo (retval, 0);
+					return retval;
 				}
 			}
-
-			throw new MonoSymbolFileException ("Internal error.");
 		}
 
 		public int FindSource (string file_name)
@@ -549,37 +607,41 @@ namespace Mono.CompilerServices.SymbolWriter
 			if (reader == null)
 				throw new InvalidOperationException ();
 
-			if (source_name_hash == null) {
-				source_name_hash = new Hashtable ();
+			lock (this) {
+				if (source_name_hash == null) {
+					source_name_hash = new Hashtable ();
 
-				for (int i = 0; i < ot.SourceCount; i++) {
-					SourceFileEntry source = GetSourceFile (i + 1);
-
-					source_name_hash.Add (source.FileName, i);
+					for (int i = 0; i < ot.SourceCount; i++) {
+						SourceFileEntry source = GetSourceFile (i + 1);
+						source_name_hash.Add (source.FileName, i);
+					}
 				}
-			}
 
-			object value = source_name_hash [file_name];
-			if (value == null)
-				return -1;
-			return (int) value;
+				object value = source_name_hash [file_name];
+				if (value == null)
+					return -1;
+				return (int) value;
+			}
 		}
 
 		public AnonymousScopeEntry GetAnonymousScope (int id)
 		{
-			if (anonymous_scopes != null)
-				return (AnonymousScopeEntry) anonymous_scopes [id];
 			if (reader == null)
 				throw new InvalidOperationException ();
 
-			anonymous_scopes = new Hashtable ();
-			reader.BaseStream.Position = ot.AnonymousScopeTableOffset;
-			for (int i = 0; i < ot.AnonymousScopeCount; i++) {
-				AnonymousScopeEntry scope = new AnonymousScopeEntry (reader);
-				anonymous_scopes.Add (scope.ID, scope);
-			}
+			lock (this) {
+				if (anonymous_scopes != null)
+					return (AnonymousScopeEntry) anonymous_scopes [id];
 
-			return (AnonymousScopeEntry) anonymous_scopes [id];
+				anonymous_scopes = new Hashtable ();
+				reader.BaseStream.Position = ot.AnonymousScopeTableOffset;
+				for (int i = 0; i < ot.AnonymousScopeCount; i++) {
+					AnonymousScopeEntry scope = new AnonymousScopeEntry (reader);
+					anonymous_scopes.Add (scope.ID, scope);
+				}
+
+				return (AnonymousScopeEntry) anonymous_scopes [id];
+			}
 		}
 
 		internal MyBinaryReader BinaryReader {
