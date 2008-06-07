@@ -295,7 +295,31 @@ namespace System.Linq.Expressions {
 
 		void EmitConvertedCoalesce (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			var ig = ec.ig;
+			var done = ig.DefineLabel ();
+			var load_right = ig.DefineLabel ();
+
+			var left = ec.EmitStored (this.left);
+			var left_is_nullable = left.LocalType.IsNullable ();
+
+			if (left_is_nullable)
+				ec.EmitNullableHasValue (left);
+			else
+				ec.EmitLoad (left);
+
+			ig.Emit (OpCodes.Brfalse, load_right);
+
+			// is it the right way to do it?
+			ec.EmitReadGlobal (conversion.Compile ());
+			ec.EmitLoad (left);
+			ig.Emit (OpCodes.Callvirt, conversion.Type.GetMethod ("Invoke"));
+
+			ig.Emit (OpCodes.Br, done);
+
+			ig.MarkLabel (load_right);
+			ec.Emit (this.right);
+
+			ig.MarkLabel (done);
 		}
 
 		static bool IsInt32OrInt64 (Type type)

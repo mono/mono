@@ -1,3 +1,7 @@
+2008-06-07  Jb Evain  <jbevain@novell.com>
+
+	* BinaryExpression.cs (EmitConvertedCoalesce): implement.
+
 2008-06-05  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs (GetUserConversionMethod): check for convertion
