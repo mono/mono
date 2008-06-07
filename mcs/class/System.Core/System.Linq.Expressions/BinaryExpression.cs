@@ -300,9 +300,8 @@ namespace System.Linq.Expressions {
 			var load_right = ig.DefineLabel ();
 
 			var left = ec.EmitStored (this.left);
-			var left_is_nullable = left.LocalType.IsNullable ();
 
-			if (left_is_nullable)
+			if (left.LocalType.IsNullable ())
 				ec.EmitNullableHasValue (left);
 			else
 				ec.EmitLoad (left);
