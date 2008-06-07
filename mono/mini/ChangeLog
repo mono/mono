@@ -1,5 +1,7 @@
 2008-06-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (remove_block_if_useless): Avoid printing the method name.
+	
 	* mini.c: Remove needless setting of ins->cil_code which is now done by 
 	MONO_INST_NEW.
 
