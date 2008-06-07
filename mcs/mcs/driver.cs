@@ -153,7 +153,7 @@ namespace Mono.CSharp
 				(int) span.TotalSeconds, span.Milliseconds, msg);
 		}	       
 	       
-		void tokenize_file (SourceFile file)
+		void tokenize_file (CompilationUnit file)
 		{
 			Stream input;
 
@@ -180,7 +180,7 @@ namespace Mono.CSharp
 			return;
 		}
 
-		void Parse (SourceFile file)
+		void Parse (CompilationUnit file)
 		{
 			Stream input;
 
@@ -205,7 +205,7 @@ namespace Mono.CSharp
 			input.Close ();
 		}	
 		
-		void Parse (SeekableStreamReader reader, SourceFile file)
+		void Parse (SeekableStreamReader reader, CompilationUnit file)
 		{
 			CSharpParser parser = new CSharpParser (reader, file, defines);
 			parser.ErrorOutput = Report.Stderr;

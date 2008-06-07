@@ -92,7 +92,7 @@ namespace Mono.CSharp
 		///
 		/// The current file.
 		///
-		SourceFile file;
+		CompilationUnit file;
 
 		///
 		/// Temporary Xml documentation cache.
@@ -5919,7 +5919,7 @@ static CSharpParser ()
 	oob_stack = new Stack ();
 }
 
-public CSharpParser (SeekableStreamReader reader, SourceFile file, ArrayList defines)
+public CSharpParser (SeekableStreamReader reader, CompilationUnit file, ArrayList defines)
 {
 	this.file = file;
 	current_namespace = new NamespaceEntry (null, file, null);

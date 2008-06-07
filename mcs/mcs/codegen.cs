@@ -866,10 +866,7 @@ namespace Mono.CSharp {
 			if (!SymbolWriter.HasSymbolWriter || OmitDebuggingInfo || loc.IsNull)
 				return;
 
-			if (check_file && (CurrentFile != loc.File))
-				return;
-
-			SymbolWriter.MarkSequencePoint (ig, loc.Row, loc.Column);
+			SymbolWriter.MarkSequencePoint (ig, loc);
 		}
 
 		public void DefineLocalVariable (string name, LocalBuilder builder)

@@ -665,7 +665,7 @@ namespace Mono.CSharp {
 
 		Namespace ns;
 		NamespaceEntry parent, implicit_parent;
-		SourceFile file;
+		CompilationUnit file;
 		int symfile_id;
 
 		// Namespace using import block
@@ -686,7 +686,7 @@ namespace Mono.CSharp {
 			entries = new ArrayList ();
 		}
 
-		public NamespaceEntry (NamespaceEntry parent, SourceFile file, string name)
+		public NamespaceEntry (NamespaceEntry parent, CompilationUnit file, string name)
 		{
 			this.parent = parent;
 			this.file = file;
@@ -701,7 +701,7 @@ namespace Mono.CSharp {
 			SlaveDeclSpace = new RootDeclSpace (this);
 		}
 
-		private NamespaceEntry (NamespaceEntry parent, SourceFile file, Namespace ns, bool slave)
+		private NamespaceEntry (NamespaceEntry parent, CompilationUnit file, Namespace ns, bool slave)
 		{
 			this.parent = parent;
 			this.file = file;
@@ -994,7 +994,7 @@ namespace Mono.CSharp {
 							using_list [i] = ((UsingEntry) using_clauses [i]).MemberName.GetTypeName ();
 					}
 
-					symfile_id = SymbolWriter.DefineNamespace (ns.Name, file.SourceFileEntry, using_list, parent_id);
+					symfile_id = SymbolWriter.DefineNamespace (ns.Name, file.CompileUnitEntry, using_list, parent_id);
 				}
 				return symfile_id;
 			}

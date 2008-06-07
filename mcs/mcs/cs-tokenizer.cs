@@ -29,7 +29,8 @@ namespace Mono.CSharp
 	{
 		SeekableStreamReader reader;
 		SourceFile ref_name;
-		SourceFile file_name;
+		CompilationUnit file_name;
+		bool hidden = false;
 		int ref_line = 1;
 		int line = 1;
 		int col = 0;
@@ -241,6 +242,7 @@ namespace Mono.CSharp
 			public int line;
 			public int ref_line;
 			public int col;
+			public bool hidden;
 			public int putback_char;
 			public int previous_col;
 			public Stack ifstack;
@@ -253,6 +255,7 @@ namespace Mono.CSharp
 				line = t.line;
 				ref_line = t.ref_line;
 				col = t.col;
+				hidden = t.hidden;
 				putback_char = t.putback_char;
 				previous_col = t.previous_col;
 				if (t.ifstack != null && t.ifstack.Count != 0)
@@ -275,6 +278,7 @@ namespace Mono.CSharp
 			ref_line = p.ref_line;
 			line = p.line;
 			col = p.col;
+			hidden = p.hidden;
 			putback_char = p.putback_char;
 			previous_col = p.previous_col;
 			ifstack = p.ifstack;
@@ -512,7 +516,7 @@ namespace Mono.CSharp
 			defines [def] = true;
 		}
 		
-		public Tokenizer (SeekableStreamReader input, SourceFile file, ArrayList defs)
+		public Tokenizer (SeekableStreamReader input, CompilationUnit file, ArrayList defs)
 		{
 			this.ref_name = file;
 			this.file_name = file;
@@ -532,7 +536,7 @@ namespace Mono.CSharp
 			// FIXME: This could be `Location.Push' but we have to
 			// find out why the MS compiler allows this
 			//
-			Mono.CSharp.Location.Push (file);
+			Mono.CSharp.Location.Push (file, file);
 		}
 
 		static bool is_identifier_start_character (char c)
@@ -1016,7 +1020,7 @@ namespace Mono.CSharp
 		{
 			return (e >= '0' && e <= '9') || (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f');
 		}
-				
+
 		static int real_type_suffix (int c)
 		{
 			int t;
@@ -1614,12 +1618,11 @@ namespace Mono.CSharp
 			if (arg == "default"){
 				ref_line = line;
 				ref_name = file_name;
-				Location.Push (ref_name);
+				hidden = false;
+				Location.Push (file_name, ref_name);
 				return true;
 			} else if (arg == "hidden"){
-				//
-				// We ignore #line hidden
-				//
+				hidden = true;
 				return true;
 			}
 			
@@ -1634,9 +1637,12 @@ namespace Mono.CSharp
 					
 					string name = arg.Substring (pos). Trim (quotes);
 					ref_name = Location.LookupFile (name);
-					Location.Push (ref_name);
+					file_name.AddFile (ref_name);
+					hidden = false;
+					Location.Push (file_name, ref_name);
 				} else {
 					ref_line = System.Int32.Parse (arg);
+					hidden = false;
 				}
 			} catch {
 				return false;
@@ -1685,6 +1691,126 @@ namespace Mono.CSharp
 			}
 		}
 
+		byte read_hex (string arg, int pos, out bool error)
+		{
+			error = false;
+
+			int total;
+			char c = arg [pos];
+
+			if ((c >= '0') && (c <= '9'))
+				total = (int) c - (int) '0';
+			else if ((c >= 'A') && (c <= 'F'))
+				total = (int) c - (int) 'A' + 10;
+			else if ((c >= 'a') && (c <= 'f'))
+				total = (int) c - (int) 'a' + 10;
+			else {
+				error = true;
+				return 0;
+			}
+
+			total *= 16;
+			c = arg [pos+1];
+
+			if ((c >= '0') && (c <= '9'))
+				total += (int) c - (int) '0';
+			else if ((c >= 'A') && (c <= 'F'))
+				total += (int) c - (int) 'A' + 10;
+			else if ((c >= 'a') && (c <= 'f'))
+				total += (int) c - (int) 'a' + 10;
+			else {
+				error = true;
+				return 0;
+			}
+
+			return (byte) total;
+		}
+
+		/// <summary>
+		/// Handles #pragma checksum
+		/// </summary>
+		bool PreProcessPragmaChecksum (string arg)
+		{
+			if ((arg [0] != ' ') && (arg [0] != '\t'))
+				return false;
+
+			arg = arg.Trim (simple_whitespaces);
+			if ((arg.Length < 2) || (arg [0] != '"'))
+				return false;
+
+			StringBuilder file_sb = new StringBuilder ();
+
+			int pos = 1;
+			char ch;
+			while ((ch = arg [pos++]) != '"') {
+				if (pos >= arg.Length)
+					return false;
+
+				if (ch == '\\') {
+					if (pos+1 >= arg.Length)
+						return false;
+					ch = arg [pos++];
+				}
+
+				file_sb.Append (ch);
+			}
+
+			if ((pos+2 >= arg.Length) || ((arg [pos] != ' ') && (arg [pos] != '\t')))
+				return false;
+
+			arg = arg.Substring (pos).Trim (simple_whitespaces);
+			if ((arg.Length < 42) || (arg [0] != '"') || (arg [1] != '{') ||
+			    (arg [10] != '-') || (arg [15] != '-') || (arg [20] != '-') ||
+			    (arg [25] != '-') || (arg [38] != '}') || (arg [39] != '"'))
+				return false;
+
+			bool error;
+			byte[] guid_bytes = new byte [16];
+
+			for (int i = 0; i < 4; i++) {
+				guid_bytes [i] = read_hex (arg, 2+2*i, out error);
+				if (error)
+					return false;
+			}
+			for (int i = 0; i < 2; i++) {
+				guid_bytes [i+4] = read_hex (arg, 11+2*i, out error);
+				if (error)
+					return false;
+				guid_bytes [i+6] = read_hex (arg, 16+2*i, out error);
+				if (error)
+					return false;
+				guid_bytes [i+8] = read_hex (arg, 21+2*i, out error);
+				if (error)
+					return false;
+			}
+
+			for (int i = 0; i < 6; i++) {
+				guid_bytes [i+10] = read_hex (arg, 26+2*i, out error);
+				if (error)
+					return false;
+			}
+
+			arg = arg.Substring (40).Trim (simple_whitespaces);
+			if ((arg.Length < 34) || (arg [0] != '"') || (arg [33] != '"'))
+				return false;
+
+			byte[] checksum_bytes = new byte [16];
+			for (int i = 0; i < 16; i++) {
+				checksum_bytes [i] = read_hex (arg, 1+2*i, out error);
+				if (error)
+					return false;
+			}
+
+			arg = arg.Substring (34).Trim (simple_whitespaces);
+			if (arg.Length > 0)
+				return false;
+
+			SourceFile file = Location.LookupFile (file_sb.ToString ());
+			file.SetChecksum (guid_bytes, checksum_bytes);
+			ref_name.AutoGenerated = true;
+			return true;
+		}
+
 		/// <summary>
 		/// Handles #pragma directive
 		/// </summary>
@@ -1693,6 +1819,7 @@ namespace Mono.CSharp
 			const string warning = "warning";
 			const string w_disable = "warning disable";
 			const string w_restore = "warning restore";
+			const string checksum = "checksum";
 
 			if (arg == w_disable) {
 				Report.RegisterWarningRegion (Location).WarningDisable (Location.Row);
@@ -1726,6 +1853,12 @@ namespace Mono.CSharp
 
 			if (arg.StartsWith (warning)) {
 				Report.Warning (1634, 1, Location, "Expected disable or restore");
+				return;
+			}
+
+			if (arg.StartsWith (checksum)) {
+				if (!PreProcessPragmaChecksum (arg.Substring (checksum.Length)))
+					Warning_InvalidPragmaChecksum ();
 				return;
 			}
 
@@ -1952,6 +2085,13 @@ namespace Mono.CSharp
 			Report.Error (1025, Location, "Single-line comment or end-of-line expected");
 		}
 		
+		void Warning_InvalidPragmaChecksum ()
+		{
+			Report.Warning (1695, 1, Location,
+					"Invalid #pragma checksum syntax; should be " +
+					"#pragma checksum \"filename\" " +
+					"\"{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}\" \"XXXX...\"");
+		}
 		//
 		// if true, then the code continues processing the code
 		// if false, the code stays in a loop until another directive is
@@ -2253,7 +2393,7 @@ namespace Mono.CSharp
 			
 			id_builder [0] = (char) s;
 
-			current_location = new Location (ref_line, Col);
+			current_location = new Location (ref_line, hidden ? -1 : Col);
 
 			while ((c = get_char ()) != -1) {
 			loop:
@@ -2441,7 +2581,7 @@ namespace Mono.CSharp
 				}
 
 			is_punct_label:
-				current_location = new Location (ref_line, Col);
+				current_location = new Location (ref_line, hidden ? -1 : Col);
 				if ((t = is_punct ((char)c, ref doread)) != Token.ERROR){
 					tokens_seen = true;
 					if (doread){
@@ -2624,7 +2764,7 @@ namespace Mono.CSharp
 			if (current_comment_location.IsNull) {
 				// "-2" is for heading "//" or "/*"
 				current_comment_location =
-					new Location (ref_line, col - 2);
+					new Location (ref_line, hidden ? -1 : col - 2);
 			}
 		}
 
@@ -2676,7 +2816,7 @@ namespace Mono.CSharp
 		public void cleanup ()
 		{
 			if (ifstack != null && ifstack.Count >= 1) {
-				current_location = new Location (ref_line, Col);
+				current_location = new Location (ref_line, hidden ? -1 : Col);
 				int state = (int) ifstack.Pop ();
 				if ((state & REGION) != 0)
 					Report.Error (1038, Location, "#endregion directive expected");

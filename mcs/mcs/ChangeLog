@@ -1,3 +1,48 @@
+2008-06-05  Martin Baulig  <martin@ximian.com>
+
+	Merged the `debugger-kahalo' branch.
+
+	* class.cs
+	(MethodData.Emit): Call SymbolWriter.SetCompilerGenerated() if
+	we're an iterator method.
+	(SourceMethod): Reflect latest symbol writer changes;
+	SymbolWriter.OpenMethod() now takes a `ICompileUnit' argument and
+	now `start_row' and `end_row'.
+	(Constructor.Emit): Fix the logic whether to emit symbol information.
+
+	* iterator.cs: Call SymbolWriter.SetCompilerGenerated() on all the
+	generated methods.
+
+	* location.cs
+	(CompilationUnit): New public class; derives from `SourceFile'.
+	(SourceFileEntry.DefineSymbolInfo): New public method.
+	(SourceFileEntry.SetChecksum): New public method.
+	(Location): Encode hidden line numbers by using `column == 255';
+	the .ctor now accepts `column == -1' to mark a hidden line number.
+	(Location.Hidden): New public property.
+	(Location.CheckPoint): Add `CompilationUnit'.
+	(Location.SourceFiles): Change return type to `CompilationUnit[]'.
+	(Location.Push): Add `CompilationUnit compile_unit' argument.
+	(Location.CompilationUnit): New public property.
+
+	* statement.cs
+	(ToplevelBlock.Emit): Add `ec.Mark (EndLocation)'.
+
+	* cs-parser.jay: `SourceFile' -> `CompilationUnit'.
+
+	* driver.cs: `SourceFile' -> `CompilationUnit'.
+
+	* cs-tokenizer.cs: `SourceFile' -> `CompilationUnit'.
+
+	* namespace.cs: `SourceFile' -> `CompilationUnit'.
+
+	* cs-tokenizer.cs: Add support for `#pragma checksum' and
+	`#line hidden'.
+
+	* symbolwriter.cs
+	(SymbolWriter.MarkSequencePoint): Take a `Location' and use the
+	new symbol writer API to also pass the file.
+
 2008-06-05  Marek Safar  <marek.safar@gmail.com>
 
 	* statement.cs: Emit catch variable assignment using variable expression.
