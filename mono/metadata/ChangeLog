@@ -1,5 +1,11 @@
 2008-06-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata.c (free_generic_class): Release the inflated
+	MonoClass of dynamic geneic classes if it's not a generic
+	type definition.
+
+2008-06-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: Reaplied more of the reverted changes.
 
 2008-06-07 Rodrigo Kumpera  <rkumpera@novell.com>
