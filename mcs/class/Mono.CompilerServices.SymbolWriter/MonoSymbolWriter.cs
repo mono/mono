@@ -92,6 +92,10 @@ namespace Mono.CompilerServices.SymbolWriter
 			this.current_method_lines = new LineNumberEntry [50];
 		}
 
+		public MonoSymbolFile SymbolFile {
+			get { return file; }
+		}
+
 		public void CloseNamespace ()
 		{ }
 
@@ -134,16 +138,10 @@ namespace Mono.CompilerServices.SymbolWriter
 			current_method.AddScopeVariable (scope, index);
 		}
 
-		[Obsolete]
-		public void MarkSequencePoint (int offset, int line, int column)
-		{
-			MarkSequencePoint (offset, 0, line, column);
-		}
-
 		public void MarkSequencePoint (int offset, int file, int line, int column)
 		{
 			if (current_method == null)
-				return;
+				throw new ArgumentNullException ();
 
 			if (current_method_lines_pos == current_method_lines.Length) {
 				LineNumberEntry [] tmp = current_method_lines;

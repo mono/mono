@@ -187,8 +187,27 @@ namespace Mono.CompilerServices.SymbolWriter
 			methods.Add (entry);
 		}
 
+		public MethodEntry DefineMethod (CompileUnitEntry comp_unit, int token,
+						 ScopeVariable[] scope_vars, LocalVariableEntry[] locals,
+						 LineNumberEntry[] lines, CodeBlockEntry[] code_blocks,
+						 string real_name, MethodEntry.Flags flags,
+						 int namespace_id)
+		{
+			if (reader != null)
+				throw new InvalidOperationException ();
+
+			MethodEntry method = new MethodEntry (
+				this, comp_unit, token, scope_vars, locals, lines, code_blocks, 
+				real_name, flags, namespace_id);
+			AddMethod (method);
+			return method;
+		}
+
 		internal void DefineAnonymousScope (int id)
 		{
+			if (reader != null)
+				throw new InvalidOperationException ();
+
 			if (anonymous_scopes == null)
 				anonymous_scopes = new Hashtable ();
 
@@ -198,12 +217,18 @@ namespace Mono.CompilerServices.SymbolWriter
 		internal void DefineCapturedVariable (int scope_id, string name, string captured_name,
 						      CapturedVariable.CapturedKind kind)
 		{
+			if (reader != null)
+				throw new InvalidOperationException ();
+
 			AnonymousScopeEntry scope = (AnonymousScopeEntry) anonymous_scopes [scope_id];
 			scope.AddCapturedVariable (name, captured_name, kind);
 		}
 
 		internal void DefineCapturedScope (int scope_id, int id, string captured_name)
 		{
+			if (reader != null)
+				throw new InvalidOperationException ();
+
 			AnonymousScopeEntry scope = (AnonymousScopeEntry) anonymous_scopes [scope_id];
 			scope.AddCapturedScope (id, captured_name);
 		}
@@ -324,7 +349,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		{
 			if (reader != null)
 				throw new InvalidOperationException ();
-			
+
 			Write (new MyBinaryWriter (fs), guid);
 		}
 

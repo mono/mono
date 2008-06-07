@@ -73,7 +73,7 @@ namespace Mono.CompilerServices.SymbolWriter
 	public class OffsetTable
 	{
 		public const int  MajorVersion = 42;
-		public const int  MinorVersion = 5;
+		public const int  MinorVersion = 4;
 		public const long Magic        = 0x45e82623fd7fa614;
 
 		#region This is actually written to the symbol file
@@ -509,7 +509,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		}
 	}
 
-	public class CompileUnitEntry
+	public class CompileUnitEntry : ICompileUnit
 	{
 		#region This is actually written to the symbol file
 		public readonly int Index;
@@ -525,6 +525,10 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		public static int Size {
 			get { return 8; }
+		}
+
+		CompileUnitEntry ICompileUnit.Entry {
+			get { return this; }
 		}
 
 		public CompileUnitEntry (MonoSymbolFile file, SourceFileEntry source)
@@ -686,7 +690,7 @@ namespace Mono.CompilerServices.SymbolWriter
 
 			if (guid == null) {
 				guid = Guid.NewGuid ().ToByteArray ();
-				using (FileStream fs = new FileStream (file_name, FileMode.Open)) {
+				using (FileStream fs = new FileStream (file_name, FileMode.Open, FileAccess.Read)) {
 					MD5 md5 = MD5.Create ();
 					hash = md5.ComputeHash (fs);
 				}
