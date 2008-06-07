@@ -1,5 +1,8 @@
 2008-06-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c: Remove needless setting of ins->cil_code which is now done by 
+	MONO_INST_NEW.
+
 	* mini-amd64.c: Add some code to avoid saving callee saved registers in the
 	LMF. Not yet used.
 
