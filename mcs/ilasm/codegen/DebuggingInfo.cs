@@ -17,33 +17,33 @@ namespace Mono.ILASM {
 
 	public class SymbolWriter : MonoSymbolWriter
 	{
-		ArrayList sources;
 		Mono.ILASM.SourceMethod current_method;
-		SourceFile current_source;
+		CompileUnitEntry current_source;
+		ArrayList methods;
 
 		public SymbolWriter (string filename)
 			: base (filename)
 		{
-			sources = new ArrayList ();
+			methods = new ArrayList ();
 		}
 
-		public Mono.ILASM.SourceMethod BeginMethod (MethodDef method, Location location)
+		public Mono.ILASM.SourceMethod BeginMethod (MethodDef method, Location start)
 		{
-			current_method = new Mono.ILASM.SourceMethod (method, location);
-			current_source.AddMethod (current_method);
+			current_method = new Mono.ILASM.SourceMethod (current_source, method, start);
+			methods.Add (current_method);
 			return current_method;
 		}
 
-		public void EndMethod (Location location)
+		public void EndMethod (Location end)
 		{
-			current_method.EndLine = location.line;
+			current_method.EndLine = end.line;
 			current_method = null;
 		}
 
 		public void BeginSourceFile (string filename)
 		{
-			current_source = new SourceFile (file, filename);
-			sources.Add (current_source);
+			SourceFileEntry file = DefineDocument (filename, null, null);
+			current_source = DefineCompilationUnit (file);
 		}
 
 		public void EndSourceFile ()
@@ -53,41 +53,23 @@ namespace Mono.ILASM {
 
 		public void Write (Guid guid)
 		{
-			foreach (SourceFile source in sources)
-				source.Write ();
+			foreach (Mono.ILASM.SourceMethod method in methods)
+				method.Write (this);
 
 			WriteSymbolFile (guid);
 		}
 	}
 
-	public class SourceFile : SourceFileEntry
+	public class SourceMethod : ISourceMethod
 	{
-		private ArrayList methods = new ArrayList ();
-
-		public SourceFile (MonoSymbolFile file, string filename)
-			: base (file, filename)
-		{ }
-
-		public void AddMethod (SourceMethod method)
-		{
-			methods.Add (method);
-		}
-
-		public void Write ()
-		{
-			foreach (SourceMethod method in methods)
-				method.Write (this);
-		}
-	}
-
-	public class SourceMethod
-	{
+		CompileUnitEntry file;
 		MethodDef method;
 		ArrayList lines;
 		public int StartLine, EndLine;
 
-		public SourceMethod (MethodDef method, Location start)
+		public SourceMethod (CompileUnitEntry file, MethodDef method, Location start)
 		{
+			this.file = file;
 			this.method = method;
 			this.StartLine = start.line;
 
@@ -95,23 +77,35 @@ namespace Mono.ILASM {
 			MarkLocation (start.line, 0);
 		}
 
-		public void MarkLocation (int line, uint offset)
-		{
-			lines.Add (new LineNumberEntry (line, (int) offset));
+		public string Name {
+			get { return method.Name; }
 		}
 
-		public void Write (SourceFile file)
+		public int NamespaceID {
+			get { return 0; }
+		}
+
+		public int Token {
+			get {
+				PEAPI.MethodDef pemethod = method.PeapiMethodDef;
+				return (int) (((uint) PEAPI.MDTable.Method << 24) | pemethod.Row);
+			}
+		}
+
+		public void MarkLocation (int line, uint offset)
 		{
-			PEAPI.MethodDef pemethod = method.PeapiMethodDef;
+			lines.Add (new LineNumberEntry (0, line, (int) offset));
+		}
 
-			LineNumberEntry[] lne = new LineNumberEntry [lines.Count];
-			lines.CopyTo (lne);
+		public void Write (MonoSymbolWriter writer)
+		{
+			LineNumberEntry[] the_lines = new LineNumberEntry [lines.Count];
+			lines.CopyTo (the_lines, 0);
 
-			uint token = ((uint) PEAPI.MDTable.Method << 24) | pemethod.Row;
-                        LocalVariableEntry[] locals = method.GetLocalVars();
+			LocalVariableEntry[] locals = method.GetLocalVars ();
 
-			file.DefineMethod ((int)token, null, locals, lne, null, null,
-                                           StartLine, EndLine, 0);
+			MethodEntry entry = writer.SymbolFile.DefineMethod (
+				file, Token, null, locals, the_lines, null, null, 0, 0);
 		}
 	}
 }

@@ -1,3 +1,7 @@
+2008-06-07  Martin Baulig  <martin@ximian.com>
+
+	* DebuggingInfo.cs: Reflect latest symbol writer changes.
+
 2008-06-02  Ankit Jain  <jankit@novell.com>
 
 	Fix bug #367114.
