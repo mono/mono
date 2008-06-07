@@ -1,3 +1,8 @@
+2008-06-07  Marek Safar  <marek.safar@gmail.com>
+
+	* Array.cs (IndexOf, LastIndexOf): Fixed more array element comparers used
+	instead of tested value comparers.
+
 2008-06-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* Environment.cs: Bump corlib version.

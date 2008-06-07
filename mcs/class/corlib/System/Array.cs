@@ -154,19 +154,16 @@ namespace System
 						}
 					}
 				}
-				if (item.Equals (value))
+				if (value.Equals (item))
 					// array index may not be zero-based.
 					// use lower bound
 					return i + this.GetLowerBound (0);
 			}
 
-			int retVal;
 			unchecked {
 				// lower bound may be MinValue
-				retVal = this.GetLowerBound (0) - 1;
+				return this.GetLowerBound (0) - 1;
 			}
-
-			return retVal;
 		}
 
 		internal T InternalArray__get_Item<T> (int index)
@@ -314,7 +311,7 @@ namespace System
 
 			int length = this.Length;
 			for (int i = 0; i < length; i++) {
-				if (Object.Equals (value, this.GetValueImpl (i)))
+				if (Object.Equals (this.GetValueImpl (i), value))
 					return true;
 			}
 			return false;
@@ -330,19 +327,16 @@ namespace System
 
 			int length = this.Length;
 			for (int i = 0; i < length; i++) {
-				if (Object.Equals (value, this.GetValueImpl (i)))
+				if (Object.Equals (this.GetValueImpl (i), value))
 					// array index may not be zero-based.
 					// use lower bound
 					return i + this.GetLowerBound (0);
 			}
 
-			int retVal;
 			unchecked {
 				// lower bound may be MinValue
-				retVal = this.GetLowerBound (0) - 1;
+				return this.GetLowerBound (0) - 1;
 			}
-
-			return retVal;
 		}
 
 		void IList.Insert (int index, object value)
@@ -1126,7 +1120,7 @@ namespace System
 				throw new ArgumentOutOfRangeException ();
 
 			for (int i = startIndex; i >= startIndex - count + 1; i--) {
-				if (Object.Equals (value, array.GetValueImpl (i)))
+				if (Object.Equals (array.GetValueImpl (i), value))
 					return i;
 			}
 
@@ -2107,7 +2101,7 @@ namespace System
 			int max = startIndex + count;
 			EqualityComparer<T> equalityComparer = EqualityComparer<T>.Default;
 			for (int i = startIndex; i < max; i++) {
-				if (equalityComparer.Equals (value, array [i]))
+				if (equalityComparer.Equals (array [i], value))
 					return i;
 			}
 
@@ -2143,7 +2137,7 @@ namespace System
 			
 			EqualityComparer<T> equalityComparer = EqualityComparer<T>.Default;
 			for (int i = startIndex; i >= startIndex - count + 1; i--) {
-				if (equalityComparer.Equals (value, array [i]))
+				if (equalityComparer.Equals (array [i], value))
 					return i;
 			}
 
