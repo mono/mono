@@ -1,5 +1,8 @@
 2008-06-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c: Add some code to avoid saving callee saved registers in the
+	LMF. Not yet used.
+
 	* tramp-amd64.c (mono_arch_patch_callsite): Tell valgrind to discard the
 	translated code after it has been patched.
 
