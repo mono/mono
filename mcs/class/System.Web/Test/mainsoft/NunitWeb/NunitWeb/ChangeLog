@@ -1,0 +1,4 @@
+2008-06-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* WebTest.cs: Fixed compilation using csc 1.x.
+

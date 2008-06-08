@@ -204,7 +204,7 @@ namespace MonoTests.SystemWeb.Framework
 				lock (_appUnloadedSync) {
 					EventHandler handler = new EventHandler(PulseAppUnloadedSync);
 					WebTest.AppUnloaded += handler;
-					WebTest t = new WebTest (PageInvoker.CreateOnLoad (UnloadAppDomain_OnLoad));
+					WebTest t = new WebTest (PageInvoker.CreateOnLoad (new PageDelegate (UnloadAppDomain_OnLoad)));
 					t.Run ();
 					Monitor.Wait(_appUnloadedSync);
 					WebTest.AppUnloaded -= handler;
