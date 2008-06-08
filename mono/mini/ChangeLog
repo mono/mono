@@ -1,3 +1,7 @@
+2008-06-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c: Revert most of the last patch for now as it breaks the build.
+
 2008-06-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (remove_block_if_useless): Avoid printing the method name.
