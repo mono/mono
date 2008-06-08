@@ -48,21 +48,20 @@ namespace System.Web.UI.HtmlControls {
 		{
 		}
 
-
 		[DefaultValue ("")]
-			[WebSysDescription("")]
-			[WebCategory("Action")]
-			[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Action")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #if NET_2_0
-			[UrlProperty]
+		[UrlProperty]
 #endif
-			public string HRef {
+		public string HRef {
 			get {
 				string s = Attributes ["href"];
 				return (s == null) ? String.Empty : s;
 			}
 			set {
-				if (value == null || value == String.Empty) {
+				if (value == null || value.Length == 0) {
 					Attributes.Remove ("href");
 				} else {
 					Attributes ["href"] = value;
@@ -71,16 +70,16 @@ namespace System.Web.UI.HtmlControls {
 		}
 
 		[DefaultValue ("")]
-			[WebSysDescription("")]
-			[WebCategory("Navigation")]
-			[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-			public string Name {
+		[WebSysDescription("")]
+		[WebCategory("Navigation")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public string Name {
 			get {
 				string s = Attributes ["name"];
 				return (s == null) ? String.Empty : s;
 			}
 			set {
-				if (value == null)
+				if (value == null || value.Length == 0)
 					Attributes.Remove ("name");
 				else
 					Attributes ["name"] = value;
@@ -88,16 +87,16 @@ namespace System.Web.UI.HtmlControls {
 		}
 
 		[DefaultValue ("")]
-			[WebSysDescription("")]
-			[WebCategory("Navigation")]
-			[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-			public string Target {
+		[WebSysDescription("")]
+		[WebCategory("Navigation")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public string Target {
 			get {
 				string s = Attributes ["target"];
 				return (s == null) ? String.Empty : s;
 			}
 			set {
-				if (value == null)
+				if (value == null || value.Length == 0)
 					Attributes.Remove ("target");
 				else
 					Attributes ["target"] = value;
@@ -105,19 +104,19 @@ namespace System.Web.UI.HtmlControls {
 		}
 
 		[DefaultValue ("")]
-			[WebSysDescription("")]
-			[WebCategory("Appearance")]
-			[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #if NET_2_0
-			[Localizable (true)]
+		[Localizable (true)]
 #endif
-			public string Title {
+		public string Title {
 			get {
 				string s = Attributes ["title"];
 				return (s == null) ? String.Empty : s;
 			}
 			set {
-				if (value == null)
+				if (value == null || value.Length == 0)
 					Attributes.Remove ("title");
 				else
 					Attributes ["title"] = value;
@@ -126,7 +125,7 @@ namespace System.Web.UI.HtmlControls {
 
 #if NET_2_0
 		[DefaultValue (true)]
-			public virtual bool CausesValidation {
+		public virtual bool CausesValidation {
 			get {
 				return ViewState.GetBool ("CausesValidation", true);
 			}
@@ -136,7 +135,7 @@ namespace System.Web.UI.HtmlControls {
 		}
 
 		[DefaultValue ("")]
-			public virtual string ValidationGroup {
+		public virtual string ValidationGroup {
 			get {
 				return ViewState.GetString ("ValidationGroup", String.Empty);
 			}
@@ -149,9 +148,9 @@ namespace System.Web.UI.HtmlControls {
 #if NET_2_0
 		protected internal
 #else
-			protected
+		protected
 #endif		
-			override void OnPreRender (EventArgs e)
+		override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
 		}
@@ -165,10 +164,6 @@ namespace System.Web.UI.HtmlControls {
 
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
-			string target = Attributes ["target"];
-			if ((target == null) || (target.Length == 0))
-				Attributes.Remove("target");
-
 			// we don't want to render the "user" URL, so we either render:
 			EventHandler serverClick = (EventHandler) Events [serverClickEvent];
 			if (serverClick != null) {
@@ -186,12 +181,12 @@ namespace System.Web.UI.HtmlControls {
 #endif
 			} else {
 				string hr = HRef;
-				if (hr != "")
+				if (hr != string.Empty)
 #if TARGET_J2EE
 					// For J2EE portlets we need to genreate a render URL.
-					HRef = ResolveClientUrl (hr, String.Compare (target, "_blank", StringComparison.InvariantCultureIgnoreCase) != 0);
+					HRef = ResolveClientUrl (hr, String.Compare (Target, "_blank", StringComparison.InvariantCultureIgnoreCase) != 0);
 #else
-				HRef = ResolveClientUrl (hr);
+					HRef = ResolveClientUrl (hr);
 #endif
 			}
 
@@ -201,6 +196,7 @@ namespace System.Web.UI.HtmlControls {
 			// nor is the property available after rendering
 			Attributes.Remove ("href");
 		}
+
 #if NET_2_0
 		protected virtual void RaisePostBackEvent (string eventArgument)
 		{
@@ -210,11 +206,12 @@ namespace System.Web.UI.HtmlControls {
 			OnServerClick (EventArgs.Empty);
 		}
 	
-		PostBackOptions GetPostBackOptions () {
+		PostBackOptions GetPostBackOptions ()
+		{
 			PostBackOptions options = new PostBackOptions (this);
 			options.ValidationGroup = null;
 			options.ActionUrl = null;
-			options.Argument = "";
+			options.Argument = string.Empty;
 			options.RequiresJavaScriptProtocol = true;
 			options.ClientSubmit = true;
 			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
@@ -234,10 +231,9 @@ namespace System.Web.UI.HtmlControls {
 #endif
 		}
 
-
 		[WebSysDescription("")]
-			[WebCategory("Action")]
-			public event EventHandler ServerClick {
+		[WebCategory("Action")]
+		public event EventHandler ServerClick {
 			add { Events.AddHandler (serverClickEvent, value); }
 			remove { Events.RemoveHandler (serverClickEvent, value); }
 		}

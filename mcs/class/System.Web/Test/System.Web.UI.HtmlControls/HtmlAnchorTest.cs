@@ -165,6 +165,125 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.AreEqual (" href=\"*1*\" name=\"*2*\" target=\"*3*\" title=\"*4*\"", writer.InnerWriter.ToString (), "HRef is back");
 		}
 
+		[Test]
+		public void RenderAttributes_HRef_Empty ()
+		{
+			TestHtmlAnchor a = new TestHtmlAnchor ();
+			Assert.AreEqual (0, a.Attributes.Count, "#1");
+			a.HRef = string.Empty;
+			a.Name = "*2*";
+			a.Target = "*3*";
+			a.Title = "*4*";
+			Assert.AreEqual (3, a.Attributes.Count, "#2");
+
+			HtmlTextWriter writer = a.GetWriter ();
+			Assert.AreEqual (" name=\"*2*\" target=\"*3*\" title=\"*4*\"", writer.InnerWriter.ToString (), "#3");
+		}
+
+		[Test]
+		public void RenderAttributes_HRef_Null ()
+		{
+			TestHtmlAnchor a = new TestHtmlAnchor ();
+			Assert.AreEqual (0, a.Attributes.Count, "#1");
+			a.HRef = null;
+			a.Name = "*2*";
+			a.Target = "*3*";
+			a.Title = "*4*";
+			Assert.AreEqual (3, a.Attributes.Count, "#2");
+
+			HtmlTextWriter writer = a.GetWriter ();
+			Assert.AreEqual (" name=\"*2*\" target=\"*3*\" title=\"*4*\"", writer.InnerWriter.ToString (), "#3");
+		}
+
+		[Test]
+		public void RenderAttributes_Name_Empty ()
+		{
+			TestHtmlAnchor a = new TestHtmlAnchor ();
+			Assert.AreEqual (0, a.Attributes.Count, "#1");
+			a.HRef = "*1*";
+			a.Name = string.Empty;
+			a.Target = "*3*";
+			a.Title = "*4*";
+			Assert.AreEqual (3, a.Attributes.Count, "#2");
+
+			HtmlTextWriter writer = a.GetWriter ();
+			Assert.AreEqual (" href=\"*1*\" target=\"*3*\" title=\"*4*\"", writer.InnerWriter.ToString (), "#3");
+		}
+
+		[Test]
+		public void RenderAttributes_Name_Null ()
+		{
+			TestHtmlAnchor a = new TestHtmlAnchor ();
+			Assert.AreEqual (0, a.Attributes.Count, "#1");
+			a.HRef = "*1*";
+			a.Name = null;
+			a.Target = "*3*";
+			a.Title = "*4*";
+			Assert.AreEqual (3, a.Attributes.Count, "#2");
+
+			HtmlTextWriter writer = a.GetWriter ();
+			Assert.AreEqual (" href=\"*1*\" target=\"*3*\" title=\"*4*\"", writer.InnerWriter.ToString (), "#3");
+		}
+
+		[Test]
+		public void RenderAttributes_Target_Empty ()
+		{
+			TestHtmlAnchor a = new TestHtmlAnchor ();
+			Assert.AreEqual (0, a.Attributes.Count, "#1");
+			a.HRef = "*1*";
+			a.Name = "*2*";
+			a.Target = string.Empty;
+			a.Title = "*4*";
+			Assert.AreEqual (3, a.Attributes.Count, "#2");
+
+			HtmlTextWriter writer = a.GetWriter ();
+			Assert.AreEqual (" href=\"*1*\" name=\"*2*\" title=\"*4*\"", writer.InnerWriter.ToString (), "#3");
+		}
+
+		[Test]
+		public void RenderAttributes_Target_Null ()
+		{
+			TestHtmlAnchor a = new TestHtmlAnchor ();
+			Assert.AreEqual (0, a.Attributes.Count, "#1");
+			a.HRef = "*1*";
+			a.Name = "*2*";
+			a.Target = null;
+			a.Title = "*4*";
+			Assert.AreEqual (3, a.Attributes.Count, "#2");
+
+			HtmlTextWriter writer = a.GetWriter ();
+			Assert.AreEqual (" href=\"*1*\" name=\"*2*\" title=\"*4*\"", writer.InnerWriter.ToString (), "#3");
+		}
+
+		[Test]
+		public void RenderAttributes_Title_Empty ()
+		{
+			TestHtmlAnchor a = new TestHtmlAnchor ();
+			Assert.AreEqual (0, a.Attributes.Count, "#1");
+			a.HRef = "*1*";
+			a.Name = "*2*";
+			a.Target = "*3*";
+			a.Title = string.Empty;
+			Assert.AreEqual (3, a.Attributes.Count, "#2");
+
+			HtmlTextWriter writer = a.GetWriter ();
+			Assert.AreEqual (" href=\"*1*\" name=\"*2*\" target=\"*3*\"", writer.InnerWriter.ToString (), "#3");
+		}
+
+		[Test]
+		public void RenderAttributes_Title_Null ()
+		{
+			TestHtmlAnchor a = new TestHtmlAnchor ();
+			Assert.AreEqual (0, a.Attributes.Count, "#1");
+			a.HRef = "*1*";
+			a.Name = "*2*";
+			a.Target = "*3*";
+			a.Title = null;
+			Assert.AreEqual (3, a.Attributes.Count, "#2");
+
+			HtmlTextWriter writer = a.GetWriter ();
+			Assert.AreEqual (" href=\"*1*\" name=\"*2*\" target=\"*3*\"", writer.InnerWriter.ToString (), "#3");
+		}
 
 		private bool serverClick;
 		private void ServerClick (object sender, EventArgs e)
