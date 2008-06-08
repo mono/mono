@@ -1,3 +1,14 @@
+2008-06-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_dynamic_image_free): Free the memory
+	used by MonoGenericParam in MonoDynamicImage::gen_param.
+
+	* reflection.c (mono_reflection_setup_generic_class): Allocate
+	container from mempool.
+
+	* reflection.c (mono_reflection_initialize_generic_parameter): Allocate
+	container from mempool.
+
 2008-06-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (mono_set_pending_exception): New internal function to set the
