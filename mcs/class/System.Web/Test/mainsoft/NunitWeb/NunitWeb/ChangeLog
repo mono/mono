@@ -1,4 +1,5 @@
 2008-06-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* PageInvoker.cs: Fixed line endings.
 	* WebTest.cs: Fixed compilation using csc 1.x.
 
