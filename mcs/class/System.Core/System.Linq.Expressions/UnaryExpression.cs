@@ -370,8 +370,6 @@ namespace System.Linq.Expressions {
 
 		void EmitUserDefinedLiftedOperator (EmitContext ec)
 		{
-			var ig = ec.ig;
-
 			// that seems like a bug in MS's implementation
 			// they don't bail out if the operand is null
 			// and force the GetValue instead
