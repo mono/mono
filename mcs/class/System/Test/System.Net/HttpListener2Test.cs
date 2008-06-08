@@ -410,6 +410,21 @@ namespace MonoTests.System.Net {
 			Assert.IsTrue (-1 != response.IndexOf ("Transfer-Encoding: chunked"));
 		}
 
+		[Test]
+		public void Test_MultipleClosesOnOuputStreamAllowed ()
+		{
+			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/MultipleCloses/");
+			NetworkStream ns = CreateNS (9000);
+			Send (ns, "GET /MultipleCloses/ HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n");
+
+			HttpListenerContext ctx = listener.GetContext ();
+			ctx.Response.OutputStream.Close ();
+			ctx.Response.OutputStream.Close ();
+			ctx.Response.OutputStream.Close ();
+			ctx.Response.Close ();
+			listener.Close ();
+		}
+	
 		void SendCookie ()
 		{
 			NetworkStream ns = CreateNS (9000);

@@ -1,3 +1,10 @@
+2008-06-08  Miguel de Icaza  <miguel@novell.com>
+
+	* ResponseStream.cs: Do not Close the HttpResponse object here as
+	it is possible to issue multiple OutputStream.Close calls (they
+	actually happen implicitly through things like StreamWriter.Close,
+	and they are in various MSDN samples).
+
 2008-05-28 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
 
 	* CookieContainer.cs: apply slightly modified patch from rulatir@wp.pl
