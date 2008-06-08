@@ -1,5 +1,7 @@
 2008-06-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* trace.c (mono_trace_parse_options): Fix warnings.
+
 	* mini-amd64.c: Revert most of the last patch for now as it breaks the build.
 
 2008-06-07  Zoltan Varga  <vargaz@gmail.com>
