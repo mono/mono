@@ -2590,7 +2590,7 @@ class Tester
 
 	public static int Main ()
 	{
-		var tests = from test in typeof (Tester).GetMethods (BindingFlags.Instance | BindingFlags.NonPublic)
+		var tests = from test in typeof (Tester).GetMethods (BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
 					where test.GetParameters ().Length == 0
 					orderby test.Name
 					select RunTest (test);
