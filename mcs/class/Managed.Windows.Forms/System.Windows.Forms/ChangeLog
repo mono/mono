@@ -1,3 +1,8 @@
+2008-06-10  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* InternalWindowManager.cs: Draw minimized windows even if they don't have
+	borders.
+
 2008-06-09  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComboBox.cs, ListBox.cs: Use SetBoundsInternalCore instead of SetBounds.
