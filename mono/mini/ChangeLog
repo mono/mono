@@ -1,3 +1,10 @@
+2008-06-09  Kornél Pál  <kornelpal@gmail.com>
+
+	* main.c: Add and set argv [argc] to NULL to match C specification that fixes
+	possible error when no arguments are passed.
+
+	Contributed under MIT/X11 license.
+
 2008-06-09  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-exceptions.c (ves_icall_get_trace): Skip source locations
