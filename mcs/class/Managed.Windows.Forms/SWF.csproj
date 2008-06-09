@@ -4454,6 +4454,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms.VisualStyles\GtkPlus.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms.VisualStyles\HitTestCode.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -4485,6 +4490,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms.VisualStyles\IntegerProperty.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.VisualStyles\IVisualStyles.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -4610,6 +4620,21 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms.VisualStyles\VisualStyleRenderer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.VisualStyles\VisualStylesEngine.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.VisualStyles\VisualStylesGtkPlus.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.VisualStyles\VisualStylesNative.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

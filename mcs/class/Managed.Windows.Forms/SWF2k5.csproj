@@ -1018,6 +1018,7 @@
     <Compile Include="System.Windows.Forms.VisualStyles\GlyphFontSizingType.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\GlyphType.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\GroupBoxState.cs" />
+    <Compile Include="System.Windows.Forms.VisualStyles\GtkPlus.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\HitTestCode.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\HitTestOptions.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\HorizontalAlign.cs" />
@@ -1025,6 +1026,7 @@
     <Compile Include="System.Windows.Forms.VisualStyles\ImageOrientation.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\ImageSelectType.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\IntegerProperty.cs" />
+    <Compile Include="System.Windows.Forms.VisualStyles\IVisualStyles.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\MarginProperty.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\OffsetType.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\PointProperty.cs" />
@@ -1050,6 +1052,9 @@
     <Compile Include="System.Windows.Forms.VisualStyles\VisualStyleElement.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\VisualStyleInformation.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\VisualStyleRenderer.cs" />
+    <Compile Include="System.Windows.Forms.VisualStyles\VisualStylesEngine.cs" />
+    <Compile Include="System.Windows.Forms.VisualStyles\VisualStylesGtkPlus.cs" />
+    <Compile Include="System.Windows.Forms.VisualStyles\VisualStylesNative.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\VisualStyleState.cs" />
     <Compile Include="System.Windows.Forms.WebBrowserDialogs\AlertCheck.cs" />
     <Compile Include="System.Windows.Forms.WebBrowserDialogs\ConfirmCheck.cs" />
