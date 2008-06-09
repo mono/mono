@@ -24,7 +24,8 @@
 die "Usage: xpidl2cs.pl file.idl [/path/to/idl/]" if scalar(@ARGV) < 1;
 
 my $file = shift;
-my $path = shift if scalar(@ARGV) == 1;
+my $path = shift if scalar(@ARGV) > 0;
+my $nosig = shift if scalar(@ARGV) > 0;
 
 open FILE, '<', $path.$file or die "Can't open file $path$file";
 
@@ -47,6 +48,7 @@ $types{"unsigned,int"} = {name => "uint", out => "out", marshal => ""};
 $types{"PRUint32"} = {name => "UInt32", out => "out", marshal => ""};
 $types{"PRInt64"} = {name => "long", out => "out", marshal => ""};
 $types{"long"} = {name => "int", out => "out", marshal => ""};
+$types{"size_t"} = {name => "int", out => "out", marshal => ""};
 $types{"unsigned,long"} = {name => "uint", out => "out", marshal => ""};
 $types{"float"} = {name => "float", out => "out", marshal => ""};
 $types{"boolean"} = {name => "bool", out => "out", marshal => ""};
@@ -58,23 +60,26 @@ $types{"DOMString"} = {name => "/*DOMString*/ HandleRef", out => "", marshal => 
 $types{"AUTF8String"} = {name => "/*AUTF8String*/ HandleRef", out => "", marshal => ""};
 $types{"ACString"} = {name => "/*ACString*/ HandleRef", out => "", marshal => ""};
 $types{"AString"} = {name => "/*AString*/ HandleRef", out => "", marshal => ""};
-$types{"wstring"} = {name => "string", out => "", marshal => "[MarshalAs(UnmanagedType.LPWStr)] "};
-$types{"nsCIDRef"} = {name => "Guid", out => "out", marshal => "[MarshalAs (UnmanagedType.LPStruct)] "};
-$types{"nsIIDRef"} = {name => "Guid", out => "out", marshal => "[MarshalAs (UnmanagedType.LPStruct)] "};
-$types{"Guid"} = {name => "Guid", out => "out", marshal => "[MarshalAs (UnmanagedType.LPStruct)] "};
-$types{"nsCID"} = {name => "Guid", out => "out", marshal => "[MarshalAs (UnmanagedType.LPStruct)] "};
-$types{"nsCIDPtr"} = {name => "Guid", out => "out", marshal => "[MarshalAs (UnmanagedType.LPStruct)] "};
-$types{"string"} = {name => "string", out => "ref", marshal => "[MarshalAs (UnmanagedType.LPStr)] "};
+$types{"wstring"} = {name => "string", out => "", marshal => "MarshalAs(UnmanagedType.LPWStr) "};
+$types{"nsCIDRef"} = {name => "Guid", out => "out", marshal => "MarshalAs (UnmanagedType.LPStruct) "};
+$types{"nsIIDRef"} = {name => "Guid", out => "out", marshal => "MarshalAs (UnmanagedType.LPStruct) "};
+$types{"Guid"} = {name => "Guid", out => "out", marshal => "MarshalAs (UnmanagedType.LPStruct) "};
+$types{"nsCID"} = {name => "Guid", out => "out", marshal => "MarshalAs (UnmanagedType.LPStruct) "};
+$types{"nsCIDPtr"} = {name => "Guid", out => "out", marshal => "MarshalAs (UnmanagedType.LPStruct) "};
+$types{"string"} = {name => "string", out => "ref", marshal => "MarshalAs (UnmanagedType.LPStr) "};
 $types{"refstring"} = {name => "IntPtr", out => "ref", marshal => ""};
 $types{"charPtr"} = {name => "StringBuilder", out => "", marshal => ""};
 $types{"voidPtr"} = {name => "IntPtr", out => "", marshal => ""};
-$types{"nsISupports"} = {name => "IntPtr", out => "out", marshal =>"[MarshalAs (UnmanagedType.Interface)] "};
+$types{"nsISupports"} = {name => "IntPtr", out => "out", marshal =>"MarshalAs (UnmanagedType.Interface) "};
 $types{"DOMTimeStamp"} = {name => "int", out => "out", marshal => ""};
 $types{"nsWriteSegmentFun"} = {name => "nsIWriteSegmentFunDelegate", out => "", marshal => ""};
 $types{"nsLoadFlags"} = {name => "ulong", out => "out", marshal => ""};
 $types{"nsQIResult"} = {name => "IntPtr", out => "out", marshal => ""};
 $types{"nsIIDPtr[]"} = {name => "IntPtr", out => "out", marshal => " "};
-$types{"others"} = {name => "", out => "out", marshal => "[MarshalAs (UnmanagedType.Interface)] "};
+$types{"PRFileDescStar"} = {name => "IntPtr", out => "out", marshal => " "};
+$types{"PRLibraryStar"} = {name => "IntPtr", out => "out", marshal => " "};
+$types{"FILE"} = {name => "IntPtr", out => "out", marshal => " "};
+$types{"others"} = {name => "", out => "out", marshal => "MarshalAs (UnmanagedType.Interface) "};
 
 $names{"event"} = {name => "_event"};
 
@@ -89,7 +94,8 @@ sub trim{
 sub parse_parent {
     my $x = shift;
 
-    `perl xpidl2cs.pl $x.idl $path`;
+	print "Parsing parent $x\n";
+    `perl xpidl2cs.pl $x.idl $path $nosig`;
 
     open my $f, '<', "$x.cs";
     my $start = 0;
@@ -205,107 +211,145 @@ sub get_params {
     my $x = shift;
     my $ret = '';
     my %list;
-#    print $methods{$x}->{"params"}."\n";
+#print $methods{$x}->{"params"}."\n";
     my @params = split /,/, $methods{$x}->{"params"};
+	my $sig = '';
 	
-#    print "params:@params:\n";
+#print "params:@params:\n";
     for my $param (@params) {
-	my $marshal;
-	my $name;
-	my $type;
-	my $out;
-	my $isout;
+		my $marshal;
+		my $name;
+		my $type;
+		my $out;
+		my $isout;
 
 
 #	print "param:$param:\n";
-	my @p = split (" ", $param);
+		my @p = split (" ", $param);
 #	print "@p\n";
 # need to backtrack to a previous parameter defined by iid_is(name) and 
 # replace the type of this one with that. who the $%#@ came up with this idea? le sigh.
 
-	if (@p[0] =~ m/iid_is/) {
-	    shift @p;
-	    $name = @p[0];
-	    $name =~ s/ //;
-	    $type = $list{$name}->{"type"};
-	    $marshal = $list{$name}->{"marshal"};
-	    $marshal = " " if !$marshal;
-	    $name = "";
-	    until (scalar(@p) == 3) {
-		shift @p;
-	    }
-	}
+		if (@p[0] =~ m/iid_is/) {
+		    shift @p;
+	    	$name = @p[0];
+		    $name =~ s/ //;
+		    $type = $list{$name}->{"type"};
+	    	$marshal = $list{$name}->{"marshal"};
+		    $marshal = " " if !$marshal;
+		    $name = "";
+		    until (scalar(@p) == 3) {
+				shift @p;
+		    }
+		}
+	
+		if (@p[0] =~ m/array/ || @p[1] =~ m/array/) {
+		    until (scalar(@p) == 3) {
+				shift @p;
+		    }
+	    	$isout = 1 if (@p[0] =~ m/out/);
+		    shift @p;
+		    $marshal = &get_marshal (@p[0], "", 1);
+	    	$type = &get_type(@p[0], "", 1);
+		}
 
-	if (@p[0] =~ m/array/ || @p[1] =~ m/array/) {
-	    until (scalar(@p) == 3) {
-		shift @p;
-	    }
-	    $isout = 1 if (@p[0] =~ m/out/);
-	    shift @p;
-	    $marshal = &get_marshal (@p[0], "", 1);
-	    $type = &get_type(@p[0], "", 1);
-	}
-
-	shift @p unless @p[0] =~ /(in|out)/;
-	$isout = 1 if (@p[0] =~ m/out/);
-	shift @p unless scalar(@p) <= 2;
+		shift @p unless @p[0] =~ /(in|out)/;
+		$isout = 1 if (@p[0] =~ m/out/);
+		shift @p unless scalar(@p) <= 2;
 
 	# if an out parameter is of type nsQIResult, that means
 	# it will return a pointer to an interface (that can be anything). 
 	# That means we want to return an IntPtr, and later cast it to
 	# the proper type, so reset type and marshalling
-	if ($isout && @p[0] =~ /nsQIResult/) {
-	    $marshal = "";
-	    $type = "";
-	}
+		if ($isout && @p[0] =~ /nsQIResult/) {
+		    $marshal = "";
+	    	$type = "";
+		}
 
-	if (!$type) {
-	    $type = join ",", @p[0..@p-2];
-	    $type=~s/\[.*\],//;
-	    until (scalar(@p) == 1) {
-		shift @p;
-	    }
+		if (!$type) {
+	    	$type = join ",", @p[0..@p-2];
+		    $type=~s/\[.*\],//;
+		    until (scalar(@p) == 1) {
+				shift @p;
+			}
 
-	    $marshal = &get_marshal ($type);
-	    $marshal = " " if !$marshal;
-	    $type = &get_type ($type);
-	    $name = &get_name (@p[0]);
-	}
-#	print "marshal:$marshal\ttype:$type\tname:$name\n";
-	$out = &get_out($type) if $isout;
+		    $marshal = &get_marshal ($type);
+	    	$marshal = " " if !$marshal;
+		    $type = &get_type ($type);
+		    $name = &get_name (@p[0]);
+		}
+#print "marshal:$marshal\ttype:$type\tname:$name\n";
+		$out = &get_out($type) if $isout;
 
-	$type = &get_type (@p[0]) unless $type;
-	shift @p unless scalar(@p) == 1;
-	$marshal = &get_marshal ($type) unless $marshal;
-	$name = &get_name (@p[0]) unless $name;
+		$type = &get_type (@p[0]) unless $type;
+		shift @p unless scalar(@p) == 1;
+		$marshal = &get_marshal ($type) unless $marshal;
+		$name = &get_name (@p[0]) unless $name;
 
-#	print "marshal:$marshal\ttype:$type\tname:$name\n";
+#print "marshal:$marshal\ttype:$type\tname:$name\n";
 
-	$list{$name} = {
-	    name => $name,
-	    type => $type,
-	    marshal => $marshal,
-	    out => $out
-	};
+		$list{$name} = {
+		    name => $name,
+		    type => $type,
+		    marshal => $marshal,
+	    	out => $out,
+			isout => $isout
+		};
 
-	&add_external ($type);
+		&add_external ($type);
 
-	$ret .= "\n\t\t\t\t$marshal $out $type $name,";
+		$marshal = "" if $marshal eq " ";
+		if ($nosig && $isout && !$sig) {
+
+			$sig .= "[return: $marshal] " if $marshal;
+			$sig .= "$type";
+		} else {
+			if ($isout && $sig) { # if this is an out param and there is already another out 
+								  # parameter turned into a return, the other one needs to be turned
+								  # back into an out param, since the method is of the form void X (out p1, out p2, ...)
+				$sig = "";
+				foreach my $key (keys %list) {
+					$outp = $list{$key};
+	  	
+					if ($outp->{"isout"} eq 1) {
+					
+						$ret .= "\n\t\t\t\t";
+						$ret .= "[".$outp->{"marshal"}."] " if $outp->{"marshal"} eq "";
+						$ret .= $outp->{"out"} . " " .  $outp->{"type"} . " " .  $outp->{"name"} . ",";
+						last;
+					}
+				}
+			}
+			$ret .= "\n\t\t\t\t";
+			$ret .= "[$marshal] " if $marshal;
+			$ret .= "$out $type $name,";
+		}
     }
 #    print "$methods{$x}->{\"type\"}\n";
     if ($x !~ /void/ && &get_type ($methods{$x}->{"type"}) ne "") {
-	$type = $methods{$x}->{"type"};
-	$type =~ s/\[.*\],//;
-	$marshal = &get_marshal ($type);
+		$type = $methods{$x}->{"type"};
+		$type =~ s/\[.*\],//;
+		$marshal = &get_marshal ($type);
 
-	$ret .= "$marshal ";
-	$ret .= &get_out($type);
-	$ret .= " " . &get_type ($type);
-	$ret .= " ret";
-	&add_external ($type);
+		if ($nosig) {
+			$sig .= "[return: $marshal] " if $marshal;
+			$sig .= &get_type ($type);
+			$isout = 0;
+		} else {
+			$ret .= "[$marshal] " if $marshal;
+			$ret .= &get_out($type);
+			$ret .= " " . &get_type ($type);
+			$ret .= " ret";
+		}
+		&add_external ($type);
     }
     $ret =~ s/,$//;
-    return $ret;
+	if ($nosig) {
+		$sig = "void" if $sig eq "" && !$isout;
+		return $sig . " $x (" . $ret . " )";
+	} else {
+		return $ret;
+	}
 }
 
 sub parse_file {
@@ -314,6 +358,7 @@ sub parse_file {
     my $mtype = '';
     my $mparams = '';
     my $start = 0;
+	my $comment = 0;
 
     while (my $line = <FILE>) {
 	chop $line;
@@ -323,6 +368,17 @@ sub parse_file {
 	last if $start && $line =~ /\};/;
 
 	trim ($line);
+	
+	if (index($line, "/*") > -1) {
+		$comment = 1;
+		next;
+	}
+	if ($comment && index($line, "*/") > -1) {
+		$comment = 0;
+		next;
+	}
+	
+	next if $comment;
 	
 	if (index($line, "*") == -1 && index ($line, "//") == -1 && index ($line, "#include") == -1) {
 	    
@@ -469,14 +525,17 @@ sub output {
     print X " {\n";
 
     if ($parent !~ /nsISupports/) {
-	print X &parse_parent ($parent);
+		print X &parse_parent ($parent);
     }
     print X "\n";
     print X "#region $name\n";
 
     my @items = split ",", $interface->{"items"};
     for my $item (@items) {
-	print X "\t\t[PreserveSigAttribute]\n";
+	
+	if (!$nosig) {
+		print X "\t\t[PreserveSigAttribute]\n";
+	}
 	print X "\t\t[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]\n";
 
 	if (&is_property ($item)) {
@@ -487,8 +546,15 @@ sub output {
 
 	    &add_external ($properties{$item}->{"type"});
 ## getter
-
-	    print X "\t\tint get$name ($marshal $out $type ret);\n";
+		print X "\t\t";
+		if ($nosig) {
+			print X "[return: $marshal] " if $marshal;
+			print X "$type get$name ();\n";
+		} else {
+			print X "int get$name (";
+			print X "[$marshal] " if $marshal;
+			print X "$out $type ret);\n";
+		}
 	    print X "\n";
 
 	   $type = &get_type ($properties{$item}->{"type"});
@@ -496,17 +562,30 @@ sub output {
 
 ## setter
 	    if (&has_setter($item)) {
-		print X "\t\t[PreserveSigAttribute]\n";
-		print X "\t\t[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]\n";
-		print X "\t\tint set$name ($marshal $type value);\n";
-		print X "\n";
+			if (!$nosig) {
+				print X "\t\t[PreserveSigAttribute]\n";
+			}
+			print X "\t\t[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]\n";
+			if ($nosig) {
+				print X "\t\tvoid";
+			} else {
+				print X "\t\tint";
+			}
+			print X " set$name (";
+			print X "[$marshal] " if $marshal;
+			print X "$type value);\n";
+			print X "\n";
 	    }
 
 	} else {
 	    print X "\t\t";
-	    print X "int " . $item . " (";
-	    print X &get_params($item);
-	    print X ");";
+		if ($nosig) {
+			print X &get_params($item) .";";
+		} else {
+			print X "int " . $item . " (";
+			print X &get_params($item);
+			print X ");";
+		}
 	    print X "\n\n";
 	}
     }
@@ -537,11 +616,11 @@ sub output {
 
 sub generate_dependents {
     for my $file (keys %dependents) {
-	if (! (-e "$file.cs") && -e "$path$file.idl") {
-	    print "generating $path$file.idl\n";
-	    my $ret = `perl xpidl2cs.pl $file.idl $path`;
-	    print "\n$ret";
-	}
+		if (! (-e "$file.cs") && -e "$path$file.idl") {
+			print "generating $path$file.idl\n";
+			my $ret = `perl xpidl2cs.pl $file.idl $path $nosig`;
+			print "\n$ret";
+		}
     }
 }
 

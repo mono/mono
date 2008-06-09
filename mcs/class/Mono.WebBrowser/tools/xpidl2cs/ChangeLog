@@ -1,3 +1,9 @@
+2008-06-09  Andreia Gaita <avidigal@novell.com> 
+
+	* xpidl2cs.pl: Add more type conversions. Add support for
+	  out-parameter-as-return-value signature type (doesn't add the
+	  PreserveSigAttribute)
+
 2008-06-02  Andreia Gaita <avidigal@novell.com> 
 
 	* xpidl2cs.pl: Add mapping: nsIIDPtr[] to IntPtr, nsCID and nsCIDPtr to
