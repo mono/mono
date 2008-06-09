@@ -1,3 +1,8 @@
+2008-06-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (ves_icall_System_AppDomain_GetAssemblies): Avoid calling
+	runtime functions while holding the domain assemblies lock.
+
 2008-06-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: Reapplied the last bit of the reverted changes.
