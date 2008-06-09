@@ -1444,7 +1444,7 @@ namespace System.Linq.Expressions {
 			return source.IsAssignableTo (target);
 		}
 
-		static void CheckLambda (Type delegateType, Expression body, ReadOnlyCollection<ParameterExpression> parameters)
+		static Expression CheckLambda (Type delegateType, Expression body, ReadOnlyCollection<ParameterExpression> parameters)
 		{
 			if (!delegateType.IsSubclassOf (typeof (System.Delegate)))
 				throw new ArgumentException ("delegateType");
@@ -1462,8 +1462,15 @@ namespace System.Linq.Expressions {
 					throw new ArgumentException (String.Format ("Can not assign a {0} to a {1}", invoke_parameters [i].ParameterType, parameters [i].Type));
 			}
 
-			if (invoke.ReturnType != typeof (void) && !CanAssign (invoke.ReturnType, body.Type))
-				throw new ArgumentException (String.Format ("body type {0} can not be assigned to {1}", body.Type, invoke.ReturnType));
+			if (invoke.ReturnType != typeof (void)) {
+				if (!CanAssign (invoke.ReturnType, body.Type)) {
+					if (invoke.ReturnType == typeof (Expression))
+						return Expression.Quote (body);
+
+					throw new ArgumentException (String.Format ("body type {0} can not be assigned to {1}", body.Type, invoke.ReturnType));
+				}
+			}
+			return body;
 		}
 
 		public static Expression<TDelegate> Lambda<TDelegate> (Expression body, params ParameterExpression [] parameters)
@@ -1478,7 +1485,7 @@ namespace System.Linq.Expressions {
 
 			var ps = parameters.ToReadOnlyCollection ();
 
-			CheckLambda (typeof (TDelegate), body, ps);
+			body = CheckLambda (typeof (TDelegate), body, ps);
 
 			return new Expression<TDelegate> (body, ps);
 		}
@@ -1529,7 +1536,7 @@ namespace System.Linq.Expressions {
 
 			var ps = parameters.ToReadOnlyCollection ();
 
-			CheckLambda (delegateType, body, ps);
+			body = CheckLambda (delegateType, body, ps);
 
 			return CreateExpressionOf (delegateType, body, ps);
 		}

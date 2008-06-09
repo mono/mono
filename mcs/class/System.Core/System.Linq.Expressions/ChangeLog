@@ -1,3 +1,7 @@
+2008-06-09  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs (CheckLambda): quote body if required.
+
 2008-06-07  Jb Evain  <jbevain@novell.com>
 
 	* BinaryExpression.cs (EmitConvertedCoalesce): implement.
