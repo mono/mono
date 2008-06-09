@@ -139,7 +139,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void InvokeWithExpressionLambdaAsArguments ()
 		{
 			var p = Expression.Parameter (typeof (string), "s");

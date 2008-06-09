@@ -259,7 +259,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CallMethodWithExpressionParameter ()
 		{
 			var call = Expression.Call (GetType ().GetMethod ("Bang"), Expression.Constant (42));
