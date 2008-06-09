@@ -12119,6 +12119,27 @@
       </method>
     </type>
   </test>
+  <test name="gtest-autoproperty-05.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.String get_X()">
+        <size>7</size>
+      </method>
+      <method name="Void set_X(System.String)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="M">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-collectioninit-01.cs">
     <type name="Test">
       <method name="Void .ctor()">
