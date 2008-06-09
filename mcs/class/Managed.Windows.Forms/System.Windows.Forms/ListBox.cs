@@ -2050,7 +2050,7 @@ namespace System.Windows.Forms
 		private void UpdateListBoxBounds ()
 		{
 			if (IsHandleCreated)
-				SetBounds (bounds.X, bounds.Y, bounds.Width, IntegralHeight ? SnapHeightToIntegral (requested_height) : requested_height, BoundsSpecified.None);
+				SetBoundsCoreInternal (bounds.X, bounds.Y, bounds.Width, IntegralHeight ? SnapHeightToIntegral (requested_height) : requested_height, BoundsSpecified.None);
 		}
 
 		private void UpdateScrollBars ()

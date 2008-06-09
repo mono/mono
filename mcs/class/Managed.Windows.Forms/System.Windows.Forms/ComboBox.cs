@@ -1100,7 +1100,7 @@ namespace System.Windows.Forms
 		{
 			base.OnHandleCreated (e);
 
-			SetBounds (Left, Top, Width, PreferredHeight, BoundsSpecified.None);
+			SetBoundsCoreInternal (Left, Top, Width, PreferredHeight, BoundsSpecified.None);
 
 			if (textbox_ctrl != null)
 				Controls.AddImplicit (textbox_ctrl);
