@@ -31086,6 +31086,25 @@
       </method>
     </type>
   </test>
+  <test name="test-648.cs">
+    <type name="ParamMismatch.TestCase">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void add_Culprit(System.EventHandler)">
+        <size>1</size>
+      </method>
+      <method name="Void remove_Culprit(System.EventHandler)">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void Finalize()">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="test-65.cs">
     <type name="X">
       <method name="Void .ctor()">
