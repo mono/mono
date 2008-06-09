@@ -208,7 +208,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void LambdaReturningExpression ()
 		{
 			var l = Expression.Lambda<Func<Expression>> (Expression.Constant (42));
