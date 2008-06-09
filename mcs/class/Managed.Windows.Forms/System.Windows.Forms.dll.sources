@@ -862,6 +862,7 @@ System.Windows.Forms.VisualStyles/FontProperty.cs
 System.Windows.Forms.VisualStyles/GlyphFontSizingType.cs
 System.Windows.Forms.VisualStyles/GlyphType.cs
 System.Windows.Forms.VisualStyles/GroupBoxState.cs
+System.Windows.Forms.VisualStyles/GtkPlus.cs
 System.Windows.Forms.VisualStyles/HitTestCode.cs
 System.Windows.Forms.VisualStyles/HitTestOptions.cs
 System.Windows.Forms.VisualStyles/HorizontalAlign.cs
@@ -869,6 +870,7 @@ System.Windows.Forms.VisualStyles/IconEffect.cs
 System.Windows.Forms.VisualStyles/ImageOrientation.cs
 System.Windows.Forms.VisualStyles/ImageSelectType.cs
 System.Windows.Forms.VisualStyles/IntegerProperty.cs
+System.Windows.Forms.VisualStyles/IVisualStyles.cs
 System.Windows.Forms.VisualStyles/MarginProperty.cs
 System.Windows.Forms.VisualStyles/OffsetType.cs
 System.Windows.Forms.VisualStyles/PointProperty.cs
@@ -894,6 +896,9 @@ System.Windows.Forms.VisualStyles/VerticalAlignment.cs
 System.Windows.Forms.VisualStyles/VisualStyleElement.cs
 System.Windows.Forms.VisualStyles/VisualStyleInformation.cs
 System.Windows.Forms.VisualStyles/VisualStyleRenderer.cs
+System.Windows.Forms.VisualStyles/VisualStylesEngine.cs
+System.Windows.Forms.VisualStyles/VisualStylesGtkPlus.cs
+System.Windows.Forms.VisualStyles/VisualStylesNative.cs
 System.Windows.Forms.VisualStyles/VisualStyleState.cs
 System.Windows.Forms.WebBrowserDialogs/AlertCheck.cs
 System.Windows.Forms.WebBrowserDialogs/ConfirmCheck.cs

@@ -67,7 +67,7 @@ namespace System.Windows.Forms.VisualStyles
 				if (!VisualStyleRenderer.IsSupported)
 					return string.Empty;
 
-				return GetData ("AUTHOR");
+				return VisualStyles.VisualStyleInformationAuthor;
 			}
 		}
 
@@ -76,12 +76,7 @@ namespace System.Windows.Forms.VisualStyles
 				if (!VisualStyleRenderer.IsSupported)
 					return string.Empty;
 
-				Text.StringBuilder ThemeName = new Text.StringBuilder (260);
-				Text.StringBuilder ColorName = new Text.StringBuilder (260);
-				Text.StringBuilder SizeName = new Text.StringBuilder (260);
-				UXTheme.GetCurrentThemeName (ThemeName, ThemeName.Capacity, ColorName, ColorName.Capacity, SizeName, SizeName.Capacity);
-
-				return ColorName.ToString ();
+				return VisualStyles.VisualStyleInformationColorScheme;
 			}
 		}
 
@@ -90,7 +85,7 @@ namespace System.Windows.Forms.VisualStyles
 				if (!VisualStyleRenderer.IsSupported)
 					return string.Empty;
 
-				return GetData ("COMPANY");
+				return VisualStyles.VisualStyleInformationCompany;
 			}
 		}
 
@@ -106,13 +101,7 @@ namespace System.Windows.Forms.VisualStyles
 #endif
 					;
 
-				IntPtr theme = UXTheme.OpenThemeData (IntPtr.Zero, "BUTTON");
-
-				uint retval = UXTheme.GetThemeSysColor (theme, 1621);
-				UXTheme.CloseThemeData (theme);
-
-				return System.Drawing.Color.FromArgb ((int)(0x000000FFU & retval),
-					(int)(0x0000FF00U & retval) >> 8, (int)(0x00FF0000U & retval) >> 16);
+				return VisualStyles.VisualStyleInformationControlHighlightHot;
 			}
 		}
 
@@ -121,7 +110,7 @@ namespace System.Windows.Forms.VisualStyles
 				if (!VisualStyleRenderer.IsSupported)
 					return string.Empty;
 
-				return GetData ("COPYRIGHT");
+				return VisualStyles.VisualStyleInformationCopyright;
 			}
 		}
 
@@ -130,7 +119,7 @@ namespace System.Windows.Forms.VisualStyles
 				if (!VisualStyleRenderer.IsSupported)
 					return string.Empty;
 
-				return GetData ("DESCRIPTION");
+				return VisualStyles.VisualStyleInformationDescription;
 			}
 		}
 
@@ -139,7 +128,7 @@ namespace System.Windows.Forms.VisualStyles
 				if (!VisualStyleRenderer.IsSupported)
 					return string.Empty;
 
-				return GetData ("DISPLAYNAME");
+				return VisualStyles.VisualStyleInformationDisplayName;
 			}
 		}
 
@@ -148,17 +137,13 @@ namespace System.Windows.Forms.VisualStyles
 				if (!VisualStyleInformation.IsSupportedByOS) 
 					return false;
 				
-				return (UXTheme.IsAppThemed () && UXTheme.IsThemeActive ());
+				return (VisualStyles.UxThemeIsAppThemed () && VisualStyles.UxThemeIsThemeActive ());
 			}
 		}
  
 		public static bool IsSupportedByOS {
 			get {
-				// Supported OS's should be NT based and at least XP (XP, 2003, Vista)
-				if ((Environment.OSVersion.Platform == PlatformID.Win32NT) && (Environment.OSVersion.Version >= new Version (5, 1))) 
-					return true;
-				
-				return false;
+				return VisualStyles.VisualStyleInformationIsSupportedByOS;
 			}
 		}
  
@@ -167,13 +152,7 @@ namespace System.Windows.Forms.VisualStyles
 				if (!VisualStyleRenderer.IsSupported)
 					return 0;
 
-				IntPtr theme = UXTheme.OpenThemeData (IntPtr.Zero, "BUTTON");
-				int retval;
-				
-				UXTheme.GetThemeSysInt (theme, 1301, out retval);
-				UXTheme.CloseThemeData (theme);
-
-				return retval;
+				return VisualStyles.VisualStyleInformationMinimumColorDepth;
 			}
 		}
 
@@ -182,12 +161,7 @@ namespace System.Windows.Forms.VisualStyles
 				if (!VisualStyleRenderer.IsSupported)
 					return string.Empty;
 
-				Text.StringBuilder ThemeName = new Text.StringBuilder (260);
-				Text.StringBuilder ColorName = new Text.StringBuilder (260);
-				Text.StringBuilder SizeName = new Text.StringBuilder (260);
-				UXTheme.GetCurrentThemeName (ThemeName, ThemeName.Capacity, ColorName, ColorName.Capacity, SizeName, SizeName.Capacity);
-
-				return SizeName.ToString ();
+				return VisualStyles.VisualStyleInformationSize;
 			}
 		}
 
@@ -196,13 +170,7 @@ namespace System.Windows.Forms.VisualStyles
 				if (!VisualStyleRenderer.IsSupported)
 					return false;
 
-				IntPtr theme = UXTheme.OpenThemeData (IntPtr.Zero, "BUTTON");
-				bool retval;
-
-				retval = UXTheme.GetThemeSysBool (theme, 1001) == 0 ? false : true;
-				UXTheme.CloseThemeData (theme);
-
-				return retval;
+				return VisualStyles.VisualStyleInformationSupportsFlatMenus;
 			}
 		}
 
@@ -212,13 +180,7 @@ namespace System.Windows.Forms.VisualStyles
 				if (!VisualStyleRenderer.IsSupported)
 					return SystemColors.ControlDarkDark;
 
-				IntPtr theme = UXTheme.OpenThemeData (IntPtr.Zero, "EDIT");
-
-				uint retval = UXTheme.GetThemeSysColor (theme, 1611);
-				UXTheme.CloseThemeData (theme);
-
-				return System.Drawing.Color.FromArgb ((int)(0x000000FFU & retval),
-						     (int)(0x0000FF00U & retval) >> 8, (int)(0x00FF0000U & retval) >> 16);
+				return VisualStyles.VisualStyleInformationTextControlBorder;
 			}
 		}
 
@@ -227,7 +189,7 @@ namespace System.Windows.Forms.VisualStyles
 				if (!VisualStyleRenderer.IsSupported)
 					return string.Empty;
 
-				return GetData ("URL");
+				return VisualStyles.VisualStyleInformationUrl;
 			}
 		}
 
@@ -236,25 +198,16 @@ namespace System.Windows.Forms.VisualStyles
 				if (!VisualStyleRenderer.IsSupported)
 					return string.Empty;
 
-				return GetData ("VERSION");
+				return VisualStyles.VisualStyleInformationVersion;
 			}
 		}
 		#endregion
-		
-		#region Internal Helper Methods
-		internal static string GetData (string propertyName)
-		{
-			Text.StringBuilder ThemeName = new Text.StringBuilder (260);
-			Text.StringBuilder ColorName = new Text.StringBuilder (260);
-			Text.StringBuilder SizeName = new Text.StringBuilder (260);
 
-			UXTheme.GetCurrentThemeName (ThemeName, ThemeName.Capacity, ColorName, ColorName.Capacity, SizeName, SizeName.Capacity);
-
-			Text.StringBuilder PropertyValue = new Text.StringBuilder (260);
-
-			UXTheme.GetThemeDocumentationProperty (ThemeName.ToString(), propertyName, PropertyValue, PropertyValue.Capacity);
-
-			return PropertyValue.ToString ();
+		#region Private Static Properties
+		static IVisualStyles VisualStyles {
+			get {
+				return VisualStylesEngine.Instance;
+			}
 		}
 		#endregion
 	}

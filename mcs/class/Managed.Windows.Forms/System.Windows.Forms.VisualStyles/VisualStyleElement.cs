@@ -118,7 +118,14 @@ namespace System.Windows.Forms.VisualStyles
 				public static VisualStyleElement MixedPressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 3, 11); } }
 				public static VisualStyleElement UncheckedDisabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 3, 4); } }
 				public static VisualStyleElement UncheckedHot { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 3, 2); } }
-				public static VisualStyleElement UncheckedNormal { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 3, 1); } }
+				public static VisualStyleElement UncheckedNormal {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_CHECKBOX,
+							(int)CHECKBOXSTATES.CBS_UNCHECKEDNORMAL);
+					}
+				}
 				public static VisualStyleElement UncheckedPressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 3, 3); } }
 			}
 			public static class GroupBox
@@ -1187,5 +1194,13 @@ namespace System.Windows.Forms.VisualStyles
 		}
 		#endregion
 		#endregion
+	}
+	enum BUTTONPARTS
+	{
+		BP_CHECKBOX = 3
+	}
+	enum CHECKBOXSTATES
+	{
+		CBS_UNCHECKEDNORMAL = 1
 	}
 }

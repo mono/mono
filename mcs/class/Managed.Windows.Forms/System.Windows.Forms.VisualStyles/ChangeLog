@@ -1,3 +1,11 @@
+2008-06-10  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* GtkPlus.cs, IVisualStyles.cs, VisualStylesEngine.cs,
+	VisualStylesGtkPlus.cs, VisualStylesNative.cs: Added.
+	* VisualStyleElement.cs: Added some named constants.
+	* VisualStyleInformation.cs, VisualStyleRenderer.cs: Refactored to allow
+	multiple implementations.
+
 2008-05-30  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* VisualStyleElement.cs: Added support for the ScrollBar hover style.

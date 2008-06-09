@@ -84,11 +84,11 @@ namespace System.Windows.Forms.VisualStyles
 			if (IsElementKnownToBeSupported (element.ClassName, element.Part, element.State))
 				return true;
 
-			IntPtr theme = UXTheme.OpenThemeData (IntPtr.Zero, element.ClassName);
+			IntPtr theme = VisualStyles.UxThemeOpenThemeData (IntPtr.Zero, element.ClassName);
 			if (theme == IntPtr.Zero)
 				return false;
-			bool retval = UXTheme.IsThemePartDefined (theme, element.Part, 0);
-			UXTheme.CloseThemeData (theme);
+			bool retval = VisualStyles.UxThemeIsThemePartDefined (theme, element.Part);
+			VisualStyles.UxThemeCloseThemeData (theme);
 
 			return retval;
 		}
@@ -100,10 +100,7 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (bounds);
-
-			last_hresult = UXTheme.DrawThemeBackground (theme, dc.GetHdc (), this.part, this.state, ref BoundsRect, IntPtr.Zero);
-			dc.ReleaseHdc ();
+			last_hresult = VisualStyles.UxThemeDrawThemeBackground (theme, dc, this.part, this.state, bounds);
 		}
 
 		public void DrawBackground (IDeviceContext dc, Rectangle bounds, Rectangle clipRectangle)
@@ -111,24 +108,17 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (bounds);
-			XplatUIWin32.RECT ClipRect = XplatUIWin32.RECT.FromRectangle (clipRectangle);
-
-			last_hresult = UXTheme.DrawThemeBackground (theme, dc.GetHdc (), this.part, this.state, ref BoundsRect, ref ClipRect);
-			dc.ReleaseHdc ();
+			last_hresult = VisualStyles.UxThemeDrawThemeBackground (theme, dc, this.part, this.state, bounds, clipRectangle);
 		}
 
 		public Rectangle DrawEdge (IDeviceContext dc, Rectangle bounds, Edges edges, EdgeStyle style, EdgeEffects effects)
 		{
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
-
-			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (bounds);
-			XplatUIWin32.RECT retval;
-
-			last_hresult = UXTheme.DrawThemeEdge (theme, dc.GetHdc (), this.part, this.state, ref BoundsRect, (uint)style, (uint)edges + (uint)effects, out retval);
-			dc.ReleaseHdc ();
-			return retval.ToRectangle ();
+			
+			Rectangle result;
+			last_hresult = VisualStyles.UxThemeDrawThemeEdge (theme, dc, this.part, this.state, bounds, edges, style, effects, out result);
+			return result;
 		}
 
 		public void DrawImage (Graphics g, Rectangle bounds, ImageList imageList, int imageIndex)
@@ -158,13 +148,7 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (bounds);
-
-			using (Graphics g = Graphics.FromHwnd (childControl.Handle)) {
-				IntPtr hdc = g.GetHdc ();
-				last_hresult = UXTheme.DrawThemeParentBackground (childControl.Handle, hdc, ref BoundsRect);
-				g.ReleaseHdc (hdc);
-			}
+			last_hresult = VisualStyles.UxThemeDrawThemeParentBackground (dc, bounds, childControl);
 		}
 
 		public void DrawText (IDeviceContext dc, Rectangle bounds, string textToDraw, bool drawDisabled, TextFormatFlags flags)
@@ -172,10 +156,7 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (bounds);
-
-			last_hresult = UXTheme.DrawThemeText (theme, dc.GetHdc (), this.part, this.state, textToDraw, textToDraw.Length, (uint)flags, 0, ref BoundsRect);
-			dc.ReleaseHdc ();
+			last_hresult = VisualStyles.UxThemeDrawThemeText (theme, dc, this.part, this.state, textToDraw, flags, bounds);
 		}
 
 		public void DrawText (IDeviceContext dc, Rectangle bounds, string textToDraw, bool drawDisabled)
@@ -193,13 +174,9 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (bounds);
-			XplatUIWin32.RECT retval;
-
-			last_hresult = UXTheme.GetThemeBackgroundContentRect (theme, dc.GetHdc (), this.part, this.state, ref BoundsRect, out retval);
-			dc.ReleaseHdc ();
-
-			return retval.ToRectangle ();
+			Rectangle result;
+			last_hresult = VisualStyles.UxThemeGetThemeBackgroundContentRect (theme, dc, this.part, this.state, bounds, out result);
+			return result;
 		}
 
 		public Rectangle GetBackgroundExtent (IDeviceContext dc, Rectangle contentBounds)
@@ -207,13 +184,9 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (contentBounds);
-			XplatUIWin32.RECT retval = new XplatUIWin32.RECT ();
-
-			last_hresult = UXTheme.GetThemeBackgroundExtent (theme, dc.GetHdc (), this.part, this.state, ref BoundsRect, ref retval);
-			dc.ReleaseHdc ();
-
-			return retval.ToRectangle ();
+			Rectangle result;
+			last_hresult = VisualStyles.UxThemeGetThemeBackgroundExtent (theme, dc, this.part, this.state, contentBounds, out result);
+			return result;
 		}
 
 		[System.Security.SuppressUnmanagedCodeSecurity]
@@ -222,13 +195,9 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (bounds);
-			IntPtr retval;
-
-			last_hresult = UXTheme.GetThemeBackgroundRegion (theme, dc.GetHdc (), this.part, this.state, ref BoundsRect, out retval);
-			dc.ReleaseHdc ();
-
-			return Region.FromHrgn (retval);
+			Region result;
+			last_hresult = VisualStyles.UxThemeGetThemeBackgroundRegion (theme, dc, this.part, this.state, bounds, out result);
+			return result;
 		}
 
 		public bool GetBoolean (BooleanProperty prop)
@@ -236,10 +205,9 @@ namespace System.Windows.Forms.VisualStyles
 			if (!Enum.IsDefined (typeof (BooleanProperty), prop))
 				throw new System.ComponentModel.InvalidEnumArgumentException ("prop", (int)prop, typeof (BooleanProperty));
 
-			int retval;
-			last_hresult = UXTheme.GetThemeBool (theme, this.part, this.state, (int)prop, out retval);
-
-			return retval == 0 ? false : true;
+			bool result;
+			last_hresult = VisualStyles.UxThemeGetThemeBool (theme, this.part, this.state, prop, out result);
+			return result;
 		}
 
 		public Color GetColor (ColorProperty prop)
@@ -247,11 +215,9 @@ namespace System.Windows.Forms.VisualStyles
 			if (!Enum.IsDefined (typeof (ColorProperty), prop))
 				throw new System.ComponentModel.InvalidEnumArgumentException ("prop", (int)prop, typeof (ColorProperty));
 
-			int retval;
-			last_hresult = UXTheme.GetThemeColor (theme, this.part, this.state, (int)prop, out retval);
-
-			return System.Drawing.Color.FromArgb ((int)(0x000000FFU & retval),
-			     (int)(0x0000FF00U & retval) >> 8, (int)(0x00FF0000U & retval) >> 16);
+			Color result;
+			last_hresult = VisualStyles.UxThemeGetThemeColor (theme, this.part, this.state, prop, out result);
+			return result;
 		}
 		
 		public int GetEnumValue (EnumProperty prop)
@@ -259,10 +225,9 @@ namespace System.Windows.Forms.VisualStyles
 			if (!Enum.IsDefined (typeof (EnumProperty), prop))
 				throw new System.ComponentModel.InvalidEnumArgumentException ("prop", (int)prop, typeof (EnumProperty));
 
-			int retval;
-			last_hresult = UXTheme.GetThemeEnumValue (theme, this.part, this.state, (int)prop, out retval);
-
-			return retval;
+			int result;
+			last_hresult = VisualStyles.UxThemeGetThemeEnumValue (theme, this.part, this.state, prop, out result);
+			return result;
 		}
 		
 		public string GetFilename (FilenameProperty prop)
@@ -270,10 +235,10 @@ namespace System.Windows.Forms.VisualStyles
 			if (!Enum.IsDefined (typeof (FilenameProperty), prop))
 				throw new System.ComponentModel.InvalidEnumArgumentException ("prop", (int)prop, typeof (FilenameProperty));
 
-			Text.StringBuilder sb = new Text.StringBuilder (255);
-			last_hresult = UXTheme.GetThemeFilename (theme, this.part, this.state, (int)prop, sb, sb.Capacity);
+			string result;
+			last_hresult = VisualStyles.UxThemeGetThemeFilename (theme, this.part, this.state, prop, out result);
+			return result;
 
-			return sb.ToString ();
 		}
 		
 		[MonoTODO(@"I can't get MS's to return anything but null, so I can't really get this one right")]
@@ -300,10 +265,9 @@ namespace System.Windows.Forms.VisualStyles
 			if (!Enum.IsDefined (typeof (IntegerProperty), prop))
 				throw new System.ComponentModel.InvalidEnumArgumentException ("prop", (int)prop, typeof (IntegerProperty));
 
-			int retval;
-			last_hresult = UXTheme.GetThemeInt (theme, this.part, this.state, (int)prop, out retval);
-
-			return retval;
+			int result;
+			last_hresult = VisualStyles.UxThemeGetThemeInt (theme, this.part, this.state, prop, out result);
+			return result;
 		}
 		
 		[MonoTODO(@"MS's causes a PInvokeStackUnbalance on me, so this is not verified against MS.")]
@@ -314,14 +278,9 @@ namespace System.Windows.Forms.VisualStyles
 			if (!Enum.IsDefined (typeof (MarginProperty), prop))
 				throw new System.ComponentModel.InvalidEnumArgumentException ("prop", (int)prop, typeof (MarginProperty));
 
-
-			UXTheme.MARGINS retval = new UXTheme.MARGINS ();
-			XplatUIWin32.RECT BoundsRect;
-
-			last_hresult = UXTheme.GetThemeMargins (theme, dc.GetHdc (), this.part, this.state, (int)prop, out BoundsRect, out retval);
-			dc.ReleaseHdc ();
-
-			return retval.ToPadding();
+			Padding result;
+			last_hresult = VisualStyles.UxThemeGetThemeMargins (theme, dc, this.part, this.state, prop, out result);
+			return result;
 		}
 		
 		public Size GetPartSize (IDeviceContext dc, Rectangle bounds, ThemeSizeType type)
@@ -331,13 +290,9 @@ namespace System.Windows.Forms.VisualStyles
 			if (!Enum.IsDefined (typeof (ThemeSizeType), type))
 				throw new System.ComponentModel.InvalidEnumArgumentException ("prop", (int)type, typeof (ThemeSizeType));
 
-			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (bounds);
-			UXTheme.SIZE retval;
-
-			last_hresult = UXTheme.GetThemePartSize (theme, dc.GetHdc (), this.part, this.state, ref BoundsRect, (int)type, out retval);
-			dc.ReleaseHdc ();
-
-			return retval.ToSize();
+			Size result;
+			last_hresult = VisualStyles.UxThemeGetThemePartSize (theme, dc, this.part, this.state, bounds, type, out result);
+			return result;
 		}
 
 		public Size GetPartSize (IDeviceContext dc, ThemeSizeType type)
@@ -347,12 +302,9 @@ namespace System.Windows.Forms.VisualStyles
 			if (!Enum.IsDefined (typeof (ThemeSizeType), type))
 				throw new System.ComponentModel.InvalidEnumArgumentException ("prop", (int)type, typeof (ThemeSizeType));
 
-			UXTheme.SIZE retval;
-
-			last_hresult = UXTheme.GetThemePartSize (theme, dc.GetHdc (), this.part, this.state, 0, (int)type, out retval);
-			dc.ReleaseHdc ();
-
-			return retval.ToSize ();
+			Size result;
+			last_hresult = VisualStyles.UxThemeGetThemePartSize (theme, dc, this.part, this.state, type, out result);
+			return result;
 		}
 
 		public Point GetPoint (PointProperty prop)
@@ -360,10 +312,9 @@ namespace System.Windows.Forms.VisualStyles
 			if (!Enum.IsDefined (typeof (PointProperty), prop))
 				throw new System.ComponentModel.InvalidEnumArgumentException ("prop", (int)prop, typeof (PointProperty));
 
-			POINT retval;
-			last_hresult = UXTheme.GetThemePosition (theme, this.part, this.state, (int)prop, out retval);
-
-			return retval.ToPoint();
+			Point result;
+			last_hresult = VisualStyles.UxThemeGetThemePosition (theme, this.part, this.state, prop, out result);
+			return result;
 		}
 		
 		[MonoTODO(@"Can't find any values that return anything on MS to test against")]
@@ -372,10 +323,9 @@ namespace System.Windows.Forms.VisualStyles
 			if (!Enum.IsDefined (typeof (StringProperty), prop))
 				throw new System.ComponentModel.InvalidEnumArgumentException ("prop", (int)prop, typeof (StringProperty));
 
-			Text.StringBuilder sb = new Text.StringBuilder (255);
-			last_hresult = UXTheme.GetThemeString (theme, this.part, this.state, (int)prop, sb, sb.Capacity);
-
-			return sb.ToString ();
+			string result;
+			last_hresult = VisualStyles.UxThemeGetThemeString (theme, this.part, this.state, prop, out result);
+			return result;
 		}
 		
 		public Rectangle GetTextExtent (IDeviceContext dc, Rectangle bounds, string textToDraw, TextFormatFlags flags)
@@ -383,13 +333,9 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (bounds);
-			XplatUIWin32.RECT retval;
-			
-			last_hresult = UXTheme.GetThemeTextExtent (theme, dc.GetHdc (), this.part, this.state, textToDraw, textToDraw.Length, (int)flags, ref BoundsRect, out retval);
-			dc.ReleaseHdc ();
-
-			return retval.ToRectangle ();
+			Rectangle result;
+			last_hresult = VisualStyles.UxThemeGetThemeTextExtent (theme, dc, this.part, this.state, textToDraw, flags, bounds, out result);
+			return result;
 		}
 
 		public Rectangle GetTextExtent (IDeviceContext dc, string textToDraw, TextFormatFlags flags)
@@ -397,12 +343,9 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			XplatUIWin32.RECT retval;
-			
-			last_hresult = UXTheme.GetThemeTextExtent (theme, dc.GetHdc (), this.part, this.state, textToDraw, textToDraw.Length, (int)flags, 0, out retval);
-			dc.ReleaseHdc ();
-
-			return retval.ToRectangle ();
+			Rectangle result;
+			last_hresult = VisualStyles.UxThemeGetThemeTextExtent (theme, dc, this.part, this.state, textToDraw, flags, out result);
+			return result;
 		}
 		
 		public TextMetrics GetTextMetrics (IDeviceContext dc)
@@ -410,34 +353,9 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc", "dc cannot be null.");
 
-			XplatUIWin32.TEXTMETRIC metrics;
-			
-			last_hresult = UXTheme.GetThemeTextMetrics (theme, dc.GetHdc (), this.part, this.state, out metrics);
-			dc.ReleaseHdc ();
-
-			TextMetrics retval = new TextMetrics ();
-			retval.Ascent = metrics.tmAscent;
-			retval.AverageCharWidth = metrics.tmAveCharWidth;
-			retval.BreakChar =(char)metrics.tmBreakChar;
-			retval.CharSet = (TextMetricsCharacterSet)metrics.tmCharSet;
-			retval.DefaultChar = (char)metrics.tmDefaultChar;
-			retval.Descent = metrics.tmDescent;
-			retval.DigitizedAspectX = metrics.tmDigitizedAspectX;
-			retval.DigitizedAspectY = metrics.tmDigitizedAspectY;
-			retval.ExternalLeading = metrics.tmExternalLeading;
-			retval.FirstChar = (char)metrics.tmFirstChar;
-			retval.Height = metrics.tmHeight;
-			retval.InternalLeading = metrics.tmInternalLeading;
-			retval.Italic = metrics.tmItalic == 0 ? false : true;
-			retval.LastChar = (char)metrics.tmLastChar;
-			retval.MaxCharWidth = metrics.tmMaxCharWidth;
-			retval.Overhang = metrics.tmOverhang;
-			retval.PitchAndFamily = (TextMetricsPitchAndFamilyValues)metrics.tmPitchAndFamily;
-			retval.StruckOut = metrics.tmStruckOut == 0 ? false : true;
-			retval.Underlined = metrics.tmUnderlined == 0 ? false : true;
-			retval.Weight = metrics.tmWeight;
-
-			return retval;
+			TextMetrics result;
+			last_hresult = VisualStyles.UxThemeGetThemeTextMetrics (theme, dc, this.part, this.state, out result);
+			return result;
 		}
 
 		public HitTestCode HitTestBackground (IDeviceContext dc, Rectangle backgroundRectangle, IntPtr hRgn, Point pt, HitTestOptions options)
@@ -445,13 +363,9 @@ namespace System.Windows.Forms.VisualStyles
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (backgroundRectangle);
-			int retval;
-
-			last_hresult = UXTheme.HitTestThemeBackground (theme, dc.GetHdc (), this.part, this.state, (uint)options, ref BoundsRect, hRgn, new POINT(pt.X, pt.Y), out retval);
-			dc.ReleaseHdc ();
-
-			return (HitTestCode)retval;
+			HitTestCode result;
+			last_hresult = VisualStyles.UxThemeHitTestThemeBackground(theme, dc, this.part, this.state, options, backgroundRectangle, hRgn, pt, out result);
+			return result;
 		}
 
 		public HitTestCode HitTestBackground (Graphics g, Rectangle backgroundRectangle, Region region, Point pt, HitTestOptions options)
@@ -471,15 +385,13 @@ namespace System.Windows.Forms.VisualStyles
 
 		public bool IsBackgroundPartiallyTransparent ()
 		{
-			int retval = UXTheme.IsThemeBackgroundPartiallyTransparent (theme, this.part, this.state);
-
-			return retval == 0 ? false : true;
+			return VisualStyles.UxThemeIsThemeBackgroundPartiallyTransparent (theme, this.part, this.state);
 		}
 
 		public void SetParameters (string className, int part, int state)
 		{
 			if (theme != IntPtr.Zero)
-				last_hresult = UXTheme.CloseThemeData (theme);
+				last_hresult = VisualStyles.UxThemeCloseThemeData (theme);
 
 			if (!IsSupported)
 				throw new InvalidOperationException ("Visual Styles are not enabled.");
@@ -487,11 +399,11 @@ namespace System.Windows.Forms.VisualStyles
 			this.class_name = className;
 			this.part = part;
 			this.state = state;
-			theme = UXTheme.OpenThemeData (IntPtr.Zero, this.class_name);
+			theme = VisualStyles.UxThemeOpenThemeData (IntPtr.Zero, this.class_name);
 
 			if (IsElementKnownToBeSupported (className, part, state))
 				return;
-			if (theme == IntPtr.Zero || !UXTheme.IsThemePartDefined (theme, this.part, 0))
+			if (theme == IntPtr.Zero || !VisualStyles.UxThemeIsThemePartDefined (theme, this.part))
 				throw new ArgumentException ("This element is not supported by the current visual style.");
 		}
 
@@ -501,17 +413,16 @@ namespace System.Windows.Forms.VisualStyles
 		}
 		#endregion
 
+		#region Private Properties
+		internal static IVisualStyles VisualStyles {
+			get { return VisualStylesEngine.Instance; }
+		}
+		#endregion
+
 		#region Private Instance Methods
 		internal void DrawBackgroundExcludingArea (IDeviceContext dc, Rectangle bounds, Rectangle excludedArea)
 		{
-			XplatUIWin32.RECT bounds_rect = XplatUIWin32.RECT.FromRectangle (bounds);
-			IntPtr hdc = dc.GetHdc ();
-			XplatUIWin32.Win32ExcludeClipRect (hdc, excludedArea.Left, excludedArea.Top, excludedArea.Right, excludedArea.Bottom);
-			UXTheme.DrawThemeBackground (theme, hdc, part, state, ref bounds_rect, IntPtr.Zero);
-			IntPtr hrgn = XplatUIWin32.Win32CreateRectRgn (excludedArea.Left, excludedArea.Top, excludedArea.Right, excludedArea.Bottom);
-			XplatUIWin32.Win32ExtSelectClipRgn (hdc, hrgn, (int)ClipCombineMode.RGN_OR);
-			XplatUIWin32.Win32DeleteObject (hrgn);
-			dc.ReleaseHdc ();
+			VisualStyles.VisualStyleRendererDrawBackgroundExcludingArea (theme, dc, part, state, bounds, excludedArea);
 		}
 		#endregion
 
@@ -530,7 +441,7 @@ namespace System.Windows.Forms.VisualStyles
 			{
 				if (VisualStyleRenderer.theme == IntPtr.Zero)
 					return;
-				UXTheme.CloseThemeData (VisualStyleRenderer.theme);
+				VisualStyles.UxThemeCloseThemeData (VisualStyleRenderer.theme);
 			}
 		}
 		#endregion

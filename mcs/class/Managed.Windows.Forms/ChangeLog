@@ -1,3 +1,8 @@
+2008-06-10  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* System.Windows.Forms.dll.sources: Added GtkPlus.cs, IVisualStyles.cs,
+	VisualStylesEngine.cs, VisualStylesGtkPlus.cs, VisualStylesNative.cs.
+
 2008-06-03  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* SWF2k5-tests.csproj: Updated.
