@@ -1,3 +1,8 @@
+2008-06-09  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #397068
+	* expression.cs: Check both operand types when predefined operator is used.
+
 2008-06-05  Martin Baulig  <martin@ximian.com>
 
 	Merged the `debugger-kahalo' branch.

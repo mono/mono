@@ -1671,12 +1671,12 @@ namespace Mono.CSharp {
 				return b;
 			}
 
-			public bool IsPrimitiveApplicable (Type type)
+			public bool IsPrimitiveApplicable (Type ltype, Type rtype)
 			{
 				//
 				// We are dealing with primitive types only
 				//
-				return left == type;
+				return left == ltype && ltype == rtype;
 			}
 
 			public virtual bool IsApplicable (EmitContext ec, Expression lexpr, Expression rexpr)
@@ -2936,6 +2936,7 @@ namespace Mono.CSharp {
 		{
 			PredefinedOperator best_operator = null;
 			Type l = left.Type;
+			Type r = right.Type;
 			Operator oper_mask = oper & ~Operator.ValuesOnlyMask;
 
 			foreach (PredefinedOperator po in operators) {
@@ -2943,7 +2944,7 @@ namespace Mono.CSharp {
 					continue;
 
 				if (primitives_only) {
-					if (!po.IsPrimitiveApplicable (l))
+					if (!po.IsPrimitiveApplicable (l, r))
 						continue;
 				} else {
 					if (!po.IsApplicable (ec, left, right))
