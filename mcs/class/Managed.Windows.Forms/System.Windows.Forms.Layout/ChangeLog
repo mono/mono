@@ -1,3 +1,8 @@
+2008-06-09  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayoutSettingsTypeConverter.cs: Fix spelling of Columns.
+	Accomadate .Net's use of culture separator.  [Fixes bug #398274]
+
 2008-06-03  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DefaultLayout.cs: It appears that TableLayoutPanels are immune to

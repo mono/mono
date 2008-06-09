@@ -88,7 +88,7 @@ namespace System.Windows.Forms.Layout
 			}
 
 			
-			xw.WriteStartElement ("Columms");
+			xw.WriteStartElement ("Columns");
 			xw.WriteAttributeString ("Styles", String.Join (",", styles.ToArray ()));
 			xw.WriteEndElement ();
 			
@@ -157,9 +157,9 @@ namespace System.Windows.Forms.Layout
 				if (node.Attributes["Styles"] == null)
 					continue;
 				string styles = node.Attributes["Styles"].Value;
-				if (styles == null)
+				if (string.IsNullOrEmpty (styles))
 					continue;
-				string[] list = styles.Split (',');
+				string[] list = BuggySplit (styles);
 				for (int i = 0; i < list.Length; i+=2) {
 					float width = 0f;
 					SizeType type = (SizeType) Enum.Parse (typeof (SizeType), list[i]);
@@ -175,9 +175,9 @@ namespace System.Windows.Forms.Layout
 				if (node.Attributes["Styles"] == null)
 					continue;
 				string styles = node.Attributes["Styles"].Value;
-				if (styles == null)
+				if (string.IsNullOrEmpty(styles))
 					continue;
-				string[] list = styles.Split (',');
+				string[] list = BuggySplit (styles);
 				for (int i = 0; i < list.Length; i += 2) {
 					float height = 0f;
 					SizeType type = (SizeType) Enum.Parse (typeof (SizeType), list[i]);
@@ -194,6 +194,41 @@ namespace System.Windows.Forms.Layout
 				int.TryParse (attValue, out val);
 			}
 			return val;
+		}
+
+		// .Net accidently uses the local culture separator, so
+		// Percent,50.0,Percent,50.0	can be
+		// Percent,50,0,Percent,50,0
+		// Make sure we can handle this
+		private string[] BuggySplit (string s)
+		{
+			List<string> l = new List<string> ();
+			
+			string[] split = s.Split (',');
+			
+			for (int i = 0; i < split.Length; i++) {
+				switch (split[i].ToLowerInvariant ()) {
+					case "autosize":
+					case "absolute":
+					case "percent":
+						l.Add (split[i]);
+						break;
+					default:
+						if (i + 1 < split.Length) {
+							float test;
+							
+							if (float.TryParse (split[i + 1], out test)) {
+								l.Add (string.Format ("{0}.{1}", split[i], split[i + 1]));
+								i++;	
+							} else
+								l.Add (split[i]);
+						} else
+							l.Add (split[i]);
+						break;
+				}
+			}
+			
+			return l.ToArray ();
 		}
 	}
 }
