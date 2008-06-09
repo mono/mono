@@ -95,7 +95,7 @@ namespace System.Windows.Forms.Layout
 				// Resize any AutoSize controls to their preferred size
 				if (c.AutoSize == true) {
 					Size new_size = c.GetPreferredSize (c.Size);
-					c.SetBounds (c.Left, c.Top, new_size.Width, new_size.Height, BoundsSpecified.None);
+					c.SetBoundsCoreInternal (c.Left, c.Top, new_size.Width, new_size.Height, BoundsSpecified.None);
 				}
 
 				switch (settings.FlowDirection) {
@@ -114,7 +114,7 @@ namespace System.Windows.Forms.Layout
 
 						// Offset the right margin and set the control to our point
 						currentLocation.Offset (0, c.Margin.Bottom * -1);
-						c.SetBounds (currentLocation.X + c.Margin.Left, currentLocation.Y - c.Height, c.Width, c.Height, BoundsSpecified.None);
+						c.SetBoundsCoreInternal (currentLocation.X + c.Margin.Left, currentLocation.Y - c.Height, c.Width, c.Height, BoundsSpecified.None);
 
 						// Update our location pointer
 						currentLocation.Y -= (c.Height + c.Margin.Top);
@@ -135,7 +135,7 @@ namespace System.Windows.Forms.Layout
 
 						// Offset the left margin and set the control to our point
 						currentLocation.Offset (c.Margin.Left, 0);
-						c.SetBounds (currentLocation.X, currentLocation.Y + c.Margin.Top, c.Width, c.Height, BoundsSpecified.None);
+						c.SetBoundsCoreInternal (currentLocation.X, currentLocation.Y + c.Margin.Top, c.Width, c.Height, BoundsSpecified.None);
 
 						// Update our location pointer
 						currentLocation.X += c.Width + c.Margin.Right;
@@ -155,7 +155,7 @@ namespace System.Windows.Forms.Layout
 
 						// Offset the right margin and set the control to our point
 						currentLocation.Offset (c.Margin.Right * -1, 0);
-						c.SetBounds (currentLocation.X - c.Width, currentLocation.Y + c.Margin.Top, c.Width, c.Height, BoundsSpecified.None);
+						c.SetBoundsCoreInternal (currentLocation.X - c.Width, currentLocation.Y + c.Margin.Top, c.Width, c.Height, BoundsSpecified.None);
 
 						// Update our location pointer
 						currentLocation.X -= (c.Width + c.Margin.Left);
@@ -175,7 +175,7 @@ namespace System.Windows.Forms.Layout
 
 						// Offset the top margin and set the control to our point
 						currentLocation.Offset (0, c.Margin.Top);
-						c.SetBounds (currentLocation.X + c.Margin.Left, currentLocation.Y, c.Width, c.Height, BoundsSpecified.None);
+						c.SetBoundsCoreInternal (currentLocation.X + c.Margin.Left, currentLocation.Y, c.Width, c.Height, BoundsSpecified.None);
 
 						// Update our location pointer
 						currentLocation.Y += c.Height + c.Margin.Bottom;
@@ -240,15 +240,15 @@ namespace System.Windows.Forms.Layout
 			// Set the new heights for each control
 			foreach (Control c in row)
 				if (allDockFill && noAuto)
-					c.SetBounds (c.Left, c.Top, c.Width, 0, BoundsSpecified.None);
+					c.SetBoundsCoreInternal (c.Left, c.Top, c.Width, 0, BoundsSpecified.None);
 				else if (c.Dock == DockStyle.Fill || ((c.Anchor & AnchorStyles.Top) == AnchorStyles.Top) && ((c.Anchor & AnchorStyles.Bottom) == AnchorStyles.Bottom))
-					c.SetBounds (c.Left, c.Top, c.Width, rowBottom - c.Top - c.Margin.Bottom, BoundsSpecified.None);
+					c.SetBoundsCoreInternal (c.Left, c.Top, c.Width, rowBottom - c.Top - c.Margin.Bottom, BoundsSpecified.None);
 				else if (c.Dock == DockStyle.Bottom || ((c.Anchor & AnchorStyles.Bottom) == AnchorStyles.Bottom))
-					c.SetBounds (c.Left, rowBottom - c.Margin.Bottom - c.Height, c.Width, c.Height, BoundsSpecified.None);
+					c.SetBoundsCoreInternal (c.Left, rowBottom - c.Margin.Bottom - c.Height, c.Width, c.Height, BoundsSpecified.None);
 				else if (c.Dock == DockStyle.Top || ((c.Anchor & AnchorStyles.Top) == AnchorStyles.Top))
 					continue;
 				else
-					c.SetBounds (c.Left, ((rowBottom - rowTop) / 2) - (c.Height / 2) + (int)Math.Floor (((c.Margin.Top - c.Margin.Bottom) / 2.0)) + rowTop, c.Width, c.Height, BoundsSpecified.None);
+					c.SetBoundsCoreInternal (c.Left, ((rowBottom - rowTop) / 2) - (c.Height / 2) + (int)Math.Floor (((c.Margin.Top - c.Margin.Bottom) / 2.0)) + rowTop, c.Width, c.Height, BoundsSpecified.None);
 
 			// Return bottom y of this row used
 			if (rowBottom == 0)
@@ -299,15 +299,15 @@ namespace System.Windows.Forms.Layout
 			// Set the new widths for each control
 			foreach (Control c in col)
 				if (allDockFill && noAuto)
-					c.SetBounds (c.Left, c.Top, 0, c.Height, BoundsSpecified.None);
+					c.SetBoundsCoreInternal (c.Left, c.Top, 0, c.Height, BoundsSpecified.None);
 				else if (c.Dock == DockStyle.Fill || ((c.Anchor & AnchorStyles.Left) == AnchorStyles.Left) && ((c.Anchor & AnchorStyles.Right) == AnchorStyles.Right))
-					c.SetBounds (c.Left, c.Top, rowRight - c.Left - c.Margin.Right, c.Height, BoundsSpecified.None);
+					c.SetBoundsCoreInternal (c.Left, c.Top, rowRight - c.Left - c.Margin.Right, c.Height, BoundsSpecified.None);
 				else if (c.Dock == DockStyle.Right || ((c.Anchor & AnchorStyles.Right) == AnchorStyles.Right))
-					c.SetBounds (rowRight - c.Margin.Right - c.Width, c.Top, c.Width, c.Height, BoundsSpecified.None);
+					c.SetBoundsCoreInternal (rowRight - c.Margin.Right - c.Width, c.Top, c.Width, c.Height, BoundsSpecified.None);
 				else if (c.Dock == DockStyle.Left || ((c.Anchor & AnchorStyles.Left) == AnchorStyles.Left))
 					continue;
 				else
-					c.SetBounds (((rowRight - rowLeft) / 2) - (c.Width / 2) + (int)Math.Floor (((c.Margin.Left - c.Margin.Right) / 2.0)) + rowLeft, c.Top, c.Width, c.Height, BoundsSpecified.None);
+					c.SetBoundsCoreInternal (((rowRight - rowLeft) / 2) - (c.Width / 2) + (int)Math.Floor (((c.Margin.Left - c.Margin.Right) / 2.0)) + rowLeft, c.Top, c.Width, c.Height, BoundsSpecified.None);
 
 			// Return rightmost x of this row used
 			if (rowRight == 0)

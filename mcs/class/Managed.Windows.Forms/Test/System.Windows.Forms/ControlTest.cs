@@ -2481,6 +2481,16 @@ namespace MonoTests.System.Windows.Forms
 			foreach (Control c1 in c.Controls)
 				c.Controls.Remove (c1);
 		}
+		
+		[Test]
+		public void MethodSetBounds ()
+		{
+			Control myControl = new Control();
+			myControl.SetBounds(10, 20, 30, 40);
+			myControl.SetBounds(50, 60, 70, 70, BoundsSpecified.Location);
+
+			Assert.AreEqual (new Rectangle (50, 60, 30, 40), myControl.Bounds, "A1");
+		}
 	}
 
 	[TestFixture]

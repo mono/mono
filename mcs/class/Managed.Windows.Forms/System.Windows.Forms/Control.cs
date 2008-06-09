@@ -4354,6 +4354,16 @@ namespace System.Windows.Forms
 		}
 
 		public void SetBounds(int x, int y, int width, int height, BoundsSpecified specified) {
+			// Fill in the values that were not specified
+			if ((specified & BoundsSpecified.X) == 0)
+				x = Left;
+			if ((specified & BoundsSpecified.Y) == 0)
+				y = Top;
+			if ((specified & BoundsSpecified.Width) == 0)
+				width = Width;
+			if ((specified & BoundsSpecified.Height) == 0)
+				height = Height;
+		
 			// SetBoundsCore is really expensive to call, so we want to avoid it if we can.
 			// We can avoid it if:
 			// - The requested dimensions are the same as our current dimensions

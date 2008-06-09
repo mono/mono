@@ -1,5 +1,10 @@
 2008-06-09  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DefaultLayout.cs, TableLayout.cs, FlowLayout.cs: Use SetBoundsCoreInternal
+	instead of SetBounds.
+
+2008-06-09  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TableLayoutSettingsTypeConverter.cs: Fix spelling of Columns.
 	Accomadate .Net's use of culture separator.  [Fixes bug #398274]
 
