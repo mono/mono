@@ -1668,6 +1668,14 @@ namespace Mono.CSharp {
 				if (right != null)
 					b.right = Convert.ImplicitConversion (ec, b.right, right, b.right.Location);
 
+				//
+				// A user operators does not support multiple user conversions, but decimal type
+				// is considered to be predefined type therefore we apply predefined operators rules
+				// and then look for decimal user-operator implementation
+				//
+				if (left == TypeManager.decimal_type)
+					return b.ResolveUserOperator (ec, b.left.Type, b.right.Type);
+
 				return b;
 			}
 
@@ -2356,6 +2364,7 @@ namespace Mono.CSharp {
 			temp.Add (new PredefinedOperator (TypeManager.uint64_type, Operator.ArithmeticMask | Operator.BitwiseMask));
 			temp.Add (new PredefinedOperator (TypeManager.float_type, Operator.ArithmeticMask));
 			temp.Add (new PredefinedOperator (TypeManager.double_type, Operator.ArithmeticMask));
+			temp.Add (new PredefinedOperator (TypeManager.decimal_type, Operator.ArithmeticMask));
 
 			temp.Add (new PredefinedOperator (TypeManager.int32_type, Operator.ComparisonMask, bool_type));
 			temp.Add (new PredefinedOperator (TypeManager.uint32_type, Operator.ComparisonMask, bool_type));
@@ -2363,6 +2372,7 @@ namespace Mono.CSharp {
 			temp.Add (new PredefinedOperator (TypeManager.uint64_type, Operator.ComparisonMask, bool_type));
 			temp.Add (new PredefinedOperator (TypeManager.float_type, Operator.ComparisonMask, bool_type));
 			temp.Add (new PredefinedOperator (TypeManager.double_type, Operator.ComparisonMask, bool_type));
+			temp.Add (new PredefinedOperator (TypeManager.decimal_type, Operator.ComparisonMask, bool_type));
 
 			temp.Add (new PredefinedOperator (TypeManager.string_type, Operator.EqualityMask, bool_type));
 

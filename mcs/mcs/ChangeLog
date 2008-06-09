@@ -1,6 +1,13 @@
 2008-06-09  Marek Safar  <marek.safar@gmail.com>
 
-	A fix for bug #397213.
+	A fix for bug #316290
+	* expression.cs: Include decimal operators in predefined table.
+	
+	* parameters.cs: More readonlyness.
+
+2008-06-09  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #397213
 	* cs-parser.jay: One more missing current_local_parameters reset.
 
 2008-06-09  Marek Safar  <marek.safar@gmail.com>

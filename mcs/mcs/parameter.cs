@@ -662,10 +662,10 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class Parameters : ParameterData {
 		// Null object pattern
-		public Parameter [] FixedParameters;
+		public readonly Parameter [] FixedParameters;
 		public readonly bool HasArglist;
 		Type [] types;
-		int count;
+		readonly int count;
 
 		public static readonly Parameters EmptyReadOnlyParameters = new Parameters ();
 		static readonly Parameter ArgList = new ArglistParameter ();
