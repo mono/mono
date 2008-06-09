@@ -12153,6 +12153,2383 @@
       </method>
     </type>
   </test>
+  <test name="gtest-etree-01.cs">
+    <type name="MyTypeExplicit">
+      <method name="Void .ctor(Int32)">
+        <size>14</size>
+      </method>
+      <method name="Int32 op_Explicit(MyTypeExplicit)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MemberAccessData">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>16</size>
+      </method>
+      <method name="Void add_EventField(System.Func`1[System.Boolean])">
+        <size>24</size>
+      </method>
+      <method name="Void remove_EventField(System.Func`1[System.Boolean])">
+        <size>24</size>
+      </method>
+      <method name="System.Linq.Expressions.Expression`1[System.Func`1[System.Func`1[System.Boolean]]] GetEvent()">
+        <size>63</size>
+      </method>
+      <method name="Void set_MyTypeProperty(MyType)">
+        <size>8</size>
+      </method>
+      <method name="MyType get_MyTypeProperty()">
+        <size>7</size>
+      </method>
+      <method name="System.String get_StaticProperty()">
+        <size>6</size>
+      </method>
+    </type>
+    <type name="NewTest`1[T]">
+      <method name="Void .ctor(T)">
+        <size>27</size>
+      </method>
+      <method name="Void .ctor(T[])">
+        <size>14</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>89</size>
+      </method>
+    </type>
+    <type name="Indexer">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 get_Item(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Void set_Item(Int32, Int32)">
+        <size>1</size>
+      </method>
+      <method name="System.String get_Item(System.String[])">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Assert[T](T, T)">
+        <size>9</size>
+      </method>
+      <method name="Void Assert[T](T, T, System.String)">
+        <size>89</size>
+      </method>
+      <method name="Void Assert[T](T[], T[])">
+        <size>220</size>
+      </method>
+      <method name="T GenericMethod[T](T)">
+        <size>2</size>
+      </method>
+      <method name="Void AssertNodeType(System.Linq.Expressions.LambdaExpression, ExpressionType)">
+        <size>56</size>
+      </method>
+      <method name="Void AddTest()">
+        <size>113</size>
+      </method>
+      <method name="Void AddTest_2()">
+        <size>133</size>
+      </method>
+      <method name="Void AddTest_3()">
+        <size>151</size>
+      </method>
+      <method name="Void AddTest_4()">
+        <size>222</size>
+      </method>
+      <method name="Void AddTest_5()">
+        <size>151</size>
+      </method>
+      <method name="Void AddTest_6()">
+        <size>176</size>
+      </method>
+      <method name="Void AddTest_7()">
+        <size>156</size>
+      </method>
+      <method name="Void AddTest_8()">
+        <size>263</size>
+      </method>
+      <method name="Void AddTest_9()">
+        <size>156</size>
+      </method>
+      <method name="Void AddCheckedTest()">
+        <size>113</size>
+      </method>
+      <method name="Void AddCheckedTest_2()">
+        <size>133</size>
+      </method>
+      <method name="Void AddCheckedTest_3()">
+        <size>151</size>
+      </method>
+      <method name="Void AddStringTest()">
+        <size>142</size>
+      </method>
+      <method name="Void AddStringTest_2()">
+        <size>187</size>
+      </method>
+      <method name="Void AddStringTest_3()">
+        <size>188</size>
+      </method>
+      <method name="Void AddStringTest_4()">
+        <size>189</size>
+      </method>
+      <method name="Void AndTest()">
+        <size>159</size>
+      </method>
+      <method name="Void AndTest_2()">
+        <size>202</size>
+      </method>
+      <method name="Void AndTest_3()">
+        <size>175</size>
+      </method>
+      <method name="Void AndNullableTest()">
+        <size>405</size>
+      </method>
+      <method name="Void AndNullableTest_2()">
+        <size>283</size>
+      </method>
+      <method name="Void AndNullableTest_3()">
+        <size>213</size>
+      </method>
+      <method name="Void AndAlsoTest()">
+        <size>110</size>
+      </method>
+      <method name="Void AndAlsoTest_2()">
+        <size>203</size>
+      </method>
+      <method name="Void AndAlsoTest_3()">
+        <size>122</size>
+      </method>
+      <method name="Void ArrayIndexTest()">
+        <size>159</size>
+      </method>
+      <method name="Void ArrayIndexTest_2()">
+        <size>129</size>
+      </method>
+      <method name="Void ArrayIndexTest_3()">
+        <size>246</size>
+      </method>
+      <method name="Void ArrayIndexTest_4()">
+        <size>274</size>
+      </method>
+      <method name="Void ArrayIndexTest_5()">
+        <size>122</size>
+      </method>
+      <method name="Void ArrayLengthTest()">
+        <size>113</size>
+      </method>
+      <method name="Void ArrayLengthTest_2()">
+        <size>105</size>
+      </method>
+      <method name="Void CallTest()">
+        <size>152</size>
+      </method>
+      <method name="Void CallTest_2()">
+        <size>137</size>
+      </method>
+      <method name="Void CallTest_3()">
+        <size>240</size>
+      </method>
+      <method name="Void CallTest_4()">
+        <size>151</size>
+      </method>
+      <method name="Void CallTest_5()">
+        <size>129</size>
+      </method>
+      <method name="Void CallTest_6()">
+        <size>84</size>
+      </method>
+      <method name="Void CallTest_7()">
+        <size>138</size>
+      </method>
+      <method name="Void CallTest_8()">
+        <size>244</size>
+      </method>
+      <method name="Void CallTest_9()">
+        <size>102</size>
+      </method>
+      <method name="Void CoalesceTest()">
+        <size>135</size>
+      </method>
+      <method name="Void CoalesceTest_2()">
+        <size>190</size>
+      </method>
+      <method name="Void ConditionTest()">
+        <size>187</size>
+      </method>
+      <method name="Void ConditionTest_2()">
+        <size>319</size>
+      </method>
+      <method name="Void ConditionTest_3()">
+        <size>193</size>
+      </method>
+      <method name="Void ConditionTest_4()">
+        <size>208</size>
+      </method>
+      <method name="Void ConstantTest()">
+        <size>73</size>
+      </method>
+      <method name="Void ConstantTest_2()">
+        <size>89</size>
+      </method>
+      <method name="Void ConstantTest_3()">
+        <size>75</size>
+      </method>
+      <method name="Void ConstantTest_4()">
+        <size>75</size>
+      </method>
+      <method name="Void ConstantTest_5()">
+        <size>73</size>
+      </method>
+      <method name="Void ConstantTest_6()">
+        <size>81</size>
+      </method>
+      <method name="Void ConstantTest_7()">
+        <size>76</size>
+      </method>
+      <method name="Void ConstantTest_8()">
+        <size>86</size>
+      </method>
+      <method name="Void ConstantTest_9()">
+        <size>86</size>
+      </method>
+      <method name="Void ConstantTest_10()">
+        <size>86</size>
+      </method>
+      <method name="Void ConstantTest_11()">
+        <size>73</size>
+      </method>
+      <method name="Void ConstantTest_12()">
+        <size>73</size>
+      </method>
+      <method name="Void ConstantTest_13()">
+        <size>73</size>
+      </method>
+      <method name="Void ConstantTest_14()">
+        <size>86</size>
+      </method>
+      <method name="Void ConstantTest_15()">
+        <size>76</size>
+      </method>
+      <method name="Void ConvertTest()">
+        <size>96</size>
+      </method>
+      <method name="Void ConvertTest_2()">
+        <size>97</size>
+      </method>
+      <method name="Void ConvertTest_3()">
+        <size>107</size>
+      </method>
+      <method name="Void ConvertTest_4()">
+        <size>119</size>
+      </method>
+      <method name="Void ConvertTest_5()">
+        <size>123</size>
+      </method>
+      <method name="Void ConvertTest_6()">
+        <size>267</size>
+      </method>
+      <method name="Void ConvertTest_7()">
+        <size>136</size>
+      </method>
+      <method name="Void ConvertTest_8()">
+        <size>132</size>
+      </method>
+      <method name="Void ConvertTest_9()">
+        <size>95</size>
+      </method>
+      <method name="Void ConvertTest_10()">
+        <size>192</size>
+      </method>
+      <method name="Void ConvertTest_11()">
+        <size>130</size>
+      </method>
+      <method name="Void ConvertTest_12()">
+        <size>195</size>
+      </method>
+      <method name="Void ConvertTest_13()">
+        <size>100</size>
+      </method>
+      <method name="Void ConvertTest_14()">
+        <size>102</size>
+      </method>
+      <method name="Void ConvertTest_15()">
+        <size>147</size>
+      </method>
+      <method name="Void ConvertCheckedTest()">
+        <size>96</size>
+      </method>
+      <method name="Void ConvertCheckedTest_2()">
+        <size>97</size>
+      </method>
+      <method name="Void ConvertCheckedTest_3()">
+        <size>107</size>
+      </method>
+      <method name="Void ConvertCheckedTest_4()">
+        <size>119</size>
+      </method>
+      <method name="Void DivideTest()">
+        <size>113</size>
+      </method>
+      <method name="Void DivideTest_2()">
+        <size>200</size>
+      </method>
+      <method name="Void DivideTest_3()">
+        <size>151</size>
+      </method>
+      <method name="Void DivideTest_4()">
+        <size>223</size>
+      </method>
+      <method name="Void DivideTest_5()">
+        <size>152</size>
+      </method>
+      <method name="Void DivideTest_6()">
+        <size>215</size>
+      </method>
+      <method name="Void EqualTest()">
+        <size>132</size>
+      </method>
+      <method name="Void EqualTest_2()">
+        <size>182</size>
+      </method>
+      <method name="Void EqualTest_3()">
+        <size>147</size>
+      </method>
+      <method name="Void EqualTest_4()">
+        <size>237</size>
+      </method>
+      <method name="Void EqualTest_5()">
+        <size>191</size>
+      </method>
+      <method name="Void EqualTest_6()">
+        <size>133</size>
+      </method>
+      <method name="Void EqualTest_7()">
+        <size>181</size>
+      </method>
+      <method name="Void EqualTest_8()">
+        <size>146</size>
+      </method>
+      <method name="Void EqualTest_9()">
+        <size>160</size>
+      </method>
+      <method name="Void EqualTest_10()">
+        <size>184</size>
+      </method>
+      <method name="Void EqualTest_11()">
+        <size>146</size>
+      </method>
+      <method name="Void EqualTest_12()">
+        <size>141</size>
+      </method>
+      <method name="Void EqualTest_13()">
+        <size>138</size>
+      </method>
+      <method name="Void EqualTestDelegate()">
+        <size>127</size>
+      </method>
+      <method name="Void EqualTestDelegate_2()">
+        <size>274</size>
+      </method>
+      <method name="Void ExclusiveOrTest()">
+        <size>129</size>
+      </method>
+      <method name="Void ExclusiveOrTest_2()">
+        <size>198</size>
+      </method>
+      <method name="Void ExclusiveOrTest_3()">
+        <size>151</size>
+      </method>
+      <method name="Void ExclusiveOrTest_4()">
+        <size>223</size>
+      </method>
+      <method name="Void ExclusiveOrTest_5()">
+        <size>216</size>
+      </method>
+      <method name="Void ExclusiveOrTest_6()">
+        <size>175</size>
+      </method>
+      <method name="Void ExclusiveOrTest_7()">
+        <size>213</size>
+      </method>
+      <method name="Void ExclusiveOrTest_8()">
+        <size>179</size>
+      </method>
+      <method name="Void GreaterThanTest()">
+        <size>113</size>
+      </method>
+      <method name="Void GreaterThanTest_2()">
+        <size>169</size>
+      </method>
+      <method name="Void GreaterThanTest_3()">
+        <size>147</size>
+      </method>
+      <method name="Void GreaterThanTest_4()">
+        <size>237</size>
+      </method>
+      <method name="Void GreaterThanTest_5()">
+        <size>228</size>
+      </method>
+      <method name="Void GreaterThanTest_6()">
+        <size>116</size>
+      </method>
+      <method name="Void GreaterThanTest_7()">
+        <size>160</size>
+      </method>
+      <method name="Void GreaterThanTest_8()">
+        <size>184</size>
+      </method>
+      <method name="Void GreaterThanOrEqualTest()">
+        <size>113</size>
+      </method>
+      <method name="Void GreaterThanOrEqualTest_2()">
+        <size>184</size>
+      </method>
+      <method name="Void GreaterThanOrEqualTest_3()">
+        <size>152</size>
+      </method>
+      <method name="Void GreaterThanOrEqualTest_4()">
+        <size>237</size>
+      </method>
+      <method name="Void GreaterThanOrEqualTest_5()">
+        <size>228</size>
+      </method>
+      <method name="Void GreaterThanOrEqualTest_6()">
+        <size>116</size>
+      </method>
+      <method name="Void GreaterThanOrEqualTest_7()">
+        <size>160</size>
+      </method>
+      <method name="Void GreaterThanOrEqualTest_8()">
+        <size>184</size>
+      </method>
+      <method name="Void InvokeTest()">
+        <size>104</size>
+      </method>
+      <method name="Void InvokeTest_2()">
+        <size>135</size>
+      </method>
+      <method name="Void LeftShiftTest()">
+        <size>169</size>
+      </method>
+      <method name="Void LeftShiftTest_2()">
+        <size>186</size>
+      </method>
+      <method name="Void LeftShiftTest_3()">
+        <size>199</size>
+      </method>
+      <method name="Void LeftShiftTest_4()">
+        <size>295</size>
+      </method>
+      <method name="Void LeftShiftTest_5()">
+        <size>124</size>
+      </method>
+      <method name="Void LessThanTest()">
+        <size>113</size>
+      </method>
+      <method name="Void LessThanTest_2()">
+        <size>169</size>
+      </method>
+      <method name="Void LessThanTest_3()">
+        <size>147</size>
+      </method>
+      <method name="Void LessThanTest_4()">
+        <size>237</size>
+      </method>
+      <method name="Void LessThanTest_5()">
+        <size>228</size>
+      </method>
+      <method name="Void LessThanTest_6()">
+        <size>116</size>
+      </method>
+      <method name="Void LessThanTest_7()">
+        <size>160</size>
+      </method>
+      <method name="Void LessThanTest_8()">
+        <size>184</size>
+      </method>
+      <method name="Void LessThanOrEqualTest()">
+        <size>113</size>
+      </method>
+      <method name="Void LessThanOrEqualTest_2()">
+        <size>184</size>
+      </method>
+      <method name="Void LessThanOrEqualTest_3()">
+        <size>147</size>
+      </method>
+      <method name="Void LessThanOrEqualTest_4()">
+        <size>237</size>
+      </method>
+      <method name="Void LessThanOrEqualTest_5()">
+        <size>228</size>
+      </method>
+      <method name="Void LessThanOrEqualTest_6()">
+        <size>116</size>
+      </method>
+      <method name="Void LessThanOrEqualTest_7()">
+        <size>160</size>
+      </method>
+      <method name="Void LessThanOrEqualTest_8()">
+        <size>184</size>
+      </method>
+      <method name="Void ListInitTest()">
+        <size>443</size>
+      </method>
+      <method name="Void ListInitTest_2()">
+        <size>306</size>
+      </method>
+      <method name="Void MemberAccessTest()">
+        <size>130</size>
+      </method>
+      <method name="Void MemberAccessTest_2()">
+        <size>77</size>
+      </method>
+      <method name="Void MemberAccessTest_3()">
+        <size>111</size>
+      </method>
+      <method name="Void MemberAccessTest_4()">
+        <size>89</size>
+      </method>
+      <method name="Void MemberAccessTest_5()">
+        <size>39</size>
+      </method>
+      <method name="Void MemberAccessTest_6()">
+        <size>102</size>
+      </method>
+      <method name="Void MemberAccessTest_7()">
+        <size>124</size>
+      </method>
+      <method name="Void MemberAccessTest_8()">
+        <size>77</size>
+      </method>
+      <method name="Void MemberAccessTest_9()">
+        <size>78</size>
+      </method>
+      <method name="Void MemberInitTest()">
+        <size>319</size>
+      </method>
+      <method name="Void MemberInitTest_2()">
+        <size>279</size>
+      </method>
+      <method name="Void MemberInitTest_3()">
+        <size>138</size>
+      </method>
+      <method name="Void ModuloTest()">
+        <size>114</size>
+      </method>
+      <method name="Void ModuloTest_2()">
+        <size>200</size>
+      </method>
+      <method name="Void ModuloTest_3()">
+        <size>151</size>
+      </method>
+      <method name="Void ModuloTest_4()">
+        <size>223</size>
+      </method>
+      <method name="Void ModuloTest_5()">
+        <size>151</size>
+      </method>
+      <method name="Void ModuloTest_6()">
+        <size>219</size>
+      </method>
+      <method name="Void ModuloTest_7()">
+        <size>124</size>
+      </method>
+      <method name="Void MultiplyTest()">
+        <size>145</size>
+      </method>
+      <method name="Void MultiplyTest_2()">
+        <size>200</size>
+      </method>
+      <method name="Void MultiplyTest_3()">
+        <size>155</size>
+      </method>
+      <method name="Void MultiplyTest_4()">
+        <size>226</size>
+      </method>
+      <method name="Void MultiplyTest_5()">
+        <size>155</size>
+      </method>
+      <method name="Void MultiplyTest_6()">
+        <size>221</size>
+      </method>
+      <method name="Void MultiplyTest_7()">
+        <size>124</size>
+      </method>
+      <method name="Void MultiplyCheckedTest()">
+        <size>136</size>
+      </method>
+      <method name="Void MultiplyCheckedTest_2()">
+        <size>207</size>
+      </method>
+      <method name="Void MultiplyCheckedTest_3()">
+        <size>155</size>
+      </method>
+      <method name="Void MultiplyCheckedTest_4()">
+        <size>135</size>
+      </method>
+      <method name="Void MultiplyCheckedTest_5()">
+        <size>138</size>
+      </method>
+      <method name="Void NegateTest()">
+        <size>86</size>
+      </method>
+      <method name="Void NegateTest_2()">
+        <size>106</size>
+      </method>
+      <method name="Void NegateTest_3()">
+        <size>145</size>
+      </method>
+      <method name="Void NegateTest_4()">
+        <size>118</size>
+      </method>
+      <method name="Void NegateTest_5()">
+        <size>164</size>
+      </method>
+      <method name="Void NegateTest_6()">
+        <size>138</size>
+      </method>
+      <method name="Void NegateTest_7()">
+        <size>149</size>
+      </method>
+      <method name="Void NegateTest_8()">
+        <size>111</size>
+      </method>
+      <method name="Void NegateTest_9()">
+        <size>101</size>
+      </method>
+      <method name="Void NegateTestChecked()">
+        <size>105</size>
+      </method>
+      <method name="Void NegateTestChecked_2()">
+        <size>152</size>
+      </method>
+      <method name="Void NegateTestChecked_3()">
+        <size>114</size>
+      </method>
+      <method name="Void NegateTestChecked_4()">
+        <size>100</size>
+      </method>
+      <method name="Void NewArrayInitTest()">
+        <size>78</size>
+      </method>
+      <method name="Void NewArrayInitTest_2()">
+        <size>78</size>
+      </method>
+      <method name="Void NewArrayInitTest_3()">
+        <size>165</size>
+      </method>
+      <method name="Void NewArrayInitTest_4()">
+        <size>134</size>
+      </method>
+      <method name="Void NewArrayBoundsTest()">
+        <size>137</size>
+      </method>
+      <method name="Void NewArrayBoundsTest_2()">
+        <size>137</size>
+      </method>
+      <method name="Void NewTest()">
+        <size>110</size>
+      </method>
+      <method name="Void NewTest_2()">
+        <size>75</size>
+      </method>
+      <method name="Void NewTest_3()">
+        <size>112</size>
+      </method>
+      <method name="Void NewTest_4()">
+        <size>266</size>
+      </method>
+      <method name="Void NewTest_5()">
+        <size>142</size>
+      </method>
+      <method name="Void NotTest()">
+        <size>84</size>
+      </method>
+      <method name="Void NotTest_2()">
+        <size>134</size>
+      </method>
+      <method name="Void NotTest_3()">
+        <size>85</size>
+      </method>
+      <method name="Void NotTest_4()">
+        <size>122</size>
+      </method>
+      <method name="Void NotTest_5()">
+        <size>87</size>
+      </method>
+      <method name="Void NotTest_6()">
+        <size>118</size>
+      </method>
+      <method name="Void NotNullableTest()">
+        <size>129</size>
+      </method>
+      <method name="Void NotNullableTest_2()">
+        <size>153</size>
+      </method>
+      <method name="Void NotNullableTest_3()">
+        <size>145</size>
+      </method>
+      <method name="Void NotNullableTest_4()">
+        <size>168</size>
+      </method>
+      <method name="Void NotNullableTest_5()">
+        <size>163</size>
+      </method>
+      <method name="Void NotEqualTest()">
+        <size>132</size>
+      </method>
+      <method name="Void NotEqualTest_2()">
+        <size>180</size>
+      </method>
+      <method name="Void NotEqualTest_3()">
+        <size>147</size>
+      </method>
+      <method name="Void NotEqualTest_4()">
+        <size>237</size>
+      </method>
+      <method name="Void NotEqualTest_5()">
+        <size>191</size>
+      </method>
+      <method name="Void NotEqualTest_6()">
+        <size>133</size>
+      </method>
+      <method name="Void NotEqualTest_7()">
+        <size>181</size>
+      </method>
+      <method name="Void NotEqualTest_8()">
+        <size>146</size>
+      </method>
+      <method name="Void NotEqualTest_9()">
+        <size>160</size>
+      </method>
+      <method name="Void NotEqualTest_10()">
+        <size>184</size>
+      </method>
+      <method name="Void NotEqualTest_11()">
+        <size>146</size>
+      </method>
+      <method name="Void OrTest()">
+        <size>160</size>
+      </method>
+      <method name="Void OrTest_2()">
+        <size>157</size>
+      </method>
+      <method name="Void OrTest_3()">
+        <size>175</size>
+      </method>
+      <method name="Void OrNullableTest()">
+        <size>406</size>
+      </method>
+      <method name="Void OrNullableTest_2()">
+        <size>219</size>
+      </method>
+      <method name="Void OrNullableTest_3()">
+        <size>196</size>
+      </method>
+      <method name="Void OrNullableTest_4()">
+        <size>213</size>
+      </method>
+      <method name="Void OrElseTest()">
+        <size>111</size>
+      </method>
+      <method name="Void OrElseTest_2()">
+        <size>205</size>
+      </method>
+      <method name="Void ParameterTest()">
+        <size>87</size>
+      </method>
+      <method name="Void ParameterTest_2()">
+        <size>89</size>
+      </method>
+      <method name="Void ParameterTest_3()">
+        <size>87</size>
+      </method>
+      <method name="Void ParameterTest_4()">
+        <size>117</size>
+      </method>
+      <method name="Void QuoteTest()">
+        <size>99</size>
+      </method>
+      <method name="Void RightShiftTest()">
+        <size>166</size>
+      </method>
+      <method name="Void RightShiftTest_2()">
+        <size>183</size>
+      </method>
+      <method name="Void RightShiftTest_3()">
+        <size>199</size>
+      </method>
+      <method name="Void RightShiftTest_4()">
+        <size>292</size>
+      </method>
+      <method name="Void SubtractTest()">
+        <size>114</size>
+      </method>
+      <method name="Void SubtractTest_2()">
+        <size>134</size>
+      </method>
+      <method name="Void SubtractTest_3()">
+        <size>152</size>
+      </method>
+      <method name="Void SubtractTest_4()">
+        <size>223</size>
+      </method>
+      <method name="Void SubtractTest_5()">
+        <size>152</size>
+      </method>
+      <method name="Void SubtractTest_6()">
+        <size>178</size>
+      </method>
+      <method name="Void SubtractTest_7()">
+        <size>127</size>
+      </method>
+      <method name="Void SubtractTest_8()">
+        <size>160</size>
+      </method>
+      <method name="Void SubtractTest_9()">
+        <size>156</size>
+      </method>
+      <method name="Void SubtractTest_10()">
+        <size>175</size>
+      </method>
+      <method name="Void SubtractTest_11()">
+        <size>171</size>
+      </method>
+      <method name="Void SubtractCheckedTest()">
+        <size>141</size>
+      </method>
+      <method name="Void SubtractCheckedTest_2()">
+        <size>200</size>
+      </method>
+      <method name="Void SubtractCheckedTest_3()">
+        <size>152</size>
+      </method>
+      <method name="Void SubtractCheckedTest_4()">
+        <size>135</size>
+      </method>
+      <method name="Void TypeAsTest()">
+        <size>105</size>
+      </method>
+      <method name="Void TypeAsTest_2()">
+        <size>165</size>
+      </method>
+      <method name="Void TypeAsTest_3()">
+        <size>124</size>
+      </method>
+      <method name="Void TypeIsTest()">
+        <size>123</size>
+      </method>
+      <method name="Void TypeIsTest_2()">
+        <size>117</size>
+      </method>
+      <method name="Void TypeIsTest_3()">
+        <size>109</size>
+      </method>
+      <method name="Void TypeIsTest_5()">
+        <size>88</size>
+      </method>
+      <method name="Void TypeIsTest_6()">
+        <size>125</size>
+      </method>
+      <method name="Void UnaryPlusTest()">
+        <size>81</size>
+      </method>
+      <method name="Void UnaryPlusTest_2()">
+        <size>61</size>
+      </method>
+      <method name="Void UnaryPlusTest_3()">
+        <size>118</size>
+      </method>
+      <method name="Void UnaryPlusTest_4()">
+        <size>164</size>
+      </method>
+      <method name="Void UnaryPlusTest_5()">
+        <size>155</size>
+      </method>
+      <method name="System.String InstanceMethod(System.String)">
+        <size>2</size>
+      </method>
+      <method name="System.Object InstanceParamsMethod(Int32, System.Object[])">
+        <size>30</size>
+      </method>
+      <method name="Int32 TestInt()">
+        <size>3</size>
+      </method>
+      <method name="Void RefMethod(Int32 ByRef)">
+        <size>8</size>
+      </method>
+      <method name="Boolean RunTest(System.Reflection.MethodInfo)">
+        <size>87</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>125</size>
+      </method>
+    </type>
+    <type name="MemberAccessData+&lt;&gt;c__CompilerGenerated0">
+      <method name="Void .ctor(MemberAccessData)">
+        <size>19</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated2">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated3">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated4">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated5">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated6">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated7">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated8">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated9">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated10">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated11">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated12">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated13">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated14">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated15">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated16">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated17">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated18">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated19">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated20">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated21">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated22">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated23">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated24">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated25">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated26">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated27">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated28">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated29">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated30">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated31">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated32">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated33">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated34">
+      <method name="Void .ctor(Tester)">
+        <size>19</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated35">
+      <method name="Void .ctor(Tester)">
+        <size>19</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated36">
+      <method name="Void .ctor(Tester)">
+        <size>19</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated37">
+      <method name="Void .ctor(Tester)">
+        <size>19</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated38">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated39">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated40">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated41">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated42">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated43">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated44">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated45">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated46">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated47">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated48">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated49">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated50">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated51">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated52">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated53">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated54">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated55">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated56">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated57">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated58">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated59">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated60">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated61">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated62">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated63">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated64">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated65">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated66">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated67">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated68">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated69">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated70">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated71">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated72">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated73">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated74">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated75">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated76">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated77">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated78">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated79">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated80">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated81">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated82">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated83">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated84">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated85">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated86">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated87">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated88">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated89">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated90">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated91">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated92">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated93">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated94">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated95">
+      <method name="Void .ctor(Tester)">
+        <size>19</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated96">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated97">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated98">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated99">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated100">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated101">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated102">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;EqualTestDelegate_2&gt;c__275()">
+        <size>1</size>
+      </method>
+      <method name="Void &lt;EqualTestDelegate_2&gt;c__276()">
+        <size>1</size>
+      </method>
+      <method name="Void &lt;EqualTestDelegate_2&gt;c__277()">
+        <size>1</size>
+      </method>
+      <method name="Void &lt;EqualTestDelegate_2&gt;c__278()">
+        <size>1</size>
+      </method>
+      <method name="Void &lt;EqualTestDelegate_2&gt;c__279()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated103">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated104">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated105">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated106">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated107">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated108">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated109">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated110">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated111">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated112">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated113">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated114">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated115">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated116">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated117">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated118">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated119">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated120">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated121">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated122">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated123">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated124">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated125">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated126">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated127">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated128">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.String &lt;InvokeTest_2&gt;c__280[T,TResult](Int32)">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated129">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated130">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated131">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated132">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated133">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated134">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated135">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated136">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated137">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated138">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated139">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated140">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated141">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated142">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated143">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated144">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated145">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated146">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated147">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated148">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated149">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated150">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated151">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated152">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated153">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated154">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated155">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated156">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated157">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated158">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated159">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated160">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated161">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated162">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated163">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated164">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated165">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated166">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated167">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated168">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated169">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated170">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated171">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated172">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated173">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated174">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated175">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated176">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated177">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated178">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated179">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated180">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated181">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated182">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated183">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated184">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated185">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated186">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated187">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated188">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated189">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated190">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated191">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated192">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated193">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated194">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated195">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated196">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated197">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated198">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated199">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated200">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated201">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated202">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated203">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated204">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated205">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated206">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated207">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated208">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated209">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated210">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated211">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated212">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated213">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated214">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated215">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated216">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated217">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated218">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated219">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated220">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated221">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated222">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated223">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated224">
+      <method name="Void .ctor(Tester)">
+        <size>19</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated225">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated226">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated227">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated228">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated229">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated230">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated231">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated232">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated233">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated234">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated235">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated236">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated237">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated238">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated239">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated240">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated241">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated242">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated243">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated244">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated245">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated246">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated247">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated248">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated249">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated250">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated251">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated252">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated253">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated254">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated255">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated256">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated257">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated258">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated259">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated260">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated261">
+      <method name="Void .ctor(Tester)">
+        <size>19</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated262">
+      <method name="Void .ctor(Tester)">
+        <size>19</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated263">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated264">
+      <method name="Void .ctor(Tester)">
+        <size>19</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated265">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated266">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated267">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated268">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated269">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated270">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated271">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated272">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated273">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;&gt;c__CompilerGenerated274">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;c__281[T,TResult](System.Reflection.MethodInfo)">
+        <size>14</size>
+      </method>
+      <method name="System.String &lt;Main&gt;c__282[T,TResult](System.Reflection.MethodInfo)">
+        <size>9</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;c__283[T,TResult](System.Reflection.MethodInfo)">
+        <size>9</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;c__284[T,TResult](Boolean)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+EmptyDelegate">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Tester+IntDelegate">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Int32 Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType0`2[&lt;A&gt;__T,&lt;Value&gt;__T]">
+      <method name="Void .ctor(&lt;A&gt;__T, &lt;Value&gt;__T)">
+        <size>21</size>
+      </method>
+      <method name="&lt;A&gt;__T get_A()">
+        <size>7</size>
+      </method>
+      <method name="&lt;Value&gt;__T get_Value()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>69</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>101</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>108</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-etree-02.cs">
     <type name="M">
       <method name="Void .ctor()">
@@ -12166,6 +14543,21 @@
       </method>
     </type>
     <type name="M+&lt;&gt;c__CompilerGenerated0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-etree-04.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>354</size>
+      </method>
+    </type>
+    <type name="C+&lt;&gt;c__CompilerGenerated0">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
