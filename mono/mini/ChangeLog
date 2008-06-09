@@ -1,3 +1,8 @@
+2008-06-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-exceptions.c (ves_icall_get_trace): Skip source locations
+	where the file name is NULL.
+
 2008-06-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c: Fix s390 build.
