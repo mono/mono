@@ -1361,7 +1361,11 @@ class Tester
 		Expression<Func<ulong, short, ulong>> e = (ulong a, short b) => a << b;
 		AssertNodeType (e, ExpressionType.LeftShift);
 		Assert ((ulong) 0x7F000, e.Compile ().Invoke (0xFE, 11));
-		Assert ((ulong) 0xFFFFFFFE00000000, e.Compile ().Invoke (0xFFFFFFFF, 0xA01));
+		Assert ((ulong) 0x1FFFFFFFE, e.Compile ().Invoke (0xFFFFFFFF, 0xA01));
+
+		// .net produces a strange result
+		// see https://bugzilla.novell.com/show_bug.cgi?id=398358
+		// Assert ((ulong) 0xFFFFFFFE00000000, e.Compile ().Invoke (0xFFFFFFFF, 0xA01));
 	}
 	
 	void LeftShiftTest_2 ()
@@ -2293,8 +2297,12 @@ class Tester
 	{
 		Expression<Func<ulong, short, ulong>> e = (ulong a, short b) => a >> b;
 		AssertNodeType (e, ExpressionType.RightShift);
-		Assert ((ulong)0x1FD940L, e.Compile ().Invoke (0xFECA0000, 11));
-		Assert ((ulong)0, e.Compile ().Invoke (0xFFFFFFFF, 0xA01));
+		Assert ((ulong) 0x1FD940L, e.Compile ().Invoke (0xFECA0000, 11));
+		Assert ((ulong) 0x7FFFFFFF, e.Compile ().Invoke (0xFFFFFFFF, 0xA01));
+
+		// .net produces a strange result
+		// see https://bugzilla.novell.com/show_bug.cgi?id=398358		
+		// Assert ((ulong)0, e.Compile ().Invoke (0xFFFFFFFF, 0xA01));
 	}
 
 	void RightShiftTest_2 ()
