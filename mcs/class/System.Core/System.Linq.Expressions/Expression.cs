@@ -31,6 +31,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -1288,7 +1289,7 @@ namespace System.Linq.Expressions {
 				throw new ArgumentNullException ("addMethod");
 			if (arguments == null)
 				throw new ArgumentNullException ("arguments");
-			if (addMethod.Name.ToLowerInvariant () != "add")
+			if (addMethod.Name.ToLower (CultureInfo.InvariantCulture) != "add")
 				throw new ArgumentException ("addMethod");
 			if (addMethod.IsStatic)
 				throw new ArgumentException ("addMethod must be an instance method", "addMethod");
@@ -1659,7 +1660,7 @@ namespace System.Linq.Expressions {
 			var inits = CheckListInit (newExpression, initializers);
 
 			if (addMethod != null) {
-				if (addMethod.Name.ToLowerInvariant () != "add")
+				if (addMethod.Name.ToLower (CultureInfo.InvariantCulture) != "add")
 					throw new ArgumentException ("addMethod");
 
 				var parameters = addMethod.GetParameters ();
