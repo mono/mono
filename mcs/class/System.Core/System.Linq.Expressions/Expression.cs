@@ -1516,9 +1516,8 @@ namespace System.Linq.Expressions {
 
 		static LambdaExpression CreateExpressionOf (Type type, Expression body, ReadOnlyCollection<ParameterExpression> parameters)
 		{
-			return (LambdaExpression) Activator.CreateInstance (
-				typeof (Expression<>).MakeGenericType (type),
-				NonPublicInstance, null, new object [] { body, parameters }, null);
+			return (LambdaExpression) typeof (Expression<>).MakeGenericType (type).GetConstructor (
+				NonPublicInstance, null, new [] { typeof (Expression), typeof (ReadOnlyCollection<ParameterExpression>) }, null).Invoke (new object [] { body, parameters } );
 		}
 
 		public static LambdaExpression Lambda (Type delegateType, Expression body, IEnumerable<ParameterExpression> parameters)
