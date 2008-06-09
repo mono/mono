@@ -1,3 +1,7 @@
+2008-06-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c: Fix s390 build.
+
 2008-06-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* trace.c (mono_trace_parse_options): Fix warnings.
