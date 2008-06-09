@@ -1,5 +1,9 @@
 2008-06-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class-internals.h: Forgot to add.
+
+2008-06-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class-internals.h: Added MONO_PROP_DYNAMIC_CATTR.
 
 	* reflection.c (lookup_custom_attr): Added a MonoImage argument.
