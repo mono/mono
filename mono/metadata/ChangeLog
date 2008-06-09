@@ -1,5 +1,9 @@
 2008-06-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c: Reapplied the last bit of the reverted changes.
+
+2008-06-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: Reapplied more of the reverted changes.
 
 2008-06-09  Martin Baulig  <martin@ximian.com>
