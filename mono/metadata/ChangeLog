@@ -1,3 +1,18 @@
+2008-06-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (start_wrapper): Call mono_monitor_init_tls ().
+	(mono_thread_attach): Ditto.
+
+	* monitor.c: Use a TLS variable for holding the current thread id instead
+	of calling pthread_self ().
+	(mono_monitor_init_tls): New internal function to initialize the TLS
+	variable.
+	(mono_monitor_try_enter_internal): Put the owner == id check after the
+	owner == 0 check.
+
+	* object-internals.h (_G_BOOLEAN_EXPR): Redefine this glib macro to avoid
+	missed optimizations when using gcc-4.3.
+
 2008-06-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (mono_dynamic_image_free): Free the memory
