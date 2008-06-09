@@ -1,5 +1,10 @@
 2008-06-09  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #397213.
+	* cs-parser.jay: One more missing current_local_parameters reset.
+
+2008-06-09  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #396633
 	* class.cs: Host backing field in partial container.
 
