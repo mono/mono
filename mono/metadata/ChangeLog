@@ -1,3 +1,16 @@
+2008-06-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class-internals.h: Added MONO_PROP_DYNAMIC_CATTR.
+
+	* reflection.c (lookup_custom_attr): Added a MonoImage argument.
+	Lookup the custom attributes from property_hash.
+
+	* reflection.c (mono_save_custom_attrs): Save the custom attributes
+	in property_hash. Allocate all data using the image mempool.
+
+ 	* reflection.c: Removed dynamic_custom_attrs. Changed all checks
+	for dynamic_custom_attrs to checks if the image is dynamic.
+
 2008-06-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain.c (ves_icall_System_AppDomain_GetAssemblies): Free the
