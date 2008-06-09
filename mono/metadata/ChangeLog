@@ -1,5 +1,9 @@
 2008-06-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* appdomain.c (set_domain_search_path): Make this use the domain assemblies
+	lock instead of the domain lock to avoid deadlocks, since the thread might
+	already hold the loader lock.
+
 	* threads.c (start_wrapper): Call mono_monitor_init_tls ().
 	(mono_thread_attach): Ditto.
 
