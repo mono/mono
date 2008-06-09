@@ -228,8 +228,20 @@ namespace I18N.CJK
 			if (byteCount <= 3)
 				throw new ArgumentOutOfRangeException ("Insufficient byte buffer.");
 			bytes [byteIndex++] = 0x1B;
-			bytes [byteIndex++] = (byte) (next == ISO2022JPMode.JISX0208 ? 0x24 : 0x28);
-			bytes [byteIndex++] = (byte) (next == ISO2022JPMode.JISX0201 ? 0x49 : 0x42);
+			switch (next) {
+			case ISO2022JPMode.JISX0201:
+				bytes [byteIndex++] = 0x28;
+				bytes [byteIndex++] = 0x49;
+				break;
+			case ISO2022JPMode.JISX0208:
+				bytes [byteIndex++] = 0x24;
+				bytes [byteIndex++] = 0x42;
+				break;
+			default:
+				bytes [byteIndex++] = 0x28;
+				bytes [byteIndex++] = 0x42;
+				break;
+			}
 			cur = next;
 		}
 
@@ -431,6 +443,8 @@ namespace I18N.CJK
 					i++;
 					if (bytes [i] == 0x42)
 						m = wide ? ISO2022JPMode.JISX0208 : ISO2022JPMode.ASCII;
+					else if (bytes [i] == 0x4A) // obsoleted
+						m = ISO2022JPMode.ASCII;
 					else if (bytes [i] == 0x49)
 						m = ISO2022JPMode.JISX0201;
 					else
@@ -514,6 +528,8 @@ namespace I18N.CJK
 					i++;
 					if (bytes [i] == 0x42)
 						m = wide ? ISO2022JPMode.JISX0208 : ISO2022JPMode.ASCII;
+					else if (bytes [i] == 0x4A) // obsoleted
+						m = ISO2022JPMode.ASCII;
 					else if (bytes [i] == 0x49)
 						m = ISO2022JPMode.JISX0201;
 					else

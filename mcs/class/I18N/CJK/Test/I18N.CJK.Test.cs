@@ -500,6 +500,15 @@ namespace MonoTests.I18N.CJK
 			Assert.AreEqual (0, d.GetChars (new byte [] {0xF9}, 0, 1, chars, 0), "#5");
 			Assert.AreEqual (new char [] {'\0'}, chars, "#6");
 		}
+
+		[Test]
+		public void HandleObsoletedESCJ () // bug #398273
+		{
+			byte [] b = new byte [] {0x64, 0x6f, 0x6e, 0x1b, 0x24, 0x42, 0x21, 0x47, 0x1b, 0x28, 0x4a, 0x74};
+			string s = Encoding.GetEncoding ("ISO-2022-JP").GetString (b);
+			Assert.AreEqual ("don\u2019t", s);
+
+		}
 		#endregion
 
 		#region Korean

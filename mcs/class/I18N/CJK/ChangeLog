@@ -1,3 +1,8 @@
+2008-06-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ISO2022JP.cs : handle ESC-J sequence which is obsoleted in
+	  JIS X 0213. Fixed bug #398273.
+
 2008-05-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: I didn't know the syntax ;-)
