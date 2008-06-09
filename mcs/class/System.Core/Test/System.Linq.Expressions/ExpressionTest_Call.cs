@@ -252,5 +252,22 @@ namespace MonoTests.System.Linq.Expressions {
 
 			Assert.AreEqual (42, c (38));
 		}
+
+		public static int Bang (Expression i)
+		{
+			return (int) (i as ConstantExpression).Value;
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CallMethodWithExpressionParameter ()
+		{
+			var call = Expression.Call (GetType ().GetMethod ("Bang"), Expression.Constant (42));
+			Assert.AreEqual (ExpressionType.Quote, call.Arguments [0].NodeType);
+
+			var l = Expression.Lambda<Func<int>> (call).Compile ();
+
+			Assert.AreEqual (42, l ());
+		}
 	}
 }

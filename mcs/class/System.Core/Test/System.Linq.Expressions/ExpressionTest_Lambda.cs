@@ -206,5 +206,19 @@ namespace MonoTests.System.Linq.Expressions
 
 			Assert.AreEqual (42, l ());
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void LambdaReturningExpression ()
+		{
+			var l = Expression.Lambda<Func<Expression>> (Expression.Constant (42));
+			Assert.AreEqual (ExpressionType.Quote, l.Body.NodeType);
+
+			var quoter = l.Compile ();
+
+			var q = quoter ();
+
+			Assert.AreEqual (ExpressionType.Constant, q.NodeType);
+		}
 	}
 }
