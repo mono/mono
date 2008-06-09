@@ -422,8 +422,27 @@ namespace System.Windows.Forms {
 
 		public bool IconRectangleContains (int x, int y)
 		{
+			if (!ShowIcon)
+				return false;
+
 			Rectangle icon = ThemeEngine.Current.ManagedWindowGetTitleBarIconArea (this);
 			return icon.Contains (x, y);
+		}
+
+		public bool ShowIcon {
+			get {
+#if NET_2_0
+				if (!Form.ShowIcon)
+					return false;
+#endif
+				if (!HasBorders)
+					return false;
+				if (IsMinimized)
+					return true;
+				if (IsToolWindow || Form.FormBorderStyle == FormBorderStyle.FixedDialog)
+					return false;
+				return true;
+			}
 		}
 
 		protected virtual void Activate ()

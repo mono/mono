@@ -6078,13 +6078,7 @@ namespace System.Windows.Forms
 						tb, format);
 			}
 
-			bool draw_icon = false;
-#if NET_2_0
-			draw_icon = !wm.IsToolWindow && form.ShowIcon;
-#else
-			draw_icon = !wm.IsToolWindow;
-#endif
-			if (draw_icon) {
+			if (wm.ShowIcon) {
 				Rectangle icon = ManagedWindowGetTitleBarIconArea (wm);
 				if (icon.IntersectsWith (clip))
 					dc.DrawIcon (form.Icon, icon);
