@@ -1,3 +1,9 @@
+2008-06-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextReader.cs : when Normalized is true, '<' after \r which
+	  comes after text node was incorrectly consumed as a text content.
+	  Fixed bug #398374.
+
 2008-06-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvert.cs : now we can use roundtrip format for float/double.

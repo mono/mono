@@ -1624,11 +1624,12 @@ namespace System.Xml
 						break;
 				} else if (normalization && ch == '\r') {
 					ReadChar ();
-					ch = ReadChar ();
+					ch = PeekChar ();
 					if (ch != '\n')
 						// append '\n' instead of '\r'.
 						AppendValueChar ('\n');
 					// and in case of "\r\n", discard '\r'.
+					continue;
 				} else {
 					if (CharacterChecking && XmlChar.IsInvalid (ch))
 						throw NotWFError ("Not allowed character was found.");

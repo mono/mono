@@ -1262,5 +1262,15 @@ namespace MonoTests.System.Xml
 			while (!xtr.EOF)
 				xtr.Read ();
 		}
+
+		[Test]
+		public void CloseTagAfterTextWithTrailingCRNormalized () // bug #398374
+		{
+			string xml = "<root><foo>some text\r</foo></root>";
+			XmlTextReader r = new XmlTextReader (xml, XmlNodeType.Document, null);
+			r.Normalization = true;
+			while (!r.EOF)
+				r.Read ();
+		}
 	}
 }
