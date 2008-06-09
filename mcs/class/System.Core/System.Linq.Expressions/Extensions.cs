@@ -48,6 +48,11 @@ namespace System.Linq.Expressions {
 			return self.IsGenericInstanceOf (typeof (Nullable<>));
 		}
 
+		public static bool IsExpression (this Type self)
+		{
+			return self == typeof (Expression) || self.IsSubclassOf (typeof (Expression));
+		}
+
 		public static bool IsGenericImplementationOf (this Type self, Type type)
 		{
 			foreach (Type iface in self.GetInterfaces ())

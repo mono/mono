@@ -998,9 +998,7 @@ namespace System.Linq.Expressions {
 			if (!method.IsStatic && !instance.Type.IsAssignableTo (method.DeclaringType))
 				throw new ArgumentException ("Type is not assignable to the declaring type of the method");
 
-			var args = arguments.ToReadOnlyCollection ();
-
-			CheckMethodArguments (method, args);
+			var args = CheckMethodArguments (method, arguments);
 
 			return new MethodCallExpression (instance, method, args);
 		}
@@ -1034,9 +1032,7 @@ namespace System.Linq.Expressions {
 			var method = TryGetMethod (instance.Type, methodName, AllInstance,
 				CollectTypes (arguments), typeArguments);
 
-			var args = arguments.ToReadOnlyCollection ();
-
-			CheckMethodArguments (method, args);
+			var args = CheckMethodArguments (method, arguments);
 
 			return new MethodCallExpression (instance, method, args);
 		}
@@ -1087,9 +1083,7 @@ namespace System.Linq.Expressions {
 			var method = TryGetMethod (type, methodName, AllStatic,
 				CollectTypes (arguments), typeArguments);
 
-			var args = arguments.ToReadOnlyCollection ();
-
-			CheckMethodArguments (method, args);
+			var args = CheckMethodArguments (method, arguments);
 
 			return new MethodCallExpression (method, args);
 		}
@@ -1294,9 +1288,7 @@ namespace System.Linq.Expressions {
 			if (addMethod.IsStatic)
 				throw new ArgumentException ("addMethod must be an instance method", "addMethod");
 
-			var args = arguments.ToReadOnlyCollection ();
-
-			CheckMethodArguments (addMethod, args);
+			var args = CheckMethodArguments (addMethod, arguments);
 
 			return new ElementInit (addMethod, args);
 		}
@@ -1430,7 +1422,7 @@ namespace System.Linq.Expressions {
 			if (invoke.GetParameters ().Length != args.Count)
 				throw new InvalidOperationException ("Arguments count doesn't match parameters length");
 
-			CheckMethodArguments (invoke, args);
+			args = CheckMethodArguments (invoke, args);
 
 			return new InvocationExpression (expression, invoke.ReturnType, args);
 		}
@@ -1464,7 +1456,7 @@ namespace System.Linq.Expressions {
 
 			if (invoke.ReturnType != typeof (void)) {
 				if (!CanAssign (invoke.ReturnType, body.Type)) {
-					if (invoke.ReturnType == typeof (Expression))
+					if (invoke.ReturnType.IsExpression ())
 						return Expression.Quote (body);
 
 					throw new ArgumentException (String.Format ("body type {0} can not be assigned to {1}", body.Type, invoke.ReturnType));
@@ -1865,15 +1857,22 @@ namespace System.Linq.Expressions {
 			if (constructor == null)
 				throw new ArgumentNullException ("constructor");
 
-			var args = arguments.ToReadOnlyCollection ();
-
-			CheckMethodArguments (constructor, args);
+			var args = CheckMethodArguments (constructor, arguments);
 
 			return new NewExpression (constructor, args, null);
 		}
 
-		static void CheckMethodArguments (MethodBase method, ReadOnlyCollection<Expression> arguments)
+		static IList<Expression> CreateArgumentList (IEnumerable<Expression> arguments)
 		{
+			if (arguments == null)
+				return arguments.ToReadOnlyCollection ();
+
+			return arguments.ToList ();
+		}
+
+		static ReadOnlyCollection<Expression> CheckMethodArguments (MethodBase method, IEnumerable<Expression> args)
+		{
+			var arguments = CreateArgumentList (args);
 			var parameters = method.GetParameters ();
 
 			if (arguments.Count != parameters.Length)
@@ -1883,9 +1882,15 @@ namespace System.Linq.Expressions {
 				if (arguments [i] == null)
 					throw new ArgumentNullException ("arguments");
 
-				if (!IsAssignableToParameterType (arguments [i].Type, parameters [i]))
-					throw new ArgumentException ("arguments");
+				if (!IsAssignableToParameterType (arguments [i].Type, parameters [i])) {
+					if (!parameters [i].ParameterType.IsExpression ())
+						throw new ArgumentException ("arguments");
+
+					arguments [i] = Expression.Quote (arguments [i]);
+				}
 			}
+
+			return arguments.ToReadOnlyCollection ();
 		}
 
 		public static NewExpression New (ConstructorInfo constructor, IEnumerable<Expression> arguments, params MemberInfo [] members)
@@ -1904,7 +1909,7 @@ namespace System.Linq.Expressions {
 			CheckForNull (args, "arguments");
 			CheckForNull (mmbs, "members");
 
-			CheckMethodArguments (constructor, args);
+			args = CheckMethodArguments (constructor, arguments);
 
 			if (args.Count != mmbs.Count)
 				throw new ArgumentException ("Arguments count does not match members count");
