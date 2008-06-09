@@ -6846,7 +6846,7 @@ namespace Mono.CSharp {
 				Parent, type_name,
 				Modifiers.BACKING_FIELD | Modifiers.PRIVATE | (ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
 			    "<" + Name + ">k__BackingField", null, Location);
-			((TypeContainer)Parent).AddField (field);
+			((TypeContainer)Parent).PartialContainer.AddField (field);
 
 			// Make get block
 			get_block.Block = new ToplevelBlock (block, null, Location);
