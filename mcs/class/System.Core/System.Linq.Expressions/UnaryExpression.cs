@@ -390,6 +390,11 @@ namespace System.Linq.Expressions {
 				EmitUserDefinedLiftedOperator (ec);
 		}
 
+		void EmitQuote (EmitContext ec)
+		{
+			ec.EmitReadGlobal (operand, typeof (Expression));
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
 			if (method != null) {
@@ -415,7 +420,7 @@ namespace System.Linq.Expressions {
 				EmitArithmeticUnary (ec);
 				return;
 			case ExpressionType.Quote:
-				ec.EmitReadGlobal (operand, typeof (Expression));
+				EmitQuote (ec);
 				return;
 			default:
 				throw new NotImplementedException (this.NodeType.ToString ());
