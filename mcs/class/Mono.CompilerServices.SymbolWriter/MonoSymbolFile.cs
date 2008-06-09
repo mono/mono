@@ -340,9 +340,11 @@ namespace Mono.CompilerServices.SymbolWriter
 			ot.Write (bw, MajorVersion, MinorVersion);
 			bw.Seek (0, SeekOrigin.End);
 
+#if false
 			Console.WriteLine ("TOTAL: {0} line numbes, {1} bytes, extended {2} bytes, " +
 					   "{3} methods.", NumLineNumbers, LineNumberSize,
 					   ExtendedLineNumberSize, methods.Count);
+#endif
 		}
 
 		public void CreateSymbolFile (Guid guid, FileStream fs)
