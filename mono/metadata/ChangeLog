@@ -1,3 +1,8 @@
+2008-06-09  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.c (load_symfile): Check the major version
+	first; if it's wrong, don't print the minor version in the error message.
+
 2008-06-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain.c (set_domain_search_path): Make this use the domain assemblies
