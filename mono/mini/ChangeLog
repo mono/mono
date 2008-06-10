@@ -1,3 +1,10 @@
+2008-06-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* debug-mini.c (mono_debug_free_method_jit_info): Moved to metadata/mono-debug.c.
+
+	* debug-mini.c (mono_debug_print_vars): Release memory after printing
+	everything.
+
 2008-06-10  Martin Baulig  <martin@ximian.com>
 
 	* debug-mini.c

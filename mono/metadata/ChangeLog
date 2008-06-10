@@ -1,3 +1,13 @@
+2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mono-debug.c: Moved mono_debug_free_method_jit_info from
+	mini/debug-mini.c to here.
+
+	* mono-debug.c (il_offset_from_address): Free memory from find_method.
+
+	* mono-debug.h: Export mono_debug_free_method_jit_info, users should
+	use it to release structs returned by mono_debug_find_method.
+
 2008-06-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_setup_vtable): Call setup_methods even for interfaces
