@@ -73,7 +73,7 @@ namespace Mono.CompilerServices.SymbolWriter
 	public class OffsetTable
 	{
 		public const int  MajorVersion = 42;
-		public const int  MinorVersion = 5;
+		public const int  MinorVersion = 6;
 		public const long Magic        = 0x45e82623fd7fa614;
 
 		#region This is actually written to the symbol file

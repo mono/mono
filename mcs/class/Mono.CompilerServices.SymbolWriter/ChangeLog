@@ -1,5 +1,13 @@
 2008-06-10  Martin Baulig  <martin@ximian.com>
 
+	* MonoSymbolTable.cs
+	(OffsetTable.MinorVersion): Bump to 6.  There were no changes to
+	the file format, but we were generating incorrect source file
+	indices in the line number table due to a bug, which made
+	backtraces report an incorrect source file.
+
+2008-06-10  Martin Baulig  <martin@ximian.com>
+
 	* MonoSymbolWriter.cs
 	(MonoSymbolWriter.MarkSequencePoint): Added overloaded version
 	taking a `SourceFileEntry' instead of a file index.
