@@ -1,3 +1,13 @@
+2008-06-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TabControlPainter.cs: When calculating the display rectangle for
+	TabPage elements, don't include TabControlSelectedDelta.Y as part of
+	the page height, since it is only added ad the end (this is the way
+	it's done in TabControl). This way having a lot of pages with
+	Multiline as true doesn't add much extra space between the tab pages
+	labels and the actual tab pages area.
+	Fixes #393912.
+
 2008-05-21  George Giolfan <georgegiolfan@yahoo.com>
 
 	* TabControlPainter.cs: Added HasHotElementStyles.

@@ -237,7 +237,7 @@ namespace System.Windows.Forms.Theming.Default
 				return res;
 
 			int spacing = RowSpacing (tab).Height;
-			int tabOffset = (tab.ItemSize.Height + spacing - (selectedTabDelta.Height - selectedTabDelta.Y)) * tab.RowCount;
+			int tabOffset = (tab.ItemSize.Height + spacing - selectedTabDelta.Height) * tab.RowCount + selectedTabDelta.Y;
 			switch (tab.Alignment) {
 				case TabAlignment.Top:
 					res.Y += tabOffset;
