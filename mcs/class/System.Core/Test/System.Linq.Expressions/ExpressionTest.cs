@@ -237,5 +237,19 @@ namespace MonoTests.System.Linq.Expressions {
 
 			Assert.AreEqual ("gazonk42", del ());
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void HoistedParameter ()
+		{
+			var i = Expression.Parameter (typeof (int), "i");
+
+			var l = Expression.Lambda<Func<int, string>> (
+				Expression.Invoke (
+					Expression.Lambda<Func<string>> (
+						Expression.Call (i, typeof (int).GetMethod ("ToString", Type.EmptyTypes)))), i).Compile ();
+
+			Assert.AreEqual ("42", l (42));
+		}
 	}
 }
