@@ -4364,6 +4364,11 @@ namespace System.Windows.Forms
 			if ((specified & BoundsSpecified.Height) == 0)
 				height = Height;
 		
+			SetBoundsInternal (x, y, width, height, specified);
+		}
+
+		internal void SetBoundsInternal (int x, int y, int width, int height, BoundsSpecified specified)
+		{
 			// SetBoundsCore is really expensive to call, so we want to avoid it if we can.
 			// We can avoid it if:
 			// - The requested dimensions are the same as our current dimensions

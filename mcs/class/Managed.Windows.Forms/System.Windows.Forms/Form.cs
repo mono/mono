@@ -3175,7 +3175,8 @@ namespace System.Windows.Forms {
 				}
 				if (new_size == Size)
 					return;
-				SetBounds (bounds.X, bounds.Y, new_size.Width, new_size.Height, BoundsSpecified.None);
+
+				SetBoundsInternal (bounds.X, bounds.Y, new_size.Width, new_size.Height, BoundsSpecified.None);
 			}
 		}
 

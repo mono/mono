@@ -65,36 +65,36 @@ namespace System.Windows.Forms.Layout
 					break;
 
 				case DockStyle.Left:
-					child.SetBoundsCoreInternal (space.Left, space.Y, child_size.Width, space.Height, BoundsSpecified.None);
+					child.SetBoundsInternal (space.Left, space.Y, child_size.Width, space.Height, BoundsSpecified.None);
 					space.X += child.Width;
 					space.Width -= child.Width;
 					break;
 
 				case DockStyle.Top:
-					child.SetBoundsCoreInternal (space.Left, space.Y, space.Width, child_size.Height, BoundsSpecified.None);
+					child.SetBoundsInternal (space.Left, space.Y, space.Width, child_size.Height, BoundsSpecified.None);
 					space.Y += child.Height;
 					space.Height -= child.Height;
 					break;
 
 				case DockStyle.Right:
-					child.SetBoundsCoreInternal (space.Right - child_size.Width, space.Y, child_size.Width, space.Height, BoundsSpecified.None);
+					child.SetBoundsInternal (space.Right - child_size.Width, space.Y, child_size.Width, space.Height, BoundsSpecified.None);
 					space.Width -= child.Width;
 					break;
 
 				case DockStyle.Bottom:
-					child.SetBoundsCoreInternal (space.Left, space.Bottom - child_size.Height, space.Width, child_size.Height, BoundsSpecified.None);
+					child.SetBoundsInternal (space.Left, space.Bottom - child_size.Height, space.Width, child_size.Height, BoundsSpecified.None);
 					space.Height -= child.Height;
 					break;
 					
 				case DockStyle.Fill:
-					child.SetBoundsCoreInternal (space.Left, space.Top, space.Width, space.Height, BoundsSpecified.None);
+					child.SetBoundsInternal (space.Left, space.Top, space.Width, space.Height, BoundsSpecified.None);
 					break;
 				}
 			}
 
 			// MdiClient gets whatever space is left
 			if (mdi != null)
-				mdi.SetBoundsCoreInternal (space.Left, space.Top, space.Width, space.Height, BoundsSpecified.None);
+				mdi.SetBoundsInternal (space.Left, space.Top, space.Width, space.Height, BoundsSpecified.None);
 		}
 
 		void LayoutAnchoredChildren (Control parent, Control[] controls)
@@ -154,7 +154,7 @@ namespace System.Windows.Forms.Layout
 				if (height < 0)
 					height = 0;
 
-				child.SetBoundsCoreInternal (left, top, width, height, BoundsSpecified.None);
+				child.SetBoundsInternal (left, top, width, height, BoundsSpecified.None);
 			}
 		}
 		
@@ -175,8 +175,8 @@ namespace System.Windows.Forms.Layout
 				top = child.Top;
 				
 				Size preferredsize = GetPreferredControlSize (child);
-				
-				child.SetBoundsCoreInternal (left, top, preferredsize.Width, preferredsize.Height, BoundsSpecified.None);
+
+				child.SetBoundsInternal (left, top, preferredsize.Width, preferredsize.Height, BoundsSpecified.None);
 			}
 		}
 
@@ -220,7 +220,7 @@ namespace System.Windows.Forms.Layout
 			if (container.MaximumSize.Height != 0 && height > container.MaximumSize.Height)
 				height = container.MaximumSize.Height;
 
-			container.SetBoundsCoreInternal (left, top, width, height, BoundsSpecified.None);
+			container.SetBoundsInternal (left, top, width, height, BoundsSpecified.None);
 		}
 #endif
 

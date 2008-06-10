@@ -1,3 +1,10 @@
+2008-06-10  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Make a SetBoundsInternal that avoids the new
+	SetBounds code.
+	* ComboBox.cs, Form.cs, ListBox.cs, ScrollableControl.cs: Use
+	SetBoundsInternal instead of SetBoundsCoreInternal.
+
 2008-06-10  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ScrollableControl.cs: Use SetBoundsCoreInternal instead of 
