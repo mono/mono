@@ -182,12 +182,12 @@ namespace System.Linq.Expressions {
 
 		MethodInfo GetFalseOperator ()
 		{
-			return left.Type.GetMethod ("op_False", AllStatic);
+			return GetNotNullableOf (left.Type).GetMethod ("op_False", AllStatic);
 		}
 
 		MethodInfo GetTrueOperator ()
 		{
-			return left.Type.GetMethod ("op_True", AllStatic);
+			return GetNotNullableOf (left.Type).GetMethod ("op_True", AllStatic);
 		}
 
 		void EmitUserDefinedLogicalShortCircuit (EmitContext ec)
@@ -649,7 +649,44 @@ namespace System.Linq.Expressions {
 
 		void EmitUserDefinedLiftedLogicalShortCircuit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			var ig = ec.ig;
+			var and = NodeType == ExpressionType.AndAlso;
+
+			var left_is_null = ig.DefineLabel ();
+			var ret_left = ig.DefineLabel ();
+			var ret_null = ig.DefineLabel ();
+			var done = ig.DefineLabel ();
+
+			var left = ec.EmitStored (this.left);
+
+			ec.EmitNullableHasValue (left);
+			ig.Emit (OpCodes.Brfalse, and ? ret_null : left_is_null);
+
+			ec.EmitNullableGetValueOrDefault (left);
+			ec.EmitCall (and ? GetFalseOperator () : GetTrueOperator ());
+			ig.Emit (OpCodes.Brtrue, ret_left);
+
+			ig.MarkLabel (left_is_null);
+			var right = ec.EmitStored (this.right);
+			ec.EmitNullableHasValue (right);
+			ig.Emit (OpCodes.Brfalse, ret_null);
+
+			ec.EmitNullableGetValueOrDefault (left);
+			ec.EmitNullableGetValueOrDefault (right);
+			ec.EmitCall (method);
+
+			ec.EmitNullableNew (Type);
+			ig.Emit (OpCodes.Br, done);
+
+			ig.MarkLabel (ret_left);
+			ec.EmitLoad (left);
+			ig.Emit (OpCodes.Br, done);
+
+			ig.MarkLabel (ret_null);
+			var ret = ig.DeclareLocal (Type);
+			ec.EmitNullableInitialize (ret);
+
+			ig.MarkLabel (done);
 		}
 
 		void EmitUserDefinedOperator (EmitContext ec)
