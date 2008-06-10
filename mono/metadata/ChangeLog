@@ -1,3 +1,8 @@
+2008-06-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_vtable): Call setup_methods even for interfaces
+	since it needs to set method->slot for all interface methods.
+
 2008-06-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class-internals.h: Forgot to add.
