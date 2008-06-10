@@ -278,7 +278,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void UserDefinedOrElseLiftedToNull ()
 		{
 			var l = Expression.Parameter (typeof (Slot?), "l");
