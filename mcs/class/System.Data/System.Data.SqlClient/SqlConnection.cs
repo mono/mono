@@ -51,6 +51,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Xml;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 
 namespace System.Data.SqlClient
 {
@@ -1699,7 +1702,11 @@ namespace System.Data.SqlClient
 
 		public static void ClearAllPools ()
 		{
+#if NET_2_0
+			IDictionary <string, TdsConnectionPool> pools = SqlConnection.sqlConnectionPools.GetConnectionPool ();
+#else
 			Hashtable pools = SqlConnection.sqlConnectionPools.GetConnectionPool ();
+#endif
 			foreach (TdsConnectionPool pool in pools.Values) {
 				if (pool != null) {
 					pool.ResetConnectionPool ();
