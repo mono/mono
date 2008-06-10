@@ -187,6 +187,12 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		public void CloseMethod ()
 		{
+			if (current_method == null) {
+				Console.WriteLine ("Some clown is calling CloseMethod() while " +
+						   "current_method == null: {0}", Environment.StackTrace);
+				return;
+			}
+						
 			current_method.SetLineNumbers (
 				current_method_lines, current_method_lines_pos);
 			current_method_lines_pos = 0;
