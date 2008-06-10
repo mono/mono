@@ -138,6 +138,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			current_method.AddScopeVariable (scope, index);
 		}
 
+		[Obsolete]
 		public void MarkSequencePoint (int offset, int file, int line, int column)
 		{
 			if (current_method == null)
@@ -152,6 +153,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			current_method_lines [current_method_lines_pos++] = new LineNumberEntry (file, line, offset);
 		}
 
+		[Obsolete]
 		public void MarkSequencePoint (int offset, int file, int line, int column, bool is_hidden)
 		{
 			if (current_method == null)
@@ -165,6 +167,23 @@ namespace Mono.CompilerServices.SymbolWriter
 
 			current_method_lines [current_method_lines_pos++] = new LineNumberEntry (
 				file, line, offset, is_hidden);
+		}
+
+		public void MarkSequencePoint (int offset, SourceFileEntry file, int line, int column,
+					       bool is_hidden)
+		{
+			if (current_method == null)
+				return;
+
+			if (current_method_lines_pos == current_method_lines.Length) {
+				LineNumberEntry [] tmp = current_method_lines;
+				current_method_lines = new LineNumberEntry [current_method_lines.Length * 2];
+				Array.Copy (tmp, current_method_lines, current_method_lines_pos);
+			}
+
+			int file_idx = file != null ? file.Index : 0;
+			current_method_lines [current_method_lines_pos++] = new LineNumberEntry (
+				file_idx, line, offset, is_hidden);
 		}
 
 		public void OpenMethod (ICompileUnit file, ISourceMethod method)

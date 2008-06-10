@@ -1,6 +1,12 @@
 2008-06-10  Martin Baulig  <martin@ximian.com>
 
 	* MonoSymbolWriter.cs
+	(MonoSymbolWriter.MarkSequencePoint): Added overloaded version
+	taking a `SourceFileEntry' instead of a file index.
+
+2008-06-10  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolWriter.cs
 	(MonoSymbolWriter.CloseMethod): Quick-fix; still a lot of broken
 	code out there.
 
