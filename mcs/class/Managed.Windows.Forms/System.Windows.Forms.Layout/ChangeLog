@@ -1,5 +1,10 @@
 2008-06-10  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TableLayoutSettingsTypeConverter.cs: Patch from Andy Hume to
+	use InvariantCulture.
+
+2008-06-10  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DefaultLayout.cs, TableLayout.cs, FlowLayout.cs: Use SetBoundsInternal
 	instead of SetBoundsCoreInternal.
 

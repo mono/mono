@@ -84,7 +84,7 @@ namespace System.Windows.Forms.Layout
 			
 			foreach (ColumnStyle style in settings.ColumnStyles) {
 				styles.Add (style.SizeType.ToString ());
-				styles.Add (style.Width.ToString ());
+				styles.Add (style.Width.ToString (CultureInfo.InvariantCulture));
 			}
 
 			
@@ -95,7 +95,7 @@ namespace System.Windows.Forms.Layout
 			styles.Clear();
 			foreach (RowStyle style in settings.RowStyles) {
 				styles.Add (style.SizeType.ToString ());
-				styles.Add (style.Height.ToString ());
+				styles.Add (style.Height.ToString (CultureInfo.InvariantCulture));
 			}
 
 			xw.WriteStartElement ("Rows");
@@ -163,7 +163,7 @@ namespace System.Windows.Forms.Layout
 				for (int i = 0; i < list.Length; i+=2) {
 					float width = 0f;
 					SizeType type = (SizeType) Enum.Parse (typeof (SizeType), list[i]);
-					float.TryParse (list[i+1], out width);
+					float.TryParse (list[i+1], NumberStyles.Float, CultureInfo.InvariantCulture, out width);
 					settings.ColumnStyles.Add (new ColumnStyle (type, width));
 				}				
 			}
@@ -181,7 +181,7 @@ namespace System.Windows.Forms.Layout
 				for (int i = 0; i < list.Length; i += 2) {
 					float height = 0f;
 					SizeType type = (SizeType) Enum.Parse (typeof (SizeType), list[i]);
-					float.TryParse (list[i + 1], out height);
+					float.TryParse (list[i + 1], NumberStyles.Float, CultureInfo.InvariantCulture, out height);
 					settings.RowStyles.Add (new RowStyle (type, height));
 				}
 			}

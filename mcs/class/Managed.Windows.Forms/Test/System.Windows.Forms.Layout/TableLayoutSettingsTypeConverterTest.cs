@@ -295,7 +295,7 @@ namespace MonoTests.System.Windows.Forms.Layout {
 		}
 
 		[Test]
-		public void ConvertTo_CurrentCultureHasDot_InvariantCulture()
+		public void ConvertTo_CurrentCultureHasDot_IsInvariantCulture()
 		{
 			CultureInfo culture = CultureInfo.InvariantCulture;
 			ConvertTo_WithCurrentCulture(culture, XmlSettingsEDecimalOneItem);
@@ -311,6 +311,12 @@ namespace MonoTests.System.Windows.Forms.Layout {
 		[Test]
 		public void ConvertTo_CurrentCultureHasComma()
 		{
+			if (!IsMonoRuntime) {
+				Assert.Ignore("Remember MSFT still uses the current culture decimal mark!");
+			}
+			//
+			// Changed to always use dot-decimal-point float format
+			//
 			// This test is a test of current behaviour, and NOT *desired* behaviour.
 			// It would likely be preferable for the float values (and everything) 
 			// to be written using InvariantCulture, e.g. style.Width.ToString (CultureInfo.InvariantCulture)
@@ -322,8 +328,8 @@ namespace MonoTests.System.Windows.Forms.Layout {
 			//
 			// de-DE or fr-FR would work here too!
 			CultureInfo culture = CultureInfo.GetCultureInfo("ca-ES");
-			ConvertTo_WithCurrentCulture(culture, XmlSettingsEDecimalOneItemCommaDecimalPoint);
-			// should:	XmlSettingsDDecimalOneItem!!!
+			ConvertTo_WithCurrentCulture(culture, XmlSettingsEDecimalOneItem);
+			// was:	XmlSettingsEDecimalOneItemCommaDecimalPoint
 			//
 			// Just check that this culture normal produces "99,9"
 			Assert.AreEqual("99,9", String.Format(culture, "{0}", 99.9d), "ToString d");
@@ -555,9 +561,6 @@ namespace MonoTests.System.Windows.Forms.Layout {
 		}
 
 		[Test]
-		// Remove this if we change to always writing the float in Invariant culture, 
-		// i.e. always using "." e.g. 99.9.
-		[NUnit.Framework.Category("NotWorking")]
 		public void ConvertTo_Loop_CurrentCultureWithComma_CultureWithComma()
 		{
 			if (!IsMonoRuntime) {
@@ -617,9 +620,7 @@ namespace MonoTests.System.Windows.Forms.Layout {
 		{
 			ConvertFrom_Loop(CultureInfo.GetCultureInfo("de-DE"));
 		}
-
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void ConvertFrom_Loop_CurrentCultureWithComma_CultureWithComma()
 		{
 			CultureInfo previous = global::System.Threading.Thread.CurrentThread.CurrentCulture;
@@ -627,6 +628,18 @@ namespace MonoTests.System.Windows.Forms.Layout {
 				= CultureInfo.GetCultureInfo("de-DE");
 			try {
 				ConvertFrom_Loop(CultureInfo.GetCultureInfo("de-DE"));
+			} finally {
+				global::System.Threading.Thread.CurrentThread.CurrentCulture = previous;
+			}
+		}
+		[Test]
+		public void ConvertFrom_Loop_CurrentCultureWithComma_InvariantCulture()
+		{
+			CultureInfo previous = global::System.Threading.Thread.CurrentThread.CurrentCulture;
+			global::System.Threading.Thread.CurrentThread.CurrentCulture
+				= CultureInfo.GetCultureInfo("de-DE");
+			try {
+				ConvertFrom_Loop(CultureInfo.InvariantCulture);
 			} finally {
 				global::System.Threading.Thread.CurrentThread.CurrentCulture = previous;
 			}
