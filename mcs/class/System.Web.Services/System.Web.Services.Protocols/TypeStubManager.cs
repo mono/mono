@@ -96,12 +96,19 @@ namespace System.Web.Services.Protocols {
 
 			object [] o = Type.GetCustomAttributes (typeof (WebServiceBindingAttribute), false);
 
+			bool isClientSide = typeof (SoapHttpClientProtocol).IsAssignableFrom (Type);
+			bool defaultAdded = false;
+
 			string defaultBindingName = logicalType.WebServiceName + ProtocolName;
 			if (o.Length > 0)
-				foreach (WebServiceBindingAttribute at in o)
+				foreach (WebServiceBindingAttribute at in o) {
 					AddBinding (new BindingInfo (at, defaultBindingName, LogicalType.WebServiceNamespace));
-			else 
-				AddBinding (new BindingInfo (null, defaultBindingName, logicalType.WebServiceNamespace));
+					if ((at.Name == null || at.Name.Length == 0) || (at.Name == defaultBindingName))
+						defaultAdded = true;
+				}
+
+			if (!defaultAdded && !isClientSide)
+				AddBindingAt (0, new BindingInfo (null, defaultBindingName, logicalType.WebServiceNamespace));
 
 #if NET_2_0
 			foreach (Type ifaceType in Type.GetInterfaces ()) {
@@ -227,6 +234,11 @@ namespace System.Web.Services.Protocols {
 		internal void AddBinding (BindingInfo info)
 		{
 			bindings.Add (info);
+		}
+
+		internal void AddBindingAt (int pos, BindingInfo info)
+		{
+			bindings.Insert (pos, info);
 		}
 		
 		internal BindingInfo GetBinding (string name)

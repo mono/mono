@@ -1,3 +1,9 @@
+2008-06-10  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* TypeStubManager.cs: fixed TypeStubInfo ctor, default binding name is
+        wrong, when declared in WebServiceBindingAttribute, but not used.
+        fixes. bug number: #345448
+
 2008-02-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TypeStubManager.cs : reverted 2007-12-11 change as it caused
