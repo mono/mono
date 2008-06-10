@@ -499,13 +499,13 @@ namespace System.Web {
 				HttpContext.Current = null;
 			} else {
 				context.ApplicationInstance = app;
-				
+
 				//
 				// Ask application to service the request
 				//
-				IHttpAsyncHandler ihah = app;
-
+				
 #if TARGET_J2EE
+				IHttpAsyncHandler ihah = app;
 				if (context.Handler == null)
 					ihah.BeginProcessRequest (context, new AsyncCallback (request_processed), context);
 				else
@@ -519,8 +519,10 @@ namespace System.Web {
 
 				ihah.EndProcessRequest (null);
 #else
-				IAsyncResult appiar = ihah.BeginProcessRequest (context, new AsyncCallback (request_processed), context);
-				ihah.EndProcessRequest (appiar);
+				IHttpHandler ihh = app;
+//				IAsyncResult appiar = ihah.BeginProcessRequest (context, new AsyncCallback (request_processed), context);
+//				ihah.EndProcessRequest (appiar);
+				ihh.ProcessRequest (context);
 #endif
 
 				HttpApplicationFactory.Recycle (app);

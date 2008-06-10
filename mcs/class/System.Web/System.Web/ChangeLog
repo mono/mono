@@ -1,3 +1,9 @@
+2008-06-10  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRuntime.cs: do not create a new thread to run the
+	application, reuse the thread from the hosting application (XSP's
+	thread comes from threadpool).
+
 2008-06-06  Marek Habersack  <mhabersack@novell.com>
 
 	* SiteMap.cs: FindCurrentNode is no longer needed. CurrentNode
