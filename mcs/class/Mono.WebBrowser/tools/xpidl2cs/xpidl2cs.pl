@@ -37,7 +37,10 @@ my %interface = (
 		 parent => ""
 		 );
 my %properties;
-my %methods;
+my %methods = {
+	type => "",
+	params => ()
+};
 
 my %types;
 $types{"short"} = {name => "short", out => "out", marshal => ""};
@@ -75,15 +78,41 @@ $types{"DOMTimeStamp"} = {name => "int", out => "out", marshal => ""};
 $types{"nsWriteSegmentFun"} = {name => "nsIWriteSegmentFunDelegate", out => "", marshal => ""};
 $types{"nsLoadFlags"} = {name => "ulong", out => "out", marshal => ""};
 $types{"nsQIResult"} = {name => "IntPtr", out => "out", marshal => ""};
-$types{"nsIIDPtr[]"} = {name => "IntPtr", out => "out", marshal => " "};
-$types{"PRFileDescStar"} = {name => "IntPtr", out => "out", marshal => " "};
-$types{"PRLibraryStar"} = {name => "IntPtr", out => "out", marshal => " "};
-$types{"FILE"} = {name => "IntPtr", out => "out", marshal => " "};
+$types{"nsIIDPtr[]"} = {name => "IntPtr", out => "out", marshal => ""};
+$types{"PRFileDescStar"} = {name => "IntPtr", out => "out", marshal => ""};
+$types{"PRLibraryStar"} = {name => "IntPtr", out => "out", marshal => ""};
+$types{"FILE"} = {name => "IntPtr", out => "out", marshal => ""};
 $types{"others"} = {name => "", out => "out", marshal => "MarshalAs (UnmanagedType.Interface) "};
 
+my %returnvalues;
+$returnvalues{"short"} = {value => "0"};
+$returnvalues{"ushort"} = {value => "0"};
+$returnvalues{"int"} = {value => "0"};
+$returnvalues{"uint"} = {value => "0"};
+$returnvalues{"UInt32"} = {value => "0"};
+$returnvalues{"Int32"} = {value => "0"};
+$returnvalues{"long"} = {value => "0"};
+$returnvalues{"ulong"} = {value => "0"};
+$returnvalues{"IntPtr"} = {value => "0"};
+$returnvalues{"float"} = {value => "0"};
+$returnvalues{"byte"} = {value => "0"};
+$returnvalues{"IntPtr"} = {value => "IntPtr.Zero"};
+$returnvalues{"string"} = {value => "String.Empty"};
+$returnvalues{"bool"} = {value => "false"};
+$returnvalues{"/*DOMString*/ HandleRef"} = {value => "null"};
+$returnvalues{"/*AUTF8String*/ HandleRef"} = {value => "null"};
+$returnvalues{"ACString*/ HandleRef"} = {value => "null"};
+$returnvalues{"/*AString*/ HandleRef"} = {value => "null"};
+$returnvalues{""} = {value => ""};
+$returnvalues{"others"} = {value => "null"};
+
+my %names;
 $names{"event"} = {name => "_event"};
+$names{"lock"} = {name => "_lock"};
 
 my %dependents;
+   
+my $class_implementation;
 
 sub trim{
     $_[0]=~s/^\s+//;
@@ -101,19 +130,19 @@ sub parse_parent {
     my $start = 0;
     my $out;
     while (my $line = <$f>) {
-	chop $line;
-	if (!$start) {
-	    if ($line =~ /#region/) {
-		$start = 1;
-		$out .= $line . "\n";
-	    }
-	}
-	elsif ($line =~ /\}/) {
+		chop $line;
+		if (!$start) {
+			if ($line =~ /#region/) {
+				$start = 1;
+				$out .= $line . "\n";
+			}
+		}
+		elsif ($line =~ /\}/) {
 	    last;
-	}
-	else {
-	    $out .= $line . "\n";
-	}
+		}
+		else {
+			$out .= $line . "\n";
+		}
     }
 
     return $out;
@@ -128,7 +157,7 @@ sub get_name {
     my $x = shift;
 
     if (exists $names{$x}) {
-	return $names{$x}->{"name"};
+		return $names{$x}->{"name"};
     }
     return $x;
 }
@@ -141,23 +170,23 @@ sub get_type {
 #    print "arr = $arr ; out = $out ; name = $x\n";
 
     if ($out) {
-	if ($arr && exists $types{"$out$x\[\]"}) {
-	    return $types{"$out$x\[\]"}->{"name"};
-	} elsif ($arr && exists $types{"$out$x"}) {
-	    return $types{"$out$x"}->{"name"}."[]";
-	} elsif (exists $types{"$out$x"}) {
-	    return $types{"$out$x"}->{"name"};
-	}
+		if ($arr && exists $types{"$out$x\[\]"}) {
+			return $types{"$out$x\[\]"}->{"name"};
+		} elsif ($arr && exists $types{"$out$x"}) {
+			return $types{"$out$x"}->{"name"}."[]";
+		} elsif (exists $types{"$out$x"}) {
+			return $types{"$out$x"}->{"name"};
+		}
     }
 
     if (exists $types{$x} || ($arr && exists $types{"$x\[\]"})) {
-	if ($arr && exists $types{"$x\[\]"}) {
-	    return $types{"$x\[\]"}->{"name"};
-	} elsif ($arr) {
-	    return $types{$x}->{"name"}."[]";
-	} else {
-	    return $types{$x}->{"name"};
-	}
+		if ($arr && exists $types{"$x\[\]"}) {
+			return $types{"$x\[\]"}->{"name"};
+		} elsif ($arr) {
+			return $types{$x}->{"name"}."[]";
+		} else {
+			return $types{$x}->{"name"};
+		}
     }
     return $x;
 }
@@ -165,7 +194,7 @@ sub get_type {
 sub get_out {
     my $x = shift;
     if (exists $types{$x}) {
-	return $types{$x}->{"out"};
+		return $types{$x}->{"out"};
     }
     return $types{"others"}->{"out"};
 }
@@ -176,24 +205,33 @@ sub get_marshal {
     my $arr = shift;
 
     if ($out) {
-	if ($arr && exists $types{"$out$x\[\]"}) {
-	    return $types{"$out$x\[\]"}->{"marshal"};
-	} elsif (exists $types{"$out$x"}) {
-	    return $types{"$out$x"}->{"marshal"};
-	}
+		if ($arr && exists $types{"$out$x\[\]"}) {
+			return $types{"$out$x\[\]"}->{"marshal"};
+		} elsif (exists $types{"$out$x"}) {
+			return $types{"$out$x"}->{"marshal"};
+		}
     }
 
     if (exists $types{$x} || ($arr && exists $types{"$x\[\]"})) {
-	if ($arr && exists $types{"$x\[\]"}) {
-	    return $types{"$x\[\]"}->{"marshal"};
-	} else {
-	    return $types{$x}->{"marshal"};
-	}
+		if ($arr && exists $types{"$x\[\]"}) {
+			return $types{"$x\[\]"}->{"marshal"};
+		} else {
+			return $types{$x}->{"marshal"};
+		}
     }
 
     return $types{"others"}->{"marshal"};
 }
 
+sub get_return_value {
+    my $x = shift;
+    if (exists $returnvalues{$x}) {
+		return $returnvalues{$x}->{"value"};
+    }
+    return $returnvalues{"others"}->{"value"};
+}
+
+		
 sub is_property {
     my $x = shift;
     return (exists $properties{$x});
@@ -202,18 +240,18 @@ sub is_property {
 sub add_external {
     my $x = shift;
     if ($x !~ /nsISupports/ && !exists $types{$x} && !exists $dependents{$x}) {
-	$dependents{$x} = $x;
+		$dependents{$x} = $x;
     }
 #    print "add_external $x\n";
 }
 
 sub get_params {
     my $x = shift;
-    my $ret = '';
     my %list;
 #print $methods{$x}->{"params"}."\n";
     my @params = split /,/, $methods{$x}->{"params"};
-	my $sig = '';
+	my $lastoutparam = "";
+	my @ret = ();
 	
 #print "params:@params:\n";
     for my $param (@params) {
@@ -232,7 +270,7 @@ sub get_params {
 
 		if (@p[0] =~ m/iid_is/) {
 		    shift @p;
-	    	$name = @p[0];
+		    $name = &get_name (@p[0]);
 		    $name =~ s/ //;
 		    $type = $list{$name}->{"type"};
 	    	$marshal = $list{$name}->{"marshal"};
@@ -299,57 +337,36 @@ sub get_params {
 		&add_external ($type);
 
 		$marshal = "" if $marshal eq " ";
-		if ($nosig && $isout && !$sig) {
 
-			$sig .= "[return: $marshal] " if $marshal;
-			$sig .= "$type";
-		} else {
-			if ($isout && $sig) { # if this is an out param and there is already another out 
-								  # parameter turned into a return, the other one needs to be turned
-								  # back into an out param, since the method is of the form void X (out p1, out p2, ...)
-				$sig = "";
-				foreach my $key (keys %list) {
-					$outp = $list{$key};
-	  	
-					if ($outp->{"isout"} eq 1) {
-					
-						$ret .= "\n\t\t\t\t";
-						$ret .= "[".$outp->{"marshal"}."] " if $outp->{"marshal"} eq "";
-						$ret .= $outp->{"out"} . " " .  $outp->{"type"} . " " .  $outp->{"name"} . ",";
-						last;
-					}
-				}
-			}
-			$ret .= "\n\t\t\t\t";
-			$ret .= "[$marshal] " if $marshal;
-			$ret .= "$out $type $name,";
-		}
+		my $tmp = "\n\t\t\t\t";
+		$tmp .= "[$marshal] " if $marshal;
+		$tmp .= "$out $type $name";
+		push (@ret, $tmp);
+		$lastoutparam = $name if $isout;
     }
-#    print "$methods{$x}->{\"type\"}\n";
-    if ($x !~ /void/ && &get_type ($methods{$x}->{"type"}) ne "") {
+
+#print "$methods{$x}->{\"type\"}\n";
+	if (!$nosig && $x !~ /void/ && &get_type ($methods{$x}->{"type"}) ne "") {
 		$type = $methods{$x}->{"type"};
 		$type =~ s/\[.*\],//;
 		$marshal = &get_marshal ($type);
 
-		if ($nosig) {
-			$sig .= "[return: $marshal] " if $marshal;
-			$sig .= &get_type ($type);
-			$isout = 0;
-		} else {
-			$ret .= "[$marshal] " if $marshal;
-			$ret .= &get_out($type);
-			$ret .= " " . &get_type ($type);
-			$ret .= " ret";
-		}
+		my $tmp = "[$marshal] " if $marshal;
+		$tmp .= &get_out($type);
+		$tmp .= " " . &get_type ($type);
+		$tmp .= " ret";
+		push (@ret, $tmp);
+		
 		&add_external ($type);
     }
-    $ret =~ s/,$//;
-	if ($nosig) {
-		$sig = "void" if $sig eq "" && !$isout;
-		return $sig . " $x (" . $ret . " )";
-	} else {
-		return $ret;
+
+	if ($nosig && &get_type ($methods{$x}->{"type"}) eq "" && $lastoutparam) {
+		$methods{$x}->{"type"} = $list{$lastoutparam}->{"type"};
+		pop (@ret);
 	}
+print "@ret\n";
+	
+	return join (",", @ret);
 }
 
 sub parse_file {
@@ -361,116 +378,117 @@ sub parse_file {
 	my $comment = 0;
 
     while (my $line = <FILE>) {
-	chop $line;
+		chop $line;
 
-	next if !$start && $line !~ /uuid\(/;
-	$start = 1;
-	last if $start && $line =~ /\};/;
+		next if !$start && $line !~ /uuid\(/;
+		$start = 1;
+		last if $start && $line =~ /\};/;
 
-	trim ($line);
-	
-	if (index($line, "/*") > -1) {
-		$comment = 1;
-		next;
-	}
-	if ($comment && index($line, "*/") > -1) {
-		$comment = 0;
-		next;
-	}
-	
-	next if $comment;
-	
-	if (index($line, "*") == -1 && index ($line, "//") == -1 && index ($line, "#include") == -1) {
-	    
-	    if (index ($line, "uuid(") != -1) {
-		my $uuid = $line;
-		$uuid =~ s/\[.*uuid\((.*)\)\]/\1/;
-		$interface->{"uuid"} = $uuid;
-	    }
+		trim ($line);
 
-	    elsif (index($line, "interface") != -1) {
-		my $class = $line;
-		$class =~ s/interface ([^\:|\s]+)\s*:\s*(.*)/\1/;
-#		print "\t\tclass:$class\n";
-		my $parent = $line;
-		$parent =~ s/([^\:]+):\s*(.*)[\s|\{]/\2/;
-#		print "\t\tparent:$parent\n";
-		$interface->{"class"} = $class;
-		$interface->{"parent"} = $parent;
-
-	    }
-	    elsif (index ($line, "const") != -1 && index ($line, "[") == -1) {
-		next;
-	    }
-	    elsif (index ($line, "attribute") != -1) {
-		my $att = substr($line, index($line, "attribute") + 10);
-
-		my @atts = split / /, $att;
-
-		my $name = pop @atts;
-		$name =~ s/;//;
-#	    print $name . "\n";
-		my @nospaces = grep /[^ ]/, @atts;
-		my $type = join ",", @nospaces;
-
-		my $setter = 0;
-		if (index ($line, "readonly") != -1) {
-		    $setter = 1;
+		if (index($line, "/*") > -1) {
+			$comment = 1;
+			next;
 		}
+		if ($comment && index($line, "*/") > -1) {
+			$comment = 0;
+			next;
+		}
+
+		next if $comment;
+
+		if (index($line, "*") == -1 && index ($line, "//") == -1 && index ($line, "#include") == -1) {
+
+			$line =~ s/\[noscript\] //;
+		
+			if (index ($line, "uuid(") != -1) {
+				my $uuid = $line;
+				$uuid =~ s/\[.*uuid\((.*)\)\]/\1/;
+				$interface->{"uuid"} = $uuid;
+			}
+
+			elsif (index($line, "interface") != -1) {
+				my $class = $line;
+				$class =~ s/interface ([^\:|\s]+)\s*:\s*(.*)/\1/;
+#		print "\t\tclass:$class\n";
+				my $parent = $line;
+				$parent =~ s/([^\:]+):\s*(.*)[\s|\{]/\2/;
+#		print "\t\tparent:$parent\n";
+				$interface->{"class"} = $class;
+				$interface->{"parent"} = $parent;
+			}
+			elsif (index ($line, "const") != -1 && index ($line, "[") == -1) {
+				next;
+			}
+			elsif (index ($line, "attribute") != -1) {
+				my $att = substr($line, index($line, "attribute") + 10);
+
+				my @atts = split / /, $att;
+
+				my $name = pop @atts;
+				$name =~ s/;//;
+#	    print $name . "\n";
+				my @nospaces = grep /[^ ]/, @atts;
+				my $type = join ",", @nospaces;
+
+				my $setter = 0;
+				if (index ($line, "readonly") != -1) {
+					$setter = 1;
+				}
 #            print $type . "\n";
-		$properties{$name} = {type => $type, setter => $setter};
-		$interface->{"items"} .= $name . ",";
-	    }
-	    elsif ($line !~ m/[{|}]/ && $line =~ m/./) {
+				$properties{$name} = {type => $type, setter => $setter};
+				$interface->{"items"} .= $name . ",";
+			}
+			elsif ($line !~ m/[{|}]/ && $line =~ m/./) {
 #		print $line . "\n";
-		if (!$method) {
-		    $method = 1;
-		    my  $m = substr($line, 0, index($line, "("));
-		    my @atts = split / /, $m;
+				if (!$method) {
+					$method = 1;
+					my  $m = substr($line, 0, index($line, "("));
+					my @atts = split / /, $m;
 
 #		    print "$m\n";
-		    $mname = pop @atts;
+					$mname = pop @atts;
 #		    print "name=$mname\n";
-		    my @nospaces = grep /[^ ]/, @atts;
-		    $mtype = join ",", @nospaces;
-		    $mtype =~ s/\[.*\],//;
+					my @nospaces = grep /[^ ]/, @atts;
+					$mtype = join ",", @nospaces;
+					$mtype =~ s/\[.*\],//;
 #		    print "type=$mtype\n";
-		    $mparams .= substr($line, index($line, "(") + 1);
-		    $mparams =~ s/;//;
-		    $mparams =~ s/\)//;
+					$mparams .= substr($line, index($line, "(") + 1);
+					$mparams =~ s/;//;
+					$mparams =~ s/\)//;
 
-		    @atts = split / /, $mparams;
-		    @nospaces = grep /[^ ]/, @atts;
-		    $mparams = join " ", @nospaces;
+					@atts = split / /, $mparams;
+					@nospaces = grep /[^ ]/, @atts;
+					$mparams = join " ", @nospaces;
 #		    print "params=>$mparams\n";
+					
+				}
+				elsif (index ($line, "raises") == -1) {
+					$mparams .= $line;
+					$mparams =~ s/;//;
+					$mparams =~ s/\)//;
+					my @atts = split / /, $mparams;
+					my @nospaces = grep /[^ ]/, @atts;
+					$mparams = join " ", @nospaces;
+#		    print "params=>$mparams\n";
+				}
+				if (index ($line, ";") != -1) {
+					$method = 0;
+					$mparams =~ s/\[([^\]]+),([^\]]+),([^\]]+)\]/\1 \2 \3/;
+					$mparams =~ s/\[([^\]]+),([^\]]+)\]/\1 \2/;
+					$mparams =~ s/\(/ /;
+					$mparams =~ s/\)//;
+					$mparams =~ s/retval//;
 
-		}
-		elsif (index ($line, "raises") == -1) {
-		    $mparams .= $line;
-		    $mparams =~ s/;//;
-		    $mparams =~ s/\)//;
-		    my @atts = split / /, $mparams;
-		    my @nospaces = grep /[^ ]/, @atts;
-		    $mparams = join " ", @nospaces;
+					$methods{$mname} = {type => $mtype, params => $mparams};
+					$interface->{"items"} .= $mname . ",";
 #		    print "params=>$mparams\n";
+					$mname = '';
+					$mtype = '';
+					$mparams = '';
+				}
+			}	
 		}
-		if (index ($line, ";") != -1) {
-		    $method = 0;
-		    $mparams =~ s/\[([^\]]+),([^\]]+),([^\]]+)\]/\1 \2 \3/;
-		    $mparams =~ s/\[([^\]]+),([^\]]+)\]/\1 \2/;
-		    $mparams =~ s/\(/ /;
-		    $mparams =~ s/\)//;
-		    $mparams =~ s/retval//;
-
-		    $methods{$mname} = {type => $mtype, params => $mparams};
-		    $interface->{"items"} .= $mname . ",";
-#		    print "params=>$mparams\n";
-		    $mname = '';
-		    $mtype = '';
-		    $mparams = '';
-		}
-	    }	
-	}
     }
 }
 
@@ -533,61 +551,69 @@ sub output {
     my @items = split ",", $interface->{"items"};
     for my $item (@items) {
 	
-	if (!$nosig) {
-		print X "\t\t[PreserveSigAttribute]\n";
-	}
-	print X "\t\t[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]\n";
-
-	if (&is_property ($item)) {
-	    my $out = &get_out($properties{$item}->{"type"});
-	    my $marshal = &get_marshal($properties{$item}->{"type"}, $out);
-	    my $type = &get_type ($properties{$item}->{"type"}, $out);
-	    my $name = ucfirst ($item);
-
-	    &add_external ($properties{$item}->{"type"});
-## getter
-		print X "\t\t";
-		if ($nosig) {
-			print X "[return: $marshal] " if $marshal;
-			print X "$type get$name ();\n";
-		} else {
-			print X "int get$name (";
-			print X "[$marshal] " if $marshal;
-			print X "$out $type ret);\n";
+		if (!$nosig) {
+			print X "\t\t[PreserveSigAttribute]\n";
 		}
-	    print X "\n";
+		print X "\t\t[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]\n";
 
-	   $type = &get_type ($properties{$item}->{"type"});
-	   $marshal = &get_marshal($properties{$item}->{"type"});
+		if (&is_property ($item)) {
+			my $out = &get_out($properties{$item}->{"type"});
+			my $marshal = &get_marshal($properties{$item}->{"type"}, $out);
+			my $type = &get_type ($properties{$item}->{"type"}, $out);
+			my $name = ucfirst ($item);
+
+			&add_external ($properties{$item}->{"type"});
+## getter
+			print X "\t\t";
+			if ($nosig) {
+				print X "[return: $marshal] " if $marshal;
+				print X "$type get$name ();\n";
+			} else {
+				print X "int get$name (";
+				print X "[$marshal] " if $marshal;
+				print X "$out $type ret);\n";
+			}
+			print X "\n";
+
+			$type = &get_type ($properties{$item}->{"type"});
+			$marshal = &get_marshal($properties{$item}->{"type"});
 
 ## setter
-	    if (&has_setter($item)) {
-			if (!$nosig) {
-				print X "\t\t[PreserveSigAttribute]\n";
+			if (&has_setter($item)) {
+				if (!$nosig) {
+					print X "\t\t[PreserveSigAttribute]\n";
+				}
+				print X "\t\t[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]\n";
+				if ($nosig) {
+					print X "\t\tvoid";
+				} else {
+					print X "\t\tint";
+				}
+				print X " set$name (";
+				print X "[$marshal] " if $marshal;
+				print X "$type value);\n";
+				print X "\n";
 			}
-			print X "\t\t[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]\n";
-			if ($nosig) {
-				print X "\t\tvoid";
-			} else {
-				print X "\t\tint";
-			}
-			print X " set$name (";
-			print X "[$marshal] " if $marshal;
-			print X "$type value);\n";
-			print X "\n";
-	    }
 
-	} else {
-	    print X "\t\t";
-		if ($nosig) {
-			print X &get_params($item) .";";
 		} else {
-			print X "int " . $item . " (";
-			print X &get_params($item);
-			print X ");";
+			my $type = &get_type ($methods{$item}->{"type"});
+			my $out = &get_out($methods{$item}->{"type"}) if $type;
+			my $marshal = &get_marshal($methods{$item}->{"type"}, $out) if $type;
+			$type = "void" if !$type;
+
+			print X "\t\t";
+			if ($nosig) {
+				print X "[return: $marshal] " if $marshal;
+				print X "$type $item (";
+				print X &get_params($item);
+				print X ");";
+			} else {
+				print X "int $item (";
+				print X &get_params($item);
+				print X ");";
+			}
+			print X "\n\n";
 		}
-	    print X "\n\n";
-	}
     }
     print X "#endregion\n";
     print X "\t}\n";
@@ -611,6 +637,11 @@ sub output {
 #end of mozilla-specific helper classes
 
     print X "}\n";
+	
+	
+	&generate_class_implementation_example ();
+	
+	
     close X;
 }
 
@@ -623,6 +654,123 @@ sub generate_dependents {
 		}
     }
 }
+
+sub generate_class_implementation_example {
+
+    my $name = $interface->{"class"};
+	my $interfacename = $interface->{"class"};
+    my $helpername = $name;
+    $helpername =~ s/nsI//;
+    my $parent = $interface->{"parent"};
+
+	print X "#if example\n\n";
+    print X "using System;\n";
+    print X "using System.Runtime.InteropServices;\n";
+    print X "using System.Runtime.CompilerServices;\n";
+    print X "using System.Text;\n";
+    print X "\n";
+
+    print X "\tinternal class $helpername";
+    print X " : $interfacename";
+    print X " {\n";
+
+    print X "\n";
+    print X "#region $interfacename\n";
+
+    my @items = split ",", $interface->{"items"};
+    for my $item (@items) {
+
+		if (&is_property ($item)) {
+			my $out = &get_out($properties{$item}->{"type"});
+			my $marshal = &get_marshal($properties{$item}->{"type"}, $out);
+			my $type = &get_type ($properties{$item}->{"type"}, $out);
+
+			my $retval = &get_return_value($type);
+			my $name = ucfirst ($item);
+
+## getter
+			print X "\t\t";
+			if ($nosig) {
+				print X "[return: $marshal] " if $marshal;
+				print X "$type $interfacename.get$name ()\n";
+			} else {
+				print X "int $interfacename.get$name (";
+				print X "[$marshal] " if $marshal;
+				print X "$out $type ret)\n";
+			}
+
+			print X "\n\t\t{\n";
+			print X "\t\t\t";
+
+			print X "return $retval;\n";
+
+			print X "\t\t";
+			print X "}\n";
+			print X "\n";
+
+			$type = &get_type ($properties{$item}->{"type"});
+			$retval = &get_return_value($type);
+			$marshal = &get_marshal($properties{$item}->{"type"});
+
+## setter
+			if (&has_setter($item)) {
+				if ($nosig) {
+					print X "\t\tvoid";
+				} else {
+					print X "\t\tint";
+				}
+				print X " $interfacename.set$name (";
+				print X "[$marshal] " if $marshal;
+				print X "$type value)\n";
+				print X "\n";
+
+				print X "\n\t\t{\n";
+				print X "\t\t\t";
+
+				print X "return $retval;\n";
+
+				print X "\t\t";
+				print X "}\n";
+				print X "\n";
+			}
+
+		} else {
+			my $type = &get_type ($methods{$item}->{"type"});
+			my $out = &get_out($methods{$item}->{"type"}) if $type;
+			my $marshal = &get_marshal($methods{$item}->{"type"}, $out) if $type;
+			$type = "void" if !$type;
+
+			print X "\t\t";
+			if ($nosig) {
+				print X "[return: $marshal] " if $marshal;
+				print X "$type $interfacename.$item (";
+				print X &get_params($item);
+				print X ")";
+			} else {
+				print X "int $interfacename.$item (";
+				print X &get_params($item);
+				print X ")";
+			}
+
+			print X "\n\t\t{\n";
+			print X "\t\t\t";
+
+			print X "return $retval;\n";
+
+			print X "\t\t";
+			print X "}\n";
+			print X "\n";
+			print X "\n\n";
+		}
+    }
+    print X "#endregion\n";
+    print X "\t}\n";
+
+
+    print X "#endif\n";
+	
+}
+
 
 &parse_file ();
 &output ();

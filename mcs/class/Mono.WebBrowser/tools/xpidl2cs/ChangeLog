@@ -1,3 +1,9 @@
+2008-06-10  Andreia Gaita <avidigal@novell.com> 
+
+	* xpidl2cs.pl: Added generate_class_implementation, to output a class
+	  stub with the proper return values for each method definition. Fix
+	  generation of interfaces with no PreserveSigAttribute
+
 2008-06-09  Andreia Gaita <avidigal@novell.com> 
 
 	* xpidl2cs.pl: Add more type conversions. Add support for
