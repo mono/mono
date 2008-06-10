@@ -58,6 +58,7 @@ Mono.Mozilla/DOM/DOMObject.cs
 Mono.Mozilla/DOM/Element.cs
 Mono.Mozilla/DOM/HTMLElement.cs
 Mono.Mozilla/DOM/HTMLElementCollection.cs
+Mono.Mozilla/DOM/History.cs
 Mono.Mozilla/DOM/Navigation.cs
 Mono.Mozilla/DOM/Node.cs
 Mono.Mozilla/DOM/NodeList.cs
@@ -111,8 +112,8 @@ Mono.WebBrowser/DOM/IMediaList.cs
 Mono.WebBrowser/DOM/INamedNodeMap.cs
 Mono.WebBrowser/DOM/IStylesheet.cs
 Mono.WebBrowser/DOM/IStylesheetList.cs
-Mono.WebBrowser/DOM/NodeEventArgs.cs
-Mono.WebBrowser/DOM/NodeEventHandler.cs
+Mono.WebBrowser/DOM/EventArgs.cs
+Mono.WebBrowser/DOM/EventHandlers.cs
 Mono.WebBrowser/IWebBrowser.cs
 Mono.WebBrowser/Manager.cs
 Mono.WebBrowser/Exception.cs
@@ -121,6 +122,7 @@ Mono.WebBrowser/DOM/IAttributeCollection.cs
 Mono.WebBrowser/DOM/IDocument.cs
 Mono.WebBrowser/DOM/IElement.cs
 Mono.WebBrowser/DOM/IElementCollection.cs
+Mono.WebBrowser/DOM/IHistory.cs
 Mono.WebBrowser/DOM/INavigation.cs
 Mono.WebBrowser/DOM/INode.cs
 Mono.WebBrowser/DOM/INodeList.cs

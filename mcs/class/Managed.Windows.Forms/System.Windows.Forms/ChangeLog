@@ -1,3 +1,21 @@
+2008-06-10  Andreia Gaita <avidigal@novell.com> 
+
+	* HtmlDocument.cs: Implement RightToLeft, ContextMenuShowing,
+	  FocusingEvent, LosingFocusEvent, OnMouseDown, OnMouseLeave,
+	  OnMouseMove, OnMouseOver, OnMouseUp
+	* HtmlElement.cs: Optimize InsertBefore. Implement RemoveFocus,
+	  ScrollIntoView, Focusing, GotFocus, LosingFocus, LostFocus.
+	* HtmlElementCollection.cs, HtmlWindowCollection.cs: Keep a reference
+	  to the WebControl object to pass to new collection objects
+	* HtmlHistory.cs: Implement support for individual window histories.
+	* HtmlWindow.cs: Implement History, Position, Size, WindowFrameElement,
+	  AttachEventHandler, DetachEventHandler, RemoveFocus, Error,
+	  GotFocus, LostFocus, OnLoad, OnUnload
+	* WebBrowser.cs: Implement EncryptionLevel, ScrollBarsEnabled,
+	  ContextMenu
+	* WebBrowserBase.cs: Implement Cursor, Enabled, UseWaitCursor, Add
+	  security level changes and context menu event support.
+
 2008-06-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ComboBox.cs: Pressing Enter should close the dropdown listbox, just

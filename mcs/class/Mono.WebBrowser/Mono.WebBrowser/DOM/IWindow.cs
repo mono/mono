@@ -36,7 +36,11 @@ namespace Mono.WebBrowser.DOM
 		IWindow Parent { get; }
 		string StatusText { get; }
 		IWindow Top { get; }
+		IHistory History {get;}
 		
+		void AttachEventHandler (string eventName, EventHandler handler);
+		void DetachEventHandler (string eventName, EventHandler handler);
+		void Focus ();
 		bool Equals (IWindow obj);		
 		int GetHashCode ();
 		void Open (string url);
@@ -44,5 +48,9 @@ namespace Mono.WebBrowser.DOM
 
 		event EventHandler Load;
 		event EventHandler Unload;
+		event EventHandler OnFocus;
+		event EventHandler OnBlur;
+		event EventHandler Error;
+		event EventHandler Scroll;
 	}
 }

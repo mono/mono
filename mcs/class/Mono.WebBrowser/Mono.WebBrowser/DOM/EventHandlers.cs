@@ -27,22 +27,6 @@ using System;
 
 namespace Mono.WebBrowser.DOM
 {
-	public class NodeEventArgs : EventArgs
-	{
-		private DOM.INode node;
-
-		#region Public Constructors
-		public NodeEventArgs (DOM.INode node)
-			: base ()
-		{
-			this.node = node;
-		}
-		#endregion	// Public Constructors
-
-		#region Public Instance Properties
-		public INode Node
-		{
-			get { return this.node; }
-		}
-		#endregion	// Public Instance Properties
-	}}
+	public delegate void NodeEventHandler (object sender, NodeEventArgs e);
+	public delegate void WindowEventHandler (object sender, WindowEventArgs e);
+}

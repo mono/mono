@@ -1,3 +1,55 @@
+2008-06-10  Andreia Gaita <avidigal@novell.com> 
+
+	* Assembly/AssemblyInfo.cs: Version bump
+	* Mono.Mozilla/Callback.cs: Fix initial load bug (uri can be null on
+	  first load). Add LoadStopped event for documents. Add Security
+	  change and Context menu events.
+	* Mono.Mozilla/DOM/AttributeCollection.cs: Fix header. Add support for
+	  creating empty collections.
+	* Mono.Mozilla/DOM/Document.cs, Mono.WebBrowser/DOM/IDocument.cs:
+	  Optimize Window getter. Add CreateAttribute, LoadStoppedEvent
+	* Mono.Mozilla/DOM/DOMImplementation.cs,
+	  Mono.Mozilla/DOM/Navigation.cs: Save documents to a list so they
+	  can be looked up later for events.
+	* Mono.Mozilla/DOM/Element.cs, Mono.WebBrowser/DOM/IElement.cs: Add
+	  Focus, Blur, ScrollIntoView
+	* Mono.Mozilla/DOM/EventListener.cs: Fix header. Add support for firing
+	  events for any type of object
+	* Mono.Mozilla/DOM/History.cs, Mono.WebBrowser/DOM/IHistory.cs: Added
+	  to support separate history on each window
+	* Mono.Mozilla/DOM/HTMLElement.cs: Moved AppendChild and InsertBefore
+	  to the Node parent class
+	* Mono.Mozilla/DOM/Node.cs, Mono.WebBrowser/DOM/INode.cs: Fetch owner
+	  document from a cached list if it's been looked up before. Add
+	  Value setter. Add InsertBefore and AppendChild from HTMLElement,
+	  implement ReplaceChild, RemoveChild. Add AttachEventHandler and
+	  DetachEventHandler to support generic event firing. Add Focus, Blur
+	  events.
+	* Mono.Mozilla/DOM/NodeList.cs: add support for empty lists.
+	* Mono.Mozilla/DOM/Window.cs, Mono.WebBrowser/DOM/IWindow.cs: Fetch
+	  owner document from a cached list if it's been looked up before.
+	  Add history and focus support. Add Load, Unload, OnFocus, OnBlur,
+	  Error, Scroll events.
+	* Mono.Mozilla/interfaces/extras/NodeType.cs,
+	  Mono.Mozilla/interfaces/extras/Options.cs: Fix header
+	* Mono.Mozilla/WebBrowser.cs, Mono.WebBrowser/IWebBrowser.cs: Add
+	  hashtable for caching document objects. Remove ScrollbarsEnabled
+	  implementation, not needed (webbrowser is using javascript
+	  instead). Add Security and Context menu events.
+	* Mono.WebBrowser.dll.sources, Mono.WebBrowser2K5.csproj: Added new
+	  classes/interfaces: Mono.Mozilla/DOM/History.cs,
+	  Mono.WebBrowser/DOM/IHistory.cs, Mono.WebBrowser/DOM/EventArgs.cs,
+	  Mono.WebBrowser/DOM/EventHandlers.cs. Removed classes/interfaces:
+	  Mono.WebBrowser/DOM/NodeEventArgs.cs,
+	  Mono.WebBrowser/DOM/NodeEventHandler.cs
+	* Mono.WebBrowser/DOM/EventArgs.cs,
+	  Mono.WebBrowser/DOM/EventHandlers.cs: Consolidate events into a
+	  single file.
+	* Mono.WebBrowser/DOM/NodeEventArgs.cs: Removed, event declarations are
+	  now in EventArgs
+	* Mono.WebBrowser/DOM/NodeEventHandler.cs: Removed, event declarations
+	  are now in EventHandlers
+
 2008-06-02  Andreia Gaita <avidigal@novell.com> 
 
 	* Mono.WebBrowser.dll.sources, Mono.WebBrowser2K5.csproj: Added new

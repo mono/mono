@@ -280,9 +280,23 @@ namespace Mono.Mozilla.DOM
 		
 		#region Methods
 
+		public void Blur () {
+			nsIDOMNSHTMLElement elm = element as nsIDOMNSHTMLElement;
+			if (elm != null) {
+				elm.blur ();
+			}
+		}
+
 		public bool Equals (IElement obj) {
 			Element doc = (Element) obj;
 			return doc.element == this.element;
+		}
+
+		public void Focus () {
+			nsIDOMNSHTMLElement elm = element as nsIDOMNSHTMLElement;
+			if (elm != null) {
+				elm.focus ();
+			}
 		}
 
 		public IElementCollection GetElementsByTagName (string name)
@@ -314,6 +328,14 @@ namespace Mono.Mozilla.DOM
 			return ret.ToString ();
 		}
 
+		public void ScrollIntoView (bool alignWithTop) 
+		{
+			nsIDOMNSHTMLElement elm = element as nsIDOMNSHTMLElement;
+			if (elm != null) {
+				elm.scrollIntoView (alignWithTop);
+			}
+		}
+		
 		public virtual void SetAttribute (string name, string value) {
 			UniString strVal = new UniString (value);
 			Base.StringSet (storage, name);

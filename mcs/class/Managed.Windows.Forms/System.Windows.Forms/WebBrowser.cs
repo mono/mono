@@ -49,10 +49,13 @@ namespace System.Windows.Forms
 		private bool isWebBrowserContextMenuEnabled;
 		private object objectForScripting;
 		private bool webBrowserShortcutsEnabled;
+		private bool scrollbarsEnabled;
 		
 		private WebBrowserReadyState readyState;
 
 		private HtmlDocument document;
+		
+		private WebBrowserEncryptionLevel securityLevel;
 
 		#region Public Properties
 
@@ -85,7 +88,7 @@ namespace System.Windows.Forms
 		public HtmlDocument Document {
 			get {
 				if (document == null && documentReady)
-					document = new HtmlDocument (this.WebHost);
+					document = new HtmlDocument (this, this.WebHost);
 				return document; 
 			}
 		}
@@ -135,11 +138,10 @@ namespace System.Windows.Forms
 			get { return document.DocType; }
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		[BrowsableAttribute(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public WebBrowserEncryptionLevel EncryptionLevel {
-			get { return WebBrowserEncryptionLevel.Unknown; }
+			get { return securityLevel; }
 		}
 
 		public override bool Focused {
@@ -184,11 +186,17 @@ namespace System.Windows.Forms
 			get { return SuppressDialogs; }
 			set { SuppressDialogs = value; }
 		}
-
+		
 		[DefaultValue(true)]
 		public bool ScrollBarsEnabled {
-			get { return WebHost.ScrollbarsEnabled; }
-			set { WebHost.ScrollbarsEnabled = value; }
+			get { return scrollbarsEnabled; }
+			set { 
+				scrollbarsEnabled = value;
+				if (!scrollbarsEnabled)
+					Document.InvokeScript ("document.body.style.overflow='hidden';");
+				else
+					Document.InvokeScript ("document.body.style.overflow='auto';");
+			}
 		}
 
 		[BrowsableAttribute(false)]
@@ -595,6 +603,50 @@ namespace System.Windows.Forms
 			WebBrowserDocumentCompletedEventArgs n = new WebBrowserDocumentCompletedEventArgs (new Uri (e.Uri));
 			OnDocumentCompleted (n);
 		}
+		
+		internal override void OnWebHostSecurityChanged (object sender, Mono.WebBrowser.SecurityChangedEventArgs e)
+		{
+			switch (e.State) {
+				case Mono.WebBrowser.SecurityLevel.Insecure:
+					securityLevel = WebBrowserEncryptionLevel.Insecure;
+				break;
+				case Mono.WebBrowser.SecurityLevel.Mixed:
+					securityLevel = WebBrowserEncryptionLevel.Mixed;
+				break;
+				case Mono.WebBrowser.SecurityLevel.Secure:
+					securityLevel = WebBrowserEncryptionLevel.Bit56;
+				break;
+			}
+		}
+		
+		internal override void OnWebHostContextMenuShown (object sender, Mono.WebBrowser.ContextMenuEventArgs e) {
+			if (!isWebBrowserContextMenuEnabled)
+				return;
+					
+            ContextMenu menu = new ContextMenu();
+                        
+			MenuItem item = new MenuItem("Back", delegate { 
+				GoBack(); 
+			});
+			item.Enabled = this.CanGoBack;
+			menu.MenuItems.Add (item);
+			
+			item = new MenuItem("Forward", delegate { 
+				GoForward(); 
+			});
+			item.Enabled = this.CanGoForward;
+			menu.MenuItems.Add (item);
+			
+			item = new MenuItem("Refresh", delegate { 
+				Refresh (); 
+			});
+			menu.MenuItems.Add (item);
+            
+            menu.MenuItems.Add (new MenuItem ("-"));
+            
+            menu.Show(this, PointToClient(MousePosition));
+		}
+		
 		#endregion
 
 		[MonoTODO ("Stub, not implemented")]

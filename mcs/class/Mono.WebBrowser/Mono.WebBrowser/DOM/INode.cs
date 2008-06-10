@@ -32,7 +32,10 @@ namespace Mono.WebBrowser.DOM
 		IAttributeCollection Attributes { get; }
 		INodeList 	ChildNodes { get; }
 		INode 		FirstChild { get; }
-		IElement	InsertBefore (INode child, INode refChild);
+		INode		InsertBefore (INode newChild, INode refChild);
+		INode		ReplaceChild (INode newChild, INode oldChild);
+		INode		RemoveChild (INode child);
+		INode		AppendChild (INode child);
 		INode 		LastChild { get; }
 		string 		LocalName { get; }
 		INode 		Next { get; }
@@ -40,7 +43,7 @@ namespace Mono.WebBrowser.DOM
 		INode		Parent {get;}
 		INode 		Previous { get; }
 		NodeType 	Type { get;}
-		string 		Value {get;} 
+		string 		Value {get; set;} 
 		
 		void FireEvent	(string eventName);
 		int 		GetHashCode ();
@@ -48,6 +51,20 @@ namespace Mono.WebBrowser.DOM
 		void AttachEventHandler (string eventName, EventHandler handler);
 		void DetachEventHandler (string eventName, EventHandler handler);
 		
+		/// <summary>
+		/// Attach a generic handler for events. The delegate needs to conform to the EventHandler signature, 
+		/// i.e., be in the form (object sender, EventArgs e)
+		/// </summary>
+		/// <param name="eventName">
+		/// A <see cref="System.String"/> with the name of the event to listen for.
+		/// </param>
+		/// <param name="handler">
+		/// A <see cref="System.Delegate"/> conforming to the EventHandler signature. 
+		/// It will throw an exception if the delegate is not of the format (object sender, EventArgs e).
+		/// </param>
+		void AttachEventHandler (string eventName, System.Delegate handler);
+		void DetachEventHandler (string eventName, System.Delegate handler);
+
 		event NodeEventHandler Click;
 		event NodeEventHandler DoubleClick;
 		event NodeEventHandler KeyDown;
@@ -59,6 +76,8 @@ namespace Mono.WebBrowser.DOM
 		event NodeEventHandler MouseMove;
 		event NodeEventHandler MouseOver;
 		event NodeEventHandler MouseUp;
+		event NodeEventHandler OnFocus;
+		event NodeEventHandler OnBlur;
 	}
 	
 	public enum NodeType

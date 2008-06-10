@@ -21,24 +21,19 @@
 //
 // Authors:
 //	Andreia Gaita (avidigal@novell.com)
+//
 
 using System;
+using Mono.WebBrowser;
 
-namespace Mono.Mozilla.DOM
+namespace Mono.WebBrowser.DOM
 {
-	internal enum NodeType : ushort 
+	public interface IHistory
 	{
-		Element       = 1,
-		Attribute     = 2,
-		Text          = 3,
-		CDataSection  = 4,
-		EntityReference = 5,
-		Entity       = 6,
-		ProcessingInstruction = 7,
-		Comment       = 8,
-		Document      = 9,
-		DocumentType = 10,
-		DocumentFragment = 11,
-		Notation      = 12
+		int Count { get; }
+		void Back (int count);
+		void Forward (int count);
+		void GoToIndex (int index);
+		void GoToUrl (string url);
 	}
 }

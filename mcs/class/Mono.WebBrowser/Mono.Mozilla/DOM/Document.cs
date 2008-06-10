@@ -393,23 +393,30 @@ namespace Mono.Mozilla.DOM
 		
 		public IWindow Window {
 			get {
-				if (control.Navigation != null) {
-					nsIDOMWindow win;
-					nsIDOMDocument doc;
-					
-					nsIWebBrowser browser = (nsIWebBrowser) control.navigation.navigation;
-					browser.getContentDOMWindow (out win);
-					
-					if (Mono.Mozilla.DOM.Window.FindDocument (ref win, this.GetHashCode ()))
-						return new Window (control, win);					
-				}
-				return null;
+				nsIDOMDocumentView docView = (nsIDOMDocumentView) this.document;
+				nsIDOMAbstractView abstractView;
+				docView.getDefaultView (out abstractView);
+				nsIInterfaceRequestor requestor = (nsIInterfaceRequestor) abstractView;
+				if (requestor == null)
+					return null;
+				IntPtr ret;				
+				requestor.getInterface (typeof(nsIDOMWindow).GUID, out ret);
+				nsIDOMWindow window = (nsIDOMWindow) Marshal.GetObjectForIUnknown (ret);
+				return new Window (this.control, window);
 			}
 		}
 
 		#endregion
 
 		#region Public IDocument Methods
+		public IAttribute CreateAttribute (string name)
+		{
+			nsIDOMAttr nsAttribute;
+			Base.StringSet (storage, name);
+			this.document.createAttribute (storage, out nsAttribute);
+			return new Attribute (control, nsAttribute);			
+		}
+
 		public IElement CreateElement (string tagName)
 		{
 			nsIDOMElement nsElement;
@@ -479,6 +486,25 @@ namespace Mono.Mozilla.DOM
 		}
 		
 		#endregion
+		
+		#region Events
+		private System.ComponentModel.EventHandlerList events;
+		internal System.ComponentModel.EventHandlerList Events {
+			get {
+				if (events == null)
+					events = new System.ComponentModel.EventHandlerList();
+
+				return events;
+			}
+		}
+		internal static object LoadStoppedEvent = new object ();
+		public event EventHandler LoadStopped
+		{
+			add { Events.AddHandler (LoadStoppedEvent, value); }
+			remove { Events.RemoveHandler (LoadStoppedEvent, value); }
+		}
+		#endregion
+		
 		
 		public override int GetHashCode () {
 			return this.document.GetHashCode ();

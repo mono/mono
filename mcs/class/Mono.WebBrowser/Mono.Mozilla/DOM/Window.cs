@@ -35,6 +35,7 @@ namespace Mono.Mozilla.DOM
 	internal class Window : DOMObject, IWindow
 	{
 		private nsIDOMWindow window;
+		private EventListener eventListener;
 		
 		public Window(WebBrowser control, nsIDOMWindow domWindow) : base (control)
 		{
@@ -81,7 +82,9 @@ namespace Mono.Mozilla.DOM
 			get {
 				nsIDOMDocument doc;
 				this.window.getDocument (out doc);
-				return new Document (control, (nsIDOMHTMLDocument) doc);
+				if (!control.documents.ContainsKey (doc.GetHashCode ()))
+				    control.documents.Add (doc.GetHashCode (), new Document (control, (nsIDOMHTMLDocument) doc));
+				return control.documents[doc.GetHashCode ()] as IDocument;
 			}
 		}
 		
@@ -123,17 +126,47 @@ namespace Mono.Mozilla.DOM
 		public string StatusText {
 			get {
 				return control.StatusText;
+				
+			}
+		}
+		
+		public IHistory History {
+			get {
+				Navigation nav = new Navigation (this.control, window as nsIWebNavigation);
+				return new History (this.control, nav);
 			}
 		}
 #endregion
 
 #region Methods
-
+		private EventListener EventListener {
+			get {
+				if (eventListener == null)
+					eventListener = new EventListener (this.window as nsIDOMEventTarget, this);
+				return eventListener;
+			}
+		}
+		
+		public void AttachEventHandler (string eventName, EventHandler handler) 
+		{
+			EventListener.AddHandler (handler, eventName);			
+		}
+		
+		public void DetachEventHandler (string eventName, EventHandler handler) 
+		{
+			EventListener.RemoveHandler (handler, eventName);
+		}
+		
 		public bool Equals (IWindow obj) {
 			Window doc = (Window) obj;
 			return doc.window == this.window;
 		}
 
+		public void Focus () {
+			nsIWebBrowserFocus focus = (nsIWebBrowserFocus) this.window;
+			focus.setFocusedWindow (this.window);
+		}
+		
 		public override int GetHashCode () {
 			return this.window.GetHashCode ();
 		}
@@ -152,17 +185,47 @@ namespace Mono.Mozilla.DOM
 
 #region Events
 		static object LoadEvent = new object ();
-		public event EventHandler Load
-		{
-			add { Events.AddHandler (LoadEvent, value); }
-			remove { Events.RemoveHandler (LoadEvent, value); }
+		public event EventHandler Load {
+			add { 
+				Events.AddHandler (LoadEvent, value); 
+				AttachEventHandler ("load", value);
+			}
+			remove { 
+				Events.RemoveHandler (LoadEvent, value); 
+				DetachEventHandler ("load", value);
+			}
 		}
 
 		static object UnloadEvent = new object ();
-		public event EventHandler Unload
-		{
-			add { Events.AddHandler (UnloadEvent, value); }
-			remove { Events.RemoveHandler (UnloadEvent, value); }
+		public event EventHandler Unload {
+			add { 
+				Events.AddHandler (UnloadEvent, value); 
+				AttachEventHandler ("unload", value);
+			}
+			remove { 
+				Events.RemoveHandler (UnloadEvent, value); 
+				DetachEventHandler ("unload", value);
+			}
+		}
+
+		public event EventHandler OnFocus {
+			add { AttachEventHandler ("focus", value); }
+			remove { DetachEventHandler ("focus", value); }
+		}
+
+		public event EventHandler OnBlur {
+			add { AttachEventHandler ("blur", value); }
+			remove { DetachEventHandler ("blur", value); }
+		}
+		
+		public event EventHandler Error {
+			add { AttachEventHandler ("error", value); }
+			remove { DetachEventHandler ("error", value); }
+		}
+		
+		public event EventHandler Scroll {
+			add { AttachEventHandler ("scroll", value); }
+			remove { DetachEventHandler ("scroll", value); }
 		}
 		
 		public void OnLoad ()

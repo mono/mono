@@ -34,10 +34,13 @@ namespace System.Windows.Forms
 	{
 		private bool disposed;
 		private Mono.WebBrowser.IWebBrowser webHost;
+		private Mono.WebBrowser.DOM.IHistory history;
 
-		internal HtmlHistory (Mono.WebBrowser.IWebBrowser webHost)
+		internal HtmlHistory (Mono.WebBrowser.IWebBrowser webHost, 
+		                      Mono.WebBrowser.DOM.IHistory history)
 		{
 			this.webHost = webHost;
+			this.history = history;
 		}
 		
 		#region IDisposable Members
@@ -71,27 +74,27 @@ namespace System.Windows.Forms
 
 		public void Back (int numberBack)
 		{
-			this.webHost.Navigation.Go (numberBack * -1, true);
+			history.Back (numberBack);
 		}
 		
 		public void Forward (int numberForward)
 		{
-			this.webHost.Navigation.Go (numberForward, true);
+			history.Forward (numberForward);
 		}
 		
 		public void Go (int relativePosition)
 		{
-			this.webHost.Navigation.Go (relativePosition, true);
+			history.GoToIndex (relativePosition);
 		}
 
 		public void Go (string urlString)
 		{
-			this.webHost.Navigation.Go (urlString);
+			history.GoToUrl (urlString);
 		}
 
 		public void Go (Uri url)
 		{
-			this.webHost.Navigation.Go (url.ToString ());
+			history.GoToUrl (url.ToString ());
 		}
 	}
 }

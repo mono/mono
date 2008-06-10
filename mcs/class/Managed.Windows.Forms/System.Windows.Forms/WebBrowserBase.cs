@@ -32,6 +32,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Collections.Generic;
 using Mono.WebBrowser;
 
 namespace System.Windows.Forms
@@ -101,7 +102,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Cursor Cursor {
-			get { return null; }
+			get { return base.Cursor; }
 			set { throw new NotSupportedException (); }
 		}
 
@@ -109,7 +110,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new bool Enabled {
-			get { return true; }
+			get { return base.Enabled; }
 			set { throw new NotSupportedException (); }
 		}
 
@@ -162,7 +163,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new bool UseWaitCursor {
-			get { return false; }
+			get { return base.UseWaitCursor; }
 			set { throw new NotSupportedException (); }
 		}
 
@@ -353,7 +354,10 @@ namespace System.Windows.Forms
 			
 			webHost.StatusChanged += delegate (object sender, Mono.WebBrowser.StatusChangedEventArgs e) {
 				status = e.Message;
-			};			
+			};
+			
+			webHost.SecurityChanged += new SecurityChangedEventHandler (OnWebHostSecurityChanged);
+			webHost.ContextMenuShown += new ContextMenuEventHandler (OnWebHostContextMenuShown);
 		}
 
 		void OnWebHostAlert (object sender, Mono.WebBrowser.AlertEventArgs e)
@@ -454,6 +458,14 @@ namespace System.Windows.Forms
 		internal virtual void OnWebHostLoadFinished (object sender, LoadFinishedEventArgs e)
 		{
 		}
+		
+		internal virtual void OnWebHostSecurityChanged (object sender, SecurityChangedEventArgs e)
+		{
+		}
+		
+		internal virtual void OnWebHostContextMenuShown (object sender, ContextMenuEventArgs e) {
+		}
+
 		#endregion
 
 		#region Events

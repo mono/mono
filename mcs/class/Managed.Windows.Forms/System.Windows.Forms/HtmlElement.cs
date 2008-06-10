@@ -36,11 +36,13 @@ namespace System.Windows.Forms
 		private EventHandlerList events;
 		private Mono.WebBrowser.IWebBrowser webHost;
 		internal IElement element;
+		private WebBrowser owner;
 		
-		internal HtmlElement (Mono.WebBrowser.IWebBrowser webHost, IElement element)
+		internal HtmlElement (WebBrowser owner, Mono.WebBrowser.IWebBrowser webHost, IElement element)
 		{
 			this.webHost = webHost;
 			this.element = element;
+			this.owner = owner;
 		}
 
 		internal EventHandlerList Events {
@@ -55,7 +57,7 @@ namespace System.Windows.Forms
 		#region Properties
 		public HtmlElementCollection All {
 			get {
-				return new HtmlElementCollection (webHost, this.element.All);
+				return new HtmlElementCollection (owner, webHost, this.element.All);
 			}
 		}
 
@@ -86,7 +88,7 @@ namespace System.Windows.Forms
 
 		public HtmlElementCollection Children {
 			get {
-				return new HtmlElementCollection (webHost, this.element.Children);
+				return new HtmlElementCollection (owner, webHost, this.element.Children);
 			}
 		}
 
@@ -113,12 +115,12 @@ namespace System.Windows.Forms
 		}
 
 		public HtmlElement OffsetParent {
-			get { return new HtmlElement (this.webHost, this.element.OffsetParent); }
+			get { return new HtmlElement (owner, this.webHost, this.element.OffsetParent); }
 		}
 
 		public HtmlDocument Document {
 			get {
-				return new HtmlDocument (webHost, element.Owner);
+				return new HtmlDocument (owner, webHost, element.Owner);
 			}
 		}
 
@@ -148,15 +150,15 @@ namespace System.Windows.Forms
 		}
 
 		public HtmlElement FirstChild {
-			get { return new HtmlElement (webHost, (IElement)element.FirstChild); }
+			get { return new HtmlElement (owner, webHost, (IElement)element.FirstChild); }
 		}
 
 		public HtmlElement NextSibling {
-			get { return new HtmlElement (webHost, (IElement)element.Next); }
+			get { return new HtmlElement (owner, webHost, (IElement)element.Next); }
 		}
 		
 		public HtmlElement Parent {
-			get { return new HtmlElement (webHost, (IElement)element.Parent); }
+			get { return new HtmlElement (owner, webHost, (IElement)element.Parent); }
 		}
 
 		public string TagName {
@@ -222,7 +224,7 @@ namespace System.Windows.Forms
 		public HtmlElementCollection GetElementsByTagName (string tagName)
 		{
 			Mono.WebBrowser.DOM.IElementCollection col = element.GetElementsByTagName (tagName);
-			return new HtmlElementCollection (webHost, col);
+			return new HtmlElementCollection (owner, webHost, col);
 		}
 		
 		public override int GetHashCode ()
@@ -239,12 +241,10 @@ namespace System.Windows.Forms
 		{
 			switch (orient) {
 				case HtmlElementInsertionOrientation.BeforeBegin:
-					IElement newChild1 = this.element.Parent.InsertBefore (newElement.element, this.element);
-					newElement.element = newChild1;
+					element.Parent.InsertBefore (newElement.element, element);
 					return newElement;
 				case HtmlElementInsertionOrientation.AfterBegin:
-					IElement newChild2 = this.element.InsertBefore (newElement.element, this.element.FirstChild);
-					newElement.element = newChild2;
+					element.InsertBefore (newElement.element, element.FirstChild);
 					return newElement;
 				case HtmlElementInsertionOrientation.BeforeEnd:
 					return this.AppendChild (newElement);
@@ -275,12 +275,12 @@ namespace System.Windows.Forms
 
 		public void RemoveFocus () 
 		{
-			throw new NotImplementedException ();
+			this.element.Blur ();
 		}
 
 		public void ScrollIntoView (bool alignWithTop) 
 		{
-			throw new NotImplementedException ();
+			this.element.ScrollIntoView (alignWithTop);
 		}
 		
 		public void SetAttribute (string attributeName, string value)
@@ -618,9 +618,11 @@ namespace System.Windows.Forms
 		public event HtmlElementEventHandler Focusing {
 			add {
 				Events.AddHandler (FocusingEvent, value);
+				((INode)element).OnFocus += new NodeEventHandler (OnFocusing);
 			}
 			remove {
 				Events.RemoveHandler (FocusingEvent, value);
+				((INode)element).OnFocus -= new NodeEventHandler (OnFocusing);
 			}
 		}
 
@@ -637,9 +639,11 @@ namespace System.Windows.Forms
 		public event HtmlElementEventHandler GotFocus {
 			add {
 				Events.AddHandler (GotFocusEvent, value);
+				((INode)element).OnFocus += new NodeEventHandler (OnGotFocus);
 			}
 			remove {
 				Events.RemoveHandler (GotFocusEvent, value);
+				((INode)element).OnFocus -= new NodeEventHandler (OnGotFocus);
 			}
 		}
 
@@ -655,9 +659,11 @@ namespace System.Windows.Forms
 		public event HtmlElementEventHandler LosingFocus {
 			add {
 				Events.AddHandler (LosingFocusEvent, value);
+				((INode)element).OnBlur += new NodeEventHandler (OnLosingFocus);
 			}
 			remove {
 				Events.RemoveHandler (LosingFocusEvent, value);
+				((INode)element).OnBlur -= new NodeEventHandler (OnLosingFocus);
 			}
 		}
 
@@ -673,9 +679,11 @@ namespace System.Windows.Forms
 		public event HtmlElementEventHandler LostFocus {
 			add {
 				Events.AddHandler (LostFocusEvent, value);
+				((INode)element).OnBlur += new NodeEventHandler (OnLostFocus);
 			}
 			remove {
 				Events.RemoveHandler (LostFocusEvent, value);
+				((INode)element).OnBlur -= new NodeEventHandler (OnLostFocus);
 			}
 		}
 

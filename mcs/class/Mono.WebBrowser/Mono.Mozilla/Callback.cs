@@ -32,9 +32,8 @@ using System.Diagnostics;
 
 namespace Mono.Mozilla {
 
-using Mono.WebBrowser;
-using Mono.WebBrowser.DOM;
-
+	using Mono.WebBrowser;
+	using Mono.WebBrowser.DOM;
 	
 	internal class Callback
 	{
@@ -101,12 +100,17 @@ using Mono.WebBrowser.DOM;
 			    (state & (uint) StateFlags.IsWindow) != 0 
 			    )
 			{
+				owner.documents.Clear ();
 				nsIChannel channel = (nsIChannel) request;
 				nsIURI uri;
 				channel.getURI (out uri);
-				AsciiString spec = new AsciiString(String.Empty);
-				uri.getSpec (spec.Handle);
-				currentUri = spec.ToString ();
+				if (uri == null)
+					currentUri = "about:blank";
+				else {
+					AsciiString spec = new AsciiString(String.Empty);
+					uri.getSpec (spec.Handle);
+					currentUri = spec.ToString ();
+				}
 				
 				LoadStartedEventHandler eh = (LoadStartedEventHandler) (owner.Events[WebBrowser.LoadStartedEvent]);
 				if (eh != null) {
@@ -136,7 +140,25 @@ using Mono.WebBrowser.DOM;
 			        eh1 (this, e);
 
 			    }
-			}  
+			}
+			else if ((state & (uint) StateFlags.Stop) != 0 && 
+				(state & (uint) StateFlags.IsDocument) != 0)
+			{
+				nsIDOMWindow win;
+				progress.getDOMWindow (out win);
+				nsIDOMDocument doc;
+				win.getDocument (out doc);
+				if (doc != null) {
+					int hash = doc.GetHashCode ();
+					if (owner.documents.ContainsKey (hash)) {
+						DOM.Document document = owner.documents[hash] as DOM.Document;
+						
+						EventHandler eh1 = (EventHandler)(document.Events[DOM.Document.LoadStoppedEvent]);
+						if (eh1 != null)
+							eh1 (this, null);
+				    }
+				}
+			} 
 #if debug
 			Console.Error.WriteLine ("{0} completed", s.ToString ());
 #endif
@@ -171,6 +193,28 @@ using Mono.WebBrowser.DOM;
 			StatusChangedEventHandler eh = (StatusChangedEventHandler) (owner.Events[WebBrowser.StatusChangedEvent]);
 			if (eh != null) {
 				StatusChangedEventArgs e = new StatusChangedEventArgs (message, status);
+				eh (this, e);
+			}
+		}
+
+		public void OnSecurityChange (nsIWebProgress progress, nsIRequest request, uint status)
+		{
+			SecurityChangedEventHandler eh = (SecurityChangedEventHandler) (owner.Events[WebBrowser.SecurityChangedEvent]);
+			if (eh != null) {
+				SecurityLevel state = SecurityLevel.Insecure;
+				switch (status) {
+				case 4: 
+					state = SecurityLevel.Insecure;
+					break;
+				case 1:
+					state = SecurityLevel.Mixed;
+					break;
+				case 2:
+					state = SecurityLevel.Secure;
+					break;
+				}
+
+				SecurityChangedEventArgs e = new SecurityChangedEventArgs (state);
 				eh (this, e);
 			}
 		}
@@ -660,6 +704,27 @@ using Mono.WebBrowser.DOM;
 			((DOM.Window)owner.Window).OnUnload ();
 		}
 		
+		public void OnShowContextMenu (UInt32 contextFlags, 
+		                               [MarshalAs (UnmanagedType.Interface)] nsIDOMEvent eve, 
+		                               [MarshalAs (UnmanagedType.Interface)] nsIDOMNode node)
+		{
+#if debug
+			OnGeneric ("OnShowContextMenu");
+			Console.Error.WriteLine ("OnShowContextMenu");
+#endif
+			ContextMenuEventHandler eh = (ContextMenuEventHandler) (owner.Events[WebBrowser.ContextMenuEvent]);
+
+			if (eh != null) {
+				nsIDOMMouseEvent mouseEvent = (nsIDOMMouseEvent) eve;
+				int x, y;
+				mouseEvent.getClientX (out x);
+				mouseEvent.getClientY (out y);
+				ContextMenuEventArgs args = new ContextMenuEventArgs(x, y);
+				eh (owner, args);
+			}
+			
+		}
+		
 		public void OnGeneric (string type)
 		{
 #if debug
@@ -742,12 +807,20 @@ using Mono.WebBrowser.DOM;
 	                                               [MarshalAs (UnmanagedType.Interface)] nsIRequest request,
 	                                               [MarshalAs (UnmanagedType.LPWStr)] string message, Int32 status);
 	
+	internal delegate void CallbackOnSecurityChange ([MarshalAs (UnmanagedType.Interface)] nsIWebProgress progress,
+	                                               [MarshalAs (UnmanagedType.Interface)] nsIRequest request,
+	                                               uint status);
+
 	internal delegate void CallbackOnStateChange ([MarshalAs (UnmanagedType.Interface)] nsIWebProgress progress,
 	                                               [MarshalAs (UnmanagedType.Interface)] nsIRequest request,
 	                                               Int32 arg2, UInt32 arg3);
 	internal delegate void CallbackOnProgress ([MarshalAs (UnmanagedType.Interface)] nsIWebProgress progress,
 	                                               [MarshalAs (UnmanagedType.Interface)] nsIRequest request,
 	                                               Int32 arg2, Int32 arg3);
+	
+	internal delegate void CallbackOnShowContextMenu (UInt32 contextFlags, 
+	                                                  [MarshalAs (UnmanagedType.Interface)] nsIDOMEvent eve, 
+	                                                  [MarshalAs (UnmanagedType.Interface)] nsIDOMNode node);
 	
 
 
@@ -766,6 +839,7 @@ using Mono.WebBrowser.DOM;
 		public CallbackOnLocationChanged		OnLocationChanged;
 
 		public CallbackOnStatusChange	OnStatusChange;
+		public CallbackOnSecurityChange	OnSecurityChange;
 
 		public KeyCallback			OnKeyDown;
 		public KeyCallback			OnKeyUp;
@@ -794,6 +868,8 @@ using Mono.WebBrowser.DOM;
 
 		public CallbackVoid				OnLoad;
 		public CallbackVoid				OnUnload;
+		
+		public CallbackOnShowContextMenu OnShowContextMenu;
 
 		public CallbackWString		OnGeneric;
 		
@@ -805,6 +881,7 @@ using Mono.WebBrowser.DOM;
 			this.OnProgress				= new CallbackOnProgress (callback.OnProgress);
 			this.OnLocationChanged		= new CallbackOnLocationChanged (callback.OnLocationChanged);
 			this.OnStatusChange			= new CallbackOnStatusChange (callback.OnStatusChange);
+			this.OnSecurityChange		= new CallbackOnSecurityChange (callback.OnSecurityChange);
 
 			this.OnKeyDown				= new KeyCallback (callback.OnClientDomKeyDown);
 			this.OnKeyUp				= new KeyCallback (callback.OnClientDomKeyUp);
@@ -833,6 +910,8 @@ using Mono.WebBrowser.DOM;
 
 			this.OnLoad 				= new CallbackVoid (callback.OnLoad);
 			this.OnUnload 				= new CallbackVoid (callback.OnUnload);
+			
+			this.OnShowContextMenu		= new CallbackOnShowContextMenu (callback.OnShowContextMenu);
 			
 			this.OnGeneric				= new CallbackWString (callback.OnGeneric);
 		}

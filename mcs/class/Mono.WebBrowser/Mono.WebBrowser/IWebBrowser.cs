@@ -71,7 +71,6 @@ namespace Mono.WebBrowser
 		/// Object exposing navigation methods like Go, Back, etc.
 		/// </value>
 		INavigation Navigation { get; }
-		bool ScrollbarsEnabled { get; set; }
 
 		event NodeEventHandler KeyDown;
 		event NodeEventHandler KeyPress;
@@ -94,6 +93,9 @@ namespace Mono.WebBrowser
 		event LoadFinishedEventHandler LoadFinished;
 				
 		event StatusChangedEventHandler StatusChanged;
+		event SecurityChangedEventHandler SecurityChanged;
+		
+		event ContextMenuEventHandler ContextMenuShown;
 	}
 
 	public enum ReloadOption : uint
@@ -149,6 +151,12 @@ namespace Mono.WebBrowser
 		Unknown = 0,
 		Winforms = 1,
 		Gtk = 2
+	}
+	
+	public enum SecurityLevel {
+		Insecure= 1,
+		Mixed = 2,
+		Secure = 3
 	}
 
 #region Window Events
@@ -367,5 +375,40 @@ namespace Mono.WebBrowser
 			this.uri = uri;
 		}
 	}
+	
+	public delegate void SecurityChangedEventHandler (object sender, SecurityChangedEventArgs e);
+	public class SecurityChangedEventArgs : EventArgs
+	{
+		private SecurityLevel state;
+		public SecurityLevel State {
+			get { return state; }
+			set { state = value; }
+		}
+
+		public SecurityChangedEventArgs (SecurityLevel state)
+		{
+			this.state = state;
+		}
+	}
+	
+	public delegate void ContextMenuEventHandler (object sender, ContextMenuEventArgs e);
+	public class ContextMenuEventArgs : EventArgs
+	{
+		private int x;
+		private int y;
+
+		public int X {
+			get { return x; }
+		}
+		public int Y {
+			get { return y; }
+		}
+
+		public ContextMenuEventArgs (int x, int y)
+		{
+			this.x = x;
+			this.y = y;
+		}
+	}	
 #endregion
 }

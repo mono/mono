@@ -137,6 +137,7 @@
     <Compile Include="Mono.Mozilla\DOM\Element.cs" />
     <Compile Include="Mono.Mozilla\DOM\HTMLElement.cs" />
     <Compile Include="Mono.Mozilla\DOM\HTMLElementCollection.cs" />
+    <Compile Include="Mono.Mozilla\DOM\History.cs" />
     <Compile Include="Mono.Mozilla\DOM\Navigation.cs" />
     <Compile Include="Mono.Mozilla\DOM\Node.cs" />
     <Compile Include="Mono.Mozilla\DOM\NodeList.cs" />
@@ -190,8 +191,8 @@
     <Compile Include="Mono.WebBrowser\DOM\INamedNodeMap.cs" />
     <Compile Include="Mono.WebBrowser\DOM\IStylesheet.cs" />
     <Compile Include="Mono.WebBrowser\DOM\IStylesheetList.cs" />
-    <Compile Include="Mono.WebBrowser\DOM\NodeEventArgs.cs" />
-    <Compile Include="Mono.WebBrowser\DOM\NodeEventHandler.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\EventArgs.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\EventHandlers.cs" />
     <Compile Include="Mono.WebBrowser\IWebBrowser.cs" />
     <Compile Include="Mono.WebBrowser\Manager.cs" />
     <Compile Include="Mono.WebBrowser\Exception.cs" />
@@ -200,6 +201,7 @@
     <Compile Include="Mono.WebBrowser\DOM\IDocument.cs" />
     <Compile Include="Mono.WebBrowser\DOM\IElement.cs" />
     <Compile Include="Mono.WebBrowser\DOM\IElementCollection.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\IHistory.cs" />
     <Compile Include="Mono.WebBrowser\DOM\INavigation.cs" />
     <Compile Include="Mono.WebBrowser\DOM\INode.cs" />
     <Compile Include="Mono.WebBrowser\DOM\INodeList.cs" />

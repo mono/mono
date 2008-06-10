@@ -27,5 +27,44 @@ using System;
 
 namespace Mono.WebBrowser.DOM
 {
-	public delegate void NodeEventHandler (object sender, NodeEventArgs e);
+	public class NodeEventArgs : EventArgs
+	{
+		private DOM.INode node;
+
+		#region Public Constructors
+		public NodeEventArgs (DOM.INode node)
+			: base ()
+		{
+			this.node = node;
+		}
+		#endregion	// Public Constructors
+
+		#region Public Instance Properties
+		public INode Node
+		{
+			get { return this.node; }
+		}
+		#endregion	// Public Instance Properties
+	}
+	
+	public class WindowEventArgs : EventArgs
+	{
+		private DOM.IWindow window;
+
+		#region Public Constructors
+		public WindowEventArgs (DOM.IWindow window)
+			: base ()
+		{
+			this.window = window;
+		}
+		#endregion	// Public Constructors
+
+		#region Public Instance Properties
+		public IWindow Window
+		{
+			get { return this.window; }
+		}
+		#endregion	// Public Instance Properties
+	}
+	
 }

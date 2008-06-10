@@ -54,6 +54,7 @@ namespace Mono.WebBrowser.DOM
 		string 				VisitedLinkColor { get; set; }
 		IWindow 			Window { get; }
 
+		IAttribute 			CreateAttribute (string name);
 		IElement 			CreateElement (string tagName);
 		IElement 			GetElementById (string id);
 		IElement 			GetElement (int x, int y);
@@ -65,5 +66,7 @@ namespace Mono.WebBrowser.DOM
 		string InvokeScript (string script);
 
 		int GetHashCode ();
+		
+		event EventHandler LoadStopped;
 	}
 }

@@ -35,20 +35,23 @@ namespace System.Windows.Forms
 	{
 		private List<HtmlElement> elements;
 		private Mono.WebBrowser.IWebBrowser webHost;
+		private WebBrowser owner;
 
-		internal HtmlElementCollection (Mono.WebBrowser.IWebBrowser webHost, IElementCollection col)
+		internal HtmlElementCollection (WebBrowser owner, Mono.WebBrowser.IWebBrowser webHost, IElementCollection col)
 		{
 			elements = new List<HtmlElement>();
 			foreach (IElement elem in col) {
-				elements.Add (new HtmlElement (webHost, elem));
+				elements.Add (new HtmlElement (owner, webHost, elem));
 			}
 			this.webHost = webHost;
+			this.owner = owner;
 		}
 
-		private HtmlElementCollection (Mono.WebBrowser.IWebBrowser webHost, List<HtmlElement> elems)
+		private HtmlElementCollection (WebBrowser owner, Mono.WebBrowser.IWebBrowser webHost, List<HtmlElement> elems)
 		{
 			elements = elems;
 			this.webHost = webHost;
+			this.owner = owner;
 		}
 
 		public int Count
@@ -84,10 +87,10 @@ namespace System.Windows.Forms
 
 			foreach (HtmlElement elem in elements) {
 				if (elem.HasAttribute ("name") && elem.GetAttribute ("name").Equals (name)) {
-					elems.Add (new HtmlElement (webHost, elem.element));
+					elems.Add (new HtmlElement (owner, webHost, elem.element));
 				}
 			}
-			return new HtmlElementCollection (webHost, elems);
+			return new HtmlElementCollection (owner, webHost, elems);
 		}
 
 		

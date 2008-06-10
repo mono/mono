@@ -38,11 +38,13 @@ namespace System.Windows.Forms
 		private EventHandlerList event_handlers;
 		private IWindow window;
 		private Mono.WebBrowser.IWebBrowser webHost;
+		private WebBrowser owner;
 		
-		internal HtmlWindow (Mono.WebBrowser.IWebBrowser webHost, IWindow iWindow)
+		internal HtmlWindow (WebBrowser owner, Mono.WebBrowser.IWebBrowser webHost, IWindow iWindow)
 		{
 			this.window = iWindow;
 			this.webHost = webHost;
+			this.owner = owner;
 			this.window.Load += new EventHandler (OnLoad);
 			this.window.Unload += new EventHandler (OnUnload);
 		}
@@ -64,7 +66,7 @@ namespace System.Windows.Forms
 
 #region Properties
 		public HtmlDocument Document {
-			get { return new HtmlDocument (webHost, this.window.Document); }
+			get { return new HtmlDocument (owner, webHost, this.window.Document); }
 		}
 		
 		public object DomWindow {
@@ -72,11 +74,11 @@ namespace System.Windows.Forms
 		}
 
 		public HtmlWindowCollection Frames {
-			get { return new HtmlWindowCollection (webHost, this.window.Frames); }
+			get { return new HtmlWindowCollection (owner, webHost, this.window.Frames); }
 		}
 
 		public HtmlHistory History {
-			get { throw new NotImplementedException (); }
+			get { return new HtmlHistory (this.webHost, window.History); }
 		}
 
 		[MonoTODO ("Windows are always open")]
@@ -95,25 +97,27 @@ namespace System.Windows.Forms
 		}
 
 		public HtmlWindow Parent {
-			get { return new HtmlWindow (webHost, this.window.Parent); }
+			get { return new HtmlWindow (owner, webHost, this.window.Parent); }
 		}
 
 		public Point Position {
-			get { throw new NotImplementedException (); }
+			get { return owner.Location; }
 		}
 
 		public Size Size {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return owner.Size; }
+			set { }
 		}
 		
 		public string StatusBarText {
 			get { return this.window.StatusText; }
-			set { throw new NotImplementedException (); }
+			set { }
 		}
 
 		public HtmlElement WindowFrameElement {
-			get { throw new NotImplementedException (); }
+			get { 
+				return new HtmlElement (owner, webHost, window.Document.DocumentElement);
+			}
 		}
 		
 		public Uri Url {
@@ -204,7 +208,7 @@ namespace System.Windows.Forms
 
 		public void AttachEventHandler (string eventName, EventHandler eventHandler)
 		{
-			throw new NotImplementedException ();
+			this.window.AttachEventHandler (eventName, eventHandler);
 		}
 		
 		public void Close ()
@@ -214,12 +218,12 @@ namespace System.Windows.Forms
 		
 		public void DetachEventHandler (string eventName, EventHandler eventHandler)
 		{
-			throw new NotImplementedException ();
+			this.window.DetachEventHandler (eventName, eventHandler);
 		}
 		
 		public void Focus ()
 		{
-			throw new NotImplementedException ();
+			this.window.Focus ();
 		}
 		
 		public void MoveTo (Point point)
@@ -234,7 +238,7 @@ namespace System.Windows.Forms
 		
 		public void RemoveFocus ()
 		{
-			throw new NotImplementedException ();
+			webHost.FocusOut ();
 		}
 		
 		public void ResizeTo (Size size)
@@ -252,8 +256,14 @@ namespace System.Windows.Forms
 		static object ErrorEvent = new object ();
 		public event HtmlElementErrorEventHandler Error
 		{
-			add { Events.AddHandler (ErrorEvent, value); }
-			remove { Events.RemoveHandler (ErrorEvent, value); }
+			add { 
+				Events.AddHandler (ErrorEvent, value); 
+				window.Error += new EventHandler (OnError);
+			}
+			remove { 
+				Events.RemoveHandler (ErrorEvent, value); 
+				window.Error -= new EventHandler (OnError);
+			}
 		}
 
 		internal void OnError (object sender, EventArgs ev)
@@ -268,8 +278,14 @@ namespace System.Windows.Forms
 		static object GotFocusEvent = new object ();
 		public event HtmlElementEventHandler GotFocus
 		{
-			add { Events.AddHandler (GotFocusEvent, value); }
-			remove { Events.RemoveHandler (GotFocusEvent, value); }
+			add { 
+				Events.AddHandler (GotFocusEvent, value);
+				window.OnFocus += new EventHandler (OnGotFocus);
+			}
+			remove { 
+				Events.RemoveHandler (GotFocusEvent, value); 
+				window.OnFocus -= new EventHandler (OnGotFocus);
+			}
 		}
 
 		internal void OnGotFocus (object sender, EventArgs ev)
@@ -284,8 +300,14 @@ namespace System.Windows.Forms
 		static object LostFocusEvent = new object ();
 		public event HtmlElementEventHandler LostFocus
 		{
-			add { Events.AddHandler (LostFocusEvent, value); }
-			remove { Events.RemoveHandler (LostFocusEvent, value); }
+			add { 
+				Events.AddHandler (LostFocusEvent, value); 
+				window.OnBlur += new EventHandler (OnLostFocus);
+			}
+			remove { 
+				Events.RemoveHandler (LostFocusEvent, value); 
+				window.OnBlur -= new EventHandler (OnLostFocus);
+			}
 		}
 
 		internal void OnLostFocus (object sender, EventArgs ev)
@@ -300,8 +322,14 @@ namespace System.Windows.Forms
 		static object LoadEvent = new object ();
 		public event HtmlElementEventHandler Load
 		{
-			add { Events.AddHandler (LoadEvent, value); }
-			remove { Events.RemoveHandler (LoadEvent, value); }
+			add { 
+				Events.AddHandler (LoadEvent, value); 
+				window.Load += new EventHandler (OnLoad);
+			}
+			remove { 
+				Events.RemoveHandler (LoadEvent, value); 
+				window.Load -= new EventHandler (OnLoad);
+			}
 		}
 
 		internal void OnLoad (object sender, EventArgs ev)
@@ -315,8 +343,14 @@ namespace System.Windows.Forms
 
 		static object UnloadEvent = new object ();
 		public event HtmlElementEventHandler Unload {
-			add { Events.AddHandler (UnloadEvent, value); }
-			remove { Events.RemoveHandler (UnloadEvent, value); }
+			add { 
+				Events.AddHandler (UnloadEvent, value); 
+				window.Unload += new EventHandler (OnUnload);
+			}
+			remove { 
+				Events.RemoveHandler (UnloadEvent, value); 
+				window.Unload -= new EventHandler (OnUnload);
+			}
 		}
 
 		internal void OnUnload (object sender, EventArgs ev)
@@ -330,8 +364,14 @@ namespace System.Windows.Forms
 
 		static object ScrollEvent = new object ();
 		public event HtmlElementEventHandler Scroll {
-			add { Events.AddHandler (ScrollEvent, value); }
-			remove { Events.RemoveHandler (ScrollEvent, value); }
+			add { 
+				Events.AddHandler (ScrollEvent, value);
+				window.Scroll += new EventHandler (OnScroll);
+			}
+			remove { 
+				Events.RemoveHandler (ScrollEvent, value);
+				window.Scroll -= new EventHandler (OnScroll);
+			}
 		}
 
 		internal void OnScroll (object sender, EventArgs ev)

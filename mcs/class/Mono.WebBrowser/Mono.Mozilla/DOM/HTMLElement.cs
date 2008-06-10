@@ -56,21 +56,6 @@ namespace Mono.Mozilla.DOM
 		#endregion
 
 		#region IElement Members
-		public override IElement AppendChild (IElement child) {
-			nsIDOMNode newChild;
-			HTMLElement elem = (HTMLElement) child;
-			this.element.appendChild (elem.element, out newChild);
-			return new HTMLElement (control, newChild as nsIDOMHTMLElement);
-		}
-		
-		public override IElement InsertBefore (INode child, INode refChild) {
-			nsIDOMNode newChild;
-			Node elem = (Node) child;
-			Node reference = (Node) refChild;
-			this.element.insertBefore (elem.node, reference.node, out newChild);
-			return new HTMLElement (control, newChild as nsIDOMHTMLElement);
-		}		
-
 		public new string InnerHTML
 		{
 			get {

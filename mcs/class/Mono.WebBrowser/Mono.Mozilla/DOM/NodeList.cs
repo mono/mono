@@ -80,6 +80,7 @@ namespace Mono.Mozilla.DOM
 		
 		internal virtual void Load ()
 		{
+			if (unmanagedNodes == null) return;
 			Clear ();
 			uint count;
 			unmanagedNodes.getLength (out count);

@@ -33,7 +33,7 @@ namespace Mono.Mozilla.DOM
 	{
 		private HandleRef storage;
 		private bool disposed = false;
-		private Node owner;
+		private object owner;
 
 		private EventHandlerList events;
 		public EventHandlerList Events {
@@ -50,7 +50,7 @@ namespace Mono.Mozilla.DOM
 			set { target = value; }
 		}
 		
-		public EventListener(nsIDOMEventTarget target, Node owner)
+		public EventListener(nsIDOMEventTarget target, object owner)
 		{
 			this.target = target;
 			this.owner = owner;
@@ -123,9 +123,21 @@ namespace Mono.Mozilla.DOM
 			_event.getType (storage);
 			string type = Base.StringGet (storage);
 			string key = String.Intern (target.GetHashCode () + ":" + type);
-			EventHandler eh = (EventHandler) Events[key];
+			EventHandler eh = Events[key] as EventHandler;
 			if (eh != null) {
 				eh (owner, new EventArgs ());
+				return 0;
+			}
+			Mono.WebBrowser.DOM.NodeEventHandler eh1 = Events[key] as Mono.WebBrowser.DOM.NodeEventHandler;
+			if (eh1 != null) {
+				eh1 (owner, new Mono.WebBrowser.DOM.NodeEventArgs ((Mono.WebBrowser.DOM.INode)owner));
+				return 0;
+			}
+
+			Mono.WebBrowser.DOM.WindowEventHandler eh2 = Events[key] as Mono.WebBrowser.DOM.WindowEventHandler;
+			if (eh2 != null) {
+				eh2 (owner, new Mono.WebBrowser.DOM.WindowEventArgs ((Mono.WebBrowser.DOM.IWindow)owner));
+				return 0;
 			}
 			
 			return 0;

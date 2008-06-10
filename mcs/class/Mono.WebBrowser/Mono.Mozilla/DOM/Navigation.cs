@@ -217,7 +217,11 @@ namespace Mono.Mozilla.DOM
 			get {
 				nsIDOMDocument doc;
 				this.navigation.getDocument (out doc);
-				return new Document (control, doc as nsIDOMHTMLDocument);
+				int hashcode = doc.GetHashCode ();
+				if (!resources.ContainsKey (hashcode)) {
+					resources.Add (hashcode, new Document (control, doc as nsIDOMHTMLDocument));
+				}
+				return resources [hashcode] as Document;
 			}
 		}
 		

@@ -52,11 +52,14 @@ namespace Mono.Mozilla
 
 		private bool streamingMode;
 		
+		internal Hashtable documents;
+		
 		public WebBrowser (Platform platform)
 		{
 			this.platform = platform;
 			callbacks = new Callback(this);
 			loaded = Base.Init (this, platform);
+			documents = new Hashtable ();
 		}
 
 		public bool Load (IntPtr handle, int width, int height)
@@ -128,50 +131,6 @@ namespace Mono.Mozilla
 			}
 		}
 		
-		private nsIPrefService prefService;
-		public bool ScrollbarsEnabled {
-			get {
-				if (prefService == null) {
-					IntPtr prefServicePtr = IntPtr.Zero;
-					nsIServiceManager man = Base.gluezilla_getServiceManager ();
-					man.getServiceByContractID ("@mozilla.org/preferences-service;1", typeof (nsIPrefService).GUID, out prefServicePtr);
-					if (prefServicePtr == IntPtr.Zero)
-						throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.PrefService);
-
-					try {
-						prefService = (nsIPrefService)Marshal.GetObjectForIUnknown (prefServicePtr);
-					} catch (System.Exception ex) {
-						throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.PrefService, ex);
-					}
-				}
-				nsIPrefBranch prefBranch;
-				prefService.getBranch ("dom. disable_window_open_feature", out prefBranch);
-				bool ret = true;
-				prefBranch.getBoolPref ("scrollbars", out ret);
-				return ret;
-			}
-			set {
-				Console.Error.WriteLine ("set scrollbars enabled = " + value);
-				if (prefService == null) {
-					IntPtr prefServicePtr = IntPtr.Zero;
-					nsIServiceManager man = Base.gluezilla_getServiceManager ();
-					man.getServiceByContractID ("@mozilla.org/preferences-service;1", typeof (nsIPrefService).GUID, out prefServicePtr);
-					if (prefServicePtr == IntPtr.Zero)
-						throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.PrefService);
-
-					try {
-						prefService = (nsIPrefService)Marshal.GetObjectForIUnknown (prefServicePtr);
-					} catch (System.Exception ex) {
-						throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.PrefService, ex);
-					}
-				}
-				nsIPrefBranch prefBranch;
-				prefService.getBranch ("dom. disable_window_open_feature", out prefBranch);
-				prefBranch.setBoolPref ("scrollbars", value ? 1 : 0);
-				Console.Error.WriteLine ("set scrollbars enabled = " + value + " done");
-			}
-		}
-		
 		internal System.ComponentModel.EventHandlerList DomEvents {
 			get {
 				if (domEvents == null)
@@ -189,7 +148,7 @@ namespace Mono.Mozilla
 				return events;
 			}
 		}
-
+		
 		
 		nsIServiceManager servMan;
 		internal nsIServiceManager ServiceManager {
@@ -232,7 +191,7 @@ namespace Mono.Mozilla
 		{
 			Base.Blur (this);
 		}
-
+		
 		public void Activate ()
 		{
 			Base.Activate (this);
@@ -305,7 +264,6 @@ namespace Mono.Mozilla
 			DomEvents.RemoveHandler (key, handler);
 		}
 		
-		
 		#endregion
 
 		#region Events
@@ -332,7 +290,10 @@ namespace Mono.Mozilla
 		internal static object LoadEvent = new object ();
 		internal static object UnloadEvent = new object ();
 		internal static object StatusChangedEvent = new object ();
+		internal static object SecurityChangedEvent = new object ();
 		internal static object ProgressEvent = new object ();
+		internal static object ContextMenuEvent = new object ();
+		
 		
 		public event NodeEventHandler KeyDown
 		{
@@ -422,6 +383,12 @@ namespace Mono.Mozilla
 			remove { Events.RemoveHandler (StatusChangedEvent, value); }
 		}
 		
+ 		public event SecurityChangedEventHandler SecurityChanged
+		{
+			add { Events.AddHandler (SecurityChangedEvent, value); }
+			remove { Events.RemoveHandler (SecurityChangedEvent, value); }
+		}
+
 		public event LoadStartedEventHandler LoadStarted
 		{
 			add { Events.AddHandler (LoadStartedEvent, value); }
@@ -444,6 +411,12 @@ namespace Mono.Mozilla
 		{
 			add { Events.AddHandler (LoadFinishedEvent, value); }
 			remove { Events.RemoveHandler (LoadFinishedEvent, value); }
+		}
+
+		public event ContextMenuEventHandler ContextMenuShown
+		{
+			add { Events.AddHandler (ContextMenuEvent, value); }
+			remove { Events.RemoveHandler (ContextMenuEvent, value); }
 		}
 
 		internal static object GenericEvent = new object ();

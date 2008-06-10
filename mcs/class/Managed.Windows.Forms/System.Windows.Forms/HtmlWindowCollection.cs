@@ -36,14 +36,17 @@ namespace System.Windows.Forms
 	{
 		private List<HtmlWindow> windows;
 		private Mono.WebBrowser.IWebBrowser webHost;
+		private WebBrowser owner;
+		
 
-		internal HtmlWindowCollection (Mono.WebBrowser.IWebBrowser webHost, IWindowCollection col)
+		internal HtmlWindowCollection (WebBrowser owner, Mono.WebBrowser.IWebBrowser webHost, IWindowCollection col)
 		{
 			windows = new List<HtmlWindow>();
 			foreach (IWindow window in col)
-				windows.Add (new HtmlWindow (webHost, window));
+				windows.Add (new HtmlWindow (owner, webHost, window));
 
 			this.webHost = webHost;
+			this.owner = owner;
 		}
 		
 		public int Count {

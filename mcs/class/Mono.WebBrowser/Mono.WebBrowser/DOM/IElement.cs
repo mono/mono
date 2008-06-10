@@ -54,11 +54,14 @@ namespace Mono.WebBrowser.DOM
 		bool				Disabled { get; set; }
 
 		IElement			AppendChild (IElement child);
+		void				Blur ();
 		bool 				Equals (IElement obj);
+		void				Focus ();
 		bool 				HasAttribute (string name);
 		string 				GetAttribute (string name);
 		IElementCollection 	GetElementsByTagName (string id);
 		int 				GetHashCode ();
+		void				ScrollIntoView (bool alignWithTop);
 		void 				SetAttribute (string name, string value);
 		
 	}

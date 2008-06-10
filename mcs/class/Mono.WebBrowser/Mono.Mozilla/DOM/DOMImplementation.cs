@@ -86,7 +86,8 @@ namespace Mono.Mozilla.DOM
 			Base.StringSet (storage, namespaceURI);
 			UniString qual = new UniString (qualifiedName);
 			unmanagedDomImpl.createDocument (storage, qual.Handle, ((DocumentType)doctype).ComObject, out doc);
-			return new Document (this.control, doc);
+			control.documents.Add (doc.GetHashCode (), new Document (this.control, doc));
+			return control.documents[doc.GetHashCode ()] as IDocument;
 			
 		}
 		#endregion

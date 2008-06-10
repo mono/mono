@@ -25,6 +25,7 @@
 
 using System;
 using System.Text;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Collections;
 using Mono.WebBrowser;
@@ -77,6 +78,8 @@ namespace Mono.Mozilla.DOM
 				if (!resources.Contains ("Attributes")) {
 					nsIDOMNamedNodeMap attributes;
 					this.node.getAttributes (out attributes);
+					if (attributes == null)
+						return new AttributeCollection (control);
 					resources.Add ("Attributes", new AttributeCollection (control, attributes));
 				}
 				return resources["Attributes"] as IAttributeCollection;
@@ -162,7 +165,9 @@ namespace Mono.Mozilla.DOM
 			get {
 				nsIDOMDocument doc;
 				this.node.getOwnerDocument (out doc);
-				return new Document (control, doc as Mono.Mozilla.nsIDOMHTMLDocument);
+				if (!control.documents.ContainsKey (doc.GetHashCode ()))
+				    control.documents.Add (doc.GetHashCode (), new Document (control, doc as Mono.Mozilla.nsIDOMHTMLDocument));
+				return control.documents[doc.GetHashCode ()] as IDocument;
 			}
 		}
 
@@ -209,6 +214,10 @@ namespace Mono.Mozilla.DOM
 			{
 				this.node.getNodeValue (storage);
 				return Base.StringGet (storage);
+			}
+			set {
+				Base.StringSet (storage, value);
+				node.setNodeValue (storage);
 			}
 		}
 		
@@ -295,13 +304,31 @@ namespace Mono.Mozilla.DOM
 
 		}
 
-		public virtual IElement InsertBefore (INode child, INode refChild) {
+		public virtual INode InsertBefore (INode child, INode refChild) {
 			nsIDOMNode newChild;
-			Node elem = (Node) child;
-			Node reference = (Node) refChild;
-			this.node.insertBefore (elem.node, reference.node, out newChild);
-			return new Element (control, newChild as nsIDOMElement);
-		}		
+			node.insertBefore (((Node) child).node, ((Node) refChild).node, out newChild);
+			return child;
+		}
+
+		public virtual INode ReplaceChild (INode child, INode oldChild) {
+			nsIDOMNode replaced;
+			node.replaceChild (((Node)child).node, ((Node)oldChild).node, out replaced);
+			return oldChild;
+		}
+		
+		public virtual INode RemoveChild (INode child) {
+			nsIDOMNode removedChild;
+			node.removeChild (((Node)child).node, out removedChild);
+			return child;
+		}
+		
+		public virtual INode AppendChild (INode child) {
+			nsIDOMNode newChild;
+			int ret = node.appendChild (((Node)child).node, out newChild);
+			Console.Error.WriteLine (ret);
+			return child;
+		}
+		
 		#endregion
 
 		
@@ -329,6 +356,27 @@ namespace Mono.Mozilla.DOM
 		public void DetachEventHandler (string eventName, EventHandler handler) 
 		{
 			EventListener.RemoveHandler (handler, eventName);
+		}
+		
+		private EventHandlerList events;
+		public EventHandlerList Events {
+			get { 
+				if (events == null)
+					events = new EventHandlerList ();
+				return events;
+			}
+		}		
+		
+		public void AttachEventHandler (string eventName, System.Delegate handler) 
+		{
+			string key = String.Intern (node.GetHashCode() + ":" + eventName);
+			Events.AddHandler (key, handler);
+		}
+		
+		public void DetachEventHandler (string eventName, System.Delegate handler) 
+		{
+			string key = String.Intern (node.GetHashCode() + ":" + eventName);
+			Events.RemoveHandler (key, handler);
 		}
 		
 		public event NodeEventHandler Click
@@ -386,6 +434,16 @@ namespace Mono.Mozilla.DOM
 		{
 			add { EventListener.AddHandler (value, "mouseup"); }
 			remove { EventListener.RemoveHandler (value, "mouseup"); }
+		}		
+		public event NodeEventHandler OnFocus
+		{
+			add { EventListener.AddHandler (value, "focus"); }
+			remove { EventListener.RemoveHandler (value, "focus"); }
+		}		
+		public event NodeEventHandler OnBlur
+		{
+			add { EventListener.AddHandler (value, "blur"); }
+			remove { EventListener.RemoveHandler (value, "blur"); }
 		}		
 
 		#endregion

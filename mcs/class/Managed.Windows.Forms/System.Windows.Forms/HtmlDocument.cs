@@ -37,15 +37,18 @@ namespace System.Windows.Forms
 		private EventHandlerList events;
 		private Mono.WebBrowser.IWebBrowser webHost;
 		private IDocument document;
+		private WebBrowser owner;
 
-		internal HtmlDocument (Mono.WebBrowser.IWebBrowser webHost) : this (webHost, webHost.Document)
+		internal HtmlDocument (WebBrowser owner, Mono.WebBrowser.IWebBrowser webHost) : 
+			this (owner, webHost, webHost.Document)
 		{
 		}
 
-		internal HtmlDocument (Mono.WebBrowser.IWebBrowser webHost, IDocument doc)
+		internal HtmlDocument (WebBrowser owner, Mono.WebBrowser.IWebBrowser webHost, IDocument doc)
 		{
 			this.webHost = webHost;
 			this.document = doc;
+			this.owner = owner;
 		}
 
 
@@ -69,7 +72,7 @@ namespace System.Windows.Forms
 		public HtmlElement CreateElement (string elementTag) 
 		{ 
 			Mono.WebBrowser.DOM.IElement element = document.CreateElement (elementTag);
-			return new HtmlElement (webHost, element);
+			return new HtmlElement (owner, webHost, element);
 		}
 
 		public void DetachEventHandler (string eventName, EventHandler eventHandler) 
@@ -96,7 +99,7 @@ namespace System.Windows.Forms
 		{
 			IElement elem = document.GetElementById (id);
 			if (elem != null)
-				return new HtmlElement (webHost, elem);
+				return new HtmlElement (owner, webHost, elem);
 			return null;
 		}
 
@@ -104,7 +107,7 @@ namespace System.Windows.Forms
 		{
 			Mono.WebBrowser.DOM.IElement elem = document.GetElement (point.X, point.Y);
 			if (elem != null)
-				return new HtmlElement(webHost, elem);
+				return new HtmlElement(owner, webHost, elem);
 			return null;
 		}
 
@@ -112,7 +115,7 @@ namespace System.Windows.Forms
 		{
 			Mono.WebBrowser.DOM.IElementCollection col = document.GetElementsByTagName (tagName);
 			if (col != null)
-				return new HtmlElementCollection (webHost, col);
+				return new HtmlElementCollection (owner, webHost, col);
 			return null;
 		}
 
@@ -174,7 +177,7 @@ namespace System.Windows.Forms
 				Mono.WebBrowser.DOM.IElement element = document.Active;
 				if (element == null)
 					return null;
-				return new HtmlElement (webHost, element);
+				return new HtmlElement (owner, webHost, element);
 			
 			}
 		}
@@ -186,7 +189,7 @@ namespace System.Windows.Forms
 
 		public HtmlElementCollection All {
 			get {
-				return new HtmlElementCollection (webHost, document.DocumentElement.All);
+				return new HtmlElementCollection (owner, webHost, document.DocumentElement.All);
 			}
 		}
 
@@ -196,7 +199,7 @@ namespace System.Windows.Forms
 		}
 		
 		public HtmlElement Body {
-			get { return new HtmlElement (webHost, document.Body); }
+			get { return new HtmlElement (owner, webHost, document.Body); }
 		}
 		
 		public string Cookie {
@@ -232,11 +235,11 @@ namespace System.Windows.Forms
 		}
 		
 		public HtmlElementCollection Forms { 
-			get { return new HtmlElementCollection (webHost, document.Forms); } 
+			get { return new HtmlElementCollection (owner, webHost, document.Forms); } 
 		}
 		
 		public HtmlElementCollection Images { 
-			get { return new HtmlElementCollection (webHost, document.Images); } 	
+			get { return new HtmlElementCollection (owner, webHost, document.Images); } 	
 		}
 		
 		public Color LinkColor {
@@ -245,12 +248,25 @@ namespace System.Windows.Forms
 		}
 		
 		public HtmlElementCollection Links {
-			get { return new HtmlElementCollection (webHost, document.Links); } 
+			get { return new HtmlElementCollection (owner, webHost, document.Links); } 
 		}
 		
 		public bool RightToLeft {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { 
+				IAttribute dir = document.Attributes["dir"];
+				return (dir != null && dir.Value == "rtl");					
+			}
+			set {
+				
+				IAttribute dir = document.Attributes["dir"];
+				if (dir == null && value) {
+					IAttribute attr = document.CreateAttribute ("dir");
+					attr.Value = "rtl";
+					document.AppendChild (attr);
+				} else if (dir != null && !value) {
+					document.RemoveChild (dir);
+				}
+			}
 		}
 		
 		public string Title {
@@ -268,7 +284,7 @@ namespace System.Windows.Forms
 		}
 		
 		public HtmlWindow Window { 
-			get { return new HtmlWindow (webHost, webHost.Window); } 
+			get { return new HtmlWindow (owner, webHost, webHost.Window); } 
 		
 		}
 
@@ -298,24 +314,38 @@ namespace System.Windows.Forms
 		}
 
 		private static object ContextMenuShowingEvent = new object ();
-		public event HtmlElementEventHandler ContextMenuShowing
-		{
-			add { Events.AddHandler (ContextMenuShowingEvent, value); }
-			remove { Events.RemoveHandler (ContextMenuShowingEvent, value); }
+		public event HtmlElementEventHandler ContextMenuShowing {
+			add { 
+				Events.AddHandler (ContextMenuShowingEvent, value);
+				owner.WebHost.ContextMenuShown += new Mono.WebBrowser.ContextMenuEventHandler (OnContextMenuShowing);
+			}
+			remove { 
+				Events.RemoveHandler (ContextMenuShowingEvent, value);
+				owner.WebHost.ContextMenuShown -= new Mono.WebBrowser.ContextMenuEventHandler (OnContextMenuShowing);
+			}
 		}
-		private void OnContextMenuShowing (object sender, EventArgs e)
+		private void OnContextMenuShowing (object sender, Mono.WebBrowser.ContextMenuEventArgs e)
 		{
 			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[ContextMenuShowingEvent];
 			if (eh != null) {
 				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
 				eh (this, ev);
+				if (ev.ReturnValue) {
+					owner.OnWebHostContextMenuShown (sender, e);
+				}
 			}
 		}
 
 		private static object FocusingEvent = new object ();
 		public event HtmlElementEventHandler Focusing {
-			add { Events.AddHandler (FocusingEvent, value); }
-			remove { Events.RemoveHandler (FocusingEvent, value); }
+			add { 
+				Events.AddHandler (FocusingEvent, value); 
+				document.OnFocus += new NodeEventHandler (OnFocusing);
+			}
+			remove { 
+				Events.RemoveHandler (FocusingEvent, value); 
+				document.OnFocus -= new NodeEventHandler (OnFocusing);
+			}
 		}
 		
 		private void OnFocusing (object sender, EventArgs e)
@@ -329,8 +359,14 @@ namespace System.Windows.Forms
 
 		private static object LosingFocusEvent = new object ();
 		public event HtmlElementEventHandler LosingFocus {
-			add { Events.AddHandler (LosingFocusEvent, value); }
-			remove { Events.RemoveHandler (LosingFocusEvent, value); }
+			add { 
+				Events.AddHandler (LosingFocusEvent, value); 
+				document.OnBlur += new NodeEventHandler (OnLosingFocus);
+			}
+			remove { 
+				Events.RemoveHandler (LosingFocusEvent, value); 
+				document.OnBlur -= new NodeEventHandler (OnLosingFocus);
+			}
 		}
 		
 		private void OnLosingFocus (object sender, EventArgs e)
@@ -344,8 +380,14 @@ namespace System.Windows.Forms
 
 		private static object MouseDownEvent = new object ();
 		public event HtmlElementEventHandler MouseDown {
-			add { Events.AddHandler (MouseDownEvent, value); }
-			remove { Events.RemoveHandler (MouseDownEvent, value); }
+			add { 
+				Events.AddHandler (MouseDownEvent, value); 
+				document.MouseDown += new NodeEventHandler (OnMouseDown);
+			}
+			remove { 
+				Events.RemoveHandler (MouseDownEvent, value); 
+				document.MouseDown -= new NodeEventHandler (OnMouseDown);
+			}
 		}
 		
 		private void OnMouseDown (object sender, EventArgs e)
@@ -359,8 +401,14 @@ namespace System.Windows.Forms
 
 		private static object MouseLeaveEvent = new object ();
 		public event HtmlElementEventHandler MouseLeave {
-			add { Events.AddHandler (MouseLeaveEvent, value); }
-			remove { Events.RemoveHandler (MouseLeaveEvent, value); }
+			add { 
+				Events.AddHandler (MouseLeaveEvent, value); 
+				document.MouseLeave += new NodeEventHandler (OnMouseLeave);
+			}
+			remove { 
+				Events.RemoveHandler (MouseLeaveEvent, value); 
+				document.MouseLeave -= new NodeEventHandler (OnMouseLeave);
+			}
 		}
 		
 		private void OnMouseLeave (object sender, EventArgs e)
@@ -374,8 +422,14 @@ namespace System.Windows.Forms
 
 		private static object MouseMoveEvent = new object ();
 		public event HtmlElementEventHandler MouseMove {
-			add { Events.AddHandler (MouseMoveEvent, value); }
-			remove { Events.RemoveHandler (MouseMoveEvent, value); }
+			add { 
+				Events.AddHandler (MouseMoveEvent, value); 
+				document.MouseMove += new NodeEventHandler (OnMouseMove);
+			}
+			remove { 
+				Events.RemoveHandler (MouseMoveEvent, value); 
+				document.MouseMove -= new NodeEventHandler (OnMouseMove);
+			}
 		}
 		
 		private void OnMouseMove (object sender, EventArgs e)
@@ -389,8 +443,14 @@ namespace System.Windows.Forms
 
 		private static object MouseOverEvent = new object ();
 		public event HtmlElementEventHandler MouseOver {
-			add { Events.AddHandler (MouseOverEvent, value); }
-			remove { Events.RemoveHandler (MouseOverEvent, value); }
+			add { 
+				Events.AddHandler (MouseOverEvent, value); 
+				document.MouseOver += new NodeEventHandler (OnMouseOver);
+			}
+			remove { 
+				Events.RemoveHandler (MouseOverEvent, value); 
+				document.MouseOver -= new NodeEventHandler (OnMouseOver);
+			}
 		}
 		
 		private void OnMouseOver (object sender, EventArgs e)
@@ -404,8 +464,14 @@ namespace System.Windows.Forms
 
 		private static object MouseUpEvent = new object ();
 		public event HtmlElementEventHandler MouseUp {
-			add { Events.AddHandler (MouseUpEvent, value); }
-			remove { Events.RemoveHandler (MouseUpEvent, value); }
+			add { 
+				Events.AddHandler (MouseUpEvent, value); 
+				document.MouseUp += new NodeEventHandler (OnMouseUp);
+			}
+			remove { 
+				Events.RemoveHandler (MouseUpEvent, value); 
+				document.MouseUp -= new NodeEventHandler (OnMouseUp);
+			}
 		}
 		
 		private void OnMouseUp (object sender, EventArgs e)
@@ -419,8 +485,14 @@ namespace System.Windows.Forms
 
 		private static object StopEvent = new object ();
 		public event HtmlElementEventHandler Stop {
-			add { Events.AddHandler (StopEvent, value); }
-			remove { Events.RemoveHandler (StopEvent, value); }
+			add { 
+				Events.AddHandler (StopEvent, value); 
+				document.LoadStopped += new EventHandler (OnStop);
+			}			
+			remove { 
+				Events.RemoveHandler (StopEvent, value); 
+				document.LoadStopped -= new EventHandler (OnStop);
+			}
 		}
 		
 		private void OnStop (object sender, EventArgs e)
