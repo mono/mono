@@ -1,3 +1,8 @@
+2008-06-10  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* DnsEndPoint_2_1.cs: embed an IPAddress and rely on IPEndPoint
+	for serialization.
+
 2008-06-04  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* DnsEndPoint_2_1.cs: new DnsEndPoint class for SL2b1

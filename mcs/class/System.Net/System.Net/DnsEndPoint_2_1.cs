@@ -38,6 +38,7 @@ namespace System.Net {
 		string host;
 		int port;
 		Sockets.AddressFamily addressFamily = Sockets.AddressFamily.Unknown;
+		private IPAddress ipAddress;
 
 		public DnsEndPoint (string host, int port)
 		{
@@ -50,6 +51,9 @@ namespace System.Net {
 
 			this.host = host;
 			this.port = port;
+			
+			IPHostEntry host_entry = Dns.GetHostEntry (host);
+			ipAddress = host_entry.AddressList[0];
 		}
 
 		public DnsEndPoint (string host, int port, Sockets.AddressFamily addressFamily) : this (host, port)
@@ -85,6 +89,11 @@ namespace System.Net {
 
 		public override Sockets.AddressFamily AddressFamily {
 			get { return addressFamily; }
+		}
+
+		public override SocketAddress Serialize ()
+		{
+			return new IPEndPoint (ipAddress, port).Serialize ();
 		}
 
 		public string Host {
