@@ -1,5 +1,9 @@
 2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (resolve_object): Release memory of inflated types.
+
+2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* loader.c (mono_method_get_signature_full): Remove assert about
 	loading a methodspec to a generic method. We have such methods, such as
 	System.Threading.Interlocked::CompareExchange<T>.
