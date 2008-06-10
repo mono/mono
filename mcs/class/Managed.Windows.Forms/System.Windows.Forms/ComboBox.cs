@@ -1649,7 +1649,8 @@ namespace System.Windows.Forms
 						if (SelectedIndex >= listbox_ctrl.LastVisibleItem ())
 							listbox_ctrl.Scroll (SelectedIndex - listbox_ctrl.LastVisibleItem () + 1);
 					break;
-					
+				
+				case Keys.Enter:	
 				case Keys.Escape:
 					DropDownListBoxFinished ();
 					break;
