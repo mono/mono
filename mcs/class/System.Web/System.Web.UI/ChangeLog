@@ -1,3 +1,8 @@
+2008-06-11  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControl.cs: make sure 'type' isn't null in LoadControl
+	before attempting to use it.
+
 2008-06-10 Noam Lampert <noaml@mainsoft.com>
 
 	* TemplateControl.jvm.cs: Don't assume that controls containing page-specific 

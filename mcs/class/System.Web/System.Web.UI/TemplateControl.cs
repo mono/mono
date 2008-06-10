@@ -211,12 +211,16 @@ namespace System.Web.UI {
 				throw new HttpException ("virtualPath is null");
 #endif
 			Type type = GetTypeFromControlPath (virtualPath);
+			
 			return LoadControl (type, null);
 		}
 
 		public Control LoadControl (Type type, object[] parameters) 
 		{
-			object [] attrs = type.GetCustomAttributes (typeof (PartialCachingAttribute), true);
+			object [] attrs = null;
+
+			if (type != null)
+				type.GetCustomAttributes (typeof (PartialCachingAttribute), true);
 			if (attrs != null && attrs.Length == 1) {
 				PartialCachingAttribute attr = (PartialCachingAttribute) attrs [0];
 				PartialCachingControl ctrl = new PartialCachingControl (type, parameters);

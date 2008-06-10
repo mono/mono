@@ -101,9 +101,20 @@ namespace System.Web.Compilation
 			return AddLinePragma (statement, location.BeginLine, location.Filename);
 		}
 
+		static bool IgnoreFile (string fileName)
+		{
+			return String.Compare (fileName, "@@inner_string@@",
+#if NET_2_0
+					    StringComparison.OrdinalIgnoreCase
+#else
+					    true
+#endif
+			) == 0;
+		}
+		
 		internal CodeStatement AddLinePragma (CodeStatement statement, int line, string fileName)
 		{
-			if (statement == null)
+			if (statement == null || IgnoreFile (fileName))
 				return null;
 			
 			statement.LinePragma = new CodeLinePragma (fileName, line);
@@ -133,7 +144,7 @@ namespace System.Web.Compilation
 		
 		internal CodeTypeMember AddLinePragma (CodeTypeMember member, int line, string fileName)
 		{
-			if (member == null)
+			if (member == null || IgnoreFile (fileName))
 				return null;
 			
 			member.LinePragma = new CodeLinePragma (fileName, line);
