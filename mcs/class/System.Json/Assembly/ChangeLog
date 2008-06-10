@@ -1,0 +1,11 @@
+2008-05-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Remove AssemblyDelaySign(true) since it's
+	not always needed and can be controlled from the Makefile.
+	Adjust public key for System.Windows (InternalsVisibleTo)
+
+2008-04-13  Jb Evain  <jbevain@novell.com>
+
+	* AssemblyInfo.cs: agmono is renamed to Mono.Moonlight.
+	Merged from the Moonlight 2 branch.
+
