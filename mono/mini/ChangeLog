@@ -1,3 +1,8 @@
+2008-06-10  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.c
+	(mono_debug_close_method): Check whether `cfg->epilogue_begin != NULL'.
+
 2008-06-09  Kornél Pál  <kornelpal@gmail.com>
 
 	* main.c: Add and set argv [argc] to NULL to match C specification that fixes
