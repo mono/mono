@@ -623,7 +623,8 @@ namespace Mono.CompilerServices.SymbolWriter
 				if (count_includes > 0) {
 					include_files = new ArrayList ();
 					for (int i = 0; i < count_includes; i++) {
-						int idx = reader.ReadLeb128 ();
+						// FIXME: The debugger will need this later on.
+						reader.ReadLeb128 ();
 					}
 				}
 
@@ -652,8 +653,6 @@ namespace Mono.CompilerServices.SymbolWriter
 		public readonly int Index;
 		int DataOffset;
 		#endregion
-
-		int real_data_offset;
 
 		MonoSymbolFile file;
 		string file_name;
@@ -1018,8 +1017,6 @@ namespace Mono.CompilerServices.SymbolWriter
 		{
 			this.SymbolFile = file;
 			this.index = index;
-
-			long start_pos = reader.BaseStream.Position;
 
 			Token = reader.ReadInt32 ();
 			DataOffset = reader.ReadInt32 ();
