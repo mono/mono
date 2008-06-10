@@ -51,6 +51,28 @@ namespace System.Windows.Forms.VisualStyles
 			CBB_DISABLED
 		}
 		#endregion
+		#region DATEPICKER
+		const string DATEPICKER = "DATEPICKER";
+		enum DATEPICKERPARTS
+		{
+			DP_DATEBORDER = 2,
+			DP_SHOWCALENDARBUTTONRIGHT
+		}
+		enum DATEBORDERSTATES
+		{
+			DPDB_NORMAL = 1,
+			DPDB_HOT,
+			DPDB_FOCUSED,
+			DPDB_DISABLED
+		}
+		enum SHOWCALENDARBUTTONRIGHTSTATES
+		{
+			DPSCBR_NORMAL = 1,
+			DPSCBR_HOT,
+			DPSCBR_PRESSED,
+			DPSCBR_DISABLED
+		}
+		#endregion
 		private const string EDIT = "EDIT";
 		private const string EXPLORERBAR = "EXPLORERBAR";
 		private const string HEADER = "HEADER";
@@ -213,6 +235,81 @@ namespace System.Windows.Forms.VisualStyles
 							COMBOBOX,
 							(int)COMBOBOXPARTS.CP_BORDER,
 							(int)BORDERSTATES.CBB_DISABLED);
+					}
+				}
+			}
+		}
+		#endregion
+		#region DatePicker
+		internal static class DatePicker
+		{
+			public static class DateBorder
+			{
+				public static VisualStyleElement Normal {
+					get {
+						return new VisualStyleElement (
+							DATEPICKER,
+							(int)DATEPICKERPARTS.DP_DATEBORDER,
+							(int)DATEBORDERSTATES.DPDB_NORMAL);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return new VisualStyleElement (
+							DATEPICKER,
+							(int)DATEPICKERPARTS.DP_DATEBORDER,
+							(int)DATEBORDERSTATES.DPDB_HOT);
+					}
+				}
+				public static VisualStyleElement Focused {
+					get {
+						return new VisualStyleElement (
+							DATEPICKER,
+							(int)DATEPICKERPARTS.DP_DATEBORDER,
+							(int)DATEBORDERSTATES.DPDB_FOCUSED);
+					}
+				}
+				public static VisualStyleElement Disabled {
+					get {
+						return new VisualStyleElement (
+							DATEPICKER,
+							(int)DATEPICKERPARTS.DP_DATEBORDER,
+							(int)DATEBORDERSTATES.DPDB_DISABLED);
+					}
+				}
+			}
+			public static class ShowCalendarButtonRight
+			{
+				public static VisualStyleElement Normal {
+					get {
+						return new VisualStyleElement (
+							DATEPICKER,
+							(int)DATEPICKERPARTS.DP_SHOWCALENDARBUTTONRIGHT,
+							(int)SHOWCALENDARBUTTONRIGHTSTATES.DPSCBR_NORMAL);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return new VisualStyleElement (
+							DATEPICKER,
+							(int)DATEPICKERPARTS.DP_SHOWCALENDARBUTTONRIGHT,
+							(int)SHOWCALENDARBUTTONRIGHTSTATES.DPSCBR_HOT);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return new VisualStyleElement (
+							DATEPICKER,
+							(int)DATEPICKERPARTS.DP_SHOWCALENDARBUTTONRIGHT,
+							(int)SHOWCALENDARBUTTONRIGHTSTATES.DPSCBR_PRESSED);
+					}
+				}
+				public static VisualStyleElement Disabled {
+					get {
+						return new VisualStyleElement (
+							DATEPICKER,
+							(int)DATEPICKERPARTS.DP_SHOWCALENDARBUTTONRIGHT,
+							(int)SHOWCALENDARBUTTONRIGHTSTATES.DPSCBR_DISABLED);
 					}
 				}
 			}

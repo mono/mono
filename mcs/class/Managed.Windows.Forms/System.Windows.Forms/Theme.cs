@@ -807,9 +807,11 @@ namespace System.Windows.Forms
 #endif
 
 		#region DateTimePicker
-
 		public abstract void DrawDateTimePicker(Graphics dc, Rectangle clip_rectangle, DateTimePicker dtp);
-
+		public abstract bool DateTimePickerBorderHasHotElementStyle { get; }
+		public abstract Rectangle DateTimePickerGetDropDownButtonArea (DateTimePicker dateTimePicker);
+		public abstract Rectangle DateTimePickerGetDateArea (DateTimePicker dateTimePicker);
+		public abstract bool DateTimePickerDropDownButtonHasHotElementStyle { get; }
 		#endregion 	// DateTimePicker
 
 		#region GroupBox

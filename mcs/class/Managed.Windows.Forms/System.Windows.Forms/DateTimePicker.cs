@@ -98,6 +98,7 @@ namespace System.Windows.Forms {
 		// variables for determining how to format the string
 		internal PartData[]					part_data;
 
+		bool drop_down_button_entered;
 		#endregion	// Local variables
 		
 		#region DateTimePickerAccessibleObject Subclass
@@ -194,6 +195,9 @@ namespace System.Windows.Forms {
 			LostFocus += new EventHandler (LostFocusHandler);
 			MouseDown += new MouseEventHandler (MouseDownHandler);			
 			MouseUp += new MouseEventHandler (MouseUpHandler);
+			MouseEnter += new EventHandler (OnMouseEnter);
+			MouseLeave += new EventHandler (OnMouseLeave);
+			MouseMove += new MouseEventHandler (OnMouseMove);
 			Paint += new PaintEventHandler (PaintHandler);
 			Resize += new EventHandler (ResizeHandler);
 			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick, false);
@@ -949,26 +953,7 @@ namespace System.Windows.Forms {
 		// this is the region that the date and the check box is drawn on
 		internal Rectangle date_area_rect {
 			get {
-				Rectangle rect = this.ClientRectangle;
-				if (ShowUpDown) {
-					// set the space to the left of the up/down button
-					if (rect.Width > (up_down_width + 4)) {
-						rect.Width -= (up_down_width + 4);
-					} else {
-						rect.Width = 0;
-					}
-				} else {
-					// set the space to the left of the up/down button
-					// TODO make this use up down button
-					if (rect.Width > (SystemInformation.VerticalScrollBarWidth + 4)) {
-						rect.Width -= SystemInformation.VerticalScrollBarWidth;
-					} else {
-						rect.Width = 0;
-					}
-				}
-				
-				rect.Inflate (-2, -2);
-				return rect;
+				return ThemeEngine.Current.DateTimePickerGetDateArea (this);
 			}
 		}
 
@@ -983,16 +968,7 @@ namespace System.Windows.Forms {
 		// the rectangle for the drop down arrow
 		internal Rectangle drop_down_arrow_rect {
 			get {
-				Rectangle rect = this.ClientRectangle;
-				rect.X = rect.Right - SystemInformation.VerticalScrollBarWidth - 2;
-				if (rect.Width > (SystemInformation.VerticalScrollBarWidth + 2)) {
-					rect.Width = SystemInformation.VerticalScrollBarWidth;
-				} else {
-					rect.Width = Math.Max (rect.Width - 2, 0);
-				}
-				
-				rect.Inflate (0, -2);
-				return rect;
+				return ThemeEngine.Current.DateTimePickerGetDropDownButtonArea (this);
 			}
 		}
 		
@@ -1003,6 +979,10 @@ namespace System.Windows.Forms {
 				return Rectangle.Empty;
 			}
 		}	
+
+		internal bool DropDownButtonEntered {
+			get { return drop_down_button_entered; }
+		}
 			
 		#endregion
 		
@@ -1786,6 +1766,28 @@ namespace System.Windows.Forms {
 			Draw (pe.ClipRectangle, pe.Graphics);
 		}
 		
+		void OnMouseEnter (object sender, EventArgs e)
+		{
+			if (ThemeEngine.Current.DateTimePickerBorderHasHotElementStyle)
+				Invalidate ();
+		}
+
+		void OnMouseLeave (object sender, EventArgs e)
+		{
+			drop_down_button_entered = false;
+			if (ThemeEngine.Current.DateTimePickerBorderHasHotElementStyle)
+				Invalidate ();
+		}
+
+		void OnMouseMove (object sender, MouseEventArgs e)
+		{
+			if (!is_drop_down_visible &&
+				ThemeEngine.Current.DateTimePickerDropDownButtonHasHotElementStyle &&
+				drop_down_button_entered != drop_down_arrow_rect.Contains (e.Location)) {
+				drop_down_button_entered = !drop_down_button_entered;
+				Invalidate (drop_down_arrow_rect);
+			}
+		}
 		#endregion		
 
 		#region internal classes

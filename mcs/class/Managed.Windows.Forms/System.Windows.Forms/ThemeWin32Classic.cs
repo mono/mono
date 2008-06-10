@@ -2232,6 +2232,20 @@ namespace System.Windows.Forms
 #endif
 
 		#region DateTimePicker
+		protected virtual void DateTimePickerDrawBorder (DateTimePicker dateTimePicker, Graphics g, Rectangle clippingArea)
+		{
+			this.CPDrawBorder3D (g, dateTimePicker.ClientRectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom, dateTimePicker.BackColor);
+		}
+
+		protected virtual void DateTimePickerDrawDropDownButton (DateTimePicker dateTimePicker, Graphics g, Rectangle clippingArea)
+		{
+			ButtonState state = dateTimePicker.is_drop_down_visible ? ButtonState.Pushed : ButtonState.Normal;
+			g.FillRectangle (ResPool.GetSolidBrush (ColorControl), dateTimePicker.drop_down_arrow_rect);
+			this.CPDrawComboButton ( 
+			  g, 
+			  dateTimePicker.drop_down_arrow_rect, 
+			  state);
+		}
 
 		public override void DrawDateTimePicker(Graphics dc, Rectangle clip_rectangle, DateTimePicker dtp)
 		{
@@ -2241,18 +2255,13 @@ namespace System.Windows.Forms
 
 			// draw the outer border
 			Rectangle button_bounds = dtp.ClientRectangle;
-			this.CPDrawBorder3D (dc, button_bounds, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom, dtp.BackColor);
+			DateTimePickerDrawBorder (dtp, dc, clip_rectangle);
 
 			// deflate by the border width
 			if (clip_rectangle.IntersectsWith (dtp.drop_down_arrow_rect)) {
 				button_bounds.Inflate (-2,-2);
 				if (!dtp.ShowUpDown) {
-					ButtonState state = dtp.is_drop_down_visible ? ButtonState.Pushed : ButtonState.Normal;
-					dc.FillRectangle (ResPool.GetSolidBrush (ColorControl), dtp.drop_down_arrow_rect);
-					this.CPDrawComboButton ( 
-					  dc, 
-					  dtp.drop_down_arrow_rect, 
-					  state);
+					DateTimePickerDrawDropDownButton (dtp, dc, clip_rectangle);
 				} else {
 					ButtonState up_state = dtp.is_up_pressed ? ButtonState.Pushed : ButtonState.Normal;
 					ButtonState down_state = dtp.is_down_pressed ? ButtonState.Pushed : ButtonState.Normal;
@@ -2375,7 +2384,55 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-		
+
+		public override bool DateTimePickerBorderHasHotElementStyle {
+			get {
+				return false;
+			}
+		}
+
+		public override Rectangle DateTimePickerGetDropDownButtonArea (DateTimePicker dateTimePicker)
+		{
+			Rectangle rect = dateTimePicker.ClientRectangle;
+			rect.X = rect.Right - SystemInformation.VerticalScrollBarWidth - 2;
+			if (rect.Width > (SystemInformation.VerticalScrollBarWidth + 2)) {
+				rect.Width = SystemInformation.VerticalScrollBarWidth;
+			} else {
+				rect.Width = Math.Max (rect.Width - 2, 0);
+			}
+			
+			rect.Inflate (0, -2);
+			return rect;
+		}
+
+		public override Rectangle DateTimePickerGetDateArea (DateTimePicker dateTimePicker)
+		{
+			Rectangle rect = dateTimePicker.ClientRectangle;
+			if (dateTimePicker.ShowUpDown) {
+				// set the space to the left of the up/down button
+				if (rect.Width > (DateTimePicker.up_down_width + 4)) {
+					rect.Width -= (DateTimePicker.up_down_width + 4);
+				} else {
+					rect.Width = 0;
+				}
+			} else {
+				// set the space to the left of the up/down button
+				// TODO make this use up down button
+				if (rect.Width > (SystemInformation.VerticalScrollBarWidth + 4)) {
+					rect.Width -= SystemInformation.VerticalScrollBarWidth;
+				} else {
+					rect.Width = 0;
+				}
+			}
+			
+			rect.Inflate (-2, -2);
+			return rect;
+		}
+		public override bool DateTimePickerDropDownButtonHasHotElementStyle {
+			get {
+				return false;
+			}
+		}
 		#endregion // DateTimePicker
 
 		#region GroupBox

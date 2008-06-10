@@ -549,6 +549,84 @@ namespace System.Windows.Forms
 		#endregion
 		#endregion
 #endif
+		#region DateTimePicker
+		#region Border
+		protected override void DateTimePickerDrawBorder (DateTimePicker dateTimePicker, Graphics g, Rectangle clippingArea)
+		{
+			VisualStyleElement element;
+			if (!dateTimePicker.Enabled)
+				element = VisualStyleElement.DatePicker.DateBorder.Disabled;
+			else if (dateTimePicker.Entered)
+				element = VisualStyleElement.DatePicker.DateBorder.Hot;
+			else if (dateTimePicker.Focused)
+				element = VisualStyleElement.DatePicker.DateBorder.Focused;
+			else
+				element = VisualStyleElement.DatePicker.DateBorder.Normal;
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.DateTimePickerDrawBorder (dateTimePicker, g, clippingArea);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (g, new Rectangle (Point.Empty, dateTimePicker.Size), clippingArea);
+		}
+		public override bool DateTimePickerBorderHasHotElementStyle {
+			get {
+				if (VisualStyleRenderer.IsElementDefined (VisualStyleElement.DatePicker.DateBorder.Hot))
+					return true;
+				return base.DateTimePickerBorderHasHotElementStyle;
+			}
+		}
+		#endregion
+		#region Drop down button
+		protected override void DateTimePickerDrawDropDownButton (DateTimePicker dateTimePicker, Graphics g, Rectangle clippingArea)
+		{
+			VisualStyleElement element;
+			if (!dateTimePicker.Enabled)
+				element = VisualStyleElement.DatePicker.ShowCalendarButtonRight.Disabled;
+			else if (dateTimePicker.is_drop_down_visible)
+				element = VisualStyleElement.DatePicker.ShowCalendarButtonRight.Pressed;
+			else if (dateTimePicker.DropDownButtonEntered)
+				element = VisualStyleElement.DatePicker.ShowCalendarButtonRight.Hot;
+			else
+				element = VisualStyleElement.DatePicker.ShowCalendarButtonRight.Normal;
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.DateTimePickerDrawDropDownButton (dateTimePicker, g, clippingArea);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (g, dateTimePicker.drop_down_arrow_rect, clippingArea);
+		}
+		//TODO: Until somebody figures out how to obtain the proper width this will need to be updated when new Windows versions/themes are released.
+		const int DateTimePickerDropDownWidthOnWindowsVista = 34;
+		const int DateTimePickerDropDownHeightOnWindowsVista = 20;
+		public override Rectangle DateTimePickerGetDropDownButtonArea (DateTimePicker dateTimePicker)
+		{
+			VisualStyleElement element = VisualStyleElement.DatePicker.ShowCalendarButtonRight.Pressed;
+			if (!VisualStyleRenderer.IsElementDefined (element))
+				return base.DateTimePickerGetDropDownButtonArea (dateTimePicker);
+			Size size = new Size (DateTimePickerDropDownWidthOnWindowsVista, DateTimePickerDropDownHeightOnWindowsVista);
+			return new Rectangle (dateTimePicker.Width - size.Width, 0, size.Width, size.Height);
+		}
+		public override Rectangle DateTimePickerGetDateArea (DateTimePicker dateTimePicker)
+		{
+			if (dateTimePicker.ShowUpDown)
+				return base.DateTimePickerGetDateArea (dateTimePicker);
+			VisualStyleElement element = VisualStyleElement.DatePicker.DateBorder.Normal;
+			if (!VisualStyleRenderer.IsElementDefined (element))
+				return base.DateTimePickerGetDateArea (dateTimePicker);
+			Graphics g = dateTimePicker.CreateGraphics ();
+			Rectangle result = new VisualStyleRenderer (element).GetBackgroundContentRectangle (g, dateTimePicker.ClientRectangle);
+			g.Dispose ();
+			result.Width -= DateTimePickerDropDownWidthOnWindowsVista;
+			return result;
+		}
+		public override bool DateTimePickerDropDownButtonHasHotElementStyle {
+			get {
+				if (VisualStyleRenderer.IsElementDefined (VisualStyleElement.DatePicker.ShowCalendarButtonRight.Hot))
+					return true;
+				return base.DateTimePickerDropDownButtonHasHotElementStyle;
+			}
+		}
+		#endregion
+		#endregion
 		#region ListView
 		protected override void ListViewDrawColumnHeaderBackground (ListView listView, ColumnHeader columnHeader, Graphics g, Rectangle area, Rectangle clippingArea)
 		{

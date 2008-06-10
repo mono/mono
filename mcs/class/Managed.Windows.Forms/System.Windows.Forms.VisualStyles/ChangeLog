@@ -1,5 +1,9 @@
 2008-06-10  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* VisualStyleElement.cs: Added DateTimePicker part and state constants.
+
+2008-06-10  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* VisualStyleElement.cs: Added ComboBox border part and state constants.
 
 2008-06-10  George Giolfan  <georgegiolfan@yahoo.com>
