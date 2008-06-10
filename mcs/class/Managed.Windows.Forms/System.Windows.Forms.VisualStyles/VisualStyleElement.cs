@@ -37,7 +37,20 @@ namespace System.Windows.Forms.VisualStyles
 		#region Class name/part/state constants
 		private const string BUTTON = "BUTTON";
 		private const string CLOCK = "CLOCK";
+		#region COMBOXBOX
 		private const string COMBOBOX = "COMBOBOX";
+		enum COMBOBOXPARTS
+		{
+			CP_BORDER = 4
+		}
+		enum BORDERSTATES
+		{
+			CBB_NORMAL = 1,
+			CBB_HOT,
+			CBB_FOCUSED,
+			CBB_DISABLED
+		}
+		#endregion
 		private const string EDIT = "EDIT";
 		private const string EXPLORERBAR = "EXPLORERBAR";
 		private const string HEADER = "HEADER";
@@ -167,6 +180,41 @@ namespace System.Windows.Forms.VisualStyles
 				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.COMBOBOX, 1, 2); } }
 				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.COMBOBOX, 1, 1); } }
 				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.COMBOBOX, 1, 3); } }
+			}
+			internal static class Border
+			{
+				public static VisualStyleElement Normal {
+					get {
+						return new VisualStyleElement (
+							COMBOBOX,
+							(int)COMBOBOXPARTS.CP_BORDER,
+							(int)BORDERSTATES.CBB_NORMAL);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return new VisualStyleElement (
+							COMBOBOX,
+							(int)COMBOBOXPARTS.CP_BORDER,
+							(int)BORDERSTATES.CBB_HOT);
+					}
+				}
+				public static VisualStyleElement Focused {
+					get {
+						return new VisualStyleElement (
+							COMBOBOX,
+							(int)COMBOBOXPARTS.CP_BORDER,
+							(int)BORDERSTATES.CBB_FOCUSED);
+					}
+				}
+				public static VisualStyleElement Disabled {
+					get {
+						return new VisualStyleElement (
+							COMBOBOX,
+							(int)COMBOBOXPARTS.CP_BORDER,
+							(int)BORDERSTATES.CBB_DISABLED);
+					}
+				}
 			}
 		}
 		#endregion

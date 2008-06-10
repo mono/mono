@@ -1596,6 +1596,29 @@ namespace System.Windows.Forms
 		{
 			return false;
 		}
+		public override void ComboBoxDrawBackground (ComboBox comboBox, Graphics g, Rectangle clippingArea, FlatStyle style)
+		{
+			if (!comboBox.Enabled)
+				g.FillRectangle (ResPool.GetSolidBrush (ColorControl), comboBox.Bounds);
+
+			if (comboBox.DropDownStyle == ComboBoxStyle.Simple)
+				g.FillRectangle (ResPool.GetSolidBrush (comboBox.Parent.BackColor), comboBox.ClientRectangle);
+
+			if (style == FlatStyle.Popup && (comboBox.Entered || comboBox.Focused)) {
+				Rectangle area = comboBox.TextArea;
+				area.Height -= 1;
+				area.Width -= 1;
+				g.DrawRectangle (ResPool.GetPen (SystemColors.ControlDark), area);
+				g.DrawLine (ResPool.GetPen (SystemColors.ControlDark), comboBox.ButtonArea.X - 1, comboBox.ButtonArea.Top, comboBox.ButtonArea.X - 1, comboBox.ButtonArea.Bottom);
+			}
+			bool is_flat = style == FlatStyle.Flat || style == FlatStyle.Popup;
+			if (!is_flat && clippingArea.IntersectsWith (comboBox.TextArea))
+				ControlPaint.DrawBorder3D (g, comboBox.TextArea, Border3DStyle.Sunken);
+		}
+		public override bool CombBoxBackgroundHasHotElementStyle (ComboBox comboBox)
+		{
+			return false;
+		}
 		#endregion ComboBox
 		
 		#region Datagrid

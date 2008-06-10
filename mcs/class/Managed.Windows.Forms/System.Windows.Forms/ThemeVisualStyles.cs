@@ -164,6 +164,48 @@ namespace System.Windows.Forms
 #endif
 			return true;
 		}
+		static bool ComboBoxShouldPaintBackground (ComboBox comboBox)
+		{
+			if (comboBox.DropDownStyle == ComboBoxStyle.Simple)
+				return false;
+#if NET_2_0
+			switch (comboBox.FlatStyle) {
+			case FlatStyle.Flat:
+			case FlatStyle.Popup:
+				return false;
+			}
+#endif 
+			return true;
+		}
+		public override void ComboBoxDrawBackground (ComboBox comboBox, Graphics g, Rectangle clippingArea, FlatStyle style)
+		{
+			if (!ComboBoxShouldPaintBackground (comboBox)) {
+				base.ComboBoxDrawBackground (comboBox, g, clippingArea, style);
+				return;
+			}
+			VisualStyleElement element;
+			if (!comboBox.Enabled)
+				element = VisualStyleElement.ComboBox.Border.Disabled;
+			else if (comboBox.Entered)
+				element = VisualStyleElement.ComboBox.Border.Hot;
+			else if (comboBox.Focused)
+				element = VisualStyleElement.ComboBox.Border.Focused;
+			else
+				element = VisualStyleElement.ComboBox.Border.Normal;
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.ComboBoxDrawBackground (comboBox, g, clippingArea, style);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (g, new Rectangle (Point.Empty, comboBox.Size), clippingArea);
+		}
+		public override bool CombBoxBackgroundHasHotElementStyle (ComboBox comboBox)
+		{
+			if (ComboBoxShouldPaintBackground (comboBox) &&
+				comboBox.Enabled &&
+				VisualStyleRenderer.IsElementDefined (VisualStyleElement.ComboBox.Border.Hot))
+				return true;
+			return base.CombBoxBackgroundHasHotElementStyle (comboBox);
+		}
 		#endregion
 		#region ControlPaint
 		#region DrawButton

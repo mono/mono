@@ -745,6 +745,8 @@ namespace System.Windows.Forms
 		public abstract void ComboBoxDrawNormalDropDownButton (ComboBox comboBox, Graphics g, Rectangle clippingArea, Rectangle area, ButtonState state);
 		public abstract bool ComboBoxNormalDropDownButtonHasTransparentBackground (ComboBox comboBox, ButtonState state);
 		public abstract bool ComboBoxDropDownButtonHasHotElementStyle (ComboBox comboBox);
+		public abstract void ComboBoxDrawBackground (ComboBox comboBox, Graphics g, Rectangle clippingArea, FlatStyle style);
+		public abstract bool CombBoxBackgroundHasHotElementStyle (ComboBox comboBox);
 		#endregion	// ComboBox
 
 		#region Control

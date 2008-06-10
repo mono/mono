@@ -112,6 +112,7 @@ namespace System.Windows.Forms
 			MouseUp += new MouseEventHandler (OnMouseUpCB);
 			MouseMove += new MouseEventHandler (OnMouseMoveCB);
 			MouseWheel += new MouseEventHandler (OnMouseWheelCB);
+			MouseEnter += new EventHandler (OnMouseEnter);
 			MouseLeave += new EventHandler (OnMouseLeave);
 			KeyDown +=new KeyEventHandler(OnKeyDownCB);
 		}
@@ -792,6 +793,16 @@ namespace System.Windows.Forms
 
 		#endregion Public Properties
 
+		#region Internal Properties
+		internal Rectangle ButtonArea {
+			get { return button_area; }
+		}
+
+		internal Rectangle TextArea {
+			get { return text_area; }
+		}
+		#endregion
+
 		#region Public Methods
 #if NET_2_0
 		[Obsolete ("This method has been deprecated")]
@@ -1428,21 +1439,7 @@ namespace System.Windows.Forms
 			is_flat = style == FlatStyle.Flat || style == FlatStyle.Popup;
 #endif
 
-			if (!Enabled)
-				dc.FillRectangle (theme.ResPool.GetSolidBrush (theme.ColorControl), bounds);
-
-			if (DropDownStyle == ComboBoxStyle.Simple)
-				dc.FillRectangle (theme.ResPool.GetSolidBrush (Parent.BackColor), ClientRectangle);
-
-			if (style == FlatStyle.Popup && (is_entered || Focused)) {
-				Rectangle area = text_area;
-				area.Height -= 1;
-				area.Width -= 1;
-				dc.DrawRectangle (theme.ResPool.GetPen (SystemColors.ControlDark), area);
-				dc.DrawLine (theme.ResPool.GetPen (SystemColors.ControlDark), button_area.X - 1, button_area.Top, button_area.X - 1, button_area.Bottom);
-			}
-			if (!is_flat && clip.IntersectsWith (text_area))
-				ControlPaint.DrawBorder3D (dc, text_area, Border3DStyle.Sunken);
+			theme.ComboBoxDrawBackground (this, dc, clip, style);
 
 			int border = theme.Border3DSize.Width;
 
@@ -1718,10 +1715,21 @@ namespace System.Windows.Forms
 			Capture = true;
 		}
 
+		void OnMouseEnter (object sender, EventArgs e)
+		{
+			if (ThemeEngine.Current.CombBoxBackgroundHasHotElementStyle (this))
+				Invalidate ();
+		}
+
 		void OnMouseLeave (object sender, EventArgs e)
 		{
-			if (show_dropdown_button)
-				DropDownButtonEntered = false;
+			if (ThemeEngine.Current.CombBoxBackgroundHasHotElementStyle (this)) {
+				drop_down_button_entered = false;
+				Invalidate ();
+			} else {
+				if (show_dropdown_button)
+					DropDownButtonEntered = false;
+			}
 		}
 
 		void OnMouseMoveCB (object sender, MouseEventArgs e)

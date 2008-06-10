@@ -1,5 +1,10 @@
 2008-06-10  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* ComboBox.cs, Theme.cs, ThemeVisualStyles.cs, ThemeWin32Classic.cs: Added
+	support for rendering the border with VisualStyles.
+
+2008-06-10  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* InternalWindowManager.cs: Added ShowIcon. Fixed IconRectangleContains when
 	the icon is not shown.
 	* ThemeWin32Classic.cs: Now uses InternalWindowManager.ShowIcon instead of
