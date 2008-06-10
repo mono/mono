@@ -1,5 +1,12 @@
 2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (mono_image_get_field_on_inst_token): Don't
+	inflate the field to encode it's signature. If it's a
+	VAR or MVAR it should stay that way in the signature.
+	Fixes #399047.
+
+2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c (resolve_object): Release memory of inflated types.
 
 2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
