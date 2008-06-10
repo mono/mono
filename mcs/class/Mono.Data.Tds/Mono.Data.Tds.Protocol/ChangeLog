@@ -1,3 +1,8 @@
+2008-06-09  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	Patch from Christian Hergert <christian.hergert@gmail.com>
+	* TdsConnectionPool.cs: Remove unnecessary locks and code refactoring 
+	
 2008-06-09  Ankit Jain  <jankit@novell.com>
 
 	Tds class doesn't need to inherit Component or implement ITds, fix.
