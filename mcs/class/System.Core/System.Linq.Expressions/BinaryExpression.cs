@@ -254,11 +254,11 @@ namespace System.Linq.Expressions {
 			ig.Emit (and ? OpCodes.Ldc_I4_0 : OpCodes.Ldc_I4_1);
 
 			ig.MarkLabel (ret_new);
-			ec.EmitNullableNew (typeof (bool?));
+			ec.EmitNullableNew (Type);
 			ig.Emit (OpCodes.Br, done);
 
 			ig.MarkLabel (ret_null);
-			var ret = ig.DeclareLocal (typeof (bool?));
+			var ret = ig.DeclareLocal (Type);
 			ec.EmitNullableInitialize (ret);
 
 			ig.MarkLabel (done);
