@@ -103,6 +103,8 @@ namespace Mono.Data.Tds.Protocol
 		bool isResultRead;
 		bool LoadInProgress;
 
+		internal int poolStatus = 0;
+
 		#endregion // Fields
 
 		#region Properties

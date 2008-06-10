@@ -2,6 +2,7 @@
 
 	Patch from Christian Hergert <christian.hergert@gmail.com>
 	* TdsConnectionPool.cs: Remove unnecessary locks and code refactoring 
+	* Tds.cs: Add member to hold status of the connection pool  
 	
 2008-06-09  Ankit Jain  <jankit@novell.com>
 
