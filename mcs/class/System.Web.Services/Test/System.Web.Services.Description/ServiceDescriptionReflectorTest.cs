@@ -275,16 +275,35 @@ namespace MonoTests.System.Web.Services.Description
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Bug345448 ()
 		{
 			ServiceDescriptionReflector r =
 				new ServiceDescriptionReflector ();
 			r.Reflect (typeof (Bug345448Service), "urn:foo");
-			Assert.IsNotNull (r.ServiceDescriptions [0].PortTypes ["Bug345448ServiceSoap"]);
-			
+
+			ServiceDescription sd = r.ServiceDescriptions [0];
+
+			Assert.AreEqual("Bug345448ServiceSoap", sd.Bindings [0].Name, "sd #1");
+			Assert.AreEqual("Bug345448ServiceSoap12", sd.Bindings [1].Name, "sd #2");
+		}
+
+		[Test]
+		public void Bug345449 ()
+		{
+			ServiceDescriptionReflector r =
+				new ServiceDescriptionReflector ();
+			r.Reflect (typeof (Bug345448Service), "urn:foo");
+			ServiceDescription sd = r.ServiceDescriptions [0];
+
+			Assert.AreEqual("Bug345448ServiceSoap", sd.Services [0].Ports [0].Name, "sd #3");
+			Assert.AreEqual("Bug345448ServiceSoap12", sd.Services [0].Ports [1].Name, "sd #4");
+		}
+
+		[Test]
+		public void Bug360241 ()
+		{
 			// Make sure the map for service client is properly created
-			new Bug345448SoapHttpClientProtocol ();
+			new Bug360241SoapHttpClientProtocol ();
 		}
 #endif
 
@@ -453,7 +472,7 @@ namespace MonoTests.System.Web.Services.Description
 		}
 
 		[WebServiceBindingAttribute (Name = "AnotherBinding", Namespace = "http://tempuri.org/")]
-		public class Bug345448SoapHttpClientProtocol : SoapHttpClientProtocol
+		public class Bug360241SoapHttpClientProtocol : SoapHttpClientProtocol
 		{
 		}
 #endif

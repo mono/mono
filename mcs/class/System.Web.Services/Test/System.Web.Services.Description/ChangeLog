@@ -1,3 +1,8 @@
+2008-06-10  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ServiceDescriptionReflectorTest.cs: added tests for bug fixes:
+	#345448, #345449, #360241
+
 2008-03-26  Lluis Sanchez Gual <lluis@novell.com> 
 
 	* ServiceDescriptionReflectorTest.cs: Added another test for bug
