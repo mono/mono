@@ -1,3 +1,7 @@
+2008-06-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Delete some tests for the disabled set which seem to work now.
+
 2008-06-05  Jonathan Chambers  <joncham@gmail.com>
 
 	* Makefile.am: Disable async-exc-compilation.exe on Win32 as it is
