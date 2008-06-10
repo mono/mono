@@ -1,3 +1,8 @@
+2008-06-10  Marek Safar  <marek.safar@gmail.com>
+
+	* icall.c (ves_icall_MonoMethod_GetGenericArguments): Creates an instance
+	of Type array and not MonoType.
+
 2008-06-10  Marek Habersack  <mhabersack@novell.com>
 
 	* profiler.c: fix a segfault on shutdown. Patch from Paolo Molaro
