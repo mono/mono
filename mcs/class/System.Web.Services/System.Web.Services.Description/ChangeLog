@@ -1,3 +1,8 @@
+2008-06-10  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ProtocolReflector.cs: fixed ImportBinding method, ports with the same
+        name declaration when non-default binding used, #345449
+
 2008-04-01  Lluis Sanchez Gual <lluis@novell.com> 
 
 	* ProtocolImporter.cs: Use the binding name as class name for the

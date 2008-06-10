@@ -278,6 +278,18 @@ namespace System.Web.Services.Description {
 			if (bindingFull)
 			{
 				port.Binding = new XmlQualifiedName (binding.Name, binfo.Namespace);
+				
+				int n = 0;
+				string name = binfo.Name; 
+				bool found;
+				do {
+
+					found = false;
+					foreach (Port p in service.Ports)
+						if (p.Name == name) { found = true; n++; name = binfo.Name + n; break; }
+				}
+				while (found);
+				port.Name = name;
 				service.Ports.Add (port);
 			}
 
