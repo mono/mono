@@ -33,6 +33,7 @@ using System.Web.J2EE;
 using System.Xml;
 using vmw.common;
 using System.Web.Util;
+using System.Collections.Generic;
 
 namespace System.Web.UI {
 
@@ -239,7 +240,24 @@ namespace System.Web.UI {
 				typeof (object),
 				typeof (EventArgs) };
 
+                LifeCycleEvent[] _pageEvents = new LifeCycleEvent[] { 
+                    LifeCycleEvent.PreInit,
+                    LifeCycleEvent.PreLoad,
+                    LifeCycleEvent.LoadComplete,
+                    LifeCycleEvent.PreRenderComplete,
+                    LifeCycleEvent.SaveStateComplete,
+                    LifeCycleEvent.InitComplete
+                };
+                List<LifeCycleEvent> pageEvents = new List<LifeCycleEvent>(_pageEvents);
+
+                bool isPage = Page.GetType().IsAssignableFrom(GetType());
+
 				for (int i = 0; i < methodNames.Length; i++) {
+                    
+                    // Don't look for page-only events in non-page controls.
+                    if (!isPage && pageEvents.Contains((LifeCycleEvent)i))
+                        continue;
+
 					string methodName = methodNames [i];
 					MethodInfo method;
 					bool noParams = false;

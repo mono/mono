@@ -1,3 +1,8 @@
+2008-06-10 Noam Lampert <noaml@mainsoft.com>
+
+	* TemplateControl.jvm.cs: Don't assume that controls containing page-specific 
+	callbacks (e.g. Page_LoadComplete) are necessarily Page derivatives.
+	
 2008-06-04  Juraj Skrispky  <js@hotfeet.ch>
 
 	* PageParser.cs (ProcessMainAttributes): Take value of
