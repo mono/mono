@@ -31,6 +31,7 @@
 //
 
 using Mono.Data.Tds.Protocol;
+using MDTP = Mono.Data.Tds.Protocol;
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -77,7 +78,7 @@ namespace Mono.Data.TdsClient {
 		TdsDataReader dataReader = null;
 
 		// The TDS object
-		ITds tds;
+		MDTP.Tds tds;
 
 		#endregion // Fields
 
@@ -131,7 +132,7 @@ namespace Mono.Data.TdsClient {
 			get { return state; }
 		}
 
-		internal ITds Tds {
+		internal MDTP.Tds Tds {
 			get { return tds; }
 		}
 

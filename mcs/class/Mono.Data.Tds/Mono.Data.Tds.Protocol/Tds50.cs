@@ -34,7 +34,7 @@ using System.Text;
 
 namespace Mono.Data.Tds.Protocol {
 	[MonoTODO ("FIXME: Can packetsize be anything other than 512?")]
-        public class Tds50 : Tds
+        public sealed class Tds50 : Tds
 	{
 		#region Fields
 

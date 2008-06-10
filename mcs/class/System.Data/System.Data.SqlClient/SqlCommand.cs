@@ -249,7 +249,7 @@ namespace System.Data.SqlClient {
 			get { return parameters; }
 		}
 
-		internal ITds Tds {
+		internal Tds Tds {
 			get { return Connection.Tds; }
 		}
 

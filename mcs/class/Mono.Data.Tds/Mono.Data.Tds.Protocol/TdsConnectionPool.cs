@@ -66,7 +66,7 @@ namespace Mono.Data.Tds.Protocol
 			}
 		}
 		
-		public virtual ITds CreateConnection (TdsConnectionInfo info)
+		public virtual Tds CreateConnection (TdsConnectionInfo info)
 		{
 			switch (version)
 			{
@@ -125,9 +125,9 @@ namespace Mono.Data.Tds.Protocol
 
 		#region Methods
 
-		public ITds GetConnection ()
+		public Tds GetConnection ()
 		{
-			ITds connection = null;
+			Tds connection = null;
 			lock (list)
 			{
 				if (!initialized) 
@@ -140,7 +140,7 @@ namespace Mono.Data.Tds.Protocol
 					if (list.Count > 0)
 					{
 						// There are available connections
-						connection = (ITds) list [list.Count - 1];
+						connection = (Tds) list [list.Count - 1];
 						list.RemoveAt (list.Count - 1);
 						if (!connection.Reset ()) {
 							try {
@@ -171,7 +171,7 @@ namespace Mono.Data.Tds.Protocol
 			return connection;
 		}
 
-		public void ReleaseConnection (ITds tds)
+		public void ReleaseConnection (Tds tds)
 		{
 			lock (list)
 			{
@@ -181,7 +181,7 @@ namespace Mono.Data.Tds.Protocol
 		}
 
 #if NET_2_0
-		public void ReleaseConnection (ref ITds tds)
+		public void ReleaseConnection (ref Tds tds)
 		{
 			lock (list)
 			{
@@ -201,10 +201,10 @@ namespace Mono.Data.Tds.Protocol
 		{
 			lock (list)
 			{
-				ITds connection = null;
+				Tds connection = null;
 				while (list.Count > 0) {
 					// There are available connections
-					connection = (ITds) list [list.Count - 1];
+					connection = (Tds) list [list.Count - 1];
 					list.RemoveAt (list.Count - 1);
 					if (!connection.Reset ()) {
 						try {
@@ -216,7 +216,7 @@ namespace Mono.Data.Tds.Protocol
 			}
 		}
 
-		public void ResetConnectionPool (ITds connection)
+		public void ResetConnectionPool (Tds connection)
 		{
 			lock (list)
 			{
@@ -237,7 +237,7 @@ namespace Mono.Data.Tds.Protocol
 		}
 #endif
 		
-		ITds CreateConnection ()
+		Tds CreateConnection ()
 		{
 			activeConnections++;
 			return manager.CreateConnection (info);

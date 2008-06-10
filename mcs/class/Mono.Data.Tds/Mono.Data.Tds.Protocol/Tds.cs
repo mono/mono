@@ -44,7 +44,7 @@ using System.Text;
 
 namespace Mono.Data.Tds.Protocol
 {
-	public abstract class Tds : Component, ITds
+	public abstract class Tds
 	{
 		#region Fields
 
@@ -754,11 +754,11 @@ namespace Mono.Data.Tds.Protocol
 				}
 
 				element = GetDecimalValue (precision, scale);
-
+				
 				// workaround for fact that TDS 7.0 returns
 				// bigint as decimal (19,0), and client code
 				// expects it to be returned as a long
-				if (tdsVersion == TdsVersion.tds70 && scale == 0 && precision == 19) {
+				if (scale == 0 && precision <= 19) {
 					if (!(element is System.DBNull))
 						element = Convert.ToInt64 (element);
 				}

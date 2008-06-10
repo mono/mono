@@ -38,7 +38,7 @@ using System;
 using System.Text;
 
 namespace Mono.Data.Tds.Protocol {
-        public class Tds70 : Tds
+        public sealed class Tds70 : Tds
 	{
 		#region Fields
 

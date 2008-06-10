@@ -4,7 +4,6 @@ Assembly/AssemblyInfo.cs
 Mono.Data.Tds/TdsMetaParameter.cs
 Mono.Data.Tds/TdsMetaParameterCollection.cs
 Mono.Data.Tds/TdsParameterDirection.cs
-Mono.Data.Tds.Protocol/ITds.cs
 Mono.Data.Tds.Protocol/Tds.cs
 Mono.Data.Tds.Protocol/Tds42.cs
 Mono.Data.Tds.Protocol/Tds50.cs

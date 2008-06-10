@@ -109,7 +109,7 @@ namespace System.Data.SqlClient
 		XmlReader xmlReader;
 
 		// The TDS object
-		ITds tds;
+		Tds tds;
 
 		#endregion // Fields
 
@@ -252,7 +252,7 @@ namespace System.Data.SqlClient
 			get { return state; }
 		}
 
-		internal ITds Tds {
+		internal Tds Tds {
 			get { return tds; }
 		}
 
@@ -1703,7 +1703,7 @@ namespace System.Data.SqlClient
 			foreach (TdsConnectionPool pool in pools.Values) {
 				if (pool != null) {
 					pool.ResetConnectionPool ();
-					ITds tds = pool.GetConnection ();
+					Tds tds = pool.GetConnection ();
 					tds.Pooling = false;
 				}
 			}

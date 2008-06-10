@@ -34,6 +34,7 @@
 
 using Mono.Data.Tds;
 using Mono.Data.Tds.Protocol;
+using MDTP = Mono.Data.Tds.Protocol;
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -143,7 +144,7 @@ namespace Mono.Data.TdsClient {
 			get { return parameters; }
 		}
 
-		internal ITds Tds {
+		internal MDTP.Tds Tds {
 			get { return Connection.Tds; }
 		}
 

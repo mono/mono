@@ -1,3 +1,8 @@
+2008-06-09  Ankit Jain  <jankit@novell.com>
+
+	* ITds.cs: Removed.
+	* Mono.Data.Tds.dll.sources: Update.
+
 2007-07-22  Nagappan A  <anagappan@novell.com>
 
 	* Mono.Data.Tds.dll.sources: Added

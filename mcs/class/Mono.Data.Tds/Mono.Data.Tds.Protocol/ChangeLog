@@ -1,3 +1,11 @@
+2008-06-09  Ankit Jain  <jankit@novell.com>
+
+	Tds class doesn't need to inherit Component or implement ITds, fix.
+	* Tds.cs: Update
+	* Tds42.cs, Tds50.cs, Tds70.cs, Tds80.cs:
+	Make Tds-derived classes sealed.
+	* TdsConnectionPool.cs: Update.
+
 2008-05-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Tds.cs: Do not return 0 for decimal/numeric columns with value NULL.
