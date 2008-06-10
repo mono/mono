@@ -1,3 +1,7 @@
+2008-06-10  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* IPAddress: allow usage on 2.1
+
 2008-06-08  Miguel de Icaza  <miguel@novell.com>
 
 	* ResponseStream.cs: Do not Close the HttpResponse object here as

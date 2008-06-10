@@ -224,7 +224,11 @@ namespace System.Net {
 					string lastNet = nets [nets.Length - 1];
 					if (lastNet.Length == 0)
 						return null;
+#if NET_2_1
+					foreach (char c in lastNet.ToCharArray ())
+#else
 					foreach (char c in lastNet)
+#endif
 						if (!Uri.IsHexDigit (c))
 							return null;
 				}
