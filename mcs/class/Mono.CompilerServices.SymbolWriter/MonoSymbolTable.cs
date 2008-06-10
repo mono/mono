@@ -721,7 +721,6 @@ namespace Mono.CompilerServices.SymbolWriter
 			hash = reader.ReadBytes (16);
 			auto_generated = reader.ReadByte () == 1;
 
-			real_data_offset = (int) reader.BaseStream.Position;
 			reader.BaseStream.Position = old_pos;
 		}
 
