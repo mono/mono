@@ -1,3 +1,11 @@
+2008-06-10  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.h
+	(MONO_SYMBOL_FILE_MINOR_VERSION): Bump to 6.  There were no
+	changes to the file format, but we were generating incorrect
+	source file indices in the line number table due to a bug, which
+	made backtraces report an incorrect source file.
+
 2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mono-debug.c: Moved mono_debug_free_method_jit_info from
