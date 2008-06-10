@@ -112,6 +112,9 @@ ICALL(BUFFER_4, "SetByteInternal", ves_icall_System_Buffer_SetByteInternal)
 ICALL_TYPE(CHAR, "System.Char", CHAR_1)
 ICALL(CHAR_1, "GetDataTablePointers", ves_icall_System_Char_GetDataTablePointers)
 
+ICALL_TYPE (COMPO_W, "System.ComponentModel.Win32Exception", COMPO_W_1)
+ICALL (COMPO_W_1, "W32ErrorMessage", ves_icall_System_ComponentModel_Win32Exception_W32ErrorMessage)
+
 ICALL_TYPE(DEFAULTC, "System.Configuration.DefaultConfig", DEFAULTC_1)
 ICALL(DEFAULTC_1, "get_bundled_machine_config", get_bundled_machine_config)
 ICALL(DEFAULTC_2, "get_machine_config_path", ves_icall_System_Configuration_DefaultConfig_get_machine_config_path)
@@ -762,8 +765,9 @@ ICALL(ILOCK_19, "Increment(int&)", ves_icall_System_Threading_Interlocked_Increm
 ICALL(ILOCK_20, "Increment(long&)", ves_icall_System_Threading_Interlocked_Increment_Long)
 ICALL(ILOCK_21, "Read(long&)", ves_icall_System_Threading_Interlocked_Read_Long)
 
-ICALL_TYPE(MONIT, "System.Threading.Monitor", MONIT_1)
-ICALL(MONIT_1, "Monitor_exit", ves_icall_System_Threading_Monitor_Monitor_exit)
+ICALL_TYPE(MONIT, "System.Threading.Monitor", MONIT_8)
+ICALL(MONIT_8, "Enter", mono_monitor_enter)
+ICALL(MONIT_1, "Exit", mono_monitor_exit)
 ICALL(MONIT_2, "Monitor_pulse", ves_icall_System_Threading_Monitor_Monitor_pulse)
 ICALL(MONIT_3, "Monitor_pulse_all", ves_icall_System_Threading_Monitor_Monitor_pulse_all)
 ICALL(MONIT_4, "Monitor_test_owner", ves_icall_System_Threading_Monitor_Monitor_test_owner)

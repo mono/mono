@@ -415,6 +415,32 @@ mono_hazard_pointer_get (void)
 	return &hazard_table [current_thread->small_id];
 }
 
+static void
+try_free_delayed_free_item (int index)
+{
+	if (delayed_free_table->len > index) {
+		DelayedFreeItem item;
+
+		item.p = NULL;
+		EnterCriticalSection (&delayed_free_table_mutex);
+		/* We have to check the length again because another
+		   thread might have freed an item before we acquired
+		   the lock. */
+		if (delayed_free_table->len > index) {
+			item = g_array_index (delayed_free_table, DelayedFreeItem, index);
+
+			if (!is_pointer_hazardous (item.p))
+				g_array_remove_index_fast (delayed_free_table, index);
+			else
+				item.p = NULL;
+		}
+		LeaveCriticalSection (&delayed_free_table_mutex);
+
+		if (item.p != NULL)
+			item.free_func (item.p);
+	}
+}
+
 void
 mono_thread_hazardous_free_or_queue (gpointer p, MonoHazardousFreeFunc free_func)
 {
@@ -422,29 +448,8 @@ mono_thread_hazardous_free_or_queue (gpointer p, MonoHazardousFreeFunc free_func
 
 	/* First try to free a few entries in the delayed free
 	   table. */
-	for (i = 2; i >= 0; --i) {
-		if (delayed_free_table->len > i) {
-			DelayedFreeItem item;
-
-			item.p = NULL;
-			EnterCriticalSection (&delayed_free_table_mutex);
-			/* We have to check the length again because another
-			   thread might have freed an item before we acquired
-			   the lock. */
-			if (delayed_free_table->len > i) {
-				item = g_array_index (delayed_free_table, DelayedFreeItem, i);
-
-				if (!is_pointer_hazardous (item.p))
-					g_array_remove_index_fast (delayed_free_table, i);
-				else
-					item.p = NULL;
-			}
-			LeaveCriticalSection (&delayed_free_table_mutex);
-
-			if (item.p != NULL)
-				item.free_func (item.p);
-		}
-	}
+	for (i = 2; i >= 0; --i)
+		try_free_delayed_free_item (i);
 
 	/* Now see if the pointer we're freeing is hazardous.  If it
 	   isn't, free it.  Otherwise put it in the delay list. */
@@ -458,6 +463,21 @@ mono_thread_hazardous_free_or_queue (gpointer p, MonoHazardousFreeFunc free_func
 		LeaveCriticalSection (&delayed_free_table_mutex);
 	} else
 		free_func (p);
+}
+
+void
+mono_thread_hazardous_try_free_all (void)
+{
+	int len;
+	int i;
+
+	if (!delayed_free_table)
+		return;
+
+	len = delayed_free_table->len;
+
+	for (i = len - 1; i >= 0; --i)
+		try_free_delayed_free_item (i);
 }
 
 static void ensure_synch_cs_set (MonoThread *thread)
@@ -540,6 +560,8 @@ static guint32 WINAPI start_wrapper(void *data)
 	tid=thread->tid;
 
 	SET_CURRENT_OBJECT (thread);
+
+	mono_monitor_init_tls ();
 
 	/* Every thread references the appdomain which created it */
 	mono_thread_push_appdomain_ref (start_info->domain);
@@ -818,6 +840,8 @@ mono_thread_attach (MonoDomain *domain)
 
 	SET_CURRENT_OBJECT (thread);
 	mono_domain_set (domain, TRUE);
+
+	mono_monitor_init_tls ();
 
 	thread_adjust_static_data (thread);
 
@@ -2298,6 +2322,8 @@ void mono_thread_init (MonoThreadStartCB start_cb,
 
 void mono_thread_cleanup (void)
 {
+	mono_thread_hazardous_try_free_all ();
+
 #if !defined(PLATFORM_WIN32) && !defined(RUN_IN_SUBTHREAD)
 	/* The main thread must abandon any held mutexes (particularly
 	 * important for named mutexes as they are shared across
@@ -2326,6 +2352,7 @@ void mono_thread_cleanup (void)
 #endif
 
 	g_array_free (delayed_free_table, TRUE);
+	delayed_free_table = NULL;
 
 	TlsFree (current_object_key);
 }
@@ -3601,8 +3628,44 @@ mono_thread_get_and_clear_pending_exception (void)
 	if (thread->interruption_requested && !is_running_protected_wrapper ()) {
 		return mono_thread_execute_interruption (thread);
 	}
-	else
-		return NULL;
+	
+	if (thread->pending_exception) {
+		MonoException *exc = thread->pending_exception;
+
+		thread->pending_exception = NULL;
+		return exc;
+	}
+
+	return NULL;
+}
+
+/*
+ * mono_set_pending_exception:
+ *
+ *   Set the pending exception of the current thread to EXC. On platforms which 
+ * support it, the exception will be thrown when execution returns to managed code. 
+ * On other platforms, this function is equivalent to mono_raise_exception (). 
+ * Internal calls which report exceptions using this function instead of 
+ * raise_exception () might be called by JITted code using a more efficient calling 
+ * convention.
+ */
+void
+mono_set_pending_exception (MonoException *exc)
+{
+	MonoThread *thread = mono_thread_current ();
+
+	/* The thread may already be stopping */
+	if (thread == NULL)
+		return;
+
+	if (mono_thread_notify_pending_exc_fn) {
+		MONO_OBJECT_SETREF (thread, pending_exception, exc);
+
+		mono_thread_notify_pending_exc_fn ();
+	} else {
+		/* No way to notify the JIT about the exception, have to throw it now */
+		mono_raise_exception (exc);
+	}
 }
 
 /**

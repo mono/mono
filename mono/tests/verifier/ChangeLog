@@ -1,3 +1,11 @@
+2008-06-06 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_ctor_test.sh: New test generator for 
+	constructor related tests.
+
+	* make_tests.sh: Added tests using using
+	the new generator.
+
 2008-05-23 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* valid_contravariant_delegate_1.il

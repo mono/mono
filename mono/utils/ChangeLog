@@ -1,3 +1,14 @@
+2008-06-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (libmonoutils_la_SOURCES): Add dtrace.h.
+
+2008-06-05  Andreas Färber  <andreas.faerber@web.de>
+
+	* dtrace.h: New file, defines macros for DTrace probes.
+	* Makefile.am (BUILT_SOURCES): Generate mono-dtrace.h when DTrace enabled.
+
+	Contributed under MIT/X11 license.
+
 2008-05-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-value-hash.c: Remove the unused prime functions. Fixes #395320.

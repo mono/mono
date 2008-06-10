@@ -8,6 +8,26 @@
 #include <mono/io-layer/io-layer.h>
 #include "mono/utils/mono-compiler.h"
 
+/* 
+ * We should find a better place for this stuff. We can't put it in mono-compiler.h,
+ * since that is included by libgc.
+ */
+#ifndef G_LIKELY
+#define G_LIKELY(a) (a)
+#define G_UNLIKELY(a) (a)
+#endif
+
+/*
+ * glib defines this macro and uses it in the definition of G_LIKELY, and thus,
+ * g_assert (). The macro expands to a complex piece of code, preventing some
+ * gcc versions like 4.3.0 from handling the __builtin_expect construct properly,
+ * causing the generation of the unlikely branch into the middle of the code.
+ */
+#ifdef _G_BOOLEAN_EXPR
+#undef _G_BOOLEAN_EXPR
+#define _G_BOOLEAN_EXPR(expr) (gsize)(expr)
+#endif
+
 #if 1
 #ifdef __GNUC__
 #define mono_assert(expr)		   G_STMT_START{		  \
@@ -281,7 +301,7 @@ struct _MonoThread {
 			       pointer table.  Should be changed to a
 			       guint32 at the next corlib version bump. */
 	MonoThreadManageCallback manage_callback;
-	gpointer unused7;
+	MonoException *pending_exception;
 };
 
 typedef struct {
@@ -427,6 +447,8 @@ typedef void        (*MonoFreeMethodFunc)	 (MonoDomain *domain, MonoMethod *meth
 
 /* Used to initialize the method pointers inside vtables */
 typedef gboolean    (*MonoInitVTableFunc)    (MonoVTable *vtable);
+
+void mono_set_pending_exception (MonoException *exc) MONO_INTERNAL;
 
 /* remoting and async support */
 

@@ -350,7 +350,11 @@ merge_argument_class_from_type (MonoType *type, ArgumentClass class1)
 		break;
 	case MONO_TYPE_R4:
 	case MONO_TYPE_R8:
+#ifdef PLATFORM_WIN32
+		class2 = ARG_CLASS_INTEGER;
+#else
 		class2 = ARG_CLASS_SSE;
+#endif
 		break;
 
 	case MONO_TYPE_TYPEDBYREF:
@@ -444,6 +448,8 @@ add_valuetype (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig, ArgIn
 		 */
 		info = mono_marshal_load_type_info (klass);
 		g_assert (info);
+
+#ifndef PLATFORM_WIN32
 		if (info->native_size > 16) {
 			ainfo->offset = *stack_size;
 			*stack_size += ALIGN_TO (info->native_size, 8);
@@ -451,6 +457,17 @@ add_valuetype (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig, ArgIn
 
 			return;
 		}
+#else
+		switch (info->native_size) {
+		case 1: case 2: case 4: case 8:
+			break;
+		default:
+			ainfo->offset = *stack_size;
+			*stack_size += ALIGN_TO (info->native_size, 16);
+			ainfo->storage = ArgOnStack;
+			return;
+		}
+#endif
 
 		args [0] = ARG_CLASS_NO_CLASS;
 		args [1] = ARG_CLASS_NO_CLASS;
@@ -729,10 +746,8 @@ get_call_info (MonoGenericSharingContext *gsctx, MonoMemPool *mp, MonoMethodSign
 	}
 
 #ifdef PLATFORM_WIN32
-	if (stack_size < 0x20) {
-		/* The Win64 ABI requires 32 bits  */
-		stack_size = 0x20;
-	}
+	// There always is 32 bytes reserved on the stack when calling on Winx64
+	stack_size += 0x20;
 #endif
 
 	if (stack_size & 0x8) {
@@ -1224,6 +1239,8 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 			cfg->arch.lmf_offset = -offset;
 		}
 	} else {
+		if (cfg->arch.omit_fp)
+			cfg->arch.reg_save_area_offset = offset;
 		/* Reserve space for caller saved registers */
 		for (i = 0; i < AMD64_NREG; ++i)
 			if (AMD64_IS_CALLEE_SAVED_REG (i) && (cfg->used_int_regs & (1 << i))) {
@@ -2104,8 +2121,6 @@ if (ins->flags & MONO_INST_BRLABEL) { \
 static guint8*
 emit_call_body (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer data)
 {
-	mono_add_patch_info (cfg, code - cfg->native_code, patch_type, data);
-
 	/* 
 	 * FIXME: Add support for thunks
 	 */
@@ -2184,9 +2199,18 @@ emit_call_body (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointe
 #endif
 
 		if (near_call) {
+			/* 
+			 * Align the call displacement to an address divisible by 4 so it does
+			 * not span cache lines. This is required for code patching to work on SMP
+			 * systems.
+			 */
+			if (((guint32)(code + 1 - cfg->native_code) % 4) != 0)
+				amd64_padding (code, 4 - ((guint32)(code + 1 - cfg->native_code) % 4));
+			mono_add_patch_info (cfg, code - cfg->native_code, patch_type, data);
 			amd64_call_code (code, 0);
 		}
 		else {
+			mono_add_patch_info (cfg, code - cfg->native_code, patch_type, data);
 			amd64_set_reg_template (code, GP_SCRATCH_REG);
 			amd64_call_reg (code, GP_SCRATCH_REG);
 		}
@@ -2196,11 +2220,19 @@ emit_call_body (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointe
 }
 
 static inline guint8*
-emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer data)
+emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer data, gboolean win64_adjust_stack)
 {
-	mono_add_patch_info (cfg, code - cfg->native_code, patch_type, data);
-
-	return emit_call_body (cfg, code, patch_type, data);
+#ifdef PLATFORM_WIN32
+	if (win64_adjust_stack)
+		amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 32);
+#endif
+	code = emit_call_body (cfg, code, patch_type, data);
+#ifdef PLATFORM_WIN32
+	if (win64_adjust_stack)
+		amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 32);
+#endif	
+	
+	return code;
 }
 
 static inline int
@@ -3637,9 +3669,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 
 			if (ins->flags & MONO_INST_HAS_METHOD)
-				code = emit_call (cfg, code, MONO_PATCH_INFO_METHOD, call->method);
+				code = emit_call (cfg, code, MONO_PATCH_INFO_METHOD, call->method, FALSE);
 			else
-				code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, call->fptr);
+				code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, call->fptr, FALSE);
 			if (call->stack_usage && !CALLCONV_IS_STDCALL (call->signature->call_convention))
 				amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, call->stack_usage);
 			code = emit_move_return_value (cfg, ins, code);
@@ -3783,13 +3815,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_THROW: {
 			amd64_mov_reg_reg (code, AMD64_ARG_REG1, ins->sreg1, 8);
 			code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, 
-					     (gpointer)"mono_arch_throw_exception");
+					     (gpointer)"mono_arch_throw_exception", FALSE);
 			break;
 		}
 		case OP_RETHROW: {
 			amd64_mov_reg_reg (code, AMD64_ARG_REG1, ins->sreg1, 8);
 			code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, 
-					     (gpointer)"mono_arch_rethrow_exception");
+					     (gpointer)"mono_arch_rethrow_exception", FALSE);
 			break;
 		}
 		case OP_CALL_HANDLER: 
@@ -4651,7 +4683,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	/* Save callee saved registers */
 	if (cfg->arch.omit_fp && !method->save_lmf) {
-		gint32 save_area_offset = 0;
+		gint32 save_area_offset = cfg->arch.reg_save_area_offset;
 
 		/* Save caller saved registers after sp is adjusted */
 		/* The registers are saved at the bottom of the frame */
@@ -4850,7 +4882,8 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			buf = code;
 			x86_branch8 (code, X86_CC_NE, 0, 0);
 			amd64_patch (no_domain_branch, code);
-			code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, (gpointer)"mono_jit_thread_attach");
+			code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, 
+					  (gpointer)"mono_jit_thread_attach", FALSE);
 			amd64_patch (buf, code);
 		} else {
 			g_assert (!cfg->compile_aot);
@@ -4858,7 +4891,8 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 				amd64_mov_reg_imm_size (code, AMD64_ARG_REG1, domain, 4);
 			else
 				amd64_mov_reg_imm_size (code, AMD64_ARG_REG1, domain, 8);
-			code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, (gpointer)"mono_jit_thread_attach");
+			code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD,
+					  (gpointer)"mono_jit_thread_attach", FALSE);
 		}
 	}
 
@@ -4895,7 +4929,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 				 */
 				args_clobbered = TRUE;
 				code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, 
-								  (gpointer)"mono_get_lmf_addr");		
+								  (gpointer)"mono_get_lmf_addr", FALSE);		
 			}
 
 			/* Save lmf_addr */
@@ -5056,7 +5090,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	} else {
 
 		if (cfg->arch.omit_fp) {
-			gint32 save_area_offset = 0;
+			gint32 save_area_offset = cfg->arch.reg_save_area_offset;
 
 			for (i = 0; i < AMD64_NREG; ++i)
 				if (AMD64_IS_CALLEE_SAVED_REG (i) && (cfg->used_int_regs & (1 << i))) {
@@ -5201,11 +5235,10 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 					exc_throw_start [nthrows] = code;
 				}
 				amd64_mov_reg_imm (code, AMD64_ARG_REG1, exc_class->type_token);
-				patch_info->data.name = "mono_arch_throw_corlib_exception";
-				patch_info->type = MONO_PATCH_INFO_INTERNAL_METHOD;
-				patch_info->ip.i = code - cfg->native_code;
 
-				code = emit_call_body (cfg, code, patch_info->type, patch_info->data.name);
+				patch_info->type = MONO_PATCH_INFO_NONE;
+
+				code = emit_call_body (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, "mono_arch_throw_corlib_exception");
 
 				amd64_mov_reg_imm (buf, AMD64_ARG_REG2, (code - cfg->native_code) - throw_ip);
 				while (buf < buf2)
@@ -5315,7 +5348,7 @@ mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean ena
 	mono_add_patch_info (cfg, code-cfg->native_code, MONO_PATCH_INFO_METHODCONST, cfg->method);
 	amd64_set_reg_template (code, AMD64_ARG_REG1);
 	amd64_mov_reg_reg (code, AMD64_ARG_REG2, AMD64_RSP, 8);
-	code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, (gpointer)func);
+	code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, (gpointer)func, TRUE);
 
 	if (enable_arguments)
 		amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, stack_area);
@@ -5407,7 +5440,7 @@ mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean ena
 
 	mono_add_patch_info (cfg, code-cfg->native_code, MONO_PATCH_INFO_METHODCONST, method);
 	amd64_set_reg_template (code, AMD64_ARG_REG1);
-	code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, (gpointer)func);
+	code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, (gpointer)func, TRUE);
 
 	/* Restore result */
 	switch (save_mode) {

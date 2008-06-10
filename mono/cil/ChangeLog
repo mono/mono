@@ -1,3 +1,8 @@
+2008-06-06  Jb Evain  <jbevain@novell.com>
+
+	* cil-opcodes.xml: constrained. is of type InlineType.
+	* opcode.def: re-generate.
+
 
 Tue Sep 11 15:09:01 CEST 2007 Paolo Molaro <lupus@ximian.com>
 

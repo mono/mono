@@ -13,6 +13,7 @@
 #include <mono/metadata/method-builder.h>
 #include <mono/metadata/opcodes.h>
 #include <mono/utils/mono-logger.h>
+#include <mono/utils/dtrace.h>
 
 #if HAVE_BOEHM_GC
 
@@ -89,8 +90,8 @@ mono_gc_base_init (void)
 	}
 #endif
 
-	GC_init ();
 	GC_no_dls = TRUE;
+	GC_init ();
 	GC_oom_fn = mono_gc_out_of_memory;
 	GC_set_warn_proc (mono_gc_warning);
 	GC_finalize_on_demand = 1;
@@ -106,7 +107,17 @@ mono_gc_base_init (void)
 void
 mono_gc_collect (int generation)
 {
+	MONO_PROBE_GC_BEGIN (generation);
+	
 	GC_gcollect ();
+	
+	MONO_PROBE_GC_END (generation);
+#if defined(ENABLE_DTRACE) && defined(__sun__)
+	/* This works around a dtrace -G problem on Solaris.
+	   Limit its actual use to when the probe is enabled. */
+	if (MONO_PROBE_GC_END_ENABLED ())
+		sleep(0);
+#endif
 }
 
 int

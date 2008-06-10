@@ -34,7 +34,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	guint8 *code, *start;
 	int this_pos = 4, reg;
 
-	if (!mono_method_signature (m)->ret->byref && MONO_TYPE_ISSTRUCT (mono_method_signature (m)->ret))
+	if (MONO_TYPE_ISSTRUCT (mono_method_signature (m)->ret))
 		this_pos = 8;
 	    
 	start = code = mono_global_codeman_reserve (36);
@@ -181,7 +181,7 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 	sparc_sti_imm (code, sparc_o0, sparc_sp, MONO_SPARC_STACK_BIAS + 304);
 
 	/* Check for thread interruption */
-	sparc_set (code, (guint8*)mono_thread_interruption_checkpoint, sparc_o7);
+	sparc_set (code, (guint8*)mono_thread_force_interruption_checkpoint, sparc_o7);
 	sparc_jmpl (code, sparc_o7, sparc_g0, sparc_o7);
 	sparc_nop (code);
 

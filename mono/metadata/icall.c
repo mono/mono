@@ -2870,7 +2870,7 @@ ves_icall_MonoMethod_GetGenericArguments (MonoReflectionMethod *method)
 
 		if (inst) {
 			count = inst->type_argc;
-			res = mono_array_new (domain, mono_defaults.monotype_class, count);
+			res = mono_array_new (domain, mono_defaults.systemtype_class, count);
 
 			for (i = 0; i < count; i++)
 				mono_array_setref (res, i, mono_type_get_object (domain, inst->type_argv [i]));
@@ -2880,7 +2880,7 @@ ves_icall_MonoMethod_GetGenericArguments (MonoReflectionMethod *method)
 	}
 
 	count = mono_method_signature (method->method)->generic_param_count;
-	res = mono_array_new (domain, mono_defaults.monotype_class, count);
+	res = mono_array_new (domain, mono_defaults.systemtype_class, count);
 
 	for (i = 0; i < count; i++) {
 		MonoGenericContainer *container = mono_method_get_generic_container (method->method);
@@ -2946,7 +2946,7 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this, MonoAr
 	if (!(m->flags & METHOD_ATTRIBUTE_STATIC)) {
 		if (this) {
 			if (!mono_object_isinst (this, m->klass)) {
-				*exc = mono_exception_from_name (mono_defaults.corlib, "System.Reflection", "TargetException");
+				*exc = mono_exception_from_name_msg (mono_defaults.corlib, "System.Reflection", "TargetException", "Object does not match target type.");
 				return NULL;
 			}
 			m = mono_object_get_virtual_method (this, m);
@@ -2954,7 +2954,7 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this, MonoAr
 			if (m->klass->valuetype)
 				obj = mono_object_unbox (this);
 		} else if (strcmp (m->name, ".ctor") && !m->wrapper_type) {
-			*exc = mono_exception_from_name (mono_defaults.corlib, "System.Reflection", "TargetException");
+			*exc = mono_exception_from_name_msg (mono_defaults.corlib, "System.Reflection", "TargetException", "Non-static method requires a target.");
 			return NULL;
 		}
 	}
@@ -7036,6 +7036,25 @@ ves_icall_Mono_Runtime_GetDisplayName (void)
 	return display_name;
 }
 
+static MonoString*
+ves_icall_System_ComponentModel_Win32Exception_W32ErrorMessage (guint32 code)
+{
+	MonoString *message;
+	guint32 ret;
+	gunichar2 buf[256];
+	
+	ret = FormatMessage (FORMAT_MESSAGE_FROM_SYSTEM |
+			     FORMAT_MESSAGE_IGNORE_INSERTS, NULL, code, 0,
+			     buf, 255, NULL);
+	if (ret == 0) {
+		message = mono_string_new (mono_domain_get (), "Error looking up error string");
+	} else {
+		message = mono_string_new_utf16 (mono_domain_get (), buf, ret);
+	}
+	
+	return message;
+}
+
 const static guchar
 dbase64 [] = {
 	128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128,
@@ -7547,6 +7566,10 @@ type_from_typename (char *typename)
 		klass = mono_defaults.object_class;
 	else if (!strcmp (typename, "obj"))
 		klass = mono_defaults.object_class;
+	else if (!strcmp (typename, "bool"))
+		klass = mono_defaults.boolean_class;
+	else if (!strcmp (typename, "boolean"))
+		klass = mono_defaults.boolean_class;
 	else {
 		g_error (typename);
 		g_assert_not_reached ();

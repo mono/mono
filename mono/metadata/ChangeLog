@@ -1,3 +1,422 @@
+2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (resolve_object): Release memory of inflated types.
+
+2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (mono_method_get_signature_full): Remove assert about
+	loading a methodspec to a generic method. We have such methods, such as
+	System.Threading.Interlocked::CompareExchange<T>.
+	This assert was removed since it crashes the verifier when it checks
+	methods calling CompareExchange<T>.
+
+2008-06-10  Marek Safar  <marek.safar@gmail.com>
+
+	* icall.c (ves_icall_MonoMethod_GetGenericArguments): Creates an instance
+	of Type array and not MonoType.
+
+2008-06-10  Marek Habersack  <mhabersack@novell.com>
+
+	* profiler.c: fix a segfault on shutdown. Patch from Paolo Molaro
+	<lupus@ximian.com>
+
+2008-06-10  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.h
+	(MONO_SYMBOL_FILE_MINOR_VERSION): Bump to 6.  There were no
+	changes to the file format, but we were generating incorrect
+	source file indices in the line number table due to a bug, which
+	made backtraces report an incorrect source file.
+
+2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mono-debug.c: Moved mono_debug_free_method_jit_info from
+	mini/debug-mini.c to here.
+
+	* mono-debug.c (il_offset_from_address): Free memory from find_method.
+
+	* mono-debug.h: Export mono_debug_free_method_jit_info, users should
+	use it to release structs returned by mono_debug_find_method.
+
+2008-06-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_vtable): Call setup_methods even for interfaces
+	since it needs to set method->slot for all interface methods.
+
+2008-06-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class-internals.h: Forgot to add.
+
+2008-06-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class-internals.h: Added MONO_PROP_DYNAMIC_CATTR.
+
+	* reflection.c (lookup_custom_attr): Added a MonoImage argument.
+	Lookup the custom attributes from property_hash.
+
+	* reflection.c (mono_save_custom_attrs): Save the custom attributes
+	in property_hash. Allocate all data using the image mempool.
+
+ 	* reflection.c: Removed dynamic_custom_attrs. Changed all checks
+	for dynamic_custom_attrs to checks if the image is dynamic.
+
+2008-06-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (ves_icall_System_AppDomain_GetAssemblies): Free the
+	assemblies array.
+	
+	* appdomain.c (ves_icall_System_AppDomain_GetAssemblies): Avoid calling
+	runtime functions while holding the domain assemblies lock.
+
+2008-06-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Reapplied the last bit of the reverted changes.
+
+2008-06-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Reapplied more of the reverted changes.
+
+2008-06-09  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.c (load_symfile): Check the major version
+	first; if it's wrong, don't print the minor version in the error message.
+
+2008-06-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (set_domain_search_path): Make this use the domain assemblies
+	lock instead of the domain lock to avoid deadlocks, since the thread might
+	already hold the loader lock.
+
+	* threads.c (start_wrapper): Call mono_monitor_init_tls ().
+	(mono_thread_attach): Ditto.
+
+	* monitor.c: Use a TLS variable for holding the current thread id instead
+	of calling pthread_self ().
+	(mono_monitor_init_tls): New internal function to initialize the TLS
+	variable.
+	(mono_monitor_try_enter_internal): Put the owner == id check after the
+	owner == 0 check.
+
+	* object-internals.h (_G_BOOLEAN_EXPR): Redefine this glib macro to avoid
+	missed optimizations when using gcc-4.3.
+
+2008-06-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_dynamic_image_free): Free the memory
+	used by MonoGenericParam in MonoDynamicImage::gen_param.
+
+	* reflection.c (mono_reflection_setup_generic_class): Allocate
+	container from mempool.
+
+	* reflection.c (mono_reflection_initialize_generic_parameter): Allocate
+	container from mempool.
+
+2008-06-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (mono_set_pending_exception): New internal function to set the
+	pending exception of the current thread.
+	(mono_thread_get_and_clear_pending_exception): Check for 
+	thread->pending_exception as well.
+
+	* object-internals.h (struct _MonoThread): Add 'pending_exception' field.
+
+	* boehm-gc.c (mono_gc_base_init): Set GC_no_dls before calling GC_init () since
+	it can trigger a collection.
+
+2008-06-06  Martin Baulig  <martin@ximian.com>
+
+	Merged the `debugger-kahalo' branch.
+
+	* mono-debug.h
+	(MONO_DEBUGGER_VERSION): Bumped to 72.
+
+	* debug-mono-symfile.h
+	(MonoSymbolFileMethodIndexEntry): Removed.
+	(MonoSymbolFileMethodEntry): New public typedef.
+	(MonoSymbolFileOffsetTable): Added `_is_aspx_source'.
+	(MonoSymbolFileSourceEntry): Remove everything except `index' and
+	`data_offset'.
+	(MonoSymbolFileMethodEntry): Removed.
+	(MonoSymbolFileLexicalBlockEntry): Removed.
+	(MonoSymbolFileLineNumberEntry): Removed.
+	(MonoDebugLexicalBlockEntry): Removed.
+	(MonoDebugMethodInfo): Replaced `entry' by `guint32 entry_offset';
+	removed `num_il_offsets' and `il_offsets'.
+	(MonoSymbolFile): Replace `version' with `major_version' and
+	`minor_version'.
+	(MONO_SYMBOL_FILE_VERSION): Replace with
+	`MONO_SYMBOL_FILE_MAJOR_VERSION' and
+	`MONO_SYMBOL_FILE_MINOR_VERSION'.
+
+	* debug-mono-symfile.c
+	(mono_debug_symfile_lookup_location): Add support for the new line
+	number table format.
+
+2008-06-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata.c (free_generic_class): Release the inflated
+	MonoClass of dynamic generic classes if it's not a generic
+	type definition.
+
+2008-06-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Reapplied more of the reverted changes.
+
+2008-06-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (lookup_custom_attr): Clean the cached flag or
+	nobody will free it. Fixes a memleak in MonoCustomAttrs::IsDefinedInternal
+	for SRE types.
+
+2008-06-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Reapplied a small part of the reverted changes.
+
+2008-06-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
+
+	* monitor.c (mono_monitor_try_enter_internal): Add NULL check which was 
+	previously in managed code.
+	(mono_monitor_exit): Ditto.
+	(ves_icall_System_Threading_Monitor_Monitor_exit): Removed, not needed anymore.
+
+	* icall-def.h: Rename the Enter/Exit icalls to simply Enter/Exit to match
+	the managed definition.
+
+2008-06-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Revert changes to see if it helps with weird buildbot crashes.
+
+2008-06-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* monitor.c: Redefine GetCurrentThreadId () with a macro on !win32.
+	
+	* monitor.c: Add some micro optimizations.
+
+	* icall.c (type_from_typename): Handle 'bool'.
+
+2008-06-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Implement constructor verification per P III 1.8.1.4.
+	Fixes #396716.
+
+2008-06-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c (mono_assembly_loaded_full): Avoid calling the search hooks while
+	holding the assemblies lock here too.
+
+2008-06-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Kill stack_top function.
+
+2008-06-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Kill stack_get function.
+
+2008-06-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_method_verify): Last change broke the build. Fixed.
+
+2008-06-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (verify_type_compatibility_full): Make SZARRAY checks
+	more reliable.
+
+	* verify.c (mono_method_verify): Inflate params and locals to avoid
+	mismatch when checking for compatibility.
+
+2008-06-05  Jonathan Chambers  <joncham@gmail.com>
+
+	* metadata.c (mono_string_from_bstr): Fix BSTR marshalling.
+	Length prefix should be size in bytes. Fix bug #339530.
+	
+	* metadata.c (mono_string_to_bstr): Fix BSTR marshalling.
+	Length prefix should be size in bytes. Fix bug #339530.
+
+	Code is contributed under MIT/X11 license.
+
+2008-06-05  Bill Holmes <billholmes54@gmail.com>
+
+	* decimal.c:  Adding MSVC implementation to my_g_bit_nth_msf.
+
+	Contributed under MIT/X11 license.
+
+2008-06-05  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.c
+	(mono_debugger_check_breakpoints): Reflect latest runtime changes.
+
+2008-06-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c (mono_assembly_load_from_full): Avoid calling the search hooks
+	while holding the assemblies lock to prevent deadlocks. Handle the case
+	where the search hook returns NULL but the assembly was still loaded.
+	Fixes #323696.
+
+	* appdomain.c (set_domain_search_path): Acquire the domain lock since we
+	modify domain state.
+
+2008-06-05  Andreas Färber  <andreas.faerber@web.de>
+
+	* boehm-gc.c: Add DTrace probes gc-{begin,end}.
+	* Makefile.am (pedump_LDADD): Post-process object files and
+	add dtrace-generated object file, if necessary.
+
+	Code is contributed under MIT/X11 license.
+
+2008-06-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_dynamic_image_free): Free MonoDynamicImage::public_key.
+
+2008-06-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_type_get_full): Add a work-around for generic type definitions.
+
+2008-06-04  Mark Probst  <mark.probst@gmail.com>
+
+	* threads.c: Try to free everything from the delayed free table
+	when shutting down threads, and set the variable to NULL after the
+	table is freed so that calling
+	mono_thread_hazardous_try_free_all() when shutting down the root
+	domain doesn't crash.
+
+2008-06-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_type_retrieve_from_typespec): Add an argument to inform
+	the caller if resulting type was inflated.
+
+	* class.c (mono_class_create_from_typespec): Free the MonoType if it
+	was inflated.
+
+	* class.c (mono_type_get_full): Free the MonoType if it	was inflated.
+
+
+2008-06-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* decimal.c (rescale128): Rework the code a bit so it no longer crashes the
+	class library tests.
+
+	* icall.c (ves_icall_InternalInvoke): Applied patch from Andy Hume 
+	(andyhume32@yahoo.co.uk). Add more useful exception messages. Fixes
+	#396989.
+
+2008-06-04  Mark Probst  <mark.probst@gmail.com>
+
+	* domain.c, domain-internals.h: The JIT infos are now freed by the
+	JIT info table code.  They are freed immediately if there only a
+	single JIT info table in circulation.  If there is more, the free
+	is delayed via a queue.
+
+	* threads.c, threads-types.h: New hazard pointer function for
+	freeing all freeable delayed items in one sitting.
+
+2008-06-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (typebuilder_setup_fields): Use mempool for allocations.
+
+	* reflection.c (typebuilder_setup_properties): Same.
+
+	* reflection.c (typebuilder_setup_events): Same.
+
+2008-06-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_custom_attrs_from_builders): Receive a MonoMemPool
+	and use it for allocating memory.
+
+	* reflection.c (mono_marshal_spec_from_builder): Same.
+
+	* reflection.c: Change code to use new signatures.
+
+	* metadata.c (mono_metadata_type_dup): Add a FIXME note.
+
+2008-06-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* decimal.c (rescale128): Put back one line which was accidently commented
+	out.
+	
+	* decimal.c (rescale128): Disable the code added by the last patch, as it seems
+	to cause crashes.
+
+2008-06-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_reflection_generic_class_initialize): Name must
+	be always malloc'ed so we can free it later on. Do this for field, property
+	and event.
+
+	* metadata.c (free_generic_class): Free field, property and event names.
+
+2008-06-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (fieldbuilder_to_mono_class_field): Use mono_metadata_type_dup
+	instead of g_memdup.
+
+	* reflection.c (typebuilder_setup_fields): Same.
+
+2008-06-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* decimal.c (rescale128): Optimize this function a bit more.
+
+2008-06-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata.c (free_generic_class): Release some memory from
+	SRE generic classes.
+
+2008-06-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_image_get_generic_field_token): No reference
+	to name is kept, free it.
+
+	* reflection.c (mono_reflection_generic_class_initialize): Free
+	more memory of the inflated field.
+
+2008-06-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* decimal.c (mono_decimalDiv): Moved equality checks here from managed
+	code.
+
+2008-06-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_dynamic_image_free): Release memory used by
+	MonoDynamicImage::array_methods elements.
+
+	* reflection.c (assembly_add_win32_resources): Release memory after
+	encoding.
+
+2008-06-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* decimal.c (log2_32): Use an optimized version for this function too.
+	
+	* decimal.c (log2_64): Fix this on 32 bit machines.
+
+2008-06-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_dup_array_type): Implement allocation using a mempool.
+
+	* class.c (mono_metadata_signature_deep_dup): Same.
+
+	* metadata.c (mono_metadata_signature_dup_full): Added, allow dup'ng with
+	a mempool.
+
+	* metadata.c (mono_metadata_signature_dup): Delegate to the _full version.
+
+	* metadata.c (mono_metadata_type_dup): Remove asserts and FIXME.
+
+	* metadata-internals.h: Added mono_metadata_signature_dup_full.
+
+	* class-internals.h: Update signatures to take a MonoMemPool.
+
+2008-06-02  Dick Porter  <dick@ximian.com>
+
+	* icall.c (ves_icall_System_ComponentModel_Win32Exception_W32ErrorMessage): 
+	* icall-def.h: Add
+	System.ComponentModel.Win32Exception.W32ErrorMessage, using the
+	FormatMessage API to get the error text.  Fixes bug 321827.
+
+2008-06-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* decimal.c: Add some micro optimizations to make decimal operations faster.
+
 2008-06-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (method_encode_clauses): Take a mempool

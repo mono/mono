@@ -79,8 +79,12 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 
 	if (((code [-13] == 0x49) && (code [-12] == 0xbb)) || (code [-5] == 0xe8)) {
 		if (code [-5] != 0xe8) {
-			if (can_write)
+			if (can_write) {
 				InterlockedExchangePointer ((gpointer*)(orig_code - 11), addr);
+#ifdef HAVE_VALGRIND_MEMCHECK_H
+				VALGRIND_DISCARD_TRANSLATIONS (orig_code - 11, sizeof (gpointer));
+#endif
+			}
 		} else {
 			if ((((guint64)(addr)) >> 32) != 0) {
 				/* Print some diagnostics */
@@ -94,15 +98,23 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 				g_assert_not_reached ();
 			}
 			g_assert ((((guint64)(orig_code)) >> 32) == 0);
-			if (can_write)
+			if (can_write) {
 				InterlockedExchange ((gint32*)(orig_code - 4), ((gint64)addr - (gint64)orig_code));
+#ifdef HAVE_VALGRIND_MEMCHECK_H
+				VALGRIND_DISCARD_TRANSLATIONS (orig_code - 5, 4);
+#endif
+			}
 		}
 	}
 	else if ((code [-7] == 0x41) && (code [-6] == 0xff) && (code [-5] == 0x15)) {
 		/* call *<OFFSET>(%rip) */
 		gpointer *got_entry = (gpointer*)((guint8*)orig_code + (*(guint32*)(orig_code - 4)));
-		if (can_write)
+		if (can_write) {
 			InterlockedExchangePointer (got_entry, addr);
+#ifdef HAVE_VALGRIND_MEMCHECK_H
+			VALGRIND_DISCARD_TRANSLATIONS (orig_code - 5, sizeof (gpointer));
+#endif
+		}
 	}
 }
 
@@ -206,9 +218,9 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 	else
 		has_caller = TRUE;
 
-	code = buf = mono_global_codeman_reserve (512);
+	code = buf = mono_global_codeman_reserve (524);
 
-	framesize = 512 + sizeof (MonoLMF);
+	framesize = 524 + sizeof (MonoLMF);
 	framesize = (framesize + (MONO_ARCH_FRAME_ALIGNMENT - 1)) & ~ (MONO_ARCH_FRAME_ALIGNMENT - 1);
 
 	if (tramp_type == MONO_TRAMPOLINE_GENERIC_CLASS_INIT) {
@@ -398,8 +410,11 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 
 	/* Check for thread interruption */
 	/* This is not perf critical code so no need to check the interrupt flag */
+	/* 
+	 * Have to call the _force_ variant, since there could be a protected wrapper on the top of the stack.
+	 */
 	amd64_mov_membase_reg (code, AMD64_RBP, res_offset, AMD64_RAX, 8);
-	amd64_mov_reg_imm (code, AMD64_RAX, (guint8*)mono_thread_interruption_checkpoint);
+	amd64_mov_reg_imm (code, AMD64_RAX, (guint8*)mono_thread_force_interruption_checkpoint);
 	amd64_call_reg (code, AMD64_RAX);
 	amd64_mov_reg_membase (code, AMD64_RAX, AMD64_RBP, res_offset, 8);	
 
@@ -431,7 +446,7 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 		/* call the compiled method */
 		amd64_jump_reg (code, X86_EAX);
 
-	g_assert ((code - buf) <= 512);
+	g_assert ((code - buf) <= 524);
 
 	mono_arch_flush_icache (buf, code - buf);
 

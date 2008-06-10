@@ -147,6 +147,15 @@ typedef struct {
 	 *on a method that creates a delegate for a non-final virtual method using ldftn*/
 	gboolean has_this_store;
 
+	/*This flag is used to control if the contructor of the parent class has been called.
+	 *If the this pointer is pushed on the eval stack and it's a reference type constructor and
+	 * super_ctor_called is false, the uninitialized flag is set on the pushed value.
+	 * 
+	 * Poping an uninitialized this ptr from the eval stack is an unverifiable operation unless
+	 * the safe variant is used. Only a few opcodes can use it : dup, pop, ldfld, stfld and call to a constructor.
+	 */
+	gboolean super_ctor_called;
+
 	guint32 prefix_set;
 	gboolean has_flags;
 	MonoType *constrained_type;
@@ -207,6 +216,8 @@ enum {
 	/**Signals that this is a boxed value type*/
 	BOXED_MASK = 0x1000,
 
+	/*This is an unitialized this ref*/
+	UNINIT_THIS_MASK = 0x2000,
 };
 
 static const char* const
@@ -1680,19 +1691,27 @@ stack_push_val (VerifyContext *ctx, int stype, MonoType *type)
 static ILStackDesc *
 stack_pop (VerifyContext *ctx)
 {
+	ILStackDesc *ret = ctx->eval.stack + --ctx->eval.size;
+	if ((ret->stype & UNINIT_THIS_MASK) == UNINIT_THIS_MASK)
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Found use of uninitialized 'this ptr' ref at 0x%04x", ctx->ip_offset));
+	return ret;
+}
+
+/* This function allows to safely pop an unititialized this ptr from
+ * the eval stack without marking the method as unverifiable. 
+ */
+static ILStackDesc *
+stack_pop_safe (VerifyContext *ctx)
+{
 	return ctx->eval.stack + --ctx->eval.size;
 }
 
-static inline ILStackDesc *
-stack_top (VerifyContext *ctx)
+static ILStackDesc *
+stack_push_stack_val (VerifyContext *ctx, ILStackDesc *value)
 {
-	return ctx->eval.stack + (ctx->eval.size - 1);
-}
-
-static inline ILStackDesc *
-stack_get (VerifyContext *ctx, int distance)
-{
-	return ctx->eval.stack + (ctx->eval.size - distance - 1);
+	ILStackDesc *top = stack_push (ctx);
+	copy_stack_value (top, value);
+	return top;
 }
 
 /* Returns the MonoType associated with the token, or NULL if it is invalid.
@@ -2247,8 +2266,8 @@ handle_enum:
 		if (candidate->type != MONO_TYPE_SZARRAY)
 			return FALSE;
 
-		left = target->data.klass;
-		right = candidate->data.klass;
+		left = target->data.array->eklass;
+		right = candidate->data.array->eklass;
 		return mono_class_is_assignable_from(left, right);
 	}
 
@@ -2592,6 +2611,8 @@ verify_delegate_compatibility (VerifyContext *ctx, MonoClass *delegate, ILStackD
 static void
 push_arg (VerifyContext *ctx, unsigned int arg, int take_addr) 
 {
+	ILStackDesc *top;
+
 	if (arg >= ctx->max_args) {
 		if (take_addr) 
 			ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Method doesn't have argument %d", arg + 1));
@@ -2605,14 +2626,17 @@ push_arg (VerifyContext *ctx, unsigned int arg, int take_addr)
 		check_unverifiable_type (ctx, ctx->params [arg]);
 		if (ctx->params [arg]->byref && take_addr)
 			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("ByRef of ByRef at 0x%04x", ctx->ip_offset));
-		if (!set_stack_value (ctx, stack_push (ctx), ctx->params [arg], take_addr))
+		top = stack_push (ctx);
+		if (!set_stack_value (ctx, top, ctx->params [arg], take_addr))
 			return;
 
 		if (arg == 0 && !(ctx->method->flags & METHOD_ATTRIBUTE_STATIC)) {
 			if (take_addr)
 				ctx->has_this_store = TRUE;
 			else
-				stack_top (ctx)->stype |= THIS_POINTER_MASK;
+				top->stype |= THIS_POINTER_MASK;
+			if (mono_method_is_constructor (ctx->method) && !ctx->super_ctor_called && !ctx->method->klass->valuetype)
+				top->stype |= UNINIT_THIS_MASK;
 		}
 	} 
 }
@@ -2639,8 +2663,8 @@ store_arg (VerifyContext *ctx, guint32 arg)
 
 	if (arg >= ctx->max_args) {
 		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Method doesn't have argument %d at 0x%04x", arg + 1, ctx->ip_offset));
-		check_underflow (ctx, 1);
-		stack_pop (ctx);
+		if (check_underflow (ctx, 1))
+			stack_pop (ctx);
 		return;
 	}
 
@@ -2679,14 +2703,14 @@ store_local (VerifyContext *ctx, guint32 arg)
 static void
 do_binop (VerifyContext *ctx, unsigned int opcode, const unsigned char table [TYPE_MAX][TYPE_MAX])
 {
-	ILStackDesc *a, *b;
+	ILStackDesc *a, *b, *top;
 	int idxa, idxb, complexMerge = 0;
 	unsigned char res;
 
 	if (!check_underflow (ctx, 2))
 		return;
-	a = stack_get (ctx, 1);
-	b = stack_top (ctx);
+	b = stack_pop (ctx);
+	a = stack_pop (ctx);
 
 	idxa = stack_slot_get_underlying_type (a);
 	if (stack_slot_is_managed_pointer (a)) {
@@ -2707,23 +2731,24 @@ do_binop (VerifyContext *ctx, unsigned int opcode, const unsigned char table [TY
 	VERIFIER_DEBUG ( printf ("binop res %d\n", res); );
 	VERIFIER_DEBUG ( printf ("idxa %d idxb %d\n", idxa, idxb); );
 
-	ctx->eval.size--;
+	top = stack_push (ctx);
 	if (res == TYPE_INV) {
 		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Binary instruction applyed to ill formed stack (%s x %s)", stack_slot_get_name (a), stack_slot_get_name (b)));
+		copy_stack_value (top, a);
 		return;
 	}
 
  	if (res & NON_VERIFIABLE_RESULT) {
 		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Binary instruction is not verifiable (%s x %s)", stack_slot_get_name (a), stack_slot_get_name (b)));
 
- 		res = res & ~NON_VERIFIABLE_RESULT;
+		res = res & ~NON_VERIFIABLE_RESULT;
  	}
 
  	if (complexMerge && res == TYPE_PTR) {
  		if (complexMerge == 1) 
- 			copy_stack_value (stack_top (ctx), a);
+ 			copy_stack_value (top, a);
  		else if (complexMerge == 2)
- 			copy_stack_value (stack_top (ctx), b);
+ 			copy_stack_value (top, b);
 		/*
 		 * There is no need to merge the type of two pointers.
 		 * The only valid operation is subtraction, that returns a native
@@ -2731,7 +2756,7 @@ do_binop (VerifyContext *ctx, unsigned int opcode, const unsigned char table [TY
 		 * This is valid acording to Patition III 1.1.4
 		 */
  	} else
-		stack_top (ctx)->stype = res;
+ 		top->stype = res;
  	
 }
 
@@ -2765,7 +2790,7 @@ do_boolean_branch_op (VerifyContext *ctx, int delta)
 
 	top = stack_pop (ctx);
 	if (!is_valid_bool_arg (top))
-		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Argument type %s not valid for brtrue/brfalse at 0x%04x", stack_slot_get_name (stack_get (ctx, -1)), ctx->ip_offset));
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Argument type %s not valid for brtrue/brfalse at 0x%04x", stack_slot_get_name (top), ctx->ip_offset));
 
 	check_unmanaged_pointer (ctx, top);
 }
@@ -2957,7 +2982,21 @@ do_invoke_method (VerifyContext *ctx, int method_token, gboolean virtual)
 	if (sig->hasthis) {
 		MonoType *type = &method->klass->byval_arg;
 		ILStackDesc copy;
-		value = stack_pop (ctx);
+
+		if (mono_method_is_constructor (method) && !method->klass->valuetype) {
+			if (!mono_method_is_constructor (ctx->method))
+				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Cannot call a constructor outside one at 0x%04x", ctx->ip_offset));
+			if (method->klass != ctx->method->klass->parent && method->klass != ctx->method->klass)
+				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Cannot call a constructor to a type diferent that this or super at 0x%04x", ctx->ip_offset));
+
+			ctx->super_ctor_called = TRUE;
+			value = stack_pop_safe (ctx);
+			if ((value->stype & THIS_POINTER_MASK) != THIS_POINTER_MASK)
+				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid 'this ptr' argument for constructor at 0x%04x", ctx->ip_offset));
+		} else {
+			value = stack_pop (ctx);
+		}
+			
 		copy_stack_value (&copy, value);
 		//TODO we should extract this to a 'drop_byref_argument' and use everywhere
 		//Other parts of the code suffer from the same issue of 
@@ -3132,7 +3171,7 @@ do_push_field (VerifyContext *ctx, int token, gboolean take_addr)
 
 	if (!check_underflow (ctx, 1))
 		return;
-	obj = stack_pop (ctx);
+	obj = stack_pop_safe (ctx);
 
 	if (!check_is_valid_type_for_field_ops (ctx, token, obj, &field, take_addr ? "ldflda" : "ldfld"))
 		return;
@@ -3158,7 +3197,7 @@ do_store_field (VerifyContext *ctx, int token)
 		return;
 
 	value = stack_pop (ctx);
-	obj = stack_pop (ctx);
+	obj = stack_pop_safe (ctx);
 
 	if (!check_is_valid_type_for_field_ops (ctx, token, obj, &field, "stfld"))
 		return;
@@ -3180,15 +3219,14 @@ do_box_value (VerifyContext *ctx, int klass_token)
 	if (!check_underflow (ctx, 1))
 		return;
 
-	value = stack_top (ctx);
+	value = stack_pop (ctx);
 	/*box is a nop for reference types*/
 
 	if (stack_slot_get_underlying_type (value) == TYPE_COMPLEX && MONO_TYPE_IS_REFERENCE (value->type) && MONO_TYPE_IS_REFERENCE (type)) {
-		value->stype |= BOXED_MASK;
+		stack_push_stack_val (ctx, value)->stype |= BOXED_MASK;
 		return;
 	}
 
-	value = stack_pop (ctx);
 
 	if (!verify_stack_type_compatibility (ctx, type, value))
 		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid type at stack for boxing operation at 0x%04x", ctx->ip_offset));
@@ -3250,7 +3288,7 @@ do_unary_math_op (VerifyContext *ctx, int op)
 	ILStackDesc *value;
 	if (!check_underflow (ctx, 1))
 		return;
-	value = stack_top (ctx);
+	value = stack_pop (ctx);
 	switch (stack_slot_get_type (value)) {
 	case TYPE_I4:
 	case TYPE_I8:
@@ -3265,6 +3303,7 @@ do_unary_math_op (VerifyContext *ctx, int op)
 	default:
 		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid type at stack for unary not at 0x%04x", ctx->ip_offset));
 	}
+	stack_push_stack_val (ctx, value);
 }
 
 static void
@@ -4031,6 +4070,8 @@ do_sizeof (VerifyContext *ctx, int token)
 static void
 do_localloc (VerifyContext *ctx)
 {
+	ILStackDesc *top;
+	
 	if (ctx->eval.size != 1) {
 		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Stack must have only size item in localloc at 0x%04x", ctx->ip_offset));
 		return;		
@@ -4041,7 +4082,10 @@ do_localloc (VerifyContext *ctx)
 		return;
 	}
 
-	set_stack_value (ctx, stack_top (ctx), &mono_defaults.int_class->byval_arg, FALSE);
+	/*TODO verify top type*/
+	top = stack_pop (ctx);
+
+	set_stack_value (ctx, stack_push (ctx), &mono_defaults.int_class->byval_arg, FALSE);
 	CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Instruction localloc in never verifiable at 0x%04x", ctx->ip_offset));
 }
 
@@ -4135,10 +4179,11 @@ do_ckfinite (VerifyContext *ctx)
 	if (!check_underflow (ctx, 1))
 		return;
 
-	top = stack_top (ctx);
+	top = stack_pop (ctx);
 
 	if (stack_slot_get_underlying_type (top) != TYPE_R8)
 		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Expected float32 or float64 on stack for ckfinit but found %s at 0x%04x", stack_slot_get_name (top), ctx->ip_offset));	
+	stack_push_stack_val (ctx, top);
 }
 /*
  * merge_stacks:
@@ -4393,25 +4438,22 @@ mono_method_verify (MonoMethod *method, int level)
 	ctx.verifiable = ctx.valid = 1;
 	ctx.level = level;
 
-	ctx.code = g_new0 (ILCodeDesc, ctx.header->code_size);
+	ctx.code = g_new (ILCodeDesc, ctx.header->code_size);
 	ctx.code_size = ctx.header->code_size;
 
 	memset(ctx.code, 0, sizeof (ILCodeDesc) * ctx.header->code_size);
 
 
 	ctx.num_locals = ctx.header->num_locals;
-	ctx.locals = ctx.header->locals;
+	ctx.locals = g_memdup (ctx.header->locals, sizeof (MonoType*) * ctx.header->num_locals);
 
 	if (ctx.num_locals > 0 && !ctx.header->init_locals)
 		CODE_NOT_VERIFIABLE (&ctx, g_strdup_printf ("Method with locals variable but without init locals set"));
 
-	if (ctx.signature->hasthis) {
-		ctx.params = g_new0 (MonoType*, ctx.max_args);
+	ctx.params = g_new (MonoType*, ctx.max_args);
+	if (ctx.signature->hasthis)
 		ctx.params [0] = method->klass->valuetype ? &method->klass->this_arg : &method->klass->byval_arg;
-		memcpy (ctx.params + 1, ctx.signature->params, sizeof (MonoType *) * ctx.signature->param_count);
-	} else {
-		ctx.params = ctx.signature->params;
-	}
+	memcpy (ctx.params + ctx.signature->hasthis, ctx.signature->params, sizeof (MonoType *) * ctx.signature->param_count);
 
 	if (ctx.signature->is_inflated)
 		ctx.generic_context = generic_context = mono_method_get_context (method);
@@ -4423,6 +4465,10 @@ mono_method_verify (MonoMethod *method, int level)
 			ctx.generic_context = generic_context = &method->klass->generic_container->context;
 	}
 
+	for (i = 0; i < ctx.num_locals; ++i)
+		ctx.locals [i] = mono_class_inflate_generic_type (ctx.locals [i], ctx.generic_context);
+	for (i = 0; i < ctx.max_args; ++i)
+		ctx.params [i] = mono_class_inflate_generic_type (ctx.params [i], ctx.generic_context);
 	stack_init (&ctx, &ctx.eval);
 
 	for (i = 0; i < ctx.header->num_clauses && ctx.valid; ++i) {
@@ -4602,7 +4648,7 @@ mono_method_verify (MonoMethod *method, int level)
 		case CEE_POP:
 			if (!check_underflow (&ctx, 1))
 				break;
-			stack_pop (&ctx);
+			stack_pop_safe (&ctx);
 			++ip;
 			break;
 
@@ -4759,8 +4805,9 @@ mono_method_verify (MonoMethod *method, int level)
 				break;
 			if (!check_overflow (&ctx))
 				break;
-			top = stack_push (&ctx);
-			copy_stack_value (top, stack_get (&ctx, 1)); 
+			top = stack_pop_safe (&ctx);
+			copy_stack_value (stack_push (&ctx), top); 
+			copy_stack_value (stack_push (&ctx), top);
 			++ip;
 			break;
 		}
@@ -5349,6 +5396,9 @@ mono_method_verify (MonoMethod *method, int level)
 			CODE_NOT_VERIFIABLE (&ctx, g_strdup_printf ("Invalid call to a non-final virtual function in method with stdarg.0 or ldarga.0 at  0x%04x", i));
 	}
 
+	if (mono_method_is_constructor (ctx.method) && !ctx.super_ctor_called && !ctx.method->klass->valuetype && ctx.method->klass != mono_defaults.object_class)
+		CODE_NOT_VERIFIABLE (&ctx, g_strdup_printf ("Constructor not calling super\n"));
+
 	if (ctx.code) {
 		for (i = 0; i < ctx.header->code_size; ++i) {
 			if (ctx.code [i].stack)
@@ -5360,12 +5410,17 @@ mono_method_verify (MonoMethod *method, int level)
 		g_free (tmp->data);
 	g_slist_free (ctx.funptrs);
 
+	for (i = 0; i < ctx.num_locals; ++i)
+		mono_metadata_free_type (ctx.locals [i]);
+	for (i = 0; i < ctx.max_args; ++i)
+		mono_metadata_free_type (ctx.params [i]);
+
 	if (ctx.eval.stack)
 		g_free (ctx.eval.stack);
 	if (ctx.code)
 		g_free (ctx.code);
-	if (ctx.signature->hasthis)
-		g_free (ctx.params);
+	g_free (ctx.locals);
+	g_free (ctx.params);
 
 	return ctx.list;
 }

@@ -61,7 +61,7 @@
  * Changes which are already detected at runtime, like the addition
  * of icalls, do not require an increment.
  */
-#define MONO_CORLIB_VERSION 66
+#define MONO_CORLIB_VERSION 67
 
 typedef struct
 {
@@ -678,36 +678,39 @@ ves_icall_System_AppDomain_GetAssemblies (MonoAppDomain *ad, MonoBoolean refonly
 	static MonoClass *System_Reflection_Assembly;
 	MonoArray *res;
 	GSList *tmp;
-	int i, count;
-	
+	int i;
+	GPtrArray *assemblies;
+
 	MONO_ARCH_SAVE_REGS;
 
 	if (!System_Reflection_Assembly)
 		System_Reflection_Assembly = mono_class_from_name (
 			mono_defaults.corlib, "System.Reflection", "Assembly");
 
-	count = 0;
+	/* 
+	 * Make a copy of the list of assemblies because we can't hold the assemblies
+	 * lock while creating objects etc.
+	 */
+	assemblies = g_ptr_array_new ();
 	/* Need to skip internal assembly builders created by remoting */
 	mono_domain_assemblies_lock (domain);
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		ass = tmp->data;
 		if (refonly && !ass->ref_only)
 			continue;
-		if (!ass->corlib_internal)
-			count++;
-	}
-	res = mono_array_new (domain, System_Reflection_Assembly, count);
-	i = 0;
-	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
-		ass = tmp->data;
-		if (refonly && !ass->ref_only)
-			continue;
 		if (ass->corlib_internal)
 			continue;
-		mono_array_setref (res, i, mono_assembly_get_object (domain, ass));
-		++i;
+		g_ptr_array_add (assemblies, ass);
 	}
 	mono_domain_assemblies_unlock (domain);
+
+	res = mono_array_new (domain, System_Reflection_Assembly, assemblies->len);
+	for (i = 0; i < assemblies->len; ++i) {
+		ass = g_ptr_array_index (assemblies, i);
+		mono_array_setref (res, i, mono_assembly_get_object (domain, ass));
+	}
+
+	g_ptr_array_free (assemblies, TRUE);
 
 	return res;
 }
@@ -846,6 +849,9 @@ mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data)
 	mono_runtime_invoke (assembly_load_method, domain->domain, params, NULL);
 }
 
+/*
+ * LOCKING: Acquires the domain assemblies lock.
+ */
 static void
 set_domain_search_path (MonoDomain *domain)
 {
@@ -858,14 +864,26 @@ set_domain_search_path (MonoDomain *domain)
 	GError *error = NULL;
 	gint appbaselen = -1;
 
-	if ((domain->search_path != NULL) && !domain->setup->path_changed)
+	/* 
+	 * We use the low-level domain assemblies lock, since this is called from
+	 * assembly loads hooks, which means this thread might hold the loader lock.
+	 */
+	mono_domain_assemblies_lock (domain);
+
+	if ((domain->search_path != NULL) && !domain->setup->path_changed) {
+		mono_domain_assemblies_unlock (domain);
 		return;
-	if (!domain->setup)
+	}
+	if (!domain->setup) {
+		mono_domain_assemblies_unlock (domain);
 		return;
+	}
 
 	setup = domain->setup;
-	if (!setup->application_base)
+	if (!setup->application_base) {
+		mono_domain_assemblies_unlock (domain);
 		return; /* Must set application base to get private path working */
+	}
 
 	npaths++;
 	
@@ -918,6 +936,7 @@ set_domain_search_path (MonoDomain *domain)
 		 * domain->search_path = g_malloc (sizeof (char *));
 		 * domain->search_path [0] = NULL;
 		*/
+		mono_domain_assemblies_unlock (domain);
 		return;
 	}
 
@@ -991,6 +1010,8 @@ set_domain_search_path (MonoDomain *domain)
 	domain->setup->path_changed = FALSE;
 
 	g_strfreev (pvt_split);
+
+	mono_domain_assemblies_unlock (domain);
 }
 
 static gboolean
@@ -1339,6 +1360,8 @@ real_load (gchar **search_path, const gchar *culture, const gchar *name, gboolea
 /*
  * Try loading the assembly from ApplicationBase and PrivateBinPath 
  * and then from assemblies_path if any.
+ * LOCKING: This is called from the assembly loading code, which means the caller
+ * might hold the loader lock. Thus, this function must not acquire the domain lock.
  */
 static MonoAssembly *
 mono_domain_assembly_preload (MonoAssemblyName *aname,

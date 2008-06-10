@@ -43,7 +43,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	int this_pos = 4;
 	MonoDomain *domain = mono_domain_get ();
 
-	if (!mono_method_signature (m)->ret->byref && MONO_TYPE_ISSTRUCT (mono_method_signature (m)->ret))
+	if (MONO_TYPE_ISSTRUCT (mono_method_signature (m)->ret))
 		this_pos = 8;
 	    
 	mono_domain_lock (domain);
@@ -337,7 +337,7 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 	/* Check for thread interruption */
 	/* This is not perf critical code so no need to check the interrupt flag */
 	x86_push_reg (buf, X86_EAX);
-	x86_call_code (buf, (guint8*)mono_thread_interruption_checkpoint);
+	x86_call_code (buf, (guint8*)mono_thread_force_interruption_checkpoint);
 	x86_pop_reg (buf, X86_EAX);
 
 	/* Restore LMF */

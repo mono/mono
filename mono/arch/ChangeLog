@@ -1,3 +1,8 @@
+2008-06-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* amd64/amd64-codegen.h (amd64_padding_size): Rewrite this to use the
+	instructions recommended by the amd64 manual.
+
 2008-04-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* amd64/amd64-codegen.h (amd64_is_imm32): Use gint64 instead of glong because of

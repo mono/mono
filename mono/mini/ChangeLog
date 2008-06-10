@@ -169,6 +169,132 @@ Fri Apr 11 18:44:31 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	* mini-s390.c (mono_arch_output_basic_block): Fix SUBCC implementation.
 	(mono_arch_decompose_long_opts): Remove LSUB, the generic code works on s390 too.
 
+2008-06-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* debug-mini.c (mono_debug_free_method_jit_info): Moved to metadata/mono-debug.c.
+
+	* debug-mini.c (mono_debug_print_vars): Release memory after printing
+	everything.
+
+2008-06-10  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.c
+	(mono_debug_close_method): Check whether `cfg->epilogue_begin != NULL'.
+
+2008-06-09  Kornél Pál  <kornelpal@gmail.com>
+
+	* main.c: Add and set argv [argc] to NULL to match C specification that fixes
+	possible error when no arguments are passed.
+
+	Contributed under MIT/X11 license.
+
+2008-06-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-exceptions.c (ves_icall_get_trace): Skip source locations
+	where the file name is NULL.
+
+2008-06-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c: Fix s390 build.
+
+2008-06-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* trace.c (mono_trace_parse_options): Fix warnings.
+
+	* mini-amd64.c: Revert most of the last patch for now as it breaks the build.
+
+2008-06-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (remove_block_if_useless): Avoid printing the method name.
+	
+	* mini.c: Remove needless setting of ins->cil_code which is now done by 
+	MONO_INST_NEW.
+
+	* mini-amd64.c: Add some code to avoid saving callee saved registers in the
+	LMF. Not yet used.
+
+	* tramp-amd64.c (mono_arch_patch_callsite): Tell valgrind to discard the
+	translated code after it has been patched.
+
+2008-06-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (emit_call_body): Align the call displacement to 4 bytes to
+	avoid problems during code patching on SMP systems.
+	(emit_call): Avoid adding a patch info which is already added by 
+	emit_call_body.
+	(mono_arch_emit_exceptions): Ditto.
+
+2008-06-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-*.c (mono_arch_get_unbox_trampoline): No need to check for ret->byref,
+	MONO_TYPE_ISSTRUCT already checks for it.
+
+2008-06-05  Bill Holmes  <billholmes54@gmail.com>
+
+	* mini-amd64.c:merge_argument_class_from_type: When marshaling 
+	  structs with floats on Winx64 the float registers are not used.  
+	  The integer registers are always used..
+	* mini-amd64.c:add_valuetype:  When marshaling structs on Winx64 
+	  only one register will be used and only if the size of the struct 
+	  is 1,2,4, or 8 bytes.
+
+	* tramp-amd64.c :  Adjusting size used for mono_global_codeman_reserve
+	  to work for Winx64.
+
+	Contributed under MIT/X11 license.
+
+2008-06-05  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.c (debugger_lookup_class): Also call
+	mono_class_setup_methods() here; we're only called from RTI.
+
+2008-06-05  Andreas Färber  <andreas.faerber@web.de>
+
+	* mini.c (mini_init): Add DTrace probes ves-init-{begin,end}.
+	(mini_method_compile) Add DTrace probes method-compile-{begin,end}.
+	* Makefile.am (libmono_la_LIBADD,libmono_static_la_LIBADD,mono_LDADD):
+	Post-process object files and add dtrace-generated object, if necessary.
+
+	Contributed under MIT/X11 license.
+
+2008-06-04  Mark Probst  <mark.probst@gmail.com>
+
+	* inssel.brg, mini-ops.h: Added opcode for unboxcast with computed
+	element class.
+
+	* mini.c: Generic sharing for unbox.any and castclass.
+
+2008-06-04  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Ignore tailcall prefix in shared generic code and when
+	doing calls which require a vtable/rgctx argument.
+
+2008-06-04  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Don't free the JIT info.
+
+	* driver.c: Changes in the JIT info table testing code.
+
+2008-06-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-arm.c (mono_arch_create_trampoline_code): Check for thread 
+	interruption. Fix some warnings.
+
+	* tramp-*.c (mono_arch_create_trampoline_code): Call the _force_ variant of
+	interruption_checkpoint.
+
+Tue Jun 3 13:07:03 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* jit.h, mini.h, trace.c, driver.c: introduce an API to enable tracing
+	from embedding applications.
+
+2008-06-02  William Holmes  <billholmes54@gmail.com>
+
+	* mini-amd64.c :  Correcting some of the issues for Winx64 dealing with
+	  reserving 32 bytes on the stack when making calls. 
+
+	Contributed under MIT/X11 license.
+
 2008-06-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c (mono_arch_output_basic_block): Merge some small fixes from
@@ -14629,6 +14755,8 @@ Mon Apr 7 16:31:34 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	belongs.
 
 	* mini.pc.in: Call this package `mini' for the moment.
+
+
 
 
 

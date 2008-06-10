@@ -290,7 +290,8 @@ BASE_TEST_CS_SRC=		\
 	bug-322722_dyn_method_throw.2.cs	\
 	bug-389886-2.cs	\
 	bug-325283.2.cs	\
-	thunks.cs
+	thunks.cs \
+	winx64structs.cs
 
 if AMD64
 TEST_CS_SRC = $(BASE_TEST_CS_SRC) async-exc-compilation.cs
@@ -307,8 +308,11 @@ TEST_CS_SRC+=async-exc-compilation.cs
 endif
 
 if X86
-# bug #71274
-PLATFORM_DISABLED_TESTS=finalizer-abort.exe finalizer-exception.exe finalizer-exit.exe
+
+if PLATFORM_WIN32
+PLATFORM_DISABLED_TESTS=async-exc-compilation.exe
+endif
+
 endif
 
 if POWERPC
@@ -318,7 +322,6 @@ endif
 
 DISABLED_TESTS=			\
 	delegate-async-exception.exe	\
-	delegate-delegate-exception.exe	\
 	appdomain-unload.exe		\
 	bug-348522.2.exe	\
 	$(PLATFORM_DISABLED_TESTS)
@@ -372,7 +375,9 @@ TEST_IL_SRC=			\
 	generic-ldtoken.2.il	\
 	generic-ldtoken-method.2.il	\
 	generic-ldtoken-field.2.il	\
-	generic-tailcall.2.il
+	generic-tailcall.2.il	\
+	generic-tailcall2.2.il	\
+	generic-array-exc.2.il
 
 #	bug-318677.il
 
@@ -698,7 +703,8 @@ test-generic-sharing : generics-sharing.2.exe shared-generic-methods.2.exe	\
 		generic-virtual.2.exe generic-tailcall.2.exe			\
 		generic-interface-methods.2.exe generic-array-type.2.exe	\
 		generic-method-patching.2.exe	\
-		generic-null-call.2.exe
+		generic-null-call.2.exe generic-tailcall2.2.exe			\
+		generic-array-exc.2.exe
 	for fn in $+ ; do	\
 		echo "Testing $$fn ...";	\
 		MONO_GENERIC_SHARING=all $(RUNTIME) -O=gshared,-inline        $$fn || exit 1;	\

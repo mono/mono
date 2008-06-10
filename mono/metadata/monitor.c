@@ -80,6 +80,22 @@ static MonoThreadsSync *monitor_freelist;
 static MonitorArray *monitor_allocated;
 static int array_size = 16;
 
+#ifdef HAVE_KW_THREAD
+static __thread gsize tls_pthread_self MONO_TLS_FAST;
+#endif
+
+#ifndef PLATFORM_WIN32
+#ifdef HAVE_KW_THREAD
+#define GetCurrentThreadId() tls_pthread_self
+#else
+/* 
+ * The usual problem: we can't replace GetCurrentThreadId () with a macro because
+ * it is in a public header.
+ */
+#define GetCurrentThreadId() ((gsize)pthread_self ())
+#endif
+#endif
+
 void
 mono_monitor_init (void)
 {
@@ -90,6 +106,19 @@ void
 mono_monitor_cleanup (void)
 {
 	/*DeleteCriticalSection (&monitor_mutex);*/
+}
+
+/*
+ * mono_monitor_init_tls:
+ *
+ *   Setup TLS variables used by the monitor code for the current thread.
+ */
+void
+mono_monitor_init_tls (void)
+{
+#if !defined(PLATFORM_WIN32) && defined(HAVE_KW_THREAD)
+	tls_pthread_self = pthread_self ();
+#endif
 }
 
 static int
@@ -324,7 +353,7 @@ mono_object_hash (MonoObject* obj)
 /* If allow_interruption==TRUE, the method will be interrumped if abort or suspend
  * is requested. In this case it returns -1.
  */ 
-static gint32 
+static inline gint32 
 mono_monitor_try_enter_internal (MonoObject *obj, guint32 ms, gboolean allow_interruption)
 {
 	MonoThreadsSync *mon;
@@ -333,16 +362,21 @@ mono_monitor_try_enter_internal (MonoObject *obj, guint32 ms, gboolean allow_int
 	guint32 then = 0, now, delta;
 	guint32 waitms;
 	guint32 ret;
-	MonoThread *thread = mono_thread_current ();
-	
+	MonoThread *thread;
+
 	LOCK_DEBUG (g_message(G_GNUC_PRETTY_FUNCTION
 		  ": (%d) Trying to lock object %p (%d ms)", id, obj, ms));
+
+	if (G_UNLIKELY (!obj)) {
+		mono_raise_exception (mono_get_exception_argument_null ("obj"));
+		return FALSE;
+	}
 
 retry:
 	mon = obj->synchronisation;
 
 	/* If the object has never been locked... */
-	if (mon == NULL) {
+	if (G_UNLIKELY (mon == NULL)) {
 		mono_monitor_allocator_lock ();
 		mon = mon_new (id);
 		if (InterlockedCompareExchangePointer ((gpointer*)&obj->synchronisation, mon, NULL) == NULL) {
@@ -422,23 +456,17 @@ retry:
 	}
 #endif
 
-	/* If the object is currently locked by this thread... */
-	if (mon->owner == id) {
-		mon->nest++;
-		return 1;
-	}
-
 	/* If the object has previously been locked but isn't now... */
 
 	/* This case differs from Dice's case 3 because we don't
 	 * deflate locks or cache unused lock records
 	 */
-	if (mon->owner == 0) {
+	if (G_LIKELY (mon->owner == 0)) {
 		/* Try to install our ID in the owner field, nest
 		 * should have been left at 1 by the previous unlock
 		 * operation
 		 */
-		if (InterlockedCompareExchangePointer ((gpointer *)&mon->owner, (gpointer)id, 0) == 0) {
+		if (G_LIKELY (InterlockedCompareExchangePointer ((gpointer *)&mon->owner, (gpointer)id, 0) == 0)) {
 			/* Success */
 			g_assert (mon->nest == 1);
 			return 1;
@@ -446,6 +474,12 @@ retry:
 			/* Trumped again! */
 			goto retry;
 		}
+	}
+
+	/* If the object is currently locked by this thread... */
+	if (mon->owner == id) {
+		mon->nest++;
+		return 1;
 	}
 
 	/* The object must be locked by someone else... */
@@ -492,6 +526,8 @@ retry:
 	}
 	
 	InterlockedIncrement (&mon->entry_count);
+
+	thread = mono_thread_current ();
 
 	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
 	
@@ -559,13 +595,18 @@ mono_monitor_try_enter (MonoObject *obj, guint32 ms)
 	return mono_monitor_try_enter_internal (obj, ms, FALSE) == 1;
 }
 
-void 
+void
 mono_monitor_exit (MonoObject *obj)
 {
 	MonoThreadsSync *mon;
 	guint32 nest;
 	
 	LOCK_DEBUG (g_message (G_GNUC_PRETTY_FUNCTION ": (%d) Unlocking %p", GetCurrentThreadId (), obj));
+
+	if (G_UNLIKELY (!obj)) {
+		mono_raise_exception (mono_get_exception_argument_null ("obj"));
+		return;
+	}
 
 	mon = obj->synchronisation;
 
@@ -579,11 +620,11 @@ mono_monitor_exit (MonoObject *obj)
 		mon = lw.sync;
 	}
 #endif
-	if (mon == NULL) {
+	if (G_UNLIKELY (mon == NULL)) {
 		/* No one ever used Enter. Just ignore the Exit request as MS does */
 		return;
 	}
-	if (mon->owner != GetCurrentThreadId ()) {
+	if (G_UNLIKELY (mon->owner != GetCurrentThreadId ())) {
 		return;
 	}
 	
@@ -626,12 +667,6 @@ ves_icall_System_Threading_Monitor_Monitor_try_enter (MonoObject *obj, guint32 m
 	} while (res == -1);
 	
 	return res == 1;
-}
-
-void 
-ves_icall_System_Threading_Monitor_Monitor_exit (MonoObject *obj)
-{
-	mono_monitor_exit (obj);
 }
 
 gboolean 

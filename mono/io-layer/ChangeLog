@@ -1,3 +1,10 @@
+2008-06-02  Dick Porter  <dick@ximian.com>
+
+	* wapi.h: 
+	* Makefile.am: 
+	* messages.h: 
+	* messages.c: Implement FormatMessage, fixes bug 321827.
+
 2008-05-29  Dick Porter  <dick@ximian.com>
 
 	* sockets.c (socket_close): Clear any saved errors
