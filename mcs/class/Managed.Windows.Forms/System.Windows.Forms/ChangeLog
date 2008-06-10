@@ -1,3 +1,11 @@
+2008-06-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBox.cs: When navigating items visually, use FocusedItem as the
+	reference point instead of SelectedIndex, since even in
+	SelectionMode.None we need to support navigation, and in that case we
+	just can't use SelectedIndex.
+	Fixes part of #398345.
+
 2008-06-10  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Make a SetBoundsInternal that avoids the new

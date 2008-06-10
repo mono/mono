@@ -1454,24 +1454,24 @@ namespace System.Windows.Forms
 			}
 
 			case ItemNavigation.Next: {
-				if (SelectedIndex == Items.Count - 1)
+				if (FocusedItem == Items.Count - 1)
 					return -1;
 
 				if (multicolumn) {
-					selected_index = SelectedIndex + 1;
+					selected_index = FocusedItem + 1;
 					break;
 				}
 				
 				int bottom = 0;
 				ArrayList heights = new ArrayList ();
 				if (draw_mode == DrawMode.OwnerDrawVariable) {
-					for (int i = top_index; i <= SelectedIndex + 1; i++) {
+					for (int i = top_index; i <= FocusedItem + 1; i++) {
 						int h = GetItemHeight (i);
 						bottom += h;
 						heights.Add (h);
 					}
 				} else {
-					bottom = ((SelectedIndex + 1) - top_index + 1) * ItemHeight;
+					bottom = ((FocusedItem + 1) - top_index + 1) * ItemHeight;
 				}
 
 				if (bottom >= items_area.Height) {
@@ -1486,17 +1486,17 @@ namespace System.Windows.Forms
 					top_index += offset;
 					UpdateTopItem ();
 				}
-				selected_index = SelectedIndex + 1;
+				selected_index = FocusedItem + 1;
 				break;
 			}
 
 			case ItemNavigation.Previous: {
-				if (SelectedIndex > 0) {
-					if (SelectedIndex - 1 < top_index) {
+				if (FocusedItem > 0) {
+					if (FocusedItem - 1 < top_index) {
 						top_index--;
 						UpdateTopItem ();
 					}
-					selected_index = SelectedIndex - 1;
+					selected_index = FocusedItem - 1;
 				}
 				break;
 			}
@@ -1507,18 +1507,18 @@ namespace System.Windows.Forms
 					break;
 				}
 
-				if (SelectedIndex + page_size - 1 >= Items.Count) {
+				if (FocusedItem + page_size - 1 >= Items.Count) {
 					top_index = Items.Count - page_size;
 					UpdateTopItem ();
 					selected_index = Items.Count - 1;
 				}
 				else {
-					if (SelectedIndex + page_size - 1  > last_visible_index) {
-						top_index = SelectedIndex;
+					if (FocusedItem + page_size - 1  > last_visible_index) {
+						top_index = FocusedItem;
 						UpdateTopItem ();
 					}
 					
-					selected_index = SelectedIndex + page_size - 1;
+					selected_index = FocusedItem + page_size - 1;
 				}
 					
 				break;
@@ -1527,18 +1527,18 @@ namespace System.Windows.Forms
 			case ItemNavigation.PreviousPage: {
 					
 				int rows = items_area.Height / ItemHeight;
-				if (SelectedIndex - (rows - 1) <= 0) {
+				if (FocusedItem - (rows - 1) <= 0) {
 					top_index = 0;
 					UpdateTopItem ();
-					SelectedIndex = 0;
+					selected_index = 0;
 				}
 				else { 
 					if (SelectedIndex - (rows - 1)  < top_index) {
-						top_index = SelectedIndex - (rows - 1);
+						top_index = FocusedItem - (rows - 1);
 						UpdateTopItem ();
 					}
 					
-					selected_index = SelectedIndex - (rows - 1);
+					selected_index = FocusedItem - (rows - 1);
 				}
 					
 				break;
