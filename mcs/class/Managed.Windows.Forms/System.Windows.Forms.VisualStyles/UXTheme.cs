@@ -109,7 +109,7 @@ namespace System.Windows.Forms.VisualStyles
 		public extern static Int32 GetThemePartSize (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, ref XplatUIWin32.RECT pRect, int eSize, out SIZE size);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
-		public extern static Int32 GetThemePartSize (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, int pRect, int eSize, out SIZE size);
+		public extern static Int32 GetThemePartSize (IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, IntPtr pRect, int eSize, out SIZE size);
 
 		[DllImport ("uxtheme", ExactSpelling = true, CharSet = CharSet.Unicode)]
 		public extern static Int32 GetThemePosition (IntPtr hTheme, int iPartId, int iStateId, int iPropId, out POINT pPoint);

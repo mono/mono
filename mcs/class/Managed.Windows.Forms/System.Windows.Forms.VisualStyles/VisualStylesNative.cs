@@ -158,7 +158,7 @@ namespace System.Windows.Forms.VisualStyles
 		{
 			UXTheme.SIZE retval;
 
-			int hresult = UXTheme.GetThemePartSize (hTheme, dc.GetHdc (), iPartId, iStateId, 0, (int)type, out retval);
+			int hresult = UXTheme.GetThemePartSize (hTheme, dc.GetHdc (), iPartId, iStateId, IntPtr.Zero, (int)type, out retval);
 			dc.ReleaseHdc ();
 
 			result = retval.ToSize ();

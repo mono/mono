@@ -1,5 +1,10 @@
 2008-06-10  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* UXTheme.cs, VisualStylesNative.cs: Fixed the type of a GetThemePartSize
+	parameter.
+
+2008-06-10  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* VisualStylesEngine.cs: Disabled VisualStylesGtkPlus until I fix it to
 	support older GTK+ versions.
 
