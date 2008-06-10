@@ -234,9 +234,10 @@ namespace Mono.CSharp {
 		public static void MarkSequencePoint (ILGenerator ig, Location loc)
 		{
 			if (symwriter != null) {
+				SourceFileEntry file = loc.SourceFile.SourceFileEntry;
 				int offset = symwriter.GetILOffset (ig);
 				symwriter.MarkSequencePoint (
-					offset, loc.File, loc.Row, loc.Column, loc.Hidden);
+					offset, file, loc.Row, loc.Column, loc.Hidden);
 			}
 		}
 

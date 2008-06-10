@@ -1,3 +1,7 @@
+2008-06-10  Martin Baulig  <martin@ximian.com>
+
+	* symbolwriter.cs: Reflect latest MarkSequencePoint() API changes.
+
 2008-06-09  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #316290
