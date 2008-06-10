@@ -1,3 +1,7 @@
+2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilderTest.cs: Added test for bug #399047.
+
 2008-05-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeBuilderTest.cs: Enabled test for bug #389171. Added and improved

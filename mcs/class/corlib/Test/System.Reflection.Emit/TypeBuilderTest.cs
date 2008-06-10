@@ -9495,6 +9495,52 @@ tb.DefineGenericParameters (new String[] { "T" });
 
 			Assert.IsTrue (tb.GetGenericArguments()[0] != t.GetGenericArguments()[0], "#1 TypeBuilder and create type arguments are diferent");
 		}
+
+		[Test] //bug #399047
+		public void FieldOnTypeBuilderInstDontInflateWhenEncoded () {
+				assembly = Thread.GetDomain ().DefineDynamicAssembly (new AssemblyName (ASSEMBLY_NAME), AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
+
+				module = assembly.DefineDynamicModule ("Instance.exe");
+  
+                TypeBuilder G = module.DefineType ("G", TypeAttributes.Public);
+                Type T = G.DefineGenericParameters ("T") [0];
+				ConstructorInfo ctor = G.DefineDefaultConstructor (MethodAttributes.Public);
+                Type GObj = G.MakeGenericType (new Type [] { T });
+
+                FieldBuilder F = G.DefineField ("F", T, FieldAttributes.Public);
+
+                TypeBuilder P = module.DefineType ("P", TypeAttributes.Public);
+
+                MethodBuilder Test = P.DefineMethod ("Test", MethodAttributes.Public);
+                Type TATest = Test.DefineGenericParameters ("TA") [0];
+                {
+                        Type TestGObj = G.MakeGenericType (new Type [] { TATest });
+
+                        ILGenerator il = Test.GetILGenerator ();
+
+                        il.Emit (OpCodes.Newobj, TypeBuilder.GetConstructor (TestGObj, ctor));
+                        il.Emit (OpCodes.Ldfld, TypeBuilder.GetField (TestGObj, F));
+                        il.Emit (OpCodes.Pop);
+
+                        il.Emit (OpCodes.Ret);
+                }
+
+ 				MethodBuilder main = P.DefineMethod ("Main", MethodAttributes.Public | MethodAttributes.Static);
+				{
+					ILGenerator il = main.GetILGenerator ();
+					il.Emit(OpCodes.Newobj, P.DefineDefaultConstructor (MethodAttributes.Public));
+					il.Emit(OpCodes.Call, Test.MakeGenericMethod (typeof (int)));
+					il.Emit (OpCodes.Ret);
+				}
+
+				assembly.SetEntryPoint (main);
+                G.CreateType ();
+                P.CreateType ();
+
+                assembly.Save ("Instance.exe");
+				Thread.GetDomain ().ExecuteAssembly(Path.GetTempPath () + Path.DirectorySeparatorChar + "Instance.exe");
+		}
+
 #endif
 
 		public interface IDelegateFactory
