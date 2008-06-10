@@ -1,5 +1,10 @@
 2008-06-10  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* VisualStylesEngine.cs: Disabled VisualStylesGtkPlus until I fix it to
+	support older GTK+ versions.
+
+2008-06-10  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* VisualStyleElement.cs: Added DateTimePicker part and state constants.
 
 2008-06-10  George Giolfan  <georgegiolfan@yahoo.com>

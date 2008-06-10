@@ -8,12 +8,12 @@ namespace System.Windows.Forms.VisualStyles
 		}
 		static IVisualStyles Initialize ()
 		{
-			if (
-#if !VISUAL_STYLES_USE_GTKPLUS_ON_WINDOWS
-				!VisualStylesNative.IsSupported () &&
-#endif
-				VisualStylesGtkPlus.Initialize ())
-				return new VisualStylesGtkPlus ();
+//            if (
+//#if !VISUAL_STYLES_USE_GTKPLUS_ON_WINDOWS
+//                !VisualStylesNative.IsSupported () &&
+//#endif
+//                VisualStylesGtkPlus.Initialize ())
+//                return new VisualStylesGtkPlus ();
 			return new VisualStylesNative ();
 		}
 	}
