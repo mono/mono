@@ -700,6 +700,7 @@
     <Compile Include="System.Web.UI.WebControls\MenuItemBindingCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\MenuItemCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\MenuItemStyle.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\MenuItemStyleCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\MenuItemTemplateContainer.cs" />
@@ -729,6 +730,7 @@
     <Compile Include="System.Web.UI.WebControls\PagerSettings.cs" />
     <Compile Include="System.Web.UI.WebControls\Panel.cs" />
     <Compile Include="System.Web.UI.WebControls\PanelStyle.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\Parameter.cs" />
     <Compile Include="System.Web.UI.WebControls\ParameterCollection.cs" />
@@ -790,6 +792,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\SubMenuStyle.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\SubMenuStyleCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\Table.cs" />
@@ -807,6 +810,7 @@
     <Compile Include="System.Web.UI.WebControls\TableRowCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\TableRowSection.cs" />
     <Compile Include="System.Web.UI.WebControls\TableSectionStyle.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\TableStyle.cs">
       <SubType>Component</SubType>
@@ -827,6 +831,7 @@
     <Compile Include="System.Web.UI.WebControls\TreeNodeEventHandler.cs" />
     <Compile Include="System.Web.UI.WebControls\TreeNodeSelectAction.cs" />
     <Compile Include="System.Web.UI.WebControls\TreeNodeStyle.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\TreeNodeStyleCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\TreeNodeTypes.cs" />
@@ -1153,8 +1158,8 @@
     <Compile Include="System.Web.Compilation\ExpressionBuilderContext.cs" />
     <Compile Include="System.Web.Compilation\ExpressionEditorAttribute.cs" />
     <Compile Include="System.Web.Compilation\ExpressionPrefixAttribute.cs" />
-    <Compile Include="System.Web.Compilation\ILocation.cs"/>
-    <Compile Include="System.Web.Compilation\IResourceProvider.cs"/>
+    <Compile Include="System.Web.Compilation\ILocation.cs" />
+    <Compile Include="System.Web.Compilation\IResourceProvider.cs" />
     <Compile Include="System.Web.Compilation\ResourceProviderFactory.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1272,6 +1277,7 @@
     <Compile Include="System.Web.UI\PageAsyncTask.cs" />
     <Compile Include="System.Web.UI\PageParser.jvm.cs" />
     <Compile Include="System.Web.UI\PageParserFilter.jvm.cs" />
+    <Compile Include="System.Web.UI\ReadOnlyDataSourceView.cs" />
     <Compile Include="System.Web.UI\RootBuilder.jvm.cs" />
     <Compile Include="System.Web.UI\SessionPageStatePersister.jvm.cs" />
     <Compile Include="System.Web.UI\SimpleWebHandlerParser.jvm.cs" />
