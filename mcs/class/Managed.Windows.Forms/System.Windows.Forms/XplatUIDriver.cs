@@ -116,6 +116,11 @@ namespace System.Windows.Forms {
 		internal virtual bool IsTitleBarGradientEnabled { get { return false; } }
 		internal virtual bool IsToolTipAnimationEnabled { get { return false; } }
 		internal virtual Size MenuBarButtonSize { get { return new Size (19, 19); } }
+		public virtual Size MenuButtonSize {
+			get {
+				return new Size(18, 18);
+			}
+		}
 		internal virtual int MenuShowDelay { get { return 0; } }
 		
 		internal virtual Keys ModifierKeys {

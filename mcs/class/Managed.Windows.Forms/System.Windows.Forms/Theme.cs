@@ -496,7 +496,7 @@ namespace System.Windows.Forms
 		
 		public virtual Size MenuButtonSize {
 			get {
-				return new Size(18, 18);
+				return XplatUI.MenuButtonSize;
 			}
 		}
 
@@ -1022,6 +1022,7 @@ namespace System.Windows.Forms
 		public abstract Size ManagedWindowButtonSize (InternalWindowManager wm);
 		public abstract void ManagedWindowSetButtonLocations (InternalWindowManager wm);
 		public abstract Rectangle ManagedWindowGetTitleBarIconArea (InternalWindowManager wm);
+		public abstract Size ManagedWindowGetMenuButtonSize (InternalWindowManager wm);
 		#endregion
 
 		#region	ControlPaint Methods

@@ -1,5 +1,14 @@
 2008-06-10  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* MdiWindowManager.cs: DrawMaximizedButtons now uses
+	ManagedWindowGetMenuButtonSize instead of ManagedWindowButtonSize.
+	* Theme.cs: Made MenuButtonSize platform dependent. Added
+	ManagedWindowButtonSize.
+	* ThemeWin32Classic.cs: Added ManagedWindowGetMenuButtonSize.
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIWin32.cs: Added MenuButtonSize.
+
+2008-06-10  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* DateTimePicker.cs, Theme.cs, ThemeVisualStyles.cs, ThemeWin32Classic.cs:
 	Added support for rendering with VisualStyles.
 

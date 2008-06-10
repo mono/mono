@@ -1189,6 +1189,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public override Size MenuButtonSize {
+			get {
+				return new Size (
+					Win32GetSystemMetrics (SystemMetrics.SM_CXMENUSIZE),
+					Win32GetSystemMetrics (SystemMetrics.SM_CYMENUSIZE));
+			}
+		}
+
 		internal override int MenuShowDelay {
 			get { return GetSystemParametersInfoInt (SPIAction.SPI_GETMENUSHOWDELAY); }
 		}

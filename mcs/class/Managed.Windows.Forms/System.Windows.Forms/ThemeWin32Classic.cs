@@ -6205,6 +6205,14 @@ namespace System.Windows.Forms
 			int bw = ManagedWindowBorderWidth (wm);
 			return new Rectangle (bw + 3, bw + 2, wm.IconWidth, wm.IconWidth);
 		}
+
+		public override Size ManagedWindowGetMenuButtonSize (InternalWindowManager wm)
+		{
+			Size result = SystemInformation.MenuButtonSize;
+			result.Width -= 2;
+			result.Height -= 4;
+			return result;
+		}
 		#endregion
 
 		#region ControlPaint

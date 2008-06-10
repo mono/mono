@@ -268,6 +268,13 @@ namespace System.Windows.Forms {
 		}
 
 		static public Size MenuBarButtonSize { get { return driver.MenuBarButtonSize; } }
+
+		public static Size MenuButtonSize {
+			get {
+				return driver.MenuButtonSize;
+			}
+		}
+
 		static public int MenuShowDelay { get { return driver.MenuShowDelay; } }
 		
 		static public Size MinimizedWindowSize {
