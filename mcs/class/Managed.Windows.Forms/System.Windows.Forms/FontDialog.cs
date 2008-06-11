@@ -995,18 +995,27 @@ namespace System.Windows.Forms
 			
 			internal_textbox_change = false;
 			
-			for (int i = 0; i < fontListBox.Items.Count; i++) {
-				string name = fontListBox.Items [i] as string;
-				
-				if (name.StartsWith(fontTextBox.Text)) {
-					if (name == fontTextBox.Text)
-						fontListBox.SelectedIndex = i;
-					else
-						fontListBox.TopIndex = i;
-					
-					break;
-				}
+			string search = fontTextBox.Text;
+			
+			// Look for an exact match
+			int found = fontListBox.FindStringExact (search);
+			
+			if (found != ListBox.NoMatches) {
+				fontListBox.SelectedIndex = found;
+				return;
 			}
+			
+			// Look for a partial match
+			found = fontListBox.FindString (search);
+			
+			if (found != ListBox.NoMatches) {
+				fontListBox.TopIndex = found;
+				return;
+			}
+
+			// No match, scroll to the top
+			if (fontListBox.Items.Count > 0)
+				fontListBox.TopIndex = 0;
 		}
 		
 		void OnFontStyleTextTextChanged (object sender, EventArgs e)
@@ -1015,17 +1024,12 @@ namespace System.Windows.Forms
 				return;
 			
 			internal_textbox_change = false;
-			
-			for (int i = 0; i < fontstyleListBox.Items.Count; i++) {
-				string name = fontstyleListBox.Items [i] as string;
-				
-				if (name.StartsWith(fontstyleTextBox.Text)) {
-					if (name == fontstyleTextBox.Text)
-						fontstyleListBox.SelectedIndex = i;
-					
-					break;
-				}
-			}
+
+			// Look for an exact match
+			int found = fontstyleListBox.FindStringExact (fontstyleTextBox.Text);
+
+			if (found != ListBox.NoMatches)
+				fontstyleListBox.SelectedIndex = found;
 		}
 		
 		void OnFontSizeTextBoxTextChanged (object sender, EventArgs e)

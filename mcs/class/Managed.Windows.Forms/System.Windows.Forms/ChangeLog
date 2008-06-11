@@ -1,3 +1,8 @@
+2008-06-11  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FontDialog.cs: Typing in the font/style textboxes should search
+	the list boxes case-insensitively.  [Fixes bug #398343]
+
 2008-06-11  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* ThemeWin32Classic.cs: Managed window title bar layout now uses actual
