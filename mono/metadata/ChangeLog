@@ -1,5 +1,10 @@
 2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetType): Release
+	memory on failure.
+
+2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* icall.c (ves_icall_System_Reflection_AssemblyName_ParseName): Release
 	memory on failure.
 
