@@ -134,9 +134,7 @@ namespace System.Xml {
 		static readonly string [] roundtripDateTimeFormats;
 		static readonly string [] localDateTimeFormats;
 		static readonly string [] utcDateTimeFormats;
-#if TARGET_JVM
 		static readonly string [] unspecifiedDateTimeFormats;
-#endif
 
 		static XmlConvert ()
 		{
@@ -144,20 +142,16 @@ namespace System.Xml {
 			roundtripDateTimeFormats = new string [l];
 			localDateTimeFormats = new string [l];
 			utcDateTimeFormats = new string [l];
-#if TARGET_JVM
 			unspecifiedDateTimeFormats = new string [l * 4];
-#endif
 			for (int i = 0; i < l; i++) {
 				string s = defaultDateTimeFormats [i];
 				localDateTimeFormats [i] = s + "zzz";
 				roundtripDateTimeFormats [i] = s + 'K';
 				utcDateTimeFormats [i] = s + 'Z';
-#if TARGET_JVM
 				unspecifiedDateTimeFormats [i * 4] = s;
 				unspecifiedDateTimeFormats [i * 4 + 1] = localDateTimeFormats [i];
 				unspecifiedDateTimeFormats [i * 4 + 2] = roundtripDateTimeFormats [i];
 				unspecifiedDateTimeFormats [i * 4 + 3] = utcDateTimeFormats [i];
-#endif
 			}
 		}
 #endif
@@ -350,9 +344,7 @@ namespace System.Xml {
 				dt = ToDateTime (value, utcDateTimeFormats);
 				return dt == DateTime.MinValue || dt == DateTime.MaxValue ? dt : dt.ToUniversalTime ();
 			case XmlDateTimeSerializationMode.Unspecified:
-#if TARGET_JVM
 				return ToDateTime (value, unspecifiedDateTimeFormats);
-#endif
 			default:
 				return ToDateTime (value, defaultDateTimeFormats);
 			}

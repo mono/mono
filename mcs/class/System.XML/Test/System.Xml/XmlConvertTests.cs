@@ -108,7 +108,7 @@ namespace MonoTests.System.Xml
 		}
 		
 		[Test]
-		public void ToDateTime ()//fails on Mono
+		public void ToDateTime ()
 		{
 			//dateTime
 			AssertEquals (632001798000000000L, XmlConvert.ToDateTime ("2003-09-26T13:30:00").Ticks);
@@ -628,13 +628,11 @@ namespace MonoTests.System.Xml
 			AssertType.AreEqual (DateTimeKind.Utc, XmlConvert.ToDateTime (s, XmlDateTimeSerializationMode.RoundtripKind).Kind, "#2-2");
 		}
 		
-#if TARGET_JVM
 		[Test]
-#endif
 		public void XmlDateTimeSerializationModeUnspecified ()
 		{
 			AssertEquals ("#1", 27, XmlConvert.ToString (new DateTime (DateTime.MaxValue.Ticks, DateTimeKind.Utc), XmlDateTimeSerializationMode.Unspecified).Length);
-			DateTime dt1 = XmlConvert.ToDateTime ("0001-02-03T10:20:30.0000+09:00", XmlDateTimeSerializationMode.Unspecified);
+			DateTime dt1 = XmlConvert.ToDateTime ("0001-02-03T10:20:30.0000+02:00", XmlDateTimeSerializationMode.Unspecified);
 			DateTime dt2 = XmlConvert.ToDateTime ("0001-02-03T10:20:30.0000", XmlDateTimeSerializationMode.Unspecified);
 			AssertEquals ("#2", false, dt1 == dt2);
 			XmlConvert.ToDateTime ("2006-05-30T09:48:32.0Z", XmlDateTimeSerializationMode.Unspecified);

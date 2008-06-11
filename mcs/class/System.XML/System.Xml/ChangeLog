@@ -1,3 +1,7 @@
+2008-06-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : no need for TARGET_JVM.
+
 2008-06-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextReader.cs : when Normalized is true, '<' after \r which
