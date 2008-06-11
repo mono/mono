@@ -155,6 +155,31 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (date.ToString (info.ShortDatePattern + " " + 
 				info.ShortTimePattern, culture), converter.ConvertToString (
 				null, culture, date));
+
+			CultureInfo ciUS = new CultureInfo("en-US");
+			CultureInfo ciGB = new CultureInfo("en-GB");
+			CultureInfo ciDE = new CultureInfo("de-DE");
+			//
+			date = new DateTime(2008, 12, 31, 23, 59, 58, 5);
+			DoTestToString("12/31/2008 11:59 PM", date, ciUS);
+			DoTestToString("31/12/2008 23:59", date, ciGB);
+			DoTestToString("31.12.2008 23:59", date, ciDE);
+			DoTestToString("12/31/2008 23:59:58", date, CultureInfo.InvariantCulture);
+			Assert.AreEqual("12/31/2008 23:59:58", converter.ConvertToInvariantString(date), "Invariant");
+			//
+			date = new DateTime(2008, 12, 31);
+			DoTestToString("12/31/2008", date, ciUS);
+			DoTestToString("31/12/2008", date, ciGB);
+			DoTestToString("31.12.2008", date, ciDE);
+			DoTestToString("2008-12-31", date, CultureInfo.InvariantCulture);
+			Assert.AreEqual("2008-12-31", converter.ConvertToInvariantString(date), "Invariant");
+		}
+		private void DoTestToString(String expected, DateTime value, CultureInfo ci)
+		{
+			String message = ci.Name;
+			if (message == null || message.Length == 0)
+				message = "?Invariant";
+			Assert.AreEqual(expected, converter.ConvertTo(null, ci, value, typeof(String)), message);
 		}
 
 		[Test]

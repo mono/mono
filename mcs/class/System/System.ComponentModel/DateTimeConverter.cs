@@ -92,7 +92,7 @@ namespace System.ComponentModel
 
 					if (culture == CultureInfo.InvariantCulture) {
 						if (datetime.Equals (datetime.Date)) {
-							return datetime.ToString ("yyyy-mm-dd", culture);
+							return datetime.ToString ("yyyy-MM-dd", culture);
 						}
 						return datetime.ToString (culture);
 					} else {

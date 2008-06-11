@@ -1,3 +1,7 @@
+2008-06-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeConverterTest.cs : test for bug #396649 by Andy Hume.
+
 2008-05-30  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TypeDescriptorTests.cs: Fix the attributes test on the 1.1 profile.

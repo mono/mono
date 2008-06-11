@@ -1,3 +1,8 @@
+2008-06-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeConverter.cs : use MM for month instead of mm.
+	  Fixed bug #396649, patch by Andy Hume.
+
 2008-06-02  Dick Porter  <dick@ximian.com>
 
 	* Win32Exception.cs: Turn W32ErrorMessage into an icall so it can
