@@ -1,5 +1,9 @@
 2008-06-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlConvert.cs : fixed bug #397934. Utc mode accepts more formats.
+
+2008-06-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlConvert.cs : no need for TARGET_JVM.
 
 2008-06-09  Atsushi Enomoto  <atsushi@ximian.com>

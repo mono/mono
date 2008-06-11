@@ -141,13 +141,15 @@ namespace System.Xml {
 			int l = defaultDateTimeFormats.Length;
 			roundtripDateTimeFormats = new string [l];
 			localDateTimeFormats = new string [l];
-			utcDateTimeFormats = new string [l];
+			utcDateTimeFormats = new string [l * 3];
 			unspecifiedDateTimeFormats = new string [l * 4];
 			for (int i = 0; i < l; i++) {
 				string s = defaultDateTimeFormats [i];
 				localDateTimeFormats [i] = s + "zzz";
 				roundtripDateTimeFormats [i] = s + 'K';
-				utcDateTimeFormats [i] = s + 'Z';
+				utcDateTimeFormats [i * 3] = s;
+				utcDateTimeFormats [i * 3 + 1] = s + 'Z';
+				utcDateTimeFormats [i * 3 + 2] = s + "zzz";
 				unspecifiedDateTimeFormats [i * 4] = s;
 				unspecifiedDateTimeFormats [i * 4 + 1] = localDateTimeFormats [i];
 				unspecifiedDateTimeFormats [i * 4 + 2] = roundtripDateTimeFormats [i];

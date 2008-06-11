@@ -1,5 +1,9 @@
 2008-06-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlConvertTests.cs : added test for bug #397934
+
+2008-06-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlConvertTests.cs : no need for TARGET_JVM. Fix wrong comparison.
 
 2008-06-09  Atsushi Enomoto  <atsushi@ximian.com>

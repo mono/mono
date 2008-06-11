@@ -639,6 +639,18 @@ namespace MonoTests.System.Xml
 			string format = "yyyy-MM-ddTHH:mm:ss.FFFFFFFK";
 			XmlConvert.ToDateTime (XmlConvert.ToString (DateTime.UtcNow, format), XmlDateTimeSerializationMode.Unspecified);
 		}
+		
+		[Test]
+		public void XmlDateTimeSerializationModeUtc ()
+		{
+			AssertEquals ("#1", 27, XmlConvert.ToString (new DateTime (DateTime.MaxValue.Ticks, DateTimeKind.Utc), XmlDateTimeSerializationMode.Unspecified).Length);
+			DateTime dt1 = XmlConvert.ToDateTime ("0001-02-03T10:20:30.0000+02:00", XmlDateTimeSerializationMode.Utc);
+			DateTime dt2 = XmlConvert.ToDateTime ("0001-02-03T10:20:30.0000", XmlDateTimeSerializationMode.Utc);
+			AssertEquals ("#2", false, dt1 == dt2);
+			XmlConvert.ToDateTime ("2006-05-30T09:48:32.0Z", XmlDateTimeSerializationMode.Utc);
+			XmlConvert.ToDateTime ("2006-05-30T09:48:32.0+02:00", XmlDateTimeSerializationMode.Utc);
+			XmlConvert.ToDateTime ("2008-06-11T11:09:47.125Z", XmlDateTimeSerializationMode.Utc);
+		}
 
 		[Test]
 		public void XmlDateTimeSerializationModeSeveralFormats ()
