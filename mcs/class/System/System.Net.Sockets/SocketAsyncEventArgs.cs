@@ -193,6 +193,8 @@ namespace System.Net.Sockets
 					curSocket.Connect (RemoteEndPoint);
 					curSocket.Connected = true;
 				}
+			} catch (SocketException se){
+				error = se.SocketErrorCode;
 			} finally {
 				SocketError = error;
 				OnCompleted (this);
