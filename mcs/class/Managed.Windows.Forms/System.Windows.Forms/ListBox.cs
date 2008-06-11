@@ -1756,6 +1756,7 @@ namespace System.Windows.Forms
 				break;
 
 			case SelectionMode.None:
+				break;
 			default:
 				return;
 			}
@@ -1784,6 +1785,7 @@ namespace System.Windows.Forms
 				break;
 
 			case SelectionMode.None:
+				break;
 			default:
 				return;
 			}

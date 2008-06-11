@@ -1,5 +1,12 @@
 2008-06-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListBox.cs: When SelectionMode is None, clicking an item should move focus
+	as well as generating a SelectedIndexChanged event, just like .Net does
+	-surprise-.
+	Fixes #398345.
+
+2008-06-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListBox.cs: When navigating items visually, use FocusedItem as the
 	reference point instead of SelectedIndex, since even in
 	SelectionMode.None we need to support navigation, and in that case we
