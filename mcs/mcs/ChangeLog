@@ -1,5 +1,12 @@
 2008-06-11  Martin Baulig  <martin@ximian.com>
 
+	* location.cs
+	(Location.LookupFile): Add `CompilationUnit' argument; when given
+	a relative file name, make it relative to the directory the .cs
+	file is located in instead of using the current directory.
+
+2008-06-11  Martin Baulig  <martin@ximian.com>
+
 	* class.cs
 	(IMethodData.EmitExtraSymbolInfo): Added `SourceMethod' argument.
 	(MethodOrOperator.EmitExtraSymbolInfo): Likewise.

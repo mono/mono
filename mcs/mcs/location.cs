@@ -236,9 +236,14 @@ namespace Mono.CSharp {
 		// <remarks>
 		//   This is used when we encounter a #line preprocessing directive.
 		// </remarks>
-		static public SourceFile LookupFile (string name)
+		static public SourceFile LookupFile (CompilationUnit comp_unit, string name)
 		{
-			string path = name.Length == 0 ? string.Empty : Path.GetFullPath (name);
+			string path;
+			if (!Path.IsPathRooted (name)) {
+				string root = Path.GetDirectoryName (comp_unit.Path);
+				path = Path.Combine (root, name);
+			} else
+				path = name;
 
 			if (!source_files.Contains (path)) {
 				if (source_count >= (1 << checkpoint_bits))
