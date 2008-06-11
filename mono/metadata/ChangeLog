@@ -1,5 +1,9 @@
 2008-06-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* assembly.c (mono_assembly_load_from_full): Call 
+	mono_assembly_load_friends () outside the assemblies lock, since it can
+	acquire the loader lock. Fixes #323696.
+
 	* reflection.c (resolve_object): Inflate the inst with the context for
 	FieldOnTypeBuilderInst. Fixes #399010.
 
