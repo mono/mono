@@ -57,21 +57,21 @@ namespace Mono.Mozilla.DOM
 		#endregion
 
 		#region IAttribute Members
-		public string Name
-		{
-			get
-			{
+		public string Name {
+			get {
 				this.attribute.getName (storage);
 				return Base.StringGet (storage);
 			}
 		}
 
-		public new string Value
-		{
-			get
-			{
+		public new string Value {
+			get {
 				this.attribute.getValue (storage);
 				return Base.StringGet (storage);
+			}
+			set {
+				Base.StringSet (storage, value);
+				this.attribute.setValue (storage);
 			}
 		}
 		#endregion

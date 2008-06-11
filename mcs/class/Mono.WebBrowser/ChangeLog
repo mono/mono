@@ -1,3 +1,7 @@
+2008-06-11  Andreia Gaita <avidigal@novell.com> 
+
+	* Mono.Mozilla/DOM/Attribute.cs: Fix missing setter
+
 2008-06-10  Andreia Gaita <avidigal@novell.com> 
 
 	* Assembly/AssemblyInfo.cs: Version bump
