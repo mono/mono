@@ -44,37 +44,12 @@ TEST_MONO_PATH = .
 
 EXTRA_DISTFILES = \
 	TODO					\
-	Test/System.Data/region.xml		\
-	Test/System.Data/store.xsd		\
-	Test/System.Data/own_schema.xsd		\
-	Test/System.Xml/2books.xml		\
-	Test/System.Xml/region.xml		\
-	Test/System.Xml/region.xsd		\
-	Test/System.Xml/store.xsd		\
-	Test/System.Data/schemas/bug77248.xsd	\
+	$(wildcard Test/System.Data/*.xml)		\
+	$(wildcard Test/System.Data/*.xsd)		\
+	$(wildcard Test/System.Xml/*.xml)		\
+	$(wildcard Test/System.Xml/*.xsd)		\
 	Test/System.Data/schemas/ChangeLog	\
-	Test/System.Data/schemas/test001.xsd	\
-	Test/System.Data/schemas/test002.xsd	\
-	Test/System.Data/schemas/test003.xsd	\
-	Test/System.Data/schemas/test004.xsd	\
-	Test/System.Data/schemas/test005.xsd	\
-	Test/System.Data/schemas/test006.xsd	\
-	Test/System.Data/schemas/test007.xsd	\
-	Test/System.Data/schemas/test008.xsd	\
-	Test/System.Data/schemas/test009.xsd	\
-	Test/System.Data/schemas/test010.xsd	\
-	Test/System.Data/schemas/test011.xsd	\
-	Test/System.Data/schemas/test012.xsd	\
-	Test/System.Data/schemas/test013.xsd	\
-	Test/System.Data/schemas/test014.xsd	\
-	Test/System.Data/schemas/test015.xsd	\
-	Test/System.Data/schemas/test016.xsd	\
-	Test/System.Data/schemas/test017.xsd	\
-	Test/System.Data/schemas/test101.xsd	\
-	Test/System.Data/schemas/test102.xsd	\
-	Test/System.Data/schemas/test103.xsd	\
-	Test/System.Data/schemas/Items.xsd	\
-	Test/System.Data/TypedDataSet.xml	\
+	$(wildcard Test/System.Data/schemas/*.xsd)		\
 	Mono.Data.SqlExpressions/Parser.jay	\
 	app_test_2.0.config			\
 	Test/System.Data/binserialize/*.bin

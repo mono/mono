@@ -1,3 +1,8 @@
+2008-06-11  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: fix EXTRA_DISTFILES to include all needed
+	xsd and xml files.
+
 2008-05-30  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: More extra dist files.
