@@ -60,7 +60,7 @@ namespace Mono.ILASM {
 		}
 	}
 
-	public class SourceMethod : ISourceMethod
+	public class SourceMethod : IMethodDef
 	{
 		CompileUnitEntry file;
 		MethodDef method;
@@ -79,10 +79,6 @@ namespace Mono.ILASM {
 
 		public string Name {
 			get { return method.Name; }
-		}
-
-		public int NamespaceID {
-			get { return 0; }
 		}
 
 		public int Token {
