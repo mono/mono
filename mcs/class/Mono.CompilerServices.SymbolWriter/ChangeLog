@@ -1,5 +1,10 @@
 2008-06-11  Martin Baulig  <martin@ximian.com>
 
+	* SymbolWriterImpl.cs: Put this back and make it work with the
+	current symbol writer.
+
+2008-06-11  Martin Baulig  <martin@ximian.com>
+
 	* MonoSymbolWriter.cs
 	(MonoSymbolWriter.OpenMethod): Maintain a method stack, so we can
 	now recursively call OpenMethod().
