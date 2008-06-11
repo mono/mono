@@ -1,5 +1,7 @@
 2008-06-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* threads.c (mono_thread_get_stack_bounds): Align the stack in all cases.
+	
 	* threads.c (mono_thread_get_stack_bounds): Align the stack address to
 	a page boundary. Fixes #396219.
 
