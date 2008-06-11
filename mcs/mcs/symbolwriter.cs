@@ -84,10 +84,13 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public static void OpenMethod (ICompileUnit file, int ns_id, IMethodDef method)
+		public static SourceMethodBuilder OpenMethod (ICompileUnit file, int ns_id,
+							      IMethodDef method)
 		{
 			if (symwriter != null)
-				symwriter.OpenMethod (file, ns_id, method);
+				return symwriter.OpenMethod (file, ns_id, method);
+			else
+				return null;
 		}
 
 		public static void CloseMethod ()
@@ -168,18 +171,6 @@ namespace Mono.CSharp {
 		{
 			if (symwriter != null)
 				symwriter.DefineCapturedScope (scope_id, id, captured_name);
-		}
-
-		public static void SetRealMethodName (string name)
-		{
-			if (symwriter != null)
-				symwriter.SetRealMethodName (name);
-		}
-
-		public static void SetCompilerGenerated ()
-		{
-			if (symwriter != null)
-				symwriter.SetCompilerGenerated ();
 		}
 
 		public static void OpenCompilerGeneratedBlock (ILGenerator ig)

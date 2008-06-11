@@ -4138,7 +4138,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public virtual void EmitExtraSymbolInfo ()
+		public virtual void EmitExtraSymbolInfo (SourceMethod source)
 		{ }
 
 		#endregion
@@ -4148,26 +4148,27 @@ namespace Mono.CSharp {
 	public class SourceMethod : IMethodDef
 	{
 		DeclSpace parent;
-		MethodBase builder;
+		MethodBase method;
+		SourceMethodBuilder builder;
 
-		protected SourceMethod (DeclSpace parent, MethodBase builder, ICompileUnit file)
+		protected SourceMethod (DeclSpace parent, MethodBase method, ICompileUnit file)
 		{
 			this.parent = parent;
-			this.builder = builder;
+			this.method = method;
 			
-			SymbolWriter.OpenMethod (file, parent.NamespaceEntry.SymbolFileID, this);
+			builder = SymbolWriter.OpenMethod (file, parent.NamespaceEntry.SymbolFileID, this);
 		}
 
 		public string Name {
-			get { return builder.Name; }
+			get { return method.Name; }
 		}
 
 		public int Token {
 			get {
-				if (builder is MethodBuilder)
-					return ((MethodBuilder) builder).GetToken ().Token;
-				else if (builder is ConstructorBuilder)
-					return ((ConstructorBuilder) builder).GetToken ().Token;
+				if (method is MethodBuilder)
+					return ((MethodBuilder) method).GetToken ().Token;
+				else if (method is ConstructorBuilder)
+					return ((ConstructorBuilder) method).GetToken ().Token;
 				else
 					throw new NotSupportedException ();
 			}
@@ -4178,7 +4179,19 @@ namespace Mono.CSharp {
 			SymbolWriter.CloseMethod ();
 		}
 
-		public static SourceMethod Create (DeclSpace parent, MethodBase builder, Block block)
+		public void SetCompilerGenerated ()
+		{
+			if (builder != null)
+				builder.SetCompilerGenerated ();
+		}
+
+		public void SetRealMethodName (string name)
+		{
+			if (builder != null)
+				builder.SetRealMethodName (name);
+		}
+
+		public static SourceMethod Create (DeclSpace parent, MethodBase method, Block block)
 		{
 			if (!SymbolWriter.HasSymbolWriter)
 				return null;
@@ -4193,7 +4206,7 @@ namespace Mono.CSharp {
 			if (compile_unit == null)
 				return null;
 
-			return new SourceMethod (parent, builder, compile_unit);
+			return new SourceMethod (parent, method, compile_unit);
 		}
 	}
 
@@ -5012,7 +5025,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		void IMethodData.EmitExtraSymbolInfo ()
+		void IMethodData.EmitExtraSymbolInfo (SourceMethod source)
 		{ }
 
 		#endregion
@@ -5041,7 +5054,7 @@ namespace Mono.CSharp {
 		bool IsExcluded ();
 		bool IsClsComplianceRequired ();
 		void SetMemberIsUsed ();
-		void EmitExtraSymbolInfo ();
+		void EmitExtraSymbolInfo (SourceMethod source);
 	}
 
 	//
@@ -5335,9 +5348,9 @@ namespace Mono.CSharp {
 				ec.EmitTopBlock (method, block);
 
 			if (source != null) {
-				method.EmitExtraSymbolInfo ();
+				method.EmitExtraSymbolInfo (source);
 				if (method.Iterator != null)
-					SymbolWriter.SetCompilerGenerated ();
+					source.SetCompilerGenerated ();
 				source.CloseMethod ();
 			}
 		}
@@ -6303,7 +6316,7 @@ namespace Mono.CSharp {
 			get { throw new InvalidOperationException ("Unexpected attempt to get doc comment from " + this.GetType () + "."); }
 		}
 
-		void IMethodData.EmitExtraSymbolInfo ()
+		void IMethodData.EmitExtraSymbolInfo (SourceMethod source)
 		{ }
 	}
 

@@ -1751,9 +1751,9 @@ namespace Mono.CSharp {
 				return aec;
 			}
 
-			public override void EmitExtraSymbolInfo ()
+			public override void EmitExtraSymbolInfo (SourceMethod source)
 			{
-				SymbolWriter.SetRealMethodName (RealName);
+				source.SetRealMethodName (RealName);
 			}
 		}
 	}

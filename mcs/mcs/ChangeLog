@@ -1,3 +1,11 @@
+2008-06-11  Martin Baulig  <martin@ximian.com>
+
+	* class.cs
+	(IMethodData.EmitExtraSymbolInfo): Added `SourceMethod' argument.
+	(MethodOrOperator.EmitExtraSymbolInfo): Likewise.
+	(SourceMethod.SetRealMethodName): Moved here from the symbol writer.
+	(SourceMethod.SetCompilerGenerated): Likewise.
+
 2008-06-11  Marek Safar  <marek.safar@gmail.com>
 
 	* codegen.cs, driver: Only write symbol file when it's asked for.

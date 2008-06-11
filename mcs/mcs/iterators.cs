@@ -402,9 +402,9 @@ namespace Mono.CSharp {
 				return ec;
 			}
 
-			public override void EmitExtraSymbolInfo ()
+			public override void EmitExtraSymbolInfo (SourceMethod source)
 			{
-				SymbolWriter.SetCompilerGenerated ();
+				source.SetCompilerGenerated ();
 			}
 
 			protected class GetEnumeratorStatement : Statement
@@ -455,8 +455,6 @@ namespace Mono.CSharp {
 					ILGenerator ig = ec.ig;
 					Label label_init = ig.DefineLabel ();
 
-					SymbolWriter.SetCompilerGenerated ();
-
 					ig.Emit (OpCodes.Ldarg_0);
 					ig.Emit (OpCodes.Ldflda, host.PC.FieldBuilder);
 					ig.Emit (OpCodes.Ldc_I4, (int) Iterator.State.Start);
@@ -506,9 +504,9 @@ namespace Mono.CSharp {
 				return ec;
 			}
 
-			public override void EmitExtraSymbolInfo ()
+			public override void EmitExtraSymbolInfo (SourceMethod source)
 			{
-				SymbolWriter.SetCompilerGenerated ();
+				source.SetCompilerGenerated ();
 			}
 
 			protected class DisposeMethodStatement : Statement
@@ -595,7 +593,6 @@ namespace Mono.CSharp {
 			protected override void DoEmit (EmitContext ec)
 			{
 				ILGenerator ig = ec.ig;
-				SymbolWriter.SetCompilerGenerated ();
 
 				ig.Emit (OpCodes.Ldarg_0);
 				ig.Emit (OpCodes.Ldfld, host.CurrentField.FieldBuilder);
