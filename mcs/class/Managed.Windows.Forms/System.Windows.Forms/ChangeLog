@@ -1,3 +1,8 @@
+2008-06-11  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* ThemeWin32Classic.cs: Managed window title bar layout now uses actual
+	widths of icon and buttons instead of hard coded values.
+
 2008-06-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBox.cs: When SelectionMode is None, clicking an item should move focus

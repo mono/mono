@@ -6138,10 +6138,20 @@ namespace System.Windows.Forms
 					tbheight + bdwidth - 1, form.Width - bdwidth - 1,
 					tbheight + bdwidth - 1);
 
-			if (!wm.IsToolWindow) {
-				tb.X += 18; // Room for the icon and the buttons
-				tb.Width = (form.Width - 62) - tb.X;
+			if (wm.ShowIcon) {
+				Rectangle icon = ManagedWindowGetTitleBarIconArea (wm);
+				if (icon.IntersectsWith (clip))
+					dc.DrawIcon (form.Icon, icon);
+				const int SpacingBetweenIconAndCaption = 2;
+				tb.Width -= icon.Right + SpacingBetweenIconAndCaption - tb.X ;
+				tb.X = icon.Right + SpacingBetweenIconAndCaption;
 			}
+			
+			foreach (TitleButton button in wm.TitleButtons.AllButtons) {
+				tb.Width -= Math.Max (0, tb.Right - DrawTitleButton (dc, button, clip));
+			}
+			const int SpacingBetweenCaptionAndLeftMostButton = 3;
+			tb.Width -= SpacingBetweenCaptionAndLeftMostButton;
 
 			string window_caption = form.Text;
 			window_caption = window_caption.Replace (Environment.NewLine, string.Empty);
@@ -6156,16 +6166,6 @@ namespace System.Windows.Forms
 					dc.DrawString (window_caption, WindowBorderFont,
 						ThemeEngine.Current.ResPool.GetSolidBrush (Color.White),
 						tb, format);
-			}
-
-			if (wm.ShowIcon) {
-				Rectangle icon = ManagedWindowGetTitleBarIconArea (wm);
-				if (icon.IntersectsWith (clip))
-					dc.DrawIcon (form.Icon, icon);
-			}
-			
-			foreach (TitleButton button in wm.TitleButtons.AllButtons) {
-				DrawTitleButton (dc, button, clip);
 			}
 		}
 
@@ -6185,19 +6185,19 @@ namespace System.Windows.Forms
 					height - 5);
 		}
 
-		private void DrawTitleButton (Graphics dc, TitleButton button, Rectangle clip)
+		private int DrawTitleButton (Graphics dc, TitleButton button, Rectangle clip)
 		{
 			if (!button.Visible) {
-				return;
+				return int.MaxValue;
 			}
 			
-			if (!button.Rectangle.IntersectsWith (clip))
-				return;
+			if (button.Rectangle.IntersectsWith (clip)) {
+				dc.FillRectangle (SystemBrushes.Control, button.Rectangle);
 
-			dc.FillRectangle (SystemBrushes.Control, button.Rectangle);
-
-			ControlPaint.DrawCaptionButton (dc, button.Rectangle,
-					button.Caption, button.State);
+				ControlPaint.DrawCaptionButton (dc, button.Rectangle,
+						button.Caption, button.State);
+			}
+			return button.Rectangle.Left;
 		}
 
 		public override Rectangle ManagedWindowGetTitleBarIconArea (InternalWindowManager wm)
