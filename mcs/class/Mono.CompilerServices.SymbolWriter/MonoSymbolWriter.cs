@@ -146,16 +146,6 @@ namespace Mono.CompilerServices.SymbolWriter
 			return builder;
 		}
 
-		public void SetRealMethodName (string name)
-		{
-			current_method.RealMethodName = name;
-		}
-
-		public void SetCompilerGenerated ()
-		{
-			current_method.SetCompilerGenerated ();
-		}
-
 		public void CloseMethod ()
 		{
 			current_method = null;
@@ -391,7 +381,11 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		public string RealMethodName {
 			get { return _real_name; }
-			set { _real_name = value; }
+		}
+
+		public void SetRealMethodName (string name)
+		{
+			_real_name = name;
 		}
 
 		public void SetCompilerGenerated ()

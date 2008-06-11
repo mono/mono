@@ -1,6 +1,13 @@
 2008-06-11  Martin Baulig  <martin@ximian.com>
 
 	* MonoSymbolWriter.cs
+	(MonoSymbolWriter.SetRealMethodName): Removed, call it on the
+	`SourceMethodBuilder'.
+	(MonoSymbolWriter.SetCompilerGenerated): Likewise.
+
+2008-06-11  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolWriter.cs
 	(ISourceMethod): Renamed to `IMethodDef'.
 	(SourceMethodBuilder): New public class.
 	(MonoSymbolWriter.OpenMethod): Added `int ns_id' argument and
