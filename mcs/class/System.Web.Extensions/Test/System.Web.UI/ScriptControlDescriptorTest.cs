@@ -72,6 +72,7 @@ namespace Tests.System.Web.UI
 			ScriptControlDescriptor scd = new ScriptControlDescriptor ("My.Type", String.Empty);
 		}
 
+		[Category("NotWorking")] // One must not depend on the order of keys in dictionary
 		[Test]
 		public void ScriptControlDescriptor_AddComponentProperty () {
 			PokerScriptControlDescriptor scd = new PokerScriptControlDescriptor ("My.Type", "Element1");
@@ -86,6 +87,7 @@ namespace Tests.System.Web.UI
 #endif
 		}
 
+		[Category("NotWorking")] // One must not depend on the order of keys in dictionary
 		[Test]
 		public void ScriptControlDescriptor_AddElementProperty () {
 			PokerScriptControlDescriptor scd = new PokerScriptControlDescriptor ("My.Type", "Element1");
@@ -100,6 +102,7 @@ namespace Tests.System.Web.UI
 #endif
 		}
 
+		[Category("NotWorking")] // One must not depend on the order of keys in dictionary
 		[Test]
 		public void ScriptControlDescriptor_AddProperty () {
 			PokerScriptControlDescriptor scd = new PokerScriptControlDescriptor ("My.Type", "Element1");
@@ -114,6 +117,7 @@ namespace Tests.System.Web.UI
 #endif
 		}
 
+		[Category("NotWorking")] // One must not depend on the order of keys in dictionary
 		[Test]
 		public void ScriptControlDescriptor_AddProperty_Null () {
 			PokerScriptControlDescriptor scd = new PokerScriptControlDescriptor ("My.Type", "Element1");
@@ -128,6 +132,7 @@ namespace Tests.System.Web.UI
 #endif
 		}
 
+		[Category("NotWorking")] // One must not depend on the order of keys in dictionary
 		[Test]
 		public void ScriptControlDescriptor_AddEvent () {
 			PokerScriptControlDescriptor scd = new PokerScriptControlDescriptor ("My.Type", "Element1");
@@ -142,6 +147,7 @@ namespace Tests.System.Web.UI
 #endif
 		}
 
+		[Category("NotWorking")] // One must not depend on the order of keys in dictionary
 		[Test]
 		public void ScriptControlDescriptor_AddScriptProperty () {
 			PokerScriptControlDescriptor scd = new PokerScriptControlDescriptor ("My.Type", "Element1");

@@ -73,6 +73,7 @@ namespace Tests.System.Web.UI
 			ScriptBehaviorDescriptor scd = new ScriptBehaviorDescriptor ("My.Type", String.Empty);
 		}
 
+		[Category("NotWorking")] // One must not depend on the order of keys in dictionary
 		[Test]
 		public void ScriptBehaviorDescriptor_AddComponentProperty () {
 			PokerScriptBehaviorDescriptor scd = new PokerScriptBehaviorDescriptor ("My.Type", "Element1");
@@ -87,6 +88,7 @@ namespace Tests.System.Web.UI
 #endif
 		}
 
+		[Category("NotWorking")] // One must not depend on the order of keys in dictionary
 		[Test]
 		public void ScriptBehaviorDescriptor_AddElementProperty () {
 			PokerScriptBehaviorDescriptor scd = new PokerScriptBehaviorDescriptor ("My.Type", "Element1");
@@ -101,6 +103,7 @@ namespace Tests.System.Web.UI
 #endif
 		}
 
+		[Category("NotWorking")] // One must not depend on the order of keys in dictionary
 		[Test]
 		public void ScriptBehaviorDescriptor_AddProperty () {
 			PokerScriptBehaviorDescriptor scd = new PokerScriptBehaviorDescriptor ("My.Type", "Element1");
@@ -115,6 +118,7 @@ namespace Tests.System.Web.UI
 #endif
 		}
 
+		[Category("NotWorking")] // One must not depend on the order of keys in dictionary
 		[Test]
 		public void ScriptBehaviorDescriptor_AddProperty_Null () {
 			PokerScriptBehaviorDescriptor scd = new PokerScriptBehaviorDescriptor ("My.Type", "Element1");
@@ -129,6 +133,7 @@ namespace Tests.System.Web.UI
 #endif
 		}
 
+		[Category("NotWorking")] // One must not depend on the order of keys in dictionary
 		[Test]
 		public void ScriptBehaviorDescriptor_AddEvent () {
 			PokerScriptBehaviorDescriptor scd = new PokerScriptBehaviorDescriptor ("My.Type", "Element1");
@@ -143,6 +148,7 @@ namespace Tests.System.Web.UI
 #endif
 		}
 
+		[Category("NotWorking")] // One must not depend on the order of keys in dictionary
 		[Test]
 		public void ScriptBehaviorDescriptor_AddScriptProperty () {
 			PokerScriptBehaviorDescriptor scd = new PokerScriptBehaviorDescriptor ("My.Type", "Element1");

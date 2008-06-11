@@ -1,3 +1,10 @@
+2008-06-11  Marek Habersack  <mhabersack@novell.com>
+
+	* Test/System.Web.UI/ScriptBehaviorDescriptorTest.cs,
+	Test/System.Web.UI/ScriptComponentDescriptorTest.cs,
+	Test/System.Web.UI/ScriptControlDescriptorTest.cs: disabled
+	tests relying on the Dictionary keys order.
+
 2008-05-07  Marek Habersack  <mhabersack@novell.com>
 
 	* ChangeLog: added and moved entries from ../ChaneLog to here.
