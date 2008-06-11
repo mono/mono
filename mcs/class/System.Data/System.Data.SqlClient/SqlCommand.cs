@@ -397,6 +397,8 @@ namespace System.Data.SqlClient {
 			}
 			reader.Close ();
 
+			if (parameters.Count == 0)
+				throw new InvalidOperationException ("Stored procedure '" + procName + "' does not exist.");
 		}
 
 		private void Execute (CommandBehavior behavior, bool wantResults)

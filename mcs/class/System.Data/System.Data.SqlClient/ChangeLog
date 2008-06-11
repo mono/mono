@@ -1,3 +1,12 @@
+2008-06-12  Marek Habersack  <mhabersack@novell.com>
+
+	* SqlParameterCollection.cs: this [int] must check the range and
+	throw an exception if necessary.
+	
+	* SqlCommand.cs: throw IOEX when stored procedure is not found in
+	DeriveParameters. All procedures in MS SQL will report at least
+	one parameter - the return value.
+
 2008-06-10  Veerapuram Varadhan  <vvaradhan@novell.com>
 	
 	* SqlConnection.cs: TdsConnectionPool.GetConnectionPool() now returns 

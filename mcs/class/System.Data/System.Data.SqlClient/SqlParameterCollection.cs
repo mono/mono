@@ -148,8 +148,16 @@ namespace System.Data.SqlClient
 		new
 #endif // NET_2_0
 		SqlParameter this [int index] {
-			get { return (SqlParameter) list [index]; }
-			set { list [index] = (SqlParameter) value; }
+			get {
+				if (index < 0 || index >= list.Count)
+					throw new IndexOutOfRangeException ("The specified index is out of range.");
+				return (SqlParameter) list [index];
+			}
+			set {
+				if (index < 0 || index >= list.Count)
+					throw new IndexOutOfRangeException ("The specified index is out of range.");
+				list [index] = (SqlParameter) value;
+			}
 		}
 
 		[Browsable (false)]
