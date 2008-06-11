@@ -1,5 +1,11 @@
 2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* assembly.c (build_assembly_name): Release memory on failure.
+
+	* assembly.c (mono_assembly_name_parse_full): Release memory on failure.
+
+2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetType): Release
 	memory on failure.
 
