@@ -84,10 +84,10 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public static void OpenMethod (ICompileUnit file, ISourceMethod method)
+		public static void OpenMethod (ICompileUnit file, int ns_id, IMethodDef method)
 		{
 			if (symwriter != null)
-				symwriter.OpenMethod (file, method);
+				symwriter.OpenMethod (file, ns_id, method);
 		}
 
 		public static void CloseMethod ()

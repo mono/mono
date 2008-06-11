@@ -4145,7 +4145,7 @@ namespace Mono.CSharp {
 
 	}
 
-	public class SourceMethod : ISourceMethod
+	public class SourceMethod : IMethodDef
 	{
 		DeclSpace parent;
 		MethodBase builder;
@@ -4155,15 +4155,11 @@ namespace Mono.CSharp {
 			this.parent = parent;
 			this.builder = builder;
 			
-			SymbolWriter.OpenMethod (file, this);
+			SymbolWriter.OpenMethod (file, parent.NamespaceEntry.SymbolFileID, this);
 		}
 
 		public string Name {
 			get { return builder.Name; }
-		}
-
-		public int NamespaceID {
-			get { return parent.NamespaceEntry.SymbolFileID; }
 		}
 
 		public int Token {
