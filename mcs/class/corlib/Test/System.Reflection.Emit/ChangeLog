@@ -1,3 +1,8 @@
+2008-06-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeBuilderTest.cs (GetField): Add a test for calling GetField on an
+	open generic type.
+
 2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilderTest.cs: Added test for bug #399047.

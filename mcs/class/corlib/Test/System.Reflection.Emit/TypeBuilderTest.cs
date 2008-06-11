@@ -9454,11 +9454,24 @@ namespace MonoTests.System.Reflection.Emit
 			ilgen.Emit (OpCodes.Ldfld, fi2);
 			ilgen.Emit (OpCodes.Ret);
 
+			// Check GetField on a type instantiated with type parameters
+			Type t3 = tb.MakeGenericType (typeParams [0]);
+			FieldBuilder fb3 = tb.DefineField ("field3", typeParams [0], FieldAttributes.Public);
+			FieldInfo fi3 = TypeBuilder.GetField (t3, fb3);
+
+			MethodBuilder mb3 = tb.DefineMethod ("get_T", MethodAttributes.Public|MethodAttributes.Static, typeParams [0], Type.EmptyTypes);
+			ILGenerator ilgen3 = mb3.GetILGenerator ();
+			ilgen3.Emit (OpCodes.Newobj, TypeBuilder.GetConstructor (t3, cb));
+			ilgen3.Emit (OpCodes.Ldfld, fi3);
+			ilgen3.Emit (OpCodes.Ret);
+
 			Type created = tb.CreateType ();
 
 			Type inst = created.MakeGenericType (typeof (object));
 
 			Assert.AreEqual (42, inst.GetMethod ("get_int").Invoke (null, null));
+
+			Assert.AreEqual (null, inst.GetMethod ("get_T").Invoke (null, null));
 		}
 		
 		[Test] //bug #354047
