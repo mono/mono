@@ -1,3 +1,8 @@
+2008-06-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (mono_thread_get_stack_bounds): Align the stack address to
+	a page boundary. Fixes #396219.
+
 2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* marshal.c (mono_marshal_load_type_info): Add a memory barrier
