@@ -2004,6 +2004,9 @@ namespace System.Windows.Forms {
 			// Allow the document to recalculate things
 			ResumeRecalc (false);
 
+			// Update our character count
+			CharCount += s.Length;
+
 			UpdateView (line, lines - old_line_count + 1, pos);
 
 			// Move the caret to the end of the inserted text if requested
@@ -2029,6 +2032,9 @@ namespace System.Windows.Forms {
 		{
 			caret.line.InsertString (caret.pos, ch.ToString(), caret.tag);
 
+			// Update our character count
+			CharCount++;
+			
 			undo.RecordTyping (caret.line, caret.pos, ch);
 
 			UpdateView (caret.line, caret.pos);

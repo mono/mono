@@ -2422,13 +2422,13 @@ namespace System.Windows.Forms
 				this.SelectedText = s;
 				document.undo.EndUserAction ();
 			} else {
-				if ((s.Length + document.Length) < max_length) {
+				if ((s.Length + (document.Length - SelectedText.Length)) < max_length) {
 					document.undo.BeginUserAction (Locale.GetText ("Paste"));
 					this.SelectedText = s;
 					document.undo.EndUserAction ();
-				} else if (document.Length < max_length) {
+				} else if ((document.Length - SelectedText.Length) < max_length) {
 					document.undo.BeginUserAction (Locale.GetText ("Paste"));
-					this.SelectedText = s.Substring (0, max_length - document.Length);
+					this.SelectedText = s.Substring (0, max_length - (document.Length - SelectedText.Length));
 					document.undo.EndUserAction ();
 				}
 			}

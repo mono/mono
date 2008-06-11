@@ -1,5 +1,14 @@
 2008-06-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextBoxBase.cs: When pasting and checking the max length,
+	subtract the selected text length (the text we will be replacing) from
+	the document length.
+	* TextControl.cs: Ensure every character insertion is reflected in
+	charcount, so max length will work properly.
+	[Fixes bug #398605]
+
+2008-06-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ListBox.cs: Ensure scrollbars are updated when a single
 	column listbox with an already set top-index is created.
 	[Fixes bug #398342]
