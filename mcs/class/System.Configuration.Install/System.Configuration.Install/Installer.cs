@@ -64,6 +64,8 @@ namespace System.Configuration.Install
 
 		public InstallerCollection Installers {
 			get {
+				if (installers == null)
+					installers = new InstallerCollection (this);
 				return installers;
 			}
 		}
