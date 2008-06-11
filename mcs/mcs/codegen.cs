@@ -190,11 +190,12 @@ namespace Mono.CSharp {
 			}
 			catch (System.IO.IOException io) {
 				Report.Error (16, "Could not write to file `"+name+"', cause: " + io.Message);
+				return;
 			}
 			catch (System.UnauthorizedAccessException ua) {
 				Report.Error (16, "Could not write to file `"+name+"', cause: " + ua.Message);
+				return;
 			}
-			
 
 			//
 			// Write debuger symbol file
