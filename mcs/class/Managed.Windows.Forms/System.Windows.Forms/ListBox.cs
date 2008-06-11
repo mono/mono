@@ -2031,10 +2031,9 @@ namespace System.Windows.Forms
 			} else if (!multicolumn) {
 				int rows = items_area.Height / ItemHeight;
 				if (index >= (top_index + rows))
-				{
 					top_index = index - rows + 1;
-					UpdateTopItem ();
-				}
+
+				UpdateTopItem ();
 			} else {
 				int rows = Math.Max (1, items_area.Height / ItemHeight);
 				int cols = Math.Max (1, items_area.Width / ColumnWidthInternal);

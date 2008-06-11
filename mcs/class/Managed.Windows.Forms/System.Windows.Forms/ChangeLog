@@ -1,5 +1,11 @@
 2008-06-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ListBox.cs: Ensure scrollbars are updated when a single
+	column listbox with an already set top-index is created.
+	[Fixes bug #398342]
+
+2008-06-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* FontDialog.cs: Typing in the font/style textboxes should search
 	the list boxes case-insensitively.  [Fixes bug #398343]
 
