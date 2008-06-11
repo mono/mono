@@ -72,12 +72,14 @@ namespace Mono.CompilerServices.SymbolWriter
 		string filename = null;
 		
 		private SourceMethodBuilder current_method = null;
+		private Stack current_method_stack;
 
 		public MonoSymbolWriter (string filename)
 		{
 			this.methods = new ArrayList ();
 			this.sources = new ArrayList ();
 			this.comp_units = new ArrayList ();
+			this.current_method_stack = new Stack ();
 			this.file = new MonoSymbolFile ();
 
 			this.filename = filename + ".mdb";
@@ -141,6 +143,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		public SourceMethodBuilder OpenMethod (ICompileUnit file, int ns_id, IMethodDef method)
 		{
 			SourceMethodBuilder builder = new SourceMethodBuilder (file, ns_id, method);
+			current_method_stack.Push (current_method);
 			current_method = builder;
 			methods.Add (current_method);
 			return builder;
@@ -148,7 +151,7 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		public void CloseMethod ()
 		{
-			current_method = null;
+			current_method = (SourceMethodBuilder) current_method_stack.Pop ();
 		}
 
 		public SourceFileEntry DefineDocument (string url)

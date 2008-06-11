@@ -1,5 +1,11 @@
 2008-06-11  Martin Baulig  <martin@ximian.com>
 
+	* MonoSymbolWriter.cs
+	(MonoSymbolWriter.OpenMethod): Maintain a method stack, so we can
+	now recursively call OpenMethod().
+
+2008-06-11  Martin Baulig  <martin@ximian.com>
+
 	* MonoSymbolTable.cs
 	(SourceFileEntry.WriteData): Silently ignore non-existing files.
 
