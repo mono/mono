@@ -1,5 +1,14 @@
 2008-06-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextBoxBase.cs: We need to call RaiseSelectionChanged pretty
+	much any time the caret moves and there is text, not just when
+	the selection changes as one would think.
+	* RichTextBox.cs: Override RaiseSelectionChanged and fire
+	SelectionChanged.
+	[Fixes bug #397271]
+
+2008-06-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* FontDialog.cs: Forward ListBox keyboard events to the ListBox
 	instead of trying to duplicate the code.
 	* ListBox.cs: Make method internal so we can send keyboard events.

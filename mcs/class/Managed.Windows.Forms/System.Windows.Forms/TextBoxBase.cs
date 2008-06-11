@@ -1407,6 +1407,11 @@ namespace System.Windows.Forms
 			return false;
 		}
 
+		internal virtual void RaiseSelectionChanged ()
+		{
+			// Do nothing, overridden in RTB
+		}
+		
 		private void HandleBackspace (bool control)
 		{
 			bool	fire_changed;
@@ -1897,6 +1902,10 @@ namespace System.Windows.Forms
 				if (click_mode == CaretSelection.Position) {
 					document.SetSelectionToCaret(false);
 					document.DisplayCaret();
+					
+					// Only raise if there is text.
+					if (Text.Length > 0)
+						RaiseSelectionChanged ();
 				}
 
 				if (scroll_timer != null) {
@@ -2357,6 +2366,9 @@ namespace System.Windows.Forms
 				// FIXME - implement center cursor alignment
 			}
 
+			if (Text.Length > 0)
+				RaiseSelectionChanged ();
+			
 			if (!document.multiline)
 				return;
 

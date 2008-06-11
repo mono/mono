@@ -132,6 +132,11 @@ namespace System.Windows.Forms {
 			return backColor;
 		}
 
+		internal override void RaiseSelectionChanged()
+		{
+			OnSelectionChanged (EventArgs.Empty);
+		}
+		
 		private void RichTextBox_LostFocus(object sender, EventArgs e) {
 			Invalidate();
 		}
