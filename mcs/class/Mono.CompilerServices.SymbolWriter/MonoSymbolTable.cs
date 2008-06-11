@@ -692,9 +692,13 @@ namespace Mono.CompilerServices.SymbolWriter
 
 			if (guid == null) {
 				guid = Guid.NewGuid ().ToByteArray ();
-				using (FileStream fs = new FileStream (file_name, FileMode.Open, FileAccess.Read)) {
-					MD5 md5 = MD5.Create ();
-					hash = md5.ComputeHash (fs);
+				try {
+					using (FileStream fs = new FileStream (file_name, FileMode.Open, FileAccess.Read)) {
+						MD5 md5 = MD5.Create ();
+						hash = md5.ComputeHash (fs);
+					}
+				} catch {
+					hash = new byte [16];
 				}
 			}
 

@@ -1,5 +1,10 @@
 2008-06-11  Martin Baulig  <martin@ximian.com>
 
+	* MonoSymbolTable.cs
+	(SourceFileEntry.WriteData): Silently ignore non-existing files.
+
+2008-06-11  Martin Baulig  <martin@ximian.com>
+
 	* MonoSymbolWriter.cs
 	(MonoSymbolWriter.SetRealMethodName): Removed, call it on the
 	`SourceMethodBuilder'.
