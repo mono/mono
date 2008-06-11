@@ -1,3 +1,10 @@
+2008-06-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* FileVersionInfoTest.cs : disabled all English-Windows-dependent
+	  tests. They all fail on Windows whose language is not English.
+
+	  In general, be careful to compare language-dependent strings.
+
 2008-05-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* TraceTest.cs: Add a test for #385666.
