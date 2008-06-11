@@ -555,6 +555,9 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		public SourceFileEntry SourceFile {
 			get {
+				if (creating)
+					return source;
+
 				ReadData ();
 				return source;
 			}
