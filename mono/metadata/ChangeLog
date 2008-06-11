@@ -1,5 +1,10 @@
 2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* marshal.c (mono_marshal_load_type_info): Add a memory barrier
+	due to double-checked locking.
+
+2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* assembly.c (build_assembly_name): Release memory on failure.
 
 	* assembly.c (mono_assembly_name_parse_full): Release memory on failure.
