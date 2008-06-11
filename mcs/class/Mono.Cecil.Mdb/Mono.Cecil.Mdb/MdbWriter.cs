@@ -118,10 +118,11 @@ namespace Mono.Cecil.Mdb {
 
 			Populate (instructions, offsets, startRows, startCols, endRows, endCols, out file);
 
-			m_writer.OpenMethod (file.CompilationUnit, meth);
+			SourceMethodBuilder builder = m_writer.OpenMethod (file.CompilationUnit, 0, meth);
 
 			for (int i = 0; i < length; i++)
-				m_writer.MarkSequencePoint (0, offsets [i], startRows [i], startCols [i]);
+				builder.MarkSequencePoint (offsets [i], file.CompilationUnit.SourceFile,
+							   startRows [i], startCols [i], false);
 
 			MarkVariables (body, variables);
 
@@ -160,16 +161,12 @@ namespace Mono.Cecil.Mdb {
 			}
 		}
 
-		class SourceMethod : ISourceMethod {
+		class SourceMethod : IMethodDef {
 
 			MethodDefinition m_method;
 
 			public string Name {
 				get { return m_method.Name; }
-			}
-
-			public int NamespaceID {
-				get { return 0; }
 			}
 
 			public int Token {
