@@ -1581,7 +1581,7 @@ namespace System.Windows.Forms
 			return true;
 		}
 
-		private void OnKeyDownLB (object sender, KeyEventArgs e)
+		internal void OnKeyDownLB (object sender, KeyEventArgs e)
 		{
 			int new_item = -1;
 			

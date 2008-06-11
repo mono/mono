@@ -1,5 +1,12 @@
 2008-06-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* FontDialog.cs: Forward ListBox keyboard events to the ListBox
+	instead of trying to duplicate the code.
+	* ListBox.cs: Make method internal so we can send keyboard events.
+	[Fixes bug #398344]
+	
+2008-06-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextBoxBase.cs: When pasting and checking the max length,
 	subtract the selected text length (the text we will be replacing) from
 	the document length.

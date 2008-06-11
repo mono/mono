@@ -392,7 +392,6 @@ namespace System.Windows.Forms
 			fontsizeTextBox.MouseWheel += new MouseEventHandler (OnFontSizeTextBoxMouseWheel);
 			
 			PopulateFontList ();
-			Font = form.Font;
 		}
 		#endregion	// Public Constructors
 		
@@ -895,70 +894,40 @@ namespace System.Windows.Forms
 		
 		void OnFontTextBoxKeyDown (object sender, KeyEventArgs e)
 		{
-			if (e.KeyCode == Keys.Up) {
-				int sel_index = fontListBox.SelectedIndex;
-				
-				sel_index--;
-				
-				if (sel_index < 0)
-					sel_index = 0;
-				
-				fontListBox.SelectedIndex = sel_index;
-			} else if (e.KeyCode == Keys.Down) {
-				int sel_index = fontListBox.SelectedIndex;
-				
-				sel_index++;
-				
-				if (sel_index > fontListBox.Items.Count - 1)
-					sel_index = fontListBox.Items.Count - 1;
-				
-				fontListBox.SelectedIndex = sel_index;
+			// Forward these keys on to the font style listbox
+			switch (e.KeyCode) {
+				case Keys.Up:
+				case Keys.Down:
+				case Keys.PageDown:
+				case Keys.PageUp:
+					fontListBox.OnKeyDownLB (sender, e);
+					break;
 			}
 		}
 		
 		void OnFontStyleTextBoxKeyDown (object sender, KeyEventArgs e)
 		{
-			if (e.KeyCode == Keys.Up) {
-				int sel_index = fontstyleListBox.SelectedIndex;
-				
-				sel_index--;
-				
-				if (sel_index < 0)
-					sel_index = 0;
-				
-				fontstyleListBox.SelectedIndex = sel_index;
-			} else if (e.KeyCode == Keys.Down) {
-				int sel_index = fontstyleListBox.SelectedIndex;
-				
-				sel_index++;
-				
-				if (sel_index > fontstyleListBox.Items.Count - 1)
-					sel_index = fontstyleListBox.Items.Count - 1;
-				
-				fontstyleListBox.SelectedIndex = sel_index;
+			// Forward these keys on to the font style listbox
+			switch (e.KeyCode) {
+				case Keys.Up:
+				case Keys.Down:
+				case Keys.PageDown:
+				case Keys.PageUp:
+					fontstyleListBox.OnKeyDownLB (sender, e);
+					break;
 			}
 		}
 		
 		void OnFontSizeTextBoxKeyDown (object sender, KeyEventArgs e)
 		{
-			if (e.KeyCode == Keys.Up) {
-				int sel_index = fontsizeListBox.SelectedIndex;
-				
-				sel_index--;
-				
-				if (sel_index < 0)
-					sel_index = 0;
-				
-				fontsizeListBox.SelectedIndex = sel_index;
-			} else if (e.KeyCode == Keys.Down) {
-				int sel_index = fontsizeListBox.SelectedIndex;
-				
-				sel_index++;
-				
-				if (sel_index > fontsizeListBox.Items.Count - 1)
-					sel_index = fontsizeListBox.Items.Count - 1;
-				
-				fontsizeListBox.SelectedIndex = sel_index;
+			// Forward these keys on to the font size listbox
+			switch (e.KeyCode) {
+				case Keys.Up:
+				case Keys.Down:
+				case Keys.PageDown:
+				case Keys.PageUp:
+					fontsizeListBox.OnKeyDownLB (sender, e);
+					break;
 			}
 		}
 		
