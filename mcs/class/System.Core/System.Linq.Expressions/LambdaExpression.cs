@@ -75,7 +75,7 @@ namespace System.Linq.Expressions {
 
 		internal Type GetReturnType ()
 		{
-			return this.Type.GetMethod ("Invoke").ReturnType;
+			return this.Type.GetInvokeMethod ().ReturnType;
 		}
 
 		public Delegate Compile ()

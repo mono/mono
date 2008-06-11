@@ -82,6 +82,11 @@ namespace System.Linq.Expressions {
 			return typeof (Nullable<>).MakeGenericType (self);
 		}
 
+		public static MethodInfo GetInvokeMethod (this Type self)
+		{
+			return self.GetMethod ("Invoke", BindingFlags.Public | BindingFlags.Instance);
+		}
+
 		public static MethodInfo MakeGenericMethodFrom (this MethodInfo self, MethodInfo method)
 		{
 			return self.MakeGenericMethod (method.GetGenericArguments ());

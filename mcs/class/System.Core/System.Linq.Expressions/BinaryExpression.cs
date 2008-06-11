@@ -311,7 +311,7 @@ namespace System.Linq.Expressions {
 			// is it the right way to do it?
 			ec.EmitReadGlobal (conversion.Compile ());
 			ec.EmitLoad (left);
-			ig.Emit (OpCodes.Callvirt, conversion.Type.GetMethod ("Invoke"));
+			ig.Emit (OpCodes.Callvirt, conversion.Type.GetInvokeMethod ());
 
 			ig.Emit (OpCodes.Br, done);
 

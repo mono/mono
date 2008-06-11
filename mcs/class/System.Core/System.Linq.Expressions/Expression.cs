@@ -786,7 +786,7 @@ namespace System.Linq.Expressions {
 
 		static BinaryExpression MakeConvertedCoalesce (Expression left, Expression right, LambdaExpression conversion)
 		{
-			var invoke = conversion.Type.GetMethod ("Invoke");
+			var invoke = conversion.Type.GetInvokeMethod ();
 
 			CheckNotVoid (invoke.ReturnType);
 
@@ -1415,7 +1415,7 @@ namespace System.Linq.Expressions {
 			var args = arguments.ToReadOnlyCollection ();
 			CheckForNull (args, "arguments");
 
-			var invoke = type.GetMethod ("Invoke");
+			var invoke = type.GetInvokeMethod ();
 			if (invoke == null)
 				throw new ArgumentException ("expression");
 
@@ -1441,7 +1441,7 @@ namespace System.Linq.Expressions {
 			if (!delegateType.IsSubclassOf (typeof (System.Delegate)))
 				throw new ArgumentException ("delegateType");
 
-			var invoke = delegateType.GetMethod ("Invoke", BindingFlags.Instance | BindingFlags.Public);
+			var invoke = delegateType.GetInvokeMethod ();
 			if (invoke == null)
 				throw new ArgumentException ("delegate must contain an Invoke method", "delegateType");
 
