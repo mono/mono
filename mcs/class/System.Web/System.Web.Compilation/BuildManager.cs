@@ -502,7 +502,7 @@ namespace System.Web.Compilation {
 		{
 			VirtualPath vp = GetAbsoluteVirtualPath (virtualPath);
 			BuildCacheItem ret = GetCachedItem (vp);
-
+			
 			if (ret != null)
 				return ret.type;
 			
@@ -1016,15 +1016,18 @@ namespace System.Web.Compilation {
 				
 				Dictionary <Type, List <AssemblyBuilder>> assemblyBuilders = new Dictionary <Type, List <AssemblyBuilder>> ();
 				bool checkForRecursion = buildKind == BuildKind.NonPages;
+				string buildItemVp;
 				
 				foreach (BuildItem buildItem in buildItems) {
-					if (buildItem.VirtualPath == vpAbsolute) {
+					buildItemVp = buildItem.VirtualPath;
+					
+					if (buildItemVp == vpAbsolute) {
 						if (!buildItem.ProcessedFine)
 							throw buildItem.ProcessingException;
 						vpBuildItem = buildItem;
 					} else if (!buildItem.ProcessedFine)
 						continue;
-					
+
 					if (checkForRecursion) {
 						// Expensive but, alas, necessary - the builder in
 						// our list might've been put into a different
@@ -1034,15 +1037,23 @@ namespace System.Web.Compilation {
 								continue;
 						}
 					}
-					
+
 					if (buildItem.assemblyBuilder == null)
 						AssignToAssemblyBuilder (assemblyBaseName, virtualPath, buildItem, assemblyBuilders);
+
+					if (buildItem.assemblyBuilder == null && buildItemVp == vpAbsolute) {
+						Exception ex = buildItem.ProcessingException;
+						if (ex is HttpException)
+							throw buildItem.ProcessingException;
+						else
+							throw new HttpException ("Error processing file at virtual path '" + virtualPath.Original + "'", ex);
+					}
 				}
 				CompilerResults results;
 				Assembly compiledAssembly;
 				string vp;
 				BuildProvider bp;
-				
+
 				foreach (List <AssemblyBuilder> abuilders in assemblyBuilders.Values) {
 					foreach (AssemblyBuilder abuilder in abuilders) {
 						abuilder.AddAssemblyReference (GetReferencedAssemblies () as List <Assembly>);

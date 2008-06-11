@@ -1,5 +1,9 @@
 2008-06-11  Marek Habersack  <mhabersack@novell.com>
 
+	* BuildManager.cs: if an error occurs while assigning the
+	requested path to an assembly builder inside BuildAssembly, throw
+	an exception.
+
 	* BaseCompiler.cs: do not generate #line pragma for code which
 	exists only in memory.
 

@@ -115,7 +115,7 @@ namespace System.Web.Compilation
 		internal CodeStatement AddLinePragma (CodeStatement statement, int line, string fileName)
 		{
 			if (statement == null || IgnoreFile (fileName))
-				return null;
+				return statement;
 			
 			statement.LinePragma = new CodeLinePragma (fileName, line);
 			return statement;			
@@ -145,7 +145,7 @@ namespace System.Web.Compilation
 		internal CodeTypeMember AddLinePragma (CodeTypeMember member, int line, string fileName)
 		{
 			if (member == null || IgnoreFile (fileName))
-				return null;
+				return member;
 			
 			member.LinePragma = new CodeLinePragma (fileName, line);
 			return member;
