@@ -1,3 +1,8 @@
+2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (field_from_memberref): Check if field signature type is equal
+	to the non-inflated type of the field. Fixes #398980.
+
 2008-06-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* assembly.c (mono_assembly_load_from_full): Call 
