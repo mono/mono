@@ -1791,7 +1791,7 @@ namespace Mono.CSharp
 			if (Report.Errors > 0)
 				return false;
 			
-			CodeGen.Save (output_file);
+			CodeGen.Save (output_file, want_debugging_support);
 			if (timestamps) {
 				ShowTime ("Saved output");
 				ShowTotalTime ("Total");

@@ -174,7 +174,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		static public void Save (string name)
+		static public void Save (string name, bool saveDebugInfo)
 		{
 			try {
 				Assembly.Builder.Save (Basename (name));
@@ -200,8 +200,9 @@ namespace Mono.CSharp {
 			//
 			// Write debuger symbol file
 			//
-			SymbolWriter.WriteSymbolFile ();
-		}
+			if (saveDebugInfo)
+				SymbolWriter.WriteSymbolFile ();
+			}
 	}
 
 

@@ -1,5 +1,9 @@
 2008-06-11  Marek Safar  <marek.safar@gmail.com>
 
+	* codegen.cs, driver: Only write symbol file when it's asked for.
+
+2008-06-11  Marek Safar  <marek.safar@gmail.com>
+
 	* codegen.cs: Don't use assembly writer error handling for symbol writer.
 
 2008-06-10  Martin Baulig  <martin@ximian.com>
