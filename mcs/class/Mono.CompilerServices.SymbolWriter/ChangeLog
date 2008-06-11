@@ -1,3 +1,11 @@
+2008-06-11  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolWriter.cs
+	(ISourceMethod): Renamed to `IMethodDef'.
+	(SourceMethodBuilder): New public class.
+	(MonoSymbolWriter.OpenMethod): Added `int ns_id' argument and
+	return a `SourceMethodBuilder'.
+
 2008-06-10  Martin Baulig  <martin@ximian.com>
 
 	* MonoSymbolTable.cs
