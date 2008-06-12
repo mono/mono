@@ -2044,6 +2044,22 @@ namespace System.Net.Sockets
 					throw new SocketException ((int) SocketError.AddressNotAvailable);
 			}
 
+#if NET_2_1
+			// Check for SL2.0b1 restrictions
+			// - tcp only
+			// - SiteOfOrigin
+			// - port 4502->4532 + default
+			if (protocol_type != ProtocolType.Tcp)
+				throw new SocketException ((int) SocketError.AccessDenied);
+			//FIXME: replace 80 by Application.Curent.Host.Source.Port
+			if (remote_end is IPEndPoint)
+				if (((remote_end as IPEndPoint).Port < 4502 || (remote_end as IPEndPoint).Port > 4530) && (remote_end as IPEndPoint).Port != 80)
+					throw new SocketException ((int) SocketError.AccessDenied);
+			else //unsuported endpoint type
+				throw new SocketException ((int) SocketError.AccessDenied);
+			//FIXME: check for Application.Curent.Host.Source.DnsSafeHost
+#endif
+
 #if NET_2_0
 			/* TODO: check this for the 1.1 profile too */
 			if (islistening)
@@ -2058,7 +2074,9 @@ namespace System.Net.Sockets
 				Connect_internal (socket, serial, out error);
 			} catch (ThreadAbortException) {
 				if (disposed) {
+#if !NET_2_1 //2.1 profile does not contains Thread.ResetAbort
 					Thread.ResetAbort ();
+#endif
 					error = (int) SocketError.Interrupted;
 				}
 			} finally {
