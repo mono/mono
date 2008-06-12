@@ -1,3 +1,9 @@
+2008-06-12  Veerapuram Varadhan  <vvaradhan@novell.com>
+	
+	Patch by Christian Hergert <christian.hergert@gmail.com>
+	* SqlConnection.cs (Open): Do not reset the connection as it is already 
+	done in the TdsConnectionPool itself.
+	
 2008-06-12  Marek Habersack  <mhabersack@novell.com>
 
 	* SqlParameterCollection.cs: this [int] must check the range and

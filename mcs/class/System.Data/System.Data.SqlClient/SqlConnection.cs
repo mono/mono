@@ -575,8 +575,6 @@ namespace System.Data.SqlClient
 						pool.ReleaseConnection (tds);
 					throw;
 				}
-			} else if (connectionReset) {
-				tds.Reset ();
 			}
 
 			disposed = false; // reset this, so using () would call Close ().
