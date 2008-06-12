@@ -801,7 +801,7 @@ namespace System.Windows.Forms {
 				DragDropEventArgs.keystate = (int) grfkeyState;
 
 				Control control = Control.FromHandle (window);
-				if (control == null) {
+				if (control != null) {
 					control.DndDrop (DragDropEventArgs);
 					return S_FALSE;
 				}

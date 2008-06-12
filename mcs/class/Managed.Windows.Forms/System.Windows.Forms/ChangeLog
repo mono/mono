@@ -1,3 +1,8 @@
+2008-06-12  Everaldo Canuto  <ecanuto@novell.com>
+
+	* Win32DnD.cs: Fix the check for control not equal null.
+	Fixes bug #341420 and #381886. 
+
 2008-06-12  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewRowCollection.cs: Update the indexes of rows after
