@@ -5062,6 +5062,8 @@ namespace Mono.CSharp {
 	//
 	public class MethodData {
 
+		static FieldInfo methodbuilder_attrs_field;
+
 		readonly IMethodData method;
 
 		public readonly GenericMethod GenericMethod;
@@ -5310,10 +5312,25 @@ namespace Mono.CSharp {
 				return;
 			}
 
-#if GMCS_SOURCE && !MS_COMPATIBLE
-			builder.SetGenericMethodSignature (
-				flags, method.CallingConventions,
-				method.ReturnType, ParameterTypes);
+#if GMCS_SOURCE
+			//
+			// Generic method has been already defined to resolve method parameters
+			// correctly when they use type parameters
+			//
+			builder.SetParameters (ParameterTypes);
+			builder.SetReturnType (method.ReturnType);
+
+			if (builder.Attributes != flags) {
+				try {
+					if (methodbuilder_attrs_field == null)
+						methodbuilder_attrs_field = typeof (MethodBuilder).GetField ("attrs", BindingFlags.NonPublic | BindingFlags.Instance);
+					methodbuilder_attrs_field.SetValue (builder, flags);
+				} catch {
+					Report.RuntimeMissingSupport (method.Location, "Generic method MethodAttributes");
+				}
+			}
+#else
+			throw new InternalErrorException ();
 #endif
 		}
 

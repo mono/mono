@@ -1,3 +1,7 @@
+2008-06-12  Marek Safar  <marek.safar@gmail.com>
+
+	* class.cs: Stop using public method which should not exist.
+
 2008-06-11  Martin Baulig  <martin@ximian.com>
 
 	* location.cs
