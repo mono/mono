@@ -1,5 +1,9 @@
 2008-06-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SqlBooleanTest.cs : oops, was running wrong test harness. Fixed it.
+
+2008-06-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SqlBooleanTest.cs : added test for comparison with Null.
 
 2007-10-01  Veerapuram Varadhan  <vvaradhan@novell.com>

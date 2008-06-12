@@ -280,8 +280,8 @@ namespace MonoTests.System.Data.SqlTypes
 
 			Assert.IsTrue (!SqlTrue.Equals(null), error + "(true == false)");
 			Assert.IsTrue (SqlBoolean.Null.Equals (SqlBoolean.Null), "null == null");
-			Assert.IsTrue (SqlBoolean.Null.Equals (SqlTrue), "null != true");
-			Assert.IsTrue (SqlBoolean.Null.Equals (SqlFalse), "null != false");
+			Assert.IsFalse (SqlBoolean.Null.Equals (SqlTrue), "null != true");
+			Assert.IsFalse (SqlBoolean.Null.Equals (SqlFalse), "null != false");
 		}
 
 		[Test]
