@@ -1,3 +1,20 @@
+2008-06-12  Bill Holmes  <billholmes54@gmail.com>
+
+	* mini-amd64.c:add_valuetype: Adding Winx64 code to fill the ArgInfo
+	  for the ArgValuetypeAddrInIReg case.
+
+	* mini-amd64.c:mono_arch_allocate_vars:  Adding a case for ArgValuetypeAddrInIReg
+	  to avoid asserts.  Code needs to be added here.
+
+	* mini-amd64.c: mono_arch_call_opcode:  Adding Winx64 code for an ArgInfo of type
+	  ArgValuetypeAddrInIReg.  The code emitted will copy the argument to a local 
+	  variable and pass the local variable by reference to the called method.
+	  
+	* mini-amd64.c: mono_arch_emit_prolog:  Adjust the stack for calls to
+	  mono_jit_thread_attach and mono_get_lmf_addr for Winx64.
+
+	Contributed under MIT/X11 license.
+
 2008-06-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* debug-mini.c (mono_debug_free_method_jit_info): Moved to metadata/mono-debug.c.

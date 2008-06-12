@@ -1,3 +1,10 @@
+2008-06-12  Bill Holmes  <billholmes54@gmail.com>
+	* libtest.c, winx64structs.cs :
+	  Adding marshaling tests for structs.  These tests
+	  represent the different cases to consider on Winx64.
+
+	Contributed under MIT/X11 license.
+
 2008-06-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am: Delete some tests for the disabled set which seem to work now.
