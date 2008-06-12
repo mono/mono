@@ -1,3 +1,9 @@
+2008-06-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs, DataTable.cs, XmlSchemaDataImporter.cs : constraints
+	  on missing tables are ignored when reading a DataTable schema.
+	  Fixes part of DataTableTest.ReadXmlSchema() test.
+
 2008-05-30  Marek Habersack  <mhabersack@novell.com>
 
 	* Constraint.cs: do not use synthetized event accessors (to avoid
@@ -252,7 +258,7 @@
 	* DataTable.cs (WriteXmlSchema): Using XmlTextWriter instead of
 	XmlWriter, solved the File Sharing IO Exception.
 
-2006-11-28 	Hubert FONGARNAND, FrÃ©dÃ©ric Mestayer <informatique.internet@fiducial.fr>
+2006-11-28 	Hubert FONGARNAND, FrAcdAcric Mestayer <informatique.internet@fiducial.fr>
 
 	* DataColumnCollection.cs : Improved Column searching when not
 	using exact column name (case sensitivity). Fixes bug # 80075.
@@ -3097,7 +3103,7 @@
 	* IDataSources.cs:
 		New 1.2 class added
 
-2003-11-21  Pedro Martínez Juliá  <yoros@wanadoo.es>
+2003-11-21  Pedro Martinez Julia  <yoros@wanadoo.es>
 
 	* DataRow.cs: Detached row can be accesible (new rows from data
 	table are detached). Closes but #51263.
@@ -3111,7 +3117,7 @@
 	*UniqueConstraint.cs : throw correct exception.
 	
 
-2003-11-09  Pedro Martínez Juliá  <yoros@wanadoo.es>
+2003-11-09  Pedro Martinez Julia  <yoros@wanadoo.es>
 
 	* DataRow.cs: Use RemoveInternal instead of Remove because the last
 	one uses Delete and AcceptChanges.
@@ -3120,7 +3126,7 @@
 	method from the row are called. Added an internal method that will
 	be used by DataRow to "physically" remove the row from the list.
 
-2003-11-09  Pedro Martínez Juliá  <yoros@wanadoo.es>
+2003-11-09  Pedro Martinez Julia  <yoros@wanadoo.es>
 
 	* DataRowCollection.cs: To follow the specification: Remove and
 	RemoveAt should remove the row. But needed to call DeletingDataRow
@@ -3129,7 +3135,7 @@
 	* DataRow.cs: Don't call DeletingDataRow when it is called by the
 	method Table.Rows.Remove.
 
-2003-11-09  Pedro Martínez Juliá  <yoros@wanadoo.es>
+2003-11-09  Pedro Martinez Julia  <yoros@wanadoo.es>
 
 	* DataRowCollection.cs: Make the row be deleted by itself. If not,
 	it fails because we need to call OnRowDeleting and OnRowDeleted. It
@@ -3682,7 +3688,7 @@
 	is added to collection before it hava TableName. So using 
 	HashTable is impossible.
 	
-2002-11-19  Carlos Guzmán Álvarez <carlosga@telefonica.net>
+2002-11-19  Carlos Guzman Alvarez <carlosga@telefonica.net>
 
 	* DataRow.cs: an object that is equal to null 
 	should be allowed to be set in this indexer too

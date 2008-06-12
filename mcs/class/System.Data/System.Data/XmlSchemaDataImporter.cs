@@ -304,6 +304,7 @@ namespace System.Data
 		#region Fields
 
 		DataSet dataset;
+		bool forDataSet;
 		XmlSchema schema;
 
 		ArrayList relations = new ArrayList ();
@@ -324,9 +325,10 @@ namespace System.Data
 
 		// .ctor()
 
-		public XmlSchemaDataImporter (DataSet dataset, XmlReader reader)
+		public XmlSchemaDataImporter (DataSet dataset, XmlReader reader, bool forDataSet)
 		{
 			this.dataset = dataset;
+			this.forDataSet = forDataSet;
 			dataset.DataSetName = "NewDataSet"; // Initialize always
 			schema = XmlSchema.Read (reader, null);
 			if (reader.NodeType == XmlNodeType.EndElement && reader.LocalName == "schema" && reader.NamespaceURI == XmlSchema.Namespace)
@@ -1037,8 +1039,13 @@ namespace System.Data
 			string tableName = c.TableName;
 			
 			DataTable dt = dataset.Tables [tableName];
-			if (dt == null)
-				throw new DataException (String.Format ("Invalid XPath selection inside selector. Cannot find: {0}", tableName));
+			if (dt == null) {
+				if (forDataSet)
+					throw new DataException (String.Format ("Invalid XPath selection inside selector. Cannot find: {0}", tableName));
+				else
+					// nonexistent table name. .NET ignores it for DataTable.ReadXmlSchema().
+					return;
+			}
 
 			DataColumn [] cols = new DataColumn [c.Columns.Length];
 			for (int i = 0; i < cols.Length; i++) {

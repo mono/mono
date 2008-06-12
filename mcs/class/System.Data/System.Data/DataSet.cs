@@ -949,7 +949,7 @@ namespace System.Data
 		public void ReadXmlSchema (XmlReader reader)
 		{
 #if true
-			new XmlSchemaDataImporter (this, reader).Process ();
+			new XmlSchemaDataImporter (this, reader, true).Process ();
 #else
 			XmlSchemaMapper SchemaMapper = new XmlSchemaMapper (this);
 			SchemaMapper.Read (reader);

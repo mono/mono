@@ -2208,7 +2208,7 @@ namespace System.Data {
 				return;
 
 			DataSet ds = new DataSet ();
-			new XmlSchemaDataImporter (ds, reader).Process ();
+			new XmlSchemaDataImporter (ds, reader, false).Process ();
 			DataTable target = null;
 			if (TableName == String.Empty) {
 				if (ds.Tables.Count > 0)
