@@ -1,5 +1,16 @@
 2008-06-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-internals.h: Added mono_metadata_field_info_with_mempool.
+
+	* metadata.c (mono_metadata_field_info_with_mempool): Added.
+	This function works just like mono_metadata_field_info, but
+	accept a mempool as argument to be used allocating memory.
+
+	* marshal.c (mono_marshal_load_type_info): Use new function
+	to load marshal data into image mempool.
+
+2008-06-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_inflate_generic_type_with_mempool):
 	This function allows to inflate a generic type using
 	a mempool.
