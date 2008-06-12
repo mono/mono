@@ -1,3 +1,7 @@
+2008-06-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SqlBoolean.cs : SqlBoolean.Null.Equals(non-null) caused crash.
+
 2008-04-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlDateTime.cs: Changed argument names to match MS. Code formatting.

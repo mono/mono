@@ -275,8 +275,13 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.IsTrue (!SqlTrue.Equals(SqlFalse), error + "(true == false)");
 			Assert.IsTrue (!SqlFalse.Equals(SqlTrue), error + "(false == true)");
 
-			Assert.IsTrue (!SqlTrue.Equals(null), error + "(true == false)");
+			Assert.IsFalse (SqlTrue.Equals(SqlBoolean.Null), error + "(true != null)");
+			Assert.IsFalse (SqlFalse.Equals(SqlBoolean.Null), error + "(false != null)");
 
+			Assert.IsTrue (!SqlTrue.Equals(null), error + "(true == false)");
+			Assert.IsTrue (SqlBoolean.Null.Equals (SqlBoolean.Null), "null == null");
+			Assert.IsTrue (SqlBoolean.Null.Equals (SqlTrue), "null != true");
+			Assert.IsTrue (SqlBoolean.Null.Equals (SqlFalse), "null != false");
 		}
 
 		[Test]

@@ -164,8 +164,8 @@ namespace System.Data.SqlTypes
 		{
 			if (!(value is SqlBoolean))
 				return false;
-			if (this.IsNull && ((SqlBoolean)value).IsNull)
-				return true;
+			if (this.IsNull)
+				return ((SqlBoolean)value).IsNull;
 			else if (((SqlBoolean)value).IsNull)
 				return false;
 			else
