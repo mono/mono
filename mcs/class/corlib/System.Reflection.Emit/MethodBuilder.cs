@@ -52,7 +52,7 @@ namespace System.Reflection.Emit
 		private RuntimeMethodHandle mhandle;
 		private Type rtype;
 		private Type[] parameters;
-		private MethodAttributes attrs;
+		private MethodAttributes attrs;	/* It's used directly by MCS */
 		private MethodImplAttributes iattrs;
 		private string name;
 		private int table_idx;
@@ -596,20 +596,6 @@ namespace System.Reflection.Emit
 					type, this, names [i], i);
 
 			return generic_params;
-		}
-
-		public void SetGenericMethodSignature (MethodAttributes attributes, CallingConventions callingConvention, Type return_type, Type[] parameter_types)
-		{
-			RejectIfCreated ();
-
-			this.attrs = attributes;
-			this.call_conv = callingConvention;
-			if ((attributes & MethodAttributes.Static) == 0)
-				this.call_conv |= CallingConventions.HasThis;
-
-			this.rtype = return_type;
-			this.parameters = new Type [parameter_types.Length];
-			System.Array.Copy (parameter_types, this.parameters, parameter_types.Length);
 		}
 
 		public void SetReturnType (Type returnType)

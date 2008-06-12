@@ -1,3 +1,7 @@
+2008-06-12  Marek Safar  <marek.safar@gmail.com>
+
+	* MethodBuilder.cs: Removed SetGenericMethodSignature.
+
 2008-06-06  Jb Evain  <jbevain@novell.com>
 
 	* OpCodes.cs: OpCode constrained. is of type InlineType.
