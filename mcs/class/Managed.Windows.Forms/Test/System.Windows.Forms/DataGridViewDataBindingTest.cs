@@ -269,6 +269,44 @@ namespace MonoTests.System.Windows.Forms.DataGridViewBindingTest
 
 			f.Dispose ();
 		}
+		
+		[Test]	// Bug #399601
+		public void TestAddingWithoutAutoGenerate ()
+		{
+			// Binding when AutoGenerateColumns is false
+			// and adding rows to the dataset
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			DataSet ds = new DataSet ();
+
+			DataTable dt = ds.Tables.Add ("Muppets");
+
+			dt.Columns.Add ("ID");
+			dt.Columns.Add ("Name");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.AutoGenerateColumns = false;
+			dgv.AllowUserToAddRows = false;
+			
+			DataGridViewTextBoxColumn col1 = new DataGridViewTextBoxColumn ();
+			col1.DataPropertyName = "Name";
+			dgv.Columns.Add (col1);
+
+			dgv.DataSource = dt;
+
+			f.Controls.Add (dgv);
+			f.Show ();
+
+			dt.Rows.Add (1, "Kermit");
+			dt.Rows.Add (2, "Miss Piggy");
+			dt.Rows.Add (3, "Gonzo");
+
+			Assert.AreEqual (1, dgv.ColumnCount, "A1");
+			Assert.AreEqual (3, dgv.RowCount, "A2");
+
+			f.Dispose ();
+		}
 	}
 	
 	[TestFixture]

@@ -1,3 +1,10 @@
+2008-06-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridView.cs: Listen to a DataSet's changed event even
+	when autogeneratecolumns is false.  Refactor the changed event's
+	add row code to use the same as the existing add row code.
+	[Fixes bug #399601]
+
 2008-06-11  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextBoxBase.cs: We need to call RaiseSelectionChanged pretty

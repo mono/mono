@@ -5487,8 +5487,6 @@ namespace System.Windows.Forms {
 						
 						columns.Add (col);
 					}
-					
-					dataView.ListChanged += OnListChanged;
 				}
 				// Its a generic something or other, like a BindingList<T>, so
 				// we can figure out the type from the generic type
@@ -5500,34 +5498,43 @@ namespace System.Windows.Forms {
 					GenerateColumnsFromType (list.GetType ().GetElementType ());
 				}
 			}
-			
-			foreach (object element in list) {
-				// Don't add rows if there are no columns
-				if (ColumnCount == 0)
-					break;
-					
-				DataGridViewRow row = (DataGridViewRow)RowTemplate.Clone ();
-				rows.InternalAdd (row);
-
-				PropertyDescriptorCollection properties = TypeDescriptor.GetProperties (element);
-				
-				foreach (PropertyDescriptor property in properties) {
-					if (property.PropertyType == typeof (IBindingList))
-						continue;
-					
-					// We do it this way because there may not be a column
-					// for every cell, ignore cells with no column	
-					DataGridViewCell cell = row.Cells.GetBoundCell (property.Name);
-					
-					if (cell == null)
-						continue;
-						
-					cell.valuex = property.GetValue (element);
-					cell.valueType = property.PropertyType;
-				}
-			}
+		
+			// Subscribe to the dataset's change notification
+			if (list is DataView)
+				(list as DataView).ListChanged += OnListChanged;
+	
+			// Add the rows
+			foreach (object element in list)
+				AddBoundRow (element);
 		}
 
+		private void AddBoundRow (object element)
+		{
+			// Don't add rows if there are no columns
+			if (ColumnCount == 0)
+				return;
+				
+			DataGridViewRow row = (DataGridViewRow)RowTemplate.Clone ();
+			rows.InternalAdd (row);
+
+			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties (element);
+			
+			foreach (PropertyDescriptor property in properties) {
+				if (property.PropertyType == typeof (IBindingList))
+					continue;
+				
+				// We do it this way because there may not be a column
+				// for every cell, ignore cells with no column	
+				DataGridViewCell cell = row.Cells.GetBoundCell (property.Name);
+				
+				if (cell == null)
+					continue;
+					
+				cell.valuex = property.GetValue (element);
+				cell.valueType = property.PropertyType;
+			}
+		}
+		
 		private void GenerateColumnsFromType (Type type)
 		{
 			foreach (PropertyDescriptor property in TypeDescriptor.GetProperties (type)) {
@@ -5715,22 +5722,15 @@ namespace System.Windows.Forms {
 			return Columns.ColumnDisplayIndexSortedArrayList[index].Index;
 		}
 		
-		private void OnListChanged (object sender, ListChangedEventArgs args) {
-			if (args.OldIndex >= 0) {
+		private void OnListChanged (object sender, ListChangedEventArgs args)
+		{
+			switch (args.ListChangedType) {
+				case ListChangedType.ItemAdded:
+					AddBoundRow ((sender as DataView)[args.NewIndex]);
+					break;
 			}
-			if (args.NewIndex >= 0) {
-				object element = (sender as DataView)[args.NewIndex];
-				DataGridViewRow row = new DataGridViewRow();
-				rows.InternalAdd(row);
-				PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(element);
-				foreach (PropertyDescriptor property in properties) {
-					DataGridViewTextBoxCell cell = new DataGridViewTextBoxCell();
-					cell.Value = property.GetValue(element);
-					cell.ValueType = property.PropertyType;
-					row.Cells.Add(cell);
-				}
-				Invalidate();
-			}
+			
+			Invalidate ();
 		}
 
 		#region Stuff for ToolTips
