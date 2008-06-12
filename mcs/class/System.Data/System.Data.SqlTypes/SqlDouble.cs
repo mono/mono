@@ -124,8 +124,8 @@ namespace System.Data.SqlTypes
 		{
 			if (!(value is SqlDouble))
 				return false;
-			if (this.IsNull && ((SqlDouble)value).IsNull)
-				return true;
+			if (this.IsNull)
+				return ((SqlDouble)value).IsNull;
 			else if (((SqlDouble)value).IsNull)
 				return false;
 			else

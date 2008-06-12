@@ -148,8 +148,8 @@ namespace System.Data.SqlTypes
 		{
 			if (!(value is SqlBinary))
 				return false;
-			else if (this.IsNull && ((SqlBinary)value).IsNull)
-				return true;
+			else if (this.IsNull)
+				return ((SqlBinary)value).IsNull;
 			else if (((SqlBinary)value).IsNull)
 				return false;
 			else

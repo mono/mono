@@ -138,8 +138,8 @@ namespace System.Data.SqlTypes
 		{
 			if (!(value is SqlInt64))
 				return false;
-			else if (this.IsNull && ((SqlInt64)value).IsNull)
-				return true;
+			else if (this.IsNull)
+				return ((SqlInt64)value).IsNull;
 			else if (((SqlInt64)value).IsNull)
 				return false;
 			else

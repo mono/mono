@@ -175,8 +175,8 @@ namespace System.Data.SqlTypes
 		{
 			if (!(value is SqlGuid))
 				return false;
-			else if (this.IsNull && ((SqlGuid)value).IsNull)
-				return true;
+			else if (this.IsNull)
+				return ((SqlGuid)value).IsNull;
 			else if (((SqlGuid)value).IsNull)
 				return false;
 			else

@@ -330,8 +330,8 @@ namespace System.Data.SqlTypes
 		{
 			if (!(value is SqlDecimal))
 				return false;
-			else if (this.IsNull && ((SqlDecimal)value).IsNull)
-				return true;
+			else if (this.IsNull)
+				return ((SqlDecimal)value).IsNull;
 			else if (((SqlDecimal)value).IsNull)
 				return false;
 			else

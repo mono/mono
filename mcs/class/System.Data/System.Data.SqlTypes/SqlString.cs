@@ -289,8 +289,8 @@ namespace System.Data.SqlTypes
 		{
 			if (!(value is SqlString))
 				return false;
-			if (this.IsNull && ((SqlString)value).IsNull)
-				return true;
+			if (this.IsNull)
+				return ((SqlString)value).IsNull;
 			else if (((SqlString)value).IsNull)
 				return false;
 			else

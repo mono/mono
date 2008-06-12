@@ -220,8 +220,8 @@ namespace System.Data.SqlTypes
 		{
 			if (!(value is SqlDateTime))
 				return false;
-			else if (this.IsNull && ((SqlDateTime)value).IsNull)
-				return true;
+			else if (this.IsNull)
+				return ((SqlDateTime)value).IsNull;
 			else if (((SqlDateTime)value).IsNull)
 				return false;
 			else

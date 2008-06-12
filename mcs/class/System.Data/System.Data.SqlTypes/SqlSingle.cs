@@ -134,8 +134,8 @@ namespace System.Data.SqlTypes
 		{
 			if (!(value is SqlSingle))
 				return false;
-			else if (this.IsNull && ((SqlSingle)value).IsNull)
-				return true;
+			else if (this.IsNull)
+				return ((SqlSingle)value).IsNull;
 			else if (((SqlSingle)value).IsNull)
 				return false;
 			else

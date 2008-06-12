@@ -150,8 +150,8 @@ namespace System.Data.SqlTypes
 		{
 			if (!(value is SqlMoney))
 				return false;
-			if (this.IsNull && ((SqlMoney)value).IsNull)
-				return true;
+			if (this.IsNull)
+				return ((SqlMoney)value).IsNull;
 			else if (((SqlMoney)value).IsNull)
 				return false;
 			else

@@ -1,5 +1,13 @@
 2008-06-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SqlDateTime.cs, SqlDecimal.cs, SqlInt32.cs, SqlInt16.cs,
+	  SqlByte.cs, SqlInt64.cs, SqlString.cs, SqlDouble.cs,
+	  SqlSingle.cs, SqlBinary.cs, SqlMoney.cs, SqlGuid.cs:
+	  ok, everything needs the same fix.
+	  (Do not let me write exhausting tests for everything.)
+
+2008-06-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SqlBoolean.cs : SqlBoolean.Null.Equals(non-null) caused crash.
 
 2008-04-21  Gert Driesen  <drieseng@users.sourceforge.net>

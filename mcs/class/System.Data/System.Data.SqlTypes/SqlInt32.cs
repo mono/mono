@@ -145,8 +145,8 @@ namespace System.Data.SqlTypes
 		{
 			if (!(value is SqlInt32))
 				return false;
-			else if (this.IsNull && ((SqlInt32)value).IsNull)
-				return true;
+			else if (this.IsNull)
+				return ((SqlInt32)value).IsNull;
 			else if (((SqlInt32)value).IsNull)
 				return false;
 			else

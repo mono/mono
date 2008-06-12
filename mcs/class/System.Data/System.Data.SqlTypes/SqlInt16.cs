@@ -137,8 +137,8 @@ namespace System.Data.SqlTypes
 		{
 			if (!(value is SqlInt16))
 				return false;
-			else if (this.IsNull && ((SqlInt16)value).IsNull)
-				return true;
+			else if (this.IsNull)
+				return ((SqlInt16)value).IsNull;
 			else if (((SqlInt16)value).IsNull)
 				return false;
 			else

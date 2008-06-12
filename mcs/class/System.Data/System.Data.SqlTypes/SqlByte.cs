@@ -137,8 +137,8 @@ namespace System.Data.SqlTypes
 		{
 			if (!(value is SqlByte))
 				return false;
-			else if (this.IsNull && ((SqlByte)value).IsNull)
-				 return true;
+			else if (this.IsNull)
+				return ((SqlByte)value).IsNull;
 			else if (((SqlByte)value).IsNull)
 				return false;
 			else
