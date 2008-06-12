@@ -2,6 +2,8 @@
 
 	* appdomain.c (ensure_directory_exists): avoid unnecessary
 	mkdir(2) calls when the shadow directory already exists.
+	(mono_make_shadow_copy): copy also satellite assemblies from the
+	private bin directories.
 
 2008-06-11  Zoltan Varga  <vargaz@gmail.com>
 
