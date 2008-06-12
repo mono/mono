@@ -1,5 +1,20 @@
 2008-06-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_inflate_generic_type_with_mempool):
+	This function allows to inflate a generic type using
+	a mempool.
+
+	* class.c (inflate_generic_type): Take a mempool as argument
+	and use it to do type dup'ing.
+
+	* class.c (mono_class_setup_fields): Field type for generic
+	generic classes are allocated from the image mempool.
+
+	* metadata.c (free_generic_class): Inflated field type is
+	now allocated in the image mempool.
+
+2008-06-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* threads.c (thread_cleanup): Free MonoThread::name.
 
 2008-06-12  Marek Habersack  <mhabersack@novell.com>
