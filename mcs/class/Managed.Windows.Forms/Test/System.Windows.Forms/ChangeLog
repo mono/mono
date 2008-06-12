@@ -1,5 +1,10 @@
 2008-06-12  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewDataBindingTest.cs: Add test for deleting rows
+	from the dataset and the table.
+
+2008-06-12  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewDataBindingTest.cs: Add test for bug #399601.
 
 2008-06-09  Jonathan Pobst  <monkey@jpobst.com>

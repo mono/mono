@@ -4727,10 +4727,36 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		[MonoTODO ("What does delete do?")]
 		protected bool ProcessDeleteKey (Keys keyData)
 		{
-			return false;
+			if (!allowUserToDeleteRows || SelectedRows.Count == 0)
+				return false;
+
+			int index = Math.Max (selected_row - SelectedRows.Count + 1, 0);
+			
+			for (int i = SelectedRows.Count - 1; i >= 0; i--) {
+				DataGridViewRow row = SelectedRows[i];
+
+				if (row.IsNewRow)
+					continue;
+
+				if (hover_cell != null && hover_cell.OwningRow == row)
+					hover_cell = null;
+					
+				if (DataSource != null && DataSource is DataSet)
+					(DataSource as DataSet).Tables[dataMember].Rows.RemoveAt (row.Index);
+				else
+					Rows.RemoveAt (row.Index);
+			}
+
+			if (selected_rows != null)
+				selected_rows.InternalClear ();
+			if (selected_columns != null)
+				selected_columns.InternalClear ();
+
+			SetSelectedCellCore (0, Math.Min (index, Rows.Count - 1), true);
+				
+			return true;
 		}
 
 		protected override bool ProcessDialogKey (Keys keyData)
@@ -5727,6 +5753,9 @@ namespace System.Windows.Forms {
 			switch (args.ListChangedType) {
 				case ListChangedType.ItemAdded:
 					AddBoundRow ((sender as DataView)[args.NewIndex]);
+					break;
+				case ListChangedType.ItemDeleted:
+					Rows.RemoveAt (args.NewIndex);
 					break;
 			}
 			

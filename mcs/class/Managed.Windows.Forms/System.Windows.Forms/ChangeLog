@@ -1,5 +1,14 @@
 2008-06-12  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewRowCollection.cs: Update the indexes of rows after
+	one has been removed.
+	* DataGridViewSelectedRowCollection.cs: Add internal clear method.
+	* DataGridViewSelectedColumnCollection.cs: Add internal clear method.
+	* DataGridView.cs: Add support for deleting rows via Delete key, deleting
+	rows for the Rows collection, or deleting rows from the bound DataSet.
+
+2008-06-12  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridView.cs: Listen to a DataSet's changed event even
 	when autogeneratecolumns is false.  Refactor the changed event's
 	add row code to use the same as the existing add row code.

@@ -443,6 +443,7 @@ namespace System.Windows.Forms
 		public virtual void Remove (DataGridViewRow dataGridViewRow)
 		{
 			list.Remove (dataGridViewRow);
+			ReIndex ();
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, dataGridViewRow));
 			DataGridView.OnRowsRemoved (new DataGridViewRowsRemovedEventArgs (dataGridViewRow.Index, 1));
 		}
@@ -451,6 +452,7 @@ namespace System.Windows.Forms
 		{
 			DataGridViewRow row = this [index];
 			list.RemoveAt (index);
+			ReIndex ();
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, row));
 			DataGridView.OnRowsRemoved (new DataGridViewRowsRemovedEventArgs (index, 1));
 		}
@@ -499,6 +501,12 @@ namespace System.Windows.Forms
 				result.Sort(new RowIndexComparator());
 				return result;
 			}
+		}
+		
+		internal void ReIndex ()
+		{
+			for (int i = 0; i < Count; i++)
+				(list[i] as DataGridViewRow).SetIndex (i);
 		}
 		
 		internal void Sort (IComparer comparer)

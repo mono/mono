@@ -126,6 +126,11 @@ namespace System.Windows.Forms
 				base.List.Add (columns [i]);
 		}
 		
+		internal void InternalClear ()
+		{
+			List.Clear ();
+		}
+		
 		internal void InternalRemove (DataGridViewColumn dataGridViewColumn)
 		{
 			base.List.Remove(dataGridViewColumn);

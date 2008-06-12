@@ -133,6 +133,11 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal void InternalClear ()
+		{
+			List.Clear ();
+		}
+		
 		internal void InternalRemove (DataGridViewRow dataGridViewRow)
 		{
 			base.List.Remove(dataGridViewRow);
