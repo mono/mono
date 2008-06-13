@@ -1,5 +1,9 @@
 2008-06-13  Mark Probst  <mark.probst@gmail.com>
 
+	* mini.c: Do pass VTable/RGCTX argument to static generic methods.
+
+2008-06-13  Mark Probst  <mark.probst@gmail.com>
+
 	* mini.c: Generic sharing of the special case of ldtoken followed
 	by a call to GetTypeFromHandle.
 
