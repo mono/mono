@@ -1,5 +1,17 @@
 2008-06-13  Mark Probst  <mark.probst@gmail.com>
 
+	* inssel.brg, inssel-long.brg, inssel-long32.brg, mini-ops.h,
+	graph.c, local-propagation.c, aliasing.c: New opcodes for calls
+	with calculated IMT.
+
+	* mini.c: Generic sharing of calls via generic interfaces.
+
+	* jit-icalls.c, jit-icalls.h: Helper function for compiling a
+	generic method with non-constant MonoGenericContext*.  Instead,
+	the context is taken out of the method itself.
+
+2008-06-13  Mark Probst  <mark.probst@gmail.com>
+
 	* mini.c: Generic sharing of ldvirtftn.
 
 2008-06-13  Mark Probst  <mark.probst@gmail.com>

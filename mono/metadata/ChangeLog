@@ -1,3 +1,9 @@
+2008-06-13  Mark Probst  <mark.probst@gmail.com>
+
+	* object.c (mono_method_get_imt_slot): Put the same methods of
+	different instantiations of the same generic interface in the same
+	IMT slots, to make generic sharing simpler.
+
 2008-06-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-internals.h: Added mono_metadata_field_info_with_mempool.
