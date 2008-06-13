@@ -1,8 +1,11 @@
 2008-06-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c inssel-x86.brg cpu-x86.md: Implement unsigned min/max
+	intrinsics.
+
 	* mini-ops.h: Add MIN/MAX_UN opcodes.
 
-	* mini-amd64.c inssel-amd64.brg cpu-amd64.md: Implement unsign min/max
+	* mini-amd64.c inssel-amd64.brg cpu-amd64.md: Implement unsigned min/max
 	intrinsics.
 
 	* basic-math.cs: Add more min/max tests.
