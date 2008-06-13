@@ -1,3 +1,7 @@
+2008-06-13  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Small fix in the prologue of emit_castclass.
+
 2008-06-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* inssel.brg: Remove the OP_MIN/OP_MAX rules. Fix a warning.
