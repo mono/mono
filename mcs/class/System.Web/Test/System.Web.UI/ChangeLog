@@ -1,3 +1,9 @@
+2008-06-14  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* PageTest.cs: Fixed compile error on MS (as it does not list the
+	test assembly in InternalVisibleTo). Removed extra tabs, and changed
+	spaces to tabs.
+
 2008-03-23  Dean Brettle <dean@brettle.com>
 
 	* PageTest.cs: added tests to ensure that using a 

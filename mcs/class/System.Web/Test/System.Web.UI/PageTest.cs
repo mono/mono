@@ -47,11 +47,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Net;
 
-
-
 namespace MonoTests.System.Web.UI {
-
-
 	class TestPage : Page {
 
 		private HttpContext ctx;
@@ -117,7 +113,7 @@ namespace MonoTests.System.Web.UI {
 		}
 	}
 
-	[TestFixture]	
+	[TestFixture]
 	public class PageTest {
 
 		[TestFixtureSetUp]
@@ -209,7 +205,7 @@ namespace MonoTests.System.Web.UI {
 			TestPage2 page = new TestPage2 ();
 			Assert.IsNull (page.Application, "Application");
 		}
-		
+
 #if NET_2_0
 		[Test]
 		[Category ("NunitWeb")]
@@ -340,8 +336,6 @@ namespace MonoTests.System.Web.UI {
 			HtmlDiff.AssertAreEqual (origHtml, newHtml, "HeaderRenderPreRenderComplete");
 		}
 
-
-
 		public static void CheckHeader (Page p)
 		{
 			Assert.AreEqual ("Untitled Page", p.Title, "CheckHeader#1");
@@ -350,20 +344,19 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual ("Test0", p.Header.Title, "CheckHeader#3");
 			p.Header.Title = "Test";
 			Assert.AreEqual ("Test", p.Title, "CheckHeader#4");
-		}     
+		}
 #endif
-
-
-
 
 #if NET_2_0
 		[Test]
 		[Category ("NunitWeb")]
-		public void Page_ValidationGroup () {
+		public void Page_ValidationGroup ()
+		{
 			new WebTest (PageInvoker.CreateOnLoad (Page_ValidationGroup_Load)).Run ();
 		}
 
-		public static void Page_ValidationGroup_Load (Page page) {
+		public static void Page_ValidationGroup_Load (Page page)
+		{
 			TextBox textbox;
 			BaseValidator val;
 
@@ -409,7 +402,7 @@ namespace MonoTests.System.Web.UI {
 			t.Invoker = PageInvoker.CreateOnLoad (InitOutputCache_UsesAdapter_OnLoad);
 			t.Run ();
 		}
-				
+
 		public static void InitOutputCache_UsesAdapter_OnLoad (Page p)
 		{
 			Assert.IsTrue (p.Response.Cache.VaryByHeaders ["header-from-aspx"], 
@@ -474,8 +467,8 @@ namespace MonoTests.System.Web.UI {
 				"DeterminePostBackMode #1");
 		}
 #endif
-#if NET_2_0
 
+#if NET_2_0
 		// This test are testing validation fixture using RequiredFieldValidator for example
 		
 		[Test]
@@ -1356,24 +1349,23 @@ namespace MonoTests.System.Web.UI {
 			#endregion
 		}
 
-                [Test]
-                [Category ("NunitWeb")]
-                public void ClearErrorOnErrorTest ()
-                {
-                        WebTest t = new WebTest ("ClearErrorOnError.aspx");
-                        string html = t.Run ();
-                        Assert.AreEqual (HttpStatusCode.OK, t.Response.StatusCode);
-                }
+		[Test]
+		[Category ("NunitWeb")]
+		public void ClearErrorOnErrorTest ()
+		{
+			WebTest t = new WebTest ("ClearErrorOnError.aspx");
+			string html = t.Run ();
+			Assert.AreEqual (HttpStatusCode.OK, t.Response.StatusCode);
+		}
 
-                [Test]
-                [Category ("NunitWeb")]
-                public void RedirectOnErrorTest ()
-                {
-                        WebTest t = new WebTest ("RedirectOnError.aspx");
-                        string html = t.Run ();
-                        Assert.AreEqual (HttpStatusCode.Found, t.Response.StatusCode);
-                }
-
+		[Test]
+		[Category ("NunitWeb")]
+		public void RedirectOnErrorTest ()
+		{
+			WebTest t = new WebTest ("RedirectOnError.aspx");
+			string html = t.Run ();
+			Assert.AreEqual (HttpStatusCode.Found, t.Response.StatusCode);
+		}
 #endif
 
 		[TestFixtureTearDown]
@@ -1410,14 +1402,8 @@ namespace MonoTests.System.Web.UI {
 			return persister;
 		}
 
-        
-#if !TARGET_JVM
-        internal 
-#endif
-        protected override string GetPostBackFormReference (string formId)
-       
-
-        {
+		protected override string GetPostBackFormReference (string formId)
+		{
 			return String.Format("/* testFormReference */{0}", 
 				base.GetPostBackFormReference (formId));
 		}
@@ -1476,7 +1462,6 @@ namespace MonoTests.System.Web.UI {
 		public new PageStatePersister PageStatePersister {
 			get { return base.PageStatePersister; }
 		}
-					
 	}
 	
 	public class TestControlAdapter : ControlAdapter
@@ -1498,7 +1483,7 @@ namespace MonoTests.System.Web.UI {
 		protected override global::System.Web.UI.Adapters.ControlAdapter ResolveAdapter ()
 		{
 			return control_adapter;
-		}					
+		}
 	}
 #endif
 }
