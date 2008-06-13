@@ -1,3 +1,7 @@
+2008-06-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* MutexTest.cs: Reenable some mutex tests which seem to work now.
+
 2008-06-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TimerTest.cs: Removed NotWorking category from TestDisposeOnCallback

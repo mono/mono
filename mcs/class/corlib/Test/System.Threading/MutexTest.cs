@@ -117,9 +117,7 @@ namespace MonoTests.System.Threading
 		}
 */
 
-		// Hangs #72534
 		[Test]
-		[Category("NotWorking")]
 		public void TestWaitAndSignal1()
 		{
 			Mutex Sem = new Mutex (false);
@@ -134,10 +132,7 @@ namespace MonoTests.System.Threading
 			}
 		}
 
-		// Hangs
 		[Test]
-		[Category("NotWorking")]
-		[Ignore ("It hangs and breaks the domain which runs nunit-console itself")]
 		public void TestWaitAndFoget1()
 		{
 			Mutex Sem = new Mutex(false);
