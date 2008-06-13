@@ -763,14 +763,17 @@ namespace MonoTests.System.Windows.Forms
 			f.Show ();
 			
 			f.ClientSize = new Size (350, 350);
-			
-			Assert.AreEqual (new Point (50, 50), c.Location, "A1");
+
+			Assert.IsTrue (c.Left > 0, string.Format ("A1: c.Left ({0}) must be greater than 0", c.Left));
+			Assert.IsTrue (c.Top > 0, string.Format ("A2: c.Top ({0}) must be greater than 0", c.Top));
 			
 			c.Dock = DockStyle.None;
-			Assert.AreEqual (new Point (50, 50), c.Location, "A2");
+			Assert.IsTrue (c.Left > 0, string.Format ("A3: c.Left ({0}) must be greater than 0", c.Left));
+			Assert.IsTrue (c.Top > 0, string.Format ("A4: c.Top ({0}) must be greater than 0", c.Top));
 			
 			f.ClientSize = new Size (400, 400);
-			Assert.AreEqual (new Point (100, 100), c.Location, "A3");
+			Assert.IsTrue (c.Left > 70, string.Format ("A5: c.Left ({0}) must be greater than 70", c.Left));
+			Assert.IsTrue (c.Top > 70, string.Format ("A6: c.Top ({0}) must be greater than 70", c.Top));
 			
 			f.Dispose ();
 		}
