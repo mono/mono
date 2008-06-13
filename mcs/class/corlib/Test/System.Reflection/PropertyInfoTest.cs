@@ -203,6 +203,17 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (typeof (Derived), pi.GetSetMethod ().ReflectedType);
 		}
 
+		[Test] // bug #399985
+		public void SetValue_Enum ()
+		{
+			TestClass t = new TestClass ();
+			PropertyInfo pi = t.GetType ().GetProperty ("Targets");
+			pi.SetValue (t, AttributeTargets.Field, null);
+			Assert.AreEqual (AttributeTargets.Field, t.Targets, "#1");
+			pi.SetValue (t, (int) AttributeTargets.Interface, null);
+			Assert.AreEqual (AttributeTargets.Interface, t.Targets, "#2");
+		}
+
 		public class ThisAttribute : Attribute
 		{
 		}
@@ -290,8 +301,15 @@ namespace MonoTests.System.Reflection
 			return false;
 		}
 
-		private class TestClass 
+		private class TestClass
 		{
+			private AttributeTargets _targets = AttributeTargets.Assembly;
+
+			public AttributeTargets Targets {
+				get { return _targets; }
+				set { _targets = value; }
+			}
+
 			public string ReadOnlyProperty {
 				get { return string.Empty; }
 			}
