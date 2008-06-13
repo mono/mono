@@ -84,7 +84,7 @@ namespace System.Threading {
 		int stack_size;
 		object start_obj;
 		private IntPtr appdomain_refs;
-		private bool interruption_requested;
+		private int interruption_requested;
 		private IntPtr suspend_event;
 		private IntPtr suspended_event;
 		private IntPtr resume_event;
@@ -98,14 +98,19 @@ namespace System.Threading {
 		private IntPtr end_stack;
 		private bool thread_interrupt_requested;
 		private byte apartment_state = (byte)ApartmentState.Unknown;
+		volatile int critical_region_level;
+		private int small_id;
+		private IntPtr manage_callback;
+		private object pending_exception;
 		/* 
 		 * These fields are used to avoid having to increment corlib versions
 		 * when a new field is added to the unmanaged MonoThread structure.
 		 */
-		private IntPtr small_id;
-		private IntPtr manage_callback;
-		private IntPtr unused7;
-		volatile int critical_region_level;
+		private IntPtr unused2;
+		private IntPtr unused3;
+		private IntPtr unused4;
+		private IntPtr unused5;
+		private IntPtr unused6;
 		#endregion
 
 		// the name of local_slots is important as it's used by the runtime.

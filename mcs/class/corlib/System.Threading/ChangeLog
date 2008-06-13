@@ -1,3 +1,7 @@
+2008-06-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* Thread.cs: Sync layout with unmanaged side.
+
 2008-06-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* Monitor.cs: Implement Enter/Exit directly as icalls without managed wrapper
