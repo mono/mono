@@ -1,3 +1,16 @@
+2008-06-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (mono_thread_request_interruption): Get rid of locking, use
+	InterlockedCompareExchange to query and modify 
+	thread->interruption_requested.
+
+	* object-internals.h (struct _MonoThread): Change interruption_requested
+	to a gint32 so it can be modified by atomic operations. Add 
+	'critical_region_level' from the managed side, change small_id to a guint32,
+	add new set of 'unused' fields.
+
+	* appdomain.c: Bump corlib version.
+
 2008-06-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_from_name): Search modules as well. Fixes
