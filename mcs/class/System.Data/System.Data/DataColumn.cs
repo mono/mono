@@ -90,7 +90,7 @@ namespace System.Data {
 		private string _caption;
 		private MappingType _columnMapping;
 		private string _columnName = String.Empty;
-		private object _defaultValue = DBNull.Value;
+		private object _defaultValue = GetDefaultValueForType (null);
 		private string _expression;
 		private IExpression _compiledExpression;
 		private PropertyCollection _extendedProperties = new PropertyCollection ();
@@ -465,6 +465,8 @@ namespace System.Data {
                                         throw new InvalidConstraintException ("Cannot change datatype, " + 
                                                                               "when column is part of a relation");
                                 
+				Type prevType = _dataContainer != null ? _dataContainer.Type : null; // current
+
 #if NET_2_0
 				if (_dataContainer != null && _dataContainer.Type == typeof (DateTime))
 					_datetimeMode = DataSetDateTime.UnspecifiedLocal;
@@ -482,6 +484,13 @@ namespace System.Data {
 						AutoIncrement = false;
 					}
 				}
+
+				if (DefaultValue != GetDefaultValueForType (prevType))
+					SetDefaultValue (DefaultValue, true);
+#if NET_2_0
+				else
+					_defaultValue = GetDefaultValueForType (DataType);
+#endif
 			}
 		}
 
@@ -507,9 +516,15 @@ namespace System.Data {
 					throw new ArgumentException("Can not set default value while" +
 						" AutoIncrement is true on this column.");
 				}
+				SetDefaultValue (value, false);
+			}
+		}
 
+		void SetDefaultValue (object value, bool forcedTypeCheck)
+		{
+			{
 				object tmpObj;
-				if (!this._defaultValue.Equals(value)) {		
+				if (forcedTypeCheck|| !this._defaultValue.Equals(value)) {
 					if (value == null) {
 						tmpObj = DBNull.Value;
 					}
@@ -517,16 +532,24 @@ namespace System.Data {
 						tmpObj = value;
 					}
 
-					if ((this.DataType != typeof (object))&& (tmpObj != DBNull.Value)) {
+					if (!this.DataType.IsInstanceOfType (tmpObj) && tmpObj != DBNull.Value) {
 						try {
 							//Casting to the new type
 							tmpObj= Convert.ChangeType(tmpObj,this.DataType);
 						}
 						catch (InvalidCastException) {
-							throw new InvalidCastException("Default Value type is not compatible with" + 
-								" column type.");
+							string msg = String.Format ("Default Value of type '{0}' is not compatible with column type '{1}'", tmpObj.GetType (), DataType);
+#if NET_2_0
+							throw new DataException(msg);
+#else
+							throw new ArgumentException(msg);
+#endif
 						}
 					}
+#if NET_2_0
+					if (tmpObj == DBNull.Value)
+						tmpObj = GetDefaultValueForType (DataType);
+#endif
 					_defaultValue = tmpObj;
 				}
 
@@ -1004,6 +1027,19 @@ namespace System.Data {
 #endif
 			return true;
 		}
+
+		internal static object GetDefaultValueForType (Type type)
+		{
+#if NET_2_0
+			if (type == null)
+				return DBNull.Value;
+			if (type.Namespace == "System.Data.SqlTypes" && type.Assembly == typeof (DataColumn).Assembly)
+				// For SqlXxx types, set SqlXxx.Null instead of DBNull.Value.
+				return Activator.CreateInstance (type);
+#endif
+			return DBNull.Value;
+		}
+
 		#endregion // Methods
 	}
 }

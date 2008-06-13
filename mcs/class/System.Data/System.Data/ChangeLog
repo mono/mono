@@ -1,3 +1,15 @@
+2008-06-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataColumn.cs
+	  DefaultValue can be non-DBNull. For SqlXxx type, it becomes
+	  SqlXxx.Null. Also, changing DataType may change DefaultValue
+	  to be consistent with the new type (say, having int DefaultValue
+	  for new string DataType is wrong).
+
+	* XmlSchemaWriter.cs
+	  This should be fixed to take non-DBNull default value into
+	  consideration.
+
 2008-06-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSet.cs, DataTable.cs, XmlSchemaDataImporter.cs : constraints

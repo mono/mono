@@ -678,7 +678,7 @@ namespace System.Data
 					XmlConvert.ToString (col.AutoIncrementStep));
 			}
 
-			if (col.DefaultValue.ToString () != String.Empty)
+			if (!DataColumn.GetDefaultValueForType (col.DataType).Equals (col.DefaultValue))
 				w.WriteAttributeString ("default",
 					DataSet.WriteObjectXml (col.DefaultValue));
 
@@ -792,7 +792,7 @@ namespace System.Data
 
 				if (!col.AllowDBNull)
 					w.WriteAttributeString ("use", "required");
-				if (col.DefaultValue.ToString () != String.Empty)
+				if (col.DefaultValue != DataColumn.GetDefaultValueForType (col.DataType))
 					w.WriteAttributeString ("default",
 						DataSet.WriteObjectXml (col.DefaultValue));
 

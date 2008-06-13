@@ -2793,7 +2793,8 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("Element", column2.ColumnMapping.ToString (), "test#33");
 			Assert.AreEqual ("second", column2.ColumnName, "test#34");
 			Assert.AreEqual ("System.Data.SqlTypes.SqlGuid", column2.DataType.ToString (), "test#35");
-			Assert.AreEqual ("Null", column2.DefaultValue.ToString (), "test#36");
+			Assert.AreEqual (SqlGuid.Null, column2.DefaultValue, "test#36");
+			Assert.AreEqual (typeof (SqlGuid), column2.DefaultValue.GetType (), "test#36-2");
 			Assert.IsFalse (column2.DesignMode, "test#37");
 			Assert.AreEqual ("", column2.Expression, "test#38");
 			Assert.AreEqual (-1, column2.MaxLength, "test#39");

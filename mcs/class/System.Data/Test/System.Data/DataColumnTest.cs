@@ -38,6 +38,7 @@
 using System;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlTypes;
 
 using NUnit.Framework;
 
@@ -323,6 +324,43 @@ namespace MonoTests.System.Data
 			object v = dataRow.ItemArray[0];
 			Assert.AreEqual (typeof (DBNull), v.GetType (), "#C1");
 			Assert.AreEqual (DBNull.Value, v, "#C2");
+		}
+
+		[Test]
+		public void Defaults3 ()
+		{
+			DataColumn col = new DataColumn ("foo", typeof (SqlBoolean));
+#if NET_2_0
+			Assert.AreEqual (SqlBoolean.Null, col.DefaultValue, "#1");
+			col.DefaultValue = SqlBoolean.True;
+			// FIXME: not working yet
+			//col.DefaultValue = true;
+			//Assert.AreEqual (SqlBoolean.True, col.DefaultValue, "#2"); // not bool but SqlBoolean
+			col.DefaultValue = DBNull.Value;
+			Assert.AreEqual (SqlBoolean.Null, col.DefaultValue, "#3"); // not DBNull
+#else
+			Assert.AreEqual (DBNull.Value, col.DefaultValue, "#1");
+			col.DefaultValue = true;
+			Assert.AreEqual (true, col.DefaultValue, "#2");
+			try {
+				col.DefaultValue = DBNull.Value; // throws. DBNull is not allowed!
+				Assert.Fail ("Should raise ArgumentException");
+			} catch (ArgumentException) {
+			}
+#endif
+		}
+
+		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (DataException))]
+#else
+		[ExpectedException (typeof (ArgumentException))]
+#endif
+		public void ChangeTypeAfterSettingDefaultValue ()
+		{
+			DataColumn col = new DataColumn ("foo", typeof (SqlBoolean));
+			col.DefaultValue = true;
+			col.DataType = typeof (int);
 		}
 
 		[Test]
