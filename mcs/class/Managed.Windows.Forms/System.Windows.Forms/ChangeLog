@@ -1,3 +1,8 @@
+2008-06-13  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Don't reset to Dock style layout if DockStyle is
+	set to none.  [Fixes bug #399316]
+
 2008-06-12  Everaldo Canuto  <ecanuto@novell.com>
 
 	* Win32DnD.cs: Fix the check for control not equal null.

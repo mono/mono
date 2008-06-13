@@ -2672,7 +2672,9 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				layout_type = LayoutType.Dock;
+				// If the user sets this to None, we need to still use Anchor layout
+				if (value != DockStyle.None)
+					layout_type = LayoutType.Dock;
 
 				if (dock_style == value) {
 					return;
