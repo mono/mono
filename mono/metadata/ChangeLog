@@ -1,5 +1,21 @@
 2008-06-13  Mark Probst  <mark.probst@gmail.com>
 
+	* generic-sharing.c: Code for maintaining the MRGCTX and MRGCTX
+	templates.  Templates are generalized with an additional type_argc
+	argument.  RGCTX templates have type_argc==0, MRGCTX templates
+	have type_argc>0.
+
+	* domain-internals.h, domain.c: New hash table for looking up
+	MRGCTXs.
+
+	* metadata.c, metadata-internals.h: Rename hash and equal
+	functions for MonoGenericInst's and make them public.
+
+	* class-internals.h: New data structures for the MRGCTX.  Macros
+	for distinguishing slots in the RGCTX and the MRGCTX.
+
+2008-06-13  Mark Probst  <mark.probst@gmail.com>
+
 	* object.c (mono_method_get_imt_slot): Put the same methods of
 	different instantiations of the same generic interface in the same
 	IMT slots, to make generic sharing simpler.

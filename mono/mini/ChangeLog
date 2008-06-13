@@ -1,5 +1,12 @@
 2008-06-13  Mark Probst  <mark.probst@gmail.com>
 
+	* mini.c, generic-sharing.c: Removed generic class relations.
+
+	* mini.c, tramp-amd64.c, tramp-x86.c: Additional arguments to
+	functions due to MRGCTX changes.
+
+2008-06-13  Mark Probst  <mark.probst@gmail.com>
+
 	* inssel.brg, inssel-long.brg, inssel-long32.brg, mini-ops.h,
 	graph.c, local-propagation.c, aliasing.c: New opcodes for calls
 	with calculated IMT.
