@@ -1,5 +1,12 @@
 2008-06-13  Mark Probst  <mark.probst@gmail.com>
 
+	* mini.c: Added additional context_used argument to several
+	functions, which will be needed for sharing generic methods.  Use
+	GET_RGCTX macro wherever appropriate.  Declare only one
+	context_used in mono_method_to_ir().
+
+2008-06-13  Mark Probst  <mark.probst@gmail.com>
+
 	* mini.c, generic-sharing.c: Removed generic class relations.
 
 	* mini.c, tramp-amd64.c, tramp-x86.c: Additional arguments to
