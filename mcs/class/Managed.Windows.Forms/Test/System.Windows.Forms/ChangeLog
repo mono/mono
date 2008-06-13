@@ -1,3 +1,7 @@
+2008-06-13  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DefaultLayoutTests.cs: Add test for bug #399316.
+
 2008-06-12  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewDataBindingTest.cs: Add test for deleting rows

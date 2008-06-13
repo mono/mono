@@ -748,6 +748,32 @@ namespace MonoTests.System.Windows.Forms
 				get { return new Rectangle (20, 20, this.Width - 40, this.Height - 40); }
 			}
 		}
+		[Test]
+		public void ResettingDockToNone ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			f.ClientSize = new Size (300, 300);
+			
+			Control c = new Control ();
+			c.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+			
+			f.Controls.Add (c);
+			
+			f.Show ();
+			
+			f.ClientSize = new Size (350, 350);
+			
+			Assert.AreEqual (new Point (50, 50), c.Location, "A1");
+			
+			c.Dock = DockStyle.None;
+			Assert.AreEqual (new Point (50, 50), c.Location, "A2");
+			
+			f.ClientSize = new Size (400, 400);
+			Assert.AreEqual (new Point (100, 100), c.Location, "A3");
+			
+			f.Dispose ();
+		}
 	}
 
 	[TestFixture]	
