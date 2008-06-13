@@ -1,5 +1,9 @@
 2008-06-13  Mark Probst  <mark.probst@gmail.com>
 
+	* mini.c: Generic sharing of ldvirtftn.
+
+2008-06-13  Mark Probst  <mark.probst@gmail.com>
+
 	* mini.c: Generic sharing of ldftn.
 
 2008-06-13  Mark Probst  <mark.probst@gmail.com>
