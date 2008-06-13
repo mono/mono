@@ -14,29 +14,22 @@ using System.Threading;
 using System.Collections;
 
 namespace MonoTests.System.Threading {
-
-	//
-	// This whole test seems to fail randomly. Either
-	// - It is relying on a race it might not win (that the timer code runs)
-	// - We have a very obscure bug with appdomains.
-	//
-	// Am going with door #1, but it would be nice to investigate this.
-	// -- Ben
-	//
 	[TestFixture]
 	public class TimerTest {
 		// this bucket is used to avoid non-theadlocal issues
 		class Bucket {
 			public int count;
 		}
+
 		[SetUp]
-		public void setup() {
+		public void Setup ()
+		{
 			//creating a timer that will never run just to make sure the
 			// scheduler is warm for the unit tests
 			// this makes fair for the "DueTime" test since it 
 			// doesn't have to wait for the scheduler thread to be 
 			// created. 
-			new Timer(null,null,Timeout.Infinite,0);
+			new Timer (null, null, Timeout.Infinite, 0);
 		}
 		
 		[Test]
@@ -45,14 +38,14 @@ namespace MonoTests.System.Threading {
 			Bucket bucket = new Bucket();
 			Timer t = new Timer (new TimerCallback (Callback), bucket, 200, Timeout.Infinite);
 			Thread.Sleep (50);
-			Assert.AreEqual (0, bucket.count);
+			Assert.AreEqual (0, bucket.count, "#1");
 			Thread.Sleep (200);
-			Assert.AreEqual (1, bucket.count);
+			Assert.AreEqual (1, bucket.count, "#2");
 			Thread.Sleep (500);
-			Assert.AreEqual (1, bucket.count);
+			Assert.AreEqual (1, bucket.count, "#3");
 			t.Change (10, 10);
 			Thread.Sleep (1000);
-			Assert.IsTrue(bucket.count > 20);
+			Assert.IsTrue(bucket.count > 20, "#4");
 			t.Dispose ();
 		}
 
@@ -63,25 +56,27 @@ namespace MonoTests.System.Threading {
 			Timer t = new Timer (new TimerCallback (Callback), bucket, 1, 1);
 			Thread.Sleep (500);
 			int c = bucket.count;
-			Assert.IsTrue(c > 20);
+			Assert.IsTrue(c > 20, "#1");
 			t.Change (100, 100);
 			Thread.Sleep (500);
-			Assert.IsTrue(bucket.count <= c + 6);
+			Assert.IsTrue(bucket.count <= c + 6, "#2");
 			t.Dispose ();
 		}
 
 		[Test]
-		public void TestZeroDueTime () {
+		public void TestZeroDueTime ()
+		{
 			Bucket bucket = new Bucket();
 
 			Timer t = new Timer (new TimerCallback (Callback), bucket, 0, Timeout.Infinite);
 			Thread.Sleep (100);
-			Assert.AreEqual (1, bucket.count);
+			Assert.AreEqual (1, bucket.count, "#1");
 			t.Change (0, Timeout.Infinite);
 			Thread.Sleep (100);
-			Assert.AreEqual (2, bucket.count);
+			Assert.AreEqual (2, bucket.count, "#2");
 			t.Dispose ();
 		}
+
 		[Test]
 		public void TestDispose ()
 		{	
@@ -91,12 +86,12 @@ namespace MonoTests.System.Threading {
 			t.Dispose ();
 			Thread.Sleep (20);
 			int c = bucket.count;
-			Assert.IsTrue(bucket.count > 5);
+			Assert.IsTrue (bucket.count > 5, "#1");
 			Thread.Sleep (200);
-			Assert.AreEqual (c, bucket.count);
+			Assert.AreEqual (c, bucket.count, "#2");
 		}
 
-		[Test] // bug #78208
+		[Test] // bug #320950
 		public void TestDispose2 ()
 		{
 			Timer t = new Timer (new TimerCallback (Callback), null, 10, 10);
@@ -105,73 +100,89 @@ namespace MonoTests.System.Threading {
 		}
 		
 		[Test]
-		public void TestHeavyCreationLoad() {
-			Bucket b = new Bucket();
+		public void TestHeavyCreationLoad ()
+		{
+			Bucket b = new Bucket ();
 			for (int i = 0; i < 500; ++i)
-				new Timer(new TimerCallback(Callback),b,10,Timeout.Infinite);
+				new Timer (new TimerCallback (Callback), b, 10,
+					Timeout.Infinite);
 			// 1000 * 10 msec = 10,000 msec or 10 sec - if everything goes well
 			// we add some slack to cope with timing issues caused by system load etc.
 			for (int i = 0; i < 20; ++i) {
 				if (b.count == 500)
 					break;
-				Thread.Sleep(1000);
+				Thread.Sleep (1000);
 			}
-			Assert.AreEqual(500,b.count);
+			Assert.AreEqual (500, b.count);
 			
-		}
-		[Test]
-		public void TestQuickDisposeDeadlockBug() {
-			int i = 0;
-			Bucket b = new Bucket();
-			ArrayList timers = new ArrayList();
-			while (i < 500) {
-				Timer t = new Timer(new TimerCallback(Callback),b,10,Timeout.Infinite);
-				timers.Add(t);
-				i++;
-				t.Dispose();
-			}
-			Thread.Sleep(11*500);
-		}
-		[Test]
-		public void TestInt32MaxDelay() {
-			Bucket b = new Bucket();
-			new Timer(new TimerCallback(Callback),b,Int32.MaxValue,Timeout.Infinite);
-			Thread.Sleep(50);
-			Assert.AreEqual(0,b.count);
-			
-		}
-		[Test]
-		public void TestInt32MaxPeriod() {
-			Bucket b = new Bucket();
-			new Timer(new TimerCallback(Callback),b,0,Int32.MaxValue);
-			Thread.Sleep(50);
-			Assert.AreEqual(1,b.count);
-			
-		}
-		[Test]
-		public void TestNegativeDelay() {
-			Bucket b = new Bucket();
-			try {
-				new Timer(new TimerCallback(Callback),b,-10,Timeout.Infinite);
-			} catch (ArgumentOutOfRangeException) {
-				return;
-			}
-			Assert.Fail();
-			
-		}
-		[Test]
-		public void TestNegativePeriod() {
-			Bucket b = new Bucket();
-			try {
-				new Timer(new TimerCallback(Callback),b,0,-10);
-			} catch (ArgumentOutOfRangeException) {
-				return;
-			}
-			Assert.Fail();
 		}
 
 		[Test]
-		public void TestDelayZeroPeriodZero() {
+		public void TestQuickDisposeDeadlockBug ()
+		{
+			int i = 0;
+			Bucket b = new Bucket ();
+			ArrayList timers = new ArrayList();
+			while (i < 500) {
+				Timer t = new Timer (new TimerCallback (Callback),
+					b, 10, Timeout.Infinite);
+				timers.Add (t);
+				i++;
+				t.Dispose ();
+			}
+			Thread.Sleep (11 * 500);
+		}
+
+		[Test]
+		public void TestInt32MaxDelay ()
+		{
+			Bucket b = new Bucket ();
+			new Timer (new TimerCallback (Callback), b, Int32.MaxValue,
+				Timeout.Infinite);
+			Thread.Sleep (50);
+			Assert.AreEqual (0, b.count);
+		}
+
+		[Test]
+		public void TestInt32MaxPeriod ()
+		{
+			Bucket b = new Bucket ();
+			new Timer (new TimerCallback (Callback), b, 0,
+				Int32.MaxValue);
+			Thread.Sleep (50);
+			Assert.AreEqual (1, b.count);
+			
+		}
+
+		[Test]
+		public void TestNegativeDelay ()
+		{
+			Bucket b = new Bucket ();
+			try {
+				new Timer (new TimerCallback (Callback), b, -10,
+					Timeout.Infinite);
+				Assert.Fail ();
+			} catch (ArgumentOutOfRangeException) {
+				return;
+			}
+		}
+
+		[Test]
+		public void TestNegativePeriod ()
+		{
+			Bucket b = new Bucket ();
+			try {
+				new Timer (new TimerCallback (Callback), b, 0,
+					-10);
+				Assert.Fail ();
+			} catch (ArgumentOutOfRangeException) {
+				return;
+			}
+		}
+
+		[Test]
+		public void TestDelayZeroPeriodZero()
+		{
 			Bucket b = new Bucket();
 			Timer t = new Timer(new TimerCallback(Callback),b,0,0);
 			Thread.Sleep(100);
@@ -181,18 +192,19 @@ namespace MonoTests.System.Threading {
 			
 		}
 
-		[Category("NotWorking")]
-		public void TestDisposeOnCallback () {
-		
+		[Test]
+		public void TestDisposeOnCallback ()
+		{
 			Timer t1 = null;
 			t1 = new Timer (new TimerCallback (CallbackTestDisposeOnCallback), t1, 0, 10);
 			Thread.Sleep (200);
-			Assert.IsNull(t1);
+			Assert.IsNotNull (t1);
 			
 		}
+
 		private void CallbackTestDisposeOnCallback (object foo)
 		{
-			((Timer)foo).Dispose();
+			((Timer) foo).Dispose ();
 		}
 		
 		private void Callback (object foo)

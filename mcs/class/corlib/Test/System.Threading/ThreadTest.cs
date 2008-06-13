@@ -89,6 +89,7 @@ namespace MonoTests.System.Threading
 	public class ThreadTest
 	{
 		static bool is_win32;
+		static bool is_mono;
 
 		static ThreadTest ()
 		{
@@ -100,6 +101,10 @@ namespace MonoTests.System.Threading
 				is_win32 = true;
 				break;
 			}
+
+			// check a class in mscorlib to determine if we're running on Mono
+			if (Type.GetType ("System.MonoType", false) != null)
+				is_mono = true;
 		}
 
 		//Some Classes to test as threads
@@ -294,7 +299,7 @@ namespace MonoTests.System.Threading
 		[Category ("NotDotNet")] // it hangs.
 		public void TestStart()
 		{
-			if (is_win32)
+			if (is_win32 && is_mono)
 				Assert.Fail ("This test fails on Win32. The test should be fixed.");
 		{
 			C1Test test1 = new C1Test();
@@ -329,7 +334,7 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void TestApartmentState ()
 		{
-			if (is_win32)
+			if (is_win32 && is_mono)
 				Assert.Fail ("This test fails on mono on win32. Our runtime should be fixed.");
 
 			C2Test test1 = new C2Test();
@@ -348,7 +353,7 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void TestPriority1()
 		{
-			if (is_win32)
+			if (is_win32 && is_mono)
 				Assert.Fail ("This test fails on mono on Win32. Our runtime should be fixed.");
 
 			C2Test test1 = new C2Test();
@@ -420,7 +425,7 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void TestIsBackground1 ()
 		{
-			if (is_win32)
+			if (is_win32 && is_mono)
 				Assert.Fail ("This test fails on mono on Win32. Our runtime should be fixed.");
 
 			C2Test test1 = new C2Test();
@@ -453,7 +458,7 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void TestName()
 		{
-			if (is_win32)
+			if (is_win32 && is_mono)
 				Assert.Fail ("This test fails on mono on Win32. Our runtime should be fixed.");
 
 			C2Test test1 = new C2Test();
@@ -472,7 +477,6 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
-		//[Category("NotDotNet")]
 		public void TestNestedThreads1()
 		{
 			C3Test test1 = new C3Test();
@@ -515,9 +519,9 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
-		public void TestThreadState()
+		public void TestThreadState ()
 		{
-			if (is_win32)
+			if (is_win32 && is_mono)
 				Assert.Fail ("This test fails on mono on Win32. Our runtime should be fixed.");
 
 			//TODO: Test The rest of the possible transitions
@@ -630,7 +634,7 @@ namespace MonoTests.System.Threading
 		[Category("NotDotNet")] // On MS, ThreadStateException is thrown on Abort: "Thread is suspended; attempting to abort"
 		public void TestSuspendAbort ()
 		{
-			if (is_win32)
+			if (is_win32 && is_mono)
 				Assert.Fail ("This test fails on Win32. The test should be fixed.");
 
 			Thread t = new Thread (new ThreadStart (DoCount));

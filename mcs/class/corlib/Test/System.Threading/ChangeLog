@@ -1,6 +1,15 @@
+2008-06-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TimerTest.cs: Removed NotWorking category from TestDisposeOnCallback
+	test. Numbered asserts. Minor code formatting updates. Removed obsolete
+	comment on class.
+	* ThreadTest.cs: Use Assert.Fail for tests that fail on the Mono
+	runtime only when these tests are being executed on the Mono runtime.
+
 2008-06-04  Zoltan Varga  <vargaz@gmail.com>
 
-	* TimerTest.cs (Callback): Use Interlocked Increment to increase the counter.
+	* TimerTest.cs (Callback): Use Interlocked Increment to increase the
+	counter.
 
 2007-12-28  Atsushi Enomoto  <atsushi@ximian.com>
 
