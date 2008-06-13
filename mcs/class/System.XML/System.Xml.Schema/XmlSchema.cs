@@ -562,7 +562,7 @@ namespace System.Xml.Schema
 					// handle case where target namespace doesn't exist in schema collection - i.e can't find it at all
 					if (includedSchema == null)
 						return;
-				} else {
+				} else if (includedSchema != null) {
 					if (TargetNamespace == includedSchema.TargetNamespace) {
 						error (handler, "Target namespace must be different from that of included schema.");
 						return;
@@ -571,7 +571,7 @@ namespace System.Xml.Schema
 						return;
 					}
 				}
-			} else {
+			} else if (includedSchema != null) {
 				if (TargetNamespace == null && 
 					includedSchema.TargetNamespace != null) {
 					error (handler, "Target namespace is required to include a schema which has its own target namespace");
@@ -583,8 +583,8 @@ namespace System.Xml.Schema
 			}
 
 			// Do not compile included schema here.
-
-			AddExternalComponentsTo (includedSchema, compilationItems, handler, handledUris, resolver, col);
+			if (includedSchema != null)
+				AddExternalComponentsTo (includedSchema, compilationItems, handler, handledUris, resolver, col);
 		}
 
 
