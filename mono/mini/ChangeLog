@@ -1,5 +1,10 @@
 2008-06-13  Mark Probst  <mark.probst@gmail.com>
 
+	* mini.c: Generic sharing of the special case of ldtoken followed
+	by a call to GetTypeFromHandle.
+
+2008-06-13  Mark Probst  <mark.probst@gmail.com>
+
 	* mini.c: Generic sharing of box for nullable types.
 
 2008-06-13  Zoltan Varga  <vargaz@gmail.com>
