@@ -1,3 +1,14 @@
+2008-06-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ops.h: Add MIN/MAX_UN opcodes.
+
+	* mini-amd64.c inssel-amd64.brg cpu-amd64.md: Implement unsign min/max
+	intrinsics.
+
+	* basic-math.cs: Add more min/max tests.
+
+	* inssel.brg: Remove the OP_MIN/OP_MAX rules. Fix a warning.
+
 2008-06-13  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c: Small fix in the prologue of emit_castclass.
