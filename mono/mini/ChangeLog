@@ -1,3 +1,12 @@
+2008-06-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel.brg: Remove the OP_MIN/OP_MAX rules. Fix a warning.
+
+	* mini.c (mini_get_inst_for_method): Remove the Min/Max intrinsics, they
+	do not work even for unsigned types. Fixes #400014.
+
+	* basic-math.cs: Add regression tests for unsigned Min/Max.
+
 2008-06-13  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c: Added additional context_used argument to several
