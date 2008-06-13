@@ -1,3 +1,8 @@
+2008-06-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_from_name): Search modules as well. Fixes
+	#322332.
+
 2008-06-13  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-sharing.c: Code for maintaining the MRGCTX and MRGCTX
