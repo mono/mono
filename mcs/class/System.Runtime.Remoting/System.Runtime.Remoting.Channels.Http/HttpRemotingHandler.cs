@@ -109,7 +109,7 @@ namespace System.Runtime.Remoting.Channels.Http
 				}
 			}
 
-			byte[] bodyBuffer = bodyBuffer = new byte [responseStream.Length];
+			byte[] bodyBuffer = new byte [responseStream.Length];
 			responseStream.Seek (0, SeekOrigin.Begin);
 			
 			int nr = 0;
