@@ -1,5 +1,12 @@
 2008-06-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* appdomain.c (unload_thread_main): Applied patch from Tim Howard 
+	(timh@ict.om.org). Remove the timeouts when waiting for appdomains to unload.
+
+	* gc.c (mono_domain_finalize): Allow an infinite timeout.
+
+	* threads.c (mono_threads_abort_appdomain_threads): Ditto.
+	
 	* threads.c (mono_thread_request_interruption): Get rid of locking, use
 	InterlockedCompareExchange to query and modify 
 	thread->interruption_requested.
