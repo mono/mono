@@ -1,3 +1,8 @@
+2008-06-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* gc.c (mono_gc_cleanup): Abort the finalizer thread more gracefully.
+	Fixes #324180.
+
 2008-06-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain.c (unload_thread_main): Applied patch from Tim Howard 
