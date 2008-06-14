@@ -1,5 +1,9 @@
 2008-06-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c: Fix some soft-float bugs. Fixes #378735 and #398348.
+
+	* mini.h (MONO_INST_LIST_ENTRY): Fix warnings on arm.
+
 	* mini.c (mono_method_to_ir): Check call signature for NEWOBJ as well.
 
 2008-06-13  Zoltan Varga  <vargaz@gmail.com>
