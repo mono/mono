@@ -1,3 +1,7 @@
+2008-06-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Check call signature for NEWOBJ as well.
+
 2008-06-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c inssel-x86.brg cpu-x86.md: Implement unsigned min/max
