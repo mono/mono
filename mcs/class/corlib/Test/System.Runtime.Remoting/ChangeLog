@@ -1,3 +1,8 @@
+2008-06-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* SynchronizationAttributeTest.cs: Reenable some tests which seem to
+	work now.
+
 2005-02-21  Nick Drochak <ndrochak@ieee.org>
 
 	* SoapServicesTest.cs: OK, i don't know how to handle multi-registrations.
