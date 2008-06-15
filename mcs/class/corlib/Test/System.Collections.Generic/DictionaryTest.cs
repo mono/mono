@@ -764,6 +764,20 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.IsTrue (list.Contains ("singe"), "singe");
 			Assert.IsTrue (list.Contains ("mono"), "mono");
 		}
+
+		[Test]
+		public void KeyObjectMustNotGetChangedIfKeyAlreadyExists ()
+		{
+			Dictionary<String, int> d = new Dictionary<string, int> ();
+			string s1 = "Test";
+			string s2 = "Tes" + "T".ToLowerInvariant();
+			d[s1] = 1;
+			d[s2] = 2;
+			string comp = String.Empty;
+			foreach (String s in d.Keys)
+				comp = s;
+			Assert.IsTrue (Object.ReferenceEquals (s1, comp));
+		}
 	}
 }
 

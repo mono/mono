@@ -1,3 +1,7 @@
+2008-06-16  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* DictionaryTest.cs: Add test for an incompatibility
+
 2008-04-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DictionaryTest.cs: Added not working tests for bug #384723. Spaces
