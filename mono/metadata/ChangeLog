@@ -1,5 +1,8 @@
 2008-06-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* metadata.c (mono_metadata_get_generic_param_row): Use bsearch instead of
+	linear search since the table is sorted.
+
 	* gc.c (mono_gc_cleanup): Abort the finalizer thread more gracefully.
 	Fixes #324180.
 
