@@ -1,3 +1,8 @@
+2008-06-16  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* String.cs: Dictionary: Do not change the index data when using the indexer for
+	an already existing index. This is somewhat illogical and breakes obscure code situations
+
 2008-05-29  Juraj Skripsky <js@hotfeet.ch>
 
 	* List.cs (RemoveAll, Shift): Fix leak by clearing empty array

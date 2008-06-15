@@ -179,6 +179,10 @@ namespace System.Collections.Generic {
 					// update the hash table
 					linkSlots [cur].Next = table [index] - 1;
 					table [index] = cur + 1;
+
+					// store the new item and its hash code
+					linkSlots [cur].HashCode = hashCode;
+					keySlots [cur] = key;
 				} else {
 					// we already have a slot for the given key,
 					// update the existing slot		
@@ -191,11 +195,8 @@ namespace System.Collections.Generic {
 						table [index] = cur + 1;
 					}
 				}
-
-				// store the hash code of the new item and
-				// the item's data itself
-				linkSlots [cur].HashCode = hashCode;
-				keySlots [cur] = key;
+				
+				// store the item's data itself
 				valueSlots [cur] = value;
 				
 				generation++;
