@@ -1,3 +1,10 @@
+2008-06-15  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* GtkPlus.cs: Added comment header and check for GTK+ 2.10.
+	* IVisualStyles.cs, VisualStylesGtkPlus.cs, VisualStylesNative.cs: Added
+	comment header.
+	* VisualStylesEngine.cs: Added comment header. Enabled VisualStylesGtkPlus.
+
 2008-06-10  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* UXTheme.cs, VisualStylesNative.cs: Fixed the type of a GetThemePartSize

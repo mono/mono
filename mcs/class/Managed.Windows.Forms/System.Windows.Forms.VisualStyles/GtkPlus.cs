@@ -1,6 +1,36 @@
+//
+// GtkPlus.cs: Wraps GTK+, exposing its control painting features to code
+// that uses System.Drawing types (such as IDeviceContext, Rectangle).
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+// Copyright (c) 2008 George Giolfan
+//
+// Authors:
+//	George Giolfan (georgegiolfan@yahoo.com)
+//
+
 using gboolean = System.Boolean;
 using gint = System.Int32;
 using gpointer = System.IntPtr;
+using guint = System.UInt32;
 using guint32 = System.UInt32;
 using guint16 = System.UInt16;
 
@@ -34,6 +64,8 @@ namespace System.Windows.Forms.VisualStyles
 		}
 		public static bool Initialize ()
 		{
+			if (gtk_check_version (2, 10, 0) != IntPtr.Zero)
+				return false;
 			//TODO: If we need to pass the actual arguments, duplicate the required code from GTK#.
 			int argc = 0;
 			string [] argv = new string [1];
@@ -307,6 +339,8 @@ namespace System.Windows.Forms.VisualStyles
 		#region GTK
 		[DllImport (GtkLibraryName)]
 		static extern gboolean gtk_init_check (ref int argc, ref string[] argv);
+		[DllImport (GtkLibraryName)]
+		static extern IntPtr gtk_check_version (guint required_major, guint required_minor, guint required_micro);
 		[DllImport (GtkLibraryName)]
 		static extern GtkStylePointer gtk_rc_get_style (GtkWidgetPointer widget);
 		[DllImport (GtkLibraryName)]
