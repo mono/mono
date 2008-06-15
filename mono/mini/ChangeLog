@@ -1,3 +1,7 @@
+2008-06-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_local_regalloc): Add some micro optimizations.
+
 2008-06-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c: Fix some soft-float bugs. Fixes #378735 and #398348.
