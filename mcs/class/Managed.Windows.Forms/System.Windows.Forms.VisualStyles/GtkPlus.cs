@@ -40,7 +40,6 @@ using GdkGCPointer = System.IntPtr;
 using GdkNativeWindowPointer = System.IntPtr;
 using GdkPixbufPointer = System.IntPtr;
 using GdkPixmapPointer = System.IntPtr;
-using GdkRectanglePointer = System.IntPtr;
 using GdkWindowPointer = System.IntPtr;
 using GtkStylePointer = System.IntPtr;
 using GtkWidgetPointer = System.IntPtr;
@@ -113,22 +112,25 @@ namespace System.Windows.Forms.VisualStyles
 			}
 		}
 		#region Controls
-		public void PaintCheckBox (IDeviceContext dc, Rectangle rectangle)
+		public void PaintCheckBox (IDeviceContext dc, Rectangle bounds, Rectangle clippingArea)
 		{
 			state_type = GtkStateType.GTK_STATE_NORMAL;
 			shadow_type = GtkShadowType.GTK_SHADOW_ETCHED_OUT;
 			detail = null;
-			Paint (WidgetType.CheckBox, rectangle, dc);
+			Paint (WidgetType.CheckBox, bounds, dc, clippingArea);
 		}
 		#endregion
-		void Paint (WidgetType widget_type, Rectangle rectangle, IDeviceContext dc)
+		void Paint (WidgetType widget_type, Rectangle bounds, IDeviceContext dc, Rectangle clippingArea)
 		{
-			Paint (widget_type, rectangle, dc, TransparencyType.Alpha, Color.Black, DeviceContextType.Native);
-			//Paint (widget_type, rectangle, dc, TransparencyType.None, Color.Black, DeviceContextType.Graphics);
+			Paint (widget_type, bounds, dc, TransparencyType.Alpha, Color.Black, DeviceContextType.Native, clippingArea);
 		}
-		void Paint (WidgetType widget_type, Rectangle rectangle, IDeviceContext dc, TransparencyType transparencyType, Color background, DeviceContextType deviceContextType)
+		void Paint (WidgetType widget_type, Rectangle bounds, IDeviceContext dc, TransparencyType transparencyType, Color background, DeviceContextType deviceContextType, Rectangle clippingArea)
 		{
-			GdkDrawablePointer drawable = gdk_pixmap_new (IntPtr.Zero, rectangle.Width, rectangle.Height, 24);
+			Rectangle painted_area = Rectangle.Intersect (bounds, clippingArea);
+			painted_area.Offset (-bounds.X, -bounds.Y);
+			if (painted_area.Width == 0 || painted_area.Height == 0)
+				return;
+			GdkDrawablePointer drawable = gdk_pixmap_new (IntPtr.Zero, bounds.Width, bounds.Height, 24);
 			GtkStylePointer style = styles [(int)widget_type] = gtk_style_attach (styles [(int)widget_type], drawable);
 			GdkPixbufPointer pixbuf;
 			IntPtr pixel_data;
@@ -136,7 +138,7 @@ namespace System.Windows.Forms.VisualStyles
 			GdkGCPointer gc = gdk_gc_new (drawable);
 			GdkColor color = new GdkColor (background);
 			gdk_gc_set_rgb_fg_color (gc, ref color);
-			Paint (drawable, gc, rectangle, widget_type, out pixbuf, out pixel_data, out rowstride);
+			Paint (drawable, gc, bounds, widget_type, out pixbuf, out pixel_data, out rowstride, painted_area);
 			GdkPixbufPointer white_pixbuf = IntPtr.Zero;
 			IntPtr white_pixel_data = IntPtr.Zero;
 			int white_rowstride = 0;
@@ -146,7 +148,7 @@ namespace System.Windows.Forms.VisualStyles
 				white_color.green = guint16.MaxValue;
 				white_color.blue = guint16.MaxValue;
 				gdk_gc_set_rgb_fg_color (gc, ref white_color);
-				Paint (drawable, gc, rectangle, widget_type, out white_pixbuf, out white_pixel_data, out white_rowstride);
+				Paint (drawable, gc, bounds, widget_type, out white_pixbuf, out white_pixel_data, out white_rowstride, painted_area);
 			}
 			g_object_unref (gc);
 			unsafe {
@@ -155,10 +157,10 @@ namespace System.Windows.Forms.VisualStyles
 				byte* white_row = (byte*)white_pixel_data;
 				byte* white_pixel;
 
-				for (int row_index = 0; row_index < rectangle.Height; row_index++) {
+				for (int row_index = 0; row_index < painted_area.Height; row_index++) {
 					pixel = row;
 					white_pixel = white_row;
-					for (int pixel_index = 0; pixel_index < rectangle.Width; pixel_index++) {
+					for (int pixel_index = 0; pixel_index < painted_area.Width; pixel_index++) {
 						const int GdkRedOffset = 0;
 						const int GdkGreenOffset = 1;
 						const int GdkBlueOffset = 2;
@@ -195,7 +197,7 @@ namespace System.Windows.Forms.VisualStyles
 			if (transparencyType == TransparencyType.Alpha)
 				g_object_unref (white_pixbuf);
 			g_object_unref (drawable);
-			Bitmap bitmap = new Bitmap (rectangle.Width, rectangle.Height, rowstride, PixelFormat.Format32bppPArgb, pixel_data);
+			Bitmap bitmap = new Bitmap (painted_area.Width, painted_area.Height, rowstride, PixelFormat.Format32bppPArgb, pixel_data);
 			Graphics g;
             bool graphics_is_from_hdc = false;
             switch (deviceContextType) {
@@ -218,7 +220,8 @@ namespace System.Windows.Forms.VisualStyles
 #endif
                 break;
             }
-			g.DrawImage (bitmap, rectangle.Location);
+			painted_area.Offset (bounds.X, bounds.Y);
+			g.DrawImage (bitmap, painted_area.Location);
             switch (deviceContextType) {
             case DeviceContextType.Graphics:
                 break;
@@ -238,34 +241,34 @@ namespace System.Windows.Forms.VisualStyles
 			bitmap.Dispose ();
 			g_object_unref (pixbuf);
 		}
-		void Paint (GdkDrawablePointer drawable, GdkGCPointer gc, Rectangle rectangle, WidgetType widget_type, out GdkPixbufPointer pixbuf, out IntPtr pixel_data, out int rowstride)
+		void Paint (GdkDrawablePointer drawable, GdkGCPointer gc, Rectangle rectangle, WidgetType widget_type, out GdkPixbufPointer pixbuf, out IntPtr pixel_data, out int rowstride, Rectangle clippingArea)
 		{
-			gdk_draw_rectangle (drawable, gc, true, 0, 0, rectangle.Width, rectangle.Height);
-			style_painters [(int)widget_type].Paint (styles [(int)widget_type], drawable, state_type, shadow_type, IntPtr.Zero, widgets [(int)widget_type], detail, 0, 0, rectangle.Width, rectangle.Height);
+			gdk_draw_rectangle (drawable, gc, true, clippingArea.X, clippingArea.Y, clippingArea.Width, clippingArea.Height);
+			style_painters [(int)widget_type].Paint (styles [(int)widget_type], drawable, state_type, shadow_type, new GdkRectangle(clippingArea), widgets [(int)widget_type], detail, 0, 0, rectangle.Width, rectangle.Height);
 			if (
-				(pixbuf = gdk_pixbuf_new (GdkColorspace.GDK_COLORSPACE_RGB, true, 8, rectangle.Width, rectangle.Height)) == IntPtr.Zero ||
-				gdk_pixbuf_get_from_drawable (pixbuf, drawable, IntPtr.Zero, 0, 0, 0, 0, rectangle.Width, rectangle.Height) == IntPtr.Zero)
+				(pixbuf = gdk_pixbuf_new (GdkColorspace.GDK_COLORSPACE_RGB, true, 8, clippingArea.Width, clippingArea.Height)) == IntPtr.Zero ||
+				gdk_pixbuf_get_from_drawable (pixbuf, drawable, IntPtr.Zero, clippingArea.X, clippingArea.Y, 0, 0, clippingArea.Width, clippingArea.Height) == IntPtr.Zero)
 				throw new OutOfMemoryException ();
 			pixel_data = gdk_pixbuf_get_pixels (pixbuf);
 			rowstride = gdk_pixbuf_get_rowstride (pixbuf);
 		}
 		interface IStylePainter
 		{
-			void Paint (GtkStylePointer style, GdkWindowPointer window, GtkStateType state_type, GtkShadowType shadow_type, GdkRectanglePointer area, GtkWidgetPointer widget, string detail, gint x, gint y, gint width, gint height);
+			void Paint (GtkStylePointer style, GdkWindowPointer window, GtkStateType state_type, GtkShadowType shadow_type, GdkRectangle area, GtkWidgetPointer widget, string detail, gint x, gint y, gint width, gint height);
 		}
 		#region Style painters
 		class ButtonPainter : IStylePainter
 		{
-			public void Paint (GtkStylePointer style, GdkWindowPointer window, GtkStateType state_type, GtkShadowType shadow_type, GdkRectanglePointer area, GtkWidgetPointer widget, string detail, gint x, gint y, gint width, gint height)
+			public void Paint (GtkStylePointer style, GdkWindowPointer window, GtkStateType state_type, GtkShadowType shadow_type, GdkRectangle area, GtkWidgetPointer widget, string detail, gint x, gint y, gint width, gint height)
 			{
-				gtk_paint_box (style, window, state_type, shadow_type, area, widget, detail, x, y, width, height);
+				gtk_paint_box (style, window, state_type, shadow_type, ref area, widget, detail, x, y, width, height);
 			}
 		}
 		class CheckBoxPainter : IStylePainter
 		{
-			public void Paint (GtkStylePointer style, GdkWindowPointer window, GtkStateType state_type, GtkShadowType shadow_type, GdkRectanglePointer area, GtkWidgetPointer widget, string detail, gint x, gint y, gint width, gint height)
+			public void Paint (GtkStylePointer style, GdkWindowPointer window, GtkStateType state_type, GtkShadowType shadow_type, GdkRectangle area, GtkWidgetPointer widget, string detail, gint x, gint y, gint width, gint height)
 			{
-				gtk_paint_check (style, window, state_type, shadow_type, area, widget, detail, x, y, width,height);
+				gtk_paint_check (style, window, state_type, shadow_type, ref area, widget, detail, x, y, width,height);
 			}
 		}
 		#endregion
@@ -322,6 +325,19 @@ namespace System.Windows.Forms.VisualStyles
 				blue = (guint16)(value.B << 8);
 			}
 		}
+		struct GdkRectangle {
+			public gint x;
+			public gint y;
+			public gint width;
+			public gint height;
+			public GdkRectangle (Rectangle value)
+			{
+				x = value.X;
+				y = value.Y;
+				width = value.Width;
+				height = value.Height;
+			}
+		}
 		#endregion
 		#region GdkPixbuf
 		[DllImport (GdkPixbufLibraryName)]
@@ -353,9 +369,9 @@ namespace System.Windows.Forms.VisualStyles
 		#endregion
 		#region Painting
 		[DllImport (GtkLibraryName)]
-		static extern void gtk_paint_box (GtkStylePointer style, GdkWindowPointer window, GtkStateType state_type, GtkShadowType shadow_type, GdkRectanglePointer area, GtkWidgetPointer widget, string detail, gint x, gint y, gint width, gint height);
+		static extern void gtk_paint_box (GtkStylePointer style, GdkWindowPointer window, GtkStateType state_type, GtkShadowType shadow_type, ref GdkRectangle area, GtkWidgetPointer widget, string detail, gint x, gint y, gint width, gint height);
 		[DllImport (GtkLibraryName)]
-		static extern void gtk_paint_check (GtkStylePointer style, GdkWindowPointer window, GtkStateType state_type, GtkShadowType shadow_type, GdkRectanglePointer area, GtkWidgetPointer widget, string detail, gint x, gint y, gint width, gint height);
+		static extern void gtk_paint_check (GtkStylePointer style, GdkWindowPointer window, GtkStateType state_type, GtkShadowType shadow_type, ref GdkRectangle area, GtkWidgetPointer widget, string detail, gint x, gint y, gint width, gint height);
 		#endregion
 		enum GtkShadowType
 		{

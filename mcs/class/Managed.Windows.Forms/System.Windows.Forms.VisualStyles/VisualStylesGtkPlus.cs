@@ -65,15 +65,19 @@ namespace System.Windows.Forms.VisualStyles
 		}
 		public int UxThemeDrawThemeBackground (IntPtr hTheme, IDeviceContext dc, int iPartId, int iStateId, Rectangle bounds, Rectangle clipRectangle)
 		{
-			return (int)(DrawBackground ((ThemeHandle)(int)hTheme, dc, iPartId, iStateId, bounds, clipRectangle, true) ? S.S_OK : S.S_FALSE);
+			return (int)(DrawBackground ((ThemeHandle)(int)hTheme, dc, iPartId, iStateId, bounds, clipRectangle) ? S.S_OK : S.S_FALSE);
 		}
-		static bool DrawBackground (ThemeHandle themHandle, IDeviceContext dc, int part, int state, Rectangle bounds, Rectangle clipRectangle, bool clipRectangleSpecified) {
+		public int UxThemeDrawThemeBackground (IntPtr hTheme, IDeviceContext dc, int iPartId, int iStateId, Rectangle bounds)
+		{
+			return UxThemeDrawThemeBackground (hTheme, dc, iPartId, iStateId, bounds, bounds);
+		}
+		static bool DrawBackground (ThemeHandle themHandle, IDeviceContext dc, int part, int state, Rectangle bounds, Rectangle clipRectangle) {
 			switch (themHandle) {
 			case ThemeHandle.BUTTON:
 				switch ((BUTTONPARTS)part) {
 				case BUTTONPARTS.BP_CHECKBOX:
 					switch ((CHECKBOXSTATES)state) {
-					case CHECKBOXSTATES.CBS_UNCHECKEDNORMAL: GtkPlus.PaintCheckBox (dc, bounds); return true;
+					case CHECKBOXSTATES.CBS_UNCHECKEDNORMAL: GtkPlus.PaintCheckBox (dc, bounds, clipRectangle); return true;
 					default: return false;
 					}
 				default: return false;
@@ -85,10 +89,6 @@ namespace System.Windows.Forms.VisualStyles
 		{
 			result = Rectangle.Empty;
 			return (int)S.S_FALSE;
-		}
-		public int UxThemeDrawThemeBackground (IntPtr hTheme, IDeviceContext dc, int iPartId, int iStateId, Rectangle bounds)
-		{
-			return (int)(DrawBackground ((ThemeHandle)(int)hTheme, dc, iPartId, iStateId, bounds, Rectangle.Empty, false) ? S.S_OK : S.S_FALSE);
 		}
 		public int UxThemeDrawThemeText (IntPtr hTheme, IDeviceContext dc, int iPartId, int iStateId, string text, TextFormatFlags textFlags, Rectangle bounds)
 		{
