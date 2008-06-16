@@ -1,3 +1,8 @@
+2008-06-16  Marek Habersack  <mhabersack@novell.com>
+
+	* UrlUtilsTest.cs: those tests can be ran only under the 2.0
+	runtime (System.Web.Util.UrlUtils is an internal class)
+
 2005-09-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TransactionsCas.cs: New. CAS unit for Transactions.

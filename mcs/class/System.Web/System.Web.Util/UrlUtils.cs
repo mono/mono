@@ -138,7 +138,7 @@ namespace System.Web.Util {
 				return Canonic (basePath + slash + relPath);
 			}
 
-			if (basePath == null || basePath == "" || basePath [0] == '~')
+			if (basePath == null || basePath.Length == 0 || basePath [0] == '~')
 				basePath = HttpRuntime.AppDomainAppVirtualPath;
 
 			if (basePath.Length <= 1)
@@ -161,7 +161,7 @@ namespace System.Web.Util {
 			for (int i = 0; i < end; i++) {
 				string current = parts [i];
 
-				if (current == "")
+				if (current.Length == 0)
 					continue;
 
 				if (current == "." )
@@ -264,7 +264,7 @@ namespace System.Web.Util {
 		
 		internal static bool IsRooted (string path)
 		{
-			if (path == null || path == "")
+			if (path == null || path.Length == 0)
 				return true;
 
 			char c = path [0];
