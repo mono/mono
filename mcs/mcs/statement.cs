@@ -4991,8 +4991,6 @@ namespace Mono.CSharp {
 		Expression variable;
 		Expression expr;
 		Statement statement;
-		ArrayForeach array;
-		CollectionForeach collection;
 		
 		public Foreach (Expression type, LocalVariableReference var, Expression expr,
 				Statement stmt, Location l)
@@ -5025,26 +5023,13 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			//
-			// We need an instance variable.  Not sure this is the best
-			// way of doing this.
-			//
-			// FIXME: When we implement propertyaccess, will those turn
-			// out to return values in ExprClass?  I think they should.
-			//
-			if (!(expr.eclass == ExprClass.Variable || expr.eclass == ExprClass.Value ||
-			      expr.eclass == ExprClass.PropertyAccess || expr.eclass == ExprClass.IndexerAccess)){
-				collection.Error_Enumerator ();
-				return false;
-			}
-
 			if (expr.Type.IsArray) {
-				array = new ArrayForeach (type, variable, expr, statement, loc);
-				return array.Resolve (ec);
+				statement = new ArrayForeach (type, variable, expr, statement, loc);
+			} else {
+				statement = new CollectionForeach (type, variable, expr, statement, loc);
 			}
 			
-			collection = new CollectionForeach (type, variable, expr, statement, loc);
-			return collection.Resolve (ec);
+			return statement.Resolve (ec);
 		}
 
 		protected override void DoEmit (EmitContext ec)
@@ -5055,10 +5040,7 @@ namespace Mono.CSharp {
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
 
-			if (collection != null)
-				collection.Emit (ec);
-			else
-				array.Emit (ec);
+			statement.Emit (ec);
 			
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
@@ -5404,7 +5386,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			public void Error_Enumerator ()
+			void Error_Enumerator ()
 			{
 				if (enumerator_found) {
 					return;
