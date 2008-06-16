@@ -1,5 +1,10 @@
 2008-06-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataColumnTest.cs : fixed Defaults3() case. After changing some
+	  test lines I have messed net_1_0 profile results.
+
+2008-06-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataTableTest.cs, DataTableReadWriteXmlTest.cs, DataSetTest.cs:
 	  fixed couple of assertions that expect wrong results. Eliminated
 	  English imperialism. Some other cosmetic fixes.

@@ -341,13 +341,8 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (SqlBoolean.Null, col.DefaultValue, "#3"); // not DBNull
 #else
 			Assert.AreEqual (DBNull.Value, col.DefaultValue, "#1");
-			col.DefaultValue = true;
-			Assert.AreEqual (true, col.DefaultValue, "#2");
-			try {
-				col.DefaultValue = DBNull.Value; // throws. DBNull is not allowed!
-				Assert.Fail ("Should raise ArgumentException");
-			} catch (ArgumentException) {
-			}
+			col.DefaultValue = SqlBoolean.True;
+			col.DefaultValue = DBNull.Value;
 #endif
 		}
 
