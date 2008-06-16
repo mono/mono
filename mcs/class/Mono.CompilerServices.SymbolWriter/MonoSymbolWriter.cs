@@ -391,11 +391,6 @@ namespace Mono.CompilerServices.SymbolWriter
 			_real_name = name;
 		}
 
-		public void SetCompilerGenerated ()
-		{
-			_method_flags |= MethodEntry.Flags.IsCompilerGenerated;
-		}
-
 		public ICompileUnit SourceFile {
 			get { return _comp_unit; }
 		}

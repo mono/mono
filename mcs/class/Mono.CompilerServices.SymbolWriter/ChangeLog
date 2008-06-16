@@ -1,3 +1,9 @@
+2008-06-16  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolWriter.cs
+	(SourceMethodBuilder.SetCompilerGenerated): Removed; we now use
+	the `DebuggerHiddenAttribute'.
+
 2008-06-11  Martin Baulig  <martin@ximian.com>
 
 	* SymbolWriterImpl.cs: Put this back and make it work with the
