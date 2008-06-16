@@ -1,3 +1,15 @@
+2008-06-16  Sandy Armstrong <sanfordarmstrong@gmail.com> 
+
+	* X11DesktopColors.cs: Clear GTK_MODULES environment variable before
+	  running gtk_init_check.  This prevents GAIL from loading
+	  unnecessarily, which was breaking UIA support.  Initial fix for bug
+	  #375987.
+	* Application.cs: Add UIA support to Winforms.  New static constructor
+	  uses reflection to initialize UIAutomationWinforms assembly.  Added
+	  PreRun event so UIA can initialize before the mainloop starts, and
+	  FormAdded event so UIA can provide a11y support for new Forms in an
+	  Application.
+
 2008-06-16  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridView.cs: When binding to a dataset, subscribe to table

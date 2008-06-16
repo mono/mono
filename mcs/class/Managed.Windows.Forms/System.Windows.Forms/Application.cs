@@ -158,8 +158,47 @@ namespace System.Windows.Forms
 		{
 		}
 
+#if NET_2_0
+		static Application ()
+		{
+			// Attempt to load UIA support for winforms
+			// UIA support requires .NET 2.0
+			InitializeUIAutomation ();
+		}
+#endif
+
 		#region Private Methods
 
+#if NET_2_0
+		private static void InitializeUIAutomation ()
+		{
+			// Initialize the UIAutomationWinforms FormListener
+			// class, which signs up for the PreRun and FormAdded
+			// events so that it can provide a11y support for MWF.
+			string uia_winforms_assembly = "UIAutomationWinforms, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f4ceacb585d99812";
+			string listener_type_name = "Mono.UIAutomation.Winforms.FormListener";
+			string init_method_name = "Initialize";
+			
+			Assembly mwf_providers = null;
+			try {
+				mwf_providers = Assembly.Load (uia_winforms_assembly);
+			} catch { }
+			
+			if (mwf_providers == null)
+				return;
+			
+			try {
+				Type listener_type = mwf_providers.GetType (listener_type_name, false);
+				if (listener_type == null)
+					return;
+				MethodInfo init_method = listener_type.GetMethod (init_method_name, BindingFlags.Static | BindingFlags.Public);
+				if (init_method == null)
+					return;
+				init_method.Invoke (null, new object [] {});
+			} catch { }
+		}
+#endif
+		
 		internal static void CloseForms (Thread thread)
 		{
 			#if DebugRunLoop
@@ -685,6 +724,11 @@ namespace System.Windows.Forms
 		public static void Run (ApplicationContext context)
 		{
 #if NET_2_0
+			// Signal that the Application loop is about to run.
+			// This allows UIA to initialize a11y support for MWF
+			// before the main loop begins.
+			if (PreRun != null)
+				PreRun (null, EventArgs.Empty);
 			// If a sync context hasn't been created by now, create
 			// a default one
 			if (SynchronizationContext.Current == null)
@@ -974,8 +1018,12 @@ namespace System.Windows.Forms
 
 		public static event EventHandler ThreadExit;
 		public static event ThreadExceptionEventHandler ThreadException;
-
+		
 #if NET_2_0
+		// These are used externally by the UIA framework
+		internal static event EventHandler FormAdded;
+		internal static event EventHandler PreRun;
+
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static event EventHandler EnterThreadModal;
 
@@ -1009,6 +1057,15 @@ namespace System.Windows.Forms
 		{
 			lock (forms)
 				forms.Add (f);
+#if NET_2_0
+			// Signal that a Form has been added to this
+			// Application. Used by UIA to detect new Forms that
+			// need a11y support. This event may be fired even if
+			// the form has already been added, so clients should
+			// account for that when handling this signal.
+			if (FormAdded != null)
+				FormAdded (f, null);
+#endif
 		}
 		
 		internal static void RemoveForm (Form f)
