@@ -1,3 +1,8 @@
+2008-06-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataTableTest3.cs : bang bang bang, close Stream before Assertion
+	  fails and throws away the remaining code paths.
+
 2008-06-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataTableTest.cs, DataSetTest.cs

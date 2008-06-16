@@ -464,9 +464,9 @@ namespace Monotests_System.Data
 			stream = new FileStream (fileName1, FileMode.Open);
 			DataTable table = new DataTable ();
 			table.ReadXmlSchema (stream);
+			stream.Dispose ();
 
 			VerifyTableSchema (table, parentTable.TableName, parentTable.DataSet);
-			stream.Dispose ();
 		}	
 		
 
@@ -502,9 +502,9 @@ namespace Monotests_System.Data
 			stream = new FileStream (fileName1, FileMode.Open);
 			DataTable table = new DataTable ();
 			table.ReadXmlSchema (stream);
+			stream.Dispose ();
 
 			VerifyTableSchema (table, parentTable.TableName, null);
-			stream.Dispose ();
 		}
 		
 		[Test]
@@ -526,6 +526,7 @@ namespace Monotests_System.Data
 			stream = new FileStream (fileName1, FileMode.Open);
 			DataTable table = new DataTable ();
 			table.ReadXmlSchema (stream);
+			stream.Dispose ();		
 			
 			//Test Property of Parent	
 			VerifyParentTableSchema (table, parentTable.TableName, parentTable.DataSet);
@@ -562,7 +563,6 @@ namespace Monotests_System.Data
 			Assert.AreEqual (1, secondChildTable.ParentRelations.Count, "#24");;
 			Assert.AreEqual (0, secondChildTable.ChildRelations.Count, "#25");
 			Assert.AreEqual (0, secondChildTable.PrimaryKey.Length, "#26");			
-			stream.Dispose ();		
 			
 		}
 		
@@ -584,6 +584,7 @@ namespace Monotests_System.Data
 			stream = new FileStream (fileName1, FileMode.Open);
 			DataTable table = new DataTable (childTable.TableName);
 			table.ReadXmlSchema (stream);
+			stream.Dispose ();
 			
 			//Check Properties of the table
 			Assert.AreEqual ("", table.Namespace, "#1");
@@ -657,7 +658,6 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("ChildTable", col.Table.ToString (), "#58");
 			Assert.AreEqual (false, col.Unique, "#59");			
 			
-			stream.Dispose ();
 				
                 }
                 
@@ -679,8 +679,9 @@ namespace Monotests_System.Data
 				Assert.Fail ("#1 Exception was expected");
 			} catch (Exception e) {
 				Assert.AreEqual ("System.ArgumentException", e.GetType ().ToString (), "#2");
+			} finally {
+				stream.Dispose ();
 			}
-			stream.Dispose ();
 		}
 		
 		
