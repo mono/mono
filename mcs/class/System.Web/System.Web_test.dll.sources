@@ -508,4 +508,5 @@ System.Web.UI.WebControls/WebControlCas.cs
 System.Web.UI.WebControls/XmlCas.cs
 System.Web.UI.WebControls/XmlDataSourceCas.cs
 System.Web.Util/TransactionsCas.cs
+System.Web.Util/UrlUtilsTest.cs
 System.Web.Util/WorkItemCas.cs

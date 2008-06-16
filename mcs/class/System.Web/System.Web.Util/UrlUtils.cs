@@ -80,7 +80,7 @@ namespace System.Web.Util {
 
 			return (StrUtils.StartsWith (path, "/(") && path.IndexOf ("/)") > 2);
 		}
-		
+
 		internal static string RemoveSessionId (string base_path, string file_path)
 		{
 			// Caller did a GetSessionId first
@@ -151,6 +151,8 @@ namespace System.Web.Util {
 		
 		internal static string Canonic (string path)
 		{
+			bool isRooted = IsRooted(path);
+			bool endsWithSlash = path.EndsWith("/");
 			string [] parts = path.Split (path_sep);
 			int end = parts.Length;
 			
@@ -158,23 +160,27 @@ namespace System.Web.Util {
 			
 			for (int i = 0; i < end; i++) {
 				string current = parts [i];
+
+				if (current == "")
+					continue;
+
 				if (current == "." )
 					continue;
 
 				if (current == "..") {
-					if (dest == 0) {
-						if (i == 1) // see bug 52599
-							continue;
-
-						throw new HttpException ("Invalid path.");
-					}
-
 					dest --;
 					continue;
 				}
+				if (dest < 0)
+					if (!isRooted)
+						throw new HttpException ("Invalid path.");
+					else
+						dest = 0;
 
 				parts [dest++] = current;
 			}
+			if (dest < 0)
+				throw new HttpException ("Invalid path.");
 
 			if (dest == 0)
 				return "/";
@@ -183,6 +189,11 @@ namespace System.Web.Util {
 #if NET_2_0
 			str = RemoveDoubleSlashes (str);
 #endif
+			if (isRooted)
+				str = "/" + str;
+			if (endsWithSlash)
+				str = str + "/";
+
 			return str;
 		}
 		

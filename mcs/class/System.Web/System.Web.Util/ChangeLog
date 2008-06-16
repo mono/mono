@@ -1,3 +1,7 @@
+2008-06-16  Noam Lampert  <noaml@mainsoft.com>
+
+	* UrlUtils.cs: Fixed some bugs in Canonize method. Add several tests
+
 2008-06-04  Marek Habersack  <mhabersack@novell.com>
 
 	* UrlUtils.cs: added internal method HasSessionId
