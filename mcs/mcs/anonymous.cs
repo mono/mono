@@ -983,8 +983,11 @@ namespace Mono.CSharp {
 
 			Parameter[] ctor_params = new Parameter [args.Count];
 			args.CopyTo (ctor_params, 0);
+			int ctor_mods = Modifiers.PUBLIC;
+			if (this is IteratorHost)
+				ctor_mods |= Modifiers.DEBUGGER_HIDDEN;
 			Constructor ctor = new Constructor (
-				this, MemberName.Name, Modifiers.PUBLIC,
+				this, MemberName.Name, ctor_mods,
 				new Parameters (ctor_params),
 				new GeneratedBaseInitializer (Location),
 				Location);
@@ -1727,7 +1730,7 @@ namespace Mono.CSharp {
 						      int mod, string real_name, MemberName name,
 						      Parameters parameters)
 				: base (scope != null ? scope : am.Host,
-					generic, return_type, mod | Modifiers.COMPILER_GENERATED, false, name, parameters, null)
+					generic, return_type, mod, false, name, parameters, null)
 			{
 				this.AnonymousMethod = am;
 				this.Scope = scope;

@@ -1,3 +1,27 @@
+2008-06-16  Martin Baulig  <martin@ximian.com>
+
+	* modifiers.cs
+	(Modifiers.DEBUGGER_HIDDEN): New public const.
+
+	* typemanager.cs
+	(TypeManager.GetDebuggerHiddenAttribute): New public static method.
+
+	* class.cs
+	(MethodOrOperator.Emit): Check `Modifiers.DEBUGGER_HIDDEN'.
+	(AbstractPropertyEventMethod): Likewise.
+	(Constructor.Emit): Likewise.
+	(SourceMethod.SetCompilerGenerated): Removed.
+
+	* iterator.cs: Set `Modifiers.DEBUGGER_HIDDEN' everywhere except
+	on MoveNext().
+
+	* anonymous.cs
+	(RootScopeInfo.DoDefineMembers): Set `Modifiers.DEBUGGER_HIDDEN'
+	if we're an `IteratorHost'.
+	(AnonymousMethodMethod..ctor): Don't set
+	`Modifiers.COMPILER_GENERATED'; csc only sets this on the class,
+	not on the method.
+
 2008-06-16  Marek Safar  <marek.safar@gmail.com>
 
 	* statement.cs: Clean-up foreach statements.

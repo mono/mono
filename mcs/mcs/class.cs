@@ -3998,6 +3998,8 @@ namespace Mono.CSharp {
 #if GMCS_SOURCE			
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0)
 				MethodBuilder.SetCustomAttribute (TypeManager.GetCompilerGeneratedAttribute (Location));
+			if ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
+				MethodBuilder.SetCustomAttribute (TypeManager.GetDebuggerHiddenAttribute (Location));
 #endif
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
@@ -4177,12 +4179,6 @@ namespace Mono.CSharp {
 		public void CloseMethod ()
 		{
 			SymbolWriter.CloseMethod ();
-		}
-
-		public void SetCompilerGenerated ()
-		{
-			if (builder != null)
-				builder.SetCompilerGenerated ();
 		}
 
 		public void SetRealMethodName (string name)
@@ -4854,6 +4850,9 @@ namespace Mono.CSharp {
 		//
 		public override void Emit ()
 		{
+			if ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
+				ConstructorBuilder.SetCustomAttribute (TypeManager.GetDebuggerHiddenAttribute (Location));
+
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
@@ -5366,8 +5365,6 @@ namespace Mono.CSharp {
 
 			if (source != null) {
 				method.EmitExtraSymbolInfo (source);
-				if (method.Iterator != null)
-					source.SetCompilerGenerated ();
 				source.CloseMethod ();
 			}
 		}
@@ -6254,6 +6251,8 @@ namespace Mono.CSharp {
 #if GMCS_SOURCE			
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0)
 				method_data.MethodBuilder.SetCustomAttribute (TypeManager.GetCompilerGeneratedAttribute (Location));
+			if ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
+				method_data.MethodBuilder.SetCustomAttribute (TypeManager.GetDebuggerHiddenAttribute (Location));
 #endif			
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
@@ -6685,10 +6684,10 @@ namespace Mono.CSharp {
 			}
 
 			if ((Get.IsDummy || Set.IsDummy)
-					&& (Get.ModFlags != 0 || Set.ModFlags != 0) && (ModFlags & Modifiers.OVERRIDE) == 0) {
+			    && (Get.ModFlags != 0 || Set.ModFlags != 0) && (ModFlags & Modifiers.OVERRIDE) == 0) {
 				Report.Error (276, Location, 
-					"`{0}': accessibility modifiers on accessors may only be used if the property or indexer has both a get and a set accessor",
-					GetSignatureForError ());
+					      "`{0}': accessibility modifiers on accessors may only be used if the property or indexer has both a get and a set accessor",
+					      GetSignatureForError ());
 				return false;
 			}
 

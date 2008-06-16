@@ -176,6 +176,7 @@ namespace Mono.CSharp {
 
 	static public CustomAttributeBuilder param_array_attr;
 	static CustomAttributeBuilder compiler_generated_attr;
+	static CustomAttributeBuilder debugger_hidden_attr;
 
 	// C# 2.0
 	static internal ConstructorInfo fixed_buffer_attr_ctor;
@@ -537,6 +538,24 @@ namespace Mono.CSharp {
 			GetPredefinedConstructor (t, loc, Type.EmptyTypes), new object[0]);
 
 		return compiler_generated_attr;
+	}
+
+	public static CustomAttributeBuilder GetDebuggerHiddenAttribute (Location loc)
+	{
+		if (debugger_hidden_attr != null)
+			return debugger_hidden_attr;
+
+		Type t = TypeManager.CoreLookupType (
+			"System.Diagnostics", "DebuggerHiddenAttribute", Kind.Class, true);
+
+		// TODO: it cannot be null
+		if (t == null)
+			return null;
+
+		debugger_hidden_attr = new CustomAttributeBuilder (
+			GetPredefinedConstructor (t, loc, Type.EmptyTypes), new object[0]);
+
+		return debugger_hidden_attr;
 	}
 
 	public static Type GetNestedType (Type t, string name)

@@ -303,13 +303,15 @@ namespace Mono.CSharp {
 
 			Property current = new Property (
 				this, type, 0, false, name, null, getter, null, false);
+			current.ModFlags |= Modifiers.DEBUGGER_HIDDEN;
 			AddProperty (current);
 		}
 
 		void Define_Reset ()
 		{
 			Method reset = new Method (
-				this, null, TypeManager.system_void_expr, Modifiers.PUBLIC,
+				this, null, TypeManager.system_void_expr,
+				Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
 				false, new MemberName ("Reset", Location),
 				Parameters.EmptyReadOnlyParameters, null);
 			AddMethod (reset);
@@ -382,7 +384,7 @@ namespace Mono.CSharp {
 			public GetEnumeratorMethod (IteratorHost host, bool is_generic)
 				: base (host, null, is_generic ?
 					host.generic_enumerator_type : host.enumerator_type,
-					0, false, GetMemberName (host, is_generic),
+					Modifiers.DEBUGGER_HIDDEN, false, GetMemberName (host, is_generic),
 					Parameters.EmptyReadOnlyParameters, null)
 			{
 				this.Host = host;
@@ -400,11 +402,6 @@ namespace Mono.CSharp {
 
 				ec.CurrentAnonymousMethod = Host.Iterator;
 				return ec;
-			}
-
-			public override void EmitExtraSymbolInfo (SourceMethod source)
-			{
-				source.SetCompilerGenerated ();
 			}
 
 			protected class GetEnumeratorStatement : Statement
@@ -481,7 +478,8 @@ namespace Mono.CSharp {
 			public IteratorHost Host;
 
 			public DisposeMethod (IteratorHost host)
-				: base (host, null, TypeManager.system_void_expr, Modifiers.PUBLIC,
+				: base (host, null, TypeManager.system_void_expr,
+					Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
 					false, new MemberName ("Dispose", host.Location),
 					Parameters.EmptyReadOnlyParameters, null)
 			{
@@ -502,11 +500,6 @@ namespace Mono.CSharp {
 
 				ec.CurrentAnonymousMethod = Host.Iterator;
 				return ec;
-			}
-
-			public override void EmitExtraSymbolInfo (SourceMethod source)
-			{
-				source.SetCompilerGenerated ();
 			}
 
 			protected class DisposeMethodStatement : Statement
