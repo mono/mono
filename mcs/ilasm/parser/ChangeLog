@@ -1,3 +1,22 @@
+2008-06-02  Ankit Jain  <jankit@novell.com>
+
+	Part of fix for bug #367114.
+	* ILParser.jay (seh_clause): Allow exception to be of any type and not
+	just class.
+
+2008-06-01  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay: Track api changes.
+
+2008-03-05  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (custom_type): Allow any method name.
+
+2008-03-05  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #367024.
+	* ILParser.jay (seh_clause): catch can take generic class refs also.
+
 2008-01-03  Rodrigo Kumpera <rkumpera@novell.com>
 
 	* ILParser.jay: Fixed typo in EmitByteInstr class name.

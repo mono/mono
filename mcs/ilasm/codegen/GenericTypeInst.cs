@@ -99,7 +99,7 @@ namespace Mono.ILASM {
                                 string meth_name, BaseTypeRef[] param, int gen_param_count)
                 {
 			/* Note: Using FullName here as we are caching in a static hashtable */
-                        string key = FullName + MethodDef.CreateSignature (ret_type, meth_name, param, gen_param_count);
+                        string key = FullName + MethodDef.CreateSignature (ret_type, call_conv, meth_name, param, gen_param_count, true);
                         TypeSpecMethodRef mr = s_method_table [key] as TypeSpecMethodRef;
                         if (mr == null) {         
                                 mr = new TypeSpecMethodRef (this, call_conv, ret_type, meth_name, param, gen_param_count);

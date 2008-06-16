@@ -15,12 +15,12 @@ namespace Mono.ILASM {
 
         public class CatchBlock : ISehClause {
 
-                private BaseClassRef class_ref;
+                private BaseTypeRef type_ref;
                 private HandlerBlock handler_block;
 
-                public CatchBlock (BaseClassRef class_ref)
+                public CatchBlock (BaseTypeRef type_ref)
                 {
-                        this.class_ref = class_ref;
+                        this.type_ref = type_ref;
                 }
 
                 public void SetHandlerBlock (HandlerBlock hb)
@@ -34,9 +34,9 @@ namespace Mono.ILASM {
                         PEAPI.CILLabel to = handler_block.GetToLabel (code_gen, method);
                         PEAPI.Catch katch;
 
-                        class_ref.Resolve (code_gen);
+                        type_ref.Resolve (code_gen);
 
-                        katch = new PEAPI.Catch (class_ref.PeapiClass, from, to);
+                        katch = new PEAPI.Catch (type_ref.PeapiType, from, to);
 
                         return katch;
                 }

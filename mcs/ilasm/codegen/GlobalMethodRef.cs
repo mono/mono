@@ -26,10 +26,8 @@ namespace Mono.ILASM {
 			if (is_resolved)
 				return;
 
-                        string sig;
-
                         if ((call_conv & PEAPI.CallConv.Vararg) == 0) {
-                                sig = MethodDef.CreateSignature (ret_type, name, param, gen_param_count);
+                                string sig = MethodDef.CreateSignature (ret_type, call_conv, name, param, gen_param_count, false);
                                 peapi_method = code_gen.ResolveMethod (sig);
                         } else {
                                 ArrayList opt_list = new ArrayList ();
@@ -42,8 +40,10 @@ namespace Mono.ILASM {
                                                 opt_list.Add (type.PeapiType);
                                         }
                                 }
-                                sig = MethodDef.CreateVarargSignature (ret_type, name, param);
-                                peapi_method = code_gen.ResolveVarargMethod (sig, code_gen,
+
+                                string sig_only_required_params = MethodDef.CreateSignature (ret_type, call_conv, name, param, gen_param_count, false);
+                                string sig_with_optional_params = MethodDef.CreateSignature (ret_type, call_conv, name, param, gen_param_count, true);
+                                peapi_method = code_gen.ResolveVarargMethod (sig_only_required_params, sig_with_optional_params, code_gen,
                                                 (PEAPI.Type[]) opt_list.ToArray (typeof (PEAPI.Type)));
                         }
 

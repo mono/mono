@@ -394,27 +394,21 @@ namespace Mono.ILASM {
                         return param_array;
                 }
 
-                public PEAPI.MethodRef GetVarargSig (PEAPI.Type[] opt)
+                public PEAPI.MethodRef GetVarargSig (PEAPI.Type[] opt, string full_signature)
                 {
                         if (!is_resolved)
                                 throw new InternalErrorException ("Methods must be resolved before a vararg sig can be created.");
 
                         PEAPI.MethodRef methref = null;
-                        StringBuilder sigbuilder = new StringBuilder ();
-                        string sig;
-                        foreach (PEAPI.Type t in opt)
-                                sigbuilder.Append (opt + ", ");
-                        sig = sigbuilder.ToString ();
-
                         if (vararg_sig_table == null) {
                                 vararg_sig_table = new Hashtable ();                                
                         } else {
-                                methref = vararg_sig_table [sig] as PEAPI.MethodRef;
+                                methref = vararg_sig_table [full_signature] as PEAPI.MethodRef;
                         }
 
                         if (methref == null) {
                                 methref = methoddef.MakeVarArgSignature (opt);
-                                vararg_sig_table [sig] = methref;
+                                vararg_sig_table [full_signature] = methref;
                         }
 
                         return methref;
@@ -669,7 +663,7 @@ namespace Mono.ILASM {
                                 signature = CreateSignature (RetType, name, param_list, GenParamCount);
                 }
 
-                public static string CreateSignature (BaseTypeRef RetType, string name, IList param_list, int gen_param_count)
+                static string CreateSignature (BaseTypeRef RetType, string name, IList param_list, int gen_param_count)
                 {
                         StringBuilder builder = new StringBuilder ();
 
@@ -694,7 +688,7 @@ namespace Mono.ILASM {
                         return builder.ToString ();
                 }
 
-                public static string CreateVarargSignature (BaseTypeRef RetType, string name, IList param_list)
+                static string CreateVarargSignature (BaseTypeRef RetType, string name, IList param_list)
                 {
                         StringBuilder builder = new StringBuilder ();
                         ParamDef last = null;
@@ -727,7 +721,19 @@ namespace Mono.ILASM {
                         return builder.ToString ();
                 }
 
-                public static string CreateVarargSignature (BaseTypeRef RetType, string name, BaseTypeRef [] param_list)
+                // @include_optional: include optional parameters for vararg methods
+                // This will be true mostly for *Ref use, eg. methodrefs at call sites
+                // and false for *Def (include only the required params)
+                public static string CreateSignature (BaseTypeRef RetType, PEAPI.CallConv call_conv, string name,
+                                BaseTypeRef[] param_list, int gen_param_count, bool include_optional)
+                {
+                        if ((call_conv & PEAPI.CallConv.Vararg) != 0)
+                                return CreateVarargSignature (RetType, name, param_list, include_optional);
+                        else
+                                return CreateSignature (RetType, name, param_list, gen_param_count, include_optional);
+                }
+
+                static string CreateVarargSignature (BaseTypeRef RetType, string name, BaseTypeRef [] param_list, bool include_optional)
                 {
                         StringBuilder builder = new StringBuilder ();
                         BaseTypeRef last = null;
@@ -745,13 +751,13 @@ namespace Mono.ILASM {
                                         builder.Append (param.FullName);
                                         first = false;
                                         last = param;
-                                        if (param is SentinelTypeRef)
+                                        if (!include_optional && param is SentinelTypeRef)
                                                 break;
                                 }
                                 
                         }
                         
-                        if (last == null || !(last is SentinelTypeRef)) {
+                        if (!include_optional && (last == null || !(last is SentinelTypeRef))) {
                                 if (!first)
                                         builder.Append (',');
                                 builder.Append ("...");
@@ -762,7 +768,7 @@ namespace Mono.ILASM {
                         return builder.ToString ();
                 }
 
-                public static string CreateSignature (BaseTypeRef RetType, string name, BaseTypeRef[] param_list, int gen_param_count)
+                static string CreateSignature (BaseTypeRef RetType, string name, BaseTypeRef[] param_list, int gen_param_count, bool include_optional)
                 {
                         StringBuilder builder = new StringBuilder ();
 
@@ -780,7 +786,7 @@ namespace Mono.ILASM {
                                                 builder.Append (',');
                                         builder.Append (param.FullName);
                                         first = false;
-                                        if (param is SentinelTypeRef)
+                                        if (!include_optional && param is SentinelTypeRef)
                                                 break;
                                 }
                         }

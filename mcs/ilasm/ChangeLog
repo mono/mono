@@ -1,3 +1,20 @@
+2008-02-21  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #363587
+	* Driver.cs: Use Report.Message for emitting messages.
+	* Report.cs (AssembleFile): Honor 'quiet'.
+	Patch from Andrea Carlo Ornstein <andrea.ornstein@st.com>
+
+2008-02-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Driver.cs: Removed crazy logic prevent debug symbol from being
+	created when /debug is set. 
+
+2008-02-06  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #358496.
+	* ExternMethodRef.cs (ResolveVararg): Fix the check for sentinel.
+
 2007-12-31  Rodrigo Kumpera <rkumpera@novell.com>
 
 	* ilasm.exe.sources: added EmiteByteInst.cs.

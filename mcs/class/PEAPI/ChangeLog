@@ -1,3 +1,12 @@
+2008-06-02  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #367114.
+	* Code.cs (TryBlock.ResolveCatchBlocks): New.
+	(CILInstructions.AddTryBlock): Resolve the catch blocks with the new
+	method.
+	(Catch..ctor): Add new .ctor to allow exceptions of any type.
+	(Catch.ResolveType): New. Add the exception type to the metadata.
+
 2007-11-05  Jackson Harper  <jackson@ximian.com>
 
 	* LICENSE: Add long lost file.

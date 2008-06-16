@@ -73,7 +73,7 @@ namespace Mono.ILASM {
                         this.is_dll = is_dll;
 
 			if (debugging_info)
-				symwriter = new SymbolWriter (CreateDebugFile (output_file));
+				symwriter = new SymbolWriter (output_file);
 
                         type_manager = new TypeManager (this);
                         extern_table = new ExternTable ();
@@ -93,17 +93,6 @@ namespace Mono.ILASM {
                         entry_point = false;
                         this_module = null;
                 }
-
-		private string CreateDebugFile (string output_file)
-		{
-			int ext_index = output_file.LastIndexOf ('.');
-
-			if (ext_index == -1)
-				ext_index = output_file.Length;
-
-			return String.Format ("{0}.{1}", output_file.Substring (0, ext_index),
-					      "mdb");
-		}
 
                 public PEFile PEFile {
                         get { return pefile; }
@@ -182,7 +171,7 @@ namespace Mono.ILASM {
                 public GlobalMethodRef GetGlobalMethodRef (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
                                 string name, BaseTypeRef[] param, int gen_param_count)
                 {
-                        string key = MethodDef.CreateSignature (ret_type, name, param, gen_param_count);
+                        string key = MethodDef.CreateSignature (ret_type, call_conv, name, param, gen_param_count, true);
 
                         GlobalMethodRef methref = null;
 
@@ -526,13 +515,15 @@ namespace Mono.ILASM {
                         return methoddef.Resolve (this);
                 }
 
-                public PEAPI.Method ResolveVarargMethod (string signature,
+                public PEAPI.Method ResolveVarargMethod (string sig_only_required_params, string sig_with_optional_params,
                                 CodeGen code_gen, PEAPI.Type[] opt)
                 {
-                        MethodDef methoddef = (MethodDef) global_method_table[signature];
-                        methoddef.Resolve (code_gen);
+                        MethodDef methoddef = (MethodDef) global_method_table [sig_only_required_params];
+                        if (methoddef == null)
+                                Report.Error ("Unable to resolve global method : " + sig_only_required_params);
 
-                        return methoddef.GetVarargSig (opt);
+                        methoddef.Resolve (code_gen);
+                        return methoddef.GetVarargSig (opt, sig_with_optional_params);
                 }
 
                 public PEAPI.Field ResolveField (string name, string type_name)

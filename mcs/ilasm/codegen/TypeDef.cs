@@ -480,7 +480,7 @@ namespace Mono.ILASM {
                 public PEAPI.Method ResolveMethod (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
                         string name, BaseTypeRef [] param, int gen_param_count, CodeGen code_gen)
                 {
-                        string signature = MethodDef.CreateSignature (ret_type, name, param, gen_param_count);
+                        string signature = MethodDef.CreateSignature (ret_type, call_conv, name, param, gen_param_count, false);
                         MethodDef methoddef = (MethodDef) method_table[signature];
 
                         if (methoddef != null)
@@ -491,12 +491,14 @@ namespace Mono.ILASM {
                 public PEAPI.Method ResolveVarargMethod (BaseTypeRef ret_type, PEAPI.CallConv call_conv,
                         string name, BaseTypeRef [] param, int gen_param_count, PEAPI.Type [] opt, CodeGen code_gen)
                 {
-                        string signature = MethodDef.CreateVarargSignature (ret_type, name, param);
+                        // Only MethodDef sig required to lookup in the method_table
+                        string signature = MethodDef.CreateSignature (ret_type, call_conv, name, param, 0, false);
                         MethodDef methoddef = (MethodDef) method_table[signature];
-
                         if (methoddef != null) {
                                 methoddef.Resolve (code_gen, classdef);
-                                return methoddef.GetVarargSig (opt);
+                                return methoddef.GetVarargSig (
+                                                opt,
+                                                MethodDef.CreateSignature (ret_type, call_conv, name, param, 0, true));
                         }
                         
                         return ResolveAsMethodRef (ret_type, call_conv, name, param, gen_param_count, code_gen);

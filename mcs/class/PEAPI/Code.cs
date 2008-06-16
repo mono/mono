@@ -701,6 +701,7 @@ namespace PEAPI {
 				exceptions = new ArrayList();
 			else if (exceptions.Contains(tryBlock)) return;
 			exceptions.Add(tryBlock);
+			tryBlock.ResolveCatchBlocks (metaData);
 		}
 
 		/// <summary>
@@ -975,6 +976,16 @@ namespace PEAPI {
 			return fatFormat;
 		}
 
+		//Hackish
+		internal void ResolveCatchBlocks (MetaData md)
+		{
+			for (int i=0; i < handlers.Count; i++) {
+				Catch c = handlers [i] as Catch;
+				if (c != null)
+					c.ResolveType (md);
+			}
+		}
+
 		internal override void Write(FileImage output, bool fatFormat) 
 		{
 			// Console.WriteLine("writing exception details");
@@ -1013,7 +1024,7 @@ namespace PEAPI {
 	/// </summary>
 	public class Catch : HandlerBlock  {
 
-		Class exceptType;
+		MetaDataElement exceptType;
 
 		/// <summary>
 		/// Create a new catch clause
@@ -1021,10 +1032,21 @@ namespace PEAPI {
 		/// <param name="except">the exception to be caught</param>
 		/// <param name="handlerStart">start of the handler code</param>
 		/// <param name="handlerEnd">end of the handler code</param>
-		public Catch(Class except, CILLabel handlerStart, CILLabel handlerEnd) 
+		public Catch(Class except, CILLabel handlerStart, CILLabel handlerEnd)
+			: base(handlerStart, handlerEnd)
+		{
+			exceptType = except;
+		}
+
+		public Catch(Type except, CILLabel handlerStart, CILLabel handlerEnd)
 			: base(handlerStart,handlerEnd) 
 		{
 			exceptType = except;
+		}
+
+		internal void ResolveType (MetaData md)
+		{
+		       exceptType = ((Type) exceptType).GetTypeSpec (md);
 		}
 
 		internal override void Write(FileImage output, bool fatFormat) 

@@ -1,3 +1,34 @@
+2008-06-02  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #367114.
+	* CatchBlock.cs: Allow exception to be of any type (BaseTypeRef) and not
+	just a class (BaseClassRef).
+
+2008-06-01  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #364580.
+	* MethodDef.cs (CreateSignature): Add new @include_optional and
+	@call_conv param. Make private.
+	(CreateVarargSignature): Likewise.
+	(CreateSignature): Add new static method for vararg and other methods.
+	(GetVarargSig): Add new @full_signature param to uniquely identify
+	vararg methods.
+
+	* CodeGen.cs (ResolveVarargMethod): This now takes two signatures - one
+	with only the required params and the other with the optional ones, to
+	correctly resolve global vararg methods.
+
+	* BaseTypeRef.cs:
+	* GenericTypeInst.cs:
+	* GlobalMethodRef.cs:
+	* PrimitiveTypeRef.cs:
+	* TypeDef.cs: Track api changes.
+
+2008-02-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeGen.cs: Use original filename as base name for debug file.
+	Symbol writer will already add .mdb to it. Fixes bug #359516.
+
 2008-01-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* EmiteByteInstr.cs: Fixed typo in class name.
