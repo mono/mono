@@ -673,6 +673,34 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			t.Show ();
 			Assert.IsTrue(t.PDCompare());
 		}
+
+		[Test]
+		public void MeasureString () {
+			Bitmap bmp = new Bitmap (400, 300, PixelFormat.Format32bppArgb);
+			Graphics graphics = Graphics.FromImage (bmp);
+			graphics.PageUnit = GraphicsUnit.Point;
+
+			string drawString = "Sample Text in points";
+			Font drawFont = new Font ("Arial Black", 70, FontStyle.Regular);
+			SolidBrush drawBrush = new SolidBrush (Color.Blue);
+
+			float netWidth1 = 836.1719f;
+			float netWidth2 = 1114.896f;
+			float netHeight1 = 98.71094f;
+			float netHeight2 = 131.6146f;
+
+			SizeF size = graphics.MeasureString (drawString, drawFont, new PointF (0, 0), StringFormat.GenericTypographic);
+
+			Assert.IsTrue (Math.Abs (size.Width - netWidth1) / netWidth1 < 0.01);
+			Assert.IsTrue (Math.Abs (size.Height - netHeight1) / netHeight1 < 0.01);
+
+			graphics.PageUnit = GraphicsUnit.Pixel;
+			size = graphics.MeasureString (drawString, drawFont, new PointF (0, 0), StringFormat.GenericTypographic);
+
+			Assert.IsTrue (Math.Abs (size.Width - netWidth2) / netWidth2 < 0.01);
+			Assert.IsTrue (Math.Abs (size.Height - netHeight2) / netHeight2 < 0.01);
+		}
+
 		[Test]
 		public virtual void BeginContainerTest_2() {
 			t.Graphics.DrawRectangle( Pens.Black, new Rectangle(70, 70, 50, 100) );

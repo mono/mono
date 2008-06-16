@@ -68,9 +68,15 @@ namespace System.Drawing.Text {
 
 		internal float MeasureWidth {
 			get {
-				return Width + (_lineIter.Margin*2);
+				return _lineIter.PadWidth (Width);
 			}
 		}
+
+		internal float WidthPadding {
+			get {
+				return _lineIter.PadWidth (Width) - Width;
+			}
+		}		
 
 		internal int CharacterCount {
 			get { return _layout.getCharacterCount(); }
@@ -98,9 +104,9 @@ namespace System.Drawing.Text {
 						case StringAlignment.Center:
 							return (height - Width) / 2;
 						case StringAlignment.Far:
-							return height - _layout.getVisibleAdvance() - _lineIter.Margin;
+							return height - _layout.getVisibleAdvance () - WidthPadding;
 						default:
-							return _lineIter.Margin;
+							return WidthPadding;
 					}
 				}
 				else
@@ -125,15 +131,15 @@ namespace System.Drawing.Text {
 							break;
 						case StringAlignment.Far:
 							if (_lineIter.Format.IsRightToLeft)
-								xOffset = _lineIter.Margin;
+								xOffset = WidthPadding/2;
 							else
-								xOffset = width - _layout.getVisibleAdvance() - _lineIter.Margin;
+								xOffset = width - _layout.getVisibleAdvance () - WidthPadding/2;
 							break;
 						default:
 							if (_lineIter.Format.IsRightToLeft)
-								xOffset = width - _layout.getVisibleAdvance() - _lineIter.Margin;
+								xOffset = width - _layout.getVisibleAdvance () - WidthPadding/2;
 							else
-								xOffset = _lineIter.Margin;
+								xOffset = WidthPadding / 2;
 							break;
 					}
 
@@ -164,8 +170,8 @@ namespace System.Drawing.Text {
 		#region Methods
 
 		internal void Draw(awt.Graphics2D g2d, float x, float y) {
-			if (_lineIter.Format.IsVertical) 
-				_layout.draw(g2d, y + NativeY, -(x + NativeX) );
+			if (_lineIter.Format.IsVertical)
+				_layout.draw (g2d, y + NativeY, -(x + NativeX));
 			else
 				_layout.draw(g2d, x + NativeX, y + NativeY );
 		}

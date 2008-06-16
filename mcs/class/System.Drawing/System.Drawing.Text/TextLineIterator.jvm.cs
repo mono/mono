@@ -86,12 +86,26 @@ namespace System.Drawing.Text {
 
 		#region Properties
 
-		float WrapWidth {
-			get { return (_format.IsVertical ? Height : Width) - (Margin * 2); }
+		float WrapWidth
+		{
+			get {
+				float widthOrHeight = _format.IsVertical ? Height : Width;
+				if (!_format.IsGenericTypographic) {
+					widthOrHeight =
+						((_format.IsVertical ? Height : Width) - (0.463f * FontSize)) / 1.028f;
+				}
+				return widthOrHeight;
+			}
 		}
 
 		internal float WrapHeight {
-			get { return (_format.IsVertical ? Width : Height); }
+			get {
+				float widthOrHeight = _format.IsVertical ? Width : Height;
+				if (!_format.IsGenericTypographic) {
+					widthOrHeight = (_format.IsVertical ? Width : Height) / 1.08864f;
+				}
+				return widthOrHeight;
+			}
 		}
 
 		internal float Width {
@@ -106,8 +120,29 @@ namespace System.Drawing.Text {
 			get { return _format; }
 		}
 
-		internal float Margin {
-			get { return _margin; }
+		internal float PadWidth (float origWidth)
+		{
+			if (Format.IsGenericTypographic)
+				return origWidth;
+
+			//This is a proximity to .NET calculated Width.
+			return origWidth * 1.028f + 0.463f * FontSize;
+		}
+
+		internal float PadHeight (float origHeight)
+		{
+			if (Format.IsGenericTypographic)
+				return origHeight;
+
+			//This is a proximity to .NET calculated Height.
+			return 1.08864f * origHeight;
+		}		
+
+		internal float FontSize
+		{
+			get {
+				return _font.Size;
+			}
 		}
 
 		internal int CharsConsumed {
@@ -161,7 +196,7 @@ namespace System.Drawing.Text {
 				this,
 				_accumulatedHeight);
 
-			float lineHeight = lineLayout.Ascent + lineLayout.Descent;
+			float lineHeight = PadHeight (lineLayout.Ascent + lineLayout.Descent + lineLayout.Leading);
 			
 			if (Format.LineLimit && (_accumulatedHeight + lineHeight > WrapHeight)) {
 				_charsConsumed += _currentPos;

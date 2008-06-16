@@ -1972,7 +1972,7 @@ namespace System.Drawing {
 				statistics[1] = iter.CharsConsumed;
 			}
 
-			return new SizeF(mwidth, mheight);
+			return new SizeF (mwidth / UnitConversion [(int) _pageUnit], mheight / UnitConversion [(int) _pageUnit]);
 		}
 
 		

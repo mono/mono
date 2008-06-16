@@ -50,6 +50,8 @@ namespace System.Drawing {
 		
 		private float _firstTabOffset;
 		private float [] _tabStops;
+
+		private bool _genericTypeographic = false;
 		
 		#region Constructors
 
@@ -178,6 +180,7 @@ namespace System.Drawing {
 					StringFormatFlags.NoClip, 
 					0 );
 				genericTypographic.Trimming = StringTrimming.None;
+				genericTypographic._genericTypeographic = true;
 				return genericTypographic;
 			}
 		}
@@ -224,6 +227,13 @@ namespace System.Drawing {
 		internal CharacterRange [] CharRanges {
 			get {
 				return _charRanges;
+			}
+		}
+
+		internal bool IsGenericTypographic
+		{
+			get {
+				return _genericTypeographic;
 			}
 		}
 		#endregion
