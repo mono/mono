@@ -196,7 +196,8 @@ namespace System.Windows.Forms
 
 			textbox.ReadOnly = ro;
 			textbox.Bounds = new Rectangle (new Point (bounds.X + offset_x, bounds.Y + offset_y),
-							new Size (bounds.Width - offset_x, bounds.Height - offset_y));
+							new Size (bounds.Width - offset_x - 1, bounds.Height - offset_y - 1));
+
 			textbox.Visible = cellIsVisible;
 			textbox.SelectAll ();
 			textbox.Focus ();

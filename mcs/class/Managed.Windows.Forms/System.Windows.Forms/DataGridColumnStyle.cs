@@ -131,7 +131,6 @@ namespace System.Windows.Forms
 		internal bool is_default;
 		internal DataGrid grid;
 		private DataGridColumnHeaderAccessibleObject accesible_object;
-		private StringFormat string_format_hdr;
 		static string def_null_text = "(null)";
 		private ArrowDrawing arrow_drawing = ArrowDrawing.No;
 		internal bool bound;
@@ -157,10 +156,6 @@ namespace System.Windows.Forms
 			grid = null;
 			is_default = false;
 			alignment = HorizontalAlignment.Left;
-			string_format_hdr = new StringFormat ();
-			string_format_hdr.FormatFlags |= StringFormatFlags.NoWrap;
-			string_format_hdr.LineAlignment  = StringAlignment.Center;
-			string_format_hdr.Trimming = StringTrimming.Character;
 		}
 
 		#endregion
@@ -529,51 +524,7 @@ namespace System.Windows.Forms
 		
 		internal void PaintHeader (Graphics g, Rectangle bounds, int colNum)
 		{
-			// Background
-			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.CurrentHeaderBackColor), 
-				bounds);
-				
-			if (!grid.FlatMode) {
-				// Paint Borders
-				g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlLight),
-					bounds.X, bounds.Y, bounds.X + bounds.Width, bounds.Y);
-				
-				if (colNum == 0) {
-					g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlLight),
-						bounds.X, bounds.Y, bounds.X, bounds.Y + bounds.Height);
-				} else {
-					g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlLight),
-						bounds.X, bounds.Y + 2, bounds.X, bounds.Y + bounds.Height - 2);
-				}
-				
-				g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlDark),
-					bounds.X + bounds.Width - 1, bounds.Y + 2 , bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 2);
-			}
-			
-			bounds.X += 2;
-			bounds.Width -= 2;
-
-			if (arrow_drawing != ArrowDrawing.No)
-				bounds.Width -= 16;
-
-			g.DrawString (HeaderText, DataGridTableStyle.HeaderFont, ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.CurrentHeaderForeColor), 
-				bounds, string_format_hdr);
-
-			if (arrow_drawing != ArrowDrawing.No) {
-				// Draw 6 x 6
-				Point pnt = new Point (bounds.X + bounds.Width + 4, bounds.Y + ((bounds.Height - 6)/2));
-				
-				if (arrow_drawing == ArrowDrawing.Ascending) {
-					g.DrawLine (SystemPens.ControlLightLight, pnt.X + 6, pnt.Y + 6, pnt.X + 3, pnt.Y);
-					g.DrawLine (SystemPens.ControlDark, pnt.X, pnt.Y + 6, pnt.X + 6, pnt.Y + 6);
-					g.DrawLine (SystemPens.ControlDark, pnt.X, pnt.Y + 6, pnt.X + 3, pnt.Y);
-				} else {
-					g.DrawLine (SystemPens.ControlLightLight, pnt.X + 6, pnt.Y, pnt.X + 3, pnt.Y + 6);
-					g.DrawLine (SystemPens.ControlDark, pnt.X, pnt.Y, pnt.X + 6, pnt.Y);
-					g.DrawLine (SystemPens.ControlDark, pnt.X, pnt.Y, pnt.X + 3, pnt.Y + 6);
-				}
-				
-			}
+			ThemeEngine.Current.DataGridPaintColumnHeader (g, bounds, grid, colNum);
 		}
 		
 		internal void PaintNewRow (Graphics g, Rectangle bounds, Brush backBrush, Brush foreBrush)

@@ -1,3 +1,36 @@
+2008-06-14  Everaldo Canuto  <ecanuto@novell.com>
+
+	[DataGrid drawing refactory]
+
+	* DataGrid.cs: Fix the caption size, we need one pixel more for divider.
+
+	* DataGridColumnStyle.cs: Removing PaintHeader code, the draw operations
+	must be handle by Theme, now it call DataGridPaintColumnHeader.
+
+	* DataGridTextBoxColumn.cs: Fix the textbox size. It must be one pixel less,
+	test cases must be also fixed because it checks for wrong size.
+
+	* ThemeWin32Classic.cs: 
+		- Draw the bottom line of grid caption.
+		- Prevent to draw caption text when it is empty.
+		- Use CPDrawBorder3D for 3D efects to simplify code.
+		- Uses 3D (when not flat) to paint corner shared between row and column
+		header.
+		- Fix header drawing issues on win32, now borders are drawing.
+		- Fix column header paint issues to mimic win32.
+		- Adjust header drawing for last column, like first one it must be draw
+		different.
+		- Added DataGridPaintRowHeaderStar to draw star like .net does, it is
+		not an character.
+		- DataGridPaintColumnHeader created to draw column headers, it also
+		paint stuff right on Win32.
+		- Use DataGridPaintColumnHeader method instead of DataGridColumnStyle 
+		class.
+
+	* Theme.cs: 
+		- DataGridPaintRowHeaderStar method added.
+		- DataGridPaintColumnHeader method added.
+
 2008-06-13  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Don't reset to Dock style layout if DockStyle is

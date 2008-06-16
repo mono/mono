@@ -777,9 +777,11 @@ namespace System.Windows.Forms
 		public abstract void DataGridPaint (PaintEventArgs pe, DataGrid grid);
 		public abstract void DataGridPaintCaption (Graphics g, Rectangle clip, DataGrid grid);
 		public abstract void DataGridPaintColumnHeaders (Graphics g, Rectangle clip, DataGrid grid);
+		public abstract void DataGridPaintColumnHeader (Graphics g, Rectangle bounds, DataGrid grid, int col);
 		public abstract void DataGridPaintRowContents (Graphics g, int row, Rectangle row_rect, bool is_newrow, Rectangle clip, DataGrid grid);
 		public abstract void DataGridPaintRowHeader (Graphics g, Rectangle bounds, int row, DataGrid grid);
 		public abstract void DataGridPaintRowHeaderArrow (Graphics g, Rectangle bounds, DataGrid grid);
+		public abstract void DataGridPaintRowHeaderStar (Graphics g, Rectangle bounds, DataGrid grid);
 		public abstract void DataGridPaintParentRows (Graphics g, Rectangle bounds, DataGrid grid);
 		public abstract void DataGridPaintParentRow (Graphics g, Rectangle bounds, DataGridDataSource row, DataGrid grid);
 		public abstract void DataGridPaintRows (Graphics g, Rectangle cells, Rectangle clip, DataGrid grid);

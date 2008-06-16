@@ -1663,27 +1663,38 @@ namespace System.Windows.Forms
 
 		public override void DataGridPaintCaption (Graphics g, Rectangle clip, DataGrid grid)
 		{
-			Rectangle modified_area = clip;
-			modified_area.Intersect (grid.caption_area);
+			Rectangle bounds = clip;
+			bounds.Intersect (grid.caption_area);
 
-			g.FillRectangle (ResPool.GetSolidBrush (grid.CaptionBackColor),
-					 modified_area);
+			// Background
+			g.FillRectangle (ResPool.GetSolidBrush (grid.CaptionBackColor), bounds);
 
-			Rectangle text_rect = grid.caption_area;
-			text_rect.Y += text_rect.Height / 2 - grid.CaptionFont.Height / 2;
-			text_rect.Height = grid.CaptionFont.Height;
-			
-			g.DrawString (grid.CaptionText, grid.CaptionFont,
-				      ResPool.GetSolidBrush (grid.CaptionForeColor),
-				      text_rect);
+			// Bottom line
+    		g.DrawLine (ResPool.GetPen (grid.CurrentTableStyle.CurrentHeaderForeColor),
+					bounds.X, bounds.Y + bounds.Height -1, 
+                    bounds.X + bounds.Width, bounds.Y + bounds.Height -1);
 
-			if (modified_area.IntersectsWith (grid.back_button_rect)) {
+			// Caption text
+			if (grid.CaptionText != String.Empty) {
+				Rectangle text_rect = grid.caption_area;
+				text_rect.Y += text_rect.Height / 2 - grid.CaptionFont.Height / 2;
+				text_rect.Height = grid.CaptionFont.Height;
+
+				g.DrawString (grid.CaptionText, grid.CaptionFont,
+					      ResPool.GetSolidBrush (grid.CaptionForeColor),
+					      text_rect);
+			}
+
+			// Back button
+			if (bounds.IntersectsWith (grid.back_button_rect)) {
 				g.DrawImage (grid.back_button_image, grid.back_button_rect);
 				if (grid.back_button_mouseover) {
 					CPDrawBorder3D (g, grid.back_button_rect, grid.back_button_active ? Border3DStyle.Sunken : Border3DStyle.Raised, all_sides);
 				}
 			}
-			if (modified_area.IntersectsWith (grid.parent_rows_button_rect)) {
+
+			// Rows button
+			if (bounds.IntersectsWith (grid.parent_rows_button_rect)) {
 				g.DrawImage (grid.parent_rows_button_image, grid.parent_rows_button_rect);
 				if (grid.parent_rows_button_mouseover) {
 					CPDrawBorder3D (g, grid.parent_rows_button_rect, grid.parent_rows_button_active ? Border3DStyle.Sunken : Border3DStyle.Raised, all_sides);
@@ -1695,14 +1706,22 @@ namespace System.Windows.Forms
 		{
 			Rectangle columns_area = grid.column_headers_area;
 
-			if (grid.CurrentTableStyle.CurrentRowHeadersVisible) { // Paint corner shared between row and column header
+            // Paint corner shared between row and column header
+			if (grid.CurrentTableStyle.CurrentRowHeadersVisible) {
 				Rectangle rect_bloc = grid.column_headers_area;
 				rect_bloc.Width = grid.RowHeaderWidth;
 				if (clip.IntersectsWith (rect_bloc)) {
-					if (grid.VisibleColumnCount > 0)
-						g.FillRectangle (ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderBackColor), rect_bloc);
-					else
+					if (grid.VisibleColumnCount > 0) {
+						if (grid.FlatMode)
+							g.FillRectangle (ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderBackColor), rect_bloc);
+						else
+							CPDrawBorder3D (g, rect_bloc, Border3DStyle.RaisedInner, 
+								Border3DSide.Left | Border3DSide.Right | 
+								Border3DSide.Top | Border3DSide.Bottom | Border3DSide.Middle, 
+								grid.CurrentTableStyle.CurrentHeaderBackColor);
+					} else {
 						g.FillRectangle (ResPool.GetSolidBrush (grid.BackgroundColor), rect_bloc);
+					}
 				}
 
 				columns_area.X += grid.RowHeaderWidth;
@@ -1742,7 +1761,7 @@ namespace System.Windows.Forms
 				current_clip.Intersect (prev_clip);
 				g.Clip = current_clip;
 
-				grid.CurrentTableStyle.GridColumnStyles[column].PaintHeader (g, rect_columnhdr, column);
+				DataGridPaintColumnHeader (g, rect_columnhdr, grid, column);
 
 				current_clip.Dispose ();
 			}
@@ -1754,6 +1773,73 @@ namespace System.Windows.Forms
 			not_usedarea.Width = grid.ClientRectangle.X + grid.ClientRectangle.Width - rect_columnhdr.X - rect_columnhdr.Height;		
 			g.FillRectangle (ResPool.GetSolidBrush (grid.BackgroundColor), not_usedarea);
 			
+		}
+
+		public override void DataGridPaintColumnHeader (Graphics g, Rectangle bounds, DataGrid grid, int col)
+		{
+			// Background
+			g.FillRectangle (ResPool.GetSolidBrush (grid.CurrentTableStyle.HeaderBackColor), bounds);
+
+			// Paint Borders
+			if (!grid.FlatMode) {
+				g.DrawLine (ResPool.GetPen (ColorControlLightLight),
+					bounds.X, bounds.Y, bounds.X + bounds.Width, bounds.Y);
+				
+				if (col == 0) {
+					g.DrawLine (ResPool.GetPen (ColorControlLightLight),
+						bounds.X, bounds.Y, bounds.X, bounds.Y + bounds.Height);
+				} else {
+					g.DrawLine (ResPool.GetPen (ColorControlLightLight),
+						bounds.X, bounds.Y + 2, bounds.X, bounds.Y + bounds.Height - 3);
+				}
+				
+				if (col == (grid.VisibleColumnCount -1)) {
+					g.DrawLine (ResPool.GetPen (ColorControlDark),
+						bounds.X + bounds.Width - 1, bounds.Y, 
+						bounds.X + bounds.Width - 1, bounds.Y + bounds.Height);
+				} else {
+					g.DrawLine (ResPool.GetPen (ColorControlDark),
+						bounds.X + bounds.Width - 1, bounds.Y + 2, 
+						bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 3);
+				}
+
+				g.DrawLine (ResPool.GetPen (ColorControlDark),
+					bounds.X, bounds.Y + bounds.Height - 1, 
+					bounds.X + bounds.Width, bounds.Y + bounds.Height - 1);
+			}
+
+			bounds.X += 2;
+			bounds.Width -= 2;
+
+			DataGridColumnStyle style = grid.CurrentTableStyle.GridColumnStyles[col];
+
+			if (style.ArrowDrawingMode != DataGridColumnStyle.ArrowDrawing.No)
+				bounds.Width -= 16;
+
+			// Caption
+			StringFormat format = new StringFormat ();
+			format.FormatFlags |= StringFormatFlags.NoWrap;
+			format.LineAlignment = StringAlignment.Center;
+			format.Trimming = StringTrimming.Character;
+
+			g.DrawString (style.HeaderText, grid.CurrentTableStyle.HeaderFont, 
+				ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderForeColor), 
+				bounds, format);
+
+			// Arrow (6 x 6)
+			if (style.ArrowDrawingMode != DataGridColumnStyle.ArrowDrawing.No) {
+				Point pnt = new Point (bounds.X + bounds.Width + 4, bounds.Y + ((bounds.Height - 6)/2));
+				
+				if (style.ArrowDrawingMode == DataGridColumnStyle.ArrowDrawing.Ascending) {
+					g.DrawLine (SystemPens.ControlLightLight, pnt.X + 6, pnt.Y + 6, pnt.X + 3, pnt.Y);
+					g.DrawLine (SystemPens.ControlDark, pnt.X, pnt.Y + 6, pnt.X + 6, pnt.Y + 6);
+					g.DrawLine (SystemPens.ControlDark, pnt.X, pnt.Y + 6, pnt.X + 3, pnt.Y);
+				} else {
+					g.DrawLine (SystemPens.ControlLightLight, pnt.X + 6, pnt.Y, pnt.X + 3, pnt.Y + 6);
+					g.DrawLine (SystemPens.ControlDark, pnt.X, pnt.Y, pnt.X + 6, pnt.Y);
+					g.DrawLine (SystemPens.ControlDark, pnt.X, pnt.Y, pnt.X + 3, pnt.Y + 6);
+				}
+			}
 		}
 
 		public override void DataGridPaintParentRows (Graphics g, Rectangle clip, DataGrid grid)
@@ -1788,8 +1874,6 @@ namespace System.Windows.Forms
 
 		public override void DataGridPaintParentRow (Graphics g, Rectangle bounds, DataGridDataSource row, DataGrid grid)
 		{
-			//Console.WriteLine ("drawing parent row {0}", row);
-
 			// Background
 			g.FillRectangle (ResPool.GetSolidBrush (grid.ParentRowsBackColor),
 					 bounds);
@@ -1811,8 +1895,6 @@ namespace System.Windows.Forms
 			text_size = g.MeasureString (table_name, bold_font).ToSize();
 			text_rect = new Rectangle(new Point(bounds.X + 3, bounds.Y + bounds.Height - text_size.Height), text_size);
 
-			//Console.WriteLine ("drawing text at {0}", text_rect);
-
 			g.DrawString (table_name,
 				      bold_font, ResPool.GetSolidBrush (grid.ParentRowsForeColor), text_rect, text_format);
 
@@ -1829,26 +1911,15 @@ namespace System.Windows.Forms
 				text_rect.Size = g.MeasureString (text, grid.Font).ToSize();
 				text_rect.Y = bounds.Y + bounds.Height - text_rect.Height; // XXX
 
-				//Console.WriteLine ("drawing text at {0}", text_rect);
-
 				g.DrawString (text,
 					      grid.Font, ResPool.GetSolidBrush (grid.ParentRowsForeColor), text_rect, text_format);
 			}
 
-			if (grid.FlatMode == false) {
-				
-				// Paint Borders
-				g.DrawLine (ResPool.GetPen (ColorControlLight),
-					bounds.X, bounds.Y, bounds.X + bounds.Width, bounds.Y);
-	
-				g.DrawLine (ResPool.GetPen (ColorControlLight),
-					bounds.X, bounds.Y + 1, bounds.X, bounds.Y + bounds.Height - 1);
-	
-				g.DrawLine (ResPool.GetPen (ColorControlDark),
-					bounds.X + bounds.Width - 1, bounds.Y + 1 , bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 1);
-	
-				g.DrawLine (ResPool.GetPen (ColorControlDark),
-					bounds.X, bounds.Y + bounds.Height -1, bounds.X + bounds.Width, bounds.Y  + bounds.Height -1);
+            // Paint Borders
+			if (!grid.FlatMode) {
+                CPDrawBorder3D (g, bounds, Border3DStyle.RaisedInner, 
+                    Border3DSide.Left | Border3DSide.Right | 
+                    Border3DSide.Top | Border3DSide.Bottom);
 			}
 		}
 
@@ -1878,14 +1949,25 @@ namespace System.Windows.Forms
 				(grid.CurrentTableStyle.CurrentHeaderForeColor), arrow, FillMode.Winding);
 		}
 
+		public override void DataGridPaintRowHeaderStar (Graphics g, Rectangle bounds, DataGrid grid) 
+		{
+			int x = bounds.X + 4;
+			int y = bounds.Y + 3;
+			Pen pen = ResPool.GetPen (grid.CurrentTableStyle.CurrentHeaderForeColor);
+
+			g.DrawLine (pen, x + 4, y, x + 4, y + 8);
+			g.DrawLine (pen, x, y + 4, x + 8, y + 4);
+			g.DrawLine (pen, x + 1, y + 1, x + 7, y + 7);
+			g.DrawLine (pen, x + 7, y + 1, x + 1, y + 7);
+		}		
+
 		public override void DataGridPaintRowHeader (Graphics g, Rectangle bounds, int row, DataGrid grid)
 		{
 			bool is_add_row = grid.ShowEditRow && row == grid.DataGridRows.Length - 1;
 			bool is_current_row = row == grid.CurrentCell.RowNumber;
 
 			// Background
-			g.FillRectangle (ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderBackColor),
-					 bounds);
+			g.FillRectangle (ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderBackColor), bounds);
 
 			// Draw arrow
 			if (is_current_row) {
@@ -1899,23 +1981,13 @@ namespace System.Windows.Forms
 				}
 			}
 			else if (is_add_row) {
-				g.DrawString ("*", grid.Font, ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderForeColor),
-					      bounds);
+				DataGridPaintRowHeaderStar (g, bounds, grid);
 			}
 
-			if (grid.FlatMode == false && !is_add_row) {
-				// Paint Borders
-				g.DrawLine (ResPool.GetPen (ColorControlLight),
-					    bounds.X, bounds.Y, bounds.X + bounds.Width, bounds.Y);
-
-				g.DrawLine (ResPool.GetPen (ColorControlLight),
-					    bounds.X, bounds.Y + 1, bounds.X, bounds.Y + bounds.Height - 1);
-
-				g.DrawLine (ResPool.GetPen (ColorControlDark),
-					    bounds.X + bounds.Width - 1, bounds.Y + 1 , bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 1);
-
-				g.DrawLine (ResPool.GetPen (ColorControlDark),
-					    bounds.X, bounds.Y + bounds.Height -1, bounds.X + bounds.Width, bounds.Y  + bounds.Height -1);
+			if (!grid.FlatMode && !is_add_row) {
+				CPDrawBorder3D (g, bounds, Border3DStyle.RaisedInner, 
+					Border3DSide.Left | Border3DSide.Right | 
+					Border3DSide.Top | Border3DSide.Bottom);
 			}
 		}
 		
