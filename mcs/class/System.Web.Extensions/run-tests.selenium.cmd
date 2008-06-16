@@ -43,7 +43,7 @@ set TIMESTAMP=%sdy%_%sdm%_%sdd%_%sth%_%stm%
 
 set ResultsURL=/PostResults
 set ResultsDir=FuncTests%TIMESTAMP%
-set OUTPUT_FILE_PREFIX=System_Web_Extensions
+set OUTPUT_FILE_PREFIX=SystemWebExtensionsSelenium
 
 set COMMON_PREFIX=%cd%\%TIMESTAMP%_%OUTPUT_FILE_PREFIX%.GH_%GH_VERSION%.1.%USERNAME%
 set SELENIUM_OUTPUT_XML=%COMMON_PREFIX%.xml
