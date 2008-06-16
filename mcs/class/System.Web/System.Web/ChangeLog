@@ -1,3 +1,7 @@
+2008-06-16  Noam Lampert  <noaml@mainsoft.com>
+
+	* HttpContext.cs: improve support for RewritePath
+
 2008-06-10  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRuntime.cs: do not create a new thread to run the

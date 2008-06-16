@@ -636,7 +636,10 @@ namespace System.Web {
 #endif
 		void RewritePath (string filePath, string pathInfo, string queryString, bool setClientFilePath)
 		{
-			filePath = UrlUtils.Combine (Request.BaseVirtualDir, filePath);
+			if (UrlUtils.IsRooted (filePath))
+				filePath = UrlUtils.Combine (Request.BaseVirtualDir, UrlUtils.Canonic (filePath).Substring (1));
+			else
+				filePath = UrlUtils.Combine (UrlUtils.GetDirectory (Request.FilePath), filePath);
 			if (!StrUtils.StartsWith (filePath, HttpRuntime.AppDomainAppVirtualPath))
 				throw new HttpException (404, "The virtual path '" + filePath + "' maps to another application.", filePath);
 
