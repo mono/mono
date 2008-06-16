@@ -43,6 +43,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Collections;
 using System.Data.Common;
+using System.Data.SqlTypes;
 using System.Globalization;
 using Mono.Data.SqlExpressions;
 
@@ -1033,9 +1034,41 @@ namespace System.Data {
 #if NET_2_0
 			if (type == null)
 				return DBNull.Value;
-			if (type.Namespace == "System.Data.SqlTypes" && type.Assembly == typeof (DataColumn).Assembly)
+			if (type.Namespace == "System.Data.SqlTypes" && type.Assembly == typeof (DataColumn).Assembly) {
 				// For SqlXxx types, set SqlXxx.Null instead of DBNull.Value.
-				return Activator.CreateInstance (type);
+				if (type == typeof (SqlBinary))
+					return SqlBinary.Null;
+				if (type == typeof (SqlBoolean))
+					return SqlBoolean.Null;
+				if (type == typeof (SqlByte))
+					return SqlByte.Null;
+				if (type == typeof (SqlBytes))
+					return SqlBytes.Null;
+				if (type == typeof (SqlChars))
+					return SqlChars.Null;
+				if (type == typeof (SqlDateTime))
+					return SqlDateTime.Null;
+				if (type == typeof (SqlDecimal))
+					return SqlDecimal.Null;
+				if (type == typeof (SqlDouble))
+					return SqlDouble.Null;
+				if (type == typeof (SqlGuid))
+					return SqlGuid.Null;
+				if (type == typeof (SqlInt16))
+					return SqlInt16.Null;
+				if (type == typeof (SqlInt32))
+					return SqlInt32.Null;
+				if (type == typeof (SqlInt64))
+					return SqlInt64.Null;
+				if (type == typeof (SqlMoney))
+					return SqlMoney.Null;
+				if (type == typeof (SqlSingle))
+					return SqlSingle.Null;
+				if (type == typeof (SqlString))
+					return SqlString.Null;
+				if (type == typeof (SqlXml))
+					return SqlXml.Null;
+			}
 #endif
 			return DBNull.Value;
 		}
