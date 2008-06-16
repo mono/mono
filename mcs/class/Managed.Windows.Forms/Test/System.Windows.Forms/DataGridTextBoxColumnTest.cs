@@ -307,7 +307,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (tb.IsInEditOrNavigateMode, "1.5");
 			column.DoEdit (cm, 0, new Rectangle (new Point (0,0), new Size (100, 100)), false, "hi there", true);
 			Assert.AreEqual ("hi there", tb.Text, "2");
-			Assert.AreEqual (new Rectangle (new Point (2,2), new Size (98,98)), tb.Bounds, "3");
+			Assert.AreEqual (new Rectangle (new Point (2,2), new Size (97,97)), tb.Bounds, "3");
 			Assert.IsFalse (tb.ReadOnly, "4");
 			Assert.IsFalse (tb.IsInEditOrNavigateMode, "5");
 
@@ -340,7 +340,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (tb.IsInEditOrNavigateMode, "1.5");
 			column.DoEdit (cm, 0, new Rectangle (new Point (0,0), new Size (100, 100)), false, "hi there", true);
 			Assert.AreEqual ("hi there", tb.Text, "2");
-			Assert.AreEqual (new Rectangle (new Point (2,2), new Size (98,98)), tb.Bounds, "3");
+			Assert.AreEqual (new Rectangle (new Point (2,2), new Size (97,97)), tb.Bounds, "3");
 			Assert.IsFalse (tb.ReadOnly, "4");
 			Assert.IsFalse (tb.IsInEditOrNavigateMode, "5");
 
@@ -359,7 +359,7 @@ namespace MonoTests.System.Windows.Forms
 			cm.Position = 0;
 			column.DoEdit (cm, 0, new Rectangle (new Point (0,0), new Size (100,100)), false, "hi there", true);
 			Assert.AreEqual ("hi there", tb.Text, "8");
-			Assert.AreEqual (new Rectangle (new Point (2,2), new Size (98,98)), tb.Bounds, "9");
+			Assert.AreEqual (new Rectangle (new Point (2,2), new Size (97,97)), tb.Bounds, "9");
 			Assert.IsFalse (tb.ReadOnly, "10");
 			Assert.IsFalse (tb.IsInEditOrNavigateMode, "11");
 			tb.Text = "yo";
@@ -390,7 +390,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (tb.IsInEditOrNavigateMode, "1.5");
 			column.DoEdit (cm, 0, new Rectangle (new Point (0,0), new Size (100, 100)), false, "hi there", true);
 			Assert.AreEqual ("hi there", tb.Text, "2");
-			Assert.AreEqual (new Rectangle (new Point (2,2), new Size (98,98)), tb.Bounds, "3");
+			Assert.AreEqual (new Rectangle (new Point (2,2), new Size (97,97)), tb.Bounds, "3");
 			Assert.IsFalse (tb.ReadOnly, "4");
 			Assert.IsFalse (tb.IsInEditOrNavigateMode, "5");
 
@@ -422,7 +422,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (tb.IsInEditOrNavigateMode, "1.5");
 			column.DoEdit (cm, 0, new Rectangle (new Point (0,0), new Size (100, 100)), false, "hi there", true);
 			Assert.AreEqual ("hi there", tb.Text, "2");
-			Assert.AreEqual (new Rectangle (new Point (2,2), new Size (98,98)), tb.Bounds, "3");
+			Assert.AreEqual (new Rectangle (new Point (2,2), new Size (97,97)), tb.Bounds, "3");
 			Assert.IsFalse (tb.ReadOnly, "4");
 			Assert.IsFalse (tb.IsInEditOrNavigateMode, "5");
 
