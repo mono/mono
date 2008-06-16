@@ -1,3 +1,7 @@
+2008-06-16  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-virtual.2.cs: Delegate test for static generic methods.
+
 2008-06-14  Kornél Pál  <kornelpal@gmail.com>
 
 	* mixed-mode: Add x64 target to mixed-mode assembly tests.
