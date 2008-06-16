@@ -1,3 +1,9 @@
+2008-06-16  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridView.cs: When binding to a dataset, subscribe to table
+	and column change events.  Unsubscribe to these when we clear bindings.
+	[Fixes bug #399601]
+
 2008-06-14  Everaldo Canuto  <ecanuto@novell.com>
 
 	[DataGrid drawing refactory]
