@@ -77,7 +77,8 @@ namespace MonoTests.System.Data
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
+				// Never premise English.
+//				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("dataType", ex.ParamName, "#6");
 			}
@@ -439,7 +440,8 @@ namespace MonoTests.System.Data
 				Assert.Fail ("#E1");
 			} catch (EvaluateException e) {
 				Assert.AreEqual (typeof (EvaluateException), e.GetType (), "#E2");
-				Assert.AreEqual ("Cannot find column [nimi].", e.Message, "#E3");
+				// Never premise English.
+				//Assert.AreEqual ("Cannot find column [nimi].", e.Message, "#E3");
 			}
 
 			try {
@@ -455,7 +457,8 @@ namespace MonoTests.System.Data
 				Assert.Fail ("#G1");
 			} catch (EvaluateException e) {
 				Assert.AreEqual (typeof (EvaluateException), e.GetType (), "#G2");
-				Assert.AreEqual ("Invalid type name 'Boolean'.", e.Message, "#G3");
+				// Never premise English.
+				//Assert.AreEqual ("Invalid type name 'Boolean'.", e.Message, "#G3");
 			}
 		}
 

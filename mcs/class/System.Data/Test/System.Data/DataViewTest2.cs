@@ -1295,8 +1295,9 @@ namespace MonoTests_System.Data
 			try {
 				DataTable newTable = view.ToTable (false, null);
 			} catch (ArgumentNullException e) {
-				Assert.AreEqual ("'columnNames' argument cannot be null." + Environment.NewLine + 
-						"Parameter name: columnNames", e.Message, "#1");
+				// Never premise English.
+				//Assert.AreEqual ("'columnNames' argument cannot be null." + Environment.NewLine + 
+				//		"Parameter name: columnNames", e.Message, "#1");
 			}
 			DataTable newTable1 = view.ToTable(false, new string[] { });
 			Assert.AreEqual(10, newTable1.Rows.Count, "#3");

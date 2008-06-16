@@ -385,7 +385,8 @@ namespace MonoTests.System.Data
 				Assert.Fail ("test#02");
 			} catch (Exception e) {
 				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#03");
-				Assert.AreEqual ("Cannot remove this column, because it is part of the parent key for relationship Rel.", e.Message, "test#04");
+				// Never premise English.
+				//Assert.AreEqual ("Cannot remove this column, because it is part of the parent key for relationship Rel.", e.Message, "test#04");
 			}
 		}
 
@@ -510,7 +511,8 @@ namespace MonoTests.System.Data
 				Assert.Fail ("test#04");
 			} catch (Exception e) {
 				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#05");
-				Assert.AreEqual ("Column '_test_' does not belong to table test_table.", e.Message, "test#06");
+				// Never premise English.
+				//Assert.AreEqual ("Column '_test_' does not belong to table test_table.", e.Message, "test#06");
 			}
 
 			Cols.Add ();
@@ -529,7 +531,8 @@ namespace MonoTests.System.Data
 				Assert.Fail ("test#10");
 			} catch (Exception e) {
 				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#11");
-				Assert.AreEqual ("Cannot remove a column that doesn't belong to this table.", e.Message, "test#12");
+				// Never premise English.
+				//Assert.AreEqual ("Cannot remove a column that doesn't belong to this table.", e.Message, "test#12");
 			}
 
 			Cols.Add ();
@@ -551,7 +554,8 @@ namespace MonoTests.System.Data
 				Assert.Fail ("test#17");
 			} catch (Exception e) {
 				Assert.AreEqual (typeof (IndexOutOfRangeException), e.GetType (), "test#18");
-				Assert.AreEqual ("Cannot find column 10.", e.Message, "test#19");
+				// Never premise English.
+				//Assert.AreEqual ("Cannot find column 10.", e.Message, "test#19");
 			}
 		}
 

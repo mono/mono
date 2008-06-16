@@ -687,8 +687,9 @@ namespace MonoTests.System.Data
 				rdr.GetSchemaTable ();
 				Assert.Fail ("#0");
 			} catch (InvalidOperationException e) {
-				Assert.AreEqual ("Schema of current DataTable '" + table.TableName + 
-						"' in DataTableReader has changed, DataTableReader is invalid.", e.Message, "#1");
+				// Never premise English.
+				//Assert.AreEqual ("Schema of current DataTable '" + table.TableName + 
+				//		"' in DataTableReader has changed, DataTableReader is invalid.", e.Message, "#1");
 			}
 			
 			rdr = table.CreateDataReader ();
@@ -698,8 +699,9 @@ namespace MonoTests.System.Data
 				rdr.GetSchemaTable ();
 				Assert.Fail ("#1");
 			} catch (InvalidOperationException e) {
-				Assert.AreEqual ("Schema of current DataTable '" + table.TableName + 
-						"' in DataTableReader has changed, DataTableReader is invalid.", e.Message, "#1");
+				// Never premise English.
+				//Assert.AreEqual ("Schema of current DataTable '" + table.TableName + 
+				//		"' in DataTableReader has changed, DataTableReader is invalid.", e.Message, "#1");
 			}
 		}
 	
@@ -742,8 +744,9 @@ namespace MonoTests.System.Data
 				rdr.GetChars (1, 0, null, 0, 10);
 				Assert.Fail ("#1");
 			} catch (InvalidCastException e) {
-				Assert.AreEqual ("Unable to cast object of type 'System.String'" +
-					" to type 'System.Char[]'.", e.Message, "#1");
+				// Never premise English.
+				//Assert.AreEqual ("Unable to cast object of type 'System.String'" +
+				//	" to type 'System.Char[]'.", e.Message, "#1");
 			}
 			char[] char_arr = null;
 			long len = 0;

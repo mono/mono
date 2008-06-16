@@ -275,8 +275,9 @@ namespace MonoTests_System.Data
 				ds.EnforceConstraints = true;
 				Assert.Fail ("#1");
 			} catch (ConstraintException e) {
-				Assert.AreEqual ("Failed to enable constraints. One or more rows contain values " + 
-						"violating non-null, unique, or foreign-key constraints.", e.Message, "#2");
+				// Never premise English.
+				//Assert.AreEqual ("Failed to enable constraints. One or more rows contain values " + 
+				//		"violating non-null, unique, or foreign-key constraints.", e.Message, "#2");
 			}
 		}
 
@@ -294,8 +295,9 @@ namespace MonoTests_System.Data
 				ds.EnforceConstraints = true;
 				Assert.Fail ("#1");
 			} catch (ConstraintException e) {
-				Assert.AreEqual ("Failed to enable constraints. One or more rows contain values " + 
-						"violating non-null, unique, or foreign-key constraints.", e.Message, "#2");
+				// Never premise English.
+				//Assert.AreEqual ("Failed to enable constraints. One or more rows contain values " + 
+				//		"violating non-null, unique, or foreign-key constraints.", e.Message, "#2");
 			}
 		}
 

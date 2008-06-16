@@ -1,5 +1,13 @@
 2008-06-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataViewTest2.cs DataColumnTest.cs DataSetTest2.cs
+	  UniqueConstraintTest.cs DataRowCollectionTest.cs DataRowTest2.cs
+	  DataColumnCollectionTest.cs DataRelationTest.cs
+	  DataTableReaderTest.cs DataRowTest.cs :
+	  Eliminate English imperialism. They fail on non-English .NET.
+
+2008-06-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataTableTest3.cs : bang bang bang, close Stream before Assertion
 	  fails and throws away the remaining code paths.
 

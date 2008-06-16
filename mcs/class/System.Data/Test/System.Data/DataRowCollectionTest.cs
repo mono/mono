@@ -141,7 +141,8 @@ namespace MonoTests.System.Data
 				Assert.Fail ("test#13");
 			} catch (Exception e) {
 				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#14");
-				Assert.AreEqual ("This row already belongs to this table.", e.Message, "test#15");
+				// Never premise English.
+				//Assert.AreEqual ("This row already belongs to this table.", e.Message, "test#15");
 			}
 			
 			try {
@@ -183,7 +184,8 @@ namespace MonoTests.System.Data
 				Assert.Fail ("test#22");
 			} catch (Exception e) {
 				Assert.AreEqual (typeof (ConstraintException), e.GetType (), "test#23");
-				Assert.AreEqual ("Column 'Column1' is constrained to be unique.  Value 'first' is already present.", e.Message, "test#24");
+				// Never premise English.
+				//Assert.AreEqual ("Column 'Column1' is constrained to be unique.  Value 'first' is already present.", e.Message, "test#24");
 			}
 		       
 			Column = new DataColumn ("integer");
@@ -368,7 +370,8 @@ namespace MonoTests.System.Data
 				Assert.Fail ("test#07");
 			} catch (Exception e) {
 				Assert.AreEqual (typeof (MissingPrimaryKeyException), e.GetType (), "test#08");
-				Assert.AreEqual ("Table doesn't have a primary key.", e.Message, "test#09");			
+				// Never premise English.
+				//Assert.AreEqual ("Table doesn't have a primary key.", e.Message, "test#09");			
 			}
 			
 			_tbl.PrimaryKey = new DataColumn [] {_tbl.Columns [0]};
@@ -381,7 +384,8 @@ namespace MonoTests.System.Data
 				Assert.Fail ("test#13");
 			} catch (Exception e) {
 				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#14");
-				Assert.AreEqual ("Expecting 1 value(s) for the key being indexed, but received 2 value(s).", e.Message, "test#15");
+				// Never premise English.
+				//Assert.AreEqual ("Expecting 1 value(s) for the key being indexed, but received 2 value(s).", e.Message, "test#15");
 			}
 			
 			_tbl.PrimaryKey = new DataColumn [] {_tbl.Columns [0], _tbl.Columns [1]};
@@ -395,7 +399,8 @@ namespace MonoTests.System.Data
 				Assert.Fail ("test#20");
 			} catch (Exception e) {
 				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#21");
-				Assert.AreEqual ("Expecting 2 value(s) for the key being indexed, but received 1 value(s).", e.Message, "test#22");
+				// Never premise English.
+				//Assert.AreEqual ("Expecting 2 value(s) for the key being indexed, but received 1 value(s).", e.Message, "test#22");
 			}
 		}
 		
@@ -510,7 +515,8 @@ namespace MonoTests.System.Data
 				Assert.Fail ("test#01");
 			} catch (Exception e) {
 				Assert.AreEqual (typeof (MissingPrimaryKeyException), e.GetType (), "test#02");
-				Assert.AreEqual ("Table doesn't have a primary key.", e.Message, "test#03");              
+				// Never premise English.
+				//Assert.AreEqual ("Table doesn't have a primary key.", e.Message, "test#03");              
 			}
 			
 			_tbl.PrimaryKey = new DataColumn [] {_tbl.Columns [0]};
@@ -539,7 +545,8 @@ namespace MonoTests.System.Data
 				Assert.Fail ("test#11");
 			} catch (Exception e) {
 				Assert.AreEqual (typeof (MissingPrimaryKeyException), e.GetType (), "test#12");
-				Assert.AreEqual ("Table doesn't have a primary key.", e.Message, "tets#13");
+				// Never premise English.
+				//Assert.AreEqual ("Table doesn't have a primary key.", e.Message, "tets#13");
 			}
 			
 			_tbl.PrimaryKey = new DataColumn [] {_tbl.Columns [0], _tbl.Columns [1]};
@@ -549,7 +556,8 @@ namespace MonoTests.System.Data
 				Assert.Fail ("test#14");
 			} catch (Exception e) {
 				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#15");
-				Assert.AreEqual ("Expecting 2 value(s) for the key being indexed, but received 1 value(s).", e.Message, "test#16");
+				// Never premise English.
+				//Assert.AreEqual ("Expecting 2 value(s) for the key being indexed, but received 1 value(s).", e.Message, "test#16");
 			}
 			
 			row = Rows.Find (new object [] {1, "fir"});
@@ -612,7 +620,8 @@ namespace MonoTests.System.Data
 				Assert.Fail ("test#01");
 			} catch (Exception e) {
 				Assert.AreEqual (typeof (IndexOutOfRangeException), e.GetType (), "test#02");
-				Assert.AreEqual ("The row insert position -1 is invalid.", e.Message, "test#03");
+				// Never premise English.
+				//Assert.AreEqual ("The row insert position -1 is invalid.", e.Message, "test#03");
 			}
 			
 			Rows.InsertAt (Row, 0);
@@ -641,7 +650,8 @@ namespace MonoTests.System.Data
                         }
                         catch (Exception e) {
                                 Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#09");
-                                Assert.AreEqual ("This row already belongs to this table.", e.Message, "test#10");
+				// Never premise English.
+                                //Assert.AreEqual ("This row already belongs to this table.", e.Message, "test#10");
                         }
 
 			DataTable table = new DataTable ();
@@ -656,7 +666,8 @@ namespace MonoTests.System.Data
 			}
 			catch (Exception e) {
 				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#12");
-				Assert.AreEqual ("This row already belongs to another table.", e.Message, "test#13");
+				// Never premise English.
+				//Assert.AreEqual ("This row already belongs to another table.", e.Message, "test#13");
 			}
 
 			table = new DataTable ();
@@ -713,7 +724,8 @@ namespace MonoTests.System.Data
 				Assert.Fail ("test#06");
 			} catch (Exception e) {
 				Assert.AreEqual (typeof (IndexOutOfRangeException), e.GetType (), "test#07");
-				Assert.AreEqual ("The given datarow is not in the current DataRowCollection.", e.Message, "test#08");
+				// Never premise English.
+				//Assert.AreEqual ("The given datarow is not in the current DataRowCollection.", e.Message, "test#08");
 			}
 			
 			DataRow Row = new DataTable ().NewRow ();
@@ -723,7 +735,8 @@ namespace MonoTests.System.Data
 				Assert.Fail ("test#09");
 			} catch (Exception e) {
 				Assert.AreEqual (typeof (IndexOutOfRangeException), e.GetType (), "test#10");
-				Assert.AreEqual ("The given datarow is not in the current DataRowCollection.", e.Message, "test#11");
+				// Never premise English.
+				//Assert.AreEqual ("The given datarow is not in the current DataRowCollection.", e.Message, "test#11");
 			}
 			
 			try {
@@ -731,7 +744,8 @@ namespace MonoTests.System.Data
 				Assert.Fail ("test#12");
 			} catch (Exception e) {
 				Assert.AreEqual (typeof (IndexOutOfRangeException), e.GetType (), "test#13");
-				Assert.AreEqual ("There is no row at position -1.", e.Message, "test#14");
+				// Never premise English.
+				//Assert.AreEqual ("There is no row at position -1.", e.Message, "test#14");
 			}
 			
 			try { 
@@ -739,7 +753,8 @@ namespace MonoTests.System.Data
 				Assert.Fail ("test#15");
 			} catch (Exception e) {
 				Assert.AreEqual (typeof (IndexOutOfRangeException), e.GetType (), "test#16");
-				Assert.AreEqual ("There is no row at position 64.", e.Message, "test#17");
+				// Never premise English.
+				//Assert.AreEqual ("There is no row at position 64.", e.Message, "test#17");
 			}
 			
 			Rows.RemoveAt (0);

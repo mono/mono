@@ -1676,7 +1676,8 @@ namespace MonoTests.System.Data
 				row.SetAdded();
 				Assert.Fail ("#1");
 			} catch (InvalidOperationException e) {
-				Assert.AreEqual (SetAddedModified_ErrMsg, e.Message, "#2");
+				// Never premise English.
+				//Assert.AreEqual (SetAddedModified_ErrMsg, e.Message, "#2");
 			}
 
 			table.Columns.Add("col1", typeof(int));
@@ -1689,7 +1690,8 @@ namespace MonoTests.System.Data
 				row.SetAdded();
 				Assert.Fail ("#2");
 			} catch (InvalidOperationException e) {
-				Assert.AreEqual (SetAddedModified_ErrMsg, e.Message, "#2");
+				// Never premise English.
+				//Assert.AreEqual (SetAddedModified_ErrMsg, e.Message, "#2");
 			}
 			Assert.AreEqual(DataRowState.Added, row.RowState, "#2");
 
@@ -1700,7 +1702,8 @@ namespace MonoTests.System.Data
 				row.SetAdded();
 				Assert.Fail ("#3");
 			} catch (InvalidOperationException e) {
-				Assert.AreEqual (SetAddedModified_ErrMsg, e.Message, "#2");
+				// Never premise English.
+				//Assert.AreEqual (SetAddedModified_ErrMsg, e.Message, "#2");
 			}
 
 			row.AcceptChanges();
@@ -1744,7 +1747,8 @@ namespace MonoTests.System.Data
 				row.SetModified();
 				Assert.Fail ("#1");
 			} catch (InvalidOperationException e) {
-				Assert.AreEqual (SetAddedModified_ErrMsg, e.Message, "#2");
+				// Never premise English.
+				//Assert.AreEqual (SetAddedModified_ErrMsg, e.Message, "#2");
 			}
 
 			row.AcceptChanges();
@@ -1754,7 +1758,8 @@ namespace MonoTests.System.Data
 				row.SetModified ();
 				Assert.Fail ("#2");
 			} catch (InvalidOperationException e) {
-				Assert.AreEqual (SetAddedModified_ErrMsg, e.Message, "#2");
+				// Never premise English.
+				//Assert.AreEqual (SetAddedModified_ErrMsg, e.Message, "#2");
 			}
 
 			row.AcceptChanges();

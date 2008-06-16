@@ -112,7 +112,8 @@ namespace MonoTests.System.Data
                 		Fail ("test#03");
                 	} catch (Exception e) {
                 		AssertEquals ("test#04", typeof (ConstraintException), e.GetType ());
-                		AssertEquals ("test#05", "Column 'ChildName' is constrained to be unique.  Value 'Dick' is already present.", e.Message);
+				// Never premise English.
+                		//AssertEquals ("test#05", "Column 'ChildName' is constrained to be unique.  Value 'Dick' is already present.", e.Message);
                 	}                	
 
 			Row = Mom.NewRow ();                                 
@@ -130,7 +131,8 @@ namespace MonoTests.System.Data
                                 Fail ("test#07");                                   
                         } catch (Exception e) {                              
                                 AssertEquals ("test#08", typeof (InvalidConstraintException), e.GetType ());
-                                AssertEquals ("test#09", "ForeignKeyConstraint Rel requires the child key values (Jack) to exist in the parent table.", e.Message);                                                                      
+				// Never premise English.
+                                //AssertEquals ("test#09", "ForeignKeyConstraint Rel requires the child key values (Jack) to exist in the parent table.", e.Message);                                                                      
                         }                                                    
 
                 }

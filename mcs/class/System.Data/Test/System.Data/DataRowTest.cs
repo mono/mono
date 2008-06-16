@@ -158,7 +158,8 @@ namespace MonoTests.System.Data
                                 Fail ("#A07");
                         }
                         catch (Exception e) {
-                                AssertEquals ("#A08", "There is no row at position 2.", e.Message);
+				// Never premise English.
+                                //AssertEquals ("#A08", "There is no row at position 2.", e.Message);
                         }
                 }
 

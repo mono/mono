@@ -70,7 +70,8 @@ namespace MonoTests.System.Data
 			} 
 			catch (Exception e) {
 				AssertEquals ("test#02", typeof (ArgumentException), e.GetType ());
-                        	AssertEquals ("test#03", "Column must belong to a table.", e.Message);
+				// Never premise English.
+                        	// AssertEquals ("test#03", "Column must belong to a table.", e.Message);
                         }        
 
 			//Null exception
@@ -80,7 +81,8 @@ namespace MonoTests.System.Data
 			}
                         catch (Exception e) {
                         	AssertEquals ("test#05", typeof (NullReferenceException), e.GetType ());
-                                AssertEquals ("test#06", "Object reference not set to an instance of an object.", e.Message);
+				// Never premise English.
+                                //AssertEquals ("test#06", "Object reference not set to an instance of an object.", e.Message);
                         }
 			
 			try {
