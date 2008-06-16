@@ -29,7 +29,7 @@ IF "%1"=="" (
 @REM Set parameters
 @REM ********************************************************
 
-set OUTPUT_FILE_PREFIX=System.Web.Extensions
+set OUTPUT_FILE_PREFIX=System_Web_Extensions
 set TEST_SOLUTION=Test\System.Web.Extensions.Test.sln
 set TEST_ASSEMBLY=System.Web.Extensions.Test.jar
 set PROJECT_CONFIGURATION=Debug_Java
