@@ -1,5 +1,11 @@
 2008-06-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataTableTest.cs, DataTableReadWriteXmlTest.cs, DataSetTest.cs:
+	  fixed couple of assertions that expect wrong results. Eliminated
+	  English imperialism. Some other cosmetic fixes.
+
+2008-06-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataViewTest2.cs DataColumnTest.cs DataSetTest2.cs
 	  UniqueConstraintTest.cs DataRowCollectionTest.cs DataRowTest2.cs
 	  DataColumnCollectionTest.cs DataRelationTest.cs

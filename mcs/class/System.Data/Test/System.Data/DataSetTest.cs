@@ -577,13 +577,7 @@ namespace MonoTests.System.Data
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			// This is original DataSet.WriteXmlSchema() output
-//			Assert.AreEqual ("  <xs:element name=\"Root\" msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\">", substring, "test#03");
-#if !NET_2_0
-			Assert.AreEqual ("  <xs:element msdata:IsDataSet=\"true\" msdata:Locale=\"fi-FI\" name=\"Root\">", substring, "test#03");
-#else
-			Assert.AreEqual ("  <xs:element msdata:IsDataSet=\"true\" msdata:UseCurrentLocale=\"true\" name=\"Root\">", substring, "test#03");
-#endif
+			Assert.AreEqual ("  <xs:element msdata:IsDataSet=\"true\" msdata:Locale=\"en-US\" name=\"Root\">", substring, "test#03");
 
 		        substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -2032,11 +2026,7 @@ namespace MonoTests.System.Data
 @"<rdData>
   <xs:schema id=""rdData"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
     <xs:element name=""rdData"" msdata:IsDataSet=""true"" " +
-#if !NET_2_0
-			  @"msdata:Locale=""fi-FI"">" +
-#else
-			  @"msdata:UseCurrentLocale=""true"">" +
-#endif
+			  @"msdata:Locale=""en-US"">" +
 @"
       <xs:complexType>
         <xs:choice minOccurs=""0"" maxOccurs=""unbounded"">
@@ -2060,7 +2050,7 @@ namespace MonoTests.System.Data
 			StringWriter w = new StringWriter ();
 			set.WriteXml (w, XmlWriteMode.WriteSchema);
 			string result = w.ToString ();
-			Assert.AreEqual (result.Replace ("\r", ""), expected.Replace ("\r", ""));
+			Assert.AreEqual (expected.Replace ("\r", ""), result.Replace ("\r", ""));
 		}
 
 		[Test]

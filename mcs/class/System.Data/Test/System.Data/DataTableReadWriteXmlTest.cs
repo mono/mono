@@ -169,6 +169,7 @@ namespace MonoTests.System.Data
             
             Assert.AreEqual(xmlDSNone, xmlDTNone, "Test#03");
             Assert.AreEqual(xmlDSDiffGram, xmlDTDiffGram, "Test#04");
+            Assert.IsTrue (xmlDSWriteSchema.IndexOf ("UseCurrentLocale") > 0, "Test#05-premise1");
             Assert.AreEqual(xmlDSWriteSchema, xmlDTWriteSchema, "Test#05");
                                
             // Now that we've tested writing tables (including children),
@@ -294,7 +295,6 @@ namespace MonoTests.System.Data
         }
         
         [Test]
-        [ExpectedException (typeof (NotImplementedException))]
 #if TARGET_JVM
 	[Ignore ("Should review the test")]
 #endif
@@ -359,6 +359,8 @@ namespace MonoTests.System.Data
             sw.GetStringBuilder().Length = 0;
             multiTable.WriteXml(sw, XmlWriteMode.WriteSchema, true);
             string xmlMultiTableCheck = sw.ToString();
+            Assert.IsTrue (xmlMultiTable.IndexOf ("UseCurrentLocale") > 0, "Test#06-premise1");
+            Assert.IsTrue (xmlMultiTable.IndexOf ("keyref") > 0, "Test#06-premise2");
             Assert.AreEqual(xmlMultiTable, xmlMultiTableCheck, "Test#06");
             
             DataTable singleTable = new DataTable();
