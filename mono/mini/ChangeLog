@@ -1,5 +1,9 @@
 2008-06-16  Mark Probst  <mark.probst@gmail.com>
 
+	* mini.h: Removed class relations enum that's not used anymore.
+
+2008-06-16  Mark Probst  <mark.probst@gmail.com>
+
 	* tramp-x86.c, tramp-amd64.c: Slot access code for MRGCTXs.
 
 	* mini-trampolines.c: Distinguish between RGCTXs and MRGCTXs in
