@@ -1,3 +1,8 @@
+2008-06-16  Mark Probst  <mark.probst@gmail.com>
+
+	* amd64/amd64-codegen.h: Removed extraneous parenthesis in a macro
+	nobody uses.
+
 2008-06-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* amd64/amd64-codegen.h (amd64_padding_size): Rewrite this to use the
