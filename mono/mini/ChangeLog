@@ -1,5 +1,12 @@
 2008-06-17  Mark Probst  <mark.probst@gmail.com>
 
+	* generic-sharing.c, mini.c, mini.h, aot-runtime.c:
+	mono_method_is_generic_sharable_impl() takes an additional
+	argument specifying whether to treat type variables as reference
+	types.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
 	* mini.h: Removed obsolete prototypes.
 
 2008-06-17  Mark Probst  <mark.probst@gmail.com>
