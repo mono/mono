@@ -1,5 +1,12 @@
 2008-06-17  Mark Probst  <mark.probst@gmail.com>
 
+	* generic-special.2.cs: Test case for static special fields in
+	generic classes.
+
+	* Makefile.am: Test added.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
 	* Makefile.am: Also run generic sharing tests with inlining
 	enabled.
 

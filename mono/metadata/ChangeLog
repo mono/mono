@@ -1,3 +1,8 @@
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
+	* object.c, class-internals.h: New function for checking whether
+	an individual field is special static.
+
 2008-06-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata.c (mono_metadata_get_generic_param_row): Use bsearch instead of

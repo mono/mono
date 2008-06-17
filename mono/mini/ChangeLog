@@ -1,5 +1,10 @@
 2008-06-17  Mark Probst  <mark.probst@gmail.com>
 
+	* mini.c: Don't compute the vtable to determine whether a field is
+	special static, because it might not work for open types.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
 	* mini.c: Removed the unused token_type and token_source arguments
 	from get_runtime_generic_context_ptr().
 
