@@ -927,7 +927,7 @@ namespace Mono.CSharp {
 		readonly Expression InstanceExpr;
 		readonly ArrayList  Arguments;
 
-		MethodBase method;
+		MethodInfo method;
 		
 		public DelegateInvocation (Expression instance_expr, ArrayList args, Location loc)
 		{
@@ -975,8 +975,7 @@ namespace Mono.CSharp {
 				return null;
 
 			method = Delegate.GetInvokeMethod (ec.ContainerType, del_type);
-			type = ((MethodInfo) method).ReturnType;
-			type = TypeManager.TypeToCoreType (type);
+			type = TypeManager.TypeToCoreType (method.ReturnType);
 			eclass = ExprClass.Value;
 			
 			return this;
@@ -997,12 +996,8 @@ namespace Mono.CSharp {
 			// 
 			// Pop the return value if there is one
 			//
-			if (method is MethodInfo){
-				Type ret = ((MethodInfo)method).ReturnType;
-				if (TypeManager.TypeToCoreType (ret) != TypeManager.void_type)
-					ec.ig.Emit (OpCodes.Pop);
-			}
+			if (type != TypeManager.void_type)
+				ec.ig.Emit (OpCodes.Pop);
 		}
-
 	}
 }

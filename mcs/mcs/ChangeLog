@@ -1,3 +1,13 @@
+2008-06-17  Marek Safar  <marek.safar@gmail.com>
+
+	* convert.cs: Don't use IsInterface on type arguments.
+	
+	* delegate.cs: DelegateInvocation uses MethodInfo.
+	
+	* parameter.cs: Removed IsTypeParameter.
+	
+	* generic-mcs.cs: More missing stuff.
+
 2008-06-16  Martin Baulig  <martin@ximian.com>
 
 	* modifiers.cs

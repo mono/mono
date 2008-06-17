@@ -140,7 +140,7 @@ namespace Mono.CSharp
 		// IMemberContainer
 		//
 
-		Type IMemberContainer.Type {
+		public Type Type {
 			get { throw new NotImplementedException (); }
 		}
 
@@ -183,6 +183,12 @@ namespace Mono.CSharp
 		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
 			return null;
+		}
+
+		public TypeParameter TypeParameter {
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 	}
 

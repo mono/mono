@@ -211,9 +211,6 @@ namespace Mono.CSharp {
 		static bool ExplicitTypeParameterConversionExists (Type source_type, Type target_type)
 		{
 #if GMCS_SOURCE
-			if (target_type.IsInterface)
-				return true;
-
 			if (TypeManager.IsGenericParameter (target_type)) {
 				GenericConstraints gc = TypeManager.GetTypeParameterConstraints (target_type);
 				if (gc == null)
@@ -228,16 +225,13 @@ namespace Mono.CSharp {
 				}
 			}
 #endif
-			return false;
+			return target_type.IsInterface;
 		}
 
 		static Expression ExplicitTypeParameterConversion (Expression source, Type target_type)
 		{
 #if GMCS_SOURCE
 			Type source_type = source.Type;
-
-			if (target_type.IsInterface)
-				return new ClassCast (source, target_type);
 
 			if (TypeManager.IsGenericParameter (target_type)) {
 				GenericConstraints gc = TypeManager.GetTypeParameterConstraints (target_type);
@@ -252,6 +246,9 @@ namespace Mono.CSharp {
 						return new ClassCast (source, target_type);
 				}
 			}
+
+			if (target_type.IsInterface)
+				return new ClassCast (source, target_type);
 #endif
 			return null;
 		}

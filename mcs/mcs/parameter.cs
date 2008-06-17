@@ -327,20 +327,6 @@ namespace Mono.CSharp {
 			get { return var; }
 		}
 
-#if GMCS_SOURCE
-		public bool IsTypeParameter;
-#else
-	    	public bool IsTypeParameter {
-			get {
-				return false;
-			}
-			set {
-				if (value)
-					throw new Exception ("You can not se TypeParameter in MCS");
-			}
-		}
-#endif
-		
 		public Parameter (FullNamedExpression type, string name, Modifier mod, Attributes attrs, Location loc)
 			: this (type.Type, name, mod, attrs, loc)
 		{
@@ -416,7 +402,7 @@ namespace Mono.CSharp {
 		
 		public virtual bool CheckAccessibility (InterfaceMemberBase member)
 		{
-			if (IsTypeParameter)
+			if (TypeManager.IsGenericParameter (parameter_type))
 				return true;
 
 			return member.IsAccessibleAs (parameter_type);
@@ -448,7 +434,6 @@ namespace Mono.CSharp {
 #if GMCS_SOURCE
 			TypeParameterExpr tparam = texpr as TypeParameterExpr;
 			if (tparam != null) {
-				IsTypeParameter = true;
 				return true;
 			}
 #endif
@@ -507,7 +492,6 @@ namespace Mono.CSharp {
 			}
 			set {
 				parameter_type = value;
-				IsTypeParameter = false;
 			}
 		}
 
@@ -585,13 +569,10 @@ namespace Mono.CSharp {
 
 		public virtual void ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index)
 		{
-#if !GMCS_SOURCE || !MS_COMPATIBLE
-			// TODO: It should use mb.DefineGenericParameters
 			if (mb == null)
 				builder = cb.DefineParameter (index, Attributes, Name);
-			else 
+			else
 				builder = mb.DefineParameter (index, Attributes, Name);
-#endif
 
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
@@ -605,10 +586,7 @@ namespace Mono.CSharp {
 
 		public Parameter Clone ()
 		{
-			Parameter p = new Parameter (parameter_type, Name, modFlags, attributes, Location);
-			p.IsTypeParameter = IsTypeParameter;
-
-			return p;
+			return new Parameter (parameter_type, Name, modFlags, attributes, Location);
 		}
 
 		public ExpressionStatement CreateExpressionTreeVariable (EmitContext ec)
