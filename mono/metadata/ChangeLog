@@ -1,5 +1,11 @@
 2008-06-17  Mark Probst  <mark.probst@gmail.com>
 
+	* marshal.c (mono_marshal_get_static_rgctx_invoke): Also handle
+	this arguments (will be needed later for generic methods).
+	Collect stats.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
 	* icall.c (ves_icall_System_Delegate_CreateDelegate_internal):
 	Create a static RGCTX invoke wrapper for methods which require it.
 
