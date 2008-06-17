@@ -37,6 +37,7 @@ namespace System.Web.Compilation
 {
 	class Token
 	{
+		public const int FIRST_TOKEN    = 0x0200000;
 		public const int EOF 		= 0x0200000;
 		public const int IDENTIFIER 	= 0x0200001;
 		public const int DIRECTIVE 	= 0x0200002;
@@ -44,6 +45,7 @@ namespace System.Web.Compilation
 		public const int TEXT	    	= 0x0200004;
 		public const int DOUBLEDASH 	= 0x0200005;
 		public const int CLOSING 	= 0x0200006;
+		public const int LAST_TOKEN     = 0x0200006;
 	}
 
 	class AspTokenizer
@@ -92,7 +94,7 @@ namespace System.Web.Compilation
 		{
 			if (hasPutBack){
 				hasPutBack = false;
-				position += Value.Length;
+				position += Value.Length;				
 				return current_token;
 			}
 
@@ -267,7 +269,7 @@ namespace System.Web.Compilation
 
 					if (current_token == '@' && Directive.IsDirective (sb.ToString ()))
 						return Token.DIRECTIVE;
-					
+
 					return Token.IDENTIFIER;
 				}
 
