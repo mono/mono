@@ -110,7 +110,6 @@ namespace MonoTests.System.Linq.Expressions
 			Expression.MakeBinary (nt, left, right);
 		}
 
-#if false
 		static void FailInt (ExpressionType nt)
 		{
 			Expression left = Expression.Constant (1);
@@ -118,13 +117,15 @@ namespace MonoTests.System.Linq.Expressions
 
 			try {
 				Expression.MakeBinary (nt, left, right);
-			} catch (ArgumentException){
+			} catch (ArgumentException) {
+				return;
+			} catch (InvalidOperationException) {
 				return;
 			}
 			// If we get here, there was an error
 			Assert.Fail ("FailInt failed while creating an {0}", nt);
 		}
-#endif
+
 		//
 		// Checks that we complain on the proper ExpressionTypes
 		//
@@ -151,14 +152,9 @@ namespace MonoTests.System.Linq.Expressions
 			PassInt (ExpressionType.Subtract);
 			PassInt (ExpressionType.SubtractChecked);
 
-			// Remove comment when the code is implemented:
-			//FailInt (ExpressionType.AndAlso);
-			//FailInt (ExpressionType.OrElse);
-
-			//This should test for types, not operation: FailInt (ExpressionType.Power);
-#if false
-	// These currently fail, because it now goes directly to the nodes, instead of doing
-	// a first-pass check;   REmove when its all done.
+			FailInt (ExpressionType.AndAlso);
+			FailInt (ExpressionType.OrElse);
+			FailInt (ExpressionType.Power);
 			FailInt (ExpressionType.ArrayLength);
 			FailInt (ExpressionType.ArrayIndex);
 			FailInt (ExpressionType.Call);
@@ -183,18 +179,12 @@ namespace MonoTests.System.Linq.Expressions
 			FailInt (ExpressionType.Quote);
 			FailInt (ExpressionType.TypeAs);
 			FailInt (ExpressionType.TypeIs);
-#endif
 		}
 
-		public delegate Expression BinaryExpr (Expression a, Expression b);
-
-		public T CodeGen<T> (BinaryExpr bin, T v1, T v2)
+		public T CodeGen<T> (Func<Expression, Expression, Expression> bin, T v1, T v2)
 		{
-			Expression<Func<T>> l = Expression.Lambda<Func<T>> (
-				bin (Expression.Constant(v1), Expression.Constant(v2)),
-				new ParameterExpression [0]);
-			Func<T> fi = l.Compile ();
-			return fi ();
+			var lambda = Expression.Lambda<Func<T>> (bin (v1.ToConstant (), v2.ToConstant ())).Compile ();
+			return lambda ();
 		}
 
 		[Test]
