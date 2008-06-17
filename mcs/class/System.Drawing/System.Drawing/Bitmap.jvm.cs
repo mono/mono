@@ -143,10 +143,7 @@ namespace System.Drawing
 			}
 			catch (IOException ex) {
 				throw ex;
-			}
-			catch (Exception) {
-				throw new OutOfMemoryException ("Out of memory");
-			}
+			}			
 			finally {
 				ic.Dispose();
 			}

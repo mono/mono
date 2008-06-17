@@ -1132,8 +1132,7 @@ namespace System.Drawing {
 			awt.Paint oldP = NativeObject.getPaint();
 			NativeObject.setPaint(brush);
 			try {
-				geom.AffineTransform oldT = NativeObject.getTransform();
-				NativeObject.transform(GetFinalTransform());
+				geom.AffineTransform oldT = NativeObject.getTransform();				
 				try {
 
 					bool noclip = float.IsPositiveInfinity(width) || (format != null && format.NoClip);
