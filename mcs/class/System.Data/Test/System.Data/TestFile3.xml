@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0"?>
 <xs:schema id="XmlSchemaDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
   <xs:element name="XmlSchemaDataSet" msdata:IsDataSet="true" msdata:MainDataTable="ParentTable" msdata:UseCurrentLocale="true">
     <xs:complexType>

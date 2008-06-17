@@ -1,3 +1,8 @@
+2008-06-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TestFile3.xml, TestFile5.xml : they do not match what should be
+	  actually written and causes svn diff mess.
+
 2008-06-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataColumnTest.cs : fixed Defaults3() case. After changing some
