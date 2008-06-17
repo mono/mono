@@ -1,5 +1,12 @@
 2008-06-17  Mark Probst  <mark.probst@gmail.com>
 
+	* mini.h, mini-trampolines.c, mini-amd64.c, mini-x86.c,
+	mini-alpha.c, mini-arm.c, mini-ia64.c, mini-ppc.c:
+	mono_arch_get_this_arg_from_call() takes a
+	MonoGenericSharingContext* as well.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
 	* mini.c: Factor out code for emitting unbox into emit_unbox() and
 	implement generic sharing of unbox.
 
