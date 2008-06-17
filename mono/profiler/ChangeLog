@@ -1,4 +1,8 @@
 2008-06-16  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-oprofile.c: Fix a segfault on shutdown (see Marek's
+	fix for the default profiler in r105466, the problem is the same.
+
+2008-06-16  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-oprofile.c: Initial implementation of summary report
 	for allocations at each collection.
 
