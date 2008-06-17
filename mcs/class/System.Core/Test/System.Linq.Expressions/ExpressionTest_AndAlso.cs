@@ -269,6 +269,7 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=350228
 		public void UserDefinedLiftedAndAlsoShortCircuit ()
 		{
 			var i = Expression.Parameter (typeof (Item<Slot?>), "i");
