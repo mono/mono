@@ -254,6 +254,21 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		public void UserDefinedAndAlsoShortCircuit ()
+		{
+			var i = Expression.Parameter (typeof (Item<Slot>), "i");
+			var and = Expression.Lambda<Func<Item<Slot>, Slot>> (
+				Expression.AndAlso (
+					Expression.Property (i, "Left"),
+					Expression.Property (i, "Right")), i).Compile ();
+
+			var item = new Item<Slot> (new Slot (0), new Slot (1));
+			Assert.AreEqual (new Slot (0), and (item));
+			Assert.IsTrue (item.LeftCalled);
+			Assert.IsFalse (item.RightCalled);
+		}
+
+		[Test]
 		public void UserDefinedAndAlsoLiftedToNull ()
 		{
 			var l = Expression.Parameter (typeof (Slot?), "l");
