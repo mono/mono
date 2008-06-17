@@ -1,5 +1,10 @@
 2008-06-17  Mark Probst  <mark.probst@gmail.com>
 
+	* mini.c: Don't fail generic sharing for initobj and sizeof - we
+	already handle them.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
 	* mini.h, mini-trampolines.c, tramp-alpha.c, tramp-amd64.c,
 	tramp-arm.c, tramp-hppa.c, tramp-ia64.c, tramp-mips.c,
 	tramp-ppc.c, tramp-s390.c, tramp-s390x.c, tramp-sparc.c,
