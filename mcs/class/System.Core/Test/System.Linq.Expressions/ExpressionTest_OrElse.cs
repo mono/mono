@@ -299,6 +299,37 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (null, orelse (null, null));
 		}
 
+		[Test]
+		public void UserDefinedOrElseShortCircuit ()
+		{
+			var i = Expression.Parameter (typeof (Item<Slot>), "i");
+			var orelse = Expression.Lambda<Func<Item<Slot>, Slot>> (
+				Expression.OrElse (
+					Expression.Property (i, "Left"),
+					Expression.Property (i, "Right")), i).Compile ();
+
+			var item = new Item<Slot> (new Slot (1), new Slot (0));
+			Assert.AreEqual (new Slot (1), orelse (item));
+			Assert.IsTrue (item.LeftCalled);
+			Assert.IsFalse (item.RightCalled);
+		}
+
+		[Test]
+		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=350228
+		public void UserDefinedLiftedOrElseShortCircuit ()
+		{
+			var i = Expression.Parameter (typeof (Item<Slot?>), "i");
+			var orelse = Expression.Lambda<Func<Item<Slot?>, Slot?>> (
+				Expression.OrElse (
+					Expression.Property (i, "Left"),
+					Expression.Property (i, "Right")), i).Compile ();
+
+			var item = new Item<Slot?> (new Slot (1), null);
+			Assert.AreEqual ((Slot?) new Slot (1), orelse (item));
+			Assert.IsTrue (item.LeftCalled);
+			Assert.IsFalse (item.RightCalled);
+		}
+
 		struct Incomplete {
 			public int Value;
 
