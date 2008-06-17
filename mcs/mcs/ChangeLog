@@ -1,3 +1,15 @@
+2008-06-17  Martin Baulig  <martin@ximian.com>
+
+	* class.cs: Also emit the `[DebuggerHidden]' attribute on the main
+	iterator method.
+	(AbstractPropertyEventMethod.IsDebuggerHidden): New protected
+	virtual property; check it in Emit().
+	(PropertyMethod.IsDebuggerHidden): Override, check whether we're
+	an iterator.
+	(MethodOrOperator.ResolveMethods): Set `DEBUGGER_HIDDEN' if we're
+	an iterator.
+	(Indexer.Define): Likewise.
+
 2008-06-17  Marek Safar  <marek.safar@gmail.com>
 
 	* convert.cs: Don't use IsInterface on type arguments.

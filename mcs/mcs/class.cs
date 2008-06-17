@@ -3922,6 +3922,7 @@ namespace Mono.CSharp {
 				iterator = Iterator.CreateIterator (this, Parent, GenericMethod, ModFlags);
 				if (iterator == null)
 					return false;
+				ModFlags |= Modifiers.DEBUGGER_HIDDEN;
 			}
 
 			if (anonymous_methods != null) {
@@ -6176,6 +6177,12 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		protected virtual bool IsDebuggerHidden {
+			get {
+				return false;
+			}
+		}
+
 		GenericMethod IMethodData.GenericMethod {
 			get {
 				return null;
@@ -6251,7 +6258,7 @@ namespace Mono.CSharp {
 #if GMCS_SOURCE			
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0)
 				method_data.MethodBuilder.SetCustomAttribute (TypeManager.GetCompilerGeneratedAttribute (Location));
-			if ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
+			if (IsDebuggerHidden || ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0))
 				method_data.MethodBuilder.SetCustomAttribute (TypeManager.GetDebuggerHiddenAttribute (Location));
 #endif			
 			if (OptAttributes != null)
@@ -6519,6 +6526,12 @@ namespace Mono.CSharp {
 			public override bool IsClsComplianceRequired ()
 			{
 				return method.IsClsComplianceRequired ();
+			}
+
+			protected override bool IsDebuggerHidden {
+				get {
+					return yields;
+				}
 			}
 
 			public override bool ResolveMembers ()
@@ -7775,6 +7788,7 @@ namespace Mono.CSharp {
 					Iterator iterator = Iterator.CreateIterator (Get, Parent, null, ModFlags);
 					if (iterator == null)
 						return false;
+					ModFlags |= Modifiers.DEBUGGER_HIDDEN;
 				}
 			}
 
