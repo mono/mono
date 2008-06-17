@@ -1146,7 +1146,7 @@ namespace System.Drawing {
 						TextLineIterator iter = new TextLineIterator(s, font, NativeObject.getFontRenderContext(), format, width, height);
 						NativeObject.transform(iter.Transform);
 						for (LineLayout layout = iter.NextLine(); layout != null; layout = iter.NextLine()) {
-							layout.Draw(NativeObject, x, y);
+							layout.Draw (NativeObject, x * UnitConversion [(int) PageUnit], y * UnitConversion [(int) PageUnit]);
 						}
 					}
 					finally {
