@@ -1,3 +1,13 @@
+2008-06-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_custom_attrs_from_builders): Mark MonoCustomAttrInfo
+	to cached in a mempool is used.
+
+	* metadata.c (free_generic_class): In some situations field generic_info type
+	is not properly dup'ed and leads to double free'ing.
+
+	Fixes #400643.
+
 2008-06-17  Mark Probst  <mark.probst@gmail.com>
 
 	* marshal.c (mono_marshal_get_static_rgctx_invoke): Also handle
