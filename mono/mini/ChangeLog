@@ -1,5 +1,14 @@
 2008-06-17  Mark Probst  <mark.probst@gmail.com>
 
+	* mini.h, mini-trampolines.c, tramp-alpha.c, tramp-amd64.c,
+	tramp-arm.c, tramp-hppa.c, tramp-ia64.c, tramp-mips.c,
+	tramp-ppc.c, tramp-s390.c, tramp-s390x.c, tramp-sparc.c,
+	tramp-x86.c: Added a MonoGenericContext* argument to
+	mono_arch_get_unbox_trampoline() so that it can call other
+	functions which require it.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
 	* mini.h, mini-trampolines.c, mini-amd64.c, mini-x86.c,
 	mini-alpha.c, mini-arm.c, mini-ia64.c, mini-ppc.c:
 	mono_arch_get_this_arg_from_call() takes a
