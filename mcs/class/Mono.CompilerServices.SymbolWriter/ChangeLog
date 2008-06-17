@@ -1,3 +1,8 @@
+2008-06-17  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolTable.cs
+	(MethodEntry.Flags): Removed `IsCompilerGenerated'.
+
 2008-06-16  Martin Baulig  <martin@ximian.com>
 
 	* MonoSymbolWriter.cs

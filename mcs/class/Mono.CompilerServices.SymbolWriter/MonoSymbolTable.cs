@@ -1013,8 +1013,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		[Flags]
 		public enum Flags
 		{
-			LocalNamesAmbiguous	= 1,
-			IsCompilerGenerated	= 2
+			LocalNamesAmbiguous	= 1
 		}
 
 		public const int Size = 12;
