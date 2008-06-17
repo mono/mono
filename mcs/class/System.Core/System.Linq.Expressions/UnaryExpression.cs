@@ -370,10 +370,6 @@ namespace System.Linq.Expressions {
 
 		void EmitUserDefinedLiftedOperator (EmitContext ec)
 		{
-			// that seems like a bug in MS's implementation
-			// they don't bail out if the operand is null
-			// and force the GetValue instead
-
 			var local = ec.EmitStored (operand);
 			ec.EmitNullableGetValue (local);
 			ec.EmitCall (method);
