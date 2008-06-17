@@ -78,7 +78,7 @@ namespace System.Data
 		private DataRelationCollection relationCollection;
 		private PropertyCollection properties;
 		private DataViewManager defaultView;
-		private CultureInfo locale = Thread.CurrentThread.CurrentCulture;
+		private CultureInfo locale;
 		internal XmlDataDocument _xmlDataDocument;
 #if NET_2_0
 		private bool dataSetInitialized = true;
@@ -98,7 +98,6 @@ namespace System.Data
 			relationCollection = new DataRelationCollection.DataSetRelationCollection (this);
 			properties = new PropertyCollection ();
 			prefix = String.Empty;
-			Locale = CultureInfo.CurrentCulture;
 		}
 
 		protected DataSet (SerializationInfo info, StreamingContext context) : this ()
@@ -223,7 +222,7 @@ namespace System.Data
 #endif
 		public CultureInfo Locale {
 			get {
-				return locale;
+				return locale != null ? locale : Thread.CurrentThread.CurrentCulture;
 			}
 			set {
 				if (locale == null || !locale.Equals (value)) {
@@ -232,6 +231,10 @@ namespace System.Data
 					locale = value;
 				}
 			}
+		}
+
+		internal bool LocaleSpecified {
+			get { return locale != null; }
 		}
 
 		internal void InternalEnforceConstraints(bool value,bool resetIndexes)
@@ -493,7 +496,7 @@ namespace System.Data
 				for (int i = 0; i < ExtendedProperties.Count; i++)
 					Copy.ExtendedProperties.Add (tgtArray.GetValue (i), ExtendedProperties[tgtArray.GetValue (i)]);
 			}
-			Copy.Locale = Locale;
+			Copy.locale = locale;
 			Copy.Namespace = Namespace;
 			Copy.Prefix = Prefix;
 			//Copy.Site = Site; // FIXME : Not sure of this.

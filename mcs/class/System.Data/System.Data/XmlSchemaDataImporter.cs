@@ -500,6 +500,8 @@ namespace System.Data
 				ProcessDataSetElement (el);
 				return;
 			}
+			else
+				dataset.Locale = CultureInfo.CurrentCulture;
 
 			// Register as a top-level element
 			topLevelElements.Add (el);
@@ -512,9 +514,15 @@ namespace System.Data
 			dataset.DataSetName = el.Name;
 			this.datasetElement = el;
 
-			// Search for msdata:Locale attribute
+			// Search for locale attributes
+			bool useCurrent = false;
 			if (el.UnhandledAttributes != null) {
 				foreach (XmlAttribute attr in el.UnhandledAttributes) {
+#if NET_2_0
+					if (attr.LocalName == "UseCurrentLocale" &&
+						attr.NamespaceURI == XmlConstants.MsdataNamespace)
+						useCurrent = true;
+#endif
 					if (attr.LocalName == "Locale" &&
 						attr.NamespaceURI == XmlConstants.MsdataNamespace) {
 						CultureInfo ci = new CultureInfo (attr.Value);
@@ -522,6 +530,10 @@ namespace System.Data
 					}
 				}
 			}
+#if NET_2_0
+			if (!useCurrent && !dataset.LocaleSpecified) // then set current culture instance _explicitly_
+				dataset.Locale = CultureInfo.CurrentCulture;
+#endif
 
 			// Process content type particle (and create DataTable)
 			XmlSchemaComplexType ct = null;

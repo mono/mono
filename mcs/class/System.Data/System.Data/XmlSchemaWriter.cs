@@ -63,9 +63,10 @@ namespace System.Data
 		internal static void WriteXmlSchema (XmlWriter writer, DataTable[] tables,
 						     DataRelation[] relations,
 						     string mainDataTable,
-						     string dataSetName)
+						     string dataSetName,
+						     CultureInfo locale)
 		{
-			new XmlSchemaWriter (writer, tables, relations, mainDataTable, dataSetName).WriteSchema ();
+			new XmlSchemaWriter (writer, tables, relations, mainDataTable, dataSetName, locale).WriteSchema ();
 		}
 
 		public XmlSchemaWriter (DataSet dataset,
@@ -74,7 +75,11 @@ namespace System.Data
 		{
 			dataSetName = dataset.DataSetName;
 			dataSetNamespace = dataset.Namespace;
+#if NET_2_0
+			dataSetLocale = dataset.LocaleSpecified ? dataset.Locale : null;
+#else
 			dataSetLocale = dataset.Locale;
+#endif
 			dataSetProperties = dataset.ExtendedProperties;
 			w = writer;
 			if (tables != null) {
@@ -91,20 +96,26 @@ namespace System.Data
 			DataTable[] tables,
 			DataRelation[] relations,
 			string mainDataTable,
-			string dataSetName)
+			string dataSetName,
+			CultureInfo locale)
 		{
 			w = writer;
 			this.tables = tables;
 			this.relations = relations;
 			this.mainDataTable = mainDataTable;
 			this.dataSetName = dataSetName;
+			this.dataSetLocale = locale;
 			this.dataSetProperties = new PropertyCollection();
 			if (tables[0].DataSet != null) {
 				dataSetNamespace = tables[0].DataSet.Namespace;
+#if !NET_2_0
 				dataSetLocale = tables[0].DataSet.Locale;
+#endif
 			} else {
 				dataSetNamespace = tables[0].Namespace;
+#if !NET_2_0
 				dataSetLocale = tables[0].Locale;
+#endif
 			}
 		}
 
@@ -217,21 +228,10 @@ namespace System.Data
 				"IsDataSet", XmlConstants.MsdataNamespace,
 				"true");
 
-			if(mainDataTable != null && mainDataTable != "")
-				w.WriteAttributeString (
-					XmlConstants.MsdataPrefix,
-					"MainDataTable",
-					XmlConstants.MsdataNamespace,
-					mainDataTable);
 #if NET_2_0
-			if (dataSetLocale == CultureInfo.CurrentCulture) {
-				w.WriteAttributeString (
-					XmlConstants.MsdataPrefix,
-					"UseCurrentLocale",
-					XmlConstants.MsdataNamespace,
-					"true");
-			}
-			else
+			bool useCurrentLocale = (dataSetLocale == null);
+
+			if (!useCurrentLocale)
 #endif
 			{
 				w.WriteAttributeString (
@@ -240,6 +240,23 @@ namespace System.Data
 					XmlConstants.MsdataNamespace,
 					dataSetLocale.Name);
 			}
+
+#if NET_2_0
+			if(mainDataTable != null && mainDataTable != "")
+				w.WriteAttributeString (
+					XmlConstants.MsdataPrefix,
+					"MainDataTable",
+					XmlConstants.MsdataNamespace,
+					mainDataTable);
+
+			if (useCurrentLocale) {
+				w.WriteAttributeString (
+					XmlConstants.MsdataPrefix,
+					"UseCurrentLocale",
+					XmlConstants.MsdataNamespace,
+					"true");
+			}
+#endif
 
 			AddExtendedPropertyAttributes (dataSetProperties);
 

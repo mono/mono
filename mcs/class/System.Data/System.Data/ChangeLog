@@ -1,3 +1,13 @@
+2008-06-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaWriter.cs, DataSet.cs, XmlTableWriter.cs, DataTable.cs,
+	  XmlDataInferenceLoader.cs, XmlSchemaDataImporter.cs:
+	  fix xsd output on msdata:Locale and msdata.UseCurrentCulture.
+	  Output explicit Locale only when it is explicitly specified.
+	  On the other hand, ReadXml/ReadXmlSchema fills Locale as en-US
+	  by default (on .NET).
+	  Some code unification in DataTable.WriteXmlSchema() overloads.
+
 2008-06-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataColumn.cs : replaced Activator.CreateInstance() with

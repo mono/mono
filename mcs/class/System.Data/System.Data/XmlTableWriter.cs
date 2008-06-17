@@ -60,11 +60,13 @@ internal class XmlTableWriter {
 				tables.CopyTo(_tables);
 				DataRelation[] _relations = new DataRelation[relations.Count];
 				relations.CopyTo(_relations);
+				DataTable dt = _tables [0];
 				new XmlSchemaWriter(writer,
 					_tables,
 					_relations,
 					mainDataTable,
-					dataSetName
+					dataSetName,
+					dt.LocaleSpecified ? dt.Locale : null
 				).WriteSchema();
 			}
 

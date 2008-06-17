@@ -683,6 +683,10 @@ namespace System.Data {
 			}
 		}
 
+		internal bool LocaleSpecified {
+			get { return _locale != null; }
+		}
+
 		/// <summary>
 		/// Gets or sets the initial starting size for this table.
 		/// </summary>
@@ -1186,7 +1190,7 @@ namespace System.Data {
 				for (int i=0; i < ExtendedProperties.Count; i++)
 					Copy.ExtendedProperties.Add (tgtArray.GetValue (i), ExtendedProperties[tgtArray.GetValue (i)]);
 			}
-			Copy.Locale = Locale;
+			Copy._locale = _locale;
 			Copy.MinimumCapacity = MinimumCapacity;
 			Copy.Namespace = Namespace;
 			// Copy.ParentRelations
@@ -1721,7 +1725,7 @@ namespace System.Data {
 			}
 
 			XmlSchemaWriter.WriteXmlSchema (writer, new DataTable [] { this }, 
-											null, TableName, dset.DataSetName);
+											null, TableName, dset.DataSetName, LocaleSpecified ? Locale : dset.LocaleSpecified ? dset.Locale : null);
 			dset.WriteIndividualTableContent (writer, this, XmlWriteMode.DiffGram);
 			writer.Flush ();
 
@@ -2659,6 +2663,8 @@ namespace System.Data {
 
 		public void WriteXmlSchema (XmlWriter writer)
 		{
+			WriteXmlSchema (writer, false);
+/*
 			if (TableName == "") {
 				throw new InvalidOperationException ("Cannot serialize the DataTable. DataTable name is not set.");
 			}
@@ -2684,6 +2690,7 @@ namespace System.Data {
 				if (tmp != null)
 					ds.Tables.Remove (this);
 			}
+*/
 		}
 
 		public void WriteXmlSchema (string fileName)
@@ -2732,10 +2739,10 @@ namespace System.Data {
 			if (TableName == "") {
 				throw new InvalidOperationException ("Cannot serialize the DataTable. DataTable name is not set.");
 			}
-			if (writeHierarchy == false) {
-				WriteXmlSchema (writer);
-			}
-			else {
+//			if (writeHierarchy == false) {
+//				WriteXmlSchema (writer);
+//			}
+//			else {
 				DataSet ds = DataSet;
 				DataSet tmp = null;
 				try {
@@ -2752,7 +2759,7 @@ namespace System.Data {
 					//	relations[i] = ds.Relations[i];
 					//}
 					DataRelation [] relations = null;
-					if (ChildRelations.Count > 0) {
+					if (writeHierarchy && ChildRelations.Count > 0) {
 						relations = new DataRelation [ChildRelations.Count];
 						for (int i = 0; i < ChildRelations.Count; i++) {
 							relations [i] = ChildRelations [i];
@@ -2769,12 +2776,12 @@ namespace System.Data {
 						tableName = TableName;
 					else
 						tableName = ds.Namespace + "_x003A_" + TableName;
-					XmlSchemaWriter.WriteXmlSchema (writer, tables, relations, tableName, ds.DataSetName);
+					XmlSchemaWriter.WriteXmlSchema (writer, tables, relations, tableName, ds.DataSetName, LocaleSpecified ? Locale : ds.LocaleSpecified ? ds.Locale : null);
 				} finally {
 					if (tmp != null)
 						ds.Tables.Remove (this);
 				}
-			}
+//			}
 		}
 
 		public void WriteXmlSchema (string fileName, bool writeHierarchy)

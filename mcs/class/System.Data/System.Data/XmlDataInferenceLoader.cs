@@ -36,6 +36,7 @@
 using System;
 using System.Collections;
 using System.Data;
+using System.Globalization;
 using System.IO; // for Driver
 using System.Text; // for Driver
 using System.Xml;
@@ -178,6 +179,8 @@ namespace System.Data
 		{
 			if (document.DocumentElement == null)
 				return;
+
+			dataset.Locale = new CultureInfo ("en-US"); // default(!)
 
 			// If the root element is not a data table, treat 
 			// this element as DataSet.
