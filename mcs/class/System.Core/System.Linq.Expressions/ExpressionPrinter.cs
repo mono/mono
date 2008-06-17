@@ -244,9 +244,9 @@ namespace System.Linq.Expressions {
 		{
 			Print ("IIF(");
 			Visit (conditional.Test);
-			Print (", ");
+			Print (ListSeparator);
 			Visit (conditional.IfTrue);
-			Print (", ");
+			Print (ListSeparator);
 			Visit (conditional.IfFalse);
 			Print (")");
 		}

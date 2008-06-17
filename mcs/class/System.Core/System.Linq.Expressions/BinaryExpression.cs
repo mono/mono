@@ -719,7 +719,7 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec)
 		{
-			if (method != null){
+			if (method != null) {
 				EmitUserDefinedOperator (ec);
 				return;
 			}
