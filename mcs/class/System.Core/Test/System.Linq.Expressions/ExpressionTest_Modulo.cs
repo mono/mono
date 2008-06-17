@@ -113,5 +113,18 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) % value(MonoTests.System.Linq.Expressions.OpClass))",
 				expr.ToString(), "Modulo#13");
 		}
+
+		[Test]
+		public void CompiledModulo ()
+		{
+			var l = Expression.Parameter (typeof (double), "l");
+			var p = Expression.Parameter (typeof (double), "r");
+
+			var modulo = Expression.Lambda<Func<double, double, double>> (
+				Expression.Modulo (l, p), l, p).Compile ();
+
+			Assert.AreEqual (0, modulo (4.0, 2.0));
+			Assert.AreEqual (2.0, modulo (5.0, 3.0));
+		}
 	}
 }
