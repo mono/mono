@@ -1,3 +1,8 @@
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Removed the unused token_type and token_source arguments
+	from get_runtime_generic_context_ptr().
+
 2008-06-17  Marek Habersack  <mhabersack@novell.com>
 
 	* mini.c (ADD_BINOP): fix the build
