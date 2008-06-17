@@ -1,5 +1,10 @@
 2008-06-17  Mark Probst  <mark.probst@gmail.com>
 
+	* icall.c (ves_icall_System_Delegate_CreateDelegate_internal):
+	Create a static RGCTX invoke wrapper for methods which require it.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
 	* object.c, class-internals.h: New function for checking whether
 	an individual field is special static.
 

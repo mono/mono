@@ -1,5 +1,10 @@
 2008-06-17  Mark Probst  <mark.probst@gmail.com>
 
+	* generic-delegate.2.cs: Test for constructing delegates via
+	CreateDelegate.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
 	* generic-special.2.cs: Test case for static special fields in
 	generic classes.
 
