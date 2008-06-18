@@ -1,3 +1,8 @@
+2008-06-18  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: AddChildCall properly processes the
+	PartialCachingAttribute now.
+
 2008-06-17  Marek Habersack  <mhabersack@novell.com>
 
 	* AspTokenizer.cs: Added FIRST_TOKEN and LAST_TOKEN symbols to the

@@ -1,10 +1,11 @@
 //
 // System.Web.UI.ControlCachePolicy
 //
-// Author:
+// Authors:
 //	Dick Porter  <dick@ximian.com>
+//      Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,78 +35,106 @@ namespace System.Web.UI
 {
 	public sealed class ControlCachePolicy
 	{
-		internal ControlCachePolicy ()
+		BasePartialCachingControl bpcc;
+		bool cached;
+		bool supportsCaching;
+		
+		internal ControlCachePolicy () : this (null)
 		{
 		}
 
+		internal ControlCachePolicy (BasePartialCachingControl bpcc)
+		{
+			this.bpcc = bpcc;
+		}
+		
 		public bool Cached 
 		{
 			get {
-				throw new NotImplementedException ();
+				AssertBasePartialCachingControl ();
+				return cached;
 			}
+			
 			set {
-				throw new NotImplementedException ();
+				AssertBasePartialCachingControl ();
+				cached = value;
 			}
 		}
 
 		public CacheDependency Dependency 
 		{
 			get {
-				throw new NotImplementedException ();
+				AssertBasePartialCachingControl ();
+				return bpcc.Dependency;
 			}
 			set {
-				throw new NotImplementedException ();
+				AssertBasePartialCachingControl ();
+				bpcc.Dependency = value;
 			}
 		}
 
 		public TimeSpan Duration 
 		{
 			get {
-				throw new NotImplementedException ();
+				AssertBasePartialCachingControl ();
+				return TimeSpan.FromMinutes (bpcc.Duration);
 			}
 			set {
-				throw new NotImplementedException ();
+				AssertBasePartialCachingControl ();
+				bpcc.Duration = value.Minutes;
 			}
 		}
 
 		public bool SupportsCaching 
 		{
 			get {
-				throw new NotImplementedException ();
+				return bpcc != null;
 			}
 		}
 
 		public string VaryByControl 
 		{
 			get {
-				throw new NotImplementedException ();
+				AssertBasePartialCachingControl ();
+				return bpcc.VaryByControls;
 			}
 			set {
-				throw new NotImplementedException ();
+				AssertBasePartialCachingControl ();
+				bpcc.VaryByControls = value;
 			}
 		}
 
-		public HttpCacheVaryByParams VaryByParams 
-		{
+		public HttpCacheVaryByParams VaryByParams {
 			get {
+				AssertBasePartialCachingControl ();
 				throw new NotImplementedException ();
 			}
 		}
 
 		public void SetExpires (DateTime expirationTime)
 		{
-			throw new NotImplementedException ();
+			AssertBasePartialCachingControl ();
+			bpcc.ExpirationTime = expirationTime;
 		}
 
 		public void SetSlidingExpiration (bool useSlidingExpiration)
 		{
-			throw new NotImplementedException ();
+			AssertBasePartialCachingControl ();
+			bpcc.SlidingExpiration = useSlidingExpiration;
 		}
 
 		public void SetVaryByCustom (string varyByCustom)
 		{
-			throw new NotImplementedException ();
+			AssertBasePartialCachingControl ();
+			bpcc.VaryByCustom = varyByCustom;
 		}
+
+		void AssertBasePartialCachingControl ()
+		{
+			if (bpcc == null)
+				throw new HttpException ("The user control is not associated with a 'BasePartialCachingControl' and is not cacheable.");
+		}
+		
 	}
 }
 #endif

@@ -1,3 +1,13 @@
+2008-06-18  Marek Habersack  <mhabersack@novell.com>
+
+	* BasePartialCachingControl.cs: implemented the CachePolicy
+	property.
+
+	* UserControl.cs: implemented the CachePolicy property.
+
+	* ControlCachePolicy.cs: implemented missing properties and
+	methods.
+
 2008-06-11  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControl.cs: make sure 'type' isn't null in LoadControl

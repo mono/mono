@@ -1,3 +1,8 @@
+2008-06-18  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.dll.sources: added
+	System.Web.Caching/SqlCacheDependency.cs
+
 2008-04-18  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile (OTHER_LIB_MCS_FLAGS): remove dependency on

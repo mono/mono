@@ -56,6 +56,9 @@ namespace System.Web.UI {
 	, INamingContainer, IFilterResolutionService
 #endif
 	{
+#if NET_2_0
+		ControlCachePolicy cachePolicy;
+#endif
 		private bool initialized;
 		private AttributeCollection attributes;
 		private StateBag attrBag;
@@ -114,7 +117,14 @@ namespace System.Web.UI {
 		public ControlCachePolicy CachePolicy 
 		{
 			get {
-				throw new NotImplementedException ();
+				BasePartialCachingControl bpcc = Parent as BasePartialCachingControl;
+
+				if (bpcc != null)
+					return bpcc.CachePolicy;
+				
+				if (cachePolicy == null)
+					cachePolicy = new ControlCachePolicy ();
+				return cachePolicy;
 			}
 		}
 #endif		

@@ -1,3 +1,7 @@
+2008-06-18  Marek Habersack  <mhabersack@novell.com>
+
+	* SqlCacheDependency.cs: added
+
 2008-05-30  Marek Habersack  <mhabersack@novell.com>
 
 	* CacheDependency.cs: do not use synthetized event accessors (to

@@ -50,8 +50,13 @@ namespace System.Web.UI
 		private string varyby_params;
 		private string varyby_controls;
 		private string varyby_custom;
-
+		DateTime expirationTime;
+		bool slidingExpiration;
+		
 		private Control control;
+#if NET_2_0
+		ControlCachePolicy cachePolicy;
+#endif
 		
 		protected BasePartialCachingControl()
 		{
@@ -87,6 +92,16 @@ namespace System.Web.UI
 			set { varyby_custom = value; }
 		}
 
+		internal DateTime ExpirationTime {
+			get { return expirationTime; }
+			set { expirationTime = value; }
+		}
+
+		internal bool SlidingExpiration {
+			get { return slidingExpiration; }
+			set { slidingExpiration = value; }
+		}
+		
 		internal abstract Control CreateControl ();
 
 		public override void Dispose ()
@@ -147,7 +162,10 @@ namespace System.Web.UI
 		public ControlCachePolicy CachePolicy 
 		{
 			get {
-				throw new NotImplementedException ();
+				if (cachePolicy == null)
+					cachePolicy = new ControlCachePolicy (this);
+
+				return cachePolicy;
 			}
 		}
 #endif

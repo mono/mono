@@ -981,9 +981,10 @@ namespace System.Web.Compilation
 			CodeMethodInvokeExpression expr = new CodeMethodInvokeExpression (m);
 
 			object [] atts = null;
-			
+
 			if (child.ControlType != null)
-				child.ControlType.GetCustomAttributes (typeof (PartialCachingAttribute), true);
+				atts = child.ControlType.GetCustomAttributes (typeof (PartialCachingAttribute), true);
+			
 			if (atts != null && atts.Length > 0) {
 				PartialCachingAttribute pca = (PartialCachingAttribute) atts [0];
 				CodeTypeReferenceExpression cc = new CodeTypeReferenceExpression("System.Web.UI.StaticPartialCachingControl");
