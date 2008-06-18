@@ -74,8 +74,10 @@ namespace System.ComponentModel.Design
 
 		public void Dispose ()
 		{
-			_extenderProviders.Clear ();
-			_extenderProviders = null;
+			if (_extenderProviders != null) {
+				_extenderProviders.Clear ();
+				_extenderProviders = null;
+			}
 		}
 	}
 }

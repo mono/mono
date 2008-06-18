@@ -1,5 +1,9 @@
 2008-06-18  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* ExtenderService.cs: Do not throw a NRE.
+
+2008-06-18  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* SelectionService.cs: Handle removal of the root component 
 	properly.
 
