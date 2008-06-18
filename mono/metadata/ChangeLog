@@ -5,6 +5,9 @@
 	set to 80.0.  The debugger <-> runtime interface is now frozen as
 	well.	
 
+	* mono-debug.c
+	(mono_debug_debugger_version): Bump to 4.
+
 2008-06-18  Martin Baulig  <martin@ximian.com>
 
 	* debug-mono-symfile.c
