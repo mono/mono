@@ -32,6 +32,7 @@
 
 using System;
 using System.IO;
+using System.Reflection;
 
 namespace System.Net {
 
@@ -53,6 +54,7 @@ namespace System.Net {
 		public abstract IAsyncResult BeginGetResponse (AsyncCallback callback, object state);
 		public abstract Stream EndGetRequestStream (IAsyncResult asyncResult);
 		public abstract WebResponse EndGetResponse (IAsyncResult asyncResult);
+
 		internal abstract Stream GetRequestStream ();
 		internal abstract WebResponse GetResponse ();
 
@@ -74,9 +76,13 @@ namespace System.Net {
 
 		static Type GetBrowserHttpFromMoonlight ()
 		{
-			var type = System.Reflection.Assembly.Load ("System.Windows.Browser, Version=2.0.5.0, Culture=Neutral, PublicKeyToken=7cec85d7bea7798e").GetType ("System.Windows.Browser.Net.BrowserHttpWebRequest");
+			var assembly = Assembly.Load ("System.Windows.Browser, Version=2.0.5.0, Culture=Neutral, PublicKeyToken=7cec85d7bea7798e");
+			if (assembly == null)
+				throw new InvalidOperationException ("Can not load System.Windows.Browser");
+
+			var type = assembly.GetType ("System.Windows.Browser.Net.BrowserHttpWebRequest");
 			if (type == null)
-				throw new NotSupportedException ("Can not get BrowserHttpWebRequest");
+				throw new InvalidOperationException ("Can not get BrowserHttpWebRequest");
 
 			return type;
 		}
