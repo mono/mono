@@ -1,3 +1,8 @@
+2008-06-18  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* SelectionService.cs: Handle removal of the root component 
+	properly.
+
 2008-04-18  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* CollectionEditor.cs: Select the next item after the one 

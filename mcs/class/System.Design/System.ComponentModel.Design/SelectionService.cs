@@ -105,7 +105,6 @@ namespace System.ComponentModel.Design
 					IDesignerHost designerHost = _serviceProvider.GetService (typeof (IDesignerHost)) as IDesignerHost;
 					if (designerHost != null)
 						return designerHost.RootComponent;
-
 				}
 				return null;
 			}
@@ -216,14 +215,20 @@ namespace System.ComponentModel.Design
 			}
 
 			if (remove) {
+				bool rootRemoved = false;
 				foreach (object component in components) {
-					if (component is IComponent && _selection.Contains (component)) {
+					if (component is IComponent && _selection.Contains (component))
 						_selection.Remove (component);
-					}
+					if (component == this.RootComponent)
+						rootRemoved = true;
 				}
 				if (_selection.Count == 0) {
-					_primarySelection = this.RootComponent;
-					_selection.Add (this.RootComponent);
+					if (rootRemoved) {
+						_primarySelection = null;
+					} else {
+						_primarySelection = this.RootComponent;
+						_selection.Add (this.RootComponent);
+					}
 				}
 			}
 
@@ -252,7 +257,7 @@ namespace System.ComponentModel.Design
 				}
 
 				if (!this.GetComponentSelected (primarySelection))
-					_selection.Add (_primarySelection);
+					_selection.Add (primarySelection);
 
 				_primarySelection = (IComponent) primarySelection;
 			}				
