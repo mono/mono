@@ -110,6 +110,7 @@ namespace System.Windows.Forms {
 		[Browsable (true)]
 		[DefaultValue (false)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
+		[MWFCategory("Behavior")]
 #if NET_2_0
 		public
 #else
@@ -139,6 +140,7 @@ namespace System.Windows.Forms {
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
+		[MWFCategory("Layout")]
 		public override bool AutoSize {
 			get { return base.AutoSize; }
 			set { base.AutoSize = value; }
@@ -152,6 +154,7 @@ namespace System.Windows.Forms {
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[Browsable (true)]
+		[MWFCategory("Appearance")]
 #if NET_2_0
 		public
 #else
@@ -262,6 +265,7 @@ namespace System.Windows.Forms {
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[RefreshProperties (RefreshProperties.Repaint)]
 		[TypeConverter (typeof (ImageKeyConverter))]
+		[MWFCategory("Appearance")]
 		public string ImageKey {
 			get { return this.image_key; }
 			set {
@@ -390,6 +394,7 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		[Localizable (true)]
 		[DefaultValue (TextImageRelation.Overlay)]
+		[MWFCategory("Appearance")]
 		public
 #else
 		internal
@@ -414,6 +419,7 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue (false)]
+		[MWFCategory("Behavior")]
 #if NET_2_0
 		public
 #else
@@ -430,6 +436,7 @@ namespace System.Windows.Forms {
 		}
 		
 		[DefaultValue (true)]
+		[MWFCategory("Appearance")]
 #if NET_2_0
 		public
 #else
@@ -451,6 +458,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[MWFCategory("Appearance")]
 #if NET_2_0
 		public
 #else

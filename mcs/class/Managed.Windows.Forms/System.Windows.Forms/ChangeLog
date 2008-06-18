@@ -1,3 +1,10 @@
+2008-06-19  Andy Hume <andyhume32 at yahoo dot co dot uk>
+
+        * ComboBox.cs, ListControl.cs, Control.cs, Button.cs, 
+	ButtonBase.cs:
+	Add Category attributes.
+	Code is contributed under the MIT/X11 license.
+
 2008-06-18  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* Form.cs: 

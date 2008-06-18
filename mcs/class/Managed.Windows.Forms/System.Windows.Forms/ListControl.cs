@@ -172,6 +172,7 @@ namespace System.Windows.Forms
 #else
 		[TypeConverter("System.Windows.Forms.Design.DataSourceConverter, " + Consts.AssemblySystem_Design)]
 #endif
+		[MWFCategory("Data")]
 		public object DataSource {
 			get { return data_source; }
 			set {
@@ -193,6 +194,7 @@ namespace System.Windows.Forms
 		[DefaultValue("")]
 		[Editor("System.Windows.Forms.Design.DataMemberFieldEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[TypeConverter("System.Windows.Forms.Design.DataMemberFieldConverter, " + Consts.AssemblySystem_Design)]
+		[MWFCategory("Data")]
 		public string DisplayMember {
 			get { 
 				return display_member;
@@ -251,6 +253,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue("")]
 		[Editor("System.Windows.Forms.Design.DataMemberFieldEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
+		[MWFCategory("Data")]
 		public string ValueMember {
 			get { return value_member.BindingMember; }
 			set {

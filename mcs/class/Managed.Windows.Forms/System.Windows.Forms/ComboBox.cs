@@ -322,6 +322,7 @@ namespace System.Windows.Forms
 		[DefaultValue ((string)null)]
 		[AttributeProvider (typeof (IListSource))]
 		[RefreshProperties (RefreshProperties.Repaint)]
+		[MWFCategory("Data")]
 		public new object DataSource {
 			get { return base.DataSource; }
 			set { base.DataSource = value; }
@@ -334,6 +335,7 @@ namespace System.Windows.Forms
 
 		[RefreshProperties(RefreshProperties.Repaint)]
 		[DefaultValue (DrawMode.Normal)]
+		[MWFCategory("Behavior")]
 		public DrawMode DrawMode {
 			get { return draw_mode; }
 			set {
@@ -356,6 +358,7 @@ namespace System.Windows.Forms
 		[Browsable (true)]
 		[DefaultValue (106)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
+		[MWFCategory("Behavior")]
 		public int DropDownHeight {
 			get {
 				return drop_down_height;
@@ -372,6 +375,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue (ComboBoxStyle.DropDown)]
 		[RefreshProperties(RefreshProperties.Repaint)]
+		[MWFCategory("Appearance")]
 		public ComboBoxStyle DropDownStyle {
 			get { return dropdown_style; }
 			set {
@@ -440,6 +444,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[MWFCategory("Behavior")]
 		public int DropDownWidth {
 			get { 
 				if (dropdown_width == -1)
@@ -486,6 +491,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 		[DefaultValue (FlatStyle.Standard)]
 		[Localizable (true)]
+		[MWFCategory("Appearance")]
 		public FlatStyle FlatStyle {
 			get { return flat_style; }
 			set {
@@ -515,6 +521,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue (true)]
 		[Localizable (true)]
+		[MWFCategory("Behavior")]
 		public bool IntegralHeight {
 			get { return integral_height; }
 			set {
@@ -527,6 +534,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
+		[MWFCategory("Behavior")]
 		public int ItemHeight {
 			get {
 				if (item_height == -1) {
@@ -559,12 +567,14 @@ namespace System.Windows.Forms
 #if NET_2_0
 		[MergableProperty (false)]
 #endif
+		[MWFCategory("Data")]
 		public ComboBox.ObjectCollection Items {
 			get { return items; }
 		}
 
 		[DefaultValue (8)]
 		[Localizable (true)]
+		[MWFCategory("Behavior")]
 		public int MaxDropDownItems {
 			get { return maxdrop_items; }
 			set {
@@ -585,6 +595,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue (0)]
 		[Localizable (true)]
+		[MWFCategory("Behavior")]
 		public int MaxLength {
 			get { return max_length; }
 			set {
@@ -731,6 +742,7 @@ namespace System.Windows.Forms
 		}
 
 		[DefaultValue (false)]
+		[MWFCategory("Behavior")]
 		public bool Sorted {
 			get { return sorted; }
 			set {

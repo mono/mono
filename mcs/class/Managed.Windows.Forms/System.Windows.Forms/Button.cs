@@ -54,6 +54,7 @@ namespace System.Windows.Forms {
 		[Browsable (true)]
 		[Localizable (true)]
 		[DefaultValue (AutoSizeMode.GrowOnly)]
+		[MWFCategory("Layout")]
 		public AutoSizeMode AutoSizeMode {
 			get { return base.GetAutoSizeMode (); }
 			set { base.SetAutoSizeMode (value); }
@@ -61,6 +62,7 @@ namespace System.Windows.Forms {
 #endif
 
 		[DefaultValue (DialogResult.None)]
+		[MWFCategory("Behavior")]
 		public virtual DialogResult DialogResult {	// IButtonControl
 			get { return dialog_result; }
 			set { dialog_result = value; }

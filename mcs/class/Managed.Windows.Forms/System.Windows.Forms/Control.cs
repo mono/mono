@@ -2242,6 +2242,7 @@ namespace System.Windows.Forms
 #else
 		[AmbientValue (typeof(Size), "0, 0")]
 #endif
+		[MWFCategory("Layout")]
 		public virtual Size MaximumSize {
 			get {
 				return maximum_size;
@@ -2259,6 +2260,7 @@ namespace System.Windows.Forms
 			return this.MaximumSize != DefaultMaximumSize;
 		}
 
+		[MWFCategory("Layout")]
 		public virtual Size MinimumSize {
 			get {
 				return minimum_size;
@@ -2331,6 +2333,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 		[DefaultValue (ImageLayout.Tile)]
 		[Localizable (true)]
+		[MWFCategory("Appearance")]
 		public virtual ImageLayout BackgroundImageLayout {
 			get {
 				return backgroundimage_layout;
@@ -2567,6 +2570,7 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 		[DefaultValue (null)]
+		[MWFCategory("Behavior")]
 		public virtual ContextMenuStrip ContextMenuStrip {
 			get { return this.context_menu_strip; }
 			set { 
@@ -3022,6 +3026,7 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 		[Localizable (true)]
+		[MWFCategory("Layout")]
 		public Padding Margin {
 			get { return this.margin; }
 			set { 
@@ -3051,6 +3056,7 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 		[Localizable(true)]
+		[MWFCategory("Layout")]
 		public Padding Padding {
 			get {
 				return padding;
@@ -3371,6 +3377,7 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Always)]
 		[Browsable(true)]
 		[DefaultValue (false)]
+		[MWFCategory("Appearance")]
 		public bool UseWaitCursor {
 			get { return use_wait_cursor; }
 			set {
