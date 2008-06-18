@@ -734,7 +734,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			int old_pos = (int) reader.BaseStream.Position;
 			reader.BaseStream.Position = DataOffset;
 
-			file_name = file.ConvertFileName (reader.ReadString ());
+			file_name = reader.ReadString ();
 			guid = reader.ReadBytes (16);
 			hash = reader.ReadBytes (16);
 			auto_generated = reader.ReadByte () == 1;
