@@ -1,5 +1,9 @@
 2008-06-18  Martin Baulig  <martin@ximian.com>
 
+	* debug-mono-symfile.h: Bump the version number to 50.0.
+
+2008-06-18  Martin Baulig  <martin@ximian.com>
+
 	* debug-mono-symfile.c
 	(load_symfile): Treat `MONO_SYMBOL_FILE_MINOR_VERSION' as a
 	minimum required version.
