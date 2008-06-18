@@ -42,6 +42,9 @@ namespace MonoTests.System.Reflection.Emit
 	public class SimpleTestAttribute : Attribute
 	{
 	}
+	public class EmptyIfaceImpl : EmptyInterface
+	{
+	}
 
 	[TestFixture]
 	public class TypeBuilderTest
@@ -9602,12 +9605,30 @@ tb.DefineGenericParameters (new String[] { "T" });
 			
 			}
 		}
-#if NET_2_0
 
+		[Test] //bug #349194
+		public void IsAssignableToWorksWithInterfacesOnParent ()
+		{
+            TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public, typeof (EmptyIfaceImpl));
+			TypeBuilder tb2 = module.DefineType (genTypeName (), TypeAttributes.Public, tb);
+
+			Assert.IsFalse (typeof (EmptyInterface).IsAssignableFrom (tb));
+			Type t = tb.CreateType ();
+			Assert.IsTrue (typeof (EmptyInterface).IsAssignableFrom (tb));
+			Assert.IsTrue (typeof (EmptyInterface).IsAssignableFrom (t));
+			
+			
+			Assert.IsFalse (typeof (EmptyInterface).IsAssignableFrom (tb2));
+			Type t2 = tb2.CreateType ();
+			Assert.IsTrue (typeof (EmptyInterface).IsAssignableFrom (tb2));
+			Assert.IsTrue (typeof (EmptyInterface).IsAssignableFrom (t2));
+		}
+
+#if NET_2_0
 		[Test]
 		public void GetCustomAttrOnFieldOfInflatedType ()
 		{
-			TypeBuilder tb = module.DefineType ("TheType", TypeAttributes.Public);
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 			tb.DefineGenericParameters ("T");
 
 			CustomAttributeBuilder caBuilder = new CustomAttributeBuilder (
@@ -9631,7 +9652,7 @@ tb.DefineGenericParameters (new String[] { "T" });
 		[Test]
 		public void GetCustomAttrOnPropertyOfInflatedType ()
 		{
-			TypeBuilder tb = module.DefineType ("TheType");
+			TypeBuilder tb = module.DefineType (genTypeName ());
 			tb.DefineGenericParameters ("T");
 
 			CustomAttributeBuilder caBuilder = new CustomAttributeBuilder (
@@ -9655,7 +9676,7 @@ tb.DefineGenericParameters (new String[] { "T" });
 		[Test]
 		public void GetCustomAttrOnEventOfInflatedType ()
 		{
-			TypeBuilder tb = module.DefineType ("TheType");
+			TypeBuilder tb = module.DefineType (genTypeName ());
 			tb.DefineGenericParameters ("T");
 
 			CustomAttributeBuilder caBuilder = new CustomAttributeBuilder (
@@ -9674,6 +9695,28 @@ tb.DefineGenericParameters (new String[] { "T" });
 			ei = t.MakeGenericType (typeof (int)).GetEvents (BindingFlags.NonPublic | BindingFlags.Instance)[0];
 			cattrs = ei.GetCustomAttributes (false);
 			Assert.AreEqual (1, cattrs.Length);
+		}
+
+		public void TestDoubleInitializationOfMonoGenericClass () //bug #400643
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+			tb.DefineGenericParameters ("T");
+ 
+			CustomAttributeBuilder caBuilder = new CustomAttributeBuilder (
+				typeof (SimpleTestAttribute).GetConstructors ()[0],
+				new object [0]);
+
+			FieldBuilder field = tb.DefineField ("OI", typeof (int), 0);
+			field.SetCustomAttribute (caBuilder);
+
+
+			tb.MakeGenericType (typeof (int)).GetMethods ();
+			tb.MakeGenericType (typeof (double)).GetMethods ();
+			
+			Type t = tb.CreateType ();
+			
+			t.MakeGenericType (typeof (int)).GetMethods ();
+			t.MakeGenericType (typeof (double)).GetMethods ();
 		}
 #endif
 

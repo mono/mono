@@ -1,3 +1,8 @@
+2008-06-18 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilderTest.cs: Fixed previous tests to follow the suite convention.
+	Added tests for bugs #349194 and #400643.
+
 2008-06-17 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilderTest.cs: Added tests for retrieving custom attributes from
