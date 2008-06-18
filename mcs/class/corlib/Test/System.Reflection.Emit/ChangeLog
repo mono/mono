@@ -1,3 +1,8 @@
+2008-06-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilderTest.cs: Added tests for retrieving custom attributes from
+	generic instances of SRE types.
+
 2008-06-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeBuilderTest.cs (GetField): Add a test for calling GetField on an

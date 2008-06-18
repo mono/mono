@@ -39,6 +39,10 @@ namespace MonoTests.System.Reflection.Emit
 		void foo ();
 	}
 
+	public class SimpleTestAttribute : Attribute
+	{
+	}
+
 	[TestFixture]
 	public class TypeBuilderTest
 	{
@@ -8662,7 +8666,7 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual (1, emittedAttrs.Length, "#5");
 		}
 
-		private void DefineStringProperty (TypeBuilder tb, string propertyName, string fieldName, MethodAttributes methodAttribs)
+		private PropertyBuilder DefineStringProperty (TypeBuilder tb, string propertyName, string fieldName, MethodAttributes methodAttribs)
 		{
 			// define the field holding the property value
 			FieldBuilder fieldBuilder = tb.DefineField (fieldName,
@@ -8701,6 +8705,7 @@ namespace MonoTests.System.Reflection.Emit
 			// their corresponding behaviors, "get" and "set" respectively. 
 			propertyBuilder.SetGetMethod (getMethodBuilder);
 			propertyBuilder.SetSetMethod (setMethodBuilder);
+			return propertyBuilder;
 		}
 
 		static int handler_called = 0;
@@ -9597,6 +9602,80 @@ tb.DefineGenericParameters (new String[] { "T" });
 			
 			}
 		}
+#if NET_2_0
+
+		[Test]
+		public void GetCustomAttrOnFieldOfInflatedType ()
+		{
+			TypeBuilder tb = module.DefineType ("TheType", TypeAttributes.Public);
+			tb.DefineGenericParameters ("T");
+
+			CustomAttributeBuilder caBuilder = new CustomAttributeBuilder (
+				typeof (SimpleTestAttribute).GetConstructors ()[0],
+				new object [0]);
+
+			FieldBuilder field = tb.DefineField ("OI", typeof (int), 0);
+			field.SetCustomAttribute (caBuilder);
+
+			Type t = tb.CreateType ();
+
+			FieldInfo fi = t.GetFields (BindingFlags.NonPublic | BindingFlags.Instance)[0];
+			object[] cattrs = fi.GetCustomAttributes (false);
+			Assert.AreEqual (1, cattrs.Length);
+
+			fi = t.MakeGenericType (typeof (int)).GetFields (BindingFlags.NonPublic | BindingFlags.Instance)[0];
+			cattrs = fi.GetCustomAttributes (false);
+			Assert.AreEqual (1, cattrs.Length);
+		}
+
+		[Test]
+		public void GetCustomAttrOnPropertyOfInflatedType ()
+		{
+			TypeBuilder tb = module.DefineType ("TheType");
+			tb.DefineGenericParameters ("T");
+
+			CustomAttributeBuilder caBuilder = new CustomAttributeBuilder (
+				typeof (SimpleTestAttribute).GetConstructors ()[0],
+				new object [0]);
+
+			PropertyBuilder property = DefineStringProperty (tb, "Name", "name", MethodAttributes.Public);
+			property.SetCustomAttribute (caBuilder);
+
+			Type t = tb.CreateType ();
+
+			PropertyInfo pi = t.GetProperties ()[0];
+			object[] cattrs = pi.GetCustomAttributes (false);
+			Assert.AreEqual (1, cattrs.Length);
+
+			pi = t.MakeGenericType (typeof (int)).GetProperties ()[0];
+			cattrs = pi.GetCustomAttributes (false);
+			Assert.AreEqual (1, cattrs.Length);
+		}
+
+		[Test]
+		public void GetCustomAttrOnEventOfInflatedType ()
+		{
+			TypeBuilder tb = module.DefineType ("TheType");
+			tb.DefineGenericParameters ("T");
+
+			CustomAttributeBuilder caBuilder = new CustomAttributeBuilder (
+				typeof (SimpleTestAttribute).GetConstructors ()[0],
+				new object [0]);
+
+			EventBuilder evt = tb.DefineEvent ("OI", 0, typeof (int));
+			evt.SetCustomAttribute (caBuilder);
+
+			Type t = tb.CreateType ();
+
+			EventInfo ei = t.GetEvents (BindingFlags.NonPublic | BindingFlags.Instance)[0];
+			object[] cattrs = ei.GetCustomAttributes (false);
+			Assert.AreEqual (1, cattrs.Length);
+
+			ei = t.MakeGenericType (typeof (int)).GetEvents (BindingFlags.NonPublic | BindingFlags.Instance)[0];
+			cattrs = ei.GetCustomAttributes (false);
+			Assert.AreEqual (1, cattrs.Length);
+		}
+#endif
 
 		static MethodInfo GetMethodByName (MethodInfo [] methods, string name)
 		{
