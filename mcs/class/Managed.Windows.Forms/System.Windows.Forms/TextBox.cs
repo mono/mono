@@ -31,6 +31,7 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
 #if NET_2_0
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 #endif
 
@@ -56,6 +57,7 @@ namespace System.Windows.Forms {
 		private AutoCompleteStringCollection auto_complete_custom_source = null;
 		private AutoCompleteMode auto_complete_mode = AutoCompleteMode.None;
 		private AutoCompleteSource auto_complete_source = AutoCompleteSource.None;
+		private AutoCompleteListBox auto_complete_listbox;
 #endif
 		#endregion	// Variables
 
@@ -66,6 +68,9 @@ namespace System.Windows.Forms {
 			alignment = HorizontalAlignment.Left;
 			this.LostFocus +=new EventHandler(TextBox_LostFocus);
 			this.RightToLeftChanged += new EventHandler (TextBox_RightToLeftChanged);
+#if NET_2_0
+			TextChanged += new EventHandler (TextBox_TextChanged);
+#endif
 
 			BackColor = SystemColors.Window;
 			ForeColor = SystemColors.WindowText;
@@ -108,6 +113,53 @@ namespace System.Windows.Forms {
 			if (hide_selection)
 				document.InvalidateSelectionArea ();
 		}
+
+#if NET_2_0
+		void TextBox_TextChanged (object o, EventArgs args)
+		{
+			if (auto_complete_mode == AutoCompleteMode.None || auto_complete_source == AutoCompleteSource.None)
+				return;
+
+			// We only support CustomSource by now
+			if (auto_complete_source != AutoCompleteSource.CustomSource ||
+				auto_complete_custom_source == null || auto_complete_custom_source.Count == 0)
+				return;
+
+			if (Text.Length == 0) {
+				if (auto_complete_listbox != null)
+					auto_complete_listbox.HideListBox (false);
+				return;
+			}
+
+			if (auto_complete_listbox == null)
+				auto_complete_listbox = new AutoCompleteListBox (this);
+
+			// If the text was just set by the auto complete listbox, ignore it
+			if (auto_complete_listbox.WasTextSet) {
+				auto_complete_listbox.WasTextSet = false;
+				return;
+			}
+
+			string text = Text;
+			auto_complete_listbox.Items.Clear ();
+			foreach (string str in auto_complete_custom_source)
+				if (str.StartsWith (text, StringComparison.CurrentCultureIgnoreCase))
+					auto_complete_listbox.Items.Add (str);
+
+			IList<string> matches = auto_complete_listbox.Items;
+			if ((matches.Count == 0) ||
+				(matches.Count == 1 && matches [0].Equals (text, StringComparison.CurrentCultureIgnoreCase))) { // Exact single match
+
+				if (auto_complete_listbox.Visible)
+					auto_complete_listbox.HideListBox (false);
+				return;
+			}
+
+			// Show or update auto complete listbox contents
+			auto_complete_listbox.Location = PointToScreen (new Point (0, Height));
+			auto_complete_listbox.ShowListBox ();
+		}
+#endif
 
 		private void UpdateAlignment ()
 		{
@@ -550,6 +602,261 @@ namespace System.Windows.Forms {
 		protected override void OnHandleDestroyed (EventArgs e)
 		{
 			base.OnHandleDestroyed (e);
+		}
+
+		class AutoCompleteListBox : Control
+		{
+			TextBox owner;
+			VScrollBar vscroll;
+			List<string> items;
+			int top_item;
+			int last_item;
+			int page_size;
+			int item_height;
+			int highlighted_index = -1;
+			bool user_defined_size;
+			bool resizing;
+			bool was_text_set;
+			Rectangle resizer_bounds;
+
+			const int DefaultDropDownItems = 7;
+
+			public AutoCompleteListBox (TextBox tb)
+			{
+				owner = tb;
+				items = new List<string> ();
+				item_height = FontHeight + 2;
+
+				vscroll = new VScrollBar ();
+				vscroll.ValueChanged += VScrollValueChanged;
+				Controls.Add (vscroll);
+
+				is_visible = false;
+				InternalBorderStyle = BorderStyle.FixedSingle;
+			}
+
+			protected override CreateParams CreateParams {
+				get {
+					CreateParams cp = base.CreateParams;
+
+					cp.Style ^= (int)WindowStyles.WS_CHILD;
+					cp.Style ^= (int)WindowStyles.WS_VISIBLE;
+					cp.Style |= (int)WindowStyles.WS_POPUP;
+					cp.ExStyle |= (int)WindowExStyles.WS_EX_TOPMOST | (int)WindowExStyles.WS_EX_TOOLWINDOW;
+					return cp;
+				}
+			}
+
+			public IList<string> Items {
+				get {
+					return items;
+				}
+			}
+
+			public int HighlightedIndex {
+				get {
+					return highlighted_index;
+				}
+				set {
+					if (value == highlighted_index)
+						return;
+
+					if (highlighted_index != -1)
+						Invalidate (GetItemBounds (highlighted_index));
+					highlighted_index = value;
+					if (highlighted_index != -1)
+						Invalidate (GetItemBounds (highlighted_index));
+				}
+			}
+
+			public bool WasTextSet {
+				get {
+					return was_text_set;
+				}
+				set {
+					was_text_set = value;
+				}
+			}
+
+			internal override bool ActivateOnShow {
+				get {
+					return false;
+				}
+			}
+
+			void VScrollValueChanged (object o, EventArgs args)
+			{
+				if (top_item == vscroll.Value)
+					return;
+
+				top_item = vscroll.Value;
+				last_item = GetLastVisibleItem ();
+				Invalidate ();
+			}
+
+			int GetLastVisibleItem ()
+			{
+				int top_y = Height;
+
+				for (int i = top_item; i < items.Count; i++) {
+					int pos = i - top_item; // relative to visible area
+					if ((pos * item_height) + item_height >= top_y)
+						return i;
+				}
+
+				return items.Count - 1;
+			}
+
+			Rectangle GetItemBounds (int index)
+			{
+				int pos = index - top_item;
+				Rectangle bounds = new Rectangle (0, pos * item_height, Width, item_height);
+				if (vscroll.Visible)
+					bounds.Width -= vscroll.Width;
+
+				return bounds;
+			}
+
+			int GetItemAt (Point loc)
+			{
+				if (loc.Y > (last_item - top_item) * item_height + item_height)
+					return -1;
+
+				int retval = loc.Y / item_height;
+				retval += top_item;
+
+				return retval;
+			}
+
+			void LayoutListBox ()
+			{
+				int total_height = items.Count * item_height;
+				page_size = Math.Max (Height / item_height, 1);
+				last_item = GetLastVisibleItem ();
+
+				if (Height < total_height) {
+					vscroll.Visible = true;
+					vscroll.Maximum = items.Count - 1;
+					vscroll.LargeChange = page_size;
+					vscroll.Location = new Point (Width - vscroll.Width, 0);
+					vscroll.Height = Height - item_height;
+				} else
+					vscroll.Visible = false;
+
+				resizer_bounds = new Rectangle (Width - item_height, Height - item_height,
+						item_height, item_height);
+			}
+
+			public void HideListBox (bool set_text)
+			{
+				if (set_text) {
+					was_text_set = true;
+					owner.Text = items [HighlightedIndex];
+					owner.SelectAll ();
+				}
+
+				Capture = false;
+				Hide ();
+			}
+
+			public void ShowListBox ()
+			{
+				if (!user_defined_size) {
+					// This should call the Layout routine for us
+					int height = items.Count > DefaultDropDownItems ? DefaultDropDownItems * item_height : 
+						(items.Count + 1) * item_height;
+					Size = new Size (owner.Width, height);
+				} else
+					LayoutListBox ();
+
+				vscroll.Value = 0;
+				HighlightedIndex = -1;
+
+				Show ();
+				Invalidate ();
+			}
+
+			protected override void OnResize (EventArgs args)
+			{
+				base.OnResize (args);
+
+				LayoutListBox ();
+				Refresh ();
+			}
+
+			protected override void OnMouseDown (MouseEventArgs args)
+			{
+				base.OnMouseDown (args);
+
+				if (!resizer_bounds.Contains (args.Location))
+					return;
+
+				user_defined_size = true;
+				resizing = true;
+				Capture = true;
+			}
+
+			protected override void OnMouseMove (MouseEventArgs args)
+			{
+				base.OnMouseMove (args);
+
+				if (resizing) {
+					Point mouse_loc = Control.MousePosition;
+					Point ctrl_loc = PointToScreen (Point.Empty);
+
+					Size new_size = new Size (mouse_loc.X - ctrl_loc.X, mouse_loc.Y - ctrl_loc.Y);
+					if (new_size.Height < item_height)
+						new_size.Height = item_height;
+					if (new_size.Width < item_height)
+						new_size.Width = item_height;
+
+					Size = new_size;
+					return;
+				}
+
+				Cursor = resizer_bounds.Contains (args.Location) ? Cursors.SizeNWSE : Cursors.Default;
+
+				int item_idx = GetItemAt (args.Location);
+				if (item_idx != -1)
+					HighlightedIndex = item_idx;
+			}
+
+			protected override void OnMouseUp (MouseEventArgs args)
+			{
+				base.OnMouseUp (args);
+
+				int item_idx = GetItemAt (args.Location);
+				if (item_idx != -1 && !resizing)
+					HideListBox (true);
+
+				resizing = false;
+				Capture = false;
+			}
+
+			internal override void OnPaintInternal (PaintEventArgs args)
+			{
+				Graphics g = args.Graphics;
+				Brush brush = ThemeEngine.Current.ResPool.GetSolidBrush (ForeColor);
+
+				int highlighted_idx = HighlightedIndex;
+
+				int y = 0;
+				for (int i = top_item; i <= last_item; i++) {
+					Rectangle item_bounds = GetItemBounds (i);
+					if (!item_bounds.IntersectsWith (args.ClipRectangle))
+						continue;
+
+					if (i == highlighted_idx) {
+						g.FillRectangle (SystemBrushes.Highlight, item_bounds);
+						g.DrawString (items [i], Font, SystemBrushes.HighlightText, item_bounds);
+					} else 
+						g.DrawString (items [i], Font, brush, item_bounds);
+
+					y += item_height;
+				}
+
+				ThemeEngine.Current.CPDrawSizeGrip (g, SystemColors.Control, resizer_bounds);
+			}
 		}
 #endif
 	}
