@@ -1,3 +1,9 @@
+2008-06-18  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripSplitButton.cs: Left and Top of ButtonBounds, SplitterBounds,
+	DropDownButtonBounds should be from the origin of the button, not the
+	ToolStrip.  [Fixes bug #401279]
+
 2008-06-16  Sandy Armstrong <sanfordarmstrong@gmail.com> 
 
 	* X11DesktopColors.cs: Clear GTK_MODULES environment variable before
