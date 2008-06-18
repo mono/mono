@@ -106,7 +106,7 @@ namespace System.Web {
 
 		static HttpResponse ()
 		{
-			string version;
+			string version = null;
 #if NET_2_0
 			HttpRuntimeSection config = WebConfigurationManager.GetSection ("system.web/httpRuntime") as HttpRuntimeSection;
 #else
