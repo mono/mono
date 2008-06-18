@@ -40,7 +40,6 @@ using System.Web.Configuration;
 using System.Globalization;
 using System.Security.Permissions;
 using System.Web.Hosting;
-using System.Web.Configuration;
 using System.Web.SessionState;
 
 namespace System.Web {
@@ -69,6 +68,8 @@ namespace System.Web {
 		CachedRawResponse cached_response;
 		string user_cache_control = "private";
 		string redirect_location;
+		
+		static UnknownResponseHeader version_header;
 		
 		//
 		// Negative Content-Length means we auto-compute the size of content-length
@@ -102,6 +103,22 @@ namespace System.Web {
 		bool is_request_being_redirected;
 		Encoding headerEncoding;
 #endif
+
+		static HttpResponse ()
+		{
+			string version;
+#if NET_2_0
+			HttpRuntimeSection config = WebConfigurationManager.GetSection ("system.web/httpRuntime") as HttpRuntimeSection;
+#else
+			HttpRuntimeConfig config = HttpContext.GetAppConfig ("system.web/httpRuntime") as HttpRuntimeConfig;
+			version = config.VersionHeader;
+#endif
+			if (config.EnableVersionHeader) {
+				if (version == null)
+					version = Environment.Version.ToString (3);
+				version_header = new UnknownResponseHeader ("X-AspNet-Version", version);
+			}
+		}
 		
 		internal HttpResponse ()
 		{
@@ -606,6 +623,7 @@ namespace System.Web {
 		//   Content-Type
 		//   Transfer-Encoding (chunked)
 		//   Cache-Control
+		//   X-AspNet-Version
 		void AddHeadersNoCache (ArrayList write_headers, bool final_flush)
 		{
 #if !TARGET_J2EE
@@ -621,6 +639,9 @@ namespace System.Web {
 				write_headers.Add (new UnknownResponseHeader ("Location", redirect_location));
 			
 #if !TARGET_J2EE
+			if (version_header != null)
+				write_headers.Add (version_header);
+
 			//
 			// If Content-Length is set.
 			//

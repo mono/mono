@@ -53,6 +53,10 @@ namespace System.Web.Configuration
 			config.AppRequestQueueLimit = AttUIntValue (section, "appRequestQueueLimit", 100);
 			config.VersionHeader = AttValue (section, "versionHeader");
 			config.RequestLengthDiskThreshold = AttUIntValue (section, "requestLengthDiskThreshold", 256);
+			config.RequireRootedSaveAsPath = AttBoolValue (section, "requireRootedSaveAsPath", true);
+			config.IdleTimeout = AttUIntValue (section, "idleTimeout", 20);
+			config.Enable = AttBoolValue (section, "enable", true);
+			config.EnableVersionHeader = AttBoolValue (section, "enableVersionHeader", true);
 
 			return config;
 		}

@@ -51,7 +51,7 @@ namespace System.Web.Configuration
 		public int AppRequestQueueLimit = 100;
 		public bool EnableKernelOutputCache = true;
 		public bool EnableVersionHeader = true;
-		public bool RequireRootSaveAsPath = true;
+		public bool RequireRootedSaveAsPath = true;
 		public int IdleTimeout = 20; // minutes
 		public bool Enable = true;
 		public string VersionHeader;
@@ -89,7 +89,7 @@ namespace System.Web.Configuration
 			AppRequestQueueLimit = parent.AppRequestQueueLimit;
 			EnableKernelOutputCache = parent.EnableKernelOutputCache;
 			EnableVersionHeader = parent.EnableVersionHeader;
-			RequireRootSaveAsPath = parent.RequireRootSaveAsPath;
+			RequireRootedSaveAsPath = parent.RequireRootedSaveAsPath;
 			IdleTimeout = parent.IdleTimeout;
 			Enable = parent.Enable;
 		}
