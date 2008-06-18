@@ -1,3 +1,8 @@
+2008-06-18  Juraj Skripsky  <js@hotfeet.ch>
+
+	* Page.cs (ProcessException): Throw HttpUnhandledException instead of
+	TargetInvocationException to match .NET. Fixes bug #400482.
+
 2008-06-18  Marek Habersack  <mhabersack@novell.com>
 
 	* BasePartialCachingControl.cs: implemented the CachePolicy

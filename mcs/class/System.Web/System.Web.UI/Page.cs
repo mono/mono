@@ -1367,7 +1367,7 @@ public partial class Page : TemplateControl, IHttpHandler
 #if TARGET_JVM
 			vmw.common.TypeUtils.Throw (e);
 #else
-			throw new TargetInvocationException (e);
+			throw new HttpUnhandledException (null, e);
 #endif
 		}
 	}
