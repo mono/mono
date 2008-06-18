@@ -1,5 +1,12 @@
 2008-06-18  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Split into
+	`MONO_DEBUGGER_MAJOR_VERSION' and `MONO_DEBUGGER_MINOR_VERSION';
+	set to 80.0.  The debugger <-> runtime interface is now frozen as
+	well.	
+
+2008-06-18  Martin Baulig  <martin@ximian.com>
+
 	* debug-mono-symfile.c
 	(load_symfile): Don't check the minor version.
 
