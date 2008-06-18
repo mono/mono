@@ -1,6 +1,11 @@
 2008-06-18  Martin Baulig  <martin@ximian.com>
 
 	* MonoSymbolTable.cs
+	(OffsetTable): Bump version to 50.0.
+
+2008-06-18  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolTable.cs
 	(OffsetTable.MinorVersion): Bump to 7.
 	(OffsetTable.Flags): New public enum.
 	(OffsetTable.FileFlags): New public property.
