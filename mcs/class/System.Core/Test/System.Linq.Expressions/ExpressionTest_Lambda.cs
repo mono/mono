@@ -226,6 +226,42 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (84, l (2));
 		}
 
+		public static int CallFunc (Func<int, int> e, int i)
+		{
+			return e (i);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void NestedParentParameterUse ()
+		{
+			var a = Expression.Parameter (typeof (int), null);
+			var b = Expression.Parameter (typeof (int), null);
+			var c = Expression.Parameter (typeof (int), null);
+			var d = Expression.Parameter (typeof (int), null);
+
+			var l = Expression.Lambda<Func<int, int>> (
+				Expression.Call (
+					this.GetType ().GetMethod ("CallFunc"),
+					Expression.Lambda<Func<int, int>> (
+						Expression.Call (
+							this.GetType ().GetMethod ("CallFunc"),
+							Expression.Lambda<Func<int, int>> (
+								Expression.Call (
+									this.GetType ().GetMethod ("CallFunc"),
+									Expression.Lambda<Func<int, int>> (
+										Expression.Add (c, d),
+										d),
+									Expression.Add (b, c)),
+								c),
+							Expression.Add (a, b)),
+						b),
+					a),
+				a).Compile ();
+
+			Assert.AreEqual (5, l (1));
+		}
+
 		[Test]
 		public void LambdaReturningExpression ()
 		{
