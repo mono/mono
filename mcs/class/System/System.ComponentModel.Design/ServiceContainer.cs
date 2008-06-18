@@ -43,7 +43,7 @@ namespace System.ComponentModel.Design
 #endif
 	{
 		private IServiceProvider parentProvider;
-		private Hashtable services = new Hashtable ();
+		private Hashtable services;
 #if NET_2_0
 		private bool _disposed;
 #endif
@@ -51,6 +51,14 @@ namespace System.ComponentModel.Design
 		public ServiceContainer()
 			: this (null)
 		{
+		}
+
+		private Hashtable Services {
+			get {
+				if (services == null)
+					services = new Hashtable ();
+				return services;
+			}
 		}
 
 		public ServiceContainer (IServiceProvider parentProvider)
@@ -88,11 +96,11 @@ namespace System.ComponentModel.Design
 				throw new ArgumentNullException ("serviceType");
 			if (serviceInstance == null)
 				throw new ArgumentNullException ("serviceInstance");
-			if (services.Contains (serviceType))
+			if (Services.Contains (serviceType))
 				throw new ArgumentException (string.Format (
 					"The service {0} already exists in the service container.",
 					serviceType.ToString ()), "serviceType");
-			services.Add (serviceType, serviceInstance);
+			Services.Add (serviceType, serviceInstance);
 		}
 
 #if NET_2_0
@@ -115,11 +123,11 @@ namespace System.ComponentModel.Design
 				throw new ArgumentNullException ("serviceType");
 			if (callback == null)
 				throw new ArgumentNullException ("callback");
-			if (services.Contains (serviceType))
+			if (Services.Contains (serviceType))
 				throw new ArgumentException (string.Format (
 					"The service {0} already exists in the service container.",
 					serviceType.ToString ()), "serviceType");
-			services.Add (serviceType, callback);
+			Services.Add (serviceType, callback);
 		}
 
 		public void RemoveService (Type serviceType)
@@ -142,7 +150,7 @@ namespace System.ComponentModel.Design
 
 			if (serviceType == null)
 				throw new ArgumentNullException ("serviceType");
-			services.Remove (serviceType);
+			Services.Remove (serviceType);
 		}
 
 #if NET_2_0
@@ -161,15 +169,16 @@ namespace System.ComponentModel.Design
 					break;
 				}
 			}
+
 			if (result == null)
-				result = services [serviceType];
+				result = Services [serviceType];
 			if (result == null && parentProvider != null)
 				result = parentProvider.GetService (serviceType);
 			if (result != null) {
 				ServiceCreatorCallback cb = result as ServiceCreatorCallback;
 				if (cb != null) {
 					result = cb (this, serviceType);
-					services [serviceType] = result;
+					Services [serviceType] = result;
 				}
 			}
 			return result;

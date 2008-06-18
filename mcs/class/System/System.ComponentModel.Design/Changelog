@@ -1,3 +1,8 @@
+2008-06-18  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ServiceContainer.cs: Lazy initialize the services hashtable so that 
+	we handle disposed state on 2.0 nicely.
+
 2008-06-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ServiceContainer.cs: In AddService, first check parent and end flow
