@@ -1,3 +1,7 @@
+2008-06-18  Nestor Salceda  <nestor.salceda@gmail.com>
+
+	* XUtil.cs: Support XText in Clone (). Fixes bug #401325.
+
 2008-05-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XUtil.cs : refactoring Clone(). Support XAttribute too.

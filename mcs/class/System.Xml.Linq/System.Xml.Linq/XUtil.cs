@@ -111,6 +111,8 @@ namespace System.Xml.Linq
 				return new XDeclaration ((XDeclaration) o);
 			if (o is XDocumentType)
 				return new XDocumentType ((XDocumentType) o);
+			if (o is XText)
+				return new XText ((XText) o);
 			throw new ArgumentException ();
 		}
 	}
