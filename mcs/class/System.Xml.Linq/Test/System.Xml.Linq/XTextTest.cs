@@ -28,6 +28,7 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
+using System.Linq;
 
 using NUnit.Framework;
 
@@ -47,6 +48,18 @@ namespace MonoTests.System.Xml.Linq
 		public void ToString ()
 		{
 			Assert.AreEqual ("Foo", new XText ("Foo").ToString ());
+		}
+
+		[Test]
+		public void AddXTextElementCloning ()
+		{
+			XDocument document = new XDocument (new XElement ("root", "This is the root"));
+			Assert.IsNotNull (document);
+			Assert.IsNotNull (document.Elements ().First ());
+
+			XDocument newDocument = new XDocument (document.Root);
+			Assert.IsNotNull (newDocument);
+			Assert.IsNotNull (newDocument.Elements ().First ());
 		}
 	}
 }
