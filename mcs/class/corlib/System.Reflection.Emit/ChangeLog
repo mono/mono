@@ -1,3 +1,9 @@
+2008-06-18 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* TypeBuilder.cs (IsAssignableTo): Fixed check for interfaces
+	defined on parent. Based on Geoff's Norton patch.
+	Fixes #349194.
+
 2008-06-12  Marek Safar  <marek.safar@gmail.com>
 
 	* MethodBuilder.cs: Removed SetGenericMethodSignature.

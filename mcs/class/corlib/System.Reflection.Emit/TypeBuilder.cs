@@ -1687,6 +1687,11 @@ namespace System.Reflection.Emit
 				return true;
 
 			if (c.IsInterface) {
+				if (parent != null && is_created) {
+					if (c.IsAssignableFrom (parent))
+						return true;
+				}
+
 				if (interfaces == null)
 					return false;
 				foreach (Type t in interfaces)
