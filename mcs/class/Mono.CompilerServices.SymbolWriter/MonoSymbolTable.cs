@@ -73,7 +73,7 @@ namespace Mono.CompilerServices.SymbolWriter
 	public class OffsetTable
 	{
 		public const int  MajorVersion = 42;
-		public const int  MinorVersion = 6;
+		public const int  MinorVersion = 7;
 		public const long Magic        = 0x45e82623fd7fa614;
 
 		#region This is actually written to the symbol file
@@ -94,7 +94,14 @@ namespace Mono.CompilerServices.SymbolWriter
 		public int AnonymousScopeTableOffset;
 		public int AnonymousScopeTableSize;
 
-		public bool IsAspxSource;
+		[Flags]
+		public enum Flags
+		{
+			IsAspxSource		= 1,
+			WindowsFileNames	= 2
+		}
+
+		public Flags FileFlags;
 
 		public int LineNumberTable_LineBase = LineNumberTable.Default_LineBase;
 		public int LineNumberTable_LineRange = LineNumberTable.Default_LineRange;
@@ -102,7 +109,11 @@ namespace Mono.CompilerServices.SymbolWriter
 		#endregion
 
 		internal OffsetTable ()
-		{ }
+		{
+			int platform = (int) Environment.OSVersion.Platform;
+			if ((platform != 4) && (platform != 128))
+				FileFlags |= Flags.WindowsFileNames;
+		}
 
 		internal OffsetTable (BinaryReader reader, int major_version, int minor_version)
 		{
@@ -128,7 +139,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			LineNumberTable_LineRange = reader.ReadInt32 ();
 			LineNumberTable_OpcodeBase = reader.ReadInt32 ();
 
-			IsAspxSource = reader.ReadInt32 () != 0;
+			FileFlags = (Flags) reader.ReadInt32 ();
 		}
 
 		internal void Write (BinaryWriter bw, int major_version, int minor_version)
@@ -155,7 +166,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			bw.Write (LineNumberTable_LineRange);
 			bw.Write (LineNumberTable_OpcodeBase);
 
-			bw.Write ((int) (IsAspxSource ? 1 : 0));
+			bw.Write ((int) FileFlags);
 		}
 
 		public override string ToString ()
@@ -723,7 +734,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			int old_pos = (int) reader.BaseStream.Position;
 			reader.BaseStream.Position = DataOffset;
 
-			file_name = reader.ReadString ();
+			file_name = file.ConvertFileName (reader.ReadString ());
 			guid = reader.ReadBytes (16);
 			hash = reader.ReadBytes (16);
 			auto_generated = reader.ReadByte () == 1;
@@ -745,7 +756,7 @@ namespace Mono.CompilerServices.SymbolWriter
 				throw new InvalidOperationException ();
 
 			auto_generated = true;
-			file.OffsetTable.IsAspxSource = true;
+			file.OffsetTable.FileFlags |= OffsetTable.Flags.IsAspxSource;
 		}
 
 		public bool CheckChecksum ()
