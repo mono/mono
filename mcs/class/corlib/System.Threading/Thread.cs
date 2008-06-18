@@ -956,18 +956,16 @@ namespace System.Threading {
 			CurrentThread.critical_region_level--;
 		}
 
-		[MonoTODO("Not implemented")]
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void BeginThreadAffinity ()
 		{
-			throw new NotImplementedException ();
+			// Managed and native threads are currently bound together.
 		}
 
-		[MonoTODO("Not implemented")]
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void EndThreadAffinity ()
 		{
-			throw new NotImplementedException ();
+			// Managed and native threads are currently bound together.
 		}
 		
 		public ApartmentState GetApartmentState ()

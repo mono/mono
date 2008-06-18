@@ -1,3 +1,8 @@
+2008-06-18  Kornél Pál  <kornelpal@gmail.com>
+
+	* Thread.cs: Implement BeginThreadAffinity and EndThreadAffinity as no-op
+	because managed and native threads are currently bound together.
+
 2008-06-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* Thread.cs: Sync layout with unmanaged side.
