@@ -53,6 +53,8 @@ namespace System.Net {
 		public abstract IAsyncResult BeginGetResponse (AsyncCallback callback, object state);
 		public abstract Stream EndGetRequestStream (IAsyncResult asyncResult);
 		public abstract WebResponse EndGetResponse (IAsyncResult asyncResult);
+		internal abstract Stream GetRequestStream ();
+		internal abstract WebResponse GetResponse ();
 
 		public static WebRequest Create (Uri uri)
 		{
@@ -72,7 +74,7 @@ namespace System.Net {
 
 		static Type GetBrowserHttpFromMoonlight ()
 		{
-			var type = Type.GetType ("System.Windows.Browser.Net.BrowserHttpWebRequest, Mono.Moonlight");
+			var type = System.Reflection.Assembly.Load ("System.Windows.Browser, Version=2.0.5.0, Culture=Neutral, PublicKeyToken=7cec85d7bea7798e").GetType ("System.Windows.Browser.Net.BrowserHttpWebRequest");
 			if (type == null)
 				throw new NotSupportedException ("Can not get BrowserHttpWebRequest");
 

@@ -1,3 +1,7 @@
+2008-06-18  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* WebRequest_2_1.cs: Load BrowserHttpWebRequest from the right assembly
+
 2008-06-10  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* DnsEndPoint_2_1.cs: embed an IPAddress and rely on IPEndPoint
