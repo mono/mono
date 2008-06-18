@@ -1,5 +1,8 @@
 2008-06-18  Martin Baulig  <martin@ximian.com>
 
+	* debug-mono-symfile.c
+	(load_symfile): Don't check the minor version.
+
 	* debug-mono-symfile.h: Bump the version number to 50.0.
 
 2008-06-18  Martin Baulig  <martin@ximian.com>
