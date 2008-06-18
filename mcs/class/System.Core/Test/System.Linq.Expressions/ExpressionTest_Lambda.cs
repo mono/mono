@@ -18,6 +18,8 @@
 //
 // Authors:
 //   Miguel de Icaza (miguel@novell.com)
+//   Jb Evain (jbevain@novell.com)
+//
 
 using System;
 using System.Reflection;
@@ -205,6 +207,23 @@ namespace MonoTests.System.Linq.Expressions
 					identity)).Compile ();
 
 			Assert.AreEqual (42, l ());
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void LambdaPassedAsDelegateUsingParentParameter ()
+		{
+			var a = Expression.Parameter (typeof (int), "a");
+			var b = Expression.Parameter (typeof (int), "b");
+
+			var l = Expression.Lambda<Func<int, int>> (
+				Expression.Call (
+					this.GetType ().GetMethod ("CallDelegate"),
+					Expression.Lambda<Func<int, int>> (
+							Expression.Multiply (a, b), b)),
+				a).Compile ();
+
+			Assert.AreEqual (84, l (2));
 		}
 
 		[Test]
