@@ -1166,7 +1166,7 @@ namespace System.Data
 				retMode != XmlReadMode.ReadSchema &&
 				mode != XmlReadMode.IgnoreSchema &&
 				mode != XmlReadMode.Fragment &&
-				Tables.Count == 0) {
+				(Tables.Count == 0 || mode == XmlReadMode.InferSchema)) {
 				InferXmlSchema(doc, null);
 				if (mode == XmlReadMode.Auto)
 					retMode = XmlReadMode.InferSchema;

@@ -1,3 +1,11 @@
+2008-06-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs : when InferSchema mode, ReadXml() should do "merging
+	  inference".
+	* XmlDataInferenceLoader.cs : fixed primary key processing in
+	  merging inference mode. Reuse existing one, instead of rejecting
+	  such a table.
+
 2008-06-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaWriter.cs, DataSet.cs, XmlTableWriter.cs, DataTable.cs,

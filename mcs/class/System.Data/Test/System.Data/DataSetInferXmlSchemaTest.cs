@@ -482,7 +482,7 @@ namespace MonoTests.System.Data
 		[ExpectedException (typeof (ConstraintException))]
 		public void ConflictExistingPrimaryKey ()
 		{
-			// The 'col' DataTable tries to create another primary key (and fails)
+			// <wrong>The 'col' DataTable tries to create another primary key (and fails)</wrong> The data violates key constraint.
 			DataSet ds = new DataSet ();
 			ds.Tables.Add (new DataTable ("table"));
 			DataColumn c = new DataColumn ("pk");

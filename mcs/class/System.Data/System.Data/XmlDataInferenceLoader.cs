@@ -207,19 +207,20 @@ namespace System.Data
 
 			int count = 0;			
 			foreach (TableMapping map in tables) {
+				string baseName = map.PrimaryKey != null ? map.PrimaryKey.ColumnName : map.Table.TableName + "_Id";
 				
 				// Make sure name of RK column is unique
-				string rkName = map.Table.TableName + "_Id";
+				string rkName = baseName;
 				if (map.ChildTables [map.Table.TableName] != null) {
-					rkName = map.Table.TableName + "_Id_" + count;
+					rkName = baseName + '_' + count;
 					while (map.GetColumn (rkName) != null) {
 						count++;
-						rkName = map.Table.TableName + "_Id_" + count;
+						rkName = baseName + '_' + count;
 					}
 				}
 				
 				foreach (TableMapping ct in map.ChildTables) {
-					ct.ReferenceKey = GetMappedColumn (ct, rkName, map.Table.Prefix, map.Table.Namespace, MappingType.Hidden);
+					ct.ReferenceKey = GetMappedColumn (ct, rkName, map.Table.Prefix, map.Table.Namespace, MappingType.Hidden, map.PrimaryKey != null ? map.PrimaryKey.DataType : typeof (int));
 				}
 			}
 
@@ -320,11 +321,6 @@ namespace System.Data
 
 		private void PopulatePrimaryKey (TableMapping table)
 		{
-			if (table.PrimaryKey != null) {
-				if (table.PrimaryKey.ColumnName != table.Table.TableName + "_Id")
-					throw new DataException ("There is already a primary key column.");
-				return;
-			}
 			DataColumn col = new DataColumn (table.Table.TableName + "_Id");
 			col.ColumnMapping = MappingType.Hidden;
 			col.DataType = typeof (int);
@@ -335,15 +331,15 @@ namespace System.Data
 			table.PrimaryKey = col;
 		}
 
-		private void PopulateRelationStructure (string parent, string child)
+		private void PopulateRelationStructure (string parent, string child, string pkeyColumn)
 		{
 			if (relations [parent, child] != null)
 				return;
 			RelationStructure rs = new RelationStructure ();
 			rs.ParentTableName = parent;
 			rs.ChildTableName = child;
-			rs.ParentColumnName = parent + "_Id";
-			rs.ChildColumnName = parent + "_Id";
+			rs.ParentColumnName = pkeyColumn;
+			rs.ChildColumnName = pkeyColumn;
 			rs.CreateConstraint = true;
 			rs.IsNested = true;
 			relations.Add (rs);
@@ -365,7 +361,7 @@ namespace System.Data
 			if (table.SimpleContent != null)
 				return;
 
-			GetMappedColumn (table, localName + "_Column", el.Prefix, el.NamespaceURI, MappingType.SimpleContent);
+			GetMappedColumn (table, localName + "_Column", el.Prefix, el.NamespaceURI, MappingType.SimpleContent, null);
 		}
 
 		private void InferTableElement (TableMapping parentTable, XmlElement el)
@@ -400,7 +396,8 @@ namespace System.Data
 					XmlHelper.Decode (attr.LocalName),
 					attr.Prefix,
 					attr.NamespaceURI,
-					MappingType.Attribute);
+					MappingType.Attribute,
+					null);
 			}
 
 			foreach (XmlNode n in el.ChildNodes) {
@@ -423,13 +420,15 @@ namespace System.Data
 						InferColumnElement (table, cel);
 						break;
 					case ElementMappingType.Repeated:
-						PopulatePrimaryKey (table);
-						PopulateRelationStructure (table.Table.TableName, childLocalName);
+						if (table.PrimaryKey == null)
+							PopulatePrimaryKey (table);
+						PopulateRelationStructure (table.Table.TableName, childLocalName, table.PrimaryKey.ColumnName);
 						InferRepeatedElement (table, cel);
 						break;
 					case ElementMappingType.Complex:
-						PopulatePrimaryKey (table);
-						PopulateRelationStructure (table.Table.TableName, childLocalName);
+						if (table.PrimaryKey == null)
+							PopulatePrimaryKey (table);
+						PopulateRelationStructure (table.Table.TableName, childLocalName, table.PrimaryKey.ColumnName);
 						InferTableElement (table, cel);
 						break;
 					}
@@ -440,7 +439,7 @@ namespace System.Data
 			// Attributes + !Children + Text = SimpleContent
 			if (table.SimpleContent == null // no need to create
 				&& !hasChildElements && hasText && (hasAttributes || isElementRepeated)) {
-				GetMappedColumn (table, table.Table.TableName + "_Text", String.Empty, String.Empty, MappingType.SimpleContent);
+				GetMappedColumn (table, table.Table.TableName + "_Text", String.Empty, String.Empty, MappingType.SimpleContent, null);
 			}
 		}
 
@@ -469,7 +468,7 @@ namespace System.Data
 			return map;
 		}
 
-		private DataColumn GetMappedColumn (TableMapping table, string name, string prefix, string ns, MappingType type)
+		private DataColumn GetMappedColumn (TableMapping table, string name, string prefix, string ns, MappingType type, Type optColType)
 		{
 			DataColumn col = table.GetColumn (name);
 			// Infer schema
@@ -490,7 +489,7 @@ namespace System.Data
 					break;
 				case MappingType.Hidden:
 					// To generate parent key
-					col.DataType = typeof (int);
+					col.DataType = optColType;
 					table.ReferenceKey = col;
 					break;
 				}

@@ -1,3 +1,7 @@
+2008-06-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSetInferXmlSchemaTest.cs: correction in code comment.
+
 2008-06-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TestFile3.xml, TestFile5.xml : they do not match what should be
