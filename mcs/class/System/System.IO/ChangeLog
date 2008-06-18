@@ -1,3 +1,9 @@
+2008-06-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* InotifyWatcher.cs: patch from Juraj Skripsky to fix
+	rename events (fixes bug #359181).
+
+
 2008-04-17  Marek Habersack  <mhabersack@novell.com>
 
 	* FileSystemWatcher.cs: added support for NullFileWatcher. Fixes
