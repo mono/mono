@@ -1,3 +1,10 @@
+2008-06-18  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* Form.cs: 
+	 - Fix a NRE when unparenting a form.
+	 - Do not recreate or destroy a parented form when 
+	unparenting. 
+
 2008-06-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TextBox.cs: Implement basic support for AutComplete with custom

@@ -308,7 +308,6 @@ namespace System.Windows.Forms {
 			bool recreate_necessary = false;
 			
 			if (new_parent == null) {
-				recreate_necessary = window_manager is FormWindowManager;
 				window_manager = null;
 			} else if (new_parent is MdiClient) {
 				window_manager = new MdiWindowManager (this, (MdiClient) new_parent);
@@ -319,7 +318,7 @@ namespace System.Windows.Forms {
 			
 			if (recreate_necessary) {
 				if (IsHandleCreated) {
-					if (new_parent.IsHandleCreated) {
+					if (new_parent != null && new_parent.IsHandleCreated) {
 						RecreateHandle ();
 					} else {
 						DestroyHandle ();
