@@ -1,5 +1,24 @@
 2008-06-17 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (mono_custom_attrs_from_property): Fix support for
+	retriveving cattrs of dynamic inflated generic types.
+
+	* reflection.c (mono_custom_attrs_from_event): Same.
+
+	* reflection.c (mono_custom_attrs_from_field): Same;
+
+	* reflection.c (typebuilder_setup_events): Same cattrs of events.
+
+	* loader.c (-mono_metadata_get_corresponding_field_from_generic_type_definition):
+	Moved to metadata.c.
+
+	* metadata.c: New functions to retrive the equivalent field, event
+	of property from the generic type definition.
+
+	* metadata-internals.h: Added new functions from metadata.c.
+
+2008-06-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c (mono_custom_attrs_from_builders): Mark MonoCustomAttrInfo
 	to cached in a mempool is used.
 
