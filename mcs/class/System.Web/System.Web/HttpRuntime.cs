@@ -564,6 +564,13 @@ namespace System.Web {
 			context.Response.ReleaseResources ();
 		}
 
+#if TARGET_JVM
+		[MonoNotSupported]
+		public static void UnloadAppDomain ()
+		{
+			throw new NotImplementedException ("UnloadAppDomain is not supported");
+		}
+#else
 		//
 		// Called when we are shutting down or we need to reload an application
 		// that has been modified (touch global.asax) 
@@ -576,7 +583,7 @@ namespace System.Web {
 			//
 			ThreadPool.QueueUserWorkItem (new WaitCallback (ShutdownAppDomain), null);
 		}
-
+#endif
 		//
 		// Shuts down the AppDomain
 		//
