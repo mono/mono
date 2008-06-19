@@ -32,7 +32,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace System.Linq {
+namespace System.Linq.Expressions {
 
 	abstract class ExpressionTransformer {
 
