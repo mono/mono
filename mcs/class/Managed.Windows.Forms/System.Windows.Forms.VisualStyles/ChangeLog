@@ -1,3 +1,8 @@
+2008-06-19  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* GtkPlus.cs: Initialize now catches DllNotFoundException from both GTK+
+	calls.
+
 2008-06-15  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* GtkPlus.cs, VisualStylesGtkPlus.cs: Added support for clipping.

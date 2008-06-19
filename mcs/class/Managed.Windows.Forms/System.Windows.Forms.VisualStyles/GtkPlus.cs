@@ -63,20 +63,19 @@ namespace System.Windows.Forms.VisualStyles
 		}
 		public static bool Initialize ()
 		{
-			if (gtk_check_version (2, 10, 0) != IntPtr.Zero)
-				return false;
-			//TODO: If we need to pass the actual arguments, duplicate the required code from GTK#.
-			int argc = 0;
-			string [] argv = new string [1];
-			bool result;
 			try {
-				result = gtk_init_check (ref argc, ref argv);
+				if (gtk_check_version (2, 10, 0) != IntPtr.Zero)
+					return false;
+				//TODO: If we need to pass the actual arguments, duplicate the required code from GTK#.
+				int argc = 0;
+				string [] argv = new string [1];
+				bool result = gtk_init_check (ref argc, ref argv);
+				if (result)
+					instance = new GtkPlus ();
+				return result;
 			} catch (DllNotFoundException) {
 				return false;
 			}
-			if (result)
-				instance = new GtkPlus ();
-			return result;
 		}
 
 		readonly int WidgetTypeCount = Enum.GetNames (typeof (WidgetType)).Length;
