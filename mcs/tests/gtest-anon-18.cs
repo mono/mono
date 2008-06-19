@@ -17,8 +17,7 @@ public class C
 	
 	public static void Test2<T> ()
 	{
-		// FIXME:
-		//T r = Test (delegate (T i) { return i; });
+		T r = Test (delegate (T i) { return i; });
 	}
 	
 	public static void Main()
