@@ -1,3 +1,9 @@
+2008-06-19  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c:
+	* icall-def.h: Implement Socket generic Send() and Receive()
+	methods.  Fixes bug 395168.
+
 2008-06-19  Kornél Pál  <kornelpal@gmail.com>
 
 	* icall-def.h, icall.c: Add ves_icall_System_Reflection_Module_GetHINSTANCE.
