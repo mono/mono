@@ -4,7 +4,8 @@
 	delegate.cs, iterators.cs, cs-parser.jay, assign.cs, anonymous.cs, driver.cs
 	expression.cs, codegen.cs, statement.cs
 	
-	Fixes bugs: TBD
+	Fixes bugs: #318652, #323223, #234779, #325069, #325476, #332532, #334465,
+	#345907, #349190, #353276, #355256, #359617, #378542, #384584, #396530
 	
 	** Anonymous methods, lambda expressions rewrite **
 	
