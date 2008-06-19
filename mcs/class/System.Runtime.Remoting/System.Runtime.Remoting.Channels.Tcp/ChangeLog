@@ -1,3 +1,7 @@
+2008-06-18  Robert Jordan  <robertj@gmx.net>
+
+	* TcpMessageIO.cs: Handle zero length streams. Fixes #398783.
+
 2008-01-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* TcpChannel.cs (Init): Handle properties == null.

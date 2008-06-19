@@ -137,6 +137,9 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			// Writes the message headers
 			SendHeaders (networkStream, requestHeaders, buffer);
 
+			if (data.Length == 0)
+				return;
+
 			// Writes the stream
 			if (data is MemoryStream)
 			{
@@ -235,10 +238,13 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			// Reads the headers
 			headers = ReceiveHeaders (networkStream, buffer);
 
-			byte[] resultBuffer = new byte[byteCount];
-			StreamRead (networkStream, resultBuffer, byteCount);
-
-			return new MemoryStream (resultBuffer);
+			if (byteCount > 0) {
+				byte[] resultBuffer = new byte[byteCount];
+				StreamRead (networkStream, resultBuffer, byteCount);
+				return new MemoryStream (resultBuffer);
+			} else {
+				return new MemoryStream ();
+			}
 		}		
 
 		private static void SendString (Stream networkStream, string str, byte[] buffer)
