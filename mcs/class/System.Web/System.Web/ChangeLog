@@ -1,3 +1,7 @@
+2008-06-19  Marek Habersack  <mhabersack@novell.com>
+
+	* MimeTypes.cs: added a mime type entry for .xpi files.
+
 2008-06-18  Juraj Skripsky  <js@hotfeet.ch>
 
 	* HttpResponse.cs (AddHeadersNoCache): Add "X-AspNet-Version" header if

@@ -529,6 +529,7 @@ namespace System.Web
 			mimeTypes.Add ("xml", "text/xml");
 			mimeTypes.Add ("xmz", "xgl/movie");
 			mimeTypes.Add ("xof", "x-world/x-vrml");
+			mimeTypes.Add ("xpi", "application/x-xpinstall");
 			mimeTypes.Add ("xpix", "application/x-vnd.ls-xpix");
 			mimeTypes.Add ("xpm", "image/xpm");
 			mimeTypes.Add ("x-png", "image/png");
