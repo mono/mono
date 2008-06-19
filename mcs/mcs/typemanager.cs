@@ -603,7 +603,7 @@ namespace Mono.CSharp {
 		if (t == typeof (ArglistParameter))
 			return "__arglist";
 			
-		if (t == typeof (AnonymousMethod))
+		if (t == typeof (AnonymousMethodBody))
 			return "anonymous method";
 
 		return CSharpName (GetFullName (t));
@@ -1167,7 +1167,7 @@ namespace Mono.CSharp {
 		//
 		// These are only used for compare purposes
 		//
-		anonymous_method_type = typeof (AnonymousMethod);
+		anonymous_method_type = typeof (AnonymousMethodBody);
 		null_type = typeof (NullLiteral);
 	}
 

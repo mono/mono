@@ -878,10 +878,7 @@ namespace Mono.CSharp {
 			
 			Expression e = a.Expr;
 			if (e is AnonymousMethodExpression && RootContext.Version != LanguageVersion.ISO_1) {
-				e = ((AnonymousMethodExpression) e).Compatible (ec, type);
-				if (e == null)
-					return null;
-				return e.Resolve (ec);
+				return e;
 			}
 
 			method_group = e as MethodGroupExpr;
@@ -998,6 +995,19 @@ namespace Mono.CSharp {
 			//
 			if (type != TypeManager.void_type)
 				ec.ig.Emit (OpCodes.Pop);
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			method = storey.MutateGenericMethod (method);
+
+			if (Arguments != null) {
+				foreach (Argument a in Arguments) {
+					a.Expr.MutateHoistedGenericType (storey);
+				}
+			}
+
+			InstanceExpr.MutateHoistedGenericType (storey);
 		}
 	}
 }

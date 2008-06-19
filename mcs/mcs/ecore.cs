@@ -1279,6 +1279,11 @@ namespace Mono.CSharp {
 
 			return texpr;
 		}
+
+		public virtual void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			// TODO: It should probably be type = storey.MutateType (type);
+		}
 	}
 
 	/// <summary>
@@ -1369,6 +1374,11 @@ namespace Mono.CSharp {
 		public override bool GetAttributableValue (Type value_type, out object value)
 		{
 			return child.GetAttributableValue (value_type, out value);
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			child.MutateHoistedGenericType (storey);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -1853,6 +1863,11 @@ namespace Mono.CSharp {
 				LoadFromPtr (ig, t);
 			}
 		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			type = storey.MutateType (type);
+		}
 	}
 	
 	/// <summary>
@@ -2117,11 +2132,15 @@ namespace Mono.CSharp {
 	///   This kind of cast is used to encapsulate a child and cast it
 	///   to the class requested
 	/// </summary>
-	public class ClassCast : TypeCast {
+	public sealed class ClassCast : TypeCast {
+		Type child_generic_parameter;
+
 		public ClassCast (Expression child, Type return_type)
 			: base (child, return_type)
 			
 		{
+			if (TypeManager.IsGenericParameter (child.Type))
+				child_generic_parameter = child.Type;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -2136,8 +2155,8 @@ namespace Mono.CSharp {
 		{
 			base.Emit (ec);
 
-			if (TypeManager.IsGenericParameter (child.Type))
-				ec.ig.Emit (OpCodes.Box, child.Type);
+			if (child_generic_parameter != null)
+				ec.ig.Emit (OpCodes.Box, child_generic_parameter);
 
 #if GMCS_SOURCE
 			if (type.IsGenericParameter)
@@ -2145,6 +2164,15 @@ namespace Mono.CSharp {
 			else
 #endif
 				ec.ig.Emit (OpCodes.Castclass, type);
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			type = storey.MutateType (type);
+			if (child_generic_parameter != null)
+				child_generic_parameter = storey.MutateGenericArgument (child_generic_parameter);
+
+ 			base.MutateHoistedGenericType (storey);
 		}
 	}
 
@@ -2843,6 +2871,11 @@ namespace Mono.CSharp {
 		{
 			return Type.GetHashCode ();
 		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			type = storey.MutateType (type);
+		}
 	}
 
 	/// <summary>
@@ -3109,6 +3142,12 @@ namespace Mono.CSharp {
 		public static void Error_BaseAccessInExpressionTree (Location loc)
 		{
 			Report.Error (831, loc, "An expression tree may not contain a base access");
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			if (InstanceExpression != null)
+				InstanceExpression.MutateHoistedGenericType (storey);
 		}
 
 		// TODO: possible optimalization
@@ -3987,6 +4026,19 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			base.MutateHoistedGenericType (storey);
+
+			MethodInfo mi = best_candidate as MethodInfo;
+			if (mi != null) {
+				best_candidate = storey.MutateGenericMethod (mi);
+				return;
+			}
+
+			best_candidate = storey.MutateConstructor ((ConstructorInfo) this);
+		}
+
 		/// <summary>
 		///   Find the Applicable Function Members (7.4.2.1)
 		///
@@ -4570,6 +4622,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class FieldExpr : MemberExpr, IAssignMethod, IMemoryLocation, IVariable {
 		public readonly FieldInfo FieldInfo;
+		readonly Type constructed_generic_type;
 		VariableInfo variable_info;
 		
 		LocalTemporary temp;
@@ -4588,6 +4641,12 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Variable;
 			type = TypeManager.TypeToCoreType (fi.FieldType);
 			loc = l;
+		}
+
+		public FieldExpr (FieldInfo fi, Type genericType, Location l)
+			: this (fi, l)
+		{
+			this.constructed_generic_type = genericType;
 		}
 
 		public override string Name {
@@ -4710,18 +4769,6 @@ namespace Mono.CSharp {
 					oa = AttributeTester.GetMemberObsoleteAttribute (FieldInfo);
 					if (oa != null)
 						AttributeTester.Report_ObsoleteMessage (oa, TypeManager.GetFullNameSignature (FieldInfo), loc);
-				}
-			}
-
-			AnonymousContainer am = ec.CurrentAnonymousMethod;
-			if (am != null){
-				if (!FieldInfo.IsStatic){
-					if (!am.IsIterator && (ec.TypeContainer is Struct)){
- 						Report.Error (1673, loc,
- 						"Anonymous methods inside structs cannot access instance members of `{0}'. Consider copying `{0}' to a local variable outside the anonymous method and using the local instead",
- 							"this");
-						return null;
-					}
 				}
 			}
 
@@ -4901,21 +4948,21 @@ namespace Mono.CSharp {
 			if (FieldInfo.IsStatic){
 				if (is_volatile)
 					ig.Emit (OpCodes.Volatile);
-				
-				ig.Emit (OpCodes.Ldsfld, FieldInfo);
+
+				ig.Emit (OpCodes.Ldsfld, GetConstructedFieldInfo ());
 			} else {
 				if (!prepared)
 					EmitInstance (ec, false);
 
 				IFixedBuffer ff = AttributeTester.GetFixedBuffer (FieldInfo);
 				if (ff != null) {
-					ig.Emit (OpCodes.Ldflda, FieldInfo);
+					ig.Emit (OpCodes.Ldflda, GetConstructedFieldInfo ());
 					ig.Emit (OpCodes.Ldflda, ff.Element);
 				} else {
 					if (is_volatile)
 						ig.Emit (OpCodes.Volatile);
 
-					ig.Emit (OpCodes.Ldfld, FieldInfo);
+					ig.Emit (OpCodes.Ldfld, GetConstructedFieldInfo ());
 				}
 			}
 
@@ -4961,13 +5008,14 @@ namespace Mono.CSharp {
 			}
 
 			if (is_static)
-				ig.Emit (OpCodes.Stsfld, FieldInfo);
-			else 
-				ig.Emit (OpCodes.Stfld, FieldInfo);
+				ig.Emit (OpCodes.Stsfld, GetConstructedFieldInfo ());
+			else
+				ig.Emit (OpCodes.Stfld, GetConstructedFieldInfo ());
 			
 			if (temp != null) {
 				temp.Emit (ec);
 				temp.Release (ec);
+				temp = null;
 			}
 		}
 
@@ -5030,12 +5078,23 @@ namespace Mono.CSharp {
 
 
 			if (FieldInfo.IsStatic){
-				ig.Emit (OpCodes.Ldsflda, FieldInfo);
+				ig.Emit (OpCodes.Ldsflda, GetConstructedFieldInfo ());
 			} else {
 				if (!prepared)
 					EmitInstance (ec, false);
-				ig.Emit (OpCodes.Ldflda, FieldInfo);
+				ig.Emit (OpCodes.Ldflda, GetConstructedFieldInfo ());
 			}
+		}
+
+		FieldInfo GetConstructedFieldInfo ()
+		{
+			if (constructed_generic_type == null)
+				return FieldInfo;
+#if GMCS_SOURCE
+			return TypeBuilder.GetField (constructed_generic_type, FieldInfo);
+#else
+			throw new NotSupportedException ();
+#endif			
 		}
 	}
 
@@ -5186,6 +5245,15 @@ namespace Mono.CSharp {
 
 				is_static = setter.IsStatic;
 			}
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			if (InstanceExpression != null)
+				InstanceExpression.MutateHoistedGenericType (storey);
+
+			type = storey.MutateType (type);
+			getter = storey.MutateGenericMethod (getter);
 		}
 
 		bool InstanceResolve (EmitContext ec, bool lvalue_instance, bool must_do_cs1540_check)
@@ -5651,7 +5719,6 @@ namespace Mono.CSharp {
 	public class TemporaryVariable : VariableReference
 	{
 		LocalInfo li;
-		Variable var;
 
 		public TemporaryVariable (Type type, Location loc)
 		{
@@ -5675,15 +5742,14 @@ namespace Mono.CSharp {
 			if (!li.Resolve (ec))
 				return null;
 
-			if (ec.MustCaptureVariable (li)) {
-				ScopeInfo scope = li.Block.CreateScopeInfo ();
-				var = scope.AddLocal (li);
-				type = var.Type;
+			if (ec.MustCaptureVariable (li) && !ec.IsInProbingMode) {
+				AnonymousMethodStorey storey = li.Block.Explicit.CreateAnonymousMethodStorey (ec);
+				storey.CaptureLocalVariable (ec, li);
 			}
 
 			return this;
 		}
-
+		
 		public override void Emit (EmitContext ec)
 		{
 			Emit (ec, false);
@@ -5694,6 +5760,10 @@ namespace Mono.CSharp {
 			EmitAssign (ec, source, false, false);
 		}
 
+		public override HoistedVariable HoistedVariable {
+			get { return li.HoistedVariableReference; }
+		}
+
 		public override bool IsFixed {
 			get { return true; }
 		}
@@ -5702,8 +5772,8 @@ namespace Mono.CSharp {
 			get { return false; }
 		}
 
-		public override Variable Variable {
-			get { return var != null ? var : li.Variable; }
+		public override ILocalVariable Variable {
+			get { return li; }
 		}
 
 		public override VariableInfo VariableInfo {

@@ -116,6 +116,7 @@ namespace Mono.CSharp {
 			return Clone (clonectx);
 		}
 
+		public abstract void MutateHoistedGenericType (AnonymousMethodStorey storey);
 	}
 
 	//
@@ -202,6 +203,10 @@ namespace Mono.CSharp {
 		{
 		}
 
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Statement target)
 		{
 			// nothing needed.
@@ -231,6 +236,14 @@ namespace Mono.CSharp {
 			TrueStatement = true_statement;
 			FalseStatement = false_statement;
 			loc = l;
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			expr.MutateHoistedGenericType (storey);
+			TrueStatement.MutateHoistedGenericType (storey);
+			if (FalseStatement != null)
+				FalseStatement.MutateHoistedGenericType (storey);
 		}
 
 		public override bool Resolve (EmitContext ec)
@@ -354,7 +367,6 @@ namespace Mono.CSharp {
 	public class Do : Statement {
 		public Expression expr;
 		public Statement  EmbeddedStatement;
-		bool infinite;
 		
 		public Do (Statement statement, Expression bool_expr, Location l)
 		{
@@ -383,13 +395,10 @@ namespace Mono.CSharp {
 			if (expr == null)
 				ok = false;
 			else if (expr is Constant){
-				bool res = !((Constant) expr).IsDefaultValue;
-
-				if (res)
-					infinite = true;
+				bool infinite = !((Constant) expr).IsDefaultValue;
+				if (infinite)
+					ec.CurrentBranching.CurrentUsageVector.Goto ();
 			}
-			if (infinite)
-				ec.CurrentBranching.CurrentUsageVector.Goto ();
 
 			ec.EndFlowBranching ();
 
@@ -426,6 +435,12 @@ namespace Mono.CSharp {
 
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			expr.MutateHoistedGenericType (storey);
+			EmbeddedStatement.MutateHoistedGenericType (storey);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -550,6 +565,12 @@ namespace Mono.CSharp {
 			target.expr = expr.Clone (clonectx);
 			target.Statement = Statement.Clone (clonectx);
 		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			expr.MutateHoistedGenericType (storey);
+			Statement.MutateHoistedGenericType (storey);
+		}
 	}
 
 	public class For : Statement {
@@ -630,7 +651,7 @@ namespace Mono.CSharp {
 
 			return ok;
 		}
-		
+
 		protected override void DoEmit (EmitContext ec)
 		{
 			if (InitStatement != null && InitStatement != EmptyStatement.Value)
@@ -684,6 +705,18 @@ namespace Mono.CSharp {
 			ec.LoopEnd = old_end;
 		}
 
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			if (InitStatement != null)
+				InitStatement.MutateHoistedGenericType (storey);
+			if (Test != null)
+				Test.MutateHoistedGenericType (storey);
+			if (Increment != null)
+				Increment.MutateHoistedGenericType (storey);
+
+			Statement.MutateHoistedGenericType (storey);
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			For target = (For) t;
@@ -717,6 +750,11 @@ namespace Mono.CSharp {
 		protected override void DoEmit (EmitContext ec)
 		{
 			expr.EmitStatement (ec);
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			expr.MutateHoistedGenericType (storey);
 		}
 
 		public override string ToString ()
@@ -779,7 +817,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			AnonymousContainer am = ec.CurrentAnonymousMethod;
+			AnonymousExpression am = ec.CurrentAnonymousMethod;
 			if ((am != null) && am.IsIterator && ec.InIterator) {
 				Report.Error (1622, loc, "Cannot return a value from iterators. Use the yield return " +
 						  "statement to return a value, or yield break to end the iteration");
@@ -837,6 +875,12 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Ret);
 		}
 
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			if (Expr != null)
+				Expr.MutateHoistedGenericType (storey);
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			Return target = (Return) t;
@@ -881,6 +925,10 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("goto emitted before target resolved");
 			Label l = label.LabelTarget (ec);
 			ec.ig.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, l);
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
 		}
 	}
 
@@ -948,6 +996,10 @@ namespace Mono.CSharp {
 			ec.ig.MarkLabel (label);
 		}
 
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+		}
+
 		public void AddReference ()
 		{
 			referenced = true;
@@ -983,6 +1035,10 @@ namespace Mono.CSharp {
 				return;
 			}
 			ec.ig.Emit (OpCodes.Br, ec.Switch.DefaultTarget);
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
 		}
 	}
 
@@ -1052,12 +1108,16 @@ namespace Mono.CSharp {
 			ec.ig.Emit (OpCodes.Br, sl.GetILLabelCode (ec));
 		}
 
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			expr.MutateHoistedGenericType (storey);
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			GotoCase target = (GotoCase) t;
 
 			target.expr = expr.Clone (clonectx);
-			target.sl = sl.Clone (clonectx);
 		}
 	}
 	
@@ -1111,6 +1171,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			if (expr != null)
+				expr.MutateHoistedGenericType (storey);
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			Throw target = (Throw) t;
@@ -1141,6 +1207,10 @@ namespace Mono.CSharp {
 		{
 			ec.ig.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, ec.LoopEnd);
 		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+		}
 		
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
@@ -1170,33 +1240,21 @@ namespace Mono.CSharp {
 			ec.ig.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, ec.LoopBegin);
 		}
 
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			// nothing needed.
 		}
 	}
 
-	public abstract class Variable
+	public interface ILocalVariable
 	{
-		public abstract Type Type {
-			get;
-		}
-
-		public abstract bool HasInstance {
-			get;
-		}
-
-		public abstract bool NeedsTemporary {
-			get;
-		}
-
-		public abstract void EmitInstance (EmitContext ec);
-
-		public abstract void Emit (EmitContext ec);
-
-		public abstract void EmitAssign (EmitContext ec);
-
-		public abstract void EmitAddressOf (EmitContext ec);
+		void Emit (EmitContext ec);
+		void EmitAssign (EmitContext ec);
+		void EmitAddressOf (EmitContext ec);
 	}
 
 	public interface IKnownVariable {
@@ -1207,8 +1265,8 @@ namespace Mono.CSharp {
 	//
 	// The information about a user-perceived local variable
 	//
-	public class LocalInfo : IKnownVariable {
-		public Expression Type;
+	public class LocalInfo : IKnownVariable, ILocalVariable {
+		public readonly Expression Type;
 
 		public Type VariableType;
 		public readonly string Name;
@@ -1216,11 +1274,7 @@ namespace Mono.CSharp {
 		public readonly Block Block;
 
 		public VariableInfo VariableInfo;
-
-		Variable var;
-		public Variable Variable {
-			get { return var; }
-		}
+		public HoistedVariable HoistedVariableReference;
 
 		[Flags]
 		enum Flags : byte {
@@ -1228,7 +1282,6 @@ namespace Mono.CSharp {
 			ReadOnly = 2,
 			Pinned = 4,
 			IsThis = 8,
-			Captured = 16,
 			AddressTaken = 32,
 			CompilerGenerated = 64,
 			IsConstant = 128
@@ -1261,11 +1314,10 @@ namespace Mono.CSharp {
 
 		public void ResolveVariable (EmitContext ec)
 		{
-			Block theblock = Block;
-			if (theblock.ScopeInfo != null)
-				var = theblock.ScopeInfo.GetCapturedVariable (this);
+			if (HoistedVariableReference != null)
+				return;
 
-			if (var == null) {
+			if (builder == null) {
 				if (Pinned)
 					//
 					// This is needed to compile on both .NET 1.x and .NET 2.x
@@ -1274,9 +1326,22 @@ namespace Mono.CSharp {
 					builder = TypeManager.DeclareLocalPinned (ec.ig, VariableType);
 				else
 					builder = ec.ig.DeclareLocal (VariableType);
-
-				var = new LocalVariable (this, builder);
 			}
+		}
+
+		public void Emit (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Ldloc, builder);
+		}
+
+		public void EmitAssign (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Stloc, builder);
+		}
+
+		public void EmitAddressOf (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Ldloca, builder);
 		}
 
 		public void EmitSymbolInfo (EmitContext ec, string name)
@@ -1306,13 +1371,14 @@ namespace Mono.CSharp {
 
 		public bool Resolve (EmitContext ec)
 		{
-			if (VariableType == null) {
-				TypeExpr texpr = Type.ResolveAsContextualType (ec, false);
-				if (texpr == null)
-					return false;
+			if (VariableType != null)
+				return true;
+
+			TypeExpr texpr = Type.ResolveAsContextualType (ec, false);
+			if (texpr == null)
+				return false;
 				
-				VariableType = texpr.Type;
-			}
+			VariableType = texpr.Type;
 
 			if (TypeManager.IsGenericParameter (VariableType))
 				return true;
@@ -1331,11 +1397,6 @@ namespace Mono.CSharp {
 				Expression.UnsafeError (Location);
 
 			return true;
-		}
-
-		public bool IsCaptured {
-			get { return (flags & Flags.Captured) != 0; }
-			set { flags |= Flags.Captured; }
 		}
 
 		public bool IsConstant {
@@ -1412,50 +1473,6 @@ namespace Mono.CSharp {
 			get { return Location; }
 		}
 
-		protected class LocalVariable : Variable
-		{
-			public readonly LocalInfo LocalInfo;
-			LocalBuilder builder;
-
-			public LocalVariable (LocalInfo local, LocalBuilder builder)
-			{
-				this.LocalInfo = local;
-				this.builder = builder;
-			}
-
-			public override Type Type {
-				get { return LocalInfo.VariableType; }
-			}
-
-			public override bool HasInstance {
-				get { return false; }
-			}
-
-			public override bool NeedsTemporary {
-				get { return false; }
-			}
-
-			public override void EmitInstance (EmitContext ec)
-			{
-				// Do nothing.
-			}
-
-			public override void Emit (EmitContext ec)
-			{
-				ec.ig.Emit (OpCodes.Ldloc, builder);
-			}
-
-			public override void EmitAssign (EmitContext ec)
-			{
-				ec.ig.Emit (OpCodes.Stloc, builder);
-			}
-
-			public override void EmitAddressOf (EmitContext ec)
-			{
-				ec.ig.Emit (OpCodes.Ldloca, builder);
-			}
-		}
-
 		public LocalInfo Clone (CloneContext clonectx)
 		{
 			//
@@ -1493,7 +1510,7 @@ namespace Mono.CSharp {
 		public Location EndLocation = Location.Null;
 
 		public ExplicitBlock Explicit;
-		public ToplevelBlock Toplevel;
+		public ToplevelBlock Toplevel; // TODO: Use Explicit
 
 		[Flags]
 		public enum Flags : byte {
@@ -1502,8 +1519,7 @@ namespace Mono.CSharp {
 			VariablesInitialized = 4,
 			HasRet = 8,
 			IsDestructor = 16,
-			Unsafe = 32,
-			IsIterator = 64
+			Unsafe = 32
 		}
 		protected Flags flags;
 
@@ -1555,8 +1571,6 @@ namespace Mono.CSharp {
 		//
 		Block switch_block;
 
-		// TODO: merge with scope_initializers
-		ExpressionStatement scope_init;
 		ArrayList scope_initializers;
 
 		ArrayList anonymous_children;
@@ -1566,7 +1580,6 @@ namespace Mono.CSharp {
 		int this_id;
 
 		int assignable_slots;
-		protected ScopeInfo scope_info;
 		bool unreachable_shown;
 		bool unreachable;
 		
@@ -1975,18 +1988,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public ScopeInfo ScopeInfo {
-			get { return scope_info; }
-		}
-
-		public ScopeInfo CreateScopeInfo ()
-		{
-			if (scope_info == null)
-				scope_info = ScopeInfo.CreateScope (this);
-
-			return scope_info;
-		}
-
 		public ArrayList AnonymousChildren {
 			get { return anonymous_children; }
 		}
@@ -2094,13 +2095,6 @@ namespace Mono.CSharp {
 		//
 		public virtual void EmitMeta (EmitContext ec)
 		{
-			Report.Debug (64, "BLOCK EMIT META", this, Parent, Toplevel, ScopeInfo, ec);
-			if (ScopeInfo != null) {
-				scope_init = ScopeInfo.GetScopeInitializer (ec);
-				Report.Debug (64, "BLOCK EMIT META #1", this, Toplevel, ScopeInfo,
-					      ec, scope_init);
-			}
-
 			if (variables != null){
 				foreach (LocalInfo vi in variables.Values)
 					vi.ResolveVariable (ec);
@@ -2293,47 +2287,22 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			Block prev_block = ec.CurrentBlock;
-
 			ec.CurrentBlock = this;
 
-			bool emit_debug_info = SymbolWriter.HasSymbolWriter;
-			bool is_lexical_block = (this == Explicit) && (Parent != null) &&
-				((flags & Flags.IsIterator) == 0);
-
-			bool omit_debug_info = ec.OmitDebuggingInfo;
-
-			if (emit_debug_info) {
-				if (is_lexical_block)
-					ec.BeginScope ();
-			}
-
-			if ((scope_init != null) || (scope_initializers != null))
+			if (scope_initializers != null) {
 				SymbolWriter.OpenCompilerGeneratedBlock (ec.ig);
 
-			if (scope_init != null) {
-				ec.OmitDebuggingInfo = true;
-				scope_init.EmitStatement (ec);
-				ec.OmitDebuggingInfo = omit_debug_info;
-			}
-			if (scope_initializers != null) {
+				bool omit_debug_info = ec.OmitDebuggingInfo;
 				ec.OmitDebuggingInfo = true;
 				foreach (StatementExpression s in scope_initializers)
 					s.Emit (ec);
 				ec.OmitDebuggingInfo = omit_debug_info;
-			}
 
-			if ((scope_init != null) || (scope_initializers != null))
 				SymbolWriter.CloseCompilerGeneratedBlock (ec.ig);
+			}
 
 			ec.Mark (StartLocation, true);
 			DoEmit (ec);
-
-			if (emit_debug_info) {
-				EmitSymbolInfo (ec);
-
-				if (is_lexical_block)
-					ec.EndScope ();
-			}
 
 			ec.CurrentBlock = prev_block;
 		}
@@ -2347,6 +2316,28 @@ namespace Mono.CSharp {
 
 					vi.EmitSymbolInfo (ec, name);
 				}
+			}
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			MutateVariables (storey);
+
+			foreach (Statement s in statements)
+				s.MutateHoistedGenericType (storey);
+		}
+
+		void MutateVariables (AnonymousMethodStorey storey)
+		{
+			if (variables != null) {
+				foreach (LocalInfo vi in variables.Values) {
+					vi.VariableType = storey.MutateType (vi.VariableType);
+				}
+			}
+
+			if (temporary_variables != null) {
+				foreach (LocalInfo vi in temporary_variables)
+					vi.VariableType = storey.MutateType (vi.VariableType);
 			}
 		}
 
@@ -2394,6 +2385,9 @@ namespace Mono.CSharp {
 	}
 
 	public class ExplicitBlock : Block {
+		HybridDictionary known_variables;
+		protected AnonymousMethodStorey am_storey;
+
 		public ExplicitBlock (Block parent, Location start, Location end)
 			: this (parent, (Flags) 0, start, end)
 		{
@@ -2404,12 +2398,6 @@ namespace Mono.CSharp {
 		{
 			this.Explicit = this;
 		}
-
-		public bool IsIterator {
-			get { return (flags & Flags.IsIterator) != 0; }
-		}
-
-		HybridDictionary known_variables;
 
 		// <summary>
 		//   Marks a variable with name @name as being used in this or a child block.
@@ -2427,9 +2415,116 @@ namespace Mono.CSharp {
 				Parent.Explicit.AddKnownVariable (name, info);
 		}
 
+		public AnonymousMethodStorey AnonymousMethodStorey {
+			get { return am_storey; }
+		}
+
+		//
+		// Creates anonymous method storey in current block
+		//
+		public AnonymousMethodStorey CreateAnonymousMethodStorey (EmitContext ec)
+		{
+			//
+			// When referencing a variable in iterator storey from children anonymous method
+			//
+			if (Toplevel.am_storey is IteratorStorey) {
+				ec.CurrentAnonymousMethod.AddStoreyReference (Toplevel.am_storey);
+				return Toplevel.am_storey;
+			}
+
+			//
+			// An iterator has only 1 storey block
+			//
+			if (ec.CurrentIterator != null)
+			    return ec.CurrentIterator.Storey;
+
+			if (am_storey == null) {
+				MemberBase mc = ec.ResolveContext as MemberBase;
+				GenericMethod gm = mc == null ? null : mc.GenericMethod;
+
+				//
+				// Create anonymous method storey for this block
+				//
+				am_storey = new AnonymousMethodStorey (this, ec.TypeContainer, mc, gm, "AnonStorey");
+			}
+
+			//
+			// Creates a link between this block and the anonymous method
+			//
+			// An anonymous method can reference variables from any outer block, but they are
+			// hoisted in their own ExplicitBlock. When more than one block is referenced we
+			// need to create another link between those variable storeys
+			//
+			ec.CurrentAnonymousMethod.AddStoreyReference (am_storey);
+			return am_storey;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			if (am_storey != null)
+				am_storey.EmitHoistedVariables (ec);
+
+			bool emit_debug_info = SymbolWriter.HasSymbolWriter;
+			bool is_lexical_block = Parent != null && !(am_storey is IteratorStorey);
+			if (emit_debug_info && is_lexical_block)
+				ec.BeginScope ();
+
+			base.Emit (ec);
+
+			if (emit_debug_info) {
+				EmitSymbolInfo (ec);
+				if (is_lexical_block)
+					ec.EndScope ();
+			}
+		}
+
+		public override void EmitMeta (EmitContext ec)
+		{
+			base.EmitMeta (ec);
+
+			//
+			// It has to be done when all storey references are resolved
+			//
+			if (am_storey != null && am_storey.HasHoistedVariables)
+				am_storey.DefineMembers ();
+		}
+
+		protected override void EmitSymbolInfo (EmitContext ec)
+		{
+			if (am_storey != null)
+				SymbolWriter.DefineScopeVariable (am_storey.ID);
+
+			base.EmitSymbolInfo (ec);
+		}
+
 		internal IKnownVariable GetKnownVariable (string name)
 		{
 			return known_variables == null ? null : (IKnownVariable) known_variables [name];
+		}
+
+		public void PropagateStoreyReference (AnonymousMethodStorey s)
+		{
+			if (Parent != null && am_storey != s) {
+				if (am_storey != null)
+					am_storey.AddParentStoreyReference (s);
+
+				Parent.Explicit.PropagateStoreyReference (s);
+			}
+		}
+
+		public override bool Resolve (EmitContext ec)
+		{
+			bool ok = base.Resolve (ec);
+
+			//
+			// Define an anonymous method storey when this block has hoisted variables
+			//
+			if (am_storey != null && am_storey.HasHoistedVariables) {
+				am_storey.DefineType ();
+				am_storey.DefineMembers ();
+			}
+
+			return ok;
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -2473,10 +2568,11 @@ namespace Mono.CSharp {
 	public class ToplevelBlock : ExplicitBlock {
 		GenericMethod generic;
 		FlowBranchingToplevel top_level_branching;
-		AnonymousContainer anonymous_container;
-		RootScopeInfo root_scope;
 		Parameters parameters;
 		ToplevelParameterInfo[] parameter_info;
+		LocalInfo this_variable;
+
+		public HoistedVariable HoistedThisVariable;
 
 		//
 		// The parameters for the block.
@@ -2485,40 +2581,12 @@ namespace Mono.CSharp {
 			get { return parameters; }
 		}
 
-		public bool CompleteContexts (EmitContext ec)
-		{
-			Report.Debug (64, "TOPLEVEL COMPLETE CONTEXTS", this, Parent, root_scope);
-
-			if (root_scope != null)
-				root_scope.LinkScopes ();
-
-			if (Parent == null && root_scope != null) {
-				Report.Debug (64, "TOPLEVEL COMPLETE CONTEXTS #1", this, root_scope);
-
-				if (root_scope.DefineType () == null)
-					return false;
-				if (!root_scope.ResolveType ())
-					return false;
-				if (!root_scope.ResolveMembers ())
-					return false;
-				if (!root_scope.DefineMembers ())
-					return false;
-			}
-
-			return true;
-		}
-
 		public GenericMethod GenericMethod {
 			get { return generic; }
 		}
 
 		public ToplevelBlock Container {
 			get { return Parent == null ? null : Parent.Toplevel; }
-		}
-
-		public AnonymousContainer AnonymousContainer {
-			get { return anonymous_container; }
-			set { anonymous_container = value; }
 		}
 
 		public ToplevelBlock (Block parent, Parameters parameters, Location start) :
@@ -2537,7 +2605,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public ToplevelBlock (Flags flags, Parameters parameters, Location start) :
+		ToplevelBlock (Flags flags, Parameters parameters, Location start) :
 			this (null, flags, parameters, start)
 		{
 		}
@@ -2641,67 +2709,35 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public RootScopeInfo CreateRootScope (TypeContainer host)
-		{
-			if (root_scope != null)
-				return root_scope;
-
-			if (Container == null)
-				root_scope = new RootScopeInfo (
-					this, host, generic, StartLocation);
-
-			if (scope_info != null)
-				throw new InternalErrorException ();
-
-			scope_info = root_scope;
-			return root_scope;
-		}
-
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
 			return ((Statement) statements [0]).CreateExpressionTree (ec);
 		}
 
-		public void CreateIteratorHost (RootScopeInfo root)
+		//
+		// Reformats this block to be top-level iterator block
+		//
+		public IteratorStorey ChangeToIterator (Iterator iterator, ToplevelBlock source)
 		{
-			Report.Debug (64, "CREATE ITERATOR HOST", this, root, Parent, root_scope);
+			// Create block with original statements
+			ExplicitBlock iter_block = new ExplicitBlock (this, flags, StartLocation, EndLocation);
 
-			if (Parent != null || root_scope != null)
-				throw new InternalErrorException ();
+			// TODO: Change to iter_block.statements = statements;
+			foreach (Statement stmt in source.statements)
+				iter_block.AddStatement (stmt);
 
-			scope_info = root_scope = root;
-		}
+			AddStatement (new IteratorStatement (iterator, iter_block));
 
-		public RootScopeInfo RootScope {
-			get {
-				if (root_scope != null)
-					return root_scope;
-				else if (Container != null)
-					return Container.RootScope;
-				else
-					return null;
-			}
+			source.statements = new ArrayList (1);
+			source.AddStatement (new Return (iterator, iterator.Location));
+
+			IteratorStorey iterator_storey = new IteratorStorey (iterator);
+			source.am_storey = iterator_storey;
+			return iterator_storey;
 		}
 
 		public FlowBranchingToplevel TopLevelBranching {
 			get { return top_level_branching; }
-		}
-
-		//
-		// This is used if anonymous methods are used inside an iterator
-		// (see 2test-22.cs for an example).
-		//
-		// The AnonymousMethod is created while parsing - at a time when we don't
-		// know yet that we're inside an iterator, so it's `Container' is initially
-		// null.  Later on, when resolving the iterator, we need to move the
-		// anonymous method into that iterator.
-		//
-		public void ReParent (ToplevelBlock new_parent)
-		{
-			if ((flags & Flags.VariablesInitialized) != 0)
-				throw new InternalErrorException ("block has already been resolved");
-
-			Parent = new_parent;
 		}
 
 		//
@@ -2724,8 +2760,6 @@ namespace Mono.CSharp {
 			}
 			return null;
 		}
-
-		LocalInfo this_variable = null;
 
 		// <summary>
 		//   Returns the "this" instance variable of this block.
@@ -2821,69 +2855,19 @@ namespace Mono.CSharp {
 
 		public override void EmitMeta (EmitContext ec)
 		{
+			parameters.ResolveVariable ();
+
 			// Avoid declaring an IL variable for this_variable since it is not accessed
 			// from the generated IL
 			if (this_variable != null)
 				Variables.Remove ("this");
 			base.EmitMeta (ec);
-			parameters.ResolveVariable (this);
-		}
-
-		protected override void EmitSymbolInfo (EmitContext ec)
-		{
-			if ((AnonymousContainer != null) && (AnonymousContainer.Scope != null))
-				SymbolWriter.DefineScopeVariable (AnonymousContainer.Scope.ID);
-
-			base.EmitSymbolInfo (ec);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
 			base.Emit (ec);
 			ec.Mark (EndLocation, true);
-		}
-
-		public void MakeIterator (Iterator iterator)
-		{
-			flags |= Flags.IsIterator;
-
-			Block block = new ExplicitBlock (this, flags, StartLocation, EndLocation);
-			foreach (Statement stmt in statements)
-				block.AddStatement (stmt);
-			statements.Clear ();
-			statements.Add (new MoveNextStatement (iterator, block));
-		}
-
-		protected class MoveNextStatement : Statement {
-			Iterator iterator;
-			Block block;
-
-			public MoveNextStatement (Iterator iterator, Block block)
-			{
-				this.iterator = iterator;
-				this.block = block;
-				this.loc = iterator.Location;
-			}
-
-			public override bool Resolve (EmitContext ec)
-			{
-				ec.StartFlowBranching (iterator);
-				bool ok = block.Resolve (ec);
-				ec.EndFlowBranching ();
-				return ok;
-			}
-
-			protected override void DoEmit (EmitContext ec)
-			{
-				iterator.EmitMoveNext (ec, block);
-			}
-		}
-
-		public override string ToString ()
-		{
-			return String.Format ("{0} ({1}:{2}{3}:{4})", GetType (), ID, StartLocation,
-					      root_scope, anonymous_container != null ?
-					      anonymous_container.Scope : null);
 		}
 	}
 	
@@ -3603,6 +3587,12 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			foreach (SwitchSection ss in Sections)
+				ss.Block.MutateHoistedGenericType (storey);
+		}
+
 		public override bool Resolve (EmitContext ec)
 		{
 			Expr = Expr.Resolve (ec);
@@ -4012,6 +4002,13 @@ namespace Mono.CSharp {
 			temp.Emit (ec);
 			ec.ig.Emit (OpCodes.Call, TypeManager.void_monitor_exit_object);
 		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			expr.MutateHoistedGenericType (storey);
+			temp.MutateHoistedGenericType (storey);
+			Statement.MutateHoistedGenericType (storey);
+		}
 		
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
@@ -4043,6 +4040,11 @@ namespace Mono.CSharp {
 				Block.Emit (ec);
 		}
 
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			Block.MutateHoistedGenericType (storey);
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			Unchecked target = (Unchecked) t;
@@ -4070,6 +4072,11 @@ namespace Mono.CSharp {
 		{
 			using (ec.With (EmitContext.Flags.AllCheckStateFlags, true))
 				Block.Emit (ec);
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			Block.MutateHoistedGenericType (storey);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -4100,6 +4107,12 @@ namespace Mono.CSharp {
 			using (ec.With (EmitContext.Flags.InUnsafe, true))
 				Block.Emit (ec);
 		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			Block.MutateHoistedGenericType (storey);
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			Unsafe target = (Unsafe) t;
@@ -4145,14 +4158,14 @@ namespace Mono.CSharp {
 				// Store pointer in pinned location
 				//
 				converted.Emit (ec);
-				vi.Variable.EmitAssign (ec);
+				vi.EmitAssign (ec);
 			}
 
 			public override void EmitExit (EmitContext ec)
 			{
 				ec.ig.Emit (OpCodes.Ldc_I4_0);
 				ec.ig.Emit (OpCodes.Conv_U);
-				vi.Variable.EmitAssign (ec);
+				vi.EmitAssign (ec);
 			}
 		}
 
@@ -4224,7 +4237,7 @@ namespace Mono.CSharp {
 					return;
 
 				converted.Emit (ec);
-				vi.Variable.EmitAssign (ec);
+				vi.EmitAssign (ec);
 			}
 
 			public override void EmitExit (EmitContext ec)
@@ -4434,6 +4447,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			// Fixed statement cannot be used inside anonymous methods or lambdas
+			throw new NotSupportedException ();
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			Fixed target = (Fixed) t;
@@ -4499,7 +4518,7 @@ namespace Mono.CSharp {
 				lvr.Resolve (ec);
 
 				Expression source;
-				if (lvr.local_info.IsCaptured) {
+				if (lvr.IsHoisted) {
 					LocalTemporary lt = new LocalTemporary (lvr.Type);
 					lt.Store (ec);
 					source = lt;
@@ -4542,6 +4561,15 @@ namespace Mono.CSharp {
 
 				return true;
 			}
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			if (type != null)
+				type = storey.MutateType (type);
+			if (VarBlock != null)
+				VarBlock.MutateHoistedGenericType (storey);
+			Block.MutateHoistedGenericType (storey);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -4602,6 +4630,12 @@ namespace Mono.CSharp {
 		protected override void EmitFinallyBody (EmitContext ec)
 		{
 			fini.Emit (ec);
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			stmt.MutateHoistedGenericType (storey);
+			fini.MutateHoistedGenericType (storey);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -4726,6 +4760,18 @@ namespace Mono.CSharp {
 				ig.EndExceptionBlock ();
 		}
 
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			Block.MutateHoistedGenericType (storey);
+
+			if (General != null)
+				General.MutateHoistedGenericType (storey);
+			if (Specific != null) {
+				foreach (Catch c in Specific)
+					c.MutateHoistedGenericType (storey);
+			}
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			TryCatch target = (TryCatch) t;
@@ -4798,7 +4844,7 @@ namespace Mono.CSharp {
 			Statement.Emit (ec);
 		}
 
-	        protected override void EmitFinallyBody (EmitContext ec)
+		protected override void EmitFinallyBody (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			if (!expr_type.IsValueType) {
@@ -4838,6 +4884,13 @@ namespace Mono.CSharp {
 
 			local_copy.AddressOf (ec, AddressOp.Load);
 			ig.Emit (OpCodes.Call, mi);
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			expr_type = storey.MutateType (expr_type);
+			local_copy.MutateHoistedGenericType (storey);
+			Statement.MutateHoistedGenericType (storey);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -4950,6 +5003,13 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Call, mi);
 				}
 			}
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			assign.MutateHoistedGenericType (storey);
+			var.MutateHoistedGenericType (storey);
+			stmt.MutateHoistedGenericType (storey);
 		}
 
 		public override bool Resolve (EmitContext ec)
@@ -5202,6 +5262,19 @@ namespace Mono.CSharp {
 				}
 
 				ig.MarkLabel (ec.LoopEnd);
+			}
+
+			public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+			{
+				copy.MutateHoistedGenericType (storey);
+				conv.MutateHoistedGenericType (storey);
+				variable.MutateHoistedGenericType (storey);
+				statement.MutateHoistedGenericType (storey);
+
+				for (int i = 0; i < rank; i++) {
+					counter [i].MutateHoistedGenericType (storey);
+					lengths [i].MutateHoistedGenericType (storey);
+				}
 			}
 		}
 
@@ -5594,6 +5667,11 @@ namespace Mono.CSharp {
 					parent.EmitLoopInit (ec);
 					parent.EmitLoopBody (ec);
 				}
+
+				public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+				{
+					throw new NotSupportedException ();
+				}
 			}
 
 			class DisposableWrapper : ExceptionStatement {
@@ -5637,6 +5715,11 @@ namespace Mono.CSharp {
 				protected override void EmitFinallyBody (EmitContext ec)
 				{
 					parent.EmitFinallyBody (ec);
+				}
+
+				public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+				{
+					throw new NotSupportedException ();
 				}
 			}
 
@@ -5685,6 +5768,13 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
 				}
 			}
+
+			public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+			{
+				enumerator_type = storey.MutateType (enumerator_type);
+				init.MutateHoistedGenericType (storey);
+				loop.MutateHoistedGenericType (storey);
+			}
 		}
 
 		protected class CollectionForeachStatement : Statement
@@ -5730,6 +5820,12 @@ namespace Mono.CSharp {
 				assign.EmitStatement (ec);
 				statement.Emit (ec);
 			}
+
+			public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+			{
+				assign.MutateHoistedGenericType (storey);
+				statement.MutateHoistedGenericType (storey);
+			}
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -5740,6 +5836,11 @@ namespace Mono.CSharp {
 			target.variable = variable.Clone (clonectx);
 			target.expr = expr.Clone (clonectx);
 			target.statement = statement.Clone (clonectx);
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			statement.MutateHoistedGenericType (storey);
 		}
 	}
 }

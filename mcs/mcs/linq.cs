@@ -197,22 +197,10 @@ namespace Mono.CSharp.Linq
 		{
 			Parameters p = new Parameters (parameters);
 
-			LambdaExpression selector = new LambdaExpression (
-				null, null, (TypeContainer)ec.TypeContainer, p, ec.CurrentBlock, loc);
+			LambdaExpression selector = new LambdaExpression ((TypeContainer)ec.TypeContainer, p, loc);
 			selector.Block = new SelectorBlock (ec.CurrentBlock, p, ti, loc);
 			selector.Block.AddStatement (new ContextualReturn (expr));
 
-			if (!ec.IsInProbingMode) {
-				selector.CreateAnonymousHelpers ();
-
-				// TODO: I am not sure where this should be done to work
-				// correctly with anonymous containerss and was called only once
-				// FIXME: selector.RootScope == null for nested anonymous
-				// methods only ?
-				if (selector.RootScope != null)
-					selector.RootScope.DefineType ();
-			}
-			
 			return new Argument (selector);
 		}
 

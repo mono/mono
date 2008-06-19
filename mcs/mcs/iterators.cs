@@ -3,15 +3,15 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
+// Dual licensed under the terms of the MIT X11 or GNU GPL
 // Copyright 2003 Ximian, Inc.
+// Copyright 2003-2008 Novell, Inc.
 //
+
 // TODO:
 //    Flow analysis for Yield.
-//    Emit calls to base object constructor.
-//
-// Generics note:
-//    Current should be defined to return T, and IEnumerator.Current returns object
 //
 
 using System;
@@ -56,10 +56,14 @@ namespace Mono.CSharp {
 
 			return true;
 		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			expr.MutateHoistedGenericType (storey);
+		}
 		
 		public override bool Resolve (EmitContext ec)
 		{
-			Report.Debug (64, "RESOLVE YIELD", this, ec, expr, expr.GetType ());
 			expr = expr.Resolve (ec);
 			if (expr == null)
 				return false;
@@ -71,9 +75,9 @@ namespace Mono.CSharp {
 				return false;
 
 			Iterator iterator = ec.CurrentIterator;
-			if (expr.Type != iterator.IteratorType) {
+			if (expr.Type != iterator.OriginalIteratorType) {
 				expr = Convert.ImplicitConversionRequired (
-					ec, expr, iterator.IteratorType, loc);
+					ec, expr, iterator.OriginalIteratorType, loc);
 				if (expr == null)
 					return false;
 			}
@@ -116,16 +120,55 @@ namespace Mono.CSharp {
 		{
 			ec.CurrentIterator.EmitYieldBreak (ec.ig, unwind_protect);
 		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			// nothing to do
+		}
 	}
 
-	public class IteratorHost : RootScopeInfo
+	//
+	// Wraps method block into iterator wrapper block
+	//
+	class IteratorStatement : Statement
+	{
+		Iterator iterator;
+		ExplicitBlock original_block;
+
+		public IteratorStatement (Iterator iterator, ExplicitBlock original_block)
+		{
+			this.iterator = iterator;
+			this.original_block = original_block;
+			this.loc = iterator.Location;
+		}
+
+		public override bool Resolve (EmitContext ec)
+		{
+			ec.StartFlowBranching (iterator);
+			bool ok = original_block.Resolve (ec);
+			ec.EndFlowBranching ();
+			return ok;
+		}
+
+		protected override void DoEmit (EmitContext ec)
+		{
+			iterator.EmitMoveNext (ec, original_block);
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			original_block.MutateHoistedGenericType (storey);
+			iterator.MutateHoistedGenericType (storey);
+		}
+	}
+
+	public class IteratorStorey : AnonymousMethodStorey
 	{
 		public readonly Iterator Iterator;
 
 		TypeExpr iterator_type_expr;
 		Field pc_field;
 		Field current_field;
-		MethodInfo dispose_method;
 
 		TypeExpr enumerator_type;
 		TypeExpr enumerable_type;
@@ -134,20 +177,14 @@ namespace Mono.CSharp {
 #if GMCS_SOURCE		
 		TypeExpr generic_enumerable_type;
 #endif
-		
-		public IteratorHost (Iterator iterator)
-			: base (iterator.Container.Toplevel, iterator.Host, iterator.GenericMethod,
-				iterator.Location)
+
+		int local_name_idx;
+
+		public IteratorStorey (Iterator iterator)
+			: base (iterator.Container.Toplevel, iterator.Host,
+			  iterator.OriginalMethod as MemberBase, iterator.GenericMethod, "Iterator")
 		{
 			this.Iterator = iterator;
-		}
-
-		public override bool IsIterator {
-			get { return true; }
-		}
-
-		public MethodInfo Dispose {
-			get { return dispose_method; }
 		}
 
 		public Field PC {
@@ -158,13 +195,13 @@ namespace Mono.CSharp {
 			get { return current_field; }
 		}
 
-		public Type IteratorType {
-			get { return iterator_type_expr.Type; }
+		public ArrayList HoistedParameters {
+			get { return hoisted_params; }
 		}
 
 		public override TypeExpr [] GetClassBases (out TypeExpr base_class)
 		{
-			iterator_type_expr = InflateType (Iterator.OriginalIteratorType);
+			iterator_type_expr = new TypeExpression (MutateType (Iterator.OriginalIteratorType), Location);
 
 #if GMCS_SOURCE
 			generic_args = new TypeArguments (Location);
@@ -203,10 +240,15 @@ namespace Mono.CSharp {
 			return base.GetClassBases (out base_class);
 		}
 
-		protected override bool DoResolveMembers ()
+		protected override string GetVariableMangledName (LocalInfo local_info)
 		{
-			pc_field = CaptureVariable ("$PC", TypeManager.system_int32_expr);
-			current_field = CaptureVariable ("$current", iterator_type_expr);
+			return "<" + local_info.Name + ">__" + local_name_idx++.ToString ();
+		}
+
+		public void DefineIteratorMembers ()
+		{
+			pc_field = AddCompilerGeneratedField ("$PC", TypeManager.system_int32_expr);
+			current_field = AddCompilerGeneratedField ("$current", iterator_type_expr);
 
 #if GMCS_SOURCE
 			Define_Current (true);
@@ -222,61 +264,7 @@ namespace Mono.CSharp {
 #endif
 			}
 
-			return base.DoResolveMembers ();
-		}
-
-		public void CaptureScopes ()
-		{
-			Report.Debug (128, "DEFINE ITERATOR HOST", this, scopes);
-
-			foreach (ScopeInfo si in scopes)
-				CaptureScope (si);
-
-			foreach (ScopeInfo si in scopes) {
-				if (!si.Define ())
-					throw new InternalErrorException ();
-				if (si.DefineType () == null)
-					throw new InternalErrorException ();
-				if (!si.ResolveType ())
-					throw new InternalErrorException ();
-				if (!si.ResolveMembers ())
-					throw new InternalErrorException ();
-				if (!si.DefineMembers ())
-					throw new InternalErrorException ();
-			}
-		}
-
-		protected override bool DoDefineMembers ()
-		{
-			if (!base.DoDefineMembers ())
-				return false;
-
-			FetchMethodDispose ();
-
-			return true;
-		}
-
-		protected override void EmitScopeConstructor (EmitContext ec)
-		{
-			ec.ig.Emit (OpCodes.Ldarg_0);
-			ec.ig.Emit (OpCodes.Ldarg_1);
-			ec.ig.Emit (OpCodes.Stfld, pc_field.FieldBuilder);
-			base.EmitScopeConstructor (ec);
-		}
-
-		void FetchMethodDispose ()
-		{
-			MemberList dispose_list;
-
-			dispose_list = FindMembers (
-				CurrentType != null ? CurrentType : TypeBuilder,
-				MemberTypes.Method, BindingFlags.Public | BindingFlags.Instance,
-				Type.FilterName, "Dispose");
-
-			if (dispose_list.Count != 1)
-				throw new InternalErrorException ("Cannot find Dipose() method.");
-
-			dispose_method = (MethodInfo) dispose_list [0];
+			DoResolveMembers ();
 		}
 
 		void Define_Current (bool is_generic)
@@ -302,8 +290,7 @@ namespace Mono.CSharp {
 			Accessor getter = new Accessor (get_block, 0, null, Location);
 
 			Property current = new Property (
-				this, type, 0, false, name, null, getter, null, false);
-			current.ModFlags |= Modifiers.DEBUGGER_HIDDEN;
+				this, type, Modifiers.DEBUGGER_HIDDEN, false, name, null, getter, null, false);
 			AddProperty (current);
 		}
 
@@ -327,46 +314,11 @@ namespace Mono.CSharp {
 			return new Throw (new New (ex_type, null, Location), Location);
 		}
 
-		protected override ScopeInitializer CreateScopeInitializer ()
-		{
-			return new IteratorHostInitializer (this);
-		}
-
-		protected class IteratorHostInitializer : RootScopeInitializer
-		{
-			new public readonly IteratorHost Host;
-			protected Iterator.State state;
-
-			public IteratorHostInitializer (IteratorHost host)
-				: base (host)
-			{
-				this.Host = host;
-			}
-
-			protected override bool DoResolveInternal (EmitContext ec)
-			{
-				if (this is EnumeratorScopeInitializer)
-					state = Iterator.State.Start;
-				else if (Host.Iterator.IsEnumerable)
-					state = Iterator.State.Uninitialized;
-				else
-					state = Iterator.State.Start;
-
-				return base.DoResolveInternal (ec);
-			}
-
-			protected override void EmitScopeConstructor (EmitContext ec)
-			{
-				ec.ig.Emit (OpCodes.Ldc_I4, (int) state);
-				base.EmitScopeConstructor (ec);
-			}
-		}
-
 		protected class GetEnumeratorMethod : Method
 		{
-			public IteratorHost Host;
+			public IteratorStorey Host;
 
-			static MemberName GetMemberName (IteratorHost host, bool is_generic)
+			static MemberName GetMemberName (IteratorStorey host, bool is_generic)
 			{
 				MemberName left;
 				if (is_generic) {
@@ -381,7 +333,7 @@ namespace Mono.CSharp {
 				return new MemberName (left, "GetEnumerator", host.Location);
 			}
 
-			public GetEnumeratorMethod (IteratorHost host, bool is_generic)
+			public GetEnumeratorMethod (IteratorStorey host, bool is_generic)
 				: base (host, null, is_generic ?
 					host.generic_enumerator_type : host.enumerator_type,
 					Modifiers.DEBUGGER_HIDDEN, false, GetMemberName (host, is_generic),
@@ -406,14 +358,12 @@ namespace Mono.CSharp {
 
 			protected class GetEnumeratorStatement : Statement
 			{
-				IteratorHost host;
+				IteratorStorey host;
 				Expression type;
 
-				ExpressionStatement initializer;
 				Expression cast;
-				MethodInfo ce;
 
-				public GetEnumeratorStatement (IteratorHost host, Expression type)
+				public GetEnumeratorStatement (IteratorStorey host, Expression type)
 				{
 					this.host = host;
 					this.type = type;
@@ -426,11 +376,25 @@ namespace Mono.CSharp {
 					if ((type == null) || (type.Type == null))
 						return false;
 
-					initializer = host.GetEnumeratorInitializer (ec);
-					if (initializer == null)
-						return false;
+					TypeExpression storey_type_expr = new TypeExpression (host.TypeBuilder, loc);
+					Expression new_storey;
+					if (host.hoisted_params != null) {
+						ArrayList init = new ArrayList (host.HoistedParameters.Count);
+						foreach (HoistedParameter hp in host.HoistedParameters) {
+							FieldExpr from = new FieldExpr (hp.Field.FieldBuilder, loc);
+							from.InstanceExpression = CompilerGeneratedThis.Instance;
+							init.Add (new ElementInitializer (hp.Field.Name, from, loc));
+						}
 
-					cast = new ClassCast (initializer, type.Type);
+						new_storey = new NewInitialize (storey_type_expr, new ArrayList (0),
+							new CollectionOrObjectInitializers (init, loc), loc);
+					} else {
+						new_storey = new New (storey_type_expr, new ArrayList (0), loc);
+					}
+
+					new_storey = new_storey.Resolve (ec);
+					if (new_storey != null)
+						cast = Convert.ImplicitConversionRequired (ec, new_storey, type.Type, loc);
 
 					if (TypeManager.int_interlocked_compare_exchange == null) {
 						Type t = TypeManager.CoreLookupType ("System.Threading", "Interlocked", Kind.Class, true);
@@ -440,8 +404,6 @@ namespace Mono.CSharp {
 								TypeManager.int32_type, TypeManager.int32_type);
 						}
 					}
-
-					ce = TypeManager.int_interlocked_compare_exchange;
 
 					ec.CurrentBranching.CurrentUsageVector.Goto ();
 					return true;
@@ -456,7 +418,7 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Ldflda, host.PC.FieldBuilder);
 					ig.Emit (OpCodes.Ldc_I4, (int) Iterator.State.Start);
 					ig.Emit (OpCodes.Ldc_I4, (int) Iterator.State.Uninitialized);
-					ig.Emit (OpCodes.Call, ce);
+					ig.Emit (OpCodes.Call, TypeManager.int_interlocked_compare_exchange);
 
 					ig.Emit (OpCodes.Ldc_I4, (int) Iterator.State.Uninitialized);
 					ig.Emit (OpCodes.Bne_Un, label_init);
@@ -466,20 +428,24 @@ namespace Mono.CSharp {
 
 					ig.MarkLabel (label_init);
 
-					initializer.EmitStatement (ec);
 					cast.Emit (ec);
 					ig.Emit (OpCodes.Ret);
+				}
+
+				public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+				{
+					throw new NotSupportedException ();
 				}
 			}
 		}
 
 		protected class DisposeMethod : Method
 		{
-			public IteratorHost Host;
+			readonly IteratorStorey Host;
 
-			public DisposeMethod (IteratorHost host)
+			public DisposeMethod (IteratorStorey host)
 				: base (host, null, TypeManager.system_void_expr,
-					Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
+					Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN | Modifiers.COMPILER_GENERATED,
 					false, new MemberName ("Dispose", host.Location),
 					Parameters.EmptyReadOnlyParameters, null)
 			{
@@ -487,7 +453,7 @@ namespace Mono.CSharp {
 
 				host.AddMethod (this);
 
-				Block = new ToplevelBlock (host.Iterator.Block, null, Location);
+				Block = new ToplevelBlock (host.Iterator.Container, null, Location);
 				Block.AddStatement (new DisposeMethodStatement (Host.Iterator));
 
 				Report.Debug (64, "DISPOSE METHOD", host, Block);
@@ -501,6 +467,14 @@ namespace Mono.CSharp {
 				ec.CurrentAnonymousMethod = Host.Iterator;
 				return ec;
 			}
+
+			//public override void Emit ()
+			//{
+			//    if (Parent.MemberName.IsGeneric)
+			//        block.MutateHoistedGenericType (Host.Iterator.Storey);
+
+			//    base.Emit ();
+			//}
 
 			protected class DisposeMethodStatement : Statement
 			{
@@ -521,55 +495,19 @@ namespace Mono.CSharp {
 				{
 					iterator.EmitDispose (ec);
 				}
-			}
-		}
 
-		protected ScopeInitializer GetEnumeratorInitializer (EmitContext ec)
-		{
-			ScopeInitializer init = new EnumeratorScopeInitializer (this);
-			if (init.Resolve (ec) == null)
-				throw new InternalErrorException ();
-			return init;
-		}
-
-		protected class EnumeratorScopeInitializer : IteratorHostInitializer
-		{
-			IteratorHost host;
-
-			public EnumeratorScopeInitializer (IteratorHost host)
-				: base (host)
-			{
-				this.host = host;
-			}
-
-			protected override bool DoResolveInternal (EmitContext ec)
-			{
-				type = host.IsGeneric ? host.CurrentType : host.TypeBuilder;
-				return base.DoResolveInternal (ec);
-			}
-
-			protected override void DoEmit (EmitContext ec)
-			{
-				DoEmitInstance (ec);
-			}
-
-			protected override bool IsGetEnumerator {
-				get { return true; }
-			}
-
-			protected override void EmitParameterReference (EmitContext ec,
-									CapturedParameter cp)
-			{
-				ec.ig.Emit (OpCodes.Ldarg_0);
-				ec.ig.Emit (OpCodes.Ldfld, cp.Field.FieldBuilder);
+				public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+				{
+					throw new NotSupportedException ();
+				}
 			}
 		}
 
 		protected class CurrentBlock : Statement {
-			IteratorHost host;
+			IteratorStorey host;
 			bool is_generic;
 
-			public CurrentBlock (IteratorHost host, bool is_generic)
+			public CurrentBlock (IteratorStorey host, bool is_generic)
 			{
 				this.host = host;
 				this.is_generic = is_generic;
@@ -593,16 +531,21 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Box, host.CurrentField.MemberType);
 				ig.Emit (OpCodes.Ret);
 			}
+
+			public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+			{
+				throw new NotSupportedException ();
+			}
 		}
 	}
 
-	public class Iterator : AnonymousContainer {
-		protected readonly ToplevelBlock OriginalBlock;
-		protected readonly IMethodData OriginalMethod;
-		protected ToplevelBlock block;
+	//
+	// Iterators are implemented as hidden anonymous block
+	//
+	public class Iterator : AnonymousExpression {
+		public readonly IMethodData OriginalMethod;
 
 		public readonly bool IsEnumerable;
-		public readonly bool IsStatic;
 
 		//
 		// The state as we generate the iterator
@@ -618,14 +561,28 @@ namespace Mono.CSharp {
 			get { return current_pc; }
 		}
 
+		public Block Container {
+			get { return OriginalMethod.Block; }
+		}
+
+		public GenericMethod GenericMethod {
+			get { return OriginalMethod.GenericMethod; }
+		}
+
 		public readonly Type OriginalIteratorType;
-		public readonly IteratorHost IteratorHost;
+
+		readonly IteratorStorey IteratorHost;
 
 		public enum State {
 			Running = -3, // Used only in CurrentPC, never stored into $PC
 			Uninitialized = -2,
 			After = -1,
 			Start = 0
+		}
+
+		public override void AddStoreyReference (AnonymousMethodStorey storey)
+		{
+			// do nothing
 		}
 
 		public void EmitYieldBreak (ILGenerator ig, bool unwind_protect)
@@ -769,6 +726,7 @@ namespace Mono.CSharp {
 			ig.MarkLabel (end);
 		}
 
+
 		ArrayList resume_points;
 		public int AddResumePoint (ResumableStatement stmt, Location loc)
 		{
@@ -815,56 +773,24 @@ namespace Mono.CSharp {
 			get { return true; }
 		}
 
-		public override RootScopeInfo RootScope {
-			get { return IteratorHost; }
-		}
-
-		public override ScopeInfo Scope {
+		public override AnonymousMethodStorey Storey {
 			get { return IteratorHost; }
 		}
 
 		//
 		// Our constructor
 		//
-		private Iterator (IMethodData m_container, DeclSpace host, GenericMethod generic,
-				 int modifiers, Type iterator_type, bool is_enumerable)
-			: base (host, generic, m_container.ParameterInfo,
-				new ToplevelBlock (m_container.ParameterInfo, m_container.Location),
-				m_container.Block, TypeManager.bool_type, modifiers,
-				m_container.Location)
+		private Iterator (IMethodData method, DeclSpace host, Type iterator_type, bool is_enumerable)
+			: base (host,
+				new ToplevelBlock (method.Block, Parameters.EmptyReadOnlyParameters, method.Block.StartLocation),
+				TypeManager.bool_type,
+				method.Location)
 		{
-			this.OriginalBlock = m_container.Block;
-			this.OriginalMethod = m_container;
+			this.OriginalMethod = method;
 			this.OriginalIteratorType = iterator_type;
 			this.IsEnumerable = is_enumerable;
 
-			Report.Debug (64, "NEW ITERATOR", host, generic, OriginalBlock,
-				      Container, Block);
-
-			IteratorHost = new IteratorHost (this);
-			Block.CreateIteratorHost (IteratorHost);
-
-			OriginalBlock.ReParent (Container.Toplevel);
-
-			m_container.Block = Container.Toplevel;
-
-			OriginalBlock.MakeIterator (this);
-		}
-
-		protected class TestStatement : Statement
-		{
-			public override bool Resolve (EmitContext ec)
-			{
-				return true;
-			}
-
-			protected override void DoEmit (EmitContext ec)
-			{
-				ec.ig.Emit (OpCodes.Nop);
-				ec.ig.Emit (OpCodes.Neg);
-				ec.ig.Emit (OpCodes.Pop);
-				ec.ig.Emit (OpCodes.Ret);
-			}
+			IteratorHost = Block.ChangeToIterator (this, method.Block);
 		}
 
 		public override string GetSignatureForError ()
@@ -872,112 +798,45 @@ namespace Mono.CSharp {
 			return OriginalMethod.GetSignatureForError ();
 		}
 
-		public override bool Define (EmitContext ec)
-		{
-			Report.Debug (64, "RESOLVE ITERATOR", this, Container, Block);
-
-			Parameters parameters = OriginalMethod.ParameterInfo;
-			for (int i = 0; i < parameters.Count; i++){
-				Parameter.Modifier mod = parameters.ParameterModifier (i);
-				if ((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0){
-					Report.Error (1623, Location,
-						      "Iterators cannot have ref or out parameters");
-					return false;
-				}
-
-				if ((mod & Parameter.Modifier.ARGLIST) != 0) {
-					Report.Error (1636, Location,
-						      "__arglist is not allowed in parameter list " +
-						      "of iterators");
-					return false;
-				}
-
-				if (parameters.ParameterType (i).IsPointer) {
-					Report.Error (1637, Location,
-						      "Iterators cannot have unsafe parameters or " +
-						      "yield types");
-					return false;
-				}
-			}
-
-			if ((ModFlags & Modifiers.UNSAFE) != 0) {
-				Report.Error (1629, Location, "Unsafe code may not appear in iterators");
-				return false;
-			}
-
-			if (!base.Define (ec))
-				return false;
-
-			Report.Debug (64, "RESOLVE ITERATOR #1", this, method, method.Parent,
-				      RootScope, ec);
-
-			if (!RootScope.ResolveType ())
-				return false;
-			if (!RootScope.ResolveMembers ())
-				return false;
-			if (!RootScope.DefineMembers ())
-				return false;
-
-			ExpressionStatement scope_init = RootScope.GetScopeInitializer (ec);
-			Container.AddStatement (new StatementExpression (scope_init));
-			Expression cast = new ClassCast (scope_init, OriginalMethod.ReturnType);
-			Container.AddStatement (new NoCheckReturn (cast));
-
-			return true;
-		}
-
-		protected override Method DoCreateMethodHost (EmitContext ec)
-		{
-			Report.Debug (128, "CREATE METHOD HOST", this, IteratorHost);
-
-			MemberCore mc = ec.ResolveContext as MemberCore;
-
-			IteratorHost.CaptureScopes ();
-
-			return new AnonymousMethodMethod (
-				this, RootScope, null, TypeManager.system_boolean_expr,
-				Modifiers.PUBLIC, mc.GetSignatureForError (),
-				new MemberName ("MoveNext", Location),
-				Parameters.EmptyReadOnlyParameters);
-		}
-
 		public override Expression DoResolve (EmitContext ec)
 		{
-			throw new NotSupportedException ();
+			method = new AnonymousMethodMethod (Storey,
+				this, Storey, null, TypeManager.system_boolean_expr,
+				Modifiers.PUBLIC, OriginalMethod.GetSignatureForError (),
+				new MemberName ("MoveNext", Location),
+				Parameters.EmptyReadOnlyParameters);
+
+			if (!Compatible (ec))
+				return null;
+
+			IteratorHost.DefineIteratorMembers ();
+
+			eclass = ExprClass.Value;
+			type = ec.ReturnType;
+			return this;
 		}
 
-		public Type IteratorType {
-			get { return IteratorHost.IteratorType; }
-		}
+		public override void Emit (EmitContext ec)
+		{
+			//
+			// Load Iterator storey instance
+			//
+			method.Storey.Instance.Emit (ec);
 
-		//
-		// This return statement tricks return into not flagging an error for being
-		// used in a Yields method
-		//
-		class NoCheckReturn : Statement {
-			public Expression Expr;
-		
-			public NoCheckReturn (Expression expr)
-			{
-				Expr = expr;
-				loc = expr.Location;
-			}
+			//
+			// Initialize iterator PC when it's unitialized
+			//
+			if (IsEnumerable) {
+				ILGenerator ig = ec.ig;
+				ig.Emit (OpCodes.Dup);
+				IntConstant.EmitInt (ig, (int)State.Uninitialized);
 
-			public override bool Resolve (EmitContext ec)
-			{
-				Expr = Expr.Resolve (ec);
-				if (Expr == null)
-					return false;
-
-				ec.CurrentBranching.CurrentUsageVector.Goto ();
-
-				return true;
-			}
-
-			protected override void DoEmit (EmitContext ec)
-			{
-				Expr.Emit (ec);
-				ec.ig.Emit (OpCodes.Ret);
+				FieldInfo field = IteratorHost.PC.FieldBuilder;
+#if GMCS_SOURCE
+				if (Storey.IsGeneric)
+					field = TypeBuilder.GetField (Storey.Instance.Type, field);
+#endif
+				ig.Emit (OpCodes.Stfld, field);
 			}
 		}
 
@@ -986,15 +845,14 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ("ET");
 		}
 
-		public static Iterator CreateIterator (IMethodData method, DeclSpace parent,
-						       GenericMethod generic, int modifiers)
+		public static void CreateIterator (IMethodData method, DeclSpace parent, int modifiers)
 		{
 			bool is_enumerable;
 			Type iterator_type;
 
 			Type ret = method.ReturnType;
 			if (ret == null)
-				return null;
+				return;
 
 			if (!CheckType (ret, out iterator_type, out is_enumerable)) {
 				Report.Error (1624, method.Location,
@@ -1002,11 +860,40 @@ namespace Mono.CSharp {
 					      "because `{1}' is not an iterator interface type",
 					      method.GetSignatureForError (),
 					      TypeManager.CSharpName (ret));
-				return null;
+				return;
 			}
 
-			return new Iterator (method, parent, generic, modifiers,
-					     iterator_type, is_enumerable);
+			Parameters parameters = method.ParameterInfo;
+			for (int i = 0; i < parameters.Count; i++) {
+				Parameter p = parameters [i];
+				Parameter.Modifier mod = p.ModFlags;
+				if ((mod & Parameter.Modifier.ISBYREF) != 0) {
+					Report.Error (1623, p.Location,
+						"Iterators cannot have ref or out parameters");
+					return;
+				}
+
+				if ((mod & Parameter.Modifier.ARGLIST) != 0) {
+					Report.Error (1636, method.Location,
+						"__arglist is not allowed in parameter list of iterators");
+					return;
+				}
+
+				if (p.ParameterType.IsPointer) {
+					Report.Error (1637, p.Location,
+							  "Iterators cannot have unsafe parameters or " +
+							  "yield types");
+					return;
+				}
+			}
+
+			if ((modifiers & Modifiers.UNSAFE) != 0) {
+				Report.Error (1629, method.Location, "Unsafe code may not appear in iterators");
+				return;
+			}
+
+			Iterator iter = new Iterator (method, parent, iterator_type, is_enumerable);
+			iter.Storey.DefineType ();
 		}
 
 		static bool CheckType (Type ret, out Type original_iterator_type, out bool is_enumerable)
@@ -1025,25 +912,25 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-#if GMCS_SOURCE
-			if (!ret.IsGenericType)
+			if (!TypeManager.IsGenericType (ret))
 				return false;
 
 			Type[] args = TypeManager.GetTypeArguments (ret);
 			if (args.Length != 1)
 				return false;
 
-			Type gt = ret.GetGenericTypeDefinition ();
+			Type gt = TypeManager.DropGenericTypeArguments (ret);
 			if (gt == TypeManager.generic_ienumerable_type) {
 				original_iterator_type = args [0];
 				is_enumerable = true;
 				return true;
-			} else if (gt == TypeManager.generic_ienumerator_type) {
+			}
+			
+			if (gt == TypeManager.generic_ienumerator_type) {
 				original_iterator_type = args [0];
 				is_enumerable = false;
 				return true;
 			}
-#endif
 
 			return false;
 		}

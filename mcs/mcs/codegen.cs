@@ -311,7 +311,7 @@ namespace Mono.CSharp {
 		///   So this reflects the low-level staticness of the method, while
 		///   IsStatic represents the semantic, high-level staticness.
 		/// </summary>
-		public bool MethodIsStatic;
+		//public bool MethodIsStatic;
 
 		/// <summary>
 		///   The value that is allowed to be returned or NULL if there is no
@@ -370,7 +370,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///  Whether we are inside an anonymous method.
 		/// </summary>
-		public AnonymousContainer CurrentAnonymousMethod;
+		public AnonymousExpression CurrentAnonymousMethod;
 		
 		/// <summary>
 		///   Location for this EmitContext
@@ -439,7 +439,6 @@ namespace Mono.CSharp {
 #endif
 
 			IsStatic = (code_flags & Modifiers.STATIC) != 0;
-			MethodIsStatic = IsStatic;
 			InIterator = (code_flags & Modifiers.METHOD_YIELDS) != 0;
 			ReturnType = return_type;
 			IsConstructor = is_constructor;
@@ -692,8 +691,12 @@ namespace Mono.CSharp {
 		{
 			if (CurrentAnonymousMethod == null)
 				return false;
+
+			// FIXME: IsIterator is too aggressive, we should capture only if child
+			// block contains yield
 			if (CurrentAnonymousMethod.IsIterator)
 				return true;
+
 			return local.Block.Toplevel != CurrentBlock.Toplevel;
 		}
 		
@@ -761,11 +764,6 @@ namespace Mono.CSharp {
 				if (!block.ResolveMeta (this, ip))
 					return false;
 
-				if ((md != null) && (md.Iterator != null)) {
-					if (!md.Iterator.Define (this))
-						return false;
-				}
-
 				using (this.With (EmitContext.Flags.DoFlowAnalysis, true)) {
 					FlowBranchingToplevel top_level;
 					if (anonymous_method_host != null)
@@ -809,9 +807,6 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (!block.CompleteContexts (this))
-				return false;
-
 			resolved = true;
 			return true;
 		}
@@ -850,12 +845,9 @@ namespace Mono.CSharp {
 				// this case.
 				//
 
-				bool in_iterator = (CurrentAnonymousMethod != null) &&
-					CurrentAnonymousMethod.IsIterator && InIterator;
-
 				if ((block != null) && block.IsDestructor) {
 					// Nothing to do; S.R.E automatically emits a leave.
-				} else if (HasReturnLabel || (!unreachable && !in_iterator)) {
+				} else if (HasReturnLabel || !unreachable) {
 					if (return_type != TypeManager.void_type)
 						ig.Emit (OpCodes.Ldloc, TemporaryReturn ());
 					ig.Emit (OpCodes.Ret);

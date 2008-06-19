@@ -24,11 +24,8 @@ namespace Mono.CSharp {
 		//    A list of Parameters (explicitly typed parameters)
 		//    An ImplicitLambdaParameter
 		//
-		public LambdaExpression (AnonymousMethodExpression parent,
-					 GenericMethod generic, TypeContainer host,
-					 Parameters parameters, Block container,
-					 Location loc)
-			: base (parent, generic, host, parameters, container, loc)
+		public LambdaExpression (TypeContainer host, Parameters parameters, Location loc)
+			: base (host, parameters, loc)
 		{
 			if (parameters.Count > 0)
 				explicit_parameters = !(parameters.FixedParameters [0] is ImplicitLambdaParameter);
@@ -119,10 +116,10 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		protected override AnonymousMethod CompatibleMethodFactory (Type returnType, Type delegateType, Parameters p, ToplevelBlock b)
+		protected override AnonymousMethodBody CompatibleMethodFactory (Type returnType, Type delegateType, Parameters p, ToplevelBlock b)
 		{
-			return new LambdaMethod (RootScope, Host,
-				GenericMethod, p, Container, b, returnType,
+			return new LambdaMethod (Host,
+				p, b, returnType,
 				delegateType, loc);
 		}
 
@@ -132,14 +129,14 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class LambdaMethod : AnonymousMethod
+	public class LambdaMethod : AnonymousMethodBody
 	{
-		public LambdaMethod (RootScopeInfo root_scope,
-					DeclSpace host, GenericMethod generic,
-					Parameters parameters, Block container,
+		public LambdaMethod (
+					DeclSpace host,
+					Parameters parameters,
 					ToplevelBlock block, Type return_type, Type delegate_type,
 					Location loc)
-			: base (root_scope, host, generic, parameters, container, block,
+			: base (host, parameters, block,
 				return_type, delegate_type, loc)
 		{
 		}

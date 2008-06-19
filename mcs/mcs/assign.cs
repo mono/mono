@@ -348,6 +348,12 @@ namespace Mono.CSharp {
 			return ResolveConversions (ec);
 		}
 
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			source.MutateHoistedGenericType (storey);
+			target.MutateHoistedGenericType (storey);
+		}
+
 		protected virtual Expression ResolveConversions (EmitContext ec)
 		{
 			source = Convert.ImplicitConversionRequired (ec, source, target.Type, loc);

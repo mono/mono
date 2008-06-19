@@ -1,5 +1,5 @@
 //
-// anonymous.cs: Support for anonymous methods
+// anonymous.cs: Support for anonymous methods and types
 //
 // Author:
 //   Miguel de Icaza (miguel@ximain.com)
@@ -7,11 +7,6 @@
 //
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 // Copyright 2003-2008 Novell, Inc.
-//
-// TODO: Ideally, we should have the helper classes emited as a hierarchy to map
-// their nesting, and have the visibility set to private, instead of NestedAssembly
-//
-//
 //
 
 using System;
@@ -24,44 +19,20 @@ namespace Mono.CSharp {
 
 	public abstract class CompilerGeneratedClass : Class
 	{
-		GenericMethod generic_method;
-		static int next_index = 0;
-
-		private static MemberName MakeProxyName (GenericMethod generic, Location loc)
+		public static string MakeName (string host, string typePrefix, string name, int id)
 		{
-			string name = MakeName (null, "CompilerGenerated");
-			if (generic != null) {
-				TypeArguments args = new TypeArguments (loc);
-				foreach (TypeParameter tparam in generic.CurrentTypeParameters)
-					args.Add (new SimpleName (tparam.Name, loc));
-				return new MemberName (name, args, loc);
-			} else
-				return new MemberName (name, loc);
-		}
-
-		public static string MakeName (string host, string prefix)
-		{
-			return "<" + host + ">c__" + prefix + next_index++;
+			return "<" + host + ">" + typePrefix + "__" + name + id.ToString ();
 		}
 		
-		public static void Reset ()
-		{
-			next_index = 0;
-		}
-
-		protected CompilerGeneratedClass (DeclSpace parent,
-					MemberName name, int mod, Location loc) :
-			base (parent.NamespaceEntry, parent, name, mod | Modifiers.COMPILER_GENERATED, null)
+		protected CompilerGeneratedClass (DeclSpace parent, MemberName name, int mod, Location loc)
+			: base (parent.NamespaceEntry, parent, name, mod | Modifiers.COMPILER_GENERATED | Modifiers.SEALED, null)
 		{
 			parent.PartialContainer.AddCompilerGeneratedClass (this);
 		}
 
-		protected CompilerGeneratedClass (DeclSpace parent, GenericMethod generic,
-						  int mod, Location loc)
-			: this (parent, MakeProxyName (generic, loc), mod, loc)
+		protected CompilerGeneratedClass (DeclSpace parent, GenericMethod generic, MemberName name, int mod, Location loc)
+			: this (parent, name, mod, loc)
 		{
-			this.generic_method = generic;
-
 			if (generic != null) {
 				ArrayList list = new ArrayList ();
 				foreach (TypeParameter tparam in generic.TypeParameters) {
@@ -70,1142 +41,643 @@ namespace Mono.CSharp {
 				}
 				SetParameterInfo (list);
 			}
-
 		}
 
-		protected override bool DefineNestedTypes ()
-		{
-			RootContext.RegisterCompilerGeneratedType (TypeBuilder);
-			return base.DefineNestedTypes ();
-		}
-
-		protected override bool DoDefineMembers ()
-		{
-			members_defined = true;
-
-			if (!base.DoDefineMembers ())
-				return false;
-
-			if (CompilerGenerated != null) {
-				foreach (CompilerGeneratedClass c in CompilerGenerated) {
-					if (!c.DefineMembers ())
-						throw new InternalErrorException ();
-				}
-			}
-
-			return true;
-		}
-
-		protected override bool DoResolveMembers ()
-		{
-			if (CompilerGenerated != null) {
-				foreach (CompilerGeneratedClass c in CompilerGenerated) {
-					if (!c.ResolveMembers ())
-						return false;
-				}
-			}
-
-			return base.DoResolveMembers ();
-		}
-
-		public GenericMethod GenericMethod {
-			get { return generic_method; }
-		}
-
-		public Parameters InflateParameters (Parameters ps)
-		{
-			if (generic_method == null)
-				return ps;
-
-			int n = ps.Count;
-			if (n == 0)
-				return ps;
-
-			Parameter[] inflated_params = new Parameter [n];
-			Type[] inflated_types = new Type [n];
-
-			for (int i = 0; i < n; ++i) {
-				Parameter p = ps [i];
-				Type it = InflateType (p.ExternalType ()).ResolveAsTypeTerminal (this, false).Type;
-				inflated_types [i] = it;
-				inflated_params [i] = new Parameter (it, p.Name, p.ModFlags, p.OptAttributes, p.Location);
-			}
-			return Parameters.CreateFullyResolved (inflated_params, inflated_types);
-		}
-
-		public TypeExpr InflateType (Type it)
-		{
-#if GMCS_SOURCE
-			if (generic_method == null)
-				return new TypeExpression (it, Location);
-
-			if (it.IsGenericParameter && (it.DeclaringMethod != null)) {
-				int pos = it.GenericParameterPosition;
-				it = CurrentTypeParameters [pos].Type;
-			} else if (it.IsGenericType) {
-				Type[] args = it.GetGenericArguments ();
-
-				TypeArguments inflated = new TypeArguments (Location);
-				foreach (Type t in args)
-					inflated.Add (InflateType (t));
-
-				return new ConstructedType (it, inflated, Location);
-			} else if (it.IsArray) {
-				TypeExpr et_expr = InflateType (it.GetElementType ());
-				int rank = it.GetArrayRank ();
-
-				Type et = et_expr.ResolveAsTypeTerminal (this, false).Type;
-				it = et.MakeArrayType (rank);
-			}
-#endif
-
-			return new TypeExpression (it, Location);
-		}
-
-		public Field CaptureVariable (string name, TypeExpr type)
+		protected void CheckMembersDefined ()
 		{
 			if (members_defined)
 				throw new InternalErrorException ("Helper class already defined!");
-			if (type == null)
-				throw new ArgumentNullException ();
-
-			return new CapturedVariableField (this, name, type);
-		}
-
-		bool members_defined;
-
-		internal void CheckMembersDefined ()
-		{
-			if (members_defined)
-				throw new InternalErrorException ("Helper class already defined!");
-		}
-
-		protected class CapturedVariableField : Field
-		{
-			public CapturedVariableField (CompilerGeneratedClass helper, string name,
-						      TypeExpr type)
-				: base (helper, type, Modifiers.INTERNAL, name, null, helper.Location)
-			{
-				helper.AddField (this);
-			}
 		}
 	}
 
-	public class ScopeInfo : CompilerGeneratedClass
+	//
+	// Anonymous method storey is created when an anonymous method uses
+	// variable or parameter from outer scope. They are then hoisted to
+	// anonymous method storey (captured)
+	//
+	public class AnonymousMethodStorey : CompilerGeneratedClass
 	{
-		protected readonly RootScopeInfo RootScope;
-		new public readonly DeclSpace Parent;
-		public readonly int ID = ++next_id;
-		public readonly Block ScopeBlock;
-		protected ScopeInitializer scope_initializer;
+		class StoreyFieldPair {
+			public AnonymousMethodStorey Storey;
+			public Field Field;
 
-		readonly Hashtable locals = new Hashtable ();
-		readonly Hashtable captured_scopes = new Hashtable ();
-		Hashtable captured_params;
-
-		static int next_id;
-
-		public static ScopeInfo CreateScope (Block block)
-		{
-			ToplevelBlock toplevel = block.Toplevel;
-			AnonymousContainer ac = toplevel.AnonymousContainer;
-
-			Report.Debug (128, "CREATE SCOPE", block, block.ScopeInfo, toplevel, ac);
-
-			if (ac == null)
-				return new ScopeInfo (block, toplevel.RootScope.Parent,
-						      toplevel.RootScope.GenericMethod);
-
-			Report.Debug (128, "CREATE SCOPE #1", ac, ac.Host, ac.Scope, ac.Block,
-				      ac.Container,
-				      ac.Location);
-
-			Block b;
-			ScopeInfo parent = null;
-
-			for (b = ac.Block; b != null; b = b.Parent) {
-				if (b.ScopeInfo != null) {
-					parent = b.ScopeInfo;
-					break;
-				}
+			public StoreyFieldPair (AnonymousMethodStorey storey)
+			{
+				this.Storey = storey;
 			}
 
-			Report.Debug (128, "CREATE SCOPE #2", parent);
+			public override int GetHashCode ()
+			{
+				return Storey.ID.GetHashCode ();
+			}
 
-			ScopeInfo new_scope = new ScopeInfo (block, parent, null);
-
-			Report.Debug (128, "CREATE SCOPE #3", new_scope);
-
-			return new_scope;
+			public override bool Equals (object obj)
+			{
+				return (AnonymousMethodStorey)obj == Storey;
+			}
 		}
 
-		private static int default_modflags (DeclSpace parent)
+		class HoistedGenericField : Field
 		{
-			return parent is CompilerGeneratedClass ? Modifiers.PUBLIC : Modifiers.PRIVATE;
+			public HoistedGenericField (DeclSpace parent, FullNamedExpression type, int mod, string name,
+				  Attributes attrs, Location loc)
+				: base (parent, type, mod, name, attrs, loc)
+			{
+			}
+
+			public override bool Define ()
+			{
+				type_name.Type = ((AnonymousMethodStorey) Parent).MutateType (type_name.Type);
+				return base.Define ();
+			}
 		}
 
-		protected ScopeInfo (Block block, DeclSpace parent, GenericMethod generic)
-			: base (parent, generic, default_modflags (parent), block.StartLocation)
+		// TODO: Why is it required by debugger ?
+		public readonly int ID;
+		static int unique_id;
+
+		public readonly Block OriginalSourceBlock;
+
+		// A list of StoreyFieldPair with local field keeping parent storey instance
+		ArrayList used_parent_storeys;
+
+		// A list of hoisted parameters
+		protected ArrayList hoisted_params;
+
+		// Hoisted this
+		HoistedThis hoisted_this;
+
+		// Local variable which holds this storey instance
+		public LocalTemporary Instance;
+
+		bool references_defined;
+
+		public AnonymousMethodStorey (Block block, DeclSpace parent, MemberBase host, GenericMethod generic, string name)
+			: base (parent, generic, MakeMemberName (host, name, generic, block.StartLocation), Modifiers.PRIVATE, block.StartLocation)
 		{
 			Parent = parent;
-			RootScope = block.Toplevel.RootScope;
-			ScopeBlock = block;
-
-			Report.Debug (128, "NEW SCOPE", this, block,
-				      block.Parent, block.Toplevel);
-
-			RootScope.AddScope (this);
+			OriginalSourceBlock = block;
+			ID = unique_id++;
 		}
 
-		protected ScopeInfo (ToplevelBlock toplevel, DeclSpace parent,
-				     GenericMethod generic, Location loc)
-			: base (parent, generic, default_modflags (parent), loc)
+		static MemberName MakeMemberName (MemberBase host, string name, GenericMethod generic, Location loc)
 		{
-			Parent = parent;
-			RootScope = (RootScopeInfo) this;
-			ScopeBlock = toplevel;
-
-			Report.Debug (128, "NEW ROOT SCOPE", this, toplevel, loc);
-		}
-
-		protected CapturedScope[] CapturedScopes {
-			get {
-				CapturedScope[] list = new CapturedScope [captured_scopes.Count];
-				captured_scopes.Values.CopyTo (list, 0);
-				return list;
-			}
-		}
-
-		protected CapturedVariable GetCapturedScope (ScopeInfo scope)
-		{
-			return (CapturedVariable) captured_scopes [scope];
-		}
-
-		protected void EmitScopeInstance (EmitContext ec)
-		{
-			if (scope_initializer == null) {
-				//
-				// This is needed if someone overwrites the Emit method
-				// of Statement and manually calls Block.Emit without
-				// this snippet first:
-				// 
-				//   ec.EmitScopeInitFromBlock (The_Block);
-				//   The_Block.Emit (ec);
-				// 
-				throw new InternalErrorException ();
+			string host_name = host == null ? null : host.Name;
+			string tname = MakeName (host_name, "c", name, unique_id);
+			TypeArguments args = null;
+			if (generic != null) {
+				args = new TypeArguments (loc);
+				foreach (TypeParameter tparam in generic.CurrentTypeParameters)
+					args.Add (new SimpleName (tparam.Name, loc));
 			}
 
-			scope_initializer.Emit (ec);
+			return new MemberName (tname, args, loc);
 		}
 
-		public ExpressionStatement GetScopeInitializer (EmitContext ec)
+		public Field AddCapturedVariable (string name, Type type)
 		{
-			Report.Debug (128, "GET SCOPE INITIALIZER",
-				      this, GetType (), scope_initializer, ScopeBlock);
+			CheckMembersDefined ();
 
-			if (scope_initializer == null) {
-				scope_initializer = CreateScopeInitializer ();
-				if (scope_initializer.Resolve (ec) == null)
-					throw new InternalErrorException ();
-			}
-
-			return scope_initializer;
-		}
-
-		public Type GetScopeType (EmitContext ec)
-		{
+			FullNamedExpression field_type = new TypeExpression (type, Location);
 			if (!IsGeneric)
-				return TypeBuilder;
+				return AddCompilerGeneratedField (name, field_type);
 
-			TypeArguments targs = new TypeArguments (Location);
-
-			if (ec.DeclContainer.Parent.IsGeneric)
-				foreach (TypeParameter t in ec.DeclContainer.Parent.TypeParameters)
-					targs.Add (new TypeParameterExpr (t, Location));
-			if (ec.DeclContainer.IsGeneric)
-				foreach (TypeParameter t in ec.DeclContainer.CurrentTypeParameters)
-					targs.Add (new TypeParameterExpr (t, Location));
-
-			Report.Debug (128, "GET SCOPE TYPE", this, TypeBuilder, targs,
-				      ec.DeclContainer, ec.DeclContainer.GetType (),
-				      ec.DeclContainer.Parent.Name);
-
-			TypeExpr te = new ConstructedType (TypeBuilder, targs, Location);
-			te = te.ResolveAsTypeTerminal (ec, false);
-			if ((te == null) || (te.Type == null))
-				return null;
-			return te.Type;
+			const int mod = Modifiers.INTERNAL | Modifiers.COMPILER_GENERATED;
+			Field f = new HoistedGenericField (this, field_type, mod, name, null, Location);
+			AddField (f);
+			return f;
 		}
 
-		protected override bool DoDefineMembers ()
+		protected Field AddCompilerGeneratedField (string name, FullNamedExpression type)
 		{
-			Report.Debug (64, "SCOPE INFO DEFINE MEMBERS", this, GetType (), IsGeneric,
-				      Parent.IsGeneric, GenericMethod);
-
-			foreach (CapturedScope child in CapturedScopes) {
-				if (!child.DefineMembers ())
-					return false;
-			}
-
-			return base.DoDefineMembers ();
+			const int mod = Modifiers.INTERNAL | Modifiers.COMPILER_GENERATED;
+			Field f = new Field (this, type, mod, name, null, Location);
+			AddField (f);
+			return f;
 		}
 
-		protected override bool DoResolveMembers ()
-		{
-			Report.Debug (64, "SCOPE INFO RESOLVE MEMBERS", this, GetType (), IsGeneric,
-				      Parent.IsGeneric, GenericMethod);
-
-			return base.DoResolveMembers ();
-		}
-
-		public Variable CaptureScope (ScopeInfo child)
+		public void AddParentStoreyReference (AnonymousMethodStorey s)
 		{
 			CheckMembersDefined ();
-			Report.Debug (128, "CAPTURE SCOPE", this, GetType (), child, child.GetType ());
-			if (child == this)
-				throw new InternalErrorException ();
-			CapturedScope captured = (CapturedScope) captured_scopes [child];
-			if (captured == null) {
-				captured = new CapturedScope (this, child);
-				captured_scopes.Add (child, captured);
-			}
-			return captured;
-		}
 
-		public Variable AddLocal (LocalInfo local)
-		{
-			Report.Debug (128, "CAPTURE LOCAL", this, local);
-			Variable var = (Variable) locals [local];
-			if (var == null) {
-				var = new CapturedLocal (this, local);
-				locals.Add (local, var);
-				local.IsCaptured = true;
-			}
-			return var;
-		}
-
-		public Variable GetCapturedVariable (LocalInfo local)
-		{
-			return (Variable) locals [local];
-		}
-
-		public bool HostsParameters {
-			get { return captured_params != null; }
-		}
-
-		public Variable GetCapturedParameter (Parameter par)
-		{
-			if (captured_params != null)
-				return (Variable) captured_params [par];
-			else
-				return null;
-		}
-
-		public Variable AddParameter (Parameter par, int idx)
-		{
-			if (captured_params == null)
-				captured_params = new Hashtable ();
-
-			Variable var = (Variable) captured_params [par];
-			if (var == null) {
-				var = new CapturedParameter (this, par, idx);
-				captured_params.Add (par, var);
-				par.IsCaptured = true;
-			}
-
-			return var;
-		}
-
-		public override void EmitType ()
-		{
-			SymbolWriter.DefineAnonymousScope (ID);
-			foreach (CapturedLocal local in locals.Values)
-				local.EmitSymbolInfo ();
-
-			if (captured_params != null) {
-				foreach (CapturedParameter param in captured_params.Values)
-					param.EmitSymbolInfo ();
-			}
-
-			foreach (CapturedScope scope in CapturedScopes) {
-				scope.EmitSymbolInfo ();
-			}
-
-			base.EmitType ();
-		}
-
-		protected string MakeFieldName (string local_name)
-		{
-			return "<" + ID + ":" + local_name + ">";
-		}
-
-		protected virtual ScopeInitializer CreateScopeInitializer ()
-		{
-			return new ScopeInitializer (this);
-		}
-
-		protected abstract class CapturedVariable : Variable
-		{
-			public readonly ScopeInfo Scope;
-			public readonly string Name;
-
-			public FieldExpr FieldInstance;
-			protected Field field;
-
-			protected CapturedVariable (ScopeInfo scope, string name)
-			{
-				this.Scope = scope;
-				this.Name = name;
-			}
-
-			protected CapturedVariable (ScopeInfo scope, string name, Type type)
-				: this (scope, name)
-			{
-				this.field = scope.CaptureVariable (
-					scope.MakeFieldName (name), scope.RootScope.InflateType (type));
-			}
-
-			public Field Field {
-				get { return field; }
-			}
-
-			public override Type Type {
-				get { return Field.MemberType; }
-			}
-
-			public override bool HasInstance {
-				get { return true; }
-			}
-
-			public override bool NeedsTemporary {
-				get { return true; }
-			}
-
-			protected FieldInfo GetField (EmitContext ec)
-			{
-				if ((ec.CurrentBlock != null) &&
-				    (ec.CurrentBlock.Toplevel != Scope.ScopeBlock.Toplevel))
-					return Field.FieldBuilder;
-				else
-					return FieldInstance.FieldInfo;
-			}
-
-			public abstract void EmitSymbolInfo ();
-
-			public override void EmitInstance (EmitContext ec)
-			{
-				if ((ec.CurrentAnonymousMethod != null) &&
-				    (ec.CurrentAnonymousMethod.Scope == Scope)) {
-					ec.ig.Emit (OpCodes.Ldarg_0);
-					return;
-				}
-
-				Scope.EmitScopeInstance (ec);
-			}
-
-			public override void Emit (EmitContext ec)
-			{
-				ec.ig.Emit (OpCodes.Ldfld, GetField (ec));
-			}
-
-			public override void EmitAssign (EmitContext ec)
-			{
-				ec.ig.Emit (OpCodes.Stfld, GetField (ec));
-			}
-
-			public override void EmitAddressOf (EmitContext ec)
-			{
-				ec.ig.Emit (OpCodes.Ldflda, GetField (ec));
-			}
-		}
-
-		protected class CapturedParameter : CapturedVariable {
-			public readonly Parameter Parameter;
-			public readonly int Idx;
-
-			public CapturedParameter (ScopeInfo scope, Parameter par, int idx)
-				: base (scope, par.Name, par.ParameterType)
-			{
-				this.Parameter = par;
-				this.Idx = idx;
-			}
-
-			public override void EmitSymbolInfo ()
-			{
-				SymbolWriter.DefineCapturedParameter (
-					Scope.ID, Parameter.Name, Field.Name);
-			}
-
-			public override string ToString ()
-			{
-				return String.Format ("{0} ({1}:{2}:{3})", GetType (), Field,
-						      Parameter.Name, Idx);
-			}
-		}
-
-		protected class CapturedLocal : CapturedVariable {
-			public readonly LocalInfo Local;
-
-			public CapturedLocal (ScopeInfo scope, LocalInfo local)
-				: base (scope, local.Name, local.VariableType)
-			{
-				this.Local = local;
-			}
-
-			public override void EmitSymbolInfo ()
-			{
-				SymbolWriter.DefineCapturedLocal (
-					Scope.ID, Local.Name, Field.Name);
-			}
-
-			public override string ToString ()
-			{
-				return String.Format ("{0} ({1}:{2})", GetType (), Field,
-						      Local.Name);
-			}
-		}
-
-		protected class CapturedThis : CapturedVariable {
-			public CapturedThis (RootScopeInfo host)
-				: base (host, "<>THIS", host.ParentType)
-			{ }
-
-			public override void EmitSymbolInfo ()
-			{
-				SymbolWriter.DefineCapturedThis (Scope.ID, Field.Name);
-			}
-		}
-
-		protected class CapturedScope : CapturedVariable {
-			public readonly ScopeInfo ChildScope;
-
-			public CapturedScope (ScopeInfo root, ScopeInfo child)
-				: base (root, "scope" + child.ID)
-			{
-				this.ChildScope = child;
-			}
-
-			public override void EmitSymbolInfo ()
-			{
-				SymbolWriter.DefineCapturedScope (Scope.ID, ChildScope.ID, Field.Name);
-			}
-
-			public bool DefineMembers ()
-			{
-				Type type = ChildScope.IsGeneric ?
-					ChildScope.CurrentType : ChildScope.TypeBuilder;
-				Report.Debug (128, "CAPTURED SCOPE DEFINE MEMBERS", this, Scope,
-					      ChildScope, Name, type);
-				if (type == null)
-					throw new InternalErrorException ();
-				field = Scope.CaptureVariable (
-					Scope.MakeFieldName (Name), Scope.InflateType (type));
-				return true;
-			}
-
-			public override string ToString ()
-			{
-				return String.Format ("CapturedScope ({1} captured in {0})",
-						      Scope, ChildScope);
-			}
-		}
-
-		static void DoPath (StringBuilder sb, ScopeInfo start)
-		{
-			sb.Append ((start.ID).ToString ());
-		}
-		
-		public override string ToString ()
-		{
-			StringBuilder sb = new StringBuilder ();
-			
-			sb.Append ("{");
-			DoPath (sb, this);
-			sb.Append ("}");
-
-			return sb.ToString ();
-		}
-
-		protected class ScopeInitializer : ExpressionStatement
-		{
-			ScopeInfo scope;
-			CapturedVariable captured_scope;
-			LocalBuilder scope_instance;
-			ConstructorInfo scope_ctor;
-
-			bool initialized;
-
-			public ScopeInitializer (ScopeInfo scope)
-			{
-				this.scope = scope;
-				this.loc = scope.Location;
-				eclass = ExprClass.Value;
-			}
-
-			public ScopeInfo Scope {
-				get { return scope; }
-			}
-
-			public override Expression CreateExpressionTree (EmitContext ec)
-			{
-				throw new NotSupportedException ("ET");
-			}
-
-			public override Expression DoResolve (EmitContext ec)
-			{
-				if (scope_ctor != null)
-					return this;
-
-				Report.Debug (64, "RESOLVE SCOPE INITIALIZER BASE", this, Scope,
-					      ec, ec.CurrentBlock);
-
-				type = Scope.GetScopeType (ec);
-				if (type == null)
-					throw new InternalErrorException ();
-
-				if (!DoResolveInternal (ec))
-					throw new InternalErrorException ();
-
-				return this;
-			}
-
-			protected virtual bool DoResolveInternal (EmitContext ec)
-			{
-				MethodGroupExpr mg = (MethodGroupExpr) MemberLookupFinal (
-					ec, ec.ContainerType, type, ".ctor", MemberTypes.Constructor,
-					AllBindingFlags | BindingFlags.DeclaredOnly, loc);
-				if (mg == null)
-					throw new InternalErrorException ();
-
-				scope_ctor = (ConstructorInfo) mg.Methods [0];
-
-				Report.Debug (128, "RESOLVE THE INIT", this, Scope, Scope.RootScope,
-					      Scope.RootScope.GetType ());
-
-				ScopeInfo host = Scope.RootScope;
-				if ((Scope != host) && (Scope.RootScope is IteratorHost)) {
-					captured_scope = host.GetCapturedScope (Scope);
-					Type root = host.GetScopeType (ec);
-					FieldExpr fe = (FieldExpr) Expression.MemberLookup (
-						type, root, captured_scope.Field.Name, loc);
-					if (fe == null)
-						throw new InternalErrorException ();
-
-					fe.InstanceExpression = this;
-					captured_scope.FieldInstance = fe;
-
-					Report.Debug (128, "RESOLVE THE INIT #1", this,
-						      captured_scope, fe);
-				} else {
-					scope_instance = ec.ig.DeclareLocal (type);
-					if (!Scope.RootScope.IsIterator)
-						SymbolWriter.DefineScopeVariable (Scope.ID, scope_instance);
-				}
-
-				foreach (CapturedLocal local in Scope.locals.Values) {
-					FieldExpr fe = (FieldExpr) Expression.MemberLookup (
-						ec.ContainerType, type, local.Field.Name, loc);
-					Report.Debug (64, "RESOLVE SCOPE INITIALIZER #2", this, Scope,
-						      Scope, ec, ec.ContainerType, type,
-						      local.Field, local.Field.Name, loc, fe);
-					if (fe == null)
-						throw new InternalErrorException ();
-
-					fe.InstanceExpression = this;
-					local.FieldInstance = fe;
-				}
-
-				if (Scope.HostsParameters) {
-					foreach (CapturedParameter cp in Scope.captured_params.Values) {
-						FieldExpr fe = (FieldExpr) Expression.MemberLookup (
-							ec.ContainerType, type, cp.Field.Name, loc);
-						if (fe == null)
-							throw new InternalErrorException ();
-
-						fe.InstanceExpression = this;
-						cp.FieldInstance = fe;
-					}
-				}
-
-				foreach (CapturedScope scope in Scope.CapturedScopes) {
-					FieldExpr fe = (FieldExpr) Expression.MemberLookup (
-						ec.ContainerType, type, scope.Field.Name, loc);
-					Report.Debug (64, "RESOLVE SCOPE INITIALIZER #3", this, Scope,
-						      scope, ec, ec.ContainerType, type,
-						      scope.Field, scope.Field.Name, loc, fe);
-					if (fe == null)
-						throw new InternalErrorException ();
-
-					fe.InstanceExpression = this;
-					scope.FieldInstance = fe;
-				}
-
-				return true;
-			}
-
-			protected virtual void EmitParameterReference (EmitContext ec,
-								       CapturedParameter cp)
-			{
-				int extra = ec.MethodIsStatic ? 0 : 1;
-				ParameterReference.EmitLdArg (ec.ig, cp.Idx + extra);
-			}
-
-			static int next_id;
-			int id = ++next_id;
-
-			protected virtual void DoEmit (EmitContext ec)
-			{
-				if ((ec.CurrentBlock != null) &&
-				    (ec.CurrentBlock.Toplevel != Scope.ScopeBlock.Toplevel)) {
-					ec.ig.Emit (OpCodes.Ldarg_0);
-
-					if (ec.CurrentAnonymousMethod != null) {
-						ScopeInfo host = ec.CurrentAnonymousMethod.Scope;
-						Variable captured = host.GetCapturedScope (scope);
-						Report.Debug (128, "EMIT SCOPE INSTANCE #2",
-							      ec.CurrentAnonymousMethod, host,
-							      scope, captured);
-						if (captured != null)
-							captured.Emit (ec);
-					}
-				} else if (scope_instance != null)
-					ec.ig.Emit (OpCodes.Ldloc, scope_instance);
-				else {
-					Report.Debug (128, "DO EMIT", this, Scope, ec,
-						      scope_instance, captured_scope);
-					captured_scope.EmitInstance (ec);
-					captured_scope.Emit (ec);
-				}
-			}
-
-			protected void DoEmitInstance (EmitContext ec)
-			{
-				Report.Debug (128, "DO EMIT INSTANCE", this, Scope, ec,
-					      scope_instance, captured_scope);
-
-				if (scope_instance != null)
-					ec.ig.Emit (OpCodes.Ldloc, scope_instance);
-				else
-					captured_scope.EmitInstance (ec);
-			}
-
-			protected virtual void EmitScopeConstructor (EmitContext ec)
-			{
-				ec.ig.Emit (OpCodes.Newobj, scope_ctor);
-			}
-
-			public override void Emit (EmitContext ec)
-			{
-				if (!initialized)
-					throw new InternalErrorException (
-						"Scope {0} not initialized yet", scope);
-
-				DoEmit (ec);
-			}
-
-			public override void EmitStatement (EmitContext ec)
-			{
-				if (initialized)
-					return;
-
-				DoEmitStatement (ec);
-				initialized = true;
-			}
-
-			protected virtual void DoEmitStatement (EmitContext ec)
-			{
-				Report.Debug (128, "EMIT SCOPE INITIALIZER STATEMENT", this, id,
-					      Scope, scope_instance, ec);
-
-				ec.ig.Emit (OpCodes.Nop);
-				ec.ig.Emit (OpCodes.Ldc_I4, id);
-				ec.ig.Emit (OpCodes.Pop);
-				ec.ig.Emit (OpCodes.Nop);
-
-				if (scope_instance == null)
-					ec.ig.Emit (OpCodes.Ldarg_0);
-				EmitScopeConstructor (ec);
-				if (scope_instance != null)
-					ec.ig.Emit (OpCodes.Stloc, scope_instance);
-				else
-					captured_scope.EmitAssign (ec);
-
-				if (Scope.HostsParameters) {
-					foreach (CapturedParameter cp in Scope.captured_params.Values) {
-						Report.Debug (128, "EMIT SCOPE INIT #6", this,
-							      ec, ec.IsStatic, Scope, cp, cp.Field.Name);
-						DoEmitInstance (ec);
-						EmitParameterReference (ec, cp);
-						ec.ig.Emit (OpCodes.Stfld, cp.FieldInstance.FieldInfo);
-					}
-				}
-
-				if (Scope is IteratorHost)
-					return;
-
-				foreach (CapturedScope scope in Scope.CapturedScopes) {
-					ScopeInfo child = scope.ChildScope;
-
-					Report.Debug (128, "EMIT SCOPE INIT #5", this, Scope,
-						      scope.Scope, scope.ChildScope);
-
-					ExpressionStatement init = child.GetScopeInitializer (ec);
-					init.EmitStatement (ec);
-
-					DoEmit (ec);
-					scope.ChildScope.EmitScopeInstance (ec);
-					scope.EmitAssign (ec);
-				}
-			}
-		}
-	}
-
-	public class RootScopeInfo : ScopeInfo
-	{
-		public RootScopeInfo (ToplevelBlock toplevel, DeclSpace parent,
-				      GenericMethod generic, Location loc)
-			: base (toplevel, parent, generic, loc)
-		{
-			scopes = new ArrayList ();
-		}
-
-		TypeExpr parent_type;
-		CapturedVariableField parent_link;
-		CapturedThis this_variable;
-		protected ArrayList scopes;
-
-		public virtual bool IsIterator {
-			get { return false; }
-		}
-
-		public RootScopeInfo ParentHost {
-			get { return Parent.PartialContainer as RootScopeInfo; }
-		}
-
-		public Type ParentType {
-			get { return parent_type.Type; }
-		}
-
-		public Field ParentLink {
-			get { return parent_link; }
-		}
-
-		protected CapturedThis THIS {
-			get { return this_variable; }
-		}
-
-		public Variable CaptureThis ()
-		{
-			if (ParentHost != null)
-				return ParentHost.CaptureThis ();
-
-			CheckMembersDefined ();
-			if (this_variable == null)
-				this_variable = new CapturedThis (this);
-			return this_variable;
-		}
-
-		public void AddScope (ScopeInfo scope)
-		{
-			scopes.Add (scope);
-		}
-
-		bool linked;
-		public void LinkScopes ()
-		{
-			Report.Debug (128, "LINK SCOPES", this, linked, scopes);
-
-			if (linked)
+			if (used_parent_storeys == null)
+				used_parent_storeys = new ArrayList ();
+			else if (used_parent_storeys.IndexOf (s) != -1)
 				return;
 
-			linked = true;
-			if (ParentHost != null)
-				ParentHost.LinkScopes ();
+			used_parent_storeys.Add (new StoreyFieldPair (s));
+		}
 
-			foreach (ScopeInfo si in scopes) {
-				if (!si.Define ())
-					throw new InternalErrorException ();
-				if (si.DefineType () == null)
-					throw new InternalErrorException ();
-				if (!si.ResolveType ())
-					throw new InternalErrorException ();
-			}
+		public void CaptureLocalVariable (EmitContext ec, LocalInfo local_info)
+		{
+			if (local_info.HoistedVariableReference != null)
+				return;
 
-			foreach (ScopeInfo si in scopes) {
-				if (!si.ResolveMembers ())
-					throw new InternalErrorException ();
-				if (!si.DefineMembers ())
-					throw new InternalErrorException ();
+			HoistedVariable var = new HoistedLocalVariable (this, local_info, GetVariableMangledName (local_info));
+			local_info.HoistedVariableReference = var;
+		}
+
+		public void CaptureParameter (EmitContext ec, ParameterReference param_ref)
+		{
+			if (param_ref.HoistedVariable != null)
+				return;
+
+			if (hoisted_params == null)
+				hoisted_params = new ArrayList ();
+
+			HoistedVariable expr = new HoistedParameter (this, param_ref);
+			param_ref.Parameter.HoistedVariableReference = expr;
+			hoisted_params.Add (expr);
+		}
+
+		public HoistedThis CaptureThis (EmitContext ec, This t)
+		{
+			hoisted_this = new HoistedThis (this, t);
+			return hoisted_this;
+		}
+
+		void DefineStoreyReferences ()
+		{
+			if (used_parent_storeys == null || references_defined)
+				return;
+
+			references_defined = true;
+
+			//
+			// For each used variable from parent scope we allocate its local reference point
+			//
+			for (int i = 0; i < used_parent_storeys.Count; ++i) {
+				StoreyFieldPair sf = (StoreyFieldPair) used_parent_storeys [i];
+				AnonymousMethodStorey p_storey = sf.Storey;
+				TypeExpr type_expr = new TypeExpression (p_storey.TypeBuilder, Location);
+
+				sf.Field = AddCompilerGeneratedField ("<>f__ref$" + p_storey.ID, type_expr);
+				sf.Field.Define ();
 			}
 		}
 
-		protected override ScopeInitializer CreateScopeInitializer ()
+		//
+		// Initializes all hoisted variables
+		//
+		public void EmitHoistedVariables (EmitContext ec)
 		{
-			return new RootScopeInitializer (this);
-		}
+			// There can be only one instance variable for each storey type
+			if (Instance != null)
+				throw new InternalErrorException ();
 
-		protected override bool DefineNestedTypes ()
-		{
-			if (Parent.IsGeneric) {
-				parent_type = new ConstructedType (
-					Parent.TypeBuilder, Parent.TypeParameters, Location);
-				parent_type = parent_type.ResolveAsTypeTerminal (this, false);
-				if ((parent_type == null) || (parent_type.Type == null))
-					return false;
+			//
+			// A storey with hoisted `this' is an instance method
+			//
+			if (!HasHoistedVariables) {
+				throw new NotImplementedException ();
+			}
+
+			DefineStoreyReferences ();
+
+			//
+			// Create an instance of storey type
+			//
+			Expression storey_type_expr;
+			if (IsGeneric) {
+				//
+				// Use current method type parameter (MVAR) for top level storey only. All
+				// nested storeys use class type parameter (VAR)
+				//
+				TypeParameter[] tparams = ec.CurrentAnonymousMethod != null ?
+					ec.CurrentAnonymousMethod.Storey.CurrentTypeParameters :
+					ec.GenericDeclContainer.CurrentTypeParameters;
+
+				if (tparams.Length != CountTypeParameters) {
+					TypeParameter [] full = new TypeParameter [CountTypeParameters];
+					DeclSpace parent = ec.DeclContainer.Parent;
+					parent.CurrentTypeParameters.CopyTo (full, 0);
+					tparams.CopyTo (full, parent.CountTypeParameters);
+					tparams = full;
+				}
+
+				storey_type_expr = new ConstructedType (TypeBuilder, tparams, Location);
 			} else {
-				parent_type = new TypeExpression (Parent.TypeBuilder, Location);
+				storey_type_expr = new TypeExpression (TypeBuilder, Location);
 			}
 
-			CompilerGeneratedClass parent = Parent.PartialContainer as CompilerGeneratedClass;
-			if (parent != null)
-				parent_link = new CapturedVariableField (this, "<>parent", parent_type);
+			Expression e = new New (storey_type_expr, new ArrayList (0), Location).Resolve (ec);
+			e.Emit (ec);
 
-			return base.DefineNestedTypes ();
+			Instance = new LocalTemporary (storey_type_expr.Type);
+			Instance.Store (ec);
+
+			EmitHoistedFieldsInitialization (ec);
 		}
 
-		protected override bool DoDefineMembers ()
+		void EmitHoistedFieldsInitialization (EmitContext ec)
 		{
-			ArrayList args = new ArrayList ();
-			if (this is IteratorHost)
-				args.Add (new Parameter (
-					TypeManager.int32_type, "$PC", Parameter.Modifier.NONE,
-					null, Location));
+			//
+			// Initialize all storey reference fields by using local or hoisted variables
+			//
+			if (used_parent_storeys != null) {
+				foreach (StoreyFieldPair sf in used_parent_storeys) {
+					//
+					// Setting local field
+					//
+					FieldExpr f_set_expr = new FieldExpr (sf.Field.FieldBuilder, Location);
+					f_set_expr.InstanceExpression = GetStoreyInstanceExpression (ec);
 
-			Field pfield;
-			if (Parent is CompilerGeneratedClass)
-				pfield = parent_link;
-			else
-				pfield = this_variable !=  null ? this_variable.Field : null;
-			if (pfield != null)
-				args.Add (new Parameter (
-					pfield.MemberType, "parent", Parameter.Modifier.NONE,
-					null, Location));
-
-			Parameter[] ctor_params = new Parameter [args.Count];
-			args.CopyTo (ctor_params, 0);
-			int ctor_mods = Modifiers.PUBLIC;
-			if (this is IteratorHost)
-				ctor_mods |= Modifiers.DEBUGGER_HIDDEN;
-			Constructor ctor = new Constructor (
-				this, MemberName.Name, ctor_mods,
-				new Parameters (ctor_params),
-				new GeneratedBaseInitializer (Location),
-				Location);
-			AddConstructor (ctor);
-
-			ctor.Block = new ToplevelBlock (null, Location);
-			ctor.Block.AddStatement (new TheCtor (this));
-
-			return base.DoDefineMembers ();
-		}
-
-		protected virtual void EmitScopeConstructor (EmitContext ec)
-		{
-			int pos = (this is IteratorHost) ? 2 : 1;
-
-			Field pfield;
-			if (Parent is CompilerGeneratedClass)
-				pfield = parent_link;
-			else
-				pfield = this_variable !=  null ? this_variable.Field : null;
-
-			if (pfield != null) {
-				ec.ig.Emit (OpCodes.Ldarg_0);
-				ec.ig.Emit (OpCodes.Ldarg, pos);
-				ec.ig.Emit (OpCodes.Stfld, pfield.FieldBuilder);
-				pos++;
+					SimpleAssign a = new SimpleAssign (f_set_expr, sf.Storey.GetStoreyInstanceExpression (ec));
+					if (a.Resolve (ec) != null)
+						a.EmitStatement (ec);
+				}
 			}
+
+			//
+			// Setting currect anonymous method to null blocks any further variable hoisting
+			//
+			AnonymousExpression ae = ec.CurrentAnonymousMethod;
+			ec.CurrentAnonymousMethod = null;
+
+			if (hoisted_params != null) {
+				foreach (HoistedParameter hp in hoisted_params) {
+					hp.EmitHoistingAssignment (ec);
+				}
+			}
+
+			if (hoisted_this != null) {
+				hoisted_this.EmitHoistingAssignment (ec);
+			}
+
+			ec.CurrentAnonymousMethod = ae;
 		}
 
 		public override void EmitType ()
 		{
+			DefineStoreyReferences ();
 			base.EmitType ();
-			if (THIS != null)
-				THIS.EmitSymbolInfo ();
 		}
 
-		protected class TheCtor : Statement
+		//
+		// Returns a field which holds referenced storey instance
+		//
+		Field GetReferencedStoreyField (AnonymousMethodStorey storey)
 		{
-			RootScopeInfo host;
+			if (used_parent_storeys == null)
+				return null;
 
-			public TheCtor (RootScopeInfo host)
-			{
-				this.host = host;
+			foreach (StoreyFieldPair sf in used_parent_storeys) {
+				if (sf.Storey == storey)
+					return sf.Field;
 			}
 
-			public override bool Resolve (EmitContext ec)
-			{
-				return true;
-			}
-
-			protected override void DoEmit (EmitContext ec)
-			{
-				host.EmitScopeConstructor (ec);
-			}
+			return null;
 		}
 
-		protected class RootScopeInitializer : ScopeInitializer
+		//
+		// Creates storey instance expression regardless of currect IP
+		//
+		public Expression GetStoreyInstanceExpression (EmitContext ec)
 		{
-			RootScopeInfo host;
+			AnonymousExpression am = ec.CurrentAnonymousMethod;
 
-			public RootScopeInitializer (RootScopeInfo host)
-				: base (host)
-			{
-				this.host = host;
-			}
+			//
+			// Access from original block -> storey
+			//
+			if (am == null)
+				return Instance;
 
-			public RootScopeInfo Host {
-				get { return host; }
-			}
+			//
+			// Access from anonymous method implemented as a static -> storey
+			//
+			if (am.Storey == null)
+				return Instance;
 
-			protected override bool DoResolveInternal (EmitContext ec)
-			{
-				Report.Debug (64, "RESOLVE ANONYMOUS METHOD HOST INITIALIZER",
-					      this, Host, Host.ParentType, loc);
-
-				if (Host.THIS != null) {
-					FieldExpr fe = (FieldExpr) Expression.MemberLookup (
-						ec.ContainerType, type, Host.THIS.Field.Name, loc);
-					if (fe == null)
-						throw new InternalErrorException ();
-
-					fe.InstanceExpression = this;
-					Host.THIS.FieldInstance = fe;
+			Field f = am.Storey.GetReferencedStoreyField (this);
+			if (f == null) {
+				if (am.Storey == this) {
+					//
+					// Access inside of same storey (S -> S)
+					//
+					return new CompilerGeneratedThis (TypeBuilder, Location);
 				}
-
-				return base.DoResolveInternal (ec);
+				//
+				// External field access
+				//
+				return Instance;
 			}
 
-			protected virtual bool IsGetEnumerator {
-				get { return false; }
-			}
+			//
+			// Storey was cached to local field
+			//
+			FieldExpr f_ind = new FieldExpr (f.FieldBuilder, Location);
+			f_ind.InstanceExpression = new CompilerGeneratedThis (TypeBuilder, Location);
+			return f_ind;
+		}
 
-			protected override void EmitScopeConstructor (EmitContext ec)
-			{
-				if (host.THIS != null) {
-					ec.ig.Emit (OpCodes.Ldarg_0);
-					if (IsGetEnumerator)
-						ec.ig.Emit (OpCodes.Ldfld, host.THIS.Field.FieldBuilder);
-					else if (host.THIS.Type.IsValueType)
-						Expression.LoadFromPtr (ec.ig, host.THIS.Type);
-				} else if (host.ParentLink != null)
-					ec.ig.Emit (OpCodes.Ldarg_0);
+		protected virtual string GetVariableMangledName (LocalInfo local_info)
+		{
+			//
+			// No need to mangle anonymous method hoisted variables cause they
+			// are hoisted in their own scopes
+			//
+			return local_info.Name;
+		}
 
-				base.EmitScopeConstructor (ec);
+		public bool HasHoistedVariables {
+			get {
+				return true; // TODO: Finish this optimization
 			}
 		}
 
+		//
+		// Mutate type dispatcher
+		//
+		public Type MutateType (Type type)
+		{
+#if GMCS_SOURCE
+			if (TypeManager.IsGenericType (type))
+				return MutateGenericType (type);
+
+			if (TypeManager.IsGenericParameter (type))
+				return MutateGenericArgument (type);
+
+			if (type.IsArray)
+				return MutateArrayType (type);
+#endif
+			return type;
+		}
+
+		//
+		// Changes method type arguments (MVAR) to storey (VAR) type arguments
+		//
+		public MethodInfo MutateGenericMethod (MethodInfo method)
+		{
+#if GMCS_SOURCE
+			if (TypeManager.IsGenericType (method.DeclaringType)) {
+				Type t = MutateGenericType (method.DeclaringType);
+				if (t != method.DeclaringType)
+					method = TypeBuilder.GetMethod (t, method);
+			}
+
+			Type [] t_args = TypeManager.GetGenericArguments (method);
+			if (t_args == null || t_args.Length == 0)
+				return method;
+
+			for (int i = 0; i < t_args.Length; ++i)
+				t_args [i] = MutateType (t_args [i]);
+
+			return method.GetGenericMethodDefinition ().MakeGenericMethod (t_args);
+#else
+			throw new NotSupportedException ();
+#endif
+		}
+
+		public ConstructorInfo MutateConstructor (ConstructorInfo ctor)
+		{
+			if (TypeManager.IsGenericType (ctor.DeclaringType)) {
+				Type t = MutateGenericType (ctor.DeclaringType);
+				if (t != ctor.DeclaringType) {
+					// TODO: It should throw on imported types
+					return TypeBuilder.GetConstructor (t, ctor);
+				}
+			}
+
+			return ctor;
+		}
+
+#if GMCS_SOURCE
+		protected Type MutateArrayType (Type array)
+		{
+			int rank = array.GetArrayRank ();
+			Type element = TypeManager.GetElementType (array);
+			if (element.IsArray)
+				throw new NotImplementedException ();
+
+			if (TypeManager.IsGenericParameter (element)) {
+				element = MutateGenericArgument (element);
+			} else if (TypeManager.IsGenericType (element)) {
+				element = MutateGenericType (element);
+			} else {
+				return array;
+			}
+
+			return element.MakeArrayType (rank);
+		}
+
+		protected Type MutateGenericType (Type type)
+		{
+			Type [] t_args = TypeManager.GetTypeArguments (type);
+			if (t_args == null || t_args.Length == 0)
+				return type;
+
+			for (int i = 0; i < t_args.Length; ++i)
+				t_args [i] = MutateType (t_args [i]);
+
+			return type.GetGenericTypeDefinition ().MakeGenericType (t_args);
+		}
+#endif
+
+		//
+		// Changes method generic argument (MVAR) to type generic argument (VAR)
+		//
+		public Type MutateGenericArgument (Type type)
+		{
+			foreach (TypeParameter tp in CurrentTypeParameters) {
+				if (tp.Name == type.Name) {
+					return tp.Type;
+				}
+			}
+
+			return type;
+		}
+
+		public static void Reset ()
+		{
+			unique_id = 0;
+		}
 	}
 
-	public interface IAnonymousContainer
+	public abstract class HoistedVariable
 	{
-		Block Container {
-			get;
+		protected readonly AnonymousMethodStorey storey;
+		protected Field field;
+		Hashtable cached_inner_access; // TODO: Hashtable is too heavyweight
+
+		protected HoistedVariable (AnonymousMethodStorey storey, string name, Type type)
+		{
+			this.storey = storey;
+
+			this.field = storey.AddCapturedVariable (name, type);
 		}
 
-		GenericMethod GenericMethod {
-			get;
+		public void AddressOf (EmitContext ec, AddressOp mode)
+		{
+			GetFieldExpression (ec).AddressOf (ec, mode);
 		}
 
-		RootScopeInfo RootScope {
-			get;
+		public void Emit (EmitContext ec)
+		{
+			GetFieldExpression (ec).Emit (ec);
 		}
 
-		bool IsIterator {
-			get;
+		//
+		// Creates field access expression for hoisted variable
+		//
+		protected FieldExpr GetFieldExpression (EmitContext ec)
+		{
+			if (ec.CurrentAnonymousMethod == null) {
+				//
+				// When setting top-level hoisted variable in generic storey
+				// change storey generic types to method generic types (VAR -> MVAR)
+				//
+				FieldExpr outer_access = storey.MemberName.IsGeneric ?
+					new FieldExpr (field.FieldBuilder, storey.Instance.Type, field.Location) :
+					new FieldExpr (field.FieldBuilder, field.Location);
+
+				outer_access.InstanceExpression = storey.GetStoreyInstanceExpression (ec);
+				outer_access.Resolve (ec);
+				return outer_access;
+			}
+
+			FieldExpr inner_access;
+			if (cached_inner_access != null) {
+				inner_access = (FieldExpr) cached_inner_access [ec.CurrentAnonymousMethod];
+			} else {
+				inner_access = null;
+				cached_inner_access = new Hashtable (4);
+			}
+
+			if (inner_access == null) {
+				inner_access = new FieldExpr (field.FieldBuilder, field.Location);
+				inner_access.InstanceExpression = storey.GetStoreyInstanceExpression (ec);
+				inner_access.Resolve (ec);
+				cached_inner_access.Add (ec.CurrentAnonymousMethod, inner_access);
+			}
+
+			return inner_access;
+		}
+
+		public abstract void EmitSymbolInfo ();
+
+		public void Emit (EmitContext ec, bool leave_copy)
+		{
+			GetFieldExpression (ec).Emit (ec, leave_copy);
+		}
+
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
+		{
+			GetFieldExpression (ec).EmitAssign (ec, source, leave_copy, false);
 		}
 	}
 
+	class HoistedParameter : HoistedVariable
+	{
+		class HoistedFieldAssign : Assign
+		{
+			public HoistedFieldAssign (Expression target, Expression source)
+				: base (target, source, source.Location)
+			{
+			}
+
+			protected override Expression ResolveConversions (EmitContext ec)
+			{
+				//
+				// Implicit conversion check fails for hoisted type arguments
+				// as they are of different types (!!0 x !0)
+				//
+				return this;
+			}
+		}
+
+		readonly ParameterReference parameter;
+
+		public HoistedParameter (AnonymousMethodStorey scope, ParameterReference par)
+			: base (scope, par.Name, par.Type)
+		{
+			this.parameter = par;
+		}
+
+		public void EmitHoistingAssignment (EmitContext ec)
+		{
+			//
+			// Remove hoisted redirection to emit assignment from original parameter
+			//
+			HoistedVariable temp = parameter.Parameter.HoistedVariableReference;
+			parameter.Parameter.HoistedVariableReference = null;
+
+			Assign a = new HoistedFieldAssign (GetFieldExpression (ec), parameter);
+			if (a.Resolve (ec) != null)
+				a.EmitStatement (ec);
+
+			parameter.Parameter.HoistedVariableReference = temp;
+		}
+
+		public override void EmitSymbolInfo ()
+		{
+			SymbolWriter.DefineCapturedParameter (storey.ID, field.Name, field.Name);
+		}
+
+		public Field Field {
+			get { return field; }
+		}
+	}
+
+	class HoistedLocalVariable : HoistedVariable
+	{
+		public HoistedLocalVariable (AnonymousMethodStorey scope, LocalInfo local, string name)
+			: base (scope, name, local.VariableType)
+		{
+		}
+
+		public override void EmitSymbolInfo ()
+		{
+			SymbolWriter.DefineCapturedLocal (storey.ID, field.Name, field.Name);
+		}
+	}
+
+	public class HoistedThis : HoistedVariable
+	{
+		readonly This this_reference;
+
+		public HoistedThis (AnonymousMethodStorey storey, This this_reference)
+			: base (storey, "<>f__this", this_reference.Type)
+		{
+			this.this_reference = this_reference;
+		}
+
+		public void EmitHoistingAssignment (EmitContext ec)
+		{
+			SimpleAssign a = new SimpleAssign (GetFieldExpression (ec), this_reference);
+			if (a.Resolve (ec) != null)
+				a.EmitStatement (ec);
+		}
+
+		public override void EmitSymbolInfo ()
+		{
+			SymbolWriter.DefineCapturedThis (storey.ID, field.Name);
+		}
+	}
+
+	// TODO: Remove, it should be done in block
 	public interface IAnonymousHost
 	{
 		//
 		// Invoked if a yield statement is found in the body
 		//
 		void SetYields ();
-
-		//
-		// Invoked if an anonymous method is found in the body
-		//
-		void AddAnonymousMethod (AnonymousMethodExpression anonymous);
 	}
 
-	public class AnonymousMethodExpression : Expression, IAnonymousContainer, IAnonymousHost
+	//
+	// Anonymous method expression as created by parser
+	//
+	public class AnonymousMethodExpression : Expression
 	{
-		public readonly AnonymousMethodExpression Parent;
-		public readonly TypeContainer Host;
+		protected readonly TypeContainer Host;
 		public readonly Parameters Parameters;
 
 		public ToplevelBlock Block;
 
-		protected Block container;
-		protected readonly GenericMethod generic;
-
-		public Block Container {
-			get { return container; }
-		}
-
-		public GenericMethod GenericMethod {
-			get { return generic; }
-		}
-
-		public RootScopeInfo RootScope {
-			get { return root_scope; }
-		}
-
-		public AnonymousMethodExpression (AnonymousMethodExpression parent,
-						  GenericMethod generic, TypeContainer host,
-						  Parameters parameters, Block container,
-						  Location loc)
+		public AnonymousMethodExpression (TypeContainer host, Parameters parameters, Location loc)
 		{
-			this.Parent = parent;
-			this.generic = parent != null ? null : generic;
 			this.Host = host;
 			this.Parameters = parameters;
-			this.container = container;
 			this.loc = loc;
-
-			Report.Debug (64, "NEW ANONYMOUS METHOD EXPRESSION", this, parent, host,
-				      container, loc);
-
-			if (parent != null)
-				parent.AddAnonymousMethod (this);
-		}
-
-		ArrayList children;
-		RootScopeInfo root_scope;
-
-		static int next_index;
-
-		void IAnonymousHost.SetYields ()
-		{
-			throw new InvalidOperationException ();
-		}
-
-		public void AddAnonymousMethod (AnonymousMethodExpression anonymous)
-		{
-			if (children == null)
-				children = new ArrayList ();
-			children.Add (anonymous);
-		}
-
-		public bool CreateAnonymousHelpers ()
-		{
-			// FIXME: this polutes expression trees implementation
-
-			Report.Debug (64, "ANONYMOUS METHOD EXPRESSION CREATE ROOT SCOPE",
-				      this, Host, container, loc);
-
-			if (container != null)
-				root_scope = container.Toplevel.CreateRootScope (Host);
-
-			if (children != null) {
-				foreach (AnonymousMethodExpression child in children) {
-					if (!child.CreateAnonymousHelpers ())
-						return false;
-				}
-			}
-
-			return true;
 		}
 
 		public override string ExprClassName {
@@ -1233,11 +705,6 @@ namespace Mono.CSharp {
 
 		protected Type CompatibleChecks (EmitContext ec, Type delegate_type)
 		{
-			if (!ec.IsAnonymousMethodAllowed) {
-				Report.Error (1706, loc, "Anonymous methods and lambda expressions cannot be used in the current context");
-				return null;
-			}
-			
 			if (TypeManager.IsDelegateType (delegate_type))
 				return delegate_type;
 
@@ -1367,7 +834,7 @@ namespace Mono.CSharp {
 
 		public Type InferReturnType (EmitContext ec, TypeInferenceContext tic, Type delegate_type)
 		{
-			AnonymousMethod am;
+			AnonymousMethodBody am;
 			using (ec.Set (EmitContext.Flags.ProbingMode | EmitContext.Flags.InferReturnType)) {
 				am = CompatibleMethod (ec, tic, GetType (), delegate_type);
 			}
@@ -1413,13 +880,9 @@ namespace Mono.CSharp {
 			// to be the delegate type return type.
 			//
 
-			Report.Debug (64, "COMPATIBLE", this, Parent, GenericMethod, Host,
-				      Container, Block, return_type, delegate_type,
-				      TypeManager.IsGenericType (delegate_type), loc);
-
 			try {
 				int errors = Report.Errors;
-				AnonymousMethod am = CompatibleMethod (ec, null, return_type, delegate_type);
+				AnonymousMethodBody am = CompatibleMethod (ec, null, return_type, delegate_type);
 				if (am != null && delegate_type != type && errors == Report.Errors)
 					return CreateExpressionTree (ec, delegate_type);
 
@@ -1461,7 +924,7 @@ namespace Mono.CSharp {
 						return null;
 					}
 					fixedpars[i] = new Parameter (
-						delegate_parameters.ParameterType (i), "+" + (++next_index),
+						delegate_parameters.ParameterType (i), null,
 						delegate_parameters.ParameterModifier (i), null, loc);
 				}
 
@@ -1477,6 +940,11 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (!ec.IsAnonymousMethodAllowed) {
+				Report.Error (1706, loc, "Anonymous methods and lambda expressions cannot be used in the current context");
+				return null;
+			}
+
 			//
 			// Set class type, set type
 			//
@@ -1512,11 +980,7 @@ namespace Mono.CSharp {
 			return ExprClassName;
 		}
 
-		public bool IsIterator {
-			get { return false; }
-		}
-
-		protected AnonymousMethod CompatibleMethod (EmitContext ec, TypeInferenceContext tic, Type return_type, Type delegate_type)
+		protected AnonymousMethodBody CompatibleMethod (EmitContext ec, TypeInferenceContext tic, Type return_type, Type delegate_type)
 		{
 			Parameters p = ResolveParameters (ec, tic, delegate_type);
 			if (p == null)
@@ -1524,17 +988,17 @@ namespace Mono.CSharp {
 
 			ToplevelBlock b = ec.IsInProbingMode ? (ToplevelBlock) Block.PerformClone () : Block;
 
-			AnonymousMethod anonymous = CompatibleMethodFactory (return_type, delegate_type, p, b);
+			AnonymousMethodBody anonymous = CompatibleMethodFactory (return_type, delegate_type, p, b);
 			if (!anonymous.Compatible (ec))
 				return null;
 
 			return anonymous;
 		}
 
-		protected virtual AnonymousMethod CompatibleMethodFactory (Type return_type, Type delegate_type, Parameters p, ToplevelBlock b)
+		protected virtual AnonymousMethodBody CompatibleMethodFactory (Type return_type, Type delegate_type, Parameters p, ToplevelBlock b)
 		{
-			return new AnonymousMethod (RootScope, Host,
-				GenericMethod, p, Container, b, return_type,
+			return new AnonymousMethodBody (Host,
+				p, b, return_type,
 				delegate_type, loc);
 		}
 
@@ -1543,131 +1007,140 @@ namespace Mono.CSharp {
 			AnonymousMethodExpression target = (AnonymousMethodExpression) t;
 
 			target.Block = (ToplevelBlock) clonectx.LookupBlock (Block);
-			target.container = clonectx.LookupBlock (Block);
 		}
 	}
 
-	public abstract class AnonymousContainer : Expression, IAnonymousContainer
+	//
+	// Abstract expression for any block which requires variables hoisting
+	//
+	public abstract class AnonymousExpression : Expression
 	{
-		public Parameters Parameters;
+		protected class AnonymousMethodMethod : Method
+		{
+			public readonly AnonymousExpression AnonymousMethod;
+			public readonly AnonymousMethodStorey Storey;
+			readonly string RealName;
+
+			public AnonymousMethodMethod (DeclSpace parent, AnonymousExpression am, AnonymousMethodStorey storey,
+							  GenericMethod generic, TypeExpr return_type,
+							  int mod, string real_name, MemberName name,
+							  Parameters parameters)
+				: base (parent, generic, return_type, mod | Modifiers.COMPILER_GENERATED,
+						false, name, parameters, null)
+			{
+				this.AnonymousMethod = am;
+				this.Storey = storey;
+				this.RealName = real_name;
+
+				Parent.PartialContainer.AddMethod (this);
+				Block = am.Block;
+			}
+
+			public override EmitContext CreateEmitContext (DeclSpace tc, ILGenerator ig)
+			{
+				EmitContext aec = AnonymousMethod.aec;
+				aec.ig = ig;
+				aec.IsStatic = (ModFlags & Modifiers.STATIC) != 0;
+				return aec;
+			}
+
+			public override bool Define ()
+			{
+				if (Storey != null && Storey.IsGeneric) {
+					if (!Parameters.Empty) {
+						Type [] ptypes = Parameters.Types;
+						for (int i = 0; i < ptypes.Length; ++i) {
+							if (TypeManager.IsGenericParameter (ptypes [i]))
+								ptypes [i] = Storey.MutateType (ptypes [i]);
+						}
+					}
+
+					member_type = Storey.MutateType (ReturnType);
+				}
+
+				return base.Define ();
+			}
+
+			public override void Emit ()
+			{
+				//
+				// Before emitting any code we have to change all MVAR references to VAR
+				// when the method is of generic type and has hoisted variables
+				//
+				if (Storey == Parent && Storey.IsGeneric) {
+					AnonymousMethod.aec.ReturnType = Storey.MutateType (ReturnType);
+					block.MutateHoistedGenericType (Storey);
+				}
+
+				base.Emit ();
+			}
+
+			public override void EmitExtraSymbolInfo (SourceMethod source)
+			{
+				source.SetRealMethodName (RealName);
+			}
+		}
 
 		//
-		// The block that makes up the body for the anonymous mehtod
+		// The block that makes up the body for the anonymous method
 		//
-		public readonly ToplevelBlock Block;
+		protected readonly ToplevelBlock Block;
 
-		public readonly int ModFlags;
 		public Type ReturnType;
 		public readonly DeclSpace Host;
 
 		//
 		// The implicit method we create
 		//
-		protected Method method;
+		protected AnonymousMethodMethod method;
 		protected EmitContext aec;
 
-		// The emit context for the anonymous method
-		protected bool unreachable;
-		protected readonly Block container;
-		protected readonly GenericMethod generic;
-
-		protected AnonymousContainer (DeclSpace host,
-					      GenericMethod generic, Parameters parameters,
-					      Block container, ToplevelBlock block,
-					      Type return_type, int mod, Location loc)
+		protected AnonymousExpression (DeclSpace host, ToplevelBlock block, Type return_type, Location loc)
 		{
 			this.ReturnType = return_type;
-			this.ModFlags = mod | Modifiers.COMPILER_GENERATED;
 			this.Host = host;
 
-			this.container = container;
-			this.generic = generic;
-			this.Parameters = parameters;
 			this.Block = block;
 			this.loc = loc;
-
-			block.AnonymousContainer = this;
 		}
 
-		public Method Method {
-			get { return method; }
-		}
-
-		public abstract string ContainerType {
-			get; 
-		}
-
-		public abstract RootScopeInfo RootScope {
-			get;
-		}
-
-		public abstract ScopeInfo Scope {
-			get;
-		}
+		public abstract void AddStoreyReference (AnonymousMethodStorey storey);
+		public abstract string ContainerType { get; }
+		public abstract bool IsIterator { get; }
+		public abstract AnonymousMethodStorey Storey { get; }
 
 		public bool Compatible (EmitContext ec)
 		{
-			// REFACTOR: The method should be refactor, many of the
-			// hacks can be handled in better way
-
-			Report.Debug (64, "RESOLVE ANONYMOUS METHOD", this, Location, ec,
-				      RootScope, Parameters, ec.IsStatic);
-
-			if (ReturnType != null) {
-				TypeExpr return_type_expr;
-				if (RootScope != null)
-					return_type_expr = RootScope.InflateType (ReturnType);
-				else
-					return_type_expr = new TypeExpression (ReturnType, Location);
-				return_type_expr = return_type_expr.ResolveAsTypeTerminal (ec, false);
-				if ((return_type_expr == null) || (return_type_expr.Type == null))
-					return false;
-				ReturnType = return_type_expr.Type;
-			}
-
-			// Linq type inference is done differently
-			if (RootScope != null && RootContext.Version != LanguageVersion.LINQ)
-				Parameters = RootScope.InflateParameters (Parameters);
-
+			// TODO: Implement clone
 			aec = new EmitContext (
-				ec.ResolveContext, ec.TypeContainer,
-				RootScope != null ? RootScope : Host, Location, null, ReturnType,
+				ec.ResolveContext, ec.TypeContainer, ec.DeclContainer,
+				Location, null, ReturnType,
 				/* REVIEW */ (ec.InIterator ? Modifiers.METHOD_YIELDS : 0) |
 				(ec.InUnsafe ? Modifiers.UNSAFE : 0), /* No constructor */ false);
 
 			aec.CurrentAnonymousMethod = this;
 			aec.IsStatic = ec.IsStatic;
-			
-			//
-			// HACK: Overwrite parent declaration container to currently resolved.
-			// It's required for an anonymous container inside partial class.
-			//
-			if (RootScope != null)
-				aec.DeclContainer.Parent = ec.TypeContainer;
 
 			IDisposable aec_dispose = null;
 			EmitContext.Flags flags = 0;
 			if (ec.InferReturnType)
 				flags |= EmitContext.Flags.InferReturnType;
-			
+
 			if (ec.IsInProbingMode)
 				flags |= EmitContext.Flags.ProbingMode;
-			
+
 			if (ec.IsInFieldInitializer)
 				flags |= EmitContext.Flags.InFieldInitializer;
 
 			if (ec.IsInUnsafeScope)
 				flags |= EmitContext.Flags.InUnsafe;
-			
+
 			// HACK: Flag with 0 cannot be set 
 			if (flags != 0)
 				aec_dispose = aec.Set (flags);
 
-			Report.Debug (64, "RESOLVE ANONYMOUS METHOD #1", this, Location, ec, aec,
-				      RootScope, Parameters, Block);
-
 			bool unreachable;
-			bool res = aec.ResolveTopBlock (ec, Block, Parameters, null, out unreachable);
+			bool res = aec.ResolveTopBlock (ec, Block, Block.Parameters, null, out unreachable);
 
 			if (ec.InferReturnType)
 				ReturnType = aec.ReturnType;
@@ -1678,11 +1151,62 @@ namespace Mono.CSharp {
 
 			return res;
 		}
+	}
 
-		public virtual bool Define (EmitContext ec)
+	public class AnonymousMethodBody : AnonymousExpression
+	{
+		ArrayList referenced_storeys;
+		readonly Parameters parameters;
+		static int unique_id;
+
+		public AnonymousMethodBody (
+					DeclSpace host,
+					Parameters parameters,
+					ToplevelBlock block, Type return_type, Type delegate_type,
+					Location loc)
+			: base (host, block, return_type, loc)
 		{
-			Report.Debug (64, "DEFINE ANONYMOUS METHOD #3", this, ec, aec, Block);
+			this.type = delegate_type;
+			this.parameters = parameters;
+		}
 
+		public override string ContainerType {
+			get { return "anonymous method"; }
+		}
+
+		public override AnonymousMethodStorey Storey {
+			get { return method.Storey; }
+		}
+
+		public override bool IsIterator {
+			get { return false; }
+		}
+
+		//
+		// Adds new storey reference to track out of scope variables
+		//
+		public override void AddStoreyReference (AnonymousMethodStorey storey)
+		{
+			if (referenced_storeys == null) {
+				referenced_storeys = new ArrayList ();
+			} else {
+				foreach (AnonymousMethodStorey ams in referenced_storeys) {
+					if (ams == storey)
+						return;
+				}
+			}
+
+			referenced_storeys.Add (storey);
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			Report.Error (1945, loc, "An expression tree cannot contain an anonymous method expression");
+			return null;
+		}
+
+		bool Define (EmitContext ec)
+		{
 			if (aec == null && !Compatible (ec))
 				return false;
 
@@ -1692,205 +1216,74 @@ namespace Mono.CSharp {
 
 			method = DoCreateMethodHost (ec);
 
-			if (Scope != null)
+			//
+			// Define method only when is not inside AnonymousMethodStorey because a container passed its Define
+			//
+			if (method.Storey != null && method.Storey.HasHoistedVariables)
 				return true;
 
-			if (!method.ResolveMembers ())
-				return false;
+			method.ResolveMembers ();
 			return method.Define ();
 		}
 
-		protected abstract Method DoCreateMethodHost (EmitContext ec);
-
-		public override void Emit (EmitContext ec)
+		//
+		// Creates a host for the anonymous method
+		//
+		AnonymousMethodMethod DoCreateMethodHost (EmitContext ec)
 		{
-			throw new NotSupportedException ();
-		}
+			AnonymousMethodStorey storey = FindBestMethodStorey ();
+			if (referenced_storeys != null && referenced_storeys.Count > 1) {
+				foreach (AnonymousMethodStorey s in referenced_storeys) {
+					if (s == storey)
+						continue;
 
-		public Block Container {
-			get { return container; }
-		}
-
-		public GenericMethod GenericMethod {
-			get { return generic; }
-		}
-
-		public abstract bool IsIterator {
-			get;
-		}
-
-		protected class AnonymousMethodMethod : Method
-		{
-			public readonly AnonymousContainer AnonymousMethod;
-			public readonly ScopeInfo Scope;
-			public readonly string RealName;
-
-			public AnonymousMethodMethod (AnonymousContainer am, ScopeInfo scope,
-						      GenericMethod generic, TypeExpr return_type,
-						      int mod, string real_name, MemberName name,
-						      Parameters parameters)
-				: base (scope != null ? scope : am.Host,
-					generic, return_type, mod, false, name, parameters, null)
-			{
-				this.AnonymousMethod = am;
-				this.Scope = scope;
-				this.RealName = real_name;
-
-				if (scope != null) {
-					scope.CheckMembersDefined ();
-					scope.AddMethod (this);
-				} else {
-					ModFlags |= Modifiers.STATIC;
-					am.Host.PartialContainer.AddMethod (this);
+					storey.AddParentStoreyReference (s);
+					Block.Parent.Explicit.PropagateStoreyReference (s);
 				}
-				Block = am.Block;
 			}
 
-			public override EmitContext CreateEmitContext (DeclSpace tc, ILGenerator ig)
-			{
-				EmitContext aec = AnonymousMethod.aec;
-				aec.ig = ig;
-				aec.MethodIsStatic = Scope == null;
-				return aec;
+			//
+			// Anonymous method body can be converted to
+			//
+			// 1, an instance method in current scope when only `this' is hoisted
+			// 2, a static method in current scope when neither `this' nor any variable is hoisted
+			// 3, an instance method in compiler generated storey when any hoisted variable exists
+			//
+
+			int modifiers;
+			if (storey != null) {
+				modifiers = storey.HasHoistedVariables ? Modifiers.INTERNAL : Modifiers.PRIVATE;
+			} else {
+				modifiers = Modifiers.STATIC | Modifiers.PRIVATE;
 			}
 
-			public override void EmitExtraSymbolInfo (SourceMethod source)
-			{
-				source.SetRealMethodName (RealName);
-			}
-		}
-	}
+			DeclSpace parent = (modifiers & Modifiers.PRIVATE) != 0 ? Host : storey;
 
-	public class AnonymousMethod : AnonymousContainer
-	{
-		Type DelegateType;
-
-		//
-		// The value return by the Compatible call, this ensure that
-		// the code works even if invoked more than once (Resolve called
-		// more than once, due to the way Convert.ImplicitConversion works
-		//
-		RootScopeInfo root_scope;
-		ScopeInfo scope;
-
-		public AnonymousMethod (RootScopeInfo root_scope,
-					DeclSpace host, GenericMethod generic,
-					Parameters parameters, Block container,
-					ToplevelBlock block, Type return_type, Type delegate_type,
-					Location loc)
-			: base (host, generic, parameters, container, block,
-				return_type, 0, loc)
-		{
-			this.DelegateType = delegate_type;
-			this.root_scope = root_scope;
-		}
-
-		public override string ContainerType {
-			get { return "anonymous method"; }
-		}
-
-		public override RootScopeInfo RootScope {
-			get { return root_scope; }
-		}
-
-		public override ScopeInfo Scope {
-			get { return scope; }
-		}
-
-		public override bool IsIterator {
-			get { return false; }
-		}
-
-		public override string GetSignatureForError ()
-		{
-			return TypeManager.CSharpName (DelegateType);
-		}
-
-		public override Expression CreateExpressionTree (EmitContext ec)
-		{
-			Report.Error (1945, loc, "An expression tree cannot contain an anonymous method expression");
-			return null;
-		}
-
-		//
-		// Creates the host for the anonymous method
-		//
-		protected override Method DoCreateMethodHost (EmitContext ec)
-		{
 			MemberCore mc = ec.ResolveContext as MemberCore;
-			string name = CompilerGeneratedClass.MakeName (mc.Name, null);
+			string name = CompilerGeneratedClass.MakeName (parent != storey ? mc.Name : null,
+				"m", null, unique_id++);
+
 			MemberName member_name;
-
-			Report.Debug (128, "CREATE METHOD HOST #0", RootScope);
-
-			Block b;
-			scope = RootScope;
-
-			Report.Debug (128, "CREATE METHOD HOST #1", this, Block, Block.ScopeInfo,
-				      RootScope, Location);
-
-			for (b = Block.Parent; b != null; b = b.Parent) {
-				Report.Debug (128, "CREATE METHOD HOST #2", this, Block,
-					      b, b.ScopeInfo);
-				if (b.ScopeInfo != null) {
-					scope = b.ScopeInfo;
-					break;
-				}
-			}
-
-			if (scope != null)
-				scope.CheckMembersDefined ();
-
-			ArrayList scopes = new ArrayList ();
-			if (b != null) {
-				for (b = b.Parent; b != null; b = b.Parent) {
-					if (b.ScopeInfo != null)
-						scopes.Add (b.ScopeInfo);
-				}
-			}
-
-			Report.Debug (128, "CREATE METHOD HOST #1", this, scope, scopes);
-
-			foreach (ScopeInfo si in scopes)
-				scope.CaptureScope (si);
-
-			Report.Debug (128, "CREATE METHOD HOST", this, Block, container,
-				      RootScope, scope, scopes, Location);
-
-			GenericMethod generic_method = null;
-#if GMCS_SOURCE
-			if (TypeManager.IsGenericType (DelegateType)) {
-				TypeArguments args = new TypeArguments (Location);
-
-				Type dt = DelegateType.GetGenericTypeDefinition ();
-
-				Type[] tparam = TypeManager.GetTypeArguments (dt);
-				for (int i = 0; i < tparam.Length; i++)
-					args.Add (new SimpleName (tparam [i].Name, Location));
-
-				member_name = new MemberName (name, args, Location);
-
-				Report.Debug (128, "CREATE METHOD HOST #5", this, DelegateType,
-					      TypeManager.GetTypeArguments (DelegateType),
-					      dt, tparam, args);
+			GenericMethod generic_method;
+			if ((modifiers & Modifiers.PRIVATE) != 0 && mc.MemberName.IsGeneric) {
+				member_name = new MemberName (name, mc.MemberName.TypeArguments.Clone (), Location);
 
 				generic_method = new GenericMethod (
-					Host.NamespaceEntry, scope, member_name,
-					new TypeExpression (ReturnType, Location), Parameters);
-
+					Host.NamespaceEntry, storey, member_name,
+					new TypeExpression (ReturnType, Location), parameters);
 				generic_method.SetParameterInfo (null);
-			} else
-#endif
+			} else {
 				member_name = new MemberName (name, Location);
+				generic_method = null;
+			}
 
 			string real_name = String.Format (
 				"{0}~{1}{2}", mc.GetSignatureForError (), GetSignatureForError (),
-				Parameters.GetSignatureForError ());
+				parameters.GetSignatureForError ());
 
-			return new AnonymousMethodMethod (
-				this, scope, generic_method, new TypeExpression (ReturnType, Location),
-				scope == null ? Modifiers.PRIVATE : Modifiers.INTERNAL,
-				real_name, member_name, Parameters);
+			return new AnonymousMethodMethod (parent,
+				this, storey, generic_method, new TypeExpression (ReturnType, Location), modifiers,
+				real_name, member_name, parameters);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -1898,35 +1291,69 @@ namespace Mono.CSharp {
 			if (!Define (ec))
 				return null;
 
-			return new AnonymousDelegate (this, DelegateType, Location).Resolve (ec);
+			eclass = ExprClass.Value;
+			return this;
 		}
 
-		public MethodInfo GetMethodBuilder (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
-			MethodInfo builder = method.MethodBuilder;
-			if ((Scope != null) && Scope.IsGeneric) {
-				Type scope_type = Scope.GetScopeType (ec);
-				if (scope_type == null)
-					throw new InternalErrorException ();
-
-				MethodGroupExpr mg = (MethodGroupExpr) Expression.MemberLookup (
-					ec.ContainerType, scope_type, builder.Name,
-					MemberTypes.Method, Expression.AllBindingFlags | BindingFlags.NonPublic, Location);
-				
-				if (mg == null)
-					throw new InternalErrorException ();
-				builder = (MethodInfo) mg.Methods [0];
+			//
+			// Load method delegate implementation
+			//
+			if ((method.ModFlags & Modifiers.STATIC) != 0) {
+				ec.ig.Emit (OpCodes.Ldnull);
+			} else {
+				Expression e = Storey.GetStoreyInstanceExpression (ec).Resolve (ec);
+				if (e != null)
+					e.Emit (ec);
 			}
 
+			MethodInfo delegate_method = method.MethodBuilder;
 #if GMCS_SOURCE
-			if (!DelegateType.IsGenericType)
-				return builder;
-
-			Type[] targs = TypeManager.GetTypeArguments (DelegateType);
-			return builder.MakeGenericMethod (targs);
-#else
-			return builder;
+			if (Storey != null && Storey.IsGeneric)
+				delegate_method = TypeBuilder.GetMethod (Storey.Instance.Type, delegate_method);
 #endif
+			ec.ig.Emit (OpCodes.Ldftn, delegate_method);
+
+			ConstructorInfo constructor_method = Delegate.GetConstructor (ec.ContainerType, type);
+#if MS_COMPATIBLE
+            if (type.IsGenericType && type is TypeBuilder)
+                constructor_method = TypeBuilder.GetConstructor (type, constructor_method);
+#endif
+			ec.ig.Emit (OpCodes.Newobj, constructor_method);
+		}
+
+		//
+		// Look for the best storey for this anonymous method
+		//
+		AnonymousMethodStorey FindBestMethodStorey ()
+		{
+			if (referenced_storeys == null) {
+				for (Block b = Block.Parent; b != null; b = b.Parent) {
+					AnonymousMethodStorey s = b.Explicit.AnonymousMethodStorey;
+					if (s != null)
+						return s;
+				}
+						
+				return null;
+			}
+
+			if (referenced_storeys.Count == 1)
+				return (AnonymousMethodStorey) referenced_storeys [0];
+
+			for (Block b = Block.Parent; b != null; b = b.Parent) {
+				foreach (AnonymousMethodStorey storey in referenced_storeys) {
+					if (storey.OriginalSourceBlock == b)
+						return storey;
+				}
+			}
+
+			return null;
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return TypeManager.CSharpName (type);
 		}
 
 		public static void Error_AddressOfCapturedVar (string name, Location loc)
@@ -1936,69 +1363,10 @@ namespace Mono.CSharp {
 				      "address taken and be used inside an anonymous method block",
 				      name);
 		}
-	}
 
-	//
-	// This will emit the code for the delegate, as well delegate creation on the host
-	//
-	public class AnonymousDelegate : DelegateCreation {
-		readonly AnonymousMethod am;
-
-		//
-		// if target_type is null, this means that we do not know the type
-		// for this delegate, and we want to infer it from the various 
-		// returns (implicit and explicit) from the body of this anonymous
-		// method.
-		//
-		// for example, the lambda: x => 1
-		//
-		public AnonymousDelegate (AnonymousMethod am, Type target_type, Location l)
+		public static void Reset ()
 		{
-			type = target_type;
-			loc = l;
-			this.am = am;
-		}
-
-		public override Expression CreateExpressionTree (EmitContext ec)
-		{
-			return am.CreateExpressionTree (ec);
-		}
-
-		public override Expression DoResolve (EmitContext ec)
-		{
-			eclass = ExprClass.Value;
-			return this;
-		}
-		
-		public override void Emit (EmitContext ec)
-		{
-			//ec.ig.Emit (OpCodes.Ldstr, "EMIT ANONYMOUS DELEGATE");
-			//ec.ig.Emit (OpCodes.Pop);
-
-			//
-			// Now emit the delegate creation.
-			//
-			if ((am.Method.ModFlags & Modifiers.STATIC) == 0) {
-				Report.Debug (128, "EMIT ANONYMOUS DELEGATE", this, am, am.Scope, loc);
-				delegate_instance_expression = am.Scope.GetScopeInitializer (ec);
-
-				if (delegate_instance_expression == null)
-					throw new InternalErrorException ();
-			}
-
-			constructor_method = Delegate.GetConstructor (ec.ContainerType, type);
-#if MS_COMPATIBLE
-			if (type.IsGenericType && type is TypeBuilder)
-				constructor_method = TypeBuilder.GetConstructor (type, (ConstructorInfo)constructor_method);
-#endif
-			
-			delegate_method = am.GetMethodBuilder (ec);
-			base.Emit (ec);
-
-			//ec.ig.Emit (OpCodes.Ldstr, "EMIT ANONYMOUS DELEGATE DONE");
-			//ec.ig.Emit (OpCodes.Pop);
-
-			Report.Debug (128, "EMIT ANONYMOUS DELEGATE DONE", this, am, am.Scope, loc);
+			unique_id = 0;
 		}
 	}
 

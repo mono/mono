@@ -1,3 +1,23 @@
+2008-06-19  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs, lambda.cs, parameter.cs, ecore.cs, linq.cs, class.cs
+	delegate.cs, iterators.cs, cs-parser.jay, assign.cs, anonymous.cs, driver.cs
+	expression.cs, codegen.cs, statement.cs
+	
+	Fixes bugs: TBD
+	
+	** Anonymous methods, lambda expressions rewrite **
+	
+	Anonymous expressions are now resolved when an explicit block is resolved 
+	and they don't require any registration procedure anymore. Further,
+	anonymous methods are defined when explicit block is emitted which allows
+	better control of whole process and opens possibilities for more
+	optimizations as well as alternative to reverse whole process.
+	
+	A concept of `MutateHoistedGenericType' was introduced to keep the resolve
+	process consistent and to correctly emit hoisted generic methods when they
+	have at least 1 hoisted variable.
+	
 2008-06-17  Martin Baulig  <martin@ximian.com>
 
 	* class.cs: Also emit the `[DebuggerHidden]' attribute on the main

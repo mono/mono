@@ -5690,11 +5690,9 @@ public class SimpleAnonymousHost : IAnonymousHost {
 	public static readonly SimpleAnonymousHost Simple = new SimpleAnonymousHost ();
 
 	bool yields;
-	ArrayList anonymous_methods;
 
 	public static SimpleAnonymousHost GetSimple () {
 		Simple.yields = false;
-		Simple.anonymous_methods = null;
 		return Simple;
 	}
 
@@ -5702,22 +5700,11 @@ public class SimpleAnonymousHost : IAnonymousHost {
 	{
 		yields = true;
 	}
-
-	public void AddAnonymousMethod (AnonymousMethodExpression anonymous)
-	{
-		if (anonymous_methods == null)
-			anonymous_methods = new ArrayList ();
-		anonymous_methods.Add (anonymous);
-	}
-
+	
 	public void Propagate (IAnonymousHost real_host)
 	{
 		if (yields)
 			real_host.SetYields ();
-		if (anonymous_methods != null) {
-			foreach (AnonymousMethodExpression ame in anonymous_methods)
-				real_host.AddAnonymousMethod (ame);
-		}
 	}
 }
 
@@ -6019,15 +6006,9 @@ start_anonymous (bool lambda, Parameters parameters, Location loc)
 
 	current_local_parameters = parameters;
 
-	ToplevelBlock top_current_block = current_block == null ? null : current_block.Toplevel;
-
 	current_anonymous_method = lambda 
-		? new LambdaExpression (
-			current_anonymous_method, current_generic_method, current_container,
-			parameters, top_current_block, loc) 
-		: new AnonymousMethodExpression (
-			current_anonymous_method, current_generic_method, current_container,
-			parameters, top_current_block, loc);
+		? new LambdaExpression (current_container, parameters, loc) 
+		: new AnonymousMethodExpression (current_container, parameters, loc);
 
 	// Force the next block to be created as a ToplevelBlock
 	parsing_anonymous_method = true;
@@ -6037,8 +6018,7 @@ start_anonymous (bool lambda, Parameters parameters, Location loc)
  * Completes the anonymous method processing, if lambda_expr is null, this
  * means that we have a Statement instead of an Expression embedded 
  */
-AnonymousMethodExpression 
-end_anonymous (ToplevelBlock anon_block, Location loc)
+AnonymousMethodExpression end_anonymous (ToplevelBlock anon_block, Location loc)
 {
 	AnonymousMethodExpression retval;
 
@@ -6047,9 +6027,6 @@ end_anonymous (ToplevelBlock anon_block, Location loc)
 		retval = null;
 	} else  {
 		current_anonymous_method.Block = anon_block;
-		if ((anonymous_host != null) && (current_anonymous_method.Parent == null))
-			anonymous_host.AddAnonymousMethod (current_anonymous_method);
-
 		retval = current_anonymous_method;
 	}
 
