@@ -90,7 +90,7 @@ namespace MonoTests.System.Web.Caching
 			Assert.IsFalse (aggregate.HasChanged, "#B3");
 
 			File.WriteAllText (depFile, "OK", Encoding.UTF8);
-			Thread.Sleep (100);
+			Thread.Sleep (500);
 
 			cachedValue = HttpRuntime.Cache.Get ("key") as string;
 			Assert.IsNull (cachedValue, "#C1");
@@ -125,7 +125,7 @@ namespace MonoTests.System.Web.Caching
 			Assert.AreEqual ("MONO", cachedValue, "#B2");
 			Assert.IsFalse (aggregate.HasChanged, "#B3");
 
-			Thread.Sleep (100);
+			Thread.Sleep (500);
 
 			cachedValue = HttpRuntime.Cache.Get ("key") as string;
 			Assert.IsNull (cachedValue, "#C1");
