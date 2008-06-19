@@ -1,3 +1,9 @@
+2008-05-29  Robert Jordan  <robertj@gmx.net>
+
+	* PathTest.cs (TestGetFullPathUnix, TestGetFullPathWindows):
+	Factored out from the disabled TestGetFullPath test while fixing
+	the issues mentioned by the ERROR comment and bug #394681.
+
 2008-05-08  Dick Porter  <dick@ximian.com>
 
 	* DirectoryInfoTest.cs: Added a test for bug 385765.

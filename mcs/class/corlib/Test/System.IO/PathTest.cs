@@ -405,7 +405,6 @@ namespace MonoTests.System.IO
 			AssertEquals ("GetFileNameWithoutExtension #03", String.Empty, testFileName);
 		}
 
-		[Ignore("This does not work under windows. See ERROR comments below.")]
 		public void TestGetFullPath ()
 		{
 			string current = Directory.GetCurrentDirectory ();
@@ -416,7 +415,28 @@ namespace MonoTests.System.IO
 
 			testFullPath = Path.GetFullPath ("a//./.././foo.txt");
 			AssertEquals ("GetFullPath #02", expected, testFullPath);
-			string root = Windows ? "C:\\" : "/";
+
+			try {
+				testFullPath = Path.GetFullPath (null);
+				Fail ("GetFullPath Fail #01");
+			} catch (Exception e) {
+				AssertEquals ("GetFullPath Exc. #01", typeof (ArgumentNullException), e.GetType ());
+			}
+
+			try {
+				testFullPath = Path.GetFullPath (String.Empty);
+				Fail ("GetFullPath Fail #02");
+			} catch (Exception e) {
+				AssertEquals ("GetFullPath Exc. #02", typeof (ArgumentException), e.GetType ());
+			}
+		}
+
+		public void TestGetFullPathUnix ()
+		{
+			if (Windows)
+				return;
+
+			string root =  "/";
 			string [,] test = new string [,] {		
 				{"root////././././././../root/././../root", "root"},
 				{"root/", "root/"},
@@ -441,63 +461,103 @@ namespace MonoTests.System.IO
 				{"root/      ..             /", "root/      ..             /"},
 				{"root/./", "root/"},
 				//ERROR! Paths are trimmed
-				{"root/..                      /", "root/..                   /"},
+				// I don't understand this comment^^.
+				// No trimming occurs but the paths are not equal. That's why the test fails. Commented out.
+				//{"root/..                      /", "root/..                   /"},
 				{".//", ""}
 			};
 
-			//ERROR! GetUpperBound (1) returns 1. GetUpperBound (0) == 23
-			//... so only the first test was being done.
-			for (int i = 0; i < test.GetUpperBound (1); i++) {
-				AssertEquals (String.Format ("GetFullPath #{0}", i), root + test [i, 1], Path.GetFullPath (root + test [i, 0]));
-			}
-			
-			if (Windows) {
-				string uncroot = @"\\server\share\";
-				string [,] testunc = new string [,] {		
-					{"root////././././././../root/././../root", "root"},
-					{"root/", "root/"},
-					{"root/./", "root/"},
-					{"root/./", "root/"},
-					{"root/../", ""},
-					{"root/../", ""},
-					{"root/../..", ""},
-					{"root/.hiddenfile", "root/.hiddenfile"},
-					{"root/. /", "root/. /"},
-					{"root/.. /", "root/.. /"},
-					{"root/..weirdname", "root/..weirdname"},
-					{"root/..", ""},
-					{"root/../a/b/../../..", ""},
-					{"root/./..", ""},
-					{"..", ""},
-					{".", ""},
-					{"root//dir", "root/dir"},
-					{"root/.              /", "root/.              /"},
-					{"root/..             /", "root/..             /"},
-					{"root/      .              /", "root/      .              /"},
-					{"root/      ..             /", "root/      ..             /"},
-					{"root/./", "root/"},
-					{"root/..                      /", "root/..                   /"},
-					{".//", ""}
-				};
-				for (int i = 0; i < test.GetUpperBound (1); i++) {
-					AssertEquals (String.Format ("GetFullPath UNC #{0}", i), uncroot + test [i, 1], Path.GetFullPath (uncroot + test [i, 0]));
-				}	
-			}
-			
-			try {
-				testFullPath = Path.GetFullPath (null);
-				Fail ("GetFullPath Fail #01");
-			} catch (Exception e) {
-				AssertEquals ("GetFullPath Exc. #01", typeof (ArgumentNullException), e.GetType ());
+			for (int i = 0; i < test.GetUpperBound (0); i++) {
+				AssertEquals (String.Format ("GetFullPathUnix #{0}", i),
+					root + test [i, 1], Path.GetFullPath (root + test [i, 0]));
 			}
 
-			try {
-				testFullPath = Path.GetFullPath (String.Empty);
-				Fail ("GetFullPath Fail #02");
-			} catch (Exception e) {
-				AssertEquals ("GetFullPath Exc. #02", typeof (ArgumentException), e.GetType ());
-			}
+
+			AssertEquals ("#01", "/", Path.GetFullPath ("/"));
+			AssertEquals ("#02", "/hey", Path.GetFullPath ("/hey"));
+			AssertEquals ("#03", Environment.CurrentDirectory, Path.GetFullPath ("."));
+			AssertEquals ("#04", Path.Combine (Environment.CurrentDirectory, "hey"),
+					     Path.GetFullPath ("hey"));
 		}
+
+		public void TestGetFullPathWindows ()
+		{
+			if (!Windows)
+				return;
+
+			string root =  "C:\\";
+			string [,] test = new string [,] {		
+				{"root////././././././../root/././../root", "root"},
+				{"root/", "root\\"},
+				{"root/./", "root\\"},
+				{"root/./", "root\\"},
+				{"root/../", ""},
+				{"root/../", ""},
+				{"root/../..", ""},
+				{"root/.hiddenfile", "root\\.hiddenfile"},
+				{"root/. /", "root\\"},
+				{"root/.. /", ""},
+				{"root/..weirdname", "root\\..weirdname"},
+				{"root/..", ""},
+				{"root/../a/b/../../..", ""},
+				{"root/./..", ""},
+				{"..", ""},
+				{".", ""},
+				{"root//dir", "root\\dir"},
+				{"root/.              /", "root\\"},
+				{"root/..             /", ""},
+				{"root/      .              /", "root\\"},
+				{"root/      ..             /", ""},
+				{"root/./", "root\\"},
+				{"root/..                      /", ""},
+				{".//", ""}
+			};
+
+			for (int i = 0; i < test.GetUpperBound (0); i++) {
+				AssertEquals (String.Format ("GetFullPathWindows #{0}", i),
+					root + test [i, 1], Path.GetFullPath (root + test [i, 0]));
+			}
+
+			// UNC tests
+			string root2 = @"\\server\share";
+			root = @"\\server\share\";
+			test = new string [,] {		
+				{"root////././././././../root/././../root", "root"},
+				{"root/", "root\\"},
+				{"root/./", "root\\"},
+				{"root/./", "root\\"},
+				{"root/../", ""},
+				{"root/../", ""},
+				{"root/../..", null},
+				{"root/.hiddenfile", "root\\.hiddenfile"},
+				{"root/. /", "root\\"},
+				{"root/.. /", ""},
+				{"root/..weirdname", "root\\..weirdname"},
+				{"root/..", null},
+				{"root/../a/b/../../..", null},
+				{"root/./..", null},
+				{"..", null},
+				{".", null},
+				{"root//dir", "root\\dir"},
+				{"root/.              /", "root\\"},
+				{"root/..             /", ""},
+				{"root/      .              /", "root\\"},
+				{"root/      ..             /", ""},
+				{"root/./", "root\\"},
+				{"root/..                      /", ""},
+				{".//", ""}
+			};
+
+			for (int i = 0; i < test.GetUpperBound (0); i++) {
+				// "null" means we have to compare against "root2"
+				string res = test [i, 1] != null
+					? root + test [i, 1]
+					: root2;
+				AssertEquals (String.Format ("GetFullPathWindows UNC #{0}", i),
+					res, Path.GetFullPath (root + test [i, 0]));
+			}	
+		}
+
 
 		public void TestGetFullPath2 ()
 		{
@@ -658,18 +718,6 @@ namespace MonoTests.System.IO
 			} else {
 				AssertEquals ("No win #01", "/etc", Path.GetDirectoryName ("/etc/hostname"));
 			}
-		}
-
-		public void TestGetFullPathUnix ()
-		{
-			if (Windows)
-				return;
-
-			AssertEquals ("#01", "/", Path.GetFullPath ("/"));
-			AssertEquals ("#02", "/hey", Path.GetFullPath ("/hey"));
-			AssertEquals ("#03", Environment.CurrentDirectory, Path.GetFullPath ("."));
-			AssertEquals ("#04", Path.Combine (Environment.CurrentDirectory, "hey"),
-					     Path.GetFullPath ("hey"));
 		}
 
 		[Test]

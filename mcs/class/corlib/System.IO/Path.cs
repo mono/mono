@@ -349,6 +349,8 @@ namespace System.IO {
 
 				if (path [0] != DirectorySeparatorChar)
 					path = path.Replace (AltDirectorySeparatorChar, DirectorySeparatorChar);
+
+				path = CanonicalizePath (path);
 			} else {
 				if (!IsPathRooted (path))
 					path = Directory.GetCurrentDirectory () + DirectorySeparatorStr + path;
@@ -586,16 +588,43 @@ namespace System.IO {
 
 			dirEqualsVolume = (DirectorySeparatorChar == VolumeSeparatorChar);
 		}
-		
+
+		// returns the server and share part of a UNC. Assumes "path" is a UNC.
+		static string GetServerAndShare (string path)
+		{
+			int len = 2;
+			while (len < path.Length && !IsDsc (path [len])) len++;
+
+			if (len < path.Length) {
+				len++;
+				while (len < path.Length && !IsDsc (path [len])) len++;
+			}
+
+			return path.Substring (2, len - 2).Replace (AltDirectorySeparatorChar, DirectorySeparatorChar);
+		}
+
+		// assumes Environment.IsRunningOnWindows == true
 		static bool SameRoot (string root, string path)
 		{
 			// compare root - if enough details are available
 			if ((root.Length < 2) || (path.Length < 2))
 				return false;
+
+			// UNC handling
+			if (IsDsc (root[0]) && IsDsc (root[1])) {
+				if (!(IsDsc (path[0]) && IsDsc (path[1])))
+					return false;
+
+				string rootShare = GetServerAndShare (root);
+				string pathShare = GetServerAndShare (path);
+
+				return String.Compare (rootShare, pathShare, true, CultureInfo.InvariantCulture) == 0;
+			}
+			
 			// same volume/drive
 			if (!root [0].Equals (path [0]))
 				return false;
-			// presence if the separator
+			// presence of the separator
 			if (path[1] != Path.VolumeSeparatorChar)
 				return false;
 			if ((root.Length > 2) && (path.Length > 2)) {
@@ -619,7 +648,7 @@ namespace System.IO {
 			// STEP 2: Check to see if this is only a root
 			string root = Path.GetPathRoot (path);
 			// it will return '\' for path '\', while it should return 'c:\' or so.
-			// Note: commenting this out makes the ened for the (target == 1...) check in step 5
+			// Note: commenting this out makes the need for the (target == 1...) check in step 5
 			//if (root == path) return path;
 
 			// STEP 3: split the directories, this gets rid of consecutative "/"'s
@@ -627,11 +656,23 @@ namespace System.IO {
 			// STEP 4: Get rid of directories containing . and ..
 			int target = 0;
 
+			bool isUnc = Environment.IsRunningOnWindows &&
+				root.Length > 2 && IsDsc (root[0]) && IsDsc (root[1]);
+
+			// Set an overwrite limit for UNC paths since '\' + server + share
+			// must not be eliminated by the '..' elimination algorithm.
+			int limit = isUnc ? 3 : 0;
+
 			for (int i = 0; i < dirs.Length; i++) {
+				// WIN32 path components must be trimmed
+				if (Environment.IsRunningOnWindows)
+					dirs[i] = dirs[i].Trim ();
+				
 				if (dirs[i] == "." || (i != 0 && dirs[i].Length == 0))
 					continue;
 				else if (dirs[i] == "..") {
-					if (target != 0)
+					// don't overwrite path segments below the limit
+					if (target > limit)
 						target--;
 				} else
 					dirs[target++] = dirs[i];
@@ -643,10 +684,16 @@ namespace System.IO {
 			else {
 				string ret = String.Join (DirectorySeparatorStr, dirs, 0, target);
 				if (Environment.IsRunningOnWindows) {
+					// append leading '\' of the UNC path that was lost in STEP 3.
+					if (isUnc)
+						ret = Path.DirectorySeparatorStr + ret;
+
 					if (!SameRoot (root, ret))
 						ret = root + ret;
-					// In GetFullPath(), it is assured that here never comes UNC. So this must only applied to such path that starts with '\', without drive specification.
-					if (!IsDsc (path[0]) && SameRoot (root, path)) {
+
+					if (isUnc) {
+						return ret;
+					} else if (!IsDsc (path[0]) && SameRoot (root, path)) {
 						if (ret.Length <= 2 && !ret.EndsWith (DirectorySeparatorStr)) // '\' after "c:"
 							ret += Path.DirectorySeparatorChar;
 						return ret;
