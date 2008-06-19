@@ -1,4 +1,4 @@
-// CS1624: The body of `C.Test<TSource>(IEnumerable<TSource>)' cannot be an iterator block because `TSource' is not an iterator interface type
+// CS1624: The body of `C.Test<TSource>(System.Collections.Generic.IEnumerable<TSource>)' cannot be an iterator block because `TSource' is not an iterator interface type
 // Line: 8
 
 using System.Collections.Generic;
