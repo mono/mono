@@ -1,3 +1,7 @@
+2008-06-19  Dick Porter  <dick@ximian.com>
+
+	* SocketTest.cs: Tests for generic Send() and Receive() methods.
+
 2007-11-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* UdpClientTest.cs: Fixed line endings.

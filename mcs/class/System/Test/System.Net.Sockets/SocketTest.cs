@@ -15,6 +15,10 @@ using System.Net;
 using System.Net.Sockets;
 using NUnit.Framework;
 
+#if NET_2_0
+using System.Collections.Generic;
+#endif
+
 namespace MonoTests.System.Net.Sockets
 {
 	[TestFixture]
@@ -2555,31 +2559,116 @@ namespace MonoTests.System.Net.Sockets
 		[Test]
 		public void ReceiveGeneric ()
 		{
-		}
-		
-		[Test]
-		public void ReceiveGenericSocketFlags ()
-		{
-		}
-		
-		[Test]
-		public void ReceiveGenericSocketFlagsSocketError ()
-		{
+			int i;
+
+			IPEndPoint endpoint = new IPEndPoint(IPAddress.Loopback, 1258);
+
+			Socket listensock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			listensock.Bind (endpoint);
+			listensock.Listen(1);
+
+			Socket sendsock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			sendsock.Connect(endpoint);
+
+			Socket clientsock = listensock.Accept();
+			
+			byte[] sendbuf = new byte[256];
+
+			for(i = 0; i < 256; i++) {
+				sendbuf[i] = (byte)i;
+			}
+			for (i = 4; i < 6; i++) {
+				Assert.AreEqual (sendbuf[i], (byte)i,
+						 "#1/" + i.ToString());
+			}
+
+			SocketError err;
+			sendsock.Send (sendbuf, 0, 256, SocketFlags.None,
+				       out err);
+
+
+			byte[] recvbuf = new byte[256];
+			List<ArraySegment<byte>> recvbuflist = new List<ArraySegment<byte>>(2);
+			recvbuflist.Add(new ArraySegment<byte>(recvbuf, 4, 2));
+			recvbuflist.Add(new ArraySegment<byte>(recvbuf, 20, 230));
+			
+			clientsock.Receive (recvbuflist);
+
+			/* recvbuf should now hold the first 2 bytes
+			 * of sendbuf from pos 4, and the next 230
+			 * bytes of sendbuf from pos 20
+			 */
+
+			for (i = 0; i < 2; i++) {
+				Assert.AreEqual (sendbuf[i], recvbuf[i + 4],
+						 "#2/" + i.ToString());
+			}
+			for (i = 2; i < 232; i++) {
+				Assert.AreEqual (sendbuf[i], recvbuf[i + 18],
+						 "#2/" + i.ToString());
+			}
+
+			sendsock.Close ();
+			clientsock.Close ();
+			listensock.Close ();
 		}
 		
 		[Test]
 		public void SendGeneric ()
 		{
-		}
-		
-		[Test]
-		public void SendGenericSocketFlags ()
-		{
-		}
-		
-		[Test]
-		public void SendGenericSocketFlagsSocketError ()
-		{
+			int i;
+
+			IPEndPoint endpoint = new IPEndPoint(IPAddress.Loopback, 1259);
+
+			Socket listensock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			listensock.Bind (endpoint);
+			listensock.Listen(1);
+
+			Socket sendsock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			sendsock.Connect(endpoint);
+
+			Socket clientsock = listensock.Accept();
+
+			byte[] sendbuf = new byte[256];
+			List<ArraySegment<byte>> sendbuflist = new List<ArraySegment<byte>>(2);
+
+			sendbuflist.Add(new ArraySegment<byte>(sendbuf, 4, 2));
+			sendbuflist.Add(new ArraySegment<byte>(sendbuf, 20, 230));
+
+			for(i = 0; i < 256; i++) {
+				sendbuf[i] = (byte)i;
+			}
+			for (i = 4; i < 6; i++) {
+				Assert.AreEqual (sendbuf[i], (byte)i,
+						 "#1/" + i.ToString());
+			}
+
+			SocketError err;
+			sendsock.Send (sendbuflist, SocketFlags.None, out err);
+
+			
+			byte[] recvbuf = new byte[256];
+
+			clientsock.Receive (recvbuf);
+
+			/* The first 2 bytes of recvbuf should now
+			 * hold 2 bytes of sendbuf from pos 4, and the
+			 * next 230 bytes of recvbuf should be sendbuf
+			 * from pos 20
+			 */
+
+			for (i = 0; i < 2; i++) {
+				Assert.AreEqual (recvbuf[i], sendbuf[i + 4],
+						 "#2/" + i.ToString());
+			}
+			for (i = 2; i < 232; i++) {
+				Assert.AreEqual (recvbuf[i], sendbuf[i + 18],
+						 "#2/" + i.ToString());
+			}
+
+			sendsock.Close ();
+			clientsock.Close ();
+			listensock.Close ();
 		}
 
 		[Test]

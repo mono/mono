@@ -1,3 +1,8 @@
+2008-06-19  Dick Porter  <dick@ximian.com>
+
+	* Socket.cs: Implement generic Send() and Receive() methods.
+	Fixes bug 395168.
+
 2008-06-12  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* Socket.cs: minimal changes to run in the 2.1 profile

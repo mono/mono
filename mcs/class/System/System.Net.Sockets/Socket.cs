@@ -66,8 +66,17 @@ namespace System.Net.Sockets
 			UsedInProcess,
 			UsedInConsole2,
 			Disconnect,
-			AcceptReceive
+			AcceptReceive,
+			ReceiveGeneric,
+			SendGeneric
 		}
+
+		[StructLayout (LayoutKind.Sequential)]
+		struct WSABUF 
+		{
+			public int len;
+			public IntPtr buf;
+		};
 
 		[StructLayout (LayoutKind.Sequential)]
 		private sealed class SocketAsyncResult: IAsyncResult
@@ -472,6 +481,25 @@ namespace System.Net.Sockets
 				result.Complete (total);
 			}
 
+			public void ReceiveGeneric ()
+			{
+#if NET_2_0
+				int total = 0;
+				try {
+					SocketError error;
+					
+					total = result.Sock.Receive (result.Buffers, result.SockFlags, out error);
+				} catch (Exception e) {
+					result.Complete (e);
+					return;
+				}
+				
+				result.Complete (total);
+#else
+				result.Complete (new SocketException ((int)SocketError.Fault));
+#endif
+			}
+
 			int send_so_far;
 
 			void UpdateSendValues (int last_sent)
@@ -526,6 +554,25 @@ namespace System.Net.Sockets
 				}
 
 				result.Complete ();
+			}
+
+			public void SendGeneric ()
+			{
+#if NET_2_0
+				int total = 0;
+				try {
+					SocketError error;
+					
+					total = result.Sock.Send (result.Buffers, result.SockFlags, out error);
+				} catch (Exception e) {
+					result.Complete (e);
+					return;
+				}
+				
+				result.Complete (total);
+#else
+				result.Complete (new SocketException ((int)SocketError.Fault));
+#endif
 			}
 		}
 			
@@ -1678,13 +1725,13 @@ namespace System.Net.Sockets
 
 			SocketAsyncResult req;
 			lock(readQ) {
-				req = new SocketAsyncResult (this, state, callback, SocketOperation.Receive);
+				req = new SocketAsyncResult (this, state, callback, SocketOperation.ReceiveGeneric);
 				req.Buffers = buffers;
 				req.SockFlags = socketFlags;
 				readQ.Enqueue (req);
 				if (readQ.Count == 1) {
 					Worker worker = new Worker (req);
-					SocketAsyncCall sac = new SocketAsyncCall (worker.Receive);
+					SocketAsyncCall sac = new SocketAsyncCall (worker.ReceiveGeneric);
 					sac.BeginInvoke (null, req);
 				}
 			}
@@ -1848,13 +1895,13 @@ namespace System.Net.Sockets
 
 			SocketAsyncResult req;
 			lock (writeQ) {
-				req = new SocketAsyncResult (this, state, callback, SocketOperation.Send);
+				req = new SocketAsyncResult (this, state, callback, SocketOperation.SendGeneric);
 				req.Buffers = buffers;
 				req.SockFlags = socketFlags;
 				writeQ.Enqueue (req);
 				if (writeQ.Count == 1) {
 					Worker worker = new Worker (req);
-					SocketAsyncCall sac = new SocketAsyncCall (worker.Send);
+					SocketAsyncCall sac = new SocketAsyncCall (worker.SendGeneric);
 					sac.BeginInvoke (null, req);
 				}
 			}
@@ -2770,30 +2817,88 @@ namespace System.Net.Sockets
 			return Receive_nochecks (buf, offset, size, flags, out error);
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static int Receive_internal (IntPtr sock,
+							    WSABUF[] bufarray,
+							    SocketFlags flags,
+							    out int error);
+		
 		public int Receive (IList<ArraySegment<byte>> buffers)
 		{
-			/* For these generic IList overloads I need to
-			 * implement WSARecv in the runtime
-			 */
-			throw new NotImplementedException ();
+			int ret;
+			SocketError error;
+			
+			ret = Receive (buffers, SocketFlags.None, out error);
+			if (error != SocketError.Success) {
+				throw new SocketException ((int)error);
+			}
+			
+			return(ret);
 		}
 		
 		[CLSCompliant (false)]
-		[MonoTODO]
 		public int Receive (IList<ArraySegment<byte>> buffers,
 				    SocketFlags socketFlags)
 		{
-			throw new NotImplementedException ();
+			int ret;
+			SocketError error;
+			
+			ret = Receive (buffers, socketFlags, out error);
+			if (error != SocketError.Success) {
+				throw new SocketException ((int)error);
+			}
+			
+			return(ret);
 		}
 
 		[CLSCompliant (false)]
-		[MonoTODO]
 		public int Receive (IList<ArraySegment<byte>> buffers,
 				    SocketFlags socketFlags,
 				    out SocketError errorCode)
 		{
-			throw new NotImplementedException ();
+			if (buffers == null ||
+			    buffers.Count == 0) {
+				throw new ArgumentNullException ("buffers");
+			}
+			
+			if (disposed && closed) {
+				throw new ObjectDisposedException (GetType ().ToString ());
+			}
+
+			int numsegments = buffers.Count;
+			int nativeError;
+			int ret;			
+
+			/* Only example I can find of sending a byte
+			 * array reference directly into an internal
+			 * call is in
+			 * System.Runtime.Remoting/System.Runtime.Remoting.Channels.Ipc.Win32/NamedPipeSocket.cs,
+			 * so taking a lead from that...
+			 */
+			WSABUF[] bufarray = new WSABUF[numsegments];
+			GCHandle[] gch = new GCHandle[numsegments];
+
+			for(int i = 0; i < numsegments; i++) {
+				ArraySegment<byte> segment = buffers[i];
+				gch[i] = GCHandle.Alloc (segment.Array, GCHandleType.Pinned);
+				bufarray[i].len = segment.Count;
+				bufarray[i].buf = Marshal.UnsafeAddrOfPinnedArrayElement (segment.Array, segment.Offset);
+			}
+			
+			try {
+				ret = Receive_internal (socket, bufarray,
+							socketFlags,
+							out nativeError);
+			} finally {
+				for(int i = 0; i < numsegments; i++) {
+					if (gch[i].IsAllocated) {
+						gch[i].Free ();
+					}
+				}
+			}
+
+			errorCode = (SocketError)nativeError;
+			return(ret);
 		}
 #endif
 
@@ -3118,29 +3223,84 @@ namespace System.Net.Sockets
 			return Send_nochecks (buf, offset, size, flags, out error);
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static int Send_internal (IntPtr sock,
+							 WSABUF[] bufarray,
+							 SocketFlags flags,
+							 out int error);
+
 		public int Send (IList<ArraySegment<byte>> buffers)
 		{
-			/* For these generic IList overloads I need to
-			 * implement WSASend in the runtime
-			 */
-			throw new NotImplementedException ();
+			int ret;
+			SocketError error;
+			
+			ret = Send (buffers, SocketFlags.None, out error);
+			if (error != SocketError.Success) {
+				throw new SocketException ((int)error);
+			}
+			
+			return(ret);
 		}
 
-		[MonoTODO]
 		public int Send (IList<ArraySegment<byte>> buffers,
 				 SocketFlags socketFlags)
 		{
-			throw new NotImplementedException ();
+			int ret;
+			SocketError error;
+			
+			ret = Send (buffers, socketFlags, out error);
+			if (error != SocketError.Success) {
+				throw new SocketException ((int)error);
+			}
+			
+			return(ret);
 		}
 
 		[CLSCompliant (false)]
-		[MonoTODO]
 		public int Send (IList<ArraySegment<byte>> buffers,
 				 SocketFlags socketFlags,
 				 out SocketError errorCode)
 		{
-			throw new NotImplementedException ();
+			if (disposed && closed) {
+				throw new ObjectDisposedException (GetType ().ToString ());
+			}
+			
+			if (buffers == null) {
+				throw new ArgumentNullException ("buffers");
+			}
+			
+			if (buffers.Count == 0) {
+				throw new ArgumentException ("Buffer is empty", "buffers");
+			}
+			
+			int numsegments = buffers.Count;
+			int nativeError;
+			int ret;
+			
+			WSABUF[] bufarray = new WSABUF[numsegments];
+			GCHandle[] gch = new GCHandle[numsegments];
+			
+			for(int i = 0; i < numsegments; i++) {
+				ArraySegment<byte> segment = buffers[i];
+				gch[i] = GCHandle.Alloc (segment.Array, GCHandleType.Pinned);
+				bufarray[i].len = segment.Count;
+				bufarray[i].buf = Marshal.UnsafeAddrOfPinnedArrayElement (segment.Array, segment.Offset);
+			}
+			
+			try {
+				ret = Send_internal (socket, bufarray,
+						     socketFlags,
+						     out nativeError);
+			} finally {
+				for(int i = 0; i < numsegments; i++) {
+					if (gch[i].IsAllocated) {
+						gch[i].Free ();
+					}
+				}
+			}
+			
+			errorCode = (SocketError)nativeError;
+			return(ret);
 		}
 #endif
 
