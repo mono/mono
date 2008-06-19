@@ -1,5 +1,10 @@
 2008-06-19  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #359611, #359604
+	* anonymous.cs: Mutate all types of hoisted parameters.
+
+2008-06-19  Marek Safar  <marek.safar@gmail.com>
+
 	* typemanager.cs, lambda.cs, parameter.cs, ecore.cs, linq.cs, class.cs
 	delegate.cs, iterators.cs, cs-parser.jay, assign.cs, anonymous.cs, driver.cs
 	expression.cs, codegen.cs, statement.cs

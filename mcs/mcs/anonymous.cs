@@ -1048,12 +1048,11 @@ namespace Mono.CSharp {
 			public override bool Define ()
 			{
 				if (Storey != null && Storey.IsGeneric) {
+				
 					if (!Parameters.Empty) {
 						Type [] ptypes = Parameters.Types;
-						for (int i = 0; i < ptypes.Length; ++i) {
-							if (TypeManager.IsGenericParameter (ptypes [i]))
-								ptypes [i] = Storey.MutateType (ptypes [i]);
-						}
+						for (int i = 0; i < ptypes.Length; ++i)
+							ptypes [i] = Storey.MutateType (ptypes [i]);
 					}
 
 					member_type = Storey.MutateType (ReturnType);
