@@ -4,7 +4,7 @@
 	UNC paths as well.
 	* Path.cs (GetServerAndShare): New helper method.
 	* Path.cs (SameRoot, CanonicalizePath): Add UNC support.
-	Fixes #394681 and a bunch of TestGetFullPath unit cases.
+	Fixes #394681 and a bunch of TestGetFullPath unit test cases.
 	All changes are Win32 related.
 
 2008-05-14  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
