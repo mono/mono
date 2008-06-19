@@ -1,5 +1,11 @@
 2008-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataTableTest.cs : do not just copy [Ignore]d tests from DataSet
+	  without [Ignore]. They won't pass.
+	  Also, what is that TARGET_JVM use? It looks inconsistent.
+
+2008-06-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataSetInferXmlSchemaTest.cs: correction in code comment.
 
 2008-06-17  Atsushi Enomoto  <atsushi@ximian.com>

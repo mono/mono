@@ -3643,6 +3643,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[Ignore ("MS behavior is far from consistent to be regarded as a reference implementation.")]
+		// See the same-named tests in DataSetTest.cs
 #if TARGET_JVM
 		[Category ("NotWorking")]
 #endif
@@ -3757,6 +3759,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[Ignore ("MS behavior is far from consistent to be regarded as a reference implementation.")]
+		// See the same-named tests in DataSetTest.cs
 #if TARGET_JVM
 		[Category ("NotWorking")]
 #endif
