@@ -1,5 +1,10 @@
 2008-06-19  Dick Porter  <dick@ximian.com>
 
+	* socket-io.c (convert_socketflags): Ignore SocketFlags.Partial.
+	Fixes bug 349688.
+
+2008-06-19  Dick Porter  <dick@ximian.com>
+
 	* socket-io.c:
 	* icall-def.h: Implement Socket generic Send() and Receive()
 	methods.  Fixes bug 395168.
