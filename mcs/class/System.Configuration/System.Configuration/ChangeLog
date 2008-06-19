@@ -1,3 +1,7 @@
+2008-06-19  Jb Evain  <jbevain@novell.com>
+
+	* ConfigurationPermissionAttribute.cs (CreatePermission): implement.
+
 2008-05-28  Marek Habersack  <mhabersack@novell.com>
 
 	* Configuration.cs: set the ConfigContext when getting

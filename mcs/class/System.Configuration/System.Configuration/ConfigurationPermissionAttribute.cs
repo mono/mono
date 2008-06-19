@@ -36,14 +36,7 @@ using System.Runtime.InteropServices;
 namespace System.Configuration {
 
 	[Serializable]
-        [AttributeUsage(
-                AttributeTargets.All
-                | AttributeTargets.Class
-                | AttributeTargets.Struct
-                | AttributeTargets.Constructor
-                | AttributeTargets.Method,
-                AllowMultiple=true,
-                Inherited=false)]
+	[AttributeUsage (AttributeTargets.All, AllowMultiple=true, Inherited=false)]
 	public sealed class ConfigurationPermissionAttribute : CodeAccessSecurityAttribute
 	{
 		public ConfigurationPermissionAttribute (SecurityAction action)
@@ -51,10 +44,9 @@ namespace System.Configuration {
 		{
 		}
 
-		[MonoTODO]
 		public override IPermission CreatePermission ()
 		{
-			throw new NotImplementedException ();
+			return new ConfigurationPermission (this.Unrestricted ? PermissionState.Unrestricted : PermissionState.None);
 		}
 	}
 
