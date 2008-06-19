@@ -223,12 +223,16 @@ namespace MonoTests.System
 			app_domain_initialized = true;
 		}
 
+		public void InstanceInitializer (string [] args)
+		{
+		}
+
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void AppDomainInitializerNonStaticMethod ()
 		{
 			AppDomainSetup s = new AppDomainSetup ();
-			s.AppDomainInitializer = delegate (string [] args) {};
+			s.AppDomainInitializer = InstanceInitializer;
 			AppDomain.CreateDomain ("MyDomain", null, s);
 		}
 #endif
