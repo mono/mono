@@ -1,4 +1,8 @@
-﻿2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+2008-06-19  Kornél Pál  <kornelpal@gmail.com>
+
+	* Marshal.cs: Implement GetHINSTANCE.
+
+2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* _EventInfo.cs
 	* _FieldInfo.cs

@@ -377,10 +377,12 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static IntPtr GetHINSTANCE (Module m)
 		{
-			throw new NotImplementedException ();
+			if (m == null)
+				throw new ArgumentNullException ("m");
+
+			return m.GetHINSTANCE ();
 		}
 
 		[MonoTODO ("SetErrorInfo")]

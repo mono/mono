@@ -1,3 +1,7 @@
+2008-06-19  Kornél Pál  <kornelpal@gmail.com>
+
+	* Module.cs: Add internal GetHINSTANCE.
+
 2008-06-02  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* Binder.cs, MonoGenericClass.cs: For property reflection we should 

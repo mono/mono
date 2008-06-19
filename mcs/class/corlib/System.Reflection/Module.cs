@@ -446,6 +446,9 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern IntPtr GetHINSTANCE ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern string GetGuidInternal ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
