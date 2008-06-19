@@ -1,6 +1,6 @@
 2008-06-19  Dick Porter  <dick@ximian.com>
 
-	* Process.cs: Match the buffer sizes of StreamWriter and
+	* Process.cs: Match the buffer sizes of StreamReader and
 	MonoSyncFileStream for redirected stdout and stderr.  Fixes bug
 	401225.
 
