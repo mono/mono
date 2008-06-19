@@ -1,3 +1,9 @@
+2008-06-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TestMerge1.xml : new test file.
+	* DataSetTest2.cs : added test for Merge() to verify that it copies
+	  constraints in DataRelation.
+
 2008-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataTableTest.cs : do not just copy [Ignore]d tests from DataSet

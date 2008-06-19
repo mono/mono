@@ -223,7 +223,7 @@ namespace System.Data
 					DataColumn[] childColumns = ResolveColumns (targetSet.Tables [relation.ChildTable.TableName],
 							relation.ChildColumns);
 					targetRelation = targetSet.Relations.Add (relation.RelationName, parentColumns,
-							childColumns, false);
+							childColumns, relation.createConstraints);
 					targetRelation.Nested = relation.Nested;
 				} else if (!CompareColumnArrays (relation.ParentColumns, targetRelation.ParentColumns) ||
 						!CompareColumnArrays (relation.ChildColumns, targetRelation.ChildColumns)) {

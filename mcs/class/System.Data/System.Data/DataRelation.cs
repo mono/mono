@@ -59,7 +59,8 @@ namespace System.Data
 		private DataColumn[] parentColumns;
 		private DataColumn[] childColumns;
 		private bool nested;
-		internal bool createConstraints;
+		internal bool createConstraints = true;
+		private bool initFinished;
 		private PropertyCollection extendedProperties;
 		private PropertyChangedEventHandler onPropertyChangingDelegate;
 
@@ -183,7 +184,7 @@ namespace System.Data
 
 			this.RelationName = _relationName;
 			this.Nested = _nested;
-			this.createConstraints = false;
+			this.initFinished = true;
 			this.extendedProperties = new PropertyCollection ();
 			InitInProgress = false;
 #if NET_2_0
@@ -345,7 +346,7 @@ namespace System.Data
                 
         internal void UpdateConstraints ()
         {
-            if ( ! createConstraints)
+            if (initFinished || ! createConstraints)
                 return;
             
             ForeignKeyConstraint    foreignKeyConstraint    = null;

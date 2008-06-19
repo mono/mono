@@ -1474,7 +1474,7 @@ namespace MonoTests_System.Data
 			ds.Merge (ds1);
 			Assert.AreEqual (1, ds.Relations.Count , "#1");
 			Assert.AreEqual (0, ds.Tables [0].Constraints.Count , "#2");
-			Assert.AreEqual (0, ds.Tables [1].Constraints.Count , "#2");
+			Assert.AreEqual (0, ds.Tables [1].Constraints.Count , "#3");
 		}
 
 		[Test]
@@ -1547,6 +1547,18 @@ namespace MonoTests_System.Data
 
 			Assert.AreEqual (0, ds2.Tables [0].Constraints.Count, "#5");
 			Assert.AreEqual (0, ds2.Tables [1].Constraints.Count, "#6");
+		}
+
+		[Test]
+		public void Merge_ConstraintsFromReadXmlSchema ()
+		{
+			DataSet ds = new DataSet ();
+			ds.ReadXml ("Test/System.Data/TestMerge1.xml");
+			DataSet ds2 = new DataSet ();
+			ds2.Merge (ds, true, MissingSchemaAction.AddWithKey);
+			DataRelation c = ds2.Tables [0].ChildRelations [0];
+			Assert.IsNotNull (c.ParentKeyConstraint, "#1");
+			Assert.IsNotNull (c.ChildKeyConstraint, "#2");
 		}
 
 		[Test]

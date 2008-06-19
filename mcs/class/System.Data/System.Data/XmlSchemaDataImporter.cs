@@ -1162,7 +1162,7 @@ namespace System.Data
 
 			if (!c.IsConstraintOnly) {
 				// generate the relation.
-				DataRelation rel = new DataRelation (c.ConstraintName, uniq.Columns, cols, false);
+				DataRelation rel = new DataRelation (c.ConstraintName, uniq.Columns, cols, true);
 				rel.Nested = c.IsNested;
 				rel.SetParentKeyConstraint (uniq);
 				rel.SetChildKeyConstraint (fkc);
