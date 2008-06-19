@@ -430,6 +430,7 @@ namespace Mono.CSharp {
 
 		public ConstructorInfo MutateConstructor (ConstructorInfo ctor)
 		{
+#if GMCS_SOURCE		
 			if (TypeManager.IsGenericType (ctor.DeclaringType)) {
 				Type t = MutateGenericType (ctor.DeclaringType);
 				if (t != ctor.DeclaringType) {
@@ -437,7 +438,7 @@ namespace Mono.CSharp {
 					return TypeBuilder.GetConstructor (t, ctor);
 				}
 			}
-
+#endif
 			return ctor;
 		}
 
