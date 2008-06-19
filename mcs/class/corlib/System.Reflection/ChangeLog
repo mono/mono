@@ -1,3 +1,8 @@
+2008-06-19  Marek Safar  <marek.safar@gmail.com>
+
+	* MonoGenericClass.cs (GetConstructor): Put back removed code due to obscure
+	System.Reflection.MonoGenericCMethod.
+
 2008-06-19  Kornél Pál  <kornelpal@gmail.com>
 
 	* Module.cs: Add internal GetHINSTANCE.

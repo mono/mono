@@ -69,6 +69,9 @@ namespace System.Reflection
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern MethodInfo GetCorrespondingInflatedMethod (MethodInfo generic);
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern ConstructorInfo GetCorrespondingInflatedConstructor (ConstructorInfo generic);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		protected extern MethodInfo[] GetMethods_internal (Type reflected_type);
@@ -158,6 +161,8 @@ namespace System.Reflection
 
 		internal override ConstructorInfo GetConstructor (ConstructorInfo fromNoninstanciated)
 		{
+			initialize ();
+		
 #if NET_2_0
 			if (fromNoninstanciated is ConstructorBuilder) {
 				ConstructorBuilder cb = (ConstructorBuilder)fromNoninstanciated;
@@ -167,8 +172,9 @@ namespace System.Reflection
 					ctors [cb] = new ConstructorOnTypeBuilderInst (this, cb);
 				return (ConstructorInfo)ctors [cb];
 			}
+			
 #endif
-			return null;
+			return GetCorrespondingInflatedConstructor (fromNoninstanciated);
 		}
 
 		internal override FieldInfo GetField (FieldInfo fromNoninstanciated)
