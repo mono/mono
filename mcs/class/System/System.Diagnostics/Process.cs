@@ -1088,12 +1088,12 @@ namespace System.Diagnostics {
 
 			if (startInfo.RedirectStandardOutput == true) {
 				MonoIO.Close (stdout_wr, out error);
-				process.output_stream = new StreamReader (new MonoSyncFileStream (process.stdout_rd, FileAccess.Read, true, 8192), stdoutEncoding);
+				process.output_stream = new StreamReader (new MonoSyncFileStream (process.stdout_rd, FileAccess.Read, true, 8192), stdoutEncoding, true, 8192);
 			}
 
 			if (startInfo.RedirectStandardError == true) {
 				MonoIO.Close (stderr_wr, out error);
-				process.error_stream = new StreamReader (new MonoSyncFileStream (process.stderr_rd, FileAccess.Read, true, 8192), stderrEncoding);
+				process.error_stream = new StreamReader (new MonoSyncFileStream (process.stderr_rd, FileAccess.Read, true, 8192), stderrEncoding, true, 8192);
 			}
 
 			process.StartExitCallbackIfNeeded ();
