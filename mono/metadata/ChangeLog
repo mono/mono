@@ -1,3 +1,9 @@
+2008-06-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* loader.c (mono_loader_init): Make this callable multiple times.
+	(mono_dllmap_insert): Call mono_loader_init () so this works even before
+	the runtime is initialized. Fixes #401755.
+
 2008-06-19  Dick Porter  <dick@ximian.com>
 
 	* socket-io.c (convert_socketflags): Ignore SocketFlags.Partial.
