@@ -167,7 +167,10 @@ namespace System.Windows.Forms
 			if (s.Width < 23)
 				s.Width = 23;
 
-			s.Width += (this.drop_down_button_width - 2);
+			// If we are a fixed size, we can't add more in for the drop down
+			// button, but we can for autosize
+			if (AutoSize)
+				s.Width += (this.drop_down_button_width - 2);
 			
 			return s;
 		}

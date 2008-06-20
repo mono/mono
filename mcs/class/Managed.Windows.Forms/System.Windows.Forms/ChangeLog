@@ -1,3 +1,8 @@
+2008-06-20  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripSplitButton.cs: We can't add in extra width if
+	the button is not AutoSize.  [Fixes bug #401279]
+
 2008-06-20  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PaddingConverter.cs: 
