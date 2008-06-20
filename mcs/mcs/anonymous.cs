@@ -1231,7 +1231,12 @@ namespace Mono.CSharp {
 		//
 		AnonymousMethodMethod DoCreateMethodHost (EmitContext ec)
 		{
+			//
+			// Searches references and parent blocks for the best store for
+			// this anynous method
+			//
 			AnonymousMethodStorey storey = FindBestMethodStorey ();
+			
 			if (referenced_storeys != null && referenced_storeys.Count > 1) {
 				foreach (AnonymousMethodStorey s in referenced_storeys) {
 					if (s == storey)
@@ -1240,6 +1245,13 @@ namespace Mono.CSharp {
 					storey.AddParentStoreyReference (s);
 					Block.Parent.Explicit.PropagateStoreyReference (s);
 				}
+			} else {
+				//
+				// Ensure we have a reference between this block and a storey
+				// where this anymous method is created
+				//
+				if (Block.Parent != null)
+					Block.Parent.Explicit.PropagateStoreyReference (storey);
 			}
 
 			//
@@ -1328,6 +1340,10 @@ namespace Mono.CSharp {
 		//
 		AnonymousMethodStorey FindBestMethodStorey ()
 		{
+			//
+			// When no storey reference exists, use the nearest block which has
+			// a storey
+			//
 			if (referenced_storeys == null) {
 				for (Block b = Block.Parent; b != null; b = b.Parent) {
 					AnonymousMethodStorey s = b.Explicit.AnonymousMethodStorey;
@@ -1338,8 +1354,13 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (referenced_storeys.Count == 1)
+			//
+			// We have storey reference, emit method in referenced storey
+			//
+			if (referenced_storeys.Count == 1) {
+				// TODO: Remove reference when appropriate
 				return (AnonymousMethodStorey) referenced_storeys [0];
+			}
 
 			for (Block b = Block.Parent; b != null; b = b.Parent) {
 				foreach (AnonymousMethodStorey storey in referenced_storeys) {
