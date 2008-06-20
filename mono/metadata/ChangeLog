@@ -1,3 +1,8 @@
+2008-06-20  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c (get_socket_assembly): Cope with Moonlight network
+	classes being in a different assembly.  Fixes bug 399184.
+
 2008-06-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* loader.c (mono_loader_init): Make this callable multiple times.
