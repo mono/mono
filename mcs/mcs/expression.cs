@@ -7826,7 +7826,6 @@ namespace Mono.CSharp {
 		public ArrayAccess (ElementAccess ea_data, Location l)
 		{
 			ea = ea_data;
-			eclass = ExprClass.Variable;
 			loc = l;
 		}
 
@@ -7852,6 +7851,9 @@ namespace Mono.CSharp {
 				return null;
 			}
 #endif
+
+			if (eclass != ExprClass.Invalid)
+				return this;
 
 			Type t = ea.Expr.Type;
 			int rank = ea.Arguments.Count;

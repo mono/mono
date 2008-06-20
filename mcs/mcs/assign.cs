@@ -635,9 +635,10 @@ namespace Mono.CSharp {
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
-			CompoundAssign target = (CompoundAssign) t;
+			CompoundAssign ctarget = (CompoundAssign) t;
 
-			target.original_source = original_source.Clone (clonectx);
+			ctarget.original_source = ctarget.source = source.Clone (clonectx);
+			ctarget.target = target.Clone (clonectx);
 		}
 	}
 }

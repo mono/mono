@@ -1,3 +1,8 @@
+2008-06-20  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #387615
+	* assign.cs, expression.cs: Correctly clone compound assignment.
+
 2008-06-19  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #359611, #359604
