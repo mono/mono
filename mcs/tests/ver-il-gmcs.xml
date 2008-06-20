@@ -16130,6 +16130,30 @@
       </method>
     </type>
   </test>
+  <test name="ltest-19.cs">
+    <type name="Crasher">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Crash()">
+        <size>36</size>
+      </method>
+      <method name="Void Do(System.Action)">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="Crasher+&lt;Crash&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__0()">
+        <size>27</size>
+      </method>
+    </type>
+  </test>
   <test name="test-1.cs">
     <type name="X">
       <method name="Void .ctor()">
