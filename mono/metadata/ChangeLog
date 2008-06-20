@@ -1,5 +1,19 @@
 2008-06-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-internals.h: Added MonoDynamicImage::methodspec
+	hashtable to store methodspec tokens created for MethodBuilders.
+
+	* reflection.c (mono_image_get_methodbuilder_token): Encode generic
+	MethodBuilders as open instantiations if a methodspec was requested.
+
+	* reflection.c (fixup_method): Skip MethodBuilder with methodspec tokens.
+
+	* reflection.c (create_dynamic_mono_image): Create the methodspec hashtable.
+
+	* reflection.c (mono_dynamic_image_free): Release the methodspec hashtable.
+
+2008-06-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* loader.c (method_from_methodspec): Avoid crashing if the
 	method lookup fails.
 
