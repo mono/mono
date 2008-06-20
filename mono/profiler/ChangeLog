@@ -1,3 +1,7 @@
+2008-06-17  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-oprofile.c (write_statistical_hit): Use the proper
+	domain instead of trying to get one.
+
 2008-06-16  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-oprofile.c (module_end_load, assembly_end_load):
 	Properly check the return value of "mono_assembly_fill_assembly_name",
