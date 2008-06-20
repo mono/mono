@@ -1,3 +1,7 @@
+2008-06-20  Jb Evain  <jbevain@novell.com>
+
+	* ExecutionScope.cs (CreateDelegate): implement.
+
 2008-04-19  Jb Evain  <jbevain@novell.com>
 
 	* ExecutionScope.cs: change the constructor to take a list

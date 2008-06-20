@@ -38,14 +38,23 @@ namespace System.Runtime.CompilerServices {
 		public object [] Locals;
 		public ExecutionScope Parent;
 
-		internal ExecutionScope (object [] globals)
+		internal CompilationContext context;
+
+		internal ExecutionScope (CompilationContext context)
 		{
-			this.Globals = globals;
+			this.context = context;
+			this.Globals = context.GetGlobals ();
+		}
+
+		internal ExecutionScope (CompilationContext context, ExecutionScope parent)
+			: this (context)
+		{
+			this.Parent = parent;
 		}
 
 		public Delegate CreateDelegate (int indexLambda, object [] locals)
 		{
-			throw new NotSupportedException ();
+			return context.CreateDelegate (indexLambda, new ExecutionScope (context, this));
 		}
 
 		public object [] CreateHoistedLocals ()
