@@ -102,6 +102,34 @@ namespace MonoTests.System.ComponentModel.Design
 			Assert.IsNull (parent.GetService (typeof (ICollection)), "#F2");
 		}
 
+#if NET_2_0
+		[Test]
+		public void AddService1_Disposed ()
+		{
+			object service;
+			ServiceContainer sc;
+
+			object serviceInstance1 = new ArrayList ();
+			object serviceInstance2 = new Hashtable ();
+
+			sc = new ServiceContainer ();
+			sc.AddService (typeof (ICollection), serviceInstance1);
+			service = sc.GetService (typeof (ICollection));
+			Assert.IsNotNull (service, "#A1");
+			Assert.AreSame (serviceInstance1, service, "#A2");
+
+			sc.Dispose ();
+
+			service = sc.GetService (typeof (ICollection));
+			Assert.IsNull (service, "#B");
+
+			sc.AddService (typeof (ICollection), serviceInstance2);
+			service = sc.GetService (typeof (ICollection));
+			Assert.IsNotNull (service, "#C1");
+			Assert.AreSame (serviceInstance2, service, "#C2");
+		}
+#endif
+
 		[Test] // AddService (Type, Object)
 		public void AddService1_ServiceInstance_Null ()
 		{
@@ -189,6 +217,32 @@ namespace MonoTests.System.ComponentModel.Design
 			}
 		}
 
+#if NET_2_0
+		[Test] // AddService (Type, ServiceCreatorCallback)
+		public void AddService2_Disposed ()
+		{
+			object service;
+			ServiceContainer sc;
+
+			object callback = new ServiceCreatorCallback (
+				Svc.ServiceCreator);
+
+			sc = new ServiceContainer ();
+			sc.AddService (typeof (Svc), callback);
+			service = sc.GetService (typeof (Svc));
+			Assert.IsNotNull (service, "#A");
+
+			sc.Dispose ();
+
+			service = sc.GetService (typeof (Svc));
+			Assert.IsNull (service, "#B");
+
+			sc.AddService (typeof (Svc), callback);
+			service = sc.GetService (typeof (Svc));
+			Assert.IsNotNull (service, "#C");
+		}
+#endif
+
 		[Test] // AddService (Type, ServiceCreatorCallback)
 		public void AddService2_ServiceType_Null ()
 		{
@@ -243,6 +297,39 @@ namespace MonoTests.System.ComponentModel.Design
 			Assert.AreSame (serviceInstance2, sc.GetService (serviceType1), "#C1");
 			Assert.AreSame (serviceInstance1, parent.GetService (serviceType1), "#C2");
 		}
+
+#if NET_2_0
+		[Test] // AddService (Type, Object, Boolean)
+		public void AddService3_Disposed ()
+		{
+			ServiceContainer sc;
+			ServiceContainer parent = new ServiceContainer ();
+
+			ArrayList serviceInstance1 = new ArrayList ();
+			ArrayList serviceInstance2 = new ArrayList ();
+
+			Type serviceType1 = typeof (IList);
+			Type serviceType2 = typeof (IEnumerable);
+
+			sc = new ServiceContainer (parent);
+			sc.AddService (serviceType1, serviceInstance1, true);
+			sc.AddService (serviceType2, serviceInstance2, false);
+
+			sc.Dispose ();
+
+			Assert.AreSame (serviceInstance1, parent.GetService (serviceType1), "#A1");
+			Assert.IsNull (parent.GetService (serviceType2), "#A2");
+			Assert.AreSame (serviceInstance1, sc.GetService (serviceType1), "#A3");
+			Assert.IsNull (sc.GetService (serviceType2), "#A4");
+
+			sc.AddService (serviceType2, serviceInstance2, false);
+
+			Assert.AreSame (serviceInstance1, parent.GetService (serviceType1), "#B1");
+			Assert.IsNull (parent.GetService (serviceType2), "#B2");
+			Assert.AreSame (serviceInstance1, sc.GetService (serviceType1), "#B3");
+			Assert.AreSame (serviceInstance2, sc.GetService (serviceType2), "#B4");
+		}
+#endif
 
 		[Test] // AddService (Type, Object, Boolean)
 		public void AddService3_ServiceInstance_Null ()
@@ -364,16 +451,27 @@ namespace MonoTests.System.ComponentModel.Design
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void GeneralTest2 ()
 		{
 			ServiceContainer sc = new ServiceContainer ();
 
 			sc.AddService (typeof (Svc), new Svc ());
 			Svc service1 = sc.GetService (typeof (Svc)) as Svc;
-			Assert.IsNotNull (service1, "#1");
+			Assert.IsNotNull (service1, "#A");
 			Assert.AreEqual (service1, sc.GetService (typeof (Svc)), "#2");
-			sc.AddService (typeof (Svc), new Svc());
+
+			try {
+				sc.AddService (typeof (Svc), new Svc ());
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// The service MonoTests.System.ComponentModel.Design.Svc
+				// already exists in the service container
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (Svc).FullName) != -1, "#B5");
+				Assert.AreEqual ("serviceType", ex.ParamName, "#B6");
+			}
 		}
 
 		[Test]
@@ -517,6 +615,26 @@ namespace MonoTests.System.ComponentModel.Design
 			Assert.IsNull (parent.GetService (serviceType1), "#K2");
 		}
 
+#if NET_2_0
+		[Test] // RemoveService (Type)
+		public void RemoveService1_Disposed ()
+		{
+			ServiceContainer sc;
+			ServiceContainer parent;
+			
+			ArrayList serviceInstance1 = new ArrayList ();
+
+			Type serviceType1 = typeof (IList);
+
+			parent = null;
+			sc = new ServiceContainer (parent);
+			sc.AddService (serviceType1, serviceInstance1);
+			sc.Dispose ();
+
+			sc.RemoveService (typeof (DateTime));
+		}
+#endif
+
 		[Test] // RemoveService (Type)
 		public void RemoveService1_ServiceType_Null ()
 		{
@@ -603,6 +721,40 @@ namespace MonoTests.System.ComponentModel.Design
 			Assert.IsNull (sc.GetService (serviceType1), "#H1");
 			Assert.IsNull (parent.GetService (serviceType1), "#H2");
 		}
+
+#if NET_2_0
+		[Test] // RemoveService (Type, Boolean)
+		public void RemoveService2_Disposed ()
+		{
+			ServiceContainer sc;
+			ServiceContainer parent;
+
+			ArrayList serviceInstance1 = new ArrayList ();
+			ArrayList serviceInstance2 = new ArrayList ();
+
+			Type serviceType1 = typeof (IList);
+			Type serviceType2 = typeof (IEnumerable);
+
+			parent = new ServiceContainer ();
+			sc = new ServiceContainer (parent);
+			sc.AddService (serviceType1, serviceInstance1, true);
+			sc.AddService (serviceType2, serviceInstance2, false);
+
+			sc.Dispose ();
+
+			sc.RemoveService (serviceType1, false);
+			sc.RemoveService (serviceType2, false);
+
+			Assert.AreSame (serviceInstance1, sc.GetService (serviceType1), "#A1");
+			Assert.IsNull (sc.GetService (serviceType2), "#A2");
+
+			sc.RemoveService (serviceType1, true);
+			sc.RemoveService (serviceType2, true);
+
+			Assert.IsNull (sc.GetService (serviceType1), "#B1");
+			Assert.IsNull (sc.GetService (serviceType2), "#B2");
+		}
+#endif
 
 		[Test] // RemoveService (Type, Boolean)
 		public void RemoveService2_ServiceType_Null ()
