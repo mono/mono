@@ -423,8 +423,7 @@ namespace System.Web.Compilation
 					i = 0;
 				}
 
-				if (token < Token.FIRST_TOKEN || token > Token.LAST_TOKEN)
-					vb_text.Append ((char) token);
+				vb_text.Append ((char) token);
 				token = tokenizer.get_token ();
 			} 
 
@@ -470,7 +469,7 @@ namespace System.Web.Compilation
 
 				return;
 			}
-
+			
 			if (Eat (Token.DOUBLEDASH)) {
 				tokenizer.ExpectAttrValue = old;
 				tokenizer.Verbatim = true;
@@ -488,13 +487,8 @@ namespace System.Web.Compilation
 			varname = Eat ('=');
 			databinding = !varname && Eat ('#');
 
-			if (Eat (Token.IDENTIFIER))
-				inside_tags = tokenizer.Value;
-			else
-				inside_tags = String.Empty;
-			
 			tokenizer.Verbatim = true;
-			inside_tags += GetVerbatim (tokenizer.get_token (), "%>");
+			inside_tags = GetVerbatim (tokenizer.get_token (), "%>");
 			tokenizer.Verbatim = false;
 			id = inside_tags;
 			attributes = null;

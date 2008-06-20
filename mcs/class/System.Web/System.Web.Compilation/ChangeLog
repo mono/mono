@@ -3,16 +3,6 @@
 	* TemplateControlCompiler.cs: AddChildCall properly processes the
 	PartialCachingAttribute now.
 
-2008-06-17  Marek Habersack  <mhabersack@novell.com>
-
-	* AspTokenizer.cs: Added FIRST_TOKEN and LAST_TOKEN symbols to the
-	internal Token class.
-
-	* AspParser.cs: GetServerTag must use parsed identifiers when
-	gathering verbatim code strings.
-	GetVerbatim must not add to the text tokens which aren't
-	characters. Fixes bug #400807
-
 2008-06-11  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: if an error occurs while assigning the
