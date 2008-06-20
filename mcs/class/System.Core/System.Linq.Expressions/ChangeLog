@@ -1,3 +1,13 @@
+2008-06-20  Jb Evain  <jbevain@novell.com>
+
+	* LambdaExpression.cs, EmitContext.cs: refactor the emit context to
+	handle the fact that lambdas are compiled in a general context where
+	they share globals but are also able to use parameters from parent lambdas.
+	(Although parameter sharing is not implemented yet).
+
+	* BinaryExpression.cs (fix converted coalesce case to use the lambda
+	compilation code).
+
 2008-06-09  Jb Evain  <jbevain@novell.com>
 
 	* Extensions.cs (Type.IsExpression): add

@@ -308,8 +308,7 @@ namespace System.Linq.Expressions {
 
 			ig.Emit (OpCodes.Brfalse, load_right);
 
-			// is it the right way to do it?
-			ec.EmitReadGlobal (conversion.Compile ());
+			ec.Emit (conversion);
 			ec.EmitLoad (left);
 			ig.Emit (OpCodes.Callvirt, conversion.Type.GetInvokeMethod ());
 

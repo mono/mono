@@ -38,22 +38,68 @@ using System.Runtime.CompilerServices;
 
 namespace System.Linq.Expressions {
 
-	abstract class EmitContext {
+	class CompilationContext {
 
-		protected LambdaExpression owner;
-		protected Type [] param_types;
-		protected Type return_type;
+		List<object> globals = new List<object> ();
+		List<EmitContext> units = new List<EmitContext> ();
 
-		protected List<object> globals = new List<object> ();
+		public int AddGlobal (object global)
+		{
+			return AddItemToList (global, globals);
+		}
+
+		public object [] GetGlobals ()
+		{
+			return globals.ToArray ();
+		}
+
+		static int AddItemToList<T> (T item, IList<T> list)
+		{
+			list.Add (item);
+			return list.Count - 1;
+		}
+
+		public int AddCompilationUnit (LambdaExpression lambda)
+		{
+			var context = new EmitContext (this, lambda);
+			var unit = AddItemToList (context, units);
+			context.Emit ();
+			return unit;
+		}
+
+		public Delegate CreateDelegate ()
+		{
+			return CreateDelegate (0, new ExecutionScope (this));
+		}
+
+		public Delegate CreateDelegate (int unit, ExecutionScope scope)
+		{
+			return units [unit].CreateDelegate (scope);
+		}
+	}
+
+	class EmitContext {
+
+		LambdaExpression owner;
+		CompilationContext context;
+		DynamicMethod method;
 
 		public ILGenerator ig;
 
-		protected EmitContext (LambdaExpression lambda)
+		public EmitContext (CompilationContext context, LambdaExpression lambda)
 		{
+			this.context = context;
 			this.owner = lambda;
 
-			param_types = CreateParameterTypes (owner.Parameters);
-			return_type = owner.GetReturnType ();
+			method = new DynamicMethod ("lambda_method", owner.GetReturnType (),
+				CreateParameterTypes (owner.Parameters), typeof (ExecutionScope), true);
+
+			ig = method.GetILGenerator ();
+		}
+
+		public void Emit ()
+		{
+			owner.EmitBody (this);
 		}
 
 		static Type [] CreateParameterTypes (ReadOnlyCollection<ParameterExpression> parameters)
@@ -67,15 +113,6 @@ namespace System.Linq.Expressions {
 			return types;
 		}
 
-		public static EmitContext Create (LambdaExpression lambda)
-		{
-#if !NET_2_1
-			if (Environment.GetEnvironmentVariable ("LINQ_DBG") != null)
-				return new DebugEmitContext (lambda);
-#endif
-			return new DynamicEmitContext (lambda);
-		}
-
 		public int GetParameterPosition (ParameterExpression p)
 		{
 			int position = owner.Parameters.IndexOf (p);
@@ -85,7 +122,10 @@ namespace System.Linq.Expressions {
 			return position + 1; // + 1 because 0 is the ExecutionScope
 		}
 
-		public abstract Delegate CreateDelegate ();
+		public Delegate CreateDelegate (ExecutionScope scope)
+		{
+			return method.CreateDelegate (owner.Type, scope);
+		}
 
 		public void Emit (Expression expression)
 		{
@@ -245,11 +285,6 @@ namespace System.Linq.Expressions {
 			ig.Emit (OpCodes.Isinst, candidate);
 		}
 
-		public void EmitConvert (LocalBuilder local, Type to)
-		{
-
-		}
-
 		public void EmitScope ()
 		{
 			ig.Emit (OpCodes.Ldarg_0);
@@ -277,8 +312,24 @@ namespace System.Linq.Expressions {
 
 		int AddGlobal (object value, Type type)
 		{
-			globals.Add (CreateStrongBox (value, type));
-			return globals.Count - 1;
+			return context.AddGlobal (CreateStrongBox (value, type));
+		}
+
+		public void EmitCreateDelegate (LambdaExpression lambda)
+		{
+			EmitScope ();
+
+			ig.Emit (OpCodes.Ldc_I4, context.AddCompilationUnit (lambda));
+			ig.Emit (OpCodes.Ldnull);
+
+			ig.Emit (OpCodes.Callvirt, typeof (ExecutionScope).GetMethod ("CreateDelegate"));
+
+			ig.Emit (OpCodes.Castclass, lambda.Type);
+		}
+
+		int AddChildContext (LambdaExpression lambda)
+		{
+			return context.AddCompilationUnit (lambda);
 		}
 
 		static object CreateStrongBox (object value, Type type)
@@ -287,69 +338,4 @@ namespace System.Linq.Expressions {
 				type.MakeStrongBoxType (), value);
 		}
 	}
-
-	class DynamicEmitContext : EmitContext {
-
-		DynamicMethod method;
-
-		public DynamicMethod Method {
-			get { return method; }
-		}
-
-		public DynamicEmitContext (LambdaExpression lambda)
-			: base (lambda)
-		{
-			// FIXME: Need to force this to be verifiable, see:
-			// https://bugzilla.novell.com/show_bug.cgi?id=355005
-			method = new DynamicMethod (GenerateName (), return_type, param_types, typeof (ExecutionScope), true);
-			ig = method.GetILGenerator ();
-
-			owner.EmitBody (this);
-		}
-
-		public override Delegate CreateDelegate ()
-		{
-			return method.CreateDelegate (owner.Type, new ExecutionScope (globals.ToArray ()));
-		}
-
-		protected virtual string GenerateName ()
-		{
-			return "lambda_method";
-		}
-	}
-
-#if !NET_2_1
-	class DebugEmitContext : DynamicEmitContext {
-
-		static object mlock = new object ();
-		static int method_count;
-
-		public DebugEmitContext (LambdaExpression lambda)
-			: base (lambda)
-		{
-			var name = Method.Name;
-			var file_name = name + ".dll";
-
-			var assembly = AppDomain.CurrentDomain.DefineDynamicAssembly (
-				new AssemblyName (name), AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
-
-			var type = assembly.DefineDynamicModule (file_name, file_name).DefineType ("Linq", TypeAttributes.Public);
-
-			var method = type.DefineMethod (name, MethodAttributes.Public | MethodAttributes.Static, return_type, param_types);
-			ig = method.GetILGenerator ();
-
-			owner.EmitBody (this);
-
-			type.CreateType ();
-			assembly.Save (file_name);
-		}
-
-		protected override string GenerateName ()
-		{
-			lock (mlock) {
-				return "lambda_method-" + (method_count++);
-			}
-		}
-	}
-#endif
 }

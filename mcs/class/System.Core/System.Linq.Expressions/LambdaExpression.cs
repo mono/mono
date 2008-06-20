@@ -63,7 +63,7 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec)
 		{
-			ec.EmitReadGlobal (Compile ());
+			ec.EmitCreateDelegate (this);
 		}
 
 		internal void EmitBody (EmitContext ec)
@@ -86,7 +86,8 @@ namespace System.Linq.Expressions {
 			inter.Validate ();
 			return inter.CreateDelegate ();
 #else
-			var context = EmitContext.Create (this);
+			var context = new CompilationContext ();
+			context.AddCompilationUnit (this);
 			return context.CreateDelegate ();
 #endif
 		}
