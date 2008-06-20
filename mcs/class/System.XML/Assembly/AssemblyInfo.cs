@@ -67,7 +67,7 @@ using System.Runtime.InteropServices;
 #if NET_2_0
 	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-	[assembly: InternalsVisibleTo ("System.Data.SqlXml, PublicKey=00000000000000000400000000000000")]
+//	[assembly: InternalsVisibleTo ("System.Data.SqlXml, PublicKey=00000000000000000400000000000000")]
 	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 	[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
 #elif NET_1_1
