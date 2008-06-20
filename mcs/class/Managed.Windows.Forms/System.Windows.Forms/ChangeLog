@@ -1,3 +1,14 @@
+2008-06-20  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PaddingConverter.cs: 
+	 - Implement conversion to InstanceDescriptor
+	 - Handle "All" in CreateInstance by using the supplied 
+	 ITypeDescriptorContext.
+	 [Fixes bugs #396076 and #396078]
+
+	 Patch by Andy Hume  <andyhume32@yahoo.co.uk>
+         Code contributed under MIT/X11 license.
+
 2008-06-19  Andy Hume <andyhume32 at yahoo dot co dot uk>
 
         * ComboBox.cs, ListControl.cs, Control.cs, Button.cs, 

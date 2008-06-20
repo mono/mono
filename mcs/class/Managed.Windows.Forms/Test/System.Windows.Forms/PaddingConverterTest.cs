@@ -28,6 +28,9 @@ using System.Globalization;
 using System.Windows.Forms;
 using System.Windows.Forms.Layout;
 using NUnit.Framework;
+using System.Collections;
+using System.ComponentModel.Design.Serialization;
+using System.Collections.Generic;
 
 namespace MonoTests.System.Windows.Forms
 {
@@ -117,6 +120,168 @@ namespace MonoTests.System.Windows.Forms
 			
 			Assert.AreEqual (true, pc.GetCreateInstanceSupported (null), "A1");
 			Assert.AreEqual (true, pc.GetPropertiesSupported (null), "A2");
+		}
+
+		[Test]
+		public void ConvertTo_InstanceDescriptor()
+		{
+			PaddingConverter c = new PaddingConverter();
+			Padding originalPadding = new Padding (1, 10, 5, 9);
+			InstanceDescriptor instanceDescriptor = (InstanceDescriptor) c.ConvertTo (originalPadding, 
+										  typeof (InstanceDescriptor));
+			Padding resultedPadding = (Padding) instanceDescriptor.Invoke ();
+			Assert.AreEqual (originalPadding, resultedPadding, "#1");
+
+			originalPadding = new Padding (99);
+			instanceDescriptor = (InstanceDescriptor) c.ConvertTo (originalPadding, 
+										  typeof (InstanceDescriptor));
+			resultedPadding = (Padding) instanceDescriptor.Invoke ();
+			Assert.AreEqual (originalPadding, resultedPadding, "#2");
+		}
+
+		#region FakeITypeDescriptorContext
+		class FakeITypeDescriptorContext : ITypeDescriptorContext
+		{
+			// Only the Instance and PropertyDescriptor members are required for testing.
+			//
+			PropertyDescriptor propertyDescriptor;
+			Object instance;
+
+			internal FakeITypeDescriptorContext (PropertyDescriptor pd, object instance)
+			{
+				if (pd == null)
+					throw new ArgumentNullException ("pd");
+				if (instance == null)
+					throw new ArgumentNullException ("instance");
+				propertyDescriptor = pd;
+				this.instance = instance;
+			}
+
+			#region ITypeDescriptorContext Members
+
+			IContainer ITypeDescriptorContext.Container {
+				get { throw new NotImplementedException (); }
+			}
+
+			object ITypeDescriptorContext.Instance {
+				get { return instance; }
+			}
+
+			void ITypeDescriptorContext.OnComponentChanged ()
+			{
+				throw new NotImplementedException ();
+			}
+
+			bool ITypeDescriptorContext.OnComponentChanging ()
+			{
+				throw new NotImplementedException ();
+			}
+
+			PropertyDescriptor ITypeDescriptorContext.PropertyDescriptor {
+				get { return propertyDescriptor; }
+			}
+
+			#endregion
+
+			#region IServiceProvider Members
+
+			object IServiceProvider.GetService (Type serviceType)
+			{
+				throw new NotImplementedException ();
+			}
+
+			#endregion
+		}
+		#endregion
+
+		class MyObjectWithMarginProperty
+		{
+			private Padding margin;
+
+			public Padding Margin {
+				get { return margin; }
+				set { margin = value; }
+			}
+		}
+
+		private static ITypeDescriptorContext GetTypeDescriptorContext (Padding paddingValue)
+		{
+			MyObjectWithMarginProperty obj = new MyObjectWithMarginProperty();
+			obj.Margin = paddingValue;
+			PropertyDescriptor pd = TypeDescriptor.GetProperties (obj)["Margin"];
+			return new FakeITypeDescriptorContext (pd, obj);
+		}
+
+		private static Hashtable GetPropertiesTable (int all, int left, int top, int right, int bottom)
+		{
+			Hashtable newValues = new Hashtable();
+			newValues.Add ("All", all);
+			newValues.Add ("Left", left);
+			newValues.Add ("Right", right);
+			newValues.Add ("Top", top);
+			newValues.Add ("Bottom", bottom);
+			return newValues;
+		}
+
+		[Test]
+		public void CreateInstance ()
+		{
+			PaddingConverter c = new PaddingConverter();
+			Padding modified, expected;
+
+			// Non-"All" Tests
+			//
+			ITypeDescriptorContext context = GetTypeDescriptorContext (new Padding (1, 2, 30, 40));
+
+			modified = (Padding) c.CreateInstance (context, GetPropertiesTable (-1, 1, 2, 30, 40));
+			expected = new Padding (1, 2, 30, 40);
+			Assert.AreEqual (expected, modified, "NonAll_NoChange");
+
+			modified = (Padding) c.CreateInstance (context, GetPropertiesTable (-1, 111, 2, 30, 40));
+			expected = new Padding (111, 2, 30, 40);
+			Assert.AreEqual (expected, modified, "NonAll_ChangeLeft");
+
+			modified = (Padding) c.CreateInstance (context, GetPropertiesTable (-1, 1, 222, 30, 40));
+			expected = new Padding (1, 222, 30, 40);
+			Assert.AreEqual (expected, modified, "NonAll_ChangeTop");
+
+			modified = (Padding) c.CreateInstance (context, GetPropertiesTable (555, 1, 2, 30, 40));
+			expected = new Padding (555);
+			Assert.AreEqual (expected, modified, "NonAll_ChangeAll");
+
+			// "All" tests
+			//
+			context = GetTypeDescriptorContext (new Padding (1));
+
+			modified = (Padding) c.CreateInstance (context, GetPropertiesTable (1, 1, 1, 1, 1));
+			expected = new Padding (1, 1, 1, 1);
+			Assert.AreEqual (expected, modified, "All_NoChange");
+
+			modified = (Padding) c.CreateInstance (context, GetPropertiesTable (1, 111, 1, 1, 1));
+			expected = new Padding (111, 1, 1, 1);
+			Assert.AreEqual (expected, modified, "All_ChangeLeft");
+
+			modified = (Padding) c.CreateInstance (context, GetPropertiesTable (1, 1, 222, 1, 1));
+			expected = new Padding (1, 222, 1, 1);
+			Assert.AreEqual (expected, modified, "All_ChangeTop");
+
+			modified = (Padding) c.CreateInstance (context, GetPropertiesTable (555, 1, 1, 1, 1));
+			expected = new Padding (555);
+			Assert.AreEqual (expected, modified, "All_ChangeAll");
+		}
+
+		[Test]
+		public void CreateInstance_NullArguments ()
+		{
+			PaddingConverter c = new PaddingConverter ();
+			try {
+				c.CreateInstance (null, GetPropertiesTable (1, 1, 1, 1, 1));
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) { }
+			try {
+				c.CreateInstance (GetTypeDescriptorContext (Padding.Empty), null);
+				Assert.Fail ("#2");
+			} catch (ArgumentNullException ex) { }
 		}
 	}
 }

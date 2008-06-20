@@ -24,6 +24,7 @@ using System.ComponentModel;
 using System.Collections;
 using System.Reflection;
 using System.Globalization;
+using System.ComponentModel.Design.Serialization; // e.g. InstanceDescriptor
 
 namespace System.Windows.Forms
 {
@@ -49,6 +50,8 @@ namespace System.Windows.Forms
 		{
 			if (destinationType == typeof (string))
 				return true;
+			else if (destinationType == typeof(InstanceDescriptor))
+				return true;
 
 			return false;
 		}
@@ -68,20 +71,41 @@ namespace System.Windows.Forms
 
 		public override object ConvertTo (ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
 		{
-			if ((value == null) || !(value is Padding) || (destinationType != typeof(string)))
-				return base.ConvertTo (context, culture, value, destinationType);
-
-			if (culture == null)
-				culture = CultureInfo.CurrentCulture;
-
-			Padding p = (Padding)value;
-
-			return string.Format ("{0}{4} {1}{4} {2}{4} {3}", p.Left, p.Top, p.Right, p.Bottom, culture.TextInfo.ListSeparator);
+			if (value is Padding) {
+				Padding p = (Padding)value;
+				if (destinationType == typeof (string)) {
+					if (culture == null)
+						culture = CultureInfo.CurrentCulture;
+					return string.Format ("{0}{4} {1}{4} {2}{4} {3}", p.Left, p.Top, p.Right, p.Bottom, culture.TextInfo.ListSeparator);
+				} else if (destinationType == typeof (InstanceDescriptor)) {
+					Type[] types;
+					Object[] values;
+					if (p.All != -1) {
+						types = new Type[] { typeof(int) };
+						values = new Object[] { p.All };
+					} else {
+						types = new Type[] { typeof(int), typeof(int), typeof(int), typeof(int) };
+						values = new Object[] { p.Left, p.Top, p.Right, p.Bottom };
+					}
+					ConstructorInfo ci = typeof(Padding).GetConstructor (types);
+					return new InstanceDescriptor (ci, values);
+				}
+			}
+			return base.ConvertTo (context, culture, value, destinationType);
 		}
 
 		public override object CreateInstance (ITypeDescriptorContext context, IDictionary propertyValues)
 		{
-			return new Padding ((int)propertyValues["Left"], (int)propertyValues["Top"], (int)propertyValues["Right"], (int)propertyValues["Bottom"]);
+			if (propertyValues == null)
+				throw new ArgumentNullException ("propertyValues");
+			if (context == null)
+				throw new ArgumentNullException ("context");
+
+			Padding old = (Padding)context.PropertyDescriptor.GetValue (context.Instance);
+			if (old.All == (int)propertyValues["All"])
+				return new Padding ((int)propertyValues["Left"], (int)propertyValues["Top"], (int)propertyValues["Right"], (int)propertyValues["Bottom"]);
+			else
+				return new Padding ((int)propertyValues["All"]);
 		}
 		
 		public override bool GetCreateInstanceSupported (ITypeDescriptorContext context)
