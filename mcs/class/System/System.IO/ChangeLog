@@ -1,3 +1,8 @@
+2008-06-20  Dick Porter  <dick@ximian.com>
+
+	* InotifyWatcher.cs: If a directory is renamed, make sure the old
+	version is removed from the requests hash.  Fixes bug 322330.
+
 2008-06-18  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* InotifyWatcher.cs: patch from Juraj Skripsky to fix
