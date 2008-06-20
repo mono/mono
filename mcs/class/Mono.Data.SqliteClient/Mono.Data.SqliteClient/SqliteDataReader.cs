@@ -68,7 +68,7 @@ namespace Mono.Data.SqliteClient
 			rows = new ArrayList ();
 			column_names_sens = new Hashtable ();
 #if NET_2_0
-			column_names_insens = new Hashtable (StringComparer.InvariantCulture);
+			column_names_insens = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
 #else
 			column_names_insens = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
 							     CaseInsensitiveComparer.DefaultInvariant);
