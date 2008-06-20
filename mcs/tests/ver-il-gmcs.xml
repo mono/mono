@@ -33994,6 +33994,65 @@
       </method>
     </type>
   </test>
+  <test name="test-anon-75.cs">
+    <type name="Data">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Foo(Int32, D)">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void TestMe()">
+        <size>150</size>
+      </method>
+      <method name="Boolean &lt;TestMe&gt;m__0()">
+        <size>4</size>
+      </method>
+    </type>
+    <type name="D">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Boolean Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Boolean EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test+&lt;TestMe&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;&gt;m__2()">
+        <size>66</size>
+      </method>
+    </type>
+    <type name="Test+&lt;TestMe&gt;c__AnonStorey2">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;&gt;m__1()">
+        <size>11</size>
+      </method>
+    </type>
+    <type name="Test+&lt;TestMe&gt;c__AnonStorey1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void .ctor()">
