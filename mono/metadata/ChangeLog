@@ -12,6 +12,8 @@
 
 	* reflection.c (mono_dynamic_image_free): Release the methodspec hashtable.
 
+	Fixes bug #349190.
+
 2008-06-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* loader.c (method_from_methodspec): Avoid crashing if the
