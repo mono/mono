@@ -1,4 +1,8 @@
 2008-06-17  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-oprofile.c: Implemented signal based enable-disable
+	toggling for the statistical and enter-exit events.
+
+2008-06-17  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-oprofile.c (write_statistical_hit): Use the proper
 	domain instead of trying to get one.
 
