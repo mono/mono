@@ -1,3 +1,8 @@
+2008-06-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (method_from_methodspec): Avoid crashing if the
+	method lookup fails.
+
 2008-06-20  Dick Porter  <dick@ximian.com>
 
 	* socket-io.c (get_socket_assembly): Cope with Moonlight network
