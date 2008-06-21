@@ -1,3 +1,11 @@
+2008-06-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewItem.cs: Set bounds initially to -1 values - thus in virtual
+	mode we can check whether we have to force a Layout or not, and can
+	cache based on this, instead of avoiding caching all the the time. Do
+	this check in GetBounds and TextBounds.
+	Fixes selection in Details view.
+
 2008-06-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Make HeaderControl internal, thus the theme engine can

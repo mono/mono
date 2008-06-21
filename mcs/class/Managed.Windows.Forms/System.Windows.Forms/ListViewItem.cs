@@ -54,7 +54,7 @@ namespace System.Windows.Forms
 		int indent_count;
 #endif
 		Point position = new Point (-1, -1);		// cached to mimic .Net behaviour
-		Rectangle bounds;
+		Rectangle bounds = new Rectangle (-1, -1, -1, -1);
 		Rectangle checkbox_rect;	// calculated by CalcListViewItem method
 		Rectangle icon_rect;
 		Rectangle item_rect;
@@ -703,9 +703,9 @@ namespace System.Windows.Forms
 			Rectangle rect;
 
 #if NET_2_0
-			// Can't cache bounds in Virtual mode,
+			// Call Layout if bounds haven't been computed.
 			// since we can get different item instances at each invocation
-			if (owner.VirtualMode)
+			if (owner.VirtualMode && bounds == new Rectangle (-1, -1, -1, -1))
 				Layout ();
 #endif
 			switch (portion) {
@@ -834,6 +834,11 @@ namespace System.Windows.Forms
 		Rectangle text_bounds;
 		internal Rectangle TextBounds {
 			get {
+#if NET_2_0
+				// Call Layout() if it hasn't been called before.
+				if (owner.VirtualMode && bounds == new Rectangle (-1, -1, -1, -1))
+					Layout ();
+#endif
 				Rectangle result = text_bounds;
 				Point loc = owner.GetItemLocation (DisplayIndex);
 				result.X += loc.X;
