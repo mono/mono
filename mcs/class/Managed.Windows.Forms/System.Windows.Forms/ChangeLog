@@ -1,3 +1,13 @@
+2008-06-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Make HeaderControl internal, thus the theme engine can
+	get its *real* height instead of trying to infere it.
+	* ThemeWin32Classic.cs: When drawing gridlines, don't iterate over the items to
+	get the position of them, since it's in general a bad idea in general,
+	and because we can't do that in virtual mode. Instead get the first
+	visible item as well as item height, and draw them.
+	Fixes #400390.
+
 2008-06-20  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripSplitButton.cs: We can't add in extra width if

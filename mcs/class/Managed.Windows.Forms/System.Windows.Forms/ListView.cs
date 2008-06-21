@@ -87,7 +87,7 @@ namespace System.Windows.Forms
 		private View view = View.LargeIcon;
 		private int layout_wd;    // We might draw more than our client area
 		private int layout_ht;    // therefore we need to have these two.
-		HeaderControl header_control;
+		internal HeaderControl header_control;
 		internal ItemControl item_control;
 		internal ScrollBar h_scroll; // used for scrolling horizontally
 		internal ScrollBar v_scroll; // used for scrolling vertically
@@ -3962,7 +3962,7 @@ namespace System.Windows.Forms
 
 		#region Subclasses
 
-		class HeaderControl : Control {
+		internal class HeaderControl : Control {
 
 			ListView owner;
 			bool column_resize_active = false;
