@@ -1,5 +1,15 @@
 2008-06-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListViewItem.cs: When invalidating, add some extra space to bounds,
+	since focus rectangle and selection can add some space and need to
+	take into account those small offsets - specially in Details view.
+	* ListView.cs: Instead of invalidate using item Bounds directly, call
+	item.Invalidate, to have the code centralized.
+	Fixes focused/selection garbage when selecting and deselecting items
+	that are close.
+
+2008-06-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListViewItem.cs: Set bounds initially to -1 values - thus in virtual
 	mode we can check whether we have to force a Layout or not, and can
 	cache based on this, instead of avoiding caching all the the time. Do

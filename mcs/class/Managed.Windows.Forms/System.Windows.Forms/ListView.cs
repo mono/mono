@@ -1598,18 +1598,18 @@ namespace System.Windows.Forms
 					reordered_items_indices [i] = reordered_items_indices [i - 1];
 
 					ListViewItem item = items [reordered_items_indices [i]];
-					item_control.Invalidate (item.Bounds);
+					item.Invalidate ();
 					item.DisplayIndex = i;
-					item_control.Invalidate (item.Bounds);
+					item.Invalidate ();
 				}
 			} else {
 				for (int i = from - 1; i < to; i++) {
 					reordered_items_indices [i] = reordered_items_indices [i + 1];
 
 					ListViewItem item = items [reordered_items_indices [i]];
-					item_control.Invalidate (item.Bounds);
+					item.Invalidate ();
 					item.DisplayIndex = i;
-					item_control.Invalidate (item.Bounds);
+					item.Invalidate ();
 				}
 			}
 		}
@@ -1637,9 +1637,9 @@ namespace System.Windows.Forms
 
 			reordered_items_indices [new_display_index] = item_index;
 
-			item_control.Invalidate (item.Bounds);
+			item.Invalidate ();
 			item.DisplayIndex = new_display_index;
-			item_control.Invalidate (item.Bounds);
+			item.Invalidate ();
 		}
 
 		int GetDisplayIndexFromLocation (Point loc)
@@ -3213,9 +3213,9 @@ namespace System.Windows.Forms
 			ListViewItem focused_item = FocusedItem;
 
 			if (focused_item.ListView != null) {
-				item_control.Invalidate (focused_item.Bounds);
+				focused_item.Invalidate ();
 				focused_item.Layout ();
-				item_control.Invalidate (focused_item.Bounds);
+				focused_item.Invalidate ();
 			}
 		}
 
@@ -3911,7 +3911,7 @@ namespace System.Windows.Forms
 				return;
 
 			for (int i = startIndex; i <= endIndex; i++)
-				item_control.Invalidate (items [i].Bounds);
+				items [i].Invalidate ();
 
 			if (!invalidateOnly)
 				Update ();

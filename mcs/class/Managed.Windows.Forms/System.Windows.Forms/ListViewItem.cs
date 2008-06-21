@@ -915,7 +915,10 @@ namespace System.Windows.Forms
 			if (owner == null || owner.item_control == null || owner.updating)
 				return;
 
-			owner.item_control.Invalidate (Bounds);
+			// Add some padding to bounds (focused extra space, selection)
+			Rectangle rect = Bounds;
+			rect.Inflate (1, 1);
+			owner.item_control.Invalidate (rect);
 		}
 
 		internal void Layout ()
