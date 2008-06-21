@@ -1,3 +1,8 @@
+2008-06-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Marshal.cs: Fixed order of arguments for ArgumentException in
+	GetComSlotForMethodInfo.
+
 2008-06-19  Kornél Pál  <kornelpal@gmail.com>
 
 	* Marshal.cs: Implement GetHINSTANCE.

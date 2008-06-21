@@ -10,8 +10,12 @@
 #if !TARGET_JVM
 using NUnit.Framework;
 using System;
+using System.IO;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Text;
 
 namespace MonoTests.System.Runtime.InteropServices
 {
@@ -47,47 +51,65 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
-		public void ClassSequential ()
+		public void SizeOf_Class_LayoutSequential ()
 		{
 			Marshal.SizeOf (typeof (ClsSequential));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void ClassNoLayout ()
+		public void SizeOf_Class_LayoutNotSet ()
 		{
-			Marshal.SizeOf (typeof (ClsNoLayout));
+			try {
+				Marshal.SizeOf (typeof (ClsNoLayout));
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Type '...MarshalTest+ClsNoLayout' cannot be
+				// marshaled as an unmanaged structure; no
+				// meaningful size or offset can be computed
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
-		public void ClassExplicit ()
+		public void SizeOf_Class_LayoutExplicit ()
 		{
 			Marshal.SizeOf (typeof (ClsExplicit));
 		}
 
 		[Test]
-		public void StructSequential ()
+		public void SizeOf_Struct_LayoutSequential ()
 		{
 			Marshal.SizeOf (typeof (StrSequential));
 		}
 
 		[Test]
-		public void StructNoLayout ()
+		public void SizeOf_Struct_LayoutNotSet ()
 		{
 			Marshal.SizeOf (typeof (StrNoLayout));
 		}
 
 		[Test]
-		public void StructExplicit ()
+		public void SizeOf_Struct_LayoutExplicit ()
 		{
 			Marshal.SizeOf (typeof (StrExplicit));
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void ArrayType ()
+		public void SizeOf_Array ()
 		{
-			Marshal.SizeOf (typeof (string[]));
+			try {
+				Marshal.SizeOf (typeof (string []));
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Type 'System.String[]' cannot be marshaled
+				// as an unmanaged structure; no meaningful
+				// size or offset can be computed
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
@@ -98,30 +120,46 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void PtrToStringWithNullThrow ()
+		public void PtrToStringAnsi_Ptr_Zero ()
 		{
-			Assert.IsNull (Marshal.PtrToStringAnsi (IntPtr.Zero, 0), "B");
+			try {
+				Marshal.PtrToStringAnsi (IntPtr.Zero, 0);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("ptr", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void PtrToStringWithNullThrow2 ()
+		public void PtrToStringWithUni_Ptr_Zero ()
 		{
-			Assert.IsNull (Marshal.PtrToStringUni (IntPtr.Zero, 0), "D");
+			try {
+				Marshal.PtrToStringUni (IntPtr.Zero, 0);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("ptr", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		public unsafe void UnsafeAddrOfPinnedArrayElement () {
+		public unsafe void UnsafeAddrOfPinnedArrayElement ()
+		{
 			short[] sarr = new short [5];
 			sarr [2] = 3;
 
 			IntPtr ptr = Marshal.UnsafeAddrOfPinnedArrayElement (sarr, 2);
-			Assert.AreEqual (3, *(short*)ptr.ToPointer ());
+			Assert.AreEqual (3, *(short*) ptr.ToPointer ());
 		}
 
 		[Test]
-		public void AllocHGlobalZeroSize () {
+		public void AllocHGlobalZeroSize ()
+		{
 			IntPtr ptr = Marshal.AllocHGlobal (0);
 			Assert.IsTrue (ptr != IntPtr.Zero);
 			Marshal.FreeHGlobal (ptr);
@@ -136,14 +174,79 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void OffsetOfStatic () {
-			Marshal.OffsetOf (typeof (Foo), "b");
+		public void OffsetOf_FieldName_Static ()
+		{
+			try {
+				Marshal.OffsetOf (typeof (Foo), "b");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Field passed in is not a marshaled member of
+				// the type '...MarshalTest+Foo'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("fieldName", ex.ParamName, "#5");
+			}
 		}
 
-		// bug #76123
 		[Test]
-		public void StringToHGlobalUni () {
+		public void GetHINSTANCE ()
+		{
+			if (RunningOnUnix)
+				Assert.Ignore ("GetHINSTANCE only applies to Windows.");
+
+			Assembly a;
+			IntPtr hinstance;
+			StringBuilder fileName;
+
+			fileName = new StringBuilder (255);
+			a = Assembly.GetExecutingAssembly ();
+			hinstance = Marshal.GetHINSTANCE (a.GetModules () [0]);
+			Assert.IsTrue (GetModuleFileName (hinstance, fileName,
+				fileName.Capacity) > 0, "#A1");
+			Assert.AreEqual (a.Location, fileName.ToString (), "#A2");
+
+			fileName.Length = 0;
+			a = typeof (int).Assembly;
+			hinstance = Marshal.GetHINSTANCE (a.GetModules () [0]);
+			Assert.IsTrue (GetModuleFileName (hinstance, fileName,
+				fileName.Capacity) > 0, "#B1");
+			Assert.IsTrue (File.Exists (fileName.ToString ()), "#B3");
+			Assert.AreEqual ("mscorlib.dll", Path.GetFileName (fileName.ToString ()), "#B4");
+		}
+
+		[Test]
+		public void GetHINSTANCE_Module_Dynamic ()
+		{
+			AssemblyName aname = new AssemblyName ();
+			aname.Name = "foo";
+
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				aname, AssemblyBuilderAccess.Save,
+				Path.GetTempPath ());
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", false);
+
+			IntPtr hinstance = Marshal.GetHINSTANCE (mb);
+			Assert.AreEqual (-1, hinstance.ToInt32 ());
+		}
+
+		[Test]
+		public void GetHINSTANCE_Module_Null ()
+		{
+			try {
+				Marshal.GetHINSTANCE ((Module) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("m", ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // bug #319009
+		public void StringToHGlobalUni ()
+		{
 			IntPtr handle = Marshal.StringToHGlobalUni ("unicode data");
 			string s = Marshal.PtrToStringUni (handle);
 			Assert.AreEqual (12, s.Length, "#1");
@@ -168,8 +271,7 @@ namespace MonoTests.System.Runtime.InteropServices
 				} else {
 					Assert.AreEqual (0x01020304, Marshal.ReadInt32 (ptr), "ReadInt32");
 				}
-			}
-			finally {
+			} finally {
 				Marshal.FreeHGlobal (ptr);
 			}
 		}
@@ -197,8 +299,7 @@ namespace MonoTests.System.Runtime.InteropServices
 
 				string s2 = Marshal.PtrToStringBSTR (ptr);
 				Assert.AreEqual (128, s2.Length, "Length-2");
-			}
-			finally {
+			} finally {
 				Marshal.FreeBSTR (ptr);
 			}
 		}
@@ -217,8 +318,7 @@ namespace MonoTests.System.Runtime.InteropServices
 
 				string s2 = Marshal.PtrToStringAnsi (ptr);
 				Assert.AreEqual (0, s2.Length, "Length-2");
-			}
-			finally {
+			} finally {
 				Marshal.FreeHGlobal (ptr);
 			}
 		}
@@ -237,8 +337,7 @@ namespace MonoTests.System.Runtime.InteropServices
 
 				string s2 = Marshal.PtrToStringAuto (ptr);
 				Assert.AreEqual (0, s2.Length, "Length-2");
-			}
-			finally {
+			} finally {
 				Marshal.FreeHGlobal (ptr);
 			}
 		}
@@ -257,8 +356,7 @@ namespace MonoTests.System.Runtime.InteropServices
 
 				string s2 = Marshal.PtrToStringUni (ptr);
 				Assert.AreEqual (0, s2.Length, "Length-2");
-			}
-			finally {
+			} finally {
 				Marshal.FreeHGlobal (ptr);
 			}
 		}
@@ -277,8 +375,7 @@ namespace MonoTests.System.Runtime.InteropServices
 
 				string s2 = Marshal.PtrToStringAnsi (ptr);
 				Assert.AreEqual (0, s2.Length, "Length-2");
-			}
-			finally {
+			} finally {
 				Marshal.FreeCoTaskMem (ptr);
 			}
 		}
@@ -297,8 +394,7 @@ namespace MonoTests.System.Runtime.InteropServices
 
 				string s2 = Marshal.PtrToStringAuto (ptr);
 				Assert.AreEqual (0, s2.Length, "Length-2");
-			}
-			finally {
+			} finally {
 				Marshal.FreeCoTaskMem (ptr);
 			}
 		}
@@ -317,8 +413,7 @@ namespace MonoTests.System.Runtime.InteropServices
 
 				string s2 = Marshal.PtrToStringUni (ptr);
 				Assert.AreEqual (0, s2.Length, "Length-2");
-			}
-			finally {
+			} finally {
 				Marshal.FreeCoTaskMem (ptr);
 			}
 		}
@@ -335,10 +430,17 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void SecureStringToBSTR_Null ()
 		{
-			Marshal.SecureStringToBSTR (null);
+			try {
+				Marshal.SecureStringToBSTR (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("s", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
@@ -353,17 +455,23 @@ namespace MonoTests.System.Runtime.InteropServices
 				Assert.AreEqual (PlainText, decrypted, "Decrypted");
 
 				Marshal.ZeroFreeBSTR (p);
-			}
-			catch (NotSupportedException) {
+			} catch (NotSupportedException) {
 				Assert.Ignore (NotSupported);
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void SecureStringToCoTaskMemAnsi_Null ()
 		{
-			Marshal.SecureStringToCoTaskMemAnsi (null);
+			try {
+				Marshal.SecureStringToCoTaskMemAnsi (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("s", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
@@ -378,17 +486,23 @@ namespace MonoTests.System.Runtime.InteropServices
 				Assert.AreEqual (AsciiPlainText, decrypted, "Decrypted");
 
 				Marshal.ZeroFreeCoTaskMemAnsi (p);
-			}
-			catch (NotSupportedException) {
+			} catch (NotSupportedException) {
 				Assert.Ignore (NotSupported);
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void SecureStringToCoTaskMemUnicode_Null ()
 		{
-			Marshal.SecureStringToCoTaskMemUnicode (null);
+			try {
+				Marshal.SecureStringToCoTaskMemUnicode (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("s", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
@@ -403,17 +517,23 @@ namespace MonoTests.System.Runtime.InteropServices
 				Assert.AreEqual (PlainText, decrypted, "Decrypted");
 
 				Marshal.ZeroFreeCoTaskMemUnicode (p);
-			}
-			catch (NotSupportedException) {
+			} catch (NotSupportedException) {
 				Assert.Ignore (NotSupported);
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void SecureStringToGlobalAllocAnsi_Null ()
 		{
-			Marshal.SecureStringToGlobalAllocAnsi (null);
+			try {
+				Marshal.SecureStringToGlobalAllocAnsi (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("s", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
@@ -428,17 +548,23 @@ namespace MonoTests.System.Runtime.InteropServices
 				Assert.AreEqual (AsciiPlainText, decrypted, "Decrypted");
 
 				Marshal.ZeroFreeGlobalAllocAnsi (p);
-			}
-			catch (NotSupportedException) {
+			} catch (NotSupportedException) {
 				Assert.Ignore (NotSupported);
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void SecureStringToGlobalAllocUnicode_Null ()
 		{
-			Marshal.SecureStringToGlobalAllocUnicode (null);
+			try {
+				Marshal.SecureStringToGlobalAllocUnicode (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("s", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
@@ -453,8 +579,7 @@ namespace MonoTests.System.Runtime.InteropServices
 				Assert.AreEqual (PlainText, decrypted, "Decrypted");
 
 				Marshal.ZeroFreeGlobalAllocUnicode (p);
-			}
-			catch (NotSupportedException) {
+			} catch (NotSupportedException) {
 				Assert.Ignore (NotSupported);
 			}
 		}
@@ -463,8 +588,8 @@ namespace MonoTests.System.Runtime.InteropServices
 		[Test]
 		public void TestGetComSlotForMethodInfo ()
 		{
-			Assert.AreEqual	(7, Marshal.GetComSlotForMethodInfo(typeof(ITestDefault).GetMethod("DoNothing")));
-			Assert.AreEqual	(7, Marshal.GetComSlotForMethodInfo(typeof(ITestDual).GetMethod("DoNothing")));
+			Assert.AreEqual (7, Marshal.GetComSlotForMethodInfo(typeof(ITestDefault).GetMethod("DoNothing")));
+			Assert.AreEqual (7, Marshal.GetComSlotForMethodInfo(typeof(ITestDual).GetMethod("DoNothing")));
 			Assert.AreEqual (7, Marshal.GetComSlotForMethodInfo (typeof(ITestDefault).GetMethod ("DoNothing")));
 			Assert.AreEqual (3, Marshal.GetComSlotForMethodInfo (typeof(ITestUnknown).GetMethod ("DoNothing")));
 
@@ -473,17 +598,37 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
-		public void TestGetComSlotForMethodInfoNullException()
+		public void TestGetComSlotForMethod_Method_Null ()
 		{
-			Marshal.GetComSlotForMethodInfo (null);
+			try {
+				Marshal.GetComSlotForMethodInfo (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+				Assert.AreEqual ("m", ex.ParamName, "#5");
+#else
+				Assert.IsNull (ex.ParamName, "#5");
+#endif
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void TestGetComSlotForMethodInfoArgumentException2 ()
+		public void TestGetComSlotForMethodInfo_Method_NotOnInterface ()
 		{
-			Marshal.GetComSlotForMethodInfo (typeof(TestCoClass).GetMethod ("DoNothing"));
+			MethodInfo m = typeof(TestCoClass).GetMethod ("DoNothing");
+			try {
+				Marshal.GetComSlotForMethodInfo (m);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The MemberInfo must be an interface method
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("m", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
@@ -522,6 +667,28 @@ namespace MonoTests.System.Runtime.InteropServices
 			mem = Marshal.ReAllocHGlobal (mem, (IntPtr) 1000000);
 			Marshal.FreeHGlobal (mem);
 		}
+
+		bool RunningOnUnix {
+			get {
+#if NET_2_0
+				return Environment.OSVersion.Platform == PlatformID.Unix;
+#else
+				return (int) Environment.OSVersion.Platform == 128;
+#endif
+			}
+		}
+
+		[DllImport ("kernel32.dll", SetLastError = true)]
+		[PreserveSig]
+		static extern uint GetModuleFileName (
+			[In]
+			IntPtr hModule,
+			[Out]
+			StringBuilder lpFilename,
+			[In]
+			[MarshalAs (UnmanagedType.U4)]
+			int nSize
+		);
 	}
 
 	[ComImport()]

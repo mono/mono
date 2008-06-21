@@ -1,3 +1,9 @@
+2008-06-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MarshalTest.cs: Added tests for GetHINSTANCE. Improved existing
+	tests, and removed use of ExpectedException. Use more meaningful names
+	for test methods. Minor code formatting.
+
 2007-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ExternalExceptionTest.cs: Improved ctor test.

@@ -348,11 +348,15 @@ namespace System.Runtime.InteropServices
 		public static int GetComSlotForMethodInfo (MemberInfo m)
 		{
 			if (m == null)
-				throw new ArgumentNullException("m", "Value cannot be null.");
+#if NET_2_0
+				throw new ArgumentNullException ("m");
+#else
+				throw new ArgumentNullException (null, "Value cannot be null.");
+#endif
 			if (!(m is MethodInfo))
-				throw new ArgumentException("m", "The MemberInfo must be an interface method.");
+				throw new ArgumentException ("The MemberInfo must be an interface method.", "m");
 			if (!m.DeclaringType.IsInterface)
-				throw new ArgumentException("m", "The MemberInfo must be an interface method.");
+				throw new ArgumentException ("The MemberInfo must be an interface method.", "m");
 			return GetComSlotForMethodInfoInternal (m);
 		}
 
