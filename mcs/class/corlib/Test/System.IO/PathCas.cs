@@ -66,16 +66,15 @@ namespace MonoCasTests.System.IO {
 		public void PartialTrust_DenyUnrestricted_Success ()
 		{
 			// some calls do not require any permissions...
-			pt.TestChangeExtension ();
-			pt.ChangeExtension_BadExtension ();
-			pt.TestDirectoryName ();
-			pt.TestGetExtension ();
-			pt.TestGetFileName ();
-			pt.TestGetFileNameWithoutExtension ();
-			pt.TestGetPathRoot2 ();
-			pt.TestHasExtension ();
-			pt.TestRooted ();
-			pt.TestDirectoryNameBugs ();
+			pt.ChangeExtension ();
+			pt.ChangeExtension_Extension_InvalidPathChars ();
+			pt.GetDirectoryName ();
+			pt.GetExtension ();
+			pt.GetFileName ();
+			pt.GetFileNameWithoutExtension ();
+			pt.GetPathRoot2 ();
+			pt.HasExtension ();
+			pt.IsPathRooted ();
 		}
 
 		[Test]
@@ -83,7 +82,7 @@ namespace MonoCasTests.System.IO {
 		public void PartialTrust_PermitOnlyEnvironment ()
 		{
 			// ... some methods (or tests) require to read environment variables...
-			pt.TestGetTempPath ();
+			pt.GetTempPath ();
 		}
 
 		[Test]
@@ -93,8 +92,8 @@ namespace MonoCasTests.System.IO {
 		{
 			// ... some methods (or tests) require to read environment variables
 			// and file i/o permissions ...
-			pt.TestCombine ();
-			pt.TestGetTempFileName ();
+			pt.Combine ();
+			pt.GetTempFileName ();
 		}
 
 		[Test]
@@ -102,9 +101,8 @@ namespace MonoCasTests.System.IO {
 		public void PartialTrust_PermitOnlyFileIO ()
 		{
 			// ... while others do need only FileIOPermission
-			pt.TestGetFullPath2 ();
-			pt.TestCanonicalizeDots ();	// only calls Path.GetFullPath
-			pt.TestGetFullPathUnix ();	// calls Environment.CurrentDirectory
+			pt.GetFullPath2 ();
+			pt.CanonicalizeDots ();	// only calls Path.GetFullPath
 		}
 
 		// test Demand by denying the required permissions

@@ -1,3 +1,10 @@
+2008-06-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Path.cs: Fixed exception arguments to match MS. Removed obsolete
+	LAMESPEC comment. In GetPathRoot, throw ArgumentException if path
+	is whitespace-only. Throw ArgumentException in HasExtension, if path
+	contains invalid path characters.
+
 2008-05-29  Robert Jordan  <robertj@gmx.net>
 
 	* Path.cs (InsecureGetFullPath): Call CanonicalizePath for

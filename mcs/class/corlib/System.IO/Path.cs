@@ -79,7 +79,7 @@ namespace System.IO {
 				return null;
 
 			if (path.IndexOfAny (InvalidPathChars) != -1)
-				throw new ArgumentException ("Illegal characters in path", "path");
+				throw new ArgumentException ("Illegal characters in path.");
 
 			int iExt = findExtension (path);
 
@@ -119,20 +119,18 @@ namespace System.IO {
 				return path1;
 
 			if (path1.IndexOfAny (InvalidPathChars) != -1)
-				throw new ArgumentException ("Illegal characters in path", "path1");
+				throw new ArgumentException ("Illegal characters in path.");
 
 			if (path2.IndexOfAny (InvalidPathChars) != -1)
-				throw new ArgumentException ("Illegal characters in path", "path2");
+				throw new ArgumentException ("Illegal characters in path.");
 
 			//TODO???: UNC names
-			// LAMESPEC: MS says that if path1 is not empty and path2 is a full path
-			// it should throw ArgumentException
 			if (IsPathRooted (path2))
 				return path2;
 			
 			char p1end = path1 [path1.Length - 1];
 			if (p1end != DirectorySeparatorChar && p1end != AltDirectorySeparatorChar && p1end != VolumeSeparatorChar)
-				return path1 + DirectorySeparatorChar.ToString () + path2;
+				return path1 + DirectorySeparatorStr + path2;
 
 			return path1 + path2;
 		}
@@ -252,7 +250,7 @@ namespace System.IO {
 				return null;
 
 			if (path.IndexOfAny (InvalidPathChars) != -1)
-				throw new ArgumentException ("Illegal characters in path", "path");
+				throw new ArgumentException ("Illegal characters in path.");
 
 			int iExt = findExtension (path);
 
@@ -270,7 +268,7 @@ namespace System.IO {
 				return path;
 
 			if (path.IndexOfAny (InvalidPathChars) != -1)
-				throw new ArgumentException ("Illegal characters in path", "path");
+				throw new ArgumentException ("Illegal characters in path.");
 
 			int nLast = path.LastIndexOfAny (PathSeparatorChars);
 			if (nLast >= 0)
@@ -383,8 +381,8 @@ namespace System.IO {
 			if (path == null)
 				return null;
 
-			if (path.Length == 0)
-				throw new ArgumentException ("This specified path is invalid.");
+			if (path.Trim ().Length == 0)
+				throw new ArgumentException ("The specified path is not of a legal form.");
 
 			if (!IsPathRooted (path))
 				return String.Empty;
@@ -472,9 +470,12 @@ namespace System.IO {
 		private static extern string get_temp_path ();
 
 		public static bool HasExtension (string path)
-		{  
+		{
 			if (path == null || path.Trim ().Length == 0)
 				return false;
+
+			if (path.IndexOfAny (InvalidPathChars) != -1)
+				throw new ArgumentException ("Illegal characters in path.");
 
 			int pos = findExtension (path);
 			return 0 <= pos && pos < path.Length - 1;
