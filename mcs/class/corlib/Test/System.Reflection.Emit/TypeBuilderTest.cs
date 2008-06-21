@@ -929,7 +929,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		public void TestSetParentNull ()
+		public void SetParent_Parent_Null ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Class,
 				typeof (Attribute));
@@ -984,6 +984,14 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.IsNotNull (ex.Message, "#D4");
 			}
 #endif
+		}
+
+		[Test]
+		public void SetParent_Parent_Interface ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Class);
+			tb.SetParent (typeof (ICloneable));
+			Assert.AreEqual (typeof (ICloneable), tb.BaseType);
 		}
 
 		[Test]
@@ -9240,6 +9248,61 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+#if ONLY_1_1
+		[Category ("NotDotNet")] // Parent type was not extensible by the given type
+#endif
+		[Category ("NotWorking")]
+		public void CreateType_Interface_ParentInvalid ()
+		{
+			TypeBuilder tb;
+
+			tb = module.DefineType (genTypeName (), TypeAttributes.Interface,
+				typeof (Exception));
+			Assert.AreEqual (typeof (Exception), tb.BaseType, "#A1");
+			try {
+				tb.CreateType ();
+				Assert.Fail ("#A2");
+			} catch (TypeLoadException ex) {
+				// Could not load interface 't5' from assembly '...'
+				// because it must extend from Object
+				Assert.AreEqual (typeof (TypeLoadException), ex.GetType (), "#A3");
+				Assert.IsNull (ex.InnerException, "#A4");
+				Assert.IsNotNull (ex.Message, "#A5");
+				Assert.IsTrue (ex.Message.IndexOf (tb.Name) != -1, "#A6");
+				Assert.IsTrue (ex.Message.IndexOf (assembly.FullName) != -1, "#A7");
+			}
+
+			tb = module.DefineType (genTypeName (), TypeAttributes.Interface,
+				typeof (object));
+			Assert.AreEqual (typeof (object), tb.BaseType, "#B1");
+			try {
+				tb.CreateType ();
+				Assert.Fail ("#B2");
+			} catch (TypeLoadException ex) {
+				// Failure has occurred while loading a type
+				Assert.AreEqual (typeof (TypeLoadException), ex.GetType (), "#B3");
+				Assert.IsNull (ex.InnerException, "#B4");
+				Assert.IsNotNull (ex.Message, "#B5");
+			}
+
+			tb = module.DefineType (genTypeName (), TypeAttributes.Interface,
+				typeof (EmptyInterface));
+			Assert.AreEqual (typeof (EmptyInterface), tb.BaseType, "#C1");
+			try {
+				tb.CreateType ();
+				Assert.Fail ("#C2");
+			} catch (TypeLoadException ex) {
+				// Could not load interface 't5' from assembly '...'
+				// because the parent type is an interface
+				Assert.AreEqual (typeof (TypeLoadException), ex.GetType (), "#C3");
+				Assert.IsNull (ex.InnerException, "#C4");
+				Assert.IsNotNull (ex.Message, "#C5");
+				Assert.IsTrue (ex.Message.IndexOf (tb.Name) != -1, "#C6");
+				Assert.IsTrue (ex.Message.IndexOf (assembly.FullName) != -1, "#C7");
+			}
+		}
+
+		[Test]
 		public void CreateType_Parent_DefaultCtorMissing ()
 		{
 			TypeBuilder tb;
@@ -9285,6 +9348,69 @@ namespace MonoTests.System.Reflection.Emit
 
 #if NET_2_0
 		[Test]
+		[Category ("NotWorking")]
+		public void DefineGenericParameters_AlreadyDefined ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+			tb.DefineGenericParameters ("K");
+			try {
+				tb.DefineGenericParameters ("V");
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// Operation is not valid due to the current
+				// state of the object
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void DefineGenericParameters_Names_Empty ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+
+			try {
+				tb.DefineGenericParameters (new string [0]);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Value does not fall within the expected range
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void DefineGenericParameters_Names_Null ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+
+			try {
+				tb.DefineGenericParameters ((string []) null);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("names", ex.ParamName, "#A5");
+			}
+
+			try {
+				tb.DefineGenericParameters ("K", null, "V");
+				Assert.Fail ("#B1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.AreEqual ("names", ex.ParamName, "#B5");
+			}
+		}
+
+		[Test]
 		public void GenericType ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
@@ -9305,34 +9431,148 @@ namespace MonoTests.System.Reflection.Emit
 		[Test]
 		public void MakeGenericType ()
 		{
-			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+			TypeBuilder tb;
+			Type generic_type;
+		
+			tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 			tb.DefineGenericParameters ("T");
 
-			Type t1 = tb.MakeGenericType (typeof (int));
-			Assert.IsTrue (t1.IsGenericType, "#A1");
-			Assert.IsFalse (t1.IsGenericTypeDefinition, "#A2");
-			Assert.IsFalse (t1.ContainsGenericParameters, "#A3");
-			Assert.IsFalse (t1.IsGenericParameter, "#A4");
+			generic_type = tb.MakeGenericType (typeof (int));
+			Assert.IsTrue (generic_type.IsGenericType, "#A1");
+			Assert.IsFalse (generic_type.IsGenericTypeDefinition, "#A2");
+			Assert.IsFalse (generic_type.ContainsGenericParameters, "#A3");
+			Assert.IsFalse (generic_type.IsGenericParameter, "#A4");
 
-			Type t2 = tb.MakeGenericType (typeof (List<>).GetGenericArguments ());
-			Assert.IsTrue (t2.IsGenericType, "#B1");
-			Assert.IsFalse (t2.IsGenericTypeDefinition, "#B2");
-			Assert.IsTrue (t2.ContainsGenericParameters, "#B3");
-			Assert.IsFalse (t2.IsGenericParameter, "#B4");
+			generic_type = tb.MakeGenericType (typeof (List<>).GetGenericArguments ());
+			Assert.IsTrue (generic_type.IsGenericType, "#B1");
+			Assert.IsFalse (generic_type.IsGenericTypeDefinition, "#B2");
+			Assert.IsTrue (generic_type.ContainsGenericParameters, "#B3");
+			Assert.IsFalse (generic_type.IsGenericParameter, "#B4");
+
+			tb = module.DefineType (genTypeName (), TypeAttributes.Interface
+				| TypeAttributes.Abstract | TypeAttributes.Public);
+			tb.DefineGenericParameters ("T");
+
+			generic_type = tb.MakeGenericType (typeof (int));
+			Assert.IsTrue (generic_type.IsGenericType, "#C1");
+			Assert.IsFalse (generic_type.IsGenericTypeDefinition, "#C2");
+			Assert.IsFalse (generic_type.ContainsGenericParameters, "#C3");
+			Assert.IsFalse (generic_type.IsGenericParameter, "#C4");
+
+			generic_type = tb.MakeGenericType (typeof (List<>).GetGenericArguments ());
+			Assert.IsTrue (generic_type.IsGenericType, "#D1");
+			Assert.IsFalse (generic_type.IsGenericTypeDefinition, "#D2");
+			Assert.IsTrue (generic_type.ContainsGenericParameters, "#D3");
+			Assert.IsFalse (generic_type.IsGenericParameter, "#D4");
 		}
 
 		[Test]
-		public void Fail_MakeGenericType ()
+		public void MakeGenericType_NoGenericTypeDefinition ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 			try {
 				tb.MakeGenericType (typeof (int));
 				Assert.Fail ("#1");
 			} catch (InvalidOperationException ex) {
+				// Operation is not valid due to the current
+				// state of the object
 				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 			}
+		}
+
+		[Test]
+		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=351169
+		public void MakeGenericType_TypeArguments_Null_Mono ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+			tb.DefineGenericParameters ("K", "V");
+
+			try {
+				tb.MakeGenericType ((Type []) null);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("typeArguments", ex.ParamName, "#A5");
+			}
+
+			try {
+				tb.MakeGenericType (typeof (string), (Type) null);
+				Assert.Fail ("#B1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.AreEqual ("typeArguments", ex.ParamName, "#B5");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=351169
+		public void MakeGenericType_TypeArguments_Null_MS ()
+		{
+			Type generic_type;
+			Type [] type_args;
+
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+			tb.DefineGenericParameters ("K", "V");
+
+			generic_type = tb.MakeGenericType ((Type []) null);
+			Assert.IsNotNull (generic_type, "#A1");
+			Assert.IsTrue (generic_type.IsGenericType, "#A2");
+			Assert.IsFalse (generic_type.IsGenericTypeDefinition, "#A3");
+			type_args = generic_type.GetGenericArguments ();
+			Assert.IsNull (type_args, "#A4");
+
+			generic_type  = tb.MakeGenericType (typeof (string), (Type) null);
+			Assert.IsNotNull (generic_type, "#B1");
+			Assert.IsTrue (generic_type.IsGenericType, "#B2");
+			Assert.IsFalse (generic_type.IsGenericTypeDefinition, "#B3");
+			type_args = generic_type.GetGenericArguments ();
+			Assert.IsNotNull (type_args, "#B4");
+			Assert.AreEqual (2, type_args.Length, "#B5");
+			Assert.AreEqual (typeof (string), type_args [0], "#B6");
+			Assert.IsNull (type_args [1], "#B7");
+		}
+
+		[Test]
+		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=351143
+		public void MakeGenericType_TypeArguments_Mismatch_Mono ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+			tb.DefineGenericParameters ("K", "V");
+			try {
+				tb.MakeGenericType (typeof (int));
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The type or method has 2 generic prarameter(s)
+				// but 1 generic argument(s) were provided. A
+				// generic argument must be provided for each
+				// generic parameter
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("typeArguments", ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=351143
+		public void MakeGenericType_TypeArguments_Mismatch_MS ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+			tb.DefineGenericParameters ("K", "V");
+			
+			Type generic_type = tb.MakeGenericType (typeof (int));
+			Assert.IsTrue (generic_type.IsGenericType, "#1");
+			Assert.IsFalse (generic_type.IsGenericTypeDefinition, "#2");
+			Type [] type_args = generic_type.GetGenericArguments ();
+			Assert.IsNotNull (type_args, "#3");
+			Assert.AreEqual (1, type_args.Length, "#4");
+			Assert.AreEqual (typeof (int), type_args [0], "#5");
 		}
 
 		[Test]
@@ -9486,8 +9726,7 @@ namespace MonoTests.System.Reflection.Emit
 		public void CreatedTypeInstantiationOverTypeBuilderArgsIsNotAGenericTypeDefinition ()
 		{
 			TypeBuilder tb = module.DefineType ("TheType", TypeAttributes.Public, typeof (object), new Type [] {typeof (IDelegateFactory)});
-			GenericTypeParameterBuilder[] typeParams =
-tb.DefineGenericParameters (new String[] { "T" });
+			GenericTypeParameterBuilder[] typeParams = tb.DefineGenericParameters (new String[] { "T" });
 			Type t = tb.CreateType ();
 
 			Type inst = tb.MakeGenericType (typeParams [0]);
@@ -9498,8 +9737,7 @@ tb.DefineGenericParameters (new String[] { "T" });
 		public void CreatedTypeAndTypeBuilderOwnTheirGenericArguments ()
 		{
 			TypeBuilder tb = module.DefineType ("TheType", TypeAttributes.Public, typeof (object), new Type [] {typeof (IDelegateFactory)});
-			GenericTypeParameterBuilder[] typeParams =
-tb.DefineGenericParameters (new String[] { "T" });
+			GenericTypeParameterBuilder[] typeParams = tb.DefineGenericParameters (new String[] { "T" });
 			Type t = tb.CreateType ();
 
 			Assert.IsTrue (tb.GetGenericArguments()[0].DeclaringType == tb, "#1 TypeBuilder owns its arguments");
@@ -9510,8 +9748,7 @@ tb.DefineGenericParameters (new String[] { "T" });
 		public void CreatedTypeAndTypeBuilderDontShareGenericArguments ()
 		{
 			TypeBuilder tb = module.DefineType ("TheType", TypeAttributes.Public, typeof (object), new Type [] {typeof (IDelegateFactory)});
-			GenericTypeParameterBuilder[] typeParams =
-tb.DefineGenericParameters (new String[] { "T" });
+			GenericTypeParameterBuilder[] typeParams = tb.DefineGenericParameters (new String[] { "T" });
 			Type t = tb.CreateType ();
 
 			Assert.IsTrue (tb.GetGenericArguments()[0] != t.GetGenericArguments()[0], "#1 TypeBuilder and create type arguments are diferent");

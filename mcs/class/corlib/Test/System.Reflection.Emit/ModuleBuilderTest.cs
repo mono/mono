@@ -222,6 +222,26 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+#if ONLY_1_1
+		[Category ("NotDotNet")] // Parent type was not extensible by the given type
+#endif
+		public void DefineType_Parent_Interface ()
+		{
+			TypeBuilder tb;
+
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+
+			tb = mb.DefineType ("Foo", TypeAttributes.Class,
+				typeof (ICollection));
+			Assert.AreEqual (typeof (ICollection), tb.BaseType, "#1");
+
+			tb = mb.DefineType ("Bar", TypeAttributes.Interface,
+				typeof (ICollection));
+			Assert.AreEqual (typeof (ICollection), tb.BaseType, "#2");
+		}
+
+		[Test]
 		public void DuplicateSymbolDocument ()
 		{
 			AssemblyBuilder ab = genAssembly ();

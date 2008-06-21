@@ -1,7 +1,17 @@
+2008-06-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ModuleBuilderTest.cs: Added test for DefineType with interface as
+	parent.
+	* TypeBuilderTest.cs: Added test for SetParent with interface as
+	parent. Added test for CreateType of an interface with invalid parent.
+	Added tests for checks in DefineGenericParameters. Improved test
+	for MakeGenericType, and added tests for argument checks in
+	MakeGenericType.
+
 2008-06-18 Rodrigo Kumpera  <rkumpera@novell.com>
 
-	* TypeBuilderTest.cs: Fixed previous tests to follow the suite convention.
-	Added tests for bugs #349194 and #400643.
+	* TypeBuilderTest.cs: Fixed previous tests to follow the suite 
+	convention. Added tests for bugs #349194 and #400643.
 
 2008-06-17 Rodrigo Kumpera  <rkumpera@novell.com>
 
