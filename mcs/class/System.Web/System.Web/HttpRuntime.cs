@@ -139,7 +139,7 @@ namespace System.Web {
 
 			if (runningOnWindows){
 				caseInsensitive = true;
-				isunc = new Uri ("file://" + AppDomainAppPath).IsUnc;
+				isunc = new Uri (AppDomainAppPath).IsUnc;
 			} else {
 				string mono_iomap = Environment.GetEnvironmentVariable ("MONO_IOMAP");
 				if (mono_iomap != null) {

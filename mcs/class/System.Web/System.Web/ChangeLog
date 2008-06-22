@@ -1,3 +1,7 @@
+2008-06-21  Robert Jordan  <robertj@gmx.net>
+
+	* HttpRuntime.cs (.cctor): Workaround for bug #402263.
+
 2008-06-19  Marek Habersack  <mhabersack@novell.com>
 
 	* MimeTypes.cs: added a mime type entry for .xpi files.
