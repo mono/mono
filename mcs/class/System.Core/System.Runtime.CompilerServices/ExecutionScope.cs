@@ -46,15 +46,16 @@ namespace System.Runtime.CompilerServices {
 			this.Globals = context.GetGlobals ();
 		}
 
-		internal ExecutionScope (CompilationContext context, ExecutionScope parent)
+		internal ExecutionScope (CompilationContext context, ExecutionScope parent, object [] locals)
 			: this (context)
 		{
 			this.Parent = parent;
+			this.Locals = locals;
 		}
 
 		public Delegate CreateDelegate (int indexLambda, object [] locals)
 		{
-			return context.CreateDelegate (indexLambda, new ExecutionScope (context, this));
+			return context.CreateDelegate (indexLambda, new ExecutionScope (context, this, locals));
 		}
 
 		public object [] CreateHoistedLocals ()
