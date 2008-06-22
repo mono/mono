@@ -7817,10 +7817,7 @@
     </type>
     <type name="Test">
       <method name="Int32 &lt;Main&gt;m__0(Int32)">
-        <size>2</size>
-      </method>
-      <method name="Int32 &lt;Main&gt;m__1(Int32)">
-        <size>2</size>
+        <size>4</size>
       </method>
     </type>
   </test>
@@ -33222,9 +33219,6 @@
       <method name="Void &lt;Main&gt;m__0(Observable)">
         <size>11</size>
       </method>
-      <method name="Void &lt;Main&gt;m__1(Observable)">
-        <size>11</size>
-      </method>
     </type>
   </test>
   <test name="test-anon-57.cs">
@@ -34050,6 +34044,47 @@
     <type name="Test+&lt;TestMe&gt;c__AnonStorey1">
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-76.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void set_Item(System.String, FactoryDelegate)">
+        <size>8</size>
+      </method>
+      <method name="FactoryDelegate get_Item(System.String)">
+        <size>7</size>
+      </method>
+      <method name="Void X()">
+        <size>37</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>70</size>
+      </method>
+    </type>
+    <type name="FactoryDelegate">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="System.Object Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="System.Object EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="C+&lt;X&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.Object &lt;&gt;m__0()">
+        <size>37</size>
       </method>
     </type>
   </test>
