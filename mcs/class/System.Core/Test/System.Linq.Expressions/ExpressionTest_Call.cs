@@ -268,5 +268,93 @@ namespace MonoTests.System.Linq.Expressions {
 
 			Assert.AreEqual (42, l ());
 		}
+
+		static bool fout_called = false;
+
+		public static int FooOut (out int x)
+		{
+			fout_called = true;
+			return x = 0;
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Connect282729 ()
+		{
+			// test from https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=282729
+
+			var p = Expression.Parameter (typeof (int), "p");
+			var lambda = Expression.Lambda<Func<int, int>> (
+				Expression.Call (
+					GetType ().GetMethod ("FooOut"),
+					Expression.ArrayIndex(
+						Expression.NewArrayBounds (
+							typeof(int),
+							1.ToConstant ()),
+						0.ToConstant ())),
+				p).Compile ();
+
+			Assert.AreEqual (0, lambda (0));
+			Assert.IsTrue (fout_called);
+		}
+
+		public static int FooOut2 (out int x)
+		{
+			x = 2;
+			return 3;
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Connect290278 ()
+		{
+			// test from https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=290278
+
+			var p = Expression.Parameter (typeof (int [,]), "p");
+			var lambda = Expression.Lambda<Func<int [,], int>> (
+				Expression.Call (
+					GetType ().GetMethod ("FooOut2"),
+					Expression.ArrayIndex (p, 0.ToConstant (), 0.ToConstant ())),
+				p).Compile ();
+
+			int [,] data = { { 1 } };
+
+			Assert.AreEqual (3, lambda (data));
+			Assert.AreEqual (2, data [0, 0]);
+		}
+
+		public static void FooRef (ref string s)
+		{
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Connect297597 ()
+		{
+			// test from https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=297597
+
+			var strings = new string [1];
+
+			var lambda = Expression.Lambda<Action> (
+				Expression.Call (
+					GetType ().GetMethod ("FooRef"),
+					Expression.ArrayIndex (
+						Expression.Constant (strings), 0.ToConstant ()))).Compile ();
+
+			lambda ();
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=319190
+		public void Connect319190 ()
+		{
+			var lambda = Expression.Lambda<Func<bool>> (
+				Expression.TypeIs (
+					Expression.New (typeof (TypedReference)),
+					typeof (object))).Compile ();
+
+			Assert.IsFalse (lambda ());
+		}
 	}
 }
