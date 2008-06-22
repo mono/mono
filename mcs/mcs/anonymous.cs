@@ -12,6 +12,7 @@
 using System;
 using System.Text;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -671,7 +672,7 @@ namespace Mono.CSharp {
 	{
 		protected readonly TypeContainer Host;
 		public readonly Parameters Parameters;
-
+		ListDictionary compatibles;
 		public ToplevelBlock Block;
 
 		public AnonymousMethodExpression (TypeContainer host, Parameters parameters, Location loc)
@@ -679,6 +680,7 @@ namespace Mono.CSharp {
 			this.Host = host;
 			this.Parameters = parameters;
 			this.loc = loc;
+			this.compatibles = new ListDictionary ();
 		}
 
 		public override string ExprClassName {
@@ -855,6 +857,10 @@ namespace Mono.CSharp {
 		//
 		public Expression Compatible (EmitContext ec, Type type)
 		{
+			Expression am = (Expression) compatibles [type];
+			if (am != null)
+				return am;
+
 			Type delegate_type = CompatibleChecks (ec, type);
 			if (delegate_type == null)
 				return null;
@@ -883,9 +889,12 @@ namespace Mono.CSharp {
 
 			try {
 				int errors = Report.Errors;
-				AnonymousMethodBody am = CompatibleMethod (ec, null, return_type, delegate_type);
+				am = CompatibleMethod (ec, null, return_type, delegate_type);
 				if (am != null && delegate_type != type && errors == Report.Errors)
-					return CreateExpressionTree (ec, delegate_type);
+					am = CreateExpressionTree (ec, delegate_type);
+
+				if (!ec.IsInProbingMode)
+					compatibles.Add (type, am);
 
 				return am;
 			} catch (Exception e) {
@@ -1300,8 +1309,10 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (!Define (ec))
-				return null;
+			if (eclass == ExprClass.Invalid) {
+				if (!Define (ec))
+					return null;
+			}
 
 			eclass = ExprClass.Value;
 			return this;
