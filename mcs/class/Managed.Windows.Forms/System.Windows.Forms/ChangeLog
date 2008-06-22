@@ -1,3 +1,7 @@
+2008-06-22  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* Cursor.cs: Show shouldn't hide the cursor.
+
 2008-06-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItem.cs: When invalidating, add some extra space to bounds,

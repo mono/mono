@@ -275,7 +275,7 @@ namespace System.Windows.Forms {
 		}
 
 		public static void Show() {
-			XplatUI.ShowCursor(false);
+			XplatUI.ShowCursor(true);
 		}
 
 		public static bool operator !=(Cursor left, Cursor right) {
