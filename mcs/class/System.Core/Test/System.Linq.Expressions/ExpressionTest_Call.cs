@@ -360,7 +360,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Connect282702 ()
 		{
 			var lambda = Expression.Lambda<Func<Func<int>>> (
