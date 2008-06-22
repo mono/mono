@@ -1081,6 +1081,30 @@ incorrect warnings.  Use it like this:
 .nf
     valgrind --suppressions=mono.supp mono ...
 .fi
+.SH DTRACE
+On some platforms, Mono can expose a set of DTrace probes (also known
+as user-land statically defined, USDT Probes).
+.TP
+They are defined in the file `mono.d'.
+.TP
+.B ves-init-begin, ves-init-end
+.Sp
+Begin and end of runtime initialization.
+.TP
+.B method-compile-begin, method-compile-end
+.Sp
+Begin and end of method compilation.
+The probe arguments are class name, method name and signature,
+and in case of method-compile-end success or failure of compilation.
+.TP
+.B gc-begin, gc-end
+.Sp
+Begin and end of Garbage Collection.
+.TP
+To verify the availability of the probes, run:
+.nf
+    dtrace -P mono'$target' -l -c mono
+.fi
 .SH FILES
 On Unix assemblies are loaded from the installation lib directory.  If you set
 `prefix' to /usr, the assemblies will be located in /usr/lib.  On
