@@ -343,7 +343,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=319190
 		public void Connect319190 ()
 		{
@@ -352,7 +351,7 @@ namespace MonoTests.System.Linq.Expressions {
 					Expression.New (typeof (TypedReference)),
 					typeof (object))).Compile ();
 
-			Assert.IsFalse (lambda ());
+			Assert.IsTrue (lambda ());
 		}
 	}
 }
