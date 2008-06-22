@@ -353,5 +353,26 @@ namespace MonoTests.System.Linq.Expressions {
 
 			Assert.IsTrue (lambda ());
 		}
+
+		public static int Truc ()
+		{
+			return 42;
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Connect282702 ()
+		{
+			var lambda = Expression.Lambda<Func<Func<int>>> (
+				Expression.Convert (
+					Expression.Call (
+						typeof (Delegate).GetMethod ("CreateDelegate", new [] { typeof (Type), typeof (object), typeof (MethodInfo) }),
+						Expression.Constant (typeof (Func<int>), typeof (Type)),
+						Expression.Constant (null, typeof (object)),
+						Expression.Constant (GetType ().GetMethod ("Truc"))),
+					typeof (Func<int>))).Compile ();
+
+			Assert.AreEqual (42, lambda ().Invoke ());
+		}
 	}
 }
