@@ -17,10 +17,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2005-2006 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2005-2008 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Peter Dennis Bartok	(pbartok@novell.com)
+//      Ivan N. Zlatev          (contact i-nz.net)
 //
 //
 
@@ -47,14 +48,6 @@ namespace System.Windows.Forms {
 	, IMessageFilter
 #endif
 	{
-		#region Enums
-		private enum DrawType {
-			Initial,
-			Redraw,
-			Finish
-		}
-		#endregion	// Enums
-
 		#region Local Variables
 		static private Cursor		splitter_ns;
 		static private Cursor		splitter_we;
@@ -62,17 +55,13 @@ namespace System.Windows.Forms {
 		new private BorderStyle		border_style;
 		private int			min_extra;
 		private int			min_size;
-		private int			split_position;		// Current splitter position
-		private int			prev_split_position;	// Previous splitter position, only valid during drag
-		private int			click_offset;		// Click offset from border of splitter control
+		private int                     max_size;
 		private int			splitter_size;		// Size (width or height) of our splitter control
 		private bool			horizontal;		// true if we've got a horizontal splitter
 		private Control			affected;		// The control that the splitter resizes
-		private Control			filler;			// The control that MinExtra prevents from being shrunk to 0 size
-		private SplitterEventArgs	sevent;			// We cache the object, prevents fragmentation
-		private int			limit_min;		// The max we're allowed to move the splitter left/up
-		private int			limit_max;		// The max we're allowed to move the splitter right/down
 		private int			split_requested;	// If the user requests a position before we have ever laid out the doc
+		private int 			splitter_prev_move;
+		private Rectangle 		splitter_rectangle_moving;
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -85,11 +74,9 @@ namespace System.Windows.Forms {
 
 			min_extra = 25;
 			min_size = 25;
-			split_position = -1;
 			split_requested = -1;
 			splitter_size = 3;
 			horizontal = false;
-			sevent = new SplitterEventArgs(0, 0, 0, 0);
 
 			SetStyle(ControlStyles.Selectable, false);
 			Anchor = AnchorStyles.None;
@@ -269,6 +256,37 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		private int MaxSize {
+			get {
+				if (this.Parent == null)
+					return 0;
+
+				if (affected == null)
+					affected = AffectedControl;
+
+				int widths = 0;
+				int heights = 0;
+				foreach (Control c in this.Parent.Controls) {
+					if (c != affected) {
+						switch (c.Dock) {
+						case DockStyle.Left:
+						case DockStyle.Right:
+							widths += c.Width;
+							break;
+						case DockStyle.Top:
+						case DockStyle.Bottom:
+							heights += c.Height;
+							break;
+						}
+					}
+				}
+
+				if (horizontal)
+					return Parent.ClientSize.Height - heights - MinExtra;
+				else
+					return Parent.ClientSize.Width - widths - MinExtra;
+			}
+		}
 		
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -293,17 +311,20 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				affected = AffectedControl;
+				if (value > MaxSize)
+					value = MaxSize;
+				if (value < MinSize)
+					value = MinSize;
 
-				if (affected == null) {
+				affected = AffectedControl;
+				if (affected == null)
 					split_requested = value;
-				}
 				else {
-					if (horizontal) {
+					if (horizontal)
 						affected.Height = value;
-					} else {
+					else
 						affected.Width = value;
-					}
+					OnSplitterMoved (new SplitterEventArgs (Left, Top, value, value));
 				}
 			}
 		}
@@ -374,137 +395,33 @@ namespace System.Windows.Forms {
 			base.OnKeyDown (e);
 			if (Capture && (e.KeyCode == Keys.Escape)) {
 				Capture = false;
-				DrawDragHandle(DrawType.Finish);
+				SplitterEndMove (Point.Empty, true);
 			}
 		}
 
 		protected override void OnMouseDown(MouseEventArgs e) {
-			Point	pt;
-
 			base.OnMouseDown (e);
 
 			// Only allow if we are set up properly
-			if ((affected == null) || (filler == null)) {
+			if (affected == null)
 				affected = AffectedControl;
-				filler = FillerControl;
-			}
+			max_size = MaxSize;
 
-			if (affected == null || e.Button != MouseButtons.Left) {
+			if (affected == null || e.Button != MouseButtons.Left)
 				return;
-			}
 
-			// Prepare the job
 			Capture = true;
-
-			// Calculate limits
-			if (filler != null) {
-				if (horizontal) {
-					if (Dock == DockStyle.Top) {
-						limit_min = affected.Bounds.Top + min_size;
-						limit_max = filler.Bounds.Bottom - min_extra + this.bounds.Top - filler.Bounds.Top;
-					} else {
-						limit_min = filler.Bounds.Top + min_extra + this.bounds.Top - filler.Bounds.Bottom;
-						limit_max = affected.Bounds.Bottom - min_size - this.Height;
-					}
-				} else {
-					if (Dock == DockStyle.Left) {
-						limit_min = affected.Bounds.Left + min_size;
-						limit_max = filler.Bounds.Right - min_extra + this.bounds.Left - filler.Bounds.Left;
-					} else {
-						limit_min = filler.Bounds.Left + min_extra + this.bounds.Left - filler.Bounds.Right;
-						limit_max = affected.Bounds.Right - min_size - this.Width;
-					}
-				}
-			} else {
-				limit_min = 0;
-				if (horizontal) {
-					limit_max = affected.Parent.Height;
-				} else {
-					limit_max = affected.Parent.Width;
-				}
-			}
-
-			#if Debug
-				Console.WriteLine("Sizing limits: Min:{0}, Max:{1}", limit_min, limit_max);
-			#endif
-
-			pt = PointToScreen(Parent.PointToClient(new Point(e.X, e.Y)));
-
-			if (horizontal) {
-				split_position = pt.Y;
-				if (Dock == DockStyle.Top) {
-					click_offset = e.Y;
-				} else {
-					click_offset = -e.Y;
-				}
-			} else {
-				split_position = pt.X;
-				if (Dock == DockStyle.Left) {
-					click_offset = e.X;
-				} else {
-					click_offset = -e.X;
-				}
-			}
-
-			// We need to set this, in case we never get a mouse move
-			prev_split_position = split_position;
-
-			#if Debug
-				Console.WriteLine("Click-offset: {0} MouseDown split position: {1}", click_offset, split_position);
-			#endif
-
-			// Draw our initial handle
-			DrawDragHandle(DrawType.Initial);
+			SplitterBeginMove (Parent.PointToClient (PointToScreen (new Point (e.X, e.Y))));
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e) {
-			Point	pt;
-
 			base.OnMouseMove (e);
 
-			if (!Capture  || e.Button != MouseButtons.Left || affected == null) {
+			if (!Capture  || e.Button != MouseButtons.Left || affected == null)
 				return;
-			}
 
 			// We need our mouse coordinates relative to our parent
-			pt = PointToScreen(Parent.PointToClient(new Point(e.X, e.Y)));
-
-			// Grab our new coordinates
-			prev_split_position = split_position;
-
-			int candidate = horizontal ? pt.Y : pt.X;
-
-			// Enforce limit on what we send to the event
-			if (candidate < limit_min)
-				candidate = limit_min;
-			else if (candidate > limit_max)
-				candidate = limit_max;
-
-			sevent.x = pt.X;
-			sevent.y = pt.Y;
-			sevent.split_x = horizontal ? 0 : candidate;
-			sevent.split_y = horizontal ? candidate : 0;
-
-			// Fire the event
-			OnSplitterMoving(sevent);
-
-			split_position = horizontal ? sevent.split_y : sevent.split_x;
-
-			// Enforce limits
-			if (split_position < limit_min) {
-				#if Debug
-					Console.WriteLine("SplitPosition {0} less than minimum {1}, setting to minimum", split_position, limit_min);
-				#endif
-				split_position = limit_min;
-			} else if (split_position > limit_max) {
-				#if Debug
-					Console.WriteLine("SplitPosition {0} more than maximum {1}, setting to maximum", split_position, limit_max);
-				#endif
-				split_position = limit_max;
-			}
-
-			// Update our handle location
-			DrawDragHandle(DrawType.Redraw);
+			SplitterMove (Parent.PointToClient (PointToScreen (new Point (e.X, e.Y))));
 		}
 
 		protected override void OnMouseUp(MouseEventArgs e) {
@@ -513,43 +430,86 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			Capture = false;
-			DrawDragHandle(DrawType.Finish);
-
-			// Resize the affected window
-			if (horizontal) {
-				affected.Height = CalculateSplitPosition() - click_offset;
-				#if Debug
-					Console.WriteLine("Setting height of affected control to {0}", CalculateSplitPosition() - click_offset);
-				#endif
-			} else {
-				affected.Width = CalculateSplitPosition() - click_offset;
-				#if Debug
-					Console.WriteLine("Setting width of affected control to {0}", CalculateSplitPosition() - click_offset);
-				#endif
-			}
-
 			base.OnMouseUp (e);
+			Capture = false;
+			SplitterEndMove (Parent.PointToClient (PointToScreen (new Point (e.X, e.Y))), false);
+		}
 
-			// It seems that MS is sending some data that doesn't quite make sense
-			// In this event. It tried to match their stuff.., not sure about split_x...
+		private void SplitterBeginMove (Point location)
+		{
+			splitter_rectangle_moving = new Rectangle (Bounds.X, Bounds.Y,
+								   Width, Height);
+			splitter_prev_move = horizontal ? location.Y : location.X;
+		}
 
-			// Prepare the event
+		private void SplitterMove (Point location)
+		{
+			int currentMove = horizontal ? location.Y : location.X;
+			int delta = currentMove - splitter_prev_move;
+			Rectangle prev_location = splitter_rectangle_moving;
+			bool moved = false;
+			int min = this.MinSize;
+			int max = max_size;
+
 			if (horizontal) {
-				sevent.x = 0;
-				sevent.y = split_position;
-				sevent.split_x = 200;
-				sevent.split_y = split_position;
+				if (splitter_rectangle_moving.Y + delta > min && splitter_rectangle_moving.Y + delta < max) {
+					splitter_rectangle_moving.Y += delta;
+					moved = true;
+				} else {
+					// Ensure that the splitter is set to minimum or maximum position, 
+					// even if the mouse "skips".
+					//
+					if (splitter_rectangle_moving.Y + delta <= min && splitter_rectangle_moving.Y != min) {
+						splitter_rectangle_moving.Y = min;
+						moved = true;
+					} else if (splitter_rectangle_moving.Y + delta >= max && splitter_rectangle_moving.Y != max) {
+						splitter_rectangle_moving.Y = max;
+						moved = true;
+					}
+				}
 			} else {
-				sevent.x = split_position;
-				sevent.y = 0;
-				sevent.split_x = split_position;
-				sevent.split_y = 200;
+				if (splitter_rectangle_moving.X + delta > min && splitter_rectangle_moving.X + delta < max) {
+					splitter_rectangle_moving.X += delta;
+					moved = true;
+				} else {
+					// Ensure that the splitter is set to minimum or maximum position, 
+					// even if the mouse "skips".
+					//
+					if (splitter_rectangle_moving.X + delta <= min && splitter_rectangle_moving.X != min) {
+						splitter_rectangle_moving.X = min;
+						moved = true;
+					} else if (splitter_rectangle_moving.X + delta >= max && splitter_rectangle_moving.X != max) {
+						splitter_rectangle_moving.X = max;
+						moved = true;
+					}
+				}
 			}
 
+			if (moved) {
+				splitter_prev_move = currentMove;
+				OnSplitterMoving (new SplitterEventArgs (location.X, location.Y, 
+									 splitter_rectangle_moving.X, 
+									 splitter_rectangle_moving.Y));
+				XplatUI.DrawReversibleRectangle (this.Parent.Handle, prev_location, 1);
+				XplatUI.DrawReversibleRectangle (this.Parent.Handle, splitter_rectangle_moving, 1);
+			}
+		}
 
-			// Fire the event
-			OnSplitterMoved(sevent);
+		private void SplitterEndMove (Point location, bool cancel)
+		{
+			if (!cancel) {
+				// Resize the affected window
+				if (horizontal)
+					affected.Height = CalculateSplitPosition();
+				else
+					affected.Width = CalculateSplitPosition();
+			}
+
+			this.Parent.Refresh (); // to clean up the drag handle artifacts from all controls
+			SplitterEventArgs args = new SplitterEventArgs (location.X, location.Y, 
+									splitter_rectangle_moving.X, 
+									splitter_rectangle_moving.Y);
+			OnSplitterMoved (args);
 		}
 
 		protected virtual void OnSplitterMoved(SplitterEventArgs sevent) {
@@ -613,32 +573,17 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private Control FillerControl {
-			get {
-				if (Parent == null)
-					return null;
-
-				// Doc says the first control preceeding us in the zorder 
-				for (int i = Parent.Controls.GetChildIndex(this) - 1; i >= 0; i--) {
-					if (Parent.Controls[i].Dock == DockStyle.Fill) {
-						return Parent.Controls[i];
-					}
-				}
-				return null;
-			}
-		}
-
 		private int CalculateSplitPosition() {
 			if (horizontal) {
 				if (Dock == DockStyle.Top)
-					return split_position - affected.Top;
+					return splitter_rectangle_moving.Y - affected.Top;
 				else
-					return affected.Bottom - split_position - splitter_size;
+					return affected.Bottom - splitter_rectangle_moving.Y - splitter_size;
 			} else {
 				if (Dock == DockStyle.Left)
-					return split_position - affected.Left;
+					return splitter_rectangle_moving.X - affected.Left;
 				else
-					return affected.Right - split_position - splitter_size;
+					return affected.Right - splitter_rectangle_moving.X - splitter_size;
 			}
 		}
 
@@ -648,7 +593,6 @@ namespace System.Windows.Forms {
 
 		private void LayoutSplitter(object sender, LayoutEventArgs e) {
 			affected = AffectedControl;
-			filler = FillerControl;
 			if (split_requested != -1) {
 				SplitPosition = split_requested;
 				split_requested = -1;
@@ -657,39 +601,8 @@ namespace System.Windows.Forms {
 
 		private void ReparentSplitter(object sender, EventArgs e) {
 			affected = null;
-			filler = null;
 		}
 
-		private void DrawDragHandle(DrawType type) {
-			Rectangle	prev;
-			Rectangle	current;
-
-			if (horizontal) {
-				prev = new Rectangle(Location.X, prev_split_position - click_offset + 1, Width, 0);
-				current = new Rectangle(Location.X, split_position - click_offset + 1, Width, 0);
-			} else {
-				prev = new Rectangle(prev_split_position - click_offset + 1, Location.Y, 0, Height);
-				current = new Rectangle(split_position - click_offset + 1, Location.Y, 0, Height);
-			}
-
-			switch(type) {
-			case DrawType.Initial:
-				XplatUI.DrawReversibleRectangle(Parent.window.Handle, current, 3);
-				return;
-
-			case DrawType.Redraw:
-				if (prev.X == current.X && prev.Y == current.Y)
-					return;
-
-				XplatUI.DrawReversibleRectangle(Parent.window.Handle, prev, 3);
-				XplatUI.DrawReversibleRectangle(Parent.window.Handle, current, 3);
-				return;
-
-			case DrawType.Finish:
-				XplatUI.DrawReversibleRectangle(Parent.window.Handle, current, 3);
-				return;
-			}
-		}
 		#endregion	// Private Properties and Methods
 
 		#region Events

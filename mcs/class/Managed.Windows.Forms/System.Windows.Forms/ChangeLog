@@ -1,5 +1,14 @@
 2008-06-22  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* Splitter.cs: Fix Splitter to:
+	 - Work for arbitrary splitter size
+	 - Handle MinSize and MinExtra properly
+	 - Get rid of absolute positioning during drag and use relative
+	 - Multiple other fixes 
+	 [Fixes bug #338966]
+
+2008-06-22  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* Cursor.cs: Show shouldn't hide the cursor.
 
 2008-06-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
