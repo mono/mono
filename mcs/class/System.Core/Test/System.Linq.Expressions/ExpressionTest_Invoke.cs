@@ -89,18 +89,17 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=352402
 		public void InvokeFunc ()
 		{
 			var invoke = Expression.Invoke (CreateInvokable<Func<string, string, int>> (), "foo".ToConstant (), "bar".ToConstant ());
 			Assert.AreEqual (typeof (int), invoke.Type);
 			Assert.AreEqual (2, invoke.Arguments.Count);
-			if (OnMono ())
-				Assert.AreEqual ("Invoke(invokable, \"foo\", \"bar\")", invoke.ToString ());
-			else
-				Assert.AreEqual ("Invoke(invokable,\"foo\",\"bar\")", invoke.ToString ());
+			Assert.AreEqual ("Invoke(invokable, \"foo\", \"bar\")", invoke.ToString ());
 		}
 
 		[Test]
+		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=352402
 		public void InvokeLambda ()
 		{
 			var p = Expression.Parameter (typeof (int), "i");
@@ -109,15 +108,7 @@ namespace MonoTests.System.Linq.Expressions {
 			var invoke = Expression.Invoke (lambda, 1.ToConstant ());
 			Assert.AreEqual (typeof (int), invoke.Type);
 			Assert.AreEqual (1, invoke.Arguments.Count);
-			if (OnMono ())
-				Assert.AreEqual ("Invoke(i => i, 1)", invoke.ToString ());
-			else
-				Assert.AreEqual ("Invoke(i => i,1)", invoke.ToString ());
-		}
-
-		static bool OnMono ()
-		{
-			return typeof (Expression).Assembly.GetType ("Consts") != null;
+			Assert.AreEqual ("Invoke(i => i, 1)", invoke.ToString ());
 		}
 
 		delegate string StringAction (string s);
