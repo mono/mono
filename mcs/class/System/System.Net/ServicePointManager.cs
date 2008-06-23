@@ -72,9 +72,9 @@ namespace System.Net
 
 #if NET_1_1
 #if TARGET_JVM
-		static bool expectContinue = true;
-#else
 		static bool expectContinue = false;
+#else
+		static bool expectContinue = true;
 #endif
 		static bool useNagle;
 #endif
