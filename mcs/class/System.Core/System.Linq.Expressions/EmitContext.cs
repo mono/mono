@@ -216,7 +216,7 @@ namespace System.Linq.Expressions {
 
 				if (parameter.ParameterType.IsByRef) {
 					ig.Emit (OpCodes.Ldloca, EmitStored (argument));
-					return;
+					continue;
 				}
 
 				Emit (arguments [i]);
@@ -279,8 +279,10 @@ namespace System.Linq.Expressions {
 		{
 			expression.Emit (this);
 
-			if (expression.Type.IsValueType)
-				ig.Emit (OpCodes.Box, expression.Type);
+			var type = expression.Type;
+
+			if (type.IsValueType)
+				ig.Emit (OpCodes.Box, type);
 
 			ig.Emit (OpCodes.Isinst, candidate);
 		}
