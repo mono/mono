@@ -1,3 +1,7 @@
+2008-06-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke2.cs libtest.c: Add test for #402585.
+
 2008-06-23  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-virtual2.2.cs: Test case for a call from a generic
