@@ -1,5 +1,13 @@
 2008-06-23  Mark Probst  <mark.probst@gmail.com>
 
+	* generic-virtual2.2.cs: Test case for a call from a generic
+	method to a method of a generic class where the generic method
+	does not require the MRGCTX.
+
+	* Makefile.am: Test added.
+
+2008-06-23  Mark Probst  <mark.probst@gmail.com>
+
 	* generic-exceptions.2.cs: Test case for exception handlers in
 	generic methods with catch clauses depending on the method type
 	arguments.
