@@ -1,3 +1,8 @@
+2008-06-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c (add_valuetype): Increase *gr too when passing a HFA to be in sync with the ABi.
+	Fixes #402585.
+
 2008-06-23  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c: Fail sharing of a generic method if it contains an open
