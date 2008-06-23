@@ -455,11 +455,10 @@ namespace Mono.CSharp {
 			if (RootContext.Version == LanguageVersion.ISO_1)
 				return false;
 
-			if (a.Type.IsValueType)
+			if (!TypeManager.IsReferenceType (a_type))
 				return false;
 
-			return Convert.ImplicitReferenceConversionCore (
-				a, b);
+			return Convert.ImplicitReferenceConversionExists (a, b);
 		}
 		
 		/// <summary>
