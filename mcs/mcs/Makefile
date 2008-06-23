@@ -65,7 +65,7 @@ BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/net_2_0_bootstrap$(PLATFORM_PATH_
 
 clean-local: clean-net_2_0_bootstrap
 clean-net_2_0_bootstrap:
-	cd .. && $(MAKE) PROFILE=net_2_0_bootstrap clean
+	cd .. && $(MAKE) NO_DIR_CHECK=yes PROFILE=net_2_0_bootstrap clean
 
 bootstrap_libs = mscorlib.dll System.dll System.Xml.dll Mono.CompilerServices.SymbolWriter.dll
 bootstrap_libfiles = $(bootstrap_libs:%=$(topdir)/class/lib/net_2_0_bootstrap/%)
@@ -74,7 +74,7 @@ $(bootstrap_libfiles): bootstrap-libs
 	@:
 .PHONY: bootstrap-libs
 bootstrap-libs:
-	cd .. && $(MAKE) PROFILE=net_2_0_bootstrap all
+	cd .. && $(MAKE) NO_DIR_CHECK=yes PROFILE=net_2_0_bootstrap all
 
 $(PROGRAM): $(bootstrap_libfiles)
 endif

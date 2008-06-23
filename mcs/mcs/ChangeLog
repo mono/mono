@@ -1,3 +1,7 @@
+2008-06-23  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile (bootstrap-libs): Pass NO_DIR_CHECK to sub-make.
+
 2008-06-22  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #394347
