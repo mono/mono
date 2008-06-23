@@ -4864,7 +4864,7 @@ namespace System.Windows.Forms
 				break;
 			case HorizontalAlignment.Center:
 				len = (int) dc.MeasureString (text, panel.Parent.Font).Width;
-				x = (panel.Width / 2) + (len / 2);
+				x = ((panel.Width - len) / 2);
 				string_rect = new Rectangle (x, y, 
 						area.Right - x - border_size,
 						area.Bottom - y - border_size);

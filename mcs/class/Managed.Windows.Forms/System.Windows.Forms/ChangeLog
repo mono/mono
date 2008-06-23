@@ -1,3 +1,8 @@
+2008-06-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ThemeWin32Classic.cs: Fix position calculation for centered
+	text on status bar panels.  [Fixes bug #402165]
+
 2008-06-22  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* Splitter.cs: Fix Splitter to:
