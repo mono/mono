@@ -9932,6 +9932,30 @@
       </method>
     </type>
   </test>
+  <test name="gtest-367.cs">
+    <type name="Foo">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Repro">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Bar[TFoo](TFoo)">
+        <size>19</size>
+      </method>
+      <method name="Void Baz[T](T, System.Action`1[T])">
+        <size>8</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void Gazonk(Repro)">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-368.cs">
     <type name="C`1[T]">
       <method name="Void .ctor(D)">
