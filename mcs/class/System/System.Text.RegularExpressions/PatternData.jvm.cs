@@ -112,7 +112,8 @@ namespace System.Text.RegularExpressions
 		}
 
 		private int GetJavaFlags (RegexOptions options) {
-			int flags = 0;
+			int flags = Pattern.UNIX_LINES; // .NET treats only the "\n" character as newline, UNIX_LINES implies the same behavior in Java.
+
 			if ((options & RegexOptions.IgnoreCase) == RegexOptions.IgnoreCase) {
 				flags |= Pattern.CASE_INSENSITIVE;
 			}
