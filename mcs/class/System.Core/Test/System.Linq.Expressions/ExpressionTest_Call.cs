@@ -242,6 +242,11 @@ namespace MonoTests.System.Linq.Expressions {
 			return a + 4;
 		}
 
+		public static string DoAnotherThing (ref int a, string s)
+		{
+			return s + a;
+		}
+
 		[Test]
 		public void CallStaticMethodWithRefParameter ()
 		{
@@ -251,6 +256,18 @@ namespace MonoTests.System.Linq.Expressions {
 				Expression.Call (GetType ().GetMethod ("DoSomethingWith"), p), p).Compile ();
 
 			Assert.AreEqual (42, c (38));
+		}
+
+		[Test]
+		public void CallStaticMethodWithRefParameterAndOtherParameter ()
+		{
+			var i = Expression.Parameter (typeof (int), "i");
+			var s = Expression.Parameter (typeof (string), "s");
+
+			var lamda = Expression.Lambda<Func<int, string, string>> (
+				Expression.Call (GetType ().GetMethod ("DoAnotherThing"), i, s), i, s).Compile ();
+
+			Assert.AreEqual ("foo42", lamda (42, "foo"));
 		}
 
 		public static int Bang (Expression i)
