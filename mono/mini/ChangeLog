@@ -1,3 +1,10 @@
+2008-06-23  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: When compiling a method with generic sharing, insert the
+	method instantiated with an all-Object generic context into the
+	jit info table, instead of the context of the first instantiation
+	of the method we happen to compile.
+
 2008-06-18  Martin Baulig  <martin@ximian.com>
 
 	* debug-debugger.h (MonoDebuggerInfo): Replaced `version' with
