@@ -55,9 +55,6 @@ namespace System.Net {
 		public abstract Stream EndGetRequestStream (IAsyncResult asyncResult);
 		public abstract WebResponse EndGetResponse (IAsyncResult asyncResult);
 
-		internal abstract Stream GetRequestStream ();
-		internal abstract WebResponse GetResponse ();
-
 		public static WebRequest Create (Uri uri)
 		{
 			if (!uri.Scheme.StartsWith ("http"))
