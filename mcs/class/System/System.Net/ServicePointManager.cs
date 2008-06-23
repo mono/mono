@@ -69,8 +69,13 @@ namespace System.Net
 		private static int maxServicePoints = 0;
 		private static bool _checkCRL = false;
 		private static SecurityProtocolType _securityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
+
 #if NET_1_1
+#if TARGET_JVM
 		static bool expectContinue = true;
+#else
+		static bool expectContinue = false;
+#endif
 		static bool useNagle;
 #endif
 

@@ -521,8 +521,14 @@ namespace System.Net
 					switch(name)
 					{
 						case "GET" : _method = new GetMethod(uriString); break;
-						case "PUT" : _method = new PutMethod(uriString); break;
-						case "POST": _method = new PostMethod(uriString); break;
+						case "PUT" : _method = new PutMethod(uriString);
+							if (ServicePointManager.Expect100Continue)
+								_method.getParams ().setBooleanParameter (HttpMethodParams.USE_EXPECT_CONTINUE, true);
+							break;
+						case "POST": _method = new PostMethod(uriString);
+							if (ServicePointManager.Expect100Continue)
+								_method.getParams ().setBooleanParameter (HttpMethodParams.USE_EXPECT_CONTINUE, true);
+							break;
 						case "HEAD": _method = new HeadMethod(uriString); break;
 						case "TRACE": _method = new TraceMethod(uriString);break;
 						case "DELETE": _method = new DeleteMethod(uriString);break;
