@@ -1,3 +1,11 @@
+2008-06-23  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-exceptions.2.cs: Test case for exception handlers in
+	generic methods with catch clauses depending on the method type
+	arguments.
+
+	* Makefile.am: Test added.
+
 2008-06-20  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* bug-349190.2.cs: Regression test for bug #349190.

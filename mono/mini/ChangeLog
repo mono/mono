@@ -1,5 +1,10 @@
 2008-06-23  Mark Probst  <mark.probst@gmail.com>
 
+	* mini.c: Fail sharing of a generic method if it contains an open
+	catch clause (because we don't pass MRGCTXs yet).
+
+2008-06-23  Mark Probst  <mark.probst@gmail.com>
+
 	* mini.c: When compiling a method with generic sharing, insert the
 	method instantiated with an all-Object generic context into the
 	jit info table, instead of the context of the first instantiation
