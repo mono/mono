@@ -1,3 +1,8 @@
+2008-06-21  Robert Jordan  <robertj@gmx.net>
+
+	* Process.cs (Start_common): UserName may be null or empty.
+	Fixes bug  #350543.
+
 2008-06-19  Dick Porter  <dick@ximian.com>
 
 	* Process.cs: Match the buffer sizes of StreamReader and

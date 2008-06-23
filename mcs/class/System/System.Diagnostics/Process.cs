@@ -1132,7 +1132,7 @@ namespace System.Diagnostics {
 			
 			if (startInfo.UseShellExecute) {
 #if NET_2_0
-				if (startInfo.UserName != null)
+				if (!String.IsNullOrEmpty (startInfo.UserName))
 					throw new InvalidOperationException ("UserShellExecute must be false if an explicit UserName is specified when starting a process");
 #endif
 				return (Start_shell (startInfo, process));

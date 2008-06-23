@@ -1,3 +1,8 @@
+2008-06-21  Robert Jordan  <robertj@gmx.net>
+
+	* ProcessTest.cs (Start_UseShellExecuteWithEmptyUserName):
+	add test for bug #350543.
+
 2008-06-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* FileVersionInfoTest.cs : disabled all English-Windows-dependent

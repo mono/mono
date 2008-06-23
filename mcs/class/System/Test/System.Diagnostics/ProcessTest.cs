@@ -592,6 +592,44 @@ namespace MonoTests.System.Diagnostics
 			}
 		}
 
+#if NET_2_0		
+		[Test]
+		public void Start_UseShellExecuteWithEmptyUserName ()
+		{
+			if (RunningOnUnix)
+				Assert.Ignore ("On Unix and Mac OS X, we try " +
+					"to open any file (using xdg-open, ...)" +
+					" and we do not report an exception " +
+					"if this fails.");
+
+			string exe = @"c:\shouldnoteverexist.exe";
+
+			try {
+				Process p = new Process ();
+				p.StartInfo.FileName = exe;
+				p.StartInfo.UseShellExecute = true;
+				p.StartInfo.UserName = "";
+				p.Start ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {
+				Assert.Fail ("#2");
+			} catch (Win32Exception) {
+			}
+
+			try {
+				Process p = new Process ();
+				p.StartInfo.FileName = exe;
+				p.StartInfo.UseShellExecute = true;
+				p.StartInfo.UserName = null;
+				p.Start ();
+				Assert.Fail ("#3");				
+			} catch (InvalidOperationException) {
+				Assert.Fail ("#4");
+			} catch (Win32Exception) {
+			}
+		}
+#endif
+		
 		[Test] // Start (string, string)
 		public void Start4_FileName_Null ()
 		{
