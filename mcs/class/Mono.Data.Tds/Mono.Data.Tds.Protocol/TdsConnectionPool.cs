@@ -123,7 +123,8 @@ namespace Mono.Data.Tds.Protocol
 		TdsConnectionInfo info;
 		bool pooling = true;
 		TdsConnectionPoolManager manager;
-
+		ManualResetEvent connAvailable;
+		
 		public TdsConnectionPool (TdsConnectionPoolManager manager, TdsConnectionInfo info)
 		{
 			int n = 0;
@@ -137,8 +138,12 @@ namespace Mono.Data.Tds.Protocol
 				list [n] = null;
 
 			// Pre-populate with minimum number of connections
-			for (; n < list.Length; n++)
+			for (; n < list.Length; n++) {
 				list [n] = CreateConnection ();
+			}
+			
+			// Event that notifies a connection is available in the pool
+			connAvailable = new ManualResetEvent (false);
 		}
 
 		public bool Pooling {
@@ -152,10 +157,13 @@ namespace Mono.Data.Tds.Protocol
 		{
 			Tds connection = null;
 			int index;
-		       
+		    
 		retry:
-			index = list.Length - 1;
+			// Reset the connection available event
+			connAvailable.Reset ();
 
+			index = list.Length - 1;
+			
 			do {
 				connection = list [index];
 
@@ -189,8 +197,16 @@ namespace Mono.Data.Tds.Protocol
 				
 				index--;
 				
-				if (index < 0)
+				if (index < 0) {
+					// TODO: Maintain a list of indices of released connection to save some loop over
+					// Honor timeout - if pool is full, and no connections are available within the 
+					// timeout period - just throw the exception
+					if (info.Timeout > 0 
+						&& !connAvailable.WaitOne (new TimeSpan (0, 0, info.Timeout), true))
+							throw Tds.CreateTimeoutException (info.DataSource, "GetConnection()");
+						
 					goto retry;
+				}
 
 			} while (connection == null);
 
@@ -200,6 +216,7 @@ namespace Mono.Data.Tds.Protocol
 		public void ReleaseConnection (Tds connection)
 		{
 			connection.poolStatus = 0;
+			connAvailable.Set ();
 		}
 
 #if NET_2_0
@@ -212,6 +229,7 @@ namespace Mono.Data.Tds.Protocol
 			} else {
 				connection.poolStatus = 0;
 			}
+			connAvailable.Set ();
 		}
 
 		public void ResetConnectionPool ()
@@ -227,6 +245,7 @@ namespace Mono.Data.Tds.Protocol
 					if (!connection.Reset ()) {
 						ThreadPool.QueueUserWorkItem (new WaitCallback (DestroyConnection), connection);
 						list [index] = connection = null;
+						connAvailable.Set ();
 					}
 				}
 
@@ -242,6 +261,7 @@ namespace Mono.Data.Tds.Protocol
 				if (connection != null && !connection.Reset ()) {
 					ThreadPool.QueueUserWorkItem (new WaitCallback (DestroyConnection), connection);
 					list [index] = connection = null;
+					connAvailable.Set ();
 				}
 			}
 		}
