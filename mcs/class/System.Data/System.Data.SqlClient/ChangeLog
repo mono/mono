@@ -1,3 +1,7 @@
+2008-06-23  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlDependency.cs: New
+	
 2008-06-12  Veerapuram Varadhan  <vvaradhan@novell.com>
 	
 	Patch by Christian Hergert <christian.hergert@gmail.com>
