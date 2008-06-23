@@ -232,7 +232,7 @@ namespace System.Linq.Expressions {
 
 		public void EmitNullableHasValue (LocalBuilder local)
 		{
-			EmitCall (local, local.LocalType.GetMethod ("get_HasValue"));
+			EmitCall (local, "get_HasValue");
 		}
 
 		public void EmitNullableInitialize (LocalBuilder local)
@@ -244,12 +244,17 @@ namespace System.Linq.Expressions {
 
 		public void EmitNullableGetValue (LocalBuilder local)
 		{
-			EmitCall (local, local.LocalType.GetMethod ("get_Value", Type.EmptyTypes));
+			EmitCall (local, "get_Value");
 		}
 
 		public void EmitNullableGetValueOrDefault (LocalBuilder local)
 		{
-			EmitCall (local, local.LocalType.GetMethod ("GetValueOrDefault", Type.EmptyTypes));
+			EmitCall (local, "GetValueOrDefault");
+		}
+
+		void EmitCall (LocalBuilder local, string method_name)
+		{
+			EmitCall (local, local.LocalType.GetMethod (method_name, Type.EmptyTypes));
 		}
 
 		public void EmitNullableNew (Type of)
