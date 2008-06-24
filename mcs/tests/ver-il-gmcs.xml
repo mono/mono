@@ -10193,6 +10193,77 @@
       </method>
     </type>
   </test>
+  <test name="gtest-381.cs">
+    <type name="TestGoto">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main(System.String[])">
+        <size>72</size>
+      </method>
+      <method name="IEnumerable`1 setX()">
+        <size>16</size>
+      </method>
+      <method name="IEnumerable`1 test()">
+        <size>16</size>
+      </method>
+    </type>
+    <type name="TestGoto+&lt;setX&gt;c__Iterator0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean System.Collections.Generic.IEnumerator`1[[System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>12</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>39</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
+        <size>39</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>106</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>46</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+    </type>
+    <type name="TestGoto+&lt;test&gt;c__Iterator1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean System.Collections.Generic.IEnumerator`1[[System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>12</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>39</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
+        <size>39</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>178</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>60</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-382.cs">
     <type name="C">
       <method name="Void .ctor()">
@@ -15193,6 +15264,48 @@
       </method>
       <method name="Char &lt;&gt;m__3(&lt;&gt;__AnonType1`2[System.Char,System.Int32])">
         <size>9</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-linq-13.cs">
+    <type name="Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void Foo(TypeDefinition)">
+        <size>30</size>
+      </method>
+      <method name="MethodDefinition &lt;Foo&gt;m__0(MethodDefinition)">
+        <size>4</size>
+      </method>
+    </type>
+    <type name="Extension">
+      <method name="IEnumerable`1 Cast[T](IFoo)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="MethodDefinition">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TypeDefinition">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="MethodDefinitionCollection get_Methods()">
+        <size>2</size>
+      </method>
+      <method name="Void set_Methods(MethodDefinitionCollection)">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="MethodDefinitionCollection">
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
