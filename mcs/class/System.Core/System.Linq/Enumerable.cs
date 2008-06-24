@@ -633,6 +633,12 @@ namespace System.Linq
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
+			return CreateGroupByIterator (source, keySelector, comparer);
+		}
+
+		static IEnumerable<IGrouping<TKey, TSource>> CreateGroupByIterator<TSource, TKey> (this IEnumerable<TSource> source,
+			Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
+		{
 			Dictionary<TKey, List<TSource>> groups = new Dictionary<TKey, List<TSource>> ();
 			List<TSource> nullList = new List<TSource> ();
 			int counter = 0;
@@ -669,7 +675,6 @@ namespace System.Linq
 				counter++;
 			}
 		}
-
 
 		public static IEnumerable<IGrouping<TKey, TElement>> GroupBy<TSource, TKey, TElement> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector)
