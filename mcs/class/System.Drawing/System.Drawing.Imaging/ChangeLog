@@ -1,3 +1,9 @@
+2008-06-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ImageAttributes.cs: Call CheckStatus in GetAdjustedPalette before
+	trying to set the palette (since the values could be bad).
+	[Partial fix for #402172]
+
 2008-05-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EncoderParameters.cs: Don't downcast an IntPtr to an Int32.

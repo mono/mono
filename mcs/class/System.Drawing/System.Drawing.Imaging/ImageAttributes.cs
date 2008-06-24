@@ -214,8 +214,9 @@ namespace System.Drawing.Imaging {
 			IntPtr colorPalette;
 
 			Status status = GDIPlus.GdipGetImageAttributesAdjustedPalette (nativeImageAttr, out colorPalette, type);
-    			palette.setFromGDIPalette (colorPalette);
 			GDIPlus.CheckStatus (status);
+
+    			palette.setFromGDIPalette (colorPalette);
 		}
 
 		public void SetBrushRemapTable (ColorMap[] map)
