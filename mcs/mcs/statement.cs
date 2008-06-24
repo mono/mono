@@ -1550,7 +1550,7 @@ namespace Mono.CSharp {
 		//
 		// Labels.  (label, block) pairs.
 		//
-		HybridDictionary labels;
+		protected HybridDictionary labels;
 
 		//
 		// Keeps track of (name, type) pairs
@@ -2725,7 +2725,8 @@ namespace Mono.CSharp {
 			// TODO: Change to iter_block.statements = statements;
 			foreach (Statement stmt in source.statements)
 				iter_block.AddStatement (stmt);
-
+			labels = source.labels;
+			
 			AddStatement (new IteratorStatement (iterator, iter_block));
 
 			source.statements = new ArrayList (1);
