@@ -1,3 +1,7 @@
+2008-06-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c: Check if stats is enabled so we don't allocate memory when not needed.
+
 2008-06-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c: Avoid storing MonoMethod pointers in the JIT stats, store their string format instead.
