@@ -3947,6 +3947,14 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			expr.MutateHoistedGenericType (storey);
+			true_expr.MutateHoistedGenericType (storey);
+			false_expr.MutateHoistedGenericType (storey);
+			type = storey.MutateType (type);
+		}
+
 		public override TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
 		{
 			return null;

@@ -1,5 +1,10 @@
 2008-06-24  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #402888
+	* expression.cs: Mutate conditional expression.
+
+2008-06-24  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #401012
 	* class.cs: Keep StructLayout in shared container.
 
