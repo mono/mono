@@ -7424,7 +7424,7 @@ namespace Mono.CSharp {
  
 	public class Indexer : PropertyBase
 	{
-		class GetIndexerMethod : GetMethod
+		public class GetIndexerMethod : GetMethod
 		{
 			public GetIndexerMethod (PropertyBase method):
 				base (method)
@@ -7453,7 +7453,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		class SetIndexerMethod: SetMethod
+		public class SetIndexerMethod: SetMethod
 		{
 			public SetIndexerMethod (PropertyBase method):
 				base (method)

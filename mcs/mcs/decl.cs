@@ -371,7 +371,8 @@ namespace Mono.CSharp {
 				}
 			} else {
 				if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN | Modifiers.PARTIAL)) == 0) {
-					if (RootContext.Version >= LanguageVersion.LINQ && this is Property.PropertyMethod) {
+					if (RootContext.Version >= LanguageVersion.LINQ && this is Property.PropertyMethod &&
+						!(this is Indexer.GetIndexerMethod || this is Indexer.SetIndexerMethod)) {
 						Report.Error (840, Location, "`{0}' must have a body because it is not marked abstract or extern. The property can be automatically implemented when you define both accessors",
 						              GetSignatureForError ());
 					} else {
