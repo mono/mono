@@ -3295,6 +3295,7 @@ namespace Mono.CSharp {
 				return base.OverloadResolve (ec, ref arguments, false, loc);
 
 			e.ExtensionExpression = ExtensionExpression;
+			e.SetTypeArguments (type_arguments);			
 			return e.ResolveOverloadExtensions (ec, arguments, e.namespace_entry, loc);
 		}		
 	}

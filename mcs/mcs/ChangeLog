@@ -1,5 +1,9 @@
 2008-06-23  Marek Safar  <marek.safar@gmail.com>
 
+	* ecore.cs: Pass type argument details to parent extension method.
+
+2008-06-23  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #375966
 	* delegate.cs: Fixed IsTypeCovariant generic type conversions.
 
