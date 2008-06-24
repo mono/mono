@@ -2693,7 +2693,7 @@ namespace Mono.CSharp {
 			}
 
 			if (a.Type == TypeManager.struct_layout_attribute_type && a.GetLayoutKindValue () == LayoutKind.Explicit) {
-				HasExplicitLayout = true;
+				PartialContainer.HasExplicitLayout = true;
 			}
 
 			base.ApplyAttributeBuilder (a, cb);
