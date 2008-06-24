@@ -550,8 +550,7 @@ namespace MonoTests.System.Linq {
 		}
 
 
-		[Test]
-		[Ignore ("Takes some time.")]
+		//[Test]
 		public void CountOverflowTest ()
 		{
 			//BigEnumerable data = new BigEnumerable ((ulong) int.MaxValue + 1);
