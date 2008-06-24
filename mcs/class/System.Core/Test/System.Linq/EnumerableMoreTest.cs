@@ -739,7 +739,6 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void SumTest ()
 		{
 			string [] data = { "2", "3", "5", "5" };
