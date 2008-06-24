@@ -1,3 +1,8 @@
+2008-06-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_GetTypes): Collect exceptions for classes where 
+	don't event mono_class_get () succeeds. Fixes #402182.
+
 2008-06-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-internals.h: Added MonoDynamicImage::methodspec
