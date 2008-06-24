@@ -7426,6 +7426,8 @@ namespace Mono.CSharp {
 	{
 		public class GetIndexerMethod : GetMethod
 		{
+			Parameters parameters;
+
 			public GetIndexerMethod (PropertyBase method):
 				base (method)
 			{
@@ -7434,6 +7436,15 @@ namespace Mono.CSharp {
 			public GetIndexerMethod (PropertyBase method, Accessor accessor):
 				base (method, accessor)
 			{
+			}
+
+			public override MethodBuilder Define (DeclSpace parent)
+			{
+				//
+				// Clone indexer accessor parameters for localized capturing
+				//
+				parameters = ((Indexer) method).parameters.Clone ();
+				return base.Define (parent);
 			}
 			
 			public override bool EnableOverloadChecks (MemberCore overload)
@@ -7448,7 +7459,7 @@ namespace Mono.CSharp {
 
 			public override Parameters ParameterInfo {
 				get {
-					return ((Indexer)method).parameters;
+					return parameters;
 				}
 			}
 		}

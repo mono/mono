@@ -1,5 +1,9 @@
 2008-06-24  Marek Safar  <marek.safar@gmail.com>
 
+	* class.cs: Clone indexer parameters for localized capturing.
+
+2008-06-24  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #402379
 	* expression.cs: Don't crash when an object initializer resolve fails.
 
