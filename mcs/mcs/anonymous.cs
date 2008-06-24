@@ -239,7 +239,7 @@ namespace Mono.CSharp {
 			// Create an instance of storey type
 			//
 			Expression storey_type_expr;
-			if (IsGeneric) {
+			if (is_generic) {
 				//
 				// Use current method type parameter (MVAR) for top level storey only. All
 				// nested storeys use class type parameter (VAR)
@@ -1333,7 +1333,7 @@ namespace Mono.CSharp {
 
 			MethodInfo delegate_method = method.MethodBuilder;
 #if GMCS_SOURCE
-			if (Storey != null && Storey.IsGeneric)
+			if (Storey != null && Storey.MemberName.IsGeneric)
 				delegate_method = TypeBuilder.GetMethod (Storey.Instance.Type, delegate_method);
 #endif
 			ec.ig.Emit (OpCodes.Ldftn, delegate_method);

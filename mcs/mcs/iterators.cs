@@ -833,7 +833,7 @@ namespace Mono.CSharp {
 
 				FieldInfo field = IteratorHost.PC.FieldBuilder;
 #if GMCS_SOURCE
-				if (Storey.IsGeneric)
+				if (Storey.MemberName.IsGeneric)
 					field = TypeBuilder.GetField (Storey.Instance.Type, field);
 #endif
 				ig.Emit (OpCodes.Stfld, field);
