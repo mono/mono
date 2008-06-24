@@ -1,3 +1,7 @@
+2008-06-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c: Avoid storing MonoMethod pointers in the JIT stats, store their string format instead.
+
 2008-06-24  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c (get_object_generic_inst): Variable-sized arrays are not
