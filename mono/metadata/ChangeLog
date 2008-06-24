@@ -1,3 +1,13 @@
+2008-06-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c: Added mono_image_get_methodref_token_for_methodbuilder.
+	It does the same as mono_image_get_methodref_token but works on
+	MethodBuilder.
+
+	* reflection.c: Use mono_image_get_methodspec_token_for_generic_method_definition
+	and always generate a methodspec. This follows the old behavior and fixes
+	the regressions in System.Core. 
+
 2008-06-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Reflection_Assembly_GetTypes): Collect exceptions for classes where 
