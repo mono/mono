@@ -9500,7 +9500,7 @@ namespace Mono.CSharp {
 			ec.CurrentInitializerVariable = new InitializerTargetExpression (this);
 			initializers.Resolve (ec);
 			ec.CurrentInitializerVariable = previous;
-			return this;
+			return e;
 		}
 
 		public override void Emit (EmitContext ec)
