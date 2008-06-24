@@ -838,6 +838,13 @@ namespace System.Linq
 			if (comparer == null)
 				comparer = EqualityComparer<TKey>.Default;
 
+			return CreateJoinIterator (outer, inner, outerKeySelector, innerKeySelector, resultSelector, comparer);
+		}
+
+		static IEnumerable<TResult> CreateJoinIterator<TOuter, TInner, TKey, TResult> (this IEnumerable<TOuter> outer,
+			IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector,
+			Func<TInner, TKey> innerKeySelector, Func<TOuter, TInner, TResult> resultSelector, IEqualityComparer<TKey> comparer)
+		{
 			ILookup<TKey, TInner> innerKeys = ToLookup<TInner, TKey> (inner, innerKeySelector, comparer);
 			/*Dictionary<K, List<U>> innerKeys = new Dictionary<K, List<U>> ();
 			foreach (U element in inner)
@@ -861,7 +868,7 @@ namespace System.Linq
 			IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector,
 			Func<TInner, TKey> innerKeySelector, Func<TOuter, TInner, TResult> resultSelector)
 		{
-			return Join<TOuter, TInner, TKey, TResult> (outer, inner, outerKeySelector, innerKeySelector, resultSelector, null);
+			return outer.Join (inner, outerKeySelector, innerKeySelector, resultSelector, null);
 		}
 
 		#endregion
