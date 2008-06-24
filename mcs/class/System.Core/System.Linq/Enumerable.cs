@@ -778,6 +778,14 @@ namespace System.Linq
 			if (comparer == null)
 				comparer = EqualityComparer<TKey>.Default;
 
+			return CreateGroupJoinIterator (outer, inner, outerKeySelector, innerKeySelector, resultSelector, comparer);
+		}
+
+		static IEnumerable<TResult> CreateGroupJoinIterator<TOuter, TInner, TKey, TResult> (this IEnumerable<TOuter> outer,
+			IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector,
+			Func<TInner, TKey> innerKeySelector, Func<TOuter, IEnumerable<TInner>, TResult> resultSelector,
+			IEqualityComparer<TKey> comparer)
+		{
 			ILookup<TKey, TInner> innerKeys = ToLookup<TInner, TKey> (inner, innerKeySelector, comparer);
 			/*Dictionary<K, List<U>> innerKeys = new Dictionary<K, List<U>> ();
 			foreach (U element in inner)
