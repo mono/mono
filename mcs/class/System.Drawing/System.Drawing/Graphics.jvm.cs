@@ -2308,15 +2308,20 @@ namespace System.Drawing {
 		}
 
 		public float DpiX {
-			get {				
+			get {
+				if (_image != null)
+					return _image.HorizontalResolution;
+
 				return DefaultScreenResolution;
 			}
 		}
 
 		public float DpiY {
 			get {
-				//TBD: assume 72 (screen) for now
-				return DpiX;
+				if (_image != null)
+					return _image.VerticalResolution;
+
+				return DefaultScreenResolution;
 			}
 		}
 
@@ -2618,5 +2623,6 @@ namespace System.Drawing {
 		#endregion
 	}
 }
+
 
 
