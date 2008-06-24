@@ -1,3 +1,8 @@
+2008-06-24 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_generic_exception_catch_clause_type.cs: Regression
+	test for #402606.
+
 2008-06-06 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_ctor_test.sh: New test generator for 
