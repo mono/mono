@@ -1529,7 +1529,7 @@ namespace Mono.CSharp {
 			LocalVariableReference other_variable = new LocalVariableReference (equals_block, "other", loc);
 
 			MemberAccess system_collections_generic = new MemberAccess (new MemberAccess (
-				new SimpleName ("System", loc), "Collections", loc), "Generic", loc);
+				new QualifiedAliasMember ("global", "System", loc), "Collections", loc), "Generic", loc);
 
 			Expression rs_equals = null;
 			Expression string_concat = new StringConstant ("<empty type>", loc);
