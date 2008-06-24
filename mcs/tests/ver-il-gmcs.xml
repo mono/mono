@@ -11928,6 +11928,30 @@
       </method>
     </type>
   </test>
+  <test name="gtest-anon-type-09.cs">
+    <type name="My.System.Test">
+      <method name="Void Main()">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType0`1[&lt;X&gt;__T]">
+      <method name="Void .ctor(&lt;X&gt;__T)">
+        <size>14</size>
+      </method>
+      <method name="&lt;X&gt;__T get_X()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>39</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>78</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>57</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Void .ctor()">
