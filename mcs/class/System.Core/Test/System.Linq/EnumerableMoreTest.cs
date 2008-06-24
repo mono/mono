@@ -1501,7 +1501,6 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void JoinArgumentNullTest ()
 		{
 			string [] data = { "2", "1", "5", "3", "4" };
