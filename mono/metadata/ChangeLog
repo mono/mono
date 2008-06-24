@@ -1,12 +1,16 @@
 2008-06-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c: Inflate exception clause types.
+	Fixes #402606.
+	
+2008-06-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c (mono_image_get_methodbuilder_token): Don't leak
 	name.
 
 	* reflection.c (mono_image_get_ctorbuilder_token): Same.
 
 	* reflection.c (mono_image_create_method_token): Same.
-
 
 2008-06-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
