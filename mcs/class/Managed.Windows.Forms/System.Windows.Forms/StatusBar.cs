@@ -360,15 +360,14 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			if (springs == null)
-				return;
-
-			int spring_total = springs.Count;
-			int total_width = Width - taken - (SizingGrip ? ThemeEngine.Current.StatusBarSizeGripWidth : 0);
-			for (int i = 0; i < spring_total; i++) {
-				StatusBarPanel p = (StatusBarPanel) springs [i];
-				int width = total_width / spring_total;
-				p.SetWidth (width >= p.MinWidth ? width : p.MinWidth);
+			if (springs != null) {
+				int spring_total = springs.Count;
+				int total_width = Width - taken - (SizingGrip ? ThemeEngine.Current.StatusBarSizeGripWidth : 0);
+				for (int i = 0; i < spring_total; i++) {
+					StatusBarPanel p = (StatusBarPanel)springs[i];
+					int width = total_width / spring_total;
+					p.SetWidth(width >= p.MinWidth ? width : p.MinWidth);
+				}
 			}
 
 			taken = border;
@@ -515,6 +514,9 @@ namespace System.Windows.Forms {
 						throw new ArgumentNullException ("index");
 					if (index < 0 || index >= Count)
 						throw new ArgumentOutOfRangeException ("index");
+
+					value.SetParent (owner);
+
 					panels [index] = value;
 				}
 			}
@@ -617,8 +619,8 @@ namespace System.Windows.Forms {
 				// TODO: InvalidArgumentException for bad AutoSize values
 				// although it seems impossible to set it to a bad value
 				value.SetParent (owner);
-				panels [index] = value;
 
+				panels.Insert(index, value);
 				owner.Refresh ();
 			}
 
@@ -657,12 +659,12 @@ namespace System.Windows.Forms {
 
 
 			object IList.this [int index] {
-				get { return panels [index]; }
-				set { panels [index] = value; }
+				get { return this[index]; }
+				set { this[index] = (StatusBarPanel)value; }
 			}
 
 			int IList.Add (object value) {
-				return panels.Add (value);
+				return AddInternal ((StatusBarPanel)value, true);
 			}
 
 			bool IList.Contains (object panel) {
@@ -676,7 +678,7 @@ namespace System.Windows.Forms {
 
 			void IList.Insert (int index, object value)
 			{
-				panels.Insert (index, value);
+				Insert (index, (StatusBarPanel)value);
 			}
 
 			bool IList.IsFixedSize {
@@ -685,7 +687,7 @@ namespace System.Windows.Forms {
 
 			void IList.Remove (object value)
 			{
-				panels.Remove (value);
+				Remove ((StatusBarPanel)value);
 			}
 			#endregion	// IList & ICollection Interfaces
 		}

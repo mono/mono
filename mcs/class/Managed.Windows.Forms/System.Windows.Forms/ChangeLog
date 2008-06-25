@@ -1,3 +1,12 @@
+2008-06-25  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ThemeWin32Classic.cs: Fix from Andy for panel text for panels
+	that are not the first panel.
+	* StatusBar.cs: Ensure that the X coordinate of panels is always
+	stored.  Fix IList implementation of StatusBarPanelCollection to
+	call the regular methods.
+	[Fixes bug #403599, #402165]
+
 2008-06-23  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ThemeWin32Classic.cs: Fix position calculation for centered
