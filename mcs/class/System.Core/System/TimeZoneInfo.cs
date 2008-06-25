@@ -369,13 +369,8 @@ namespace System
 							} catch (ArgumentNullException) {
 							} catch (TimeZoneNotFoundException) {
 							} catch (InvalidTimeZoneException) {
-							} catch (Exception e) {
-								if (e is OutOfMemoryException || e is System.Security.SecurityException)
-									throw;
-								else {
-									Console.WriteLine ("Unexpected Exception");
-									throw;
-								}
+							} catch (Exception) {
+								throw;
 							}
 						}
 					} catch {}
