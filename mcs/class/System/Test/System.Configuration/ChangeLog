@@ -1,3 +1,7 @@
+2008-06-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ConfigurationExceptionTest.cs: Added ctor tests.
+
 2007-10-30 Arina Itkes <arinai@mainsoft.com>
 
 	* SettingsBaseTest.cs: Replacing Win32Exception to 

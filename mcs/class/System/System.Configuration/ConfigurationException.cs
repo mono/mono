@@ -41,10 +41,9 @@ namespace System.Configuration
 	[Serializable]
 	public class ConfigurationException : SystemException
 	{
-		// Fields		
-		string bareMessage;
-		string filename;
-		int line;
+		// Fields
+		readonly string filename;
+		readonly int line;
 
 		//
 		// Constructors
@@ -52,11 +51,9 @@ namespace System.Configuration
 #if NET_2_0
 		[Obsolete ("This class is obsolete.  Use System.Configuration.ConfigurationErrorsException")]
 #endif
-		public ConfigurationException ()
-			: base (Locale.GetText ("There is an error in a configuration setting."))
+		public ConfigurationException () : this (null)
 		{
 			filename = null;
-			bareMessage = Locale.GetText ("There is an error in a configuration setting.");
 			line = 0;
 		}
 
@@ -66,7 +63,6 @@ namespace System.Configuration
 		public ConfigurationException (string message)
 			: base (message)
 		{
-			bareMessage = message;
 		}
 
 		protected ConfigurationException (SerializationInfo info, StreamingContext context)
@@ -82,7 +78,6 @@ namespace System.Configuration
 		public ConfigurationException (string message, Exception inner)
 			: base (message, inner)
 		{
-			bareMessage = message;
 		}
 
 #if (XML_DEP)
@@ -94,7 +89,6 @@ namespace System.Configuration
 		{
 			filename = GetXmlNodeFilename(node);
 			line = GetXmlNodeLineNumber(node);
-			bareMessage = message;
 		}
 
 #if NET_2_0
@@ -105,7 +99,6 @@ namespace System.Configuration
 		{
 			filename = GetXmlNodeFilename (node);
 			line = GetXmlNodeLineNumber (node);
-			bareMessage = message;
 		}
 #endif
 #if NET_2_0
@@ -114,7 +107,6 @@ namespace System.Configuration
 		public ConfigurationException (string message, string filename, int line)
 			: base (message)
 		{
-			bareMessage = message;
 			this.filename = filename;
 			this.line= line;
 		}
@@ -123,9 +115,8 @@ namespace System.Configuration
 		[Obsolete ("This class is obsolete.  Use System.Configuration.ConfigurationErrorsException")]
 #endif
 		public ConfigurationException (string message, Exception inner, string filename, int line)
-			: base (message)
+			: base (message, inner)
 		{
-			bareMessage = message;
 			this.filename = filename;
 			this.line = line;
 		}
@@ -136,17 +127,15 @@ namespace System.Configuration
 #if NET_2_0
 		virtual
 #endif
-		string BareMessage
-		{
-			get  { return bareMessage; }
+		string BareMessage {
+			get { return base.Message; }
 		}
 
 		public
 #if NET_2_0
 		virtual
 #endif
-		string Filename
-		{
+		string Filename {
 			get { return filename; }
 		}
 
@@ -154,19 +143,25 @@ namespace System.Configuration
 #if NET_2_0
 		virtual
 #endif
-		int Line
-		{
+		int Line {
 			get { return line; }
 		}
 
-		public override string Message
-		{
+		public override string Message {
 			get {
-				string baseMsg = base.Message;
-				string f = (filename == null) ? String.Empty : filename;
-				string l = (line == 0) ? String.Empty : (" line " + line);
-
-				return baseMsg + " (" + f + l + ")";
+				string msg;
+				if (filename != null && filename.Length != 0) {
+					if (line != 0)
+						msg = BareMessage + " (" + filename + " line " + line + ")";
+					else
+						msg = BareMessage + " (" + filename + ")";
+				} else {
+					if (line != 0)
+						msg = BareMessage + " (line " + line + ")";
+					else
+						msg = BareMessage;
+				}
+				return msg;
 			}
 		}
 
