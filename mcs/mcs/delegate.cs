@@ -874,10 +874,16 @@ namespace Mono.CSharp {
 			Argument a = (Argument) Arguments [0];
 			if (!a.ResolveMethodGroup (ec))
 				return null;
-			
+
 			Expression e = a.Expr;
-			if (e is AnonymousMethodExpression && RootContext.Version != LanguageVersion.ISO_1) {
-				return e;
+
+			AnonymousMethodExpression ame = e as AnonymousMethodExpression;
+			if (ame != null && RootContext.Version != LanguageVersion.ISO_1) {
+				e = ame.Compatible (ec, type);
+				if (e == null)
+					return null;
+
+				return e.Resolve (ec);
 			}
 
 			method_group = e as MethodGroupExpr;
