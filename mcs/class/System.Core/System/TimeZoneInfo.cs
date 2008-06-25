@@ -24,6 +24,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
@@ -640,17 +641,32 @@ namespace System
 			}
 		}
 
+		static int SwapInt32 (int i)
+		{
+			return (((i >> 24) & 0xff)
+				| ((i >> 8) & 0xff00)
+				| ((i << 8) & 0xff0000)
+				| ((i << 24)));
+		}
+
+		static int ReadBigEndianInt32 (byte [] buffer, int start)
+		{
+			int i = BitConverter.ToInt32 (buffer, start);
+			if (!BitConverter.IsLittleEndian)
+				return i;
+
+			return SwapInt32 (i);
+		}
+
 		private static TimeZoneInfo ParseTZBuffer (string id, byte [] buffer, int length)
 		{
-			DataConverter enc = DataConverter.BigEndian;
-
 			//Reading the header. 4 bytes for magic, 16 are reserved
-			int ttisgmtcnt = enc.GetInt32 (buffer, 20);
-			int ttisstdcnt = enc.GetInt32 (buffer, 24);
-			int leapcnt = enc.GetInt32 (buffer, 28);
-			int timecnt = enc.GetInt32 (buffer, 32);
-			int typecnt = enc.GetInt32 (buffer, 36);
-			int charcnt = enc.GetInt32 (buffer, 40);
+			int ttisgmtcnt = ReadBigEndianInt32 (buffer, 20);
+			int ttisstdcnt = ReadBigEndianInt32 (buffer, 24);
+			int leapcnt = ReadBigEndianInt32 (buffer, 28);
+			int timecnt = ReadBigEndianInt32 (buffer, 32);
+			int typecnt = ReadBigEndianInt32 (buffer, 36);
+			int charcnt = ReadBigEndianInt32 (buffer, 40);
 
 			if (length < 44 + timecnt * 5 + typecnt * 6 + charcnt + leapcnt * 8 + ttisstdcnt + ttisgmtcnt)
 				throw new InvalidTimeZoneException ();
@@ -753,10 +769,9 @@ namespace System
 
 		static Dictionary<int, TimeType> ParseTimesTypes (byte [] buffer, int index, int count, Dictionary<int, string> abbreviations)
 		{
-			DataConverter enc = DataConverter.BigEndian;
 			var types = new Dictionary<int, TimeType> (count);
 			for (int i = 0; i < count; i++) {
-				int offset = enc.GetInt32 (buffer, index + 6 * i);
+				int offset = ReadBigEndianInt32 (buffer, index + 6 * i);
 				byte is_dst = buffer [index + 6 * i + 4];
 				byte abbrev = buffer [index + 6 * i + 5];
 				types.Add (i, new TimeType (offset, (is_dst != 0), abbreviations [(int)abbrev]));
@@ -766,10 +781,9 @@ namespace System
 
 		static SortedList<DateTime, TimeType> ParseTransitions (byte [] buffer, int index, int count, Dictionary<int, TimeType> time_types)
 		{
-			DataConverter enc = DataConverter.BigEndian;
 			var trans = new SortedList<DateTime, TimeType> (count);
 			for (int i = 0; i < count; i++) {
-				int unixtime = enc.GetInt32 (buffer, index + 4 * i);
+				int unixtime = ReadBigEndianInt32 (buffer, index + 4 * i);
 				DateTime ttime = DateTimeFromUnixTime (unixtime);
 				byte ttype = buffer [index + 4 * count + i];
 				trans.Add (ttime, time_types [(int)ttype]);

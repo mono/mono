@@ -1,3 +1,8 @@
+2008-06-25  Jb Evain  <jbevain@novell.com>
+
+	* TimeZoneInfo.cs: remove the dependance to Mono.DataConverter
+	which is only used to read big endian int32.
+
 2008-05-26  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* TimeZoneInfo.cs: workaround for weird transition dates, like for 
