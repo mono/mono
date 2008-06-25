@@ -4,6 +4,8 @@
 	use base.Message instead. Fixed default cor to invoke String ctor of
 	SystemException. Fixed Message property to only add filename if not
 	null or zero-length string, and only add line if not zero.
+	* DictionarySectionHandler.cs: Fixed line endings.
+	* IgnoreSectionHandler.cs: Fixed line endings.
 
 2008-03-21  Atsushi Enomoto  <atsushi@ximian.com>
 
