@@ -1,3 +1,8 @@
+2008-06-25  Rodrigo Kumpera  <rkumpera@n ovell.com>
+
+	* MethodBase.cs (GetMethodFromHandle): Check if the icall returns null
+	and fail. This is part of the fix for #377324.
+
 2008-06-19  Marek Safar  <marek.safar@gmail.com>
 
 	* MonoGenericClass.cs (GetConstructor): Put back removed code due to obscure

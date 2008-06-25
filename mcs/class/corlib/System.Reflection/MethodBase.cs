@@ -49,7 +49,14 @@ namespace System.Reflection {
 		public static MethodBase GetMethodFromHandle(RuntimeMethodHandle handle) {
 			if (handle.Value == IntPtr.Zero)
 				throw new ArgumentException ("The handle is invalid.");
-			return GetMethodFromHandleInternalType (handle.Value, IntPtr.Zero);
+			MethodBase res = GetMethodFromHandleInternalType (handle.Value, IntPtr.Zero);
+			if (res == null)
+				throw new ArgumentException ("The handle is invalid.");			
+#if NET_2_0
+			if (res.DeclaringType.IsGenericType || res.DeclaringType.IsGenericTypeDefinition)
+				throw new ArgumentException ("Cannot resolve method because it's declared in a generic class.");
+#endif
+			return res;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -60,7 +67,10 @@ namespace System.Reflection {
 		public static MethodBase GetMethodFromHandle(RuntimeMethodHandle handle, RuntimeTypeHandle declaringType) {
 			if (handle.Value == IntPtr.Zero)
 				throw new ArgumentException ("The handle is invalid.");
-			return GetMethodFromHandleInternalType (handle.Value, declaringType.Value);
+			MethodBase res = GetMethodFromHandleInternalType (handle.Value, declaringType.Value);
+			if (res == null)
+				throw new ArgumentException ("The handle is invalid.");
+			return res;
 		}
 #endif
 
