@@ -1125,7 +1125,7 @@ public sealed class TypeDescriptor
 			// 
 			// Note that we also have to preserve the properties order here.
 			// 
-			while (currentType != typeof (object)) {
+			while (currentType != null && currentType != typeof (object)) {
 				PropertyInfo[] props = currentType.GetProperties (BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
 				foreach (PropertyInfo property in props) {
 					if (property.GetIndexParameters ().Length == 0 &&

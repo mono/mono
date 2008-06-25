@@ -1,3 +1,8 @@
+2008-06-25  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TypeDescriptor.cs: Fix a NRE.
+	[Fixes bug #403880]
+
 2008-06-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeConverter.cs : use MM for month instead of mm.
