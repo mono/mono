@@ -1,3 +1,9 @@
+2008-06-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_klass_info): Call mono_class_setup_vtable ().
+
+	* aot-compiler.c: Move the contents of the has_glot_slots array to MonoCompile.
+
 2008-06-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c: Check if stats is enabled so we don't allocate memory when not needed.
