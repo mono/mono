@@ -1,4 +1,7 @@
 2008-06-17  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-oprofile.c: Fixed breakage introduced in r105966
+
+2008-06-17  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-oprofile.c: Implemented signal based enable-disable
 	toggling for the statistical and enter-exit events.
 
