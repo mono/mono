@@ -1,5 +1,15 @@
 2008-06-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c, class-internals.h: Export mono_class_get_generic_type_definition
+	as part of the private mono API.
+	
+	* loader.c (ves_icall_System_Reflection_MethodBase_GetMethodFromHandleInternalType):
+	Do proper argument checking for methods that belong to generic classes.
+	Do proper type resolution for GMFH/2.
+	Fixes #377324.
+	
+2008-06-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (do_switch): Fix a memory corruption bug with
 	the jump index is out of bound.
 
