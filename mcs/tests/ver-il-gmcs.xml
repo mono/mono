@@ -34287,6 +34287,56 @@
       </method>
     </type>
   </test>
+  <test name="test-anon-78.cs">
+    <type name="DelegateTest">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>8</size>
+      </method>
+      <method name="Void Foo(D1)">
+        <size>7</size>
+      </method>
+      <method name="Void Foo(D2)">
+        <size>1</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>33</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__0()">
+        <size>18</size>
+      </method>
+    </type>
+    <type name="D1">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="D2">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void .ctor()">
