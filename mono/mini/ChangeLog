@@ -1,5 +1,9 @@
 2008-06-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Add not-yet-usable 'full' option. Add some infrastructure code
+	for emitting methods which are not in the source assembly. Detect and report
+	failure of assembling+linking.
+	
 	* aot-compiler.c (emit_klass_info): Call mono_class_setup_vtable ().
 
 	* aot-compiler.c: Move the contents of the has_glot_slots array to MonoCompile.
