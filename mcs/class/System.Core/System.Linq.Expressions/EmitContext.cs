@@ -326,7 +326,7 @@ namespace System.Linq.Expressions {
 		{
 			EmitScope ();
 
-			ig.Emit (OpCodes.Ldc_I4, context.AddCompilationUnit (lambda));
+			ig.Emit (OpCodes.Ldc_I4, AddChildContext (lambda));
 			ig.Emit (OpCodes.Ldnull);
 
 			ig.Emit (OpCodes.Callvirt, typeof (ExecutionScope).GetMethod ("CreateDelegate"));
