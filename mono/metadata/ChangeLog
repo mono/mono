@@ -1,3 +1,10 @@
+2008-06-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_image_get_methodbuilder_token): Use
+	mono_image_get_methodspec_token_for_generic_method_definition
+	instead of mono_image_get_memberref_token. We cache more memberef
+	entries now.
+
 2008-06-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: Inflate exception clause types.
