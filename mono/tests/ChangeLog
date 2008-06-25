@@ -1,3 +1,8 @@
+2008-06-25  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* generic-ldtoken-method.2.il: Don't use GetMethodHandle/1
+	with methods that belong to a generic type.
+
 2008-06-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke2.cs libtest.c: Add test for #402585.
