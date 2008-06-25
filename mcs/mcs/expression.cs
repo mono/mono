@@ -54,6 +54,11 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall ("Call", args);
 		}
 
+		protected override void CloneTo (CloneContext context, Expression target)
+		{
+			// Nothing to clone
+		}
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			//
@@ -4438,6 +4443,11 @@ namespace Mono.CSharp {
 				return false;
 
 			return Name == pr.Name && referenced == pr.referenced;
+		}
+		
+		protected override void CloneTo (CloneContext clonectx, Expression target)
+		{
+			// Nothing to clone
 		}
 
 		public override Expression CreateExpressionTree (EmitContext ec)

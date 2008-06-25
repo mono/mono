@@ -1336,7 +1336,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public abstract class TypeCast : Expression
 	{
-		protected Expression child;
+		protected readonly Expression child;
 
 		protected TypeCast (Expression child, Type return_type)
 		{
@@ -1383,9 +1383,7 @@ namespace Mono.CSharp {
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
-			TypeCast target = (TypeCast) t;
-
-			target.child = child.Clone (clonectx);
+			// Nothing to clone
 		}
 
 		public override bool IsNull {
