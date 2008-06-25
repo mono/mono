@@ -1,4 +1,9 @@
-2008-06-24 Rodrigo Kumpera  <rkumpera@novell.com>
+2008-06-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_switch): Fix a memory corruption bug with
+	the jump index is out of bound.
+
+2008-06-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: Disable debug code.
 
