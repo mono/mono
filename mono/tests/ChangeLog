@@ -1,3 +1,13 @@
+2008-06-26  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-valuetype-interface.2.cs: Test for generic valuetypes
+	which implement interfaces.
+
+	* generic-valuetype-newobj.2.il, generic-valuetype-newobj2.2.il:
+	Test for newobj with generic valuetypes.
+
+	* Makefile.am: Tests added.
+
 2008-06-25  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* generic-ldtoken-method.2.il: Don't use GetMethodHandle/1
