@@ -1,3 +1,24 @@
+2008-06-26  Kornél Pál  <kornelpal@gmail.com>
+
+	* assembly.c (mono_set_rootdir): Use __ImageBase instead of
+	mono_module_handle that is defined by the linker; no initialization required.
+	* coree.h: Remove mono_module_handle, add __ImageBase, update
+	mono_image_open_from_module_handle.
+	* coree.c (_CorValidateImage): Convert platform independent PE32 images to
+	PE32+ on 64-bit Windows that makes the OS able to load CIL images as modules.
+	(MonoFixupCorEE): Export Address Table RVAs are 32-bit unsigned integers so
+	memory has to be allocated for trampolines (x64) or procedure labels (IA64) up
+	to 4 GB away from image base address. IA64 version is not tested but was very
+	easy to implement and should work if we ever need it.
+	* domain.c (mono_init_internal): Avoid system error message boxes.
+	* image.c (mono_image_open_from_module_handle): Replace ref_count argument
+	with has_entry_point. Handle do_mono_image_load fauilre correctly.
+	(mono_image_open_full, mono_image_close): Use has_entry_point instead of
+	coff_attributes that is a more reliable way to detect if _CorDllMain was called.
+	* metadata-internals.h: Add has_entry_point to _MonoImage on Windows.
+
+	Contributed under MIT/X11 license.
+
 2008-06-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c, class-internals.h: Export mono_class_get_generic_type_definition

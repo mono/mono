@@ -1,3 +1,9 @@
+2008-06-26  Kornél Pál  <kornelpal@gmail.com>
+
+	* driver.c (DllMain): Remove mono_module_handle.
+
+	Contributed under MIT/X11 license.
+
 2008-06-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c: Add not-yet-usable 'full' option. Add some infrastructure code
