@@ -394,18 +394,9 @@ namespace System.Diagnostics
 				if (t == XmlNodeType.Element) {
 					XmlAttributeCollection attributes = child.Attributes;
 					string name = null;
-					string type = null;
-					string id = null;
 					switch (child.Name) {
 						case "add":
-							name = GetAttribute (attributes, "name", true, child);
-#if NET_2_0
-							type = GetAttribute (attributes, "type", false, child);
-#else
-							type = GetAttribute (attributes, "type", true, child);
-#endif
-							id = GetAttribute (attributes, "initializeData", false, child);
-							AddTraceListener (d, name, type, id, listeners);
+							AddTraceListener (d, child, attributes, listeners);
 							break;
 						case "remove":
 							name = GetAttribute (attributes, "name", true, child);
@@ -426,40 +417,76 @@ namespace System.Diagnostics
 #endif
 		}
 
-		private void AddTraceListener (IDictionary d, string name, string type, string initializeData, TraceListenerCollection listeners)
+		private void AddTraceListener (IDictionary d, XmlNode child, XmlAttributeCollection attributes, TraceListenerCollection listeners)
 		{
-#if NET_2_0		
+			string name = GetAttribute (attributes, "name", true, child);
+			string type = null;
+
+#if NET_2_0
+			type = GetAttribute (attributes, "type", false, child);
 			if (type == null) {
 				// indicated by name.
 				TraceListener shared = GetSharedListeners (d) [name];
 				if (shared == null)
-					throw new ConfigurationException (String.Format ("Shared trace listener {0} does not exist", name));
+					throw new ConfigurationException (String.Format ("Shared trace listener {0} does not exist.", name));
+				if (attributes.Count != 0)
+					throw new ConfigurationErrorsException (string.Format (
+						"Listener '{0}' references a shared " +
+						"listener and can only have a 'Name' " +
+						"attribute.", name));
 				listeners.Add (shared);
 				return;
 			}
+#else
+			type = GetAttribute (attributes, "type", true, child);
 #endif
+
 			Type t = Type.GetType (type);
 			if (t == null)
 				throw new ConfigurationException (string.Format ("Invalid Type Specified: {0}", type));
 
 			object[] args;
 			Type[] types;
-			
+
+			string initializeData = GetAttribute (attributes, "initializeData", false, child);
 			if (initializeData != null) {
 				args = new object[] { initializeData };
 				types = new Type[] { typeof(string) };
-			}
-			else {
+			} else {
 				args = null;
 				types = Type.EmptyTypes;
 			}
-				
+
 			System.Reflection.ConstructorInfo ctor = t.GetConstructor (types);
 			if (ctor == null) 
 				throw new ConfigurationException ("Couldn't find constructor for class " + type);
 			
 			TraceListener l = (TraceListener) ctor.Invoke (args);
 			l.Name = name;
+
+#if NET_2_0
+			string trace = GetAttribute (attributes, "traceOutputOptions", false, child);
+			if (trace != null) {
+				if (trace != trace.Trim ())
+					throw new ConfigurationErrorsException (string.Format (
+						"Invalid value '{0}' for 'traceOutputOptions'.",
+						trace), child);
+
+				TraceOptions trace_options;
+	
+				try {
+					trace_options = (TraceOptions) Enum.Parse (
+						typeof (TraceOptions), trace);
+				} catch (ArgumentException) {
+					throw new ConfigurationErrorsException (string.Format (
+						"Invalid value '{0}' for 'traceOutputOptions'.",
+						trace), child);
+				}
+
+				l.TraceOutputOptions = trace_options;
+			}
+#endif
+
 			listeners.Add (l);
 		}
 

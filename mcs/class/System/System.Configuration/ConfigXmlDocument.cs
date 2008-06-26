@@ -27,6 +27,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0 && CONFIGURATION_DEP
+using System.Configuration.Internal;
+#endif
 using System.IO;
 using System.Security;
 using System.Security.Permissions;
@@ -39,7 +42,7 @@ namespace System.Configuration
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	public sealed class ConfigXmlDocument : XmlDocument, IConfigXmlNode
 #if NET_2_0 && CONFIGURATION_DEP
-		, System.Configuration.Internal.IConfigErrorInfo
+		, IConfigErrorInfo
 #endif
 	{
 		XmlTextReader reader;
@@ -139,6 +142,9 @@ namespace System.Configuration
 		// Wrappers for Xml* that just provide file name and line number addition
 		//
 		class ConfigXmlAttribute : XmlAttribute, IConfigXmlNode
+#if NET_2_0 && CONFIGURATION_DEP
+			, IConfigErrorInfo
+#endif
 		{
 			string fileName;
 			int lineNumber;
@@ -172,6 +178,9 @@ namespace System.Configuration
 		}
 		
 		class ConfigXmlCDataSection : XmlCDataSection, IConfigXmlNode
+#if NET_2_0 && CONFIGURATION_DEP
+			, IConfigErrorInfo
+#endif
 		{
 			string fileName;
 			int lineNumber;
@@ -232,6 +241,9 @@ namespace System.Configuration
 		}
 	
 		class ConfigXmlElement : XmlElement, IConfigXmlNode
+#if NET_2_0 && CONFIGURATION_DEP
+			, IConfigErrorInfo
+#endif
 		{
 			string fileName;
 			int lineNumber;
@@ -265,6 +277,9 @@ namespace System.Configuration
 		}
 
 		class ConfigXmlText : XmlText, IConfigXmlNode
+#if NET_2_0 && CONFIGURATION_DEP
+			, IConfigErrorInfo
+#endif
 		{
 			string fileName;
 			int lineNumber;

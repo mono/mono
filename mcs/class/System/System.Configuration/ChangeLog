@@ -1,3 +1,7 @@
+2008-06-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ConfigXmlDocument.cs: Implement IConfigErrorInfo on all Node classes.
+
 2008-06-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ConfigurationExceptionTest.cs: Removed local bareMessage field, and
