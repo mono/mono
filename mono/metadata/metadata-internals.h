@@ -87,6 +87,9 @@ struct _MonoImage {
 #ifdef PLATFORM_WIN32
 	/* Module was loaded using LoadLibrary. */
 	guint8 is_module_handle : 1;
+
+	/* Module entry point is _CorDllMain. */
+	guint8 has_entry_point : 1;
 #endif
 
 	/* Whenever this is a dynamically emitted module */
@@ -302,6 +305,7 @@ struct _MonoDynamicImage {
 	GHashTable *field_to_table_idx;
 	GHashTable *method_aux_hash;
 	MonoGHashTable *generic_def_objects;
+	MonoGHashTable *methodspec;
 	gboolean run;
 	gboolean save;
 	gboolean initial_image;
@@ -465,6 +469,28 @@ mono_type_stack_size_internal (MonoType *t, int *align, gboolean allow_open) MON
 gboolean
 mono_metadata_type_equal_full (MonoType *t1, MonoType *t2, gboolean signature_only) MONO_INTERNAL;
 
+MonoMarshalSpec *
+mono_metadata_parse_marshal_spec_with_mempool (MonoMemPool *mp, const char *ptr) MONO_INTERNAL;;
+
+guint	       mono_metadata_generic_inst_hash (gconstpointer data) MONO_INTERNAL;
+gboolean       mono_metadata_generic_inst_equal (gconstpointer ka, gconstpointer kb) MONO_INTERNAL;
+
+void
+mono_metadata_field_info_with_mempool (MonoMemPool *mp, 
+					  MonoImage *meta, 
+				      guint32       table_index,
+				      guint32      *offset,
+				      guint32      *rva,
+				      MonoMarshalSpec **marshal_spec);
+
+MonoClassField*
+mono_metadata_get_corresponding_field_from_generic_type_definition (MonoClassField *field) MONO_INTERNAL;
+
+MonoEvent*
+mono_metadata_get_corresponding_event_from_generic_type_definition (MonoEvent *event) MONO_INTERNAL;
+
+MonoProperty*
+mono_metadata_get_corresponding_property_from_generic_type_definition (MonoProperty *property) MONO_INTERNAL;
 
 #endif /* __MONO_METADATA_INTERNALS_H__ */
 

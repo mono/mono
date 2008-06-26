@@ -169,6 +169,241 @@ Fri Apr 11 18:44:31 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	* mini-s390.c (mono_arch_output_basic_block): Fix SUBCC implementation.
 	(mono_arch_decompose_long_opts): Remove LSUB, the generic code works on s390 too.
 
+2008-06-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c (mono_main): Add experimental --aot-only command line option.
+
+	* mini.c: Error out when creating trampolines or JIT compiling if --aot-only is
+	set.
+
+2008-06-26  Kornél Pál  <kornelpal@gmail.com>
+
+	* driver.c (DllMain): Remove mono_module_handle.
+
+	Contributed under MIT/X11 license.
+
+2008-06-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Add not-yet-usable 'full' option. Add some infrastructure code
+	for emitting methods which are not in the source assembly. Detect and report
+	failure of assembling+linking.
+	
+	* aot-compiler.c (emit_klass_info): Call mono_class_setup_vtable ().
+
+	* aot-compiler.c: Move the contents of the has_glot_slots array to MonoCompile.
+
+2008-06-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c: Check if stats is enabled so we don't allocate memory when not needed.
+
+2008-06-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h: Remove some obsolete prototypes.
+
+	* mini.c: Avoid storing MonoMethod pointers in the JIT stats, store their string format instead.
+
+2008-06-24  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c (get_object_generic_inst): Variable-sized arrays are not
+	supported by Visual Studio, so use alloca().
+
+2008-06-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c (add_valuetype): Increase *gr too when passing a HFA to be in sync with the ABi.
+	Fixes #402585.
+
+2008-06-23  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Fail sharing of a generic method if it contains an open
+	catch clause (because we don't pass MRGCTXs yet).
+
+2008-06-23  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: When compiling a method with generic sharing, insert the
+	method instantiated with an all-Object generic context into the
+	jit info table, instead of the context of the first instantiation
+	of the method we happen to compile.
+
+2008-06-18  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h (MonoDebuggerInfo): Replaced `version' with
+	`major_version' and `minor_version'.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c, mini.c, mini.h, aot-runtime.c:
+	mono_method_is_generic_sharable_impl() takes an additional
+	argument specifying whether to treat type variables as reference
+	types.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.h: Removed obsolete prototypes.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Don't fail generic sharing for initobj and sizeof - we
+	already handle them.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.h, mini-trampolines.c, tramp-alpha.c, tramp-amd64.c,
+	tramp-arm.c, tramp-hppa.c, tramp-ia64.c, tramp-mips.c,
+	tramp-ppc.c, tramp-s390.c, tramp-s390x.c, tramp-sparc.c,
+	tramp-x86.c: Added a MonoGenericContext* argument to
+	mono_arch_get_unbox_trampoline() so that it can call other
+	functions which require it.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.h, mini-trampolines.c, mini-amd64.c, mini-x86.c,
+	mini-alpha.c, mini-arm.c, mini-ia64.c, mini-ppc.c:
+	mono_arch_get_this_arg_from_call() takes a
+	MonoGenericSharingContext* as well.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Factor out code for emitting unbox into emit_unbox() and
+	implement generic sharing of unbox.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Don't compute the vtable to determine whether a field is
+	special static, because it might not work for open types.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Removed the unused token_type and token_source arguments
+	from get_runtime_generic_context_ptr().
+
+2008-06-17  Marek Habersack  <mhabersack@novell.com>
+
+	* mini.c (ADD_BINOP): fix the build
+
+2008-06-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (ADD_BINOP): When operating on a native int and an int32, insert
+	a widening op.
+
+2008-06-16  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.h: Removed class relations enum that's not used anymore.
+
+2008-06-16  Mark Probst  <mark.probst@gmail.com>
+
+	* tramp-x86.c, tramp-amd64.c: Slot access code for MRGCTXs.
+
+	* mini-trampolines.c: Distinguish between RGCTXs and MRGCTXs in
+	the lazy fetch trampoline access code.
+
+2008-06-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_local_regalloc): Add some micro optimizations.
+
+2008-06-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c: Fix some soft-float bugs. Fixes #378735 and #398348.
+
+	* mini.h (MONO_INST_LIST_ENTRY): Fix warnings on arm.
+
+	* mini.c (mono_method_to_ir): Check call signature for NEWOBJ as well.
+
+2008-06-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c inssel-x86.brg cpu-x86.md: Implement unsigned min/max
+	intrinsics.
+
+	* mini-ops.h: Add MIN/MAX_UN opcodes.
+
+	* mini-amd64.c inssel-amd64.brg cpu-amd64.md: Implement unsigned min/max
+	intrinsics.
+
+	* basic-math.cs: Add more min/max tests.
+
+	* inssel.brg: Remove the OP_MIN/OP_MAX rules. Fix a warning.
+
+2008-06-13  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Small fix in the prologue of emit_castclass.
+
+2008-06-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel.brg: Remove the OP_MIN/OP_MAX rules. Fix a warning.
+
+	* mini.c (mini_get_inst_for_method): Remove the Min/Max intrinsics, they
+	do not work even for unsigned types. Fixes #400014.
+
+	* basic-math.cs: Add regression tests for unsigned Min/Max.
+
+2008-06-13  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Added additional context_used argument to several
+	functions, which will be needed for sharing generic methods.  Use
+	GET_RGCTX macro wherever appropriate.  Declare only one
+	context_used in mono_method_to_ir().
+
+2008-06-13  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c, generic-sharing.c: Removed generic class relations.
+
+	* mini.c, tramp-amd64.c, tramp-x86.c: Additional arguments to
+	functions due to MRGCTX changes.
+
+2008-06-13  Mark Probst  <mark.probst@gmail.com>
+
+	* inssel.brg, inssel-long.brg, inssel-long32.brg, mini-ops.h,
+	graph.c, local-propagation.c, aliasing.c: New opcodes for calls
+	with calculated IMT.
+
+	* mini.c: Generic sharing of calls via generic interfaces.
+
+	* jit-icalls.c, jit-icalls.h: Helper function for compiling a
+	generic method with non-constant MonoGenericContext*.  Instead,
+	the context is taken out of the method itself.
+
+2008-06-13  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Generic sharing of ldvirtftn.
+
+2008-06-13  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Generic sharing of ldftn.
+
+2008-06-13  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Do pass VTable/RGCTX argument to static generic methods.
+
+2008-06-13  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Generic sharing of the special case of ldtoken followed
+	by a call to GetTypeFromHandle.
+
+2008-06-13  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Generic sharing of box for nullable types.
+
+2008-06-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-s390x.c (add_stackParm): Fix computation of offsets when arguments
+	are passed on the stack. Fixes #324807.
+
+2008-06-12  Bill Holmes  <billholmes54@gmail.com>
+
+	* mini-amd64.c:add_valuetype: Adding Winx64 code to fill the ArgInfo
+	for the ArgValuetypeAddrInIReg case.
+
+	* mini-amd64.c:mono_arch_allocate_vars:  Adding a case for 
+	ArgValuetypeAddrInIReg to avoid asserts.  Code needs to be added here.
+
+	* mini-amd64.c: mono_arch_call_opcode:  Adding Winx64 code for an ArgInfo of 
+	type ArgValuetypeAddrInIReg.  The code emitted will copy the argument to a 
+	local variable and pass the local variable by reference to the called method.
+	  
+	* mini-amd64.c: mono_arch_emit_prolog:  Adjust the stack for calls to
+	mono_jit_thread_attach and mono_get_lmf_addr for Winx64.
+
+	Contributed under MIT/X11 license.
+
 2008-06-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* debug-mini.c (mono_debug_free_method_jit_info): Moved to metadata/mono-debug.c.

@@ -30,6 +30,7 @@ static guint8* nullified_class_init_trampoline;
 
 /*
  * mono_arch_get_unbox_trampoline:
+ * @gsctx: the generic sharing context
  * @m: method pointer
  * @addr: pointer to native code for @m
  *
@@ -38,14 +39,14 @@ static guint8* nullified_class_init_trampoline;
  * unboxing before calling the method
  */
 gpointer
-mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
+mono_arch_get_unbox_trampoline (MonoGenericSharingContext *gsctx, MonoMethod *m, gpointer addr)
 {
 	guint8 *code, *start;
 	int this_reg;
 
 	MonoDomain *domain = mono_domain_get ();
 
-	this_reg = mono_arch_get_this_arg_reg (mono_method_signature (m), NULL);
+	this_reg = mono_arch_get_this_arg_reg (mono_method_signature (m), gsctx);
 
 	mono_domain_lock (domain);
 	start = code = mono_code_manager_reserve (domain->code_mp, 20);
@@ -507,35 +508,47 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot)
 	int tramp_size;
 	int depth, index;
 	int i;
+	gboolean mrgctx;
 
 	g_assert (tramp);
 
-	index = slot;
+	mrgctx = MONO_RGCTX_SLOT_IS_MRGCTX (slot);
+	index = MONO_RGCTX_SLOT_INDEX (slot);
+	if (mrgctx)
+		index += sizeof (MonoMethodRuntimeGenericContext) / sizeof (gpointer);
 	for (depth = 0; ; ++depth) {
-		int size = mono_class_rgctx_get_array_size (depth);
+		int size = mono_class_rgctx_get_array_size (depth, mrgctx);
 
 		if (index < size - 1)
 			break;
 		index -= size - 1;
 	}
 
-	tramp_size = 32 + 8 * depth;
+	tramp_size = 36 + 8 * depth;
 
 	code = buf = mono_global_codeman_reserve (tramp_size);
 
 	rgctx_null_jumps = g_malloc (sizeof (guint8*) * (depth + 2));
 
-	/* load rgctx ptr from vtable */
-	amd64_mov_reg_membase (buf, AMD64_RAX, AMD64_ARG_REG1, G_STRUCT_OFFSET (MonoVTable, runtime_generic_context), 8);
-	/* is the rgctx ptr null? */
-	amd64_test_reg_reg (buf, AMD64_RAX, AMD64_RAX);
-	/* if yes, jump to actual trampoline */
-	rgctx_null_jumps [0] = buf;
-	amd64_branch8 (buf, X86_CC_Z, -1, 1);
+	if (mrgctx) {
+		/* get mrgctx ptr */
+		amd64_mov_reg_reg (buf, AMD64_RAX, AMD64_ARG_REG1, 8);
+	} else {
+		/* load rgctx ptr from vtable */
+		amd64_mov_reg_membase (buf, AMD64_RAX, AMD64_ARG_REG1, G_STRUCT_OFFSET (MonoVTable, runtime_generic_context), 8);
+		/* is the rgctx ptr null? */
+		amd64_test_reg_reg (buf, AMD64_RAX, AMD64_RAX);
+		/* if yes, jump to actual trampoline */
+		rgctx_null_jumps [0] = buf;
+		amd64_branch8 (buf, X86_CC_Z, -1, 1);
+	}
 
 	for (i = 0; i < depth; ++i) {
 		/* load ptr to next array */
-		amd64_mov_reg_membase (buf, AMD64_RAX, AMD64_RAX, 0, 8);
+		if (mrgctx && i == 0)
+			amd64_mov_reg_membase (buf, AMD64_RAX, AMD64_RAX, sizeof (MonoMethodRuntimeGenericContext), 8);
+		else
+			amd64_mov_reg_membase (buf, AMD64_RAX, AMD64_RAX, 0, 8);
 		/* is the ptr null? */
 		amd64_test_reg_reg (buf, AMD64_RAX, AMD64_RAX);
 		/* if yes, jump to actual trampoline */
@@ -553,7 +566,7 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot)
 	/* otherwise return */
 	amd64_ret (buf);
 
-	for (i = 0; i <= depth + 1; ++i)
+	for (i = mrgctx ? 1 : 0; i <= depth + 1; ++i)
 		x86_patch (rgctx_null_jumps [i], buf);
 
 	g_free (rgctx_null_jumps);

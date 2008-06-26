@@ -1,3 +1,10 @@
+2008-06-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-codeman.c (new_codechunk): Allocate memory for dynamic code managers
+	using dlmemalign.
+
+	* dlmalloc.c: Enable the memalign functions.
+
 2008-06-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (libmonoutils_la_SOURCES): Add dtrace.h.

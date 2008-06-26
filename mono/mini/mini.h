@@ -201,6 +201,7 @@ extern int mono_exc_esp_offset;
 #else
 extern gboolean mono_compile_aot;
 #endif
+extern gboolean mono_aot_only;
 extern MonoMethodDesc *mono_inject_async_exc_method;
 extern int mono_inject_async_exc_pos;
 extern MonoMethodDesc *mono_break_at_bb_method;
@@ -220,6 +221,121 @@ extern const char ins_info[];
 #define MONO_BB_FOR_EACH_INS_REVERSE_SAFE(bb, p, ins) for ((ins) = (bb)->last_ins, p = (ins) ? (ins)->prev : NULL; (ins); (ins) = (p), (p) = (ins) ? (ins)->prev : NULL)
 
 #define mono_bb_first_ins(bb) (bb)->code
+
+#if 0
+
+static inline void
+MONO_INST_LIST_ADD_TAIL (MonoInstList *new, MonoInstList *head)
+{
+	__MONO_INST_LIST_ADD (new, head->prev, head);
+}
+
+static inline void
+__MONO_INST_LIST_DEL (MonoInstList *prev, MonoInstList *next)
+{
+	next->prev = prev;
+	prev->next = next;
+}
+
+static inline void
+__MONO_INST_LIST_SPLICE (MonoInstList *list, MonoInstList *head)
+{
+	MonoInstList *first = list->next;
+	MonoInstList *last = list->prev;
+	MonoInstList *at = head->next;
+
+	first->prev = head;
+	head->next = first;
+
+	last->next = at;
+	at->prev = last;
+}
+
+static inline void
+MONO_INST_LIST_SPLICE (MonoInstList *list, MonoInstList *head) 
+{
+	if (!MONO_INST_LIST_EMPTY (list))
+		__MONO_INST_LIST_SPLICE (list, head);
+}
+
+static inline void
+MONO_INST_LIST_SPLICE_TAIL (MonoInstList *list, MonoInstList *head) 
+{
+	if (!MONO_INST_LIST_EMPTY (list))
+		__MONO_INST_LIST_SPLICE (list, head->prev);
+}
+
+static inline void
+MONO_INST_LIST_SPLICE_INIT (MonoInstList *list, MonoInstList *head)
+{
+	if (!MONO_INST_LIST_EMPTY (list)) {
+		__MONO_INST_LIST_SPLICE (list, head);
+		MONO_INST_LIST_INIT (list);
+	}
+}
+
+static inline void
+MONO_INST_LIST_SPLICE_TAIL_INIT (MonoInstList *list, MonoInstList *head)
+{
+	if (!MONO_INST_LIST_EMPTY (list)) {
+		__MONO_INST_LIST_SPLICE (list, head->prev);
+		MONO_INST_LIST_INIT (list);
+	}
+}
+
+/*#define mono_container_of(ptr, type, member) ({			\
+	const typeof( ((type *)0)->member ) *__mptr = (ptr);	\
+	(type *)( (char *)__mptr - offsetof(type,member) );})
+
+#define MONO_INST_LIST_ENTRY(ptr, type, member) \
+	mono_container_of(ptr, type, member)*/
+
+#define MONO_INST_LIST_ENTRY(ptr, type, member)	\
+	((type *)(gpointer)(ptr))
+
+#define MONO_INST_LIST_FIRST_ENTRY(ptr, type, member) \
+	MONO_INST_LIST_ENTRY((ptr)->next, type, member)
+
+#define MONO_INST_LIST_LAST_ENTRY(ptr, type, member) \
+	MONO_INST_LIST_ENTRY((ptr)->prev, type, member)
+
+#define MONO_INST_LIST_FOR_EACH(pos, head) \
+	for (pos = (head)->next; pos != (head); pos = pos->next)
+
+#define MONO_INST_LIST_FOR_EACH_PREV(pos, head) \
+	for (pos = (head)->prev; pos != (head); pos = pos->prev)
+
+#define MONO_INST_LIST_FOR_EACH_SAFE(pos, n, head) \
+	for (pos = (head)->next, n = pos->next; pos != (head); \
+		pos = n, n = pos->next)
+
+#define MONO_INST_LIST_FOR_EACH_PREV_SAFE(pos, n, head) \
+	for (pos = (head)->prev, n = pos->prev; pos != (head); \
+		pos = n, n = pos->prev)
+
+#define MONO_INST_LIST_FOR_EACH_ENTRY(pos, head, member) \
+	for (pos = MONO_INST_LIST_ENTRY ((head)->next, MonoInst, member);\
+	     &pos->member != (head);\
+	     pos = MONO_INST_LIST_ENTRY (pos->member.next, MonoInst, member))
+
+#define MONO_INST_LIST_FOR_EACH_ENTRY_REVERSE(pos, head, member) \
+	for (pos = MONO_INST_LIST_ENTRY ((head)->prev, MonoInst, member);\
+	     &pos->member != (head);\
+	     pos = MONO_INST_LIST_ENTRY (pos->member.prev, MonoInst, member))
+
+#define MONO_INST_LIST_FOR_EACH_ENTRY_SAFE(pos, n, head, member) \
+	for (pos = MONO_INST_LIST_ENTRY ((head)->next, MonoInst, member),\
+		n = MONO_INST_LIST_ENTRY (pos->member.next, MonoInst, member);\
+	     &pos->member != (head); 					\
+	     pos = n, n = MONO_INST_LIST_ENTRY (n->member.next, MonoInst, member))
+
+#define MONO_BB_FOR_EACH_INS(bb, ins) MONO_INST_LIST_FOR_EACH_ENTRY ((ins), &((bb)->ins_list), node)
+
+#define MONO_BB_FOR_EACH_INS_SAFE(bb, next, ins) MONO_INST_LIST_FOR_EACH_ENTRY_SAFE ((ins), (next), &((bb)->ins_list), node)
+
+#define MONO_BB_FOR_EACH_INS_REVERSE(bb, ins) MONO_INST_LIST_FOR_EACH_ENTRY_REVERSE ((ins), &((bb)->ins_list), node)
+
+#endif
 
 struct MonoEdge {
 	MonoEdge *next;
@@ -750,6 +866,7 @@ typedef struct {
 	guint            disable_reuse_stack_slots : 1;
 	guint            disable_initlocals_opt : 1;
 	guint            disable_omit_fp : 1;
+	guint            has_got_slots : 1;
 	gpointer         debug_info;
 	guint32          lmf_offset;
     guint16          *intvars;
@@ -813,8 +930,8 @@ typedef struct {
 	gulong cas_linkdemand;
 	gulong cas_demand_generation;
 	gulong generic_virtual_invocations;
-	MonoMethod *max_ratio_method;
-	MonoMethod *biggest_method;
+	char *max_ratio_method;
+	char *biggest_method;
 	gboolean enabled;
 } MonoJitStats;
 
@@ -1036,11 +1153,6 @@ enum {
 };
 
 enum {
-	MINI_GENERIC_CLASS_RELATION_OTHER_TABLE,
-	MINI_GENERIC_CLASS_RELATION_OTHER
-};
-
-enum {
 	MINI_TOKEN_SOURCE_CLASS,
 	MINI_TOKEN_SOURCE_METHOD,
 	MINI_TOKEN_SOURCE_FIELD
@@ -1110,6 +1222,7 @@ void      mono_remove_patch_info            (MonoCompile *cfg, int ip) MONO_INTE
 MonoJumpInfo* mono_patch_info_dup_mp        (MonoMemPool *mp, MonoJumpInfo *patch_info) MONO_INTERNAL;
 guint     mono_patch_info_hash (gconstpointer data) MONO_INTERNAL;
 gint      mono_patch_info_equal (gconstpointer ka, gconstpointer kb) MONO_INTERNAL;
+MonoJumpInfo *mono_patch_info_list_prepend  (MonoJumpInfo *list, int ip, MonoJumpInfoType type, gconstpointer target) MONO_INTERNAL;
 gpointer  mono_resolve_patch_target         (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *patch_info, gboolean run_cctors) MONO_INTERNAL;
 gpointer  mono_jit_find_compiled_method     (MonoDomain *domain, MonoMethod *method) MONO_INTERNAL;
 MonoLMF * mono_get_lmf                      (void) MONO_INTERNAL;
@@ -1252,9 +1365,6 @@ gpointer  mono_arch_get_rethrow_exception       (void) MONO_INTERNAL;
 gpointer  mono_arch_get_throw_exception_by_name (void) MONO_INTERNAL;
 gpointer  mono_arch_get_throw_corlib_exception  (void) MONO_INTERNAL;
 guchar*   mono_arch_create_trampoline_code      (MonoTrampolineType tramp_type) MONO_INTERNAL;
-gpointer  mono_arch_create_jit_trampoline       (MonoMethod *method) MONO_INTERNAL;
-MonoJitInfo *mono_arch_create_jump_trampoline      (MonoMethod *method) MONO_INTERNAL;
-gpointer  mono_arch_create_class_init_trampoline(MonoVTable *vtable) MONO_INTERNAL;
 gpointer  mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot) MONO_INTERNAL;
 guint32	  mono_arch_get_rgctx_lazy_fetch_offset (gpointer *regs) MONO_INTERNAL;
 GList    *mono_arch_get_allocatable_int_vars    (MonoCompile *cfg) MONO_INTERNAL;
@@ -1319,13 +1429,13 @@ gpointer*mono_arch_get_delegate_method_ptr_addr (guint8* code, gpointer *regs) M
 void     mono_arch_create_vars                  (MonoCompile *cfg) MONO_INTERNAL;
 void     mono_arch_save_unwind_info             (MonoCompile *cfg) MONO_INTERNAL;
 void     mono_arch_register_lowlevel_calls      (void) MONO_INTERNAL;
-gpointer mono_arch_get_unbox_trampoline         (MonoMethod *m, gpointer addr) MONO_INTERNAL;
+gpointer mono_arch_get_unbox_trampoline         (MonoGenericSharingContext *gsctx, MonoMethod *m, gpointer addr) MONO_INTERNAL;
 void     mono_arch_patch_callsite               (guint8 *method_start, guint8 *code, guint8 *addr) MONO_INTERNAL;
 void     mono_arch_patch_plt_entry              (guint8 *code, guint8 *addr) MONO_INTERNAL;
 void     mono_arch_nullify_class_init_trampoline(guint8 *code, gssize *regs) MONO_INTERNAL;
 void     mono_arch_nullify_plt_entry            (guint8 *code) MONO_INTERNAL;
 int      mono_arch_get_this_arg_reg             (MonoMethodSignature *sig, MonoGenericSharingContext *gsctx) MONO_INTERNAL;
-gpointer mono_arch_get_this_arg_from_call       (MonoMethodSignature *sig, gssize *regs, guint8 *code) MONO_INTERNAL;
+gpointer mono_arch_get_this_arg_from_call       (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig, gssize *regs, guint8 *code) MONO_INTERNAL;
 MonoObject* mono_arch_find_this_argument        (gpointer *regs, MonoMethod *method, MonoGenericSharingContext *gsctx) MONO_INTERNAL;
 gpointer mono_arch_get_delegate_invoke_impl     (MonoMethodSignature *sig, gboolean has_target) MONO_INTERNAL;
 gpointer mono_arch_create_specific_trampoline   (gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, guint32 *code_len) MONO_INTERNAL;
@@ -1434,12 +1544,7 @@ gboolean mono_generic_context_equal_deep (MonoGenericContext *context1, MonoGene
 gboolean mono_generic_context_is_sharable (MonoGenericContext *context, gboolean allow_type_vars) MONO_INTERNAL;
 
 gboolean mono_method_is_generic_impl (MonoMethod *method) MONO_INTERNAL;
-gboolean mono_method_is_generic_sharable_impl (MonoMethod *method) MONO_INTERNAL;
-
-MonoMethod* mono_method_get_declaring_generic_method (MonoMethod *method) MONO_INTERNAL;
-
-int mono_class_generic_class_relation (MonoClass *klass, int info_type, MonoClass *method_klass,
-				       MonoGenericContext *generic_context, int *arg_num) MONO_INTERNAL;
+gboolean mono_method_is_generic_sharable_impl (MonoMethod *method, gboolean allow_type_vars) MONO_INTERNAL;
 
 gpointer mono_helper_get_rgctx_other_ptr (MonoClass *caller_class, MonoVTable *vtable,
 					  guint32 token, guint32 token_source, guint32 rgctx_type,

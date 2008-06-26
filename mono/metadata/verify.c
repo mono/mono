@@ -128,6 +128,8 @@ typedef struct {
 	GSList *list;
 	/*Allocated fnptr MonoType that should be freed by us.*/
 	GSList *funptrs;
+	/*Type dup'ed exception types from catch blocks.*/
+	GSList *exception_types;
 
 	int num_locals;
 	MonoType **locals;
@@ -2132,8 +2134,10 @@ handle_enum:
 static void
 init_stack_with_value_at_exception_boundary (VerifyContext *ctx, ILCodeDesc *code, MonoClass *klass)
 {
+	MonoType *type = mono_class_inflate_generic_type (&klass->byval_arg, ctx->generic_context);
 	stack_init (ctx, code);
-	set_stack_value (ctx, code->stack, &klass->byval_arg, FALSE);
+	set_stack_value (ctx, code->stack, type, FALSE);
+	ctx->exception_types = g_slist_prepend (ctx->exception_types, type);
 	code->size = 1;
 	code->flags |= IL_CODE_FLAG_WAS_TARGET;
 }
@@ -3981,8 +3985,10 @@ do_switch (VerifyContext *ctx, int count, const unsigned char *data)
 	for (i = 0; i < count; ++i) {
 		int target = base + read32 (data + i * 4);
 
-		if (target < 0 || target >= ctx->code_size)
+		if (target < 0 || target >= ctx->code_size) {
 			ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Switch target %x out of code at 0x%04x", i, ctx->ip_offset));
+			return;
+		}
 
 		switch (is_valid_branch_instruction (ctx->header, ctx->ip_offset, target)) {
 		case 1:
@@ -3990,7 +3996,7 @@ do_switch (VerifyContext *ctx, int count, const unsigned char *data)
 			break;
 		case 2:
 			ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Switch target %x escapes out of exception block at 0x%04x", i, ctx->ip_offset));
-			break;
+			return;
 		}
 		merge_stacks (ctx, &ctx->eval, &ctx->code [target], FALSE, TRUE);
 	}
@@ -5408,6 +5414,10 @@ mono_method_verify (MonoMethod *method, int level)
 
 	for (tmp = ctx.funptrs; tmp; tmp = tmp->next)
 		g_free (tmp->data);
+	g_slist_free (ctx.funptrs);
+
+	for (tmp = ctx.exception_types; tmp; tmp = tmp->next)
+		mono_metadata_free_type (tmp->data);
 	g_slist_free (ctx.funptrs);
 
 	for (i = 0; i < ctx.num_locals; ++i)

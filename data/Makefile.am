@@ -4,7 +4,7 @@ monodir = $(sysconfdir)/mono
 
 EXTRA_DIST =  	\
 	config.in \
-	browscap.ini mono.supp README \
+	browscap.ini mono.supp mono.d README \
 	mono.pc.in mint.pc.in dotnet.pc.in dotnet35.pc.in \
 	mono-cairo.pc.in cecil.pc.in smcs.pc.in
 

@@ -271,7 +271,12 @@ BASE_TEST_CS_SRC=		\
 	generic-interface-methods.2.cs	\
 	generic-array-type.2.cs	\
 	generic-method-patching.2.cs	\
+	generic-static-methods.2.cs	\
 	generic-null-call.2.cs	\
+	generic-special.2.cs	\
+	generic-exceptions.2.cs	\
+	generic-virtual2.2.cs	\
+	generic-valuetype-interface.2.cs	\
 	recursive-generics.2.cs	\
 	bug-80392.2.cs		\
 	dynamic-method-access.2.cs	\
@@ -291,7 +296,8 @@ BASE_TEST_CS_SRC=		\
 	bug-389886-2.cs	\
 	bug-325283.2.cs	\
 	thunks.cs \
-	winx64structs.cs
+	winx64structs.cs \
+	bug-349190.2.cs
 
 if AMD64
 TEST_CS_SRC = $(BASE_TEST_CS_SRC) async-exc-compilation.cs
@@ -377,7 +383,9 @@ TEST_IL_SRC=			\
 	generic-ldtoken-field.2.il	\
 	generic-tailcall.2.il	\
 	generic-tailcall2.2.il	\
-	generic-array-exc.2.il
+	generic-array-exc.2.il	\
+	generic-valuetype-newobj2.2.il	\
+	generic-valuetype-newobj.2.il
 
 #	bug-318677.il
 
@@ -413,7 +421,7 @@ else
 if PLATFORM_WIN32
 test:   assemblyresolve/test/asm.dll testjit test-type-load test-inline-call-stack test-bug-80307 test-bug-81673 test-bug-81691 test-bug-81466 test-bug-324535 test-generic-sharing test-bug-382986
 else
-test:	assemblyresolve/test/asm.dll testjit testbundle test-type-load test-inline-call-stack test-iomap-regression test-bug-80307 test-bug-81673 test-bug-81691 test-bug-81466 test-bug-324535 custom-modifiers test-generic-sharing test-bug-382986 
+test:	assemblyresolve/test/asm.dll testjit testbundle test-type-load test-inline-call-stack test-iomap-regression test-bug-80307 test-bug-81673 test-bug-81691 test-bug-81466 test-bug-324535 custom-modifiers test-generic-sharing test-bug-382986 test-modules
 endif
 endif
 
@@ -702,11 +710,16 @@ test-generic-sharing : generics-sharing.2.exe shared-generic-methods.2.exe	\
 		generic-ldtoken-method.2.exe  generic-ldtoken-field.2.exe	\
 		generic-virtual.2.exe generic-tailcall.2.exe			\
 		generic-interface-methods.2.exe generic-array-type.2.exe	\
-		generic-method-patching.2.exe	\
+		generic-method-patching.2.exe generic-static-methods.2.exe	\
 		generic-null-call.2.exe generic-tailcall2.2.exe			\
-		generic-array-exc.2.exe
+		generic-array-exc.2.exe generic-special.2.exe			\
+		generic-exceptions.2.exe	\
+		generic-virtual2.2.exe generic-valuetype-interface.2.exe	\
+		generic-valuetype-newobj.2.exe generic-valuetype-newobj2.2.exe
 	for fn in $+ ; do	\
 		echo "Testing $$fn ...";	\
+		MONO_GENERIC_SHARING=all $(RUNTIME) -O=gshared                $$fn || exit 1;	\
+		MONO_GENERIC_SHARING=all $(RUNTIME) -O=gshared,shared         $$fn || exit 1;	\
 		MONO_GENERIC_SHARING=all $(RUNTIME) -O=gshared,-inline        $$fn || exit 1;	\
 		MONO_GENERIC_SHARING=all $(RUNTIME) -O=gshared,-inline,shared $$fn || exit 1;	\
 	done
@@ -717,6 +730,14 @@ async-exceptions.exe : async-exceptions.cs
 test-async-exceptions : async-exceptions.exe
 	for i in `echo 0 1 2 3 4 5 6 7 8 9 10`; do $(RUNTIME) --inject-async-exc Tests:foo $$i async-exceptions.exe || exit 1; done
 	for i in `echo 0 1 2 3 4 5 6 7 8 9 10`; do $(RUNTIME) --inject-async-exc Tests:bar $$i async-exceptions.exe || exit 1; done
+
+EXTRA_DIST += modules.cs modules-m1.cs
+modules-m1.netmodule: modules-m1.cs
+	$(MCS) -out:$@ /target:module $(srcdir)/modules-m1.cs
+modules.exe: modules.cs modules-m1.netmodule
+	$(MCS) -out:$@ /addmodule:modules-m1.netmodule -r:TestDriver.dll $(srcdir)/modules.cs
+test-modules: modules.exe
+	$(RUNTIME) modules.exe
 
 # Useful if mono is compiled with --enable-shared=no
 patch-libtool:

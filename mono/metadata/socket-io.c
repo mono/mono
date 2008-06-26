@@ -288,11 +288,18 @@ static gint32 convert_socketflags (gint32 sflags)
 		flags |= MSG_PEEK;
 	if (sflags & SocketFlags_DontRoute)
 		flags |= MSG_DONTROUTE;
+#if 0
+	/* Ignore Partial - see bug 349688.  Don't return -1, because
+	 * according to the comment in that bug ms runtime doesn't for
+	 * UDP sockets (this means we will silently ignore it for TCP
+	 * too)
+	 */
 	if (sflags & SocketFlags_Partial)
 #ifdef MSG_MORE
 		flags |= MSG_MORE;
 #else
 		return -1;	
+#endif
 #endif
 	if (sflags & SocketFlags_MaxIOVectorLength)
 		/* FIXME: Don't know what to do for MaxIOVectorLength query */
@@ -601,18 +608,45 @@ static gint32 convert_sockopt_level_and_name(MonoSocketOptionLevel mono_level,
 	return(0);
 }
 
-#define STASH_SYS_ASS(this) \
-	if(system_assembly == NULL) { \
-		system_assembly=mono_image_loaded ("System"); \
-		if (!system_assembly) {	\
-			MonoAssembly *sa = mono_assembly_open ("System.dll", NULL);	\
-			if (!sa) g_assert_not_reached ();	\
-			else {system_assembly = mono_assembly_get_image (sa);}	\
-		}	\
+static MonoImage *get_socket_assembly (void)
+{
+	static const char *version = NULL;
+	gboolean moonlight;
+	static MonoImage *socket_assembly = NULL;
+	
+	if (version == NULL) {
+		version = mono_get_runtime_info ()->framework_version;
+		moonlight = !strcmp (version, "2.1");
 	}
-
-static MonoImage *system_assembly=NULL;
-
+	
+	if (socket_assembly == NULL) {
+		if (moonlight) {
+			socket_assembly = mono_image_loaded ("System.Net");
+			if (!socket_assembly) {
+				MonoAssembly *sa = mono_assembly_open ("System.Net.dll", NULL);
+			
+				if (!sa) {
+					g_assert_not_reached ();
+				} else {
+					socket_assembly = mono_assembly_get_image (sa);
+				}
+			}
+		} else {
+			socket_assembly = mono_image_loaded ("System");
+			if (!socket_assembly) {
+				MonoAssembly *sa = mono_assembly_open ("System.dll", NULL);
+			
+				if (!sa) {
+					g_assert_not_reached ();
+				} else {
+					socket_assembly = mono_assembly_get_image (sa);
+				}
+			}
+		}
+	}
+	
+	return(socket_assembly);
+}
 
 #ifdef AF_INET6
 static gint32 get_family_hint(void)
@@ -625,7 +659,7 @@ static gint32 get_family_hint(void)
 		gint32 ipv6_enabled = -1, ipv4_enabled = -1;
 		MonoVTable *vtable;
 
-		socket_class = mono_class_from_name (system_assembly, "System.Net.Sockets", "Socket");
+		socket_class = mono_class_from_name (get_socket_assembly (), "System.Net.Sockets", "Socket");
 		ipv4_field = mono_class_get_field_from_name (socket_class, "ipv4Supported");
 		ipv6_field = mono_class_get_field_from_name (socket_class, "ipv6Supported");
 		vtable = mono_class_vtable (mono_domain_get (), socket_class);
@@ -663,8 +697,6 @@ gpointer ves_icall_System_Net_Sockets_Socket_Socket_internal(MonoObject *this, g
 	
 	MONO_ARCH_SAVE_REGS;
 
-	STASH_SYS_ASS(this);
-	
 	*error = 0;
 	
 	sock_family=convert_family(family);
@@ -823,7 +855,7 @@ static MonoObject *create_object_from_sockaddr(struct sockaddr *saddr,
 	MonoAddressFamily family;
 
 	/* Build a System.Net.SocketAddress object instance */
-	sockaddr_class=mono_class_from_name(system_assembly, "System.Net", "SocketAddress");
+	sockaddr_class=mono_class_from_name(get_socket_assembly (), "System.Net", "SocketAddress");
 	sockaddr_obj=mono_object_new(domain, sockaddr_class);
 	
 	/* Locate the SocketAddress data buffer in the object */
@@ -1345,6 +1377,35 @@ gint32 ves_icall_System_Net_Sockets_Socket_Receive_internal(SOCKET sock, MonoArr
 	return(ret);
 }
 
+gint32 ves_icall_System_Net_Sockets_Socket_Receive_array_internal(SOCKET sock, MonoArray *buffers, gint32 flags, gint32 *error)
+{
+	int ret, count;
+	DWORD recv;
+	WSABUF *wsabufs;
+	DWORD recvflags = 0;
+	
+	MONO_ARCH_SAVE_REGS;
+
+	*error = 0;
+	
+	wsabufs = mono_array_addr (buffers, WSABUF, 0);
+	count = mono_array_length (buffers);
+	
+	recvflags = convert_socketflags (flags);
+	if (recvflags == -1) {
+		*error = WSAEOPNOTSUPP;
+		return(0);
+	}
+	
+	ret = WSARecv (sock, wsabufs, count, &recv, &recvflags, NULL, NULL);
+	if (ret == SOCKET_ERROR) {
+		*error = WSAGetLastError ();
+		return(0);
+	}
+	
+	return(recv);
+}
+
 gint32 ves_icall_System_Net_Sockets_Socket_RecvFrom_internal(SOCKET sock, MonoArray *buffer, gint32 offset, gint32 count, gint32 flags, MonoObject **sockaddr, gint32 *error)
 {
 	int ret;
@@ -1436,6 +1497,35 @@ gint32 ves_icall_System_Net_Sockets_Socket_Send_internal(SOCKET sock, MonoArray 
 	}
 
 	return(ret);
+}
+
+gint32 ves_icall_System_Net_Sockets_Socket_Send_array_internal(SOCKET sock, MonoArray *buffers, gint32 flags, gint32 *error)
+{
+	int ret, count;
+	DWORD sent;
+	WSABUF *wsabufs;
+	DWORD sendflags = 0;
+	
+	MONO_ARCH_SAVE_REGS;
+
+	*error = 0;
+	
+	wsabufs = mono_array_addr (buffers, WSABUF, 0);
+	count = mono_array_length (buffers);
+	
+	sendflags = convert_socketflags (flags);
+	if (sendflags == -1) {
+		*error = WSAEOPNOTSUPP;
+		return(0);
+	}
+	
+	ret = WSASend (sock, wsabufs, count, &sent, sendflags, NULL, NULL);
+	if (ret == SOCKET_ERROR) {
+		*error = WSAGetLastError ();
+		return(0);
+	}
+	
+	return(sent);
 }
 
 gint32 ves_icall_System_Net_Sockets_Socket_SendTo_internal(SOCKET sock, MonoArray *buffer, gint32 offset, gint32 count, gint32 flags, MonoObject *sockaddr, gint32 *error)
@@ -1699,7 +1789,7 @@ void ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal(SOCKET soc
 	switch(name) {
 	case SocketOptionName_Linger:
 		/* build a System.Net.Sockets.LingerOption */
-		obj_class=mono_class_from_name(system_assembly,
+		obj_class=mono_class_from_name(get_socket_assembly (),
 					       "System.Net.Sockets",
 					       "LingerOption");
 		obj=mono_object_new(domain, obj_class);

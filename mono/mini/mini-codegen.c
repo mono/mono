@@ -243,10 +243,12 @@ mono_spillvar_offset (MonoCompile *cfg, int spillvar, gboolean fp)
 #define is_soft_reg(r,fp) (!is_hard_reg((r),(fp)))
 
 #ifdef MONO_ARCH_INST_IS_FLOAT
+#define reg_is_fp(desc) (MONO_ARCH_INST_IS_FLOAT (desc))
 #define dreg_is_fp(spec)  (MONO_ARCH_INST_IS_FLOAT (spec [MONO_INST_DEST]))
 #define sreg1_is_fp(spec) (MONO_ARCH_INST_IS_FLOAT (spec [MONO_INST_SRC1]))
 #define sreg2_is_fp(spec) (MONO_ARCH_INST_IS_FLOAT (spec [MONO_INST_SRC2]))
 #else
+#define reg_is_fp(desc) ((desc) == 'f')
 #define sreg1_is_fp(spec) (G_UNLIKELY (spec [MONO_INST_SRC1] == 'f'))
 #define sreg2_is_fp(spec) (G_UNLIKELY (spec [MONO_INST_SRC2] == 'f'))
 #define dreg_is_fp(spec)  (G_UNLIKELY (spec [MONO_INST_DEST] == 'f'))
@@ -1435,47 +1437,51 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			clob_mask = MONO_ARCH_CALLEE_REGS;
 
-			/*
-			 * Need to avoid spilling the dreg since the dreg is not really
-			 * clobbered by the call.
-			 */
-			if ((prev_dreg != -1) && !dreg_is_fp (spec))
-				dreg = rs->vassign [prev_dreg];
-			else
-				dreg = -1;
+			if (rs->ifree_mask != MONO_ARCH_CALLEE_REGS) {
+				/*
+				 * Need to avoid spilling the dreg since the dreg is not really
+				 * clobbered by the call.
+				 */
+				if ((prev_dreg != -1) && !reg_is_fp (spec_dest))
+					dreg = rs->vassign [prev_dreg];
+				else
+					dreg = -1;
 
-			if (MONO_ARCH_INST_IS_REGPAIR (spec_dest))
-				dreg2 = rs->vassign [prev_dreg + 1];
-			else
-				dreg2 = -1;
+				if (MONO_ARCH_INST_IS_REGPAIR (spec_dest))
+					dreg2 = rs->vassign [prev_dreg + 1];
+				else
+					dreg2 = -1;
 
-			for (j = 0; j < MONO_MAX_IREGS; ++j) {
-				s = regmask (j);
-				if ((clob_mask & s) && !(rs->ifree_mask & s) && (j != ins->sreg1)) {
-					if ((j != dreg) && (j != dreg2))
-						get_register_force_spilling (cfg, bb, tmp, ins, rs->isymbolic [j], FALSE);
-					else if (rs->isymbolic [j])
-						/* The hreg is assigned to the dreg of this instruction */
-						rs->vassign [rs->isymbolic [j]] = -1;
-					mono_regstate_free_int (rs, j);
+				for (j = 0; j < MONO_MAX_IREGS; ++j) {
+					s = regmask (j);
+					if ((clob_mask & s) && !(rs->ifree_mask & s) && (j != ins->sreg1)) {
+						if ((j != dreg) && (j != dreg2))
+							get_register_force_spilling (cfg, bb, tmp, ins, rs->isymbolic [j], FALSE);
+						else if (rs->isymbolic [j])
+							/* The hreg is assigned to the dreg of this instruction */
+							rs->vassign [rs->isymbolic [j]] = -1;
+						mono_regstate_free_int (rs, j);
+					}
 				}
 			}
 
-			clob_mask = MONO_ARCH_CALLEE_FREGS;
-			if ((prev_dreg != -1) && dreg_is_fp (spec))
-				dreg = rs->vassign [prev_dreg];
-			else
-				dreg = -1;
+			if (rs->ffree_mask != MONO_ARCH_CALLEE_FREGS) {
+				clob_mask = MONO_ARCH_CALLEE_FREGS;
+				if ((prev_dreg != -1) && reg_is_fp (spec_dest))
+					dreg = rs->vassign [prev_dreg];
+				else
+					dreg = -1;
 
-			for (j = 0; j < MONO_MAX_FREGS; ++j) {
-				s = regmask (j);
-				if ((clob_mask & s) && !(rs->ffree_mask & s) && (j != ins->sreg1)) {
-					if (j != dreg)
-						get_register_force_spilling (cfg, bb, tmp, ins, rs->fsymbolic [j], TRUE);
-					else if (rs->fsymbolic [j])
-						/* The hreg is assigned to the dreg of this instruction */
-						rs->vassign [rs->fsymbolic [j]] = -1;
-					mono_regstate_free_float (rs, j);
+				for (j = 0; j < MONO_MAX_FREGS; ++j) {
+					s = regmask (j);
+					if ((clob_mask & s) && !(rs->ffree_mask & s) && (j != ins->sreg1)) {
+						if (j != dreg)
+							get_register_force_spilling (cfg, bb, tmp, ins, rs->fsymbolic [j], TRUE);
+						else if (rs->fsymbolic [j])
+							/* The hreg is assigned to the dreg of this instruction */
+							rs->vassign [rs->fsymbolic [j]] = -1;
+						mono_regstate_free_float (rs, j);
+					}
 				}
 			}
 		}

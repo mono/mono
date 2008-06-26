@@ -3303,11 +3303,23 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_alu_reg_reg (code, X86_CMP, ins->sreg1, ins->sreg2);
 			x86_cmov_reg (code, X86_CC_GT, TRUE, ins->dreg, ins->sreg2);
 			break;
+		case OP_IMIN_UN:
+			g_assert (cfg->opt & MONO_OPT_CMOV);
+			g_assert (ins->dreg == ins->sreg1);
+			x86_alu_reg_reg (code, X86_CMP, ins->sreg1, ins->sreg2);
+			x86_cmov_reg (code, X86_CC_GT, FALSE, ins->dreg, ins->sreg2);
+			break;
 		case OP_IMAX:
 			g_assert (cfg->opt & MONO_OPT_CMOV);
 			g_assert (ins->dreg == ins->sreg1);
 			x86_alu_reg_reg (code, X86_CMP, ins->sreg1, ins->sreg2);
 			x86_cmov_reg (code, X86_CC_LT, TRUE, ins->dreg, ins->sreg2);
+			break;
+		case OP_IMAX_UN:
+			g_assert (cfg->opt & MONO_OPT_CMOV);
+			g_assert (ins->dreg == ins->sreg1);
+			x86_alu_reg_reg (code, X86_CMP, ins->sreg1, ins->sreg2);
+			x86_cmov_reg (code, X86_CC_LT, FALSE, ins->dreg, ins->sreg2);
 			break;
 		case OP_X86_FPOP:
 			x86_fstp (code, 0);
@@ -4581,9 +4593,13 @@ mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethod
 			if (strcmp (cmethod->name, "Min") == 0) {
 				if (fsig->params [0]->type == MONO_TYPE_I4)
 					opcode = OP_IMIN;
+				else if (fsig->params [0]->type == MONO_TYPE_U4)
+					opcode = OP_IMIN_UN;
 			} else if (strcmp (cmethod->name, "Max") == 0) {
 				if (fsig->params [0]->type == MONO_TYPE_I4)
 					opcode = OP_IMAX;
+				else if (fsig->params [0]->type == MONO_TYPE_U4)
+					opcode = OP_IMAX_UN;
 			}		
 
 			if (opcode) {
@@ -4859,13 +4875,14 @@ mono_arch_get_vcall_slot_addr (guint8 *code, gpointer *regs)
 }
 
 gpointer
-mono_arch_get_this_arg_from_call (MonoMethodSignature *sig, gssize *regs, guint8 *code)
+mono_arch_get_this_arg_from_call (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig,
+		gssize *regs, guint8 *code)
 {
 	guint32 esp = regs [X86_ESP];
 	CallInfo *cinfo;
 	gpointer res;
 
-	cinfo = get_call_info (NULL, NULL, sig, FALSE);
+	cinfo = get_call_info (gsctx, NULL, sig, FALSE);
 
 	/*
 	 * The stack looks like:

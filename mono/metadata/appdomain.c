@@ -61,7 +61,7 @@
  * Changes which are already detected at runtime, like the addition
  * of icalls, do not require an increment.
  */
-#define MONO_CORLIB_VERSION 67
+#define MONO_CORLIB_VERSION 68
 
 typedef struct
 {
@@ -1135,10 +1135,18 @@ ensure_directory_exists (const char *filename)
 	char *p;
 	gchar *dir = g_path_get_dirname (filename);
 	int retval;
+	struct stat sbuf;
 	
-	if (!dir || !dir [0])
+	if (!dir || !dir [0]) {
+		g_free (dir);
 		return FALSE;
-
+	}
+	
+	if (stat (dir, &sbuf) == 0 && S_ISDIR (sbuf.st_mode)) {
+		g_free (dir);
+		return TRUE;
+	}
+	
 	p = dir;
 	while (*p == '/')
 		p++;
@@ -1210,7 +1218,7 @@ mono_make_shadow_copy (const char *filename)
 		if (!is_private)
 			continue;
 
-		if (strcmp (dir_name, *path) == 0) {
+		if (strstr (dir_name, *path) == dir_name) {
 			do_copy = TRUE;
 			break;
 		}
@@ -1741,13 +1749,13 @@ unload_thread_main (void *arg)
 	 * FIXME: Abort our parent thread last, so we can return a failure 
 	 * indication if aborting times out.
 	 */
-	if (!mono_threads_abort_appdomain_threads (domain, 10000)) {
+	if (!mono_threads_abort_appdomain_threads (domain, -1)) {
 		data->failure_reason = g_strdup_printf ("Aborting of threads in domain %s timed out.", domain->friendly_name);
 		return 1;
 	}
 
 	/* Finalize all finalizable objects in the doomed appdomain */
-	if (!mono_domain_finalize (domain, 10000)) {
+	if (!mono_domain_finalize (domain, -1)) {
 		data->failure_reason = g_strdup_printf ("Finalization of domain %s timed out.", domain->friendly_name);
 		return 1;
 	}

@@ -1,3 +1,31 @@
+2008-06-25  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-oprofile.c: Record also the domain of each statistical
+	hit, so that mono_jit_info_table_find works properly.
+
+2008-06-25  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-oprofile.c: Fixed breakage introduced in r105966
+
+2008-06-17  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-oprofile.c: Implemented signal based enable-disable
+	toggling for the statistical and enter-exit events.
+
+2008-06-17  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-oprofile.c (write_statistical_hit): Use the proper
+	domain instead of trying to get one.
+
+2008-06-16  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-oprofile.c (module_end_load, assembly_end_load):
+	Properly check the return value of "mono_assembly_fill_assembly_name",
+	otherwise "mono_stringify_assembly_name" can crash.
+
+2008-06-16  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-oprofile.c: Fix a segfault on shutdown (see Marek's
+	fix for the default profiler in r105466, the problem is the same.
+
+2008-06-16  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-oprofile.c: Initial implementation of summary report
+	for allocations at each collection.
+
 2008-05-23  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-oprofile.c: Fix warnings x86 and remove debugging code.
 

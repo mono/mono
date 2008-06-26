@@ -4395,6 +4395,11 @@ get_runtime_generic_context_ptr (MonoCompile *cfg, MonoMethod *method, MonoClass
 								 MonoGenericContext *generic_context, MonoInst *rgctx,
 								 int rgctx_type)
 {
+	// FIXME:
+	g_assert_not_reached ();
+	return NULL;
+
+#if 0
 	int arg_num = -1;
 	int relation = mono_class_generic_class_relation (klass, rgctx_type, method->klass, generic_context, &arg_num);
 
@@ -4408,24 +4413,35 @@ get_runtime_generic_context_ptr (MonoCompile *cfg, MonoMethod *method, MonoClass
 		g_assert_not_reached ();
 		return NULL;
 	}
+#endif
 }
 
 static MonoInst*
 get_runtime_generic_context_method (MonoCompile *cfg, MonoMethod *method,
 									MonoMethod *cmethod, MonoGenericContext *generic_context, MonoInst *rgctx, int rgctx_type)
 {
+	// FIXME:
+	g_assert_not_reached ();
+	return NULL;
+#if 0
 	int arg_num = mono_class_lookup_or_register_other_info (method->klass, cmethod, rgctx_type, generic_context);
 
 	return get_runtime_generic_context_other_table_ptr (cfg, rgctx, arg_num);
+#endif
 }
 
 static MonoInst*
 get_runtime_generic_context_field (MonoCompile *cfg, MonoMethod *method,
 	MonoClassField *field, MonoGenericContext *generic_context, MonoInst *rgctx, int rgctx_type)
 {
+	// FIXME:
+	g_assert_not_reached ();
+	return NULL;
+#if 0
 	int arg_num = mono_class_lookup_or_register_other_info (method->klass, field, rgctx_type, generic_context);
 
 	return get_runtime_generic_context_other_table_ptr (cfg, rgctx, arg_num);
+#endif
 }
 
 static gboolean
@@ -5911,7 +5927,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					(cmethod->is_inflated && mono_method_get_context (cmethod)->method_inst) ||
 					((cmethod->flags & METHOD_ATTRIBUTE_STATIC) &&
 						mono_class_generic_sharing_enabled (cmethod->klass)) ||
-					(!mono_method_is_generic_sharable_impl (cmethod) &&
+					 (!mono_method_is_generic_sharable_impl (cmethod, TRUE) &&
 						(!virtual || cmethod->flags & METHOD_ATTRIBUTE_FINAL ||
 						!(cmethod->flags & METHOD_ATTRIBUTE_VIRTUAL))))) {
 				MonoInst *rgctx;
@@ -6892,7 +6908,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					}
 				} else if (generic_shared &&
 						(cmethod->klass->valuetype ||
-						!mono_method_is_generic_sharable_impl (cmethod))) {
+						 !mono_method_is_generic_sharable_impl (cmethod, TRUE))) {
 
 				} else if (generic_shared && cmethod->klass->valuetype) {
 					NOT_IMPLEMENTED;
@@ -7337,9 +7353,13 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					GENERIC_SHARING_FAILURE (*ip);
 
 				if (context_used) {
+					// FIXME:
+					g_assert_not_reached ();
+#if 0
 					relation = mono_class_generic_class_relation (klass, MONO_RGCTX_INFO_VTABLE,
 						method->klass, generic_context, NULL);
 					shared_access = TRUE;
+#endif
 				}
 
 				// FIXME:
@@ -10107,8 +10127,8 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
  * - make the REM_IMM optimization in mini-x86.c arch-independent.
- * - merge the mini.c changes between 104646 and 105506.
- * - LAST MERGE: 105506.
+ * - merge the mini.c changes between 104646 and 106666.
+ * - LAST MERGE: 106666.
  * - when returning vtypes in registers, generate IR and append it to the end of the
  *   last bb instead of doing it in the epilog.
  * - when the new JIT is done, use the ins emission macros in ir-emit.h instead of the 

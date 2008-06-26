@@ -528,6 +528,8 @@ static void thread_cleanup (MonoThread *thread)
 	if (thread->serialized_culture_info)
 		g_free (thread->serialized_culture_info);
 
+	g_free (thread->name);
+
 	thread->cached_culture_info = NULL;
 
 	mono_gc_free_fixed (thread->static_data);
@@ -745,8 +747,8 @@ mono_thread_create (MonoDomain *domain, gpointer func, gpointer arg)
 /*
  * mono_thread_get_stack_bounds:
  *
- *   Return the address and size of the current threads stack. Return NULL as the stack
- * address if the stack address cannot be determined.
+ *   Return the address and size of the current threads stack. Return NULL as the 
+ * stack address if the stack address cannot be determined.
  */
 void
 mono_thread_get_stack_bounds (guint8 **staddr, size_t *stsize)
@@ -754,6 +756,7 @@ mono_thread_get_stack_bounds (guint8 **staddr, size_t *stsize)
 #if defined(HAVE_PTHREAD_GET_STACKSIZE_NP) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
 	*staddr = (guint8*)pthread_get_stackaddr_np (pthread_self ());
 	*stsize = pthread_get_stacksize_np (pthread_self ());
+	*staddr = (guint8*)((gssize)*staddr & ~(mono_pagesize () - 1));
 	return;
 	/* FIXME: simplify the mess below */
 #elif !defined(PLATFORM_WIN32)
@@ -762,28 +765,31 @@ mono_thread_get_stack_bounds (guint8 **staddr, size_t *stsize)
 
 	pthread_attr_init (&attr);
 #ifdef HAVE_PTHREAD_GETATTR_NP
-		pthread_getattr_np (pthread_self(), &attr);
+	pthread_getattr_np (pthread_self(), &attr);
 #else
 #ifdef HAVE_PTHREAD_ATTR_GET_NP
-		pthread_attr_get_np (pthread_self(), &attr);
+	pthread_attr_get_np (pthread_self(), &attr);
 #elif defined(sun)
-		*staddr = NULL;
-		pthread_attr_getstacksize (&attr, &stsize);
+	*staddr = NULL;
+	pthread_attr_getstacksize (&attr, &stsize);
 #else
-		*staddr = NULL;
-		*stsize = 0;
-		return;
+	*staddr = NULL;
+	*stsize = 0;
+	return;
 #endif
 #endif
 
 #ifndef sun
-		pthread_attr_getstack (&attr, (void**)staddr, stsize);
-		if (*staddr)
-			g_assert ((current > *staddr) && (current < *staddr + *stsize));
+	pthread_attr_getstack (&attr, (void**)staddr, stsize);
+	if (*staddr)
+		g_assert ((current > *staddr) && (current < *staddr + *stsize));
 #endif
 
-		pthread_attr_destroy (&attr); 
+	pthread_attr_destroy (&attr); 
 #endif
+
+	/* When running under emacs, sometimes staddr is not aligned to a page size */
+	*staddr = (guint8*)((gssize)*staddr & ~(mono_pagesize () - 1));
 }	
 
 MonoThread *
@@ -3023,6 +3029,7 @@ mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout)
 {
 	abort_appdomain_data user_data;
 	guint32 start_time;
+	int orig_timeout = timeout;
 
 	THREAD_DEBUG (g_message ("%s: starting abort", __func__));
 
@@ -3046,7 +3053,7 @@ mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout)
 		timeout -= mono_msec_ticks () - start_time;
 		start_time = mono_msec_ticks ();
 
-		if (timeout < 0)
+		if (orig_timeout != -1 && timeout < 0)
 			return FALSE;
 	}
 	while (user_data.wait.num > 0);
@@ -3522,7 +3529,8 @@ static MonoException* mono_thread_execute_interruption (MonoThread *thread)
  * the thread. If the result is an exception that needs to be throw, it is 
  * provided as return value.
  */
-MonoException* mono_thread_request_interruption (gboolean running_managed)
+MonoException*
+mono_thread_request_interruption (gboolean running_managed)
 {
 	MonoThread *thread = mono_thread_current ();
 
@@ -3530,16 +3538,8 @@ MonoException* mono_thread_request_interruption (gboolean running_managed)
 	if (thread == NULL) 
 		return NULL;
 	
-	ensure_synch_cs_set (thread);
-
-	/* FIXME: This is NOT signal safe */
-	EnterCriticalSection (thread->synch_cs);
-	
-	if (thread->interruption_requested) {
-		LeaveCriticalSection (thread->synch_cs);
-		
+	if (InterlockedCompareExchange (&thread->interruption_requested, 1, 0) == 1)
 		return NULL;
-	}
 
 	if (!running_managed || is_running_protected_wrapper ()) {
 		/* Can't stop while in unmanaged code. Increase the global interruption
@@ -3547,9 +3547,6 @@ MonoException* mono_thread_request_interruption (gboolean running_managed)
 		   checked and the thread will be interrupted. */
 		
 		InterlockedIncrement (&thread_interruption_requested);
-		thread->interruption_requested = TRUE;
-
-		LeaveCriticalSection (thread->synch_cs);
 
 		if (mono_thread_notify_pending_exc_fn && !running_managed)
 			/* The JIT will notify the thread about the interruption */
@@ -3563,8 +3560,6 @@ MonoException* mono_thread_request_interruption (gboolean running_managed)
 		return NULL;
 	}
 	else {
-		LeaveCriticalSection (thread->synch_cs);
-		
 		return mono_thread_execute_interruption (thread);
 	}
 }

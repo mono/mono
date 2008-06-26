@@ -964,6 +964,7 @@ mini_usage_jitdeveloper (void)
 		 "    --wapi=hps|semdel      IO-layer maintenance\n"
 		 "    --inject-async-exc METHOD OFFSET Inject an asynchronous exception at METHOD\n"
 		 "    --verify-all           Run the verifier on all methods\n"
+		 "    --aot-only             Avoid JITting any code\n"
 		 "\n"
 		 "Other options:\n" 
 		 "    --graph[=TYPE] METHOD  Draws a graph of the specified method:\n");
@@ -1089,7 +1090,6 @@ BOOL APIENTRY DllMain (HMODULE module_handle, DWORD reason, LPVOID reserved)
 	switch (reason)
 	{
 	case DLL_PROCESS_ATTACH:
-		mono_module_handle = module_handle;
 		mono_install_runtime_load (mini_init);
 		break;
 	case DLL_PROCESS_DETACH:
@@ -1259,6 +1259,8 @@ mono_main (int argc, char* argv[])
 			mono_inject_async_exc_pos = atoi (argv [++i]);
 		} else if (strcmp (argv [i], "--verify-all") == 0) {
 			mono_verifier_enable_verify_all ();
+		} else if (strcmp (argv [i], "--aot-only") == 0) {
+			mono_aot_only = TRUE;
 		} else if (strcmp (argv [i], "--print-vtable") == 0) {
 			mono_print_vtable = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {

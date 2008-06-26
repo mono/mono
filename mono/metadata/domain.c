@@ -1165,6 +1165,7 @@ mono_domain_create (void)
 	InitializeCriticalSection (&domain->assemblies_lock);
 
 	domain->shared_generics_hash = NULL;
+	domain->method_rgctx_hash = NULL;
 
 	mono_appdomains_lock ();
 	domain_id_alloc (domain);
@@ -1202,7 +1203,10 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	if (domain)
 		g_assert_not_reached ();
 
-#if defined(PLATFORM_WIN32) && !defined(_WIN64)
+#ifdef PLATFORM_WIN32
+	/* Avoid system error message boxes. */
+	SetErrorMode (SEM_FAILCRITICALERRORS | SEM_NOOPENFILEERRORBOX);
+
 	mono_load_coree (exe_filename);
 #endif
 
@@ -1924,6 +1928,10 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	if (domain->shared_generics_hash) {
 		g_hash_table_destroy (domain->shared_generics_hash);
 		domain->shared_generics_hash = NULL;
+	}
+	if (domain->method_rgctx_hash) {
+		g_hash_table_destroy (domain->method_rgctx_hash);
+		domain->method_rgctx_hash = NULL;
 	}
 
 	DeleteCriticalSection (&domain->assemblies_lock);

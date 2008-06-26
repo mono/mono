@@ -56,9 +56,15 @@ guint32 loader_error_thread_id;
 void
 mono_loader_init ()
 {
-	InitializeCriticalSection (&loader_mutex);
+	static gboolean inited;
 
-	loader_error_thread_id = TlsAlloc ();
+	if (!inited) {
+		InitializeCriticalSection (&loader_mutex);
+
+		loader_error_thread_id = TlsAlloc ();
+
+		inited = TRUE;
+	}
 }
 
 void
@@ -338,8 +344,9 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 		      MonoGenericContext *context)
 {
 	MonoClass *klass;
-	MonoClassField *field;
+	MonoClassField *field, *sig_field = NULL;
 	MonoTableInfo *tables = image->tables;
+	MonoType *sig_type;
 	guint32 cols[6];
 	guint32 nindex, class;
 	const char *fname;
@@ -356,6 +363,12 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 	mono_metadata_decode_blob_size (ptr, &ptr);
 	/* we may want to check the signature here... */
 
+	if (*ptr++ != 0x6) {
+		mono_loader_set_error_bad_image (g_strdup_printf ("Bad field signature class token %08x field name %s token %08x", class, fname, token));
+		return NULL;
+	}
+	sig_type = mono_metadata_parse_type (image, MONO_PARSE_TYPE, 0, ptr, &ptr);
+
 	switch (class) {
 	case MONO_MEMBERREF_PARENT_TYPEDEF:
 		klass = mono_class_get (image, MONO_TOKEN_TYPE_DEF | nindex);
@@ -369,7 +382,7 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 		mono_class_init (klass);
 		if (retklass)
 			*retklass = klass;
-		field = mono_class_get_field_from_name (klass, fname);
+		sig_field = field = mono_class_get_field_from_name (klass, fname);
 		break;
 	case MONO_MEMBERREF_PARENT_TYPEREF:
 		klass = mono_class_from_typeref (image, MONO_TOKEN_TYPE_REF | nindex);
@@ -383,28 +396,16 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 		mono_class_init (klass);
 		if (retklass)
 			*retklass = klass;
-		field = mono_class_get_field_from_name (klass, fname);
+		sig_field = field = mono_class_get_field_from_name (klass, fname);
 		break;
 	case MONO_MEMBERREF_PARENT_TYPESPEC: {
-		/*guint32 bcols [MONO_TYPESPEC_SIZE];
-		guint32 len;
-		MonoType *type;
-
-		mono_metadata_decode_row (&tables [MONO_TABLE_TYPESPEC], nindex - 1, 
-					  bcols, MONO_TYPESPEC_SIZE);
-		ptr = mono_metadata_blob_heap (image, bcols [MONO_TYPESPEC_SIGNATURE]);
-		len = mono_metadata_decode_value (ptr, &ptr);	
-		type = mono_metadata_parse_type (image, MONO_PARSE_TYPE, 0, ptr, &ptr);
-
-		klass = mono_class_from_mono_type (type);
-		mono_class_init (klass);
-		g_print ("type in sig: %s\n", klass->name);*/
 		klass = mono_class_get_full (image, MONO_TOKEN_TYPE_SPEC | nindex, context);
 		//FIXME can't klass be null?
 		mono_class_init (klass);
 		if (retklass)
 			*retklass = klass;
 		field = mono_class_get_field_from_name (klass, fname);
+		sig_field = mono_metadata_get_corresponding_field_from_generic_type_definition (field);
 		break;
 	}
 	default:
@@ -414,6 +415,10 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 
 	if (!field)
 		mono_loader_set_error_field_load (klass, fname);
+	else if (sig_field && !mono_metadata_type_equal_full (sig_type, sig_field->type, TRUE)) {
+		mono_loader_set_error_field_load (klass, fname);
+		return NULL;
+	}
 
 	return field;
 }
@@ -907,6 +912,9 @@ method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 i
 	else
 		method = method_from_memberref (image, nindex, context, NULL);
 
+	if (!method)
+		return NULL;
+
 	klass = method->klass;
 
 	if (klass->generic_class) {
@@ -982,9 +990,20 @@ mono_dllmap_lookup (MonoImage *assembly, const char *dll, const char* func, cons
 	return mono_dllmap_lookup_list (global_dll_map, dll, func, rdll, rfunc);
 }
 
+/*
+ * mono_dllmap_insert:
+ *
+ * LOCKING: Acquires the loader lock.
+ *
+ * NOTE: This can be called before the runtime is initialized, for example from
+ * mono_config_parse ().
+ */
 void
-mono_dllmap_insert (MonoImage *assembly, const char *dll, const char *func, const char *tdll, const char *tfunc) {
+mono_dllmap_insert (MonoImage *assembly, const char *dll, const char *func, const char *tdll, const char *tfunc)
+{
 	MonoDllMap *entry;
+
+	mono_loader_init ();
 
 	mono_loader_lock ();
 

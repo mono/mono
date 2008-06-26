@@ -247,7 +247,7 @@ mono_magic_trampoline (gssize *regs, guint8 *code, MonoMethod *m, guint8* tramp)
 
 	if (vtable_slot) {
 		if (m->klass->valuetype)
-			addr = mono_arch_get_unbox_trampoline (m, addr);
+			addr = mono_arch_get_unbox_trampoline (get_generic_context (code), m, addr);
 
 		g_assert (*vtable_slot);
 
@@ -323,7 +323,7 @@ mono_aot_trampoline (gssize *regs, guint8 *code, guint8 *token_info,
 			if (!method)
 				method = mono_get_method (image, token, NULL);
 			if (method->klass->valuetype)
-				addr = mono_arch_get_unbox_trampoline (method, addr);
+				addr = mono_arch_get_unbox_trampoline (get_generic_context (code), method, addr);
 		}
 	} else {
 		/* This is a normal call through a PLT entry */
@@ -412,12 +412,14 @@ mono_generic_class_init_trampoline (gssize *regs, guint8 *code, MonoVTable *vtab
 }
 
 static gpointer
-mono_rgctx_lazy_fetch_trampoline (gssize *regs, guint8 *code, MonoVTable *vtable, guint8 *tramp)
+mono_rgctx_lazy_fetch_trampoline (gssize *regs, guint8 *code, gpointer data, guint8 *tramp)
 {
 	static gboolean inited = FALSE;
 	static int num_lookups = 0;
 
 	guint32 slot = mono_arch_get_rgctx_lazy_fetch_offset ((gpointer*)regs);
+	guint32 index = MONO_RGCTX_SLOT_INDEX (slot);
+	gboolean mrgctx = MONO_RGCTX_SLOT_IS_MRGCTX (slot);
 
 	if (!inited) {
 		mono_counters_register ("RGCTX unmanaged lookups", MONO_COUNTER_GENERICS | MONO_COUNTER_INT, &num_lookups);
@@ -426,7 +428,10 @@ mono_rgctx_lazy_fetch_trampoline (gssize *regs, guint8 *code, MonoVTable *vtable
 
 	num_lookups++;
 
-	return mono_class_fill_runtime_generic_context (vtable, slot);
+	if (mrgctx)
+		return mono_method_fill_runtime_generic_context (data, index);
+	else
+		return mono_class_fill_runtime_generic_context (data, index);
 }
 
 #ifdef MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
@@ -451,7 +456,7 @@ mono_delegate_trampoline (gssize *regs, guint8 *code, MonoClass *klass, guint8* 
 
 	/* Obtain the delegate object according to the calling convention */
 
-	delegate = mono_arch_get_this_arg_from_call (mono_method_signature (invoke), regs, code);
+	delegate = mono_arch_get_this_arg_from_call (get_generic_context (code), mono_method_signature (invoke), regs, code);
 
 	if (!delegate->method_ptr && delegate->method) {
 		/* The delegate was initialized by mini_delegate_ctor */

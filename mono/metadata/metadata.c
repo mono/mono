@@ -964,7 +964,7 @@ mono_metadata_decode_row (const MonoTableInfo *t, int idx, guint32 *res, int res
 	data = t->base + idx * t->row_size;
 	
 	g_assert (res_size == count);
-	
+
 	for (i = 0; i < count; i++) {
 		int n = mono_metadata_table_size (bitfield, i);
 
@@ -1401,8 +1401,8 @@ mono_type_equal (gconstpointer ka, gconstpointer kb)
 	return 1;
 }
 
-static guint
-mono_generic_inst_hash (gconstpointer data)
+guint
+mono_metadata_generic_inst_hash (gconstpointer data)
 {
 	const MonoGenericInst *ginst = (const MonoGenericInst *) data;
 	guint hash = 0;
@@ -1437,8 +1437,8 @@ mono_generic_inst_equal_full (const MonoGenericInst *a, const MonoGenericInst *b
 	return TRUE;
 }
 
-static gboolean
-mono_generic_inst_equal (gconstpointer ka, gconstpointer kb)
+gboolean
+mono_metadata_generic_inst_equal (gconstpointer ka, gconstpointer kb)
 {
 	const MonoGenericInst *a = (const MonoGenericInst *) ka;
 	const MonoGenericInst *b = (const MonoGenericInst *) kb;
@@ -1480,7 +1480,7 @@ mono_metadata_init (void)
 	int i;
 
 	type_cache = g_hash_table_new (mono_type_hash, mono_type_equal);
-	generic_inst_cache = g_hash_table_new_full (mono_generic_inst_hash, mono_generic_inst_equal, NULL, (GDestroyNotify)free_generic_inst);
+	generic_inst_cache = g_hash_table_new_full (mono_metadata_generic_inst_hash, mono_metadata_generic_inst_equal, NULL, (GDestroyNotify)free_generic_inst);
 	generic_class_cache = g_hash_table_new_full (mono_generic_class_hash, mono_generic_class_equal, NULL, (GDestroyNotify)free_generic_class);
 
 	for (i = 0; i < NBUILTIN_TYPES (); ++i)
@@ -2243,7 +2243,6 @@ free_generic_class (MonoGenericClass *gclass)
 		if (class->fields) {
 			for (i = 0; i < class->field.count; ++i) {
 				g_free (class->fields [i].generic_info);
-				mono_metadata_free_type (class->fields [i].type);
 			}
 		}
 		/* Allocated in mono_generic_class_get_class () */
@@ -2256,7 +2255,6 @@ free_generic_class (MonoGenericClass *gclass)
 			MonoClassField *field = dgclass->fields + i;
 			mono_metadata_free_type (field->type);
 			if (field->generic_info) {
-				mono_metadata_free_type (field->generic_info->generic_type);
 				g_free (field->generic_info);
 			}
 			g_free ((char*)field->name);
@@ -4215,6 +4213,13 @@ void
 mono_metadata_field_info (MonoImage *meta, guint32 index, guint32 *offset, guint32 *rva, 
 			  MonoMarshalSpec **marshal_spec)
 {
+	return mono_metadata_field_info_with_mempool (NULL, meta, index, offset, rva, marshal_spec);
+}
+
+void
+mono_metadata_field_info_with_mempool (MonoMemPool *mempool, MonoImage *meta, guint32 index, guint32 *offset, guint32 *rva, 
+			  MonoMarshalSpec **marshal_spec)
+{
 	MonoTableInfo *tdef;
 	locator_t loc;
 
@@ -4253,7 +4258,7 @@ mono_metadata_field_info (MonoImage *meta, guint32 index, guint32 *offset, guint
 		const char *p;
 		
 		if ((p = mono_metadata_get_marshal_info (meta, index, TRUE))) {
-			*marshal_spec = mono_metadata_parse_marshal_spec (meta, p);
+			*marshal_spec = mono_metadata_parse_marshal_spec_with_mempool (mempool, p);
 		}
 	}
 
@@ -4567,8 +4572,27 @@ mono_type_create_from_typespec (MonoImage *image, guint32 type_spec)
 	return type;
 }
 
+
+static char*
+mono_mempool_strndup (MonoMemPool *mp, const char *data, guint len)
+{
+	char *res;
+	if (!mp)
+		return g_strndup (data, len);
+	res = mono_mempool_alloc (mp, len + 1);
+	memcpy (res, data, len);
+	res [len] = 0;
+	return res;
+}
+
 MonoMarshalSpec *
 mono_metadata_parse_marshal_spec (MonoImage *image, const char *ptr)
+{
+	return mono_metadata_parse_marshal_spec_with_mempool (NULL, ptr);
+}
+
+MonoMarshalSpec *
+mono_metadata_parse_marshal_spec_with_mempool (MonoMemPool *mempool, const char *ptr)
 {
 	MonoMarshalSpec *res;
 	int len;
@@ -4576,7 +4600,10 @@ mono_metadata_parse_marshal_spec (MonoImage *image, const char *ptr)
 
 	/* fixme: this is incomplete, but I cant find more infos in the specs */
 
-	res = g_new0 (MonoMarshalSpec, 1);
+	if (mempool)
+		res = mono_mempool_alloc0 (mempool, sizeof (MonoMarshalSpec));
+	else
+		res = g_new0 (MonoMarshalSpec, 1);
 	
 	len = mono_metadata_decode_value (ptr, &ptr);
 	res->native = *ptr++;
@@ -4625,11 +4652,11 @@ mono_metadata_parse_marshal_spec (MonoImage *image, const char *ptr)
 		ptr += len;
 		/* read custom marshaler type name */
 		len = mono_metadata_decode_value (ptr, &ptr);
-		res->data.custom_data.custom_name = g_strndup (ptr, len);		
+		res->data.custom_data.custom_name = mono_mempool_strndup (mempool, ptr, len);		
 		ptr += len;
 		/* read cookie string */
 		len = mono_metadata_decode_value (ptr, &ptr);
-		res->data.custom_data.cookie = g_strndup (ptr, len);
+		res->data.custom_data.cookie = mono_mempool_strndup (mempool, ptr, len);
 	}
 
 	if (res->native == MONO_NATIVE_SAFEARRAY) {
@@ -5016,8 +5043,7 @@ guint32
 mono_metadata_get_generic_param_row (MonoImage *image, guint32 token, guint32 *owner)
 {
 	MonoTableInfo *tdef  = &image->tables [MONO_TABLE_GENERICPARAM];
-	guint32 cols [MONO_GENERICPARAM_SIZE];
-	guint32 i;
+	locator_t loc;
 
 	g_assert (owner);
 	if (!tdef->base)
@@ -5033,13 +5059,18 @@ mono_metadata_get_generic_param_row (MonoImage *image, guint32 token, guint32 *o
 	}
 	*owner |= mono_metadata_token_index (token) << MONO_TYPEORMETHOD_BITS;
 
-	for (i = 0; i < tdef->rows; ++i) {
-		mono_metadata_decode_row (tdef, i, cols, MONO_GENERICPARAM_SIZE);
-		if (cols [MONO_GENERICPARAM_OWNER] == *owner)
-			return i + 1;
-	}
+	loc.idx = *owner;
+	loc.col_idx = MONO_GENERICPARAM_OWNER;
+	loc.t = tdef;
 
-	return 0;
+	if (!bsearch (&loc, tdef->base, tdef->rows, tdef->row_size, table_locator))
+		return 0;
+
+	/* Find the first entry by searching backwards */
+	while ((loc.result > 0) && (mono_metadata_decode_row_col (tdef, loc.result - 1, MONO_GENERICPARAM_OWNER) == loc.idx))
+		loc.result --;
+
+	return loc.result + 1;
 }
 
 gboolean
@@ -5277,5 +5308,59 @@ guint
 mono_aligned_addr_hash (gconstpointer ptr)
 {
 	return GPOINTER_TO_UINT (ptr) >> 3;
+}
+
+/*
+ * If @field belongs to an inflated generic class, return the corresponding field of the
+ * generic type definition class.
+ */
+MonoClassField*
+mono_metadata_get_corresponding_field_from_generic_type_definition (MonoClassField *field)
+{
+	MonoClass *gtd;
+	int offset;
+
+	if (!field->parent->generic_class)
+		return field;
+
+	gtd = field->parent->generic_class->container_class;
+	offset = field - field->parent->fields;
+	return gtd->fields + offset;
+}
+
+/*
+ * If @event belongs to an inflated generic class, return the corresponding event of the
+ * generic type definition class.
+ */
+MonoEvent*
+mono_metadata_get_corresponding_event_from_generic_type_definition (MonoEvent *event)
+{
+	MonoClass *gtd;
+	int offset;
+
+	if (!event->parent->generic_class)
+		return event;
+
+	gtd = event->parent->generic_class->container_class;
+	offset = event - event->parent->events;
+	return gtd->events + offset;
+}
+
+/*
+ * If @property belongs to an inflated generic class, return the corresponding property of the
+ * generic type definition class.
+ */
+MonoProperty*
+mono_metadata_get_corresponding_property_from_generic_type_definition (MonoProperty *property)
+{
+	MonoClass *gtd;
+	int offset;
+
+	if (!property->parent->generic_class)
+		return property;
+
+	gtd = property->parent->generic_class->container_class;
+	offset = property - property->parent->properties;
+	return gtd->properties + offset;
 }
 

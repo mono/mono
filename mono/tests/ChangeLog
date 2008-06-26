@@ -1,3 +1,101 @@
+2008-06-26  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-valuetype-interface.2.cs: Test for generic valuetypes
+	which implement interfaces.
+
+	* generic-valuetype-newobj.2.il, generic-valuetype-newobj2.2.il:
+	Test for newobj with generic valuetypes.
+
+	* Makefile.am: Tests added.
+
+2008-06-25  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* generic-ldtoken-method.2.il: Don't use GetMethodHandle/1
+	with methods that belong to a generic type.
+
+2008-06-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke2.cs libtest.c: Add test for #402585.
+
+2008-06-23  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-virtual2.2.cs: Test case for a call from a generic
+	method to a method of a generic class where the generic method
+	does not require the MRGCTX.
+
+	* Makefile.am: Test added.
+
+2008-06-23  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-exceptions.2.cs: Test case for exception handlers in
+	generic methods with catch clauses depending on the method type
+	arguments.
+
+	* Makefile.am: Test added.
+
+2008-06-20  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-349190.2.cs: Regression test for bug #349190.
+	Checks the encoding of generic MethodBuilders that
+	have been not instantiated.
+
+	* Makefile.am: Test added.
+
+2008-06-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* generic-ldtoken-method.2.il: Fix the signature of GetMethodHandle.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-delegate.2.cs: Test for constructing delegates via
+	CreateDelegate.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-special.2.cs: Test case for static special fields in
+	generic classes.
+
+	* Makefile.am: Test added.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
+	* Makefile.am: Also run generic sharing tests with inlining
+	enabled.
+
+2008-06-16  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-virtual.2.cs: Delegate test for static generic methods.
+
+2008-06-14  Kornél Pál  <kornelpal@gmail.com>
+
+	* mixed-mode: Add x64 target to mixed-mode assembly tests.
+
+	Contributed under MIT/X11 license.
+
+2008-06-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* modules.cs modules-m1.cs: New files. Tests for .netmodules.
+
+2008-06-13  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-static-methods.2.cs: Test case for static generic
+	methods.
+
+	* Makefile.am: Test added.
+
+2008-06-12  Bill Holmes  <billholmes54@gmail.com>
+	* libtest.c, winx64structs.cs :
+	  Changing winx64structs.cs to use the TestDriver.dll
+
+	Contributed under MIT/X11 license.
+
+2008-06-12  Bill Holmes  <billholmes54@gmail.com>
+	* libtest.c, winx64structs.cs :
+	  Adding marshaling tests for structs.  These tests
+	  represent the different cases to consider on Winx64.
+
+	Contributed under MIT/X11 license.
+
 2008-06-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am: Delete some tests for the disabled set which seem to work now.
@@ -97,6 +195,8 @@
 2008-05-09  Kornél Pál  <kornelpal@gmail.com>
 
 	* mixed-mode: Added mixed-mode assembly tests.
+
+	Contributed under MIT/X11 license.
 
 2008-05-08  Rodrigo Kumpera  <rkumpera@novell.com>
 

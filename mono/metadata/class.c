@@ -479,7 +479,7 @@ mono_class_is_open_constructed_type (MonoType *t)
 }
 
 static MonoType*
-inflate_generic_type (MonoType *type, MonoGenericContext *context)
+inflate_generic_type (MonoMemPool *mempool, MonoType *type, MonoGenericContext *context)
 {
 	switch (type->type) {
 	case MONO_TYPE_MVAR: {
@@ -496,7 +496,7 @@ inflate_generic_type (MonoType *type, MonoGenericContext *context)
 		 * while the VAR/MVAR duplicates a type from the context.  So, we need to ensure that the
 		 * ->byref and ->attrs from @type are propagated to the returned type.
 		 */
-		nt = mono_metadata_type_dup (NULL, inst->type_argv [num]);
+		nt = mono_metadata_type_dup (mempool, inst->type_argv [num]);
 		nt->byref = type->byref;
 		nt->attrs = type->attrs;
 		return nt;
@@ -509,27 +509,27 @@ inflate_generic_type (MonoType *type, MonoGenericContext *context)
 			return NULL;
 		if (num >= inst->type_argc)
 			g_error ("VAR %d (%s) cannot be expanded in this context with %d instantiations", num, type->data.generic_param->name, inst->type_argc);
-		nt = mono_metadata_type_dup (NULL, inst->type_argv [num]);
+		nt = mono_metadata_type_dup (mempool, inst->type_argv [num]);
 		nt->byref = type->byref;
 		nt->attrs = type->attrs;
 		return nt;
 	}
 	case MONO_TYPE_SZARRAY: {
 		MonoClass *eclass = type->data.klass;
-		MonoType *nt, *inflated = inflate_generic_type (&eclass->byval_arg, context);
+		MonoType *nt, *inflated = inflate_generic_type (NULL, &eclass->byval_arg, context);
 		if (!inflated)
 			return NULL;
-		nt = mono_metadata_type_dup (NULL, type);
+		nt = mono_metadata_type_dup (mempool, type);
 		nt->data.klass = mono_class_from_mono_type (inflated);
 		mono_metadata_free_type (inflated);
 		return nt;
 	}
 	case MONO_TYPE_ARRAY: {
 		MonoClass *eclass = type->data.array->eklass;
-		MonoType *nt, *inflated = inflate_generic_type (&eclass->byval_arg, context);
+		MonoType *nt, *inflated = inflate_generic_type (NULL, &eclass->byval_arg, context);
 		if (!inflated)
 			return NULL;
-		nt = mono_metadata_type_dup (NULL, type);
+		nt = mono_metadata_type_dup (mempool, type);
 		nt->data.array = g_memdup (nt->data.array, sizeof (MonoArrayType));
 		nt->data.array->eklass = mono_class_from_mono_type (inflated);
 		mono_metadata_free_type (inflated);
@@ -549,7 +549,7 @@ inflate_generic_type (MonoType *type, MonoGenericContext *context)
 		if (gclass == type->data.generic_class)
 			return NULL;
 
-		nt = mono_metadata_type_dup (NULL, type);
+		nt = mono_metadata_type_dup (mempool, type);
 		nt->data.generic_class = gclass;
 		return nt;
 	}
@@ -571,7 +571,7 @@ inflate_generic_type (MonoType *type, MonoGenericContext *context)
 
 		gclass = mono_metadata_lookup_generic_class (klass, inst, klass->image->dynamic);
 
-		nt = mono_metadata_type_dup (NULL, type);
+		nt = mono_metadata_type_dup (mempool, type);
 		nt->type = MONO_TYPE_GENERICINST;
 		nt->data.generic_class = gclass;
 		return nt;
@@ -595,6 +595,24 @@ mono_class_get_context (MonoClass *class)
 }
 
 /*
+ * This method allows specifying a mempool to do type duping, if needed. 
+ */
+static MonoType*
+mono_class_inflate_generic_type_with_mempool (MonoMemPool *mempool, MonoType *type, MonoGenericContext *context)
+{
+	MonoType *inflated = NULL; 
+
+	if (context)
+		inflated = inflate_generic_type (mempool, type, context);
+
+	if (!inflated)
+		return mono_metadata_type_dup (mempool, type);
+
+	mono_stats.inflated_type_count++;
+	return inflated;
+}
+
+/*
  * mono_class_inflate_generic_type:
  * @type: a type
  * @context: a generics context
@@ -608,17 +626,9 @@ mono_class_get_context (MonoClass *class)
 MonoType*
 mono_class_inflate_generic_type (MonoType *type, MonoGenericContext *context)
 {
-	MonoType *inflated = NULL; 
-
-	if (context)
-		inflated = inflate_generic_type (type, context);
-
-	if (!inflated)
-		return mono_metadata_type_dup (NULL, type);
-
-	mono_stats.inflated_type_count++;
-	return inflated;
+	return mono_class_inflate_generic_type_with_mempool (NULL, type, context);
 }
+
 
 static MonoGenericContext
 inflate_generic_context (MonoGenericContext *context, MonoGenericContext *inflate_with)
@@ -771,7 +781,7 @@ mono_class_inflate_generic_method_full (MonoMethod *method, MonoClass *klass_hin
 		result->klass = klass_hint;
 
 	if (!result->klass) {
-		MonoType *inflated = inflate_generic_type (&method->klass->byval_arg, context);
+		MonoType *inflated = inflate_generic_type (NULL, &method->klass->byval_arg, context);
 		result->klass = inflated ? mono_class_from_mono_type (inflated) : method->klass;
 		if (inflated)
 			mono_metadata_free_type (inflated);
@@ -886,6 +896,7 @@ mono_class_find_enum_basetype (MonoClass *class)
 		if (!ftype)
 			return NULL;
 		if (class->generic_class) {
+			//FIXME do we leak here?
 			ftype = mono_class_inflate_generic_type (ftype, mono_class_get_context (class));
 			ftype->attrs = cols [MONO_FIELD_FLAGS];
 		}
@@ -1009,7 +1020,8 @@ mono_class_setup_fields (MonoClass *class)
 			ifield->generic_type = gfield->type;
 			field->name = gfield->name;
 			field->generic_info = ifield;
-			field->type = mono_class_inflate_generic_type (gfield->type, mono_class_get_context (class));
+			/*This memory must come from the image mempool as we don't have a change to free it.*/
+			field->type = mono_class_inflate_generic_type_with_mempool (class->image->mempool, gfield->type, mono_class_get_context (class));
 			field->type->attrs = gfield->type->attrs;
 			if (mono_field_is_deleted (field))
 				continue;
@@ -4669,7 +4681,7 @@ mono_type_retrieve_from_typespec (MonoImage *image, guint32 type_spec, MonoGener
 	if (!t)
 		return NULL;
 	if (context && (context->class_inst || context->method_inst)) {
-		MonoType *inflated = inflate_generic_type (t, context);
+		MonoType *inflated = inflate_generic_type (NULL, t, context);
 		if (inflated) {
 			t = inflated;
 			*did_inflate = TRUE;
@@ -5598,6 +5610,31 @@ mono_class_from_name (MonoImage *image, const char* name_space, const char *name
 			class = mono_class_from_name (module, name_space, name);
 			if (class)
 				return class;
+		}
+	}
+
+	if (!token) {
+		/* 
+		 * The EXPORTEDTYPES table only contains public types, so have to search the
+		 * modules as well.
+		 * Note: image->modules contains the contents of the MODULEREF table, while
+		 * the real module list is in the FILE table.
+		 */
+		MonoTableInfo *file_table = &image->tables [MONO_TABLE_FILE];
+		MonoImage *file_image;
+
+		for (i = 0; i < file_table->rows; i++) {
+			guint32 cols [MONO_FILE_SIZE];
+			mono_metadata_decode_row (file_table, i, cols, MONO_FILE_SIZE);
+			if (cols [MONO_FILE_FLAGS] == FILE_CONTAINS_NO_METADATA)
+				continue;
+
+			file_image = mono_image_load_file_for_image (image, i + 1);
+			if (file_image) {
+				class = mono_class_from_name (file_image, name_space, name);
+				if (class)
+					return class;
+			}
 		}
 	}
 
@@ -6985,7 +7022,7 @@ is_nesting_type (MonoClass *outer_klass, MonoClass *inner_klass)
 	return FALSE;
 }
 
-static MonoClass *
+MonoClass *
 mono_class_get_generic_type_definition (MonoClass *klass)
 {
 	return klass->generic_class ? klass->generic_class->container_class : klass;

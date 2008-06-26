@@ -551,7 +551,7 @@ mono_set_rootdir (void)
 #ifdef PLATFORM_WIN32
 	gchar *bindir, *installdir, *root, *name, *config;
 
-	name = mono_get_module_file_name (mono_module_handle);
+	name = mono_get_module_file_name ((HMODULE) &__ImageBase);
 	bindir = g_path_get_dirname (name);
 	installdir = g_path_get_dirname (bindir);
 	root = g_build_path (G_DIR_SEPARATOR_S, installdir, "lib", NULL);
@@ -1323,6 +1323,8 @@ mono_assembly_open_full (const char *filename, MonoImageOpenStatus *status, gboo
  * This is an internal method, we need this because when we load mscorlib
  * we do not have the mono_defaults.internals_visible_class loaded yet,
  * so we need to load these after we initialize the runtime. 
+ *
+ * LOCKING: Acquires the assemblies lock plus the loader lock.
  */
 void
 mono_assembly_load_friends (MonoAssembly* ass)
@@ -1349,7 +1351,9 @@ mono_assembly_load_friends (MonoAssembly* ass)
 		aname = g_new0 (MonoAssemblyName, 1);
 		/*g_print ("friend ass: %s\n", data);*/
 		if (mono_assembly_name_parse_full (data, aname, TRUE, NULL, NULL)) {
+			mono_assemblies_lock ();
 			ass->friend_assembly_names = g_slist_prepend (ass->friend_assembly_names, aname);
+			mono_assemblies_unlock ();
 		} else {
 			g_free (aname);
 		}
@@ -1466,13 +1470,14 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 	image->assembly = ass;
 
 	loaded_assemblies = g_list_prepend (loaded_assemblies, ass);
+	mono_assemblies_unlock ();
+
 	if (mono_defaults.internals_visible_class)
 		mono_assembly_load_friends (ass);
 #ifdef PLATFORM_WIN32
 	if (image->is_module_handle)
 		mono_image_fixup_vtable (image);
 #endif
-	mono_assemblies_unlock ();
 
 	mono_assembly_invoke_load_hook (ass);
 
@@ -1625,6 +1630,7 @@ build_assembly_name (const char *name, const char *version, const char *culture,
 
 		/* the constant includes the ending NULL, hence the -1 */
 		if (strlen (token) != (MONO_PUBLIC_KEY_TOKEN_LENGTH - 1)) {
+			mono_assembly_name_free (aname);
 			return FALSE;
 		}
 		lower = g_ascii_strdown (token, MONO_PUBLIC_KEY_TOKEN_LENGTH);
@@ -1711,7 +1717,7 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 			*is_version_defined = TRUE;
 			version = g_strstrip (value + 8);
 			if (strlen (version) == 0) {
-				return FALSE;
+				goto cleanup_and_fail;
 			}
 			tmp++;
 			continue;
@@ -1720,7 +1726,7 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 		if (!g_ascii_strncasecmp (value, "Culture=", 8)) {
 			culture = g_strstrip (value + 8);
 			if (strlen (culture) == 0) {
-				return FALSE;
+				goto cleanup_and_fail;
 			}
 			tmp++;
 			continue;
@@ -1730,7 +1736,7 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 			*is_token_defined = TRUE;
 			token = g_strstrip (value + 15);
 			if (strlen (token) == 0) {
-				return FALSE;
+				goto cleanup_and_fail;
 			}
 			tmp++;
 			continue;
@@ -1739,7 +1745,7 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 		if (!g_ascii_strncasecmp (value, "PublicKey=", 10)) {
 			key = g_strstrip (value + 10);
 			if (strlen (key) == 0) {
-				return FALSE;
+				goto cleanup_and_fail;
 			}
 			tmp++;
 			continue;
@@ -1748,12 +1754,12 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 		if (!g_ascii_strncasecmp (value, "Retargetable=", 13)) {
 			retargetable = g_strstrip (value + 13);
 			if (strlen (retargetable) == 0) {
-				return FALSE;
+				goto cleanup_and_fail;
 			}
 			if (!g_ascii_strcasecmp (retargetable, "yes")) {
 				flags |= ASSEMBLYREF_RETARGETABLE_FLAG;
 			} else if (g_ascii_strcasecmp (retargetable, "no")) {
-				return FALSE;
+				goto cleanup_and_fail;
 			}
 			tmp++;
 			continue;
@@ -1771,13 +1777,17 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 
 	/* if retargetable flag is set, then we must have a fully qualified name */
 	if (retargetable != NULL && (version == NULL || culture == NULL || (key == NULL && token == NULL))) {
-		return FALSE;
+		goto cleanup_and_fail;
 	}
 
 	res = build_assembly_name (dllname, version, culture, token, key, flags,
 		aname, save_public_key);
 	g_strfreev (parts);
 	return res;
+
+cleanup_and_fail:
+	g_strfreev (parts);
+	return FALSE;
 }
 
 /**

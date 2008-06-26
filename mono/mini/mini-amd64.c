@@ -223,6 +223,7 @@ typedef enum {
 	ArgInDoubleSSEReg,
 	ArgOnStack,
 	ArgValuetypeInReg,
+	ArgValuetypeAddrInIReg,
 	ArgNone /* only in pair_storage */
 } ArgStorage;
 
@@ -410,10 +411,13 @@ add_valuetype (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig, ArgIn
 		size = mono_type_native_stack_size (&klass->byval_arg, NULL);
 	else 
 		size = mini_type_stack_size (gsctx, &klass->byval_arg, NULL);
-
+#ifndef PLATFORM_WIN32
 	if (!sig->pinvoke && !disable_vtypes_in_regs && ((is_return && (size == 8)) || (!is_return && (size <= 16)))) {
 		/* We pass and return vtypes of size 8 in a register */
 	} else if (!sig->pinvoke || (size == 0) || (size > 16)) {
+#else
+	if (!sig->pinvoke) {
+#endif
 		/* Allways pass in memory */
 		ainfo->offset = *stack_size;
 		*stack_size += ALIGN_TO (size, 8);
@@ -458,6 +462,7 @@ add_valuetype (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig, ArgIn
 			return;
 		}
 #else
+<<<<<<< .working
 		switch (info->native_size) {
 		case 1: case 2: case 4: case 8:
 			break;
@@ -467,6 +472,34 @@ add_valuetype (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig, ArgIn
 			ainfo->storage = ArgOnStack;
 			return;
 		}
+=======
+	switch (info->native_size) {
+	case 1: case 2: case 4: case 8:
+		break;
+	default:
+		if (is_return) {
+			ainfo->storage = ArgOnStack;
+			ainfo->offset = *stack_size;
+			*stack_size += ALIGN_TO (info->native_size, 8);
+		}
+		else {
+			ainfo->storage = ArgValuetypeAddrInIReg;
+
+			if (*gr < PARAM_REGS) {
+				ainfo->pair_storage [0] = ArgInIReg;
+				ainfo->pair_regs [0] = param_regs [*gr];
+				(*gr) ++;
+			} 
+			else {
+				ainfo->pair_storage [0] = ArgOnStack;
+				ainfo->offset = *stack_size;
+				*stack_size += 8;
+			}
+		}
+
+		return;
+	}
+>>>>>>> .merge-right.r106666
 #endif
 
 		args [0] = ARG_CLASS_NO_CLASS;
@@ -1404,6 +1437,8 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 				break;
 			case ArgValuetypeInReg:
 				break;
+			case ArgValuetypeAddrInIReg:
+				break;  /*FIXME: Not sure what to do for this case yet on Winx64*/
 			default:
 				NOT_IMPLEMENTED;
 			}
@@ -1722,6 +1757,45 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 						arg->next = call->out_args;
 						call->out_args = arg;
 					}
+				}
+				else if (ainfo->storage == ArgValuetypeAddrInIReg){
+
+					/* Add a temp variable to the method*/
+					MonoInst *load;
+					MonoInst *vtaddr = mono_compile_create_var (cfg, &in->klass->byval_arg, OP_LOCAL);
+					
+					MONO_INST_NEW (cfg, load, OP_LDADDR);
+					load->ssa_op = MONO_SSA_LOAD;
+					load->inst_left = vtaddr;
+					
+					if (ainfo->pair_storage [0] == ArgInIReg) {
+						/* Inserted after the copy.  Load the address of the temp to the argument regster.*/
+						arg->opcode = OP_OUTARG_REG;
+						arg->inst_left = load;
+						arg->inst_call = call;
+						arg->backend.reg3 =  ainfo->pair_regs [0];
+					} 
+					else {
+						/* Inserted after the copy.  Load the address of the temp on the stack.*/
+						arg->opcode = OP_OUTARG_VT;
+						arg->inst_left = load;
+						arg->type = STACK_PTR;
+						arg->klass = mono_defaults.int_class;
+						arg->backend.is_pinvoke = sig->pinvoke;
+						arg->inst_imm = size;
+					}
+
+					/*Copy the argument to the temp variable.*/
+					MONO_INST_NEW (cfg, load, OP_MEMCPY);
+					load->backend.memcpy_args = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoMemcpyArgs));
+					load->backend.memcpy_args->size = mono_class_value_size (in->klass, &align);
+					load->backend.memcpy_args->align = align;
+					load->inst_left = (cfg)->varinfo [vtaddr->inst_c0];
+					load->inst_right = in->inst_i0;
+
+					// FIXME:
+					g_assert_not_reached ();
+					//MONO_INST_LIST_ADD (&load->node, &call->out_args);
 				}
 				else {
 					arg->opcode = OP_OUTARG_VT;
@@ -4105,11 +4179,23 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_alu_reg_reg_size (code, X86_CMP, ins->sreg1, ins->sreg2, 4);
 			amd64_cmov_reg_size (code, X86_CC_GT, TRUE, ins->dreg, ins->sreg2, 4);
 			break;
+		case OP_IMIN_UN:
+			g_assert (cfg->opt & MONO_OPT_CMOV);
+			g_assert (ins->dreg == ins->sreg1);
+			amd64_alu_reg_reg_size (code, X86_CMP, ins->sreg1, ins->sreg2, 4);
+			amd64_cmov_reg_size (code, X86_CC_GT, FALSE, ins->dreg, ins->sreg2, 4);
+			break;
 		case OP_IMAX:
 			g_assert (cfg->opt & MONO_OPT_CMOV);
 			g_assert (ins->dreg == ins->sreg1);
 			amd64_alu_reg_reg_size (code, X86_CMP, ins->sreg1, ins->sreg2, 4);
 			amd64_cmov_reg_size (code, X86_CC_LT, TRUE, ins->dreg, ins->sreg2, 4);
+			break;
+		case OP_IMAX_UN:
+			g_assert (cfg->opt & MONO_OPT_CMOV);
+			g_assert (ins->dreg == ins->sreg1);
+			amd64_alu_reg_reg_size (code, X86_CMP, ins->sreg1, ins->sreg2, 4);
+			amd64_cmov_reg_size (code, X86_CC_LT, FALSE, ins->dreg, ins->sreg2, 4);
 			break;
 		case OP_LMIN:
 			g_assert (cfg->opt & MONO_OPT_CMOV);
@@ -4117,11 +4203,23 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_alu_reg_reg (code, X86_CMP, ins->sreg1, ins->sreg2);
 			amd64_cmov_reg (code, X86_CC_GT, TRUE, ins->dreg, ins->sreg2);
 			break;
+		case OP_LMIN_UN:
+			g_assert (cfg->opt & MONO_OPT_CMOV);
+			g_assert (ins->dreg == ins->sreg1);
+			amd64_alu_reg_reg (code, X86_CMP, ins->sreg1, ins->sreg2);
+			amd64_cmov_reg (code, X86_CC_GT, FALSE, ins->dreg, ins->sreg2);
+			break;
 		case OP_LMAX:
 			g_assert (cfg->opt & MONO_OPT_CMOV);
 			g_assert (ins->dreg == ins->sreg1);
 			amd64_alu_reg_reg (code, X86_CMP, ins->sreg1, ins->sreg2);
 			amd64_cmov_reg (code, X86_CC_LT, TRUE, ins->dreg, ins->sreg2);
+			break;
+		case OP_LMAX_UN:
+			g_assert (cfg->opt & MONO_OPT_CMOV);
+			g_assert (ins->dreg == ins->sreg1);
+			amd64_alu_reg_reg (code, X86_CMP, ins->sreg1, ins->sreg2);
+			amd64_cmov_reg (code, X86_CC_LT, FALSE, ins->dreg, ins->sreg2);
 			break;	
 		case OP_X86_FPOP:
 			break;		
@@ -4883,7 +4981,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			x86_branch8 (code, X86_CC_NE, 0, 0);
 			amd64_patch (no_domain_branch, code);
 			code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, 
-					  (gpointer)"mono_jit_thread_attach", FALSE);
+					  (gpointer)"mono_jit_thread_attach", TRUE);
 			amd64_patch (buf, code);
 		} else {
 			g_assert (!cfg->compile_aot);
@@ -4892,7 +4990,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			else
 				amd64_mov_reg_imm_size (code, AMD64_ARG_REG1, domain, 8);
 			code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD,
-					  (gpointer)"mono_jit_thread_attach", FALSE);
+					  (gpointer)"mono_jit_thread_attach", TRUE);
 		}
 	}
 
@@ -4929,7 +5027,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 				 */
 				args_clobbered = TRUE;
 				code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, 
-								  (gpointer)"mono_get_lmf_addr", FALSE);		
+								  (gpointer)"mono_get_lmf_addr", TRUE);		
 			}
 
 			/* Save lmf_addr */
@@ -5750,9 +5848,9 @@ mono_arch_get_this_arg_reg (MonoMethodSignature *sig, MonoGenericSharingContext 
 }
 
 gpointer
-mono_arch_get_this_arg_from_call (MonoMethodSignature *sig, gssize *regs, guint8 *code)
+mono_arch_get_this_arg_from_call (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig, gssize *regs, guint8 *code)
 {
-	return (gpointer)regs [mono_arch_get_this_arg_reg (sig, NULL)];
+	return (gpointer)regs [mono_arch_get_this_arg_reg (sig, gsctx)];
 }
 
 #define MAX_ARCH_DELEGATE_PARAMS 10
@@ -6052,7 +6150,7 @@ mono_arch_find_imt_method (gpointer *regs, guint8 *code)
 MonoObject*
 mono_arch_find_this_argument (gpointer *regs, MonoMethod *method, MonoGenericSharingContext *gsctx)
 {
-	return regs [mono_arch_get_this_arg_reg (mono_method_signature (method), gsctx)];
+	return mono_arch_get_this_arg_from_call (gsctx, mono_method_signature (method), (gssize*)regs, NULL);
 }
 
 void
@@ -6094,13 +6192,21 @@ mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethod
 			if (strcmp (cmethod->name, "Min") == 0) {
 				if (fsig->params [0]->type == MONO_TYPE_I4)
 					opcode = OP_IMIN;
+				if (fsig->params [0]->type == MONO_TYPE_U4)
+					opcode = OP_IMIN_UN;
 				else if (fsig->params [0]->type == MONO_TYPE_I8)
 					opcode = OP_LMIN;
+				else if (fsig->params [0]->type == MONO_TYPE_U8)
+					opcode = OP_LMIN_UN;
 			} else if (strcmp (cmethod->name, "Max") == 0) {
 				if (fsig->params [0]->type == MONO_TYPE_I4)
 					opcode = OP_IMAX;
+				if (fsig->params [0]->type == MONO_TYPE_U4)
+					opcode = OP_IMAX_UN;
 				else if (fsig->params [0]->type == MONO_TYPE_I8)
 					opcode = OP_LMAX;
+				else if (fsig->params [0]->type == MONO_TYPE_U8)
+					opcode = OP_LMAX_UN;
 			}		
 
 			if (opcode) {

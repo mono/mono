@@ -1,3 +1,337 @@
+2008-06-26  Kornél Pál  <kornelpal@gmail.com>
+
+	* assembly.c (mono_set_rootdir): Use __ImageBase instead of
+	mono_module_handle that is defined by the linker; no initialization required.
+	* coree.h: Remove mono_module_handle, add __ImageBase, update
+	mono_image_open_from_module_handle.
+	* coree.c (_CorValidateImage): Convert platform independent PE32 images to
+	PE32+ on 64-bit Windows that makes the OS able to load CIL images as modules.
+	(MonoFixupCorEE): Export Address Table RVAs are 32-bit unsigned integers so
+	memory has to be allocated for trampolines (x64) or procedure labels (IA64) up
+	to 4 GB away from image base address. IA64 version is not tested but was very
+	easy to implement and should work if we ever need it.
+	* domain.c (mono_init_internal): Avoid system error message boxes.
+	* image.c (mono_image_open_from_module_handle): Replace ref_count argument
+	with has_entry_point. Handle do_mono_image_load fauilre correctly.
+	(mono_image_open_full, mono_image_close): Use has_entry_point instead of
+	coff_attributes that is a more reliable way to detect if _CorDllMain was called.
+	* metadata-internals.h: Add has_entry_point to _MonoImage on Windows.
+
+	Contributed under MIT/X11 license.
+
+2008-06-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c, class-internals.h: Export mono_class_get_generic_type_definition
+	as part of the private mono API.
+	
+	* loader.c (ves_icall_System_Reflection_MethodBase_GetMethodFromHandleInternalType):
+	Do proper argument checking for methods that belong to generic classes.
+	Do proper type resolution for GMFH/2.
+	Fixes #377324.
+	
+2008-06-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_switch): Fix a memory corruption bug with
+	the jump index is out of bound.
+
+2008-06-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Disable debug code.
+
+2008-06-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_image_get_methodbuilder_token): Use
+	mono_image_get_methodspec_token_for_generic_method_definition
+	instead of mono_image_get_memberref_token. We cache more memberef
+	entries now.
+
+2008-06-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Inflate exception clause types.
+	Fixes #402606.
+	
+2008-06-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_image_get_methodbuilder_token): Don't leak
+	name.
+
+	* reflection.c (mono_image_get_ctorbuilder_token): Same.
+
+	* reflection.c (mono_image_create_method_token): Same.
+
+2008-06-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c: Added mono_image_get_methodref_token_for_methodbuilder.
+	It does the same as mono_image_get_methodref_token but works on
+	MethodBuilder.
+
+	* reflection.c: Use mono_image_get_methodspec_token_for_generic_method_definition
+	and always generate a methodspec. This follows the old behavior and fixes
+	the regressions in System.Core. 
+
+2008-06-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_GetTypes): Collect exceptions for classes where 
+	don't event mono_class_get () succeeds. Fixes #402182.
+
+2008-06-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-internals.h: Added MonoDynamicImage::methodspec
+	hashtable to store methodspec tokens created for MethodBuilders.
+
+	* reflection.c (mono_image_get_methodbuilder_token): Encode generic
+	MethodBuilders as open instantiations if a methodspec was requested.
+
+	* reflection.c (fixup_method): Skip MethodBuilder with methodspec tokens.
+
+	* reflection.c (create_dynamic_mono_image): Create the methodspec hashtable.
+
+	* reflection.c (mono_dynamic_image_free): Release the methodspec hashtable.
+
+	Fixes bug #349190.
+
+2008-06-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (method_from_methodspec): Avoid crashing if the
+	method lookup fails.
+
+2008-06-20  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c (get_socket_assembly): Cope with Moonlight network
+	classes being in a different assembly.  Fixes bug 399184.
+
+2008-06-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* loader.c (mono_loader_init): Make this callable multiple times.
+	(mono_dllmap_insert): Call mono_loader_init () so this works even before
+	the runtime is initialized. Fixes #401755.
+
+2008-06-19  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c (convert_socketflags): Ignore SocketFlags.Partial.
+	Fixes bug 349688.
+
+2008-06-19  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c:
+	* icall-def.h: Implement Socket generic Send() and Receive()
+	methods.  Fixes bug 395168.
+
+2008-06-19  Kornél Pál  <kornelpal@gmail.com>
+
+	* icall-def.h, icall.c: Add ves_icall_System_Reflection_Module_GetHINSTANCE.
+
+	Contributed under MIT/X11 license.
+
+2008-06-18  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Split into
+	`MONO_DEBUGGER_MAJOR_VERSION' and `MONO_DEBUGGER_MINOR_VERSION';
+	set to 80.0.  The debugger <-> runtime interface is now frozen as
+	well.	
+
+	* mono-debug.c
+	(mono_debug_debugger_version): Bump to 4.
+
+2008-06-18  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.c
+	(load_symfile): Don't check the minor version.
+
+	* debug-mono-symfile.h: Bump the version number to 50.0.
+
+2008-06-18  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.c
+	(load_symfile): Treat `MONO_SYMBOL_FILE_MINOR_VERSION' as a
+	minimum required version.
+
+2008-06-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_custom_attrs_from_property): Fix support for
+	retriveving cattrs of dynamic inflated generic types.
+
+	* reflection.c (mono_custom_attrs_from_event): Same.
+
+	* reflection.c (mono_custom_attrs_from_field): Same;
+
+	* reflection.c (typebuilder_setup_events): Same cattrs of events.
+
+	* loader.c (-mono_metadata_get_corresponding_field_from_generic_type_definition):
+	Moved to metadata.c.
+
+	* metadata.c: New functions to retrive the equivalent field, event
+	of property from the generic type definition.
+
+	* metadata-internals.h: Added new functions from metadata.c.
+
+2008-06-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_custom_attrs_from_builders): Mark MonoCustomAttrInfo
+	to cached in a mempool is used.
+
+	* metadata.c (free_generic_class): In some situations field generic_info type
+	is not properly dup'ed and leads to double free'ing.
+
+	Fixes #400643.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
+	* marshal.c (mono_marshal_get_static_rgctx_invoke): Also handle
+	this arguments (will be needed later for generic methods).
+	Collect stats.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
+	* icall.c (ves_icall_System_Delegate_CreateDelegate_internal):
+	Create a static RGCTX invoke wrapper for methods which require it.
+
+2008-06-17  Mark Probst  <mark.probst@gmail.com>
+
+	* object.c, class-internals.h: New function for checking whether
+	an individual field is special static.
+
+2008-06-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c (mono_metadata_get_generic_param_row): Use bsearch instead of
+	linear search since the table is sorted.
+
+	* gc.c (mono_gc_cleanup): Abort the finalizer thread more gracefully.
+	Fixes #324180.
+
+2008-06-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (unload_thread_main): Applied patch from Tim Howard 
+	(timh@ict.om.org). Remove the timeouts when waiting for appdomains to unload.
+
+	* gc.c (mono_domain_finalize): Allow an infinite timeout.
+
+	* threads.c (mono_threads_abort_appdomain_threads): Ditto.
+	
+	* threads.c (mono_thread_request_interruption): Get rid of locking, use
+	InterlockedCompareExchange to query and modify 
+	thread->interruption_requested.
+
+	* object-internals.h (struct _MonoThread): Change interruption_requested
+	to a gint32 so it can be modified by atomic operations. Add 
+	'critical_region_level' from the managed side, change small_id to a guint32,
+	add new set of 'unused' fields.
+
+	* appdomain.c: Bump corlib version.
+
+2008-06-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_from_name): Search modules as well. Fixes
+	#322332.
+
+2008-06-13  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c: Code for maintaining the MRGCTX and MRGCTX
+	templates.  Templates are generalized with an additional type_argc
+	argument.  RGCTX templates have type_argc==0, MRGCTX templates
+	have type_argc>0.
+
+	* domain-internals.h, domain.c: New hash table for looking up
+	MRGCTXs.
+
+	* metadata.c, metadata-internals.h: Rename hash and equal
+	functions for MonoGenericInst's and make them public.
+
+	* class-internals.h: New data structures for the MRGCTX.  Macros
+	for distinguishing slots in the RGCTX and the MRGCTX.
+
+2008-06-13  Mark Probst  <mark.probst@gmail.com>
+
+	* object.c (mono_method_get_imt_slot): Put the same methods of
+	different instantiations of the same generic interface in the same
+	IMT slots, to make generic sharing simpler.
+
+2008-06-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-internals.h: Added mono_metadata_field_info_with_mempool.
+
+	* metadata.c (mono_metadata_field_info_with_mempool): Added.
+	This function works just like mono_metadata_field_info, but
+	accept a mempool as argument to be used allocating memory.
+
+	* marshal.c (mono_marshal_load_type_info): Use new function
+	to load marshal data into image mempool.
+
+2008-06-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_inflate_generic_type_with_mempool):
+	This function allows to inflate a generic type using
+	a mempool.
+
+	* class.c (inflate_generic_type): Take a mempool as argument
+	and use it to do type dup'ing.
+
+	* class.c (mono_class_setup_fields): Field type for generic
+	generic classes are allocated from the image mempool.
+
+	* metadata.c (free_generic_class): Inflated field type is
+	now allocated in the image mempool.
+
+2008-06-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* threads.c (thread_cleanup): Free MonoThread::name.
+
+2008-06-12  Marek Habersack  <mhabersack@novell.com>
+
+	* appdomain.c (ensure_directory_exists): avoid unnecessary
+	mkdir(2) calls when the shadow directory already exists.
+	(mono_make_shadow_copy): copy also satellite assemblies from the
+	private bin directories.
+
+2008-06-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (mono_thread_get_stack_bounds): Align the stack in all cases.
+	
+	* threads.c (mono_thread_get_stack_bounds): Align the stack address to
+	a page boundary. Fixes #396219.
+
+2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* marshal.c (mono_marshal_load_type_info): Add a memory barrier
+	due to double-checked locking.
+
+2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* assembly.c (build_assembly_name): Release memory on failure.
+
+	* assembly.c (mono_assembly_name_parse_full): Release memory on failure.
+
+2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetType): Release
+	memory on failure.
+
+2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c (ves_icall_System_Reflection_AssemblyName_ParseName): Release
+	memory on failure.
+
+2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (field_from_memberref): Check if field signature type is equal
+	to the non-inflated type of the field. Fixes #398980.
+
+2008-06-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c (mono_assembly_load_from_full): Call 
+	mono_assembly_load_friends () outside the assemblies lock, since it can
+	acquire the loader lock. Fixes #323696.
+
+	* reflection.c (resolve_object): Inflate the inst with the context for
+	FieldOnTypeBuilderInst. Fixes #399010.
+
+2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_image_get_field_on_inst_token): Don't
+	inflate the field to encode it's signature. If it's a
+	VAR or MVAR it should stay that way in the signature.
+	Fixes #399047.
+
 2008-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (resolve_object): Release memory of inflated types.
