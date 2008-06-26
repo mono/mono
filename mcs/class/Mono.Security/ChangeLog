@@ -1,3 +1,8 @@
+2008-06-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Security_test.dll.sources: Added SubjectAltNameExtension unit
+	tests to the build. Patch by David Wolinsky
+
 2006-12-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Security_test.dll.sources: Added X509Certificate unit tests to

@@ -40,3 +40,4 @@ Mono.Security.X509/X520AttributesTest.cs
 Mono.Security.X509.Extensions/KeyUsageExtensionTest.cs
 Mono.Security.X509.Extensions/ExtendedKeyUsageExtensionTest.cs
 Mono.Security.X509.Extensions/BasicConstraintsExtensionTest.cs
+Mono.Security.X509.Extensions/SubjectAltNameExtensionTest.cs
