@@ -57,6 +57,7 @@ System.Configuration/ConfigurationSectionGroupCollection.cs
 System.Configuration/ConfigurationUserLevel.cs
 System.Configuration/ConfigurationValidatorAttribute.cs
 System.Configuration/ConfigurationValidatorBase.cs
+System.Configuration/ConfigXmlTextReader.cs
 System.Configuration/ConnectionStringsSection.cs
 System.Configuration/ConnectionStringSettingsCollection.cs
 System.Configuration/ConnectionStringSettings.cs

@@ -73,7 +73,7 @@ namespace System.Configuration {
 			if (File != "") {
 				try {
 					Stream s = System.IO.File.OpenRead (File);
-					XmlReader subreader = new XmlTextReader (s);
+					XmlReader subreader = new ConfigXmlTextReader (s, File);
 					base.DeserializeElement (subreader, serializeCollectionKey);
 					s.Close ();
 				}

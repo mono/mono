@@ -32,28 +32,39 @@ using System;
 using System.Reflection;
 using System.Configuration.Internal;
 
-namespace System.Configuration {
-
+namespace System.Configuration
+{
 	internal class ClientConfigurationSystem : IInternalConfigSystem
 	{
-		readonly Configuration cfg;
+		Configuration cfg;
 
-		public ClientConfigurationSystem () {
-			Assembly a = Assembly.GetEntryAssembly();
-			string exePath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
-            
-			if (a == null && exePath == null)
-				exePath = "";
-            
-			cfg = ConfigurationManager.OpenExeConfigurationInternal (ConfigurationUserLevel.None, a, exePath);
+		public ClientConfigurationSystem ()
+		{
+		}
+
+		private Configuration Configuration {
+			get {
+				if (cfg == null) {
+					Assembly a = Assembly.GetEntryAssembly();
+					string exePath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
+
+					if (a == null && exePath == null)
+						exePath = string.Empty;
+
+					try {
+						cfg = ConfigurationManager.OpenExeConfigurationInternal (
+							ConfigurationUserLevel.None, a, exePath);
+					} catch (Exception ex) {
+						throw new ConfigurationErrorsException ("Error Initializing the configuration system.", ex);
+					}
+				}
+				return cfg;
+			}
 		}
 
 		object IInternalConfigSystem.GetSection (string configKey)
 		{
-			if (cfg == null)
-				return null;
-
-			ConfigurationSection s = cfg.GetSection (configKey);
+			ConfigurationSection s = Configuration.GetSection (configKey);
 			return s != null ? s.GetRuntimeObject () : null;
 		}
 

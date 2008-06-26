@@ -322,13 +322,13 @@ namespace System.Configuration
 					} else if (this is ConfigurationSection && reader.LocalName == "configSource") {
 						/* ignore */
 					} else if (!OnDeserializeUnrecognizedAttribute (reader.LocalName, reader.Value))
-						throw new ConfigurationException ("Unrecognized attribute '" + reader.LocalName + "'.");
+						throw new ConfigurationErrorsException ("Unrecognized attribute '" + reader.LocalName + "'.", reader);
 
 					continue;
 				}
 				
 				if (readProps.ContainsKey (prop))
-					throw new ConfigurationException ("The attribute '" + prop.Name + "' may only appear once in this element.");
+					throw new ConfigurationErrorsException ("The attribute '" + prop.Name + "' may only appear once in this element.", reader);
 
 				string value = null;
 				try {
@@ -369,7 +369,7 @@ namespace System.Configuration
 								if (c != null && c.OnDeserializeUnrecognizedElement (reader.LocalName, reader))
 									continue;
 							}
-							throw new ConfigurationException ("Unrecognized element '" + reader.LocalName + "'.");
+							throw new ConfigurationErrorsException ("Unrecognized element '" + reader.LocalName + "'.", reader);
 						}
 						continue;
 					}
@@ -378,7 +378,7 @@ namespace System.Configuration
 						throw new ConfigurationException ("Property '" + prop.Name + "' is not a ConfigurationElement.");
 					
 					if (readProps.Contains (prop))
-						throw new ConfigurationException ("The element <" + prop.Name + "> may only appear once in this section.");
+						throw new ConfigurationErrorsException ("The element <" + prop.Name + "> may only appear once in this section.", reader);
 					
 					ConfigurationElement val = (ConfigurationElement) prop.Value;
 					val.DeserializeElement (reader, serializeCollectionKey);

@@ -216,11 +216,11 @@ namespace System.Configuration {
 					rootSectionGroup.Initialize (this, rootGroup);
 				}
 				return rootSectionGroup;
-			}                        
+			}
 		}
 
 		public ConfigurationSectionGroupCollection SectionGroups {
-			get { return RootSectionGroup.SectionGroups; }                        
+			get { return RootSectionGroup.SectionGroups; }
 		}
 
 		public ConfigurationSectionCollection Sections {
@@ -281,7 +281,7 @@ namespace System.Configuration {
 			sec.Reset (parentSection);
 
 			if (xml != null && xml == data) {
-				XmlTextReader r = new XmlTextReader (new StringReader (xml));
+				XmlTextReader r = new ConfigXmlTextReader (new StringReader (xml), FilePath);
 				sec.DeserializeSection (r);
 				r.Close ();
 
@@ -327,10 +327,10 @@ namespace System.Configuration {
 				object ctx = sec.SectionInformation.AllowExeDefinition != ConfigurationAllowExeDefinition.MachineToApplication ? (object) sec.SectionInformation.AllowExeDefinition : (object) sec.SectionInformation.AllowDefinition;
 				throw new ConfigurationErrorsException ("The section <" + name + "> can't be defined in this configuration file (the allowed definition context is '" + ctx + "').");
 			}
-						
+
 			if (sec.SectionInformation.Type == null)
 				sec.SectionInformation.Type = system.Host.GetConfigTypeName (sec.GetType ());
-			
+
 			SectionInfo section = new SectionInfo (name, sec.SectionInformation);
 			section.StreamName = streamName;
 			section.ConfigHost = system.Host;
@@ -449,7 +449,6 @@ namespace System.Configuration {
 			if (String.IsNullOrEmpty (streamName))
 				return true;
 
-			XmlTextReader reader = null;
 			Stream stream = null;
 			
 			// FIXME: we should remove this kind of hack that
@@ -460,16 +459,11 @@ namespace System.Configuration {
 				return false;
 			}
 
-			try {
-				reader = new XmlTextReader (stream);
+			using (XmlTextReader reader = new ConfigXmlTextReader (stream, streamName)) {
 				ReadConfigFile (reader, streamName);
-			} finally {
-				if (reader != null)
-					reader.Close();
 			}
 			return true;
 		}
-
 
 		void ReadConfigFile (XmlTextReader reader, string fileName)
 		{
@@ -507,7 +501,7 @@ namespace System.Configuration {
 			
 			rootGroup.ReadRootData (reader, this, true);
 		}
-		
+
 		internal void ReadData (XmlTextReader reader, bool allowOverride)
 		{
 			rootGroup.ReadData (this, reader, allowOverride);

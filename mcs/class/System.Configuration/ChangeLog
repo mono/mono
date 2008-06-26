@@ -1,3 +1,9 @@
+2008-06-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Configuration_test.dll.sources: added
+	ConfigurationErrorsExceptionTest.cs
+	* System.Configuration.dll.sources: added ConfigXmlTextReader.cs.
+
 2007-08-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Configuration_test.dll.sources: added ProviderBaseTest.cs.

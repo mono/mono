@@ -88,9 +88,11 @@ namespace System.Configuration
 				
 				try {
 					// This code requires some re-thinking...
-					XmlReader reader = new XmlTextReader (new StringReader (RawXml));
+					XmlReader reader = new ConfigXmlTextReader (
+						new StringReader (RawXml),
+						Configuration.FilePath);
 
-					DoDeserializeSection (reader);				
+					DoDeserializeSection (reader);
 					
 					if (!String.IsNullOrEmpty (SectionInformation.ConfigSource)) {
 						string fileDir = SectionInformation.ConfigFilePath;
@@ -146,7 +148,7 @@ namespace System.Configuration
 			string localName;
 			
 			while (reader.MoveToNextAttribute ()) {
-				localName = reader.LocalName;				
+				localName = reader.LocalName;
 				if (localName == "configProtectionProvider")
 					protection_provider = reader.Value;
 				else if (localName == "configSource")
@@ -208,7 +210,7 @@ namespace System.Configuration
 			
 			RawXml = File.ReadAllText (path);
 			SectionInformation.SetRawXml (RawXml);
-			DeserializeElement (new XmlTextReader (new StringReader (RawXml)), false);
+			DeserializeElement (new ConfigXmlTextReader (new StringReader (RawXml), path), false);
 		}
 		
 		protected internal virtual string SerializeSection (ConfigurationElement parentElement, string name, ConfigurationSaveMode saveMode)

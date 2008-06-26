@@ -1,3 +1,29 @@
+2008-06-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ConfigurationElement.cs: Use ConfigurationErrorsException instead of
+	ConfigurationException, and pass reader to ConfigurationErrorsException
+	ctor to allow for file/linenumber info in exception message.
+	* ConfigurationErrorsException.cs: Removed local bareMessage field, and
+	use base.BareMessage field instead. Fixed Message property to only add
+	filename if not null or zero-length string, and only add line if not
+	zero. In GetFilename/GetLineNumber overloads, only try to get info if
+	node/reader implements IConfigErrorInfo.
+	* ConfigurationSection.cs: Use ConfigXmlTextReader instead of
+	XmlTextReader to allow for file/linenumber info in exception messages.
+	* ConfigXmlTextReader.cs: Added XmlTextReader that implements
+	IConfigErrorInfo.
+	* ConfigurationLocation.cs: Use ConfigXmlTextReader instead of
+	XmlTextReader to allow for file/linenumber info in exception messages.
+	* ClientConfigurationSystem.cs: Perform lazy initialization and
+	wrap exceptions in ConfigurationErrorsException. Fixes standalone test
+	t28.
+	* Configuration.cs: Use ConfigXmlTextReader instead of XmlTextReader
+	to allow for file/linenumber info in exception messages.
+	* ConfigInfo.cs: Fixed ThrowException to use file/number info available
+	in XmlTextReader for exception message.
+	* AppSettingsSection.cs: Use ConfigXmlTextReader instead of
+	XmlTextReader to allow for file/linenumber info in exception messages.
+
 2008-06-19  Jb Evain  <jbevain@novell.com>
 
 	* ConfigurationPermissionAttribute.cs (CreatePermission): implement.

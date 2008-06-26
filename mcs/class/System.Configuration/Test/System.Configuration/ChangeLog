@@ -1,3 +1,8 @@
+2008-06-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ConfigurationErrorsExceptionTest.cs: Added tests for ctors and
+	GetFilename/GetLineNumber overloads.
+
 2007-08-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* GenericEnumConverterTest.cs: Remove unused variable.

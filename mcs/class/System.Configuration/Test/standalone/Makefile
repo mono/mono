@@ -23,4 +23,4 @@ t36.exe : t36.cs t36-lib.cs
 	gmcs /debug -r:System.Configuration.dll -r:t36-lib.dll t36.cs
 
 %.exe: %.cs
-	gmcs /debug $< -r:System.Configuration.dll -r:System.Web.dll -r:System.Data.dll
+	gmcs /debug /out:$@ Assert.cs $< -r:System.Configuration.dll -r:System.Web.dll -r:System.Data.dll

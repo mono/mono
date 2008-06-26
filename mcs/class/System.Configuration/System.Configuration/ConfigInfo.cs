@@ -73,7 +73,7 @@ namespace System.Configuration {
 		
 		protected void ThrowException (string text, XmlTextReader reader)
 		{
-			throw new ConfigurationErrorsException (text, StreamName, reader.LineNumber);
+			throw new ConfigurationErrorsException (text, reader);
 		}
 		
 		public abstract void ReadConfig (Configuration cfg, string streamName, XmlTextReader reader);

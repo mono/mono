@@ -32,6 +32,7 @@
 #if NET_2_0
 
 using System;
+using System.Configuration.Internal;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Collections;
@@ -55,7 +56,6 @@ namespace System.Configuration
 		public ConfigurationErrorsException (string message)
 			: base (message)
 		{
-			bareMessage = message;
 		}
 
 		protected ConfigurationErrorsException (SerializationInfo info, StreamingContext context)
@@ -98,7 +98,6 @@ namespace System.Configuration
 		public ConfigurationErrorsException (string message, Exception inner, string filename, int line)
 			: base (message, inner)
 		{
-			bareMessage = message;
 			this.filename = filename;
 			this.line = line;
 		}
@@ -106,34 +105,37 @@ namespace System.Configuration
 		//
 		// Properties
 		//
-		public override string BareMessage
-		{
-			get  { return bareMessage; }
+		public override string BareMessage {
+			get  { return base.BareMessage; }
 		}
 
-		public ICollection Errors
-		{
+		public ICollection Errors {
 			get { throw new NotImplementedException (); }
 		}
 
-		public override string Filename
-		{
+		public override string Filename {
 			get { return filename; }
 		}
 		
-		public override int Line
-		{
+		public override int Line {
 			get { return line; }
 		}
 
-		public override string Message
-		{
+		public override string Message {
 			get {
-				string baseMsg = base.Message;
-				string f = (filename == null) ? String.Empty : filename;
-				string l = (line == 0) ? String.Empty : (" line " + line);
-
-				return baseMsg + " (" + f + l + ")";
+				string msg;
+				if (!String.IsNullOrEmpty (filename)) {
+					if (line != 0)
+						msg = BareMessage + " (" + filename + " line " + line + ")";
+					else
+						msg = BareMessage + " (" + filename + ")";
+				} else {
+					if (line != 0)
+						msg = BareMessage + " (line " + line + ")";
+					else
+						msg = BareMessage;
+				}
+				return msg;
 			}
 		}
 		//
@@ -141,34 +143,34 @@ namespace System.Configuration
 		//
 		public static string GetFilename (XmlReader reader)
 		{
-			if (reader is XmlTextReader)
-				return ((XmlTextReader)reader).BaseURI;
+			if (reader is IConfigErrorInfo)
+				return ((IConfigErrorInfo) reader).Filename;
 			else
-				return String.Empty;
+				return null;
 		}
 
 		public static int GetLineNumber (XmlReader reader)
 		{
-			if (reader is XmlTextReader)
-				return ((XmlTextReader)reader).LineNumber;
+			if (reader is IConfigErrorInfo)
+				return ((IConfigErrorInfo) reader).LineNumber;
 			else
 				return 0;
 		}
 
 		public static string GetFilename (XmlNode node)
 		{
-			if (!(node is IConfigXmlNode))
-				return String.Empty;
+			if (!(node is IConfigErrorInfo))
+				return null;
 
-			return ((IConfigXmlNode) node).Filename;
+			return ((IConfigErrorInfo) node).Filename;
 		}
 
 		public static int GetLineNumber (XmlNode node)
 		{
-			if (!(node is IConfigXmlNode))
+			if (!(node is IConfigErrorInfo))
 				return 0;
 
-			return ((IConfigXmlNode) node).LineNumber;
+			return ((IConfigErrorInfo) node).LineNumber;
 		}
 		
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
@@ -178,9 +180,8 @@ namespace System.Configuration
 			info.AddValue ("ConfigurationErrors_Line", line);
 		}
 
-		string bareMessage = "";
-		string filename = "";
-		int line = 0;
+		readonly string filename;
+		readonly int line;
 	}
 #pragma warning restore
 }
