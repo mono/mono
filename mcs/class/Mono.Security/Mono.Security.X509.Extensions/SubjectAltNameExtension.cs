@@ -67,9 +67,9 @@ namespace Mono.Security.X509.Extensions {
 	 * }
 	 */
 
-	// TODO - incomplete (only rfc822Name, dNSName are supported)
+	// TODO: Directories not supported
 	public class SubjectAltNameExtension : X509Extension {
-		
+
 		private GeneralNames _names;
 
 		public SubjectAltNameExtension ()
@@ -86,6 +86,16 @@ namespace Mono.Security.X509.Extensions {
 		public SubjectAltNameExtension (X509Extension extension) 
 			: base (extension) 
 		{
+		}
+
+		public SubjectAltNameExtension (string[] rfc822, string[] dnsNames,
+				string[] ipAddresses, string[] uris)
+		{
+			_names = new GeneralNames(rfc822, dnsNames, ipAddresses, uris);
+			// 0x04 for string decoding and then the General Names!
+			extnValue = new ASN1 (0x04, _names.GetBytes());
+			extnOid = "2.5.29.17";
+		//	extnCritical = true;
 		}
 
 		protected override void Decode () 
@@ -108,9 +118,12 @@ namespace Mono.Security.X509.Extensions {
 			get { return _names.DNSNames; }
 		}
 
-		// Incomplete support
 		public string[] IPAddresses {
 			get { return _names.IPAddresses; }
+		}
+
+		public string[] UniformResourceIdentifiers {
+			get { return _names.UniformResourceIdentifiers; }
 		}
 
 		public override string ToString () 

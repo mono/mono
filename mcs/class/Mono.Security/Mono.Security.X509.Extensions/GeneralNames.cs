@@ -72,9 +72,53 @@ namespace Mono.Security.X509.Extensions {
 		private ArrayList directoryNames;
 		private ArrayList uris;
 		private ArrayList ipAddr;
+		private ASN1 asn;
 
 		public GeneralNames ()
 		{
+		}
+
+		public GeneralNames (string[] rfc822s, string[] dnsNames, string[] ipAddresses, string[] uris)
+		{
+			// This is an extension
+			asn = new ASN1 (0x30);
+
+			if (rfc822s != null) {
+				rfc822Name = new ArrayList ();
+				foreach (string rfc822 in rfc822s) {
+					asn.Add (new ASN1 (0x81, Encoding.ASCII.GetBytes (rfc822)));
+					rfc822Name.Add (rfc822s);
+				}
+			}
+
+			if (dnsNames != null) {
+				dnsName = new ArrayList ();
+				foreach (string dnsname in dnsNames) {
+					asn.Add (new ASN1 (0x82, Encoding.ASCII.GetBytes (dnsname)));
+					dnsName.Add(dnsname);
+				}
+			}
+
+			if (ipAddresses != null) {
+				ipAddr = new ArrayList ();
+				foreach (string ipaddress in ipAddresses) {
+					string[] parts = ipaddress.Split ('.', ':');
+					byte[] bytes = new byte[parts.Length];
+					for (int i = 0; i < parts.Length; i++) {
+						bytes[i] = Byte.Parse (parts[i]);
+					}
+					asn.Add (new ASN1 (0x87, bytes));
+					ipAddr.Add (ipaddress);
+				}
+			}
+
+			if (uris != null) {
+				this.uris = new ArrayList();
+				foreach (string uri in uris) {
+					asn.Add (new ASN1 (0x86, Encoding.ASCII.GetBytes (uri)));
+					this.uris.Add (uri);
+				}
+			}
 		}
 
 		public GeneralNames (ASN1 sequence)
@@ -105,7 +149,17 @@ namespace Mono.Security.X509.Extensions {
 				case 0x87: // iPAddress				[7]     OCTET STRING
 					if (ipAddr == null)
 						ipAddr = new ArrayList ();
-					// TODO - Must find sample certificates
+					byte[] bytes = sequence[i].Value;
+					string space = (bytes.Length == 4) ? "." : ":";
+					StringBuilder sb = new StringBuilder();
+					for (int j = 0; j < bytes.Length; j++) {
+						sb.Append (bytes[j].ToString ());
+						if (j < bytes.Length - 1)
+							sb.Append (space); 
+					}
+					ipAddr.Add (sb.ToString());
+					if (ipAddr == null)
+						ipAddr = new ArrayList ();
 					break;
 				default:
 					break;
@@ -145,13 +199,17 @@ namespace Mono.Security.X509.Extensions {
 			}
 		}
 
-		// Incomplete support
 		public string[] IPAddresses {
 			get {
 				if (ipAddr == null)
 					return new string[0];
 				return (string[])ipAddr.ToArray (typeof (string));
 			}
+		}
+
+		public byte[] GetBytes ()
+		{
+			return asn.GetBytes ();
 		}
 
 		public override string ToString ()

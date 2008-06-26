@@ -1,3 +1,10 @@
+2008-06-26  David Wolinsky  <davidiw@ufl.edu>
+
+	* SubjectAltNameExtension.cs: IP Addresses are handled and now 
+	this class can be generated via the constructor from arrays.
+	* GeneralNames.cs: Added support to generate GeneralNames from
+	an arrays of strings.
+
 2007-12-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthorityKeyIdentifierExtension.cs: Don't throw on what we don't
