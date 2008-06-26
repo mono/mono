@@ -1,3 +1,7 @@
+2008-06-26  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* System.Data.dll.sources: Add new SqlDependency.cs
+	
 2008-06-11  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: fix EXTRA_DISTFILES to include all needed
