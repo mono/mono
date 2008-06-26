@@ -1858,12 +1858,10 @@ namespace Mono.CSharp {
 			// From any class type S to any interface T, provides S is not sealed
 			// and provided S does not implement T.
 			//
-			if (target_type.IsInterface && !source_type.IsSealed) {
-				if (TypeManager.ImplementsInterface (source_type, target_type))
-					return null;
-				else
-					return new ClassCast (source, target_type);
-
+			if (target_type.IsInterface &&
+				(!source_type.IsSealed || source_type.IsArray) &&	// SRE: IsSealed does not work with aggregates
+				!TypeManager.ImplementsInterface (source_type, target_type)) {
+				return new ClassCast (source, target_type);
 			}
 
 			//
