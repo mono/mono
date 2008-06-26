@@ -228,9 +228,9 @@ namespace System
 			return TypeCode.Boolean;
 		}
 
-		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
+		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			return System.Convert.ToType (m_value, conversionType, provider);
+			return System.Convert.ToType (m_value, type, provider);
 		}
 
 		bool IConvertible.ToBoolean (IFormatProvider provider)

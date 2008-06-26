@@ -168,9 +168,9 @@ namespace System
 			return TypeCode.Byte;
 		}
 
-		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
+		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			return System.Convert.ToType (m_value, conversionType, provider);
+			return System.Convert.ToType (m_value, type, provider);
 		}
 
 		bool IConvertible.ToBoolean (IFormatProvider provider)
@@ -227,13 +227,6 @@ namespace System
 		{
 			return System.Convert.ToSingle (m_value);
 		}
-
-/*
-		string IConvertible.ToString (IFormatProvider provider)
-		{
-			return ToString("G", provider);
-		}
-*/
 
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{

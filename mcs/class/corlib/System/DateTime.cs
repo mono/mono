@@ -2135,16 +2135,16 @@ namespace System
 			throw new InvalidCastException();
 		}
 
-		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
+		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			if (conversionType == null)
-				throw new ArgumentNullException ("conversionType");
+			if (type == null)
+				throw new ArgumentNullException ("type");
 
-			if (conversionType == typeof (DateTime))
+			if (type == typeof (DateTime))
 				return this;
-			else if (conversionType == typeof (String))
+			else if (type == typeof (String))
 				return this.ToString (provider);
-			else if (conversionType == typeof (Object))
+			else if (type == typeof (Object))
 				return this;
 			else
 				throw new InvalidCastException();

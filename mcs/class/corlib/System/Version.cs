@@ -193,29 +193,29 @@ namespace System {
 #if NET_2_0
 		public
 #endif
-		int CompareTo (Version version)
+		int CompareTo (Version value)
 		{
-			if (version == null)
+			if (value == null)
 				return 1;
 			
-			if (this._Major > version._Major)
+			if (this._Major > value._Major)
 				return 1;
-			else if (this._Major < version._Major)
+			else if (this._Major < value._Major)
 				return -1;
 
-			if (this._Minor > version._Minor)
+			if (this._Minor > value._Minor)
 				return 1;
-			else if (this._Minor < version._Minor)
+			else if (this._Minor < value._Minor)
 				return -1;
 
-			if (this._Build > version._Build)
+			if (this._Build > value._Build)
 				return 1;
-			else if (this._Build < version._Build)
+			else if (this._Build < value._Build)
 				return -1;
 
-			if (this._Revision > version._Revision)
+			if (this._Revision > value._Revision)
 				return 1;
-			else if (this._Revision < version._Revision)
+			else if (this._Revision < value._Revision)
 				return -1;
 
 			return 0;

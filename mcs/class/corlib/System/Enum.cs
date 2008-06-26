@@ -155,9 +155,9 @@ namespace System
 			return Convert.ToSingle (get_value (), provider);
 		}
 
-		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
+		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			return Convert.ToType (get_value (), conversionType, provider);
+			return Convert.ToType (get_value (), type, provider);
 		}
 
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
