@@ -1,3 +1,9 @@
+2008-06-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate2.cs: Allow password-less ctor to (try to) open 
+	PKCS#12 files (with an empty password).
+	[Fix bug #403610]
+
 2008-06-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate2.cs: Allow PrivateKey property to be set to null.

@@ -86,9 +86,9 @@ namespace System.Security.Cryptography.X509Certificates {
 			Import (rawData, password, keyStorageFlags);
 		}
 
-		public X509Certificate2 (string fileName) : base (fileName) 
+		public X509Certificate2 (string fileName)
 		{
-			Import (fileName, (string)null, X509KeyStorageFlags.DefaultKeySet);
+			Import (fileName, String.Empty, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		public X509Certificate2 (string fileName, string password)
