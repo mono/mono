@@ -1,3 +1,8 @@
+2008-06-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SubjectAltNameExtensionTest.cs: New. Unit tests for 
+	SubjectAltNameExtension. Patch by David Wolinsky
+
 2006-01-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BasicConstraintsExtensionTest.cs: New. Unit tests for encoding and
