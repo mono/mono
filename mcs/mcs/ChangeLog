@@ -1,5 +1,10 @@
 2008-06-26  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #379348
+	* delegate.cs: Box a load of generic parameters.
+
+2008-06-26  Marek Safar  <marek.safar@gmail.com>
+
 	* expression.cs: Add an array creation arguments mutate.
 
 2008-06-26  Marek Safar  <marek.safar@gmail.com>

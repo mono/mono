@@ -748,15 +748,17 @@ namespace Mono.CSharp {
 			//
 			if (delegate_instance_expression != null)
 				return;
-			
-			if (method_group.InstanceExpression != null)
-				delegate_instance_expression = method_group.InstanceExpression;
-			else if (!delegate_method.IsStatic && !ec.IsStatic)
-				delegate_instance_expression = ec.GetThis (loc);
 
-			if (delegate_instance_expression != null && delegate_instance_expression.Type.IsValueType)
-				delegate_instance_expression = new BoxedCast (
-					delegate_instance_expression, TypeManager.object_type);
+			if (method_group.InstanceExpression != null) {
+				delegate_instance_expression = method_group.InstanceExpression;
+				Type instance_type = delegate_instance_expression.Type;
+				if (TypeManager.IsValueType (instance_type) || TypeManager.IsGenericParameter (instance_type)) {
+					delegate_instance_expression = new BoxedCast (
+						delegate_instance_expression, TypeManager.object_type);
+				}
+			} else if (!delegate_method.IsStatic && !ec.IsStatic) {
+				delegate_instance_expression = ec.GetThis (loc);
+			}
 		}
 		
 		public override void Emit (EmitContext ec)
