@@ -1,3 +1,10 @@
+2008-06-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c (mono_main): Add experimental --aot-only command line option.
+
+	* mini.c: Error out when creating trampolines or JIT compiling if --aot-only is
+	set.
+
 2008-06-26  Kornél Pál  <kornelpal@gmail.com>
 
 	* driver.c (DllMain): Remove mono_module_handle.
