@@ -1,3 +1,9 @@
+2008-06-26  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #386068
+	* anonymous.cs, expression.cs: Emit correctly hoisted expression tree
+	parameter.
+
 2008-06-25  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs, expression.cs: Fixed broken TypeCast clone, implemented few more

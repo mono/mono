@@ -4452,6 +4452,9 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
+			if (IsHoistedEmitRequired (ec))
+				return HoistedVariable.CreateExpressionTree (ec);
+
 			return Parameter.ExpressionTreeVariableReference ();
 		}
 

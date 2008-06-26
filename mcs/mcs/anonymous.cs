@@ -497,6 +497,37 @@ namespace Mono.CSharp {
 
 	public abstract class HoistedVariable
 	{
+		class ExpressionTreeProxy : Expression
+		{
+			readonly HoistedVariable hv;
+
+			public ExpressionTreeProxy (HoistedVariable hv)
+			{
+				this.hv = hv;
+			}
+
+			public override Expression CreateExpressionTree (EmitContext ec)
+			{
+				throw new NotSupportedException ("ET");
+			}
+
+			public override Expression DoResolve (EmitContext ec)
+			{
+				eclass = ExprClass.MethodGroup;
+				type = TypeManager.expression_type_expr.Type;
+				return this;
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				Expression e = hv.GetFieldExpression (ec).CreateExpressionTree (ec);
+				// This should never fail
+				e = e.Resolve (ec);
+				if (e != null)
+					e.Emit (ec);
+			}
+		}
+	
 		protected readonly AnonymousMethodStorey storey;
 		protected Field field;
 		Hashtable cached_inner_access; // TODO: Hashtable is too heavyweight
@@ -511,6 +542,11 @@ namespace Mono.CSharp {
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			GetFieldExpression (ec).AddressOf (ec, mode);
+		}
+
+		public Expression CreateExpressionTree (EmitContext ec)
+		{
+			return new ExpressionTreeProxy (this);
 		}
 
 		public void Emit (EmitContext ec)
