@@ -1,3 +1,10 @@
+2008-06-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir2): Handle cases when ldfld is called with
+	a vtype on the stack, instead of an address.
+
+	* iltests.il.in (HAS_VALUE): Add a test.
+
 2008-05-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* ir-emit.h (NEW_VARLOADA): Mark the component vars of a long var INDIRECT

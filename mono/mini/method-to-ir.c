@@ -7293,6 +7293,18 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					*sp++ = ins;
 				}
 			} else {
+				if (sp [0]->type == STACK_VTYPE) {
+					MonoInst *var;
+
+					/* Have to compute the address of the variable */
+
+					var = cfg->vreg_to_inst [sp [0]->dreg];
+					g_assert (var);
+					
+					EMIT_NEW_VARLOADA (cfg, ins, var, &var->klass->byval_arg);
+					sp [0] = ins;
+				}
+
 				if (*ip == CEE_LDFLDA) {
 					dreg = alloc_preg (cfg);
 
