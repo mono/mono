@@ -6217,6 +6217,10 @@ namespace Mono.CSharp {
 		{
 			array_element_type = storey.MutateType (array_element_type);
 			type = storey.MutateType (type);
+			if (arguments != null) {
+				foreach (Argument a in arguments)
+					a.Expr.MutateHoistedGenericType (storey);
+			}
 
 			// TODO: finish !!
 		}
