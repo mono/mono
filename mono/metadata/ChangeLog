@@ -1,3 +1,7 @@
+2008-06-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object.c (mono_value_box): Fix boxing of nullables.
+
 2008-06-26  Kornél Pál  <kornelpal@gmail.com>
 
 	* assembly.c (mono_set_rootdir): Use __ImageBase instead of
