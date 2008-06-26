@@ -11607,6 +11607,30 @@
       </method>
     </type>
   </test>
+  <test name="gtest-anon-32.cs">
+    <type name="Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Foo[T](IList`1)">
+        <size>31</size>
+      </method>
+      <method name="Void Assert(System.Action`1[System.Int32])">
+        <size>9</size>
+      </method>
+      <method name="Void Main(System.String[])">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Foo&gt;c__AnonStorey0`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__0(Int32)">
+        <size>18</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-4.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -13549,6 +13573,27 @@
       </method>
     </type>
   </test>
+  <test name="gtest-etree-08.cs">
+    <type name="Foo">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 ThisMethod()">
+        <size>3</size>
+      </method>
+      <method name="Int32 Goo(Boolean)">
+        <size>209</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="Foo+&lt;Goo&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-exmethod-01.cs">
     <type name="SimpleTest">
       <method name="System.String Prefix(System.String, System.String)">
@@ -15330,6 +15375,49 @@
     <type name="MethodDefinitionCollection">
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-linq-14.cs">
+    <type name="Person">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Style get_Style()">
+        <size>7</size>
+      </method>
+      <method name="Void set_Style(Style)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="Extensions">
+      <method name="IMarker`1 Cast[T](IObjectContainer)">
+        <size>2</size>
+      </method>
+      <method name="IMarker`1 Where[T](IMarker`1, System.Linq.Expressions.Expression`1[System.Func`2[T,System.Boolean]])">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void Assert(System.Action)">
+        <size>1</size>
+      </method>
+      <method name="Void Test(IObjectContainer, Style)">
+        <size>38</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Test&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__0()">
+        <size>127</size>
       </method>
     </type>
   </test>
