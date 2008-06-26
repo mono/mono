@@ -1,4 +1,7 @@
 2008-06-25  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-oprofile.c: Added more logging code.
+
+2008-06-25  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-oprofile.c: Record also the domain of each statistical
 	hit, so that mono_jit_info_table_find works properly.
 
