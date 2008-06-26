@@ -11671,6 +11671,35 @@
       </method>
     </type>
   </test>
+  <test name="gtest-anon-33.cs">
+    <type name="IEnumerableRocks">
+      <method name="System.String Implode[TSource,TResult](IEnumerable`1, System.String, System.Func`2[TSource,TResult])">
+        <size>33</size>
+      </method>
+      <method name="System.String Implode[TSource](IEnumerable`1, System.String, System.Action`2[System.Text.StringBuilder,TSource])">
+        <size>130</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>50</size>
+      </method>
+      <method name="System.String &lt;Main&gt;m__1(System.String)">
+        <size>19</size>
+      </method>
+    </type>
+    <type name="IEnumerableRocks+&lt;Implode&gt;c__AnonStorey0`2[TSource,TResult]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__0(System.Text.StringBuilder, TSource)">
+        <size>34</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-4.cs">
     <type name="Test">
       <method name="Void .ctor()">
