@@ -1,3 +1,7 @@
+2008-06-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DiagnosticsConfigurationHandler.cs: quick build fix (hopefully).
+
 2008-06-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DiagnosticsConfigurationHandler.cs: On 2.0 profile, throw

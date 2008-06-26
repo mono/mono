@@ -422,7 +422,7 @@ namespace System.Diagnostics
 			string name = GetAttribute (attributes, "name", true, child);
 			string type = null;
 
-#if NET_2_0
+#if NET_2_0 && CONFIGURATION_DEP
 			type = GetAttribute (attributes, "type", false, child);
 			if (type == null) {
 				// indicated by name.
@@ -464,7 +464,7 @@ namespace System.Diagnostics
 			TraceListener l = (TraceListener) ctor.Invoke (args);
 			l.Name = name;
 
-#if NET_2_0
+#if NET_2_0 && CONFIGURATION_DEP
 			string trace = GetAttribute (attributes, "traceOutputOptions", false, child);
 			if (trace != null) {
 				if (trace != trace.Trim ())
