@@ -1,3 +1,8 @@
+2008-06-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_ValueType_Equals): Avoid traversing all the static
+	fields of an enum.
+
 2008-06-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* object.c (mono_value_box): Fix boxing of nullables.
