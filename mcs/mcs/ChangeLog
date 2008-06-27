@@ -1,3 +1,9 @@
+2008-06-27  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #398319
+	* cs-parser.jay: Implemented undocumented base access expression inside
+	anonymous types.
+
 2008-06-26  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #404227
