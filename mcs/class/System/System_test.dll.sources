@@ -129,6 +129,7 @@ System.ComponentModel/DisplayNameAttributeTests.cs
 System.ComponentModel/DoubleConverterTests.cs
 System.ComponentModel/EnumConverterTests.cs
 System.ComponentModel/EventHandlerListTests.cs
+System.ComponentModel/EventDescriptorCollectionTests.cs
 System.ComponentModel/Int16ConverterTests.cs
 System.ComponentModel/Int32ConverterTests.cs
 System.ComponentModel/Int64ConverterTests.cs

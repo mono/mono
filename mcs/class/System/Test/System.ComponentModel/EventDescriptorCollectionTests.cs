@@ -1,10 +1,10 @@
 //
-// System.ComponentModel.PropertyDescriptorCollection test cases
+// System.ComponentModel.EventDescriptorCollection test cases
 //
 // Authors:
 // 	Gert Driesen (drieseng@users.sourceforge.net)
 //
-// (c) 2005 Novell, Inc. (http://www.ximian.com)
+// (c) 2008 Gert Driesen
 //
 
 using System;
@@ -12,13 +12,14 @@ using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
+using CategoryAttribute = System.ComponentModel.CategoryAttribute;
 
 using NUnit.Framework;
 
 namespace MonoTests.System.ComponentModel
 {
 	[TestFixture]
-	public class PropertyDescriptorCollectionTests
+	public class EventDescriptorCollectionTests
 	{
 		private CultureInfo originalCulture;
 
@@ -35,62 +36,69 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Ignore ("TD BUG ID: 7229")]
-#endif		
+		[NUnit.Framework.Category ("NotWorking")]
 		public void Empty ()
 		{
-			PropertyDescriptorCollection descriptors = PropertyDescriptorCollection.Empty;
+			EventDescriptorCollection descriptors = EventDescriptorCollection.Empty;
 			Assert.AreEqual (0, descriptors.Count);
 			AssertReadOnly (descriptors, "Empty");
 		}
 
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
 		public void Find ()
 		{
-			PropertyDescriptorCollection descriptors = new PropertyDescriptorCollection (
-				new PropertyDescriptor[] { new MockPropertyDescriptor("A", 1), 
-					new MockPropertyDescriptor("b", 2)});
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("tr-TR");
 
-			Assert.IsNotNull (descriptors.Find ("A", false), "#1");
-			Assert.IsNotNull (descriptors.Find ("b", false), "#2");
-			Assert.IsNull (descriptors.Find ("a", false), "#3");
-			Assert.IsNotNull (descriptors.Find ("a", true), "#4");
+			EventDescriptor descA = new MockEventDescriptor ("hehe_\u0061\u030a", null);
+			EventDescriptor descB = new MockEventDescriptor ("heh_\u00e5", null);
+			EventDescriptor descC = new MockEventDescriptor ("Foo", null);
+			EventDescriptor descD = new MockEventDescriptor ("FOo", null);
+			EventDescriptor descE = new MockEventDescriptor ("Aim", null);
+			EventDescriptor descF = new MockEventDescriptor ("Bar", null);
+
+			EventDescriptorCollection col = new EventDescriptorCollection (
+				new EventDescriptor [] { descA, descB, descC, descD, descE, descF });
+
+#if NET_2_0
+			Assert.IsNull (col.Find ("heh_\u0061\u030a", false), "#1");
+			Assert.IsNull (col.Find ("hehe_\u00e5", false), "#2");
+#else
+			Assert.AreSame (descB, col.Find ("heh_\u0061\u030a", false), "#1");
+			Assert.AreSame (descA, col.Find ("hehe_\u00e5", false), "#2");
+#endif
+			Assert.AreSame (descA, col.Find ("hehe_\u0061\u030a", false), "#3");
+			Assert.AreSame (descB, col.Find ("heh_\u00e5", false), "#4");
+			Assert.IsNull (col.Find ("foo", false), "#5");
+			Assert.AreSame (descC, col.Find ("foo", true), "#6");
+			Assert.AreSame (descD, col.Find ("FOo", false), "#7");
+			Assert.AreSame (descC, col.Find ("FOo", true), "#8");
+			Assert.IsNull (col.Find ("fOo", false), "#9");
+			Assert.AreSame (descC, col.Find ("fOo", true), "#10");
+			Assert.IsNull (col.Find ("AIm", false), "#11");
+			Assert.AreSame (descE, col.Find ("AIm", true), "#12");
+			Assert.IsNull (col.Find ("AiM", false), "#13");
+			Assert.AreSame (descE, col.Find ("AiM", true), "#14");
+			Assert.AreSame (descE, col.Find ("Aim", false), "#15");
+			Assert.AreSame (descE, col.Find ("Aim", true), "#16");
 		}
 
 		[Test]
 		public void Find_Key_Null ()
 		{
-			PropertyDescriptorCollection descriptors = new PropertyDescriptorCollection (
-				new PropertyDescriptor[] { new MockPropertyDescriptor ("A", 1),
-					new MockPropertyDescriptor ("b", 2)});
+			EventDescriptorCollection descriptors = new EventDescriptorCollection (
+				new EventDescriptor[] { new MockEventDescriptor ("A", "X"),
+					new MockEventDescriptor ("b", "Y")});
 
-			try {
-				descriptors.Find (null, false);
-				Assert.Fail ("#A1");
-			} catch (ArgumentNullException ex) {
-				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
-				Assert.IsNull (ex.InnerException, "#A3");
-				Assert.IsNotNull (ex.Message, "#A4");
-				//Assert.AreEqual ("key", ex.ParamName, "#A5");
-			}
-
-			try {
-				descriptors.Find (null, true);
-				Assert.Fail ("#B1");
-			} catch (ArgumentNullException ex) {
-				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
-				Assert.IsNull (ex.InnerException, "#B3");
-				Assert.IsNotNull (ex.Message, "#B4");
-				//Assert.AreEqual ("key", ex.ParamName, "#B5");
-			}
-
+			Assert.IsNull (descriptors.Find (null, false), "#1");
+			Assert.IsNull (descriptors.Find (null, true), "#2");
 		}
 
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
 		public void IList ()
 		{
-			IList list = ((IList) new PropertyDescriptorCollection (null));
+			IList list = ((IList) new EventDescriptorCollection (null));
 
 			Assert.AreEqual (0, list.Count, "#1");
 #if NET_2_0
@@ -106,72 +114,28 @@ namespace MonoTests.System.ComponentModel
 		[Test]
 		public void IList_Add_Null ()
 		{
-			IList list = ((IList) new PropertyDescriptorCollection (null));
+			IList list = ((IList) new EventDescriptorCollection (null));
 			Assert.AreEqual (0, list.Count, "#1");
 			list.Add (null);
 			Assert.AreEqual (1, list.Count, "#2");
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidCastException))]
-		public void IList_Add_NoPropertyDescriptor ()
+		public void IList_Add_NoEventDescriptor ()
 		{
-			IList list = ((IList) new PropertyDescriptorCollection (null));
-			list.Add (5);
+			IList list = ((IList) new EventDescriptorCollection (null));
+			try {
+				list.Add (5);
+				Assert.Fail ("#1");
+			} catch (InvalidCastException) {
+			}
 		}
 
-		[Test]
-		public void IDictionary ()
-		{
-			IDictionary dictionary = ((IDictionary) new PropertyDescriptorCollection (null));
-
-			Assert.AreEqual (0, dictionary.Count, "#1");
-#if NET_2_0
-			Assert.IsFalse (dictionary.IsFixedSize, "#2");
-#else
-			Assert.IsTrue (dictionary.IsFixedSize, "#2");
-#endif
-			Assert.IsFalse (dictionary.IsReadOnly, "#3");
-			Assert.IsFalse (dictionary.IsSynchronized, "#4");
-			Assert.IsNull (dictionary.SyncRoot, "#5");
-		}
-
-
-		[Test]
-		[ExpectedException (typeof(ArgumentException))]
-		public void IDictionary_Add_Null ()
-		{
-			IDictionary dictionary = ((IDictionary) new PropertyDescriptorCollection (null));
-			dictionary.Add ("whatever", null);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void IDictionary_Add_NoPropertyDescriptor ()
-		{
-			IDictionary dictionary = ((IDictionary) new PropertyDescriptorCollection (null));
-			dictionary.Add ("whatever", 5);
-		}
-
-		[Test]
-		public void CultureInsensitiveFindTest ()
-		{
-			Assert.AreEqual(0, string.Compare ("\u0061\u030a", "\u00e5", true), "#1");
-
-			PropertyDescriptorCollection col =
-				new PropertyDescriptorCollection (
-				new PropertyDescriptor [] {
-					new MockPropertyDescriptor ("hehe_\u0061\u030a", null),
-					new MockPropertyDescriptor ("heh_\u00e5", null) });
-
-			Assert.IsNull (col.Find ("heh_\u0061\u030a", false), "#2");
-			Assert.IsNull (col.Find ("hehe_\u00e5", false), "#3");
-
-		}
 #if NET_2_0
 		public void ReadOnly ()
 		{
-			PropertyDescriptorCollection descriptors = new PropertyDescriptorCollection(null, true);
+			EventDescriptorCollection descriptors = new EventDescriptorCollection (
+				(EventDescriptor []) null, true);
 			AssertReadOnly (descriptors, "ReadOnly");
 		}
 #endif
@@ -179,19 +143,19 @@ namespace MonoTests.System.ComponentModel
 		[Test] // Sort ()
 		public void Sort1 ()
 		{
-			PropertyDescriptorCollection descriptors;
-			PropertyDescriptorCollection sorted;
+			EventDescriptorCollection descriptors;
+			EventDescriptorCollection sorted;
 
-			PropertyDescriptor descA = new MockPropertyDescriptor("Foo", 2);
-			PropertyDescriptor descB = new MockPropertyDescriptor ("Aim", 3);
-			PropertyDescriptor descC = new MockPropertyDescriptor ("Bim", 1);
-			PropertyDescriptor descD = new MockPropertyDescriptor("AIm", 5);
-			PropertyDescriptor descE = new MockPropertyDescriptor("Boo", 4);
-			PropertyDescriptor descF = new MockPropertyDescriptor ("FOo", 6);
+			EventDescriptor descA = new MockEventDescriptor ("Foo", "B");
+			EventDescriptor descB = new MockEventDescriptor ("Aim", "C");
+			EventDescriptor descC = new MockEventDescriptor ("Bim", "A");
+			EventDescriptor descD = new MockEventDescriptor ("AIm", "E");
+			EventDescriptor descE = new MockEventDescriptor ("Boo", "D");
+			EventDescriptor descF = new MockEventDescriptor ("FOo", "F");
 
-			PropertyDescriptor [] props = new  PropertyDescriptor [] {
+			EventDescriptor [] props = new EventDescriptor [] {
 				descA, descB, descC, descD, descE, descF };
-			descriptors = new PropertyDescriptorCollection (props);
+			descriptors = new EventDescriptorCollection (props);
 
 			Assert.AreSame (descA, descriptors [0], "#A1");
 			Assert.AreSame (descB, descriptors [1], "#A2");
@@ -220,19 +184,19 @@ namespace MonoTests.System.ComponentModel
 		[Test] // Sort (String [])
 		public void Sort2 ()
 		{
-			PropertyDescriptorCollection descriptors;
-			PropertyDescriptorCollection sorted;
+			EventDescriptorCollection descriptors;
+			EventDescriptorCollection sorted;
 
-			PropertyDescriptor descA = new MockPropertyDescriptor ("Foo", 2);
-			PropertyDescriptor descB = new MockPropertyDescriptor ("Aim", 3);
-			PropertyDescriptor descC = new MockPropertyDescriptor ("Bim", 1);
-			PropertyDescriptor descD = new MockPropertyDescriptor ("AIm", 5);
-			PropertyDescriptor descE = new MockPropertyDescriptor ("Boo", 4);
-			PropertyDescriptor descF = new MockPropertyDescriptor ("FOo", 6);
+			EventDescriptor descA = new MockEventDescriptor ("Foo", "B");
+			EventDescriptor descB = new MockEventDescriptor ("Aim", "C");
+			EventDescriptor descC = new MockEventDescriptor ("Bim", "A");
+			EventDescriptor descD = new MockEventDescriptor ("AIm", "E");
+			EventDescriptor descE = new MockEventDescriptor ("Boo", "D");
+			EventDescriptor descF = new MockEventDescriptor ("FOo", "F");
 
-			PropertyDescriptor [] props = new PropertyDescriptor [] {
+			EventDescriptor [] props = new EventDescriptor [] {
 				descA, descB, descC, descD, descE, descF };
-			descriptors = new PropertyDescriptorCollection (props);
+			descriptors = new EventDescriptorCollection (props);
 
 			Assert.AreSame (descA, descriptors [0], "#A1");
 			Assert.AreSame (descB, descriptors [1], "#A2");
@@ -277,19 +241,19 @@ namespace MonoTests.System.ComponentModel
 		[Test] // Sort (IComparer)
 		public void Sort3 ()
 		{
-			PropertyDescriptorCollection descriptors;
-			PropertyDescriptorCollection sorted;
+			EventDescriptorCollection descriptors;
+			EventDescriptorCollection sorted;
 
-			PropertyDescriptor descA = new MockPropertyDescriptor ("Foo", 2);
-			PropertyDescriptor descB = new MockPropertyDescriptor ("Aim", 3);
-			PropertyDescriptor descC = new MockPropertyDescriptor ("Bim", 1);
-			PropertyDescriptor descD = new MockPropertyDescriptor ("AIm", 5);
-			PropertyDescriptor descE = new MockPropertyDescriptor ("Boo", 4);
-			PropertyDescriptor descF = new MockPropertyDescriptor ("FOo", 6);
+			EventDescriptor descA = new MockEventDescriptor ("Foo", "B");
+			EventDescriptor descB = new MockEventDescriptor ("Aim", "C");
+			EventDescriptor descC = new MockEventDescriptor ("Bim", "A");
+			EventDescriptor descD = new MockEventDescriptor ("AIm", "E");
+			EventDescriptor descE = new MockEventDescriptor ("Boo", "D");
+			EventDescriptor descF = new MockEventDescriptor ("FOo", "F");
 
-			PropertyDescriptor [] props = new PropertyDescriptor [] {
+			EventDescriptor [] props = new EventDescriptor [] {
 				descA, descB, descC, descD, descE, descF };
-			descriptors = new PropertyDescriptorCollection (props);
+			descriptors = new EventDescriptorCollection (props);
 
 			Assert.AreSame (descA, descriptors [0], "#A1");
 			Assert.AreSame (descB, descriptors [1], "#A2");
@@ -298,7 +262,7 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreSame (descE, descriptors [4], "#A5");
 			Assert.AreSame (descF, descriptors [5], "#A6");
 
-			sorted = descriptors.Sort (new ComparableComparer ());
+			sorted = descriptors.Sort (new CategoryComparer ());
 
 			Assert.AreSame (descA, descriptors [0], "#B1");
 			Assert.AreSame (descB, descriptors [1], "#B2");
@@ -334,19 +298,19 @@ namespace MonoTests.System.ComponentModel
 		[Test] // Sort (String [], IComparer)
 		public void Sort4 ()
 		{
-			PropertyDescriptorCollection descriptors;
-			PropertyDescriptorCollection sorted;
+			EventDescriptorCollection descriptors;
+			EventDescriptorCollection sorted;
 
-			PropertyDescriptor descA = new MockPropertyDescriptor ("Foo", 2);
-			PropertyDescriptor descB = new MockPropertyDescriptor ("Aim", 3);
-			PropertyDescriptor descC = new MockPropertyDescriptor ("Bim", 1);
-			PropertyDescriptor descD = new MockPropertyDescriptor ("AIm", 5);
-			PropertyDescriptor descE = new MockPropertyDescriptor ("Boo", 4);
-			PropertyDescriptor descF = new MockPropertyDescriptor ("FOo", 6);
+			EventDescriptor descA = new MockEventDescriptor ("Foo", "B");
+			EventDescriptor descB = new MockEventDescriptor ("Aim", "C");
+			EventDescriptor descC = new MockEventDescriptor ("Bim", "A");
+			EventDescriptor descD = new MockEventDescriptor ("AIm", "E");
+			EventDescriptor descE = new MockEventDescriptor ("Boo", "D");
+			EventDescriptor descF = new MockEventDescriptor ("FOo", "F");
 
-			PropertyDescriptor [] props = new PropertyDescriptor [] {
+			EventDescriptor [] props = new EventDescriptor [] {
 				descA, descB, descC, descD, descE, descF };
-			descriptors = new PropertyDescriptorCollection (props);
+			descriptors = new EventDescriptorCollection (props);
 
 			Assert.AreSame (descA, descriptors [0], "#A1");
 			Assert.AreSame (descB, descriptors [1], "#A2");
@@ -356,7 +320,7 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreSame (descF, descriptors [5], "#A6");
 
 			sorted = descriptors.Sort (new string [] { "B", "Foo", null, "A", "Boo" },
-				new ComparableComparer ());
+				new CategoryComparer ());
 
 			Assert.AreSame (descA, descriptors [0], "#B1");
 			Assert.AreSame (descB, descriptors [1], "#B2");
@@ -372,7 +336,7 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreSame (descD, sorted [4], "#C5");
 			Assert.AreSame (descF, sorted [5], "#C6");
 
-			sorted = descriptors.Sort ((string []) null, new ComparableComparer ());
+			sorted = descriptors.Sort ((string []) null, new CategoryComparer ());
 
 			Assert.AreSame (descA, descriptors [0], "#D1");
 			Assert.AreSame (descB, descriptors [1], "#D2");
@@ -422,13 +386,13 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreSame (descF, sorted [5], "#I6");
 		}
 
-		private void AssertReadOnly (PropertyDescriptorCollection descriptors, string testCase)
+		private void AssertReadOnly (EventDescriptorCollection descriptors, string testCase)
 		{
-			MockPropertyDescriptor mockPropertyDescr = new MockPropertyDescriptor (
-				"Date", DateTime.Now);
+			MockEventDescriptor desc = new MockEventDescriptor (
+				"Date", "NOW");
 
 			try {
-				descriptors.Add (mockPropertyDescr);
+				descriptors.Add (desc);
 				Assert.Fail (testCase + "#1");
 			} catch (NotSupportedException) {
 				// read-only collection cannot be modified
@@ -450,7 +414,7 @@ namespace MonoTests.System.ComponentModel
 			}
 
 			try {
-				descriptors.Insert (0, mockPropertyDescr);
+				descriptors.Insert (0, desc);
 				Assert.Fail (testCase + "#4");
 			} catch (NotSupportedException) {
 				// read-only collection cannot be modified
@@ -465,7 +429,7 @@ namespace MonoTests.System.ComponentModel
 			}
 
 			try {
-				descriptors.Remove (mockPropertyDescr);
+				descriptors.Remove (desc);
 				Assert.Fail (testCase + "#6");
 			} catch (NotSupportedException) {
 				// read-only collection cannot be modified
@@ -495,7 +459,7 @@ namespace MonoTests.System.ComponentModel
 #endif
 
 			try {
-				list.Add (mockPropertyDescr);
+				list.Add (desc);
 				Assert.Fail (testCase + "#11");
 			} catch (NotSupportedException) {
 				// read-only collection cannot be modified
@@ -517,7 +481,7 @@ namespace MonoTests.System.ComponentModel
 			}
 
 			try {
-				list.Insert (0, mockPropertyDescr);
+				list.Insert (0, desc);
 				Assert.Fail (testCase + "#14");
 			} catch (NotSupportedException) {
 				// read-only collection cannot be modified
@@ -532,7 +496,7 @@ namespace MonoTests.System.ComponentModel
 			}
 
 			try {
-				list.Remove (mockPropertyDescr);
+				list.Remove (desc);
 				Assert.Fail (testCase + "#16");
 			} catch (NotSupportedException) {
 				// read-only collection cannot be modified
@@ -554,7 +518,7 @@ namespace MonoTests.System.ComponentModel
 			}
 
 			try {
-				list[0] = mockPropertyDescr;
+				list[0] = desc;
 				Assert.Fail (testCase + "#19");
 			} catch (NotSupportedException) {
 				// read-only collection cannot be modified
@@ -567,115 +531,48 @@ namespace MonoTests.System.ComponentModel
 			} catch (NotSupportedException) {
 				// read-only collection cannot be modified
 			}
-
-			IDictionary dictionary = (IDictionary) descriptors;
-			Assert.IsTrue (dictionary.IsReadOnly, testCase + "#21");
-#if NET_2_0
-			Assert.IsTrue (dictionary.IsFixedSize, testCase + "#22");
-#else
-			Assert.IsFalse (dictionary.IsFixedSize, testCase + "#22");
-#endif
-
-			try {
-				dictionary.Add ("test", mockPropertyDescr);
-				Assert.Fail (testCase + "#23");
-			} catch (NotSupportedException) {
-				// read-only collection cannot be modified
-			}
-
-			// value is checked before read-only check
-			try {
-				dictionary.Add ("test", null);
-				Assert.Fail (testCase + "#24");
-			} catch (ArgumentException) {
-				// read-only collection cannot be modified
-			}
-
-			try {
-				dictionary.Clear ();
-				Assert.Fail (testCase + "#25");
-			} catch (NotSupportedException) {
-				// read-only collection cannot be modified
-			}
-
-			try {
-				dictionary[0] = mockPropertyDescr;
-				Assert.Fail (testCase + "#26");
-			} catch (NotSupportedException) {
-				// read-only collection cannot be modified
-			}
-
-			// ensure read-only check if performed before value is checked
-			try {
-				dictionary[0] = null;
-				Assert.Fail (testCase + "#27");
-			} catch (NotSupportedException) {
-				// read-only collection cannot be modified
-			}
 		}
 
-		private class MockPropertyDescriptor : PropertyDescriptor
+		private class MockEventDescriptor : EventDescriptor
 		{
-			private object _value;
-
-			public MockPropertyDescriptor (string name, object value) : base (name, null)
+			public MockEventDescriptor (string name, string category)
+				: base (name, new Attribute [] { new CategoryAttribute (category) })
 			{
-				_value = value;
-			}
-
-			public override bool CanResetValue (object component)
-			{
-				return true;
-			}
-
-			public override object GetValue (object component)
-			{
-				return _value;
-			}
-
-			public override void ResetValue (object component)
-			{
-				_value = null;
-			}
-
-			public override void SetValue (object component, object value)
-			{
-				_value = value;
-			}
-
-			public override bool ShouldSerializeValue (object component)
-			{
-				return false;
 			}
 
 			public override Type ComponentType {
 				get {
-					if (_value != null) {
-						return _value.GetType ();
-					}
 					return null;
 				}
 			}
 
-			public override bool IsReadOnly {
+			public override Type EventType {
+				get {
+					return null;
+				}
+			}
+
+			public override bool IsMulticast {
 				get {
 					return false;
 				}
 			}
 
-			public override Type PropertyType {
-				get {
-					return ComponentType;
-				}
+			public override void AddEventHandler (object component, Delegate value)
+			{
 			}
- 		}
 
-		class ComparableComparer : IComparer
+			public override void RemoveEventHandler (object component, Delegate value)
+			{
+			}
+		}
+
+		class CategoryComparer : IComparer
 		{
 			public int Compare (object x, object y)
 			{
-				PropertyDescriptor descX = x as PropertyDescriptor;
-				PropertyDescriptor descY = y as PropertyDescriptor;
+				EventDescriptor descX = x as EventDescriptor;
+				EventDescriptor descY = y as EventDescriptor;
 
 				if (descX == null && descY == null)
 					return 0;
@@ -684,16 +581,7 @@ namespace MonoTests.System.ComponentModel
 				if (descY == null)
 					return 1;
 
-				IComparable compX = descX.GetValue (null) as IComparable;
-				IComparable compY = descY.GetValue (null) as IComparable;
-
-				if (compX == null && compY == null)
-					return 0;
-				if (compX == null)
-					return -1;
-				if (compY == null)
-					return 1;
-				return compX.CompareTo (compY);
+				return string.Compare (descX.Category, descY.Category, false, CultureInfo.CurrentCulture);
 			}
 		}
 	}

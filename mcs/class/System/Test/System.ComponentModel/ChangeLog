@@ -1,3 +1,10 @@
+2008-06-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* EventDescriptorCollectionTests.cs: Added tests based on tests for
+	PropertyDescriptorCollection.
+	* PropertyDescriptorCollectionTests.cs: Added tests for Sort overloads.
+	Improved test for Find with null key.
+
 2008-06-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeConverterTest.cs : test for bug #396649 by Andy Hume.

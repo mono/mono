@@ -1,3 +1,10 @@
+2008-06-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* EventDescriptorCollection.cs: Fixed NRE in Sort overloads when order
+	string array is null.
+	* PropertyDescriptorCollection.cs: Fixed NRE in Sort overloads when
+	order string array is null.
+
 2008-06-27  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PropertyDescriptorCollection.cs, EventDescriptorCollection.cs, 

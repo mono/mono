@@ -1,3 +1,7 @@
+2008-06-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added EventDescriptorCollectionTest.cs.
+
 2008-06-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added ConfigurationExceptionTest.cs.

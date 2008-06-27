@@ -275,10 +275,14 @@ namespace System.ComponentModel
 		public virtual PropertyDescriptorCollection Sort (string[] order, IComparer comparer) 
 		{
 			PropertyDescriptorCollection col = CloneCollection ();
-			ArrayList sorted = col.ExtractItems (order);
-			col.InternalSort (comparer);
-			sorted.AddRange (col.properties);
-			col.properties = sorted;
+			if (order != null) {
+				ArrayList sorted = col.ExtractItems (order);
+				col.InternalSort (comparer);
+				sorted.AddRange (col.properties);
+				col.properties = sorted;
+			} else {
+				col.InternalSort (comparer);
+			}
 			return col;
 		}
 
@@ -291,10 +295,14 @@ namespace System.ComponentModel
 
 		protected void InternalSort (string [] order)
 		{
-			ArrayList sorted = ExtractItems (order);
-			InternalSort ((IComparer) null);
-			sorted.AddRange (properties);
-			properties = sorted;
+			if (order != null) {
+				ArrayList sorted = ExtractItems (order);
+				InternalSort ((IComparer) null);
+				sorted.AddRange (properties);
+				properties = sorted;
+			} else {
+				InternalSort ((IComparer) null);
+			}
 		}
 		
 		ArrayList ExtractItems (string[] names)

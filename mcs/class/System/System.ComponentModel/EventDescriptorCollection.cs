@@ -159,10 +159,14 @@ namespace System.ComponentModel
 
 		public virtual EventDescriptorCollection Sort (string[] order, IComparer comparer) {
 			EventDescriptorCollection col = CloneCollection ();
-			ArrayList sorted = col.ExtractItems (order);
-			col.InternalSort (comparer);
-			sorted.AddRange (col.eventList);
-			col.eventList = sorted;
+			if (order != null) {
+				ArrayList sorted = col.ExtractItems (order);
+				col.InternalSort (comparer);
+				sorted.AddRange (col.eventList);
+				col.eventList = sorted;
+			} else {
+				col.InternalSort (comparer);
+			}
 			return col;
 		}
 
@@ -173,10 +177,14 @@ namespace System.ComponentModel
 		}
 
 		protected void InternalSort (string[] order) {
-			ArrayList sorted = ExtractItems (order);
-			InternalSort ((IComparer) null);
-			sorted.AddRange (eventList);
-			eventList = sorted;
+			if (order != null) {
+				ArrayList sorted = ExtractItems (order);
+				InternalSort ((IComparer) null);
+				sorted.AddRange (eventList);
+				eventList = sorted;
+			} else {
+				InternalSort ((IComparer) null);
+			}
 		}
 		
 		ArrayList ExtractItems (string[] names)
