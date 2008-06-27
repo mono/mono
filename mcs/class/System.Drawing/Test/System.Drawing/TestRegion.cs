@@ -915,6 +915,19 @@ namespace MonoTests.System.Drawing
 #if TARGET_JVM
 		[Category ("NotWorking")]
 #endif
+		public void ExcludeBug402613 ()
+		{
+			Region r = new Region();
+			r.MakeInfinite ();
+			r.Exclude (new Rectangle (387,292,189,133));
+			r.Exclude (new Rectangle (387,66,189,133));
+			Assert.IsTrue (r.IsVisible (new Rectangle (66,292,189,133)));
+		}
+
+		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void TestIntersect()
 		{
 

@@ -1,3 +1,8 @@
+2008-06-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestRegion.cs: Add test case for #402613 to verify Exclude.
+	Based on Jan Krajicek's code supplied inside the bug report.
+
 2008-06-27  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TestPointConverter.cs: Add test cases to verify that no NRE 
