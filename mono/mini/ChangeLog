@@ -1,5 +1,15 @@
 2008-06-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (mono_delegate_trampoline): Don't pass a gsctx to
+	get_this_arg_from_call, let it compute it when needed.
+
+	* mini-amd64.c (mono_arch_get_this_arg_reg): Add a 'code' argument, compute
+	gsctx from code only when needed.
+
+	* mini-trampolines.c (get_generic_context): Rename this to 
+	mono_get_generic_context_from_code (), and move it to generic-sharing.c, where
+	it can be called by the arch backends.
+
 	* mini-exceptions.c (mono_print_thread_dump): Allow the argument to be NULL.
 
 2008-06-26  Zoltan Varga  <vargaz@gmail.com>
