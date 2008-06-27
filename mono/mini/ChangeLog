@@ -1,3 +1,7 @@
+2008-06-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_print_thread_dump): Allow the argument to be NULL.
+
 2008-06-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* driver.c (mono_main): Add experimental --aot-only command line option.
