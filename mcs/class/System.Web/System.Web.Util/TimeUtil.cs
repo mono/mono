@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Globalization;
 
 namespace System.Web.Util {
 
@@ -38,7 +39,8 @@ namespace System.Web.Util {
 		
 		internal static string ToUtcTimeString (DateTime dt)
 		{
-			return dt.ToUniversalTime ().ToString ("ddd, d MMM yyyy HH:mm:ss ") + "GMT";
+			return dt.ToUniversalTime ().ToString ("ddd, d MMM yyyy HH:mm:ss ",
+				CultureInfo.InvariantCulture) + "GMT";
 		}
 	}
 }

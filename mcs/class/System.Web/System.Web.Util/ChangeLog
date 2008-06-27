@@ -1,3 +1,9 @@
+2008-06-27  Robert Jordan  <robertj@gmx.net>
+
+	* TimeUtil.cs (ToUtcTimeString): convert using the invariant
+	culture. Fixes bug #404083. Contributed by
+	Hubert FONGARNAND <informatique.internet@fiducial.fr>.
+
 2008-06-16  Marek Habersack  <mhabersack@novell.com>
 
 	* UrlUtils.cs: optimize string usage (do not compare against "").

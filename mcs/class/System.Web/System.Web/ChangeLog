@@ -1,3 +1,10 @@
+2008-06-27  Robert Jordan  <robertj@gmx.net>
+
+	* HttpCachePolicy.cs: map default HttpCacheability to
+	"Cache-control: private" for MS.NET compatibility.
+	Fixes bug #404083. Contributed by
+	Hubert FONGARNAND <informatique.internet@fiducial.fr>.
+
 2008-06-21  Robert Jordan  <robertj@gmx.net>
 
 	* HttpRuntime.cs (.cctor): Workaround for bug #402263.

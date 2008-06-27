@@ -358,16 +358,16 @@ namespace System.Web {
 				cc = "public";
 				break;
 
-			case HttpCacheability.Private:
-			case HttpCacheability.ServerAndPrivate:
-				cc = "private";
-				break;
-
 			case HttpCacheability.NoCache:
 			case HttpCacheability.ServerAndNoCache:
-			default:
 				noCache = true;
 				cc = "no-cache";
+				break;
+
+			case HttpCacheability.Private:
+			case HttpCacheability.ServerAndPrivate:
+			default:
+				cc = "private";
 				break;
 			}
 
