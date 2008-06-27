@@ -1,5 +1,12 @@
 2008-06-27  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* Control.cs: Visibility of the control should be false 
+	when the handle is destroyed in WmDestroy and not immediately 
+	in Dispose().
+	[Fixes bug #402446]
+
+2008-06-27  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* PropertyGridTextBox.cs: Start monitoring the mouse clicks 
 	when the textbox gets focus.
 	[Fixes bug #402704]

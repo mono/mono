@@ -1148,8 +1148,6 @@ namespace System.Windows.Forms
 				}
 			}
 			is_disposed = true;
-			is_disposing = false;
-			is_visible = false;
 			base.Dispose(disposing);
 		}
 		#endregion 	// Public Constructors
@@ -5453,6 +5451,11 @@ namespace System.Windows.Forms
 				Console.WriteLine (" + new handle = {0:X}", Handle.ToInt32());
 #endif
 				is_recreating = false;
+			}
+
+			if (is_disposing) {
+				is_disposing = false;
+				is_visible = false;
 			}
 		}
 
