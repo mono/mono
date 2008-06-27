@@ -78,6 +78,9 @@ namespace MonoTests.System.Data.OracleClient
 		}
 
 		[Test]
+#if !TARGET_JVM
+		[Ignore ("JVM test")]
+#endif
 		public void TestMultipleResultSetsWithSQLText()
 		{
 
@@ -347,6 +350,9 @@ namespace MonoTests.System.Data.OracleClient
 		}
 
 		[Test]
+#if !TARGET_JVM
+		[Ignore ("JVM test")]
+#endif
 		public void TestMultipleResultSetsWithSP()
 		{
 #if !JAVA

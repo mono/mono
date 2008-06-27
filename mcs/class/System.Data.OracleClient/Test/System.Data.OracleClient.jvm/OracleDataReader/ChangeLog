@@ -1,3 +1,8 @@
+2008-06-27 Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OracleDataReader_NextResult.cs: Ignore tests when not compiled for
+	JVM. Fixes buildbot test failures.
+
 2006-10-19 Leszek Ciesielski <skolima@gmail.com>
 
 	* OracleDataReader_GetByte_I.cs:

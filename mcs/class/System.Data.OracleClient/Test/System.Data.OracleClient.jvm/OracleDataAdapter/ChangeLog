@@ -1,3 +1,10 @@
+2008-06-27 Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OracleDataAdapter_FillSchema_DsSt.cs: Ignore tests when not compiled
+	for JVM. Fixes buildbot test failure.
+	* OracleDataAdapter_GetFillParameters.cs: Ignore tests when not
+	compiled for JVM. Fixes buildbot test failure.
+
 2006-10-19 Leszek Ciesielski <skolima@gmail.com>
 
 	* OracleDataAdapter_RowUpdating.cs:

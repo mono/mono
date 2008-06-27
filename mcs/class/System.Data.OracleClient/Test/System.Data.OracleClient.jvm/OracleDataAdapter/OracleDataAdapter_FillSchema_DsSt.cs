@@ -66,6 +66,9 @@ public class OracleDataAdapter_FillSchema_DsSt : ADONetTesterClass
 
 	//Test case for bug #4708
 	[Test(Description="Test case for bug #4708")]
+#if !TARGET_JVM
+	[Ignore ("JVM test")]
+#endif
 	public void TestLongSqlExpression()
 	{
 		BeginCase("Long SQL string cause java.lang.StackOverflowError (Test case for bug #4708)");
@@ -105,7 +108,5 @@ public class OracleDataAdapter_FillSchema_DsSt : ADONetTesterClass
 			exp = null;
 		}
 	}
-
-
 }
 }

@@ -70,6 +70,9 @@ public class OracleDataAdapter_GetFillParameters : GHTBase
 	//BY DEFAULT LOGGING IS DONE TO THE STANDARD OUTPUT ONLY FOR FAILURES
 
 	[Test]
+#if !TARGET_JVM
+	[Ignore ("JVM test")]
+#endif
 	public void run()
 	{
 		Exception exp = null;
@@ -93,7 +96,7 @@ public class OracleDataAdapter_GetFillParameters : GHTBase
 		oleDBda.SelectCommand.Parameters.Add(new OracleParameter("@FirstName",OracleType.VarChar,10));
 
 		Idp = oleDBda.GetFillParameters();
-        
+
 		try
 		{
 			BeginCase("Parameter 0");
@@ -113,5 +116,4 @@ public class OracleDataAdapter_GetFillParameters : GHTBase
 		
 		}
 	}
-
 }
