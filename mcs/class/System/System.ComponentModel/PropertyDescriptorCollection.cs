@@ -140,7 +140,7 @@ namespace System.ComponentModel
 		public virtual PropertyDescriptor Find (string name, bool ignoreCase)
 		{
 			if (name == null)
-				throw new ArgumentNullException ("key");
+				throw new ArgumentNullException ("name");
 
 			foreach (PropertyDescriptor p in properties) {
 #if NET_2_0

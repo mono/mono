@@ -1,3 +1,7 @@
+2008-06-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PropertyDescriptorCollection.cs : huh.
+
 2008-06-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* EventDescriptorCollection.cs: Fixed Empty to return read-only
