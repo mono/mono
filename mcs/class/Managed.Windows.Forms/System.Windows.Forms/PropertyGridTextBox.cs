@@ -113,6 +113,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 			dialog_button.Paint+=new PaintEventHandler(dialog_button_Paint);
 			textbox.DoubleClick+=new EventHandler(textbox_DoubleClick);
 			textbox.KeyDown+=new KeyEventHandler(textbox_KeyDown);
+			textbox.GotFocus+=new EventHandler(textbox_GotFocus);
 		}
 
 		
@@ -127,10 +128,6 @@ namespace System.Windows.Forms.PropertyGridInternal
 			textbox.has_been_focused = true;
 			textbox.Focus ();
 			textbox.SelectionLength = 0;
-			if (!filtering) {
-				filtering = true;
-				Application.AddMessageFilter ((IMessageFilter)this);
-			}
 		}
 
 		#endregion
@@ -263,10 +260,6 @@ namespace System.Windows.Forms.PropertyGridInternal
 			Point clientLocation = PointToClient (screenLocation);
 			XplatUI.SendMessage (Handle, Msg.WM_LBUTTONDOWN, new IntPtr ((int) MsgButtons.MK_LBUTTON), Control.MakeParam (clientLocation.X, clientLocation.Y));
 			textbox.FocusAt (screenLocation);
-			if (!filtering) {
-				filtering = true;
-				Application.AddMessageFilter ((IMessageFilter)this);
-			}
 		}	
 
 		private void textbox_DoubleClick(object sender, EventArgs e) {
@@ -279,6 +272,13 @@ namespace System.Windows.Forms.PropertyGridInternal
 			KeyEventHandler eh = (KeyEventHandler)(Events [KeyDownEvent]);
 			if (eh != null)
 				eh (this, e);
+		}
+
+		private void textbox_GotFocus(object sender, EventArgs e) {
+			if (!filtering) {
+				filtering = true;
+				Application.AddMessageFilter ((IMessageFilter)this);
+			}
 		}
 
 		bool IMessageFilter.PreFilterMessage(ref Message m)
