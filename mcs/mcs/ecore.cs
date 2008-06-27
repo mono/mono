@@ -3897,14 +3897,12 @@ namespace Mono.CSharp {
 
 				if (a_type != parameter)
 					return 2;
-
-				return 0;
+			} else {
+				if (delegate_type != null ?
+					!Delegate.IsTypeCovariant (argument.Expr, parameter) :
+					!Convert.ImplicitConversionExists (ec, argument.Expr, parameter))
+					return 2;
 			}
-
-			if (delegate_type != null ?
-				!Delegate.IsTypeCovariant (argument.Expr, parameter) :
-				!Convert.ImplicitConversionExists (ec, argument.Expr, parameter))
-				return 2;
 
 			if (arg_mod != param_mod)
 				return 1;
