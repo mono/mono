@@ -10573,6 +10573,26 @@
       </method>
     </type>
   </test>
+  <test name="gtest-399.cs">
+    <type name="TestIssue.Base">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestIssue.Derived">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestIssue.Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>39</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -12025,6 +12045,44 @@
     <type name="My.System.Test">
       <method name="Void Main()">
         <size>14</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType0`1[&lt;X&gt;__T]">
+      <method name="Void .ctor(&lt;X&gt;__T)">
+        <size>14</size>
+      </method>
+      <method name="&lt;X&gt;__T get_X()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>39</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>78</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>57</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-anon-type-10.cs">
+    <type name="A">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 get_X()">
+        <size>3</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>11</size>
+      </method>
+      <method name="Int32 Test()">
+        <size>33</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType0`1[&lt;X&gt;__T]">
