@@ -83,7 +83,7 @@ namespace System.Configuration
 			return StreamName == cfg.FileName;
 		}
 
-		public override void ReadConfig (Configuration cfg, string streamName, XmlTextReader reader)
+		public override void ReadConfig (Configuration cfg, string streamName, XmlReader reader)
 		{
 			StreamName = streamName;
 			ConfigHost = cfg.ConfigHost;
@@ -173,7 +173,7 @@ namespace System.Configuration
 			writer.WriteEndElement ();
 		}
 		
-		public override void ReadData (Configuration config, XmlTextReader reader, bool overrideAllowed)
+		public override void ReadData (Configuration config, XmlReader reader, bool overrideAllowed)
 		{
 			if (!config.HasFile && !allowLocation)
 				throw new ConfigurationErrorsException ("The configuration section <" + Name + "> cannot be defined inside a <location> element.", reader); 

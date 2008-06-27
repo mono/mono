@@ -71,14 +71,15 @@ namespace System.Configuration {
 		public abstract bool HasConfigContent (Configuration cfg);
 		public abstract bool HasDataContent (Configuration cfg);
 		
-		protected void ThrowException (string text, XmlTextReader reader)
+		protected void ThrowException (string text, XmlReader reader)
 		{
+			IXmlLineInfo li = reader as IXmlLineInfo;
 			throw new ConfigurationErrorsException (text, reader);
 		}
 		
-		public abstract void ReadConfig (Configuration cfg, string streamName, XmlTextReader reader);
+		public abstract void ReadConfig (Configuration cfg, string streamName, XmlReader reader);
 		public abstract void WriteConfig (Configuration cfg, XmlWriter writer, ConfigurationSaveMode mode);
-		public abstract void ReadData (Configuration config, XmlTextReader reader, bool overrideAllowed);
+		public abstract void ReadData (Configuration config, XmlReader reader, bool overrideAllowed);
 		public abstract void WriteData (Configuration config, XmlWriter writer, ConfigurationSaveMode mode);
 		
 		internal abstract void Merge (ConfigInfo data);

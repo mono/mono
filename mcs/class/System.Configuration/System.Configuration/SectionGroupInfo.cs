@@ -136,7 +136,7 @@ namespace System.Configuration
 			return false;
 		}
 		
-		public override void ReadConfig (Configuration cfg, string streamName, XmlTextReader reader)
+		public override void ReadConfig (Configuration cfg, string streamName, XmlReader reader)
 		{
 			StreamName = streamName;
 			ConfigHost = cfg.ConfigHost;
@@ -245,7 +245,7 @@ namespace System.Configuration
 			writer.WriteEndElement ();
 		}
 
-		private void ReadRemoveSection (XmlTextReader reader)
+		private void ReadRemoveSection (XmlReader reader)
 		{
 			if (!reader.MoveToNextAttribute () || reader.Name != "name")
 				ThrowException ("Unrecognized attribute.", reader);
@@ -263,13 +263,13 @@ namespace System.Configuration
 			reader.Skip ();
 		}
 
-		public void ReadRootData (XmlTextReader reader, Configuration config, bool overrideAllowed)
+		public void ReadRootData (XmlReader reader, Configuration config, bool overrideAllowed)
 		{
 			reader.MoveToContent ();
 			ReadContent (reader, config, overrideAllowed, true);
 		}
 		
-		public override void ReadData (Configuration config, XmlTextReader reader, bool overrideAllowed)
+		public override void ReadData (Configuration config, XmlReader reader, bool overrideAllowed)
 		{
 			reader.MoveToContent ();
 			if (!reader.IsEmptyElement) {
@@ -281,7 +281,7 @@ namespace System.Configuration
 				reader.Read ();
 		}
 		
-		void ReadContent (XmlTextReader reader, Configuration config, bool overrideAllowed, bool root)
+		void ReadContent (XmlReader reader, Configuration config, bool overrideAllowed, bool root)
 		{
 			while (reader.NodeType != XmlNodeType.EndElement && reader.NodeType != XmlNodeType.None) {
 				if (reader.NodeType != XmlNodeType.Element) {

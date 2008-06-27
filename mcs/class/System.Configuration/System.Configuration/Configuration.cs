@@ -465,7 +465,7 @@ namespace System.Configuration {
 			return true;
 		}
 
-		void ReadConfigFile (XmlTextReader reader, string fileName)
+		void ReadConfigFile (XmlReader reader, string fileName)
 		{
 			reader.MoveToContent ();
 
@@ -502,15 +502,16 @@ namespace System.Configuration {
 			rootGroup.ReadRootData (reader, this, true);
 		}
 
-		internal void ReadData (XmlTextReader reader, bool allowOverride)
+		internal void ReadData (XmlReader reader, bool allowOverride)
 		{
 			rootGroup.ReadData (this, reader, allowOverride);
 		}
 		
 
-		private void ThrowException (string text, XmlTextReader reader)
+		private void ThrowException (string text, XmlReader reader)
 		{
-			throw new ConfigurationException (text, streamName, reader.LineNumber);
+			IXmlLineInfo li = reader as IXmlLineInfo;
+			throw new ConfigurationException (text, streamName, li != null ? li.LineNumber : 0);
 		}
 	}
 }
