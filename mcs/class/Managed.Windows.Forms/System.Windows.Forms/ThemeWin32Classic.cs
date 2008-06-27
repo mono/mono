@@ -6073,7 +6073,7 @@ namespace System.Windows.Forms
 
 		public override int ManagedWindowBorderWidth (InternalWindowManager wm)
 		{
-			if (wm is ToolWindowManager && wm.form.FormBorderStyle == FormBorderStyle.FixedToolWindow)
+			if (wm.IsToolWindow)
 				return 3;
 			else
 				return 4;

@@ -1,8 +1,22 @@
 2008-06-27  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* XplatUIX11.cs, InternalWindowManager.cs: 
+	If WS_EX_TOOLWINDOW is set in the CreateParams for a form MS 
+	doesn't automagically update the FormBorderStyle, so we must 
+	double check the CreateParams explicitly to determine if the 
+	window is a toolwindow.
+	* ThemeWin32Classic.cs: Use InternalWindowManager.IsToolWindow 
+	instead of doing custom checks.
+
+	Fixes toolwindows for the test case in bug #402446
+
+2008-06-27  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* Control.cs: Visibility of the control should be false 
 	when the handle is destroyed in WmDestroy and not immediately 
-	in Dispose().
+	in Dispose(). This is effectively where the disposing process 
+	ends even though the control is marked as Disposed immediately 
+	after calling Dispose().
 	[Fixes bug #402446]
 
 2008-06-27  Ivan N. Zlatev  <contact@i-nz.net>

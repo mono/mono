@@ -714,7 +714,8 @@ namespace System.Windows.Forms {
 		public bool IsToolWindow {
 			get {
 				if (form.FormBorderStyle == FormBorderStyle.SizableToolWindow ||
-						form.FormBorderStyle == FormBorderStyle.FixedToolWindow)
+				    form.FormBorderStyle == FormBorderStyle.FixedToolWindow || 
+				    form.GetCreateParams().IsSet (WindowExStyles.WS_EX_TOOLWINDOW))
 					return true;
 				return false;
 			}

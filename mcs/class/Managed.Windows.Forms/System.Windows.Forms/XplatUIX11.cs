@@ -5141,9 +5141,13 @@ namespace System.Windows.Forms {
 
 		internal override void SetBorderStyle(IntPtr handle, FormBorderStyle border_style) {
 			Form form = Control.FromHandle (handle) as Form;
-			if (form != null && form.window_manager == null && (border_style == FormBorderStyle.FixedToolWindow ||
-					border_style == FormBorderStyle.SizableToolWindow)) {
-				form.window_manager = new ToolWindowManager (form);
+			if (form != null && form.window_manager == null) {
+				CreateParams cp = form.GetCreateParams ();
+				if (border_style == FormBorderStyle.FixedToolWindow ||
+				     border_style == FormBorderStyle.SizableToolWindow || 
+				     cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW)) {
+					form.window_manager = new ToolWindowManager (form);
+				}
 			}
 			
 			RequestNCRecalc(handle);
