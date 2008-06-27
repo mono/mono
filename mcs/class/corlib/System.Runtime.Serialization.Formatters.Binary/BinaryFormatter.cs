@@ -245,9 +245,9 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 		// shouldn't be called unless the code is intended to be executed at full-trust
 		[ComVisible (false)]
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
-		public object UnsafeDeserializeMethodResponse (Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallmessage)
+		public object UnsafeDeserializeMethodResponse (Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallMessage)
 		{
-			return NoCheckDeserializeMethodResponse (serializationStream, handler, methodCallmessage);
+			return NoCheckDeserializeMethodResponse (serializationStream, handler, methodCallMessage);
 		}
 		
 		private void WriteBinaryHeader (BinaryWriter writer, bool hasHeaders)

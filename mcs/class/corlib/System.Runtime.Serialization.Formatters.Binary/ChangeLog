@@ -1,3 +1,7 @@
+2008-06-27  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* BinaryFormatter.cs: Fix parameter name
+
 2008-04-26  Jb Evain  <jbevain@novell.com>
 
 	* CodeGenerator.cs: replace usage of new Type [0] by
