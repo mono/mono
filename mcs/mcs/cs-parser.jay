@@ -416,16 +416,13 @@ using_namespace_directive
 // detach them
 // 
 namespace_declaration
-	: opt_attributes NAMESPACE namespace_or_type_name
+	: opt_attributes NAMESPACE qualified_identifier
 	  {
 		MemberName name = (MemberName) $3;
 
 		if ($1 != null) {
 			Report.Error(1671, name.Location, "A namespace declaration cannot have modifiers or attributes");
 		}
-
-		if (name.TypeArguments != null)
-			syntax_error (lexer.Location, "namespace name expected");
 
 		current_namespace = new NamespaceEntry (
 			current_namespace, file, name.GetName ());
@@ -437,6 +434,23 @@ namespace_declaration
 		current_namespace = current_namespace.Parent;
 		current_class = current_namespace.SlaveDeclSpace;
 		current_container = current_class.PartialContainer;
+	  }
+	;
+
+qualified_identifier
+	: IDENTIFIER
+	  {
+		LocatedToken lt = (LocatedToken) $1;
+		$$ = new MemberName (lt.Value, lt.Location);
+	  }
+	| qualified_identifier DOT IDENTIFIER
+	  {
+		LocatedToken lt = (LocatedToken) $3;
+		$$ = new MemberName ((MemberName) $1, lt.Value, lt.Location);		
+	  }
+	| error
+	  {
+		syntax_error (lexer.Location, "`.' expected");
 	  }
 	;
 

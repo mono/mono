@@ -1,6 +1,11 @@
 2008-06-26  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #404227
+	* cs-parser.jay: Parse namespace declaration using qualified identifier.
+
+2008-06-26  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #404227
 	* convert.cs: Fixed explicit array to interface cast.
 
 2008-06-26  Marek Safar  <marek.safar@gmail.com>
