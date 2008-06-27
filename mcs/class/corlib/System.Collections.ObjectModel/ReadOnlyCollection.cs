@@ -121,9 +121,9 @@ namespace System.Collections.ObjectModel
 		}
 
 #region Not generic interface implementations
-		void ICollection.CopyTo (Array array, int arrayIndex)
+		void ICollection.CopyTo (Array array, int index)
 		{
-			((ICollection)list).CopyTo (array, arrayIndex);
+			((ICollection)list).CopyTo (array, index);
 		}
 				
 		IEnumerator IEnumerable.GetEnumerator ()
@@ -131,7 +131,7 @@ namespace System.Collections.ObjectModel
 			return ((IEnumerable) list).GetEnumerator ();
 		}
 		
-		int IList.Add (object item)
+		int IList.Add (object value)
 		{
 			throw new NotSupportedException ();
 		}
@@ -141,26 +141,26 @@ namespace System.Collections.ObjectModel
 			throw new NotSupportedException ();
 		}
 
-		bool IList.Contains (object item)
+		bool IList.Contains (object value)
 		{
-			if (Collection <T>.IsValidItem (item))
-				return list.Contains ((T) item);
+			if (Collection <T>.IsValidItem (value))
+				return list.Contains ((T) value);
 			return false;
 		}
 		
-		int IList.IndexOf (object item)
+		int IList.IndexOf (object value)
 		{
-			if (Collection <T>.IsValidItem (item))
-				return list.IndexOf ((T) item);
+			if (Collection <T>.IsValidItem (value))
+				return list.IndexOf ((T) value);
 			return -1;
 		}
 		
-		void IList.Insert (int index, object item)
+		void IList.Insert (int index, object value)
 		{
 			throw new NotSupportedException ();
 		}
 		
-		void IList.Remove (object item)
+		void IList.Remove (object value)
 		{
 			throw new NotSupportedException ();
 		}
