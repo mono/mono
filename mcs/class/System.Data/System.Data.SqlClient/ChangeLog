@@ -1,3 +1,7 @@
+2008-06-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* SqlDataReader.cs (ConstructSchemaTable): Avoid unneccessary reflection calls.
+
 2008-06-23  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlDependency.cs: New
