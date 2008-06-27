@@ -128,6 +128,7 @@ namespace System.Web.Configuration.nBrowser
 		private Identification[] Capture;
 		private System.Collections.Specialized.NameValueCollection Capabilities;
 		private System.Collections.Specialized.NameValueCollection Adapter;
+		private Type[] AdapterControlTypes, AdapterTypes;
 		private System.Collections.Generic.List<string> ChildrenKeys;
 		private System.Collections.Generic.List<string> DefaultChildrenKeys;
 		private System.Collections.Generic.SortedList<string, nBrowser.Node> Children;
@@ -331,6 +332,9 @@ namespace System.Web.Configuration.nBrowser
 					Adapter[controlType] = adapterType;
 				}
 			}
+
+			AdapterControlTypes = null;
+			AdapterTypes = null;
 		}
 
 		/// <summary>
@@ -397,6 +401,8 @@ namespace System.Web.Configuration.nBrowser
 			Capture = null;
 			Capabilities = null;
 			Adapter = null;
+			AdapterControlTypes = null;
+			AdapterTypes = null;
 			if (string.Compare(this.xmlNode.Name, "browser", true, System.Globalization.CultureInfo.CurrentCulture) == 0)
 			{
 				this.NameType = NodeType.Browser;
@@ -505,7 +511,21 @@ namespace System.Web.Configuration.nBrowser
 				DefaultChildrenKeys.Remove(child.Id);
 			}
 		}
-		
+				
+		private Type FindType(string typeName)
+		{
+			foreach (System.Reflection.Assembly a in System.AppDomain.CurrentDomain.GetAssemblies())
+			{
+				string fullTypeName = typeName + "," + a.FullName;
+				Type t = System.Type.GetType(fullTypeName); // case-sensitive
+				if (t != null)
+					return t;
+				t = System.Type.GetType(fullTypeName, false, true); // case-insensitive
+				if (t != null)
+					return t;
+			}
+			throw new TypeLoadException(typeName);
+		}
 		
 		/// <summary>
 		/// 
@@ -542,9 +562,21 @@ namespace System.Web.Configuration.nBrowser
 			//----------------------------------------------------------------------
 			if (Adapter != null)
 			{
+				/* Lookup the types and store them for future use */
+				if (AdapterControlTypes == null)
+					AdapterControlTypes = new Type [Adapter.Count];
+				if (AdapterTypes == null)
+					AdapterTypes = new Type [Adapter.Count];
+				for (int i = 0;i <= Adapter.Count - 1;i++) {
+					if (AdapterControlTypes [i] == null)
+						AdapterControlTypes [i] = FindType (Adapter.GetKey (i));
+					if (AdapterTypes [i] == null)
+						AdapterTypes [i] = FindType (Adapter [i]);
+				}
+
 				for (int i = 0;i <= Adapter.Count - 1;i++)
 				{
-					result.AddAdapter(Adapter.GetKey(i), Adapter[i]);
+					result.AddAdapter(AdapterControlTypes [i], AdapterTypes [i]);
 				}
 			}
 
@@ -696,7 +728,7 @@ namespace System.Web.Configuration.nBrowser
 			{
 				for (int i = 0;i <= Adapter.Count - 1;i++)
 				{
-					result.AddAdapter(Adapter.GetKey(i), Adapter[i]);
+					result.AddAdapter(AdapterControlTypes [i], AdapterTypes [i]);
 				}
 			}
 			//----------------------------------------------------------------------

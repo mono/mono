@@ -1,3 +1,8 @@
+2008-06-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* nBrowser/Node.cs nBrowser/Result.cs: Avoid looking up adapter types names for
+	every request in every assembly.
+
 2008-05-22  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationHost.cs: changed CreateDeprecatedConfigContext
