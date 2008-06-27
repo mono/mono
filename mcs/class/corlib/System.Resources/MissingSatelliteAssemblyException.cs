@@ -63,8 +63,8 @@ namespace System.Resources
 		{
 		}
 		
-		public MissingSatelliteAssemblyException (String message, Exception e)
-			: base (message, e)
+		public MissingSatelliteAssemblyException (String message, Exception inner)
+			: base (message, inner)
 		{
 		}
 

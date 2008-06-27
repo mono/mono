@@ -60,8 +60,8 @@ namespace System.Resources
 		{
 		}
 		
-		public MissingManifestResourceException (String message, Exception e)
-			:base (message, e)
+		public MissingManifestResourceException (String message, Exception inner)
+			:base (message, inner)
 		{
 		}
 	}

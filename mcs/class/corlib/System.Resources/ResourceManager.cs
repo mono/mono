@@ -303,7 +303,7 @@ namespace System.Resources
 			return set.GetStream (name, ignoreCase);
 		}
 #endif
-		protected virtual ResourceSet InternalGetResourceSet (CultureInfo culture, bool Createifnotexists, bool tryParents)
+		protected virtual ResourceSet InternalGetResourceSet (CultureInfo culture, bool createIfNotExists, bool tryParents)
 		{
 			ResourceSet set;
 			
@@ -346,7 +346,7 @@ namespace System.Resources
 							MainAssembly, filename);
 				}
 
-				if (stream != null && Createifnotexists) {
+				if (stream != null && createIfNotExists) {
 					object [] args = new Object [1] { stream };
 					
 					/* should we catch
@@ -361,7 +361,7 @@ namespace System.Resources
 			} else if (resourceDir != null || BaseNameField != null) {
 				/* File resources */
 				string filename = GetResourceFilePath (culture);
-				if (Createifnotexists && File.Exists (filename)) {
+				if (createIfNotExists && File.Exists (filename)) {
 					object [] args = new Object [1] { filename };
 
 					/* should we catch
@@ -386,7 +386,7 @@ namespace System.Resources
 				// avoid endless recursion
 				if (!culture.Equals (CultureInfo.InvariantCulture))
 					set = InternalGetResourceSet (culture.Parent,
-						Createifnotexists, tryParents);
+						createIfNotExists, tryParents);
 			}
 
 			if (set != null)
