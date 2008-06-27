@@ -156,15 +156,19 @@ namespace System.Resources
 			if (Table == null)
 				ReadResources ();
 
+			object o = Table [name];
+			if (o != null)
+				return o;
+
 			if (ignoreCase) {
 				foreach (DictionaryEntry de in Table) {
 					string key = (string) de.Key;
 					if (String.Compare (key, name, true, CultureInfo.InvariantCulture) == 0)
 						return de.Value;
 				}
-				return null;
-			} else
-				return Table [name];
+			}
+
+			return null;
 		}
 
 		public virtual object GetObject (string name)

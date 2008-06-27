@@ -58,6 +58,9 @@ namespace System.Resources
 		private Type resourceSource;
 		private Type resourceSetType = typeof (RuntimeResourceSet);
 		private String resourceDir;
+
+		// Contains cultures which have no resource sets
+		private Hashtable nonExistentResourceSets;
 		
 		/* Recursing through culture parents stops here */
 		private CultureInfo neutral_culture;
@@ -312,6 +315,13 @@ namespace System.Resources
 			if (set != null)
 				return set;
 
+			// Cache lookup failures
+			if (nonExistentResourceSets == null)
+				nonExistentResourceSets = new Hashtable();
+
+			if (nonExistentResourceSets.Contains (culture))
+				return null;
+
 			if (MainAssembly != null) {
 				/* Assembly resources */
 				CultureInfo resourceCulture = culture;
@@ -391,6 +401,8 @@ namespace System.Resources
 
 			if (set != null)
 				ResourceSets.Add (culture, set);
+			else
+				nonExistentResourceSets [culture] = culture;
 
 			return set;
 		}
