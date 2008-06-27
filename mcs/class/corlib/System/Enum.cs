@@ -288,9 +288,16 @@ namespace System
 
 		private static int FindName (string [] names, string name,  bool ignoreCase)
 		{
-			for (int i = 0; i < names.Length; ++i) {
-				if (String.Compare (name, names [i], ignoreCase, CultureInfo.InvariantCulture) == 0)
-					return i;
+			if (!ignoreCase) {
+				for (int i = 0; i < names.Length; ++i) {
+					if (name == names [i])
+						return i;
+				}
+			} else {
+				for (int i = 0; i < names.Length; ++i) {
+					if (String.Compare (name, names [i], ignoreCase, CultureInfo.InvariantCulture) == 0)
+						return i;
+				}
 			}
 			return -1;
 		}
