@@ -284,6 +284,8 @@ namespace System.ComponentModel
 
 		protected void InternalSort (IComparer ic)
 		{
+			if (ic == null)
+				ic = MemberDescriptor.DefaultComparer;
 			properties.Sort (ic);
 		}
 

@@ -167,6 +167,8 @@ namespace System.ComponentModel
 		}
 
 		protected void InternalSort (IComparer comparer) {
+			if (comparer == null)
+				comparer = MemberDescriptor.DefaultComparer;
 			eventList.Sort (comparer);
 		}
 

@@ -1,3 +1,10 @@
+2008-06-27  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyDescriptorCollection.cs, EventDescriptorCollection.cs, 
+	MemberDescriptor.cs: Implement proper sorting of descriptors by 
+	comparing their names.
+	[Fixes bug #403882]
+
 2008-06-25  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TypeDescriptor.cs: Fix a NRE.

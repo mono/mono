@@ -36,6 +36,7 @@ using System.Collections;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.ComponentModel.Design;
+using System.Globalization;
 
 namespace System.ComponentModel
 {
@@ -45,6 +46,7 @@ namespace System.ComponentModel
 		private string name;
 		private Attribute [] attrs; // only the attributes supplied in the ctor
 		private AttributeCollection attrCollection;
+		private static IComparer default_comparer;
 
 		protected MemberDescriptor (string name, Attribute [] attrs)
 		{
@@ -230,6 +232,23 @@ namespace System.ComponentModel
 			// FIXME returnType is not taken into account. AFAIK methods are not allowed to only
 			// differ by return type anyway
 			return componentClass.GetMethod (name, bf, null, CallingConventions.Any, args, null);
+		}
+
+		internal static IComparer DefaultComparer {
+			get {
+				if (default_comparer == null)
+					default_comparer = new MemberDescriptorComparer ();
+				return default_comparer;
+			}
+		}
+
+		private class MemberDescriptorComparer : IComparer
+		{
+			public int Compare (object x, object y)
+			{
+				return String.Compare (((MemberDescriptor)x).Name, ((MemberDescriptor)y).Name, 
+						       false, CultureInfo.InvariantCulture);
+			}
 		}
 	}
 }
