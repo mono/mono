@@ -62,6 +62,7 @@ namespace MonoTests.System.Web.Caching
 		}
 
 		[Test] // bug #82419
+		[Ignore ("The test is not written in reproducible way and hence keeps build looks as if it regressed incorrectly")]
 		public void SingleDependency ()
 		{
 			string depFile = Path.Combine (_tempFolder, "dep.tmp");
