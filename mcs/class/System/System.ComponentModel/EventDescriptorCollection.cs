@@ -31,6 +31,7 @@
 //
 
 using System.Collections;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace System.ComponentModel
@@ -40,7 +41,7 @@ namespace System.ComponentModel
 	{
 		private ArrayList eventList = new ArrayList ();
 		private bool isReadOnly;
-		public static readonly EventDescriptorCollection Empty = new EventDescriptorCollection ();
+		public static readonly EventDescriptorCollection Empty = new EventDescriptorCollection (null, true);
 		
 		private EventDescriptorCollection ()
 		{
@@ -72,7 +73,7 @@ namespace System.ComponentModel
 		public int Add (EventDescriptor value)
 		{
 			if (isReadOnly)
-				throw new InvalidOperationException ("The collection is read-only");
+				throw new NotSupportedException ("The collection is read-only");
 			return eventList.Add (value);
 		}
 
@@ -84,7 +85,7 @@ namespace System.ComponentModel
 		public void Clear ()
 		{
 			if (isReadOnly)
-				throw new InvalidOperationException ("The collection is read-only");
+				throw new NotSupportedException ("The collection is read-only");
 			eventList.Clear ();
 		}
 
@@ -95,8 +96,18 @@ namespace System.ComponentModel
 		public virtual EventDescriptor Find (string name, bool ignoreCase) 
 		{
 			foreach (EventDescriptor e in eventList) {
-				if (0 == String.Compare (name, e.Name, ignoreCase))
+#if NET_2_0
+				if (ignoreCase) {
+					if (0 == String.Compare (name, e.Name, StringComparison.OrdinalIgnoreCase))
+						return e;
+				} else {
+					if (0 == String.Compare (name, e.Name, StringComparison.Ordinal))
+						return e;
+				}
+#else
+				if (0 == String.Compare (name, e.Name, ignoreCase, CultureInfo.InvariantCulture))
 					return e;
+#endif
 			}
 			return null;
 		}
@@ -116,14 +127,14 @@ namespace System.ComponentModel
 		public void Insert (int index, EventDescriptor value)
 		{
 			if (isReadOnly)
-				throw new InvalidOperationException ("The collection is read-only");
+				throw new NotSupportedException ("The collection is read-only");
 			eventList.Insert (index, value);
 		}
 
 		public void Remove (EventDescriptor value)
 		{
 			if (isReadOnly)
-				throw new InvalidOperationException ("The collection is read-only");
+				throw new NotSupportedException ("The collection is read-only");
 			eventList.Remove (value);
 		}
 
@@ -135,7 +146,7 @@ namespace System.ComponentModel
 		public void RemoveAt (int index)
 		{
 			if (isReadOnly)
-				throw new InvalidOperationException ("The collection is read-only");
+				throw new NotSupportedException ("The collection is read-only");
 			eventList.RemoveAt (index);
 		}
 
@@ -267,11 +278,17 @@ namespace System.ComponentModel
 		}
 
 		bool IList.IsFixedSize {
-			get { return false; }
+			get {
+#if NET_2_0
+				return isReadOnly;
+#else
+				return !isReadOnly;
+#endif
+			}
 		}
 
 		bool IList.IsReadOnly {
-			get { return false; }
+			get { return isReadOnly; }
 		}
 
 		object IList.this[int index] {
@@ -280,7 +297,7 @@ namespace System.ComponentModel
 			}
 			set {
 				if (isReadOnly)
-					throw new InvalidOperationException ("The collection is read-only");
+					throw new NotSupportedException ("The collection is read-only");
 				eventList[index] = value;
 			}
 		}

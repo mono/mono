@@ -1,5 +1,15 @@
 2008-06-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* EventDescriptorCollection.cs: Fixed Empty to return read-only
+	collection. In a read-only collection, throw NotSupportedException
+	instead of InvalidOperationException when attempting to modify the
+	collection. Fixed find to use ordinal comparison on 2.0 profile.
+	Fixed IList's IsFixedSize and IsReadOnly.
+	* PropertyDescriptorCollection.cs (Find): Use key as argument name
+	when name is null. Silly compatiblity fix. 
+
+2008-06-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* EventDescriptorCollection.cs: Fixed NRE in Sort overloads when order
 	string array is null.
 	* PropertyDescriptorCollection.cs: Fixed NRE in Sort overloads when

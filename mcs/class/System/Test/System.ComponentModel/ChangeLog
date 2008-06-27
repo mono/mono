@@ -1,5 +1,13 @@
 2008-06-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* EventDescriptorCollectionTests.cs: Enabled tests for Empty, Find and
+	IList. Added test for String indexer.
+	* PropertyDescriptorCollectionTests.cs: Improved test for Find and
+	merged CultureInsensitiveFindTest. Improved test for Find with null
+	name/key. Added test for String indexer.
+
+2008-06-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* EventDescriptorCollectionTests.cs: Added tests based on tests for
 	PropertyDescriptorCollection.
 	* PropertyDescriptorCollectionTests.cs: Added tests for Sort overloads.

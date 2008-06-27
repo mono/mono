@@ -36,7 +36,6 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void Empty ()
 		{
 			EventDescriptorCollection descriptors = EventDescriptorCollection.Empty;
@@ -45,11 +44,8 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void Find ()
 		{
-			Thread.CurrentThread.CurrentCulture = new CultureInfo ("tr-TR");
-
 			EventDescriptor descA = new MockEventDescriptor ("hehe_\u0061\u030a", null);
 			EventDescriptor descB = new MockEventDescriptor ("heh_\u00e5", null);
 			EventDescriptor descC = new MockEventDescriptor ("Foo", null);
@@ -95,7 +91,6 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void IList ()
 		{
 			IList list = ((IList) new EventDescriptorCollection (null));
@@ -129,6 +124,37 @@ namespace MonoTests.System.ComponentModel
 				Assert.Fail ("#1");
 			} catch (InvalidCastException) {
 			}
+		}
+
+		[Test] // this [String]
+		public void Indexer2 ()
+		{
+			EventDescriptor descA = new MockEventDescriptor ("hehe_\u0061\u030a", null);
+			EventDescriptor descB = new MockEventDescriptor ("heh_\u00e5", null);
+			EventDescriptor descC = new MockEventDescriptor ("Foo", null);
+			EventDescriptor descD = new MockEventDescriptor ("FOo", null);
+			EventDescriptor descE = new MockEventDescriptor ("Aim", null);
+			EventDescriptor descF = new MockEventDescriptor ("Bar", null);
+
+			EventDescriptorCollection col = new EventDescriptorCollection (
+				new EventDescriptor [] { descA, descB, descC, descD, descE, descF });
+
+#if NET_2_0
+			Assert.IsNull (col ["heh_\u0061\u030a"], "#1");
+			Assert.IsNull (col ["hehe_\u00e5"], "#2");
+#else
+			Assert.AreSame (descB, col ["heh_\u0061\u030a"], "#1");
+			Assert.AreSame (descA, col ["hehe_\u00e5"], "#2");
+#endif
+			Assert.AreSame (descA, col ["hehe_\u0061\u030a"], "#3");
+			Assert.AreSame (descB, col ["heh_\u00e5"], "#4");
+			Assert.IsNull (col ["foo"], "#5");
+			Assert.AreSame (descD, col ["FOo"], "#6");
+			Assert.IsNull (col ["fOo"], "#7");
+			Assert.IsNull (col ["AIm"], "#8");
+			Assert.IsNull (col ["AiM"], "#9");
+			Assert.AreSame (descE, col ["Aim"], "#10");
+			Assert.IsNull (col [(string) null], "#11");
 		}
 
 #if NET_2_0

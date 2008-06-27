@@ -48,20 +48,40 @@ namespace MonoTests.System.ComponentModel
 		[Test]
 		public void Find ()
 		{
-			PropertyDescriptorCollection descriptors = new PropertyDescriptorCollection (
-				new PropertyDescriptor[] { new MockPropertyDescriptor("A", 1), 
-					new MockPropertyDescriptor("b", 2)});
+			PropertyDescriptor descA = new MockPropertyDescriptor ("hehe_\u0061\u030a", 2);
+			PropertyDescriptor descB = new MockPropertyDescriptor ("heh_\u00e5", 3);
+			PropertyDescriptor descC = new MockPropertyDescriptor ("Foo", 5);
+			PropertyDescriptor descD = new MockPropertyDescriptor ("FOo", 6);
+			PropertyDescriptor descE = new MockPropertyDescriptor ("Aim", 1);
+			PropertyDescriptor descF = new MockPropertyDescriptor ("Bar", 4);
 
-			Assert.IsNotNull (descriptors.Find ("A", false), "#1");
-			Assert.IsNotNull (descriptors.Find ("b", false), "#2");
-			Assert.IsNull (descriptors.Find ("a", false), "#3");
-			Assert.IsNotNull (descriptors.Find ("a", true), "#4");
+			PropertyDescriptorCollection col = new PropertyDescriptorCollection (
+				new PropertyDescriptor [] { descA, descB, descC, descD, descE, descF });
+
+			Assert.IsNull (col.Find ("heh_\u0061\u030a", false), "#1");
+			Assert.IsNull (col.Find ("hehe_\u00e5", false), "#2");
+			Assert.AreSame (descA, col.Find ("hehe_\u0061\u030a", false), "#3");
+			Assert.AreSame (descB, col.Find ("heh_\u00e5", false), "#4");
+			Assert.IsNull (col.Find ("foo", false), "#5");
+			Assert.AreSame (descC, col.Find ("foo", true), "#6");
+			Assert.AreSame (descD, col.Find ("FOo", false), "#7");
+			Assert.AreSame (descC, col.Find ("FOo", true), "#8");
+			Assert.IsNull (col.Find ("fOo", false), "#9");
+			Assert.AreSame (descC, col.Find ("fOo", true), "#10");
+			Assert.IsNull (col.Find ("AIm", false), "#11");
+			Assert.AreSame (descE, col.Find ("AIm", true), "#12");
+			Assert.IsNull (col.Find ("AiM", false), "#13");
+			Assert.AreSame (descE, col.Find ("AiM", true), "#14");
+			Assert.AreSame (descE, col.Find ("Aim", false), "#15");
+			Assert.AreSame (descE, col.Find ("Aim", true), "#16");
 		}
 
 		[Test]
-		public void Find_Key_Null ()
+		public void Find_Name_Null ()
 		{
-			PropertyDescriptorCollection descriptors = new PropertyDescriptorCollection (
+			PropertyDescriptorCollection descriptors;
+			
+			descriptors = new PropertyDescriptorCollection (
 				new PropertyDescriptor[] { new MockPropertyDescriptor ("A", 1),
 					new MockPropertyDescriptor ("b", 2)});
 
@@ -72,7 +92,7 @@ namespace MonoTests.System.ComponentModel
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
-				//Assert.AreEqual ("key", ex.ParamName, "#A5");
+				Assert.AreEqual ("key", ex.ParamName, "#A5");
 			}
 
 			try {
@@ -82,9 +102,30 @@ namespace MonoTests.System.ComponentModel
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
-				//Assert.AreEqual ("key", ex.ParamName, "#B5");
+				Assert.AreEqual ("key", ex.ParamName, "#B5");
 			}
 
+			descriptors = PropertyDescriptorCollection.Empty;
+
+			try {
+				descriptors.Find (null, false);
+				Assert.Fail ("#C1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.AreEqual ("key", ex.ParamName, "#C5");
+			}
+
+			try {
+				descriptors.Find (null, true);
+				Assert.Fail ("#D1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNotNull (ex.Message, "#D4");
+				Assert.AreEqual ("key", ex.ParamName, "#D5");
+			}
 		}
 
 		[Test]
@@ -153,21 +194,63 @@ namespace MonoTests.System.ComponentModel
 			dictionary.Add ("whatever", 5);
 		}
 
-		[Test]
-		public void CultureInsensitiveFindTest ()
+		[Test] // this [String]
+		public void Indexer2 ()
 		{
-			Assert.AreEqual(0, string.Compare ("\u0061\u030a", "\u00e5", true), "#1");
+			PropertyDescriptor descA = new MockPropertyDescriptor ("hehe_\u0061\u030a", 2);
+			PropertyDescriptor descB = new MockPropertyDescriptor ("heh_\u00e5", 3);
+			PropertyDescriptor descC = new MockPropertyDescriptor ("Foo", 5);
+			PropertyDescriptor descD = new MockPropertyDescriptor ("FOo", 6);
+			PropertyDescriptor descE = new MockPropertyDescriptor ("Aim", 1);
+			PropertyDescriptor descF = new MockPropertyDescriptor ("Bar", 4);
 
-			PropertyDescriptorCollection col =
-				new PropertyDescriptorCollection (
-				new PropertyDescriptor [] {
-					new MockPropertyDescriptor ("hehe_\u0061\u030a", null),
-					new MockPropertyDescriptor ("heh_\u00e5", null) });
+			PropertyDescriptorCollection col = new PropertyDescriptorCollection (
+				new PropertyDescriptor [] { descA, descB, descC, descD, descE, descF });
 
-			Assert.IsNull (col.Find ("heh_\u0061\u030a", false), "#2");
-			Assert.IsNull (col.Find ("hehe_\u00e5", false), "#3");
-
+			Assert.IsNull (col ["heh_\u0061\u030a"], "#1");
+			Assert.IsNull (col ["hehe_\u00e5"], "#2");
+			Assert.AreSame (descA, col ["hehe_\u0061\u030a"], "#3");
+			Assert.AreSame (descB, col ["heh_\u00e5"], "#4");
+			Assert.IsNull (col ["foo"], "#5");
+			Assert.AreSame (descD, col ["FOo"], "#6");
+			Assert.IsNull (col ["fOo"], "#7");
+			Assert.IsNull (col ["AIm"], "#8");
+			Assert.IsNull (col ["AiM"], "#9");
+			Assert.AreSame (descE, col ["Aim"], "#10");
 		}
+
+		[Test]
+		public void Indexer2_Name_Null ()
+		{
+			PropertyDescriptorCollection descriptors;
+
+			descriptors = new PropertyDescriptorCollection (
+				new PropertyDescriptor [] { new MockPropertyDescriptor ("A", 1),
+					new MockPropertyDescriptor ("b", 2)});
+
+			try {
+				PropertyDescriptor desc = descriptors [(string) null];
+				Assert.Fail ("#A1:" + desc);
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("key", ex.ParamName, "#A5");
+			}
+
+			descriptors = PropertyDescriptorCollection.Empty;
+
+			try {
+				PropertyDescriptor desc = descriptors [(string) null];
+				Assert.Fail ("#B1:" + desc);
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.AreEqual ("key", ex.ParamName, "#B5");
+			}
+		}
+
 #if NET_2_0
 		public void ReadOnly ()
 		{
