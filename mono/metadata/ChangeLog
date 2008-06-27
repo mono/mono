@@ -1,5 +1,8 @@
 2008-06-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* icall.c (ves_icall_System_ValueType_Equals): Optimize the comparison of enums
+	even more.
+
 	* class.c (mono_class_get_fields): Avoid calling setup_fields_locking () for
 	each iteration.
 
