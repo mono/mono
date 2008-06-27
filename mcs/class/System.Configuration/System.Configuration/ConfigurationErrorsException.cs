@@ -143,18 +143,21 @@ namespace System.Configuration
 		//
 		public static string GetFilename (XmlReader reader)
 		{
+			// FIXME: eliminate this silly compatibility.
 			if (reader is IConfigErrorInfo)
 				return ((IConfigErrorInfo) reader).Filename;
-			else
-				return null;
+
+			return reader != null ? reader.BaseURI : null;
 		}
 
 		public static int GetLineNumber (XmlReader reader)
 		{
+			// FIXME: eliminate this silly compatibility.
 			if (reader is IConfigErrorInfo)
 				return ((IConfigErrorInfo) reader).LineNumber;
-			else
-				return 0;
+
+			IXmlLineInfo li = reader as IXmlLineInfo;
+			return li != null ? li.LineNumber : 0;
 		}
 
 		public static string GetFilename (XmlNode node)

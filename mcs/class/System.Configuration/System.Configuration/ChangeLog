@@ -1,3 +1,9 @@
+2008-06-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigurationErrorsException.cs : recover from
+	  silly change that tries to prevent debuggin by
+	  decreasing error location information.
+
 2008-06-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ConfigurationElement.cs: Use ConfigurationErrorsException instead of
