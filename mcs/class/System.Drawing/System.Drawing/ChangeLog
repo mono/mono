@@ -1,3 +1,10 @@
+2008-06-27  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* SizeConverter.cs: Fallback to CultureInfo.CurrentCulture 
+	if supplied culture is null.
+	* PointConverter.cs: Fallback to CultureInfo.CurrentCulture 
+	if supplied culture is null.
+
 2008-05-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Bitmap.cs: Changed argument names to match MS.

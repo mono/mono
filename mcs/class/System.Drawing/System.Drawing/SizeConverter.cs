@@ -68,6 +68,8 @@ namespace System.Drawing {
 						    CultureInfo culture,
 						    object value)
 		{
+			if (culture == null)
+				culture = CultureInfo.CurrentCulture;
 			string s = value as string;
 			if (s == null)
 				return base.ConvertFrom (context, culture, value);
@@ -91,6 +93,8 @@ namespace System.Drawing {
 						  object value,
 						  Type destinationType)
 		{
+			if (culture == null)
+				culture = CultureInfo.CurrentCulture;
 			// LAMESPEC: "The default implementation calls the ToString method
 			// of the object if the object is valid and if the destination
 			// type is string." MS does not behave as per the specs.

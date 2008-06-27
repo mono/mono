@@ -1,3 +1,10 @@
+2008-06-27  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TestPointConverter.cs: Add test cases to verify that no NRE 
+	is thrown if culture is null in ConvertTo.
+	* TestSizeConverter.cs: Add test cases to verify that no NRE 
+	is thrown if culture is null in ConvertTo.
+
 2008-04-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestRegion.cs: Add test cases for #383878 to verify Intersect

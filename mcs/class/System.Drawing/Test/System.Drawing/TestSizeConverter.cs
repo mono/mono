@@ -227,6 +227,13 @@ namespace MonoTests.System.Drawing
 			} catch (Exception e) {
 				Assert.IsTrue (e is NotSupportedException, "CT#7");
 			}
+
+			try {
+				// culture == null
+				szconv.ConvertTo (null, null, sz, typeof (string));
+			} catch (NullReferenceException e) {
+				Assert.Fail ("CT#8: must not throw NullReferenceException");
+			}
 		}
 
 		[Test]
