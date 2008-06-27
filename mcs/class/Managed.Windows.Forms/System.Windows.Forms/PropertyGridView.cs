@@ -99,6 +99,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			grid_textbox.BackColor = SystemColors.Window;
 			grid_textbox.Validate += new CancelEventHandler (grid_textbox_Validate);
 			grid_textbox.ToggleValue+=new EventHandler (grid_textbox_ToggleValue);
+			grid_textbox.KeyDown+=new KeyEventHandler (grid_textbox_KeyDown);
 			this.Controls.Add (grid_textbox);
 
 			vbar = new ImplicitVScrollBar ();
@@ -751,6 +752,11 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		private void DropDownButtonClicked (object sender, EventArgs e) 
 		{
+			DropDownEdit ();
+		}
+
+		private void DropDownEdit ()
+		{
 			GridEntry entry = this.SelectedGridItem as GridEntry;
 			if (entry == null)
 				return;
@@ -805,6 +811,18 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		private void grid_textbox_ToggleValue (object sender, EventArgs args) 
 		{
 			ToggleValue (this.SelectedGridItem);
+		}
+
+		private void grid_textbox_KeyDown (object sender, KeyEventArgs e) 
+		{
+			switch (e.KeyData & Keys.KeyCode) {
+			case Keys.Down:
+				if (e.Alt) {
+					DropDownEdit ();
+					e.Handled = true;
+				}
+				break;
+			}
 		}
 
 		private void grid_textbox_Validate (object sender, CancelEventArgs args)
@@ -972,6 +990,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 			System.Windows.Forms.MSG msg = new MSG ();
 			object queue_id = XplatUI.StartLoop (Thread.CurrentThread);
+			control.Focus ();
 			while (dropdown_form.Visible && XplatUI.GetMessage (queue_id, ref msg, IntPtr.Zero, 0, 0)) {
 				switch (msg.message) {
 					case Msg.WM_NCLBUTTONDOWN:

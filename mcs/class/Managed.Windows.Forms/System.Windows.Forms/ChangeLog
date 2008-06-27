@@ -1,3 +1,10 @@
+2008-06-27  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGridTextBox.cs, PropertyGridView.cs: 
+	 - Alt + Down should show the drop down editor.
+	 - Focus the editor when showing it
+	[Fixes bug #402710]
+
 2008-06-25  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ThemeWin32Classic.cs: Fix from Andy for panel text for panels

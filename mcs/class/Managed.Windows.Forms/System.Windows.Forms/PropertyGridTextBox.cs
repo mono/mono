@@ -42,6 +42,15 @@ namespace System.Windows.Forms.PropertyGridInternal
 			XplatUI.SendMessage (Handle, Msg.WM_LBUTTONDOWN, new IntPtr ((int)MsgButtons.MK_LBUTTON), Control.MakeParam (pnt.X, pnt.Y));
 		}
 
+		protected override bool IsInputKey (Keys keyData)
+		{
+			// To be handled by the PropertyGridView
+			if ((keyData & Keys.Alt) != 0 && 
+			    (keyData & Keys.KeyCode) == Keys.Down)
+				return true;
+			return base.IsInputKey (keyData);
+		}
+
 		protected override void WndProc (ref Message m)
 		{
 			// Swallow the first MOUSEMOVE after the focusing WM_LBUTTONDOWN
@@ -103,6 +112,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 			dropdown_button.Paint+=new PaintEventHandler(dropdown_button_Paint);
 			dialog_button.Paint+=new PaintEventHandler(dialog_button_Paint);
 			textbox.DoubleClick+=new EventHandler(textbox_DoubleClick);
+			textbox.KeyDown+=new KeyEventHandler(textbox_KeyDown);
 		}
 
 		
@@ -193,6 +203,8 @@ namespace System.Windows.Forms.PropertyGridInternal
 		static object DropDownButtonClickedEvent = new object ();
 		static object DialogButtonClickedEvent = new object ();
 		static object ToggleValueEvent = new object ();
+		static object KeyDownEvent = new object ();
+		static object ValidateEvent = new object ();
 
 		public event EventHandler DropDownButtonClicked {
 			add { Events.AddHandler (DropDownButtonClickedEvent, value); }
@@ -208,7 +220,16 @@ namespace System.Windows.Forms.PropertyGridInternal
 			add { Events.AddHandler (ToggleValueEvent, value); }
 			remove { Events.RemoveHandler (ToggleValueEvent, value); }
 		}
+
+		public new event KeyEventHandler KeyDown {
+			add { Events.AddHandler (KeyDownEvent, value); }
+			remove { Events.RemoveHandler (KeyDownEvent, value); }
+		}
 		
+		public new event CancelEventHandler Validate {
+			add { Events.AddHandler (ValidateEvent, value); }
+			remove { Events.RemoveHandler (ValidateEvent, value); }
+		}
 		#endregion Events
 		
 		#region Private Helper Methods
@@ -254,6 +275,12 @@ namespace System.Windows.Forms.PropertyGridInternal
 				eh (this, e);
 		}
 
+		private void textbox_KeyDown(object sender, KeyEventArgs e) {
+			KeyEventHandler eh = (KeyEventHandler)(Events [KeyDownEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+
 		bool IMessageFilter.PreFilterMessage(ref Message m)
 		{
 			// validating check is to allow whatever UI code to execute
@@ -266,10 +293,11 @@ namespace System.Windows.Forms.PropertyGridInternal
 			    m.Msg == (int)Msg.WM_NCLBUTTONDOWN ||
 			    m.Msg == (int)Msg.WM_NCMBUTTONDOWN ||
 			    m.Msg == (int)Msg.WM_NCRBUTTONDOWN) {
-				if (Validate != null) {
+				CancelEventHandler validateHandler = (CancelEventHandler)(Events [ValidateEvent]);
+				if (validateHandler != null) {
 					CancelEventArgs args = new CancelEventArgs ();
 					validating = true;
-					Validate (this, args);
+					validateHandler (this, args);
 					validating = false;
 					if (!args.Cancel) {
 						Application.RemoveMessageFilter ((IMessageFilter)this);
@@ -280,7 +308,5 @@ namespace System.Windows.Forms.PropertyGridInternal
 			}
 			return false;
 		}
-
-		internal event CancelEventHandler Validate;
 	}
 }
