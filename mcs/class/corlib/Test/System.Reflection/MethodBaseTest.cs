@@ -33,6 +33,26 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Reflection
 {
+	public class Generic<T> {
+		public void Foo () {
+		}
+
+		public void GenericFoo<K> () {
+
+		}
+	}
+
+	public class AnotherGeneric<T> {
+		public void Foo () {
+		}	
+	}
+
+	public class SimpleClass {
+		public void GenericFoo<K> () {
+
+		}
+	}
+
 	[TestFixture]
 	public class MethodBaseTest
 	{
@@ -138,6 +158,125 @@ namespace MonoTests.System.Reflection
 			{
 			}
 		}
+
+		[Test]
+		public void GetMethodFromHandle_Handle_Generic_Method ()
+		{
+			MethodInfo mi = typeof (SimpleClass).GetMethod ("GenericFoo");
+			RuntimeMethodHandle handle = mi.MethodHandle;
+
+			MethodBase res = MethodBase.GetMethodFromHandle (handle);
+			Assert.AreEqual (mi, res, "#1");
+
+			res = MethodBase.GetMethodFromHandle (handle, typeof (SimpleClass).TypeHandle);
+			Assert.AreEqual (mi, res, "#2");
+		}
+
+
+		[Test]
+		public void GetMethodFromHandle_Handle_Generic_Method_Instance ()
+		{
+			MethodInfo mi = typeof (SimpleClass).GetMethod ("GenericFoo").MakeGenericMethod (typeof (int));
+			RuntimeMethodHandle handle = mi.MethodHandle;
+
+			MethodBase res = MethodBase.GetMethodFromHandle (handle);
+			Assert.AreEqual (mi, res, "#1");
+
+			res = MethodBase.GetMethodFromHandle (handle, typeof (SimpleClass).TypeHandle);
+			Assert.AreEqual (mi, res, "#2");
+		}
+
+		[Test]
+		public void GetMethodFromHandle_Handle_Generic_Method_On_Generic_Class ()
+	    {
+			MethodInfo mi = typeof (Generic<>).GetMethod ("GenericFoo");
+			RuntimeMethodHandle handle = mi.MethodHandle;
+			MethodBase res;
+
+			try {
+				MethodBase.GetMethodFromHandle (handle);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
+
+			mi = typeof (Generic<int>).GetMethod ("GenericFoo").MakeGenericMethod (typeof (int));
+			handle = mi.MethodHandle;
+
+			try {
+				MethodBase.GetMethodFromHandle (handle);
+				Assert.Fail ("#2");
+			} catch (ArgumentException) {
+			}
+
+
+			mi = typeof (Generic<>).GetMethod ("GenericFoo").MakeGenericMethod (typeof (int));
+			handle = mi.MethodHandle;
+
+			try {
+				MethodBase.GetMethodFromHandle (handle);
+				Assert.Fail ("#3");
+			} catch (ArgumentException) {
+			}
+
+
+			res = MethodBase.GetMethodFromHandle(handle, typeof (Generic<int>).TypeHandle);
+			Assert.AreEqual (typeof (Generic<int>), res.DeclaringType, "#4");
+
+			res = MethodBase.GetMethodFromHandle(handle, typeof (Generic<double>).TypeHandle);
+			Assert.AreEqual (typeof (Generic<double>), res.DeclaringType, "#5");
+
+			res = MethodBase.GetMethodFromHandle(handle, typeof (Generic<>).TypeHandle);
+			Assert.AreEqual (typeof (Generic<>), res.DeclaringType, "#6");
+
+			try {
+				MethodBase.GetMethodFromHandle(handle, typeof (AnotherGeneric<double>).TypeHandle);
+				Assert.Fail ("#7");
+			} catch (ArgumentException) {
+			}
+		}
+
+		[Test]
+		public void GetMethodFromHandle_Handle_Method_On_Generic_Class ()
+	    {
+			MethodInfo mi = typeof (Generic<>).GetMethod ("Foo");
+			RuntimeMethodHandle handle = mi.MethodHandle;
+			MethodBase res;
+
+			try {
+				MethodBase.GetMethodFromHandle(handle);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
+
+			res = MethodBase.GetMethodFromHandle(handle, typeof (Generic<>).TypeHandle);
+			Assert.AreEqual (res, mi, "#2");
+
+			mi = typeof (Generic<int>).GetMethod ("Foo");
+			handle = mi.MethodHandle;
+
+			try {
+				MethodBase.GetMethodFromHandle(handle);
+				Assert.Fail ("#3");
+			} catch (ArgumentException) {
+			}
+
+			res = MethodBase.GetMethodFromHandle(handle, typeof (Generic<int>).TypeHandle);
+			Assert.AreEqual (typeof (Generic<int>), res.DeclaringType, "#4");
+
+			res = MethodBase.GetMethodFromHandle(handle, typeof (Generic<double>).TypeHandle);
+			Assert.AreEqual (typeof (Generic<double>), res.DeclaringType, "#5");
+			Console.WriteLine ("res is {0}", res.DeclaringType);
+
+			res = MethodBase.GetMethodFromHandle(handle, typeof (Generic<>).TypeHandle);
+			Assert.AreEqual (typeof (Generic<>), res.DeclaringType, "#6");
+
+			try {
+				MethodBase.GetMethodFromHandle(handle, typeof (AnotherGeneric<double>).TypeHandle);
+				Assert.Fail ("#7");
+			} catch (ArgumentException) {
+			}
+		}
+
 #endif
 	}
 }
