@@ -1,3 +1,8 @@
+2008-06-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* TemplateControl.cs: Avoid collecting the automatic event info for each 
+	instance.
+
 2008-06-18  Juraj Skripsky  <js@hotfeet.ch>
 
 	* Page.cs (ProcessException): Throw HttpUnhandledException instead of

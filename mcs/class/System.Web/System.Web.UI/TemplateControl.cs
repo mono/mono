@@ -127,10 +127,51 @@ namespace System.Web.UI {
 			return null;
 		}
 
+		class EvtInfo {
+			public MethodInfo method;
+			public string methodName;
+			public EventInfo evt;
+			public bool noParams;
+		}
+
+		static Hashtable auto_event_info;
+		static object auto_event_info_monitor = new Object ();
+
 		internal void WireupAutomaticEvents ()
 		{
 			if (!SupportAutoEvents || !AutoEventWireup)
 				return;
+
+			ArrayList events = null;
+
+			/* Avoid expensive reflection operations by computing the event info only once */
+			lock (auto_event_info_monitor) {
+				if (auto_event_info == null)
+					auto_event_info = new Hashtable ();
+				events = (ArrayList)auto_event_info [GetType ()];
+				if (events == null) {
+					events = CollectAutomaticEventInfo ();
+					auto_event_info [GetType ()] = events;
+				}
+			}
+
+			foreach (EvtInfo evinfo in events) {
+				if (evinfo.noParams) {
+					NoParamsInvoker npi = new NoParamsInvoker (this, evinfo.method);
+					evinfo.evt.AddEventHandler (this, npi.FakeDelegate);
+				} else {
+					evinfo.evt.AddEventHandler (this, Delegate.CreateDelegate (
+#if NET_2_0
+							typeof (EventHandler), this, evinfo.method));
+#else
+							typeof (EventHandler), this, evinfo.methodName));
+#endif
+				}
+			}
+		}
+
+		private ArrayList CollectAutomaticEventInfo () {
+			ArrayList events = new ArrayList ();
 
 			foreach (string methodName in methodNames) {
 				MethodInfo method = null;
@@ -168,18 +209,16 @@ namespace System.Web.UI {
 					continue;
 				}
 
-				if (noParams) {
-					NoParamsInvoker npi = new NoParamsInvoker (this, method);
-					evt.AddEventHandler (this, npi.FakeDelegate);
-				} else {
-					evt.AddEventHandler (this, Delegate.CreateDelegate (
-#if NET_2_0
-							typeof (EventHandler), this, method));
-#else
-							typeof (EventHandler), this, methodName));
-#endif
-				}
+				EvtInfo evinfo = new EvtInfo ();
+				evinfo.method = method;
+				evinfo.methodName = methodName;
+				evinfo.evt = evt;
+				evinfo.noParams = noParams;
+
+				events.Add (evinfo);
 			}
+
+			return events;
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
