@@ -190,7 +190,7 @@ namespace System
 							else
 								sb.AppendFormat ("<0x{0:x5}> {1}", frame.GetNativeOffset (), unknown);
 						} else {
-							sb.Append (GetFullNameForStackTrace (frame.GetMethod ()));
+							GetFullNameForStackTrace (sb, frame.GetMethod ());
 
 							if (frame.GetILOffset () == -1)
 								sb.AppendFormat (" <0x{0:x5}> ", frame.GetNativeOffset ());
@@ -311,35 +311,43 @@ namespace System
 			return this;
 		}
 
-		internal string GetFullNameForStackTrace (MethodBase mi)
+		internal void GetFullNameForStackTrace (StringBuilder sb, MethodBase mi)
 		{
 			string parms = String.Empty;
 			ParameterInfo[] p = mi.GetParameters ();
-			for (int i = 0; i < p.Length; ++i) {
-				if (i > 0)
-					parms = parms + ", ";
-				string paramName = (p [i].Name == null) ? String.Empty : (" " + p [i].Name);
-				Type pt = p[i].ParameterType;
-				if (pt.IsClass && pt.Namespace != String.Empty)
-					parms = parms + pt.Namespace + "." + pt.Name + paramName;
-				else
-					parms = parms + pt.Name + paramName;
-			}
+			sb.Append (mi.DeclaringType.ToString ());
+			sb.Append (".");
+			sb.Append (mi.Name);
 
-			string generic = String.Empty;
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 			if (mi.IsGenericMethod) {
 				Type[] gen_params = mi.GetGenericArguments ();
-				generic = "[";
+				sb.Append ("[");
 				for (int j = 0; j < gen_params.Length; j++) {
 					if (j > 0)
-						generic += ",";
-					generic += gen_params [j].Name;
+						sb.Append (",");
+					sb.Append (gen_params [j].Name);
 				}
-				generic += "]";
+				sb.Append ("]");
 			}
 #endif
-			return mi.DeclaringType.ToString () + "." + mi.Name + generic + " (" + parms + ")";
+			sb.Append (" (");
+			for (int i = 0; i < p.Length; ++i) {
+				if (i > 0)
+					sb.Append (", ");
+				string paramName = (p [i].Name == null) ? String.Empty : (" " + p [i].Name);
+				Type pt = p[i].ParameterType;
+				if (pt.IsClass && pt.Namespace != String.Empty) {
+					sb.Append (pt.Namespace);
+					sb.Append (".");
+					sb.Append (pt.Name);
+					sb.Append (paramName);
+				} else {
+					sb.Append (pt.Name);
+					sb.Append (paramName);
+				}
+			}
+			sb.Append (")");
 		}
 
 #if NET_2_0
