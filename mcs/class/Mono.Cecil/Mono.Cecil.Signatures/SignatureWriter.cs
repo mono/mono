@@ -527,7 +527,7 @@ namespace Mono.Cecil.Signatures {
 				writer.Write ((uint) elem.Value);
 				break;
 			case ElementType.U8 :
-				writer.Write ((long) elem.Value);
+				writer.Write ((ulong) elem.Value);
 				break;
 			case ElementType.String :
 			case ElementType.Type :

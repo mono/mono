@@ -1,3 +1,9 @@
+2008-06-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Cecil.Signatures/SignatureWriter.cs:
+		Fix typo.
+		[Found using Gendarme AvoidUnneededUnboxingRule]
+
 2008-06-06  Jb Evain  <jbevain@novell.com>
 
 	* CodeGen/cecil.xml: constrained. is of type InlineType.
