@@ -85,7 +85,7 @@ namespace System.ComponentModel.Design
 		private Stack _transactions;
 		private IServiceContainer _serviceContainer;
 		private bool _loading;
-		
+		private bool _unloading;
 		public DesignerHost (IServiceProvider serviceProvider)
 		{
 			if (serviceProvider == null)
@@ -167,7 +167,7 @@ namespace System.ComponentModel.Design
 
 		internal void RemovePreProcess (IComponent component)
 		{
-			if (ComponentRemoving != null)
+			if (!_unloading && ComponentRemoving != null)
 				ComponentRemoving (this, new ComponentEventArgs (component));
 
 			IDesigner designer = _designers[component] as IDesigner;
@@ -188,7 +188,7 @@ namespace System.ComponentModel.Design
 
 		internal void RemovePostProcess (IComponent component)
 		{
-			if (ComponentRemoved != null)
+			if (!_unloading && ComponentRemoved != null)
 				ComponentRemoved (this, new ComponentEventArgs (component));
 		}
 
@@ -491,6 +491,7 @@ namespace System.ComponentModel.Design
 
 		private void Unload ()
 		{
+			_unloading = true;
 			if (DesignerLoaderHostUnloading != null)
 				DesignerLoaderHostUnloading (this, EventArgs.Empty);
 
@@ -504,6 +505,7 @@ namespace System.ComponentModel.Design
 			
 			if (DesignerLoaderHostUnloaded != null)
 				DesignerLoaderHostUnloaded (this, EventArgs.Empty);
+			_unloading = false;
 		}
 						
 #endregion
