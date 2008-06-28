@@ -3782,10 +3782,15 @@ namespace System.Windows.Forms
 		}
 
 		public DragDropEffects DoDragDrop(object data, DragDropEffects allowedEffects) {
+			DragDropEffects result = DragDropEffects.None;
 			if (IsHandleCreated)
-				return XplatUI.StartDrag(Handle, data, allowedEffects);
-			else
-				return DragDropEffects.None;
+				result = XplatUI.StartDrag(Handle, data, allowedEffects);
+			OnDragDropEnd (result);
+			return result;
+		}
+
+		internal virtual void OnDragDropEnd (DragDropEffects effects)
+		{
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]

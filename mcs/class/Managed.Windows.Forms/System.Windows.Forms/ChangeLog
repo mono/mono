@@ -1,5 +1,14 @@
 2008-06-28  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* Control.cs: Add an internal virtual OnDragDropEnd method 
+	to allow controls such as ListBox, which depend on a sequence 
+	of MouseDown+Move+End events, to handle the lack of a MouseUp 
+	when a DnD operation is started in MouseDown.
+	* ListBox.cs: If a DnD operation is started in MouseDown we won't 
+	get a MouseUp, so reset our state whenever a DnD operation ends.
+
+2008-06-28  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* PropertyGrid.cs: Clear the root griditem first thing when 
 	new object/s is/are selected. Fixes some rare cases where 
 	the View will get a paint request and won't know that the 

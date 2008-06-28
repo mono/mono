@@ -1793,6 +1793,14 @@ namespace System.Windows.Forms
 			FocusedItem = index;
 		}
 
+		internal override void OnDragDropEnd (DragDropEffects effects)
+		{
+			// In the case of a DnD operation (started on MouseDown)
+			// there will be no MouseUp event, so we need to reset 
+			// the state here
+			button_pressed = false;
+		}
+
 		private void OnMouseUpLB (object sender, MouseEventArgs e)
 		{
 			// Only do stuff with the left mouse button
