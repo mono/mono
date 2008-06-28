@@ -658,6 +658,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
+				root_grid_item = null;
 				SelectItemCore (null, null); // unselect current item in the view
 				if (value != null) {
 					for (int i = 0; i < value.Length; i++) {
