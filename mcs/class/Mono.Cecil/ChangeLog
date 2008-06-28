@@ -1,4 +1,9 @@
-2008-06-28  Sebastien Pouliot  <sebastien@ximian.com>
+2008-06-28  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Mono.Cecil.dll.sources
+	* Mono.Xml/MiniParser.cs:
+		Remove MiniParser as it is no more required (replaced by 
+		SmallXmlParser) and save a few KB in the binary size
 
 	* Mono.Xml/SecurityParser.cs
 	* Mono.Xml/SmallXmlParser.cs:

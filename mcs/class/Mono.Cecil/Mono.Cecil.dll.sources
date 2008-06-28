@@ -307,6 +307,5 @@
 ./Mono.Cecil.Signatures/TypeSpec.cs
 ./Mono.Cecil.Signatures/ValueType.cs
 ./Mono.Cecil.Signatures/Var.cs
-./Mono.Xml/MiniParser.cs
 ./Mono.Xml/SecurityParser.cs
 ./Mono.Xml/SmallXmlParser.cs
