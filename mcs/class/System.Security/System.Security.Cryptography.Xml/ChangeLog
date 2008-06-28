@@ -1,3 +1,12 @@
+2008-06-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XmlDecryptionTransform.cs,
+	* XmlDsigC14NTransform.cs,
+	* XmlDsigEnvelopedSignatureTransform.cs,
+	* XmlDsigExcC14NTransform.cs,
+	* XmlDsigXsltTransform.cs: Replace Type.GetType("x") into typeof(x)
+	[Found using Gendarme AvoidTypeGetTypeForConstantStringsRule]
+
 2008-05-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XmlDecryptionTransform.cs,

@@ -126,7 +126,7 @@ namespace System.Security.Cryptography.Xml
 
 		public override object GetOutput (Type type) 
 		{
-			if (type != Type.GetType ("System.IO.Stream"))
+			if (type != typeof (Stream))
 				throw new ArgumentException ("type");
 			return GetOutput ();
 		}
