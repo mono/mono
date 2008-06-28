@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil {
 
-	class NullReferenceImporter : IImporter {
+	sealed class NullReferenceImporter : IImporter {
 
 		public static readonly NullReferenceImporter Instance = new NullReferenceImporter ();
 

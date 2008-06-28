@@ -39,7 +39,7 @@ namespace Mono.Cecil {
 	using Mono.Cecil.Signatures;
 	using Mono.Xml;
 
-	internal class SecurityDeclarationReader {
+	internal sealed class SecurityDeclarationReader {
 
 		private SecurityParser m_parser;
 		private SignatureReader sr;

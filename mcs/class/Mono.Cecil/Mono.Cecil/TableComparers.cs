@@ -33,7 +33,7 @@ namespace Mono.Cecil {
 
 	using Mono.Cecil.Metadata;
 
-	class TableComparers {
+	sealed class TableComparers {
 
 		public sealed class TypeDef : IComparer {
 
@@ -58,7 +58,7 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public class TypeRef : IComparer {
+		public sealed class TypeRef : IComparer {
 
 			public static readonly TypeRef Instance = new TypeRef ();
 
@@ -79,7 +79,7 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public class NestedClass : IComparer {
+		public sealed class NestedClass : IComparer {
 
 			public static readonly NestedClass Instance = new NestedClass ();
 
@@ -92,7 +92,7 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public class Constant : IComparer {
+		public sealed class Constant : IComparer {
 
 			public static readonly Constant Instance = new Constant ();
 
@@ -108,7 +108,7 @@ namespace Mono.Cecil {
 
 		}
 
-		public class InterfaceImpl : IComparer {
+		public sealed class InterfaceImpl : IComparer {
 
 			public static readonly InterfaceImpl Instance = new InterfaceImpl ();
 
@@ -128,7 +128,7 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public class MethodSem : IComparer {
+		public sealed class MethodSem : IComparer {
 
 			public static readonly MethodSem Instance = new MethodSem ();
 
@@ -143,7 +143,7 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public class CustomAttribute : IComparer {
+		public sealed class CustomAttribute : IComparer {
 
 			public static readonly CustomAttribute Instance = new CustomAttribute ();
 
@@ -158,7 +158,7 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public class SecurityDeclaration : IComparer {
+		public sealed class SecurityDeclaration : IComparer {
 
 			public static readonly SecurityDeclaration Instance = new SecurityDeclaration ();
 
@@ -173,7 +173,7 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public class Override : IComparer {
+		public sealed class Override : IComparer {
 
 			public static readonly Override Instance = new Override ();
 
@@ -186,7 +186,7 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public class PInvoke : IComparer {
+		public sealed class PInvoke : IComparer {
 
 			public static readonly PInvoke Instance = new PInvoke ();
 
@@ -199,7 +199,7 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public class FieldRVA : IComparer {
+		public sealed class FieldRVA : IComparer {
 
 			public static readonly FieldRVA Instance = new FieldRVA ();
 
@@ -212,7 +212,7 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public class FieldLayout : IComparer {
+		public sealed class FieldLayout : IComparer {
 
 			public static readonly FieldLayout Instance = new FieldLayout ();
 
@@ -225,7 +225,7 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public class FieldMarshal : IComparer {
+		public sealed class FieldMarshal : IComparer {
 
 			public static readonly FieldMarshal Instance = new FieldMarshal ();
 
@@ -240,7 +240,7 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public class TypeLayout : IComparer {
+		public sealed class TypeLayout : IComparer {
 
 			public static readonly TypeLayout Instance = new TypeLayout ();
 
@@ -253,7 +253,7 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public class GenericParam : IComparer {
+		public sealed class GenericParam : IComparer {
 
 			public static readonly GenericParam Instance = new GenericParam ();
 
