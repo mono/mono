@@ -1,5 +1,10 @@
 2008-06-28  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DesignSurfaceManager.cs: Set the ActiveSurface only if it 
+	differs from the current one.
+
+2008-06-28  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DesignerHost.cs: Surpress remove events when unloading.
 
 2008-06-18  Ivan N. Zlatev  <contact@i-nz.net>

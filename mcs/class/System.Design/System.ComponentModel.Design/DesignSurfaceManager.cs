@@ -133,23 +133,25 @@ namespace System.ComponentModel.Design
 					
 					ISelectionService selectionService = null;
 					
-					// unsubscribe from current's selectionchanged
-					if (oldSurface != null) {
-						selectionService = oldSurface.GetService (typeof (ISelectionService)) as ISelectionService;
+					if (oldSurface != value) {
+						// unsubscribe from current's selectionchanged
+						if (oldSurface != null) {
+							selectionService = oldSurface.GetService (typeof (ISelectionService)) as ISelectionService;
+							if (selectionService != null)
+								selectionService.SelectionChanged -= new EventHandler (OnSelectionChanged);
+						}
+						// subscribe to new's selectionchanged
+						selectionService = value.GetService (typeof (ISelectionService)) as ISelectionService;
 						if (selectionService != null)
-							selectionService.SelectionChanged -= new EventHandler (OnSelectionChanged);
+							selectionService.SelectionChanged += new EventHandler (OnSelectionChanged);
+						
+						// set it
+						eventService.ActiveDesigner = value.GetService (typeof (IDesignerHost)) as IDesignerHost;
+						
+						// fire event
+						if (this.ActiveDesignSurfaceChanged != null)
+							this.ActiveDesignSurfaceChanged (this, new ActiveDesignSurfaceChangedEventArgs (oldSurface, value));
 					}
-					// subscribe to new's selectionchanged
-				   selectionService = value.GetService (typeof (ISelectionService)) as ISelectionService;
-				   if (selectionService != null)
-					   selectionService.SelectionChanged += new EventHandler (OnSelectionChanged);
-					
-					// set it
-					eventService.ActiveDesigner = value.GetService (typeof (IDesignerHost)) as IDesignerHost;
-					
-					// fire event
-					if (this.ActiveDesignSurfaceChanged != null)
-						this.ActiveDesignSurfaceChanged (this, new ActiveDesignSurfaceChangedEventArgs (oldSurface, value));
 				}
 			}
 		}
