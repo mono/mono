@@ -1,5 +1,8 @@
 2008-06-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* Control.cs (ResolveAdapter): Avoid calling the Context property getter 
+	multiple times.
+
 	* TemplateControl.cs: Avoid collecting the automatic event info for each 
 	instance.
 

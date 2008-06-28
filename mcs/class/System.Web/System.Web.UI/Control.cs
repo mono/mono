@@ -1118,16 +1118,18 @@ namespace System.Web.UI
 #if NET_2_0
 		protected virtual ControlAdapter ResolveAdapter ()
 		{
-			if (Context == null)
+			HttpContext context = Context;
+
+			if (context == null)
 				return null;
 
-			if (!Context.Request.BrowserMightHaveAdapters)
+			if (!context.Request.BrowserMightHaveAdapters)
 				return null;
 				
 			// Search up the type hierarchy until we find a control with an adapter.
 			Type adapterType = null;
 			Type controlType = GetType();
-			IDictionary typeMap = Context.Request.Browser.Adapters;
+			IDictionary typeMap = context.Request.Browser.Adapters;
 			while (adapterType == null && controlType != typeof(object)) {
 				adapterType = (Type)typeMap [controlType];
 				controlType = controlType.BaseType;
