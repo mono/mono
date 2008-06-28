@@ -72,12 +72,15 @@ namespace Mono.Cecil.Metadata {
 
 		public override bool Equals (object other)
 		{
-			if (other is MetadataToken) {
-				MetadataToken o = (MetadataToken) other;
-				return o.m_rid == m_rid && o.m_type == m_type;
-			}
+			if (other is MetadataToken)
+				return Equals ((MetadataToken) other);
 
 			return false;
+		}
+
+		private bool Equals (MetadataToken other)
+		{
+			return other.m_rid == m_rid && other.m_type == m_type;
 		}
 
 		public static bool operator == (MetadataToken one, MetadataToken other)

@@ -1,4 +1,10 @@
-2008-06-28  Sebastien Pouliot  <sebastien@ximian.com> 
+2008-06-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Cecil.Metadata/MetadataToken.cs:
+		Add a private Equals(MetadataToken) method. This allows the 
+		existing operators (== and !=) to avoid boxing, since they
+		will prefer it to the Equals(object) method.
+		[Found using Gendarme ImplementEqualsTypeRule]
 
 	* Mono.Cecil.Cil/GuidAttribute.cs:
 		Seal attribute class
