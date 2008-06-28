@@ -1,3 +1,7 @@
+2008-06-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_message_init): Avoid looking up array types for each call.
+
 2008-06-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (mono_message_invoke): Avoid looking up the object[] type for each
