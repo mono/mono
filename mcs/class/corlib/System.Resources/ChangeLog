@@ -1,3 +1,10 @@
+2008-06-28  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ResourceReader.cs (LoadResourceValues): Kill ununsed local.
+
+	* ResourceReader.cs (CreateResourceInfo): Don't return a big
+	struct on stack, pass it as a reference argument.
+
 2008-06-27  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ResourceReader.cs: Avoid an extra array copy for the resource arrays.

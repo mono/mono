@@ -235,7 +235,7 @@ namespace System.Resources
 				long origPosition = reader.BaseStream.Position;
 				infos = new ResourceInfo [resourceCount];
 				for (int i = 0; i < resourceCount; i++)
-					infos [i] = CreateResourceInfo (positions [i]);
+					CreateResourceInfo (positions [i], ref infos [i]);
 				reader.BaseStream.Seek (origPosition, SeekOrigin.Begin);
 				
 				positions = null;
@@ -244,7 +244,7 @@ namespace System.Resources
 			}
 		}
 
-		ResourceInfo CreateResourceInfo (long position)
+		void CreateResourceInfo (long position, ref ResourceInfo info)
 		{
 			long pos = position + nameSectionOffset;
 
@@ -261,7 +261,7 @@ namespace System.Resources
 			reader.BaseStream.Seek (data_offset, SeekOrigin.Begin);
 			int type_index = Read7BitEncodedInt ();
 			
-			return new ResourceInfo (resourceName, reader.BaseStream.Position, type_index);
+			info = new ResourceInfo (resourceName, reader.BaseStream.Position, type_index);
 		}
 		
 		/* Cut and pasted from BinaryReader, because it's
@@ -412,7 +412,6 @@ namespace System.Resources
 		void LoadResourceValues (ResourceCacheItem[] store)
 		{
 			ResourceInfo ri;
-			ResourceCacheItem rci;
 			object value;
 			
 			lock (readerLock) {
