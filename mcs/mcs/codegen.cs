@@ -206,6 +206,9 @@ namespace Mono.CSharp {
 	}
 
 
+	/// <summary>
+	/// An interface to hold all the information needed in the resolving phase.
+	/// </summary>
 	public interface IResolveContext
 	{
 		DeclSpace DeclContainer { get; }
@@ -467,11 +470,13 @@ namespace Mono.CSharp {
 		{
 		}
 
+		// IResolveContext.DeclContainer
 		public DeclSpace DeclContainer { 
 			get { return decl_space; }
 			set { decl_space = value; }
 		}
 
+		// IResolveContext.GenericDeclContainer
 		public DeclSpace GenericDeclContainer {
 			get { return DeclContainer; }
 		}
@@ -565,6 +570,7 @@ namespace Mono.CSharp {
 			get { return (flags & Flags.InferReturnType) != 0; }
 		}
 
+		// IResolveContext.IsInObsoleteScope
 		public bool IsInObsoleteScope {
 			get {
 				// Disables obsolete checks when probing is on
@@ -576,6 +582,7 @@ namespace Mono.CSharp {
 			get { return (flags & Flags.ProbingMode) != 0; }
 		}
 
+		// IResolveContext.IsInUnsafeScope
 		public bool IsInUnsafeScope {
 			get { return InUnsafe || ResolveContext.IsInUnsafeScope; }
 		}
