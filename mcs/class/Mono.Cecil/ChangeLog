@@ -1,4 +1,8 @@
-2008-06-28  Sebastien Pouliot  <sebastien@ximian.com>
+2008-06-28  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Mono.Cecil/AssemblyNameReference.cs:
+		Use String.Length > 0 instead of comparing to String.Empty
+		[Found using Gendarme CompareWithEmptyStringEfficientlyRule]
 
 	* Mono.Cecil.Metadata/MetadataToken.cs:
 		Add a private Equals(MetadataToken) method. This allows the 
