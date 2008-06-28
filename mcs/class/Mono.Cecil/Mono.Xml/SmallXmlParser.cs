@@ -38,7 +38,7 @@ using System.Text;
 
 namespace Mono.Xml
 {
-	internal class DefaultHandler : SmallXmlParser.IContentHandler
+	internal sealed class DefaultHandler : SmallXmlParser.IContentHandler
 	{
 		public void OnStartParsing (SmallXmlParser parser)
 		{
@@ -93,7 +93,7 @@ namespace Mono.Xml
 			string [] Values { get; }
 		}
 
-		class AttrListImpl : IAttrList
+		sealed class AttrListImpl : IAttrList
 		{
 			public int Length {
 				get { return attrNames.Count; }
@@ -611,7 +611,7 @@ namespace Mono.Xml
 		}
 	}
 
-	internal class SmallXmlParserException : SystemException
+	internal sealed class SmallXmlParserException : SystemException
 	{
 		int line;
 		int column;

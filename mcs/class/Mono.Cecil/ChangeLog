@@ -1,5 +1,10 @@
 2008-06-28  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* Mono.Xml/SecurityParser.cs
+	* Mono.Xml/SmallXmlParser.cs:
+		Seal non-visible classes.
+		[Found using Gendarme AvoidUnsealedUninheritedInternalClassesRule]
+
 	* Mono.Cecil.Signatures/GenericArg.cs:
 		Seal non-visible classes.
 		[Found using Gendarme AvoidUnsealedUninheritedInternalClassesRule]

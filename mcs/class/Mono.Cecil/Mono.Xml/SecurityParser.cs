@@ -38,7 +38,7 @@ using System.Security;
 namespace Mono.Xml {
 
 	// convert an XML document into SecurityElement objects
-	internal class SecurityParser : SmallXmlParser, SmallXmlParser.IContentHandler {
+	internal sealed class SecurityParser : SmallXmlParser, SmallXmlParser.IContentHandler {
 
 		private SecurityElement root;
 
