@@ -1,4 +1,8 @@
-2008-06-28  Sebastien Pouliot  <sebastien@ximian.com> 
+2008-06-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Cecil.Signatures/GenericArg.cs:
+		Seal non-visible classes.
+		[Found using Gendarme AvoidUnsealedUninheritedInternalClassesRule]
 
 	* Mono.Cecil.Binary/CopyImageVisitor.cs
 	* Mono.Cecil.Binary/ImageInitializer.cs
