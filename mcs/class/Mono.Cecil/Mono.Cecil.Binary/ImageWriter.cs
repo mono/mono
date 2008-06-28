@@ -33,7 +33,7 @@ namespace Mono.Cecil.Binary {
 
 	using Mono.Cecil.Metadata;
 
-	class ImageWriter : BaseImageVisitor {
+	sealed class ImageWriter : BaseImageVisitor {
 
 		Image m_img;
 		AssemblyKind m_kind;

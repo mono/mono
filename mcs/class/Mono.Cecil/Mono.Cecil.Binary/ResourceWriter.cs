@@ -32,7 +32,7 @@ namespace Mono.Cecil.Binary {
 
 	using System.Collections;
 
-	class ResourceWriter {
+	sealed class ResourceWriter {
 
 		Image m_img;
 		Section m_rsrc;

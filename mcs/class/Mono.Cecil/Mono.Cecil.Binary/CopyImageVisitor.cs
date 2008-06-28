@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Binary {
 
-	class CopyImageVisitor : BaseImageVisitor {
+	sealed class CopyImageVisitor : BaseImageVisitor {
 
 		Image m_newImage;
 		Image m_originalImage;

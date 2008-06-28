@@ -32,7 +32,7 @@ namespace Mono.Cecil.Binary {
 	using System.IO;
 	using System.Text;
 
-	class ResourceReader {
+	sealed class ResourceReader {
 
 		Image m_img;
 		Section m_rsrc;

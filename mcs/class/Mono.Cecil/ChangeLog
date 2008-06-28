@@ -1,4 +1,13 @@
-2008-06-28  Sebastien Pouliot  <sebastien@ximian.com>
+2008-06-28  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Mono.Cecil.Binary/CopyImageVisitor.cs
+	* Mono.Cecil.Binary/ImageInitializer.cs
+	* Mono.Cecil.Binary/ImageReader.cs
+	* Mono.Cecil.Binary/ImageWriter.cs
+	* Mono.Cecil.Binary/ResourceReader.cs
+	* Mono.Cecil.Binary/ResourceWriter.cs:
+		Seal non-visible classes.
+		[Found using Gendarme AvoidUnsealedUninheritedInternalClassesRule]
 
 	* Mono.Cecil.Metadata/CultureUtils.cs
 	* Mono.Cecil.Metadata/MetadataInitializer.cs

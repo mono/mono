@@ -32,7 +32,7 @@ namespace Mono.Cecil.Binary {
 
 	using Mono.Cecil.Metadata;
 
-	class ImageInitializer : BaseImageVisitor {
+	sealed class ImageInitializer : BaseImageVisitor {
 
 		Image m_image;
 		MetadataInitializer m_mdinit;

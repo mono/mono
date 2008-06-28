@@ -34,7 +34,7 @@ namespace Mono.Cecil.Binary {
 
 	using Mono.Cecil.Metadata;
 
-	class ImageReader : BaseImageVisitor {
+	sealed class ImageReader : BaseImageVisitor {
 
 		MetadataReader m_mdReader;
 		BinaryReader m_binaryReader;
