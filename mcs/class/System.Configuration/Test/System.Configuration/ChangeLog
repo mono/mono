@@ -1,5 +1,10 @@
 2008-06-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ConfigurationErrorsExceptionTest.cs : actually
+	  remove ignored tests.
+
+2008-06-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ConfigurationErrorsExceptionTest.cs : mark couple
 	  of tests as [Ignore] that blocks us from decent
 	  implementation in the name of silly .NET compatibility.

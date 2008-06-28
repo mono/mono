@@ -193,56 +193,6 @@ namespace MonoTests.System.Configuration
 			Assert.AreEqual (cee.BareMessage, cee.Message, "#D7");
 		}
 
-		[Test] // ctor (String, XmlReader)
-		[Ignore ("Asserting that the exception has less information is an idiot's way to go.")]
-		public void Constructor5 ()
-		{
-			string msg;
-			XmlReader reader;
-			ConfigurationErrorsException cee;
-
-			string xmlfile = Path.Combine (foldername, "test.xml");
-
-			XmlDocument doc = new XmlDocument ();
-			doc.AppendChild (doc.CreateElement ("test"));
-			doc.Save (xmlfile);
-
-			using (reader = new XmlTextReader (xmlfile)) {
-				msg = "MSG";
-				cee = new ConfigurationErrorsException (msg, reader);
-				Assert.AreSame (msg, cee.BareMessage, "#A1");
-				Assert.IsNotNull (cee.Data, "#A2");
-				Assert.AreEqual (0, cee.Data.Count, "#A3");
-				Assert.IsNull (cee.Filename, "#A4");
-				Assert.IsNull (cee.InnerException, "#A5");
-				Assert.AreEqual (0, cee.Line, "#A6");
-				Assert.AreSame (msg, cee.Message, "#A7");
-			}
-
-			using (reader = new XmlErrorReader (xmlfile)) {
-				msg = "MSG";
-				cee = new ConfigurationErrorsException (msg, reader);
-				Assert.AreSame (msg, cee.BareMessage, "#B1");
-				Assert.IsNotNull (cee.Data, "#B2");
-				Assert.AreEqual (0, cee.Data.Count, "#B3");
-				Assert.AreEqual ("FILE", cee.Filename, "#B4");
-				Assert.IsNull (cee.InnerException, "#B5");
-				Assert.AreEqual (666, cee.Line, "#B6");
-				Assert.AreEqual (msg + " (FILE line 666)", cee.Message, "#B7");
-			}
-
-			msg = null;
-			reader = null;
-			cee = new ConfigurationErrorsException (msg, reader);
-			Assert.AreEqual (new ConfigurationErrorsException ().Message, cee.BareMessage, "#C1");
-			Assert.IsNotNull (cee.Data, "#C2");
-			Assert.AreEqual (0, cee.Data.Count, "#C3");
-			Assert.IsNull (cee.Filename, "#C4");
-			Assert.IsNull (cee.InnerException, "#C5");
-			Assert.AreEqual (0, cee.Line, "#C6");
-			Assert.AreEqual (cee.BareMessage, cee.Message, "#C7");
-		}
-
 		[Test] // ctor (String, Exception, XmlNode)
 		public void Constructor6 ()
 		{
@@ -309,60 +259,6 @@ namespace MonoTests.System.Configuration
 			Assert.AreSame (inner, cee.InnerException, "#D5");
 			Assert.AreEqual (0, cee.Line, "#D6");
 			Assert.AreEqual (cee.BareMessage, cee.Message, "#D7");
-		}
-
-		[Test] // ctor (String, Exception, XmlReader)
-		[Ignore ("Asserting that the exception has less information is an idiot's way to go.")]
-		public void Constructor7 ()
-		{
-			string msg;
-			Exception inner;
-			XmlReader reader;
-			ConfigurationErrorsException cee;
-
-			string xmlfile = Path.Combine (foldername, "test.xml");
-
-			XmlDocument doc = new XmlDocument ();
-			doc.AppendChild (doc.CreateElement ("test"));
-			doc.Save (xmlfile);
-
-			using (reader = new XmlTextReader (xmlfile)) {
-				msg = "MSG";
-				inner = new Exception ();
-				cee = new ConfigurationErrorsException (msg, inner, reader);
-				Assert.AreSame (msg, cee.BareMessage, "#A1");
-				Assert.IsNotNull (cee.Data, "#A2");
-				Assert.AreEqual (0, cee.Data.Count, "#A3");
-				Assert.IsNull (cee.Filename, "#A4");
-				Assert.AreSame (inner, cee.InnerException, "#A5");
-				Assert.AreEqual (0, cee.Line, "#A6");
-				Assert.AreEqual (msg, cee.Message, "#A7");
-			}
-
-			using (reader = new XmlErrorReader (xmlfile)) {
-				msg = "MSG";
-				inner = new Exception ();
-				cee = new ConfigurationErrorsException (msg, inner, reader);
-				Assert.AreSame (msg, cee.BareMessage, "#B1");
-				Assert.IsNotNull (cee.Data, "#B2");
-				Assert.AreEqual (0, cee.Data.Count, "#B3");
-				Assert.AreEqual ("FILE", cee.Filename, "#B4");
-				Assert.AreSame (inner, cee.InnerException, "#B5");
-				Assert.AreEqual (666, cee.Line, "#B6");
-				Assert.AreEqual (msg + " (FILE line 666)", cee.Message, "#B7");
-			}
-
-			msg = null;
-			inner = null;
-			reader = null;
-			cee = new ConfigurationErrorsException (msg, inner, reader);
-			Assert.AreEqual (new ConfigurationErrorsException ().Message, cee.BareMessage, "#C1");
-			Assert.IsNotNull (cee.Data, "#C2");
-			Assert.AreEqual (0, cee.Data.Count, "#C3");
-			Assert.IsNull (cee.Filename, "#C4");
-			Assert.AreSame (inner, cee.InnerException, "#C5");
-			Assert.AreEqual (0, cee.Line, "#C6");
-			Assert.AreEqual (cee.BareMessage, cee.Message, "#C7");
 		}
 
 		[Test] // ctor (String, String, Int32)
@@ -605,26 +501,6 @@ namespace MonoTests.System.Configuration
 			Assert.AreSame (inner, cee.InnerException, "#G5");
 			Assert.AreEqual (line, cee.Line, "#G6");
 			Assert.AreEqual (cee.BareMessage + " (abc.txt line 7)", cee.Message, "#G7");
-		}
-
-		[Test] // GetFilename (XmlReader)
-		[Ignore ("Asserting that the exception has less information is idiot's way to go.")]
-		public void GetFilename1 ()
-		{
-			string xmlfile = Path.Combine (foldername, "test.xml");
-			XmlDocument doc = new XmlDocument ();
-			doc.AppendChild (doc.CreateElement ("test"));
-			doc.Save (xmlfile);
-
-			using (XmlReader reader = new XmlTextReader (xmlfile)) {
-				string filename = ConfigurationErrorsException.GetFilename (reader);
-				Assert.IsNull (filename, "#1");
-			}
-
-			using (XmlErrorReader reader = new XmlErrorReader (xmlfile)) {
-				string filename = ConfigurationErrorsException.GetFilename (reader);
-				Assert.AreEqual ("FILE", filename, "#2");
-			}
 		}
 
 		[Test] // GetFilename (XmlReader)
