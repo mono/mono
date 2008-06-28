@@ -1,3 +1,7 @@
+.de Sp \" Vertical space (when we can't use .PP)
+.if t .sp .5v
+.if n .sp
+..
 .TH mcs 1 "6 January 2001"
 .SH NAME 
 mcs, gmcs, smcs \- Mono C# Compiler (1.0, 2.0, Moonlight)
@@ -66,7 +70,8 @@ use the -pkg:dotnet command line option.
 Displays information about the Mono C# compiler
 .TP
 .I \-\-addmodule:MODULE1[,MODULE2]
-Includes the specified modules in the resulting assembly.  
+Includes the specified modules in the resulting assembly.  Modules are
+created by calling the compiler with the -target:module option
 .TP
 .I -checked, -checked+
 Sets the default compilation mode to `checked'.  This makes all
@@ -75,6 +80,15 @@ the math operations checked (the default is unchecked).
 .I -checked-
 Sets the default compilation mode to `unchecked'.  This makes all
 the math operations unchecked (this is the default).
+.TP
+.I -clscheck-, -clscheck+
+Disables or enables the Common Language Specification (CLS) checks (it
+is enabled by default). 
+.Sp
+The Common Language Specification (CLS) defines an interoperable
+subset of types as well as conventions that compilers (CLS producers)
+and developers must follow to expose code to other programming
+languages (CLS consumers).  
 .TP
 .I -codepage:ID
 Specifies the code page used to process the input files from the
@@ -273,14 +287,49 @@ name will be the file name.
 Links to the specified RESOURCE.  The optional ID can be used to give
 a name to the linked resource.
 .TP
-.I -r:ASSEMBLY1[,ASSEMBLY2], \-r ASSEMBLY1[,ASSEMBLY2]
+.I -r:ASSEMBLY1[,ASSEMBLY2], \-reference ASSEMBLY1[,ASSEMBLY2]
 Reference the named assemblies.  Use this to use classes from the named
 assembly in your program.  The assembly will be loaded from either the
 system directory where all the assemblies live, or from the path
 explicitly given with the -L option.
-.PP
+.Sp
 You can also use a semicolon to separate the assemblies instead of a
 comma. 
+.TP
+.I -reference:ALIAS=ASSEMBLY
+Extern alias reference support for C#.
+.Sp
+If you have different assemblies that provide the same types, the
+extern alias support allows you to provide names that your software
+can use to tell those appart.    The types from ASSEMBLY will be
+exposed as ALIAS, then on the C# source code, you need to do:
+.Sp
+.nf
+	extern alias ALIAS;
+.fi
+To bring it into your namespace.   For example, to cope with two
+graphics libraries that define "Graphics.Point", one in
+"OpenGL.dll" and one in "Postscript.dll", you would invoke the
+compiler like this:
+.Sp
+.nf
+	mcs -r:Postscript=Postscript.dll -r:OpenGL=OpenGL.dll
+.fi
+.Sp
+And in your source code, you would write:
+.Sp
+.nf
+	extern alias Postscript;
+	extern alias OpenGL;
+
+	class X {
+		// This is a Graphics.Point from Postscrip.dll
+		Postscript.Point p = new Postscript.Point ();
+
+		// This is a Graphics.Point from OpenGL.dll
+		OpenGL.Point p = new OpenGL.Point ();
+	}
+.fi
 .TP
 .I \-recurse:PATTERN, --recurse PATTERN
 Does recursive compilation using the specified pattern.  In Unix the
