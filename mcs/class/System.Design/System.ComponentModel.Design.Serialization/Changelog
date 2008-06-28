@@ -1,3 +1,8 @@
+2008-06-28  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* CodeDomDesignerLoader.cs: Add the supplied TypeResolutionService
+	to the service container if one isn't present already.
+
 2008-03-06  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* CodeDomSerializerBase.cs: Fix deserialization of 

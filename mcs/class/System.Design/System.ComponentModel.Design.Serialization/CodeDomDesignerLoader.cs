@@ -53,7 +53,10 @@ namespace System.ComponentModel.Design.Serialization
 			base.LoaderHost.AddService (typeof (IDesignerSerializationService), this);
 			base.LoaderHost.AddService (typeof (INameCreationService), this);
 			base.LoaderHost.AddService (typeof (ComponentSerializationService), new 
-										CodeDomComponentSerializationService (base.LoaderHost));
+						    CodeDomComponentSerializationService (base.LoaderHost));
+			if (this.TypeResolutionService != null && 
+			    LoaderHost.GetService (typeof (ITypeResolutionService)) == null)
+				LoaderHost.AddService (typeof (ITypeResolutionService), this.TypeResolutionService);
 			IDesignerSerializationManager manager = base.LoaderHost.GetService (typeof (IDesignerSerializationManager)) as IDesignerSerializationManager;
 			if (manager != null)
 				manager.AddSerializationProvider (CodeDomSerializationProvider.Instance);
