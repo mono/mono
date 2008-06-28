@@ -409,7 +409,7 @@ namespace System.Resources
 			return obj;
 		}		
 
-		void LoadResourceValues (IList store)
+		void LoadResourceValues (ResourceCacheItem[] store)
 		{
 			ResourceInfo ri;
 			ResourceCacheItem rci;
@@ -419,7 +419,7 @@ namespace System.Resources
 				for (int i = 0; i < resourceCount; i++) {
 					ri = infos [i];
 					if (ri.TypeIndex == -1) {
-						store.Add (new ResourceCacheItem (ri.ResourceName, null));
+						store [i] = new ResourceCacheItem (ri.ResourceName, null);
 						continue;
 					}
 
@@ -431,7 +431,7 @@ namespace System.Resources
 #endif
 						value = ReadValueVer1 (Type.GetType (typeNames [ri.TypeIndex], true));
 
-					store.Add (new ResourceCacheItem (ri.ResourceName, value));
+					store [i] = new ResourceCacheItem (ri.ResourceName, value);
 				}
 			}
 		}
@@ -672,19 +672,11 @@ namespace System.Resources
 			{
 				if (reader.reader == null)
 					return;
-				
-#if NET_2_0
-				var resources = new List <ResourceCacheItem> (reader.resourceCount);
-#else
-				ArrayList resources = new ArrayList (reader.resourceCount);
-#endif
-				
+
+				ResourceCacheItem[] resources = new ResourceCacheItem [reader.resourceCount];				
 				reader.LoadResourceValues (resources);
-#if NET_2_0
-				cache = resources.ToArray ();
-#else
-				cache = (ResourceCacheItem[]) resources.ToArray (typeof (ResourceCacheItem));
-#endif
+				cache = resources;
+
 			}
 		} // internal class ResourceEnumerator
 	}  // public sealed class ResourceReader

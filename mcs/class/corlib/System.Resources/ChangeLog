@@ -1,3 +1,7 @@
+2008-06-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ResourceReader.cs: Avoid an extra array copy for the resource arrays.
+
 2008-06-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* ResourceManager.cs: Add a negative cache for culture->resource set mappings
