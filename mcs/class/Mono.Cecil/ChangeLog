@@ -1,4 +1,11 @@
-2008-06-28  Sebastien Pouliot  <sebastien@ximian.com>
+2008-06-28  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Mono.Cecil.Cil/CodeReader.cs
+	* Mono.Cecil.Cil/OpCodeNames.cs
+	* Mono.Cecil.Cil/CodeWriter.cs
+	* Mono.Cecil.Cil/SymbolStoreHelper.cs:
+		Seal non-visible classes.
+		[Found using Gendarme AvoidUnsealedUninheritedInternalClassesRule]
 
 	* Mono.Cecil/SecurityDeclarationReader.cs
 	* Mono.Cecil/NullReferenceImporter.cs

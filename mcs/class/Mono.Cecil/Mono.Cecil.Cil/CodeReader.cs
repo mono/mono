@@ -36,7 +36,7 @@ namespace Mono.Cecil.Cil {
 	using Mono.Cecil.Metadata;
 	using Mono.Cecil.Signatures;
 
-	class CodeReader : BaseCodeVisitor {
+	sealed class CodeReader : BaseCodeVisitor {
 
 		ReflectionReader m_reflectReader;
 		MetadataRoot m_root;

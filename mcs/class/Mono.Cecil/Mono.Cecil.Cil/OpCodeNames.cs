@@ -26,7 +26,7 @@
 
 namespace Mono.Cecil.Cil {
 
-	internal class OpCodeNames {
+	internal sealed class OpCodeNames {
 
 		internal static readonly string [] names = {
 			"nop",

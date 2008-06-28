@@ -31,7 +31,7 @@ namespace Mono.Cecil.Cil {
 	using System;
 	using SR = System.Reflection;
 
-	class SymbolStoreHelper {
+	sealed class SymbolStoreHelper {
 
 		static readonly string MonoSymbolSupport = "Mono.Cecil.Mdb.MdbFactory, Mono.Cecil.Mdb";
 		static readonly string DotNetSymbolSupport = "Mono.Cecil.Pdb.PdbFactory, Mono.Cecil.Pdb";

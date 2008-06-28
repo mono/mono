@@ -36,7 +36,7 @@ namespace Mono.Cecil.Cil {
 	using Mono.Cecil.Metadata;
 	using Mono.Cecil.Signatures;
 
-	class CodeWriter : BaseCodeVisitor {
+	sealed class CodeWriter : BaseCodeVisitor {
 
 		ReflectionWriter m_reflectWriter;
 		MemoryBinaryWriter m_binaryWriter;
