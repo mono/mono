@@ -1,5 +1,8 @@
 2008-06-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* object.c (mono_message_invoke): Avoid looking up the object[] type for each
+	call.
+
 	* icall.c (ves_icall_System_ValueType_Equals): Optimize the comparison of enums
 	even more.
 
