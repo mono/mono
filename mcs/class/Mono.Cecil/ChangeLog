@@ -1,4 +1,8 @@
-2008-06-28  Sebastien Pouliot  <sebastien@ximian.com>
+2008-06-28  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Mono.Cecil.Cil/GuidAttribute.cs:
+		Seal attribute class
+		[Found using Gendarme AvoidUnsealedConcreteAttributesRule]
 
 	* Mono.Cecil.Signatures/SignatureWriter.cs:
 		Fix typo.

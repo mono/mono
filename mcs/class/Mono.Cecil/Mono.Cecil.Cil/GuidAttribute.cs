@@ -32,7 +32,7 @@ namespace Mono.Cecil.Cil {
 	using System.Reflection;
 
 	[AttributeUsage (AttributeTargets.Field)]
-	public class GuidAttribute : Attribute {
+	public sealed class GuidAttribute : Attribute {
 
 		private Guid m_guid;
 
