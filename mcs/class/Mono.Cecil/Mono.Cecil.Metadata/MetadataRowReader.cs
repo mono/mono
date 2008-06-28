@@ -37,7 +37,7 @@ namespace Mono.Cecil.Metadata {
 
 	using Mono.Cecil.Binary;
 
-	class MetadataRowReader : BaseMetadataRowVisitor {
+	sealed class MetadataRowReader : BaseMetadataRowVisitor {
 
 		MetadataTableReader m_mtrv;
 		BinaryReader m_binaryReader;

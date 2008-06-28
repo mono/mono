@@ -32,7 +32,7 @@ namespace Mono.Cecil.Metadata {
 	using System.Collections;
 	using System.Globalization;
 
-	class CultureUtils {
+	sealed class CultureUtils {
 
 		static IDictionary m_cultures;
 

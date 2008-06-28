@@ -35,7 +35,7 @@ namespace Mono.Cecil.Metadata {
 	using System.Collections;
 	using System.IO;
 
-	class MetadataTableReader : BaseMetadataTableVisitor {
+	sealed class MetadataTableReader : BaseMetadataTableVisitor {
 
 		MetadataRoot m_metadataRoot;
 		TablesHeap m_heap;

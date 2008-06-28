@@ -36,7 +36,7 @@ namespace Mono.Cecil.Metadata {
 
 	using Mono.Cecil.Binary;
 
-	class MetadataRowWriter : BaseMetadataRowVisitor {
+	sealed class MetadataRowWriter : BaseMetadataRowVisitor {
 
 		MetadataRoot m_root;
 		MemoryBinaryWriter m_binaryWriter;

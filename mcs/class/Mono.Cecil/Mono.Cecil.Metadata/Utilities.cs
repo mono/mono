@@ -35,7 +35,7 @@ namespace Mono.Cecil.Metadata {
 	using System.Collections;
 	using System.IO;
 
-	class Utilities {
+	sealed class Utilities {
 
 		Utilities ()
 		{
