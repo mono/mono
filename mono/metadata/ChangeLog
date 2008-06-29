@@ -1,5 +1,8 @@
 2008-06-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* object.c (mono_array_new_specific): Optimize this and the other allocation
+	functions a bit.
+	
 	* object.c (mono_class_create_runtime_vtable): Use typed allocation in other
 	domains too if mono_dont_free_domains is set.
 
