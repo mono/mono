@@ -1,3 +1,7 @@
+2008-06-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* CompareInfo.cs: Add a cache of SimpleCollator objects.
+
 2008-01-13  Eyal Alaluf <eyala@mainsoft.com>
 
 	* NumberFormatInfo.cs: Defined internal "Raw" APIs that do not clone the

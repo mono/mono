@@ -32,6 +32,7 @@
 //
 
 using System.Reflection;
+using System.Collections;
 using System.Runtime.Serialization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -66,6 +67,13 @@ namespace System.Globalization
 
 		[NonSerialized]
 		SimpleCollator collator;
+
+		// Maps culture IDs to SimpleCollator objects
+		private static Hashtable collators;
+
+		[NonSerialized]
+		// Protects access to 'collators'
+		private static object monitor = new Object ();
 		
 		/* Hide the .ctor() */
 		CompareInfo() {}
@@ -76,9 +84,17 @@ namespace System.Globalization
 		internal CompareInfo (CultureInfo ci)
 		{
 			this.culture = ci.LCID;
-			if (UseManagedCollation) 
-				collator = new SimpleCollator (ci);
-			else {
+			if (UseManagedCollation) {
+				lock (monitor) {
+					if (collators == null)
+						collators = new Hashtable ();
+					collator = (SimpleCollator)collators [ci.LCID];
+					if (collator == null) {
+						collator = new SimpleCollator (ci);
+						collators [ci.LCID] = collator;
+					}
+				}
+			} else {
 				this.icu_name = ci.IcuName;
 				this.construct_compareinfo (icu_name);
 			}
