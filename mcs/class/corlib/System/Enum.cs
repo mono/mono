@@ -95,9 +95,7 @@ namespace System
 		// IConvertible methods Start -->
 		public TypeCode GetTypeCode ()
 		{
-			MonoEnumInfo info;
-			MonoEnumInfo.GetInfo (this.GetType (), out info);
-			return Type.GetTypeCode (info.utype);
+			return Type.GetTypeCode (GetUnderlyingType (this.GetType ()));
 		}
 
 		bool IConvertible.ToBoolean (IFormatProvider provider)
@@ -261,6 +259,9 @@ namespace System
 			}
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private static extern Type get_underlying_type (Type enumType);
+
 #if NET_2_0
 		[ComVisible (true)]
 #endif
@@ -272,9 +273,7 @@ namespace System
 			if (!enumType.IsEnum)
 				throw new ArgumentException ("enumType is not an Enum type.", "enumType");
 
-			MonoEnumInfo info;
-			MonoEnumInfo.GetInfo (enumType, out info);
-			return info.utype;
+			return get_underlying_type (enumType);
 		}
 
 #if NET_2_0

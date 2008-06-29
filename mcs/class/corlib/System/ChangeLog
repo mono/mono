@@ -1,5 +1,7 @@
 2008-06-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* Enum.cs (GetUnderlyingType): Implement this using an icall.
+	
 	* Enum.cs (Format): Call IsDefined with inherited=false.
 
 	* Exception.cs: Fix a warning.
