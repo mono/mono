@@ -1,5 +1,8 @@
 2008-06-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* icall.c (ves_icall_System_Enum_get_underlying_type): New icall.
+	(mono_method_get_equivalent_method): Fix a warning.
+
 	* object.c (mono_message_init): Avoid looking up array types for each call.
 
 2008-06-27  Zoltan Varga  <vargaz@gmail.com>
