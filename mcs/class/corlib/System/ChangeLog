@@ -1,3 +1,7 @@
+2008-06-30  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* Char.cs: Fix formatting, rename wrong named param, remove code duplication
+
 2008-06-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* Enum.cs (GetUnderlyingType): Implement this using an icall.
@@ -18,20 +22,20 @@
 2008-06-27  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* Version.cs: Fix parameter names
-	UInt64.cs: 
-	UInt32.cs:
-	UInt16.cs:
-	Int64.cs: Fix parameter names
-	Int32.cs: Fix parameter names; some small formatting
-	Int16.cs: Fix parameter names
-	Double.cs: Fix parameter names; small formatting
-	Single.cs:
-	SByte.cs:
-	Byte.cs:
-	Boolean.cs:
-	DateTime.cs:
-	Enum.cs:
-	Decimal.cs: Fix parameter names
+	* UInt64.cs: 
+	* UInt32.cs:
+	* UInt16.cs:
+	* Int64.cs: Fix parameter names
+	* Int32.cs: Fix parameter names; some small formatting
+	* Int16.cs: Fix parameter names
+	* Double.cs: Fix parameter names; small formatting
+	* Single.cs:
+	* SByte.cs:
+	* Byte.cs:
+	* Boolean.cs:
+	* DateTime.cs:
+	* Enum.cs:
+	* Decimal.cs: Fix parameter names
 
 2008-06-14  Zoltan Varga  <vargaz@gmail.com>
 

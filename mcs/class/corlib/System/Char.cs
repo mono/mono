@@ -143,10 +143,8 @@ namespace System
 
 		public static int ConvertToUtf32 (string s, int index)
 		{
-			if (s == null)
-				throw new ArgumentNullException ("s");
-			if (index < 0 || index >= s.Length)
-				throw new ArgumentOutOfRangeException ("index");
+			CheckParameter (s, index);
+
 			if (!Char.IsSurrogate (s [index]))
 				return s [index];
 			if (!Char.IsHighSurrogate (s [index])
@@ -169,10 +167,7 @@ namespace System
 
 		public static bool IsSurrogatePair (string s, int index)
 		{
-			if (s == null)
-				throw new ArgumentNullException ("s");
-			if (index < 0 || index >= s.Length)
-				throw new ArgumentOutOfRangeException ("index");
+			CheckParameter (s, index);
 			return index + 1 < s.Length && IsSurrogatePair (s [index], s [index + 1]);
 		}
 #endif
@@ -201,13 +196,7 @@ namespace System
 
 		public static double GetNumericValue (string s, int index)
 		{
-			if (s == null) 
-				throw new ArgumentNullException ("s");
-			
-			if (index < 0 || index >= s.Length)
-				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of s."));	
-			
+			CheckParameter (s, index);
 			return GetNumericValue (s[index]);
 		}
 
@@ -220,13 +209,7 @@ namespace System
 
 		public static UnicodeCategory GetUnicodeCategory (string s, int index)
 		{
-			if (s == null) 
-				throw new ArgumentNullException ("s");
-			
-			if (index < 0 || index >= s.Length)
-				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of s."));
-			
+			CheckParameter (s, index);
 			return GetUnicodeCategory (s[index]);
 		}
 
@@ -239,13 +222,7 @@ namespace System
 
 		public static bool IsControl (string s, int index)
 		{
-			if (s == null) 
-				throw new ArgumentNullException ("s");
-			
-			if (index < 0 || index >= s.Length)
-				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of s."));
-			
+			CheckParameter (s, index);
 			return IsControl (s[index]);
 		}	
 
@@ -258,13 +235,7 @@ namespace System
 
 		public static bool IsDigit (string s, int index)
 		{
-			if (s == null) 
-				throw new ArgumentNullException ("s");
-			
-			if (index < 0 || index >= s.Length)
-				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of s."));
-			
+			CheckParameter (s, index);
 			return IsDigit (s[index]);
 		}
 
@@ -276,12 +247,7 @@ namespace System
 
 		public static bool IsHighSurrogate (string s, int index)
 		{
-			if (s == null) 
-				throw new ArgumentNullException ("s");
-			
-			if (index < 0 || index >= s.Length)
-				throw new ArgumentOutOfRangeException ("index");
-			
+			CheckParameter (s, index);
 			return IsHighSurrogate (s [index]);
 		}
 #endif
@@ -295,13 +261,7 @@ namespace System
 
 		public static bool IsLetter (string s, int index)
 		{
-			if (s == null) 
-				throw new ArgumentNullException ("s");
-			
-			if (index < 0 || index >= s.Length)
-				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of s."));
-			
+			CheckParameter (s, index);
 			return IsLetter (s[index]);
 		}
 
@@ -325,13 +285,7 @@ namespace System
 
 		public static bool IsLetterOrDigit (string s, int index)
 		{
-			if (s == null) 
-				throw new ArgumentNullException ("s");
-			
-			if (index < 0 || index >= s.Length)
-				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of s."));
-			
+			CheckParameter (s, index);
 			return IsLetterOrDigit (s[index]);
 		}
 
@@ -341,16 +295,10 @@ namespace System
 				return (category_data [c] == (byte)UnicodeCategory.LowercaseLetter);
 			}
 		}
-		
+
 		public static bool IsLower (string s, int index)
 		{
-			if (s == null) 
-				throw new ArgumentNullException ("s");
-			
-			if (index < 0 || index >= s.Length)
-				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of s."));
-			
+			CheckParameter (s, index);
 			return IsLower (s[index]);
 		}
 
@@ -362,12 +310,7 @@ namespace System
 
 		public static bool IsLowSurrogate (string s, int index)
 		{
-			if (s == null) 
-				throw new ArgumentNullException ("s");
-			
-			if (index < 0 || index >= s.Length)
-				throw new ArgumentOutOfRangeException ("index");
-			
+			CheckParameter (s, index);
 			return IsLowSurrogate (s [index]);
 		}
 #endif
@@ -386,16 +329,10 @@ namespace System
 				}
 			}
 		}
-		
+
 		public static bool IsNumber (string s, int index)
 		{
-			if (s == null) 
-				throw new ArgumentNullException ("s");
-			
-			if (index < 0 || index >= s.Length)
-				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of s."));
-			
+			CheckParameter (s, index);
 			return IsNumber (s[index]);
 		}
 
@@ -417,16 +354,10 @@ namespace System
 				}
 			}
 		}
-		
+
 		public static bool IsPunctuation (string s, int index)
 		{
-			if (s == null) 
-				throw new ArgumentNullException ("s");
-			
-			if (index < 0 || index >= s.Length)
-				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of s."));
-			
+			CheckParameter (s, index);
 			return IsPunctuation (s[index]);
 		}
 
@@ -444,16 +375,10 @@ namespace System
 				}
 			}
 		}
-		
+
 		public static bool IsSeparator (string s, int index)
 		{
-			if (s == null) 
-				throw new ArgumentNullException ("s");
-			
-			if (index < 0 || index >= s.Length)
-				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of s."));
-			
+			CheckParameter (s, index);
 			return IsSeparator (s[index]);
 		}
 
@@ -463,16 +388,10 @@ namespace System
 				return (category_data [c] == (byte)UnicodeCategory.Surrogate);
 			}
 		}
-		
+
 		public static bool IsSurrogate (string s, int index)
 		{
-			if (s == null) 
-				throw new ArgumentNullException ("s");
-			
-			if (index < 0 || index >= s.Length)
-				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of s."));
-			
+			CheckParameter (s, index);
 			return IsSurrogate (s[index]);
 		}
 
@@ -491,16 +410,10 @@ namespace System
 				}
 			}
 		}
-		
+
 		public static bool IsSymbol (string s, int index)
 		{
-			if (s == null) 
-				throw new ArgumentNullException ("s");
-			
-			if (index < 0 || index >= s.Length)
-				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of s."));
-			
+			CheckParameter (s, index);
 			return IsSymbol (s[index]);
 		}
 
@@ -510,16 +423,10 @@ namespace System
 				return (category_data [c] == (byte)UnicodeCategory.UppercaseLetter);
 			}
 		}
-		
+
 		public static bool IsUpper (string s, int index)
 		{
-			if (s == null) 
-				throw new ArgumentNullException ("s");
-			
-			if (index < 0 || index >= s.Length)
-				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of s."));
-			
+			CheckParameter (s, index);
 			return IsUpper (s[index]);
 		}
 
@@ -547,17 +454,21 @@ namespace System
 				}
 			}
 		}
-		
+
 		public static bool IsWhiteSpace (string s, int index)
+		{
+			CheckParameter (s, index);
+			return IsWhiteSpace (s[index]);
+		}
+
+		private static void CheckParameter (string s, int index)
 		{
 			if (s == null) 
 				throw new ArgumentNullException ("s");
 			
-			if (index < 0 || index >= s.Length)
-				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of s."));
-			
-			return IsWhiteSpace (s[index]);
+			if (index < 0 || index >= s.Length) 
+				throw new ArgumentOutOfRangeException (
+					Locale.GetText ("The value of index is less than zero, or greater than or equal to the length of s."));
 		}
 
 #if NET_2_0
@@ -643,7 +554,7 @@ namespace System
 
 			return culture.TextInfo.ToUpper (c);
 		}
-		
+
 		public override string ToString ()
 		{
 			// LAMESPEC: ECMA draft lists this as returning ToString (null), 
@@ -663,86 +574,85 @@ namespace System
 		}
 
 		// =========== IConvertible Methods =========== //
-		
+
 		public TypeCode GetTypeCode ()
 		{
 			return TypeCode.Char;
-		}	  
-
-		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
-		{
-			return System.Convert.ToType(m_value, conversionType, provider);
 		}
-		
+
+		object IConvertible.ToType (Type type, IFormatProvider provider)
+		{
+			return System.Convert.ToType(m_value, type, provider);
+		}
+
 		bool IConvertible.ToBoolean (IFormatProvider provider)
 		{
 			throw new InvalidCastException();
 		}
-		
+
 		byte IConvertible.ToByte (IFormatProvider provider)
 		{
 			return System.Convert.ToByte(m_value);
 		}
-		
+
 		char IConvertible.ToChar (IFormatProvider provider)
 		{
 			return m_value;
 		}
-		
+
 		DateTime IConvertible.ToDateTime (IFormatProvider provider)
 		{
 			throw new InvalidCastException();
 		}
-		
+
 		decimal IConvertible.ToDecimal (IFormatProvider provider)
 		{
 			throw new InvalidCastException();
 		}
-		
+
 		double IConvertible.ToDouble (IFormatProvider provider)
 		{
 			throw new InvalidCastException();
 		}
-		
+
 		short IConvertible.ToInt16 (IFormatProvider provider)
 		{
 			return System.Convert.ToInt16(m_value);
 		}
-		
+
 		int IConvertible.ToInt32 (IFormatProvider provider)
 		{
 			return System.Convert.ToInt32(m_value);
 		}
-		
+
 		long IConvertible.ToInt64 (IFormatProvider provider)
 		{
 			return System.Convert.ToInt64(m_value);
 		}
-		
+
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
 			return System.Convert.ToSByte(m_value);
 		}
-		
+
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
 			throw new InvalidCastException();
 		}
-		
+
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt16(m_value);
 		}
-		
+
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt32(m_value);
 		}
-		
+
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt64(m_value);
 		}
 	}
 }
-
