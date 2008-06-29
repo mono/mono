@@ -1,3 +1,7 @@
+2008-06-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_parse_debug_options): Add 'dont-free-domains' option.
+
 2008-06-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_delegate_trampoline): Don't pass a gsctx to
