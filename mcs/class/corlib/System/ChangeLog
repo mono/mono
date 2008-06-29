@@ -1,3 +1,7 @@
+2008-06-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* Exception.cs: Fix a warning.
+
 2008-06-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* Enum.cs (FindName): Avoid calling String.Compare for the !ignoreCase case.
