@@ -1,3 +1,8 @@
+2008-06-29  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* valuetype-equals.cs: Tests for ValueType::Equals for all
+	primitive numeric types.
+
 2008-06-26  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* nullable_boxing.2.cs: Test if Array::GetValue box nullables
