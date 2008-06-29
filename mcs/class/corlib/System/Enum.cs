@@ -735,7 +735,7 @@ namespace System
 			char formatChar = format [0];
 			string retVal;
 			if ((formatChar == 'G' || formatChar == 'g')) {
-				if (!Attribute.IsDefined (enumType, typeof(FlagsAttribute))) {
+				if (!enumType.IsDefined (typeof(FlagsAttribute), false)) {
 					retVal = GetName (enumType, value);
 					if (retVal == null)
 						retVal = value.ToString();
