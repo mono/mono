@@ -1,3 +1,13 @@
+2008-06-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_class_create_runtime_vtable): Use typed allocation in other
+	domains too if mono_dont_free_domains is set.
+
+	* domain-internals.h (mono_dont_free_domains): New internal option controlling
+	whenever to free appdomain data after it has been unloaded.
+
+	* domain.c (mono_domain_free): Don't free appdomain data if the option is set.
+	
 2008-06-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Enum_get_underlying_type): New icall.
