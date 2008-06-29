@@ -2013,7 +2013,12 @@ namespace System.Data {
 		/// </summary>
 		protected internal DataRow[] NewRowArray (int size) 
 		{
-			return (DataRow[]) Array.CreateInstance (GetRowType (), size);
+			Type t = GetRowType ();
+			/* Avoid reflection if possible */
+			if (t == typeof (DataRow))
+				return new DataRow [size];
+			else
+				return (DataRow[]) Array.CreateInstance (GetRowType (), size);
 		}
 
 		/// <summary>

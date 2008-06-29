@@ -1,3 +1,7 @@
+2008-06-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* DataTable.cs (NewRowArray): Avoid using reflection if possible.
+
 2008-06-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataRelation.cs : keep createConstraints flag for cloning in
