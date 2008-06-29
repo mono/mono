@@ -753,10 +753,29 @@ Currently, the following options are supported:
 .RS
 .ne 8
 .TP
+.I "break-on-unverified"
+If this variable is set, when the Mono VM runs into a verification
+problem, instead of throwing an exception it will break into the
+debugger.  This is useful when debugging verifier problems
+.TP
 .I "collect-pagefault-stats"
 Collects information about pagefaults.   This is used internally to
 track the number of page faults produced to load metadata.  To display
-this information you must use this option with "--stats" command line option.
+this information you must use this option with "--stats" command line
+option.
+.TP
+.I "dont-free-domains"
+This is an Optimization for multi-AppDomain applications (most
+commonly ASP.NET applications).  Due to internal limitations Mono,
+Mono by default does not use typed allocations on multi-appDomain
+applications as they could leak memory when a domain is unloaded. 
+.TP
+Although this is a fine default, for applications that use more than
+on AppDomain heavily (for example, ASP.NET applications) it is worth
+trading off the small leaks for the increased performance
+(additionally, since ASP.NET applications are not likely going to
+unload the application domains on production systems, it is worth
+using this feature). 
 .TP
 .I "handle-sigint"
 Captures the interrupt signal (Control-C) and displays a stack trace
@@ -770,11 +789,6 @@ delegate misuse.  Basically a delegate instance might be created,
 passed to unmanaged code, and no references kept in managed code,
 which will garbage collect the code.  With this option it is possible
 to track down the source of the problems. 
-.TP
-.I "break-on-unverified"
-If this variable is set, when the Mono VM runs into a verification
-problem, instead of throwing an exception it will break into the
-debugger.  This is useful when debugging verifier problems
 .TP
 .I "no-gdb-backtrace"
 This option will disable the GDB backtrace emitted by the runtime
