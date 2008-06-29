@@ -1,3 +1,8 @@
+2008-06-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c (ves_icall_System_ValueType_Equals): Avoid allocating objects
+	for any primitive type.
+
 2008-06-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (mono_array_new_specific): Optimize this and the other allocation
