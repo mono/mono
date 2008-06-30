@@ -26,10 +26,13 @@ namespace System.Web.Configuration
 	using System;
 	using System.Collections.Generic;
 	using System.Text;
+	using System.Reflection;
+	using System.IO;
 
 	internal class CapabilitiesResult : System.Web.HttpBrowserCapabilities
 	{
-		private string[] RandomRoboBotKeywords;
+		private static string[] RandomRoboBotKeywords;
+
 		/// <summary>
 		/// Initializes a new instance of the Result class.
 		/// </summary>
@@ -40,20 +43,21 @@ namespace System.Web.Configuration
 			: base()
 		{
 			base.Capabilities = items;
+		}
 
+		static CapabilitiesResult () {
 			//---------------------------------------------------------------
 			//Copies out a list of keywords stored in an Embeded file, which 
 			//will be used to help determine if a browser is 
 			//IsRandomRoboBotUserAgent.
 			//---------------------------------------------------------------
-			System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
-			System.IO.Stream CP;
-			CP = asm.GetManifestResourceStream("RandomRoboBotKeywords.txt");
-			System.IO.StreamReader Read = new System.IO.StreamReader(CP, System.Text.Encoding.Default);
-			RandomRoboBotKeywords = System.Text.RegularExpressions.Regex.Split(Read.ReadToEnd(), System.Environment.NewLine);
-			Read.Close();
-			Read = null;
+			Assembly asm = Assembly.GetExecutingAssembly();
+			Stream CP = asm.GetManifestResourceStream("RandomRoboBotKeywords.txt");
+			using (StreamReader Read = new StreamReader(CP, System.Text.Encoding.Default)) {
+				RandomRoboBotKeywords = System.Text.RegularExpressions.Regex.Split(Read.ReadToEnd(), System.Environment.NewLine);
+			}
 		}
+
 		/// <summary>
 		/// 
 		/// </summary>
