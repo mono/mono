@@ -564,12 +564,12 @@ namespace System.Resources
 			typeNames=null;
 		}
 		
-		internal class ResourceEnumerator : IDictionaryEnumerator
+		internal sealed class ResourceEnumerator : IDictionaryEnumerator
 		{
 			private ResourceReader reader;
 			private int index = -1;
-			private bool finished = false;
-			ResourceCacheItem[] cache;
+			private bool finished;
+			private ResourceCacheItem[] cache;
 			
 			internal ResourceEnumerator(ResourceReader readerToEnumerate)
 			{
@@ -582,7 +582,7 @@ namespace System.Resources
 				get { return index; }
 			}
 
-			public virtual DictionaryEntry Entry
+			public DictionaryEntry Entry
 			{
 				get {
 					if (reader.reader == null)
@@ -597,7 +597,7 @@ namespace System.Resources
 				}
 			}
 			
-			public virtual object Key
+			public object Key
 			{
 				get { 
 					if (reader.reader == null)
@@ -609,7 +609,7 @@ namespace System.Resources
 				}
 			}
 			
-			public virtual object Value
+			public object Value
 			{
 				get { 
 					if (reader.reader == null)
@@ -633,7 +633,7 @@ namespace System.Resources
 			}
 #endif
 			
-			public virtual object Current
+			public object Current
 			{
 				get {
 					/* Entry does the checking, no
@@ -643,7 +643,7 @@ namespace System.Resources
 				}
 			}
 			
-			public virtual bool MoveNext ()
+			public bool MoveNext ()
 			{
 				if (reader.reader == null)
 					throw new InvalidOperationException("ResourceReader is closed.");
@@ -654,10 +654,9 @@ namespace System.Resources
 				if (++index < reader.resourceCount){
 					return true;
 				}
-				else {
-					finished=true;
-					return false;
-				}
+
+				finished=true;
+				return false;
 			}
 			
 			public void Reset () {
@@ -671,11 +670,10 @@ namespace System.Resources
 			{
 				if (reader.reader == null)
 					return;
-
+					
 				ResourceCacheItem[] resources = new ResourceCacheItem [reader.resourceCount];				
 				reader.LoadResourceValues (resources);
 				cache = resources;
-
 			}
 		} // internal class ResourceEnumerator
 	}  // public sealed class ResourceReader
