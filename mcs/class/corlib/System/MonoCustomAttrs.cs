@@ -266,7 +266,9 @@ namespace System
 			if (attributeType == null)
 				throw new ArgumentNullException ("attributeType");
 
-			if (obj.GetType ().Assembly != typeof (int).Assembly)
+			/* Avoid calling .Assembly if possible */
+			Type otype = obj.GetType ();
+			if (otype != typeof (MonoType) && otype.Assembly != typeof (int).Assembly)
 				// User types might overwrite GetCustomAttributes () but not 
 				// IsDefined ().
 				return obj.GetCustomAttributes (attributeType, inherit).Length > 0;

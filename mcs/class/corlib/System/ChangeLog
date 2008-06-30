@@ -1,3 +1,8 @@
+2008-06-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* MonoCustomAttrs.cs (IsDefined): Avoid calling the .Assembly property in some
+	cases.
+
 2008-06-30  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* Char.cs: Fix formatting, rename wrong named param, remove code duplication
