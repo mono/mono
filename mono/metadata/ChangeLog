@@ -1,3 +1,10 @@
+2008-06-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* domain-internals.h (struct _MonoDomain): Add 'jit_code_hash_lock' field,
+	which is a low level lock protecting just the 'jit_code_hash' hash table.
+
+	* domain.c: Initialize+cleanup jit_code_hash_lock.
+	
 2008-06-30  Kornél Pál  <kornelpal@gmail.com>
 
 	* coree.c (mono_load_coree): Set coree_module_handle global variable only
