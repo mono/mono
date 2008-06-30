@@ -4054,13 +4054,11 @@ namespace Mono.CSharp {
 
 	public class SourceMethod : IMethodDef
 	{
-		DeclSpace parent;
 		MethodBase method;
 		SourceMethodBuilder builder;
 
 		protected SourceMethod (DeclSpace parent, MethodBase method, ICompileUnit file)
 		{
-			this.parent = parent;
 			this.method = method;
 			
 			builder = SymbolWriter.OpenMethod (file, parent.NamespaceEntry.SymbolFileID, this);
@@ -4934,9 +4932,9 @@ namespace Mono.CSharp {
 	// Encapsulates most of the Method's state
 	//
 	public class MethodData {
-
+#if GMCS_SOURCE
 		static FieldInfo methodbuilder_attrs_field;
-
+#endif
 		readonly IMethodData method;
 
 		public readonly GenericMethod GenericMethod;
