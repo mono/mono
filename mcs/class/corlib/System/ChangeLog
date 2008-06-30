@@ -1,3 +1,7 @@
+2008-06-30  Marek Safar  <marek.safar@gmail.com>
+
+	* String.cs: Tweaked hash code methods for better distibution, and speed-up.
+
 2008-06-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* MonoCustomAttrs.cs (IsDefined): Avoid calling the .Assembly property in some
