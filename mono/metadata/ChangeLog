@@ -1,4 +1,17 @@
-2008-06-26 Rodrigo Kumpera  <rkumpera@novell.com>
+2008-06-30  Kornél Pál  <kornelpal@gmail.com>
+
+	* coree.c (_CorValidateImage): Retain IMAGE_DIRECTORY_ENTRY_SECURITY
+	because that is platform independent. Check NumberOfRvaAndSizes in PE32
+	as well.
+	(MonoLoadImage): New wrapper function around LoadLibrary to ensure that the
+	image being loaded is a CLI image and _CorValidateImage gets called.
+
+	* coree.c: Add MonoLoadImage.
+
+	* image.c (mono_image_open_full): Load CLI images using MonoLoadImage
+	instead of LoadLibrary.
+
+2008-06-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall.c (ves_icall_System_ValueType_Equals): Avoid allocating objects
 	for any primitive type.
