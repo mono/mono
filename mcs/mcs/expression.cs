@@ -9542,8 +9542,10 @@ namespace Mono.CSharp {
 
 			initializers.Emit (ec);
 
-			if (variable == null)
+			if (variable == null) {
 				value_target.Emit (ec);
+				value_target = null;
+			}
 		}
 
 		public override void EmitStatement (EmitContext ec)

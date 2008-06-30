@@ -1,3 +1,8 @@
+2008-06-30  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #396987
+	* expression.cs (NewInitialize): Clear local temporary variable for next run
+
 2008-06-27  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #401020
