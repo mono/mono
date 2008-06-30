@@ -63,8 +63,8 @@ namespace System
 		{
 		}
 
-		public ContextMarshalException (string message, Exception innerException)
-			:base (message, innerException)
+		public ContextMarshalException (string message, Exception inner)
+			:base (message, inner)
 		{
 			HResult = Result;
 		}

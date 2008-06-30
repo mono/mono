@@ -62,8 +62,8 @@ namespace System
 		{
 		}
 
-		public FieldAccessException (string message, Exception innerException)
-			:base (message, innerException)
+		public FieldAccessException (string message, Exception inner)
+			:base (message, inner)
 		{
 			HResult = Result;
 		}

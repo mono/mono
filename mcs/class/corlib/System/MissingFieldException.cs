@@ -62,8 +62,8 @@ namespace System
 		{
 		}
 
-		public MissingFieldException (string message, Exception innerException)
-			: base (message, innerException)
+		public MissingFieldException (string message, Exception inner)
+			: base (message, inner)
 		{
 			HResult = Result;
 		}

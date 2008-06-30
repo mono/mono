@@ -62,8 +62,8 @@ namespace System
 		{
 		}
 
-		public EntryPointNotFoundException (string message, Exception innerException)
-			:base (message, innerException)
+		public EntryPointNotFoundException (string message, Exception inner)
+			:base (message, inner)
 		{
 			HResult = Result;
 		}

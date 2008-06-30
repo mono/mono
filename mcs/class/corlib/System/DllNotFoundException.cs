@@ -62,8 +62,8 @@ namespace System
 		{
 		}
 
-		public DllNotFoundException (string message, Exception innerException)
-			:base (message, innerException)
+		public DllNotFoundException (string message, Exception inner)
+			:base (message, inner)
 		{
 			HResult = Result;
 		}

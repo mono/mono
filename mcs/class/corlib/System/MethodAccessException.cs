@@ -62,8 +62,8 @@ namespace System
 		{
 		}
 
-		public MethodAccessException (string message, Exception innerException)
-			:base (message, innerException)
+		public MethodAccessException (string message, Exception inner)
+			:base (message, inner)
 		{
 			HResult = Result;
 		}
