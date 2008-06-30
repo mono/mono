@@ -1,3 +1,8 @@
+2008-06-30  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms.dll.sources: Remove the "new" X11 backend.  It
+	was never finished, is bit-rotted, and will likely never be finished.	
+
 2008-06-10  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* SWF.csproj, SWF2k5.csproj: Updated.

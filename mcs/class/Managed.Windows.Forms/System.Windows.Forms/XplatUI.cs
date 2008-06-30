@@ -38,7 +38,6 @@ using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Windows.Forms.X11Internal;
 
 namespace System.Windows.Forms {
 	internal class XplatUI {
@@ -84,9 +83,10 @@ namespace System.Windows.Forms {
 			default_class_name = "SWFClass" + System.Threading.Thread.GetDomainID().ToString();
 
 			if (RunningOnUnix) {
-				if (Environment.GetEnvironmentVariable ("not_supported_MONO_MWF_USE_NEW_X11_BACKEND") != null) {
-					driver=XplatUIX11_new.GetInstance ();
-				} else if (Environment.GetEnvironmentVariable ("MONO_MWF_MAC_FORCE_X11") != null) {
+				//if (Environment.GetEnvironmentVariable ("not_supported_MONO_MWF_USE_NEW_X11_BACKEND") != null) {
+				//        driver=XplatUIX11_new.GetInstance ();
+				//} else 
+				if (Environment.GetEnvironmentVariable ("MONO_MWF_MAC_FORCE_X11") != null) {
 					driver = XplatUIX11.GetInstance ();
 				} else {
 					IntPtr buf = Marshal.AllocHGlobal (8192);

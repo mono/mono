@@ -1,3 +1,7 @@
+2008-06-30  Jonathan Pobst  <monkey@jpobst.com>
+
+	* XPlatUI.cs: Remove references to "new" X11 backend.
+
 2008-06-28  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* Control.cs: Add an internal virtual OnDragDropEnd method 

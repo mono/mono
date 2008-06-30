@@ -904,11 +904,3 @@ System.Windows.Forms.WebBrowserDialogs/AlertCheck.cs
 System.Windows.Forms.WebBrowserDialogs/ConfirmCheck.cs
 System.Windows.Forms.WebBrowserDialogs/Generic.cs
 System.Windows.Forms.WebBrowserDialogs/Prompt.cs
-System.Windows.Forms.X11Internal/X11Atoms.cs
-System.Windows.Forms.X11Internal/X11Display.cs
-System.Windows.Forms.X11Internal/X11Exception.cs
-System.Windows.Forms.X11Internal/X11Hwnd.cs
-System.Windows.Forms.X11Internal/X11RootHwnd.cs
-System.Windows.Forms.X11Internal/X11ThreadQueue.cs
-System.Windows.Forms.X11Internal/Xlib.cs
-System.Windows.Forms.X11Internal/XplatUIX11-new.cs
