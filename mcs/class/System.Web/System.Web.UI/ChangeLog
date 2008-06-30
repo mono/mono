@@ -1,5 +1,8 @@
 2008-06-30  Marek Habersack  <mhabersack@novell.com>
 
+	* TemplateParser.cs: use atomic incrementation for automatic class
+	name creation to avoid Monitor Enter/Exit.
+
 	* UserControlParser.cs: hush the warnings and remove unnecessary
 	code.
 

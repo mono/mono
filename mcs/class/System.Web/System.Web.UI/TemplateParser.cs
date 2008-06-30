@@ -35,6 +35,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Security.Permissions;
+using System.Threading;
 using System.Web.Compilation;
 using System.Web.Configuration;
 using System.Web.Hosting;
@@ -984,7 +985,6 @@ namespace System.Web.UI {
 
 #if NET_2_0
 		static long autoClassCounter = 0;
-		static object autoClassCounterLock = new object ();
 #endif
 		
 		internal string ClassName {
@@ -1011,10 +1011,7 @@ namespace System.Web.UI {
 				if (String.IsNullOrEmpty (inFile)) {
 					// generate a unique class name
 					long suffix;
-					lock (autoClassCounterLock) {
-						suffix = autoClassCounter++;
-					}
-
+					suffix = Interlocked.Increment (ref autoClassCounter);
 					className = String.Format ("autoclass_nosource_{0:x}", suffix);
 					return className;
 				}
