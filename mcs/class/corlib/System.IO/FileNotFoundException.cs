@@ -63,8 +63,8 @@ namespace System.IO {
 			HResult = Result;
 		}
 
-		public FileNotFoundException (string message, Exception inner)
-			: base (message, inner)
+		public FileNotFoundException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 			HResult = Result;
 		}

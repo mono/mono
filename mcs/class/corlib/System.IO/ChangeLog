@@ -1,3 +1,15 @@
+2008-06-30  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* BinaryReader.cs: Fix parameter names
+	* BinaryWriter.cs: Fix parameter names, fix exceptions
+	* BufferedStream.cs: Fix parameter names
+	* Directory.cs: Fix parameter names, fix exceptions, optimize == "" cases
+	* DirectoryInfo.cs:
+	* DirectoryNotFoundException.cs:
+	* FileNotFoundException.cs:
+	* FileStream.cs: Fix parameter names, fix exceptions
+	* IOException.cs: Fix parameter names
+
 2008-06-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Path.cs: Fixed exception arguments to match MS. Removed obsolete

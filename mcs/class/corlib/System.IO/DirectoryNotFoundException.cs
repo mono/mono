@@ -54,8 +54,8 @@ namespace System.IO {
 		{
 		}
 
-		public DirectoryNotFoundException (string message, Exception inner)
-			: base (message, inner)
+		public DirectoryNotFoundException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 		}
 

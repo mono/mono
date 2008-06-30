@@ -58,8 +58,10 @@ namespace System.IO {
 		}
 
 		public BinaryWriter(Stream output, Encoding encoding) {
-			if (output == null || encoding == null) 
-				throw new ArgumentNullException(Locale.GetText ("Output or Encoding is a null reference."));
+			if (output == null) 
+				throw new ArgumentNullException("output");
+			if (encoding == null) 
+				throw new ArgumentNullException("encoding");
 			if (!output.CanWrite)
 				throw new ArgumentException(Locale.GetText ("Stream does not support writing or already closed."));
 
@@ -118,56 +120,56 @@ namespace System.IO {
 			OutStream.WriteByte(value);
 		}
 
-		public virtual void Write(byte[] value) {
+		public virtual void Write(byte[] buffer) {
 
 			if (disposed)
 				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
 
-			if (value == null)
-				throw new ArgumentNullException(Locale.GetText ("Byte buffer is a null reference."));
-			OutStream.Write(value, 0, value.Length);
+			if (buffer == null)
+				throw new ArgumentNullException("buffer");
+			OutStream.Write(buffer, 0, buffer.Length);
 		}
 
-		public virtual void Write(byte[] value, int offset, int length) {
+		public virtual void Write(byte[] buffer, int index, int count) {
 
 			if (disposed)
 				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
 
-			if (value == null)
-				throw new ArgumentNullException(Locale.GetText ("Byte buffer is a null reference."));
-			OutStream.Write(value, offset, length);
+			if (buffer == null)
+				throw new ArgumentNullException("buffer");
+			OutStream.Write(buffer, index, count);
 		}
 
-		public virtual void Write(char value) {
+		public virtual void Write(char ch) {
 
 			if (disposed)
 				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
 
 			char[] dec = new char[1];
-			dec[0] = value;
+			dec[0] = ch;
 			byte[] enc = m_encoding.GetBytes(dec, 0, 1);
 			OutStream.Write(enc, 0, enc.Length);
 		}
 		
-		public virtual void Write(char[] value) {
+		public virtual void Write(char[] chars) {
 
 			if (disposed)
 				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
 
-			if (value == null)
-				throw new ArgumentNullException(Locale.GetText ("Chars is a null reference."));
-			byte[] enc = m_encoding.GetBytes(value, 0, value.Length);
+			if (chars == null)
+				throw new ArgumentNullException("chars");
+			byte[] enc = m_encoding.GetBytes(chars, 0, chars.Length);
 			OutStream.Write(enc, 0, enc.Length);
 		}
 
-		public virtual void Write(char[] value, int offset, int length) {
+		public virtual void Write(char[] chars, int index, int count) {
 
 			if (disposed)
 				throw new ObjectDisposedException ("BinaryWriter", "Cannot write to a closed BinaryWriter");
 
-			if (value == null)
-				throw new ArgumentNullException(Locale.GetText ("Chars is a null reference."));
-			byte[] enc = m_encoding.GetBytes(value, offset, length);
+			if (chars == null)
+				throw new ArgumentNullException("chars");
+			byte[] enc = m_encoding.GetBytes(chars, index, count);
 			OutStream.Write(enc, 0, enc.Length);
 		}
 

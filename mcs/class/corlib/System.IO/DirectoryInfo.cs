@@ -222,9 +222,9 @@ namespace System.IO {
 			Delete (false);
 		}
 
-		public void Delete (bool recurse)
+		public void Delete (bool recursive)
 		{
-			Directory.Delete (FullPath, recurse);
+			Directory.Delete (FullPath, recursive);
 		}
 
 		public void MoveTo (string destDirName)

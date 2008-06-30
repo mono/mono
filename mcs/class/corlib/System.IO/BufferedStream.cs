@@ -50,20 +50,20 @@ namespace System.IO {
 		{
 		}
 
-		public BufferedStream (Stream stream, int buffer_size) 
+		public BufferedStream (Stream stream, int bufferSize) 
 		{
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
 			// LAMESPEC: documented as < 0
-			if (buffer_size <= 0)
-				throw new ArgumentOutOfRangeException ("buffer_size", "<= 0");
+			if (bufferSize <= 0)
+				throw new ArgumentOutOfRangeException ("bufferSize", "<= 0");
 			if (!stream.CanRead && !stream.CanWrite) {
 				throw new ObjectDisposedException (
 					Locale.GetText ("Cannot access a closed Stream."));
 			}
 
 			m_stream = stream;
-			m_buffer = new byte [buffer_size];
+			m_buffer = new byte [bufferSize];
 		}
 
 		public override bool CanRead {

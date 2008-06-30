@@ -1,5 +1,5 @@
 //
-// System.IO/FileStream.cs
+// System.IO.FileStream.cs
 //
 // Authors:
 // 	Dietmar Maurer (dietmar@ximian.com)
@@ -141,8 +141,8 @@ namespace System.IO
 		{
 		}
 
-		public FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool isAsync)
-			: this (path, mode, access, share, bufferSize, isAsync, FileOptions.None)
+		public FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool useAsync)
+			: this (path, mode, access, share, bufferSize, useAsync, FileOptions.None)
 		{
 		}
 
@@ -471,38 +471,38 @@ namespace System.IO
 			buf_dirty = true;
 		}
 
-		public override int Read ([In,Out] byte[] dest, int dest_offset, int count)
+		public override int Read ([In,Out] byte[] array, int offset, int count)
 		{
 			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
-			if (dest == null)
-				throw new ArgumentNullException ("destFile");
+			if (array == null)
+				throw new ArgumentNullException ("array");
 			if (!CanRead)
 				throw new NotSupportedException ("Stream does not support reading");
-			int len = dest.Length;
-			if (dest_offset < 0)
-				throw new ArgumentOutOfRangeException ("dest_offset", "< 0");
+			int len = array.Length;
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset", "< 0");
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count", "< 0");
-			if (dest_offset > len)
+			if (offset > len)
 				throw new ArgumentException ("destination offset is beyond array size");
 			// reordered to avoid possible integer overflow
-			if (dest_offset > len - count)
+			if (offset > len - count)
 				throw new ArgumentException ("Reading would overrun buffer");
 
 			if (async) {
-				IAsyncResult ares = BeginRead (dest, dest_offset, count, null, null);
+				IAsyncResult ares = BeginRead (array, offset, count, null, null);
 				return EndRead (ares);
 			}
 
-			return ReadInternal (dest, dest_offset, count);
+			return ReadInternal (array, offset, count);
 		}
 
-		int ReadInternal (byte [] dest, int dest_offset, int count)
+		int ReadInternal (byte [] dest, int offset, int count)
 		{
 			int copied = 0;
 
-			int n = ReadSegment (dest, dest_offset, count);
+			int n = ReadSegment (dest, offset, count);
 			copied += n;
 			count -= n;
 			
@@ -520,7 +520,7 @@ namespace System.IO
 				 */
 				FlushBuffer();
 				n = ReadData (handle, dest,
-					      dest_offset+copied,
+					      offset+copied,
 					      count);
 			
 				/* Make the next buffer read
@@ -530,7 +530,7 @@ namespace System.IO
 			} else {
 				RefillBuffer ();
 				n = ReadSegment (dest,
-						 dest_offset+copied,
+						 offset+copied,
 						 count);
 			}
 
@@ -541,8 +541,8 @@ namespace System.IO
 
 		delegate int ReadDelegate (byte [] buffer, int offset, int count);
 
-		public override IAsyncResult BeginRead (byte [] buffer, int offset, int count,
-							AsyncCallback cback, object state)
+		public override IAsyncResult BeginRead (byte [] array, int offset, int numBytes,
+							AsyncCallback userCallback, object stateObject)
 		{
 			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
@@ -550,71 +550,71 @@ namespace System.IO
 			if (!CanRead)
 				throw new NotSupportedException ("This stream does not support reading");
 
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
+			if (array == null)
+				throw new ArgumentNullException ("array");
 
-			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count", "Must be >= 0");
+			if (numBytes < 0)
+				throw new ArgumentOutOfRangeException ("numBytes", "Must be >= 0");
 
 			if (offset < 0)
 				throw new ArgumentOutOfRangeException ("offset", "Must be >= 0");
 
 			// reordered to avoid possible integer overflow
-			if (count > buffer.Length - offset)
-				throw new ArgumentException ("Buffer too small. count/offset wrong.");
+			if (numBytes > array.Length - offset)
+				throw new ArgumentException ("Buffer too small. numBytes/offset wrong.");
 
 			if (!async)
-				return base.BeginRead (buffer, offset, count, cback, state);
+				return base.BeginRead (array, offset, numBytes, userCallback, stateObject);
 
 			ReadDelegate r = new ReadDelegate (ReadInternal);
-			return r.BeginInvoke (buffer, offset, count, cback, state);
+			return r.BeginInvoke (array, offset, numBytes, userCallback, stateObject);
 		}
 		
-		public override int EndRead (IAsyncResult async_result)
+		public override int EndRead (IAsyncResult asyncResult)
 		{
-			if (async_result == null)
-				throw new ArgumentNullException ("async_result");
+			if (asyncResult == null)
+				throw new ArgumentNullException ("asyncResult");
 
 			if (!async)
-				return base.EndRead (async_result);
+				return base.EndRead (asyncResult);
 
-			AsyncResult ares = async_result as AsyncResult;
+			AsyncResult ares = asyncResult as AsyncResult;
 			if (ares == null)
-				throw new ArgumentException ("Invalid IAsyncResult", "async_result");
+				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
 
 			ReadDelegate r = ares.AsyncDelegate as ReadDelegate;
 			if (r == null)
-				throw new ArgumentException ("Invalid IAsyncResult", "async_result");
+				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
 
-			return r.EndInvoke (async_result);
+			return r.EndInvoke (asyncResult);
 		}
 
-		public override void Write (byte[] src, int src_offset, int count)
+		public override void Write (byte[] array, int offset, int count)
 		{
 			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
-			if (src == null)
-				throw new ArgumentNullException ("src");
-			if (src_offset < 0)
-				throw new ArgumentOutOfRangeException ("src_offset", "< 0");
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset", "< 0");
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count", "< 0");
 			// ordered to avoid possible integer overflow
-			if (src_offset > src.Length - count)
+			if (offset > array.Length - count)
 				throw new ArgumentException ("Reading would overrun buffer");
 			if (!CanWrite)
 				throw new NotSupportedException ("Stream does not support writing");
 
 			if (async) {
-				IAsyncResult ares = BeginWrite (src, src_offset, count, null, null);
+				IAsyncResult ares = BeginWrite (array, offset, count, null, null);
 				EndWrite (ares);
 				return;
 			}
 
-			WriteInternal (src, src_offset, count);
+			WriteInternal (array, offset, count);
 		}
 
-		void WriteInternal (byte [] src, int src_offset, int count)
+		void WriteInternal (byte [] src, int offset, int count)
 		{
 			if (count > buf_size) {
 				// shortcut for long writes
@@ -622,7 +622,7 @@ namespace System.IO
 
 				FlushBuffer ();
 
-				MonoIO.Write (handle, src, src_offset, count, out error);
+				MonoIO.Write (handle, src, offset, count, out error);
 				if (error != MonoIOError.ERROR_SUCCESS) {
 					// don't leak the path information for isolated storage
 					string fname = (anonymous) ? Path.GetFileName (name) : name;
@@ -635,7 +635,7 @@ namespace System.IO
 				int copied = 0;
 				while (count > 0) {
 					
-					int n = WriteSegment (src, src_offset + copied, count);
+					int n = WriteSegment (src, offset + copied, count);
 					copied += n;
 					count -= n;
 
@@ -650,8 +650,8 @@ namespace System.IO
 
 		delegate void WriteDelegate (byte [] buffer, int offset, int count);
 
-		public override IAsyncResult BeginWrite (byte [] buffer, int offset, int count,
-							AsyncCallback cback, object state)
+		public override IAsyncResult BeginWrite (byte [] array, int offset, int numBytes,
+							AsyncCallback userCallback, object stateObject)
 		{
 			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
@@ -659,58 +659,58 @@ namespace System.IO
 			if (!CanWrite)
 				throw new NotSupportedException ("This stream does not support writing");
 
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
+			if (array == null)
+				throw new ArgumentNullException ("array");
 
-			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count", "Must be >= 0");
+			if (numBytes < 0)
+				throw new ArgumentOutOfRangeException ("numBytes", "Must be >= 0");
 
 			if (offset < 0)
 				throw new ArgumentOutOfRangeException ("offset", "Must be >= 0");
 
 			// reordered to avoid possible integer overflow
-			if (count > buffer.Length - offset)
-				throw new ArgumentException ("Buffer too small. count/offset wrong.");
+			if (numBytes > array.Length - offset)
+				throw new ArgumentException ("array too small. numBytes/offset wrong.");
 
 			if (!async)
-				return base.BeginWrite (buffer, offset, count, cback, state);
+				return base.BeginWrite (array, offset, numBytes, userCallback, stateObject);
 
-			FileStreamAsyncResult result = new FileStreamAsyncResult (cback, state);
+			FileStreamAsyncResult result = new FileStreamAsyncResult (userCallback, stateObject);
 			result.BytesRead = -1;
-			result.Count = count;
-			result.OriginalCount = count;
+			result.Count = numBytes;
+			result.OriginalCount = numBytes;
 
 			if (buf_dirty) {
 				MemoryStream ms = new MemoryStream ();
 				FlushBufferToStream (ms);
-				ms.Write (buffer, offset, count);
+				ms.Write (array, offset, numBytes);
 				offset = 0;
-				count = (int) ms.Length;
+				numBytes = (int) ms.Length;
 			}
 
 			WriteDelegate w = new WriteDelegate (WriteInternal);
-			return w.BeginInvoke (buffer, offset, count, cback, state);			
+			return w.BeginInvoke (array, offset, numBytes, userCallback, stateObject);			
 		}
 		
-		public override void EndWrite (IAsyncResult async_result)
+		public override void EndWrite (IAsyncResult asyncResult)
 		{
-			if (async_result == null)
-				throw new ArgumentNullException ("async_result");
+			if (asyncResult == null)
+				throw new ArgumentNullException ("asyncResult");
 
 			if (!async) {
-				base.EndWrite (async_result);
+				base.EndWrite (asyncResult);
 				return;
 			}
 
-			AsyncResult ares = async_result as AsyncResult;
+			AsyncResult ares = asyncResult as AsyncResult;
 			if (ares == null)
-				throw new ArgumentException ("Invalid IAsyncResult", "async_result");
+				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
 
 			WriteDelegate w = ares.AsyncDelegate as WriteDelegate;
 			if (w == null)
-				throw new ArgumentException ("Invalid IAsyncResult", "async_result");
+				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
 
-			w.EndInvoke (async_result);
+			w.EndInvoke (asyncResult);
 			return;
 		}
 
@@ -773,7 +773,7 @@ namespace System.IO
 			return(buf_start);
 		}
 
-		public override void SetLength (long length)
+		public override void SetLength (long value)
 		{
 			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
@@ -784,22 +784,22 @@ namespace System.IO
 			if(CanWrite == false)
 				throw new NotSupportedException("The stream does not support writing");
 
-			if(length < 0)
-				throw new ArgumentOutOfRangeException("Length is less than 0");
+			if(value < 0)
+				throw new ArgumentOutOfRangeException("value is less than 0");
 			
 			Flush ();
 
 			MonoIOError error;
 			
-			MonoIO.SetLength (handle, length, out error);
+			MonoIO.SetLength (handle, value, out error);
 			if (error != MonoIOError.ERROR_SUCCESS) {
 				// don't leak the path information for isolated storage
 				string fname = (anonymous) ? Path.GetFileName (name) : name;
 				throw MonoIO.GetException (fname, error);
 			}
 
-			if (Position > length)
-				Position = length;
+			if (Position > value)
+				Position = value;
 		}
 
 		public override void Flush ()

@@ -102,20 +102,20 @@ namespace System.IO {
 			Dispose (true);
 		}
 
-		protected virtual void FillBuffer (int bytes)
+		protected virtual void FillBuffer (int numBytes)
 		{
 			if (m_disposed)
 				throw new ObjectDisposedException ("BinaryReader", "Cannot read from a closed BinaryReader.");
 			if (m_stream==null)
 				throw new IOException("Stream is invalid");
 			
-			CheckBuffer(bytes);
+			CheckBuffer(numBytes);
 
 			/* Cope with partial reads */
 			int pos=0;
 
-			while(pos<bytes) {
-				int n=m_stream.Read(m_buffer, pos, bytes-pos);
+			while(pos<numBytes) {
+				int n=m_stream.Read(m_buffer, pos, numBytes-pos);
 				if(n==0) {
 					throw new EndOfStreamException();
 				}

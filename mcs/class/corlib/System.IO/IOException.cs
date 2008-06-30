@@ -54,8 +54,8 @@ namespace System.IO {
 		{
 		}
 
-		public IOException (string message, Exception inner)
-			: base (message, inner)
+		public IOException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 		}
 

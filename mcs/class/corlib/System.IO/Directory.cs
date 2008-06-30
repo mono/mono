@@ -70,7 +70,7 @@ namespace System.IO
 			if (path == null)
 				throw new ArgumentNullException ("path");
 			
-			if (path == "")
+			if (path.Length == 0)
 				throw new ArgumentException ("Path is empty");
 			
 			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
@@ -134,7 +134,7 @@ namespace System.IO
 			if (path == null)
 				throw new ArgumentNullException ("path");
 			
-			if (path == "")
+			if (path.Length == 0)
 				throw new ArgumentException ("Path is empty");
 			
 			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
@@ -192,16 +192,14 @@ namespace System.IO
 			Directory.Delete (path);
 		}
 		
-		public static void Delete (string path, bool recurse)
+		public static void Delete (string path, bool recursive)
 		{
 			CheckPathExceptions (path);
 			
-			if (recurse == false){
+			if (recursive)
+				RecursiveDelete (path);
+			else
 				Delete (path);
-				return;
-			}
-
-			RecursiveDelete (path);
 		}
 
 		public static bool Exists (string path)
@@ -277,26 +275,26 @@ namespace System.IO
 			return GetDirectories (path, "*");
 		}
 		
-		public static string [] GetDirectories (string path, string pattern)
+		public static string [] GetDirectories (string path, string searchPattern)
 		{
-			return GetFileSystemEntries (path, pattern, FileAttributes.Directory, FileAttributes.Directory);
+			return GetFileSystemEntries (path, searchPattern, FileAttributes.Directory, FileAttributes.Directory);
 		}
 		
 #if NET_2_0
-		public static string [] GetDirectories (string path, string pattern, SearchOption option)
+		public static string [] GetDirectories (string path, string searchPattern, SearchOption option)
 		{
 			if (option == SearchOption.TopDirectoryOnly)
-				return GetDirectories (path, pattern);
+				return GetDirectories (path, searchPattern);
 			ArrayList all = new ArrayList ();
-			GetDirectoriesRecurse (path, pattern, all);
+			GetDirectoriesRecurse (path, searchPattern, all);
 			return (string []) all.ToArray (typeof (string));
 		}
 		
-		static void GetDirectoriesRecurse (string path, string pattern, ArrayList all)
+		static void GetDirectoriesRecurse (string path, string searchPattern, ArrayList all)
 		{
-			all.AddRange (GetDirectories (path, pattern));
+			all.AddRange (GetDirectories (path, searchPattern));
 			foreach (string dir in GetDirectories (path))
-				GetDirectoriesRecurse (dir, pattern, all);
+				GetDirectoriesRecurse (dir, searchPattern, all);
 		}
 #endif
 
@@ -310,9 +308,9 @@ namespace System.IO
 			return GetFiles (path, "*");
 		}
 		
-		public static string [] GetFiles (string path, string pattern)
+		public static string [] GetFiles (string path, string searchPattern)
 		{
-			return GetFileSystemEntries (path, pattern, FileAttributes.Directory, 0);
+			return GetFileSystemEntries (path, searchPattern, FileAttributes.Directory, 0);
 		}
 
 #if NET_2_0
@@ -325,11 +323,11 @@ namespace System.IO
 			return (string []) all.ToArray (typeof (string));
 		}
 		
-		static void GetFilesRecurse (string path, string pattern, ArrayList all)
+		static void GetFilesRecurse (string path, string searchPattern, ArrayList all)
 		{
-			all.AddRange (GetFiles (path, pattern));
+			all.AddRange (GetFiles (path, searchPattern));
 			foreach (string dir in GetDirectories (path))
-				GetFilesRecurse (dir, pattern, all);
+				GetFilesRecurse (dir, searchPattern, all);
 		}
 #endif
 
@@ -338,9 +336,9 @@ namespace System.IO
 			return GetFileSystemEntries (path, "*");
 		}
 
-		public static string [] GetFileSystemEntries (string path, string pattern)
+		public static string [] GetFileSystemEntries (string path, string searchPattern)
 		{
-			return GetFileSystemEntries (path, pattern, 0, 0);
+			return GetFileSystemEntries (path, searchPattern, 0, 0);
 		}
 		
 		public static string[] GetLogicalDrives ()
@@ -365,10 +363,10 @@ namespace System.IO
 		public static DirectoryInfo GetParent (string path)
 		{
 			if (path == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("path");
 			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("Path contains invalid characters");
-			if (path == "")
+			if (path.Length == 0)
 				throw new ArgumentException ("The Path do not have a valid format");
 
 			// return null if the path is the root directory
@@ -376,7 +374,7 @@ namespace System.IO
 				return null;
 
 			string parent_name = Path.GetDirectoryName (path);
-			if (parent_name == "")
+			if (parent_name.Length == 0)
 				parent_name = GetCurrentDirectory();
 
 			return new DirectoryInfo (parent_name);
@@ -390,10 +388,10 @@ namespace System.IO
 			if (destDirName == null)
 				throw new ArgumentNullException ("destDirName");
 
-			if (sourceDirName.Trim () == "" || sourceDirName.IndexOfAny (Path.InvalidPathChars) != -1)
+			if (sourceDirName.Trim ().Length == 0 || sourceDirName.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("Invalid source directory name: " + sourceDirName, "sourceDirName");
 
-			if (destDirName.Trim () == "" || destDirName.IndexOfAny (Path.InvalidPathChars) != -1)
+			if (destDirName.Trim ().Length == 0 || destDirName.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("Invalid target directory name: " + destDirName, "destDirName");
 
 			if (sourceDirName == destDirName)
@@ -417,14 +415,14 @@ namespace System.IO
 		}
 #endif
 
-		public static void SetCreationTime (string path, DateTime creation_time)
+		public static void SetCreationTime (string path, DateTime creationTime)
 		{
-			File.SetCreationTime (path, creation_time);
+			File.SetCreationTime (path, creationTime);
 		}
 
-		public static void SetCreationTimeUtc (string path, DateTime creation_time)
+		public static void SetCreationTimeUtc (string path, DateTime creationTimeUtc)
 		{
-			SetCreationTime (path, creation_time.ToLocalTime ());
+			SetCreationTime (path, creationTimeUtc.ToLocalTime ());
 		}
 
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
@@ -432,7 +430,7 @@ namespace System.IO
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
-			if (path.Trim () == String.Empty)
+			if (path.Trim ().Length == 0)
 				throw new ArgumentException ("path string must not be an empty string or whitespace string");
 
 			MonoIOError error;
@@ -446,24 +444,24 @@ namespace System.IO
 				throw MonoIO.GetException (path, error);
 		}
 
-		public static void SetLastAccessTime (string path, DateTime last_access_time)
+		public static void SetLastAccessTime (string path, DateTime lastAccessTime)
 		{
-			File.SetLastAccessTime (path, last_access_time);
+			File.SetLastAccessTime (path, lastAccessTime);
 		}
 
-		public static void SetLastAccessTimeUtc (string path, DateTime last_access_time)
+		public static void SetLastAccessTimeUtc (string path, DateTime lastAccessTimeUtc)
 		{
-			SetLastAccessTime (path, last_access_time.ToLocalTime ());
+			SetLastAccessTime (path, lastAccessTimeUtc.ToLocalTime ());
 		}
 
-		public static void SetLastWriteTime (string path, DateTime last_write_time)
+		public static void SetLastWriteTime (string path, DateTime lastWriteTime)
 		{
-			File.SetLastWriteTime (path, last_write_time);
+			File.SetLastWriteTime (path, lastWriteTime);
 		}
 
-		public static void SetLastWriteTimeUtc (string path, DateTime last_write_time)
+		public static void SetLastWriteTimeUtc (string path, DateTime lastWriteTimeUtc)
 		{
-			SetLastWriteTime (path, last_write_time.ToLocalTime ());
+			SetLastWriteTime (path, lastWriteTimeUtc.ToLocalTime ());
 		}
 
 		// private
@@ -471,8 +469,8 @@ namespace System.IO
 		private static void CheckPathExceptions (string path)
 		{
 			if (path == null)
-				throw new System.ArgumentNullException("Path is Null");
-			if (path == "")
+				throw new System.ArgumentNullException("path");
+			if (path.Length == 0)
 				throw new System.ArgumentException("Path is Empty");
 			if (path.Trim().Length == 0)
 				throw new ArgumentException ("Only blank characters in path");
@@ -480,18 +478,18 @@ namespace System.IO
 				throw new ArgumentException ("Path contains invalid chars");
 		}
 
-		private static string [] GetFileSystemEntries (string path, string pattern, FileAttributes mask, FileAttributes attrs)
+		private static string [] GetFileSystemEntries (string path, string searchPattern, FileAttributes mask, FileAttributes attrs)
 		{
-			if (path == null || pattern == null)
+			if (path == null || searchPattern == null)
 				throw new ArgumentNullException ();
 
-			if (pattern == String.Empty)
+			if (searchPattern.Length == 0)
 				return new string [] {};
 			
-			if (path.Trim () == "")
+			if (path.Trim ().Length == 0)
 				throw new ArgumentException ("The Path does not have a valid format");
 
-			string wild = Path.Combine (path, pattern);
+			string wild = Path.Combine (path, searchPattern);
 			string wildpath = Path.GetDirectoryName (wild);
 			if (wildpath.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("Path contains invalid characters");
@@ -519,12 +517,12 @@ namespace System.IO
 					throw new DirectoryNotFoundException ("Directory '" + wildpath + "' not found.");
 
 				if (path.IndexOfAny (SearchPattern.WildcardChars) == -1)
-					throw new ArgumentException ("Pattern is invalid", "pattern");
+					throw new ArgumentException ("Pattern is invalid", "searchPattern");
 
 				throw new ArgumentException ("Path is invalid", "path");
 			}
 
-			string path_with_pattern = Path.Combine (wildpath, pattern);
+			string path_with_pattern = Path.Combine (wildpath, searchPattern);
 			string [] result = MonoIO.GetFileSystemEntries (path, path_with_pattern, (int) attrs, (int) mask, out error);
 			if (error != 0)
 				throw MonoIO.GetException (wildpath, error);
