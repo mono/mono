@@ -111,6 +111,8 @@ namespace System.Resources
 		int dataSectionOffset;
 		long nameSectionOffset;
 		int resource_ver;
+		ResourceCacheItem[] cache;
+		object cache_lock = new object ();
 		
 		// Constructors
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
@@ -557,11 +559,12 @@ namespace System.Resources
 					reader.Close();
 				}
 			}
-
+			
 			reader=null;
 			hashes=null;
 			infos=null;
 			typeNames=null;
+			cache = null;
 		}
 		
 		internal sealed class ResourceEnumerator : IDictionaryEnumerator
@@ -569,7 +572,6 @@ namespace System.Resources
 			private ResourceReader reader;
 			private int index = -1;
 			private bool finished;
-			private ResourceCacheItem[] cache;
 			
 			internal ResourceEnumerator(ResourceReader readerToEnumerate)
 			{
@@ -582,18 +584,14 @@ namespace System.Resources
 				get { return index; }
 			}
 
-			public DictionaryEntry Entry
-			{
+			public DictionaryEntry Entry {
 				get {
 					if (reader.reader == null)
 						throw new InvalidOperationException("ResourceReader is closed.");
 					if (index < 0)
 						throw new InvalidOperationException("Enumeration has not started. Call MoveNext.");
 
-					DictionaryEntry entry = new DictionaryEntry();
-					entry.Key = Key;
-					entry.Value = Value;
-					return entry; 
+					return new DictionaryEntry(Key, Value);
 				}
 			}
 			
@@ -605,7 +603,7 @@ namespace System.Resources
 					if (index < 0)
 						throw new InvalidOperationException("Enumeration has not started. Call MoveNext.");
 
-					return cache [index].ResourceName;
+					return reader.cache [index].ResourceName;
 				}
 			}
 			
@@ -616,7 +614,7 @@ namespace System.Resources
 						throw new InvalidOperationException("ResourceReader is closed.");
 					if (index < 0)
 						throw new InvalidOperationException("Enumeration has not started. Call MoveNext.");
-					return cache [index].ResourceValue;
+					return reader.cache [index].ResourceValue;
 				}
 			}
 			
@@ -668,12 +666,17 @@ namespace System.Resources
 
 			void FillCache ()
 			{
-				if (reader.reader == null)
+				if (reader.cache != null)
 					return;
+				
+				lock (reader.cache_lock) {
+					if (reader.cache != null)
+						return;
 					
-				ResourceCacheItem[] resources = new ResourceCacheItem [reader.resourceCount];				
-				reader.LoadResourceValues (resources);
-				cache = resources;
+					ResourceCacheItem[] resources = new ResourceCacheItem [reader.resourceCount];				
+					reader.LoadResourceValues (resources);
+					reader.cache = resources;
+				}
 			}
 		} // internal class ResourceEnumerator
 	}  // public sealed class ResourceReader

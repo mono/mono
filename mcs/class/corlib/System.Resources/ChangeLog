@@ -1,5 +1,9 @@
 2008-06-30  Marek Safar  <marek.safar@gmail.com>
 
+	* ResourceReader.cs: Cache resources enumerator in ResourceReader.
+
+2008-06-30  Marek Safar  <marek.safar@gmail.com>
+
 	* ResourceReader.cs: Sealed ResourceEnumerator.
 
 2008-06-28  Rodrigo Kumpera  <rkumpera@novell.com>
