@@ -507,7 +507,9 @@ namespace Mono.Data.Tds.Protocol {
 				if (isBlob)
 					Comm.Skip (Comm.GetTdsShort ()); // Class ID
 
-				int index = result.Add (new TdsDataColumn ());
+				TdsDataColumn col = new TdsDataColumn ();
+				int index = result.Add (col);
+				col.ColumnType = columnType;
 				result[index]["NumericPrecision"] = precision;
 				result[index]["NumericScale"] = scale;
 				result[index]["ColumnSize"] = bufLength;

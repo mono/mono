@@ -667,7 +667,10 @@ namespace Mono.Data.Tds.Protocol {
 				}
 
 				string columnName = Comm.GetString (Comm.GetByte ());
-				int index = result.Add (new TdsDataColumn ());
+
+				TdsDataColumn col = new TdsDataColumn ();
+				int index = result.Add (col);
+				col.ColumnType = columnType;
 				result[index]["AllowDBNull"] = nullable;
 				result[index]["ColumnName"] = columnName;
 				result[index]["ColumnSize"] = columnSize;

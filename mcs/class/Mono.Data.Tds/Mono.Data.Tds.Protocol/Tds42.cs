@@ -272,15 +272,17 @@ namespace Mono.Data.Tds.Protocol {
 					bytesRead += 1;
 				}
 
-				int index = result.Add (new TdsDataColumn ());
-				result[index]["NumericPrecision"] = precision;
-				result[index]["NumericScale"] = scale;
-				result[index]["ColumnSize"] = bufLength;
-				result[index]["ColumnName"] = ColumnNames[index];
-				result[index]["ColumnType"] = columnType;
-				result[index]["BaseTableName"] = tableName;
-				result[index]["AllowDBNull"] = nullable;
-				result[index]["IsReadOnly"] = !writable;
+				TdsDataColumn col = new TdsDataColumn ();
+				int index = result.Add (col);
+				col.ColumnType = columnType;
+				col["NumericPrecision"] = precision;
+				col["NumericScale"] = scale;
+				col["ColumnSize"] = bufLength;
+				col["ColumnName"] = ColumnNames[index];
+				col["ColumnType"] = columnType;
+				col["BaseTableName"] = tableName;
+				col["AllowDBNull"] = nullable;
+				col["IsReadOnly"] = !writable;
 			}
 
 			return result;

@@ -31,31 +31,70 @@
 using System.Collections;
 
 namespace Mono.Data.Tds.Protocol {
-	public class TdsDataColumn : Hashtable
+	public class TdsDataColumn
 	{
-		#region Constructors
+		int column_ordinal;
+		TdsColumnType column_type;
+		string column_name;
+
+		Hashtable properties;
 
 		public TdsDataColumn ()
 		{
 			SetDefaultValues ();
 		}
 
-		#endregion // Constructors
+		public TdsColumnType ColumnType {
+			get {
+				return column_type;
+			}
+			set {
+				column_type = value;
+			}
+		}
+		
+		public string ColumnName {
+			get {
+				return column_name;
+			}
+			set {
+				column_name = value;
+			}
+		}
 
-		#region Methods
+		public int ColumnOrdinal {
+			get {
+				return column_ordinal;
+			}
+			set {
+				column_ordinal = value;
+			}
+		}
+
+		// This allows the storage of arbitrary properties in addition to the predefined ones
+		public object this [object key] {
+			get {
+				if (properties == null)
+					return null;
+				return properties [key];
+			}
+			set {
+				if (properties == null)
+					properties = new Hashtable ();
+				properties [key] = value;
+			}
+		}
+
+		static object bool_true = true;
+		static object bool_false = false;
 
 		private void SetDefaultValues ()
 		{
-			Add ("AllowDBNull", true);
-			Add ("ColumnOrdinal", 0);
-			Add ("IsAutoIncrement", false);
-			Add ("IsIdentity", false);
-			Add ("IsReadOnly", false);
-			Add ("IsRowVersion", false);
-			Add ("IsUnique", false);
-			Add ("IsHidden", false);
+			this ["IsAutoIncrement"] = bool_false;
+			this ["IsIdentity"] = bool_false;
+			this ["IsRowVersion"] = bool_false;
+			this ["IsUnique"] = bool_false;
+			this ["IsHidden"] = bool_false;
 		}
-
-		#endregion // Methods
 	}
 }

@@ -1,3 +1,10 @@
+2008-06-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* TdsDataColumn.cs: Do not inherit from Hashtable, add always set properties
+	as normal properties so code can access them without doing a hashtable lookup.
+
+	* Tds.cs Tds42.cs Tds50.cs Tds70.cs: Adapt to the TdsDataColumn changes.
+
 2008-06-09  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	Patch from Christian Hergert <christian.hergert@gmail.com>

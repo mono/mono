@@ -215,7 +215,7 @@ namespace Mono.Data.Tds.Protocol
 				throw new Exception ("Cannot Skip to a colindex less than the curr index");
 
 			while (colIndex != StreamColumnIndex) {
-				TdsColumnType colType = (TdsColumnType)Columns[StreamColumnIndex]["ColumnType"];
+				TdsColumnType colType = Columns[StreamColumnIndex].ColumnType;
 				if (!(colType == TdsColumnType.Image ||
 					colType == TdsColumnType.Text ||
 					colType == TdsColumnType.NText)) {
@@ -242,7 +242,7 @@ namespace Mono.Data.Tds.Protocol
 			if (colIndex != StreamColumnIndex)
 				SkipToColumnIndex (colIndex);
 
-			object o = GetColumnValue ((TdsColumnType)Columns[colIndex]["ColumnType"], false, colIndex);
+			object o = GetColumnValue (Columns[colIndex].ColumnType, false, colIndex);
 			StreamColumnIndex++;
 			return o;
 		}
@@ -256,7 +256,7 @@ namespace Mono.Data.Tds.Protocol
 					SkipToColumnIndex (colIndex);
 
 				if (!LoadInProgress)
-					BeginLoad ((TdsColumnType)Columns[colIndex]["ColumnType"]);
+					BeginLoad (Columns[colIndex].ColumnType);
 
 				if (buffer == null) {
 					return StreamLength;
@@ -1169,7 +1169,7 @@ namespace Mono.Data.Tds.Protocol
 
 			int i = 0;
 			foreach (TdsDataColumn column in columns) {
-				object o = GetColumnValue ((TdsColumnType) column["ColumnType"], false, i);
+				object o = GetColumnValue (column.ColumnType, false, i);
 				currentRow.Add (o);
 				if (doneProc)
 					outputParameters.Add (o);
