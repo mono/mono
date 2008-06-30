@@ -1,3 +1,13 @@
+2008-06-30  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpContext.cs: GetGlobalObjectFromFactory caches the
+	ResourceManager objects now. Patch from Zoltan Varga
+	<vargaz@gmail.com>, thanks!
+	The GetGlobalObjectFromFactory caches are thread local to avoid
+	locking.
+	GetResourceObject ResourceManager cache is now a thread local
+	Dictionary to avoid cloning.
+
 2008-06-27  Robert Jordan  <robertj@gmx.net>
 
 	* HttpCachePolicy.cs: map default HttpCacheability to

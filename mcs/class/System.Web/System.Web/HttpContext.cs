@@ -76,6 +76,10 @@ namespace System.Web {
 		bool _isProcessingInclude;
 
 #if NET_2_0
+		[ThreadStatic]
+		static ResourceProviderFactory provider_factory;
+		[ThreadStatic]
+		static Dictionary <string, IResourceProvider> resource_providers;
 		
 #if TARGET_JVM
 		const string app_global_res_key = "HttpContext.app_global_res_key";
@@ -84,7 +88,8 @@ namespace System.Web {
 			set { AppDomain.CurrentDomain.SetData (app_global_res_key, value); }
 		}
 #else
-		static Hashtable resourceManagerCache = new Hashtable ();
+		[ThreadStatic]
+		static Dictionary <ResourceManagerCacheKey, ResourceManager> resourceManagerCache;
 		RequestNotification _currentNotification;
 		internal static Assembly AppGlobalResourcesAssembly;
 #endif
@@ -443,15 +448,14 @@ namespace System.Web {
 		{
 			ResourceManager rm;
 			try {
+				if (resourceManagerCache == null)
+					resourceManagerCache = new Dictionary <ResourceManagerCacheKey, ResourceManager> ();
+				
 				ResourceManagerCacheKey key = new ResourceManagerCacheKey (classKey, assembly);
-				rm = (ResourceManager) resourceManagerCache [key];
-
-				if (rm == null) {
+				if (!resourceManagerCache.TryGetValue (key, out rm)) {
 					rm = new ResourceManager (classKey, assembly);
 					rm.IgnoreCase = true;
-					Hashtable tmp = (Hashtable) resourceManagerCache.Clone ();
-					tmp[key] = rm;
-					resourceManagerCache = tmp;
+					resourceManagerCache.Add (key, rm);
 				}
 				
 				return rm.GetObject (resourceKey, culture);
@@ -469,24 +473,37 @@ namespace System.Web {
 
 		static object GetGlobalObjectFromFactory (string classKey, string resourceKey, CultureInfo culture)
 		{
-			GlobalizationSection gs = WebConfigurationManager.GetSection ("system.web/globalization") as GlobalizationSection;
+			// FIXME: Retention of data
 
-			if (gs == null)
-				return null;
+			if (provider_factory == null) {
+				GlobalizationSection gs = WebConfigurationManager.GetSection ("system.web/globalization") as GlobalizationSection;
 
-			String rsfTypeName = gs.ResourceProviderFactoryType;
-			if (String.IsNullOrEmpty (rsfTypeName))
-				return null;
+				if (gs == null)
+					return null;
+
+				String rsfTypeName = gs.ResourceProviderFactoryType;
+				if (String.IsNullOrEmpty (rsfTypeName))
+					return null;
 			
-			Type rsfType = Type.GetType (rsfTypeName, true);
-			ResourceProviderFactory rpf = Activator.CreateInstance (rsfType) as ResourceProviderFactory;
+				Type rsfType = Type.GetType (rsfTypeName, true);
+				ResourceProviderFactory rpf = Activator.CreateInstance (rsfType) as ResourceProviderFactory;
 			
-			if (rpf == null)
-				return null;
+				if (rpf == null)
+					return null;
 
-			IResourceProvider rp = rpf.CreateGlobalResourceProvider (classKey);
-			if (rp == null)
-				return null;
+				provider_factory = rpf;
+			}
+
+			if (resource_providers == null)
+				resource_providers = new Dictionary <string, IResourceProvider> ();
+
+			IResourceProvider rp;
+			if (!resource_providers.TryGetValue (classKey, out rp)) {
+				rp = provider_factory.CreateGlobalResourceProvider (classKey);
+				if (rp == null)
+					return null;
+				resource_providers.Add (classKey, rp);
+			}
 
 			return rp.GetObject (resourceKey, culture);
 		}
