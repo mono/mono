@@ -74,9 +74,6 @@ namespace System.Web.UI {
 		internal bool isProperty;
 		internal ILocation location;
 		ArrayList otherTags;
-#if NET_2_0
-		static string privateBinPath;
-#endif
 		
 		public ControlBuilder ()
 		{

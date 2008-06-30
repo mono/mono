@@ -83,13 +83,8 @@ namespace System.Web.UI.WebControls {
 		private int idx;
 
 #if NET_2_0
-		//private int editIndex;
-		private int selectedIndex;
-
 		public DataList ()
 		{
-			//editIndex = -1;
-			selectedIndex = -1;
 			idx = -1;
 		}
 #else
@@ -633,7 +628,6 @@ namespace System.Web.UI.WebControls {
 			case ListItemType.AlternatingItem:
 			case ListItemType.SelectedItem:
 			case ListItemType.EditItem:
-				int index = item.ItemIndex;
 				if ((item.ItemType == ListItemType.EditItem) && (EditItemTemplate != null))
 					t = EditItemTemplate;
 				else if ((item.ItemType == ListItemType.SelectedItem) && (SelectedItemTemplate != null))

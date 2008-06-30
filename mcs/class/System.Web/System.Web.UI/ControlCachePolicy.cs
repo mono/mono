@@ -37,7 +37,6 @@ namespace System.Web.UI
 	{
 		BasePartialCachingControl bpcc;
 		bool cached;
-		bool supportsCaching;
 		
 		internal ControlCachePolicy () : this (null)
 		{

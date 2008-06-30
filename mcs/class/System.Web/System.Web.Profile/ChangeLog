@@ -1,3 +1,7 @@
+2008-06-30  Marek Habersack  <mhabersack@novell.com>
+
+	* SqliteProfileProvider.cs: remove unused method
+
 2008-05-30  Marek Habersack  <mhabersack@novell.com>
 
 	* ProfileModule.cs: do not use synthetized event accessors (to

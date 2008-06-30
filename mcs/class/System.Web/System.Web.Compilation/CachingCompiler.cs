@@ -106,7 +106,6 @@ namespace System.Web.Compilation
 				if (req == null)
 					throw new HttpException ("No current context, cannot compile.");
 				
-				int depLength = deps.Length;
 				for (int i = 0; i < deps.Length; i++)
 					deps [i] = req.MapPath (deps [i]);
 				
@@ -262,9 +261,10 @@ namespace System.Web.Compilation
 		static void GetExtraAssemblies (CompilerParameters options)
 		{
 			StringCollection refAsm = options.ReferencedAssemblies;
-			string asmName, asmLocation;
+			string asmLocation;
 			
 #if NET_2_0
+			string asmName;
 			ArrayList al = WebConfigurationManager.ExtraAssemblies;
 			
 			if (al != null && al.Count > 0) {

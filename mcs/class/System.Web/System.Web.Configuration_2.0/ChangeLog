@@ -1,3 +1,7 @@
+2008-06-30  Marek Habersack  <mhabersack@novell.com>
+
+	* CompilationSection.cs: hush the warnings
+
 2008-06-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* nBrowser/Node.cs nBrowser/Result.cs: Avoid looking up adapter types names for

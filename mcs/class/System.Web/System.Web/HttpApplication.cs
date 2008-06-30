@@ -1265,14 +1265,14 @@ namespace System.Web {
 		release:
 			eventHandler = Events [ReleaseRequestStateEvent];
 			if (eventHandler != null){
-#pragma warning disable 168
+#pragma warning disable 219
 				foreach (bool stop in RunHooks (eventHandler)) {
 					//
 					// Ignore the stop signal while release the state
 					//
 					
 				}
-#pragma warning restore 168
+#pragma warning restore 219
 			}
 			
 			if (stop_processing)

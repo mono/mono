@@ -775,7 +775,6 @@ namespace System.Web.Compilation
 			if (!isProperty && !isField)
 				return; // an "impossible" case
 			
-			Type declaringType = mi.DeclaringType;
 			CodeAssignStatement assign = new CodeAssignStatement ();
 			
 			assign.Left = new CodePropertyReferenceExpression (ctrlVar, memberName);
@@ -1455,13 +1454,15 @@ namespace System.Web.Compilation
 			CreateFrameworkInitializeMethod ();
 		}
 
+#if NET_2_0
 		void CallBaseFrameworkInitialize (CodeMemberMethod method)
 		{
 			CodeBaseReferenceExpression baseRef = new CodeBaseReferenceExpression ();
 			CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (baseRef, "FrameworkInitialize");
 			method.Statements.Add (invoke);
 		}
-
+#endif
+		
 		void CallSetStringResourcePointer (CodeMemberMethod method)
 		{
 			CodeFieldReferenceExpression stringResource = GetMainClassFieldReferenceExpression ("__stringResource");

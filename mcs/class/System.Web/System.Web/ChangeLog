@@ -1,5 +1,7 @@
 2008-06-30  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpRuntime.cs, HttpApplication.cs: hush the warnings
+
 	* HttpContext.cs: GetGlobalObjectFromFactory caches the
 	ResourceManager objects now. Patch from Zoltan Varga
 	<vargaz@gmail.com>, thanks!
@@ -7,6 +9,7 @@
 	locking.
 	GetResourceObject ResourceManager cache is now a thread local
 	Dictionary to avoid cloning.
+	Hush the warnings.
 
 2008-06-27  Robert Jordan  <robertj@gmx.net>
 

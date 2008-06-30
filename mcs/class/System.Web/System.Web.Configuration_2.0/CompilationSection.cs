@@ -55,7 +55,6 @@ namespace System.Web.Configuration
 		static ConfigurationProperty expressionBuildersProp;
 		static ConfigurationProperty urlLinePragmasProp;
 		static ConfigurationProperty codeSubDirectoriesProp;
-		static bool hosted;
 		
 		static CompilationSection ()
 		{

@@ -64,7 +64,6 @@ namespace System.Web.UI {
 	{
 		string inputFile;
 		string text;
-		string privateBinPath;
 		Hashtable mainAttributes;
 		ArrayList dependencies;
 		ArrayList assemblies;
@@ -600,9 +599,9 @@ namespace System.Web.UI {
 			linePragmasOn = GetBool (atts, "LinePragmas", false);
 			
 			string inherits = GetString (atts, "Inherits", null);
+#if NET_2_0
 			string srcRealPath = null;
 			
-#if NET_2_0
 			// In ASP 2, the source file is actually integrated with
 			// the generated file via the use of partial classes. This
 			// means that the code file has to be confirmed, but not
@@ -668,10 +667,8 @@ namespace System.Web.UI {
 #else
 			string src = GetString (atts, "Src", null);
 
-			if (src != null) {
-				srcRealPath = MapPath (src, false);
+			if (src != null)
 				srcAssembly = GetAssemblyFromSource (src);
-			}
 			
 			if (inherits != null)
 				SetBaseType (inherits);
@@ -884,6 +881,10 @@ namespace System.Web.UI {
 		internal abstract string DefaultBaseTypeName { get; }
 		internal abstract string DefaultDirectiveName { get; }
 
+		internal bool LinePragmasOn {
+			get { return linePragmasOn; }
+		}
+		
 #if NET_2_0
 		internal byte[] MD5Checksum {
 			get { return md5checksum; }
@@ -981,8 +982,10 @@ namespace System.Web.UI {
 			set { baseTypeIsGlobal = value; }
 		}
 
+#if NET_2_0
 		static long autoClassCounter = 0;
 		static object autoClassCounterLock = new object ();
+#endif
 		
 		internal string ClassName {
 			get {

@@ -691,8 +691,6 @@ namespace System.Web.Compilation {
 			}
 			
 			string fileVirtualPath;
-			string fileName;
-			
 			lock (buildCacheLock) {
 				foreach (VirtualFile f in files) {
 					fileVirtualPath = f.VirtualPath;
@@ -996,7 +994,6 @@ namespace System.Web.Compilation {
 			BuildKind buildKind = BuildKind.Unknown;
 			bool kindPushed = false;
 			string vpAbsolute = virtualPath.Absolute;
-			BuildItem vpBuildItem = null;
 			
 			acquired = AcquireCompilationTicket (virtualDir, out ticket);
 			try {
@@ -1024,7 +1021,6 @@ namespace System.Web.Compilation {
 					if (buildItemVp == vpAbsolute) {
 						if (!buildItem.ProcessedFine)
 							throw buildItem.ProcessingException;
-						vpBuildItem = buildItem;
 					} else if (!buildItem.ProcessedFine)
 						continue;
 

@@ -59,7 +59,6 @@ namespace System.Web.UI
 		string errorPage;
 		bool validateRequest;
 		string clientTarget;
-		Type baseType = typeof (Page);
 
 #if NET_2_0
 		bool async;

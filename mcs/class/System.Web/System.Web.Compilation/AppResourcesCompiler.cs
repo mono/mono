@@ -50,7 +50,6 @@ namespace System.Web.Compilation
 		public const string DefaultCultureKey = ".:!DefaultCulture!:.";
 		
 		bool isGlobal;
-		HttpContext context;
 		AppResourceFilesCollection files;
 		string tempDirectory;
 		string virtualPath;
@@ -70,7 +69,6 @@ namespace System.Web.Compilation
 		
 		public AppResourcesCompiler (HttpContext context)
 		{
-			this.context = context;
 			this.isGlobal = true;
 			this.files = new AppResourceFilesCollection (context);
 			this.cultureFiles = new Dictionary <string, List <string>> ();

@@ -47,12 +47,14 @@ namespace System.Web.Compilation
 		static readonly object errorEvent = new object ();
 		static readonly object tagParsedEvent = new object ();
 		static readonly object textParsedEvent = new object ();
-		
+
+#if NET_2_0
+		byte[] md5checksum;
+#endif
 		AspTokenizer tokenizer;
 		int beginLine, endLine;
 		int beginColumn, endColumn;
 		int beginPosition, endPosition;
-		byte[] md5checksum;
 		string filename;
 		string fileText;
 		string verbatimID;

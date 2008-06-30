@@ -47,15 +47,12 @@ namespace System.Web.Configuration
 		
 		static string keyEncryption;
 		static string keyValidation;
-		static bool noStore;
 		
 		static MachineKeyRegistryStorage ()
 		{
 			string appName = AppDomain.CurrentDomain.SetupInformation.ApplicationName;
-			if (appName == null) {
-				noStore = true;
+			if (appName == null)
 				return;
-			}
 			
 			string hash = appName.GetHashCode ().ToString ("x");
 			keyEncryption = "software\\mono\\asp.net\\" + Environment.Version.ToString () +

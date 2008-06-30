@@ -137,7 +137,7 @@ namespace System.Web {
 			PlatformID pid = Environment.OSVersion.Platform;
 			runningOnWindows = ((int) pid != 128 && (int) pid != 4);
 
-			if (runningOnWindows){
+			if (runningOnWindows) {
 				caseInsensitive = true;
 				isunc = new Uri (AppDomainAppPath).IsUnc;
 			} else {
@@ -338,7 +338,6 @@ namespace System.Web {
 #if !TARGET_J2EE
 #if NET_2_0
 		static readonly string[] app_offline_files = {"app_offline.htm", "App_Offline.htm", "APP_OFFLINE.HTM"};
-		static FileSystemWatcher[] app_offline_watchers;
 		static string app_offline_file;
 		
 		static bool AppIsOffline (HttpContext context)
@@ -553,6 +552,7 @@ namespace System.Web {
 			RealProcessRequest (request);
 		}
 
+#if TARGET_J2EE
 		//
 		// Callback to be invoked by IHttpAsyncHandler.BeginProcessRequest
 		//
@@ -563,7 +563,8 @@ namespace System.Web {
 			context.Request.ReleaseResources ();
 			context.Response.ReleaseResources ();
 		}
-
+#endif
+		
 #if TARGET_JVM
 		[MonoNotSupported]
 		public static void UnloadAppDomain ()
@@ -715,6 +716,7 @@ namespace System.Web {
 			}
 		}
 #endif // #if !TARGET_J2EE
+#endif
 		internal static bool RunningOnWindows {
 			get { return runningOnWindows; }
 		}
@@ -722,9 +724,9 @@ namespace System.Web {
 		internal static bool CaseInsensitive {
 			get { return caseInsensitive; }
 		}
-#endif
+
         
-        internal static TraceManager TraceManager {
+		internal static TraceManager TraceManager {
 			get {
 				return trace_manager;
 			}

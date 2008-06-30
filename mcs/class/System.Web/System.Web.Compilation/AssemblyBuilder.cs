@@ -489,21 +489,6 @@ namespace System.Web.Compilation {
 
 			foreach (CodeTypeMember member in membersToRemove)
 				targetMembers.Remove (member);
-		}		
-
-		bool TypeHasMember (CodeTypeDeclaration type, CodeMemberMethod member)
-		{
-			if (type == null || member == null)
-				return false;
-
-			CodeMemberMethod method = FindMemberByName (type, member.Name) as CodeMemberMethod;
-			if (method == null)
-				return false;
-
-			if (method.Parameters.Count != member.Parameters.Count)
-				return false;
-			
-			return true;
 		}
 
 		bool TypeHasMember (CodeTypeDeclaration type, CodeTypeMember member)
@@ -601,9 +586,17 @@ namespace System.Web.Compilation {
 				} catch (Exception) {}
 				
 #if DEBUG
-				Console.WriteLine ("Compilation failed. Errors:");
+				Console.WriteLine ("********************************************************************");
+				Console.WriteLine ("Compilation failed.");
+				Console.WriteLine ("Output:");
+				foreach (string s in results.Output)
+					Console.WriteLine ("  " + s);
+				Console.WriteLine ("\nErrors:");
 				foreach (CompilerError err in results.Errors)
 					Console.WriteLine (err);
+				Console.WriteLine ("File name: {0}", results.Errors [0].FileName);
+				Console.WriteLine ("File text:\n{0}\n", fileText);
+				Console.WriteLine ("********************************************************************");
 #endif
 				
 				throw new CompilationException (virtualPath != null ? virtualPath.Original : String.Empty, results, fileText);

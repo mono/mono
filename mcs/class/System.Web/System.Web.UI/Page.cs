@@ -74,8 +74,8 @@ namespace System.Web.UI
 #endif
 public partial class Page : TemplateControl, IHttpHandler
 {
-	static string machineKeyConfigPath = "system.web/machineKey";
 #if NET_2_0
+	static string machineKeyConfigPath = "system.web/machineKey";
 	private bool _eventValidation = true;
 	private object [] _savedControlState;
 	private bool _doLoadPreviousPage;
@@ -2554,29 +2554,31 @@ public partial class Page : TemplateControl, IHttpHandler
 		byte [] vk = MachineKeySectionUtils.ValidationKeyBytes (config);
 
 		switch (config.Validation) {
-		case MachineKeyValidation.SHA1:
-			transform = SHA1.Create ();
-			break;
+			case MachineKeyValidation.SHA1:
+				transform = SHA1.Create ();
+				break;
 
-		case MachineKeyValidation.MD5:
-			transform = MD5.Create ();
-			break;
+			case MachineKeyValidation.MD5:
+				transform = MD5.Create ();
+				break;
 
-		case MachineKeyValidation.AES:
-			if (cryptoStreamMode == CryptoStreamMode.Read){
-				transform = Rijndael.Create().CreateDecryptor(vk, AES_IV);
-			} else {
-				transform = Rijndael.Create().CreateEncryptor(vk, AES_IV);
-			}
-			break;
+			case MachineKeyValidation.AES:
+				InitializeEncryption ();
+				if (cryptoStreamMode == CryptoStreamMode.Read){
+					transform = Rijndael.Create().CreateDecryptor(vk, AES_IV);
+				} else {
+					transform = Rijndael.Create().CreateEncryptor(vk, AES_IV);
+				}
+				break;
 
-		case MachineKeyValidation.TripleDES:
-			if (cryptoStreamMode == CryptoStreamMode.Read){
-				transform = TripleDES.Create().CreateDecryptor(vk, TripleDES_IV);
-			} else {
-				transform = TripleDES.Create().CreateEncryptor(vk, TripleDES_IV);
-			}
-			break;
+			case MachineKeyValidation.TripleDES:
+				InitializeEncryption ();
+				if (cryptoStreamMode == CryptoStreamMode.Read){
+					transform = TripleDES.Create().CreateDecryptor(vk, TripleDES_IV);
+				} else {
+					transform = TripleDES.Create().CreateEncryptor(vk, TripleDES_IV);
+				}
+				break;
 		}
 
 		return transform;

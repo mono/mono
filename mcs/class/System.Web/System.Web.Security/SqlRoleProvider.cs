@@ -81,7 +81,7 @@ namespace System.Web.Security
 		{
 			DbParameter dbp = command.CreateParameter ();
 			dbp.ParameterName = parameterName;
-			dbp.Value = parameterValue = parameterValue;
+			dbp.Value = parameterValue;
 			dbp.Direction = direction;
 			dbp.DbType = type;
 			command.Parameters.Add (dbp);

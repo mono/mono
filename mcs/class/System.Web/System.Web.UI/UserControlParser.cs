@@ -132,14 +132,8 @@ namespace System.Web.UI
 		{
 #if NET_2_0
 			masterPage = GetString (atts, "MasterPageFile", null);
-			if (masterPage != null) {
-				// Make sure the page exists
-				if (masterPage != null) {
-					string path = MapPath (masterPage);
-//					BuildManager.GetCompiledType (masterPage);
-					AddDependency (masterPage);
-				}
-			}
+			if (masterPage != null)
+				AddDependency (masterPage);
 #endif
 
 			base.ProcessMainAttributes (atts);

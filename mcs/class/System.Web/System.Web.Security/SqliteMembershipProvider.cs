@@ -70,17 +70,6 @@ namespace System.Web.Security
                         command.Parameters.Add (dbp);
                         return dbp;
                 }
-
-                DbParameter AddParameter (DbCommand command, string parameterName, ParameterDirection direction, DbType type, object parameterValue)
-                {
-                        DbParameter dbp = command.CreateParameter ();
-                        dbp.ParameterName = parameterName;
-                        dbp.Value = parameterValue;
-                        dbp.Direction = direction;
-                        dbp.DbType = type;
-                        command.Parameters.Add (dbp);
-                        return dbp;
-                }
 		
 		/// <summary>
 		/// System.Configuration.Provider.ProviderBase.Initialize Method.

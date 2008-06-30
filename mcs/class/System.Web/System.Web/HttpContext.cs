@@ -90,7 +90,6 @@ namespace System.Web {
 #else
 		[ThreadStatic]
 		static Dictionary <ResourceManagerCacheKey, ResourceManager> resourceManagerCache;
-		RequestNotification _currentNotification;
 		internal static Assembly AppGlobalResourcesAssembly;
 #endif
 		ProfileBase profile = null;

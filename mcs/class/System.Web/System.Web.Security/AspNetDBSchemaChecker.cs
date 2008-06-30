@@ -63,7 +63,7 @@ namespace System.Web.Security
 				try {
 					command.ExecuteNonQuery ();
 				}
-				catch (Exception ex) {
+				catch (Exception) {
 					throw new ProviderException ("ASP.NET Membership schema not installed.");
 				}
 

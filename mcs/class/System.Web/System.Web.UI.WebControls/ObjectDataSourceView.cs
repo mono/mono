@@ -62,7 +62,6 @@ namespace System.Web.UI.WebControls
 		string startRowIndexParameterName = null;
 		string typeName = null;
 		string updateMethod = null;
-		private static string privateBinPath = null;
 
 		bool isTrackingViewState = false;
 		ParameterCollection selectParameters;

@@ -116,10 +116,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-	    [DefaultValueAttribute (null)]
+		[DefaultValueAttribute (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [EditorAttribute ("System.Web.UI.Design.WebControls.MenuBindingsEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-	    [MergablePropertyAttribute (false)]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.MenuBindingsEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[MergablePropertyAttribute (false)]
 		public MenuItemBindingCollection DataBindings {
 			get {
 				if (dataBindings == null) {
@@ -1603,11 +1603,6 @@ namespace System.Web.UI.WebControls
 
 		private bool DisplayChildren (MenuItem item) {
 			return (item.Depth + 1 < StaticDisplayLevels + MaximumDynamicDisplayLevels) && item.ChildItems.Count > 0;
-		}
-
-		static string MakeHandlerJavaScript (string handlerName, string param1, string param2, string param3)
-		{
-			return "javascript:Menu_" + handlerName + "('" + param1 + "','" + param2 + "'," + param3 + ")";
 		}
 		
 		internal void RenderItem (HtmlTextWriter writer, MenuItem item, int position) {

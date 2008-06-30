@@ -255,12 +255,14 @@ namespace System.Web.Compilation
 #endif
 		}
 		
+#if NET_2_0
 		void InitParser (string filename)
 		{
 			StreamReader reader = new StreamReader (filename, WebEncoding.FileEncoding);
 			InitParser (reader, filename);
 		}
-
+#endif
+		
 		public void Parse (string file)
 		{
 #if ONLY_1_1
@@ -354,7 +356,6 @@ namespace System.Web.Compilation
 			if (req == null)
 				throw new HttpException ("No current context, cannot compile.");
 
-			int depLength = deps.Length;
 			for (int i = 0; i < deps.Length; i++)
 				deps [i] = req.MapPath (deps [i]);			
 
@@ -620,8 +621,8 @@ namespace System.Web.Compilation
 					if (tmp is System.Web.UI.WebControls.ContentBuilderInternal)
 						continue;
 					
-					if (!(tmp.ControlType is System.Web.UI.WebControls.Content))
-						return true;					
+					if (tmp.ControlType != typeof (System.Web.UI.WebControls.Content))
+						return true;
 				}
 			}
 

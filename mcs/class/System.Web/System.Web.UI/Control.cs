@@ -806,7 +806,7 @@ namespace System.Web.UI
 				try {
 					if (c._userId != null)
 						_controlsCache.Add (c._userId, c);
-				} catch (ArgumentException ex) {
+				} catch (ArgumentException) {
 					throw new HttpException (
 						"Multiple controls with the same ID '" + 
 						c._userId + 

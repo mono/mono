@@ -1,11 +1,20 @@
 2008-06-30  Marek Habersack  <mhabersack@novell.com>
 
+	* UserControlParser.cs: hush the warnings and remove unnecessary
+	code.
+
+	* ControlCachePolicy.cs, PageParser.cs, ControlBuilder.cs,
+	TemplateParser.cs, SimpleWebHandlerParser.cs, TemplateControl.cs,
+	ApplicationFileParser.cs: hush the warnings
+
 	* Page.cs: Context is protected internal in .NET 3.5
+	Initialize encryption IVs before returning the transform.
 
 	* Control.cs: in 2.0 we should return the context associated with
 	the current page. In 1.0 we ignore the never set field _context
 	and keep walking up the parent chain. Also, Context is protected
 	internal in .NET 3.5
+	Hush the warnings.
 
 2008-06-27  Zoltan Varga  <vargaz@gmail.com>
 

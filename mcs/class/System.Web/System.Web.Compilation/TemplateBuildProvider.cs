@@ -93,8 +93,6 @@ namespace System.Web.Compilation
 				return null;
 			
 			ArrayList al = parser.Assemblies;
-			int count;
-			
 			if (al == null || al.Count == 0)
 				return null;
 

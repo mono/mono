@@ -55,14 +55,16 @@ namespace System.Web.UI
 		ArrayList assemblies;
 		ArrayList dependencies;
 		Hashtable anames;
-		string privateBinPath;
 		string baseDir;
 		string baseVDir;
 #if !NET_2_0
 		CompilationConfiguration compilationConfig;
 #endif
-		TextReader reader;
 
+#if NET_2_0
+		TextReader reader;
+#endif
+		
 		int appAssemblyIndex = -1;
 		Type cachedType;
 
@@ -72,7 +74,9 @@ namespace System.Web.UI
 		
 		internal SimpleWebHandlerParser (HttpContext context, string virtualPath, string physicalPath, TextReader reader)
 		{
+#if NET_2_0
 			this.reader = reader;
+#endif
 			cachedType = CachingCompiler.GetTypeFromCache (physicalPath);
 			if (cachedType != null)
 				return; // We don't need anything else.
@@ -369,7 +373,7 @@ namespace System.Web.UI
 			try {
 				assembly = Assembly.LoadWithPartialName (name);
 			} catch (Exception e) {
-				ex = null;
+				ex = e;
 				assembly = null;
 			}
 

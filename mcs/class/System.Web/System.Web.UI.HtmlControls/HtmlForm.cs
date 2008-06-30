@@ -290,7 +290,9 @@ namespace System.Web.UI.HtmlControls
 			 * Fixes bug #82596
 			 */
 			if (ID == null) {
+#pragma warning disable 219
 				string client = ClientID;
+#pragma warning restore 219
 			}
 			
 			string submit = Page.GetSubmitStatements ();

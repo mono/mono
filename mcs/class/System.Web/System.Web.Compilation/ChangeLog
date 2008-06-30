@@ -1,3 +1,15 @@
+2008-06-30  Marek Habersack  <mhabersack@novell.com>
+
+	* AspGenerator.cs: hush the warnings and fix invalid type
+	comparison.
+
+	* AssemblyBuilder.cs: hush the warnings and add some debugging
+	CWLs.
+
+	* AspParser.cs, AppResourcesCompiler.cs, TemplateBuildProvider.cs,
+	CachingCompiler.cs, BaseCompiler.cs, TemplateControlCompiler.cs,
+	SimpleBuildProvider.cs, BuildManager.cs: hush the warnings
+
 2008-06-18  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: AddChildCall properly processes the

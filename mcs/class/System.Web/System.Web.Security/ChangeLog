@@ -1,3 +1,10 @@
+2008-06-30  Marek Habersack  <mhabersack@novell.com>
+
+	* SqliteMembershipProvider.cs, SqliteRoleProvider.cs: remove
+	unused method
+
+	* SqlRoleProvider.cs, AspNetDBSchemaChecker.cs: hush the warnings
+
 2008-05-30  Marek Habersack  <mhabersack@novell.com>
 
 	* AnonymousIdentificationModule.cs, FormsAuthenticationModule.cs,

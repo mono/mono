@@ -112,7 +112,7 @@ namespace System.Web.UI
 		}
 		
 #if NET_2_0
-		 internal TextReader Reader {
+		 internal override TextReader Reader {
                         get { return reader; }
                         set { reader = value; }
                 }
