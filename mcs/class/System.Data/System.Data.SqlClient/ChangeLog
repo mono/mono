@@ -1,3 +1,8 @@
+2008-06-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* SqlDataReader.cs: Allocate 'schemaTable' lazily. 
+	(GetSchemaValue): Avoid some hash table lookups
+
 2008-06-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* SqlDataReader.cs (ConstructSchemaTable): Avoid unneccessary reflection calls.

@@ -81,7 +81,6 @@ namespace System.Data.SqlClient
 			haveRead = false;
 			readResultUsed = false;
 			this.command = command;
-			schemaTable = ConstructSchemaTable ();
 			resultsRead = 0;
 			fieldCount = 0;
 			isClosed = false;
@@ -236,7 +235,8 @@ namespace System.Data.SqlClient
 		{
 			if (!disposed) {
 				if (disposing) {
-					schemaTable.Dispose ();
+					if (schemaTable != null)
+						schemaTable.Dispose ();
 					Close ();
 					command = null;
 				}
@@ -459,6 +459,8 @@ namespace System.Data.SqlClient
 #endif // NET_2_0
 		Type GetFieldType (int i)
 		{
+			if (schemaTable == null)
+				schemaTable = ConstructSchemaTable ();
 			if (i < 0 || i >= schemaTable.Rows.Count)
 				throw new IndexOutOfRangeException ();
 			return (Type) schemaTable.Rows[i]["DataType"];
@@ -540,6 +542,8 @@ namespace System.Data.SqlClient
 #endif // NET_2_0
 		string GetName (int i)
 		{
+			if (schemaTable == null)
+				schemaTable = ConstructSchemaTable ();
 			return (string) schemaTable.Rows[i]["ColumnName"];
 		}
 
@@ -549,6 +553,8 @@ namespace System.Data.SqlClient
 #endif // NET_2_0
 		int GetOrdinal (string name)
 		{
+			if (schemaTable == null)
+				schemaTable = ConstructSchemaTable ();
 			foreach (DataRow schemaRow in schemaTable.Rows)
 				if (((string) schemaRow ["ColumnName"]).Equals (name))
 					return (int) schemaRow ["ColumnOrdinal"];
@@ -565,6 +571,9 @@ namespace System.Data.SqlClient
 		DataTable GetSchemaTable ()
 		{
 			ValidateState ();
+
+			if (schemaTable == null)
+				schemaTable = ConstructSchemaTable ();
 
 			if (schemaTable.Rows != null && schemaTable.Rows.Count > 0)
 				return schemaTable;
@@ -775,9 +784,11 @@ namespace System.Data.SqlClient
 
 		private static object GetSchemaValue (TdsDataColumn schema, object key)
 		{
-			if (schema.ContainsKey (key) && schema [key] != null)
-				return schema [key];
-			return DBNull.Value;
+			object val = schema [key];
+			if (val != null)
+				return val;
+			else
+				return DBNull.Value;
 		}
 
 		public
@@ -960,6 +971,9 @@ namespace System.Data.SqlClient
 #endif
 		object GetSqlValue (int i)
 		{
+			if (schemaTable == null)
+				schemaTable = ConstructSchemaTable ();
+
 			SqlDbType type = (SqlDbType) (schemaTable.Rows [i]["ProviderType"]);
 			object value = GetValue (i);
 
@@ -1045,6 +1059,9 @@ namespace System.Data.SqlClient
 #endif
 		int GetSqlValues (object[] values)
 		{
+			if (schemaTable == null)
+				schemaTable = ConstructSchemaTable ();
+
 			int count = 0;
 			int columnCount = schemaTable.Rows.Count;
 			int arrayCount = values.Length;
@@ -1165,7 +1182,7 @@ namespace System.Data.SqlClient
 				command.GetOutputParameters ();
 			else {
 				//new schema
-				schemaTable = ConstructSchemaTable ();
+				schemaTable = null;
 				GetSchemaTable ();
 			}
 
