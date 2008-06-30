@@ -14439,6 +14439,45 @@
       </method>
     </type>
   </test>
+  <test name="gtest-initialize-08.cs">
+    <type name="T">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Z[] get_Prop()">
+        <size>7</size>
+      </method>
+      <method name="Void set_Prop(Z[])">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="Z">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void .ctor(String)">
+        <size>70</size>
+      </method>
+      <method name="Void .ctor(Int32)">
+        <size>70</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-iter-01.cs">
     <type name="C">
       <method name="Void .ctor()">
@@ -30452,6 +30491,22 @@
     <type name="App">
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-651.cs">
+    <type name="Foo">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Open(IList)">
+        <size>1</size>
+      </method>
+      <method name="Void Open(System.Collections.ArrayList ByRef)">
+        <size>20</size>
       </method>
       <method name="Void Main()">
         <size>1</size>
