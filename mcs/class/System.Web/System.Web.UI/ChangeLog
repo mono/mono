@@ -1,3 +1,12 @@
+2008-06-30  Marek Habersack  <mhabersack@novell.com>
+
+	* Page.cs: Context is protected internal in .NET 3.5
+
+	* Control.cs: in 2.0 we should return the context associated with
+	the current page. In 1.0 we ignore the never set field _context
+	and keep walking up the parent chain. Also, Context is protected
+	internal in .NET 3.5
+
 2008-06-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* Control.cs (ResolveAdapter): Avoid calling the Context property getter 

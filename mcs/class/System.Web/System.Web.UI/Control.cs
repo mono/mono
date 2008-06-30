@@ -93,7 +93,6 @@ namespace System.Web.UI
 		Page _page;
 		Control _parent;
 		ISite _site;
-		HttpContext _context;
 		StateBag _viewState;
 		EventHandlerList _events;
 		RenderMethod _renderMethodDelegate;
@@ -516,16 +515,25 @@ namespace System.Web.UI
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		protected virtual HttpContext Context { //DIT
+#if NET_2_0
+		protected internal
+#else
+		protected
+#endif
+		virtual HttpContext Context { //DIT
 			get {
-				HttpContext context;
-				if (_context != null)
-					return _context;
+#if NET_2_0
+				Page page = Page;
+				if (page != null)
+					return page.Context;
+#else
 				if (_parent == null)
 					return HttpContext.Current;
-				context = _parent.Context;
+				HttpContext context = _parent.Context;
 				if (context != null)
 					return context;
+#endif
+				
 				return HttpContext.Current;
 			}
 		}

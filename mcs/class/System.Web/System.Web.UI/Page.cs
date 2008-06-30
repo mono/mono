@@ -280,7 +280,12 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 #endif
 
-	protected override HttpContext Context {
+#if NET_2_0
+	protected internal
+#else
+	protected
+#endif
+	override HttpContext Context {
 		get {
 			if (_context == null)
 				return HttpContext.Current;
