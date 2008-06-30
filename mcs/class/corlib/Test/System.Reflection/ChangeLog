@@ -1,3 +1,7 @@
+2008-06-30  Rodrigo Kumpera <rkumpera@novell.com>
+
+	* MethodBase.cs: Fix the 1.0 build.
+
 2008-06-27  Rodrigo Kumpera <rkumpera@novell.com>
 
 	* MethodBase.cs: Added tests for GetMethodFromToken.

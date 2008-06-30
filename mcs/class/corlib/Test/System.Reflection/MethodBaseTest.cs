@@ -33,6 +33,7 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Reflection
 {
+#if NET_2_0
 	public class Generic<T> {
 		public void Foo () {
 		}
@@ -52,6 +53,7 @@ namespace MonoTests.System.Reflection
 
 		}
 	}
+#endif
 
 	[TestFixture]
 	public class MethodBaseTest
