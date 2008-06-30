@@ -1,3 +1,8 @@
+2008-06-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c: Use domain->jit_code_hash_lock for controlling access to
+	domain->jit_code_hash.
+
 2008-06-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_parse_debug_options): Add 'dont-free-domains' option.
