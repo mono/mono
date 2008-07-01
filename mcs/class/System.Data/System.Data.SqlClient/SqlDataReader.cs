@@ -583,32 +583,53 @@ namespace System.Data.SqlClient
 
 			fieldCount = 0;
 
-			dataTypeNames = new ArrayList ();
+			dataTypeNames = new ArrayList (command.Tds.Columns.Count);
+			DataColumnCollection cols = schemaTable.Columns;
+			int columnNameIdx = cols.IndexOf ("ColumnName");
+			int columnOrdinalIdx = cols.IndexOf ("ColumnOrdinal");
+			int isUniqueIdx = cols.IndexOf ("IsUnique");
+			int isAutoIncrementIdx = cols.IndexOf ("IsAutoIncrement");
+			int isRowVersionIdx = cols.IndexOf ("IsRowVersion");
+			int isHiddenIdx = cols.IndexOf ("IsHidden");
+			int isIdentifyIdx = cols.IndexOf ("IsIdentity");
+			int columnSizeIdx = cols.IndexOf ("ColumnSize");
+			int numericPrecisionIdx = cols.IndexOf ("NumericPrecision");
+			int numerocScaleIdx = cols.IndexOf ("NumericScale");
+			int isKeyIdx = cols.IndexOf ("IsKey");
+			int isAliasedIdx = cols.IndexOf ("IsAliased");
+			int isExpressionIdx = cols.IndexOf ("IsExpression");
+			int isReadOnlyIdx = cols.IndexOf ("IsReadOnly");
+			int baseServerNameIdx = cols.IndexOf ("BaseServerName");
+			int baseCatalogNameIdx = cols.IndexOf ("BaseCatalogName");
+			int baseColumnNameIdx = cols.IndexOf ("BaseColumnName");
+			int baseSchemaNameIdx = cols.IndexOf ("BaseSchemaName");
+			int baseTableNameIdx = cols.IndexOf ("BaseTableName");
+			int allowDBNullIdx = cols.IndexOf ("AllowDBNull");
 
 			foreach (TdsDataColumn schema in command.Tds.Columns) {
 				DataRow row = schemaTable.NewRow ();
 
 #if NET_2_0
-				row ["ColumnName"]		= GetSchemaValue (schema.ColumnName);
-				row ["ColumnOrdinal"]		= GetSchemaValue (schema.ColumnOrdinal);
-				row ["IsUnique"]		= GetSchemaValue (schema.IsUnique);
-				row ["IsAutoIncrement"]		= GetSchemaValue (schema.IsAutoIncrement);
-				row ["IsRowVersion"]		= GetSchemaValue (schema.IsRowVersion);
-				row ["IsHidden"]		= GetSchemaValue (schema.IsHidden);
-				row ["IsIdentity"]		= GetSchemaValue (schema.IsIdentity);
-				row ["ColumnSize"]		= GetSchemaValue (schema.ColumnSize);
-				row ["NumericPrecision"]	= GetSchemaValue (schema.NumericPrecision);
-				row ["NumericScale"]		= GetSchemaValue (schema.NumericScale);
-				row ["IsKey"]			= GetSchemaValue (schema.IsKey);
-				row ["IsAliased"]		= GetSchemaValue (schema.IsAliased);
-				row ["IsExpression"]		= GetSchemaValue (schema.IsExpression);
-				row ["IsReadOnly"]		= GetSchemaValue (schema.IsReadOnly);
-				row ["BaseServerName"]		= GetSchemaValue (schema.BaseServerName);
-				row ["BaseCatalogName"]		= GetSchemaValue (schema.BaseCatalogName);
-				row ["BaseColumnName"]		= GetSchemaValue (schema.BaseColumnName);
-				row ["BaseSchemaName"]		= GetSchemaValue (schema.BaseSchemaName);
-				row ["BaseTableName"]		= GetSchemaValue (schema.BaseTableName);
-				row ["AllowDBNull"]		= GetSchemaValue (schema.AllowDBNull);
+				row [columnNameIdx]		= GetSchemaValue (schema.ColumnName);
+				row [columnOrdinalIdx]		= GetSchemaValue (schema.ColumnOrdinal);
+				row [isUniqueIdx]		= GetSchemaValue (schema.IsUnique);
+				row [isAutoIncrementIdx]		= GetSchemaValue (schema.IsAutoIncrement);
+				row [isRowVersionIdx]		= GetSchemaValue (schema.IsRowVersion);
+				row [isHiddenIdx]		= GetSchemaValue (schema.IsHidden);
+				row [isIdentifyIdx]		= GetSchemaValue (schema.IsIdentity);
+				row [columnSizeIdx]		= GetSchemaValue (schema.ColumnSize);
+				row [numericPrecisionIdx]	= GetSchemaValue (schema.NumericPrecision);
+				row [numerocScaleIdx]		= GetSchemaValue (schema.NumericScale);
+				row [isKeyIdx]			= GetSchemaValue (schema.IsKey);
+				row [isAliasedIdx]		= GetSchemaValue (schema.IsAliased);
+				row [isExpressionIdx]		= GetSchemaValue (schema.IsExpression);
+				row [isReadOnlyIdx]		= GetSchemaValue (schema.IsReadOnly);
+				row [baseServerNameIdx]		= GetSchemaValue (schema.BaseServerName);
+				row [baseCatalogNameIdx]		= GetSchemaValue (schema.BaseCatalogName);
+				row [baseColumnNameIdx]		= GetSchemaValue (schema.BaseColumnName);
+				row [baseSchemaNameIdx]		= GetSchemaValue (schema.BaseSchemaName);
+				row [baseTableNameIdx]		= GetSchemaValue (schema.BaseTableName);
+				row [allowDBNullIdx]		= GetSchemaValue (schema.AllowDBNull);
 #else
 				row ["ColumnName"]		= GetSchemaValue (schema, "ColumnName");
 				row ["ColumnOrdinal"]		= GetSchemaValue (schema, "ColumnOrdinal");

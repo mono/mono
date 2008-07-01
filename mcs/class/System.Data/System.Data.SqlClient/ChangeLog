@@ -1,3 +1,8 @@
+2008-07-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* SqlDataReader.cs (GetSchemaTable): Calculate column indexes
+	outside of the row loop.
+
 2008-07-01  Marek Habersack  <mhabersack@novell.com>
 
 	* SqlDataReader.cs: use named properties in TdsDataColumn for the
