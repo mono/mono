@@ -1,5 +1,10 @@
 2008-07-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceDescription.cs : fill RetrievalUrl by string.Empty
+	  by default.
+
+2008-07-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ProtocolImporter.cs, HttpSimpleProtocolImporter.cs,
 	  SoapProtocolImporter.cs : make classes partial in 2.0 profile.
 

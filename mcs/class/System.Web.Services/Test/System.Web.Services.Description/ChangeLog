@@ -1,5 +1,10 @@
 2008-07-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceDescriptionTest.cs : check RetrievalUrl before/after Read().
+	  Sadly it does not provide the actual URL...
+
+2008-07-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* test3.wsdl: added missing file (though the test is ignored).
 
 2008-06-10  Vladimir Krasnov  <vladimirk@mainsoft.com>

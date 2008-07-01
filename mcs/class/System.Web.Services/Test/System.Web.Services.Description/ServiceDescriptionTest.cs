@@ -47,6 +47,14 @@ namespace MonoTests.System.Web.Services.Description
 			Assert.IsNull (sd.TargetNamespace);
 		}
 
+		[Test]
+		public void ReadAndRetrievalUrl ()
+		{
+			Assert.AreEqual (String.Empty, new ServiceDescription ().RetrievalUrl, "#1");
+			ServiceDescription sd = ServiceDescription.Read ("Test/System.Web.Services.Description/test2.wsdl");
+			Assert.AreEqual (String.Empty, sd.RetrievalUrl, "#2");
+		}
+
 #if NET_2_0
 		[Test]
 		public void Namespaces ()

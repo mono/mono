@@ -66,7 +66,7 @@ namespace System.Web.Services.Description
 		string name;
 #endif
 		PortTypeCollection portTypes;
-		string retrievalUrl;
+		string retrievalUrl = String.Empty;
 		ServiceDescriptionCollection serviceDescriptions;
 		ServiceCollection services;
 		string targetNamespace;
