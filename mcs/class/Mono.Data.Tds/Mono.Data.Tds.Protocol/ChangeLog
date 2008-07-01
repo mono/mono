@@ -1,3 +1,7 @@
+2008-07-01  Marek Safar  <marek.safar@gmail.com>
+
+	* TdsDataColumn.cs: No need for nullables when they are all initialized.
+
 2008-07-01  Marek Habersack  <mhabersack@novell.com>
 
 	* TdsDataColumnCollection.cs, Tds50.cs, Tds42.cs, Tds70.cs,

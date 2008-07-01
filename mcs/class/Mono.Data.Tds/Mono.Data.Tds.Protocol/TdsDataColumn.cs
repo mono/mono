@@ -34,23 +34,28 @@ namespace Mono.Data.Tds.Protocol {
 	public class TdsDataColumn
 	{
 #if NET_2_0
-		int? column_ordinal;
+		int column_ordinal;
 		TdsColumnType? column_type;
 		string column_name;
-		bool? is_auto_increment = false;
-		bool? is_identity = false;
-		bool? is_row_version = false;
-		bool? is_unique = false;
-		bool? is_hidden = false;
+		bool is_auto_increment;
+		bool is_identity;
+		bool is_row_version;
+		bool is_unique;
+		bool is_hidden;
 #endif
 		Hashtable properties;
 
+#if !NET_2_0
 		public TdsDataColumn ()
 		{
-#if !NET_2_0
-			SetDefaultValues ();
-#endif
+			object bool_false = false;
+			this ["IsAutoIncrement"] = bool_false;
+			this ["IsIdentity"] = bool_false;
+			this ["IsRowVersion"] = bool_false;
+			this ["IsUnique"] = bool_false;
+			this ["IsHidden"] = bool_false;
 		}
+#endif
 
 
 #if NET_2_0
@@ -72,7 +77,7 @@ namespace Mono.Data.Tds.Protocol {
 			}
 		}
 
-		public int? ColumnOrdinal {
+		public int ColumnOrdinal {
 			get {
 				return column_ordinal;
 			}
@@ -81,7 +86,7 @@ namespace Mono.Data.Tds.Protocol {
 			}
 		}
 
-		public bool? IsAutoIncrement {
+		public bool IsAutoIncrement {
 			get {
 				return is_auto_increment;
 			}
@@ -90,7 +95,7 @@ namespace Mono.Data.Tds.Protocol {
 			}
 		}
 
-		public bool? IsIdentity {
+		public bool IsIdentity {
 			get {
 				return is_identity;
 			}
@@ -99,7 +104,7 @@ namespace Mono.Data.Tds.Protocol {
 			}
 		}
 
-		public bool? IsRowVersion {
+		public bool IsRowVersion {
 			get {
 				return is_row_version;
 			}
@@ -108,7 +113,7 @@ namespace Mono.Data.Tds.Protocol {
 			}
 		}
 
-		public bool? IsUnique {
+		public bool IsUnique {
 			get {
 				return is_unique;
 			}
@@ -117,7 +122,7 @@ namespace Mono.Data.Tds.Protocol {
 			}
 		}
 
-		public bool? IsHidden {
+		public bool IsHidden {
 			get {
 				return is_hidden;
 			}
@@ -128,7 +133,7 @@ namespace Mono.Data.Tds.Protocol {
 #endif
 		
 		// This allows the storage of arbitrary properties in addition to the predefined ones
-		public object this [object key] {
+		public object this [string key] {
 			get {
 				if (properties == null)
 					return null;
@@ -140,19 +145,5 @@ namespace Mono.Data.Tds.Protocol {
 				properties [key] = value;
 			}
 		}
-
-		static object bool_true = true;
-		static object bool_false = false;
-
-#if !NET_2_0
-		private void SetDefaultValues ()
-		{
-			this ["IsAutoIncrement"] = bool_false;
-			this ["IsIdentity"] = bool_false;
-			this ["IsRowVersion"] = bool_false;
-			this ["IsUnique"] = bool_false;
-			this ["IsHidden"] = bool_false;
-		}
-#endif
 	}
 }
