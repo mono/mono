@@ -70,6 +70,9 @@ namespace System.Web.Services.Description
 			httpBinding = (HttpBinding) Binding.Extensions.Find (typeof(HttpBinding));
 
 			CodeTypeDeclaration codeClass = new CodeTypeDeclaration (ClassName);
+#if NET_2_0
+			codeClass.IsPartial = true;
+#endif
 
 			string location = null;
 			if (Port != null) {

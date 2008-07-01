@@ -577,6 +577,9 @@ namespace System.Web.Services.Description {
 			
 			string argsClassName = classNames.AddUnique (messageName + "CompletedEventArgs", null);
 			CodeTypeDeclaration argsClass = new CodeTypeDeclaration (argsClassName);
+#if NET_2_0
+			argsClass.IsPartial = true;
+#endif
 			argsClass.BaseTypes.Add (new CodeTypeReference ("System.ComponentModel.AsyncCompletedEventArgs"));
 
 			CodeMemberField resultsField = new CodeMemberField (typeof(object[]), "results");

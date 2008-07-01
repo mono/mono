@@ -106,7 +106,10 @@ namespace System.Web.Services.Description {
 			soapBinding = (SoapBinding) Binding.Extensions.Find (typeof(SoapBinding));
 			
 			CodeTypeDeclaration codeClass = new CodeTypeDeclaration (ClassName);
-			
+#if NET_2_0
+			codeClass.IsPartial = true;
+#endif
+
 			string location = null;
 			
 			if (Port != null) {
