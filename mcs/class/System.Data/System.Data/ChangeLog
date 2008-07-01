@@ -1,3 +1,7 @@
+2008-07-01  Marek Safar  <marek.safar@gmail.com>
+
+	* DataColumnCollection.cs: Made few simple optimizations.
+
 2008-06-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* DataTable.cs (NewRowArray): Avoid using reflection if possible.

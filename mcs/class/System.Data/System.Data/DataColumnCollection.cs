@@ -83,6 +83,8 @@ namespace System.Data {
 		// Keep reference to most recent columns passed to AddRange()
 		// so that they can be added when EndInit() is called.
 		DataColumn[] _mostRecentColumns = null;
+		
+		static readonly string ColumnPrefix = "Column";
 
 		// Internal Constructor.  This Class can only be created from other classes in this assembly.
 		internal DataColumnCollection(DataTable table):base()
@@ -186,10 +188,12 @@ namespace System.Data {
 
 		internal void RegisterName(string name, DataColumn column)
 		{
-			if (columnFromName.Contains(name))
+			try {
+				columnFromName.Add (name, column);
+			} catch (ArgumentException) {
 				throw new DuplicateNameException("A DataColumn named '" + name + "' already belongs to this DataTable.");
+			}
 
-			columnFromName [name] = column;	
 			// Get existing doublet
 			Doublet d = (Doublet) columnNameCount [name];
 			if (d != null) {
@@ -204,8 +208,15 @@ namespace System.Data {
 				columnNameCount [name] = d;
 			}
 			
-			if (name.StartsWith("Column") && name == MakeName(defaultColumnIndex + 1))
-			{
+#if NET_2_0			
+			if (name.Length <= ColumnPrefix.Length || !name.StartsWith (ColumnPrefix, StringComparison.Ordinal))
+				return;
+#else			
+			if (name.Length <= ColumnPrefix.Length || !name.StartsWith (ColumnPrefix))
+				return;
+#endif			
+			
+			if (name == MakeName(defaultColumnIndex + 1)) {
 				do
 				{
 					defaultColumnIndex++;
@@ -230,7 +241,7 @@ namespace System.Data {
 					columnNameCount.Remove (name);
 			}
 			
-			if (name.StartsWith("Column") && name == MakeName(defaultColumnIndex - 1))
+			if (name.StartsWith(ColumnPrefix) && name == MakeName(defaultColumnIndex - 1))
 			{
 				do
 				{
@@ -253,12 +264,12 @@ namespace System.Data {
 
 		static readonly string[] TenColumns = { "Column0", "Column1", "Column2", "Column3", "Column4", "Column5", "Column6", "Column7", "Column8", "Column9" };
 
-		private string MakeName(int index)
+		static string MakeName (int index)
 		{
 			if (index < 10)
 				return TenColumns[index];
 
-			return String.Concat("Column", index.ToString());
+			return String.Concat(ColumnPrefix, index.ToString());
 		}
 
 		/// <summary>
@@ -278,8 +289,7 @@ namespace System.Data {
 			column.PropertyChanged += new PropertyChangedEventHandler (ColumnPropertyChanged);
 #endif
 
-			if (column.ColumnName.Equals(String.Empty))
-			{
+			if (column.ColumnName.Length == 0) {
 				column.ColumnName = GetNextDefaultColumnName ();
 			}
 
