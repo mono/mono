@@ -1,5 +1,6 @@
 
-The Mono code is licensed under various different licenses.
+The Mono code under the mcs/ directory is licensed under various
+different licenses:
 
 	GNU GPL: details avaliable in the file LICENSE.GPL
 	GNU LGPL: details available in the file LICENSE.LGPL
@@ -27,7 +28,7 @@ The Mono code is licensed under various different licenses.
 		ported pieces of code from Rhino, the Mozilla JavaScript
 		implementations
 
-	* Mono C# compiler: GNU GPL
+	* Mono C# compiler: Dual licensed MIT X11 and GNU GPL.
 
 	* Mono Basic compiler: GNU GPL.
 
