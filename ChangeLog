@@ -1,3 +1,7 @@
+2008-07-01  Marc Christensen  <mchristensen@novell.com>
+
+	* configure.in: version bump -> 1.9.2
+
 2008-04-04  Wade Berrier  <wberrier@novell.com>
 
 	* configure.in: version bump -> 1.9.1
