@@ -118,7 +118,10 @@ namespace MonoTests.System.Net.Mime
 		{
 			string rfc822 = "dd MMM yyyy HH':'mm':'ss zz00";
 			string modification_date = DateTime.MaxValue.ToString (rfc822);
-			Assert.AreEqual ("attachment; modification-date=\"" + modification_date + "\"; filename=genome.jpeg", cd.ToString ());
+			string to_string = cd.ToString ();
+			Assert.IsTrue (to_string.StartsWith ("attachment; "), "#1");
+			Assert.IsTrue (to_string.Contains ("modification-date=\"" + modification_date + "\""), "#2");
+			Assert.IsTrue (to_string.Contains ("filename=genome.jpeg"), "#3");
 		}
 
 		[Test]
