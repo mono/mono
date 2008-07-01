@@ -31,6 +31,7 @@
 
 #if NET_2_0
 
+using System.IO;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Xml;
@@ -46,6 +47,15 @@ namespace System.Web.Services.Description
 			get { return WsiProfiles.BasicProfile1_1; }
 		}
 		
+		/*
+		private string GetAbsoluteUri (string baseUri, string relativeUri)
+		{
+			string actualBaseUri = baseUri ?? Path.GetFullPath (".") + Path.DirectorySeparatorChar;
+			Uri uri = new Uri (new Uri (actualBaseUri), relativeUri);
+			return uri.ToString ();
+		}
+		*/
+
 		public override void Check (ConformanceCheckContext ctx, Import value) 
 		{
 			if (value.Location == "" || value.Location == null) {
@@ -55,9 +65,13 @@ namespace System.Web.Services.Description
 			
 			if (!new Uri (value.Namespace, UriKind.RelativeOrAbsolute).IsAbsoluteUri)
 				ctx.ReportRuleViolation (value, BasicProfileRules.R2803);
-			
-			object doc = ctx.GetDocument (value.Location, value.Namespace);
-			if (doc == null) ctx.ReportError (value, "Document '" + value.Location + "' not found");
+
+			// LAMESPEC: RetrievalUrl does not seem to help here (in .NET)
+			//ServiceDescription importer = value.ServiceDescription;
+			//string absUri = GetAbsoluteUri (importer != null ? importer.RetrievalUrl : null, value.Location);
+			object doc = ctx.GetDocument (/*absUri*/value.Location, value.Namespace);
+			if (doc == null) // and looks like .net ignores non-resolvable documentation... I dunno if it makes sense. I don't care :/
+				return; //ctx.ReportError (value, "Document '" + value.Location + "' not found");
 			
 			if (doc is XmlSchema)
 				ctx.ReportRuleViolation (value, BasicProfileRules.R2002);
@@ -449,6 +463,7 @@ namespace System.Web.Services.Description
 		
 		public override void Check (ConformanceCheckContext ctx, XmlSchemaImport value)
 		{
+			// LAMESPEC: same here to Check() for Import.
 			XmlSchema doc = ctx.GetDocument (value.SchemaLocation, value.Namespace) as XmlSchema;
 			if (doc == null) ctx.ReportError (value, "Schema '" + value.SchemaLocation + "' not found");
 		}

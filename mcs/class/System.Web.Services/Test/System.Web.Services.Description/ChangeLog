@@ -1,5 +1,11 @@
 2008-07-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* WebServicesInteroperabilityTest.cs : new test. wsdl with <import>
+	  should not result in an error.
+	* check-import.wsdl, check-import2.wsdl : test helper files.
+
+2008-07-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceDescriptionTest.cs : check RetrievalUrl before/after Read().
 	  Sadly it does not provide the actual URL...
 

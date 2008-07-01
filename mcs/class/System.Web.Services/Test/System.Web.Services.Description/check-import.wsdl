@@ -1,0 +1,6 @@
+<definitions targetNamespace="urn:foo"
+   xmlns="http://schemas.xmlsoap.org/wsdl/"
+   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+>
+   <import location="check-import2.wsdl" namespace="urn:bar" />
+</definitions>

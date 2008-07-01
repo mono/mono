@@ -1,5 +1,11 @@
 2008-07-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* BasicProfileChecker.cs : it does not really resolve relative URI in
+	  <import> element. It caused error, which should be reported, but
+	  .net ignores it. It must be LAMESPEC. Anyways added comments.
+
+2008-07-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceDescription.cs : fill RetrievalUrl by string.Empty
 	  by default.
 

@@ -1,0 +1,31 @@
+<definitions targetNamespace="urn:bar"
+   xmlns="http://schemas.xmlsoap.org/wsdl/"
+   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+   xmlns:bar="urn:bar"
+>
+<message name="BarMessage" />
+<message name="BarResponseMessage" />
+<portType name="BarPort">
+  <operation name="BarOperation">
+    <input message="bar:BarMessage" />
+    <output message="bar:BarResponseMessage" />
+  </operation>
+</portType>
+<binding name="BarBinding" type="bar:BarPort">
+  <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+  <operation name="BarOperation">
+    <soap:operation soapAction="" style="document" />
+    <input>
+      <soap:body use="literal" />
+    </input>
+    <output>
+      <soap:body use="literal" />
+    </output>
+  </operation>
+</binding>
+<service name="BarService">
+   <port binding="bar:BarBinding" name="BarPort">
+      <soap:address location="https://localhost/bar" />
+   </port>
+</service>
+</definitions>

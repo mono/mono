@@ -26,7 +26,6 @@ EXTRA_DISTFILES = \
 	System.Web.Services.Description/wsdl-1.1.xsd		\
 	System.Web.Services.Description/wsdl-1.1-soap.xsd	\
 	System.Web.Services.Description/wsdl.genxs		\
-	Test/System.Web.Services.Description/test.wsdl		\
-	Test/System.Web.Services.Description/test2.wsdl
+	Test/System.Web.Services.Description/*.wsdl
 
 include ../../build/library.make
