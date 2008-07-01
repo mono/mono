@@ -676,21 +676,25 @@ namespace Mono.Data.Tds.Protocol {
 				result[index].ColumnType = columnType;
 				result[index].IsAutoIncrement = autoIncrement;
 				result[index].IsIdentity = isIdentity;
-
+				result[index].ColumnSize = columnSize;
+				result[index].NumericPrecision = precision;
+				result[index].NumericScale = scale;
+				result[index].IsReadOnly = !writable;
+				result[index].AllowDBNull = nullable;
+				result[index].BaseTableName = tableName;
 #else
 				col["ColumnType"] = columnType;
 				result[index]["ColumnName"] = columnName;
 				result[index]["ColumnType"] = columnType;
 				result[index]["IsAutoIncrement"] = autoIncrement;
 				result[index]["IsIdentity"] = isIdentity;
-
-#endif
 				result[index]["ColumnSize"] = columnSize;
-				result[index]["AllowDBNull"] = nullable;
-				result[index]["IsReadOnly"] = !writable;
 				result[index]["NumericPrecision"] = precision;
 				result[index]["NumericScale"] = scale;
+				result[index]["IsReadOnly"] = !writable;
+				result[index]["AllowDBNull"] = nullable;
 				result[index]["BaseTableName"] = tableName;
+#endif
 			}
 			return result;
 		}

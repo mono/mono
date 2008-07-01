@@ -33,102 +33,137 @@ using System.Collections;
 namespace Mono.Data.Tds.Protocol {
 	public class TdsDataColumn
 	{
-#if NET_2_0
-		int? column_ordinal;
-		TdsColumnType? column_type;
-		string column_name;
-		bool? is_auto_increment = false;
-		bool? is_identity = false;
-		bool? is_row_version = false;
-		bool? is_unique = false;
-		bool? is_hidden = false;
-#endif
 		Hashtable properties;
 
 		public TdsDataColumn ()
 		{
-#if !NET_2_0
-			SetDefaultValues ();
+#if NET_2_0
+			IsAutoIncrement = false;
+			IsIdentity = false;
+			IsRowVersion = false;
+			IsUnique = false;
+			IsHidden = false;
+#else
+			object bool_false = false;
+			
+			this ["IsAutoIncrement"] = bool_false;
+			this ["IsIdentity"] = bool_false;
+			this ["IsRowVersion"] = bool_false;
+			this ["IsUnique"] = bool_false;
+			this ["IsHidden"] = bool_false;
 #endif
 		}
 
 
 #if NET_2_0
 		public TdsColumnType? ColumnType {
-			get {
-				return column_type;
-			}
-			set {
-				column_type = value;
-			}
+			get;
+			set;
 		}
 		
 		public string ColumnName {
-			get {
-				return column_name;
-			}
-			set {
-				column_name = value;
-			}
+			get;
+			set;
 		}
 
+		public int? ColumnSize {
+			get;
+			set;
+		}
+		
 		public int? ColumnOrdinal {
-			get {
-				return column_ordinal;
-			}
-			set {
-				column_ordinal = value;
-			}
+			get;
+			set;
 		}
 
 		public bool? IsAutoIncrement {
-			get {
-				return is_auto_increment;
-			}
-			set {
-				is_auto_increment = value;
-			}
+			get;
+			set;
 		}
 
 		public bool? IsIdentity {
-			get {
-				return is_identity;
-			}
-			set {
-				is_identity = value;
-			}
+			get;
+			set;
 		}
 
 		public bool? IsRowVersion {
-			get {
-				return is_row_version;
-			}
-			set {
-				is_row_version = value;
-			}
+			get;
+			set;
 		}
 
 		public bool? IsUnique {
-			get {
-				return is_unique;
-			}
-			set {
-				is_unique = value;
-			}
+			get;
+			set;
 		}
 
 		public bool? IsHidden {
-			get {
-				return is_hidden;
-			}
-			set {
-				is_hidden = value;
-			}
+			get;
+			set;
+		}
+
+		public bool? IsKey {
+			get;
+			set;
+		}
+
+		public bool? IsAliased {
+			get;
+			set;
+		}
+
+		public bool? IsExpression {
+			get;
+			set;
+		}
+
+		public bool? IsReadOnly {
+			get;
+			set;
+		}
+		
+		public short? NumericPrecision {
+			get;
+			set;
+		}
+
+		public short? NumericScale {
+			get;
+			set;
+		}
+
+		public string BaseServerName {
+			get;
+			set;
+		}
+
+		public string BaseCatalogName {
+			get;
+			set;
+		}
+
+		public string BaseColumnName {
+			get;
+			set;
+		}
+
+		public string BaseSchemaName {
+			get;
+			set;
+		}
+
+		public string BaseTableName {
+			get;
+			set;
+		}
+
+		public bool? AllowDBNull {
+			get;
+			set;
 		}
 #endif
 		
 		// This allows the storage of arbitrary properties in addition to the predefined ones
-		public object this [object key] {
+		public object this [string key] {
 			get {
 				if (properties == null)
 					return null;
@@ -140,19 +175,5 @@ namespace Mono.Data.Tds.Protocol {
 				properties [key] = value;
 			}
 		}
-
-		static object bool_true = true;
-		static object bool_false = false;
-
-#if !NET_2_0
-		private void SetDefaultValues ()
-		{
-			this ["IsAutoIncrement"] = bool_false;
-			this ["IsIdentity"] = bool_false;
-			this ["IsRowVersion"] = bool_false;
-			this ["IsUnique"] = bool_false;
-			this ["IsHidden"] = bool_false;
-		}
-#endif
 	}
 }

@@ -515,19 +515,25 @@ namespace Mono.Data.Tds.Protocol {
 				result[index].IsIdentity = isIdentity;
 				result[index].IsRowVersion = isRowVersion;
 				result[index].ColumnType = columnType;
+				result[index].ColumnSize = bufLength;
+				result[index].NumericPrecision = precision;
+				result[index].NumericScale = scale;
+				result[index].IsReadOnly = !isUpdatable;
+				result[index].IsKey = isKey;
+				result[index].AllowDBNull = allowDBNull;
 #else
 				col["ColumnType"] = columnType;
 				result[index]["ColumnName"] = columnName;
 				result[index]["IsIdentity"] = isIdentity;
 				result[index]["IsRowVersion"] = isRowVersion;
 				result[index]["ColumnType"] = columnType;
-#endif
-				result[index]["IsReadOnly"] = !isUpdatable;
+				result[index]["ColumnSize"] = bufLength;
 				result[index]["NumericPrecision"] = precision;
 				result[index]["NumericScale"] = scale;
-				result[index]["ColumnSize"] = bufLength;
-				result[index]["AllowDBNull"] = allowDBNull;
+				result[index]["IsReadOnly"] = !isUpdatable;
 				result[index]["IsKey"] = isKey;
+				result[index]["AllowDBNull"] = allowDBNull;
+#endif
 				result[index]["Hidden"] = hidden;
 			}
 			return result;

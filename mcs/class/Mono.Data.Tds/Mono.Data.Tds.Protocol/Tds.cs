@@ -792,8 +792,13 @@ namespace Mono.Data.Tds.Protocol
 					scale = comm.GetByte ();
 				}
 				else {
+#if NET_2_0
+					precision = (byte) columns[ordinal].NumericPrecision;
+					scale = (byte) columns[ordinal].NumericScale;
+#else
 					precision = (byte) columns[ordinal]["NumericPrecision"];
 					scale = (byte) columns[ordinal]["NumericScale"];
+#endif
 				}
 
 				element = GetDecimalValue (precision, scale);
@@ -1375,16 +1380,18 @@ namespace Mono.Data.Tds.Protocol
 				byte index = (byte) (values[0] - (byte) 1);
 				byte tableIndex = (byte) (values[1] - (byte) 1);
 				bool isExpression = ((values[2] & (byte) TdsColumnStatus.IsExpression) != 0);
-
-				columns [index]["IsExpression"] = isExpression;
-				columns [index]["IsKey"] = ((values[2] & (byte) TdsColumnStatus.IsKey) != 0);
+				
 #if NET_2_0
 				columns [index].IsHidden = ((values[2] & (byte) TdsColumnStatus.Hidden) != 0);
+				columns [index].IsExpression = isExpression;
+				columns [index].IsKey = ((values[2] & (byte) TdsColumnStatus.IsKey) != 0);
+				columns [index].IsAliased = isAlias;
 #else
 				columns [index]["IsHidden"] = ((values[2] & (byte) TdsColumnStatus.Hidden) != 0);
-#endif
+				columns [index]["IsExpression"] = isExpression;
+				columns [index]["IsKey"] = ((values[2] & (byte) TdsColumnStatus.IsKey) != 0);
 				columns [index]["IsAliased"] = isAlias;
-
+#endif
 				columns [index]["BaseColumnName"] = ((isAlias) ? baseColumnName : null);
 				columns [index]["BaseTableName"] = ((!isExpression) ? tableNames [tableIndex] : null);
 			}
