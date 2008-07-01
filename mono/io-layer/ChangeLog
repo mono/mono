@@ -1,3 +1,7 @@
+2008-07-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* process-private.h (_WAPI_PROCESS_UNHANDLED_PID_MASK): Fix the amd64 build.
+
 2008-06-27  Dick Porter  <dick@ximian.com>
 
 	* processes.c: Implement a form of process pseudo-handle to allow
