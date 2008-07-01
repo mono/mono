@@ -1,6 +1,8 @@
 2008-07-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* Mono.Data.SybaseClient/SybaseDataReader.cs: Fix the build after the TDS changes.
+	
+	* Mono.Data.SybaseClient/SybaseDataReader.cs: Fix the build after the TDS changes.
 
 2008-06-09  Ankit Jain  <jankit@novell.com>
 
