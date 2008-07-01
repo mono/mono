@@ -782,7 +782,7 @@ namespace System.Data.SqlClient
 			return schemaTable;
 		}
 
-		private static object GetSchemaValue (TdsDataColumn schema, object key)
+		private static object GetSchemaValue (TdsDataColumn schema, string key)
 		{
 			object val = schema [key];
 			if (val != null)
