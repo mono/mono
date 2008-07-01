@@ -259,8 +259,8 @@
   </multiList>aa<xmltext>33</xmltext>bb<xmltext>776</xmltext><special>
     <data>
       <three>3</three>
-      <one>1</one>
       <two>2</two>
+      <one>1</one>
     </data>
   </special><dummyStringArray xmlns="mm">
     <ArrayOfString xsi:nil="true" />
