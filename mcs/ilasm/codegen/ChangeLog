@@ -1,3 +1,9 @@
+2008-07-02  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #405383
+	* MethodPointerTypeRef (Clone): Add missing null ref check.
+	Patch from Andrea Carlo Ornstein <andrea.ornstein@st.com>
+
 2008-06-07  Martin Baulig  <martin@ximian.com>
 
 	* DebuggingInfo.cs: Reflect latest symbol writer changes.

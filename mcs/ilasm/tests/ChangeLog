@@ -1,3 +1,7 @@
+2008-07-02  Ankit Jain  <jankit@novell.com>
+
+	* test-method-pointer.il: New.
+
 2007-12-31  Rodrigo Kumpera <rkumpera@novell.com>	
 
 	* test-emitbyte.il: new test for .emitbyte directive

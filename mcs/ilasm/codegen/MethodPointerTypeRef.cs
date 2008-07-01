@@ -62,7 +62,8 @@ namespace Mono.ILASM {
 
                 public override BaseTypeRef Clone ()
                 {
-                        return new MethodPointerTypeRef (callconv, ret, (ArrayList) param_list.Clone (),
+                        return new MethodPointerTypeRef (callconv, ret,
+                                        param_list == null ? null : (ArrayList) param_list.Clone (),
                                         (ArrayList) ConversionList.Clone (), sig_mod);
                 }
 
