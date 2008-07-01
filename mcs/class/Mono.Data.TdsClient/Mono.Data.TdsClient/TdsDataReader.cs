@@ -341,6 +341,28 @@ namespace Mono.Data.TdsClient {
 			foreach (TdsDataColumn schema in command.Tds.Columns) {
 				DataRow row = schemaTable.NewRow ();
 
+#if NET_2_0
+				row ["ColumnName"]		= GetSchemaValue (schema.ColumnName);
+				row ["ColumnSize"]		= GetSchemaValue (schema.ColumnSize); 
+				row ["ColumnOrdinal"]		= GetSchemaValue (schema.ColumnOrdinal);
+				row ["NumericPrecision"]	= GetSchemaValue (schema.NumericPrecision);
+				row ["NumericScale"]		= GetSchemaValue (schema.NumericScale);
+				row ["IsUnique"]		= GetSchemaValue (schema.IsUnique);
+				row ["IsKey"]			= GetSchemaValue (schema.IsKey);
+				row ["IsAliased"]		= GetSchemaValue (schema.IsAliased);
+				row ["IsExpression"]		= GetSchemaValue (schema.IsExpression);
+				row ["IsIdentity"]		= GetSchemaValue (schema.IsIdentity);
+				row ["IsAutoIncrement"]		= GetSchemaValue (schema.IsAutoIncrement);
+				row ["IsRowVersion"]		= GetSchemaValue (schema.IsRowVersion);
+				row ["IsHidden"]		= GetSchemaValue (schema.IsHidden);
+				row ["IsReadOnly"]		= GetSchemaValue (schema.IsReadOnly);
+				row ["BaseServerName"]		= GetSchemaValue (schema.BaseServerName);
+				row ["BaseCatalogName"]		= GetSchemaValue (schema.BaseCatalogName);
+				row ["BaseColumnName"]		= GetSchemaValue (schema.BaseColumnName);
+				row ["BaseSchemaName"]		= GetSchemaValue (schema.BaseSchemaName);
+				row ["BaseTableName"]		= GetSchemaValue (schema.BaseTableName);
+				row ["AllowDBNull"]		= GetSchemaValue (schema.AllowDBNull);
+#else
 				row ["ColumnName"]		= GetSchemaValue (schema, "ColumnName");
 				row ["ColumnSize"]		= GetSchemaValue (schema, "ColumnSize"); 
 				row ["ColumnOrdinal"]		= GetSchemaValue (schema, "ColumnOrdinal");
@@ -348,12 +370,6 @@ namespace Mono.Data.TdsClient {
 				row ["NumericScale"]		= GetSchemaValue (schema, "NumericScale");
 				row ["IsUnique"]		= GetSchemaValue (schema, "IsUnique");
 				row ["IsKey"]			= GetSchemaValue (schema, "IsKey");
-				row ["BaseServerName"]		= GetSchemaValue (schema, "BaseServerName");
-				row ["BaseCatalogName"]		= GetSchemaValue (schema, "BaseCatalogName");
-				row ["BaseColumnName"]		= GetSchemaValue (schema, "BaseColumnName");
-				row ["BaseSchemaName"]		= GetSchemaValue (schema, "BaseSchemaName");
-				row ["BaseTableName"]		= GetSchemaValue (schema, "BaseTableName");
-				row ["AllowDBNull"]		= GetSchemaValue (schema, "AllowDBNull");
 				row ["IsAliased"]		= GetSchemaValue (schema, "IsAliased");
 				row ["IsExpression"]		= GetSchemaValue (schema, "IsExpression");
 				row ["IsIdentity"]		= GetSchemaValue (schema, "IsIdentity");
@@ -361,7 +377,14 @@ namespace Mono.Data.TdsClient {
 				row ["IsRowVersion"]		= GetSchemaValue (schema, "IsRowVersion");
 				row ["IsHidden"]		= GetSchemaValue (schema, "IsHidden");
 				row ["IsReadOnly"]		= GetSchemaValue (schema, "IsReadOnly");
-
+				row ["BaseServerName"]		= GetSchemaValue (schema, "BaseServerName");
+				row ["BaseCatalogName"]		= GetSchemaValue (schema, "BaseCatalogName");
+				row ["BaseColumnName"]		= GetSchemaValue (schema, "BaseColumnName");
+				row ["BaseSchemaName"]		= GetSchemaValue (schema, "BaseSchemaName");
+				row ["BaseTableName"]		= GetSchemaValue (schema, "BaseTableName");
+				row ["AllowDBNull"]		= GetSchemaValue (schema, "AllowDBNull");
+#endif
+				
 				// We don't always get the base column name.
 				if (row ["BaseColumnName"] == DBNull.Value)
 					row ["BaseColumnName"] = row ["ColumnName"];
@@ -513,13 +536,24 @@ namespace Mono.Data.TdsClient {
 			return schemaTable;
 		}		
 
-		private static object GetSchemaValue (TdsDataColumn schema, object key)
+		private static object GetSchemaValue (TdsDataColumn schema, string key)
 		{
-			if (schema.ContainsKey (key) && schema [key] != null)
-				return schema [key];
-			return DBNull.Value;
+			object ret = schema [key];
+
+			if (ret == null)
+				return DBNull.Value;
+
+			return ret;
 		}
 
+		static object GetSchemaValue (object value)
+		{
+			if (value == null)
+				return DBNull.Value;
+
+			return value;
+		}
+		
 		public TdsBinary GetTdsBinary (int i)
 		{
 			throw new NotImplementedException ();
