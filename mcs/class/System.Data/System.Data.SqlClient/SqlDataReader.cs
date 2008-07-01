@@ -588,37 +588,73 @@ namespace System.Data.SqlClient
 			foreach (TdsDataColumn schema in command.Tds.Columns) {
 				DataRow row = schemaTable.NewRow ();
 
+#if NET_2_0
+				row ["ColumnName"]		= GetSchemaValue (schema.ColumnName);
+				row ["ColumnOrdinal"]		= GetSchemaValue (schema.ColumnOrdinal);
+				row ["IsUnique"]		= GetSchemaValue (schema.IsUnique);
+				row ["IsAutoIncrement"]		= GetSchemaValue (schema.IsAutoIncrement);
+				row ["IsRowVersion"]		= GetSchemaValue (schema.IsRowVersion);
+				row ["IsHidden"]		= GetSchemaValue (schema.IsHidden);
+				row ["IsIdentity"]		= GetSchemaValue (schema.IsIdentity);
+				row ["ColumnSize"]		= GetSchemaValue (schema.ColumnSize);
+				row ["NumericPrecision"]	= GetSchemaValue (schema.NumericPrecision);
+				row ["NumericScale"]		= GetSchemaValue (schema.NumericScale);
+				row ["IsKey"]			= GetSchemaValue (schema.IsKey);
+				row ["IsAliased"]		= GetSchemaValue (schema.IsAliased);
+				row ["IsExpression"]		= GetSchemaValue (schema.IsExpression);
+				row ["IsReadOnly"]		= GetSchemaValue (schema.IsReadOnly);
+				row ["BaseServerName"]		= GetSchemaValue (schema.BaseServerName);
+				row ["BaseCatalogName"]		= GetSchemaValue (schema.BaseCatalogName);
+				row ["BaseColumnName"]		= GetSchemaValue (schema.BaseColumnName);
+				row ["BaseSchemaName"]		= GetSchemaValue (schema.BaseSchemaName);
+				row ["BaseTableName"]		= GetSchemaValue (schema.BaseTableName);
+				row ["AllowDBNull"]		= GetSchemaValue (schema.AllowDBNull);
+#else
 				row ["ColumnName"]		= GetSchemaValue (schema, "ColumnName");
-				row ["ColumnSize"]		= GetSchemaValue (schema, "ColumnSize"); 
 				row ["ColumnOrdinal"]		= GetSchemaValue (schema, "ColumnOrdinal");
+				row ["IsUnique"]		= GetSchemaValue (schema, "IsUnique");
+				row ["IsAutoIncrement"]		= GetSchemaValue (schema, "IsAutoIncrement");
+				row ["IsRowVersion"]		= GetSchemaValue (schema, "IsRowVersion");
+				row ["IsHidden"]		= GetSchemaValue (schema, "IsHidden");
+				row ["IsIdentity"]		= GetSchemaValue (schema, "IsIdentity");
+				row ["ColumnSize"]		= GetSchemaValue (schema, "ColumnSize");
 				row ["NumericPrecision"]	= GetSchemaValue (schema, "NumericPrecision");
 				row ["NumericScale"]		= GetSchemaValue (schema, "NumericScale");
-				row ["IsUnique"]		= GetSchemaValue (schema, "IsUnique");
 				row ["IsKey"]			= GetSchemaValue (schema, "IsKey");
+				row ["IsAliased"]		= GetSchemaValue (schema, "IsAliased");
+				row ["IsExpression"]		= GetSchemaValue (schema, "IsExpression");
+				row ["IsReadOnly"]		= GetSchemaValue (schema, "IsReadOnly");
 				row ["BaseServerName"]		= GetSchemaValue (schema, "BaseServerName");
 				row ["BaseCatalogName"]		= GetSchemaValue (schema, "BaseCatalogName");
 				row ["BaseColumnName"]		= GetSchemaValue (schema, "BaseColumnName");
 				row ["BaseSchemaName"]		= GetSchemaValue (schema, "BaseSchemaName");
 				row ["BaseTableName"]		= GetSchemaValue (schema, "BaseTableName");
 				row ["AllowDBNull"]		= GetSchemaValue (schema, "AllowDBNull");
-				row ["IsAliased"]		= GetSchemaValue (schema, "IsAliased");
-				row ["IsExpression"]		= GetSchemaValue (schema, "IsExpression");
-				row ["IsIdentity"]		= GetSchemaValue (schema, "IsIdentity");
-				row ["IsAutoIncrement"]		= GetSchemaValue (schema, "IsAutoIncrement");
-				row ["IsRowVersion"]		= GetSchemaValue (schema, "IsRowVersion");
-				row ["IsHidden"]		= GetSchemaValue (schema, "IsHidden");
-				row ["IsReadOnly"]		= GetSchemaValue (schema, "IsReadOnly");
-
+#endif
+				
 				// We don't always get the base column name.
 				if (row ["BaseColumnName"] == DBNull.Value)
 					row ["BaseColumnName"] = row ["ColumnName"];
 
-				switch ((TdsColumnType) schema ["ColumnType"]) {
+				int csize;
+				TdsColumnType ctype;
+				
+#if NET_2_0
+				ctype = (TdsColumnType) schema.ColumnType;
+#else
+				ctype = (TdsColumnType) schema ["ColumnType"];
+#endif
+				switch (ctype) {
 					case TdsColumnType.Int1:
 					case TdsColumnType.Int2:
 					case TdsColumnType.Int4:
 					case TdsColumnType.IntN:
-						switch ((int) schema ["ColumnSize"]) {
+#if NET_2_0
+						csize = (int) schema.ColumnSize;
+#else
+						csize = (int) schema ["ColumnSize"];
+#endif
+						switch (csize) {
 						case 1:
 							dataTypeNames.Add ("tinyint");
 							row ["ProviderType"] = (int) SqlDbType.TinyInt;
@@ -648,7 +684,12 @@ namespace System.Data.SqlClient
 					case TdsColumnType.Real:
 					case TdsColumnType.Float8:
 					case TdsColumnType.FloatN:
-						switch ((int) schema ["ColumnSize"]) {
+#if NET_2_0
+						csize = (int) schema.ColumnSize;
+#else
+						csize = (int) schema ["ColumnSize"];
+#endif
+						switch (csize) {
 						case 4:
 							dataTypeNames.Add ("real");
 							row ["ProviderType"] = (int) SqlDbType.Real;
@@ -791,6 +832,14 @@ namespace System.Data.SqlClient
 				return DBNull.Value;
 		}
 
+		static object GetSchemaValue (object value)
+		{
+			if (value == null)
+				return DBNull.Value;
+
+			return value;
+		}
+		
 		public
 #if NET_2_0
 		virtual
@@ -909,7 +958,16 @@ namespace System.Data.SqlClient
 			// TDS 7.0 returns bigint as decimal(19,0)
 			if (value is SqlDecimal) {
 				TdsDataColumn schema = command.Tds.Columns[i];
-				if ((byte)schema["NumericPrecision"] == 19 && (byte)schema["NumericScale"] == 0)
+				byte precision, scale;
+
+#if NET_2_0
+				precision = (byte)schema.NumericPrecision;
+				scale = (byte)schema.NumericScale;
+#else
+				precision = (byte)schema["NumericPrecision"];
+				scale = (byte)schema["NumericScale"];
+#endif
+				if (precision == 19 && scale == 0)
 					value = (SqlInt64) (SqlDecimal) value;
 			}
 			if (!(value is SqlInt64))
