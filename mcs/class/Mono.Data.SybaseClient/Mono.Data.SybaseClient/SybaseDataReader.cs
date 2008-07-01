@@ -515,9 +515,11 @@ namespace Mono.Data.SybaseClient {
 
 		private static object GetSchemaValue (TdsDataColumn schema, object key)
 		{
-			if (schema.ContainsKey (key) && schema [key] != null)
-				return schema [key];
-			return DBNull.Value;
+			object val = schema [key];
+			if (val != null)
+				return val;
+			else
+				return DBNull.Value;
 		}
 
 		public SybaseBinary GetSybaseBinary (int i)
