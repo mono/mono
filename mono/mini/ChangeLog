@@ -1,3 +1,11 @@
+2008-07-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Allow AOTing methods which access the interruption
+	request flag.
+	(mono_resolve_patch_target): Handle INTERRUPTION_REQUEST_FLAG.
+
+	* patch-info.h: Add INTERRUPTION_REQUEST_FLAG.
+
 2008-06-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c: Use domain->jit_code_hash_lock for controlling access to
