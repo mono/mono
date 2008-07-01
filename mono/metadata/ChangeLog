@@ -1,3 +1,8 @@
+2008-07-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_init): Register Thread:ResetAbort as an icall ().
+	(mono_marshal_get_runtime_invoke): Call ResetAbort as an icall.
+
 2008-06-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* domain-internals.h (struct _MonoDomain): Add 'jit_code_hash_lock' field,
