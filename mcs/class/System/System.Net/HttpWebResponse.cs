@@ -101,7 +101,6 @@ namespace System.Net
 			// parameter      = attribute "=" value
 			// 3.7.1. default is ISO-8859-1
 			get { 
-				CheckDisposed ();
 				string contentType = ContentType;
 				if (contentType == null)
 					return "ISO-8859-1";
@@ -119,7 +118,6 @@ namespace System.Net
 		
 		public string ContentEncoding {
 			get { 
-				CheckDisposed ();
 				string h = webHeaders ["Content-Encoding"];
 				return h != null ? h : "";
 			}
@@ -127,7 +125,6 @@ namespace System.Net
 		
 		public override long ContentLength {		
 			get {
-				CheckDisposed ();
 				if (contentLength != -1)
 					return contentLength;
 
@@ -143,7 +140,6 @@ namespace System.Net
 		
 		public override string ContentType {		
 			get {
-				CheckDisposed ();
 				if (contentType == null)
 					contentType = webHeaders ["Content-Type"];
 
@@ -153,21 +149,17 @@ namespace System.Net
 		
 		public CookieCollection Cookies {
 			get { 
-				CheckDisposed ();
-				
 				if (cookieCollection == null)
 					cookieCollection = new CookieCollection ();
 				return cookieCollection;
 			}
 			set {
-				CheckDisposed ();
 				cookieCollection = value;
 			}
 		}
 		
 		public override WebHeaderCollection Headers {		
 			get { 
-				CheckDisposed ();
 				return webHeaders; 
 			}
 		}
@@ -189,7 +181,6 @@ namespace System.Net
 		
 		public DateTime LastModified {
 			get {
-				CheckDisposed ();
 				try {
 					string dtStr = webHeaders ["Last-Modified"];
 					return MonoHttpDate.Parse (dtStr);
@@ -201,42 +192,36 @@ namespace System.Net
 		
 		public string Method {
 			get { 
-				CheckDisposed ();
 				return method; 
 			}
 		}
 		
 		public Version ProtocolVersion {
 			get { 
-				CheckDisposed ();
 				return version; 
 			}
 		}
 		
 		public override Uri ResponseUri {		
 			get { 
-				CheckDisposed ();
 				return uri; 
 			}
 		}		
 		
 		public string Server {
 			get { 
-				CheckDisposed ();
 				return webHeaders ["Server"]; 
 			}
 		}
 		
 		public HttpStatusCode StatusCode {
 			get { 
-				CheckDisposed ();
 				return statusCode; 
 			}
 		}
 		
 		public string StatusDescription {
 			get { 
-				CheckDisposed ();
 				return statusDescription; 
 			}
 		}
@@ -245,14 +230,12 @@ namespace System.Net
 #if !NET_2_0
 		public override int GetHashCode ()
 		{
-			CheckDisposed ();
 			return base.GetHashCode ();
 		}
 #endif
 		
 		public string GetResponseHeader (string headerName)
 		{
-			CheckDisposed ();
 			string value = webHeaders [headerName];
 			return (value != null) ? value : "";
 		}
