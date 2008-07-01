@@ -670,13 +670,23 @@ namespace Mono.Data.Tds.Protocol {
 
 				TdsDataColumn col = new TdsDataColumn ();
 				int index = result.Add (col);
+#if NET_2_0
 				col.ColumnType = columnType;
-				result[index]["AllowDBNull"] = nullable;
+				result[index].ColumnName = columnName;
+				result[index].ColumnType = columnType;
+				result[index].IsAutoIncrement = autoIncrement;
+				result[index].IsIdentity = isIdentity;
+
+#else
+				col["ColumnType"] = columnType;
 				result[index]["ColumnName"] = columnName;
-				result[index]["ColumnSize"] = columnSize;
 				result[index]["ColumnType"] = columnType;
 				result[index]["IsAutoIncrement"] = autoIncrement;
 				result[index]["IsIdentity"] = isIdentity;
+
+#endif
+				result[index]["ColumnSize"] = columnSize;
+				result[index]["AllowDBNull"] = nullable;
 				result[index]["IsReadOnly"] = !writable;
 				result[index]["NumericPrecision"] = precision;
 				result[index]["NumericScale"] = scale;

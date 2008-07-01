@@ -1,3 +1,17 @@
+2008-07-01  Marek Habersack  <mhabersack@novell.com>
+
+	* TdsDataColumnCollection.cs, Tds50.cs, Tds42.cs, Tds70.cs,
+	Tds.cs: adjust for changes below.
+
+	* TdsDataColumn.cs: use the named properties only in the 2.0
+	profile. The reason is that Mono.Data.TdsClient.TdsDataReader
+	needs to know if a property has been set or not. With 2.0 it is
+	easy to implement using nullable types, with 1.x it would require
+	using e.g. BitArray to control which field was set, and in
+	addition extra code would be needed to check whether a field was
+	set or not. Also, it would clutter the code with #ifdefs all over
+	the map.
+
 2008-06-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* TdsDataColumn.cs: Do not inherit from Hashtable, add always set properties

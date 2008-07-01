@@ -215,7 +215,13 @@ namespace Mono.Data.Tds.Protocol
 				throw new Exception ("Cannot Skip to a colindex less than the curr index");
 
 			while (colIndex != StreamColumnIndex) {
-				TdsColumnType colType = Columns[StreamColumnIndex].ColumnType;
+#if NET_2_0
+				TdsColumnType? colType = Columns[StreamColumnIndex].ColumnType;
+				if (colType == null)
+					throw new Exception ("Column type unset.");
+#else
+				TdsColumnType colType = (TdsColumnType) Columns [StreamColumnIndex]["ColumnType"];
+#endif
 				if (!(colType == TdsColumnType.Image ||
 					colType == TdsColumnType.Text ||
 					colType == TdsColumnType.NText)) {
@@ -242,7 +248,11 @@ namespace Mono.Data.Tds.Protocol
 			if (colIndex != StreamColumnIndex)
 				SkipToColumnIndex (colIndex);
 
+#if NET_2_0
 			object o = GetColumnValue (Columns[colIndex].ColumnType, false, colIndex);
+#else
+			object o = GetColumnValue ((TdsColumnType)Columns[colIndex]["ColumnType"], false, colIndex);
+#endif
 			StreamColumnIndex++;
 			return o;
 		}
@@ -255,9 +265,14 @@ namespace Mono.Data.Tds.Protocol
 				if (colIndex != StreamColumnIndex) 
 					SkipToColumnIndex (colIndex);
 
-				if (!LoadInProgress)
+				if (!LoadInProgress) {
+#if NET_2_0
 					BeginLoad (Columns[colIndex].ColumnType);
-
+#else
+					BeginLoad ((TdsColumnType)Columns[colIndex]["ColumnType"]);
+#endif
+				}
+				
 				if (buffer == null) {
 					return StreamLength;
 				}
@@ -268,13 +283,23 @@ namespace Mono.Data.Tds.Protocol
 			}
 		}
 
-		private void BeginLoad(TdsColumnType colType) 
+		private void BeginLoad (
+#if NET_2_0
+			TdsColumnType? colType
+#else
+			TdsColumnType colType
+#endif
+		) 
 		{
 			if (LoadInProgress)
 				EndLoad ();
 
 			StreamLength = 0;
-		
+
+#if NET_2_0
+			if (colType == null)
+				throw new ArgumentNullException ("colType");
+#endif
 			switch (colType) {
 			case TdsColumnType.Text :
 			case TdsColumnType.NText:
@@ -645,17 +670,33 @@ namespace Mono.Data.Tds.Protocol
 			return new TdsInternalErrorMessageEventArgs (new TdsInternalError (theClass, lineNumber, message, number, procedure, server, source, state));
 		}
 
-		private object GetColumnValue (TdsColumnType colType, bool outParam)
+		private object GetColumnValue (
+#if NET_2_0
+			TdsColumnType? colType,
+#else
+			TdsColumnType colType,
+#endif
+			bool outParam)
 		{
 			return GetColumnValue (colType, outParam, -1);
 		}
 
-		private object GetColumnValue (TdsColumnType colType, bool outParam, int ordinal)
+		private object GetColumnValue (
+#if NET_2_0
+			TdsColumnType? colType,
+#else
+			TdsColumnType colType,
+#endif
+			bool outParam, int ordinal)
 		{
 			int len;
 			object element = null;
 
-			switch (colType) {
+#if NET_2_0
+			if (colType == null)
+				throw new ArgumentNullException ("colType");
+#endif
+			switch (colType) {				
 			case TdsColumnType.IntN :
 				if (outParam)
 					comm.Skip (1);
@@ -843,11 +884,21 @@ namespace Mono.Data.Tds.Protocol
 			return result;
 		}
 
-		private object GetDateTimeValue (TdsColumnType type)
+		private object GetDateTimeValue (
+#if NET_2_0
+			TdsColumnType? type
+#else
+			TdsColumnType type
+#endif
+		)
 		{
 			int len = 0;
 			object result;
-		
+
+#if NET_2_0
+			if (type == null)
+				throw new ArgumentNullException ("type");
+#endif
 			switch (type) {
 			case TdsColumnType.DateTime4:
 				len = 4;
@@ -958,8 +1009,18 @@ namespace Mono.Data.Tds.Protocol
 			
 		}
 
-		private object GetFloatValue (TdsColumnType columnType)
+		private object GetFloatValue (
+#if NET_2_0
+			TdsColumnType? columnType
+#else
+			TdsColumnType columnType
+#endif
+		)
 		{
+#if NET_2_0
+			if (columnType == null)
+				throw new ArgumentNullException ("columnType");
+#endif
 			int columnSize = 0;
 
 			switch (columnType) {
@@ -1000,10 +1061,20 @@ namespace Mono.Data.Tds.Protocol
 			return (comm.GetBytes (len, true));
 		}
 
-		private object GetIntValue (TdsColumnType type)
+		private object GetIntValue (
+#if NET_2_0
+			TdsColumnType? type
+#else
+			TdsColumnType type
+#endif
+		)
 		{
 			int len;
 
+#if NET_2_0
+			if (type == null)
+				throw new ArgumentNullException ("type");
+#endif
 			switch (type) {
 			case TdsColumnType.IntN :
 				len = comm.GetByte ();
@@ -1033,10 +1104,20 @@ namespace Mono.Data.Tds.Protocol
 			}
 		}
 
-		private object GetMoneyValue (TdsColumnType type)
+		private object GetMoneyValue (
+#if NET_2_0
+			TdsColumnType? type
+#else
+			TdsColumnType type
+#endif
+		)
 		{
 			int len;
 
+#if NET_2_0
+			if (type == null)
+				throw new ArgumentNullException ("type");
+#endif
 			switch (type) {
 			case TdsColumnType.SmallMoney :
 			case TdsColumnType.Money4 :
@@ -1169,7 +1250,11 @@ namespace Mono.Data.Tds.Protocol
 
 			int i = 0;
 			foreach (TdsDataColumn column in columns) {
+#if NET_2_0
 				object o = GetColumnValue (column.ColumnType, false, i);
+#else
+				object o = GetColumnValue ((TdsColumnType)column["ColumnType"], false, i);
+#endif
 				currentRow.Add (o);
 				if (doneProc)
 					outputParameters.Add (o);
@@ -1293,7 +1378,11 @@ namespace Mono.Data.Tds.Protocol
 
 				columns [index]["IsExpression"] = isExpression;
 				columns [index]["IsKey"] = ((values[2] & (byte) TdsColumnStatus.IsKey) != 0);
+#if NET_2_0
+				columns [index].IsHidden = ((values[2] & (byte) TdsColumnStatus.Hidden) != 0);
+#else
 				columns [index]["IsHidden"] = ((values[2] & (byte) TdsColumnStatus.Hidden) != 0);
+#endif
 				columns [index]["IsAliased"] = isAlias;
 
 				columns [index]["BaseColumnName"] = ((isAlias) ? baseColumnName : null);

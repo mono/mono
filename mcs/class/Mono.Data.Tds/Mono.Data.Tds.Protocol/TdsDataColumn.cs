@@ -33,18 +33,28 @@ using System.Collections;
 namespace Mono.Data.Tds.Protocol {
 	public class TdsDataColumn
 	{
-		int column_ordinal;
-		TdsColumnType column_type;
+#if NET_2_0
+		int? column_ordinal;
+		TdsColumnType? column_type;
 		string column_name;
-
+		bool? is_auto_increment = false;
+		bool? is_identity = false;
+		bool? is_row_version = false;
+		bool? is_unique = false;
+		bool? is_hidden = false;
+#endif
 		Hashtable properties;
 
 		public TdsDataColumn ()
 		{
+#if !NET_2_0
 			SetDefaultValues ();
+#endif
 		}
 
-		public TdsColumnType ColumnType {
+
+#if NET_2_0
+		public TdsColumnType? ColumnType {
 			get {
 				return column_type;
 			}
@@ -62,7 +72,7 @@ namespace Mono.Data.Tds.Protocol {
 			}
 		}
 
-		public int ColumnOrdinal {
+		public int? ColumnOrdinal {
 			get {
 				return column_ordinal;
 			}
@@ -71,6 +81,52 @@ namespace Mono.Data.Tds.Protocol {
 			}
 		}
 
+		public bool? IsAutoIncrement {
+			get {
+				return is_auto_increment;
+			}
+			set {
+				is_auto_increment = value;
+			}
+		}
+
+		public bool? IsIdentity {
+			get {
+				return is_identity;
+			}
+			set {
+				is_identity = value;
+			}
+		}
+
+		public bool? IsRowVersion {
+			get {
+				return is_row_version;
+			}
+			set {
+				is_row_version = value;
+			}
+		}
+
+		public bool? IsUnique {
+			get {
+				return is_unique;
+			}
+			set {
+				is_unique = value;
+			}
+		}
+
+		public bool? IsHidden {
+			get {
+				return is_hidden;
+			}
+			set {
+				is_hidden = value;
+			}
+		}
+#endif
+		
 		// This allows the storage of arbitrary properties in addition to the predefined ones
 		public object this [object key] {
 			get {
@@ -88,6 +144,7 @@ namespace Mono.Data.Tds.Protocol {
 		static object bool_true = true;
 		static object bool_false = false;
 
+#if !NET_2_0
 		private void SetDefaultValues ()
 		{
 			this ["IsAutoIncrement"] = bool_false;
@@ -96,5 +153,6 @@ namespace Mono.Data.Tds.Protocol {
 			this ["IsUnique"] = bool_false;
 			this ["IsHidden"] = bool_false;
 		}
+#endif
 	}
 }

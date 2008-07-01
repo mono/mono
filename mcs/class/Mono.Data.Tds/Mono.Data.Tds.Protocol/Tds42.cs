@@ -274,7 +274,11 @@ namespace Mono.Data.Tds.Protocol {
 
 				TdsDataColumn col = new TdsDataColumn ();
 				int index = result.Add (col);
+#if NET_2_0
 				col.ColumnType = columnType;
+#else
+				col["ColumnType"] = columnType;
+#endif
 				col["NumericPrecision"] = precision;
 				col["NumericScale"] = scale;
 				col["ColumnSize"] = bufLength;

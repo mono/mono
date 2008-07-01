@@ -68,8 +68,11 @@ namespace Mono.Data.Tds.Protocol {
 		{
 			int index;
 			index = list.Add (schema);
+#if NET_2_0
 			schema.ColumnOrdinal = index;
+#else
 			schema["ColumnOrdinal"] = index;
+#endif
 			return index;
 		}
 
