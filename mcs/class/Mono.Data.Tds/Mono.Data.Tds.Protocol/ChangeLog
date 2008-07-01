@@ -1,3 +1,9 @@
+2008-07-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Tds70.cs: Avoid accessing TdsDataColumnCollection indexer.
+	* Tds.cs: Removed unused method.
+	* TdsComm.cs: Fixed compiler warning.
+
 2008-07-01  Marek Habersack  <mhabersack@novell.com>
 
 	* TdsDataColumnCollection.cs, Tds50.cs, Tds42.cs, Tds70.cs,

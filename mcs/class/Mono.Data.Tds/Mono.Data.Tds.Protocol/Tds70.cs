@@ -669,31 +669,29 @@ namespace Mono.Data.Tds.Protocol {
 				string columnName = Comm.GetString (Comm.GetByte ());
 
 				TdsDataColumn col = new TdsDataColumn ();
-				int index = result.Add (col);
+				result.Add (col);
 #if NET_2_0
 				col.ColumnType = columnType;
-				result[index].ColumnName = columnName;
-				result[index].ColumnType = columnType;
-				result[index].IsAutoIncrement = autoIncrement;
-				result[index].IsIdentity = isIdentity;
-				result[index].ColumnSize = columnSize;
-				result[index].NumericPrecision = precision;
-				result[index].NumericScale = scale;
-				result[index].IsReadOnly = !writable;
-				result[index].AllowDBNull = nullable;
-				result[index].BaseTableName = tableName;
+				col.ColumnName = columnName;
+				col.IsAutoIncrement = autoIncrement;
+				col.IsIdentity = isIdentity;
+				col.ColumnSize = columnSize;
+				col.NumericPrecision = precision;
+				col.NumericScale = scale;
+				col.IsReadOnly = !writable;
+				col.AllowDBNull = nullable;
+				col.BaseTableName = tableName;
 #else
-				col["ColumnType"] = columnType;
-				result[index]["ColumnName"] = columnName;
-				result[index]["ColumnType"] = columnType;
-				result[index]["IsAutoIncrement"] = autoIncrement;
-				result[index]["IsIdentity"] = isIdentity;
-				result[index]["ColumnSize"] = columnSize;
-				result[index]["NumericPrecision"] = precision;
-				result[index]["NumericScale"] = scale;
-				result[index]["IsReadOnly"] = !writable;
-				result[index]["AllowDBNull"] = nullable;
-				result[index]["BaseTableName"] = tableName;
+				col ["ColumnType"] = columnType;
+				col ["ColumnName"] = columnName;
+				col ["IsAutoIncrement"] = autoIncrement;
+				col ["IsIdentity"] = isIdentity;
+				col ["ColumnSize"] = columnSize;
+				col ["NumericPrecision"] = precision;
+				col ["NumericScale"] = scale;
+				col ["IsReadOnly"] = !writable;
+				col ["AllowDBNull"] = nullable;
+				col ["BaseTableName"] = tableName;
 #endif
 			}
 			return result;

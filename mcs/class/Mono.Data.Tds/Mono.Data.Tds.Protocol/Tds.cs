@@ -1293,35 +1293,6 @@ namespace Mono.Data.Tds.Protocol
 			}
 		}
 
-		private int LookupDisplaySize (TdsColumnType columnType) 
-		{
-			switch (columnType) {
-				case TdsColumnType.Int1 :
-					return 3;
-				case TdsColumnType.Int2 :
-					return 6;
-				case TdsColumnType.Int4 :
-					return 11;
-				case TdsColumnType.Real :
-					return 14;
-				case TdsColumnType.Float8 :
-					return 24;
-				case TdsColumnType.DateTime :
-					return 23;
-				case TdsColumnType.DateTime4 :
-					return 16;
-				case TdsColumnType.Bit :
-					return 1;
-				case TdsColumnType.Money :
-					return 21;
-				case TdsColumnType.Money4 :
-				case TdsColumnType.SmallMoney :
-					return 12;
-				default:
-					return 0;
-			}
-		}
-
 		protected internal int ProcessAuthentication ()
 		{
 			int pdu_size = Comm.GetTdsShort ();

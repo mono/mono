@@ -98,7 +98,7 @@ namespace Mono.Data.Tds.Protocol {
 				endPoint = new IPEndPoint (hostEntry.AddressList [0], port);
 
 				connected.Reset ();
-				IAsyncResult asyncResult = socket.BeginConnect (endPoint, new AsyncCallback (ConnectCallback), socket);
+				socket.BeginConnect (endPoint, new AsyncCallback (ConnectCallback), socket);
 
 				if (timeout > 0 && !connected.WaitOne (new TimeSpan (0, 0, timeout), true))
 					throw Tds.CreateTimeoutException (dataSource, "Open()");
