@@ -1,5 +1,10 @@
 2008-07-01  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* SqlDataReader.cs (GetSchemaTable): All column index are constants,
+	extract them.
+
+2008-07-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* SqlDataReader.cs (GetSchemaTable): Calculate column indexes
 	outside of the row loop.
 
