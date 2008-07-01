@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+	targetNamespace="tag:example.org,2007:SomeService"
+	xmlns:tns="tag:example.org,2007:SomeService"
+	xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+	xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+>
+	<wsdl:types>
+		<xsd:schema targetNamespace="tag:example.org,2007:SomeService">
+			<xsd:element name="OperationName.Request">
+				<xsd:complexType>
+					<xsd:all maxOccurs="1" minOccurs="1">
+						<xsd:element ref="tns:isbn" minOccurs="0" maxOccurs="1"/>
+						<xsd:element ref="tns:year" minOccurs="0" maxOccurs="1"/>
+						<xsd:element ref="tns:semester" minOccurs="0" maxOccurs="1"/>
+
+						<xsd:element ref="tns:author" minOccurs="0" maxOccurs="1"/>
+						<xsd:element ref="tns:title" minOccurs="0" maxOccurs="1"/>
+					</xsd:all>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="isbn" type="xsd:normalizedString"/>
+			<xsd:element name="author" type="xsd:normalizedString"/>
+			<xsd:element name="title" type="xsd:normalizedString"/>
+			<xsd:element name="year" type="xsd:positiveInteger"/>
+
+			<xsd:element name="semester" type="xsd:positiveInteger"/>
+			<xsd:element name="dept" type="xsd:positiveInteger"/>
+			<xsd:element name="section" type="xsd:positiveInteger"/>
+			<xsd:element name="course" type="xsd:normalizedString"/>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="m.OperationName.in">
+		<wsdl:part name="a" type='xsd:string'/>
+		<wsdl:part name="b" type='xsd:string'/>
+
+		<wsdl:part name="c" type='xsd:string'/>
+	</wsdl:message>
+	<wsdl:message name="m.OperationName.out">
+		<wsdl:part name="out" element="tns:OperationName.Request"/>
+	</wsdl:message>
+	<wsdl:portType name="pt.GET">
+		<wsdl:operation name="OperationName">
+			<wsdl:input message="tns:m.OperationName.in"/>
+			<wsdl:output message="tns:m.OperationName.out"/>
+
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="binding.GET" type="tns:pt.GET">
+		<http:binding verb="GET"/>
+		<wsdl:operation name="OperationName">
+			<http:operation location="/URL/Handler.ashx"/>
+			<wsdl:input>
+				<http:urlEncoded/>
+			</wsdl:input>
+
+			<wsdl:output>
+				<mime:content type="text/xml"/>
+			</wsdl:output>
+			<wsdl:fault name="fault.ExceptionName">
+				<wsdl:documentation> Errors occurred! </wsdl:documentation>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+
+	<wsdl:service name="MyService">
+<!-- also try commenting out this port -->
+		<wsdl:port name="p.GET" binding="tns:binding.GET">
+			<http:address location="http://127.0.0.1"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>
+
