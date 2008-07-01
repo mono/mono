@@ -58,8 +58,8 @@ For comments, corrections and updates, please contact mono@novell.com
 
   	The C# Compilers (1.0 and 2.0)
 
-	These compilers are dual licensed under the GPL and commercial
-	terms.
+	These compilers are dual licensed under the GPL and MIT X11
+	license terms.
 
 ** tests
 
