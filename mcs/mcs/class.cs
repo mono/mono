@@ -4700,9 +4700,6 @@ namespace Mono.CSharp {
 				ca, CallingConventions,
 				ParameterTypes);
 
-			if ((ModFlags & Modifiers.UNSAFE) != 0)
-				ConstructorBuilder.InitLocals = false;
-
 			if (Parent.PartialContainer.IsComImport) {
 				if (!IsDefault ()) {
 					Report.Error (669, Location, "`{0}': A class with the ComImport attribute cannot have a user-defined constructor",
@@ -5130,10 +5127,6 @@ namespace Mono.CSharp {
 				declaring_type = container.CurrentType;
 			else
 				declaring_type = container.TypeBuilder;
-
-			if ((modifiers & Modifiers.UNSAFE) != 0)
-				builder.InitLocals = false;
-
 
 			if (implementing != null){
 				//
