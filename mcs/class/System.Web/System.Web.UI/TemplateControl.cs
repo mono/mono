@@ -155,7 +155,8 @@ namespace System.Web.UI {
 				}
 			}
 
-			foreach (EvtInfo evinfo in events) {
+			for (int i = 0; i < events.Count; ++i) {
+				EvtInfo evinfo = (EvtInfo)events [i];
 				if (evinfo.noParams) {
 					NoParamsInvoker npi = new NoParamsInvoker (this, evinfo.method);
 					evinfo.evt.AddEventHandler (this, npi.FakeDelegate);
