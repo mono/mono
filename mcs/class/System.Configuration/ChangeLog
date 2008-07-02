@@ -1,3 +1,13 @@
+2008-07-01  Miguel de Icaza  <miguel@novell.com>
+
+	* ConfigurationManager.cs (OpenExeConfigurationInternal): if the
+	string passed is empty, then we default to the startup assembly.
+
+	Fixes: #405574
+
+	Not entirely happy as there is no decent documentation for this
+	behavior (the docs state nothing about empty strings). 
+
 2008-06-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Configuration_test.dll.sources: added

@@ -95,9 +95,13 @@ namespace System.Configuration {
 
 			switch (userLevel) {
 			case ConfigurationUserLevel.None:
-				if (exePath == null)
-					exePath = calling_assembly.Location;
-				else if (!File.Exists (exePath))
+				if (exePath == null || exePath == ""){
+					Assembly a = Assembly.GetEntryAssembly ();
+					if (a == null)
+						a = calling_assembly;
+					
+					exePath = a.Location;
+				} else if (!File.Exists (exePath))
 					exePath = "";
 
 				if (exePath != "") {
