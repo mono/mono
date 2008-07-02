@@ -1,5 +1,5 @@
 //
-// System.Runtime.Remoting.Metadata.W3cXsd2001.SoapDuration
+// System.Runtime.Remoting.Metadata.W3cXsd2001.SoapDuration.cs
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
@@ -50,17 +50,17 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 			get { return "duration"; }
 		}
 
-		public static TimeSpan Parse (string s)
+		public static TimeSpan Parse (string value)
 		{
-			if (s.Length == 0)
+			if (value.Length == 0)
 				throw new ArgumentException ("Invalid format string for duration schema datatype.");
 
 			int start = 0;
-			if (s [0] == '-')
+			if (value [0] == '-')
 				start = 1;
 			bool minusValue = (start == 1);
 
-			if (s [start] != 'P')
+			if (value [start] != 'P')
 				throw new ArgumentException ("Invalid format string for duration schema datatype.");
 			start++;
 
@@ -74,8 +74,8 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 			bool error = false;
 
 			int i = start;
-			while (i < s.Length) {
-				if (s [i] == 'T') {
+			while (i < value.Length) {
+				if (value [i] == 'T') {
 					isTime = true;
 					parseStep = 4;
 					i++;
@@ -84,12 +84,12 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 				}
 				bool isIntegerValue = true;
 				int dotOccurence = 0;
-				for (; i < s.Length; i++) 
+				for (; i < value.Length; i++) 
 				{
-					if (!Char.IsDigit (s [i]))
+					if (!Char.IsDigit (value [i]))
 					{
 						//check if it is a non integer value.
-						if (s[i] == '.') 
+						if (value[i] == '.') 
 						{
 							isIntegerValue = false;
 							dotOccurence++;
@@ -109,10 +109,10 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 				int intValue = -1;
 				double doubleValue = -1;
 				if (isIntegerValue)
-					intValue = int.Parse (s.Substring (start, i - start));
+					intValue = int.Parse (value.Substring (start, i - start));
 				else
-					doubleValue = double.Parse (s.Substring (start, i - start), CultureInfo.InvariantCulture);
-				switch (s [i]) {
+					doubleValue = double.Parse (value.Substring (start, i - start), CultureInfo.InvariantCulture);
+				switch (value [i]) {
 				case 'Y':
 					days += intValue * 365;
 					if (parseStep > 0 || !isIntegerValue)
@@ -170,23 +170,23 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 			return minusValue ? -ts : ts;
 		}
 
-		public static string ToString (TimeSpan value)
+		public static string ToString (TimeSpan timeSpan)
 		{
 			StringBuilder builder = new StringBuilder();
-			if (value.Ticks < 0) {
+			if (timeSpan.Ticks < 0) {
 				builder.Append('-');
-				value = value.Negate();
+				timeSpan = timeSpan.Negate();
 			}
 			builder.Append('P');
-			if (value.Days > 0) builder.Append(value.Days).Append('D');
-			if (value.Days > 0 || value.Minutes > 0 || value.Seconds > 0 || value.Milliseconds > 0) {
+			if (timeSpan.Days > 0) builder.Append(timeSpan.Days).Append('D');
+			if (timeSpan.Days > 0 || timeSpan.Minutes > 0 || timeSpan.Seconds > 0 || timeSpan.Milliseconds > 0) {
 				builder.Append('T');
-				if (value.Hours > 0) builder.Append(value.Hours).Append('H');
-				if (value.Minutes > 0) builder.Append(value.Minutes).Append('M');
-				if (value.Seconds > 0 || value.Milliseconds > 0) {
-					double secs = (double) value.Seconds;
-					if (value.Milliseconds > 0)
-						secs += ((double)value.Milliseconds) / 1000.0;
+				if (timeSpan.Hours > 0) builder.Append(timeSpan.Hours).Append('H');
+				if (timeSpan.Minutes > 0) builder.Append(timeSpan.Minutes).Append('M');
+				if (timeSpan.Seconds > 0 || timeSpan.Milliseconds > 0) {
+					double secs = (double) timeSpan.Seconds;
+					if (timeSpan.Milliseconds > 0)
+						secs += ((double)timeSpan.Milliseconds) / 1000.0;
 					builder.Append(String.Format(CultureInfo.InvariantCulture, "{0:0.0000000}", secs));
 					builder.Append('S');
 				}

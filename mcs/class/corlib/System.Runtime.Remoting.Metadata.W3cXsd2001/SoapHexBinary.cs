@@ -1,5 +1,5 @@
 //
-// System.Runtime.Remoting.Metadata.W3cXsd2001.SoapHexBinary
+// System.Runtime.Remoting.Metadata.W3cXsd2001.SoapHexBinary.cs
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
@@ -67,9 +67,9 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 			return XsdType;
 		}
 		
-		public static SoapHexBinary Parse (string s)
+		public static SoapHexBinary Parse (string value)
 		{
-			char [] chars = s.ToCharArray ();
+			char [] chars = value.ToCharArray ();
 			byte [] bytes = new byte [chars.Length / 2 + chars.Length % 2];
 			FromBinHexString (chars, 0, chars.Length, bytes);
 			return new SoapHexBinary (bytes);

@@ -1,5 +1,5 @@
 //
-// System.Runtime.Remoting.Metadata.W3cXsd2001.SoapDate
+// System.Runtime.Remoting.Metadata.W3cXsd2001.SoapDate.cs
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
@@ -59,14 +59,14 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 		{
 		}
 
-		public SoapDate (DateTime date)
+		public SoapDate (DateTime value)
 		{
-			_value = date;
+			_value = value;
 		}
 
-		public SoapDate (DateTime date, int sign)
+		public SoapDate (DateTime value, int sign)
 		{
-			_value = date;
+			_value = value;
 			_sign = sign;
 		}
 

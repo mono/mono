@@ -1,5 +1,5 @@
 //
-// System.Runtime.Remoting.Metadata.W3cXsd2001.SoapQName
+// System.Runtime.Remoting.Metadata.W3cXsd2001.SoapQName.cs
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
@@ -49,22 +49,22 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 		{
 		}
 
-		public SoapQName (string localName)
+		public SoapQName (string value)
 		{
-			_name = localName;
+			_name = value;
 		}
 
-		public SoapQName (string key, string localName)
+		public SoapQName (string key, string name)
 		{
 			_key = key;
-			_name = localName;
+			_name = name;
 		}
 
-		public SoapQName (string key, string localName, string namspace)
+		public SoapQName (string key, string name, string namespaceValue)
 		{
 			_key = key;
-			_name = localName;
-			_namespace = namspace;
+			_name = name;
+			_namespace = namespaceValue;
 		}
 
 		public string Key {

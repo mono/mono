@@ -1,5 +1,5 @@
 //
-// System.Runtime.Remoting.Metadata.W3cXsd2001.SoapYearMonth
+// System.Runtime.Remoting.Metadata.W3cXsd2001.SoapYearMonth.cs
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
@@ -59,14 +59,14 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 		{
 		}
 
-		public SoapYearMonth (DateTime date)
+		public SoapYearMonth (DateTime value)
 		{
-			_value = date;
+			_value = value;
 		}
 
-		public SoapYearMonth (DateTime date, int sign)
+		public SoapYearMonth (DateTime value, int sign)
 		{
-			_value = date;
+			_value = value;
 			_sign = sign;
 		}
 
