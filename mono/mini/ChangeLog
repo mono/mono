@@ -1,5 +1,8 @@
 2008-07-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c (mono_arch_get_delegate_invoke_impl): Remove locking, speed up the
+	fast path a bit.
+	
 	* mini-trampolines.c (mono_delegate_trampoline): Add a comment.
 
 	* mini-amd64.c (mono_arch_get_delegate_invoke_impl): Remove locking, speed up the
