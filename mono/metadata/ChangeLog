@@ -1,3 +1,8 @@
+2008-07-03  Mark Probst  <mark.probst@gmail.com>
+
+	* domain.c (mono_jit_info_table_find): Fixed a bug that caused
+	mono_jit_info_table_find() to perform very badly in some cases.
+
 2008-07-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (type_from_typename): Handle 'string'.
