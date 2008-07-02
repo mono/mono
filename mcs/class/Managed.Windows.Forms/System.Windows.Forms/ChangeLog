@@ -1,3 +1,10 @@
+2008-07-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBox.cs: When handling item navigation, if selection mode is
+	None, call EnsureVisible, since scrolling is normally handled by
+	selection, that we are not calling in this case.
+	Fixes #398345.
+
 2008-07-02  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ContainerControl.cs: Apply a patch from Ernesto Carrea that adds

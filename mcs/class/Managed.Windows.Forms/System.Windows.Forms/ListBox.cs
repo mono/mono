@@ -1650,9 +1650,11 @@ namespace System.Windows.Forms
 				
 				if (new_item != -1) {
 					FocusedItem = new_item;
-					if (selection_mode != SelectionMode.MultiSimple && selection_mode != SelectionMode.None) {
+
+					if (selection_mode == SelectionMode.None)
+						EnsureVisible (new_item);
+					else if (selection_mode != SelectionMode.MultiSimple)
 						SelectedItemFromNavigation (new_item);
-					}
 				}
 		}
 		
