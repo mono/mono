@@ -1,5 +1,14 @@
 2008-07-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ComboBox.cs:
+	* TextBox.cs: Implement AutoComplete support for ComboBox, which just
+	uses the AutoComplete support in the internal TextBox. Also TextBox
+	can store a reference to ComboBox, in case AutoCompleteSource is set
+	to ListItems (this is, ComboBox's items, and we don't want to pass an
+	additional collection).
+
+2008-07-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListViewItem.cs: Restore the initial value of bounds rect to
 	Rectangle.Empty, and is this value for Layout detection in virtual
 	mode. Fixes the tests.

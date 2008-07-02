@@ -27,6 +27,7 @@
 // NOT COMPLETE
 
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
@@ -58,6 +59,7 @@ namespace System.Windows.Forms {
 		private AutoCompleteMode auto_complete_mode = AutoCompleteMode.None;
 		private AutoCompleteSource auto_complete_source = AutoCompleteSource.None;
 		private AutoCompleteListBox auto_complete_listbox;
+		private ComboBox auto_complete_cb_source;
 #endif
 		#endregion	// Variables
 
@@ -121,8 +123,14 @@ namespace System.Windows.Forms {
 				return;
 
 			// We only support CustomSource by now
+			IList source;
+			if (auto_complete_cb_source == null)
+				source = auto_complete_custom_source;
+			else
+				source = auto_complete_cb_source.Items;
+
 			if (auto_complete_source != AutoCompleteSource.CustomSource ||
-				auto_complete_custom_source == null || auto_complete_custom_source.Count == 0)
+				source == null || source.Count == 0)
 				return;
 
 			if (Text.Length == 0) {
@@ -142,9 +150,13 @@ namespace System.Windows.Forms {
 
 			string text = Text;
 			auto_complete_listbox.Items.Clear ();
-			foreach (string str in auto_complete_custom_source)
-				if (str.StartsWith (text, StringComparison.CurrentCultureIgnoreCase))
-					auto_complete_listbox.Items.Add (str);
+
+			for (int i = 0; i < source.Count; i++) {
+				string item_text = auto_complete_cb_source == null ? auto_complete_custom_source [i] :
+					auto_complete_cb_source.GetItemText (auto_complete_cb_source.Items [i]);
+				if (item_text.StartsWith (text, StringComparison.CurrentCultureIgnoreCase))
+					auto_complete_listbox.Items.Add (item_text);
+			}
 
 			IList<string> matches = auto_complete_listbox.Items;
 			if ((matches.Count == 0) ||
@@ -158,6 +170,15 @@ namespace System.Windows.Forms {
 			// Show or update auto complete listbox contents
 			auto_complete_listbox.Location = PointToScreen (new Point (0, Height));
 			auto_complete_listbox.ShowListBox ();
+		}
+
+		internal ComboBox AutoCompleteInternalSource {
+			get {
+				return auto_complete_cb_source;
+			}
+			set {
+				auto_complete_cb_source = value;
+			}
 		}
 #endif
 

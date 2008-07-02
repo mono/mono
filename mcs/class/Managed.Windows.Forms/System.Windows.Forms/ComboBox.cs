@@ -246,6 +246,8 @@ namespace System.Windows.Forms
 
 				if(auto_complete_custom_source != null)
 					auto_complete_custom_source.CollectionChanged += new CollectionChangeEventHandler (OnAutoCompleteCustomSourceChanged);
+
+				SetTextBoxAutoCompleteData ();
 			}
 		}
 
@@ -263,6 +265,7 @@ namespace System.Windows.Forms
 					throw new InvalidEnumArgumentException (Locale.GetText ("Enum argument value '{0}' is not valid for AutoCompleteMode", value));
 
 				auto_complete_mode = value;
+				SetTextBoxAutoCompleteData ();
 			}
 		}
 
@@ -280,6 +283,25 @@ namespace System.Windows.Forms
 					throw new InvalidEnumArgumentException (Locale.GetText ("Enum argument value '{0}' is not valid for AutoCompleteSource", value));
 
 				auto_complete_source = value;
+				SetTextBoxAutoCompleteData ();
+			}
+		}
+
+		void SetTextBoxAutoCompleteData ()
+		{
+			if (textbox_ctrl == null)
+				return;
+
+			textbox_ctrl.AutoCompleteMode = auto_complete_mode;
+
+			if (auto_complete_source == AutoCompleteSource.ListItems) {
+				textbox_ctrl.AutoCompleteSource = AutoCompleteSource.CustomSource;
+				textbox_ctrl.AutoCompleteCustomSource = null;
+				textbox_ctrl.AutoCompleteInternalSource = this;
+			} else {
+				textbox_ctrl.AutoCompleteSource = auto_complete_source;
+				textbox_ctrl.AutoCompleteCustomSource = auto_complete_custom_source;
+				textbox_ctrl.AutoCompleteInternalSource = null;
 			}
 		}
 #endif
@@ -433,6 +455,9 @@ namespace System.Windows.Forms
 
 					if (IsHandleCreated == true)
 						Controls.AddImplicit (textbox_ctrl);
+#if NET_2_0
+					SetTextBoxAutoCompleteData ();
+#endif
 				}
 				
 				ResumeLayout ();
