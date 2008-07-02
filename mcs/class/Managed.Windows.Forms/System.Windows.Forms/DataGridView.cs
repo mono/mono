@@ -2810,8 +2810,9 @@ namespace System.Windows.Forms {
 				throw new ArgumentNullException ("dataGridViewColumn");
 			if (dataGridViewColumn.DataGridView != this)
 				throw new ArgumentException ("dataGridViewColumn");
-			if (DataSource != null && !dataGridViewColumn.IsDataBound)
-				throw new ArgumentException ("dataGridViewColumn");
+			// XXX: This is thrown too much, disable for now..
+			//if (DataSource != null && !dataGridViewColumn.IsDataBound)
+			//        throw new ArgumentException ("dataGridViewColumn");
 			if (VirtualMode && !dataGridViewColumn.IsDataBound)
 				throw new InvalidOperationException ();
 
@@ -4713,9 +4714,6 @@ namespace System.Windows.Forms {
 				case Keys.Space:
 					return ProcessSpaceKey (e.KeyData);
 				case Keys.Tab:
-				case Keys.Shift | Keys.Tab:
-				case Keys.Control | Keys.Tab:
-				case Keys.Control | Keys.Shift | Keys.Tab:
 					return ProcessTabKey (e.KeyData);
 				case Keys.Up:
 					return ProcessUpKey (e.KeyData);
