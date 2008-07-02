@@ -38,11 +38,11 @@ namespace System.Security.AccessControl
 		MutexRights rights;
 		
 		public MutexAuditRule (IdentityReference identity,
-				       MutexRights mutexRights,
+				       MutexRights eventRights,
 				       AuditFlags flags)
 			: base (identity, 0, false, InheritanceFlags.None, PropagationFlags.None, flags)
 		{
-			this.rights = mutexRights;
+			this.rights = eventRights;
 		}
 		
 		public MutexRights MutexRights {

@@ -38,18 +38,18 @@ namespace System.Security.AccessControl
 		MutexRights rights;
 		
 		public MutexAccessRule (IdentityReference identity,
-					MutexRights mutexRights,
+					MutexRights eventRights,
 					AccessControlType type)
 			// FIXME: accessMask=0 likely causes an error
 			: base (identity, 0, false, InheritanceFlags.None, PropagationFlags.None, type)
 		{
-			this.rights = mutexRights;
+			this.rights = eventRights;
 		}
 
 		public MutexAccessRule (string identity,
-					MutexRights mutexRights,
+					MutexRights eventRights,
 					AccessControlType type)
-			: this (new SecurityIdentifier (identity), mutexRights, type)
+			: this (new SecurityIdentifier (identity), eventRights, type)
 		{
 		}
 		
