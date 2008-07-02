@@ -41,54 +41,58 @@ namespace System.Diagnostics
 	internal sealed class DebuggerVisualizerAttribute : Attribute
 #endif
 	{
-		string description;
-		string visualizerSourceName;
-		Type visualizerSource;
-		string visualizerName;
-		Type visualizer;
+		private string description;
+		private string visualizerSourceName;
+		private string visualizerName;
+		private string targetTypeName;
+		private Type target;
 
-		string targetTypeName;
-		Type target;
-
-		public DebuggerVisualizerAttribute (string visualizerSourceName)
-		{
-			this.visualizerSourceName = visualizerSourceName;
-		}
-
-		public DebuggerVisualizerAttribute (Type visualizerSource)
-		{
-			this.visualizerSource = visualizerSource;
-			this.visualizerSourceName = visualizerSource.AssemblyQualifiedName;
-		}
-
-		public DebuggerVisualizerAttribute (string visualizerName, string visualizerSourceName)
-		{
-			this.visualizerName = visualizerName;
-			this.visualizerSourceName = visualizerSourceName;
-		}
-
-#if NET_2_0
-		public DebuggerVisualizerAttribute (string visualizerTypeName, Type visualizerObjectSource)
+		public DebuggerVisualizerAttribute (string visualizerTypeName)
 		{
 			this.visualizerName = visualizerTypeName;
-			this.visualizerSource = visualizerObjectSource;
+		}
+
+		public DebuggerVisualizerAttribute (Type visualizer)
+		{
+			if (visualizer == null)
+				throw new ArgumentNullException ("visualizer");
+
+			this.visualizerName = visualizer.AssemblyQualifiedName;
+		}
+
+		public DebuggerVisualizerAttribute (string visualizerTypeName, string visualizerObjectSourceTypeName)
+		{
+			this.visualizerName = visualizerTypeName;
+			this.visualizerSourceName = visualizerObjectSourceTypeName;
+		}
+
+		public DebuggerVisualizerAttribute (string visualizerTypeName, Type visualizerObjectSource)
+		{
+			if (visualizerObjectSource == null)
+				throw new ArgumentNullException ("visualizerObjectSource");
+
+			this.visualizerName = visualizerTypeName;
 			this.visualizerSourceName = visualizerObjectSource.AssemblyQualifiedName;
 		}
-#endif
 
-		public DebuggerVisualizerAttribute (Type visualizer, string visualizerSourceName)
+		public DebuggerVisualizerAttribute (Type visualizer, string visualizerObjectSourceTypeName)
 		{
-			this.visualizerSourceName = visualizerSourceName;
-			this.visualizer = visualizer;
+			if (visualizer == null)
+				throw new ArgumentNullException ("visualizer");
+
 			this.visualizerName = visualizer.AssemblyQualifiedName;
+			this.visualizerSourceName = visualizerObjectSourceTypeName;
 		}
 
-		public DebuggerVisualizerAttribute (Type visualizer, Type visualizerSource)
+		public DebuggerVisualizerAttribute (Type visualizer, Type visualizerObjectSource)
 		{
-			this.visualizer = visualizer;
+			if (visualizer == null)
+				throw new ArgumentNullException ("visualizer");
+			if (visualizerObjectSource == null)
+				throw new ArgumentNullException ("visualizerObjectSource");
+
 			this.visualizerName = visualizer.AssemblyQualifiedName;
-			this.visualizerSource = visualizerSource;
-			this.visualizerSourceName = visualizerSource.AssemblyQualifiedName;
+			this.visualizerSourceName = visualizerObjectSource.AssemblyQualifiedName;
 		}
 
 		public string Description {

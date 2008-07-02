@@ -57,9 +57,9 @@ namespace System.Diagnostics {
 			init_frames (METHODS_TO_SKIP, false);
 		}
 
-		public StackTrace (bool needFileInfo)
+		public StackTrace (bool fNeedFileInfo)
 		{
-			init_frames (METHODS_TO_SKIP, needFileInfo);
+			init_frames (METHODS_TO_SKIP, fNeedFileInfo);
 		}
 
 		public StackTrace (int skipFrames)
@@ -67,12 +67,12 @@ namespace System.Diagnostics {
 			init_frames (skipFrames, false);
 		}
 
-		public StackTrace (int skipFrames, bool needFileInfo)
+		public StackTrace (int skipFrames, bool fNeedFileInfo)
 		{
-			init_frames (skipFrames, needFileInfo);
+			init_frames (skipFrames, fNeedFileInfo);
 		}
 
-		void init_frames (int skipFrames, bool needFileInfo)
+		void init_frames (int skipFrames, bool fNeedFileInfo)
 		{
 			if (skipFrames < 0)
 				throw new ArgumentOutOfRangeException ("< 0", "skipFrames");
@@ -82,27 +82,27 @@ namespace System.Diagnostics {
 
 			skipFrames += 2;
 			
-			while ((sf = new StackFrame (skipFrames, needFileInfo)) != null &&
+			while ((sf = new StackFrame (skipFrames, fNeedFileInfo)) != null &&
 			       sf.GetMethod () != null) {
 				
 				al.Add (sf);
 				skipFrames++;
 			};
 
-			debug_info = needFileInfo;
+			debug_info = fNeedFileInfo;
 			frames = (StackFrame [])al.ToArray (typeof (StackFrame));	
 		}
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static StackFrame [] get_trace (Exception e, int skipFrames, bool needFileInfo);
+		extern static StackFrame [] get_trace (Exception e, int skipFrames, bool fNeedFileInfo);
 
 		public StackTrace (Exception e)
 			: this (e, METHODS_TO_SKIP, false)
 		{
 		}
 
-		public StackTrace (Exception e, bool needFileInfo)
-			: this (e, METHODS_TO_SKIP, needFileInfo)
+		public StackTrace (Exception e, bool fNeedFileInfo)
+			: this (e, METHODS_TO_SKIP, fNeedFileInfo)
 		{
 		}
 
@@ -111,19 +111,19 @@ namespace System.Diagnostics {
 		{
 		}
 
-		public StackTrace (Exception e, int skipFrames, bool needFileInfo)
-			: this (e, skipFrames, needFileInfo, false)
+		public StackTrace (Exception e, int skipFrames, bool fNeedFileInfo)
+			: this (e, skipFrames, fNeedFileInfo, false)
 		{
 		}
 
-		internal StackTrace (Exception e, int skipFrames, bool needFileInfo, bool returnNativeFrames)
+		internal StackTrace (Exception e, int skipFrames, bool fNeedFileInfo, bool returnNativeFrames)
 		{
 			if (e == null)
 				throw new ArgumentNullException ("e");
 			if (skipFrames < 0)
 				throw new ArgumentOutOfRangeException ("< 0", "skipFrames");
 
-			frames = get_trace (e, skipFrames, needFileInfo);
+			frames = get_trace (e, skipFrames, fNeedFileInfo);
 
 			if (!returnNativeFrames) {
 				bool resize = false;

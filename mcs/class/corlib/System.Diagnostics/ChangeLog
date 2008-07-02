@@ -1,3 +1,10 @@
+2008-04-03  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* StackTrace.cs: Fix parameter names
+	* DebuggerVisualizerAttribute.cs: Fix parameter names, fix wrong constructors (parameters
+	  were incorrectly used, maybe result of the wrong parameter names), 
+	  remove unaccessible parameters, remove useless NET_2_0
+
 2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* DebuggerTypeProxyAttribute.cs
