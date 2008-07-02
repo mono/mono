@@ -1,3 +1,8 @@
+2008-07-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* Timer.cs (SchedulerThread): Iterate through the keys of the hashtable instead
+	of key-value pairs.
+
 2008-06-18  Kornél Pál  <kornelpal@gmail.com>
 
 	* Thread.cs: Implement BeginThreadAffinity and EndThreadAffinity as no-op

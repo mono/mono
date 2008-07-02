@@ -76,8 +76,7 @@ namespace System.Threading
 				lock (jobs) {
 					ArrayList expired = null;
 					long ticks = Ticks ();
-					foreach (DictionaryEntry entry in jobs) {
-						Timer t1 = entry.Value as Timer;
+					foreach (Timer t1 in jobs.Keys) {
 						if (t1.next_run <= ticks) {
 							ThreadPool.QueueUserWorkItem (new WaitCallback (t1.callback), t1.state);
 							if (t1.period_ms == -1 || ((t1.period_ms == 0 | t1.period_ms == Timeout.Infinite) && t1.due_time_ms != Timeout.Infinite)) {
