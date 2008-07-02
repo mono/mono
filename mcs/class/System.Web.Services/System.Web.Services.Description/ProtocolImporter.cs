@@ -577,6 +577,7 @@ namespace System.Web.Services.Description {
 			
 			string argsClassName = classNames.AddUnique (messageName + "CompletedEventArgs", null);
 			CodeTypeDeclaration argsClass = new CodeTypeDeclaration (argsClassName);
+			argsClass.Attributes |= MemberAttributes.Public;
 #if NET_2_0
 			argsClass.IsPartial = true;
 #endif
@@ -619,12 +620,14 @@ namespace System.Web.Services.Description {
 			// Event delegate type
 			
 			CodeTypeDelegate delegateType = new CodeTypeDelegate (messageName + "CompletedEventHandler");
+			delegateType.Attributes |= MemberAttributes.Public;
 			delegateType.Parameters.Add (new CodeParameterDeclarationExpression (typeof(object), "sender"));
 			delegateType.Parameters.Add (new CodeParameterDeclarationExpression (argsClassName, "args"));
 			
 			// Event member
 			
 			CodeMemberEvent codeEvent = new CodeMemberEvent ();
+			codeEvent.Attributes = codeEvent.Attributes & ~MemberAttributes.AccessMask | MemberAttributes.Public;
 			codeEvent.Name = messageName + "Completed";
 			codeEvent.Type = new CodeTypeReference (delegateType.Name);
 			CodeTypeDeclaration.Members.Add (codeEvent);
