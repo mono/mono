@@ -43,9 +43,9 @@ namespace System.Runtime.Remoting.Channels
 		string[] _channelURIs;
 		DictionaryEntry[] _extraData;
 		
-		public ChannelDataStore (string[] uris)
+		public ChannelDataStore (string[] channelURIs)
 		{
-			_channelURIs = uris;
+			_channelURIs = channelURIs;
 		}
 
 		public string[] ChannelUris

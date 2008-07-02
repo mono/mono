@@ -1,3 +1,9 @@
+2008-07-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* IChannelReceiver.cs:
+	* ClientChannelSinkStack.cs:
+	* ChannelDataStore.cs: Fix parameter names
+
 2007-08-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelServices.cs : implement ensureSecurity support in

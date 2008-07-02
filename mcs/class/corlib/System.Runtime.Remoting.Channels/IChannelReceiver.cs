@@ -38,7 +38,7 @@ namespace System.Runtime.Remoting.Channels {
 	{
 		object ChannelData { get; }
 
-		string [] GetUrlsForUri (string objectUri);
+		string [] GetUrlsForUri (string objectURI);
 
 		void StartListening (object data);
 

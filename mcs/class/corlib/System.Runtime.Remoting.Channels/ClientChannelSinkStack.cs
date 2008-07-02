@@ -50,9 +50,9 @@ namespace System.Runtime.Remoting.Channels
 		{
 		}
 		
-		public ClientChannelSinkStack (IMessageSink sink)
+		public ClientChannelSinkStack (IMessageSink replySink)
 		{
-			_replySink = sink;
+			_replySink = replySink;
 		}
 
 		public void AsyncProcessResponse (ITransportHeaders headers, Stream stream)
