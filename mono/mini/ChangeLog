@@ -1,3 +1,8 @@
+2008-07-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_get_delegate_invoke_impl): Eliminate locking, speed up
+	some checks a bit.
+
 2008-07-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (decode_patch_info): Don't create trampolines in aot_only mode.
