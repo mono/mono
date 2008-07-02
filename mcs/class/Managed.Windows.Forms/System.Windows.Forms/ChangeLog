@@ -1,3 +1,8 @@
+2008-07-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ContainerControl.cs: Apply a patch from Ernesto Carrea that adds
+	a null check to our focus walking code.  [Fixes bug #394332]
+
 2008-07-02  Andy Hume <andyhume32 at yahoo dot co dot uk>
 
         * ComboBox.cs: Case missed in bug 379596 "Support item

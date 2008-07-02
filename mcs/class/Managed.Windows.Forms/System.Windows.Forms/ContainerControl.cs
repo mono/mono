@@ -122,7 +122,7 @@ namespace System.Windows.Forms {
 				active_control = value;
 
 				// Generate the leave messages
-				while (walk != common_ancestor) {
+				while (walk != common_ancestor && walk != null) {
 					if (walk == value) {
 						root = value;
 						fire_enter = false;
