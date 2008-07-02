@@ -1,3 +1,12 @@
+2008-07-03  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* ThreadPool.cs:
+	* LockCookie.cs:
+	* Interlocked.cs:
+	* ExecutionContext.cs:
+	* AsyncFlowControl.cs:
+	* AbandonedMutexException.cs: Fix parameter names
+
 2008-07-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* Timer.cs (SchedulerThread): Iterate through the keys of the hashtable instead

@@ -49,13 +49,12 @@ namespace System.Threading
 		{
 		}
 
-		public AbandonedMutexException(string message)
+		public AbandonedMutexException (string message)
 			: base (message)
 		{
 		}
 
-		public AbandonedMutexException (int location,
-						WaitHandle handle)
+		public AbandonedMutexException (int location, WaitHandle handle)
 			: base ("Mutex was abandoned")
 		{
 			mutex_index = location;
@@ -63,29 +62,24 @@ namespace System.Threading
 		}
 		
 
-		protected AbandonedMutexException(SerializationInfo info,
-						  StreamingContext context)
+		protected AbandonedMutexException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
 
-		public AbandonedMutexException(string message,
-					       Exception innerException)
-			: base (message, innerException)
+		public AbandonedMutexException (string message, Exception inner)
+			: base (message, inner)
 		{
 		}
 
-		public AbandonedMutexException (string message, int location,
-						WaitHandle handle)
+		public AbandonedMutexException (string message, int location, WaitHandle handle)
 			: base (message)
 		{
 			mutex_index = location;
 			mutex = handle as Mutex;
 		}
 
-		public AbandonedMutexException (string message,
-						Exception inner, int location,
-						WaitHandle handle)
+		public AbandonedMutexException (string message, Exception inner, int location, WaitHandle handle)
 			: base (message, inner)
 		{
 			mutex_index = location;

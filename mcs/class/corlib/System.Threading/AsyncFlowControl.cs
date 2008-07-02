@@ -1,5 +1,5 @@
 //
-// System.Threading.AsyncFlowControl structure
+// System.Threading.AsyncFlowControl.cs
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -102,14 +102,14 @@ namespace System.Threading {
 			}
 		}
 
-		public static bool operator == (AsyncFlowControl obj1, AsyncFlowControl obj2)
+		public static bool operator == (AsyncFlowControl a, AsyncFlowControl b)
 		{
-			return obj1.Equals (obj2);
+			return a.Equals (b);
 		}
 
-		public static bool operator != (AsyncFlowControl obj1, AsyncFlowControl obj2)
+		public static bool operator != (AsyncFlowControl a, AsyncFlowControl b)
 		{
-			return !obj1.Equals (obj2);
+			return !a.Equals (b);
 		}
 	}
 }

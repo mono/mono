@@ -116,7 +116,7 @@ namespace System.Threading
 		[ComVisible (false)]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
-		public extern static T CompareExchange<T> (ref T location, T value, T comparand) where T:class;
+		public extern static T CompareExchange<T> (ref T location1, T value, T comparand) where T:class;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static long Exchange(ref long location1, long value);
@@ -134,16 +134,15 @@ namespace System.Threading
 		public extern static T Exchange<T> (ref T location1, T value) where T:class;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static long Read(ref long location1);
+		public extern static long Read(ref long location);
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static int Add(ref int location1, int add);
+		public extern static int Add(ref int location1, int value);
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static long Add(ref long location1, long add);
+		public extern static long Add(ref long location1, long value);
 #endif
 	}
 }
-

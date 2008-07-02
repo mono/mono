@@ -87,14 +87,14 @@ namespace System.Threading
 			return(obj.Equals (this));
 		}
 
-		public static bool operator == (LockCookie obj1, LockCookie obj2)
+		public static bool operator == (LockCookie a, LockCookie b)
 		{
-			return obj1.Equals (obj2);
+			return a.Equals (b);
 		}
 
-		public static bool operator != (LockCookie obj1, LockCookie obj2)
+		public static bool operator != (LockCookie a, LockCookie b)
 		{
-			return !obj1.Equals (obj2);
+			return !a.Equals (b);
 		}
 #endif
 

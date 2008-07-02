@@ -127,7 +127,7 @@ namespace System.Threading {
 #if NET_2_0
 		[MonoTODO ("only the SecurityContext is considered")]
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
-		public static void Run (ExecutionContext executionContext, ContextCallback callBack, object state)
+		public static void Run (ExecutionContext executionContext, ContextCallback callback, object state)
 		{
 			if (executionContext == null) {
 				throw new InvalidOperationException (Locale.GetText (
@@ -137,7 +137,7 @@ namespace System.Threading {
 			// FIXME: supporting more than one context (the SecurityContext)
 			// will requires a rewrite of this method
 
-			SecurityContext.Run (executionContext.SecurityContext, callBack, state);
+			SecurityContext.Run (executionContext.SecurityContext, callback, state);
 		}
 #endif
 		public static AsyncFlowControl SuppressFlow ()

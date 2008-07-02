@@ -1,5 +1,5 @@
 //
-// System.Threading.ThreadPool
+// System.Threading.ThreadPool.cs
 //
 // Author:
 //   Patrik Torstensson
@@ -88,17 +88,17 @@ namespace System.Threading {
 		public static extern bool SetMaxThreads (int workerThreads, int completionPortThreads);
 #endif
 			
-		public static bool QueueUserWorkItem (WaitCallback callback)
+		public static bool QueueUserWorkItem (WaitCallback callBack)
 		{
-			IAsyncResult ar = callback.BeginInvoke (null, null, null);
+			IAsyncResult ar = callBack.BeginInvoke (null, null, null);
 			if (ar == null)
 				return false;
 			return true;
 		}
 
-		public static bool QueueUserWorkItem (WaitCallback callback, object state)
+		public static bool QueueUserWorkItem (WaitCallback callBack, object state)
 		{
-			IAsyncResult ar = callback.BeginInvoke (state, null, null);
+			IAsyncResult ar = callBack.BeginInvoke (state, null, null);
 			if (ar == null)
 				return false;
 			return true;
@@ -165,7 +165,7 @@ namespace System.Threading {
 #endif
 
 		[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
-		public static bool UnsafeQueueUserWorkItem (WaitCallback callback, object state)
+		public static bool UnsafeQueueUserWorkItem (WaitCallback callBack, object state)
 		{
 			// no stack propagation here (that's why it's unsafe and requires extra security permissions)
 			IAsyncResult ar = null;
@@ -173,7 +173,7 @@ namespace System.Threading {
 				if (!ExecutionContext.IsFlowSuppressed ())
 					ExecutionContext.SuppressFlow (); // on current thread only
 
-				ar = callback.BeginInvoke (state, null, null);
+				ar = callBack.BeginInvoke (state, null, null);
 			}
 			finally {
 				if (ExecutionContext.IsFlowSuppressed ())
