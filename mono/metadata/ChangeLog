@@ -1,5 +1,10 @@
 2008-07-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* icall.c (mono_get_jit_icall_info): New function to return the jit icall hash table.
+
+	* *-gc.c (mono_gc_get_managed_allocator_types): New function to return the
+	number of available managed allocator types.
+
 	* marshal.c (mono_marshal_init): Register Thread:ResetAbort as an icall ().
 	(mono_marshal_get_runtime_invoke): Call ResetAbort as an icall.
 
