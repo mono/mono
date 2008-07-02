@@ -1,5 +1,5 @@
 //
-// System.Runtime.Remoting.Contexts.IDynamicMessageSink..cs
+// System.Runtime.Remoting.Contexts.IDynamicMessageSink.cs
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
@@ -39,8 +39,8 @@ namespace System.Runtime.Remoting.Contexts {
 #endif
 	public interface IDynamicMessageSink {
 
-		void ProcessMessageFinish (IMessage reply_msg, bool client_site, bool async);
+		void ProcessMessageFinish (IMessage replyMsg, bool bCliSide, bool bAsync);
 
-		void ProcessMessageStart  (IMessage req_msg, bool client_site, bool async);
+		void ProcessMessageStart  (IMessage reqMsg, bool bCliSide, bool bAsync);
 	}
 }

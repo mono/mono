@@ -1,5 +1,5 @@
 //
-// System.Runtime.Remoting.Contexts.IContextProperty..cs
+// System.Runtime.Remoting.Contexts.IContextProperty.cs
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
@@ -42,8 +42,8 @@ namespace System.Runtime.Remoting.Contexts {
 			get;
 		}
 
-		void Freeze (Context ctx);
+		void Freeze (Context newContext);
 
-		bool IsNewContextOK (Context ctx);
+		bool IsNewContextOK (Context newCtx);
 	}
 }

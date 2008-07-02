@@ -1,5 +1,5 @@
 //
-// System.Runtime.Remoting.Contexts.ContextAttribute..cs
+// System.Runtime.Remoting.Contexts.ContextAttribute.cs
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
@@ -70,7 +70,7 @@ namespace System.Runtime.Remoting.Contexts {
 			return true;
 		}
 
-		public virtual void Freeze (Context ctx)
+		public virtual void Freeze (Context newContext)
 		{
 		}
 
@@ -85,12 +85,12 @@ namespace System.Runtime.Remoting.Contexts {
 		/// <summary>
 		///    Adds the current context property to the IConstructionCallMessage
 		/// </summary>
-		public virtual void GetPropertiesForNewContext (IConstructionCallMessage msg)
+		public virtual void GetPropertiesForNewContext (IConstructionCallMessage ctorMsg)
 		{
-			if (msg == null)
-				throw new ArgumentNullException ("IConstructionCallMessage");
+			if (ctorMsg == null)
+				throw new ArgumentNullException ("ctorMsg");
 
-			IList list = msg.ContextProperties;
+			IList list = ctorMsg.ContextProperties;
 
 			list.Add (this);
 		}
@@ -99,14 +99,14 @@ namespace System.Runtime.Remoting.Contexts {
 		//   True whether the context arguments satisfies the requirements
 		//   of the current context.
 		// </summary>
-		public virtual bool IsContextOK (Context ctx, IConstructionCallMessage msg)
+		public virtual bool IsContextOK (Context ctx, IConstructionCallMessage ctorMsg)
 		{
-			if (msg == null)
-				throw new ArgumentNullException ("IConstructionCallMessage");
+			if (ctorMsg == null)
+				throw new ArgumentNullException ("ctorMsg");
 			if (ctx == null)
-				throw new ArgumentNullException ("Context");
+				throw new ArgumentNullException ("ctx");
 
-			if (!msg.ActivationType.IsContextful)
+			if (!ctorMsg.ActivationType.IsContextful)
 				return true;
 
 			IContextProperty p = ctx.GetProperty (AttributeName);
@@ -119,7 +119,7 @@ namespace System.Runtime.Remoting.Contexts {
 			return true;
 		}
 
-		public virtual bool IsNewContextOK (Context ctx)
+		public virtual bool IsNewContextOK (Context newCtx)
 		{
 			return true;
 		}
