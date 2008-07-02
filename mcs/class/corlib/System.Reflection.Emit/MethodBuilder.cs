@@ -267,7 +267,7 @@ namespace System.Reflection.Emit
 			throw NotSupported ();
 		}
 
-		public override bool IsDefined (Type attribute_type, bool inherit)
+		public override bool IsDefined (Type attributeType, bool inherit)
 		{
 			throw NotSupported ();
 		}
@@ -551,7 +551,7 @@ namespace System.Reflection.Emit
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public override extern MethodInfo MakeGenericMethod (params Type [] types);
+		public override extern MethodInfo MakeGenericMethod (params Type [] typeArguments);
 
 		public override bool IsGenericMethodDefinition {
 			get {

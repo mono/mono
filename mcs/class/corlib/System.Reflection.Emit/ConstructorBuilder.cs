@@ -1,5 +1,5 @@
 //
-// System.Reflection.Emit/ConstructorBuilder.cs
+// System.Reflection.Emit.ConstructorBuilder.cs
 //
 // Author:
 //   Paolo Molaro (lupus@ximian.com)
@@ -233,7 +233,7 @@ namespace System.Reflection.Emit {
 			return pb;
 		}
 
-		public override bool IsDefined (Type attribute_type, bool inherit)
+		public override bool IsDefined (Type attributeType, bool inherit)
 		{
 			throw not_supported ();
 		}
@@ -269,11 +269,11 @@ namespace System.Reflection.Emit {
 #else
 		internal
 #endif
-		ILGenerator GetILGenerator (int size)
+		ILGenerator GetILGenerator (int streamSize)
 		{
 			if (ilgen != null)
 				return ilgen;
-			ilgen = new ILGenerator (type.Module, ((ModuleBuilder)type.Module).GetTokenGenerator (), size);
+			ilgen = new ILGenerator (type.Module, ((ModuleBuilder)type.Module).GetTokenGenerator (), streamSize);
 			return ilgen;
 		}
 

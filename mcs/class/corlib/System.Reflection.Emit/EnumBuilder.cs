@@ -177,10 +177,10 @@ namespace System.Reflection.Emit {
 		}
 
 		protected override ConstructorInfo GetConstructorImpl (
-			BindingFlags bindingAttr, Binder binder, CallingConventions cc,
+			BindingFlags bindingAttr, Binder binder, CallingConventions callConvention,
 			Type[] types, ParameterModifier[] modifiers)
 		{
-			return _tb.GetConstructor (bindingAttr, binder, cc, types, 
+			return _tb.GetConstructor (bindingAttr, binder, callConvention, types, 
 				modifiers);
 		}
 

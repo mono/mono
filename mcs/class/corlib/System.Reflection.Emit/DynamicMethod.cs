@@ -1,5 +1,5 @@
 //
-// System.Reflection.Emit/DynamicMethod.cs
+// System.Reflection.Emit.DynamicMethod.cs
 //
 // Author:
 //   Paolo Molaro (lupus@ximian.com)
@@ -88,7 +88,7 @@ namespace System.Reflection.Emit {
 		public DynamicMethod (string name, Type returnType, Type[] parameterTypes) : this (name, returnType, parameterTypes, false) {
 		}
 
-		public DynamicMethod (string name, Type returnType, Type[] parameterTypes, bool skipVisibility) : this (name, MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard, returnType, parameterTypes, null, null, false, true) {
+		public DynamicMethod (string name, Type returnType, Type[] parameterTypes, bool restrictedSkipVisibility) : this (name, MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard, returnType, parameterTypes, null, null, false, true) {
 		}
 
 		DynamicMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type [] parameterTypes, Type owner, Module m, bool skipVisibility, bool anonHosted)
@@ -185,7 +185,7 @@ namespace System.Reflection.Emit {
 			return Delegate.CreateDelegate (delegateType, target, this);
 		}
 		
-		public ParameterBuilder DefineParameter (int position, ParameterAttributes attributes, string strParamName)
+		public ParameterBuilder DefineParameter (int position, ParameterAttributes attributes, string parameterName)
 		{
 			//
 			// Extension: Mono allows position == 0 for the return attribute
@@ -195,7 +195,7 @@ namespace System.Reflection.Emit {
 
 			RejectIfCreated ();
 
-			ParameterBuilder pb = new ParameterBuilder (this, position, attributes, strParamName);
+			ParameterBuilder pb = new ParameterBuilder (this, position, attributes, parameterName);
 			if (pinfo == null)
 				pinfo = new ParameterBuilder [parameters.Length + 1];
 			pinfo [position] = pb;
@@ -226,7 +226,7 @@ namespace System.Reflection.Emit {
 			return GetILGenerator (64);
 		}
 
-		public ILGenerator GetILGenerator (int size) {
+		public ILGenerator GetILGenerator (int streamSize) {
 			if (((GetMethodImplementationFlags () & MethodImplAttributes.CodeTypeMask) != 
 				 MethodImplAttributes.IL) ||
 				((GetMethodImplementationFlags () & MethodImplAttributes.ManagedMask) != 
@@ -234,7 +234,7 @@ namespace System.Reflection.Emit {
 				throw new InvalidOperationException ("Method body should not exist.");
 			if (ilgen != null)
 				return ilgen;
-			ilgen = new ILGenerator (Module, new DynamicMethodTokenGenerator (this), size);
+			ilgen = new ILGenerator (Module, new DynamicMethodTokenGenerator (this), streamSize);
 			return ilgen;
 		}		
 

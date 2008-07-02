@@ -252,11 +252,11 @@ namespace System.Reflection.Emit {
 			num_types ++;
 		}
 
-		private TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packsize, int typesize) {
+		private TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packingSize, int typesize) {
 			if (name != null && name_cache.Contains (name))
 				throw new ArgumentException ("Duplicate type name within an assembly.");
 
-			TypeBuilder res = new TypeBuilder (this, name, attr, parent, interfaces, packsize, typesize, null);
+			TypeBuilder res = new TypeBuilder (this, name, attr, parent, interfaces, packingSize, typesize, null);
 			AddType (res);
 			name_cache.Add (name, res);
 			return res;
@@ -642,7 +642,7 @@ namespace System.Reflection.Emit {
 			return new TypeToken (GetToken (type));
 		}
 
-		public TypeToken GetTypeToken (string type)
+		public TypeToken GetTypeToken (string name)
 		{
 			return GetTypeToken (GetType (name));
 		}

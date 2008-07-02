@@ -77,16 +77,16 @@ namespace System.Reflection.Emit {
 			this.ilgen = ilgen;
 		}
 
-		public void SetLocalSymInfo (string lname, int startOffset, int endOffset)
+		public void SetLocalSymInfo (string name, int startOffset, int endOffset)
 		{
-			name = lname;
+			this.name = name;
 			this.startOffset = startOffset;
 			this.endOffset = endOffset;
 		}
 
-		public void SetLocalSymInfo (string lname)
+		public void SetLocalSymInfo (string name)
 		{
-			SetLocalSymInfo (lname, 0, 0);
+			SetLocalSymInfo (name, 0, 0);
 		}
 
 #if NET_2_0

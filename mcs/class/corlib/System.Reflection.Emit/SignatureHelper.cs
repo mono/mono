@@ -89,36 +89,33 @@ namespace System.Reflection.Emit {
 			return new SignatureHelper (null, SignatureHelperType.HELPER_LOCAL);
 		}
 
-		public static SignatureHelper GetMethodSigHelper(CallingConventions callingConvention, Type returnType)
+		public static SignatureHelper GetMethodSigHelper (CallingConventions callingConvention, Type returnType)
 		{
 			return GetMethodSigHelper (null, callingConvention, (CallingConvention)0, returnType, null);
 		}
 
-		public static SignatureHelper GetMethodSigHelper (CallingConvention unmanagedCallingConvention,
-								  Type returnType)
+		public static SignatureHelper GetMethodSigHelper (CallingConvention unmanagedCallingConvention, Type returnType)
 		{
 			return GetMethodSigHelper (null, CallingConventions.Standard, unmanagedCallingConvention, returnType, null);
 		}
 #endif
 
-		public static SignatureHelper GetMethodSigHelper( Module mod, CallingConventions callingConvention, Type returnType)
+		public static SignatureHelper GetMethodSigHelper (Module mod, CallingConventions unmanagedCallConv, Type returnType)
 		{
-			return GetMethodSigHelper (mod, callingConvention, (CallingConvention)0, returnType, null);
+			return GetMethodSigHelper (mod, unmanagedCallConv, (CallingConvention)0, returnType, null);
 		}
 
-		public static SignatureHelper GetMethodSigHelper( Module mod, CallingConvention unmanagedCallingConvention, Type returnType)
+		public static SignatureHelper GetMethodSigHelper (Module mod, CallingConvention unmanagedCallingConvention, Type returnType)
 		{
 			return GetMethodSigHelper (mod, CallingConventions.Standard, unmanagedCallingConvention, returnType, null);
 		}
 
-		public static SignatureHelper GetMethodSigHelper( Module mod, Type returnType, Type[] parameterTypes)
+		public static SignatureHelper GetMethodSigHelper (Module mod, Type returnType, Type[] parameterTypes)
 		{
-			return GetMethodSigHelper (mod, CallingConventions.Standard, 
-									   (CallingConvention)0, returnType, 
-									   parameterTypes);
+			return GetMethodSigHelper (mod, CallingConventions.Standard, (CallingConvention)0, returnType, parameterTypes);
 		}
 		[MonoTODO("Not implemented")]
-		public static SignatureHelper GetPropertySigHelper( Module mod, Type returnType, Type[] parameterTypes)
+		public static SignatureHelper GetPropertySigHelper (Module mod, Type returnType, Type[] parameterTypes)
 		{
 			throw new NotImplementedException ();
 		}
@@ -162,7 +159,7 @@ namespace System.Reflection.Emit {
 			array = new_a;
 		}
 		
-		static void ValidateParameterModifiers(string name, Type [] parameter_modifiers)
+		static void ValidateParameterModifiers (string name, Type [] parameter_modifiers)
 		{
 			foreach (Type modifier in parameter_modifiers){
 				if (modifier == null)
@@ -256,7 +253,7 @@ namespace System.Reflection.Emit {
 		public void AddArgument (Type clsArgument)
 		{
 			if (clsArgument == null)
-				throw new ArgumentNullException ("argument");
+				throw new ArgumentNullException ("clsArgument");
 
 			AppendArray (ref arguments, clsArgument);
 		}
@@ -366,7 +363,7 @@ namespace System.Reflection.Emit {
 			return "SignatureHelper";
 		}
 
-		internal static SignatureHelper GetMethodSigHelper( Module mod, CallingConventions callConv, CallingConvention unmanagedCallConv, Type returnType,
+		internal static SignatureHelper GetMethodSigHelper (Module mod, CallingConventions callConv, CallingConvention unmanagedCallConv, Type returnType,
 														   Type [] parameters)
 		{
 			if (mod != null && !(mod is ModuleBuilder))
@@ -390,7 +387,7 @@ namespace System.Reflection.Emit {
 			return helper;
 		}
 
-                void _SignatureHelper.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+                void _SignatureHelper.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
                 {
                         throw new NotImplementedException ();
                 }
@@ -411,4 +408,3 @@ namespace System.Reflection.Emit {
                 }
 	}
 }
-

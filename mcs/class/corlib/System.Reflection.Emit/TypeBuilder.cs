@@ -1,5 +1,5 @@
 //
-// System.Reflection.Emit/TypeBuilder.cs
+// System.Reflection.Emit.TypeBuilder.cs
 //
 // Author:
 //   Paolo Molaro (lupus@ximian.com)
@@ -401,7 +401,7 @@ namespace System.Reflection.Emit
 		}
 
 		private TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, Type[] interfaces,
-						      PackingSize packsize, int typesize)
+						      PackingSize packSize, int typeSize)
 		{
 			// Visibility must be NestedXXX
 			/* This breaks mcs
@@ -414,7 +414,7 @@ namespace System.Reflection.Emit
 					if (iface == null)
 						throw new ArgumentNullException ("interfaces");
 
-			TypeBuilder res = new TypeBuilder (pmodule, name, attr, parent, interfaces, packsize, typesize, this);
+			TypeBuilder res = new TypeBuilder (pmodule, name, attr, parent, interfaces, packSize, typeSize, this);
 			res.fullname = res.GetFullName ();
 			pmodule.RegisterTypeName (res, res.fullname);
 			if (subtypes != null) {
@@ -437,14 +437,14 @@ namespace System.Reflection.Emit
 			return DefineNestedType (name, attr, parent, interfaces, PackingSize.Unspecified, UnspecifiedTypeSize);
 		}
 
-		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, int typesize)
+		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, int typeSize)
 		{
-			return DefineNestedType (name, attr, parent, null, PackingSize.Unspecified, typesize);
+			return DefineNestedType (name, attr, parent, null, PackingSize.Unspecified, typeSize);
 		}
 
-		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, PackingSize packsize)
+		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, PackingSize packSize)
 		{
-			return DefineNestedType (name, attr, parent, null, packsize, UnspecifiedTypeSize);
+			return DefineNestedType (name, attr, parent, null, packSize, UnspecifiedTypeSize);
 		}
 
 #if NET_2_0
@@ -633,9 +633,9 @@ namespace System.Reflection.Emit
 			return DefineMethod (name, attributes, CallingConventions.Standard);
 		}
 
-		public MethodBuilder DefineMethod (string name, MethodAttributes attributes, CallingConventions callConv)
+		public MethodBuilder DefineMethod (string name, MethodAttributes attributes, CallingConventions callingConvention)
 		{
-			return DefineMethod (name, attributes, callConv, null, null);
+			return DefineMethod (name, attributes, callingConvention, null, null);
 		}
 #endif
 
@@ -663,14 +663,14 @@ namespace System.Reflection.Emit
 #else
 		internal
 #endif
-		FieldBuilder DefineField (string fieldName, Type type, Type[] requiredCustomAttributes, Type[] optionalCustomAttributes, FieldAttributes attributes)
+		FieldBuilder DefineField (string fieldName, Type type, Type[] requiredCustomModifiers, Type[] optionalCustomModifiers, FieldAttributes attributes)
 		{
 			check_name ("fieldName", fieldName);
 			if (type == typeof (void))
 				throw new ArgumentException ("Bad field type in defining field.");
 			check_not_created ();
 
-			FieldBuilder res = new FieldBuilder (this, fieldName, type, attributes, requiredCustomAttributes, optionalCustomAttributes);
+			FieldBuilder res = new FieldBuilder (this, fieldName, type, attributes, requiredCustomModifiers, optionalCustomModifiers);
 			if (fields != null) {
 				if (fields.Length == num_fields) {
 					FieldBuilder[] new_fields = new FieldBuilder [fields.Length * 2];
@@ -1773,27 +1773,27 @@ namespace System.Reflection.Emit
 			return generic_params;
 		}
 
-		public static ConstructorInfo GetConstructor (Type instanciated, ConstructorInfo ctor)
+		public static ConstructorInfo GetConstructor (Type type, ConstructorInfo constructor)
 		{
-			ConstructorInfo res = instanciated.GetConstructor (ctor);
+			ConstructorInfo res = type.GetConstructor (constructor);
 			if (res == null)
 				throw new System.Exception ("constructor not found");
 			else
 				return res;
 		}
 
-		public static MethodInfo GetMethod (Type instanciated, MethodInfo meth)
+		public static MethodInfo GetMethod (Type type, MethodInfo method)
 		{
-			MethodInfo res = instanciated.GetMethod (meth);
+			MethodInfo res = type.GetMethod (method);
 			if (res == null)
 				throw new System.Exception ("method not found");
 			else
 				return res;
 		}
 
-		public static FieldInfo GetField (Type instanciated, FieldInfo fld)
+		public static FieldInfo GetField (Type type, FieldInfo field)
 		{
-			FieldInfo res = instanciated.GetField (fld);
+			FieldInfo res = type.GetField (field);
 			if (res == null)
 				throw new System.Exception ("field not found");
 			else

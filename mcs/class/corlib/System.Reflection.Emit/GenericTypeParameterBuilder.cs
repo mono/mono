@@ -54,20 +54,20 @@ namespace System.Reflection.Emit
 		private GenericParameterAttributes attrs;
 	#endregion
 
-		public void SetBaseTypeConstraint (Type base_type_constraint)
+		public void SetBaseTypeConstraint (Type baseTypeConstraint)
 		{
-			this.base_type = base_type_constraint;
+			this.base_type = baseTypeConstraint;
 		}
 
 		[ComVisible (true)]
-		public void SetInterfaceConstraints (params Type[] iface_constraints)
+		public void SetInterfaceConstraints (params Type[] interfaceConstraints)
 		{
-			this.iface_constraints = iface_constraints;
+			this.iface_constraints = interfaceConstraints;
 		}
 
-		public void SetGenericParameterAttributes (GenericParameterAttributes attrs)
+		public void SetGenericParameterAttributes (GenericParameterAttributes genericParameterAttributes)
 		{
-			this.attrs = attrs;
+			this.attrs = genericParameterAttributes;
 		}
 
 		internal GenericTypeParameterBuilder (TypeBuilder tbuilder,
@@ -410,9 +410,9 @@ namespace System.Reflection.Emit
 		}
 
 		[MonoTODO]
-		public override bool Equals (object other)
+		public override bool Equals (object o)
 		{
-			return base.Equals (other);
+			return base.Equals (o);
 		}
 
 		[MonoTODO]

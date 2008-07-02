@@ -454,8 +454,13 @@ namespace System.Reflection.Emit {
 		
 		public virtual void BeginScope ()
 		{ }
-		
-		public virtual LocalBuilder DeclareLocal (Type localType)
+
+#if NET_2_0
+		public virtual
+#else
+		public
+#endif
+		LocalBuilder DeclareLocal (Type localType)
 		{
 			return DeclareLocal (localType, false);
 		}
@@ -508,32 +513,32 @@ namespace System.Reflection.Emit {
 			ll_emit (opcode);
 		}
 		
-		public virtual void Emit (OpCode opcode, Byte val)
+		public virtual void Emit (OpCode opcode, Byte arg)
 		{
 			make_room (3);
 			ll_emit (opcode);
-			code [code_len++] = val;
+			code [code_len++] = arg;
 		}
 		
 #if NET_2_0
 		[ComVisible (true)]
 #endif
-		public virtual void Emit (OpCode opcode, ConstructorInfo constructor)
+		public virtual void Emit (OpCode opcode, ConstructorInfo con)
 		{
-			int token = token_gen.GetToken (constructor);
+			int token = token_gen.GetToken (con);
 			make_room (6);
 			ll_emit (opcode);
-			if (constructor.DeclaringType.Module == module)
-				add_token_fixup (constructor);
+			if (con.DeclaringType.Module == module)
+				add_token_fixup (con);
 			emit_int (token);
 			
 			if (opcode.StackBehaviourPop == StackBehaviour.Varpop)
-				cur_stack -= constructor.GetParameterCount ();
+				cur_stack -= con.GetParameterCount ();
 		}
 		
-		public virtual void Emit (OpCode opcode, double val)
+		public virtual void Emit (OpCode opcode, double arg)
 		{
-			byte[] s = System.BitConverter.GetBytes (val);
+			byte[] s = System.BitConverter.GetBytes (arg);
 			make_room (10);
 			ll_emit (opcode);
 			if (BitConverter.IsLittleEndian){
@@ -561,33 +566,33 @@ namespace System.Reflection.Emit {
 			emit_int (token);
 		}
 		
-		public virtual void Emit (OpCode opcode, Int16 val)
+		public virtual void Emit (OpCode opcode, Int16 arg)
 		{
 			make_room (4);
 			ll_emit (opcode);
-			code [code_len++] = (byte) (val & 0xFF);
-			code [code_len++] = (byte) ((val >> 8) & 0xFF);
+			code [code_len++] = (byte) (arg & 0xFF);
+			code [code_len++] = (byte) ((arg >> 8) & 0xFF);
 		}
 		
-		public virtual void Emit (OpCode opcode, int val)
+		public virtual void Emit (OpCode opcode, int arg)
 		{
 			make_room (6);
 			ll_emit (opcode);
-			emit_int (val);
+			emit_int (arg);
 		}
 		
-		public virtual void Emit (OpCode opcode, long val)
+		public virtual void Emit (OpCode opcode, long arg)
 		{
 			make_room (10);
 			ll_emit (opcode);
-			code [code_len++] = (byte) (val & 0xFF);
-			code [code_len++] = (byte) ((val >> 8) & 0xFF);
-			code [code_len++] = (byte) ((val >> 16) & 0xFF);
-			code [code_len++] = (byte) ((val >> 24) & 0xFF);
-			code [code_len++] = (byte) ((val >> 32) & 0xFF);
-			code [code_len++] = (byte) ((val >> 40) & 0xFF);
-			code [code_len++] = (byte) ((val >> 48) & 0xFF);
-			code [code_len++] = (byte) ((val >> 56) & 0xFF);
+			code [code_len++] = (byte) (arg & 0xFF);
+			code [code_len++] = (byte) ((arg >> 8) & 0xFF);
+			code [code_len++] = (byte) ((arg >> 16) & 0xFF);
+			code [code_len++] = (byte) ((arg >> 24) & 0xFF);
+			code [code_len++] = (byte) ((arg >> 32) & 0xFF);
+			code [code_len++] = (byte) ((arg >> 40) & 0xFF);
+			code [code_len++] = (byte) ((arg >> 48) & 0xFF);
+			code [code_len++] = (byte) ((arg >> 56) & 0xFF);
 		}
 		
 		public virtual void Emit (OpCode opcode, Label label)
@@ -659,17 +664,17 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		public virtual void Emit (OpCode opcode, LocalBuilder lbuilder)
+		public virtual void Emit (OpCode opcode, LocalBuilder local)
 		{
-			if (lbuilder == null)
+			if (local == null)
 				throw new ArgumentNullException ("local");
 
-			uint pos = lbuilder.position;
+			uint pos = local.position;
 			bool load_addr = false;
 			bool is_store = false;
 			make_room (6);
 
-			if (lbuilder.ilgen != this)
+			if (local.ilgen != this)
 				throw new Exception ("Trying to emit a local from a different ILGenerator.");
 
 			/* inline the code from ll_emit () to optimize il code size */
@@ -721,32 +726,32 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		public virtual void Emit (OpCode opcode, MethodInfo method)
+		public virtual void Emit (OpCode opcode, MethodInfo meth)
 		{
-			if (method == null)
+			if (meth == null)
 				throw new ArgumentNullException ("meth");
 
 #if NET_2_0
 			// For compatibility with MS
-			if ((method is DynamicMethod) && ((opcode == OpCodes.Ldftn) || (opcode == OpCodes.Ldvirtftn) || (opcode == OpCodes.Ldtoken)))
+			if ((meth is DynamicMethod) && ((opcode == OpCodes.Ldftn) || (opcode == OpCodes.Ldvirtftn) || (opcode == OpCodes.Ldtoken)))
 				throw new ArgumentException ("Ldtoken, Ldftn and Ldvirtftn OpCodes cannot target DynamicMethods.");
 #endif
 
-			int token = token_gen.GetToken (method);
+			int token = token_gen.GetToken (meth);
 			make_room (6);
 			ll_emit (opcode);
-			Type declaringType = method.DeclaringType;
+			Type declaringType = meth.DeclaringType;
 			// Might be a DynamicMethod with no declaring type
 			if (declaringType != null) {
 				if (declaringType.Module == module)
-					add_token_fixup (method);
+					add_token_fixup (meth);
 			}
 			emit_int (token);
-			if (method.ReturnType != void_type)
+			if (meth.ReturnType != void_type)
 				cur_stack ++;
 
 			if (opcode.StackBehaviourPop == StackBehaviour.Varpop)
-				cur_stack -= method.GetParameterCount ();
+				cur_stack -= meth.GetParameterCount ();
 		}
 
 		private void Emit (OpCode opcode, MethodInfo method, int token)
@@ -768,24 +773,24 @@ namespace System.Reflection.Emit {
 		}
 
 		[CLSCompliant(false)]
-		public void Emit (OpCode opcode, sbyte val)
+		public void Emit (OpCode opcode, sbyte arg)
 		{
 			make_room (3);
 			ll_emit (opcode);
-			code [code_len++] = (byte)val;
+			code [code_len++] = (byte)arg;
 		}
 
-		public virtual void Emit (OpCode opcode, SignatureHelper shelper)
+		public virtual void Emit (OpCode opcode, SignatureHelper signature)
 		{
-			int token = token_gen.GetToken (shelper);
+			int token = token_gen.GetToken (signature);
 			make_room (6);
 			ll_emit (opcode);
 			emit_int (token);
 		}
 
-		public virtual void Emit (OpCode opcode, float val)
+		public virtual void Emit (OpCode opcode, float arg)
 		{
-			byte[] s = System.BitConverter.GetBytes (val);
+			byte[] s = System.BitConverter.GetBytes (arg);
 			make_room (6);
 			ll_emit (opcode);
 			if (BitConverter.IsLittleEndian){
@@ -799,19 +804,19 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		public virtual void Emit (OpCode opcode, string val)
+		public virtual void Emit (OpCode opcode, string str)
 		{
-			int token = token_gen.GetToken (val);
+			int token = token_gen.GetToken (str);
 			make_room (6);
 			ll_emit (opcode);
 			emit_int (token);
 		}
 
-		public virtual void Emit (OpCode opcode, Type type)
+		public virtual void Emit (OpCode opcode, Type cls)
 		{
 			make_room (6);
 			ll_emit (opcode);
-			emit_int (token_gen.GetToken (type));
+			emit_int (token_gen.GetToken (cls));
 		}
 
 		[MonoLimitation ("vararg methods are not supported")]
@@ -820,23 +825,23 @@ namespace System.Reflection.Emit {
 #else
 		public
 #endif
-		void EmitCall (OpCode opcode, MethodInfo methodinfo, Type[] optionalParamTypes)
+		void EmitCall (OpCode opcode, MethodInfo methodInfo, Type[] optionalParameterTypes)
 		{
-			if (methodinfo == null)
+			if (methodInfo == null)
 				throw new ArgumentNullException ("methodInfo");
 			short value = opcode.Value;
 			if (!(value == OpCodes.Call.Value || value == OpCodes.Callvirt.Value))
 				throw new NotSupportedException ("Only Call and CallVirt are allowed");
-			if (optionalParamTypes != null){
-				if ((methodinfo.CallingConvention & CallingConventions.VarArgs)  == 0){
+			if (optionalParameterTypes != null){
+				if ((methodInfo.CallingConvention & CallingConventions.VarArgs)  == 0){
 					throw new InvalidOperationException ("Method is not VarArgs method and optional types were passed");
 				}
 
-				int token = token_gen.GetToken (methodinfo, optionalParamTypes);
-				Emit (opcode, methodinfo, token);
+				int token = token_gen.GetToken (methodInfo, optionalParameterTypes);
+				Emit (opcode, methodInfo, token);
 				return;
 			}
-			Emit (opcode, methodinfo);
+			Emit (opcode, methodInfo);
 		}
 
 #if NET_2_0
@@ -844,10 +849,9 @@ namespace System.Reflection.Emit {
 #else
 		public
 #endif
-		void EmitCalli (OpCode opcode, CallingConvention unmanagedCallConv, Type returnType, Type[] paramTypes)
+		void EmitCalli (OpCode opcode, CallingConvention unmanagedCallConv, Type returnType, Type[] parameterTypes)
 		{
-			SignatureHelper helper 
-				= SignatureHelper.GetMethodSigHelper (module, 0, unmanagedCallConv, returnType, paramTypes);
+			SignatureHelper helper = SignatureHelper.GetMethodSigHelper (module, 0, unmanagedCallConv, returnType, parameterTypes);
 			Emit (opcode, helper);
 		}
 
@@ -856,55 +860,48 @@ namespace System.Reflection.Emit {
 #else
 		public
 #endif
-		void EmitCalli (OpCode opcode, CallingConventions callConv, Type returnType, Type[] paramTypes, Type[] optionalParamTypes)
+		void EmitCalli (OpCode opcode, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Type[] optionalParameterTypes)
 		{
-			if (optionalParamTypes != null)
+			if (optionalParameterTypes != null)
 				throw new NotImplementedException ();
 
-			SignatureHelper helper 
-				= SignatureHelper.GetMethodSigHelper (module, callConv, 0, returnType, paramTypes);
+			SignatureHelper helper = SignatureHelper.GetMethodSigHelper (module, callingConvention, 0, returnType, parameterTypes);
 			Emit (opcode, helper);
 		}
 		
-		public virtual void EmitWriteLine (FieldInfo field)
+		public virtual void EmitWriteLine (FieldInfo fld)
 		{
-			if (field == null)
-				throw new ArgumentNullException ("field");
+			if (fld == null)
+				throw new ArgumentNullException ("fld");
 			
 			// The MS implementation does not check for valuetypes here but it
 			// should. Also, it should check that if the field is not static,
 			// then it is a member of this type.
-			if (field.IsStatic)
-				Emit (OpCodes.Ldsfld, field);
+			if (fld.IsStatic)
+				Emit (OpCodes.Ldsfld, fld);
 			else {
 				Emit (OpCodes.Ldarg_0);
-				Emit (OpCodes.Ldfld, field);
+				Emit (OpCodes.Ldfld, fld);
 			}
-			Emit (OpCodes.Call, 
-			      typeof (Console).GetMethod ("WriteLine",
-							  new Type[1] { field.FieldType }));
+			Emit (OpCodes.Call, typeof (Console).GetMethod ("WriteLine", new Type[1] { fld.FieldType }));
 		}
 
-		public virtual void EmitWriteLine (LocalBuilder lbuilder)
+		public virtual void EmitWriteLine (LocalBuilder localBuilder)
 		{
-			if (lbuilder == null)
-				throw new ArgumentNullException ("lbuilder");
-			if (lbuilder.LocalType is TypeBuilder)
+			if (localBuilder == null)
+				throw new ArgumentNullException ("localBuilder");
+			if (localBuilder.LocalType is TypeBuilder)
 				throw new  ArgumentException ("Output streams do not support TypeBuilders.");
 			// The MS implementation does not check for valuetypes here but it
 			// should.
-			Emit (OpCodes.Ldloc, lbuilder);
-			Emit (OpCodes.Call, 
-			      typeof (Console).GetMethod ("WriteLine",
-							  new Type[1] { lbuilder.LocalType }));
+			Emit (OpCodes.Ldloc, localBuilder);
+			Emit (OpCodes.Call, typeof (Console).GetMethod ("WriteLine", new Type[1] { localBuilder.LocalType }));
 		}
 		
-		public virtual void EmitWriteLine (string val)
+		public virtual void EmitWriteLine (string value)
 		{
-			Emit (OpCodes.Ldstr, val);
-			Emit (OpCodes.Call, 
-			      typeof (Console).GetMethod ("WriteLine",
-							  new Type[1] { typeof(string)}));
+			Emit (OpCodes.Ldstr, value);
+			Emit (OpCodes.Call, typeof (Console).GetMethod ("WriteLine", new Type[1] { typeof(string)}));
 		}
 
 		public virtual void EndExceptionBlock ()
@@ -986,16 +983,16 @@ namespace System.Reflection.Emit {
 			get { return sequencePointLists != null; }
 		}
 
-		public virtual void ThrowException (Type exceptionType)
+		public virtual void ThrowException (Type excType)
 		{
-			if (exceptionType == null)
-				throw new ArgumentNullException ("exceptionType");
-			if (! ((exceptionType == typeof (Exception)) || 
-				   exceptionType.IsSubclassOf (typeof (Exception))))
-				throw new ArgumentException ("Type should be an exception type", "exceptionType");
-			ConstructorInfo ctor = exceptionType.GetConstructor (Type.EmptyTypes);
+			if (excType == null)
+				throw new ArgumentNullException ("excType");
+			if (! ((excType == typeof (Exception)) || 
+				   excType.IsSubclassOf (typeof (Exception))))
+				throw new ArgumentException ("Type should be an exception type", "excType");
+			ConstructorInfo ctor = excType.GetConstructor (Type.EmptyTypes);
 			if (ctor == null)
-				throw new ArgumentException ("Type should have a default constructor", "exceptionType");
+				throw new ArgumentException ("Type should have a default constructor", "excType");
 			Emit (OpCodes.Newobj, ctor);
 			Emit (OpCodes.Throw);
 		}
