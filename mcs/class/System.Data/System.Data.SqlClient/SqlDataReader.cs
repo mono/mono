@@ -487,7 +487,7 @@ namespace System.Data.SqlClient
 				schemaTable = ConstructSchemaTable ();
 			if (i < 0 || i >= schemaTable.Rows.Count)
 				throw new IndexOutOfRangeException ();
-			return (Type) schemaTable.Rows[i]["DataType"];
+			return (Type) schemaTable.Rows[i][DATA_TYPE_IDX];
 		}
 
 		public
@@ -568,7 +568,7 @@ namespace System.Data.SqlClient
 		{
 			if (schemaTable == null)
 				schemaTable = ConstructSchemaTable ();
-			return (string) schemaTable.Rows[i]["ColumnName"];
+			return (string) schemaTable.Rows[i][COLUMN_NAME_IDX];
 		}
 
 		public
@@ -580,11 +580,11 @@ namespace System.Data.SqlClient
 			if (schemaTable == null)
 				schemaTable = ConstructSchemaTable ();
 			foreach (DataRow schemaRow in schemaTable.Rows)
-				if (((string) schemaRow ["ColumnName"]).Equals (name))
-					return (int) schemaRow ["ColumnOrdinal"];
+				if (((string) schemaRow [COLUMN_NAME_IDX]).Equals (name))
+					return (int) schemaRow [COLUMN_ORDINAL_IDX];
 			foreach (DataRow schemaRow in schemaTable.Rows)
-				if (String.Compare (((string) schemaRow ["ColumnName"]), name, true) == 0)
-					return (int) schemaRow ["ColumnOrdinal"];
+				if (String.Compare (((string) schemaRow [COLUMN_NAME_IDX]), name, true) == 0)
+					return (int) schemaRow [COLUMN_ORDINAL_IDX];
 			throw new IndexOutOfRangeException ();
 		}
 
@@ -1055,7 +1055,7 @@ namespace System.Data.SqlClient
 			if (schemaTable == null)
 				schemaTable = ConstructSchemaTable ();
 
-			SqlDbType type = (SqlDbType) (schemaTable.Rows [i]["ProviderType"]);
+			SqlDbType type = (SqlDbType) (schemaTable.Rows [i][PROVIDER_TYPE_IDX]);
 			object value = GetValue (i);
 
 			switch (type) {
