@@ -1271,13 +1271,16 @@ namespace System.Web.UI.WebControls
 
 			_dataEnumerator = null;
 			ICollection fieldCollection = CreateColumns (dataSource, dataBinding);
-			DataControlField[] fields = new DataControlField [fieldCollection.Count];
+			int fieldCount = fieldCollection.Count;
+			DataControlField dcf;
+			DataControlField[] fields = new DataControlField [fieldCount];
 			fieldCollection.CopyTo (fields, 0);
-
-			foreach (DataControlField field in fields) {
-				field.Initialize (AllowSorting, this);
+			
+			for (int i = 0; i < fieldCount; i++) {
+				dcf = fields [i];
+				dcf.Initialize (AllowSorting, this);
 				if (EnableSortingAndPagingCallbacks)
-					field.ValidateSupportsCallback ();
+					dcf.ValidateSupportsCallback ();
 			}
 
 			bool skip_first = false;
@@ -1298,7 +1301,7 @@ namespace System.Web.UI.WebControls
 				
 				if (list.Count == 0) {
 					if (createPager && (PagerSettings.Position == PagerPosition.Top || PagerSettings.Position == PagerPosition.TopAndBottom)) {
-						topPagerRow = CreatePagerRow (fields.Length, dataSource);
+						topPagerRow = CreatePagerRow (fieldCount, dataSource);
 						OnRowCreated (new GridViewRowEventArgs (topPagerRow));
 						ContainedTable.Rows.Add (topPagerRow);
 						if (dataBinding) {
@@ -1336,7 +1339,7 @@ namespace System.Web.UI.WebControls
 			}
 
 			if (list.Count == 0) {
-				GridViewRow emptyRow = CreateEmptyrRow (fields.Length);
+				GridViewRow emptyRow = CreateEmptyrRow (fieldCount);
 				if (emptyRow != null) {
 					OnRowCreated (new GridViewRowEventArgs (emptyRow));
 					ContainedTable.Rows.Add (emptyRow);
@@ -1358,7 +1361,7 @@ namespace System.Web.UI.WebControls
 				}
 
 				if (createPager && (PagerSettings.Position == PagerPosition.Bottom || PagerSettings.Position == PagerPosition.TopAndBottom)) {
-					bottomPagerRow = CreatePagerRow (fields.Length, dataSource);
+					bottomPagerRow = CreatePagerRow (fieldCount, dataSource);
 					OnRowCreated (new GridViewRowEventArgs (bottomPagerRow));
 					ContainedTable.Rows.Add (bottomPagerRow);
 					if (dataBinding) {
