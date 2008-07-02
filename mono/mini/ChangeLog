@@ -1,5 +1,7 @@
 2008-07-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c (mono_arch_get_delegate_invoke_impl): Eliminate locking.
+
 	* mini-amd64.c (mono_arch_get_delegate_invoke_impl): Eliminate locking, speed up
 	some checks a bit.
 
