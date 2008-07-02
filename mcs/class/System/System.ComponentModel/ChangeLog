@@ -1,3 +1,7 @@
+2008-07-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* PropertyDescriptorCollection.cs : Kill some foreach loops.
+
 2008-06-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* PropertyDescriptorCollection.cs : huh.

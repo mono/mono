@@ -142,7 +142,8 @@ namespace System.ComponentModel
 			if (name == null)
 				throw new ArgumentNullException ("name");
 
-			foreach (PropertyDescriptor p in properties) {
+			for (int i = 0; i < properties.Count; ++i) {
+				PropertyDescriptor p = (PropertyDescriptor)properties [i];
 #if NET_2_0
 				if (ignoreCase) {
 					if (0 == String.Compare (name, p.Name, StringComparison.OrdinalIgnoreCase))
