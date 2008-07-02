@@ -1,5 +1,5 @@
 //
-// System.Security.Permissions.KeyContainerPermission class
+// System.Security.Permissions.KeyContainerPermission.cs
 //
 // Author
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -89,20 +89,20 @@ namespace System.Security.Permissions {
 		}
 
 		[MonoTODO ("(2.0) missing support for AccessEntries")]
-		public override void FromXml (SecurityElement esd) 
+		public override void FromXml (SecurityElement securityElement) 
 		{
 			// General validation in CodeAccessPermission
-			CheckSecurityElement (esd, "esd", version, version);
+			CheckSecurityElement (securityElement, "securityElement", version, version);
 			// Note: we do not (yet) care about the return value 
 			// as we only accept version 1 (min/max values)
 
-			if (IsUnrestricted (esd)) {
+			if (IsUnrestricted (securityElement)) {
 				_flags = KeyContainerPermissionFlags.AllFlags;
 			}
 			else {
 				// ???
 				_flags = (KeyContainerPermissionFlags) Enum.Parse (
-					typeof (KeyContainerPermissionFlags), esd.Attribute ("Flags"));
+					typeof (KeyContainerPermissionFlags), securityElement.Attribute ("Flags"));
 			}
 		}
 

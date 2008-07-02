@@ -306,9 +306,9 @@ namespace System.Security.Permissions {
 			return se;
 		}
 
-		public override IPermission Union (IPermission target)
+		public override IPermission Union (IPermission other)
 		{
-			RegistryPermission rp = Cast (target);
+			RegistryPermission rp = Cast (other);
 			if (rp == null)
 				return Copy ();
 

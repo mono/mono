@@ -56,10 +56,10 @@ namespace System.Security.Permissions {
 				flags = SecurityPermissionFlag.NoFlags;
 		}
 
-		public SecurityPermission (SecurityPermissionFlag flags) 
+		public SecurityPermission (SecurityPermissionFlag flag) 
 		{
 			// reuse validation by the Flags property
-			Flags = flags;
+			Flags = flag;
 		}
 
 		public SecurityPermissionFlag Flags {
@@ -132,18 +132,18 @@ namespace System.Security.Permissions {
 			return ((flags & ~sp.flags) == 0);
 		}
 
-		public override void FromXml (SecurityElement e) 
+		public override void FromXml (SecurityElement esd) 
 		{
 			// General validation in CodeAccessPermission
-			CheckSecurityElement (e, "e", version, version);
+			CheckSecurityElement (esd, "esd", version, version);
 			// Note: we do not (yet) care about the return value 
 			// as we only accept version 1 (min/max values)
 
-			if (IsUnrestricted (e)) {
+			if (IsUnrestricted (esd)) {
 				flags = SecurityPermissionFlag.AllFlags;
 			}
 			else {
-				string f = e.Attribute ("Flags");
+				string f = esd.Attribute ("Flags");
 				if (f == null) {
 					flags = SecurityPermissionFlag.NoFlags;
 				}

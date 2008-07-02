@@ -1,5 +1,5 @@
 //
-// System.Security.Permissions.KeyContainerPermissionAccessEntry class
+// System.Security.Permissions.KeyContainerPermissionAccessEntry.cs
 //
 // Author
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -46,15 +46,15 @@ namespace System.Security.Permissions {
 		private int _type;
 
 
-		public KeyContainerPermissionAccessEntry (CspParameters csp, KeyContainerPermissionFlags flags)
+		public KeyContainerPermissionAccessEntry (CspParameters parameters, KeyContainerPermissionFlags flags)
 		{
-			if (csp == null)
-				throw new ArgumentNullException ("csp");
+			if (parameters == null)
+				throw new ArgumentNullException ("parameters");
 
-			ProviderName = csp.ProviderName;
-			ProviderType = csp.ProviderType;
-			KeyContainerName = csp.KeyContainerName;
-			KeySpec = csp.KeyNumber;
+			ProviderName = parameters.ProviderName;
+			ProviderType = parameters.ProviderType;
+			KeyContainerName = parameters.KeyContainerName;
+			KeySpec = parameters.KeyNumber;
 			Flags = flags;
 		}
 
@@ -113,11 +113,11 @@ namespace System.Security.Permissions {
 		}
 
 
-		public override bool Equals (object obj)
+		public override bool Equals (object o)
 		{
-			if (obj == null)
+			if (o == null)
 				return false;
-			KeyContainerPermissionAccessEntry kcpae = (obj as KeyContainerPermissionAccessEntry);
+			KeyContainerPermissionAccessEntry kcpae = (o as KeyContainerPermissionAccessEntry);
 			if (kcpae == null)
 				return false;
 			if (_flags != kcpae._flags)

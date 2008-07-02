@@ -132,17 +132,17 @@ namespace System.Security.Permissions {
 			}
 		}
 
-		public void FromXml (SecurityElement esd) 
+		public void FromXml (SecurityElement elem) 
 		{
 			// General validation in CodeAccessPermission
-			CheckSecurityElement (esd, "esd", version, version);
+			CheckSecurityElement (elem, "elem", version, version);
 			// Note: we do not (yet) care about the return value 
 			// as we only accept version 1 (min/max values)
 
 			principals.Clear ();
 			// Children is null, not empty, when no child is present
-			if (esd.Children != null) {
-				foreach (SecurityElement se in esd.Children) {
+			if (elem.Children != null) {
+				foreach (SecurityElement se in elem.Children) {
 					if (se.Tag != "Identity")
 						throw new ArgumentException ("not IPermission/Identity");
 					string name = se.Attribute ("ID");
@@ -258,9 +258,9 @@ namespace System.Security.Permissions {
 			return se;
 		}
 
-		public IPermission Union (IPermission target)
+		public IPermission Union (IPermission other)
 		{
-			PrincipalPermission pp = Cast (target);
+			PrincipalPermission pp = Cast (other);
 			if (pp == null)
 				return Copy ();
 
