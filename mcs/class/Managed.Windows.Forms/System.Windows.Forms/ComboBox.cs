@@ -1554,6 +1554,7 @@ namespace System.Windows.Forms
 			if (DropDownStyle == ComboBoxStyle.Simple)
 				return;
 				
+			FindMatchOrSetIndex (SelectedIndex);
 			button_state = ButtonState.Normal;
 			Invalidate (button_area);
 			dropped_down = false;
