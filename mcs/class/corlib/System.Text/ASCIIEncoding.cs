@@ -71,12 +71,12 @@ public class ASCIIEncoding : Encoding
 	}
 
 	// Convenience wrappers for "GetByteCount".
-	public override int GetByteCount (String s)
+	public override int GetByteCount (String chars)
 	{
-		if (s == null) {
-			throw new ArgumentNullException ("s");
+		if (chars == null) {
+			throw new ArgumentNullException ("chars");
 		}
-		return s.Length;
+		return chars.Length;
 	}
 
 	// Get the bytes that result from encoding a character buffer.
@@ -146,32 +146,32 @@ public class ASCIIEncoding : Encoding
 	}
 
 	// Convenience wrappers for "GetBytes".
-	public override int GetBytes (String s, int charIndex, int charCount, byte[] bytes, int byteIndex)
+	public override int GetBytes (String chars, int charIndex, int charCount, byte[] bytes, int byteIndex)
 	{
 #if NET_2_0
 // I know this #if is ugly, but I think it is the simplest switch.
 		EncoderFallbackBuffer buffer = null;
 		char [] fallback_chars = null;
-		return GetBytes (s, charIndex, charCount, bytes, byteIndex,
+		return GetBytes (chars, charIndex, charCount, bytes, byteIndex,
 			ref buffer, ref fallback_chars);
 	}
 
-	int GetBytes (String s, int charIndex, int charCount,
+	int GetBytes (String chars, int charIndex, int charCount,
 		      byte[] bytes, int byteIndex,
 		      ref EncoderFallbackBuffer buffer,
 		      ref char [] fallback_chars)
 	{
 #endif
-		if (s == null) {
-			throw new ArgumentNullException ("s");
+		if (chars == null) {
+			throw new ArgumentNullException ("chars");
 		}
 		if (bytes == null) {
 			throw new ArgumentNullException ("bytes");
 		}
-		if (charIndex < 0 || charIndex > s.Length) {
+		if (charIndex < 0 || charIndex > chars.Length) {
 			throw new ArgumentOutOfRangeException ("charIndex", _("ArgRange_StringIndex"));
 		}
-		if (charCount < 0 || charCount > (s.Length - charIndex)) {
+		if (charCount < 0 || charCount > (chars.Length - charIndex)) {
 			throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_StringRange"));
 		}
 		if (byteIndex < 0 || byteIndex > bytes.Length) {
@@ -183,7 +183,7 @@ public class ASCIIEncoding : Encoding
 		int count = charCount;
 		char ch;
 		while (count-- > 0) {
-			ch = s [charIndex++];
+			ch = chars [charIndex++];
 			if (ch < (char)0x80) {
 				bytes [byteIndex++] = (byte)ch;
 			} else {
@@ -191,8 +191,8 @@ public class ASCIIEncoding : Encoding
 				if (buffer == null)
 					buffer = EncoderFallback.CreateFallbackBuffer ();
 				if (Char.IsSurrogate (ch) && count > 1 &&
-				    Char.IsSurrogate (s [charIndex]))
-					buffer.Fallback (ch, s [charIndex], charIndex++ - 1);
+				    Char.IsSurrogate (chars [charIndex]))
+					buffer.Fallback (ch, chars [charIndex], charIndex++ - 1);
 				else
 					buffer.Fallback (ch, charIndex - 1);
 				if (fallback_chars == null || fallback_chars.Length < buffer.Remaining)
@@ -295,27 +295,27 @@ public class ASCIIEncoding : Encoding
 	}
 
 	// Decode a buffer of bytes into a string.
-	public override String GetString (byte[] bytes, int index, int count)
+	public override String GetString (byte[] bytes, int byteIndex, int byteCount)
 	{
 		if (bytes == null) {
 			throw new ArgumentNullException ("bytes");
 		}
-		if (index < 0 || index > bytes.Length) {
-			throw new ArgumentOutOfRangeException ("index", _("ArgRange_Array"));
+		if (byteIndex < 0 || byteIndex > bytes.Length) {
+			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
 		}
-		if (count < 0 || count > (bytes.Length - index)) {
-			throw new ArgumentOutOfRangeException ("count", _("ArgRange_Array"));
+		if (byteCount < 0 || byteCount > (bytes.Length - byteIndex)) {
+			throw new ArgumentOutOfRangeException ("byteCount", _("ArgRange_Array"));
 		}
-		if (count == 0)
+		if (byteCount == 0)
 			return String.Empty;
 		
 		unsafe {
 			fixed (byte* bytePtr = bytes) {
-				string s = string.InternalAllocateStr (count);
+				string s = string.InternalAllocateStr (byteCount);
 
 				fixed (char* charPtr = s) {
-					byte* currByte = bytePtr + index;
-					byte* lastByte = currByte + count;
+					byte* currByte = bytePtr + byteIndex;
+					byte* lastByte = currByte + byteCount;
 					char* currChar = charPtr;
 
 					while (currByte < lastByte) {

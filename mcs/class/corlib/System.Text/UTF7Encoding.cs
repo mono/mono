@@ -118,9 +118,9 @@ class UTF7Encoding : Encoding
 	}
 
 	[ComVisible(false)]
-	public override bool Equals (object other)
+	public override bool Equals (object value)
 	{
-		UTF7Encoding e = other as UTF7Encoding;
+		UTF7Encoding e = value as UTF7Encoding;
 		if (e == null)
 			return false;
 		return allowOptionals == e.allowOptionals &&

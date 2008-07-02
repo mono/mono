@@ -179,9 +179,9 @@ public abstract class Encoding
 	}
 
 	// Determine if two Encoding objects are equal.
-	public override bool Equals (Object obj)
+	public override bool Equals (Object value)
 	{
-		Encoding enc = (obj as Encoding);
+		Encoding enc = (value as Encoding);
 		if (enc != null) {
 #if NET_2_0
 			return codePage == enc.codePage &&
@@ -442,14 +442,14 @@ public abstract class Encoding
 #else
 	public
 #endif
-	static Encoding GetEncoding (int codePage)
+	static Encoding GetEncoding (int codepage)
 	{
-		if (codePage < 0 || codePage > 0xffff)
+		if (codepage < 0 || codepage > 0xffff)
 			throw new ArgumentOutOfRangeException ("codepage", 
 				"Valid values are between 0 and 65535, inclusive.");
 
 		// Check for the builtin code pages first.
-		switch (codePage) {
+		switch (codepage) {
 			case 0: return Default;
 
 			case ASCIIEncoding.ASCII_CODE_PAGE:
@@ -482,14 +482,14 @@ public abstract class Encoding
 		}
 
 		// Try to obtain a code page handler from the I18N handler.
-		Encoding enc = (Encoding)(InvokeI18N ("GetEncoding", codePage));
+		Encoding enc = (Encoding)(InvokeI18N ("GetEncoding", codepage));
 		if (enc != null) {
 			enc.is_readonly = true;
 			return enc;
 		}
 
 		// Build a code page class name.
-		String cpName = "System.Text.CP" + codePage.ToString ();
+		String cpName = "System.Text.CP" + codepage.ToString ();
 
 		// Look for a code page converter in this assembly.
 		Assembly assembly = Assembly.GetExecutingAssembly ();
@@ -511,7 +511,7 @@ public abstract class Encoding
 
 		// We have no idea how to handle this code page.
 		throw new NotSupportedException
-			(String.Format ("CodePage {0} not supported", codePage.ToString ()));
+			(String.Format ("CodePage {0} not supported", codepage.ToString ()));
 	}
 
 #if !ECMA_COMPAT
@@ -525,7 +525,7 @@ public abstract class Encoding
 		return e;
 	}
 
-	public static Encoding GetEncoding (int codePage,
+	public static Encoding GetEncoding (int codepage,
 		EncoderFallback encoderFallback, DecoderFallback decoderFallback)
 	{
 		if (encoderFallback == null)
@@ -533,7 +533,7 @@ public abstract class Encoding
 		if (decoderFallback == null)
 			throw new ArgumentNullException ("decoderFallback");
 
-		Encoding e = GetEncoding (codePage).Clone () as Encoding;
+		Encoding e = GetEncoding (codepage).Clone () as Encoding;
 		e.is_readonly = false;
 		e.encoder_fallback = encoderFallback;
 		e.decoder_fallback = decoderFallback;

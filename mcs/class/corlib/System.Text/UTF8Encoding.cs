@@ -185,17 +185,17 @@ public class UTF8Encoding : Encoding
 
 #if !NET_2_0
 	// Convenience wrappers for "GetByteCount".
-	public override int GetByteCount (String s)
+	public override int GetByteCount (String chars)
 	{
 		// Validate the parameters.
-		if (s == null) {
-			throw new ArgumentNullException ("s");
+		if (chars == null) {
+			throw new ArgumentNullException ("chars");
 		}
 
 		unsafe {
-			fixed (char* cptr = s) {
+			fixed (char* cptr = chars) {
 				char dummy = '\0';
-				return InternalGetByteCount (cptr, s.Length, ref dummy, true);
+				return InternalGetByteCount (cptr, chars.Length, ref dummy, true);
 			}
 		}
 	}

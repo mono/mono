@@ -1,5 +1,5 @@
 //
-// EncodingInfo.cs
+// System.Text.EncodingInfo.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
@@ -60,9 +60,9 @@ namespace System.Text
 			}
 		}
 
-		public override bool Equals (object other)
+		public override bool Equals (object value)
 		{
-			EncodingInfo ei = other as EncodingInfo;
+			EncodingInfo ei = value as EncodingInfo;
 			return ei != null &&
 				ei.codepage == codepage;
 		}

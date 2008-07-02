@@ -74,16 +74,16 @@ public abstract class Encoder
 #if NET_2_0
 	[CLSCompliant (false)]
 	[ComVisible (false)]
-	public unsafe virtual int GetByteCount (char* chars, int charCount, bool flush)
+	public unsafe virtual int GetByteCount (char* chars, int count, bool flush)
 	{
 		if (chars == null)
 			throw new ArgumentNullException ("chars");
-		if (charCount < 0)
-			throw new ArgumentOutOfRangeException ("charCount");
+		if (count < 0)
+			throw new ArgumentOutOfRangeException ("count");
 
-		char [] carr = new char [charCount];
-		Marshal.Copy ((IntPtr) chars, carr, 0, charCount);
-		return GetByteCount (carr, 0, charCount, flush);
+		char [] carr = new char [count];
+		Marshal.Copy ((IntPtr) chars, carr, 0, count);
+		return GetByteCount (carr, 0, count, flush);
 	}
 
 	[CLSCompliant (false)]

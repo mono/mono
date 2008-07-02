@@ -59,13 +59,13 @@ public sealed class UTF32Encoding : Encoding
 	{
 	}
 
-	public UTF32Encoding (bool bigEndian, bool byteOrderMark, bool throwOnInvalid)
+	public UTF32Encoding (bool bigEndian, bool byteOrderMark, bool throwOnInvalidCharacters)
 		: base ((bigEndian ? BIG_UTF32_CODE_PAGE : UTF32_CODE_PAGE))
 	{
 		this.bigEndian = bigEndian;
 		this.byteOrderMark = byteOrderMark;
 
-		if (throwOnInvalid)
+		if (throwOnInvalidCharacters)
 			SetFallbackInternal (EncoderFallback.ExceptionFallback,
 				DecoderFallback.ExceptionFallback);
 		else

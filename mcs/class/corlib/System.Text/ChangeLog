@@ -1,3 +1,13 @@
+2008-07-03  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* UTF8Encoding.cs:
+	* UTF7Encoding.cs:
+	* UTF32Encoding.cs:
+	* EncodingInfo.cs:
+	* Encoding.cs:
+	* Encoder.cs:
+	* ASCIIEncoding.cs: Fix parameter names
+
 2008-06-01  Juraj Skripsky  <js@hotfeet.ch>
 
 	* StringBuilder.cs (ToString): Use String.SubstringUnchecked instead
