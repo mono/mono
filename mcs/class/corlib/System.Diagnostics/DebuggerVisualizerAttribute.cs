@@ -29,13 +29,10 @@
 //
 
 using System;
-
-#if NET_2_0
 using System.Runtime.InteropServices;
-#endif
 
-namespace System.Diagnostics {
-
+namespace System.Diagnostics
+{
 	[AttributeUsageAttribute(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Assembly, AllowMultiple=true)]
 #if NET_2_0
 	[ComVisible (true)]
@@ -44,23 +41,34 @@ namespace System.Diagnostics {
 	internal sealed class DebuggerVisualizerAttribute : Attribute
 #endif
 	{
-		public DebuggerVisualizerAttribute(string visualizerSourceName) {
+		string description;
+		string visualizerSourceName;
+		Type visualizerSource;
+		string visualizerName;
+		Type visualizer;
+
+		string targetTypeName;
+		Type target;
+
+		public DebuggerVisualizerAttribute (string visualizerSourceName)
+		{
 			this.visualizerSourceName = visualizerSourceName;
 		}
 
-		public DebuggerVisualizerAttribute(Type visualizerSource) {
+		public DebuggerVisualizerAttribute (Type visualizerSource)
+		{
 			this.visualizerSource = visualizerSource;
 			this.visualizerSourceName = visualizerSource.AssemblyQualifiedName;
 		}
 
-		public DebuggerVisualizerAttribute(string visualizerName, string visualizerSourceName) {
+		public DebuggerVisualizerAttribute (string visualizerName, string visualizerSourceName)
+		{
 			this.visualizerName = visualizerName;
 			this.visualizerSourceName = visualizerSourceName;
 		}
 
 #if NET_2_0
-		public DebuggerVisualizerAttribute (string visualizerTypeName,
-						    Type visualizerObjectSource)
+		public DebuggerVisualizerAttribute (string visualizerTypeName, Type visualizerObjectSource)
 		{
 			this.visualizerName = visualizerTypeName;
 			this.visualizerSource = visualizerObjectSource;
@@ -68,13 +76,15 @@ namespace System.Diagnostics {
 		}
 #endif
 
-		public DebuggerVisualizerAttribute(Type visualizer, string visualizerSourceName) {
+		public DebuggerVisualizerAttribute (Type visualizer, string visualizerSourceName)
+		{
 			this.visualizerSourceName = visualizerSourceName;
 			this.visualizer = visualizer;
 			this.visualizerName = visualizer.AssemblyQualifiedName;
 		}
 
-		public DebuggerVisualizerAttribute(Type visualizer, Type visualizerSource) {
+		public DebuggerVisualizerAttribute (Type visualizer, Type visualizerSource)
+		{
 			this.visualizer = visualizer;
 			this.visualizerName = visualizer.AssemblyQualifiedName;
 			this.visualizerSource = visualizerSource;
@@ -122,15 +132,5 @@ namespace System.Diagnostics {
 				return visualizerName;
 			}
 		}
-
-		string description;
-		string visualizerSourceName;
-		Type visualizerSource;
-		string visualizerName;
-		Type visualizer;
-
-		string targetTypeName;
-		Type target;
 	}
-
 }
