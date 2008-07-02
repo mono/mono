@@ -1133,14 +1133,12 @@ namespace System.Web.UI
 				return null;
 				
 			// Search up the type hierarchy until we find a control with an adapter.
-			Type adapterType = null;
-			Type controlType = GetType();
 			IDictionary typeMap = context.Request.Browser.Adapters;
-			while (controlType != typeof(object)) {
-				adapterType = (Type)typeMap [controlType];
-				if (adapterType != null)
-					break;
+			Type controlType = GetType ();
+			Type adapterType = (Type)typeMap [controlType];
+			while (adapter == null && controlType != typeof (Control)) {
 				controlType = controlType.BaseType;
+				adapterType = (Type)typeMap [controlType];
 			}
 
 			ControlAdapter a = null;

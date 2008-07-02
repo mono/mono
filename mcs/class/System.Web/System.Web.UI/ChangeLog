@@ -1,5 +1,9 @@
 2008-07-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Control.cs: Optimize ResolveAdapter a bit more.
+
+2008-07-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Control.cs: Optimize the Adapter property and ResolveAdapter a bit.
 
 2008-07-01  Rodrigo Kumpera  <rkumpera@novell.com>
