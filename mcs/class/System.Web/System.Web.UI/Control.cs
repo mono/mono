@@ -152,18 +152,15 @@ namespace System.Web.UI
 		}
 
 #if NET_2_0
-		private ControlAdapter adapter = null;
-		private bool has_adapter = true;
+		ControlAdapter adapter;
+		bool did_adapter_lookup;
 		protected internal ControlAdapter Adapter {
 			get {
-				if (has_adapter) {
-					if (adapter == null) {
-						adapter = ResolveAdapter();
-					}
-					if (adapter == null)
-						has_adapter = false;
-					else
+				if (!did_adapter_lookup) {
+					adapter = ResolveAdapter ();
+					if (adapter != null)
 						adapter.Control = this;
+					did_adapter_lookup = true;
 				}
 				return adapter;
 			}
@@ -1114,8 +1111,9 @@ namespace System.Web.UI
 					if (c == null)
 						continue;
 #if NET_2_0
-					if (c.Adapter != null)
-						c.RenderControl (writer, c.Adapter);
+					ControlAdapter tmp = c.Adapter;
+					if (tmp != null)
+						c.RenderControl (writer, tmp);
 					else
 #endif
 						c.RenderControl (writer);
@@ -1138,8 +1136,10 @@ namespace System.Web.UI
 			Type adapterType = null;
 			Type controlType = GetType();
 			IDictionary typeMap = context.Request.Browser.Adapters;
-			while (adapterType == null && controlType != typeof(object)) {
+			while (controlType != typeof(object)) {
 				adapterType = (Type)typeMap [controlType];
+				if (adapterType != null)
+					break;
 				controlType = controlType.BaseType;
 			}
 
@@ -1465,8 +1465,9 @@ namespace System.Web.UI
 				trace.Write ("control", String.Concat ("End UnloadRecursive ", _userId, " ", type_name));
 #endif
 #if NET_2_0
-			if (Adapter != null)
-				Adapter.OnUnload (EventArgs.Empty);
+			ControlAdapter tmp = Adapter;
+			if (tmp != null)
+				tmp.OnUnload (EventArgs.Empty);
 			else
 #endif
 				OnUnload (EventArgs.Empty);
@@ -1550,9 +1551,9 @@ namespace System.Web.UI
 			stateMask |= INITING;
 #if NET_2_0
 			ApplyTheme ();
-
-			if (Adapter != null)
-				Adapter.OnInit (EventArgs.Empty);
+			ControlAdapter tmp = Adapter;
+			if (tmp != null)
+				tmp.OnInit (EventArgs.Empty);
 			else
 #endif
 				OnInit (EventArgs.Empty);
