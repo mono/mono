@@ -1,3 +1,14 @@
+2008-07-02  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ClientConfigurationSystem.cs: Moved logic for defaulting to
+	configuration file of AppDomain to OpenExeConfigurationInternal.
+	* ConfigurationManager.cs (OpenExeConfigurationInternal):
+	Allow calling_assembly and exePath to be null. When userLevel is None,
+	default to configuration file of AppDomain if exePath is null or empty.
+	When exePath is specified, resolve it to absolute path and throw
+	ConfigurationErrorsException if exePath does not exist and add
+	.config extension to get config file name if exePath does exist.
+
 2008-06-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SectionInfo.cs, Configuration.cs, ConfigInfo.cs,

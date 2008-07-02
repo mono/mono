@@ -44,6 +44,26 @@ namespace MonoTests.System.Configuration {
 	[TestFixture]
 	public class ConfigurationManagerTest
 	{
+		private string originalCurrentDir;
+		private string tempFolder;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			originalCurrentDir = Directory.GetCurrentDirectory ();
+			tempFolder = Path.Combine (Path.GetTempPath (), this.GetType ().FullName);
+			if (!Directory.Exists (tempFolder))
+				Directory.CreateDirectory (tempFolder);
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			Directory.SetCurrentDirectory (originalCurrentDir);
+			if (Directory.Exists (tempFolder))
+				Directory.Delete (tempFolder, true);
+		}
+
 		[Test]
 		public void UserLevelNone ()
 		{
@@ -59,7 +79,6 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void UserLevelPerRoaming ()
 		{
 			SysConfig config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoaming);
@@ -70,7 +89,6 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void UserLevelPerRoamingAndLocal ()
 		{
 			SysConfig config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
@@ -80,41 +98,111 @@ namespace MonoTests.System.Configuration {
 			Assert.AreEqual ("user.config", fi.Name);
 		}
 
-		[Test]
-		public void exePath_UserLevelNone_absolute ()
+		[Test] // OpenExeConfiguration (String)
+		public void OpenExeConfiguration2 ()
 		{
-#if false
-			string path = String.Format ("{0}hi{1}there.exe", Path.DirectorySeparatorChar, Path.DirectorySeparatorChar);
-			SysConfig config = ConfigurationManager.OpenExeConfiguration(path);
-			Assert.AreEqual ("", config.FilePath);
-#endif
+			String exePath;
+			SysConfig config;
+
+			exePath = Path.Combine (tempFolder, "DoesNotExist.whatever");
+			File.Create (exePath).Close ();
+
+			config = ConfigurationManager.OpenExeConfiguration (exePath);
+			Assert.AreEqual (exePath + ".config", config.FilePath, "#1");
+
+			exePath = Path.Combine (tempFolder, "SomeExecutable.exe");
+			File.Create (exePath).Close ();
+
+			config = ConfigurationManager.OpenExeConfiguration (exePath);
+			Assert.AreEqual (exePath + ".config", config.FilePath, "#2");
+
+			exePath = Path.Combine (tempFolder, "Foo.exe.config");
+			File.Create (exePath).Close ();
+
+			config = ConfigurationManager.OpenExeConfiguration (exePath);
+			Assert.AreEqual (exePath + ".config", config.FilePath, "#3");
+
+			Directory.SetCurrentDirectory (tempFolder);
+
+			exePath = "relative.exe";
+			File.Create (Path.Combine (tempFolder, exePath)).Close ();
+
+			config = ConfigurationManager.OpenExeConfiguration (exePath);
+			Assert.AreEqual (Path.Combine (tempFolder, exePath + ".config"), config.FilePath, "#4");
+		}
+
+		[Test] // OpenExeConfiguration (String)
+		public void OpenExeConfiguration2_ExePath_Empty ()
+		{
+			AppDomain domain = AppDomain.CurrentDomain;
+
+			SysConfig config = ConfigurationManager.OpenExeConfiguration (string.Empty);
+			Assert.AreEqual (domain.SetupInformation.ConfigurationFile, config.FilePath);
+		}
+
+		[Test] // OpenExeConfiguration (String)
+		public void OpenExeConfiguration2_ExePath_Null ()
+		{
+			AppDomain domain = AppDomain.CurrentDomain;
+
+			SysConfig config = ConfigurationManager.OpenExeConfiguration (string.Empty);
+			Assert.AreEqual (domain.SetupInformation.ConfigurationFile, config.FilePath);
+		}
+
+		[Test] // OpenExeConfiguration (String)
+		public void OpenExeConfiguration2_ExePath_DoesNotExist ()
+		{
+			AppDomain domain = AppDomain.CurrentDomain;
+			String exePath = Path.Combine (tempFolder, "DoesNotExist.exe");
+
+			try {
+				ConfigurationManager.OpenExeConfiguration (exePath);
+				Assert.Fail ("#1");
+			} catch (ConfigurationErrorsException ex) {
+				// An error occurred loading a configuration file:
+				// The parameter 'exePath' is invalid
+				Assert.AreEqual (typeof (ConfigurationErrorsException), ex.GetType (), "#2");
+				Assert.IsNull (ex.Filename, "#3");
+				Assert.IsNotNull (ex.InnerException, "#4");
+				Assert.AreEqual (0, ex.Line, "#5");
+				Assert.IsNotNull (ex.Message, "#6");
+
+				// The parameter 'exePath' is invalid
+				ArgumentException inner = ex.InnerException as ArgumentException;
+				Assert.IsNotNull (inner, "#7");
+				Assert.AreEqual (typeof (ArgumentException), inner.GetType (), "#8");
+				Assert.IsNull (inner.InnerException, "#9");
+				Assert.IsNotNull (inner.Message, "#10");
+				Assert.AreEqual ("exePath", inner.ParamName, "#11");
+			}
 		}
 
 		[Test]
 		public void exePath_UserLevelNone ()
 		{
-#if false
+			string basedir = AppDomain.CurrentDomain.BaseDirectory;
 			SysConfig config = ConfigurationManager.OpenExeConfiguration("System.Configuration_test_net_2_0.dll.mdb");
-			Assert.AreEqual ("", config.FilePath);
-#endif
+			Assert.AreEqual (Path.Combine (basedir, "System.Configuration_test_net_2_0.dll.mdb.config"), config.FilePath);
 		}
 
 		[Test]
 		public void exePath_UserLevelPerRoaming ()
 		{
-#if false
-			SysConfig config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoaming, "System.Configuration_test_net_2_0.dll.mdb");
-			Assert.AreEqual ("", config.FilePath);
-#endif
+			SysConfig config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoaming);
+			string filePath = config.FilePath;
+			string applicationData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+			Assert.IsTrue (filePath.StartsWith (applicationData), "#1");
+			Assert.AreEqual ("user.config", Path.GetFileName (filePath), "#2");
 		}
 
 		[Test]
 		public void exePath_UserLevelPerRoamingAndLocal ()
 		{
-#if false
-			SysConfig config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal, "System.Configuration_test_net_2_0.dll.mdb");
-			Assert.AreEqual ("", config.FilePath);
-#endif
+			SysConfig config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
+			string filePath = config.FilePath;
+			string applicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+			Assert.IsTrue (filePath.StartsWith (applicationData), "#1");
+			Assert.AreEqual ("user.config", Path.GetFileName (filePath), "#2");
 		}
 
 		[Test]

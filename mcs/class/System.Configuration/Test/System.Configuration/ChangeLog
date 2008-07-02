@@ -1,3 +1,8 @@
+2008-07-02  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ConfigurationManagerTest.cs: Added/improved tests for
+	OpenExeConfiguration. Enabled tests that were previously failed. 
+
 2008-06-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ConfigurationErrorsExceptionTest.cs : actually
