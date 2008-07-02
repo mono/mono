@@ -1,5 +1,15 @@
 2008-07-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (MONO_AOT_FILE_VERSION): Bump AOT file format version.
+
+	* aot-compiler.c aot-runtime.c: Allow AOTing many wrapper types.
+
+	* mini.c (mono_resolve_patch_target): Handle JIT_ICALL_ADDR.
+	(mono_codegen): Convert calls made by JIT icall wrappers to the icalls into
+	JIT_ICALL_ADDR patch type.
+
+	* patch-info.h: Add JIT_ICALL_ADDR patch type.
+
 	* mini.c (mono_method_to_ir): Allow AOTing methods which access the interruption
 	request flag.
 	(mono_resolve_patch_target): Handle INTERRUPTION_REQUEST_FLAG.
