@@ -1,5 +1,15 @@
 2008-07-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Fixup the computation of method indexes.
+	(add_wrappers): Create the base methods of the runtime invoke wrappers using
+	the method builder infrastructure.
+
+	* aot-runtime.c (decode_exception_debug_info): Don't crash if the method
+	has no header.
+
+	* mini-trampolines.c (mono_create_jit_trampoline_in_domain): In aot-only
+	mode, load the method right away instead of creating a trampoline.
+
 	* mini-x86.c (mono_arch_get_delegate_invoke_impl): Eliminate locking.
 
 	* mini-amd64.c (mono_arch_get_delegate_invoke_impl): Eliminate locking, speed up
