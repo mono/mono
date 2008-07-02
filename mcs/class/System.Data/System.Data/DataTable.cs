@@ -1989,7 +1989,8 @@ namespace System.Data {
 			// initialize default values row for the first time
 			if ( _defaultValuesRowIndex == -1 ) {
 				_defaultValuesRowIndex = RecordCache.NewRecord();
-				foreach(DataColumn column in Columns) {
+				for (int i = 0; i < Columns.Count; ++i) {
+					DataColumn column = Columns [i];
 					column.DataContainer[_defaultValuesRowIndex] = column.DefaultValue;
 				}
 			}
@@ -2461,10 +2462,9 @@ namespace System.Data {
 		}
 
 		internal void AddRowToIndexes (DataRow row) {
-			if (_indexes != null) {
-				foreach (Index indx in _indexes) {
-					indx.Add (row);
-				}
+				if (_indexes != null) {
+				for (int i = 0; i < _indexes.Count; ++i)
+					((Index)_indexes [i]).Add (row);
 			}
 		}
 

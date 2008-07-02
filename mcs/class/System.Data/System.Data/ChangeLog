@@ -1,3 +1,9 @@
+2008-07-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* DataTable.cs: Kill some foreach loops.
+	
+	* DataRow.cs: Same.
+
 2008-07-01  Marek Safar  <marek.safar@gmail.com>
 
 	* DataColumnCollection.cs: Made few simple optimizations.

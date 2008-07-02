@@ -1683,7 +1683,8 @@ namespace System.Data {
 				
 			if (Table.DataSet != null && !Table.DataSet.EnforceConstraints)
 				return;
-			foreach(DataColumn column in Table.Columns) {
+			for (int i = 0; i < Table.Columns.Count; ++i) {
+				DataColumn column = Table.Columns [i];
 				if (!column.AllowDBNull && IsNull(column)) {
 					throw new NoNullAllowedException(_nullConstraintMessage);
 				}

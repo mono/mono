@@ -88,7 +88,8 @@ namespace System.Data.Common
 					if ( _currentCapacity < MIN_CACHE_SIZE ) {
 						_currentCapacity = MIN_CACHE_SIZE;
 					}
-					foreach(DataColumn col in cols) {
+					for (int i = 0; i < cols.Count; ++i) {
+						DataColumn col = cols [i];
 						col.DataContainer.Capacity = _currentCapacity;
 					}
 
