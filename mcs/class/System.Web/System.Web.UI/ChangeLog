@@ -1,5 +1,10 @@
 2008-07-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Control.cs: Fix the lookup in ResolveAdapter that I
+	broke in the previous change.
+
+2008-07-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Control.cs: Optimize ResolveAdapter a bit more.
 
 2008-07-02  Rodrigo Kumpera  <rkumpera@novell.com>

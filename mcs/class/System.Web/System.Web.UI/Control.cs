@@ -1136,7 +1136,7 @@ namespace System.Web.UI
 			IDictionary typeMap = context.Request.Browser.Adapters;
 			Type controlType = GetType ();
 			Type adapterType = (Type)typeMap [controlType];
-			while (adapter == null && controlType != typeof (Control)) {
+			while (adapterType == null && controlType != typeof (Control)) {
 				controlType = controlType.BaseType;
 				adapterType = (Type)typeMap [controlType];
 			}
