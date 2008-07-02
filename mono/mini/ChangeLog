@@ -1,5 +1,11 @@
 2008-07-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (decode_patch_info): Don't create trampolines in aot_only mode.
+	(mono_aot_load_method): Use method_index instead of method->token.
+
+	* mini.c (mono_jit_compile_method_inner): Move the aot_only check down, so it
+	can handle icalls etc. properly.
+
 	* mini.h (MONO_AOT_FILE_VERSION): Bump AOT file format version.
 
 	* aot-compiler.c aot-runtime.c: Allow AOTing many wrapper types.
