@@ -1,3 +1,9 @@
+2008-07-02  Marek Habersack  <mhabersack@novell.com>
+
+	* SqlDataSourceTest.cs: command parameters are constructed from
+	reversed order of keys in an IOrderedDictionary - fix the order in
+	some tests.
+
 2008-05-18  Marek Habersack  <mhabersack@novell.com>
 
 	* HierarchicalDataBoundControlTest.cs: Added 
