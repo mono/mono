@@ -201,12 +201,12 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		// public methods
 	
-		public virtual bool Equals (System.Security.Cryptography.X509Certificates.X509Certificate cert)
+		public virtual bool Equals (System.Security.Cryptography.X509Certificates.X509Certificate other)
 		{
-			if (cert == null) {
+			if (other == null) {
 				return false;
 			} else {
-				if (cert.x509 == null) {
+				if (other.x509 == null) {
 #if NET_2_0
 					if (x509 == null)
 						return true;
@@ -216,7 +216,7 @@ namespace System.Security.Cryptography.X509Certificates {
 #endif
 				}
 
-				byte[] raw = cert.x509.RawData;
+				byte[] raw = other.x509.RawData;
 				if (raw != null) {
 					if (x509 == null)
 						return false;
@@ -433,9 +433,9 @@ namespace System.Security.Cryptography.X509Certificates {
 			return base.ToString ();
 		}
 	
-		public virtual string ToString (bool details) 
+		public virtual string ToString (bool fVerbose) 
 		{
-			if (!details || (x509 == null))
+			if (!fVerbose || (x509 == null))
 				return base.ToString ();
 
 			string nl = Environment.NewLine;

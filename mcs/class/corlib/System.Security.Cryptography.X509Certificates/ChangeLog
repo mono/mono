@@ -1,3 +1,7 @@
+2008-07-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* X509Certificate.cs: Fix parameter names
+
 2008-01-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: Don't wrap our own COMException inside another
