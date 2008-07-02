@@ -440,8 +440,8 @@ namespace System.Web.UI.WebControls {
 #else
 					w.AddAttribute (HtmlTextWriterAttribute.Onclick,
 							BuildScriptAttribute ("onclick", Page.ClientScript.GetPostBackEventReference (this, String.Empty)));
+					w.AddAttribute ("language", "javascript", false);
 #endif
-				w.AddAttribute ("language", "javascript", false);
 			}
 
 			if (AccessKey.Length > 0)

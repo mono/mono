@@ -1,3 +1,8 @@
+2008-07-03  Marek Habersack  <mhabersack@novell.com>
+
+	* CheckBox.cs: do not render the language="javascript" attribute
+	in the 2.0 profile.
+
 2008-07-02  Marek Habersack  <mhabersack@novell.com>
 
 	* GridView.cs: minor optimizations (removed a foreach loop,
