@@ -401,12 +401,12 @@ namespace System.Security.Cryptography {
 		}
 
 		[ComVisible (false)]
-		public void ImportCspBlob (byte[] rawData)
+		public void ImportCspBlob (byte[] keyBlob)
 		{
-			if (rawData == null)
-				throw new ArgumentNullException ("rawData");
+			if (keyBlob == null)
+				throw new ArgumentNullException ("keyBlob");
 
-			RSA rsa = CryptoConvert.FromCapiKeyBlob (rawData);
+			RSA rsa = CryptoConvert.FromCapiKeyBlob (keyBlob);
 			if (rsa is RSACryptoServiceProvider) {
 				// default (if no change are present in machine.config)
 				RSAParameters rsap = rsa.ExportParameters (!(rsa as RSACryptoServiceProvider).PublicOnly);

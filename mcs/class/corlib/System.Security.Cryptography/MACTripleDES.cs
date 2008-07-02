@@ -133,7 +133,7 @@ namespace System.Security.Cryptography {
 			mac.Initialize (KeyValue);
 		}
 	
-		protected override void HashCore (byte[] rgb, int ib, int cb) 
+		protected override void HashCore (byte[] rgbData, int ibStart, int cbSize) 
 		{
 			if (m_disposed)
 				throw new ObjectDisposedException ("MACTripleDES");
@@ -141,7 +141,7 @@ namespace System.Security.Cryptography {
 				Initialize ();
 				State = 1;
 			}
-			mac.Core (rgb, ib, cb);
+			mac.Core (rgbData, ibStart, cbSize);
 		}
 	
 		protected override byte[] HashFinal () 

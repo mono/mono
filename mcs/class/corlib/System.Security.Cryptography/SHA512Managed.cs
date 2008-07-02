@@ -92,28 +92,28 @@ public class SHA512Managed : SHA512 {
 
 	// protected
 
-	protected override void HashCore (byte[] rgb, int start, int count) 
+	protected override void HashCore (byte[] rgb, int ibStart, int cbSize) 
 	{
 		// fill the current word
-		while ((xBufOff != 0) && (count > 0)) {
-			update (rgb [start]);
-			start++;
-			count--;
+		while ((xBufOff != 0) && (cbSize > 0)) {
+			update (rgb [ibStart]);
+			ibStart++;
+			cbSize--;
 		}
 
 		// process whole words.
-		while (count > xBuf.Length) {
-			processWord (rgb, start);
-			start += xBuf.Length;
-			count -= xBuf.Length;
+		while (cbSize > xBuf.Length) {
+			processWord (rgb, ibStart);
+			ibStart += xBuf.Length;
+			cbSize -= xBuf.Length;
 			byteCount1 += (ulong) xBuf.Length;
 		}
 
 		// load in the remainder.
-		while (count > 0) {
-			update (rgb [start]);
-			start++;
-			count--;
+		while (cbSize > 0) {
+			update (rgb [ibStart]);
+			ibStart++;
+			cbSize--;
 		}
 	}
 

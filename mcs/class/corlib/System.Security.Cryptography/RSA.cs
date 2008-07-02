@@ -64,7 +64,7 @@ namespace System.Security.Cryptography {
 
 		public abstract byte[] DecryptValue (byte[] rgb);
 
-		public abstract RSAParameters ExportParameters (bool include);
+		public abstract RSAParameters ExportParameters (bool includePrivateParameters);
 
 		public abstract void ImportParameters (RSAParameters parameters);
 

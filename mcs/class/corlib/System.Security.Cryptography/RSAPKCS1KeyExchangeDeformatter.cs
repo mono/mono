@@ -62,14 +62,14 @@ namespace System.Security.Cryptography {
 			set { random = value; }
 		}
 	
-		public override byte[] DecryptKeyExchange (byte[] rgbData) 
+		public override byte[] DecryptKeyExchange (byte[] rgbIn) 
 		{
 			if (rsa == null) {
 				throw new CryptographicUnexpectedOperationException (
 					Locale.GetText ("No key pair available."));
 			}
 
-			byte[] result = PKCS1.Decrypt_v15 (rsa, rgbData);
+			byte[] result = PKCS1.Decrypt_v15 (rsa, rgbIn);
 			if (result != null)
 				return result;
 

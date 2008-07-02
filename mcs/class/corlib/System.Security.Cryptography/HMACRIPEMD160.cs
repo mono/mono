@@ -43,11 +43,11 @@ namespace System.Security.Cryptography {
 		{
 		}
 
-		public HMACRIPEMD160 (byte[] rgbKey) : base () 
+		public HMACRIPEMD160 (byte[] key) : base () 
 		{
 			HashName = "RIPEMD160";
 			HashSizeValue = 160;
-			Key = rgbKey;
+			Key = key;
 		}
 	}
 }

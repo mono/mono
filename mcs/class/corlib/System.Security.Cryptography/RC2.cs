@@ -45,9 +45,9 @@ namespace System.Security.Cryptography {
 			return Create ("System.Security.Cryptography.RC2");
 		}
 		
-		public static new RC2 Create (string algName) 
+		public static new RC2 Create (string AlgName) 
 		{
-			return (RC2) CryptoConfig.CreateFromName (algName);
+			return (RC2) CryptoConfig.CreateFromName (AlgName);
 		}
 
 		protected int EffectiveKeySizeValue;

@@ -71,7 +71,7 @@ namespace System.Security.Cryptography {
 		/// <param name="ibStart">The offset into the byte array from which to begin using data.</param>
 		/// <param name="cbSize">The number of bytes in the array to use as data.</param>
 		/// <exception cref="ObjectDisposedException">The <see cref="RIPEMD160Managed"/> instance has been disposed.</exception>
-		protected override void HashCore(byte[] array, int ibStart, int cbSize) {
+		protected override void HashCore(byte[] rgb, int ibStart, int cbSize) {
 			int i;
 			State = 1;
 
@@ -79,12 +79,12 @@ namespace System.Security.Cryptography {
 
 			if (_ProcessingBufferCount != 0) {
 				if (cbSize < (BLOCK_SIZE_BYTES - _ProcessingBufferCount)) {
-					System.Buffer.BlockCopy (array, ibStart, _ProcessingBuffer, _ProcessingBufferCount, cbSize);
+					System.Buffer.BlockCopy (rgb, ibStart, _ProcessingBuffer, _ProcessingBufferCount, cbSize);
 					_ProcessingBufferCount += cbSize;
 					return;
 				} else {
 					i = (BLOCK_SIZE_BYTES - _ProcessingBufferCount);
-					System.Buffer.BlockCopy (array, ibStart, _ProcessingBuffer, _ProcessingBufferCount, i);
+					System.Buffer.BlockCopy (rgb, ibStart, _ProcessingBuffer, _ProcessingBufferCount, i);
 					ProcessBlock (_ProcessingBuffer, 0);
 					_ProcessingBufferCount = 0;
 					ibStart += i;
@@ -92,13 +92,13 @@ namespace System.Security.Cryptography {
 				}
 			}
 
-			for (i=0; i<cbSize-cbSize%BLOCK_SIZE_BYTES; i += BLOCK_SIZE_BYTES) {
-				ProcessBlock (array, ibStart+i);
+			for (i = 0; i < cbSize - cbSize % BLOCK_SIZE_BYTES; i += BLOCK_SIZE_BYTES) {
+				ProcessBlock (rgb, ibStart + i);
 			}
 
-			if (cbSize%BLOCK_SIZE_BYTES != 0) {
-				System.Buffer.BlockCopy (array, cbSize-cbSize%BLOCK_SIZE_BYTES+ibStart, _ProcessingBuffer, 0, cbSize%BLOCK_SIZE_BYTES);
-				_ProcessingBufferCount = cbSize%BLOCK_SIZE_BYTES;
+			if (cbSize % BLOCK_SIZE_BYTES != 0) {
+				System.Buffer.BlockCopy (rgb, cbSize - cbSize % BLOCK_SIZE_BYTES + ibStart, _ProcessingBuffer, 0, cbSize % BLOCK_SIZE_BYTES);
+				_ProcessingBufferCount = cbSize % BLOCK_SIZE_BYTES;
 			}
 		}
 		/// <summary>

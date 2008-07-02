@@ -1,5 +1,5 @@
 //
-// System.Security.Cryptography.FromBase64Transform
+// System.Security.Cryptography.FromBase64Transform.cs
 //
 // Authors:
 //	Sergey Chaban (serge@wildwestsoftware.com)
@@ -58,9 +58,9 @@ namespace System.Security.Cryptography {
 		{
 		}
 
-		public FromBase64Transform (FromBase64TransformMode mode)
+		public FromBase64Transform (FromBase64TransformMode whitespaces)
 		{
-			this.mode = mode;
+			this.mode = whitespaces;
 			accumulator = new byte [4];
 			accPtr = 0;
 			m_disposed = false;

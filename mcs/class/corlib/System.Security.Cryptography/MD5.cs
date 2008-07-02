@@ -1,5 +1,5 @@
 //
-// System.Security.Cryptography MD5 Class implementation
+// System.Security.Cryptography.MD5.cs
 //
 // Authors:
 //	Matthew S. Ford (Matthew.S.Ford@Rose-Hulman.Edu)
@@ -49,9 +49,9 @@ namespace System.Security.Cryptography {
 			return Create ("System.Security.Cryptography.MD5");
 		}
 
-		public static new MD5 Create (string hashName) 
+		public static new MD5 Create (string algName) 
 		{
-			return (MD5) CryptoConfig.CreateFromName (hashName);
+			return (MD5) CryptoConfig.CreateFromName (algName);
 		}
 	}
 }

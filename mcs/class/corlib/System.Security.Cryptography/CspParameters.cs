@@ -1,5 +1,5 @@
 //
-// System.Security.Cryptography CspParameters.cs
+// System.Security.Cryptography.CspParameters.cs
 //
 // Authors:
 //	Thomas Neidhart (tome@sbox.tugraz.at)
@@ -83,18 +83,18 @@ namespace System.Security.Cryptography {
 		private SecureString _password;
 		private IntPtr _windowHandle;
 
-		public CspParameters (int dwTypeIn, string strProviderNameIn, string strContainerNameIn, 
+		public CspParameters (int providerType, string providerName, string keyContainerName, 
 			CryptoKeySecurity cryptoKeySecurity, IntPtr parentWindowHandle)
-			: this (dwTypeIn, strProviderNameIn, strContainerNameIn)
+			: this (providerType, providerName, keyContainerName)
 		{
 			if (cryptoKeySecurity != null)
 				CryptoKeySecurity = cryptoKeySecurity;
 			_windowHandle = parentWindowHandle;
 		}
 
-		public CspParameters (int dwTypeIn, string strProviderNameIn, string strContainerNameIn, 
+		public CspParameters (int providerType, string providerName, string keyContainerName, 
 			CryptoKeySecurity cryptoKeySecurity, SecureString keyPassword)
-			: this (dwTypeIn, strProviderNameIn, strContainerNameIn)
+			: this (providerType, providerName, keyContainerName)
 		{
 			if (cryptoKeySecurity != null)
 				CryptoKeySecurity = cryptoKeySecurity;

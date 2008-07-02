@@ -175,9 +175,9 @@ namespace System.Security.Cryptography {
 			return Create ("System.Security.Cryptography.HMAC");
 		}
 
-		public static new HMAC Create (string algName) 
+		public static new HMAC Create (string algorithmName) 
 		{
-			return (HMAC) CryptoConfig.CreateFromName (algName);
+			return (HMAC) CryptoConfig.CreateFromName (algorithmName);
 		}
 	}
 }

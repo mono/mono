@@ -43,11 +43,11 @@ namespace System.Security.Cryptography {
 		{
 		}
 
-		public HMACSHA256 (byte[] rgbKey) : base () 
+		public HMACSHA256 (byte[] key) : base () 
 		{
 			HashName = "SHA256";
 			HashSizeValue = 256;
-			Key = rgbKey;
+			Key = key;
 		}
 	}
 }

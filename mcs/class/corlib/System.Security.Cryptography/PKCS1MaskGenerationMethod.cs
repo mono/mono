@@ -57,10 +57,10 @@ namespace System.Security.Cryptography {
 		// This method is not compatible with the one provided by MS in
 		// framework 1.0 and 1.1 but IS compliant with PKCS#1 v.2.1 and
 		// work for implementing OAEP
-		public override byte[] GenerateMask (byte[] mgfSeed, int maskLen)
+		public override byte[] GenerateMask (byte[] rgbSeed, int cbReturn)
 		{
 			HashAlgorithm hash = HashAlgorithm.Create (hashName);
-			return PKCS1.MGF1 (hash, mgfSeed, maskLen);
+			return PKCS1.MGF1 (hash, rgbSeed, cbReturn);
 		}
 	}
 }

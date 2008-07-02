@@ -1,5 +1,5 @@
 //
-// System.Security.Cryptography.DES
+// System.Security.Cryptography.DES.cs
 //
 // Author:
 //	Sergey Chaban (serge@wildwestsoftware.com)
@@ -66,9 +66,9 @@ public abstract class DES : SymmetricAlgorithm {
 		return Create ("System.Security.Cryptography.DES");
 	}
 
-	public static new DES Create (string algo) 
+	public static new DES Create (string algName) 
         {
-		return (DES) CryptoConfig.CreateFromName (algo);
+		return (DES) CryptoConfig.CreateFromName (algName);
 	}
 
 

@@ -1,5 +1,5 @@
 //
-// System.Security.Cryptography SHA1Managed Class implementation
+// System.Security.Cryptography.SHA1Managed.cs
 //
 // Author:
 //	Sebastien Pouliot (sebastien@ximian.com)
@@ -50,10 +50,10 @@ namespace System.Security.Cryptography {
 			sha = new SHA1Internal ();
 		}
 
-		protected override void HashCore (byte[] rgb, int start, int size) 
+		protected override void HashCore (byte[] rgb, int ibStart, int cbSize) 
 		{
 			State = 1;
-			sha.HashCore (rgb, start, size);
+			sha.HashCore (rgb, ibStart, cbSize);
 		}
 
 		protected override byte[] HashFinal () 

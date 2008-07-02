@@ -1,5 +1,5 @@
 //
-// System.Security.Cryptography SHA1CryptoServiceProvider Class implementation
+// System.Security.Cryptography.SHA1CryptoServiceProvider.cs
 //
 // Authors:
 //	Matthew S. Ford (Matthew.S.Ford@Rose-Hulman.Edu)
@@ -58,33 +58,33 @@ namespace System.Security.Cryptography {
 			Initialize();
 		}
 
-		public void HashCore (byte[] rgb, int start, int size) 
+		public void HashCore (byte[] rgb, int ibStart, int cbSize) 
 		{
 			int i;
 
 			if (_ProcessingBufferCount != 0) {
-				if (size < (BLOCK_SIZE_BYTES - _ProcessingBufferCount)) {
-					System.Buffer.BlockCopy (rgb, start, _ProcessingBuffer, _ProcessingBufferCount, size);
-					_ProcessingBufferCount += size;
+				if (cbSize < (BLOCK_SIZE_BYTES - _ProcessingBufferCount)) {
+					System.Buffer.BlockCopy (rgb, ibStart, _ProcessingBuffer, _ProcessingBufferCount, cbSize);
+					_ProcessingBufferCount += cbSize;
 					return;
 				}
 				else {
 					i = (BLOCK_SIZE_BYTES - _ProcessingBufferCount);
-					System.Buffer.BlockCopy (rgb, start, _ProcessingBuffer, _ProcessingBufferCount, i);
+					System.Buffer.BlockCopy (rgb, ibStart, _ProcessingBuffer, _ProcessingBufferCount, i);
 					ProcessBlock (_ProcessingBuffer, 0);
 					_ProcessingBufferCount = 0;
-					start += i;
-					size -= i;
+					ibStart += i;
+					cbSize -= i;
 				}
 			}
 
-			for (i=0; i<size-size%BLOCK_SIZE_BYTES; i += BLOCK_SIZE_BYTES) {
-				ProcessBlock (rgb, (uint)(start+i));
+			for (i = 0; i < cbSize - cbSize % BLOCK_SIZE_BYTES; i += BLOCK_SIZE_BYTES) {
+				ProcessBlock (rgb, (uint)(ibStart + i));
 			}
 
-			if (size%BLOCK_SIZE_BYTES != 0) {
-				System.Buffer.BlockCopy (rgb, size-size%BLOCK_SIZE_BYTES+start, _ProcessingBuffer, 0, size%BLOCK_SIZE_BYTES);
-				_ProcessingBufferCount = size%BLOCK_SIZE_BYTES;
+			if (cbSize % BLOCK_SIZE_BYTES != 0) {
+				System.Buffer.BlockCopy (rgb, cbSize - cbSize % BLOCK_SIZE_BYTES + ibStart, _ProcessingBuffer, 0, cbSize % BLOCK_SIZE_BYTES);
+				_ProcessingBufferCount = cbSize % BLOCK_SIZE_BYTES;
 			}
 		}
 	

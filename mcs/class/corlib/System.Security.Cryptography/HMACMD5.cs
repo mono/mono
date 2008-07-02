@@ -50,11 +50,11 @@ namespace System.Security.Cryptography {
 		{
 		}
 
-		public HMACMD5 (byte[] rgbKey) : base ()
+		public HMACMD5 (byte[] key) : base ()
 		{
 			HashName = "MD5";
 			HashSizeValue = 128;
-			Key = rgbKey;
+			Key = key;
 		}
 	}
 }

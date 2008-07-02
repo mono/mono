@@ -52,12 +52,12 @@ namespace System.Security.Cryptography {
 			ProduceLegacyHmacValues = legacy_mode;
 		}
 
-		public HMACSHA512 (byte[] rgbKey)
+		public HMACSHA512 (byte[] key)
 		{
 			ProduceLegacyHmacValues = legacy_mode;
 			HashName = "SHA512";
 			HashSizeValue = 512;
-			Key = rgbKey;
+			Key = key;
 		}
 
 		// this property will appear in the next .NET service pack

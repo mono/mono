@@ -142,18 +142,18 @@ namespace System.Security.Cryptography {
 		{
 		}
 
-		public HMACSHA1 (byte[] rgbKey)
+		public HMACSHA1 (byte[] key)
 		{
 			HashName = "SHA1";
 			HashSizeValue = 160;
-			Key = rgbKey;
+			Key = key;
 		}
 
-		public HMACSHA1 (byte[] rgbKey, bool useManagedSha1)
+		public HMACSHA1 (byte[] key, bool useManagedSha1)
 		{
 			HashName = "System.Security.Cryptography.SHA1" + (useManagedSha1 ? "Managed" : "CryptoServiceProvider");
 			HashSizeValue = 160;
-			Key = rgbKey;
+			Key = key;
 		}
 	}
 #endif

@@ -1,5 +1,5 @@
 //
-// System.Security.Cryptography HashAlgorithm Class implementation
+// System.Security.Cryptography.HashAlgorithm.cs
 //
 // Authors:
 //	Matthew S. Ford (Matthew.S.Ford@Rose-Hulman.Edu)
@@ -68,12 +68,12 @@ namespace System.Security.Cryptography {
 			Dispose (true);
 		}
 
-		public byte[] ComputeHash (byte[] input) 
+		public byte[] ComputeHash (byte[] buffer) 
 		{
-			if (input == null)
-				throw new ArgumentNullException ("input");
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
 
-			return ComputeHash (input, 0, input.Length);
+			return ComputeHash (buffer, 0, buffer.Length);
 		}
 
 		public byte[] ComputeHash (byte[] buffer, int offset, int count) 
@@ -136,7 +136,7 @@ namespace System.Security.Cryptography {
 			}
 		}
 	
-		protected abstract void HashCore (byte[] rgb, int start, int size);
+		protected abstract void HashCore (byte[] array, int ibStart, int cbSize);
 
 		protected abstract byte[] HashFinal ();
 

@@ -181,19 +181,19 @@ namespace System.Security.Cryptography {
 			return dsa.CreateSignature (rgbHash);
 		}
 
-		public byte[] SignData (byte[] data)
+		public byte[] SignData (byte[] buffer)
 		{
 			// right now only SHA1 is supported by FIPS186-2
 			HashAlgorithm hash = SHA1.Create ();
-			byte[] toBeSigned = hash.ComputeHash (data);
+			byte[] toBeSigned = hash.ComputeHash (buffer);
 			return dsa.CreateSignature (toBeSigned);
 		}
 
-		public byte[] SignData (byte[] data, int offset, int count)
+		public byte[] SignData (byte[] buffer, int offset, int count)
 		{
 			// right now only SHA1 is supported by FIPS186-2
 			HashAlgorithm hash = SHA1.Create ();
-			byte[] toBeSigned = hash.ComputeHash (data, offset, count);
+			byte[] toBeSigned = hash.ComputeHash (buffer, offset, count);
 			return dsa.CreateSignature (toBeSigned);
 		}
 
@@ -289,11 +289,11 @@ namespace System.Security.Cryptography {
 		}
 
 		[ComVisible (false)]
-		public void ImportCspBlob (byte[] rawData)
+		public void ImportCspBlob (byte[] keyBlob)
 		{
-			if (rawData == null)
-				throw new ArgumentNullException ("rawData");
-			DSA dsa = CryptoConvert.FromCapiKeyBlobDSA (rawData);
+			if (keyBlob == null)
+				throw new ArgumentNullException ("keyBlob");
+			DSA dsa = CryptoConvert.FromCapiKeyBlobDSA (keyBlob);
 			if (dsa is DSACryptoServiceProvider) {
 				DSAParameters dsap = dsa.ExportParameters (!(dsa as DSACryptoServiceProvider).PublicOnly);
 				ImportParameters (dsap);
