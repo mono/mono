@@ -1,5 +1,8 @@
 2008-07-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* driver.c (mono_jit_init_version): Correct the comments since the first
+	argument should be the name of the root domain, not a filename.
+
 	* aot-runtime.c (make_writable): Error out if this is called while running
 	with --aot-only.
 	(load_aot_module): Ditto.
