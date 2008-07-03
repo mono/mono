@@ -178,9 +178,8 @@ namespace System.Data {
 				DataColumn column = _table.Columns[columnIndex];
 				_table.ChangingDataColumn (this, column, value);
 				
-				if (value == null && column.DataType != typeof(string)) {
-					throw new ArgumentException("Cannot set column " + column.ColumnName + " to be null, Please use DBNull instead");
-				}
+				if (value == null && column.DataType != typeof(string))
+					value = DBNull.Value;
 				_rowChanged = true;
 				
 				CheckValue (value, column);
