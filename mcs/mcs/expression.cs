@@ -1062,8 +1062,10 @@ namespace Mono.CSharp {
 				
 				if (n == 0)
 					ig.Emit (OpCodes.Sizeof, et);
-				else
+				else {
 					IntConstant.EmitInt (ig, n);
+					ig.Emit (OpCodes.Conv_I);
+				}
 			} else 
 				ig.Emit (OpCodes.Ldc_I4_1);
 
@@ -1692,11 +1694,8 @@ namespace Mono.CSharp {
 			{
 				b.type = ReturnType;
 
-				if (left != null)
-					b.left = Convert.ImplicitConversion (ec, b.left, left, b.left.Location);
-
-				if (right != null)
-					b.right = Convert.ImplicitConversion (ec, b.right, right, b.right.Location);
+				b.left = Convert.ImplicitConversion (ec, b.left, left, b.left.Location);
+				b.right = Convert.ImplicitConversion (ec, b.right, right, b.right.Location);
 
 				//
 				// A user operators does not support multiple user conversions, but decimal type
@@ -1847,7 +1846,11 @@ namespace Mono.CSharp {
 
 			public override Expression ConvertResult (EmitContext ec, Binary b)
 			{
-				base.ConvertResult (ec, b);
+				if (left != null) {
+					b.left = EmptyCast.Create (b.left, left);
+				} else if (right != null) {
+					b.right = EmptyCast.Create (b.right, right);
+				}
 
 				Type r_type = ReturnType;
 				if (r_type == null) {
@@ -3799,32 +3802,48 @@ namespace Mono.CSharp {
 				// handle + and - on (pointer op int)
 				//
 				left.Emit (ec);
-				ig.Emit (OpCodes.Conv_I);
 
 				Constant right_const = right as Constant;
-				if (right_const != null && size != 0) {
-					Expression ex = ConstantFold.BinaryFold (ec, Binary.Operator.Multiply, new IntConstant (size, right.Location), right_const, loc);
-					if (ex == null)
+				if (right_const != null) {
+					//
+					// Optimize 0-based arithmetic
+					//
+					if (right_const.IsDefaultValue)
 						return;
-					ex.Emit (ec);
-				} else {
-					right.Emit (ec);
-					if (size != 1){
-						if (size == 0)
-							ig.Emit (OpCodes.Sizeof, element);
-						else 
-							IntLiteral.EmitInt (ig, size);
-						if (rtype == TypeManager.int64_type)
-							ig.Emit (OpCodes.Conv_I8);
-						else if (rtype == TypeManager.uint64_type)
-							ig.Emit (OpCodes.Conv_U8);
 
-						Binary.EmitOperatorOpcode (ec, Binary.Operator.Multiply, rtype);
+					if (size != 0) {
+						right = ConstantFold.BinaryFold (ec, Binary.Operator.Multiply, new IntConstant (size, right.Location), right_const, loc);
+						if (right == null)
+							return;
+					} else {
+						ig.Emit (OpCodes.Sizeof, element);
+						right = EmptyExpression.Null;
 					}
 				}
-				
-				if (rtype == TypeManager.int64_type || rtype == TypeManager.uint64_type)
+
+				right.Emit (ec);
+				if (rtype == TypeManager.sbyte_type || rtype == TypeManager.byte_type ||
+					rtype == TypeManager.short_type || rtype == TypeManager.ushort_type) {
 					ig.Emit (OpCodes.Conv_I);
+				} else if (rtype == TypeManager.uint32_type) {
+					ig.Emit (OpCodes.Conv_U);
+				}
+
+				if (right_const == null && size != 1){
+					if (size == 0)
+						ig.Emit (OpCodes.Sizeof, element);
+					else 
+						IntLiteral.EmitInt (ig, size);
+					if (rtype == TypeManager.int64_type || rtype == TypeManager.uint64_type)
+						ig.Emit (OpCodes.Conv_I8);
+
+					Binary.EmitOperatorOpcode (ec, Binary.Operator.Multiply, rtype);
+				}
+
+				if (rtype == TypeManager.int64_type)
+					ig.Emit (OpCodes.Conv_I);
+				else if (rtype == TypeManager.uint64_type)
+					ig.Emit (OpCodes.Conv_U);
 
 				Binary.EmitOperatorOpcode (ec, op, op_type);
 			}
@@ -9074,7 +9093,7 @@ namespace Mono.CSharp {
 			if (count == null)
 				return null;
 			
-			if (count.Type != TypeManager.int32_type){
+			if (count.Type != TypeManager.uint32_type){
 				count = Convert.ImplicitConversionRequired (ec, count, TypeManager.int32_type, loc);
 				if (count == null)
 					return null;
@@ -9110,13 +9129,15 @@ namespace Mono.CSharp {
 		{
 			int size = GetTypeSize (otype);
 			ILGenerator ig = ec.ig;
-				
+
+			count.Emit (ec);
+
 			if (size == 0)
 				ig.Emit (OpCodes.Sizeof, otype);
 			else
 				IntConstant.EmitInt (ig, size);
-			count.Emit (ec);
-			ig.Emit (OpCodes.Mul);
+
+			ig.Emit (OpCodes.Mul_Ovf_Un);
 			ig.Emit (OpCodes.Localloc);
 		}
 

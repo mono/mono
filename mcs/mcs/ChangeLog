@@ -1,3 +1,7 @@
+2008-07-03  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs: Fixed native pointer conversions. Also fixes #321615.
+
 2008-07-02  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #404905
