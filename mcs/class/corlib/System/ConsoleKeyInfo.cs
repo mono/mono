@@ -1,5 +1,5 @@
 //
-// System.ConsoleKeyInfo
+// System.ConsoleKeyInfo.cs
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
@@ -80,26 +80,26 @@ namespace System {
 			get { return modifiers; }
 		}
 		
-		public override bool Equals (object o)
+		public override bool Equals (object value)
 		{
-			if (!(o is ConsoleKeyInfo))
+			if (!(value is ConsoleKeyInfo))
 				return false;
-			return Equals ((ConsoleKeyInfo) o);
+			return Equals ((ConsoleKeyInfo) value);
 		}
 		
-		public static bool operator == (ConsoleKeyInfo obj1, ConsoleKeyInfo obj2)
+		public static bool operator == (ConsoleKeyInfo a, ConsoleKeyInfo b)
 		{
-			return obj1.Equals (obj2);
+			return a.Equals (b);
 		}
 		
-		public static bool operator != (ConsoleKeyInfo obj1, ConsoleKeyInfo obj2)
+		public static bool operator != (ConsoleKeyInfo a, ConsoleKeyInfo b)
 		{
-			return !obj1.Equals (obj2);
+			return !a.Equals (b);
 		}
 		
-		public bool Equals (ConsoleKeyInfo o)
+		public bool Equals (ConsoleKeyInfo obj)
 		{
-			return key == o.key && o.keychar == keychar && o.modifiers == modifiers;
+			return key == obj.key && obj.keychar == keychar && obj.modifiers == modifiers;
 		}
 		
 		public override int GetHashCode ()

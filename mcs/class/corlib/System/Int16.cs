@@ -46,15 +46,15 @@ namespace System {
 		
 		internal short m_value;
 
-		public int CompareTo (object v)
+		public int CompareTo (object value)
 		{
-			if (v == null)
+			if (value == null)
 				return 1;
 
-			if (!(v is System.Int16))
+			if (!(value is System.Int16))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Int16"));
 
-			short xv = (short) v;
+			short xv = (short) value;
 			if (m_value == xv)
 				return 0;
 			if (m_value > xv)
@@ -63,12 +63,12 @@ namespace System {
 				return -1;
 		}
 
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is System.Int16))
+			if (!(obj is System.Int16))
 				return false;
 
-			return ((short) o) == m_value;
+			return ((short) obj) == m_value;
 		}
 
 		public override int GetHashCode ()
@@ -87,9 +87,9 @@ namespace System {
 				return -1;
 		}
 
-		public bool Equals (short value)
+		public bool Equals (short obj)
 		{
-			return value == m_value;
+			return obj == m_value;
 		}
 #endif
 
@@ -181,9 +181,9 @@ namespace System {
 			return false;
 		}
 
-		public static short Parse (string s, IFormatProvider fp)
+		public static short Parse (string s, IFormatProvider provider)
 		{
-			return Parse (s, NumberStyles.Integer, fp);
+			return Parse (s, NumberStyles.Integer, provider);
 		}
 
 		public static short Parse (string s, NumberStyles style)
@@ -191,9 +191,9 @@ namespace System {
 			return Parse (s, style, null);
 		}
 
-		public static short Parse (string s, NumberStyles style, IFormatProvider fp)
+		public static short Parse (string s, NumberStyles style, IFormatProvider provider)
 		{
-			int tmpResult = Int32.Parse (s, style, fp);
+			int tmpResult = Int32.Parse (s, style, provider);
 			if (tmpResult > Int16.MaxValue || tmpResult < Int16.MinValue)
 				throw new OverflowException ("Value too large or too small.");
 
@@ -254,9 +254,9 @@ namespace System {
 			return ToString (format, null);
 		}
 
-		public string ToString (string format, IFormatProvider fp)
+		public string ToString (string format, IFormatProvider provider)
 		{
-			return NumberFormatter.NumberToString(format, m_value, fp);
+			return NumberFormatter.NumberToString(format, m_value, provider);
 		}
 
 		// =========== IConvertible Methods =========== //

@@ -184,9 +184,9 @@ namespace System {
 			return false;
 		}
 
-		public static long Parse (string s, IFormatProvider fp)
+		public static long Parse (string s, IFormatProvider provider)
 		{
-			return Parse (s, NumberStyles.Integer, fp);
+			return Parse (s, NumberStyles.Integer, provider);
 		}
 
 		public static long Parse (string s, NumberStyles style)
@@ -460,12 +460,12 @@ namespace System {
 			return res;
 		}
 
-		public static long Parse (string s, NumberStyles style, IFormatProvider fp) 
+		public static long Parse (string s, NumberStyles style, IFormatProvider provider) 
 		{
 			Exception exc;
 			long res;
 
-			if (!Parse (s, style, fp, false, out res, out exc))
+			if (!Parse (s, style, provider, false, out res, out exc))
 				throw exc;
 
 			return res;
@@ -510,9 +510,9 @@ namespace System {
 			return ToString (format, null);
 		}
 
-		public string ToString (string format, IFormatProvider fp)
+		public string ToString (string format, IFormatProvider provider)
 		{
-			return NumberFormatter.NumberToString (format, m_value, fp);
+			return NumberFormatter.NumberToString (format, m_value, provider);
 		}
 
 		// =========== IConvertible Methods =========== //

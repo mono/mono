@@ -534,21 +534,21 @@ namespace System
 			return tmp;
 		}
 #endif
-		public static bool operator == (Delegate a, Delegate b)
+		public static bool operator == (Delegate d1, Delegate d2)
 		{
-			if ((object)a == null) {
-				if ((object)b == null)
+			if ((object)d1 == null) {
+				if ((object)d2 == null)
 					return true;
 				return false;
-			} else if ((object) b == null)
+			} else if ((object) d2 == null)
 				return false;
 			
-			return a.Equals (b);
+			return d1.Equals (d2);
 		}
 
-		public static bool operator != (Delegate a, Delegate b)
+		public static bool operator != (Delegate d1, Delegate d2)
 		{
-			return !(a == b);
+			return !(d1 == d2);
 		}
 	}
 }

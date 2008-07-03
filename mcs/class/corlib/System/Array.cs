@@ -2027,9 +2027,9 @@ namespace System
 		}
 		
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
-		public static int BinarySearch<T> (T [] array, int offset, int length, T value)
+		public static int BinarySearch<T> (T [] array, int index, int length, T value)
 		{
-			return BinarySearch<T> (array, offset, length, value, null);
+			return BinarySearch<T> (array, index, length, value, null);
 		}
 		
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]

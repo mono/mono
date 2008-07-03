@@ -1,5 +1,5 @@
 /*
- * System.DateTimeOffset
+ * System.DateTimeOffset.cs
  *
  * Author(s)
  * 	Stephane Delcroix <stephane@delcroix.org>
@@ -176,10 +176,10 @@ namespace System
 			return UtcDateTime == other.UtcDateTime;
 		}
 
-		public override bool Equals (object other)
+		public override bool Equals (object obj)
 		{
-			if (other is DateTimeOffset)
-				return UtcDateTime == ((DateTimeOffset) other).UtcDateTime;
+			if (obj is DateTimeOffset)
+				return UtcDateTime == ((DateTimeOffset) obj).UtcDateTime;
 			return false;
 		}
 
@@ -624,14 +624,14 @@ namespace System
 			return char_parsed;
 		}
 
-		public TimeSpan Subtract (DateTimeOffset other)
+		public TimeSpan Subtract (DateTimeOffset value)
 		{
-			return UtcDateTime - other.UtcDateTime;
+			return UtcDateTime - value.UtcDateTime;
 		}
 
-		public DateTimeOffset Subtract (TimeSpan timeSpan)
+		public DateTimeOffset Subtract (TimeSpan value)
 		{
-			return Add (-timeSpan);
+			return Add (-value);
 		}
 
 		public static TimeSpan operator - (DateTimeOffset left, DateTimeOffset right)

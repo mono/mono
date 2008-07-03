@@ -271,9 +271,9 @@ namespace System {
 			SetupInformationNoCopy.ShadowCopyDirectories = String.Empty;
 		}
 
-		public ObjectHandle CreateComInstanceFrom (string assemblyFile, string typeName)
+		public ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName)
 		{
-			return Activator.CreateComInstanceFrom (assemblyFile, typeName);
+			return Activator.CreateComInstanceFrom (assemblyName, typeName);
 		}
 
 #if NET_1_1
@@ -284,50 +284,50 @@ namespace System {
 		}
 #endif
 
-		public ObjectHandle CreateInstance (string assemblyFile, string typeName)
+		public ObjectHandle CreateInstance (string assemblyName, string typeName)
 		{
-			if (assemblyFile == null)
-				throw new ArgumentNullException ("assemblyFile");
+			if (assemblyName == null)
+				throw new ArgumentNullException ("assemblyName");
 
-			return Activator.CreateInstance (assemblyFile, typeName);
+			return Activator.CreateInstance (assemblyName, typeName);
 		}
 
-		public ObjectHandle CreateInstance (string assemblyFile, string typeName, object[] activationAttributes)
+		public ObjectHandle CreateInstance (string assemblyName, string typeName, object[] activationAttributes)
 		{
-			if (assemblyFile == null)
-				throw new ArgumentNullException ("assemblyFile");
+			if (assemblyName == null)
+				throw new ArgumentNullException ("assemblyName");
 
-			return Activator.CreateInstance (assemblyFile, typeName, activationAttributes);
+			return Activator.CreateInstance (assemblyName, typeName, activationAttributes);
 		}
 
-		public ObjectHandle CreateInstance (string assemblyFile, string typeName, bool ignoreCase, BindingFlags bindingAttr,
+		public ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase, BindingFlags bindingAttr,
 		                                    Binder binder, object[] args, CultureInfo culture, object[] activationAttributes,
 		                                    Evidence securityAttributes)
 		{
-			if (assemblyFile == null)
-				throw new ArgumentNullException ("assemblyFile");
+			if (assemblyName == null)
+				throw new ArgumentNullException ("assemblyName");
 
-			return Activator.CreateInstance (assemblyFile, typeName, ignoreCase, bindingAttr, binder, args,
+			return Activator.CreateInstance (assemblyName, typeName, ignoreCase, bindingAttr, binder, args,
 				culture, activationAttributes, securityAttributes);
 		}
 
-		public object CreateInstanceAndUnwrap (string assemblyFile, string typeName)
+		public object CreateInstanceAndUnwrap (string assemblyName, string typeName)
 		{
-			ObjectHandle oh = CreateInstance (assemblyFile, typeName);
+			ObjectHandle oh = CreateInstance (assemblyName, typeName);
 			return (oh != null) ? oh.Unwrap () : null;
 		}
 
-		public object CreateInstanceAndUnwrap (string assemblyFile, string typeName, object [] activationAttributes)
+		public object CreateInstanceAndUnwrap (string assemblyName, string typeName, object [] activationAttributes)
 		{
-			ObjectHandle oh = CreateInstance (assemblyFile, typeName, activationAttributes);
+			ObjectHandle oh = CreateInstance (assemblyName, typeName, activationAttributes);
 			return (oh != null) ? oh.Unwrap () : null;
 		}
 
-		public object CreateInstanceAndUnwrap (string assemblyFile, string typeName, bool ignoreCase,
+		public object CreateInstanceAndUnwrap (string assemblyName, string typeName, bool ignoreCase,
 		                                       BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture,
 		                                       object[] activationAttributes, Evidence securityAttributes)
 		{
-			ObjectHandle oh = CreateInstance (assemblyFile, typeName, ignoreCase, bindingAttr, binder, args,
+			ObjectHandle oh = CreateInstance (assemblyName, typeName, ignoreCase, bindingAttr, binder, args,
 				culture, activationAttributes, securityAttributes);
 			return (oh != null) ? oh.Unwrap () : null;
 		}
@@ -348,14 +348,14 @@ namespace System {
 			return Activator.CreateInstanceFrom (assemblyFile, typeName, activationAttributes);
 		}
 
-		public ObjectHandle CreateInstanceFrom (string assemblyName, string typeName, bool ignoreCase,
+		public ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, bool ignoreCase,
 		                                        BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture,
 		                                        object[] activationAttributes, Evidence securityAttributes)
 		{
-			if (assemblyName == null)
-				throw new ArgumentNullException ("assemblyName");
+			if (assemblyFile == null)
+				throw new ArgumentNullException ("assemblyFile");
 
-			return Activator.CreateInstanceFrom (assemblyName, typeName, ignoreCase, bindingAttr, binder, args,
+			return Activator.CreateInstanceFrom (assemblyFile, typeName, ignoreCase, bindingAttr, binder, args,
 			                                     culture, activationAttributes, securityAttributes);
 		}
 

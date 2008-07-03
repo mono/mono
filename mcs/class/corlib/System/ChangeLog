@@ -1,3 +1,23 @@
+2008-07-04  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* Predicate.cs:
+	* Object.cs:
+	* Nullable.cs
+	* MultiCastDelegate.cs
+	* ModuleHandle.cs
+	* Math.cs
+	* MarshalByRefObject.cs
+	* Int64.cs
+	* Int32.cs
+	* Int16.cs
+	* Environment.cs
+	* Delegate.cs
+	* DateTimeOffset.cs
+	* ConsoleKeyInfo.cs
+	* Console.cs
+	* Array.cs
+	* AppDomain.cs: Fix parameter names
+
 2008-07-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Exception.cs (GetFullNameForStackTrace): Don't do string

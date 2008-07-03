@@ -71,12 +71,12 @@ namespace System
 		}
 
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
-		public virtual ObjRef CreateObjRef (Type type)
+		public virtual ObjRef CreateObjRef (Type requestedType)
 		{
 			// This method can only be called when this object has been marshalled
 			if (_identity == null)
 				throw new RemotingException (Locale.GetText ("No remoting information was found for the object."));
-			return _identity.CreateObjRef (type);
+			return _identity.CreateObjRef (requestedType);
 		}
 
 		// corcompare says it is "virtual final", so there is likely

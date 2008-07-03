@@ -177,14 +177,14 @@ namespace System
 			return value.GetHashCode ();
 		}
 
-		public static bool operator == (ModuleHandle a, ModuleHandle b)
+		public static bool operator == (ModuleHandle left, ModuleHandle right)
 		{
-			return Equals (a, b);
+			return Equals (left, right);
 		}
 
-		public static bool operator != (ModuleHandle a, ModuleHandle b)
+		public static bool operator != (ModuleHandle left, ModuleHandle right)
 		{
-			return !Equals (a, b);
+			return !Equals (left, right);
 		}
 	}
 }

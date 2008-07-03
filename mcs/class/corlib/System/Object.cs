@@ -59,15 +59,15 @@ namespace System {
 		// <summary>
 		//   Compares two objects for equality
 		// </summary>
-		public static bool Equals (object a, object b)
+		public static bool Equals (object objA, object objB)
 		{
-			if (a == b)
+			if (objA == objB)
 				return true;
 			
-			if (a == null || b == null)
+			if (objA == null || objB == null)
 				return false;
 
-			return a.Equals (b);
+			return objA.Equals (objB);
 		}
 
 		// <summary>
@@ -130,9 +130,9 @@ namespace System {
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
-		public static bool ReferenceEquals (object a, object b)
+		public static bool ReferenceEquals (object objA, object objB)
 		{
-			return (a == b);
+			return (objA == objB);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

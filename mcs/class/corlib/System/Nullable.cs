@@ -1,5 +1,5 @@
 //
-// System.Nullable
+// System.Nullable.cs
 //
 // Martin Baulig (martin@ximian.com)
 // Marek Safar	 (marek.safar@gmail.com)
@@ -136,10 +136,10 @@ namespace System
 			return GetValueOrDefault (default (T));
 		}
 
-		public T GetValueOrDefault (T def_value)
+		public T GetValueOrDefault (T defaultValue)
 		{
 			if (!has_value)
-				return def_value;
+				return defaultValue;
 			else
 				return value;
 		}

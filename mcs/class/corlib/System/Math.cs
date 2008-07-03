@@ -140,7 +140,7 @@ namespace System
 #endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static double Floor (double value);
+		public extern static double Floor (double d);
 
 		public static double IEEERemainder (double x, double y)
 		{
@@ -405,7 +405,7 @@ namespace System
 #endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static double Round (double d);
+		public extern static double Round (double a);
 
 		public static double Round (double value, int digits)
 		{
@@ -514,43 +514,43 @@ namespace System
 
 		// internal calls
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static double Sin (double x);
+		public extern static double Sin (double a);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static double Cos (double x);
+		public extern static double Cos (double d);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static double Tan (double x);
+		public extern static double Tan (double a);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static double Sinh (double x);
+		public extern static double Sinh (double value);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static double Cosh (double x);
+		public extern static double Cosh (double value);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static double Tanh (double x);
+		public extern static double Tanh (double value);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static double Acos (double x);
+		public extern static double Acos (double d);
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static double Asin (double x);
+		public extern static double Asin (double d);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static double Atan (double x);
+		public extern static double Atan (double d);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static double Atan2 (double y, double x);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static double Exp (double x);
+		public extern static double Exp (double d);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static double Log (double x);
+		public extern static double Log (double d);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static double Log10 (double x);
+		public extern static double Log10 (double d);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static double Pow (double x, double y);
@@ -559,6 +559,6 @@ namespace System
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
-		public extern static double Sqrt (double x);
+		public extern static double Sqrt (double d);
 	}
 }

@@ -348,18 +348,18 @@ namespace System {
 		public extern static string[] GetCommandLineArgs ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static string internalGetEnvironmentVariable (string name);
+		internal extern static string internalGetEnvironmentVariable (string variable);
 
 		/// <summary>
 		/// Return a string containing the value of the environment
 		/// variable identifed by parameter "variable"
 		/// </summary>
-		public static string GetEnvironmentVariable (string name)
+		public static string GetEnvironmentVariable (string variable)
 		{
 			if (SecurityManager.SecurityEnabled) {
-				new EnvironmentPermission (EnvironmentPermissionAccess.Read, name).Demand ();
+				new EnvironmentPermission (EnvironmentPermissionAccess.Read, variable).Demand ();
 			}
-			return internalGetEnvironmentVariable (name);
+			return internalGetEnvironmentVariable (variable);
 		}
 
 		static Hashtable GetEnvironmentVariablesNoCase ()

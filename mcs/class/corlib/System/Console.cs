@@ -248,9 +248,9 @@ namespace System
 			stdout.Write (value);
 		}
 
-		public static void Write (char[] value)
+		public static void Write (char[] buffer)
 		{
-			stdout.Write (value);
+			stdout.Write (buffer);
 		}
 
 		public static void Write (decimal value)
@@ -361,9 +361,9 @@ namespace System
 			stdout.WriteLine (value);
 		}
 
-		public static void WriteLine (char[] value)
+		public static void WriteLine (char[] buffer)
 		{
-			stdout.WriteLine (value);
+			stdout.WriteLine (buffer);
 		}
 
 		public static void WriteLine (decimal value)

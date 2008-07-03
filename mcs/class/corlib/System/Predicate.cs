@@ -1,5 +1,5 @@
 //
-// Predicate.cs
+// System.Predicate.cs
 //
 // Authors:
 //  Ben Maurer (bmaurer@ximian.com)
@@ -27,6 +27,6 @@
 //
 #if NET_2_0
 namespace System {
-	public delegate bool Predicate <T> (T value);
+	public delegate bool Predicate <T> (T obj);
 }
 #endif

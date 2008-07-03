@@ -48,15 +48,15 @@ namespace System {
 		// This field is looked up by name in the runtime
 		internal int m_value;
 
-		public int CompareTo (object v)
+		public int CompareTo (object value)
 		{
-			if (v == null)
+			if (value == null)
 				return 1;
 			
-			if (!(v is System.Int32))
+			if (!(value is System.Int32))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Int32"));
 
-			int xv = (int) v;
+			int xv = (int) value;
 			if (m_value == xv)
 				return 0;
 			if (m_value > xv)
@@ -65,12 +65,12 @@ namespace System {
 				return -1;
 		}
 
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is System.Int32))
+			if (!(obj is System.Int32))
 				return false;
 
-			return ((int) o) == m_value;
+			return ((int) obj) == m_value;
 		}
 
 		public override int GetHashCode ()
@@ -89,9 +89,9 @@ namespace System {
 				return -1;
 		}
 
-		public bool Equals (int value)
+		public bool Equals (int obj)
 		{
-			return value == m_value;
+			return obj == m_value;
 		}
 #endif
 
@@ -203,9 +203,9 @@ namespace System {
 			return false;
 		}
 
-		public static int Parse (string s, IFormatProvider fp)
+		public static int Parse (string s, IFormatProvider provider)
 		{
-			return Parse (s, NumberStyles.Integer, fp);
+			return Parse (s, NumberStyles.Integer, provider);
 		}
 
 		public static int Parse (string s, NumberStyles style)
@@ -587,12 +587,12 @@ namespace System {
 			return res;
 		}
 
-		public static int Parse (string s, NumberStyles style, IFormatProvider fp) 
+		public static int Parse (string s, NumberStyles style, IFormatProvider provider) 
 		{
 			Exception exc;
 			int res;
 
-			if (!Parse (s, style, fp, false, out res, out exc))
+			if (!Parse (s, style, provider, false, out res, out exc))
 				throw exc;
 
 			return res;
@@ -638,9 +638,9 @@ namespace System {
 			return ToString (format, null);
 		}
 
-		public string ToString (string format, IFormatProvider fp )
+		public string ToString (string format, IFormatProvider provider)
 		{
-			return NumberFormatter.NumberToString (format, m_value, fp);
+			return NumberFormatter.NumberToString (format, m_value, provider);
 		}
 
 		// =========== IConvertible Methods =========== //

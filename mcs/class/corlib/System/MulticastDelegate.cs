@@ -51,8 +51,8 @@ namespace System
 			prev = null;
 		}
 
-		protected MulticastDelegate (Type target_type, string method)
-			: base (target_type, method)
+		protected MulticastDelegate (Type target, string method)
+			: base (target, method)
 		{
 			prev = null;
 		}
@@ -75,12 +75,12 @@ namespace System
 		//   Equals: two multicast delegates are equal if their base is equal
 		//   and their invocations list is equal.
 		// </remarks>
-		public sealed override bool Equals (object o)
+		public sealed override bool Equals (object obj)
 		{
-			if (!base.Equals (o))
+			if (!base.Equals (obj))
 				return false;
 
-			MulticastDelegate d = o as MulticastDelegate;
+			MulticastDelegate d = obj as MulticastDelegate;
 			if (d == null)
 				return false;
 			
@@ -260,20 +260,20 @@ namespace System
 			return retval;
 		}
 
-		public static bool operator == (MulticastDelegate a, MulticastDelegate b)
+		public static bool operator == (MulticastDelegate d1, MulticastDelegate d2)
 		{
-			if (a == null)
-		    		return b == null;
+			if (d1 == null)
+		    		return d2 == null;
 		    		
-			return a.Equals (b);
+			return d1.Equals (d2);
 		}
 		
-		public static bool operator != (MulticastDelegate a, MulticastDelegate b)
+		public static bool operator != (MulticastDelegate d1, MulticastDelegate d2)
 		{
-			if (a == null)
-				return b != null;
+			if (d1 == null)
+				return d2 != null;
 		    	
-			return !a.Equals (b);
+			return !d1.Equals (d2);
 		}
 	}
 }
