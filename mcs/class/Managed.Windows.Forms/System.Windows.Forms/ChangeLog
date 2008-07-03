@@ -1,10 +1,16 @@
 2008-07-03  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TabControl.cs: Invalidate when we remove a tab.  Guard against
+	an AOORE when trying to remove a tabpage that is not owned by the
+	parent control.
+	[Fixes bug #399927]
+
+2008-07-03  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ScrollBar.cs: Change the LargeChange calculation to be correct.
 	Ensure we are using LargeChange instead of large_change so we our
 	calculations are correct.
 	[Fixes bug #403122]
-
 
 2008-07-03  Jonathan Pobst  <monkey@jpobst.com>
 

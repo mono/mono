@@ -1503,7 +1503,7 @@ namespace System.Windows.Forms {
 			public override void Remove (Control value)
 			{
 				TabPage page = value as TabPage;
-				if (page != null) {
+				if (page != null && owner.Controls.Contains (page)) {
 					int index = owner.IndexForTabPage (page);
 					if (index < owner.SelectedIndex || owner.SelectedIndex == Count - 1)
 						owner.SelectedIndex--;
@@ -1640,6 +1640,7 @@ namespace System.Windows.Forms {
 			public virtual void Clear ()
 			{
 				owner.Controls.Clear ();
+				owner.Invalidate ();
 			}
 
 			public bool Contains (TabPage page)
@@ -1687,11 +1688,13 @@ namespace System.Windows.Forms {
 			public void Remove (TabPage value)
 			{
 				owner.Controls.Remove (value);
+				owner.Invalidate ();
 			}
 
 			public void RemoveAt (int index)
 			{
 				owner.Controls.RemoveAt (index);
+				owner.Invalidate ();
 			}
 
 #if NET_2_0
