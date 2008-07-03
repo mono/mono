@@ -751,13 +751,8 @@ namespace System.Windows.Forms {
 			} else if (ke.KeyCode == Keys.End) {
 				SelectedIndex = TabCount - 1;
 				ke.Handled = true;
-			} else if (ke.KeyCode == Keys.Left && SelectedIndex > 0) {
-				SelectedIndex--;
+			} else if (NavigateTabs (ke.KeyCode))
 				ke.Handled = true;
-			} else if (ke.KeyCode == Keys.Right && SelectedIndex < TabCount - 1) {
-				SelectedIndex++;
-				ke.Handled = true;
-			}
 
 			base.OnKeyDown (ke);
 		}
@@ -769,9 +764,45 @@ namespace System.Windows.Forms {
 			case Keys.End:
 			case Keys.Left:
 			case Keys.Right:
+			case Keys.Up:
+			case Keys.Down:
 				return true;
 			}
 			return base.IsInputKey (keyData);
+		}
+		
+		private bool NavigateTabs (Keys keycode)
+		{
+			bool move_left = false;
+			bool move_right = false;
+			
+			if (alignment == TabAlignment.Bottom || alignment == TabAlignment.Top) {
+				if (keycode == Keys.Left)
+					move_left = true;
+				else if (keycode == Keys.Right)
+					move_right = true;
+			} else {
+				if (keycode == Keys.Up)
+					move_left = true;
+				else if (keycode == Keys.Down)
+					move_right = true;
+			}
+				
+			if (move_left) {
+				if (SelectedIndex > 0) {
+					SelectedIndex--;
+					return true;
+				}
+			}
+			
+			if (move_right) {
+				if (SelectedIndex < TabCount - 1) {
+					SelectedIndex++;
+					return true;
+				}
+			}
+			
+			return false;
 		}
 		#endregion
 

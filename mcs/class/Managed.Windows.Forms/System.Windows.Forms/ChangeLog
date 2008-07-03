@@ -1,5 +1,11 @@
 2008-07-03  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TabControl.cs: Handle Up and Down keys when TabControl is in
+	vertical alignment.
+	[Fixes bug #399585]
+
+2008-07-03  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TabControl.cs: Invalidate when we remove a tab.  Guard against
 	an AOORE when trying to remove a tabpage that is not owned by the
 	parent control.
