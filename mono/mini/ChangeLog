@@ -1,3 +1,8 @@
+2008-07-03  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Don't accept ldftn and ldvirtftn with uninstantiated
+	generic methods.
+
 2008-07-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h: Add some missing prototypes.
