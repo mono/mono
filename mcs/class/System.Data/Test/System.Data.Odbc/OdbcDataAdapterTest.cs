@@ -482,6 +482,46 @@ namespace MonoTests.System.Data.Odbc
 			}
 		}
 
+#if NET_2_0
+		[Test]
+		public void UpdateBatchSize ()
+		{
+			OdbcDataAdapter da = new OdbcDataAdapter ();
+			da.UpdateBatchSize = 1;
+			Assert.AreEqual (1, da.UpdateBatchSize, "#A");
+
+			try {
+				da.UpdateBatchSize = -2;
+				Assert.Fail ("#B1");
+			} catch (NotSupportedException ex) {
+				// Specified method is not supported
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
+
+			try {
+				da.UpdateBatchSize = 0;
+				Assert.Fail ("#C1");
+			} catch (NotSupportedException ex) {
+				// Specified method is not supported
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+			}
+
+			try {
+				da.UpdateBatchSize = -1;
+				Assert.Fail ("#D1");
+			} catch (NotSupportedException ex) {
+				// Specified method is not supported
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNotNull (ex.Message, "#D4");
+			}
+		}
+#endif
+
 		[Test]
 		public void UpdateCommand ()
 		{
