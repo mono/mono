@@ -1,3 +1,9 @@
+2008-07-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* PropertyDescriptorCollectionTests.cs: Allow tests for pass on MS.
+	* TypeDescriptorTests.cs: Added GetProperties and GetEvents asserts
+	for interfaces.
+
 2008-06-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* PropertyDescriptorCollectionTests.cs : huh.

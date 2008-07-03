@@ -92,7 +92,7 @@ namespace MonoTests.System.ComponentModel
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
-				Assert.AreEqual ("name", ex.ParamName, "#A5");
+				Assert.IsNotNull (ex.ParamName, "#A5");
 			}
 
 			try {
@@ -102,7 +102,7 @@ namespace MonoTests.System.ComponentModel
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.AreEqual ("name", ex.ParamName, "#B5");
+				Assert.IsNotNull (ex.ParamName, "#B5");
 			}
 
 			descriptors = PropertyDescriptorCollection.Empty;
@@ -114,7 +114,7 @@ namespace MonoTests.System.ComponentModel
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#C2");
 				Assert.IsNull (ex.InnerException, "#C3");
 				Assert.IsNotNull (ex.Message, "#C4");
-				Assert.AreEqual ("name", ex.ParamName, "#C5");
+				Assert.IsNotNull (ex.ParamName, "#C5");
 			}
 
 			try {
@@ -124,7 +124,7 @@ namespace MonoTests.System.ComponentModel
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#D2");
 				Assert.IsNull (ex.InnerException, "#D3");
 				Assert.IsNotNull (ex.Message, "#D4");
-				Assert.AreEqual ("name", ex.ParamName, "#D5");
+				Assert.IsNotNull (ex.ParamName, "#D5");
 			}
 		}
 
@@ -235,7 +235,7 @@ namespace MonoTests.System.ComponentModel
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
-				Assert.AreEqual ("name", ex.ParamName, "#A5");
+				Assert.IsNotNull (ex.ParamName, "#A5");
 			}
 
 			descriptors = PropertyDescriptorCollection.Empty;
@@ -247,7 +247,7 @@ namespace MonoTests.System.ComponentModel
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.AreEqual ("name", ex.ParamName, "#B5");
+				Assert.IsNotNull (ex.ParamName, "#B5");
 			}
 		}
 

@@ -15,6 +15,25 @@ using System.Globalization;
 
 namespace MonoTests.System.ComponentModel
 {
+	interface IFoo
+	{
+		event EventHandler Fired;
+		event EventHandler Closed;
+
+		bool HasFired {
+			get;
+		}
+	}
+
+	interface IBar : IFoo
+	{
+		event EventHandler Destroyed;
+
+		bool IsDestroyed {
+			get;
+		}
+	}
+
 	class MyDesigner: IDesigner
 	{
 		public MyDesigner()
@@ -750,6 +769,20 @@ namespace MonoTests.System.ComponentModel
 			col = TypeDescriptor.GetEvents (nfscom, filter);
 			Assert.AreEqual (1, col.Count, "#H1");
 			Assert.IsNotNull (col.Find ("AnEvent", true), "#H2");
+
+			col = TypeDescriptor.GetEvents (typeof (IFoo));
+			Assert.AreEqual (2, col.Count, "#I1");
+			Assert.IsNotNull (col.Find ("Fired", true), "#I2");
+			Assert.IsNotNull (col.Find ("Fired", false), "#I3");
+			Assert.IsNotNull (col.Find ("fired", true), "#I4");
+			Assert.IsNull (col.Find ("fired", false), "#I5");
+			Assert.IsNotNull (col.Find ("Closed", true), "#I6");
+
+			col = TypeDescriptor.GetEvents (typeof (IBar));
+			Assert.AreEqual (1, col.Count, "#J1");
+			Assert.IsNull (col.Find ("Fired", true), "#J2");
+			Assert.IsNull (col.Find ("Closed", true), "#J3");
+			Assert.IsNotNull (col.Find ("Destroyed", true), "#J4");
 		}
 		
 		[Test]
@@ -815,6 +848,21 @@ namespace MonoTests.System.ComponentModel
 			// GetProperties does not return write-only properties (ones without a getter)
 			// 
 			Assert.IsNull (col.Find ("WriteOnlyProperty", true), "#H1");
+
+			col = TypeDescriptor.GetProperties (typeof (IFoo));
+			Assert.AreEqual (1, col.Count, "#I1");
+			Assert.IsNotNull (col.Find ("HasFired", true), "#I1");
+			Assert.IsNotNull (col.Find ("HasFired", false), "#I2");
+			Assert.IsNotNull (col.Find ("hasFired", true), "#I3");
+			Assert.IsNull (col.Find ("hasFired", false), "#I4");
+
+			col = TypeDescriptor.GetProperties (typeof (IBar));
+			Assert.AreEqual (1, col.Count, "#J1");
+			Assert.IsNull (col.Find ("HasFired", true), "#J2");
+			Assert.IsNotNull (col.Find ("IsDestroyed", true), "#J3");
+			Assert.IsNotNull (col.Find ("IsDestroyed", false), "#J4");
+			Assert.IsNotNull (col.Find ("isDestroyed", true), "#J5");
+			Assert.IsNull (col.Find ("isDestroyed", false), "#J6");
 		}
 
 		[Test]
