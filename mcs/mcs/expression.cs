@@ -2209,8 +2209,8 @@ namespace Mono.CSharp {
 
 		static bool IsUnsigned (Type t)
 		{
-			while (t.IsPointer)
-				t = TypeManager.GetElementType (t);
+			if (t.IsPointer)
+				return true;
 
 			return (t == TypeManager.uint32_type || t == TypeManager.uint64_type ||
 				t == TypeManager.ushort_type || t == TypeManager.byte_type);
@@ -3325,7 +3325,7 @@ namespace Mono.CSharp {
 			right.Emit (ec);
 
 			Type t = left.Type;
-			bool is_unsigned = IsUnsigned (t) || t == TypeManager.double_type || t == TypeManager.float_type;
+			bool is_unsigned = IsUnsigned (t) || IsFloat (t);
 			
 			switch (oper){
 			case Operator.Equality:
