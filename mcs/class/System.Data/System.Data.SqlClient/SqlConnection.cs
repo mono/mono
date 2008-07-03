@@ -92,7 +92,6 @@ namespace System.Data.SqlClient
 		// Connection parameters
 		
 		TdsConnectionParameters parms = new TdsConnectionParameters ();
-		NameValueCollection connStringParameters;
 		bool connectionReset;
 		bool pooling;
 		string dataSource;
@@ -321,20 +320,6 @@ namespace System.Data.SqlClient
 
 		#region Methods
 
-		internal string GetConnStringKeyValue (params string [] keys)
-		{
-			if (connStringParameters == null || connStringParameters.Count == 0)
-				return string.Empty;
-
-			foreach (string key in keys) {
-				string value = connStringParameters [key];
-				if (value != null)
-					return value;
-			}
-
-			return string.Empty;
-		}
-
 		public new SqlTransaction BeginTransaction ()
 		{
 			return BeginTransaction (IsolationLevel.ReadCommitted, String.Empty);
@@ -485,7 +470,6 @@ namespace System.Data.SqlClient
 					if (State == ConnectionState.Open) 
 						Close ();
 					ConnectionString = string.Empty;
-					SetDefaultConnectionParameters (this.connStringParameters); 
 				}
 			} finally {
 				disposed = true;
@@ -659,12 +643,10 @@ namespace System.Data.SqlClient
 	
 		void SetConnectionString (string connectionString)
 		{
-			NameValueCollection parameters = new NameValueCollection ();
-			SetDefaultConnectionParameters (parameters);
+			SetDefaultConnectionParameters ();
 
 			if ((connectionString == null) || (connectionString.Trim().Length == 0)) {
 				this.connectionString = connectionString;
-				this.connStringParameters = parameters;
 				return;
 			}
 
@@ -714,7 +696,6 @@ namespace System.Data.SqlClient
 						if (name != String.Empty && name != null) {
 							value = sb.ToString ();
 							SetProperties (name.ToUpper ().Trim() , value);
-							parameters [name.ToUpper ().Trim ()] = value.Trim ();
 						}
 						else if (sb.Length != 0)
 							throw new ArgumentException ("Format of initialization string does not conform to specifications");
@@ -752,10 +733,9 @@ namespace System.Data.SqlClient
 
 			connectionString = connectionString.Substring (0 , connectionString.Length-1);
 			this.connectionString = connectionString;
-			this.connStringParameters = parameters;
 		}
 
-		void SetDefaultConnectionParameters (NameValueCollection parameters)
+		void SetDefaultConnectionParameters ()
 		{
 			parms.Reset ();
 			dataSource = string.Empty;
@@ -765,25 +745,8 @@ namespace System.Data.SqlClient
 			maxPoolSize = DEFAULT_MAXPOOLSIZE;
 			minPoolSize = DEFAULT_MINPOOLSIZE;
 			packetSize = DEFAULT_PACKETSIZE;
-			
-			parameters["APPLICATION NAME"] = "Mono SqlClient Data Provider";
-			parameters["CONNECT TIMEOUT"] = connectionTimeout.ToString (CultureInfo.InvariantCulture);
-			parameters["CONNECTION LIFETIME"] = "0";
-			parameters["CONNECTION RESET"] = "true";
-			parameters["ENLIST"] = "true";
-			parameters["INTEGRATED SECURITY"] = "false";
-			parameters["INITIAL CATALOG"] = string.Empty;
-			parameters["MAX POOL SIZE"] = maxPoolSize.ToString (CultureInfo.InvariantCulture);
-			parameters["MIN POOL SIZE"] = minPoolSize.ToString (CultureInfo.InvariantCulture);
-			parameters["NETWORK LIBRARY"] = "dbmssocn";
-			parameters["PACKET SIZE"] = packetSize.ToString (CultureInfo.InvariantCulture);
-			parameters["PERSIST SECURITY INFO"] = "false";
-			parameters["POOLING"] = "true";
-			parameters["WORKSTATION ID"] = Environment.MachineName;
-			parameters["USER INSTANCE"] = "false";
  #if NET_2_0
 			async = false;
-			parameters ["ASYNCHRONOUS PROCESSING"] = "false";
  #endif
 		}
 

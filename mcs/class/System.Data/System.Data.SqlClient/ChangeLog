@@ -1,3 +1,7 @@
+2008-07-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* SqlConnection.cs: Remove connStringParameters as nobody uses it.
+	
 2008-07-01  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* SqlDataReader.cs: Do all column accesses with int indexes.	
