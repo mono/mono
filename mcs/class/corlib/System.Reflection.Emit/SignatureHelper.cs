@@ -100,14 +100,14 @@ namespace System.Reflection.Emit {
 		}
 #endif
 
-		public static SignatureHelper GetMethodSigHelper (Module mod, CallingConventions unmanagedCallConv, Type returnType)
+		public static SignatureHelper GetMethodSigHelper (Module mod, CallingConventions callingConvention, Type returnType)
 		{
-			return GetMethodSigHelper (mod, unmanagedCallConv, (CallingConvention)0, returnType, null);
+			return GetMethodSigHelper (mod, callingConvention, (CallingConvention)0, returnType, null);
 		}
 
-		public static SignatureHelper GetMethodSigHelper (Module mod, CallingConvention unmanagedCallingConvention, Type returnType)
+		public static SignatureHelper GetMethodSigHelper (Module mod, CallingConvention unmanagedCallConv, Type returnType)
 		{
-			return GetMethodSigHelper (mod, CallingConventions.Standard, unmanagedCallingConvention, returnType, null);
+			return GetMethodSigHelper (mod, CallingConventions.Standard, unmanagedCallConv, returnType, null);
 		}
 
 		public static SignatureHelper GetMethodSigHelper (Module mod, Type returnType, Type[] parameterTypes)
@@ -363,7 +363,7 @@ namespace System.Reflection.Emit {
 			return "SignatureHelper";
 		}
 
-		internal static SignatureHelper GetMethodSigHelper (Module mod, CallingConventions callConv, CallingConvention unmanagedCallConv, Type returnType,
+		internal static SignatureHelper GetMethodSigHelper (Module mod, CallingConventions callingConvention, CallingConvention unmanagedCallingConvention, Type returnType,
 														   Type [] parameters)
 		{
 			if (mod != null && !(mod is ModuleBuilder))
@@ -375,8 +375,8 @@ namespace System.Reflection.Emit {
 			SignatureHelper helper = 
 				new SignatureHelper ((ModuleBuilder)mod, SignatureHelperType.HELPER_METHOD);
 			helper.returnType = returnType;
-			helper.callConv = callConv;
-			helper.unmanagedCallConv = unmanagedCallConv;
+			helper.callConv = callingConvention;
+			helper.unmanagedCallConv = unmanagedCallingConvention;
 
 			if (parameters != null) {
 				helper.arguments = new Type [parameters.Length];

@@ -289,8 +289,8 @@ namespace System.Reflection.Emit {
 			return DefineType (name, attr, parent, null, packsize, TypeBuilder.UnspecifiedTypeSize);
 		}
 
-		public TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, PackingSize packsize, int typesize) {
-			return DefineType (name, attr, parent, null, packsize, typesize);
+		public TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, PackingSize packingSize, int typesize) {
+			return DefineType (name, attr, parent, null, packingSize, typesize);
 		}
 
 		public MethodInfo GetArrayMethod( Type arrayClass, string methodName, CallingConventions callingConvention, Type returnType, Type[] parameterTypes) {

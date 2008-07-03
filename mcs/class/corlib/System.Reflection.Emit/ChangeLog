@@ -1,15 +1,7 @@
-2008-07-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+2008-07-03  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
-	* TypeBuilder.cs: Fix parameter names
-	* SignatureHelper.cs: Fix parameter names, Small formatting
+	* SignatureHelper.cs: Fix parameter names
 	* ModuleBuilder.cs: Fix parameter names
-	* MethodBuilder.cs: Fix parameter names
-	* LocalBuilder.cs:
-	* ILGenerator.cs:
-	* GenericTypeParameterBuilder.cs:
-	* EnumBuilder.cs:
-	* DynamicMethod.cs:
-	* ConstructorBuilder.cs: Fix parameter names
 
 2008-06-18 Rodrigo Kumpera <rkumpera@novell.com>
 
