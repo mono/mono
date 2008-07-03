@@ -85,22 +85,22 @@ namespace System.Runtime.Remoting {
 			if (unmarshalAsProxy) flags |= MarshalledObjectRef;
 		}
 
-		public ObjRef (MarshalByRefObject mbr, Type type)
+		public ObjRef (MarshalByRefObject o, Type requestedType)
 		{
-			if (mbr == null)
-				throw new ArgumentNullException ("mbr");
+			if (o == null)
+				throw new ArgumentNullException ("o");
 			
-			if (type == null)
-				throw new ArgumentNullException ("type");
+			if (requestedType == null)
+				throw new ArgumentNullException ("requestedType");
 
-			// The ObjRef can only be constructed if the given mbr
+			// The ObjRef can only be constructed if the given o
 			// has already been marshalled using RemotingServices.Marshall
 
-			uri = RemotingServices.GetObjectUri(mbr);
-			typeInfo = new TypeInfo(type);
+			uri = RemotingServices.GetObjectUri (o);
+			typeInfo = new TypeInfo (requestedType);
 
-			if (!type.IsInstanceOfType (mbr))
-				throw new RemotingException ("The server object type cannot be cast to the requested type " + type.FullName + ".");
+			if (!requestedType.IsInstanceOfType (o))
+				throw new RemotingException ("The server object type cannot be cast to the requested type " + requestedType.FullName);
 
 			UpdateChannelInfo();
 		}
@@ -116,9 +116,9 @@ namespace System.Runtime.Remoting {
 			flags |= WellKnowObjectRef;
 		}
 
-		protected ObjRef (SerializationInfo si, StreamingContext sc)
+		protected ObjRef (SerializationInfo info, StreamingContext context)
 		{
-			SerializationInfoEnumerator en = si.GetEnumerator();
+			SerializationInfoEnumerator en = info.GetEnumerator();
 			// Info to serialize: uri, objrefFlags, typeInfo, envoyInfo, channelInfo
 
 			bool marshalledValue = true;
@@ -212,17 +212,17 @@ namespace System.Runtime.Remoting {
 			}
 		}
 
-		public virtual void GetObjectData (SerializationInfo si, StreamingContext sc)
+		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			si.SetType (GetType());
-			si.AddValue ("uri", uri);
-			si.AddValue ("typeInfo", typeInfo, typeof (IRemotingTypeInfo));
-			si.AddValue ("envoyInfo", envoyInfo, typeof (IEnvoyInfo));
-			si.AddValue ("channelInfo", channel_info, typeof(IChannelInfo));
-			si.AddValue ("objrefFlags", flags);
+			info.SetType (GetType());
+			info.AddValue ("uri", uri);
+			info.AddValue ("typeInfo", typeInfo, typeof (IRemotingTypeInfo));
+			info.AddValue ("envoyInfo", envoyInfo, typeof (IEnvoyInfo));
+			info.AddValue ("channelInfo", channel_info, typeof(IChannelInfo));
+			info.AddValue ("objrefFlags", flags);
 		}
 
-		public virtual object GetRealObject (StreamingContext sc)
+		public virtual object GetRealObject (StreamingContext context)
 		{
 			if ((flags & MarshalledObjectRef) > 0)
 				return RemotingServices.Unmarshal (this);

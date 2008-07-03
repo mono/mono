@@ -1,7 +1,7 @@
 //
 // System.Runtime.Remoting.RemotingException.cs
 //
-// AUthor: Duncan Mak  (duncan@ximian.com)
+// Author: Duncan Mak  (duncan@ximian.com)
 //
 // 2002 (C) Copyright. Ximian, Inc.
 //
@@ -55,8 +55,8 @@ namespace System.Runtime.Remoting {
 		{
 		}
 
-		public RemotingException (string message, Exception ex)
-			: base (message, ex)
+		public RemotingException (string message, Exception InnerException)
+			: base (message, InnerException)
 		{
 		}
 	}

@@ -211,19 +211,19 @@ namespace System.Runtime.Remoting
 			}
 		}
 
-		public static bool IsActivationAllowed (Type serverType) 
+		public static bool IsActivationAllowed (Type svrType) 
 		{
 			lock (channelTemplates)
 			{
-				return activatedServiceEntries.ContainsKey (serverType);
+				return activatedServiceEntries.ContainsKey (svrType);
 			}
 		}
 
-		public static ActivatedClientTypeEntry IsRemotelyActivatedClientType (Type serviceType) 
+		public static ActivatedClientTypeEntry IsRemotelyActivatedClientType (Type svrType) 
 		{
 			lock (channelTemplates)
 			{
-				return activatedClientEntries [serviceType] as ActivatedClientTypeEntry;
+				return activatedClientEntries [svrType] as ActivatedClientTypeEntry;
 			}
 		}
 
@@ -232,11 +232,11 @@ namespace System.Runtime.Remoting
 			return IsRemotelyActivatedClientType (Assembly.Load(assemblyName).GetType (typeName));
 		}
 
-		public static WellKnownClientTypeEntry IsWellKnownClientType (Type serviceType) 
+		public static WellKnownClientTypeEntry IsWellKnownClientType (Type svrType) 
 		{
 			lock (channelTemplates)
 			{
-				return wellKnownClientEntries [serviceType] as WellKnownClientTypeEntry;
+				return wellKnownClientEntries [svrType] as WellKnownClientTypeEntry;
 			}
 		}
 
@@ -298,9 +298,9 @@ namespace System.Runtime.Remoting
 			}
 		}
 
-		public static void RegisterWellKnownServiceType (Type type, string objectUrl, WellKnownObjectMode mode) 
+		public static void RegisterWellKnownServiceType (Type type, string objectUri, WellKnownObjectMode mode) 
 		{
-			RegisterWellKnownServiceType (new WellKnownServiceTypeEntry (type, objectUrl, mode));
+			RegisterWellKnownServiceType (new WellKnownServiceTypeEntry (type, objectUri, mode));
 		}
 
 		public static void RegisterWellKnownServiceType (WellKnownServiceTypeEntry entry) 

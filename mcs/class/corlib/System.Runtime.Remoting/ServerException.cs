@@ -50,8 +50,8 @@ namespace System.Runtime.Remoting {
 		{
 		}
 
-		public ServerException (string message, Exception ex)
-			: base (message, ex)
+		public ServerException (string message, Exception InnerException)
+			: base (message, InnerException)
 		{
 		}
 

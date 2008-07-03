@@ -240,9 +240,9 @@ namespace System.Runtime.Remoting
 			}
 		}
 
-		public static Type GetServerTypeForUri (string uri)
+		public static Type GetServerTypeForUri (string URI)
 		{
-			ServerIdentity ident = GetIdentityForUri (uri) as ServerIdentity;
+			ServerIdentity ident = GetIdentityForUri (URI) as ServerIdentity;
 			if (ident == null) return null;
 			return ident.ObjectType;
 		}
@@ -255,19 +255,19 @@ namespace System.Runtime.Remoting
 			else return null;
 		}
 
-		public static object Unmarshal (ObjRef objref)
+		public static object Unmarshal (ObjRef objectRef)
 		{
-			return Unmarshal(objref, true);
+			return Unmarshal (objectRef, true);
 		}
 
-		public static object Unmarshal (ObjRef objref, bool fRefine)
+		public static object Unmarshal (ObjRef objectRef, bool fRefine)
 		{
-			Type classToProxy = fRefine ? objref.ServerType : typeof (MarshalByRefObject);
+			Type classToProxy = fRefine ? objectRef.ServerType : typeof (MarshalByRefObject);
 			if (classToProxy == null) classToProxy = typeof (MarshalByRefObject);
 
-			if (objref.IsReferenceToWellKnow) {
-				object obj = GetRemoteObject(objref, classToProxy);
-				TrackingServices.NotifyUnmarshaledObject (obj, objref);
+			if (objectRef.IsReferenceToWellKnow) {
+				object obj = GetRemoteObject (objectRef, classToProxy);
+				TrackingServices.NotifyUnmarshaledObject (obj, objectRef);
 				return obj;
 			}
 			else
@@ -276,34 +276,34 @@ namespace System.Runtime.Remoting
 				
 				if (classToProxy.IsContextful) {
 					// Look for a ProxyAttribute
-					ProxyAttribute att = (ProxyAttribute) Attribute.GetCustomAttribute (classToProxy, typeof(ProxyAttribute),true);
+					ProxyAttribute att = (ProxyAttribute) Attribute.GetCustomAttribute (classToProxy, typeof(ProxyAttribute), true);
 					if (att != null) {
-						obj = att.CreateProxy (objref, classToProxy, null, null).GetTransparentProxy();
-						TrackingServices.NotifyUnmarshaledObject (obj, objref);
+						obj = att.CreateProxy (objectRef, classToProxy, null, null).GetTransparentProxy();
+						TrackingServices.NotifyUnmarshaledObject (obj, objectRef);
 						return obj;
 					}
 				}
-				obj = GetProxyForRemoteObject (objref, classToProxy);
-				TrackingServices.NotifyUnmarshaledObject (obj, objref);
+				obj = GetProxyForRemoteObject (objectRef, classToProxy);
+				TrackingServices.NotifyUnmarshaledObject (obj, objectRef);
 				return obj;
 			}
 		}
 
-		public static ObjRef Marshal (MarshalByRefObject obj)
+		public static ObjRef Marshal (MarshalByRefObject Obj)
 		{
-			return Marshal (obj, null, null);
+			return Marshal (Obj, null, null);
 		}
 		
-		public static ObjRef Marshal (MarshalByRefObject obj, string uri)
+		public static ObjRef Marshal (MarshalByRefObject Obj, string URI)
 		{
-			return Marshal (obj, uri, null);
+			return Marshal (Obj, URI, null);
 		}
 		
-		public static ObjRef Marshal (MarshalByRefObject obj, string uri, Type requested_type)
+		public static ObjRef Marshal (MarshalByRefObject Obj, string ObjURI, Type RequestedType)
 		{
-			if (IsTransparentProxy (obj))
+			if (IsTransparentProxy (Obj))
 			{
-				RealProxy proxy = RemotingServices.GetRealProxy(obj);
+				RealProxy proxy = RemotingServices.GetRealProxy (Obj);
 				Identity identity = proxy.ObjectIdentity;
 
 				if (identity != null)
@@ -312,46 +312,46 @@ namespace System.Runtime.Remoting
 					{
 						// Unregistered local contextbound object. Register now.
 						ClientActivatedIdentity cboundIdentity = (ClientActivatedIdentity)identity;
-						if (uri == null) uri = NewUri();
-						cboundIdentity.ObjectUri = uri;
+						if (ObjURI == null) ObjURI = NewUri();
+						cboundIdentity.ObjectUri = ObjURI;
 						RegisterServerIdentity (cboundIdentity);
-						cboundIdentity.StartTrackingLifetime ((ILease)obj.InitializeLifetimeService());
-						return cboundIdentity.CreateObjRef(requested_type);
+						cboundIdentity.StartTrackingLifetime ((ILease)Obj.InitializeLifetimeService());
+						return cboundIdentity.CreateObjRef (RequestedType);
 					}
-					else if (uri != null)
+					else if (ObjURI != null)
 						throw new RemotingException ("It is not possible marshal a proxy of a remote object.");
 
-					ObjRef or = proxy.ObjectIdentity.CreateObjRef(requested_type);
-					TrackingServices.NotifyMarshaledObject (obj, or);
+					ObjRef or = proxy.ObjectIdentity.CreateObjRef (RequestedType);
+					TrackingServices.NotifyMarshaledObject (Obj, or);
 					return or;
 				}
 			}
 
-			if (requested_type == null) requested_type = obj.GetType();
+			if (RequestedType == null) RequestedType = Obj.GetType ();
 
-			if (uri == null) 
+			if (ObjURI == null) 
 			{
-				if (obj.ObjectIdentity == null)
+				if (Obj.ObjectIdentity == null)
 				{
-					uri = NewUri();
-					CreateClientActivatedServerIdentity (obj, requested_type, uri);
+					ObjURI = NewUri();
+					CreateClientActivatedServerIdentity (Obj, RequestedType, ObjURI);
 				}
 			}
 			else
 			{
-				ClientActivatedIdentity identity = GetIdentityForUri ("/" + uri) as ClientActivatedIdentity;
-				if (identity == null || obj != identity.GetServerObject()) 
-					CreateClientActivatedServerIdentity (obj, requested_type, uri);
+				ClientActivatedIdentity identity = GetIdentityForUri ("/" + ObjURI) as ClientActivatedIdentity;
+				if (identity == null || Obj != identity.GetServerObject()) 
+					CreateClientActivatedServerIdentity (Obj, RequestedType, ObjURI);
 			}
 
 			ObjRef oref;
 			
-			if (IsTransparentProxy (obj))
-				oref = RemotingServices.GetRealProxy(obj).ObjectIdentity.CreateObjRef (requested_type);
+			if (IsTransparentProxy (Obj))
+				oref = RemotingServices.GetRealProxy (Obj).ObjectIdentity.CreateObjRef (RequestedType);
 			else
-				oref = obj.CreateObjRef(requested_type);
+				oref = Obj.CreateObjRef (RequestedType);
 			
-			TrackingServices.NotifyMarshaledObject (obj, oref);
+			TrackingServices.NotifyMarshaledObject (Obj, oref);
 			return oref;
 		}
 

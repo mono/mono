@@ -1,3 +1,12 @@
+2008-07-03  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* ServerException.cs:
+	* RemotingTimeoutException.cs:
+	* RemotingException.cs:
+	* RemotingServices.cs:
+	* RemotingConfiguration.cs:
+	* ObjRef.cs: "Fix" parameter names
+
 2008-01-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Identity.cs: Fix Disposed setter to use value (not true). Found 
