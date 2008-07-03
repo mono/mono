@@ -1,5 +1,9 @@
 2008-07-04  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* IntPtr: Fix parameter names, change internal name to accomodate for parameter changes
+
+2008-07-04  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* Predicate.cs:
 	* Object.cs:
 	* Nullable.cs

@@ -57,44 +57,44 @@ namespace System
 #endif
 	public unsafe struct IntPtr : ISerializable
 	{
-		private void *value;
+		private void *m_value;
 
 		public static readonly IntPtr Zero;
 
 #if NET_2_0
 		[ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
 #endif
-		public IntPtr (int i32)
+		public IntPtr (int value)
 		{
-			value = (void *) i32;
+			m_value = (void *) value;
 		}
 
 #if NET_2_0
 		[ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
 #endif
-		public IntPtr (long i64)
+		public IntPtr (long value)
 		{
-			if (((i64 > Int32.MaxValue) || (i64 < Int32.MinValue)) && (IntPtr.Size < 8)) {
+			if (((value > Int32.MaxValue) || (value < Int32.MinValue)) && (IntPtr.Size < 8)) {
 				throw new OverflowException (
 					Locale.GetText ("This isn't a 64bits machine."));
 			}
 
-			value = (void *) i64;
+			m_value = (void *) value;
 		}
 
 		[CLSCompliant (false)]
 #if NET_2_0
 		[ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
 #endif
-		unsafe public IntPtr (void *ptr)
+		unsafe public IntPtr (void *value)
 		{
-			value = ptr;
+			m_value = value;
 		}
 
 		private IntPtr (SerializationInfo info, StreamingContext context)
 		{
 			long savedValue = info.GetInt64 ("value");
-			value = (void *) savedValue;
+			m_value = (void *) savedValue;
 		}
 
 		public static int Size {
@@ -114,17 +114,17 @@ namespace System
 			info.AddValue ("value", ToInt64 ());
 		}
 
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is System.IntPtr))
+			if (!(obj is System.IntPtr))
 				return false;
 
-			return ((IntPtr) o).value == value;
+			return ((IntPtr) obj).m_value == m_value;
 		}
 
 		public override int GetHashCode ()
 		{
-			return (int) value;
+			return (int) m_value;
 		}
 
 #if NET_2_0
@@ -132,7 +132,7 @@ namespace System
 #endif
 		public int ToInt32 ()
 		{
-			return (int) value;
+			return (int) m_value;
 		}
 
 #if NET_2_0
@@ -142,9 +142,9 @@ namespace System
 		{
 			// pointer to long conversion is done using conv.u8 by the compiler
 			if (Size == 4)
-				return (long)(int)value;
+				return (long)(int)m_value;
 			else
-				return (long)value;
+				return (long)m_value;
 		}
 
 		[CLSCompliant (false)]
@@ -153,7 +153,7 @@ namespace System
 #endif
 		unsafe public void *ToPointer ()
 		{
-			return value;
+			return m_value;
 		}
 
 		override public string ToString ()
@@ -167,25 +167,25 @@ namespace System
 		string ToString (string format)
 		{
 			if (Size == 4)
-				return ((int) value).ToString (format);
+				return ((int) m_value).ToString (format);
 			else
-				return ((long) value).ToString (format);
+				return ((long) m_value).ToString (format);
 		}
 
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
-		public static bool operator == (IntPtr a, IntPtr b)
+		public static bool operator == (IntPtr value1, IntPtr value2)
 		{
-			return (a.value == b.value);
+			return (value1.m_value == value2.m_value);
 		}
 
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
-		public static bool operator != (IntPtr a, IntPtr b)
+		public static bool operator != (IntPtr value1, IntPtr value2)
 		{
-			return (a.value != b.value);
+			return (value1.m_value != value2.m_value);
 		}
 
 #if NET_2_0
@@ -215,7 +215,7 @@ namespace System
 
 		public static explicit operator int (IntPtr value)
 		{
-			return (int) value.value;
+			return (int) value.m_value;
 		}
 
 		public static explicit operator long (IntPtr value)
@@ -226,7 +226,7 @@ namespace System
 		[CLSCompliant (false)]
 		unsafe public static explicit operator void * (IntPtr value)
 		{
-			return value.value;
+			return value.m_value;
 		}
 	}
 }
