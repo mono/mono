@@ -1,3 +1,8 @@
+2008-07-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* HttpListener2Test.cs: Added test for multiple responses.
+	* HttpWebResponseTest.cs: Added tests for disposed checks.
+
 2008-04-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FileWebRequestTest.cs: Now that we have proper locking for file

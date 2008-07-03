@@ -29,6 +29,7 @@
 #if NET_2_0
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -536,6 +537,68 @@ namespace MonoTests.System.Net {
 
 			listener.Close ();
 		}
+
+		[Test]
+		public void MultiResponses ()
+		{
+			Thread srv = new Thread (new ThreadStart (EchoServer));
+			srv.Start ();
+			Thread.Sleep (200);
+
+			for (int i = 0; i < 10; i++) {
+				string payload = string.Format (CultureInfo.InvariantCulture,
+					"Client{0}", i);
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (
+					"http://localhost:8888/foobar/");
+				req.ServicePoint.Expect100Continue = false;
+				req.ServicePoint.UseNagleAlgorithm = false;
+				req.Method = "POST";
+				StreamWriter w = new StreamWriter (req.GetRequestStream ());
+				w.WriteLine (payload);
+				w.Close ();
+
+				HttpWebResponse resp = (HttpWebResponse) req.GetResponse ();
+				StreamReader r = new StreamReader (resp.GetResponseStream ());
+				Assert.AreEqual ("Hello, " + payload + "!", r.ReadToEnd ().Trim ());
+				r.Close ();
+			}
+
+			manualReset.Set ();
+			srv.Join ();
+		}
+
+		void EchoServer ()
+		{
+			HttpListener listener = new HttpListener ();
+			listener.Prefixes.Add ("http://*:8888/foobar/");
+			listener.Start ();
+
+			manualReset = new ManualResetEvent (false);
+
+			IAsyncResult result = listener.BeginGetContext (
+				new AsyncCallback (EchoCallback), listener);
+			manualReset.WaitOne ();
+		}
+
+		void EchoCallback (IAsyncResult result)
+		{
+			HttpListener listener = (HttpListener) result.AsyncState;
+			HttpListenerContext context = listener.EndGetContext (result);
+			HttpListenerRequest req = context.Request;
+			StreamReader r = new StreamReader (req.InputStream);
+			string reqBody = r.ReadToEnd ().Trim ();
+
+			HttpListenerResponse resp = context.Response;
+			StreamWriter o = new StreamWriter (resp.OutputStream);
+			o.WriteLine ("Hello, " + reqBody + "!");
+			o.Close ();
+
+			listener.BeginGetContext (new AsyncCallback (EchoCallback), listener);
+		}
+
+		private ManualResetEvent manualReset;
+
 	}
 
 	[TestFixture]
