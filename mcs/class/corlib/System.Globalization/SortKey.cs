@@ -43,92 +43,89 @@ namespace System.Globalization {
 		private int lcid;
 		
 		/* Hide the .ctor() */
-		SortKey() {}
+		SortKey () {}
 
-		internal SortKey (int lcid, string source,
-				  CompareOptions options)
+		internal SortKey (int lcid, string source, CompareOptions options)
 		{
-			this.lcid=lcid;
-			str=source;
-			this.options=options;
+			this.lcid = lcid;
+			str = source;
+			this.options = options;
 		}
 
 		public virtual byte[] KeyData
 		{
 			get {
-				return(key);
+				return key;
 			}
 		}
 
 		public virtual string OriginalString
 		{
 			get {
-				return(str);
+				return str;
 			}
 		}
 
-		public static int Compare(SortKey sortkey1, SortKey sortkey2)
+		public static int Compare (SortKey sortkey1, SortKey sortkey2)
 		{
-			if(sortkey1==null) {
+			if (sortkey1 == null) {
 				throw new ArgumentNullException ("sortkey1");
 			}
-			if(sortkey2==null) {
+			if (sortkey2 == null) {
 				throw new ArgumentNullException ("sortkey2");
 			}
 
-			byte[] keydata1=sortkey1.key;
-			byte[] keydata2=sortkey2.key;
+			byte[] keydata1 = sortkey1.key;
+			byte[] keydata2 = sortkey2.key;
 
-			if(keydata1.Length==0) {
-				if(keydata2.Length==0) {
-					return(0);
+			if (keydata1.Length == 0) {
+				if (keydata2.Length == 0) {
+					return 0;
 				}
-				return(-1);
+				return -1;
 			}
 			
-			int min_len=(keydata1.Length < keydata2.Length)?
-				keydata1.Length:keydata2.Length;
+			int min_len = (keydata1.Length < keydata2.Length) ? keydata1.Length : keydata2.Length;
 
-			for(int i=0; i<min_len; i++) {
-				if(keydata1[i] > keydata2[i]) {
-					return(1);
-				} else if(keydata1[i] < keydata2[i]) {
-					return(-1);
+			for (int i = 0; i < min_len; i++) {
+				if (keydata1[i] > keydata2[i]) {
+					return 1;
+				} else if (keydata1[i] < keydata2[i]) {
+					return -1;
 				}
 			}
 
-			if(keydata1.Length < keydata2.Length) {
-				return(-1);
+			if (keydata1.Length < keydata2.Length) {
+				return -1;
 			} else if (keydata1.Length > keydata2.Length) {
-				return(1);
+				return 1;
 			} else {
-				return(0);
+				return 0;
 			}
 		}
 
-		public override bool Equals(object value)
+		public override bool Equals (object value)
 		{
-			SortKey other=(value as SortKey);
-			if(other!=null) {
-				if((this.lcid==other.lcid) &&
-				   (this.options==other.options) &&
-				   (Compare (this, other)==0)) {
-					return(true);
+			SortKey other = (value as SortKey);
+			if (other != null) {
+				if ((this.lcid == other.lcid) &&
+				   (this.options == other.options) &&
+				   (Compare (this, other) == 0)) {
+					return true;
 				}
 			}
 
-			return(false);
+			return false;
 		}
 
-		public override int GetHashCode()
+		public override int GetHashCode ()
 		{
-			return(str.GetHashCode ());
+			return str.GetHashCode ();
 		}
 
-		public override string ToString()
+		public override string ToString ()
 		{
-			return("SortKey - "+lcid+", "+options+", "+str);
+			return ("SortKey - " + lcid + ", " + options + ", " + str);
 		}
-
 	}
 }

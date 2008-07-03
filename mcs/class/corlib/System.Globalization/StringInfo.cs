@@ -49,17 +49,16 @@ namespace System.Globalization {
 		string s;
 		int length;
 
-		public StringInfo(string str)
+		public StringInfo (string value)
 		{
-			if (str == null)
-				throw new ArgumentNullException ("str");
-			String = str;
+			// Argument check in property
+			String = value;
 		}
 
 		[ComVisible (false)]
-		public override bool Equals (object obj)
+		public override bool Equals (object value)
 		{
-			StringInfo other = obj as StringInfo;
+			StringInfo other = value as StringInfo;
 			return other != null && s == other.s;
 		}
 

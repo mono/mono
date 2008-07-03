@@ -693,10 +693,10 @@ namespace System.Globalization
 
 		public CultureInfo (int culture) : this (culture, true) {}
 
-		public CultureInfo (int culture, bool use_user_override) :
-			this (culture, use_user_override, false) {}
+		public CultureInfo (int culture, bool useUserOverride) :
+			this (culture, useUserOverride, false) {}
 
-		private CultureInfo (int culture, bool use_user_override, bool read_only)
+		private CultureInfo (int culture, bool useUserOverride, bool read_only)
 		{
 			if (culture < 0)
 				throw new ArgumentOutOfRangeException ("culture", "Positive "
@@ -704,7 +704,7 @@ namespace System.Globalization
 
 			constructed = true;
 			m_isReadOnly = read_only;
-			m_useUserOverride = use_user_override;
+			m_useUserOverride = useUserOverride;
 
 			if (culture == InvariantCultureId) {
 				/* Short circuit the invariant culture */
@@ -720,17 +720,17 @@ namespace System.Globalization
 
 		public CultureInfo (string name) : this (name, true) {}
 
-		public CultureInfo (string name, bool use_user_override) :
-			this (name, use_user_override, false) {}
+		public CultureInfo (string name, bool useUserOverride) :
+			this (name, useUserOverride, false) {}
 
-		private CultureInfo (string name, bool use_user_override, bool read_only)
+		private CultureInfo (string name, bool useUserOverride, bool read_only)
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
 
 			constructed = true;
 			m_isReadOnly = read_only;
-			m_useUserOverride = use_user_override;
+			m_useUserOverride = useUserOverride;
 
 			if (name.Length == 0) {
 				/* Short circuit the invariant culture */

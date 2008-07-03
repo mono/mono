@@ -1,5 +1,16 @@
 2008-07-03  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* TextInfo.cs: Fix exceptions
+	* StringInfo.cs
+	* SortKey.cs:
+	* RegionInfo.cs:
+	* NumberFormatInfo.cs:
+	* CultureInfo.cs:
+	* CompareInfo.cs:
+	* CharUnicodeInfo.cs: Fix parameter names
+
+2008-07-03  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* UmAlQuraCalendar.cs:
 	* ThaiBuddhistCalendar.cs
 	* TaiwanCalendar.cs:

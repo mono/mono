@@ -956,11 +956,11 @@ namespace System.Globalization {
 			return copy;
 		}			
 
-		public static NumberFormatInfo GetInstance(IFormatProvider provider)
+		public static NumberFormatInfo GetInstance(IFormatProvider formatProvider)
 		{
-			if (provider != null) {
+			if (formatProvider != null) {
 				NumberFormatInfo nfi;
-				nfi = (NumberFormatInfo)provider.GetFormat(typeof(NumberFormatInfo));
+				nfi = (NumberFormatInfo)formatProvider.GetFormat(typeof(NumberFormatInfo));
 				if (nfi != null)
 					return nfi;
 			}

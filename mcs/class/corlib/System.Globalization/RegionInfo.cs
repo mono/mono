@@ -1,5 +1,5 @@
 //
-// RegionInfo.cs
+// System.Globalization.RegionInfo.cs
 //
 // Author:
 //	Atsushi Enomoto  <atsushi@ximian.com>
@@ -66,17 +66,17 @@ namespace System.Globalization
 		string isoCurrencySymbol;
 		string currencyEnglishName;
 
-		public RegionInfo (int lcid)
+		public RegionInfo (int culture)
 		{
 #if NET_2_0
-			if (!GetByTerritory (CultureInfo.GetCultureInfo (lcid)))
+			if (!GetByTerritory (CultureInfo.GetCultureInfo (culture)))
 				throw new ArgumentException (
-					String.Format ("Region ID {0} (0x{0:X4}) is not a supported region.", lcid), "lcid");
+					String.Format ("Region ID {0} (0x{0:X4}) is not a supported region.", culture), "culture");
 #else
-			if (!construct_internal_region_from_lcid (lcid))
+			if (!construct_internal_region_from_lcid (culture))
 				throw new ArgumentException (
 					String.Format ("Region ID {0} (0x{0:X4}) is not a " +
-							"supported region.", lcid), "lcid");
+							"supported region.", culture), "culture");
 #endif
 		}
 

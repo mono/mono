@@ -1,5 +1,5 @@
 //
-// System.Globalization.CompareInfo
+// System.Globalization.CompareInfo.cs
 //
 // Authors:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -837,15 +837,15 @@ namespace System.Globalization
 
 #if NET_2_0
 		[ComVisible (false)]
-		public static bool IsSortable (char c)
+		public static bool IsSortable (char ch)
 		{
-			return MSCompatUnicodeTable.IsSortable (c);
+			return MSCompatUnicodeTable.IsSortable (ch);
 		}
 
 		[ComVisible (false)]
-		public static bool IsSortable (string s)
+		public static bool IsSortable (string text)
 		{
-			return MSCompatUnicodeTable.IsSortable (s);
+			return MSCompatUnicodeTable.IsSortable (text);
 		}
 #endif
 

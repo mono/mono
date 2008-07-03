@@ -38,9 +38,9 @@ namespace System.Globalization
 	{
 		private CharUnicodeInfo () {}
 
-		public static int GetDecimalDigitValue (char c)
+		public static int GetDecimalDigitValue (char ch)
 		{
-			int i = (int) c;
+			int i = (int) ch;
 			switch (i) {
 			// They are not decimal digits but are regarded as they were.
 			case 178:
@@ -59,7 +59,7 @@ namespace System.Globalization
 			if (8320 <= i && i < 8330)
 				return i - 8320;
 
-			if (!Char.IsDigit (c))
+			if (!Char.IsDigit (ch))
 				return -1;
 
 			if (i < 58)
@@ -119,13 +119,13 @@ namespace System.Globalization
 			return GetDecimalDigitValue (s [index]);
 		}
 
-		public static int GetDigitValue (char c)
+		public static int GetDigitValue (char ch)
 		{
-			int i = GetDecimalDigitValue (c);
+			int i = GetDecimalDigitValue (ch);
 
 			if (i >= 0)
 				return i;
-			i = (int) c;
+			i = (int) ch;
 
 			if (i == 9450)
 				return 0;
@@ -156,13 +156,13 @@ namespace System.Globalization
 			return GetDigitValue (s [index]);
 		}
 
-		public static double GetNumericValue (char c)
+		public static double GetNumericValue (char ch)
 		{
-			int i = GetDigitValue (c);
+			int i = GetDigitValue (ch);
 			if (i >= 0)
 				return i;
 
-			i = (int) c;
+			i = (int) ch;
 
 			switch (i) {
 			case 188:
@@ -260,7 +260,7 @@ namespace System.Globalization
 			if (12977 <= i && i < 12992)
 				return i - 12941;
 
-			if (!char.IsNumber (c))
+			if (!char.IsNumber (ch))
 				return -1;
 
 			if (i < 3891)
@@ -296,13 +296,12 @@ namespace System.Globalization
 			return GetNumericValue (s [index]);
 		}
 
-		public static UnicodeCategory GetUnicodeCategory (char c)
+		public static UnicodeCategory GetUnicodeCategory (char ch)
 		{
-			return Char.GetUnicodeCategory (c);
+			return Char.GetUnicodeCategory (ch);
 		}
 
-		public static UnicodeCategory GetUnicodeCategory (string s,
-			int index)
+		public static UnicodeCategory GetUnicodeCategory (string s, int index)
 		{
 			if (s == null)
 				throw new ArgumentNullException ("s");

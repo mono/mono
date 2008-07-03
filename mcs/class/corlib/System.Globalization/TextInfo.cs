@@ -258,7 +258,7 @@ namespace System.Globalization {
 		public string ToTitleCase (string str)
 		{
 			if(str == null)
-				throw new ArgumentNullException("string is null");
+				throw new ArgumentNullException ("str");
 
 			StringBuilder sb = null;
 			int i = 0;
@@ -445,7 +445,7 @@ namespace System.Globalization {
 			return ToUpper (c);
 		}
 
-		public unsafe virtual string ToLower (string s)
+		public unsafe virtual string ToLower (string str)
 		{
 			// In ICU (3.2) there are a few cases that one single
 			// character results in multiple characters in e.g.
@@ -453,16 +453,16 @@ namespace System.Globalization {
 			// test with single character as a string input, but 
 			// there was no such conversion. So I think it just
 			// invokes ToLower(char).
-			if (s == null)
-				throw new ArgumentNullException ("string is null");
+			if (str == null)
+				throw new ArgumentNullException ("str");
 
-			string tmp = String.InternalAllocateStr (s.Length);
-			fixed (char* source = s, dest = tmp) {
+			string tmp = String.InternalAllocateStr (str.Length);
+			fixed (char* source = str, dest = tmp) {
 
 				char* destPtr = (char*)dest;
 				char* sourcePtr = (char*)source;
 
-				for (int n = 0; n < s.Length; n++) {
+				for (int n = 0; n < str.Length; n++) {
 					*destPtr = ToLower (*sourcePtr);
 					sourcePtr++;
 					destPtr++;
@@ -471,23 +471,23 @@ namespace System.Globalization {
 			return tmp;
 		}
 
-		public unsafe virtual string ToUpper (string s)
+		public unsafe virtual string ToUpper (string str)
 		{
 			// In ICU (3.2) there is a case that string
 			// is handled beyond per-character conversion, but
 			// it is only lt-LT culture where MS.NET does not
 			// handle any special transliteration. So I keep
 			// ToUpper() just as character conversion.
-			if (s == null)
-				throw new ArgumentNullException ("string is null");
+			if (str == null)
+				throw new ArgumentNullException ("str");
 
-			string tmp = String.InternalAllocateStr (s.Length);
-			fixed (char* source = s, dest = tmp) {
+			string tmp = String.InternalAllocateStr (str.Length);
+			fixed (char* source = str, dest = tmp) {
 
 				char* destPtr = (char*)dest;
 				char* sourcePtr = (char*)source;
 
-				for (int n = 0; n < s.Length; n++) {
+				for (int n = 0; n < str.Length; n++) {
 					*destPtr = ToUpper (*sourcePtr);
 					sourcePtr++;
 					destPtr++;
