@@ -4475,7 +4475,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Test()">
-        <size>297</size>
+        <size>289</size>
       </method>
       <method name="Int32 Main()">
         <size>6</size>
@@ -9624,10 +9624,10 @@
         <size>7</size>
       </method>
       <method name="Void CopyTo(Bug.xxx*)">
-        <size>113</size>
+        <size>99</size>
       </method>
       <method name="Void Convert(Bug.xxx*, System.UInt64*)">
-        <size>107</size>
+        <size>93</size>
       </method>
       <method name="Void Main()">
         <size>1</size>
@@ -23331,7 +23331,7 @@
         <size>17</size>
       </method>
       <method name="Int32 Main()">
-        <size>89</size>
+        <size>84</size>
       </method>
     </type>
   </test>
@@ -24957,13 +24957,13 @@
         <size>89</size>
       </method>
       <method name="Int32 TestPtrAdd()">
-        <size>86</size>
+        <size>87</size>
       </method>
       <method name="Int32 TestPtrAssign()">
         <size>198</size>
       </method>
       <method name="Int32 TestPtrArithmetic()">
-        <size>229</size>
+        <size>227</size>
       </method>
       <method name="Int32 TestMultiple()">
         <size>93</size>
@@ -24979,7 +24979,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>174</size>
+        <size>171</size>
       </method>
     </type>
   </test>
@@ -24989,7 +24989,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>19</size>
+        <size>18</size>
       </method>
     </type>
   </test>
@@ -25066,7 +25066,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>45</size>
+        <size>44</size>
       </method>
     </type>
   </test>
@@ -30325,13 +30325,13 @@
         <size>3</size>
       </method>
       <method name="Int32 CheckAdd(System.Byte*, Int32)">
-        <size>15</size>
+        <size>14</size>
       </method>
       <method name="Int32 CheckSub(System.Int16*, Int32)">
-        <size>17</size>
+        <size>16</size>
       </method>
       <method name="Int32 CheckSub2(System.Int16*, Int32)">
-        <size>24</size>
+        <size>23</size>
       </method>
     </type>
   </test>
@@ -30510,6 +30510,38 @@
       </method>
       <method name="Void Main()">
         <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-652.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>6</size>
+      </method>
+      <method name="Int32 Test()">
+        <size>27</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-653.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Test()">
+        <size>50</size>
+      </method>
+      <method name="Void Test2()">
+        <size>32</size>
+      </method>
+      <method name="Void Test2(SByte, Int16, Int32, Int64, UInt64)">
+        <size>39</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>41</size>
       </method>
     </type>
   </test>
