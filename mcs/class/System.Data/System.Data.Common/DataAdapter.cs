@@ -322,12 +322,11 @@ namespace System.Data.Common
 					// check to see if the column mapping exists
 					DataColumnMapping columnMapping = DataColumnMappingCollection.GetColumnMappingBySchemaAction(tableMapping.ColumnMappings, realSourceColumnName, missingMapAction);
 					if (columnMapping != null) {
-						Type columnType = (Type)schemaRow[DataTypeCol];
-						DataColumn col =
-							columnMapping.GetDataColumnBySchemaAction(
-												  table ,
-												  columnType,
-												  missingSchAction);
+						Type columnType = schemaRow[DataTypeCol] as Type;
+						DataColumn col = columnType != null ? columnMapping.GetDataColumnBySchemaAction(
+						                                                                                table ,
+						                                                                                columnType,
+						                                                                                missingSchAction) : null;
 
 						if (col != null) {
 							// if the column is not in the table - add it.
