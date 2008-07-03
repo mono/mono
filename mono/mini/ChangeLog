@@ -5,6 +5,8 @@
 
 2008-07-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* dominators.c (check_dominance_frontier): Fix a warning.
+
 	* mini.h: Add some missing prototypes.
 
 	* ssa.c local-propagation.c debug-debuger.c: Fix warnings.
