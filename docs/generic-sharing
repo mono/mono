@@ -1,0 +1,56 @@
+Generic code sharing
+====================
+
+Getting generics information about a stack frame
+------------------------------------------------
+
+If a method is compiled with generic sharing, its MonoJitInfo has
+has_generic_jit_info set.  In that case, the MonoJitInfo is followed
+(after the MonoJitExceptionInfo array) by a MonoGenericJitInfo.
+
+The MonoGenericJitInfo contains information about the location of the
+this/vtable/MRGCTX variable, if the has_this flag is set.  If that is
+the case, there are two possibilites:
+
+  1. this_in_reg is set.  this_reg is the number of the register where
+     the variable is stored.
+
+  2. this_in_reg is not set.  The variable is stored at offset
+     this_offset from the address in the register with number
+     this_reg.
+
+The variable can either point to the "this" object, to a vtable or to
+an MRGCTX:
+
+  1. If the method is a non-generic non-static method of a reference
+     type, the variable points to the "this" object.
+
+  2. If the method is a non-generic static method or a non-generic
+     method of a value type, the variable points to the vtable of the
+     class.
+
+  3. If the method is a generic method, the variable points to the
+     MRGCTX of the method.
+
+
+Layout of the MRGCTX
+--------------------
+
+The MRGCTX is a structure that starts with
+MonoMethodRuntimeGenericContext, which contains a pointer to the
+vtable of the class and a pointer to the MonoGenericInst with the type
+arguments for the method.
+
+
+Blog posts about generic code sharing
+-------------------------------------
+
+http://schani.wordpress.com/2007/09/22/generics-sharing-in-mono/
+http://schani.wordpress.com/2007/10/12/the-trouble-with-shared-generics/
+http://schani.wordpress.com/2007/10/15/a-quick-generics-sharing-update/
+http://schani.wordpress.com/2008/01/29/other-types/
+http://schani.wordpress.com/2008/02/25/generic-types-are-lazy/
+http://schani.wordpress.com/2008/03/10/sharing-static-methods/
+http://schani.wordpress.com/2008/04/22/sharing-everything-and-saving-memory/
+http://schani.wordpress.com/2008/06/02/sharing-generic-methods/
+http://schani.wordpress.com/2008/06/27/another-generic-sharing-update/
