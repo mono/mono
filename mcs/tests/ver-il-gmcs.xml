@@ -30545,6 +30545,19 @@
       </method>
     </type>
   </test>
+  <test name="test-654.cs">
+    <type name="Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>8</size>
+      </method>
+      <method name="Int32 Test(System.SByte*)">
+        <size>33</size>
+      </method>
+    </type>
+  </test>
   <test name="test-66.cs">
     <type name="Y">
       <method name="Void .ctor()">
