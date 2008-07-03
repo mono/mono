@@ -149,7 +149,6 @@ namespace MonoTests.System.Security.Policy {
 			Assert.AreEqual ("file://WINDOWS/PATH/mono", ad2.Directory);
 			Assert.AreEqual ("file://WINDOWS/PATH/mono".GetHashCode (), ad2.GetHashCode (), "GetHashCode-Windows");
 #endif
-			Assert.IsFalse ((ad1.GetHashCode () == ad2.GetHashCode ()), "GetHashCode-Compare");
 		}
 
 		[Test]
