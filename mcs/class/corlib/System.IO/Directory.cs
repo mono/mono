@@ -281,9 +281,9 @@ namespace System.IO
 		}
 		
 #if NET_2_0
-		public static string [] GetDirectories (string path, string searchPattern, SearchOption option)
+		public static string [] GetDirectories (string path, string searchPattern, SearchOption searchOption)
 		{
-			if (option == SearchOption.TopDirectoryOnly)
+			if (searchOption == SearchOption.TopDirectoryOnly)
 				return GetDirectories (path, searchPattern);
 			ArrayList all = new ArrayList ();
 			GetDirectoriesRecurse (path, searchPattern, all);

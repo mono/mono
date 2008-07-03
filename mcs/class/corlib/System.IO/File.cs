@@ -588,37 +588,37 @@ namespace System.IO
 			return ReadAllText (path, Encoding.UTF8Unmarked);
 		}
 
-		public static string ReadAllText (string path, Encoding enc)
+		public static string ReadAllText (string path, Encoding encoding)
 		{
-			using (StreamReader sr = new StreamReader (path, enc)) {
+			using (StreamReader sr = new StreamReader (path, encoding)) {
 				return sr.ReadToEnd ();
 			}
 		}
 
-		public static void WriteAllBytes (string path, byte [] data)
+		public static void WriteAllBytes (string path, byte [] bytes)
 		{
 			using (Stream stream = File.Create (path)) {
-				stream.Write (data, 0, data.Length);
+				stream.Write (bytes, 0, bytes.Length);
 			}
 		}
 
-		public static void WriteAllLines (string path, string [] lines)
+		public static void WriteAllLines (string path, string [] contents)
 		{
 			using (StreamWriter writer = new StreamWriter (path)) {
-				WriteAllLines (writer, lines);
+				WriteAllLines (writer, contents);
 			}
 		}
 
-		public static void WriteAllLines (string path, string [] lines, Encoding encoding)
+		public static void WriteAllLines (string path, string [] contents, Encoding encoding)
 		{
 			using (StreamWriter writer = new StreamWriter (path, false, encoding)) {
-				WriteAllLines (writer, lines);
+				WriteAllLines (writer, contents);
 			}
 		}
 
-		static void WriteAllLines (StreamWriter writer, string [] lines)
+		static void WriteAllLines (StreamWriter writer, string [] contents)
 		{
-			foreach (string line in lines)
+			foreach (string line in contents)
 				writer.WriteLine (line);
 		}
 

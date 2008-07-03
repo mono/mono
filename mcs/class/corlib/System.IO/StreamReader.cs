@@ -125,33 +125,33 @@ namespace System.IO {
 		public StreamReader(Stream stream)
 			: this (stream, Encoding.UTF8Unmarked, true, DefaultBufferSize) { }
 
-		public StreamReader(Stream stream, bool detect_encoding_from_bytemarks)
-			: this (stream, Encoding.UTF8Unmarked, detect_encoding_from_bytemarks, DefaultBufferSize) { }
+		public StreamReader(Stream stream, bool detectEncodingFromByteOrderMarks)
+			: this (stream, Encoding.UTF8Unmarked, detectEncodingFromByteOrderMarks, DefaultBufferSize) { }
 
 		public StreamReader(Stream stream, Encoding encoding)
 			: this (stream, encoding, true, DefaultBufferSize) { }
 
-		public StreamReader(Stream stream, Encoding encoding, bool detect_encoding_from_bytemarks)
-			: this (stream, encoding, detect_encoding_from_bytemarks, DefaultBufferSize) { }
+		public StreamReader(Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks)
+			: this (stream, encoding, detectEncodingFromByteOrderMarks, DefaultBufferSize) { }
 		
-		public StreamReader(Stream stream, Encoding encoding, bool detect_encoding_from_bytemarks, int buffer_size)
+		public StreamReader(Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize)
 		{
-			Initialize (stream, encoding, detect_encoding_from_bytemarks, buffer_size);
+			Initialize (stream, encoding, detectEncodingFromByteOrderMarks, bufferSize);
 		}
 
 		public StreamReader(string path)
 			: this (path, Encoding.UTF8Unmarked, true, DefaultFileBufferSize) { }
 
-		public StreamReader(string path, bool detect_encoding_from_bytemarks)
-			: this (path, Encoding.UTF8Unmarked, detect_encoding_from_bytemarks, DefaultFileBufferSize) { }
+		public StreamReader(string path, bool detectEncodingFromByteOrderMarks)
+			: this (path, Encoding.UTF8Unmarked, detectEncodingFromByteOrderMarks, DefaultFileBufferSize) { }
 
 		public StreamReader(string path, Encoding encoding)
 			: this (path, encoding, true, DefaultFileBufferSize) { }
 
-		public StreamReader(string path, Encoding encoding, bool detect_encoding_from_bytemarks)
-			: this (path, encoding, detect_encoding_from_bytemarks, DefaultFileBufferSize) { }
+		public StreamReader(string path, Encoding encoding, bool detectEncodingFromByteOrderMarks)
+			: this (path, encoding, detectEncodingFromByteOrderMarks, DefaultFileBufferSize) { }
 		
-		public StreamReader(string path, Encoding encoding, bool detect_encoding_from_bytemarks, int buffer_size)
+		public StreamReader(string path, Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize)
 		{
 			if (null == path)
 				throw new ArgumentNullException("path");
@@ -161,14 +161,14 @@ namespace System.IO {
 				throw new ArgumentException("path contains invalid characters");
 			if (null == encoding)
 				throw new ArgumentNullException ("encoding");
-			if (buffer_size <= 0)
-				throw new ArgumentOutOfRangeException ("buffer_size", "The minimum size of the buffer must be positive");
+			if (bufferSize <= 0)
+				throw new ArgumentOutOfRangeException ("bufferSize", "The minimum size of the buffer must be positive");
 
 			Stream stream = (Stream) File.OpenRead (path);
-			Initialize (stream, encoding, detect_encoding_from_bytemarks, buffer_size);
+			Initialize (stream, encoding, detectEncodingFromByteOrderMarks, bufferSize);
 		}
 
-		internal void Initialize (Stream stream, Encoding encoding, bool detect_encoding_from_bytemarks, int buffer_size)
+		internal void Initialize (Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize)
 		{
 			if (null == stream)
 				throw new ArgumentNullException ("stream");
@@ -176,26 +176,26 @@ namespace System.IO {
 				throw new ArgumentNullException ("encoding");
 			if (!stream.CanRead)
 				throw new ArgumentException ("Cannot read stream");
-			if (buffer_size <= 0)
-				throw new ArgumentOutOfRangeException ("buffer_size", "The minimum size of the buffer must be positive");
+			if (bufferSize <= 0)
+				throw new ArgumentOutOfRangeException ("bufferSize", "The minimum size of the buffer must be positive");
 
-			if (buffer_size < MinimumBufferSize)
-				buffer_size = MinimumBufferSize;
+			if (bufferSize < MinimumBufferSize)
+				bufferSize = MinimumBufferSize;
 
 			base_stream = stream;
-			input_buffer = new byte [buffer_size];
-			this.buffer_size = buffer_size;
+			input_buffer = new byte [bufferSize];
+			this.buffer_size = bufferSize;
 			this.encoding = encoding;
 			decoder = encoding.GetDecoder ();
 
 			byte [] preamble = encoding.GetPreamble ();
-			do_checks = detect_encoding_from_bytemarks ? 1 : 0;
+			do_checks = detectEncodingFromByteOrderMarks ? 1 : 0;
 			do_checks += (preamble.Length == 0) ? 0 : 2;
 			
 			// since GetChars() might add flushed character, it 
 			// should have additional char buffer for extra 1 
 			// (probably 1 is ok, but might be insufficient. I'm not sure)
-			decoded_buffer = new char [encoding.GetMaxCharCount (buffer_size) + 1];
+			decoded_buffer = new char [encoding.GetMaxCharCount (bufferSize) + 1];
 			decoded_count = 0;
 			pos = 0;
 		}
@@ -378,19 +378,19 @@ namespace System.IO {
 			return decoded_buffer [pos++];
 		}
 
-		public override int Read ([In, Out] char[] dest_buffer, int index, int count)
+		public override int Read ([In, Out] char[] buffer, int index, int count)
 		{
 			if (base_stream == null)
 				throw new ObjectDisposedException ("StreamReader", "Cannot read from a closed StreamReader");
-			if (dest_buffer == null)
-				throw new ArgumentNullException ("dest_buffer");
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
 			if (index < 0)
 				throw new ArgumentOutOfRangeException ("index", "< 0");
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count", "< 0");
 			// re-ordered to avoid possible integer overflow
-			if (index > dest_buffer.Length - count)
-				throw new ArgumentException ("index + count > dest_buffer.Length");
+			if (index > buffer.Length - count)
+				throw new ArgumentException ("index + count > buffer.Length");
 
 			int chars_read = 0;
 			while (count > 0)
@@ -399,7 +399,7 @@ namespace System.IO {
 					return chars_read > 0 ? chars_read : 0;
 
 				int cch = Math.Min (decoded_count - pos, count);
-				Array.Copy (decoded_buffer, pos, dest_buffer, index, cch);
+				Array.Copy (decoded_buffer, pos, buffer, index, cch);
 				pos += cch;
 				index += cch;
 				count -= cch;

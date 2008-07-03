@@ -298,13 +298,13 @@ namespace System.IO {
 				Flush ();
 		}
 
-		public override void Write (char[] value)
+		public override void Write (char[] buffer)
 		{
 			if (DisposedAlready)
-				throw new ObjectDisposedException("StreamWriter");
+				throw new ObjectDisposedException ("StreamWriter");
 
-			if (value != null)
-				LowLevelWrite (value, 0, value.Length);
+			if (buffer != null)
+				LowLevelWrite (buffer, 0, buffer.Length);
 			if (iflush)
 				Flush ();
 		}

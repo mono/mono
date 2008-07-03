@@ -1,5 +1,5 @@
 //
-// System.IO/Stream.cs
+// System.IO.Stream.cs
 //
 // Authors:
 //   Dietmar Maurer (dietmar@ximian.com)
@@ -183,7 +183,7 @@ namespace System.IO
 		}
 
 		public virtual IAsyncResult
-		BeginRead (byte [] buffer, int offset, int count, AsyncCallback cback, object state)
+		BeginRead (byte [] buffer, int offset, int count, AsyncCallback callback, object state)
 		{
 			if (!CanRead)
 				throw new NotSupportedException ("This stream does not support reading");
@@ -204,8 +204,8 @@ namespace System.IO
 				result.SetComplete (e, 0);
 			}
 
-			if (cback != null)
-				cback (result);
+			if (callback != null)
+				callback (result);
 
 			return result;
 		}
@@ -213,7 +213,7 @@ namespace System.IO
 //		delegate void WriteDelegate (byte [] buffer, int offset, int count);
 
 		public virtual IAsyncResult
-		BeginWrite (byte [] buffer, int offset, int count, AsyncCallback cback, object state)
+		BeginWrite (byte [] buffer, int offset, int count, AsyncCallback callback, object state)
 		{
 			if (!CanWrite)
 				throw new NotSupportedException ("This stream does not support writing");
@@ -234,20 +234,20 @@ namespace System.IO
 				result.SetComplete (e);
 			}
 
-			if (cback != null)
-				cback.BeginInvoke (result, null, null);
+			if (callback != null)
+				callback.BeginInvoke (result, null, null);
 
 			return result;
 		}
 		
-		public virtual int EndRead (IAsyncResult async_result)
+		public virtual int EndRead (IAsyncResult asyncResult)
 		{
-			if (async_result == null)
-				throw new ArgumentNullException ("async_result");
+			if (asyncResult == null)
+				throw new ArgumentNullException ("asyncResult");
 
-			StreamAsyncResult result = async_result as StreamAsyncResult;
+			StreamAsyncResult result = asyncResult as StreamAsyncResult;
 			if (result == null || result.NBytes == -1)
-				throw new ArgumentException ("Invalid IAsyncResult", "async_result");
+				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
 
 			if (result.Done)
 				throw new InvalidOperationException ("EndRead already called.");
@@ -259,14 +259,14 @@ namespace System.IO
 			return result.NBytes;
 		}
 
-		public virtual void EndWrite (IAsyncResult async_result)
+		public virtual void EndWrite (IAsyncResult asyncResult)
 		{
-			if (async_result == null)
-				throw new ArgumentNullException ("async_result");
+			if (asyncResult == null)
+				throw new ArgumentNullException ("asyncResult");
 
-			StreamAsyncResult result = async_result as StreamAsyncResult;
+			StreamAsyncResult result = asyncResult as StreamAsyncResult;
 			if (result == null || result.NBytes != -1)
-				throw new ArgumentException ("Invalid IAsyncResult", "async_result");
+				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
 
 			if (result.Done)
 				throw new InvalidOperationException ("EndWrite already called.");
@@ -320,9 +320,7 @@ namespace System.IO
 		{
 		}
 
-		public override int Read (byte[] buffer,
-					  int offset,
-					  int count)
+		public override int Read (byte[] buffer, int offset, int count)
 		{
 			return 0;
 		}
@@ -332,8 +330,7 @@ namespace System.IO
 			return -1;
 		}
 
-		public override long Seek (long offset,
-					   SeekOrigin origin)
+		public override long Seek (long offset, SeekOrigin origin)
 		{
 			return 0;
 		}
@@ -342,9 +339,7 @@ namespace System.IO
 		{
 		}
 
-		public override void Write (byte[] buffer,
-					    int offset,
-					    int count)
+		public override void Write (byte[] buffer, int offset, int count)
 		{
 		}
 

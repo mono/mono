@@ -53,8 +53,8 @@ namespace System.IO
 			this.HResult = ErrorCode;
 		}
 
-		public DriveNotFoundException (string message, Exception inner)
-			: base (message, inner)
+		public DriveNotFoundException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 			this.HResult = ErrorCode;
 		}

@@ -1,5 +1,5 @@
 //
-// System.IO.TextWriter
+// System.IO.TextWriter.cs
 //
 // Authors:
 //   Marcin Szczepanski (marcins@zipworld.com.au)
@@ -137,11 +137,11 @@ namespace System.IO {
 			// Do nothing
 		}
 
-                public virtual void Write (char[] value)
+                public virtual void Write (char[] buffer)
 		{
-			if (value == null)
+			if (buffer == null)
 				return;
-			Write (value, 0, value.Length);
+			Write (buffer, 0, buffer.Length);
 		}
 		
                 public virtual void Write (decimal value)
@@ -245,9 +245,9 @@ namespace System.IO {
 			WriteLine();
 		}
 		
-                public virtual void WriteLine (char[] value)
+                public virtual void WriteLine (char[] buffer)
 		{
-			Write (value);
+			Write (buffer);
 			WriteLine();
 		}
 		

@@ -1,5 +1,5 @@
 //
-// System.IO.MemoryStream 
+// System.IO.MemoryStream.cs
 //
 // Authors:	Marcin Szczepanski (marcins@zipworld.com.au)
 //		Patrik Torstensson
@@ -81,12 +81,12 @@ namespace System.IO
 			InternalConstructor (buffer, 0, buffer.Length, true, false);                        
 		}
 
-		public MemoryStream (byte [] buffer, bool writeable)
+		public MemoryStream (byte [] buffer, bool writable)
 		{
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 			
-			InternalConstructor (buffer, 0, buffer.Length, writeable, false);
+			InternalConstructor (buffer, 0, buffer.Length, writable, false);
 		}
 
 		public MemoryStream (byte [] buffer, int index, int count)
@@ -94,17 +94,17 @@ namespace System.IO
 			InternalConstructor (buffer, index, count, true, false);
 		}
 
-		public MemoryStream (byte [] buffer, int index, int count, bool writeable)
+		public MemoryStream (byte [] buffer, int index, int count, bool writable)
 		{
-			InternalConstructor (buffer, index, count, writeable, false);
+			InternalConstructor (buffer, index, count, writable, false);
 		}
 
-		public MemoryStream (byte [] buffer, int index, int count, bool writeable, bool publicallyVisible)
+		public MemoryStream (byte [] buffer, int index, int count, bool writable, bool publiclyVisible)
 		{
-			InternalConstructor (buffer, index, count, writeable, publicallyVisible);
+			InternalConstructor (buffer, index, count, writable, publiclyVisible);
 		}
 
-		void InternalConstructor (byte [] buffer, int index, int count, bool writeable, bool publicallyVisible)
+		void InternalConstructor (byte [] buffer, int index, int count, bool writable, bool publicallyVisible)
 		{
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
@@ -116,7 +116,7 @@ namespace System.IO
 				throw new ArgumentException ("index+count", 
 							     "The size of the buffer is less than index + count.");
 
-			canWrite = writeable;
+			canWrite = writable;
 
 			internalBuffer = buffer;
 			capacity = count + index;

@@ -1,3 +1,14 @@
+2008-07-03  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* TextWriter.cs:
+	* StreamWriter.cs:
+	* StreamReader.cs:
+	* Stream.cs:
+	* MemoryStream.cs:
+	* File.cs:
+	* DriveNotFoundException.cs:
+	* Directory.cs: Fix parameter names
+
 2008-06-30  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* BinaryReader.cs: Fix parameter names
