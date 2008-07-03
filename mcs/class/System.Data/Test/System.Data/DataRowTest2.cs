@@ -875,6 +875,504 @@ namespace MonoTests.System.Data
 			Assert.AreEqual(false , r.HasVersion(DataRowVersion.Proposed) , "DRW84");
 		}
 
+		[Test] // Object this [DataColumn]
+		public void Indexer1 ()
+		{
+			DataTable dt = new DataTable ();
+			DataColumn dc0 = new DataColumn ("Col0", typeof (Address));
+			dt.Columns.Add (dc0);
+			DataColumn dc1 = new DataColumn ("Col1", typeof (Person));
+			dt.Columns.Add (dc1);
+
+			Person personA = new Person ("Miguel");
+			Address addressA = new Address ("X", 5);
+			Person personB = new Person ("Chris");
+			Address addressB = new Address ("Y", 4);
+			Person personC = new Person ("Jackson");
+			Address addressC = new Address ("Z", 3);
+
+			dt.Rows.Add (new object [] { addressA, personA });
+			dt.Rows.Add (new object [] { addressB, personB });
+			DataRow dr;
+
+			dr = dt.Rows [0];
+			Assert.AreEqual (addressA, dr [dc0], "#A1");
+			Assert.AreSame (personA, dr [dc1], "#A2");
+
+			dr = dt.Rows [1];
+			Assert.AreEqual (addressB, dr [dc0], "#B1");
+			Assert.AreSame (personB, dr [dc1], "#B2");
+
+			dr = dt.Rows [0];
+			dr [dc0] = addressC;
+			Assert.AreEqual (addressC, dr [dc0], "#C1");
+			Assert.AreSame (personA, dr [dc1], "#C2");
+
+			dr = dt.Rows [1];
+			dr [dc1] = personC;
+			Assert.AreEqual (addressB, dr [dc0], "#D1");
+			Assert.AreSame (personC, dr [dc1], "#D2");
+		}
+
+		[Test] // Object this [DataColumn]
+		public void Indexer1_Column_Null ()
+		{
+			DataTable dt = new DataTable ();
+			DataColumn dc0 = new DataColumn ("Col0", typeof (Address));
+			dt.Columns.Add (dc0);
+			DataColumn dc1 = new DataColumn ("Col1", typeof (Person));
+			dt.Columns.Add (dc1);
+
+			Person personA = new Person ("Miguel");
+			Address addressA = new Address ("X", 5);
+			Person personB = new Person ("Chris");
+
+			dt.Rows.Add (new object [] { addressA, personA });
+			DataRow dr = dt.Rows [0];
+
+			try {
+				object value = dr [(DataColumn) null];
+				Assert.Fail ("#A1:" + value);
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("column", ex.ParamName, "#A5");
+			}
+
+			try {
+				dr [(DataColumn) null] = personB;
+				Assert.Fail ("#B1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.AreEqual ("column", ex.ParamName, "#B5");
+			}
+		}
+
+		[Test] // Object this [DataColumn]
+		[NUnit.Framework.Category ("NotWorking")]
+		public void Indexer1_Value_Null ()
+		{
+			DataTable dt = new DataTable ();
+			DataColumn dc0 = new DataColumn ("Col0", typeof (Address));
+			dt.Columns.Add (dc0);
+			DataColumn dc1 = new DataColumn ("Col1", typeof (Person));
+			dt.Columns.Add (dc1);
+
+			Person personA = new Person ("Miguel");
+			Address addressA = new Address ("X", 5);
+			Person personB = new Person ("Chris");
+			Address addressB = new Address ("Y", 4);
+			Person personC = new Person ("Jackson");
+			Address addressC = new Address ("Z", 3);
+
+			dt.Rows.Add (new object [] { addressA, personA });
+			dt.Rows.Add (new object [] { addressB, personB });
+
+			DataRow dr = dt.Rows [0];
+
+			try {
+				dr [dc0] = null;
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Cannot set Column 'Col0' to be null.
+				// Please use DBNull instead
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf ("Col0") != -1, "#A5");
+				Assert.IsTrue (ex.Message.IndexOf ("DBNull") != -1, "#A6");
+			}
+
+			Assert.AreEqual (addressA, dr [dc0], "#B1");
+			Assert.IsFalse (dr.IsNull (dc0), "#B2");
+			Assert.AreSame (personA, dr [dc1], "#B3");
+			Assert.IsFalse (dr.IsNull (dc1), "#B4");
+
+#if NET_2_0
+			dr [dc1] = null;
+#else
+			try {
+				dr [dc1] = null;
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Cannot set Column 'Col1' to be null.
+				// Please use DBNull instead
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("Col1") != -1, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf ("DBNull") != -1, "#B6");
+			}
+			dr [dc1] = DBNull.Value;
+#endif
+
+			Assert.AreEqual (addressA, dr [dc0], "#C1");
+			Assert.IsFalse (dr.IsNull (dc0), "#C2");
+			Assert.AreSame (DBNull.Value, dr [dc1], "#C3");
+			Assert.IsTrue (dr.IsNull (dc1), "#C4");
+
+			dr [dc0] = DBNull.Value;
+
+			Assert.AreSame (DBNull.Value, dr [dc0], "#D1");
+			Assert.IsTrue (dr.IsNull (dc0), "#D2");
+			Assert.AreSame (DBNull.Value, dr [dc1], "#D3");
+			Assert.IsTrue (dr.IsNull (dc1), "#D4");
+
+			dr [dc1] = personC;
+			Assert.AreSame (DBNull.Value, dr [dc0], "#E1");
+			Assert.IsTrue (dr.IsNull (dc0), "#E2");
+			Assert.AreEqual (personC, dr [dc1], "#E3");
+			Assert.IsFalse (dr.IsNull (dc1), "#E4");
+
+			dr [dc1] = DBNull.Value;
+
+			Assert.AreSame (DBNull.Value, dr [dc0], "#F1");
+			Assert.IsTrue (dr.IsNull (dc0), "#F2");
+			Assert.AreSame (DBNull.Value, dr [dc1], "#F3");
+			Assert.IsTrue (dr.IsNull (dc1), "#F4");
+		}
+
+		[Test] // Object this [Int32]
+		public void Indexer2 ()
+		{
+			DataTable dt = new DataTable ();
+			DataColumn dc0 = new DataColumn ("Col0", typeof (Address));
+			dt.Columns.Add (dc0);
+			DataColumn dc1 = new DataColumn ("Col1", typeof (Person));
+			dt.Columns.Add (dc1);
+
+			Person personA = new Person ("Miguel");
+			Address addressA = new Address ("X", 5);
+			Person personB = new Person ("Chris");
+			Address addressB = new Address ("Y", 4);
+			Person personC = new Person ("Jackson");
+			Address addressC = new Address ("Z", 3);
+
+			dt.Rows.Add (new object [] { addressA, personA });
+			dt.Rows.Add (new object [] { addressB, personB });
+			DataRow dr;
+			
+			dr = dt.Rows [0];
+			Assert.AreEqual (addressA, dr [0], "#A1");
+			Assert.AreSame (personA, dr [1], "#A2");
+
+			dr = dt.Rows [1];
+			Assert.AreEqual (addressB, dr [0], "#B1");
+			Assert.AreSame (personB, dr [1], "#B2");
+
+			dr = dt.Rows [0];
+			dr [0] = addressC;
+			Assert.AreEqual (addressC, dr [0], "#C1");
+			Assert.AreSame (personA, dr [1], "#C2");
+
+			dr = dt.Rows [1];
+			dr [1] = personC;
+			Assert.AreEqual (addressB, dr [0], "#D1");
+			Assert.AreSame (personC, dr [1], "#D2");
+		}
+
+		[Test] // Object this [Int32]
+		[NUnit.Framework.Category ("NotWorking")]
+		public void Indexer2_Value_Null ()
+		{
+			DataTable dt = new DataTable ();
+			DataColumn dc0 = new DataColumn ("Col0", typeof (Address));
+			dt.Columns.Add (dc0);
+			DataColumn dc1 = new DataColumn ("Col1", typeof (Person));
+			dt.Columns.Add (dc1);
+
+			Person personA = new Person ("Miguel");
+			Address addressA = new Address ("X", 5);
+			Person personB = new Person ("Chris");
+			Address addressB = new Address ("Y", 4);
+			Person personC = new Person ("Jackson");
+			Address addressC = new Address ("Z", 3);
+
+			dt.Rows.Add (new object [] { addressA, personA });
+			dt.Rows.Add (new object [] { addressB, personB });
+
+			DataRow dr = dt.Rows [0];
+
+			try {
+				dr [0] = null;
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Cannot set Column 'Col0' to be null.
+				// Please use DBNull instead
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf ("Col0") != -1, "#A5");
+				Assert.IsTrue (ex.Message.IndexOf ("DBNull") != -1, "#A6");
+			}
+
+			Assert.AreEqual (addressA, dr [0], "#B1");
+			Assert.IsFalse (dr.IsNull (0), "#B2");
+			Assert.AreSame (personA, dr [1], "#B3");
+			Assert.IsFalse (dr.IsNull (1), "#B4");
+
+#if NET_2_0
+			dr [1] = null;
+#else
+			try {
+				dr [1] = null;
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Cannot set Column 'Col1' to be null.
+				// Please use DBNull instead
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("Col1") != -1, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf ("DBNull") != -1, "#B6");
+			}
+			dr [1] = DBNull.Value;
+#endif
+
+			Assert.AreEqual (addressA, dr [0], "#C1");
+			Assert.IsFalse (dr.IsNull (0), "#C2");
+			Assert.AreSame (DBNull.Value, dr [1], "#C3");
+			Assert.IsTrue (dr.IsNull (1), "#C4");
+
+			dr [0] = DBNull.Value;
+
+			Assert.AreSame (DBNull.Value, dr [0], "#D1");
+			Assert.IsTrue (dr.IsNull (0), "#D2");
+			Assert.AreSame (DBNull.Value, dr [1], "#D3");
+			Assert.IsTrue (dr.IsNull (1), "#D4");
+
+			dr [1] = personC;
+			Assert.AreSame (DBNull.Value, dr [0], "#E1");
+			Assert.IsTrue (dr.IsNull (0), "#E2");
+			Assert.AreEqual (personC, dr [1], "#E3");
+			Assert.IsFalse (dr.IsNull (1), "#E4");
+
+			dr [1] = DBNull.Value;
+
+			Assert.AreSame (DBNull.Value, dr [0], "#F1");
+			Assert.IsTrue (dr.IsNull (0), "#F2");
+			Assert.AreSame (DBNull.Value, dr [1], "#F3");
+			Assert.IsTrue (dr.IsNull (1), "#F4");
+		}
+
+		[Test] // Object this [String]
+		public void Indexer3 ()
+		{
+			DataTable dt = new DataTable ();
+			DataColumn dc0 = new DataColumn ("Col0", typeof (Address));
+			dt.Columns.Add (dc0);
+			DataColumn dc1 = new DataColumn ("Col1", typeof (Person));
+			dt.Columns.Add (dc1);
+
+			Person personA = new Person ("Miguel");
+			Address addressA = new Address ("X", 5);
+			Person personB = new Person ("Chris");
+			Address addressB = new Address ("Y", 4);
+			Person personC = new Person ("Jackson");
+			Address addressC = new Address ("Z", 3);
+
+			dt.Rows.Add (new object [] { addressA, personA });
+			dt.Rows.Add (new object [] { addressB, personB });
+			DataRow dr;
+
+			dr = dt.Rows [0];
+			Assert.AreEqual (addressA, dr ["Col0"], "#A1");
+			Assert.AreSame (personA, dr ["Col1"], "#A2");
+
+			dr = dt.Rows [1];
+			Assert.AreEqual (addressB, dr ["Col0"], "#B1");
+			Assert.AreSame (personB, dr ["Col1"], "#B2");
+
+			dr = dt.Rows [0];
+			dr ["Col0"] = addressC;
+			Assert.AreEqual (addressC, dr ["Col0"], "#C1");
+			Assert.AreSame (personA, dr ["Col1"], "#C2");
+
+			dr = dt.Rows [1];
+			dr ["Col1"] = personC;
+			Assert.AreEqual (addressB, dr ["Col0"], "#D1");
+			Assert.AreSame (personC, dr ["Col1"], "#D2");
+		}
+
+		[Test] // Object this [String]
+		public void Indexer3_ColumnName_Empty ()
+		{
+			DataTable dt = new DataTable ("Persons");
+			DataColumn dc0 = new DataColumn ("Col0", typeof (Address));
+			dt.Columns.Add (dc0);
+			DataColumn dc1 = new DataColumn (string.Empty, typeof (Person));
+			dt.Columns.Add (dc1);
+
+			Person personA = new Person ("Miguel");
+			Address addressA = new Address ("X", 5);
+			Person personB = new Person ("Chris");
+
+			dt.Rows.Add (new object [] { addressA, personA });
+
+			DataRow dr = dt.Rows [0];
+
+			try {
+				object value = dr [string.Empty];
+				Assert.Fail ("#A1:" + value);
+			} catch (ArgumentException ex) {
+				//  Column '' does not belong to table Persons
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf ("''") != -1, "#A5");
+				Assert.IsTrue (ex.Message.IndexOf ("Persons") != -1, "#A6");
+				Assert.IsNull (ex.ParamName, "#A7");
+			}
+
+			try {
+				dr [string.Empty] = personB;
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Column '' does not belong to table Persons
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("''") != -1, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf ("Persons") != -1, "#B6");
+				Assert.IsNull (ex.ParamName, "#B7");
+			}
+		}
+
+		[Test] // Object this [String]
+		[NUnit.Framework.Category ("NotWorking")]
+		public void Indexer3_ColumnName_Null ()
+		{
+			DataTable dt = new DataTable ();
+			DataColumn dc0 = new DataColumn ("Col0", typeof (Address));
+			dt.Columns.Add (dc0);
+			DataColumn dc1 = new DataColumn ("Col1", typeof (Person));
+			dt.Columns.Add (dc1);
+
+			Person personA = new Person ("Miguel");
+			Address addressA = new Address ("X", 5);
+			Person personB = new Person ("Chris");
+
+			dt.Rows.Add (new object [] { addressA, personA });
+
+			DataRow dr = dt.Rows [0];
+
+			try {
+				object value = dr [(string) null];
+				Assert.Fail ("#A1:" + value);
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+#if NET_2_0
+				Assert.AreEqual ("name", ex.ParamName, "#A5");
+#else
+				Assert.AreEqual ("key", ex.ParamName, "#A5");
+#endif
+				throw;
+			}
+
+			try {
+				dr [(string) null] = personB;
+				Assert.Fail ("#B1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+#if NET_2_0
+				Assert.AreEqual ("name", ex.ParamName, "#B5");
+#else
+				Assert.AreEqual ("key", ex.ParamName, "#B5");
+#endif
+			}
+		}
+
+		[Test] // Object this [String]
+		[NUnit.Framework.Category ("NotWorking")]
+		public void Indexer3_Value_Null ()
+		{
+			DataTable dt = new DataTable ();
+			DataColumn dc0 = new DataColumn ("Col0", typeof (Address));
+			dt.Columns.Add (dc0);
+			DataColumn dc1 = new DataColumn ("Col1", typeof (Person));
+			dt.Columns.Add (dc1);
+
+			Person personA = new Person ("Miguel");
+			Address addressA = new Address ("X", 5);
+			Person personB = new Person ("Chris");
+			Address addressB = new Address ("Y", 4);
+			Person personC = new Person ("Jackson");
+			Address addressC = new Address ("Z", 3);
+
+			dt.Rows.Add (new object [] { addressA, personA });
+			dt.Rows.Add (new object [] { addressB, personB });
+
+			DataRow dr = dt.Rows [0];
+
+			try {
+				dr ["Col0"] = null;
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Cannot set Column 'Col0' to be null.
+				// Please use DBNull instead
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf ("Col0") != -1, "#A5");
+				Assert.IsTrue (ex.Message.IndexOf ("DBNull") != -1, "#A6");
+			}
+
+			Assert.AreEqual (addressA, dr ["Col0"], "#B1");
+			Assert.IsFalse (dr.IsNull ("Col0"), "#B2");
+			Assert.AreSame (personA, dr ["Col1"], "#B3");
+			Assert.IsFalse (dr.IsNull ("Col1"), "#B4");
+
+#if NET_2_0
+			dr ["Col1"] = null;
+#else
+			try {
+				dr ["Col1"] = null;
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Cannot set Column 'Col1' to be null.
+				// Please use DBNull instead
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("Col1") != -1, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf ("DBNull") != -1, "#B6");
+			}
+			dr ["Col1"] = DBNull.Value;
+#endif
+
+			Assert.AreEqual (addressA, dr ["Col0"], "#C1");
+			Assert.IsFalse (dr.IsNull ("Col0"), "#C2");
+			Assert.AreSame (DBNull.Value, dr ["Col1"], "#C3");
+			Assert.IsTrue (dr.IsNull ("Col1"), "#C4");
+
+			dr ["Col0"] = DBNull.Value;
+
+			Assert.AreSame (DBNull.Value, dr ["Col0"], "#D1");
+			Assert.IsTrue (dr.IsNull ("Col0"), "#D2");
+			Assert.AreSame (DBNull.Value, dr ["Col1"], "#D3");
+			Assert.IsTrue (dr.IsNull ("Col1"), "#D4");
+
+			dr ["Col1"] = personC;
+			Assert.AreSame (DBNull.Value, dr ["Col0"], "#E1");
+			Assert.IsTrue (dr.IsNull ("Col0"), "#E2");
+			Assert.AreEqual (personC, dr ["Col1"], "#E3");
+			Assert.IsFalse (dr.IsNull ("Col1"), "#E4");
+
+			dr ["Col1"] = DBNull.Value;
+
+			Assert.AreSame (DBNull.Value, dr ["Col0"], "#F1");
+			Assert.IsTrue (dr.IsNull ("Col0"), "#F2");
+			Assert.AreSame (DBNull.Value, dr ["Col1"], "#F3");
+			Assert.IsTrue (dr.IsNull ("Col1"), "#F4");
+		}
+
 		[Test] public void IsNull_ByDataColumn()
 		{
 			DataTable dt = new DataTable(); 
@@ -1817,5 +2315,47 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("25", row["Total"] , "#2 Should not be emptry string");
 		}
 
+		class Person
+		{
+			public Person (string name)
+			{
+				this.Name = name;
+			}
+
+			public string Name;
+			public Address HomeAddress;
+		}
+
+		struct Address
+		{
+			public Address (string street, int houseNumber)
+			{
+				Street = street;
+				HouseNumber = houseNumber;
+			}
+
+			public override bool Equals (object o)
+			{
+				if (!(o is Address))
+					return false;
+
+				Address address = (Address) o;
+				if (address.HouseNumber != HouseNumber)
+					return false;
+				if (address.Street != Street)
+					return false;
+				return true;
+			}
+
+			public override int GetHashCode ()
+			{
+				if (Street == null)
+					return HouseNumber.GetHashCode ();
+				return (Street.GetHashCode () ^ HouseNumber.GetHashCode ());
+			}
+
+			public string Street;
+			public int HouseNumber;
+		}
 	}
 }

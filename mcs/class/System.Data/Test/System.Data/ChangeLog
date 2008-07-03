@@ -1,3 +1,7 @@
+2008-07-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataRowTest2.cs: Added indexer tests.
+
 2008-06-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TestMerge1.xml : new test file.

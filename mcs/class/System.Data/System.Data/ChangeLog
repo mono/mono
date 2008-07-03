@@ -1,3 +1,8 @@
+2008-07-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataRow.cs: Added missing null checks. Cosmetic changes to exception
+	messages.
+
 2008-07-03  Marek Habersack  <mhabersack@novell.com>
 
 	* DataRow.cs (this []): Use DBNull instead of throwing an exception

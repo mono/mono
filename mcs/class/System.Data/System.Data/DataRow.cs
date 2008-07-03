@@ -142,8 +142,8 @@ namespace System.Data {
 			set {
 				int columnIndex = _table.Columns.IndexOf (columnName);
 				if (columnIndex == -1) {
-					throw new ArgumentException ("The column " + columnName +
-								    " does not belong to the table : " + _table.TableName);
+					throw new ArgumentException ("The column '" + columnName +
+								    "' does not belong to the table : " + _table.TableName);
 				}
 				this[columnIndex] = value;
 			}
@@ -157,6 +157,8 @@ namespace System.Data {
 			get {
 				return this[column, DataRowVersion.Default];} 
 			set {
+				if (column == null)
+					throw new ArgumentNullException ("column");
 				int columnIndex = _table.Columns.IndexOf (column);
 				if (columnIndex == -1)
 					throw new ArgumentException ("The column does not belong to this table.");
@@ -203,8 +205,8 @@ namespace System.Data {
 			get {
 				int columnIndex = _table.Columns.IndexOf (columnName);
 				if (columnIndex == -1) {
-					throw new ArgumentException ("The column " + columnName +
-								     " does not belong to the table : " + _table.TableName);
+					throw new ArgumentException ("The column '" + columnName +
+								     "' does not belong to the table : " + _table.TableName);
 				}
 				return this[columnIndex, version];
 			}
@@ -215,6 +217,8 @@ namespace System.Data {
 		/// </summary>
 		public object this[DataColumn column, DataRowVersion version] {
 			get {
+				if (column == null)
+					throw new ArgumentNullException ("column");
 				if (column.Table != Table)
 					throw new ArgumentException ("The column does not belong to this table.");
 				int columnIndex = column.Ordinal;
