@@ -334,16 +334,15 @@ namespace System
 			for (int i = 0; i < p.Length; ++i) {
 				if (i > 0)
 					sb.Append (", ");
-				string paramName = (p [i].Name == null) ? String.Empty : (" " + p [i].Name);
 				Type pt = p[i].ParameterType;
 				if (pt.IsClass && pt.Namespace != String.Empty) {
 					sb.Append (pt.Namespace);
 					sb.Append (".");
-					sb.Append (pt.Name);
-					sb.Append (paramName);
-				} else {
-					sb.Append (pt.Name);
-					sb.Append (paramName);
+				}
+				sb.Append (pt.Name);
+				if (p [i].Name != null) {
+					sb.Append (" ");
+					sb.Append (p [i].Name);
 				}
 			}
 			sb.Append (")");

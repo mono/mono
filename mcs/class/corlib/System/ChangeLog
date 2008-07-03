@@ -1,3 +1,8 @@
+2008-07-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Exception.cs (GetFullNameForStackTrace): Don't do string
+	concatenation.
+
 2008-06-30  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* ContextMarshalException.cs:
