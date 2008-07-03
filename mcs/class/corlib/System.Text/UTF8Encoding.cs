@@ -1075,14 +1075,12 @@ Char.IsLetterOrDigit (pair);
 	}
 
 #if NET_2_0
-	[MonoTODO]
-	public override int GetByteCount (string s)
+	public override int GetByteCount (string chars)
 	{
 		// hmm, does this override make any sense?
-		return base.GetByteCount (s);
+		return base.GetByteCount (chars);
 	}
 
-	[MonoTODO]
 	[ComVisible (false)]
 	public override string GetString (byte [] bytes, int index, int count)
 	{

@@ -1,5 +1,9 @@
 2008-07-03  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
+	* UTF8Encoding.cs: Fix parameter names, Remove unfounded TODO
+
+2008-07-03  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
 	* UTF8Encoding.cs:
 	* UTF7Encoding.cs:
 	* UTF32Encoding.cs:
