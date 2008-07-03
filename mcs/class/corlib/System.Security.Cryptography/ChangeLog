@@ -1,5 +1,9 @@
 2008-07-03  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
+	* SHA1CryptoServiceProvider.cs: Fix parameter names
+
+2008-07-03  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
 	* SHA512Managed.cs:
 	* SHA384Managed.cs:
 	* SHA256Managed.cs:

@@ -340,10 +340,10 @@ namespace System.Security.Cryptography {
 			base.Dispose (disposing);
 		}
 
-		protected override void HashCore (byte[] rgb, int start, int size) 
+		protected override void HashCore (byte[] rgb, int ibStart, int cbSize) 
 		{
 			State = 1;
-			sha.HashCore (rgb, start, size);
+			sha.HashCore (rgb, ibStart, cbSize);
 		}
 
 		protected override byte[] HashFinal () 
