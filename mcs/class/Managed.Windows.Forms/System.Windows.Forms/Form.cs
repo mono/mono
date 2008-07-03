@@ -2129,7 +2129,7 @@ namespace System.Windows.Forms {
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected virtual void OnMenuComplete(EventArgs e) {
+		protected internal virtual void OnMenuComplete(EventArgs e) {
 			EventHandler eh = (EventHandler)(Events [MenuCompleteEvent]);
 			if (eh != null)
 				eh (this, e);

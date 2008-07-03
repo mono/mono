@@ -259,6 +259,15 @@ namespace System.Windows.Forms {
 			/* Perform click when is not a popup */
 			if (!item.IsPopup) {
 				DeselectItem (item);
+				
+				// Raise the form's MenuComplete event
+				if (TopMenu != null && TopMenu.Wnd != null) {
+					Form f = TopMenu.Wnd.FindForm ();
+					
+					if (f != null)
+						f.OnMenuComplete (EventArgs.Empty);	
+				}
+				
 				item.PerformClick ();
 			}
 		}

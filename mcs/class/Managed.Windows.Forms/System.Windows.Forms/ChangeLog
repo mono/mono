@@ -1,5 +1,11 @@
 2008-07-03  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Form.cs: Make OnMenuComplete internal so we can call it.
+	* MenuAPI.cs: Raise Form.MenuComplete when a menu item is clicked.
+	[Fixes bug #399321]
+
+2008-07-03  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TabControl.cs: Handle Up and Down keys when TabControl is in
 	vertical alignment.
 	[Fixes bug #399585]
