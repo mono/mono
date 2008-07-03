@@ -1,5 +1,8 @@
 2008-07-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (make_writable): Error out if this is called while running
+	with --aot-only.
+
 	* aot-compiler.c: Really fix the computation of method indexes.
 
 	* mini-amd64.c (mono_arch_get_delegate_invoke_impl): Remove the previous 
