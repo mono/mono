@@ -1,5 +1,9 @@
 2008-07-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h: Add some missing prototypes.
+
+	* ssa.c local-propagation.c debug-debuger.c: Fix warnings.
+
 	* driver.c (mono_jit_init_version): Correct the comments since the first
 	argument should be the name of the root domain, not a filename.
 
