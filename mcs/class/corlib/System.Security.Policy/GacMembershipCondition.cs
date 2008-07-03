@@ -1,5 +1,5 @@
 //
-// System.Security.Policy.GacMembershipCondition
+// System.Security.Policy.GacMembershipCondition.cs
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -72,14 +72,14 @@ namespace System.Security.Policy {
 			return (o is GacMembershipCondition);
 		}
 
-		public void FromXml (SecurityElement element)
+		public void FromXml (SecurityElement e)
 		{
-			FromXml (element, null);
+			FromXml (e, null);
 		}
 
-                public void FromXml (SecurityElement element, PolicyLevel level)
+                public void FromXml (SecurityElement e, PolicyLevel level)
                 {
-			MembershipConditionHelper.CheckSecurityElement (element, "element", version, version);
+			MembershipConditionHelper.CheckSecurityElement (e, "e", version, version);
 			// PolicyLevel isn't used as there's no need to resolve NamedPermissionSet references
 		}
 

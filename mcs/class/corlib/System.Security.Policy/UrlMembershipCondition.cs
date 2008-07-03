@@ -132,16 +132,16 @@ namespace System.Security.Policy {
 			return (String.Compare (u, 0, umc.Url, 0, length, true, CultureInfo.InvariantCulture) == 0);
 		}
 
-                public void FromXml (SecurityElement element)
+                public void FromXml (SecurityElement e)
                 {
-                        FromXml (element, null);
+                        FromXml (e, null);
                 }
 
-		public void FromXml (SecurityElement element, PolicyLevel level)
+		public void FromXml (SecurityElement e, PolicyLevel level)
 		{
-			MembershipConditionHelper.CheckSecurityElement (element, "element", version, version);
+			MembershipConditionHelper.CheckSecurityElement (e, "e", version, version);
 			
-			string u = element.Attribute ("Url");
+			string u = e.Attribute ("Url");
 #if NET_2_0
 			if (u != null) {
 				CheckUrl (u);

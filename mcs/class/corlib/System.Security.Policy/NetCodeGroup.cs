@@ -1,5 +1,5 @@
 //
-// System.Security.Policy.NetCodeGroup
+// System.Security.Policy.NetCodeGroup.cs
 //
 // Authors:
 //	Jackson Harper (Jackson@LatitudeGeo.com)
@@ -49,8 +49,8 @@ namespace System.Security.Policy {
 		private int _hashcode;
 #endif
 
-		public NetCodeGroup (IMembershipCondition condition) 
-			: base (condition, null) 
+		public NetCodeGroup (IMembershipCondition membershipCondition) 
+			: base (membershipCondition, null) 
 		{
 		}
 

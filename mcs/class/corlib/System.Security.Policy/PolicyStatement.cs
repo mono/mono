@@ -1,5 +1,5 @@
 //
-// System.Security.Policy.PolicyStatement
+// System.Security.Policy.PolicyStatement.cs
 //
 // Authors:
 //	Dan Lewis (dihlewis@yahoo.co.uk)
@@ -42,18 +42,18 @@ namespace System.Security.Policy {
 		private PermissionSet perms;
 		private PolicyStatementAttribute attrs;
 
-		public PolicyStatement (PermissionSet perms) :
-			this (perms, PolicyStatementAttribute.Nothing)
+		public PolicyStatement (PermissionSet permSet) :
+			this (permSet, PolicyStatementAttribute.Nothing)
 		{
 		}
 
-		public PolicyStatement (PermissionSet perms, PolicyStatementAttribute attrs) 
+		public PolicyStatement (PermissionSet permSet, PolicyStatementAttribute attributes) 
 		{
-			if (perms != null) {
-				this.perms = perms.Copy ();
+			if (permSet != null) {
+				this.perms = permSet.Copy ();
 				this.perms.SetReadOnly (true);
 			}
-			this.attrs = attrs;
+			this.attrs = attributes;
 		}
 		
 		public PermissionSet PermissionSet {
@@ -107,26 +107,26 @@ namespace System.Security.Policy {
 
 		// ISecurityEncodable
 
-		public void FromXml (SecurityElement e)
+		public void FromXml (SecurityElement et)
 		{
-			FromXml (e, null);
+			FromXml (et, null);
 		}
 
-		public void FromXml (SecurityElement e, PolicyLevel level)
+		public void FromXml (SecurityElement et, PolicyLevel level)
 		{
-			if (e == null)
-				throw new ArgumentNullException ("e");
-			if (e.Tag != "PolicyStatement")
+			if (et == null)
+				throw new ArgumentNullException ("et");
+			if (et.Tag != "PolicyStatement")
 				throw new ArgumentException (Locale.GetText ("Invalid tag."));
 
 
-			string attributes = e.Attribute ("Attributes");
+			string attributes = et.Attribute ("Attributes");
 			if (attributes != null) {
 				attrs = (PolicyStatementAttribute) Enum.Parse (
 					typeof (PolicyStatementAttribute), attributes);
 			}
 
-			SecurityElement permissions = e.SearchForChildByTag ("PermissionSet");
+			SecurityElement permissions = et.SearchForChildByTag ("PermissionSet");
 			PermissionSet.FromXml (permissions);
 		}
 		

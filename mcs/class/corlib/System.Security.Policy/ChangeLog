@@ -1,3 +1,16 @@
+2008-07-03  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* ZoneMembershipCondition.cs:
+	* UrlMembershipCondition.cs:
+	* UnionCodeGroup.cs:
+	* PolicyStatement.cs:
+	* PolicyException.cs:
+	* PermissionRequestEvidence.cs:
+	* NetCodeGroup.cs:
+	* HashMembershipCondition.cs:
+	* GacMembershipCondition.cs:
+	* ApplicationDirectory.cs: Fix parameter names
+
 2008-05-30  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* ApplicationSecurityManager.cs: Provide better MonoTODO messages 

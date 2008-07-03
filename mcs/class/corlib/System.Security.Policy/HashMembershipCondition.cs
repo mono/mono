@@ -1,5 +1,5 @@
 //
-// System.Security.Policy.HashMembershipCondition
+// System.Security.Policy.HashMembershipCondition.cs
 //
 // Authors:
 //	Jackson Harper (Jackson@LatitudeGeo.com)
@@ -56,15 +56,15 @@ namespace System.Security.Policy {
 		{
 		}
 
-		public HashMembershipCondition (HashAlgorithm hash_algorithm, byte[] hash_value)
+		public HashMembershipCondition (HashAlgorithm hashAlg, byte[] value)
 		{
-			if (hash_algorithm == null)
-				throw new ArgumentNullException ("hash_algorithm");
-			if (hash_value == null)
-				throw new ArgumentNullException ("hash_value");
+			if (hashAlg == null)
+				throw new ArgumentNullException ("hashAlg");
+			if (value == null)
+				throw new ArgumentNullException ("value");
 				
-			this.hash_algorithm = hash_algorithm;
-			this.hash_value = (byte[]) hash_value.Clone ();
+			this.hash_algorithm = hashAlg;
+			this.hash_value = (byte[]) value.Clone ();
 		}
 
 		//
@@ -146,9 +146,9 @@ namespace System.Security.Policy {
 			return se;
 		}
 
-		public void FromXml (SecurityElement element)
+		public void FromXml (SecurityElement e)
 		{
-			FromXml (element, null);
+			FromXml (e, null);
 		}
 		
 		public void FromXml (SecurityElement e, PolicyLevel level)

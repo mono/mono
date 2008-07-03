@@ -40,10 +40,10 @@ namespace System.Security.Policy {
 
 		private PermissionSet requested, optional, denied;
 
-		public PermissionRequestEvidence (PermissionSet requested, PermissionSet optional, PermissionSet denied) 
+		public PermissionRequestEvidence (PermissionSet request, PermissionSet optional, PermissionSet denied) 
 		{
-			if (requested != null)
-				this.requested = new PermissionSet (requested);
+			if (request != null)
+				this.requested = new PermissionSet (request);
 			if (optional != null)
 				this.optional = new PermissionSet (optional);
 			if (denied != null)

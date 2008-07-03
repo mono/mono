@@ -100,16 +100,16 @@ namespace System.Security.Policy {
 			return (zmc.SecurityZone == zone);
 		}
 
-                public void FromXml (SecurityElement element)
+                public void FromXml (SecurityElement e)
                 {
-                        FromXml (element, null);
+                        FromXml (e, null);
                 }
 
-		public void FromXml (SecurityElement element, PolicyLevel level)
+		public void FromXml (SecurityElement e, PolicyLevel level)
 		{
-			MembershipConditionHelper.CheckSecurityElement (element, "element", version, version);
+			MembershipConditionHelper.CheckSecurityElement (e, "e", version, version);
 
-			string z = element.Attribute ("Zone");
+			string z = e.Attribute ("Zone");
 			if (z != null) {
 				zone = (SecurityZone) Enum.Parse (typeof (SecurityZone), z);
 			}

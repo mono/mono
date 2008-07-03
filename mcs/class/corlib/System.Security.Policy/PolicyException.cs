@@ -1,5 +1,5 @@
 //	
-// System.PolicyException.cs
+// System.Security.Policy.PolicyException.cs
 //
 // Author:
 //	Duncan Mak (duncan@ximian.com)
@@ -56,8 +56,8 @@ namespace System.Security.Policy {
 		{
 		}
 
-		public PolicyException (string message, Exception innerException)
-			:base (message, innerException)
+		public PolicyException (string message, Exception exception)
+			:base (message, exception)
 		{
 		}
 	}

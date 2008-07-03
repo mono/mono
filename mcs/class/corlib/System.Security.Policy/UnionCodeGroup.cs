@@ -40,8 +40,8 @@ namespace System.Security.Policy {
 #endif
 	public sealed class UnionCodeGroup : CodeGroup {
 
-		public UnionCodeGroup (IMembershipCondition membershipCondition, PolicyStatement policyStatement)
-			: base (membershipCondition, policyStatement)
+		public UnionCodeGroup (IMembershipCondition membershipCondition, PolicyStatement policy)
+			: base (membershipCondition, policy)
 		{
 		}
 

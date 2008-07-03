@@ -1,5 +1,5 @@
 //
-// System.Security.Policy.ApplicationDirectory
+// System.Security.Policy.ApplicationDirectory.cs
 //
 // Authors:
 //	Jackson Harper (Jackson@LatitudeGeo.com)
@@ -112,9 +112,9 @@ namespace System.Security.Policy {
 			return new ApplicationDirectory (this.Directory);
 		}
 		
-		public override bool Equals (object other)
+		public override bool Equals (object o)
 		{
-			ApplicationDirectory compare = (other as ApplicationDirectory);
+			ApplicationDirectory compare = (o as ApplicationDirectory);
 			if (compare != null) {
 				// MS "by design" behaviour (see FDBK14362)
 				ThrowOnInvalid (compare.directory);
