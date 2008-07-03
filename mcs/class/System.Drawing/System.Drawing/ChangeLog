@@ -1,3 +1,8 @@
+2008-07-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Image.cs: throw NotImplementedException in SetPropertyItem
+	instead of executing broken code. See #406307 for test case.
+
 2008-06-27  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* SizeConverter.cs: Fallback to CultureInfo.CurrentCulture 

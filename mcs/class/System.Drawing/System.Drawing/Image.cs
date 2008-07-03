@@ -528,6 +528,8 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	public void SetPropertyItem(PropertyItem propitem)
 	{
+		throw new NotImplementedException ();
+/*
 		GdipPropertyItem pi = new GdipPropertyItem ();
 		GdipPropertyItem.MarshalTo (pi, propitem);
 		unsafe {
@@ -535,8 +537,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			
 			GDIPlus.CheckStatus (status);
 		}
-		// FIXME: GdipSetPropertyItem isn't implemented in libgdiplus (but returns Ok)
-		// so who's freeing "property" ? GDI+ ?
+*/
 	}
 
 	// properties	
