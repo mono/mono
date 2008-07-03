@@ -436,12 +436,7 @@ namespace System.Windows.Forms
 		[RefreshProperties(RefreshProperties.Repaint)]
 		[MWFDescription("Scroll amount when clicking in the scroll area"), MWFCategory("Behaviour")]
 		public int LargeChange {
-			get {
-				if (large_change > maximum)
-					return (maximum + 1);
-				else
-					return large_change;
-			}
+			get { return Math.Min (large_change, maximum - minimum + 1); }
 			set {
 				if (value < 0)
 #if NET_2_0
@@ -1255,7 +1250,7 @@ namespace System.Windows.Forms
 		private void SetEndPosition ()
 		{
 			ScrollEventArgs event_args;
-    			int pos = Maximum - large_change + 1;
+    			int pos = Maximum - LargeChange + 1;
 
     			event_args = new ScrollEventArgs (ScrollEventType.Last, pos);
     			OnScroll (event_args);
@@ -1287,7 +1282,7 @@ namespace System.Windows.Forms
     		private void SmallIncrement ()
     		{
     			ScrollEventArgs event_args;
-    			int pos = Math.Min (Maximum - large_change + 1, position + SmallChange);
+    			int pos = Math.Min (Maximum - LargeChange + 1, position + SmallChange);
 
     			event_args = new ScrollEventArgs (ScrollEventType.SmallIncrement, pos);
     			OnScroll (event_args);
@@ -1351,8 +1346,8 @@ namespace System.Windows.Forms
     			if (newPos < minimum)
     				pos = minimum;
     			else
-    				if (newPos > maximum + 1 - large_change)
-    					pos = maximum + 1 - large_change;
+    				if (newPos > maximum + 1 - LargeChange)
+    					pos = maximum + 1 - LargeChange;
 				else
 					pos = newPos;
 

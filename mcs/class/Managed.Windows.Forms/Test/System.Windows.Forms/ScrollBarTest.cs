@@ -494,6 +494,29 @@ public class MyScrollBar : HScrollBar
 			Assert.AreEqual (5, s.LargeChange, "A7");
 			Assert.AreEqual (5, s.SmallChange, "A8");
 		}
+		
+		[Test]
+		public void CalculateLargeChange ()
+		{
+			ScrollBar s = new HScrollBar ();
+
+			s.Minimum = -50;
+			s.Maximum = 50;
+			s.LargeChange = 1000;
+
+			Assert.AreEqual (101, s.LargeChange, "A1");
+
+			s.Maximum = 200;
+			s.Minimum = 199;
+			s.LargeChange = 1000;
+
+			Assert.AreEqual (2, s.LargeChange, "A2");
+
+			s.Minimum = 200;
+			s.LargeChange = 1000;
+
+			Assert.AreEqual (1, s.LargeChange, "A3");
+		}
     }
 
    [TestFixture]

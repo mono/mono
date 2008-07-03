@@ -1,3 +1,7 @@
+2008-07-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ScrollBarTest.cs: Add test for bug #403122.
+
 2008-06-20  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PaddingConverterTest.cs: Add tests for bugs #396076 and #396078

@@ -1,5 +1,13 @@
 2008-07-03  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ScrollBar.cs: Change the LargeChange calculation to be correct.
+	Ensure we are using LargeChange instead of large_change so we our
+	calculations are correct.
+	[Fixes bug #403122]
+
+
+2008-07-03  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TableLayoutPanel.cs: When we change to a serialized TableLayoutSettings,
 	we need to ensure the ColumnCount/RowCount gets set.
 	[Fixes bug #404851]
