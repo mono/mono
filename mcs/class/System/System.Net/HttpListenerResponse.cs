@@ -149,9 +149,6 @@ namespace System.Net {
 
 		public Stream OutputStream {
 			get {
-				if (disposed)
-					throw new ObjectDisposedException (GetType ().ToString ());
-
 				if (output_stream == null)
 					output_stream = context.Connection.GetResponseStream ();
 				return output_stream;

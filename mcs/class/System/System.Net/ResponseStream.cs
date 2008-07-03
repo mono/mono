@@ -84,6 +84,7 @@ namespace System.Net {
 					WriteChunkSize (0, true);
 					trailer_sent = true;
 				}
+				response.Close ();
 			}
 		}
 
