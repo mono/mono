@@ -214,7 +214,7 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (UpdateRowSource.Both, cmd.UpdatedRowSource, "#C13");
 		}
 
-		[Test] // bug #81710
+		[Test] // bug #324386
 		public void Dispose ()
 		{
 			string connectionString = "Initial Catalog=a;Server=b;User ID=c;"
@@ -239,13 +239,13 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (string.Empty, cmd.CommandText, "#4");
 		}
 
-#if NET_2_0		
+#if NET_2_0
 		[Test] // bug #381100
 		public void ParameterCollectionTest ()
 		{
 			SqlCommand cmd = new SqlCommand();
 			cmd.Parameters.AddRange(new SqlParameter[] { });
 		}
-#endif		
+#endif
 	}
 }

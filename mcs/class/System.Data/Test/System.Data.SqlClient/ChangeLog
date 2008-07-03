@@ -1,3 +1,7 @@
+2008-07-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlCommandTest.cs: Removed extra tabs. Update bug number.
+
 2008-04-19  Robert Jordan  <robertj@gmx.net>
 
 	* SqlCommandTest.cs: Add test case for bug #381100.
