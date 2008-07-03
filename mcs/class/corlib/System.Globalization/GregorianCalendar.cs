@@ -1,4 +1,4 @@
-// GregorianCalendar.cs
+// System.Globalization.GregorianCalendar.cs
 //
 // (C) Ulrich Kunitz 2002
 //
@@ -350,9 +350,9 @@ public class GregorianCalendar : Calendar {
 
 #if NET_2_0
 	[ComVisible (false)]
-	public override int GetWeekOfYear (DateTime date, CalendarWeekRule rule, DayOfWeek firstDayOfWeek)
+	public override int GetWeekOfYear (DateTime time, CalendarWeekRule rule, DayOfWeek firstDayOfWeek)
 	{
-		return base.GetWeekOfYear (date, rule, firstDayOfWeek);
+		return base.GetWeekOfYear (time, rule, firstDayOfWeek);
 	}
 #endif
 
@@ -471,14 +471,14 @@ public class GregorianCalendar : Calendar {
 	/// is out of range.
 	/// </exception>
 	public override DateTime ToDateTime(int year, int month, int day,
-		int hour, int minute, int second, int milliseconds,
+		int hour, int minute, int second, int millisecond,
 		int era)
 	{
 		M_CheckYMDE(year, month, day, ref era);
-		M_CheckHMSM(hour, minute, second, milliseconds);
+		M_CheckHMSM(hour, minute, second, millisecond);
 		return CCGregorianCalendar.ToDateTime(
 			year, month, day,
-			hour, minute, second, milliseconds);
+			hour, minute, second, millisecond);
 	}
 
 	public override int ToFourDigitYear(int year)

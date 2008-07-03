@@ -1,4 +1,4 @@
-// Calendar.cs
+// System.Globalization.Calendar.cs
 //
 // (C) Ulrich Kunitz 2002
 //
@@ -188,11 +188,11 @@ public abstract class Calendar
 	}
 
 	[ComVisible (false)]
-	public static Calendar ReadOnly (Calendar source)
+	public static Calendar ReadOnly (Calendar calendar)
 	{
-		if (source.m_isReadOnly)
-			return source;
-		Calendar c = (Calendar) source.Clone ();
+		if (calendar.m_isReadOnly)
+			return calendar;
+		Calendar c = (Calendar) calendar.Clone ();
 		c.m_isReadOnly = true;
 		return c;
 	}
@@ -890,10 +890,10 @@ public abstract class Calendar
 	/// is out of range.
 	/// </exception>
 	public virtual DateTime ToDateTime(int year, int month, int day,
-		int hour, int minute, int second, int milliseconds)
+		int hour, int minute, int second, int millisecond)
 	{
-		return ToDateTime(year, month, day, hour, minute, second, 
-			milliseconds, CurrentEra);
+		return ToDateTime (year, month, day, hour, minute, second, 
+			millisecond, CurrentEra);
 	}
 
 
@@ -927,7 +927,7 @@ public abstract class Calendar
 	/// is out of range.
 	/// </exception>
 	public abstract DateTime ToDateTime(int year, int month, int day,
-		int hour, int minute, int second, int milliseconds,
+		int hour, int minute, int second, int millisecond,
 		int era);
 
 	/// <summary>

@@ -1,4 +1,4 @@
-// HijriCalendar.cs
+// System.Globalization.HijriCalendar.cs
 //
 // (C) Ulrich Kunitz 2002
 //
@@ -926,14 +926,14 @@ public class HijriCalendar : Calendar {
 	/// is out of range.
 	/// </exception>
 	public override DateTime ToDateTime(int year, int month, int day,
-		int hour, int minute, int second, int milliseconds,
+		int hour, int minute, int second, int millisecond,
 		int era)
 	{
 		M_CheckYMDE(year, month, day, ref era);
-		M_CheckHMSM(hour, minute, second, milliseconds);
+		M_CheckHMSM(hour, minute, second, millisecond);
 		int rd = CCHijriCalendar.fixed_from_dmy(day, month, year);
 		return M_ToDateTime(rd,
-			hour, minute, second, milliseconds);
+			hour, minute, second, millisecond);
 	}
 
 	public override int ToFourDigitYear(int year)

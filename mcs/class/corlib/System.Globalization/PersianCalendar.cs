@@ -1,5 +1,5 @@
 //
-// PersianCalendar.cs: Implements the Persian calendar
+// System.Globalization.PersianCalendar.cs
 //
 // Authors:
 //   Roozbeh Pournader (roozbeh@farsiweb.info)
@@ -677,14 +677,14 @@ public class PersianCalendar : Calendar {
 	/// </exception>
 	public override DateTime ToDateTime(int year, int month, int day,
 		                            int hour, int minute,
-		                            int second, int milliseconds,
+		                            int second, int millisecond,
 	                                    int era)
 	{
 		M_CheckYMDE(year, month, day, ref era);
-		M_CheckHMSM(hour, minute, second, milliseconds);
+		M_CheckHMSM(hour, minute, second, millisecond);
 		int rd = fixed_from_dmy(day, month, year);
 		return CCFixed.ToDateTime(rd,
-			hour, minute, second, milliseconds);
+			hour, minute, second, millisecond);
 	}
 
 	// FIXME: Calendar.cs and HebrewCalendar.cs are different in

@@ -1,5 +1,5 @@
 //
-// EastAsianLunisolarCalendar.cs
+// System.Globalization.EastAsianLunisolarCalendar.cs
 //
 // Author
 //	Ulrich Kunitz 2002
@@ -193,14 +193,14 @@ public abstract class EastAsianLunisolarCalendar : Calendar {
 
 	[MonoTODO]
 	public override DateTime ToDateTime(int year, int month, int day,
-		int hour, int minute, int second, int milliseconds,
+		int hour, int minute, int second, int millisecond,
 		int era)
 	{
 		int gregorianYear = M_CheckYMDEG(year, month, day, ref era);
-		M_CheckHMSM(hour, minute, second, milliseconds);
+		M_CheckHMSM(hour, minute, second, millisecond);
 		return CCGregorianCalendar.ToDateTime(
 			gregorianYear, month, day,
-			hour, minute, second, milliseconds);
+			hour, minute, second, millisecond);
 	}
 
 	[MonoTODO]

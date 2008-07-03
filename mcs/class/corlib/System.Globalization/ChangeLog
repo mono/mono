@@ -1,3 +1,18 @@
+2008-07-03  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* UmAlQuraCalendar.cs:
+	* ThaiBuddhistCalendar.cs
+	* TaiwanCalendar.cs:
+	* PersianCalendar.cs:
+	* KoreanCalendar.cs:
+	* JulianCalendar.cs:
+	* JapaneseCalendar.cs:
+	* HijriCalendar.cs:
+	* HebrewCalendar.cs:
+	* GregorianCalendar.cs:
+	* EastAsianLunisolarCalendar.cs:
+	* Calendar.cs: Fix parameter names
+
 2008-06-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* CompareInfo.cs: Add a cache of SimpleCollator objects.

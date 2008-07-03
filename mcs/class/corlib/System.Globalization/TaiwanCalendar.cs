@@ -1,4 +1,4 @@
-// TaiwanCalendar.cs
+// System.Globalization.TaiwanCalendar.cs
 //
 // (C) Ulrich Kunitz 2002
 //
@@ -424,9 +424,9 @@ public class TaiwanCalendar : Calendar {
 
 #if NET_2_0
 	[ComVisible (false)]
-	public override int GetWeekOfYear (DateTime date, CalendarWeekRule rule, DayOfWeek firstDayOfWeek)
+	public override int GetWeekOfYear (DateTime time, CalendarWeekRule rule, DayOfWeek firstDayOfWeek)
 	{
-		return base.GetWeekOfYear (date, rule, firstDayOfWeek);
+		return base.GetWeekOfYear (time, rule, firstDayOfWeek);
 	}
 #endif
 
@@ -553,14 +553,14 @@ public class TaiwanCalendar : Calendar {
 	/// is out of range.
 	/// </exception>
 	public override DateTime ToDateTime(int year, int month, int day,
-		int hour, int minute, int second, int milliseconds,
+		int hour, int minute, int second, int millisecond,
 		int era)
 	{
 		int gregorianYear = M_CheckYMDEG(year, month, day, ref era);
-		M_CheckHMSM(hour, minute, second, milliseconds);
+		M_CheckHMSM(hour, minute, second, millisecond);
 		return CCGregorianCalendar.ToDateTime(
 			gregorianYear, month, day,
-			hour, minute, second, milliseconds);
+			hour, minute, second, millisecond);
 	}
 
 	/// <summary>

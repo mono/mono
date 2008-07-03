@@ -1,4 +1,4 @@
-// HebrewCalendar.cs
+// System.Globalization.HebrewCalendar.cs
 //
 // (C) Ulrich Kunitz 2002
 //
@@ -679,15 +679,15 @@ public class HebrewCalendar : Calendar {
 	/// is out of range.
 	/// </exception>
 	public override DateTime ToDateTime(int year, int month, int day,
-		int hour, int minute, int second, int milliseconds,
+		int hour, int minute, int second, int millisecond,
 		int era)
 	{
 		M_CheckYMDE(year, month, day, ref era);
-		M_CheckHMSM(hour, minute, second, milliseconds);
+		M_CheckHMSM(hour, minute, second, millisecond);
 		int ccm = M_CCMonth(month, year);
 		int rd = CCHebrewCalendar.fixed_from_dmy(day, ccm, year);
 		return CCFixed.ToDateTime(rd,
-			hour, minute, second, milliseconds);
+			hour, minute, second, millisecond);
 	}
 
 	public override int ToFourDigitYear (int year)
