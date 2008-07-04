@@ -1,5 +1,16 @@
 2008-07-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* ConstraintCollectionTest2.cs
+	* DataColumnTest2.cs
+	* DataRelationCollectionTest2.cs
+	* DataRowCollectionTest2.cs
+	* DataTableCollectionTest2.cs
+	* DataTableTest2.cs
+	* DataViewTest2.cs
+	* VersionNotFoundException.cs: Fixed line endings.
+
+2008-07-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* DataColumnCollectionTest.cs: Added test for Add (String) with null
 	and zero-length column name.
 	* DataColumnCollectionTest2.cs: Added/improved indexer tests.
