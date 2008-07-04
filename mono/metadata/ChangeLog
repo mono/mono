@@ -1,5 +1,11 @@
 2008-07-04  Mark Probst  <mark.probst@gmail.com>
 
+	* class-internals.h, class.c: Added new generic sharing option:
+	Share only stuff in System.Collections.Generic, which is now the
+	default.
+
+2008-07-04  Mark Probst  <mark.probst@gmail.com>
+
 	* generic-sharing.c, class-internals.h: New function for getting a
 	generic method in a generic class given the corresponding method
 	for a different instantiation of the class.  Partly refactored

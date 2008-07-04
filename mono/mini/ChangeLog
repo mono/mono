@@ -1,3 +1,7 @@
+2008-07-04  Mark Probst  <mark.probst@gmail.com>
+
+	* driver.c: Turn on GSHARED optimization by default.
+
 2008-07-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c mini.c mini.h tramp-<ARCH>.c: Rename MONO_TRAMPOLINE_GENERIC
