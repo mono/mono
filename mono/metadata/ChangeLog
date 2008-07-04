@@ -1,5 +1,18 @@
 2008-07-04  Mark Probst  <mark.probst@gmail.com>
 
+	* generic-sharing.c, class-internals.h: New function for getting a
+	generic method in a generic class given the corresponding method
+	for a different instantiation of the class.  Partly refactored
+	from mini-trampolines.c.
+
+	* class.c: Make sure generic methods have a class_inst if they are
+	part of a generic class.
+
+	* metadata.c (mono_type_stack_size_internal): Handle type
+	variables.
+
+2008-07-04  Mark Probst  <mark.probst@gmail.com>
+
 	* domain-internals.h: New field (has_this) in MonoGenericJitInfo.
 	Signifies whether information on the this/vtable/mrgctx variable
 	is available.

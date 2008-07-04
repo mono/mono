@@ -1,5 +1,26 @@
 2008-07-04  Mark Probst  <mark.probst@gmail.com>
 
+	* inssel.brg, mini-ops.h: New opcode for doing CHECK_THIS in a
+	pass-through manner.
+
+	* mini.c: Generic method sharing.  Pass MRGCTX to generic methods
+	and don't fail sharing for them anymore.
+
+	* mini-exceptions.c: Handle exceptions in shared generic methods.
+
+	* generic-sharing.c: When checking the context of a generic
+	method, also check its class's context.  Don't treat wrappers as
+	sharable.
+
+	* mini-trampolines.c: Some code factored out to
+	metadata/generic-sharing.c.  Handle the MRGCTX case.
+
+	* jit-icalls.c, jit-icalls.h: ldvirtfn icall for generic sharing -
+	we must deal with the method being of another instantiation of the
+	class.  Add static rgctx invoke wrappers to generic methods.
+
+2008-07-04  Mark Probst  <mark.probst@gmail.com>
+
 	* mini.c: Provide all jit infos of generic shared methods with a
 	generic jit info.
 
