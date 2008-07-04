@@ -1,3 +1,7 @@
+2008-07-04  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* SortKey: Fix parameter names, add attribute, small formatting
+
 2008-06-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* CodePointIndexer.cs : Make TableRange a struct instead

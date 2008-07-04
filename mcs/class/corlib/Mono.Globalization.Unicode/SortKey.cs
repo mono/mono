@@ -1,5 +1,5 @@
 //
-// Sortkey.cs
+// System.Globalization.SortKey.cs
 //
 // Author:
 //	Atsushi Enomoto  <atsushi@ximian.com>
@@ -36,24 +36,27 @@ using System.Globalization;
 
 namespace System.Globalization
 {
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible (true)]
+#endif
 	[Serializable]
 	public class SortKey
 	{
 		#region Static members
-		public static int Compare (SortKey sk1, SortKey sk2)
+		public static int Compare (SortKey sortkey1, SortKey sortkey2)
 		{
-			if (sk1 == null)
-				throw new ArgumentNullException ("sk1");
-			if (sk2 == null)
-				throw new ArgumentNullException ("sk2");
+			if (sortkey1 == null)
+				throw new ArgumentNullException ("sortkey1");
+			if (sortkey2 == null)
+				throw new ArgumentNullException ("sortkey2");
 
-			if (Object.ReferenceEquals (sk1, sk2)
-				|| Object.ReferenceEquals (sk1.OriginalString,
-				sk2.OriginalString))
+			if (Object.ReferenceEquals (sortkey1, sortkey2)
+				|| Object.ReferenceEquals (sortkey1.OriginalString,
+				sortkey2.OriginalString))
 				return 0;
 
-			byte [] d1 = sk1.KeyData;
-			byte [] d2 = sk2.KeyData;
+			byte [] d1 = sortkey1.KeyData;
+			byte [] d2 = sortkey2.KeyData;
 
 			int len = d1.Length > d2.Length ? d2.Length : d1.Length;
 			for (int i = 0; i < len; i++)
@@ -100,15 +103,15 @@ namespace System.Globalization
 		public override bool Equals (object value)
 		{
 			SortKey other = (value as SortKey);
-			if(other!=null) {
-				if((this.lcid==other.lcid) &&
-				   (this.options==other.options) &&
-				   (Compare (this, other)==0)) {
-					return(true);
+			if (other != null) {
+				if ((this.lcid == other.lcid) &&
+				   (this.options == other.options) &&
+				   (Compare (this, other) == 0)) {
+					return true;
 				}
 			}
 
-			return(false);
+			return false;
 		}
 
 		public override int GetHashCode ()
@@ -124,7 +127,7 @@ namespace System.Globalization
 		// copy from original SortKey.cs
 		public override string ToString()
 		{
-			return("SortKey - "+lcid+", "+options+", "+source);
+			return "SortKey - " + lcid + ", " + options + ", " + source;
 		}
 	}
 }
