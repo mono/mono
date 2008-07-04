@@ -1,5 +1,10 @@
 2008-07-04  Rodrigo Kumpera  <rkumpera@n ovell.com>
 
+	* MethodBase.cs (GetMethodFromHandle): Fix a warning in
+	the 1.0 build.
+
+2008-07-04  Rodrigo Kumpera  <rkumpera@n ovell.com>
+
 	* MethodBase.cs (GetMethodFromHandle): Extract an internal version
 	of this function that doesn't perform the generic class check.
 	This method is required to fix the Delegate regression that fixing

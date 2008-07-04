@@ -57,8 +57,8 @@ namespace System.Reflection {
 
 		public static MethodBase GetMethodFromHandle(RuntimeMethodHandle handle) {
 			MethodBase res = GetMethodFromHandleNoGenericCheck (handle);
-			Type t = res.DeclaringType;
 #if NET_2_0
+			Type t = res.DeclaringType;
 			if (t.IsGenericType || t.IsGenericTypeDefinition)
 				throw new ArgumentException ("Cannot resolve method because it's declared in a generic class.");
 #endif
