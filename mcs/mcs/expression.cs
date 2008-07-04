@@ -4025,10 +4025,9 @@ namespace Mono.CSharp {
 		public abstract bool IsRef { get; }
 
 		//
-		// Variable IL data
+		// Variable IL data, it has to be protected to encapsulate hoisted variables
 		//
-		// FIXME: It has to be protected to encapsulate hoisted variables
-		public abstract ILocalVariable Variable { get; }
+		protected abstract ILocalVariable Variable { get; }
 		
 		//
 		// Variable flow-analysis data
@@ -4330,7 +4329,7 @@ namespace Mono.CSharp {
 			return Name == lvr.Name && Block == lvr.Block;
 		}
 
-		public override ILocalVariable Variable {
+		protected override ILocalVariable Variable {
 			get { return local_info; }
 		}
 
@@ -4395,7 +4394,7 @@ namespace Mono.CSharp {
 			get { return pi.VariableInfo; }
 		}
 
-		public override ILocalVariable Variable {
+		protected override ILocalVariable Variable {
 			get { return Parameter; }
 		}
 
@@ -6642,7 +6641,7 @@ namespace Mono.CSharp {
 			get { return is_struct; }
 		}
 
-		public override ILocalVariable Variable {
+		protected override ILocalVariable Variable {
 			get { return ThisVariable.Instance; }
 		}
 
@@ -9552,15 +9551,16 @@ namespace Mono.CSharp {
 			base.Emit (ec);
 
 			//
-			// If target is a value, let's use it
+			// If target is non-hoisted variable, let's use it
 			//
 			VariableReference variable = value_target as VariableReference;
-			if (variable != null) {
+			if (variable != null && variable.HoistedVariable == null) {
 				if (variable.IsRef)
 					StoreFromPtr (ec.ig, type);
 				else
-					variable.Variable.EmitAssign (ec);
+					variable.EmitAssign (ec, EmptyExpression.Null, false, false);
 			} else {
+				variable = null;
 				if (value_target == null || value_target_set)
 					value_target = new LocalTemporary (type);
 

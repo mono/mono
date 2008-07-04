@@ -5754,7 +5754,7 @@ namespace Mono.CSharp {
 			get { return false; }
 		}
 
-		public override ILocalVariable Variable {
+		protected override ILocalVariable Variable {
 			get { return li; }
 		}
 

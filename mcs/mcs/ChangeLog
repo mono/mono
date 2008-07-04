@@ -1,5 +1,10 @@
 2008-07-04  Marek Safar  <marek.safar@gmail.com>
 
+	* ecore.cs, expression.cs (VariableReference): Variable property is 
+	protected.
+
+2008-07-04  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs, convert.cs: Made OpcodeCast more memory efficient.
 	
 2008-07-04  Marek Safar  <marek.safar@gmail.com>
