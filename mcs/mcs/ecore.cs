@@ -2084,24 +2084,12 @@ namespace Mono.CSharp {
 	}
 	
 	public class OpcodeCast : TypeCast {
-		OpCode op, op2;
-		bool second_valid;
+		readonly OpCode op;
 		
 		public OpcodeCast (Expression child, Type return_type, OpCode op)
 			: base (child, return_type)
-			
 		{
 			this.op = op;
-			second_valid = false;
-		}
-
-		public OpcodeCast (Expression child, Type return_type, OpCode op, OpCode op2)
-			: base (child, return_type)
-			
-		{
-			this.op = op;
-			this.op2 = op2;
-			second_valid = true;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -2116,9 +2104,6 @@ namespace Mono.CSharp {
 		{
 			base.Emit (ec);
 			ec.ig.Emit (op);
-
-			if (second_valid)
-				ec.ig.Emit (op2);
 		}
 
 		public Type UnderlyingType {

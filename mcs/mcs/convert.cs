@@ -582,11 +582,9 @@ namespace Mono.CSharp {
 				if (real_target_type == TypeManager.uint64_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
 				if (real_target_type == TypeManager.double_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
-							       OpCodes.Conv_R8);
+					return new OpcodeCast (new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un), target_type, OpCodes.Conv_R8);
 				if (real_target_type == TypeManager.float_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
-							       OpCodes.Conv_R4);
+					return new OpcodeCast (new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un), target_type, OpCodes.Conv_R4);
 				if (real_target_type == TypeManager.decimal_type)
 					return new CastToDecimal (expr);
 			} else if (expr_type == TypeManager.int64_type){
@@ -604,11 +602,9 @@ namespace Mono.CSharp {
 				// From ulong to float, double
 				//
 				if (real_target_type == TypeManager.double_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
-							       OpCodes.Conv_R8);
+					return new OpcodeCast (new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un), target_type, OpCodes.Conv_R8);
 				if (real_target_type == TypeManager.float_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
-							       OpCodes.Conv_R4);
+					return new OpcodeCast (new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un), target_type, OpCodes.Conv_R4);
 				if (real_target_type == TypeManager.decimal_type)
 					return new CastToDecimal (expr);
 			} else if (expr_type == TypeManager.char_type){
