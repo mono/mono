@@ -1,5 +1,10 @@
 2008-07-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* DataRelationTest.cs
+	* MissingPrimaryKeyExceptionTest.cs: Fixed line endings.
+
+2008-07-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* ConstraintCollectionTest2.cs
 	* DataColumnTest2.cs
 	* DataRelationCollectionTest2.cs
