@@ -1,5 +1,8 @@
 2008-07-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c mini.c mini.h tramp-<ARCH>.c: Rename MONO_TRAMPOLINE_GENERIC
+	to MONO_TRAMPOLINE_JIT since it better reflects what it does.
+
 	* mini-trampolines.c (mono_get_aot_trampoline_code): New internal function to
 	create a variant of the generic trampoline code callable from AOTed trampolines.
 
