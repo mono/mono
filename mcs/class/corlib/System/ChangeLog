@@ -1,3 +1,8 @@
+2008-07-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Delegate.cs (get_Method): Use the internal version
+	of GetMethodFromHandle to avoid the generic class check.
+
 2008-07-04  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* GCCollectionMode.cs: Add attribute

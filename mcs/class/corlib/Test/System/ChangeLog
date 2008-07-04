@@ -1,3 +1,8 @@
+2008-07-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* DelegateTest.cs (GetMethodFromGenericClass): Test for a
+	regression the fix for #377324 introduced.
+
 2008-07-04  Marek Safar  <marek.safar@gmail.com>
 
 	* StringTest.cs: Removed NotWorking flags.

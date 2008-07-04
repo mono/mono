@@ -14,6 +14,14 @@ namespace MonoTests.System
 	public class DelegateTest
 	{
 #if NET_2_0
+		
+		public class GenericClass<T> {
+			public void Method<K> (T t, K k) {}
+		}
+
+		public delegate void SimpleDelegate(int a, double b);
+
+
 		[Test] //See bug #372406
 		public void CreateDelegate1_Method_Private_Instance ()
 		{
@@ -25,7 +33,19 @@ namespace MonoTests.System
 			D d = (D) dg;
 			d (c);
 		}
+
+		[Test] //Fixes a regression #377324
+		public void GetMethodFromGenericClass ()
+		{
+			GenericClass<int> gclass = new GenericClass<int>();
+			SimpleDelegate d = new SimpleDelegate (gclass.Method<double>);
+			MethodInfo method = d.Method;
+			MethodInfo target = typeof (GenericClass<int>).GetMethod ("Method").MakeGenericMethod(typeof(double));
+			Assert.IsNotNull (method, "#1");
+			Assert.AreEqual (target, method, "#2");
+		}
 #endif
+
 		[Test] // CreateDelegate (Type, MethodInfo)
 		public void CreateDelegate1_Method_Static ()
 		{

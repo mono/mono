@@ -96,8 +96,9 @@ namespace System
 				if (method_info != null) {
 					return method_info;
 				} else {
-					if (method != IntPtr.Zero)
-						method_info = (MethodInfo)MethodBase.GetMethodFromHandle (new RuntimeMethodHandle (method));
+					if (method != IntPtr.Zero) {
+						method_info = (MethodInfo)MethodBase.GetMethodFromHandleNoGenericCheck (new RuntimeMethodHandle (method));
+					}
 					return method_info;
 				}
 			}
