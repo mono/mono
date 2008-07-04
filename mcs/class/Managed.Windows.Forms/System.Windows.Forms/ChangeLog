@@ -1,3 +1,8 @@
+2008-07-04  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TreeView.cs: Add a null check when using CollapseAll on an
+	empty tree.  [Fixes bug #406449]
+
 2008-07-03  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Form.cs: Make OnMenuComplete internal so we can call it.

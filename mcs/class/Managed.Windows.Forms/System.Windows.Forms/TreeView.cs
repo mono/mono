@@ -780,6 +780,9 @@ namespace System.Windows.Forms {
 		{
 			TreeNode walk = TopNode;
 			
+			if (walk == null)
+				return;
+				
 			while (walk.parent != root_node)
 				walk = walk.parent;
 
