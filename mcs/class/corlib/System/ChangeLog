@@ -1,5 +1,10 @@
 2008-07-04  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* GCCollectionMode.cs: Add attribute
+	* GC.cs: Add semi-stubbed missing method, remove obsolete Lamespec, hide non-public method
+
+2008-07-04  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* Delegate.cs: Fix parameter names for 2.0 profile
 	* Int64.cs: Fix parameter names
 

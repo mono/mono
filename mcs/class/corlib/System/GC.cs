@@ -65,14 +65,18 @@ namespace System
 			InternalCollect (MaxGeneration);
 		}
 
-		// LAMESPEC: MS documentation says that it raises an error
-		// when the argument generation is greater than MaxGeneration,
-		// but it doesn't. (The documentation is fixed in 2.0.)
 		public static void Collect (int generation) {
 			if (generation < 0)
 				throw new ArgumentOutOfRangeException ("generation");
 			InternalCollect (generation);
 		}
+
+#if NET_2_0
+		[MonoTODO ("mode parameter ignored")]
+		public static void Collect (int generation, GCCollectionMode mode) {
+			Collect (generation);
+		}
+#endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static int GetGeneration (object obj);
@@ -112,7 +116,7 @@ namespace System
 		public extern static int CollectionCount (int generation);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static void RecordPressure (long diff);
+		private extern static void RecordPressure (long bytesAllocated);
 
 		public static void AddMemoryPressure (long bytesAllocated) {
 			RecordPressure (bytesAllocated);
