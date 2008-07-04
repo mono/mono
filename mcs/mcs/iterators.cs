@@ -781,7 +781,7 @@ namespace Mono.CSharp {
 		//
 		// Our constructor
 		//
-		private Iterator (IMethodData method, DeclSpace host, Type iterator_type, bool is_enumerable)
+		private Iterator (IMethodData method, TypeContainer host, Type iterator_type, bool is_enumerable)
 			: base (host,
 				new ToplevelBlock (method.Block, Parameters.EmptyReadOnlyParameters, method.Block.StartLocation),
 				TypeManager.bool_type,
@@ -846,7 +846,7 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ("ET");
 		}
 
-		public static void CreateIterator (IMethodData method, DeclSpace parent, int modifiers)
+		public static void CreateIterator (IMethodData method, TypeContainer parent, int modifiers)
 		{
 			bool is_enumerable;
 			Type iterator_type;

@@ -1151,7 +1151,7 @@ namespace Mono.CSharp {
 		protected readonly ToplevelBlock Block;
 
 		public Type ReturnType;
-		public readonly DeclSpace Host;
+		public readonly TypeContainer Host;
 
 		//
 		// The implicit method we create
@@ -1159,7 +1159,7 @@ namespace Mono.CSharp {
 		protected AnonymousMethodMethod method;
 		protected EmitContext aec;
 
-		protected AnonymousExpression (DeclSpace host, ToplevelBlock block, Type return_type, Location loc)
+		protected AnonymousExpression (TypeContainer host, ToplevelBlock block, Type return_type, Location loc)
 		{
 			this.ReturnType = return_type;
 			this.Host = host;
@@ -1223,9 +1223,10 @@ namespace Mono.CSharp {
 		readonly Parameters parameters;
 		static int unique_id;
 
-		public AnonymousMethodBody (
-					DeclSpace host,
-					Parameters parameters,
+		// A field cache for static anonymous method
+		Field am_cache;
+
+		public AnonymousMethodBody (TypeContainer host, Parameters parameters,
 					ToplevelBlock block, Type return_type, Type delegate_type,
 					Location loc)
 			: base (host, block, return_type, loc)
@@ -1331,7 +1332,11 @@ namespace Mono.CSharp {
 			if (storey != null) {
 				modifiers = storey.HasHoistedVariables ? Modifiers.INTERNAL : Modifiers.PRIVATE;
 			} else {
-				modifiers = Modifiers.STATIC | Modifiers.PRIVATE;
+				modifiers = Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED;
+				am_cache = new Field (Host, new TypeExpression (type, loc), modifiers,
+					CompilerGeneratedClass.MakeName (null, "f", "am$cache", unique_id), null, loc);
+				am_cache.Define ();
+				Host.AddField (am_cache);
 			}
 
 			DeclSpace parent = (modifiers & Modifiers.PRIVATE) != 0 ? Host : storey;
@@ -1376,17 +1381,25 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
+			ILGenerator ig = ec.ig;
+			Label l_initialized = ig.DefineLabel ();
+
+			if (am_cache != null) {
+				ig.Emit (OpCodes.Ldsfld, am_cache.FieldBuilder);
+				ig.Emit (OpCodes.Brtrue_S, l_initialized);
+			}
+
 			//
 			// Load method delegate implementation
 			//
 			if ((method.ModFlags & Modifiers.STATIC) != 0) {
-				ec.ig.Emit (OpCodes.Ldnull);
+				ig.Emit (OpCodes.Ldnull);
 			} else if (Storey.HasHoistedVariables) {
 				Expression e = Storey.GetStoreyInstanceExpression (ec).Resolve (ec);
 				if (e != null)
 					e.Emit (ec);
 			} else {
-				ec.ig.Emit (OpCodes.Ldarg_0);
+				ig.Emit (OpCodes.Ldarg_0);
 			}
 
 			MethodInfo delegate_method = method.MethodBuilder;
@@ -1394,14 +1407,20 @@ namespace Mono.CSharp {
 			if (Storey != null && Storey.MemberName.IsGeneric && Storey.HasHoistedVariables)
 				delegate_method = TypeBuilder.GetMethod (Storey.Instance.Type, delegate_method);
 #endif
-			ec.ig.Emit (OpCodes.Ldftn, delegate_method);
+			ig.Emit (OpCodes.Ldftn, delegate_method);
 
 			ConstructorInfo constructor_method = Delegate.GetConstructor (ec.ContainerType, type);
 #if MS_COMPATIBLE
             if (type.IsGenericType && type is TypeBuilder)
                 constructor_method = TypeBuilder.GetConstructor (type, constructor_method);
 #endif
-			ec.ig.Emit (OpCodes.Newobj, constructor_method);
+			ig.Emit (OpCodes.Newobj, constructor_method);
+
+			if (am_cache != null) {
+				ig.Emit (OpCodes.Stsfld, am_cache.FieldBuilder);
+				ig.MarkLabel (l_initialized);
+				ig.Emit (OpCodes.Ldsfld, am_cache.FieldBuilder);
+			}
 		}
 
 		//

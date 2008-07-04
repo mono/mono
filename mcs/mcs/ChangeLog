@@ -1,5 +1,10 @@
 2008-07-04  Marek Safar  <marek.safar@gmail.com>
 
+	* anonymous.cs, class.cs, lambda.cs, iterator.cs: Cache static anonymous
+	method delegates.
+
+2008-07-04  Marek Safar  <marek.safar@gmail.com>
+
 	* anonymous.cs, class.cs, expression.cs, iterator.cs, statement.cs: Reduce
 	anonymous method storey to an instance method when only "this" is hoisted.
 

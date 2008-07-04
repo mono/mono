@@ -131,9 +131,7 @@ namespace Mono.CSharp {
 
 	public class LambdaMethod : AnonymousMethodBody
 	{
-		public LambdaMethod (
-					DeclSpace host,
-					Parameters parameters,
+		public LambdaMethod (TypeContainer host, Parameters parameters,
 					ToplevelBlock block, Type return_type, Type delegate_type,
 					Location loc)
 			: base (host, parameters, block,

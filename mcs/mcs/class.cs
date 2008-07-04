@@ -3862,7 +3862,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if ((ModFlags & Modifiers.METHOD_YIELDS) != 0)
-				Iterator.CreateIterator (this, Parent, ModFlags);
+				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
 
 			if (IsPartialDefinition) {
 				caching_flags &= ~Flags.Excluded_Undetected;
@@ -4715,7 +4715,7 @@ namespace Mono.CSharp {
 			// It's here only to report an error
 			if ((ModFlags & Modifiers.METHOD_YIELDS) != 0) {
 				member_type = TypeManager.void_type;
-				Iterator.CreateIterator (this, Parent, ModFlags);
+				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
 			}
 
 			return true;
@@ -6391,7 +6391,7 @@ namespace Mono.CSharp {
 				CheckAbstractAndExtern (block != null);
 
 				if (yields)
-					Iterator.CreateIterator (this, Parent, ModFlags);
+					Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
 
 				return null;
 			}
