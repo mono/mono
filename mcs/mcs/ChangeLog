@@ -1,5 +1,9 @@
 2008-07-04  Marek Safar  <marek.safar@gmail.com>
 
+	* class.cs: Report missing partial modifier for correct type.
+
+2008-07-04  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs, expression.cs (VariableReference): Variable property is 
 	protected.
 

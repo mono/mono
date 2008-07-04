@@ -336,8 +336,8 @@ namespace Mono.CSharp {
 				return AddTypeContainer (next_part);
 
 			if ((tc.ModFlags & Modifiers.PARTIAL) == 0) {
-				Report.SymbolRelatedToPreviousError (tc);
-				Error_MissingPartialModifier (next_part);
+				Report.SymbolRelatedToPreviousError (next_part);
+				Error_MissingPartialModifier (tc);
 			}
 
 			if (tc.Kind != next_part.Kind) {
