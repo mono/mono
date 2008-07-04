@@ -1,3 +1,11 @@
+2008-07-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataColumnCollectionTest.cs: Added test for Add (String) with null
+	and zero-length column name.
+	* DataColumnCollectionTest2.cs: Added/improved indexer tests.
+	* DataRowTest2.cs: Added/improved indexer tests. Enabled indexer test
+	for null column name.
+
 2008-07-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataRowTest2.cs: Added indexer tests.

@@ -140,12 +140,11 @@ namespace System.Data {
 		public object this[string columnName] {
 			get { return this[columnName, DataRowVersion.Default]; }
 			set {
-				int columnIndex = _table.Columns.IndexOf (columnName);
-				if (columnIndex == -1) {
+				DataColumn column = _table.Columns [columnName];
+				if (column == null)
 					throw new ArgumentException ("The column '" + columnName +
-								    "' does not belong to the table : " + _table.TableName);
-				}
-				this[columnIndex] = value;
+						"' does not belong to the table : " + _table.TableName);
+				this [column.Ordinal] = value;
 			}
 		}
 
@@ -161,7 +160,9 @@ namespace System.Data {
 					throw new ArgumentNullException ("column");
 				int columnIndex = _table.Columns.IndexOf (column);
 				if (columnIndex == -1)
-					throw new ArgumentException ("The column does not belong to this table.");
+					throw new ArgumentException (string.Format (CultureInfo.InvariantCulture,
+						"The column '{0}' does not belong to the table : {1}.",
+						column.ColumnName, _table.TableName));
 				this[columnIndex] = value;
 			}
 		}
@@ -203,12 +204,11 @@ namespace System.Data {
 		/// </summary>
 		public object this[string columnName, DataRowVersion version] {
 			get {
-				int columnIndex = _table.Columns.IndexOf (columnName);
-				if (columnIndex == -1) {
+				DataColumn column = _table.Columns [columnName];
+				if (column == null)
 					throw new ArgumentException ("The column '" + columnName +
-								     "' does not belong to the table : " + _table.TableName);
-				}
-				return this[columnIndex, version];
+						"' does not belong to the table : " + _table.TableName);
+				return this [column.Ordinal, version];
 			}
 		}
 
@@ -220,7 +220,9 @@ namespace System.Data {
 				if (column == null)
 					throw new ArgumentNullException ("column");
 				if (column.Table != Table)
-					throw new ArgumentException ("The column does not belong to this table.");
+					throw new ArgumentException (string.Format (CultureInfo.InvariantCulture,
+						"The column '{0}' does not belong to the table : {1}.",
+						column.ColumnName, _table.TableName));
 				int columnIndex = column.Ordinal;
 				return this[columnIndex, version];
 			}

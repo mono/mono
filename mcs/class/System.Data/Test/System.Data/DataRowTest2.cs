@@ -26,23 +26,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using NUnit.Framework;
 using System;
-using System.IO;
+using System.Collections;
 using System.ComponentModel;
 using System.Data;
+using System.Globalization;
+using System.IO;
+
 using MonoTests.System.Data.Utils;
+
+using NUnit.Framework;
 
 namespace MonoTests.System.Data
 {
 	[TestFixture] public class DataRowTest2
 	{
 		bool _rowChanged;
+		ArrayList _eventsFired;
 
 		[SetUp]
 		public void SetUp ()
 		{
 			_rowChanged = false;
+			_eventsFired = new ArrayList ();
 		}
 
 		[Test] public void AcceptChanges()
@@ -878,7 +884,13 @@ namespace MonoTests.System.Data
 		[Test] // Object this [DataColumn]
 		public void Indexer1 ()
 		{
+			EventInfo evt;
+			DataColumnChangeEventArgs colChangeArgs;
+
 			DataTable dt = new DataTable ();
+			dt.ColumnChanged += new DataColumnChangeEventHandler (ColumnChanged);
+			dt.ColumnChanging += new DataColumnChangeEventHandler (ColumnChanging);
+
 			DataColumn dc0 = new DataColumn ("Col0", typeof (Address));
 			dt.Columns.Add (dc0);
 			DataColumn dc1 = new DataColumn ("Col1", typeof (Person));
@@ -904,20 +916,155 @@ namespace MonoTests.System.Data
 			Assert.AreSame (personB, dr [dc1], "#B2");
 
 			dr = dt.Rows [0];
+			Assert.AreEqual (0, _eventsFired.Count, "#C1");
 			dr [dc0] = addressC;
-			Assert.AreEqual (addressC, dr [dc0], "#C1");
-			Assert.AreSame (personA, dr [dc1], "#C2");
+			Assert.AreEqual (2, _eventsFired.Count, "#C2");
+			Assert.AreEqual (addressC, dr [dc0], "#C3");
+			Assert.AreSame (personA, dr [dc1], "#C4");
 
 			dr = dt.Rows [1];
+			dr.BeginEdit ();
+			Assert.AreEqual (2, _eventsFired.Count, "#D1");
 			dr [dc1] = personC;
-			Assert.AreEqual (addressB, dr [dc0], "#D1");
-			Assert.AreSame (personC, dr [dc1], "#D2");
+			Assert.AreEqual (4, _eventsFired.Count, "#D2");
+			Assert.AreEqual (addressB, dr [dc0], "#D3");
+			Assert.AreSame (personC, dr [dc1], "#D4");
+			dr.EndEdit ();
+			Assert.AreEqual (4, _eventsFired.Count, "#D5");
+			Assert.AreEqual (addressB, dr [dc0], "#D6");
+			Assert.AreSame (personC, dr [dc1], "#D7");
+
+			dr = dt.Rows [0];
+			dr.BeginEdit ();
+			Assert.AreEqual (4, _eventsFired.Count, "#E1");
+			dr [dc0] = addressB;
+			Assert.AreEqual (6, _eventsFired.Count, "#E2");
+			Assert.AreEqual (addressB, dr [dc0], "#E3");
+			Assert.AreSame (personA, dr [dc1], "#E4");
+			dr.CancelEdit ();
+			Assert.AreEqual (6, _eventsFired.Count, "#E5");
+			Assert.AreEqual (addressC, dr [dc0], "#E6");
+			Assert.AreSame (personA, dr [dc1], "#E7");
+
+			evt = (EventInfo) _eventsFired [0];
+			Assert.AreEqual ("ColumnChanging", evt.Name, "#F1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc0, colChangeArgs.Column, "#F2");
+			Assert.AreEqual (addressC, colChangeArgs.ProposedValue, "#F3");
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#F4");
+
+			evt = (EventInfo) _eventsFired [1];
+			Assert.AreEqual ("ColumnChanged", evt.Name, "#G1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc0, colChangeArgs.Column, "#G2");
+			Assert.AreEqual (addressC, colChangeArgs.ProposedValue, "#G3");
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#G4");
+
+			evt = (EventInfo) _eventsFired [2];
+			Assert.AreEqual ("ColumnChanging", evt.Name, "#H1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc1, colChangeArgs.Column, "#H2");
+			Assert.AreEqual (personC, colChangeArgs.ProposedValue, "#H3");
+			Assert.AreSame (dt.Rows [1], colChangeArgs.Row, "#H4");
+
+			evt = (EventInfo) _eventsFired [3];
+			Assert.AreEqual ("ColumnChanged", evt.Name, "#I1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc1, colChangeArgs.Column, "#I2");
+			Assert.AreEqual (personC, colChangeArgs.ProposedValue, "#I3");
+			Assert.AreSame (dt.Rows [1], colChangeArgs.Row, "#I4");
+
+			evt = (EventInfo) _eventsFired [4];
+			Assert.AreEqual ("ColumnChanging", evt.Name, "#J1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc0, colChangeArgs.Column, "#J2");
+			Assert.AreEqual (addressB, colChangeArgs.ProposedValue, "#J3");
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#J4");
+
+			evt = (EventInfo) _eventsFired [5];
+			Assert.AreEqual ("ColumnChanged", evt.Name, "#K1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc0, colChangeArgs.Column, "#K2");
+			Assert.AreEqual (addressB, colChangeArgs.ProposedValue, "#K3");
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#K4");
+		}
+
+		[Test] // Object this [DataColumn]
+		public void Indexer1_Column_NotInTable ()
+		{
+			EventInfo evt;
+			DataColumnChangeEventArgs colChangeArgs;
+
+			DataTable dtA = new DataTable ("TableA");
+			dtA.ColumnChanged += new DataColumnChangeEventHandler (ColumnChanged);
+			dtA.ColumnChanging += new DataColumnChangeEventHandler (ColumnChanging);
+			DataColumn dcA1 = new DataColumn ("Col0", typeof (Address));
+			dtA.Columns.Add (dcA1);
+			DataColumn dcA2 = new DataColumn ("Col1", typeof (Person));
+			dtA.Columns.Add (dcA2);
+
+			DataTable dtB = new DataTable ("TableB");
+			dtB.ColumnChanged += new DataColumnChangeEventHandler (ColumnChanged);
+			dtB.ColumnChanging += new DataColumnChangeEventHandler (ColumnChanging);
+			DataColumn dcB1 = new DataColumn ("Col0", typeof (Address));
+			dtB.Columns.Add (dcB1);
+			DataColumn dcB2 = new DataColumn ("Col1", typeof (Person));
+			dtB.Columns.Add (dcB2);
+
+			Person personA = new Person ("Miguel");
+			Address addressA = new Address ("X", 5);
+
+			dtA.Rows.Add (new object [] { addressA, personA });
+			DataRow dr = dtA.Rows [0];
+
+			try {
+				object value = dr [dcB1];
+				Assert.Fail ("#A1:" + value);
+			} catch (ArgumentException ex) {
+				// Column 'Col0' does not belong to table TableA
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf ("'Col0'") != -1, "#A5");
+				Assert.IsTrue (ex.Message.IndexOf ("TableA") != -1, "#A6");
+			}
+
+			try {
+				object value = dr [new DataColumn ("ZZZ")];
+				Assert.Fail ("#B1:" + value);
+			} catch (ArgumentException ex) {
+				// Column 'Col0' does not belong to table TableA
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("'ZZZ'") != -1, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf ("TableA") != -1, "#B6");
+			}
+
+			dtA.Columns.Remove (dcA2);
+
+			try {
+				object value = dr [dcA2];
+				Assert.Fail ("#C1:" + value);
+			} catch (ArgumentException ex) {
+				// Column 'Col0' does not belong to table TableA
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsTrue (ex.Message.IndexOf ("'Col1'") != -1, "#C5");
+				Assert.IsTrue (ex.Message.IndexOf ("TableA") != -1, "#C6");
+			}
 		}
 
 		[Test] // Object this [DataColumn]
 		public void Indexer1_Column_Null ()
 		{
+			EventInfo evt;
+			DataColumnChangeEventArgs colChangeArgs;
+
 			DataTable dt = new DataTable ();
+			dt.ColumnChanged += new DataColumnChangeEventHandler (ColumnChanged);
+			dt.ColumnChanging += new DataColumnChangeEventHandler (ColumnChanging);
 			DataColumn dc0 = new DataColumn ("Col0", typeof (Address));
 			dt.Columns.Add (dc0);
 			DataColumn dc1 = new DataColumn ("Col1", typeof (Person));
@@ -949,13 +1096,20 @@ namespace MonoTests.System.Data
 				Assert.IsNotNull (ex.Message, "#B4");
 				Assert.AreEqual ("column", ex.ParamName, "#B5");
 			}
+
+			Assert.AreEqual (0, _eventsFired.Count, "#C");
 		}
 
 		[Test] // Object this [DataColumn]
 		[NUnit.Framework.Category ("NotWorking")]
 		public void Indexer1_Value_Null ()
 		{
+			EventInfo evt;
+			DataColumnChangeEventArgs colChangeArgs;
+
 			DataTable dt = new DataTable ();
+			dt.ColumnChanged += new DataColumnChangeEventHandler (ColumnChanged);
+			dt.ColumnChanging += new DataColumnChangeEventHandler (ColumnChanging);
 			DataColumn dc0 = new DataColumn ("Col0", typeof (Address));
 			dt.Columns.Add (dc0);
 			DataColumn dc1 = new DataColumn ("Col1", typeof (Person));
@@ -982,14 +1136,16 @@ namespace MonoTests.System.Data
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
-				Assert.IsTrue (ex.Message.IndexOf ("Col0") != -1, "#A5");
+				Assert.IsTrue (ex.Message.IndexOf ("'Col0'") != -1, "#A5");
 				Assert.IsTrue (ex.Message.IndexOf ("DBNull") != -1, "#A6");
 			}
 
-			Assert.AreEqual (addressA, dr [dc0], "#B1");
-			Assert.IsFalse (dr.IsNull (dc0), "#B2");
-			Assert.AreSame (personA, dr [dc1], "#B3");
-			Assert.IsFalse (dr.IsNull (dc1), "#B4");
+			Assert.AreEqual (1, _eventsFired.Count, "#B1");
+			Assert.AreEqual (addressA, dr [dc0], "#B2");
+			Assert.IsFalse (dr.IsNull (dc0), "#B3");
+			Assert.AreSame (personA, dr [dc1], "#B4");
+			Assert.IsFalse (dr.IsNull (dc1), "#B5");
+			Assert.AreEqual (1, _eventsFired.Count, "#B6");
 
 #if NET_2_0
 			dr [dc1] = null;
@@ -1003,36 +1159,161 @@ namespace MonoTests.System.Data
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsTrue (ex.Message.IndexOf ("Col1") != -1, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf ("'Col1'") != -1, "#B5");
 				Assert.IsTrue (ex.Message.IndexOf ("DBNull") != -1, "#B6");
+				Assert.AreEqual (2, _eventsFired.Count, "#B7");
 			}
 			dr [dc1] = DBNull.Value;
 #endif
 
-			Assert.AreEqual (addressA, dr [dc0], "#C1");
-			Assert.IsFalse (dr.IsNull (dc0), "#C2");
-			Assert.AreSame (DBNull.Value, dr [dc1], "#C3");
-			Assert.IsTrue (dr.IsNull (dc1), "#C4");
+#if NET_2_0
+			Assert.AreEqual (3, _eventsFired.Count, "#C1");
+#else
+			Assert.AreEqual (4, _eventsFired.Count, "#C1");
+#endif
+			Assert.AreEqual (addressA, dr [dc0], "#C2");
+			Assert.IsFalse (dr.IsNull (dc0), "#C3");
+			Assert.AreSame (DBNull.Value, dr [dc1], "#C4");
+			Assert.IsTrue (dr.IsNull (dc1), "#C5");
+#if NET_2_0
+			Assert.AreEqual (3, _eventsFired.Count, "#C6");
+#else
+			Assert.AreEqual (4, _eventsFired.Count, "#C6");
+#endif
 
 			dr [dc0] = DBNull.Value;
 
-			Assert.AreSame (DBNull.Value, dr [dc0], "#D1");
-			Assert.IsTrue (dr.IsNull (dc0), "#D2");
-			Assert.AreSame (DBNull.Value, dr [dc1], "#D3");
-			Assert.IsTrue (dr.IsNull (dc1), "#D4");
+#if NET_2_0
+			Assert.AreEqual (5, _eventsFired.Count, "#D1");
+#else
+			Assert.AreEqual (6, _eventsFired.Count, "#D1");
+#endif
+			Assert.AreSame (DBNull.Value, dr [dc0], "#D2");
+			Assert.IsTrue (dr.IsNull (dc0), "#D3");
+			Assert.AreSame (DBNull.Value, dr [dc1], "#D4");
+			Assert.IsTrue (dr.IsNull (dc1), "#D5");
+#if NET_2_0
+			Assert.AreEqual (5, _eventsFired.Count, "#D6");
+#else
+			Assert.AreEqual (6, _eventsFired.Count, "#D6");
+#endif
 
+			dr.BeginEdit ();
 			dr [dc1] = personC;
-			Assert.AreSame (DBNull.Value, dr [dc0], "#E1");
-			Assert.IsTrue (dr.IsNull (dc0), "#E2");
-			Assert.AreEqual (personC, dr [dc1], "#E3");
-			Assert.IsFalse (dr.IsNull (dc1), "#E4");
+#if NET_2_0
+			Assert.AreEqual (7, _eventsFired.Count, "#E1");
+#else
+			Assert.AreEqual (8, _eventsFired.Count, "#E1");
+#endif
+			Assert.AreSame (DBNull.Value, dr [dc0], "#E2");
+			Assert.IsTrue (dr.IsNull (dc0), "#E3");
+			Assert.AreEqual (personC, dr [dc1], "#E4");
+			Assert.IsFalse (dr.IsNull (dc1), "#E5");
+			dr.EndEdit ();
+			Assert.AreSame (DBNull.Value, dr [dc0], "#E6");
+			Assert.IsTrue (dr.IsNull (dc0), "#E7");
+			Assert.AreEqual (personC, dr [dc1], "#E8");
+			Assert.IsFalse (dr.IsNull (dc1), "#E9");
+#if NET_2_0
+			Assert.AreEqual (7, _eventsFired.Count, "#E10");
+#else
+			Assert.AreEqual (8, _eventsFired.Count, "#E10");
+#endif
 
 			dr [dc1] = DBNull.Value;
 
-			Assert.AreSame (DBNull.Value, dr [dc0], "#F1");
-			Assert.IsTrue (dr.IsNull (dc0), "#F2");
-			Assert.AreSame (DBNull.Value, dr [dc1], "#F3");
-			Assert.IsTrue (dr.IsNull (dc1), "#F4");
+#if NET_2_0
+			Assert.AreEqual (9, _eventsFired.Count, "#F1");
+#else
+			Assert.AreEqual (10, _eventsFired.Count, "#F1");
+#endif
+			Assert.AreSame (DBNull.Value, dr [dc0], "#F2");
+			Assert.IsTrue (dr.IsNull (dc0), "#F3");
+			Assert.AreSame (DBNull.Value, dr [dc1], "#F4");
+			Assert.IsTrue (dr.IsNull (dc1), "#F5");
+#if NET_2_0
+			Assert.AreEqual (9, _eventsFired.Count, "#F6");
+#else
+			Assert.AreEqual (10, _eventsFired.Count, "#F6");
+#endif
+
+			int index = 0;
+
+			evt = (EventInfo) _eventsFired [index++];
+			Assert.AreEqual ("ColumnChanging", evt.Name, "#G1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc0, colChangeArgs.Column, "#G2");
+			Assert.IsNull (colChangeArgs.ProposedValue, "#G3");
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#G4");
+
+			evt = (EventInfo) _eventsFired [index++];
+			Assert.AreEqual ("ColumnChanging", evt.Name, "#H1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc1, colChangeArgs.Column, "#H2");
+			Assert.IsNull (colChangeArgs.ProposedValue, "#H3");
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#H4");
+
+#if ONLY_1_1
+			evt = (EventInfo) _eventsFired [index++];
+			Assert.AreEqual ("ColumnChanging", evt.Name, "#I1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc1, colChangeArgs.Column, "#I2");
+			Assert.AreSame (DBNull.Value, colChangeArgs.ProposedValue, "#I3");
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#I4");
+#endif
+
+			evt = (EventInfo) _eventsFired [index++];
+			Assert.AreEqual ("ColumnChanged", evt.Name, "#J1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc1, colChangeArgs.Column, "#J2");
+#if NET_2_0
+			Assert.IsNull (colChangeArgs.ProposedValue, "#J3");
+#else
+			Assert.AreSame (DBNull.Value, colChangeArgs.ProposedValue, "#J3");
+#endif
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#J4");
+
+			evt = (EventInfo) _eventsFired [index++];
+			Assert.AreEqual ("ColumnChanging", evt.Name, "#K1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc0, colChangeArgs.Column, "#K2");
+			Assert.AreSame (DBNull.Value, colChangeArgs.ProposedValue, "#K3");
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#K4");
+
+			evt = (EventInfo) _eventsFired [index++];
+			Assert.AreEqual ("ColumnChanged", evt.Name, "#L1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc0, colChangeArgs.Column, "#L2");
+			Assert.AreSame (DBNull.Value, colChangeArgs.ProposedValue, "#L3");
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#L4");
+
+			evt = (EventInfo) _eventsFired [index++];
+			Assert.AreEqual ("ColumnChanging", evt.Name, "#M1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc1, colChangeArgs.Column, "#M2");
+			Assert.AreSame (personC, colChangeArgs.ProposedValue, "#M3");
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#M4");
+
+			evt = (EventInfo) _eventsFired [index++];
+			Assert.AreEqual ("ColumnChanged", evt.Name, "#N1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc1, colChangeArgs.Column, "#N2");
+			Assert.AreSame (personC, colChangeArgs.ProposedValue, "#N3");
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#N4");
+
+			evt = (EventInfo) _eventsFired [index++];
+			Assert.AreEqual ("ColumnChanging", evt.Name, "#O1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc1, colChangeArgs.Column, "#O2");
+			Assert.AreSame (DBNull.Value, colChangeArgs.ProposedValue, "#O3");
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#O4");
+
+			evt = (EventInfo) _eventsFired [index++];
+			Assert.AreEqual ("ColumnChanged", evt.Name, "#P1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc1, colChangeArgs.Column, "#P2");
+			Assert.AreSame (DBNull.Value, colChangeArgs.ProposedValue, "#P3");
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#P4");
 		}
 
 		[Test] // Object this [Int32]
@@ -1069,9 +1350,22 @@ namespace MonoTests.System.Data
 			Assert.AreSame (personA, dr [1], "#C2");
 
 			dr = dt.Rows [1];
+			dr.BeginEdit ();
 			dr [1] = personC;
 			Assert.AreEqual (addressB, dr [0], "#D1");
 			Assert.AreSame (personC, dr [1], "#D2");
+			dr.EndEdit ();
+			Assert.AreEqual (addressB, dr [0], "#D3");
+			Assert.AreSame (personC, dr [1], "#D4");
+
+			dr = dt.Rows [0];
+			dr.BeginEdit ();
+			dr [0] = addressB;
+			Assert.AreEqual (addressB, dr [0], "#E1");
+			Assert.AreSame (personA, dr [1], "#E2");
+			dr.CancelEdit ();
+			Assert.AreEqual (addressC, dr [0], "#E3");
+			Assert.AreSame (personA, dr [1], "#E4");
 		}
 
 		[Test] // Object this [Int32]
@@ -1105,7 +1399,7 @@ namespace MonoTests.System.Data
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
-				Assert.IsTrue (ex.Message.IndexOf ("Col0") != -1, "#A5");
+				Assert.IsTrue (ex.Message.IndexOf ("'Col0'") != -1, "#A5");
 				Assert.IsTrue (ex.Message.IndexOf ("DBNull") != -1, "#A6");
 			}
 
@@ -1126,7 +1420,7 @@ namespace MonoTests.System.Data
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsTrue (ex.Message.IndexOf ("Col1") != -1, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf ("'Col1'") != -1, "#B5");
 				Assert.IsTrue (ex.Message.IndexOf ("DBNull") != -1, "#B6");
 			}
 			dr [1] = DBNull.Value;
@@ -1144,11 +1438,17 @@ namespace MonoTests.System.Data
 			Assert.AreSame (DBNull.Value, dr [1], "#D3");
 			Assert.IsTrue (dr.IsNull (1), "#D4");
 
+			dr.BeginEdit ();
 			dr [1] = personC;
 			Assert.AreSame (DBNull.Value, dr [0], "#E1");
 			Assert.IsTrue (dr.IsNull (0), "#E2");
 			Assert.AreEqual (personC, dr [1], "#E3");
 			Assert.IsFalse (dr.IsNull (1), "#E4");
+			dr.EndEdit ();
+			Assert.AreSame (DBNull.Value, dr [0], "#E5");
+			Assert.IsTrue (dr.IsNull (0), "#E6");
+			Assert.AreEqual (personC, dr [1], "#E7");
+			Assert.IsFalse (dr.IsNull (1), "#E8");
 
 			dr [1] = DBNull.Value;
 
@@ -1192,9 +1492,22 @@ namespace MonoTests.System.Data
 			Assert.AreSame (personA, dr ["Col1"], "#C2");
 
 			dr = dt.Rows [1];
+			dr.BeginEdit ();
 			dr ["Col1"] = personC;
 			Assert.AreEqual (addressB, dr ["Col0"], "#D1");
 			Assert.AreSame (personC, dr ["Col1"], "#D2");
+			dr.EndEdit ();
+			Assert.AreEqual (addressB, dr ["Col0"], "#D3");
+			Assert.AreSame (personC, dr ["Col1"], "#D4");
+
+			dr = dt.Rows [0];
+			dr.BeginEdit ();
+			dr ["Col0"] = addressB;
+			Assert.AreEqual (addressB, dr ["Col0"], "#E1");
+			Assert.AreSame (personA, dr ["Col1"], "#E2");
+			dr.CancelEdit ();
+			Assert.AreEqual (addressC, dr ["Col0"], "#E3");
+			Assert.AreSame (personA, dr ["Col1"], "#E4");
 		}
 
 		[Test] // Object this [String]
@@ -1242,7 +1555,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test] // Object this [String]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void Indexer3_ColumnName_Null ()
 		{
 			DataTable dt = new DataTable ();
@@ -1271,7 +1583,6 @@ namespace MonoTests.System.Data
 #else
 				Assert.AreEqual ("key", ex.ParamName, "#A5");
 #endif
-				throw;
 			}
 
 			try {
@@ -1360,10 +1671,12 @@ namespace MonoTests.System.Data
 			Assert.IsTrue (dr.IsNull ("Col1"), "#D4");
 
 			dr ["Col1"] = personC;
+			dr.BeginEdit ();
 			Assert.AreSame (DBNull.Value, dr ["Col0"], "#E1");
 			Assert.IsTrue (dr.IsNull ("Col0"), "#E2");
 			Assert.AreEqual (personC, dr ["Col1"], "#E3");
 			Assert.IsFalse (dr.IsNull ("Col1"), "#E4");
+			dr.EndEdit ();
 
 			dr ["Col1"] = DBNull.Value;
 
@@ -1371,6 +1684,266 @@ namespace MonoTests.System.Data
 			Assert.IsTrue (dr.IsNull ("Col0"), "#F2");
 			Assert.AreSame (DBNull.Value, dr ["Col1"], "#F3");
 			Assert.IsTrue (dr.IsNull ("Col1"), "#F4");
+		}
+
+		[Test] // Object this [DataColumn, DataRowVersion]
+		public void Indexer4 ()
+		{
+			DataTable dt = new DataTable ();
+			DataColumn dc0 = new DataColumn ("Col0", typeof (Address));
+			dt.Columns.Add (dc0);
+			DataColumn dc1 = new DataColumn ("Col1", typeof (Person));
+			dt.Columns.Add (dc1);
+
+			Person personA = new Person ("Miguel");
+			Address addressA = new Address ("X", 5);
+			Person personB = new Person ("Chris");
+			Address addressB = new Address ("Y", 4);
+			Person personC = new Person ("Jackson");
+			Address addressC = new Address ("Z", 3);
+
+			dt.Rows.Add (new object [] { addressA, personA });
+			dt.Rows.Add (new object [] { addressB, personB });
+			DataRow dr;
+
+			dr = dt.Rows [0];
+			Assert.AreEqual (addressA, dr [dc0, DataRowVersion.Current], "#A1");
+			Assert.AreEqual (addressA, dr [dc0, DataRowVersion.Default], "#A2");
+			Assert.IsTrue (AssertNotFound (dr, dc0, DataRowVersion.Original), "#A3");
+			Assert.IsTrue (AssertNotFound (dr, dc0, DataRowVersion.Proposed), "#A4");
+			Assert.AreSame (personA, dr [dc1, DataRowVersion.Current], "#A5");
+			Assert.AreSame (personA, dr [dc1, DataRowVersion.Default], "#A6");
+			Assert.IsTrue (AssertNotFound (dr, dc1, DataRowVersion.Original), "#A7");
+			Assert.IsTrue (AssertNotFound (dr, dc1, DataRowVersion.Proposed), "#A8");
+
+			dr = dt.Rows [1];
+			Assert.AreEqual (addressB, dr [dc0, DataRowVersion.Current], "#B1");
+			Assert.AreEqual (addressB, dr [dc0, DataRowVersion.Default], "#B2");
+			Assert.IsTrue (AssertNotFound (dr, dc0, DataRowVersion.Original), "#B3");
+			Assert.IsTrue (AssertNotFound (dr, dc0, DataRowVersion.Proposed), "#B4");
+			Assert.AreSame (personB, dr [dc1, DataRowVersion.Current], "#B5");
+			Assert.AreSame (personB, dr [dc1, DataRowVersion.Default], "#B6");
+			Assert.IsTrue (AssertNotFound (dr, dc1, DataRowVersion.Original), "#B7");
+			Assert.IsTrue (AssertNotFound (dr, dc1, DataRowVersion.Proposed), "#B8");
+
+			dr = dt.Rows [0];
+			dr [dc0] = addressC;
+			Assert.AreEqual (addressC, dr [dc0, DataRowVersion.Current], "#C1");
+			Assert.AreEqual (addressC, dr [dc0, DataRowVersion.Default], "#C2");
+			Assert.IsTrue (AssertNotFound (dr, dc0, DataRowVersion.Original), "#C3");
+			Assert.IsTrue (AssertNotFound (dr, dc0, DataRowVersion.Proposed), "#C4");
+			Assert.AreSame (personA, dr [dc1, DataRowVersion.Current], "#C5");
+			Assert.AreSame (personA, dr [dc1, DataRowVersion.Default], "#C6");
+			Assert.IsTrue (AssertNotFound (dr, dc1, DataRowVersion.Original), "#C7");
+			Assert.IsTrue (AssertNotFound (dr, dc1, DataRowVersion.Proposed), "#C8");
+
+			dr = dt.Rows [1];
+			dr.BeginEdit ();
+			dr [dc1] = personC;
+			Assert.AreEqual (addressB, dr [dc0, DataRowVersion.Current], "#D1");
+			Assert.AreEqual (addressB, dr [dc0, DataRowVersion.Default], "#D2");
+			Assert.IsTrue (AssertNotFound (dr, dc0, DataRowVersion.Original), "#D3");
+			Assert.AreEqual (addressB, dr [dc0, DataRowVersion.Proposed], "#D4");
+			Assert.AreSame (personB, dr [dc1, DataRowVersion.Current], "#D5");
+			Assert.AreSame (personC, dr [dc1, DataRowVersion.Default], "#D6");
+			Assert.IsTrue (AssertNotFound (dr, dc1, DataRowVersion.Original), "#D7");
+			Assert.AreSame (personC, dr [dc1, DataRowVersion.Proposed], "#D8");
+			dr.EndEdit ();
+			Assert.AreEqual (addressB, dr [dc0, DataRowVersion.Current], "#D9");
+			Assert.AreEqual (addressB, dr [dc0, DataRowVersion.Default], "#D10");
+			Assert.IsTrue (AssertNotFound (dr, dc0, DataRowVersion.Original), "#D11");
+			Assert.IsTrue (AssertNotFound (dr, dc0, DataRowVersion.Proposed), "#D12");
+			Assert.AreSame (personC, dr [dc1, DataRowVersion.Current], "#D13");
+			Assert.AreSame (personC, dr [dc1, DataRowVersion.Default], "#D14");
+			Assert.IsTrue (AssertNotFound (dr, dc1, DataRowVersion.Original), "#D15");
+			Assert.IsTrue (AssertNotFound (dr, dc1, DataRowVersion.Proposed), "#D16");
+			dr.AcceptChanges ();
+			Assert.AreEqual (addressB, dr [dc0, DataRowVersion.Current], "#D17");
+			Assert.AreEqual (addressB, dr [dc0, DataRowVersion.Default], "#D18");
+			Assert.AreEqual (addressB, dr [dc0, DataRowVersion.Original], "#D19");
+			Assert.IsTrue (AssertNotFound (dr, dc0, DataRowVersion.Proposed), "#D20");
+			Assert.AreSame (personC, dr [dc1, DataRowVersion.Current], "#D21");
+			Assert.AreSame (personC, dr [dc1, DataRowVersion.Default], "#D22");
+			Assert.AreEqual (personC, dr [dc1, DataRowVersion.Original], "#D23");
+			Assert.IsTrue (AssertNotFound (dr, dc1, DataRowVersion.Proposed), "#D24");
+
+			dr = dt.Rows [0];
+			dr.BeginEdit ();
+			dr [dc0] = addressA;
+			Assert.AreEqual (addressC, dr [dc0, DataRowVersion.Current], "#E1");
+			Assert.AreEqual (addressA, dr [dc0, DataRowVersion.Default], "#E2");
+			Assert.IsTrue (AssertNotFound (dr, dc0, DataRowVersion.Original), "#E3");
+			Assert.AreEqual (addressA, dr [dc0, DataRowVersion.Proposed], "#E4");
+			Assert.AreSame (personA, dr [dc1, DataRowVersion.Current], "#E5");
+			Assert.AreSame (personA, dr [dc1, DataRowVersion.Default], "#E6");
+			Assert.IsTrue (AssertNotFound (dr, dc1, DataRowVersion.Original), "#E7");
+			Assert.AreSame (personA, dr [dc1, DataRowVersion.Proposed], "#E8");
+			dr.CancelEdit ();
+			Assert.AreEqual (addressC, dr [dc0, DataRowVersion.Current], "#E9");
+			Assert.AreEqual (addressC, dr [dc0, DataRowVersion.Default], "#E10");
+			Assert.IsTrue (AssertNotFound (dr, dc0, DataRowVersion.Original), "#E11");
+			Assert.IsTrue (AssertNotFound (dr, dc0, DataRowVersion.Proposed), "#E12");
+			Assert.AreSame (personA, dr [dc1, DataRowVersion.Current], "#E13");
+			Assert.AreSame (personA, dr [dc1, DataRowVersion.Default], "#E14");
+			Assert.IsTrue (AssertNotFound (dr, dc1, DataRowVersion.Original), "#E15");
+			Assert.IsTrue (AssertNotFound (dr, dc1, DataRowVersion.Proposed), "#E16");
+		}
+
+		[Test]
+		public void Indexer4_Column_NotInTable ()
+		{
+			DataTable dtA = new DataTable ("TableA");
+			DataColumn dcA1 = new DataColumn ("Col0", typeof (Address));
+			dtA.Columns.Add (dcA1);
+			DataColumn dcA2 = new DataColumn ("Col1", typeof (Person));
+			dtA.Columns.Add (dcA2);
+
+			DataTable dtB = new DataTable ("TableB");
+			DataColumn dcB1 = new DataColumn ("Col0", typeof (Address));
+			dtB.Columns.Add (dcB1);
+			DataColumn dcB2 = new DataColumn ("Col1", typeof (Person));
+			dtB.Columns.Add (dcB2);
+
+			Person personA = new Person ("Miguel");
+			Address addressA = new Address ("X", 5);
+
+			dtA.Rows.Add (new object [] { addressA, personA });
+			DataRow dr = dtA.Rows [0];
+
+			try {
+				object value = dr [dcB1, DataRowVersion.Default];
+				Assert.Fail ("#A1:" + value);
+			} catch (ArgumentException ex) {
+				// Column 'Col0' does not belong to table TableA
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf ("'Col0'") != -1, "#A5");
+				Assert.IsTrue (ex.Message.IndexOf ("TableA") != -1, "#A6");
+			}
+
+			try {
+				object value = dr [new DataColumn ("ZZZ"), DataRowVersion.Default];
+				Assert.Fail ("#B1:" + value);
+			} catch (ArgumentException ex) {
+				// Column 'Col0' does not belong to table TableA
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("'ZZZ'") != -1, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf ("TableA") != -1, "#B6");
+			}
+
+			dtA.Columns.Remove (dcA2);
+
+			try {
+				object value = dr [dcA2, DataRowVersion.Default];
+				Assert.Fail ("#C1:" + value);
+			} catch (ArgumentException ex) {
+				// Column 'Col0' does not belong to table TableA
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsTrue (ex.Message.IndexOf ("'Col1'") != -1, "#C5");
+				Assert.IsTrue (ex.Message.IndexOf ("TableA") != -1, "#C6");
+			}
+		}
+
+		[Test] // Object this [DataColumn, DataRowVersion]
+		public void Indexer4_Column_Null ()
+		{
+			DataTable dt = new DataTable ();
+			DataColumn dc0 = new DataColumn ("Col0", typeof (Address));
+			dt.Columns.Add (dc0);
+			DataColumn dc1 = new DataColumn ("Col1", typeof (Person));
+			dt.Columns.Add (dc1);
+
+			Person personA = new Person ("Miguel");
+			Address addressA = new Address ("X", 5);
+			Person personB = new Person ("Chris");
+
+			dt.Rows.Add (new object [] { addressA, personA });
+			DataRow dr = dt.Rows [0];
+
+			try {
+				object value = dr [(DataColumn) null, DataRowVersion.Default];
+				Assert.Fail ("#1:" + value);
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("column", ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // Object this [DataColumn, DataRowVersion]
+		public void Indexer4_Version_Invalid ()
+		{
+			DataTable dt = new DataTable ();
+			DataColumn dc0 = new DataColumn ("Col0", typeof (Address));
+			dt.Columns.Add (dc0);
+			DataColumn dc1 = new DataColumn ("Col1", typeof (Person));
+			dt.Columns.Add (dc1);
+
+			Person personA = new Person ("Miguel");
+			Address addressA = new Address ("X", 5);
+			Person personB = new Person ("Chris");
+
+			dt.Rows.Add (new object [] { addressA, personA });
+			DataRow dr = dt.Rows [0];
+
+			try {
+				object value = dr [dc0, (DataRowVersion) 666];
+				Assert.Fail ("#1:" + value);
+			} catch (DataException ex) {
+				// Version must be Original, Current, or Proposed
+				Assert.AreEqual (typeof (DataException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("Original") != -1, "#5");
+				Assert.IsTrue (ex.Message.IndexOf ("Current") != -1, "#6");
+				Assert.IsTrue (ex.Message.IndexOf ("Proposed") != -1, "#7");
+				Assert.IsFalse (ex.Message.IndexOf ("Default") != -1, "#8");
+			}
+		}
+
+		[Test] // Object this [DataColumn, DataRowVersion]
+		public void Indexer4_Version_NotFound ()
+		{
+			DataTable dt = new DataTable ();
+			DataColumn dc0 = new DataColumn ("Col0", typeof (Address));
+			dt.Columns.Add (dc0);
+			DataColumn dc1 = new DataColumn ("Col1", typeof (Person));
+			dt.Columns.Add (dc1);
+
+			Person personA = new Person ("Miguel");
+			Address addressA = new Address ("X", 5);
+			Person personB = new Person ("Chris");
+
+			dt.Rows.Add (new object [] { addressA, personA });
+			DataRow dr = dt.Rows [0];
+
+			try {
+				object value = dr [dc0, DataRowVersion.Original];
+				Assert.Fail ("#A1:" + value);
+			} catch (VersionNotFoundException ex) {
+				// There is no Original data to access
+				Assert.AreEqual (typeof (VersionNotFoundException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf ("Original") != -1, "#A5");
+			}
+
+			try {
+				object value = dr [dc0, DataRowVersion.Proposed];
+				Assert.Fail ("#B1:" + value);
+			} catch (VersionNotFoundException ex) {
+				// There is no Proposed data to access
+				Assert.AreEqual (typeof (VersionNotFoundException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("Proposed") != -1, "#B5");
+			}
 		}
 
 		[Test] public void IsNull_ByDataColumn()
@@ -2315,6 +2888,46 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("25", row["Total"] , "#2 Should not be emptry string");
 		}
 
+		void ColumnChanged (object sender, DataColumnChangeEventArgs e)
+		{
+			_eventsFired.Add (new EventInfo ("ColumnChanged", e));
+		}
+
+		void ColumnChanging (object sender, DataColumnChangeEventArgs e)
+		{
+			_eventsFired.Add (new EventInfo ("ColumnChanging", e));
+		}
+
+		class EventInfo
+		{
+			public EventInfo (string name, EventArgs args)
+			{
+				this.name = name;
+				this.args = args;
+			}
+
+			public string Name {
+				get { return name; }
+			}
+
+			public EventArgs Args {
+				get { return args; }
+			}
+
+			private readonly string name;
+			private readonly EventArgs args;
+		}
+
+		static bool AssertNotFound (DataRow rc, DataColumn dc, DataRowVersion version)
+		{
+			try {
+				object value = rc [dc, version];
+				return false;
+			} catch (VersionNotFoundException) {
+				return true;
+			}
+		}
+
 		class Person
 		{
 			public Person (string name)
@@ -2352,6 +2965,14 @@ namespace MonoTests.System.Data
 				if (Street == null)
 					return HouseNumber.GetHashCode ();
 				return (Street.GetHashCode () ^ HouseNumber.GetHashCode ());
+			}
+
+			public override string ToString ()
+			{
+				if (Street == null)
+					return HouseNumber.ToString (CultureInfo.InvariantCulture);
+
+				return string.Concat (Street, HouseNumber.ToString (CultureInfo.InvariantCulture));
 			}
 
 			public string Street;

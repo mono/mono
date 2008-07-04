@@ -196,6 +196,70 @@ namespace MonoTests.System.Data
 			Assert.IsFalse (C.Unique, "test#110"); 
 		}
 
+		[Test] // Add (String)
+		public void Add3_ColumnName_Empty ()
+		{
+			DataTable table = new DataTable ();
+			DataColumnCollection cols = table.Columns;
+			DataColumn col;
+
+			col = cols.Add (string.Empty);
+			Assert.AreEqual (1, cols.Count, "#A1");
+			Assert.AreEqual ("Column1", col.ColumnName, "#A2");
+			Assert.AreSame (table, col.Table, "#A3");
+
+			col = cols.Add (string.Empty);
+			Assert.AreEqual (2, cols.Count, "#B1");
+			Assert.AreEqual ("Column2", col.ColumnName, "#B2");
+			Assert.AreSame (table, col.Table, "#B3");
+
+			cols.RemoveAt (1);
+
+			col = cols.Add (string.Empty);
+			Assert.AreEqual (2, cols.Count, "#C1");
+			Assert.AreEqual ("Column2", col.ColumnName, "#C2");
+			Assert.AreSame (table, col.Table, "#C3");
+
+			cols.Clear ();
+
+			col = cols.Add (string.Empty);
+			Assert.AreEqual (1, cols.Count, "#D1");
+			Assert.AreEqual ("Column1", col.ColumnName, "#D2");
+			Assert.AreSame (table, col.Table, "#D3");
+		}
+
+		[Test] // Add (String)
+		public void Add3_ColumnName_Null ()
+		{
+			DataTable table = new DataTable ();
+			DataColumnCollection cols = table.Columns;
+			DataColumn col;
+			
+			col = cols.Add ((string) null);
+			Assert.AreEqual (1, cols.Count, "#A1");
+			Assert.AreEqual ("Column1", col.ColumnName, "#A2");
+			Assert.AreSame (table, col.Table, "#A3");
+
+			col = cols.Add ((string) null);
+			Assert.AreEqual (2, cols.Count, "#B1");
+			Assert.AreEqual ("Column2", col.ColumnName, "#B2");
+			Assert.AreSame (table, col.Table, "#B3");
+
+			cols.RemoveAt (1);
+
+			col = cols.Add ((string) null);
+			Assert.AreEqual (2, cols.Count, "#C1");
+			Assert.AreEqual ("Column2", col.ColumnName, "#C2");
+			Assert.AreSame (table, col.Table, "#C3");
+
+			cols.Clear ();
+
+			col = cols.Add ((string) null);
+			Assert.AreEqual (1, cols.Count, "#D1");
+			Assert.AreEqual ("Column1", col.ColumnName, "#D2");
+			Assert.AreSame (table, col.Table, "#D3");
+		}
+
 		[Test]
 		public void AddExceptions ()
 		{

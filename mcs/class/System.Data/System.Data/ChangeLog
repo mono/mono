@@ -1,3 +1,11 @@
+2008-07-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataRow.cs: Use indexer of DataColumnCollection instead of IndexOf.
+	Cosmetic changes to exception message.
+	* DataColumnCollection.cs: Fixed off by one error in index check. Added
+	null check in name indexer. In Clear, also reset columnNameCount and
+	defaultColumnIndex.
+
 2008-07-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataRow.cs: Added missing null checks. Cosmetic changes to exception

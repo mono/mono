@@ -103,7 +103,7 @@ namespace System.Data {
 		{
 			get
 			{
-				if (index < 0 || index > base.List.Count) {
+				if (index < 0 || index >= base.List.Count) {
 					throw new IndexOutOfRangeException("Cannot find column " + index + ".");
 				}
 				return (DataColumn) base.List[index];
@@ -121,6 +121,11 @@ namespace System.Data {
 		{
 			get
 			{
+#if NET_2_0
+				if (name == null)
+					throw new ArgumentNullException ("name");
+#endif
+
 				DataColumn dc = columnFromName[name] as DataColumn;
 				
 				if (dc != null)
@@ -503,7 +508,9 @@ namespace System.Data {
 
 			columnFromName.Clear();
 			autoIncrement.Clear();
+			columnNameCount.Clear ();
 			base.List.Clear();
+			defaultColumnIndex = 1;
 			OnCollectionChanged(e);
 		}
 

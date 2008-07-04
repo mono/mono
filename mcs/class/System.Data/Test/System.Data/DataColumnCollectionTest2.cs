@@ -654,37 +654,106 @@ namespace MonoTests.System.Data
 			}
 		}
 
-		[Test]
-		public void Item()
+		[Test] // this [Int32]
+		public void Indexer1 ()
 		{
 			DataTable dt = DataProvider.CreateParentDataTable();
-			
-			Assert.AreEqual("ParentId",dt.Columns["ParentId"].ColumnName,"dcci#1");
-			Assert.AreEqual("ParentId",dt.Columns["parentId"].ColumnName ,"dcci#2");
-			Assert.AreEqual("String1",dt.Columns[1].ColumnName,"dcci#3");
+			DataColumn col;
 
-			try
-			{
-				dt.Columns[-1].ColumnName = "error";
-				Assert.Fail("dcci#3: Item failed to throw IndexOutOfRangeException");
-			}
-			catch (IndexOutOfRangeException) {}
-			catch (AssertionException exc) {throw  exc;}
-			catch (Exception exc)
-			{
-				Assert.Fail("dcci#4: Item. Wrong exception type. Got:" + exc);
-			}
+			col = dt.Columns [5];
+			Assert.IsNotNull (col, "#A1");
+			Assert.AreEqual ("ParentBool", col.ColumnName, "#A2");
 
-			try
-			{
-				dt.Columns[null].ColumnName = "error";
-				Assert.Fail("dcci#5: Item failed to throw ArgmentException");
+			col = dt.Columns [0];
+			Assert.IsNotNull (col, "#B1");
+			Assert.AreEqual ("ParentId", col.ColumnName, "#B2");
+
+			col = dt.Columns [3];
+			Assert.IsNotNull (col, "#C1");
+			Assert.AreEqual ("ParentDateTime", col.ColumnName, "#C2");
+		}
+
+		[Test] // this [Int32]
+		public void Indexer1_Index_Negative ()
+		{
+			DataTable dt = DataProvider.CreateParentDataTable ();
+
+			try {
+				DataColumn column = dt.Columns [-1];
+				Assert.Fail ("#1:" + column);
+			} catch (IndexOutOfRangeException ex) {
+				// Cannot find column -1
+				Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
 			}
-			catch (ArgumentException) {}
-			catch (AssertionException exc) {throw  exc;}
-			catch (Exception exc)
-			{
-				Assert.Fail("dcci#6: Item. Wrong exception type. Got:" + exc);
+		}
+
+		[Test] // this [Int32]
+		public void Indexer1_Index_Overflow ()
+		{
+			DataTable dt = DataProvider.CreateParentDataTable ();
+
+			try {
+				DataColumn column = dt.Columns [6];
+				Assert.Fail ("#1:" + column);
+			} catch (IndexOutOfRangeException ex) {
+				// Cannot find column 6
+				Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test] // this [String]
+		public void Indexer2 ()
+		{
+			DataTable dt = DataProvider.CreateParentDataTable ();
+			DataColumnCollection cols = dt.Columns;
+			DataColumn col;
+
+			col = cols ["ParentId"];
+			Assert.IsNotNull (col, "#A1");
+			Assert.AreEqual ("ParentId", col.ColumnName, "#A2");
+
+			col = cols ["parentiD"];
+			Assert.IsNotNull (col, "#B1");
+			Assert.AreEqual ("ParentId", col.ColumnName, "#B2");
+
+			col = cols ["DoesNotExist"];
+			Assert.IsNull (col, "#C");
+		}
+
+		[Test] // this [String]
+		public void Indexer2_Name_Empty ()
+		{
+			DataTable dt = new DataTable ();
+			DataColumnCollection cols = dt.Columns;
+
+			cols.Add (string.Empty, typeof (int));
+			cols.Add ((string) null, typeof (bool));
+
+			DataColumn column = cols [string.Empty];
+			Assert.IsNull (column);
+		}
+
+		[Test] // this [String]
+		public void Indexer2_Name_Null ()
+		{
+			DataTable dt = DataProvider.CreateParentDataTable ();
+
+			try {
+				DataColumn column = dt.Columns [(string) null];
+				Assert.Fail ("#1:" + column);
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+				Assert.AreEqual ("name", ex.ParamName, "#5");
+#else
+				Assert.AreEqual ("key", ex.ParamName, "#5");
+#endif
 			}
 		}
 
