@@ -34632,6 +34632,39 @@
       </method>
     </type>
   </test>
+  <test name="test-anon-80.cs">
+    <type name="MonoBug.MyTest">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>167</size>
+      </method>
+    </type>
+    <type name="MonoBug.MyTest+EventHandlers">
+      <method name="Void .ctor()">
+        <size>18</size>
+      </method>
+      <method name="System.EventHandler get_DoNothingEventHandler()">
+        <size>30</size>
+      </method>
+      <method name="System.EventHandler get_DoSomethingEventHandler()">
+        <size>13</size>
+      </method>
+      <method name="System.EventHandler get_Handler()">
+        <size>7</size>
+      </method>
+      <method name="Void set_Handler(System.EventHandler)">
+        <size>8</size>
+      </method>
+      <method name="Void &lt;DoNothingEventHandler&gt;m__0(System.Object, System.EventArgs)">
+        <size>1</size>
+      </method>
+      <method name="Void &lt;DoSomethingEventHandler&gt;m__1(System.Object, System.EventArgs)">
+        <size>15</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void .ctor()">
