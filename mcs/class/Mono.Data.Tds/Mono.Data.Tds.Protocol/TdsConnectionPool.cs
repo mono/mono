@@ -119,7 +119,12 @@ namespace Mono.Data.Tds.Protocol
 
 	public class TdsConnectionPool
 	{
+#if NET_2_0
 		Tds[] list;
+#else
+		object [] list;
+#endif
+
 		TdsConnectionInfo info;
 		bool pooling = true;
 		TdsConnectionPoolManager manager;
@@ -131,8 +136,12 @@ namespace Mono.Data.Tds.Protocol
 			
 			this.info = info;
 			this.manager = manager;
+#if NET_2_0
 			list = new Tds[info.PoolMaxSize];
-			
+#else
+			list = new object [info.PoolMaxSize];
+#endif
+
 			// Placeholder for future connections are at the beginning of the array.
 			for (; n < info.PoolMaxSize - info.PoolMinSize; n++)
 				list [n] = null;
@@ -165,16 +174,21 @@ namespace Mono.Data.Tds.Protocol
 			index = list.Length - 1;
 			
 			do {
+#if NET_2_0
 				connection = list [index];
+#else
+				connection = (Tds) list [index];
+#endif
 
 				if (connection == null) {
 					// Attempt take-over of array position
 					connection = CreateConnection ();
 					(connection as Tds).poolStatus = 1;
+
 #if NET_2_0
 					if (Interlocked.CompareExchange<Tds> (ref list [index], connection, null) != null) {
 #else
-					if (Interlocked.CompareExchange (ref (list as object[]) [index], connection, null) != null) {
+					if (Interlocked.CompareExchange (ref list [index], connection, null) != null) {
 #endif
 						// Someone beat us to the punch
 						connection = null;

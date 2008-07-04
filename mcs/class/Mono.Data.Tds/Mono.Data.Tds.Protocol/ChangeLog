@@ -1,4 +1,9 @@
-2007-07-04  Gert Driesen  <drieseng@users.sourceforge.net>
+2008-07-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TdsConnectionPool.cs: On 1.0 profile, use object[] for list of
+	connections. Patch provided by Christian Hergert. Fixes bug #406540.
+
+2008-07-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Tds.cs: Avoid accessing TdsDataColumnCollection indexer. On 2.0
 	profile, use predefined properties on TdsDataColumn for setting the
