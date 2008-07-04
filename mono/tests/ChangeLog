@@ -1,3 +1,11 @@
+2008-07-04  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-delegate2.2.cs, generic-delegate2-lib.2.il: Test case
+	for open generic delegates (delegates which get their target
+	object only at the invocation).
+
+	* Makefile.am: Test added.
+
 2008-06-29  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* valuetype-equals.cs: Tests for ValueType::Equals for all
