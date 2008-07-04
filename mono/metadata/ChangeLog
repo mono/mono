@@ -1,5 +1,11 @@
 2008-07-04  Mark Probst  <mark.probst@gmail.com>
 
+	* domain-internals.h: New field (has_this) in MonoGenericJitInfo.
+	Signifies whether information on the this/vtable/mrgctx variable
+	is available.
+
+2008-07-04  Mark Probst  <mark.probst@gmail.com>
+
 	* object.c, object-internals.h, icall.c: New function
 	mono_delegate_ctor_with_method(), which does the same as
 	mono_delegate_ctor(), but takes an explicit method argument
