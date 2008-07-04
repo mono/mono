@@ -1,3 +1,10 @@
+2008-07-04  Rodrigo Kumpera  <rkumpera@n ovell.com>
+
+	* MethodBase.cs (GetMethodFromHandle): Extract an internal version
+	of this function that doesn't perform the generic class check.
+	This method is required to fix the Delegate regression that fixing
+	#377324 caused.
+
 2008-06-25  Rodrigo Kumpera  <rkumpera@n ovell.com>
 
 	* MethodBase.cs (GetMethodFromHandle): Check if the icall returns null
