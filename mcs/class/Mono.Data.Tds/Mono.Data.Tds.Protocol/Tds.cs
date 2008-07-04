@@ -1351,20 +1351,23 @@ namespace Mono.Data.Tds.Protocol
 				byte index = (byte) (values[0] - (byte) 1);
 				byte tableIndex = (byte) (values[1] - (byte) 1);
 				bool isExpression = ((values[2] & (byte) TdsColumnStatus.IsExpression) != 0);
-				
+
+				TdsDataColumn column = columns [index];
 #if NET_2_0
-				columns [index].IsHidden = ((values[2] & (byte) TdsColumnStatus.Hidden) != 0);
-				columns [index].IsExpression = isExpression;
-				columns [index].IsKey = ((values[2] & (byte) TdsColumnStatus.IsKey) != 0);
-				columns [index].IsAliased = isAlias;
+				column.IsHidden = ((values[2] & (byte) TdsColumnStatus.Hidden) != 0);
+				column.IsExpression = isExpression;
+				column.IsKey = ((values[2] & (byte) TdsColumnStatus.IsKey) != 0);
+				column.IsAliased = isAlias;
+				column.BaseColumnName = ((isAlias) ? baseColumnName : null);
+				column.BaseTableName = ((!isExpression) ? (string) tableNames [tableIndex] : null);
 #else
-				columns [index]["IsHidden"] = ((values[2] & (byte) TdsColumnStatus.Hidden) != 0);
-				columns [index]["IsExpression"] = isExpression;
-				columns [index]["IsKey"] = ((values[2] & (byte) TdsColumnStatus.IsKey) != 0);
-				columns [index]["IsAliased"] = isAlias;
+				column ["IsHidden"] = ((values [2] & (byte) TdsColumnStatus.Hidden) != 0);
+				column ["IsExpression"] = isExpression;
+				column ["IsKey"] = ((values [2] & (byte) TdsColumnStatus.IsKey) != 0);
+				column ["IsAliased"] = isAlias;
+				column ["BaseColumnName"] = ((isAlias) ? baseColumnName : null);
+				column ["BaseTableName"] = ((!isExpression) ? tableNames [tableIndex] : null);
 #endif
-				columns [index]["BaseColumnName"] = ((isAlias) ? baseColumnName : null);
-				columns [index]["BaseTableName"] = ((!isExpression) ? tableNames [tableIndex] : null);
 			}
 		}
 

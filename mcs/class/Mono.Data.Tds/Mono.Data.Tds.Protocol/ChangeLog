@@ -1,5 +1,8 @@
 2007-07-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* Tds.cs: Avoid accessing TdsDataColumnCollection indexer. On 2.0
+	profile, use predefined properties on TdsDataColumn for setting the
+	BaseColumnName and BaseTableName. Fixes bug #406556.
 	* Tds50.cs: Avoid accessing TdsDataColumnCollection indexer, and
 	fixed IsHidden.
 
