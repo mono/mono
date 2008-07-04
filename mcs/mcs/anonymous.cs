@@ -28,7 +28,6 @@ namespace Mono.CSharp {
 		protected CompilerGeneratedClass (DeclSpace parent, MemberName name, int mod, Location loc)
 			: base (parent.NamespaceEntry, parent, name, mod | Modifiers.COMPILER_GENERATED | Modifiers.SEALED, null)
 		{
-			parent.PartialContainer.AddCompilerGeneratedClass (this);
 		}
 
 		protected CompilerGeneratedClass (DeclSpace parent, GenericMethod generic, MemberName name, int mod, Location loc)
@@ -112,6 +111,7 @@ namespace Mono.CSharp {
 		public LocalTemporary Instance;
 
 		bool references_defined;
+		bool has_hoisted_variable;
 
 		public AnonymousMethodStorey (Block block, DeclSpace parent, MemberBase host, GenericMethod generic, string name)
 			: base (parent, generic, MakeMemberName (host, name, generic, block.StartLocation), Modifiers.PRIVATE, block.StartLocation)
@@ -176,6 +176,7 @@ namespace Mono.CSharp {
 
 			HoistedVariable var = new HoistedLocalVariable (this, local_info, GetVariableMangledName (local_info));
 			local_info.HoistedVariableReference = var;
+			has_hoisted_variable = true;
 		}
 
 		public void CaptureParameter (EmitContext ec, ParameterReference param_ref)
@@ -230,7 +231,8 @@ namespace Mono.CSharp {
 			// A storey with hoisted `this' is an instance method
 			//
 			if (!HasHoistedVariables) {
-				throw new NotImplementedException ();
+				hoisted_this.RemoveHoisting ();
+				return;
 			}
 
 			DefineStoreyReferences ();
@@ -380,9 +382,16 @@ namespace Mono.CSharp {
 			return local_info.Name;
 		}
 
+		//
+		// Returns true when at least one local variable or parameter is
+		// hoisted, or story is transitioned
+		//
 		public bool HasHoistedVariables {
 			get {
-				return true; // TODO: Finish this optimization
+				return has_hoisted_variable || hoisted_params != null;
+			}
+			set {
+				has_hoisted_variable = value;
 			}
 		}
 
@@ -492,6 +501,12 @@ namespace Mono.CSharp {
 		public static void Reset ()
 		{
 			unique_id = 0;
+		}
+		
+		public void Undo ()
+		{
+			if (hoisted_this != null)
+				hoisted_this.RemoveHoisting ();
 		}
 	}
 
@@ -689,6 +704,11 @@ namespace Mono.CSharp {
 		public override void EmitSymbolInfo ()
 		{
 			SymbolWriter.DefineCapturedThis (storey.ID, field.Name);
+		}
+
+		public void RemoveHoisting ()
+		{
+			this_reference.RemoveHoisting ();
 		}
 	}
 
@@ -1092,8 +1112,7 @@ namespace Mono.CSharp {
 
 			public override bool Define ()
 			{
-				if (Storey != null && Storey.IsGeneric) {
-				
+				if (Storey != null && Storey.IsGeneric && Storey.HasHoistedVariables) {
 					if (!Parameters.Empty) {
 						Type [] ptypes = Parameters.Types;
 						for (int i = 0; i < ptypes.Length; ++i)
@@ -1288,6 +1307,7 @@ namespace Mono.CSharp {
 						continue;
 
 					storey.AddParentStoreyReference (s);
+					s.HasHoistedVariables = true;
 					Block.Parent.Explicit.PropagateStoreyReference (s);
 				}
 			} else {
@@ -1361,15 +1381,17 @@ namespace Mono.CSharp {
 			//
 			if ((method.ModFlags & Modifiers.STATIC) != 0) {
 				ec.ig.Emit (OpCodes.Ldnull);
-			} else {
+			} else if (Storey.HasHoistedVariables) {
 				Expression e = Storey.GetStoreyInstanceExpression (ec).Resolve (ec);
 				if (e != null)
 					e.Emit (ec);
+			} else {
+				ec.ig.Emit (OpCodes.Ldarg_0);
 			}
 
 			MethodInfo delegate_method = method.MethodBuilder;
 #if GMCS_SOURCE
-			if (Storey != null && Storey.MemberName.IsGeneric)
+			if (Storey != null && Storey.MemberName.IsGeneric && Storey.HasHoistedVariables)
 				delegate_method = TypeBuilder.GetMethod (Storey.Instance.Type, delegate_method);
 #endif
 			ec.ig.Emit (OpCodes.Ldftn, delegate_method);
@@ -1523,7 +1545,7 @@ namespace Mono.CSharp {
 			return a_type;
 		}
 		
-		public new static void Reset ()
+		public static void Reset ()
 		{
 			types_counter = 0;
 		}

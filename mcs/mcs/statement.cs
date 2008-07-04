@@ -2518,10 +2518,17 @@ namespace Mono.CSharp {
 
 			//
 			// Define an anonymous method storey when this block has hoisted variables
+			// otherwise the storey can be discarded
 			//
-			if (am_storey != null && am_storey.HasHoistedVariables) {
-				am_storey.DefineType ();
-				am_storey.DefineMembers ();
+			if (am_storey != null) {
+				if (am_storey.HasHoistedVariables) {
+					am_storey.DefineType ();
+					am_storey.DefineMembers ();
+					am_storey.Parent.PartialContainer.AddCompilerGeneratedClass (am_storey);
+				} else {
+					am_storey.Undo ();
+					am_storey = null;
+				}
 			}
 
 			return ok;

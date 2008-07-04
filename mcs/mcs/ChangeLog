@@ -1,3 +1,8 @@
+2008-07-04  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs, class.cs, expression.cs, iterator.cs, statement.cs: Reduce
+	anonymous method storey to an instance method when only "this" is hoisted.
+
 2008-07-03  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #321615

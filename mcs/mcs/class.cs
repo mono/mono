@@ -2265,6 +2265,11 @@ namespace Mono.CSharp {
 				EmitIndexerName ();
 			}
 
+			if (events != null){
+				foreach (Event e in Events)
+					e.Emit ();
+			}
+
 			if (methods != null) {
 				for (int i = 0; i < methods.Count; ++i)
 					((Method) methods [i]).Emit ();
@@ -2273,11 +2278,6 @@ namespace Mono.CSharp {
 			if (fields != null)
 				foreach (FieldBase f in fields)
 					f.Emit ();
-
-			if (events != null){
-				foreach (Event e in Events)
-					e.Emit ();
-			}
 
 			if (delegates != null) {
 				foreach (Delegate d in Delegates) {

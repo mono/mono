@@ -6751,6 +6751,7 @@ namespace Mono.CSharp {
 
 			return this;
 		}
+
 		public override int GetHashCode()
 		{
 			return block.GetHashCode ();
@@ -6770,6 +6771,11 @@ namespace Mono.CSharp {
 			This target = (This) t;
 
 			target.block = clonectx.LookupBlock (block);
+		}
+
+		public void RemoveHoisting ()
+		{
+			TopToplevelBlock.HoistedThisVariable = null;
 		}
 	}
 

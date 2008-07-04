@@ -185,6 +185,7 @@ namespace Mono.CSharp {
 			  iterator.OriginalMethod as MemberBase, iterator.GenericMethod, "Iterator")
 		{
 			this.Iterator = iterator;
+			HasHoistedVariables = true;
 		}
 
 		public Field PC {
