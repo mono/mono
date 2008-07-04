@@ -1,3 +1,7 @@
+2008-07-04  Marek Safar  <marek.safar@gmail.com>
+
+	* StringTest.cs: Removed NotWorking flags.
+﻿
 2008-06-19  Jb Evain  <jbevain@novell.com>
 
 	* AppDomainSetupTest.cs (AppDomainInitializerNonStaticMethod):

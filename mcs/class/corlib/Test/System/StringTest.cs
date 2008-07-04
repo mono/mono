@@ -244,7 +244,6 @@ public class StringTest : TestCase
 	}
 
 	[Test]
-	[Category ("NotWorking")] // bug #321615
 	public unsafe void Constructor7_StartIndex_Overflow ()
 	{
 		try {
@@ -387,7 +386,6 @@ public class StringTest : TestCase
 	}
 
 	[Test]
-	[Category ("NotWorking")] // bug #321615
 	public unsafe void Constructor8_StartIndex_Overflow ()
 	{
 		try {
