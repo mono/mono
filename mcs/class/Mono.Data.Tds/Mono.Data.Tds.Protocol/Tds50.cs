@@ -511,30 +511,31 @@ namespace Mono.Data.Tds.Protocol {
 				int index = result.Add (col);
 #if NET_2_0
 				col.ColumnType = columnType;
-				result[index].ColumnName = columnName;
-				result[index].IsIdentity = isIdentity;
-				result[index].IsRowVersion = isRowVersion;
-				result[index].ColumnType = columnType;
-				result[index].ColumnSize = bufLength;
-				result[index].NumericPrecision = precision;
-				result[index].NumericScale = scale;
-				result[index].IsReadOnly = !isUpdatable;
-				result[index].IsKey = isKey;
-				result[index].AllowDBNull = allowDBNull;
+				col.ColumnName = columnName;
+				col.IsIdentity = isIdentity;
+				col.IsRowVersion = isRowVersion;
+				col.ColumnType = columnType;
+				col.ColumnSize = bufLength;
+				col.NumericPrecision = precision;
+				col.NumericScale = scale;
+				col.IsReadOnly = !isUpdatable;
+				col.IsKey = isKey;
+				col.AllowDBNull = allowDBNull;
+				col.IsHidden = hidden;
 #else
-				col["ColumnType"] = columnType;
-				result[index]["ColumnName"] = columnName;
-				result[index]["IsIdentity"] = isIdentity;
-				result[index]["IsRowVersion"] = isRowVersion;
-				result[index]["ColumnType"] = columnType;
-				result[index]["ColumnSize"] = bufLength;
-				result[index]["NumericPrecision"] = precision;
-				result[index]["NumericScale"] = scale;
-				result[index]["IsReadOnly"] = !isUpdatable;
-				result[index]["IsKey"] = isKey;
-				result[index]["AllowDBNull"] = allowDBNull;
+				col ["ColumnType"] = columnType;
+				col ["ColumnName"] = columnName;
+				col ["IsIdentity"] = isIdentity;
+				col ["IsRowVersion"] = isRowVersion;
+				col ["ColumnType"] = columnType;
+				col ["ColumnSize"] = bufLength;
+				col ["NumericPrecision"] = precision;
+				col ["NumericScale"] = scale;
+				col ["IsReadOnly"] = !isUpdatable;
+				col ["IsKey"] = isKey;
+				col ["AllowDBNull"] = allowDBNull;
+				col ["IsHidden"] = hidden;
 #endif
-				result[index]["Hidden"] = hidden;
 			}
 			return result;
 		}
