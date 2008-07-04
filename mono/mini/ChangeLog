@@ -1,3 +1,13 @@
+2008-07-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_get_aot_trampoline_code): New internal function to
+	create a variant of the generic trampoline code callable from AOTed trampolines.
+
+	* tramp-amd64.c (mono_arch_create_trampoline_code_full): Add support for generic
+	trampoline code callable from AOTed trampolines.
+
+	* aot-compiler.c aot-runtime.c: Add support for AOTing trampolines.
+
 2008-07-04  Mark Probst  <mark.probst@gmail.com>
 
 	* inssel.brg, mini-ops.h: New opcode for doing CHECK_THIS in a
