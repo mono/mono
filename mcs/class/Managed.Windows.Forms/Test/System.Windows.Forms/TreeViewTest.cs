@@ -20,6 +20,13 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void CollapseAll_NoNodes ()
+		{
+			TreeView tv = new TreeView ();
+			tv.CollapseAll ();
+		}
+	
+		[Test]
 		public void DefaultCtor ()
 		{
 			TreeView tv = new TreeView ();

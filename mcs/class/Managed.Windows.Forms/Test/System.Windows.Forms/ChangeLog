@@ -1,3 +1,7 @@
+2008-07-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TreeViewTest.cs: Add test for bug #406449.
+
 2008-07-03  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ScrollBarTest.cs: Add test for bug #403122.
