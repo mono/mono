@@ -53,7 +53,7 @@ namespace System.Runtime.Remoting.Messaging
 		bool _isContextOk;
 		[NonSerialized] RemotingProxy _sourceProxy;
 
-		public ConstructionCall(IMessage msg): base (msg)
+		public ConstructionCall (IMessage m): base (m)
 		{
 			_activationTypeName = TypeName;
 			_isContextOk = true;

@@ -63,7 +63,7 @@ namespace System.Runtime.Remoting.Messaging {
 		protected IDictionary ExternalProperties;
 		protected IDictionary InternalProperties;
 
-		public MethodResponse (Header[] headers, IMethodCallMessage mcm)
+		public MethodResponse (Header[] h1, IMethodCallMessage mcm)
 		{
 			if (mcm != null)
 			{
@@ -75,9 +75,9 @@ namespace System.Runtime.Remoting.Messaging {
 				_args = mcm.Args;
 			}
 
-			if (headers != null)
+			if (h1 != null)
 			{
-				foreach (Header header in headers)
+				foreach (Header header in h1)
 					InitMethodProperty (header.Name, header.Value);
 			}
 		}
@@ -335,7 +335,7 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 
 		[MonoTODO]
-		public void RootSetObjectData (SerializationInfo info, StreamingContext context)
+		public void RootSetObjectData (SerializationInfo info, StreamingContext ctx)
 		{
 			throw new NotImplementedException ();
 		} 

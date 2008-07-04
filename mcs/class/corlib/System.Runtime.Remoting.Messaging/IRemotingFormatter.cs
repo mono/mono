@@ -1,5 +1,5 @@
 //
-// System.Runtime.Remoting.Messaging.IRemotingFormatter..cs
+// System.Runtime.Remoting.Messaging.IRemotingFormatter.cs
 //
 // Author:
 //   Duncan Mak  (duncan@ximian.com)
@@ -40,7 +40,7 @@ namespace System.Runtime.Remoting.Messaging {
 	[System.Runtime.InteropServices.ComVisible (true)]
 #endif
 	public interface IRemotingFormatter : IFormatter {
-		object Deserialize (Stream serializationStream, HeaderHandler handler);
-		void Serialize (Stream serializationStream, object graph, Header [] handlers); 
+		object Deserialize (Stream serializationStream, HeaderHandler headers);
+		void Serialize (Stream serializationStream, object graph, Header [] headers); 
 	}
 }

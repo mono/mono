@@ -39,21 +39,21 @@ namespace System.Runtime.Remoting.Messaging {
 	[System.Runtime.InteropServices.ComVisible (true)]
 #endif
 	public class Header {
-		public Header (string name, object value) :
-			this (name, value, true)
+		public Header (string _Name, object _Value) :
+			this (_Name, _Value, true)
 		{
 		}
 
-		public Header (string name, object value, bool must_understand) :
-			this (name, value, must_understand, null)
+		public Header (string _Name, object _Value, bool _MustUnderstand) :
+			this (_Name, _Value, _MustUnderstand, null)
 		{
 		}
 
-		public Header (string name, object value, bool must_understand, string header_namespace) {
-			this.Name = name;
-			this.Value = value;
-			this.MustUnderstand = must_understand;
-			this.HeaderNamespace = header_namespace;
+		public Header (string _Name, object _Value, bool _MustUnderstand, string _HeaderNamespace) {
+			this.Name = _Name;
+			this.Value = _Value;
+			this.MustUnderstand = _MustUnderstand;
+			this.HeaderNamespace = _HeaderNamespace;
 		}
 
 		// fields

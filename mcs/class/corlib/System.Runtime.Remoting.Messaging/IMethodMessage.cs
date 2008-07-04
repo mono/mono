@@ -1,5 +1,5 @@
 //
-// System.Runtime.Remoting.Messaging.IMethodMessage..cs
+// System.Runtime.Remoting.Messaging.IMethodMessage.cs
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
@@ -74,8 +74,8 @@ namespace System.Runtime.Remoting.Messaging {
 			get;
 		}
 
-		object GetArg     (int arg_num);
-		string GetArgName (int arg_num);
+		object GetArg     (int argNum);
+		string GetArgName (int index);
 	}
 }
 

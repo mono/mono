@@ -57,30 +57,30 @@ namespace System.Runtime.Remoting.Messaging
 		Identity _targetIdentity;
 		ArgInfo _inArgInfo;
 
-		public ReturnMessage (object returnValue, object [] outArgs,
-			       int outArgCount, LogicalCallContext callCtx,
-			       IMethodCallMessage request)
+		public ReturnMessage (object ret, object [] outArgs,
+			       int outArgsCount, LogicalCallContext callCtx,
+			       IMethodCallMessage mcm)
 		{
 			// outArgCount tells how many values of outArgs are valid
 
-			_returnValue = returnValue;
+			_returnValue = ret;
 			_args = outArgs;
-			_outArgsCount = outArgCount;
+			_outArgsCount = outArgsCount;
 			_callCtx = callCtx;
-			if (request != null) {
-				_uri = request.Uri;
-				_methodBase = request.MethodBase;
+			if (mcm != null) {
+				_uri = mcm.Uri;
+				_methodBase = mcm.MethodBase;
 			}
-			if (_args == null) _args = new object [outArgCount];
+			if (_args == null) _args = new object [outArgsCount];
 		}
 
-		public ReturnMessage (Exception exc, IMethodCallMessage request)
+		public ReturnMessage (Exception e, IMethodCallMessage mcm)
 		{
-			_exception = exc;
+			_exception = e;
 			
-			if (request != null) {
-				_methodBase = request.MethodBase;
-				_callCtx = request.LogicalCallContext;
+			if (mcm != null) {
+				_methodBase = mcm.MethodBase;
+				_callCtx = mcm.LogicalCallContext;
 			}
 			_args = new object[0];	// .NET does this
 		}
@@ -171,14 +171,14 @@ namespace System.Runtime.Remoting.Messaging
 			set { Uri = value; }
 		}
 
-		public object GetArg (int arg_num)
+		public object GetArg (int argNum)
 		{
-			return _args [arg_num];
+			return _args [argNum];
 		}
 		
-		public string GetArgName (int arg_num)
+		public string GetArgName (int index)
 		{
-			return _methodBase.GetParameters()[arg_num].Name;
+			return _methodBase.GetParameters()[index].Name;
 		}
 
 		public Exception Exception {
@@ -211,16 +211,16 @@ namespace System.Runtime.Remoting.Messaging
 			}
 		}
 
-		public object GetOutArg (int arg_num)
+		public object GetOutArg (int argNum)
 		{
 			if (_inArgInfo == null) _inArgInfo = new ArgInfo (MethodBase, ArgInfoType.Out);
-			return _args[_inArgInfo.GetInOutArgIndex (arg_num)];
+			return _args[_inArgInfo.GetInOutArgIndex (argNum)];
 		}
 
-		public string GetOutArgName (int arg_num)
+		public string GetOutArgName (int index)
 		{
 			if (_inArgInfo == null) _inArgInfo = new ArgInfo (MethodBase, ArgInfoType.Out);
-			return _inArgInfo.GetInOutArgName(arg_num);
+			return _inArgInfo.GetInOutArgName (index);
 		}
 
 		Identity IInternalMessage.TargetIdentity

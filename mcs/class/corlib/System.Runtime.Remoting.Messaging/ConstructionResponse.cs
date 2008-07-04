@@ -42,8 +42,8 @@ namespace System.Runtime.Remoting.Messaging
 #endif
 	public class ConstructionResponse: MethodResponse, IConstructionReturnMessage
 	{
-		public ConstructionResponse (Header[] headers, IMethodCallMessage mcm)
-			: base (headers, mcm)
+		public ConstructionResponse (Header[] h, IMethodCallMessage mcm)
+			: base (h, mcm)
 		{
 		}
 		

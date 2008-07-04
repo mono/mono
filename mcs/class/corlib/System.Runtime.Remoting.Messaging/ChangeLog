@@ -1,3 +1,16 @@
+2008-07-04  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* ReturnMessage.cs:
+	* MethodResponse.cs:
+	* MethodCall.cs:
+	* IRemotingFormatter.cs:
+	* IMethodReturnMessage.cs:
+	* IMethodMessage.cs:
+	* IMethodCallMessage.cs:
+	* ConstructionResponse.cs:
+	* ConstructionCall.cs: Fix parameter name
+	* Header.cs: Ouch!
+
 2007-12-04  Robert Jordan  <robertj@gmx.net>
 
 	* MethodCall.cs (ResolveMethod): Handle server objects registered

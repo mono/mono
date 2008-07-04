@@ -47,8 +47,8 @@ namespace System.Runtime.Remoting.Messaging {
 			get;
 		}
 		
-		object GetInArg (int arg_num);
-		string GetInArgName (int arg_num);
+		object GetInArg (int argNum);
+		string GetInArgName (int index);
 	}
 }
 

@@ -1,5 +1,5 @@
 //
-// System.Runtime.Remoting.Messaging.IMethodReturnMessage..cs
+// System.Runtime.Remoting.Messaging.IMethodReturnMessage.cs
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
@@ -42,7 +42,7 @@ namespace System.Runtime.Remoting.Messaging {
 		object [] OutArgs     { get; }
 		object    ReturnValue { get; }
 
-		object GetOutArg      (int arg_num);
-		string GetOutArgName  (int arg_num);
+		object GetOutArg      (int argNum);
+		string GetOutArgName  (int index);
 	}
 }
