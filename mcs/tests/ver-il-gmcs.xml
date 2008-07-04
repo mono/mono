@@ -11714,6 +11714,49 @@
       </method>
     </type>
   </test>
+  <test name="gtest-anon-34.cs">
+    <type name="MyClass">
+      <method name="Void .ctor()">
+        <size>18</size>
+      </method>
+      <method name="Int32 get_Answer()">
+        <size>7</size>
+      </method>
+      <method name="Void set_Answer(Int32)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>82</size>
+      </method>
+    </type>
+    <type name="Test+D">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Main&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__0()">
+        <size>33</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-4.cs">
     <type name="Test">
       <method name="Void .ctor()">
