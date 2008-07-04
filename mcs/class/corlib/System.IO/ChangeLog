@@ -1,3 +1,7 @@
+2008-07-04  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* File.cs: Fix parameter name
+
 2008-07-03  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* TextWriter.cs:

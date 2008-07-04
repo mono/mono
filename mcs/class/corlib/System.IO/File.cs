@@ -627,9 +627,9 @@ namespace System.IO
 			WriteAllText (path, contents, Encoding.UTF8Unmarked);
 		}
 
-		public static void WriteAllText (string path, string contents, Encoding enc)
+		public static void WriteAllText (string path, string contents, Encoding encoding)
 		{
-			using (StreamWriter sw = new StreamWriter (path, false, enc)) {
+			using (StreamWriter sw = new StreamWriter (path, false, encoding)) {
 				sw.Write (contents);
 			}
 		}
