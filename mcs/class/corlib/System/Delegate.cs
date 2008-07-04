@@ -250,13 +250,14 @@ namespace System
 		}
 
 #if NET_2_0
-		public
+		public static Delegate CreateDelegate (Type type, object firstArgument, MethodInfo method) {
+			return CreateDelegate (type, firstArgument, method, true);
+		}
 #else
-		internal
-#endif
-		static Delegate CreateDelegate (Type type, object target, MethodInfo method) {
+		internal static Delegate CreateDelegate (Type type, object target, MethodInfo method) {
 			return CreateDelegate (type, target, method, true);
 		}
+#endif
 
 #if NET_2_0
 		public

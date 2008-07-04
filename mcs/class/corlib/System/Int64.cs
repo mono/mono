@@ -48,28 +48,28 @@ namespace System {
 		
 		internal long m_value;
 
-		public int CompareTo (object v)
+		public int CompareTo (object value)
 		{
-			if (v == null)
+			if (value == null)
 				return 1;
 			
-			if (!(v is System.Int64))
+			if (!(value is System.Int64))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Int64"));
 
-			long value = (long) v;
+			long lValue = (long) value;
 
-			if (m_value == value)
+			if (m_value == lValue)
 				return 0;
 
-			return (m_value < value) ? -1 : 1;
+			return (m_value < lValue) ? -1 : 1;
 		}
 
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is System.Int64))
+			if (!(obj is System.Int64))
 				return false;
 
-			return ((long) o) == m_value;
+			return ((long) obj) == m_value;
 		}
 
 		public override int GetHashCode ()
@@ -88,9 +88,9 @@ namespace System {
 				return -1;
 		}
 
-		public bool Equals (long value)
+		public bool Equals (long obj)
 		{
-			return value == m_value;
+			return obj == m_value;
 		}
 #endif
 

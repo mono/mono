@@ -1,6 +1,11 @@
 2008-07-04  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
-	* IntPtr: Fix parameter names, change internal name to accomodate for parameter changes
+	* Delegate.cs: Fix parameter names for 2.0 profile
+	* Int64.cs: Fix parameter names
+
+2008-07-04  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* IntPtr.cs: Fix parameter names, change internal name to accomodate for parameter changes
 
 2008-07-04  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
