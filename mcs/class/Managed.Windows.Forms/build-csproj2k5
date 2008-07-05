@@ -231,9 +231,10 @@ echo "  <ItemGroup>"
 	INCLUDE=`echo $INCLUDE | sed 's/\//\\\\/'`
 
 	echo "    <EmbeddedResource Include=\"$INCLUDE\">"
-	echo "      <LogicalName>$LOGICALNAME</LogicalName>"
 	if test "x$CUSTOMTOOLNAMESPACE" != "x"; then
-	    echo "      <CustomToolNameSpace>$CUSTOMTOOLNAMESPACE</CustomToolNameSpace>"
+		echo "      <LogicalName>$CUSTOMTOOLNAMESPACE</LogicalName>"
+	else
+		echo "      <LogicalName>$LOGICALNAME</LogicalName>"
 	fi
 	echo "    </EmbeddedResource>"
     done

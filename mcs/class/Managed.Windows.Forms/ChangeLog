@@ -1,3 +1,8 @@
+2008-07-05  Andreia Gaita <avidigal@novell.com> 
+
+	* SWF2k5.csproj, build-csproj2k5: Fix namespaces on embedded resources
+	  [Fixes #384180]
+
 2008-06-30  Jonathan Pobst  <monkey@jpobst.com>
 
 	* System.Windows.Forms.dll.sources: Remove the "new" X11 backend.  It
