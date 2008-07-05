@@ -1,3 +1,13 @@
+2008-07-05  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-trampolines.c, mini.h: Add an argument to
+	mono_create_jit_trampoline_in_domain() for turning off the adding
+	of the sync wrapper.
+
+	* mini.c: Use the JIT trampoline without sync instead of
+	ldftn_nosync in static RGCTX invoke wrappers so that the call can
+	be patched.
+
 2008-07-04  Mark Probst  <mark.probst@gmail.com>
 
 	* driver.c: Turn on GSHARED optimization by default.
