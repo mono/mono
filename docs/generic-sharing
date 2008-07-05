@@ -1,8 +1,136 @@
+-*- outline -*-
+
 Generic code sharing
 ====================
 
-Getting generics information about a stack frame
-------------------------------------------------
+* Porting
+
+** Generic class init trampoline
+
+The generic class init trampoline is very similar to the class init
+trampoline, with the exception that the VTable of the class to be
+inited is passed in a register, MONO_ARCH_VTABLE_REG.  That can be the
+same as the IMT register.
+
+The call to the generic class init trampoline is never patched because
+the VTable is not constant - it depends on the type arguments of the
+class/method doing the call to the trampoline.  For that reason, the
+trampoline needs a fast path for the case that the class is already
+inited.  See tramp-x86.c for how to portably figure out the number of
+the bit in the bit-field that needs to be checked.
+
+** RGCTX register
+
+Generic shared code needs access to type information.  This
+information is contained in a RGCTX for non-generic methods and in an
+MRGCTX for generic methods.  It is passed in one of several ways,
+depending on the type of the called method:
+
+  1. Non-generic non-static methods of reference types have access to
+     the RGCTX via the "this" argument (this->vtable->rgctx).
+
+  2. Non-generic static methods of reference types and non-generic
+     methods of value types need to be passed a pointer to the
+     caller's class's VTable in the MONO_ARCH_RGCTX_REG register.
+
+  3. Generic methods need to be passed a pointer to the MRGCTX in the
+     MONO_ARCH_RGCTX_REG register.
+
+The MONO_ARCH_RGCTX_REG must not be clobbered by trampolines.
+
+MONO_ARCH_RGCTX_REG can be the same as the IMT register for now, but
+this might change in the future when we implement virtual generic
+method calls (more) efficiently.
+
+** Dealing with types
+
+Types passed to arch functions might be type parameters
+(MONO_TYPE_(M)VAR) if the MonoGenericSharingContext* argument is
+non-NULL.  For example, an argument or return type in a method passed
+to mono_arch_find_this_argument() could be a MONO_TYPE_VAR.  To guard
+for that case use mini_get_basic_type_from_generic() on the type.  See
+get_call_info() in mini-x86.c, for example.
+
+** (M)RGCTX lazy fetch trampoline
+
+The purpose of the lazy fetch trampoline is to fetch a slot from an
+(M)RGCTX which might not be inited, yet.  In the latter case, it needs
+to go make a transition to unmanaged code to fill the slot.  This is
+the layout of a RGCTX:
+
+     +---------------------------------+
+     | next | slot 0 | slot 1 | slot 2 |
+     +--|------------------------------+
+        |
+  +-----+
+  |  +---------------------------------
+  +->| next | slot 3 | slot 4 | slot 5 ....
+     +--|------------------------------
+        |
+  +-----+
+  |  +------------------------------------
+  +->| next | slot 10 | slot 11 | slot 12 ....
+     +--|---------------------------------
+        .
+        .
+        .
+
+For fetching a slot from a RGCTX the trampoline is passed a pointer to
+the VTable.  From there it has to fetch the pointer to the RGCTX,
+which might be null.  Then it has to traverse the correct number of
+"next" links, each of which might be NULL.  Arriving at the right
+array it needs to fetch the slot, which might also be NULL.  If any of
+the NULL cases, the trampoline must transition to unmanaged code to
+potentially setup the RGCTX and fill the slot.  Here is pseudo-code
+for fetching slot 11:
+
+    ; vtable ptr in r1
+    ; fetch RGCTX array 0
+    r2 = *(r1 + offsetof(MonoVTable, runtime_generic_context))
+    if r2 == NULL goto unmanaged
+    ; fetch RGCTX array 1
+    r2 = *r2
+    if r2 == NULL goto unmanaged
+    ; fetch RGCTX array 2
+    r2 = *r2
+    if r2 == NULL goto unmanaged
+    ; fetch slot 11
+    r2 = *(r2 + 2 * sizeof (gpointer))
+    if r2 == NULL goto unmanaged
+    return r2
+  unmanaged:
+    jump unmanaged_fetch_code
+
+The number of slots in the arrays must be obtained from the function
+mono_class_rgctx_get_array_size().
+
+The MRGCTX case is different in two aspects.  First, the trampoline is
+not passed a pointer to a VTable, but a pointer directly to the
+MRGCTX, which is guaranteed not to be NULL (any of the next pointers
+and any of the slots can be NULL, though).  Second, the layout of the
+first array is slightly different, in that the first two slots are
+occupied by a pointers to the class's VTable and to the method's
+method_inst.  The next pointer is in the third slot and the first
+actual slot, "slot 0", in the fourth:
+
+     +--------------------------------------------------------+
+     | vtable | method_inst | next | slot 0 | slot 1 | slot 2 |
+     +-------------------------|------------------------------+
+                               .
+                               .
+
+All other arrays have the same layout as the RGCTX ones, except
+possibly for their length.
+
+The function to create the trampoline,
+mono_arch_create_rgctx_lazy_fetch_trampoline(), gets passed an encoded
+slot number.  Use the macro MONO_RGCTX_SLOT_IS_MRGCTX to query whether
+a trampoline for an MRGCTX is needed, as opposed to one for a RGCTX.
+Use MONO_RGCTX_SLOT_INDEX to get the index of the slot (like 2 for
+"slot 2" as above).
+
+
+* Getting generics information about a stack frame
 
 If a method is compiled with generic sharing, its MonoJitInfo has
 has_generic_jit_info set.  In that case, the MonoJitInfo is followed
@@ -10,7 +138,7 @@ has_generic_jit_info set.  In that case, the MonoJitInfo is followed
 
 The MonoGenericJitInfo contains information about the location of the
 this/vtable/MRGCTX variable, if the has_this flag is set.  If that is
-the case, there are two possibilites:
+the case, there are two possibilities:
 
   1. this_in_reg is set.  this_reg is the number of the register where
      the variable is stored.
@@ -33,8 +161,7 @@ an MRGCTX:
      MRGCTX of the method.
 
 
-Layout of the MRGCTX
---------------------
+* Layout of the MRGCTX
 
 The MRGCTX is a structure that starts with
 MonoMethodRuntimeGenericContext, which contains a pointer to the
@@ -42,8 +169,7 @@ vtable of the class and a pointer to the MonoGenericInst with the type
 arguments for the method.
 
 
-Blog posts about generic code sharing
--------------------------------------
+* Blog posts about generic code sharing
 
 http://schani.wordpress.com/2007/09/22/generics-sharing-in-mono/
 http://schani.wordpress.com/2007/10/12/the-trouble-with-shared-generics/
