@@ -1,3 +1,7 @@
+2008-07-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* generic-sharing.c (mono_method_lookup_rgctx): Fix a warning.
+
 2008-07-04  Mark Probst  <mark.probst@gmail.com>
 
 	* class-internals.h, class.c: Added new generic sharing option:
