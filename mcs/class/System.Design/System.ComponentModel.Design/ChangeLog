@@ -1,3 +1,9 @@
+2008-07-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DesignerActionMethodItem.cs: Fix typo where the action_list
+	field was self-assigned (instead of taking the ctor value).
+	[Found using Gendarme ReviewSelfAssignmentRule]
+
 2008-06-28  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DesignSurfaceManager.cs: Set the ActiveSurface only if it 

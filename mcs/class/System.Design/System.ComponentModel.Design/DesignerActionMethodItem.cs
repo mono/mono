@@ -74,7 +74,7 @@ namespace System.ComponentModel.Design
 						 bool includeAsDesignerVerb)
 			: base (displayName, category, description)
 		{
-			this.action_list = action_list;
+			this.action_list = actionList;
 			this.member_name = memberName;
 			this.designer_verb = includeAsDesignerVerb;
 		}
