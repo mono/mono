@@ -7,6 +7,11 @@
 	then throw an InvalidOperationException instead of a SqlException.
 	* Tds50.cs: Fixed compiler warning. Removed extra tabs, and changed
 	spaces to tabs. Minor code formatting.
+	* Tds70.cs: Removed extra tabs, and changed spaces to tabs. Code
+	formatting. Avoid calling Environment.UserDomainName if username
+	contains domain. Use String.Empty instead of "".
+	* TdsConnectionParameters.cs: Invoke Reset method for initializing
+	fields. Spaces to tabs.
 
 2008-07-04  Gert Driesen  <drieseng@users.sourceforge.net>
 

@@ -31,36 +31,43 @@
 //
 
 using System;
-namespace Mono.Data.Tds.Protocol {
+
+namespace Mono.Data.Tds.Protocol
+{
 	public class TdsConnectionParameters
 	{
-		public string ApplicationName = "Mono";
-		public string Database = String.Empty;
-		public string Charset = String.Empty;
-		public string Hostname = System.Net.Dns.GetHostName();
-		public string Language = String.Empty;
-		public string LibraryName = "Mono";
-		public string Password = String.Empty;
-		public string ProgName = "Mono";
-		public string User = String.Empty;
-		public bool DomainLogin = false; 
-		public string DefaultDomain = String.Empty; 
-		public string AttachDBFileName = String.Empty; 
+		public string ApplicationName;
+		public string Database;
+		public string Charset;
+		public string Hostname;
+		public string Language;
+		public string LibraryName;
+		public string Password;
+		public string ProgName;
+		public string User;
+		public bool DomainLogin;
+		public string DefaultDomain;
+		public string AttachDBFileName;
 
-                public void Reset ()
-                {
-                        ApplicationName = "Mono";
-                        Database = String.Empty;
-                        Charset = String.Empty;
-                        Hostname = System.Net.Dns.GetHostName();
-                        Language = String.Empty;
-                        LibraryName = "Mono";
-                        Password = String.Empty;
-                        ProgName = "Mono";
-                        User = String.Empty;
-                        DomainLogin = false; 
-                        DefaultDomain = String.Empty;
+		public TdsConnectionParameters ()
+		{
+			Reset ();
+		}
+
+		public void Reset ()
+		{
+			ApplicationName = "Mono";
+			Database = String.Empty;
+			Charset = String.Empty;
+			Hostname = System.Net.Dns.GetHostName();
+			Language = String.Empty;
+			LibraryName = "Mono";
+			Password = String.Empty;
+			ProgName = "Mono";
+			User = String.Empty;
+			DomainLogin = false; 
+			DefaultDomain = String.Empty;
 			AttachDBFileName = String.Empty;
-                }
+		}
 	}
 }

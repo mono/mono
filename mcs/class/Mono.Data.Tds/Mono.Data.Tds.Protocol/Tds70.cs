@@ -37,8 +37,9 @@ using Mono.Security.Protocol.Ntlm;
 using System;
 using System.Text;
 
-namespace Mono.Data.Tds.Protocol {
-        public sealed class Tds70 : Tds
+namespace Mono.Data.Tds.Protocol
+{
+	public sealed class Tds70 : Tds
 	{
 		#region Fields
 
@@ -80,7 +81,7 @@ namespace Mono.Data.Tds.Protocol {
 			foreach (TdsMetaParameter p in Parameters) {
 				string includeAt = "@";
 				if (p.ParameterName [0] == '@')
-					includeAt = "";
+					includeAt = string.Empty;
 				if (p.Direction != TdsParameterDirection.ReturnValue) {
 					if (result.Length > 0)
 						result.Append (", ");
@@ -123,7 +124,6 @@ namespace Mono.Data.Tds.Protocol {
 			if (Parameters != null) {
 				foreach (TdsMetaParameter p in Parameters) {
 					if (p.Direction != TdsParameterDirection.Input) {
-
 						if (count == 0)
 							select.Append ("select ");
 						else
@@ -133,7 +133,7 @@ namespace Mono.Data.Tds.Protocol {
 						declare.Append (String.Format ("declare {0}\n", p.Prepare ()));
 
 						if (p.Direction != TdsParameterDirection.ReturnValue) {
-							if( p.Direction == TdsParameterDirection.InputOutput )
+							if (p.Direction == TdsParameterDirection.InputOutput)
 								set.Append (String.Format ("set {0}\n", FormatParameter(p)));
 							else
 								set.Append (String.Format ("set {0}=NULL\n", p.ParameterName));
@@ -142,15 +142,15 @@ namespace Mono.Data.Tds.Protocol {
 						count += 1;
 					}
 					
-					if (p.Direction == TdsParameterDirection.ReturnValue) {
+					if (p.Direction == TdsParameterDirection.ReturnValue)
 						exec = p.ParameterName + "=";
-					}
 				}
 			}
-                        exec = "exec " + exec;
-                        
-                        string sql = String.Format ("{0}{1}{2}{3} {4}\n{5}", declare.ToString (), set.ToString (), exec, procedure, BuildParameters (), select.ToString ());
-			return sql;
+			exec = "exec " + exec;
+
+			return String.Format ("{0}{1}{2}{3} {4}\n{5}",
+				declare.ToString (), set.ToString (), exec,
+				procedure, BuildParameters (), select.ToString ());
 		}
 
 		public override bool Connect (TdsConnectionParameters connectionParameters)
@@ -167,7 +167,7 @@ namespace Mono.Data.Tds.Protocol {
 			short authLen = 0;
 			byte pad = (byte) 0;
 			
-			byte[] domainMagic =  {	6, 0x7d, 0x0f, 0xfd, 0xff, 0x0, 0x0, 0x0,
+			byte[] domainMagic = { 6, 0x7d, 0x0f, 0xfd, 0xff, 0x0, 0x0, 0x0,
 									0x0, 0xe0, 0x83, 0x0, 0x0,
 									0x68, 0x01, 0x00, 0x00, 0x09, 0x04, 0x00, 0x00 };
 			byte[] sqlserverMagic = { 6, 0x0, 0x0, 0x0,
@@ -177,40 +177,40 @@ namespace Mono.Data.Tds.Protocol {
 										0x0, 0x0, 0x0 };
 			byte[] magic = null;
 			
-			if (connectionParameters.DomainLogin == true)
+			if (connectionParameters.DomainLogin)
 				magic = domainMagic;
 			else
 				magic = sqlserverMagic;
 			
 			string username = connectionParameters.User;
+			string domain = null;
 
-			string domain = Environment.UserDomainName;
-			domain = connectionParameters.DefaultDomain = Environment.UserDomainName;
-
-			int idx = 0;
-			if ((idx = username.IndexOf ("\\")) > -1) {
+			int idx = username.IndexOf ("\\");
+			if (idx != -1) {
 				domain = username.Substring (0, idx);
 				username = username.Substring (idx + 1);
 
 				connectionParameters.DefaultDomain = domain;
 				connectionParameters.User = username;
+			} else {
+				domain = Environment.UserDomainName;
+				connectionParameters.DefaultDomain = domain;
 			}
-							
+
 			short partialPacketSize = (short) (86 + (
-				connectionParameters.Hostname.Length + 		
-				connectionParameters.ApplicationName.Length + 
+				connectionParameters.Hostname.Length +
+				connectionParameters.ApplicationName.Length +
 				DataSource.Length +
 				connectionParameters.LibraryName.Length +
 				Language.Length +
 				connectionParameters.Database.Length +
-				connectionParameters.AttachDBFileName.Length) * 2); 
-			
-			if(connectionParameters.DomainLogin == true) {
+				connectionParameters.AttachDBFileName.Length) * 2);
+
+			if (connectionParameters.DomainLogin) {
 				authLen = ((short) (32 + (connectionParameters.Hostname.Length +
 					domain.Length)));
 				partialPacketSize += authLen;
-			}
-			else 
+			} else
 				partialPacketSize += ((short) ((username.Length + connectionParameters.Password.Length) * 2));
 			
 			int totalPacketSize = partialPacketSize;
@@ -228,20 +228,17 @@ namespace Mono.Data.Tds.Protocol {
 
 			short curPos = 86;
 
-			// Hostname 
+			// Hostname
 			Comm.Append (curPos);
 			Comm.Append ((short) connectionParameters.Hostname.Length);
 			curPos += (short) (connectionParameters.Hostname.Length * 2);
 
-			if(connectionParameters.DomainLogin.Equals(true))
-			{
+			if (connectionParameters.DomainLogin) {
 				Comm.Append((short)0);
 				Comm.Append((short)0);
 				Comm.Append((short)0);
 				Comm.Append((short)0);
-			}
-			else 
-			{
+			} else {
 				// Username
 				Comm.Append (curPos);
 				Comm.Append ((short) username.Length);
@@ -253,7 +250,7 @@ namespace Mono.Data.Tds.Protocol {
 				curPos += (short) (connectionParameters.Password.Length * 2);
 			}
 
-			// AppName			
+			// AppName
 			Comm.Append (curPos);
 			Comm.Append ((short) connectionParameters.ApplicationName.Length);
 			curPos += (short) (connectionParameters.ApplicationName.Length * 2);
@@ -292,12 +289,10 @@ namespace Mono.Data.Tds.Protocol {
 
 			// Authentication Stuff
 			Comm.Append ((short) curPos);
-			if (connectionParameters.DomainLogin == true) 
-			{
+			if (connectionParameters.DomainLogin) {
 				Comm.Append ((short) authLen);
 				curPos += (short) authLen;
-			}
-			else
+			} else
 				Comm.Append ((short) 0);
 			
 			// Unknown
@@ -307,8 +302,7 @@ namespace Mono.Data.Tds.Protocol {
 			
 			// Connection Parameters
 			Comm.Append (connectionParameters.Hostname);
-			if (connectionParameters.DomainLogin == false) 
-			{
+			if (!connectionParameters.DomainLogin) {
 				// SQL Server Authentication
 				Comm.Append (connectionParameters.User);
 				string scrambledPwd = EncryptPassword (connectionParameters.Password);
@@ -320,16 +314,15 @@ namespace Mono.Data.Tds.Protocol {
 			Comm.Append (Language);
 			Comm.Append (connectionParameters.Database);
 
-			if (connectionParameters.DomainLogin) 
-			{
+			if (connectionParameters.DomainLogin) {
 				// the rest of the packet is NTLMSSP authentication
 				Type1Message msg = new Type1Message ();
 				msg.Domain = domain;
 				msg.Host = connectionParameters.Hostname;
-				msg.Flags = NtlmFlags.NegotiateUnicode | 
-					NtlmFlags.NegotiateNtlm | 
-					NtlmFlags.NegotiateDomainSupplied | 
-					NtlmFlags.NegotiateWorkstationSupplied | 
+				msg.Flags = NtlmFlags.NegotiateUnicode |
+					NtlmFlags.NegotiateNtlm |
+					NtlmFlags.NegotiateDomainSupplied |
+					NtlmFlags.NegotiateWorkstationSupplied |
 					NtlmFlags.NegotiateAlwaysSign; // 0xb201
 				Comm.Append (msg.GetBytes ());
 			}
@@ -362,7 +355,7 @@ namespace Mono.Data.Tds.Protocol {
 		{
 			try {
 				ExecProc ("sp_reset_connection");
-				base.Reset (); 
+				base.Reset ();
 			} catch (Exception e) {
 				System.Reflection.PropertyInfo pinfo = e.GetType ().GetProperty ("Class");
 				if (pinfo != null && pinfo.PropertyType == typeof (byte)) {
@@ -391,7 +384,7 @@ namespace Mono.Data.Tds.Protocol {
 		protected override void ExecRPC (string rpcName, TdsMetaParameterCollection parameters, 
 						 int timeout, bool wantResults)
 		{
-			// clean up 
+			// clean up
 			InitExec ();
 			Comm.StartPacket (TdsPacketType.RPC);
 
@@ -428,12 +421,10 @@ namespace Mono.Data.Tds.Protocol {
 			param.IsNullable = false;
 
 			Comm.Append ((byte)colType); // type
-				
-			int size = 0 ;
-			if (param.Size == 0)
+
+			int size = param.Size;
+			if (size == 0)
 				size = param.GetActualSize ();
-			else
-				size = param.Size;
 
 			/*
 			  If column type is SqlDbType.NVarChar the size of parameter is multiplied by 2
@@ -445,12 +436,12 @@ namespace Mono.Data.Tds.Protocol {
 				Comm.Append ((short)size); // Parameter size passed in SqlParameter
 			else if (IsBlobType (colType))
 				Comm.Append (size); // Parameter size passed in SqlParameter
-			else 
+			else
 				Comm.Append ((byte)size);
 
 			// Precision and Scale are non-zero for only decimal/numeric
 			if ( param.TypeName == "decimal" || param.TypeName == "numeric") {
-				Comm.Append ((param.Precision!=0)?param.Precision:(byte)28);
+				Comm.Append ((param.Precision !=0 ) ? param.Precision : (byte) 28);
 				Comm.Append (param.Scale);
 			}
 
@@ -463,46 +454,44 @@ namespace Mono.Data.Tds.Protocol {
 				Comm.Append ((byte)size);
 
 			if (size > 0) {
-			switch (param.TypeName) { 
-			case "money" :
-				{
+				switch (param.TypeName) {
+				case "money" : {
 					Decimal val = (decimal) param.Value;
-					int[]  arr = Decimal.GetBits (val);
+					int[] arr = Decimal.GetBits (val);
 					int sign = (val>0 ? 1: -1);
 					Comm.Append (sign * arr[1]);
 					Comm.Append (sign * arr[0]);
+					break;
 				}
-				break;
-			case "smallmoney":
-				{
+				case "smallmoney": {
 					Decimal val = (decimal) param.Value;
-					int[]  arr = Decimal.GetBits (val);
+					int[] arr = Decimal.GetBits (val);
 					int sign = (val>0 ? 1: -1);
 					Comm.Append (sign * arr[0]);
+					break;
 				}
-				break;
-			case "datetime":
-				Comm.Append ((DateTime)param.Value, 8);
-				break;
-			case "smalldatetime":
-				Comm.Append ((DateTime)param.Value, 4);
-				break;
-			case "varchar" :
-			case "nvarchar" :
-			case "char" :
-			case "nchar" :
-			case "text" :
-			case "ntext" :
-				byte [] tmp = param.GetBytes ();
-				Comm.Append (tmp);
-				break;
-			case "uniqueidentifier" :
-				Comm.Append (((Guid)param.Value).ToByteArray());
-				break;
-			default : 
-				Comm.Append (param.Value);
-				break;
-			}
+				case "datetime":
+					Comm.Append ((DateTime)param.Value, 8);
+					break;
+				case "smalldatetime":
+					Comm.Append ((DateTime)param.Value, 4);
+					break;
+				case "varchar" :
+				case "nvarchar" :
+				case "char" :
+				case "nchar" :
+				case "text" :
+				case "ntext" :
+					byte [] tmp = param.GetBytes ();
+					Comm.Append (tmp);
+					break;
+				case "uniqueidentifier" :
+					Comm.Append (((Guid)param.Value).ToByteArray());
+					break;
+				default :
+					Comm.Append (param.Value);
+					break;
+				}
 			}
 			return;
 		}
@@ -520,16 +509,15 @@ namespace Mono.Data.Tds.Protocol {
 		{
 			string includeAt = "@";
 			if (parameter.ParameterName [0] == '@')
-				includeAt = "";
+				includeAt = string.Empty;
 			if (parameter.Direction == TdsParameterDirection.Output)
 				return String.Format ("{0}{1}={1} output", includeAt, parameter.ParameterName);
-
 			if (parameter.Value == null || parameter.Value == DBNull.Value)
 				return parameter.ParameterName + "=NULL";
 
 			string value = null;
 			switch (parameter.TypeName) {
-                        case "smalldatetime":
+			case "smalldatetime":
 			case "datetime":
 				DateTime d = Convert.ToDateTime (parameter.Value);
 				value = String.Format (base.Locale,
@@ -556,14 +544,13 @@ namespace Mono.Data.Tds.Protocol {
 				value = String.Format ("N'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
 				break;
 			case "uniqueidentifier":
-				value = String.Format ("'{0}'", ((Guid) parameter.Value).ToString (""));
+				value = String.Format ("'{0}'", ((Guid) parameter.Value).ToString (string.Empty));
 				break;
 			case "bit":
 				if (parameter.Value.GetType () == typeof (bool))
 					value = (((bool) parameter.Value) ? "0x1" : "0x0");
 				else
 					value = parameter.Value.ToString ();
-
 				break;
 			case "image":
 			case "binary":
@@ -574,7 +561,7 @@ namespace Mono.Data.Tds.Protocol {
 				if (byteArray.Length == 0)
 					value = "0x";
 				else
-					value = String.Format ("0x{0}", BitConverter.ToString (byteArray).Replace ("-", "").ToLower ());
+					value = String.Format ("0x{0}", BitConverter.ToString (byteArray).Replace ("-", string.Empty).ToLower ());
 				break;
 			default:
 				value = String.Format ("'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
@@ -597,11 +584,11 @@ namespace Mono.Data.Tds.Protocol {
 			parms.Add (new TdsMetaParameter ("@Query", "nvarchar", commandText));
 
 			ExecProc ("sp_prepare", parms, 0, true);
-			SkipToEnd ();	
+			SkipToEnd ();
 			return OutputParameters[0].ToString () ;
 			//if (ColumnValues == null || ColumnValues [0] == null || ColumnValues [0] == DBNull.Value)
 			//	throw new TdsInternalException ();
-			//return "" ;
+			//return string.Empty;
 			//return ColumnValues [0].ToString ();
 		}
 
@@ -637,9 +624,7 @@ namespace Mono.Data.Tds.Protocol {
 				if (IsBlobType (columnType)) {
 					columnSize = Comm.GetTdsInt ();
 					tableName = Comm.GetString (Comm.GetTdsShort ());
-				}
-
-				else if (IsFixedSizeColumn (columnType))
+				} else if (IsFixedSizeColumn (columnType))
 					columnSize = LookupBufferSize (columnType);
 				else if (IsLargeType ((TdsColumnType) xColumnType))
 					columnSize = Comm.GetTdsShort ();
@@ -653,7 +638,6 @@ namespace Mono.Data.Tds.Protocol {
 				case TdsColumnType.NText:
 				case TdsColumnType.NChar:
 				case TdsColumnType.NVarChar:
-				  /**/
 					columnSize /= 2;
 					break;
 				case TdsColumnType.Decimal:
@@ -714,86 +698,81 @@ namespace Mono.Data.Tds.Protocol {
 		protected override void ProcessReturnStatus ()
 		{
 			int result = Comm.GetTdsInt ();
-			if( Parameters != null ) {
-			foreach (TdsMetaParameter param in Parameters) {
-				if (param.Direction == TdsParameterDirection.ReturnValue){
-					param.Value = result;
-					break;
+			if (Parameters != null) {
+				foreach (TdsMetaParameter param in Parameters) {
+					if (param.Direction == TdsParameterDirection.ReturnValue) {
+						param.Value = result;
+						break;
+					}
 				}
 			}
-		}
 		}
 
 		#endregion // Methods
 
 #if NET_2_0
-                #region Asynchronous Methods
-                public override IAsyncResult BeginExecuteNonQuery (string cmdText,
+		#region Asynchronous Methods
+
+		public override IAsyncResult BeginExecuteNonQuery (string cmdText,
                                                           TdsMetaParameterCollection parameters,
                                                           AsyncCallback callback,
                                                           object state)
-                {
-                        Parameters = parameters;
-                        string sql = cmdText;
+		{
+			Parameters = parameters;
+			string sql = cmdText;
 			if (Parameters != null && Parameters.Count > 0)
 				sql = BuildExec (cmdText);
 
-                        IAsyncResult ar = BeginExecuteQueryInternal (sql, false, callback, state);
-                        return ar;
-                }
+			IAsyncResult ar = BeginExecuteQueryInternal (sql, false, callback, state);
+			return ar;
+		}
 
-                public override void EndExecuteNonQuery (IAsyncResult ar)
-                {
-                        EndExecuteQueryInternal (ar);
-                }
+		public override void EndExecuteNonQuery (IAsyncResult ar)
+		{
+			EndExecuteQueryInternal (ar);
+		}
 
-                public override IAsyncResult BeginExecuteQuery (string cmdText,
+		public override IAsyncResult BeginExecuteQuery (string cmdText,
                                                                 TdsMetaParameterCollection parameters,
                                                                 AsyncCallback callback,
                                                                 object state)
-                {
-                        Parameters = parameters;
-                        string sql = cmdText;
+		{
+			Parameters = parameters;
+			string sql = cmdText;
 			if (Parameters != null && Parameters.Count > 0)
 				sql = BuildExec (cmdText);
 
-                        IAsyncResult ar = BeginExecuteQueryInternal (sql, true, callback, state);
-                        return ar;
-                }
+			IAsyncResult ar = BeginExecuteQueryInternal (sql, true, callback, state);
+			return ar;
+		}
 
-                public override void EndExecuteQuery (IAsyncResult ar)
-                {
-                        EndExecuteQueryInternal (ar);
-                }
+		public override void EndExecuteQuery (IAsyncResult ar)
+		{
+			EndExecuteQueryInternal (ar);
+		}
 
-
-                public override IAsyncResult BeginExecuteProcedure (string prolog,
+		public override IAsyncResult BeginExecuteProcedure (string prolog,
                                                                     string epilog,
                                                                     string cmdText,
                                                                     bool IsNonQuery,
                                                                     TdsMetaParameterCollection parameters,
                                                                     AsyncCallback callback,
                                                                     object state)
-                {
-
-                        
-                        Parameters = parameters;
+		{
+			Parameters = parameters;
 			string pcall = BuildProcedureCall (cmdText);
-                        string sql = String.Format ("{0};{1};{2};", prolog, pcall, epilog);
+			string sql = String.Format ("{0};{1};{2};", prolog, pcall, epilog);
 
-                        IAsyncResult ar = BeginExecuteQueryInternal (sql, !IsNonQuery, callback, state);
-                        return ar;
-                }
+			IAsyncResult ar = BeginExecuteQueryInternal (sql, !IsNonQuery, callback, state);
+			return ar;
+		}
 
-                public override void EndExecuteProcedure (IAsyncResult ar)
-                {
-                        EndExecuteQueryInternal (ar);
-                }
+		public override void EndExecuteProcedure (IAsyncResult ar)
+		{
+			EndExecuteQueryInternal (ar);
+		}
 
-
-
-                #endregion // Asynchronous Methods
+		#endregion // Asynchronous Methods
 #endif // NET_2_0
-
 	}
 }
