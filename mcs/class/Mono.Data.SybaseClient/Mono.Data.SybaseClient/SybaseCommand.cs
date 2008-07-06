@@ -74,13 +74,11 @@ namespace Mono.Data.SybaseClient {
 		public SybaseCommand (string commandText) 
 			: this (commandText, null, null)
 		{
-			commandText = commandText;
 		}
 
 		public SybaseCommand (string commandText, SybaseConnection connection) 
 			: this (commandText, connection, null)
 		{
-			Connection = connection;
 		}
 
 		public SybaseCommand (string commandText, SybaseConnection connection, SybaseTransaction transaction) 
