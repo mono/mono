@@ -1141,11 +1141,32 @@ synchronously.   The default mode of operation is asynchronous which
 makes it hard to isolate the root of certain problems.
 .TP
 \fBMONO_GENERIC_SHARING\fR
-This environment variable is completely unsupported, don't use it.
-This controls for which classes to enable generic code sharing in
-principle.  Permissible values are "all", "corlib" and "none".  The
-default is "corlib", meaning that sharing can only happen for corlib
-classes.  Note that to enable generation of shared code the "gshared"
+This environment variable controls the kind of generic sharing used.
+This variable is used by internal JIT developers and should not be
+changed in production.  Do not use it.
+.Sp
+The variable controls which classes will have generic code sharing
+enabled.
+.Sp
+Permissible values are:
+.RS
+.TP 
+.I "all" 
+All generated code can be shared. 
+.TP
+.I "collections" 
+Only the classes in System.Collections.Generic will have its code
+shared (this is the default value).
+.TP
+.I "corlib"
+Only code in corlib will have its code shared.
+.TP
+.I "none"
+No generic code sharing will be performed.
+.RE
+.Sp
+The
+Note that to enable generation of shared code the "gshared"
 compiler option has to be set as well.
 .SH VALGRIND
 If you want to use Valgrind, you will find the file `mono.supp'
