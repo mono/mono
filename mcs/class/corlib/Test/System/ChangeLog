@@ -1,3 +1,7 @@
+2008-07-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* DateTimeOffsetTest.cs: Fix wrong test (DateTimeOffset has no public CompareTo (object))
+
 2008-07-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* DelegateTest.cs (GetMethodFromGenericClass): Test for a
