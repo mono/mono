@@ -64,7 +64,10 @@ namespace System {
 		 * of icalls, do not require an increment.
 		 */
 		private const int mono_corlib_version = 68;
-		
+
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public enum SpecialFolder
 		{	// TODO: Determine if these windoze style folder identifiers 
 			//       have unix/linux counterparts

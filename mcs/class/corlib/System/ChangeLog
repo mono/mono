@@ -1,3 +1,7 @@
+2008-07-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* Environment.cs: Add missing attribute
+
 2008-07-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Delegate.cs (get_Method): Use the internal version
