@@ -1,5 +1,5 @@
 //
-// System.Security.Policy.ApplicationTrust class
+// System.Security.Policy.ApplicationTrust.cs
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -35,8 +35,9 @@ using System.Security.Permissions;
 
 using Mono.Security.Cryptography;
 
-namespace System.Security.Policy {
-
+namespace System.Security.Policy
+{
+	[Serializable]
 	[ComVisible (true)]
 	public sealed class ApplicationTrust : ISecurityEncodable {
 

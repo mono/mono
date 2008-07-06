@@ -1,3 +1,7 @@
+2008-07-06  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* ApplicationTrust.cs: Add missing attribute
+
 2008-07-03  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* ZoneMembershipCondition.cs:
