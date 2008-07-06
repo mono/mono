@@ -1,3 +1,10 @@
+2008-07-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Data.TdsClient/TdsCommand.cs: Fix unneeded assignment
+	for commandText (assigned to self). Also fix another unneeded 
+	assignment (already taken care by the called ctor).
+	[Found using Gendarme ReviewSelfAssignmentRule]
+
 2005-06-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Mono.Data.DtsClient.dll.sources :

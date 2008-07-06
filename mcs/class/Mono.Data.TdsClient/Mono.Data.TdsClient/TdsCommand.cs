@@ -72,13 +72,11 @@ namespace Mono.Data.TdsClient {
 		public TdsCommand (string commandText) 
 			: this (commandText, null, null)
 		{
-			commandText = commandText;
 		}
 
 		public TdsCommand (string commandText, TdsConnection connection) 
 			: this (commandText, connection, null)
 		{
-			Connection = connection;
 		}
 
 		public TdsCommand (string commandText, TdsConnection connection, TdsTransaction transaction) 
