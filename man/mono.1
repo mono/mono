@@ -176,6 +176,7 @@ The following optimizations are implemented:
              abcrem     Array bound checks removal
              ssapre     SSA based Partial Redundancy Elimination
              sse2       SSE2 instructions on x86 [arch-dependency]
+             gshared    Enable generic code sharing.
 .fi
 .Sp
 For example, to enable all the optimization but dead code
@@ -1165,9 +1166,8 @@ Only code in corlib will have its code shared.
 No generic code sharing will be performed.
 .RE
 .Sp
-The
-Note that to enable generation of shared code the "gshared"
-compiler option has to be set as well.
+Generic code sharing by default only applies to collections.   The
+Mono JIT by default turns this on.
 .SH VALGRIND
 If you want to use Valgrind, you will find the file `mono.supp'
 useful, it contains the suppressions for the GC which trigger
