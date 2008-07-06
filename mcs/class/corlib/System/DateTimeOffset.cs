@@ -161,9 +161,9 @@ namespace System
 			return UtcDateTime.CompareTo (other.UtcDateTime);
 		}
 
-		int IComparable.CompareTo (object other)
+		int IComparable.CompareTo (object obj)
 		{
-			return CompareTo ((DateTimeOffset) other);
+			return CompareTo ((DateTimeOffset) obj);
 		}
 
 		public static bool operator == (DateTimeOffset left, DateTimeOffset right)

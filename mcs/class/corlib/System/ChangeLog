@@ -1,5 +1,9 @@
 2008-07-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* DateTimeOffset.cs: Fix parameter name
+
+2008-07-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* DateTimeOffset.cs: Remove public, make implicit method
 
 2008-07-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
