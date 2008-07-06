@@ -1043,8 +1043,8 @@ namespace System.DirectoryServices
 				}
 				if (modList.Count > 0) {
 					LdapModification[] mods = new LdapModification[modList.Count]; 	
-					Type mtype=Type.GetType("System.DirectoryServices.LdapModification");
-					mods = (LdapModification[])modList.ToArray(typeof(LdapModification));
+					Type mtype = typeof (LdapModification);
+					mods = (LdapModification[])modList.ToArray(mtype);
 					ModEntry(mods);
 				}
 			}

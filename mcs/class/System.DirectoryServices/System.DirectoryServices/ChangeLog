@@ -1,3 +1,12 @@
+2008-07-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DirectoryEntry.cs: Use typeof(LdapModification) instead of
+	Type.GetType and actually use the value afterward.
+	[Found using Gendarme AvoidTypeGetTypeForConstantStringsRule]
+	* SearchResultCollection.cs: Avoid infinite recursion in 
+	Contains(SearchResult).
+	[Found using Gendarme BadRecursiveInvocationRule]
+
 2007-05-21  Adar Wesley <adarw@mainsoft.com>
 
 	* DirectoryEntry.cs: added missing methods InvokeGet, InvokeSet.

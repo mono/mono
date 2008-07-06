@@ -136,9 +136,9 @@ namespace System.DirectoryServices
 			return sValues.Contains(oValues);
 		}
 
-		public bool Contains(SearchResult result)
+		public bool Contains (SearchResult result)
 		{
-			return Contains(result);
+			return sValues.Contains (result);
 		}
 
 		public SearchResult this[int index]
