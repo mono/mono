@@ -163,11 +163,11 @@ namespace System.Data.OracleClient
 
 		private static DataTable ConstructSchemaTable ()
 		{
-			Type booleanType = Type.GetType ("System.Boolean");
-			Type stringType = Type.GetType ("System.String");
-			Type intType = Type.GetType ("System.Int32");
-			Type typeType = Type.GetType ("System.Type");
-			Type shortType = Type.GetType ("System.Int16");
+			Type booleanType = typeof (bool);
+			Type stringType = typeof (string);
+			Type intType = typeof (int);
+			Type typeType = typeof (Type);
+			Type shortType = typeof (short);
 
 			DataTable schemaTable = new DataTable ("SchemaTable");
 			schemaTable.Columns.Add ("ColumnName", stringType);

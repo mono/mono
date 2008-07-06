@@ -1,3 +1,8 @@
+2008-07-06  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* OracleDataReader.cs: Replace a few Type.GetType by typeof
+	[Found using Gendarme AvoidTypeGetTypeForConstantStringsRule]
+
 2008-05-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OracleTransaction.cs: Corcompare fixes for 2.0 profile. Implemented
