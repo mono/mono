@@ -1,3 +1,11 @@
+2008-07-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TdsConnectionPool.cs: When pooled connection cannot be reset, remove
+	it from pool and allow slot to be re-used for a newly established
+	connection. Fixes part of bug #360157. When pool is full, and no
+	connection becomes available before the connect timeout has elapsed,
+	then throw an InvalidOperationException instead of a SqlException.
+
 2008-07-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TdsConnectionPool.cs: On 1.0 profile, use object[] for list of

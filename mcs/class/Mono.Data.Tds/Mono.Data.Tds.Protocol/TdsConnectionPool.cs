@@ -166,7 +166,7 @@ namespace Mono.Data.Tds.Protocol
 		{
 			Tds connection = null;
 			int index;
-		    
+
 		retry:
 			// Reset the connection available event
 			connAvailable.Reset ();
@@ -193,7 +193,7 @@ namespace Mono.Data.Tds.Protocol
 						// Someone beat us to the punch
 						connection = null;
 					} else {
-					        continue;
+						continue;
 					}
 				} else {
 					if (Interlocked.CompareExchange (ref (connection as Tds).poolStatus, 1, 0) != 0) {
@@ -202,9 +202,12 @@ namespace Mono.Data.Tds.Protocol
 					} else {
 						if (!connection.Reset ()) {
 							ThreadPool.QueueUserWorkItem (new WaitCallback (DestroyConnection), connection);
-							connection = null;
+							// remove connection from pool
+							list [index] = connection = null;
+							// allow slot be re-used in same run
+							continue;
 						} else {
-						        continue;
+							continue;
 						}
 					}
 				}
@@ -217,8 +220,11 @@ namespace Mono.Data.Tds.Protocol
 					// timeout period - just throw the exception
 					if (info.Timeout > 0 
 						&& !connAvailable.WaitOne (new TimeSpan (0, 0, info.Timeout), true))
-							throw Tds.CreateTimeoutException (info.DataSource, "GetConnection()");
-						
+							throw new InvalidOperationException (
+								"Timeout expired. The timeout period elapsed before a " +
+								"connection could be obtained. A possible explanation " +
+								"is that all the connections in the pool are in use, " +
+								"and the maximum pool size is reached.");
 					goto retry;
 				}
 
