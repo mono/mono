@@ -161,7 +161,7 @@ namespace System
 			return UtcDateTime.CompareTo (other.UtcDateTime);
 		}
 
-		public int CompareTo (object other)
+		int IComparable.CompareTo (object other)
 		{
 			return CompareTo ((DateTimeOffset) other);
 		}
