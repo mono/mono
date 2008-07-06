@@ -1,3 +1,9 @@
+2008-07-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlException.cs: Modified HResult/ErrorCode to match MS. Removed
+	unused FromTdsInternalException overload. Removed unnecessary check
+	for Errors.Count. Minor code formatting.
+
 2008-07-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* SqlConnection.cs: Remove connStringParameters as nobody uses it.
