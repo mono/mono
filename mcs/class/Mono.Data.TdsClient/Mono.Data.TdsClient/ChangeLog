@@ -1,3 +1,8 @@
+2008-07-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TdsDataReader.cs: Replace a few Type.GetType by typeof
+	[Found using Gendarme AvoidTypeGetTypeForConstantStringsRule]
+
 2008-07-01  Marek Habersack  <mhabersack@novell.com>
 
 	* TdsDataReader.cs: use named properties in TdsDataColumn for the
