@@ -96,7 +96,7 @@ namespace MonoTests.System {
 			Assert.IsTrue (dt1 != dt3);
 			Assert.IsFalse (dt1.EqualsExact (dt2));
 			Assert.IsTrue (dt1.CompareTo (dt3) > 0);
-			Assert.IsTrue (dt1.CompareTo (o) == 0);
+			Assert.IsTrue (((IComparable)dt1).CompareTo (o) == 0);
 		}
 
 		[Test]
