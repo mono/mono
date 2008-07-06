@@ -1,3 +1,10 @@
+2008-07-06  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* OciDefineHandle.cs,
+	* OciParameterDescriptor.cs: Replace a few Type.GetType("System.Byte[])
+	by typeof(byte[])
+	[Found using Gendarme AvoidTypeGetTypeForConstantStringsRule]
+
 2007-01-19 Leszek Ciesielski <skolima@gmail.com>
 	* OciCalls.cs: Speed up of the memory allocation
 

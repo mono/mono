@@ -153,17 +153,17 @@ namespace System.Data.OracleClient.Oci {
 			case "Date":
 				return typeof (System.DateTime);
 			case "VarRaw":
-				return Type.GetType ("System.Byte[]");
+				return typeof (byte[]);
 			case "Raw":
-				return Type.GetType ("System.Byte[]");
+				return typeof (byte[]);
 			case "LongRaw":
-				return Type.GetType ("System.Byte[]");
+				return typeof (byte[]);
 			case "UnsignedInt":
 				return typeof (System.UInt32);
 			case "LongVarChar":
 				return typeof (System.String);
 			case "LongVarRaw":
-				return Type.GetType ("System.Byte[]");
+				return typeof (byte[]);
 			case "Char":
 				return typeof (System.String);
 			case "CharZ":
@@ -177,9 +177,9 @@ namespace System.Data.OracleClient.Oci {
 			case "Clob":
 				return typeof (System.String);
 			case "Blob":
-				return Type.GetType ("System.Byte[]");
+				return typeof (byte[]);
 			case "BFile":
-				return Type.GetType ("System.Byte[]");
+				return typeof (byte[]);
 			case "OciString":
 				return typeof (System.String);
 			case "OciDate":

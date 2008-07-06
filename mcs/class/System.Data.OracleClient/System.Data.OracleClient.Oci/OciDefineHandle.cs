@@ -322,7 +322,7 @@ namespace System.Data.OracleClient.Oci
 			if (ociType == OciDataType.Clob)
 				fieldType = typeof(System.String);
 			else if (ociType == OciDataType.Blob)
-				fieldType = Type.GetType("System.Byte[]");
+				fieldType = typeof(byte[]);
 
 			int status = 0;
 
@@ -362,7 +362,7 @@ namespace System.Data.OracleClient.Oci
 		void DefineRaw (int position)
 		{
 			ociType = OciDataType.Raw;
-			fieldType = Type.GetType("System.Byte[]");
+			fieldType = typeof (byte[]);
 
 			value = OciCalls.AllocateClear (definedSize);
 
