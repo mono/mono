@@ -1,4 +1,4 @@
-// ReflectionPermissionFlag.cs
+// System.Security.Permissions.ReflectionPermissionFlag.cs
 //
 // This code was automatically generated from
 // ECMA CLI XML Library Specification.
@@ -51,6 +51,11 @@ namespace System.Security.Permissions {
 
 		ReflectionEmit = 0x4,
 
-		AllFlags = TypeInformation | MemberAccess | ReflectionEmit
+		AllFlags = TypeInformation | MemberAccess | ReflectionEmit,
+
+#if NET_2_0
+		[ComVisible (false)]
+		RestrictedMemberAccess = 0x8
+#endif
 	}
 }

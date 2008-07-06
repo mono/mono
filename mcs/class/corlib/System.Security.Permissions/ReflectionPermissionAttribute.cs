@@ -85,7 +85,20 @@ namespace System.Security.Permissions {
 					flags -= ReflectionPermissionFlag.ReflectionEmit;
 				reflectionEmit = value; 
 			}
-		}  
+		}
+
+#if NET_2_0
+		public bool RestrictedMemberAccess
+		{
+			get { return ((flags & ReflectionPermissionFlag.RestrictedMemberAccess) == ReflectionPermissionFlag.RestrictedMemberAccess); }
+			set {
+				if (value)
+					flags |= ReflectionPermissionFlag.RestrictedMemberAccess;
+				else
+					flags -= ReflectionPermissionFlag.RestrictedMemberAccess;
+			}
+		}
+#endif
 
 #if NET_2_0
 		[Obsolete ("not enforced in 2.0+")]
@@ -101,7 +114,7 @@ namespace System.Security.Permissions {
 				typeInfo = value; 
 			}
 		}
-		
+
 		// Methods
 		public override IPermission CreatePermission ()
 		{
