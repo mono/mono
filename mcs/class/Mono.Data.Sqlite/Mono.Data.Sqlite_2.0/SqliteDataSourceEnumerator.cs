@@ -48,19 +48,19 @@ namespace Mono.Data.Sqlite
 			DataTable dt = new DataTable ();
 			DataColumn col;
 
-			col = new DataColumn ("ServerName", Type.GetType ("System.String"));
+			col = new DataColumn ("ServerName", typeof (string));
 			dt.Columns.Add (col);
 			
-			col = new DataColumn ("InstanceName", Type.GetType ("System.String"));
+			col = new DataColumn ("InstanceName", typeof (string));
 			dt.Columns.Add (col);
 
-			col = new DataColumn ("IsClustered", Type.GetType("System.Bool"));
+			col = new DataColumn ("IsClustered", typeof (bool));
 			dt.Columns.Add (col);
 			
-			col = new DataColumn ("Version", Type.GetType("System.String"));
+			col = new DataColumn ("Version", typeof (string));
 			dt.Columns.Add (col);
 			
-			col = new DataColumn ("FactoryName", Type.GetType("System.String"));
+			col = new DataColumn ("FactoryName", typeof (string));
 			dt.Columns.Add (col);
 
 			DataRow dr = dt.NewRow ();
