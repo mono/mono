@@ -1,5 +1,8 @@
-2008-07-06  Sebastien Pouliot  <sebastien@ximian.com>
+2008-07-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
+	* Mono.Data.SybaseClient/SybaseDataReader.cs: Replace a few 
+	Type.GetType by typeof
+	[Found using Gendarme AvoidTypeGetTypeForConstantStringsRule]
 	* Mono.Data.SybaseClient/SybaseCommand.cs: Fix unneeded assignment
 	for commandText (assigned to self). Also fix another unneeded 
 	assignment (already taken care by the called ctor).
