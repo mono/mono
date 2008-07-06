@@ -5,6 +5,8 @@
 	connection. Fixes part of bug #360157. When pool is full, and no
 	connection becomes available before the connect timeout has elapsed,
 	then throw an InvalidOperationException instead of a SqlException.
+	* Tds50.cs: Fixed compiler warning. Removed extra tabs, and changed
+	spaces to tabs. Minor code formatting.
 
 2008-07-04  Gert Driesen  <drieseng@users.sourceforge.net>
 

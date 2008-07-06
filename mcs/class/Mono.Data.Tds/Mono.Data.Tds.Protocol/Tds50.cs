@@ -32,15 +32,16 @@ using Mono.Data.Tds;
 using System;
 using System.Text;
 
-namespace Mono.Data.Tds.Protocol {
+namespace Mono.Data.Tds.Protocol
+{
 	[MonoTODO ("FIXME: Can packetsize be anything other than 512?")]
-        public sealed class Tds50 : Tds
+	public sealed class Tds50 : Tds
 	{
 		#region Fields
 
 		public static readonly TdsVersion Version = TdsVersion.tds50;
 		int packetSize;
-		bool isSelectQuery = false;
+		bool isSelectQuery;
 
 		#endregion // Fields
 
@@ -70,7 +71,7 @@ namespace Mono.Data.Tds.Protocol {
 			StringBuilder set = new StringBuilder ();
 			StringBuilder declare = new StringBuilder ();
 			int count = 0;
-			foreach (TdsMetaParameter p in Parameters) {	
+			foreach (TdsMetaParameter p in Parameters) {
 				declare.Append (String.Format ("declare {0}\n", p.Prepare ()));
 				set.Append (String.Format ("select {0}=", p.ParameterName));
 				if (p.Direction == TdsParameterDirection.Input)
@@ -310,7 +311,7 @@ namespace Mono.Data.Tds.Protocol {
 		public override void Execute (string sql, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
 		{
 			Parameters = parameters;
-                        string ex = BuildExec (sql);
+			string ex = BuildExec (sql);
 			ExecuteQuery (ex, timeout, wantResults);
 		}
 
@@ -319,8 +320,8 @@ namespace Mono.Data.Tds.Protocol {
 			Parameters = parameters;
 			ExecuteQuery (BuildProcedureCall (commandText), timeout, wantResults);
 		}
-                
-                private string BuildProcedureCall (string procedure)
+
+		private string BuildProcedureCall (string procedure)
 		{
 			string exec = String.Empty;
 
@@ -351,21 +352,19 @@ namespace Mono.Data.Tds.Protocol {
 						count += 1;
 					}
 					
-					if (p.Direction == TdsParameterDirection.ReturnValue) {
+					if (p.Direction == TdsParameterDirection.ReturnValue)
 						exec = p.ParameterName + "=";
-					}
 				}
 			}
-                        exec = "exec " + exec;
-                        
-                        string sql = String.Format ("{0}{1}{2}{3} {4}\n{5}", declare.ToString (), 
-                                                    set.ToString (), 
-                                                    exec, procedure, 
-                                                    BuildParameters (), select.ToString ());
+			exec = "exec " + exec;
+
+			string sql = String.Format ("{0}{1}{2}{3} {4}\n{5}", declare.ToString (),
+				set.ToString (),
+				exec, procedure,
+				BuildParameters (), select.ToString ());
 			return sql;
 		}
 
-                
 		private string BuildParameters ()
 		{
 			if (Parameters == null || Parameters.Count == 0)
@@ -422,7 +421,7 @@ namespace Mono.Data.Tds.Protocol {
 			case "image":
 			case "binary":
 			case "varbinary":
-				return String.Format ("0x{0}", BitConverter.ToString ((byte[]) parameter.Value).Replace ("-", "").ToLower ());
+				return String.Format ("0x{0}", BitConverter.ToString ((byte[]) parameter.Value).Replace ("-", string.Empty).ToLower ());
 			default:
 				return String.Format ("'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
 			}
@@ -465,7 +464,7 @@ namespace Mono.Data.Tds.Protocol {
 		{
 			isSelectQuery = true; 
 			TdsDataColumnCollection result = new TdsDataColumnCollection ();
-			/*int totalLength = */Comm.GetTdsShort ();	
+			/*int totalLength = */Comm.GetTdsShort ();
 			int count = Comm.GetTdsShort ();
 			for (int i = 0; i < count; i += 1) {
 				string columnName = Comm.GetString (Comm.GetByte ());
@@ -508,7 +507,7 @@ namespace Mono.Data.Tds.Protocol {
 					Comm.Skip (Comm.GetTdsShort ()); // Class ID
 
 				TdsDataColumn col = new TdsDataColumn ();
-				int index = result.Add (col);
+				result.Add (col);
 #if NET_2_0
 				col.ColumnType = columnType;
 				col.ColumnName = columnName;
@@ -572,9 +571,9 @@ namespace Mono.Data.Tds.Protocol {
 
 				Comm.Append ((byte) parameterName.Length);
 				Comm.Append (parameterName);
-				Comm.Append (status);        
+				Comm.Append (status);
 				Comm.Append (userType);
-				Comm.Append ((byte) metaType);    
+				Comm.Append ((byte) metaType);
 
 				if (!IsFixedSizeColumn (metaType))
 					Comm.Append ((byte) p.Size);         // MAXIMUM SIZE
@@ -620,7 +619,7 @@ namespace Mono.Data.Tds.Protocol {
 
 		protected override bool IsValidRowCount (byte status, byte op)
 		{
-			if (isSelectQuery) 
+			if (isSelectQuery)
 				return (isSelectQuery = false);
 
 			// TODO : Need to figure out how to calculate rowcount inside stored 
@@ -628,7 +627,7 @@ namespace Mono.Data.Tds.Protocol {
 			// statements executing inside a StoredProcedure
 
 			if (((status & (byte)0x40) != 0) || ((status & (byte)0x10) == 0))
-				return false ;
+				return false;
 
 			return true;
 		}
