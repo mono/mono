@@ -1,3 +1,8 @@
+2008-07-06  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* IRemotingFormatter.cs: Fix parameter name
+	* MethodCallMessageWrapper.cs: Remove excess public members
+
 2008-07-04  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* ReturnMessage.cs:

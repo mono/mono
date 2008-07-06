@@ -40,7 +40,7 @@ namespace System.Runtime.Remoting.Messaging {
 	[System.Runtime.InteropServices.ComVisible (true)]
 #endif
 	public interface IRemotingFormatter : IFormatter {
-		object Deserialize (Stream serializationStream, HeaderHandler headers);
+		object Deserialize (Stream serializationStream, HeaderHandler handler);
 		void Serialize (Stream serializationStream, object graph, Header [] headers); 
 	}
 }
