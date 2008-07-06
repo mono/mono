@@ -65,11 +65,11 @@ namespace System.Runtime.Remoting.Messaging {
 			get { return ((IMethodCallMessage)WrappedMessage).HasVarArgs; }
 		}
 
-		int IMethodCallMessage.InArgCount {
+		public virtual int InArgCount {
 			get { return _inArgInfo.GetInOutArgCount(); }
 		}
 
-		object[] IMethodCallMessage.InArgs {
+		public virtual object[] InArgs {
 			get { return _inArgInfo.GetInOutArgs (_args); }
 		}
 		
@@ -121,12 +121,12 @@ namespace System.Runtime.Remoting.Messaging {
 			return ((IMethodCallMessage)WrappedMessage).GetArgName (index);
 		}
 
-		object IMethodCallMessage.GetInArg (int argNum)
+		public virtual object GetInArg (int argNum)
 		{
 			return _args[_inArgInfo.GetInOutArgIndex (argNum)];
 		}
 
-		string IMethodCallMessage.GetInArgName (int index)
+		public virtual string GetInArgName (int index)
 		{
 			return _inArgInfo.GetInOutArgName(index);
 		}
