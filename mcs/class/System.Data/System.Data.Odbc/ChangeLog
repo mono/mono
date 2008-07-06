@@ -1,3 +1,9 @@
+2008-07-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* OdbcDataReader.cs: Fix unneeded self-assignment for 'length'. Also
+	fix a bad setter where "value = behavior" instead of "behavior = value"
+	[Found using Gendarme ReviewSelfAssignmentRule]
+
 2008-04-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OdbcParameterCollection.cs: Changed argument names to match MS.

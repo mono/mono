@@ -91,7 +91,7 @@ namespace System.Data.Odbc
 
 		private CommandBehavior CommandBehavior {
 			get { return behavior; }
-			set { value = behavior; }
+			set { behavior = value; }
 		}
 
 		public
@@ -278,7 +278,8 @@ namespace System.Data.Odbc
 			int returnVal = 0, outsize = 0;
 			byte [] tbuff = new byte [length+1];
 
-			length = buffer == null ? 0 : length;
+			if (buffer == null)
+				length = 0;
 			ret=libodbc.SQLGetData (hstmt, (ushort) (i + 1), SQL_C_TYPE.BINARY, tbuff, length, 
 						ref outsize);
 
