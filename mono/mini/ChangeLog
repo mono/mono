@@ -1,3 +1,9 @@
+2008-07-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c: For calls returning vtypes in registers, don't store
+	the return address on the stack, instead allocate a separate local for
+	it. Fixes #404729.
+
 2008-07-05  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-trampolines.c, mini.h: Add an argument to
