@@ -1,3 +1,7 @@
+2008-07-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke2.cs libtest.c: Add test for #404729.
+
 2008-07-04  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-delegate2.2.cs, generic-delegate2-lib.2.il: Test case
