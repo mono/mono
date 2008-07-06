@@ -1,3 +1,9 @@
+2008-07-06  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* GCLatencyMode.cs: Add missing attribute
+	* GCSettings.cs: Provide default data instead of throwing, add missing attrbutes, 
+	enhance/add description texts
+
 2007-11-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* GCSettings.cs, MemoryFailPoint.cs : initial checkin (stubs).

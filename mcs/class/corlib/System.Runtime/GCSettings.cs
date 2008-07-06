@@ -1,5 +1,5 @@
 //
-// GCSettings.cs
+// System.Runtime.GCSettings.cs
 //
 // Author:
 //	Atsushi Enomoto  <atsushi@ximian.com>
@@ -28,21 +28,23 @@
 
 #if NET_2_0
 
-using System.Runtime.InteropServices;
+using System.Runtime.ConstrainedExecution;
 
 namespace System.Runtime
 {
 	public static class GCSettings
 	{
-		[MonoTODO]
+		[MonoTODO ("Always returns false")]
 		public static bool IsServerGC {
-			get { throw new NotImplementedException (); }
+			get { return false; }
 		}
 
-		[MonoTODO (".NET 2.0 SP1 member")]
+		[MonoTODO ("Always returns GCLatencyMode.Interactive and ignores set (.NET 2.0 SP1 member)")]
 		public static GCLatencyMode LatencyMode {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+			get { return GCLatencyMode.Interactive; }
+			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+			set { ; }
 		}
 	}
 }

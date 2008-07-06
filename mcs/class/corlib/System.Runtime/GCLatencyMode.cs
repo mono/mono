@@ -1,5 +1,5 @@
 //
-// System.GCCollectionMode.cs
+// System.Runtime.GCLatencyMode.cs
 //
 
 //
@@ -31,7 +31,9 @@
 
 namespace System.Runtime
 {
-	public enum GCLatencyMode {
+	[Serializable]
+	public enum GCLatencyMode
+	{
 		Batch = 0,
 		Interactive = 1,
 		LowLatency = 2
