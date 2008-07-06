@@ -1,3 +1,7 @@
+2008-07-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* resolve_field_bug.2.il: Fix this test.
+
 2008-07-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke2.cs libtest.c: Add test for #404729.
