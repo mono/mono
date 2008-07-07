@@ -1333,10 +1333,16 @@ namespace Mono.CSharp {
 				modifiers = storey.HasHoistedVariables ? Modifiers.INTERNAL : Modifiers.PRIVATE;
 			} else {
 				modifiers = Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED;
-				am_cache = new Field (Host, new TypeExpression (type, loc), modifiers,
-					CompilerGeneratedClass.MakeName (null, "f", "am$cache", unique_id), null, loc);
-				am_cache.Define ();
-				Host.AddField (am_cache);
+
+				//
+				// Don't cache generic delegates when reference MVAR argument
+				//
+				if (!HasGenericParameter (type)) {
+					am_cache = new Field (Host, new TypeExpression (type, loc), modifiers,
+						CompilerGeneratedClass.MakeName (null, "f", "am$cache", unique_id), null, loc);
+					am_cache.Define ();
+					Host.AddField (am_cache);
+				}
 			}
 
 			DeclSpace parent = (modifiers & Modifiers.PRIVATE) != 0 ? Host : storey;
@@ -1463,6 +1469,23 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError ()
 		{
 			return TypeManager.CSharpName (type);
+		}
+
+		static bool HasGenericParameter (Type type)
+		{
+#if GMCS_SOURCE
+			if (type.IsGenericParameter)
+				return type.DeclaringMethod != null;
+				
+			if (!type.IsGenericType)
+				return false;
+
+			foreach (Type t in type.GetGenericArguments ()) {
+				if (HasGenericParameter (t))
+					return true;
+			}
+#endif
+			return false;
 		}
 
 		public static void Error_AddressOfCapturedVar (string name, Location loc)
