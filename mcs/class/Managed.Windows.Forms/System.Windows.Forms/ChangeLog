@@ -1,5 +1,11 @@
 2008-07-07  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* Form.cs: Avoid recursively calling OnSizeChanged due to recursive 
+	WM_WINDOWPOSCHANGED caused by the layouting code on win32.
+	[Fixes bug #406786]
+
+2008-07-07  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* Form.cs: When disposed set owner to null. Improves #402446.
 
 2008-07-07  Ivan N. Zlatev  <contact@i-nz.net>

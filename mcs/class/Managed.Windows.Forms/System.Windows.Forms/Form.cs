@@ -93,6 +93,7 @@ namespace System.Windows.Forms {
 		private bool			is_clientsize_set;
 		internal bool			suppress_closing_events;
 		internal bool			waiting_showwindow; // for XplatUIX11
+		private bool                    is_minimizing;
 
 #if NET_2_0
 		private MenuStrip		main_menu_strip;
@@ -2649,8 +2650,15 @@ namespace System.Windows.Forms {
 			// 
 			if (window_state != FormWindowState.Minimized && WindowState != FormWindowState.Minimized)
 				base.WndProc (ref m);
-			else // minimized or restored
-				OnSizeChanged (EventArgs.Empty);
+			else { // minimized or restored
+				if (!is_minimizing) {
+					// Avoid recursive calls here as code in OnSizeChanged might 
+					// cause a WM_WINDOWPOSCHANGED to be sent.
+					is_minimizing = true;
+					OnSizeChanged (EventArgs.Empty);
+					is_minimizing = false;
+				}
+			}
 
 #if NET_2_0
 			if (WindowState == FormWindowState.Normal)
