@@ -259,6 +259,9 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	internal static IntPtr InitFromStream (Stream stream)
 	{
+		if (stream == null)
+			throw new ArgumentException ("stream");
+
 		IntPtr imagePtr;
 		Status st;
 		

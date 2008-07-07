@@ -1,3 +1,9 @@
+2008-07-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Bitmap.cs: Fix exceptions for some ctors.
+	* Image.cs: Throw ArgumentNullException for null streams.
+	[Fix bug #406763]
+
 2008-07-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Image.cs: throw NotImplementedException in SetPropertyItem

@@ -69,7 +69,10 @@ namespace System.Drawing
 		}
 
 		public Bitmap (int width, int height, Graphics g)
-		{		
+		{
+			if (g == null)
+				throw new ArgumentNullException ("g");
+
 			IntPtr bmp;
 			Status s = GDIPlus.GdipCreateBitmapFromGraphics (width, height, g.nativeObject, out bmp);
 			GDIPlus.CheckStatus (s);
@@ -101,6 +104,9 @@ namespace System.Drawing
 
 		public Bitmap (string filename, bool useIcm)
 		{
+			if (filename == null)
+				throw new ArgumentNullException ("filename");
+
 			IntPtr imagePtr;
 			Status st;
 
@@ -115,6 +121,9 @@ namespace System.Drawing
 
 		public Bitmap (Type type, string resource)
 		{
+			if (resource == null)
+				throw new ArgumentException ("resource");
+
 			Stream s = type.Assembly.GetManifestResourceStream (type, resource);
 			if (s == null) {
 				string msg = Locale.GetText ("Resource '{0}' was not found.", resource);
