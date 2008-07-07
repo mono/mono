@@ -1,3 +1,10 @@
+2008-07-07  Bill Holmes  <billholmes54@gmail.com>
+
+	* mini-amd64.c:  On Winx64 the calling convention always requires the caller to 
+	  clean the stack.
+
+	Contributed under MIT/X11 license.
+
 2008-07-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_exception_debug_info): Serialize the debug info first
@@ -14029,6 +14036,8 @@ Mon Apr 7 16:31:34 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	belongs.
 
 	* mini.pc.in: Call this package `mini' for the moment.
+
+
 
 
 
