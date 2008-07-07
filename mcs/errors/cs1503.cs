@@ -1,4 +1,4 @@
-// CS1503: Argument 1: Cannot convert type `int' to `bool'
+// CS1503: Argument `#1' cannot convert `int' expression to type `bool'
 // Line: 15
 
 class A

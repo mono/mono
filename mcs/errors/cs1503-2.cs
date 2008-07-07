@@ -1,4 +1,4 @@
-// CS1503:  Argument 1: Cannot convert type `bool' to `int[]'
+// CS1503: Argument `#1' cannot convert `bool' expression to type `int[]'
 // Line: 13
 
 public class X

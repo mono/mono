@@ -1,4 +1,4 @@
-// CS1615: Argument `2' should not be passed with the `out' keyword
+// CS1615: Argument `#2' does not require `out' modifier. Consider removing `out' modifier
 // Line: 13
 
 public class X

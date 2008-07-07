@@ -1,4 +1,4 @@
-// CS1503: Argument 2: Cannot convert type `method group' to `System.Collections.Generic.Comparer<int>'
+// CS1503: Argument `#2' cannot convert `method group' expression to type `System.Collections.Generic.Comparer<int>'
 // Line: 20
 
 using System;

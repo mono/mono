@@ -1,4 +1,4 @@
-// CS1620: Argument `1' must be passed with the `out' keyword
+// CS1620: Argument `#1' is missing `out' modifier
 // Line: 24
 
 using System;

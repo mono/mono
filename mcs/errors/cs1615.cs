@@ -1,4 +1,4 @@
-// cs1615.cs: Argument `1' should not be passed with the `ref' keyword
+// CS1615: Argument `#1' does not require `ref' modifier. Consider removing `ref' modifier
 // Line: 11
 
 class C

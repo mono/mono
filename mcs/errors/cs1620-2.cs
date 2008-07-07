@@ -1,4 +1,4 @@
-// CS1620: Argument `1' must be passed with the `ref' keyword
+// CS1620:  Argument `#1' is missing `ref' modifier
 // Line: 24
 
 public class X

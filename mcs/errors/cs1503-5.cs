@@ -1,4 +1,4 @@
-// CS1503: Argument 5: Cannot convert type `void' to `object'
+// CS1503: Argument `#5' cannot convert `void' expression to type `object'
 // Line: 14
 
 using System;

@@ -1,4 +1,4 @@
-// CS1503: Argument 1: Cannot convert type `object' to `int'
+// CS1503: Argument `#1' cannot convert `object' expression to type `int'
 // Line: 16
 
 using System;

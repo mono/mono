@@ -1,4 +1,4 @@
-// CS1503: Argument 1: Cannot convert type `int[]' to `int'
+// CS1503: Argument `#1' cannot convert `int[]' expression to type `int'
 // Line: 12
 
 class C
