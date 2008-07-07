@@ -1,3 +1,8 @@
+2008-07-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FolderBrowserDialog.cs: If we can't find the SelectedPath, display
+	the full tree instead of nothing.  [Improves bug #406584]
+
 2008-07-07  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* ThemeWin32Classic.cs: Adjusted minimized window painting.

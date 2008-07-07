@@ -508,6 +508,13 @@ namespace System.Windows.Forms {
 							path_cut = path_cut_new;
 						}
 					}
+
+					// If we didn't find anything, just display the full, unselected tree
+					if (node == null) {
+						EndUpdate ();
+						RootFolder = rootFolder;
+						return;
+					}
 					
 					FillNode (node);
 					node.Expand ();
