@@ -1,3 +1,14 @@
+2008-07-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_get_imt_trampoline): Call mono_create_specific_trampoline ().
+	(mini_get_vtable_trampoline): Ditto.
+
+	* tramp-amd64.c (mono_arch_create_trampoline_code_full): Create relocatable
+	code in the AOT case by returning the code size and a list of relocations to
+	the caller.
+
+	* mini-trampolines.c (mono_create_specific_trampoline): New helper function.
+
 2008-07-07  Bill Holmes  <billholmes54@gmail.com>
 
 	* mini-amd64.c:  On Winx64 the calling convention always requires the caller to 
