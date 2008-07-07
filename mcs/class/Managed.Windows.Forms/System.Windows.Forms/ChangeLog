@@ -1,3 +1,11 @@
+2008-07-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TabControl.cs: Since we don't support more than one direction in
+	TabControl rows alignment (this is, the row becomes the
+	bottom row when selected), make Direction return always 1. This way
+	the layout doesn't get confused about a bad calculation.
+	Fixes #399582.
+
 2008-07-07  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* XplatUIX11.cs: Implement NC hit-testing for mouse down/up messages, 

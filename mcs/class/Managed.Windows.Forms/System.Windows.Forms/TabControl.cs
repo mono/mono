@@ -1036,13 +1036,7 @@ namespace System.Windows.Forms {
 		private int Direction
 		{
 			get {
-				switch (Alignment) {
-				case TabAlignment.Right:
-				case TabAlignment.Bottom:
-					return -1;
-				default:
-					return 1;
-				}
+				return 1;
 			}
 		}
 
