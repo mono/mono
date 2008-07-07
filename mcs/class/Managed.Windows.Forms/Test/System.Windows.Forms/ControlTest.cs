@@ -27,6 +27,39 @@ namespace MonoTests.System.Windows.Forms
 	public class ControlTest
 	{
 		
+		[Test]
+		public void DisposeTest ()
+		{
+			ControlDisposeTester control = new ControlDisposeTester ();
+			control.Visible = true;
+			control.Dispose ();
+
+			try {
+				control.CreateControl ();
+			} catch (ObjectDisposedException ex) {
+				Console.WriteLine (ex);
+				Assert.Fail ("#1");
+			}
+			Assert.IsFalse (control.IsHandleCreated, "#2");
+
+			// The control remains Visible until WM_DESTROY is received.
+			Assert.IsTrue (control.Visible, "#3");
+
+			try {
+				control.InvokeCreateHandle ();
+				Assert.Fail ("#4");
+			} catch (ObjectDisposedException ex) {
+				Console.WriteLine (ex);
+			}
+		}
+
+		private class ControlDisposeTester : Control
+		{
+			public void InvokeCreateHandle ()
+			{
+				CreateHandle ();
+			}
+		}
 #if NET_2_0
 		[Test]
 		public void AutoSizeTest ()

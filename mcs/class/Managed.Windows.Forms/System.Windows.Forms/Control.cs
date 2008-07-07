@@ -3734,9 +3734,6 @@ namespace System.Windows.Forms
 		}
 
 		public void CreateControl () {
-			if (is_disposed) {
-				throw new ObjectDisposedException(GetType().FullName);
-			}
 			if (is_created) {
 				return;
 			}

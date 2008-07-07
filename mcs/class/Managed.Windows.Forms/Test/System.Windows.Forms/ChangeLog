@@ -1,5 +1,9 @@
 2008-07-07  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* ControlTest.cs: Add tests for the Dispose behavior.
+
+2008-07-07  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* TableLayoutTest.cs: Add test for bug #402651
 
 2008-07-04  Gert Driesen  <drieseng@users.sourceforge.net>

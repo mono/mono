@@ -1,5 +1,11 @@
 2008-07-07  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* Control.cs: CreateControl just returns if the Control is diposed 
+	and doesn't throw ObjectDisposedException.
+	[Fixes bug #406566]
+
+2008-07-07  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* Control.cs: Do not create the control if the parent isn't created 
 	yet, e.g in the case of a parented form on which .Show is called.
 	It will be created when the parent is made visible/created.
