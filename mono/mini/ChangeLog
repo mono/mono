@@ -1,3 +1,11 @@
+2008-07-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_exception_debug_info): Serialize the debug info first
+	so the buffer size can be computed correctly. Fixes #404735.
+
+	* debug-mini.c (mono_debug_serialize_debug_info): Lookup the debug info
+	normally as cfg->debug_info is already freed.
+
 2008-07-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c: For calls returning vtypes in registers, don't store
