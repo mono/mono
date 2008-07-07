@@ -1,5 +1,10 @@
 2008-07-07  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #406648
+	* cs-parser.jay: Report nullable use in mcs for some cases.
+
+2008-07-07  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs: Improved argument mismatch error messages.
 
 2008-07-07  Marek Safar  <marek.safar@gmail.com>

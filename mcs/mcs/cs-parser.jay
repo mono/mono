@@ -3136,12 +3136,9 @@ integral_type
 	;
 
 array_type
-	: type rank_specifiers opt_nullable
+	: type rank_specifiers
 	  {
 		string rank_specifiers = (string) $2;
-		if ((bool) $3)
-			rank_specifiers += "?";
-
 		$$ = current_array_type = new ComposedCast ((FullNamedExpression) $1, rank_specifiers);
 	  }
 	;
@@ -3654,10 +3651,13 @@ opt_rank_specifier
 opt_rank_specifier_or_nullable
 	: /* empty */
 	  {
-		$$ = "";
+		$$ = string.Empty;
 	  }
 	| INTERR
 	  {
+		if (RootContext.Version < LanguageVersion.ISO_2)
+			Report.FeatureIsNotAvailable (lexer.Location, "nullable types");
+
 		$$ = "?";
 	  }
 	| opt_nullable rank_specifiers
@@ -3666,13 +3666,6 @@ opt_rank_specifier_or_nullable
 			$$ = "?" + $2;
 		else
 			$$ = $2;
-	  }
-	| opt_nullable rank_specifiers INTERR
-	  {
-		if ((bool) $1)
-			$$ = "?" + $2 + "?";
-		else
-			$$ = $2 + "?";
 	  }
 	;
 
@@ -4621,23 +4614,24 @@ local_variable_type
 		// SimpleName is when you have
 		// Blah i;
 		
-		Expression expr = (Expression) $1;  
+		Expression expr = (Expression) $1;
+		string rank_or_nullable = (string) $2;
+		
 		if (expr is ComposedCast){
-			$$ = new ComposedCast ((ComposedCast)expr, (string) $2);
+			$$ = new ComposedCast ((ComposedCast)expr, rank_or_nullable);
 		} else if (expr is ATypeNameExpression){
 			//
 			// So we extract the string corresponding to the SimpleName
 			// or MemberAccess
 			//
-			
-			if ((string) $2 == "") {
+			if (rank_or_nullable.Length == 0) {
 				SimpleName sn = expr as SimpleName;
 				if (sn != null && RootContext.Version > LanguageVersion.ISO_2 && sn.Name == "var")
 					$$ = new VarExpr (sn.Location);
 				else
 					$$ = $1;
 			} else {
-				$$ = new ComposedCast ((ATypeNameExpression)expr, (string) $2);
+				$$ = new ComposedCast ((ATypeNameExpression)expr, rank_or_nullable);
 			}
 		} else {
 			Error_ExpectingTypeName (expr);
