@@ -1,3 +1,8 @@
+2008-07-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayoutSettingsTypeConverterTest.cs: Make 'roundtrip' not
+	dependent on exact order of <Control> elements.
+
 2008-06-10  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TableLayoutSettingsTypeConverterTest.cs: New tests
