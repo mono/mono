@@ -1,27 +1,5 @@
-
-//
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-
 #if !NET_2_0
-
+// It is automatically generated
 using System;
 using System.Xml;
 using System.Xml.Schema;
@@ -34,6 +12,11 @@ namespace System.Web.Services.Description
 {
 	internal class ServiceDescriptionReaderBase : XmlSerializationReader
 	{
+		static readonly System.Reflection.MethodInfo fromBinHexStringMethod = typeof (XmlConvert).GetMethod ("FromBinHexString", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic, null, new Type [] {typeof (string)}, null);
+		static byte [] FromBinHexString (string input)
+		{
+			return input == null ? null : (byte []) fromBinHexStringMethod.Invoke (null, new object [] {input});
+		}
 		public object ReadRoot_ServiceDescription ()
 		{
 			Reader.MoveToContent();
@@ -56,7 +39,7 @@ namespace System.Web.Services.Description
 					throw CreateUnknownTypeException(t);
 			}
 
-			ob = new System.Web.Services.Description.ServiceDescription ();
+			ob = (System.Web.Services.Description.ServiceDescription) Activator.CreateInstance(typeof(System.Web.Services.Description.ServiceDescription), true);
 
 			Reader.MoveToElement();
 
@@ -75,6 +58,7 @@ namespace System.Web.Services.Description
 				}
 			}
 
+			Reader.MoveToElement ();
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
 				Reader.Skip ();
@@ -102,8 +86,9 @@ namespace System.Web.Services.Description
 			{
 				if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
 				{
-					if (Reader.LocalName == "documentation" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b0) {
-						ob.@DocumentationElement = ((System.Xml.XmlElement) ReadXmlNode (false));
+					if (Reader.LocalName == "types" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b2) {
+						b2 = true;
+						ob.@Types = ReadObject_Types (false, true);
 					}
 					else if (Reader.LocalName == "service" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b6) {
 						if (((object)o16) == null)
@@ -116,6 +101,9 @@ namespace System.Web.Services.Description
 							throw CreateReadOnlyCollectionException ("System.Web.Services.Description.MessageCollection");
 						o10.Add (ReadObject_Message (false, true));
 						n9++;
+					}
+					else if (Reader.LocalName == "documentation" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b0) {
+						ob.@DocumentationElement = ((System.Xml.XmlElement) ReadXmlNode (false));
 					}
 					else if (Reader.LocalName == "portType" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b4) {
 						if (((object)o12) == null)
@@ -134,375 +122,6 @@ namespace System.Web.Services.Description
 							throw CreateReadOnlyCollectionException ("System.Web.Services.Description.BindingCollection");
 						o14.Add (ReadObject_Binding (false, true));
 						n13++;
-					}
-					else if (Reader.LocalName == "types" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b2) {
-						b2 = true;
-						ob.@Types = ReadObject_Types (false, true);
-					}
-					else {
-						ServiceDescription.ReadExtension (Document, Reader, ob);
-					}
-				}
-				else
-					UnknownNode(ob);
-
-				Reader.MoveToContent();
-			}
-
-
-			ReadEndElement();
-
-			return ob;
-		}
-
-		public System.Web.Services.Description.Service ReadObject_Service (bool isNullable, bool checkType)
-		{
-			System.Web.Services.Description.Service ob = null;
-			if (isNullable && ReadNull()) return null;
-
-			if (checkType) 
-			{
-				System.Xml.XmlQualifiedName t = GetXsiType();
-				if (t == null)
-				{ }
-				else if (t.Name != "Service" || t.Namespace != "http://schemas.xmlsoap.org/wsdl/")
-					throw CreateUnknownTypeException(t);
-			}
-
-			ob = new System.Web.Services.Description.Service ();
-
-			Reader.MoveToElement();
-
-			while (Reader.MoveToNextAttribute())
-			{
-				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
-					ob.@Name = Reader.Value;
-				}
-				else if (IsXmlnsAttribute (Reader.Name)) {
-				}
-				else {
-					UnknownNode (ob);
-				}
-			}
-
-			Reader.MoveToElement();
-			if (Reader.IsEmptyElement) {
-				Reader.Skip ();
-				return ob;
-			}
-
-			Reader.ReadStartElement();
-			Reader.MoveToContent();
-
-			bool b17=false, b18=false;
-
-			System.Web.Services.Description.PortCollection o20;
-			o20 = ob.@Ports;
-			int n19=0;
-
-			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement) 
-			{
-				if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
-				{
-					if (Reader.LocalName == "documentation" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b17) {
-						ob.@DocumentationElement = ((System.Xml.XmlElement) ReadXmlNode (false));
-					}
-					else if (Reader.LocalName == "port" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b18) {
-						if (((object)o20) == null)
-							throw CreateReadOnlyCollectionException ("System.Web.Services.Description.PortCollection");
-						o20.Add (ReadObject_Port (false, true));
-						n19++;
-					}
-					else {
-						ServiceDescription.ReadExtension (Document, Reader, ob);
-					}
-				}
-				else
-					UnknownNode(ob);
-
-				Reader.MoveToContent();
-			}
-
-
-			ReadEndElement();
-
-			return ob;
-		}
-
-		public System.Web.Services.Description.Message ReadObject_Message (bool isNullable, bool checkType)
-		{
-			System.Web.Services.Description.Message ob = null;
-			if (isNullable && ReadNull()) return null;
-
-			if (checkType) 
-			{
-				System.Xml.XmlQualifiedName t = GetXsiType();
-				if (t == null)
-				{ }
-				else if (t.Name != "Message" || t.Namespace != "http://schemas.xmlsoap.org/wsdl/")
-					throw CreateUnknownTypeException(t);
-			}
-
-			ob = new System.Web.Services.Description.Message ();
-
-			Reader.MoveToElement();
-
-			while (Reader.MoveToNextAttribute())
-			{
-				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
-					ob.@Name = Reader.Value;
-				}
-				else if (IsXmlnsAttribute (Reader.Name)) {
-				}
-				else {
-					UnknownNode (ob);
-				}
-			}
-
-			Reader.MoveToElement();
-			if (Reader.IsEmptyElement) {
-				Reader.Skip ();
-				return ob;
-			}
-
-			Reader.ReadStartElement();
-			Reader.MoveToContent();
-
-			bool b21=false, b22=false;
-
-			System.Web.Services.Description.MessagePartCollection o24;
-			o24 = ob.@Parts;
-			int n23=0;
-
-			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement) 
-			{
-				if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
-				{
-					if (Reader.LocalName == "documentation" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b21) {
-						ob.@DocumentationElement = ((System.Xml.XmlElement) ReadXmlNode (false));
-					}
-					else if (Reader.LocalName == "part" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b22) {
-						if (((object)o24) == null)
-							throw CreateReadOnlyCollectionException ("System.Web.Services.Description.MessagePartCollection");
-						o24.Add (ReadObject_MessagePart (false, true));
-						n23++;
-					}
-					else {
-						ServiceDescription.ReadExtension (Document, Reader, ob);
-					}
-				}
-				else
-					UnknownNode(ob);
-
-				Reader.MoveToContent();
-			}
-
-
-			ReadEndElement();
-
-			return ob;
-		}
-
-		public System.Web.Services.Description.PortType ReadObject_PortType (bool isNullable, bool checkType)
-		{
-			System.Web.Services.Description.PortType ob = null;
-			if (isNullable && ReadNull()) return null;
-
-			if (checkType) 
-			{
-				System.Xml.XmlQualifiedName t = GetXsiType();
-				if (t == null)
-				{ }
-				else if (t.Name != "PortType" || t.Namespace != "http://schemas.xmlsoap.org/wsdl/")
-					throw CreateUnknownTypeException(t);
-			}
-
-			ob = new System.Web.Services.Description.PortType ();
-
-			Reader.MoveToElement();
-
-			while (Reader.MoveToNextAttribute())
-			{
-				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
-					ob.@Name = Reader.Value;
-				}
-				else if (IsXmlnsAttribute (Reader.Name)) {
-				}
-				else {
-					UnknownNode (ob);
-				}
-			}
-
-			Reader.MoveToElement();
-			if (Reader.IsEmptyElement) {
-				Reader.Skip ();
-				return ob;
-			}
-
-			Reader.ReadStartElement();
-			Reader.MoveToContent();
-
-			bool b25=false, b26=false;
-
-			System.Web.Services.Description.OperationCollection o28;
-			o28 = ob.@Operations;
-			int n27=0;
-
-			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement) 
-			{
-				if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
-				{
-					if (Reader.LocalName == "documentation" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b25) {
-						ob.@DocumentationElement = ((System.Xml.XmlElement) ReadXmlNode (false));
-					}
-					else if (Reader.LocalName == "operation" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b26) {
-						if (((object)o28) == null)
-							throw CreateReadOnlyCollectionException ("System.Web.Services.Description.OperationCollection");
-						o28.Add (ReadObject_Operation (false, true));
-						n27++;
-					}
-					else {
-						ServiceDescription.ReadExtension (Document, Reader, ob);
-					}
-				}
-				else
-					UnknownNode(ob);
-
-				Reader.MoveToContent();
-			}
-
-
-			ReadEndElement();
-
-			return ob;
-		}
-
-		public System.Web.Services.Description.Import ReadObject_Import (bool isNullable, bool checkType)
-		{
-			System.Web.Services.Description.Import ob = null;
-			if (isNullable && ReadNull()) return null;
-
-			if (checkType) 
-			{
-				System.Xml.XmlQualifiedName t = GetXsiType();
-				if (t == null)
-				{ }
-				else if (t.Name != "Import" || t.Namespace != "http://schemas.xmlsoap.org/wsdl/")
-					throw CreateUnknownTypeException(t);
-			}
-
-			ob = new System.Web.Services.Description.Import ();
-
-			Reader.MoveToElement();
-
-			while (Reader.MoveToNextAttribute())
-			{
-				if (Reader.LocalName == "location" && Reader.NamespaceURI == "") {
-					ob.@Location = Reader.Value;
-				}
-				else if (Reader.LocalName == "namespace" && Reader.NamespaceURI == "") {
-					ob.@Namespace = Reader.Value;
-				}
-				else if (IsXmlnsAttribute (Reader.Name)) {
-				}
-				else {
-					UnknownNode (ob);
-				}
-			}
-
-			Reader.MoveToElement();
-			if (Reader.IsEmptyElement) {
-				Reader.Skip ();
-				return ob;
-			}
-
-			Reader.ReadStartElement();
-			Reader.MoveToContent();
-
-			bool b29=false;
-
-			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement) 
-			{
-				if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
-				{
-					if (Reader.LocalName == "documentation" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b29) {
-						ob.@DocumentationElement = ((System.Xml.XmlElement) ReadXmlNode (false));
-					}
-					else {
-						ServiceDescription.ReadExtension (Document, Reader, ob);
-					}
-				}
-				else
-					UnknownNode(ob);
-
-				Reader.MoveToContent();
-			}
-
-			ReadEndElement();
-
-			return ob;
-		}
-
-		public System.Web.Services.Description.Binding ReadObject_Binding (bool isNullable, bool checkType)
-		{
-			System.Web.Services.Description.Binding ob = null;
-			if (isNullable && ReadNull()) return null;
-
-			if (checkType) 
-			{
-				System.Xml.XmlQualifiedName t = GetXsiType();
-				if (t == null)
-				{ }
-				else if (t.Name != "Binding" || t.Namespace != "http://schemas.xmlsoap.org/wsdl/")
-					throw CreateUnknownTypeException(t);
-			}
-
-			ob = new System.Web.Services.Description.Binding ();
-
-			Reader.MoveToElement();
-
-			while (Reader.MoveToNextAttribute())
-			{
-				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
-					ob.@Name = Reader.Value;
-				}
-				else if (Reader.LocalName == "type" && Reader.NamespaceURI == "") {
-					ob.@Type = ToXmlQualifiedName (Reader.Value);
-				}
-				else if (IsXmlnsAttribute (Reader.Name)) {
-				}
-				else {
-					UnknownNode (ob);
-				}
-			}
-
-			Reader.MoveToElement();
-			if (Reader.IsEmptyElement) {
-				Reader.Skip ();
-				return ob;
-			}
-
-			Reader.ReadStartElement();
-			Reader.MoveToContent();
-
-			bool b30=false, b31=false;
-
-			System.Web.Services.Description.OperationBindingCollection o33;
-			o33 = ob.@Operations;
-			int n32=0;
-
-			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement) 
-			{
-				if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
-				{
-					if (Reader.LocalName == "documentation" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b30) {
-						ob.@DocumentationElement = ((System.Xml.XmlElement) ReadXmlNode (false));
-					}
-					else if (Reader.LocalName == "operation" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b31) {
-						if (((object)o33) == null)
-							throw CreateReadOnlyCollectionException ("System.Web.Services.Description.OperationBindingCollection");
-						o33.Add (ReadObject_OperationBinding (false, true));
-						n32++;
 					}
 					else {
 						ServiceDescription.ReadExtension (Document, Reader, ob);
@@ -534,7 +153,7 @@ namespace System.Web.Services.Description
 					throw CreateUnknownTypeException(t);
 			}
 
-			ob = new System.Web.Services.Description.Types ();
+			ob = (System.Web.Services.Description.Types) Activator.CreateInstance(typeof(System.Web.Services.Description.Types), true);
 
 			Reader.MoveToElement();
 
@@ -547,6 +166,377 @@ namespace System.Web.Services.Description
 				}
 			}
 
+			Reader.MoveToElement ();
+			Reader.MoveToElement();
+			if (Reader.IsEmptyElement) {
+				Reader.Skip ();
+				return ob;
+			}
+
+			Reader.ReadStartElement();
+			Reader.MoveToContent();
+
+			bool b17=false, b18=false;
+
+			System.Xml.Serialization.XmlSchemas o20;
+			o20 = ob.@Schemas;
+			int n19=0;
+
+			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement) 
+			{
+				if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
+				{
+					if (Reader.LocalName == "documentation" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b17) {
+						ob.@DocumentationElement = ((System.Xml.XmlElement) ReadXmlNode (false));
+					}
+					else if (Reader.LocalName == "schema" && Reader.NamespaceURI == "http://www.w3.org/2001/XMLSchema" && !b18) {
+						if (((object)o20) == null)
+							throw CreateReadOnlyCollectionException ("System.Xml.Serialization.XmlSchemas");
+						o20.Add (ReadObject_XmlSchema (false, true));
+						n19++;
+					}
+					else {
+						ServiceDescription.ReadExtension (Document, Reader, ob);
+					}
+				}
+				else
+					UnknownNode(ob);
+
+				Reader.MoveToContent();
+			}
+
+
+			ReadEndElement();
+
+			return ob;
+		}
+
+		public System.Web.Services.Description.Service ReadObject_Service (bool isNullable, bool checkType)
+		{
+			System.Web.Services.Description.Service ob = null;
+			if (isNullable && ReadNull()) return null;
+
+			if (checkType) 
+			{
+				System.Xml.XmlQualifiedName t = GetXsiType();
+				if (t == null)
+				{ }
+				else if (t.Name != "Service" || t.Namespace != "http://schemas.xmlsoap.org/wsdl/")
+					throw CreateUnknownTypeException(t);
+			}
+
+			ob = (System.Web.Services.Description.Service) Activator.CreateInstance(typeof(System.Web.Services.Description.Service), true);
+
+			Reader.MoveToElement();
+
+			while (Reader.MoveToNextAttribute())
+			{
+				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
+					ob.@Name = Reader.Value;
+				}
+				else if (IsXmlnsAttribute (Reader.Name)) {
+				}
+				else {
+					UnknownNode (ob);
+				}
+			}
+
+			Reader.MoveToElement ();
+			Reader.MoveToElement();
+			if (Reader.IsEmptyElement) {
+				Reader.Skip ();
+				return ob;
+			}
+
+			Reader.ReadStartElement();
+			Reader.MoveToContent();
+
+			bool b21=false, b22=false;
+
+			System.Web.Services.Description.PortCollection o24;
+			o24 = ob.@Ports;
+			int n23=0;
+
+			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement) 
+			{
+				if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
+				{
+					if (Reader.LocalName == "documentation" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b21) {
+						ob.@DocumentationElement = ((System.Xml.XmlElement) ReadXmlNode (false));
+					}
+					else if (Reader.LocalName == "port" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b22) {
+						if (((object)o24) == null)
+							throw CreateReadOnlyCollectionException ("System.Web.Services.Description.PortCollection");
+						o24.Add (ReadObject_Port (false, true));
+						n23++;
+					}
+					else {
+						ServiceDescription.ReadExtension (Document, Reader, ob);
+					}
+				}
+				else
+					UnknownNode(ob);
+
+				Reader.MoveToContent();
+			}
+
+
+			ReadEndElement();
+
+			return ob;
+		}
+
+		public System.Web.Services.Description.Message ReadObject_Message (bool isNullable, bool checkType)
+		{
+			System.Web.Services.Description.Message ob = null;
+			if (isNullable && ReadNull()) return null;
+
+			if (checkType) 
+			{
+				System.Xml.XmlQualifiedName t = GetXsiType();
+				if (t == null)
+				{ }
+				else if (t.Name != "Message" || t.Namespace != "http://schemas.xmlsoap.org/wsdl/")
+					throw CreateUnknownTypeException(t);
+			}
+
+			ob = (System.Web.Services.Description.Message) Activator.CreateInstance(typeof(System.Web.Services.Description.Message), true);
+
+			Reader.MoveToElement();
+
+			while (Reader.MoveToNextAttribute())
+			{
+				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
+					ob.@Name = Reader.Value;
+				}
+				else if (IsXmlnsAttribute (Reader.Name)) {
+				}
+				else {
+					UnknownNode (ob);
+				}
+			}
+
+			Reader.MoveToElement ();
+			Reader.MoveToElement();
+			if (Reader.IsEmptyElement) {
+				Reader.Skip ();
+				return ob;
+			}
+
+			Reader.ReadStartElement();
+			Reader.MoveToContent();
+
+			bool b25=false, b26=false;
+
+			System.Web.Services.Description.MessagePartCollection o28;
+			o28 = ob.@Parts;
+			int n27=0;
+
+			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement) 
+			{
+				if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
+				{
+					if (Reader.LocalName == "documentation" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b25) {
+						ob.@DocumentationElement = ((System.Xml.XmlElement) ReadXmlNode (false));
+					}
+					else if (Reader.LocalName == "part" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b26) {
+						if (((object)o28) == null)
+							throw CreateReadOnlyCollectionException ("System.Web.Services.Description.MessagePartCollection");
+						o28.Add (ReadObject_MessagePart (false, true));
+						n27++;
+					}
+					else {
+						ServiceDescription.ReadExtension (Document, Reader, ob);
+					}
+				}
+				else
+					UnknownNode(ob);
+
+				Reader.MoveToContent();
+			}
+
+
+			ReadEndElement();
+
+			return ob;
+		}
+
+		public System.Web.Services.Description.PortType ReadObject_PortType (bool isNullable, bool checkType)
+		{
+			System.Web.Services.Description.PortType ob = null;
+			if (isNullable && ReadNull()) return null;
+
+			if (checkType) 
+			{
+				System.Xml.XmlQualifiedName t = GetXsiType();
+				if (t == null)
+				{ }
+				else if (t.Name != "PortType" || t.Namespace != "http://schemas.xmlsoap.org/wsdl/")
+					throw CreateUnknownTypeException(t);
+			}
+
+			ob = (System.Web.Services.Description.PortType) Activator.CreateInstance(typeof(System.Web.Services.Description.PortType), true);
+
+			Reader.MoveToElement();
+
+			while (Reader.MoveToNextAttribute())
+			{
+				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
+					ob.@Name = Reader.Value;
+				}
+				else if (IsXmlnsAttribute (Reader.Name)) {
+				}
+				else {
+					UnknownNode (ob);
+				}
+			}
+
+			Reader.MoveToElement ();
+			Reader.MoveToElement();
+			if (Reader.IsEmptyElement) {
+				Reader.Skip ();
+				return ob;
+			}
+
+			Reader.ReadStartElement();
+			Reader.MoveToContent();
+
+			bool b29=false, b30=false;
+
+			System.Web.Services.Description.OperationCollection o32;
+			o32 = ob.@Operations;
+			int n31=0;
+
+			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement) 
+			{
+				if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
+				{
+					if (Reader.LocalName == "documentation" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b29) {
+						ob.@DocumentationElement = ((System.Xml.XmlElement) ReadXmlNode (false));
+					}
+					else if (Reader.LocalName == "operation" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b30) {
+						if (((object)o32) == null)
+							throw CreateReadOnlyCollectionException ("System.Web.Services.Description.OperationCollection");
+						o32.Add (ReadObject_Operation (false, true));
+						n31++;
+					}
+					else {
+						ServiceDescription.ReadExtension (Document, Reader, ob);
+					}
+				}
+				else
+					UnknownNode(ob);
+
+				Reader.MoveToContent();
+			}
+
+
+			ReadEndElement();
+
+			return ob;
+		}
+
+		public System.Web.Services.Description.Import ReadObject_Import (bool isNullable, bool checkType)
+		{
+			System.Web.Services.Description.Import ob = null;
+			if (isNullable && ReadNull()) return null;
+
+			if (checkType) 
+			{
+				System.Xml.XmlQualifiedName t = GetXsiType();
+				if (t == null)
+				{ }
+				else if (t.Name != "Import" || t.Namespace != "http://schemas.xmlsoap.org/wsdl/")
+					throw CreateUnknownTypeException(t);
+			}
+
+			ob = (System.Web.Services.Description.Import) Activator.CreateInstance(typeof(System.Web.Services.Description.Import), true);
+
+			Reader.MoveToElement();
+
+			while (Reader.MoveToNextAttribute())
+			{
+				if (Reader.LocalName == "location" && Reader.NamespaceURI == "") {
+					ob.@Location = Reader.Value;
+				}
+				else if (Reader.LocalName == "namespace" && Reader.NamespaceURI == "") {
+					ob.@Namespace = Reader.Value;
+				}
+				else if (IsXmlnsAttribute (Reader.Name)) {
+				}
+				else {
+					UnknownNode (ob);
+				}
+			}
+
+			Reader.MoveToElement ();
+			Reader.MoveToElement();
+			if (Reader.IsEmptyElement) {
+				Reader.Skip ();
+				return ob;
+			}
+
+			Reader.ReadStartElement();
+			Reader.MoveToContent();
+
+			bool b33=false;
+
+			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement) 
+			{
+				if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
+				{
+					if (Reader.LocalName == "documentation" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b33) {
+						ob.@DocumentationElement = ((System.Xml.XmlElement) ReadXmlNode (false));
+					}
+					else {
+						ServiceDescription.ReadExtension (Document, Reader, ob);
+					}
+				}
+				else
+					UnknownNode(ob);
+
+				Reader.MoveToContent();
+			}
+
+			ReadEndElement();
+
+			return ob;
+		}
+
+		public System.Web.Services.Description.Binding ReadObject_Binding (bool isNullable, bool checkType)
+		{
+			System.Web.Services.Description.Binding ob = null;
+			if (isNullable && ReadNull()) return null;
+
+			if (checkType) 
+			{
+				System.Xml.XmlQualifiedName t = GetXsiType();
+				if (t == null)
+				{ }
+				else if (t.Name != "Binding" || t.Namespace != "http://schemas.xmlsoap.org/wsdl/")
+					throw CreateUnknownTypeException(t);
+			}
+
+			ob = (System.Web.Services.Description.Binding) Activator.CreateInstance(typeof(System.Web.Services.Description.Binding), true);
+
+			Reader.MoveToElement();
+
+			while (Reader.MoveToNextAttribute())
+			{
+				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
+					ob.@Name = Reader.Value;
+				}
+				else if (Reader.LocalName == "type" && Reader.NamespaceURI == "") {
+					ob.@Type = ToXmlQualifiedName (Reader.Value);
+				}
+				else if (IsXmlnsAttribute (Reader.Name)) {
+				}
+				else {
+					UnknownNode (ob);
+				}
+			}
+
+			Reader.MoveToElement ();
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
 				Reader.Skip ();
@@ -558,8 +548,8 @@ namespace System.Web.Services.Description
 
 			bool b34=false, b35=false;
 
-			System.Xml.Serialization.XmlSchemas o37;
-			o37 = ob.@Schemas;
+			System.Web.Services.Description.OperationBindingCollection o37;
+			o37 = ob.@Operations;
 			int n36=0;
 
 			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement) 
@@ -569,10 +559,10 @@ namespace System.Web.Services.Description
 					if (Reader.LocalName == "documentation" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b34) {
 						ob.@DocumentationElement = ((System.Xml.XmlElement) ReadXmlNode (false));
 					}
-					else if (Reader.LocalName == "schema" && Reader.NamespaceURI == "http://www.w3.org/2001/XMLSchema" && !b35) {
+					else if (Reader.LocalName == "operation" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b35) {
 						if (((object)o37) == null)
-							throw CreateReadOnlyCollectionException ("System.Xml.Serialization.XmlSchemas");
-						o37.Add (ReadObject_XmlSchema (false, true));
+							throw CreateReadOnlyCollectionException ("System.Web.Services.Description.OperationBindingCollection");
+						o37.Add (ReadObject_OperationBinding (false, true));
 						n36++;
 					}
 					else {
@@ -591,6 +581,13 @@ namespace System.Web.Services.Description
 			return ob;
 		}
 
+		public System.Xml.Schema.XmlSchema ReadObject_XmlSchema (bool isNullable, bool checkType)
+		{
+			System.Xml.Schema.XmlSchema ob = null;
+			ob = System.Xml.Schema.XmlSchema.Read (Reader, null); Reader.Read ();
+			return ob;
+		}
+
 		public System.Web.Services.Description.Port ReadObject_Port (bool isNullable, bool checkType)
 		{
 			System.Web.Services.Description.Port ob = null;
@@ -605,7 +602,7 @@ namespace System.Web.Services.Description
 					throw CreateUnknownTypeException(t);
 			}
 
-			ob = new System.Web.Services.Description.Port ();
+			ob = (System.Web.Services.Description.Port) Activator.CreateInstance(typeof(System.Web.Services.Description.Port), true);
 
 			Reader.MoveToElement();
 
@@ -624,6 +621,7 @@ namespace System.Web.Services.Description
 				}
 			}
 
+			Reader.MoveToElement ();
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
 				Reader.Skip ();
@@ -671,7 +669,7 @@ namespace System.Web.Services.Description
 					throw CreateUnknownTypeException(t);
 			}
 
-			ob = new System.Web.Services.Description.MessagePart ();
+			ob = (System.Web.Services.Description.MessagePart) Activator.CreateInstance(typeof(System.Web.Services.Description.MessagePart), true);
 
 			Reader.MoveToElement();
 
@@ -693,6 +691,7 @@ namespace System.Web.Services.Description
 				}
 			}
 
+			Reader.MoveToElement ();
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
 				Reader.Skip ();
@@ -740,11 +739,10 @@ namespace System.Web.Services.Description
 					throw CreateUnknownTypeException(t);
 			}
 
-			ob = new System.Web.Services.Description.Operation ();
+			ob = (System.Web.Services.Description.Operation) Activator.CreateInstance(typeof(System.Web.Services.Description.Operation), true);
 
 			Reader.MoveToElement();
 
-			ob.@ParameterOrderString = "";
 			while (Reader.MoveToNextAttribute())
 			{
 				if (Reader.LocalName == "name" && Reader.NamespaceURI == "") {
@@ -760,6 +758,7 @@ namespace System.Web.Services.Description
 				}
 			}
 
+			Reader.MoveToElement ();
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
 				Reader.Skip ();
@@ -781,14 +780,11 @@ namespace System.Web.Services.Description
 			{
 				if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
 				{
-					if (Reader.LocalName == "documentation" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b40) {
-						ob.@DocumentationElement = ((System.Xml.XmlElement) ReadXmlNode (false));
-					}
-					else if (Reader.LocalName == "fault" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b41) {
-						if (((object)o44) == null)
-							throw CreateReadOnlyCollectionException ("System.Web.Services.Description.OperationFaultCollection");
-						o44.Add (ReadObject_OperationFault (false, true));
-						n43++;
+					if (Reader.LocalName == "output" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b42) {
+						if (((object)o46) == null)
+							throw CreateReadOnlyCollectionException ("System.Web.Services.Description.OperationMessageCollection");
+						o46.Add (ReadObject_OperationOutput (false, true));
+						n45++;
 					}
 					else if (Reader.LocalName == "input" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b42) {
 						if (((object)o46) == null)
@@ -796,11 +792,14 @@ namespace System.Web.Services.Description
 						o46.Add (ReadObject_OperationInput (false, true));
 						n45++;
 					}
-					else if (Reader.LocalName == "output" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b42) {
-						if (((object)o46) == null)
-							throw CreateReadOnlyCollectionException ("System.Web.Services.Description.OperationMessageCollection");
-						o46.Add (ReadObject_OperationOutput (false, true));
-						n45++;
+					else if (Reader.LocalName == "documentation" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b40) {
+						ob.@DocumentationElement = ((System.Xml.XmlElement) ReadXmlNode (false));
+					}
+					else if (Reader.LocalName == "fault" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b41) {
+						if (((object)o44) == null)
+							throw CreateReadOnlyCollectionException ("System.Web.Services.Description.OperationFaultCollection");
+						o44.Add (ReadObject_OperationFault (false, true));
+						n43++;
 					}
 					else {
 						ServiceDescription.ReadExtension (Document, Reader, ob);
@@ -832,7 +831,7 @@ namespace System.Web.Services.Description
 					throw CreateUnknownTypeException(t);
 			}
 
-			ob = new System.Web.Services.Description.OperationBinding ();
+			ob = (System.Web.Services.Description.OperationBinding) Activator.CreateInstance(typeof(System.Web.Services.Description.OperationBinding), true);
 
 			Reader.MoveToElement();
 
@@ -848,6 +847,7 @@ namespace System.Web.Services.Description
 				}
 			}
 
+			Reader.MoveToElement ();
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
 				Reader.Skip ();
@@ -867,7 +867,15 @@ namespace System.Web.Services.Description
 			{
 				if (Reader.NodeType == System.Xml.XmlNodeType.Element) 
 				{
-					if (Reader.LocalName == "documentation" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b47) {
+					if (Reader.LocalName == "input" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b49) {
+						b49 = true;
+						ob.@Input = ReadObject_InputBinding (false, true);
+					}
+					else if (Reader.LocalName == "output" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b50) {
+						b50 = true;
+						ob.@Output = ReadObject_OutputBinding (false, true);
+					}
+					else if (Reader.LocalName == "documentation" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b47) {
 						ob.@DocumentationElement = ((System.Xml.XmlElement) ReadXmlNode (false));
 					}
 					else if (Reader.LocalName == "fault" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b48) {
@@ -875,14 +883,6 @@ namespace System.Web.Services.Description
 							throw CreateReadOnlyCollectionException ("System.Web.Services.Description.FaultBindingCollection");
 						o52.Add (ReadObject_FaultBinding (false, true));
 						n51++;
-					}
-					else if (Reader.LocalName == "input" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b49) {
-						b49 = true;
-						ob.@Input = ReadObject_InputBinding (false, true);
-					}
-					else if (Reader.LocalName == "output" && Reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/" && !b50) {
-						b50 = true;
-						ob.@Output = ReadObject_OutputBinding (false, true);
 					}
 					else {
 						ServiceDescription.ReadExtension (Document, Reader, ob);
@@ -900,16 +900,9 @@ namespace System.Web.Services.Description
 			return ob;
 		}
 
-		public System.Xml.Schema.XmlSchema ReadObject_XmlSchema (bool isNullable, bool checkType)
+		public System.Web.Services.Description.OperationOutput ReadObject_OperationOutput (bool isNullable, bool checkType)
 		{
-			System.Xml.Schema.XmlSchema ob = null;
-			ob = System.Xml.Schema.XmlSchema.Read (Reader, null); Reader.Read ();
-			return ob;
-		}
-
-		public System.Web.Services.Description.OperationFault ReadObject_OperationFault (bool isNullable, bool checkType)
-		{
-			System.Web.Services.Description.OperationFault ob = null;
+			System.Web.Services.Description.OperationOutput ob = null;
 			if (isNullable && ReadNull()) return null;
 
 			if (checkType) 
@@ -917,11 +910,11 @@ namespace System.Web.Services.Description
 				System.Xml.XmlQualifiedName t = GetXsiType();
 				if (t == null)
 				{ }
-				else if (t.Name != "OperationFault" || t.Namespace != "http://schemas.xmlsoap.org/wsdl/")
+				else if (t.Name != "OperationOutput" || t.Namespace != "http://schemas.xmlsoap.org/wsdl/")
 					throw CreateUnknownTypeException(t);
 			}
 
-			ob = new System.Web.Services.Description.OperationFault ();
+			ob = (System.Web.Services.Description.OperationOutput) Activator.CreateInstance(typeof(System.Web.Services.Description.OperationOutput), true);
 
 			Reader.MoveToElement();
 
@@ -940,6 +933,7 @@ namespace System.Web.Services.Description
 				}
 			}
 
+			Reader.MoveToElement ();
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
 				Reader.Skip ();
@@ -987,7 +981,7 @@ namespace System.Web.Services.Description
 					throw CreateUnknownTypeException(t);
 			}
 
-			ob = new System.Web.Services.Description.OperationInput ();
+			ob = (System.Web.Services.Description.OperationInput) Activator.CreateInstance(typeof(System.Web.Services.Description.OperationInput), true);
 
 			Reader.MoveToElement();
 
@@ -1006,6 +1000,7 @@ namespace System.Web.Services.Description
 				}
 			}
 
+			Reader.MoveToElement ();
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
 				Reader.Skip ();
@@ -1039,9 +1034,9 @@ namespace System.Web.Services.Description
 			return ob;
 		}
 
-		public System.Web.Services.Description.OperationOutput ReadObject_OperationOutput (bool isNullable, bool checkType)
+		public System.Web.Services.Description.OperationFault ReadObject_OperationFault (bool isNullable, bool checkType)
 		{
-			System.Web.Services.Description.OperationOutput ob = null;
+			System.Web.Services.Description.OperationFault ob = null;
 			if (isNullable && ReadNull()) return null;
 
 			if (checkType) 
@@ -1049,11 +1044,11 @@ namespace System.Web.Services.Description
 				System.Xml.XmlQualifiedName t = GetXsiType();
 				if (t == null)
 				{ }
-				else if (t.Name != "OperationOutput" || t.Namespace != "http://schemas.xmlsoap.org/wsdl/")
+				else if (t.Name != "OperationFault" || t.Namespace != "http://schemas.xmlsoap.org/wsdl/")
 					throw CreateUnknownTypeException(t);
 			}
 
-			ob = new System.Web.Services.Description.OperationOutput ();
+			ob = (System.Web.Services.Description.OperationFault) Activator.CreateInstance(typeof(System.Web.Services.Description.OperationFault), true);
 
 			Reader.MoveToElement();
 
@@ -1072,6 +1067,7 @@ namespace System.Web.Services.Description
 				}
 			}
 
+			Reader.MoveToElement ();
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
 				Reader.Skip ();
@@ -1105,9 +1101,9 @@ namespace System.Web.Services.Description
 			return ob;
 		}
 
-		public System.Web.Services.Description.FaultBinding ReadObject_FaultBinding (bool isNullable, bool checkType)
+		public System.Web.Services.Description.InputBinding ReadObject_InputBinding (bool isNullable, bool checkType)
 		{
-			System.Web.Services.Description.FaultBinding ob = null;
+			System.Web.Services.Description.InputBinding ob = null;
 			if (isNullable && ReadNull()) return null;
 
 			if (checkType) 
@@ -1115,11 +1111,11 @@ namespace System.Web.Services.Description
 				System.Xml.XmlQualifiedName t = GetXsiType();
 				if (t == null)
 				{ }
-				else if (t.Name != "FaultBinding" || t.Namespace != "http://schemas.xmlsoap.org/wsdl/")
+				else if (t.Name != "InputBinding" || t.Namespace != "http://schemas.xmlsoap.org/wsdl/")
 					throw CreateUnknownTypeException(t);
 			}
 
-			ob = new System.Web.Services.Description.FaultBinding ();
+			ob = (System.Web.Services.Description.InputBinding) Activator.CreateInstance(typeof(System.Web.Services.Description.InputBinding), true);
 
 			Reader.MoveToElement();
 
@@ -1135,6 +1131,7 @@ namespace System.Web.Services.Description
 				}
 			}
 
+			Reader.MoveToElement ();
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
 				Reader.Skip ();
@@ -1168,9 +1165,9 @@ namespace System.Web.Services.Description
 			return ob;
 		}
 
-		public System.Web.Services.Description.InputBinding ReadObject_InputBinding (bool isNullable, bool checkType)
+		public System.Web.Services.Description.OutputBinding ReadObject_OutputBinding (bool isNullable, bool checkType)
 		{
-			System.Web.Services.Description.InputBinding ob = null;
+			System.Web.Services.Description.OutputBinding ob = null;
 			if (isNullable && ReadNull()) return null;
 
 			if (checkType) 
@@ -1178,11 +1175,11 @@ namespace System.Web.Services.Description
 				System.Xml.XmlQualifiedName t = GetXsiType();
 				if (t == null)
 				{ }
-				else if (t.Name != "InputBinding" || t.Namespace != "http://schemas.xmlsoap.org/wsdl/")
+				else if (t.Name != "OutputBinding" || t.Namespace != "http://schemas.xmlsoap.org/wsdl/")
 					throw CreateUnknownTypeException(t);
 			}
 
-			ob = new System.Web.Services.Description.InputBinding ();
+			ob = (System.Web.Services.Description.OutputBinding) Activator.CreateInstance(typeof(System.Web.Services.Description.OutputBinding), true);
 
 			Reader.MoveToElement();
 
@@ -1198,6 +1195,7 @@ namespace System.Web.Services.Description
 				}
 			}
 
+			Reader.MoveToElement ();
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
 				Reader.Skip ();
@@ -1231,9 +1229,9 @@ namespace System.Web.Services.Description
 			return ob;
 		}
 
-		public System.Web.Services.Description.OutputBinding ReadObject_OutputBinding (bool isNullable, bool checkType)
+		public System.Web.Services.Description.FaultBinding ReadObject_FaultBinding (bool isNullable, bool checkType)
 		{
-			System.Web.Services.Description.OutputBinding ob = null;
+			System.Web.Services.Description.FaultBinding ob = null;
 			if (isNullable && ReadNull()) return null;
 
 			if (checkType) 
@@ -1241,11 +1239,11 @@ namespace System.Web.Services.Description
 				System.Xml.XmlQualifiedName t = GetXsiType();
 				if (t == null)
 				{ }
-				else if (t.Name != "OutputBinding" || t.Namespace != "http://schemas.xmlsoap.org/wsdl/")
+				else if (t.Name != "FaultBinding" || t.Namespace != "http://schemas.xmlsoap.org/wsdl/")
 					throw CreateUnknownTypeException(t);
 			}
 
-			ob = new System.Web.Services.Description.OutputBinding ();
+			ob = (System.Web.Services.Description.FaultBinding) Activator.CreateInstance(typeof(System.Web.Services.Description.FaultBinding), true);
 
 			Reader.MoveToElement();
 
@@ -1261,6 +1259,7 @@ namespace System.Web.Services.Description
 				}
 			}
 
+			Reader.MoveToElement ();
 			Reader.MoveToElement();
 			if (Reader.IsEmptyElement) {
 				Reader.Skip ();
@@ -1307,6 +1306,11 @@ namespace System.Web.Services.Description
 	internal class ServiceDescriptionWriterBase : XmlSerializationWriter
 	{
 		const string xmlNamespace = "http://www.w3.org/2000/xmlns/";
+		static readonly System.Reflection.MethodInfo toBinHexStringMethod = typeof (XmlConvert).GetMethod ("ToBinHexString", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic, null, new Type [] {typeof (byte [])}, null);
+		static string ToBinHexString (byte [] input)
+		{
+			return input == null ? null : (string) toBinHexStringMethod.Invoke (null, new object [] {input});
+		}
 		public void WriteRoot_ServiceDescription (object o)
 		{
 			WriteStartDocument ();
@@ -1344,7 +1348,7 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o59 = ob.@DocumentationElement;
 				if (o59 is XmlElement) {
-				if ((o59.Name == "documentation" && o59.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o59.LocalName == "documentation" && o59.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o59.WriteTo (Writer);
 					WriteElementLiteral (o59, "", "", false, true);
@@ -1409,7 +1413,7 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o65 = ob.@DocumentationElement;
 				if (o65 is XmlElement) {
-				if ((o65.Name == "documentation" && o65.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o65.LocalName == "documentation" && o65.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o65.WriteTo (Writer);
 					WriteElementLiteral (o65, "", "", false, true);
@@ -1446,7 +1450,7 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o66 = ob.@DocumentationElement;
 				if (o66 is XmlElement) {
-				if ((o66.Name == "documentation" && o66.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o66.LocalName == "documentation" && o66.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o66.WriteTo (Writer);
 					WriteElementLiteral (o66, "", "", false, true);
@@ -1489,7 +1493,7 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o68 = ob.@DocumentationElement;
 				if (o68 is XmlElement) {
-				if ((o68.Name == "documentation" && o68.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o68.LocalName == "documentation" && o68.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o68.WriteTo (Writer);
 					WriteElementLiteral (o68, "", "", false, true);
@@ -1532,7 +1536,7 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o70 = ob.@DocumentationElement;
 				if (o70 is XmlElement) {
-				if ((o70.Name == "documentation" && o70.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o70.LocalName == "documentation" && o70.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o70.WriteTo (Writer);
 					WriteElementLiteral (o70, "", "", false, true);
@@ -1577,7 +1581,7 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o72 = ob.@DocumentationElement;
 				if (o72 is XmlElement) {
-				if ((o72.Name == "documentation" && o72.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o72.LocalName == "documentation" && o72.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o72.WriteTo (Writer);
 					WriteElementLiteral (o72, "", "", false, true);
@@ -1620,7 +1624,7 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o74 = ob.@DocumentationElement;
 				if (o74 is XmlElement) {
-				if ((o74.Name == "documentation" && o74.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o74.LocalName == "documentation" && o74.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o74.WriteTo (Writer);
 					WriteElementLiteral (o74, "", "", false, true);
@@ -1670,7 +1674,7 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o76 = ob.@DocumentationElement;
 				if (o76 is XmlElement) {
-				if ((o76.Name == "documentation" && o76.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o76.LocalName == "documentation" && o76.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o76.WriteTo (Writer);
 					WriteElementLiteral (o76, "", "", false, true);
@@ -1711,7 +1715,7 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o77 = ob.@DocumentationElement;
 				if (o77 is XmlElement) {
-				if ((o77.Name == "documentation" && o77.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o77.LocalName == "documentation" && o77.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o77.WriteTo (Writer);
 					WriteElementLiteral (o77, "", "", false, true);
@@ -1727,11 +1731,11 @@ namespace System.Web.Services.Description
 			if (ob.@Messages != null) {
 				for (int n79 = 0; n79 < ob.@Messages.Count; n79++) {
 					if (((object)ob.@Messages[n79]) == null) { }
-					else if (ob.@Messages[n79].GetType() == typeof(System.Web.Services.Description.OperationInput)) {
-						WriteObject_OperationInput (((System.Web.Services.Description.OperationInput) ob.@Messages[n79]), "input", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
-					}
 					else if (ob.@Messages[n79].GetType() == typeof(System.Web.Services.Description.OperationOutput)) {
 						WriteObject_OperationOutput (((System.Web.Services.Description.OperationOutput) ob.@Messages[n79]), "output", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
+					}
+					else if (ob.@Messages[n79].GetType() == typeof(System.Web.Services.Description.OperationInput)) {
+						WriteObject_OperationInput (((System.Web.Services.Description.OperationInput) ob.@Messages[n79]), "input", "http://schemas.xmlsoap.org/wsdl/", false, false, true);
 					}
 					else throw CreateUnknownTypeException (ob.@Messages[n79]);
 				}
@@ -1767,7 +1771,7 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o80 = ob.@DocumentationElement;
 				if (o80 is XmlElement) {
-				if ((o80.Name == "documentation" && o80.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o80.LocalName == "documentation" && o80.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o80.WriteTo (Writer);
 					WriteElementLiteral (o80, "", "", false, true);
@@ -1814,7 +1818,7 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o82 = ob.@DocumentationElement;
 				if (o82 is XmlElement) {
-				if ((o82.Name == "documentation" && o82.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o82.LocalName == "documentation" && o82.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o82.WriteTo (Writer);
 					WriteElementLiteral (o82, "", "", false, true);
@@ -1853,52 +1857,13 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o83 = ob.@DocumentationElement;
 				if (o83 is XmlElement) {
-				if ((o83.Name == "documentation" && o83.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o83.LocalName == "documentation" && o83.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o83.WriteTo (Writer);
 					WriteElementLiteral (o83, "", "", false, true);
 				}
 				else
 					throw CreateUnknownAnyElementException (o83.Name, o83.NamespaceURI);
-			}
-			if (writeWrappingElem) WriteEndElement (ob);
-		}
-
-		void WriteObject_OperationInput (System.Web.Services.Description.OperationInput ob, string element, string namesp, bool isNullable, bool needType, bool writeWrappingElem)
-		{
-			if (((object)ob) == null)
-			{
-				if (isNullable)
-					WriteNullTagLiteral(element, namesp);
-				return;
-			}
-
-			System.Type type = ob.GetType ();
-			if (type == typeof(System.Web.Services.Description.OperationInput))
-			{ }
-			else {
-				throw CreateUnknownTypeException (ob);
-			}
-
-			if (writeWrappingElem) {
-				WriteStartElement (element, namesp, ob);
-			}
-
-			if (needType) WriteXsiType("OperationInput", "http://schemas.xmlsoap.org/wsdl/");
-
-			WriteAttribute ("message", "", FromXmlQualifiedName (ob.@Message));
-			WriteAttribute ("name", "", ob.@Name);
-
-			if (ob.@DocumentationElement != null) {
-				XmlNode o84 = ob.@DocumentationElement;
-				if (o84 is XmlElement) {
-				if ((o84.Name == "documentation" && o84.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
-					}
-					else o84.WriteTo (Writer);
-					WriteElementLiteral (o84, "", "", false, true);
-				}
-				else
-					throw CreateUnknownAnyElementException (o84.Name, o84.NamespaceURI);
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
@@ -1929,9 +1894,48 @@ namespace System.Web.Services.Description
 			WriteAttribute ("name", "", ob.@Name);
 
 			if (ob.@DocumentationElement != null) {
+				XmlNode o84 = ob.@DocumentationElement;
+				if (o84 is XmlElement) {
+				if ((o84.LocalName == "documentation" && o84.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+					}
+					else o84.WriteTo (Writer);
+					WriteElementLiteral (o84, "", "", false, true);
+				}
+				else
+					throw CreateUnknownAnyElementException (o84.Name, o84.NamespaceURI);
+			}
+			if (writeWrappingElem) WriteEndElement (ob);
+		}
+
+		void WriteObject_OperationInput (System.Web.Services.Description.OperationInput ob, string element, string namesp, bool isNullable, bool needType, bool writeWrappingElem)
+		{
+			if (((object)ob) == null)
+			{
+				if (isNullable)
+					WriteNullTagLiteral(element, namesp);
+				return;
+			}
+
+			System.Type type = ob.GetType ();
+			if (type == typeof(System.Web.Services.Description.OperationInput))
+			{ }
+			else {
+				throw CreateUnknownTypeException (ob);
+			}
+
+			if (writeWrappingElem) {
+				WriteStartElement (element, namesp, ob);
+			}
+
+			if (needType) WriteXsiType("OperationInput", "http://schemas.xmlsoap.org/wsdl/");
+
+			WriteAttribute ("message", "", FromXmlQualifiedName (ob.@Message));
+			WriteAttribute ("name", "", ob.@Name);
+
+			if (ob.@DocumentationElement != null) {
 				XmlNode o85 = ob.@DocumentationElement;
 				if (o85 is XmlElement) {
-				if ((o85.Name == "documentation" && o85.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o85.LocalName == "documentation" && o85.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o85.WriteTo (Writer);
 					WriteElementLiteral (o85, "", "", false, true);
@@ -1970,7 +1974,7 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o86 = ob.@DocumentationElement;
 				if (o86 is XmlElement) {
-				if ((o86.Name == "documentation" && o86.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o86.LocalName == "documentation" && o86.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o86.WriteTo (Writer);
 					WriteElementLiteral (o86, "", "", false, true);
@@ -2009,7 +2013,7 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o87 = ob.@DocumentationElement;
 				if (o87 is XmlElement) {
-				if ((o87.Name == "documentation" && o87.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o87.LocalName == "documentation" && o87.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o87.WriteTo (Writer);
 					WriteElementLiteral (o87, "", "", false, true);
@@ -2048,7 +2052,7 @@ namespace System.Web.Services.Description
 			if (ob.@DocumentationElement != null) {
 				XmlNode o88 = ob.@DocumentationElement;
 				if (o88 is XmlElement) {
-				if ((o88.Name == "documentation" && o88.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
+				if ((o88.LocalName == "documentation" && o88.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")) {
 					}
 					else o88.WriteTo (Writer);
 					WriteElementLiteral (o88, "", "", false, true);
