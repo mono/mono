@@ -6966,10 +6966,13 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public Type TypeArgument
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
-			get
-			{
+			typearg = storey.MutateType (typearg);
+		}
+
+		public Type TypeArgument {
+			get {
 				return typearg;
 			}
 		}

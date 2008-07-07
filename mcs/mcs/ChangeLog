@@ -1,3 +1,7 @@
+2008-07-07  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs (TypeOf): Mutate type argument.
+
 2008-07-04  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs: Report missing partial modifier for correct type.
