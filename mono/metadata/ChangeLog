@@ -1,3 +1,8 @@
+2008-07-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-debug.c (mono_debug_find_method): Allow this to be called even when
+	debugging is turned off.
+
 2008-07-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* generic-sharing.c (mono_method_lookup_rgctx): Fix a warning.
