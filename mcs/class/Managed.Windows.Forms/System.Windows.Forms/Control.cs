@@ -3749,6 +3749,10 @@ namespace System.Windows.Forms
 				return;
 			}
 			
+			if (parent != null && !parent.Created) {
+				return;
+			}
+
 			if (!IsHandleCreated) {
 				CreateHandle();
 			}
