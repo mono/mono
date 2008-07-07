@@ -1,5 +1,9 @@
 2008-07-07  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* Form.cs: When disposed set owner to null. Improves #402446.
+
+2008-07-07  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* Form.cs, FlowLayoutPanel.cs: When calculating the PreferredSize 
 	use children's PreferredSize if in AutoSize mode and ExplicitBounds 
 	if not.

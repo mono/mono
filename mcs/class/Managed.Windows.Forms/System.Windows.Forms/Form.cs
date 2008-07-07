@@ -2025,7 +2025,7 @@ namespace System.Windows.Forms {
 				((Form)owned_forms[i]).Owner = null;
 
 			owned_forms.Clear ();
-			
+			Owner = null;
 			base.Dispose (disposing);
 			
 			Application.RemoveForm (this);
