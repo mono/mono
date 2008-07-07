@@ -1,3 +1,10 @@
+2008-07-07  Bill Holmes  <billholmes54@gmail.com>
+
+	* threads.c : Thread.Interrupt changes to ensure that ThreadInterruptedException
+	  is not throw too many times.
+
+	Code is contributed under MIT/X11 license.
+
 2008-07-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-debug.c (mono_debug_find_method): Allow this to be called even when
