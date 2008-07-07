@@ -1,3 +1,14 @@
+2008-07-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-amd64.c: Change the signature of the exception code creation 
+	functions to allow the creation of relocatable code later.
+
+	* mini-exceptions.c: Add a set of functions to query the various 
+	runtime-generated exception functions.
+
+	* mini.c mini-exceptions.c: Use the newly added functions instead of the
+	mono_arch_.. () functions.
+	
 2008-07-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_aot_get_trampoline_code): Removed, no longer used.
