@@ -1,3 +1,10 @@
+2008-07-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ClientConfigurationSystem.cs:
+	* ConfigurationManager.cs: The previous patch since it
+	causes a regression. It will remain reverted until we figure
+	out what's wrong and how to fix it.
+
 2008-07-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ClientConfigurationSystem.cs: Moved logic for defaulting to
