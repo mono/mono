@@ -1542,8 +1542,11 @@ namespace MonoTests.System.Resources
 		}
 		
 		[Test]
+		[Category ("NotWorking")]
 		public void ResXDataNode_GetNodePosition ()
 		{
+			// This test relies on a hashtable's enumerator being ordered,
+			// when the ordering is not guaranteed.
 			string refFile = Path.Combine (_tempDirectory, "32x32.ico");
 			WriteEmbeddedResource ("32x32.ico", refFile);
 

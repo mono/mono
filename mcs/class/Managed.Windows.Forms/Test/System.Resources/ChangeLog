@@ -1,3 +1,8 @@
+2008-07-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ResXResourceReaderTest.cs: Ignore test that is dependent on
+	hashtable ordering.
+
 2008-01-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ResXResourceReaderTest.cs: Added Mono-only ctor tests. Fixed
