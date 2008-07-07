@@ -1,3 +1,8 @@
+2008-07-07  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* InternalWindowManager.cs: No longer draws decorations for maximized MDI
+	children.
+
 2008-07-04  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TreeView.cs: Add a null check when using CollapseAll on an
