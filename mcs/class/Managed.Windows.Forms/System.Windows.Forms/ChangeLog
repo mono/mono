@@ -1,5 +1,9 @@
 2008-07-07  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* ThemeWin32Classic.cs: Adjusted minimized window painting.
+
+2008-07-07  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* InternalWindowManager.cs: No longer draws decorations for maximized MDI
 	children.
 

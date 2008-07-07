@@ -6163,7 +6163,8 @@ namespace System.Windows.Forms
 		{
 			Form form = wm.Form;
 			int tbheight = ManagedWindowTitleBarHeight (wm);
-			int bdwidth = ManagedWindowBorderWidth (wm);
+			const int MinimizedWindowBorderWidth = 3;
+			int bdwidth = wm.IsMinimized ? MinimizedWindowBorderWidth : ManagedWindowBorderWidth (wm);
 			Color titlebar_color = Color.FromArgb (255, 10, 36, 106);
 			Color titlebar_color2 = Color.FromArgb (255, 166, 202, 240);
 			Color color = ThemeEngine.Current.ColorControlDark;
@@ -6206,10 +6207,11 @@ namespace System.Windows.Forms
 				}	
 			}
 			
-			// Draw the line just beneath the title bar
-			dc.DrawLine (ResPool.GetPen (SystemColors.Control), bdwidth,
-					tbheight + bdwidth - 1, form.Width - bdwidth - 1,
-					tbheight + bdwidth - 1);
+			if (!wm.IsMinimized)
+				// Draw the line just beneath the title bar
+				dc.DrawLine (ResPool.GetPen (SystemColors.Control), bdwidth,
+						tbheight + bdwidth - 1, form.Width - bdwidth - 1,
+						tbheight + bdwidth - 1);
 
 			if (wm.ShowIcon) {
 				Rectangle icon = ManagedWindowGetTitleBarIconArea (wm);
