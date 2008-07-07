@@ -1,5 +1,7 @@
 2008-07-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile.am: Run the aot tests using --debug.
+
 	* resolve_field_bug.2.il: Fix this test.
 
 2008-07-06  Zoltan Varga  <vargaz@gmail.com>
