@@ -1,5 +1,9 @@
 2008-07-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (mono_aot_get_trampoline_code): Removed, no longer used.
+
+	* aot-runtime.c aot-compiler.c: AOT the generic trampolines in aot-only mode.
+
 	* mini.c (mini_get_imt_trampoline): Call mono_create_specific_trampoline ().
 	(mini_get_vtable_trampoline): Ditto.
 
