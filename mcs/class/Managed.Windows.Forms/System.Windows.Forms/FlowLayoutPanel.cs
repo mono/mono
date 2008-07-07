@@ -120,7 +120,11 @@ namespace System.Windows.Forms
 			bool horizontal = FlowDirection == FlowDirection.LeftToRight || FlowDirection == FlowDirection.RightToLeft;
 			if (!WrapContents || (horizontal && proposedSize.Width == 0) || (!horizontal && proposedSize.Height == 0)) {
 				foreach (Control control in Controls) {
-					Size control_preferred_size = control.PreferredSize;
+					Size control_preferred_size;
+					if (control.AutoSize)
+						control_preferred_size = control.PreferredSize;
+					else
+						control_preferred_size = control.Size;
 					Padding control_margin = control.Margin;
 					if (horizontal) {
 						width += control_preferred_size.Width + control_margin.Horizontal;
@@ -135,7 +139,11 @@ namespace System.Windows.Forms
 				int size_in_other_direction = 0;
 				int increase;
 				foreach (Control control in Controls) {
-					Size control_preferred_size = control.PreferredSize;
+					Size control_preferred_size;
+					if (control.AutoSize)
+						control_preferred_size = control.PreferredSize;
+					else
+						control_preferred_size = control.ExplicitBounds.Size;
 					Padding control_margin = control.Margin;
 					if (horizontal) {
 						increase = control_preferred_size.Width + control_margin.Horizontal;

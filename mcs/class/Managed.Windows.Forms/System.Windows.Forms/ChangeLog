@@ -1,3 +1,11 @@
+2008-07-07  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* Form.cs, FlowLayoutPanel.cs: When calculating the PreferredSize 
+	use children's PreferredSize if in AutoSize mode and ExplicitBounds 
+	if not.
+	* Form.cs: Take the Padding into account for the PreferredSize.
+	[Fixes bug #402849]
+
 2008-07-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TabControl.cs: Since we don't support more than one direction in

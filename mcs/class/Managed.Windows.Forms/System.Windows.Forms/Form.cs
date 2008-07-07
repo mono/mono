@@ -169,20 +169,35 @@ namespace System.Windows.Forms {
 			Size retsize = Size.Empty;
 			
 			foreach (Control child in Controls) {
-				if (child.Dock == DockStyle.Fill) {
-					if (child.Bounds.Right > retsize.Width)
-						retsize.Width = child.Bounds.Right;
-				} 
-				else if (child.Dock != DockStyle.Top && child.Dock != DockStyle.Bottom && (child.Bounds.Right + child.Margin.Right) > retsize.Width)
-					retsize.Width = child.Bounds.Right + child.Margin.Right;
+				Size child_preferred_size;
+				if (child.AutoSize)
+					child_preferred_size = child.PreferredSize;
+				else
+					child_preferred_size = child.ExplicitBounds.Size;
+				int child_right = child.Bounds.X + child_preferred_size.Width;
+				int child_bottom = child.Bounds.Y + child_preferred_size.Height;
 
 				if (child.Dock == DockStyle.Fill) {
-					if (child.Bounds.Bottom > retsize.Height)
-						retsize.Height = child.Bounds.Bottom;
+					if (child_right > retsize.Width)
+						retsize.Width = child_right;
+				} 
+				else if (child.Dock != DockStyle.Top && child.Dock != DockStyle.Bottom && child_right > retsize.Width)
+					retsize.Width = child_right + child.Margin.Right;
+
+				if (child.Dock == DockStyle.Fill) {
+					if (child_bottom > retsize.Height)
+						retsize.Height = child_bottom;
 				}
-				else if (child.Dock != DockStyle.Left && child.Dock != DockStyle.Right && (child.Bounds.Bottom + child.Margin.Bottom) > retsize.Height)
-					retsize.Height = child.Bounds.Bottom + child.Margin.Bottom;
+				else if (child.Dock != DockStyle.Left && child.Dock != DockStyle.Right && child_bottom > retsize.Height)
+					retsize.Height = child_bottom + child.Margin.Bottom;
 			}
+
+			if (retsize == Size.Empty) { // no child controls
+				retsize.Height += this.Padding.Top;
+				retsize.Width += this.Padding.Left;
+			}
+			retsize.Height += this.Padding.Bottom;
+			retsize.Width += this.Padding.Right;
 
 			return SizeFromClientSize (retsize);
 		}
