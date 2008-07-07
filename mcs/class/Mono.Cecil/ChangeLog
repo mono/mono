@@ -1,8 +1,8 @@
-2008-06-28  Sebastien Pouliot  <sebastien@ximian.com> 
+2008-06-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Cecil.dll.sources
 	* Mono.Xml/MiniParser.cs:
-		Remove MiniParser as it is no more required (replaced by 
+		Remove MiniParser as it is no more required (replaced by
 		SmallXmlParser) and save a few KB in the binary size
 
 	* Mono.Xml/SecurityParser.cs
@@ -51,7 +51,7 @@
 		[Found using Gendarme CompareWithEmptyStringEfficientlyRule]
 
 	* Mono.Cecil.Metadata/MetadataToken.cs:
-		Add a private Equals(MetadataToken) method. This allows the 
+		Add a private Equals(MetadataToken) method. This allows the
 		existing operators (== and !=) to avoid boxing, since they
 		will prefer it to the Equals(object) method.
 		[Found using Gendarme ImplementEqualsTypeRule]

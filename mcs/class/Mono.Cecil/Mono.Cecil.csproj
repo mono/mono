@@ -343,7 +343,6 @@
     <Compile Include="Mono.Cecil\TypeReferenceCollection.cs" />
     <Compile Include="Mono.Cecil\TypeSpecification.cs" />
     <Compile Include="Mono.Cecil\VariantType.cs" />
-    <Compile Include="Mono.Xml\MiniParser.cs" />
     <Compile Include="Mono.Xml\SecurityParser.cs" />
     <Compile Include="Mono.Xml\SmallXmlParser.cs" />
   </ItemGroup>
