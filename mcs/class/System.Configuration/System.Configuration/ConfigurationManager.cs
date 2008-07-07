@@ -81,9 +81,6 @@ namespace System.Configuration {
 
 		internal static Configuration OpenExeConfigurationInternal (ConfigurationUserLevel userLevel, Assembly calling_assembly, string exePath)
 		{
-			if (calling_assembly == null && exePath == null)
-				throw new ArgumentException ("exePath must be specified when not running inside a stand alone exe.");
-
 			ExeConfigurationFileMap map = new ExeConfigurationFileMap ();
 
 			/* Roaming and RoamingAndLocal should be different
@@ -95,20 +92,17 @@ namespace System.Configuration {
 
 			switch (userLevel) {
 			case ConfigurationUserLevel.None:
-				if (exePath == null || exePath == ""){
-					Assembly a = Assembly.GetEntryAssembly ();
-					if (a == null)
-						a = calling_assembly;
-					
-					exePath = a.Location;
-				} else if (!File.Exists (exePath))
-					exePath = "";
-					
-				if (exePath != "") {
-					if (!exePath.EndsWith (".config"))
-						map.ExeConfigFilename = exePath + ".config";
-					else
-						map.ExeConfigFilename = exePath;
+				if (exePath == null || exePath.Length == 0) {
+					exePath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
+					map.ExeConfigFilename = exePath;
+				} else {
+					if (!Path.IsPathRooted (exePath))
+						exePath = Path.GetFullPath (exePath);
+					if (!File.Exists (exePath)) {
+						Exception cause = new ArgumentException ("The specified path does not exist.", "exePath");
+						throw new ConfigurationErrorsException ("Error Initializing the configuration system:", cause);
+					}
+					map.ExeConfigFilename = exePath + ".config";
 				}
 				break;
 			case ConfigurationUserLevel.PerUserRoaming:

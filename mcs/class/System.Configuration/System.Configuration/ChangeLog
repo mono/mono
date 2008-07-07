@@ -1,6 +1,13 @@
 2008-07-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ClientConfigurationSystem.cs:
+	* ConfigurationManager.cs: Reaply the patch from Gert.
+	This change doesn't contain any fix to to not clutter
+	the commit history.
+
+2008-07-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ClientConfigurationSystem.cs:
 	* ConfigurationManager.cs: The previous patch since it
 	causes a regression. It will remain reverted until we figure
 	out what's wrong and how to fix it.

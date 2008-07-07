@@ -46,14 +46,10 @@ namespace System.Configuration
 			get {
 				if (cfg == null) {
 					Assembly a = Assembly.GetEntryAssembly();
-					string exePath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
-
-					if (a == null && exePath == null)
-						exePath = string.Empty;
 
 					try {
 						cfg = ConfigurationManager.OpenExeConfigurationInternal (
-							ConfigurationUserLevel.None, a, exePath);
+							ConfigurationUserLevel.None, a, null);
 					} catch (Exception ex) {
 						throw new ConfigurationErrorsException ("Error Initializing the configuration system.", ex);
 					}
