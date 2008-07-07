@@ -1,5 +1,12 @@
 2008-07-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* ConfigurationManager.cs: Return the right path if the calling assembly is
+	not null. This happens when ConfigurationSession::GetRuntimeObject() is
+	called, SectionHandler != null and the handler itself calls
+	OpenExeConfigurationInternal ("").
+
+2008-07-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* ClientConfigurationSystem.cs:
 	* ConfigurationManager.cs: Reaply the patch from Gert.
 	This change doesn't contain any fix to to not clutter
