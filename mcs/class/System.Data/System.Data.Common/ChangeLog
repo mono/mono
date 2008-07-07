@@ -1,3 +1,8 @@
+2008-07-06  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* DbDataReader.cs: Replace a few Type.GetType by typeof
+	[Found using Gendarme AvoidTypeGetTypeForConstantStringsRule]
+
 2008-07-03  Marek Habersack  <mhabersack@novell.com>
 
 	* DataAdapter.cs (BuildSchema): Check for null.
