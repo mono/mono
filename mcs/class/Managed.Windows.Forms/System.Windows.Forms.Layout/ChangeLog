@@ -1,3 +1,9 @@
+2008-07-07  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TableLayout.cs: Controls bounds should be taken into account regardless
+	of their Dock and Anchor states.
+	[Fixes bug #402651]
+
 2008-06-10  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TableLayoutSettingsTypeConverter.cs: Patch from Andy Hume to

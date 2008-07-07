@@ -1326,6 +1326,45 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
+		public void Bug402651 ()
+		{
+			Form f = new Form ();
+			f.ClientSize = new Size (300, 300);
+
+			TableLayoutPanel tlp = new TableLayoutPanel ();
+			tlp.Dock = DockStyle.Fill;
+			tlp.RowCount = 2;
+			tlp.RowStyles.Add (new RowStyle (SizeType.Percent, 100F));
+			tlp.RowStyles.Add (new RowStyle (SizeType.AutoSize));
+			f.Controls.Add (tlp);
+
+			Button b1 = new Button ();
+			b1.Text = String.Empty;
+			b1.Dock = DockStyle.Fill;
+			tlp.Controls.Add (b1, 0, 0);
+
+			Button b2 = new Button ();
+			b2.Text = String.Empty;
+			b2.Size = new Size (100, 100);
+			b2.Anchor = AnchorStyles.None;
+			b2.Dock = DockStyle.None;
+			b2.Visible = false;
+			tlp.Controls.Add (b2, 0, 1);
+
+			f.Show ();
+
+			b2.Visible = true;
+			Assert.AreEqual (new Size (100, 100), b2.Size, "A1");
+
+			b2.Visible = false;
+			b2.Anchor = AnchorStyles.Left;
+			b2.Visible = true;
+			Assert.AreEqual (new Size (100, 100), b2.Size, "A2");
+
+			f.Dispose ();
+		}
+
+		[Test]
 		public void Bug354672 ()
 		{
 			Form f = new Form ();

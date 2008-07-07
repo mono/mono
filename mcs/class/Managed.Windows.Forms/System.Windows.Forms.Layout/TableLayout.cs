@@ -266,14 +266,10 @@ namespace System.Windows.Forms.Layout
 							if (settings.GetColumnSpan (c) > 1)
 								continue;
 								
-							if (c.Dock == DockStyle.Fill || ((c.Anchor & AnchorStyles.Left) == AnchorStyles.Left && (c.Anchor & AnchorStyles.Right) == AnchorStyles.Right)) {
-								if (c.AutoSize)
-									max_width = Math.Max (max_width, c.PreferredSize.Width + c.Margin.Horizontal);
-								else
-									max_width = Math.Max (max_width, c.ExplicitBounds.Width + c.Margin.Horizontal);
-								
-								continue;
-							}
+							if (c.AutoSize)
+								max_width = Math.Max (max_width, c.PreferredSize.Width + c.Margin.Horizontal);
+							else
+								max_width = Math.Max (max_width, c.ExplicitBounds.Width + c.Margin.Horizontal);
 							
 							if (c.Width + c.Margin.Left + c.Margin.Right > max_width)
 								max_width = c.Width + c.Margin.Left + c.Margin.Right;						
@@ -347,14 +343,10 @@ namespace System.Windows.Forms.Layout
 							if (settings.GetRowSpan (c) > 1)
 								continue; 
 								
-							if (c.Dock == DockStyle.Fill || ((c.Anchor & AnchorStyles.Top) == AnchorStyles.Top && (c.Anchor & AnchorStyles.Bottom) == AnchorStyles.Bottom)) {
-								if (c.AutoSize)
-									max_height = Math.Max (max_height, c.PreferredSize.Height + c.Margin.Vertical);
-								else
-									max_height = Math.Max (max_height, c.ExplicitBounds.Height + c.Margin.Vertical);
-
-								continue;
-							}
+							if (c.AutoSize)
+								max_height = Math.Max (max_height, c.PreferredSize.Height + c.Margin.Vertical);
+							else
+								max_height = Math.Max (max_height, c.ExplicitBounds.Height + c.Margin.Vertical);
 
 							if (c.Height + c.Margin.Top + c.Margin.Bottom > max_height)
 								max_height = c.Height + c.Margin.Top + c.Margin.Bottom;
