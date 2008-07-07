@@ -1,3 +1,9 @@
+2008-07-07  Bill Holmes  <billholmes54@gmail.com>
+
+	* ThreadTest.cs : Tests added for Thread.Interrupt.
+
+	Code is contributed under MIT/X11 license.
+
 2008-06-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* MutexTest.cs: Reenable some mutex tests which seem to work now.

@@ -660,7 +660,59 @@ namespace MonoTests.System.Threading
 			
 			CheckIsNotRunning ("t6", t);
 		}
+
+		[Test]
+		public void Test_Interrupt ()
+		{
+			bool interruptedExceptionThrown = false;
+			ThreadPool.QueueUserWorkItem (Test_Interrupt_Worker, Thread.CurrentThread);
+
+			try {
+				try {
+					Thread.Sleep (3000);
+				} finally {
+					try {
+						Thread.Sleep (0);
+					} catch (ThreadInterruptedException) {
+						Assert.Fail ("ThreadInterruptedException thrown twice");
+					}
+				}
+			} catch (ThreadInterruptedException) {
+				interruptedExceptionThrown = true;
+			}
+
+			Assert.IsTrue (interruptedExceptionThrown, "ThreadInterruptedException expected.");
+		}
+
+		private void Test_Interrupt_Worker (object o)
+		{
+			Thread t = o as Thread;
+			Thread.Sleep (100);
+			t.Interrupt ();
+		}
 		
+		[Test]
+		public void Test_InterruptCurrentThread ()
+		{
+			bool interruptedExceptionThrown = false;
+
+			try {
+				try {
+					Thread.CurrentThread.Interrupt ();
+				} finally {
+					try {
+						Thread.Sleep (0);
+					} catch (ThreadInterruptedException) {
+						Assert.Fail ("ThreadInterruptedException should not be thrown.");
+					}
+				}
+			} catch (ThreadInterruptedException) {
+				interruptedExceptionThrown = true;
+			}
+
+			Assert.IsFalse (interruptedExceptionThrown, "ThreadInterruptedException should not be thrown.");
+		}
+
 		void CheckIsRunning (string s, Thread t)
 		{
 			int c = counter;
