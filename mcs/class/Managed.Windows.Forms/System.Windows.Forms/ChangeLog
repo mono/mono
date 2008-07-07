@@ -1,3 +1,9 @@
+2008-07-07  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* XplatUIX11.cs: Implement NC hit-testing for mouse down/up messages, 
+	so that the wparam is properly set.
+	Fixes form moving in the test case in bug 402446.
+
 2008-07-07  Jonathan Pobst  <monkey@jpobst.com>
 
 	* FolderBrowserDialog.cs: If we can't find the SelectedPath, display

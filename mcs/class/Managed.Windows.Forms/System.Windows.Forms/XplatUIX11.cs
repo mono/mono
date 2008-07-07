@@ -3731,12 +3731,12 @@ namespace System.Windows.Forms {
 							MouseState |= MouseButtons.Left;
 							if (client) {
 								msg.message = Msg.WM_LBUTTONDOWN;
+								msg.wParam = GetMousewParam (0);
 							} else {
 								msg.message = Msg.WM_NCLBUTTONDOWN;
+								msg.wParam = (IntPtr) NCHitTest (hwnd, xevent.MotionEvent.x, xevent.MotionEvent.y);
 								MenuToScreen (xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
-							// TODO: For WM_NCLBUTTONDOWN wParam specifies a hit-test value not the virtual keys down
-							msg.wParam=GetMousewParam(0);
 							break;
 						}
 
@@ -3744,11 +3744,12 @@ namespace System.Windows.Forms {
 							MouseState |= MouseButtons.Middle;
 							if (client) {
 								msg.message = Msg.WM_MBUTTONDOWN;
+								msg.wParam = GetMousewParam (0);
 							} else {
 								msg.message = Msg.WM_NCMBUTTONDOWN;
+								msg.wParam = (IntPtr) NCHitTest (hwnd, xevent.MotionEvent.x, xevent.MotionEvent.y);
 								MenuToScreen (xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
-							msg.wParam=GetMousewParam(0);
 							break;
 						}
 
@@ -3756,11 +3757,12 @@ namespace System.Windows.Forms {
 							MouseState |= MouseButtons.Right;
 							if (client) {
 								msg.message = Msg.WM_RBUTTONDOWN;
+								msg.wParam = GetMousewParam (0);
 							} else {
 								msg.message = Msg.WM_NCRBUTTONDOWN;
+								msg.wParam = (IntPtr) NCHitTest (hwnd, xevent.MotionEvent.x, xevent.MotionEvent.y);
 								MenuToScreen (xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
-							msg.wParam=GetMousewParam(0);
 							break;
 						}
 
@@ -3843,17 +3845,17 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.ButtonRelease: {
-
 					switch(xevent.ButtonEvent.button) {
 						case 1: {
 							if (client) {
 								msg.message = Msg.WM_LBUTTONUP;
 							} else {
 								msg.message = Msg.WM_NCLBUTTONUP;
+								msg.wParam = (IntPtr) NCHitTest (hwnd, xevent.MotionEvent.x, xevent.MotionEvent.y);
 								MenuToScreen (xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 							MouseState &= ~MouseButtons.Left;
-							msg.wParam=GetMousewParam(0);
+							msg.wParam = GetMousewParam (0);
 							break;
 						}
 
@@ -3862,10 +3864,11 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_MBUTTONUP;
 							} else {
 								msg.message = Msg.WM_NCMBUTTONUP;
+								msg.wParam = (IntPtr) NCHitTest (hwnd, xevent.MotionEvent.x, xevent.MotionEvent.y);
 								MenuToScreen (xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 							MouseState &= ~MouseButtons.Middle;
-							msg.wParam=GetMousewParam(0);
+							msg.wParam = GetMousewParam (0);
 							break;
 						}
 
@@ -3874,10 +3877,11 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_RBUTTONUP;
 							} else {
 								msg.message = Msg.WM_NCRBUTTONUP;
+								msg.wParam = (IntPtr) NCHitTest (hwnd, xevent.MotionEvent.x, xevent.MotionEvent.y);
 								MenuToScreen (xevent.AnyEvent.window, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 							MouseState &= ~MouseButtons.Right;
-							msg.wParam=GetMousewParam(0);
+							msg.wParam = GetMousewParam (0);
 							break;
 						}
 
@@ -3991,14 +3995,7 @@ namespace System.Windows.Forms {
 							msg.lParam = (IntPtr)(mouse_position.Y << 16 | mouse_position.X);
 						}
 
-						// The hit test is sent in screen coordinates
-						XTranslateCoordinates (DisplayHandle, xevent.AnyEvent.window, RootWindow,
-								xevent.MotionEvent.x, xevent.MotionEvent.y,
-								out screen_x, out screen_y, out dummy);
-
-						msg.lParam = (IntPtr) (screen_y << 16 | screen_x & 0xFFFF);
-						ht = (HitTest)NativeWindow.WndProc (hwnd.client_window, Msg.WM_NCHITTEST,
-								IntPtr.Zero, msg.lParam).ToInt32 ();
+						ht = NCHitTest (hwnd, xevent.MotionEvent.x, xevent.MotionEvent.y);
 						NativeWindow.WndProc(hwnd.client_window, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)ht);
 
 						mouse_position.X = xevent.MotionEvent.x;
@@ -4351,6 +4348,16 @@ namespace System.Windows.Forms {
 			}
 
 			return true;
+		}
+
+		private HitTest NCHitTest (Hwnd hwnd, int x, int y)
+		{
+			// The hit test is sent in screen coordinates
+			IntPtr dummy;
+			int screen_x, screen_y;
+			XTranslateCoordinates (DisplayHandle, hwnd.WholeWindow, RootWindow, x, y, out screen_x, out screen_y, out dummy);
+			return (HitTest) NativeWindow.WndProc (hwnd.client_window, Msg.WM_NCHITTEST, IntPtr.Zero, 
+							       (IntPtr) (screen_y << 16 | screen_x & 0xFFFF));
 		}
 
 		internal override bool GetText(IntPtr handle, out string text) {
