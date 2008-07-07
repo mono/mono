@@ -4117,7 +4117,7 @@
         <size>7</size>
       </method>
       <method name="T`1[X] M[X]()">
-        <size>30</size>
+        <size>13</size>
       </method>
       <method name="T`1[System.Int64] N()">
         <size>30</size>
@@ -10762,7 +10762,7 @@
         <size>7</size>
       </method>
       <method name="X+ModuleBinder`1[TDelegate] CreateMethodUnscoped[TDelegate]()">
-        <size>30</size>
+        <size>13</size>
       </method>
       <method name="Void Main()">
         <size>1</size>
@@ -10953,7 +10953,7 @@
         <size>10</size>
       </method>
       <method name="Void Test2[T]()">
-        <size>36</size>
+        <size>19</size>
       </method>
       <method name="Void Main()">
         <size>100</size>
@@ -11381,10 +11381,10 @@
         <size>7</size>
       </method>
       <method name="System.Converter`2[TSource,TDest] GetUpcaster[TSource,TDest]()">
-        <size>30</size>
+        <size>13</size>
       </method>
       <method name="System.Converter`2[TSource,TDest] GetDowncaster[TSource,TDest]()">
-        <size>30</size>
+        <size>13</size>
       </method>
       <method name="Void Main()">
         <size>1</size>
@@ -11754,6 +11754,49 @@
       </method>
       <method name="Void &lt;&gt;m__0()">
         <size>33</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-anon-35.cs">
+    <type name="C`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.Func`1[T] XX()">
+        <size>32</size>
+      </method>
+      <method name="T &lt;XX&gt;m__0()">
+        <size>12</size>
+      </method>
+    </type>
+    <type name="C2`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.Func`1[C`1[T]] XX()">
+        <size>32</size>
+      </method>
+      <method name="C`1[T] &lt;XX&gt;m__1()">
+        <size>4</size>
+      </method>
+    </type>
+    <type name="N1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.Func`1[T] XX[T]()">
+        <size>15</size>
+      </method>
+      <method name="T &lt;XX&gt;m__2[T]()">
+        <size>12</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>98</size>
       </method>
     </type>
   </test>
@@ -14564,6 +14607,74 @@
       </method>
     </type>
   </test>
+  <test name="gtest-iter-03.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>18</size>
+      </method>
+      <method name="IEnumerable`1 Annotations[T]()">
+        <size>23</size>
+      </method>
+      <method name="IEnumerable`1 Annotations(System.Type)">
+        <size>30</size>
+      </method>
+      <method name="Void Main()">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Annotations&gt;c__Iterator0`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>12</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>39</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
+        <size>39</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>194</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>60</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Annotations&gt;c__Iterator1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>12</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>53</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
+        <size>53</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>213</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>51</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-linq-01.cs">
     <type name="from.ITest">
       <method name="Int32 get_Id()">
@@ -16447,7 +16558,7 @@
         <size>7</size>
       </method>
       <method name="Void Foo[T]()">
-        <size>31</size>
+        <size>14</size>
       </method>
       <method name="Void Main()">
         <size>1</size>
