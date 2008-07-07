@@ -1,5 +1,9 @@
 2008-07-07  Marek Safar  <marek.safar@gmail.com>
 
+	* ecore.cs: Improved argument mismatch error messages.
+
+2008-07-07  Marek Safar  <marek.safar@gmail.com>
+
 	* anonymous.cs: Don't cache generic delegates when reference MVAR argument.
 
 2008-07-07  Marek Safar  <marek.safar@gmail.com>

@@ -3729,10 +3729,10 @@ namespace Mono.CSharp {
 			if (((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) ^
 				(a.Modifier & (Parameter.Modifier.REF | Parameter.Modifier.OUT))) != 0) {
 				if ((mod & Parameter.Modifier.ISBYREF) == 0)
-					Report.Error (1615, loc, "Argument `{0}' should not be passed with the `{1}' keyword",
+					Report.Error (1615, loc, "Argument `#{0}' does not require `{1}' modifier. Consider removing `{1}' modifier",
 						index, Parameter.GetModifierSignature (a.Modifier));
 				else
-					Report.Error (1620, loc, "Argument `{0}' must be passed with the `{1}' keyword",
+					Report.Error (1620, loc, "Argument `#{0}' is missing `{1}' modifier",
 						index, Parameter.GetModifierSignature (mod));
 			} else {
 				string p1 = a.GetSignatureForError ();
@@ -3743,7 +3743,8 @@ namespace Mono.CSharp {
 					Report.SymbolRelatedToPreviousError (a.Expr.Type);
 					Report.SymbolRelatedToPreviousError (paramType);
 				}
-				Report.Error (1503, loc, "Argument {0}: Cannot convert type `{1}' to `{2}'", index, p1, p2);
+
+				Report.Error (1503, loc, "Argument `#{0}' cannot convert `{1}' expression to type `{2}'", index, p1, p2);
 			}
 		}
 
