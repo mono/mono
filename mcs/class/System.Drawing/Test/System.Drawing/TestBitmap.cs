@@ -1571,6 +1571,90 @@ namespace MonoTests.System.Drawing {
 		{
 			new XmlSerializer (typeof (Bitmap));
 		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void BitmapImageCtor ()
+		{
+			new Bitmap ((Image) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BitmapImageSizeCtor ()
+		{
+			new Bitmap ((Image) null, Size.Empty);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BitmapImageIntIntCtor ()
+		{
+			new Bitmap ((Image) null, Int32.MinValue, Int32.MaxValue);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BitmapIntIntCtor ()
+		{
+			new Bitmap (Int32.MinValue, Int32.MaxValue);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void BitmapIntIntGraphicCtor ()
+		{
+			new Bitmap (1, 1, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BitmapIntIntPixelFormatCtor ()
+		{
+			new Bitmap (Int32.MinValue, Int32.MaxValue, PixelFormat.Format1bppIndexed);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BitmapStreamCtor ()
+		{
+			new Bitmap ((Stream) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BitmapStreamBoolCtor ()
+		{
+			new Bitmap ((Stream) null, true);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void BitmapStringCtor ()
+		{
+			new Bitmap ((string) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void BitmapStringBoolCtor ()
+		{
+			new Bitmap ((string) null, false);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void BitmapTypeStringCtor1 ()
+		{
+			new Bitmap ((Type) null, "mono");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BitmapTypeStringCtor2 ()
+		{
+			new Bitmap (typeof (Bitmap), null);
+		}
 	}
 
 	[TestFixture]
@@ -1579,6 +1663,12 @@ namespace MonoTests.System.Drawing {
 #endif
 	public class BitmapFullTrustTest {
 #if !TARGET_JVM
+		[Test]
+		public void BitmapIntIntIntPixelFormatIntPtrCtor ()
+		{
+			new Bitmap (1, 1, 1, PixelFormat.Format1bppIndexed, IntPtr.Zero);
+		}
+
 		// BitmapFromHicon## is *almost* the same as IconTest.Icon##ToBitmap except
 		// for the Flags property
 
