@@ -412,6 +412,21 @@ namespace MonoTests.System.Windows.Forms
 #endif
 		}
 
+		[Test]
+		public void PreferredHeight ()
+		{
+			// PreferredHeight is not tied to ItemHeight like we had it
+			ComboBox cb = new ComboBox ();
+			
+			int h = cb.PreferredHeight;
+			
+			cb.ItemHeight = 10;
+			Assert.AreEqual (h, cb.PreferredHeight, "A2");
+
+			cb.ItemHeight = 30;
+			Assert.AreEqual (h, cb.PreferredHeight, "A3");
+		}
+		
 #if NET_2_0
 		[Test]
 		public void ResetTextTest ()

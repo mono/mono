@@ -1,3 +1,8 @@
+2008-07-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ComboBoxTest.cs: Test showing PreferredHeight is independent of
+	ItemHeight.
+
 2008-07-08  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* FormTest.cs: Added the MinimizedWindowSize test.

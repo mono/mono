@@ -1,3 +1,8 @@
+2008-07-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ComboBox.cs: PreferredHeight is not tied to ItemHeight.  Fixes 3rd
+	ComboBox in FormsTest.
+
 2008-07-08  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ThemeWin32Classic.cs: (ManagedWindowBorderWidth): width 3 is only 

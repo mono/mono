@@ -658,9 +658,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		public int PreferredHeight {
-			get {
-				return ItemHeight + 6;
-			}
+			get { return Font.Height + 8; }
 		}
 
 		[Browsable (false)]
