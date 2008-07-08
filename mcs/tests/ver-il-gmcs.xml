@@ -16734,6 +16734,69 @@
       </method>
     </type>
   </test>
+  <test name="ltest-20.cs">
+    <type name="Z">
+      <method name="Void .ctor()">
+        <size>37</size>
+      </method>
+      <method name="Void &lt;Z&gt;m__0()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Foo()">
+        <size>2</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="TestMethod">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="ltest-21.cs">
+    <type name="Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="T Foo[T](System.Func`2[System.String,T])">
+        <size>12</size>
+      </method>
+      <method name="Void Foo(System.Action`1[System.String])">
+        <size>12</size>
+      </method>
+      <method name="System.String Bar()">
+        <size>35</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>95</size>
+      </method>
+      <method name="System.String &lt;Bar&gt;m__0(System.String)">
+        <size>9</size>
+      </method>
+      <method name="System.String &lt;Main&gt;m__1(System.String)">
+        <size>4</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__2(System.String)">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-1.cs">
     <type name="X">
       <method name="Void .ctor()">
