@@ -1,5 +1,10 @@
 2008-07-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_method_to_ir): Call mono_array_new_2 if possible.
+
+	* jit-icalls.c (mono_array_new_2): New jit icall, specialized version of
+	mono_array_new_va which avoids varargs.
+
 	* mini-exceptions.c (mono_exceptions_init): Fix the ppc build.
 
 	* mini-trampolines.c: Call mono_create_specific_trampoline () instead of
