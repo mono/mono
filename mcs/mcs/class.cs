@@ -3905,7 +3905,7 @@ namespace Mono.CSharp {
 		public override void Emit ()
 		{
 #if GMCS_SOURCE			
-			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0)
+			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
 				MethodBuilder.SetCustomAttribute (TypeManager.GetCompilerGeneratedAttribute (Location));
 			if ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
 				MethodBuilder.SetCustomAttribute (TypeManager.GetDebuggerHiddenAttribute (Location));
@@ -4603,10 +4603,6 @@ namespace Mono.CSharp {
 			return Parameters.Empty &&
 					(Initializer is ConstructorBaseInitializer) &&
 					(Initializer.Arguments == null);
-		}
-
-		public bool IsCompilerGenerated {
-			get { return Initializer is GeneratedBaseInitializer; }
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
@@ -5539,9 +5535,8 @@ namespace Mono.CSharp {
 		public override void Emit ()
 		{
 #if GMCS_SOURCE
-			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0) {
+			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
 				FieldBuilder.SetCustomAttribute (TypeManager.GetCompilerGeneratedAttribute (Location));
-			}
 #endif
 
 			if (OptAttributes != null) {
@@ -6102,7 +6097,7 @@ namespace Mono.CSharp {
 			EmitMethod (parent);
 
 #if GMCS_SOURCE			
-			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0)
+			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
 				method_data.MethodBuilder.SetCustomAttribute (TypeManager.GetCompilerGeneratedAttribute (Location));
 			if (((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0))
 				method_data.MethodBuilder.SetCustomAttribute (TypeManager.GetDebuggerHiddenAttribute (Location));

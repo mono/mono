@@ -1523,9 +1523,8 @@ namespace Mono.CSharp {
 			if (parameters.Count > 0)
 				a_type.SetParameterInfo (null);
 
-			Constructor c = new Constructor (a_type, name, Modifiers.PUBLIC,
+			Constructor c = new Constructor (a_type, name, Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
 				new Parameters (ctor_params), null, loc);
-			c.OptAttributes = a_type.GetDebuggerHiddenAttribute ();
 			c.Block = new ToplevelBlock (c.Parameters, loc);
 
 			// 
@@ -1588,13 +1587,12 @@ namespace Mono.CSharp {
 			Location loc = Location;
 
 			Method equals = new Method (this, null, TypeManager.system_boolean_expr,
-				Modifiers.PUBLIC | Modifiers.OVERRIDE, false, new MemberName ("Equals", loc),
-				new Parameters (new Parameter (TypeManager.system_object_expr, "obj", 0, null, loc)),
-				GetDebuggerHiddenAttribute ());
+				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN, false, new MemberName ("Equals", loc),
+				new Parameters (new Parameter (TypeManager.system_object_expr, "obj", 0, null, loc)), null);
 
 			Method tostring = new Method (this, null, TypeManager.system_string_expr,
-				Modifiers.PUBLIC | Modifiers.OVERRIDE, false, new MemberName ("ToString", loc),
-				Mono.CSharp.Parameters.EmptyReadOnlyParameters, GetDebuggerHiddenAttribute ());
+				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN, false, new MemberName ("ToString", loc),
+				Mono.CSharp.Parameters.EmptyReadOnlyParameters, null);
 
 			ToplevelBlock equals_block = new ToplevelBlock (equals.Parameters, loc);
 			TypeExpr current_type;
@@ -1685,8 +1683,9 @@ namespace Mono.CSharp {
 			// GetHashCode () override
 			//
 			Method hashcode = new Method (this, null, TypeManager.system_int32_expr,
-				Modifiers.PUBLIC | Modifiers.OVERRIDE, false, new MemberName ("GetHashCode", loc),
-				Mono.CSharp.Parameters.EmptyReadOnlyParameters, GetDebuggerHiddenAttribute ());
+				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN,
+				false, new MemberName ("GetHashCode", loc),
+				Mono.CSharp.Parameters.EmptyReadOnlyParameters, null);
 
 			//
 			// Modified FNV with good avalanche behavior and uniform
@@ -1745,12 +1744,6 @@ namespace Mono.CSharp {
 			DefineOverrides ();
 
 			return base.DefineMembers ();
-		}
-
-		Attributes GetDebuggerHiddenAttribute ()
-		{
-			return new Attributes (new Attribute (null, null,
-				"System.Diagnostics.DebuggerHiddenAttribute", null, Location, false));
 		}
 
 		public override string GetSignatureForError ()

@@ -444,6 +444,15 @@ namespace Mono.CSharp {
 			VerifyClsCompliance ();
 		}
 
+		public bool IsCompilerGenerated {
+			get	{
+				if ((mod_flags & Modifiers.COMPILER_GENERATED) != 0)
+					return true;
+
+				return Parent == null ? false : Parent.IsCompilerGenerated;
+			}
+		}
+
 		public virtual bool IsUsed {
 			get { return (caching_flags & Flags.IsUsed) != 0; }
 		}
@@ -1039,6 +1048,9 @@ namespace Mono.CSharp {
 				for (int i = offset; i < type_params.Length; i++)
 					CurrentTypeParameters [i - offset].Emit ();
 			}
+
+			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
+				TypeBuilder.SetCustomAttribute (TypeManager.GetCompilerGeneratedAttribute (Location));
 #endif
 
 			base.Emit ();

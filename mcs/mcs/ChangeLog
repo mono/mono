@@ -1,5 +1,10 @@
 2008-07-08  Marek Safar  <marek.safar@gmail.com>
 
+	* anonymous.cs, class.cs, decl.cs: Emit CompilerGenerated attribute
+	hierarchically.
+
+2008-07-08  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #406702
 	* anonymous.cs: Always park anonymous method in the nearest parent storey.
 
