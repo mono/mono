@@ -1,5 +1,11 @@
 2008-07-08  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #378189, #370577
+	* lambda.cs, ecore.cs: Implemented 3.0 enhancement to better conversion
+	from expression.
+
+2008-07-08  Marek Safar  <marek.safar@gmail.com>
+
 	* anonymous.cs, class.cs, decl.cs: Emit CompilerGenerated attribute
 	hierarchically.
 

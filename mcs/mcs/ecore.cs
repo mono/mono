@@ -3432,6 +3432,10 @@ namespace Mono.CSharp {
 				
 				p = Delegate.GetInvokeMethod (null, p).ReturnType;
 				q = Delegate.GetInvokeMethod (null, q).ReturnType;
+				if (p == TypeManager.void_type && q != TypeManager.void_type)
+					return 2;
+				if (q == TypeManager.void_type && p != TypeManager.void_type)
+					return 1;
 			} else {
 				if (argument_type == p)
 					return 1;
