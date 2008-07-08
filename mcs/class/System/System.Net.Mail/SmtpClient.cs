@@ -390,7 +390,6 @@ namespace System.Net.Mail {
 		void ParseExtensions (string extens)
 		{
 			char[] delims = new char [1] { ' ' };
-			int ln = 0;
 			string[] parts = extens.Split ('\n');
 
 			foreach (string part in parts) {

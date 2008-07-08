@@ -302,7 +302,6 @@ namespace System.Net.Sockets
 					
 				default:
 					throw new NotSupportedException ();
-					break;
 			}
 
 			Thread t = new Thread (callback);

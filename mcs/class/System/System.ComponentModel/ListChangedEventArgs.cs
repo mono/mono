@@ -36,8 +36,10 @@ namespace System.ComponentModel {
 		ListChangedType changedType;
 		int oldIndex;
 		int newIndex;
+#if NET_2_0
 		PropertyDescriptor propDesc;
-	
+#endif
+
 		public ListChangedEventArgs (ListChangedType listChangedType,
 					     int newIndex)
 		{
@@ -49,7 +51,9 @@ namespace System.ComponentModel {
 					     PropertyDescriptor propDesc)
 		{
 			this.changedType = listChangedType;
+#if NET_2_0
 			this.propDesc = propDesc;
+#endif			
 		}
 		
 		public ListChangedEventArgs (ListChangedType listChangedType,

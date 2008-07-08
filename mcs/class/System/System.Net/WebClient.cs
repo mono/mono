@@ -333,7 +333,9 @@ namespace System.Net
 					byte [] buffer = new byte [length];
 					
 					int nread = 0;
+#if NET_2_0
 					long notify_total = 0;
+#endif					
 					while ((nread = st.Read (buffer, 0, length)) != 0){
 #if NET_2_0
 						if (async && DownloadProgressChanged != null){
@@ -943,7 +945,7 @@ namespace System.Net
 			if (nolength)
 				ms = new MemoryStream ();
 
-			long total = 0;
+//			long total = 0;
 			int nread = 0;
 			int offset = 0;
 			byte [] buffer = new byte [size];
@@ -956,7 +958,7 @@ namespace System.Net
 				}
 #if NET_2_0
 				if (async && DownloadProgressChanged != null){
-					total += nread;
+//					total += nread;
 					DownloadProgressChanged (this, new DownloadProgressChangedEventArgs (nread, length, userToken));
 				}
 #endif

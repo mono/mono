@@ -290,7 +290,7 @@ namespace System.Net.NetworkInformation {
 
 					// Hardcoded, only useful for Linux.
 					return ((f & 0x1000) == 0x1000);
-				} catch (Exception e){
+				} catch {
 					return false;
 				}
 			}

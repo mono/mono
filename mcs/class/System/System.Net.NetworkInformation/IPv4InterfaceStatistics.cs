@@ -122,7 +122,7 @@ namespace System.Net.NetworkInformation {
 		{
 			try {
 				return long.Parse (NetworkInterface.ReadLine (linux.iface_path + file));
-			} catch (Exception e){
+			} catch {
 				return 0;
 			}
 		}

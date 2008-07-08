@@ -346,8 +346,6 @@ namespace System.Configuration
 			}
 
 			if (isProduct) {
-				string evidenceHash;
-
 				if (isEvidence) {
 					Assembly assembly = Assembly.GetEntryAssembly ();
 					if (assembly == null)

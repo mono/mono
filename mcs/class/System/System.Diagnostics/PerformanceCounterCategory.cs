@@ -38,7 +38,9 @@ namespace System.Diagnostics
 	{
 		private string categoryName;
 		private string machineName;
+#if NET_2_0
 		private PerformanceCounterCategoryType type = PerformanceCounterCategoryType.Unknown;
+#endif		
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern bool CategoryDelete (string name);

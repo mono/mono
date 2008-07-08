@@ -475,7 +475,6 @@ public sealed class TypeDescriptor
 		if (t == null) 
 			return null;
 
-		Exception exc = null;
 		try {
 			return Activator.CreateInstance (t);
 		} catch {}

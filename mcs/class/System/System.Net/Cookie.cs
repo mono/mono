@@ -48,9 +48,11 @@ namespace System.Net {
 		Uri commentUri;
 		bool discard;
 		string domain;
-		bool expired;
+//		bool expired;
 		DateTime expires;
+#if NET_2_0		
 		bool httpOnly;
+#endif		
 		string name;
 		string path;
 		string port;
@@ -68,7 +70,6 @@ namespace System.Net {
 		{
 			expires = DateTime.MinValue;
 			timestamp = DateTime.Now;
-			httpOnly = false;
 			domain = "";
 			name = "";
 			val = "";

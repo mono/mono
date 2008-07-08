@@ -13,7 +13,7 @@ namespace System.Text.RegularExpressions {
 		int string_start;
 		int string_end;
 		int group_count;
-		int match_start;
+//		int match_start;
 		int[] groups;
 		EvalDelegate eval_del; // optimized EvalByteCode method created by the CILCompiler
 
@@ -77,7 +77,7 @@ namespace System.Text.RegularExpressions {
 		private void Close (int gid, int ptr) {
 	       		marks [groups [gid]].End = ptr;
 		}
-
+/*
 		private bool Balance (int gid, int balance_gid, bool capture, int ptr) {
 			int b = groups [balance_gid];
 
@@ -93,7 +93,7 @@ namespace System.Text.RegularExpressions {
 			groups [balance_gid] = marks[b].Previous;
 			return true;
 		}
-
+*/
 		private int Checkpoint () {
 			mark_start = mark_end;
 			return mark_start;
@@ -326,7 +326,7 @@ namespace System.Text.RegularExpressions {
 							marks [groups [0]].Start = strpos;
 						}
 						if (EvalByteCode (pc, strpos, ref res)) {
-							match_start = strpos;
+//							match_start = strpos;
 							marks [groups [0]].Start = strpos;
 							if (groups.Length > 1)
 								marks [groups [0]].End = res;
