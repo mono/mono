@@ -2871,6 +2871,21 @@ namespace MonoTests.System.Windows.Forms
 			form.Icon = null;
 			Assert.IsNotNull (form.Icon, "2");
 		}
+
+		[Test]
+		public void MinimizedWindowSize ()
+		{
+			Form form = new Form ();
+			form.WindowState = FormWindowState.Minimized;
+			form.Show ();
+			Assert.AreEqual (SystemInformation.MinimizedWindowSize, form.Size, "1");
+			form.Close ();
+			form = new Form ();
+			form.Show ();
+			form.WindowState = FormWindowState.Minimized;
+			Assert.AreEqual (SystemInformation.MinimizedWindowSize, form.Size, "2");
+			form.Close ();
+		}
 	}
 
 	public class TimeBombedForm : Form

@@ -1,3 +1,7 @@
+2008-07-08  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* Form.cs: SetBoundsCore: Added minimum size for minimized windows.
+
 2008-07-07  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* Control.cs: CreateControl just returns if the Control is diposed 
