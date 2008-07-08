@@ -1,5 +1,28 @@
 2008-07-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-amd64.c (mono_arch_nullify_plt_entry): Read the nullified class
+	init trampoline from the AOT file as well.
+
+	* mini-amd64.c (mono_arch_register_lowlevel_calls): Register
+	mono_amd64_throw_exception as a jit icall since it is needed by the aot-only
+	code.
+
+	* mini.c (mini_init): Move the call to mono_exceptions_init () after 
+	mono_init.
+
+	* exceptions-amd64.c: Add _full variants for the remaining exception code
+	creation functions as well, allow emission of relocatable code, remove
+	caching since that is now done by the caller.
+
+	* mini-exceptions.c: Add _full variants for the remaining exception code
+	creation functions as well, add aot-only support.
+
+	* aot-compiler.c (compile_method): Allow calls to methods of constructed types
+	if we can determine a proper token for them.
+	(add_wrappers): Add a few more wrappers.
+	(emit_method_code): Remove some dead code.
+	(emit_trampolines): Emit exception code too.
+
 	* mini.c (mono_method_to_ir): Call mono_array_new_2 if possible.
 
 	* jit-icalls.c (mono_array_new_2): New jit icall, specialized version of
