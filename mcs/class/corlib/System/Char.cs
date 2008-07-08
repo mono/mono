@@ -514,8 +514,6 @@ namespace System
 
 		public override string ToString ()
 		{
-			// LAMESPEC: ECMA draft lists this as returning ToString (null), 
-			// However it doesn't list another ToString() method.
 			return new String (m_value, 1);
 		}
 
@@ -526,7 +524,6 @@ namespace System
 
 		public string ToString (IFormatProvider provider)
 		{
-			// LAMESPEC: ECMA draft doesn't say Char implements IFormattable
 			return new String (m_value, 1);
 		}
 
@@ -539,17 +536,17 @@ namespace System
 
 		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			return System.Convert.ToType(m_value, type, provider);
+			return System.Convert.ToType (m_value, type, provider);
 		}
 
 		bool IConvertible.ToBoolean (IFormatProvider provider)
 		{
-			throw new InvalidCastException();
+			throw new InvalidCastException ();
 		}
 
 		byte IConvertible.ToByte (IFormatProvider provider)
 		{
-			return System.Convert.ToByte(m_value);
+			return System.Convert.ToByte (m_value);
 		}
 
 		char IConvertible.ToChar (IFormatProvider provider)
@@ -559,57 +556,57 @@ namespace System
 
 		DateTime IConvertible.ToDateTime (IFormatProvider provider)
 		{
-			throw new InvalidCastException();
+			throw new InvalidCastException ();
 		}
 
 		decimal IConvertible.ToDecimal (IFormatProvider provider)
 		{
-			throw new InvalidCastException();
+			throw new InvalidCastException ();
 		}
 
 		double IConvertible.ToDouble (IFormatProvider provider)
 		{
-			throw new InvalidCastException();
+			throw new InvalidCastException ();
 		}
 
 		short IConvertible.ToInt16 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt16(m_value);
+			return System.Convert.ToInt16 (m_value);
 		}
 
 		int IConvertible.ToInt32 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt32(m_value);
+			return System.Convert.ToInt32 (m_value);
 		}
 
 		long IConvertible.ToInt64 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt64(m_value);
+			return System.Convert.ToInt64 (m_value);
 		}
 
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
-			return System.Convert.ToSByte(m_value);
+			return System.Convert.ToSByte (m_value);
 		}
 
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
-			throw new InvalidCastException();
+			throw new InvalidCastException ();
 		}
 
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt16(m_value);
+			return System.Convert.ToUInt16 (m_value);
 		}
 
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt32(m_value);
+			return System.Convert.ToUInt32 (m_value);
 		}
 
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt64(m_value);
+			return System.Convert.ToUInt64 (m_value);
 		}
 	}
 }
