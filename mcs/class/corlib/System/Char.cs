@@ -268,18 +268,9 @@ namespace System
 		public static bool IsLetterOrDigit (char c)
 		{
 			unsafe {
-				UnicodeCategory Category = (UnicodeCategory)category_data [c];
-				switch (Category) {
-				case UnicodeCategory.DecimalDigitNumber:
-				case UnicodeCategory.UppercaseLetter:
-				case UnicodeCategory.LowercaseLetter:
-				case UnicodeCategory.TitlecaseLetter:
-				case UnicodeCategory.ModifierLetter:
-				case UnicodeCategory.OtherLetter:
-					return true;
-				default:
-					return false;
-				}
+				int category = category_data [c];
+				return (category <= ((int)UnicodeCategory.OtherLetter) ||
+				        category == ((int)UnicodeCategory.DecimalDigitNumber));
 			}
 		}
 
@@ -318,15 +309,9 @@ namespace System
 		public static bool IsNumber (char c)
 		{
 			unsafe {
-				UnicodeCategory Category = (UnicodeCategory)category_data [c];
-				switch (Category) {
-				case UnicodeCategory.DecimalDigitNumber:
-				case UnicodeCategory.LetterNumber:
-				case UnicodeCategory.OtherNumber:
-					return true;
-				default:
-					return false;
-				}
+				int category = category_data [c];
+				return (category >= ((int)UnicodeCategory.DecimalDigitNumber) &&
+				        category <= ((int)UnicodeCategory.OtherNumber));
 			}
 		}
 
@@ -339,19 +324,9 @@ namespace System
 		public static bool IsPunctuation (char c)
 		{
 			unsafe {
-				UnicodeCategory Category = (UnicodeCategory)category_data [c];
-				switch (Category) {
-				case UnicodeCategory.ConnectorPunctuation:
-				case UnicodeCategory.DashPunctuation:
-				case UnicodeCategory.OpenPunctuation:
-				case UnicodeCategory.ClosePunctuation:
-				case UnicodeCategory.InitialQuotePunctuation:
-				case UnicodeCategory.FinalQuotePunctuation:
-				case UnicodeCategory.OtherPunctuation:
-					return true;
-				default:
-					return false;
-				}
+				int category = category_data [c];
+				return (category >= ((int)UnicodeCategory.ConnectorPunctuation) &&
+				        category <= ((int)UnicodeCategory.OtherPunctuation));
 			}
 		}
 
@@ -364,15 +339,9 @@ namespace System
 		public static bool IsSeparator (char c)
 		{
 			unsafe {
-				UnicodeCategory Category = (UnicodeCategory)category_data [c];
-				switch (Category) {
-				case UnicodeCategory.SpaceSeparator:
-				case UnicodeCategory.LineSeparator:
-				case UnicodeCategory.ParagraphSeparator:
-					return true;
-				default:
-					return false;
-				}
+				int category = category_data [c];
+				return (category >= ((int)UnicodeCategory.SpaceSeparator) &&
+				        category <= ((int)UnicodeCategory.ParagraphSeparator));
 			}
 		}
 
@@ -398,16 +367,9 @@ namespace System
 		public static bool IsSymbol (char c)
 		{
 			unsafe {
-				UnicodeCategory Category = (UnicodeCategory)category_data [c];
-				switch (Category) {
-				case UnicodeCategory.MathSymbol:
-				case UnicodeCategory.CurrencySymbol:
-				case UnicodeCategory.ModifierSymbol:
-				case UnicodeCategory.OtherSymbol:
-					return true;
-				default:
-					return false;
-				}
+				int category = category_data [c];
+				return (category >= ((int)UnicodeCategory.MathSymbol) &&
+				        category <= ((int)UnicodeCategory.OtherSymbol));
 			}
 		}
 
@@ -433,25 +395,18 @@ namespace System
 		public static bool IsWhiteSpace (char c)
 		{
 			unsafe {
-				if (category_data [c] == (byte)UnicodeCategory.SpaceSeparator)
-					return true;
-				
-				switch (c) {
-				case (char)0x9:
-				case (char)0x0a:
-				case (char)0x0b:
-				case (char)0x0c:
-				case (char)0x0d:
-				case (char)0x85: // NEL 
-				case (char)0x2028: // Line Separator
-				case (char)0x2029: // Paragraph Separator
-#if NET_2_0
-				case (char)0x205F: // Medium Mathematical Space
-#endif
-					return true;
-				default:
+				int category = category_data [c];
+				if (category <= ((int)UnicodeCategory.OtherNumber))
 					return false;
-				}
+				if (category <= ((int)UnicodeCategory.ParagraphSeparator))
+					return true;
+				// FIXME: (char)0x205F Medium Mathematical Space has wrong category in 2.0 Profile
+				// Remove the if NET_2_0 case once the error is corrected
+#if NET_2_0
+				return  c >= (char)0x09 && c <= (char)0x0d || c == (char)0x85 || c == (char)0x205F;
+#else
+				return  c >= (char)0x09 && c <= (char)0x0d || c == (char)0x85;
+#endif
 			}
 		}
 
@@ -497,7 +452,8 @@ namespace System
 
 		public static char ToLower (char c)
 		{
-			return ToLower (c, CultureInfo.CurrentCulture);
+			// CurrentCulture is never null or Invariant
+			return CultureInfo.CurrentCulture.TextInfo.ToLower (c);
 		}
 
 #if NET_2_0
@@ -527,7 +483,8 @@ namespace System
 
 		public static char ToUpper (char c)
 		{
-			return ToUpper (c, CultureInfo.CurrentCulture);
+			// CurrentCulture is never null or Invariant
+			return CultureInfo.CurrentCulture.TextInfo.ToUpper (c);
 		}
 
 #if NET_2_0

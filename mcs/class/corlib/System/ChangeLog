@@ -1,3 +1,7 @@
+2008-07-08  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* Char.cs: Optimize some Is* checks
+
 2008-07-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* DateTimeOffset.cs: Fix parameter name
