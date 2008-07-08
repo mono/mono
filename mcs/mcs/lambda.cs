@@ -187,6 +187,7 @@ namespace Mono.CSharp {
 					return false;
 				
 				if (Expr is ExpressionStatement) {
+				// MSAF: REMOVE this IF
 					if (Expr is Invocation)
 						return TypeManager.IsEqual (Expr.Type, TypeManager.void_type);
 					return true;

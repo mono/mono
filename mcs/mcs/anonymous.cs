@@ -166,6 +166,7 @@ namespace Mono.CSharp {
 			else if (used_parent_storeys.IndexOf (s) != -1)
 				return;
 
+			has_hoisted_variable = true;
 			used_parent_storeys.Add (new StoreyFieldPair (s));
 		}
 
@@ -1253,7 +1254,7 @@ namespace Mono.CSharp {
 		public override void AddStoreyReference (AnonymousMethodStorey storey)
 		{
 			if (referenced_storeys == null) {
-				referenced_storeys = new ArrayList ();
+				referenced_storeys = new ArrayList (2);
 			} else {
 				foreach (AnonymousMethodStorey ams in referenced_storeys) {
 					if (ams == storey)
@@ -1296,13 +1297,9 @@ namespace Mono.CSharp {
 		//
 		AnonymousMethodMethod DoCreateMethodHost (EmitContext ec)
 		{
-			//
-			// Searches references and parent blocks for the best store for
-			// this anynous method
-			//
 			AnonymousMethodStorey storey = FindBestMethodStorey ();
 			
-			if (referenced_storeys != null && referenced_storeys.Count > 1) {
+			if (referenced_storeys != null) {
 				foreach (AnonymousMethodStorey s in referenced_storeys) {
 					if (s == storey)
 						continue;
@@ -1311,6 +1308,7 @@ namespace Mono.CSharp {
 					s.HasHoistedVariables = true;
 					Block.Parent.Explicit.PropagateStoreyReference (s);
 				}
+				referenced_storeys = null;
 			} else {
 				//
 				// Ensure we have a reference between this block and a storey
@@ -1435,34 +1433,14 @@ namespace Mono.CSharp {
 		AnonymousMethodStorey FindBestMethodStorey ()
 		{
 			//
-			// When no storey reference exists, use the nearest block which has
-			// a storey
+			// Use the nearest parent block which has a storey
 			//
-			if (referenced_storeys == null) {
-				for (Block b = Block.Parent; b != null; b = b.Parent) {
-					AnonymousMethodStorey s = b.Explicit.AnonymousMethodStorey;
-					if (s != null)
-						return s;
-				}
-						
-				return null;
-			}
-
-			//
-			// We have storey reference, emit method in referenced storey
-			//
-			if (referenced_storeys.Count == 1) {
-				// TODO: Remove reference when appropriate
-				return (AnonymousMethodStorey) referenced_storeys [0];
-			}
-
 			for (Block b = Block.Parent; b != null; b = b.Parent) {
-				foreach (AnonymousMethodStorey storey in referenced_storeys) {
-					if (storey.OriginalSourceBlock == b)
-						return storey;
-				}
+				AnonymousMethodStorey s = b.Explicit.AnonymousMethodStorey;
+				if (s != null)
+					return s;
 			}
-
+					
 			return null;
 		}
 
