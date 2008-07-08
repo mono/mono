@@ -1,5 +1,7 @@
 2008-07-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* trace.c (mono_trace_enter_method): Fix printing of Type instances.
+
 	* aot-compiler.c (compile_method): Disable the check for GSHARED since it
 	is on by default.
 
