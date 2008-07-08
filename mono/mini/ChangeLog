@@ -1,5 +1,13 @@
 2008-07-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-exceptions.c (mono_exceptions_init): Fix the ppc build.
+
+	* mini-trampolines.c: Call mono_create_specific_trampoline () instead of
+	mono_arch_create_specific_trampoline () in all places.
+
+	* aot-compiler.c aot-runtime.c: Refactor the trampoline emitting/loading code
+	a bit so it can be used for other things as well.
+	
 	* mini-exceptions.c (mono_exceptions_init): Initialize throw_exception_by_name
 	on demand as well.
 
