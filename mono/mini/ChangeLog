@@ -1,5 +1,7 @@
 2008-07-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* inssel-long.brg (reg): Add a rule for LCALL_REG (OP_I8CONST).
+
 	* tramp-amd64.c (mono_arch_nullify_plt_entry): Read the nullified class
 	init trampoline from the AOT file as well.
 
