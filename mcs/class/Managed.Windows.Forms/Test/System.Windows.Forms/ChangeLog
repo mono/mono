@@ -1,3 +1,7 @@
+2008-07-08  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* FormTest.cs: Disabled the MinimizedWindowSize test.
+
 2008-07-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComboBoxTest.cs: Test showing PreferredHeight is independent of
