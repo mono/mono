@@ -1,3 +1,8 @@
+2008-07-08  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ThemeWin32Classic.cs: (ManagedWindowBorderWidth): width 3 is only 
+	for fixed toolwindows.
+
 2008-07-08  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* Form.cs: SetBoundsCore: Added minimum size for minimized windows.
