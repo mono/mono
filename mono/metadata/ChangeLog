@@ -1,3 +1,7 @@
+2008-07-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object.c (mono_string_to_utf8): Avoid allocating a temp array.
+
 2008-07-07  Bill Holmes  <billholmes54@gmail.com>
 
 	* threads.c : Thread.Interrupt changes to ensure that ThreadInterruptedException
