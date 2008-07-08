@@ -1,5 +1,11 @@
 2008-07-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-exceptions.c (mono_exceptions_init): Initialize throw_exception_by_name
+	on demand as well.
+
+	* exceptions-amd64.c: Rename the caching from the exception code creation
+	functions, it is done by the caller instead.
+	
 	* exceptions-amd64.c: Change the signature of the exception code creation 
 	functions to allow the creation of relocatable code later.
 
