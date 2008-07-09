@@ -1,5 +1,11 @@
 2008-07-09  Bill Holmes  <billholmes54@gmail.com>
 
+	* wapihandles.c: Fixing MSVC builds.  Include statement changed from <> to ""
+
+	Contributed under MIT/X11 license.
+
+2008-07-09  Bill Holmes  <billholmes54@gmail.com>
+
 	* mini.c (mono_codegen):  Allocate space at the end of the code block and store
 	  the unwind information for the method at the end of the allocated block.
 	  
