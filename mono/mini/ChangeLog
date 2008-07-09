@@ -1,5 +1,9 @@
 2008-07-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h: Remove duplicate definitions of the mini_wapi_ functions.
+
+	* wapihandles.c: Fix warnings.
+
 	* aot-runtime.c (load_aot_module): Add a missing error message in aot-only
 	mode.
 
