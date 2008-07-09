@@ -16,8 +16,8 @@ sed -e 's/^\t$(COMPILE)/\t$(if $(V),,@echo -e "CC\\t$@";) $(COMPILE)/g' < $src >
 sed -e 's/^\t$(LTCOMPILE)/\t$(if $(V),,@echo -e "CC\\t$@";) $(LTCOMPILE)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
 # link
 # automake defines multiple symbols ending with LINK
-#sed -e 's/\t$(LINK)/\t$(if $(V),,@echo -e "LD\\t$@";) $(LINK)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
-sed -e 's/LINK = $(LIBTOOL)/LINK = $(if $(V),,@echo -e "LD\\t$@";) $(LIBTOOL)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
+sed -e 's/\t$(\(.*LINK\))/\t$(if $(V),,@echo -e "LD\\t$@";) $(\1)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
+#sed -e 's/LINK = $(LIBTOOL)/LINK = $(if $(V),,@echo -e "LD\\t$@";) $(LIBTOOL)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
 # CC
 sed -e 's/^\t$(CC)/\t$(if $(V),,@echo -e "CC\\t$@";) $(CC)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
 # mv
