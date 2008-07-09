@@ -58,6 +58,11 @@ namespace System.Windows.Forms
 		{
 			return dc.g;
 		}
+
+		public void Dispose ()
+		{
+			g.Dispose ();
+		}
 	}
 }
 #endif

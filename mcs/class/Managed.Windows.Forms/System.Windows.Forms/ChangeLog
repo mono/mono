@@ -1,5 +1,9 @@
 2008-07-09  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* IDeviceContext.cs: Added Dispose.
+
+2008-07-09  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* Control.cs: Added OnSizeInitializedOrChanged.
 	* Form.cs: OnLoadInternal: Added a call to
 	Control.OnSizeInitializedOrChanged.
