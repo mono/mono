@@ -1,5 +1,9 @@
 2008-07-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_resolve_patch_target): In aot-only mode, allocate the
+	jump table for switches from the normal domain mempool, not the code
+	manager.
+
 	* mini-trampolines.c (get_unbox_trampoline): New function to return an
 	unbox trampoline which handles aot-only mode too.
 
