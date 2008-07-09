@@ -1,8 +1,11 @@
 2008-07-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_init): In aot-only mode, set the root domain code manager to
+	read-only to help catch code allocation requests.
+	
 	* mini.c inssel.brg aot-compiler.c: Make the use of IMT runtime configurable,
 	and turn it off when using --aot-only or when compiling with --aot=full.
-	
+
 	* mini.c (mono_resolve_patch_target): In aot-only mode, allocate the
 	jump table for switches from the normal domain mempool, not the code
 	manager.
