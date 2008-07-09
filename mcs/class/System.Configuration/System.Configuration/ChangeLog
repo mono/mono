@@ -1,3 +1,8 @@
+2008-07-09  Marek Habersack  <mhabersack@novell.com>
+
+	* ConfigurationManager.cs: implemented a work-around for
+	OpenExeConfiguration ("") not working with ASP.NET apps properly.
+
 2008-07-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ConfigurationManager.cs: Return the right path if the calling assembly is
