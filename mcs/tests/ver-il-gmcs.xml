@@ -11800,6 +11800,58 @@
       </method>
     </type>
   </test>
+  <test name="gtest-anon-36.cs">
+    <type name="IBar`1[T]">
+      <method name="Void add_Handler(Handler`1[T])">
+        <size>0</size>
+      </method>
+      <method name="Void remove_Handler(Handler`1[T])">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Foo`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void add_handler(Handler`1[T])">
+        <size>24</size>
+      </method>
+      <method name="Void remove_handler(Handler`1[T])">
+        <size>24</size>
+      </method>
+      <method name="Void add_Handler(Handler`1[T])">
+        <size>64</size>
+      </method>
+      <method name="Void remove_Handler(Handler`1[T])">
+        <size>24</size>
+      </method>
+      <method name="Void &lt;add_Handler&gt;m__0(System.Object)">
+        <size>18</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>15</size>
+      </method>
+    </type>
+    <type name="Handler`1[T]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke(System.Object)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.Object, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-4.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -13789,6 +13841,32 @@
       </method>
     </type>
     <type name="Mono.C+&lt;Main&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-etree-10.cs">
+    <type name="Foo`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean ContainsAll[U](IEnumerable`1)">
+        <size>177</size>
+      </method>
+      <method name="Boolean Contains(T)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>44</size>
+      </method>
+    </type>
+    <type name="Foo`1+&lt;ContainsAll&gt;c__AnonStorey1`1[T,U]">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
@@ -34900,9 +34978,6 @@
       <method name="Void Main()">
         <size>1</size>
       </method>
-      <method name="Void &lt;Test&gt;m__0()">
-        <size>7</size>
-      </method>
     </type>
     <type name="Test+D">
       <method name="Void .ctor(Object, IntPtr)">
@@ -34916,6 +34991,11 @@
       </method>
       <method name="Void EndInvoke(IAsyncResult)">
         <size>0</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void &lt;add_Changed&gt;m__0()">
+        <size>7</size>
       </method>
     </type>
   </test>
