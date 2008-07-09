@@ -454,7 +454,7 @@ namespace System.Windows.Forms {
 		public class StatusBarPanelCollection :	 IList, ICollection, IEnumerable {
 			#region Fields
 			private StatusBar owner;
-			private ArrayList panels;
+			private ArrayList panels = new ArrayList ();
 #if NET_2_0
 			private int last_index_by_key;
 #endif
@@ -472,11 +472,9 @@ namespace System.Windows.Forms {
 			private int AddInternal (StatusBarPanel p, bool refresh) {
 				if (p == null)
 					throw new ArgumentNullException ("value");
-				if (panels == null)
-					panels = new ArrayList ();
 
-				int res = panels.Add (p);
 				p.SetParent (owner);
+				int res = panels.Add (p);
 
 				if (refresh) {
 					owner.CalcPanelSizes ();
@@ -492,11 +490,7 @@ namespace System.Windows.Forms {
 			[Browsable(false)]
 			[EditorBrowsable(EditorBrowsableState.Never)]
 			public int Count {
-				get {
-					if (panels == null)
-						return 0;
-					return panels.Count;
-				}
+				get { return panels.Count; }
 			}
 
 			public bool IsReadOnly {
@@ -553,8 +547,6 @@ namespace System.Windows.Forms {
 					throw new ArgumentNullException ("panels");
 				if (panels.Length == 0)
 					return;
-				if (this.panels == null)
-					this.panels = new ArrayList (panels.Length);
 
 				for (int i = 0; i < panels.Length; i++)
 					AddInternal (panels [i], false);
@@ -660,10 +652,18 @@ namespace System.Windows.Forms {
 
 			object IList.this [int index] {
 				get { return this[index]; }
-				set { this[index] = (StatusBarPanel)value; }
+				set { 
+					if (!(value is StatusBarPanel))
+						throw new ArgumentException ("Value must be of type StatusBarPanel.", "value");
+						
+					this[index] = (StatusBarPanel)value;
+				}
 			}
 
 			int IList.Add (object value) {
+				if (!(value is StatusBarPanel))
+					throw new ArgumentException ("Value must be of type StatusBarPanel.", "value");
+				
 				return AddInternal ((StatusBarPanel)value, true);
 			}
 
@@ -678,6 +678,9 @@ namespace System.Windows.Forms {
 
 			void IList.Insert (int index, object value)
 			{
+				if (!(value is StatusBarPanel))
+					throw new ArgumentException ("Value must be of type StatusBarPanel.", "value");
+
 				Insert (index, (StatusBarPanel)value);
 			}
 
@@ -687,7 +690,8 @@ namespace System.Windows.Forms {
 
 			void IList.Remove (object value)
 			{
-				Remove ((StatusBarPanel)value);
+				StatusBarPanel s = value as StatusBarPanel;
+				Remove (s);
 			}
 			#endregion	// IList & ICollection Interfaces
 		}

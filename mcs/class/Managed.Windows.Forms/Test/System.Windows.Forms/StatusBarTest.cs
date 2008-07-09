@@ -12,6 +12,7 @@ using NUnit.Framework;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Runtime.Remoting;
+using System.Collections;
 
 namespace MonoTests.System.Windows.Forms
 {
@@ -382,5 +383,162 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (-1, c.IndexOfKey ("p"), "#8");			
 		}
 #endif
+
+		[Test]
+		public void PanelParentAlwaysSet()
+		{
+			// Ensure that the panel is always correctly initialized (Parent set) 
+			// even when added to the collection even by the IList interface methods.
+			//
+			StatusBar.StatusBarPanelCollection coll;
+			coll = CreateStatusBarPanelCollection ();
+			StatusBarPanel sbp;
+			//
+			coll.Add ("panel1");
+			Assert.IsNotNull (coll [0].Parent, "Add(String) null!");
+			//
+			sbp = new StatusBarPanel ();
+			Assert.IsNull (sbp.Parent, "checking test precondition that Parent is null initially");
+			coll.Add (sbp);
+			Assert.IsNotNull (sbp.Parent, "Add(StatusBarPanel) null!");
+			//
+			sbp = new StatusBarPanel ();
+			coll.Insert (1, sbp);
+			Assert.IsNotNull (sbp.Parent, "Insert(int, StatusBarPanel) null!");
+			//
+			sbp = new StatusBarPanel ();
+			coll[0] = sbp;
+			Assert.IsNotNull (sbp.Parent, "this[int] null!");
+			//
+			// IList interface
+			sbp = new StatusBarPanel ();
+			((IList)coll).Add (sbp);
+			Assert.IsNotNull (sbp.Parent, "IList.Add(object) null!");
+			//
+			sbp = new StatusBarPanel ();
+			((IList)coll).Insert (2, sbp);
+			Assert.IsNotNull (sbp.Parent, "IList.Insert(int, object) null!");
+			//
+			sbp = new StatusBarPanel ();
+			((IList)coll)[0] = sbp;
+			Assert.IsNotNull (sbp.Parent, "IList.this[int] null!");
+		}
+
+		[Test]
+		public void Interface_Misc()
+		{
+			// Test other interface methods.
+			//
+			StatusBar.StatusBarPanelCollection coll;
+			// From bug XXXXXX -- Ensure that the internal list is initialized when 
+			// calling an interface method first.
+			coll = CreateStatusBarPanelCollection ();
+			object[] arr = new object[coll.Count];
+			((ICollection)coll).CopyTo (arr, 0);
+			coll = CreateStatusBarPanelCollection ();
+			((IList)coll).Add (new StatusBarPanel ());
+			//
+			// Check what happens when a non-StatusBarPanel type is passed into the 
+			// interface methods.
+			object tmp = new Version (1, 2, 3, 4);
+			try {
+				((IList)coll) [0] = tmp;
+			} catch (ArgumentException) { }
+			try {
+				((IList)coll).Add (tmp);
+			} catch (ArgumentException) { }
+			Assert.IsFalse (((IList)coll).Contains (tmp), "Contains(tmp)");
+			Assert.AreEqual (-1, ((IList)coll).IndexOf (tmp), "IndexOf (tmp)");
+			try {
+				((IList)coll).Insert (0, tmp);
+			} catch (ArgumentException) { }
+			((IList)coll).Remove (tmp);
+			//
+			// Note that adding null fails, thus the try cast to 
+			// StatusBarPanel means that the Contains/IndexOf/Remove 
+			// methods will fail as shown above when passed another type.
+			try {
+				coll.Add ((StatusBarPanel)null);
+			} catch (ArgumentNullException) { }
+		}
+
+		StatusBar.StatusBarPanelCollection CreateStatusBarPanelCollection()
+		{
+			return new StatusBar.StatusBarPanelCollection (new StatusBar ());
+		}
+
+		[Test]
+		public void Interface_AddRemoveTest()
+		{
+			// Copy of test, for the equivalent ICollection/IList members.
+			//
+			StatusBar bar = new StatusBar ();
+			StatusBar.StatusBarPanelCollection collectionX = new StatusBar.StatusBarPanelCollection (bar);
+			IList collection = collectionX;
+
+			StatusBarPanel panel = new StatusBarPanel ();
+			StatusBarPanel panel2 = new StatusBarPanel ();
+
+			collection.Add (panel);
+			Assert.AreEqual (1, collection.Count, "#1");
+
+			collection.Remove (panel);
+			Assert.AreEqual (0, collection.Count, "#2");
+
+			collection.Add (panel);
+			collection.RemoveAt (0);
+			Assert.AreEqual (0, collection.Count, "#3");
+
+			collection.Add (panel);
+			Assert.AreEqual (0, collection.IndexOf (panel), "#4");
+			Assert.AreEqual (-1, collection.IndexOf (panel2), "#5");
+
+			collection.Add (panel2);
+			Assert.AreEqual (1, collection.IndexOf (panel2), "#6");
+
+			collection.RemoveAt (0);
+			Assert.AreEqual (0, collection.IndexOf (panel2), "#7");
+			Assert.AreEqual (1, collection.Count, "#8");
+
+			Assert.AreEqual (false, collection.Contains (panel), "#9");
+			Assert.AreEqual (true, collection.Contains (panel2), "#10");
+
+		}
+
+		[Test]
+		public void Insert()
+		{
+			StatusBar bar = new StatusBar ();
+			StatusBar.StatusBarPanelCollection collection = new StatusBar.StatusBarPanelCollection (bar);
+
+			StatusBarPanel panel = new StatusBarPanel ();
+			StatusBarPanel panel2 = new StatusBarPanel ();
+
+			collection.Add (panel);
+			Assert.AreEqual (1, collection.Count, "#1");
+
+			collection.Insert (0, panel);
+			Assert.AreEqual (2, collection.Count, "#2");
+		}
+
+		[Test]
+		public void Interface_Insert()
+		{
+			// Copy of test, for the equivalent ICollection/IList members.
+			//
+			StatusBar bar = new StatusBar ();
+			StatusBar.StatusBarPanelCollection collectionX = new StatusBar.StatusBarPanelCollection (bar);
+			IList collection = collectionX;
+
+			StatusBarPanel panel = new StatusBarPanel ();
+			StatusBarPanel panel2 = new StatusBarPanel ();
+
+			collection.Add (panel);
+			Assert.AreEqual (1, collection.Count, "#1");
+
+			collection.Insert (0, panel);
+			Assert.AreEqual (2, collection.Count, "#2");
+		}
+
 	}
 }
