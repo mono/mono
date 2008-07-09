@@ -389,7 +389,7 @@ namespace System.Xml.Serialization {
 				if (ExportExtraElementAttributes (attributes, einfo, defaultNamespace, defaultType))
 					continue;
 
-				GenerateElementInfoMember (attributes, member, einfo, defaultType, defaultNamespace, addAlwaysAttr, forceUseMemberName);
+				GenerateElementInfoMember (attributes, member, einfo, defaultType, defaultNamespace, addAlwaysAttr, forceUseMemberName | addAlwaysAttr);
 			}
 
 			GenerateElementMember (attributes, member);

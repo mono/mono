@@ -1,3 +1,8 @@
+2008-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MapCodeGenerator.cs : use explicit element name for explicitly added
+	  XmlElementAttribute. (exposed by some product from some company.)
+
 2008-06-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializationReaderInterpreter.cs, MapCodeGenerator.cs,
