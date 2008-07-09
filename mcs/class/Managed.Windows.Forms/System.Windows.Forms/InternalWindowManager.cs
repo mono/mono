@@ -584,16 +584,8 @@ namespace System.Windows.Forms {
 		
 		protected virtual void HandleTitleBarMouseMove (int x, int y)
 		{
-			bool any_change = false;
-			
-			any_change = title_buttons.MouseMove (x, y);
-			
-			if (any_change) {
-				if (IsMaximized && form.IsMdiChild)
-					XplatUI.InvalidateNC (form.MdiParent.Handle);
-				else
-					XplatUI.InvalidateNC (form.Handle);
-			}
+			if (title_buttons.MouseMove (x, y))
+				XplatUI.InvalidateNC (form.Handle);
 		}
 		
 		protected virtual void HandleTitleBarUp (int x, int y)
@@ -806,9 +798,7 @@ namespace System.Windows.Forms {
 			if (!button.Rectangle.IntersectsWith (clip))
 				return;
 
-			dc.FillRectangle (SystemBrushes.Control, button.Rectangle);
-			ControlPaint.DrawCaptionButton (dc, button.Rectangle,
-					button.Caption, button.State);
+			ThemeEngine.Current.ManagedWindowDrawMenuButton (dc, button, clip, this);
 		}
 
 		public virtual void DrawMaximizedButtons (object sender, PaintEventArgs pe)
@@ -906,6 +896,7 @@ namespace System.Windows.Forms {
 		public CaptionButton Caption;
 		private EventHandler Clicked;
 		public bool Visible;
+		bool entered;
 
 		public TitleButton (CaptionButton caption, EventHandler clicked)
 		{
@@ -918,6 +909,11 @@ namespace System.Windows.Forms {
 			if (Clicked != null) {
 				Clicked (this, EventArgs.Empty);
 			}
+		}
+
+		public bool Entered {
+			get { return entered; }
+			set { entered = value; }
 		}
 	}
 
@@ -1118,10 +1114,20 @@ namespace System.Windows.Forms {
 					}
 					ToolTipStart (button);
 					any_tooltip = true;
+					if (!button.Entered) {
+						button.Entered = true;
+						if (ThemeEngine.Current.ManagedWindowTitleButtonHasHotElementStyle (button, form))
+							any_change = true;
+					}
 				} else {
 					if (any_pushed_buttons) {
 						any_change |= button.State != ButtonState.Normal;
 						button.State = ButtonState.Normal;
+					}
+					if (button.Entered) {
+						button.Entered = false;
+						if (ThemeEngine.Current.ManagedWindowTitleButtonHasHotElementStyle (button, form))
+							any_change = true;
 					}
 				}
 			}

@@ -776,193 +776,361 @@ namespace System.Windows.Forms
 				box.Enabled ? GroupBoxState.Normal : GroupBoxState.Disabled);
 		}
 		#endregion
-		#region Managed windows
-		[MonoTODO("When other VisualStyles implementations are supported, check if the visual style elements are defined.")]
-		[MonoTODO("When the rest of the MDI code is fixed, make sure minimized windows are painted correctly,restrict the caption text drawing area to exclude the title buttons and handle the title bar height correctly.")]
-		public override void DrawManagedWindowDecorations (Graphics dc, Rectangle clip, InternalWindowManager wm)
+		#region Managed window
+		Rectangle ManagedWindowGetTitleBarRectangle (InternalWindowManager wm)
 		{
-			if (!render_non_client_areas) {
-				base.DrawManagedWindowDecorations (dc, clip, wm);
+			return new Rectangle (0, 0, wm.Form.Width, ManagedWindowTitleBarHeight (wm) + ManagedWindowBorderWidth (wm));
+		}
+		Region ManagedWindowGetWindowRegion (Form form)
+		{
+			if (form.WindowManager is MdiWindowManager && form.WindowManager.IsMaximized)
+				return null;
+			VisualStyleElement title_bar_element = ManagedWindowGetTitleBarVisualStyleElement (form.WindowManager);
+			if (!VisualStyleRenderer.IsElementDefined (title_bar_element))
+				return null;
+			VisualStyleRenderer renderer = new VisualStyleRenderer (title_bar_element);
+			if (!renderer.IsBackgroundPartiallyTransparent ())
+				return null;
+			IDeviceContext dc = GetMeasurementDeviceContext ();
+			Rectangle title_bar_rectangle = ManagedWindowGetTitleBarRectangle (form.WindowManager);
+			Region region = renderer.GetBackgroundRegion (dc, title_bar_rectangle);
+			ReleaseMeasurementDeviceContext (dc);
+			region.Union (new Rectangle (0, title_bar_rectangle.Bottom, form.Width, form.Height));
+			return region;
+		}
+		public override void ManagedWindowOnSizeInitializedOrChanged (Form form)
+		{
+			base.ManagedWindowOnSizeInitializedOrChanged (form);
+			if (!render_non_client_areas)
 				return;
-			}
-			if (!wm.HasBorders || (wm.Form.IsMdiChild && wm.IsMaximized))
-				return;
-			VisualStyleElement element;
-			#region Title bar background
-			#region Select caption visual style element
+			form.Region = ManagedWindowGetWindowRegion (form);
+		}
+		protected override Rectangle ManagedWindowDrawTitleBarAndBorders (Graphics dc, Rectangle clip, InternalWindowManager wm)
+		{
+			if (!render_non_client_areas)
+				return base.ManagedWindowDrawTitleBarAndBorders (dc, clip, wm);
+			VisualStyleElement title_bar_element = ManagedWindowGetTitleBarVisualStyleElement (wm);
+			VisualStyleElement left_border_element;
+			VisualStyleElement right_border_element;
+			VisualStyleElement bottom_border_element;
+			ManagedWindowGetBorderVisualStyleElements (wm, out left_border_element, out right_border_element, out bottom_border_element);
+			if (!VisualStyleRenderer.IsElementDefined (title_bar_element) ||
+				!VisualStyleRenderer.IsElementDefined (left_border_element) ||
+				!VisualStyleRenderer.IsElementDefined (right_border_element) ||
+				!VisualStyleRenderer.IsElementDefined (bottom_border_element))
+				return base.ManagedWindowDrawTitleBarAndBorders (dc, clip, wm);
+			VisualStyleRenderer renderer = new VisualStyleRenderer (title_bar_element);
+			Rectangle title_bar_rectangle = ManagedWindowGetTitleBarRectangle (wm);
+			renderer.DrawBackground (dc, title_bar_rectangle, clip);
+			int border_width = ManagedWindowBorderWidth (wm);
+			renderer.SetParameters (left_border_element);
+			renderer.DrawBackground (dc, new Rectangle (
+				0,
+				title_bar_rectangle.Bottom,
+				border_width,
+				wm.Form.Height - title_bar_rectangle.Bottom
+				), clip);
+			renderer.SetParameters (right_border_element);
+			renderer.DrawBackground (dc, new Rectangle (
+				wm.Form.Width - border_width,
+				title_bar_rectangle.Bottom,
+				border_width,
+				wm.Form.Height - title_bar_rectangle.Bottom
+				), clip);
+			renderer.SetParameters (bottom_border_element);
+			renderer.DrawBackground (dc, new Rectangle (
+				0,
+				wm.Form.Height - border_width,
+				wm.Form.Width,
+				border_width
+				), clip);
+			return title_bar_rectangle;
+		}
+		static FormWindowState ManagedWindowGetWindowState (InternalWindowManager wm)
+		{
+			return wm.GetWindowState ();
+		}
+		static bool ManagedWindowIsDisabled (InternalWindowManager wm)
+		{
+			return !wm.Form.Enabled;
+		}
+		static bool ManagedWindowIsActive (InternalWindowManager wm)
+		{
+			return wm.IsActive;
+		}
+		static VisualStyleElement ManagedWindowGetTitleBarVisualStyleElement (InternalWindowManager wm)
+		{
 			if (wm.IsToolWindow)
 				#region Small window
-				switch (wm.form.window_state) {
+				switch (ManagedWindowGetWindowState (wm)) {
 				case FormWindowState.Minimized:
-					if (!wm.Form.Enabled)
-						element = VisualStyleElement.Window.SmallMinCaption.Disabled;
-					else if (wm.IsActive)
-						element = VisualStyleElement.Window.SmallMinCaption.Active;
-					else
-						element = VisualStyleElement.Window.SmallMinCaption.Inactive;
-					break;
+					if (ManagedWindowIsDisabled (wm))
+						return VisualStyleElement.Window.SmallMinCaption.Disabled;
+					else if (ManagedWindowIsActive (wm))
+						return VisualStyleElement.Window.SmallMinCaption.Active;
+					return VisualStyleElement.Window.SmallMinCaption.Inactive;
 				case FormWindowState.Maximized:
-					if (!wm.Form.Enabled)
-						element = VisualStyleElement.Window.SmallMaxCaption.Disabled;
-					else if (wm.IsActive)
-						element = VisualStyleElement.Window.SmallMaxCaption.Active;
-					else
-						element = VisualStyleElement.Window.SmallMaxCaption.Inactive;
-					break;
+					if (ManagedWindowIsDisabled (wm))
+						return VisualStyleElement.Window.SmallMaxCaption.Disabled;
+					else if (ManagedWindowIsActive (wm))
+						return VisualStyleElement.Window.SmallMaxCaption.Active;
+					return VisualStyleElement.Window.SmallMaxCaption.Inactive;
 				default:
-					if (!wm.Form.Enabled)
-						element = VisualStyleElement.Window.SmallCaption.Disabled;
-					else if (wm.IsActive)
-						element = VisualStyleElement.Window.SmallCaption.Active;
-					else
-						element = VisualStyleElement.Window.SmallCaption.Inactive;
-					break;
+					if (ManagedWindowIsDisabled (wm))
+						return VisualStyleElement.Window.SmallCaption.Disabled;
+					else if (ManagedWindowIsActive (wm))
+						return VisualStyleElement.Window.SmallCaption.Active;
+					return VisualStyleElement.Window.SmallCaption.Inactive;
 				}
 				#endregion
 			else
 				#region Normal window
-				switch (wm.form.window_state) {
+				switch (ManagedWindowGetWindowState (wm)) {
 				case FormWindowState.Minimized:
-					if (!wm.Form.Enabled)
-						element = VisualStyleElement.Window.MinCaption.Disabled;
-					else if (wm.IsActive)
-						element = VisualStyleElement.Window.MinCaption.Active;
-					else
-						element = VisualStyleElement.Window.MinCaption.Inactive;
-					break;
+					if (ManagedWindowIsDisabled (wm))
+						return VisualStyleElement.Window.MinCaption.Disabled;
+					else if (ManagedWindowIsActive (wm))
+						return VisualStyleElement.Window.MinCaption.Active;
+					return VisualStyleElement.Window.MinCaption.Inactive;
 				case FormWindowState.Maximized:
-					if (!wm.Form.Enabled)
-						element = VisualStyleElement.Window.MaxCaption.Disabled;
-					else if (wm.IsActive)
-						element = VisualStyleElement.Window.MaxCaption.Active;
-					else
-						element = VisualStyleElement.Window.MaxCaption.Inactive;
-					break;
+					if (ManagedWindowIsDisabled (wm))
+						return VisualStyleElement.Window.MaxCaption.Disabled;
+					else if (ManagedWindowIsActive (wm))
+						return VisualStyleElement.Window.MaxCaption.Active;
+					return VisualStyleElement.Window.MaxCaption.Inactive;
 				default:
-					if (!wm.Form.Enabled)
-						element = VisualStyleElement.Window.Caption.Disabled;
-					else if (wm.IsActive)
-						element = VisualStyleElement.Window.Caption.Active;
-					else
-						element = VisualStyleElement.Window.Caption.Inactive;
-					break;
+					if (ManagedWindowIsDisabled (wm))
+						return VisualStyleElement.Window.Caption.Disabled;
+					else if (ManagedWindowIsActive (wm))
+						return VisualStyleElement.Window.Caption.Active;
+					return VisualStyleElement.Window.Caption.Inactive;
 				}
 				#endregion
-			#endregion
-			VisualStyleRenderer renderer = new VisualStyleRenderer (element);
-			Rectangle title_bar_rectangle = new Rectangle (
-				0,
-				0,
-				wm.Form.Width,
-				renderer.GetPartSize (dc, ThemeSizeType.True).Height
-			);
-			Rectangle caption_text_area = title_bar_rectangle;
-			renderer.DrawBackground (dc, title_bar_rectangle, clip);
-			#endregion
-			int border_width = ManagedWindowBorderWidth (wm);
-			#region Icon
-			if (!wm.IsToolWindow && wm.Form.FormBorderStyle != FormBorderStyle.FixedDialog
-#if NET_2_0
-			&& wm.Form.ShowIcon
-#endif
-			) {
-				Rectangle icon_rectangle = new Rectangle (
-					border_width + 3,
-					border_width + 2,
-					wm.IconWidth,
-					wm.IconWidth);
-				caption_text_area.X += icon_rectangle.Width;
-				if (icon_rectangle.IntersectsWith (clip))
-					dc.DrawIcon (wm.Form.Icon, icon_rectangle);
+		}
+		static void ManagedWindowGetBorderVisualStyleElements (InternalWindowManager wm, out VisualStyleElement left, out VisualStyleElement right, out VisualStyleElement bottom)
+		{
+			bool active = !ManagedWindowIsDisabled (wm) && ManagedWindowIsActive (wm);
+			if (wm.IsToolWindow) {
+				if (active) {
+					left = VisualStyleElement.Window.SmallFrameLeft.Active;
+					right = VisualStyleElement.Window.SmallFrameRight.Active;
+					bottom = VisualStyleElement.Window.SmallFrameBottom.Active;
+				} else {
+					left = VisualStyleElement.Window.SmallFrameLeft.Inactive;
+					right = VisualStyleElement.Window.SmallFrameRight.Inactive;
+					bottom = VisualStyleElement.Window.SmallFrameBottom.Inactive;
+				}
+			} else {
+				if (active) {
+					left = VisualStyleElement.Window.FrameLeft.Active;
+					right = VisualStyleElement.Window.FrameRight.Active;
+					bottom = VisualStyleElement.Window.FrameBottom.Active;
+				} else {
+					left = VisualStyleElement.Window.FrameLeft.Inactive;
+					right = VisualStyleElement.Window.FrameRight.Inactive;
+					bottom = VisualStyleElement.Window.FrameBottom.Inactive;
+				}
 			}
-			#endregion
-			#region Title bar buttons
-			foreach (TitleButton button in wm.TitleButtons.AllButtons) {
-				if (!button.Visible || !button.Rectangle.IntersectsWith (clip))
-					continue;
-				new VisualStyleRenderer (GetCaptionButtonVisualStyleElement (button.Caption, button.State)).DrawBackground (dc, button.Rectangle, clip);
-			}
-			#endregion
-			#region Borders
-			if (wm.GetWindowState () == FormWindowState.Normal) {
-				#region Left
-				if (wm.IsToolWindow)
-					if (wm.IsActive)
-						element = VisualStyleElement.Window.SmallFrameLeft.Active;
-					else
-						element = VisualStyleElement.Window.SmallFrameLeft.Inactive;
+		}
+		public override bool ManagedWindowTitleButtonHasHotElementStyle (TitleButton button, Form form)
+		{
+			if (render_non_client_areas && (button.State & ButtonState.Inactive) != ButtonState.Inactive) {
+				VisualStyleElement element;
+				if (ManagedWindowIsMaximizedMdiChild (form))
+					switch (button.Caption) {
+					case CaptionButton.Close:
+						element = VisualStyleElement.Window.MdiCloseButton.Hot;
+						break;
+					case CaptionButton.Help:
+						element = VisualStyleElement.Window.MdiHelpButton.Hot;
+						break;
+					case CaptionButton.Minimize:
+						element = VisualStyleElement.Window.MdiMinButton.Hot;
+						break;
+					default:
+						element = VisualStyleElement.Window.MdiRestoreButton.Hot;
+						break;
+					}
+				else if (form.WindowManager.IsToolWindow)
+					element = VisualStyleElement.Window.SmallCloseButton.Hot;
 				else
-					if (wm.IsActive)
-						element = VisualStyleElement.Window.FrameLeft.Active;
-					else
-						element = VisualStyleElement.Window.FrameLeft.Inactive;
-				renderer = new VisualStyleRenderer (element);
-				renderer.DrawBackground (dc, new Rectangle (
-					0,
-					title_bar_rectangle.Bottom,
-					border_width,
-					wm.form.Height - title_bar_rectangle.Bottom
-					), clip);
-				#endregion
-				#region Right
-				if (wm.IsToolWindow)
-					if (wm.IsActive)
-						element = VisualStyleElement.Window.SmallFrameRight.Active;
-					else
-						element = VisualStyleElement.Window.SmallFrameRight.Inactive;
-				else
-					if (wm.IsActive)
-						element = VisualStyleElement.Window.FrameRight.Active;
-					else
-						element = VisualStyleElement.Window.FrameRight.Inactive;
-
-				renderer = new VisualStyleRenderer (element);
-				renderer.DrawBackground (dc, new Rectangle (
-					wm.form.Width - border_width,
-					title_bar_rectangle.Bottom,
-					border_width,
-					wm.form.Height - title_bar_rectangle.Bottom
-					), clip);
-				#endregion
-				#region Bottom
-				if (wm.IsToolWindow)
-					if (wm.IsActive)
-						element = VisualStyleElement.Window.SmallFrameBottom.Active;
-					else
-						element = VisualStyleElement.Window.SmallFrameBottom.Inactive;
-				else
-					if (wm.IsActive)
-						element = VisualStyleElement.Window.FrameBottom.Active;
-					else
-						element = VisualStyleElement.Window.FrameBottom.Inactive;
-
-				renderer = new VisualStyleRenderer (element);
-				renderer.DrawBackground (dc, new Rectangle (
-					0,
-					wm.form.Height - border_width,
-					wm.form.Width,
-					border_width
-					), clip);
-				#endregion
-				caption_text_area.X += border_width;
+					switch (button.Caption) {
+					case CaptionButton.Close:
+						element = VisualStyleElement.Window.CloseButton.Hot;
+						break;
+					case CaptionButton.Help:
+						element = VisualStyleElement.Window.HelpButton.Hot;
+						break;
+					case CaptionButton.Maximize:
+						element = VisualStyleElement.Window.MaxButton.Hot;
+						break;
+					case CaptionButton.Minimize:
+						element = VisualStyleElement.Window.MinButton.Hot;
+						break;
+					default:
+						element = VisualStyleElement.Window.RestoreButton.Hot;
+						break;
+					}
+				if (VisualStyleRenderer.IsElementDefined (element))
+					return true;
 			}
-			#endregion
-			#region Caption text
-			string window_caption = wm.Form.Text;
-			if (window_caption != null && window_caption.Length != 0 && caption_text_area.IntersectsWith (clip)) {
-				StringFormat format = new StringFormat ();
-				format.FormatFlags = StringFormatFlags.NoWrap;
-				format.Trimming = StringTrimming.EllipsisCharacter;
-				format.LineAlignment = StringAlignment.Center;
-				dc.DrawString (
-					window_caption,
-					WindowBorderFont,
-					ThemeEngine.Current.ResPool.GetSolidBrush (Color.White),
-					caption_text_area,
-					format
-				);
+			return base.ManagedWindowTitleButtonHasHotElementStyle (button, form);
+		}
+		static bool ManagedWindowIsMaximizedMdiChild (Form form)
+		{
+			return form.WindowManager is MdiWindowManager &&
+				ManagedWindowGetWindowState (form.WindowManager) == FormWindowState.Maximized;
+		}
+		static bool ManagedWindowTitleButtonIsDisabled (TitleButton button, InternalWindowManager wm)
+		{
+			return (button.State & ButtonState.Inactive) == ButtonState.Inactive;
+		}
+		static bool ManagedWindowTitleButtonIsPressed (TitleButton button)
+		{
+			return (button.State & ButtonState.Pushed) == ButtonState.Pushed;
+		}
+		static VisualStyleElement ManagedWindowGetTitleButtonVisualStyleElement (TitleButton button, Form form)
+		{
+			if (form.WindowManager.IsToolWindow) {
+				if (ManagedWindowTitleButtonIsDisabled (button, form.WindowManager))
+					return VisualStyleElement.Window.SmallCloseButton.Disabled;
+				if (ManagedWindowTitleButtonIsPressed (button))
+					return VisualStyleElement.Window.SmallCloseButton.Pressed;
+				if (button.Entered)
+					return VisualStyleElement.Window.SmallCloseButton.Hot;
+				return VisualStyleElement.Window.SmallCloseButton.Normal;
 			}
-			#endregion
+			switch (button.Caption) {
+			case CaptionButton.Close:
+				if (ManagedWindowTitleButtonIsDisabled (button, form.WindowManager))
+					return VisualStyleElement.Window.CloseButton.Disabled;
+				if (ManagedWindowTitleButtonIsPressed (button))
+					return VisualStyleElement.Window.CloseButton.Pressed;
+				if (button.Entered)
+					return VisualStyleElement.Window.CloseButton.Hot;
+				return VisualStyleElement.Window.CloseButton.Normal;
+			case CaptionButton.Help:
+				if (ManagedWindowTitleButtonIsDisabled (button, form.WindowManager))
+					return VisualStyleElement.Window.HelpButton.Disabled;
+				if (ManagedWindowTitleButtonIsPressed (button))
+					return VisualStyleElement.Window.HelpButton.Pressed;
+				if (button.Entered)
+					return VisualStyleElement.Window.HelpButton.Hot;
+				return VisualStyleElement.Window.HelpButton.Normal;
+			case CaptionButton.Maximize:
+				if (ManagedWindowTitleButtonIsDisabled (button, form.WindowManager))
+					return VisualStyleElement.Window.MaxButton.Disabled;
+				if (ManagedWindowTitleButtonIsPressed (button))
+					return VisualStyleElement.Window.MaxButton.Pressed;
+				if (button.Entered)
+					return VisualStyleElement.Window.MaxButton.Hot;
+				return VisualStyleElement.Window.MaxButton.Normal;
+			case CaptionButton.Minimize:
+				if (ManagedWindowTitleButtonIsDisabled (button, form.WindowManager))
+					return VisualStyleElement.Window.MinButton.Disabled;
+				if (ManagedWindowTitleButtonIsPressed (button))
+					return VisualStyleElement.Window.MinButton.Pressed;
+				if (button.Entered)
+					return VisualStyleElement.Window.MinButton.Hot;
+				return VisualStyleElement.Window.MinButton.Normal;
+			default:
+				if (ManagedWindowTitleButtonIsDisabled (button, form.WindowManager))
+					return VisualStyleElement.Window.RestoreButton.Disabled;
+				if (ManagedWindowTitleButtonIsPressed (button))
+					return VisualStyleElement.Window.RestoreButton.Pressed;
+				if (button.Entered)
+					return VisualStyleElement.Window.RestoreButton.Hot;
+				return VisualStyleElement.Window.RestoreButton.Normal;
+			}
+		}
+		protected override void ManagedWindowDrawTitleButton (Graphics dc, TitleButton button, Rectangle clip, Form form)
+		{
+			if (!render_non_client_areas) {
+				base.ManagedWindowDrawTitleButton (dc, button, clip, form);
+				return;
+			}
+			VisualStyleElement element = ManagedWindowGetTitleButtonVisualStyleElement (button, form);
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.ManagedWindowDrawTitleButton (dc, button, clip, form);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (dc, button.Rectangle, clip);
+		}
+		public override Size ManagedWindowButtonSize (InternalWindowManager wm)
+		{
+			if (!render_non_client_areas)
+				return base.ManagedWindowButtonSize (wm);
+			VisualStyleElement element = wm.IsToolWindow && !wm.IsMinimized ?
+				VisualStyleElement.Window.SmallCloseButton.Normal :
+				VisualStyleElement.Window.CloseButton.Normal;
+			if (!VisualStyleRenderer.IsElementDefined (element))
+				return base.ManagedWindowButtonSize (wm);
+			IDeviceContext dc = GetMeasurementDeviceContext ();
+			Size result = new VisualStyleRenderer (element).GetPartSize (dc, ThemeSizeType.True);
+			ReleaseMeasurementDeviceContext (dc);
+			return result;
+		}
+		public override void ManagedWindowDrawMenuButton (Graphics dc, TitleButton button, Rectangle clip, InternalWindowManager wm)
+		{
+			if (!render_non_client_areas) {
+				base.ManagedWindowDrawMenuButton (dc, button, clip, wm);
+				return;
+			}
+			VisualStyleElement element = ManagedWindowGetMenuButtonVisualStyleElement (button, wm);
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.ManagedWindowDrawMenuButton (dc, button, clip, wm);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (dc, button.Rectangle, clip);
+		}
+		static VisualStyleElement ManagedWindowGetMenuButtonVisualStyleElement (TitleButton button, InternalWindowManager wm)
+		{
+			switch (button.Caption) {
+			case CaptionButton.Close:
+				if (ManagedWindowTitleButtonIsDisabled (button, wm))
+					return VisualStyleElement.Window.MdiCloseButton.Disabled;
+				if (ManagedWindowTitleButtonIsPressed (button))
+					return VisualStyleElement.Window.MdiCloseButton.Pressed;
+				if (button.Entered)
+					return VisualStyleElement.Window.MdiCloseButton.Hot;
+				return VisualStyleElement.Window.MdiCloseButton.Normal;
+			case CaptionButton.Help:
+				if (ManagedWindowTitleButtonIsDisabled (button, wm))
+					return VisualStyleElement.Window.MdiHelpButton.Disabled;
+				if (ManagedWindowTitleButtonIsPressed (button))
+					return VisualStyleElement.Window.MdiHelpButton.Pressed;
+				if (button.Entered)
+					return VisualStyleElement.Window.MdiHelpButton.Hot;
+				return VisualStyleElement.Window.MdiHelpButton.Normal;
+			case CaptionButton.Minimize:
+				if (ManagedWindowTitleButtonIsDisabled (button, wm))
+					return VisualStyleElement.Window.MdiMinButton.Disabled;
+				if (ManagedWindowTitleButtonIsPressed (button))
+					return VisualStyleElement.Window.MdiMinButton.Pressed;
+				if (button.Entered)
+					return VisualStyleElement.Window.MdiMinButton.Hot;
+				return VisualStyleElement.Window.MdiMinButton.Normal;
+			default:
+				if (ManagedWindowTitleButtonIsDisabled (button, wm))
+					return VisualStyleElement.Window.MdiRestoreButton.Disabled;
+				if (ManagedWindowTitleButtonIsPressed (button))
+					return VisualStyleElement.Window.MdiRestoreButton.Pressed;
+				if (button.Entered)
+					return VisualStyleElement.Window.MdiRestoreButton.Hot;
+				return VisualStyleElement.Window.MdiRestoreButton.Normal;
+			}
+		}
+		public override Size ManagedWindowGetMenuButtonSize (InternalWindowManager wm)
+		{
+			if (!render_non_client_areas)
+				return base.ManagedWindowGetMenuButtonSize (wm);
+			VisualStyleElement element = VisualStyleElement.Window.MdiCloseButton.Normal;
+			if (!VisualStyleRenderer.IsElementDefined (element))
+				return base.ManagedWindowGetMenuButtonSize (wm);
+			IDeviceContext dc = GetMeasurementDeviceContext ();
+			Size result = new VisualStyleRenderer (element).GetPartSize (dc, ThemeSizeType.True);
+			ReleaseMeasurementDeviceContext (dc);
+			return result;
 		}
 		#endregion
 		#region ProgressBar
@@ -1987,5 +2155,18 @@ namespace System.Windows.Forms
 				value1.Part == value2.Part &&
 				value1.State == value2.State;
 		}
+		#region Measurement device context
+		static Control control;
+		static IDeviceContext GetMeasurementDeviceContext ()
+		{
+			if (control == null)
+				control = new Control ();
+			return control.CreateGraphics ();
+		}
+		static void ReleaseMeasurementDeviceContext (IDeviceContext dc)
+		{
+			dc.Dispose ();
+		}
+		#endregion
 	}
 }

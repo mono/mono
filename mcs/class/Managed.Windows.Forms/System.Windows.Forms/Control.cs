@@ -2017,6 +2017,13 @@ namespace System.Windows.Forms
 				return (control_style & ControlStyles.DoubleBuffer) != 0;
 			}
 		}
+
+		internal void OnSizeInitializedOrChanged ()
+		{
+			Form form = this as Form;
+			if (form != null && form.WindowManager != null)
+				ThemeEngine.Current.ManagedWindowOnSizeInitializedOrChanged (form);
+		}
 		#endregion	// Private & Internal Methods
 
 		#region Public Static Properties
@@ -5160,6 +5167,7 @@ namespace System.Windows.Forms
 			}
 
 			if (resized) {
+				OnSizeInitializedOrChanged ();
 				OnSizeChanged(EventArgs.Empty);
 #if NET_2_0
 				OnClientSizeChanged (EventArgs.Empty);

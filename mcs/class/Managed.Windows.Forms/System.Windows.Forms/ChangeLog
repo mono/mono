@@ -1,5 +1,28 @@
 2008-07-09  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* Control.cs: Added OnSizeInitializedOrChanged.
+	* Form.cs: OnLoadInternal: Added a call to
+	Control.OnSizeInitializedOrChanged.
+	* InternalWindowManager.cs:
+	 * HandleTitleBarMouseMove: No longer invalidates the parent window.
+	 * DrawTitleButton: Extracted Theme.ManagedWindowDrawMenuButton.
+	 * TitleButton: Added Entered.
+	 * TitleButtons.MouseMove: Added handling of TitleButton.Entered.
+	* MdiWindowManager.cs:
+	 * HandleTitleBarMouseMove: Now invalidates the parent window when a mouse
+	 move over the maximized title buttons causes a change.
+	 * IsActive: Can now be called before the window is added to a MDI parent.
+	* Theme.cs: Added ManagedWindowTitleButtonHasHotElementStyle,
+	ManagedWindowDrawMenuButton, ManagedWindowOnSizeInitializedOrChanged.
+	* ThemeVisualStyles.cs: Implemented proper managed window rendering.
+	* ThemeWin32Classic.cs:
+	 * Extracted ManagedWindowDrawTitleBarAndBorders, ManagedWindowDrawTitleButton.
+	 * DrawTitleButton takes a new form parameter.
+	 * Added ManagedWindowTitleButtonHasHotElementStyle,
+	 ManagedWindowDrawMenuButton, ManagedWindowOnSizeInitializedOrChanged.
+
+2008-07-09  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* ThemeEngine.cs: ThemeVisualStyles is now selected if
 	Application.EnableVisualStyles has been called, even if the current system
 	configuration does not support rendering with Visual Styles.

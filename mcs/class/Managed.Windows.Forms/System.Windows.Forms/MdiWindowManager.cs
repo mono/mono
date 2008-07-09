@@ -545,9 +545,8 @@ namespace System.Windows.Forms {
 		{
 			base.HandleTitleBarMouseMove (x, y);
 
-			if (maximized_title_buttons != null) {
-				maximized_title_buttons.MouseMove (x, y);
-			}
+			if (maximized_title_buttons != null && maximized_title_buttons.MouseMove (x, y))
+				XplatUI.InvalidateNC (form.MdiParent.Handle);
 		}
 
 		protected override bool HandleLButtonDblClick (ref Message m)
@@ -646,6 +645,8 @@ namespace System.Windows.Forms {
 
 		public override bool IsActive {
 			get {
+				if (mdi_container == null)
+					return false;
 				return mdi_container.ActiveMdiChild == form;
 			}
 		}

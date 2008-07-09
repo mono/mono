@@ -2917,6 +2917,7 @@ namespace System.Windows.Forms {
 			}
 
 			if (!IsDisposed) {
+				OnSizeInitializedOrChanged ();
 				OnLoad (e);
 				
 				if (!IsDisposed)

@@ -1025,6 +1025,9 @@ namespace System.Windows.Forms
 		public abstract void ManagedWindowSetButtonLocations (InternalWindowManager wm);
 		public abstract Rectangle ManagedWindowGetTitleBarIconArea (InternalWindowManager wm);
 		public abstract Size ManagedWindowGetMenuButtonSize (InternalWindowManager wm);
+		public abstract bool ManagedWindowTitleButtonHasHotElementStyle (TitleButton button, Form form);
+		public abstract void ManagedWindowDrawMenuButton (Graphics dc, TitleButton button, Rectangle clip, InternalWindowManager wm);
+		public abstract void ManagedWindowOnSizeInitializedOrChanged (Form form);
 		#endregion
 
 		#region	ControlPaint Methods

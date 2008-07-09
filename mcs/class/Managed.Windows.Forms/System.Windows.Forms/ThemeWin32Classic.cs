@@ -6159,7 +6159,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public override void DrawManagedWindowDecorations (Graphics dc, Rectangle clip, InternalWindowManager wm)
+		protected virtual Rectangle ManagedWindowDrawTitleBarAndBorders (Graphics dc, Rectangle clip, InternalWindowManager wm)
 		{
 			Form form = wm.Form;
 			int tbheight = ManagedWindowTitleBarHeight (wm);
@@ -6170,11 +6170,6 @@ namespace System.Windows.Forms
 			Color color = ThemeEngine.Current.ColorControlDark;
 			Color color2 = Color.FromArgb (255, 192, 192, 192);
 
-#if debug
-			Console.WriteLine (DateTime.Now.ToLongTimeString () + " DrawManagedWindowDecorations");
-			dc.FillRectangle (Brushes.Black, clip);
-#endif
-			
 			Pen pen = ResPool.GetPen (ColorControl);
 			Rectangle borders = new Rectangle (0, 0, form.Width, form.Height);
 			ControlPaint.DrawBorder3D (dc, borders, Border3DStyle.Raised);
@@ -6212,7 +6207,18 @@ namespace System.Windows.Forms
 				dc.DrawLine (ResPool.GetPen (SystemColors.Control), bdwidth,
 						tbheight + bdwidth - 1, form.Width - bdwidth - 1,
 						tbheight + bdwidth - 1);
+			return tb;
+		}
 
+		public override void DrawManagedWindowDecorations (Graphics dc, Rectangle clip, InternalWindowManager wm)
+		{
+#if debug
+			Console.WriteLine (DateTime.Now.ToLongTimeString () + " DrawManagedWindowDecorations");
+			dc.FillRectangle (Brushes.Black, clip);
+#endif
+			Rectangle tb = ManagedWindowDrawTitleBarAndBorders (dc, clip, wm);
+
+			Form form = wm.Form;
 			if (wm.ShowIcon) {
 				Rectangle icon = ManagedWindowGetTitleBarIconArea (wm);
 				if (icon.IntersectsWith (clip))
@@ -6223,7 +6229,7 @@ namespace System.Windows.Forms
 			}
 			
 			foreach (TitleButton button in wm.TitleButtons.AllButtons) {
-				tb.Width -= Math.Max (0, tb.Right - DrawTitleButton (dc, button, clip));
+				tb.Width -= Math.Max (0, tb.Right - DrawTitleButton (dc, button, clip, form));
 			}
 			const int SpacingBetweenCaptionAndLeftMostButton = 3;
 			tb.Width -= SpacingBetweenCaptionAndLeftMostButton;
@@ -6260,19 +6266,24 @@ namespace System.Windows.Forms
 					height - 5);
 		}
 
-		private int DrawTitleButton (Graphics dc, TitleButton button, Rectangle clip)
+		private int DrawTitleButton (Graphics dc, TitleButton button, Rectangle clip, Form form)
 		{
 			if (!button.Visible) {
 				return int.MaxValue;
 			}
 			
 			if (button.Rectangle.IntersectsWith (clip)) {
-				dc.FillRectangle (SystemBrushes.Control, button.Rectangle);
-
-				ControlPaint.DrawCaptionButton (dc, button.Rectangle,
-						button.Caption, button.State);
+				ManagedWindowDrawTitleButton (dc, button, clip, form);
 			}
 			return button.Rectangle.Left;
+		}
+
+		protected virtual void ManagedWindowDrawTitleButton (Graphics dc, TitleButton button, Rectangle clip, Form form)
+		{
+			dc.FillRectangle (SystemBrushes.Control, button.Rectangle);
+
+			ControlPaint.DrawCaptionButton (dc, button.Rectangle,
+					button.Caption, button.State);
 		}
 
 		public override Rectangle ManagedWindowGetTitleBarIconArea (InternalWindowManager wm)
@@ -6287,6 +6298,22 @@ namespace System.Windows.Forms
 			result.Width -= 2;
 			result.Height -= 4;
 			return result;
+		}
+
+		public override bool ManagedWindowTitleButtonHasHotElementStyle (TitleButton button, Form form)
+		{
+			return false;
+		}
+
+		public override void ManagedWindowDrawMenuButton (Graphics dc, TitleButton button, Rectangle clip, InternalWindowManager wm)
+		{
+			dc.FillRectangle (SystemBrushes.Control, button.Rectangle);
+			ControlPaint.DrawCaptionButton (dc, button.Rectangle,
+					button.Caption, button.State);
+		}
+
+		public override void ManagedWindowOnSizeInitializedOrChanged (Form form)
+		{
 		}
 		#endregion
 
