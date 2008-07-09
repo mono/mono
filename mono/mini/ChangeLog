@@ -1,5 +1,8 @@
 2008-07-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.h tramp-arm.c exceptions-arm.c aot-compiler.c: Beginnings of aot-only
+	support.
+
 	* mini.c: Move the soft float handling macros a bit earlier, add 
 	NEW_TEMPSTORE_SOFT_FLOAT macro, fix warnings, add soft-float support in one
 	place.
