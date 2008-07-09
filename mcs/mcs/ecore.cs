@@ -3710,6 +3710,8 @@ namespace Mono.CSharp {
 		protected virtual void Error_InvalidArguments (EmitContext ec, Location loc, int idx, MethodBase method,
 													Argument a, ParameterData expected_par, Type paramType)
 		{
+			ExtensionMethodGroupExpr emg = this as ExtensionMethodGroupExpr;
+
 			if (a is CollectionElementInitializer.ElementInitializerArgument) {
 				Report.SymbolRelatedToPreviousError (method);
 				if ((expected_par.ParameterModifier (idx) & Parameter.Modifier.ISBYREF) != 0) {
@@ -3721,8 +3723,15 @@ namespace Mono.CSharp {
 					  TypeManager.CSharpSignature (method));
 			} else if (delegate_type == null) {
 				Report.SymbolRelatedToPreviousError (method);
-				Report.Error (1502, loc, "The best overloaded method match for `{0}' has some invalid arguments",
-						  TypeManager.CSharpSignature (method));
+				if (emg != null) {
+					Report.Error (1928, loc,
+						"Type `{0}' does not contain a member `{1}' and the best extension method overload `{2}' has some invalid arguments",
+						emg.ExtensionExpression.GetSignatureForError (),
+						emg.Name, TypeManager.CSharpSignature (method));
+				} else {
+					Report.Error (1502, loc, "The best overloaded method match for `{0}' has some invalid arguments",
+						TypeManager.CSharpSignature (method));
+				}
 			} else
 				Report.Error (1594, loc, "Delegate `{0}' has some invalid arguments",
 					TypeManager.CSharpName (delegate_type));
@@ -3748,7 +3757,13 @@ namespace Mono.CSharp {
 					Report.SymbolRelatedToPreviousError (paramType);
 				}
 
-				Report.Error (1503, loc, "Argument `#{0}' cannot convert `{1}' expression to type `{2}'", index, p1, p2);
+				if (idx == 0 && emg != null) {
+					Report.Error (1929, loc,
+						"Extension method instance type `{0}' cannot be converted to `{1}'", p1, p2);
+				} else {
+					Report.Error (1503, loc,
+						"Argument `#{0}' cannot convert `{1}' expression to type `{2}'", index, p1, p2);
+				}
 			}
 		}
 
