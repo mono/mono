@@ -1353,10 +1353,12 @@ namespace Mono.CSharp {
 					return CreateConstantResult (false);
 
 				if (constraints.IsValueType && !d.IsValueType)
-					return CreateConstantResult (false);
+					return CreateConstantResult (TypeManager.IsEqual (d, t));
 			}
 
-			expr = new BoxedCast (expr, d);
+			if (!TypeManager.IsReferenceType (expr.Type))
+				expr = new BoxedCast (expr, d);
+
 			return this;
 #else
 			return null;

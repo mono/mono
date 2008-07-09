@@ -1,5 +1,9 @@
 2008-07-09  Marek Safar  <marek.safar@gmail.com>
 
+	* expression.cs (Is): No need to box reference values.
+
+2008-07-09  Marek Safar  <marek.safar@gmail.com>
+
 	* class.cs: Use event resolve context when initializing CreateEmitContext.
 
 2008-07-09  Marek Safar  <marek.safar@gmail.com>
