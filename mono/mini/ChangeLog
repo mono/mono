@@ -1,3 +1,10 @@
+2008-07-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_create_delegate_trampoline): Avoid calling
+	get_delegate_invoke_impl in aot-only mode.
+
+	* mini.c (mono_global_codeman_reserve): Reenable the aot-only check.
+
 2008-07-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* trace.c (mono_trace_enter_method): Fix printing of Type instances.
