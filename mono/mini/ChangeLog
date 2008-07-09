@@ -1,6 +1,17 @@
+2008-07-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (get_unbox_trampoline): New function to return an
+	unbox trampoline which handles aot-only mode too.
+
+	* aot-runtime.c (mono_aot_get_unbox_trampoline): New function to lookup
+	an AOTed unbox trampoline.
+
+	* aot-compiler.c (emit_trampolines): Emit unbox trampolines.
+
 2008-07-09  Bill Holmes  <billholmes54@gmail.com>
 
-	* wapihandles.c: Fixing MSVC builds.  Include statement changed from <> to ""
+	* wapihandles.c: Fixing MSVC builds.  Include statement changed from <> to
+	""
 
 	Contributed under MIT/X11 license.
 
