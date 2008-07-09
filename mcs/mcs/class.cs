@@ -7255,7 +7255,7 @@ namespace Mono.CSharp {
 			public override EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig)
 			{
 				return new EmitContext (
-					ds, method.Parent, Location, ig, ReturnType,
+					this, method.Parent, Location, ig, ReturnType,
 					method.ModFlags, false);
 			}
 
