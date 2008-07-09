@@ -29,7 +29,8 @@ namespace System.Windows.Forms.Theming.VisualStyles
 	class TabControlPainter : Default.TabControlPainter
 	{
 		static bool ShouldPaint (TabControl tabControl) {
-			return tabControl.Alignment == TabAlignment.Top &&
+			return ThemeVisualStyles.RenderClientAreas &&
+				tabControl.Alignment == TabAlignment.Top &&
 				tabControl.DrawMode == TabDrawMode.Normal;
 		}
 		protected override void DrawBackground (Graphics dc, Rectangle area, TabControl tab)

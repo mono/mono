@@ -1,3 +1,8 @@
+2008-07-09  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* TabControlPainter.cs, ToolStripPainter.cs: Now falls back to the default
+	implementation when Visual Styles should not be used.
+
 2008-05-21  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* TabControlPainter.cs: Enabled support for the hot style.

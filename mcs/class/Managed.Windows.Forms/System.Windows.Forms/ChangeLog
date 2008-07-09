@@ -1,3 +1,11 @@
+2008-07-09  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* ThemeEngine.cs: ThemeVisualStyles is now selected if
+	Application.EnableVisualStyles has been called, even if the current system
+	configuration does not support rendering with Visual Styles.
+	* ThemeVisualStyles.cs: Now falls back to ThemeWin32Classic when Visual
+	Styles should not be used.
+
 2008-07-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComboBox.cs: PreferredHeight is not tied to ItemHeight.  Fixes 3rd

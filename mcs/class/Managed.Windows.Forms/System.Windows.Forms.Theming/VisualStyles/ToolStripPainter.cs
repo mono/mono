@@ -50,6 +50,10 @@ namespace System.Windows.Forms.Theming.VisualStyles
 		}
 		public override void OnRenderButtonBackground (ToolStripItemRenderEventArgs e)
 		{
+			if (!ThemeVisualStyles.RenderClientAreas) {
+				base.OnRenderButtonBackground (e);
+				return;
+			}
 			VisualStyleElement element;
 			if (IsDisabled (e.Item))
 				element = VisualStyleElement.ToolBar.Button.Disabled;
@@ -72,6 +76,10 @@ namespace System.Windows.Forms.Theming.VisualStyles
 		}
 		public override void OnRenderDropDownButtonBackground (ToolStripItemRenderEventArgs e)
 		{
+			if (!ThemeVisualStyles.RenderClientAreas) {
+				base.OnRenderDropDownButtonBackground (e);
+				return;
+			}
 			VisualStyleElement element;
 			if (IsDisabled (e.Item))
 				element = VisualStyleElement.ToolBar.DropDownButton.Disabled;
@@ -94,6 +102,10 @@ namespace System.Windows.Forms.Theming.VisualStyles
 		}
 		public override void OnRenderGrip (ToolStripGripRenderEventArgs e)
 		{
+			if (!ThemeVisualStyles.RenderClientAreas) {
+				base.OnRenderGrip (e);
+				return;
+			}
 			if (e.GripStyle == ToolStripGripStyle.Hidden)
 				return;
 			VisualStyleElement element = e.GripDisplayStyle == ToolStripGripDisplayStyle.Vertical ?
@@ -110,6 +122,10 @@ namespace System.Windows.Forms.Theming.VisualStyles
 		}
 		public override void OnRenderOverflowButtonBackground (ToolStripItemRenderEventArgs e)
 		{
+			if (!ThemeVisualStyles.RenderClientAreas) {
+				base.OnRenderOverflowButtonBackground (e);
+				return;
+			}
 			VisualStyleElement element = e.ToolStrip.Orientation == Orientation.Horizontal ?
 				VisualStyleElement.Rebar.Chevron.Normal :
 				VisualStyleElement.Rebar.ChevronVertical.Normal;
@@ -122,6 +138,10 @@ namespace System.Windows.Forms.Theming.VisualStyles
 		}
 		public override void OnRenderSeparator (ToolStripSeparatorRenderEventArgs e)
 		{
+			if (!ThemeVisualStyles.RenderClientAreas) {
+				base.OnRenderSeparator (e);
+				return;
+			}
 			VisualStyleElement element = e.ToolStrip.Orientation == Orientation.Horizontal ?
 				VisualStyleElement.ToolBar.SeparatorHorizontal.Normal :
 				VisualStyleElement.ToolBar.SeparatorVertical.Normal;
@@ -133,6 +153,10 @@ namespace System.Windows.Forms.Theming.VisualStyles
 		}
 		public override void OnRenderSplitButtonBackground (ToolStripItemRenderEventArgs e)
 		{
+			if (!ThemeVisualStyles.RenderClientAreas) {
+				base.OnRenderSplitButtonBackground (e);
+				return;
+			}
 			VisualStyleElement element, drop_down_element;
 			if (IsDisabled (e.Item)) {
 				element = VisualStyleElement.ToolBar.SplitButton.Disabled;
@@ -168,6 +192,10 @@ namespace System.Windows.Forms.Theming.VisualStyles
 		}
 		public override void OnRenderToolStripBackground (ToolStripRenderEventArgs e)
 		{
+			if (!ThemeVisualStyles.RenderClientAreas) {
+				base.OnRenderToolStripBackground (e);
+				return;
+			}
 			VisualStyleElement element;
 			if (e.ToolStrip is StatusStrip)
 				element = VisualStyleElement.Status.Bar.Normal;

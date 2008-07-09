@@ -1,3 +1,9 @@
+2008-07-09  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* ThemeElements.cs: ThemeElementsVisualStyles is now selected if
+	Application.EnableVisualStyles has been called, even if the current system
+	configuration does not support rendering with Visual Styles.
+
 2008-05-07  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* ThemeElementsVisualStyles.cs: Added ToolStripPainter.
