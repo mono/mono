@@ -1,3 +1,23 @@
+2008-07-09  Bill Holmes  <billholmes54@gmail.com>
+
+	* mini.c (mono_codegen):  Allocate space at the end of the code block and store
+	  the unwind information for the method at the end of the allocated block.
+	  
+	* mini-amd64.h: Added declarations for the unwind routines and adding field to 
+	  MonoCompileArch to hold the unwind info for SEH on Winx64
+	
+	* mini-amd64.c (mono_arch_emit_prolog): Calls to the unwind routines added to store
+	  frame pointer info for the method being compiled.
+	  
+	* exceptions-amd64.c (mono_arch_get_throw_corlib_exception): Added a stack adjustment before
+	  the call to mono_exception_from_token.
+	  
+	* exceptions-amd64.c: Added mono_arch_unwindinfo* implementations.  This code is responsible
+	  storing the method prolog information in a format that the Winx64 SEH can understand.  This
+	  information is stored a the end of the method block because it is all 32-bit offset based.
+
+	Contributed under MIT/X11 license.
+
 2008-07-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h: Remove duplicate definitions of the mini_wapi_ functions.
