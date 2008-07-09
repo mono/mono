@@ -1,5 +1,7 @@
 2008-07-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h: Add prototype for mono_arch_fixup_jinfo.
+
 	* mini.c (mini_init): In aot-only mode, set the root domain code manager to
 	read-only to help catch code allocation requests.
 	
