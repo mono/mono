@@ -90,12 +90,19 @@ namespace Mono.Data.Tds.Protocol {
 			
 			try {
 				socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
 #if NET_2_0
-				IPHostEntry hostEntry = Dns.GetHostEntry (this.dataSource);
+				IPAddress ip;
+				if(IPAddress.TryParse(this.dataSource, out ip)) {
+					endPoint = new IPEndPoint(ip, port);
+				} else {
+					IPHostEntry hostEntry = Dns.GetHostEntry (this.dataSource);
+					endPoint = new IPEndPoint(hostEntry.AddressList [0], port);
+				}
 #else
 				IPHostEntry hostEntry = Dns.Resolve (this.dataSource);
-#endif
 				endPoint = new IPEndPoint (hostEntry.AddressList [0], port);
+#endif
 
 				connected.Reset ();
 				socket.BeginConnect (endPoint, new AsyncCallback (ConnectCallback), socket);
@@ -330,7 +337,9 @@ namespace Mono.Data.Tds.Protocol {
 				socket.EndConnect (ar);
 				connected.Set ();
 			}
-                }
+			
+			Console.WriteLine ("Connected call back called");
+		}
 
 		public byte GetByte ()
 		{

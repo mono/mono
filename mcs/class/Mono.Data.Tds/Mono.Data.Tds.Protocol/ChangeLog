@@ -1,3 +1,8 @@
+2008-07-09  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	Patch by Jon Larimer <jlarimer@gmail.com> fixes ##407208
+	* TdsComm.cs: Call DNS.GetHostEntry() only for host names and not for IPs.
+	
 2008-07-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TdsConnectionPool.cs: When pooled connection cannot be reset, remove
