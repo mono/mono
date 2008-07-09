@@ -1,5 +1,9 @@
 2008-07-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c: Move the soft float handling macros a bit earlier, add 
+	NEW_TEMPSTORE_SOFT_FLOAT macro, fix warnings, add soft-float support in one
+	place.
+
 	* mini.h: Add prototype for mono_arch_fixup_jinfo.
 
 	* mini.c (mini_init): In aot-only mode, set the root domain code manager to
