@@ -1,3 +1,10 @@
+2008-07-09  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #394436
+	* anonymous.cs, class.cs, expression.cs, lambda.cs: Emit correctly extension
+	method used inside expression trees. Added more LINQ to expression tree
+	conversions.
+
 2008-07-08  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #378189, #370577

@@ -4701,13 +4701,29 @@ namespace Mono.CSharp {
 				return CreateExpressionFactoryCall ("Quote", args);
 			}
 
-			args = new ArrayList (Arguments == null ? 2 : Arguments.Count + 2);
+			ExtensionMethodGroupExpr emg = mg as ExtensionMethodGroupExpr;
+
+			int arg_count = Arguments == null ? 2 : Arguments.Count + 2;
+			if (emg != null)
+				++arg_count;
+			args = new ArrayList (arg_count);
+
 			if (mg.IsInstance)
 				args.Add (new Argument (mg.InstanceExpression.CreateExpressionTree (ec)));
 			else
 				args.Add (new Argument (new NullLiteral (loc)));
 
 			args.Add (new Argument (mg.CreateExpressionTree (ec)));
+
+			//
+			// Use extension argument when exists
+			//
+			if (emg != null) {
+				Expression e = emg.ExtensionExpression.CreateExpressionTree (ec);
+				if (e != null)
+					args.Add (new Argument (e));
+			}
+
 			if (Arguments != null) {
 				foreach (Argument a in Arguments) {
 					Expression e = a.Expr.CreateExpressionTree (ec);
@@ -6688,11 +6704,12 @@ namespace Mono.CSharp {
 					//
 					// this is hoisted to very top level block
 					//
-
-					// TODO: it could be optimized
-					AnonymousMethodStorey scope = TopToplevelBlock.Explicit.CreateAnonymousMethodStorey (ec);
-					if (HoistedVariable == null) {
-						TopToplevelBlock.HoistedThisVariable = scope.CaptureThis (ec, this);
+					if (!ec.IsInProbingMode) {
+						// TODO: it could be optimized
+						AnonymousMethodStorey scope = TopToplevelBlock.Explicit.CreateAnonymousMethodStorey (ec);
+						if (HoistedVariable == null) {
+							TopToplevelBlock.HoistedThisVariable = scope.CaptureThis (ec, this);
+						}
 					}
 				}
 			}

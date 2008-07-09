@@ -1137,6 +1137,11 @@ namespace Mono.CSharp {
 					block.MutateHoistedGenericType (Storey);
 				}
 
+				if (MethodBuilder == null) {
+					ResolveMembers ();
+					Define ();
+				}
+
 				base.Emit ();
 			}
 
@@ -1221,11 +1226,8 @@ namespace Mono.CSharp {
 	public class AnonymousMethodBody : AnonymousExpression
 	{
 		ArrayList referenced_storeys;
-		readonly Parameters parameters;
+		protected readonly Parameters parameters;
 		static int unique_id;
-
-		// A field cache for static anonymous method
-		Field am_cache;
 
 		public AnonymousMethodBody (TypeContainer host, Parameters parameters,
 					ToplevelBlock block, Type return_type, Type delegate_type,
@@ -1277,19 +1279,10 @@ namespace Mono.CSharp {
 				return false;
 
 			// Don't define anything when we are in probing scope (nested anonymous methods)
-			if (ec.IsInProbingMode)
-				return true;
+			if (!ec.IsInProbingMode)
+				method = DoCreateMethodHost (ec);
 
-			method = DoCreateMethodHost (ec);
-
-			//
-			// Define method only when is not inside AnonymousMethodStorey because a container passed its Define
-			//
-			if (method.Storey != null && method.Storey.HasHoistedVariables)
-				return true;
-
-			method.ResolveMembers ();
-			return method.Define ();
+			return true;
 		}
 
 		//
@@ -1330,17 +1323,7 @@ namespace Mono.CSharp {
 			if (storey != null) {
 				modifiers = storey.HasHoistedVariables ? Modifiers.INTERNAL : Modifiers.PRIVATE;
 			} else {
-				modifiers = Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED;
-
-				//
-				// Don't cache generic delegates when reference MVAR argument
-				//
-				if (!HasGenericParameter (type)) {
-					am_cache = new Field (Host, new TypeExpression (type, loc), modifiers,
-						CompilerGeneratedClass.MakeName (null, "f", "am$cache", unique_id), null, loc);
-					am_cache.Define ();
-					Host.AddField (am_cache);
-				}
+				modifiers = Modifiers.STATIC | Modifiers.PRIVATE;
 			}
 
 			DeclSpace parent = (modifiers & Modifiers.PRIVATE) != 0 ? Host : storey;
@@ -1385,6 +1368,28 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
+			//
+			// It has to be delayed not to polute expression trees
+			//
+			if (method.MethodBuilder == null) {
+				method.ResolveMembers ();
+				method.Define ();
+			}
+
+			//
+			// Don't cache generic delegates when contains MVAR argument
+			//
+			Field am_cache = null;
+			if ((method.ModFlags & Modifiers.STATIC) != 0 && !HasGenericParameter (type)) {
+				TypeContainer parent = method.Parent.PartialContainer;
+				int id = parent.Fields == null ? 0 : parent.Fields.Count;
+				am_cache = new Field (Host, new TypeExpression (type, loc),
+					Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED,
+					CompilerGeneratedClass.MakeName (null, "f", "am$cache", id), null, loc);
+				am_cache.Define ();
+				parent.AddField (am_cache);
+			}
+
 			ILGenerator ig = ec.ig;
 			Label l_initialized = ig.DefineLabel ();
 

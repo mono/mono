@@ -424,6 +424,15 @@ namespace Mono.CSharp {
 				AddMemberToList (method, methods, false);
 		}
 
+		public void RemoveMethod (Method method)
+		{
+			methods.Remove (method);
+			if (method.IsExplicitImpl)
+				ordered_explicit_member_list.Remove (method);
+			else
+				ordered_member_list.Remove (method);
+		}
+
 		//
 		// Do not use this method: use AddMethod.
 		//

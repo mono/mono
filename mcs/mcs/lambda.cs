@@ -134,8 +134,7 @@ namespace Mono.CSharp {
 		public LambdaMethod (TypeContainer host, Parameters parameters,
 					ToplevelBlock block, Type return_type, Type delegate_type,
 					Location loc)
-			: base (host, parameters, block,
-				return_type, delegate_type, loc)
+			: base (host, parameters, block, return_type, delegate_type, loc)
 		{
 		}
 
@@ -147,7 +146,22 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			return Block.CreateExpressionTree (ec);
+			//
+			// Remove IL method implementation when expression tree is requested
+			//
+			method.Parent.PartialContainer.RemoveMethod (method);
+
+			Expression args = parameters.CreateExpressionTree (ec, loc);
+			Expression expr = Block.CreateExpressionTree (ec);
+			if (expr == null)
+				return null;
+
+			ArrayList arguments = new ArrayList (2);
+			arguments.Add (new Argument (expr));
+			arguments.Add (new Argument (args));
+			return CreateExpressionFactoryCall ("Lambda",
+				new TypeArguments (loc, new TypeExpression (type, loc)),
+				arguments);
 		}
 	}
 
