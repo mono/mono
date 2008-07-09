@@ -1,5 +1,12 @@
 2008-07-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (load_aot_module): Add a missing error message in aot-only
+	mode.
+
+	* mini-trampolines.c (mono_create_jit_trampoline_in_domain): Avoid calling 
+	mono_jit_compile_method in aot-only mode since that calls the type 
+	initializer.
+	
 	* mini-trampolines.c (mono_create_delegate_trampoline): Avoid calling
 	get_delegate_invoke_impl in aot-only mode.
 
