@@ -1,5 +1,9 @@
 2008-07-09  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	* TdsComm.cs:  Cleanup stray Console.WriteLine that got in during last commit
+	
+2008-07-09  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	Patch by Jon Larimer <jlarimer@gmail.com> fixes ##407208
 	* TdsComm.cs: Call DNS.GetHostEntry() only for host names and not for IPs.
 	

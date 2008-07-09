@@ -336,9 +336,7 @@ namespace Mono.Data.Tds.Protocol {
 			if (Poll (s, connectionTimeout, SelectMode.SelectWrite)) {
 				socket.EndConnect (ar);
 				connected.Set ();
-			}
-			
-			Console.WriteLine ("Connected call back called");
+			}		
 		}
 
 		public byte GetByte ()
