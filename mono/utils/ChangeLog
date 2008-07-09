@@ -1,5 +1,7 @@
 2008-07-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mono-codeman.c (mono_code_manager_new): Initialize the read-only field.
+	
 	* mono-codeman.c (mono_code_manager_set_read_only): New helper function to
 	set the code manager to read-only status.
 	(mono_code_manager_reserve_align): Assert if the code manager is read only.
