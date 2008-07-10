@@ -1171,8 +1171,8 @@ namespace System.Windows.Forms
 			else
 				LayoutSingleColumn ();
 
-			UpdateScrollBars ();
 			last_visible_index = LastVisibleItem ();
+			UpdateScrollBars ();
 		}
 
 		private void LayoutSingleColumn ()

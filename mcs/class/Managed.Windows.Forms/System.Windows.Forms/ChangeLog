@@ -1,5 +1,11 @@
 2008-07-10  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ListBox.cs: Make sure last_item_visible gets reset before we try
+	to do a layout due to scrollbars appearing or disappearing.
+	[Fixes bug #408139]
+
+2008-07-10  Jonathan Pobst  <monkey@jpobst.com>
+
 	* XPlatUIWin32.cs: Change GetMenuOrigin to calculate borders better
 	for different window themes.  [Fixes bug #339140]
 
