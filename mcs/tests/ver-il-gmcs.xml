@@ -10614,6 +10614,16 @@
       </method>
     </type>
   </test>
+  <test name="gtest-401.cs">
+    <type name="ParserTest">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>173</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -30898,6 +30908,22 @@
       </method>
       <method name="Int32 Test(System.SByte*)">
         <size>33</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-655.cs">
+    <type name="D">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Byte get_Item(Int32)">
+        <size>7</size>
+      </method>
+      <method name="Void set_Item(Int32, Byte)">
+        <size>8</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>77</size>
       </method>
     </type>
   </test>
