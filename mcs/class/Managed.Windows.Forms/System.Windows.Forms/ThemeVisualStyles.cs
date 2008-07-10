@@ -2140,6 +2140,7 @@ namespace System.Windows.Forms
 		#endregion
 		#endregion
 
+#if NET_2_0
 		static bool AreEqual (VisualStyleElement value1, VisualStyleElement value2)
 		{
 			return
@@ -2147,6 +2148,7 @@ namespace System.Windows.Forms
 				value1.Part == value2.Part &&
 				value1.State == value2.State;
 		}
+#endif
 		#region Measurement device context
 		static Control control;
 		static IDeviceContext GetMeasurementDeviceContext ()
