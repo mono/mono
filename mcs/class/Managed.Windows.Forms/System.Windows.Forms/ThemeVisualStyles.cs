@@ -1123,18 +1123,6 @@ namespace System.Windows.Forms
 				return VisualStyleElement.Window.MdiRestoreButton.Normal;
 			}
 		}
-		public override Size ManagedWindowGetMenuButtonSize (InternalWindowManager wm)
-		{
-			if (!render_non_client_areas)
-				return base.ManagedWindowGetMenuButtonSize (wm);
-			VisualStyleElement element = VisualStyleElement.Window.MdiCloseButton.Normal;
-			if (!VisualStyleRenderer.IsElementDefined (element))
-				return base.ManagedWindowGetMenuButtonSize (wm);
-			IDeviceContext dc = GetMeasurementDeviceContext ();
-			Size result = new VisualStyleRenderer (element).GetPartSize (dc, ThemeSizeType.True);
-			ReleaseMeasurementDeviceContext (dc);
-			return result;
-		}
 		#endregion
 		#region ProgressBar
 		public override void DrawProgressBar (Graphics dc, Rectangle clip_rect, ProgressBar ctrl)
