@@ -1,3 +1,8 @@
+2008-07-10  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* ThemeWin32Classic.cs: Implemented minimized window border width properly,
+	in ManagedWindowBorderWidth.
+
 2008-07-10  Jonathan Pobst  <monkey@jpobst.com>
 
 	* InternalWindowManager.cs: Change MouseMove to take a point, so

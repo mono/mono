@@ -6073,7 +6073,8 @@ namespace System.Windows.Forms
 
 		public override int ManagedWindowBorderWidth (InternalWindowManager wm)
 		{
-			if (wm.IsToolWindow && wm.form.FormBorderStyle == FormBorderStyle.FixedToolWindow)
+			if ((wm.IsToolWindow && wm.form.FormBorderStyle == FormBorderStyle.FixedToolWindow) ||
+				wm.IsMinimized)
 				return 3;
 			else
 				return 4;
@@ -6172,8 +6173,7 @@ namespace System.Windows.Forms
 		{
 			Form form = wm.Form;
 			int tbheight = ManagedWindowTitleBarHeight (wm);
-			const int MinimizedWindowBorderWidth = 3;
-			int bdwidth = wm.IsMinimized ? MinimizedWindowBorderWidth : ManagedWindowBorderWidth (wm);
+			int bdwidth = ManagedWindowBorderWidth (wm);
 			Color titlebar_color = Color.FromArgb (255, 10, 36, 106);
 			Color titlebar_color2 = Color.FromArgb (255, 166, 202, 240);
 			Color color = ThemeEngine.Current.ColorControlDark;
