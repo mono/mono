@@ -1106,7 +1106,10 @@ namespace System.Windows.Forms {
 			foreach (TitleButton button in this) {
 				if (button == null)
 					continue;
-
+				
+				if (button.State == ButtonState.Inactive)
+					continue;
+					
 				if (button == over_button) {
 					if (any_pushed_buttons) {
 						any_change |= button.State != ButtonState.Pushed;
@@ -1147,12 +1150,12 @@ namespace System.Windows.Forms {
 			ToolTipHide (false);
 
 			foreach (TitleButton button in this) {
-				if (button != null) {
+				if (button != null && button.State != ButtonState.Inactive) {
 					button.State = ButtonState.Normal;
 				}
 			}
 			TitleButton clicked_button = FindButton (x, y);
-			if (clicked_button != null) {
+			if (clicked_button != null && clicked_button.State != ButtonState.Inactive) {
 				clicked_button.State = ButtonState.Pushed;
 			}
 		}
@@ -1164,12 +1167,12 @@ namespace System.Windows.Forms {
 			}
 			
 			TitleButton clicked_button = FindButton (x, y);
-			if (clicked_button != null) {
+			if (clicked_button != null && clicked_button.State != ButtonState.Inactive) {
 				clicked_button.OnClick ();
 			}
 
 			foreach (TitleButton button in this) {
-				if (button == null)
+				if (button == null || button.State == ButtonState.Inactive)
 					continue;
 
 				button.State = ButtonState.Normal;
@@ -1177,6 +1180,8 @@ namespace System.Windows.Forms {
 
 			if (clicked_button == CloseButton && !form.closing)
 				XplatUI.InvalidateNC (form.Handle);
+				
+			ToolTipHide (true);
 		}
 
 		internal void MouseLeave (int x, int y)
@@ -1186,7 +1191,7 @@ namespace System.Windows.Forms {
 			}
 			
 			foreach (TitleButton button in this) {
-				if (button == null)
+				if (button == null || button.State == ButtonState.Inactive)
 					continue;
 
 				button.State = ButtonState.Normal;

@@ -1,5 +1,13 @@
 2008-07-10  Jonathan Pobst  <monkey@jpobst.com>
 
+	* InternalWindowManager.cs: Ignore mouse actions on TitleButtons that
+	are inactive.
+	* ThemeWin32Classic.cs: Disable or hide MinimizeBox/MaximizeBox if
+	user requested it.
+	[Fixes bug #398686]
+
+2008-07-10  Jonathan Pobst  <monkey@jpobst.com>
+
 	* MdiWindowManager.cs: Double-clicking on the title bar should not
 	maximize a MDI form if MaximizeBox = false.
 

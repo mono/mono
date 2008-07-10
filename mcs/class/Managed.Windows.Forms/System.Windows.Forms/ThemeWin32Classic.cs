@@ -6131,6 +6131,15 @@ namespace System.Windows.Forms
 				break;
 			}
 
+			// Respect MinimizeBox/MaximizeBox
+			if (form.MinimizeBox == false && form.MaximizeBox == false) {
+				buttons.MinimizeButton.Visible = false;
+				buttons.MaximizeButton.Visible = false;
+			} else if (form.MinimizeBox == false)
+				buttons.MinimizeButton.State = ButtonState.Inactive;
+			else if (form.MaximizeBox == false)
+				buttons.MaximizeButton.State = ButtonState.Inactive;
+
 			int bw = ManagedWindowBorderWidth (wm);
 			Size btsize = ManagedWindowButtonSize (wm);
 			int btw = btsize.Width;
