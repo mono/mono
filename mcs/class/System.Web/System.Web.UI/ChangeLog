@@ -1,5 +1,9 @@
 2008-07-09  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* DataBinder.cs (GetDataItem): Commited stupid code.
+
+2008-07-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* DataBinder.cs (GetDataItem): Use a per-thread cache for
 	property lookup.
 

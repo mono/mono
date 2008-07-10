@@ -222,6 +222,7 @@ namespace System.Web.UI {
 				return null;
 			
 			foundDataItem = true;
+
 			return pi.GetValue (container, null); 
 		} 
 		
