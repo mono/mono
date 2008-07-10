@@ -1455,6 +1455,142 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (2, cmd.Parameters.Count);
 		}
 #endif
+		private void bug326182_OutputParamMixupTestCommon (int paramOrder, 
+		                                                   out int param0Val,
+		                                                   out int param1Val,
+		                                                   out int param2Val,
+		                                                   out int param3Val,
+		                                                   out int rvalVal)
+		{
+			try {
+				conn = (SqlConnection) ConnectionManager.Singleton.Connection;
+				ConnectionManager.Singleton.OpenConnection ();
+				string create_proc = "CREATE procedure sp_326182 ( " + Environment.NewLine +
+					"@param0 int out," + Environment.NewLine +
+						"@param1 int out," + Environment.NewLine +
+						"@param2 int out," + Environment.NewLine +
+						"@param3 int out" + Environment.NewLine + 
+						")" + Environment.NewLine + 
+						"as" + Environment.NewLine +
+						"set @param0 = 100" + Environment.NewLine +
+						"set @param1 = 101" + Environment.NewLine +
+						"set @param2 = 102" + Environment.NewLine +
+						"set @param3 = 103" + Environment.NewLine +
+						"return 2";
+				string drop_proc = "drop procedure sp_326182";
+
+				try {
+					SqlParameter param0 = new SqlParameter ("@param0", SqlDbType.Int);
+					SqlParameter param1 = new SqlParameter ("@param1", SqlDbType.Int);
+					SqlParameter param2 = new SqlParameter ("@param2", SqlDbType.Int);
+					SqlParameter param3 = new SqlParameter ("@param3", SqlDbType.Int);
+					SqlParameter rval = new SqlParameter ("@RETURN_VALUE", SqlDbType.Int);
+					
+					cmd = new SqlCommand();
+					cmd.CommandText = create_proc;
+					cmd.CommandType = CommandType.Text;
+					cmd.Connection = conn;
+					cmd.CommandTimeout = 90;
+					cmd.ExecuteNonQuery ();
+					
+					cmd.CommandText = "dbo.[sp_326182]";
+					cmd.CommandType = CommandType.StoredProcedure;
+					
+					param0.Direction = ParameterDirection.Output;
+					param1.Direction = ParameterDirection.Output;
+					param2.Direction = ParameterDirection.Output;
+					param3.Direction = ParameterDirection.Output;
+					rval.Direction = ParameterDirection.ReturnValue;
+					
+					switch (paramOrder) {
+					case 1: cmd.Parameters.Add (param0);
+						cmd.Parameters.Add (param1);
+						cmd.Parameters.Add (rval);
+						cmd.Parameters.Add (param2);
+						cmd.Parameters.Add (param3);
+						break;
+					case 2: cmd.Parameters.Add (rval);
+						cmd.Parameters.Add (param1);
+						cmd.Parameters.Add (param0);
+						cmd.Parameters.Add (param2);
+						cmd.Parameters.Add (param3);
+						break;
+					default: cmd.Parameters.Add (param0);
+						cmd.Parameters.Add (param1);
+						cmd.Parameters.Add (param2);
+						cmd.Parameters.Add (param3);
+						cmd.Parameters.Add (rval);
+						break;
+					}
+					
+					cmd.ExecuteNonQuery ();
+					
+					/* Copy the param values to variables, just in case if 
+					 * tests fail, we don't want the created sp to exist */
+					param3Val = (int)cmd.Parameters["@param3"].Value;
+					param1Val = (int)cmd.Parameters["@param1"].Value;
+					rvalVal = (int)cmd.Parameters["@RETURN_VALUE"].Value;
+					param2Val = (int)cmd.Parameters["@param2"].Value;
+					param0Val = (int)cmd.Parameters["@param0"].Value;
+
+					/* Delete the created stored procedure */
+					cmd.Parameters.Clear ();
+					cmd.CommandText = drop_proc;
+					cmd.CommandType = CommandType.Text;
+					cmd.ExecuteNonQuery ();
+				} finally {
+					cmd.Dispose();
+					cmd = null;
+				}
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
+				conn = null;
+			}								
+		}
+		
+		[Test]
+		public void bug326182_OutputParamMixupTest_Normal ()
+		{
+			int param0Val, param1Val, param2Val, param3Val, rvalVal;
+			
+			//param0Val = param1Val = param2Val = param3Val = rvalVal = 0;
+			
+			bug326182_OutputParamMixupTestCommon (0, out param0Val, out param1Val, 
+			                                      out param2Val, out param3Val, out rvalVal);
+			Assert.AreEqual (103, param3Val);
+			Assert.AreEqual (101, param1Val);
+			Assert.AreEqual (2, rvalVal);
+			Assert.AreEqual (102, param2Val);
+			Assert.AreEqual (100, param0Val);
+		}
+
+		[Test]
+		public void bug326182_OutputParamMixupTest_RValInBetween ()
+		{
+			int param0Val, param1Val, param2Val, param3Val, rvalVal;
+			
+			bug326182_OutputParamMixupTestCommon (1, out param0Val, out param1Val, 
+			                                      out param2Val, out param3Val, out rvalVal);
+			Assert.AreEqual (103, param3Val);
+			Assert.AreEqual (101, param1Val);
+			Assert.AreEqual (2, rvalVal);
+			Assert.AreEqual (102, param2Val);
+			Assert.AreEqual (100, param0Val);
+		}
+
+		[Test]
+		public void bug326182_OutputParamMixupTest_RValFirst ()
+		{
+			int param0Val, param1Val, param2Val, param3Val, rvalVal;
+			
+			bug326182_OutputParamMixupTestCommon (2, out param0Val, out param1Val, 
+			                                      out param2Val, out param3Val, out rvalVal);
+			Assert.AreEqual (103, param3Val);
+			Assert.AreEqual (101, param1Val);
+			Assert.AreEqual (2, rvalVal);
+			Assert.AreEqual (102, param2Val);
+			Assert.AreEqual (100, param0Val);
+		}
 
 		private enum Status { 
 			OK = 0,

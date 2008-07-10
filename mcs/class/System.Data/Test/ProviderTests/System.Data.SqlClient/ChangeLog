@@ -1,3 +1,8 @@
+2008-07-10  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlCommandTest.cs (bug326182_*): Test case for Bug#326182 - StoredProcedure 
+	parameters gets mixed up
+	
 2008-05-29  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlParameterTest.cs (ParameterSize_compatibility_Test) : New

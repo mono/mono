@@ -574,7 +574,8 @@ namespace System.Data.SqlClient {
 
 				int index = 0;
 				foreach (SqlParameter parameter in parameters) {
-					if (parameter.Direction != ParameterDirection.Input) {
+					if (parameter.Direction != ParameterDirection.Input &&
+					    parameter.Direction != ParameterDirection.ReturnValue) {
 						parameter.Value = list [index];
 						index += 1;
 					}
