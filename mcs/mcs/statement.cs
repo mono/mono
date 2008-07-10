@@ -1556,6 +1556,7 @@ namespace Mono.CSharp {
 		// Keeps track of (name, type) pairs
 		//
 		IDictionary variables;
+		protected IDictionary range_variables;
 
 		//
 		// Keeps track of constants
@@ -1806,10 +1807,14 @@ namespace Mono.CSharp {
 			LocalInfo vi = GetLocalInfo (name);
 			if (vi != null) {
 				Report.SymbolRelatedToPreviousError (vi.Location, name);
-				if (Explicit == vi.Block.Explicit)
-					Error_AlreadyDeclared (l, name, null);
-				else
+				if (Explicit == vi.Block.Explicit) {
+					if (type == Linq.ImplicitQueryParameter.ImplicitType.Instance && type == vi.Type)
+						Error_AlreadyDeclared (l, name);
+					else
+						Error_AlreadyDeclared (l, name, null);
+				} else {
 					Error_AlreadyDeclared (l, name, "parent");
+				}
 				return null;
 			}
 
@@ -1912,13 +1917,21 @@ namespace Mono.CSharp {
 
 		public LocalInfo GetLocalInfo (string name)
 		{
+			LocalInfo ret;
 			for (Block b = this; b != null; b = b.Parent) {
 				if (b.variables != null) {
-					LocalInfo ret = b.variables [name] as LocalInfo;
+					ret = (LocalInfo) b.variables [name];
+					if (ret != null)
+						return ret;
+				}
+
+				if (b.range_variables != null) {
+					ret = (LocalInfo) b.range_variables [name];
 					if (ret != null)
 						return ret;
 				}
 			}
+
 			return null;
 		}
 
@@ -2628,7 +2641,7 @@ namespace Mono.CSharp {
 			if (parent != null)
 				parent.AddAnonymousChild (this);
 
-			if (this.parameters.Count != 0)
+			if (!this.parameters.Empty)
 				ProcessParameters ();
 		}
 

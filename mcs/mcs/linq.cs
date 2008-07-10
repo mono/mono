@@ -779,26 +779,26 @@ namespace Mono.CSharp.Linq
 	//
 	// This block is actually never used, it is used by parser only
 	//
-	public class QueryBlock : Block
+	public class QueryBlock : ExplicitBlock
 	{
-		Hashtable range_variables = new Hashtable ();
-
 		public QueryBlock (Block parent, Location start)
 			: base (parent, start, Location.Null)
 		{
+			range_variables = new System.Collections.Specialized.HybridDictionary ();
 		}
 
 		protected override void AddVariable (LocalInfo li)
 		{
 			string name = li.Name;
 			if (range_variables.Contains (name)) {
-				Location conflict = (Location)range_variables [name];
-				Report.SymbolRelatedToPreviousError (conflict, name);
+				LocalInfo conflict = (LocalInfo) range_variables [name];
+				Report.SymbolRelatedToPreviousError (conflict.Location, name);
 				Error_AlreadyDeclared (li.Location, name);
 				return;
 			}
 
-			range_variables.Add (name, li.Location);
+			range_variables.Add (name, li);
+			Explicit.AddKnownVariable (name, li);
 		}
 		
 		protected override void Error_AlreadyDeclared (Location loc, string var, string reason)

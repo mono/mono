@@ -1,5 +1,10 @@
 2008-07-10  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #369670
+	* linq.cs, statement.cs: Use explicit block for query expressions variables.
+
+2008-07-10  Marek Safar  <marek.safar@gmail.com>
+
 	* report.cs, ecore.cs: Flush recorder only when silent mode is off.
 
 2008-07-10  Raja R Harinath  <harinath@hurrynot.org>
