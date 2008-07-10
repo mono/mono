@@ -1,3 +1,7 @@
+2008-07-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializationWriter.cs : more helpful error message.
+
 2008-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MapCodeGenerator.cs : use explicit element name for explicitly added

@@ -873,7 +873,7 @@ namespace System.Xml.Serialization
 			string value;
 			TypeData td = TypeTranslator.GetTypeData (o.GetType ());
 			if (td.SchemaType != SchemaTypes.Primitive)
-				throw new InvalidOperationException ("The type of the argument object is not primitive.");
+				throw new InvalidOperationException (String.Format ("The type of the argument object '{0}' is not primitive.", td.FullTypeName));
 
 			if (name == null) {
 				ns = td.IsXsdType ? XmlSchema.Namespace : XmlSerializer.WsdlTypesNamespace;
