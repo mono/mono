@@ -1,3 +1,9 @@
+2008-07-10  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile.am (testaot): Set MONO_PATH when running the AOT
+	compiler.  Don't set LD_LIBRARY_PATH, we're already using LIBTOOL
+	to run the program.
+
 2008-07-07  Bill Holmes  <billholmes54@gmail.com>
 	* libtest.c, winx64structs.cs :
 	  Adding tests to exercise bug 404729 on Winx64.
