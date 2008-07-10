@@ -1,3 +1,8 @@
+2008-07-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Get rid of whitespace in the generated assembly file to
+	speed up the assembler.
+
 2008-07-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.h tramp-arm.c exceptions-arm.c aot-compiler.c: Beginnings of aot-only
