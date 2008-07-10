@@ -1,3 +1,10 @@
+2008-07-10  Bill Holmes  <billholmes54@gmail.com>
+
+	* inssel-long.brg For OP_LCONV_TO_OVF_I4 an int cast is needed when expressing 
+	  IntMin for the VS Compiler.  See Compiler Warning (level 2) C4146.
+
+	Contributed under MIT/X11 license.
+
 2008-07-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c: Get rid of whitespace in the generated assembly file to
