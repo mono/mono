@@ -510,7 +510,7 @@ namespace System.Windows.Forms {
 		{
 			if (IconRectangleContains (x, y)) {
 				form.Close ();
-			} else {
+			} else if (form.MaximizeBox == true) {
 				form.WindowState = FormWindowState.Maximized;
 			}
 			base.HandleTitleBarDoubleClick (x, y);

@@ -1,3 +1,8 @@
+2008-07-10  Jonathan Pobst  <monkey@jpobst.com>
+
+	* MdiWindowManager.cs: Double-clicking on the title bar should not
+	maximize a MDI form if MaximizeBox = false.
+
 2008-07-10  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* ThemeVisualStyles.cs: Fixed a warning.
