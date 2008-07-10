@@ -70,6 +70,7 @@ namespace System.Windows.Forms
 			get { return render_client_areas; }
 		}
 
+		#region Controls
 		#region ButtonBase
 		public override void DrawButtonBase (Graphics dc, Rectangle clip_area, ButtonBase button)
 		{
@@ -1562,6 +1563,193 @@ namespace System.Windows.Forms
 			return new VisualStyleRenderer (element).IsBackgroundPartiallyTransparent ();
 		}
 		#endregion
+		#region ToolBar
+		static bool ToolBarIsDisabled (ToolBarItem item)
+		{
+			return !item.Button.Enabled;
+		}
+		static bool ToolBarIsPressed (ToolBarItem item)
+		{
+			return item.Pressed;
+		}
+		static bool ToolBarIsChecked (ToolBarItem item)
+		{
+			return item.Button.Pushed;
+		}
+		static bool ToolBarIsHot (ToolBarItem item)
+		{
+			return item.Hilight;
+		}
+		#region Border
+		protected override void DrawToolBarButtonBorder (Graphics dc, ToolBarItem item, bool is_flat)
+		{
+			if (!RenderClientAreas) {
+				base.DrawToolBarButtonBorder (dc, item, is_flat);
+				return;
+			}
+			if (item.Button.Style == ToolBarButtonStyle.Separator)
+				return;
+			VisualStyleElement element;
+			if (item.Button.Style == ToolBarButtonStyle.DropDownButton)
+				element = ToolBarGetDropDownButtonVisualStyleElement (item);
+			else
+				element = ToolBarGetButtonVisualStyleElement (item);
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.DrawToolBarButtonBorder (dc, item, is_flat);
+				return;
+			}
+			Rectangle rectangle = item.Rectangle;
+			if (item.Button.Style == ToolBarButtonStyle.DropDownButton && item.Button.Parent.DropDownArrows)
+				rectangle.Width -= ToolBarDropDownWidth;
+			new VisualStyleRenderer (element).DrawBackground (dc, rectangle);
+		}
+		private static VisualStyleElement ToolBarGetDropDownButtonVisualStyleElement (ToolBarItem item)
+		{
+			if (item.Button.Parent.DropDownArrows) {
+				if (ToolBarIsDisabled (item))
+					return VisualStyleElement.ToolBar.SplitButton.Disabled;
+				if (ToolBarIsPressed (item))
+					return VisualStyleElement.ToolBar.SplitButton.Pressed;
+				if (ToolBarIsChecked (item))
+					if (ToolBarIsHot (item))
+						return VisualStyleElement.ToolBar.SplitButton.HotChecked;
+					else
+						return VisualStyleElement.ToolBar.SplitButton.Checked;
+				if (ToolBarIsHot (item))
+					return VisualStyleElement.ToolBar.SplitButton.Hot;
+				return VisualStyleElement.ToolBar.SplitButton.Normal;
+			} else {
+				if (ToolBarIsDisabled (item))
+					return VisualStyleElement.ToolBar.DropDownButton.Disabled;
+				if (ToolBarIsPressed (item))
+					return VisualStyleElement.ToolBar.DropDownButton.Pressed;
+				if (ToolBarIsChecked (item))
+					if (ToolBarIsHot (item))
+						return VisualStyleElement.ToolBar.DropDownButton.HotChecked;
+					else
+						return VisualStyleElement.ToolBar.DropDownButton.Checked;
+				if (ToolBarIsHot (item))
+					return VisualStyleElement.ToolBar.DropDownButton.Hot;
+				return VisualStyleElement.ToolBar.DropDownButton.Normal;
+			}
+		}
+		private static VisualStyleElement ToolBarGetButtonVisualStyleElement (ToolBarItem item)
+		{
+			if (ToolBarIsDisabled (item))
+				return VisualStyleElement.ToolBar.Button.Disabled;
+			if (ToolBarIsPressed (item))
+				return VisualStyleElement.ToolBar.Button.Pressed;
+			if (ToolBarIsChecked (item))
+				if (ToolBarIsHot (item))
+					return VisualStyleElement.ToolBar.Button.HotChecked;
+				else
+					return VisualStyleElement.ToolBar.Button.Checked;
+			if (ToolBarIsHot (item))
+				return VisualStyleElement.ToolBar.Button.Hot;
+			return VisualStyleElement.ToolBar.Button.Normal;
+		}
+		#endregion
+		#region Separator
+		protected override void DrawToolBarSeparator (Graphics dc, ToolBarItem item)
+		{
+			if (!RenderClientAreas) {
+				base.DrawToolBarSeparator (dc, item);
+				return;
+			}
+			VisualStyleElement element = ToolBarGetSeparatorVisualStyleElement (item);
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.DrawToolBarSeparator (dc, item);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (dc, item.Rectangle);
+		}
+		static VisualStyleElement ToolBarGetSeparatorVisualStyleElement (ToolBarItem toolBarItem)
+		{
+			return toolBarItem.Button.Parent.Vertical ?
+				VisualStyleElement.ToolBar.SeparatorVertical.Normal :
+				VisualStyleElement.ToolBar.SeparatorHorizontal.Normal;
+		}
+		#endregion
+		#region Toggle button background
+		protected override void DrawToolBarToggleButtonBackground (Graphics dc, ToolBarItem item)
+		{
+			if (!RenderClientAreas ||
+				!VisualStyleRenderer.IsElementDefined (ToolBarGetButtonVisualStyleElement (item)))
+				base.DrawToolBarToggleButtonBackground (dc, item);
+		}
+		#endregion
+		#region Drop down arrow
+		protected override void DrawToolBarDropDownArrow (Graphics dc, ToolBarItem item, bool is_flat)
+		{
+			if (!RenderClientAreas) {
+				base.DrawToolBarDropDownArrow (dc, item, is_flat);
+				return;
+			}
+			VisualStyleElement element = ToolBarGetDropDownArrowVisualStyleElement (item);
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.DrawToolBarDropDownArrow (dc, item, is_flat);
+				return;
+			}
+			Rectangle rect = item.Rectangle;
+			rect.X = item.Rectangle.Right - ToolBarDropDownWidth;
+			rect.Width = ToolBarDropDownWidth;
+			new VisualStyleRenderer (element).DrawBackground (dc, rect);
+		}
+		private static VisualStyleElement ToolBarGetDropDownArrowVisualStyleElement (ToolBarItem item)
+		{
+			if (ToolBarIsDisabled (item))
+				return VisualStyleElement.ToolBar.SplitButtonDropDown.Disabled;
+			if (ToolBarIsPressed (item))
+				return VisualStyleElement.ToolBar.SplitButtonDropDown.Pressed;
+			if (ToolBarIsChecked (item))
+				if (ToolBarIsHot (item))
+					return VisualStyleElement.ToolBar.SplitButtonDropDown.HotChecked;
+				else
+					return VisualStyleElement.ToolBar.SplitButtonDropDown.Checked;
+			if (ToolBarIsHot (item))
+				return VisualStyleElement.ToolBar.SplitButtonDropDown.Hot;
+			return VisualStyleElement.ToolBar.SplitButtonDropDown.Normal;
+		}
+		#endregion
+		public override bool ToolBarHasHotElementStyles (ToolBar toolBar)
+		{
+			if (!RenderClientAreas)
+				return base.ToolBarHasHotElementStyles (toolBar);
+			return true;
+		}
+		public override bool ToolBarHasHotCheckedElementStyles {
+			get {
+				if (!RenderClientAreas)
+					return base.ToolBarHasHotCheckedElementStyles;
+				return true;
+			}
+		}
+		#endregion
+		#region ToolTip
+		protected override void ToolTipDrawBackground (Graphics dc, Rectangle clip_rectangle, ToolTip.ToolTipWindow control)
+		{
+			if (!RenderClientAreas) {
+				base.ToolTipDrawBackground (dc, clip_rectangle, control);
+				return;
+			}
+			VisualStyleElement element = VisualStyleElement.ToolTip.Standard.Normal;
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.ToolTipDrawBackground (dc, clip_rectangle, control);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (dc, control.Bounds);
+		}
+		public override bool ToolTipTransparentBackground {
+			get {
+				if (!RenderClientAreas)
+					return base.ToolTipTransparentBackground;
+				VisualStyleElement element = VisualStyleElement.ToolTip.Standard.Normal;
+				if (!VisualStyleRenderer.IsElementDefined (element))
+					return base.ToolTipTransparentBackground;
+				return new VisualStyleRenderer (element).IsBackgroundPartiallyTransparent ();
+			}
+		}
+		#endregion
 		#region TrackBar
 		protected override Size TrackBarGetThumbSize (TrackBar trackBar)
 		{
@@ -1880,194 +2068,6 @@ namespace System.Windows.Forms
 			}
 		}
 		#endregion
-		#region ToolBar
-		static bool ToolBarIsDisabled (ToolBarItem item)
-		{
-			return !item.Button.Enabled;
-		}
-		static bool ToolBarIsPressed (ToolBarItem item)
-		{
-			return item.Pressed;
-		}
-		static bool ToolBarIsChecked (ToolBarItem item)
-		{
-			return item.Button.Pushed;
-		}
-		static bool ToolBarIsHot (ToolBarItem item)
-		{
-			return item.Hilight;
-		}
-		#region Border
-		protected override void DrawToolBarButtonBorder (Graphics dc, ToolBarItem item, bool is_flat)
-		{
-			if (!RenderClientAreas) {
-				base.DrawToolBarButtonBorder (dc, item, is_flat);
-				return;
-			}
-			if (item.Button.Style == ToolBarButtonStyle.Separator)
-				return;
-			VisualStyleElement element;
-			if (item.Button.Style == ToolBarButtonStyle.DropDownButton)
-				element = ToolBarGetDropDownButtonVisualStyleElement (item);
-			else
-				element = ToolBarGetButtonVisualStyleElement (item);
-			if (!VisualStyleRenderer.IsElementDefined (element)) {
-				base.DrawToolBarButtonBorder (dc, item, is_flat);
-				return;
-			}
-			Rectangle rectangle = item.Rectangle;
-			if (item.Button.Style == ToolBarButtonStyle.DropDownButton && item.Button.Parent.DropDownArrows)
-				rectangle.Width -= ToolBarDropDownWidth;
-			new VisualStyleRenderer (element).DrawBackground (dc, rectangle);
-		}
-		private static VisualStyleElement ToolBarGetDropDownButtonVisualStyleElement (ToolBarItem item)
-		{
-			if (item.Button.Parent.DropDownArrows) {
-				if (ToolBarIsDisabled (item))
-					return VisualStyleElement.ToolBar.SplitButton.Disabled;
-				if (ToolBarIsPressed (item))
-					return VisualStyleElement.ToolBar.SplitButton.Pressed;
-				if (ToolBarIsChecked (item))
-					if (ToolBarIsHot (item))
-						return VisualStyleElement.ToolBar.SplitButton.HotChecked;
-					else
-						return VisualStyleElement.ToolBar.SplitButton.Checked;
-				if (ToolBarIsHot (item))
-					return VisualStyleElement.ToolBar.SplitButton.Hot;
-				return VisualStyleElement.ToolBar.SplitButton.Normal;
-			} else {
-				if (ToolBarIsDisabled (item))
-					return VisualStyleElement.ToolBar.DropDownButton.Disabled;
-				if (ToolBarIsPressed (item))
-					return VisualStyleElement.ToolBar.DropDownButton.Pressed;
-				if (ToolBarIsChecked (item))
-					if (ToolBarIsHot (item))
-						return VisualStyleElement.ToolBar.DropDownButton.HotChecked;
-					else
-						return VisualStyleElement.ToolBar.DropDownButton.Checked;
-				if (ToolBarIsHot (item))
-					return VisualStyleElement.ToolBar.DropDownButton.Hot;
-				return VisualStyleElement.ToolBar.DropDownButton.Normal;
-			}
-		}
-		private static VisualStyleElement ToolBarGetButtonVisualStyleElement (ToolBarItem item)
-		{
-			if (ToolBarIsDisabled (item))
-				return VisualStyleElement.ToolBar.Button.Disabled;
-			if (ToolBarIsPressed (item))
-				return VisualStyleElement.ToolBar.Button.Pressed;
-			if (ToolBarIsChecked (item))
-				if (ToolBarIsHot (item))
-					return VisualStyleElement.ToolBar.Button.HotChecked;
-				else
-					return VisualStyleElement.ToolBar.Button.Checked;
-			if (ToolBarIsHot (item))
-				return VisualStyleElement.ToolBar.Button.Hot;
-			return VisualStyleElement.ToolBar.Button.Normal;
-		}
-		#endregion
-		#region Separator
-		protected override void DrawToolBarSeparator (Graphics dc, ToolBarItem item)
-		{
-			if (!RenderClientAreas) {
-				base.DrawToolBarSeparator (dc, item);
-				return;
-			}
-			VisualStyleElement element = ToolBarGetSeparatorVisualStyleElement (item);
-			if (!VisualStyleRenderer.IsElementDefined (element)) {
-				base.DrawToolBarSeparator (dc, item);
-				return;
-			}
-			Rectangle area = item.Rectangle;
-			new VisualStyleRenderer (element).DrawBackground (dc, item.Rectangle);
-		}
-		static VisualStyleElement ToolBarGetSeparatorVisualStyleElement (ToolBarItem toolBarItem)
-		{
-			return toolBarItem.Button.Parent.Vertical ?
-				VisualStyleElement.ToolBar.SeparatorVertical.Normal :
-				VisualStyleElement.ToolBar.SeparatorHorizontal.Normal;
-		}
-		#endregion
-		#region Toggle button background
-		protected override void DrawToolBarToggleButtonBackground (Graphics dc, ToolBarItem item)
-		{
-			if (!RenderClientAreas ||
-				!VisualStyleRenderer.IsElementDefined (ToolBarGetButtonVisualStyleElement (item)))
-				base.DrawToolBarToggleButtonBackground (dc, item);
-		}
-		#endregion
-		#region Drop down arrow
-		protected override void DrawToolBarDropDownArrow (Graphics dc, ToolBarItem item, bool is_flat)
-		{
-			if (!RenderClientAreas) {
-				base.DrawToolBarDropDownArrow (dc, item, is_flat);
-				return;
-			}
-			VisualStyleElement element = ToolBarGetDropDownArrowVisualStyleElement (item);
-			if (!VisualStyleRenderer.IsElementDefined (element)) {
-				base.DrawToolBarDropDownArrow (dc, item, is_flat);
-				return;
-			}
-			Rectangle rect = item.Rectangle;
-			rect.X = item.Rectangle.Right - ToolBarDropDownWidth;
-			rect.Width = ToolBarDropDownWidth;
-			new VisualStyleRenderer (element).DrawBackground (dc, rect);
-		}
-		private static VisualStyleElement ToolBarGetDropDownArrowVisualStyleElement (ToolBarItem item)
-		{
-			if (ToolBarIsDisabled (item))
-				return VisualStyleElement.ToolBar.SplitButtonDropDown.Disabled;
-			if (ToolBarIsPressed (item))
-				return VisualStyleElement.ToolBar.SplitButtonDropDown.Pressed;
-			if (ToolBarIsChecked (item))
-				if (ToolBarIsHot (item))
-					return VisualStyleElement.ToolBar.SplitButtonDropDown.HotChecked;
-				else
-					return VisualStyleElement.ToolBar.SplitButtonDropDown.Checked;
-			if (ToolBarIsHot (item))
-				return VisualStyleElement.ToolBar.SplitButtonDropDown.Hot;
-			return VisualStyleElement.ToolBar.SplitButtonDropDown.Normal;
-		}
-		#endregion
-		public override bool ToolBarHasHotElementStyles (ToolBar toolBar)
-		{
-			if (!RenderClientAreas)
-				return base.ToolBarHasHotElementStyles (toolBar);
-			return true;
-		}
-		public override bool ToolBarHasHotCheckedElementStyles {
-			get {
-				if (!RenderClientAreas)
-					return base.ToolBarHasHotCheckedElementStyles;
-				return true;
-			}
-		}
-		#endregion
-		#region ToolTip
-		protected override void ToolTipDrawBackground (Graphics dc, Rectangle clip_rectangle, ToolTip.ToolTipWindow control)
-		{
-			if (!RenderClientAreas) {
-				base.ToolTipDrawBackground (dc, clip_rectangle, control);
-				return;
-			}
-			VisualStyleElement element = VisualStyleElement.ToolTip.Standard.Normal;
-			if (!VisualStyleRenderer.IsElementDefined (element)) {
-				base.ToolTipDrawBackground (dc, clip_rectangle, control);
-				return;
-			}
-			new VisualStyleRenderer (element).DrawBackground (dc, control.Bounds);
-		}
-		public override bool ToolTipTransparentBackground {
-			get {
-				if (!RenderClientAreas)
-					return base.ToolTipTransparentBackground;
-				VisualStyleElement element = VisualStyleElement.ToolTip.Standard.Normal;
-				if (!VisualStyleRenderer.IsElementDefined (element))
-					return base.ToolTipTransparentBackground;
-				return new VisualStyleRenderer (element).IsBackgroundPartiallyTransparent ();
-			}
-		}
-		#endregion
 		#region TreeView
 		[MonoTODO("Use the sizing information provided by the VisualStyles API.")]
 		public override void TreeViewDrawNodePlusMinus (TreeView treeView, TreeNode node, Graphics dc, int x, int middle)
@@ -2137,6 +2137,7 @@ namespace System.Windows.Forms
 				return true;
 			}
 		}
+		#endregion
 		#endregion
 
 		static bool AreEqual (VisualStyleElement value1, VisualStyleElement value2)

@@ -79,9 +79,9 @@ namespace System.Windows.Forms.VisualStyles
 		}
 
 		readonly int WidgetTypeCount = Enum.GetNames (typeof (WidgetType)).Length;
-		GtkWidgetPointer [] widgets;
-		GtkStylePointer [] styles;
-		IStylePainter [] style_painters;
+		readonly GtkWidgetPointer [] widgets;
+		readonly GtkStylePointer [] styles;
+		readonly IStylePainter [] style_painters;
 		protected GtkPlus ()
 		{
 			widgets = new GtkWidgetPointer [WidgetTypeCount];
@@ -132,7 +132,7 @@ namespace System.Windows.Forms.VisualStyles
 			if (painted_area.Width == 0 || painted_area.Height == 0)
 				return;
 			GdkDrawablePointer drawable = gdk_pixmap_new (IntPtr.Zero, bounds.Width, bounds.Height, 24);
-			GtkStylePointer style = styles [(int)widgetType] = gtk_style_attach (styles [(int)widgetType], drawable);
+			styles [(int)widgetType] = gtk_style_attach (styles [(int)widgetType], drawable);
 			GdkPixbufPointer pixbuf;
 			IntPtr pixel_data;
 			int rowstride;
@@ -200,45 +200,47 @@ namespace System.Windows.Forms.VisualStyles
 			g_object_unref (drawable);
 			Bitmap bitmap = new Bitmap (painted_area.Width, painted_area.Height, rowstride, PixelFormat.Format32bppPArgb, pixel_data);
 			Graphics g;
-            bool graphics_is_from_hdc = false;
-            switch (deviceContextType) {
-            case DeviceContextType.Graphics:
-                g = (Graphics)dc;
-                break;
-            case DeviceContextType.Native:
-                g = Graphics.FromHdc (dc.GetHdc ());
-                break;
-            default:
 #if NET_2_0
-                g = dc as Graphics;
-                if (g == null) {
-                    graphics_is_from_hdc = true;
-                    g = Graphics.FromHdc (dc.GetHdc ());
-                } else
-                    graphics_is_from_hdc = false;
+			bool graphics_is_from_hdc = false;
+#endif
+			switch (deviceContextType) {
+			case DeviceContextType.Graphics:
+				g = (Graphics)dc;
+				break;
+			case DeviceContextType.Native:
+				g = Graphics.FromHdc (dc.GetHdc ());
+				break;
+			default:
+#if NET_2_0
+				g = dc as Graphics;
+				if (g == null) {
+					graphics_is_from_hdc = true;
+					g = Graphics.FromHdc (dc.GetHdc ());
+				} else
+					graphics_is_from_hdc = false;
 #else
 				g = (Graphics)dc;
 #endif
-                break;
-            }
+				break;
+			}
 			painted_area.Offset (bounds.X, bounds.Y);
 			g.DrawImage (bitmap, painted_area.Location);
-            switch (deviceContextType) {
-            case DeviceContextType.Graphics:
-                break;
-            case DeviceContextType.Native:
-                g.Dispose ();
-                dc.ReleaseHdc ();
-                break;
-            default:
+			switch (deviceContextType) {
+			case DeviceContextType.Graphics:
+				break;
+			case DeviceContextType.Native:
+				g.Dispose ();
+				dc.ReleaseHdc ();
+				break;
+			default:
 #if NET_2_0
-                if (graphics_is_from_hdc) {
-                    g.Dispose ();
-                    dc.ReleaseHdc ();
-                }
+				if (graphics_is_from_hdc) {
+					g.Dispose ();
+					dc.ReleaseHdc ();
+				}
 #endif
-                break;
-            }
+				break;
+			}
 			bitmap.Dispose ();
 			g_object_unref (pixbuf);
 		}
@@ -347,9 +349,8 @@ namespace System.Windows.Forms.VisualStyles
 		static extern int gdk_pixbuf_get_rowstride (GdkPixbufPointer pixbuf);
 		[DllImport (GdkPixbufLibraryName)]
 		static extern GdkPixbufPointer gdk_pixbuf_new (GdkColorspace colorspace, gboolean has_alpha, int bits_per_sample, int width, int height);
-		[DllImport (GdkPixbufLibraryName)]
-		static extern GdkPixbufPointer gdk_pixbuf_new_from_data (IntPtr data, GdkColorspace colorspace, gboolean has_alpha, int bits_per_sample, int width, int height, int rowstride, IntPtr destroy_fn, gpointer destroy_fn_data);
-		enum GdkColorspace{
+		enum GdkColorspace
+		{
 			GDK_COLORSPACE_RGB
 		}
 		#endregion
