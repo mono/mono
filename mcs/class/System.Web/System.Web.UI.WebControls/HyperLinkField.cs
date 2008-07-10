@@ -236,7 +236,7 @@ namespace System.Web.UI.WebControls {
 			PropertyDescriptorCollection props = TypeDescriptor.GetProperties (item); 
 			
 			if (DataTextField.Length > 0) {
-				textProperty = props [DataTextField];
+				textProperty = props.Find (DataTextField, true);
 				if (textProperty == null)
 					throw new InvalidOperationException ("Property '" + DataTextField + "' not found in object of type " + item.GetType());
 			}
@@ -245,7 +245,7 @@ namespace System.Web.UI.WebControls {
 			if (urlFields.Length > 0) {
 				urlProperties = new PropertyDescriptor [urlFields.Length];
 				for (int n=0; n<urlFields.Length; n++) {
-					PropertyDescriptor prop = props [urlFields [n]];
+					PropertyDescriptor prop = props.Find (urlFields [n], true);
 					if (prop == null)
 						throw new InvalidOperationException ("Property '" + urlFields [n] + "' not found in object of type " + item.GetType());
 					urlProperties [n] = prop;

@@ -1,3 +1,8 @@
+2008-07-10  Roei Erez  <roeie@mainsoft.com>
+
+	* HyperlinkField.cs: Changed behavior of HyperLinkField bound field key 
+	to be case insensitive.
+
 2008-07-03  Marek Habersack  <mhabersack@novell.com>
 
 	* CheckBox.cs: do not render the language="javascript" attribute
