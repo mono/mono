@@ -32,6 +32,9 @@ using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
 using System.Security.Permissions;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 
 namespace System.Web.UI {
 
@@ -191,6 +194,9 @@ namespace System.Web.UI {
 		}
 
 		#if NET_2_0
+		[ThreadStatic]
+		static Dictionary<Type, PropertyInfo> dataItemCache;
+	
 		public static object GetDataItem (object container, out bool foundDataItem)
 		{	
 			foundDataItem = false;
@@ -202,7 +208,16 @@ namespace System.Web.UI {
 				return ((IDataItemContainer)container).DataItem;
 			}
 			
-			PropertyInfo pi = container.GetType ().GetProperty ("DataItem", BindingFlags.Public | BindingFlags.Instance);
+			PropertyInfo pi = null;
+			if (dataItemCache == null)
+				dataItemCache = new Dictionary<Type, PropertyInfo> ();
+			
+			Type type = container.GetType ();
+			if (!dataItemCache.TryGetValue (type, out pi)) {
+				pi = type.GetProperty ("DataItem", BindingFlags.Public | BindingFlags.Instance);
+				dataItemCache [type] = pi;
+			}
+
 			if (pi == null)
 				return null;
 			

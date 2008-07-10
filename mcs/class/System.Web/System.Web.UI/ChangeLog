@@ -1,3 +1,8 @@
+2008-07-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* DataBinder.cs (GetDataItem): Use a per-thread cache for
+	property lookup.
+
 2008-07-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Control.cs: Fix the lookup in ResolveAdapter that I
