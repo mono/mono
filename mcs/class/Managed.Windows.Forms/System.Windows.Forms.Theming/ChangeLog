@@ -1,3 +1,8 @@
+2008-07-10  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* ThemeElements.cs: Changed the XplatUI.ThemesEnabled check to
+	Application.VisualStylesEnabled because it does not work on X11.
+
 2008-07-09  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* ThemeElements.cs: ThemeElementsVisualStyles is now selected if

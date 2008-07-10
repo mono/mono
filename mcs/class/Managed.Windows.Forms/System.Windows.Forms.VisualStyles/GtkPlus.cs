@@ -82,9 +82,6 @@ namespace System.Windows.Forms.VisualStyles
 		GtkWidgetPointer [] widgets;
 		GtkStylePointer [] styles;
 		IStylePainter [] style_painters;
-		GtkStateType state_type;
-		GtkShadowType shadow_type;
-		string detail;
 		protected GtkPlus ()
 		{
 			widgets = new GtkWidgetPointer [WidgetTypeCount];
@@ -111,33 +108,38 @@ namespace System.Windows.Forms.VisualStyles
 			}
 		}
 		#region Controls
-		public void PaintCheckBox (IDeviceContext dc, Rectangle bounds, Rectangle clippingArea)
+		#region CheckBox
+		public void CheckBoxPaint (IDeviceContext dc, Rectangle bounds, Rectangle clippingArea, GtkPlusState state, GtkPlusCheckBoxValue value)
 		{
-			state_type = GtkStateType.GTK_STATE_NORMAL;
-			shadow_type = GtkShadowType.GTK_SHADOW_ETCHED_OUT;
-			detail = null;
-			Paint (WidgetType.CheckBox, bounds, dc, clippingArea);
+			Paint (WidgetType.CheckBox, bounds, dc, clippingArea, (GtkStateType)state, (GtkShadowType)value, "checkbutton");
+		}
+		public Size CheckBoxGetSize ()
+		{
+			int indicator_size;
+			gtk_widget_style_get (widgets [(int)WidgetType.CheckBox], "indicator-size", out indicator_size, IntPtr.Zero);
+			return new Size (indicator_size, indicator_size);
 		}
 		#endregion
-		void Paint (WidgetType widget_type, Rectangle bounds, IDeviceContext dc, Rectangle clippingArea)
+		#endregion
+		void Paint (WidgetType widgetType, Rectangle bounds, IDeviceContext dc, Rectangle clippingArea, GtkStateType stateType, GtkShadowType shadowType, string detail)
 		{
-			Paint (widget_type, bounds, dc, TransparencyType.Alpha, Color.Black, DeviceContextType.Native, clippingArea);
+			Paint (widgetType, bounds, dc, TransparencyType.Alpha, Color.Black, DeviceContextType.Native, clippingArea, stateType, shadowType, detail);
 		}
-		void Paint (WidgetType widget_type, Rectangle bounds, IDeviceContext dc, TransparencyType transparencyType, Color background, DeviceContextType deviceContextType, Rectangle clippingArea)
+		void Paint (WidgetType widgetType, Rectangle bounds, IDeviceContext dc, TransparencyType transparencyType, Color background, DeviceContextType deviceContextType, Rectangle clippingArea, GtkStateType stateType, GtkShadowType shadowType, string detail)
 		{
 			Rectangle painted_area = Rectangle.Intersect (bounds, clippingArea);
 			painted_area.Offset (-bounds.X, -bounds.Y);
 			if (painted_area.Width == 0 || painted_area.Height == 0)
 				return;
 			GdkDrawablePointer drawable = gdk_pixmap_new (IntPtr.Zero, bounds.Width, bounds.Height, 24);
-			GtkStylePointer style = styles [(int)widget_type] = gtk_style_attach (styles [(int)widget_type], drawable);
+			GtkStylePointer style = styles [(int)widgetType] = gtk_style_attach (styles [(int)widgetType], drawable);
 			GdkPixbufPointer pixbuf;
 			IntPtr pixel_data;
 			int rowstride;
 			GdkGCPointer gc = gdk_gc_new (drawable);
 			GdkColor color = new GdkColor (background);
 			gdk_gc_set_rgb_fg_color (gc, ref color);
-			Paint (drawable, gc, bounds, widget_type, out pixbuf, out pixel_data, out rowstride, painted_area);
+			Paint (drawable, gc, bounds, widgetType, out pixbuf, out pixel_data, out rowstride, painted_area, stateType, shadowType, detail);
 			GdkPixbufPointer white_pixbuf = IntPtr.Zero;
 			IntPtr white_pixel_data = IntPtr.Zero;
 			int white_rowstride = 0;
@@ -147,7 +149,7 @@ namespace System.Windows.Forms.VisualStyles
 				white_color.green = guint16.MaxValue;
 				white_color.blue = guint16.MaxValue;
 				gdk_gc_set_rgb_fg_color (gc, ref white_color);
-				Paint (drawable, gc, bounds, widget_type, out white_pixbuf, out white_pixel_data, out white_rowstride, painted_area);
+				Paint (drawable, gc, bounds, widgetType, out white_pixbuf, out white_pixel_data, out white_rowstride, painted_area, stateType, shadowType, detail);
 			}
 			g_object_unref (gc);
 			unsafe {
@@ -175,8 +177,8 @@ namespace System.Windows.Forms.VisualStyles
 								pixel [GdkRedOffset] == background.R &&
 								pixel [GdkGreenOffset] == background.G &&
 								pixel [GdkBlueOffset] == background.B) {
-								const int AlphaFullTransparent = 0;
-								pixel [BitmapAlphaOffset] = AlphaFullTransparent;
+								const int AlphaFullyTransparent = 0;
+								pixel [BitmapAlphaOffset] = AlphaFullyTransparent;
 							}
 							break;
 						}
@@ -240,34 +242,34 @@ namespace System.Windows.Forms.VisualStyles
 			bitmap.Dispose ();
 			g_object_unref (pixbuf);
 		}
-		void Paint (GdkDrawablePointer drawable, GdkGCPointer gc, Rectangle rectangle, WidgetType widget_type, out GdkPixbufPointer pixbuf, out IntPtr pixel_data, out int rowstride, Rectangle clippingArea)
+		void Paint (GdkDrawablePointer drawable, GdkGCPointer gc, Rectangle rectangle, WidgetType widgetType, out GdkPixbufPointer pixbuf, out IntPtr pixelData, out int rowstride, Rectangle clippingArea, GtkStateType stateType, GtkShadowType shadowType, string detail)
 		{
 			gdk_draw_rectangle (drawable, gc, true, clippingArea.X, clippingArea.Y, clippingArea.Width, clippingArea.Height);
-			style_painters [(int)widget_type].Paint (styles [(int)widget_type], drawable, state_type, shadow_type, new GdkRectangle(clippingArea), widgets [(int)widget_type], detail, 0, 0, rectangle.Width, rectangle.Height);
+			style_painters [(int)widgetType].Paint (styles [(int)widgetType], drawable, stateType, shadowType, new GdkRectangle(clippingArea), widgets [(int)widgetType], detail, 0, 0, rectangle.Width, rectangle.Height);
 			if (
 				(pixbuf = gdk_pixbuf_new (GdkColorspace.GDK_COLORSPACE_RGB, true, 8, clippingArea.Width, clippingArea.Height)) == IntPtr.Zero ||
 				gdk_pixbuf_get_from_drawable (pixbuf, drawable, IntPtr.Zero, clippingArea.X, clippingArea.Y, 0, 0, clippingArea.Width, clippingArea.Height) == IntPtr.Zero)
 				throw new OutOfMemoryException ();
-			pixel_data = gdk_pixbuf_get_pixels (pixbuf);
+			pixelData = gdk_pixbuf_get_pixels (pixbuf);
 			rowstride = gdk_pixbuf_get_rowstride (pixbuf);
 		}
 		interface IStylePainter
 		{
-			void Paint (GtkStylePointer style, GdkWindowPointer window, GtkStateType state_type, GtkShadowType shadow_type, GdkRectangle area, GtkWidgetPointer widget, string detail, gint x, gint y, gint width, gint height);
+			void Paint (GtkStylePointer style, GdkWindowPointer window, GtkStateType stateType, GtkShadowType shadowType, GdkRectangle area, GtkWidgetPointer widget, string detail, gint x, gint y, gint width, gint height);
 		}
 		#region Style painters
 		class ButtonPainter : IStylePainter
 		{
-			public void Paint (GtkStylePointer style, GdkWindowPointer window, GtkStateType state_type, GtkShadowType shadow_type, GdkRectangle area, GtkWidgetPointer widget, string detail, gint x, gint y, gint width, gint height)
+			public void Paint (GtkStylePointer style, GdkWindowPointer window, GtkStateType stateType, GtkShadowType shadowType, GdkRectangle area, GtkWidgetPointer widget, string detail, gint x, gint y, gint width, gint height)
 			{
-				gtk_paint_box (style, window, state_type, shadow_type, ref area, widget, detail, x, y, width, height);
+				gtk_paint_box (style, window, stateType, shadowType, ref area, widget, detail, x, y, width, height);
 			}
 		}
 		class CheckBoxPainter : IStylePainter
 		{
-			public void Paint (GtkStylePointer style, GdkWindowPointer window, GtkStateType state_type, GtkShadowType shadow_type, GdkRectangle area, GtkWidgetPointer widget, string detail, gint x, gint y, gint width, gint height)
+			public void Paint (GtkStylePointer style, GdkWindowPointer window, GtkStateType stateType, GtkShadowType shadowType, GdkRectangle area, GtkWidgetPointer widget, string detail, gint x, gint y, gint width, gint height)
 			{
-				gtk_paint_check (style, window, state_type, shadow_type, ref area, widget, detail, x, y, width,height);
+				gtk_paint_check (style, window, stateType, shadowType, ref area, widget, detail, x, y, width,height);
 			}
 		}
 		#endregion
@@ -360,6 +362,8 @@ namespace System.Windows.Forms.VisualStyles
 		static extern GtkStylePointer gtk_rc_get_style (GtkWidgetPointer widget);
 		[DllImport (GtkLibraryName)]
 		static extern GtkStylePointer gtk_style_attach (GtkStylePointer style, GdkWindowPointer window);
+		[DllImport (GtkLibraryName)]
+		static extern void gtk_widget_style_get (GtkWidgetPointer widget, string property, out int value, IntPtr nullTerminator);
 		#region Widget creation
 		[DllImport (GtkLibraryName)]
 		static extern GtkWidgetPointer gtk_button_new ();
@@ -372,7 +376,7 @@ namespace System.Windows.Forms.VisualStyles
 		[DllImport (GtkLibraryName)]
 		static extern void gtk_paint_check (GtkStylePointer style, GdkWindowPointer window, GtkStateType state_type, GtkShadowType shadow_type, ref GdkRectangle area, GtkWidgetPointer widget, string detail, gint x, gint y, gint width, gint height);
 		#endregion
-		enum GtkShadowType
+		internal enum GtkShadowType
 		{
 			GTK_SHADOW_NONE,
 			GTK_SHADOW_IN,
@@ -398,5 +402,19 @@ namespace System.Windows.Forms.VisualStyles
 		static extern gpointer g_object_ref_sink (gpointer @object);
 		#endregion
 		#endregion
+	}
+	enum GtkPlusCheckBoxValue
+	{
+		Unchecked = GtkPlus.GtkShadowType.GTK_SHADOW_OUT,
+		Mixed = GtkPlus.GtkShadowType.GTK_SHADOW_ETCHED_IN,
+		Checked = GtkPlus.GtkShadowType.GTK_SHADOW_IN
+	}
+	enum GtkPlusState
+	{
+		Normal,
+		Pressed,
+		Hot,
+		Selected,
+		Disabled
 	}
 }

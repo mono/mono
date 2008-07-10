@@ -143,16 +143,86 @@ namespace System.Windows.Forms.VisualStyles
 		{
 			public static class CheckBox
 			{
-				public static VisualStyleElement CheckedDisabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 3, 8); } }
-				public static VisualStyleElement CheckedHot { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 3, 6); } }
-				public static VisualStyleElement CheckedNormal { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 3, 5); } }
-				public static VisualStyleElement CheckedPressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 3, 7); } }
-				public static VisualStyleElement MixedDisabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 3, 12); } }
-				public static VisualStyleElement MixedHot { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 3, 10); } }
-				public static VisualStyleElement MixedNormal { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 3, 9); } }
-				public static VisualStyleElement MixedPressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 3, 11); } }
-				public static VisualStyleElement UncheckedDisabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 3, 4); } }
-				public static VisualStyleElement UncheckedHot { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 3, 2); } }
+				public static VisualStyleElement CheckedDisabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_CHECKBOX,
+							(int)CHECKBOXSTATES.CBS_CHECKEDDISABLED);
+					}
+				}
+				public static VisualStyleElement CheckedHot {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_CHECKBOX,
+							(int)CHECKBOXSTATES.CBS_CHECKEDHOT);
+					}
+				}
+				public static VisualStyleElement CheckedNormal {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_CHECKBOX,
+							(int)CHECKBOXSTATES.CBS_CHECKEDNORMAL);
+					}
+				}
+				public static VisualStyleElement CheckedPressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_CHECKBOX,
+							(int)CHECKBOXSTATES.CBS_CHECKEDPRESSED);
+					}
+				}
+				public static VisualStyleElement MixedDisabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_CHECKBOX,
+							(int)CHECKBOXSTATES.CBS_MIXEDDISABLED);
+					}
+				}
+				public static VisualStyleElement MixedHot {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_CHECKBOX,
+							(int)CHECKBOXSTATES.CBS_MIXEDHOT);
+					}
+				}
+				public static VisualStyleElement MixedNormal {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_CHECKBOX,
+							(int)CHECKBOXSTATES.CBS_MIXEDNORMAL);
+					}
+				}
+				public static VisualStyleElement MixedPressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_CHECKBOX,
+							(int)CHECKBOXSTATES.CBS_MIXEDPRESSED);
+					}
+				}
+				public static VisualStyleElement UncheckedDisabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_CHECKBOX,
+							(int)CHECKBOXSTATES.CBS_UNCHECKEDDISABLED);
+					}
+				}
+				public static VisualStyleElement UncheckedHot {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_CHECKBOX,
+							(int)CHECKBOXSTATES.CBS_UNCHECKEDHOT);
+					}
+				}
 				public static VisualStyleElement UncheckedNormal {
 					get {
 						return VisualStyleElement.CreateElement (
@@ -161,7 +231,14 @@ namespace System.Windows.Forms.VisualStyles
 							(int)CHECKBOXSTATES.CBS_UNCHECKEDNORMAL);
 					}
 				}
-				public static VisualStyleElement UncheckedPressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 3, 3); } }
+				public static VisualStyleElement UncheckedPressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_CHECKBOX,
+							(int)CHECKBOXSTATES.CBS_UNCHECKEDPRESSED);
+					}
+				}
 			}
 			public static class GroupBox
 			{
@@ -1346,6 +1423,17 @@ namespace System.Windows.Forms.VisualStyles
 	}
 	enum CHECKBOXSTATES
 	{
-		CBS_UNCHECKEDNORMAL = 1
+		CBS_UNCHECKEDNORMAL = 1,
+		CBS_UNCHECKEDHOT,
+		CBS_UNCHECKEDPRESSED,
+		CBS_UNCHECKEDDISABLED,
+		CBS_CHECKEDNORMAL,
+		CBS_CHECKEDHOT,
+		CBS_CHECKEDPRESSED,
+		CBS_CHECKEDDISABLED,
+		CBS_MIXEDNORMAL,
+		CBS_MIXEDHOT,
+		CBS_MIXEDPRESSED,
+		CBS_MIXEDDISABLED
 	}
 }

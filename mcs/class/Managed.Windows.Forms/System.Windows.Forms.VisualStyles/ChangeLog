@@ -1,3 +1,12 @@
+2008-07-10  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* GtkPlus.cs, VisualStylesGtkPlus.cs: Implemented check box
+	size. Extended check box painting to allow all cases.
+	* VisualStyleElement.cs: Added some constants.
+	* VisualStylesEngine.cs: Now requires environment variable
+	MONO_VISUAL_STYLES to be set to GtkPlus in order to select the GTK+
+	implementation.
+
 2008-06-19  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* GtkPlus.cs: Initialize now catches DllNotFoundException from both GTK+

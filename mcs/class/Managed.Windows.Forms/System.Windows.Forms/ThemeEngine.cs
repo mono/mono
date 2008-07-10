@@ -51,7 +51,7 @@ namespace System.Windows.Forms
 				theme = new ThemeNice ();
 			} else if ( theme_var == "clearlooks" ) {
 				theme = new ThemeClearlooks ();
-			} else if (theme_var == "visualstyles" && XplatUI.ThemesEnabled) {
+			} else if (theme_var == "visualstyles" && Application.VisualStylesEnabled) {
 				theme = new ThemeVisualStyles ();
 			} else {
 				theme = new ThemeWin32Classic ();

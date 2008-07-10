@@ -71,15 +71,67 @@ namespace System.Windows.Forms.VisualStyles
 		{
 			return UxThemeDrawThemeBackground (hTheme, dc, iPartId, iStateId, bounds, bounds);
 		}
-		static bool DrawBackground (ThemeHandle themHandle, IDeviceContext dc, int part, int state, Rectangle bounds, Rectangle clipRectangle) {
-			switch (themHandle) {
+		static bool DrawBackground (ThemeHandle themeHandle, IDeviceContext dc, int part, int state, Rectangle bounds, Rectangle clipRectangle) {
+			switch (themeHandle) {
 			case ThemeHandle.BUTTON:
 				switch ((BUTTONPARTS)part) {
 				case BUTTONPARTS.BP_CHECKBOX:
+					GtkPlusState gtk_plus_state;
+					GtkPlusCheckBoxValue gtk_plus_check_box_value;
 					switch ((CHECKBOXSTATES)state) {
-					case CHECKBOXSTATES.CBS_UNCHECKEDNORMAL: GtkPlus.PaintCheckBox (dc, bounds, clipRectangle); return true;
-					default: return false;
+					case CHECKBOXSTATES.CBS_UNCHECKEDNORMAL:
+						gtk_plus_state = GtkPlusState.Normal;
+						gtk_plus_check_box_value = GtkPlusCheckBoxValue.Unchecked;
+						break;
+					case CHECKBOXSTATES.CBS_UNCHECKEDPRESSED:
+						gtk_plus_state = GtkPlusState.Pressed;
+						gtk_plus_check_box_value = GtkPlusCheckBoxValue.Unchecked;
+						break;
+					case CHECKBOXSTATES.CBS_UNCHECKEDHOT:
+						gtk_plus_state = GtkPlusState.Hot;
+						gtk_plus_check_box_value = GtkPlusCheckBoxValue.Unchecked;
+						break;
+					case CHECKBOXSTATES.CBS_UNCHECKEDDISABLED:
+						gtk_plus_state = GtkPlusState.Disabled;
+						gtk_plus_check_box_value = GtkPlusCheckBoxValue.Unchecked;
+						break;
+					case CHECKBOXSTATES.CBS_CHECKEDNORMAL:
+						gtk_plus_state = GtkPlusState.Normal;
+						gtk_plus_check_box_value = GtkPlusCheckBoxValue.Checked;
+						break;
+					case CHECKBOXSTATES.CBS_CHECKEDPRESSED:
+						gtk_plus_state = GtkPlusState.Pressed;
+						gtk_plus_check_box_value = GtkPlusCheckBoxValue.Checked;
+						break;
+					case CHECKBOXSTATES.CBS_CHECKEDHOT:
+						gtk_plus_state = GtkPlusState.Hot;
+						gtk_plus_check_box_value = GtkPlusCheckBoxValue.Checked;
+						break;
+					case CHECKBOXSTATES.CBS_CHECKEDDISABLED:
+						gtk_plus_state = GtkPlusState.Disabled;
+						gtk_plus_check_box_value = GtkPlusCheckBoxValue.Checked;
+						break;
+					case CHECKBOXSTATES.CBS_MIXEDNORMAL:
+						gtk_plus_state = GtkPlusState.Normal;
+						gtk_plus_check_box_value = GtkPlusCheckBoxValue.Mixed;
+						break;
+					case CHECKBOXSTATES.CBS_MIXEDPRESSED:
+						gtk_plus_state = GtkPlusState.Pressed;
+						gtk_plus_check_box_value = GtkPlusCheckBoxValue.Mixed;
+						break;
+					case CHECKBOXSTATES.CBS_MIXEDHOT:
+						gtk_plus_state = GtkPlusState.Hot;
+						gtk_plus_check_box_value = GtkPlusCheckBoxValue.Mixed;
+						break;
+					case CHECKBOXSTATES.CBS_MIXEDDISABLED:
+						gtk_plus_state = GtkPlusState.Disabled;
+						gtk_plus_check_box_value = GtkPlusCheckBoxValue.Mixed;
+						break;
+					default:
+						return false;
 					}
+					GtkPlus.CheckBoxPaint (dc, bounds, clipRectangle, gtk_plus_state, gtk_plus_check_box_value);
+					return true;
 				default: return false;
 				}
 			default: return false;
@@ -141,13 +193,25 @@ namespace System.Windows.Forms.VisualStyles
 		}
 		public int UxThemeGetThemePartSize (IntPtr hTheme, IDeviceContext dc, int iPartId, int iStateId, Rectangle bounds, ThemeSizeType type, out Size result)
 		{
-			result = Size.Empty;
-			return (int)S.S_FALSE;
+			return (int)(GetPartSize ((ThemeHandle)(int)hTheme, dc, iPartId, iStateId, bounds, true, type, out result) ? S.S_OK : S.S_FALSE);
 		}
 		public int UxThemeGetThemePartSize (IntPtr hTheme, IDeviceContext dc, int iPartId, int iStateId, ThemeSizeType type, out Size result)
 		{
+			return (int)(GetPartSize ((ThemeHandle)(int)hTheme, dc, iPartId, iStateId, Rectangle.Empty, false, type, out result) ? S.S_OK : S.S_FALSE);
+		}
+		bool GetPartSize (ThemeHandle themeHandle, IDeviceContext dc, int part, int state, Rectangle bounds, bool rectangleSpecified, ThemeSizeType type, out Size result)
+		{
+			switch (themeHandle) {
+			case ThemeHandle.BUTTON:
+				switch ((BUTTONPARTS)part) {
+				case BUTTONPARTS.BP_CHECKBOX:
+					result = GtkPlus.CheckBoxGetSize ();
+					return true;
+				}
+				break;
+			}
 			result = Size.Empty;
-			return (int)S.S_FALSE;
+			return false;
 		}
 		public int UxThemeGetThemePosition (IntPtr hTheme, int iPartId, int iStateId, PointProperty prop, out Point result)
 		{

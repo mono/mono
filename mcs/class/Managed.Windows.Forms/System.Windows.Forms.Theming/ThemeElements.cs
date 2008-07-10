@@ -54,7 +54,7 @@ namespace System.Windows.Forms.Theming
 		private static ThemeElementsDefault LoadTheme (string themeName) 
 		{
 			if (themeName == "visualstyles")
-				if (XplatUI.ThemesEnabled)
+				if (Application.VisualStylesEnabled)
 					return new ThemeElementsVisualStyles ();
 				else
 					return new ThemeElementsDefault ();

@@ -153,6 +153,7 @@ namespace System.Windows.Forms
 		private static ToolStrip keyboard_capture;
 #endif
 		private static VisualStyleState visual_style_state = VisualStyleState.ClientAndNonClientAreasEnabled;
+		static bool visual_styles_enabled;
 
 		private Application ()
 		{
@@ -486,6 +487,7 @@ namespace System.Windows.Forms
 
 		public static void EnableVisualStyles ()
 		{
+			visual_styles_enabled = true;
 			XplatUI.EnableThemes ();
 		}
 
@@ -1049,6 +1051,10 @@ namespace System.Windows.Forms
 			set { keyboard_capture = value; }
 		}
 #endif
+
+		internal static bool VisualStylesEnabled {
+			get { return visual_styles_enabled; }
+		}
 		#endregion
 		
 		#region Internal Methods
