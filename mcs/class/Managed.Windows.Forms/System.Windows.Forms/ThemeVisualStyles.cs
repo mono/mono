@@ -779,7 +779,7 @@ namespace System.Windows.Forms
 		#region Managed window
 		Rectangle ManagedWindowGetTitleBarRectangle (InternalWindowManager wm)
 		{
-			return new Rectangle (0, 0, wm.Form.Width, ManagedWindowTitleBarHeight (wm) + ManagedWindowBorderWidth (wm));
+			return new Rectangle (0, 0, wm.Form.Width, ManagedWindowTitleBarHeight (wm) + ManagedWindowBorderWidth (wm) + (wm.IsMinimized ? 1 : 0));
 		}
 		Region ManagedWindowGetWindowRegion (Form form)
 		{
@@ -815,35 +815,38 @@ namespace System.Windows.Forms
 			VisualStyleElement bottom_border_element;
 			ManagedWindowGetBorderVisualStyleElements (wm, out left_border_element, out right_border_element, out bottom_border_element);
 			if (!VisualStyleRenderer.IsElementDefined (title_bar_element) ||
+				(!wm.IsMinimized && (
 				!VisualStyleRenderer.IsElementDefined (left_border_element) ||
 				!VisualStyleRenderer.IsElementDefined (right_border_element) ||
-				!VisualStyleRenderer.IsElementDefined (bottom_border_element))
+				!VisualStyleRenderer.IsElementDefined (bottom_border_element))))
 				return base.ManagedWindowDrawTitleBarAndBorders (dc, clip, wm);
 			VisualStyleRenderer renderer = new VisualStyleRenderer (title_bar_element);
 			Rectangle title_bar_rectangle = ManagedWindowGetTitleBarRectangle (wm);
 			renderer.DrawBackground (dc, title_bar_rectangle, clip);
-			int border_width = ManagedWindowBorderWidth (wm);
-			renderer.SetParameters (left_border_element);
-			renderer.DrawBackground (dc, new Rectangle (
-				0,
-				title_bar_rectangle.Bottom,
-				border_width,
-				wm.Form.Height - title_bar_rectangle.Bottom
-				), clip);
-			renderer.SetParameters (right_border_element);
-			renderer.DrawBackground (dc, new Rectangle (
-				wm.Form.Width - border_width,
-				title_bar_rectangle.Bottom,
-				border_width,
-				wm.Form.Height - title_bar_rectangle.Bottom
-				), clip);
-			renderer.SetParameters (bottom_border_element);
-			renderer.DrawBackground (dc, new Rectangle (
-				0,
-				wm.Form.Height - border_width,
-				wm.Form.Width,
-				border_width
-				), clip);
+			if (!wm.IsMinimized) {
+				int border_width = ManagedWindowBorderWidth (wm);
+				renderer.SetParameters (left_border_element);
+				renderer.DrawBackground (dc, new Rectangle (
+					0,
+					title_bar_rectangle.Bottom,
+					border_width,
+					wm.Form.Height - title_bar_rectangle.Bottom
+					), clip);
+				renderer.SetParameters (right_border_element);
+				renderer.DrawBackground (dc, new Rectangle (
+					wm.Form.Width - border_width,
+					title_bar_rectangle.Bottom,
+					border_width,
+					wm.Form.Height - title_bar_rectangle.Bottom
+					), clip);
+				renderer.SetParameters (bottom_border_element);
+				renderer.DrawBackground (dc, new Rectangle (
+					0,
+					wm.Form.Height - border_width,
+					wm.Form.Width,
+					border_width
+					), clip);
+			}
 			return title_bar_rectangle;
 		}
 		static FormWindowState ManagedWindowGetWindowState (InternalWindowManager wm)
