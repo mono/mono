@@ -15897,6 +15897,58 @@
       </method>
     </type>
   </test>
+  <test name="gtest-linq-15.cs">
+    <type name="NameCollisionTest.Data">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="NameCollisionTest.Ex">
+      <method name="IEnumerable`1 Foo[T,TR](IEnumerable`1, System.Func`2[T,TR])">
+        <size>30</size>
+      </method>
+    </type>
+    <type name="NameCollisionTest.C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>78</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__0(NameCollisionTest.Data)">
+        <size>9</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__1(Int32)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="NameCollisionTest.Ex+&lt;Foo&gt;c__Iterator0`2[T,TR]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="TR System.Collections.Generic.IEnumerator`1[TR].get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>12</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>65</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[TR].GetEnumerator()">
+        <size>65</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>86</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>8</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-partial-01.cs">
     <type name="C">
       <method name="Void .ctor()">
