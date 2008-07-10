@@ -1,3 +1,9 @@
+2008-07-10  Raja R Harinath  <harinath@hurrynot.org>
+
+	Fix bug #314902
+	* cs-tokenizer.cs (is_punct): If a generic lookahead is looking
+	only one '>', and finds a '>>', abort the generic lookahead.
+
 2008-07-10  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #319902

@@ -833,7 +833,7 @@ namespace Mono.CSharp
 					return Token.OP_GE;
 				}
 
-				if (parsing_generic_less_than > 0) {
+				if (parsing_generic_less_than > 1 || (parsing_generic_less_than == 1 && d != '>')) {
 					parsing_generic_less_than--;
 					return Token.OP_GENERICS_GT;
 				}
