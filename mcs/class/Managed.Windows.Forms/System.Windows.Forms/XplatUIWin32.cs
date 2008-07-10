@@ -2740,10 +2740,19 @@ namespace System.Windows.Forms {
 
 		internal override Point GetMenuOrigin(IntPtr handle) {
 			Form form = Control.FromHandle (handle) as Form;
+			
 			if (form != null) {
-				Hwnd.Borders borders = Hwnd.GetBorders (form.GetCreateParams (), null);
-				return new Point(borders.left, borders.top);
+				if (form.FormBorderStyle == FormBorderStyle.None)
+					return Point.Empty;
+					
+				int bordersize = (form.Width - form.ClientSize.Width) / 2;
+					
+				if (form.FormBorderStyle == FormBorderStyle.FixedToolWindow || form.FormBorderStyle == FormBorderStyle.SizableToolWindow)
+					return new Point (bordersize, bordersize + SystemInformation.ToolWindowCaptionHeight);
+				else
+					return new Point (bordersize, bordersize + SystemInformation.CaptionHeight);
 			}
+			
 			return new Point(SystemInformation.FrameBorderSize.Width, SystemInformation.FrameBorderSize.Height + ThemeEngine.Current.CaptionHeight);
 		}
 

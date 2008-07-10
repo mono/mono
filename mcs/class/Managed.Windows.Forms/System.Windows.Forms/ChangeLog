@@ -1,3 +1,8 @@
+2008-07-10  Jonathan Pobst  <monkey@jpobst.com>
+
+	* XPlatUIWin32.cs: Change GetMenuOrigin to calculate borders better
+	for different window themes.  [Fixes bug #339140]
+
 2008-07-10  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* ThemeWin32Classic.cs: Implemented minimized window border width properly,
