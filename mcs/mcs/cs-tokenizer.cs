@@ -826,25 +826,29 @@ namespace Mono.CSharp
 				}
 				return Token.OP_LT;
 			} else if (c == '>') {
+				d = peek_char ();
+
+				if (d == '='){
+					doread = true;
+					return Token.OP_GE;
+				}
+
 				if (parsing_generic_less_than > 0) {
 					parsing_generic_less_than--;
 					return Token.OP_GENERICS_GT;
 				}
 
-				d = peek_char ();
-				if (d == '>'){
+				if (d == '>') {
 					get_char ();
 					d = peek_char ();
 
-					if (d == '='){
+					if (d == '=') {
 						doread = true;
 						return Token.OP_SHIFT_RIGHT_ASSIGN;
 					}
 					return Token.OP_SHIFT_RIGHT;
-				} else if (d == '='){
-					doread = true;
-					return Token.OP_GE;
 				}
+
 				return Token.OP_GT;
 			}
 			

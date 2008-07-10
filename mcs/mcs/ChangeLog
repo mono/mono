@@ -1,5 +1,10 @@
 2008-07-10  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #319902
+	* cs-tokenizer.cs: Always look-ahed for `>='  when tokenizing `>'.
+
+2008-07-10  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #406371
 	* statement.cs: Moved EmitSymbolInfo to Block.
 
