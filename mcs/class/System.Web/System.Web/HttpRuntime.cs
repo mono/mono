@@ -566,7 +566,7 @@ namespace System.Web {
 #endif
 		
 #if TARGET_JVM
-		[MonoNotSupported]
+		[MonoNotSupported ("UnloadAppDomain is not supported")]
 		public static void UnloadAppDomain ()
 		{
 			throw new NotImplementedException ("UnloadAppDomain is not supported");

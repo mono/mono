@@ -1,3 +1,9 @@
+2008-07-10  Roei Erez  <roeie@mainsoft.com>
+
+	* Page.cs: Differentiate between IPostBackEventHandler that was registered by the user, 
+	and one that was given as post parameter, so that in case ther post data may trigger both 
+	IPostBackEventHandler and IPostBackDataHandler, only the IPostBackDataHandler is actually triggered.
+
 2008-07-09  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* DataBinder.cs (GetDataItem): Commited stupid code.
