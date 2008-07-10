@@ -160,6 +160,7 @@ namespace Mono.CSharp {
 
 		public interface IMessageRecorder
 		{
+			bool IsEmpty { get; }
 			void EndSession ();
 			void AddMessage (AbstractMessage msg);
 			bool PrintMessages ();
@@ -239,6 +240,12 @@ namespace Mono.CSharp {
 					session_messages = new ArrayList ();
 
 				session_messages.Add (msg);
+			}
+
+			public bool IsEmpty {
+				get {
+					return merged_messages == null && common_messages == null;
+				}
 			}
 
 			//

@@ -4170,8 +4170,12 @@ namespace Mono.CSharp {
 			}
 
 			Report.SetMessageRecorder (prev_recorder);
-			if (msg_recorder != null && msg_recorder.PrintMessages ())
+			if (msg_recorder != null && !msg_recorder.IsEmpty) {
+				if (!may_fail)
+					msg_recorder.PrintMessages ();
+
 				return null;
+			}
 			
 			int candidate_top = candidates.Count;
 
