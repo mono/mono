@@ -1,3 +1,8 @@
+2008-07-10  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (mini_method_compile): Disable generics sharing when
+	running in the debugger.
+
 2008-07-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_method_to_ir): Create the got var in CEE_REFANYVAL.
