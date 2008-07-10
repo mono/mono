@@ -2304,6 +2304,9 @@ namespace Mono.CSharp {
 			ec.Mark (StartLocation, true);
 			DoEmit (ec);
 
+			if (SymbolWriter.HasSymbolWriter)
+				EmitSymbolInfo (ec);
+
 			ec.CurrentBlock = prev_block;
 		}
 
@@ -2464,18 +2467,14 @@ namespace Mono.CSharp {
 			if (am_storey != null)
 				am_storey.EmitHoistedVariables (ec);
 
-			bool emit_debug_info = SymbolWriter.HasSymbolWriter;
-			bool is_lexical_block = Parent != null && !(am_storey is IteratorStorey);
-			if (emit_debug_info && is_lexical_block)
+			bool emit_debug_info = SymbolWriter.HasSymbolWriter && Parent != null && !(am_storey is IteratorStorey);
+			if (emit_debug_info)
 				ec.BeginScope ();
 
 			base.Emit (ec);
 
-			if (emit_debug_info) {
-				EmitSymbolInfo (ec);
-				if (is_lexical_block)
-					ec.EndScope ();
-			}
+			if (emit_debug_info)
+				ec.EndScope ();
 		}
 
 		public override void EmitMeta (EmitContext ec)
