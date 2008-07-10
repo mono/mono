@@ -597,7 +597,8 @@ namespace System.Windows.Forms {
 
 		protected override void HandleWindowMove (Message m)
 		{
-			Point move = MouseMove (m);
+			Point pos = Cursor.Position;
+			Point move = MouseMove (pos);
 			
 			if (move.X == 0 && move.Y == 0)
 				return;
@@ -612,7 +613,8 @@ namespace System.Windows.Forms {
 				client.Height -= SystemInformation.HorizontalScrollBarHeight;
 
 			UpdateVP (x, y, form.Width, form.Height);
-			start = Cursor.Position;
+
+			start = pos;
 		}
 
 		protected override bool HandleNCMouseMove (ref Message m)

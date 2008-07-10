@@ -633,7 +633,7 @@ namespace System.Windows.Forms {
 	
 		protected virtual void HandleWindowMove (Message m)
 		{
-			Point move = MouseMove (m);
+			Point move = MouseMove (Cursor.Position);
 
 			UpdateVP (virtual_position.X + move.X, virtual_position.Y + move.Y,
 					virtual_position.Width, virtual_position.Height);
@@ -805,10 +805,9 @@ namespace System.Windows.Forms {
 		{
 		}
 
-		protected Point MouseMove (Message m)
+		protected Point MouseMove (Point pos)
 		{
-			Point cp = Cursor.Position;
-			return new Point (cp.X - start.X, cp.Y - start.Y);
+			return new Point (pos.X - start.X, pos.Y - start.Y);
 		}
 
 		protected virtual void DrawVirtualPosition (Rectangle virtual_position)

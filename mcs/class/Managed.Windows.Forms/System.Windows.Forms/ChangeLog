@@ -1,5 +1,14 @@
 2008-07-10  Jonathan Pobst  <monkey@jpobst.com>
 
+	* InternalWindowManager.cs: Change MouseMove to take a point, so
+	we can use the same point later on.
+	* MdiWindowManager.cs: Store point sent to MouseMove so we can
+	later reset to it.  On Windows, the Cursor.Position had already
+	changed by the time we were resetting to it.
+	[Fixes bug #363239]
+
+2008-07-10  Jonathan Pobst  <monkey@jpobst.com>
+
 	* InternalWindowManager.cs: Ignore mouse actions on TitleButtons that
 	are inactive.
 	* ThemeWin32Classic.cs: Disable or hide MinimizeBox/MaximizeBox if
