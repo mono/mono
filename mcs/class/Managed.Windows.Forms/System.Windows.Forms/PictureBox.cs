@@ -174,7 +174,9 @@ namespace System.Windows.Forms {
 			get { return image_location; }
 			set {
 				image_location = value;
-				Load (value);
+
+				if (!string.IsNullOrEmpty (value))
+					Load (value);
 			}
 		}
 		
