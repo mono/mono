@@ -71,6 +71,9 @@ namespace System.Reflection
 		extern MethodInfo GetCorrespondingInflatedMethod (MethodInfo generic);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern FieldInfo GetCorrespondingInflatedField (string generic);
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern ConstructorInfo GetCorrespondingInflatedConstructor (ConstructorInfo generic);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -179,6 +182,8 @@ namespace System.Reflection
 
 		internal override FieldInfo GetField (FieldInfo fromNoninstanciated)
 		{
+			initialize ();
+
 #if NET_2_0
 			if (fromNoninstanciated is FieldBuilder) {
 				FieldBuilder fb = (FieldBuilder)fromNoninstanciated;
@@ -189,7 +194,7 @@ namespace System.Reflection
 				return (FieldInfo)fields [fb];
 			}
 #endif
-			return null;
+			return GetCorrespondingInflatedField (fromNoninstanciated.Name);
 		}
 		
 		public override MethodInfo[] GetMethods (BindingFlags bf)

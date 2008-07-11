@@ -1,3 +1,7 @@
+2008-07-11  Marek Safar  <marek.safar@gmail.com>
+
+	* MonoGenericClass.cs (GetField): Put back removed code.
+
 2008-07-04  Rodrigo Kumpera  <rkumpera@n ovell.com>
 
 	* MethodBase.cs (GetMethodFromHandle): Fix a warning in
