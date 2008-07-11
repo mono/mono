@@ -1,3 +1,8 @@
+2008-07-11 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* unverifiable_funptr_double_free_regression.il: Regression
+	test for double free of funptrs.
+
 2008-06-24 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* valid_generic_exception_catch_clause_type.cs: Regression
