@@ -1,3 +1,17 @@
+2008-07-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-arm.c (mono_arch_get_call_filter_full): Initialize ji.
+
+	* aot-runtime.c (mono_aot_get_plt_info_offset): New helper function to
+	return the plt info offset belonging to a given plt entry.
+
+	* mini-trampolines.c (mono_aot_plt_trampoline): Use 
+	mono_aot_get_plt_info_offset.
+	
+	* aot-runtime.c aot-compiler.c tramp-arm.c: Change the arm plt code to be
+	similar to the amd64 code by makeing jumps through a separate jump table 
+	instead of embedding the jump addresses into the code.
+
 2008-07-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_method_to_ir): Disable aot for calling ldtoken in a generic
