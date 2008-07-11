@@ -1,5 +1,11 @@
 2008-07-11 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* invalid_bad_method_instantiation.il: Test for 
+	instantiations using VAR or MVAR that are invalid
+	in the current context.
+
+2008-07-11 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* unverifiable_funptr_double_free_regression.il: Regression
 	test for double free of funptrs.
 
