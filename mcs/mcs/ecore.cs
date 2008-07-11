@@ -4627,7 +4627,7 @@ namespace Mono.CSharp {
 	///   Fully resolved expression that evaluates to a Field
 	/// </summary>
 	public class FieldExpr : MemberExpr, IAssignMethod, IMemoryLocation, IVariable {
-		public readonly FieldInfo FieldInfo;
+		public FieldInfo FieldInfo;
 		readonly Type constructed_generic_type;
 		VariableInfo variable_info;
 		
@@ -5102,6 +5102,12 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ();
 #endif			
 		}
+		
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			FieldInfo = storey.MutateField (FieldInfo);
+			base.MutateHoistedGenericType (storey);
+		}		
 	}
 
 	

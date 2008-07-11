@@ -452,6 +452,20 @@ namespace Mono.CSharp {
 #endif
 			return ctor;
 		}
+		
+		public FieldInfo MutateField (FieldInfo field)
+		{
+#if GMCS_SOURCE
+			if (TypeManager.IsGenericType (field.DeclaringType)) {
+				Type t = MutateGenericType (field.DeclaringType);
+				if (t != field.DeclaringType) {
+					// TODO: It should throw on imported types
+					return TypeBuilder.GetField (t, field);
+				}
+			}
+#endif
+			return field;
+		}		
 
 #if GMCS_SOURCE
 		protected Type MutateArrayType (Type array)
