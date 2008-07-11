@@ -45,13 +45,7 @@ namespace System.Windows.Forms
 				theme_var = theme_var.ToLower ();
 			}
 
-			if (theme_var == "gtk") {
-				theme = new ThemeGtk ();
-			} else if ( theme_var == "nice" ) {
-				theme = new ThemeNice ();
-			} else if ( theme_var == "clearlooks" ) {
-				theme = new ThemeClearlooks ();
-			} else if (theme_var == "visualstyles" && Application.VisualStylesEnabled) {
+			if (theme_var == "visualstyles" && Application.VisualStylesEnabled) {
 				theme = new ThemeVisualStyles ();
 			} else {
 				theme = new ThemeWin32Classic ();

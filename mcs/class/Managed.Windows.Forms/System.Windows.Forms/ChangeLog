@@ -1,5 +1,10 @@
 2008-07-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ThemeEngine.cs: Remove the clearlooks, nice, and old gtk themes.
+	They are bit-rotted and have always been listed as "unsupported".
+
+2008-07-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* PictureBox.cs: Don't crash if ImageLocation is set to "" or null.
 
 2008-07-11  George Giolfan  <georgegiolfan@yahoo.com>

@@ -1,3 +1,9 @@
+2008-07-11  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms.dll.sources: Remove the clearlooks, nice,
+	and old gtk themes.  They are bit-rotted and have always been listed
+	as "unsupported".  
+
 2008-07-05  Andreia Gaita <avidigal@novell.com> 
 
 	* SWF2k5.csproj, build-csproj2k5: Fix namespaces on embedded resources
