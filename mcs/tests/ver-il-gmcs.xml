@@ -11893,6 +11893,32 @@
       </method>
     </type>
   </test>
+  <test name="gtest-anon-37.cs">
+    <type name="Wrap`1[U]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Run[T](Wrap`1[T])">
+        <size>56</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>16</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Run&gt;c__AnonStorey0`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__0()">
+        <size>17</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-4.cs">
     <type name="Test">
       <method name="Void .ctor()">
