@@ -1143,6 +1143,21 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 		
+		[Test]
+		public void UnparentForm ()
+		{
+			Form f1 = new Form ();
+			f1.Show ();
+
+			Form f2 = new Form ();
+			f2.TopLevel = false;
+			f2.Parent = f1;
+			Assert.AreSame (f1, f2.Parent, "#1");
+			f2.Show ();
+			f2.Parent = null;
+			Assert.IsNull (f2.Parent, "#2");
+		}
+
 		[Test] // bug #80791
 		public void ClientSizeTest ()
 		{
