@@ -1,5 +1,10 @@
 2008-07-11 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c: Verify if type and method instantiations
+	don't have invalid VAR or MVAR arguments.
+
+2008-07-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: Fix double free of function pointer list.
 
 2008-07-11 Rodrigo Kumpera  <rkumpera@novell.com>
