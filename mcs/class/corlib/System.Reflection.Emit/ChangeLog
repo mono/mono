@@ -1,3 +1,7 @@
+2008-07-11  Marek Safar  <marek.safar@gmail.com>
+
+	* ModuleBuilder.cs: Couple of micro optimizations.
+
 2008-07-03  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* SignatureHelper.cs: Fix parameter names

@@ -253,12 +253,15 @@ namespace System.Reflection.Emit {
 		}
 
 		private TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packingSize, int typesize) {
-			if (name != null && name_cache.Contains (name))
-				throw new ArgumentException ("Duplicate type name within an assembly.");
-
 			TypeBuilder res = new TypeBuilder (this, name, attr, parent, interfaces, packingSize, typesize, null);
 			AddType (res);
-			name_cache.Add (name, res);
+			
+			try {
+				name_cache.Add (name, res);
+			} catch {
+				throw new ArgumentException ("Duplicate type name within an assembly.");
+			}
+			
 			return res;
 		}
 
@@ -269,9 +272,7 @@ namespace System.Reflection.Emit {
 		
 		internal TypeBuilder GetRegisteredType (string name)
 		{
-			if (name_cache == null)
-				return null;
-			return (TypeBuilder)name_cache [name];
+			return (TypeBuilder) name_cache [name];
 		}
 
 #if NET_2_0
@@ -405,9 +406,8 @@ namespace System.Reflection.Emit {
 				throw new TypeLoadException (orig);
 			if (result != null && (modifiers != null)) {
 				Type mt = create_modified_type (result, modifiers);
-				if (mt is TypeBuilder)
-					result = mt as TypeBuilder;
-				else
+				result = mt as TypeBuilder;
+				if (result == null)
 					return mt;
 			}
 			if (result != null && result.is_created)
@@ -464,7 +464,7 @@ namespace System.Reflection.Emit {
 		public override Type [] GetTypes ()
 		{
 			if (types == null)
-				return new TypeBuilder [0];
+				return Type.EmptyTypes;
 
 			int n = num_types;
 			Type [] copy = new Type [n];
