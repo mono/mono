@@ -780,7 +780,7 @@ namespace System.Windows.Forms
 		#region Managed window
 		Rectangle ManagedWindowGetTitleBarRectangle (InternalWindowManager wm)
 		{
-			return new Rectangle (0, 0, wm.Form.Width, ManagedWindowTitleBarHeight (wm) + ManagedWindowBorderWidth (wm) + (wm.IsMinimized ? 1 : 0));
+			return new Rectangle (0, 0, wm.Form.Width, ManagedWindowTitleBarHeight (wm) + ManagedWindowBorderWidth (wm) * (wm.IsMinimized ? 2 : 1));
 		}
 		Region ManagedWindowGetWindowRegion (Form form)
 		{

@@ -1,3 +1,7 @@
+2008-07-11  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* ThemeVisualStyles.cs: Fixed minimized window height adjustment.
+
 2008-07-10  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ListBox.cs: Make sure last_item_visible gets reset before we try
