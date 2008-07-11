@@ -1028,6 +1028,7 @@ namespace System.Windows.Forms
 		public abstract bool ManagedWindowTitleButtonHasHotElementStyle (TitleButton button, Form form);
 		public abstract void ManagedWindowDrawMenuButton (Graphics dc, TitleButton button, Rectangle clip, InternalWindowManager wm);
 		public abstract void ManagedWindowOnSizeInitializedOrChanged (Form form);
+		public const int ManagedWindowSpacingAfterLastTitleButton = 2;
 		#endregion
 
 		#region	ControlPaint Methods

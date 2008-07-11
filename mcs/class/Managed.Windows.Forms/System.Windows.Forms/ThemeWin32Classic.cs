@@ -6146,7 +6146,7 @@ namespace System.Windows.Forms
 			int btw = btsize.Width;
 			int bth = btsize.Height;
 			int top = bw + 2;
-			int left = form.Width - bw - btw - 2;
+			int left = form.Width - bw - btw - ManagedWindowSpacingAfterLastTitleButton;
 			
 			if ((!wm.IsToolWindow || wm.IsMinimized) && wm.HasBorders) {
 				buttons.CloseButton.Rectangle = new Rectangle (left, top, btw, bth);

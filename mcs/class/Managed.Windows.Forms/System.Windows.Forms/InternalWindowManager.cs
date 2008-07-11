@@ -642,9 +642,17 @@ namespace System.Windows.Forms {
 		private void HandleSizing (Message m)
 		{
 			Rectangle pos = virtual_position;
-			Size minimum_size = SystemInformation.MinWindowTrackSize;
-			int mw = minimum_size.Width;
-			int mh = minimum_size.Height;
+			int mw;
+			int mh;
+			if (IsToolWindow) {
+				int border_width = BorderWidth;
+				mw = 2 * (border_width + Theme.ManagedWindowSpacingAfterLastTitleButton) + ThemeEngine.Current.ManagedWindowButtonSize (this).Width;
+				mh = 2 * border_width + TitleBarHeight;
+			} else {
+				Size minimum_size = SystemInformation.MinWindowTrackSize;
+				mw = minimum_size.Width;
+				mh = minimum_size.Height;
+			}
 			int x = Cursor.Position.X;
 			int y = Cursor.Position.Y;
 

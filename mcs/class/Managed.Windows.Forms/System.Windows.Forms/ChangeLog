@@ -1,3 +1,10 @@
+2008-07-11  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* InternalWindowManager.cs: HandleSizing: Implemented a better minimum
+	tracking size for tool windows.
+	* Theme.cs, ThemeWin32Classic.cs : Extracted
+	ManagedWindowSpacingAfterLastTitleButton.
+
 2008-07-11  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ThemeEngine.cs: Remove the clearlooks, nice, and old gtk themes.
