@@ -39,8 +39,18 @@ namespace Mono.CSharp.Linq
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			int counter = TransparentParameter.Counter;
+
 			Expression e = BuildQueryClause (ec, null, null, null);
 			e = e.Resolve (ec);
+
+			//
+			// Reset counter in probing mode to ensure that all transparent
+			// identifier anonymous types are created only once
+			//
+			if (ec.IsInProbingMode)
+				TransparentParameter.Counter = counter;
+
 			return e;
 		}
 
@@ -686,11 +696,11 @@ namespace Mono.CSharp.Linq
 	//
 	public class TransparentParameter : ImplicitLambdaParameter
 	{
-		static int counter;
+		public static int Counter;
 		const string ParameterNamePrefix = "<>__TranspIdent";
 
 		public TransparentParameter (Location loc)
-			: base (ParameterNamePrefix + counter++, loc)
+			: base (ParameterNamePrefix + Counter++, loc)
 		{
 		}
 	}

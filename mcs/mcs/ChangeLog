@@ -1,5 +1,9 @@
 2008-07-11  Marek Safar  <marek.safar@gmail.com>
 
+	* linq.cs: Reset tranparent parameter counter in probing mode.
+
+2008-07-11  Marek Safar  <marek.safar@gmail.com>
+
 	* anonymous.cs: Mutate anonymous method type.
 
 2008-07-11  Marek Safar  <marek.safar@gmail.com>
