@@ -1269,6 +1269,13 @@ namespace System.Web.UI
 #endif
 		void RenderControl (HtmlTextWriter writer)
 		{
+#if NET_2_0
+			if (this.adapter != null) {
+				RenderControl (writer, this.adapter);
+				return;
+			}
+#endif
+
 			if ((stateMask & VISIBLE) != 0) {
 				HttpContext ctx = Context;
 				TraceContext trace = (ctx != null) ? ctx.Trace : null;
