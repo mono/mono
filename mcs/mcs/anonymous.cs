@@ -1484,6 +1484,11 @@ namespace Mono.CSharp {
 #endif
 			return false;
 		}
+		
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			type = storey.MutateType (type);
+		}
 
 		public static void Error_AddressOfCapturedVar (string name, Location loc)
 		{

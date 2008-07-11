@@ -1,5 +1,9 @@
 2008-07-11  Marek Safar  <marek.safar@gmail.com>
 
+	* anonymous.cs: Mutate anonymous method type.
+
+2008-07-11  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs, anonymous.cs: Mutate field expressions.
 
 2008-07-10  Marek Safar  <marek.safar@gmail.com>
