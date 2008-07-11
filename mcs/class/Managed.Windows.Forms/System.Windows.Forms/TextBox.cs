@@ -114,6 +114,10 @@ namespace System.Windows.Forms {
 		private void TextBox_LostFocus(object sender, EventArgs e) {
 			if (hide_selection)
 				document.InvalidateSelectionArea ();
+#if NET_2_0
+			if (auto_complete_listbox.Visible)
+				auto_complete_listbox.HideListBox (false);
+#endif
 		}
 
 #if NET_2_0
