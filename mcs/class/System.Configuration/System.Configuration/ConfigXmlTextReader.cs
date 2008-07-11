@@ -57,12 +57,6 @@ internal class ConfigXmlTextReader : XmlTextReader, IConfigErrorInfo
 	public string Filename {
 		get { return fileName; }
 	}
-
-	public int LineNumber {
-		get {
-			return base.LineNumber;
-		}
-	}
 }
 
 #endif

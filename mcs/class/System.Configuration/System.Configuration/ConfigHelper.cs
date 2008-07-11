@@ -47,11 +47,6 @@ namespace System.Configuration
 		{
 		}
 		
-		public ConfigNameValueCollection (IHashCodeProvider hashProvider, IComparer comparer)
-			: base(hashProvider, comparer)
-		{
-		}
-		
 		public void ResetModified ()
 		{
 			modified = false;
@@ -67,5 +62,4 @@ namespace System.Configuration
 			modified = true;
 		}
 	}
-
 }

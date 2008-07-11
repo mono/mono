@@ -73,7 +73,7 @@ namespace System.Configuration {
 		
 		protected void ThrowException (string text, XmlReader reader)
 		{
-			IXmlLineInfo li = reader as IXmlLineInfo;
+//			IXmlLineInfo li = reader as IXmlLineInfo;
 			throw new ConfigurationErrorsException (text, reader);
 		}
 		
