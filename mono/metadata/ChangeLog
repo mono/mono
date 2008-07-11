@@ -1,3 +1,8 @@
+2008-07-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object.c (mono_string_to_utf8): Comment the new code as it
+	breaks under eglib.
+
 2008-07-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* object.c (mono_string_to_utf8): Avoid allocating a temp array.
