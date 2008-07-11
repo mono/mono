@@ -243,5 +243,16 @@ namespace MonoTests.I18N.West
 			byte [] actual = e437.GetBytes (l);
 			Assert.AreEqual (expected, actual);
 		}
+
+		[Test]
+		public void Bug408381 ()
+		{
+			byte [] expected = new byte [] {0x27, 0x3F, 0x27};
+			byte [] utf8bytes = new byte [] {0x27, 0xC2, 0x92, 0x27};
+			string strToEncode = Encoding.UTF8.GetString(utf8bytes);
+			Encoding cp1252 = Encoding.GetEncoding (1252);
+			byte [] actual = cp1252.GetBytes (strToEncode);
+			Assert.AreEqual (expected, actual);
+		}
 	}
 }

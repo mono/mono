@@ -1,3 +1,8 @@
+2008-07-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CP1252.cs : continue after fallback was missing.
+	  Fixed bug #408381, patch by Jonathan Gagnon.
+
 2008-05-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : added Test/texts/*.txt to EXTRA_DISTFILES.

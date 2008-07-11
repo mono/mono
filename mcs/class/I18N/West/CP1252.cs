@@ -236,6 +236,7 @@ public class CP1252 : ByteEncoding
 					else
 #if NET_2_0
 						HandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);
+						continue;
 #else
 						ch = 0x3F;
 #endif
