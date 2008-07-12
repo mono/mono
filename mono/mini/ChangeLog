@@ -1,3 +1,7 @@
+2008-07-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c aot-runtime.c tramp-arm.c: Implement aot-only support.
+
 2008-07-11  Martin Baulig  <martin@ximian.com>
 
 	* debug-debugger.h
