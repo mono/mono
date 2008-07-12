@@ -1,5 +1,8 @@
 2008-07-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.h aot-compiler.c aot-runtime.c: Store the plt info offset inline
+	on amd64 similar to the way it is done on arm.
+
 	* mini.h (MONO_AOT_FILE_VERSION): Bump AOT file format version.
 
 	* aot-runtime.c (load_aot_module): Rename 'info' to 'amodule' for 
