@@ -1,3 +1,17 @@
+2008-07-11  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.h
+	(MonoDebuggerEvent): Add `MONO_DEBUGGER_EVENT_INTERRUPTION_REQUEST'.
+
+	* mono-debug-debugger.c
+	(_mono_debugger_interruption_request): New global volatile variable.
+	(mono_debugger_check_interruption): New public function.
+
+	* threads.c
+	(mono_thread_current_check_pending_interrupt): Call
+	mono_debugger_check_interruption().
+	(mono_thread_interruption_checkpoint_request): Likewise.
+
 2008-07-11 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: Add more type checks for loaded types. Verify the result

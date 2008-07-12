@@ -1,3 +1,8 @@
+2008-07-11  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h
+	(MonoDebuggerInfo): Add `interruption_request'.
+
 2008-07-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_plt): Remove some dead code.
