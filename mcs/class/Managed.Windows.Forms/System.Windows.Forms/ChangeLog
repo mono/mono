@@ -1,3 +1,8 @@
+2008-07-12  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* ThemeVisualStyles.cs: Disabled when Application.VisualStyleState is
+	NonClientAreaEnabled until our VisualStyles is modified to allow it.
+
 2008-07-12  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TextBox.cs: Fixed NRE in LostFocus. Avoid unnecessary initialization.

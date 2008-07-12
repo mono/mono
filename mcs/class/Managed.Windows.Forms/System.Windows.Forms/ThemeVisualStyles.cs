@@ -62,8 +62,8 @@ namespace System.Windows.Forms
 				Application.VisualStyleState == VisualStyleState.ClientAreaEnabled);
 			render_non_client_areas =
 				visual_styles_is_enabled_by_user &&
-				(Application.VisualStyleState == VisualStyleState.ClientAndNonClientAreasEnabled ||
-				Application.VisualStyleState == VisualStyleState.NonClientAreaEnabled);
+				(Application.VisualStyleState == VisualStyleState.ClientAndNonClientAreasEnabled/* ||
+				Application.VisualStyleState == VisualStyleState.NonClientAreaEnabled*/);
 		}
 
 		public static bool RenderClientAreas {
