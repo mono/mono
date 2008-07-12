@@ -1,5 +1,14 @@
 2008-07-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (MONO_AOT_FILE_VERSION): Bump AOT file format version.
+
+	* aot-runtime.c (load_aot_module): Rename 'info' to 'amodule' for 
+	consistency, normalize error messages, avoid loading aot-only modules in
+	normal mode.
+
+	* driver.c (mono_main): Rename --aot-only command line option to --full-aot
+	for consistency.
+
 	* aot-compiler.c aot-runtime.c tramp-arm.c: Implement aot-only support.
 
 2008-07-11  Martin Baulig  <martin@ximian.com>
