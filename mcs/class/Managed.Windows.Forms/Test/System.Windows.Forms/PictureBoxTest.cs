@@ -41,19 +41,122 @@ namespace MonoTests.System.Windows.Forms
 
 			myForm.Dispose ();
 		}
-		
+
 #if NET_2_0
 		[Test]
 		[Category ("NotWorking")]
-		public void ImageLocation ()
+		public void ImageLocation_Async ()
 		{
+			Form f = new Form ();
 			PictureBox pb = new PictureBox ();
+			f.Controls.Add (pb);
+			f.Show ();
+
+			Assert.IsNull (pb.ImageLocation, "#A");
+
+			pb.ImageLocation = "M.gif";
+			Application.DoEvents ();
+
+			Assert.AreEqual ("M.gif", pb.ImageLocation, "#B1");
+			Assert.AreSame (pb.InitialImage, pb.Image, "#B2");
+
+			using (Stream s = this.GetType ().Assembly.GetManifestResourceStream ("32x32.ico")) {
+				pb.Image = Image.FromStream (s);
+			}
+			Application.DoEvents ();
+
+			Assert.AreEqual ("M.gif", pb.ImageLocation, "#C1");
+			Assert.IsNotNull (pb.Image, "#C2");
+			Assert.AreEqual (60, pb.Image.Height, "#C3");
+			Assert.AreEqual (150, pb.Image.Width, "#C4");
+
+			pb.ImageLocation = null;
+			Application.DoEvents ();
+
+			Assert.IsNull (pb.ImageLocation, "#D1");
+			Assert.IsNull (pb.Image, "#D2");
+
+			pb.ImageLocation = "M.gif";
+			Application.DoEvents ();
+
+			Assert.AreEqual ("M.gif", pb.ImageLocation, "#E1");
+			Assert.IsNull (pb.Image, "#E2");
+
+			pb.Load ();
+			Application.DoEvents ();
+
+			Assert.AreEqual ("M.gif", pb.ImageLocation, "#F1");
+			Assert.IsNotNull (pb.Image, "#F2");
+			Assert.AreEqual (60, pb.Image.Height, "#F3");
+			Assert.AreEqual (150, pb.Image.Width, "#F4");
+
+			pb.ImageLocation = null;
+			Application.DoEvents ();
+
+			Assert.IsNull (pb.ImageLocation, "#G1");
+			Assert.IsNull (pb.Image, "#G2");
+
+			pb.ImageLocation = "M.gif";
+			pb.Load ();
+			pb.ImageLocation = "XYZ.gif";
+			Application.DoEvents ();
+
+			Assert.AreEqual ("XYZ.gif", pb.ImageLocation, "#H1");
+			Assert.IsNotNull (pb.Image, "#H2");
+			Assert.AreEqual (60, pb.Image.Height, "#H3");
+			Assert.AreEqual (150, pb.Image.Width, "#H4");
+
+			pb.ImageLocation = string.Empty;
+			Application.DoEvents ();
+
+			Assert.AreEqual (string.Empty, pb.ImageLocation, "#I1");
+			Assert.IsNull (pb.Image, "#I2");
+
+			using (Stream s = this.GetType ().Assembly.GetManifestResourceStream ("32x32.ico")) {
+				pb.Image = Image.FromStream (s);
+			}
+			Application.DoEvents ();
+
+			Assert.AreEqual (string.Empty, pb.ImageLocation, "#J1");
+			Assert.IsNotNull (pb.Image, "#J2");
+			Assert.AreEqual (96, pb.Image.Height, "#J3");
+			Assert.AreEqual (96, pb.Image.Width, "#J4");
+
+			pb.Load ("M.gif");
+			Application.DoEvents ();
+
+			Assert.AreEqual ("M.gif", pb.ImageLocation, "#K1");
+			Assert.IsNotNull (pb.Image, "#K2");
+			Assert.AreEqual (60, pb.Image.Height, "#K3");
+			Assert.AreEqual (150, pb.Image.Width, "#K4");
+
+			pb.ImageLocation = null;
+			Application.DoEvents ();
+
+			Assert.IsNull (pb.ImageLocation, "#L1");
+			Assert.IsNull (pb.Image, "#L2");
+
+			f.Dispose ();
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImageLocation_Sync ()
+		{
+			Form f = new Form ();
+			PictureBox pb = new PictureBox ();
+			pb.WaitOnLoad = true;
+			f.Controls.Add (pb);
+			f.Show ();
+
 			Assert.IsNull (pb.ImageLocation, "#A");
 
 			pb.ImageLocation = "M.gif";
 
 			Assert.AreEqual ("M.gif", pb.ImageLocation, "#B1");
-			Assert.IsNull (pb.Image, "#B2");
+			Assert.IsNotNull (pb.Image, "#B2");
+			Assert.AreEqual (60, pb.Image.Height, "#B3");
+			Assert.AreEqual (150, pb.Image.Width, "#B4");
 
 			using (Stream s = this.GetType ().Assembly.GetManifestResourceStream ("32x32.ico")) {
 				pb.Image = Image.FromStream (s);
@@ -75,8 +178,8 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual ("M.gif", pb.ImageLocation, "#E1");
 			Assert.IsNotNull (pb.Image, "#E2");
-			Assert.AreEqual (96, pb.Image.Height, "#E3");
-			Assert.AreEqual (96, pb.Image.Width, "#E4");
+			Assert.AreEqual (60, pb.Image.Height, "#E3");
+			Assert.AreEqual (150, pb.Image.Width, "#E4");
 
 			pb.Load ();
 
@@ -90,40 +193,49 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNull (pb.ImageLocation, "#G1");
 			Assert.IsNull (pb.Image, "#G2");
 
-			pb.ImageLocation = "M.gif";
-			pb.Load ();
-			pb.ImageLocation = "XYZ.gif";
-
-			Assert.AreEqual ("XYZ.gif", pb.ImageLocation, "#H1");
-			Assert.IsNotNull (pb.Image, "#H2");
-			Assert.AreEqual (60, pb.Image.Height, "#H3");
-			Assert.AreEqual (150, pb.Image.Width, "#H4");
-
-			pb.ImageLocation = string.Empty;
-
-			Assert.AreEqual (string.Empty, pb.ImageLocation, "#I1");
-			Assert.IsNull (pb.Image, "#I2");
-
 			using (Stream s = this.GetType ().Assembly.GetManifestResourceStream ("32x32.ico")) {
 				pb.Image = Image.FromStream (s);
 			}
 
-			Assert.AreEqual (string.Empty, pb.ImageLocation, "#J1");
-			Assert.IsNotNull (pb.Image, "#J2");
-			Assert.AreEqual (96, pb.Image.Height, "#J3");
-			Assert.AreEqual (96, pb.Image.Width, "#J4");
+			Assert.IsNull (pb.ImageLocation, "#H1");
+			Assert.IsNotNull (pb.Image, "#H2");
+			Assert.AreEqual (96, pb.Image.Height, "#H3");
+			Assert.AreEqual (96, pb.Image.Width, "#H4");
 
 			pb.Load ("M.gif");
+
+			Assert.AreEqual ("M.gif", pb.ImageLocation, "#I1");
+			Assert.IsNotNull (pb.Image, "#I2");
+			Assert.AreEqual (60, pb.Image.Height, "#I3");
+			Assert.AreEqual (150, pb.Image.Width, "#I4");
+
+			pb.ImageLocation = string.Empty;
+
+			Assert.AreEqual (string.Empty, pb.ImageLocation, "#J1");
+			Assert.IsNull (pb.Image, "#J2");
+
+			pb.ImageLocation = "M.gif";
 
 			Assert.AreEqual ("M.gif", pb.ImageLocation, "#K1");
 			Assert.IsNotNull (pb.Image, "#K2");
 			Assert.AreEqual (60, pb.Image.Height, "#K3");
 			Assert.AreEqual (150, pb.Image.Width, "#K4");
 
-			pb.ImageLocation = null;
+			try {
+				pb.ImageLocation = "XYZ.gif";
+				Assert.Fail ("#L1");
+			} catch (FileNotFoundException ex) {
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#L2");
+				Assert.IsNull (ex.InnerException, "#L3");
+				Assert.IsNotNull (ex.Message, "#L4");
+			}
 
-			Assert.IsNull (pb.ImageLocation, "#L1");
-			Assert.IsNull (pb.Image, "#L2");
+			Assert.AreEqual ("XYZ.gif", pb.ImageLocation, "#M1");
+			Assert.IsNotNull (pb.Image, "#M2");
+			Assert.AreEqual (60, pb.Image.Height, "#M3");
+			Assert.AreEqual (150, pb.Image.Width, "#M4");
+
+			f.Dispose ();
 		}
 #endif
 
@@ -132,13 +244,86 @@ namespace MonoTests.System.Windows.Forms
 		{
 			PictureBox myPicBox = new PictureBox ();
 			// I 
-			Assert.AreEqual (null, myPicBox.Image, "#I1");
+			Assert.IsNull (myPicBox.Image, "#1");
 			Image myImage = Image.FromFile ("M.gif");
 			myPicBox.Image = myImage;
-			Assert.AreEqual (60, myPicBox.Image.Height, "#I2");
-			Assert.AreEqual (150, myPicBox.Image.Width, "#I3");
+			Assert.AreSame (myImage, myPicBox.Image, "#2");
+			Assert.AreEqual (60, myPicBox.Image.Height, "#3");
+			Assert.AreEqual (150, myPicBox.Image.Width, "#4");
+			myPicBox.Image = null;
+			Assert.IsNull (myPicBox.Image, "#5");
+			myPicBox.Image = null;
+			Assert.IsNull (myPicBox.Image, "#6");
 		}
-		
+
+#if NET_2_0
+		[Test] // Load ()
+		public void Load_ImageLocation_Empty ()
+		{
+			PictureBox pb = new PictureBox ();
+			pb.ImageLocation = string.Empty;
+
+			try {
+				pb.Load ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// ImageLocation must be set
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test] // Load ()
+		public void Load_ImageLocation_Null ()
+		{
+			PictureBox pb = new PictureBox ();
+			pb.ImageLocation = null;
+
+			try {
+				pb.Load ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// ImageLocation must be set
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test] // Load (String)
+		public void Load2_Url_Empty ()
+		{
+			PictureBox pb = new PictureBox ();
+
+			try {
+				pb.Load (string.Empty);
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// ImageLocation must be set
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test] // Load (String)
+		public void Load2_Url_Null ()
+		{
+			PictureBox pb = new PictureBox ();
+
+			try {
+				pb.Load ((string) null);
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// ImageLocation must be set
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+#endif
+
 		[Test]
 		public void ToStringMethodTest ()
 		{
@@ -172,7 +357,7 @@ namespace MonoTests.System.Windows.Forms
 			}
 
 			[Test]
-			public void PictureBoxEvenTest ()
+			public void PictureBoxEventTest ()
 			{
 				Form myForm = new Form ();
 				myForm.ShowInTaskbar = false;

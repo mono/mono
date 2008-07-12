@@ -1,3 +1,8 @@
+2008-07-12  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* PictureBoxTest.cs: Split up ImageLocation test in sync and async
+	tests. Added tests for Load argument checks.
+
 2008-07-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* PictureBoxTest.cs: Added (notworking) test for ImageLocation.
