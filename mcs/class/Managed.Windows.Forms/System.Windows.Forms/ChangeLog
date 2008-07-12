@@ -1,3 +1,7 @@
+2008-07-12  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TextBox.cs: Fixed NRE in LostFocus. Avoid unnecessary initialization.
+
 2008-07-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TextBox.cs: When focus is lost, if the auto complete listbox is

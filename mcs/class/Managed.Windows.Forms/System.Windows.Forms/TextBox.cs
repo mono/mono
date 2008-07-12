@@ -54,8 +54,8 @@ namespace System.Windows.Forms {
 		private MenuItem	select_all;
 
 #if NET_2_0
-		private bool use_system_password_char = false;
-		private AutoCompleteStringCollection auto_complete_custom_source = null;
+		private bool use_system_password_char;
+		private AutoCompleteStringCollection auto_complete_custom_source;
 		private AutoCompleteMode auto_complete_mode = AutoCompleteMode.None;
 		private AutoCompleteSource auto_complete_source = AutoCompleteSource.None;
 		private AutoCompleteListBox auto_complete_listbox;
@@ -111,11 +111,11 @@ namespace System.Windows.Forms {
 			UpdateAlignment ();
 		}
 
-		private void TextBox_LostFocus(object sender, EventArgs e) {
+		private void TextBox_LostFocus (object sender, EventArgs e) {
 			if (hide_selection)
 				document.InvalidateSelectionArea ();
 #if NET_2_0
-			if (auto_complete_listbox.Visible)
+			if (auto_complete_listbox != null && auto_complete_listbox.Visible)
 				auto_complete_listbox.HideListBox (false);
 #endif
 		}
