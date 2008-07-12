@@ -1,3 +1,7 @@
+2008-07-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_signature_to_name): Encode sig->hasthis as well.
+
 2008-07-11  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.h
