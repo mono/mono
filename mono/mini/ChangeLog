@@ -1,5 +1,8 @@
 2008-07-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.h aot-compiler.c aot-runtime.c: Store the plt info offset inline
+	on x86.
+
 	* mini-amd64.h aot-compiler.c aot-runtime.c: Store the plt info offset inline
 	on amd64 similar to the way it is done on arm.
 
