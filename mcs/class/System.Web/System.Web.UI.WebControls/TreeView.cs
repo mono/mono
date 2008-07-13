@@ -1187,7 +1187,8 @@ namespace System.Web.UI.WebControls
 				bindings = new Hashtable ();
 				foreach (TreeNodeBinding bin in dataBindings) {
 					string key = GetBindingKey (bin.DataMember, bin.Depth);
-					bindings [key] = bin;
+					if (!bindings.ContainsKey(key))
+						bindings [key] = bin;
 				}
 			}
 			else
