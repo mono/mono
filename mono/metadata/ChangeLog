@@ -1,3 +1,8 @@
+2008-07-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_generic_sharing_enabled): Always disable generic sharing
+	on platforms which do not support it.
+
 2008-07-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_signature_to_name): Encode sig->hasthis as well.
