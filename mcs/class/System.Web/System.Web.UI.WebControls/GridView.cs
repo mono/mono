@@ -1330,11 +1330,11 @@ namespace System.Web.UI.WebControls
 				OnRowCreated (new GridViewRowEventArgs (row));
 				ContainedTable.Rows.Add (row);
 				if (dataBinding) {
-					row.DataBind ();
-					OnRowDataBound (new GridViewRowEventArgs (row));
+					row.DataBind ();					
 					if (EditIndex == row.RowIndex)
 						oldEditValues = new DataKey (GetRowValues (row, true, true));
 					DataKeyArrayList.Add (new DataKey (CreateRowDataKey (row), DataKeyNames));
+					OnRowDataBound (new GridViewRowEventArgs (row));
 				} 
 			}
 

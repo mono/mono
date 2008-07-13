@@ -1,5 +1,13 @@
 2008-07-13  Roei Erez  <roeie@mainsoft.com>
 
+	* GridView.cs: When the RowDataBound event is invoked, the value
+	of GridView1.DataKeys should contains all the keys up untill the
+	current row, and not be empty.
+	I only changed the order of the user event invocation and the addition
+	to the collection.
+
+2008-07-13  Roei Erez  <roeie@mainsoft.com>
+
 	* TreeView.cs: In case of multiple tree node bingings, select 
 	The first one and not the last one.
 
