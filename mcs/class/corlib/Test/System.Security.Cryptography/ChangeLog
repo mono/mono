@@ -1,3 +1,9 @@
+2008-07-13  Nestor Salceda  <nestor.salceda@gmail.com>
+
+	* RSAPKCS1KeyExchangeFormatterTest.cs: Add test case where you are
+	passing null parameters to SetKey method and constructor with the key as
+	parameter.  Fixes the bug #408738.
+
 2008-04-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HMACSHA1Test.cs: Add test case where data reside inside a byte

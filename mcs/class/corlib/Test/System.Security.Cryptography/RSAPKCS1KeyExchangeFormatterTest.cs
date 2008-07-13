@@ -167,6 +167,21 @@ public class RSAPKCS1KeyExchangeFormatterTest : Assertion {
 		DSA dsa = DSA.Create ();
 		AsymmetricKeyExchangeFormatter keyex = new RSAOAEPKeyExchangeFormatter (dsa);
 	}
+	
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void CreateWithNullKey ()
+	{
+		AsymmetricKeyExchangeFormatter keyex = new RSAPKCS1KeyExchangeFormatter (null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void CreateAndSetNullKey ()
+	{
+		AsymmetricKeyExchangeFormatter keyex = new RSAPKCS1KeyExchangeFormatter ();
+		keyex.SetKey (null);
+	}
 }
 
 }
