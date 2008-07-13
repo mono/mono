@@ -50,7 +50,7 @@ namespace System.Security.Cryptography {
 	
 		public RSAPKCS1KeyExchangeFormatter (AsymmetricAlgorithm key)
 		{
-			SetKey (key);
+			SetRSAKey (key);
 		}
 	
 		public RandomNumberGenerator Rng {
@@ -82,10 +82,17 @@ namespace System.Security.Cryptography {
 			// documentation says that symAlgType is not used !?!
 			return CreateKeyExchange (rgbData);
 		}
-	
+		
+		private void SetRSAKey (AsymmetricAlgorithm key)
+		{
+			if (key == null)
+				throw new ArgumentNullException ("key");
+			rsa = (RSA) key;
+		}
+			
 		public override void SetKey (AsymmetricAlgorithm key)
 		{
-			rsa = (RSA) key;
+			SetRSAKey (key);
 		}
 	}
 }
