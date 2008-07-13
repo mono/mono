@@ -269,6 +269,7 @@ namespace Mainsoft.Web.Hosting
 
 				servletDomain.SetData(IAppDomainConfig.APP_PHYS_DIR, J2EEUtils.GetApplicationPhysicalPath(config.getServletContext ()));
 				servletDomain.SetData(IAppDomainConfig.WEB_APP_DIR, rootPath);
+				servletDomain.SetData(IAppDomainConfig.SERVLET_CONFIG, config);
 
 				//Set DataDirectory substitution string (http://blogs.msdn.com/dataaccess/archive/2005/10/28/486273.aspx)
 				string dataDirectory = config.getServletContext ().getInitParameter ("DataDirectory");
