@@ -278,14 +278,15 @@ can be accessed using the 'methods' global symbol.
 	Our PLT is similar to the elf PLT, it is used to handle calls between methods.
 	If method A needs to call method B, then an entry is allocated in the PLT for
 	method B, and A calls that entry instead of B directly. This is useful because
-	in some cases runtime needs to do some processing the first time B is called.
+	in some cases the runtime needs to do some processing the first time B is 
+	called.
 	There are two cases:
 	- if B is in another assembly, then it needs to be looked up, then JITted or the
 	corresponding AOT code needs to be found.
 	- if B is in the same assembly, but has got slots, then the got slots need to be
 	initialized.
 	If none of these cases is true, then the PLT is not used, and the call is made
-	normally.
+	directly to the native code of the target method.
 	A PLT entry is usually implemented by a jump though a jump table, where the
 	jump table entries are initially filled up with the address of a trampoline so
 	the runtime can get control, and after the native code of the called method is
