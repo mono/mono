@@ -41,18 +41,20 @@ namespace System.Web.Configuration
 			: base (wrapped) {
 			_wrapped = wrapped;
 
-			IServiceProvider provider = (IServiceProvider) ((IServiceProvider) hc).GetService (typeof (HttpWorkerRequest));
-			ServletConfig config = (ServletConfig) provider.GetService (typeof (ServletConfig));
-			ServletContext context = config.getServletContext ();
+			ServletConfig config = (ServletConfig) AppDomain.CurrentDomain.GetData (vmw.common.IAppDomainConfig.SERVLET_CONFIG);
+			if (config != null) {
+				
+				ServletContext context = config.getServletContext ();
 
-			for (java.util.Enumeration e = context.getInitParameterNames (); e.hasMoreElements (); ) {
-				string key = (string) e.nextElement ();
-				Set (key, context.getInitParameter (key));
-			}
+				for (java.util.Enumeration e = context.getInitParameterNames (); e.hasMoreElements (); ) {
+					string key = (string) e.nextElement ();
+					Set (key, context.getInitParameter (key));
+				}
 
-			for (java.util.Enumeration e = config.getInitParameterNames (); e.hasMoreElements (); ) {
-				string key = (string) e.nextElement ();
-				Set (key, config.getInitParameter (key));
+				for (java.util.Enumeration e = config.getInitParameterNames (); e.hasMoreElements (); ) {
+					string key = (string) e.nextElement ();
+					Set (key, config.getInitParameter (key));
+				}
 			}
 		}
 
