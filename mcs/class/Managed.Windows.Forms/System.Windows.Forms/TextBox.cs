@@ -866,7 +866,8 @@ namespace System.Windows.Forms {
 				int highlighted_idx = HighlightedIndex;
 
 				int y = 0;
-				for (int i = top_item; i <= last_item; i++) {
+				int last = GetLastVisibleItem ();
+				for (int i = top_item; i <= last; i++) {
 					Rectangle item_bounds = GetItemBounds (i);
 					if (!item_bounds.IntersectsWith (args.ClipRectangle))
 						continue;
