@@ -669,8 +669,8 @@ namespace System.Web.UI
 						string scriptKey = "inc_" + (type.FullName + key).GetHashCode ().ToString ("X");
 						writer.WriteLine ("<script type=\"text/javascript\">");
 						writer.WriteLine (SCRIPT_BLOCK_START);
-						writer.WriteLine ("if (document.{0} == null) {{", scriptKey);
-						writer.WriteLine ("\tdocument.{0} = true", scriptKey);
+						writer.WriteLine ("if (!window.{0}) {{", scriptKey);
+						writer.WriteLine ("\twindow.{0} = true", scriptKey);
 						writer.WriteLine ("\tdocument.write('<script src=\"{0}\" type=\"text/javascript\"><\\/script>'); }}", path);
 						writer.WriteLine (SCRIPT_BLOCK_END);
 						writer.WriteLine ("</script>");
