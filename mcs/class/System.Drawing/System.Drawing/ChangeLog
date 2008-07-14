@@ -1,3 +1,9 @@
+2008-07-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* gdipFunctions.cs: Fix signature for 
+	GdipGetImageAttributesAdjustedPalette
+	[Part of fix for bug #402172]
+
 2008-07-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Bitmap.cs: Fix exceptions for some ctors.

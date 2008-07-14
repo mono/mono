@@ -1429,8 +1429,8 @@ namespace System.Drawing
 		internal static extern Status GdipCloneImageAttributes(IntPtr imageattr, out IntPtr cloneImageattr);
 
 		[DllImport ("gdiplus.dll")]     
-		internal static extern Status GdipGetImageAttributesAdjustedPalette(IntPtr imageattr,
-    			out IntPtr colorPalette,  ColorAdjustType colorAdjustType);
+		internal static extern Status GdipGetImageAttributesAdjustedPalette (IntPtr imageattr, IntPtr colorPalette,
+			ColorAdjustType colorAdjustType);
     			
     		[DllImport ("gdiplus.dll")]     
 		internal static extern Status GdipSetImageAttributesWrapMode(IntPtr imageattr,  WrapMode wrap,
