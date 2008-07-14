@@ -1,5 +1,9 @@
 2008-07-14  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TreeView.cs: Fix ToString to match MS.  [Fixes bug #409029]
+
+2008-07-14  Jonathan Pobst  <monkey@jpobst.com>
+
 	* NumericUpDown.cs: Apply patch from Andy Hume to clamp out of range
 	values from the textbox to the boundary values.  [Fixes bug #409026]
 

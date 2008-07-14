@@ -331,6 +331,19 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("aaa", tv.Nodes[0].Text, "A1");
 		}
 #endif
+
+		[Test]
+		public void MethodToString ()
+		{
+			TreeView tv = new TreeView ();
+
+			Assert.AreEqual (@"System.Windows.Forms.TreeView, Nodes.Count: 0", tv.ToString (), "A1");
+
+			tv.Nodes.Add ("A");
+			tv.Nodes.Add ("B");
+
+			Assert.AreEqual (@"System.Windows.Forms.TreeView, Nodes.Count: 2, Nodes[0]: TreeNode: A", tv.ToString (), "A2");
+		}
 	}
 
 	[TestFixture]

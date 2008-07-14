@@ -845,8 +845,8 @@ namespace System.Windows.Forms {
 		public override string ToString () {
 			int count = Nodes.Count;
 			if (count <= 0)
-				return String.Concat (base.ToString (), "Node Count: 0");
-			return String.Concat (base.ToString (), "Node Count: ", count, " Nodes[0]: ", Nodes [0]);
+				return String.Concat (base.ToString (), ", Nodes.Count: 0");
+			return String.Concat (base.ToString (), ", Nodes.Count: ", count, ", Nodes[0]: ", Nodes [0]);
 						
 		}
 
