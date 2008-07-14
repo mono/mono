@@ -28,26 +28,91 @@
 //
 #if NET_2_0
 using System;
+using System.Text;
+using System.Diagnostics;
+using System.Globalization;
 using System.ComponentModel;
 using System.Net.Sockets;
+using System.Security.Principal;
+using System.Runtime.InteropServices;
 
 namespace System.Net.NetworkInformation {
 	[MonoTODO ("IPv6 support is missing")]
 	public class Ping : Component, IDisposable
 	{
+		[StructLayout(LayoutKind.Sequential)]
+		struct cap_user_header_t
+		{
+			public UInt32 version;
+			public Int32 pid;
+		};
+
+		[StructLayout(LayoutKind.Sequential)]
+		struct cap_user_data_t
+		{
+			public UInt32 effective;
+			public UInt32 permitted;
+			public UInt32 inheritable;
+		}
+		
+		const int DefaultCount = 1;
+		const string PingBinPath = "/bin/ping";
 		const int default_timeout = 4000; // 4 sec.
-		static readonly byte [] default_buffer = new byte [0];
 		const int identifier = 1; // no need to be const, but there's no place to change it.
 
-		public event PingCompletedEventHandler PingCompleted;
-
-		public Ping ()
-		{
-		}
+		// This value is correct as of Linux kernel version 2.6.25.9
+		// See /usr/include/linux/capability.h
+		const UInt32 linux_cap_version = 0x20071026;
+		
+		static readonly byte [] default_buffer = new byte [0];
+		static bool canSendPrivileged;
+		
 
 		BackgroundWorker worker;
 		object user_async_state;
+		
+		public event PingCompletedEventHandler PingCompleted;
+		
+		static Ping ()
+		{
+			if (Environment.OSVersion.Platform == PlatformID.Unix) {
+				CheckLinuxCapabilities ();
+				if (!canSendPrivileged && WindowsIdentity.GetCurrent ().Name == "root")
+					canSendPrivileged = true;
+			}
+		}
+		
+		public Ping ()
+		{
+		}
+  
+		[DllImport ("libc", EntryPoint="capget")]
+		static extern int capget (ref cap_user_header_t header, ref cap_user_data_t data);
 
+		static void CheckLinuxCapabilities ()
+		{
+			try {
+				cap_user_header_t header = new cap_user_header_t ();
+				cap_user_data_t data = new cap_user_data_t ();
+
+				header.version = linux_cap_version;
+
+				int ret = -1;
+
+				try {
+					ret = capget (ref header, ref data);
+				} catch (Exception) {
+				}
+
+				if (ret == -1)
+					return;
+
+				canSendPrivileged = (data.effective & (1 << 13)) != 0;
+			} catch {
+				canSendPrivileged = false;
+			}
+		}
+		
 		void IDisposable.Dispose ()
 		{
 		}
@@ -116,6 +181,14 @@ namespace System.Net.NetworkInformation {
 				throw new ArgumentNullException ("buffer");
 			// options can be null.
 
+			if (canSendPrivileged)
+				return SendPrivileged (address, timeout, buffer, options);
+			else
+				return SendUnprivileged (address, timeout, buffer, options);
+		}
+
+		private PingReply SendPrivileged (IPAddress address, int timeout, byte [] buffer, PingOptions options)
+		{
 			IPEndPoint target = new IPEndPoint (address, 0);
 			IPEndPoint client = new IPEndPoint (GetNonLoopbackIP (), 0);
 
@@ -165,6 +238,50 @@ namespace System.Net.NetworkInformation {
 					return new PingReply (null, new byte [0], options, 0, stat);
 				}
 			} while (true);
+		}
+
+		private PingReply SendUnprivileged (IPAddress address, int timeout, byte [] buffer, PingOptions options)
+		{
+			DateTime sentTime = DateTime.Now;
+
+			Process ping = new Process ();
+			string args = BuildPingArgs (address, timeout, options);
+			long trip_time = 0;
+
+			ping.StartInfo.FileName = PingBinPath;
+			ping.StartInfo.Arguments = args;
+
+			ping.StartInfo.CreateNoWindow = true;
+			ping.StartInfo.UseShellExecute = false;
+
+			ping.StartInfo.RedirectStandardOutput = true;
+			ping.StartInfo.RedirectStandardError = true;
+
+			try {
+				ping.Start ();
+
+#pragma warning disable 219
+				string stdout = ping.StandardOutput.ReadToEnd ();
+				string stderr = ping.StandardError.ReadToEnd ();
+#pragma warning restore 219
+				
+				trip_time = (long) (DateTime.Now - sentTime).TotalMilliseconds;
+				if (!ping.WaitForExit (timeout) || ping.ExitCode == 2)
+					return new PingReply (address, buffer, options, trip_time, IPStatus.TimedOut); 
+
+				if (ping.ExitCode == 1)
+					return new PingReply (address, buffer, options, trip_time, IPStatus.TtlExpired);
+			} catch (Exception) {
+				return new PingReply (address, buffer, options, trip_time, IPStatus.Unknown);
+			} finally {
+				if (ping != null) {
+					if (!ping.HasExited)
+						ping.Kill ();
+					ping.Dispose ();
+				}
+			}
+
+			return new PingReply (address, buffer, options, trip_time, IPStatus.Success);
 		}
 
 		// Async
@@ -345,6 +462,22 @@ namespace System.Net.NetworkInformation {
 					throw new NotSupportedException (String.Format ("Unexpected pair of ICMP message type and code: type is {0} and code is {1}", Type, Code));
 				}
 			}
+		}
+
+		private string BuildPingArgs (IPAddress address, int timeout, PingOptions options)
+		{
+			StringBuilder args = new StringBuilder ();
+
+			args.AppendFormat ("-c {0} ", DefaultCount, CultureInfo.InvariantCulture);
+			args.AppendFormat ("-w {0} ", (double)timeout / 1000.0, CultureInfo.InvariantCulture);
+			args.AppendFormat ("-t {0} ", options.Ttl, CultureInfo.InvariantCulture);
+			args.Append ("-M ");
+			args.Append (options.DontFragment ? "do " : "dont ");
+
+			args.Append (address.ToString ());
+
+			return args.ToString ();
+		
 		}
 
 	}
