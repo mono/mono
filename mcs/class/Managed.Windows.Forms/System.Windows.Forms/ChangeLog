@@ -1,5 +1,10 @@
 2008-07-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TextBox.cs: Auto complete stuff in WndProc should be 2.0 only.
+	Fixes build.
+
+2008-07-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TextBox.cs: Implement navigation support for auto complete in
 	TextBox, as well as refactor the code to show the auto complete window
 	when receiving a WM_CHAR message, instead of TextChanged, since

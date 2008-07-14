@@ -569,6 +569,7 @@ namespace System.Windows.Forms {
 		protected override void WndProc (ref Message m)
 		{
 			switch ((Msg)m.Msg) {
+#if NET_2_0
 				case Msg.WM_KEYDOWN:
 					if (auto_complete_listbox == null || !auto_complete_listbox.Visible)
 						break;
@@ -592,6 +593,7 @@ namespace System.Windows.Forms {
 					base.WndProc (ref m);
 					ShowAutoCompleteListBox ();
 					return;
+#endif
 				case Msg.WM_LBUTTONDOWN:
 					// When the textbox gets focus by LBUTTON (but not by middle or right)
 					// it does not do the select all / scroll thing.
