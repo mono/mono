@@ -1,3 +1,8 @@
+2008-07-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Disable aot for code using CCASTCLASS on x86 as 
+	it has too much register pressure.
+
 2008-07-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* inssel.brg (CEE_CASTCLASS): Remove some dead code.
