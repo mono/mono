@@ -376,7 +376,7 @@ namespace System.Windows.Forms {
 		protected void ParseEditText () {
 			try {
 				if (!hexadecimal) {
-					Value = decimal.Parse (Text, CultureInfo.CurrentCulture);
+					Value = Check (decimal.Parse (Text, CultureInfo.CurrentCulture));
 				} else {
 #if !NET_2_0
 					Value = Check (Convert.ToDecimal (Convert.ToInt32 (Text, 16)));

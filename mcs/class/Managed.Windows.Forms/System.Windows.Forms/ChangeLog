@@ -1,5 +1,10 @@
 2008-07-14  Jonathan Pobst  <monkey@jpobst.com>
 
+	* NumericUpDown.cs: Apply patch from Andy Hume to clamp out of range
+	values from the textbox to the boundary values.  [Fixes bug #409026]
+
+2008-07-14  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TreeNodeCollection.cs: We were copying one too many elements when
 	doing our array copy.  Fixes a crash when RemoveAt is called.
 	[Fixes bug #408999]
