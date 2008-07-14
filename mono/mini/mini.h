@@ -799,6 +799,8 @@ typedef struct {
 	MonoInst        **locals;
 	MonoInst	*rgctx_var; /* Runtime generic context variable (for static generic methods) */
 	MonoInst        **args;
+	MonoMethod      *current_method; /* The method currently processed by method_to_ir () */
+	MonoGenericContext *generic_context;
 
 	/* 
 	 * This variable represents the hidden argument holding the vtype

@@ -1,5 +1,9 @@
 2008-07-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c: Clean up the get_runtime_generic_context functions a bit:
+	rename them to emit_get_rgctx_..., reduce number of parameters, pass the
+	important parameters last.
+
 	* mini.c (mono_method_to_ir): Disable aot for code using CCASTCLASS on x86 as 
 	it has too much register pressure.
 

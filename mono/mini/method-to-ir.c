@@ -554,24 +554,6 @@ mono_create_exvar_for_offset (MonoCompile *cfg, int offset)
 	return var;
 }
 
-static void
-df_visit (MonoBasicBlock *start, int *dfn, MonoBasicBlock **array)
-{
-	int i;
-
-	array [*dfn] = start;
-	/*printf ("visit %d at %p (BB%ld)\n", *dfn, start->cil_code, start->block_num);*/
-	for (i = 0; i < start->out_count; ++i) {
-		if (start->out_bb [i]->dfn)
-			continue;
-		(*dfn)++;
-		start->out_bb [i]->dfn = *dfn;
-		start->out_bb [i]->df_parent = start;
-		array [*dfn] = start->out_bb [i];
-		df_visit (start->out_bb [i], dfn, array);
-	}
-}
-
 static MonoBasicBlock*
 find_previous (MonoBasicBlock **bblocks, guint32 n_bblocks, MonoBasicBlock *start, const guchar *code)
 {
@@ -3807,6 +3789,8 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	MonoBasicBlock *prev_cbb;
 	unsigned char* prev_cil_start;
 	guint32 prev_cil_offset_to_bb_len;
+	MonoMethod *prev_current_method;
+	MonoGenericContext *prev_generic_context;
 
 	g_assert (cfg->exception_type == MONO_EXCEPTION_NONE);
 
@@ -3858,6 +3842,8 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	prev_cil_offset_to_bb_len = cfg->cil_offset_to_bb_len;
 	prev_cil_start = cfg->cil_start;
 	prev_cbb = cfg->cbb;
+	prev_current_method = cfg->current_method;
+	prev_generic_context = cfg->generic_context;
 
 	costs = mono_method_to_ir2 (cfg, cmethod, sbblock, ebblock, rvar, dont_inline, sp, real_offset, *ip == CEE_CALLVIRT);
 
@@ -3869,6 +3855,8 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	cfg->cil_start = prev_cil_start;
 	cfg->locals = prev_locals;
 	cfg->args = prev_args;
+	cfg->current_method = prev_current_method;
+	cfg->generic_context = prev_generic_context;
 
 	if ((costs >= 0 && costs < 60) || inline_allways) {
 		if (cfg->verbose_level > 2)
@@ -4329,7 +4317,7 @@ set_exception_type_from_invalid_il (MonoCompile *cfg, MonoMethod *method, unsign
 }
 
 static MonoInst*
-emit_get_runtime_generic_context (MonoCompile *cfg, MonoMethod *method, int context_used, MonoInst *this)
+emit_get_rgctx (MonoCompile *cfg, MonoMethod *method, int context_used, MonoInst *this)
 {
 	g_assert (!method->klass->valuetype);
 
@@ -4385,11 +4373,11 @@ emit_get_runtime_generic_context (MonoCompile *cfg, MonoMethod *method, int cont
 		GENERIC_SHARING_FAILURE_IF_VALUETYPE_METHOD(*ip);	\
 		if (!(method->flags & METHOD_ATTRIBUTE_STATIC) && !((context_used) & MONO_GENERIC_CONTEXT_USED_METHOD))	\
 			EMIT_NEW_ARGLOAD (cfg, this, 0);			\
-		(rgctx) = emit_get_runtime_generic_context (cfg, method, (context_used), this); \
+		(rgctx) = emit_get_rgctx (cfg, method, (context_used), this); \
 	} while (0)
 
 static MonoInst*
-get_runtime_generic_context_other_table_ptr (MonoCompile *cfg, MonoInst *rgc_ptr, int slot)
+emit_get_rgctx_other_table_ptr (MonoCompile *cfg, MonoInst *rgc_ptr, int slot)
 {
 	MonoMethodSignature *sig = helper_sig_rgctx_lazy_fetch_trampoline;
 	guint8 *tramp = mini_create_rgctx_lazy_fetch_trampoline (slot);
@@ -4398,133 +4386,45 @@ get_runtime_generic_context_other_table_ptr (MonoCompile *cfg, MonoInst *rgc_ptr
 }
 
 static MonoInst*
-get_runtime_generic_context_ptr (MonoCompile *cfg, MonoMethod *method, int context_used,
-								 MonoClass *klass, MonoGenericContext *generic_context, MonoInst *rgctx, int rgctx_type)
+emit_get_rgctx_klass (MonoCompile *cfg, int context_used,
+					  MonoInst *rgctx, MonoClass *klass, int rgctx_type)
 {
-	guint32 slot = mono_method_lookup_or_register_other_info (method,
-		context_used & MONO_GENERIC_CONTEXT_USED_METHOD, &klass->byval_arg, rgctx_type, generic_context);
+	guint32 slot = mono_method_lookup_or_register_other_info (cfg->current_method,
+		context_used & MONO_GENERIC_CONTEXT_USED_METHOD, &klass->byval_arg, rgctx_type, cfg->generic_context);
 
-	return get_runtime_generic_context_other_table_ptr (cfg, rgctx, slot);
+	return emit_get_rgctx_other_table_ptr (cfg, rgctx, slot);
 }
 
 static MonoInst*
-get_runtime_generic_context_method (MonoCompile *cfg, MonoMethod *method, int context_used,
-	MonoMethod *cmethod, MonoGenericContext *generic_context, MonoInst *rgctx, int rgctx_type)
+emit_get_rgctx_method (MonoCompile *cfg, int context_used,
+					   MonoInst *rgctx, MonoMethod *cmethod, int rgctx_type)
 {
-	guint32 slot = mono_method_lookup_or_register_other_info (method,
-		context_used & MONO_GENERIC_CONTEXT_USED_METHOD, cmethod, rgctx_type, generic_context);
+	guint32 slot = mono_method_lookup_or_register_other_info (cfg->current_method,
+		context_used & MONO_GENERIC_CONTEXT_USED_METHOD, cmethod, rgctx_type, cfg->generic_context);
 
-	return get_runtime_generic_context_other_table_ptr (cfg, rgctx, slot);
+	return emit_get_rgctx_other_table_ptr (cfg, rgctx, slot);
 }
 
 static MonoInst*
-get_runtime_generic_context_field (MonoCompile *cfg, MonoMethod *method, int context_used,
-	MonoClassField *field, MonoGenericContext *generic_context, MonoInst *rgctx, int rgctx_type)
+emit_get_rgctx_field (MonoCompile *cfg, int context_used,
+					  MonoInst *rgctx, MonoClassField *field, int rgctx_type)
 {
-	guint32 slot = mono_method_lookup_or_register_other_info (method,
-		context_used & MONO_GENERIC_CONTEXT_USED_METHOD, field, rgctx_type, generic_context);
+	guint32 slot = mono_method_lookup_or_register_other_info (cfg->current_method,
+		context_used & MONO_GENERIC_CONTEXT_USED_METHOD, field, rgctx_type, cfg->generic_context);
 
-	return get_runtime_generic_context_other_table_ptr (cfg, rgctx, slot);
+	return emit_get_rgctx_other_table_ptr (cfg, rgctx, slot);
 }
 
 static MonoInst*
-get_runtime_generic_context_method_rgctx (MonoCompile *cfg, MonoMethod *method, int context_used,
-	MonoMethod *rgctx_method, MonoGenericContext *generic_context, MonoInst *rgctx)
+emit_get_rgctx_method_rgctx (MonoCompile *cfg, int context_used,
+							 MonoInst *rgctx, MonoMethod *rgctx_method)
 {
-	guint32 slot = mono_method_lookup_or_register_other_info (method,
+	guint32 slot = mono_method_lookup_or_register_other_info (cfg->current_method,
 		context_used & MONO_GENERIC_CONTEXT_USED_METHOD, rgctx_method,
-		MONO_RGCTX_INFO_METHOD_RGCTX, generic_context);
+		MONO_RGCTX_INFO_METHOD_RGCTX, cfg->generic_context);
 
-	return get_runtime_generic_context_other_table_ptr (cfg, rgctx, slot);
+	return emit_get_rgctx_other_table_ptr (cfg, rgctx, slot);
 }
-
-
-
-/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
-
-#if 0
-
-static MonoInst*
-get_runtime_generic_context_other_ptr (MonoCompile *cfg, MonoMethod *method,
-									   MonoInst *rgc_ptr, guint32 token, int token_source, int rgctx_type, int index)
-{
-	MonoInst *args [6];
-
-	// FIXME:
-	return NULL;
-
-#if 0
-	g_assert (method->wrapper_type == MONO_WRAPPER_NONE);
-
-	EMIT_NEW_CLASSCONST (cfg, args [0], method->klass);
-	args [1] = rgc_ptr;
-	EMIT_NEW_ICONST (cfg, args [2], token);
-	EMIT_NEW_ICONST (cfg, args [3], token_source);
-	EMIT_NEW_ICONST (cfg, args [4], rgctx_type);
-	EMIT_NEW_ICONST (cfg, args [5], index);
-
-	return mono_emit_jit_icall (cfg, mono_helper_get_rgctx_other_ptr, args);
-#endif
-}
-
-static MonoInst*
-get_runtime_generic_context_ptr (MonoCompile *cfg, MonoMethod *method, MonoClass *klass,
-								 guint32 type_token, int token_source, 
-								 MonoGenericContext *generic_context, MonoInst *rgctx,
-								 int rgctx_type)
-{
-	// FIXME:
-	g_assert_not_reached ();
-	return NULL;
-
-#if 0
-	int arg_num = -1;
-	int relation = mono_class_generic_class_relation (klass, rgctx_type, method->klass, generic_context, &arg_num);
-
-	switch (relation) {
-	case MINI_GENERIC_CLASS_RELATION_OTHER_TABLE:
-		return get_runtime_generic_context_other_table_ptr (cfg, rgctx, arg_num);
-	case MINI_GENERIC_CLASS_RELATION_OTHER:
-		return get_runtime_generic_context_other_ptr (cfg, method, rgctx,
-			type_token, token_source, rgctx_type, arg_num);
-	default:
-		g_assert_not_reached ();
-		return NULL;
-	}
-#endif
-}
-
-static MonoInst*
-get_runtime_generic_context_method (MonoCompile *cfg, MonoMethod *method,
-									MonoMethod *cmethod, MonoGenericContext *generic_context, MonoInst *rgctx, int rgctx_type)
-{
-	// FIXME:
-	g_assert_not_reached ();
-	return NULL;
-#if 0
-	int arg_num = mono_class_lookup_or_register_other_info (method->klass, cmethod, rgctx_type, generic_context);
-
-	return get_runtime_generic_context_other_table_ptr (cfg, rgctx, arg_num);
-#endif
-}
-
-static MonoInst*
-get_runtime_generic_context_field (MonoCompile *cfg, MonoMethod *method,
-	MonoClassField *field, MonoGenericContext *generic_context, MonoInst *rgctx, int rgctx_type)
-{
-	// FIXME:
-	g_assert_not_reached ();
-	return NULL;
-#if 0
-	int arg_num = mono_class_lookup_or_register_other_info (method->klass, field, rgctx_type, generic_context);
-
-	return get_runtime_generic_context_other_table_ptr (cfg, rgctx, arg_num);
-#endif
-}
-
-#endif
-
-/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
 
 static gboolean
 generic_class_is_reference_type (MonoCompile *cfg, MonoClass *klass)
@@ -4975,6 +4875,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		generic_context = mono_method_get_context (method);
 	else if (generic_container)
 		generic_context = &generic_container->context;
+	cfg->generic_context = generic_context;
 
 	if (!cfg->generic_sharing_context)
 		g_assert (!sig->has_type_parameters);
@@ -4987,6 +4888,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 	cfg->cil_offset_to_bb = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoBasicBlock*) * header->code_size);
 	cfg->cil_offset_to_bb_len = header->code_size;
+
+	cfg->current_method = method;
 
 	if (cfg->verbose_level > 2)
 		printf ("method to IR %s\n", mono_method_full_name (method, TRUE));
@@ -5827,8 +5730,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					MonoInst *rgctx;
 
 					EMIT_GET_RGCTX (rgctx, context_used);
-					vtable_arg = get_runtime_generic_context_ptr (cfg, method, context_used,
-						cmethod->klass, generic_context, rgctx, MONO_RGCTX_INFO_VTABLE);
+					vtable_arg = emit_get_rgctx_klass (cfg, context_used,
+													   rgctx, cmethod->klass, MONO_RGCTX_INFO_VTABLE);
 				} else {
 					MonoVTable *vtable = mono_class_vtable (cfg->domain, cmethod->klass);
 
@@ -6030,8 +5933,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				 */
 
 				EMIT_GET_RGCTX (rgctx, context_used);
-				addr = get_runtime_generic_context_method (cfg, method, context_used, cmethod,
-						generic_context, rgctx, MONO_RGCTX_INFO_GENERIC_METHOD_CODE);
+				addr = emit_get_rgctx_method (cfg, context_used, rgctx, cmethod, MONO_RGCTX_INFO_GENERIC_METHOD_CODE);
 			}
 
 			/* Indirect calls */
@@ -6941,8 +6843,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 						rgctx_info = MONO_RGCTX_INFO_KLASS;
 					else
 						rgctx_info = MONO_RGCTX_INFO_VTABLE;
-					data = get_runtime_generic_context_ptr (cfg, method, context_used,
-						cmethod->klass, generic_context, rgctx, rgctx_info);
+					data = emit_get_rgctx_klass (cfg, context_used, rgctx, cmethod->klass, rgctx_info);
 
 					alloc = handle_alloc_from_inst (cfg, cmethod->klass, data, FALSE);
 					*sp = alloc;
@@ -7240,8 +7141,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 						rgctx_info = MONO_RGCTX_INFO_KLASS;
 					else
 						rgctx_info = MONO_RGCTX_INFO_VTABLE;
-					data = get_runtime_generic_context_ptr (cfg, method, context_used, klass,
-															generic_context, rgctx, rgctx_info);
+					data = emit_get_rgctx_klass (cfg, context_used, rgctx, klass, rgctx_info);
 					*sp++ = handle_box_from_inst (cfg, val, klass, data);
   				}
 			} else {
@@ -7465,7 +7365,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if ((cfg->opt & MONO_OPT_SHARED) ||
 					(cfg->compile_aot && is_special_static) ||
 					(context_used && is_special_static)) {
-				int temp;
 				MonoInst *iargs [2];
 
 				g_assert (field->parent);
@@ -7474,8 +7373,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					MonoInst *rgctx;
 
 					EMIT_GET_RGCTX (rgctx, context_used);
-					iargs [1] = get_runtime_generic_context_field (cfg, method, context_used, field,
-																   generic_context, rgctx, MONO_RGCTX_INFO_CLASS_FIELD);
+					iargs [1] = emit_get_rgctx_field (cfg, context_used, rgctx, field, MONO_RGCTX_INFO_CLASS_FIELD);
 				} else {
 					EMIT_NEW_FIELDCONST (cfg, iargs [1], field);
 				}
@@ -7490,13 +7388,11 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				*/
 
 				if (mono_class_needs_cctor_run (klass, method)) {
-					MonoMethodSignature *sig = helper_sig_generic_class_init_trampoline;
 					MonoCallInst *call;
 					MonoInst *vtable, *rgctx;
 
 					EMIT_GET_RGCTX (rgctx, context_used);
-					vtable = get_runtime_generic_context_ptr (cfg, method, context_used, klass,
-							generic_context, rgctx, MONO_RGCTX_INFO_VTABLE);
+					vtable = emit_get_rgctx_klass (cfg, context_used, rgctx, klass, MONO_RGCTX_INFO_VTABLE);
 
 					// FIXME: This doesn't work since it tries to pass the argument
 					// in the normal way, instead of using MONO_ARCH_VTABLE_REG
@@ -7519,8 +7415,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				 *   super_info.static_data + field->offset
 				 */
 				EMIT_GET_RGCTX (rgctx, context_used);
-				static_data = get_runtime_generic_context_ptr (cfg, method, context_used, klass,
-					generic_context, rgctx, MONO_RGCTX_INFO_STATIC_DATA);
+				static_data = emit_get_rgctx_klass (cfg, context_used, rgctx, klass, MONO_RGCTX_INFO_STATIC_DATA);
 
 				if (field->offset == 0) {
 					ins = static_data;
@@ -7731,8 +7626,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 				/* klass */
 				EMIT_GET_RGCTX (rgctx, context_used);
-				args [1] = get_runtime_generic_context_ptr (cfg, method, context_used, klass,
-					generic_context, rgctx, MONO_RGCTX_INFO_KLASS);
+				args [1] = emit_get_rgctx_klass (cfg, context_used, rgctx, klass, MONO_RGCTX_INFO_KLASS);
 
 				/* array len */
 				args [2] = sp [0];
@@ -8118,9 +8012,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 						g_assert (!cfg->compile_aot);
 						EMIT_GET_RGCTX (rgctx, context_used);
-						ins = get_runtime_generic_context_ptr (cfg, method, context_used,
-															   tclass, generic_context,
-							rgctx, MONO_RGCTX_INFO_REFLECTION_TYPE);
+						ins = emit_get_rgctx_klass (cfg, context_used, rgctx, tclass, MONO_RGCTX_INFO_REFLECTION_TYPE);
 					} else if (cfg->compile_aot) {
 						/*
 						 * FIXME: We would have to include the context into the
