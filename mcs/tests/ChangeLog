@@ -1,3 +1,7 @@
+2008-07-14 Marek Safar <marek.safar@gmail.com>
+
+	* Makefile: Added IL verification for 1.1 profile.
+
 2008-07-10  Raja R Harinath  <harinath@hurrynot.org>
 
 	* gtest-402.cs: New test from #314903.
