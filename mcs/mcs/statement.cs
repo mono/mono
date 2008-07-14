@@ -1995,8 +1995,9 @@ namespace Mono.CSharp {
 
 		public int AssignableSlots {
 			get {
-				if ((flags & Flags.VariablesInitialized) == 0)
-					throw new Exception ("Variables have not been initialized yet");
+// TODO: Re-enable			
+//				if ((flags & Flags.VariablesInitialized) == 0)
+//					throw new Exception ("Variables have not been initialized yet");
 				return assignable_slots;
 			}
 		}
