@@ -211,12 +211,15 @@ namespace System.Drawing.Imaging {
 		[MonoTODO ("Not supported by libgdiplus")]
 		public void GetAdjustedPalette (ColorPalette palette, ColorAdjustType type)
 		{
-			IntPtr colorPalette;
-
-			Status status = GDIPlus.GdipGetImageAttributesAdjustedPalette (nativeImageAttr, out colorPalette, type);
-			GDIPlus.CheckStatus (status);
-
-    			palette.setFromGDIPalette (colorPalette);
+			IntPtr colorPalette = palette.getGDIPalette ();
+			try {
+				Status status = GDIPlus.GdipGetImageAttributesAdjustedPalette (nativeImageAttr, colorPalette, type);
+				GDIPlus.CheckStatus (status);
+	    			palette.setFromGDIPalette (colorPalette);
+			} finally {
+				if (colorPalette != IntPtr.Zero)
+					Marshal.FreeHGlobal (colorPalette);
+			}
 		}
 
 		public void SetBrushRemapTable (ColorMap[] map)

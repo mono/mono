@@ -1,3 +1,8 @@
+2008-07-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ImageAttributes.cs: Fix GetAdjustedPalette using new (and correct)
+	signature.
+
 2008-06-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ImageAttributes.cs: Call CheckStatus in GetAdjustedPalette before
