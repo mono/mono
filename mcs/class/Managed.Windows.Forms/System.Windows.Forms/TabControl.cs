@@ -1244,7 +1244,10 @@ namespace System.Windows.Forms {
 			
 				if (page.Row != prev_row) {
 					if (SizeMode == TabSizeMode.FillToRight && !ShowSlider) {
-						FillRow (begin_prev, i - 1, ((row_width - TabPages [i - 1].TabBounds.Right) / (i - begin_prev)), spacing);
+						bool vertical = alignment == TabAlignment.Right || alignment == TabAlignment.Left;
+						int offset = vertical ? TabPages [i - 1].TabBounds.Bottom : TabPages [i - 1].TabBounds.Right;
+						FillRow (begin_prev, i - 1, ((row_width - offset) / (i - begin_prev)), spacing,
+							vertical);
 					}
 					begin_prev = i;
 				}	
