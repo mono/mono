@@ -1,5 +1,13 @@
 2008-07-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TextBox.cs: Implement navigation support for auto complete in
+	TextBox, as well as refactor the code to show the auto complete window
+	when receiving a WM_CHAR message, instead of TextChanged, since
+	autocomplete itself should be able to set the Text a lot of times and
+	finally only typing should show it, not changes from code.
+
+2008-07-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TabControl.cs: When expanding the selected tab, don't adjust the
 	width if alignment is Right, since it has a different offset than 0,
 	as opposed to the other alignments.

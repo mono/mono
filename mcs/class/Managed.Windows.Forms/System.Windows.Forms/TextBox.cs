@@ -59,6 +59,7 @@ namespace System.Windows.Forms {
 		private AutoCompleteMode auto_complete_mode = AutoCompleteMode.None;
 		private AutoCompleteSource auto_complete_source = AutoCompleteSource.None;
 		private AutoCompleteListBox auto_complete_listbox;
+		private string auto_complete_original_text;
 		private ComboBox auto_complete_cb_source;
 #endif
 		#endregion	// Variables
@@ -71,7 +72,7 @@ namespace System.Windows.Forms {
 			this.LostFocus +=new EventHandler(TextBox_LostFocus);
 			this.RightToLeftChanged += new EventHandler (TextBox_RightToLeftChanged);
 #if NET_2_0
-			TextChanged += new EventHandler (TextBox_TextChanged);
+			MouseWheel += new MouseEventHandler (TextBox_MouseWheel);
 #endif
 
 			BackColor = SystemColors.Window;
@@ -121,12 +122,27 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		void TextBox_TextChanged (object o, EventArgs args)
+		private void TextBox_MouseWheel (object o, MouseEventArgs args)
+		{
+			if (auto_complete_listbox == null || !auto_complete_listbox.Visible)
+				return;
+
+			int lines = args.Delta / 120;
+			auto_complete_listbox.Scroll (-lines);
+		}
+
+		private void ShowAutoCompleteListBox ()
 		{
 			if (auto_complete_mode == AutoCompleteMode.None || auto_complete_source == AutoCompleteSource.None)
 				return;
 
-			// We only support CustomSource by now
+			// 
+			// We only support CustomSource *and* Suggest mode by now
+			//
+
+			if (auto_complete_mode != AutoCompleteMode.Suggest)
+				return;
+
 			IList source;
 			if (auto_complete_cb_source == null)
 				source = auto_complete_custom_source;
@@ -145,12 +161,6 @@ namespace System.Windows.Forms {
 
 			if (auto_complete_listbox == null)
 				auto_complete_listbox = new AutoCompleteListBox (this);
-
-			// If the text was just set by the auto complete listbox, ignore it
-			if (auto_complete_listbox.WasTextSet) {
-				auto_complete_listbox.WasTextSet = false;
-				return;
-			}
 
 			string text = Text;
 			auto_complete_listbox.Items.Clear ();
@@ -183,6 +193,53 @@ namespace System.Windows.Forms {
 			set {
 				auto_complete_cb_source = value;
 			}
+		}
+
+		void NavigateAutoCompleteList (Keys key)
+		{
+			int index = auto_complete_listbox.HighlightedIndex;
+			if (index == -1)
+				auto_complete_original_text = Text;
+
+			switch (key) {
+				case Keys.Up:
+					index -= 1;
+					if (index < -1)
+						index = auto_complete_listbox.Items.Count - 1;
+					break;
+				case Keys.Down:
+					index += 1;
+					if (index >= auto_complete_listbox.Items.Count)
+						index = -1;
+					break;
+				case Keys.PageUp:
+					if (index == -1)
+						index = auto_complete_listbox.Items.Count - 1;
+					else if (index == 0)
+						index = -1;
+					else {
+						index -= auto_complete_listbox.page_size - 1;
+						if (index < 0)
+							index = 0;
+					}
+					break;
+				case Keys.PageDown:
+					if (index == -1)
+						index = 0;
+					else if (index == auto_complete_listbox.Items.Count - 1)
+						index = -1;
+					else {
+						index += auto_complete_listbox.page_size - 1;
+						if (index >= auto_complete_listbox.Items.Count)
+							index = auto_complete_listbox.Items.Count - 1;
+					}
+					break;
+				default:
+					break;
+			}
+
+			auto_complete_listbox.HighlightedIndex = index;
+			Text = index == -1 ? auto_complete_original_text : auto_complete_listbox.Items [index];
 		}
 #endif
 
@@ -512,6 +569,29 @@ namespace System.Windows.Forms {
 		protected override void WndProc (ref Message m)
 		{
 			switch ((Msg)m.Msg) {
+				case Msg.WM_KEYDOWN:
+					if (auto_complete_listbox == null || !auto_complete_listbox.Visible)
+						break;
+
+					Keys key_data = (Keys)m.WParam.ToInt32 ();
+					switch (key_data) {
+						case Keys.Down:
+						case Keys.Up:
+						case Keys.PageDown:
+						case Keys.PageUp:
+							NavigateAutoCompleteList (key_data);
+							m.Result = IntPtr.Zero;
+							return;
+						default:
+							break;
+					}
+					break;
+				case Msg.WM_CHAR:
+					// Need to call base.WndProc before to have access to
+					// the updated Text property value
+					base.WndProc (ref m);
+					ShowAutoCompleteListBox ();
+					return;
 				case Msg.WM_LBUTTONDOWN:
 					// When the textbox gets focus by LBUTTON (but not by middle or right)
 					// it does not do the select all / scroll thing.
@@ -636,12 +716,11 @@ namespace System.Windows.Forms {
 			List<string> items;
 			int top_item;
 			int last_item;
-			int page_size;
+			internal int page_size;
 			int item_height;
 			int highlighted_index = -1;
 			bool user_defined_size;
 			bool resizing;
-			bool was_text_set;
 			Rectangle resizer_bounds;
 
 			const int DefaultDropDownItems = 7;
@@ -691,15 +770,35 @@ namespace System.Windows.Forms {
 					highlighted_index = value;
 					if (highlighted_index != -1)
 						Invalidate (GetItemBounds (highlighted_index));
+
+					if (highlighted_index != -1)
+						EnsureVisible (highlighted_index);
 				}
 			}
 
-			public bool WasTextSet {
-				get {
-					return was_text_set;
-				}
-				set {
-					was_text_set = value;
+			public void Scroll (int lines)
+			{
+				int max = vscroll.Maximum - page_size + 1;
+				int val = vscroll.Value + lines;
+				if (val > max)
+					val = max;
+				else if (val < vscroll.Minimum)
+					val = vscroll.Minimum;
+
+				vscroll.Value = val;
+			}
+
+			public void EnsureVisible (int index)
+			{
+				if (index < top_item) {
+					vscroll.Value = index;
+				} else {
+					int max = vscroll.Maximum - page_size + 1;
+					int rows = Height / item_height;
+					if (index > top_item + rows - 1) {
+						index = index - rows + 1;
+						vscroll.Value = index > max ? max : index;
+					}
 				}
 			}
 
@@ -775,7 +874,6 @@ namespace System.Windows.Forms {
 			public void HideListBox (bool set_text)
 			{
 				if (set_text) {
-					was_text_set = true;
 					owner.Text = items [HighlightedIndex];
 					owner.SelectAll ();
 				}
