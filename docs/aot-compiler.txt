@@ -101,7 +101,10 @@ Mono Ahead Of Time Compiler
 	If the called method is in the same assembly, and does not need initialization (i.e. it
     doesn't have GOT slots etc), then the call is made directly, bypassing the PLT.
 
-* The Precompiled File Format
+* Implementation
+----------------
+
+** The Precompiled File Format
 -----------------------------
 	
 	We use the native object format of the platform. That way it
@@ -115,6 +118,21 @@ Mono Ahead Of Time Compiler
 	library (on Linux its ".so" to the generated file). 
 
 	For example: basic.exe -> basic.exe.so; corlib.dll -> corlib.dll.so
+
+	To avoid symbol lookup overhead	and to save space, some things like the 
+	compiled code of the individual methods are not identified by specific symbols
+    like method_code_1234. Instead, they are stored in one big array and the
+	offsets inside this array are stored in another array, requiring just two
+	symbols. The offsets array is usually named 'FOO_offsets', where FOO is the
+	array the offsets refer to, like 'methods', and 'method_offsets'.
+
+	Generating code using an assembler and linker has some disadvantages:
+	- it requires GNU binutils or an equivalent package to be installed on the
+	  machine running the aot compilation.
+	- it is slow.
+
+	There is some support in the aot compiler for directly emitting elf files, but
+	its not complete (yet).
 	
 	The following things are saved in the object file and can be
 	looked up using the equivalent to dlsym:
@@ -188,7 +206,136 @@ Mono Ahead Of Time Compiler
 		plt_info
 
 			Contains information needed to find the method belonging to a given PLT entry.
-	
+
+** Source file structure
+-----------------------------
+
+	The AOT infrastructure is split into two files, aot-compiler.c and 
+	aot-runtime.c. aot-compiler.c contains the AOT compiler which is invoked by
+	--aot, while aot-runtime.c contains the runtime support needed for loading
+	code and other things from the aot files.
+
+** Compilation process
+----------------------------
+
+	AOT compilation consists of the following stages:
+	- collecting the methods to be compiled.
+	- compiling them using the JIT.
+	- emitting the JITted code and other information into an assembly file (.s).
+	- assembling the file using the system assembler.
+	- linking the resulting object file into a shared library using the system
+	  linker.
+
+** Handling compiled code
+----------------------------
+
+	  Each method is identified by a method index. For normal methods, this is
+	equivalent to its index in the METHOD metadata table. For runtime generated
+	methods (wrappers), it is an arbitrary number.
+	  Compiled code is created by invoking the JIT, requesting it to created AOT
+	code instead of normal code. This is done by the compile_method () function.
+	The output of the JIT is compiled code and a set of patches (relocations). Each 
+	relocation specifies an offset inside the compiled code, and a runtime object 
+	whose address is accessed at that offset.
+	Patches are described by a MonoJumpInfo structure. From the perspective
+	of the AOT compiler, there are two kinds of patches:
+	- calls, which require an entry in the PLT table.
+	- everything else, which require an entry in the GOT table.
+	How patches is handled is described in the next section.
+	  After all the method are compiled, they are emitted into the output file into
+	  a byte array called 'methods', The emission
+	is done by the emit_method_code () and emit_and_reloc_code () functions. Each
+	piece of compiled code is identified by the local symbol .Lm_<method index>. 
+	While compiled code is emitted, all the locations which have an associated patch
+	are rewritten using a platform specific process so the final generated code will
+	refer to the plt and got entries belonging to the patches.
+	The compiled code array 
+can be accessed using the 'methods' global symbol. 
+
+** Handling patches
+----------------------------
+
+	  Before a piece of AOTed code can be used, the GOT entries used by it must be
+	filled out with the addresses of runtime objects. Those objects are identified
+	by MonoJumpInfo structures. These stuctures are saved in a serialized form in
+	the AOT file, so the AOT loader can deconstruct them. The serialization is done
+	by the encode_patch () function, while the deserialization is done by the
+	decode_patch_info () function.
+	Every method has an associated method info blob inside the 'method_info' byte
+	array in the AOT file. This contains all the information required to load the
+	method at runtime:
+	- the first got entry used by the method.
+	- the number of got entries used by the method.
+	- the serialized patch info for the got entries.
+	Some patches, like vtables, icalls are very common, so instead of emitting their
+	info every time they are used by a method, we emit the info only once into a 
+	byte array named 'got_info', and only emit an index into this array for every
+	access.
+
+** The Procedure Linkage Table (PLT)
+------------------------------------
+
+	Our PLT is similar to the elf PLT, it is used to handle calls between methods.
+	If method A needs to call method B, then an entry is allocated in the PLT for
+	method B, and A calls that entry instead of B directly. This is useful because
+	in some cases the runtime needs to do some processing the first time B is 
+	called.
+	There are two cases:
+	- if B is in another assembly, then it needs to be looked up, then JITted or the
+	corresponding AOT code needs to be found.
+	- if B is in the same assembly, but has got slots, then the got slots need to be
+	initialized.
+	If none of these cases is true, then the PLT is not used, and the call is made
+	directly to the native code of the target method.
+	A PLT entry is usually implemented by a jump though a jump table, where the
+	jump table entries are initially filled up with the address of a trampoline so
+	the runtime can get control, and after the native code of the called method is
+	created/found, the jump table entry is changed to point to the native code. 
+	All PLT entries also embed a integer offset after the jump which indexes into
+	the 'plt_info' table, which stores the information required to find the called
+	method. The PLT is emitted by the emit_plt () function.
+
+** Exception/Debug info
+----------------------------
+
+	Each compiled method has some additional info generated by the JIT, usable 
+	for debugging (IL offset-native offset maps) and exception handling 
+	(saved registers, native offsets of try/catch clauses). Since this info is
+	rarely needed, it is saved into a separate byte array called 'ex_info'.
+
+** Cached metadata
+---------------------------
+
+	When the runtime loads a class, it needs to compute a variety of information
+	which is not readily available in the metadata, like the instance size,
+	vtable, whenever the class has a finalizer/type initializer etc. Computing this
+	information requires a lot of time, causes the loading of lots of metadata,
+	and it usually involves the creation of many runtime data structures 
+	(MonoMethod/MonoMethodSignature etc), which are long living, and usually persist
+	for the lifetime of the app. To avoid this, we compute the required information
+	at aot compilation time, and save it into the aot image, into an array called
+	'class_info'. The runtime can query this information using the 
+	mono_aot_get_cached_class_info () function, and if the information is available,
+	it can avoid computing it.
+
+** Full AOT mode
+-------------------------
+
+	Some platforms like the iphone prohibit JITted code, using technical and/or
+	legal means. This is a significant problem for the mono runtime, since it 
+	generates a lot of code dynamically, using either the JIT or more low-level
+	code generation macros. To solve this, the AOT compiler is able to function in
+	full-aot or aot-only mode, where it generates and saves all the neccesary code
+	in the aot image, so at runtime, no code needs to be generated.
+	There are two kinds of code which needs to be considered:
+	- wrapper methods, that is methods whose IL is generated dynamically by the
+	  runtime. They are handled by generating them in the add_wrappers () function,
+	  then emitting them the same way as the 'normal' methods. The only problem is
+	  that these methods do not have a methoddef token, so we need a separate table
+	  in the aot image ('wrapper_info') to find their method index.
+	- trampolines and other small hand generated pieces of code. They are handled
+	  in an ad-hoc way in the emit_trampolines () function.
+
 * Performance considerations
 ----------------------------
 

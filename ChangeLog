@@ -1,3 +1,76 @@
+2008-07-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* docs/aot-compiler.txt: Update docs.
+
+2008-07-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* scripts/patch-quiet.sh: Another try to fix this on osx.
+	
+	* scripts/patch-quiet.sh: Use \\t to encode \t.
+
+	* scripts/patch-quiet.sh: Remove a stray \t.
+
+2008-07-10  Raja R Harinath  <harinath@hurrynot.org>
+
+	* configure.in (enable_quiet_build): Work better on a non-srcdir build.
+	(mono_cv_sizeof_sunpath): Rename cacheval from 'cv_mono_sizeof_sunpath'
+	to placate autoconf.
+
+2008-07-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Make the patching done by --enable-quiet quiet.
+
+2008-07-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* scripts/patch-quiet.sh: Make this more precise.
+
+2008-07-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Add an --enable-quiet-build option.
+
+	* Makefile.am (patch-quiet): New target.
+
+	* acinclude.m4: Handle --quiet.
+
+2008-07-05  Mark Probst  <mark.probst@gmail.com>
+
+	* docs/generic-sharing: Docs about porting generic sharing.
+
+2008-07-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* scripts/patch-quiet.sh (src): Fix verbose mode.
+
+2008-07-03  Mark Probst  <mark.probst@gmail.com>
+
+	* docs/generic-sharing: New documentation file about generic code
+	sharing.  Currently contains information about examining stack
+	frames of generic shared code.
+
+2008-07-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* scripts/patch-quiet.sh: New helper script.
+
+2008-07-02  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* data/net_1_1/machine.config: Ignore system.windows.forms section.
+	* data/net_2_0/machine.config: Define system.windows.forms section.
+
+2008-06-30  Alp Toker  <alp@nuanti.com>
+
+	* configure.in:
+	* acinclude.m4: Remove concatenation syntax from doltlibtool to support
+	old versions of bash and re-enable dolt.
+
+2008-06-26  Alp Toker  <alp@nuanti.com>
+
+	* acinclude.m4: Prospective dolt fix for the build bot. Fix syntax to work
+	with older bash versions.
+
+2008-06-26  Alp Toker  <alp@nuanti.com>
+
+	* acinclude.m4: Update dolt to the latest git version 5e9eef10. (The one we
+	had wasn't in fact the latest version and had a known bug.)
+
 2008-06-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* configure.in: Enable dolt by default as an experiment.

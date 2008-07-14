@@ -587,6 +587,9 @@ typedef struct _ProfilerExecutableFiles {
 } ProfilerExecutableFiles;
 
 
+#define CLEANUP_WRITER_THREAD() do {profiler->writer_thread_terminated = TRUE;} while (0)
+#define CHECK_WRITER_THREAD() (! profiler->writer_thread_terminated)
+
 #ifndef PLATFORM_WIN32
 #include <sys/types.h>
 #include <sys/time.h>
@@ -611,7 +614,11 @@ typedef struct _ProfilerExecutableFiles {
 #define THREAD_TYPE pthread_t
 #define CREATE_WRITER_THREAD(f) pthread_create (&(profiler->data_writer_thread), NULL, ((void*(*)(void*))f), NULL)
 #define EXIT_THREAD() pthread_exit (NULL);
-#define WAIT_WRITER_THREAD() pthread_join (profiler->data_writer_thread, NULL)
+#define WAIT_WRITER_THREAD() do {\
+	if (CHECK_WRITER_THREAD ()) {\
+		pthread_join (profiler->data_writer_thread, NULL);\
+	}\
+} while (0)
 #define CURRENT_THREAD_ID() (gsize) pthread_self ()
 
 #ifndef HAVE_KW_THREAD
@@ -631,15 +638,23 @@ make_pthread_profiler_key (void) {
 #define WRITER_EVENT_INIT() do {\
 	sem_init (&(profiler->enable_data_writer_event), 0, 0);\
 	sem_init (&(profiler->wake_data_writer_event), 0, 0);\
+	sem_init (&(profiler->done_data_writer_event), 0, 0);\
 } while (0)
 #define WRITER_EVENT_DESTROY() do {\
 	sem_destroy (&(profiler->enable_data_writer_event));\
 	sem_destroy (&(profiler->wake_data_writer_event));\
+	sem_destroy (&(profiler->done_data_writer_event));\
 } while (0)
 #define WRITER_EVENT_WAIT() (void) sem_wait (&(profiler->wake_data_writer_event))
 #define WRITER_EVENT_RAISE() (void) sem_post (&(profiler->wake_data_writer_event))
 #define WRITER_EVENT_ENABLE_WAIT() (void) sem_wait (&(profiler->enable_data_writer_event))
 #define WRITER_EVENT_ENABLE_RAISE() (void) sem_post (&(profiler->enable_data_writer_event))
+#define WRITER_EVENT_DONE_WAIT() do {\
+	if (CHECK_WRITER_THREAD ()) {\
+		(void) sem_wait (&(profiler->done_data_writer_event));\
+	}\
+} while (0)
+#define WRITER_EVENT_DONE_RAISE() (void) sem_post (&(profiler->done_data_writer_event))
 
 #if 0
 #define FILE_HANDLE_TYPE FILE*
@@ -668,7 +683,11 @@ make_pthread_profiler_key (void) {
 #define THREAD_TYPE HANDLE
 #define CREATE_WRITER_THREAD(f) CreateThread (NULL, (1*1024*1024), (f), NULL, 0, NULL);
 #define EXIT_THREAD() ExitThread (0);
-#define WAIT_WRITER_THREAD() WaitForSingleObject (profiler->data_writer_thread, INFINITE)
+#define WAIT_WRITER_THREAD() do {\
+	if (CHECK_WRITER_THREAD ()) {\
+		 WaitForSingleObject (profiler->data_writer_thread, INFINITE);\
+	}\
+} while (0)
 #define CURRENT_THREAD_ID() (gsize) GetCurrentThreadId ()
 
 #ifndef HAVE_KW_THREAD
@@ -683,16 +702,24 @@ static guint32 profiler_thread_id = -1;
 #define WRITER_EVENT_INIT() (void) do {\
 	profiler->enable_data_writer_event = CreateEvent (NULL, FALSE, FALSE, NULL);\
 	profiler->wake_data_writer_event = CreateEvent (NULL, FALSE, FALSE, NULL);\
+	profiler->done_data_writer_event = CreateEvent (NULL, FALSE, FALSE, NULL);\
 } while (0)
 #define WRITER_EVENT_DESTROY() CloseHandle (profiler->statistical_data_writer_event)
 #define WRITER_EVENT_INIT() (void) do {\
 	CloseHandle (profiler->enable_data_writer_event);\
 	CloseHandle (profiler->wake_data_writer_event);\
+	CloseHandle (profiler->done_data_writer_event);\
 } while (0)
 #define WRITER_EVENT_WAIT() WaitForSingleObject (profiler->wake_data_writer_event, INFINITE)
 #define WRITER_EVENT_RAISE() SetEvent (profiler->wake_data_writer_event)
 #define WRITER_EVENT_ENABLE_WAIT() WaitForSingleObject (profiler->enable_data_writer_event, INFINITE)
 #define WRITER_EVENT_ENABLE_RAISE() SetEvent (profiler->enable_data_writer_event)
+#define WRITER_EVENT_DONE_WAIT() do {\
+	if (CHECK_WRITER_THREAD ()) {\
+		WaitForSingleObject (profiler->done_data_writer_event, INFINITE);\
+	}\
+} while (0)
+#define WRITER_EVENT_DONE_RAISE() SetEvent (profiler->done_data_writer_event)
 
 #define FILE_HANDLE_TYPE FILE*
 #define OPEN_FILE() profiler->file = fopen (profiler->file_name, "wb");
@@ -767,9 +794,12 @@ struct _MonoProfiler {
 	THREAD_TYPE data_writer_thread;
 	EVENT_TYPE enable_data_writer_event;
 	EVENT_TYPE wake_data_writer_event;
+	EVENT_TYPE done_data_writer_event;
 	gboolean terminate_writer_thread;
+	gboolean writer_thread_terminated;
 	gboolean detach_writer_thread;
 	gboolean writer_thread_enabled;
+	gboolean writer_thread_flush_everything;
 	
 	ProfilerFileWriteBuffer *write_buffers;
 	ProfilerFileWriteBuffer *current_write_buffer;
@@ -873,7 +903,8 @@ add_toggle_handler (int signal_number)
 #define DEBUG_CLASS_BITMAPS 0
 #define DEBUG_STATISTICAL_PROFILER 0
 #define DEBUG_WRITER_THREAD 0
-#if (DEBUG_LOGGING_PROFILER || DEBUG_STATISTICAL_PROFILER || DEBUG_HEAP_PROFILER || DEBUG_WRITER_THREAD)
+#define DEBUG_FILE_WRITES 0
+#if (DEBUG_LOGGING_PROFILER || DEBUG_STATISTICAL_PROFILER || DEBUG_HEAP_PROFILER || DEBUG_WRITER_THREAD || DEBUG_FILE_WRITES)
 #define LOG_WRITER_THREAD(m) printf ("WRITER-THREAD-LOG %s\n", m)
 #else
 #define LOG_WRITER_THREAD(m)
@@ -1405,7 +1436,7 @@ profiler_heap_shot_write_job_new (gboolean heap_shot_was_signalled, gboolean dum
 	job->collection = collection;
 	job->dump_heap_data = dump_heap_data;
 #if DEBUG_HEAP_PROFILER
-	printf ("profiler_heap_shot_write_job_new: created job %p with buffer %p(%p-%p)\n", job, job->buffers, job->start, job->end);
+	printf ("profiler_heap_shot_write_job_new: created job %p with buffer %p(%p-%p) (collection %d, dump %d)\n", job, job->buffers, job->start, job->end, collection, dump_heap_data);
 #endif
 	return job;
 }
@@ -1603,7 +1634,7 @@ profiler_statistical_data_new (MonoProfiler *profiler) {
 
 	data->hits = g_new0 (ProfilerStatisticalHit, buffer_size);
 	data->next_free_index = 0;
-	data->end_index = buffer_size;
+	data->end_index = profiler->statistical_buffer_size;
 	data->first_unwritten_index = 0;
 	
 	return data;
@@ -1678,17 +1709,29 @@ write_current_block (guint16 code) {
 	header [8] = (counter_delta >> 16) & 0xff;
 	header [9] = (counter_delta >> 24) & 0xff;
 	
+#if (DEBUG_FILE_WRITES)
+	printf ("write_current_block: writing header (code %d)\n", code);
+#endif
 	WRITE_BUFFER (& (header [0]), 10);
 	
 	while ((current_buffer != NULL) && (profiler->full_write_buffers > 0)) {
+#if (DEBUG_FILE_WRITES)
+		printf ("write_current_block: writing buffer (size %d)\n", PROFILER_FILE_WRITE_BUFFER_SIZE);
+#endif
 		WRITE_BUFFER (& (current_buffer->buffer [0]), PROFILER_FILE_WRITE_BUFFER_SIZE);
 		profiler->full_write_buffers --;
 		current_buffer = current_buffer->next;
 	}
 	if (profiler->current_write_position > 0) {
+#if (DEBUG_FILE_WRITES)
+		printf ("write_current_block: writing last buffer (size %d)\n", profiler->current_write_position);
+#endif
 		WRITE_BUFFER (& (current_buffer->buffer [0]), profiler->current_write_position);
 	}
 	FLUSH_FILE ();
+#if (DEBUG_FILE_WRITES)
+	printf ("write_current_block: buffers flushed\n");
+#endif
 	
 	profiler->current_write_buffer = profiler->write_buffers;
 	profiler->current_write_position = 0;
@@ -1797,7 +1840,7 @@ profiler_heap_shot_write_data_block (ProfilerHeapShotWriteJob *job) {
 	write_uint64 (start_counter);
 	write_uint64 (start_time);
 #if DEBUG_HEAP_PROFILER
-	printf ("profiler_heap_shot_write_data_block: start writing job %p...\n", job);
+	printf ("profiler_heap_shot_write_data_block: start writing job %p (start %p, end %p)...\n", job, & (job->buffers->buffer [0]), job->cursor);
 #endif
 	buffer = job->buffers;
 	cursor = & (buffer->buffer [0]);
@@ -1990,7 +2033,7 @@ write_mapping_block (gsize thread_id) {
 	if ((profiler->classes->unwritten == NULL) && (profiler->methods->unwritten == NULL))
 		return;
 	
-#if (DEBUG_MAPPING_EVENTS)
+#if (DEBUG_MAPPING_EVENTS || DEBUG_FILE_WRITES)
 	printf ("[write_mapping_block][TID %ld] START\n", thread_id);
 #endif
 	
@@ -2029,7 +2072,7 @@ write_mapping_block (gsize thread_id) {
 	write_clock_data ();
 	write_current_block (MONO_PROFILER_FILE_BLOCK_KIND_MAPPING);
 	
-#if (DEBUG_MAPPING_EVENTS)
+#if (DEBUG_MAPPING_EVENTS || DEBUG_FILE_WRITES)
 	printf ("[write_mapping_block][TID %ld] END\n", thread_id);
 #endif
 }
@@ -2121,7 +2164,9 @@ write_thread_data_block (ProfilerPerThreadData *data) {
 	
 	if (start == end)
 		return;
-	
+#if (DEBUG_FILE_WRITES)
+	printf ("write_thread_data_block: preparing buffer for thread %ld\n", (guint64) data->thread_id);
+#endif
 	write_clock_data ();
 	write_uint64 (data->thread_id);
 	
@@ -2135,6 +2180,9 @@ write_thread_data_block (ProfilerPerThreadData *data) {
 	
 	write_clock_data ();
 	write_current_block (MONO_PROFILER_FILE_BLOCK_KIND_EVENTS);
+#if (DEBUG_FILE_WRITES)
+	printf ("write_thread_data_block: buffer for thread %ld written\n", (guint64) data->thread_id);
+#endif
 }
 
 static ProfilerExecutableMemoryRegionData*
@@ -3169,6 +3217,20 @@ flush_everything (void) {
 	write_statistical_data_block (profiler->statistical_data);
 }
 
+static void
+writer_thread_flush_everything (void) {
+	if (CHECK_WRITER_THREAD ()) {
+		profiler->writer_thread_flush_everything = TRUE;
+		LOG_WRITER_THREAD ("writer_thread_flush_everything: raising event...");
+		WRITER_EVENT_RAISE ();
+		LOG_WRITER_THREAD ("writer_thread_flush_everything: waiting event...");
+		WRITER_EVENT_DONE_WAIT ();
+		LOG_WRITER_THREAD ("writer_thread_flush_everything: got event.");
+	} else {
+		LOG_WRITER_THREAD ("writer_thread_flush_everything: no thread.");
+	}
+}
+
 #define RESULT_TO_LOAD_CODE(r) (((r)==MONO_PROFILE_OK)?MONO_PROFILER_LOADED_EVENT_SUCCESS:MONO_PROFILER_LOADED_EVENT_FAILURE)
 static void
 appdomain_start_load (MonoProfiler *profiler, MonoDomain *domain) {
@@ -3193,7 +3255,7 @@ static void
 appdomain_start_unload (MonoProfiler *profiler, MonoDomain *domain) {
 	LOCK_PROFILER ();
 	loaded_element_unload_start (profiler->loaded_appdomains, domain);
-	flush_everything ();
+	writer_thread_flush_everything ();
 	UNLOCK_PROFILER ();
 }
 
@@ -3235,7 +3297,7 @@ static void
 module_start_unload (MonoProfiler *profiler, MonoImage *module) {
 	LOCK_PROFILER ();
 	loaded_element_unload_start (profiler->loaded_modules, module);
-	flush_everything ();
+	writer_thread_flush_everything ();
 	UNLOCK_PROFILER ();
 }
 
@@ -3277,7 +3339,7 @@ static void
 assembly_start_unload (MonoProfiler *profiler, MonoAssembly *assembly) {
 	LOCK_PROFILER ();
 	loaded_element_unload_start (profiler->loaded_assemblies, assembly);
-	flush_everything ();
+	writer_thread_flush_everything ();
 	UNLOCK_PROFILER ();
 }
 static void
@@ -4138,17 +4200,14 @@ profiler_shutdown (MonoProfiler *prof)
 	WRITER_EVENT_DESTROY ();
 	
 	LOCK_PROFILER ();
-	
+	writer_thread_flush_everything ();
 	MONO_PROFILER_GET_CURRENT_TIME (profiler->end_time);
 	MONO_PROFILER_GET_CURRENT_COUNTER (profiler->end_counter);
-	
-	mono_thread_attach (mono_get_root_domain ());
-	
-	flush_everything ();
 	write_end_block ();
 	FLUSH_FILE ();
 	CLOSE_FILE();
 	UNLOCK_PROFILER ();
+	
 	g_free (profiler->file_name);
 	if (profiler->file_name_suffix != NULL) {
 		g_free (profiler->file_name_suffix);
@@ -4481,35 +4540,62 @@ data_writer_thread (gpointer nothing) {
 		}
 		
 		statistical_data = profiler->statistical_data_ready;
-		done = (statistical_data == NULL) && (profiler->heap_shot_write_jobs == NULL);
+		done = (statistical_data == NULL) && (profiler->heap_shot_write_jobs == NULL) && (profiler->writer_thread_flush_everything == FALSE);
 		
 		if ((!done) && thread_attached) {
-			LOG_WRITER_THREAD ("data_writer_thread: acquiring lock and writing data");
-			LOCK_PROFILER ();
-			
-			// This makes sure that all method ids are in place
-			LOG_WRITER_THREAD ("data_writer_thread: writing mapping...");
-			flush_all_mappings ();
-			LOG_WRITER_THREAD ("data_writer_thread: wrote mapping");
-			
-			if ((statistical_data != NULL) && ! thread_detached) {
-				LOG_WRITER_THREAD ("data_writer_thread: writing statistical data...");
-				profiler->statistical_data_ready = NULL;
-				write_statistical_data_block (statistical_data);
-				statistical_data->next_free_index = 0;
-				statistical_data->first_unwritten_index = 0;
-				profiler->statistical_data_second_buffer = statistical_data;
-				LOG_WRITER_THREAD ("data_writer_thread: wrote statistical data");
+			if (profiler->writer_thread_flush_everything) {
+				if (! thread_detached) {
+					LOG_WRITER_THREAD ("data_writer_thread: flushing everything...");
+					flush_everything ();
+					profiler->writer_thread_flush_everything = FALSE;
+					WRITER_EVENT_DONE_RAISE ();
+					LOG_WRITER_THREAD ("data_writer_thread: flushed everything.");
+				} else {
+					LOG_WRITER_THREAD ("data_writer_thread: flushing requested, but thread is detached...");
+					profiler->writer_thread_flush_everything = FALSE;
+					WRITER_EVENT_DONE_RAISE ();
+					LOG_WRITER_THREAD ("data_writer_thread: done event raised.");
+				}
+			} else {
+				LOG_WRITER_THREAD ("data_writer_thread: acquiring lock and writing data");
+				LOCK_PROFILER ();
+				
+				// This makes sure that all method ids are in place
+				LOG_WRITER_THREAD ("data_writer_thread: writing mapping...");
+				flush_all_mappings ();
+				LOG_WRITER_THREAD ("data_writer_thread: wrote mapping");
+				
+				if ((statistical_data != NULL) && ! thread_detached) {
+					LOG_WRITER_THREAD ("data_writer_thread: writing statistical data...");
+					profiler->statistical_data_ready = NULL;
+					write_statistical_data_block (statistical_data);
+					statistical_data->next_free_index = 0;
+					statistical_data->first_unwritten_index = 0;
+					profiler->statistical_data_second_buffer = statistical_data;
+					LOG_WRITER_THREAD ("data_writer_thread: wrote statistical data");
+				}
+				
+				profiler_process_heap_shot_write_jobs ();
+				
+				UNLOCK_PROFILER ();
+				LOG_WRITER_THREAD ("data_writer_thread: wrote data and released lock");
 			}
-			
-			profiler_process_heap_shot_write_jobs ();
-			
-			UNLOCK_PROFILER ();
-			LOG_WRITER_THREAD ("data_writer_thread: wrote data and released lock");
+		} else {
+			if (profiler->writer_thread_flush_everything) {
+				LOG_WRITER_THREAD ("data_writer_thread: flushing requested, but thread is not attached...");
+				profiler->writer_thread_flush_everything = FALSE;
+				WRITER_EVENT_DONE_RAISE ();
+				LOG_WRITER_THREAD ("data_writer_thread: done event raised.");
+			}
 		}
 		
 		if (profiler->detach_writer_thread) {
 			if (this_thread != NULL) {
+				LOG_WRITER_THREAD ("data_writer_thread: detach requested, acquiring lock and flushing data");
+				LOCK_PROFILER ();
+				flush_everything ();
+				UNLOCK_PROFILER ();
+				LOG_WRITER_THREAD ("data_writer_thread: flushed data and released lock");
 				LOG_WRITER_THREAD ("data_writer_thread: detaching thread");
 				mono_thread_detach (this_thread);
 				this_thread = NULL;
@@ -4522,6 +4608,7 @@ data_writer_thread (gpointer nothing) {
 		
 		if (profiler->terminate_writer_thread) {
 		LOG_WRITER_THREAD ("data_writer_thread: exiting thread");
+			CLEANUP_WRITER_THREAD ();
 			EXIT_THREAD ();
 		}
 	}

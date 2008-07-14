@@ -1,3 +1,23 @@
+2008-07-11 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* invalid_ldtoken_field.il
+	* invalid_ldtoken_method.il
+	* invalid_ldtoken_type_2.il
+	* invalid_ldtoken_type_3.il
+	* invalid_ldtoken_type.il: Tests for bad tokens for
+	the ldtoken opcode.
+
+2008-07-11 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* invalid_bad_method_instantiation.il: Test for 
+	instantiations using VAR or MVAR that are invalid
+	in the current context.
+
+2008-07-11 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* unverifiable_funptr_double_free_regression.il: Regression
+	test for double free of funptrs.
+
 2008-06-24 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* valid_generic_exception_catch_clause_type.cs: Regression

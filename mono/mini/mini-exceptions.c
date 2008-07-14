@@ -48,15 +48,126 @@
 #define MONO_ARCH_CONTEXT_DEF
 #endif
 
+static gpointer restore_context_func, call_filter_func;
+static gpointer throw_exception_func, rethrow_exception_func;
+static gpointer throw_exception_by_name_func, throw_corlib_exception_func;
+
 void
 mono_exceptions_init (void)
 {
+#ifdef MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES
+	guint32 code_size;
+	MonoJumpInfo *ji;
+
+	if (mono_aot_only) {
+		restore_context_func = mono_aot_get_named_code ("restore_context");
+		call_filter_func = mono_aot_get_named_code ("call_filter");
+		throw_exception_func = mono_aot_get_named_code ("throw_exception");
+		rethrow_exception_func = mono_aot_get_named_code ("rethrow_exception");
+	} else {
+		restore_context_func = mono_arch_get_restore_context_full (&code_size, &ji, FALSE);
+		call_filter_func = mono_arch_get_call_filter_full (&code_size, &ji, FALSE);
+		throw_exception_func = mono_arch_get_throw_exception_full (&code_size, &ji, FALSE);
+		rethrow_exception_func = mono_arch_get_rethrow_exception_full (&code_size, &ji, FALSE);
+	}
+#else
 #ifndef CUSTOM_EXCEPTION_HANDLING
-	mono_arch_get_restore_context ();
-	mono_arch_get_call_filter ();
-	mono_arch_get_throw_exception ();
-	mono_arch_get_rethrow_exception ();
+	restore_context_func = mono_arch_get_restore_context ();
+	call_filter_func = mono_arch_get_call_filter ();
 #endif
+	throw_exception_func = mono_arch_get_throw_exception ();
+	rethrow_exception_func = mono_arch_get_rethrow_exception ();
+#endif
+}
+
+gpointer
+mono_get_throw_exception (void)
+{
+	g_assert (throw_exception_func);
+	return throw_exception_func;
+}
+
+gpointer
+mono_get_rethrow_exception (void)
+{
+	g_assert (rethrow_exception_func);
+	return rethrow_exception_func;
+}
+
+gpointer
+mono_get_call_filter (void)
+{
+	g_assert (call_filter_func);
+	return call_filter_func;
+}
+
+gpointer
+mono_get_restore_context (void)
+{
+	g_assert (restore_context_func);
+	return restore_context_func;
+}
+
+gpointer
+mono_get_throw_exception_by_name (void)
+{
+	gpointer code = NULL;
+#ifdef MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES
+	guint32 code_size;
+	MonoJumpInfo *ji;
+#endif
+
+	/* This depends on corlib classes so cannot be inited in mono_exceptions_init () */
+	if (throw_exception_by_name_func)
+		return throw_exception_by_name_func;
+
+#ifdef MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES
+	if (mono_aot_only)
+		code = mono_aot_get_named_code ("throw_exception_by_name");
+	else
+		code = mono_arch_get_throw_exception_by_name_full (&code_size, &ji, FALSE);
+#else
+		code = mono_arch_get_throw_exception_by_name ();
+#endif
+
+	mono_memory_barrier ();
+
+	throw_exception_by_name_func = code;
+
+	return throw_exception_by_name_func;
+}
+
+gpointer
+mono_get_throw_corlib_exception (void)
+{
+	gpointer code = NULL;
+#ifdef MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES
+	guint32 code_size;
+	MonoJumpInfo *ji;
+#endif
+
+	/* This depends on corlib classes so cannot be inited in mono_exceptions_init () */
+	if (throw_corlib_exception_func)
+		return throw_corlib_exception_func;
+
+#if MONO_ARCH_HAVE_THROW_CORLIB_EXCEPTION
+#ifdef MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES
+	if (mono_aot_only)
+		code = mono_aot_get_named_code ("throw_corlib_exception");
+	else
+		code = mono_arch_get_throw_corlib_exception_full (&code_size, &ji, FALSE);
+#else
+		code = mono_arch_get_throw_corlib_exception ();
+#endif
+#else
+	g_assert_not_reached ();
+#endif
+
+	mono_memory_barrier ();
+
+	throw_corlib_exception_func = code;
+
+	return throw_corlib_exception_func;
 }
 
 #ifndef mono_find_jit_info
@@ -606,40 +717,69 @@ static MonoClass*
 get_exception_catch_class (MonoJitExceptionInfo *ei, MonoJitInfo *ji, MonoContext *ctx)
 {
 	MonoClass *catch_class = ei->data.catch_class;
+	MonoGenericJitInfo *gi;
+	gpointer info;
+	MonoClass *class, *method_container_class;
+	MonoType *inflated_type;
+	MonoGenericContext context = { NULL, NULL };
 
-	if (ji->has_generic_jit_info) {
-		MonoGenericJitInfo *gi = mono_jit_info_get_generic_jit_info (ji);
-		gpointer info;
-		MonoClass *class;
-		MonoType *inflated_type;
+	if (!catch_class)
+		return NULL;
 
-		if (gi->this_in_reg)
-			info = mono_arch_context_get_int_reg (ctx, gi->this_reg);
-		else
-			info = *(gpointer*)((char*)mono_arch_context_get_int_reg (ctx, gi->this_reg) +
-					gi->this_offset);
+	if (!ji->has_generic_jit_info)
+		return catch_class;
 
-		if (ji->method->flags & METHOD_ATTRIBUTE_STATIC) {
-			MonoVTable *vtable = info;
+	gi = mono_jit_info_get_generic_jit_info (ji);
+	if (!gi->has_this)
+		return catch_class;
 
-			class = vtable->klass;
-		} else {
-			MonoObject *this = info;
+	if (gi->this_in_reg)
+		info = mono_arch_context_get_int_reg (ctx, gi->this_reg);
+	else
+		info = *(gpointer*)((char*)mono_arch_context_get_int_reg (ctx, gi->this_reg) +
+				gi->this_offset);
 
-			class = this->vtable->klass;
-		}
+	g_assert (ji->method->is_inflated);
 
-		/* FIXME: we shouldn't inflate but instead put the
-		   type in the rgctx and fetch it from there.  It
-		   might be a good idea to do this lazily, i.e. only
-		   when the exception is actually thrown, so as not to
-		   waste space for exception clauses which might never
-		   be encountered. */
-		inflated_type = mono_class_inflate_generic_type (&catch_class->byval_arg,
-				mini_class_get_context (class));
-		catch_class = mono_class_from_mono_type (inflated_type);
-		g_free (inflated_type);
+	if (mono_method_get_context (ji->method)->method_inst) {
+		MonoMethodRuntimeGenericContext *mrgctx = info;
+
+		class = mrgctx->class_vtable->klass;
+		context.method_inst = mrgctx->method_inst;
+		g_assert (context.method_inst);
+	} else if (ji->method->flags & METHOD_ATTRIBUTE_STATIC) {
+		MonoVTable *vtable = info;
+
+		class = vtable->klass;
+	} else {
+		MonoObject *this = info;
+
+		class = this->vtable->klass;
 	}
+
+	if (class->generic_class || class->generic_container)
+		context.class_inst = mini_class_get_context (class)->class_inst;
+
+	g_assert (!ji->method->klass->generic_container);
+	if (ji->method->klass->generic_class)
+		method_container_class = ji->method->klass->generic_class->container_class;
+	else
+		method_container_class = ji->method->klass;
+
+	if (class->generic_class)
+		g_assert (class->generic_class->container_class == method_container_class);
+	else
+		g_assert (!class->generic_container && class == method_container_class);
+
+	/* FIXME: we shouldn't inflate but instead put the
+	   type in the rgctx and fetch it from there.  It
+	   might be a good idea to do this lazily, i.e. only
+	   when the exception is actually thrown, so as not to
+	   waste space for exception clauses which might never
+	   be encountered. */
+	inflated_type = mono_class_inflate_generic_type (&catch_class->byval_arg, &context);
+	catch_class = mono_class_from_mono_type (inflated_type);
+	g_free (inflated_type);
 
 	return catch_class;
 }
@@ -706,10 +846,10 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gpointer origina
 	}
 
 	if (!call_filter)
-		call_filter = mono_arch_get_call_filter ();
+		call_filter = mono_get_call_filter ();
 
 	if (!restore_context)
-		restore_context = mono_arch_get_restore_context ();
+		restore_context = mono_get_restore_context ();
 
 	g_assert (jit_tls->end_of_stack);
 	g_assert (jit_tls->abort_func);
@@ -945,7 +1085,7 @@ mono_debugger_run_finally (MonoContext *start_ctx)
 		return;
 
 	if (!call_filter)
-		call_filter = mono_arch_get_call_filter ();
+		call_filter = mono_get_call_filter ();
 
 	for (i = 0; i < ji->num_clauses; i++) {
 		MonoJitExceptionInfo *ei = &ji->clauses [i];
@@ -1229,6 +1369,7 @@ mono_handle_native_sigsegv (int signal, void *ctx)
  * mono_print_thread_dump:
  *
  *   Print information about the current thread to stdout.
+ * SIGCTX can be NULL, allowing this to be called from gdb.
  */
 void
 mono_print_thread_dump (void *sigctx)
@@ -1254,7 +1395,10 @@ mono_print_thread_dump (void *sigctx)
 
 	/* FIXME: */
 #if defined(__i386__) || defined(__x86_64__)
-	mono_arch_sigctx_to_monoctx (sigctx, &ctx);
+	if (!sigctx)
+		MONO_INIT_CONTEXT_FROM_FUNC (&ctx, mono_print_thread_dump);
+	else
+		mono_arch_sigctx_to_monoctx (sigctx, &ctx);
 
 	mono_jit_walk_stack_from_ctx (print_stack_frame_to_string, &ctx, TRUE, text);
 #else

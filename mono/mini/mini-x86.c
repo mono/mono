@@ -4882,6 +4882,8 @@ mono_arch_get_this_arg_from_call (MonoGenericSharingContext *gsctx, MonoMethodSi
 	CallInfo *cinfo;
 	gpointer res;
 
+	if (!gsctx && code)
+		gsctx = mono_get_generic_context_from_code (code);
 	cinfo = get_call_info (gsctx, NULL, sig, FALSE);
 
 	/*
@@ -4919,11 +4921,8 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 
 	if (has_target) {
 		static guint8* cached = NULL;
-		mono_mini_arch_lock ();
-		if (cached) {
-			mono_mini_arch_unlock ();
+		if (cached)
 			return cached;
-		}
 		
 		start = code = mono_global_codeman_reserve (64);
 
@@ -4935,9 +4934,11 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 
 		g_assert ((code - start) < 64);
 
-		cached = start;
 		mono_debug_add_delegate_trampoline (start, code - start);
-		mono_mini_arch_unlock ();
+
+		mono_memory_barrier ();
+
+		cached = start;
 	} else {
 		static guint8* cache [MAX_ARCH_DELEGATE_PARAMS + 1] = {NULL};
 		int i = 0;
@@ -4948,12 +4949,9 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 			if (!mono_is_regsize_var (sig->params [i]))
 				return NULL;
 
-		mono_mini_arch_lock ();
 		code = cache [sig->param_count];
-		if (code) {
-			mono_mini_arch_unlock ();
+		if (code)
 			return code;
-		}
 
 		/*
 		 * The stack contains:
@@ -4986,10 +4984,11 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 
 		g_assert ((code - start) < code_reserve);
 
-		cache [sig->param_count] = start;
-
 		mono_debug_add_delegate_trampoline (start, code - start);
-		mono_mini_arch_unlock ();
+
+		mono_memory_barrier ();
+
+		cache [sig->param_count] = start;
 	}
 
 	return start;

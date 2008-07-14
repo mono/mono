@@ -276,8 +276,9 @@ reg: OP_LCONV_TO_OVF_U2_UN (reg) {
 }
 
 reg: OP_LCONV_TO_OVF_I4 (reg) {
+	/* The int cast is needed for the VS compiler.  See Compiler Warning (level 2) C4146. */
 	MONO_EMIT_NEW_COMPARE_IMM_EXC (s, GT, state->left->reg1, 0x7fffffff, "OverflowException");
-	MONO_EMIT_NEW_COMPARE_IMM_EXC (s, LT, state->left->reg1, -2147483648, "OverflowException");
+	MONO_EMIT_NEW_COMPARE_IMM_EXC (s, LT, state->left->reg1, ((int)-2147483648), "OverflowException");
 	MONO_EMIT_UNALU (s, tree, OP_MOVE, state->reg1, state->left->reg1);
 }
 
@@ -382,14 +383,13 @@ reg: OP_LCALL_REG_RGCTX (reg, reg) {
 	mono_bblock_add_inst (s->cbb, tree);
 }
 
-reg: OP_LCALL_REG (OP_ICONST) {
+reg: OP_LCALL_REG (OP_ICONST),
+reg: OP_LCALL_REG (OP_I8CONST) {
 	tree->opcode = OP_LCALL;
 	((MonoCallInst*)tree)->fptr = state->left->tree->inst_p0;
 	tree->dreg = state->reg1;
 	mono_bblock_add_inst (s->cbb, tree);
 }
-
-
 
 stmt: CEE_STIND_I4 (OP_REGVAR, OP_ICONST) {
 	tree->inst_c0 = state->right->tree->inst_c0;

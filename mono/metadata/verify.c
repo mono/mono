@@ -173,10 +173,10 @@ static gboolean
 mono_delegate_signature_equal (MonoMethodSignature *sig1, MonoMethodSignature *sig2);
 
 static gboolean
-mono_class_is_valid_generic_instantiation (MonoClass *klass);
+mono_class_is_valid_generic_instantiation (VerifyContext *ctx, MonoClass *klass);
 
 static gboolean
-mono_method_is_valid_generic_instantiation (MonoMethod *method);
+mono_method_is_valid_generic_instantiation (VerifyContext *ctx, MonoMethod *method);
 //////////////////////////////////////////////////////////////////
 
 
@@ -446,7 +446,7 @@ is_valid_generic_instantiation (MonoGenericContainer *gc, MonoGenericContext *co
 
 		/*it's not safe to call mono_class_init from here*/
 		if (paramClass->generic_class && !paramClass->inited) {
-			if (!mono_class_is_valid_generic_instantiation (paramClass))
+			if (!mono_class_is_valid_generic_instantiation (NULL, paramClass))
 				return FALSE;
 		}
 
@@ -477,42 +477,128 @@ is_valid_generic_instantiation (MonoGenericContainer *gc, MonoGenericContext *co
 	return TRUE;
 }
 
+/*
+ * Verify if @type is valid for the given @ctx verification context.
+ * this function checks for VAR and MVAR types that are invalid under the current verifier,
+ * This means that it either 
+ */
 static gboolean
-mono_method_is_valid_generic_instantiation (MonoMethod *method)
+is_valid_type_in_context (VerifyContext *ctx, MonoType *type)
+{
+	if (mono_type_is_generic_argument (type) && !ctx->generic_context)
+		return FALSE;
+	if (type->type == MONO_TYPE_VAR) {
+		if (!ctx->generic_context->class_inst)
+			return FALSE;
+		if (type->data.generic_param->num >= ctx->generic_context->class_inst->type_argc)
+			return FALSE;
+	} else if (type->type == MONO_TYPE_MVAR) {
+		if (!ctx->generic_context->method_inst)
+			return FALSE;
+		if (type->data.generic_param->num >= ctx->generic_context->method_inst->type_argc)
+			return FALSE;
+	}
+	return TRUE;
+}
+
+static gboolean
+is_valid_generic_instantiation_in_context (VerifyContext *ctx, MonoGenericInst *ginst)
+{
+	int i;
+	for (i = 0; i < ginst->type_argc; ++i) {
+		MonoType *type = ginst->type_argv [i];
+		if (!is_valid_type_in_context (ctx, type))
+			return FALSE;
+	}
+	return TRUE;
+}
+
+static gboolean
+mono_method_is_valid_generic_instantiation (VerifyContext *ctx, MonoMethod *method)
 {
 	MonoMethodInflated *gmethod = (MonoMethodInflated *)method;
 	MonoGenericInst *ginst = gmethod->context.method_inst;
 	MonoGenericContainer *gc = mono_method_get_generic_container (gmethod->declaring);
 	if (!gc) /*non-generic inflated method - it's part of a generic type  */
 		return TRUE;
+	if (ctx && !is_valid_generic_instantiation_in_context (ctx, ginst))
+		return FALSE;
 	return is_valid_generic_instantiation (gc, &gmethod->context, ginst);
 
 }
 
 static gboolean
-mono_class_is_valid_generic_instantiation (MonoClass *klass)
+mono_class_is_valid_generic_instantiation (VerifyContext *ctx, MonoClass *klass)
 {
 	MonoGenericClass *gklass = klass->generic_class;
 	MonoGenericInst *ginst = gklass->context.class_inst;
 	MonoGenericContainer *gc = gklass->container_class->generic_container;
+	if (ctx && !is_valid_generic_instantiation_in_context (ctx, ginst))
+		return FALSE;
 	return is_valid_generic_instantiation (gc, &gklass->context, ginst);
 }
 
 static gboolean
-verify_type_load_error (VerifyContext *ctx, MonoClass *klass)
+mono_type_is_valid_in_context (VerifyContext *ctx, MonoType *type)
 {
+	MonoClass *klass;
+
+	if (!is_valid_type_in_context (ctx, type)) {
+		ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid type %x at 0x%04x", type->type, ctx->ip_offset), MONO_EXCEPTION_BAD_IMAGE);
+		return FALSE;
+	}
+
+	klass = mono_class_from_mono_type (type);
 	mono_class_init (klass);
 	if (mono_loader_get_last_error () || klass->exception_type != MONO_EXCEPTION_NONE) {
-		if (klass->generic_class && !mono_class_is_valid_generic_instantiation (klass))
+		if (klass->generic_class && !mono_class_is_valid_generic_instantiation (NULL, klass))
 			ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid generic instantiation of type %s.%s at 0x%04x", klass->name_space, klass->name, ctx->ip_offset), MONO_EXCEPTION_TYPE_LOAD);
 		else
 			ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Could not load type %s.%s at 0x%04x", klass->name_space, klass->name, ctx->ip_offset), MONO_EXCEPTION_TYPE_LOAD);
 		return FALSE;
 	}
+	if (!klass->generic_class)
+		return TRUE;
+
+	if (!mono_class_is_valid_generic_instantiation (ctx, klass)) {
+		ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid generic instantiation of type %s.%s at 0x%04x", klass->name_space, klass->name, ctx->ip_offset), MONO_EXCEPTION_TYPE_LOAD);
+		return FALSE;
+	}
+
+	if (!is_valid_generic_instantiation_in_context (ctx, mono_class_get_context (klass)->class_inst)) {
+		ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid generic instantiation of type %s.%s at 0x%04x", klass->name_space, klass->name, ctx->ip_offset), MONO_EXCEPTION_BAD_IMAGE);
+		return FALSE;
+	}
 
 	return TRUE;
 }
+static gboolean
+mono_method_is_valid_in_context (VerifyContext *ctx, MonoMethod *method)
+{
+	MonoGenericInst *ginst;
 
+	if (!mono_type_is_valid_in_context (ctx, &method->klass->byval_arg)) {
+		ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid method %s.%s::%s at 0x%04x", method->klass->name_space, method->klass->name, method->name, ctx->ip_offset), MONO_EXCEPTION_BAD_IMAGE);
+		return FALSE;
+	}
+
+	if (!method->is_inflated)
+		return TRUE;
+
+	if (!mono_method_is_valid_generic_instantiation (ctx, method)) {
+		ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid generic instantiation of method %s.%s::%s at 0x%04x", method->klass->name_space, method->klass->name, method->name, ctx->ip_offset), MONO_EXCEPTION_UNVERIFIABLE_IL);
+		return FALSE;
+	}
+
+	ginst = mono_method_get_context (method)->method_inst;
+	if (ginst && !is_valid_generic_instantiation_in_context (ctx, ginst)) {
+		ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid generic instantiation of method %s.%s::%s at 0x%04x", method->klass->name_space, method->klass->name, method->name, ctx->ip_offset), MONO_EXCEPTION_BAD_IMAGE);
+		return FALSE;
+	}
+	return TRUE;
+}
+
+	
 static MonoClassField*
 verifier_load_field (VerifyContext *ctx, int token, MonoClass **klass, const char *opcode) {
 	MonoClassField *field;
@@ -528,7 +614,7 @@ verifier_load_field (VerifyContext *ctx, int token, MonoClass **klass, const cha
 		return NULL;
 	}
 
-	if (!verify_type_load_error (ctx, field->parent))
+	if (!mono_type_is_valid_in_context (ctx, &field->parent->byval_arg))
 		return NULL;
 
 	return field;
@@ -550,13 +636,8 @@ verifier_load_method (VerifyContext *ctx, int token, const char *opcode) {
 		return NULL;
 	}
 	
-	if (!verify_type_load_error (ctx, method->klass))
+	if (!mono_method_is_valid_in_context (ctx, method))
 		return NULL;
-
-	if (method->is_inflated && !mono_method_is_valid_generic_instantiation (method)) {
-		ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid generic instantiation of method %s.%s::%s at 0x%04x", method->klass->name_space, method->klass->name, method->name, ctx->ip_offset), MONO_EXCEPTION_UNVERIFIABLE_IL);
-		return NULL;
-	}
 
 	return method;
 }
@@ -577,7 +658,7 @@ verifier_load_type (VerifyContext *ctx, int token, const char *opcode) {
 		return NULL;
 	}
 
-	if (!verify_type_load_error (ctx, mono_class_from_mono_type (type)))
+	if (!mono_type_is_valid_in_context (ctx, type))
 		return NULL;
 
 	return type;
@@ -3359,6 +3440,15 @@ do_load_token (VerifyContext *ctx, int token)
 		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Invalid token 0x%x for ldtoken at 0x%04x", token, ctx->ip_offset));
 		return;
 	}
+	if (handle_class == mono_defaults.typehandle_class) {
+		mono_type_is_valid_in_context (ctx, (MonoType*)handle);
+	} else if (handle_class == mono_defaults.methodhandle_class) {
+		mono_method_is_valid_in_context (ctx, (MonoMethod*)handle);		
+	} else if (handle_class == mono_defaults.fieldhandle_class) {
+		mono_type_is_valid_in_context (ctx, &((MonoClassField*)handle)->parent->byval_arg);				
+	} else {
+		ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid ldtoken type %x at 0x%04x", token, ctx->ip_offset), MONO_EXCEPTION_BAD_IMAGE);
+	}
 	stack_push_val (ctx, TYPE_COMPLEX, mono_class_get_type (handle_class));
 }
 
@@ -5418,7 +5508,7 @@ mono_method_verify (MonoMethod *method, int level)
 
 	for (tmp = ctx.exception_types; tmp; tmp = tmp->next)
 		mono_metadata_free_type (tmp->data);
-	g_slist_free (ctx.funptrs);
+	g_slist_free (ctx.exception_types);
 
 	for (i = 0; i < ctx.num_locals; ++i)
 		mono_metadata_free_type (ctx.locals [i]);
@@ -5495,7 +5585,7 @@ mono_verifier_is_method_full_trust (MonoMethod *method)
  * This value is only pertinent to assembly verification and has
  * nothing to do with CoreClr security. 
  * 
- * Under verify_all, all code is under full trust if no verifier mode is set. 
+ * Under verify_all all user code must be verifiable if no security option was set 
  * 
  */
 gboolean
@@ -5562,7 +5652,7 @@ mono_verifier_verify_class (MonoClass *class)
 	if (!verify_class_for_overlapping_reference_fields (class))
 		return FALSE;
 	
-	if (class->generic_class && !mono_class_is_valid_generic_instantiation (class))
+	if (class->generic_class && !mono_class_is_valid_generic_instantiation (NULL, class))
 		return FALSE;
 	return TRUE;
 }

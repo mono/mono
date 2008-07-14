@@ -646,6 +646,7 @@ typedef struct {
 
 enum {
 	MONO_GENERIC_SHARING_NONE,
+	MONO_GENERIC_SHARING_COLLECTIONS,
 	MONO_GENERIC_SHARING_CORLIB,
 	MONO_GENERIC_SHARING_ALL
 };
@@ -944,6 +945,9 @@ mono_find_jit_icall_by_name (const char *name) MONO_INTERNAL;
 MonoJitICallInfo *
 mono_find_jit_icall_by_addr (gconstpointer addr) MONO_INTERNAL;
 
+GHashTable*
+mono_get_jit_icall_info (void) MONO_INTERNAL;
+
 gboolean
 mono_class_set_failure (MonoClass *klass, guint32 ex_type, void *ex_data) MONO_INTERNAL;
 
@@ -989,6 +993,9 @@ mono_generic_class_is_generic_type_definition (MonoGenericClass *gklass) MONO_IN
 
 MonoMethod*
 mono_method_get_declaring_generic_method (MonoMethod *method) MONO_INTERNAL;
+
+MonoMethod*
+mono_class_get_method_generic (MonoClass *klass, MonoMethod *method) MONO_INTERNAL;
 
 MonoType*
 mono_type_get_basic_type_from_generic (MonoType *type) MONO_INTERNAL;

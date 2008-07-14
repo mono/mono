@@ -11,6 +11,8 @@ void* mono_ldftn_nosync (MonoMethod *method) MONO_INTERNAL;
 
 void* mono_ldvirtfn (MonoObject *obj, MonoMethod *method) MONO_INTERNAL;
 
+void* mono_ldvirtfn_gshared (MonoObject *obj, MonoMethod *method) MONO_INTERNAL;
+
 void mono_helper_stelem_ref_check (MonoArray *array, MonoObject *val) MONO_INTERNAL;
 
 gint64 mono_llmult (gint64 a, gint64 b) MONO_INTERNAL;
@@ -50,6 +52,8 @@ guint64 mono_lshr_un (guint64 a, gint32 shamt) MONO_INTERNAL;
 gint64 mono_lshr (gint64 a, gint32 shamt) MONO_INTERNAL;
 
 MonoArray *mono_array_new_va (MonoMethod *cm, ...) MONO_INTERNAL;
+
+MonoArray *mono_array_new_2 (MonoMethod *cm, guint32 length1, guint32 length2) MONO_INTERNAL;
 
 gpointer mono_class_static_field_address (MonoDomain *domain, MonoClassField *field) MONO_INTERNAL;
 

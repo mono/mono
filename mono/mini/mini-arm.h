@@ -57,8 +57,6 @@
  * reproduceable results for benchmarks */
 #define MONO_ARCH_CODE_ALIGNMENT 32
 
-#define MONO_ARCH_AOT_PLT_OFFSET_REG ARMREG_IP
-
 void arm_patch (guchar *code, const guchar *target);
 guint8* mono_arm_emit_load_imm (guint8 *code, int dreg, guint32 val);
 
@@ -120,6 +118,7 @@ typedef struct MonoCompileArch {
 #define ARM_NUM_REG_ARGS (ARM_LAST_ARG_REG-ARM_FIRST_ARG_REG+1)
 #define ARM_NUM_REG_FPARGS 0
 
+#define MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_IMT 1
 
 #define MONO_ARCH_AOT_SUPPORTED 1

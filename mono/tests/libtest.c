@@ -1512,6 +1512,17 @@ mono_test_marshal_amd64_pass_return_struct1 (amd64_struct1 s)
 	return s;
 }
 
+LIBTEST_API amd64_struct1 STDCALL 
+mono_test_marshal_amd64_pass_return_struct1_many_args (amd64_struct1 s, int i1, int i2, int i3, int i4, int i5, int i6, int i7, int i8)
+{
+	s.i ++;
+	s.j ++;
+	s.k ++;
+	s.l += 1 + i1 + i2 + i3 + i4 + i5 + i6 + i7 + i8;
+
+	return s;
+}
+
 typedef struct amd64_struct2 {
 	int i;
 	int j;
@@ -3559,6 +3570,24 @@ mono_test_Winx64_struct5_ret ()
 	return ret;
 }
 
+LIBTEST_API winx64_struct1 STDCALL  
+mono_test_Winx64_struct1_ret_5_args (char a, char b, char c, char d, char e)
+{
+	winx64_struct1 ret;
+	ret.a = a + b + c + d + e;
+	return ret;
+}
+
+LIBTEST_API winx64_struct5 STDCALL
+mono_test_Winx64_struct5_ret6_args (char a, char b, char c, char d, char e)
+{
+	winx64_struct5 ret;
+	ret.a = a + b;
+	ret.b = c + d;
+	ret.c = e;
+	return ret;
+}
+
 typedef struct
 {
 	float a;
@@ -3600,4 +3629,6 @@ mono_test_managed_Winx64_struct1_in(managed_struct1_delegate func)
 	val.a = 5;
 	return func (val);
 }
+
+
 

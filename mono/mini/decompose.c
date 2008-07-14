@@ -266,7 +266,8 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 	case OP_LCONV_TO_OVF_I4:
 		MONO_EMIT_NEW_COMPARE_IMM (cfg, ins->sreg1, 0x7fffffff);
 		MONO_EMIT_NEW_COND_EXC (cfg, GT, "OverflowException");
-		MONO_EMIT_NEW_COMPARE_IMM (cfg, ins->sreg1, -2147483648);
+		/* The int cast is needed for the VS compiler.  See Compiler Warning (level 2) C4146. */
+		MONO_EMIT_NEW_COMPARE_IMM (cfg, ins->sreg1, ((int)-2147483648));
 		MONO_EMIT_NEW_COND_EXC (cfg, LT, "OverflowException");
 		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ins->dreg, ins->sreg1);
 		ins->opcode = OP_NOP;

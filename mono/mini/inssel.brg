@@ -1114,6 +1114,16 @@ stmt: OP_CHECK_THIS (reg) {
 	mono_bblock_add_inst (s->cbb, tree);
 }
 
+reg: OP_CHECK_THIS_PASSTHROUGH (reg) {
+	MonoInst *check;
+
+	MONO_INST_NEW (s, check, OP_CHECK_THIS);
+	check->sreg1 = state->left->reg1;
+	mono_bblock_add_inst (s->cbb, check);
+
+	MONO_EMIT_UNALU (s, tree, OP_MOVE, state->reg1, state->left->reg1);
+}
+
 # object related opcodes 
 
 reg: CEE_ISINST (reg) {
@@ -1446,6 +1456,7 @@ reg: OP_CCASTCLASS (reg) {
 	MonoInst *end_label, *fail_label, *no_proxy_label, *ok_result_label;
 	int obj_reg = state->left->reg1;
 	int tmp_reg = mono_regstate_next_int (s->rs);
+	int tmp2_reg = mono_regstate_next_int (s->rs);
 	int klass_reg = mono_regstate_next_int (s->rs);
 
 	MONO_NEW_LABEL (s, end_label);
@@ -1472,12 +1483,8 @@ reg: OP_CCASTCLASS (reg) {
 			MONO_EMIT_NEW_COMPARE_IMM_EXC (s, NE_UN, klass_reg, mono_defaults.transparent_proxy_class, "InvalidCastException");
 		}
 		
-		
-		MONO_EMIT_NEW_LOAD_MEMBASE (s, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, remote_class));
-		MONO_EMIT_NEW_LOAD_MEMBASE (s, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoRemoteClass, proxy_class));
-		
-		MONO_EMIT_NEW_LOAD_MEMBASE (s, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
-		MONO_EMIT_NEW_COMPARE_IMM_EXC (s, EQ, tmp_reg, 0, "InvalidCastException");
+		MONO_EMIT_NEW_LOAD_MEMBASE (s, tmp2_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
+		MONO_EMIT_NEW_COMPARE_IMM_EXC (s, EQ, tmp2_reg, 0, "InvalidCastException");
 		
 		MONO_EMIT_NEW_ICONST (s, state->reg1, 1);
 		MONO_EMIT_NEW_BRANCH_LABEL (s, OP_BR, end_label);
@@ -1502,8 +1509,8 @@ reg: OP_CCASTCLASS (reg) {
 		MONO_EMIT_NEW_LOAD_MEMBASE (s, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, remote_class));
 		MONO_EMIT_NEW_LOAD_MEMBASE (s, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoRemoteClass, proxy_class));
 		
-		MONO_EMIT_NEW_LOAD_MEMBASE (s, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
-		MONO_EMIT_NEW_COMPARE_IMM_BRANCH_LABEL (s, CEE_BEQ, tmp_reg, 0, no_proxy_label);
+		MONO_EMIT_NEW_LOAD_MEMBASE (s, tmp2_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
+		MONO_EMIT_NEW_COMPARE_IMM_BRANCH_LABEL (s, CEE_BEQ, tmp2_reg, 0, no_proxy_label);
 		
 		mini_emit_isinst (s, klass_reg, klass, fail_label, ok_result_label);
 		mono_bblock_add_inst (s->cbb, fail_label);
@@ -1788,7 +1795,6 @@ mini_emit_max_iid_check_class (MonoCompile *s, int klass_reg, MonoClass *klass,
 /* Emit code which loads interface_offsets [klass->interface_id]
  * The array is stored in memory before vtable.
  */
-#ifndef MONO_ARCH_HAVE_IMT
 static void
 mini_emit_load_intf_reg_vtable (MonoCompile *s, int intf_reg, int vtable_reg, MonoClass *klass)
 {
@@ -1802,7 +1808,6 @@ mini_emit_load_intf_reg_vtable (MonoCompile *s, int intf_reg, int vtable_reg, Mo
 		MONO_EMIT_NEW_LOAD_MEMBASE (s, intf_reg, vtable_reg, -((klass->interface_id + 1) * SIZEOF_VOID_P));
 	}
 }
-#endif
 
 /* 
  * Emit code which loads into "intf_bit_reg" a nonzero value if the MonoClass
@@ -1972,17 +1977,21 @@ mini_emit_virtual_call_internal (MonoCompile *cfg, void *st, MonoInst *tree, int
 	vtable_reg = mono_regstate_next_int (cfg->rs);
 	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, vtable_reg, this_reg, G_STRUCT_OFFSET (MonoObject, vtable));
 	if (method->klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
+		slot_reg = -1;
 #ifdef MONO_ARCH_HAVE_IMT
-		guint32 imt_slot = mono_method_get_imt_slot (method);
-		emit_imt_argument (cfg, (MonoCallInst*)tree, have_imt_arg, imt_reg);
-		slot_reg = vtable_reg;
-		tree->inst_offset = ((gint32)imt_slot - MONO_IMT_SIZE) * SIZEOF_VOID_P;
-#else
-		g_assert (!have_imt_arg);
-		slot_reg = mono_regstate_next_int (cfg->rs);
-		mini_emit_load_intf_reg_vtable (cfg, slot_reg, vtable_reg, method->klass);
-		tree->inst_offset = slot * SIZEOF_VOID_P;
+		if (mono_use_imt) {
+			guint32 imt_slot = mono_method_get_imt_slot (method);
+			emit_imt_argument (cfg, (MonoCallInst*)tree, have_imt_arg, imt_reg);
+			slot_reg = vtable_reg;
+			tree->inst_offset = ((gint32)imt_slot - MONO_IMT_SIZE) * SIZEOF_VOID_P;
+		}
 #endif
+		if (slot_reg == -1) {
+			g_assert (!have_imt_arg);
+			slot_reg = mono_regstate_next_int (cfg->rs);
+			mini_emit_load_intf_reg_vtable (cfg, slot_reg, vtable_reg, method->klass);
+			tree->inst_offset = slot * SIZEOF_VOID_P;
+		}
 	} else {
 		slot_reg = vtable_reg;
 		tree->inst_offset = G_STRUCT_OFFSET (MonoVTable, vtable) + (slot * SIZEOF_VOID_P);

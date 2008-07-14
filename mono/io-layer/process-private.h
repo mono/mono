@@ -15,6 +15,12 @@
 
 /* There doesn't seem to be a defined symbol for this */
 #define _WAPI_PROCESS_CURRENT (gpointer)0xFFFFFFFF
+
+/* This marks a system process that we don't have a handle on */
+/* FIXME: cope with pids > 16bit */
+#define _WAPI_PROCESS_UNHANDLED_PID_MASK 0x7FFF
+#define _WAPI_PROCESS_UNHANDLED (-1 & ~_WAPI_PROCESS_UNHANDLED_PID_MASK)
+
 extern gpointer _wapi_process_duplicate (void);
 
 extern struct _WapiHandleOps _wapi_process_ops;

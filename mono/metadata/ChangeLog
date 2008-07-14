@@ -1,3 +1,201 @@
+2008-07-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_generic_sharing_enabled): Always disable generic sharing
+	on platforms which do not support it.
+
+2008-07-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_signature_to_name): Encode sig->hasthis as well.
+
+2008-07-11  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.h
+	(MonoDebuggerEvent): Add `MONO_DEBUGGER_EVENT_INTERRUPTION_REQUEST'.
+
+	* mono-debug-debugger.c
+	(_mono_debugger_interruption_request): New global volatile variable.
+	(mono_debugger_check_interruption): New public function.
+
+	* threads.c
+	(mono_thread_current_check_pending_interrupt): Call
+	mono_debugger_check_interruption().
+	(mono_thread_interruption_checkpoint_request): Likewise.
+
+2008-07-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Add more type checks for loaded types. Verify the result
+	handle from ldtoken.
+
+2008-07-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (field_from_memberref): Don't crash if the field
+	wasn't found.
+
+2008-07-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Verify if type and method instantiations
+	don't have invalid VAR or MVAR arguments.
+
+2008-07-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Fix double free of function pointer list.
+
+2008-07-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object.c (mono_string_to_utf8): Comment the new code as it
+	breaks under eglib.
+
+2008-07-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object.c (mono_string_to_utf8): Avoid allocating a temp array.
+
+2008-07-07  Bill Holmes  <billholmes54@gmail.com>
+
+	* threads.c : Thread.Interrupt changes to ensure that ThreadInterruptedException
+	  is not throw too many times.
+
+	Code is contributed under MIT/X11 license.
+
+2008-07-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-debug.c (mono_debug_find_method): Allow this to be called even when
+	debugging is turned off.
+
+2008-07-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* generic-sharing.c (mono_method_lookup_rgctx): Fix a warning.
+
+2008-07-04  Mark Probst  <mark.probst@gmail.com>
+
+	* class-internals.h, class.c: Added new generic sharing option:
+	Share only stuff in System.Collections.Generic, which is now the
+	default.
+
+2008-07-04  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c, class-internals.h: New function for getting a
+	generic method in a generic class given the corresponding method
+	for a different instantiation of the class.  Partly refactored
+	from mini-trampolines.c.
+
+	* class.c: Make sure generic methods have a class_inst if they are
+	part of a generic class.
+
+	* metadata.c (mono_type_stack_size_internal): Handle type
+	variables.
+
+2008-07-04  Mark Probst  <mark.probst@gmail.com>
+
+	* domain-internals.h: New field (has_this) in MonoGenericJitInfo.
+	Signifies whether information on the this/vtable/mrgctx variable
+	is available.
+
+2008-07-04  Mark Probst  <mark.probst@gmail.com>
+
+	* object.c, object-internals.h, icall.c: New function
+	mono_delegate_ctor_with_method(), which does the same as
+	mono_delegate_ctor(), but takes an explicit method argument
+	instead of taking the method from the jit info.
+
+	* marshal.c: When creating a delegate with an inflated method take
+	the "this" argument as the target class for the castclass.
+
+2008-07-03  Mark Probst  <mark.probst@gmail.com>
+
+	* domain.c (mono_jit_info_table_find): Fixed a bug that caused
+	mono_jit_info_table_find() to perform very badly in some cases.
+
+2008-07-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (type_from_typename): Handle 'string'.
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Don't insert runtime invoke
+	wrappers into the wrapper_hash, since the key is not a MonoMethod.
+
+2008-07-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (mono_get_jit_icall_info): New function to return the jit icall hash table.
+
+	* *-gc.c (mono_gc_get_managed_allocator_types): New function to return the
+	number of available managed allocator types.
+
+	* marshal.c (mono_marshal_init): Register Thread:ResetAbort as an icall ().
+	(mono_marshal_get_runtime_invoke): Call ResetAbort as an icall.
+
+2008-06-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* domain-internals.h (struct _MonoDomain): Add 'jit_code_hash_lock' field,
+	which is a low level lock protecting just the 'jit_code_hash' hash table.
+
+	* domain.c: Initialize+cleanup jit_code_hash_lock.
+	
+2008-06-30  Kornél Pál  <kornelpal@gmail.com>
+
+	* coree.c (mono_load_coree): Set coree_module_handle global variable only
+	after initialization.
+
+	* coree.h: Make MonoFixupExe internal.
+
+	Contributed under MIT/X11 license.
+
+2008-06-30  Kornél Pál  <kornelpal@gmail.com>
+
+	* coree.c (_CorValidateImage): Retain IMAGE_DIRECTORY_ENTRY_SECURITY
+	because that is platform independent. Check NumberOfRvaAndSizes in PE32
+	as well.
+	(MonoLoadImage): New wrapper function around LoadLibrary to ensure that the
+	image being loaded is a CLI image and _CorValidateImage gets called.
+
+	* coree.h: Add MonoLoadImage.
+
+	* image.c (mono_image_open_full): Load CLI images using MonoLoadImage
+	instead of LoadLibrary.
+
+	Contributed under MIT/X11 license.
+
+2008-06-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c (ves_icall_System_ValueType_Equals): Avoid allocating objects
+	for any primitive type.
+
+2008-06-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_array_new_specific): Optimize this and the other allocation
+	functions a bit.
+	
+	* object.c (mono_class_create_runtime_vtable): Use typed allocation in other
+	domains too if mono_dont_free_domains is set.
+
+	* domain-internals.h (mono_dont_free_domains): New internal option controlling
+	whenever to free appdomain data after it has been unloaded.
+
+	* domain.c (mono_domain_free): Don't free appdomain data if the option is set.
+	
+2008-06-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Enum_get_underlying_type): New icall.
+	(mono_method_get_equivalent_method): Fix a warning.
+
+	* object.c (mono_message_init): Avoid looking up array types for each call.
+
+2008-06-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_message_invoke): Avoid looking up the object[] type for each
+	call.
+
+	* icall.c (ves_icall_System_ValueType_Equals): Optimize the comparison of enums
+	even more.
+
+	* class.c (mono_class_get_fields): Avoid calling setup_fields_locking () for
+	each iteration.
+
+	* icall.c (ves_icall_System_ValueType_Equals): Avoid traversing all the static
+	fields of an enum.
+
+2008-06-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object.c (mono_value_box): Fix boxing of nullables.
+
 2008-06-26  Kornél Pál  <kornelpal@gmail.com>
 
 	* assembly.c (mono_set_rootdir): Use __ImageBase instead of

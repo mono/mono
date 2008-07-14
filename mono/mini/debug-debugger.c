@@ -166,7 +166,8 @@ MonoDebuggerInfo MONO_DEBUGGER__debugger_info = {
 	&mono_debugger_event_handler,
 	debugger_event_handler,
 
-	&_mono_debug_using_mono_debugger
+	&_mono_debug_using_mono_debugger,
+	&_mono_debugger_interruption_request
 };
 
 static guint64
@@ -435,11 +436,15 @@ debugger_init_threads (void)
 	gc_thread_vtable = &debugger_thread_vtable;
 }
 
+#if 0
+
 static void
 debugger_finalize_threads (void)
 {
 	gc_thread_vtable = NULL;
 }
+
+#endif
 
 static guint64
 debugger_init_code_buffer (void)

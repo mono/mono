@@ -128,6 +128,7 @@ opt_funcs [sizeof (int) * 8] = {
 	MONO_OPT_LOOP |  \
 	MONO_OPT_EXCEPTION |  \
     MONO_OPT_CMOV |  \
+	MONO_OPT_GSHARED |	\
 	MONO_OPT_AOT)
 
 #define EXCLUDED_FROM_ALL (MONO_OPT_SHARED | MONO_OPT_PRECOMP)
@@ -964,7 +965,7 @@ mini_usage_jitdeveloper (void)
 		 "    --wapi=hps|semdel      IO-layer maintenance\n"
 		 "    --inject-async-exc METHOD OFFSET Inject an asynchronous exception at METHOD\n"
 		 "    --verify-all           Run the verifier on all methods\n"
-		 "    --aot-only             Avoid JITting any code\n"
+		 "    --full-aot             Avoid JITting any code\n"
 		 "\n"
 		 "Other options:\n" 
 		 "    --graph[=TYPE] METHOD  Draws a graph of the specified method:\n");
@@ -1259,7 +1260,7 @@ mono_main (int argc, char* argv[])
 			mono_inject_async_exc_pos = atoi (argv [++i]);
 		} else if (strcmp (argv [i], "--verify-all") == 0) {
 			mono_verifier_enable_verify_all ();
-		} else if (strcmp (argv [i], "--aot-only") == 0) {
+		} else if (strcmp (argv [i], "--full-aot") == 0) {
 			mono_aot_only = TRUE;
 		} else if (strcmp (argv [i], "--print-vtable") == 0) {
 			mono_print_vtable = TRUE;
@@ -1662,7 +1663,7 @@ mono_jit_init (const char *file)
 
 /**
  * mono_jit_init_version:
- * @file: the initial assembly to load
+ * @domain_name: the name of the root domain
  * @runtime_version: the version of the runtime to load
  *
  * Use this version when you want to force a particular runtime
@@ -1680,9 +1681,9 @@ mono_jit_init (const char *file)
  * was loaded.
  */
 MonoDomain * 
-mono_jit_init_version (const char *file, const char *runtime_version)
+mono_jit_init_version (const char *domain_name, const char *runtime_version)
 {
-	return mini_init (file, runtime_version);
+	return mini_init (domain_name, runtime_version);
 }
 
 void        

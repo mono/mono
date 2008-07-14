@@ -739,6 +739,14 @@ mono_class_inflate_generic_method_full (MonoMethod *method, MonoClass *klass_hin
 	if (!context->method_inst && method->is_generic)
 		iresult->context.method_inst = mono_method_get_generic_container (method)->context.method_inst;
 
+	if (!context->class_inst) {
+		g_assert (!iresult->declaring->klass->generic_class);
+		if (iresult->declaring->klass->generic_container)
+			iresult->context.class_inst = iresult->declaring->klass->generic_container->context.class_inst;
+		else if (iresult->declaring->klass->generic_class)
+			iresult->context.class_inst = iresult->declaring->klass->generic_class->context.class_inst;
+	}
+
 	mono_loader_lock ();
 	cached = mono_method_inflated_lookup (iresult, FALSE);
 	if (cached) {
@@ -6354,8 +6362,8 @@ mono_class_get_fields (MonoClass* klass, gpointer *iter)
 	MonoClassField* field;
 	if (!iter)
 		return NULL;
-	mono_class_setup_fields_locking (klass);
 	if (!*iter) {
+		mono_class_setup_fields_locking (klass);
 		/* start from the first */
 		if (klass->field.count) {
 			return *iter = &klass->fields [0];
@@ -7433,18 +7441,27 @@ gboolean
 mono_class_generic_sharing_enabled (MonoClass *class)
 {
 #if defined(__i386__) || defined(__x86_64__)
-	static int generic_sharing = MONO_GENERIC_SHARING_CORLIB;
+	static gboolean supported = TRUE;
 #else
-	static int generic_sharing = MONO_GENERIC_SHARING_NONE;
+	/* Not supported by the JIT backends */
+	static gboolean supported = FALSE;
 #endif
+	static int generic_sharing = MONO_GENERIC_SHARING_NONE;
 	static gboolean inited = FALSE;
 
 	if (!inited) {
 		const char *option;
 
+		if (supported)
+			generic_sharing = MONO_GENERIC_SHARING_COLLECTIONS;
+		else
+			generic_sharing = MONO_GENERIC_SHARING_NONE;
+
 		if ((option = g_getenv ("MONO_GENERIC_SHARING"))) {
 			if (strcmp (option, "corlib") == 0)
 				generic_sharing = MONO_GENERIC_SHARING_CORLIB;
+			else if (strcmp (option, "collections") == 0)
+				generic_sharing = MONO_GENERIC_SHARING_COLLECTIONS;
 			else if (strcmp (option, "all") == 0)
 				generic_sharing = MONO_GENERIC_SHARING_ALL;
 			else if (strcmp (option, "none") == 0)
@@ -7452,6 +7469,9 @@ mono_class_generic_sharing_enabled (MonoClass *class)
 			else
 				g_warning ("Unknown generic sharing option `%s'.", option);
 		}
+
+		if (!supported)
+			generic_sharing = MONO_GENERIC_SHARING_NONE;
 
 		inited = TRUE;
 	}
@@ -7463,6 +7483,12 @@ mono_class_generic_sharing_enabled (MonoClass *class)
 		return TRUE;
 	case MONO_GENERIC_SHARING_CORLIB :
 		return class->image == mono_defaults.corlib;
+	case MONO_GENERIC_SHARING_COLLECTIONS:
+		if (class->image != mono_defaults.corlib)
+			return FALSE;
+		while (class->nested_in)
+			class = class->nested_in;
+		return g_str_has_prefix (class->name_space, "System.Collections.Generic");
 	default:
 		g_assert_not_reached ();
 	}

@@ -75,6 +75,8 @@ mono_ldstr_metdata_sig (MonoDomain *domain, const char* sig);
 #define ldstr_unlock() LeaveCriticalSection (&ldstr_section)
 static CRITICAL_SECTION ldstr_section;
 
+static gboolean profile_allocs = TRUE;
+
 void
 mono_runtime_object_init (MonoObject *this)
 {
@@ -1384,7 +1386,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class)
 		 * vtable is reachable by other roots after the appdomain is unloaded.
 		 */
 #ifdef HAVE_BOEHM_GC
-	if (domain != mono_get_root_domain ())
+	if (domain != mono_get_root_domain () && !mono_dont_free_domains)
 		vt->gc_descr = GC_NO_DESCRIPTOR;
 	else
 #endif
@@ -3330,10 +3332,11 @@ mono_object_new_alloc_specific (MonoVTable *vtable)
 /*		printf("OBJECT: %s.%s.\n", vtable->klass->name_space, vtable->klass->name); */
 		o = mono_object_allocate (vtable->klass->instance_size, vtable);
 	}
-	if (vtable->klass->has_finalize)
+	if (G_UNLIKELY (vtable->klass->has_finalize))
 		mono_object_register_finalizer (o);
 	
-	mono_profiler_allocation (o, vtable->klass);
+	if (G_UNLIKELY (profile_allocs))
+		mono_profiler_allocation (o, vtable->klass);
 	return o;
 }
 
@@ -3391,6 +3394,9 @@ void*
 mono_class_get_allocation_ftn (MonoVTable *vtable, gboolean for_box, gboolean *pass_size_in_words)
 {
 	*pass_size_in_words = FALSE;
+
+	if (!(mono_profiler_get_events () & MONO_PROFILE_ALLOCATIONS))
+		profile_allocs = FALSE;
 
 	if (vtable->klass->has_finalize || vtable->klass->marshalbyref || (mono_profiler_get_events () & MONO_PROFILE_ALLOCATIONS))
 		return mono_object_new_specific;
@@ -3463,7 +3469,8 @@ mono_object_clone (MonoObject *obj)
 	if (obj->vtable->klass->has_references)
 		mono_gc_wbarrier_object (o);
 #endif
-	mono_profiler_allocation (o, obj->vtable->klass);
+	if (G_UNLIKELY (profile_allocs))
+		mono_profiler_allocation (o, obj->vtable->klass);
 
 	if (obj->vtable->klass->has_finalize)
 		mono_object_register_finalizer (o);
@@ -3583,18 +3590,18 @@ mono_array_clone (MonoArray *array)
 #define MYGUINT64_MAX 0x0000FFFFFFFFFFFFUL
 #define MYGUINT_MAX MYGUINT64_MAX
 #define CHECK_ADD_OVERFLOW_UN(a,b) \
-        (guint64)(MYGUINT64_MAX) - (guint64)(b) < (guint64)(a) ? -1 : 0
+	    (G_UNLIKELY ((guint64)(MYGUINT64_MAX) - (guint64)(b) < (guint64)(a))
 #define CHECK_MUL_OVERFLOW_UN(a,b) \
-        ((guint64)(a) == 0) || ((guint64)(b) == 0) ? 0 : \
-        (guint64)(b) > ((MYGUINT64_MAX) / (guint64)(a))
+	    (G_UNLIKELY (((guint64)(a) > 0) && ((guint64)(b) > 0) &&	\
+					 ((guint64)(b) > ((MYGUINT64_MAX) / (guint64)(a)))))
 #else
 #define MYGUINT32_MAX 4294967295U
 #define MYGUINT_MAX MYGUINT32_MAX
 #define CHECK_ADD_OVERFLOW_UN(a,b) \
-        (guint32)(MYGUINT32_MAX) - (guint32)(b) < (guint32)(a) ? -1 : 0
+	    (G_UNLIKELY ((guint32)(MYGUINT32_MAX) - (guint32)(b) < (guint32)(a)))
 #define CHECK_MUL_OVERFLOW_UN(a,b) \
-        ((guint32)(a) == 0) || ((guint32)(b) == 0) ? 0 : \
-        (guint32)(b) > ((MYGUINT32_MAX) / (guint32)(a))
+	    (G_UNLIKELY (((guint32)(a) > 0) && ((guint32)(b) > 0) &&			\
+					 ((guint32)(b) > ((MYGUINT32_MAX) / (guint32)(a)))))
 #endif
 
 /**
@@ -3684,7 +3691,8 @@ mono_array_new_full (MonoDomain *domain, MonoClass *array_class, mono_array_size
 		}
 	}
 
-	mono_profiler_allocation (o, array_class);
+	if (G_UNLIKELY (profile_allocs))
+		mono_profiler_allocation (o, array_class);
 
 	return array;
 }
@@ -3705,7 +3713,7 @@ mono_array_new (MonoDomain *domain, MonoClass *eclass, mono_array_size_t n)
 	MONO_ARCH_SAVE_REGS;
 
 	ac = mono_array_class_get (eclass, 1);
-	g_assert (ac != NULL);
+	g_assert (ac);
 
 	return mono_array_new_specific (mono_class_vtable (domain, ac), n);
 }
@@ -3727,19 +3735,26 @@ mono_array_new_specific (MonoVTable *vtable, mono_array_size_t n)
 
 	MONO_ARCH_SAVE_REGS;
 
-	if (n > MONO_ARRAY_MAX_INDEX)
+	if (G_UNLIKELY (n > MONO_ARRAY_MAX_INDEX)) {
 		arith_overflow ();
+		return NULL;
+	}
 	
 	elem_size = mono_array_element_size (vtable->klass);
-	if (CHECK_MUL_OVERFLOW_UN (n, elem_size))
+	if (CHECK_MUL_OVERFLOW_UN (n, elem_size)) {
 		mono_gc_out_of_memory (MONO_ARRAY_MAX_SIZE);
+		return NULL;
+	}
 	byte_len = n * elem_size;
-	if (CHECK_ADD_OVERFLOW_UN (byte_len, sizeof (MonoArray)))
+	if (CHECK_ADD_OVERFLOW_UN (byte_len, sizeof (MonoArray))) {
 		mono_gc_out_of_memory (MONO_ARRAY_MAX_SIZE);
+		return NULL;
+	}
 	byte_len += sizeof (MonoArray);
 	if (!vtable->klass->has_references) {
 		o = mono_object_allocate_ptrfree (byte_len, vtable);
 #if NEED_TO_ZERO_PTRFREE
+		((MonoArray*)o)->bounds = NULL;
 		memset ((char*)o + sizeof (MonoObject), 0, byte_len - sizeof (MonoObject));
 #endif
 	} else if (vtable->gc_descr != GC_NO_DESCRIPTOR) {
@@ -3750,9 +3765,9 @@ mono_array_new_specific (MonoVTable *vtable, mono_array_size_t n)
 	}
 
 	ao = (MonoArray *)o;
-	ao->bounds = NULL;
 	ao->max_length = n;
-	mono_profiler_allocation (o, vtable->klass);
+	if (G_UNLIKELY (profile_allocs))
+		mono_profiler_allocation (o, vtable->klass);
 
 	return ao;
 }
@@ -3803,7 +3818,8 @@ mono_string_new_size (MonoDomain *domain, gint32 len)
 #if NEED_TO_ZERO_PTRFREE
 	s->chars [len] = 0;
 #endif
-	mono_profiler_allocation ((MonoObject*)s, mono_defaults.string_class);
+	if (G_UNLIKELY (profile_allocs))
+		mono_profiler_allocation ((MonoObject*)s, mono_defaults.string_class);
 
 	return s;
 }
@@ -3844,23 +3860,41 @@ mono_string_new_len (MonoDomain *domain, const char *text, guint length)
 MonoString*
 mono_string_new (MonoDomain *domain, const char *text)
 {
-	GError *error = NULL;
+    GError *error = NULL;
+    MonoString *o = NULL;
+    guint16 *ut;
+    glong items_written;
+    int l;
+
+    l = strlen (text);
+   
+    ut = g_utf8_to_utf16 (text, l, NULL, &items_written, &error);
+
+    if (!error)
+        o = mono_string_new_utf16 (domain, ut, items_written);
+    else
+        g_error_free (error);
+
+    g_free (ut);
+/*FIXME g_utf8_get_char, g_utf8_next_char and g_utf8_validate are not part of eglib.*/
+#if 0
+	gunichar2 *str;
+	const gchar *end;
+	int len;
 	MonoString *o = NULL;
-	guint16 *ut;
-	glong items_written;
-	int l;
 
-	l = strlen (text);
-	
-	ut = g_utf8_to_utf16 (text, l, NULL, &items_written, &error);
+	if (!g_utf8_validate (text, -1, &end))
+		return NULL;
 
-	if (!error)
-		o = mono_string_new_utf16 (domain, ut, items_written);
-	else 
-		g_error_free (error);
+	len = g_utf8_strlen (text, -1);
+	o = mono_string_new_size (domain, len);
+	str = mono_string_chars (o);
 
-	g_free (ut);
-
+	while (text < end) {
+		*str++ = g_utf8_get_char (text);
+		text = g_utf8_next_char (text);
+	}
+#endif
 	return o;
 }
 
@@ -3898,11 +3932,14 @@ mono_value_box (MonoDomain *domain, MonoClass *class, gpointer value)
 	MonoVTable *vtable;
 
 	g_assert (class->valuetype);
+	if (mono_class_is_nullable (class))
+		return mono_nullable_box (value, class);
 
 	vtable = mono_class_vtable (domain, class);
 	size = mono_class_instance_size (class);
 	res = mono_object_new_alloc_specific (vtable);
-	mono_profiler_allocation (res, class);
+	if (G_UNLIKELY (profile_allocs))
+		mono_profiler_allocation (res, class);
 
 	size = size - sizeof (MonoObject);
 
@@ -4538,31 +4575,55 @@ mono_message_init (MonoDomain *domain,
 		   MonoReflectionMethod *method,
 		   MonoArray *out_args)
 {
+	static MonoClass *object_array_klass;
+	static MonoClass *byte_array_klass;
+	static MonoClass *string_array_klass;
 	MonoMethodSignature *sig = mono_method_signature (method->method);
 	MonoString *name;
 	int i, j;
 	char **names;
 	guint8 arg_type;
 
+	if (!object_array_klass) {
+		MonoClass *klass;
+
+		klass = mono_array_class_get (mono_defaults.object_class, 1);
+		g_assert (klass);
+
+		mono_memory_barrier ();
+		object_array_klass = klass;
+
+		klass = mono_array_class_get (mono_defaults.byte_class, 1);
+		g_assert (klass);
+
+		mono_memory_barrier ();
+		byte_array_klass = klass;
+
+		klass = mono_array_class_get (mono_defaults.string_class, 1);
+		g_assert (klass);
+
+		mono_memory_barrier ();
+		string_array_klass = klass;
+	}
+
 	MONO_OBJECT_SETREF (this, method, method);
 
-	MONO_OBJECT_SETREF (this, args, mono_array_new (domain, mono_defaults.object_class, sig->param_count));
-	MONO_OBJECT_SETREF (this, arg_types, mono_array_new (domain, mono_defaults.byte_class, sig->param_count));
+	MONO_OBJECT_SETREF (this, args, mono_array_new_specific (mono_class_vtable (domain, object_array_klass), sig->param_count));
+	MONO_OBJECT_SETREF (this, arg_types, mono_array_new_specific (mono_class_vtable (domain, byte_array_klass), sig->param_count));
 	this->async_result = NULL;
 	this->call_type = CallType_Sync;
 
 	names = g_new (char *, sig->param_count);
 	mono_method_get_param_names (method->method, (const char **) names);
-	MONO_OBJECT_SETREF (this, names, mono_array_new (domain, mono_defaults.string_class, sig->param_count));
+	MONO_OBJECT_SETREF (this, names, mono_array_new_specific (mono_class_vtable (domain, string_array_klass), sig->param_count));
 	
 	for (i = 0; i < sig->param_count; i++) {
-		 name = mono_string_new (domain, names [i]);
-		 mono_array_setref (this->names, i, name);	
+		name = mono_string_new (domain, names [i]);
+		mono_array_setref (this->names, i, name);	
 	}
 
 	g_free (names);
 	for (i = 0, j = 0; i < sig->param_count; i++) {
-
 		if (sig->params [i]->byref) {
 			if (out_args) {
 				MonoObject* arg = mono_array_get (out_args, gpointer, j);
@@ -4622,6 +4683,7 @@ MonoObject *
 mono_message_invoke (MonoObject *target, MonoMethodMessage *msg, 
 		     MonoObject **exc, MonoArray **out_args) 
 {
+	static MonoClass *object_array_klass;
 	MonoDomain *domain; 
 	MonoMethod *method;
 	MonoMethodSignature *sig;
@@ -4647,8 +4709,18 @@ mono_message_invoke (MonoObject *target, MonoMethodMessage *msg,
 			outarg_count++;
 	}
 
+	if (!object_array_klass) {
+		MonoClass *klass;
+
+		klass = mono_array_class_get (mono_defaults.object_class, 1);
+		g_assert (klass);
+
+		mono_memory_barrier ();
+		object_array_klass = klass;
+	}
+
 	/* FIXME: GC ensure we insert a write barrier for out_args, maybe in the caller? */
-	*out_args = mono_array_new (domain, mono_defaults.object_class, outarg_count);
+	*out_args = mono_array_new_specific (mono_class_vtable (domain, object_array_klass), outarg_count);
 	*exc = NULL;
 
 	ret = mono_runtime_invoke_array (method, method->klass->valuetype? mono_object_unbox (target): target, msg->args, exc);
@@ -4713,28 +4785,27 @@ mono_print_unhandled_exception (MonoObject *exc)
  * @this: pointer to an uninitialized delegate object
  * @target: target object
  * @addr: pointer to native code
+ * @method: method
  *
- * This is used to initialize a delegate.
+ * Initialize a delegate and sets a specific method, not the one
+ * associated with addr.  This is useful when sharing generic code.
+ * In that case addr will most probably not be associated with the
+ * correct instantiation of the method.
  */
 void
-mono_delegate_ctor (MonoObject *this, MonoObject *target, gpointer addr)
+mono_delegate_ctor_with_method (MonoObject *this, MonoObject *target, gpointer addr, MonoMethod *method)
 {
-	MonoDomain *domain = mono_domain_get ();
 	MonoDelegate *delegate = (MonoDelegate *)this;
-	MonoMethod *method = NULL;
 	MonoClass *class;
-	MonoJitInfo *ji;
 
 	g_assert (this);
 	g_assert (addr);
 
+	if (method)
+		delegate->method = method;
+
 	class = this->vtable->klass;
 	mono_stats.delegate_creations++;
-
-	if ((ji = mono_jit_info_table_find (domain, mono_get_addr_from_ftnptr (addr)))) {
-		method = ji->method;
-		delegate->method = method;
-	}
 
 	if (target && target->vtable->klass == mono_defaults.transparent_proxy_class) {
 		g_assert (method);
@@ -4751,6 +4822,31 @@ mono_delegate_ctor (MonoObject *this, MonoObject *target, gpointer addr)
 	}
 
 	delegate->invoke_impl = arch_create_delegate_trampoline (delegate->object.vtable->klass);
+}
+
+/**
+ * mono_delegate_ctor:
+ * @this: pointer to an uninitialized delegate object
+ * @target: target object
+ * @addr: pointer to native code
+ *
+ * This is used to initialize a delegate.
+ */
+void
+mono_delegate_ctor (MonoObject *this, MonoObject *target, gpointer addr)
+{
+	MonoDomain *domain = mono_domain_get ();
+	MonoJitInfo *ji;
+	MonoMethod *method = NULL;
+
+	g_assert (addr);
+
+	if ((ji = mono_jit_info_table_find (domain, mono_get_addr_from_ftnptr (addr)))) {
+		method = ji->method;
+		g_assert (!method->klass->generic_container);
+	}
+
+	mono_delegate_ctor_with_method (this, target, addr, method);
 }
 
 /**

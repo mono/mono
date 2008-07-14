@@ -143,16 +143,14 @@ void win32_seh_set_handler(int type, MonoW32ExceptionHandler handler)
  * Returns a pointer to a method which restores a previously saved sigcontext.
  */
 gpointer
-mono_arch_get_restore_context (void)
+mono_arch_get_restore_context_full (guint32 *code_size, MonoJumpInfo **ji, gboolean aot)
 {
-	static guint8 *start = NULL;
-	static gboolean inited = FALSE;
+	guint8 *start = NULL;
 	guint8 *code;
 
-	if (inited)
-		return start;
-
 	/* restore_contect (MonoContext *ctx) */
+
+	*ji = NULL;
 
 	start = code = mono_global_codeman_reserve (256);
 
@@ -182,7 +180,9 @@ mono_arch_get_restore_context (void)
 	/* jump to the saved IP */
 	amd64_jump_reg (code, AMD64_R11);
 
-	inited = TRUE;
+	mono_arch_flush_icache (start, code - start);
+
+	*code_size = code - start;
 
 	return start;
 }
@@ -195,16 +195,14 @@ mono_arch_get_restore_context (void)
  * @exc object in this case).
  */
 gpointer
-mono_arch_get_call_filter (void)
+mono_arch_get_call_filter_full (guint32 *code_size, MonoJumpInfo **ji, gboolean aot)
 {
-	static guint8 *start;
-	static gboolean inited = FALSE;
+	guint8 *start;
 	int i;
 	guint8 *code;
 	guint32 pos;
 
-	if (inited)
-		return start;
+	*ji = NULL;
 
 	start = code = mono_global_codeman_reserve (128);
 
@@ -263,7 +261,9 @@ mono_arch_get_call_filter (void)
 
 	g_assert ((code - start) < 128);
 
-	inited = TRUE;
+	mono_arch_flush_icache (start, code - start);
+
+	*code_size = code - start;
 
 	return start;
 }
@@ -272,20 +272,20 @@ mono_arch_get_call_filter (void)
  * The first few arguments are dummy, to force the other arguments to be passed on
  * the stack, this avoids overwriting the argument registers in the throw trampoline.
  */
-static void
-throw_exception (guint64 dummy1, guint64 dummy2, guint64 dummy3, guint64 dummy4,
-				 guint64 dummy5, guint64 dummy6,
-				 MonoObject *exc, guint64 rip, guint64 rsp,
-				 guint64 rbx, guint64 rbp, guint64 r12, guint64 r13, 
-				 guint64 r14, guint64 r15, guint64 rdi, guint64 rsi, 
-				 guint64 rax, guint64 rcx, guint64 rdx,
-				 guint64 rethrow)
+void
+mono_amd64_throw_exception (guint64 dummy1, guint64 dummy2, guint64 dummy3, guint64 dummy4,
+							guint64 dummy5, guint64 dummy6,
+							MonoObject *exc, guint64 rip, guint64 rsp,
+							guint64 rbx, guint64 rbp, guint64 r12, guint64 r13, 
+							guint64 r14, guint64 r15, guint64 rdi, guint64 rsi, 
+							guint64 rax, guint64 rcx, guint64 rdx,
+							guint64 rethrow)
 {
 	static void (*restore_context) (MonoContext *);
 	MonoContext ctx;
 
 	if (!restore_context)
-		restore_context = mono_arch_get_restore_context ();
+		restore_context = mono_get_restore_context ();
 
 	ctx.rsp = rsp;
 	ctx.rip = rip;
@@ -339,7 +339,7 @@ throw_exception (guint64 dummy1, guint64 dummy2, guint64 dummy3, guint64 dummy4,
 }
 
 static gpointer
-get_throw_trampoline (gboolean rethrow)
+get_throw_trampoline (gboolean rethrow, guint32 *code_size, MonoJumpInfo **ji, gboolean aot)
 {
 	guint8* start;
 	guint8 *code;
@@ -347,6 +347,8 @@ get_throw_trampoline (gboolean rethrow)
 	start = code = mono_global_codeman_reserve (64);
 
 	code = start;
+
+	*ji = NULL;
 
 	amd64_mov_reg_reg (code, AMD64_R11, AMD64_RSP, 8);
 
@@ -384,11 +386,20 @@ get_throw_trampoline (gboolean rethrow)
 	amd64_push_imm (code, 0);
 #endif
 
-	amd64_mov_reg_imm (code, AMD64_R11, throw_exception);
+	if (aot) {
+		*ji = mono_patch_info_list_prepend (*ji, code - start, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_amd64_throw_exception");
+		amd64_mov_reg_membase (code, AMD64_R11, AMD64_RIP, 0, 8);
+	} else {
+		amd64_mov_reg_imm (code, AMD64_R11, mono_amd64_throw_exception);
+	}
 	amd64_call_reg (code, AMD64_R11);
 	amd64_breakpoint (code);
 
+	mono_arch_flush_icache (start, code - start);
+
 	g_assert ((code - start) < 64);
+
+	*code_size = code - start;
 
 	return start;
 }
@@ -402,51 +413,33 @@ get_throw_trampoline (gboolean rethrow)
  *
  */
 gpointer 
-mono_arch_get_throw_exception (void)
+mono_arch_get_throw_exception_full (guint32 *code_size, MonoJumpInfo **ji, gboolean aot)
 {
-	static guint8* start;
-	static gboolean inited = FALSE;
-
-	if (inited)
-		return start;
-
-	start = get_throw_trampoline (FALSE);
-
-	inited = TRUE;
-
-	return start;
+	return get_throw_trampoline (FALSE, code_size, ji, aot);
 }
 
 gpointer 
-mono_arch_get_rethrow_exception (void)
+mono_arch_get_rethrow_exception_full (guint32 *code_size, MonoJumpInfo **ji, gboolean aot)
 {
-	static guint8* start;
-	static gboolean inited = FALSE;
-
-	if (inited)
-		return start;
-
-	start = get_throw_trampoline (TRUE);
-
-	inited = TRUE;
-
-	return start;
+	return get_throw_trampoline (TRUE, code_size, ji, aot);
 }
 
 gpointer 
-mono_arch_get_throw_exception_by_name (void)
+mono_arch_get_throw_exception_by_name_full (guint32 *code_size, MonoJumpInfo **ji, gboolean aot)
 {	
-	static guint8* start;
-	static gboolean inited = FALSE;
+	guint8* start;
 	guint8 *code;
-
-	if (inited)
-		return start;
 
 	start = code = mono_global_codeman_reserve (64);
 
+	*ji = NULL;
+
 	/* Not used on amd64 */
 	amd64_breakpoint (code);
+
+	mono_arch_flush_icache (start, code - start);
+
+	*code_size = code - start;
 
 	return start;
 }
@@ -462,26 +455,37 @@ mono_arch_get_throw_exception_by_name (void)
  * needs no relocations in the caller.
  */
 gpointer 
-mono_arch_get_throw_corlib_exception (void)
+mono_arch_get_throw_corlib_exception_full (guint32 *code_size, MonoJumpInfo **ji, gboolean aot)
 {
 	static guint8* start;
-	static gboolean inited = FALSE;
 	guint8 *code;
 	guint64 throw_ex;
 
-	if (inited)
-		return start;
-
 	start = code = mono_global_codeman_reserve (64);
+
+	*ji = NULL;
 
 	/* Push throw_ip */
 	amd64_push_reg (code, AMD64_ARG_REG2);
 
 	/* Call exception_from_token */
 	amd64_mov_reg_reg (code, AMD64_ARG_REG2, AMD64_ARG_REG1, 8);
-	amd64_mov_reg_imm (code, AMD64_ARG_REG1, mono_defaults.exception_class->image);
-	amd64_mov_reg_imm (code, AMD64_R11, mono_exception_from_token);
+	if (aot) {
+		*ji = mono_patch_info_list_prepend (*ji, code - start, MONO_PATCH_INFO_IMAGE, mono_defaults.exception_class->image);
+		amd64_mov_reg_membase (code, AMD64_ARG_REG1, AMD64_RIP, 0, 8);
+		*ji = mono_patch_info_list_prepend (*ji, code - start, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_exception_from_token");
+		amd64_mov_reg_membase (code, AMD64_R11, AMD64_RIP, 0, 8);
+	} else {
+		amd64_mov_reg_imm (code, AMD64_ARG_REG1, mono_defaults.exception_class->image);
+		amd64_mov_reg_imm (code, AMD64_R11, mono_exception_from_token);
+	}
+#ifdef PLATFORM_WIN32
+	amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 32);
+#endif
 	amd64_call_reg (code, AMD64_R11);
+#ifdef PLATFORM_WIN32
+	amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 32);
+#endif
 
 	/* Compute throw_ip */
 	amd64_pop_reg (code, AMD64_ARG_REG2);
@@ -492,17 +496,24 @@ mono_arch_get_throw_corlib_exception (void)
 	/* Put the throw_ip at the top of the misaligned stack */
 	amd64_push_reg (code, AMD64_ARG_REG3);
 
-	throw_ex = (guint64)mono_arch_get_throw_exception ();
+	throw_ex = (guint64)mono_get_throw_exception ();
 
 	/* Call throw_exception */
 	amd64_mov_reg_reg (code, AMD64_ARG_REG1, AMD64_RAX, 8);
-	amd64_mov_reg_imm (code, AMD64_R11, throw_ex);
+	if (aot) {
+		*ji = mono_patch_info_list_prepend (*ji, code - start, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_throw_exception");
+		amd64_mov_reg_membase (code, AMD64_R11, AMD64_RIP, 0, 8);
+	} else {
+		amd64_mov_reg_imm (code, AMD64_R11, throw_ex);
+	}
 	/* The original IP is on the stack */
 	amd64_jump_reg (code, AMD64_R11);
 
 	g_assert ((code - start) < 64);
 
-	inited = TRUE;
+	mono_arch_flush_icache (start, code - start);
+
+	*code_size = code - start;
 
 	return start;
 }
@@ -844,7 +855,7 @@ altstack_handle_and_restore (void *sigctx, gpointer obj, gboolean stack_ovf)
 	void (*restore_context) (MonoContext *);
 	MonoContext mctx;
 
-	restore_context = mono_arch_get_restore_context ();
+	restore_context = mono_get_restore_context ();
 	mono_arch_sigctx_to_monoctx (sigctx, &mctx);
 	mono_handle_exception (&mctx, obj, MONO_CONTEXT_GET_IP (&mctx), FALSE);
 	if (stack_ovf)
@@ -969,7 +980,7 @@ get_throw_pending_exception (void)
 	amd64_push_reg (code, AMD64_RAX);
 
 	/* Call the throw trampoline */
-	throw_trampoline = mono_arch_get_throw_exception ();
+	throw_trampoline = mono_get_throw_exception ();
 	amd64_mov_reg_imm (code, AMD64_R11, throw_trampoline);
 	/* We use a jump instead of a call so we can push the original ip on the stack */
 	amd64_jump_reg (code, AMD64_R11);
@@ -1025,3 +1036,227 @@ mono_arch_notify_pending_exc (void)
 
 	*(gpointer*)(lmf->rsp - 8) = get_throw_pending_exception ();
 }
+
+#ifdef PLATFORM_WIN32
+
+/*
+ * The mono_arch_unwindinfo* methods are used to build and add
+ * function table info for each emitted method from mono.  On Winx64
+ * the seh handler will not be called if the mono methods are not
+ * added to the function table.  
+ *
+ * We should not need to add non-volatile register info to the 
+ * table since mono stores that info elsewhere. (Except for the register 
+ * used for the fp.)
+ */
+
+#define MONO_MAX_UNWIND_CODES 22
+
+typedef union _UNWIND_CODE {
+    struct {
+        guchar CodeOffset;
+        guchar UnwindOp : 4;
+        guchar OpInfo   : 4;
+    };
+    gushort FrameOffset;
+} UNWIND_CODE, *PUNWIND_CODE;
+
+typedef struct _UNWIND_INFO {
+	guchar Version       : 3;
+	guchar Flags         : 5;
+	guchar SizeOfProlog;
+	guchar CountOfCodes;
+	guchar FrameRegister : 4;
+	guchar FrameOffset   : 4;
+	/* custom size for mono allowing for mono allowing for*/
+	/*UWOP_PUSH_NONVOL ebp offset = 21*/
+	/*UWOP_ALLOC_LARGE : requires 2 or 3 offset = 20*/
+	/*UWOP_SET_FPREG : requires 2 offset = 17*/
+	/*UWOP_PUSH_NONVOL offset = 15-0*/
+	UNWIND_CODE UnwindCode[MONO_MAX_UNWIND_CODES]; 
+
+/*  	UNWIND_CODE MoreUnwindCode[((CountOfCodes + 1) & ~1) - 1];
+ *   	union {
+ *   	    OPTIONAL ULONG ExceptionHandler;
+ *   	    OPTIONAL ULONG FunctionEntry;
+ *   	};
+ *   	OPTIONAL ULONG ExceptionData[]; */
+} UNWIND_INFO, *PUNWIND_INFO;
+
+typedef struct
+{
+	RUNTIME_FUNCTION runtimeFunction;
+	UNWIND_INFO unwindInfo;
+} MonoUnwindInfo, *PMonoUnwindInfo;
+
+static void
+mono_arch_unwindinfo_create (gpointer* monoui)
+{
+	PMonoUnwindInfo newunwindinfo;
+	*monoui = newunwindinfo = g_new0 (MonoUnwindInfo, 1);
+	newunwindinfo->unwindInfo.Version = 1;
+}
+
+void
+mono_arch_unwindinfo_add_push_nonvol (gpointer* monoui, gpointer codebegin, gpointer nextip, guchar reg )
+{
+	PMonoUnwindInfo unwindinfo;
+	PUNWIND_CODE unwindcode;
+	guchar codeindex;
+	if (!*monoui)
+		mono_arch_unwindinfo_create (monoui);
+	
+	unwindinfo = (MonoUnwindInfo*)*monoui;
+
+	if (unwindinfo->unwindInfo.CountOfCodes >= MONO_MAX_UNWIND_CODES)
+		g_error ("Larger allocation needed for the unwind information.");
+
+	codeindex = MONO_MAX_UNWIND_CODES - (++unwindinfo->unwindInfo.CountOfCodes);
+	unwindcode = &unwindinfo->unwindInfo.UnwindCode[codeindex];
+	unwindcode->UnwindOp = 0; /*UWOP_PUSH_NONVOL*/
+	unwindcode->CodeOffset = (((guchar*)nextip)-((guchar*)codebegin));
+	unwindcode->OpInfo = reg;
+
+	if (unwindinfo->unwindInfo.SizeOfProlog >= unwindcode->CodeOffset)
+		g_error ("Adding unwind info in wrong order.");
+	
+	unwindinfo->unwindInfo.SizeOfProlog = unwindcode->CodeOffset;
+}
+
+void
+mono_arch_unwindinfo_add_set_fpreg (gpointer* monoui, gpointer codebegin, gpointer nextip, guchar reg )
+{
+	PMonoUnwindInfo unwindinfo;
+	PUNWIND_CODE unwindcode;
+	guchar codeindex;
+	if (!*monoui)
+		mono_arch_unwindinfo_create (monoui);
+	
+	unwindinfo = (MonoUnwindInfo*)*monoui;
+
+	if (unwindinfo->unwindInfo.CountOfCodes + 1 >= MONO_MAX_UNWIND_CODES)
+		g_error ("Larger allocation needed for the unwind information.");
+
+	codeindex = MONO_MAX_UNWIND_CODES - (unwindinfo->unwindInfo.CountOfCodes += 2);
+	unwindcode = &unwindinfo->unwindInfo.UnwindCode[codeindex];
+	unwindcode->FrameOffset = 0; /*Assuming no frame pointer offset for mono*/
+	unwindcode++;
+	unwindcode->UnwindOp = 3; /*UWOP_SET_FPREG*/
+	unwindcode->CodeOffset = (((guchar*)nextip)-((guchar*)codebegin));
+	unwindcode->OpInfo = reg;
+	
+	unwindinfo->unwindInfo.FrameRegister = reg;
+
+	if (unwindinfo->unwindInfo.SizeOfProlog >= unwindcode->CodeOffset)
+		g_error ("Adding unwind info in wrong order.");
+	
+	unwindinfo->unwindInfo.SizeOfProlog = unwindcode->CodeOffset;
+}
+
+void
+mono_arch_unwindinfo_add_alloc_stack (gpointer* monoui, gpointer codebegin, gpointer nextip, guint size )
+{
+	PMonoUnwindInfo unwindinfo;
+	PUNWIND_CODE unwindcode;
+	guchar codeindex;
+	guchar codesneeded;
+	if (!*monoui)
+		mono_arch_unwindinfo_create (monoui);
+	
+	unwindinfo = (MonoUnwindInfo*)*monoui;
+
+	if (size < 0x8)
+		g_error ("Stack allocation must be equal to or greater than 0x8.");
+	
+	if (size <= 0x80)
+		codesneeded = 1;
+	else if (size <= 0x7FFF8)
+		codesneeded = 2;
+	else
+		codesneeded = 3;
+	
+	if (unwindinfo->unwindInfo.CountOfCodes + codesneeded > MONO_MAX_UNWIND_CODES)
+		g_error ("Larger allocation needed for the unwind information.");
+
+	codeindex = MONO_MAX_UNWIND_CODES - (unwindinfo->unwindInfo.CountOfCodes += codesneeded);
+	unwindcode = &unwindinfo->unwindInfo.UnwindCode[codeindex];
+
+	if (codesneeded == 1) {
+		/*The size of the allocation is 
+		  (the number in the OpInfo member) times 8 plus 8*/
+		unwindcode->OpInfo = (size - 8)/8;
+		unwindcode->UnwindOp = 2; /*UWOP_ALLOC_SMALL*/
+	}
+	else {
+		if (codesneeded == 3) {
+			/*the unscaled size of the allocation is recorded
+			  in the next two slots in little-endian format*/
+			*((unsigned int*)(&unwindcode->FrameOffset)) = size;
+			unwindcode += 2;
+			unwindcode->OpInfo = 1;
+		}
+		else {
+			/*the size of the allocation divided by 8
+			  is recorded in the next slot*/
+			unwindcode->FrameOffset = size/8; 
+			unwindcode++;	
+			unwindcode->OpInfo = 0;
+			
+		}
+		unwindcode->UnwindOp = 1; /*UWOP_ALLOC_LARGE*/
+	}
+
+	unwindcode->CodeOffset = (((guchar*)nextip)-((guchar*)codebegin));
+
+	if (unwindinfo->unwindInfo.SizeOfProlog >= unwindcode->CodeOffset)
+		g_error ("Adding unwind info in wrong order.");
+	
+	unwindinfo->unwindInfo.SizeOfProlog = unwindcode->CodeOffset;
+}
+
+guint
+mono_arch_unwindinfo_get_size (gpointer monoui)
+{
+	PMonoUnwindInfo unwindinfo;
+	if (!monoui)
+		return 0;
+	
+	unwindinfo = (MonoUnwindInfo*)monoui;
+	return (8 + sizeof (MonoUnwindInfo)) - 
+		(sizeof (UNWIND_CODE) * (MONO_MAX_UNWIND_CODES - unwindinfo->unwindInfo.CountOfCodes));
+}
+
+void
+mono_arch_unwindinfo_install_unwind_info (gpointer* monoui, gpointer code, guint code_size)
+{
+	PMonoUnwindInfo unwindinfo, targetinfo;
+	guchar codecount;
+	guint64 targetlocation;
+	if (!*monoui)
+		return;
+
+	unwindinfo = (MonoUnwindInfo*)*monoui;
+	targetlocation = (guint64)&(((guchar*)code)[code_size]);
+	targetinfo = (PMonoUnwindInfo) ALIGN_TO(targetlocation, 8);
+
+	unwindinfo->runtimeFunction.EndAddress = code_size;
+	unwindinfo->runtimeFunction.UnwindData = ((guchar*)&targetinfo->unwindInfo) - ((guchar*)code);
+	
+	memcpy (targetinfo, unwindinfo, sizeof (MonoUnwindInfo) - (sizeof (UNWIND_CODE) * MONO_MAX_UNWIND_CODES));
+	
+	codecount = unwindinfo->unwindInfo.CountOfCodes;
+	if (codecount) {
+		memcpy (&targetinfo->unwindInfo.UnwindCode[0], &unwindinfo->unwindInfo.UnwindCode[MONO_MAX_UNWIND_CODES-codecount], 
+			sizeof (UNWIND_CODE) * unwindinfo->unwindInfo.CountOfCodes);
+	}
+
+	g_free (unwindinfo);
+	*monoui = 0;
+
+	RtlAddFunctionTable (&targetinfo->runtimeFunction, 1, (DWORD64)code);
+}
+
+#endif
+
+
+

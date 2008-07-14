@@ -1438,7 +1438,6 @@ handle_stack_args (MonoCompile *cfg, MonoInst **sp, int count)
 	}
 }
 
-#ifndef MONO_ARCH_HAVE_IMT
 /* Emit code which loads interface_offsets [klass->interface_id]
  * The array is stored in memory before vtable.
 */
@@ -1457,7 +1456,6 @@ mini_emit_load_intf_reg_vtable (MonoCompile *cfg, int intf_reg, int vtable_reg, 
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, intf_reg, vtable_reg, -((klass->interface_id + 1) * SIZEOF_VOID_P));
 	}
 }
-#endif
 
 /* 
  * Emit code which loads into "intf_bit_reg" a nonzero value if the MonoKlass
@@ -2379,16 +2377,20 @@ mono_emit_method_call (MonoCompile *cfg, MonoMethod *method, MonoMethodSignature
 		vtable_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, vtable_reg, this_reg, G_STRUCT_OFFSET (MonoObject, vtable));
 		if (method->klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
+			slot_reg = -1;
 #ifdef MONO_ARCH_HAVE_IMT
-			guint32 imt_slot = mono_method_get_imt_slot (method);
-			emit_imt_argument (cfg, call);
-			slot_reg = vtable_reg;
-			call->inst.inst_offset = ((gint32)imt_slot - MONO_IMT_SIZE) * SIZEOF_VOID_P;
-#else
-			slot_reg = alloc_preg (cfg);
-			mini_emit_load_intf_reg_vtable (cfg, slot_reg, vtable_reg, method->klass);
-			call->inst.inst_offset = method->slot * SIZEOF_VOID_P;
+			if (mono_use_imt) {
+				guint32 imt_slot = mono_method_get_imt_slot (method);
+				emit_imt_argument (cfg, call);
+				slot_reg = vtable_reg;
+				call->inst.inst_offset = ((gint32)imt_slot - MONO_IMT_SIZE) * SIZEOF_VOID_P;
+			}
 #endif
+			if (slot_reg == -1) {
+				slot_reg = alloc_preg (cfg);
+				mini_emit_load_intf_reg_vtable (cfg, slot_reg, vtable_reg, method->klass);
+				call->inst.inst_offset = method->slot * SIZEOF_VOID_P;
+			}
 		} else {
 			slot_reg = vtable_reg;
 			call->inst.inst_offset = G_STRUCT_OFFSET (MonoVTable, vtable) + (method->slot * SIZEOF_VOID_P);
@@ -2877,8 +2879,7 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src)
 		tmp_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tmp_reg, 0);
-		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, false2_bb);
-		
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBNE_UN, false2_bb);		
 	} else {
 		tmp_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
@@ -2956,10 +2957,6 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src)
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 
 		mini_emit_class_check (cfg, klass_reg, mono_defaults.transparent_proxy_class);
-
-		tmp_reg = alloc_preg (cfg);
-		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, remote_class));
-		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, tmp_reg, G_STRUCT_OFFSET (MonoRemoteClass, proxy_class));
 
 		tmp_reg = alloc_preg (cfg);		
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
@@ -4377,6 +4374,10 @@ get_runtime_generic_context_other_ptr (MonoCompile *cfg, MonoMethod *method,
 {
 	MonoInst *args [6];
 
+	// FIXME:
+	return NULL;
+
+#if 0
 	g_assert (method->wrapper_type == MONO_WRAPPER_NONE);
 
 	EMIT_NEW_CLASSCONST (cfg, args [0], method->klass);
@@ -4387,6 +4388,7 @@ get_runtime_generic_context_other_ptr (MonoCompile *cfg, MonoMethod *method,
 	EMIT_NEW_ICONST (cfg, args [5], index);
 
 	return mono_emit_jit_icall (cfg, mono_helper_get_rgctx_other_ptr, args);
+#endif
 }
 
 static MonoInst*
@@ -6822,7 +6824,11 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (mini_class_is_system_array (cmethod->klass)) {
 				g_assert (!generic_shared);
 				EMIT_NEW_METHODCONST (cfg, *sp, cmethod);
-				alloc = handle_array_new (cfg, fsig->param_count, sp, ip);
+				if (fsig->param_count == 2)
+					/* Avoid varargs in the common case */
+					alloc = mono_emit_jit_icall (cfg, mono_array_new_2, sp);
+				else
+					alloc = handle_array_new (cfg, fsig->param_count, sp, ip);
 			} else if (cmethod->string_ctor) {
 				g_assert (!generic_shared);
 				/* we simply pass a null pointer */
@@ -8052,6 +8058,12 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 							token, MINI_TOKEN_SOURCE_CLASS, generic_context,
 							rgctx, MONO_RGCTX_INFO_REFLECTION_TYPE);
 					} else if (cfg->compile_aot) {
+						/*
+						 * FIXME: We would have to include the context into the
+						 * aot constant too (tests/generic-array-type.2.exe).
+						 */
+						if (generic_context)
+							cfg->disable_aot = TRUE;
 						EMIT_NEW_TYPE_FROM_HANDLE_CONST (cfg, ins, image, n);
 					} else {
 						EMIT_NEW_PCONST (cfg, ins, mono_type_get_object (cfg->domain, handle));
@@ -8233,18 +8245,41 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				token = read32 (ip + 2);
 
 				ptr = mono_method_get_wrapper_data (method, token);
-				if (cfg->compile_aot && cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
+				if (cfg->compile_aot && (cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE || cfg->method->wrapper_type == MONO_WRAPPER_RUNTIME_INVOKE)) {
 					MonoMethod *wrapped = mono_marshal_method_from_wrapper (cfg->method);
 
 					if (wrapped && ptr != NULL && mono_lookup_internal_call (wrapped) == ptr) {
 						EMIT_NEW_AOTCONST (cfg, ins, MONO_PATCH_INFO_ICALL_ADDR, wrapped);
-						ins->cil_code = ip;
 						*sp++ = ins;
 						ip += 6;
 						break;
 					}
-				}
 
+					if ((method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) && (strstr (method->name, "__icall_wrapper_") == method->name)) {
+						MonoJitICallInfo *callinfo;
+						const char *icall_name;
+
+						icall_name = method->name + strlen ("__icall_wrapper_");
+						g_assert (icall_name);
+						callinfo = mono_find_jit_icall_by_name (icall_name);
+						g_assert (callinfo);
+
+						if (ptr == callinfo->func) {
+							/* Will be transformed into an AOTCONST later */
+							EMIT_NEW_PCONST (cfg, ins, ptr);
+							*sp++ = ins;
+							ip += 6;
+							break;
+						}
+					}
+				}
+				/* FIXME: Generalize this */
+				if (cfg->compile_aot && ptr == mono_thread_interruption_request_flag ()) {
+					EMIT_NEW_AOTCONST (cfg, ins, MONO_PATCH_INFO_INTERRUPTION_REQUEST_FLAG, NULL);
+					*sp++ = ins;
+					ip += 6;
+					break;
+				}
 				EMIT_NEW_PCONST (cfg, ins, ptr);
 				*sp++ = ins;
 				ip += 6;
@@ -10139,8 +10174,8 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
  * - make the REM_IMM optimization in mini-x86.c arch-independent.
- * - merge the mini.c changes between 104646 and 106666.
- * - LAST MERGE: 106666.
+ * - merge the mini.c changes since 104646.
+ * - LAST MERGE: 107901.
  * - when returning vtypes in registers, generate IR and append it to the end of the
  *   last bb instead of doing it in the epilog.
  * - when the new JIT is done, use the ins emission macros in ir-emit.h instead of the 

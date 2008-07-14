@@ -556,6 +556,7 @@ mono_marshal_init (void)
 		if (com_provider_env && !strcmp(com_provider_env, "MS"))
 			com_provider = MONO_COM_MS;
 
+		register_icall (ves_icall_System_Threading_Thread_ResetAbort, "ves_icall_System_Threading_Thread_ResetAbort", "void", TRUE);
 		register_icall (mono_marshal_string_to_utf16, "mono_marshal_string_to_utf16", "ptr obj", FALSE);
 		register_icall (mono_marshal_string_to_utf16_copy, "mono_marshal_string_to_utf16_copy", "ptr obj", FALSE);
 		register_icall (mono_string_to_utf16, "mono_string_to_utf16", "ptr obj", FALSE);
@@ -812,7 +813,7 @@ mono_ftnptr_to_delegate (MonoClass *klass, gpointer ftn)
 		g_free (sig);
 
 		d = (MonoDelegate*)mono_object_new (mono_domain_get (), klass);
-		mono_delegate_ctor ((MonoObject*)d, NULL, mono_compile_method (wrapper));
+		mono_delegate_ctor_with_method ((MonoObject*)d, NULL, mono_compile_method (wrapper), wrapper);
 	}
 
 	if (d->object.vtable->domain != mono_domain_get ())
@@ -2534,6 +2535,9 @@ mono_signature_to_name (MonoMethodSignature *sig, const char *prefix)
 	}
 
 	mono_type_get_desc (res, sig->ret, FALSE);
+
+	if (sig->hasthis)
+		g_string_append (res, "__this__");
 
 	for (i = 0; i < sig->param_count; ++i) {
 		g_string_append_c (res, '_');
@@ -4322,6 +4326,7 @@ mono_marshal_get_delegate_invoke (MonoMethod *method, MonoDelegate *del)
 	int pos0;
 	char *name;
 	MonoMethod *target_method = NULL;
+	MonoClass *target_class = NULL;
 	gboolean callvirt = FALSE;
 
 	/*
@@ -4332,6 +4337,16 @@ mono_marshal_get_delegate_invoke (MonoMethod *method, MonoDelegate *del)
 	if (del && !del->target && del->method && mono_method_signature (del->method)->hasthis) {
 		callvirt = TRUE;
 		target_method = del->method;
+		if (target_method->is_inflated) {
+			MonoType *target_type;
+
+			g_assert (method->signature->hasthis);
+			target_type = mono_class_inflate_generic_type (method->signature->params [0],
+				mono_method_get_context (method));
+			target_class = mono_class_from_mono_type (target_type);
+		} else {
+			target_class = del->method->klass;
+		}
 	}
 
 	g_assert (method && method->klass->parent == mono_defaults.multicastdelegate_class &&
@@ -4435,7 +4450,7 @@ mono_marshal_get_delegate_invoke (MonoMethod *method, MonoDelegate *del)
 
 	if (callvirt) {
 		mono_mb_emit_ldarg (mb, 1);
-		mono_mb_emit_op (mb, CEE_CASTCLASS, target_method->klass);
+		mono_mb_emit_op (mb, CEE_CASTCLASS, target_class);
 		for (i = 1; i < sig->param_count; ++i)
 			mono_mb_emit_ldarg (mb, i + 1);
 		mono_mb_emit_op (mb, CEE_CALLVIRT, target_method);
@@ -4567,7 +4582,6 @@ mono_marshal_get_runtime_invoke (MonoMethod *method)
 	MonoClass *target_klass;
 	MonoMethod *res = NULL;
 	static MonoString *string_dummy = NULL;
-	static MonoMethodSignature *delay_abort_sig = NULL;
 	static MonoMethodSignature *cctor_signature = NULL;
 	static MonoMethodSignature *finalize_signature = NULL;
 	int i, pos, posna;
@@ -4661,12 +4675,6 @@ mono_marshal_get_runtime_invoke (MonoMethod *method)
 
 	if (res) {
 		return res;
-	}
-
-	if (!delay_abort_sig) {
-		delay_abort_sig = mono_metadata_signature_alloc (mono_defaults.corlib, 0);
-		delay_abort_sig->ret = &mono_defaults.void_class->byval_arg;
-		delay_abort_sig->pinvoke = 0;
 	}
 	
 	/* to make it work with our special string constructors */
@@ -4874,7 +4882,7 @@ handle_enum:
 	posna = mono_mb_emit_short_branch (mb, CEE_BRFALSE_S);
 
 	/* Delay the abort exception */
-	mono_mb_emit_native_call (mb, delay_abort_sig, ves_icall_System_Threading_Thread_ResetAbort);
+	mono_mb_emit_icall (mb, ves_icall_System_Threading_Thread_ResetAbort);
 
 	mono_mb_patch_short_branch (mb, posna);
 	mono_mb_emit_branch (mb, CEE_LEAVE);
@@ -4904,7 +4912,7 @@ handle_enum:
 			if (!res) {
 				res = newm;
 				g_hash_table_insert (cache, callsig, res);
-				g_hash_table_insert (wrapper_hash, res, callsig);
+				/* Can't insert it into wrapper_hash since the key is a signature */
 			} else {
 				mono_free_method (newm);
 			}

@@ -1,3 +1,43 @@
+2008-07-10  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile.am (testaot): Set MONO_PATH when running the AOT
+	compiler.  Don't set LD_LIBRARY_PATH, we're already using LIBTOOL
+	to run the program.
+
+2008-07-07  Bill Holmes  <billholmes54@gmail.com>
+	* libtest.c, winx64structs.cs :
+	  Adding tests to exercise bug 404729 on Winx64.
+
+	Contributed under MIT/X11 license.
+
+2008-07-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Run the aot tests using --debug.
+
+	* resolve_field_bug.2.il: Fix this test.
+
+2008-07-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke2.cs libtest.c: Add test for #404729.
+
+2008-07-04  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-delegate2.2.cs, generic-delegate2-lib.2.il: Test case
+	for open generic delegates (delegates which get their target
+	object only at the invocation).
+
+	* Makefile.am: Test added.
+
+2008-06-29  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* valuetype-equals.cs: Tests for ValueType::Equals for all
+	primitive numeric types.
+
+2008-06-26  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* nullable_boxing.2.cs: Test if Array::GetValue box nullables
+	correctly.
+
 2008-06-26  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-valuetype-interface.2.cs: Test for generic valuetypes

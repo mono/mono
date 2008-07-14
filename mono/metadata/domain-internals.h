@@ -13,6 +13,14 @@
 
 extern CRITICAL_SECTION mono_delegate_section;
 
+/*
+ * If this is set, the memory belonging to appdomains is not freed when a domain is
+ * unloaded, and assemblies loaded by the appdomain are not unloaded either. This
+ * allows us to use typed gc in non-default appdomains too, leading to increased
+ * performance.
+ */ 
+extern gboolean mono_dont_free_domains;
+
 /* This is a copy of System.AppDomainSetup */
 typedef struct {
 	MonoObject object;
@@ -86,6 +94,7 @@ typedef struct
 	MonoGenericSharingContext *generic_sharing_context;
 	gint32 this_offset;
 	guint8 this_reg;
+	gboolean has_this:1;
 	gboolean this_in_reg:1;
 } MonoGenericJitInfo;
 
@@ -173,7 +182,9 @@ struct _MonoDomain {
 	GHashTable         *class_vtable_hash;
 	/* maps remote class key -> MonoRemoteClass */
 	GHashTable         *proxy_vtable_hash;
+	/* Protected by 'jit_code_hash_lock' */
 	MonoInternalHashTable jit_code_hash;
+	CRITICAL_SECTION    jit_code_hash_lock;
 	/* maps MonoMethod -> MonoJitDynamicMethodInfo */
 	GHashTable         *dynamic_code_hash;
 	int		    num_jit_info_tables;
@@ -221,6 +232,8 @@ typedef struct  {
 #define mono_domain_unlock(domain) LeaveCriticalSection(&(domain)->lock)
 #define mono_domain_assemblies_lock(domain)   EnterCriticalSection(&(domain)->assemblies_lock)
 #define mono_domain_assemblies_unlock(domain) LeaveCriticalSection(&(domain)->assemblies_lock)
+#define mono_domain_jit_code_hash_lock(domain)   EnterCriticalSection(&(domain)->jit_code_hash_lock)
+#define mono_domain_jit_code_hash_unlock(domain) LeaveCriticalSection(&(domain)->jit_code_hash_lock)
 
 typedef MonoDomain* (*MonoLoadFunc) (const char *filename, const char *runtime_version);
 

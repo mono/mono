@@ -112,8 +112,6 @@ struct sigcontext {
 #define MONO_ARCH_RETREG1 X86_EAX
 #define MONO_ARCH_RETREG2 X86_EDX
 
-#define MONO_ARCH_AOT_PLT_OFFSET_REG AMD64_RAX
-
 #define MONO_ARCH_ENCODE_LREG(r1,r2) (r1 | (r2<<3))
 
 #define inst_dreg_low dreg&7 
@@ -155,6 +153,10 @@ typedef struct MonoCompileArch {
 	gboolean omit_fp, omit_fp_computed;
 	gpointer cinfo;
 	gint32 async_point_count;
+	gpointer vret_addr_loc;
+#ifdef PLATFORM_WIN32
+	gpointer	unwindinfo;
+#endif
 } MonoCompileArch;
 
 typedef struct {
@@ -274,6 +276,7 @@ typedef struct {
 #define MONO_ARCH_HAVE_ATOMIC_ADD 1
 #define MONO_ARCH_HAVE_ATOMIC_EXCHANGE 1
 #define MONO_ARCH_HAVE_ATOMIC_CAS_IMM 1
+#define MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_IMT 1
 #define MONO_ARCH_HAVE_TLS_GET 1
 #define MONO_ARCH_IMT_REG AMD64_R11
@@ -308,12 +311,32 @@ typedef struct {
 void 
 mono_amd64_patch (unsigned char* code, gpointer target) MONO_INTERNAL;
 
+void
+mono_amd64_throw_exception (guint64 dummy1, guint64 dummy2, guint64 dummy3, guint64 dummy4,
+							guint64 dummy5, guint64 dummy6,
+							MonoObject *exc, guint64 rip, guint64 rsp,
+							guint64 rbx, guint64 rbp, guint64 r12, guint64 r13, 
+							guint64 r14, guint64 r15, guint64 rdi, guint64 rsi, 
+							guint64 rax, guint64 rcx, guint64 rdx,
+							guint64 rethrow);
+
 typedef struct {
 	guint8 *address;
 	guint8 saved_byte;
 } MonoBreakpointInfo;
 
 extern MonoBreakpointInfo mono_breakpoint_info [MONO_BREAKPOINT_ARRAY_SIZE];
+
+#ifdef PLATFORM_WIN32
+
+void mono_arch_unwindinfo_add_push_nonvol (gpointer* monoui, gpointer codebegin, gpointer nextip, guchar reg );
+void mono_arch_unwindinfo_add_set_fpreg (gpointer* monoui, gpointer codebegin, gpointer nextip, guchar reg );
+void mono_arch_unwindinfo_add_alloc_stack (gpointer* monoui, gpointer codebegin, gpointer nextip, guint size );
+guint mono_arch_unwindinfo_get_size (gpointer* monoui);
+void mono_arch_unwindinfo_install_unwind_info (gpointer* monoui, gpointer code, guint code_size);
+
+#define MONO_ARCH_HAVE_UNWIND_TABLE 1
+#endif
 
 #endif /* __MONO_MINI_AMD64_H__ */  
 

@@ -68,6 +68,8 @@ static guint16 appdomain_next = 0;
 static MonoDomain **appdomains_list = NULL;
 static MonoImage *exe_image;
 
+gboolean mono_dont_free_domains;
+
 #define mono_appdomains_lock() EnterCriticalSection (&appdomains_mutex)
 #define mono_appdomains_unlock() LeaveCriticalSection (&appdomains_mutex)
 static CRITICAL_SECTION appdomains_mutex;
@@ -396,13 +398,14 @@ mono_jit_info_table_find (MonoDomain *domain, char *addr)
 			   beyond what we're looking for, we have to end the
 			   search. */
 			if ((gint8*)addr < (gint8*)ji->code_start)
-				break;
+				goto not_found;
 		}
 
 		++chunk_pos;
 		pos = 0;
-	 } while (chunk_pos < table->num_chunks);
+	} while (chunk_pos < table->num_chunks);
 
+ not_found:
 	mono_hazard_pointer_clear (hp, JIT_INFO_TABLE_HAZARD_INDEX);
 	mono_hazard_pointer_clear (hp, JIT_INFO_HAZARD_INDEX);
 
@@ -1163,6 +1166,7 @@ mono_domain_create (void)
 
 	InitializeCriticalSection (&domain->lock);
 	InitializeCriticalSection (&domain->assemblies_lock);
+	InitializeCriticalSection (&domain->jit_code_hash_lock);
 
 	domain->shared_generics_hash = NULL;
 	domain->method_rgctx_hash = NULL;
@@ -1817,6 +1821,9 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 		return;
 	}
 
+	if (mono_dont_free_domains)
+		return;
+
 	mono_profiler_appdomain_event (domain, MONO_PROFILE_START_UNLOAD);
 
 	mono_debug_domain_unload (domain);
@@ -1935,6 +1942,7 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	}
 
 	DeleteCriticalSection (&domain->assemblies_lock);
+	DeleteCriticalSection (&domain->jit_code_hash_lock);
 	DeleteCriticalSection (&domain->lock);
 	domain->setup = NULL;
 

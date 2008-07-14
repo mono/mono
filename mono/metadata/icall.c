@@ -983,6 +983,9 @@ ves_icall_System_ValueType_Equals (MonoObject *this, MonoObject *that, MonoArray
 
 	klass = mono_object_class (this);
 
+	if (klass->enumtype && klass->enum_basetype && klass->enum_basetype->type == MONO_TYPE_I4)
+		return (*(gint32*)((guint8*)this + sizeof (MonoObject)) == *(gint32*)((guint8*)that + sizeof (MonoObject)));
+
 	/*
 	 * Do the comparison for fields of primitive type and return a result if
 	 * possible. Otherwise, return the remaining fields in an array to the 
@@ -998,10 +1001,38 @@ ves_icall_System_ValueType_Equals (MonoObject *this, MonoObject *that, MonoArray
 			continue;
 		/* FIXME: Add more types */
 		switch (field->type->type) {
+		case MONO_TYPE_U1:
+		case MONO_TYPE_I1:
+		case MONO_TYPE_BOOLEAN:
+			if (*((guint8*)this + field->offset) != *((guint8*)that + field->offset))
+				return FALSE;
+			break;
+		case MONO_TYPE_U2:
+		case MONO_TYPE_I2:
+		case MONO_TYPE_CHAR:
+			if (*(gint16*)((guint8*)this + field->offset) != *(gint16*)((guint8*)that + field->offset))
+				return FALSE;
+			break;
+		case MONO_TYPE_U4:
 		case MONO_TYPE_I4:
 			if (*(gint32*)((guint8*)this + field->offset) != *(gint32*)((guint8*)that + field->offset))
 				return FALSE;
 			break;
+		case MONO_TYPE_U8:
+		case MONO_TYPE_I8:
+			if (*(gint64*)((guint8*)this + field->offset) != *(gint64*)((guint8*)that + field->offset))
+				return FALSE;
+			break;
+		case MONO_TYPE_R4:
+			if (*(float*)((guint8*)this + field->offset) != *(float*)((guint8*)that + field->offset))
+				return FALSE;
+			break;
+		case MONO_TYPE_R8:
+			if (*(double*)((guint8*)this + field->offset) != *(double*)((guint8*)that + field->offset))
+				return FALSE;
+			break;
+
+
 		case MONO_TYPE_STRING: {
 			MonoString *s1, *s2;
 			guint32 s1len, s2len;
@@ -1028,6 +1059,10 @@ ves_icall_System_ValueType_Equals (MonoObject *this, MonoObject *that, MonoArray
 			o = mono_field_get_value_object (mono_object_domain (this), field, that);
 			values [count++] = o;
 		}
+
+		if (klass->enumtype)
+			/* enums only have one non-static field */
+			break;
 	}
 
 	if (values) {
@@ -3224,6 +3259,14 @@ ves_icall_System_Enum_get_value (MonoObject *this)
 	return res;
 }
 
+static MonoReflectionType *
+ves_icall_System_Enum_get_underlying_type (MonoReflectionType *type)
+{
+	MONO_ARCH_SAVE_REGS;
+
+	return mono_type_get_object (mono_object_domain (type), mono_class_from_mono_type (type->type)->enum_basetype);
+}
+
 static void
 ves_icall_get_enum_info (MonoReflectionType *type, MonoEnumInfo *info)
 {
@@ -4732,7 +4775,7 @@ mono_method_get_equivalent_method (MonoMethod *method, MonoClass *klass)
 {
 	int offset = -1, i;
 	if (method->is_inflated && ((MonoMethodInflated*)method)->context.method_inst) {
-		MonoMethodInflated *inflated = method;
+		MonoMethodInflated *inflated = (MonoMethodInflated*)method;
 		//method is inflated, we should inflate it on the other class
 		MonoGenericContext ctx;
 		ctx.method_inst = inflated->context.method_inst;
@@ -5716,7 +5759,8 @@ ves_icall_System_Delegate_CreateDelegate_internal (MonoReflectionType *type, Mon
 	if ((method->is_inflated && mono_method_get_context (method)->method_inst &&
 					mono_class_generic_sharing_enabled (method->klass)) ||
 			((method->flags & METHOD_ATTRIBUTE_STATIC) && method->klass->generic_class)) {
-		func = mono_compile_method (mono_marshal_get_static_rgctx_invoke (method));
+		method = mono_marshal_get_static_rgctx_invoke (method);
+		func = mono_compile_method (method);
 	} else if (method->dynamic) {
 		/* Creating a trampoline would leak memory */
 		func = mono_compile_method (method);
@@ -5725,7 +5769,7 @@ ves_icall_System_Delegate_CreateDelegate_internal (MonoReflectionType *type, Mon
 			mono_runtime_create_jump_trampoline (mono_domain_get (), method, TRUE));
 	}
 
-	mono_delegate_ctor (delegate, target, func);
+	mono_delegate_ctor_with_method (delegate, target, func, method);
 
 	return delegate;
 }
@@ -7653,6 +7697,8 @@ type_from_typename (char *typename)
 		klass = mono_defaults.object_class;
 	else if (!strcmp (typename, "obj"))
 		klass = mono_defaults.object_class;
+	else if (!strcmp (typename, "string"))
+		klass = mono_defaults.string_class;
 	else if (!strcmp (typename, "bool"))
 		klass = mono_defaults.boolean_class;
 	else if (!strcmp (typename, "boolean"))
@@ -7736,6 +7782,18 @@ mono_find_jit_icall_by_addr (gconstpointer addr)
 	mono_loader_unlock ();
 
 	return info;
+}
+
+/*
+ * mono_get_jit_icall_info:
+ *
+ *   Return the hashtable mapping JIT icall names to MonoJitICallInfo structures. The
+ * caller should access it while holding the loader lock.
+ */
+GHashTable*
+mono_get_jit_icall_info (void)
+{
+	return jit_icall_hash_name;
 }
 
 void

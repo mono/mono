@@ -1934,6 +1934,9 @@ void ves_icall_System_Threading_Thread_Interrupt_internal (MonoThread *this)
 	gboolean throw = FALSE;
 	
 	ensure_synch_cs_set (this);
+
+	if (this == mono_thread_current ())
+		return;
 	
 	EnterCriticalSection (this->synch_cs);
 	
@@ -1954,6 +1957,8 @@ void mono_thread_current_check_pending_interrupt ()
 {
 	MonoThread *thread = mono_thread_current ();
 	gboolean throw = FALSE;
+
+	mono_debugger_check_interruption ();
 
 	ensure_synch_cs_set (thread);
 	
@@ -3511,6 +3516,7 @@ static MonoException* mono_thread_execute_interruption (MonoThread *thread)
 		return NULL;
 	} else if (thread->thread_interrupt_requested) {
 
+		thread->thread_interrupt_requested = FALSE;
 		LeaveCriticalSection (thread->synch_cs);
 		
 		return(mono_get_exception_thread_interrupted ());
@@ -3582,6 +3588,8 @@ static void mono_thread_interruption_checkpoint_request (gboolean bypass_abort_p
 	/* The thread may already be stopping */
 	if (thread == NULL)
 		return;
+
+	mono_debugger_check_interruption ();
 
 	if (thread->interruption_requested && (bypass_abort_protection || !is_running_protected_wrapper ())) {
 		MonoException* exc = mono_thread_execute_interruption (thread);
