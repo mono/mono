@@ -1715,14 +1715,17 @@ public partial class Page : TemplateControl, IHttpHandler
 			return;
 		}
 
+		if (formPostedRequiresRaiseEvent != null) {
+			RaisePostBackEvent (formPostedRequiresRaiseEvent, null);
+			return;
+		}
+		
 		NameValueCollection postdata = _requestValueCollection;
 		if (postdata == null)
 			return;
 
 		string eventTarget = postdata [postEventSourceID];
 		if (eventTarget == null || eventTarget.Length == 0) {
-			if (formPostedRequiresRaiseEvent != null)
-				RaisePostBackEvent (formPostedRequiresRaiseEvent, null);
 			Validate ();
 			return;
                 }

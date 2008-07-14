@@ -1,3 +1,10 @@
+2008-07-14  Marek Habersack  <mhabersack@novell.com>
+
+	* Page.cs: fix the failing tests by moving the form
+	RaisePostBackEvent code up in RaisePostBackEvents, so that
+	Validate () isn't called together with the registered post back
+	events.
+
 2008-07-10  Roei Erez  <roeie@mainsoft.com>
 
 	* ClientScriptManager.cs: Bug in javacript code, usind window scope instead of document.
