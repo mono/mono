@@ -797,6 +797,12 @@ namespace Mono.CSharp {
 			return null;
 		}
 		
+		protected override void CloneTo (CloneContext clonectx, Expression t)
+		{
+			Indirection target = (Indirection) t;
+			target.expr = expr.Clone (clonectx);
+		}		
+		
 		public override void Emit (EmitContext ec)
 		{
 			if (!prepared)
