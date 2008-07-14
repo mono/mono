@@ -138,7 +138,7 @@ namespace Mono.CSharp {
 
 		public static void EnableReporting ()
 		{
-			if (warning_stack != null)
+			if (warning_stack != null && warning_stack.Count > 0)
 				Warnings = (int) warning_stack.Pop ();
 			else
 				Warnings = 0;

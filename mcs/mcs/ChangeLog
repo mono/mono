@@ -1,3 +1,7 @@
+2008-07-14  Marek Safar  <marek.safar@gmail.com>
+
+	* report.cs (EnableReporting): Don't reinitialize 0-based values.
+
 2008-07-11  Marek Safar  <marek.safar@gmail.com>
 
 	* linq.cs: Reset tranparent parameter counter in probing mode.
