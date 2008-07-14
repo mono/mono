@@ -34756,9 +34756,12 @@
         <size>38</size>
       </method>
       <method name="Void &lt;&gt;m__1()">
-        <size>34</size>
+        <size>16</size>
       </method>
       <method name="Void &lt;&gt;m__2()">
+        <size>51</size>
+      </method>
+      <method name="Void &lt;&gt;m__3()">
         <size>16</size>
       </method>
     </type>
