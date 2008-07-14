@@ -4,6 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
+//      Marek Habersack (mhabersack@novell.com)
 //
 // Copyright (c) 2006-2007 Novell, Inc. (http://www.novell.com)
 //
@@ -27,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if NET_2_0
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace System.Net.NetworkInformation {
@@ -44,7 +46,72 @@ namespace System.Net.NetworkInformation {
 		public abstract bool UsesWins { get; }
 	}
 
-	class Win32IPv4InterfaceProperties : IPv4InterfaceProperties
+	sealed class LinuxIPv4InterfaceProperties : IPv4InterfaceProperties
+	{
+		LinuxNetworkInterface iface;
+		
+		public LinuxIPv4InterfaceProperties (LinuxNetworkInterface iface)
+		{
+			this.iface = iface;
+		}
+		
+		public override int Index {
+			get { return LinuxNetworkInterface.IfNameToIndex (iface.Name); }
+		}
+
+		// TODO: how to discover that?
+		public override bool IsAutomaticPrivateAddressingActive {
+			get { return false; }
+		}
+
+		// TODO: how to discover that?
+		public override bool IsAutomaticPrivateAddressingEnabled {
+			get { return false; }
+		}
+
+		// TODO: how to discover that? The only way is distribution-specific...
+		public override bool IsDhcpEnabled {
+			get { return false; }
+		}
+	
+		public override bool IsForwardingEnabled {
+			get {
+				string iface_path = "/proc/sys/net/ipv4/conf/" + iface.Name + "/forwarding";
+
+				if (File.Exists (iface_path)) {
+					string val = NetworkInterface.ReadLine (iface_path);
+
+					return val != "0";
+				}
+
+				return false;
+			}
+		}
+		public override int Mtu {
+			get {
+				string iface_path = iface.IfacePath + "mtu";
+				int ret = 0;
+
+				if (File.Exists (iface_path)) {
+					string val = NetworkInterface.ReadLine (iface_path);
+					
+					try {
+						ret = Int32.Parse (val);
+					} catch {
+					}
+				}
+
+				return ret;
+						
+			}
+		}
+	
+		public override bool UsesWins {
+			get { return false; }
+		}
+	}
+	
+	sealed class Win32IPv4InterfaceProperties : IPv4InterfaceProperties
 	{
 		[DllImport ("iphlpapi.dll")]
 		static extern int GetPerAdapterInfo (int IfIndex, Win32_IP_PER_ADAPTER_INFO pPerAdapterInfo, ref int pOutBufLen);

@@ -44,12 +44,12 @@ namespace System.Net.NetworkInformation {
 	}
 
 	// So, why are there many pointless members in the base class?
-	class Win32MulticastIPAddressInformation : MulticastIPAddressInformation
+	class MulticastIPAddressInformationImpl : MulticastIPAddressInformation
 	{
 		IPAddress address;
 		bool is_dns_eligible, is_transient;
 
-		public Win32MulticastIPAddressInformation (IPAddress address, bool isDnsEligible, bool isTransient)
+		public MulticastIPAddressInformationImpl (IPAddress address, bool isDnsEligible, bool isTransient)
 		{
 			this.address = address;
 			this.is_dns_eligible = isDnsEligible;

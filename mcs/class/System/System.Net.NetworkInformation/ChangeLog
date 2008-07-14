@@ -1,5 +1,31 @@
 2008-07-14  Marek Habersack  <mhabersack@novell.com>
 
+	* NetworkInterface.cs: implemented support for Linux. Parts
+	contributed by Eric Butler (eric@extremeboredom.net), thanks!
+
+	* GatewayIPAddressInformationCollection.cs,
+	IPInterfaceProperties.cs, IPAddressInformationCollection.cs: added
+	support for Linux. Patch contributed by Eric Butler
+	(eric@extremeboredom.net), thanks!
+
+	* IPv4InterfaceProperties.cs: implemented support for Linux.
+
+	* LinuxNetworkInterfaceMarshal.cs: added. Contains a set of
+	Linux-specific structures required for accessing the network
+	information. Patch contributed by Eric Butler
+	(eric@extremeboredom.net), thanks!
+
+	* MulticastIPAddressInformation.cs: added support for Linux
+	multicast information. Patch contributed by Eric Butler
+	(eric@extremeboredom.net), thanks!
+
+	* IPv4InterfaceStatistics.cs: use the parent IfacePath to get the
+	path to the interface description file.
+
+	* UnicastIPAddressInformation.cs: added stubs for
+	LinuxUnicastIPAddressInformation. Patch contributed by Eric Butler
+	(eric@extremeboredom.net), thanks!
+
 	* Ping.cs: Use /bin/ping when running as non-root user
 	(implementation by Jackson Harper <jaharper@novell.com>) or use
 	raw sockets if running as root or if the current process has the

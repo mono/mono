@@ -4,7 +4,9 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
-//      Miguel de Icaza (miguel@novell.com
+//      Miguel de Icaza (miguel@novell.com)
+//      Eric Butler (eric@extremeboredom.net)
+//      Marek Habersack (mhabersack@novell.com)
 //
 // Copyright (c) 2006-2008 Novell, Inc. (http://www.novell.com)
 //
@@ -32,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.Net;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.IO;
@@ -39,6 +42,9 @@ using System.Globalization;
 
 namespace System.Net.NetworkInformation {
 	public abstract class NetworkInterface {
+		static Version windowsVer51 = new Version (5, 1);
+		static internal readonly bool runningOnUnix = (Environment.OSVersion.Platform == PlatformID.Unix);
+		
 		protected NetworkInterface ()
 		{
 		}
@@ -46,15 +52,16 @@ namespace System.Net.NetworkInformation {
 		[MonoTODO("Only works on Linux and Windows")]
 		public static NetworkInterface [] GetAllNetworkInterfaces ()
 		{
-			switch (Environment.OSVersion.Platform) {
-			case PlatformID.Unix:
-				if (Directory.Exists ("/sys/class/net")){
+			if (runningOnUnix) {
+				try {
 					return LinuxNetworkInterface.ImplGetAllNetworkInterfaces ();
+				} catch (SystemException ex) {
+					throw ex;
+				} catch {
+					return new NetworkInterface [0];
 				}
-				return new NetworkInterface [0];
-				
-			default:
-				if (Environment.OSVersion.Version >= new Version (5, 1))
+			} else {
+				if (Environment.OSVersion.Version >= windowsVer51)
 					return Win32NetworkInterface2.ImplGetAllNetworkInterfaces ();
 				return new NetworkInterface [0];
 			}
@@ -74,15 +81,18 @@ namespace System.Net.NetworkInformation {
 				}
 			}
 		}
-
-		[MonoTODO("Only works on Linux")]
+		
+		[MonoTODO("Only works on Linux. Returns 0 on other systems.")]
 		public static int LoopbackInterfaceIndex {
 			get {
-				try {
-					return Int32.Parse (ReadLine ("/sys/class/net/lo/ifindex"));
-				} catch {
+				if (runningOnUnix) {
+					try {
+						return LinuxNetworkInterface.IfNameToIndex ("lo");
+					} catch  {
+						return 0;
+					}
+				} else
 					return 0;
-				}
 			}
 		}
 
@@ -109,68 +119,212 @@ namespace System.Net.NetworkInformation {
 	//
 	class LinuxNetworkInterface : NetworkInterface
 	{
-		internal string iface;
-		internal string iface_path;
+		[DllImport("libc")]
+		static extern int if_nametoindex(string ifname);
+
+		[DllImport ("libc")]
+		static extern int getifaddrs (out IntPtr ifap);
+
+		[DllImport ("libc")]
+		static extern void freeifaddrs (IntPtr ifap);
+
+		const int AF_INET   = 2;
+		const int AF_INET6  = 10;
+		const int AF_PACKET = 17;
+		
 		IPv4InterfaceStatistics ipv4stats;
+		IPInterfaceProperties ipproperties;
+		
+		string               name;
+		int                  index;
+		List <IPAddress>     addresses;
+		byte[]               macAddress;
+		NetworkInterfaceType type;
+		string               iface_path;
+		string               iface_operstate_path;
+		string               iface_flags_path;		
+
+		internal string IfacePath {
+			get { return iface_path; }
+		}
+		
+		public static int IfNameToIndex (string ifname)
+		{
+			return if_nametoindex(ifname);
+		}
 		
 		public static NetworkInterface [] ImplGetAllNetworkInterfaces ()
 		{
-			string [] dirs = Directory.GetFileSystemEntries ("/sys/class/net");
-			ArrayList a = null;
-			
-			foreach (string d in dirs){
-				if (a == null)
-					a = new ArrayList ();
+			var interfaces = new Dictionary <string, LinuxNetworkInterface> ();
+			IntPtr ifap;
+			if (getifaddrs (out ifap) != 0)
+				throw new SystemException ("getifaddrs() failed");
 
-				a.Add (new LinuxNetworkInterface (Path.GetFileName (d)));
+			try {
+				IntPtr next = ifap;
+				while (next != IntPtr.Zero) {
+					ifaddrs   addr = (ifaddrs) Marshal.PtrToStructure (next, typeof (ifaddrs));
+					IPAddress address = IPAddress.None;
+					string    name = addr.ifa_name;
+					int       index = -1;
+					byte[]    macAddress = null;
+					NetworkInterfaceType type = NetworkInterfaceType.Unknown;
+
+					if (addr.ifa_addr != IntPtr.Zero) {
+						sockaddr_in sockaddr = (sockaddr_in) Marshal.PtrToStructure (addr.ifa_addr, typeof (sockaddr_in));
+
+						if (sockaddr.sin_family == AF_INET6) {
+							sockaddr_in6 sockaddr6 = (sockaddr_in6) Marshal.PtrToStructure (addr.ifa_addr, typeof (sockaddr_in6));
+							address = new IPAddress (sockaddr6.sin6_addr.u6_addr8, sockaddr6.sin6_scope_id);
+						} else if (sockaddr.sin_family == AF_INET) {
+							address = new IPAddress (sockaddr.sin_addr);
+						} else if (sockaddr.sin_family == AF_PACKET) {
+							sockaddr_ll sockaddrll = (sockaddr_ll) Marshal.PtrToStructure (addr.ifa_addr, typeof (sockaddr_ll));
+							if (((int)sockaddrll.sll_halen) > sockaddrll.sll_addr.Length)
+								throw new SystemException("Bad hardware address length");
+							
+							macAddress = new byte [(int) sockaddrll.sll_halen];
+							Array.Copy (sockaddrll.sll_addr, 0, macAddress, 0, macAddress.Length);
+							index = sockaddrll.sll_ifindex;
+
+							int hwtype = (int)sockaddrll.sll_hatype;
+							if (Enum.IsDefined (typeof (LinuxArpHardware), hwtype)) {
+								switch ((LinuxArpHardware)hwtype) {
+									case LinuxArpHardware.EETHER:
+										goto case LinuxArpHardware.ETHER;
+										
+									case LinuxArpHardware.ETHER:
+										type = NetworkInterfaceType.Ethernet;
+										break;
+
+									case LinuxArpHardware.PRONET:
+										type = NetworkInterfaceType.TokenRing;
+										break;
+
+									case LinuxArpHardware.ATM:
+										type = NetworkInterfaceType.Atm;
+										break;
+									
+									case LinuxArpHardware.SLIP:
+										type = NetworkInterfaceType.Slip;
+										break;
+									
+									case LinuxArpHardware.PPP:
+										type = NetworkInterfaceType.Ppp;
+										break;
+									
+									case LinuxArpHardware.LOOPBACK:
+										type = NetworkInterfaceType.Loopback;
+										break;
+
+									case LinuxArpHardware.FDDI:
+										type = NetworkInterfaceType.Fddi;
+										break;
+
+									case LinuxArpHardware.TUNNEL6:
+										goto case LinuxArpHardware.TUNNEL;
+										
+									case LinuxArpHardware.TUNNEL:
+										type = NetworkInterfaceType.Tunnel;
+										break;
+								}
+							}
+						}
+					}
+
+					LinuxNetworkInterface iface = null;
+
+					if (!interfaces.TryGetValue (name, out iface)) {
+						iface = new LinuxNetworkInterface (name);
+						interfaces.Add (name, iface);
+					}
+
+					if (!address.Equals (IPAddress.None))
+						iface.AddAddress (address);
+
+					if (macAddress != null)
+						iface.SetLinkLayerInfo (index, macAddress, type);
+
+					next = addr.ifa_next;
+				}
+			} finally {
+				freeifaddrs (ifap);
 			}
-			if (a == null)
-				return new NetworkInterface [0];
 
-			return (NetworkInterface []) a.ToArray (typeof (LinuxNetworkInterface));
-		}
-
-		LinuxNetworkInterface (string dir)
-		{
-			iface = dir;
-			iface_path = "/sys/class/net/" + iface + "/";
-			ipv4stats = new LinuxIPv4InterfaceStatistics (this);
+			NetworkInterface [] result = new NetworkInterface [interfaces.Count];
+			int x = 0;
+			foreach (NetworkInterface thisInterface in interfaces.Values) {
+				result [x] = thisInterface;
+				x++;
+			}
+			return result;
 		}
 		
+		LinuxNetworkInterface (string name)
+		{
+			this.name = name;
+			addresses = new List<IPAddress> ();
+			iface_path = "/sys/class/net/" + name + "/";
+			iface_operstate_path = iface_path + "operstate";
+			iface_flags_path = iface_path + "flags";
+		}
+
+		internal void AddAddress (IPAddress address)
+		{
+			addresses.Add (address);
+		}
+
+		internal void SetLinkLayerInfo (int index, byte[] macAddress, NetworkInterfaceType type)
+		{
+			this.index = index;
+			this.macAddress = macAddress;
+			this.type = type;
+		}
+
 		public override IPInterfaceProperties GetIPProperties ()
 		{
-			throw new NotImplementedException ();
+			if (ipproperties == null)
+				ipproperties = new LinuxIPInterfaceProperties (this, addresses);
+			return ipproperties;
 		}
 
 		public override IPv4InterfaceStatistics GetIPv4Statistics ()
 		{
+			if (ipv4stats == null)
+				ipv4stats = new LinuxIPv4InterfaceStatistics (this);
+			
 			return ipv4stats;
 		}
 
 		public override PhysicalAddress GetPhysicalAddress ()
 		{
-			return PhysicalAddress.ParseEthernet (ReadLine (iface_path + "address"));
-			
+			if (macAddress != null)
+				return new PhysicalAddress (macAddress);
+			else
+				return PhysicalAddress.None;
 		}
 
 		public override bool Supports (NetworkInterfaceComponent networkInterfaceComponent)
 		{
-			switch (networkInterfaceComponent) {
-			case NetworkInterfaceComponent.IPv4:
-				return (Directory.Exists ("/proc/sys/net/ipv4/conf/" + iface));
+			bool wantIPv4 = networkInterfaceComponent == NetworkInterfaceComponent.IPv4;
+			bool wantIPv6 = wantIPv4 ? false : networkInterfaceComponent == NetworkInterfaceComponent.IPv6;
 				
-			case NetworkInterfaceComponent.IPv6:
-				return (Directory.Exists ("/proc/sys/net/ipv6/conf/" + iface));
-			}
-			return false;
+			foreach (IPAddress address in addresses) {
+				if (wantIPv4 && address.AddressFamily == AddressFamily.InterNetwork)
+					return true;
+				else if (wantIPv6 && address.AddressFamily == AddressFamily.InterNetworkV6)
+					return true;
+                        }
+			
+                        return false;
 		}
 
 		public override string Description {
-			get { return iface_path; }
+			get { return name; }
 		}
 
 		public override string Id {
-			get { return iface; }
+			get { return name; }
 		}
 
 		public override bool IsReceiveOnly {
@@ -178,92 +332,42 @@ namespace System.Net.NetworkInformation {
 		}
 
 		public override string Name {
-			get { return iface; }
+			get { return name; }
 		}
 		
 		public override NetworkInterfaceType NetworkInterfaceType {
-			get {
-				try {
-					// The constants come from the ARP hardware identifiers, this is what Linux uses
-					
-					switch (Int32.Parse (ReadLine (iface_path + "type"))){
-					case 1:
-						if (Directory.Exists (iface_path + "wireless"))
-							return NetworkInterfaceType.Wireless80211;
-						
-						return NetworkInterfaceType.Ethernet;
-
-					case 19:
-						return NetworkInterfaceType.Atm;
-						
-					case 512:
-						return NetworkInterfaceType.Ppp;
-
-					case 772:
-						return NetworkInterfaceType.Loopback;
-
-					case 774:
-						return NetworkInterfaceType.Fddi;
-
-					case 800:
-						return NetworkInterfaceType.TokenRing;
-
-					case 801:
-						return NetworkInterfaceType.Wireless80211;
-						
-					case 256: // Slip
-					case 257: // CSlip
-					case 258: // Slip6
-					case 259: // CSlip6
-						return NetworkInterfaceType.Slip;
-						
-					// .NET exposes these, but we do not currently have a mapping:
-					// BasicIsdn
-					// PrimaryIsdn
-					// Ethernet3Megabit
-					// GenericModem
-					// FastEthernetT
-					// FastEthernetFx
-					//
-					// AsymmetricDsl
-					// RateAdaptDsl = 95,
-					// SymmetricDsl = 96,
-					// VeryHighSpeedDsl = 97,
-						
-					}
-					return NetworkInterfaceType.Unknown;
-				} catch {
-					return NetworkInterfaceType.Unknown;
-				}
-			}
+			get { return type; }
 		}
 		
 		public override OperationalStatus OperationalStatus {
 			get {
+				if (!Directory.Exists (iface_path))
+					return OperationalStatus.Unknown;
+				
 				try {
-					string s = ReadLine (iface_path + "operstate");
+					string s = ReadLine (iface_operstate_path);
 
 					switch (s){
-					case "unknown":
-						return OperationalStatus.Unknown;
+						case "unknown":
+							return OperationalStatus.Unknown;
 						
-					case "notpresent":
-						return OperationalStatus.NotPresent;
+						case "notpresent":
+							return OperationalStatus.NotPresent;
 
-					case "down":
-						return OperationalStatus.Down;
+						case "down":
+							return OperationalStatus.Down;
 
-					case "lowerlayerdown":
-						return OperationalStatus.LowerLayerDown;
+						case "lowerlayerdown":
+							return OperationalStatus.LowerLayerDown;
 
-					case "testing":
-						return OperationalStatus.Testing;
+						case "testing":
+							return OperationalStatus.Testing;
 
-					case "dormant":
-						return OperationalStatus.Dormant;
+						case "dormant":
+							return OperationalStatus.Dormant;
 
-					case "up":
-						return OperationalStatus.Up;
+						case "up":
+							return OperationalStatus.Up;
 					}
 				} catch {
 				}
@@ -281,8 +385,11 @@ namespace System.Net.NetworkInformation {
 		
 		public override bool SupportsMulticast {
 			get {
+				if (!Directory.Exists (iface_path))
+					return false;
+				
 				try {
-					string s = ReadLine (iface_path + "flags");
+					string s = ReadLine (iface_flags_path);
 					if (s.Length > 2 && s [0] == '0' && s [1] == 'x')
 						s = s.Substring (2);
 					

@@ -27,6 +27,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if NET_2_0
+using System.Collections.Generic;
+
 namespace System.Net.NetworkInformation {
 	public abstract class IPInterfaceProperties {
 		protected IPInterfaceProperties ()
@@ -46,6 +48,125 @@ namespace System.Net.NetworkInformation {
 		public abstract MulticastIPAddressInformationCollection MulticastAddresses { get; }
 		public abstract UnicastIPAddressInformationCollection UnicastAddresses { get; }
 		public abstract IPAddressCollection WinsServersAddresses { get; }
+	}
+
+	class LinuxIPInterfaceProperties : IPInterfaceProperties
+	{
+		IPv4InterfaceProperties ipv4iface_properties;
+		LinuxNetworkInterface iface;
+		List <IPAddress> addresses;
+		
+		public LinuxIPInterfaceProperties (LinuxNetworkInterface iface, List <IPAddress> addresses)
+		{
+			this.iface = iface;
+			this.addresses = addresses;
+		}
+
+		public override IPv4InterfaceProperties GetIPv4Properties ()
+		{
+			if (ipv4iface_properties == null)
+				ipv4iface_properties = new LinuxIPv4InterfaceProperties (iface);
+			
+			return ipv4iface_properties;
+		}
+
+		public override IPv6InterfaceProperties GetIPv6Properties ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override IPAddressInformationCollection AnycastAddresses {
+			get {
+				List<IPAddress> anycastAddresses = new List<IPAddress> ();
+				/* XXX:
+				foreach (IPAddress address in addresses) {
+					if (is_anycast_address (address)) {
+						anycastAddresses.Add (address);
+					}
+				}
+				*/
+				return IPAddressInformationImplCollection.LinuxFromAnycast (anycastAddresses);
+			}
+		}
+
+		[MonoTODO ("Always returns an empty collection.")]
+		public override IPAddressCollection DhcpServerAddresses {
+			get {
+				// There are lots of different DHCP clients
+				// that all store their configuration differently.
+				// I'm not sure what to do here.
+				return new IPAddressCollection ();
+			}
+		}
+
+		[MonoTODO ("Always returns an empty collection.")]
+		public override IPAddressCollection DnsAddresses {
+			get {
+				// XXX: Parse /etc/resolv.conf, I suppose.
+				return new IPAddressCollection ();
+			}
+		}
+
+		[MonoTODO ("Does not return anything.")]
+		public override string DnsSuffix {
+			get {
+				// XXX: Also parse resolv.conf?
+				return String.Empty;
+			}
+		}
+
+		[MonoTODO ("Always returns an empty collection.")]
+		public override GatewayIPAddressInformationCollection GatewayAddresses {
+			get {
+				// XXX: Pull information from route table.
+				return LinuxGatewayIPAddressInformationCollection.Empty;
+			}
+		}
+
+		[MonoTODO ("Always returns true")]
+		public override bool IsDnsEnabled {
+			get {
+				return true;
+			}
+		}
+
+		[MonoTODO ("Always returns false")]
+		public override bool IsDynamicDnsEnabled {
+			get {
+				return false;
+			}
+		}
+
+		public override MulticastIPAddressInformationCollection MulticastAddresses {
+			get {
+				List<IPAddress> multicastAddresses = new List<IPAddress> ();
+				foreach (IPAddress address in addresses) {
+					byte[] addressBytes = address.GetAddressBytes ();
+					if (addressBytes[0] >= 224 && addressBytes[0] <= 239) {
+						multicastAddresses.Add (address);
+					}
+				}
+				return MulticastIPAddressInformationImplCollection.LinuxFromList (multicastAddresses);
+			}
+		}
+
+		public override UnicastIPAddressInformationCollection UnicastAddresses {
+			get {
+				List<IPAddress> unicastAddresses = new List<IPAddress> ();
+				foreach (IPAddress address in addresses) {
+					// XXX: Add everything that's not multicast or anycast here.
+				}
+				return UnicastIPAddressInformationImplCollection.LinuxFromList (unicastAddresses);
+			}
+		}
+
+		[MonoTODO ("Always returns an empty collection.")]
+		public override IPAddressCollection WinsServersAddresses {
+			get {
+				// I do SUPPOSE we could scrape /etc/samba/smb.conf, but.. yeesh.
+				return new IPAddressCollection ();
+			}
+		}
 	}
 
 	class Win32IPInterfaceProperties2 : IPInterfaceProperties
@@ -73,7 +194,7 @@ namespace System.Net.NetworkInformation {
 		}
 
 		public override IPAddressInformationCollection AnycastAddresses {
-			get { return IPAddressInformationImplCollection.FromAnycast (addr.FirstAnycastAddress); }
+			get { return IPAddressInformationImplCollection.Win32FromAnycast (addr.FirstAnycastAddress); }
 		}
 
 		public override IPAddressCollection DhcpServerAddresses {
@@ -109,11 +230,11 @@ namespace System.Net.NetworkInformation {
 		}
 
 		public override MulticastIPAddressInformationCollection MulticastAddresses {
-			get { return Win32MulticastIPAddressInformationCollection.FromMulticast (addr.FirstMulticastAddress); }
+			get { return MulticastIPAddressInformationImplCollection.Win32FromMulticast (addr.FirstMulticastAddress); }
 		}
 
 		public override UnicastIPAddressInformationCollection UnicastAddresses {
-			get { return Win32UnicastIPAddressInformationCollection.FromUnicast (addr.FirstUnicastAddress); }
+			get { return UnicastIPAddressInformationImplCollection.Win32FromUnicast (addr.FirstUnicastAddress); }
 		}
 
 		public override IPAddressCollection WinsServersAddresses {

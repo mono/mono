@@ -4,6 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
+//	Eric Butler (eric@extremeboredom.net)
 //
 // Copyright (c) 2006-2007 Novell, Inc. (http://www.novell.com)
 //
@@ -96,7 +97,62 @@ namespace System.Net.NetworkInformation {
 		public override SuffixOrigin SuffixOrigin {
 			get { return info.SuffixOrigin; }
 		}
+	}
 
+	class LinuxUnicastIPAddressInformation : UnicastIPAddressInformation
+	{
+		IPAddress address;
+
+		public LinuxUnicastIPAddressInformation (IPAddress address)
+		{
+			this.address = address;
+		}
+
+		public override IPAddress Address {
+			get { return address; }
+		}
+
+		public override bool IsDnsEligible {
+			get {
+				byte[] addressBytes = address.GetAddressBytes ();
+				return !(addressBytes[0] == 169 && addressBytes[1] == 254);
+			}
+		}
+
+		[MonoTODO("Always returns false")]
+		public override bool IsTransient {
+			get { return false; }
+		}
+
+		// UnicastIPAddressInformation members
+
+		public override long AddressPreferredLifetime {
+			get { throw new NotImplementedException (); }
+		}
+
+		public override long AddressValidLifetime {
+			get { throw new NotImplementedException (); }
+		}
+
+		public override long DhcpLeaseLifetime {
+			get { throw new NotImplementedException (); }
+		}
+
+		public override DuplicateAddressDetectionState DuplicateAddressDetectionState {
+			get { throw new NotImplementedException (); }
+		}
+
+		public override IPAddress IPv4Mask {
+			get { throw new NotImplementedException (); }
+		}
+
+		public override PrefixOrigin PrefixOrigin {
+			get { throw new NotImplementedException (); }
+		}
+
+		public override SuffixOrigin SuffixOrigin {
+			get { throw new NotImplementedException (); }
+		}
 	}
 }
 #endif

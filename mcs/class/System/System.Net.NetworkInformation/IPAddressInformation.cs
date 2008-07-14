@@ -60,6 +60,7 @@ namespace System.Net.NetworkInformation {
 			get { return is_dns_eligible; }
 		}
 
+		[MonoTODO ("Always false on Linux")]
 		public override bool IsTransient {
 			get { return is_transient; }
 		}

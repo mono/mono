@@ -4,6 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
+//	Eric Butler (eric@extremeboredom.net)
 //
 // Copyright (c) 2006-2007 Novell, Inc. (http://www.novell.com)
 //
@@ -93,14 +94,14 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
-	class Win32MulticastIPAddressInformationCollection : MulticastIPAddressInformationCollection
+	class MulticastIPAddressInformationImplCollection : MulticastIPAddressInformationCollection
 	{
-		public static readonly Win32MulticastIPAddressInformationCollection Empty = new Win32MulticastIPAddressInformationCollection (true);
+		public static readonly MulticastIPAddressInformationImplCollection Empty = new MulticastIPAddressInformationImplCollection (true);
 
 		bool is_readonly;
 
 		// for static methods
-		Win32MulticastIPAddressInformationCollection (bool isReadOnly)
+		MulticastIPAddressInformationImplCollection (bool isReadOnly)
 		{
 			is_readonly = isReadOnly;
 		}
@@ -109,16 +110,29 @@ namespace System.Net.NetworkInformation {
 			get { return is_readonly; }
 		}
 
-		public static Win32MulticastIPAddressInformationCollection FromMulticast (IntPtr ptr)
+		public static MulticastIPAddressInformationCollection Win32FromMulticast (IntPtr ptr)
 		{
-			Win32MulticastIPAddressInformationCollection c = new Win32MulticastIPAddressInformationCollection (false);
+			MulticastIPAddressInformationImplCollection c = new MulticastIPAddressInformationImplCollection (false);
 			Win32_IP_ADAPTER_MULTICAST_ADDRESS a;
 			for (IntPtr p = ptr; p != IntPtr.Zero; p = a.Next) {
 				a = (Win32_IP_ADAPTER_MULTICAST_ADDRESS) Marshal.PtrToStructure (p, typeof (Win32_IP_ADAPTER_MULTICAST_ADDRESS));
-				c.Add (new Win32MulticastIPAddressInformation (
+				c.Add (new MulticastIPAddressInformationImpl (
 				       a.Address.GetIPAddress (),
 				       a.LengthFlags.IsDnsEligible,
 				       a.LengthFlags.IsTransient));
+			}
+			c.is_readonly = true;
+			return c;
+		}
+
+		public static MulticastIPAddressInformationImplCollection LinuxFromList (List<IPAddress> addresses)
+		{
+			MulticastIPAddressInformationImplCollection c = new MulticastIPAddressInformationImplCollection (false);
+			foreach (IPAddress address in addresses) {
+				c.Add (new MulticastIPAddressInformationImpl (
+					address,
+					true,
+					false));
 			}
 			c.is_readonly = true;
 			return c;

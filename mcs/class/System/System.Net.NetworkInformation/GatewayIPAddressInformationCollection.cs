@@ -128,6 +128,22 @@ namespace System.Net.NetworkInformation {
 			get { return is_readonly; }
 		}
 	}
+
+	class LinuxGatewayIPAddressInformationCollection : GatewayIPAddressInformationCollection
+	{
+		public static readonly LinuxGatewayIPAddressInformationCollection Empty = new LinuxGatewayIPAddressInformationCollection (true);
+
+		bool is_readonly;
+
+		private LinuxGatewayIPAddressInformationCollection (bool isReadOnly)
+		{
+			this.is_readonly = isReadOnly;
+		}
+		
+		public override bool IsReadOnly {
+			get { return is_readonly; }
+		}
+	}
 }
 #endif
 

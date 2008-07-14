@@ -1,3 +1,8 @@
+2008-07-14  Marek Habersack  <mhabersack@novell.com>
+
+	* System.dll.sources: added
+	System.Net.NetworkInformation/LinuxNetworkInterfaceMarshal.cs
+
 2008-06-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added EventDescriptorCollectionTest.cs.

@@ -110,7 +110,7 @@ namespace System.Net.NetworkInformation {
 			get { return is_readonly; }
 		}
 
-		public static IPAddressInformationImplCollection FromAnycast (IntPtr ptr)
+		public static IPAddressInformationCollection Win32FromAnycast (IntPtr ptr)
 		{
 			IPAddressInformationImplCollection c = new IPAddressInformationImplCollection (false);
 			Win32_IP_ADAPTER_ANYCAST_ADDRESS a;
@@ -120,6 +120,16 @@ namespace System.Net.NetworkInformation {
 				       a.Address.GetIPAddress (),
 				       a.LengthFlags.IsDnsEligible,
 				       a.LengthFlags.IsTransient));
+			}
+			c.is_readonly = true;
+			return c;
+		}
+
+		public static IPAddressInformationImplCollection LinuxFromAnycast (IList<IPAddress> addresses)
+		{
+			IPAddressInformationImplCollection c = new IPAddressInformationImplCollection (false);
+			foreach (IPAddress address in addresses) {
+				c.Add (new IPAddressInformationImpl (address, false, false));
 			}
 			c.is_readonly = true;
 			return c;

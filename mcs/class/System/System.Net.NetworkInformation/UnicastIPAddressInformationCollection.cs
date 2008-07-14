@@ -96,14 +96,14 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 
-	class Win32UnicastIPAddressInformationCollection : UnicastIPAddressInformationCollection
+	class UnicastIPAddressInformationImplCollection : UnicastIPAddressInformationCollection
 	{
-		public static readonly Win32UnicastIPAddressInformationCollection Empty = new Win32UnicastIPAddressInformationCollection (true);
+		public static readonly UnicastIPAddressInformationImplCollection Empty = new UnicastIPAddressInformationImplCollection (true);
 
 		bool is_readonly;
 
 		// for static methods
-		Win32UnicastIPAddressInformationCollection (bool isReadOnly)
+		UnicastIPAddressInformationImplCollection (bool isReadOnly)
 		{
 			is_readonly = isReadOnly;
 		}
@@ -112,13 +112,23 @@ namespace System.Net.NetworkInformation {
 			get { return is_readonly; }
 		}
 
-		public static Win32UnicastIPAddressInformationCollection FromUnicast (IntPtr ptr)
+		public static UnicastIPAddressInformationCollection Win32FromUnicast (IntPtr ptr)
 		{
-			Win32UnicastIPAddressInformationCollection c = new Win32UnicastIPAddressInformationCollection (false);
+			UnicastIPAddressInformationImplCollection c = new UnicastIPAddressInformationImplCollection (false);
 			Win32_IP_ADAPTER_UNICAST_ADDRESS a;
 			for (IntPtr p = ptr; p != IntPtr.Zero; p = a.Next) {
 				a = (Win32_IP_ADAPTER_UNICAST_ADDRESS) Marshal.PtrToStructure (p, typeof (Win32_IP_ADAPTER_UNICAST_ADDRESS));
 				c.Add (new Win32UnicastIPAddressInformation (a));
+			}
+			c.is_readonly = true;
+			return c;
+		}
+
+		public static UnicastIPAddressInformationCollection LinuxFromList (List<IPAddress> addresses)
+		{
+			UnicastIPAddressInformationImplCollection c = new UnicastIPAddressInformationImplCollection (false);
+			foreach (IPAddress address in addresses) {
+				c.Add (new LinuxUnicastIPAddressInformation (address));
 			}
 			c.is_readonly = true;
 			return c;
