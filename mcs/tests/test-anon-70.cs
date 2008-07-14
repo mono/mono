@@ -1,6 +1,16 @@
+// Compiler options: -unsafe
+
 // Cloning tests
 
 using System;
+
+unsafe class UnsafeClass
+{
+	public int* GetUnsafeValue ()
+	{
+		return null;
+	}
+}
 
 public class C
 {
@@ -9,6 +19,15 @@ public class C
 	static void Test (D d)
 	{
 	}
+	
+	unsafe static void UnsafeTests ()
+	{
+		UnsafeClass v = new UnsafeClass ();
+		Test (delegate () {
+			int i = *v.GetUnsafeValue ();
+		});
+	}
+	
 	
 	public static void Main ()
 	{
@@ -32,9 +51,6 @@ public class C
 		Test (delegate () {
 				foreach (int t in i_a) {
 				}
-				Test (delegate () {
-					Console.WriteLine (typeof (void));
-				});
 			});
 			
 		Test (delegate () {
@@ -43,3 +59,4 @@ public class C
 
 	}
 }
+

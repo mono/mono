@@ -34748,18 +34748,36 @@
         <size>0</size>
       </method>
     </type>
-    <type name="C+&lt;Main&gt;c__AnonStorey0">
+    <type name="UnsafeClass">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.Int32* GetUnsafeValue()">
+        <size>3</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void UnsafeTests()">
+        <size>35</size>
+      </method>
+    </type>
+    <type name="C+&lt;UnsafeTests&gt;c__AnonStorey0">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
       <method name="Void &lt;&gt;m__0()">
-        <size>38</size>
+        <size>14</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey1">
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
       <method name="Void &lt;&gt;m__1()">
-        <size>16</size>
+        <size>38</size>
       </method>
       <method name="Void &lt;&gt;m__2()">
-        <size>51</size>
+        <size>34</size>
       </method>
       <method name="Void &lt;&gt;m__3()">
         <size>16</size>
