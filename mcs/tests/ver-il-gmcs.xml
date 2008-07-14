@@ -14888,6 +14888,53 @@
       </method>
     </type>
   </test>
+  <test name="gtest-iter-05.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerable`1 TestRoutine[T](IEnumerable`1, Foo`1[T])">
+        <size>30</size>
+      </method>
+      <method name="Void Main()">
+        <size>31</size>
+      </method>
+    </type>
+    <type name="Foo`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void CreateItem[G]()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="Test+&lt;TestRoutine&gt;c__Iterator0`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>12</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>65</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
+        <size>65</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>185</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>60</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-linq-01.cs">
     <type name="from.ITest">
       <method name="Int32 get_Id()">
