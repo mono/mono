@@ -1,3 +1,8 @@
+2008-07-14  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Net.dll.sources: added
+	System.Net.NetworkInformation/LinuxNetworkInterfaceMarshal.cs
+
 2008-04-13  Jb Evain  <jbevain@novell.com>
 
 	* System.Net: new assembly in SL 2b1.

@@ -80,6 +80,7 @@ System.Net/WebResponse_2_1.cs
 ../System/System.Net.NetworkInformation/IPv4InterfaceProperties.cs
 ../System/System.Net.NetworkInformation/IPv4InterfaceStatistics.cs
 ../System/System.Net.NetworkInformation/IPv6InterfaceProperties.cs
+../System/System.Net.NetworkInformation/LinuxNetworkInterfaceMarshal.cs
 ../System/System.Net.NetworkInformation/MulticastIPAddressInformationCollection.cs
 ../System/System.Net.NetworkInformation/MulticastIPAddressInformation.cs
 ../System/System.Net.NetworkInformation/NetBiosNodeType.cs
