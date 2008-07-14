@@ -420,13 +420,13 @@ namespace Mono.CSharp {
 		public MethodInfo MutateGenericMethod (MethodInfo method)
 		{
 #if GMCS_SOURCE
+			Type [] t_args = TypeManager.GetGenericArguments (method);
 			if (TypeManager.IsGenericType (method.DeclaringType)) {
 				Type t = MutateGenericType (method.DeclaringType);
 				if (t != method.DeclaringType)
 					method = TypeBuilder.GetMethod (t, method);
 			}
 
-			Type [] t_args = TypeManager.GetGenericArguments (method);
 			if (t_args == null || t_args.Length == 0)
 				return method;
 

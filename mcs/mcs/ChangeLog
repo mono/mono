@@ -1,5 +1,11 @@
 2008-07-14  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #408361
+	* anonymous.cs (MutateGenericMethod): Store generic type arguments before
+	they are replaced by GetMethod.
+
+2008-07-14  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #408721 by jeremie.laval@gmail.com
 	* expression.cs (Indirection): Implemented CloneTo.
 
