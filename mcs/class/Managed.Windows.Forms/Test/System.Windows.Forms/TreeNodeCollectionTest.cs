@@ -412,5 +412,16 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (-1, tv.Nodes.IndexOfKey ("42"), "#KI2");
 		}
 #endif
+
+		[Test]
+		public void Bug408999 ()
+		{
+			TreeView tv = new TreeView ();
+
+			for (int i = 0; i < 100; i++)
+				tv.Nodes.Add (i.ToString ());
+
+			tv.Nodes.RemoveAt (0);
+		}
 	}
 }

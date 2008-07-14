@@ -1,3 +1,9 @@
+2008-07-14  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TreeNodeCollection.cs: We were copying one too many elements when
+	doing our array copy.  Fixes a crash when RemoveAt is called.
+	[Fixes bug #408999]
+
 2008-07-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TabControl.cs: When doing the layout and need to call FillRow -using

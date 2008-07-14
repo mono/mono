@@ -372,8 +372,11 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			Array.Copy (nodes, index + 1, nodes, index, count - index);
+			Array.Copy (nodes, index + 1, nodes, index, count - index - 1);
 			count--;
+			
+			nodes[count] = null;
+			
 			if (nodes.Length > OrigSize && nodes.Length > (count * 2))
 				Shrink ();
 
