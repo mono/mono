@@ -262,7 +262,7 @@ namespace System.Windows.Forms.VisualStyles
 				public static VisualStyleElement UncheckedDisabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 2, 4); } }
 				public static VisualStyleElement UncheckedHot { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 2, 2); } }
 				public static VisualStyleElement UncheckedNormal { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 2, 1); } }
-				public static VisualStyleElement UncheckedPressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 2, 7); } }
+				public static VisualStyleElement UncheckedPressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 2, 3); } }
 			}
 			public static class UserButton
 			{

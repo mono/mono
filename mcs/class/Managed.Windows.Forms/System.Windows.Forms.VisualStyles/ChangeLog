@@ -1,3 +1,8 @@
+2008-07-14  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* VisualStyleElement.cs: Fixed
+	VisualStyleElement.Button.RadioButton.UncheckedPressed.
+
 2008-07-10  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* GtkPlus.cs: Fixed warnings and formatted.
