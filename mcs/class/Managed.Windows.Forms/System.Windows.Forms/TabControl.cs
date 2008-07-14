@@ -1318,7 +1318,10 @@ namespace System.Windows.Forms {
 			r.Height += ThemeEngine.Current.TabControlSelectedDelta.Height;
 			if (r.Left < left_edge)
 				r.X = left_edge;
-			if (r.Right > right_edge && SizeMode != TabSizeMode.Normal)
+			// Adjustment can't be used for right alignment, since it is
+			// the only one that has a different X origin than 0
+			if (r.Right > right_edge && SizeMode != TabSizeMode.Normal &&
+					alignment != TabAlignment.Right)
 				r.Width = right_edge - r.X;
 			page.TabBounds = r;
 		}

@@ -1,3 +1,11 @@
+2008-07-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TabControl.cs: When expanding the selected tab, don't adjust the
+	width if alignment is Right, since it has a different offset than 0,
+	as opposed to the other alignments.
+	Fixes the selected tab not being painted at all with alignment = Right
+	and using FillToRight size mode.
+
 2008-07-14  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TreeView.cs: Fix ToString to match MS.  [Fixes bug #409029]
