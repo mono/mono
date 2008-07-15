@@ -14,6 +14,7 @@ using System.Reflection;
 using System.ComponentModel;
 using NUnit.Framework;
 using System.Threading;
+using System.Collections;
 
 
 namespace MonoTests.System.Windows.Forms
@@ -167,6 +168,21 @@ namespace MonoTests.System.Windows.Forms
 			ImageList myimagelist = new ImageList ();
 			Assert.AreEqual ("System.Windows.Forms.ImageList Images.Count: 0, ImageSize: {Width=16, Height=16}",
 					 myimagelist.ToString (), "#T3");
+		}
+		
+		[Test]
+		public void Bug409169 ()
+		{
+			ImageList imgList = new ImageList ();
+			ImageList.ImageCollection coll = imgList.Images;
+			Bitmap img1 = new Bitmap (10, 10);
+			coll.Add (img1);
+
+			const int dstOffset = 5;
+			object[] dst = new object[dstOffset + coll.Count];
+			((IList)coll).CopyTo (dst, dstOffset);
+			
+			Assert.IsNotNull (dst[dstOffset], "A1");
 		}
 		
 		[TestFixture]

@@ -949,8 +949,7 @@ namespace System.Windows.Forms
 
 			void ICollection.CopyTo(Array dest, int index)
 			{
-				for (int imageIndex = 0; imageIndex < this.Count; imageIndex++)
-					dest.SetValue (this [index], index++);
+				list.CopyTo (dest, index);
 			}
 			#endregion // ImageCollection Interface Methods
 		}

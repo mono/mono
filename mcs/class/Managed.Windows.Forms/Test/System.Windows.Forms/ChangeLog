@@ -1,3 +1,7 @@
+2008-07-15  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ImageListTest.cs: Add test for bug #409169.
+
 2008-07-14  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TreeViewTest.cs: Add test for bug #409029.
