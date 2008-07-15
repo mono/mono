@@ -1058,11 +1058,7 @@ namespace Mono.CSharp {
 
 		public override string GetSignatureForError ()
 		{	
-			if (IsGeneric) {
-				return SimpleName.RemoveGenericArity (Name) + TypeParameter.GetSignatureForError (type_params);
-			}
-			// Parent.GetSignatureForError
-			return Name;
+			return MemberName.GetSignatureForError ();
 		}
 		
 		public bool CheckAccessLevel (Type check_type)

@@ -1,3 +1,7 @@
+2008-07-15  Marek Safar  <marek.safar@gmail.com>
+
+	* decl.cs (GetSignatureForError): Report full namespace name for containers.
+
 2008-07-14  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #408361
