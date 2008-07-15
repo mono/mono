@@ -1,3 +1,8 @@
+2008-07-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* decimal.c (my_g_bit_nth_msf): Implement this directly without calling
+	g_bit_nth_msf () since that macro is not implemented in glib.
+
 2008-07-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_generic_sharing_enabled): Always disable generic sharing
