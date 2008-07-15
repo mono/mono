@@ -3783,8 +3783,8 @@ namespace Mono.CSharp {
 			
 			// It must be either array or fixed buffer
 			Type element = TypeManager.HasElementType (op_type) ?
-				element = TypeManager.GetElementType (op_type) :
-				element = AttributeTester.GetFixedBuffer (((FieldExpr)left).FieldInfo).ElementType;
+				TypeManager.GetElementType (op_type) :
+				AttributeTester.GetFixedBuffer (((FieldExpr)left).FieldInfo).ElementType;
 
 			int size = GetTypeSize (element);
 			Type rtype = right.Type;
