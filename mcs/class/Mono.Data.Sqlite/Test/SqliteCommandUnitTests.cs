@@ -164,7 +164,11 @@ namespace MonoTests.Mono.Data.Sqlite
 		}
 		
 		[Test]
+#if NET_2_0
+		[ExpectedException(typeof(SqliteException))]
+#else
 		[ExpectedException(typeof(SqliteSyntaxException))]
+#endif
 		public void InsertWithFailingTransaction()
 		{
 			_conn.Open();

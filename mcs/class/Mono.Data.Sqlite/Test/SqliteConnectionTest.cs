@@ -43,7 +43,28 @@ namespace MonoTests.Mono.Data.Sqlite
                 readonly static string _connectionString = "URI=file://" + _uri + ", version=3";
                 SqliteConnection _conn = new SqliteConnection ();
 
-                
+#if NET_2_0
+                [Test]
+                [ExpectedException (typeof (ArgumentNullException))]
+                public void ConnectionStringTest_Null ()
+                {
+                        _conn.ConnectionString = null;
+                }
+
+                [Test]
+                [ExpectedException (typeof (InvalidOperationException))]
+                public void ConnectionStringTest_MustBeClosed ()
+                {
+                        _conn.ConnectionString = _connectionString;
+                        try {
+                    		_conn.Open ();
+                    		_conn.ConnectionString = _connectionString;
+                    	} finally {
+                    		_conn.Close ();
+                    	}
+                }
+
+#else
                 [Test]
                 [ExpectedException (typeof (InvalidOperationException))]
                 public void ConnectionStringTest_Empty ()
@@ -58,13 +79,14 @@ namespace MonoTests.Mono.Data.Sqlite
                         _conn.ConnectionString = "version=3";
                 }
 
+		// In 2.0 _conn.Database always returns "main"
                 [Test]
                 public void ConnectionStringTest_IgnoreSpacesAndTrim ()
                 {
                         _conn.ConnectionString = "URI=file://xyz      , ,,, ,, version=3";
                         Assert.AreEqual ("xyz", _conn.Database, "#1 file path is wrong");
                 }
-
+#endif
 				// behavior has changed, I guess
                 //[Test]
                 [Ignore ("opening a connection should not create db! though, leave for now")]

@@ -74,7 +74,13 @@ namespace MonoTests.Mono.Data.Sqlite
 					Assert.AreEqual(reader["t"], textP.Value);
 					Assert.AreEqual(reader["f"], floatP.Value);
 					Assert.AreEqual(reader["i"], integerP.Value);
-					Assert.AreEqual(reader["b"], blobP.Value);
+					
+					object compareValue;
+					if (blobP.Value is byte[])
+						compareValue = System.Text.Encoding.UTF8.GetString ((byte[])blobP.Value);
+					else
+						compareValue = blobP.Value;
+					Assert.AreEqual(reader["b"], compareValue);
 					Assert.AreEqual(reader.Read(), false);
 				}
 			}
