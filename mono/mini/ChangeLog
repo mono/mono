@@ -1,3 +1,7 @@
+2008-07-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (emit_get_rgctx): Fix some FIXMEs.
+
 2008-07-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c: Clean up the get_runtime_generic_context functions a bit:

@@ -4324,18 +4324,13 @@ emit_get_rgctx (MonoCompile *cfg, MonoMethod *method, int context_used, MonoInst
 	if (context_used & MONO_GENERIC_CONTEXT_USED_METHOD) {
 		MonoInst *mrgctx_loc, *mrgctx_var;
 
-		// FIXME:
-		g_assert_not_reached ();
-		return NULL;
-#if 0
 		g_assert (!this);
 		g_assert (method->is_inflated && mono_method_get_context (method)->method_inst);
 
 		mrgctx_loc = mono_get_vtable_var (cfg);
-		NEW_TEMPLOAD (cfg, mrgctx_var, mrgctx_loc->inst_c0);
+		EMIT_NEW_TEMPLOAD (cfg, mrgctx_var, mrgctx_loc->inst_c0);
 
 		return mrgctx_var;
-#endif
 	} else if (method->flags & METHOD_ATTRIBUTE_STATIC) {
 		MonoInst *vtable_loc, *vtable_var;
 
@@ -4346,13 +4341,10 @@ emit_get_rgctx (MonoCompile *cfg, MonoMethod *method, int context_used, MonoInst
 
 		if (method->is_inflated && mono_method_get_context (method)->method_inst) {
 			MonoInst *mrgctx_var = vtable_var;
+			int vtable_reg;
 
-			// FIXME:
-			g_assert_not_reached ();
-			g_assert (G_STRUCT_OFFSET (MonoMethodRuntimeGenericContext, class_vtable) == 0);
-
-			MONO_INST_NEW (cfg, vtable_var, CEE_LDIND_I);
-			vtable_var->inst_left = mrgctx_var;
+			vtable_reg = alloc_preg (cfg);
+			EMIT_NEW_LOAD_MEMBASE (cfg, vtable_var, OP_LOAD_MEMBASE, vtable_reg, mrgctx_var->dreg, G_STRUCT_OFFSET (MonoMethodRuntimeGenericContext, class_vtable));
 			vtable_var->type = STACK_PTR;
 		}
 
