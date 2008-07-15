@@ -402,7 +402,7 @@ namespace System.Windows.Forms
 			this.PerformLayout ();
 			
 			Point show_point = position;
-			Point max_screen = new Point (SystemInformation.WorkingArea.Width, SystemInformation.WorkingArea.Height);
+			Point max_screen = new Point (SystemInformation.VirtualScreen.Width, SystemInformation.VirtualScreen.Height);
 			
 			if (this is ContextMenuStrip) {
 				// If we are going to go offscreen, adjust our direction so we don't...
