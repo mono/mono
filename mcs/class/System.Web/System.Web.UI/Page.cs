@@ -1726,10 +1726,12 @@ public partial class Page : TemplateControl, IHttpHandler
 
 		string eventTarget = postdata [postEventSourceID];
 		if (eventTarget == null || eventTarget.Length == 0) {
+			if (formPostedRequiresRaiseEvent != null)
+				RaisePostBackEvent (formPostedRequiresRaiseEvent, null);
 			else
 				Validate ();
 			return;
-                }
+        }
 
 #if NET_2_0
 		targetControl = FindControl (eventTarget, true);
