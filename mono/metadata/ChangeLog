@@ -1,14 +1,9 @@
-2008-07-15  Jonathan Chambers  <joncham@gmail.com>
+2008-07-16  Kornél Pál  <kornelpal@gmail.com>
 
-	* assembly.c (mono_set_rootdir): Revert part of mixed
-	mode assembly patch to fix build. Use mono_module_handle
-	instead of linker specific __ImageBase.
-	
-	* coree.h: Add back mono_module_handle.
-	
-	* coree.c: Add back mono_module_handle.
+	* coree.h: Define __ImageBase as _image_base__ on cygwin that fixes build with
+	old ld versions.
 
-	Code is contributed under MIT/X11 license.
+	Contributed under MIT/X11 license.
 
 2008-07-15  Zoltan Varga  <vargaz@gmail.com>
 
