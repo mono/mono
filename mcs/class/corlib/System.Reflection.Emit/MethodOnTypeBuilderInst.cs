@@ -74,7 +74,11 @@ namespace System.Reflection.Emit
 		}
 
 		public override Type ReturnType {
-			get { return mb.ReturnType; }
+			get { 
+				if (!((ModuleBuilder)mb.Module).assemblyb.IsCompilerContext)
+					return mb.ReturnType;
+				return instantiation.InflateType (mb.ReturnType);
+			}
 		}
 
 		public override bool IsDefined (Type attributeType, bool inherit)
@@ -103,7 +107,23 @@ namespace System.Reflection.Emit
 
 		public override ParameterInfo [] GetParameters ()
 		{
-			throw new NotSupportedException ();
+			if (!((ModuleBuilder)mb.Module).assemblyb.IsCompilerContext)
+				throw new NotSupportedException ();
+
+			ParameterInfo [] res = new ParameterInfo [mb.parameters.Length];
+			for (int i = 0; i < mb.parameters.Length; i++) {
+				Type type = instantiation.InflateType (mb.parameters [i]);
+				res [i] = new ParameterInfo (mb.pinfo == null ? null : mb.pinfo [i + 1], type, this, i + 1);
+			}
+			return res;
+		}
+
+		public override int MetadataToken {
+			get {
+				if (!((ModuleBuilder)mb.Module).assemblyb.IsCompilerContext)
+					return base.MetadataToken;
+				return mb.MetadataToken;
+			}
 		}
 
 		internal override int GetParameterCount ()
@@ -136,6 +156,7 @@ namespace System.Reflection.Emit
 
 		public override Type [] GetGenericArguments ()
 		{
+			//FIXME test that once we support generic methods 
 			return mb.GetGenericArguments ();
 		}
 
@@ -152,12 +173,14 @@ namespace System.Reflection.Emit
 
 		public override bool IsGenericMethodDefinition {
 			get {
+				//FIXME test that once we support generic methods 
 				return mb.IsGenericMethodDefinition;
 			}
 		}
 
 		public override bool IsGenericMethod {
 			get {
+				//FIXME test that once we support generic methods 
 				return mb.IsGenericMethod;
 			}
 		}

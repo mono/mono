@@ -51,7 +51,7 @@ namespace System.Reflection.Emit
 	{
 		private RuntimeMethodHandle mhandle;
 		private Type rtype;
-		private Type[] parameters;
+		internal Type[] parameters;
 		private MethodAttributes attrs;	/* It's used directly by MCS */
 		private MethodImplAttributes iattrs;
 		private string name;
@@ -59,7 +59,7 @@ namespace System.Reflection.Emit
 		private byte[] code;
 		private ILGenerator ilgen;
 		private TypeBuilder type;
-		private ParameterBuilder[] pinfo;
+		internal ParameterBuilder[] pinfo;
 		private CustomAttributeBuilder[] cattrs;
 		private MethodInfo override_method;
 		private string pi_dll;

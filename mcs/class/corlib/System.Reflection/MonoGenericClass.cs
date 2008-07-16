@@ -116,6 +116,16 @@ namespace System.Reflection
 		protected extern Type GetParentType ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern Type InflateType_internal (Type type);
+
+		internal Type InflateType (Type type)
+		{
+			if (!type.IsGenericParameter && !type.ContainsGenericParameters)
+				return type;
+			return InflateType_internal (type);
+		}
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		protected extern MonoGenericClass[] GetInterfaces_internal ();
 
 		public override Type BaseType {
@@ -149,7 +159,7 @@ namespace System.Reflection
 				// MethodOnTypeBuilderInst objects
 				// Also, mono_image_get_method_on_inst_token () can't handle generic
 				// methods
-				if (!((ModuleBuilder)mb.Module).assemblyb.IsCompilerContext && !mb.IsGenericMethodDefinition) {
+				if (!mb.IsGenericMethodDefinition) {
 					if (methods == null)
 						methods = new Hashtable ();
 					if (!methods.ContainsKey (mb))

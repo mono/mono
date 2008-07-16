@@ -1,3 +1,11 @@
+2008-07-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MethodOnTypeBuilderInst.cs: Special case all methods
+	under compiler context as needed by mcs. 
+
+	* MethodBuilder.cs: Change the visibility of some fields
+	to internal so MethodOnTypeBuilderInst can use it.
+
 2008-07-11  Marek Safar  <marek.safar@gmail.com>
 
 	* ModuleBuilder.cs: Couple of micro optimizations.

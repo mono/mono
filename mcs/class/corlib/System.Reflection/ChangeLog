@@ -1,8 +1,16 @@
+2008-07-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoGenericClass.cs (GetMethod): Use the new codepath for compiler
+	context.
+
+	* MonoGenericClass.cs: New InflateType method, used to inflate
+	managed types.
+
 2008-07-11  Marek Safar  <marek.safar@gmail.com>
 
 	* MonoGenericClass.cs (GetField): Put back removed code.
 
-2008-07-04  Rodrigo Kumpera  <rkumpera@n ovell.com>
+2008-07-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MethodBase.cs (GetMethodFromHandle): Fix a warning in
 	the 1.0 build.
