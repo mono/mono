@@ -1,3 +1,10 @@
+2008-07-15  Jonathan Chambers  <joncham@gmail.com>
+
+	* driver.c: Add back mono_module_handle and 
+	initialize in DllMain DLL_PROCESS_ATTACH case.
+
+	Code is contributed under MIT/X11 license.
+
 2008-07-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_method_to_ir): Disable aot for code using CCASTCLASS on x86 as 

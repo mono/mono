@@ -1,3 +1,15 @@
+2008-07-15  Jonathan Chambers  <joncham@gmail.com>
+
+	* assembly.c (mono_set_rootdir): Revert part of mixed
+	mode assembly patch to fix build. Use mono_module_handle
+	instead of linker specific __ImageBase.
+	
+	* coree.h: Add back mono_module_handle.
+	
+	* coree.c: Add back mono_module_handle.
+
+	Code is contributed under MIT/X11 license.
+
 2008-07-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* decimal.c (my_g_bit_nth_msf): Implement this directly without calling
