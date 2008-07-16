@@ -140,7 +140,10 @@ namespace System.Web.UI.WebControls {
 
 		string GetDataKey ()
 		{
-			return TemplateSourceDirectory + "_" + Page.ToString () + "_" + ID;
+			Page page = Page;
+			string p = page != null ? page.ToString () : "NullPage";
+			
+			return TemplateSourceDirectory + "_" + p + "_" + ID;
 		}
 
 		Cache DataCache
