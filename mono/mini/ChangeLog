@@ -1,3 +1,8 @@
+2008-07-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_method_compile): Don't add the method to the jit info tables
+	during aot compilation.
+
 2008-07-15  Jonathan Chambers  <joncham@gmail.com>
 
 	* driver.c: Add back mono_module_handle and 
