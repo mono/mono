@@ -658,8 +658,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 		public bool IsExpandable {
 			get {
 				TypeConverter converter = GetConverter ();
-				if ((converter != null && converter.GetPropertiesSupported ((ITypeDescriptorContext)this)) || 
-				     PropertyDescriptor.Attributes.Contains (DesignerSerializationVisibilityAttribute.Content))
+				if (converter != null && converter.GetPropertiesSupported ((ITypeDescriptorContext)this))
 					return true;
 				return false;
 			}

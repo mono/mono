@@ -1,3 +1,11 @@
+2008-07-16  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* GridEntry.cs: Checking for DesignerSerializaitonVisibility.Content 
+	in order to determine that we are expandable is wrong. There was a bug, 
+	now fixed, in TypeDescriptor that was causing the wrong converter to be 
+	returned which caused GetPropertiesSupported == false in most cases.
+	[Fixes bug #409027]
+
 2008-07-15  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ImageList.cs: Fix ICollection.CopyTo implementation for
