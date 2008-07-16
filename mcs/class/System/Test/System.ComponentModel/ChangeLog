@@ -1,3 +1,8 @@
+2008-07-16  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TypeDescriptorTests.cs: Add a test that both GetConverter 
+	overloads return the same converter.
+
 2008-07-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* PropertyDescriptorCollectionTests.cs: Allow tests for pass on MS.

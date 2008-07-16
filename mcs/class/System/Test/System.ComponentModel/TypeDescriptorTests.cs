@@ -650,6 +650,8 @@ namespace MonoTests.System.ComponentModel
 			// Test from bug #76686
 			Assert.AreEqual  (typeof (Int32Converter), TypeDescriptor.GetConverter ((int?) 1).GetType (), "#28");
 #endif
+			Assert.IsTrue (TypeDescriptor.GetConverter (typeof (Component)) is ComponentConverter, "#29");
+			Assert.IsTrue (TypeDescriptor.GetConverter (new Component()) is ComponentConverter, "#30");
 		}
 		
 		[Test]
