@@ -1,3 +1,15 @@
+2008-07-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object.c (mono_class_try_get_vtable): New function. Tries to fetch
+	the vtable if it already exists.
+
+	* object-internals.h: Add mono_class_try_get_vtable as part of the
+	internal API.
+
+	* reflection.c (mono_type_get_object): Use the MonoObject from the
+	vtable when possible. Reduces locking contention on reflection heavy
+	code.
+
 2008-07-15  Jonathan Chambers  <joncham@gmail.com>
 
 	* assembly.c (mono_set_rootdir): Revert part of mixed
