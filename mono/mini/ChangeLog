@@ -1,3 +1,7 @@
+2008-07-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c: Merge unbox sharing changes.
+
 2008-07-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (emit_get_rgctx): Fix some FIXMEs.
