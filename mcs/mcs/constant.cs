@@ -1769,10 +1769,26 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			if (Value == null)
+			if (Value == null) {
 				ec.ig.Emit (OpCodes.Ldnull);
-			else
-				ec.ig.Emit (OpCodes.Ldstr, Value);
+				return;
+			}
+
+			//
+			// Use string.Empty for both literals and constants even if
+			// it's not allowed at language level
+			//
+			if (Value.Length == 0 && RootContext.Optimize && ec.TypeContainer.TypeBuilder != TypeManager.string_type) {			
+				if (TypeManager.string_empty == null)
+					TypeManager.string_empty = TypeManager.GetPredefinedField (TypeManager.string_type, "Empty", loc);
+
+				if (TypeManager.string_empty != null) {
+					ec.ig.Emit (OpCodes.Ldsfld, TypeManager.string_empty);
+					return;
+				}
+			}
+
+			ec.ig.Emit (OpCodes.Ldstr, Value);
 		}
 
 		public override Constant Increment ()

@@ -1,5 +1,10 @@
 2008-07-16  Marek Safar  <marek.safar@gmail.com>
 
+	* constant.cs, typemanager.cs: Emit empty string ("") as string.Empty field
+	load.
+
+2008-07-16  Marek Safar  <marek.safar@gmail.com>
+
 	* literal.cs: Null literal is of object type.
 
 2008-07-16  Marek Safar  <marek.safar@gmail.com>
