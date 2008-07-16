@@ -304,6 +304,8 @@ public sealed class TypeDescriptor
 			TypeConverterAttribute tca = (TypeConverterAttribute) atts[typeof(TypeConverterAttribute)];
 			if (tca != null && tca.ConverterTypeName.Length > 0)
 				converterType = GetTypeFromName (component as IComponent, tca.ConverterTypeName);
+			if (converterType == null)
+				converterType = FindDefaultConverterType (component.GetType ());
 			
 			if (converterType != null) {
 				ConstructorInfo ci = converterType.GetConstructor (new Type[] { typeof(Type) });
@@ -311,9 +313,8 @@ public sealed class TypeDescriptor
 					return (TypeConverter) ci.Invoke (new object[] { component.GetType () });
 				else
 					return (TypeConverter) Activator.CreateInstance (converterType);
-			}
-			else
-				return GetConverter (component.GetType ());
+			} else
+				return null;
 		}
 	}
 
@@ -339,7 +340,6 @@ public sealed class TypeDescriptor
 				defaultConverters.Add (typeof (float), typeof (SingleConverter));
 				defaultConverters.Add (typeof (double), typeof (DoubleConverter));
 				defaultConverters.Add (typeof (decimal), typeof (DecimalConverter));
-				defaultConverters.Add (typeof (object), typeof (TypeConverter));
 				defaultConverters.Add (typeof (void), typeof (TypeConverter));
 				defaultConverters.Add (typeof (Array), typeof (ArrayConverter));
 				defaultConverters.Add (typeof (CultureInfo), typeof (CultureInfoConverter));
@@ -347,6 +347,8 @@ public sealed class TypeDescriptor
 				defaultConverters.Add (typeof (Guid), typeof (GuidConverter));
 				defaultConverters.Add (typeof (TimeSpan), typeof (TimeSpanConverter));
 				defaultConverters.Add (typeof (ICollection), typeof (CollectionConverter));
+				defaultConverters.Add (typeof (Enum), typeof (EnumConverter));
+				defaultConverters.Add (typeof (object), typeof (TypeConverter));
 			}
 			return defaultConverters;
 		}
@@ -354,48 +356,26 @@ public sealed class TypeDescriptor
 	
 	public static TypeConverter GetConverter (Type type)
 	{
-		TypeConverterAttribute tca = null;
-		Type t = null;
-		object [] atts = type.GetCustomAttributes (typeof(TypeConverterAttribute), true);
-		
-		if (atts.Length > 0)
-			tca = (TypeConverterAttribute)atts[0];
-		
-		if (tca != null) {
-			t = GetTypeFromName (null, tca.ConverterTypeName);
-		}
-		
-		if (t == null) {
-			if (type.IsEnum) {
-				// EnumConverter needs to know the enum type
-				return new EnumConverter(type);
-			} else if (type.IsArray) {
-				return new ArrayConverter ();
-			}
-		}
-		
-		if (t == null)
-			t = FindConverterType (type);
+		Type converterType = null;
+		AttributeCollection atts = GetAttributes (type);
+		TypeConverterAttribute tca = (TypeConverterAttribute) atts[typeof(TypeConverterAttribute)];
+		if (tca != null && tca.ConverterTypeName.Length > 0)
+			converterType = GetTypeFromName (null, tca.ConverterTypeName);
+		if (converterType == null)
+			converterType = FindDefaultConverterType (type);
 
-		if (t != null) {
-			Exception exc = null;
-			try {
-				return (TypeConverter) Activator.CreateInstance (t);
-			} catch (MissingMethodException e) {
-				exc = e;
-			}
-
-			try {
-				return (TypeConverter) Activator.CreateInstance (t, new object [] {type});
-			} catch (MissingMethodException) {
-				throw exc;
-			}
+		if (converterType != null) {
+			ConstructorInfo ci = converterType.GetConstructor (new Type[] { typeof(Type) });
+			if (ci != null)
+				return (TypeConverter) ci.Invoke (new object[] { type });
+			else
+				return (TypeConverter) Activator.CreateInstance (converterType);
 		}
-
-		return new ReferenceConverter (type);    // Default?
+		else
+			return null;
 	}
 
-	private static Type FindConverterType (Type type)
+	private static Type FindDefaultConverterType (Type type)
 	{
 		Type t = null;
 		
@@ -413,9 +393,9 @@ public sealed class TypeDescriptor
 		
 		// Nothing found, try the same with our base type
 		if (type.BaseType != null)
-			return FindConverterType (type.BaseType);
+			return FindDefaultConverterType (type.BaseType);
 		else
-			return null;
+			return typeof (ReferenceConverter);
 	}
 
 	public static EventDescriptor GetDefaultEvent (Type componentType)
