@@ -1,5 +1,7 @@
 2008-07-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Merge ldtoken sharing changes.
+
 	* mini.c method-to-ir.c mini-amd64.c: More generic sharing updates.
 	
 	* mini.c jit-icalls.h jit-icalls.c: Move mono_object_castclass () to

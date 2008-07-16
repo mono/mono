@@ -8136,7 +8136,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (!handle)
 				goto load_error;
 			mono_class_init (handle_class);
-
 			if (cfg->generic_sharing_context) {
 				if (handle_class == mono_defaults.typehandle_class) {
 					/* If we get a MONO_TYPE_CLASS
@@ -8153,22 +8152,31 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					context_used = mono_method_check_context_used (handle);
 				else
 					g_assert_not_reached ();
-
-				if (context_used & MONO_GENERIC_CONTEXT_USED_METHOD)
-					GENERIC_SHARING_FAILURE (CEE_LDTOKEN);
 			}
 
 			if (cfg->opt & MONO_OPT_SHARED) {
 				MonoInst *addr, *vtvar, *iargs [3];
- 
-				GENERIC_SHARING_FAILURE (CEE_LDTOKEN);
+				int method_context_used;
+
+				if (cfg->generic_sharing_context)
+					method_context_used = mono_method_check_context_used (method);
+				else
+					method_context_used = 0;
 
 				vtvar = mono_compile_create_var (cfg, &handle_class->byval_arg, OP_LOCAL); 
 
 				EMIT_NEW_IMAGECONST (cfg, iargs [0], image);
 				EMIT_NEW_ICONST (cfg, iargs [1], n);
-				EMIT_NEW_PCONST (cfg, iargs [2], generic_context);
-				ins = mono_emit_jit_icall (cfg, mono_ldtoken_wrapper, iargs);
+				if (method_context_used) {
+					MonoInst *rgctx;
+
+					EMIT_GET_RGCTX (rgctx, method_context_used);
+					iargs [2] = emit_get_rgctx_method (cfg, method_context_used, rgctx, method, MONO_RGCTX_INFO_METHOD);
+					ins = mono_emit_jit_icall (cfg, mono_ldtoken_wrapper_generic_shared, iargs);
+				} else {
+					EMIT_NEW_PCONST (cfg, iargs [2], generic_context);
+					ins = mono_emit_jit_icall (cfg, mono_ldtoken_wrapper, iargs);
+				}
 				EMIT_NEW_TEMPLOADA (cfg, addr, vtvar->inst_c0);
 
 				MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, addr->dreg, 0, ins->dreg);
@@ -8206,13 +8214,32 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				} else {
 					MonoInst *addr, *vtvar;
 
-					GENERIC_SHARING_FAILURE (CEE_LDTOKEN);
-
 					vtvar = mono_compile_create_var (cfg, &handle_class->byval_arg, OP_LOCAL);
-					if (cfg->compile_aot)
+
+					if (context_used) {
+							MonoInst *rgctx;
+
+						g_assert (!cfg->compile_aot);
+
+						EMIT_GET_RGCTX (rgctx, context_used);
+						if (handle_class == mono_defaults.typehandle_class) {
+							ins = emit_get_rgctx_klass (cfg, context_used, rgctx,
+									mono_class_from_mono_type (handle),
+									MONO_RGCTX_INFO_TYPE);
+						} else if (handle_class == mono_defaults.methodhandle_class) {
+							ins = emit_get_rgctx_method (cfg, context_used, rgctx,
+									handle, MONO_RGCTX_INFO_METHOD);
+						} else if (handle_class == mono_defaults.fieldhandle_class) {
+							ins = emit_get_rgctx_field (cfg, context_used, rgctx,
+									handle, MONO_RGCTX_INFO_CLASS_FIELD);
+						} else {
+							g_assert_not_reached ();
+						}
+					} else if (cfg->compile_aot) {
 						EMIT_NEW_LDTOKENCONST (cfg, ins, image, n);
-					else
+					} else {
 						EMIT_NEW_PCONST (cfg, ins, handle);
+					}
 					EMIT_NEW_TEMPLOADA (cfg, addr, vtvar->inst_c0);
 					MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, addr->dreg, 0, ins->dreg);
 					EMIT_NEW_TEMPLOAD (cfg, ins, vtvar->inst_c0);
