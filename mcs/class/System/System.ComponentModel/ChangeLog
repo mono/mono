@@ -1,4 +1,12 @@
 2008-07-16  Jonathan Pobst  <monkey@jpobst.com>
+
+	Apply patch from Achille Fouilleul (achille.fouilleul at gadz dot org)
+
+	* BackgroundWorker.cs: Ensure the async object is set to null before
+	calling RunWorkerCompleted, as IsBusy is based off the async object.
+	[Fixes bug #394365]
+
+2008-07-16  Jonathan Pobst  <monkey@jpobst.com>
 	
 	Apply patches from Jordan Callicoat (MonkeeSage at gmail dot com)
 

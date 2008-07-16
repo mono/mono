@@ -77,6 +77,7 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (true, m.WaitOne (10000, false), "A");
 			
 			Assert.AreEqual (true, runworkercalled, "B");
+			Assert.AreEqual (false, bw.IsBusy, "C");
 		}
 
 		void bw_RunWorkerCompleted (object sender, RunWorkerCompletedEventArgs e)
@@ -115,6 +116,7 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (true, m2.WaitOne (10000, false), "A");
 
 			Assert.AreEqual (true, runworkercalled2, "B");
+			Assert.AreEqual (false, bw.IsBusy, "C");
 		}
 
 		void bw_RunWorkerCompletedException (object sender, RunWorkerCompletedEventArgs e)
@@ -154,6 +156,7 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (true, m3.WaitOne (10000, false), "A");
 
 			Assert.AreEqual (true, runworkercalled3, "B");
+			Assert.AreEqual (false, bw.IsBusy, "C");
 		}
 
 		void bw_RunWorkerCompletedSuccess (object sender, RunWorkerCompletedEventArgs e)

@@ -132,12 +132,12 @@ namespace System.ComponentModel
 			AsyncOperation async = args [1] as AsyncOperation;
 
 			SendOrPostCallback callback = delegate (object darg) {
+				this.async = null;
 				OnRunWorkerCompleted (darg as RunWorkerCompletedEventArgs);
 			};
 
 			async.PostOperationCompleted (callback, e);
 
-			this.async = null;
 			cancel_pending = false;
 		}
 
