@@ -1,3 +1,8 @@
+2008-07-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MethodOnTypeBuilderInstTest.cs: Added test for stuff under compiler
+	context.
+
 2008-06-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ModuleBuilderTest.cs: Added test for DefineType with interface as

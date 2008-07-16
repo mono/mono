@@ -51,21 +51,29 @@ namespace MonoTests.System.Reflection.Emit
 		private Type typeBarOfInt32;
 		private MethodInfo method_create;
 		private MethodInfo method_edit;
+		private TypeBuilder typeBuilder;
+		private GenericTypeParameterBuilder[] typeParams;
+		
 
 		[SetUp]
 		public void SetUp ()
+		{
+			SetUp (AssemblyBuilderAccess.RunAndSave);
+		}
+		
+		void SetUp (AssemblyBuilderAccess access)
 		{
 			AssemblyName assemblyName = new AssemblyName ();
 			assemblyName.Name = ASSEMBLY_NAME;
 
 			assembly = AppDomain.CurrentDomain.DefineDynamicAssembly (
-				assemblyName, AssemblyBuilderAccess.RunAndSave,
+				assemblyName, access,
 				Path.GetTempPath ());
 
 			module = assembly.DefineDynamicModule ("module1");
 
-			TypeBuilder tb = module.DefineType ("Bar");
-			GenericTypeParameterBuilder [] typeParams = tb.DefineGenericParameters ("T");
+			TypeBuilder tb = typeBuilder = module.DefineType ("Bar");
+			typeParams = tb.DefineGenericParameters ("T");
 
 			ConstructorBuilder cb = tb.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
 			ILGenerator ig = cb.GetILGenerator ();
@@ -496,6 +504,99 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
 			}
+		}
+
+		public class GenericType<T> {
+		}
+
+		[Test]
+		[Category ("NotDotNet")]
+		public void MetadataTokenWorksUnderCompilerContext  ()
+		{
+			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
+			int mb_token = mb_create.MetadataToken;
+			int inst_token = method_create.MetadataToken;
+			Assert.AreEqual (mb_token, inst_token, "#1");
+		}
+
+		[Test]
+		[Category ("NotDotNet")]
+		public void ReturnTypeWorksUnderCompilerContext  ()
+		{
+			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
+
+			Type oldGinst = typeBuilder.MakeGenericType (typeof (double));
+			TypeBuilder.GetMethod (oldGinst, mb_create); //cause it to be inflated
+
+			MethodBuilder method_0 = typeBuilder.DefineMethod ("_0", MethodAttributes.Public, typeParams [0], Type.EmptyTypes);
+			MethodBuilder method_1 = typeBuilder.DefineMethod ("_1", MethodAttributes.Public, typeof (GenericType<>).MakeGenericType (typeParams [0]), Type.EmptyTypes);
+
+			Type newGinst = typeBuilder.MakeGenericType (typeof (float));
+
+			MethodInfo old_method_0 = TypeBuilder.GetMethod (oldGinst, method_0);
+			MethodInfo new_method_0 = TypeBuilder.GetMethod (newGinst, method_0);
+
+			MethodInfo old_method_1 = TypeBuilder.GetMethod (oldGinst, method_1);
+			MethodInfo new_method_1 = TypeBuilder.GetMethod (newGinst, method_1);
+
+			Assert.AreEqual (typeof (double), old_method_0.ReturnType, "O#1");
+			Assert.AreEqual (typeof (float), new_method_0.ReturnType, "N#1");
+
+			Assert.AreEqual (typeof (GenericType <double>), old_method_1.ReturnType, "O#1");
+			Assert.AreEqual (typeof (GenericType <float>), new_method_1.ReturnType, "N#1");
+
+		}
+
+		[Test]
+		[Category ("NotDotNet")]
+		public void GetParametersWorksUnderCompilerContext  ()
+		{
+			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
+
+			Type oldGinst = typeBuilder.MakeGenericType (typeof (double));
+			TypeBuilder.GetMethod (oldGinst, mb_create); //cause it to be inflated
+
+			MethodBuilder target_method = typeBuilder.DefineMethod ("_1", MethodAttributes.Public, typeof (void), 
+			new Type[] {
+				typeof (int),
+				typeParams [0],
+				typeParams [0].MakeArrayType (),
+				typeParams [0].MakePointerType (),
+				typeParams [0].MakeByRefType (),
+				typeof (GenericType<>).MakeGenericType (typeParams [0]),
+				typeof (GenericType<>).MakeGenericType (typeof (GenericType<>).MakeGenericType (typeParams [0]))});
+
+
+			Type newGinst = typeBuilder.MakeGenericType (typeof (float));
+
+			MethodInfo old_method = TypeBuilder.GetMethod (oldGinst, target_method);
+			MethodInfo new_method = TypeBuilder.GetMethod (newGinst, target_method);
+			ParameterInfo[] old_params = old_method.GetParameters ();
+			ParameterInfo[] new_params = new_method.GetParameters ();
+
+			Assert.AreEqual (typeof (int), old_params [0].ParameterType, "O#1");
+			Assert.AreEqual (typeof (double), old_params [1].ParameterType, "O#2");
+			Assert.AreEqual (typeof (double).MakeArrayType (), old_params [2].ParameterType, "O#3");
+
+			//Assert.AreEqual (typeof (double).MakePointerType (), old_params [3].ParameterType, "O#4");
+			//FIXME this is the current behavior when inflating pointers
+			Assert.AreEqual (typeParams [0].MakePointerType (), old_params [3].ParameterType, "O#4");
+			
+			Assert.AreEqual (typeof (double).MakeByRefType (), old_params [4].ParameterType, "O#5");
+			Assert.AreEqual (typeof (GenericType <double>), old_params [5].ParameterType, "O#6");
+			Assert.AreEqual (typeof (GenericType <GenericType<double>>), old_params [6].ParameterType, "O#7");
+
+			Assert.AreEqual (typeof (int), new_params [0].ParameterType, "N#1");
+			Assert.AreEqual (typeof (float), new_params [1].ParameterType, "N#2");
+			Assert.AreEqual (typeof (float).MakeArrayType (), new_params [2].ParameterType, "N#3");
+
+			//Assert.AreEqual (typeof (float).MakePointerType (), new_params [3].ParameterType, "N#4");
+			//FIXME this is the current behavior when inflating pointers
+			Assert.AreEqual (typeParams [0].MakePointerType (), old_params [3].ParameterType, "N#4");
+
+			Assert.AreEqual (typeof (float).MakeByRefType (), new_params [4].ParameterType, "N#5");
+			Assert.AreEqual (typeof (GenericType <float>), new_params [5].ParameterType, "N#6");
+			Assert.AreEqual (typeof (GenericType <GenericType<float>>), new_params [6].ParameterType, "N#7");
 		}
 	}
 }
