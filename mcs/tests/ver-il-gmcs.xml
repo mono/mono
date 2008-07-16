@@ -13016,7 +13016,7 @@
         <size>61</size>
       </method>
       <method name="Void ConstantTest_4()">
-        <size>61</size>
+        <size>54</size>
       </method>
       <method name="Void ConstantTest_5()">
         <size>59</size>
@@ -13085,7 +13085,7 @@
         <size>116</size>
       </method>
       <method name="Void ConvertTest_12()">
-        <size>181</size>
+        <size>166</size>
       </method>
       <method name="Void ConvertTest_13()">
         <size>86</size>
@@ -13313,7 +13313,7 @@
         <size>169</size>
       </method>
       <method name="Void ListInitTest()">
-        <size>429</size>
+        <size>414</size>
       </method>
       <method name="Void ListInitTest_2()">
         <size>292</size>
@@ -13655,7 +13655,7 @@
         <size>144</size>
       </method>
       <method name="Void TypeAsTest_3()">
-        <size>110</size>
+        <size>95</size>
       </method>
       <method name="Void TypeIsTest()">
         <size>103</size>
@@ -13830,6 +13830,16 @@
       </method>
     </type>
   </test>
+  <test name="gtest-etree-03.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>6</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-etree-04.cs">
     <type name="C">
       <method name="Void .ctor()">
@@ -13857,7 +13867,7 @@
         <size>56</size>
       </method>
       <method name="Int32 Main()">
-        <size>375</size>
+        <size>360</size>
       </method>
     </type>
   </test>

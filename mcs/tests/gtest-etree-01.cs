@@ -755,8 +755,7 @@ class Tester
 	void ConstantTest_4 ()
 	{
 		Expression<Func<object>> e4 = () => null;
-		// TODO: Extra Convert
-		//AssertNodeType (e4, ExpressionType.Constant);
+		AssertNodeType (e4, ExpressionType.Constant);
 		Assert (null, e4.Compile ().Invoke ());
 	}
 	
