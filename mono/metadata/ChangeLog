@@ -1,5 +1,15 @@
 2008-07-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* string-icalls.c (ves_icall_System_String_InternalSplit):
+	Optimize array allocation by caching the MonoClass of the
+	array type.
+
+	* icall.c (ves_icall_Type_GetMethodsByName): Same.
+
+	* reflection.c (mono_param_get_objects): Same.
+
+2008-07-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* icall-def.h:
 	* icall.c: New ves_icall_MonoGenericClass_InflateType icall.
 	It inflates the given type using the class context.
