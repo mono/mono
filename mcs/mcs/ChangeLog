@@ -1,4 +1,8 @@
-2008-07-15  Marek Safar  <marek.safar@gmail.com>
+2008-07-16  Marek Safar  <marek.safar@gmail.com>
+
+	* literal.cs: Null literal is of object type.
+
+2008-07-16  Marek Safar  <marek.safar@gmail.com>
 
 	* nullable.cs (LiftedBinaryOperator): Always lift unwrapped nullable
 	expression of nullable equality comparison.

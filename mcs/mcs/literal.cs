@@ -83,9 +83,11 @@ namespace Mono.CSharp {
 
 		public override Constant ConvertImplicitly (Type targetType)
 		{
-			// FIXME: Null literal should be of object type
-			//if (targetType == TypeManager.object_type)
-			//	return this;
+			//
+			// Null literal is of object type
+			//
+			if (targetType == TypeManager.object_type)
+				return this;
 		
 			if (targetType.IsPointer)
 				return new EmptyConstantCast (NullPointer.Null, targetType);
