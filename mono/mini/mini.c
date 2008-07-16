@@ -13010,9 +13010,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (MONO_PROBE_METHOD_COMPILE_BEGIN_ENABLED ())
 		MONO_PROBE_METHOD_COMPILE_BEGIN (method);
  
-	// FIXME:
-	opts &= ~MONO_OPT_GSHARED;
-
 	if (compile_aot)
 		/* We are passed the original generic method definition */
 		try_generic_shared = mono_class_generic_sharing_enabled (method->klass) &&

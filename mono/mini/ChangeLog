@@ -1,5 +1,7 @@
 2008-07-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c method-to-ir.c mini-amd64.c: More generic sharing updates.
+	
 	* mini.c jit-icalls.h jit-icalls.c: Move mono_object_castclass () to
 	jit-icalls.c.
 

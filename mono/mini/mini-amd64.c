@@ -3810,10 +3810,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 					ins->sreg1 = AMD64_RAX;
 				}
 				val = (gssize)(gpointer)call->method;
+
+				// FIXME: Generics sharing
+#if 0
 				if ((((guint64)val) >> 32) == 0)
 					amd64_mov_reg_imm_size (code, MONO_ARCH_IMT_REG, val, 4);
 				else
 					amd64_mov_reg_imm_size (code, MONO_ARCH_IMT_REG, val, 8);
+#endif
 			}
 
 			amd64_call_membase (code, ins->sreg1, ins->inst_offset);
