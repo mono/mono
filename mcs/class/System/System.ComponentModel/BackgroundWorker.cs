@@ -78,15 +78,6 @@ namespace System.ComponentModel
 				return;
 
 			cancel_pending = true;
-
-			async.PostOperationCompleted (delegate (object darg) {
-				OnRunWorkerCompleted (
-					new RunWorkerCompletedEventArgs (
-					null, null, true));
-				this.async = null;
-				cancel_pending = false;
-				},
-				null);
 		}
 
 		public void ReportProgress (int percentProgress)
@@ -147,6 +138,7 @@ namespace System.ComponentModel
 			async.PostOperationCompleted (callback, e);
 
 			this.async = null;
+			cancel_pending = false;
 		}
 
 		public void RunWorkerAsync (object argument)
