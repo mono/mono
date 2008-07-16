@@ -1,3 +1,9 @@
+2008-07-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall-def.h:
+	* icall.c: New ves_icall_MonoGenericClass_InflateType icall.
+	It inflates the given type using the class context.
+
 2008-07-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* object.c (mono_class_try_get_vtable): New function. Tries to fetch
