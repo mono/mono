@@ -1,3 +1,9 @@
+2008-07-16  Rodrigo Kumpera  <rkumpera@novell.com>
+	* DataBoundLiteralControl.cs: Lazily create staticLiterals.
+
+	* DataBoundLiteralControl.cs (Render): Don't generate
+	an intermediate string, write the content directly.
+
 2008-07-14  Marek Habersack  <mhabersack@novell.com>
 
 	* Page.cs: fix the failing tests by moving the form

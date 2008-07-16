@@ -43,12 +43,14 @@ namespace System.Web.UI {
 	, ITextControl
 #endif
 	{
+		private int staticLiteralsCount;
 		private string [] staticLiterals;
 		private string [] dataBoundLiterals;
 		
 		public DataBoundLiteralControl (int staticLiteralsCount,
 						int dataBoundLiteralCount)
 		{
+			this.staticLiteralsCount = staticLiteralsCount;
 			staticLiterals = new string [staticLiteralsCount];
 			dataBoundLiterals = new string [dataBoundLiteralCount];
 			AutoID = false;
@@ -57,7 +59,7 @@ namespace System.Web.UI {
 		public string Text {
 			get {
 				StringBuilder text = new StringBuilder ();
-				int stLength = staticLiterals.Length;
+				int stLength = staticLiterals == null ? 0 : staticLiterals.Length;
 				int dbLength = dataBoundLiterals.Length;
 				int max = (stLength > dbLength) ? stLength : dbLength;
 				for (int i = 0; i < max; i++){
@@ -92,7 +94,17 @@ namespace System.Web.UI {
 #endif
 		override void Render (HtmlTextWriter output)
 		{
-			output.Write (Text);
+			int stLength = staticLiterals == null ? 0 : staticLiterals.Length;
+			int dbLength = dataBoundLiterals.Length;
+			int max = (stLength > dbLength) ? stLength : dbLength;
+			int length = 0;
+
+			for (int i = 0; i < max; i++){
+				if (i < stLength)
+					output.Write (staticLiterals [i]);
+				if (i < dbLength)
+					output.Write (dataBoundLiterals [i]);
+			}
 		}
 
 		protected override object SaveViewState ()
@@ -109,6 +121,8 @@ namespace System.Web.UI {
 
 		public void SetStaticString (int index, string s)
 		{
+			if (staticLiterals == null)
+				staticLiterals = new string [staticLiteralsCount];
 			staticLiterals [index] = s;
 		}
 
