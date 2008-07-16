@@ -40,19 +40,26 @@ namespace MonoTests.System.Data.OracleClient
 		private OracleConnection con;
 		private OracleCommand cmd;
 		private OracleDataReader rdr;
+		private string connectionString;
 		Exception exp;
 
 		[SetUp]
+		public void SetUp ()
+		{
+			connectionString = ConnectedDataProvider.ConnectionString;
+		}
 
 		[TearDown]
 		public void TearDown()
 		{
-			if (con != null && con.State == ConnectionState.Open) con.Close();
+			if (con != null && con.State == ConnectionState.Open)
+				con.Close();
 		}
 
 		public static void Main()
 		{
 			OracleDataReader_GetDateTime tc = new OracleDataReader_GetDateTime();
+			tc.SetUp ();
 			Exception exp = null;
 			try
 			{
@@ -76,9 +83,9 @@ namespace MonoTests.System.Data.OracleClient
 			{
 				BeginCase("check simple value");
 				//prepare data
-				base.PrepareDataForTesting(MonoTests.System.Data.Utils.ConnectedDataProvider.ConnectionString);
+				base.PrepareDataForTesting(connectionString);
 
-				con = new OracleConnection(MonoTests.System.Data.Utils.ConnectedDataProvider.ConnectionString);
+				con = new OracleConnection (connectionString);
 
 				con.Open();
 				cmd = new OracleCommand("Select BirthDate From Employees where EmployeeID = 100", con);
@@ -86,22 +93,12 @@ namespace MonoTests.System.Data.OracleClient
 				rdr.Read();
 				DateTime dt = rdr.GetDateTime(0); //will be 1988-May-31 15:33:44
 				Compare(dt,new DateTime(1988,5,31,15,33,44,00));
-			} 
-			catch(Exception ex)
-			{
+			} catch(Exception ex) {
 				exp = ex;
-			}
-			finally
-			{
+			} finally {
 				EndCase(exp); 
 				if (rdr != null && !rdr.IsClosed)
-				{
 					rdr.Close();
-				}
-				if (con != null && con.State != ConnectionState.Closed)
-				{
-					con.Close();
-				}
 				exp = null;
 			}
 		}
