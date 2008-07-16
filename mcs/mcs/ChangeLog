@@ -1,5 +1,10 @@
 2008-07-15  Marek Safar  <marek.safar@gmail.com>
 
+	* nullable.cs (LiftedBinaryOperator): Always lift unwrapped nullable
+	expression of nullable equality comparison.
+
+2008-07-15  Marek Safar  <marek.safar@gmail.com>
+
 	* expression.cs(PointerArithmetic): Removed redundant assignment.
 
 2008-07-15  Marek Safar  <marek.safar@gmail.com>
