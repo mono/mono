@@ -5062,21 +5062,6 @@ handle_box_nullable_from_inst (MonoCompile *cfg, MonoMethod *caller_method, int 
 	return dest;
 }
 
-static MonoObject*
-mono_object_castclass (MonoObject *obj, MonoClass *klass)
-{
-	if (!obj)
-		return NULL;
-
-	if (mono_object_isinst (obj, klass))
-		return obj;
-
-	mono_raise_exception (mono_exception_from_name (mono_defaults.corlib,
-					"System", "InvalidCastException"));
-
-	return NULL;
-}
-
 static int
 emit_castclass (MonoClass *klass, guint32 token, int context_used, gboolean inst_is_castclass, MonoCompile *cfg,
 		MonoMethod *method, MonoInst **arg_array, MonoType **param_types, GList *dont_inline,
