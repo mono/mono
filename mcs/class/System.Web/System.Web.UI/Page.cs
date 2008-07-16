@@ -1726,7 +1726,8 @@ public partial class Page : TemplateControl, IHttpHandler
 
 		string eventTarget = postdata [postEventSourceID];
 		if (eventTarget == null || eventTarget.Length == 0) {
-			Validate ();
+			else
+				Validate ();
 			return;
                 }
 
