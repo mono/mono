@@ -1182,22 +1182,11 @@ opt_error_modifier
 	  }
 	;
 
-	// 
-	// This rule is used to handle the cases where OPEN_PARENS_LAMBDA
-	// is returned (type followed by an identifier), these are the
-	// declarations (methods, overloads, constructors, etc) and a handful
-	// of expressions ("using", "fixed") or "catch".
-	//
-open_parens
-	: OPEN_PARENS
-	| OPEN_PARENS_LAMBDA
-	;
-
 method_header
 	: opt_attributes
 	  opt_modifiers
 	  type member_name
-	  open_parens
+	  OPEN_PARENS
 	  {
 		arglist_allowed = true;
 	  }
@@ -1240,7 +1229,7 @@ method_header
 	| opt_attributes
 	  opt_modifiers
 	  VOID member_name
-	  open_parens
+	  OPEN_PARENS
 	  {
 		arglist_allowed = true;
 	  }	  
@@ -1284,7 +1273,7 @@ method_header
 	  opt_modifiers
 	  PARTIAL
 	  VOID member_name
-	  open_parens opt_formal_parameter_list CLOSE_PARENS 
+	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
 		lexer.ConstraintsParsing = true;
 	  }
@@ -1341,7 +1330,7 @@ method_header
 	| opt_attributes
 	  opt_modifiers
 	  type 
-	  modifiers member_name open_parens opt_formal_parameter_list CLOSE_PARENS
+	  modifiers member_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 		MemberName name = (MemberName) $5;
 		Report.Error (1585, name.Location, 
@@ -1969,7 +1958,7 @@ interface_method_declaration_body
 
 interface_method_declaration
 	: opt_attributes opt_new type namespace_or_type_name
-	  open_parens opt_formal_parameter_list CLOSE_PARENS
+	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 		lexer.ConstraintsParsing = true;
 	  }
@@ -2002,7 +1991,7 @@ interface_method_declaration
 			((Method) $$).DocComment = Lexer.consume_doc_comment ();
 	  }
 	| opt_attributes opt_new VOID namespace_or_type_name
-	  open_parens opt_formal_parameter_list CLOSE_PARENS
+	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 		lexer.ConstraintsParsing = true;
 	  }
@@ -2225,7 +2214,7 @@ operator_body
 	; 
 
 operator_declarator
-	: type OPERATOR overloadable_operator open_parens
+	: type OPERATOR overloadable_operator OPEN_PARENS
 	  {
 		params_modifiers_not_allowed = true;
 	  }
@@ -2300,7 +2289,7 @@ overloadable_operator
 	;
 
 conversion_operator_declarator
-	: IMPLICIT OPERATOR type open_parens
+	: IMPLICIT OPERATOR type OPEN_PARENS
 	  {
 		params_modifiers_not_allowed = true;
 	  }
@@ -2318,7 +2307,7 @@ conversion_operator_declarator
 
 		$$ = new OperatorDeclaration (Operator.OpType.Implicit, (FullNamedExpression) $3, loc);
 	  }
-	| EXPLICIT OPERATOR type open_parens
+	| EXPLICIT OPERATOR type OPEN_PARENS
 	  {
 		params_modifiers_not_allowed = true;
 	  }
@@ -2404,7 +2393,7 @@ constructor_header
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
 	  }
-	  open_parens opt_formal_parameter_list CLOSE_PARENS
+	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 		LocatedToken lt = (LocatedToken) $1;
 		current_local_parameters = (Parameters) $4;
@@ -2423,11 +2412,11 @@ constructor_body
 	;
 
 constructor_initializer
-	: COLON BASE open_parens opt_argument_list CLOSE_PARENS
+	: COLON BASE OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
 		$$ = new ConstructorBaseInitializer ((ArrayList) $4, (Location) $2);
 	  }
-	| COLON THIS open_parens opt_argument_list CLOSE_PARENS
+	| COLON THIS OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
 		$$ = new ConstructorThisInitializer ((ArrayList) $4, (Location) $2);
 	  }
@@ -2855,7 +2844,7 @@ delegate_declaration
 	  opt_modifiers
 	  DELEGATE
 	  type type_name
-	  open_parens opt_formal_parameter_list CLOSE_PARENS
+	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 		MemberName name = MakeName ((MemberName) $5);
 		Parameters p = (Parameters) $7;
@@ -3860,7 +3849,7 @@ opt_anonymous_method_signature
 	;
 
 anonymous_method_signature
-	: open_parens
+	: OPEN_PARENS
 	  {
 	  	params_modifiers_not_allowed = true; 
 	  }
@@ -4883,7 +4872,7 @@ do_statement
 	;
 
 for_statement
-	: FOR open_parens 
+	: FOR OPEN_PARENS 
 	  opt_for_initializer SEMICOLON
 	  {
 		Location l = lexer.Location;
@@ -4981,12 +4970,12 @@ statement_expression_list
 	;
 
 foreach_statement
-	: FOREACH open_parens type IN expression CLOSE_PARENS
+	: FOREACH OPEN_PARENS type IN expression CLOSE_PARENS
 	  {
 		Report.Error (230, (Location) $1, "Type and identifier are both required in a foreach statement");
 		$$ = null;
 	  }
-	| FOREACH open_parens type IDENTIFIER IN
+	| FOREACH OPEN_PARENS type IDENTIFIER IN
 	  expression CLOSE_PARENS 
 	  {
 		start_block (lexer.Location);
@@ -5248,7 +5237,7 @@ unsafe_statement
 	;
 
 fixed_statement
-	: FIXED open_parens 
+	: FIXED OPEN_PARENS 
 	  type fixed_pointer_declarators 
 	  CLOSE_PARENS
 	  {
@@ -5327,7 +5316,7 @@ lock_statement
 	;
 
 using_statement
-	: USING open_parens local_variable_declaration CLOSE_PARENS
+	: USING OPEN_PARENS local_variable_declaration CLOSE_PARENS
 	  {
 		start_block (lexer.Location);
 		Block assign_block = current_block;
@@ -5382,7 +5371,7 @@ using_statement
 		current_block.AddStatement (stmt);
 		$$ = end_block (lexer.Location);
 	  }
-	| USING open_parens expression CLOSE_PARENS
+	| USING OPEN_PARENS expression CLOSE_PARENS
 	  {
 		start_block (lexer.Location);
 	  }

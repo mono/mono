@@ -1,5 +1,9 @@
 2008-07-17  Marek Safar  <marek.safar@gmail.com>
 
+	* cs-parser.jay: Clean up unused open_parens.
+
+2008-07-17  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs: Custom error message for a range variable assignment.
 
 2008-07-16  Marek Safar  <marek.safar@gmail.com>
