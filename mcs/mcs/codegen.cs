@@ -751,16 +751,18 @@ namespace Mono.CSharp {
 		}
 
 		bool resolved;
+		bool unreachable;
 
 		public bool ResolveTopBlock (EmitContext anonymous_method_host, ToplevelBlock block,
 					     Parameters ip, IMethodData md, out bool unreachable)
 		{
-			current_phase = Phase.Resolving;
-			
-			unreachable = false;
-
-			if (resolved)
+			if (resolved) {
+				unreachable = this.unreachable;
 				return true;
+			}
+
+			current_phase = Phase.Resolving;
+			unreachable = false;
 
 			if (!loc.IsNull)
 				CurrentFile = loc.File;
@@ -787,7 +789,7 @@ namespace Mono.CSharp {
 
 					bool flow_unreachable = top_level.End ();
 					if (flow_unreachable)
-						unreachable = true;
+						this.unreachable = unreachable = true;
 				}
 #if PRODUCTION
 			} catch (Exception e) {

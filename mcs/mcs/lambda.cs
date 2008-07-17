@@ -184,10 +184,13 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			if (ec.ReturnType == TypeManager.void_type)
+			if (ec.ReturnType == TypeManager.void_type) {
 				((ExpressionStatement) Expr).EmitStatement (ec);
-			else
-				base.Emit (ec);
+				ec.ig.Emit (OpCodes.Ret);
+				return;
+			}
+
+			base.Emit (ec);
 		}
 
 		protected override bool DoResolve (EmitContext ec)
