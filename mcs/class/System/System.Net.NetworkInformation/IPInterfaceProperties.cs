@@ -28,6 +28,7 @@
 //
 #if NET_2_0
 using System.Collections.Generic;
+using System.Net.Sockets;
 
 namespace System.Net.NetworkInformation {
 	public abstract class IPInterfaceProperties {
@@ -154,7 +155,20 @@ namespace System.Net.NetworkInformation {
 			get {
 				List<IPAddress> unicastAddresses = new List<IPAddress> ();
 				foreach (IPAddress address in addresses) {
-					// XXX: Add everything that's not multicast or anycast here.
+					switch (address.AddressFamily) {
+						case AddressFamily.InterNetwork:
+							byte top = address.GetAddressBytes () [0];
+							if (top >= 224 && top <= 239)
+								continue;
+							unicastAddresses.Add (address);
+							break;
+
+						case AddressFamily.InterNetworkV6:
+							if (address.IsIPv6Multicast)
+								continue;
+							unicastAddresses.Add (address);
+							break;
+					}
 				}
 				return UnicastIPAddressInformationImplCollection.LinuxFromList (unicastAddresses);
 			}
