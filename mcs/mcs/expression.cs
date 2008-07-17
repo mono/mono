@@ -4260,7 +4260,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (!ec.IsInProbingMode) {
+				if (ec.IsVariableCapturingRequired) {
 					AnonymousMethodStorey storey = local_info.Block.Explicit.CreateAnonymousMethodStorey (ec);
 					storey.CaptureLocalVariable (ec, local_info);
 				}
@@ -4448,8 +4448,7 @@ namespace Mono.CSharp {
 					return true;
 			}
 
-			// Don't capture parameters when the probing is on
-			if (!ec.IsInProbingMode) {
+			if (ec.IsVariableCapturingRequired) {
 				AnonymousMethodStorey storey = declared.CreateAnonymousMethodStorey (ec);
 				storey.CaptureParameter (ec, this);
 			}
@@ -6710,7 +6709,7 @@ namespace Mono.CSharp {
 					//
 					// this is hoisted to very top level block
 					//
-					if (!ec.IsInProbingMode) {
+					if (ec.IsVariableCapturingRequired) {
 						// TODO: it could be optimized
 						AnonymousMethodStorey scope = TopToplevelBlock.Explicit.CreateAnonymousMethodStorey (ec);
 						if (HoistedVariable == null) {

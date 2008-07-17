@@ -5760,7 +5760,7 @@ namespace Mono.CSharp {
 			if (!li.Resolve (ec))
 				return null;
 
-			if (ec.MustCaptureVariable (li) && !ec.IsInProbingMode) {
+			if (ec.MustCaptureVariable (li) && ec.IsVariableCapturingRequired) {
 				AnonymousMethodStorey storey = li.Block.Explicit.CreateAnonymousMethodStorey (ec);
 				storey.CaptureLocalVariable (ec, li);
 			}

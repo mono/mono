@@ -592,7 +592,13 @@ namespace Mono.CSharp {
 		
 		public bool IsInCompoundAssignment {
 			get { return (flags & Flags.InCompoundAssignment) != 0; }
-		}		
+		}
+
+		public bool IsVariableCapturingRequired {
+			get {
+				return !IsInProbingMode && (CurrentBranching == null || !CurrentBranching.CurrentUsageVector.IsUnreachable);
+			}
+		}
 
 		public FlowBranching CurrentBranching {
 			get { return current_flow_branching; }

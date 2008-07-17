@@ -1282,8 +1282,11 @@ namespace Mono.CSharp {
 			if (aec == null && !Compatible (ec))
 				return false;
 
-			// Don't define anything when we are in probing scope (nested anonymous methods)
-			if (!ec.IsInProbingMode)
+			//
+			// Don't create anonymous expression method when we are in probing
+			// mode or unreachable block
+			//
+			if (ec.IsVariableCapturingRequired)
 				method = DoCreateMethodHost (ec);
 
 			return true;

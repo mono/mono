@@ -1132,12 +1132,14 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			ec.CurrentBranching.CurrentUsageVector.Goto ();
-
-			if (expr == null)
+			if (expr == null) {
+				ec.CurrentBranching.CurrentUsageVector.Goto ();
 				return ec.CurrentBranching.CheckRethrow (loc);
+			}
 
 			expr = expr.Resolve (ec);
+			ec.CurrentBranching.CurrentUsageVector.Goto ();
+
 			if (expr == null)
 				return false;
 
