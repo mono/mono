@@ -466,8 +466,7 @@ namespace Mono.CSharp {
 		///  Returns the method itself if okay and null if not.
 		/// </summary>
 		public static MethodBase VerifyMethod (Type container_type, Type delegate_type,
-						       MethodGroupExpr old_mg, MethodBase mb,
-						       Location loc)
+						       MethodGroupExpr old_mg, MethodBase mb)
 		{
 			MethodInfo invoke_mb = GetInvokeMethod (container_type, delegate_type);
 			if (invoke_mb == null)
@@ -808,7 +807,7 @@ namespace Mono.CSharp {
 				return null;
 
 			foreach (MethodInfo mi in mg.Methods){
-				MethodBase mb = Delegate.VerifyMethod (mg.DeclaringType, target_type, mg, mi, Location.Null);
+				MethodBase mb = Delegate.VerifyMethod (mg.DeclaringType, target_type, mg, mi);
 				if (mb != null)
 					return mb;
 			}

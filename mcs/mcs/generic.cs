@@ -1673,7 +1673,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		bool HasDefaultConstructor (Type atype)
+		static bool HasDefaultConstructor (Type atype)
 		{
 			if (atype.IsAbstract)
 				return false;
@@ -1837,7 +1837,7 @@ namespace Mono.CSharp {
 		///   Define and resolve the type parameters.
 		///   We're called from Method.Define().
 		/// </summary>
-		public bool Define (MethodBuilder mb, ToplevelBlock block)
+		public bool Define (MethodBuilder mb)
 		{
 			TypeParameterName[] names = MemberName.TypeArguments.GetDeclarations ();
 			string[] snames = new string [names.Length];
@@ -2526,13 +2526,13 @@ namespace Mono.CSharp {
 			//
 			// SPEC: does not cover type inference using constraints
 			//
-			if (TypeManager.IsGenericParameter (t)) {
-				GenericConstraints constraints = TypeManager.GetTypeParameterConstraints (t);
-				if (constraints != null) {
-					//if (constraints.EffectiveBaseClass != null)
-					//	t = constraints.EffectiveBaseClass;
-				}
-			}
+			//if (TypeManager.IsGenericParameter (t)) {
+			//    GenericConstraints constraints = TypeManager.GetTypeParameterConstraints (t);
+			//    if (constraints != null) {
+			//        //if (constraints.EffectiveBaseClass != null)
+			//        //	t = constraints.EffectiveBaseClass;
+			//    }
+			//}
 			a.Add (t);
 		}
 		

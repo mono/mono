@@ -25,13 +25,13 @@ namespace Mono.CSharp {
 			return "<" + host + ">" + typePrefix + "__" + name + id.ToString ();
 		}
 		
-		protected CompilerGeneratedClass (DeclSpace parent, MemberName name, int mod, Location loc)
+		protected CompilerGeneratedClass (DeclSpace parent, MemberName name, int mod)
 			: base (parent.NamespaceEntry, parent, name, mod | Modifiers.COMPILER_GENERATED | Modifiers.SEALED, null)
 		{
 		}
 
-		protected CompilerGeneratedClass (DeclSpace parent, GenericMethod generic, MemberName name, int mod, Location loc)
-			: this (parent, name, mod, loc)
+		protected CompilerGeneratedClass (DeclSpace parent, GenericMethod generic, MemberName name, int mod)
+			: this (parent, name, mod)
 		{
 			if (generic != null) {
 				ArrayList list = new ArrayList ();
@@ -114,7 +114,7 @@ namespace Mono.CSharp {
 		bool has_hoisted_variable;
 
 		public AnonymousMethodStorey (Block block, DeclSpace parent, MemberBase host, GenericMethod generic, string name)
-			: base (parent, generic, MakeMemberName (host, name, generic, block.StartLocation), Modifiers.PRIVATE, block.StartLocation)
+			: base (parent, generic, MakeMemberName (host, name, generic, block.StartLocation), Modifiers.PRIVATE)
 		{
 			Parent = parent;
 			OriginalSourceBlock = block;
@@ -1506,7 +1506,7 @@ namespace Mono.CSharp {
 		readonly ArrayList parameters;
 
 		private AnonymousTypeClass (DeclSpace parent, MemberName name, ArrayList parameters, Location loc)
-			: base (parent, name, Modifiers.SEALED, loc)
+			: base (parent, name, Modifiers.SEALED)
 		{
 			this.parameters = parameters;
 		}

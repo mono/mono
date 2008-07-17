@@ -1694,13 +1694,6 @@ namespace Mono.CSharp {
 			return GetClsCompliantAttributeValue (type, type.Assembly);
 		}
 
-		// Registers the core type as we assume that they will never be obsolete which
-		// makes things easier for bootstrap and faster (we don't need to query Obsolete attribute).
-		public static void RegisterNonObsoleteType (Type type)
-		{
-			analyzed_types_obsolete [type] = FALSE;
-		}
-
 		/// <summary>
 		/// Returns instance of ObsoleteAttribute when type is obsolete
 		/// </summary>

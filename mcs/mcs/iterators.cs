@@ -33,7 +33,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public static bool CheckContext (EmitContext ec, Location loc, bool isYieldBreak)
+		public static bool CheckContext (EmitContext ec, Location loc)
 		{
 			for (Block block = ec.CurrentBlock; block != null; block = block.Parent) {
 				if (!block.Unsafe)
@@ -71,7 +71,7 @@ namespace Mono.CSharp {
 			Report.Debug (64, "RESOLVE YIELD #1", this, ec, expr, expr.GetType (),
 				      ec.CurrentAnonymousMethod, ec.CurrentIterator);
 
-			if (!CheckContext (ec, loc, false))
+			if (!CheckContext (ec, loc))
 				return false;
 
 			Iterator iterator = ec.CurrentIterator;
@@ -113,7 +113,7 @@ namespace Mono.CSharp {
 
 		protected override bool DoResolve (EmitContext ec)
 		{
-			return Yield.CheckContext (ec, loc, true);
+			return Yield.CheckContext (ec, loc);
 		}
 
 		protected override void DoEmit (EmitContext ec)
@@ -729,7 +729,7 @@ namespace Mono.CSharp {
 
 
 		ArrayList resume_points;
-		public int AddResumePoint (ResumableStatement stmt, Location loc)
+		public int AddResumePoint (ResumableStatement stmt)
 		{
 			if (resume_points == null)
 				resume_points = new ArrayList ();

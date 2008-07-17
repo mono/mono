@@ -1734,7 +1734,7 @@ namespace Mono.CSharp {
 					Convert.ImplicitConversionExists (ec, rexpr, right);
 			}
 
-			public PredefinedOperator ResolveBetterOperator (EmitContext ec, Expression lexpr, Expression rexpr, PredefinedOperator best_operator)
+			public PredefinedOperator ResolveBetterOperator (EmitContext ec, PredefinedOperator best_operator)
 			{
 				int result = 0;
 				if (left != null && best_operator.left != null) {
@@ -3016,7 +3016,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				best_operator = po.ResolveBetterOperator (ec, left, right, best_operator);
+				best_operator = po.ResolveBetterOperator (ec, best_operator);
 
 				if (best_operator == null) {
 					Report.Error (34, loc, "Operator `{0}' is ambiguous on operands of type `{1}' and `{2}'",
@@ -3192,7 +3192,7 @@ namespace Mono.CSharp {
 				WarnUselessComparison (type);
 		}
 
-		private bool IsValueOutOfRange (long value, Type type)
+		static bool IsValueOutOfRange (long value, Type type)
 		{
 			if (IsTypeUnsigned (type) && value < 0)
 				return true;
@@ -4917,7 +4917,7 @@ namespace Mono.CSharp {
 			ParameterData pd = TypeManager.GetParameterData (mb);
 
 			if (arguments == null)
-				return new Type [0];
+				return Type.EmptyTypes;
 
 			Argument a = (Argument) arguments [pd.Count - 1];
 			Arglist list = (Arglist) a.Expr;
@@ -5259,13 +5259,11 @@ namespace Mono.CSharp {
 	// This class is used to "disable" the code generation for the
 	// temporary variable when initializing value types.
 	//
-	class EmptyAddressOf : EmptyExpression, IMemoryLocation {
+	sealed class EmptyAddressOf : EmptyExpression, IMemoryLocation {
 		public void AddressOf (EmitContext ec, AddressOp Mode)
 		{
 			// nothing
 		}
-		
-		public bool IsFixed { get { return true; } }
 	}
 	
 	/// <summary>

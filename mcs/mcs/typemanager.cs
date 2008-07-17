@@ -1739,7 +1739,7 @@ namespace Mono.CSharp {
 			return e.UnderlyingType;
 
 		// TODO: cache it ?
-		FieldInfo fi = GetPredefinedField (t, Enum.UnderlyingValueField, Location.Null);
+		FieldInfo fi = GetPredefinedField (t, Enum.UnderlyingValueField, Location.Null, Type.EmptyTypes);
 		if (fi == null)
 			return TypeManager.int32_type;
 
@@ -1926,12 +1926,9 @@ namespace Mono.CSharp {
 		return (EventField) events [ei];
 	}
 
-	static public bool RegisterIndexer (PropertyBuilder pb, MethodBase get,
-                                            MethodBase set, Type[] args)
+	static public void RegisterIndexer (PropertyBuilder pb, Type[] args)
 	{
 		indexer_arguments.Add (pb, args);
-
-		return true;
 	}
 
 	public static bool CheckStructCycles (TypeContainer tc, Hashtable seen)

@@ -1695,7 +1695,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		byte read_hex (string arg, int pos, out bool error)
+		static byte read_hex (string arg, int pos, out bool error)
 		{
 			error = false;
 
@@ -2517,9 +2517,8 @@ namespace Mono.CSharp
 									warn_incorrect_doc_comment ();
 							}
 						}
-						while ((d = get_char ()) != -1 && (d != '\n') && d != '\r')
-							if (d == '\n'){
-							}
+						while ((d = get_char ()) != -1 && (d != '\n') && d != '\r');
+
 						any_token_seen |= tokens_seen;
 						tokens_seen = false;
 						comments_seen = false;

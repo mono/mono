@@ -636,14 +636,14 @@ namespace Mono.CSharp
 
 						// Try a -CSCOPTION
 						string csc_opt = "/" + arg.Substring (1);
-						if (CSCParseOption (csc_opt, ref args, ref i))
+						if (CSCParseOption (csc_opt, ref args))
 							continue;
 
 						Error_WrongOption (arg);
 						return false;
 					}
 					if (arg [0] == '/') {
-						if (CSCParseOption (arg, ref args, ref i))
+						if (CSCParseOption (arg, ref args))
 							continue;
 
 						// Need to skip `/home/test.cs' however /test.cs is considered as error
@@ -1066,7 +1066,7 @@ namespace Mono.CSharp
 		// This parses the -arg and /arg options to the compiler, even if the strings
 		// in the following text use "/arg" on the strings.
 		//
-		bool CSCParseOption (string option, ref string [] args, ref int i)
+		bool CSCParseOption (string option, ref string [] args)
 		{
 			int idx = option.IndexOf (':');
 			string arg, value;

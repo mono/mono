@@ -638,7 +638,7 @@ namespace Mono.CSharp
 
 		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
 		{
-			pc = iterator.AddResumePoint (stmt, loc);
+			pc = iterator.AddResumePoint (stmt);
 			return false;
 		}
 	}
@@ -785,10 +785,10 @@ namespace Mono.CSharp
 		UsageVector finally_vector;
 
 		abstract class SavedOrigin {
-			public SavedOrigin Next;
-			public UsageVector Vector;
+			public readonly SavedOrigin Next;
+			public readonly UsageVector Vector;
 
-			public SavedOrigin (SavedOrigin next, UsageVector vector)
+			protected SavedOrigin (SavedOrigin next, UsageVector vector)
 			{
 				Next = next;
 				Vector = vector.Clone ();
@@ -906,7 +906,7 @@ namespace Mono.CSharp
 			Parent.AddResumePoint (this.stmt, loc, out pc);
 			if (errors == Report.Errors) {
 				if (finally_vector == null)
-					this.stmt.AddResumePoint (stmt, loc, pc);
+					this.stmt.AddResumePoint (stmt, pc);
 				else
 					Report.Error (1625, loc, "Cannot yield in the body of a finally clause");
 			}

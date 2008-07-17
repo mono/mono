@@ -488,7 +488,7 @@ namespace Mono.CSharp {
 		/// 
 		/// Looks for extension method in this namespace
 		/// 
-		public ArrayList LookupExtensionMethod (Type extensionType, ClassOrStruct currentClass, string name, NamespaceEntry ns)
+		public ArrayList LookupExtensionMethod (Type extensionType, ClassOrStruct currentClass, string name)
 		{
 			ArrayList found = null;
 
@@ -840,13 +840,13 @@ namespace Mono.CSharp {
 		{
 			ArrayList candidates = null;
 			if (currentClass != null) {
-				candidates = ns.LookupExtensionMethod (extensionType, currentClass, name, this);
+				candidates = ns.LookupExtensionMethod (extensionType, currentClass, name);
 				if (candidates != null)
 					return new ExtensionMethodGroupExpr (candidates, this, extensionType, loc);
 			}
 
 			foreach (Namespace n in GetUsingTable ()) {
-				ArrayList a = n.LookupExtensionMethod (extensionType, null, name, this);
+				ArrayList a = n.LookupExtensionMethod (extensionType, null, name);
 				if (a == null)
 					continue;
 
@@ -867,7 +867,7 @@ namespace Mono.CSharp {
 			//
 			Namespace parent_ns = ns.Parent;
 			do {
-				candidates = parent_ns.LookupExtensionMethod (extensionType, null, name, parent);
+				candidates = parent_ns.LookupExtensionMethod (extensionType, null, name);
 				if (candidates != null)
 					return new ExtensionMethodGroupExpr (candidates, parent, extensionType, loc);
 

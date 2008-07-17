@@ -83,7 +83,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public virtual void Emit (EmitContext ec)
 		{
-			ec.Mark (loc, true);
+			ec.Mark (loc);
 			DoEmit (ec);
 		}
 
@@ -542,7 +542,7 @@ namespace Mono.CSharp {
 				Statement.Emit (ec);
 			
 				ig.MarkLabel (ec.LoopBegin);
-				ec.Mark (loc, true);
+				ec.Mark (loc);
 
 				expr.EmitBranchable (ec, while_loop, true);
 				
@@ -1344,7 +1344,7 @@ namespace Mono.CSharp {
 			ec.ig.Emit (OpCodes.Ldloca, builder);
 		}
 
-		public void EmitSymbolInfo (EmitContext ec, string name)
+		public void EmitSymbolInfo (EmitContext ec)
 		{
 			if (builder != null)
 				ec.DefineLocalVariable (Name, builder);
@@ -2146,7 +2146,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		private void CheckPossibleMistakenEmptyStatement (Statement s)
+		static void CheckPossibleMistakenEmptyStatement (Statement s)
 		{
 			Statement body;
 
@@ -2316,7 +2316,7 @@ namespace Mono.CSharp {
 				SymbolWriter.CloseCompilerGeneratedBlock (ec.ig);
 			}
 
-			ec.Mark (StartLocation, true);
+			ec.Mark (StartLocation);
 			DoEmit (ec);
 
 			if (SymbolWriter.HasSymbolWriter)
@@ -2328,11 +2328,8 @@ namespace Mono.CSharp {
 		protected virtual void EmitSymbolInfo (EmitContext ec)
 		{
 			if (variables != null) {
-				foreach (DictionaryEntry de in variables) {
-					string name = (string) de.Key;
-					LocalInfo vi = (LocalInfo) de.Value;
-
-					vi.EmitSymbolInfo (ec, name);
+				foreach (LocalInfo vi in variables.Values) {
+					vi.EmitSymbolInfo (ec);
 				}
 			}
 		}
@@ -2896,7 +2893,7 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			base.Emit (ec);
-			ec.Mark (EndLocation, true);
+			ec.Mark (EndLocation);
 		}
 	}
 	
@@ -3874,7 +3871,7 @@ namespace Mono.CSharp {
 
 		ArrayList resume_points;
 		int first_resume_pc;
-		public void AddResumePoint (ResumableStatement stmt, Location loc, int pc)
+		public void AddResumePoint (ResumableStatement stmt, int pc)
 		{
 			if (resume_points == null) {
 				resume_points = new ArrayList ();

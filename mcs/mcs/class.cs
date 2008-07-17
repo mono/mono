@@ -3828,7 +3828,7 @@ namespace Mono.CSharp {
 #if GMCS_SOURCE
 			if (GenericMethod != null) {
 				MethodBuilder = Parent.TypeBuilder.DefineMethod (GetFullName (MemberName), flags);
-				if (!GenericMethod.Define (MethodBuilder, block))
+				if (!GenericMethod.Define (MethodBuilder))
 					return false;
 			}
 #endif
@@ -4521,7 +4521,7 @@ namespace Mono.CSharp {
 			if (base_constructor_group == null)
 				return;
 			
-			ec.Mark (loc, false);
+			ec.Mark (loc);
 			if (!ec.IsStatic)
 				base_constructor_group.InstanceExpression = ec.GetThis (loc);
 			
@@ -6933,7 +6933,7 @@ namespace Mono.CSharp {
 	public class EventProperty: Event {
 		abstract class AEventPropertyAccessor : AEventAccessor
 		{
-			public AEventPropertyAccessor (Event method, Accessor accessor, string prefix):
+			protected AEventPropertyAccessor (Event method, Accessor accessor, string prefix):
 				base (method, accessor, prefix)
 			{
 			}
@@ -7591,7 +7591,7 @@ namespace Mono.CSharp {
 				Parent.MemberCache.AddMember (SetBuilder, Set);
 			}
 				
-			TypeManager.RegisterIndexer (PropertyBuilder, GetBuilder, SetBuilder, parameters.Types);
+			TypeManager.RegisterIndexer (PropertyBuilder, parameters.Types);
 			Parent.MemberCache.AddMember (PropertyBuilder, this);
 			return true;
 		}

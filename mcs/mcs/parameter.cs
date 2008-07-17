@@ -618,7 +618,7 @@ namespace Mono.CSharp {
 		private Parameters ()
 		{
 			FixedParameters = new Parameter[0];
-			types = new Type [0];
+			types = Type.EmptyTypes;
 		}
 
 		private Parameters (Parameter[] parameters, Type[] types)

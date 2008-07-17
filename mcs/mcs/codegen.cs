@@ -860,7 +860,7 @@ namespace Mono.CSharp {
 		///   This is called immediately before emitting an IL opcode to tell the symbol
 		///   writer to which source line this opcode belongs.
 		/// </summary>
-		public void Mark (Location loc, bool check_file)
+		public void Mark (Location loc)
 		{
 			if (!SymbolWriter.HasSymbolWriter || OmitDebuggingInfo || loc.IsNull)
 				return;
@@ -909,8 +909,6 @@ namespace Mono.CSharp {
 
 		public void FreeTemporaryLocal (LocalBuilder b, Type t)
 		{
-			Stack s;
-
 			if (temporary_storage == null) {
 				temporary_storage = new Hashtable ();
 				temporary_storage [t] = b;
@@ -921,9 +919,8 @@ namespace Mono.CSharp {
 				temporary_storage [t] = b;
 				return;
 			}
-			if (o is Stack) {
-				s = (Stack) o;
-			} else {
+			Stack s = o as Stack;
+			if (s == null) {
 				s = new Stack ();
 				s.Push (o);
 				temporary_storage [t] = s;

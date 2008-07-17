@@ -63,8 +63,8 @@ namespace Mono.CSharp.Nullable
 			Type = type;
 			UnderlyingType = TypeManager.GetTypeArguments (type) [0];
 
-			PropertyInfo has_value_pi = TypeManager.GetPredefinedProperty (type, "HasValue", Location.Null);
-			PropertyInfo value_pi = TypeManager.GetPredefinedProperty (type, "Value", Location.Null);
+			PropertyInfo has_value_pi = TypeManager.GetPredefinedProperty (type, "HasValue", Location.Null, Type.EmptyTypes);
+			PropertyInfo value_pi = TypeManager.GetPredefinedProperty (type, "Value", Location.Null, Type.EmptyTypes);
 			GetValueOrDefault = TypeManager.GetPredefinedMethod (type, "GetValueOrDefault", Location.Null, Type.EmptyTypes);
 
 			HasValue = has_value_pi.GetGetMethod (false);

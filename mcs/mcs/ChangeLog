@@ -1,5 +1,12 @@
 2008-07-17  Marek Safar  <marek.safar@gmail.com>
 
+	* generic.cs, typemanager.cs, cs-tokenizer.cs, parameter.cs, namespace.cs,
+	class.cs, delegate.cs, flowanalysis.cs, iterators.cs, anonymous.cs,
+	driver.cs, nullable.cs, expression.cs, attribute.cs, codegen.cs,
+	statement.cs: Fixed relevant defects found by Gendarme.
+
+2008-07-17  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #325291
 	* modifiers.cs, class.cs, cs-parser.jay, anonymous.cs, codegen.cs, 
 	statement.cs: Replaced IAnonymousHost with top level block flag.
