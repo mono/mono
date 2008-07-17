@@ -286,13 +286,13 @@ namespace System.Windows.Forms.PropertyGridInternal
 			// validating check is to allow whatever UI code to execute
 			// without filtering messages (i.e. error dialogs, etc)
 			//
-			if (!validating && m.HWnd != textbox.Handle &&
-			    m.Msg == (int)Msg.WM_LBUTTONDOWN || 
-			    m.Msg == (int)Msg.WM_MBUTTONDOWN ||
-			    m.Msg == (int)Msg.WM_RBUTTONDOWN ||
-			    m.Msg == (int)Msg.WM_NCLBUTTONDOWN ||
-			    m.Msg == (int)Msg.WM_NCMBUTTONDOWN ||
-			    m.Msg == (int)Msg.WM_NCRBUTTONDOWN) {
+			if (!validating && m.HWnd != textbox.Handle && textbox.Focused &&
+			    (m.Msg == (int)Msg.WM_LBUTTONDOWN || 
+			     m.Msg == (int)Msg.WM_MBUTTONDOWN ||
+			     m.Msg == (int)Msg.WM_RBUTTONDOWN ||
+			     m.Msg == (int)Msg.WM_NCLBUTTONDOWN ||
+			     m.Msg == (int)Msg.WM_NCMBUTTONDOWN ||
+			     m.Msg == (int)Msg.WM_NCRBUTTONDOWN)) {
 				CancelEventHandler validateHandler = (CancelEventHandler)(Events [ValidateEvent]);
 				if (validateHandler != null) {
 					CancelEventArgs args = new CancelEventArgs ();

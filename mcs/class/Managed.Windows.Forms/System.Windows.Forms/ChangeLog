@@ -1,3 +1,10 @@
+2008-07-17  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGridTextBox.cs: Validation should be performed only if we 
+	are focused. We can lose focus for example if the Return key is used 
+	to set the entry and there is an error. When the message box is 
+	displayed we would have validate on click in the message box.
+
 2008-07-16  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* GridEntry.cs: Checking for DesignerSerializaitonVisibility.Content 
