@@ -45,7 +45,7 @@ namespace System.ComponentModel
 public sealed class TypeDescriptor
 {
 	private static readonly object creatingDefaultConverters = new object ();
-	private static Hashtable defaultConverters;
+	private static ArrayList defaultConverters;
 	private static IComNativeDescriptorHandler descriptorHandler;
 	private static Hashtable componentTable = new Hashtable ();
 	private static Hashtable typeTable = new Hashtable ();
@@ -318,37 +318,36 @@ public sealed class TypeDescriptor
 		}
 	}
 
-	private static Hashtable DefaultConverters
+	private static ArrayList DefaultConverters
 	{
 		get {
 			lock (creatingDefaultConverters) {
 				if (defaultConverters != null)
 					return defaultConverters;
 				
-				defaultConverters = new Hashtable ();
-				defaultConverters.Add (typeof (bool), typeof (BooleanConverter));
-				defaultConverters.Add (typeof (byte), typeof (ByteConverter));
-				defaultConverters.Add (typeof (sbyte), typeof (SByteConverter));
-				defaultConverters.Add (typeof (string), typeof (StringConverter));
-				defaultConverters.Add (typeof (char), typeof (CharConverter));
-				defaultConverters.Add (typeof (short), typeof (Int16Converter));
-				defaultConverters.Add (typeof (int), typeof (Int32Converter));
-				defaultConverters.Add (typeof (long), typeof (Int64Converter));
-				defaultConverters.Add (typeof (ushort), typeof (UInt16Converter));
-				defaultConverters.Add (typeof (uint), typeof (UInt32Converter));
-				defaultConverters.Add (typeof (ulong), typeof (UInt64Converter));
-				defaultConverters.Add (typeof (float), typeof (SingleConverter));
-				defaultConverters.Add (typeof (double), typeof (DoubleConverter));
-				defaultConverters.Add (typeof (decimal), typeof (DecimalConverter));
-				defaultConverters.Add (typeof (void), typeof (TypeConverter));
-				defaultConverters.Add (typeof (Array), typeof (ArrayConverter));
-				defaultConverters.Add (typeof (CultureInfo), typeof (CultureInfoConverter));
-				defaultConverters.Add (typeof (DateTime), typeof (DateTimeConverter));
-				defaultConverters.Add (typeof (Guid), typeof (GuidConverter));
-				defaultConverters.Add (typeof (TimeSpan), typeof (TimeSpanConverter));
-				defaultConverters.Add (typeof (ICollection), typeof (CollectionConverter));
-				defaultConverters.Add (typeof (Enum), typeof (EnumConverter));
-				defaultConverters.Add (typeof (object), typeof (TypeConverter));
+				defaultConverters = new ArrayList ();
+				defaultConverters.Add (new DictionaryEntry (typeof (bool), typeof (BooleanConverter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (byte), typeof (ByteConverter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (sbyte), typeof (SByteConverter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (string), typeof (StringConverter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (char), typeof (CharConverter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (short), typeof (Int16Converter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (int), typeof (Int32Converter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (long), typeof (Int64Converter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (ushort), typeof (UInt16Converter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (uint), typeof (UInt32Converter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (ulong), typeof (UInt64Converter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (float), typeof (SingleConverter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (double), typeof (DoubleConverter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (decimal), typeof (DecimalConverter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (void), typeof (TypeConverter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (Array), typeof (ArrayConverter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (CultureInfo), typeof (CultureInfoConverter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (DateTime), typeof (DateTimeConverter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (Guid), typeof (GuidConverter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (TimeSpan), typeof (TimeSpanConverter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (ICollection), typeof (CollectionConverter)));
+				defaultConverters.Add (new DictionaryEntry (typeof (Enum), typeof (EnumConverter)));
 			}
 			return defaultConverters;
 		}
@@ -377,25 +376,35 @@ public sealed class TypeDescriptor
 
 	private static Type FindDefaultConverterType (Type type)
 	{
-		Type t = null;
-		
+		Type converterType = null;
+
 		// Is there a default converter
-		t = (Type) DefaultConverters [type];
-		if (t != null)
-			return t;
-		
-		// Find default converter with a type this type is assignable to
-		foreach (Type defType in DefaultConverters.Keys) {
-			if (defType.IsInterface && defType.IsAssignableFrom (type)) {
-				return (Type) DefaultConverters [defType];
-			}
+		foreach (DictionaryEntry entry in DefaultConverters) {
+			if ((Type)entry.Key == type)
+				return (Type)entry.Value;
 		}
-		
-		// Nothing found, try the same with our base type
-		if (type.BaseType != null)
-			return FindDefaultConverterType (type.BaseType);
-		else
-			return typeof (ReferenceConverter);
+
+		// Find default converter with a baseType this baseType is assignable to
+		Type baseType = type;
+		while (baseType != null && baseType != typeof (object)) {
+			foreach (DictionaryEntry entry in DefaultConverters) {
+				Type defType = (Type)entry.Key;
+				if (defType.IsAssignableFrom (baseType)) {
+					converterType = (Type)entry.Value;
+					break;
+				}
+			}
+			baseType = baseType.BaseType;
+		}
+
+		if (converterType == null) {
+			if (type.IsInterface)
+				converterType = typeof (ReferenceConverter);
+			else
+				converterType = typeof (TypeConverter);
+		}
+
+		return converterType;
 	}
 
 	public static EventDescriptor GetDefaultEvent (Type componentType)
