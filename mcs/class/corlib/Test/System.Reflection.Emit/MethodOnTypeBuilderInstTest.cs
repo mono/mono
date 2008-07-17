@@ -511,6 +511,7 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test]
 		[Category ("NotDotNet")]
+		[Category ("NotWorking")]
 		public void MetadataTokenWorksUnderCompilerContext  ()
 		{
 			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
@@ -521,6 +522,7 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test]
 		[Category ("NotDotNet")]
+		[Category ("NotWorking")]
 		public void ReturnTypeWorksUnderCompilerContext  ()
 		{
 			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
@@ -549,6 +551,7 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test]
 		[Category ("NotDotNet")]
+		[Category ("NotWorking")]
 		public void GetParametersWorksUnderCompilerContext  ()
 		{
 			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);

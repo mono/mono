@@ -159,7 +159,7 @@ namespace System.Reflection
 				// MethodOnTypeBuilderInst objects
 				// Also, mono_image_get_method_on_inst_token () can't handle generic
 				// methods
-				if (!mb.IsGenericMethodDefinition) {
+				if (!((ModuleBuilder)mb.Module).assemblyb.IsCompilerContext && !mb.IsGenericMethodDefinition) {
 					if (methods == null)
 						methods = new Hashtable ();
 					if (!methods.ContainsKey (mb))

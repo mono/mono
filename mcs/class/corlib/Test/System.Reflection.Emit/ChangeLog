@@ -1,3 +1,8 @@
+2008-07-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MethodOnTypeBuilderInstTest.cs: Disable new tests as the change
+	that made then work was reverted.
+
 2008-07-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MethodOnTypeBuilderInstTest.cs: Added test for stuff under compiler
