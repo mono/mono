@@ -1,5 +1,3 @@
-
-
 using System;
 using System.Linq;
 
@@ -14,7 +12,7 @@ class NestedQuery
 	}
 	
 	public static int Main ()
-	{/*
+	{
 		var e = from values in new [] { "aba", "bbb", "bab", "aaa" }
 			where values.Length > 0
 			select from type in values
@@ -47,7 +45,7 @@ class NestedQuery
 			
 		if (counter != 12)
 			return 2;
-			*/
+			
 		return 0;
 	}
 }

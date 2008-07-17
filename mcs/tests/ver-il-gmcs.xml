@@ -15829,7 +15829,7 @@
         <size>108</size>
       </method>
       <method name="Int32 Main()">
-        <size>2</size>
+        <size>481</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;values&gt;__T,&lt;length&gt;__T]">
@@ -15891,6 +15891,37 @@
         <size>17</size>
       </method>
       <method name="Char &lt;&gt;m__3(&lt;&gt;__AnonType1`2[System.Char,System.Int32])">
+        <size>9</size>
+      </method>
+    </type>
+    <type name="NestedQuery">
+      <method name="Boolean &lt;Main&gt;m__5(System.String)">
+        <size>12</size>
+      </method>
+      <method name="IEnumerable`1 &lt;Main&gt;m__7(System.String)">
+        <size>38</size>
+      </method>
+      <method name="&lt;&gt;__AnonType0`2[System.String,System.Int32] &lt;Main&gt;m__8(System.String)">
+        <size>15</size>
+      </method>
+      <method name="IEnumerable`1 &lt;Main&gt;m__12(&lt;&gt;__AnonType0`2[System.String,System.Int32])">
+        <size>95</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__6(Char)">
+        <size>8</size>
+      </method>
+      <method name="&lt;&gt;__AnonType1`2[System.Char,System.Int32] &lt;Main&gt;m__9(Char)">
+        <size>11</size>
+      </method>
+    </type>
+    <type name="NestedQuery+&lt;Main&gt;c__AnonStorey1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;&gt;m__10(&lt;&gt;__AnonType1`2[System.Char,System.Int32])">
+        <size>17</size>
+      </method>
+      <method name="Char &lt;&gt;m__11(&lt;&gt;__AnonType1`2[System.Char,System.Int32])">
         <size>9</size>
       </method>
     </type>
