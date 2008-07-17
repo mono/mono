@@ -30661,7 +30661,7 @@
         <size>7</size>
       </method>
       <method name="Void TestFunc()">
-        <size>8</size>
+        <size>2</size>
       </method>
       <method name="Void Main(System.String[])">
         <size>6</size>
@@ -30679,14 +30679,6 @@
       </method>
       <method name="Void EndInvoke(IAsyncResult)">
         <size>0</size>
-      </method>
-    </type>
-    <type name="Test+&lt;TestFunc&gt;c__AnonStorey0">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0()">
-        <size>12</size>
       </method>
     </type>
   </test>
