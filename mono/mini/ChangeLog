@@ -1,3 +1,9 @@
+2008-07-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c: Use mono_runtime_class_init_full to avoid leaking memory
+	for types which the initialization fails. Raises the provided exception
+	at the right stop after cleanup.
+
 2008-07-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c: Free most of the memory allocated during compilation.
