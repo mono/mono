@@ -5432,8 +5432,14 @@ namespace Mono.CSharp {
 				//
 				if (getter == null)
 					return null;
-				Report.Error (200, loc, "Property or indexer `{0}' cannot be assigned to (it is read only)",
-					      GetSignatureForError ());
+
+				if (ec.CurrentBlock.Toplevel.GetTransparentIdentifier (PropertyInfo.Name) != null) {
+					Report.Error (1947, loc, "A range variable `{0}' cannot be assigned to. Consider using `let' clause to store the value",
+						PropertyInfo.Name);
+				} else {
+					Report.Error (200, loc, "Property or indexer `{0}' cannot be assigned to (it is read only)",
+						GetSignatureForError ());
+				}
 				return null;
 			}
 
