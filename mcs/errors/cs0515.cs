@@ -1,5 +1,6 @@
-// cs0515.cs: `X.X()': access modifiers are not allowed on static constructors
-// Line: 4
+// CS0515: `X.X()': static constructor cannot have an access modifier
+// Line: 5
+
 class X {
 	public static X ()
 	{
