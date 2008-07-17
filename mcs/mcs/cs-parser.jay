@@ -36,8 +36,6 @@ namespace Mono.CSharp
 		TypeContainer   current_container;
 		DeclSpace	current_class;
 	
-		IAnonymousHost anonymous_host;
-
 		/// <summary>
 		///   Current block is used to add statements as we find
 		///   them.  
@@ -1144,7 +1142,6 @@ variable_initializer
 
 method_declaration
 	: method_header {
-		anonymous_host = (IAnonymousHost) $1;
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 	  }
@@ -1154,7 +1151,6 @@ method_declaration
 		method.Block = (ToplevelBlock) $3;
 		current_container.AddMethod (method);
 
-		anonymous_host = null;
 		current_generic_method = null;
 		current_local_parameters = null;
 
@@ -1218,7 +1214,6 @@ method_header
 		method = new Method (current_class, generic, (FullNamedExpression) $3, (int) $2, false,
 				     name, current_local_parameters, (Attributes) $1);
 
-		anonymous_host = method;
 		current_generic_method = generic;
 
 		if (RootContext.Documentation != null)
@@ -1261,7 +1256,6 @@ method_header
 		method = new Method (current_class, generic, TypeManager.system_void_expr,
 				     (int) $2, false, name, current_local_parameters, (Attributes) $1);
 
-		anonymous_host = method;
 		current_generic_method = generic;
 
 		if (RootContext.Documentation != null)
@@ -1319,7 +1313,6 @@ method_header
 		method = new Method (current_class, generic, TypeManager.system_void_expr,
 				     modifiers, false, name, current_local_parameters, (Attributes) $1);
 
-		anonymous_host = method;
 		current_generic_method = generic;
 
 		if (RootContext.Documentation != null)
@@ -1686,8 +1679,6 @@ get_accessor_declaration
 		else 
 			current_local_parameters = indexer_parameters;
 		lexer.PropertyParsing = false;
-
-		anonymous_host = SimpleAnonymousHost.GetSimple ();
 	  }
           accessor_body
 	  {
@@ -1699,9 +1690,6 @@ get_accessor_declaration
 		has_get = true;
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
-
-		SimpleAnonymousHost.Simple.Propagate (accessor);
-		anonymous_host = null;
 
 		if (RootContext.Documentation != null)
 			if (Lexer.doc_state == XmlCommentState.Error)
@@ -1739,8 +1727,6 @@ set_accessor_declaration
 		}
 		
 		lexer.PropertyParsing = false;
-
-		anonymous_host = SimpleAnonymousHost.GetSimple ();
 	  }
 	  accessor_body
 	  {
@@ -1752,9 +1738,6 @@ set_accessor_declaration
 		has_set = true;
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
-
-		SimpleAnonymousHost.Simple.Propagate (accessor);
-		anonymous_host = null;
 
 		if (RootContext.Documentation != null
 			&& Lexer.doc_state == XmlCommentState.Error)
@@ -2180,7 +2163,6 @@ interface_indexer_declaration
 operator_declaration
 	: opt_attributes opt_modifiers operator_declarator 
 	  {
-		anonymous_host = SimpleAnonymousHost.GetSimple ();
 	  }
 	  operator_body
 	  {
@@ -2197,9 +2179,6 @@ operator_declaration
 			op.DocComment = tmpComment;
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
-
-		SimpleAnonymousHost.Simple.Propagate (op);
-		anonymous_host = null;
 
 		// Note again, checking is done in semantic analysis
 		current_container.AddOperator (op);
@@ -2344,7 +2323,6 @@ constructor_declaration
 		Constructor c = (Constructor) $3;
 		c.Block = (ToplevelBlock) $4;
 		c.OptAttributes = (Attributes) $1;
-		int yield_method = c.ModFlags & Modifiers.METHOD_YIELDS;
 		int mods = (int) $2;
 		
 		if (RootContext.Documentation != null)
@@ -2364,7 +2342,7 @@ constructor_declaration
 			}
 		}
 
-		c.ModFlags = Modifiers.Check (Constructor.AllowedModifiers, mods, Modifiers.PRIVATE, c.Location) | yield_method;
+		c.ModFlags = Modifiers.Check (Constructor.AllowedModifiers, mods, Modifiers.PRIVATE, c.Location);
 		current_container.AddConstructor (c);
 
 		current_local_parameters = null;
@@ -2401,8 +2379,6 @@ constructor_header
 
 		$$ = new Constructor (current_class, lt.Value, 0, current_local_parameters,
 				      null, lt.Location);
-
-		anonymous_host = (IAnonymousHost) $$;
 	  }
 	;
 
@@ -2582,8 +2558,6 @@ add_accessor_declaration
 		
 		current_local_parameters = new Parameters (args);  
 		lexer.EventParsing = false;
-		
-		anonymous_host = SimpleAnonymousHost.GetSimple ();
 	  }
 	  block
 	  {
@@ -2591,9 +2565,6 @@ add_accessor_declaration
 		lexer.EventParsing = true;
 		
 		current_local_parameters = null;
-		SimpleAnonymousHost.Simple.Propagate (accessor);
-		anonymous_host = null;
-		
 		$$ = accessor;
 	  }
 	| opt_attributes ADD error {
@@ -2647,7 +2618,6 @@ indexer_declaration
 		parsing_indexer  = true;
 		
 		indexer_parameters = decl.param_list;
-		anonymous_host = SimpleAnonymousHost.GetSimple ();
 	  }
           accessor_declarations 
 	  {
@@ -5076,13 +5046,8 @@ yield_statement
 			Report.FeatureIsNotAvailable (lt.Location, "yield statement");
 			$$ = null;
 		}
-		if (anonymous_host == null){
-			Report.Error (204, lt.Location, "yield statement can only be used within a method, operator or property");
-			$$ = null;
-		} else {
-			anonymous_host.SetYields ();
-			$$ = new Yield ((Expression) $3, lt.Location); 
-		}
+		current_block.Toplevel.IsIterator = true;
+		$$ = new Yield ((Expression) $3, lt.Location); 
 	  }
 	| IDENTIFIER RETURN SEMICOLON
 	  {
@@ -5101,13 +5066,9 @@ yield_statement
 			Report.FeatureIsNotAvailable (lt.Location, "yield statement");
 			$$ = null;
 		}
-		if (anonymous_host == null){
-			Report.Error (204, lt.Location, "yield statement can only be used within a method, operator or property");
-			$$ = null;
-		} else {
-			anonymous_host.SetYields ();
-			$$ = new YieldBreak (lt.Location);
-		}
+		
+		current_block.Toplevel.IsIterator = true;
+		$$ = new YieldBreak (lt.Location);
 	  }
 	;
 
@@ -5683,31 +5644,6 @@ public class IndexerDeclaration {
 		this.interface_type = interface_type;
 		this.param_list = param_list;
 		this.location = loc;
-	}
-}
-
-//
-// We use this when we do not have an object in advance that is an IAnonymousHost
-//
-public class SimpleAnonymousHost : IAnonymousHost {
-	public static readonly SimpleAnonymousHost Simple = new SimpleAnonymousHost ();
-
-	bool yields;
-
-	public static SimpleAnonymousHost GetSimple () {
-		Simple.yields = false;
-		return Simple;
-	}
-
-	public void SetYields ()
-	{
-		yields = true;
-	}
-	
-	public void Propagate (IAnonymousHost real_host)
-	{
-		if (yields)
-			real_host.SetYields ();
 	}
 }
 

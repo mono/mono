@@ -817,12 +817,12 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			AnonymousExpression am = ec.CurrentAnonymousMethod;
-			if ((am != null) && am.IsIterator && ec.InIterator) {
+			if (ec.CurrentBlock.Toplevel.IsIterator) {
 				Report.Error (1622, loc, "Cannot return a value from iterators. Use the yield return " +
 						  "statement to return a value, or yield break to end the iteration");
 			}
 
+			AnonymousExpression am = ec.CurrentAnonymousMethod;
 			if (am == null && ec.ReturnType == TypeManager.void_type) {
 				MemberCore mc = ec.ResolveContext as MemberCore;
 				Report.Error (127, loc, "`{0}': A return keyword must not be followed by any expression when method returns void",
@@ -1519,7 +1519,8 @@ namespace Mono.CSharp {
 			VariablesInitialized = 4,
 			HasRet = 8,
 			IsDestructor = 16,
-			Unsafe = 32
+			Unsafe = 32,
+			IsIterator = 64
 		}
 		protected Flags flags;
 
@@ -2741,6 +2742,7 @@ namespace Mono.CSharp {
 		{
 			// Create block with original statements
 			ExplicitBlock iter_block = new ExplicitBlock (this, flags, StartLocation, EndLocation);
+			IsIterator = true;
 
 			// TODO: Change to iter_block.statements = statements;
 			foreach (Statement stmt in source.statements)
@@ -2751,6 +2753,7 @@ namespace Mono.CSharp {
 
 			source.statements = new ArrayList (1);
 			source.AddStatement (new Return (iterator, iterator.Location));
+			source.IsIterator = false;
 
 			IteratorStorey iterator_storey = new IteratorStorey (iterator);
 			source.am_storey = iterator_storey;
@@ -2808,6 +2811,11 @@ namespace Mono.CSharp {
 			}
 
 			return this_variable;
+		}
+
+		public bool IsIterator {
+			get { return (flags & Flags.IsIterator) != 0; }
+			set { flags = value ? flags | Flags.IsIterator : flags & ~Flags.IsIterator; }
 		}
 
 		public bool IsThisAssigned (EmitContext ec)

@@ -361,11 +361,6 @@ namespace Mono.CSharp {
 		public bool HasReturnLabel;
 
 		/// <summary>
-		///   Whether we are inside an iterator block.
-		/// </summary>
-		public bool InIterator;
-
-		/// <summary>
 		///  Whether we are in a `fixed' initialization
 		/// </summary>
 		public bool InFixedInitializer;
@@ -442,7 +437,6 @@ namespace Mono.CSharp {
 #endif
 
 			IsStatic = (code_flags & Modifiers.STATIC) != 0;
-			InIterator = (code_flags & Modifiers.METHOD_YIELDS) != 0;
 			ReturnType = return_type;
 			IsConstructor = is_constructor;
 			CurrentBlock = null;
@@ -992,7 +986,7 @@ namespace Mono.CSharp {
 				throw new Exception ("NeedReturnLabel called from Emit phase, should only be called during Resolve");
 			}
 			
-			if (!InIterator && !HasReturnLabel) 
+			if (!HasReturnLabel)
 				HasReturnLabel = true;
 		}
 

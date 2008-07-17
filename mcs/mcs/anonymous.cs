@@ -727,15 +727,6 @@ namespace Mono.CSharp {
 		}
 	}
 
-	// TODO: Remove, it should be done in block
-	public interface IAnonymousHost
-	{
-		//
-		// Invoked if a yield statement is found in the body
-		//
-		void SetYields ();
-	}
-
 	//
 	// Anonymous method expression as created by parser
 	//
@@ -1199,7 +1190,6 @@ namespace Mono.CSharp {
 			aec = new EmitContext (
 				ec.ResolveContext, ec.TypeContainer, ec.DeclContainer,
 				Location, null, ReturnType,
-				/* REVIEW */ (ec.InIterator ? Modifiers.METHOD_YIELDS : 0) |
 				(ec.InUnsafe ? Modifiers.UNSAFE : 0), /* No constructor */ false);
 
 			aec.CurrentAnonymousMethod = this;

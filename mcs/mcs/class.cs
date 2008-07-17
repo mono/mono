@@ -3325,11 +3325,6 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		public virtual void SetYields ()
-		{
-			ModFlags |= Modifiers.METHOD_YIELDS;
-		}
-
 		protected override bool VerifyClsCompliance ()
 		{
 			if (!base.VerifyClsCompliance ())
@@ -3870,7 +3865,7 @@ namespace Mono.CSharp {
 			if (!CheckBase ())
 				return false;
 
-			if ((ModFlags & Modifiers.METHOD_YIELDS) != 0)
+			if (block != null && block.IsIterator && !(Parent is IteratorStorey))
 				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
 
 			if (IsPartialDefinition) {
@@ -4118,7 +4113,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Method : MethodOrOperator, IAnonymousHost {
+	public class Method : MethodOrOperator {
 
 		/// <summary>
 		///   Modifiers allowed in a class declaration
@@ -4134,8 +4129,7 @@ namespace Mono.CSharp {
 			Modifiers.SEALED |
 			Modifiers.OVERRIDE |
 			Modifiers.ABSTRACT |
-		        Modifiers.UNSAFE |
-			Modifiers.METHOD_YIELDS | 
+			Modifiers.UNSAFE |
 			Modifiers.EXTERN;
 
 		const int AllowedInterfaceModifiers =
@@ -4561,7 +4555,7 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	public class Constructor : MethodCore, IMethodData, IAnonymousHost {
+	public class Constructor : MethodCore, IMethodData {
 		public ConstructorBuilder ConstructorBuilder;
 		public ConstructorInitializer Initializer;
 		ListDictionary declarative_security;
@@ -4718,7 +4712,7 @@ namespace Mono.CSharp {
 			TypeManager.AddMethod (ConstructorBuilder, this);
 			
 			// It's here only to report an error
-			if ((ModFlags & Modifiers.METHOD_YIELDS) != 0) {
+			if (block != null && block.IsIterator) {
 				member_type = TypeManager.void_type;
 				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
 			}
@@ -5938,7 +5932,7 @@ namespace Mono.CSharp {
 	//
 	// `set' and `get' accessors are represented with an Accessor.
 	// 
-	public class Accessor : IAnonymousHost {
+	public class Accessor {
 		//
 		// Null if the accessor is empty, or a Block if not
 		//
@@ -5952,7 +5946,6 @@ namespace Mono.CSharp {
 		public Attributes Attributes;
 		public Location Location;
 		public int ModFlags;
-		public bool Yields;
 		
 		public Accessor (ToplevelBlock b, int mod, Attributes attrs, Location loc)
 		{
@@ -5960,11 +5953,6 @@ namespace Mono.CSharp {
 			Attributes = attrs;
 			Location = loc;
 			ModFlags = Modifiers.Check (AllowedModifiers, mod, 0, loc);
-		}
-
-		public void SetYields ()
-		{
-			Yields = true;
 		}
 	}
 
@@ -6325,7 +6313,6 @@ namespace Mono.CSharp {
 		{
 			protected readonly PropertyBase method;
 			protected MethodAttributes flags;
-			bool yields;
 
 			public PropertyMethod (PropertyBase method, string prefix)
 				: base (method, prefix)
@@ -6339,7 +6326,6 @@ namespace Mono.CSharp {
 			{
 				this.method = method;
 				this.ModFlags = accessor.ModFlags;
-				yields = accessor.Yields;
 
 				if (accessor.ModFlags != 0 && RootContext.Version == LanguageVersion.ISO_1) {
 					Report.FeatureIsNotAvailable (Location, "access modifiers on properties");
@@ -6394,7 +6380,7 @@ namespace Mono.CSharp {
 
 				CheckAbstractAndExtern (block != null);
 
-				if (yields)
+				if (block != null && block.IsIterator)
 					Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
 
 				return null;
@@ -6689,7 +6675,6 @@ namespace Mono.CSharp {
 			Modifiers.ABSTRACT |
 			Modifiers.UNSAFE |
 			Modifiers.EXTERN |
-			Modifiers.METHOD_YIELDS |
 			Modifiers.VIRTUAL;
 
 		const int AllowedInterfaceModifiers =
@@ -7655,7 +7640,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Operator : MethodOrOperator, IAnonymousHost {
+	public class Operator : MethodOrOperator {
 
 		const int AllowedModifiers =
 			Modifiers.PUBLIC |
