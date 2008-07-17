@@ -1,3 +1,11 @@
+2008-07-17  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TypeDescriptor.cs: 
+	 - Refactor the default converters table not to be a Hashtable, 
+	 because the order of the keys is not preserved.
+	 - Fix FindDefaultConverterType to properly make use of the default 
+	 converters.
+
 2008-07-16  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TypeDescriptor.cs: 
