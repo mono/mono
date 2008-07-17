@@ -966,12 +966,7 @@ public sealed class TypeDescriptor
 			foreach (Attribute attribute in _infoType.GetCustomAttributes (false))
 				attributesList.Add (attribute);
 
-			// 2) Attributes of the type's implemented interfaces and their interfaces as well
-			foreach (Type inface in _infoType.GetInterfaces ())
-				foreach (Attribute attribute in TypeDescriptor.GetAttributes (inface))
-					attributesList.Add (attribute);
-
-			// 3) Attributes of the base types
+			// 2) Attributes of the base types
 			Type baseType = _infoType.BaseType;
 			while (baseType != null && baseType != typeof (object)) {
 				foreach (Attribute attribute in baseType.GetCustomAttributes (false))
@@ -979,8 +974,13 @@ public sealed class TypeDescriptor
 				baseType = baseType.BaseType;
 			}
 
-			// Filter out duplicate attributes, so that the type and its interfaces
-			// have higher precedence than the base types.
+			// 3) Attributes of the type's implemented interfaces and their interfaces as well
+			foreach (Type inface in _infoType.GetInterfaces ())
+				foreach (Attribute attribute in TypeDescriptor.GetAttributes (inface))
+					attributesList.Add (attribute);
+
+			// Filter out duplicate attributes, so that the base types have higher precedence 
+			// than the interfaces and the type higher than both.
 			Hashtable attributesTable = new Hashtable ();
 			for (int i = attributesList.Count - 1; i >= 0; i--) {
 				Attribute attribute = (Attribute)attributesList[i];
