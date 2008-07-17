@@ -1,3 +1,7 @@
+2008-07-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* generics-sharing.2.cs: Fix the build.
+
 2008-07-10  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile.am (testaot): Set MONO_PATH when running the AOT
