@@ -2328,10 +2328,10 @@ constructor_declaration
 		if (RootContext.Documentation != null)
 			c.DocComment = ConsumeStoredComment ();
 
-		if ((mods & Modifiers.STATIC) != 0 && c.Name == current_container.Basename) {
+		if ((mods & Modifiers.STATIC) != 0 && c.Name == current_container.MemberName.Name) {
 			if ((mods & Modifiers.Accessibility) != 0){
 				Report.Error (515, c.Location,
-					"`{0}': access modifiers are not allowed on static constructors",
+					"`{0}': static constructor cannot have an access modifier",
 					c.GetSignatureForError ());
 			}
 	
