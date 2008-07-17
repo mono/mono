@@ -116,7 +116,7 @@ namespace System.Timers
 			set { 
 				// The doc says 'less than 0', but 0 also throws the exception
 				if (value <= 0)
-					throw new ArgumentException ("Invalid value: " + interval, "interval");
+					throw new ArgumentException ("Invalid value: " + value);
 
 				interval = value;
 			}
