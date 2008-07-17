@@ -1,4 +1,4 @@
-// CS3005: Identifier `X.index.set' differing only in case is not CLS-compliant
+// cs3005-22.cs: Identifier `X.index' differing only in case is not CLS-compliant
 // Line: 8
 // Compiler options: -warnaserror
 
