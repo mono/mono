@@ -63,7 +63,9 @@ namespace System.Diagnostics {
 		private PerformanceCounterInstanceLifetime lifetime;
 #endif
 
+#if NET_2_0
 		[Obsolete]
+#endif
 		public static int DefaultFileMappingSize = 524288;
 
 		// set catname, countname, instname to "", machname to "."
