@@ -119,7 +119,7 @@ namespace System.Linq.Expressions {
 
 			switch (NodeType) {
 			case ExpressionType.Not:
-				if (GetNotNullableOf (operand.Type) == typeof (bool)) {
+				if (operand.Type.GetNotNullableType () == typeof (bool)) {
 					ig.Emit (OpCodes.Ldc_I4_0);
 					ig.Emit (OpCodes.Ceq);
 				} else
@@ -136,8 +136,8 @@ namespace System.Linq.Expressions {
 			case ExpressionType.ConvertChecked:
 				// Called when converting from nullable from nullable
 				EmitPrimitiveConversion (ec,
-					GetNotNullableOf (operand.Type),
-					GetNotNullableOf (Type));
+					operand.Type.GetNotNullableType (),
+					Type.GetNotNullableType ());
 				break;
 			}
 		}
@@ -177,10 +177,10 @@ namespace System.Linq.Expressions {
 				return;
 			}
 
-			if (operand.Type != GetNotNullableOf (Type)) {
+			if (operand.Type != Type.GetNotNullableType ()) {
 				EmitPrimitiveConversion (ec,
 					operand.Type,
-					GetNotNullableOf (Type));
+					Type.GetNotNullableType ());
 			}
 
 			ec.EmitNullableNew (Type);
@@ -196,9 +196,9 @@ namespace System.Linq.Expressions {
 
 			ec.EmitCall (operand, operand.Type.GetMethod ("get_Value"));
 
-			if (GetNotNullableOf (operand.Type) != Type) {
+			if (operand.Type.GetNotNullableType () != Type) {
 				EmitPrimitiveConversion (ec,
-					GetNotNullableOf (operand.Type),
+					operand.Type.GetNotNullableType (),
 					Type);
 			}
 		}
