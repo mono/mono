@@ -1,4 +1,4 @@
-// CS0841: The variable `y' cannot be used before it is declared
+// CS0841: A local variable `y' cannot be used before it is declared
 // Line: 8
 
 public class C

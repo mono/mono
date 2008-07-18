@@ -1,4 +1,4 @@
-// CS0841: The variable `v' cannot be used before it is declared
+// CS0841: A local variable `v' cannot be used before it is declared
 // Line: 9
 
 
