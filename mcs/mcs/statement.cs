@@ -91,10 +91,7 @@ namespace Mono.CSharp {
 		// This routine must be overrided in derived classes and make copies
 		// of all the data that might be modified if resolved
 		// 
-		protected virtual void CloneTo (CloneContext clonectx, Statement target)
-		{
-			throw new InternalErrorException ("{0} does not implement Statement.CloneTo", this.GetType ());
-		}
+		protected abstract void CloneTo (CloneContext clonectx, Statement target);
 
 		public Statement Clone (CloneContext clonectx)
 		{
@@ -919,6 +916,11 @@ namespace Mono.CSharp {
 			label.AddReference ();
 		}
 
+		protected override void CloneTo (CloneContext clonectx, Statement target)
+		{
+			// Nothing to clone
+		}
+
 		protected override void DoEmit (EmitContext ec)
 		{
 			if (label == null)
@@ -981,6 +983,11 @@ namespace Mono.CSharp {
 			vectors = vector;
 		}
 
+		protected override void CloneTo (CloneContext clonectx, Statement target)
+		{
+			// nothing to clone
+		}
+
 		public override bool Resolve (EmitContext ec)
 		{
 			// this flow-branching will be terminated when the surrounding block ends
@@ -1015,6 +1022,11 @@ namespace Mono.CSharp {
 		public GotoDefault (Location l)
 		{
 			loc = l;
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement target)
+		{
+			// nothing to clone
 		}
 
 		public override bool Resolve (EmitContext ec)
@@ -5186,6 +5198,11 @@ namespace Mono.CSharp {
 				loc = l;
 			}
 
+			protected override void CloneTo (CloneContext clonectx, Statement target)
+			{
+				throw new NotImplementedException ();
+			}
+
 			public override bool Resolve (EmitContext ec)
 			{
 				array_type = expr.Type;
@@ -5338,6 +5355,11 @@ namespace Mono.CSharp {
 				this.expr = expr;
 				statement = stmt;
 				loc = l;
+			}
+
+			protected override void CloneTo (CloneContext clonectx, Statement target)
+			{
+				throw new NotImplementedException ();
 			}
 
 			bool GetEnumeratorFilter (EmitContext ec, MethodInfo mi)
@@ -5692,6 +5714,11 @@ namespace Mono.CSharp {
 					this.parent = parent;
 				}
 
+				protected override void CloneTo (CloneContext clonectx, Statement target)
+				{
+					throw new NotSupportedException ();
+				}
+
 				public override bool Resolve (EmitContext ec)
 				{
 					return parent.ResolveLoop (ec);
@@ -5715,6 +5742,11 @@ namespace Mono.CSharp {
 				internal DisposableWrapper (CollectionForeach parent)
 				{
 					this.parent = parent;
+				}
+
+				protected override void CloneTo (CloneContext clonectx, Statement target)
+				{
+					throw new NotSupportedException ();
 				}
 
 				public override bool Resolve (EmitContext ec)
@@ -5828,6 +5860,11 @@ namespace Mono.CSharp {
 				this.current = current;
 				this.statement = statement;
 				this.loc = loc;
+			}
+
+			protected override void CloneTo (CloneContext clonectx, Statement target)
+			{
+				throw new NotImplementedException ();
 			}
 
 			public override bool Resolve (EmitContext ec)

@@ -111,6 +111,11 @@ namespace Mono.CSharp {
 			Report.Error (1625, loc, "Cannot yield in the body of a finally clause");
 		}
 
+		protected override void CloneTo (CloneContext clonectx, Statement target)
+		{
+			throw new NotSupportedException ();
+		}
+
 		protected override bool DoResolve (EmitContext ec)
 		{
 			return Yield.CheckContext (ec, loc);
@@ -140,6 +145,13 @@ namespace Mono.CSharp {
 			this.iterator = iterator;
 			this.original_block = original_block;
 			this.loc = iterator.Location;
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement target)
+		{
+			IteratorStatement t = (IteratorStatement) target;
+			t.original_block = (ExplicitBlock) original_block.Clone (clonectx);
+			t.iterator = (Iterator) iterator.Clone (clonectx);
 		}
 
 		public override bool Resolve (EmitContext ec)
@@ -371,6 +383,11 @@ namespace Mono.CSharp {
 					loc = host.Location;
 				}
 
+				protected override void CloneTo (CloneContext clonectx, Statement target)
+				{
+					throw new NotSupportedException ();
+				}
+
 				public override bool Resolve (EmitContext ec)
 				{
 					type = type.ResolveAsTypeTerminal (ec, false);
@@ -487,6 +504,11 @@ namespace Mono.CSharp {
 					this.loc = iterator.Location;
 				}
 
+				protected override void CloneTo (CloneContext clonectx, Statement target)
+				{
+					throw new NotSupportedException ();
+				}
+
 				public override bool Resolve (EmitContext ec)
 				{
 					return true;
@@ -513,6 +535,11 @@ namespace Mono.CSharp {
 				this.host = host;
 				this.is_generic = is_generic;
 				loc = host.Location;
+			}
+
+			protected override void CloneTo (CloneContext clonectx, Statement target)
+			{
+				throw new NotSupportedException ();
 			}
 
 			public override bool Resolve (EmitContext ec)

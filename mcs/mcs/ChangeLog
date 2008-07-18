@@ -1,5 +1,9 @@
 2008-07-18  Marek Safar  <marek.safar@gmail.com>
 
+	* iterators.cs, statement.cs: Finished statements CloneTo.
+
+2008-07-18  Marek Safar  <marek.safar@gmail.com>
+
 	* anonymous.cs: ExpressionTreeProxy is of Value type expression.
 	
 	* expression.cs: Emit optimized default value expressions in expression tree
