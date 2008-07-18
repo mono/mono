@@ -1,4 +1,4 @@
-// CS3005: Identifier `CLSClass.NameABC' differing only in case is not CLS-compliant
+// cs3005-12.cs: Identifier `CLSClass.NameAbC(int)' differing only in case is not CLS-compliant
 // Line: 9
 // Compiler options: -warnaserror
 

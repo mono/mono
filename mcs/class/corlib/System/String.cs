@@ -2527,36 +2527,34 @@ namespace System
 		// When modifying it, GetCaseInsensitiveHashCode() should be modified as well.
 		public unsafe override int GetHashCode ()
 		{
-			fixed (char* c = this) {
-				char* cc = c;
-				char* end = cc + length - 1;
-				int h = 23;
-				while (cc < end) {
-					h = (h << 5) * 37 + *cc;
-					h = (h << 5) * 37 + cc [1];
-					cc += 2;
+			fixed (char * c = this) {
+				char * cc = c;
+				char * end = cc + length - 1;
+				int h = 0;
+				for (;cc < end; cc += 2) {
+					h = (h << 5) - h + *cc;
+					h = (h << 5) - h + cc [1];
 				}
 				++end;
 				if (cc < end)
-					h = (h << 5) * 37 + *cc;
+					h = (h << 5) - h + *cc;
 				return h;
 			}
 		}
 
 		internal unsafe int GetCaseInsensitiveHashCode ()
 		{
-			fixed (char* c = this) {
-				char* cc = c;
-				char* end = cc + length - 1;
-				int h = 23;
-				while (cc < end) {
-					h = (h << 5) * 37 + Char.ToUpperInvariant (*cc);
-					h = (h << 5) * 37 + Char.ToUpperInvariant (cc [1]);
-					cc += 2;
+			fixed (char * c = this) {
+				char * cc = c;
+				char * end = cc + length - 1;
+				int h = 0;
+				for (;cc < end; cc += 2) {
+					h = (h << 5) - h + Char.ToUpperInvariant (*cc);
+					h = (h << 5) - h + Char.ToUpperInvariant (cc [1]);
 				}
 				++end;
 				if (cc < end)
-					h = (h << 5) * 37 + Char.ToUpperInvariant (*cc);
+					h = (h << 5) - h + Char.ToUpperInvariant (*cc);
 				return h;
 			}
 		}
