@@ -43,12 +43,12 @@ namespace System.Linq.Expressions {
 		ExpressionType node_type;
 		Type type;
 
-		internal const BindingFlags PublicInstance = BindingFlags.Public | BindingFlags.Instance;
-		internal const BindingFlags NonPublicInstance = BindingFlags.NonPublic | BindingFlags.Instance;
-		internal const BindingFlags PublicStatic = BindingFlags.Public | BindingFlags.Static;
-		internal const BindingFlags AllInstance = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-		internal const BindingFlags AllStatic = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-		internal const BindingFlags All = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
+		internal const BindingFlags PublicInstance = BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+		internal const BindingFlags NonPublicInstance = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+		internal const BindingFlags PublicStatic = BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy;
+		internal const BindingFlags AllInstance = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+		internal const BindingFlags AllStatic = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy;
+		internal const BindingFlags All = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
 
 		public ExpressionType NodeType {
 			get { return node_type; }
@@ -78,7 +78,7 @@ namespace System.Linq.Expressions {
 
 		static MethodInfo GetUnaryOperator (string oper_name, Type declaring, Type param, Type ret)
 		{
-			var methods = GetNotNullableOf (declaring).GetMethods (PublicStatic);
+			var methods = declaring.GetNotNullableType ().GetMethods (PublicStatic);
 
 			foreach (var method in methods) {
 				if (method.Name != oper_name)
@@ -88,10 +88,13 @@ namespace System.Linq.Expressions {
 				if (parameters.Length != 1)
 					continue;
 
-				if (!IsAssignableToParameterType (GetNotNullableOf (param), parameters [0]))
+				if (method.IsGenericMethod)
 					continue;
 
-				if (ret != null && method.ReturnType != GetNotNullableOf (ret))
+				if (!IsAssignableToParameterType (param.GetNotNullableType (), parameters [0]))
+					continue;
+
+				if (ret != null && method.ReturnType != ret.GetNotNullableType ())
 					continue;
 
 				return method;
@@ -100,13 +103,28 @@ namespace System.Linq.Expressions {
 			return null;
 		}
 
+		internal static MethodInfo GetTrueOperator (Type self)
+		{
+			return GetBooleanOperator ("op_True", self);
+		}
+
+		internal static MethodInfo GetFalseOperator (Type self)
+		{
+			return GetBooleanOperator ("op_False", self);
+		}
+
+		static MethodInfo GetBooleanOperator (string op, Type self)
+		{
+			return GetUnaryOperator (op, self, self, typeof (bool));
+		}
+
 		static bool IsAssignableToParameterType (Type type, ParameterInfo param)
 		{
 			var ptype = param.ParameterType;
 			if (ptype.IsByRef)
 				ptype = ptype.GetElementType ();
 
-			return GetNotNullableOf (type).IsAssignableTo (ptype);
+			return type.GetNotNullableType ().IsAssignableTo (ptype);
 		}
 
 		static MethodInfo CheckUnaryMethod (MethodInfo method, Type param)
@@ -122,7 +140,7 @@ namespace System.Linq.Expressions {
 			if (parameters.Length != 1)
 				throw new ArgumentException ("Must have only one parameters", "method");
 
-			if (!IsAssignableToParameterType (GetNotNullableOf (param), parameters [0]))
+			if (!IsAssignableToParameterType (param.GetNotNullableType (), parameters [0]))
 				throw new InvalidOperationException ("left-side argument type does not match expression type");
 
 			return method;
@@ -136,7 +154,7 @@ namespace System.Linq.Expressions {
 			if (method != null)
 				return CheckUnaryMethod (method, expression.Type);
 
-				var type = GetNotNullableOf (expression.Type);
+			var type = expression.Type.GetNotNullableType ();
 
 				if (validator (type))
 					return null;
@@ -161,6 +179,9 @@ namespace System.Linq.Expressions {
 
 				var parameters = method.GetParameters ();
 				if (parameters.Length != 2)
+					continue;
+
+				if (method.IsGenericMethod)
 					continue;
 
 				if (!IsAssignableToParameterType (left.Type, parameters [0]))
@@ -209,8 +230,8 @@ namespace System.Linq.Expressions {
 			} else {
 				Type ltype = left.Type;
 				Type rtype = right.Type;
-				Type ultype = GetNotNullableOf (ltype);
-				Type urtype = GetNotNullableOf (rtype);
+				Type ultype = ltype.GetNotNullableType ();
+				Type urtype = rtype.GetNotNullableType ();
 
 				if (oper_name == "op_BitwiseOr" || oper_name == "op_BitwiseAnd") {
 					if (ultype == typeof (bool)) {
@@ -305,8 +326,8 @@ namespace System.Linq.Expressions {
 					type = method.ReturnType;
 				} else if (left.Type.IsNullable ()
 					&& right.Type.IsNullable ()
-					&& GetNotNullableOf (left.Type) == lp.ParameterType
-					&& GetNotNullableOf (right.Type) == rp.ParameterType
+					&& left.Type.GetNotNullableType () == lp.ParameterType
+					&& right.Type.GetNotNullableType () == rp.ParameterType
 					&& !method.ReturnType.IsNullable ()) {
 
 					is_lifted = true;
@@ -345,7 +366,7 @@ namespace System.Linq.Expressions {
 					is_lifted = false;
 					type = method.ReturnType;
 				} else if (expression.Type.IsNullable ()
-					&& GetNotNullableOf (expression.Type) == parameter.ParameterType
+					&& expression.Type.GetNotNullableType () == parameter.ParameterType
 					&& !method.ReturnType.IsNullable ()) {
 
 					is_lifted = true;
@@ -384,8 +405,8 @@ namespace System.Linq.Expressions {
 					type = method.ReturnType;
 				} else if (left.Type.IsNullable ()
 					&& right.Type.IsNullable ()
-					&& GetNotNullableOf (left.Type) == lp.ParameterType
-					&& GetNotNullableOf (right.Type) == rp.ParameterType) {
+					&& left.Type.GetNotNullableType () == lp.ParameterType
+					&& right.Type.GetNotNullableType () == rp.ParameterType) {
 
 					is_lifted = true;
 
@@ -533,7 +554,7 @@ namespace System.Linq.Expressions {
 		{
 			method = BinaryCoreCheck (null, left, right, method);
 
-			if (GetNotNullableOf (left.Type) != typeof (double))
+			if (left.Type.GetNotNullableType () != typeof (double))
 				throw new InvalidOperationException ("Power only supports double arguments");
 
 			return MakeSimpleBinary (ExpressionType.Power, left, right, method);
@@ -622,15 +643,17 @@ namespace System.Linq.Expressions {
 			method = BinaryCoreCheck (oper, left, right, method);
 
 			if (method == null) {
-				if (GetNotNullableOf (left.Type) != typeof (bool))
+				if (left.Type.GetNotNullableType () != typeof (bool))
 					throw new InvalidOperationException ("Only booleans are allowed");
 			} else {
+				var type = left.Type.GetNotNullableType ();
+
 				// The method should have identical parameter and return types.
-				if (left.Type != right.Type || method.ReturnType != GetNotNullableOf (left.Type))
+				if (left.Type != right.Type || method.ReturnType != type)
 					throw new ArgumentException ("left, right and return type must match");
 
-				var optrue = GetNotNullableOf (left.Type).GetMethod ("op_True", AllStatic);
-				var opfalse = GetNotNullableOf (left.Type).GetMethod ("op_False", AllStatic);
+				var optrue = GetTrueOperator (type);
+				var opfalse = GetFalseOperator (type);
 
 				if (optrue == null || opfalse == null)
 					throw new ArgumentException ("Operators true and false are required but not defined");
@@ -764,7 +787,7 @@ namespace System.Linq.Expressions {
 			Type result = null;
 
 			if (left.Type.IsNullable ()) {
-				Type lbase = GetNullableArgumentType (left.Type);
+				Type lbase = left.Type.GetNotNullableType ();
 
 				if (!right.Type.IsNullable () && right.Type.IsAssignableTo (lbase))
 					result = lbase;
@@ -774,7 +797,7 @@ namespace System.Linq.Expressions {
 				result = left.Type;
 
 			if (result == null) {
-				if (left.Type.IsNullable () && GetNullableArgumentType (left.Type).IsAssignableTo (right.Type))
+				if (left.Type.IsNullable () && left.Type.GetNotNullableType ().IsAssignableTo (right.Type))
 					result = right.Type;
 			}
 
@@ -1135,7 +1158,7 @@ namespace System.Linq.Expressions {
 
 		static bool IsConvertiblePrimitive (Type type)
 		{
-			var t = GetNotNullableOf (type);
+			var t = type.GetNotNullableType ();
 
 			if (t == typeof (bool))
 				return false;
@@ -1151,10 +1174,10 @@ namespace System.Linq.Expressions {
 			if (type == target)
 				return true;
 
-			if (type.IsNullable () && target == GetNotNullableOf (type))
+			if (type.IsNullable () && target == type.GetNotNullableType ())
 				return true;
 
-			if (target.IsNullable () && type == GetNotNullableOf (target))
+			if (target.IsNullable () && type == target.GetNotNullableType ())
 				return true;
 
 			if (IsConvertiblePrimitive (type) && IsConvertiblePrimitive (target))
@@ -1985,7 +2008,8 @@ namespace System.Linq.Expressions {
 					throw new ArgumentNullException ("initializers");
 
 				if (!expression.Type.IsAssignableTo (type))
-					throw new InvalidOperationException ();
+					throw new InvalidOperationException (
+						string.Format ("{0} IsAssignableTo {1}, expression [ {2} ] : {3}", expression.Type, type, expression.NodeType, expression));
 
 				// TODO: Quote elements if type == typeof (Expression)
 			}
@@ -2187,19 +2211,6 @@ namespace System.Linq.Expressions {
 				t == typeof (uint) ||
 				t == typeof (ulong) ||
 				t == typeof (byte);
-		}
-
-		//
-		// returns the T in a a Nullable<T> type.
-		//
-		internal static Type GetNullableArgumentType (Type type)
-		{
-			return type.GetFirstGenericArgument ();
-		}
-
-		internal static Type GetNotNullableOf (Type type)
-		{
-			return type.IsNullable () ? GetNullableArgumentType (type) : type;
 		}
 
 		//

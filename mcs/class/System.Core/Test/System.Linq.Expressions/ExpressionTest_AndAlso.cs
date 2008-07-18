@@ -332,5 +332,44 @@ namespace MonoTests.System.Linq.Expressions
 
 			Expression.AndAlso (l, r, method);
 		}
+
+		class A {
+			public static bool operator true (A x)
+			{
+				return true;
+			}
+
+			public static bool operator false (A x)
+			{
+				return false;
+			}
+		}
+
+		class B : A {
+			public static B operator & (B x, B y)
+			{
+				return new B ();
+			}
+
+			public static bool op_True<T> (B x)
+			{
+				return true;
+			}
+
+			public static bool op_False (B x)
+			{
+				return false;
+			}
+		}
+
+		[Test] // from https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=350487
+		public void Connect350487 ()
+		{
+			var p = Expression.Parameter (typeof (B), "b");
+			var l = Expression.Lambda<Func<B, A>> (
+				Expression.AndAlso (p, p), p).Compile ();
+
+			Assert.IsNotNull (l (null));
+		}
 	}
 }
