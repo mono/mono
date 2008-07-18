@@ -543,7 +543,7 @@ namespace Mono.CSharp {
 
 			public override Expression DoResolve (EmitContext ec)
 			{
-				eclass = ExprClass.MethodGroup;
+				eclass = ExprClass.Value;
 				type = TypeManager.expression_type_expr.Type;
 				return this;
 			}

@@ -5932,8 +5932,13 @@ namespace Mono.CSharp {
 			args = new ArrayList (array_data == null ? 1 : array_data.Count + 1);
 			args.Add (new Argument (new TypeOf (new TypeExpression (array_element_type, loc), loc)));
 			if (array_data != null) {
-				foreach (Expression e in array_data)
+				for (int i = 0; i < array_data.Count; ++i) {
+					Expression e = (Expression) array_data [i];
+					if (e == null)
+						e = Convert.ImplicitConversion (ec, (Expression) initializers [i], array_element_type, loc);
+
 					args.Add (new Argument (e.CreateExpressionTree (ec)));
+				}
 			}
 
 			return CreateExpressionFactoryCall ("NewArrayInit", args);

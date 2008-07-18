@@ -1,4 +1,11 @@
-2008-07-17  Marek Safar  <marek.safar@gmail.com>
+2008-07-18  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs: ExpressionTreeProxy is of Value type expression.
+	
+	* expression.cs: Emit optimized default value expressions in expression tree
+	array initializer.
+
+2008-07-18  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs, cs-parser.jay, statement.cs: Error reporting fixes.
 
