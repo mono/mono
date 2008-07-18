@@ -47,7 +47,10 @@ namespace System.ComponentModel
 		
 		protected void RaiseExceptionIfNecessary()
 		{
-			if (_error != null) throw _error;
+			if (_error != null)
+				throw new System.Reflection.TargetInvocationException (_error);
+			else if (_cancelled)
+				throw new InvalidOperationException ("The operation was cancelled");	
 		}
 		
 		public bool Cancelled {

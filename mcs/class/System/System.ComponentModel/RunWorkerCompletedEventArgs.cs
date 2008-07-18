@@ -46,7 +46,10 @@ namespace System.ComponentModel
 		object result, user_state;
 
 		public object Result {
-			get { return result; }
+			get {
+				RaiseExceptionIfNecessary ();
+				return result;
+			}
 		}
 
 		// It is always null. See .ctor() for details.

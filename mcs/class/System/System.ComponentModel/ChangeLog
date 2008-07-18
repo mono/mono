@@ -1,3 +1,24 @@
+2008-07-16  Jonathan Pobst  <monkey@jpobst.com>
+	[Backport to 2.0]
+	Apply patch from Achille Fouilleul (achille.fouilleul at gadz dot org)
+
+	* BackgroundWorker.cs: Ensure the async object is set to null before
+	calling RunWorkerCompleted, as IsBusy is based off the async object.
+	[Fixes bug #394365]
+
+2008-07-16  Jonathan Pobst  <monkey@jpobst.com>
+	[Backport to 2.0]
+	Apply patches from Jordan Callicoat (MonkeeSage at gmail dot com)
+
+	* AsyncCompleteEventArgs.cs: RaiseExceptionIfNecessary should throw
+	TargetInvocationException if there was an exception, and IOE if
+	the operation was cancelled.
+	* BackgroundWorker.cs: Do not call RunWorkerCompleted from CancelAsync,
+	setting cancel_pending to true is enough.
+	* RunWorkerCompletedEventArgs.cs: Raise exceptions when user tries
+	to access the Result if there are any exceptions.
+	[Fixes bugs #328830 and 373153]
+
 2008-07-17  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TypeDescriptor.cs: Attributes precendence (higher to lower) 
