@@ -1,3 +1,8 @@
+2008-07-18  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs, BinaryExpression.cs: fix retrieval of true and false
+	operators.
+
 2008-06-20  Jb Evain  <jbevain@novell.com>
 
 	* LambdaExpression.cs, EmitContext.cs: refactor the emit context to

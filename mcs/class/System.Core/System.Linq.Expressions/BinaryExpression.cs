@@ -182,12 +182,12 @@ namespace System.Linq.Expressions {
 
 		MethodInfo GetFalseOperator ()
 		{
-			return left.Type.GetNotNullableType ().GetMethod ("op_False", AllStatic);
+			return GetFalseOperator (left.Type.GetNotNullableType ());
 		}
 
 		MethodInfo GetTrueOperator ()
 		{
-			return left.Type.GetNotNullableType ().GetMethod ("op_True", AllStatic);
+			return GetTrueOperator (left.Type.GetNotNullableType ());
 		}
 
 		void EmitUserDefinedLogicalShortCircuit (EmitContext ec)

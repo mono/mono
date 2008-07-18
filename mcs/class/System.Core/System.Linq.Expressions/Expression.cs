@@ -43,12 +43,12 @@ namespace System.Linq.Expressions {
 		ExpressionType node_type;
 		Type type;
 
-		internal const BindingFlags PublicInstance = BindingFlags.Public | BindingFlags.Instance;
-		internal const BindingFlags NonPublicInstance = BindingFlags.NonPublic | BindingFlags.Instance;
-		internal const BindingFlags PublicStatic = BindingFlags.Public | BindingFlags.Static;
-		internal const BindingFlags AllInstance = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-		internal const BindingFlags AllStatic = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-		internal const BindingFlags All = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
+		internal const BindingFlags PublicInstance = BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+		internal const BindingFlags NonPublicInstance = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+		internal const BindingFlags PublicStatic = BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy;
+		internal const BindingFlags AllInstance = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
+		internal const BindingFlags AllStatic = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy;
+		internal const BindingFlags All = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
 
 		public ExpressionType NodeType {
 			get { return node_type; }
@@ -88,6 +88,9 @@ namespace System.Linq.Expressions {
 				if (parameters.Length != 1)
 					continue;
 
+				if (method.IsGenericMethod)
+					continue;
+
 				if (!IsAssignableToParameterType (param.GetNotNullableType (), parameters [0]))
 					continue;
 
@@ -98,6 +101,21 @@ namespace System.Linq.Expressions {
 			}
 
 			return null;
+		}
+
+		internal static MethodInfo GetTrueOperator (Type self)
+		{
+			return GetBooleanOperator ("op_True", self);
+		}
+
+		internal static MethodInfo GetFalseOperator (Type self)
+		{
+			return GetBooleanOperator ("op_False", self);
+		}
+
+		static MethodInfo GetBooleanOperator (string op, Type self)
+		{
+			return GetUnaryOperator (op, self, self, typeof (bool));
 		}
 
 		static bool IsAssignableToParameterType (Type type, ParameterInfo param)
@@ -161,6 +179,9 @@ namespace System.Linq.Expressions {
 
 				var parameters = method.GetParameters ();
 				if (parameters.Length != 2)
+					continue;
+
+				if (method.IsGenericMethod)
 					continue;
 
 				if (!IsAssignableToParameterType (left.Type, parameters [0]))
@@ -625,12 +646,14 @@ namespace System.Linq.Expressions {
 				if (left.Type.GetNotNullableType () != typeof (bool))
 					throw new InvalidOperationException ("Only booleans are allowed");
 			} else {
+				var type = left.Type.GetNotNullableType ();
+
 				// The method should have identical parameter and return types.
-				if (left.Type != right.Type || method.ReturnType != left.Type.GetNotNullableType ())
+				if (left.Type != right.Type || method.ReturnType != type)
 					throw new ArgumentException ("left, right and return type must match");
 
-				var optrue = left.Type.GetNotNullableType ().GetMethod ("op_True", AllStatic);
-				var opfalse = left.Type.GetNotNullableType ().GetMethod ("op_False", AllStatic);
+				var optrue = GetTrueOperator (type);
+				var opfalse = GetFalseOperator (type);
 
 				if (optrue == null || opfalse == null)
 					throw new ArgumentException ("Operators true and false are required but not defined");
