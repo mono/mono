@@ -1796,6 +1796,12 @@ namespace Mono.CSharp {
 			if (e is VariableReference || (e is Constant && b.GetLocalInfo (name) != null))
 				return true;
 
+			if (this is ToplevelBlock) {
+				Report.SymbolRelatedToPreviousError (kvi.Location, name);
+				e.Error_VariableIsUsedBeforeItIsDeclared (name);
+				return false;
+			}
+
 			//
 			// Even though we detected the error when the name is used, we
 			// treat it as if the variable declaration was in error.
@@ -2214,13 +2220,14 @@ namespace Mono.CSharp {
 					if (s is EmptyStatement)
 						continue;
 
-					if (s is Block)
-						((Block) s).unreachable = true;
-
 					if (!unreachable_shown && !(s is LabeledStatement)) {
 						Report.Warning (162, 2, s.loc, "Unreachable code detected");
 						unreachable_shown = true;
 					}
+
+					Block c_block = s as Block;
+					if (c_block != null)
+						c_block.unreachable = c_block.unreachable_shown = true;
 				}
 
 				//

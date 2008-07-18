@@ -1,5 +1,9 @@
 2008-07-17  Marek Safar  <marek.safar@gmail.com>
 
+	* ecore.cs, cs-parser.jay, statement.cs: Error reporting fixes.
+
+2008-07-17  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #367536
 	* cs-parser.jay: Check static constructor of generic types for an access
 	modifier.

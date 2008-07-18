@@ -393,10 +393,9 @@ namespace Mono.CSharp {
 				TypeManager.CSharpName (target));
 		}
 
-		protected void Error_VariableIsUsedBeforeItIsDeclared (string name)
+		public virtual void Error_VariableIsUsedBeforeItIsDeclared (string name)
 		{
-			Report.Error (841, loc, "The variable `{0}' cannot be used before it is declared",
-				name);
+			Report.Error (841, loc, "A local variable `{0}' cannot be used before it is declared", name);
 		}
 
 		protected virtual void Error_TypeDoesNotContainDefinition (Type type, string name)
@@ -5037,6 +5036,13 @@ namespace Mono.CSharp {
 
 			if (is_volatile || is_marshal_by_ref ())
 				base.EmitSideEffect (ec);
+		}
+
+		public override void Error_VariableIsUsedBeforeItIsDeclared (string name)
+		{
+			Report.Error (844, loc,
+				"A local variable `{0}' cannot be used before it is declared. Consider renaming the local variable when it hides the field `{1}'",
+				name, GetSignatureForError ());
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
