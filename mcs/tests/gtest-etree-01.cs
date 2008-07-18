@@ -1942,6 +1942,13 @@ class Tester
 		Assert (new char [] { 'a' }, e3.Compile ().Invoke () [0]);
 	}
 	
+	void NewArrayInitTest_5 ()
+	{
+		Expression<Func<int?[]>> e = () => new int?[] { null, 3, 4 };	
+		AssertNodeType (e, ExpressionType.NewArrayInit);
+		Assert (3, e.Compile ().Invoke ().Length);
+	}
+	
 	void NewArrayBoundsTest ()
 	{
 		Expression<Func<int [,]>> e = () => new int [2,3];

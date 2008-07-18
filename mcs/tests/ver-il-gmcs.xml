@@ -13816,6 +13816,11 @@
         <size>7</size>
       </method>
     </type>
+    <type name="Tester">
+      <method name="Void NewArrayInitTest_5()">
+        <size>158</size>
+      </method>
+    </type>
   </test>
   <test name="gtest-etree-02.cs">
     <type name="M">
@@ -13944,6 +13949,32 @@
       </method>
     </type>
     <type name="Foo`1+&lt;ContainsAll&gt;c__AnonStorey1`1[T,U]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-etree-11.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>12</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Invalid(Int32)">
+        <size>134</size>
+      </method>
+      <method name="Void Other(System.Int32[])">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Invalid&gt;c__AnonStorey0">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
