@@ -1,3 +1,8 @@
+2008-07-15  Jonathan Pobst  <monkey@jpobst.com>
+	[Backport to 2.0]
+	* ImageList.cs: Fix ICollection.CopyTo implementation for
+	ImageListCollection.  [Fixes bug #409169]
+
 2008-07-17  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PropertyGridTextBox.cs: Validation should be performed only if we 
