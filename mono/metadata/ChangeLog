@@ -1,3 +1,14 @@
+2008-07-18 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object-internals.h:
+	* object.c: New mono_runtime_class_init_full function
+	that makes throwing the exception optinal.
+
+	* class-internals.h: New exception type MONO_EXCEPTION_OBJECT_SUPPLIED
+	for the case where the exception object is supplied.
+
+	Backported from trunk.
+
 2008-07-16  Kornél Pál  <kornelpal@gmail.com>
 
 	* coree.h: Define __ImageBase as _image_base__ on cygwin that fixes build with
