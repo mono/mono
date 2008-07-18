@@ -221,6 +221,11 @@ namespace Mono.CSharp.Linq
 
 		protected abstract string MethodName { get; }
 
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			// Nothing to mutate
+		}
+
 		public virtual AQueryClause Next {
 			set {
 				next = value;
@@ -679,6 +684,11 @@ namespace Mono.CSharp.Linq
 			}
 
 			public override void Emit (EmitContext ec)
+			{
+				throw new NotSupportedException ();
+			}
+
+			public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 			{
 				throw new NotSupportedException ();
 			}

@@ -815,6 +815,15 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			if (delegate_instance_expression != null)
+				delegate_instance_expression.MutateHoistedGenericType (storey);
+
+			delegate_method = storey.MutateGenericMethod (delegate_method);
+			constructor_method = storey.MutateConstructor (constructor_method);
+		}
+
 		#region IErrorHandler Members
 
 		public bool NoExactMatch (EmitContext ec, MethodBase method)
