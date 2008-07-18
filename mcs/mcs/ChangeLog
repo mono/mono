@@ -1,5 +1,9 @@
 2008-07-18  Marek Safar  <marek.safar@gmail.com>
 
+	* convert.cs: Don't box same type arguments.
+
+2008-07-18  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs, linq.cs, delegate.cs, constant.cs, nullable.cs, expression.cs:
 	Finished missing generic type mutators.
 

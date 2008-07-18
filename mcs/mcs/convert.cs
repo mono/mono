@@ -428,9 +428,12 @@ namespace Mono.CSharp {
 				if (TypeManager.IsNullableType (expr_type))
 					return TypeManager.GetTypeArguments (expr_type) [0].IsEnum;
 			}
-			
+
 			if (TypeManager.IsSubclassOf (expr_type, target_type)) {
-				if (TypeManager.IsGenericParameter (expr_type))
+				//
+				// Don't box same type arguments
+				//
+				if (TypeManager.IsGenericParameter (expr_type) && expr_type != target_type)
 					return true;
 
 				return false;
