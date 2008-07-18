@@ -764,7 +764,7 @@ namespace System.Linq.Expressions {
 			Type result = null;
 
 			if (left.Type.IsNullable ()) {
-				Type lbase = GetNullableArgumentType (left.Type);
+				Type lbase = GetNotNullableOf (left.Type);
 
 				if (!right.Type.IsNullable () && right.Type.IsAssignableTo (lbase))
 					result = lbase;
@@ -774,7 +774,7 @@ namespace System.Linq.Expressions {
 				result = left.Type;
 
 			if (result == null) {
-				if (left.Type.IsNullable () && GetNullableArgumentType (left.Type).IsAssignableTo (right.Type))
+				if (left.Type.IsNullable () && GetNotNullableOf (left.Type).IsAssignableTo (right.Type))
 					result = right.Type;
 			}
 
@@ -1985,7 +1985,8 @@ namespace System.Linq.Expressions {
 					throw new ArgumentNullException ("initializers");
 
 				if (!expression.Type.IsAssignableTo (type))
-					throw new InvalidOperationException ();
+					throw new InvalidOperationException (
+						string.Format ("{0} IsAssignableTo {1}, expression [ {2} ] : {3}", expression.Type, type, expression.NodeType, expression));
 
 				// TODO: Quote elements if type == typeof (Expression)
 			}
@@ -2189,17 +2190,9 @@ namespace System.Linq.Expressions {
 				t == typeof (byte);
 		}
 
-		//
-		// returns the T in a a Nullable<T> type.
-		//
-		internal static Type GetNullableArgumentType (Type type)
-		{
-			return type.GetFirstGenericArgument ();
-		}
-
 		internal static Type GetNotNullableOf (Type type)
 		{
-			return type.IsNullable () ? GetNullableArgumentType (type) : type;
+			return type.IsNullable () ? type.GetFirstGenericArgument () : type;
 		}
 
 		//
