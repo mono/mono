@@ -2220,6 +2220,11 @@ namespace Mono.CSharp {
 				}
 			}
 
+			public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+			{
+				expr.MutateHoistedGenericType (storey);
+			}
+
 			public override void Emit (EmitContext ec)
 			{
 				expr.Emit (ec);
@@ -2269,6 +2274,11 @@ namespace Mono.CSharp {
 		public override void EmitBranchable (EmitContext ec, Label target, bool on_true)
 		{
 			expr.EmitBranchable (ec, target, on_true);
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			expr.MutateHoistedGenericType (storey);
 		}
 	}
 
@@ -2767,6 +2777,11 @@ namespace Mono.CSharp {
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
 			throw new NotSupportedException ("ET");
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			throw new NotSupportedException ();
 		}
 
 		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)

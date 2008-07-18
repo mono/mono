@@ -53,10 +53,10 @@ namespace Mono.CSharp.Nullable
 	{
 		public readonly Type Type;
 		public readonly Type UnderlyingType;
-		public readonly MethodInfo HasValue;
-		public readonly MethodInfo Value;
-		public readonly MethodInfo GetValueOrDefault;
-		public readonly ConstructorInfo Constructor;
+		public MethodInfo HasValue;
+		public MethodInfo Value;
+		public MethodInfo GetValueOrDefault;
+		public ConstructorInfo Constructor;
 
 		public NullableInfo (Type type)
 		{
@@ -182,6 +182,15 @@ namespace Mono.CSharp.Nullable
 				expr.Emit (ec);
 			else
 				LocalVariable.Emit (ec);
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			type = storey.MutateType (type);
+			info.Constructor = storey.MutateConstructor (info.Constructor);
+			info.HasValue = storey.MutateGenericMethod (info.HasValue);
+			info.GetValueOrDefault = storey.MutateGenericMethod (info.GetValueOrDefault);
+			info.Value = storey.MutateGenericMethod (info.Value);
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
@@ -1086,6 +1095,13 @@ namespace Mono.CSharp.Nullable
 			right.Emit (ec);
 
 			ig.MarkLabel (end_label);
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			left.MutateHoistedGenericType (storey);
+			right.MutateHoistedGenericType (storey);
+			type = storey.MutateType (type);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)

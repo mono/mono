@@ -6265,8 +6265,11 @@ namespace Mono.CSharp {
 				foreach (Argument a in arguments)
 					a.Expr.MutateHoistedGenericType (storey);
 			}
-
-			// TODO: finish !!
+			
+			if (array_data != null) {
+				foreach (Expression e in array_data)
+					e.MutateHoistedGenericType (storey);
+			}
 		}
 
 		//
@@ -6896,6 +6899,12 @@ namespace Mono.CSharp {
 		{
 			foreach (Argument arg in Arguments)
 				arg.Emit (ec);
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			foreach (Argument arg in Arguments)
+				arg.Expr.MutateHoistedGenericType (storey);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -7687,6 +7696,11 @@ namespace Mono.CSharp {
 				Expr.EmitBranchable (ec, target, on_true);
 		}
 
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			Expr.MutateHoistedGenericType (storey);
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			CheckedExpr target = (CheckedExpr) t;
@@ -7740,6 +7754,11 @@ namespace Mono.CSharp {
 		{
 			using (ec.With (EmitContext.Flags.AllCheckStateFlags, false))
 				Expr.EmitBranchable (ec, target, on_true);
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			Expr.MutateHoistedGenericType (storey);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -8913,6 +8932,12 @@ namespace Mono.CSharp {
 		{
 			source.Emit (ec);
 			ec.ig.Emit (OpCodes.Call, method);
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			source.MutateHoistedGenericType (storey);
+			method = storey.MutateGenericMethod (method);
 		}
 	}
 

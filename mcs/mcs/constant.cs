@@ -254,6 +254,11 @@ namespace Mono.CSharp {
 		{
 			// CloneTo: Nothing, we do not keep any state on this expression
 		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			// A constant cannot be of generic type
+		}
 	}
 
 	public abstract class IntegralConstant : Constant {
