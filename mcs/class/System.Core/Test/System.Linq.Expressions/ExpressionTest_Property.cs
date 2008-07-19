@@ -177,5 +177,19 @@ namespace MonoTests.System.Linq.Expressions
 
 			Assert.AreEqual ("bar", barer (new Bar ("bar")));
 		}
+
+		public static int StaticProperty {
+			get { return 42; }
+		}
+
+		[Test]
+		[Category ("NotDotNet")] // http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=339351
+		[ExpectedException (typeof (ArgumentException))]
+		public void StaticPropertyWithInstanceArgument ()
+		{
+			Expression.Property (
+				Expression.Parameter (GetType (), "t"),
+				GetType ().GetProperty ("StaticProperty"));
+		}
 	}
 }
