@@ -1,3 +1,8 @@
+2008-07-19  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #410666
+	* anonymous.cs: Correctly initialize generic storey reference.
+
 2008-07-18  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs, linq.cs, delegate.cs, constant.cs, nullable.cs, expression.cs:

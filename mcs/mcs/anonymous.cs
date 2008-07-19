@@ -283,8 +283,11 @@ namespace Mono.CSharp {
 					//
 					// Setting local field
 					//
-					FieldExpr f_set_expr = new FieldExpr (sf.Field.FieldBuilder, Location);
-					f_set_expr.InstanceExpression = GetStoreyInstanceExpression (ec);
+					Expression instace_expr = GetStoreyInstanceExpression (ec);
+					FieldExpr f_set_expr = TypeManager.IsGenericType (instace_expr.Type) ?
+						new FieldExpr (sf.Field.FieldBuilder, instace_expr.Type, Location) :
+						new FieldExpr (sf.Field.FieldBuilder, Location);
+					f_set_expr.InstanceExpression = instace_expr;
 
 					SimpleAssign a = new SimpleAssign (f_set_expr, sf.Storey.GetStoreyInstanceExpression (ec));
 					if (a.Resolve (ec) != null)
