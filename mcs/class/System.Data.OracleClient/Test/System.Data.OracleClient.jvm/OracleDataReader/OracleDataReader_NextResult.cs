@@ -36,12 +36,13 @@ namespace MonoTests.System.Data.OracleClient
 	[TestFixture]
 	public class OracleDataReader_NextResult : ADONetTesterClass 
 	{
-		OracleConnection con = new OracleConnection(MonoTests.System.Data.Utils.ConnectedDataProvider.ConnectionString);
+		OracleConnection con;
 		Exception exp = null;
 
 		[SetUp]
 		public void SetUp() {
 			base.PrepareDataForTesting(MonoTests.System.Data.Utils.ConnectedDataProvider.ConnectionString);
+			con = new OracleConnection (MonoTests.System.Data.Utils.ConnectedDataProvider.ConnectionString);
 			con.Open();
 		}
 

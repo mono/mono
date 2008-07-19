@@ -1,3 +1,12 @@
+2008-07-16 Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OracleDataReader_GetDateTime.cs: Moved initialization of
+	connectionString to a setup method, as workaround for NUnit 2.2.0
+	bug with Assert.Ignore in ctor.
+	* OracleDataReader_NextResult.cs: Moved initialization of connection
+	to setup method, as workaround for NUnit 2.2.0 bug with Assert.Ignore
+	in ctor.
+
 2008-06-27 Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OracleDataReader_NextResult.cs: Ignore tests when not compiled for

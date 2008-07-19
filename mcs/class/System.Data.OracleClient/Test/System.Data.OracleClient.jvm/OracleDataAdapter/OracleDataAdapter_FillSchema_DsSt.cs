@@ -36,27 +36,29 @@ namespace MonoTests.System.Data.OracleClient
 public class OracleDataAdapter_FillSchema_DsSt : ADONetTesterClass
 {
 	private Exception exp;
-	private string connectionString = ConnectedDataProvider.ConnectionString;
+	private string connectionString;
 
 	public static void Main()
 	{
 		OracleDataAdapter_FillSchema_DsSt tc = new OracleDataAdapter_FillSchema_DsSt();
 		Exception l_exp = null;
-		try
-		{
+		try {
+			tc.SetUp ();
 			// Every Test must begin with BeginTest
 			tc.BeginTest("OracleDataAdapter_FillSchema_DsSt");
 			tc.run();
-		}
-		catch(Exception ex)
-		{
+		} catch(Exception ex) {
 			l_exp = ex;
-		}
-		finally
-		{
+		} finally {
 			// Every Test must End with EndTest
 			tc.EndTest(l_exp);
 		}
+	}
+
+	[SetUp]
+	public void SetUp ()
+	{
+		connectionString = ConnectedDataProvider.ConnectionString;
 	}
 
 	public void run()
