@@ -141,6 +141,17 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.AreEqual ("IsNullOrEmpty(\"\")", call.ToString ());
 		}
 
+		[Test]
+		[Category ("NotDotNet")] // http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=339351
+		[ExpectedException (typeof (ArgumentException))]
+		public void CallStaticMethodWithInstanceArgument ()
+		{
+			Expression.Call (
+				Expression.Parameter (GetType (), "t"),
+				GetType ().GetMethod ("Identity"),
+				Expression.Constant (null));
+		}
+
 		public static object Identity (object o)
 		{
 			return o;
@@ -224,17 +235,13 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+		[Category ("NotDotNet")] // http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=339351
+		[ExpectedException (typeof (ArgumentException))]
 		public void CallStaticMethodOnNonSenseInstanceExpression ()
 		{
-			var call = Expression.Call (
-					Expression.Constant ("la la la"),
-					this.GetType ().GetMethod ("OneStaticMethod"));
-
-			Assert.IsNotNull (call.Object);
-
-			var callMethod = Expression.Lambda<Func<int>> (call).Compile ();
-
-			Assert.AreEqual (42, callMethod ());
+			Expression.Call (
+				Expression.Constant ("la la la"),
+				this.GetType ().GetMethod ("OneStaticMethod"));
 		}
 
 		public static int DoSomethingWith (ref int a)

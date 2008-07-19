@@ -85,6 +85,16 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ("MemberClass.StaticField", expr.ToString(), "Field#09");
 		}
 
+		[Test]
+		[Category ("NotDotNet")] // http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=339351
+		[ExpectedException (typeof (ArgumentException))]
+		public void StaticFieldWithInstanceArgument ()
+		{
+			Expression.Field (
+				Expression.Parameter (GetType (), "t"),
+				GetType ().GetField ("foo"));
+		}
+
 		public static string foo = "foo";
 
 		[Test]

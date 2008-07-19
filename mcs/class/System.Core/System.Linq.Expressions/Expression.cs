@@ -1018,6 +1018,8 @@ namespace System.Linq.Expressions {
 				throw new ArgumentNullException ("method");
 			if (instance == null && !method.IsStatic)
 				throw new ArgumentNullException ("instance");
+			if (method.IsStatic && instance != null)
+				throw new ArgumentException ("instance");
 			if (!method.IsStatic && !instance.Type.IsAssignableTo (method.DeclaringType))
 				throw new ArgumentException ("Type is not assignable to the declaring type of the method");
 
@@ -1325,7 +1327,8 @@ namespace System.Linq.Expressions {
 					throw new ArgumentNullException ("expression");
 				if (!expression.Type.IsAssignableTo (field.DeclaringType))
 					throw new ArgumentException ("field");
-			}
+			} else if (expression != null)
+				throw new ArgumentException ("expression");
 
 			return new MemberExpression (expression, field, field.FieldType);
 		}
@@ -2060,7 +2063,8 @@ namespace System.Linq.Expressions {
 					throw new ArgumentNullException ("expression");
 				if (!expression.Type.IsAssignableTo (propertyAccessor.DeclaringType))
 					throw new ArgumentException ("expression");
-			}
+			} else if (expression != null)
+				throw new ArgumentException ("expression");
 
 			var prop = GetAssociatedProperty (propertyAccessor);
 			if (prop == null)
@@ -2095,7 +2099,8 @@ namespace System.Linq.Expressions {
 					throw new ArgumentNullException ("expression");
 				if (!expression.Type.IsAssignableTo (property.DeclaringType))
 					throw new ArgumentException ("expression");
-			}
+			} else if (expression != null)
+				throw new ArgumentException ("expression");
 
 			return new MemberExpression (expression, property, property.PropertyType);
 		}

@@ -1,3 +1,8 @@
+2008-07-19  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs (Call, Field, Property): disallow instance arguments
+	on static members. See ms connect #339351.
+
 2008-07-18  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs, BinaryExpression.cs: fix retrieval of true and false
