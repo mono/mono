@@ -12046,6 +12046,56 @@
       </method>
     </type>
   </test>
+  <test name="gtest-anon-40.cs">
+    <type name="RunTests">
+      <method name="Int32 Main()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test1.X">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Test1[R](R, Int32)">
+        <size>157</size>
+      </method>
+      <method name="Void Run()">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Test1.Foo">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Int32 Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test1.X+&lt;Test1&gt;c__AnonStorey1`1[R]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__0()">
+        <size>71</size>
+      </method>
+    </type>
+    <type name="Test1.X+&lt;Test1&gt;c__AnonStorey0`1[R]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test1.X+&lt;Test1&gt;c__AnonStorey2`1[R]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-5.cs">
     <type name="X">
       <method name="Void .ctor()">
