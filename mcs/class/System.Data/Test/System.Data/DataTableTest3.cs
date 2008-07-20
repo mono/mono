@@ -36,11 +36,24 @@ namespace Monotests_System.Data
 	[TestFixture]
 	public class DataTableTest3
 	{
-		string fileName1 = "Test/System.Data/TestFile3.xml";
+		string tempFile;
 		DataSet dataSet;
 		DataTable parentTable;
 		DataTable childTable;
 		DataTable secondChildTable;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			tempFile = Path.GetTempFileName ();
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			if (tempFile != null)
+				File.Delete (tempFile);
+		}
 
 		private void MakeParentTable ()
 		{
@@ -50,7 +63,7 @@ namespace Monotests_System.Data
 			DataColumn column;
 			DataRow row;
  
-			// Create new DataColumn, set DataType, 
+			// Create new DataColumn, set DataType,
 			// ColumnName and add to Table.
 			column = new DataColumn ();
 			column.DataType = typeof (int);
@@ -453,13 +466,13 @@ namespace Monotests_System.Data
 			dataSet.Tables.Remove (parentTable);
 
 			//Write
-			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
 				parentTable.WriteXmlSchema (stream);
 			}
 
 			//Read
-				DataTable table = new DataTable ();
-			using (FileStream stream = new FileStream (fileName1, FileMode.Open)) {
+			DataTable table = new DataTable ();
+			using (FileStream stream = new FileStream (tempFile, FileMode.Open)) {
 				table.ReadXmlSchema (stream);
 			}
 
@@ -474,7 +487,7 @@ namespace Monotests_System.Data
 			dataSet.Tables.Remove (parentTable);
 			parentTable.TableName = String.Empty;
 
-			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
 				try {
 					parentTable.WriteXmlSchema (stream);
 					Assert.Fail ("#1");
@@ -492,13 +505,13 @@ namespace Monotests_System.Data
 			//Write
 			MakeParentTable ();
 
-			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
 				parentTable.WriteXmlSchema (stream);
 			}
 
 			//Read
 			DataTable table = new DataTable ();
-			using (FileStream stream = new FileStream (fileName1, FileMode.Open)) {
+			using (FileStream stream = new FileStream (tempFile, FileMode.Open)) {
 				table.ReadXmlSchema (stream);
 			}
 
@@ -515,13 +528,13 @@ namespace Monotests_System.Data
 			MakeDataRelation ();
 
 			//Write
-			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
 				parentTable.WriteXmlSchema (stream, true);
 			}
 
 			//Read
 			DataTable table = new DataTable ();
-			using (FileStream stream = new FileStream (fileName1, FileMode.Open)) {
+			using (FileStream stream = new FileStream (tempFile, FileMode.Open)) {
 				table.ReadXmlSchema (stream);
 			}
 
@@ -571,16 +584,15 @@ namespace Monotests_System.Data
 			MakeDataRelation ();
 			
 			//Write
-			FileStream stream = new FileStream (fileName1, FileMode.Create);
-			childTable.WriteXmlSchema (stream);
-			stream.Dispose ();
-	
-			
+			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
+				childTable.WriteXmlSchema (stream);
+			}
+
 			//Read
-			stream = new FileStream (fileName1, FileMode.Open);
 			DataTable table = new DataTable (childTable.TableName);
-			table.ReadXmlSchema (stream);
-			stream.Dispose ();
+			using (FileStream stream = new FileStream (tempFile, FileMode.Open)) {
+				table.ReadXmlSchema (stream);
+			}
 			
 			//Check Properties of the table
 			Assert.AreEqual (string.Empty, table.Namespace, "#1");
@@ -659,7 +671,7 @@ namespace Monotests_System.Data
 		{
 			MakeParentTable ();
 
-			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
 				parentTable.WriteXmlSchema (stream);
 			}
 
@@ -667,7 +679,7 @@ namespace Monotests_System.Data
 			DataSet ds = new DataSet ();
 			ds.Tables.Add (table);
 			
-			using (FileStream stream = new FileStream (fileName1, FileMode.Open)) {
+			using (FileStream stream = new FileStream (tempFile, FileMode.Open)) {
 				try {
 					table.ReadXmlSchema (stream);
 					Assert.Fail ("#1");
@@ -705,7 +717,7 @@ namespace Monotests_System.Data
 		{
 			MakeParentTable ();
 
-			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
 				parentTable.WriteXmlSchema (stream);
 			}
 		
@@ -714,7 +726,7 @@ namespace Monotests_System.Data
 			table.Columns.Add (new DataColumn (parentTable.Columns [0].ColumnName, typeof (int)));
 
 			//ReadXmlSchema will not read any schema in this case
-			table.ReadXmlSchema (fileName1);
+			table.ReadXmlSchema (tempFile);
 
 			Assert.AreEqual (string.Empty, table.TableName, "#1");
 			Assert.AreEqual (1, table.Columns.Count, "#2");
@@ -726,7 +738,7 @@ namespace Monotests_System.Data
 		{
 			MakeParentTable ();
 
-			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+			using (FileStream stream = new FileStream (tempFile, FileMode.Create)) {
 				parentTable.WriteXmlSchema (stream);
 			}
 		
@@ -737,7 +749,7 @@ namespace Monotests_System.Data
 			table.Columns.Add (new DataColumn (parentTable.Columns [2].ColumnName, typeof (int)));
 
 			//ReadXmlSchema will not read any schema in this case
-			table.ReadXmlSchema (fileName1);
+			table.ReadXmlSchema (tempFile);
 
 			Assert.AreEqual (string.Empty, table.TableName, "#1");
 			Assert.AreEqual (3, table.Columns.Count, "#2");

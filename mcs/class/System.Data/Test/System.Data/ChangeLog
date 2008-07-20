@@ -1,5 +1,15 @@
 2008-07-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* XmlDataLoaderTest.cs: Use temporary file in TEMP dir instead of
+	creating file in source dir. Cleaned up test.
+	* DataTableTest3.cs
+	* DataTableTest4.cs
+	* DataTableTest5.cs: Use temporary file in TEMP dir instead of creating
+	file in source dir.
+	* TestFile3.xml, TestFile5.xml: Removed test output.
+
+2008-07-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* DataTableTest.cs
 	* DataTableTest2.cs
 	* DataTableTest3.cs

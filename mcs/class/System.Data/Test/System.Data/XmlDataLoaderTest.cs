@@ -25,59 +25,58 @@
 
 #if NET_2_0
 using System;
-using System.Data;
 using System.Collections;
-using System.IO;	
+using System.Data;
+using System.IO;
 using System.Xml;
+
 using NUnit.Framework;
 
 namespace Monotests_System.Data
 {
-	[TestFixture]	
+	[TestFixture]
 	public class XmlDataLoaderTest
 	{
-		DataSet _ds;
-		
-		public XmlDataLoaderTest ()
+		string tempFile;
+
+		[SetUp]
+		public void SetUp ()
 		{
+			tempFile = Path.GetTempFileName ();
 		}
 
-		private DataSet Create ()
+		[TearDown]
+		public void TearDown ()
 		{
-			DataSet ds = new DataSet ("Set");
-			DataTable dt = new DataTable ("Test");
-			dt.Columns.Add ("CustName",  typeof (String));
-			dt.Columns.Add ("Type",  typeof (System.Type));
-			ds.Tables.Add (dt);
-			return ds;
+			if (tempFile != null)
+				File.Delete (tempFile);
 		}
-				
-		public void Write ()
-		{
-			_ds = Create ();
-			DataTable dt = _ds.Tables [0];
-			DataRow dr = dt.NewRow ();
-			dr["CustName"] = System.DBNull.Value;
-			dr["Type"] = typeof (System.DBNull);
-			dt.Rows.Add (dr);
-			_ds.WriteXml ("Test/System.Data/TestReadWriteXml1.xml", XmlWriteMode.DiffGram);
-		}
-		
-		public void Read ()
-		{
-			_ds = Create ();
-			_ds.ReadXml ("Test/System.Data/TestReadWriteXml1.xml", XmlReadMode.DiffGram);
-		}
+
 		[Test]
 		public void XmlLoadTest ()
 		{
-			try {
-				XmlDataLoaderTest t = new XmlDataLoaderTest ();
-				t.Write ();
-				t.Read ();
-			} catch {
-				Assert.Fail ("#1 Should not throw Exception");
-			}
+			DataSet ds;
+
+			ds = Create ();
+			DataTable dt = ds.Tables [0];
+			DataRow dr = dt.NewRow ();
+			dr["CustName"] = DBNull.Value;
+			dr["Type"] = typeof (DBNull);
+			dt.Rows.Add (dr);
+			ds.WriteXml (tempFile, XmlWriteMode.DiffGram);
+
+			ds = Create ();
+			ds.ReadXml (tempFile, XmlReadMode.DiffGram);
+		}
+
+		private static DataSet Create ()
+		{
+			DataSet ds = new DataSet ("Set");
+			DataTable dt = new DataTable ("Test");
+			dt.Columns.Add ("CustName", typeof (String));
+			dt.Columns.Add ("Type", typeof (System.Type));
+			ds.Tables.Add (dt);
+			return ds;
 		}
 	}
 }
