@@ -322,6 +322,76 @@ namespace MonoTests.System.Windows.Forms
 				Assert.IsNotNull (ex.Message, "#4");
 			}
 		}
+
+		[Test] // LoadAsync ()
+		[Category ("NotWorking")]
+		public void LoadAsync1_ImageLocation_Empty ()
+		{
+			PictureBox pb = new PictureBox ();
+			pb.ImageLocation = string.Empty;
+
+			try {
+				pb.LoadAsync ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// ImageLocation must be set
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test] // LoadAsync ()
+		[Category ("NotWorking")]
+		public void LoadAsync1_ImageLocation_Null ()
+		{
+			PictureBox pb = new PictureBox ();
+			pb.ImageLocation = null;
+
+			try {
+				pb.LoadAsync ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// ImageLocation must be set
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test] // LoadAsync (String)
+		[Category ("NotWorking")]
+		public void LoadASync2_Url_Empty ()
+		{
+			PictureBox pb = new PictureBox ();
+
+			try {
+				pb.LoadAsync (string.Empty);
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// ImageLocation must be set
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test] // LoadAsync (String)
+		[Category ("NotWorking")]
+		public void LoadAsync2_Url_Null ()
+		{
+			PictureBox pb = new PictureBox ();
+
+			try {
+				pb.LoadAsync ((string) null);
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// ImageLocation must be set
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
 #endif
 
 		[Test]

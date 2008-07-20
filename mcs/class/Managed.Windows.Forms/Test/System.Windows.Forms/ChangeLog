@@ -1,3 +1,9 @@
+2008-07-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ListViewItemTest.cs: Added ListViewSubItem (de)serialization tests,
+	added/improved ctor tests and add property tests.
+	* PictureBoxTest.cs: Added tests for Load(Async) argument checks.
+
 2008-07-15  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ImageListTest.cs: Add test for bug #409169.
@@ -13,7 +19,7 @@
 2008-07-12  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* PictureBoxTest.cs: Split up ImageLocation test in sync and async
-	tests. Added tests for Load argument checks.
+	tests.
 
 2008-07-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
