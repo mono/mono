@@ -1,5 +1,15 @@
 2008-07-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* DataTableTest.cs
+	* DataTableTest2.cs
+	* DataTableTest3.cs
+	* DataTableTest4.cs
+	* DataTableTest5.cs: Code formatting (spaces to tabs, removed extra
+	spaces/tabs). Use typeof instead of Type.GetType. Ensure (File)Streams
+	are always closed. Improved exception tests.
+
+2008-07-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* DataRowTest2.cs: Improved int indexer test for setting value of
 	column to null/DBNull. Enabled indexer tests for setting column
 	value to null/DBNull.

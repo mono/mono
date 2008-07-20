@@ -25,13 +25,14 @@
 
 #if NET_2_0
 using System;
-using System.Data;
 using System.Collections;
+using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Xml;
-using NUnit.Framework;
 using System.Xml.Serialization;
-using System.Diagnostics;
+
+using NUnit.Framework;
 
 namespace Monotests_System.Data
 {
@@ -40,16 +41,16 @@ namespace Monotests_System.Data
 	{
 		string fileName1 = "Test/System.Data/TestFile5.xml";
 
-		DataSet dataSet = null;
-		DataTable dummyTable = null;
-		DataTable parentTable1 = null;
-		DataTable childTable = null;
-		DataTable secondChildTable = null;
+		DataSet dataSet;
+		DataTable dummyTable;
+		DataTable parentTable1;
+		DataTable childTable;
+		DataTable secondChildTable;
 
-		void WriteXmlSerializable (Stream s, DataTable dt) {
+		void WriteXmlSerializable (Stream s, DataTable dt)
+		{
 			XmlWriterSettings ws = new XmlWriterSettings ();
-			using (XmlWriter xw = XmlWriter.Create (s, ws)){
-				
+			using (XmlWriter xw = XmlWriter.Create (s, ws)) {
 				IXmlSerializable idt = dt;
 				xw.WriteStartElement ("start");
 				idt.WriteXml (xw);
@@ -58,39 +59,40 @@ namespace Monotests_System.Data
 			}
 		}
 
-		void ReadXmlSerializable (Stream s, DataTable dt) {
-			using (XmlReader xr = XmlReader.Create (s)){
+		void ReadXmlSerializable (Stream s, DataTable dt)
+		{
+			using (XmlReader xr = XmlReader.Create (s)) {
 				ReadXmlSerializable (dt, xr);
 			}
 		}
 
-		private static void ReadXmlSerializable (DataTable dt, XmlReader xr) {
-
+		private static void ReadXmlSerializable (DataTable dt, XmlReader xr)
+		{
 			XmlSerializer serializer = new XmlSerializer (dt.GetType ());
 			IXmlSerializable idt = dt;
 			idt.ReadXml (xr);
 			xr.Close ();
 		}
 
-		void ReadXmlSerializable (string fileName, DataTable dt) {
-
+		void ReadXmlSerializable (string fileName, DataTable dt)
+		{
 			using (XmlReader xr = XmlReader.Create (fileName)) {
 				ReadXmlSerializable (dt, xr);
 			}
 		}
 
-
-		private void MakeParentTable1 () {
+		private void MakeParentTable1 ()
+		{
 			// Create a new Table
 			parentTable1 = new DataTable ("ParentTable");
 			dataSet = new DataSet ("XmlDataSet");
 			DataColumn column;
 			DataRow row;
 
-			// Create new DataColumn, set DataType, 
-			// ColumnName and add to Table.    
+			// Create new DataColumn, set DataType,
+			// ColumnName and add to Table.
 			column = new DataColumn ();
-			column.DataType = System.Type.GetType ("System.Int32");
+			column.DataType = typeof (int);
 			column.ColumnName = "id";
 			column.Unique = true;
 			// Add the Column to the DataColumnCollection.
@@ -98,7 +100,7 @@ namespace Monotests_System.Data
 
 			// Create second column
 			column = new DataColumn ();
-			column.DataType = System.Type.GetType ("System.String");
+			column.DataType = typeof (string);
 			column.ColumnName = "ParentItem";
 			column.AutoIncrement = false;
 			column.Caption = "ParentItem";
@@ -108,12 +110,11 @@ namespace Monotests_System.Data
 
 			// Create third column.
 			column = new DataColumn ();
-			column.DataType = System.Type.GetType ("System.Int32");
+			column.DataType = typeof (int);
 			column.ColumnName = "DepartmentID";
 			column.Caption = "DepartmentID";
 			// Add the column to the table.
 			parentTable1.Columns.Add (column);
-
 
 			// Make the ID column the primary key column.
 			DataColumn [] PrimaryKeyColumns = new DataColumn [2];
@@ -134,7 +135,8 @@ namespace Monotests_System.Data
 			}
 		}
 
-		private void MakeDummyTable () {
+		private void MakeDummyTable ()
+		{
 			// Create a new Table
 			dataSet = new DataSet ();
 			dummyTable = new DataTable ("DummyTable");
@@ -142,9 +144,9 @@ namespace Monotests_System.Data
 			DataRow row;
 
 			// Create new DataColumn, set DataType, 
-			// ColumnName and add to Table.    
+			// ColumnName and add to Table.
 			column = new DataColumn ();
-			column.DataType = System.Type.GetType ("System.Int32");
+			column.DataType = typeof (int);
 			column.ColumnName = "id";
 			column.Unique = true;
 			// Add the Column to the DataColumnCollection.
@@ -152,7 +154,7 @@ namespace Monotests_System.Data
 
 			// Create second column
 			column = new DataColumn ();
-			column.DataType = System.Type.GetType ("System.String");
+			column.DataType = typeof (string);
 			column.ColumnName = "DummyItem";
 			column.AutoIncrement = false;
 			column.Caption = "DummyItem";
@@ -178,7 +180,8 @@ namespace Monotests_System.Data
 			row1.EndEdit ();
 		}
 
-		private void MakeChildTable () {
+		private void MakeChildTable ()
+		{
 			// Create a new Table
 			childTable = new DataTable ("ChildTable");
 			DataColumn column;
@@ -186,7 +189,7 @@ namespace Monotests_System.Data
 
 			// Create first column and add to the DataTable.
 			column = new DataColumn ();
-			column.DataType = System.Type.GetType ("System.Int32");
+			column.DataType = typeof (int);
 			column.ColumnName = "ChildID";
 			column.AutoIncrement = true;
 			column.Caption = "ID";
@@ -197,7 +200,7 @@ namespace Monotests_System.Data
 
 			// Create second column
 			column = new DataColumn ();
-			column.DataType = System.Type.GetType ("System.String");
+			column.DataType = typeof (string);
 			column.ColumnName = "ChildItem";
 			column.AutoIncrement = false;
 			column.Caption = "ChildItem";
@@ -206,7 +209,7 @@ namespace Monotests_System.Data
 
 			//Create third column
 			column = new DataColumn ();
-			column.DataType = System.Type.GetType ("System.Int32");
+			column.DataType = typeof (int);
 			column.ColumnName = "ParentID";
 			column.AutoIncrement = false;
 			column.Caption = "ParentID";
@@ -240,7 +243,8 @@ namespace Monotests_System.Data
 			}
 		}
 
-		private void MakeSecondChildTable () {
+		private void MakeSecondChildTable ()
+		{
 			// Create a new Table
 			secondChildTable = new DataTable ("SecondChildTable");
 			DataColumn column;
@@ -248,7 +252,7 @@ namespace Monotests_System.Data
 
 			// Create first column and add to the DataTable.
 			column = new DataColumn ();
-			column.DataType = System.Type.GetType ("System.Int32");
+			column.DataType = typeof (int);
 			column.ColumnName = "ChildID";
 			column.AutoIncrement = true;
 			column.Caption = "ID";
@@ -260,7 +264,7 @@ namespace Monotests_System.Data
 
 			// Create second column.
 			column = new DataColumn ();
-			column.DataType = System.Type.GetType ("System.String");
+			column.DataType = typeof (string);
 			column.ColumnName = "ChildItem";
 			column.AutoIncrement = false;
 			column.Caption = "ChildItem";
@@ -270,7 +274,7 @@ namespace Monotests_System.Data
 
 			//Create third column.
 			column = new DataColumn ();
-			column.DataType = System.Type.GetType ("System.Int32");
+			column.DataType = typeof (int);
 			column.ColumnName = "ParentID";
 			column.AutoIncrement = false;
 			column.Caption = "ParentID";
@@ -280,7 +284,7 @@ namespace Monotests_System.Data
 
 			//Create fourth column.
 			column = new DataColumn ();
-			column.DataType = System.Type.GetType ("System.Int32");
+			column.DataType = typeof (int);
 			column.ColumnName = "DepartmentID";
 			column.Caption = "DepartmentID";
 			column.Unique = false;
@@ -315,7 +319,8 @@ namespace Monotests_System.Data
 			}
 		}
 
-		private void MakeDataRelation () {
+		private void MakeDataRelation ()
+		{
 			DataColumn parentColumn = dataSet.Tables ["ParentTable"].Columns ["id"];
 			DataColumn childColumn = dataSet.Tables ["ChildTable"].Columns ["ParentID"];
 			DataRelation relation = new DataRelation ("ParentChild_Relation1", parentColumn, childColumn);
@@ -334,8 +339,8 @@ namespace Monotests_System.Data
 			dataSet.Tables ["SecondChildTable"].ParentRelations.Add (secondRelation);
 		}
 
-		private void MakeDataRelation (DataTable dt) {
-
+		private void MakeDataRelation (DataTable dt)
+		{
 			DataColumn parentColumn = dt.Columns ["id"];
 			DataColumn childColumn = dataSet.Tables ["ChildTable"].Columns ["ParentID"];
 			DataRelation relation = new DataRelation ("ParentChild_Relation1", parentColumn, childColumn);
@@ -355,19 +360,20 @@ namespace Monotests_System.Data
 		}
 
 		//Test properties of a table which does not belongs to a DataSet
-		private void VerifyTableSchema (DataTable table, string tableName, DataSet ds) {
+		private void VerifyTableSchema (DataTable table, string tableName, DataSet ds)
+		{
 			//Test Schema 
 			//Check Properties of Table
-			Assert.AreEqual ("", table.Namespace, "#1");
+			Assert.AreEqual (string.Empty, table.Namespace, "#1");
 			Assert.AreEqual (ds, table.DataSet, "#2");
 			Assert.AreEqual (3, table.Columns.Count, "#3");
 			Assert.AreEqual (false, table.CaseSensitive, "#5");
 			Assert.AreEqual (tableName, table.TableName, "#6");
 			Assert.AreEqual (2, table.Constraints.Count, "#7");
-			Assert.AreEqual ("", table.Prefix, "#8");
+			Assert.AreEqual (string.Empty, table.Prefix, "#8");
 			Assert.AreEqual (2, table.Constraints .Count, "#10");
-			Assert.AreEqual ("System.Data.UniqueConstraint", table.Constraints [0].GetType ().ToString (), "#11");
-			Assert.AreEqual ("System.Data.UniqueConstraint", table.Constraints [1].GetType ().ToString (), "#12");
+			Assert.AreEqual (typeof (UniqueConstraint), table.Constraints [0].GetType (), "#11");
+			Assert.AreEqual (typeof (UniqueConstraint), table.Constraints [1].GetType (), "#12");
 			Assert.AreEqual (2, table.PrimaryKey.Length, "#13");
 			Assert.AreEqual ("id", table.PrimaryKey [0].ToString (), "#14");
 			Assert.AreEqual ("DepartmentID", table.PrimaryKey [1].ToString (), "#15");
@@ -384,13 +390,13 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("Element", col.ColumnMapping.ToString (), "#22");
 			Assert.AreEqual ("id", col.Caption, "#23");
 			Assert.AreEqual ("id", col.ColumnName, "#24");
-			Assert.AreEqual ("System.Int32", col.DataType.ToString (), "#25");
-			Assert.AreEqual ("", col.DefaultValue.ToString (), "#26");
+			Assert.AreEqual (typeof (int), col.DataType, "#25");
+			Assert.AreEqual (string.Empty, col.DefaultValue.ToString (), "#26");
 			Assert.AreEqual (false, col.DesignMode, "#27");
 			Assert.AreEqual ("System.Data.PropertyCollection", col.ExtendedProperties.ToString (), "#28");
 			Assert.AreEqual (-1, col.MaxLength, "#29");
 			Assert.AreEqual (0, col.Ordinal, "#30");
-			Assert.AreEqual ("", col.Prefix, "#31");
+			Assert.AreEqual (string.Empty, col.Prefix, "#31");
 			Assert.AreEqual ("ParentTable", col.Table.ToString (), "#32");
 			Assert.AreEqual (true, col.Unique, "#33");
 
@@ -403,13 +409,13 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("Element", col.ColumnMapping.ToString (), "#38");
 			Assert.AreEqual ("ParentItem", col.Caption, "#39");
 			Assert.AreEqual ("ParentItem", col.ColumnName, "#40");
-			Assert.AreEqual ("System.String", col.DataType.ToString (), "#41");
-			Assert.AreEqual ("", col.DefaultValue.ToString (), "#42");
+			Assert.AreEqual (typeof (string), col.DataType, "#41");
+			Assert.AreEqual (string.Empty, col.DefaultValue.ToString (), "#42");
 			Assert.AreEqual (false, col.DesignMode, "#43");
 			Assert.AreEqual ("System.Data.PropertyCollection", col.ExtendedProperties.ToString (), "#44");
 			Assert.AreEqual (-1, col.MaxLength, "#45");
 			Assert.AreEqual (1, col.Ordinal, "#46");
-			Assert.AreEqual ("", col.Prefix, "#47");
+			Assert.AreEqual (string.Empty, col.Prefix, "#47");
 			Assert.AreEqual ("ParentTable", col.Table.ToString (), "#48");
 			Assert.AreEqual (false, col.Unique, "#49");
 
@@ -422,13 +428,13 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("Element", col.ColumnMapping.ToString (), "#54");
 			Assert.AreEqual ("DepartmentID", col.Caption, "#55");
 			Assert.AreEqual ("DepartmentID", col.ColumnName, "#56");
-			Assert.AreEqual ("System.Int32", col.DataType.ToString (), "#57");
-			Assert.AreEqual ("", col.DefaultValue.ToString (), "#58");
+			Assert.AreEqual (typeof (int), col.DataType, "#57");
+			Assert.AreEqual (string.Empty, col.DefaultValue.ToString (), "#58");
 			Assert.AreEqual (false, col.DesignMode, "#59");
 			Assert.AreEqual ("System.Data.PropertyCollection", col.ExtendedProperties.ToString (), "#60");
 			Assert.AreEqual (-1, col.MaxLength, "#61");
 			Assert.AreEqual (2, col.Ordinal, "#62");
-			Assert.AreEqual ("", col.Prefix, "#63");
+			Assert.AreEqual (string.Empty, col.Prefix, "#63");
 			Assert.AreEqual ("ParentTable", col.Table.ToString (), "#64");
 			Assert.AreEqual (false, col.Unique, "#65");
 
@@ -452,16 +458,15 @@ namespace Monotests_System.Data
 		}
 
 		[Test]
-		public void XmlTest1 () {
+		public void XmlTest1 ()
+		{
 			//Make a table without any relations
 			MakeParentTable1 ();
 			dataSet.Tables.Remove (parentTable1);
-		
 
-			FileStream stream = new FileStream (fileName1, FileMode.Create);
-			
-			WriteXmlSerializable (stream, parentTable1);
-			stream.Close ();
+			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+				WriteXmlSerializable (stream, parentTable1);
+			}
 
 			DataTable table = new DataTable ("ParentTable");
 			//Read the Xml and the Schema into a table which does not belongs to any DataSet
@@ -470,11 +475,13 @@ namespace Monotests_System.Data
 		}
 
 		[Test]
-		public void XmlTest2 () {
+		public void XmlTest2 ()
+		{
 			MakeParentTable1 ();
-			FileStream stream = new FileStream (fileName1, FileMode.Create);
-			WriteXmlSerializable (stream, parentTable1);
-			stream.Close ();
+
+			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+				WriteXmlSerializable (stream, parentTable1);
+			}
 
 			DataTable table = new DataTable ("ParentTable");
 			DataSet ds = new DataSet ("XmlDataSet");
@@ -486,7 +493,8 @@ namespace Monotests_System.Data
 		}
 
 		[Test]
-		public void XmlTest3 () {
+		public void XmlTest3 ()
+		{
 			//Create a parent table and create child tables
 			MakeParentTable1 ();
 			MakeChildTable ();
@@ -494,18 +502,18 @@ namespace Monotests_System.Data
 			//Relate the parent and the children
 			MakeDataRelation ();
 
-			FileStream stream = new FileStream (fileName1, FileMode.Create);
-			WriteXmlSerializable (stream, parentTable1);
-			stream.Close ();
+			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+				WriteXmlSerializable (stream, parentTable1);
+			}
 
 			DataTable table = new DataTable ();
 			ReadXmlSerializable (fileName1, table);
 			VerifyTableSchema (table, parentTable1.TableName, null);
 		}
 
-		
 		[Test]
-		public void XmlTest4 () {
+		public void XmlTest4 ()
+		{
 			//Create a parent table and create child tables
 			MakeParentTable1 ();
 			MakeChildTable ();
@@ -513,30 +521,28 @@ namespace Monotests_System.Data
 			//Relate the parent and the children
 			MakeDataRelation ();
 
-			FileStream stream = new FileStream (fileName1, FileMode.Create);
-			//WriteXml on any of the children
-			WriteXmlSerializable (stream, childTable);
-			stream.Close ();
-
+			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+				//WriteXml on any of the children
+				WriteXmlSerializable (stream, childTable);
+			}
 
 			DataTable table = new DataTable ();
 			ReadXmlSerializable (fileName1, table);
 
 			//Test Schema 
 			//Check Properties of Table
-			Assert.AreEqual ("", table.Namespace, "#1");
-			Assert.AreEqual (null, table.DataSet, "#2");
+			Assert.AreEqual (string.Empty, table.Namespace, "#1");
+			Assert.IsNull (table.DataSet, "#2");
 			Assert.AreEqual (3, table.Columns.Count, "#3");
 			Assert.AreEqual (false, table.CaseSensitive, "#5");
 			Assert.AreEqual ("ChildTable", table.TableName, "#6");
-			Assert.AreEqual ("", table.Prefix, "#7");
+			Assert.AreEqual (string.Empty, table.Prefix, "#7");
 			Assert.AreEqual (1, table.Constraints.Count, "#8");
 			Assert.AreEqual ("Constraint1", table.Constraints [0].ToString (), "#9");
-			Assert.AreEqual ("System.Data.UniqueConstraint", table.Constraints [0].GetType ().ToString (), "#10");
+			Assert.AreEqual (typeof (UniqueConstraint), table.Constraints [0].GetType (), "#10");
 			Assert.AreEqual (0, table.PrimaryKey.Length, "#11");
 			Assert.AreEqual (0, table.ParentRelations.Count, "#12");
 			Assert.AreEqual (0, table.ChildRelations.Count, "#13");
-
 
 			//Check properties of each column
 			//First Column
@@ -546,16 +552,15 @@ namespace Monotests_System.Data
 			Assert.AreEqual (1, col.AutoIncrementStep, "#16");
 			Assert.AreEqual ("Element", col.ColumnMapping.ToString (), "#17");
 			Assert.AreEqual ("ChildID", col.ColumnName, "#19");
-			Assert.AreEqual ("System.Int32", col.DataType.ToString (), "#20");
-			Assert.AreEqual ("", col.DefaultValue.ToString (), "#21");
+			Assert.AreEqual (typeof (int), col.DataType, "#20");
+			Assert.AreEqual (string.Empty, col.DefaultValue.ToString (), "#21");
 			Assert.AreEqual (false, col.DesignMode, "#22");
 			Assert.AreEqual ("System.Data.PropertyCollection", col.ExtendedProperties.ToString (), "#23");
 			Assert.AreEqual (-1, col.MaxLength, "#24");
 			Assert.AreEqual (0, col.Ordinal, "#25");
-			Assert.AreEqual ("", col.Prefix, "#26");
+			Assert.AreEqual (string.Empty, col.Prefix, "#26");
 			Assert.AreEqual ("ChildTable", col.Table.ToString (), "#27");
 			Assert.AreEqual (true, col.Unique, "#28");
-
 
 			//Second Column
 			col = table.Columns [1];
@@ -565,13 +570,13 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("Element", col.ColumnMapping.ToString (), "#32");
 			Assert.AreEqual ("ChildItem", col.Caption, "#33");
 			Assert.AreEqual ("ChildItem", col.ColumnName, "#34");
-			Assert.AreEqual ("System.String", col.DataType.ToString (), "#35");
-			Assert.AreEqual ("", col.DefaultValue.ToString (), "#36");
+			Assert.AreEqual (typeof (string), col.DataType, "#35");
+			Assert.AreEqual (string.Empty, col.DefaultValue.ToString (), "#36");
 			Assert.AreEqual (false, col.DesignMode, "#37");
 			Assert.AreEqual ("System.Data.PropertyCollection", col.ExtendedProperties.ToString (), "#38");
 			Assert.AreEqual (-1, col.MaxLength, "#39");
 			Assert.AreEqual (1, col.Ordinal, "#40");
-			Assert.AreEqual ("", col.Prefix, "#41");
+			Assert.AreEqual (string.Empty, col.Prefix, "#41");
 			Assert.AreEqual ("ChildTable", col.Table.ToString (), "#42");
 			Assert.AreEqual (false, col.Unique, "#43");
 
@@ -584,16 +589,15 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("Element", col.ColumnMapping.ToString (), "#48");
 			Assert.AreEqual ("ParentID", col.Caption, "#49");
 			Assert.AreEqual ("ParentID", col.ColumnName, "#50");
-			Assert.AreEqual ("System.Int32", col.DataType.ToString (), "#51");
-			Assert.AreEqual ("", col.DefaultValue.ToString (), "#52");
+			Assert.AreEqual (typeof (int), col.DataType, "#51");
+			Assert.AreEqual (string.Empty, col.DefaultValue.ToString (), "#52");
 			Assert.AreEqual (false, col.DesignMode, "#53");
 			Assert.AreEqual ("System.Data.PropertyCollection", col.ExtendedProperties.ToString (), "#54");
 			Assert.AreEqual (-1, col.MaxLength, "#55");
 			Assert.AreEqual (2, col.Ordinal, "#56");
-			Assert.AreEqual ("", col.Prefix, "#57");
+			Assert.AreEqual (string.Empty, col.Prefix, "#57");
 			Assert.AreEqual ("ChildTable", col.Table.ToString (), "#58");
 			Assert.AreEqual (false, col.Unique, "#59");
-
 
 			//Test the Xml
 			Assert.AreEqual (6, table.Rows.Count, "#60");
@@ -628,29 +632,31 @@ namespace Monotests_System.Data
 			Assert.AreEqual (11, row ["ChildID"], "#75");
 			Assert.AreEqual ("ChildItem 2", row ["ChildItem"], "#76");
 			Assert.AreEqual (3, row ["ParentID"], "#77");
-
 		}
 
 		[Test]
-		public void XmlTest5 () {
+		public void XmlTest5 ()
+		{
 			MakeParentTable1 ();
-			FileStream stream = new FileStream (fileName1, FileMode.Create);
-			WriteXmlSerializable (stream, parentTable1);
-			stream.Close ();
 
-			stream = new FileStream (fileName1, FileMode.Open);
+			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+				WriteXmlSerializable (stream, parentTable1);
+				stream.Close ();
+			}
+
 			DataTable table = new DataTable ("ParentTable");
 			DataSet dataSet = new DataSet ("XmlDataSet");
 			dataSet.Tables.Add (table);
-			table.Columns.Add (new DataColumn ("id", System.Type.GetType ("System.String")));
-			ReadXmlSerializable (stream, table);
-			stream.Close ();
+			table.Columns.Add (new DataColumn ("id", typeof (string)));
 
-			
+			using (FileStream stream = new FileStream (fileName1, FileMode.Open)) {
+				ReadXmlSerializable (stream, table);
+			}
+
 			Assert.AreEqual ("ParentTable", table.TableName, "#2");
 			Assert.AreEqual (3, table.Rows.Count, "#3");
 			Assert.AreEqual (1, table.Columns.Count, "#4");
-			Assert.AreEqual ("System.String", table.Columns [0].DataType.ToString (), "#5");
+			Assert.AreEqual (typeof (string), table.Columns [0].DataType, "#5");
 			Assert.IsNotNull (table.DataSet, "#6");
 
 			//Check Rows
@@ -665,54 +671,59 @@ namespace Monotests_System.Data
 		}
 
 		[Test]
-		public void XmlTest6 () {
-
+		public void XmlTest6 ()
+		{
 			MakeParentTable1 ();
-			FileStream stream = new FileStream (fileName1, FileMode.Create);
-			WriteXmlSerializable (stream, parentTable1);
-			stream.Close ();
 
-			stream = new FileStream (fileName1, FileMode.Open);
+			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+				WriteXmlSerializable (stream, parentTable1);
+				stream.Close ();
+			}
+
 			//Create a target table which has nomatching column(s) names
 			DataTable table = new DataTable ("ParentTable");
 			DataSet dataSet = new DataSet ("XmlDataSet");
 			dataSet.Tables.Add (table);
-			table.Columns.Add (new DataColumn ("sid", System.Type.GetType ("System.String")));
-			//ReadXml does not read anything as the column names are not matching
-			ReadXmlSerializable (stream, table);
-			stream.Close ();
+			table.Columns.Add (new DataColumn ("sid", typeof (string)));
 
-			
+			using (FileStream stream = new FileStream (fileName1, FileMode.Open)) {
+				// ReadXml does not read anything as the column 
+				// names are not matching
+				ReadXmlSerializable (stream, table);
+			}
+
 			Assert.AreEqual ("ParentTable", table.TableName, "#2");
 			Assert.AreEqual (3, table.Rows.Count, "#3");
 			Assert.AreEqual (1, table.Columns.Count, "#4");
 			Assert.AreEqual ("sid", table.Columns [0].ColumnName, "#5");
-			Assert.AreEqual ("System.String", table.Columns [0].DataType.ToString (), "#6");
+			Assert.AreEqual (typeof (string), table.Columns [0].DataType, "#6");
 			Assert.IsNotNull (table.DataSet, "#6");
 		}
 
 		[Test]
-		public void XmlTest7 () {
-
+		public void XmlTest7 ()
+		{
 			MakeParentTable1 ();
-			FileStream stream = new FileStream (fileName1, FileMode.Create);
-			WriteXmlSerializable (stream, parentTable1);
-			stream.Close ();
 
-			stream = new FileStream (fileName1, FileMode.Open);
-			//Create a target table which has matching column(s) name and an extra column
+			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+				WriteXmlSerializable (stream, parentTable1);
+				stream.Close ();
+			}
+
+			//Create a target table which has matching
+			// column(s) name and an extra column
 			DataTable table = new DataTable ("ParentTable");
-			
-			table.Columns.Add (new DataColumn ("id", System.Type.GetType ("System.Int32")));
-			table.Columns.Add (new DataColumn ("ParentItem", System.Type.GetType ("System.String")));
-			table.Columns.Add (new DataColumn ("DepartmentID", System.Type.GetType ("System.Int32")));
-			table.Columns.Add (new DataColumn ("DummyColumn", System.Type.GetType ("System.String")));
+			table.Columns.Add (new DataColumn ("id", typeof (int)));
+			table.Columns.Add (new DataColumn ("ParentItem", typeof (string)));
+			table.Columns.Add (new DataColumn ("DepartmentID", typeof (int)));
+			table.Columns.Add (new DataColumn ("DummyColumn", typeof (string)));
 			DataSet dataSet = new DataSet ("XmlDataSet");
 			dataSet.Tables.Add (table);
-			ReadXmlSerializable (stream, table);
-			stream.Close ();
 
-			
+			using (FileStream stream = new FileStream (fileName1, FileMode.Open)) {
+				ReadXmlSerializable (stream, table);
+			}
+
 			Assert.AreEqual ("ParentTable", table.TableName, "#2");
 			Assert.AreEqual (3, table.Rows.Count, "#3");
 			Assert.AreEqual (4, table.Columns.Count, "#4");
@@ -720,61 +731,58 @@ namespace Monotests_System.Data
 
 			//Check the Columns
 			Assert.AreEqual ("id", table.Columns [0].ColumnName, "#6");
-			Assert.AreEqual ("System.Int32", table.Columns [0].DataType.ToString (), "#7");
+			Assert.AreEqual (typeof (int), table.Columns [0].DataType, "#7");
 
 			Assert.AreEqual ("ParentItem", table.Columns [1].ColumnName, "#8");
-			Assert.AreEqual ("System.String", table.Columns [1].DataType.ToString (), "#9");
+			Assert.AreEqual (typeof (string), table.Columns [1].DataType, "#9");
 
 			Assert.AreEqual ("DepartmentID", table.Columns [2].ColumnName, "#10");
-			Assert.AreEqual ("System.Int32", table.Columns [2].DataType.ToString (), "#11");
+			Assert.AreEqual (typeof (int), table.Columns [2].DataType, "#11");
 
 			Assert.AreEqual ("DummyColumn", table.Columns [3].ColumnName, "#12");
-			Assert.AreEqual ("System.String", table.Columns [3].DataType.ToString (), "#13");
+			Assert.AreEqual (typeof (string), table.Columns [3].DataType, "#13");
 
 			//Check the rows
 			DataRow row = table.Rows [0];
 			Assert.AreEqual (1, row ["id"], "#14");
 			Assert.AreEqual ("ParentItem 1", row ["ParentItem"], "#15");
 			Assert.AreEqual (1, row ["DepartmentID"], "#16");
-			
 
 			row = table.Rows [1];
 			Assert.AreEqual (2, row ["id"], "#18");
 			Assert.AreEqual ("ParentItem 2", row ["ParentItem"], "#19");
 			Assert.AreEqual (2, row ["DepartmentID"], "#20");
-		
-
 
 			row = table.Rows [2];
 			Assert.AreEqual (3, row ["id"], "#22");
 			Assert.AreEqual ("ParentItem 3", row ["ParentItem"], "#23");
 			Assert.AreEqual (3, row ["DepartmentID"], "#24");
-			
 		}
 
 		[Test]
-		public void XmlTest8 () {
+		public void XmlTest8 ()
+		{
 			MakeParentTable1 ();
-			FileStream stream = new FileStream (fileName1, FileMode.Create);
-			WriteXmlSerializable (stream, parentTable1);
-			stream.Close ();
 
-			stream = new FileStream (fileName1, FileMode.Open);
+			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+				WriteXmlSerializable (stream, parentTable1);
+			}
+
 			DataTable table = new DataTable ("ParentTable");
 			DataSet dataSet = new DataSet ("XmlDataSet");
 			dataSet.Tables.Add (table);
-			table.Columns.Add (new DataColumn ("id", System.Type.GetType ("System.Int32")));
-			table.Columns.Add (new DataColumn ("DepartmentID", System.Type.GetType ("System.Int32")));
+			table.Columns.Add (new DataColumn ("id", typeof (int)));
+			table.Columns.Add (new DataColumn ("DepartmentID", typeof (int)));
 
-			ReadXmlSerializable (stream, table);
-			stream.Close ();
+			using (FileStream stream = new FileStream (fileName1, FileMode.Open)) {
+				ReadXmlSerializable (stream, table);
+			}
 
-			
 			Assert.AreEqual ("ParentTable", table.TableName, "#2");
 			Assert.AreEqual (3, table.Rows.Count, "#3");
 			Assert.AreEqual (2, table.Columns.Count, "#4");
-			Assert.AreEqual ("System.Int32", table.Columns [0].DataType.ToString (), "#5");
-			Assert.AreEqual ("System.Int32", table.Columns [1].DataType.ToString (), "#6");
+			Assert.AreEqual (typeof (int), table.Columns [0].DataType, "#5");
+			Assert.AreEqual (typeof (int), table.Columns [1].DataType, "#6");
 			Assert.IsNotNull (table.DataSet, "#6");
 
 			//Check rows
@@ -792,25 +800,27 @@ namespace Monotests_System.Data
 		}
 
 		[Test]
-		public void XmlTest9 () {
+		public void XmlTest9 ()
+		{
 			MakeParentTable1 ();
-			FileStream stream = new FileStream (fileName1, FileMode.Create);
-			WriteXmlSerializable (stream, parentTable1);
-			stream.Close ();
 
-			stream = new FileStream (fileName1, FileMode.Open);
+			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+				WriteXmlSerializable (stream, parentTable1);
+			}
+
 			DataSet ds = new DataSet ();
 			DataTable table = new DataTable ("ParentTable");
-			
-			table.Columns.Add (new DataColumn ("id", System.Type.GetType ("System.Int32")));
+			table.Columns.Add (new DataColumn ("id", typeof (int)));
 			ds.Tables.Add (table);
-			ReadXmlSerializable (stream, table);
-			stream.Close ();
+
+			using (FileStream stream = new FileStream (fileName1, FileMode.Open)) {
+				ReadXmlSerializable (stream, table);
+			}
 
 			Assert.AreEqual ("ParentTable", table.TableName, "#2");
 			Assert.AreEqual (3, table.Rows.Count, "#3");
 			Assert.AreEqual (1, table.Columns.Count, "#4");
-			Assert.AreEqual ("System.Int32", table.Columns [0].DataType.ToString (), "#5");
+			Assert.AreEqual (typeof (int), table.Columns [0].DataType, "#5");
 			Assert.AreEqual ("System.Data.DataSet", table.DataSet.ToString (), "#6");
 			Assert.AreEqual ("NewDataSet", table.DataSet.DataSetName, "#7");
 
@@ -826,29 +836,30 @@ namespace Monotests_System.Data
 		}
 
 		[Test]
-		public void XmlTest10 () {
+		public void XmlTest10 ()
+		{
 			MakeParentTable1 ();
-			FileStream stream = new FileStream (fileName1, FileMode.Create);
-			WriteXmlSerializable (stream, parentTable1);
-			stream.Close ();
 
-			stream = new FileStream (fileName1, FileMode.Open);
+			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+				WriteXmlSerializable (stream, parentTable1);
+			}
+
 			DataSet ds = new DataSet ();
 			DataTable table = new DataTable ("ParentTable");
-			
-			table.Columns.Add (new DataColumn ("id", System.Type.GetType ("System.Int32")));
-			table.Columns.Add (new DataColumn ("DepartmentID", System.Type.GetType ("System.String")));
-
+			table.Columns.Add (new DataColumn ("id", typeof (int)));
+			table.Columns.Add (new DataColumn ("DepartmentID", typeof (string)));
 			ds.Tables.Add (table);
-			ReadXmlSerializable (stream, table);
-			stream.Close ();
+
+			using (FileStream stream = new FileStream (fileName1, FileMode.Open)) {
+				ReadXmlSerializable (stream, table);
+			}
 
 			Assert.AreEqual ("ParentTable", table.TableName, "#2");
 			Assert.AreEqual ("NewDataSet", table.DataSet.DataSetName, "#3");
 			Assert.AreEqual (3, table.Rows.Count, "#4");
 			Assert.AreEqual (2, table.Columns.Count, "#5");
-			Assert.AreEqual ("System.Int32", table.Columns [0].DataType.ToString (), "#6");
-			Assert.AreEqual ("System.String", table.Columns [1].DataType.ToString (), "#7");
+			Assert.AreEqual (typeof (int), table.Columns [0].DataType, "#6");
+			Assert.AreEqual (typeof (string), table.Columns [1].DataType, "#7");
 
 			//Check rows
 			DataRow row = table.Rows [0];
@@ -865,24 +876,26 @@ namespace Monotests_System.Data
 		}
 		
 		[Test]
-		public void XmlTest11 () {
+		public void XmlTest11 ()
+		{
 			MakeDummyTable ();
-			FileStream stream = new FileStream (fileName1, FileMode.Create);
-			WriteXmlSerializable (stream, dummyTable);
-			stream.Close ();
+
+			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+				WriteXmlSerializable (stream, dummyTable);
+			}
 
 			//Create a table and set the table name
 			DataTable table = new DataTable ("DummyTable");
 			//define the table schame partially
-			table.Columns.Add (new DataColumn ("DummyItem", System.Type.GetType ("System.String")));
-			stream = new FileStream (fileName1, FileMode.Open);
-			ReadXmlSerializable (stream, table);
-			stream.Close ();
+			table.Columns.Add (new DataColumn ("DummyItem", typeof (string)));
 
-			
-			Assert.AreEqual (null, table.DataSet, "#2");
+			using (FileStream stream = new FileStream (fileName1, FileMode.Open)) {
+				ReadXmlSerializable (stream, table);
+			}
+
+			Assert.IsNull (table.DataSet, "#2");
 			Assert.AreEqual (1, table.Columns.Count, "#3");
-			Assert.AreEqual ("System.String", table.Columns [0].DataType.ToString (), "#4");
+			Assert.AreEqual (typeof (string), table.Columns [0].DataType, "#4");
 			Assert.AreEqual (3, table.Rows.Count, "#5");
 
 			//Check Rows
@@ -897,113 +910,112 @@ namespace Monotests_System.Data
 			row = table.Rows [2];
 			Assert.AreEqual ("DummyItem 3", row [0], "#5");
 			Assert.AreEqual (DataRowState.Unchanged, row.RowState, "#6");
-
 		}
 
-		[Category("NotWorking")]
 		[Test]
-		public void XmlTest12 () {
+		[Category("NotWorking")]
+		public void XmlTest12 ()
+		{
 			MakeDummyTable ();
-			FileStream stream = new FileStream (fileName1, FileMode.Create);
-			WriteXmlSerializable (stream, dummyTable);
-			stream.Close ();
+
+			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+				WriteXmlSerializable (stream, dummyTable);
+			}
 
 			//Create a table and set the table name
 			DataTable table = new DataTable ("DummyTable");
 			//define the table and add an extra column in the table
-			table.Columns.Add (new DataColumn ("id", System.Type.GetType ("System.Int32")));
-			table.Columns.Add (new DataColumn ("DummyItem", System.Type.GetType ("System.String")));
+			table.Columns.Add (new DataColumn ("id", typeof (int)));
+			table.Columns.Add (new DataColumn ("DummyItem", typeof (string)));
 			//Add an extra column which does not match any column in the source diffram
-			table.Columns.Add (new DataColumn ("ExtraColumn", System.Type.GetType ("System.Double")));
+			table.Columns.Add (new DataColumn ("ExtraColumn", typeof (double)));
 
-			stream = new FileStream (fileName1, FileMode.Open);
+			using (FileStream stream = new FileStream (fileName1, FileMode.Open)) {
+				ReadXmlSerializable (stream, table);
+			}
 
-			ReadXmlSerializable (stream, table);
-			stream.Close ();
-
-			
-			Assert.AreEqual (null, table.DataSet, "#2");
+			Assert.IsNull (table.DataSet, "#2");
 			Assert.AreEqual (3, table.Columns.Count, "#3");
-			Assert.AreEqual ("System.Int32", table.Columns [0].DataType.ToString (), "#4");
-			Assert.AreEqual ("System.String", table.Columns [1].DataType.ToString (), "#5");
-			Assert.AreEqual ("System.Double", table.Columns [2].DataType.ToString (), "#6");
+			Assert.AreEqual (typeof (int), table.Columns [0].DataType, "#4");
+			Assert.AreEqual (typeof (string), table.Columns [1].DataType, "#5");
+			Assert.AreEqual (typeof (double), table.Columns [2].DataType, "#6");
 			Assert.AreEqual (3, table.Rows.Count, "#7");
 
 			//Check Rows
 			DataRow row = table.Rows [0];
 			Assert.AreEqual (1, row [0], "#8");
 			Assert.AreEqual ("DummyItem 1", row [1], "#9");
-			Assert.AreEqual ("System.DBNull", row [2].GetType ().ToString (), "#10");
+			Assert.AreSame (DBNull.Value, row [2], "#10");
 			Assert.AreEqual (DataRowState.Unchanged, row.RowState, "#11");
 
 			row = table.Rows [1];
 			Assert.AreEqual (2, row [0], "#12");
 			Assert.AreEqual ("Changed_DummyItem 2", row [1], "#13");
-			Assert.AreEqual ("System.DBNull", row [2].GetType ().ToString (), "#14");
+			Assert.AreSame (DBNull.Value, row [2], "#14");
 			Assert.AreEqual (DataRowState.Modified, row.RowState, "#15");
 
 			row = table.Rows [2];
 			Assert.AreEqual (3, row [0], "#16");
 			Assert.AreEqual ("DummyItem 3", row [1], "#17");
-			Assert.AreEqual ("System.DBNull", row [2].GetType ().ToString (), "#18");
+			Assert.AreSame (DBNull.Value, row [2], "#18");
 			Assert.AreEqual (DataRowState.Unchanged, row.RowState, "#19");
 		}
 
-		[Category ("NotWorking")]
 		[Test]
-		public void XmlTest13 () {
+		[Category ("NotWorking")]
+		public void XmlTest13 ()
+		{
 			MakeDummyTable ();
-			FileStream stream = new FileStream (fileName1, FileMode.Create);
-			WriteXmlSerializable (stream, dummyTable);
-			stream.Close ();
+
+			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+				WriteXmlSerializable (stream, dummyTable);
+			}
 
 			//Create a table and set the table name
 			DataTable table = new DataTable ("DummyTable");
 			//define the table schame partially with a column name which does not match with any
 			//table columns in the diffgram
-			table.Columns.Add (new DataColumn ("WrongColumnName", System.Type.GetType ("System.String")));
-			stream = new FileStream (fileName1, FileMode.Open);
+			table.Columns.Add (new DataColumn ("WrongColumnName", typeof (string)));
 
-			ReadXmlSerializable (stream, table);
-			stream.Close ();
+			using (FileStream stream = new FileStream (fileName1, FileMode.Open)) {
+				ReadXmlSerializable (stream, table);
+			}
 
-			
-			Assert.AreEqual (null, table.DataSet, "#2");
+			Assert.IsNull (table.DataSet, "#2");
 			Assert.AreEqual ("DummyTable", table.TableName, "#3");
 			Assert.AreEqual (1, table.Columns.Count, "#4");
-			Assert.AreEqual ("System.String", table.Columns [0].DataType.ToString (), "#5");
+			Assert.AreEqual (typeof (string), table.Columns [0].DataType, "#5");
 
 			Assert.AreEqual (3, table.Rows.Count, "#6");
 			foreach (DataRow row in table.Rows)
-				Assert.AreEqual ("System.DBNull", row [0].GetType ().ToString (), "#7");
+				Assert.AreSame (DBNull.Value, row [0], "#7");
 		}
 
 		[Test]
-		public void XmlTest14 () {
+		public void XmlTest14 ()
+		{
 			MakeParentTable1 ();
 			MakeChildTable ();
 			MakeSecondChildTable ();
 			MakeDataRelation ();
 
-			FileStream stream = new FileStream (fileName1, FileMode.Create);
-			WriteXmlSerializable (stream, parentTable1);
-			stream.Close ();
+			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+				WriteXmlSerializable (stream, parentTable1);
+			}
 
 			DataTable table1 = new DataTable ("ParentTable");
 			table1.Columns.Add (new DataColumn (parentTable1.Columns [0].ColumnName, typeof (int)));
 			table1.Columns.Add (new DataColumn (parentTable1.Columns [1].ColumnName, typeof (string)));
 			table1.Columns.Add (new DataColumn (parentTable1.Columns [2].ColumnName, typeof (int)));
 
-			
 			ReadXmlSerializable (fileName1, table1);
-			
-			
-			Assert.AreEqual (null, table1.DataSet, "#2");
+
+			Assert.IsNull (table1.DataSet, "#2");
 			Assert.AreEqual ("ParentTable", table1.TableName, "#3");
 			Assert.AreEqual (3, table1.Columns.Count, "#4");
-			Assert.AreEqual ("System.Int32", table1.Columns [0].DataType.ToString (), "#5");
-			Assert.AreEqual ("System.String", table1.Columns [1].DataType.ToString (), "#6");
-			Assert.AreEqual ("System.Int32", table1.Columns [2].DataType.ToString (), "#7");
+			Assert.AreEqual (typeof (int), table1.Columns [0].DataType, "#5");
+			Assert.AreEqual (typeof (string), table1.Columns [1].DataType, "#6");
+			Assert.AreEqual (typeof (int), table1.Columns [2].DataType, "#7");
 			Assert.AreEqual (0, table1.ChildRelations.Count, "#8");
 
 			Assert.AreEqual (3, table1.Rows.Count, "#9");
@@ -1025,11 +1037,13 @@ namespace Monotests_System.Data
 		}
 
 		[Test]
-		public void XmlTest15 () {
+		public void XmlTest15 ()
+		{
 			MakeDummyTable ();
-			FileStream stream = new FileStream (fileName1, FileMode.Create);
-			WriteXmlSerializable (stream, dummyTable);
-			stream.Close ();
+
+			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+				WriteXmlSerializable (stream, dummyTable);
+			}
 
 			Assert.AreEqual (3, dummyTable.Rows.Count, "#4b");
 
@@ -1043,7 +1057,7 @@ namespace Monotests_System.Data
 
 			Assert.AreEqual ("HelloWorldDataSet", table.DataSet.DataSetName, "#1");
 			Assert.AreEqual (1, table.Columns.Count, "#2");
-			Assert.AreEqual ("System.String", table.Columns [0].DataType.ToString (), "#3");
+			Assert.AreEqual (typeof (string), table.Columns [0].DataType, "#3");
 			Assert.AreEqual (3, table.Rows.Count, "#4");
 
 			//Check Rows
@@ -1061,9 +1075,8 @@ namespace Monotests_System.Data
 		}
 
 		[Test]
-		public void XmlTest16 () {
-			FileStream stream = null;
-
+		public void XmlTest16 ()
+		{
 			DataSet ds = new DataSet ();
 			DataTable parent = new DataTable ("Parent");
 			parent.Columns.Add (new DataColumn ("col1", typeof (int)));
@@ -1097,7 +1110,6 @@ namespace Monotests_System.Data
 			child2.Rows.Add (new object [] { 6, "C2_" });
 			child2.Rows.Add (new object [] { 6, "C2_" });
 
-
 			ds.Tables.Add (parent);
 			ds.Tables.Add (child1);
 			ds.Tables.Add (child2);
@@ -1108,11 +1120,9 @@ namespace Monotests_System.Data
 			relation = new DataRelation ("Relation2", child1.Columns [2], child2.Columns [0]);
 			child1.ChildRelations.Add (relation);
 
-			stream = new FileStream (fileName1, FileMode.Create);
-			WriteXmlSerializable (stream, parent);
-
-			stream.Close ();
-
+			using (FileStream stream = new FileStream (fileName1, FileMode.Create)) {
+				WriteXmlSerializable (stream, parent);
+			}
 
 			DataTable table = new DataTable ();
 			ReadXmlSerializable (fileName1, table);
@@ -1120,11 +1130,10 @@ namespace Monotests_System.Data
 			Assert.AreEqual ("Parent", table.TableName, "#1");
 			Assert.AreEqual (2, table.Columns.Count, "#3");
 			Assert.AreEqual (2, table.Rows.Count, "#4");
-			Assert.AreEqual (typeof (System.Int32), table.Columns [0].DataType, "#5");
-			Assert.AreEqual (typeof (System.String), table.Columns [1].DataType, "#6");
+			Assert.AreEqual (typeof (int), table.Columns [0].DataType, "#5");
+			Assert.AreEqual (typeof (string), table.Columns [1].DataType, "#6");
 			Assert.AreEqual (1, table.Constraints.Count, "#7");
 			Assert.AreEqual (typeof (UniqueConstraint), table.Constraints [0].GetType (), "#8");
-
 		}
 	}
 }

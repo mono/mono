@@ -32,17 +32,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using NUnit.Framework;
 using System;
+using System.Collections;
 using System.Data;
 using System.Data.SqlTypes;
 using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Xml;
-using MonoTests.System.Data.Utils;
-using System.Collections;
 using System.Threading;
+using System.Xml;
+
+using MonoTests.System.Data.Utils;
+
+using NUnit.Framework;
 
 namespace MonoTests.System.Data
 {
@@ -57,32 +59,31 @@ namespace MonoTests.System.Data
 			DataTable dt = new DataTable();
 
 			Assert.IsFalse (dt.CaseSensitive, "CaseSensitive must be false.");
-			Assert.IsTrue (dt.Columns != null, "Col");
+			Assert.IsNotNull (dt.Columns, "Col");
 			//Assert.IsTrue (dt.ChildRelations != null);
-			Assert.IsTrue (dt.Constraints != null, "Const");
-			Assert.IsTrue (dt.DataSet == null, "ds"); 
-			Assert.IsTrue (dt.DefaultView != null, "dv");
-			Assert.IsTrue (dt.DisplayExpression == "", "de");
-			Assert.IsTrue (dt.ExtendedProperties != null, "ep");
-			Assert.IsTrue (dt.HasErrors == false, "he");
-			Assert.IsTrue (dt.Locale != null, "lc");
-			Assert.IsTrue (dt.MinimumCapacity == 50, "mc"); //LAMESPEC:
-			Assert.IsTrue (dt.Namespace == "", "ns");
+			Assert.IsNotNull (dt.Constraints, "Const");
+			Assert.IsNull (dt.DataSet, "ds");
+			Assert.IsNotNull (dt.DefaultView, "dv");
+			Assert.AreEqual (string.Empty, dt.DisplayExpression, "de");
+			Assert.IsNotNull (dt.ExtendedProperties, "ep");
+			Assert.IsFalse (dt.HasErrors, "he");
+			Assert.IsNotNull (dt.Locale, "lc");
+			Assert.AreEqual (50, dt.MinimumCapacity, "mc"); //LAMESPEC:
+			Assert.AreEqual (string.Empty, dt.Namespace, "ns");
 			//Assert.IsTrue (dt.ParentRelations != null);
-			Assert.IsTrue (dt.Prefix == "", "pf");
-			Assert.IsTrue (dt.PrimaryKey != null, "pk");
-			Assert.IsTrue (dt.Rows != null, "rows");
-			Assert.IsTrue (dt.Site == null, "Site");
-			Assert.IsTrue (dt.TableName == "", "tname");
-			
+			Assert.AreEqual (string.Empty, dt.Prefix, "pf");
+			Assert.IsNotNull (dt.PrimaryKey, "pk");
+			Assert.IsNotNull (dt.Rows, "rows");
+			Assert.IsNull (dt.Site, "Site");
+			Assert.AreEqual (string.Empty, dt.TableName, "tname");
 		}
 
 		[Test]
-                public void Select ()
-                {
+		public void Select ()
+		{
 			DataSet Set = new DataSet ();
 			DataTable Mom = new DataTable ("Mom");
-			DataTable Child = new DataTable ("Child");			
+			DataTable Child = new DataTable ("Child");
 			Set.Tables.Add (Mom);
 			Set.Tables.Add (Child);
 			
@@ -93,186 +94,185 @@ namespace MonoTests.System.Data
 			
 			DataColumn Col3 = new DataColumn ("Name");
 			DataColumn Col4 = new DataColumn ("Age");
-			Col4.DataType = Type.GetType ("System.Int16");
+			Col4.DataType = typeof (short);
 			Child.Columns.Add (Col3);
 			Child.Columns.Add (Col4);
-                	
-                	DataRelation Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [0]);
+
+			DataRelation Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [0]);
 			Set.Relations.Add (Relation);
 
-                	DataRow Row = Mom.NewRow ();
-                	Row [0] = "Laura";
-                	Row [1] = "Nick";
-                	Mom.Rows.Add (Row);
-                	
-                	Row = Mom.NewRow ();
-                	Row [0] = "Laura";
-                	Row [1] = "Dick";
-                	Mom.Rows.Add (Row);
-                	
-                	Row = Mom.NewRow ();
-                	Row [0] = "Laura";
-                	Row [1] = "Mick";
-                	Mom.Rows.Add (Row);
-
-                	Row = Mom.NewRow ();
-                	Row [0] = "Teresa";
-                	Row [1] = "Jack";
-                	Mom.Rows.Add (Row);
-                	
-                	Row = Mom.NewRow ();
-                	Row [0] = "Teresa";
-                	Row [1] = "Mack";
-                	Mom.Rows.Add (Row);
+			DataRow Row = Mom.NewRow ();
+			Row [0] = "Laura";
+			Row [1] = "Nick";
+			Mom.Rows.Add (Row);
 
 			Row = Mom.NewRow ();
-                	Row [0] = "'Jhon O'' Collenal'";
-                	Row [1] = "Pack";
-                	Mom.Rows.Add (Row);
-                	
-                	Row = Child.NewRow ();
-                	Row [0] = "Nick";
-                	Row [1] = 15;
-                	Child.Rows.Add (Row);
-                	
-                	Row = Child.NewRow ();
-                	Row [0] = "Dick";
-                	Row [1] = 25;
-                	Child.Rows.Add (Row);
-                	
-                	Row = Child.NewRow ();
-                	Row [0] = "Mick";
-                	Row [1] = 35;
-                	Child.Rows.Add (Row);
-                	
-                	Row = Child.NewRow ();
-                	Row [0] = "Jack";
-                	Row [1] = 10;
-                	Child.Rows.Add (Row);
-                	
-                	Row = Child.NewRow ();
-                	Row [0] = "Mack";
-                	Row [1] = 19;
-                	Child.Rows.Add (Row);
-                
-                	Row = Child.NewRow ();
-                	Row [0] = "Mack";
-                	Row [1] = 99;
-                	Child.Rows.Add (Row);
+			Row [0] = "Laura";
+			Row [1] = "Dick";
+			Mom.Rows.Add (Row);
+
+			Row = Mom.NewRow ();
+			Row [0] = "Laura";
+			Row [1] = "Mick";
+			Mom.Rows.Add (Row);
+
+			Row = Mom.NewRow ();
+			Row [0] = "Teresa";
+			Row [1] = "Jack";
+			Mom.Rows.Add (Row);
+
+			Row = Mom.NewRow ();
+			Row [0] = "Teresa";
+			Row [1] = "Mack";
+			Mom.Rows.Add (Row);
+
+			Row = Mom.NewRow ();
+			Row [0] = "'Jhon O'' Collenal'";
+			Row [1] = "Pack";
+			Mom.Rows.Add (Row);
 
 			Row = Child.NewRow ();
-                	Row [0] = "Pack";
-                	Row [1] = 66;
-                	Child.Rows.Add (Row);
-                	
-                	DataRow [] Rows = Mom.Select ("Name = 'Teresa'");
-                	Assert.AreEqual (2, Rows.Length, "test#01");
+			Row [0] = "Nick";
+			Row [1] = 15;
+			Child.Rows.Add (Row);
+
+			Row = Child.NewRow ();
+			Row [0] = "Dick";
+			Row [1] = 25;
+			Child.Rows.Add (Row);
+
+			Row = Child.NewRow ();
+			Row [0] = "Mick";
+			Row [1] = 35;
+			Child.Rows.Add (Row);
+
+			Row = Child.NewRow ();
+			Row [0] = "Jack";
+			Row [1] = 10;
+			Child.Rows.Add (Row);
+
+			Row = Child.NewRow ();
+			Row [0] = "Mack";
+			Row [1] = 19;
+			Child.Rows.Add (Row);
+
+			Row = Child.NewRow ();
+			Row [0] = "Mack";
+			Row [1] = 99;
+			Child.Rows.Add (Row);
+
+			Row = Child.NewRow ();
+			Row [0] = "Pack";
+			Row [1] = 66;
+			Child.Rows.Add (Row);
+
+			DataRow [] Rows = Mom.Select ("Name = 'Teresa'");
+			Assert.AreEqual (2, Rows.Length, "test#01");
 
 			// test with apos escaped
 			Rows = Mom.Select ("Name = '''Jhon O'''' Collenal'''");
-                	Assert.AreEqual (1, Rows.Length, "test#01.1");
-                	
-                	Rows = Mom.Select ("Name = 'Teresa' and ChildName = 'Nick'");
-                	Assert.AreEqual (0, Rows.Length, "test#02");
+			Assert.AreEqual (1, Rows.Length, "test#01.1");
 
-                	Rows = Mom.Select ("Name = 'Teresa' and ChildName = 'Jack'");
-                	Assert.AreEqual (1, Rows.Length, "test#03");
+			Rows = Mom.Select ("Name = 'Teresa' and ChildName = 'Nick'");
+			Assert.AreEqual (0, Rows.Length, "test#02");
 
-                	Rows = Mom.Select ("Name = 'Teresa' and ChildName <> 'Jack'");
-                	Assert.AreEqual ("Mack", Rows [0] [1], "test#04");
-                	
-                	Rows = Mom.Select ("Name = 'Teresa' or ChildName <> 'Jack'");
-                	Assert.AreEqual (6, Rows.Length, "test#05");
-			
-                	Rows = Child.Select ("age = 20 - 1");
-                	Assert.AreEqual (1, Rows.Length, "test#06");
-			
-                	Rows = Child.Select ("age <= 20");
-                	Assert.AreEqual (3, Rows.Length, "test#07");
-			
-                	Rows = Child.Select ("age >= 20");
-                	Assert.AreEqual (4, Rows.Length, "test#08");
-			
-                	Rows = Child.Select ("age >= 20 and name = 'Mack' or name = 'Nick'");
-                	Assert.AreEqual (2, Rows.Length, "test#09");
+			Rows = Mom.Select ("Name = 'Teresa' and ChildName = 'Jack'");
+			Assert.AreEqual (1, Rows.Length, "test#03");
 
-                	Rows = Child.Select ("age >= 20 and (name = 'Mack' or name = 'Nick')");
-                	Assert.AreEqual (1, Rows.Length, "test#10");
-                	Assert.AreEqual ("Mack", Rows [0] [0], "test#11");
-                	
-                	Rows = Child.Select ("not (Name = 'Jack')");
-                	Assert.AreEqual (6, Rows.Length, "test#12");
-                }
-                
+			Rows = Mom.Select ("Name = 'Teresa' and ChildName <> 'Jack'");
+			Assert.AreEqual ("Mack", Rows [0] [1], "test#04");
+
+			Rows = Mom.Select ("Name = 'Teresa' or ChildName <> 'Jack'");
+			Assert.AreEqual (6, Rows.Length, "test#05");
+
+			Rows = Child.Select ("age = 20 - 1");
+			Assert.AreEqual (1, Rows.Length, "test#06");
+
+			Rows = Child.Select ("age <= 20");
+			Assert.AreEqual (3, Rows.Length, "test#07");
+
+			Rows = Child.Select ("age >= 20");
+			Assert.AreEqual (4, Rows.Length, "test#08");
+
+			Rows = Child.Select ("age >= 20 and name = 'Mack' or name = 'Nick'");
+			Assert.AreEqual (2, Rows.Length, "test#09");
+
+			Rows = Child.Select ("age >= 20 and (name = 'Mack' or name = 'Nick')");
+			Assert.AreEqual (1, Rows.Length, "test#10");
+			Assert.AreEqual ("Mack", Rows [0] [0], "test#11");
+
+			Rows = Child.Select ("not (Name = 'Jack')");
+			Assert.AreEqual (6, Rows.Length, "test#12");
+		}
+
 		[Test]
-                public void Select2 ()
-                {
+		public void Select2 ()
+		{
 			DataSet Set = new DataSet ();
 			DataTable Child = new DataTable ("Child");
 
 			Set.Tables.Add (Child);
-						
+
 			DataColumn Col3 = new DataColumn ("Name");
 			DataColumn Col4 = new DataColumn ("Age");
-			Col4.DataType = Type.GetType ("System.Int16");
+			Col4.DataType = typeof (short);
 			Child.Columns.Add (Col3);
 			Child.Columns.Add (Col4);
-                	
-                	DataRow Row = Child.NewRow ();
-                	Row [0] = "Nick";
-                	Row [1] = 15;
-                	Child.Rows.Add (Row);
-                	
-                	Row = Child.NewRow ();
-                	Row [0] = "Dick";
-                	Row [1] = 25;
-                	Child.Rows.Add (Row);
-                	
-                	Row = Child.NewRow ();
-                	Row [0] = "Mick";
-                	Row [1] = 35;
-                	Child.Rows.Add (Row);
-                	
-                	Row = Child.NewRow ();
-                	Row [0] = "Jack";
-                	Row [1] = 10;
-                	Child.Rows.Add (Row);
-                	
-                	Row = Child.NewRow ();
-                	Row [0] = "Mack";
-                	Row [1] = 19;
-                	Child.Rows.Add (Row);
-                
-                	Row = Child.NewRow ();
-                	Row [0] = "Mack";
-                	Row [1] = 99;
-                	Child.Rows.Add (Row);
+
+			DataRow Row = Child.NewRow ();
+			Row [0] = "Nick";
+			Row [1] = 15;
+			Child.Rows.Add (Row);
+
+			Row = Child.NewRow ();
+			Row [0] = "Dick";
+			Row [1] = 25;
+			Child.Rows.Add (Row);
+
+			Row = Child.NewRow ();
+			Row [0] = "Mick";
+			Row [1] = 35;
+			Child.Rows.Add (Row);
+
+			Row = Child.NewRow ();
+			Row [0] = "Jack";
+			Row [1] = 10;
+			Child.Rows.Add (Row);
+
+			Row = Child.NewRow ();
+			Row [0] = "Mack";
+			Row [1] = 19;
+			Child.Rows.Add (Row);
+
+			Row = Child.NewRow ();
+			Row [0] = "Mack";
+			Row [1] = 99;
+			Child.Rows.Add (Row);
 
 			DataRow [] Rows = Child.Select ("age >= 20", "age DESC");
-                	Assert.AreEqual (3, Rows.Length, "test#01");
-                	Assert.AreEqual ("Mack", Rows [0] [0], "test#02");
-                	Assert.AreEqual ("Mick", Rows [1] [0], "test#03");                	
-                	Assert.AreEqual ("Dick", Rows [2] [0], "test#04");                	
-                	
-                	Rows = Child.Select ("age >= 20", "age asc");
-                	Assert.AreEqual (3, Rows.Length, "test#05");
-                	Assert.AreEqual ("Dick", Rows [0] [0], "test#06");
-                	Assert.AreEqual ("Mick", Rows [1] [0], "test#07");                	
-                	Assert.AreEqual ("Mack", Rows [2] [0], "test#08");                	
-                
-                	Rows = Child.Select ("age >= 20", "name asc");
-                	Assert.AreEqual (3, Rows.Length, "test#09");
-                	Assert.AreEqual ("Dick", Rows [0] [0], "test#10");
-                	Assert.AreEqual ("Mack", Rows [1] [0], "test#11");                	
-                	Assert.AreEqual ("Mick", Rows [2] [0], "test#12");                	
+			Assert.AreEqual (3, Rows.Length, "test#01");
+			Assert.AreEqual ("Mack", Rows [0] [0], "test#02");
+			Assert.AreEqual ("Mick", Rows [1] [0], "test#03");
+			Assert.AreEqual ("Dick", Rows [2] [0], "test#04");
 
-                	Rows = Child.Select ("age >= 20", "name desc");
-                	Assert.AreEqual (3, Rows.Length, "test#09");
-                	Assert.AreEqual ("Mick", Rows [0] [0], "test#10");
-                	Assert.AreEqual ("Mack", Rows [1] [0], "test#11");                	
-                	Assert.AreEqual ("Dick", Rows [2] [0], "test#12");                	
+			Rows = Child.Select ("age >= 20", "age asc");
+			Assert.AreEqual (3, Rows.Length, "test#05");
+			Assert.AreEqual ("Dick", Rows [0] [0], "test#06");
+			Assert.AreEqual ("Mick", Rows [1] [0], "test#07");
+			Assert.AreEqual ("Mack", Rows [2] [0], "test#08");
 
-                }
+			Rows = Child.Select ("age >= 20", "name asc");
+			Assert.AreEqual (3, Rows.Length, "test#09");
+			Assert.AreEqual ("Dick", Rows [0] [0], "test#10");
+			Assert.AreEqual ("Mack", Rows [1] [0], "test#11");
+			Assert.AreEqual ("Mick", Rows [2] [0], "test#12");
+
+			Rows = Child.Select ("age >= 20", "name desc");
+			Assert.AreEqual (3, Rows.Length, "test#09");
+			Assert.AreEqual ("Mick", Rows [0] [0], "test#10");
+			Assert.AreEqual ("Mack", Rows [1] [0], "test#11");
+			Assert.AreEqual ("Dick", Rows [2] [0], "test#12");
+		}
 
 		[Test]
 		public void SelectParsing ()
@@ -311,27 +311,25 @@ namespace MonoTests.System.Data
 			try {
 				T.Select ("name = 1human ");
 				Assert.Fail ("test#03");
-			} catch (Exception e) {
-				
+			} catch (SyntaxErrorException e) {
 				// missing operand after 'human' operand 
-				Assert.AreEqual (typeof (SyntaxErrorException), e.GetType (), "test#04");				
+				Assert.AreEqual (typeof (SyntaxErrorException), e.GetType (), "test#04");
 			}
 			
-			try {			
+			try {
 				T.Select ("name = 1");
 				Assert.Fail ("test#05");
-			} catch (Exception e) {
-				
+			} catch (EvaluateException e) {
 				// Cannot perform '=' operation between string and Int32
 				Assert.AreEqual (typeof (EvaluateException), e.GetType (), "test#06");
 			}
 			
 			Assert.AreEqual (1, T.Select ("age = '13'").Length, "test#07");
-
 		}
-		
+
 		[Test]
-		public void SelectEscaping () {
+		public void SelectEscaping ()
+		{
 			DataTable dt = new DataTable ();
 			dt.Columns.Add ("SomeCol");
 			dt.Rows.Add (new object [] {"\t"});
@@ -342,8 +340,9 @@ namespace MonoTests.System.Data
 			
 			try {
 				dt.Select (@"SomeCol='\x'");
-				Assert.Fail("test#03");
-			} catch (SyntaxErrorException) {}
+				Assert.Fail ("test#03");
+			} catch (SyntaxErrorException) {
+			}
 		}
 
 		[Test]
@@ -377,10 +376,10 @@ namespace MonoTests.System.Data
 			T.Rows.Add (Row);
 			
 			Assert.AreEqual (11, T.Select ("age < 10").Length, "test#01");
-			Assert.AreEqual (12, T.Select ("age <= 10").Length, "test#02");			
-			Assert.AreEqual (12, T.Select ("age< =10").Length, "test#03");			
+			Assert.AreEqual (12, T.Select ("age <= 10").Length, "test#02");
+			Assert.AreEqual (12, T.Select ("age< =10").Length, "test#03");
 			Assert.AreEqual (89, T.Select ("age > 10").Length, "test#04");
-			Assert.AreEqual (90, T.Select ("age >= 10").Length, "test#05");			
+			Assert.AreEqual (90, T.Select ("age >= 10").Length, "test#05");
 			Assert.AreEqual (100, T.Select ("age <> 10").Length, "test#06");
 			Assert.AreEqual (3, T.Select ("name < 'human10'").Length, "test#07");
 			Assert.AreEqual (3, T.Select ("id < '10'").Length, "test#08");
@@ -414,8 +413,7 @@ namespace MonoTests.System.Data
 			try {
 				T.Select ("name = human1");
 				Assert.Fail ("test#01");
-			} catch (Exception e) {
-				
+			} catch (EvaluateException e) {
 				// column name human not found
 				Assert.AreEqual (typeof (EvaluateException), e.GetType (), "test#02");
 			}
@@ -426,11 +424,10 @@ namespace MonoTests.System.Data
 			try {
 				T.Select ("id = 1k3");
 				Assert.Fail ("test#06");
-			} catch (Exception e) {
-				
+			} catch (SyntaxErrorException e) {
 				// no operands after k3 operator
 				Assert.AreEqual (typeof (SyntaxErrorException), e.GetType (), "test#07");
-			}						
+			}
 		}
 		
 		[Test]
@@ -461,12 +458,12 @@ namespace MonoTests.System.Data
 			Row [1] = 1;
 			Row [2] = 1;
 			T.Rows.Add (Row);
-					
+
 			Assert.AreEqual (1, T.Select ("name = 'human' + 1").Length, "test#01");
 			
-			Assert.AreEqual ("human1", T.Select ("name = 'human' + 1") [0] ["name"], "test#02");			
+			Assert.AreEqual ("human1", T.Select ("name = 'human' + 1") [0] ["name"], "test#02");
 			Assert.AreEqual (1, T.Select ("name = 'human' + '1'").Length, "test#03");
-			Assert.AreEqual ("human1", T.Select ("name = 'human' + '1'") [0] ["name"], "test#04");			
+			Assert.AreEqual ("human1", T.Select ("name = 'human' + '1'") [0] ["name"], "test#04");
 			Assert.AreEqual (1, T.Select ("name = 'human' + 1 + 2").Length, "test#05");
 			Assert.AreEqual ("human12", T.Select ("name = 'human' + '1' + '2'") [0] ["name"], "test#06");
 			
@@ -494,8 +491,7 @@ namespace MonoTests.System.Data
 			try {
 				Assert.AreEqual (11, T.Select ("name like 'h*an1'").Length, "test#16");
 				Assert.Fail ("test#16");
-			} catch (Exception e) {
-				
+			} catch (EvaluateException e) {
 				// 'h*an1' is invalid
 				Assert.AreEqual (typeof (EvaluateException), e.GetType (), "test#17");
 			}
@@ -503,15 +499,13 @@ namespace MonoTests.System.Data
 			try {
 				Assert.AreEqual (11, T.Select ("name like 'h%an1'").Length, "test#18");
 				Assert.Fail ("test#19");
-			} catch (Exception e) {
-				
+			} catch (EvaluateException e) {
 				// 'h%an1' is invalid
 				Assert.AreEqual (typeof (EvaluateException), e.GetType (), "test#20");
 			}
 			
 			Assert.AreEqual (0, T.Select ("name like 'h[%]an'").Length, "test#21");
 			Assert.AreEqual (1, T.Select ("name like 'h[*]an'").Length, "test#22");
-			
 		}
 
 		[Test]
@@ -572,97 +566,96 @@ namespace MonoTests.System.Data
 			T.Rows.Add (Row);
 
 			//TODO: How to test Convert-function
-			Assert.AreEqual (25, T.Select ("age = 5*5") [0]["age"], "test#01");			
+			Assert.AreEqual (25, T.Select ("age = 5*5") [0]["age"], "test#01");
 			Assert.AreEqual (901, T.Select ("len(name) > 7").Length, "test#02");
 			Assert.AreEqual (125, T.Select ("age = 5*5*5 AND len(name)>7") [0]["age"], "test#03");
-			Assert.AreEqual (1, T.Select ("isnull(id, 'test') = 'test'").Length, "test#04");			
-			Assert.AreEqual (1000, T.Select ("iif(id = '56', 'test', 'false') = 'false'").Length, "test#05");			
+			Assert.AreEqual (1, T.Select ("isnull(id, 'test') = 'test'").Length, "test#04");
+			Assert.AreEqual (1000, T.Select ("iif(id = '56', 'test', 'false') = 'false'").Length, "test#05");
 			Assert.AreEqual (1, T.Select ("iif(id = '56', 'test', 'false') = 'test'").Length, "test#06");
 			Assert.AreEqual (9, T.Select ("substring(id, 2, 3) = '23'").Length, "test#07");
 			Assert.AreEqual ("123", T.Select ("substring(id, 2, 3) = '23'") [0] ["id"], "test#08");
 			Assert.AreEqual ("423", T.Select ("substring(id, 2, 3) = '23'") [3] ["id"], "test#09");
 			Assert.AreEqual ("923", T.Select ("substring(id, 2, 3) = '23'") [8] ["id"], "test#10");
-			
 		}
 
 		[Test]
 		public void SelectRelations ()
 		{
-                        DataSet Set = new DataSet ();
-                        DataTable Mom = new DataTable ("Mom");
-                        DataTable Child = new DataTable ("Child");
+			DataSet Set = new DataSet ();
+			DataTable Mom = new DataTable ("Mom");
+			DataTable Child = new DataTable ("Child");
 
-                        Set.Tables.Add (Mom);
-                        Set.Tables.Add (Child);
-                        
-                        DataColumn Col = new DataColumn ("Name");
-                        DataColumn Col2 = new DataColumn ("ChildName");
-                        Mom.Columns.Add (Col);
-                        Mom.Columns.Add (Col2);
-                        
-                        DataColumn Col3 = new DataColumn ("Name");
-                        DataColumn Col4 = new DataColumn ("Age");
-                        Col4.DataType = Type.GetType ("System.Int16");
-                        Child.Columns.Add (Col3);
-                        Child.Columns.Add (Col4);
-                        
-                        DataRelation Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [0]);
-                        Set.Relations.Add (Relation);
+			Set.Tables.Add (Mom);
+			Set.Tables.Add (Child);
 
-                        DataRow Row = Mom.NewRow ();
-                        Row [0] = "Laura";
-                        Row [1] = "Nick";
-                        Mom.Rows.Add (Row);
-                        
-                        Row = Mom.NewRow ();
-                        Row [0] = "Laura";
-                        Row [1] = "Dick";
-                        Mom.Rows.Add (Row);
-                        
-                        Row = Mom.NewRow ();
-                        Row [0] = "Laura";
-                        Row [1] = "Mick";
-                        Mom.Rows.Add (Row);
+			DataColumn Col = new DataColumn ("Name");
+			DataColumn Col2 = new DataColumn ("ChildName");
+			Mom.Columns.Add (Col);
+			Mom.Columns.Add (Col2);
 
-                        Row = Mom.NewRow ();
-                        Row [0] = "Teresa";
-                        Row [1] = "Jack";
-                        Mom.Rows.Add (Row);
-                        
-                        Row = Mom.NewRow ();
-                        Row [0] = "Teresa";
-                        Row [1] = "Mack";
-                        Mom.Rows.Add (Row);
-                        
-                        Row = Child.NewRow ();
-                        Row [0] = "Nick";
-                        Row [1] = 15;
-                        Child.Rows.Add (Row);
-                        
-                        Row = Child.NewRow ();
-                        Row [0] = "Dick";
-                        Row [1] = 25;
-                        Child.Rows.Add (Row);
-                        
-                        Row = Child.NewRow ();
-                        Row [0] = "Mick";
-                        Row [1] = 35;
-                        Child.Rows.Add (Row);
-                        
-                        Row = Child.NewRow ();
-                        Row [0] = "Jack";
-                        Row [1] = 10;
-                        Child.Rows.Add (Row);
-                        
-                        Row = Child.NewRow ();
-                        Row [0] = "Mack";
-                        Row [1] = 19;
-                        Child.Rows.Add (Row);
-                
-                        Row = Child.NewRow ();
-                        Row [0] = "Mack";
-                        Row [1] = 99;
-                        Child.Rows.Add (Row);
+			DataColumn Col3 = new DataColumn ("Name");
+			DataColumn Col4 = new DataColumn ("Age");
+			Col4.DataType = typeof (short);
+			Child.Columns.Add (Col3);
+			Child.Columns.Add (Col4);
+
+			DataRelation Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [0]);
+			Set.Relations.Add (Relation);
+
+			DataRow Row = Mom.NewRow ();
+			Row [0] = "Laura";
+			Row [1] = "Nick";
+			Mom.Rows.Add (Row);
+
+			Row = Mom.NewRow ();
+			Row [0] = "Laura";
+			Row [1] = "Dick";
+			Mom.Rows.Add (Row);
+
+			Row = Mom.NewRow ();
+			Row [0] = "Laura";
+			Row [1] = "Mick";
+			Mom.Rows.Add (Row);
+
+			Row = Mom.NewRow ();
+			Row [0] = "Teresa";
+			Row [1] = "Jack";
+			Mom.Rows.Add (Row);
+
+			Row = Mom.NewRow ();
+			Row [0] = "Teresa";
+			Row [1] = "Mack";
+			Mom.Rows.Add (Row);
+
+			Row = Child.NewRow ();
+			Row [0] = "Nick";
+			Row [1] = 15;
+			Child.Rows.Add (Row);
+
+			Row = Child.NewRow ();
+			Row [0] = "Dick";
+			Row [1] = 25;
+			Child.Rows.Add (Row);
+
+			Row = Child.NewRow ();
+			Row [0] = "Mick";
+			Row [1] = 35;
+			Child.Rows.Add (Row);
+
+			Row = Child.NewRow ();
+			Row [0] = "Jack";
+			Row [1] = 10;
+			Child.Rows.Add (Row);
+
+			Row = Child.NewRow ();
+			Row [0] = "Mack";
+			Row [1] = 19;
+			Child.Rows.Add (Row);
+
+			Row = Child.NewRow ();
+			Row [0] = "Mack";
+			Row [1] = 99;
+			Child.Rows.Add (Row);
 			
 			DataRow [] Rows = Child.Select ("name = Parent.Childname");
 			Assert.AreEqual (6, Rows.Length, "test#01");
@@ -684,45 +677,45 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (3, Rows.Length, "test#06");
 			
 			DataTable Parent2 = new DataTable ("Parent2");
-                        Col = new DataColumn ("Name");
-                        Col2 = new DataColumn ("ChildName");
+			Col = new DataColumn ("Name");
+			Col2 = new DataColumn ("ChildName");
 
-                        Parent2.Columns.Add (Col);
-                        Parent2.Columns.Add (Col2);
-                        Set.Tables.Add (Parent2);
-                        
-                        Row = Parent2.NewRow ();
-                        Row [0] = "Laura";
-                        Row [1] = "Nick";
-                        Parent2.Rows.Add (Row);
-                        
-                        Row = Parent2.NewRow ();
-                        Row [0] = "Laura";
-                        Row [1] = "Dick";
-                        Parent2.Rows.Add (Row);
-                        
-                        Row = Parent2.NewRow ();
-                        Row [0] = "Laura";
-                        Row [1] = "Mick";
-                        Parent2.Rows.Add (Row);
+			Parent2.Columns.Add (Col);
+			Parent2.Columns.Add (Col2);
+			Set.Tables.Add (Parent2);
 
-                        Row = Parent2.NewRow ();
-                        Row [0] = "Teresa";
-                        Row [1] = "Jack";
-                        Parent2.Rows.Add (Row);
-                        
-                        Row = Parent2.NewRow ();
-                        Row [0] = "Teresa";
-                        Row [1] = "Mack";
-                        Parent2.Rows.Add (Row);
+			Row = Parent2.NewRow ();
+			Row [0] = "Laura";
+			Row [1] = "Nick";
+			Parent2.Rows.Add (Row);
 
-                        Relation = new DataRelation ("Rel2", Parent2.Columns [1], Child.Columns [0]);
-                        Set.Relations.Add (Relation);
-			
+			Row = Parent2.NewRow ();
+			Row [0] = "Laura";
+			Row [1] = "Dick";
+			Parent2.Rows.Add (Row);
+
+			Row = Parent2.NewRow ();
+			Row [0] = "Laura";
+			Row [1] = "Mick";
+			Parent2.Rows.Add (Row);
+
+			Row = Parent2.NewRow ();
+			Row [0] = "Teresa";
+			Row [1] = "Jack";
+			Parent2.Rows.Add (Row);
+
+			Row = Parent2.NewRow ();
+			Row [0] = "Teresa";
+			Row [1] = "Mack";
+			Parent2.Rows.Add (Row);
+
+			Relation = new DataRelation ("Rel2", Parent2.Columns [1], Child.Columns [0]);
+			Set.Relations.Add (Relation);
+
 			try {
 				Rows = Child.Select ("Parent.ChildName = 'Jack'");
 				Assert.Fail ("test#07");
-			} catch (Exception e) {
+			} catch (EvaluateException e) {
 				Assert.AreEqual (typeof (EvaluateException), e.GetType (), "test#08");
 				// Do not compare exception messages!
 				//Assert.AreEqual ("The table [Child] involved in more than one relation. You must explicitly mention a relation name in the expression 'parent.[ChildName]'.", e.Message, "test#09");
@@ -735,13 +728,12 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (1, Rows.Length, "test#10");
 			
 			try {
-			     	Mom.Select ("Parent.name  = 'John'");
-			} catch (Exception e) {
+				Mom.Select ("Parent.name  = 'John'");
+			} catch (IndexOutOfRangeException e) {
 				Assert.AreEqual (typeof (IndexOutOfRangeException), e.GetType (), "test#11");
 				// Do not compare exception messages!
 				//Assert.AreEqual ("Cannot find relation 0.", e.Message, "test#12");
 			}
-			
 		}
 
 		[Test]
@@ -761,12 +753,11 @@ namespace MonoTests.System.Data
 		public void ToStringTest()
 		{
 			DataTable dt = new DataTable();
-			dt.Columns.Add("Col1",typeof(int));
-			
+			dt.Columns.Add("Col1", typeof(int));
+
 			dt.TableName = "Mytable";
 			dt.DisplayExpression = "Col1";
-			
-			
+
 			string cmpr = dt.TableName + " + " + dt.DisplayExpression;
 			Assert.AreEqual (cmpr, dt.ToString());
 		}
@@ -782,49 +773,47 @@ namespace MonoTests.System.Data
 			dt.Columns.Add ();
 			dt.Columns.Add ();
 			dt.Columns.Add ();
-			
+
 			Assert.AreEqual (0, dt.PrimaryKey.Length, "test#01");
-			
+
 			dt.PrimaryKey = new DataColumn [] {dt.Columns [0]};
 			Assert.AreEqual (1, dt.PrimaryKey.Length, "test#02");
 			Assert.AreEqual ("Column1", dt.PrimaryKey [0].ColumnName, "test#03");
-			
+
 			dt.PrimaryKey = null;
 			Assert.AreEqual (0, dt.PrimaryKey.Length, "test#04");
-			
+
 			Col = new DataColumn ("failed");
-			
+
 			try {
 				dt.PrimaryKey = new DataColumn [] {Col};
-				Assert.Fail ("test#05");					
-			} catch (Exception e) {
+				Assert.Fail ("test#05");
+			} catch (ArgumentException e) {
 				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#06");
 				// Never expect English message
 				// Assert.AreEqual ("Column must belong to a table.", e.Message, "test#07");
 			}
-			
+
 			DataTable dt2 = new DataTable ();
 			dt2.Columns.Add ();
-			
+
 			try {
 				dt.PrimaryKey = new DataColumn [] {dt2.Columns [0]};
 				Assert.Fail ("test#08");
-			} catch (Exception e) {
+			} catch (ArgumentException e) {
 				Assert.AreEqual (typeof (ArgumentException), e.GetType (), "test#09");
 				// Never expect English message
 				// Assert.AreEqual ("PrimaryKey columns do not belong to this table.", e.Message, "test#10");
 			}
-			
-			
+
 			Assert.AreEqual (0, dt.Constraints.Count, "test#11");
-			
+
 			dt.PrimaryKey = new DataColumn [] {dt.Columns [0], dt.Columns [1]};
 			Assert.AreEqual (2, dt.PrimaryKey.Length, "test#12");
 			Assert.AreEqual (1, dt.Constraints.Count, "test#13");
 			Assert.IsTrue (dt.Constraints [0] is UniqueConstraint, "test#14");
 			Assert.AreEqual ("Column1", dt.PrimaryKey [0].ColumnName, "test#15");
 			Assert.AreEqual ("Column2", dt.PrimaryKey [1].ColumnName, "test#16");
-			
 		}
 		
 		[Test]
@@ -838,24 +827,24 @@ namespace MonoTests.System.Data
 
 			DataColumn col = new DataColumn ();
 			col.ColumnName = "Id";
-			col.DataType = Type.GetType ("System.Int32");
+			col.DataType = typeof (int);
 			table.Columns.Add (col);
 			UniqueConstraint uc = new UniqueConstraint ("UK1", table.Columns[0] );
 			table.Constraints.Add (uc);
 			table.CaseSensitive = false;
-                                                                                                                           
+
 			col = new DataColumn ();
 			col.ColumnName = "Name";
-			col.DataType = Type.GetType ("System.String");
+			col.DataType = typeof (string);
 			table.Columns.Add (col);
-        	        
+
 			col = new DataColumn ();
 			col.ColumnName = "Id";
-			col.DataType = Type.GetType ("System.Int32");
+			col.DataType = typeof (int);
 			table1.Columns.Add (col);
 			col = new DataColumn ();
 			col.ColumnName = "Name";
-			col.DataType = Type.GetType ("System.String");
+			col.DataType = typeof (string);
 			table1.Columns.Add (col);
 
 			DataRelation dr = new DataRelation ("DR", table.Columns[0], table1.Columns[0]);
@@ -867,6 +856,7 @@ namespace MonoTests.System.Data
 				Assert.Fail ("#A01");
 			} catch (ArgumentException) {
 			}
+
 			try {
 				CultureInfo cultureInfo = new CultureInfo ("en-gb");
 				table.Locale = cultureInfo;
@@ -874,6 +864,7 @@ namespace MonoTests.System.Data
 				Assert.Fail ("#A03");
 			} catch (ArgumentException) {
 			}
+
 			try {
 				table.Prefix = "Prefix#1";
 				Assert.Fail ("#A05");
@@ -888,12 +879,12 @@ namespace MonoTests.System.Data
 
 			DataColumn col = new DataColumn ();
 			col.ColumnName = "Id";
-			col.DataType = Type.GetType ("System.Int32");
+			col.DataType = typeof (int);
 			table.Columns.Add (col);
-                                                                                                                             
+
 			col = new DataColumn ();
 			col.ColumnName = "Name";
-			col.DataType = Type.GetType ("System.String");
+			col.DataType = typeof (string);
 			table.Columns.Add (col);
 			
 			DataRow row = table.NewRow ();
@@ -905,6 +896,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (1, table.GetErrors ().Length, "#A01");
 			Assert.AreEqual ("Error#1", (table.GetErrors ())[0].RowError, "#A02");
 		}
+
 #if NET_2_0
 		[Test]
 		public void NewRowAddedTest ()
@@ -913,16 +905,16 @@ namespace MonoTests.System.Data
 
 			DataColumn col = new DataColumn ();
 			col.ColumnName = "Id";
-			col.DataType = Type.GetType ("System.Int32");
+			col.DataType = typeof (int);
 			table.Columns.Add (col);
-                                                                                                                             
+
 			col = new DataColumn ();
 			col.ColumnName = "Name";
-			col.DataType = Type.GetType ("System.String");
+			col.DataType = typeof (string);
 			table.Columns.Add (col);
 			
-                        _tableNewRowAddedEventFired = false;
-                        table.TableNewRow += new DataTableNewRowEventHandler (OnTableNewRowAdded);
+			_tableNewRowAddedEventFired = false;
+			table.TableNewRow += new DataTableNewRowEventHandler (OnTableNewRowAdded);
 			DataRow row = table.NewRow ();
 			row ["Id"] = 147;
 			row ["name"] = "Abc";
@@ -931,6 +923,7 @@ namespace MonoTests.System.Data
 			Assert.IsTrue (_tableNewRowAddedEventFired, "#NewRowAdded Event #01");
 		}
 #endif
+
 		[Test]
 		public void CloneCopyTest ()
 		{
@@ -938,9 +931,9 @@ namespace MonoTests.System.Data
 			table.TableName = "Table#1";
 			DataTable table1 = new DataTable ();
 			table1.TableName = "Table#2";
-                
+
 			table.AcceptChanges ();
-        	        
+
 			DataSet set = new DataSet ("Data Set#1");
 			set.DataSetName = "Dataset#1";
 			set.Tables.Add (table);
@@ -948,37 +941,37 @@ namespace MonoTests.System.Data
 
 			DataColumn col = new DataColumn ();
 			col.ColumnName = "Id";
-			col.DataType = Type.GetType ("System.Int32");
+			col.DataType = typeof (int);
 			table.Columns.Add (col);
 			UniqueConstraint uc = new UniqueConstraint ("UK1", table.Columns[0] );
 			table.Constraints.Add (uc);
-                
+
 			col = new DataColumn ();
 			col.ColumnName = "Id";
-			col.DataType = Type.GetType ("System.Int32");
+			col.DataType = typeof (int);
 			table1.Columns.Add (col);
-                                                                                                                             
+
 			col = new DataColumn ();
 			col.ColumnName = "Name";
-			col.DataType = Type.GetType ("System.String");
+			col.DataType = typeof (string);
 			table.Columns.Add (col);
 			
 			col = new DataColumn ();
 			col.ColumnName = "Name";
-			col.DataType = Type.GetType ("System.String");
-                	table1.Columns.Add (col);
+			col.DataType = typeof (string);
+			table1.Columns.Add (col);
 			DataRow row = table.NewRow ();
 			row ["Id"] = 147;
 			row ["name"] = "Abc";
 			row.RowError = "Error#1";
 			table.Rows.Add (row);
-                                                                                                                             
+
 			row = table.NewRow ();
 			row ["Id"] = 47;
 			row ["name"] = "Efg";
 			table.Rows.Add (row);
 			table.AcceptChanges ();
-                                                                                                                             
+
 			table.CaseSensitive = true;
 			table1.CaseSensitive = true;
 			table.MinimumCapacity = 100;
@@ -1003,7 +996,7 @@ namespace MonoTests.System.Data
 			row ["Id"] = 47;
 			row ["Name"] = "Efg";
 			table1.Rows.Add (row);
-                
+
 			DataRelation dr = new DataRelation ("DR", table.Columns[0], table1.Columns[0]);
 			set.Relations.Add (dr);
 
@@ -1056,35 +1049,35 @@ namespace MonoTests.System.Data
 			DataTable table = new DataTable ();
 			DataColumn col = new DataColumn ();
 			col.ColumnName = "Id";
-			col.DataType = Type.GetType ("System.Int32");
+			col.DataType = typeof (int);
 			col.DefaultValue = 47;
 			table.Columns.Add (col);
 			UniqueConstraint uc = new UniqueConstraint ("UK1", table.Columns[0] );
 			table.Constraints.Add (uc);
-                
+
 			col = new DataColumn ();
 			col.ColumnName = "Name";
-			col.DataType = Type.GetType ("System.String");
+			col.DataType = typeof (string);
 			col.DefaultValue = "Hello";
 			table.Columns.Add (col);
-                
+
 			table.BeginLoadData();
 			object[] row = {147, "Abc"};
 			DataRow newRow = table.LoadDataRow (row, true);
-                
+
 			object[] row1 = {147, "Efg"};
 			DataRow newRow1 = table.LoadDataRow (row1, true);
-                                                                                                                             
+
 			object[] row2 = {143, "Hij"};
 			DataRow newRow2 = table.LoadDataRow (row2, true);
-                                                                                                                             
+
 			try {
 				table.EndLoadData ();
 				Assert.Fail ("#A01");
-			}
-			catch (ConstraintException) {
+			} catch (ConstraintException) {
 			}
 		}
+
 		[Test]
 		public void Changes () //To test GetChanges and RejectChanges
 		{
@@ -1092,22 +1085,22 @@ namespace MonoTests.System.Data
 
 			DataColumn col = new DataColumn ();
 			col.ColumnName = "Id";
-			col.DataType = Type.GetType ("System.Int32");
+			col.DataType = typeof (int);
 			table.Columns.Add (col);
 			UniqueConstraint uc = new UniqueConstraint ("UK1", table.Columns[0] );
 			table.Constraints.Add (uc);
-                                                                                                                             
+
 			col = new DataColumn ();
 			col.ColumnName = "Name";
-			col.DataType = Type.GetType ("System.String");
-			table.Columns.Add (col);			
+			col.DataType = typeof (string);
+			table.Columns.Add (col);
 
 			DataRow row = table.NewRow ();
 			row ["Id"] = 147;
 			row ["name"] = "Abc";
 			table.Rows.Add (row);
 			table.AcceptChanges ();
-                        
+
 			row = table.NewRow ();
 			row ["Id"] = 47;
 			row ["name"] = "Efg";
@@ -1116,119 +1109,124 @@ namespace MonoTests.System.Data
 			//Testing GetChanges
 			DataTable changesTable = table.GetChanges ();
 			Assert.AreEqual (1, changesTable.Rows.Count, "#A01");
- 			Assert.AreEqual ("Efg", changesTable.Rows[0]["Name"], "#A02");               	
+ 			Assert.AreEqual ("Efg", changesTable.Rows[0]["Name"], "#A02");
 			table.AcceptChanges ();
 			changesTable = table.GetChanges ();
+
 			try {
 				int cnt = changesTable.Rows.Count;
-			}
-			catch(Exception e) {
-				if (e.GetType () != typeof (AssertionException))
-					Assert.AreEqual (typeof(NullReferenceException), e.GetType (), "#A03");
-				else
-					Console.WriteLine (e);
+				Assert.Fail ();
+			} catch (NullReferenceException) {
 			}
 			
 			//Testing RejectChanges
 			row = table.NewRow ();
-                        row ["Id"] = 247;
-                        row ["name"] = "Hij";
-                        table.Rows.Add (row);
+			row ["Id"] = 247;
+			row ["name"] = "Hij";
+			table.Rows.Add (row);
 
 			(table.Rows [0])["Name"] = "AaBbCc";
 			table.RejectChanges ();
 			Assert.AreEqual ("Abc" , (table.Rows [0]) ["Name"], "#A03");
 			Assert.AreEqual (2, table.Rows.Count, "#A04");
 		}
-		
-                [Test]
-                public void ImportRowTest ()
-                {
-                        // build source table
-                        DataTable src = new DataTable ();
-                        src.Columns.Add ("id", typeof (int));
-                        src.Columns.Add ("name", typeof (string));
 
-                        src.PrimaryKey = new DataColumn [] {src.Columns [0]} ;
+		[Test]
+		public void ImportRowTest ()
+		{
+			// build source table
+			DataTable src = new DataTable ();
+			src.Columns.Add ("id", typeof (int));
+			src.Columns.Add ("name", typeof (string));
 
-                        src.Rows.Add (new object [] { 1, "mono 1" });
-                        src.Rows.Add (new object [] { 2, "mono 2" });
-                        src.Rows.Add (new object [] { 3, "mono 3" });
-                        src.AcceptChanges ();
+			src.PrimaryKey = new DataColumn [] {src.Columns [0]} ;
 
-                        src.Rows [0] [1] = "mono changed 1";  // modify 1st row
-                        src.Rows [1].Delete ();              // delete 2nd row
-                        // 3rd row is unchanged
-                        src.Rows.Add (new object [] { 4, "mono 4" }); // add 4th row
+			src.Rows.Add (new object [] { 1, "mono 1" });
+			src.Rows.Add (new object [] { 2, "mono 2" });
+			src.Rows.Add (new object [] { 3, "mono 3" });
+			src.AcceptChanges ();
 
-                        // build target table
-                        DataTable target = new DataTable ();
-                        target.Columns.Add ("id", typeof (int));
-                        target.Columns.Add ("name", typeof (string));
+			src.Rows [0] [1] = "mono changed 1";  // modify 1st row
+			src.Rows [1].Delete ();              // delete 2nd row
+			// 3rd row is unchanged
+			src.Rows.Add (new object [] { 4, "mono 4" }); // add 4th row
 
-                        target.PrimaryKey = new DataColumn [] {target.Columns [0]} ;
+			// build target table
+			DataTable target = new DataTable ();
+			target.Columns.Add ("id", typeof (int));
+			target.Columns.Add ("name", typeof (string));
 
-                        // import all rows
-                        target.ImportRow (src.Rows [0]);     // import 1st row
-                        target.ImportRow (src.Rows [1]);     // import 2nd row
-                        target.ImportRow (src.Rows [2]);     // import 3rd row
-                        target.ImportRow (src.Rows [3]);     // import 4th row
+			target.PrimaryKey = new DataColumn [] {target.Columns [0]} ;
 
-                        try {
-                                target.ImportRow (src.Rows [2]); // import 3rd row again
-                                Assert.Fail ("#AA1 Should have thrown exception violativ PK");
-                        } catch (ConstraintException e) {}
+			// import all rows
+			target.ImportRow (src.Rows [0]);     // import 1st row
+			target.ImportRow (src.Rows [1]);     // import 2nd row
+			target.ImportRow (src.Rows [2]);     // import 3rd row
+			target.ImportRow (src.Rows [3]);     // import 4th row
 
-                        // check row states
-                        Assert.AreEqual (src.Rows [0].RowState, target.Rows [0].RowState, "#A1");
-                        Assert.AreEqual (src.Rows [1].RowState, target.Rows [1].RowState, "#A2");
-                        Assert.AreEqual (src.Rows [2].RowState, target.Rows [2].RowState, "#A3");
-                        Assert.AreEqual (src.Rows [3].RowState, target.Rows [3].RowState, "#A4");
+			try {
+				target.ImportRow (src.Rows [2]); // import 3rd row again
+				Assert.Fail ("#C1");
+			} catch (ConstraintException ex) {
+				// Column 'id' is constrained to be unique.
+				// Value '3' is already present
+				Assert.AreEqual (typeof (ConstraintException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsTrue (ex.Message.IndexOf ("'id'") != -1, "#C5");
+				Assert.IsTrue (ex.Message.IndexOf ("'3'") != -1, "#C6");
+			}
 
-                        // check for modified row (1st row)
-                        Assert.AreEqual ((string) src.Rows [0] [1], (string) target.Rows [0] [1], "#B1");
-                        Assert.AreEqual ((string) src.Rows [0] [1, DataRowVersion.Default], (string) target.Rows [0] [1, DataRowVersion.Default], "#B2");
-                        Assert.AreEqual ((string) src.Rows [0] [1, DataRowVersion.Original], (string) target.Rows [0] [1, DataRowVersion.Original], "#B3");
-                        Assert.AreEqual ((string) src.Rows [0] [1, DataRowVersion.Current], (string) target.Rows [0] [1, DataRowVersion.Current], "#B4");
-                        Assert.IsFalse (target.Rows [0].HasVersion(DataRowVersion.Proposed), "#B5");
+			// check row states
+			Assert.AreEqual (src.Rows [0].RowState, target.Rows [0].RowState, "#A1");
+			Assert.AreEqual (src.Rows [1].RowState, target.Rows [1].RowState, "#A2");
+			Assert.AreEqual (src.Rows [2].RowState, target.Rows [2].RowState, "#A3");
+			Assert.AreEqual (src.Rows [3].RowState, target.Rows [3].RowState, "#A4");
 
-                        // check for deleted row (2nd row)
-                        Assert.AreEqual ((string) src.Rows [1] [1, DataRowVersion.Original], (string) target.Rows [1] [1, DataRowVersion.Original], "#C1");
+			// check for modified row (1st row)
+			Assert.AreEqual ((string) src.Rows [0] [1], (string) target.Rows [0] [1], "#B1");
+			Assert.AreEqual ((string) src.Rows [0] [1, DataRowVersion.Default], (string) target.Rows [0] [1, DataRowVersion.Default], "#B2");
+			Assert.AreEqual ((string) src.Rows [0] [1, DataRowVersion.Original], (string) target.Rows [0] [1, DataRowVersion.Original], "#B3");
+			Assert.AreEqual ((string) src.Rows [0] [1, DataRowVersion.Current], (string) target.Rows [0] [1, DataRowVersion.Current], "#B4");
+			Assert.IsFalse (target.Rows [0].HasVersion(DataRowVersion.Proposed), "#B5");
 
-                        // check for unchanged row (3rd row)
-                        Assert.AreEqual ((string) src.Rows [2] [1], (string) target.Rows [2] [1], "#D1");
-                        Assert.AreEqual ((string) src.Rows [2] [1, DataRowVersion.Default], (string) target.Rows [2] [1, DataRowVersion.Default], "#D2");
-                        Assert.AreEqual ((string) src.Rows [2] [1, DataRowVersion.Original], (string) target.Rows [2] [1, DataRowVersion.Original], "#D3");
-                        Assert.AreEqual ((string) src.Rows [2] [1, DataRowVersion.Current], (string) target.Rows [2] [1, DataRowVersion.Current], "#D4");
+			// check for deleted row (2nd row)
+			Assert.AreEqual ((string) src.Rows [1] [1, DataRowVersion.Original], (string) target.Rows [1] [1, DataRowVersion.Original], "#C1");
 
-                        // check for newly added row (4th row)
-                        Assert.AreEqual ((string) src.Rows [3] [1], (string) target.Rows [3] [1], "#E1");
-                        Assert.AreEqual ((string) src.Rows [3] [1, DataRowVersion.Default], (string) target.Rows [3] [1, DataRowVersion.Default], "#E2");
-                        Assert.AreEqual ((string) src.Rows [3] [1, DataRowVersion.Current], (string) target.Rows [3] [1, DataRowVersion.Current], "#E3");
-                }
+			// check for unchanged row (3rd row)
+			Assert.AreEqual ((string) src.Rows [2] [1], (string) target.Rows [2] [1], "#D1");
+			Assert.AreEqual ((string) src.Rows [2] [1, DataRowVersion.Default], (string) target.Rows [2] [1, DataRowVersion.Default], "#D2");
+			Assert.AreEqual ((string) src.Rows [2] [1, DataRowVersion.Original], (string) target.Rows [2] [1, DataRowVersion.Original], "#D3");
+			Assert.AreEqual ((string) src.Rows [2] [1, DataRowVersion.Current], (string) target.Rows [2] [1, DataRowVersion.Current], "#D4");
 
-                [Test]
+			// check for newly added row (4th row)
+			Assert.AreEqual ((string) src.Rows [3] [1], (string) target.Rows [3] [1], "#E1");
+			Assert.AreEqual ((string) src.Rows [3] [1, DataRowVersion.Default], (string) target.Rows [3] [1, DataRowVersion.Default], "#E2");
+			Assert.AreEqual ((string) src.Rows [3] [1, DataRowVersion.Current], (string) target.Rows [3] [1, DataRowVersion.Current], "#E3");
+		}
+
+		[Test]
 		public void ImportRowDetachedTest ()
 		{
 			DataTable table = new DataTable ();
 			DataColumn col = new DataColumn ();
 			col.ColumnName = "Id";
-			col.DataType = Type.GetType ("System.Int32");
+			col.DataType = typeof (int);
 			table.Columns.Add (col);
 
-                        table.PrimaryKey = new DataColumn [] {col};
+			table.PrimaryKey = new DataColumn [] {col};
 
-                        col = new DataColumn ();
+			col = new DataColumn ();
 			col.ColumnName = "Name";
-			col.DataType = Type.GetType ("System.String");
+			col.DataType = typeof (string);
 			table.Columns.Add (col);
-                        
+
 			DataRow row = table.NewRow ();
 			row ["Id"] = 147;
 			row ["name"] = "Abc";
 
-                        // keep silent as ms.net ;-), though this is not useful.
-                        table.ImportRow (row);
+			// keep silent as ms.net ;-), though this is not useful.
+			table.ImportRow (row);
 
 			//if RowState is detached, then dont import the row.
 			Assert.AreEqual (0, table.Rows.Count, "#1");
@@ -1249,11 +1247,11 @@ namespace MonoTests.System.Data
 			// row.
 			row.Delete ();
 			table.ImportRow (row);
-			Assert.AreEqual (2, table.Rows.Count, "#1");
+			Assert.AreEqual (2, table.Rows.Count, "#A1");
 
 			// Both the deleted rows shud be now gone
 			table.AcceptChanges ();
-			Assert.AreEqual (0, table.Rows.Count, "#2");
+			Assert.AreEqual (0, table.Rows.Count, "#A2");
 
 			//just add another row
 			row = table.Rows.Add (new object[] {1,2});
@@ -1264,13 +1262,20 @@ namespace MonoTests.System.Data
 			// row and validate only on RejectChanges
 			row.Delete ();
 			table.ImportRow (row);
-			Assert.AreEqual (2, table.Rows.Count, "#3");
-			Assert.AreEqual (DataRowState.Deleted, table.Rows[1].RowState, "#4");
+			Assert.AreEqual (2, table.Rows.Count, "#A3");
+			Assert.AreEqual (DataRowState.Deleted, table.Rows[1].RowState, "#A4");
 
 			try {
 				table.RejectChanges ();
-				Assert.Fail ("#5");
-			} catch (ConstraintException e) {
+				Assert.Fail ("#B1");
+			} catch (ConstraintException ex) {
+				// Column 'col' is constrained to be unique.
+				// Value '1' is already present
+				Assert.AreEqual (typeof (ConstraintException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("'col'") != -1, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf ("'1'") != -1, "#B6");
 			}
 		}
 
@@ -1279,40 +1284,40 @@ namespace MonoTests.System.Data
 		{
 			DataTable table = new DataTable ("table");
 			DataTable table1 = new DataTable ("table1");
-                
+
 			DataSet set = new DataSet ();
 			set.Tables.Add (table);
 			set.Tables.Add (table1);
 
-                        table.Columns.Add ("Id", typeof (int));
-                        table.Columns.Add ("Name", typeof (string));
-                        table.Constraints.Add (new UniqueConstraint ("UK1", table.Columns [0]));
-                        table.CaseSensitive = false;
-                        
-                        table1.Columns.Add ("Id", typeof (int));
-                        table1.Columns.Add ("Name", typeof (string));
+			table.Columns.Add ("Id", typeof (int));
+			table.Columns.Add ("Name", typeof (string));
+			table.Constraints.Add (new UniqueConstraint ("UK1", table.Columns [0]));
+			table.CaseSensitive = false;
 
-                        DataRelation dr = new DataRelation ("DR", table.Columns[0], table1.Columns[0]);
+			table1.Columns.Add ("Id", typeof (int));
+			table1.Columns.Add ("Name", typeof (string));
+
+			DataRelation dr = new DataRelation ("DR", table.Columns[0], table1.Columns[0]);
 			set.Relations.Add (dr);
-                
+
 			DataRow row = table.NewRow ();
 			row ["Id"] = 147;
 			row ["name"] = "Roopa";
 			table.Rows.Add (row);
-                
+
 			row = table.NewRow ();
 			row ["Id"] = 47;
 			row ["Name"] = "roopa";
 			table.Rows.Add (row);
-                
+
 			Assert.AreEqual (2, table.Rows.Count);
 			Assert.AreEqual (1, table.ChildRelations.Count);
 			try {
 				table.Reset ();
 				Assert.Fail ("#A01, should have thrown ArgumentException");
+			} catch (ArgumentException) {
 			}
-                        catch (ArgumentException) {
-			}
+
 			Assert.AreEqual (0, table.Rows.Count, "#CT01");
 			Assert.AreEqual (0, table.ChildRelations.Count, "#CT02");
 			Assert.AreEqual (0, table.ParentRelations.Count, "#CT03");
@@ -1323,7 +1328,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (0, table1.Constraints.Count, "#A06");
 			Assert.AreEqual (0, table1.ParentRelations.Count, "#A07");
 		
-                        // clear test
+			// clear test
 			table.Clear ();
 			Assert.AreEqual (0, table.Rows.Count, "#A08");
 #if NET_1_1
@@ -1332,62 +1337,63 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (1, table.Constraints.Count, "#A09");
 #endif
 			Assert.AreEqual (0, table.ChildRelations.Count, "#A10");
-
 		}
 
-                [Test]
-                public void ClearTest ()
-                {
-                        DataTable table = new DataTable ("test");
-                        table.Columns.Add ("id", typeof (int));
-                        table.Columns.Add ("name", typeof (string));
-                        
-                        table.PrimaryKey = new DataColumn [] { table.Columns [0] } ;
-                        
-                        table.Rows.Add (new object [] { 1, "mono 1" });
-                        table.Rows.Add (new object [] { 2, "mono 2" });
-                        table.Rows.Add (new object [] { 3, "mono 3" });
-                        table.Rows.Add (new object [] { 4, "mono 4" });
+		[Test]
+		public void ClearTest ()
+		{
+			DataTable table = new DataTable ("test");
+			table.Columns.Add ("id", typeof (int));
+			table.Columns.Add ("name", typeof (string));
 
-                        table.AcceptChanges ();
-#if NET_2_0
-                        _tableClearedEventFired = false;
-                        table.TableCleared += new DataTableClearEventHandler (OnTableCleared);
-                        _tableClearingEventFired = false;
-                        table.TableClearing += new DataTableClearEventHandler (OnTableClearing);
-#endif // NET_2_0
-                        
-                        table.Clear ();
-#if NET_2_0
-                        Assert.IsTrue (_tableClearingEventFired, "#3 should have fired cleared event");
-                        Assert.IsTrue (_tableClearedEventFired, "#0 should have fired cleared event");
-#endif // NET_2_0
-                        
-                        DataRow r = table.Rows.Find (1);
-                        Assert.IsTrue (r == null, "#1 should have cleared");
+			table.PrimaryKey = new DataColumn [] { table.Columns [0] } ;
 
-                        // try adding new row. indexes should have cleared
-                        table.Rows.Add (new object [] { 2, "mono 2" });
-                        Assert.AreEqual (1, table.Rows.Count, "#2 should add row");
-                }
+			table.Rows.Add (new object [] { 1, "mono 1" });
+			table.Rows.Add (new object [] { 2, "mono 2" });
+			table.Rows.Add (new object [] { 3, "mono 3" });
+			table.Rows.Add (new object [] { 4, "mono 4" });
+
+			table.AcceptChanges ();
 #if NET_2_0
-                private bool _tableClearedEventFired = false;
-                private void OnTableCleared (object src, DataTableClearEventArgs args)
-                {
-                        _tableClearedEventFired = true;
-                }
-                private bool _tableClearingEventFired = false;
-                private void OnTableClearing (object src, DataTableClearEventArgs args)
-                {
-                        _tableClearingEventFired = true;
-                }
-                private bool _tableNewRowAddedEventFired = false;
-                private void OnTableNewRowAdded (object src, DataTableNewRowEventArgs args)
-                {
-                        _tableNewRowAddedEventFired = true;
-                }
+			_tableClearedEventFired = false;
+			table.TableCleared += new DataTableClearEventHandler (OnTableCleared);
+			_tableClearingEventFired = false;
+			table.TableClearing += new DataTableClearEventHandler (OnTableClearing);
 #endif // NET_2_0
-                
+
+			table.Clear ();
+#if NET_2_0
+			Assert.IsTrue (_tableClearingEventFired, "#3 should have fired cleared event");
+			Assert.IsTrue (_tableClearedEventFired, "#0 should have fired cleared event");
+#endif // NET_2_0
+
+			DataRow r = table.Rows.Find (1);
+			Assert.IsTrue (r == null, "#1 should have cleared");
+
+			// try adding new row. indexes should have cleared
+			table.Rows.Add (new object [] { 2, "mono 2" });
+			Assert.AreEqual (1, table.Rows.Count, "#2 should add row");
+		}
+
+#if NET_2_0
+		private bool _tableClearedEventFired;
+		private void OnTableCleared (object src, DataTableClearEventArgs args)
+		{
+			_tableClearedEventFired = true;
+		}
+
+		private bool _tableClearingEventFired;
+		private void OnTableClearing (object src, DataTableClearEventArgs args)
+		{
+			_tableClearingEventFired = true;
+		}
+
+		private bool _tableNewRowAddedEventFired;
+		private void OnTableNewRowAdded (object src, DataTableNewRowEventArgs args)
+		{
+			_tableNewRowAddedEventFired = true;
+		}
+#endif // NET_2_0
 
 #if NET_2_0
 		[Test]
@@ -1413,7 +1419,7 @@ namespace MonoTests.System.Data
 			string substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?>", substring, "test#01");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("<xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring, "test#02");
@@ -1423,19 +1429,19 @@ namespace MonoTests.System.Data
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("    <xs:complexType>", substring, "test#04");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("      <xs:choice minOccurs=\"0\" maxOccurs=\"unbounded\">", substring, "test#05");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("        <xs:element name=\"TestWriteXmlSchema\">", substring, "test#06");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("          <xs:complexType>", substring, "test#07");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("            <xs:sequence>", substring, "test#08");
@@ -1451,16 +1457,15 @@ namespace MonoTests.System.Data
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("            </xs:sequence>", substring, "test#11");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("          </xs:complexType>", substring, "test#12");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("        </xs:element>", substring, "test#13");
-			
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("      </xs:choice>", substring, "test#14");
@@ -1471,9 +1476,10 @@ namespace MonoTests.System.Data
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			Assert.AreEqual ("  </xs:element>", substring, "test#16");			
+			Assert.AreEqual ("  </xs:element>", substring, "test#16");
 			Assert.AreEqual ("</xs:schema>", TextString, "test#17");
 		}
+
 		[Test]
 		public void TestWriteXmlSchema2()
 		{
@@ -1502,7 +1508,7 @@ namespace MonoTests.System.Data
 			string substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?>", substring, "test#01");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("<xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring, "test#02");
@@ -1512,23 +1518,23 @@ namespace MonoTests.System.Data
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("    <xs:complexType>", substring, "test#04");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("      <xs:choice minOccurs=\"0\" maxOccurs=\"unbounded\">", substring, "test#05");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("        <xs:element name=\"TestWriteXmlSchema\">", substring, "test#06");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("          <xs:complexType>", substring, "test#07");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("            <xs:sequence>", substring, "test#08");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("              <xs:element name=\"Col1\" type=\"xs:int\" minOccurs=\"0\" />", substring, "test#09");
@@ -1540,15 +1546,15 @@ namespace MonoTests.System.Data
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("            </xs:sequence>", substring, "test#11");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("          </xs:complexType>", substring, "test#12");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("        </xs:element>", substring, "test#13");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("      </xs:choice>", substring, "test#14");
@@ -1575,9 +1581,10 @@ namespace MonoTests.System.Data
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			Assert.AreEqual ("  </xs:element>", substring, "test#20");			
+			Assert.AreEqual ("  </xs:element>", substring, "test#20");
 			Assert.AreEqual ("</xs:schema>", TextString, "test#21");
 		}
+
 		[Test]
 		public void TestWriteXmlSchema3()
 		{
@@ -1606,7 +1613,7 @@ namespace MonoTests.System.Data
 			string substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?>", substring, "test#01");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("<xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\">", substring, "test#02");
@@ -1616,23 +1623,23 @@ namespace MonoTests.System.Data
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("    <xs:complexType>", substring, "test#04");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("      <xs:choice minOccurs=\"0\" maxOccurs=\"unbounded\">", substring, "test#05");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("        <xs:element name=\"TestWriteXmlSchema\">", substring, "test#06");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("          <xs:complexType>", substring, "test#07");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("            <xs:sequence>", substring, "test#08");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("              <xs:element name=\"Col1\" type=\"xs:int\" minOccurs=\"0\" />", substring, "test#09");
@@ -1644,27 +1651,27 @@ namespace MonoTests.System.Data
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("            </xs:sequence>", substring, "test#11");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("          </xs:complexType>", substring, "test#12");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("        </xs:element>", substring, "test#13");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("        <xs:element name=\"HelloWorld\">", substring, "test#14");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("          <xs:complexType>", substring, "test#15");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("            <xs:sequence>", substring, "test#16");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("              <xs:element name=\"T1\" type=\"xs:int\" minOccurs=\"0\" />", substring, "test#17");
@@ -1676,15 +1683,15 @@ namespace MonoTests.System.Data
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("            </xs:sequence>", substring, "test#19");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("          </xs:complexType>", substring, "test#20");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("        </xs:element>", substring, "test#21");
-			
+
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			Assert.AreEqual ("      </xs:choice>", substring, "test#22");
@@ -1727,30 +1734,30 @@ namespace MonoTests.System.Data
 
 			substring = TextString.Substring (0, TextString.IndexOf(EOL));
 			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-			Assert.AreEqual ("  </xs:element>", substring, "test#32");			
+			Assert.AreEqual ("  </xs:element>", substring, "test#32");
 			Assert.AreEqual ("</xs:schema>", TextString, "test#33");
 		}
 #endif
+
 		[Test]
 		public void Serialize ()
 		{
 			MemoryStream fs = new MemoryStream ();
-			
+
 			// Construct a BinaryFormatter and use it 
 			// to serialize the data to the stream.
 			BinaryFormatter formatter = new BinaryFormatter();
-		
+
 			// Create an array with multiple elements refering to 
 			// the one Singleton object.
 			DataTable dt = new DataTable();
-		
-		
+
 			dt.Columns.Add(new DataColumn("Id", typeof(string)));
 			dt.Columns.Add(new DataColumn("ContactName", typeof(string)));
 			dt.Columns.Add(new DataColumn("ContactTitle", typeof(string)));
 			dt.Columns.Add(new DataColumn("ContactAreaCode", typeof(string)));
 			dt.Columns.Add(new DataColumn("ContactPhone", typeof(string)));
-		
+
 			DataRow loRowToAdd;
 			loRowToAdd = dt.NewRow();
 			loRowToAdd[0] = "a";
@@ -1758,21 +1765,20 @@ namespace MonoTests.System.Data
 			loRowToAdd[2] = "c";
 			loRowToAdd[3] = "d";
 			loRowToAdd[4] = "e";
-						
 			dt.Rows.Add(loRowToAdd);
-		
+
 			DataTable[] dtarr = new DataTable[] {dt}; 
-		
+
 			// Serialize the array elements.
 			formatter.Serialize(fs, dtarr);
-		
+
 			// Deserialize the array elements.
 			fs.Position = 0;
 			DataTable[] a2 = (DataTable[]) formatter.Deserialize(fs);
-		
+
 			DataSet ds = new DataSet();
 			ds.Tables.Add(a2[0]);
-		
+
 			StringWriter sw = new StringWriter ();
 			ds.WriteXml(sw);
 			XmlDocument doc = new XmlDocument ();
@@ -1781,7 +1787,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[ExpectedException (typeof (DataException))]
 		public void SetPrimaryKeyAssertsNonNull ()
 		{
 			DataTable dt = new DataTable ("table");
@@ -1791,11 +1796,14 @@ namespace MonoTests.System.Data
 			dt.Rows.Add (new object [] {1, 3});
 			dt.Rows.Add (new object [] {DBNull.Value, 3});
 
-			dt.PrimaryKey = new DataColumn [] {dt.Columns [0]};
+			try {
+				dt.PrimaryKey = new DataColumn [] { dt.Columns [0] };
+				Assert.Fail ("#1");
+			} catch (DataException) {
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (NoNullAllowedException))]
 		public void PrimaryKeyColumnChecksNonNull ()
 		{
 			DataTable dt = new DataTable ("table");
@@ -1804,7 +1812,12 @@ namespace MonoTests.System.Data
 			dt.Constraints.Add (new UniqueConstraint (dt.Columns [0]));
 			dt.PrimaryKey = new DataColumn [] {dt.Columns [0]};
 			dt.Rows.Add (new object [] {1, 3});
-			dt.Rows.Add (new object [] {DBNull.Value, 3});
+
+			try {
+				dt.Rows.Add (new object [] { DBNull.Value, 3 });
+				Assert.Fail ("#1");
+			} catch (NoNullAllowedException) {
+			}
 		}
 
 		[Test]
@@ -1860,43 +1873,41 @@ namespace MonoTests.System.Data
 			Assert.IsTrue (rowChangingRowChanged, "changed,Changed");
 		}
 
-		 [Test]
-                public void CloneSubClassTest()
-                {
-                        MyDataTable dt1 = new MyDataTable();
-                        MyDataTable dt = (MyDataTable)(dt1.Clone());
-                        Assert.AreEqual (2, MyDataTable.count, "A#01");
-                }
+		[Test]
+		public void CloneSubClassTest()
+		{
+			MyDataTable dt1 = new MyDataTable();
+			MyDataTable dt = (MyDataTable)(dt1.Clone());
+			Assert.AreEqual (2, MyDataTable.count, "A#01");
+		}
 
-                DataRowAction rowActionChanging = DataRowAction.Nothing;
-                DataRowAction rowActionChanged  = DataRowAction.Nothing;
-                [Test]
-                public void AcceptChangesTest ()
-                {
-                        DataTable dt = new DataTable ("test");
-                        dt.Columns.Add ("id", typeof (int));
-                        dt.Columns.Add ("name", typeof (string));
-                        
-                        dt.Rows.Add (new object [] { 1, "mono 1" });
+		DataRowAction rowActionChanging = DataRowAction.Nothing;
+		DataRowAction rowActionChanged  = DataRowAction.Nothing;
+		[Test]
+		public void AcceptChangesTest ()
+		{
+			DataTable dt = new DataTable ("test");
+			dt.Columns.Add ("id", typeof (int));
+			dt.Columns.Add ("name", typeof (string));
 
-                        dt.RowChanged  += new DataRowChangeEventHandler (OnRowChanged);
-                        dt.RowChanging += new DataRowChangeEventHandler (OnRowChanging);
+			dt.Rows.Add (new object [] { 1, "mono 1" });
 
-                        try {
-                                rowActionChanged = rowActionChanging = DataRowAction.Nothing;
-                                dt.AcceptChanges ();
+			dt.RowChanged  += new DataRowChangeEventHandler (OnRowChanged);
+			dt.RowChanging += new DataRowChangeEventHandler (OnRowChanging);
 
-                                Assert.AreEqual (DataRowAction.Commit, rowActionChanging,
+			try {
+				rowActionChanged = rowActionChanging = DataRowAction.Nothing;
+				dt.AcceptChanges ();
+
+				Assert.AreEqual (DataRowAction.Commit, rowActionChanging,
 						 "#1 should have fired event and set action to commit");
-                                Assert.AreEqual (DataRowAction.Commit, rowActionChanged,
+				Assert.AreEqual (DataRowAction.Commit, rowActionChanged,
 						 "#2 should have fired event and set action to commit");
-
-                        } finally {
-                                dt.RowChanged  -= new DataRowChangeEventHandler (OnRowChanged);
-                                dt.RowChanging -= new DataRowChangeEventHandler (OnRowChanging);
-
-                        }
-                }
+			} finally {
+				dt.RowChanged  -= new DataRowChangeEventHandler (OnRowChanged);
+				dt.RowChanging -= new DataRowChangeEventHandler (OnRowChanging);
+			}
+		}
 
 		[Test]
 		public void ColumnObjectTypeTest() {
@@ -1909,7 +1920,8 @@ namespace MonoTests.System.Data
 #if NET_2_0
 		private bool tableInitialized;
 		[Test]
-		public void TableInitializedEventTest1 () {
+		public void TableInitializedEventTest1 ()
+		{
 			DataTable dt = new DataTable();
 			tableInitialized = false;
 			dt.Initialized += new EventHandler (OnTableInitialized);
@@ -1918,8 +1930,10 @@ namespace MonoTests.System.Data
 			Assert.IsFalse (tableInitialized, "TableInitialized #01");
 			dt.Initialized -= new EventHandler (OnTableInitialized);
 		}
+
 		[Test]
-		public void TableInitializedEventTest2 () {
+		public void TableInitializedEventTest2 ()
+		{
 			DataTable dt = new DataTable();
 			dt.BeginInit ();
 			tableInitialized = false;
@@ -1930,8 +1944,10 @@ namespace MonoTests.System.Data
 			dt.Initialized -= new EventHandler (OnTableInitialized);
 			Assert.IsTrue (tableInitialized, "TableInitialized #02");
 		}
+
 		[Test]
-		public void TableInitializedEventTest3 () {
+		public void TableInitializedEventTest3 ()
+		{
 			DataTable dt = new DataTable();
 			tableInitialized = true;
 			dt.Initialized += new EventHandler (OnTableInitialized);
@@ -1940,8 +1956,10 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (tableInitialized, dt.IsInitialized, "TableInitialized #03");
 			dt.Initialized -= new EventHandler (OnTableInitialized);
 		}
+
 		[Test]
-		public void TableInitializedEventTest4 () {
+		public void TableInitializedEventTest4 ()
+		{
 			DataTable dt = new DataTable();
 			Assert.IsTrue (dt.IsInitialized, "TableInitialized #04");
 			dt.BeginInit ();
@@ -1956,21 +1974,20 @@ namespace MonoTests.System.Data
 			dt.Initialized -= new EventHandler (OnTableInitialized);
 		}
 
-                private void OnTableInitialized (object src, EventArgs args)
-                {
+		private void OnTableInitialized (object src, EventArgs args)
+		{
 			tableInitialized = true;
 		}
-
 #endif
 
-                public void OnRowChanging (object src, DataRowChangeEventArgs args)
-                {
-                        rowActionChanging = args.Action;
-                }
-                
-                public void OnRowChanged (object src, DataRowChangeEventArgs args)
-                {
-                        rowActionChanged = args.Action;
+		public void OnRowChanging (object src, DataRowChangeEventArgs args)
+		{
+			rowActionChanging = args.Action;
+		}
+
+		public void OnRowChanged (object src, DataRowChangeEventArgs args)
+		{
+			rowActionChanged = args.Action;
 		}
 
 #if NET_2_0
@@ -1991,7 +2008,8 @@ namespace MonoTests.System.Data
 		#region DataTable.CreateDataReader Tests
 
 		[Test]
-		public void CreateDataReader1 () {
+		public void CreateDataReader1 ()
+		{
 			localSetup ();
 			DataTableReader dtr = dt.CreateDataReader ();
 			Assert.IsTrue (dtr.HasRows, "HasRows");
@@ -2006,7 +2024,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void CreateDataReader2 () {
+		public void CreateDataReader2 ()
+		{
 			localSetup ();
 			DataTableReader dtr = dt.CreateDataReader ();
 			Assert.IsTrue (dtr.HasRows, "HasRows");
@@ -2027,7 +2046,8 @@ namespace MonoTests.System.Data
 		#region DataTable.Load Tests
 
 		[Test]
-		public void Load_Basic () {
+		public void Load_Basic ()
+		{
 			localSetup ();
 			DataTable dtLoad = new DataTable ("LoadBasic");
 			dtLoad.Columns.Add ("id", typeof (int));
@@ -2052,7 +2072,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void Load_NoSchema () {
+		public void Load_NoSchema ()
+		{
 			localSetup ();
 			DataTable dtLoad = new DataTable ("LoadNoSchema");
 			DataTableReader dtr = dt.CreateDataReader ();
@@ -2067,12 +2088,15 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("mono 3", dtLoad.Rows[2][1], "RowData2-1");
 		}
 
-		internal struct fillErrorStruct {
+		internal struct fillErrorStruct
+		{
 			internal string error;
 			internal string tableName;
 			internal int rowKey;
 			internal bool contFlag;
-			internal void init (string tbl, int row, bool cont, string err) {
+
+			internal void init (string tbl, int row, bool cont, string err)
+			{
 				tableName = tbl;
 				rowKey = row;
 				contFlag = cont;
@@ -2081,7 +2105,8 @@ namespace MonoTests.System.Data
 		}
 		private fillErrorStruct[] fillErr = new fillErrorStruct[3];
 		private int fillErrCounter;
-		private void fillErrorHandler (object sender, FillErrorEventArgs e) {
+		private void fillErrorHandler (object sender, FillErrorEventArgs e)
+		{
 			e.Continue = fillErr[fillErrCounter].contFlag;
 			Assert.AreEqual (fillErr[fillErrCounter].tableName, e.DataTable.TableName, "fillErr-T");
 			//Assert.AreEqual (fillErr[fillErrCounter].rowKey, e.Values[0], "fillErr-R");
@@ -2091,18 +2116,23 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void Load_Incompatible () {
+		public void Load_Incompatible ()
+		{
 			localSetup ();
 			DataTable dtLoad = new DataTable ("LoadIncompatible");
 			dtLoad.Columns.Add ("name", typeof (double));
 			DataTableReader dtr = dt.CreateDataReader ();
-			dtLoad.Load (dtr);
+			try {
+				dtLoad.Load (dtr);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
 		}
 		[Test]
 		// Load doesn't have a third overload in System.Data
 		// and is commented-out below
-		public void Load_IncompatibleEHandlerT () {
+		public void Load_IncompatibleEHandlerT ()
+		{
 			fillErrCounter = 0;
 			fillErr[0].init ("LoadIncompatible", 1, true,
 				 "Input string was not in a correct format.Couldn't store <mono 1> in name Column.  Expected type is Double.");
@@ -2116,11 +2146,12 @@ namespace MonoTests.System.Data
 			DataTableReader dtr = dt.CreateDataReader ();
 			dtLoad.Load (dtr,LoadOption.PreserveChanges,fillErrorHandler);
 		}
+
 		[Test]
 		// Load doesn't have a third overload in System.Data
 		// and is commented-out below
-		[ExpectedException (typeof (ArgumentException))]
-		public void Load_IncompatibleEHandlerF () {
+		public void Load_IncompatibleEHandlerF ()
+		{
 			fillErrCounter = 0;
 			fillErr[0].init ("LoadIncompatible", 1, false,
 				"Input string was not in a correct format.Couldn't store <mono 1> in name Column.  Expected type is Double.");
@@ -2128,11 +2159,16 @@ namespace MonoTests.System.Data
 			DataTable dtLoad = new DataTable ("LoadIncompatible");
 			dtLoad.Columns.Add ("name", typeof (double));
 			DataTableReader dtr = dt.CreateDataReader ();
-			dtLoad.Load (dtr, LoadOption.PreserveChanges, fillErrorHandler);
+			try {
+				dtLoad.Load (dtr, LoadOption.PreserveChanges, fillErrorHandler);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
 		}
 
 		[Test]
-		public void Load_ExtraColsEqualVal () {
+		public void Load_ExtraColsEqualVal ()
+		{
 			localSetup ();
 			DataTable dtLoad = new DataTable ("LoadExtraCols");
 			dtLoad.Columns.Add ("id", typeof (int));
@@ -2154,7 +2190,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void Load_ExtraColsNonEqualVal () {
+		public void Load_ExtraColsNonEqualVal ()
+		{
 			localSetup ();
 			DataTable dtLoad = new DataTable ("LoadExtraCols");
 			dtLoad.Columns.Add ("id", typeof (int));
@@ -2179,8 +2216,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[ExpectedException (typeof (ConstraintException))]
-		public void Load_MissingColsNonNullable () {
+		public void Load_MissingColsNonNullable ()
+		{
 			localSetup ();
 			DataTable dtLoad = new DataTable ("LoadMissingCols");
 			dtLoad.Columns.Add ("id", typeof (int));
@@ -2193,11 +2230,16 @@ namespace MonoTests.System.Data
 			dtLoad.Rows.Add (new object[] { 6, "mono 6", "miss6" });
 			dtLoad.AcceptChanges ();
 			DataTableReader dtr = dt.CreateDataReader ();
-			dtLoad.Load (dtr);
+			try {
+				dtLoad.Load (dtr);
+				Assert.Fail ("#1");
+			} catch (ConstraintException) {
+			}
 		}
 
 		[Test]
-		public void Load_MissingColsDefault () {
+		public void Load_MissingColsDefault ()
+		{
 			localSetup ();
 			DataTable dtLoad = new DataTable ("LoadMissingCols");
 			dtLoad.Columns.Add ("id", typeof (int));
@@ -2235,7 +2277,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void Load_MissingColsNullable () {
+		public void Load_MissingColsNullable ()
+		{
 			localSetup ();
 			DataTable dtLoad = new DataTable ("LoadMissingCols");
 			dtLoad.Columns.Add ("id", typeof (int));
@@ -2271,7 +2314,8 @@ namespace MonoTests.System.Data
 			//Assert.IsNull (dtLoad.Rows[5][2], "RowData5-2");
 		}
 
-		private DataTable setupRowState () {
+		private DataTable setupRowState ()
+		{
 			DataTable tbl = new DataTable ("LoadRowStateChanges");
 			tbl.RowChanged += new DataRowChangeEventHandler (dtLoad_RowChanged);
 			tbl.RowChanging += new DataRowChangeEventHandler (dtLoad_RowChanging);
@@ -2294,25 +2338,32 @@ namespace MonoTests.System.Data
 		}
 
 		private DataRowAction[] rowChangeAction = new DataRowAction[5];
-		private bool checkAction = false;
+		private bool checkAction;
 		private int rowChagedCounter, rowChangingCounter;
-		private void rowActionInit (DataRowAction[] act) {
+		private void rowActionInit (DataRowAction[] act)
+		{
 			checkAction = true;
 			rowChagedCounter = 0;
 			rowChangingCounter = 0;
 			for (int i = 0; i < 5; i++)
 				rowChangeAction[i] = act[i];
 		}
-		private void rowActionEnd () {
+
+		private void rowActionEnd ()
+		{
 			checkAction = false;
 		}
-		private void dtLoad_RowChanged (object sender, DataRowChangeEventArgs e) {
+
+		private void dtLoad_RowChanged (object sender, DataRowChangeEventArgs e)
+		{
 			if (checkAction) {
 				Assert.AreEqual (rowChangeAction[rowChagedCounter], e.Action, "RowChanged" + rowChagedCounter);
 				rowChagedCounter++;
 			}
 		}
-		private void dtLoad_RowChanging (object sender, DataRowChangeEventArgs e) {
+
+		private void dtLoad_RowChanging (object sender, DataRowChangeEventArgs e)
+		{
 			if (checkAction) {
 				Assert.AreEqual (rowChangeAction[rowChangingCounter], e.Action, "RowChanging" + rowChangingCounter);
 				rowChangingCounter++;
@@ -2320,7 +2371,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void Load_RowStateChangesDefault () {
+		public void Load_RowStateChangesDefault ()
+		{
 			localSetup ();
 			dt.Rows.Add (new object[] { 4, "mono 4" });
 			dt.Rows.Add (new object[] { 5, "mono 5" });
@@ -2358,8 +2410,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[ExpectedException (typeof (VersionNotFoundException))]
-		public void Load_RowStateChangesDefaultDelete () {
+		public void Load_RowStateChangesDefaultDelete ()
+		{
 			localSetup ();
 			DataTable dtLoad = new DataTable ("LoadRowStateChanges");
 			dtLoad.Columns.Add ("id", typeof (int));
@@ -2372,11 +2424,17 @@ namespace MonoTests.System.Data
 			dtLoad.Rows[2].Delete ();
 			DataTableReader dtr = dt.CreateDataReader ();
 			dtLoad.Load (dtr);
-			Assert.AreEqual (" ", dtLoad.Rows[2][1, DataRowVersion.Current], "RowData2-C");
+
+			try {
+				Assert.AreEqual (" ", dtLoad.Rows[2][1, DataRowVersion.Current], "RowData2-C");
+				Assert.Fail ("#1");
+			} catch (VersionNotFoundException) {
+			}
 		}
 
 		[Test]
-		public void Load_RowStatePreserveChanges () {
+		public void Load_RowStatePreserveChanges ()
+		{
 			localSetup ();
 			dt.Rows.Add (new object[] { 4, "mono 4" });
 			dt.Rows.Add (new object[] { 5, "mono 5" });
@@ -2414,7 +2472,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[ExpectedException (typeof (VersionNotFoundException))]
 		public void Load_RowStatePreserveChangesDelete () {
 			localSetup ();
 			DataTable dtLoad = new DataTable ("LoadRowStateChanges");
@@ -2428,11 +2485,17 @@ namespace MonoTests.System.Data
 			dtLoad.Rows[2].Delete ();
 			DataTableReader dtr = dt.CreateDataReader ();
 			dtLoad.Load (dtr,LoadOption.PreserveChanges);
-			Assert.AreEqual (" ", dtLoad.Rows[2][1, DataRowVersion.Current], "RowData2-C");
+
+			try {
+				Assert.AreEqual (" ", dtLoad.Rows[2][1, DataRowVersion.Current], "RowData2-C");
+				Assert.Fail ("#1");
+			} catch (VersionNotFoundException) {
+			}
 		}
 
 		[Test]
-		public void Load_RowStateOverwriteChanges () {
+		public void Load_RowStateOverwriteChanges ()
+		{
 			localSetup ();
 			dt.Rows.Add (new object[] { 4, "mono 4" });
 			dt.Rows.Add (new object[] { 5, "mono 5" });
@@ -2471,7 +2534,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void Load_RowStateUpsert () {
+		public void Load_RowStateUpsert ()
+		{
 			localSetup ();
 			dt.Rows.Add (new object[] { 4, "mono 4" });
 			dt.Rows.Add (new object[] { 5, "mono 5" });
@@ -2513,7 +2577,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void Load_RowStateUpsertDuplicateKey1 () {
+		public void Load_RowStateUpsertDuplicateKey1 ()
+		{
 			localSetup ();
 			dt.Rows.Add (new object[] { 4, "mono 4" });
 			DataTable dtLoad = new DataTable ("LoadRowStateChanges");
@@ -2549,8 +2614,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[ExpectedException (typeof (IndexOutOfRangeException))]
-		public void Load_RowStateUpsertDuplicateKey2 () {
+		public void Load_RowStateUpsertDuplicateKey2 ()
+		{
 			localSetup ();
 			dt.Rows.Add (new object[] { 4, "mono 4" });
 			DataTable dtLoad = new DataTable ("LoadRowStateChanges");
@@ -2565,12 +2630,17 @@ namespace MonoTests.System.Data
 			DataTableReader dtr = dt.CreateDataReader ();
 			dtLoad.Load (dtr, LoadOption.Upsert);
 			dtLoad.AcceptChanges ();
-			Assert.AreEqual (" ", dtLoad.Rows[4][1], "RowData4");
+
+			try {
+				Assert.AreEqual (" ", dtLoad.Rows[4][1], "RowData4");
+				Assert.Fail ("#1");
+			} catch (IndexOutOfRangeException) {
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (VersionNotFoundException))]
-		public void Load_RowStateUpsertDelete1 () {
+		public void Load_RowStateUpsertDelete1 ()
+		{
 			localSetup ();
 			DataTable dtLoad = new DataTable ("LoadRowStateChanges");
 			dtLoad.Columns.Add ("id", typeof (int));
@@ -2583,12 +2653,17 @@ namespace MonoTests.System.Data
 			dtLoad.Rows[2].Delete ();
 			DataTableReader dtr = dt.CreateDataReader ();
 			dtLoad.Load (dtr, LoadOption.Upsert);
-			Assert.AreEqual (" ", dtLoad.Rows[2][1, DataRowVersion.Current], "RowData2-C");
+
+			try {
+				Assert.AreEqual (" ", dtLoad.Rows[2][1, DataRowVersion.Current], "RowData2-C");
+				Assert.Fail ("#1");
+			} catch (VersionNotFoundException) {
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (VersionNotFoundException))]
-		public void Load_RowStateUpsertDelete2 () {
+		public void Load_RowStateUpsertDelete2 ()
+		{
 			localSetup ();
 			DataTable dtLoad = new DataTable ("LoadRowStateChanges");
 			dtLoad.Columns.Add ("id", typeof (int));
@@ -2601,12 +2676,17 @@ namespace MonoTests.System.Data
 			dtLoad.Rows[2].Delete ();
 			DataTableReader dtr = dt.CreateDataReader ();
 			dtLoad.Load (dtr, LoadOption.Upsert);
-			Assert.AreEqual (" ", dtLoad.Rows[3][1, DataRowVersion.Original], "RowData3-O");
+
+			try {
+				Assert.AreEqual (" ", dtLoad.Rows[3][1, DataRowVersion.Original], "RowData3-O");
+				Assert.Fail ("#1");
+			} catch (VersionNotFoundException) {
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (VersionNotFoundException))]
-		public void Load_RowStateUpsertAdd () {
+		public void Load_RowStateUpsertAdd ()
+		{
 			localSetup ();
 			dt.Rows.Add (new object[] { 4, "mono 4" });
 			DataTable dtLoad = new DataTable ("LoadRowStateChanges");
@@ -2623,11 +2703,15 @@ namespace MonoTests.System.Data
 			dtLoad.Rows.Add (row);
 			DataTableReader dtr = dt.CreateDataReader ();
 			dtLoad.Load (dtr, LoadOption.Upsert);
-			Assert.AreEqual (" ", dtLoad.Rows[3][1, DataRowVersion.Original], "RowData3-O");
+
+			try {
+				Assert.AreEqual (" ", dtLoad.Rows[3][1, DataRowVersion.Original], "RowData3-O");
+				Assert.Fail ("#1");
+			} catch (VersionNotFoundException) {
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (VersionNotFoundException))]
 		public void Load_RowStateUpsertUnpresent () {
 			localSetup ();
 			dt.Rows.Add (new object[] { 4, "mono 4" });
@@ -2641,11 +2725,17 @@ namespace MonoTests.System.Data
 			dtLoad.AcceptChanges ();
 			DataTableReader dtr = dt.CreateDataReader ();
 			dtLoad.Load (dtr, LoadOption.Upsert);
-			Assert.AreEqual (" ", dtLoad.Rows[3][1, DataRowVersion.Original], "RowData3-O");
+
+			try {
+				Assert.AreEqual (" ", dtLoad.Rows[3][1, DataRowVersion.Original], "RowData3-O");
+				Assert.Fail ("#1");
+			} catch (VersionNotFoundException) {
+			}
 		}
 
 		[Test]
-		public void Load_RowStateUpsertUnchangedEqualVal () {
+		public void Load_RowStateUpsertUnchangedEqualVal ()
+		{
 			localSetup ();
 			DataTable dtLoad = new DataTable ("LoadRowStateChanges");
 			dtLoad.Columns.Add ("id", typeof (int));
@@ -2669,7 +2759,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void LoadDataRow_LoadOptions () {
+		public void LoadDataRow_LoadOptions ()
+		{
 			// LoadDataRow is covered in detail (without LoadOptions) in DataTableTest2
 			// LoadOption tests are covered in detail in DataTable.Load().
 			// Therefore only minimal tests of LoadDataRow with LoadOptions are covered here.
@@ -2708,7 +2799,8 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (DataRowState.Added, dr.RowState, "DT76-LO");
 		}
 
-		public static DataTable CreateDataTableExample () {
+		public static DataTable CreateDataTableExample ()
+		{
 			DataTable dtParent = new DataTable ("Parent");
 
 			dtParent.Columns.Add ("ParentId", typeof (int));
@@ -2737,7 +2829,8 @@ namespace MonoTests.System.Data
 #if TARGET_JVM
 		[Category ("NotWorking")]
 #endif
-		public void ReadXmlSchema () {
+		public void ReadXmlSchema ()
+		{
 			DataTable Table = new DataTable ();
 			Table.ReadXmlSchema ("Test/System.Data/own_schema1.xsd");
 
@@ -2761,7 +2854,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("test", column.Caption, "test#15");
 			Assert.AreEqual ("Element", column.ColumnMapping.ToString (), "test#16");
 			Assert.AreEqual ("first", column.ColumnName, "test#17");
-			Assert.AreEqual ("System.String", column.DataType.ToString (), "test#18");
+			Assert.AreEqual (typeof (string), column.DataType, "test#18");
 			Assert.AreEqual ("test_default_value", column.DefaultValue.ToString (), "test#19");
 			Assert.IsFalse (column.DesignMode, "test#20");
 			Assert.AreEqual ("", column.Expression, "test#21");
@@ -2780,7 +2873,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("second", column2.Caption, "test#32");
 			Assert.AreEqual ("Element", column2.ColumnMapping.ToString (), "test#33");
 			Assert.AreEqual ("second", column2.ColumnName, "test#34");
-			Assert.AreEqual ("System.Data.SqlTypes.SqlGuid", column2.DataType.ToString (), "test#35");
+			Assert.AreEqual (typeof (SqlGuid), column2.DataType, "test#35");
 			Assert.AreEqual (SqlGuid.Null, column2.DefaultValue, "test#36");
 			Assert.AreEqual (typeof (SqlGuid), column2.DefaultValue.GetType (), "test#36-2");
 			Assert.IsFalse (column2.DesignMode, "test#37");
@@ -2811,7 +2904,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("second_first", column3.Caption, "test#56");
 			Assert.AreEqual ("Element", column3.ColumnMapping.ToString (), "test#57");
 			Assert.AreEqual ("second_first", column3.ColumnName, "test#58");
-			Assert.AreEqual ("System.String", column3.DataType.ToString (), "test#59");
+			Assert.AreEqual (typeof (string), column3.DataType, "test#59");
 			Assert.AreEqual ("default_value", column3.DefaultValue.ToString (), "test#60");
 			Assert.IsFalse (column3.DesignMode, "test#61");
 			Assert.AreEqual ("", column3.Expression, "test#62");
@@ -2824,7 +2917,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void ReadXmlSchema_2 () {
+		public void ReadXmlSchema_2 ()
+		{
 			DataTable dt = new DataTable ();
 			string xmlData = string.Empty;
 			xmlData += "<?xml version=\"1.0\"?>";
@@ -2860,7 +2954,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void ReadXmlSchema_ByStream () {
+		public void ReadXmlSchema_ByStream ()
+		{
 			DataSet ds1 = new DataSet ();
 			ds1.Tables.Add (DataProvider.CreateParentDataTable ());
 			ds1.Tables.Add (DataProvider.CreateChildDataTable ());
@@ -2909,7 +3004,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void ReadWriteXmlSchema_ByFileName () {
+		public void ReadWriteXmlSchema_ByFileName ()
+		{
 			string sTempFileName1 = "tmpDataSet_ReadWriteXml_43899-1.xml";
 			string sTempFileName2 = "tmpDataSet_ReadWriteXml_43899-2.xml";
 
@@ -2938,7 +3034,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void ReadXmlSchema_ByTextReader () {
+		public void ReadXmlSchema_ByTextReader ()
+		{
 			DataSet ds1 = new DataSet ();
 			ds1.Tables.Add (DataProvider.CreateParentDataTable ());
 			ds1.Tables.Add (DataProvider.CreateChildDataTable ());
@@ -2987,7 +3084,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void ReadXmlSchema_ByXmlReader () {
+		public void ReadXmlSchema_ByXmlReader ()
+		{
 			DataSet ds1 = new DataSet ();
 			ds1.Tables.Add (DataProvider.CreateParentDataTable ());
 			ds1.Tables.Add (DataProvider.CreateChildDataTable ());
@@ -3043,7 +3141,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void WriteXmlSchema () {
+		public void WriteXmlSchema ()
+		{
 			DataSet ds = new DataSet ();
 			ds.ReadXml ("Test/System.Data/region.xml");
 			TextWriter writer = new StringWriter ();
@@ -3120,7 +3219,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void WriteXmlSchema2 () {
+		public void WriteXmlSchema2 ()
+		{
 			string xml = @"<myDataSet xmlns='NetFrameWork'><myTable><id>0</id><item>item 0</item></myTable><myTable><id>1</id><item>item 1</item></myTable><myTable><id>2</id><item>item 2</item></myTable><myTable><id>3</id><item>item 3</item></myTable><myTable><id>4</id><item>item 4</item></myTable><myTable><id>5</id><item>item 5</item></myTable><myTable><id>6</id><item>item 6</item></myTable><myTable><id>7</id><item>item 7</item></myTable><myTable><id>8</id><item>item 8</item></myTable><myTable><id>9</id><item>item 9</item></myTable></myDataSet>";
 			string schema = @"<?xml version='1.0' encoding='utf-16'?>
 <xs:schema id='myDataSet' targetNamespace='NetFrameWork' xmlns:mstns='NetFrameWork' xmlns='NetFrameWork' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' attributeFormDefault='qualified' elementFormDefault='qualified'>
@@ -3176,7 +3276,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void WriteXmlSchema3 () {
+		public void WriteXmlSchema3 ()
+		{
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""ExampleDataSet"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
   <xs:element name=""ExampleDataSet"" msdata:IsDataSet=""true"" msdata:MainDataTable=""ExampleDataTable"" msdata:UseCurrentLocale=""true"">
@@ -3218,7 +3319,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void WriteXmlSchema4 () {
+		public void WriteXmlSchema4 ()
+		{
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
   <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:MainDataTable=""MyType"" msdata:UseCurrentLocale=""true"">
@@ -3258,7 +3360,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void WriteXmlSchema5 () {
+		public void WriteXmlSchema5 ()
+		{
 			string xmlschema1 = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
   <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:MainDataTable=""StandAlone"" msdata:UseCurrentLocale=""true"">
@@ -3383,7 +3486,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void WriteXmlSchema6 () {
+		public void WriteXmlSchema6 ()
+		{
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
   <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:MainDataTable=""MyType"" msdata:UseCurrentLocale=""true"">
@@ -3424,7 +3528,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void WriteXmlSchema7 () {
+		public void WriteXmlSchema7 ()
+		{
 			DataSet ds = new DataSet ();
 			DataTable dt = new DataTable ("table");
 			dt.Columns.Add ("col1");
@@ -3437,7 +3542,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void WriteXmlSchema_ConstraintNameWithSpaces () {
+		public void WriteXmlSchema_ConstraintNameWithSpaces ()
+		{
 			DataSet ds = new DataSet ();
 			DataTable table1 = ds.Tables.Add ("table1");
 			DataTable table2 = ds.Tables.Add ("table2");
@@ -3457,7 +3563,8 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void WriteXmlSchema_ForignKeyConstraint () {
+		public void WriteXmlSchema_ForignKeyConstraint ()
+		{
 			DataSet ds1 = new DataSet ();
 
 			DataTable table1 = ds1.Tables.Add ();
@@ -3480,66 +3587,67 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void WriteXmlSchema_Relations_ForeignKeys () {
-		        MemoryStream ms1 = null;
-		        MemoryStream ms2 = null;
+		public void WriteXmlSchema_Relations_ForeignKeys ()
+		{
+			MemoryStream ms1 = null;
+			MemoryStream ms2 = null;
 			MemoryStream msA = null;
 			MemoryStream msB = null;
 
-		        DataSet ds1 = new DataSet ();
+			DataSet ds1 = new DataSet ();
 
-		        DataTable table1 = ds1.Tables.Add ("Table 1");
-		        DataTable table2 = ds1.Tables.Add ("Table 2");
+			DataTable table1 = ds1.Tables.Add ("Table 1");
+			DataTable table2 = ds1.Tables.Add ("Table 2");
 
-		        DataColumn col1_1 = table1.Columns.Add ("col 1", typeof (int));
-		        DataColumn col1_2 = table1.Columns.Add ("col 2", typeof (int));
-		        DataColumn col1_3 = table1.Columns.Add ("col 3", typeof (int));
-		        DataColumn col1_4 = table1.Columns.Add ("col 4", typeof (int));
-		        DataColumn col1_5 = table1.Columns.Add ("col 5", typeof (int));
-		        DataColumn col1_6 = table1.Columns.Add ("col 6", typeof (int));
-		        DataColumn col1_7 = table1.Columns.Add ("col 7", typeof (int));
+			DataColumn col1_1 = table1.Columns.Add ("col 1", typeof (int));
+			DataColumn col1_2 = table1.Columns.Add ("col 2", typeof (int));
+			DataColumn col1_3 = table1.Columns.Add ("col 3", typeof (int));
+			DataColumn col1_4 = table1.Columns.Add ("col 4", typeof (int));
+			DataColumn col1_5 = table1.Columns.Add ("col 5", typeof (int));
+			DataColumn col1_6 = table1.Columns.Add ("col 6", typeof (int));
+			DataColumn col1_7 = table1.Columns.Add ("col 7", typeof (int));
 
-		        DataColumn col2_1 = table2.Columns.Add ("col 1", typeof (int));
-		        DataColumn col2_2 = table2.Columns.Add ("col 2", typeof (int));
-		        DataColumn col2_3 = table2.Columns.Add ("col 3", typeof (int));
-		        DataColumn col2_4 = table2.Columns.Add ("col 4", typeof (int));
-		        DataColumn col2_5 = table2.Columns.Add ("col 5", typeof (int));
-		        DataColumn col2_6 = table2.Columns.Add ("col 6", typeof (int));
+			DataColumn col2_1 = table2.Columns.Add ("col 1", typeof (int));
+			DataColumn col2_2 = table2.Columns.Add ("col 2", typeof (int));
+			DataColumn col2_3 = table2.Columns.Add ("col 3", typeof (int));
+			DataColumn col2_4 = table2.Columns.Add ("col 4", typeof (int));
+			DataColumn col2_5 = table2.Columns.Add ("col 5", typeof (int));
+			DataColumn col2_6 = table2.Columns.Add ("col 6", typeof (int));
 			DataColumn col2_7 = table2.Columns.Add ("col 7", typeof (int));
 
-		        ds1.Relations.Add ("rel 1",
-		                new DataColumn[] { col1_1, col1_2 },
-		                new DataColumn[] { col2_1, col2_2 },
+			ds1.Relations.Add ("rel 1",
+				new DataColumn[] { col1_1, col1_2 },
+				new DataColumn[] { col2_1, col2_2 },
 				false);
 			ds1.Relations.Add ("rel 2",
-		                new DataColumn[] { col1_3, col1_4 },
-		                new DataColumn[] { col2_3, col2_4 },
-		                true);
-		        table2.Constraints.Add ("fk 1",
-		                new DataColumn[] { col1_5, col1_6 },
-		                new DataColumn[] { col2_5, col2_6 });
+				new DataColumn[] { col1_3, col1_4 },
+				new DataColumn[] { col2_3, col2_4 },
+				true);
+			table2.Constraints.Add ("fk 1",
+				new DataColumn[] { col1_5, col1_6 },
+				new DataColumn[] { col2_5, col2_6 });
 			table1.Constraints.Add ("fk 2",
 				new DataColumn[] { col2_5, col2_6 },
 				new DataColumn[] { col1_5, col1_6 });
 
-		        table1.Constraints.Add ("pk 1", col1_7, true);
+			table1.Constraints.Add ("pk 1", col1_7, true);
 			table2.Constraints.Add ("pk 2", col2_7, true);
 
 			ms1 = new MemoryStream ();
-		        ds1.Tables[0].WriteXmlSchema (ms1);
+			ds1.Tables[0].WriteXmlSchema (ms1);
 			ms2 = new MemoryStream ();
 			ds1.Tables[1].WriteXmlSchema (ms2);
 
-		        msA = new MemoryStream (ms1.GetBuffer ());
-		        DataTable dtA = new DataTable ();
+			msA = new MemoryStream (ms1.GetBuffer ());
+			DataTable dtA = new DataTable ();
 			dtA.ReadXmlSchema (msA);
 
 			msB = new MemoryStream (ms2.GetBuffer ());
 			DataTable dtB = new DataTable ();
 			dtB.ReadXmlSchema (msB);
 
-		        Assert.AreEqual (3, dtA.Constraints.Count, "#2");
-		        Assert.AreEqual (2, dtB.Constraints.Count, "#3");
+			Assert.AreEqual (3, dtA.Constraints.Count, "#2");
+			Assert.AreEqual (2, dtB.Constraints.Count, "#3");
 
 			Assert.IsTrue (dtA.Constraints.Contains ("pk 1"), "#5");
 			Assert.IsTrue (dtA.Constraints.Contains ("Constraint1"), "#6");
@@ -3550,7 +3658,8 @@ namespace MonoTests.System.Data
 
 		[Test]
 		[Category ("NotWorking")]
-		public void WriteXmlSchema_DifferentNamespace () {
+		public void WriteXmlSchema_DifferentNamespace ()
+		{
 			string schema = @"<xs:schema id='NewDataSet' targetNamespace='urn:bar' xmlns:mstns='urn:bar' xmlns='urn:bar' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' attributeFormDefault='qualified' elementFormDefault='qualified' xmlns:app1='urn:baz' xmlns:app2='urn:foo' msdata:schemafragmentcount='3'>
   <xs:import namespace='urn:foo' />
   <xs:import namespace='urn:baz' />
@@ -3614,7 +3723,8 @@ namespace MonoTests.System.Data
 #if TARGET_JVM
 		[Category ("NotWorking")]
 #endif
-		public void WriteXmlSchema_Hierarchy () {
+		public void WriteXmlSchema_Hierarchy ()
+		{
 			DataSet ds = new DataSet ();
 			DataTable table1 = new DataTable ();
 			DataColumn idColumn = table1.Columns.Add ("ID", typeof (Int32));
@@ -3628,8 +3738,8 @@ namespace MonoTests.System.Data
 			ds.Tables.Add (table1);
 			ds.Tables.Add (table2);
 			ds.Relations.Add ("CustomerOrder",
-			    new DataColumn[] { table1.Columns[0] },
-			    new DataColumn[] { table2.Columns[1] }, true);
+				new DataColumn[] { table1.Columns[0] },
+				new DataColumn[] { table2.Columns[1] }, true);
 
 			StringWriter writer1 = new StringWriter ();
 			table1.WriteXmlSchema (writer1, false);
@@ -3764,7 +3874,8 @@ namespace MonoTests.System.Data
 #if TARGET_JVM
 		[Category ("NotWorking")]
 #endif
-		public void ReadWriteXmlSchema_IgnoreSchema () {
+		public void ReadWriteXmlSchema_IgnoreSchema ()
+		{
 			DataSet ds = new DataSet ();
 			ds.ReadXmlSchema ("Test/System.Data/store.xsd");
 			// check dataset properties before testing write
@@ -3847,19 +3958,18 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (expected3, TextString3.Replace ("\r\n", "").Replace ("  ", ""), "#3");
 
 			TextWriter writer4 = new StringWriter ();
-			//string expStr = "";
+
 			try {
-				ds.Tables[3].WriteXmlSchema (writer4);
+				ds.Tables [3].WriteXmlSchema (writer4);
 				Assert.Fail ("expected exception");
+			} catch (InvalidOperationException ex) {
+				throw ex;
 			}
-			catch (Exception ex) {
-			//	expStr = ex.Message;
-			}
-			//Assert.AreEqual ("Cannot find table 3.", expStr, "#4");
 		}
 
 		[Test]
-		public void ReadWriteXmlSchema_2 () {
+		public void ReadWriteXmlSchema_2 ()
+		{
 			DataSet ds = new DataSet ("dataset");
 			ds.Tables.Add ("table1");
 			ds.Tables.Add ("table2");
@@ -3884,56 +3994,69 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[ExpectedException (typeof (XmlException))]
-		public void ReadWriteXmlSchemaExp_NoRootElmnt () {
+		public void ReadWriteXmlSchemaExp_NoRootElmnt ()
+		{
 			MemoryStream ms = new MemoryStream ();
 			DataTable dtr = new DataTable ();
-			dtr.ReadXmlSchema (ms);
+			try {
+				dtr.ReadXmlSchema (ms);
+				Assert.Fail ("#1");
+			} catch (XmlException) {
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
-		public void ReadWriteXmlSchemaExp_NoTableName () {
+		public void ReadWriteXmlSchemaExp_NoTableName ()
+		{
 			DataTable dtw = new DataTable ();
 			MemoryStream ms = new MemoryStream ();
-			dtw.WriteXmlSchema (ms);
+			try {
+				dtw.WriteXmlSchema (ms);
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void ReadWriteXmlSchemaExp_NoFileName () {
+		public void ReadWriteXmlSchemaExp_NoFileName ()
+		{
 			DataTable dtw = new DataTable ();
-			dtw.WriteXmlSchema ("");
+			try {
+				dtw.WriteXmlSchema (string.Empty);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void ReadWriteXmlSchemaExp_TableNameConflict () {
+		public void ReadWriteXmlSchemaExp_TableNameConflict ()
+		{
 			DataTable dtw = new DataTable ("Table1");
 			StringWriter writer1 = new StringWriter ();
 			dtw.WriteXmlSchema (writer1);
 			DataTable dtr = new DataTable ("Table2");
 			StringReader reader1 = new StringReader (writer1.ToString());
-			dtr.ReadXmlSchema (reader1);
+			try {
+				dtr.ReadXmlSchema (reader1);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
 		}
 
 		#endregion // Read/Write XML Tests
 
 #endif // NET_2_0
-
 	}
-                                                                                                    
-                                                                                                    
-         public  class MyDataTable:DataTable {
-                                                                                                    
-             public static int count = 0;
-                                                                                                    
-             public MyDataTable() {
-                                                                                                    
-                    count++;
-             }
-                                                                                                    
-         }
+
+	public  class MyDataTable : DataTable
+	{
+		public static int count = 0;
+
+		public MyDataTable()
+		{
+			count++;
+		}
+	}
 
 	[Serializable]
 	[TestFixture]
@@ -3944,6 +4067,7 @@ namespace MonoTests.System.Data
 			int n = (int) Convert.ChangeType ("5", typeof (int));
 			Assert.AreEqual (5, n, "n");
 		}
+
 #if !TARGET_JVM
 		[Test]
 		public void NFIFromBug55978 ()
@@ -4000,11 +4124,11 @@ namespace MonoTests.System.Data
 			Select (tbl);
 			Thread.CurrentThread.CurrentCulture = currentCulture;
 		}
+
 		private static void Select (DataTable tbl)
 		{
 			tbl.Locale = CultureInfo.InvariantCulture;
-			string filter = string.Format ("Data = '{0}'", new DateTime (2007, 7,
-										     1).ToString (CultureInfo.InvariantCulture));
+			string filter = string.Format ("Data = '{0}'", new DateTime (2007, 7, 1).ToString (CultureInfo.InvariantCulture));
 			DataRow [] rows = tbl.Select (filter);
 			Assert.AreEqual (1, rows.Length, "Incorrect number of rows found");
 		}
