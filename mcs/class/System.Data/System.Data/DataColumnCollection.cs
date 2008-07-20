@@ -718,7 +718,7 @@ namespace System.Data {
 					return base.List.IndexOf (columnFromName [d.columnNames [0]]);
 				} else if (d.count > 1 && error) {
 					// there's more than one, exception!
-					throw new ArgumentException ("There is no match for the name in the same case and there are multiple matches in different case.");
+					throw new ArgumentException ("There is no match for '" + name + "' in the same case and there are multiple matches in different case.");
 				}
 				else 
 					return -1;

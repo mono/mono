@@ -1101,7 +1101,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test] // Object this [DataColumn]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void Indexer1_Value_Null ()
 		{
 			EventInfo evt;
@@ -1114,16 +1113,20 @@ namespace MonoTests.System.Data
 			dt.Columns.Add (dc0);
 			DataColumn dc1 = new DataColumn ("Col1", typeof (Person));
 			dt.Columns.Add (dc1);
+			DataColumn dc2 = new DataColumn ("Col2", typeof (string));
+			dt.Columns.Add (dc2);
 
 			Person personA = new Person ("Miguel");
 			Address addressA = new Address ("X", 5);
+			string countryA = "U.S.";
 			Person personB = new Person ("Chris");
 			Address addressB = new Address ("Y", 4);
+			string countryB = "Canada";
 			Person personC = new Person ("Jackson");
 			Address addressC = new Address ("Z", 3);
 
-			dt.Rows.Add (new object [] { addressA, personA });
-			dt.Rows.Add (new object [] { addressB, personB });
+			dt.Rows.Add (new object [] { addressA, personA, countryA });
+			dt.Rows.Add (new object [] { addressB, personB, countryB });
 
 			DataRow dr = dt.Rows [0];
 
@@ -1182,7 +1185,6 @@ namespace MonoTests.System.Data
 #endif
 
 			dr [dc0] = DBNull.Value;
-
 #if NET_2_0
 			Assert.AreEqual (5, _eventsFired.Count, "#D1");
 #else
@@ -1221,7 +1223,6 @@ namespace MonoTests.System.Data
 #endif
 
 			dr [dc1] = DBNull.Value;
-
 #if NET_2_0
 			Assert.AreEqual (9, _eventsFired.Count, "#F1");
 #else
@@ -1237,83 +1238,147 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (10, _eventsFired.Count, "#F6");
 #endif
 
+			dr [dc2] = null;
+#if NET_2_0
+			Assert.AreEqual (11, _eventsFired.Count, "#G1");
+#else
+			Assert.AreEqual (12, _eventsFired.Count, "#G1");
+#endif
+			Assert.AreSame (DBNull.Value, dr [dc0], "#G2");
+			Assert.IsTrue (dr.IsNull (dc0), "#G3");
+			Assert.AreSame (DBNull.Value, dr [dc1], "#G4");
+			Assert.IsTrue (dr.IsNull (dc1), "#G5");
+			Assert.AreSame (DBNull.Value, dr [dc2], "#G6");
+			Assert.IsTrue (dr.IsNull (dc2), "#G7");
+#if NET_2_0
+			Assert.AreEqual (11, _eventsFired.Count, "#G8");
+#else
+			Assert.AreEqual (12, _eventsFired.Count, "#G8");
+#endif
+
+			dr [dc2] = DBNull.Value;
+#if NET_2_0
+			Assert.AreEqual (13, _eventsFired.Count, "#H1");
+#else
+			Assert.AreEqual (14, _eventsFired.Count, "#H1");
+#endif
+			Assert.AreSame (DBNull.Value, dr [dc0], "#H2");
+			Assert.IsTrue (dr.IsNull (dc0), "#H3");
+			Assert.AreSame (DBNull.Value, dr [dc1], "#H4");
+			Assert.IsTrue (dr.IsNull (dc1), "#H5");
+			Assert.AreSame (DBNull.Value, dr [dc2], "#H6");
+			Assert.IsTrue (dr.IsNull (dc2), "#H7");
+#if NET_2_0
+			Assert.AreEqual (13, _eventsFired.Count, "#H8");
+#else
+			Assert.AreEqual (14, _eventsFired.Count, "#H8");
+#endif
+
 			int index = 0;
 
 			evt = (EventInfo) _eventsFired [index++];
-			Assert.AreEqual ("ColumnChanging", evt.Name, "#G1");
+			Assert.AreEqual ("ColumnChanging", evt.Name, "#I1");
 			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
-			Assert.AreSame (dc0, colChangeArgs.Column, "#G2");
-			Assert.IsNull (colChangeArgs.ProposedValue, "#G3");
-			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#G4");
+			Assert.AreSame (dc0, colChangeArgs.Column, "#I2");
+			Assert.IsNull (colChangeArgs.ProposedValue, "#I3");
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#I4");
 
 			evt = (EventInfo) _eventsFired [index++];
-			Assert.AreEqual ("ColumnChanging", evt.Name, "#H1");
+			Assert.AreEqual ("ColumnChanging", evt.Name, "#J1");
 			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
-			Assert.AreSame (dc1, colChangeArgs.Column, "#H2");
-			Assert.IsNull (colChangeArgs.ProposedValue, "#H3");
-			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#H4");
+			Assert.AreSame (dc1, colChangeArgs.Column, "#J2");
+			Assert.IsNull (colChangeArgs.ProposedValue, "#J3");
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#J4");
 
 #if ONLY_1_1
 			evt = (EventInfo) _eventsFired [index++];
-			Assert.AreEqual ("ColumnChanging", evt.Name, "#I1");
-			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
-			Assert.AreSame (dc1, colChangeArgs.Column, "#I2");
-			Assert.AreSame (DBNull.Value, colChangeArgs.ProposedValue, "#I3");
-			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#I4");
-#endif
-
-			evt = (EventInfo) _eventsFired [index++];
-			Assert.AreEqual ("ColumnChanged", evt.Name, "#J1");
-			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
-			Assert.AreSame (dc1, colChangeArgs.Column, "#J2");
-#if NET_2_0
-			Assert.IsNull (colChangeArgs.ProposedValue, "#J3");
-#else
-			Assert.AreSame (DBNull.Value, colChangeArgs.ProposedValue, "#J3");
-#endif
-			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#J4");
-
-			evt = (EventInfo) _eventsFired [index++];
 			Assert.AreEqual ("ColumnChanging", evt.Name, "#K1");
 			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
-			Assert.AreSame (dc0, colChangeArgs.Column, "#K2");
+			Assert.AreSame (dc1, colChangeArgs.Column, "#K2");
 			Assert.AreSame (DBNull.Value, colChangeArgs.ProposedValue, "#K3");
 			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#K4");
+#endif
 
 			evt = (EventInfo) _eventsFired [index++];
 			Assert.AreEqual ("ColumnChanged", evt.Name, "#L1");
 			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
-			Assert.AreSame (dc0, colChangeArgs.Column, "#L2");
+			Assert.AreSame (dc1, colChangeArgs.Column, "#L2");
+#if NET_2_0
+			Assert.IsNull (colChangeArgs.ProposedValue, "#L3");
+#else
 			Assert.AreSame (DBNull.Value, colChangeArgs.ProposedValue, "#L3");
+#endif
 			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#L4");
 
 			evt = (EventInfo) _eventsFired [index++];
 			Assert.AreEqual ("ColumnChanging", evt.Name, "#M1");
 			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
-			Assert.AreSame (dc1, colChangeArgs.Column, "#M2");
-			Assert.AreSame (personC, colChangeArgs.ProposedValue, "#M3");
+			Assert.AreSame (dc0, colChangeArgs.Column, "#M2");
+			Assert.AreSame (DBNull.Value, colChangeArgs.ProposedValue, "#M3");
 			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#M4");
 
 			evt = (EventInfo) _eventsFired [index++];
 			Assert.AreEqual ("ColumnChanged", evt.Name, "#N1");
 			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
-			Assert.AreSame (dc1, colChangeArgs.Column, "#N2");
-			Assert.AreSame (personC, colChangeArgs.ProposedValue, "#N3");
+			Assert.AreSame (dc0, colChangeArgs.Column, "#N2");
+			Assert.AreSame (DBNull.Value, colChangeArgs.ProposedValue, "#N3");
 			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#N4");
 
 			evt = (EventInfo) _eventsFired [index++];
 			Assert.AreEqual ("ColumnChanging", evt.Name, "#O1");
 			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
 			Assert.AreSame (dc1, colChangeArgs.Column, "#O2");
-			Assert.AreSame (DBNull.Value, colChangeArgs.ProposedValue, "#O3");
+			Assert.AreSame (personC, colChangeArgs.ProposedValue, "#O3");
 			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#O4");
 
 			evt = (EventInfo) _eventsFired [index++];
 			Assert.AreEqual ("ColumnChanged", evt.Name, "#P1");
 			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
 			Assert.AreSame (dc1, colChangeArgs.Column, "#P2");
-			Assert.AreSame (DBNull.Value, colChangeArgs.ProposedValue, "#P3");
+			Assert.AreSame (personC, colChangeArgs.ProposedValue, "#P3");
 			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#P4");
+
+			evt = (EventInfo) _eventsFired [index++];
+			Assert.AreEqual ("ColumnChanging", evt.Name, "#Q1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc1, colChangeArgs.Column, "#Q2");
+			Assert.AreSame (DBNull.Value, colChangeArgs.ProposedValue, "#Q3");
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#Q4");
+
+			evt = (EventInfo) _eventsFired [index++];
+			Assert.AreEqual ("ColumnChanged", evt.Name, "#R1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc1, colChangeArgs.Column, "#R2");
+			Assert.AreSame (DBNull.Value, colChangeArgs.ProposedValue, "#R3");
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#R4");
+
+			evt = (EventInfo) _eventsFired [index++];
+			Assert.AreEqual ("ColumnChanging", evt.Name, "#S1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc2, colChangeArgs.Column, "#S2");
+			Assert.IsNull (colChangeArgs.ProposedValue, "#S3");
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#S4");
+
+			evt = (EventInfo) _eventsFired [index++];
+			Assert.AreEqual ("ColumnChanged", evt.Name, "#T1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc2, colChangeArgs.Column, "#T2");
+			Assert.IsNull (colChangeArgs.ProposedValue, "#T3");
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#T4");
+
+			evt = (EventInfo) _eventsFired [index++];
+			Assert.AreEqual ("ColumnChanging", evt.Name, "#U1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc2, colChangeArgs.Column, "#U2");
+			Assert.AreSame (DBNull.Value, colChangeArgs.ProposedValue, "#U3");
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#U4");
+
+			evt = (EventInfo) _eventsFired [index++];
+			Assert.AreEqual ("ColumnChanged", evt.Name, "#V1");
+			colChangeArgs = (DataColumnChangeEventArgs) evt.Args;
+			Assert.AreSame (dc2, colChangeArgs.Column, "#V2");
+			Assert.AreSame (DBNull.Value, colChangeArgs.ProposedValue, "#V3");
+			Assert.AreSame (dt.Rows [0], colChangeArgs.Row, "#V4");
 		}
 
 		[Test] // Object this [Int32]
@@ -1369,7 +1434,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test] // Object this [Int32]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void Indexer2_Value_Null ()
 		{
 			DataTable dt = new DataTable ();
@@ -1601,7 +1665,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test] // Object this [String]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void Indexer3_Value_Null ()
 		{
 			DataTable dt = new DataTable ();
@@ -1631,7 +1694,7 @@ namespace MonoTests.System.Data
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
-				Assert.IsTrue (ex.Message.IndexOf ("Col0") != -1, "#A5");
+				Assert.IsTrue (ex.Message.IndexOf ("'Col0'") != -1, "#A5");
 				Assert.IsTrue (ex.Message.IndexOf ("DBNull") != -1, "#A6");
 			}
 
@@ -1652,7 +1715,7 @@ namespace MonoTests.System.Data
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsTrue (ex.Message.IndexOf ("Col1") != -1, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf ("'Col1'") != -1, "#B5");
 				Assert.IsTrue (ex.Message.IndexOf ("DBNull") != -1, "#B6");
 			}
 			dr ["Col1"] = DBNull.Value;

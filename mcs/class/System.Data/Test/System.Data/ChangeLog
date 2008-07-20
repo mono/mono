@@ -1,3 +1,9 @@
+2008-07-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataRowTest2.cs: Improved int indexer test for setting value of
+	column to null/DBNull. Enabled indexer tests for setting column
+	value to null/DBNull.
+
 2008-07-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataRelationTest.cs

@@ -180,9 +180,16 @@ namespace System.Data {
 
 				DataColumn column = _table.Columns[columnIndex];
 				_table.ChangingDataColumn (this, column, value);
-				
-				if (value == null && column.DataType != typeof(string))
-					value = DBNull.Value;
+	
+#if NET_2_0
+				if (value == null && column.DataType.IsValueType)
+#else
+				if (value == null && column.DataType != typeof (string))
+#endif
+					throw new ArgumentException ("Canot set column '"
+						+ column.ColumnName + "' to be null."
+						+ " Please use DBNull instead.");
+
 				_rowChanged = true;
 				
 				CheckValue (value, column);
