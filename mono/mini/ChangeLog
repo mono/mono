@@ -1,3 +1,7 @@
+2008-07-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c: Make the previous fix GC safe.
+
 2008-07-21  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile.am (version.h): Allow a trailing '/' in the repository URL.
