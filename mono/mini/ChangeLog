@@ -1,3 +1,7 @@
+2008-07-21  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile.am (version.h): Allow a trailing '/' in the repository URL.
+
 2008-07-18  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c: Use mono_runtime_class_init_full to avoid leaking memory
