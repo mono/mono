@@ -1,3 +1,8 @@
+2008-07-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Enum.cs (GetHashCode): Use new icall get_hashcode to
+	avoid allocating a boxed version of the enum basetype.
+
 2008-07-17  Marek Safar  <marek.safar@gmail.com>
 
 	* String.cs: reverted GetHashCode changes.

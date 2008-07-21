@@ -516,10 +516,12 @@ namespace System
 			return DefaultEquals (this, obj);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern int get_hashcode ();
+
 		public override int GetHashCode ()
 		{
-			object v = this.get_value ();
-			return v.GetHashCode ();
+			return get_hashcode ();
 		}
 
 		private static string FormatSpecifier_X (Type enumType, object value, bool upper)
