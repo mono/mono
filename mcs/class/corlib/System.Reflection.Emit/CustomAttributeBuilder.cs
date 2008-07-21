@@ -295,6 +295,9 @@ namespace System.Reflection.Emit {
 			case UnmanagedType.SafeArray:
 				return UnmanagedMarshal.DefineSafeArray (subtype);
 			case UnmanagedType.ByValArray:
+				if (!is_field)
+					throw new ArgumentException ("Specified unmanaged type is only valid on fields");
+			
 				return UnmanagedMarshal.DefineByValArray (sizeConst);
 			case UnmanagedType.ByValTStr:
 				return UnmanagedMarshal.DefineByValTStr (sizeConst);

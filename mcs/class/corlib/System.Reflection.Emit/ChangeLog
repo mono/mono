@@ -1,3 +1,8 @@
+2008-07-21  Marek Safar  <marek.safar@gmail.com>
+
+	* ParameterBuilder.cs, CustomAttributeBuilder.cs: Check for
+	UnmanagedType.ByValArray to be used only on fields.
+
 2008-07-16  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MethodOnTypeBuilderInst.cs: Special case all methods

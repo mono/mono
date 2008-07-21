@@ -110,7 +110,7 @@ namespace System.Reflection.Emit {
 				return;
 			} else if (attrname == "System.Runtime.InteropServices.MarshalAsAttribute") {
 				attrs |= ParameterAttributes.HasFieldMarshal;
-				marshal_info = CustomAttributeBuilder.get_umarshal (customBuilder, true);
+				marshal_info = CustomAttributeBuilder.get_umarshal (customBuilder, false);
 				/* FIXME: check for errors */
 				return;
 			} else if (attrname == "System.Runtime.InteropServices.DefaultParameterValueAttribute") {
