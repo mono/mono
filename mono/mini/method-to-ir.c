@@ -92,7 +92,7 @@
 	} while (0)
 #define GENERIC_SHARING_FAILURE(opcode) do {		\
 		if (cfg->generic_sharing_context) {	\
-            if (cfg->verbose_level > 1) \
+            if (cfg->verbose_level > -1) \
 			    printf ("sharing failed for method %s.%s.%s/%d opcode %s line %d\n", method->klass->name_space, method->klass->name, method->name, method->signature->param_count, mono_opcode_name ((opcode)), __LINE__); \
 			cfg->exception_type = MONO_EXCEPTION_GENERIC_SHARING_FAILED;	\
 			goto exception_exit;	\
@@ -3471,22 +3471,6 @@ mini_emit_ldelema_ins (MonoCompile *cfg, MonoMethod *cmethod, MonoInst **sp, uns
 	return addr;
 }
 
-static int
-is_unsigned_regsize_type (MonoType *type)
-{
-	switch (type->type) {
-	case MONO_TYPE_U1:
-	case MONO_TYPE_U2:
-	case MONO_TYPE_U4:
-#if SIZEOF_VOID_P == 8
-	/*case MONO_TYPE_U8: this requires different opcodes in inssel.brg */
-#endif
-		return TRUE;
-	default:
-		return FALSE;
-	}
-}
-
 static MonoInst*
 mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
@@ -3791,33 +3775,11 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			return ins;
 		}
 	} else if (cmethod->klass == mono_defaults.math_class) {
-		if (strcmp (cmethod->name, "Min") == 0) {
-			if (is_unsigned_regsize_type (fsig->params [0])) {
-				/* min (x,y) = y + (((x-y)>>31)&(x-y)); */
-				int diff = alloc_preg (cfg);
-				int shifted = alloc_preg (cfg);
-				int anded = alloc_preg (cfg);
-				int dreg = alloc_preg (cfg);
-				MONO_EMIT_NEW_BIALU (cfg, OP_ISUB, diff, args [0]->dreg, args [1]->dreg);
-				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_IMM, shifted, diff, (sizeof(void*)*8-1));
-				MONO_EMIT_NEW_BIALU (cfg, OP_IAND, anded, shifted, diff);
-				EMIT_NEW_BIALU (cfg, ins, OP_IADD, dreg, args [1]->dreg, anded);
-				return ins;
-			}
-		} else if (strcmp (cmethod->name, "Max") == 0) {
-			if (is_unsigned_regsize_type (fsig->params [0])) {
-				/* max (x,y) = x - (((x-y)>>31)&(x-y)); */
-				int diff = alloc_preg (cfg);
-				int shifted = alloc_preg (cfg);
-				int anded = alloc_preg (cfg);
-				int dreg = alloc_preg (cfg);
-				MONO_EMIT_NEW_BIALU (cfg, OP_ISUB, diff, args [0]->dreg, args [1]->dreg);
-				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHR_IMM, shifted, diff, (sizeof(void*)*8-1));
-				MONO_EMIT_NEW_BIALU (cfg, OP_IAND, anded, shifted, diff);
-				EMIT_NEW_BIALU (cfg, ins, OP_ISUB, dreg, args [0]->dreg, anded);
-				return ins;
-			}
-		}
+		/* 
+		 * There is general branches code for Min/Max, but it does not work for 
+		 * all inputs:
+		 * http://everything2.com/?node_id=1051618
+		 */
 	}
 
 	return mono_arch_emit_inst_for_method (cfg, cmethod, fsig, args);
@@ -4919,6 +4881,13 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 	if (!cfg->generic_sharing_context)
 		g_assert (!sig->has_type_parameters);
+
+	if (sig->generic_param_count && method->wrapper_type == MONO_WRAPPER_NONE) {
+		g_assert (method->is_inflated);
+		g_assert (mono_method_get_context (method)->method_inst);
+	}
+	if (method->is_inflated && mono_method_get_context (method)->method_inst)
+		g_assert (sig->generic_param_count);
 
 	if (cfg->method == method) {
 		cfg->real_offset = 0;
@@ -10333,7 +10302,6 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
  * - make the REM_IMM optimization in mini-x86.c arch-independent.
- * - merge the mini.c changes since 104646.
  * - LAST MERGE: 107901.
  * - when returning vtypes in registers, generate IR and append it to the end of the
  *   last bb instead of doing it in the epilog.

@@ -1,3 +1,7 @@
+2008-07-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c: Merge all the remaining mini.c changes.
+
 2008-07-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir2): Merge ldtoken sharing changes.
