@@ -4432,8 +4432,8 @@ set_exception_type_from_invalid_il (MonoCompile *cfg, MonoMethod *method, unsign
 static void
 set_exception_object (MonoCompile *cfg, MonoException *exception)
 {
-	// FIXME: This is not GC safe
 	cfg->exception_type = MONO_EXCEPTION_OBJECT_SUPPLIED;
+	MONO_GC_REGISTER_ROOT (cfg->exception_ptr);
 	cfg->exception_ptr = exception;
 }
 
@@ -10316,7 +10316,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
  * - make the REM_IMM optimization in mini-x86.c arch-independent.
- * - LAST MERGE: 108365.
+ * - LAST MERGE: 108395.
  * - when returning vtypes in registers, generate IR and append it to the end of the
  *   last bb instead of doing it in the epilog.
  * - when the new JIT is done, use the ins emission macros in ir-emit.h instead of the 

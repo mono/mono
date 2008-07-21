@@ -498,7 +498,7 @@ testaot: $(TESTSI_CS) $(TESTSI_IL) $(TESTBS) libtest.la
 	failed_tests="";\
 	for i in $(TESTSI_CS) $(TESTSI_IL) $(TESTBS); do	\
 		rm -f $${i}.so; \
-		$(with_mono_path) $(JITTEST_PROG_RUN) --aot --debug $${i} > /dev/null || exit 1; \
+		$(with_mono_path) $(JITTEST_PROG_RUN) --aot --debug $${i} > /dev/null || (echo "Failed to AOT $${i}"; exit 1); \
 		if $(srcdir)/test-driver '$(with_mono_path) $(JITTEST_PROG_RUN)' $$i "$(DISABLED_TESTS)" $(RUNTIME_ARGS); \
 		then \
 			passed=`expr $${passed} + 1`; \
