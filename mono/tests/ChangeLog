@@ -1,3 +1,10 @@
+2008-07-21  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-getgenericarguments.2.cs: Test case catching static
+	RGCTX wrappers in MonoReflectionMethods.
+
+	* Makefile.am: Test added.
+
 2008-07-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* generics-sharing.2.cs: Fix the build.
