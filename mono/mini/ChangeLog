@@ -1,3 +1,13 @@
+2008-07-21  Bill Holmes  <billholmes54@gmail.com>
+
+	Back port from trunk.  r108343
+
+	* mini-amd64.c (get_call_info): Correcting the case for MONO_TYPE_TYPEDBYREF
+	  on Winx64.  This type will not be passed on the stack (ArgOnStack), but 
+	  ArgValuetypeAddrInIReg instead.
+
+	Contributed under MIT/X11 license.
+
 2008-07-21  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile.am (version.h): Allow a trailing '/' in the repository URL.
