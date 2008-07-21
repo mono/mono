@@ -369,7 +369,6 @@ namespace System.ComponentModel.Design.Serialization
 							}
 						}
 					}
-					_errors = manager.Errors;
 				}
 				_errors = manager.Errors;
 				session.Dispose ();

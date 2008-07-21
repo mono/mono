@@ -1,3 +1,7 @@
+2008-07-21  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* CodeDomComponentSerializationService.cs: Remove redundant assignment.
+
 2008-06-28  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* CodeDomDesignerLoader.cs: Add the supplied TypeResolutionService
