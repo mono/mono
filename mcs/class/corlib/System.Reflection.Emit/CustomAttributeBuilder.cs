@@ -231,11 +231,19 @@ namespace System.Reflection.Emit {
 				pos = 4;
 			int nnamed = (int)data [pos++];
 			nnamed |= ((int)data [pos++]) << 8;
-			
+
 			for (int i = 0; i < nnamed; ++i) {
 				int paramType; // What is this ?
-				paramType = (int)data [pos++];
-				paramType |= ((int)data [pos++]) << 8;
+				
+				/* Skip field/property signature */
+				pos ++;
+				/* Read type */
+				paramType = ((int)data [pos++]);
+				if (paramType == 0x55) {
+					/* enums, the value is preceeded by the type */
+					int len2 = decode_len (data, pos, out pos);
+					pos += len2;
+				}
 				int len = decode_len (data, pos, out pos);
 				string named_name = string_from_bytes (data, pos, len);
 				pos += len;
