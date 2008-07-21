@@ -4461,6 +4461,9 @@ static void
 set_exception_object (MonoCompile *cfg, MonoException *exception)
 {
 	cfg->exception_type = MONO_EXCEPTION_OBJECT_SUPPLIED;
+#ifdef HAVE_SGEN_GC
+	MONO_GC_REGISTER_ROOT (cfg->exception_ptr);
+#endif
 	cfg->exception_ptr = exception;
 }
 
@@ -12887,8 +12890,12 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 		mono_raise_exception ((MonoException*)exc);
 	}
 	case MONO_EXCEPTION_OBJECT_SUPPLIED: {
+		MonoException *exp = cfg->exception_ptr;
+#ifdef HAVE_SGEN_GC
+		MONO_GC_UNREGISTER_ROOT (cfg->exception_ptr);
+#endif
 		mono_destroy_compile (cfg);
-		mono_raise_exception (cfg->exception_ptr);
+		mono_raise_exception (exp);
 		break;
 	}
 	default:
