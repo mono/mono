@@ -1,3 +1,11 @@
+2008-07-21  Bill Holmes  <billholmes54@gmail.com>
+
+	* mini-amd64.c (get_call_info): Winx64 fix for passing floats.
+	  The float param registers and other param registers must be the 
+	  same index on Windows x64.
+
+	Contributed under MIT/X11 license.
+
 2008-07-21  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c: Make the previous fix GC safe.
@@ -14290,6 +14298,7 @@ Mon Apr 7 16:31:34 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	belongs.
 
 	* mini.pc.in: Call this package `mini' for the moment.
+
 
 
 
