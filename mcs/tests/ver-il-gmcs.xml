@@ -31256,6 +31256,16 @@
       </method>
     </type>
   </test>
+  <test name="test-656.cs">
+    <type name="Goo">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>26</size>
+      </method>
+    </type>
+  </test>
   <test name="test-66.cs">
     <type name="Y">
       <method name="Void .ctor()">
