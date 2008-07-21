@@ -5459,6 +5459,7 @@ namespace Mono.CSharp {
 			}
 #endif
 
+#if !NET_2_0
 			if (a.Type == TypeManager.marshal_as_attr_type) {
 				UnmanagedMarshal marshal = a.GetMarshal (this);
 				if (marshal != null) {
@@ -5466,7 +5467,7 @@ namespace Mono.CSharp {
 				}
 				return;
 			}
-
+#endif
 			if ((a.HasSecurityAttribute)) {
 				a.Error_InvalidSecurityParent ();
 				return;

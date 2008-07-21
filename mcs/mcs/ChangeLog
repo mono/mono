@@ -1,5 +1,10 @@
 2008-07-21  Marek Safar  <marek.safar@gmail.com>
 
+	 * typemanager.cs, parameter.cs, class.cs, attribute.cs: Use an attribute
+	 to emit UnmanagedMarshal data under 2.0 profile.
+
+2008-07-21  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #410369
 	* parameter.cs: Clone correctly ParamsParameter.
 

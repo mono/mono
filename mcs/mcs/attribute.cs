@@ -1007,14 +1007,6 @@ namespace Mono.CSharp {
 			ps.AddPermission (perm);
 		}
 
-		static object GetValue (object value)
-		{
-			if (value is EnumConstant)
-				return ((EnumConstant) value).GetValue ();
-			else
-				return value;				
-		}
-
 		public object GetPropertyValue (string name)
 		{
 			if (prop_info_arr == null)
@@ -1028,25 +1020,12 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		object GetFieldValue (string name)
-		{
-			int i;
-			if (field_info_arr == null)
-				return null;
-			i = 0;
-			foreach (FieldInfo fi in field_info_arr) {
-				if (fi.Name == name)
-					return GetValue (field_values_arr [i]);
-				i++;
-			}
-			return null;
-		}
-
 		//
 		// Theoretically, we can get rid of this, since FieldBuilder.SetCustomAttribute()
 		// and ParameterBuilder.SetCustomAttribute() are supposed to handle this attribute.
 		// However, we can't, since it appears that the .NET 1.1 SRE hangs when given a MarshalAsAttribute.
 		//
+#if !NET_2_0
 		public UnmanagedMarshal GetMarshal (Attributable attr)
 		{
 			UnmanagedType UnmanagedType;
@@ -1119,6 +1098,30 @@ namespace Mono.CSharp {
 				return UnmanagedMarshal.DefineUnmanagedMarshal (UnmanagedType);
 			}
 		}
+
+		object GetFieldValue (string name)
+		{
+			int i;
+			if (field_info_arr == null)
+				return null;
+			i = 0;
+			foreach (FieldInfo fi in field_info_arr) {
+				if (fi.Name == name)
+					return GetValue (field_values_arr [i]);
+				i++;
+			}
+			return null;
+		}
+
+		static object GetValue (object value)
+		{
+			if (value is EnumConstant)
+				return ((EnumConstant) value).GetValue ();
+			else
+				return value;				
+		}
+		
+#endif
 
 		public CharSet GetCharSetValue ()
 		{

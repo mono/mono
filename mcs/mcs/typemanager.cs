@@ -77,7 +77,9 @@ namespace Mono.CSharp {
 	static public Type decimal_constant_attribute_type;
 	static public Type dllimport_type;
 	static public Type methodimpl_attr_type;
+#if !NET_2_0
 	static public Type marshal_as_attr_type;
+#endif
 	static public Type param_array_type;
 	static public Type void_ptr_type;
 	static public Type indexer_name_type;
@@ -1080,7 +1082,9 @@ namespace Mono.CSharp {
 
 		dllimport_type = CoreLookupType ("System.Runtime.InteropServices", "DllImportAttribute", Kind.Class, false);
 		methodimpl_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "MethodImplAttribute", Kind.Class, false);
+#if !NET_2_0
 		marshal_as_attr_type = CoreLookupType ("System.Runtime.InteropServices", "MarshalAsAttribute", Kind.Class, false);
+#endif
 		in_attribute_type = CoreLookupType ("System.Runtime.InteropServices", "InAttribute", Kind.Class, false);
 		indexer_name_type = CoreLookupType ("System.Runtime.CompilerServices", "IndexerNameAttribute", Kind.Class, false);
 		conditional_attribute_type = CoreLookupType ("System.Diagnostics", "ConditionalAttribute", Kind.Class, false);
