@@ -1,3 +1,9 @@
+2008-07-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall-def.h:
+	* icall.c: New icall System.Enum:get_hashcode. This function
+	avoids the overhead of boxing the enum to the underlying type.
+
 2008-07-21  Mark Probst  <mark.probst@gmail.com>
 
 	* reflection.c (mono_method_get_object): Don't let static RGCTX
