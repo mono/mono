@@ -162,6 +162,16 @@ namespace Mono.CSharp {
 		{
 		}
 
+		ParamsParameter (Type type, string name, Attributes attrs, Location loc)
+			: base (type, name, Modifier.PARAMS, attrs, loc)
+		{
+		}
+
+		public override Parameter Clone ()
+		{
+			return new ParamsParameter (parameter_type, Name, attributes, Location);
+		}
+
 		public override bool Resolve (IResolveContext ec)
 		{
 			if (!base.Resolve (ec))
@@ -505,7 +515,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public Parameter Clone ()
+		public virtual Parameter Clone ()
 		{
 			return new Parameter (parameter_type, Name, modFlags, attributes, Location);
 		}

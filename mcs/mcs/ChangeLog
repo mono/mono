@@ -1,5 +1,10 @@
 2008-07-21  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #410369
+	* parameter.cs: Clone correctly ParamsParameter.
+
+2008-07-21  Marek Safar  <marek.safar@gmail.com>
+
 	* expression.cs (Argument): Always report type for type based expressions
 	errors.
 
