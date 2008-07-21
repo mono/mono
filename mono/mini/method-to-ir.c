@@ -4428,6 +4428,14 @@ set_exception_type_from_invalid_il (MonoCompile *cfg, MonoMethod *method, unsign
  	g_free (method_code);
 }
 
+static void
+set_exception_object (MonoCompile *cfg, MonoException *exception)
+{
+	// FIXME: This is not GC safe
+	cfg->exception_type = MONO_EXCEPTION_OBJECT_SUPPLIED;
+	cfg->exception_ptr = exception;
+}
+
 static gboolean
 generic_class_is_reference_type (MonoCompile *cfg, MonoClass *klass)
 {
@@ -7590,12 +7598,17 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 						class_inits = g_slist_prepend (class_inits, vtable);
 					} else {
 						if (cfg->run_cctors) {
+							MonoException *ex;
 							/* This makes so that inline cannot trigger */
 							/* .cctors: too many apps depend on them */
 							/* running with a specific order... */
 							if (! vtable->initialized)
 								INLINE_FAILURE;
-							mono_runtime_class_init (vtable);
+							ex = mono_runtime_class_init_full (vtable, FALSE);
+							if (ex) {
+								set_exception_object (cfg, ex);
+								goto exception_exit;
+							}
 						}
 					}
 					addr = (char*)vtable->data + field->offset;
@@ -10302,7 +10315,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
  * - make the REM_IMM optimization in mini-x86.c arch-independent.
- * - LAST MERGE: 107901.
+ * - LAST MERGE: 108365.
  * - when returning vtypes in registers, generate IR and append it to the end of the
  *   last bb instead of doing it in the epilog.
  * - when the new JIT is done, use the ins emission macros in ir-emit.h instead of the 

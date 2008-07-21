@@ -17,6 +17,37 @@
 
 	* method-to-ir.c (emit_get_rgctx): Fix some FIXMEs.
 
+2008-07-21  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile.am (version.h): Allow a trailing '/' in the repository URL.
+
+2008-07-21  Bill Holmes  <billholmes54@gmail.com>
+
+	* mini-amd64.c (get_call_info): Correcting the case for MONO_TYPE_TYPEDBYREF
+	  on Winx64.  This type will not be passed on the stack (ArgOnStack), but 
+	  ArgValuetypeAddrInIReg instead.
+
+	Contributed under MIT/X11 license.
+
+2008-07-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (get_register_spilling): Fix a warning.
+
+2008-07-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c: Use mono_runtime_class_init_full to avoid leaking memory
+	for types which the initialization fails. Raises the provided exception
+	at the right stop after cleanup.
+
+2008-07-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Free most of the memory allocated during compilation.
+
+	* mini.c (mini_parse_debug_options): Fix a leak.
+	
+	* mini.c (mini_method_compile): Don't add the method to the jit info tables
+	during aot compilation.
+
 2008-07-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c: Clean up the get_runtime_generic_context functions a bit:
@@ -15420,6 +15451,7 @@ Mon Apr 7 16:31:34 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	belongs.
 
 	* mini.pc.in: Call this package `mini' for the moment.
+
 
 
 

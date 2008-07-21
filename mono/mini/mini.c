@@ -4868,6 +4868,13 @@ set_exception_type_from_invalid_il (MonoCompile *cfg, MonoMethod *method, unsign
 	g_free (method_code);
 }
 
+static void
+set_exception_object (MonoCompile *cfg, MonoException *exception)
+{
+	cfg->exception_type = MONO_EXCEPTION_OBJECT_SUPPLIED;
+	cfg->exception_ptr = exception;
+}
+
 static MonoInst*
 get_runtime_generic_context (MonoCompile *cfg, MonoMethod *method, int context_used, MonoInst *this, unsigned char *ip)
 {
@@ -8081,12 +8088,17 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						class_inits = g_slist_prepend (class_inits, vtable);
 					} else {
 						if (cfg->run_cctors) {
+							MonoException *ex;
 							/* This makes so that inline cannot trigger */
 							/* .cctors: too many apps depend on them */
 							/* running with a specific order... */
 							if (! vtable->initialized)
 								INLINE_FAILURE;
-							mono_runtime_class_init (vtable);
+							ex = mono_runtime_class_init_full (vtable, FALSE);
+							if (ex) {
+								set_exception_object (cfg, ex);
+								goto exception_exit;
+							}					
 						}
 					}
 					addr = (char*)vtable->data + field->offset;
@@ -13745,12 +13757,14 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	mono_arch_fixup_jinfo (cfg);
 #endif
 
-	mono_domain_lock (cfg->domain);
-	mono_jit_info_table_add (cfg->domain, jinfo);
+	if (!cfg->compile_aot) {
+		mono_domain_lock (cfg->domain);
+		mono_jit_info_table_add (cfg->domain, jinfo);
 
-	if (cfg->method->dynamic)
-		mono_dynamic_code_hash_lookup (cfg->domain, cfg->method)->ji = jinfo;
-	mono_domain_unlock (cfg->domain);
+		if (cfg->method->dynamic)
+			mono_dynamic_code_hash_lookup (cfg->domain, cfg->method)->ji = jinfo;
+		mono_domain_unlock (cfg->domain);
+	}
 
 	/* collect statistics */
 	mono_jit_stats.allocated_code_size += cfg->code_len;
@@ -13966,6 +13980,11 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 		cfg = NULL;
 
 		mono_raise_exception ((MonoException*)exc);
+	}
+	case MONO_EXCEPTION_OBJECT_SUPPLIED: {
+		mono_destroy_compile (cfg);
+		mono_raise_exception (cfg->exception_ptr);
+		break;
 	}
 	default:
 		g_assert_not_reached ();
@@ -14972,6 +14991,8 @@ mini_parse_debug_options (void)
 			exit (1);
 		}
 	}
+
+	g_strfreev (args);
 }
 
 MonoDebugOptions *

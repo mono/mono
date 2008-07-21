@@ -1,3 +1,7 @@
+2008-07-15  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* versioninfo.c (map_pe_file): Fix memory leak.
+
 2008-07-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* process-private.h (_WAPI_PROCESS_UNHANDLED_PID_MASK): Fix the amd64 build.

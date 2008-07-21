@@ -23,6 +23,9 @@
 STDAPI MonoFixupCorEE(HMODULE ModuleHandle);
 
 /* Defined by the linker. */
+#ifndef _MSC_VER
+#define __ImageBase _image_base__
+#endif
 extern IMAGE_DOS_HEADER __ImageBase MONO_INTERNAL;
 
 extern HMODULE coree_module_handle MONO_INTERNAL;
