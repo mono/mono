@@ -1,5 +1,13 @@
 2008-07-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mini_emit_load_intf_bit_reg_class): Fix the aot case.
+
+	* debug-mini.c (mono_debug_close_method): Use cfg->locals/args instead of
+	indexing into the varinfo array.
+	(write_variable): Handle dead variables more gracefully.
+
+	* method-to-ir.c (UNVERIFIED): Sync with the version in mini.c.
+	
 	* method-to-ir.c: Merge all the remaining mini.c changes.
 
 2008-07-16  Zoltan Varga  <vargaz@gmail.com>
