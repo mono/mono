@@ -93,7 +93,7 @@ namespace Mono.CSharp {
 		// This hashtable contains all of the #definitions across the source code
 		// it is used by the ConditionalAttribute handler.
 		//
-		public static Hashtable AllDefines = new Hashtable ();
+		static ArrayList AllDefines = new ArrayList ();
 		
 		//
 		// This keeps track of the order in which classes were defined
@@ -141,6 +141,24 @@ namespace Mono.CSharp {
 			Documentation = null;
 			impl_details_class = null;
 			helper_classes = null;
+
+			//
+			// Setup default defines
+			//
+			RootContext.AllDefines = new ArrayList ();
+			RootContext.AddConditional ("__MonoCS__");
+		}
+
+		public static void AddConditional (string p)
+		{
+			if (AllDefines.Contains (p))
+				return;
+			AllDefines.Add (p);
+		}
+
+		public static bool IsConditionalDefined (string value)
+		{
+			return AllDefines.Contains (value);
 		}
 
 		static public RootTypes ToplevelTypes {

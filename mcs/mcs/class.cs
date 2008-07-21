@@ -2831,7 +2831,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (AttributeTester.IsAttributeExcluded (a.Type))
+			if (AttributeTester.IsAttributeExcluded (a.Type, Location))
 				return;
 
 			base.ApplyAttributeBuilder (a, cb);
@@ -3009,7 +3009,7 @@ namespace Mono.CSharp {
 
 			foreach (Attribute a in attrs) {
 				string condition = a.GetConditionalAttributeValue ();
-				if (RootContext.AllDefines.Contains (condition))
+				if (Location.CompilationUnit.IsConditionalDefined (condition))
 					return false;
 			}
 
@@ -4019,7 +4019,7 @@ namespace Mono.CSharp {
 					if (condition == null)
 						return false;
 
-					if (RootContext.AllDefines.Contains (condition))
+					if (Location.CompilationUnit.IsConditionalDefined (condition))
 						return false;
 				}
 
@@ -4029,7 +4029,7 @@ namespace Mono.CSharp {
 
 			IMethodData md = TypeManager.GetMethod (TypeManager.DropGenericMethodArguments (base_method));
 			if (md == null) {
-				if (AttributeTester.IsConditionalMethodExcluded (base_method)) {
+				if (AttributeTester.IsConditionalMethodExcluded (base_method, Location)) {
 					caching_flags |= Flags.Excluded;
 					return true;
 				}

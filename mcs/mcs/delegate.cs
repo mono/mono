@@ -919,7 +919,7 @@ namespace Mono.CSharp {
 					TypeManager.GetFullNameSignature (delegate_method));
 			}
 
-			if (Invocation.IsMethodExcluded (delegate_method)) {
+			if (Invocation.IsMethodExcluded (delegate_method, loc)) {
 				Report.SymbolRelatedToPreviousError (delegate_method);
 				Report.Error (1618, loc, "Cannot create delegate with `{0}' because it has a Conditional attribute",
 					TypeManager.CSharpSignature (delegate_method));

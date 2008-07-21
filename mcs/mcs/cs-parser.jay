@@ -5849,14 +5849,14 @@ static CSharpParser ()
 	oob_stack = new Stack ();
 }
 
-public CSharpParser (SeekableStreamReader reader, CompilationUnit file, ArrayList defines)
+public CSharpParser (SeekableStreamReader reader, CompilationUnit file)
 {
 	this.file = file;
 	current_namespace = new NamespaceEntry (null, file, null);
 	current_class = current_namespace.SlaveDeclSpace;
 	current_container = current_class.PartialContainer; // == RootContest.ToplevelTypes
 	oob_stack.Clear ();
-	lexer = new Tokenizer (reader, file, defines);
+	lexer = new Tokenizer (reader, file);
 }
 
 public void parse ()

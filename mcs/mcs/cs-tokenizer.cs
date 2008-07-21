@@ -184,8 +184,6 @@ namespace Mono.CSharp
 		//
 		// Pre-processor
 		//
-		Hashtable defines;
-
 		const int TAKING        = 1;
 		const int ELSE_SEEN     = 4;
 		const int PARENT_TAKING = 8;
@@ -506,29 +504,13 @@ namespace Mono.CSharp
 			get { return current_location; }
 		}
 
-		void define (string def)
-		{
-			if (!RootContext.AllDefines.Contains (def)){
-				RootContext.AllDefines [def] = true;
-			}
-			if (defines.Contains (def))
-				return;
-			defines [def] = true;
-		}
-		
-		public Tokenizer (SeekableStreamReader input, CompilationUnit file, ArrayList defs)
+		public Tokenizer (SeekableStreamReader input, CompilationUnit file)
 		{
 			this.ref_name = file;
 			this.file_name = file;
 			reader = input;
 			
 			putback_char = -1;
-
-			if (defs != null){
-				defines = new Hashtable ();
-				foreach (string def in defs)
-					define (def);
-			}
 
 			xml_comment_buffer = new StringBuilder ();
 
@@ -1658,24 +1640,24 @@ namespace Mono.CSharp
 		//
 		// Handles #define and #undef
 		//
-		void PreProcessDefinition (bool is_define, string arg, bool caller_is_taking)
+		void PreProcessDefinition (bool is_define, string ident, bool caller_is_taking)
 		{
-			if (arg.Length == 0 || arg == "true" || arg == "false"){
+			if (ident.Length == 0 || ident == "true" || ident == "false"){
 				Report.Error (1001, Location, "Missing identifer to pre-processor directive");
 				return;
 			}
 
-			if (arg.IndexOfAny (simple_whitespaces) != -1){
+			if (ident.IndexOfAny (simple_whitespaces) != -1){
 				Error_EndLineExpected ();
 				return;
 			}
 
-			if (!is_identifier_start_character (arg [0]))
-				Report.Error (1001, Location, "Identifier expected: " + arg);
+			if (!is_identifier_start_character (ident [0]))
+				Report.Error (1001, Location, "Identifier expected: " + ident);
 			
-			foreach (char c in arg.Substring (1)){
+			foreach (char c in ident.Substring (1)){
 				if (!is_identifier_part_character (c)){
-					Report.Error (1001, Location, "Identifier expected: " + arg);
+					Report.Error (1001, Location, "Identifier expected: " + ident);
 					return;
 				}
 			}
@@ -1683,15 +1665,19 @@ namespace Mono.CSharp
 			if (!caller_is_taking)
 				return;
 
-			if (is_define){
-				if (defines == null)
-					defines = new Hashtable ();
-				define (arg);
-			} else {
-				if (defines == null)
+			if (is_define) {
+				//
+				// #define ident
+				//
+				if (RootContext.IsConditionalDefined (ident))
 					return;
-				if (defines.Contains (arg))
-					defines.Remove (arg);
+
+				file_name.AddDefine (ident);
+			} else {
+				//
+				// #undef ident
+				//
+				file_name.AddUndefine (ident);
 			}
 		}
 
@@ -1891,13 +1877,8 @@ namespace Mono.CSharp
 				return true;
 			if (s == "false")
 				return false;
-			
-			if (defines == null)
-				return false;
-			if (defines.Contains (s))
-				return true;
 
-			return false;
+			return file_name.IsConditionalDefined (s);
 		}
 
 		bool pp_primary (ref string s)

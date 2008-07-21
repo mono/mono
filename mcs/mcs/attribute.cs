@@ -1799,7 +1799,7 @@ namespace Mono.CSharp {
 			Report.Warning (618, 2, loc, "`{0}' is obsolete: `{1}'", member, oa.Message);
 		}
 
-		public static bool IsConditionalMethodExcluded (MethodBase mb)
+		public static bool IsConditionalMethodExcluded (MethodBase mb, Location loc)
 		{
 			object excluded = analyzed_method_excluded [mb];
 			if (excluded != null)
@@ -1816,11 +1816,12 @@ namespace Mono.CSharp {
 			}
 
 			foreach (ConditionalAttribute a in attrs) {
-				if (RootContext.AllDefines.Contains (a.ConditionString)) {
+				if (loc.CompilationUnit.IsConditionalDefined (a.ConditionString)) {
 					analyzed_method_excluded.Add (mb, FALSE);
 					return false;
 				}
 			}
+
 			analyzed_method_excluded.Add (mb, TRUE);
 			return true;
 		}
@@ -1829,7 +1830,7 @@ namespace Mono.CSharp {
 		/// Analyzes class whether it has attribute which has ConditionalAttribute
 		/// and its condition is not defined.
 		/// </summary>
-		public static bool IsAttributeExcluded (Type type)
+		public static bool IsAttributeExcluded (Type type, Location loc)
 		{
 			if (!type.IsClass)
 				return false;
@@ -1841,7 +1842,7 @@ namespace Mono.CSharp {
 			if (class_decl == null && TypeManager.conditional_attribute_type != null) {
 				object[] attributes = type.GetCustomAttributes (TypeManager.conditional_attribute_type, false);
 				foreach (ConditionalAttribute ca in attributes) {
-					if (RootContext.AllDefines.Contains (ca.ConditionString))
+					if (loc.CompilationUnit.IsConditionalDefined (ca.ConditionString))
 						return false;
 				}
 				return attributes.Length > 0;

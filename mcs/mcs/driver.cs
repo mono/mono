@@ -79,11 +79,6 @@ namespace Mono.CSharp
 		static string win32IconFile;
 
 		//
-		// An array of the defines from the command line
-		//
-		ArrayList defines;
-
-		//
 		// Output file
 		//
 		static string output_file;
@@ -108,12 +103,6 @@ namespace Mono.CSharp
 		public Driver ()
 		{
 			encoding = Encoding.Default;
-
-			//
-			// Setup default defines
-			//
-			defines = new ArrayList ();
-			defines.Add ("__MonoCS__");
 		}
 
 		public static Driver Create (string [] args)
@@ -166,7 +155,7 @@ namespace Mono.CSharp
 
 			using (input){
 				SeekableStreamReader reader = new SeekableStreamReader (input, encoding);
-				Tokenizer lexer = new Tokenizer (reader, file, defines);
+				Tokenizer lexer = new Tokenizer (reader, file);
 				int token, tokens = 0, errors = 0;
 
 				while ((token = lexer.token ()) != Token.EOF){
@@ -207,7 +196,7 @@ namespace Mono.CSharp
 		
 		void Parse (SeekableStreamReader reader, CompilationUnit file)
 		{
-			CSharpParser parser = new CSharpParser (reader, file, defines);
+			CSharpParser parser = new CSharpParser (reader, file);
 			parser.ErrorOutput = Report.Stderr;
 			try {
 				parser.parse ();
@@ -859,7 +848,7 @@ namespace Mono.CSharp
 					Usage ();
 					Environment.Exit (1);
 				}
-				defines.Add (args [++i]);
+				RootContext.AddConditional (args [++i]);
 				return true;
 
 			case "--tokenize": 
@@ -1149,7 +1138,7 @@ namespace Mono.CSharp
 						Report.Warning (2029, 1, "Invalid conditional define symbol `{0}'", d);
 						continue;
 					}
-					defines.Add (d);
+					RootContext.AddConditional (d);
 				}
 				return true;
 			}
@@ -1460,7 +1449,7 @@ namespace Mono.CSharp
 				case "default":
 					RootContext.Version = LanguageVersion.Default;
 #if GMCS_SOURCE					
-					defines.Add ("__V2__");
+					RootContext.AddConditional ("__V2__");
 #endif
 					return true;
 #if GMCS_SOURCE

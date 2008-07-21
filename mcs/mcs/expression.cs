@@ -4927,7 +4927,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// This checks the ConditionalAttribute on the method 
 		/// </summary>
-		public static bool IsMethodExcluded (MethodBase method)
+		public static bool IsMethodExcluded (MethodBase method, Location loc)
 		{
 			if (method.IsConstructor)
 				return false;
@@ -4943,7 +4943,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			return AttributeTester.IsConditionalMethodExcluded (method);
+			return AttributeTester.IsConditionalMethodExcluded (method, loc);
 		}
 
 		/// <remarks>
@@ -5000,7 +5000,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (IsMethodExcluded (method))
+			if (IsMethodExcluded (method, loc))
 				return;
 			
 			bool is_static = method.IsStatic;
