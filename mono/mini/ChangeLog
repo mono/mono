@@ -1,3 +1,11 @@
+2008-07-21  Bill Holmes  <billholmes54@gmail.com>
+
+	* mini-amd64.c (get_call_info): Correcting the case for MONO_TYPE_TYPEDBYREF
+	  on Winx64.  This type will not be passed on the stack (ArgOnStack), but 
+	  ArgValuetypeAddrInIReg instead.
+
+	Contributed under MIT/X11 license.
+
 2008-07-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-codegen.c (get_register_spilling): Fix a warning.
@@ -14284,6 +14292,7 @@ Mon Apr 7 16:31:34 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	belongs.
 
 	* mini.pc.in: Call this package `mini' for the moment.
+
 
 
 
