@@ -1,3 +1,12 @@
+2008-07-21  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-getgenericarguments.2.cs: Test case catching static
+	RGCTX wrappers in MonoReflectionMethods.
+
+	* Makefile.am: Test added.
+
+	Backported from trunk.
+
 2008-07-10  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile.am (testaot): Set MONO_PATH when running the AOT
