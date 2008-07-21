@@ -1,3 +1,10 @@
+2008-07-21  Bill Holmes  <billholmes54@gmail.com>
+
+	* mono-membar.h :  Including glib.h to get definition of 'inline.'  Needed
+	  by the MSVC compiler.
+
+	Contributed under MIT/X11 license.
+
 2008-07-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-codeman.c (mono_code_manager_new): Initialize the read-only field.
