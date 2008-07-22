@@ -1,5 +1,7 @@
 2008-07-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* ssa2.c abcremoval2.c: Fix warnings.
+
 	* *: Merge the Linear IR branch.
 
 	The original branch is at trunk/branches/vargaz/mini-linear-il, and
