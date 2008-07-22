@@ -1,5 +1,9 @@
 2008-07-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* debug-mono-symfile.c: Fix a warning.
+
+	* mono-perfcounters.c (get_cpu_times): Fix a warning.
+
 	* object.c (mono_class_vtable): Check if exception_type is set, and return
 	NULL as defined by the function comments.
 
