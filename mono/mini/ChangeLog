@@ -1,3 +1,11 @@
+2008-07-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* *: Merge the Linear IR branch.
+
+	The original branch is at trunk/branches/vargaz/mini-linear-il, and
+	the ChangeLog file there describes all the changes done over the years. 
+	Further documentation can be found at www.mono-project.com/Linear_IL.
+
 2008-07-21  Bill Holmes  <billholmes54@gmail.com>
 
 	* mini-amd64.c (get_call_info): Winx64 fix for passing floats.
