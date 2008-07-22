@@ -1,4 +1,6 @@
-// Compiler options: -r:test-656-lib.dll
+// Compiler options: -r:test-656-lib.dll;
+
+// Trailing semicolon is part of the test
 
 class Goo
 {
