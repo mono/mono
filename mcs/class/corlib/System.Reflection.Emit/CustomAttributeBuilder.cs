@@ -242,6 +242,7 @@ namespace System.Reflection.Emit {
 				if (paramType == 0x55) {
 					/* enums, the value is preceeded by the type */
 					int len2 = decode_len (data, pos, out pos);
+					string_from_bytes (data, pos, len2);
 					pos += len2;
 				}
 				int len = decode_len (data, pos, out pos);
@@ -263,6 +264,15 @@ namespace System.Reflection.Emit {
 					value |= ((int)data [pos++]) << 24;
 					sizeConst = value;
 					hasSize = true;
+					break;
+				case "SafeArraySubType":
+				case "IidParameterIndex":
+					pos += 4;
+					break;
+				case "SafeArrayUserDefinedSubType":
+					len = decode_len (data, pos, out pos);
+					string_from_bytes (data, pos, len);
+					pos += len;
 					break;
 				case "SizeParamIndex":
 					value = (int)data [pos++];
@@ -287,10 +297,7 @@ namespace System.Reflection.Emit {
 					pos += len;
 					break;
 				default:
-					len = decode_len(data, pos, out pos);
-					string_from_bytes (data, pos, len);
-					pos += len;
-					break;
+					throw new Exception ("Unknown MarshalAsAttribute field: " + named_name);
 				}
 			}
 
