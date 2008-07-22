@@ -2033,6 +2033,51 @@ namespace MonoTests.System.Reflection.Emit
 
 #if NET_2_0
 		[Test]
+		public void GetMethod_RejectMethodFromInflatedTypeBuilder () {
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			tb.DefineGenericParameters ("T");
+			MethodBuilder mb = tb.DefineMethod ("create", MethodAttributes.Public, typeof (void), Type.EmptyTypes);
+
+			Type ginst = tb.MakeGenericType (typeof (int));
+			
+			MethodInfo mi = TypeBuilder.GetMethod (ginst, mb);
+			try {
+				TypeBuilder.GetMethod (ginst, mi);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual ("method", ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		[Category ("NotDotNet")]
+		public void GetMethod_AcceptMethodFromInflatedTypeBuilder_UnderCompilerContext () {
+			AssemblyName assemblyName = new AssemblyName ();
+			assemblyName.Name = ASSEMBLY_NAME;
+
+			assembly =
+				Thread.GetDomain ().DefineDynamicAssembly (
+					assemblyName, AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800, Path.GetTempPath ());
+
+			module = assembly.DefineDynamicModule ("module1");
+			
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			tb.DefineGenericParameters ("T");
+			MethodBuilder mb = tb.DefineMethod ("create", MethodAttributes.Public, typeof (void), Type.EmptyTypes);
+
+			Type ginst = tb.MakeGenericType (typeof (int));
+			
+			MethodInfo mi = TypeBuilder.GetMethod (ginst, mb);
+
+			try {
+				TypeBuilder.GetMethod (ginst, mi);
+			} catch (ArgumentException ex) {
+				Assert.Fail ("#1");
+			}
+		}
+
+
+		[Test]
 		// Test that changes made to the method builder after a call to GetMethod ()
 		// are visible
 		public void TestGetMethod ()

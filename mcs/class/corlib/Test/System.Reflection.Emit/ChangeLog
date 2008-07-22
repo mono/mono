@@ -1,3 +1,8 @@
+2008-07-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilderTest.cs: Added tests for the special cased behavior
+	of GetMethod.
+
 2008-07-17 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MethodOnTypeBuilderInstTest.cs: Disable new tests as the change
