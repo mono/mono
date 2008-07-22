@@ -1,3 +1,8 @@
+2008-07-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_class_vtable): Check if exception_type is set, and return
+	NULL as defined by the function comments.
+
 2008-07-22  Mark Probst  <mark.probst@gmail.com>
 
 	* mempool.c: Use malloc for every single mempool allocation if the
