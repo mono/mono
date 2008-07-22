@@ -1215,6 +1215,7 @@ namespace System.Windows.Forms {
 			get { return verticalScrollingOffset; }
 		}
 
+		[MonoTODO ("VirtualMode is not supported.")]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		[DefaultValue (false)]
 		public bool VirtualMode {
