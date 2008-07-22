@@ -1,3 +1,8 @@
+2008-07-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_method_compile): Rename the COUNT env variable to
+	MONO_COUNT.
+
 2008-07-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mini_emit_load_intf_bit_reg_class): Fix the aot case.

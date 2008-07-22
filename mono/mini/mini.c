@@ -13134,12 +13134,12 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 		count ++;
 
-		if (getenv ("COUNT")) {
-			if (count == atoi (getenv ("COUNT"))) {
+		if (getenv ("MONO_COUNT")) {
+			if (count == atoi (getenv ("MONO_COUNT"))) {
 				printf ("LAST: %s\n", mono_method_full_name (method, TRUE));
 				//cfg->verbose_level = 5;
 			}
-			if (count <= atoi (getenv ("COUNT")))
+			if (count <= atoi (getenv ("MONO_COUNT")))
 				cfg->new_ir = TRUE;
 
 			/*
