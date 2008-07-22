@@ -1,3 +1,8 @@
+2008-07-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* LosFormatter.cs: Avoid using Position when stream is unseekable.
+	Do not invoke Length property twice for seekable MemoryStream. 
+
 2008-07-22  Dean Brettle <dean@brettle.com>
 
 	* LosFormatter.cs: fixed bug 411115 where passing an unseekable 

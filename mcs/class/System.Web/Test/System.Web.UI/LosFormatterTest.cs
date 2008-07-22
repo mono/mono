@@ -38,7 +38,19 @@ namespace MonoTests.System.Web.UI
 	[TestFixture]
 	public class LosFormatterTest
 	{
-		[Test] // bug #81851
+		[Test] // bug #411115
+		public void Deserialize_Stream_NonSeekable ()
+		{
+			string s1 = "Hello world";
+			NonSeekableStream ns = new NonSeekableStream ();
+			LosFormatter lf = new LosFormatter ();
+			lf.Serialize (ns, s1);
+			ns.Reset ();
+			string s2 = lf.Deserialize (ns) as string;
+			Assert.AreEqual (s1, s2);
+		}
+
+		[Test] // bug #324526
 		public void Serialize ()
 		{
 			string s = "Hello world";
@@ -147,33 +159,46 @@ namespace MonoTests.System.Web.UI
 #endif
 		}
 
-		[Test] // bug #4111115
-		public void Deserialize_Unseekable ()
+		class NonSeekableStream : MemoryStream
 		{
-			string s = "Hello world";
-			LosFormatter lf = new LosFormatter ();
-			MemoryStream ms = new MemoryStream ();
-			lf.Serialize (ms, s);
-			byte[] serializedBytes = ms.ToArray();
-			UnseekableMemoryStream ums 
-				= new UnseekableMemoryStream(serializedBytes, 0, serializedBytes.Length, false, true);
-			string s2 = lf.Deserialize (ums) as string;
-			Assert.IsNotNull (s2, "#1");
-			Assert.AreEqual (s, s2, "#2");
-		}
+			private bool canSeek;
 
-		class UnseekableMemoryStream : MemoryStream
-		{
-			public UnseekableMemoryStream(byte[] byteArray, int index, int count, 
-			                              bool writable, bool publiclyVisible) 
-				: base(byteArray, index, count, writable, publiclyVisible)
-			{
-			}
-			
 			public override bool CanSeek {
-				get { return false; }
-			}				
-		}
+				get { return canSeek; }
+			}
 
+			public override long Length {
+				get {
+					if (!CanSeek)
+						throw new NotSupportedException ();
+					return base.Length;
+				}
+			}
+
+			public override long Position {
+				get{
+					if (!CanSeek)
+						throw new NotSupportedException ();
+					return base.Position;
+				}
+				set {
+					base.Position = value;
+				}
+			}
+
+			public override long Seek (long offset, SeekOrigin origin)
+			{
+				if (!CanSeek)
+					throw new NotSupportedException ();
+				return base.Seek (offset, origin);
+			}
+
+			public void Reset ()
+			{
+				canSeek = true;
+				Position = 0;
+				canSeek = false;
+			}
+		}
 	}
 }
