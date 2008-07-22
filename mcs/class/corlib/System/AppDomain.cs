@@ -584,10 +584,7 @@ namespace System {
 
 		public Assembly Load (string assemblyString)
 		{
-			if (assemblyString == null)
-				throw new ArgumentNullException ("assemblyString");
-
-			return LoadAssembly (assemblyString, null, false);
+			return Load (assemblyString, null, false);
 		}
 
 		public Assembly Load (string assemblyString, Evidence assemblySecurity)
@@ -599,6 +596,9 @@ namespace System {
 		{
 			if (assemblyString == null)
 				throw new ArgumentNullException ("assemblyString");
+				
+			if (assemblyString.Length == 0)
+				throw new ArgumentException ("assemblyString cannot have zero length");
 
 			return LoadAssembly (assemblyString, assemblySecurity, refonly);
 		}
