@@ -1,5 +1,6 @@
-// cs3010.cs: `I.Error': CLS-compliant interfaces must have only CLS-compliant members
-// Line: 12
+// CS3010: `I.Error': CLS-compliant interfaces must have only CLS-compliant members
+// Line: 13
+// Compiler options: -warnaserror -warn:1
 
 using System;
 [assembly:CLSCompliant (true)]

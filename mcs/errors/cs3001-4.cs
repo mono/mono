@@ -1,5 +1,6 @@
-// cs3001-4.cs: Argument type `out IError' is not CLS-compliant
-// Line: 12
+// CS3001: Argument type `out IError' is not CLS-compliant
+// Line: 13
+// Compiler options: -warnaserror -warn:1
 
 using System;
 [assembly:CLSCompliant(true)]

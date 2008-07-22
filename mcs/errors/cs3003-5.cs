@@ -1,6 +1,6 @@
-// cs3003-5.cs: Type of `S.test2' is not CLS-compliant
+// CS3003: Type of `S.test2' is not CLS-compliant
 // Line: 11
-// Compiler options: -unsafe
+// Compiler options: -unsafe -warnaserror -warn:1
 
 using System;
 

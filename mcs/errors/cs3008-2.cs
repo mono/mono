@@ -1,5 +1,6 @@
-// cs3008-2.cs: Identifier `CLSClass._myEvent' is not CLS-compliant
-// Line: 8
+// CS3008: Identifier `CLSClass._myEvent' is not CLS-compliant
+// Line: 11
+// Compiler options: -warnaserror -warn:1
 
 using System;
 [assembly: CLSCompliant(true)]

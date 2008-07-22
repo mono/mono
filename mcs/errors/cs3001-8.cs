@@ -1,6 +1,6 @@
-// cs3001-8.cs: Argument type `int*' is not CLS-compliant
+// CS3001: Argument type `int*' is not CLS-compliant
 // Line: 9
-// Compiler options: -unsafe
+// Compiler options: -unsafe -warnaserror -warn:1
 
 using System;
 [assembly:CLSCompliant(true)]

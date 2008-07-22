@@ -1,5 +1,6 @@
-// cs3001.cs: Argument type `sbyte' is not CLS-compliant
-// Line: 8
+// CS3001: Argument type `sbyte' is not CLS-compliant
+// Line: 9
+// Compiler options: -warnaserror -warn:1
 
 using System;
 [assembly:CLSCompliant (true)]

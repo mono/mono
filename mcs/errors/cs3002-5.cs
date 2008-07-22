@@ -1,5 +1,6 @@
-// cs3002-5.cs: Return type of `CLSClass.Test1()' is not CLS-compliant
-// Line: 11
+// CS3002: Return type of `CLSClass.Test1()' is not CLS-compliant
+// Line: 14
+// Compiler options: -warnaserror -warn:1
 
 using System;
 [assembly:CLSCompliant(true)]
@@ -10,6 +11,6 @@ public interface I {}
 public class C {}
 
 public class CLSClass {
-        public I Test1() { return null; } 
+	public I Test1() { return null; } 
 	public C Test2() { return null; }
 }

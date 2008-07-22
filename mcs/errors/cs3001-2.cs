@@ -1,5 +1,6 @@
-// cs3001-2.cs: Argument type `ref ulong' is not CLS-compliant
-// Line: 9
+// CS3001: Argument type `ref ulong' is not CLS-compliant
+// Line: 10
+// Compiler options: -warnaserror -warn:1
 
 using System;
 [assembly:CLSCompliant (true)]

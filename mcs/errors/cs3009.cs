@@ -1,5 +1,6 @@
-// cs3009.cs: `CLSClass': base type `BaseClass' is not CLS-compliant
-// Line: 11
+// CS3009: `CLSClass': base type `BaseClass' is not CLS-compliant
+// Line: 12
+// Compiler options: -warnaserror -warn:1
 
 using System;
 [assembly:CLSCompliant (true)]

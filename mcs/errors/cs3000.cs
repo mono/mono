@@ -1,5 +1,6 @@
-// cs3000.cs: Methods with variable arguments are not CLS-compliant
-// Line: 10
+// CS3000: Methods with variable arguments are not CLS-compliant
+// Line: 11
+// Compiler options: -warnaserror -warn:1
 
 using System;
 

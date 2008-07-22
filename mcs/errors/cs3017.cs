@@ -1,5 +1,6 @@
-// cs3017.cs: You cannot specify the CLSCompliant attribute on a module that differs from the CLSCompliant attribute on the assembly
-// Line: 6
+// CS3017: You cannot specify the CLSCompliant attribute on a module that differs from the CLSCompliant attribute on the assembly
+// Line: 7
+// Compiler options: -warnaserror -warn:1
 
 using System;
 

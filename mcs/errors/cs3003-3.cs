@@ -1,5 +1,6 @@
-// cs3003-3.cs: Type of `I.Error' is not CLS-compliant
-// Line: 8
+// CS3003: Type of `I.Error' is not CLS-compliant
+// Line: 9
+// Compiler options: -warnaserror -warn:1
 
 using System;
 [assembly:CLSCompliant(true)]

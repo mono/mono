@@ -1,5 +1,6 @@
-// cs3002-2.cs: Return type of `CLSClass.Foo()' is not CLS-compliant
-// Line: 13
+// CS3002: Return type of `CLSClass.Foo()' is not CLS-compliant
+// Line: 14
+// Compiler options: -warnaserror -warn:1
 
 using System;
 [assembly:CLSCompliant(true)]

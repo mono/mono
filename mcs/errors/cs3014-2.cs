@@ -1,5 +1,6 @@
-// cs3014-2.cs: `C' cannot be marked as CLS-compliant because the assembly is not marked as CLS-compliant
-// Line: 7
+// CS3014: `C' cannot be marked as CLS-compliant because the assembly is not marked as CLS-compliant
+// Line: 8
+// Compiler options: -warnaserror -warn:1
 
 using System;
 

@@ -1,5 +1,6 @@
-// cs3008.cs: Identifier `CLSClass._value' is not CLS-compliant
-// Line: 8
+// CS3008: Identifier `CLSClass._value' is not CLS-compliant
+// Line: 9
+// Compiler options: -warnaserror -warn:1
 
 using System;
 [assembly: CLSCompliant(true)]

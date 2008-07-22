@@ -1,10 +1,6 @@
-// cs3005-13.cs: Identifier `CLSEnum.label' differing only in case is not CLS-compliant
+// CS3005: Identifier `CLSEnum.label' differing only in case is not CLS-compliant
 // Line: 9
-// Compiler options: -warnaserror
-
-//
-// NOTE: This is only an error in MCS - in GMCS, it's just a warning.
-//
+// Compiler options: -warnaserror -warn:1
 
 using System;
 [assembly:CLSCompliant (true)]

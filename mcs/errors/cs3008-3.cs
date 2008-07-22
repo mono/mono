@@ -1,5 +1,6 @@
-// cs3008-3.cs: Identifier `_A' is not CLS-compliant
-// Line: 7
+// CS3008: Identifier `_A' is not CLS-compliant
+// Line: 8
+// Compiler options: -warnaserror -warn:1
 
 using System;
 [assembly:CLSCompliant(true)]

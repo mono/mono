@@ -1,5 +1,6 @@
-// cs3009-1.cs: `Days': base type `uint' is not CLS-compliant
-// Line: 7
+// CS3009: `Days': base type `uint' is not CLS-compliant
+// Line: 8
+// Compiler options: -warnaserror -warn:1
 
 using System;
 [assembly:CLSCompliant(true)]

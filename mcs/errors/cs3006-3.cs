@@ -1,5 +1,6 @@
-// cs3006-3.cs: Overloaded method `CLSInterface.Test(int)' differing only in ref or out, or in array rank, is not CLS-compliant
-// Line: 9
+// CS3006: Overloaded method `CLSInterface.Test(int)' differing only in ref or out, or in array rank, is not CLS-compliant
+// Line: 10
+// Compiler options: -warnaserror -warn:1
 
 using System;
 [assembly: CLSCompliant(true)]

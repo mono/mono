@@ -1,5 +1,6 @@
-// cs3002-3.cs: Return type of `CLSClass.MyDelegate' is not CLS-compliant
-// Line: 8
+// CS3002: Return type of `CLSClass.MyDelegate' is not CLS-compliant
+// Line: 9
+// Compiler options: -warnaserror -warn:1
 
 using System;
 [assembly:CLSCompliant(true)]

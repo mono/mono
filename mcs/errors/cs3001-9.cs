@@ -1,5 +1,6 @@
-// cs3001-9.cs: Argument type `ulong' is not CLS-compliant
-// Line: 13
+// CS3001: Argument type `ulong' is not CLS-compliant
+// Line: 14
+// Compiler options: -warnaserror -warn:1
 
 using System;
 [assembly:CLSCompliant (A.f)]

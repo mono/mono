@@ -1,5 +1,6 @@
-// cs3016-3.cs: Arrays as attribute arguments are not CLS-compliant
-// Line: 12
+// CS3016: Arrays as attribute arguments are not CLS-compliant
+// Line: 13
+// Compiler options: -warnaserror -warn:1
 
 using System;
 [assembly:CLSCompliant(true)]
