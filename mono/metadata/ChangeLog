@@ -1,5 +1,8 @@
 2008-07-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mono-debug-debugger.c (mono_debugger_check_breakpoints): Fix a 
+	warning.
+
 	* debug-mono-symfile.c: Fix a warning.
 
 	* mono-perfcounters.c (get_cpu_times): Fix a warning.
