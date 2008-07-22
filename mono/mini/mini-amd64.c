@@ -1200,13 +1200,33 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 				break;
 			case ArgValuetypeInReg:
 				break;
-			case ArgValuetypeAddrInIReg:
-				break;  /*FIXME: Not sure what to do for this case yet on Winx64*/
+			case ArgValuetypeAddrInIReg: {
+				MonoInst *indir;
+				g_assert (!cfg->arch.omit_fp);
+				
+				MONO_INST_NEW (cfg, indir, 0);
+				indir->opcode = OP_REGOFFSET;
+				if (ainfo->pair_storage [0] == ArgInIReg) {
+					indir->inst_basereg = cfg->frame_reg;
+					offset = ALIGN_TO (offset, sizeof (gpointer));
+					offset += (sizeof (gpointer));
+					indir->inst_offset = - offset;
+				}
+				else {
+					indir->inst_basereg = cfg->frame_reg;
+					indir->inst_offset = ainfo->offset + ARGS_OFFSET;
+				}
+				
+				inst->opcode = OP_VTARG_ADDR;
+				inst->inst_left = indir;
+				
+				break;
+			}
 			default:
 				NOT_IMPLEMENTED;
 			}
 
-			if (!inreg && (ainfo->storage != ArgOnStack)) {
+			if (!inreg && (ainfo->storage != ArgOnStack) && (ainfo->storage != ArgValuetypeAddrInIReg)) {
 				inst->opcode = OP_REGOFFSET;
 				inst->inst_basereg = cfg->frame_reg;
 				/* These arguments are saved to the stack in the prolog */
@@ -2267,6 +2287,10 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 						g_assert_not_reached ();
 					}
 				}
+				break;
+			case ArgValuetypeAddrInIReg:
+				if (ainfo->pair_storage [0] == ArgInIReg)
+					amd64_mov_reg_membase (code, ainfo->pair_regs [0], ins->inst_left->inst_basereg, ins->inst_left->inst_offset,  sizeof (gpointer));
 				break;
 			default:
 				break;
@@ -4257,6 +4281,10 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 						g_assert_not_reached ();
 					}
 				}
+				break;
+			case ArgValuetypeAddrInIReg:
+				if (ainfo->pair_storage [0] == ArgInIReg)
+					amd64_mov_membase_reg (code, ins->inst_left->inst_basereg, ins->inst_left->inst_offset, ainfo->pair_regs [0],  sizeof (gpointer));
 				break;
 			default:
 				break;

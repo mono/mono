@@ -1,3 +1,18 @@
+2008-07-22  Bill Holmes  <billholmes54@gmail.com>
+
+	* inssel-amd64.brg :  Adding rules for OP_VTARG_ADDR that are used for
+	  Winx64 struct arguments.
+
+	* mini-amd64.c (mono_arch_allocate_vars) : Implementing the ArgValuetypeAddrInIReg
+	  argument case.  Setting the argument op to OP_VTARG_ADDR (OP_REGOFFSET)).
+
+	* mini-amd64.c (mono_arch_emit_prolog, emit_load_volatile_arguments) :
+ 	  Implementing the ArgValuetypeAddrInIReg argument case.  When the address
+ 	  of a struct is passed in a register it must be saved with the other
+ 	  volatile argument on the stack.
+
+	Contributed under MIT/X11 license.
+
 2008-07-21  Bill Holmes  <billholmes54@gmail.com>
 
 	* mini-amd64.c (get_call_info): Winx64 fix for passing floats.
@@ -14298,6 +14313,7 @@ Mon Apr 7 16:31:34 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	belongs.
 
 	* mini.pc.in: Call this package `mini' for the moment.
+
 
 
 

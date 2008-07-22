@@ -619,6 +619,21 @@ reg: CEE_MUL(reg, CEE_LDIND_I4 (base)) {
 	MONO_EMIT_BIALU_MEMBASE (cfg, tree, OP_X86_MUL_REG_MEMBASE, state->reg1, state->left->reg1, base->inst_basereg, base->inst_offset);
 } 
 
+reg: OP_VTARG_ADDR (base) {
+	MONO_EMIT_NEW_LOAD_MEMBASE (s, state->reg1, state->left->tree->inst_basereg, 
+					state->left->tree->inst_offset);
+}
+
+reg: OP_LDADDR (OP_VTARG_ADDR (base)) {
+	MONO_EMIT_NEW_LOAD_MEMBASE (s, state->reg1, state->left->left->tree->inst_basereg, 
+					state->left->left->tree->inst_offset);
+}
+
+reg: CEE_LDOBJ (OP_VTARG_ADDR (base)) {
+	MONO_EMIT_NEW_LOAD_MEMBASE (s, state->reg1, state->left->left->tree->inst_basereg, 
+					state->left->left->tree->inst_offset);
+}
+
 reg: OP_LSHL (reg, reg),
 reg: OP_LSHR (reg, reg),
 reg: OP_LSHR_UN (reg, reg),
