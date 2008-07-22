@@ -1221,7 +1221,7 @@ namespace Mono.CSharp {
 							return;
 
 						if (arg.Type.IsArray) {
-							Report.Error (3016, Location, "Arrays as attribute arguments are not CLS-compliant");
+							Report.Warning (3016, 1, Location, "Arrays as attribute arguments are not CLS-compliant");
 							return;
 						}
 					}
@@ -1238,7 +1238,7 @@ namespace Mono.CSharp {
 						return;
 
 					if (arg.Type.IsArray) {
-						Report.Error (3016, Location, "Arrays as attribute arguments are not CLS-compliant");
+						Report.Warning (3016, 1, Location, "Arrays as attribute arguments are not CLS-compliant");
 						return;
 					}
 				}

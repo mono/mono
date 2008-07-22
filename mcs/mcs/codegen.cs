@@ -1588,7 +1588,7 @@ namespace Mono.CSharp {
 				}
 				else if (CodeGen.Assembly.IsClsCompliant != a.GetBoolean ()) {
 					Report.SymbolRelatedToPreviousError (CodeGen.Assembly.ClsCompliantAttribute.Location, CodeGen.Assembly.ClsCompliantAttribute.GetSignatureForError ());
-					Report.Error (3017, a.Location, "You cannot specify the CLSCompliant attribute on a module that differs from the CLSCompliant attribute on the assembly");
+					Report.Warning (3017, 1, a.Location, "You cannot specify the CLSCompliant attribute on a module that differs from the CLSCompliant attribute on the assembly");
 					return;
 				}
 			}

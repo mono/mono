@@ -1,5 +1,11 @@
 2008-07-22  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #320993
+	* report.cs, parameter.cs, class.cs, decl.cs, delegate.cs, attribute.cs,
+	  enum.cs, codegen.cs: Report CLS compliance errors as warnings.
+
+2008-07-22  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #320748
 	* convert.cs: Implicit user operators cannot convert to interfaces
 

@@ -364,7 +364,8 @@ namespace Mono.CSharp {
 			Parameters.VerifyClsCompliance ();
 
 			if (!AttributeTester.IsClsCompliant (ReturnType.Type)) {
-				Report.Error (3002, Location, "Return type of `{0}' is not CLS-compliant", GetSignatureForError ());
+				Report.Warning (3002, 1, Location, "Return type of `{0}' is not CLS-compliant",
+					GetSignatureForError ());
 			}
 			return true;
 		}

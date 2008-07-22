@@ -496,7 +496,7 @@ namespace Mono.CSharp {
 			if (AttributeTester.IsClsCompliant (ExternalType ()))
 				return;
 
-			Report.Error (3001, Location, "Argument type `{0}' is not CLS-compliant", GetSignatureForError ());
+			Report.Warning (3001, 1, Location, "Argument type `{0}' is not CLS-compliant", GetSignatureForError ());
 		}
 
 		public virtual void ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index)

@@ -224,7 +224,7 @@ namespace Mono.CSharp {
 			if (UnderlyingType == TypeManager.uint32_type ||
 				UnderlyingType == TypeManager.uint64_type ||
 				UnderlyingType == TypeManager.ushort_type) {
-				Report.Error (3009, Location, "`{0}': base type `{1}' is not CLS-compliant", GetSignatureForError (), TypeManager.CSharpName (UnderlyingType));
+				Report.Warning (3009, 1, Location, "`{0}': base type `{1}' is not CLS-compliant", GetSignatureForError (), TypeManager.CSharpName (UnderlyingType));
 			}
 
 			return true;

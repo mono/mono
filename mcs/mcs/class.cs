@@ -2195,7 +2195,7 @@ namespace Mono.CSharp {
 					has_compliant_args = c.HasCompliantArgs;
 				}
 				if (!has_compliant_args)
-					Report.Error (3015, Location, "`{0}' has no accessible constructors which use only CLS-compliant types", GetSignatureForError ());
+					Report.Warning (3015, 1, Location, "`{0}' has no accessible constructors which use only CLS-compliant types", GetSignatureForError ());
 			} else {
 				foreach (Constructor c in instance_constructors) {
 					try {
@@ -2461,7 +2461,7 @@ namespace Mono.CSharp {
 
 			Type base_type = TypeBuilder.BaseType;
 			if (base_type != null && !AttributeTester.IsClsCompliant (base_type)) {
-				Report.Error (3009, Location, "`{0}': base type `{1}' is not CLS-compliant", GetSignatureForError (), TypeManager.CSharpName (base_type));
+				Report.Warning (3009, 1, Location, "`{0}': base type `{1}' is not CLS-compliant", GetSignatureForError (), TypeManager.CSharpName (base_type));
 			}
 			return true;
 		}
@@ -2505,11 +2505,8 @@ namespace Mono.CSharp {
 				} else {
 					Report.SymbolRelatedToPreviousError ((MemberCore) found);
 				}
-#if GMCS_SOURCE
+
 				Report.Warning (3005, 1, mc.Location, "Identifier `{0}' differing only in case is not CLS-compliant", mc.GetSignatureForError ());
-#else
-				Report.Error (3005, mc.Location, "Identifier `{0}' differing only in case is not CLS-compliant", mc.GetSignatureForError ());
-#endif
 			}
 		}
 
@@ -3213,7 +3210,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (!AttributeTester.IsClsCompliant (MemberType)) {
-				Report.Error (3003, Location, "Type of `{0}' is not CLS-compliant",
+				Report.Warning (3003, 1, Location, "Type of `{0}' is not CLS-compliant",
 					GetSignatureForError ());
 			}
 			return true;
@@ -3331,11 +3328,11 @@ namespace Mono.CSharp {
 				return false;
 
 			if (Parameters.HasArglist) {
-				Report.Error (3000, Location, "Methods with variable arguments are not CLS-compliant");
+				Report.Warning (3000, 1, Location, "Methods with variable arguments are not CLS-compliant");
 			}
 
 			if (!AttributeTester.IsClsCompliant (MemberType)) {
-				Report.Error (3002, Location, "Return type of `{0}' is not CLS-compliant",
+				Report.Warning (3002, 1, Location, "Return type of `{0}' is not CLS-compliant",
 					GetSignatureForError ());
 			}
 
@@ -3736,11 +3733,11 @@ namespace Mono.CSharp {
 		{
 			if (!base.VerifyClsCompliance ()) {
 				if (IsInterface && HasClsCompliantAttribute && Parent.IsClsComplianceRequired ()) {
-					Report.Error (3010, Location, "`{0}': CLS-compliant interfaces must have only CLS-compliant members", GetSignatureForError ());
+					Report.Warning (3010, 1, Location, "`{0}': CLS-compliant interfaces must have only CLS-compliant members", GetSignatureForError ());
 				}
 
 				if ((ModFlags & Modifiers.ABSTRACT) != 0 && Parent.TypeBuilder.IsClass && IsExposedFromAssembly () && Parent.IsClsComplianceRequired ()) {
-					Report.Error (3011, Location, "`{0}': only CLS-compliant members can be abstract", GetSignatureForError ());
+					Report.Warning (3011, 1, Location, "`{0}': only CLS-compliant members can be abstract", GetSignatureForError ());
 				}
 				return false;
 			}
@@ -5591,7 +5588,8 @@ namespace Mono.CSharp {
 				return false;
 
 			if (!IsFieldClsCompliant) {
-				Report.Error (3003, Location, "Type of `{0}' is not CLS-compliant", GetSignatureForError ());
+				Report.Warning (3003, 1, Location, "Type of `{0}' is not CLS-compliant",
+					GetSignatureForError ());
 			}
 			return true;
 		}

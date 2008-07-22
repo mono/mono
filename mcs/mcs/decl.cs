@@ -441,7 +441,8 @@ namespace Mono.CSharp {
 			if (!RootContext.VerifyClsCompliance)
 				return;
 
-			VerifyClsCompliance ();
+			if (Report.WarningLevel > 0)
+				VerifyClsCompliance ();
 		}
 
 		public bool IsCompilerGenerated {
@@ -768,7 +769,7 @@ namespace Mono.CSharp {
 
 			if (HasClsCompliantAttribute) {
 				if (CodeGen.Assembly.ClsCompliantAttribute == null && !CodeGen.Assembly.IsClsCompliant) {
-					Report.Error (3014, Location,
+					Report.Warning (3014, 1, Location,
 						"`{0}' cannot be marked as CLS-compliant because the assembly is not marked as CLS-compliant",
 						GetSignatureForError ());
 					return false;
@@ -782,7 +783,7 @@ namespace Mono.CSharp {
 			}
 
 			if (member_name.Name [0] == '_') {
-				Report.Error (3008, Location, "Identifier `{0}' is not CLS-compliant", GetSignatureForError () );
+				Report.Warning (3008, 1, Location, "Identifier `{0}' is not CLS-compliant", GetSignatureForError () );
 			}
 			return true;
 		}
@@ -1493,11 +1494,8 @@ namespace Mono.CSharp {
 			else {
 				Report.SymbolRelatedToPreviousError ((DeclSpace)val);
 			}
-#if GMCS_SOURCE
+
 			Report.Warning (3005, 1, Location, "Identifier `{0}' differing only in case is not CLS-compliant", GetSignatureForError ());
-#else
-			Report.Error (3005, Location, "Identifier `{0}' differing only in case is not CLS-compliant", GetSignatureForError ());
-#endif
 			return true;
 		}
 	}
@@ -2669,10 +2667,10 @@ namespace Mono.CSharp {
  				Report.SymbolRelatedToPreviousError (entry.Member);
 				switch (result) {
 					case AttributeTester.Result.RefOutArrayError:
-						Report.Error (3006, method.Location, "Overloaded method `{0}' differing only in ref or out, or in array rank, is not CLS-compliant", method.GetSignatureForError ());
+						Report.Warning (3006, 1, method.Location, "Overloaded method `{0}' differing only in ref or out, or in array rank, is not CLS-compliant", method.GetSignatureForError ());
 						continue;
 					case AttributeTester.Result.ArrayArrayError:
-						Report.Error (3007, method.Location, "Overloaded method `{0}' differing only by unnamed array types is not CLS-compliant", method.GetSignatureForError ());
+						Report.Warning (3007, 1, method.Location, "Overloaded method `{0}' differing only by unnamed array types is not CLS-compliant", method.GetSignatureForError ());
 						continue;
 				}
 
