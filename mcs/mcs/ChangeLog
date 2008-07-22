@@ -1,5 +1,10 @@
 2008-07-22  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #312686
+	* driver.cs: Ignore empty assembly references.
+
+2008-07-22  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #387040
 	* ecore.cs: Skip constrains check for an explicit implementation.
 

@@ -1250,8 +1250,9 @@ namespace Mono.CSharp
 						AddExternAlias (alias, assembly);
 						return true;
 					}
-					
-					references.Add (val);
+
+					if (val.Length != 0)
+						references.Add (val);
 				}
 				return true;
 			}
