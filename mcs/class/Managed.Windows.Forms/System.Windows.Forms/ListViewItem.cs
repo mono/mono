@@ -1129,15 +1129,15 @@ namespace System.Windows.Forms
 		[TypeConverter (typeof(ListViewSubItemConverter))]
 		public class ListViewSubItem
 		{
-			private Color back_color;
-			private Font font;
-			private Color fore_color;
+			[NonSerialized]
 			internal ListViewItem owner;
 			private string text = string.Empty;
 #if NET_2_0
-			private string name = String.Empty;
-			private object tag;
+			private string name;
+			private object userData;
 #endif
+			private SubItemStyle style;
+			[NonSerialized]
 			internal Rectangle bounds;
 			
 			#region Public Constructors
@@ -1156,23 +1156,22 @@ namespace System.Windows.Forms
 			{
 				this.owner = owner;
 				Text = text;
-				this.fore_color = foreColor;
-				this.back_color = backColor;
-				this.font = font;
+				this.style = new SubItemStyle (foreColor,
+					backColor, font);
 			}
 			#endregion // Public Constructors
 
 			#region Public Instance Properties
 			public Color BackColor {
 				get {
-					if (this.back_color != Color.Empty)
-						return this.back_color;
+					if (style.backColor != Color.Empty)
+						return style.backColor;
 					if (this.owner != null && this.owner.ListView != null)
 						return this.owner.ListView.BackColor;
 					return ThemeEngine.Current.ColorWindow;
 				}
 				set { 
-					back_color = value; 
+					style.backColor = value;
 					Invalidate ();
 				}
 			}
@@ -1199,30 +1198,30 @@ namespace System.Windows.Forms
 			[Localizable (true)]
 			public Font Font {
 				get {
-					if (font != null)
-						return font;
+					if (style.font != null)
+						return style.font;
 					else if (owner != null)
 						return owner.Font;
 					return ThemeEngine.Current.DefaultFont;
 				}
-				set { 
-					if (font == value)
+				set {
+					if (style.font == value)
 						return;
-					font = value; 
+					style.font = value; 
 					Invalidate ();
-				    }
+				}
 			}
 
 			public Color ForeColor {
 				get {
-					if (this.fore_color != Color.Empty)
-						return this.fore_color;
+					if (style.foreColor != Color.Empty)
+						return style.foreColor;
 					if (this.owner != null && this.owner.ListView != null)
 						return this.owner.ListView.ForeColor;
 					return ThemeEngine.Current.ColorWindowText;
 				}
-				set { 
-					fore_color = value; 
+				set {
+					style.foreColor = value;
 					Invalidate ();
 				}
 			}
@@ -1231,10 +1230,12 @@ namespace System.Windows.Forms
 			[Localizable (true)]
 			public string Name {
 				get {
+					if (name == null)
+						return string.Empty;
 					return name;
 				}
 				set {
-					name = value == null ? String.Empty : value;
+					name = value;
 				}
 			}
 
@@ -1244,10 +1245,10 @@ namespace System.Windows.Forms
 			[Localizable (false)]
 			public object Tag {
 				get {
-					return tag;
+					return userData;
 				}
 				set {
-					tag = value;
+					userData = value;
 				}
 			}
 #endif
@@ -1272,9 +1273,7 @@ namespace System.Windows.Forms
 			#region Public Methods
 			public void ResetStyle ()
 			{
-				font = ThemeEngine.Current.DefaultFont;
-				back_color = ThemeEngine.Current.DefaultControlBackColor;
-				fore_color = ThemeEngine.Current.DefaultControlForeColor;
+				style.Reset ();
 				Invalidate ();
 			}
 
@@ -1284,7 +1283,6 @@ namespace System.Windows.Forms
 			}
 			#endregion // Public Methods
 
-			
 			#region Private Methods
 			private void Invalidate ()
 			{
@@ -1293,6 +1291,15 @@ namespace System.Windows.Forms
 
 				owner.Invalidate ();
 			}
+
+#if NET_2_0
+			[OnDeserialized]
+			void OnDeserialized (StreamingContext context)
+			{
+				name = null;
+				userData = null;
+			}
+#endif
 
 			internal int Height {
 				get {
@@ -1306,6 +1313,32 @@ namespace System.Windows.Forms
 			}
 
 			#endregion // Private Methods
+
+			[Serializable]
+			class SubItemStyle
+			{
+				public SubItemStyle ()
+				{
+				}
+
+				public SubItemStyle (Color foreColor, Color backColor, Font font)
+				{
+					this.foreColor = foreColor;
+					this.backColor = backColor;
+					this.font = font;
+				}
+
+				public void Reset ()
+				{
+					foreColor = Color.Empty;
+					backColor = Color.Empty;
+					font = null;
+				}
+
+				public Color backColor;
+				public Color foreColor;
+				public Font font;
+			}
 		}
 
 		public class ListViewSubItemCollection : IList, ICollection, IEnumerable

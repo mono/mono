@@ -803,7 +803,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Serialize ()
 		{
 			ListViewItem.ListViewSubItem subItem;
@@ -841,7 +840,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NotDotNet")]
 		public void SerializeExact_Mono ()
 		{
@@ -905,7 +903,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Deserialize ()
 		{
 			ListViewItem.ListViewSubItem subItem;

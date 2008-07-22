@@ -1,3 +1,13 @@
+2008-07-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ListViewItem.cs: Changed binary serialization to match MS. Fixes
+	bug #409351.
+	* PictureBox.cs: When ImageLocation is set to null or an empty string,
+	only set image to null if it was previously initialized from an url
+	(or using ImageLocation). In ImageLocation, load specified image
+	asynchronously if WaitOnLoad is false. Added support for local file
+	paths to LoadAsync, and added missing argument check.
+
 2008-07-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* DateTimePicker.cs: 

@@ -140,7 +140,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ImageLocation_Sync ()
 		{
 			Form f = new Form ();
@@ -324,7 +323,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // LoadAsync ()
-		[Category ("NotWorking")]
 		public void LoadAsync1_ImageLocation_Empty ()
 		{
 			PictureBox pb = new PictureBox ();
@@ -342,7 +340,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // LoadAsync ()
-		[Category ("NotWorking")]
 		public void LoadAsync1_ImageLocation_Null ()
 		{
 			PictureBox pb = new PictureBox ();
@@ -360,7 +357,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // LoadAsync (String)
-		[Category ("NotWorking")]
 		public void LoadASync2_Url_Empty ()
 		{
 			PictureBox pb = new PictureBox ();
@@ -377,7 +373,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // LoadAsync (String)
-		[Category ("NotWorking")]
 		public void LoadAsync2_Url_Null ()
 		{
 			PictureBox pb = new PictureBox ();

@@ -1,6 +1,11 @@
+2008-07-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ListViewItemTest.cs: Enabled (de)serialization tests.
+	* PictureBoxTest.cs: Enabled tests for bug #378308.
+
 2008-07-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
-	* ListVewItemTest.cs: Fixed tests.
+	* ListViewItemTest.cs: Fixed tests.
 
 2008-07-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
