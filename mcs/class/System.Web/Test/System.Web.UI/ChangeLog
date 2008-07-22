@@ -1,3 +1,8 @@
+2008-07-22  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* LosFormatterTest.cs: Added test for Deserialize using non-seekable
+	stream.
+
 2008-06-14  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* PageTest.cs: Fixed compile error on MS (as it does not list the

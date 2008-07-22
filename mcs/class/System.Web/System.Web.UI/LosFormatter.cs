@@ -70,10 +70,12 @@ namespace System.Web.UI {
 		{
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
-
-			byte [] bytes = new byte [stream.Length >= 0 ? stream.Length : 2048];
+			long streamLength = -1;
+			if (stream.CanSeek)
+				streamLength = stream.Length;
+			byte [] bytes = new byte [streamLength >= 0 ? streamLength : 2048];
 			MemoryStream ms = null;
-			if ((stream is MemoryStream) && stream.Position == 0) {
+			if (streamLength  != -1 && (stream is MemoryStream) && stream.Position == 0) {
 				// We save allocating a new stream and reading in this case.
 				ms = (MemoryStream) stream;
 			} else {
@@ -81,9 +83,11 @@ namespace System.Web.UI {
 				int n;
 				while ((n = stream.Read (bytes, 0, bytes.Length)) > 0)
 					ms.Write (bytes, 0, n);
+				streamLength = ms.Length;
 			}
 
-			string b64 = Encoding.ASCII.GetString (ms.GetBuffer (), 0, (int) ms.Length);
+			string b64 = Encoding.ASCII.GetString (ms.GetBuffer (),
+				0, (int) streamLength);
 			return Deserialize (b64);
 		}
 

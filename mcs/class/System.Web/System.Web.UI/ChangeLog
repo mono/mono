@@ -1,3 +1,9 @@
+2008-07-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* LosFormatter.cs (Deserialize): When stream is non-seekable, do not
+	attempt to use properties that require a seekable stream. Based on
+	patch provided by Dean Brettle (dean@brettle.com). Fixes bug #411115.
+
 2008-07-16  Rodrigo Kumpera  <rkumpera@novell.com>
 	* DataBoundLiteralControl.cs: Lazily create staticLiterals.
 
