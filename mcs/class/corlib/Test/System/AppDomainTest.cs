@@ -3101,6 +3101,13 @@ namespace MonoTests.System
 				AppDomain.Unload (ad);
 			}
 		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Load_EmptyString ()
+		{
+			AppDomain.CurrentDomain.Load ("");
+		}
 
 		[Test]
 		public void SetAppDomainPolicy ()
