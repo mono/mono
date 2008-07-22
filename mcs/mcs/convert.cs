@@ -1224,7 +1224,16 @@ namespace Mono.CSharp {
 			MethodInfo method = null;
 
 			object o;
-			DoubleHash hash = look_for_explicit ? explicit_conv : implicit_conv;
+			DoubleHash hash;
+			if (look_for_explicit) {
+				hash = explicit_conv;
+			} else {
+				// Implicit user operators cannot convert to interfaces
+				if (target.IsInterface)
+					return null;
+
+				hash = implicit_conv;
+			}			
 
 			if (!(source is Constant) && hash.Lookup (source_type, target, out o)) {
 				method = (MethodInfo) o;

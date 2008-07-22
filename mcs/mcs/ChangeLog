@@ -1,5 +1,10 @@
 2008-07-22  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #320748
+	* convert.cs: Implicit user operators cannot convert to interfaces
+
+2008-07-22  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #312686
 	* driver.cs: Ignore empty assembly references.
 
