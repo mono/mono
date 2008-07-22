@@ -1,5 +1,12 @@
 2008-07-21  Bill Holmes  <billholmes54@gmail.com>
 
+	* mono-membar.h :  From previous commit.  When including glib.h,
+ 	  <> should be used and not "".
+
+	Contributed under MIT/X11 license.
+
+2008-07-21  Bill Holmes  <billholmes54@gmail.com>
+
 	* mono-membar.h :  Including glib.h to get definition of 'inline.'  Needed
 	  by the MSVC compiler.
 
