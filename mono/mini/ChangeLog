@@ -1,5 +1,9 @@
 2008-07-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): When calling native code which returns
+	a non int sized type, widen it to an int since newer versions of gcc seem to
+	generate code which needs this.
+
 	* ssa2.c abcremoval2.c: Fix warnings.
 
 	* *: Merge the Linear IR branch.
