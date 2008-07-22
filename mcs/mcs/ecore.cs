@@ -264,9 +264,9 @@ namespace Mono.CSharp {
 				}
 			}
 
-			// Constrains don't need to be checked for overrides
+			// Skip constrains check for overrides and explicit implementations
 			GenericMethod gm = ec.GenericDeclContainer as GenericMethod;
-			if (gm != null && (gm.ModFlags & Modifiers.OVERRIDE) != 0) {
+			if (gm != null && ((gm.ModFlags & Modifiers.OVERRIDE) != 0 || gm.MemberName.Left != null)) {
 				te.loc = loc;
 				return te;
 			}
