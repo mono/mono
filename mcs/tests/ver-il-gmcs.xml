@@ -10495,6 +10495,34 @@
       </method>
     </type>
   </test>
+  <test name="gtest-395.cs">
+    <type name="RuleBuilder`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="IDynamicObject">
+      <method name="RuleBuilder`1[T] GetRule[T]()">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="RubyMethod">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="RuleBuilder`1[T] IDynamicObject.GetRule[T]()">
+        <size>6</size>
+      </method>
+    </type>
+    <type name="T">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-396.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -31263,6 +31291,27 @@
       </method>
       <method name="Void Main()">
         <size>26</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-657.cs">
+    <type name="TestDebug.C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Method()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="TestDebug.Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Excluded()">
+        <size>11</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>7</size>
       </method>
     </type>
   </test>
