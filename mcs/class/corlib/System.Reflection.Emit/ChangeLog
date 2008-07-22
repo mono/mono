@@ -1,3 +1,8 @@
+2008-07-22  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MethodOnTypeBuilderInst.cs: Change visibility of the parent
+	MethodBuilder to internal.
+
 2008-07-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* CustomAttributeBuilder.cs (get_umarshal): Add support for all 

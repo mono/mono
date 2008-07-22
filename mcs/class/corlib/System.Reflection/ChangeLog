@@ -1,3 +1,8 @@
+2008-07-22  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoGenericClass.cs (GetMethod): Under compiler mode allow
+	MethodOnTypeBuilderInst to be used..
+
 2008-07-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoGenericClass.cs (GetMethod): Revert to old code

@@ -150,16 +150,22 @@ namespace System.Reflection
 			initialize ();
 
 #if NET_2_0
+			if (fromNoninstanciated is MethodOnTypeBuilderInst) {
+				MethodOnTypeBuilderInst mbinst = (MethodOnTypeBuilderInst)fromNoninstanciated;
+				if (((ModuleBuilder)mbinst.mb.Module).assemblyb.IsCompilerContext)
+					fromNoninstanciated = mbinst.mb;
+				else
+					throw new ArgumentException ("method declaring type is not the generic type definition of type", "method");
+			}
+
 			if (fromNoninstanciated is MethodBuilder) {
 				MethodBuilder mb = (MethodBuilder)fromNoninstanciated;
 
-				// FIXME: The MethodOnTypeBuilderInst class does not implement some methods
-				// needed by gmcs, so avoid using it in that case
 				// FIXME: We can't yet handle creating generic instantiations of
 				// MethodOnTypeBuilderInst objects
 				// Also, mono_image_get_method_on_inst_token () can't handle generic
 				// methods
-				if (!((ModuleBuilder)mb.Module).assemblyb.IsCompilerContext && !mb.IsGenericMethodDefinition) {
+				if (!mb.IsGenericMethodDefinition) {
 					if (methods == null)
 						methods = new Hashtable ();
 					if (!methods.ContainsKey (mb))

@@ -42,7 +42,7 @@ namespace System.Reflection.Emit
 	{
 		#region Keep in sync with object-internals.h
 		MonoGenericClass instantiation;
-		MethodBuilder mb;
+		internal MethodBuilder mb;
 		#endregion
 
 		public MethodOnTypeBuilderInst (MonoGenericClass instantiation, MethodBuilder mb)
