@@ -1,3 +1,9 @@
+2008-07-22  Mark Probst  <mark.probst@gmail.com>
+
+	* mempool.c: Use malloc for every single mempool allocation if the
+	configure option is set.  This makes it easier to track mempool
+	allocations with tools like Valgrind.
+
 2008-07-22  Jb Evain  <jbevain@novell.com>
 
 	* reflection.c (create_dynamic_mono_image): emit the same
