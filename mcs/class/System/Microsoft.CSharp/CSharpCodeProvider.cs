@@ -44,7 +44,7 @@ namespace Microsoft.CSharp {
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 	public class CSharpCodeProvider : CodeDomProvider {
 #if NET_2_0
-		Dictionary <string, string> providerOptions;
+		IDictionary <string, string> providerOptions;
 #endif
 		
 		//
@@ -55,7 +55,7 @@ namespace Microsoft.CSharp {
 		}
 
 #if NET_2_0
-		public CSharpCodeProvider (Dictionary <string, string> providerOptions)
+		public CSharpCodeProvider (IDictionary <string, string> providerOptions)
 		{
 			this.providerOptions = providerOptions;
 		}
