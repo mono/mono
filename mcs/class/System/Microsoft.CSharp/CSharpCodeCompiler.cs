@@ -113,7 +113,7 @@ namespace Mono.CSharp
 		}
 
 #if NET_2_0
-		public CSharpCodeCompiler (Dictionary <string, string> providerOptions) :
+		public CSharpCodeCompiler (IDictionary <string, string> providerOptions) :
 			base (providerOptions)
 		{
 		}
@@ -308,7 +308,7 @@ namespace Mono.CSharp
 			mcsOutMutex.ReleaseMutex ();
 		}		
 
-		private static string BuildArgs(CompilerParameters options,string[] fileNames, Dictionary <string, string> providerOptions)
+		private static string BuildArgs(CompilerParameters options,string[] fileNames, IDictionary <string, string> providerOptions)
 #else
 		private static string BuildArgs(CompilerParameters options,string[] fileNames)
 #endif

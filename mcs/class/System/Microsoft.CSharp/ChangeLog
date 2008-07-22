@@ -1,3 +1,11 @@
+2008-07-22  Jb Evain  <jbevain@novell.com>
+
+	* CSharpCodeProvider.cs: fix the constructor to take an IDictionary
+	instead of a plain Dictionary for provider options.
+	* CSharpCodeGenerator.cs, CSharpCodeCompiler.cs: update accordingly.
+	Fixes #411105.
+
+
 2008-06-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CSharpCodeCompiler.cs : in 2.0 profile, do not capture stdout (we

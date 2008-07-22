@@ -48,7 +48,7 @@ namespace Mono.CSharp
 		: CodeGenerator
 	{
 #if NET_2_0
-		Dictionary <string, string> providerOptions;
+		IDictionary <string, string> providerOptions;
 #endif
 		
 		// It is used for beautiful "for" syntax
@@ -63,12 +63,12 @@ namespace Mono.CSharp
 		}
 
 #if NET_2_0
-		public CSharpCodeGenerator (Dictionary <string, string> providerOptions)
+		public CSharpCodeGenerator (IDictionary <string, string> providerOptions)
 		{
 			this.providerOptions = providerOptions;
 		}
 
-		protected Dictionary <string, string> ProviderOptions {
+		protected IDictionary <string, string> ProviderOptions {
 			get { return providerOptions; }
 		}
 #endif
