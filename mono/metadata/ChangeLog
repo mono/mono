@@ -1,3 +1,8 @@
+2008-07-22  Jb Evain  <jbevain@novell.com>
+
+	* reflection.c (create_dynamic_mono_image): emit the same
+	metadata version that SL2 does when creating a SL2 image.
+
 2008-07-21 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall-def.h:
