@@ -97,6 +97,9 @@ namespace System.Windows.Forms {
 
 		// variables for determining how to format the string
 		internal PartData[]					part_data;
+		internal int						editing_part_index = -1;
+		internal int 						editing_number = -1;
+		internal string						editing_text;
 
 		bool drop_down_button_entered;
 		#endregion	// Local variables
@@ -312,7 +315,7 @@ namespace System.Windows.Forms {
 					// invalidate the value inside this control
 					if (ShowCheckBox) {
 						for (int i = 0; i < part_data.Length; i++)
-							part_data [i].is_selected = false;
+							part_data [i].Selected = false;
 						Invalidate (date_area_rect);
 					}
 				}
@@ -1145,7 +1148,7 @@ namespace System.Windows.Forms {
 					case 'g': // Spec says nothing about g, but it seems to be treated like spaces.
 						if (!(lastch == ch || lastch == 0) && literal.Length != 0)
 						{
-							formats.Add (new PartData(literal.ToString (), false));
+							formats.Add (new PartData(literal.ToString (), false, this));
 							literal.Length = 0;
 						}
 						literal.Append (ch);
@@ -1160,24 +1163,24 @@ namespace System.Windows.Forms {
 							is_literal = !is_literal;
 							break;
 						}
-						formats.Add (new PartData (literal.ToString (), is_literal));
+						formats.Add (new PartData (literal.ToString (), is_literal, this));
 						literal.Length = 0;
 						is_literal = !is_literal;
 						break;
 					default:
 						if (literal.Length != 0)
 						{
-							formats.Add (new PartData(literal.ToString (), false));
+							formats.Add (new PartData(literal.ToString (), false, this));
 							literal.Length = 0;
 						}
-						formats.Add (new PartData (ch.ToString(), true));
+						formats.Add (new PartData (ch.ToString(), true, this));
 						break;
 
 				}
 				lastch = ch;
 			}
 			if (literal.Length >= 0)
-				formats.Add (new PartData (literal.ToString (), is_literal));
+				formats.Add (new PartData (literal.ToString (), is_literal, this));
 
 			part_data = new PartData [formats.Count];
 			formats.CopyTo (part_data);
@@ -1220,6 +1223,7 @@ namespace System.Windows.Forms {
 		// drop the calendar down
 		internal void DropDownMonthCalendar ()
 		{
+			EndDateEdit (true);
 			// ensure the right date is set for the month_calendar
 			month_calendar.SetDate (this.date_value);
 			// get a rectangle that has the dimensions of the text area,
@@ -1259,7 +1263,7 @@ namespace System.Windows.Forms {
 		{
 			for (int i = 0; i < part_data.Length; i++)
 			{
-				if (part_data[i].is_selected && !part_data[i].is_literal)
+				if (part_data[i].Selected && !part_data[i].is_literal)
 					return i;
 			}
 			return -1;
@@ -1273,55 +1277,42 @@ namespace System.Windows.Forms {
 				return;
 			}
 			
-			switch (part_data[selected_index].value)
+			DateTimePart dt_part = part_data [selected_index].date_time_part;
+			switch (dt_part)
 			{
-				case "d":
-				case "dd": // number day formats
+				case DateTimePart.Day:
 					if (delta < 0) {
 						if (Value.Day == 1)
-							SetPart(DateTime.DaysInMonth(Value.Year, Value.Month), 'd');
+							SetPart(DateTime.DaysInMonth(Value.Year, Value.Month), dt_part);
 						else
-							SetPart(Value.Day + delta, 'd');
+							SetPart(Value.Day + delta, dt_part);
 					} else {
 						if (Value.Day == DateTime.DaysInMonth(Value.Year, Value.Month))
-							SetPart(1, 'd');
+							SetPart(1, dt_part);
 						else
-							SetPart(Value.Day + delta, 'd') ;
+							SetPart(Value.Day + delta, dt_part) ;
 					}
 					break;
-				case "ddd":
-				case "dddd": // text day formats
+				case DateTimePart.DayName:
 					Value = Value.AddDays(delta);
 					break;
-				case "h":
-				case "hh":
-				case "H":
-				case "HH": // hour formats
-					SetPart(Value.Hour + delta, 'h');
+				case DateTimePart.Hour:
+					SetPart(Value.Hour + delta, dt_part);
 					break;
-				case "m":
-				case "mm": // minute formats
-					SetPart(Value.Minute + delta, 'm');
+				case DateTimePart.Minutes:
+					SetPart(Value.Minute + delta, dt_part);
 					break;
-				case "M":
-				case "MM":
-				case "MMM":
-				case "MMMM": // month formats
-					SetPart(Value.Month + delta, 'M');
+				case DateTimePart.Month:
+					SetPart(Value.Month + delta, dt_part);
 					break;
-				case "s":
-				case "ss": // second format
-					SetPart(Value.Second + delta, 's');
+				case DateTimePart.Seconds:
+					SetPart(Value.Second + delta, dt_part);
 					break;
-				case "t":
-				case "tt": // AM / PM specifier
-					SetPart(Value.Hour + delta * 12, 'h');
+				case DateTimePart.AMPMSpecifier:
+					SetPart(Value.Hour + delta * 12, dt_part);
 					break;
-				case "y":
-				case "yy":
-				case "yyy":
-				case "yyyy":
-					SetPart(Value.Year + delta, 'y');
+				case DateTimePart.Year:
+					SetPart(Value.Year + delta, dt_part);
 					break;
 			}
 		}
@@ -1335,7 +1326,7 @@ namespace System.Windows.Forms {
 					if (!part_data[i].is_literal)
 					{
 						is_checkbox_selected = false;
-						part_data[i].is_selected = true;
+						part_data[i].Selected = true;
 						Invalidate();
 						break;
 					}
@@ -1343,12 +1334,13 @@ namespace System.Windows.Forms {
 			} else {
 				selected_index = GetSelectedPartIndex();
 				if (selected_index >= 0)
-					part_data[selected_index].is_selected = false;
+					part_data [selected_index].Selected = false;
+
 				for (int i = selected_index + 1; i < part_data.Length; i++)
 				{
 					if (!part_data[i].is_literal)
 					{
-						part_data[i].is_selected = true;
+						part_data [i].Selected = true;
 						Invalidate();
 						break;
 					}
@@ -1366,7 +1358,7 @@ namespace System.Windows.Forms {
 						{
 							if (!part_data[i].is_literal)
 							{
-								part_data[i].is_selected = true;
+								part_data[i].Selected = true;
 								Invalidate();
 								break;
 							}
@@ -1386,7 +1378,7 @@ namespace System.Windows.Forms {
 					if (!part_data[i].is_literal)
 					{
 						is_checkbox_selected = false;
-						part_data[i].is_selected = true;
+						part_data[i].Selected = true;
 						Invalidate();
 						break;
 					}
@@ -1397,13 +1389,13 @@ namespace System.Windows.Forms {
 				int selected_index = GetSelectedPartIndex();
 
 				if (selected_index >= 0)
-					part_data[selected_index].is_selected = false;
+					part_data[selected_index].Selected = false;
 
 				for (int i = selected_index - 1; i >= 0; i--)
 				{
 					if (!part_data[i].is_literal)
 					{
-						part_data[i].is_selected = true;
+						part_data[i].Selected = true;
 						Invalidate();
 						break;
 					}
@@ -1421,7 +1413,7 @@ namespace System.Windows.Forms {
 						{
 							if (!part_data[i].is_literal)
 							{
-								part_data[i].is_selected = true;
+								part_data[i].Selected = true;
 								Invalidate();
 								break;
 							}
@@ -1506,55 +1498,35 @@ namespace System.Windows.Forms {
 						break;
 					if (!part_data[selected_index].is_numeric_format)
 						break;
-					switch (part_data[selected_index].value)
-					{
-						case "d":
-						case "dd":
-							int newDay = Value.Day * 10 + number;
-							if (DateTime.DaysInMonth(Value.Year, Value.Month) < newDay)
-								newDay = number;
-							SetPart(newDay, 'd');
-							break;
-						case "M":
-						case "MM":
-							int newMonth = Value.Month * 10 + number;
-							if (newMonth > 12)
-								newMonth = number;
-							SetPart(newMonth, 'M');
-							break;
-						case "y":
-						case "yy":
-						case "yyyy":
-							int newYear = Value.Year * 10 + number;
-							if (newYear > 9999)
-								newYear = number;
-							SetPart(newYear, 'y');
-							break;
-						case "h":
-						case "hh":
-						case "H":
-						case "HH":
-							int newHour = Value.Hour * 10 + number;
-							if (newHour >= 24)
-								newHour = number;
-							SetPart(newHour, 'h');
-							break;
-						case "m":
-						case "mm":
-							int newMinute = Value.Minute* 10 + number;
-							if (newMinute >= 60)
-								newMinute = number;
-							SetPart(newMinute, 'm');
-							break;
-						case "s":
-						case "ss":
-							int newSecond = Value.Second * 10 + number;
-							if (newSecond >= 60)
-								newSecond = number;
-							SetPart(newSecond, 's');
-							break;
 
+					DateTimePart dt_part = part_data [selected_index].date_time_part;
+					if (editing_part_index < 0) {
+						editing_part_index = selected_index;
+						editing_number = 0;
+						editing_text = String.Empty;
 					}
+
+					editing_text += number.ToString ();
+					int date_part_max_length = 0;
+
+					switch (dt_part) {
+						case DateTimePart.Day:
+						case DateTimePart.Month:
+						case DateTimePart.Seconds:
+						case DateTimePart.Minutes:
+						case DateTimePart.Hour:
+							date_part_max_length = 2;
+							break;
+						case DateTimePart.Year:
+							date_part_max_length = 4;
+							break;
+					}
+
+					editing_number = editing_number * 10 + number;
+					if (editing_text.Length >= date_part_max_length)
+						EndDateEdit (false);
+
+					Invalidate (date_area_rect);
 					break;
 				default:
 					break;
@@ -1562,42 +1534,61 @@ namespace System.Windows.Forms {
 			e.Handled = true;
 		}
 
-		// set the specified part of the date to the specified value
-		private void SetPart(int value, char part)
+		private void EndDateEdit (bool invalidate)
 		{
-			switch (part)
+			if (editing_part_index == -1)
+				return;
+
+			int prev_selected_idx = GetSelectedPartIndex ();
+			if (prev_selected_idx == -1)
+				return;
+
+			PartData part = part_data [prev_selected_idx];
+			if (part.date_time_part == DateTimePart.Year) { // Special case
+				// Infer, like .Net does
+				if (editing_number > 0 && editing_number < 30)
+					editing_number += 2000;
+				else if (editing_number >= 30 && editing_number < 100)
+					editing_number += 1900;
+			}
+
+			SetPart (editing_number, part.date_time_part);
+			editing_part_index = editing_number = -1;
+			editing_text = null;
+
+			if (invalidate)
+				Invalidate (date_area_rect);
+		}
+
+		// set the specified part of the date to the specified value
+		private void SetPart (int value, DateTimePart dt_part)
+		{
+			switch (dt_part)
 			{
-				case 's': // seconds
-					value %= 60;
+				case DateTimePart.Seconds:
 					if (value == -1)
 						value = 59;
 					if (value >= 0 && value <= 59)
 						Value = new DateTime(Value.Year, Value.Month, Value.Day, Value.Hour, Value.Minute, value, Value.Millisecond);
 					break;
-				case 'm': // minutes
-					value %= 60;
+				case DateTimePart.Minutes:
 					if (value == -1)
 						value = 59;
 					if (value >= 0 && value <= 59)
 						Value = new DateTime(Value.Year, Value.Month, Value.Day, Value.Hour, value, Value.Second, Value.Millisecond);
 					break;
-				case 'h':
-				case 'H': // hours
-					value %= 24;
+				case DateTimePart.Hour:
 					if (value == -1)
 						value = 23;
 					if (value >= 0 && value <= 23)
 						Value = new DateTime(Value.Year, Value.Month, Value.Day, value, Value.Minute, Value.Second, Value.Millisecond);
 					break;
-				case 'd': // days
+				case DateTimePart.Day:
 					int max_days = DateTime.DaysInMonth(Value.Year, Value.Month);
-					if (value > max_days)
-						Value = new DateTime(Value.Year, Value.Month, max_days, Value.Hour, Value.Minute, Value.Second, Value.Millisecond);
-					if (value >= 1 && value <= 31)
+					if (value >= 1 && value <= 31 && value <= max_days)
 						Value = new DateTime(Value.Year, Value.Month, value, Value.Hour, Value.Minute, Value.Second, Value.Millisecond);
 					break;
-				case 'M': // months
-					value %= 12;
+				case DateTimePart.Month:
 					if (value == 0)
 						value = 12;
 						
@@ -1612,10 +1603,8 @@ namespace System.Windows.Forms {
 							Value = new DateTime (Value.Year, value, Value.Day, Value.Hour, Value.Minute, Value.Second, Value.Millisecond);
 					}
 					break;
-				case 'y': // years
-					value %= 10000;
-					
-					if (value > 0 && value <= 9999) {
+				case DateTimePart.Year:
+					if (value >= min_date.Year && value <= max_date.Year) {
 						// if we move to a leap year, the days in month could throw an exception
 						int days_in_new_month = DateTime.DaysInMonth (value, Value.Month);
 						
@@ -1634,7 +1623,7 @@ namespace System.Windows.Forms {
 			int selected_index = GetSelectedPartIndex ();
 			if (selected_index != -1)
 			{
-				part_data [selected_index].is_selected = false;
+				part_data [selected_index].Selected = false;
 				Rectangle invalidate_rect = Rectangle.Ceiling (part_data [selected_index].drawing_rectangle);
 				invalidate_rect.Inflate (2, 2);
 				Invalidate (invalidate_rect);
@@ -1737,17 +1726,17 @@ namespace System.Windows.Forms {
 					// go through the parts to see if the click is in any of them
 					bool invalidate_afterwards = false;
 					for (int i = 0; i < part_data.Length; i++) {
-						bool old = part_data [i].is_selected;
+						bool old = part_data [i].Selected;
 
 						if (part_data [i].is_literal)
 							continue;
 
 						if (part_data [i].drawing_rectangle.Contains (e.X, e.Y)) {
-							part_data [i].is_selected = true;
-						} else {
-							part_data [i].is_selected = false;
-						}
-						if (old != part_data [i].is_selected) 
+							part_data [i].Selected = true;
+						} else
+							part_data [i].Selected = false;
+
+						if (old != part_data [i].Selected) 
 							invalidate_afterwards = true;
 					}
 					if (invalidate_afterwards)
@@ -1791,12 +1780,26 @@ namespace System.Windows.Forms {
 		#endregion		
 
 		#region internal classes
+		internal enum DateTimePart {
+			Seconds,
+			Minutes,
+			Hour,
+			Day,
+			DayName,
+			Month,
+			Year,
+			AMPMSpecifier,
+			Literal
+		}
+
 		internal class PartData
 		{
 			internal string value;
 			internal bool is_literal;
-			internal bool is_selected;
+			bool is_selected;
 			internal RectangleF drawing_rectangle;
+			internal DateTimePart date_time_part;
+			DateTimePicker owner;
 
 			internal bool is_numeric_format
 			{
@@ -1830,10 +1833,27 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			internal PartData(string value, bool is_literal)
+			internal PartData(string value, bool is_literal, DateTimePicker owner)
 			{
 				this.value = value;
 				this.is_literal = is_literal;
+				this.owner = owner;
+				date_time_part = GetDateTimePart (value);
+			}
+
+			internal bool Selected {
+				get {
+					return is_selected;
+				}
+				set {
+					if (value == is_selected)
+						return;
+
+					if (is_selected)
+						owner.EndDateEdit (false);
+
+					is_selected = value;
+				}
 			}
 
 			// calculate the string to show for this data
@@ -1844,6 +1864,42 @@ namespace System.Windows.Forms {
 				} else {
 					return GetText (date, value);
 				}
+			}
+
+			static DateTimePart GetDateTimePart (string value)
+			{
+				switch (value) {
+					case "s":
+					case "ss":
+						return DateTimePart.Seconds;
+					case "m":
+					case "mm":
+						return DateTimePart.Minutes;
+					case "h":
+					case "hh":
+					case "H":
+					case "HH":
+						return DateTimePart.Hour;
+					case "d":
+					case "dd":
+						return DateTimePart.Day;
+					case "ddd":
+					case "dddd":
+						return DateTimePart.DayName;
+					case "M":
+					case "MM":
+						return DateTimePart.Month;
+					case "y":
+					case "yy":
+					case "yyy":
+					case "yyyy":
+						return DateTimePart.Year;
+					case "t":
+					case "tt":
+						return DateTimePart.AMPMSpecifier;
+				}
+					
+				return DateTimePart.Literal;
 			}
 
 			static internal string GetText(DateTime date, string format)

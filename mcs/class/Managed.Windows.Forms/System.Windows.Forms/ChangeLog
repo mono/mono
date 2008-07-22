@@ -1,3 +1,14 @@
+2008-07-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DateTimePicker.cs: 
+	* ThemeWin32Classic.cs: Add a editing capability to DateTimePicker, in
+	order to set the value as required (which means: when selection
+	changes for a part being edited, and not before that if not needed).
+	Also use an enum to describe which part are we using, and use the
+	selection as a property in PartData, in order to notify the
+	DateTimePicker owner that we need to end the current edit.
+	Fixes #383462.
+
 2008-07-17  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PropertyGridTextBox.cs: Validation should be performed only if we 
