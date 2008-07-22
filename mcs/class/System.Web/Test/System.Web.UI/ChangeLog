@@ -1,3 +1,8 @@
+2008-07-22  Dean Brettle <dean@brettle.com>
+
+	* LosFormatterTest.cs: added test for bug 411115 where passing an
+	unseekable stream to LosFormatter.Deserialize() causes an exception.
+
 2008-06-14  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* PageTest.cs: Fixed compile error on MS (as it does not list the

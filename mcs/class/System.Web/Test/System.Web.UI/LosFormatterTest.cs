@@ -146,5 +146,34 @@ namespace MonoTests.System.Web.UI
 			Assert.AreEqual (string.Empty, s1, "#2");
 #endif
 		}
+
+		[Test] // bug #4111115
+		public void Deserialize_Unseekable ()
+		{
+			string s = "Hello world";
+			LosFormatter lf = new LosFormatter ();
+			MemoryStream ms = new MemoryStream ();
+			lf.Serialize (ms, s);
+			byte[] serializedBytes = ms.ToArray();
+			UnseekableMemoryStream ums 
+				= new UnseekableMemoryStream(serializedBytes, 0, serializedBytes.Length, false, true);
+			string s2 = lf.Deserialize (ums) as string;
+			Assert.IsNotNull (s2, "#1");
+			Assert.AreEqual (s, s2, "#2");
+		}
+
+		class UnseekableMemoryStream : MemoryStream
+		{
+			public UnseekableMemoryStream(byte[] byteArray, int index, int count, 
+			                              bool writable, bool publiclyVisible) 
+				: base(byteArray, index, count, writable, publiclyVisible)
+			{
+			}
+			
+			public override bool CanSeek {
+				get { return false; }
+			}				
+		}
+
 	}
 }
