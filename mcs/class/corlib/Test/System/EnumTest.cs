@@ -867,6 +867,42 @@ namespace MonoTests.System
 		}
 		// TODO - ToString with IFormatProviders
 
+		[Test]
+		public void GetHashCode_ShouldBeEqualToUnderlyingType ()
+		{
+			Assert.AreEqual (EnInt8.A.GetHashCode(), SByte.MinValue, "i8#0");
+			Assert.AreEqual (EnInt8.B.GetHashCode(), 44, "i8#1");
+			Assert.AreEqual (EnInt8.C.GetHashCode(), SByte.MaxValue, "i8#2");
+	
+			Assert.AreEqual (EnUInt8.A.GetHashCode(), Byte.MinValue, "u8#0");
+			Assert.AreEqual (EnUInt8.B.GetHashCode(), 44, "u8#1");
+			Assert.AreEqual (EnUInt8.C.GetHashCode(), Byte.MaxValue, "u8#2");
+	
+			Assert.AreEqual (EnInt16.A.GetHashCode(), Int16.MinValue, "i16#0");
+			Assert.AreEqual (EnInt16.B.GetHashCode(), 44, "i16#1");
+			Assert.AreEqual (EnInt16.C.GetHashCode(), Int16.MaxValue, "i16#2");
+	
+			Assert.AreEqual (EnUInt16.A.GetHashCode(), UInt16.MinValue, "u16#0");
+			Assert.AreEqual (EnUInt16.B.GetHashCode(), 44, "u16#1");
+			Assert.AreEqual (EnUInt16.C.GetHashCode(), UInt16.MaxValue, "u16#2");
+	
+			Assert.AreEqual (EnInt32.A.GetHashCode(), Int32.MinValue, "i32#0");
+			Assert.AreEqual (EnInt32.B.GetHashCode(), 44, "i32#1");
+			Assert.AreEqual (EnInt32.C.GetHashCode(), Int32.MaxValue, "i32#2");
+	
+			Assert.AreEqual (EnUInt32.A.GetHashCode(), UInt32.MinValue, "u32#0");
+			Assert.AreEqual (EnUInt32.B.GetHashCode(), 44, "u32#1");
+			Assert.AreEqual (EnUInt32.C.GetHashCode(), UInt32.MaxValue.GetHashCode (), "u32#2");
+	
+			Assert.AreEqual (EnInt64.A.GetHashCode(), Int64.MinValue.GetHashCode (), "i64#0");
+			Assert.AreEqual (EnInt64.B.GetHashCode(), 3488924689489l.GetHashCode (), "i64#1");
+			Assert.AreEqual (EnInt64.C.GetHashCode(), Int64.MaxValue.GetHashCode (), "i64#2");
+	
+			Assert.AreEqual (EnUInt64.A.GetHashCode(), UInt64.MinValue.GetHashCode (), "u64#0");
+			Assert.AreEqual (EnUInt64.B.GetHashCode(), 3488924689489l.GetHashCode (), "u64#1");
+			Assert.AreEqual (EnUInt64.C.GetHashCode(), UInt64.MaxValue.GetHashCode (), "u64#2");
+		}
+
 		[Flags]
 		enum SomeEnum
 		{
@@ -998,6 +1034,54 @@ namespace MonoTests.System
 			B = 2,
 			C = 3,
 			D = 4
+		}
+		
+		enum EnInt8 : sbyte{
+			A = SByte.MinValue,
+			B = 44,
+			C = SByte.MaxValue,
+		}
+		
+		enum EnUInt8 : byte {
+			A = Byte.MinValue,
+			B = 44,
+			C = Byte.MaxValue,
+		}
+		
+		enum EnInt16 : short{
+			A = Int16.MinValue,
+			B = 44,
+			C = Int16.MaxValue,
+		}
+		
+		enum EnUInt16 : ushort {
+			A = UInt16.MinValue,
+			B = 44,
+			C = UInt16.MaxValue,
+		}
+		
+		enum EnInt32 : int{
+			A = Int32.MinValue,
+			B = 44,
+			C = Int32.MaxValue,
+		}
+		
+		enum EnUInt32 : uint {
+			A = UInt32.MinValue,
+			B = 44,
+			C = UInt32.MaxValue,
+		}
+		
+		enum EnInt64 : long{
+			A = Int64.MinValue,
+			B = 3488924689489l,
+			C = Int64.MaxValue,
+		}
+		
+		enum EnUInt64 : ulong {
+			A = UInt64.MinValue,
+			B = 3488924689489l,
+			C = UInt64.MaxValue,
 		}
 	}
 }
