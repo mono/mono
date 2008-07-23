@@ -4928,7 +4928,7 @@ namespace Mono.CSharp {
 #if GMCS_SOURCE
 		static FieldInfo methodbuilder_attrs_field;
 #endif
-		readonly IMethodData method;
+		public readonly IMethodData method;
 
 		public readonly GenericMethod GenericMethod;
 
@@ -4988,12 +4988,7 @@ namespace Mono.CSharp {
 
 			PendingImplementation pending = container.PendingImplementations;
 			if (pending != null){
-				if (member is Indexer) // TODO: test it, but it should work without this IF
-					implementing = pending.IsInterfaceIndexer (
-						member.InterfaceType, method.ReturnType, method.ParameterInfo);
-				else
-					implementing = pending.IsInterfaceMethod (
-						member.InterfaceType, name, method.ReturnType, method.ParameterInfo);
+				implementing = pending.IsInterfaceMethod (name, member.InterfaceType, this);
 
 				if (member.InterfaceType != null){
 					if (implementing == null){
@@ -5128,14 +5123,7 @@ namespace Mono.CSharp {
 				//
 				// clear the pending implemntation flag
 				//
-				if (member is Indexer) {
-					pending.ImplementIndexer (
-						member.InterfaceType, builder, method.ReturnType,
-						method.ParameterInfo, member.IsExplicitImpl);
-				} else
-					pending.ImplementMethod (
-						member.InterfaceType, name, method.ReturnType,
-						method.ParameterInfo, member.IsExplicitImpl);
+				pending.ImplementMethod (name, member.InterfaceType, this, member.IsExplicitImpl);
 
 				if (member.IsExplicitImpl)
 					container.TypeBuilder.DefineMethodOverride (

@@ -1,5 +1,11 @@
 2008-07-23  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #323012
+	* class.cs, pending.cs: Emit proxy for indexers when they differ in name.
+	Base method implementing interface has to be public.
+
+2008-07-23  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-parser.jay: Don't break on missing argument.
 
 2008-07-22  Marek Safar  <marek.safar@gmail.com>

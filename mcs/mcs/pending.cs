@@ -42,19 +42,12 @@ namespace Mono.CSharp {
 		// This flag on the method says `We found a match, but
 		// because it was private, we could not use the match
 		//
-		public bool []       found;
+		public MethodData [] found;
 
 		// If a method is defined here, then we always need to
 		// create a proxy for it.  This is used when implementing
 		// an interface's indexer with a different IndexerName.
 		public MethodInfo [] need_proxy;
-
-		//
-		// The name of the indexer (if it exists), precompute set/get, because
-		// they would be recomputed many times inside a loop later on.
-		//
-		public string set_indexer_name;
-		public string get_indexer_name;
 	}
 
 	public class PendingImplementation {
@@ -154,15 +147,11 @@ namespace Mono.CSharp {
 				pending_implementations [i].need_proxy = new MethodInfo [count];
 				
 				abstract_methods.CopyTo (pending_implementations [i].methods, 0);
-				pending_implementations [i].found = new bool [count];
+				pending_implementations [i].found = new MethodData [count];
 				pending_implementations [i].args = new Type [count][];
 				pending_implementations [i].mods = new Parameter.Modifier [count][];
 				pending_implementations [i].type = type_builder;
 
-				string indexer_name = TypeManager.IndexerPropertyName (type_builder);
-				pending_implementations [i].set_indexer_name = "set_" + indexer_name;
-				pending_implementations [i].get_indexer_name = "get_" + indexer_name;
-				
 				int j = 0;
 				foreach (MemberInfo m in abstract_methods) {
 					MethodInfo mi = (MethodInfo) m;
@@ -206,12 +195,8 @@ namespace Mono.CSharp {
 				pending_implementations [i].methods = mi;
 				pending_implementations [i].args = new Type [count][];
 				pending_implementations [i].mods = new Parameter.Modifier [count][];
-				pending_implementations [i].found = new bool [count];
+				pending_implementations [i].found = new MethodData [count];
 				pending_implementations [i].need_proxy = new MethodInfo [count];
-				string indexer_name = TypeManager.IndexerPropertyName (t);
-
-				pending_implementations [i].set_indexer_name = "set_" + indexer_name;
-				pending_implementations [i].get_indexer_name = "get_" + indexer_name;
 				
 				int j = 0;
 				foreach (MethodInfo m in mi){
@@ -341,28 +326,16 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Whether the specified method is an interface method implementation
 		/// </summary>
-		public MethodInfo IsInterfaceMethod (Type t, string name, Type ret_type, ParameterData args)
+		public MethodInfo IsInterfaceMethod (string name, Type ifaceType, MethodData method)
 		{
-			return InterfaceMethod (t, name, ret_type, args, Operation.Lookup, null);
+			return InterfaceMethod (name, ifaceType, method, Operation.Lookup);
 		}
 
-		public MethodInfo IsInterfaceIndexer (Type t, Type ret_type, ParameterData args)
+		public void ImplementMethod (string name, Type ifaceType, MethodData method, bool clear_one) 
 		{
-			return InterfaceMethod (t, null, ret_type, args, Operation.Lookup, null);
+			InterfaceMethod (name, ifaceType, method, clear_one ? Operation.ClearOne : Operation.ClearAll);
 		}
 
-		public void ImplementMethod (Type t, string name, Type ret_type, ParameterData args, bool clear_one) 
-		{
-			InterfaceMethod (t, name, ret_type, args,
-					 clear_one ? Operation.ClearOne : Operation.ClearAll, null);
-		}
-
-		public void ImplementIndexer (Type t, MethodInfo mi, Type ret_type, ParameterData args, bool clear_one) 
-		{
-			InterfaceMethod (t, null, ret_type, args,
-					 clear_one ? Operation.ClearOne : Operation.ClearAll, mi);
-		}
-		
 		/// <remarks>
 		///   If a method in Type `t' (or null to look in all interfaces
 		///   and the base abstract class) with name `Name', return type `ret_type' and
@@ -380,16 +353,18 @@ namespace Mono.CSharp {
 		///   that was used in the interface, then we always need to create a proxy for it.
 		///
 		/// </remarks>
-		public MethodInfo InterfaceMethod (Type t, string name, Type ret_type, ParameterData args,
-						   Operation op, MethodInfo need_proxy)
+		public MethodInfo InterfaceMethod (string name, Type iType, MethodData method, Operation op)
 		{
-			int arg_len = args.Count;
-
 			if (pending_implementations == null)
 				return null;
 
+			Type ret_type = method.method.ReturnType;
+			Parameters args = method.method.ParameterInfo;
+			int arg_len = args.Count;
+			bool is_indexer = method.method is Indexer.SetIndexerMethod || method.method is Indexer.GetIndexerMethod;
+
 			foreach (TypeAndMethods tm in pending_implementations){
-				if (!(t == null || tm.type == t))
+				if (!(iType == null || tm.type == iType))
 					continue;
 
 				int method_count = tm.methods.Length;
@@ -398,6 +373,15 @@ namespace Mono.CSharp {
 					m = tm.methods [i];
 
 					if (m == null)
+						continue;
+
+					//
+					// Check if we have the same parameters
+					//
+
+					if (tm.args [i] == null && arg_len != 0)
+						continue;
+					if (tm.args [i] != null && tm.args [i].Length != arg_len)
 						continue;
 
 					string mname = TypeManager.GetMethodName (m);
@@ -410,26 +394,19 @@ namespace Mono.CSharp {
 					// signature and not on the name (this is done in the Lookup
 					// for an interface indexer).
 					//
-					if (name == null){
-						if (mname != tm.get_indexer_name && mname != tm.set_indexer_name)
-							continue;
-					} else if ((need_proxy == null) && (name != mname))
-						continue;
 
-					Type rt = TypeManager.TypeToCoreType (m.ReturnType);
-					if (!TypeManager.IsEqual (ret_type, rt) &&
-					    !(ret_type == null && rt == TypeManager.void_type) &&
-					    !(rt == null && ret_type == TypeManager.void_type))
+					if (is_indexer) {
+						IMethodData md = TypeManager.GetMethod (m);
+						if (md != null) {
+							if (!(md is Indexer.SetIndexerMethod || md is Indexer.GetIndexerMethod))
+								continue;
+						} else {
+							if (TypeManager.GetPropertyFromAccessor (m) == null)
+								continue;
+						}
+					} else if (name != mname) {
 						continue;
-
-					//
-					// Check if we have the same parameters
-					//
-
-					if (tm.args [i] == null && arg_len != 0)
-						continue;
-					if (tm.args [i] != null && tm.args [i].Length != arg_len)
-						continue;
+					}
 
 					int j;
 
@@ -448,23 +425,26 @@ namespace Mono.CSharp {
 					if (j != arg_len)
 						continue;
 
-					if (op != Operation.Lookup){
+					if (op != Operation.Lookup) {
 						// If `t != null', then this is an explicitly interface
 						// implementation and we can always clear the method.
 						// `need_proxy' is not null if we're implementing an
 						// interface indexer.  In this case, we need to create
 						// a proxy if the implementation's IndexerName doesn't
 						// match the IndexerName in the interface.
-						bool name_matches = false;
-						if (name == mname || mname == tm.get_indexer_name || mname == tm.set_indexer_name)
-							name_matches = true;
-
-						if ((t == null) && (need_proxy != null) && !name_matches)
-							tm.need_proxy [i] = need_proxy;
-						else 
+						if (iType == null && name != mname)
+							tm.need_proxy [i] = method.MethodBuilder;
+						else
 							tm.methods [i] = null;
+					} else {
+						tm.found [i] = method;
 					}
-					tm.found [i] = true;
+
+					Type rt = TypeManager.TypeToCoreType (m.ReturnType);
+					if (!TypeManager.IsEqual (ret_type, rt) &&
+						!(ret_type == null && rt == TypeManager.void_type) &&
+						!(rt == null && ret_type == TypeManager.void_type))
+						continue;
 
 					//
 					// Lookups and ClearOne return
@@ -474,7 +454,7 @@ namespace Mono.CSharp {
 				}
 
 				// If a specific type was requested, we can stop now.
-				if (tm.type == t)
+				if (tm.type == iType)
 					return null;
 			}
 			return null;
@@ -529,7 +509,7 @@ namespace Mono.CSharp {
 		///   the given method (which turns out, it is valid to have an interface
 		///   implementation in a base
 		/// </summary>
-		bool BaseImplements (Type iface_type, MethodInfo mi)
+		bool BaseImplements (Type iface_type, MethodInfo mi, out MethodInfo base_method)
 		{
 			MethodSignature ms;
 			
@@ -540,15 +520,22 @@ namespace Mono.CSharp {
 				BindingFlags.Public | BindingFlags.Instance,
 				MethodSignature.method_signature_filter, ms);
 
-			if (list.Count == 0)
+			if (list.Count == 0) {
+				base_method = null;
 				return false;
+			}
 
-			if (TypeManager.ImplementsInterface (container.TypeBuilder.BaseType, iface_type))
+			if (TypeManager.ImplementsInterface (container.TypeBuilder.BaseType, iface_type)) {
+				base_method = null;
 				return true;
+			}
 
-			MethodInfo base_method = (MethodInfo) list [0];
+			base_method = (MethodInfo) list [0];
 
 			if (base_method.DeclaringType.IsInterface)
+				return false;
+
+			if (!base_method.IsPublic)
 				return false;
 
 			if (!base_method.IsAbstract && !base_method.IsVirtual)
@@ -591,30 +578,46 @@ namespace Mono.CSharp {
 							continue;
 						}
 
-						if (base_implements_type || BaseImplements (type, mi))
-							continue;
-						
 						if (pending_implementations [i].optional)
 							continue;
 
+						MethodInfo candidate = null;
+						if (base_implements_type || BaseImplements (type, mi, out candidate))
+							continue;
+
+						if (candidate == null) {
+							MethodData md = pending_implementations [i].found [j];
+							if (md != null)
+								candidate = md.MethodBuilder;
+						}
+						
 						Report.SymbolRelatedToPreviousError (mi);
-						if (pending_implementations [i].found [j]) {
+						if (candidate != null) {
 							if (mi.IsSpecialName) {
 								string name = TypeManager.CSharpName (mi.DeclaringType) + '.' + mi.Name.Substring (4);
 								Report.Error (551, container.Location, "Explicit interface implementation `{0}.{1}' is missing accessor `{2}'",
 									container.GetSignatureForError (), name, TypeManager.CSharpSignature (mi, true));
 							} else {
-								string[] methodLabel = TypeManager.CSharpSignature (mi).Split ('.');
-								Report.Error (536, container.Location,
-									"`{0}' does not implement interface member `{1}'. `{2}.{3}' " +
-									"is either static, not public, or has the wrong return type",
-									container.Name, TypeManager.CSharpSignature (mi),
-									container.Name, methodLabel[methodLabel.Length - 1]);
+								Report.SymbolRelatedToPreviousError (candidate);
+								if (candidate.IsStatic) {
+									Report.Error (736, container.Location,
+										"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' is static",
+										container.GetSignatureForError (), TypeManager.CSharpSignature (mi, true), TypeManager.CSharpSignature (candidate));
+								} else if (!candidate.IsPublic) {
+									Report.Error (737, container.Location,
+										"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' in not public",
+										container.GetSignatureForError (), TypeManager.CSharpSignature (mi, true), TypeManager.CSharpSignature (candidate));
+								} else {
+									Report.Error (738, container.Location,
+										"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' return type `{3}' does not match interface member return type `{4}'",
+										container.GetSignatureForError (), TypeManager.CSharpSignature (mi, true), TypeManager.CSharpSignature (candidate),
+										TypeManager.CSharpName (candidate.ReturnType), TypeManager.CSharpName (mi.ReturnType));
+								}
 							}
 						}
 						else {
 							Report.Error (535, container.Location, "`{0}' does not implement interface member `{1}'",
-								container.GetSignatureForError (), TypeManager.CSharpSignature (mi));
+								container.GetSignatureForError (), TypeManager.CSharpSignature (mi, true));
 						}
 					} else {
 						Report.Error (534, container.Location, "`{0}' does not implement inherited abstract member `{1}'",
