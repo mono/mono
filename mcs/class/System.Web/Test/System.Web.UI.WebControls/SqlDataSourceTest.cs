@@ -505,7 +505,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			view.Delete (keys, oldValues);
 
 			Assert.IsNotNull (CustomEventParameterCollection, "KeysAndOldValues_CompareAllValues");
-			Assert.AreEqual ("String:@origin_ProductID=ov_10, String:@origin_Name=ov_ColorTV, String:@origin_Description=ov_Beautifull", PassedParameters, "KeysAndOldValues_CompareAllValues Values");
+			Assert.AreEqual ("String:@origin_ProductID=ov_10, String:@origin_Description=ov_Beautifull, String:@origin_Name=ov_ColorTV", PassedParameters, "KeysAndOldValues_CompareAllValues Values");
 		}
 
 		[Test]
