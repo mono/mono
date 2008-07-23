@@ -32,6 +32,10 @@
 using System;
 using System.Collections;
 
+#if NET_2_0
+using System.Collections.Generic;
+#endif
+
 namespace System.ComponentModel {
 
 	// <summary>
@@ -41,15 +45,22 @@ namespace System.ComponentModel {
 	// <remarks>
 	//   Longer description
 	// </remarks>
-	public sealed class EventHandlerList : IDisposable {
+	public sealed class EventHandlerList : IDisposable
+	{
+#if NET_2_0
+		Dictionary <object, HandlerEntry> handlers;
+#else
+		Hashtable handlers;
+#endif
+		HandlerEntry nullEntry;
+		
 		public EventHandlerList ()
 		{
-			head = null;
 		}
 
 		public Delegate this [object key] {
 			get {
-				ListNode entry = FindEntry (key);
+				HandlerEntry entry = FindEntry (key);
 				return entry == null ? null : entry.value;
 			}
 
@@ -60,9 +71,21 @@ namespace System.ComponentModel {
 
 		public void AddHandler (object key, Delegate value)
 		{
-			ListNode entry = FindEntry (key);
+			HandlerEntry entry = FindEntry (key);
 			if (entry == null) {
-				head = new ListNode (key, value, head);
+				if (handlers == null) {
+#if NET_2_0
+					handlers = new Dictionary <object, HandlerEntry> ();
+#else
+					handlers = new Hashtable ();
+#endif
+				}
+
+				if (key != null)
+					handlers.Add (key, new HandlerEntry (value));
+				else
+					nullEntry = new HandlerEntry (value);
+
 				return;
 			}
 			entry.value = Delegate.Combine (entry.value, value);
@@ -71,19 +94,17 @@ namespace System.ComponentModel {
 #if NET_2_0
 		public void AddHandlers (EventHandlerList listToAddFrom)
 		{
-			if (listToAddFrom == null) {
+			if (listToAddFrom == null)
 				return;
-			}
 
-			for (ListNode entry = listToAddFrom.head; entry != null; entry = entry.next) {
-				AddHandler (entry.key, entry.value);
-			}
+			foreach (KeyValuePair <object, HandlerEntry> kvp in listToAddFrom.handlers)
+				AddHandler (kvp.Key, kvp.Value.value);
 		}
 #endif
 
 		public void RemoveHandler (object key, Delegate value)
 		{
-			ListNode entry = FindEntry (key);
+			HandlerEntry entry = FindEntry (key);
 			if (entry == null)
 				return;
 
@@ -92,32 +113,37 @@ namespace System.ComponentModel {
 
 		public void Dispose ()
 		{
-			head = null;
+			handlers = null;
 		}
-		private ListNode FindEntry (object key)
+		
+		private HandlerEntry FindEntry (object key)
 		{
-			for (ListNode entry = head; entry != null; entry = entry.next)
-				if (key == entry.key)
-					return entry;
+			if (key == null)
+				return nullEntry;
+			
+			if (handlers == null)
+				return null;
+
+#if NET_2_0
+			HandlerEntry entry;
+			if (handlers.TryGetValue (key, out entry))
+				return entry;
+
 			return null;
+#else
+			return handlers [key] as HandlerEntry;
+#endif
 		}
 
 		[Serializable]
-		private class ListNode
+		sealed class HandlerEntry
 		{
-			public object key;
 			public Delegate value;
-			public ListNode next;
-			public ListNode (object key, Delegate value, ListNode next)
+			
+			public HandlerEntry (Delegate value)
 			{
-				this.key = key;
 				this.value = value;
-				this.next = next;
 			}
 		}
-
-		private ListNode head;
-
 	}
-	
 }
