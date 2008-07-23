@@ -1,8 +1,11 @@
 2008-07-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_output_basic_block): Handle varargs in the CALL_REG
+	opcodes as well.
+
 	* method-to-ir.c (mono_spill_global_vars): Avoid fusing a load+store into the
 	instruction for non int sized variables.
-	
+
 	* method-to-ir.c (mono_method_to_ir2): Fix an assert in the LDFLD
 	implementation.
 
