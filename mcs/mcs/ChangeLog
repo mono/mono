@@ -1,5 +1,9 @@
 2008-07-23  Marek Safar  <marek.safar@gmail.com>
 
+	* expression.cs: Removed MakeSimpleCall.
+
+2008-07-23  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #323012
 	* class.cs, pending.cs: Emit proxy for indexers when they differ in name.
 	Base method implementing interface has to be public.

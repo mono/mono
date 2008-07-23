@@ -72,28 +72,6 @@ namespace Mono.CSharp {
 			mg.EmitCall (ec, arguments);
 		}
 
-		[Obsolete ("It may not be compatible with expression trees")]
-		static public UserOperatorCall MakeSimpleCall (EmitContext ec, MethodGroupExpr mg,
-							 Expression e, Location loc)
-		{
-			ArrayList args;
-			
-			args = new ArrayList (1);
-			Argument a = new Argument (e, Argument.AType.Expression);
-
-                        // We need to resolve the arguments before sending them in !
-                        if (!a.Resolve (ec, loc))
-                                return null;
-
-                        args.Add (a);
-			mg = mg.OverloadResolve (ec, ref args, false, loc);
-
-			if (mg == null)
-				return null;
-
-			return new UserOperatorCall (mg, args, null, loc);
-		}
-
 		public MethodGroupExpr Method {
 			get { return mg; }
 		}
@@ -977,7 +955,7 @@ namespace Mono.CSharp {
 			//
 			// Step 1: Perform Operator Overload location
 			//
-			Expression mg;
+			MethodGroupExpr mg;
 			string op_name;
 			
 			if (mode == Mode.PreIncrement || mode == Mode.PostIncrement)
@@ -985,12 +963,16 @@ namespace Mono.CSharp {
 			else
 				op_name = Operator.GetMetadataName (Operator.OpType.Decrement);
 
-			mg = MemberLookup (ec.ContainerType, expr_type, op_name, MemberTypes.Method, AllBindingFlags, loc);
+			mg = MemberLookup (ec.ContainerType, expr_type, op_name, MemberTypes.Method, AllBindingFlags, loc) as MethodGroupExpr;
 
 			if (mg != null) {
-				method = UserOperatorCall.MakeSimpleCall (
-					ec, (MethodGroupExpr) mg, expr, loc);
+				ArrayList args = new ArrayList (1);
+				args.Add (new Argument (expr, Argument.AType.Expression));
+				mg = mg.OverloadResolve (ec, ref args, false, loc);
+				if (mg == null)
+					return null;
 
+				method = new UserOperatorCall (mg, args, null, loc);
 				type = method.Type;
 			} else if (!IsIncrementableNumber (expr_type)) {
 				Error (187, "No such operator '" + OperName (mode) + "' defined for type '" +
