@@ -1,3 +1,9 @@
+2008-07-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (ves_icall_System_Threading_Thread_Abort): Avoid calling 
+	mono_thread_resume () during shutdown, since the thread we want to abort
+	might be suspended.
+
 2008-07-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-debug-debugger.c (mono_debugger_check_breakpoints): Fix a 
