@@ -1,5 +1,14 @@
 2008-07-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-exceptions.c: Fix some warnings. Remove one ia64 special case as it
+	is no longer needed.
+
+	* mini-ia64.c (mono_arch_emit_prolog): In native-to-managed wrappers, widen
+	non register sized integer arguments.
+	(mono_arch_call_opcode): Add support for ArgInFloatRegR4.
+	(mono_arch_emit_outarg_vt): Pass a more reasonable alignment to 
+	emit_memcpy2 ().
+
 	* method-to-ir.c (mono_method_to_ir2): Handle the ret_var_is_local case in
 	CEE_MONO_RETOBJ.
 	
