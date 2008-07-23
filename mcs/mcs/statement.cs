@@ -2502,14 +2502,6 @@ namespace Mono.CSharp {
 				am_storey.DefineMembers ();
 		}
 
-		protected override void EmitSymbolInfo (EmitContext ec)
-		{
-			if (am_storey != null)
-				SymbolWriter.DefineScopeVariable (am_storey.ID);
-
-			base.EmitSymbolInfo (ec);
-		}
-
 		internal IKnownVariable GetKnownVariable (string name)
 		{
 			return known_variables == null ? null : (IKnownVariable) known_variables [name];
@@ -2883,6 +2875,15 @@ namespace Mono.CSharp {
 			if (this_variable != null)
 				Variables.Remove ("this");
 			base.EmitMeta (ec);
+		}
+
+		protected override void EmitSymbolInfo (EmitContext ec)
+		{
+			AnonymousExpression ae = ec.CurrentAnonymousMethod;
+			if ((ae != null) && (ae.Storey != null))
+				SymbolWriter.DefineScopeVariable (ae.Storey.ID);
+
+			base.EmitSymbolInfo (ec);
 		}
 
 		public override void Emit (EmitContext ec)

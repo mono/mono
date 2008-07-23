@@ -1,3 +1,23 @@
+2008-07-23  Martin Baulig  <martin@ximian.com>
+
+	* anonymous.cs
+	(AnonymousMethodStorey.EmitHoistedVariables): Added the required
+	symbolwriter calls to tell the debugger about the scope variable.
+	(AnonymousMethodStorey.EmitType): Added the required symbol writer
+	calls to tell the debugger about captured variables.
+
+	* statement.cs
+	(ExplicitBlock.EmitSymbolInfo): Moved to `ToplevelBlock'.
+	(ToplevelBlock.EmitSymbolInfo): Tell the symbol writer about the
+	scope variable.
+
+	* class.cs
+	(MethodOrOperator.Define): Set `Modifiers.DEBUGGER_HIDDEN' if
+	we're an iterator.
+	(MethodOrOperator.Emit): Add the `[DebuggerHidden]' custom
+	attribute if requested.
+	(Constructor.Emit): Likewise.
+
 2008-07-22  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #387040

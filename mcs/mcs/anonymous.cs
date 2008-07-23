@@ -103,6 +103,7 @@ namespace Mono.CSharp {
 
 		// A list of hoisted parameters
 		protected ArrayList hoisted_params;
+		protected ArrayList hoisted_locals;
 
 		// Hoisted this
 		HoistedThis hoisted_this;
@@ -178,6 +179,11 @@ namespace Mono.CSharp {
 			HoistedVariable var = new HoistedLocalVariable (this, local_info, GetVariableMangledName (local_info));
 			local_info.HoistedVariableReference = var;
 			has_hoisted_variable = true;
+
+			if (hoisted_locals == null)
+				hoisted_locals = new ArrayList ();
+
+			hoisted_locals.Add (var);
 		}
 
 		public void CaptureParameter (EmitContext ec, ParameterReference param_ref)
@@ -236,6 +242,8 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			SymbolWriter.OpenCompilerGeneratedBlock (ec.ig);
+
 			DefineStoreyReferences ();
 
 			//
@@ -267,10 +275,15 @@ namespace Mono.CSharp {
 			Expression e = new New (storey_type_expr, new ArrayList (0), Location).Resolve (ec);
 			e.Emit (ec);
 
+			LocalBuilder builder = ec.GetTemporaryLocal (storey_type_expr.Type);
 			Instance = new LocalTemporary (storey_type_expr.Type);
 			Instance.Store (ec);
 
+			SymbolWriter.DefineScopeVariable (ID, builder);
+
 			EmitHoistedFieldsInitialization (ec);
+
+			SymbolWriter.CloseCompilerGeneratedBlock (ec.ig);
 		}
 
 		void EmitHoistedFieldsInitialization (EmitContext ec)
@@ -316,7 +329,29 @@ namespace Mono.CSharp {
 
 		public override void EmitType ()
 		{
+			SymbolWriter.DefineAnonymousScope (ID);
+
+			if (hoisted_this != null)
+				hoisted_this.EmitSymbolInfo ();
+
+			if (hoisted_locals != null) {
+				foreach (HoistedVariable local in hoisted_locals)
+					local.EmitSymbolInfo ();
+			}
+
+			if (hoisted_params != null) {
+				foreach (HoistedParameter param in hoisted_params)
+					param.EmitSymbolInfo ();
+			}
+
 			DefineStoreyReferences ();
+
+			if (used_parent_storeys != null) {
+				foreach (StoreyFieldPair sf in used_parent_storeys) {
+					SymbolWriter.DefineCapturedScope (ID, sf.Storey.ID, sf.Field.Name);
+				}
+			}
+
 			base.EmitType ();
 		}
 
@@ -691,14 +726,17 @@ namespace Mono.CSharp {
 
 	class HoistedLocalVariable : HoistedVariable
 	{
+		string name;
+
 		public HoistedLocalVariable (AnonymousMethodStorey scope, LocalInfo local, string name)
 			: base (scope, name, local.VariableType)
 		{
+			this.name = local.Name;
 		}
 
 		public override void EmitSymbolInfo ()
 		{
-			SymbolWriter.DefineCapturedLocal (storey.ID, field.Name, field.Name);
+			SymbolWriter.DefineCapturedLocal (storey.ID, name, field.Name);
 		}
 	}
 

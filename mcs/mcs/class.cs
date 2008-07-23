@@ -3870,8 +3870,10 @@ namespace Mono.CSharp {
 			if (!CheckBase ())
 				return false;
 
-			if ((ModFlags & Modifiers.METHOD_YIELDS) != 0)
+			if ((ModFlags & Modifiers.METHOD_YIELDS) != 0) {
 				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
+				ModFlags |= Modifiers.DEBUGGER_HIDDEN;
+			}
 
 			if (IsPartialDefinition) {
 				caching_flags &= ~Flags.Excluded_Undetected;
@@ -6394,8 +6396,10 @@ namespace Mono.CSharp {
 
 				CheckAbstractAndExtern (block != null);
 
-				if (yields)
+				if (yields) {
 					Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
+					ModFlags |= Modifiers.DEBUGGER_HIDDEN;
+				}
 
 				return null;
 			}
