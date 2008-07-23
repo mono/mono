@@ -31315,6 +31315,53 @@
       </method>
     </type>
   </test>
+  <test name="test-658.cs">
+    <type name="A">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 get_Thread()">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="Thread">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Foo()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>6</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-659.cs">
+    <type name="Iface">
+      <method name="Void set_AA(Int32, Boolean)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="MySubClass">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>30</size>
+      </method>
+      <method name="Void set_BB(Int32, Boolean)">
+        <size>1</size>
+      </method>
+      <method name="Void Iface.set_AA(Int32, Boolean)">
+        <size>9</size>
+      </method>
+    </type>
+  </test>
   <test name="test-66.cs">
     <type name="Y">
       <method name="Void .ctor()">
