@@ -1,3 +1,7 @@
+2008-07-23  Marek Habersack  <mhabersack@novell.com>
+
+	* SqlDataSourceTest.cs: fix the failing test again.
+
 2008-07-02  Marek Habersack  <mhabersack@novell.com>
 
 	* SqlDataSourceTest.cs: command parameters are constructed from
