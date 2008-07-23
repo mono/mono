@@ -426,8 +426,13 @@ namespace Mono.CSharp {
 			Type [] t_args = TypeManager.GetGenericArguments (method);
 			if (TypeManager.IsGenericType (method.DeclaringType)) {
 				Type t = MutateGenericType (method.DeclaringType);
-				if (t != method.DeclaringType)
-					method = TypeBuilder.GetMethod (t, method);
+				if (t != method.DeclaringType) {
+					method = (MethodInfo) TypeManager.DropGenericMethodArguments (method);
+					if (method.Module == CodeGen.Module.Builder)
+						method = TypeBuilder.GetMethod (t, method);
+					else
+						method = (MethodInfo) MethodInfo.GetMethodFromHandle (method.MethodHandle, t.TypeHandle);
+				}				
 			}
 
 			if (t_args == null || t_args.Length == 0)

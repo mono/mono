@@ -1,5 +1,10 @@
 2008-07-23  Marek Safar  <marek.safar@gmail.com>
 
+	* anonymous.cs (MutateGenericMethod): Added extra code path for imported
+	types.
+
+2008-07-23  Marek Safar  <marek.safar@gmail.com>
+
 	* expression.cs: Removed MakeSimpleCall.
 
 2008-07-23  Marek Safar  <marek.safar@gmail.com>
