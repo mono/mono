@@ -1,3 +1,7 @@
+2008-07-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_emit_call): Use mini_type_stack_size ().
+
 2008-07-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c: Fix some warnings. Remove one ia64 special case as it
