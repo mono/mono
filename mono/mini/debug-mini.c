@@ -267,9 +267,9 @@ mono_debug_close_method (MonoCompile *cfg)
 	for (i = 0; i < jit->num_locals; i++)
 		write_variable (cfg->varinfo [cfg->locals_start + i], &jit->locals [i]);
 
-	if (sig->hasthis) {
+	if (sig->hasthis && !(cfg->varinfo [0]->flags & MONO_INST_IS_DEAD)) {
 		jit->this_var = g_new0 (MonoDebugVarInfo, 1);
-		write_variable (cfg->varinfo [0], jit->this_var);
+		write_variable (cfg->args [0], jit->this_var);
 	}
 
 	for (i = 0; i < jit->num_params; i++)

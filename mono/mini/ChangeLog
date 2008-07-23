@@ -1,3 +1,8 @@
+2008-07-23  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.c (mono_debug_close_method): Check
+	`MONO_INST_IS_DEAD' for `this'.
+
 2008-07-22  Bill Holmes  <billholmes54@gmail.com>
 
 	* inssel-amd64.brg :  Adding rules for OP_VTARG_ADDR that are used for
