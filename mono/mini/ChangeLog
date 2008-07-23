@@ -1,3 +1,8 @@
+2008-07-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_bblock_insert_after_ins): Properly link up with the next
+	instruction in the ins==NULL case.
+
 2008-07-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ops.h: Add OP_X86_OUTARG_ALIGN_STACK.
