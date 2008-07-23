@@ -1,5 +1,9 @@
 2008-07-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ops.h: Add OP_X86_OUTARG_ALIGN_STACK.
+
+	* mini-x86.c: Fix osx build.
+
 	* mini-amd64.c (mono_arch_output_basic_block): Handle varargs in the CALL_REG
 	opcodes as well.
 
