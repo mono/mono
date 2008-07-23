@@ -122,6 +122,11 @@ namespace System.Web {
 		bool stop_processing;
 
 		//
+		// See https://bugzilla.novell.com/show_bug.cgi?id=381971
+		//
+		bool in_application_start;
+		
+		//
 		// The Pipeline
 		//
 		IEnumerator pipeline;
@@ -189,10 +194,6 @@ namespace System.Web {
 			lock (this_lock) {
 				if (modcoll != null)
 					return;
-
-				if (full_init)
-					events = null; // discard all the event handlers registered
-						       // so far (e.g. in Application_Start)
 				
 #if NET_2_0
 				HttpModulesSection modules;
@@ -216,6 +217,11 @@ namespace System.Web {
 			}
 		}
 
+		internal bool InApplicationStart {
+			get { return in_application_start; }
+			set { in_application_start = value; }
+		}
+		
 		internal string AssemblyLocation {
 			get {
 				if (assemblyLocation == null)
@@ -423,10 +429,19 @@ namespace System.Web {
 		}
 
 		static object BeginRequestEvent = new object ();
-		public event EventHandler BeginRequest
+		public event EventHandler BeginRequest		
 		{
-			add { AddEventHandler (BeginRequestEvent, value); }
-			remove { RemoveEventHandler (BeginRequestEvent, value); }
+			add {
+				// See https://bugzilla.novell.com/show_bug.cgi?id=381971
+				if (InApplicationStart)
+					return;
+				AddEventHandler (BeginRequestEvent, value);
+			}
+			remove {
+				if (InApplicationStart)
+					return;
+				RemoveEventHandler (BeginRequestEvent, value);
+			}
 		}
 		
 		public void AddOnBeginRequestAsync (BeginEventHandler bh, EndEventHandler eh)
@@ -438,8 +453,17 @@ namespace System.Web {
 		static object EndRequestEvent = new object ();
 		public event EventHandler EndRequest
 		{
-			add { AddEventHandler (EndRequestEvent, value); }
-			remove { RemoveEventHandler (EndRequestEvent, value); }
+			add {
+				// See https://bugzilla.novell.com/show_bug.cgi?id=381971
+				if (InApplicationStart)
+					return;
+				AddEventHandler (EndRequestEvent, value);
+			}
+			remove {
+				if (InApplicationStart)
+					return;
+				RemoveEventHandler (EndRequestEvent, value);
+			}
 		}
 		
 		public void AddOnEndRequestAsync (BeginEventHandler bh, EndEventHandler eh)
@@ -1096,10 +1120,11 @@ namespace System.Web {
 				yield return true;
 
 			eventHandler = Events [BeginRequestEvent];
-			if (eventHandler != null)
+			if (eventHandler != null) {
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
-
+			}
+			
 			eventHandler = Events [AuthenticateRequestEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
