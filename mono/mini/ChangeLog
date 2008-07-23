@@ -1,5 +1,8 @@
 2008-07-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Handle the ret_var_is_local case in
+	CEE_MONO_RETOBJ.
+	
 	* method-to-ir.c (ADD_WIDEN_OP): New macro to insert a widening op when
 	two a binop with different sized arguments is emitted.
 
