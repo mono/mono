@@ -1,3 +1,7 @@
+2008-07-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (patch-libtool): New helper target.
+
 2008-04-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* serial.c (set_attributes): When setting parity to Even,

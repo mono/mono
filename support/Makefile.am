@@ -146,3 +146,9 @@ refresh:
 	--library=MonoPosixHelper                             \
 	$(mcs_topdir)/class/lib/net_2_0/Mono.Posix.dll map
 
+# Useful if mono is compiled with --enable-shared=no
+patch-libtool:
+	cp "../libtool" .
+	sed -e 's,build_libtool_libs=no,build_libtool_libs=yes,g' libtool > 2; mv 2 libtool
+	sed -e 's,LIBTOOL =,LIBTOOL2 =,g' Makefile > 2 && echo "LIBTOOL = bash ./libtool" > 1 && cat 1 2 > Makefile
+	touch *.c
