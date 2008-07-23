@@ -3342,6 +3342,16 @@ argument_list
 		list.Add ($3);
 		$$ = list;
 	  }
+	| argument_list COMMA
+	  {
+	  	Report.Error (839, GetLocation ($2), "An argument is missing");
+	  	$$ = null;
+	  }
+	| COMMA argument
+	  {
+	  	Report.Error (839, GetLocation ($1), "An argument is missing");
+	  	$$ = null;
+	  }
 	| argument_list error {
 		CheckToken (1026, yyToken, "Expected `,' or `)'", GetLocation ($2));
 		$$ = null;
