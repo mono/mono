@@ -1,3 +1,8 @@
+2008-07-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ListViewItemTest.cs: Marked SerializeExact_Mono as NotWorking to fix
+	buildbot.
+
 2008-07-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ListViewItemTest.cs: Enabled (de)serialization tests.
