@@ -68,9 +68,10 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static MethodBase GetMethodFromHandleInternalType (IntPtr method_handle, IntPtr type_handle);
 
-#if NET_2_0
+#if NET_2_0 || BOOTSTRAP_NET_2_0
 		[ComVisible (false)]
-		public static MethodBase GetMethodFromHandle(RuntimeMethodHandle handle, RuntimeTypeHandle declaringType) {
+		public static MethodBase GetMethodFromHandle(RuntimeMethodHandle handle, RuntimeTypeHandle declaringType)
+		{
 			if (handle.Value == IntPtr.Zero)
 				throw new ArgumentException ("The handle is invalid.");
 			MethodBase res = GetMethodFromHandleInternalType (handle.Value, declaringType.Value);

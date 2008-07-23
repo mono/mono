@@ -1,3 +1,7 @@
+2008-07-23  Marek Safar  <marek.safar@gmail.com>
+
+	* MethodBase.cs (GetMethodFromHandle): Needed for bootraping.
+
 2008-07-22  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoGenericClass.cs (GetMethod): Under compiler mode allow
