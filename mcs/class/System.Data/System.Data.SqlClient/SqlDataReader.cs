@@ -57,7 +57,6 @@ namespace System.Data.SqlClient
 		SqlCommand command;
 		ArrayList dataTypeNames;
 		bool disposed;
-		int fieldCount;
 		bool isClosed;
 		bool moreResults;
 		int resultsRead;
@@ -106,7 +105,6 @@ namespace System.Data.SqlClient
 			readResultUsed = false;
 			this.command = command;
 			resultsRead = 0;
-			fieldCount = 0;
 			isClosed = false;
 			command.Tds.RecordsAffected = -1;
 #if NET_2_0
@@ -132,7 +130,7 @@ namespace System.Data.SqlClient
 		override
 #endif // NET_2_0
 		int FieldCount {
-			get { return fieldCount; }
+			get { return command.Tds.Columns.Count; }
 		}
 
 		public
@@ -250,6 +248,201 @@ namespace System.Data.SqlClient
 			schemaTable.Columns.Add ("IsReadOnly", booleanType);
 
 			return schemaTable;
+		}
+		
+		private void GetSchemaRowTypeName (TdsColumnType ctype, int csize, out string typeName) 
+		{
+			int dbType;
+			bool isLong;
+			Type fieldType;
+			
+			GetSchemaRowType (ctype, csize, out dbType, out fieldType, out isLong, out typeName);
+		}
+
+		private void GetSchemaRowFieldType (TdsColumnType ctype, int csize, out Type fieldType) 
+		{
+			int dbType;
+			bool isLong;
+			string typeName;
+			
+			GetSchemaRowType (ctype, csize, out dbType, out fieldType, out isLong, out typeName);
+		}
+
+		private void GetSchemaRowDbType (TdsColumnType ctype, int csize, out int dbType) 
+		{
+			Type fieldType;
+			bool isLong;
+			string typeName;
+			
+			GetSchemaRowType (ctype, csize, out dbType, out fieldType, out isLong, out typeName);
+		}
+		
+		private void GetSchemaRowType (TdsColumnType ctype, int csize, 
+		                               out int dbType, out Type fieldType, 
+		                               out bool isLong, out string typeName)
+		{
+			dbType = -1;
+			typeName = string.Empty;
+			isLong = false;
+			fieldType = typeof (Type);
+			
+			switch (ctype) {
+				case TdsColumnType.Int1:
+				case TdsColumnType.Int2:
+				case TdsColumnType.Int4:
+				case TdsColumnType.IntN:
+					switch (csize) {
+					case 1:
+						typeName = "tinyint";
+						dbType = (int) SqlDbType.TinyInt;
+						fieldType = typeof (byte);
+						isLong = false;
+						break;
+					case 2:
+						typeName = "smallint";
+						dbType = (int) SqlDbType.SmallInt;
+						fieldType = typeof (short);
+						isLong = false;
+						break;
+					case 4:
+						typeName = "int";
+						dbType = (int) SqlDbType.Int;
+						fieldType = typeof (int);
+						isLong = false;
+						break;
+					case 8:
+						typeName = "bigint";
+						dbType = (int) SqlDbType.BigInt;
+						fieldType = typeof (long);
+						isLong = false;
+						break;
+					}
+					break;
+				case TdsColumnType.Real:
+				case TdsColumnType.Float8:
+				case TdsColumnType.FloatN:
+					switch (csize) {
+					case 4:
+						typeName = "real";
+						dbType = (int) SqlDbType.Real;
+						fieldType = typeof (float);
+						isLong = false;
+						break;
+					case 8:
+						typeName = "float";
+						dbType = (int) SqlDbType.Float;
+						fieldType = typeof (double);
+						isLong = false;
+						break;
+					}
+					break;
+				case TdsColumnType.Image :
+					typeName = "image";
+					dbType = (int) SqlDbType.Image;
+					fieldType = typeof (byte[]);
+					isLong = true;
+					break;
+				case TdsColumnType.Text :
+					typeName = "text";
+					dbType = (int) SqlDbType.Text;
+					fieldType = typeof (string);
+					isLong = true;
+					break;
+				case TdsColumnType.UniqueIdentifier :
+					typeName = "uniqueidentifier";
+					dbType = (int) SqlDbType.UniqueIdentifier;
+					fieldType = typeof (Guid);
+					isLong = false;
+					break;
+				case TdsColumnType.VarBinary :
+				case TdsColumnType.BigVarBinary :
+					typeName = "varbinary";
+					dbType = (int) SqlDbType.VarBinary;
+					fieldType = typeof (byte[]);
+					isLong = true;
+					break;
+				case TdsColumnType.VarChar :
+				case TdsColumnType.BigVarChar :
+					typeName = "varchar";
+					dbType = (int) SqlDbType.VarChar;
+					fieldType = typeof (string);
+					isLong = false;
+					break;
+				case TdsColumnType.Binary :
+				case TdsColumnType.BigBinary :
+					typeName = "binary";
+					dbType = (int) SqlDbType.Binary;
+					fieldType = typeof (byte[]);
+					isLong = true;
+					break;
+				case TdsColumnType.Char :
+				case TdsColumnType.BigChar :
+					typeName = "char";
+					dbType = (int) SqlDbType.Char;
+					fieldType = typeof (string);
+					isLong = false;
+					break;
+				case TdsColumnType.Bit :
+				case TdsColumnType.BitN :
+					typeName = "bit";
+					dbType = (int) SqlDbType.Bit;
+					fieldType = typeof (bool);
+					isLong = false;
+					break;
+				case TdsColumnType.DateTime4 :
+				case TdsColumnType.DateTime :
+				case TdsColumnType.DateTimeN :
+					typeName = "datetime";
+					dbType = (int) SqlDbType.DateTime;
+					fieldType = typeof (DateTime);
+					isLong = false;
+					break;
+				case TdsColumnType.Money :
+				case TdsColumnType.MoneyN :
+				case TdsColumnType.Money4 :
+					typeName = "money";
+					dbType = (int) SqlDbType.Money;
+					fieldType = typeof (decimal);
+					isLong = false;
+					break;
+				case TdsColumnType.NText :
+					typeName = "ntext";
+					dbType = (int) SqlDbType.NText;
+					fieldType = typeof (string);
+					isLong = true;
+					break;
+				case TdsColumnType.NVarChar :
+					typeName = "nvarchar";
+					dbType = (int) SqlDbType.NVarChar;
+					fieldType = typeof (string);
+					isLong = false;
+					break;
+				case TdsColumnType.Decimal :
+				case TdsColumnType.Numeric :
+					typeName = "decimal";
+					dbType = (int) SqlDbType.Decimal;
+					fieldType = typeof (decimal);
+					isLong = false;
+					break;
+				case TdsColumnType.NChar :
+					typeName = "nchar";
+					dbType = (int) SqlDbType.NChar;
+					fieldType = typeof (string);
+					isLong = false;
+					break;
+				case TdsColumnType.SmallMoney :
+					typeName = "smallmoney";
+					dbType = (int) SqlDbType.SmallMoney;
+					fieldType = typeof (decimal);
+					isLong = false;
+					break;
+				default :
+					typeName = "variant";
+					dbType = (int) SqlDbType.Variant;
+					fieldType = typeof (object);
+					isLong = false;
+					break;
+			}
 		}
 
 #if NET_2_0
@@ -430,9 +623,21 @@ namespace System.Data.SqlClient
 #endif // NET_2_0
 		string GetDataTypeName (int i)
 		{
-			if (i < 0 || i >= dataTypeNames.Count)
+			TdsColumnType ctype;
+			string datatypeName;
+			int csize;
+			
+			if (i < 0 || i >= command.Tds.Columns.Count)
 				throw new IndexOutOfRangeException ();
-			return (string) dataTypeNames [i];
+#if NET_2_0
+			ctype = (TdsColumnType) command.Tds.Columns[i].ColumnType;
+			csize = (int) command.Tds.Columns[i].ColumnSize;
+#else
+			ctype = (TdsColumnType) command.Tds.Columns[i]["ColumnType"];
+			csize = (int) command.Tds.Columns[i]["ColumnSize"];
+#endif
+			GetSchemaRowTypeName (ctype, csize, out datatypeName);
+			return datatypeName;
 		}
 
 		public
@@ -483,11 +688,21 @@ namespace System.Data.SqlClient
 #endif // NET_2_0
 		Type GetFieldType (int i)
 		{
-			if (schemaTable == null)
-				schemaTable = ConstructSchemaTable ();
-			if (i < 0 || i >= schemaTable.Rows.Count)
+			TdsColumnType ctype;
+			Type fieldType;
+			int csize;
+			
+			if (i < 0 || i >= command.Tds.Columns.Count)
 				throw new IndexOutOfRangeException ();
-			return (Type) schemaTable.Rows[i][DATA_TYPE_IDX];
+#if NET_2_0
+			ctype = (TdsColumnType) command.Tds.Columns[i].ColumnType;
+			csize = (int) command.Tds.Columns[i].ColumnSize;
+#else
+			ctype = (TdsColumnType) command.Tds.Columns[i]["ColumnType"];
+			csize = (int) command.Tds.Columns[i]["ColumnSize"];
+#endif
+			GetSchemaRowFieldType (ctype, csize, out fieldType);			
+			return fieldType;
 		}
 
 		public
@@ -566,9 +781,13 @@ namespace System.Data.SqlClient
 #endif // NET_2_0
 		string GetName (int i)
 		{
-			if (schemaTable == null)
-				schemaTable = ConstructSchemaTable ();
-			return (string) schemaTable.Rows[i][COLUMN_NAME_IDX];
+			if (i < 0 || i >= command.Tds.Columns.Count)
+				throw new IndexOutOfRangeException ();
+#if NET_2_0
+			return (string) command.Tds.Columns[i].ColumnName;
+#else
+			return (string) command.Tds.Columns[i]["ColumnName"];
+#endif
 		}
 
 		public
@@ -577,14 +796,18 @@ namespace System.Data.SqlClient
 #endif // NET_2_0
 		int GetOrdinal (string name)
 		{
-			if (schemaTable == null)
-				schemaTable = ConstructSchemaTable ();
-			foreach (DataRow schemaRow in schemaTable.Rows)
-				if (((string) schemaRow [COLUMN_NAME_IDX]).Equals (name))
-					return (int) schemaRow [COLUMN_ORDINAL_IDX];
-			foreach (DataRow schemaRow in schemaTable.Rows)
-				if (String.Compare (((string) schemaRow [COLUMN_NAME_IDX]), name, true) == 0)
-					return (int) schemaRow [COLUMN_ORDINAL_IDX];
+			string colName;
+			foreach (TdsDataColumn schema in command.Tds.Columns) {
+#if NET_2_0
+				colName = schema.ColumnName;
+				if (colName.Equals (name) || String.Compare (colName, name, true) == 0)
+					return (int) schema.ColumnOrdinal;
+#else
+				colName = (string) schema["ColumnName"];
+				if (colName.Equals (name) || String.Compare (colName, name, true) == 0)
+					return (int) schema["ColumnOrdinal"];
+#endif						
+			}			
 			throw new IndexOutOfRangeException ();
 		}
 
@@ -604,8 +827,6 @@ namespace System.Data.SqlClient
 
 			if (!moreResults)
 				return null;
-
-			fieldCount = 0;
 
 			dataTypeNames = new ArrayList (command.Tds.Columns.Count);
 
@@ -659,189 +880,32 @@ namespace System.Data.SqlClient
 				if (row [BASE_COLUMN_NAME_IDX] == DBNull.Value)
 					row [BASE_COLUMN_NAME_IDX] = row [COLUMN_NAME_IDX];
 
-				int csize;
 				TdsColumnType ctype;
-				
+				int csize, dbType;				
+				Type fieldType;
+				bool isLong;
+				string typeName;
 #if NET_2_0
 				ctype = (TdsColumnType) schema.ColumnType;
+				csize = (int) schema.ColumnSize;
 #else
 				ctype = (TdsColumnType) schema ["ColumnType"];
+				csize = (int) schema ["ColumnSize"];
 #endif
-				switch (ctype) {
-					case TdsColumnType.Int1:
-					case TdsColumnType.Int2:
-					case TdsColumnType.Int4:
-					case TdsColumnType.IntN:
-#if NET_2_0
-						csize = (int) schema.ColumnSize;
-#else
-						csize = (int) schema ["ColumnSize"];
-#endif
-						switch (csize) {
-						case 1:
-							dataTypeNames.Add ("tinyint");
-							row [PROVIDER_TYPE_IDX] = (int) SqlDbType.TinyInt;
-							row [DATA_TYPE_IDX] = typeof (byte);
-							row [IS_LONG_IDX] = false;
-							break;
-						case 2:
-							dataTypeNames.Add ("smallint");
-							row [PROVIDER_TYPE_IDX] = (int) SqlDbType.SmallInt;
-							row [DATA_TYPE_IDX] = typeof (short);
-							row [IS_LONG_IDX] = false;
-							break;
-						case 4:
-							dataTypeNames.Add ("int");
-							row [PROVIDER_TYPE_IDX] = (int) SqlDbType.Int;
-							row [DATA_TYPE_IDX] = typeof (int);
-							row [IS_LONG_IDX] = false;
-							break;
-						case 8:
-							dataTypeNames.Add ("bigint");
-							row [PROVIDER_TYPE_IDX] = (int) SqlDbType.BigInt;
-							row [DATA_TYPE_IDX] = typeof (long);
-							row [IS_LONG_IDX] = false;
-							break;
-						}
-						break;
-					case TdsColumnType.Real:
-					case TdsColumnType.Float8:
-					case TdsColumnType.FloatN:
-#if NET_2_0
-						csize = (int) schema.ColumnSize;
-#else
-						csize = (int) schema ["ColumnSize"];
-#endif
-						switch (csize) {
-						case 4:
-							dataTypeNames.Add ("real");
-							row [PROVIDER_TYPE_IDX] = (int) SqlDbType.Real;
-							row [DATA_TYPE_IDX] = typeof (float);
-							row [IS_LONG_IDX] = false;
-							break;
-						case 8:
-							dataTypeNames.Add ("float");
-							row [PROVIDER_TYPE_IDX] = (int) SqlDbType.Float;
-							row [DATA_TYPE_IDX] = typeof (double);
-							row [IS_LONG_IDX] = false;
-							break;
-						}
-						break;
-					case TdsColumnType.Image :
-						dataTypeNames.Add ("image");
-						row [PROVIDER_TYPE_IDX] = (int) SqlDbType.Image;
-						row [DATA_TYPE_IDX] = typeof (byte[]);
-						row [IS_LONG_IDX] = true;
-						break;
-					case TdsColumnType.Text :
-						dataTypeNames.Add ("text");
-						row [PROVIDER_TYPE_IDX] = (int) SqlDbType.Text;
-						row [DATA_TYPE_IDX] = typeof (string);
-						row [IS_LONG_IDX] = true;
-						break;
-					case TdsColumnType.UniqueIdentifier :
-						dataTypeNames.Add ("uniqueidentifier");
-						row [PROVIDER_TYPE_IDX] = (int) SqlDbType.UniqueIdentifier;
-						row [DATA_TYPE_IDX] = typeof (Guid);
-						row [IS_LONG_IDX] = false;
-						break;
-					case TdsColumnType.VarBinary :
-					case TdsColumnType.BigVarBinary :
-						dataTypeNames.Add ("varbinary");
-						row [PROVIDER_TYPE_IDX] = (int) SqlDbType.VarBinary;
-						row [DATA_TYPE_IDX] = typeof (byte[]);
-						row [IS_LONG_IDX] = true;
-						break;
-					case TdsColumnType.VarChar :
-					case TdsColumnType.BigVarChar :
-						dataTypeNames.Add ("varchar");
-						row [PROVIDER_TYPE_IDX] = (int) SqlDbType.VarChar;
-						row [DATA_TYPE_IDX] = typeof (string);
-						row [IS_LONG_IDX] = false;
-						break;
-					case TdsColumnType.Binary :
-					case TdsColumnType.BigBinary :
-						dataTypeNames.Add ("binary");
-						row [PROVIDER_TYPE_IDX] = (int) SqlDbType.Binary;
-						row [DATA_TYPE_IDX] = typeof (byte[]);
-						row [IS_LONG_IDX] = true;
-						break;
-					case TdsColumnType.Char :
-					case TdsColumnType.BigChar :
-						dataTypeNames.Add ("char");
-						row [PROVIDER_TYPE_IDX] = (int) SqlDbType.Char;
-						row [DATA_TYPE_IDX] = typeof (string);
-						row [IS_LONG_IDX] = false;
-						break;
-					case TdsColumnType.Bit :
-					case TdsColumnType.BitN :
-						dataTypeNames.Add ("bit");
-						row [PROVIDER_TYPE_IDX] = (int) SqlDbType.Bit;
-						row [DATA_TYPE_IDX] = typeof (bool);
-						row [IS_LONG_IDX] = false;
-						break;
-					case TdsColumnType.DateTime4 :
-					case TdsColumnType.DateTime :
-					case TdsColumnType.DateTimeN :
-						dataTypeNames.Add ("datetime");
-						row [PROVIDER_TYPE_IDX] = (int) SqlDbType.DateTime;
-						row [DATA_TYPE_IDX] = typeof (DateTime);
-						row [IS_LONG_IDX] = false;
-						break;
-					case TdsColumnType.Money :
-					case TdsColumnType.MoneyN :
-					case TdsColumnType.Money4 :
-						dataTypeNames.Add ("money");
-						row [PROVIDER_TYPE_IDX] = (int) SqlDbType.Money;
-						row [DATA_TYPE_IDX] = typeof (decimal);
-						row [IS_LONG_IDX] = false;
-						break;
-					case TdsColumnType.NText :
-						dataTypeNames.Add ("ntext");
-						row [PROVIDER_TYPE_IDX] = (int) SqlDbType.NText;
-						row [DATA_TYPE_IDX] = typeof (string);
-						row [IS_LONG_IDX] = true;
-						break;
-					case TdsColumnType.NVarChar :
-						dataTypeNames.Add ("nvarchar");
-						row [PROVIDER_TYPE_IDX] = (int) SqlDbType.NVarChar;
-						row [DATA_TYPE_IDX] = typeof (string);
-						row [IS_LONG_IDX] = false;
-						break;
-					case TdsColumnType.Decimal :
-					case TdsColumnType.Numeric :
-						dataTypeNames.Add ("decimal");
-						row [PROVIDER_TYPE_IDX] = (int) SqlDbType.Decimal;
-						row [DATA_TYPE_IDX] = typeof (decimal);
-						row [IS_LONG_IDX] = false;
-						break;
-					case TdsColumnType.NChar :
-						dataTypeNames.Add ("nchar");
-						row [PROVIDER_TYPE_IDX] = (int) SqlDbType.NChar;
-						row [DATA_TYPE_IDX] = typeof (string);
-						row [IS_LONG_IDX] = false;
-						break;
-					case TdsColumnType.SmallMoney :
-						dataTypeNames.Add ("smallmoney");
-						row [PROVIDER_TYPE_IDX] = (int) SqlDbType.SmallMoney;
-						row [DATA_TYPE_IDX] = typeof (decimal);
-						row [IS_LONG_IDX] = false;
-						break;
-					default :
-						dataTypeNames.Add ("variant");
-						row [PROVIDER_TYPE_IDX] = (int) SqlDbType.Variant;
-						row [DATA_TYPE_IDX] = typeof (object);
-						row [IS_LONG_IDX] = false;
-						break;
-				}
+
+				GetSchemaRowType (ctype, csize, out dbType, 
+									out fieldType, out isLong, out typeName);
+				
+				dataTypeNames.Add (typeName);
+				row [PROVIDER_TYPE_IDX] = dbType;
+				row [DATA_TYPE_IDX] = fieldType;
+				row [IS_LONG_IDX] = isLong;			
 #if NET_2_0
 				if ((bool)row [IS_HIDDEN_IDX] == false)
 					visibleFieldCount += 1;
 #endif
 
 				schemaTable.Rows.Add (row);
-
-				fieldCount += 1;
 			}
 			return schemaTable;
 		}
@@ -1052,10 +1116,20 @@ namespace System.Data.SqlClient
 #endif
 		object GetSqlValue (int i)
 		{
-			if (schemaTable == null)
-				schemaTable = ConstructSchemaTable ();
-
-			SqlDbType type = (SqlDbType) (schemaTable.Rows [i][PROVIDER_TYPE_IDX]);
+			int dbType, csize;
+			TdsColumnType ctype;
+			
+			if (i < 0 || i >= command.Tds.Columns.Count)
+				throw new IndexOutOfRangeException ();
+#if NET_2_0
+			ctype = (TdsColumnType) command.Tds.Columns[i].ColumnType;
+			csize = (int) command.Tds.Columns[i].ColumnSize;
+#else
+			ctype = (TdsColumnType) command.Tds.Columns[i]["ColumnType"];
+			csize = (int) command.Tds.Columns[i]["ColumnSize"];
+#endif
+			GetSchemaRowDbType (ctype, csize, out dbType);
+			SqlDbType type = (SqlDbType) dbType;
 			object value = GetValue (i);
 
 			switch (type) {
@@ -1140,11 +1214,8 @@ namespace System.Data.SqlClient
 #endif
 		int GetSqlValues (object[] values)
 		{
-			if (schemaTable == null)
-				schemaTable = ConstructSchemaTable ();
-
 			int count = 0;
-			int columnCount = schemaTable.Rows.Count;
+			int columnCount = command.Tds.Columns.Count;
 			int arrayCount = values.Length;
 
 			if (arrayCount > columnCount)
@@ -1262,9 +1333,8 @@ namespace System.Data.SqlClient
 			if (!moreResults)
 				command.GetOutputParameters ();
 			else {
-				//new schema
+				// new schema - don't do anything except reset schemaTable as command.Tds.Columns is already updated
 				schemaTable = null;
-				GetSchemaTable ();
 			}
 
 			rowsRead = 0;
