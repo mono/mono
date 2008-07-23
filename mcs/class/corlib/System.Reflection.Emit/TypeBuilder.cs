@@ -1782,13 +1782,41 @@ namespace System.Reflection.Emit
 				return res;
 		}
 
+		static bool IsValidGetMethodType (Type type)
+		{
+			if (type is TypeBuilder || type is MonoGenericClass)
+				return true;
+			if (type.IsGenericParameter)
+				return false;
+
+			Type[] inst = type.GetGenericArguments ();
+			if (inst == null)
+				return false;
+			for (int i = 0; i < inst.Length; ++i) {
+				if (IsValidGetMethodType (inst [i]))
+					return true;
+			}
+			return false;
+		}
+
 		public static MethodInfo GetMethod (Type type, MethodInfo method)
 		{
+			if (!IsValidGetMethodType (type))
+				throw new ArgumentException ("type is not TypeBuilder but " + type.GetType (), "type");
+
+			if (!type.IsGenericType)
+				throw new ArgumentException ("type is not a generic type", "type");
+
+			if (!method.DeclaringType.IsGenericTypeDefinition)
+				throw new ArgumentException ("method declaring type is not a generic type definition", "method");
+			if (method.DeclaringType != type.GetGenericTypeDefinition ())
+				throw new ArgumentException ("method declaring type is not the generic type definition of type", "method");
+
 			MethodInfo res = type.GetMethod (method);
 			if (res == null)
-				throw new System.Exception ("method not found");
-			else
-				return res;
+				throw new ArgumentException (String.Format ("method {0} not found in type {1}", method.Name, type));
+				
+			return res;
 		}
 
 		public static FieldInfo GetField (Type type, FieldInfo field)
