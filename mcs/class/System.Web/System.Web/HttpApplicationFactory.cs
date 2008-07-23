@@ -180,7 +180,9 @@ namespace System.Web {
 			context.ApplicationInstance = app;
 			app.SetContext (context);
 			object [] args = new object [] {app, EventArgs.Empty};
+			app.InApplicationStart = true;
 			FireEvent ("Application_Start", app, args);
+			app.InApplicationStart = false;
 			return app;
 		}
 
