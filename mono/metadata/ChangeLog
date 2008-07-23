@@ -1,3 +1,9 @@
+2008-07-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (ves_icall_System_Threading_Thread_Abort): Avoid calling 
+	mono_thread_resume () during shutdown, since the thread we want to abort
+	might be suspended.
+
 2008-07-22  Jb Evain  <jbevain@novell.com>
 
 	* reflection.c (create_dynamic_mono_image): emit the same
