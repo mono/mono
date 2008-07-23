@@ -1,3 +1,8 @@
+2008-07-23 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_generic_inst_field_might_have_zero_size.il:
+	Regression test found from gtest-106.exe
+
 2008-07-11 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* invalid_ldtoken_field.il
