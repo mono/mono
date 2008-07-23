@@ -1335,6 +1335,7 @@ namespace System.Data.SqlClient
 			else {
 				// new schema - don't do anything except reset schemaTable as command.Tds.Columns is already updated
 				schemaTable = null;
+				dataTypeNames = null;
 			}
 
 			rowsRead = 0;

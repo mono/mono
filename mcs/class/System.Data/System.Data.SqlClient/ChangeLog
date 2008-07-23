@@ -1,5 +1,10 @@
 2008-07-23  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	* SqlDataReader.cs (NextResult): Memleak fix - mark datatypeNames
+	array to be GCed along with schemaTable.
+	
+2008-07-23  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	* SqlDataReader.cs: Do not generate schemaTable unless otherwise
 	asked for; use command.Tds.Columns instead.  Improves performance
 	of the DataReader.
