@@ -415,13 +415,13 @@ fi
 # with an ancient tar program (Solaris)
 #
 AC_MSG_CHECKING(integrity of package)
-if test -f $srcdir/$mcsdir/class/System.Runtime.Serialization.Formatters.Soap/System.Runtime.Serialization.Formatters.Soap/SoapTypeMapper.cs
-then
-   AC_MSG_RESULT(ok)
-else
-   errorm="Your mono distribution is incomplete;  if unpacking from a tar file, make sure you use GNU tar;  see http://www.mono-project.com/IncompletePackage for more details"
-   AC_MSG_ERROR([$errorm])
-fi
+#if test -f $srcdir/$mcsdir/class/System.Runtime.Serialization.Formatters.Soap/System.Runtime.Serialization.Formatters.Soap/SoapTypeMapper.cs
+#then
+#   AC_MSG_RESULT(ok)
+#else
+#   errorm="Your mono distribution is incomplete;  if unpacking from a tar file, make sure you use GNU tar;  see http://www.mono-project.com/IncompletePackage for more details"
+#   AC_MSG_ERROR([$errorm])
+#fi
 
 mcs_topdir='$(top_srcdir)/'$mcsdir
 mcs_topdir_from_srcdir='$(top_builddir)/'$mcsdir
@@ -2246,6 +2246,11 @@ AC_CONFIG_COMMANDS([runtime/etc/mono/2.0/Browsers/Compat.browser],
     cd $depth
 ],[LN_S='$LN_S'])
 
+if test x$enable_quiet_build = xyes; then
+   AC_CONFIG_COMMANDS([quiet], [find mono libgc support -name Makefile -exec $shell $srcdir/scripts/patch-quiet.sh {} \;], [shell=$SHELL])
+   AC_CONFIG_COMMANDS([quiet-libtool], [sed -e 's/$echo "copying selected/$show "copying selected/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool])
+fi
+
 AC_OUTPUT([
 Makefile
 mono-uninstalled.pc
@@ -2318,11 +2323,6 @@ if test x$platform_win32 = xyes; then
    # wrapper scripts which use exec(). gcc has no problem compiling+linking this, but the resulting
    # executable doesn't work...
    sed -e "s,-mno-cygwin,,g" libtool > libtool.new; mv libtool.new libtool; chmod 755 libtool
-fi
-
-if test x$enable_quiet_build = xyes; then
-   find mono -name Makefile -exec $SHELL $srcdir/scripts/patch-quiet.sh {} \;
-   find libgc -name Makefile -exec $SHELL $srcdir/scripts/patch-quiet.sh {} \;
 fi
 
 (
