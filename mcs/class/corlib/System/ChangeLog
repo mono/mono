@@ -1,3 +1,7 @@
+2008-07-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* ConsoleDriver.cs: Remove unused Suspend icall.
+
 2008-07-08  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* Char.cs: Remove obsolete lamespecs (it implements IConvertible, small formatting)
