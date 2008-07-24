@@ -1,3 +1,10 @@
+2008-07-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* configure.in: Change USED_GC_NAME to show if parallel mark is used.
+	This is shown in mono --version.
+
+	Backported from trunk.
+
 2008-07-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* docs/aot-compiler.txt: Update docs.
