@@ -1,5 +1,12 @@
 2008-07-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (handle_delegate_ctor): Add an optimization to avoid
+	looking up the native code of the target method when a delegate is called
+	for the first time.
+
+	* mini-trampolines.c (mono_delegate_trampoline): Add the other half of the
+	optimization.
+
 	* debug-debugger.c (MONO_DEBUGGER__debugger_info): Fix a warning.
 
 	* aot-runtime.c aot-compiler.c: Add a new option 'no-dlsym' which makes
