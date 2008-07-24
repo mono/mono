@@ -1,3 +1,13 @@
+2008-07-24  Marek Habersack  <mhabersack@novell.com>
+
+	* MailDefinition.cs: look for the mail body file in the correct
+	path. Patch from Jackson Harper <jaharper@novell.com>,
+	thanks! Fixes bug #408699
+
+	* PasswordRecovery.cs: do not ask password recovery question if
+	it's disabled. Patch from Jackson Harper <jaharper@novell.com>,
+	thanks! Fixes bug #408696
+
 2008-07-16  Marek Habersack  <mhabersack@novell.com>
 
 	* XmlDataSource.cs: check if Page isn't null before stringifying
