@@ -1,3 +1,7 @@
+2008-07-24  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TableLayoutPanel.cs: Layout on Row/Column count change.
+
 2008-07-15  Jonathan Pobst  <monkey@jpobst.com>
 	[Backport to 2.0]
 	* ImageList.cs: Fix ICollection.CopyTo implementation for

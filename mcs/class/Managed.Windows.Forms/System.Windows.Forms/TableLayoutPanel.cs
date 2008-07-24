@@ -94,7 +94,12 @@ namespace System.Windows.Forms
 		[DefaultValue (0)]
 		public int ColumnCount {
 			get { return settings.ColumnCount; }
-			set { settings.ColumnCount = value; }
+			set {
+				if (settings.ColumnCount != value) {
+					settings.ColumnCount = value; 
+					this.PerformLayout (this, "ColumnCount");
+				}
+			}
 		}
 
 		[Browsable (false)]
@@ -143,7 +148,12 @@ namespace System.Windows.Forms
 		[DefaultValue (0)]
 		public int RowCount {
 			get { return settings.RowCount; }
-			set { this.settings.RowCount = value; }
+			set {
+				if (settings.RowCount != value) {
+					settings.RowCount = value; 
+					this.PerformLayout (this, "RowCount");
+				}
+			}
 		}
 
 		[Browsable (false)]
