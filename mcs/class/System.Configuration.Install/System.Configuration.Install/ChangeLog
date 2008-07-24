@@ -1,3 +1,7 @@
+2008-07-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyInstaller.cs: Fixed argument name to match MS.
+
 2008-06-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Installer.cs : populate 'installers' instance. Fixed bug #397126.

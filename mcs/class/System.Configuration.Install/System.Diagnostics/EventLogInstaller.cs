@@ -50,9 +50,8 @@ namespace System.Diagnostics
 		}
 
 		[MonoTODO]
-		// in MSDN, documented as System.Diagnostics.Design.StringValueConverter, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
 		[Editor ("System.Windows.Forms.Design.FileNameEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing )]
-		[TypeConverter (typeof (StringConverter))]
+		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
 		[ComVisible (false)]
 		public string CategoryResourceFile {
 			get { return _categoryResourceFile; }
@@ -60,9 +59,8 @@ namespace System.Diagnostics
 		}
 
 		[MonoTODO]
-		// in MSDN, documented as System.Diagnostics.Design.StringValueConverter, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
 		[Editor ("System.Windows.Forms.Design.FileNameEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing )]
-		[TypeConverter (typeof (StringConverter))]
+		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
 		[ComVisible (false)]
 		public string MessageResourceFile {
 			get { return _messageResourceFile; }
@@ -70,9 +68,8 @@ namespace System.Diagnostics
 		}
 
 		[MonoTODO]
-		// in MSDN, documented as System.Diagnostics.Design.StringValueConverter, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
 		[Editor ("System.Windows.Forms.Design.FileNameEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing )]
-		[TypeConverter (typeof (StringConverter))]
+		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
 		[ComVisible (false)]
 		public string ParameterResourceFile {
 			get { return _parameterResourceFile; }

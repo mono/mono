@@ -46,9 +46,9 @@ namespace System.Configuration.Install
 			_useNewContext = true;
 		}
 
-		public AssemblyInstaller (string filename, string[] commandLine)
+		public AssemblyInstaller (string fileName, string[] commandLine)
 		{
-			Path = System.IO.Path.GetFullPath (filename);
+			Path = System.IO.Path.GetFullPath (fileName);
 			_commandLine = commandLine;
 			_useNewContext = true;
 		}
