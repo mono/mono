@@ -23,7 +23,6 @@ cs0457-2.cs
 cs0457.cs
 cs0525.cs
 cs0526.cs
-cs0536.cs
 cs0547-2.cs # new in GMCS; grammar issue
 cs0547.cs
 cs0548-4.cs
@@ -39,6 +38,8 @@ cs0647-6.cs
 cs0647-7.cs
 cs0647-9.cs
 cs0714-2.cs
+cs0737-2.cs
+cs0737.cs
 cs1041.cs # new in GMCS; grammar issue
 cs1502-2.cs
 cs1521-3.cs
