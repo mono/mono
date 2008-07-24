@@ -1,3 +1,12 @@
+2008-07-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
+
+	* domain-internals.h (struct _MonoDomain): Add 'method_code_hash' field.
+
+	* object-internals.h (struct _MonoDelegate): Add 'method_code' field,
+	synch with managed object layout.
+
 2008-07-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (do_branch_op): Handle valuetypes and generic
