@@ -1,3 +1,7 @@
+2008-07-24  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TableLayoutPanel.cs: Layout on Row/Column count change.
+
 2008-07-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ListViewItem.cs: Changed binary serialization to match MS. Fixes
