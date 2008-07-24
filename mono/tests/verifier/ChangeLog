@@ -1,5 +1,13 @@
 2008-07-23 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* valid_nested_field_access_with_generic_class.cs:
+	Check if nested access works with generic types. 
+
+	* valid_isinst_box_generic_arguments.il: Check if generic
+	arguments should be boxed by isisnt and castclass.
+
+2008-07-23 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* valid_generic_inst_field_might_have_zero_size.il:
 	Regression test found from gtest-106.exe
 
