@@ -723,7 +723,14 @@ namespace System.Web.UI.WebControls
 				((UserNameContainer) UserNameTemplateContainer).FailureTextLiteral.Text = UserNameFailureText;
 				return;
 			}
-			
+
+			if (!MembershipProviderInternal.RequiresQuestionAndAnswer) {
+				GenerateAndSendEmail ();
+
+				_currentStep = PasswordReciveryStep.StepSuccess;
+				return;
+			}
+
 			Question = user.PasswordQuestion;
 			_currentStep = PasswordReciveryStep.StepAnswer;
 			return;
@@ -742,6 +749,14 @@ namespace System.Web.UI.WebControls
 				return;
 			}
 
+			GenerateAndSendEmail ();
+
+			_currentStep = PasswordReciveryStep.StepSuccess;
+			return;
+		}
+
+		private void GenerateAndSendEmail ()
+		{
 			string newPassword = "";
 			try {
 				if (MembershipProviderInternal.EnablePasswordRetrieval) {
@@ -760,9 +775,6 @@ namespace System.Web.UI.WebControls
 			}
 
 			SendPasswordByMail (UserName, newPassword);
-
-			_currentStep = PasswordReciveryStep.StepSuccess;
-			return;
 		}
 
 		private void InitMemberShipProvider ()
