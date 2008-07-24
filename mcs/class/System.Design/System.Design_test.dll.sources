@@ -1,4 +1,5 @@
 System.ComponentModel.Design/DesignerActionListsChangedEventArgsTest.cs
 System.ComponentModel.Design/DesignerActionMethodItemTest.cs
 System.ComponentModel.Design/DesignerActionPropertyItemTest.cs
+System.Diagnostics.Design/StringValueConverterTest.cs
 System.Windows.Forms.Design/MenuCommandsTest.cs

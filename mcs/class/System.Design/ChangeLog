@@ -1,3 +1,8 @@
+2008-07-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Design.dll.sources: Added StringValueConverter.cs.
+	* System.Design_test.dll.sources: Added StringValueConverterTest.cs.
+
 2007-10-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: in 2.0 there is cyclic dep with Sys.Drawing.Design.dll.

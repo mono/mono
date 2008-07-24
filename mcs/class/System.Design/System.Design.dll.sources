@@ -110,6 +110,7 @@ System.Diagnostics.Design/LogConverter.cs
 System.Diagnostics.Design/ProcessDesigner.cs
 System.Diagnostics.Design/ProcessModuleDesigner.cs
 System.Diagnostics.Design/ProcessThreadDesigner.cs
+System.Diagnostics.Design/StringValueConverter.cs
 System.Messaging.Design/MessageDesigner.cs
 System.Resources.Tools/StronglyTypedResourceBuilder.cs
 System.ServiceProcess.Design/ServiceControllerDesigner.cs
