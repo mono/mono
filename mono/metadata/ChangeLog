@@ -1,3 +1,11 @@
+2008-07-24  Massimiliano Mantione  <massi@ximian.com>
+	* profiler.c: Added runtime_initialized_event,
+	mono_profiler_install_runtime_initialized and
+	mono_profiler_runtime_initialized. This new hook tells the profiler
+	when the runtime is sufficiently initialized to be able to call
+	mono_thread_attach on the root appdomain.
+	* profiler.h, profiler-private.h: Likewise.
+
 2008-07-23 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (do_cast): Do boxing for generic arguments as well.
