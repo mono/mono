@@ -1,3 +1,7 @@
+2008-07-24  Marek Safar  <marek.safar@gmail.com>
+
+	* compiler-tester.cs: Always exercise symbol writer.
+
 2008-04-22  Marek Safar  <marek.safar@gmail.com>
 
 	* compiler-tester.cs: Print test name when IL reduction is detected.

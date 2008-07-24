@@ -175,16 +175,19 @@ namespace TestRunner {
 				public bool Checked;
 			}
 
-			string test_file;
 			ArrayList methods;
 			public bool IsNewSet;
 
 			public VerificationData (string test_file)
 			{
+#if NET_2_0
 				this.test_file = test_file;
+#endif				
 			}
 
-#if NET_2_0			
+#if NET_2_0
+			string test_file;
+
 			public static VerificationData FromFile (string name, XmlReader r)
 			{
 				VerificationData tc = new VerificationData (name);
@@ -475,12 +478,13 @@ namespace TestRunner {
 			string[] test_args;
 
 			if (test.CompilerOptions != null) {
-				test_args = new string [1 + test.CompilerOptions.Length];
+				test_args = new string [2 + test.CompilerOptions.Length];
 				test.CompilerOptions.CopyTo (test_args, 0);
 			} else {
-				test_args = new string [1];
+				test_args = new string [2];
 			}
-			test_args [test_args.Length - 1] = test.FileName;
+			test_args [test_args.Length - 2] = test.FileName;
+			test_args [test_args.Length - 1] = "-debug";
 
 			return tester.Invoke (test_args);
 		}
