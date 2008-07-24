@@ -1,5 +1,15 @@
 2008-07-23 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (do_cast): Do boxing for generic arguments as well.
+
+	* class.c (is_nesting_type): Drop generic instantiations before
+	checking for nesting.
+
+	* class.c (can_access_instantiation): Allow access to generic
+	arguments.
+
+2008-07-23 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (verify_class_for_overlapping_reference_fields):
 	On some cases, the field size might be zero, guard against that.
 	Fix the explicit layout check to work as expected.
