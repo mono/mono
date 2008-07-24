@@ -39,6 +39,12 @@ using System.Runtime.InteropServices;
 
 namespace System
 {
+	/* Contains the rarely used fields of Delegate */
+	class DelegateData {
+		public Type target_type;
+		public string method_name;
+	}
+
 #if NET_1_1
 	[ClassInterface (ClassInterfaceType.AutoDual)]
 #endif
@@ -53,14 +59,15 @@ namespace System
 		private IntPtr invoke_impl;
 		private object m_target;
 		private IntPtr method;
-		private Type target_type;
-		private string method_name;
 		private IntPtr delegate_trampoline;
+		private IntPtr method_code;
 		private MethodInfo method_info;
 
 		// Keep a ref of the MethodInfo passed to CreateDelegate.
 		// Used to keep DynamicMethods alive.
 		private MethodInfo original_method_info;
+
+		private DelegateData data;
 		#endregion
 
 		protected Delegate (object target, string method)
@@ -71,10 +78,9 @@ namespace System
 			if (method == null)
 				throw new ArgumentNullException ("method");
 
-			this.target_type = null;
-			this.method_ptr = IntPtr.Zero;
 			this.m_target = target;
-			this.method_name = method;
+			this.data = new DelegateData ();
+			this.data.method_name = method;
 		}
 
 		protected Delegate (Type target, string method)
@@ -85,10 +91,9 @@ namespace System
 			if (method == null)
 				throw new ArgumentNullException ("method");
 
-			this.target_type = target;
-			this.method_ptr = IntPtr.Zero;
-			this.m_target = null;
-			this.method_name = method;
+			this.data = new DelegateData ();
+			this.data.method_name = method;
+			this.data.target_type = target;
 		}
 
 		public MethodInfo Method {
@@ -401,7 +406,7 @@ namespace System
 				for (int i = 0; i < args.Length; ++i) {
 					mtypes [i] = args [i].GetType ();
 				}
-				method_info = m_target.GetType ().GetMethod (method_name, mtypes);
+				method_info = m_target.GetType ().GetMethod (data.method_name, mtypes);
 			}
 
 #if NET_2_0
@@ -435,9 +440,16 @@ namespace System
 				return false;
 			
 			// Do not compare method_ptr, since it can point to a trampoline
-			if ((d.target_type == target_type) && (d.m_target == m_target) &&
-				(d.method_name == method_name) && (d.method == method))
+			if (d.m_target == m_target && d.method == method) {
+				if (d.data != null || data != null) {
+					/* Uncommon case */
+					if (d.data != null && data != null)
+						return (d.data.target_type == data.target_type && d.data.method_name == data.method_name);
+					else
+						return false;
+				}
 				return true;
+			}
 
 			return false;
 		}

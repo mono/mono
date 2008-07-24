@@ -1,5 +1,10 @@
 2008-07-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* Delegate.cs: Move the rarely used fields to a separate object, add
+	'method_code' field.
+
+	* Environment.cs: Bump corlib version.
+
 	* ConsoleDriver.cs: Remove unused Suspend icall.
 
 2008-07-21  Marek Safar  <marek.safar@gmail.com>
