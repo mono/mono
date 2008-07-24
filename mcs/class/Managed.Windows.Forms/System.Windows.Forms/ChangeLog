@@ -1,3 +1,8 @@
+2008-07-25  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGridTextBox.cs: Stop filtering messages prior to our 
+	disposal to avoid unexpected ObjectDisposedExceptions.
+
 2008-07-24  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TableLayoutPanel.cs: Layout on Row/Column count change.
