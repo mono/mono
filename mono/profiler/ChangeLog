@@ -1,4 +1,8 @@
 2008-07-04  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c: Emit full type names for loaded classes
+	(patch by Rodrigo Kumpera).
+
+2008-07-04  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c: Use the new "runtime initialized" hook.
 
 2008-07-04  Massimiliano Mantione <massi@ximian.com>
