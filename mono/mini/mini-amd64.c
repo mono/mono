@@ -4118,12 +4118,20 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		while (remaining_size >= 0x1000) {
 			amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 0x1000);
 			async_exc_point (code);
+#ifdef PLATFORM_WIN32
+			if (cfg->arch.omit_fp) 
+				mono_arch_unwindinfo_add_alloc_stack (&cfg->arch.unwindinfo, cfg->native_code, code, 0x1000);
+#endif
 			amd64_test_membase_reg (code, AMD64_RSP, 0, AMD64_RSP);
 			remaining_size -= 0x1000;
 		}
 		if (remaining_size) {
 			amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, remaining_size);
 			async_exc_point (code);
+#ifdef PLATFORM_WIN32
+			if (cfg->arch.omit_fp) 
+				mono_arch_unwindinfo_add_alloc_stack (&cfg->arch.unwindinfo, cfg->native_code, code, remaining_size);
+#endif
 		}
 #else
 		amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, alloc_size);
