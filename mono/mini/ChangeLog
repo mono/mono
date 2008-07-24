@@ -1,3 +1,10 @@
+2008-07-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c aot-compiler.c: Add a new option 'no-dlsym' which makes
+	AOT work on platforms without a working dlsym implementation.
+
+	* mini.h: Bump AOT image format version.
+	
 2008-07-24  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-exceptions.c: Free a MonoType with
@@ -18,6 +25,11 @@
 	profiler hook.
 
 2008-07-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir2): Set the stack type properly for
+	NEWOBJ calls on valuetypes.
+
+	* iltests.il.in: Add new test.
 
 	* mini-x86.c (mono_arch_emit_call): Use mini_type_stack_size ().
 
