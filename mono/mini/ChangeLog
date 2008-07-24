@@ -1,3 +1,12 @@
+2008-07-24  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-exceptions.c: Free a MonoType with
+	mono_metadata_free_type() instead of g_free().
+
+	* aot-runtime.c: Free a MonoType.
+
+	Backported from trunk.
+
 2008-07-24  Bill Holmes  <billholmes54@gmail.com>
 
 	* mini-amd64.c (mono_arch_call_opcode) : Winx64 fix.  Use the size
