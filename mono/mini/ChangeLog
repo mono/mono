@@ -1,3 +1,10 @@
+2008-07-24  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-exceptions.c: Free a MonoType with
+	mono_metadata_free_type() instead of g_free().
+
+	* aot-runtime.c: Free a MonoType.
+
 2008-07-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir2): Add a comment for the box+brtrue
