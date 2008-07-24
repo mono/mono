@@ -1,3 +1,12 @@
+2008-07-24 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* unverifiable_binary_compare_with_generic_argument.il:
+	* unverifiable_binary_compare_with_valuetype.il:
+	* unverifiable_ceq_with_generic_argument.il:
+	* unverifiable_ceq_with_valuetype.il:
+	Tests for valuetypes and generic arguments with
+	bne.un and ceq.
+
 2008-07-23 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* valid_nested_field_access_with_generic_class.cs:
