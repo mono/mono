@@ -1,3 +1,9 @@
+2008-07-24  Marek Safar  <marek.safar@gmail.com>
+
+	* lambda.cs, linq.cs, class.cs, iterators.cs, cs-parser.jay, assign.cs, 
+	anonymous.cs, statement.cs: Always emit anonymous method as static method
+	when is instance free. Use nesting for nested anynomous methods blocks.
+	
 2008-07-23  Marek Safar  <marek.safar@gmail.com>
 
 	* anonymous.cs (MutateGenericMethod): Added extra code path for imported

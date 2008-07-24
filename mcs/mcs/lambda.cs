@@ -24,8 +24,8 @@ namespace Mono.CSharp {
 		//    A list of Parameters (explicitly typed parameters)
 		//    An ImplicitLambdaParameter
 		//
-		public LambdaExpression (TypeContainer host, Parameters parameters, Location loc)
-			: base (host, parameters, loc)
+		public LambdaExpression (Parameters parameters, Location loc)
+			: base (parameters, loc)
 		{
 			if (parameters.Count > 0)
 				explicit_parameters = !(parameters.FixedParameters [0] is ImplicitLambdaParameter);
@@ -118,9 +118,7 @@ namespace Mono.CSharp {
 
 		protected override AnonymousMethodBody CompatibleMethodFactory (Type returnType, Type delegateType, Parameters p, ToplevelBlock b)
 		{
-			return new LambdaMethod (Host,
-				p, b, returnType,
-				delegateType, loc);
+			return new LambdaMethod (p, b, returnType, delegateType, loc);
 		}
 
 		public override string GetSignatureForError ()
@@ -131,10 +129,10 @@ namespace Mono.CSharp {
 
 	public class LambdaMethod : AnonymousMethodBody
 	{
-		public LambdaMethod (TypeContainer host, Parameters parameters,
+		public LambdaMethod (Parameters parameters,
 					ToplevelBlock block, Type return_type, Type delegate_type,
 					Location loc)
-			: base (host, parameters, block, return_type, delegate_type, loc)
+			: base (parameters, block, return_type, delegate_type, loc)
 		{
 		}
 
@@ -146,11 +144,6 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			//
-			// Remove IL method implementation when expression tree is requested
-			//
-			method.Parent.PartialContainer.RemoveMethod (method);
-
 			Expression args = parameters.CreateExpressionTree (ec, loc);
 			Expression expr = Block.CreateExpressionTree (ec);
 			if (expr == null)

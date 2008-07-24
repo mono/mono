@@ -207,7 +207,7 @@ namespace Mono.CSharp.Linq
 		{
 			Parameters p = new Parameters (parameters);
 
-			LambdaExpression selector = new LambdaExpression ((TypeContainer)ec.TypeContainer, p, loc);
+			LambdaExpression selector = new LambdaExpression (p, loc);
 			selector.Block = new SelectorBlock (ec.CurrentBlock, p, ti, loc);
 			selector.Block.AddStatement (new ContextualReturn (expr));
 

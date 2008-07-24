@@ -5956,8 +5956,8 @@ start_anonymous (bool lambda, Parameters parameters, Location loc)
 	current_local_parameters = parameters;
 
 	current_anonymous_method = lambda 
-		? new LambdaExpression (current_container, parameters, loc) 
-		: new AnonymousMethodExpression (current_container, parameters, loc);
+		? new LambdaExpression (parameters, loc) 
+		: new AnonymousMethodExpression (parameters, loc);
 
 	// Force the next block to be created as a ToplevelBlock
 	parsing_anonymous_method = true;

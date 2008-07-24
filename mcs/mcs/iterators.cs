@@ -572,7 +572,8 @@ namespace Mono.CSharp {
 	//
 	public class Iterator : AnonymousExpression {
 		public readonly IMethodData OriginalMethod;
-
+		AnonymousMethodMethod method;
+		public readonly TypeContainer Host;
 		public readonly bool IsEnumerable;
 
 		//
@@ -809,7 +810,7 @@ namespace Mono.CSharp {
 		// Our constructor
 		//
 		private Iterator (IMethodData method, TypeContainer host, Type iterator_type, bool is_enumerable)
-			: base (host,
+			: base (
 				new ToplevelBlock (method.Block, Parameters.EmptyReadOnlyParameters, method.Block.StartLocation),
 				TypeManager.bool_type,
 				method.Location)
@@ -817,6 +818,7 @@ namespace Mono.CSharp {
 			this.OriginalMethod = method;
 			this.OriginalIteratorType = iterator_type;
 			this.IsEnumerable = is_enumerable;
+			this.Host = host;
 
 			IteratorHost = Block.ChangeToIterator (this, method.Block);
 		}

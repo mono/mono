@@ -231,6 +231,10 @@ namespace Mono.CSharp {
 				LoadFromPtr (ig, type);
 		}
 
+		public LocalBuilder Builder {
+			get { return builder; }
+		}
+
 		// NB: if you have `is_address' on the stack there must
 		// be a managed pointer. Otherwise, it is the type from
 		// the ctor.

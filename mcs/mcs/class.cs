@@ -424,31 +424,6 @@ namespace Mono.CSharp {
 				AddMemberToList (method, methods, false);
 		}
 
-		public void RemoveMethod (Method method)
-		{
-			methods.Remove (method);
-			if (method.IsExplicitImpl)
-				ordered_explicit_member_list.Remove (method);
-			else
-				ordered_member_list.Remove (method);
-		}
-
-		//
-		// Do not use this method: use AddMethod.
-		//
-		// This is only used by iterators.
-		//
-		public void AppendMethod (Method method)
-		{
-			if (!AddMember (method))
-				return;
-
-			if (methods == null)
-				methods = new MemberCoreArrayList ();
-
-			AddMemberToList (method, methods, false);
-		}
-
 		public void AddConstructor (Constructor c)
 		{
 			if (c.Name != MemberName.Name) {
@@ -2302,8 +2277,8 @@ namespace Mono.CSharp {
 				return;
 
 			if (compiler_generated != null) {
-				foreach (CompilerGeneratedClass c in compiler_generated)
-					c.EmitType ();
+				for (int i = 0; i < compiler_generated.Count; ++i)
+					((CompilerGeneratedClass) compiler_generated [i]).EmitType ();
 			}
 		}
 		
@@ -6382,7 +6357,7 @@ namespace Mono.CSharp {
 
 			public override EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig)
 			{
-				return new EmitContext (method,
+				return new EmitContext (this,
 					ds, method.ds, method.Location, ig, ReturnType,
 					method.ModFlags, false);
 			}

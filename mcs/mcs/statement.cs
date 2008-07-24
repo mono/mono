@@ -1534,7 +1534,8 @@ namespace Mono.CSharp {
 			HasRet = 8,
 			IsDestructor = 16,
 			Unsafe = 32,
-			IsIterator = 64
+			IsIterator = 64,
+			HasStoreyAccess	= 128
 		}
 		protected Flags flags;
 
@@ -2512,13 +2513,20 @@ namespace Mono.CSharp {
 
 		public override void EmitMeta (EmitContext ec)
 		{
-			base.EmitMeta (ec);
+			//
+			// Creates anonymous method storey
+			//
+			if (am_storey != null) {
+				if (ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod.Storey != null) {
+					am_storey.ChangeParentStorey (ec.CurrentAnonymousMethod.Storey);
+				}
 
-			//
-			// It has to be done when all storey references are resolved
-			//
-			if (am_storey != null && am_storey.HasHoistedVariables)
+				am_storey.DefineType ();
 				am_storey.DefineMembers ();
+				am_storey.Parent.PartialContainer.AddCompilerGeneratedClass (am_storey);
+			}
+
+			base.EmitMeta (ec);
 		}
 
 		protected override void EmitSymbolInfo (EmitContext ec)
@@ -2549,18 +2557,11 @@ namespace Mono.CSharp {
 			bool ok = base.Resolve (ec);
 
 			//
-			// Define an anonymous method storey when this block has hoisted variables
-			// otherwise the storey can be discarded
+			// Discard an anonymous method storey when this block has no hoisted variables
 			//
-			if (am_storey != null) {
-				if (am_storey.HasHoistedVariables) {
-					am_storey.DefineType ();
-					am_storey.DefineMembers ();
-					am_storey.Parent.PartialContainer.AddCompilerGeneratedClass (am_storey);
-				} else {
-					am_storey.Undo ();
-					am_storey = null;
-				}
+			if (am_storey != null && !am_storey.HasHoistedVariables) {
+				am_storey.Undo ();
+				am_storey = null;
 			}
 
 			return ok;
@@ -2622,6 +2623,11 @@ namespace Mono.CSharp {
 
 		public GenericMethod GenericMethod {
 			get { return generic; }
+		}
+
+		public bool HasStoreyAccess {
+			set { flags = value ? flags | Flags.HasStoreyAccess : flags & ~Flags.HasStoreyAccess; }
+			get { return (flags & Flags.HasStoreyAccess) != 0;  }
 		}
 
 		public ToplevelBlock Container {
