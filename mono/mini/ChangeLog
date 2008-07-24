@@ -1,3 +1,11 @@
+2008-07-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir2): Add a comment for the box+brtrue
+	optimization.
+
+	* mini-codegen.c (mono_local_regalloc): Remove the remaining items from the
+	fp stack on x86.
+
 2008-07-23  Massimiliano Mantione  <massi@ximian.com>
 	* mini.c (sigprof_signal_handler): call the new "runtime initialized"
 	profiler hook.
