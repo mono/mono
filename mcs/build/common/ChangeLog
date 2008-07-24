@@ -1,3 +1,7 @@
+2008-07-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Consts.cs.in; Update FxFileVersion and VsFileVersion for 2.0 SP1.
+
 2008-04-13  Jb Evain  <jbevain@novell.com>
 
 	* Consts.cs.in: update the 2.1 profile versions.
