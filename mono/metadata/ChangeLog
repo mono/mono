@@ -5,6 +5,8 @@
 
 	* verify.c (do_cmp_op): Same.
 
+	Fixes #410383.
+
 2008-07-24  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-sharing.c: Fix memory leaks.
