@@ -1,5 +1,13 @@
 2008-07-24  Marek Habersack  <mhabersack@novell.com>
 
+	* DataGrid.cs: removed the private class TableID and moved its
+	code to ChildTable.cs (see below). 2.0 instantiates teh ChildTable
+	with the owner parameter now. Fixes bug #400377
+
+	* ChildTable.cs: refactoring - moved code from TableID previously
+	defined in DataGrid.cs to here and made the class available under
+	different names for both 1.x and 2.x profiles. Fixes bug #400377
+
 	* MailDefinition.cs: look for the mail body file in the correct
 	path. Patch from Jackson Harper <jaharper@novell.com>,
 	thanks! Fixes bug #408699

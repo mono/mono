@@ -27,7 +27,6 @@
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
-#if NET_2_0
 using System;
 using System.Globalization;
 using System.Web;
@@ -36,10 +35,31 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
+#if NET_2_0
 	internal class ChildTable : Table
+#else
+	internal class TableID : Table
+#endif
 	{
+		Control parent;
+
+#if NET_2_0
+		public ChildTable (Control parent)
+#else
+		public TableID (Control parent)
+#endif
+		{
+			this.parent = parent;
+		}
+
+		protected override void AddAttributesToRender (HtmlTextWriter writer)
+		{
+			base.AddAttributesToRender (writer);
+			if (ID == null)
+				writer.AddAttribute ("id", parent.ClientID);
+		}
 	}
 }
-#endif
+
 
 

@@ -397,23 +397,6 @@ namespace System.Web.UI.WebControls {
 				return data_source_columns;
 			}
 		}
-
-		class TableID : Table
-		{
-			Control parent;
-
-			public TableID (Control parent)
-			{
-				this.parent = parent;
-			}
-
-			protected override void AddAttributesToRender (HtmlTextWriter writer)
-			{
-				base.AddAttributesToRender (writer);
-				if (ID == null)
-					writer.AddAttribute ("id", parent.ClientID);
-			}
-		}
 		
 		private Table RenderTable {
 			get {
@@ -421,7 +404,7 @@ namespace System.Web.UI.WebControls {
 #if ONLY_1_1
 					render_table = new TableID (this);
 #else
-					render_table = new ChildTable ();
+					render_table = new ChildTable (this);
 #endif
 					render_table.AutoID = false;
 				}
