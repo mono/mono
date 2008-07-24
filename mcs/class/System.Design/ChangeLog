@@ -1,3 +1,7 @@
+2008-07-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* System.Design_test.dll.sources: Fix CRLFs.
+
 2008-07-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Design.dll.sources: Added StringValueConverter.cs.
