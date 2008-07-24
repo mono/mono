@@ -281,6 +281,14 @@ namespace System.Windows.Forms.PropertyGridInternal
 			}
 		}
 
+
+		protected override void DestroyHandle ()
+		{
+			Application.RemoveMessageFilter ((IMessageFilter)this);
+			filtering = false;
+			base.DestroyHandle ();
+		}
+
 		bool IMessageFilter.PreFilterMessage(ref Message m)
 		{
 			// validating check is to allow whatever UI code to execute
