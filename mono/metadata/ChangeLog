@@ -1,3 +1,14 @@
+2008-07-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_branch_op): Handle valuetypes and generic
+	arguments properly.
+
+	* verify.c (do_cmp_op): Same.
+
+	Fixes #410383.
+
+	Backported from trunk.
+
 2008-07-23 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (do_cast): Do boxing for generic arguments as well.
