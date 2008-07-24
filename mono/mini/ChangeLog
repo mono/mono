@@ -1,5 +1,7 @@
 2008-07-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* debug-debugger.c (MONO_DEBUGGER__debugger_info): Fix a warning.
+
 	* aot-runtime.c aot-compiler.c: Add a new option 'no-dlsym' which makes
 	AOT work on platforms without a working dlsym implementation.
 
