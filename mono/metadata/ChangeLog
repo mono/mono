@@ -1,3 +1,7 @@
+2008-07-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* pedump.c (dump_verify_info): Dump full class name.
+
 2008-07-24  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-sharing.c: Removed some old code that didn't do anything.
