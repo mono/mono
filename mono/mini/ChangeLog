@@ -1,3 +1,7 @@
+2008-07-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c aot-compiler.c: Merge with the version in HEAD.
+	
 2008-07-24  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-exceptions.c: Free a MonoType with
