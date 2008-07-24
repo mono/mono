@@ -1,8 +1,5 @@
 2008-07-24  Zoltan Varga  <vargaz@gmail.com>
 
-	* method-to-ir.c (mono_method_to_ir2): Call mono_array_new_specific in the
-	gshared version of NEWARR.
-	
 	* method-to-ir.c (mono_method_to_ir2): Allocate a GOT var for NEWOBJ, since
 	got accesses might only get generated later when NEWOBJ is decomposed.
 	
