@@ -578,8 +578,21 @@ namespace System.Linq
 		public static TSource First<TSource> (this IEnumerable<TSource> source)
 		{
 			Check.Source (source);
-
-			return source.First (PredicateOf<TSource>.Always, Fallback.Throw);
+			
+			var list = source as IList<TSource>;
+			if (list != null) {
+				if (list.Count != 0)
+					return list [0];
+				
+				throw new InvalidOperationException ();
+			} else {
+				using (var enumerator = source.GetEnumerator ()) {
+					if (enumerator.MoveNext ())
+						return enumerator.Current;
+				}
+			}
+			
+			throw new InvalidOperationException ();
 		}
 
 		public static TSource First<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
