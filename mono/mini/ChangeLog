@@ -1,5 +1,13 @@
 2008-07-24  Bill Holmes  <billholmes54@gmail.com>
 
+	* mini-amd64.c (mono_arch_call_opcode) : Winx64 fix.  Use the size
+	  variable computed above as the copy length for arguments of storage
+	  type ArgValuetypeAddrInIReg.
+
+	Contributed under MIT/X11 license.
+
+2008-07-24  Bill Holmes  <billholmes54@gmail.com>
+
 	* mini-amd64.c (mono_arch_emit_prolog) : Winx64 fix.  When omitting the
 	  frame pointer the stack adjustment value must be saved to the unwind 
 	  info structure.

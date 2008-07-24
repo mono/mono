@@ -1506,7 +1506,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 					/*Copy the argument to the temp variable.*/
 					MONO_INST_NEW (cfg, load, OP_MEMCPY);
 					load->backend.memcpy_args = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoMemcpyArgs));
-					load->backend.memcpy_args->size = mono_class_value_size (in->klass, &align);
+					load->backend.memcpy_args->size = size;
 					load->backend.memcpy_args->align = align;
 					load->inst_left = (cfg)->varinfo [vtaddr->inst_c0];
 					load->inst_right = in->inst_i0;
