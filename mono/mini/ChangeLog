@@ -1,3 +1,7 @@
+2008-07-23  Massimiliano Mantione  <massi@ximian.com>
+	* mini.c (sigprof_signal_handler): call the new "runtime initialized"
+	profiler hook.
+
 2008-07-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c (mono_arch_emit_call): Use mini_type_stack_size ().
