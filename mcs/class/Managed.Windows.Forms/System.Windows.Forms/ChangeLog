@@ -1,5 +1,10 @@
 2008-07-25  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* TableLayoutPanel.cs: Perform layout on GrowStyle change, so 
+	that the change has an immediate effect.
+
+2008-07-25  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* ScrollableControl.cs: Update PerformLayout calls to include 
 	provide the name of the property that changed.
 

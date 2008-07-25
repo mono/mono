@@ -121,7 +121,12 @@ namespace System.Windows.Forms
 		[DefaultValue (TableLayoutPanelGrowStyle.AddRows)]
 		public TableLayoutPanelGrowStyle GrowStyle {
 			get { return settings.GrowStyle; }
-			set { settings.GrowStyle = value; }
+			set { 
+				if (settings.GrowStyle != value) {
+					settings.GrowStyle = value;
+					PerformLayout (this, "GrowStyle");
+				}
+			}
 		}
 
 		public override System.Windows.Forms.Layout.LayoutEngine LayoutEngine {
