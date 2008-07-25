@@ -2733,6 +2733,23 @@ namespace Mono.CSharp {
 			Expression ltemp = left;
 			Expression rtemp = right;
 			Type underlying_type;
+			Expression expr;
+			
+			if ((oper & Operator.ComparisonMask | Operator.BitwiseMask) != 0) {
+				if (renum) {
+					expr = Convert.ImplicitConversion (ec, left, rtype, loc);
+					if (expr != null) {
+						left = expr;
+						ltype = expr.Type;
+					}
+				} else if (lenum) {
+					expr = Convert.ImplicitConversion (ec, right, ltype, loc);
+					if (expr != null) {
+						right = expr;
+						rtype = expr.Type;
+					}
+				}
+			}			
 
 			if (TypeManager.IsEqual (ltype, rtype)) {
 				underlying_type = TypeManager.GetEnumUnderlyingType (ltype);
@@ -2812,7 +2829,7 @@ namespace Mono.CSharp {
 					res_type = ltype;
 			}
 			
-			Expression expr = ResolveOperatorPredefined (ec, standard_operators, true, res_type);
+			expr = ResolveOperatorPredefined (ec, standard_operators, true, res_type);
 			if (!is_compound || expr == null)
 				return expr;
 
