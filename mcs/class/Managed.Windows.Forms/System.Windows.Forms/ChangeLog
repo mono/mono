@@ -1,5 +1,12 @@
 2008-07-25  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* XplatUIX11.cs: Non Client area is actually Client such in the 
+	case of NotifyIcon, so double check WholeWindow == ClientWindow 
+	when adding an expose.
+	[Fixes bugs #324237 and #357022]
+
+2008-07-25  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* TableLayoutPanel.cs: Invalidate after layouting, so that we 
 	repaint the cell borders.
 
