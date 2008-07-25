@@ -1,5 +1,10 @@
 2008-07-25  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* TableLayoutPanel.cs: Invalidate after layouting, so that we 
+	repaint the cell borders.
+
+2008-07-25  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* PropertyGridTextBox.cs: Stop filtering messages prior to our 
 	disposal to avoid unexpected ObjectDisposedExceptions.
 
