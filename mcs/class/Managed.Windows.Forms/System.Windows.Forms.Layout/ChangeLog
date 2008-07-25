@@ -1,3 +1,10 @@
+2008-07-25  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TableLayout.cs: Initialize columns and rows as empty array, so that we 
+	can drop the null check when drawing and always draw the control border, 
+	but void for the cell borders if there aren't any.
+	[Fixes bug #411858]
+
 2008-07-07  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TableLayout.cs: Controls bounds should be taken into account regardless
