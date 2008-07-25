@@ -1,3 +1,11 @@
+2008-07-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Implement constraint equivalence checking.
+	This is required when a generic parameter is used as
+	argument to a constrained one.
+
+	Fixes #410637.
+
 2008-07-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
