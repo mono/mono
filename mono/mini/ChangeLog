@@ -1,3 +1,8 @@
+2008-07-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir2): Initialize an uninitialized variable
+	in the LDFTN implementation.
+
 2008-07-25  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-trampolines.c (mono_magic_trampoline): When sharing generic
