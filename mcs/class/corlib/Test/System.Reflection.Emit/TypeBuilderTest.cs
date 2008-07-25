@@ -2050,6 +2050,20 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		public void GetMethod_WorkWithInstancesOfCreatedTypeBuilder () {
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			tb.DefineGenericParameters ("T");
+			MethodBuilder mb = tb.DefineMethod ("create", MethodAttributes.Public, typeof (void), Type.EmptyTypes);
+			ILGenerator ig = mb.GetILGenerator ();
+			ig.Emit (OpCodes.Ret);
+			
+			tb.CreateType ();
+			
+			MethodInfo mi = TypeBuilder.GetMethod (tb.MakeGenericType (typeof (int)), mb);
+			Assert.IsNotNull (mi);
+		}
+
+		[Test]
 		[Category ("NotDotNet")]
 		[Category ("NotWorking")]
 		public void GetMethod_AcceptMethodFromInflatedTypeBuilder_UnderCompilerContext () {

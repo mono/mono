@@ -1,5 +1,13 @@
 2008-07-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* TypeBuilderTest.cs: New test for the regression found by
+	bug-333798-tb.2.cs.
+
+	* MethodOnTypeBuilderInstTest.cs: Renable some CompilerContext
+	tests.
+
+2008-07-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* TypeBuilderTest.cs: Disable the special behavior of GetMethod
 	under compiler behavior as mcs has been fixed.
 
