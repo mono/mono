@@ -1,3 +1,8 @@
+2008-07-25  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FileDialog.cs: Apply patch from Ernesto to clean up some
+	dialog messages.
+
 2008-07-25  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TableLayoutPanel.cs: Perform layout on GrowStyle change, so 
