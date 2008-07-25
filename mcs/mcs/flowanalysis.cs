@@ -660,9 +660,7 @@ namespace Mono.CSharp
 
 		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
 		{
-			pc = -1;
-			Report.Error (-6, loc, "Internal Error: A yield in a non-iterator");
-			return false;
+			throw new InternalErrorException ("A yield in a non-iterator block");
 		}
 
 		public override bool AddBreakOrigin (UsageVector vector, Location loc)
@@ -1184,8 +1182,8 @@ namespace Mono.CSharp
 
 				field_type_hash.Add (type, this);
 
-				if (type is TypeBuilder) {
-					TypeContainer tc = TypeManager.LookupTypeContainer (type);
+				if (type.Module == CodeGen.Module.Builder) {
+					TypeContainer tc = TypeManager.LookupTypeContainer (TypeManager.DropGenericTypeArguments (type));
 
 					ArrayList fields = null;
 					if (tc != null)

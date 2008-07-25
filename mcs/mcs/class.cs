@@ -983,6 +983,11 @@ namespace Mono.CSharp {
 				else if (Kind == Kind.Enum)
 					default_parent = TypeManager.enum_type;
 
+				//
+				// Sets .size to 1 for structs with no instance fields
+				//
+				int type_size = Kind == Kind.Struct && first_nonstatic_field == null ? 1 : 0;
+
 				if (IsTopLevel){
 					if (TypeManager.NamespaceClash (Name, Location)) {
 						return false;
@@ -990,12 +995,12 @@ namespace Mono.CSharp {
 
 					ModuleBuilder builder = CodeGen.Module.Builder;
 					TypeBuilder = builder.DefineType (
-						Name, TypeAttr, default_parent, null);
+						Name, TypeAttr, default_parent, type_size);
 				} else {
 					TypeBuilder builder = Parent.TypeBuilder;
 
 					TypeBuilder = builder.DefineNestedType (
-						Basename, TypeAttr, default_parent, null);
+						Basename, TypeAttr, default_parent, type_size);
 				}
 			} catch (ArgumentException) {
 				Report.RuntimeMissingSupport (Location, "static classes");
@@ -2191,37 +2196,6 @@ namespace Mono.CSharp {
 		{
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
-
-			//
-			// Structs with no fields need to have at least one byte.
-			// The right thing would be to set the PackingSize in a DefineType
-			// but there are no functions that allow interfaces *and* the size to
-			// be specified.
-			//
-
-			if (Kind == Kind.Struct && first_nonstatic_field == null){
-				FieldBuilder fb = TypeBuilder.DefineField ("$PRIVATE$", TypeManager.byte_type,
-									   FieldAttributes.Private);
-
-				if (HasExplicitLayout){
-					object [] ctor_args = new object [] { 0 };
-
-					if (TypeManager.field_offset_attribute_ctor == null) {
-						// Type is optional
-						if (TypeManager.field_offset_attribute_type == null) {
-							TypeManager.field_offset_attribute_type = TypeManager.CoreLookupType (
-								"System.Runtime.InteropServices", "FieldOffsetAttribute", Kind.Class, true);
-						}
-
-						TypeManager.field_offset_attribute_ctor = TypeManager.GetPredefinedConstructor (
-							TypeManager.field_offset_attribute_type, Location, TypeManager.int32_type);
-					}
-				
-					CustomAttributeBuilder cba = new CustomAttributeBuilder (
-						TypeManager.field_offset_attribute_ctor, ctor_args);
-					fb.SetCustomAttribute (cba);
-				}
-			}
 
 			Emit ();
 
