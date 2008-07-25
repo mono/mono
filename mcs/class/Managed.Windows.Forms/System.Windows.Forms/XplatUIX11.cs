@@ -1953,7 +1953,7 @@ namespace System.Windows.Forms {
 				MoveResizeWindow (DisplayHandle, hwnd.client_window, rect.X, rect.Y, rect.Width, rect.Height);
 			}
 
-			AddExpose (hwnd, false, 0, 0, hwnd.Width, hwnd.Height);
+			AddExpose (hwnd, hwnd.WholeWindow == hwnd.ClientWindow, 0, 0, hwnd.Width, hwnd.Height);
 		}
 		#endregion	// Private Methods
 
@@ -4572,7 +4572,7 @@ namespace System.Windows.Forms {
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			AddExpose (hwnd, false, 0, 0, hwnd.Width, hwnd.Height);
+			AddExpose (hwnd, hwnd.WholeWindow == hwnd.ClientWindow, 0, 0, hwnd.Width, hwnd.Height);
 		}
 
 		internal override bool IsEnabled(IntPtr handle) {
