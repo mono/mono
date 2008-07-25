@@ -1,3 +1,9 @@
+2008-07-25  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-trampolines.c (mono_magic_trampoline): When sharing generic
+	code, patch calls to icalls, too, even if they're not in the
+	shared generic code hash.  Fixes #411962.
+
 2008-07-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir2): Remove the generic sharing restrictions
