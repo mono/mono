@@ -85,8 +85,12 @@ namespace System.Windows.Forms.Layout
 			foreach (Control c in panel.Controls) {
 				int col = settings.GetColumn (c);
 				int row = settings.GetRow (c);
+				if (col >= 0 && row >= 0) {
+					if (col >= columns)
+						 return CalculateControlPositions (panel, col + 1, rows);
+					if (row >= rows)
+						 return CalculateControlPositions (panel, columns, row + 1);
 
-				if ((col >= 0 && col < columns) && (row >= 0 && row < rows)) {
 					if (grid[col, row] == null) {
 						int col_span = Math.Min (settings.GetColumnSpan (c), columns);
 						int row_span = Math.Min (settings.GetRowSpan (c), rows);

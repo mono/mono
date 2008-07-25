@@ -1,5 +1,12 @@
 2008-07-25  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* TableLayout.cs: Automagically add the required number of columns/rows 
+	if the control is added at non-existent such. Note that ColumnCount and 
+	RowCount do not change in LayoutSettings.
+	[Fixes bug #412161]
+
+2008-07-25  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* TableLayout.cs: Initialize columns and rows as empty array, so that we 
 	can drop the null check when drawing and always draw the control border, 
 	but void for the cell borders if there aren't any.
