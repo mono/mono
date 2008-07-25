@@ -1,3 +1,8 @@
+2008-07-25  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilder.cs (GetMethod): Allow created TypeBuilders
+	to be used.
+
 2008-07-23  Marek Safar  <marek.safar@gmail.com>
 			Rodrigo Kumpera  <rkumpera@novell.com>
 

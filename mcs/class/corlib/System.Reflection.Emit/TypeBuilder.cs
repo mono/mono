@@ -1786,6 +1786,9 @@ namespace System.Reflection.Emit
 		{
 			if (type is TypeBuilder || type is MonoGenericClass)
 				return true;
+			/*GetMethod() must work with TypeBuilders after CreateType() was called.*/
+			if (type.Module is ModuleBuilder)
+				return true;
 			if (type.IsGenericParameter)
 				return false;
 
