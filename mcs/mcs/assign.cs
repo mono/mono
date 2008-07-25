@@ -356,6 +356,7 @@ namespace Mono.CSharp {
 		{
 			source.MutateHoistedGenericType (storey);
 			target.MutateHoistedGenericType (storey);
+			type = storey.MutateType (type);			
 		}
 
 		protected virtual Expression ResolveConversions (EmitContext ec)
