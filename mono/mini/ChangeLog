@@ -1,5 +1,8 @@
 2008-07-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (handle_delegate_ctor): Avoid putting dynamic methods
+	into the domain->method_code_hash.
+
 	* aot-compiler.c: Fix win32 build.
 
 	* method-to-ir.c (EMIT_GET_RGCTX): Call EMIT_NEW_LDARG in emit_get_rgctx ().
