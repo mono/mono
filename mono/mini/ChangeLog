@@ -1,3 +1,9 @@
+2008-07-25  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.c
+	(debugger_get_boxed_object): GC-protect the last 16 objects.
+	(debugger_runtime_invoke): Likewise.
+
 2008-07-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c aot-compiler.c: Merge with the version in HEAD.
