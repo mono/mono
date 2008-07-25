@@ -1,3 +1,7 @@
+2008-07-25  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs: Cache closed generic anonymous method delegates.
+
 2008-07-24  Marek Safar  <marek.safar@gmail.com>
 
 	* lambda.cs, linq.cs, class.cs, iterators.cs, cs-parser.jay, assign.cs, 

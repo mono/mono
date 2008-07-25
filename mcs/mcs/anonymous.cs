@@ -1452,19 +1452,22 @@ namespace Mono.CSharp {
 			method.ResolveMembers ();
 			method.Define ();
 
-			//
-			// Don't cache generic delegates when contains MVAR argument
-			//
 			Field am_cache = null;
 			bool is_static = (method.ModFlags & Modifiers.STATIC) != 0;
-			if (is_static && !method.MemberName.IsGeneric) {
-				TypeContainer parent = method.Parent.PartialContainer;
-				int id = parent.Fields == null ? 0 : parent.Fields.Count;
-				am_cache = new Field (parent, new TypeExpression (type, loc),
-					Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED,
-					CompilerGeneratedClass.MakeName (null, "f", "am$cache", id), null, loc);
-				am_cache.Define ();
-				parent.AddField (am_cache);
+			if (is_static) {
+				//
+				// Creates a field cache to store delegate instance if it's not generic or all 
+				// type arguments are closed
+				//
+				if (!method.MemberName.IsGeneric || !HasGenericTypeParameter (type)) {
+					TypeContainer parent = method.Parent.PartialContainer;
+					int id = parent.Fields == null ? 0 : parent.Fields.Count;
+					am_cache = new Field (parent, new TypeExpression (type, loc),
+						Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED,
+						CompilerGeneratedClass.MakeName (null, "f", "am$cache", id), null, loc);
+					am_cache.Define ();
+					parent.AddField (am_cache);
+				}
 			}
 
 			ILGenerator ig = ec.ig;
@@ -1531,6 +1534,23 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError ()
 		{
 			return TypeManager.CSharpName (type);
+		}
+
+		static bool HasGenericTypeParameter (Type type)
+		{
+#if GMCS_SOURCE
+			if (type.IsGenericParameter)
+				return true;
+
+			if (!type.IsGenericType)
+				return false;
+
+			foreach (Type t in type.GetGenericArguments ()) {
+				if (HasGenericTypeParameter (t))
+					return true;
+			}
+#endif
+			return false;
 		}
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
