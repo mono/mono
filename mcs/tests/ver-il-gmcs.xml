@@ -15161,6 +15161,58 @@
       </method>
     </type>
   </test>
+  <test name="gtest-iter-06.cs">
+    <type name="Mono.Rocks.KeyValuePair">
+      <method name="Nullable`1 Just[TKey,TValue](TKey, TValue)">
+        <size>16</size>
+      </method>
+    </type>
+    <type name="Mono.Rocks.Sequence">
+      <method name="IEnumerable`1 Unfoldr[TSource,TResult](TSource, System.Func`2[TSource,System.Nullable`1[System.Collections.Generic.KeyValuePair`2[TResult,TSource]]])">
+        <size>8</size>
+      </method>
+      <method name="IEnumerable`1 CreateUnfoldrIterator[TSource,TResult](TSource, System.Func`2[TSource,System.Nullable`1[System.Collections.Generic.KeyValuePair`2[TResult,TSource]]])">
+        <size>30</size>
+      </method>
+    </type>
+    <type name="Mono.Rocks.Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>121</size>
+      </method>
+      <method name="Nullable`1 &lt;Main&gt;m__0(Int32)">
+        <size>30</size>
+      </method>
+    </type>
+    <type name="Mono.Rocks.Sequence+&lt;CreateUnfoldrIterator&gt;c__Iterator0`2[TSource,TResult]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="TResult System.Collections.Generic.IEnumerator`1[TResult].get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>12</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>65</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[TResult].GetEnumerator()">
+        <size>65</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>183</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>8</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-linq-01.cs">
     <type name="from.ITest">
       <method name="Int32 get_Id()">
