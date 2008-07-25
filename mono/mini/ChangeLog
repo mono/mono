@@ -1,5 +1,7 @@
 2008-07-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (EMIT_GET_RGCTX): Call EMIT_NEW_LDARG in emit_get_rgctx ().
+	
 	* method-to-ir.c (mono_method_to_ir2): Use mono_array_new_specific in the
 	gshared NEWARR implementation.
 
