@@ -1,3 +1,8 @@
+2008-07-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir2): Create a variable if needed when
+	accessing a field of a valuetype in LDFLD/STFLD. Fixes #412399.
+
 2008-07-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir2): Initialize an uninitialized variable
