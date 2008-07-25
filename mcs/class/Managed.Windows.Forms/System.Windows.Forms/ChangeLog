@@ -1,3 +1,7 @@
+2008-07-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* WebBrowser.cs: Removed debug output.
+
 2008-07-25  Jonathan Pobst  <monkey@jpobst.com>
 
 	* FileDialog.cs: Apply patch from Ernesto to clean up some
