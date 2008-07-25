@@ -584,6 +584,23 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void TestCellPositioning17 ()
+		{
+			// ColumnCount == RowCount == 0, but control is added at > 0.
+			// The columns and rows are created, but ColumnCount and RowCount remains 0
+			//
+			TableLayoutPanel p = new TableLayoutPanel ();
+			p.ColumnCount = 0;
+			p.RowCount = 0;
+			Control c1 = new Button ();
+
+			p.Controls.Add (c1, 6, 7);
+			Assert.AreEqual (new TableLayoutPanelCellPosition (6, 7), p.GetPositionFromControl (c1), "C1");
+			Assert.AreEqual (0, p.LayoutSettings.ColumnCount, "C2");
+			Assert.AreEqual (0, p.LayoutSettings.RowCount, "C3");
+		}
+
+		[Test]
 		public void TestRowColumnSizes1 ()
 		{
 			// Row span = 2, but control is in the last row, creates new row
