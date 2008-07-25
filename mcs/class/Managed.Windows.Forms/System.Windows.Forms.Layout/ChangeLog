@@ -1,3 +1,8 @@
+2008-07-26  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TableLayout.cs: Perform layout even if they are no child controls, so 
+	that cell sizes are updated properly for the cell border painting.
+
 2008-07-25  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TableLayout.cs: For newly created cells for controls without a 

@@ -54,10 +54,6 @@ namespace System.Windows.Forms.Layout
 			TableLayoutPanel panel = container as TableLayoutPanel;
 			TableLayoutSettings settings = panel.LayoutSettings;
 			
-			// Nothing to layout, don't waste time
-			if (panel.Controls.Count == 0) 
-				return false;
-
 			// STEP 1:
 			// - Figure out which row/column each control goes into
 			// - Store data in the TableLayoutPanel.actual_positions
