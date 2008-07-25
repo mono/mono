@@ -1,5 +1,12 @@
 2008-07-25  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* ScrollableControl.cs: Perform layouting after the AutoScroll 
+	properties have changed, so that the changes have immediate 
+	effect.
+	[Fixes bug #409090]
+
+2008-07-25  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* XplatUIX11.cs: Non Client area is actually Client such in the 
 	case of NotifyIcon, so double check WholeWindow == ClientWindow 
 	when adding an expose.
