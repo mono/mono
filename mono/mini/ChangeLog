@@ -1,3 +1,15 @@
+2008-07-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* ir-emit.h (NEW_ARGLOAD): Use cfg->args and cfg->arg_types so this macro
+	can be used outside of method_to_ir.
+
+	* mini.h (MonoCompile): Add arg_types field.
+
+	* method-to-ir.c (inline_method): Save/Restore cfg->args and cfg->arg_types.
+	
+	* method-to-ir.c (mono_method_to_ir2): Set cfg->args and cfg->arg_types to
+	the values of the local arg_array and param_types array.
+
 2008-07-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir2): Allocate a GOT var for NEWOBJ, since
