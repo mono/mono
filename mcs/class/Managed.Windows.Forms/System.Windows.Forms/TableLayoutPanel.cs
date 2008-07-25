@@ -65,6 +65,8 @@ namespace System.Windows.Forms
 		{
 			settings = new TableLayoutSettings(this);
 			cell_border_style = TableLayoutPanelCellBorderStyle.None;
+			column_widths = new int[0];
+			row_heights = new int[0];
 		}
 		#endregion
 
@@ -298,9 +300,6 @@ namespace System.Windows.Forms
 		{
 			base.OnPaintBackground (e);
 
-			if (column_widths == null || row_heights == null)
-				return;
-				
 			DrawCellBorders (e);
 			
 			int border_width = GetCellBorderWidth (CellBorderStyle);
