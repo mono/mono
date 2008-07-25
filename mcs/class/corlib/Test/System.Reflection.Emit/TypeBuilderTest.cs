@@ -2051,6 +2051,7 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test]
 		[Category ("NotDotNet")]
+		[Category ("NotWorking")]
 		public void GetMethod_AcceptMethodFromInflatedTypeBuilder_UnderCompilerContext () {
 			AssemblyName assemblyName = new AssemblyName ();
 			assemblyName.Name = ASSEMBLY_NAME;

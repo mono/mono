@@ -1,3 +1,8 @@
+2008-07-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilderTest.cs: Disable the special behavior of GetMethod
+	under compiler behavior as mcs has been fixed.
+
 2008-07-22 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilderTest.cs: Added tests for the special cased behavior
