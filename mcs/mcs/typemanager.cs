@@ -3294,12 +3294,36 @@ namespace Mono.CSharp {
 	{
 		MethodInfo get_method = pi.GetGetMethod (true);
 		MethodInfo set_method = pi.GetSetMethod (true);
+		int g_count = 0;
+		int s_count = 0;
 		if (get_method != null && set_method != null) {
-			int g_count = get_method.GetParameters ().Length;
-			int s_count = set_method.GetParameters ().Length;
+			g_count = get_method.GetParameters ().Length;
+			s_count = set_method.GetParameters ().Length;
 			if (g_count + 1 != s_count)
 				return false;
+		} else if (get_method != null) {
+			g_count = get_method.GetParameters ().Length;
+		} else if (set_method != null) {
+			s_count = set_method.GetParameters ().Length;
 		}
+
+		//
+		// DefaultMemberName and indexer name has to match to identify valid C# indexer
+		//
+		if ((s_count > 1 || g_count > 0) && TypeManager.default_member_type != null) {
+			object[] o = pi.DeclaringType.GetCustomAttributes (TypeManager.default_member_type, false);
+			if (o.Length == 0)
+				return false;
+			
+			DefaultMemberAttribute dma = (DefaultMemberAttribute) o [0];
+			if (dma.MemberName != pi.Name)
+				return false;
+			if (get_method != null && "get_" + dma.MemberName != get_method.Name)
+				return false;
+			if (set_method != null && "set_" + dma.MemberName != set_method.Name)
+				return false;
+		}
+
 		return true;
 	}
 

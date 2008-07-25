@@ -1,5 +1,11 @@
 2008-07-25  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #323644
+	* typemanager.cs (IsValidProperty): Verify DefaultMemberName when checking
+	indexers.
+
+2008-07-25  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #412134
 	* expression.cs (ResolveOperatorEnum): Do implicit conversion of
 	non-enumerable operands when overloading equality or bitwise operators.
