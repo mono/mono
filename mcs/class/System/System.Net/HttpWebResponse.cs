@@ -52,11 +52,11 @@ namespace System.Net
 		Version version;
 		HttpStatusCode statusCode;
 		string statusDescription;
-		long contentLength = -1;
+		long contentLength;
 		string contentType;
 		CookieContainer cookie_container;
 
-		bool disposed = false;
+		bool disposed;
 		Stream stream;
 		
 		// Constructors
@@ -70,6 +70,13 @@ namespace System.Net
 			statusCode = (HttpStatusCode) data.StatusCode;
 			statusDescription = data.StatusDescription;
 			stream = data.stream;
+
+			try {
+				contentLength = (long) UInt64.Parse (webHeaders ["Content-Length"]);
+			} catch (Exception) {
+				contentLength = - 1;
+			}
+
 			if (container != null) {
 				this.cookie_container = container;	
 				FillCookies ();
@@ -117,7 +124,8 @@ namespace System.Net
 		}
 		
 		public string ContentEncoding {
-			get { 
+			get {
+				CheckDisposed ();
 				string h = webHeaders ["Content-Encoding"];
 				return h != null ? h : "";
 			}
@@ -125,21 +133,14 @@ namespace System.Net
 		
 		public override long ContentLength {		
 			get {
-				if (contentLength != -1)
-					return contentLength;
-
-				try {
-					contentLength = (long) UInt64.Parse (webHeaders ["Content-Length"]); 
-				} catch (Exception) {
-					return -1;
-				}
-
 				return contentLength;
 			}
 		}
 		
 		public override string ContentType {		
 			get {
+				CheckDisposed ();
+
 				if (contentType == null)
 					contentType = webHeaders ["Content-Type"];
 
@@ -148,18 +149,23 @@ namespace System.Net
 		}
 		
 		public CookieCollection Cookies {
-			get { 
+			get {
+				CheckDisposed ();
 				if (cookieCollection == null)
 					cookieCollection = new CookieCollection ();
 				return cookieCollection;
 			}
 			set {
+				CheckDisposed ();
 				cookieCollection = value;
 			}
 		}
 		
 		public override WebHeaderCollection Headers {		
-			get { 
+			get {
+#if ONLY_1_1
+				CheckDisposed ();
+#endif
 				return webHeaders; 
 			}
 		}
@@ -181,6 +187,7 @@ namespace System.Net
 		
 		public DateTime LastModified {
 			get {
+				CheckDisposed ();
 				try {
 					string dtStr = webHeaders ["Last-Modified"];
 					return MonoHttpDate.Parse (dtStr);
@@ -191,37 +198,42 @@ namespace System.Net
 		}
 		
 		public string Method {
-			get { 
+			get {
+				CheckDisposed ();
 				return method; 
 			}
 		}
 		
 		public Version ProtocolVersion {
-			get { 
+			get {
+				CheckDisposed ();
 				return version; 
 			}
 		}
 		
 		public override Uri ResponseUri {		
-			get { 
+			get {
+				CheckDisposed ();
 				return uri; 
 			}
 		}		
 		
 		public string Server {
-			get { 
+			get {
+				CheckDisposed ();
 				return webHeaders ["Server"]; 
 			}
 		}
 		
 		public HttpStatusCode StatusCode {
-			get { 
+			get {
 				return statusCode; 
 			}
 		}
 		
 		public string StatusDescription {
-			get { 
+			get {
+				CheckDisposed ();
 				return statusDescription; 
 			}
 		}
@@ -236,6 +248,7 @@ namespace System.Net
 		
 		public string GetResponseHeader (string headerName)
 		{
+			CheckDisposed ();
 			string value = webHeaders [headerName];
 			return (value != null) ? value : "";
 		}
@@ -311,7 +324,9 @@ namespace System.Net
 			if (disposing) {
 				// release managed resources
 				uri = null;
+#if !NET_2_0
 				webHeaders = null;
+#endif
 				cookieCollection = null;
 				method = null;
 				version = null;

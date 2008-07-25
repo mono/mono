@@ -1,3 +1,7 @@
+2008-07-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* HttpWebResponseTest.cs: Enabled tests.
+
 2008-07-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpListener2Test.cs: Added test for multiple responses.

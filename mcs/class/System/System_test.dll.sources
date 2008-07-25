@@ -194,6 +194,7 @@ System.Net/DnsTest.cs
 System.Net/FileWebRequestTest.cs
 System.Net/FileWebResponseTest.cs
 System.Net/HttpWebRequestTest.cs
+System.Net/HttpWebResponseTest.cs
 System.Net/HttpListenerTest.cs
 System.Net/HttpListenerBasicIdentityTest.cs
 System.Net/HttpListenerPrefixCollectionTest.cs

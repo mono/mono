@@ -19,7 +19,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Net
 {
 	[TestFixture]
-	[Ignore ("Awaits approval of fixes")]
 	public class HttpWebResponseTest
 	{
 		[Test]
