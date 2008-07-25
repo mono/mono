@@ -1,5 +1,7 @@
 2008-07-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* cpu-sparc.md: Remove duplicate localloc_imm opcode.
+
 	* ir-emit.h (NEW_ARGLOAD): Use cfg->args and cfg->arg_types so this macro
 	can be used outside of method_to_ir.
 
