@@ -376,8 +376,8 @@ namespace System.Windows.Forms
 		{
 			ControlPaint.DrawBorder (g, rect, SystemColors.ControlDark, ButtonBorderStyle.Solid);
 
-			int x = 0;
-			int y = 0;
+			int x = DisplayRectangle.X;
+			int y = DisplayRectangle.Y;
 
 			for (int i = 0; i < column_widths.Length - 1; i++) {
 				x += column_widths[i] + 1;
@@ -396,8 +396,8 @@ namespace System.Windows.Forms
 		{
 			ControlPaint.DrawBorder3D (g, rect, Border3DStyle.Etched);
 			
-			int x = 0;
-			int y = 0;
+			int x = DisplayRectangle.X;
+			int y = DisplayRectangle.Y;
 
 			for (int i = 0; i < column_widths.Length - 1; i++) {
 				x += column_widths[i] + 2;
@@ -419,8 +419,8 @@ namespace System.Windows.Forms
 			g.DrawRectangle (SystemPens.ControlDark, new Rectangle (rect.Left + 1, rect.Top + 1, rect.Width - 2, rect.Height - 2));
 			g.DrawRectangle (Pens.White, new Rectangle (rect.Left, rect.Top, rect.Width - 2, rect.Height - 2));
 
-			int x = 0;
-			int y = 0;
+			int x = DisplayRectangle.X;
+			int y = DisplayRectangle.Y;
 
 			for (int i = 0; i < column_widths.Length - 1; i++) {
 				x += column_widths[i] + 2;
@@ -445,8 +445,8 @@ namespace System.Windows.Forms
 			g.DrawRectangle (SystemPens.ControlDark, new Rectangle (rect.Left + 2, rect.Top + 2, rect.Width - 2, rect.Height - 2));
 			g.DrawRectangle (Pens.White, new Rectangle (rect.Left, rect.Top, rect.Width - 2, rect.Height - 2));
 
-			int x = 0;
-			int y = 0;
+			int x = DisplayRectangle.X;
+			int y = DisplayRectangle.Y;
 
 			for (int i = 0; i < column_widths.Length - 1; i++) {
 				x += column_widths[i] + 3;
@@ -462,9 +462,9 @@ namespace System.Windows.Forms
 				g.DrawLine (SystemPens.ControlDark, new Point (3, y + 2), new Point (Right - 4, y + 2));
 			}
 
-			x = 0;
-			y = 0;
-			
+			x = DisplayRectangle.X;
+			y = DisplayRectangle.Y;
+
 			for (int i = 0; i < column_widths.Length - 1; i++) {
 				x += column_widths[i] + 3;
 
@@ -486,8 +486,8 @@ namespace System.Windows.Forms
 			g.DrawRectangle (Pens.White, new Rectangle (rect.Left + 2, rect.Top + 2, rect.Width - 2, rect.Height - 2));
 			g.DrawRectangle (SystemPens.ControlDark, new Rectangle (rect.Left, rect.Top, rect.Width - 2, rect.Height - 2));
 
-			int x = 0;
-			int y = 0;
+			int x = DisplayRectangle.X;
+			int y = DisplayRectangle.Y;
 
 			for (int i = 0; i < column_widths.Length - 1; i++) {
 				x += column_widths[i] + 3;
@@ -503,8 +503,8 @@ namespace System.Windows.Forms
 				g.DrawLine (Pens.White, new Point (3, y + 2), new Point (Right - 4, y + 2));
 			}
 
-			x = 0;
-			y = 0;
+			x = DisplayRectangle.X;
+			y = DisplayRectangle.Y;
 			
 			for (int i = 0; i < column_widths.Length - 1; i++) {
 				x += column_widths[i] + 3;
