@@ -1,5 +1,8 @@
 2008-07-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Use mono_array_new_specific in the
+	gshared NEWARR implementation.
+
 	* cpu-sparc.md: Remove duplicate localloc_imm opcode.
 
 	* ir-emit.h (NEW_ARGLOAD): Use cfg->args and cfg->arg_types so this macro
