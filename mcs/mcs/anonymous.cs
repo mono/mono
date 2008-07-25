@@ -276,7 +276,7 @@ namespace Mono.CSharp {
 			e.Emit (ec);
 
 			LocalBuilder builder = ec.GetTemporaryLocal (storey_type_expr.Type);
-			Instance = new LocalTemporary (storey_type_expr.Type);
+			Instance = new LocalTemporary (builder, storey_type_expr.Type);
 			Instance.Store (ec);
 
 			SymbolWriter.DefineScopeVariable (ID, builder);
