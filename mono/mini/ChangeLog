@@ -1,5 +1,10 @@
 2008-07-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Avoid a crash if 
+	mini_method_get_context () returns NULL. Fixes #356531.
+
+	* mini.c (mono_method_to_ir): Ditto.
+	
 	* method-to-ir.c (mono_method_to_ir2): Create a variable if needed when
 	accessing a field of a valuetype in LDFLD/STFLD. Fixes #412399.
 
