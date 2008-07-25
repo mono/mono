@@ -6,6 +6,11 @@
 
 2008-07-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* cpu-x86.md: Increase the length of the fcall opcodes.
+
+	* mini-x86.c (emit_move_return_value): Avoid some precision issues for
+	calls returning floats.
+
 	* method-to-ir.c (mono_method_to_ir2): Remove the generic sharing restrictions
 	on NEWARR.
 	
