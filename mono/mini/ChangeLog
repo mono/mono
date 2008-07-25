@@ -1,8 +1,11 @@
 2008-07-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Remove the generic sharing restrictions
+	on NEWARR.
+	
 	* method-to-ir.c (mono_method_to_ir2): Merge some LDFTN gsharing changes
 	missed earlier.
-	
+
 	* method-to-ir.c (handle_delegate_ctor): Avoid putting dynamic methods
 	into the domain->method_code_hash.
 
