@@ -1,5 +1,10 @@
 2008-07-25  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* ScrollableControl.cs: Update PerformLayout calls to include 
+	provide the name of the property that changed.
+
+2008-07-25  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* TableLayoutPanel.cs: Draw relative to the DisplayRectangle 
 	location. Fixes drawing of border and cell borders if scrollable.
 

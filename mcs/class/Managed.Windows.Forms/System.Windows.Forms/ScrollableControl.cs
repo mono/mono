@@ -388,7 +388,7 @@ namespace System.Windows.Forms {
 			set {
 				if (auto_scroll != value) {
 					auto_scroll = value;
-					PerformLayout ();
+					PerformLayout (this, "AutoScroll");
 				}
 			}
 		}
@@ -429,7 +429,7 @@ namespace System.Windows.Forms {
 				if (value != auto_scroll_min_size) {
 					auto_scroll_min_size = value;
 					AutoScroll = true;
-					PerformLayout ();
+					PerformLayout (this, "AutoScrollMinSize");
 				}
 			}
 		}
