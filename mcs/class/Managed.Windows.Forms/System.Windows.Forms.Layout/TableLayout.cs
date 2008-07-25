@@ -181,7 +181,13 @@ namespace System.Windows.Forms.Layout
 				}
 
 				// We ran out of room in the grid, and have more controls, what is our GrowStyle?
-				switch (settings.GrowStyle) {
+				TableLayoutPanelGrowStyle adjustedGrowStyle = settings.GrowStyle;
+				if (panel.LayoutSettings.ColumnCount == 0)
+					adjustedGrowStyle = TableLayoutPanelGrowStyle.AddRows;
+				else if (panel.LayoutSettings.RowCount == 0)
+					adjustedGrowStyle = TableLayoutPanelGrowStyle.AddColumns;
+					
+				switch (adjustedGrowStyle) {
 					case TableLayoutPanelGrowStyle.AddColumns:
 						return CalculateControlPositions (panel, columns + 1, rows);
 					case TableLayoutPanelGrowStyle.AddRows:

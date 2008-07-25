@@ -1,5 +1,12 @@
 2008-07-25  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* TableLayout.cs: For newly created cells for controls without a 
+	specifically assinged such enforce AddRows if ColumnCount == 0 else 
+	AddColumns if RowCount == 0.
+	[Fixes bug #412163]
+
+2008-07-25  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* TableLayout.cs: Automagically add the required number of columns/rows 
 	if the control is added at non-existent such. Note that ColumnCount and 
 	RowCount do not change in LayoutSettings.
