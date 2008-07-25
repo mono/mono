@@ -1,3 +1,14 @@
+2008-07-25 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_generic_argument_constraints_test.sh: New test
+	generator for constraint compatibility of generic arguments.
+
+	* make_tests.sh: Added tests using using
+	the new generator.
+
+	* invalid_generic_argument_violate_type_constraint.il:
+	Test for constraints compatibility between types.
+
 2008-07-24 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* unverifiable_binary_compare_with_generic_argument.il:
