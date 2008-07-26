@@ -1,3 +1,7 @@
+2008-07-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* X509CertificateTest.cs: Added asserts for Subject and Issuer.
+
 2006-11-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Cert20Test.cs: Add test cases for Equals and Export.
