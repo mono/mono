@@ -586,7 +586,7 @@ namespace Mono.CSharp
 				if (arg.Length == 0)
 					continue;
 
-				if (arg.StartsWith ("@")) {
+				if (arg [0] == '@') {
 					string [] extra_args;
 					string response_file = arg.Substring (1);
 
@@ -619,7 +619,7 @@ namespace Mono.CSharp
 						continue;
 					}
 
-					if (arg.StartsWith ("-")) {
+					if (arg [0] == '-') {
 						if (UnixParseOption (arg, ref args, ref i))
 							continue;
 
@@ -1069,7 +1069,7 @@ namespace Mono.CSharp
 				value = option.Substring (idx + 1);
 			}
 
-			switch (arg){
+			switch (arg.ToLower (CultureInfo.InvariantCulture)){
 			case "/nologo":
 				return true;
 
@@ -1456,10 +1456,6 @@ namespace Mono.CSharp
 #if GMCS_SOURCE
 				case "iso-2":
 					RootContext.Version = LanguageVersion.ISO_2;
-					return true;
-					
-				case "linq":
-					Report.Warning (-30, 1, "Deprecated: The `linq' option is no longer required and should not be used");
 					return true;
 #endif
 				}
