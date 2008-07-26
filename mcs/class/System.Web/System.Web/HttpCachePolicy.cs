@@ -381,8 +381,10 @@ namespace System.Web {
 				if (MaxAge.TotalSeconds != 0)
 					cc = String.Concat (cc, ", max-age=", ((long) MaxAge.TotalSeconds).ToString ());
 
-				string expires = TimeUtil.ToUtcTimeString (expire_date);
-				headers.Add (new UnknownResponseHeader ("Expires", expires));
+				if (have_expire_date) {
+					string expires = TimeUtil.ToUtcTimeString (expire_date);
+					headers.Add (new UnknownResponseHeader ("Expires", expires));
+				}
 			}
 
 			if (set_no_store)

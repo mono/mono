@@ -1,3 +1,8 @@
+2008-07-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* HttpCachePolicy.cs: Only add Expires header if expire date is
+	actually set.
+
 2008-07-23  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplication.cs: do not register handlers for
