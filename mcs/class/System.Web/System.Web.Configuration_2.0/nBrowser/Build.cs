@@ -314,7 +314,8 @@ namespace System.Web.Configuration.nBrowser
 			}
 			System.Diagnostics.Trace.WriteLine(string.Join("+", new string[50]));
 #endif			
-			return Browser().Process(header, r, new System.Collections.Generic.List<System.Web.Configuration.nBrowser.Identification>());
+			Browser().Process(header, r, new System.Collections.Generic.List<System.Text.RegularExpressions.Match>());
+			return r;
 		}
 		/// <summary>
 		/// 

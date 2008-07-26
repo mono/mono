@@ -18,6 +18,8 @@
     	<capability name="changedInRefNode" value="changed" />
     	<capability name="capturedInOrigNode" value="uaInOrig:${capturename}" />
     	<capability name="capturedInRefNode" value="uaInRef:${refuacapturename}" />
+    	<capability name="multipleSubstitutions" value="uaInOrig:${capturename} uaInRef:${refuacapturename}" />
+    	<capability name="specialCharsInValue" value="10%*$100=$10" />
     </capabilities>
   </browser>
 </browsers>

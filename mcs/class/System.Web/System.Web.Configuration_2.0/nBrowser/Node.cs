@@ -27,6 +27,8 @@ namespace System.Web.Configuration.nBrowser
 	using System;
 	using System.Collections.Generic;
 	using System.Text;
+	using System.Text.RegularExpressions;
+		
 	internal class Node
 	{
 		#region Public Properties
@@ -528,13 +530,36 @@ namespace System.Web.Configuration.nBrowser
 		}
 		
 		/// <summary>
-		/// 
+		/// Matches the header collection against this subtree and uses the matchList
+		/// and any new matches to augment the result.  This method calls ProcessSubtree()
+		/// but then removes the matches that it adds to the matchList.
 		/// </summary>
-		/// <param name="header"></param>
-		/// <param name="result"></param>
-		/// <param name="List"></param>
-		/// <returns></returns>
-		internal nBrowser.Result Process(System.Collections.Specialized.NameValueCollection header, nBrowser.Result result, System.Collections.Generic.List<System.Web.Configuration.nBrowser.Identification> List)
+		/// <param name="header">the header collection to evaluate (invariant)</param>
+		/// <param name="result">the result of the match (might be changed if a match is found)</param>
+		/// <param name="matchList">the matches to use to do substitutions (invariant)</param>
+		/// <returns>true iff this node or one of it's descendants matches</returns>
+		internal bool Process(System.Collections.Specialized.NameValueCollection header, nBrowser.Result result,
+		                      System.Collections.Generic.List<Match> matchList)
+		{
+			// The real work is done in ProcessSubtree.  This method just ensures that matchList is restored
+			// to its original state before returning.
+			int origMatchListCount = matchList.Count;
+			bool matched = ProcessSubtree(header, result, matchList);
+			if (matchList.Count > origMatchListCount)
+				matchList.RemoveRange(origMatchListCount, matchList.Count-origMatchListCount);
+			return matched;
+		}
+		
+		/// <summary>
+		/// Matches the header collection against this subtree, adds any new matches for this node to
+		/// matchList, and uses the matchList to augment the result.  
+		/// </summary>
+		/// <param name="header">the header collection to evaluate (invariant)</param>
+		/// <param name="result">the result of the match (might be changed if a match is found)</param>
+		/// <param name="matchList">the matches to use to do substitutions, 
+		/// possibly including new matches for this node.</param>
+		/// <returns>true iff this node or one of it's descendants matches</returns>
+		private bool ProcessSubtree(System.Collections.Specialized.NameValueCollection header, nBrowser.Result result, System.Collections.Generic.List<Match> matchList)
 		{
 			//----------------------------------------------------------------------
 			//This is just coded over from MS version since if you pass in an empty
@@ -542,13 +567,16 @@ namespace System.Web.Configuration.nBrowser
 			//----------------------------------------------------------------------
 			result.AddCapabilities("", header["User-Agent"]);
 
-			//this step shouldn't really be necessary, if it was checked
-			//prior to calling this method, but we assume it hasn't and
-			//recheck anyways.
-			if (BrowserIdentification(header, result) == false)
+			if (RefId.Length == 0 && this.NameType != NodeType.DefaultBrowser)
 			{
-				return result;
+				//----------------------------------------------------------------------
+				//BrowserIdentification adds all the Identifiction matches to the match
+				//list if this node matches.
+				//----------------------------------------------------------------------
+				if (!BrowserIdentification(header, result, matchList))
+					return false;
 			}
+
 			#region Browser Identification Successfull
 			//----------------------------------------------------------------------
 			//By reaching this point, it either means there were no Identification 
@@ -562,18 +590,7 @@ namespace System.Web.Configuration.nBrowser
 			//----------------------------------------------------------------------
 			if (Adapter != null)
 			{
-				/* Lookup the types and store them for future use */
-				if (AdapterControlTypes == null)
-					AdapterControlTypes = new Type [Adapter.Count];
-				if (AdapterTypes == null)
-					AdapterTypes = new Type [Adapter.Count];
-				for (int i = 0;i <= Adapter.Count - 1;i++) {
-					if (AdapterControlTypes [i] == null)
-						AdapterControlTypes [i] = FindType (Adapter.GetKey (i));
-					if (AdapterTypes [i] == null)
-						AdapterTypes [i] = FindType (Adapter [i]);
-				}
-
+				LookupAdapterTypes();
 				for (int i = 0;i <= Adapter.Count - 1;i++)
 				{
 					result.AddAdapter(AdapterControlTypes [i], AdapterTypes [i]);
@@ -593,27 +610,12 @@ namespace System.Web.Configuration.nBrowser
 					result.MarkupTextWriter = Type.GetType(MarkupTextWriterType, true, true);
 			}
 
-			//----------------------------------------------------------------------
-			//Adds all the Identifiction matches to the List of Identification
-			//list.
-			//----------------------------------------------------------------------
-			if (this.NameType != NodeType.DefaultBrowser)
-			{
-				for (int i = 0;i <= Identification.Length - 1;i++)
-				{
-					if (Identification[i].HasCaptureGroups == true)
-					{
-						List.Add(Identification[i]);
-					}
-				}
-			}
 			#endregion
 			#region Capture
 			if (Capture != null)
 			{
 				//----------------------------------------------------------------------
-				//Adds all the sucessfull Capture matches to the List of generic 
-				//Identification list.
+				//Adds all the sucessfull Capture matches to the matchList
 				//----------------------------------------------------------------------
 				for (int i = 0;i <= Capture.Length - 1;i++)
 				{
@@ -624,19 +626,18 @@ namespace System.Web.Configuration.nBrowser
 					{
 						continue;
 					}
-					//take no chances get back to base state.
-					Capture[i].Reset();
+					Match m = null;
 					if (Capture[i].Group == "header")
 					{
-						Capture[i].Match(header[Capture[i].Name]);
+						m = Capture[i].GetMatch(header[Capture[i].Name]);
 					}
 					else if (Capture[i].Group == "capability")
 					{
-						Capture[i].Match(result[Capture[i].Name]);
+						m = Capture[i].GetMatch(result[Capture[i].Name]);
 					}
-					if (Capture[i].Success == true && Capture[i].HasCaptureGroups == true)
+					if (Capture[i].IsMatchSuccessful(m) && m.Groups.Count > 0)
 					{
-						List.Add(Capture[i]);
+						matchList.Add(m);
 					}
 				}
 			}
@@ -653,84 +654,49 @@ namespace System.Web.Configuration.nBrowser
 				for (int i = 0;i <= Capabilities.Count - 1;i++)
 				{
 					//----------------------------------------------------------------------
-					//Most items do not have any regular expression in them
-					//so we can add them directly to the results.
+					//We need to further process these Capabilities to 
+					//insert the proper information.
 					//----------------------------------------------------------------------
-					if (Capabilities[i].IndexOf("$") == -1 && Capabilities[i].IndexOf("%") == -1)
+					string v = Capabilities[i];
+
+					//----------------------------------------------------------------------
+					//Loop though the list of Identifiction/Capture Matches
+					//in reverse order. Meaning the newest Items in the list
+					//get checked first, then working to the oldest. Often times
+					//Minor /Major revisition numbers will be listed multple times
+					//and only the newest one (most recent matches) are the ones
+					//we want to insert.
+					//----------------------------------------------------------------------
+					for (int a = matchList.Count - 1; a >= 0 && v != null && v.Length > 0 &&  v.IndexOf("$") > -1; a--)
 					{
-						result.AddCapabilities(Capabilities.Keys[i], Capabilities[i]);
+						// Don't do substitution if the match has no groups or was a nonMatch
+						if (matchList[a].Groups.Count == 0 || !matchList[a].Success)
+							continue;
+						v = matchList[a].Result(v);
 					}
-					else
+
+					//----------------------------------------------------------------------
+					//Checks to make sure we extract the result we where looking for.
+					//----------------------------------------------------------------------
+					if (v.IndexOf("$") > -1 || v.IndexOf("%") > -1)
 					{
 						//----------------------------------------------------------------------
-						//We need to further process these Capabilities to 
-						//insert the proper information.
+						//Microsoft has a nasty habbit of using capability items in regular expressions
+						//so I have to figure a nice way to working around it
+						// <capability name="msdomversion"		value="${majorversion}${minorversion}" />
 						//----------------------------------------------------------------------
-						string v = string.Empty;
 
-						//----------------------------------------------------------------------
-						//Loop though the list of Identifiction/Capture Matches
-						//in reverse order. Meaning the newest Items in the list
-						//get checked first, then working to the oldest. Often times
-						//Minor /Major revisition numbers will be listed multple times
-						//and only the newest one (most recent matches) are the ones
-						//we want to insert.
-						//----------------------------------------------------------------------
-						if (Capabilities[i].IndexOf("$") >= -1)
-						{
-							for (int a = List.Count - 1;a >= 0;a--)
-							{
-								v = ((System.Web.Configuration.nBrowser.Identification)List[a]).Result(Capabilities[i]);
-								//----------------------------------------------------------------------
-								//exit the loop once we are able to extract a result.
-								//----------------------------------------------------------------------
-								if (v.Length > 0 && v.IndexOf("$") == -1)
-								{
-									break;
-								}
-							}
-						}
-						//----------------------------------------------------------------------
-						//Checks to make sure we extract the result we where looking for.
-						//----------------------------------------------------------------------
-						if (v.IndexOf("$") > -1 || v.IndexOf("%") > -1)
-						{
-							//----------------------------------------------------------------------
-							//Microsoft has a nasty habbit of using capability items in regular expressions
-							//so I have to figure a nice way to working around it
-							// <capability name="msdomversion"		value="${majorversion}${minorversion}" />
-							//----------------------------------------------------------------------
-
-							//double checks the values against the current Capabilities. to 
-							//find any last minute matches. that are not defined by regluar
-							//expressions
-							v = result.Replace(v);
-						}
-
-						if (v.Length > 0 && v.IndexOf("$") == -1 && v.IndexOf("%") == -1)
-						{
-							result.AddCapabilities(Capabilities.Keys[i], v);
-						}
-						else
-						{
-							//----------------------------------------------------------------------
-							//This happens pretty often, especially when mobile phone browsers
-							//are in use, and different proxie servers send back varying amount
-							//of details, when Items are missing, this will often pop.
-							//----------------------------------------------------------------------
-							//Console.WriteLine(this.Id +"\t"+v);
-						}
+						//double checks the values against the current Capabilities. to 
+						//find any last minute matches. that are not defined by regluar
+						//expressions
+						v = result.Replace(v);
 					}
+
+					result.AddCapabilities(Capabilities.Keys[i], v);
 				}
 			}
 			#endregion
-			if (Adapter != null)
-			{
-				for (int i = 0;i <= Adapter.Count - 1;i++)
-				{
-					result.AddAdapter(AdapterControlTypes [i], AdapterTypes [i]);
-				}
-			}
+
 			//----------------------------------------------------------------------
 			//Run the Default Children after the Parent Node is finished with 
 			//what it is doing
@@ -741,7 +707,7 @@ namespace System.Web.Configuration.nBrowser
 				Node node = DefaultChildren[key];
 				if (node.NameType == NodeType.DefaultBrowser)
 				{
-					node.Process(header, result, List);
+					node.Process(header, result, matchList);
 				}
 			}
 			//----------------------------------------------------------------------
@@ -758,87 +724,33 @@ namespace System.Web.Configuration.nBrowser
 				Node node = Children[key];
 				if (node.NameType == NodeType.Gateway)
 				{
-					node.Process(header, result, List);
+					node.Process(header, result, matchList);
 				}
 			}
 			for (int i = 0;i <= Children.Count - 1;i++)
 			{
 				string key = ChildrenKeys[i];
 				Node node = Children[key];
-				if (node.NameType == NodeType.Browser)
-				{
-					if (node.BrowserIdentification(header, result) == true)
-					{
-						node.Process(header, result, List);
-						break;
-					}
-				}
+				if (node.NameType == NodeType.Browser 
+				    && node.Process(header, result, matchList))
+					break;
 			}
 
-			#region Remove Identification & Caputers from lists
-			//----------------------------------------------------------------------
-			//
-			//---------------------------------------------------------------------
-			if (Identification != null)
-			{
-				for (int i = 0;i <= Identification.Length - 1;i++)
-				{
-					//shouldn't happen often, the null should
-					//signal the end of the list, I keep procssing
-					//the rest just in case
-					if (Identification[i] == null)
-					{
-						continue;
-					}
-					if (Identification[i].HasCaptureGroups == true)
-					{
-						List.Remove(Identification[i]);
-					}
-				}
-			}
-			//----------------------------------------------------------------------
-			//
-			//---------------------------------------------------------------------
-			if (Capture != null)
-			{
-				for (int i = 0;i <= Capture.Length - 1;i++)
-				{
-					//shouldn't happen often, the null should
-					//signal the end of the list, I keep procssing
-					//the rest just in case
-					if (Capture[i] == null)
-					{
-						continue;
-					}
-					if (Capture[i].Success == true && Capture[i].HasCaptureGroups == true)
-					{
-						List.Remove(Capture[i]);
-					}
-				}
-			}
-			#endregion
-
-			return result;
+			return true;
 		}
+		
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="header"></param>
 		/// <param name="result"></param>
-		/// <returns></returns>
-		public bool BrowserIdentification(System.Collections.Specialized.NameValueCollection header, System.Web.Configuration.CapabilitiesResult result)
+		/// <param name="matchList"></param>
+		/// <returns>true iff this node is a match</returns>
+		private bool BrowserIdentification(System.Collections.Specialized.NameValueCollection header, System.Web.Configuration.CapabilitiesResult result, System.Collections.Generic.List<Match> matchList)
 		{
 			if (Id.Length > 0 && RefId.Length > 0)
 			{
 				throw new nBrowser.Exception("Id and refID Attributes givin when there should only be one set not both");
-			}
-			if (RefId.Length > 0)
-			{
-				return true;
-			}
-			if (this.NameType == NodeType.DefaultBrowser)
-			{
-				return true;
 			}
 			if (Identification == null || Identification.Length == 0)
 			{
@@ -856,7 +768,7 @@ namespace System.Web.Configuration.nBrowser
 #if trace			   
 			System.Diagnostics.Trace.WriteLine(string.Format("{0}[{1}]", ("[" + this.Id + "]").PadRight(45), this.ParentId));
 #endif
-
+			
 			for (int i = 0;i <= Identification.Length - 1;i++)
 			{
 
@@ -867,8 +779,6 @@ namespace System.Web.Configuration.nBrowser
 				{
 					continue;
 				}
-				//take no chances get back to base state.
-				Identification[i].Reset();
 				string v = string.Empty;
 				if (string.Compare(Identification[i].Group, "header", true, System.Globalization.CultureInfo.CurrentCulture) == 0)
 				{
@@ -884,19 +794,14 @@ namespace System.Web.Configuration.nBrowser
 				{
 					v = string.Empty;
 				}
-				Identification[i].Match(v);
+				Match m = Identification[i].GetMatch(v);
 				//----------------------------------------------------------------------
 				//we exit this method return the orginal Result back to  the calling method.
 				//----------------------------------------------------------------------
-				if (Identification[i].Success == false)
+				if (Identification[i].IsMatchSuccessful(m) == false)
 				{
 #if trace 
 					System.Diagnostics.Trace.WriteLine(string.Format("{0}{1}", "Failed:".PadRight(45), Identification[i].Pattern));
-#endif
-					//just making sure to cleanup before we leave.
-					Identification[i].Reset();
-#if trace
-					System.Diagnostics.Trace.WriteLine("");
 #endif
 					return false;
 				}
@@ -905,6 +810,10 @@ namespace System.Web.Configuration.nBrowser
 #if trace 
 					System.Diagnostics.Trace.WriteLine(string.Format("{0}{1}", "Passed:".PadRight(45), Identification[i].Pattern));
 #endif
+					if (m.Groups.Count > 0)
+					{
+						matchList.Add(m);
+					}
 				}
 			}
 #if trace
@@ -912,6 +821,30 @@ namespace System.Web.Configuration.nBrowser
 #endif
 			return true;
 		}
+		
+		private bool HaveAdapterTypes = false;
+		private object LookupAdapterTypesLock = new object();
+		private void LookupAdapterTypes()
+		{
+			if (Adapter == null || HaveAdapterTypes) return;
+			lock (LookupAdapterTypesLock)
+			{
+				if (HaveAdapterTypes) return;
+				/* Lookup the types and store them for future use */
+				if (AdapterControlTypes == null)
+					AdapterControlTypes = new Type [Adapter.Count];
+				if (AdapterTypes == null)
+					AdapterTypes = new Type [Adapter.Count];
+				for (int i = 0;i <= Adapter.Count - 1;i++) {
+					if (AdapterControlTypes [i] == null)
+						AdapterControlTypes [i] = FindType (Adapter.GetKey (i));
+					if (AdapterTypes [i] == null)
+						AdapterTypes [i] = FindType (Adapter [i]);
+				}
+				HaveAdapterTypes = true;
+			}
+		}
+		
 		/// <summary>
 		/// 
 		/// </summary>
