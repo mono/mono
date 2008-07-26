@@ -1,3 +1,7 @@
+2008-07-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Unify the different 'test' targets somewhat.
+
 2008-07-21  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-getgenericarguments.2.cs: Test case catching static
