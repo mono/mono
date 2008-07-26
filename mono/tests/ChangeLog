@@ -1,5 +1,8 @@
 2008-07-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* appdomain-unload.cs: Disable the timeout test as there is no timeout in
+	the runtime any more.
+
 	* Makefile.am: Unify the different 'test' targets somewhat.
 
 2008-07-21  Mark Probst  <mark.probst@gmail.com>
