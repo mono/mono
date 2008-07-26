@@ -1,5 +1,15 @@
 2008-07-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* liveness.c: Disable the liveness2 pass on 32 bit platforms.
+
+	* method-to-ir.c (mono_handle_global_vregs): Make the component vregs of a
+	long vreg volatile even if the variable was already created.
+
+	* liveness.c (update_liveness2): Avoid eliminating dead definitions of
+	volatile variables.
+
+2008-07-26  Zoltan Varga  <vargaz@gmail.com>
+
 	* cpu-x86.md (fcall_membase): Increase the size of the fcall opcodes.
 
 	* mini.c (mono_jit_compile_method_inner): Add support for 
