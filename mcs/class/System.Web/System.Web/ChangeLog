@@ -1,7 +1,7 @@
 2008-07-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpCachePolicy.cs: Only add Expires header if expire date is
-	actually set.
+	actually set. Removed extra tabs and regions. Code formatting.
 
 2008-07-23  Marek Habersack  <mhabersack@novell.com>
 
