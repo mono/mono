@@ -1,5 +1,8 @@
 2008-07-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-x86.c: Merge some changes which seemed to have got lost
+	in the linear-ir merge.
+
 	* liveness.c: Disable the liveness2 pass on 32 bit platforms.
 
 	* method-to-ir.c (mono_handle_global_vregs): Make the component vregs of a
