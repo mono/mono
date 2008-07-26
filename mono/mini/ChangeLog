@@ -1,3 +1,9 @@
+2008-07-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c: Simplify the is_fp macros.
+	(free_up_ireg): Remove, use free_up_reg instead.
+	(free_up_reg): Fix the fp case.
+
 2008-07-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-arm.md (loadr8_membase): Increase the length of this as this is not
