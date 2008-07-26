@@ -619,19 +619,7 @@ namespace Mono.CSharp
 						continue;
 					}
 
-					if (arg.StartsWith ("-")) {
-						if (UnixParseOption (arg, ref args, ref i))
-							continue;
-
-						// Try a -CSCOPTION
-						string csc_opt = "/" + arg.Substring (1);
-						if (CSCParseOption (csc_opt, ref args))
-							continue;
-
-						Error_WrongOption (arg);
-						return false;
-					}
-					if (arg [0] == '/') {
+					if (arg [0] == '/' || arg [0] == '-') {
 						if (CSCParseOption (arg, ref args))
 							continue;
 
@@ -801,255 +789,7 @@ namespace Mono.CSharp
 			Console.WriteLine ("Mono C# compiler version {0}", version);
 			Environment.Exit (0);
 		}
-		
-		//
-		// Currently handles the Unix-like command line options, but will be
-		// deprecated in favor of the CSCParseOption, which will also handle the
-		// options that start with a dash in the future.
-		//
-		bool UnixParseOption (string arg, ref string [] args, ref int i)
-		{
-			switch (arg){
-			case "-v":
-				CSharpParser.yacc_verbose_flag++;
-				return true;
-
-			case "--version":
-				Version ();
-				return true;
-				
-			case "--parse":
-				parse_only = true;
-				return true;
-				
-			case "--main": case "-m":
-				Report.Warning (-29, 1, "Compatibility: Use -main:CLASS instead of --main CLASS or -m CLASS");
-				if ((i + 1) >= args.Length){
-					Usage ();
-					Environment.Exit (1);
-				}
-				RootContext.MainClass = args [++i];
-				return true;
-				
-			case "--unsafe":
-				Report.Warning (-29, 1, "Compatibility: Use -unsafe instead of --unsafe");
-				RootContext.Unsafe = true;
-				return true;
-				
-			case "/?": case "/h": case "/help":
-			case "--help":
-				Usage ();
-				Environment.Exit (0);
-				return true;
-
-			case "--define":
-				Report.Warning (-29, 1, "Compatibility: Use -d:SYMBOL instead of --define SYMBOL");
-				if ((i + 1) >= args.Length){
-					Usage ();
-					Environment.Exit (1);
-				}
-				RootContext.AddConditional (args [++i]);
-				return true;
-
-			case "--tokenize": 
-				tokenize = true;
-				return true;
-				
-			case "-o": 
-			case "--output":
-				Report.Warning (-29, 1, "Compatibility: Use -out:FILE instead of --output FILE or -o FILE");
-				if ((i + 1) >= args.Length){
-					Usage ();
-					Environment.Exit (1);
-				}
-				OutputFile = args [++i];
-				return true;
-
-			case "--checked":
-				Report.Warning (-29, 1, "Compatibility: Use -checked instead of --checked");
-				RootContext.Checked = true;
-				return true;
-				
-			case "--stacktrace":
-				Report.Stacktrace = true;
-				return true;
-				
-			case "--linkresource":
-			case "--linkres":
-				Report.Warning (-29, 1, "Compatibility: Use -linkres:VALUE instead of --linkres VALUE");
-				if ((i + 1) >= args.Length){
-					Usage ();
-					Report.Error (5, "Missing argument to --linkres"); 
-					Environment.Exit (1);
-				}
-				if (embedded_resources == null)
-					embedded_resources = new Resources ();
-				
-				embedded_resources.Add (false, args [++i], args [i]);
-				return true;
-				
-			case "--resource":
-			case "--res":
-				Report.Warning (-29, 1, "Compatibility: Use -res:VALUE instead of --res VALUE");
-				if ((i + 1) >= args.Length){
-					Usage ();
-					Report.Error (5, "Missing argument to --resource"); 
-					Environment.Exit (1);
-				}
-				if (embedded_resources == null)
-					embedded_resources = new Resources ();
-				
-				embedded_resources.Add (true, args [++i], args [i]);
-				return true;
-				
-			case "--target":
-				Report.Warning (-29, 1, "Compatibility: Use -target:KIND instead of --target KIND");
-				if ((i + 1) >= args.Length){
-					Environment.Exit (1);
-					return true;
-				}
-				
-				string type = args [++i];
-				switch (type){
-				case "library":
-					RootContext.Target = Target.Library;
-					RootContext.TargetExt = ".dll";
-					break;
-					
-				case "exe":
-					RootContext.Target = Target.Exe;
-					break;
-					
-				case "winexe":
-					RootContext.Target = Target.WinExe;
-					break;
-					
-				case "module":
-					RootContext.Target = Target.Module;
-					RootContext.TargetExt = ".dll";
-					break;
-				default:
-					TargetUsage ();
-					break;
-				}
-				return true;
-				
-			case "-r":
-				Report.Warning (-29, 1, "Compatibility: Use -r:LIBRARY instead of -r library");
-				if ((i + 1) >= args.Length){
-					Usage ();
-					Environment.Exit (1);
-				}
-				
-				string val = args [++i];
-				int idx = val.IndexOf ('=');
-				if (idx > -1) {
-					string alias = val.Substring (0, idx);
-					string assembly = val.Substring (idx + 1);
-					AddExternAlias (alias, assembly);
-					return true;
-				}
-
-				references.Add (val);
-				return true;
-				
-			case "-L":
-				Report.Warning (-29, 1, "Compatibility: Use -lib:ARG instead of --L arg");
-				if ((i + 1) >= args.Length){
-					Usage ();	
-					Environment.Exit (1);
-				}
-				link_paths.Add (args [++i]);
-				return true;
-				
-			case "--nostdlib":
-				Report.Warning (-29, 1, "Compatibility: Use -nostdlib instead of --nostdlib");
-				RootContext.StdLib = false;
-				return true;
-				
-			case "--fatal":
-				Report.Fatal = true;
-				return true;
-				
-			case "--werror":
-				Report.Warning (-29, 1, "Compatibility: Use -warnaserror: option instead of --werror");
-				Report.WarningsAreErrors = true;
-				return true;
-
-			case "--nowarn":
-				Report.Warning (-29, 1, "Compatibility: Use -nowarn instead of --nowarn");
-				if ((i + 1) >= args.Length){
-					Usage ();
-					Environment.Exit (1);
-				}
-				int warn = 0;
-				
-				try {
-					warn = Int32.Parse (args [++i]);
-				} catch {
-					Usage ();
-					Environment.Exit (1);
-				}
-				Report.SetIgnoreWarning (warn);
-				return true;
-				
-			case "--wlevel":
-				Report.Warning (-29, 1, "Compatibility: Use -warn:LEVEL instead of --wlevel LEVEL");
-				if ((i + 1) >= args.Length){
-					Report.Error (
-						1900,
-						"--wlevel requires a value from 0 to 4");
-					Environment.Exit (1);
-				}
-
-				SetWarningLevel (args [++i]);
-				return true;
-
-			case "--mcs-debug":
-				if ((i + 1) >= args.Length){
-					Report.Error (5, "--mcs-debug requires an argument");
-					Environment.Exit (1);
-				}
-
-				try {
-					Report.DebugFlags = Int32.Parse (args [++i]);
-				} catch {
-					Report.Error (5, "Invalid argument to --mcs-debug");
-					Environment.Exit (1);
-				}
-				return true;
-				
-			case "--about":
-				About ();
-				return true;
-				
-			case "--recurse":
-				Report.Warning (-29, 1, "Compatibility: Use -recurse:PATTERN option instead --recurse PATTERN");
-				if ((i + 1) >= args.Length){
-					Report.Error (5, "--recurse requires an argument");
-					Environment.Exit (1);
-				}
-				ProcessSourceFiles (args [++i], true); 
-				return true;
-				
-			case "--timestamp":
-				timestamps = true;
-				last_time = first_time = DateTime.Now;
-				return true;
-
-			case "--debug": case "-g":
-				Report.Warning (-29, 1, "Compatibility: Use -debug option instead of -g or --debug");
-				want_debugging_support = true;
-				return true;
-				
-			case "--noconfig":
-				Report.Warning (-29, 1, "Compatibility: Use -noconfig option instead of --noconfig");
-				load_default_config = false;
-				return true;
-			}
-
-			return false;
-		}
+	
 
 		//
 		// This parses the -arg and /arg options to the compiler, even if the strings
@@ -1065,16 +805,18 @@ namespace Mono.CSharp
 				value = "";
 			} else {
 				arg = option.Substring (0, idx);
-
 				value = option.Substring (idx + 1);
 			}
 
-			switch (arg){
-			case "/nologo":
+			if (arg [0] == '/')
+				arg = "-" + arg.Substring (1);
+
+			switch (arg.ToLower (CultureInfo.InvariantCulture)){
+			case "-nologo":
 				return true;
 
-			case "/t":
-			case "/target":
+			case "-t":
+			case "-target":
 				switch (value){
 				case "exe":
 					RootContext.Target = Target.Exe;
@@ -1100,7 +842,7 @@ namespace Mono.CSharp
 				}
 				return true;
 
-			case "/out":
+			case "-out":
 				if (value.Length == 0){
 					Usage ();
 					Environment.Exit (1);
@@ -1108,26 +850,26 @@ namespace Mono.CSharp
 				OutputFile = value;
 				return true;
 
-			case "/o":
-			case "/o+":
-			case "/optimize":
-			case "/optimize+":
+			case "-o":
+			case "-o+":
+			case "-optimize":
+			case "-optimize+":
 				RootContext.Optimize = true;
 				return true;
 
-			case "/o-":
-			case "/optimize-":
+			case "-o-":
+			case "-optimize-":
 				RootContext.Optimize = false;
 				return true;
 
-			case "/incremental":
-			case "/incremental+":
-			case "/incremental-":
+			case "-incremental":
+			case "-incremental+":
+			case "-incremental-":
 				// nothing.
 				return true;
 
-			case "/d":
-			case "/define": {
+			case "-d":
+			case "-define": {
 				if (value.Length == 0){
 					Usage ();
 					Environment.Exit (1);
@@ -1143,14 +885,14 @@ namespace Mono.CSharp
 				return true;
 			}
 
-			case "/bugreport":
+			case "-bugreport":
 				//
 				// We should collect data, runtime, etc and store in the file specified
 				//
 				Console.WriteLine ("To file bug reports, please visit: http://www.mono-project.com/Bugs");
 				return true;
 
-			case "/pkg": {
+			case "-pkg": {
 				string packages;
 
 				if (value.Length == 0){
@@ -1193,14 +935,14 @@ namespace Mono.CSharp
 				return true;
 			}
 				
-			case "/linkres":
-			case "/linkresource":
-			case "/res":
-			case "/resource":
+			case "-linkres":
+			case "-linkresource":
+			case "-res":
+			case "-resource":
 				if (embedded_resources == null)
 					embedded_resources = new Resources ();
 
-				bool embeded = arg.StartsWith ("/r");
+				bool embeded = arg.StartsWith ("-r");
 				string[] s = value.Split (',');
 				switch (s.Length) {
 					case 1:
@@ -1225,7 +967,7 @@ namespace Mono.CSharp
 
 				return true;
 				
-			case "/recurse":
+			case "-recurse":
 				if (value.Length == 0){
 					Report.Error (5, "-recurse requires an argument");
 					Environment.Exit (1);
@@ -1233,8 +975,8 @@ namespace Mono.CSharp
 				ProcessSourceFiles (value, true); 
 				return true;
 
-			case "/r":
-			case "/reference": {
+			case "-r":
+			case "-reference": {
 				if (value.Length == 0){
 					Report.Error (5, "-reference requires an argument");
 					Environment.Exit (1);
@@ -1256,7 +998,7 @@ namespace Mono.CSharp
 				}
 				return true;
 			}
-			case "/addmodule": {
+			case "-addmodule": {
 				if (value.Length == 0){
 					Report.Error (5, arg + " requires an argument");
 					Environment.Exit (1);
@@ -1268,7 +1010,7 @@ namespace Mono.CSharp
 				}
 				return true;
 			}
-			case "/win32res": {
+			case "-win32res": {
 				if (value.Length == 0) {
 					Report.Error (5, arg + " requires an argument");
 					Environment.Exit (1);
@@ -1277,7 +1019,7 @@ namespace Mono.CSharp
 				win32ResourceFile = value;
 				return true;
 			}
-			case "/win32icon": {
+			case "-win32icon": {
 				if (value.Length == 0) {
 					Report.Error (5, arg + " requires an argument");
 					Environment.Exit (1);
@@ -1286,7 +1028,7 @@ namespace Mono.CSharp
 				win32IconFile = value;
 				return true;
 			}
-			case "/doc": {
+			case "-doc": {
 				if (value.Length == 0){
 					Report.Error (2006, arg + " requires an argument");
 					Environment.Exit (1);
@@ -1294,11 +1036,11 @@ namespace Mono.CSharp
 				RootContext.Documentation = new Documentation (value);
 				return true;
 			}
-			case "/lib": {
+			case "-lib": {
 				string [] libdirs;
 				
 				if (value.Length == 0){
-					Report.Error (5, "/lib requires an argument");
+					Report.Error (5, "-lib requires an argument");
 					Environment.Exit (1);
 				}
 
@@ -1308,59 +1050,59 @@ namespace Mono.CSharp
 				return true;
 			}
 
-			case "/debug-":
+			case "-debug-":
 				want_debugging_support = false;
 				return true;
 				
-			case "/debug":
-			case "/debug+":
+			case "-debug":
+			case "-debug+":
 				want_debugging_support = true;
 				return true;
 
-			case "/checked":
-			case "/checked+":
+			case "-checked":
+			case "-checked+":
 				RootContext.Checked = true;
 				return true;
 
-			case "/checked-":
+			case "-checked-":
 				RootContext.Checked = false;
 				return true;
 
-			case "/clscheck":
-			case "/clscheck+":
+			case "-clscheck":
+			case "-clscheck+":
 				return true;
 
-			case "/clscheck-":
+			case "-clscheck-":
 				RootContext.VerifyClsCompliance = false;
 				return true;
 
-			case "/unsafe":
-			case "/unsafe+":
+			case "-unsafe":
+			case "-unsafe+":
 				RootContext.Unsafe = true;
 				return true;
 
-			case "/unsafe-":
+			case "-unsafe-":
 				RootContext.Unsafe = false;
 				return true;
 
-			case "/warnaserror":
-			case "/warnaserror+":
+			case "-warnaserror":
+			case "-warnaserror+":
 				Report.WarningsAreErrors = true;
 				return true;
 
-			case "/warnaserror-":
+			case "-warnaserror-":
 				Report.WarningsAreErrors = false;
 				return true;
 
-			case "/warn":
+			case "-warn":
 				SetWarningLevel (value);
 				return true;
 
-			case "/nowarn": {
+			case "-nowarn": {
 				string [] warns;
 
 				if (value.Length == 0){
-					Report.Error (5, "/nowarn requires an argument");
+					Report.Error (5, "-nowarn requires an argument");
 					Environment.Exit (1);
 				}
 				
@@ -1379,28 +1121,28 @@ namespace Mono.CSharp
 				return true;
 			}
 
-			case "/noconfig-":
+			case "-noconfig-":
 				load_default_config = true;
 				return true;
 				
-			case "/noconfig":
-			case "/noconfig+":
+			case "-noconfig":
+			case "-noconfig+":
 				load_default_config = false;
 				return true;
 
-			case "/help2":
+			case "-help2":
 				OtherFlags ();
 				Environment.Exit(0);
 				return true;
 				
-			case "/help":
-			case "/?":
+			case "-help":
+			case "-?":
 				Usage ();
 				Environment.Exit (0);
 				return true;
 
-			case "/main":
-			case "/m":
+			case "-main":
+			case "-m":
 				if (value.Length == 0){
 					Report.Error (5, arg + " requires an argument");					
 					Environment.Exit (1);
@@ -1408,40 +1150,40 @@ namespace Mono.CSharp
 				RootContext.MainClass = value;
 				return true;
 
-			case "/nostdlib":
-			case "/nostdlib+":
+			case "-nostdlib":
+			case "-nostdlib+":
 				RootContext.StdLib = false;
 				return true;
 
-			case "/nostdlib-":
+			case "-nostdlib-":
 				RootContext.StdLib = true;
 				return true;
 
-			case "/fullpaths":
+			case "-fullpaths":
 				return true;
 
-			case "/keyfile":
+			case "-keyfile":
 				if (value == String.Empty) {
 					Report.Error (5, arg + " requires an argument");
 					Environment.Exit (1);
 				}
 				RootContext.StrongNameKeyFile = value;
 				return true;
-			case "/keycontainer":
+			case "-keycontainer":
 				if (value == String.Empty) {
 					Report.Error (5, arg + " requires an argument");
 					Environment.Exit (1);
 				}
 				RootContext.StrongNameKeyContainer = value;
 				return true;
-			case "/delaysign+":
+			case "-delaysign+":
 				RootContext.StrongNameDelaySign = true;
 				return true;
-			case "/delaysign-":
+			case "-delaysign-":
 				RootContext.StrongNameDelaySign = false;
 				return true;
 
-			case "/langversion":
+			case "-langversion":
 				switch (value.ToLower (CultureInfo.InvariantCulture)) {
 				case "iso-1":
 					RootContext.Version = LanguageVersion.ISO_1;
@@ -1457,16 +1199,12 @@ namespace Mono.CSharp
 				case "iso-2":
 					RootContext.Version = LanguageVersion.ISO_2;
 					return true;
-					
-				case "linq":
-					Report.Warning (-30, 1, "Deprecated: The `linq' option is no longer required and should not be used");
-					return true;
 #endif
 				}
 				Report.Error (1617, "Invalid option `{0}' for /langversion. It must be either `ISO-1', `ISO-2' or `Default'", value);
 				return true;
 
-			case "/codepage":
+			case "-codepage":
 				switch (value) {
 				case "utf8":
 					encoding = new UTF8Encoding();
@@ -1483,6 +1221,39 @@ namespace Mono.CSharp
 					}
 					break;
 				}
+				return true;
+
+			case "--about":
+				About ();
+				return true;
+
+			case "-v":
+				CSharpParser.yacc_verbose_flag++;
+				return true;
+
+			case "--version":
+				Version ();
+				return true;
+				
+			case "--parse":
+				parse_only = true;
+				return true;
+
+			case "--tokenize":
+				tokenize = true;
+				return true;
+
+			case "--fatal":
+				Report.Fatal = true;
+				return true;
+
+			case "--stacktrace":
+				Report.Stacktrace = true;
+				return true;
+
+			case "--timestamp":
+				timestamps = true;
+				last_time = first_time = DateTime.Now;
 				return true;
 			}
 
@@ -1617,7 +1388,7 @@ namespace Mono.CSharp
 			if (RootContext.Target == Target.Module) {
 				PropertyInfo module_only = typeof (AssemblyBuilder).GetProperty ("IsModuleOnly", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
 				if (module_only == null) {
-					Report.RuntimeMissingSupport (Location.Null, "/target:module");
+					Report.RuntimeMissingSupport (Location.Null, "-target:module");
 					Environment.Exit (1);
 				}
 

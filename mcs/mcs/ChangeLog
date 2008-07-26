@@ -1,3 +1,7 @@
+2008-07-26  Marek Safar  <marek.safar@gmail.com>
+
+	* driver.cs: Replaced outdated UnixParseOption with CSCParseOption.
+
 2008-07-25  Marek Safar  <marek.safar@gmail.com>
 
 	* flowanalysis.cs (StructInfo): Fixed detection of dynamic types.
