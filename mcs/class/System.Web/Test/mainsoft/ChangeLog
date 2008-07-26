@@ -1,3 +1,9 @@
+2008-07-25  Dean Brettle <dean@brettle.com>
+
+	* NunitWebResources/adapters.browser: added capabilities with 
+	multiple substitutions and $ and % characters not associated
+	with substitutions. 
+
 2008-03-23  Dean Brettle <dean@brettle.com>
 
 	* NunitWebResources/adapters.browser, 

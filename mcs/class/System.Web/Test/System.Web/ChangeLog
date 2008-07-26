@@ -1,3 +1,10 @@
+2008-07-25  Dean Brettle <dean@brettle.com>
+
+	* AppBrowsersTest.cs: Added tests for bug where capabilities 
+	containing literal $ or % were dropped.  Added test for bug 
+	where capabilities with multiple $ substitutions only
+	had one applied.
+
 2008-03-23  Dean Brettle <dean@brettle.com>
 
 	* AppBrowsersTest.cs: added tests to ensure browscap.ini

@@ -37,7 +37,6 @@ namespace System.Web.Configuration.nBrowser
 		//used without having to drill down deep in regex object to find it
 		private string MatchPattern = string.Empty;
 		private System.Text.RegularExpressions.Regex RegexPattern;
-		private System.Text.RegularExpressions.Match PatternMatch;
 
 		/// <summary>
 		/// Sets up Initial Identification Object, So that it is easier debuging
@@ -60,82 +59,19 @@ namespace System.Web.Configuration.nBrowser
 		/// </summary>
 		/// <param name="Header">Header Value which the regular expression will evaluate.</param>
 		/// <returns>A Match object created from the regular expression and the passed in header.</returns>
-		public System.Text.RegularExpressions.Match Match(string Header)
+		public System.Text.RegularExpressions.Match GetMatch(string Header)
 		{
-			if (string.IsNullOrEmpty(Header) == false)
-			{
-				PatternMatch = RegexPattern.Match(Header);
-				return PatternMatch;
-			}
-			else
-			{
-				PatternMatch = RegexPattern.Match(string.Empty);
-				return PatternMatch;
-			}
+			return RegexPattern.Match(Header == null ? string.Empty : Header);
 		}
 		/// <summary>
 		/// 
 		/// </summary>
-		public bool Success
+		public bool IsMatchSuccessful(System.Text.RegularExpressions.Match m)
 		{
-			get
-			{
-				if (PatternMatch == null)
-				{
-					throw new nBrowser.Exception("Missing Regular Expression Value, Match Function was not previously called");
-				}
-				if (MatchType == true)
-				{
-					return PatternMatch.Success;
-				}
-				else
-				{
-					return !PatternMatch.Success;
-				}
-			}
+			// Return true if a "match" matched successfully or a "nonmatch" didn't match.
+			return (MatchType == m.Success);
 		}
-		/// <summary>
-		/// 
-		/// </summary>
-		public bool HasCaptureGroups
-		{
-			get
-			{
-				if (PatternMatch == null)
-				{
-					throw new nBrowser.Exception("Missing Regular Expression Value, Match Function was not previously called");
-				}
-				if (PatternMatch.Groups.Count > 0)
-				{
-					return true;
-				}
-				return false;
-			}
-		}
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="Template"></param>
-		/// <returns></returns>
-		public string Result(string Template)
-		{
-			if (PatternMatch == null)
-			{
-				throw new nBrowser.Exception("Missing Regular Expression Value, Match Function was not previously called");
-			}
-			if (MatchType == true && PatternMatch.Success == true)
-			{
-				return PatternMatch.Result(Template);
-			}
-			return string.Empty;
-		}
-		/// <summary>
-		/// 
-		/// </summary>
-		public void Reset()
-		{
-			PatternMatch = null;
-		}
+
 		/// <summary>
 		/// 
 		/// </summary>

@@ -83,6 +83,11 @@ namespace MonoTests.System.Web
 			Assert.AreEqual ("uaInRef:testUserAgent", caps["capturedInRefNode"], "AppBrowsersCapabilities #7");
 			// This property is inherited from browscap.ini
 			Assert.AreEqual ("0", caps["majorver"], "AppBrowsersCapabilities #8");
+			// This capability uses multiple substitutions
+			Assert.AreEqual ("uaInOrig:testUserAgent uaInRef:testUserAgent", caps["multipleSubstitutions"],
+			                 "AppBrowsersCapabilities #9");
+			Assert.AreEqual ("10%*$100=$10", caps["specialCharsInValue"],
+			                 "AppBrowsersCapabilities #10");
 		}
 		
 		[Test]

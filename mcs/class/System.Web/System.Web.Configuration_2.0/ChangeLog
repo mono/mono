@@ -1,3 +1,24 @@
+2008-07-25  Dean Brettle <dean@brettle.com>
+
+	* nBrowser/Node.cs nBrowser/Build.cs nBrowser/Identification.cs: Fixed race
+	condition in Node.Process() by removing mutating functions from Identification
+	and	changing Node.Process() and Node.BrowserIdentification() to maintain
+	state in a List<Match> instead of a List<Identification>.
+	
+	* nBrowser/Node.cs: Fixed race condition associated with lookup of adapter
+	types.
+	
+	* nBrowser/Node.cs: Removed duplicate call to Node.BrowserIdentification() from
+	Node.Process().
+
+	* nBrowser/Node.cs: Removed duplicate call to Result.AddAdaper() from Node.Process().
+	
+	* nBrowser/Node.cs: Fixed bug where capabilities containing literal $ or % were
+	dropped.
+
+	* nBrowser/Node.cs: Fixed bug where capabilities with multiple $ substitutions only
+	had one applied.
+
 2008-06-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* CapabilitiesResult.cs: Make the RandomRoboBotKeywords array static and compute it
