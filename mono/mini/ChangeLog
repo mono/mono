@@ -1,5 +1,8 @@
 2008-07-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* cpu-arm.md (loadr8_membase): Increase the length of this as this is not
+	lowered earlier.
+
 	* exceptions-x86.c: Merge some changes which seemed to have got lost
 	in the linear-ir merge.
 
