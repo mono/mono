@@ -1,5 +1,8 @@
 2008-07-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Use get_vreg_to_inst () instead of
+	accessing cfg->vreg_to_inst directly to prevent a crash in LDFLD.
+
 	* iltests.il.in: Add new test.
 
 	* aot-compiler.c: Fix some warnings.
