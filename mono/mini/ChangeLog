@@ -1,3 +1,8 @@
+2008-07-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel-x86.brg (stmt): Add missing OP_X86_OUTARG_ALIGN_STACK rule
+	which got lost in the merge.
+
 2008-07-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c: Make the helper_sig variables extern to fix the ppc
