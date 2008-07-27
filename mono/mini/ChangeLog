@@ -1,5 +1,7 @@
 2008-07-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* iltests.il.in: Add new test.
+
 	* aot-compiler.c: Fix some warnings.
 
 	* decompose.c (mono_decompose_long_opts): Implement OP_ICONV_TO_OVF_I8_UN.
