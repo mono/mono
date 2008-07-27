@@ -458,8 +458,12 @@ mono_debug_serialize_debug_info (MonoCompile *cfg, guint8 **out_buf, guint32 *bu
 	for (i = 0; i < jit->num_params; ++i)
 		serialize_variable (&jit->params [i], p, &p);
 
-	if (mono_method_signature (cfg->method)->hasthis)
+	if (jit->this_var) {
+		encode_value (1, p, &p);
 		serialize_variable (jit->this_var, p, &p);
+	} else {
+		encode_value (0, p, &p);
+	}
 
 	for (i = 0; i < jit->num_locals; i++)
 		serialize_variable (&jit->locals [i], p, &p);
@@ -511,7 +515,7 @@ deserialize_debug_info (MonoMethod *method, guint8 *code_start, guint8 *buf, gui
 	gint32 offset, native_offset, prev_offset, prev_native_offset;
 	MonoDebugMethodJitInfo *jit;
 	guint8 *p;
-	int i;
+	int i, has_this;
 
 	header = mono_method_get_header (method);
 	g_assert (header);
@@ -531,7 +535,8 @@ deserialize_debug_info (MonoMethod *method, guint8 *code_start, guint8 *buf, gui
 	for (i = 0; i < jit->num_params; ++i)
 		deserialize_variable (&jit->params [i], p, &p);
 
-	if (mono_method_signature (method)->hasthis) {
+	has_this = decode_value (p, &p);
+	if (has_this) {
 		jit->this_var = g_new0 (MonoDebugVarInfo, 1);
 		deserialize_variable (jit->this_var, p, &p);
 	}
