@@ -1,3 +1,7 @@
+2008-07-27  Andreas Färber  <andreas.faerber@web.de>
+
+	* object.c (CHECK_ADD_OVERFLOW_UN): Add missing bracket. Fixes #412499.
+
 2008-07-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain.c (unload_thread_main): Attach the unload thread to the runtime.
