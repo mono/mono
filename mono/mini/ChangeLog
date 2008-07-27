@@ -1,5 +1,10 @@
 2008-07-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* iltests.il.in: Add new regression test.
+
+	* method-to-ir.c (mono_method_to_ir2): Fix handling of inlined methods which
+	end with a throw.
+
 	* method-to-ir.c (mono_method_to_ir2): Use get_vreg_to_inst () instead of
 	accessing cfg->vreg_to_inst directly to prevent a crash in LDFLD.
 
