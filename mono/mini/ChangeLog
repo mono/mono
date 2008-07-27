@@ -1,5 +1,8 @@
 2008-07-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (emit_call_body): Avoid aligning the call instruction on
+	icalls, since they won't be patched.
+
 	* exceptions-amd64.c (mono_arch_get_restore_context_full): Use a slightly
 	different code sequence when running under valgrind to prevent some valgrind
 	errors.
