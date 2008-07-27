@@ -1,5 +1,12 @@
 2008-07-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Fix some warnings.
+
+	* decompose.c (mono_decompose_long_opts): Implement OP_ICONV_TO_OVF_I8_UN.
+	Fixes #412494.
+
+2008-07-27  Zoltan Varga  <vargaz@gmail.com>
+
 	* driver.c (mono_main): Fix the --gc=none build. Fixes #412482.
 	(mini_usage_jitdeveloper): Add a missing --wapi option.
 
