@@ -1,3 +1,7 @@
+2008-07-27  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* RootCodeDomSerializer.cs: Clear the fields as well.
+
 2008-07-21  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* CodeDomComponentSerializationService.cs: Remove redundant assignment.

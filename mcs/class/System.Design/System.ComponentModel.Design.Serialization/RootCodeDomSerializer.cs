@@ -145,6 +145,7 @@ namespace System.ComponentModel.Design.Serialization
 
 			public void Clear ()
 			{
+				_fields.Clear ();
 				_initializers.Clear ();
 				_begin.Clear ();
 				_default.Clear ();
