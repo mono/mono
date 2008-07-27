@@ -1,3 +1,11 @@
+2008-07-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (runtest-managed): New experimental target which uses the
+	new test runner.
+
+	* test-runner.cs: New managed test driver with support for parallel 
+	execution.
+
 2008-07-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain-unload.cs: Disable the timeout test as there is no timeout in
