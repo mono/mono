@@ -1,8 +1,10 @@
 2008-07-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile.am (runtest-managed): Make this depend on test-runner.exe.
+	
 	* Makefile.am: Make most tests which had a separate execution rule use the
 	normal test runner, make the output less verbose.
-	
+
 	* Makefile.am (runtest-managed): New experimental target which uses the
 	new test runner.
 
