@@ -1,3 +1,9 @@
+2008-07-28  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* Form.cs: Remove some seems leftover code for non-TopLevel's 
+	CreateParams, which is breaking ClientSize sizing, because it 
+	removes the border window styles.
+
 2008-07-27  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PropertyGrid.cs: Invalidate the View when the PropertyTab 

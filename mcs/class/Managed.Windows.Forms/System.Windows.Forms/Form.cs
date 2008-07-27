@@ -1539,15 +1539,6 @@ namespace System.Windows.Forms {
 					cp.WindowStyle &= ~WindowStyles.WS_DLGFRAME;
 				}
 				
-				// Fake the window styles for mdi and parented forms
-				if (cp.HasWindowManager) {
-					// Remove all styles but WS_VISIBLE.
-					cp.WindowStyle &= WindowStyles.WS_VISIBLE;
-					// Set styles that enables us to use the window manager.
-					cp.WindowStyle |= WindowStyles.WS_CHILD | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS;
-					cp.ExStyle = 0;
-				}
-				
 				return cp;
 			}
 		}
