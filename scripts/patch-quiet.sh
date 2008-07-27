@@ -23,7 +23,7 @@ sed -e 's/^\t$(CC)/\t$(if $(V),,@echo -e "CC\\t$@";) $(CC)/g' < $src > $src.tmp 
 # mv
 sed -e 's/\tmv -f/\t$(if $(V),,@)mv -f/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
 # libtool messages
-sed -e 's/\$(LIBTOOL)/$(LIBTOOL) --quiet/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
+sed -e 's/\$(LIBTOOL)/$(LIBTOOL) $(if $(V),,--quiet)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
 
 # FIXME: libtool message which is not silenced by --quiet:
 # $echo "copying selected object files to avoid basename conflicts..."
