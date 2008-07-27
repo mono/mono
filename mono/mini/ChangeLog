@@ -1,5 +1,9 @@
 2008-07-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-amd64.c (mono_arch_get_restore_context_full): Use a slightly
+	different code sequence when running under valgrind to prevent some valgrind
+	errors.
+
 	* iltests.il.in: Add new regression test.
 
 	* method-to-ir.c (mono_method_to_ir2): Fix handling of inlined methods which
