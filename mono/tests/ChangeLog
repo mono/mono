@@ -1,5 +1,8 @@
 2008-07-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* test-runner.cs: Cleanup terminated processes on the main thread to prevent
+	races.
+
 	* Makefile.am (runtest-managed): Make this depend on test-runner.exe.
 	
 	* Makefile.am: Make most tests which had a separate execution rule use the
