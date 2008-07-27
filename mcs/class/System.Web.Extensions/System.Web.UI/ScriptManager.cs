@@ -1503,7 +1503,7 @@ namespace System.Web.UI
 					return;
 
 				string value = _currentField ["value"];
-				if (String.IsNullOrEmpty (value))
+				if (value == null)
 					return;
 
 				ScriptManager.WriteCallbackOutput (_responseOutput, hiddenField, _currentField ["name"], HttpUtility.HtmlDecode (value));
