@@ -1,5 +1,7 @@
 2008-07-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (emit_call_body): Add a no_patch case missed earlier.
+	
 	* mini-amd64.c (emit_call_body): Avoid aligning the call instruction on
 	icalls, since they won't be patched.
 
