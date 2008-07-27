@@ -1,3 +1,7 @@
+2008-07-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (unload_thread_main): Attach the unload thread to the runtime.
+
 2008-07-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (do_branch_op): Handle valuetypes and generic
