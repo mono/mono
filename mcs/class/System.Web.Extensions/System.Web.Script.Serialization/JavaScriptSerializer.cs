@@ -214,7 +214,10 @@ namespace System.Web.Script.Serialization
 				return obj;
 
 			if (type.IsEnum)
-				return Enum.ToObject (type, obj);
+				if (obj is string)
+					return Enum.Parse (type, (string) obj, true);
+				else
+					return Enum.ToObject (type, obj);
 
 			TypeConverter c = TypeDescriptor.GetConverter (type);
 			if (c.CanConvertFrom (sourceType)) {
@@ -355,7 +358,7 @@ namespace System.Web.Script.Serialization
 					((IDictionary) target).Add (entry.Key, ConvertToType (ReflectionUtils.GetTypedDictionaryValueType (type), value));
 					continue;
 				}
-				MemberInfo [] memberCollection = type.GetMember (entry.Key);
+				MemberInfo [] memberCollection = type.GetMember (entry.Key, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
 				if (memberCollection == null || memberCollection.Length == 0) {
 					//must evaluate value
 					Evaluate (value);
