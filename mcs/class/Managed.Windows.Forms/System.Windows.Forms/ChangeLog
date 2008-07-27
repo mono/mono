@@ -1,3 +1,8 @@
+2008-07-27  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGrid.cs: Invalidate the View when the PropertyTab 
+	changes.
+
 2008-07-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* WebBrowser.cs: Removed debug output.

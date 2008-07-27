@@ -904,6 +904,7 @@ namespace System.Windows.Forms
 				selected_tab = propertyTab;
 				PopulateGrid (selected_objects);
 				SelectItemCore (null, GetDefaultPropertyItem (root_grid_item, selected_tab));
+				property_grid_view.UpdateView ();
 			}
 		}
 
