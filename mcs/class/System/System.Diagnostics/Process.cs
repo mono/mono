@@ -106,7 +106,7 @@ namespace System.Diagnostics {
 		{
 #if !NET_2_1
 			bool start = (!already_waiting && enableRaisingEvents && exited_event != null);
-			if (start && process_handle != IntPtr.Zero && !HasExited) {
+			if (start && process_handle != IntPtr.Zero) {
 				WaitOrTimerCallback cb = new WaitOrTimerCallback (CBOnExit);
 				ProcessWaitHandle h = new ProcessWaitHandle (process_handle);
 				ThreadPool.RegisterWaitForSingleObject (h, cb, this, -1, true);
