@@ -1,3 +1,8 @@
+2008-07-27  Robert Jordan  <robertj@gmx.net>
+
+	* class.c (mono_class_init): Don't compute class.has_finalize for
+	valuetypes. Fixes #412477.
+
 2008-07-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: Implement constraint equivalence checking.
