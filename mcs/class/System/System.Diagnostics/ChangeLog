@@ -1,3 +1,8 @@
+2008-07-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* Process.cs (SetExitCallbackIfNeeded): Avoid a race condition by not
+	checking for HashExited.
+
 2008-06-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DiagnosticsConfigurationHandler.cs: quick build fix (hopefully).
