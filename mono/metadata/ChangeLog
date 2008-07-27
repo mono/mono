@@ -1,3 +1,7 @@
+2008-07-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (unload_thread_main): Attach the unload thread to the runtime.
+
 2008-07-27  Robert Jordan  <robertj@gmx.net>
 
 	* class.c (mono_class_init): Don't compute class.has_finalize for
