@@ -1,3 +1,8 @@
+2008-07-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c (mono_main): Fix the --gc=none build. Fixes #412482.
+	(mini_usage_jitdeveloper): Add a missing --wapi option.
+
 2008-07-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-codegen.c: Simplify the is_fp macros.
