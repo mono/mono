@@ -1,3 +1,7 @@
+2008-07-28  Marek Safar  <marek.safar@gmail.com>
+
+	* KnownTerminals.cs: Don't initialize rarely used static data.
+
 2008-07-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* Delegate.cs: Move the rarely used fields to a separate object, add
