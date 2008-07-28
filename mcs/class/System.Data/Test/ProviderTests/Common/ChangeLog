@@ -1,3 +1,9 @@
+2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ConnectionManager.cs: Fixed exception message. Code formatting.
+	* DataProvider.cs: Code formatting.
+	* DBHelper.cs: Removed extra using statement.
+
 2007-05-30  Nagappan A  <anagappan@novell.com>
 
 	* DBHelper.cs: Fixed warnings of unused variables.

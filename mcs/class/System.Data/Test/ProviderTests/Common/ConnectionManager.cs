@@ -31,6 +31,7 @@
 using System;
 using System.Configuration;
 using System.Data;
+
 using Mono.Data;
 
 namespace MonoTests.System.Data
@@ -49,25 +50,21 @@ namespace MonoTests.System.Data
 		private ConnectionManager ()
 		{
 			string connectionString = ConfigurationSettings.AppSettings ["ConnString"];
-			if (connectionString == null || connectionString.Equals (String.Empty)) {
-				throw new ArgumentException ("Connection string is invalid!");
-			}
+			if (connectionString == null || connectionString.Equals (String.Empty))
+				throw new ArgumentException ("Connection string is not set!");
 			_connection = ProviderFactory.CreateConnectionFromConfig ("ConnString");
 			_connectionString = Connection.ConnectionString;
 		}
 
-		public static ConnectionManager Singleton
-		{
+		public static ConnectionManager Singleton {
 			get {return Instance;}
 		}
 
-		public IDbConnection Connection 
-		{
+		public IDbConnection Connection {
 			get {return _connection;}
 		}
 
-		public string ConnectionString
-		{
+		public string ConnectionString {
 			get {return _connectionString;}
 		}
 

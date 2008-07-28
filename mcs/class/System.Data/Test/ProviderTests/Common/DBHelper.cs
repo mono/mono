@@ -27,12 +27,11 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-
 using System;
 using System.Data;
-using System.Text;
 using System.Data.Common;
-using System.Data.Odbc;
+using System.Text;
+
 using Mono.Data;
 
 using NUnit.Framework;

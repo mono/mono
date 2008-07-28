@@ -27,15 +27,14 @@
 //
 
 using System;
-using System.Collections;
 using System.Data;
 using System.Data.SqlClient;
 
 namespace MonoTests.System.Data
 {
-	public class DataProvider {
-
-		private DataSet data = null ; 
+	public class DataProvider
+	{
+		private readonly DataSet data;
 
 		// TODO : The Data is now got from the Database.
 		// Needs to be modified to get the data from a config file
@@ -48,7 +47,7 @@ namespace MonoTests.System.Data
 			query += "Select * from datetime_family order by id ASC;";
 
 			SqlDataAdapter adapter = new SqlDataAdapter (query,
-					ConnectionManager.Singleton.ConnectionString);	
+				ConnectionManager.Singleton.ConnectionString);
 			adapter.TableMappings.Add ("Table", "numeric_family");
 			adapter.TableMappings.Add ("Table1", "string_family");
 			adapter.TableMappings.Add ("Table2", "binary_family");
@@ -63,8 +62,7 @@ namespace MonoTests.System.Data
 
 		public DataSet GetDataSet ()
 		{
-			return data ;
+			return data;
 		}
 	}
 }
-
