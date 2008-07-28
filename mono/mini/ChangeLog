@@ -1,3 +1,40 @@
+2008-07-28  Bill Holmes  <billholmes54@gmail.com>
+
+	* mini-amd64.c (get_call_info): Winx64 fix for passing floats.
+	  The float param registers and other param registers must be the 
+	  same index on Windows x64.
+
+	* mini-amd64.c (mono_arch_allocate_vars) : Implementing the 
+	  ArgValuetypeAddrInIReg argument case.  Setting the argument
+	  op to OP_VTARG_ADDR (OP_REGOFFSET)).
+
+	* mini-amd64.c (mono_arch_call_opcode) : Winx64 fix.  Use the size
+	  variable computed above as the copy length for arguments of storage
+	  type ArgValuetypeAddrInIReg.
+
+	* mini-amd64.c (mono_arch_emit_call) :  Implementing the 
+	  ArgValuetypeAddrInIReg argument case.  This case will rely on
+	  mono_arch_emit_outarg_vt to emit the correct code later in the process.
+
+	* mini-amd64.c (mono_arch_emit_call) :  On Winx64 there always needs to be
+	  a 32 byte stack allocation for all calls.  We will omit the adjustment for
+	  jump and tail call instructoins as they do not follow the typical call behavior.
+
+	* mini-amd64.c (mono_arch_emit_outarg_vt) :  Implementing the case for
+	  ArgValuetypeAddrInIReg.  The code emitted will copy the argument to a 
+	  local variable and pass the local variable by reference to the called method.
+
+	* mini-amd64.c (mono_arch_emit_prolog, emit_load_volatile_arguments) :
+ 	  Implementing the ArgValuetypeAddrInIReg argument case.  When the address
+ 	  of a struct is passed in a register it must be saved with the other
+ 	  volatile argument on the stack.
+
+	* mini-amd64.c (mono_arch_emit_prolog) : Winx64 fix.  When omitting the
+	  frame pointer the stack adjustment value must be saved to the unwind 
+	  info structure.
+
+	Contributed under MIT/X11 license.
+
 2008-07-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* inssel-x86.brg (stmt): Add missing OP_X86_OUTARG_ALIGN_STACK rule
