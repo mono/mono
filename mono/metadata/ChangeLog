@@ -1,3 +1,13 @@
+2008-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Implement constraint equivalence checking.
+	This is required when a generic parameter is used as
+	argument to a constrained one.
+
+	Fixes #410637.
+
+	Backported from trunk.
+
 2008-07-27  Andreas Färber  <andreas.faerber@web.de>
 
 	* object.c (CHECK_ADD_OVERFLOW_UN): Add missing bracket. Fixes #412499.
