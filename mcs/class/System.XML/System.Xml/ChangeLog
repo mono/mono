@@ -1,3 +1,10 @@
+2008-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlNamespaceManager.cs : check null arg.
+	* XmlTextReader.cs : fixed bug #412657; now we populate nametable
+	  and namespace manager in case they are null in parser context, and
+	  use them instead of the members in the parser context.
+
 2008-06-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvert.cs : fixed bug #397934. Utc mode accepts more formats.
