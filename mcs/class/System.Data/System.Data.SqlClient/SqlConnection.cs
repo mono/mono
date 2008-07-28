@@ -393,7 +393,7 @@ namespace System.Data.SqlClient
 #if NET_2_0
 		override
 #endif // NET_2_0
-		void ChangeDatabase (string database) 
+		void ChangeDatabase (string database)
 		{
 			if (!IsValidDatabaseName (database))
 				throw new ArgumentException (String.Format ("The database name {0} is not valid.", database));
@@ -404,6 +404,9 @@ namespace System.Data.SqlClient
 
 		private void ChangeState (ConnectionState currentState)
 		{
+			if (currentState == state)
+				return;
+
 			ConnectionState originalState = state;
 			state = currentState;
 			OnStateChange (CreateStateChangeEvent (originalState, currentState));
@@ -413,7 +416,7 @@ namespace System.Data.SqlClient
 #if NET_2_0
 		override
 #endif // NET_2_0
-		void Close () 
+		void Close ()
 		{
 			if (transaction != null && transaction.IsOpen)
 				transaction.Rollback ();
@@ -443,7 +446,7 @@ namespace System.Data.SqlClient
 			ChangeState (ConnectionState.Closed);
 		}
 
-		public new SqlCommand CreateCommand () 
+		public new SqlCommand CreateCommand ()
 		{
 			SqlCommand command = new SqlCommand ();
 			command.Connection = this;
@@ -565,7 +568,7 @@ namespace System.Data.SqlClient
 			ChangeState (ConnectionState.Open);
 		}
 
-		private bool ParseDataSource (string theDataSource, out int thePort, out string theServerName) 
+		private bool ParseDataSource (string theDataSource, out int thePort, out string theServerName)
 		{
 			theServerName = string.Empty;
 			string theInstanceName = string.Empty;
@@ -905,7 +908,7 @@ namespace System.Data.SqlClient
 		}
 #endif
 
-		private sealed class SqlMonitorSocket : UdpClient 
+		private sealed class SqlMonitorSocket : UdpClient
 		{
 			// UDP port that the SQL Monitor listens
 			private static readonly int SqlMonitorUdpPort = 1434;
@@ -921,7 +924,7 @@ namespace System.Data.SqlClient
 				instance = InstanceName;
 			}
 
-			internal int DiscoverTcpPort (int timeoutSeconds) 
+			internal int DiscoverTcpPort (int timeoutSeconds)
 			{
 				int SqlServerTcpPort;
 				Client.Blocking = false;
@@ -976,9 +979,11 @@ namespace System.Data.SqlClient
 		}
 
 #if NET_2_0
-		struct ColumnInfo {
+		struct ColumnInfo
+		{
 			public string name;
 			public Type type;
+
 			public ColumnInfo (string name, Type type)
 			{
 				this.name = name; this.type = type;

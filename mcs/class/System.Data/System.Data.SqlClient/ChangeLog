@@ -1,3 +1,8 @@
+2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlConnection.cs(ChangeState): Return immediately when new state
+	equals original state. Fixes bug #412574.
+
 2008-07-23  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlDataReader.cs (NextResult): Memleak fix - mark datatypeNames

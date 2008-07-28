@@ -1,5 +1,9 @@
 2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlConnectionTest.cs: Enabled test for bug #412574.
+
+2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlCommandTest.cs: Moved tests that do not require connection to
 	regular test suite. Improved existing tests, and added set of new
 	tests. Reduce failure count.

@@ -208,8 +208,6 @@ namespace MonoTests.System.Data
 		[Test] // bug #412574
 		public void Close ()
 		{
-			Assert.Ignore ("bug #412574");
-
 			conn = new SqlConnection (connectionString);
 			conn.Open ();
 			conn.StateChange += new StateChangeEventHandler (Connection_StateChange);
