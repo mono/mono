@@ -290,7 +290,6 @@ namespace MonoTests.System.Data
 				ConnectionManager.Singleton.OpenConnection ();
 				DBHelper.ExecuteNonQuery (conn, "delete from string_family where id = 6000");
 				ConnectionManager.Singleton.CloseConnection ();
-
 			}
 		}
 
@@ -462,9 +461,9 @@ namespace MonoTests.System.Data
 			}
 		}
 
-                [Test]
-                public void DBNullParameterTest()
-                {
+		[Test]
+		public void DBNullParameterTest()
+		{
 			IDbConnection conn = ConnectionManager.Singleton.Connection;
 			try {
 				ConnectionManager.Singleton.OpenConnection ();
@@ -472,13 +471,17 @@ namespace MonoTests.System.Data
 				DataSet Lector = new DataSet ();
 
 				Adaptador.SelectCommand = new OdbcCommand ("SELECT ?;", (OdbcConnection) conn);
+#if NET_2_0
 				Adaptador.SelectCommand.Parameters.AddWithValue("@un", DBNull.Value);
+#else
+				Adaptador.SelectCommand.Parameters.Add ("@un", (object) DBNull.Value);
+#endif
 				Adaptador.Fill (Lector);
 				Assert.AreEqual (Lector.Tables[0].Rows[0][0], DBNull.Value, "#1 DBNull parameter not passed correctly");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
-		}		
+		}
 		
 		[Test]
 		public void DefaultValuesTest ()
@@ -525,4 +528,3 @@ namespace MonoTests.System.Data
 		}
 	}
 }
-

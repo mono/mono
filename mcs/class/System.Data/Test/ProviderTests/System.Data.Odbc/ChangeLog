@@ -1,3 +1,7 @@
+2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OdbcParameterTest.cs: Fixed compilation on 1.0 profile.
+
 2008-03-03  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* OdbcParameterTest.cs: Build break fix. 
