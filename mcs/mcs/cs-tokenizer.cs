@@ -553,6 +553,33 @@ namespace Mono.CSharp
 					case Token.OPEN_BRACE:
 					case Token.OPEN_PARENS:
 					case Token.LITERAL_STRING:
+					case Token.LITERAL_INTEGER:
+					case Token.LITERAL_FLOAT:
+					case Token.LITERAL_DOUBLE:
+					case Token.LITERAL_DECIMAL:
+					case Token.LITERAL_CHARACTER:
+					case Token.NULL:
+					case Token.FALSE:
+					case Token.TRUE:
+					case Token.OP_INC:
+					case Token.OP_DEC:
+					case Token.OP_SHIFT_LEFT:
+					case Token.OP_SHIFT_RIGHT:
+					case Token.OP_LE:
+					case Token.OP_GE:
+					case Token.OP_EQ:
+					case Token.OP_NE:
+					case Token.OP_AND:
+					case Token.OP_OR:
+					case Token.BITWISE_AND:
+					case Token.BITWISE_OR:
+					case Token.PLUS:
+					case Token.MINUS:
+					case Token.DIV:
+					case Token.NEW:
+					case Token.THIS:
+					case Token.BASE:
+					case Token.TYPEOF:
 						return false;
 				}
 			}

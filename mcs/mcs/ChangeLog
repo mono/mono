@@ -1,3 +1,9 @@
+2008-07-28  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-tokenizer.cs (IsLambdaOpenParens): Optimized using more stop tokens.
+	
+	* expression.cs (ElementAccess): Exact size allocation.
+
 2008-07-26  Marek Safar  <marek.safar@gmail.com>
 
 	* driver.cs: Replaced outdated UnixParseOption with CSCParseOption.

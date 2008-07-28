@@ -7781,16 +7781,14 @@ namespace Mono.CSharp {
 		public ElementAccess (Expression e, ArrayList e_list)
 		{
 			Expr = e;
-
 			loc  = e.Location;
 			
 			if (e_list == null)
 				return;
 			
-			Arguments = new ArrayList ();
+			Arguments = new ArrayList (e_list.Count);
 			foreach (Expression tmp in e_list)
 				Arguments.Add (new Argument (tmp, Argument.AType.Expression));
-			
 		}
 
 		bool CommonResolve (EmitContext ec)
