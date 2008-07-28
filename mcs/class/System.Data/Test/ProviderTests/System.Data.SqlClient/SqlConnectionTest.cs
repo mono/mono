@@ -1,6 +1,6 @@
 //
-// SqlDataAdapterTest.cs - NUnit Test Cases for testing the
-//                          SqlDataAdapter class
+// SqlConnectionTest.cs - NUnit Test Cases for testing the
+//                          SqlConnection class
 // Author:
 //      Senganal T (tsenganal@novell.com)
 //
@@ -40,31 +40,14 @@ namespace MonoTests.System.Data
 	[Category ("sqlserver")]
 	public class SqlConnectionTest
 	{
-		SqlConnection conn = null ; 
+		SqlConnection conn;
 		String connectionString = ConnectionManager.Singleton.ConnectionString;
-
-		ArrayList invalidConnectionStrings = null;
-		int stateChangeEventCount = 0;
-		int disposedEventCount = 0;
-		int infoMessageEventCount = 0;
-
-		void populateTestData () 
-		{
-			invalidConnectionStrings = new ArrayList ();
-			// shud be got from  a config file .. 
-			//list of invalid and valid conn strings; 
-			invalidConnectionStrings.Add ("InvalidConnectionString");
-			invalidConnectionStrings.Add ("invalidKeyword=10");
-			invalidConnectionStrings.Add ("Packet Size=511");
-			invalidConnectionStrings.Add ("Packet Size=32768");
-			invalidConnectionStrings.Add ("Connect Timeout=-1");			
-			invalidConnectionStrings.Add ("Max Pool Size=-1");
-			invalidConnectionStrings.Add ("Min Pool Size=-1");				
-		}
+		ArrayList events;
 
 		[SetUp]
 		public void SetUp ()
 		{
+			events = new ArrayList ();
 		}
 
 		[TearDown]
@@ -75,278 +58,285 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void DefaultConstructorTest ()
-		{
-			SqlConnection conn = new SqlConnection ();  
-			Assert.AreEqual ("", conn.ConnectionString, 
-					"#1 Default Connection String should be empty");
-			Assert.AreEqual (15, conn.ConnectionTimeout, 
-					"#2 Default ConnectionTimeout should be 15" ); 
-			Assert.AreEqual ("", conn.Database, 
-					"#3 Default Database should be empty");
-			Assert.AreEqual ("", conn.DataSource,
-					"#4 Default DataSource should be empty");
-			Assert.AreEqual (8192, conn.PacketSize,"#5 Default Packet Size is 8192");
-			Assert.AreEqual (Dns.GetHostName().ToUpper (), conn.WorkstationId.ToUpper (), 
-					"#6 Default Workstationid shud be hostname");
-			Assert.AreEqual (ConnectionState.Closed, conn.State, 
-					"#7 Connection State shud be closed by default");
-		}
-
-		[Test]
 		public void OverloadedConstructorTest ()
 		{
-			// Test Exceptions are thrown for Invalid Connection Strings
-			int count=0 ;
-			populateTestData ();
-			foreach (String invalidConnString in invalidConnectionStrings) {
-				count++;
-				try {
-					conn = new SqlConnection ((string)invalidConnString);
-					Assert.Fail ("#1 Exception must be thrown");
-				}catch (AssertionException e) {
-					throw e; 
-				}catch (Exception e) {
-					Assert.AreEqual (typeof(ArgumentException), e.GetType(), 
-						"Incorrect Exception" + e.StackTrace);
-				}
-			}
-
-			//check synonyms..
+			//check synonyms.
 			//do i need to check for all the synonyms.. 
-			conn = new SqlConnection (
-					"Timeout=10;Connect Timeout=20;Connection Timeout=30");
-			Assert.AreEqual (30, conn.ConnectionTimeout,
-				"## The last set value shud be taken");
-			conn = new SqlConnection (
-					"Connect Timeout=100;Connection Timeout=200;Timeout=300");
-			Assert.AreEqual (300, conn.ConnectionTimeout,
-				"## The last set value shud be taken");
-			conn = new SqlConnection (
-					"Connection Timeout=1000;Timeout=2000;Connect Timeout=3000");
-			Assert.AreEqual (3000, conn.ConnectionTimeout,
-				"## The last set value shud be taken");
+			conn = new SqlConnection ("Timeout=10;Connect Timeout=20;Connection Timeout=30");
+			Assert.AreEqual (30, conn.ConnectionTimeout, "#A1");
+			conn = new SqlConnection ("Connect Timeout=100;Connection Timeout=200;Timeout=300");
+			Assert.AreEqual (300, conn.ConnectionTimeout, "#A2");
+			conn = new SqlConnection ("Connection Timeout=1000;Timeout=2000;Connect Timeout=3000");
+			Assert.AreEqual (3000, conn.ConnectionTimeout, "#A3");
 
-			// Test if properties are set correctly
-			
 			//'==' doesent work correctly in both msdotnet and mono
 			/*
 			conn = new SqlConnection ("server=local==host;database=tmp;");
 			Assert.AreEqual ("local==host", conn.DataSource, 
 				"# Datasource name is set incorrectly");
 			*/
-			string connStr = "Server='loca\"lhost';Database='''Db'; packet Size=\"512\";";
-			connStr += "connect Timeout=20;Workstation Id=\"'\"\"desktop\";";
+			string connStr = "Server='loca\"lhost';Database='''Db'; packet Size=\"512\";"
+				+ "connect Timeout=20;Workstation Id=\"'\"\"desktop\";";
 			conn = new SqlConnection (connStr);
-			Assert.AreEqual (connStr , conn.ConnectionString , "#1");
-			Assert.AreEqual ("loca\"lhost" , conn.DataSource , "#2");
-			Assert.AreEqual ("'Db" , conn.Database , "#3");
-			Assert.AreEqual (512 , conn.PacketSize , "#4");
-			Assert.AreEqual (20 , conn.ConnectionTimeout , "#5");
-			Assert.AreEqual ("'\"desktop" , conn.WorkstationId , "#6");
-			Assert.AreEqual (ConnectionState.Closed , conn.State , "#7");
+			Assert.AreEqual (connStr , conn.ConnectionString , "#B1");
+			Assert.AreEqual ("loca\"lhost" , conn.DataSource , "#B2");
+			Assert.AreEqual ("'Db" , conn.Database , "#B3");
+			Assert.AreEqual (512 , conn.PacketSize , "#B4");
+			Assert.AreEqual (20 , conn.ConnectionTimeout , "#B5");
+			Assert.AreEqual ("'\"desktop" , conn.WorkstationId , "#B6");
 		}
 
 		[Test]
-		public void OpenTest ()
+		public void Open ()
 		{
 			conn = new SqlConnection (connectionString);
-			ArrayList validIncorrectConnStrings = new ArrayList();
-			string validConnString = connectionString;
-
-			validIncorrectConnStrings.Add (
-					validConnString+"user id=invalidLogin");
-			validIncorrectConnStrings.Add (
-					validConnString+"database=invalidDB");
-			validIncorrectConnStrings.Add (
-					validConnString+";password=invalidPassword");
-			validIncorrectConnStrings.Add (
-					validConnString+";server=invalidServerName");
-
-			int count=0;
-			foreach (string connString in validIncorrectConnStrings) {
-				count++;
-				try {
-					conn.ConnectionString = connString;
-					conn.Open();
-					Assert.Fail (String.Format (
-							"#1_{0} Incorrect Connection String",count));				
-						
-				}catch (AssertionException e) {
-					throw e;
-				}catch (Exception e) {
-					Assert.AreEqual (typeof (SqlException), e.GetType (),
-						"#2 Incorrect Exception" + e.StackTrace);
-				}
-			}
-			
-			// Test connection is Opened for a valid Connection String
-			conn.ConnectionString = connectionString; 
+			conn.StateChange += new StateChangeEventHandler (Connection_StateChange);
 			conn.Open ();
-			Assert.AreEqual (ConnectionState.Open, conn.State,
-				"#3 Connection State Should be OPEN");
 
-			// Test Exception is thrown on opening an OPEN Connection 
-			try {
-				conn.Open ();
-				Assert.AreEqual (typeof (InvalidOperationException), null,
-					"#1 Connection is Already Open");
-			}catch (AssertionException e) {
-				throw e;
-			}catch (Exception e) {
-				Assert.AreEqual (typeof(InvalidOperationException), e.GetType (),
-					 "#2 Incorect Exception."); 
-			}
-			conn.Close();				
+			Assert.AreEqual (ConnectionState.Open, conn.State, "#1");
+			Assert.AreEqual (1, events.Count, "#2");
+			StateChangeEventArgs args = events [0] as StateChangeEventArgs;
+			Assert.IsNotNull (args, "#3");
+			Assert.AreEqual (ConnectionState.Closed, args.OriginalState, "#4");
+			Assert.AreEqual (ConnectionState.Open, args.CurrentState, "#5");
 
-			/*
-			// Test if localhost is assumed when servername is empty/missing
-			// NOTE : msdotnet contradicts doc
-
-			Assumes the server is localhost .. need to test this with mono on windows 
-			conn.ConnectionString = connectionString + "server=;";
-			try {
-				conn.Open ();
-			}catch (Exception e) {
-				Assert.Fail ("## If server name is not given or empty ,localhost shud be tried");
-			}
-			ex = null; 
 			conn.Close ();
-			 */
 		}
 
 		[Test]
-		public void OpenTest_1 ()
+		public void Open_Connection_Open ()
 		{
-			SqlConnection conn  = new SqlConnection ();
-
-			conn.ConnectionString = "";
-			try {
-				conn.Open ();
-				Assert.Fail ("#1 Should throw ArgumentException and not SqlException");
-			} catch (InvalidOperationException) {
-			}
-
-			conn.ConnectionString = "    ";
-			try {
-				conn.Open ();
-				Assert.Fail ("#2 Should throw ArgumentException and not SqlException");
-			} catch (InvalidOperationException) {
-			}
-		}
-
-		[Test]
-		public void CreateCommandTest ()
-		{
-			conn = new SqlConnection (connectionString);
-			IDbCommand cmd = conn.CreateCommand ();
-			Assert.AreSame (conn, cmd.Connection,
-				"#1 Connection instance should be the same");
-		}
-
-		[Test]
-		public void CloseTest ()
-		{	
 			conn = new SqlConnection (connectionString);
 			conn.Open ();
-			Assert.AreEqual (ConnectionState.Open, conn.State,
-				"#1 Connection State should be : Open");
-			conn.Close ();
-			Assert.AreEqual (ConnectionState.Closed, conn.State,
-				"#1 Connection State Should : Closed");
-			// Test Closing an already closed connection is Valid..
-			conn.Close ();
+
+			try {
+				conn.Open ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// The connection was not closed. The connection's
+				// current state is open
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			} finally {
+				conn.Close ();
+			}
 		}
 
 		[Test]
-		public void DisposeTest ()
+		public void Open_ConnectionString_Incorrect ()
 		{
-			SqlConnection conn = new SqlConnection (connectionString);
-			conn.Dispose ();
-			Assert.AreEqual ("", conn.ConnectionString, 
-				"#1 Dispose shud make the Connection String empty");
-			Assert.AreEqual (15, conn.ConnectionTimeout, 
-				"#2 Default ConnectionTimeout : 15" ); 
-			Assert.AreEqual ("", conn.Database,
-				"#3 Default Database : empty");
-			Assert.AreEqual ("", conn.DataSource, 
-				"#4 Default DataSource : empty");
-			Assert.AreEqual (8192, conn.PacketSize, 
-				"#5 Default Packet Size : 8192");
-			Assert.AreEqual (Dns.GetHostName().ToUpper (), conn.WorkstationId.ToUpper (), 
-				"#6 Default Workstationid : hostname");
-			Assert.AreEqual (ConnectionState.Closed, conn.State, 
-				"#7 Default State : CLOSED ");
+			Assert.Ignore ("NotWorking");
 
-			conn = new SqlConnection ();
-			//shud not throw exception
-			conn.Dispose ();
+			// login invalid
+			conn = new SqlConnection (connectionString + "user id=invalidLogin");
+			try {
+				conn.Open ();
+				Assert.Fail ("#A1");
+			} catch (SqlException ex) {
+				// Login failed for user 'invalidLogin'
+				Assert.AreEqual (typeof (SqlException), ex.GetType (), "#A2");
+				Assert.AreEqual ((byte) 14, ex.Class, "#A3");
+				Assert.IsNull (ex.InnerException, "#A4");
+				Assert.IsNotNull (ex.Message, "#A5");
+				Assert.IsTrue (ex.Message.IndexOf ("'invalidLogin'") != -1, "#A6");
+				Assert.AreEqual (18456, ex.Number, "#A7");
+				Assert.AreEqual ((byte) 1, ex.State, "#A8");
+			} finally {
+				conn.Close ();
+			}
+
+			// database invalid
+			conn = new SqlConnection (connectionString + "database=invalidDB");
+			try {
+				conn.Open ();
+				Assert.Fail ("#B1");
+			} catch (SqlException ex) {
+				// Cannot open database "invalidDB" requested
+				// by the login. The login failed
+				Assert.AreEqual (typeof (SqlException), ex.GetType (), "#B2");
+				Assert.AreEqual ((byte) 11, ex.Class, "#B3");
+				Assert.IsNull (ex.InnerException, "#B4");
+				Assert.IsNotNull (ex.Message, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf ("\"invalidDB\"") != -1, "#B6");
+				Assert.AreEqual (4060, ex.Number, "#B7");
+				Assert.AreEqual ((byte) 1, ex.State, "#B8");
+			} finally {
+				conn.Close ();
+			}
+
+			// password invalid
+			conn = new SqlConnection (connectionString + ";password=invalidPassword");
+			try {
+				conn.Open ();
+				Assert.Fail ("#C1");
+			} catch (SqlException ex) {
+				// Login failed for user '...'
+				Assert.AreEqual (typeof (SqlException), ex.GetType (), "#C2");
+				Assert.AreEqual ((byte) 14, ex.Class, "#C3");
+				Assert.IsNull (ex.InnerException, "#C4");
+				Assert.IsNotNull (ex.Message, "#C5");
+				Assert.AreEqual (18456, ex.Number, "#C6");
+				Assert.AreEqual ((byte) 1, ex.State, "#C7");
+			} finally {
+				conn.Close ();
+			}
+
+			// server invalid
+			conn = new SqlConnection (connectionString + ";server=invalidServerName");
+			try {
+				conn.Open ();
+				Assert.Fail ("#D1");
+			} catch (SqlException ex) {
+				// An error has occurred while establishing a
+				// connection to the server...
+				Assert.AreEqual (typeof (SqlException), ex.GetType (), "#D2");
+				Assert.AreEqual ((byte) 20, ex.Class, "#D3");
+				Assert.IsNull (ex.InnerException, "#D4");
+				Assert.IsNotNull (ex.Message, "#D5");
+#if NET_2_0
+				Assert.AreEqual (53, ex.Number, "#D6");
+#else
+				Assert.AreEqual (17, ex.Number, "#D6");
+#endif
+				Assert.AreEqual ((byte) 0, ex.State, "#D7");
+			} finally {
+				conn.Close ();
+			}
+		}
+
+		[Test] // bug #412574
+		public void Close ()
+		{
+			Assert.Ignore ("bug #412574");
+
+			conn = new SqlConnection (connectionString);
+			conn.Open ();
+			conn.StateChange += new StateChangeEventHandler (Connection_StateChange);
+			conn.Close ();
+
+			Assert.AreEqual (ConnectionState.Closed, conn.State, "#1");
+			Assert.AreEqual (1, events.Count, "#2");
+			StateChangeEventArgs args = events [0] as StateChangeEventArgs;
+			Assert.IsNotNull (args, "#3");
+			Assert.AreEqual (ConnectionState.Open, args.OriginalState, "#4");
+			Assert.AreEqual (ConnectionState.Closed, args.CurrentState, "5");
+
+			conn.Close ();
+
+			Assert.AreEqual (1, events.Count, "#6");
 		}
 
 		[Test]
-		public void ChangeDatabaseTest ()
+		public void ChangeDatabase ()
 		{
 			conn = new SqlConnection (connectionString);
+			conn.Open ();
+			conn.ChangeDatabase ("master");
+			Assert.AreEqual ("master", conn.Database);
+		}
+
+		[Test]
+		public void ChangeDatabase_DatabaseName_DoesNotExist ()
+		{
+			conn = new SqlConnection (connectionString);
+			conn.Open ();
+
 			String database = conn.Database;
 
-			//Test if exception is thrown if connection is closed
 			try {
-				conn.ChangeDatabase ("database");
-				Assert.AreEqual (typeof (InvalidOperationException), null,
-					"#1 Connection is Closed");
-			}catch (AssertionException e){
-				throw e; 
-			}catch (Exception e) {
-				Assert.AreEqual (typeof (InvalidOperationException), e.GetType(),
-					"#2 Incorrect Exception : " + e.StackTrace);
-			}
+				conn.ChangeDatabase ("doesnotexist");
+				Assert.Fail ("#1");
+			} catch (SqlException ex) {
+				// Could not locate entry in sysdatabases for
+				// database 'doesnotexist'. No entry found with
+				// that name. Make sure that the name is entered
+				// correctly.
+				Assert.AreEqual (typeof (SqlException), ex.GetType (), "#2");
+				Assert.AreEqual ((byte) 16, ex.Class, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+				Assert.IsTrue (ex.Message.IndexOf ("'doesnotexist'") != -1, "#6");
+				Assert.AreEqual (911, ex.Number, "#7");
+				Assert.AreEqual ((byte) 1, ex.State, "#8");
 
-			//Test if exception is thrown for invalid Database Names 
-			//need to add more to the list 
-			conn.Open ();
-			String[] InvalidDatabaseNames = {"", null, "       "};
-			for (int i = 0; i < InvalidDatabaseNames.Length ; ++i) {
-				try {
-					conn.ChangeDatabase (InvalidDatabaseNames[i]);
-					Assert.AreEqual (typeof (ArgumentException), null,
-						string.Format ("#3_{0} Exception not thrown",i));
-				}catch (AssertionException e) {
-					throw e;
-				}catch (Exception e) {
-					Assert.AreEqual (typeof(ArgumentException), e.GetType (),
-						string.Format( "#4_{0} Incorrect Exception : {1}",
-							i, e.StackTrace));
-				}
-				Assert.AreEqual (database, conn.Database,
-					"#4 The Database shouldnt get changed if Operation Failed");
+				Assert.AreEqual (database, conn.Database, "#9");
+			} finally {
+				conn.Close ();
 			}
-			
-			//Test if exception is thrown if database name is non-existent
-			try {
-				conn.ChangeDatabase ("invalidDB");
-				Assert.Fail ("#5 Exception must be thrown if database doesent exist");
-			}catch (AssertionException e) {
-				throw e;
-			}catch (Exception e) {
-				Assert.AreEqual (typeof(SqlException), e.GetType (),
-					"#6 Incorrect Exception" + e.StackTrace);
-			}
-			conn.Close (); 
+		}
 
-			//Test if '-' is a valid character in a database name
-			//TODO : Check for database names that have more special Characters..
-			conn.ConnectionString = connectionString;
+		[Test]
+		public void ChangeDatabase_DatabaseName_Empty ()
+		{
+			conn = new SqlConnection (connectionString);
 			conn.Open ();
 			try {
-				conn.ChangeDatabase ("mono-test");
-				Assert.AreEqual ("mono-test", conn.Database,
-					"#7 Database name should be mono-test");
-			}catch (AssertionException e) {
-				throw e;
-			}catch (Exception e){
-				Assert.Fail ("#8 Unexpected Exception : DB Name can have a '-' : "
-					 + e);
+				conn.ChangeDatabase (string.Empty);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Database cannot be null, the empty string,
+				// or string of only whitespace
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName);
 			}
+		}
+
+		[Test]
+		public void ChangeDatabase_DatabaseName_Null ()
+		{
+			conn = new SqlConnection (connectionString);
+			conn.Open ();
+			try {
+				conn.ChangeDatabase ((string) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Database cannot be null, the empty string,
+				// or string of only whitespace
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName);
+			}
+		}
+
+		[Test] // bug #412581
+		public void ChangeDatabase_DatabaseName_Whitespace ()
+		{
+#if NET_2_0
+			Assert.Ignore ("bug #412581");
+#endif
+
+			conn = new SqlConnection (connectionString);
+			conn.Open ();
+			try {
+				conn.ChangeDatabase ("   ");
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (SqlException ex) {
+				// Could not locate entry in sysdatabases for
+				// database '   '. No entry found with that name.
+				// Make sure that the name is entered correctly
+				Assert.AreEqual (typeof (SqlException), ex.GetType (), "#2");
+				Assert.AreEqual ((byte) 16, ex.Class, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+				Assert.IsTrue (ex.Message.IndexOf ("'   '") != -1, "#6");
+				Assert.AreEqual (911, ex.Number, "#7");
+				Assert.AreEqual ((byte) 1, ex.State, "#8");
+			}
+#else
+			} catch (ArgumentException ex) {
+				// Database cannot be null, the empty string,
+				// or string of only whitespace
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName);
+			}
+#endif
 		}
 
 		[Test]
@@ -364,40 +354,27 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void BeginTransactionTest()
+		public void BeginTransaction ()
 		{
 			conn = new SqlConnection (connectionString);
-			SqlTransaction trans = null ;
-
-			try {
-				trans = conn.BeginTransaction ();
-				Assert.Fail ("#1 Connection must be Open to Begin a Transaction");
-			}catch (AssertionException e) {
-				throw e;
-			}catch (Exception e) {
-				Assert.AreEqual (typeof (InvalidOperationException), e.GetType(),
-					"#2 Incorrect Exception" + e.StackTrace);
-			}
-
 			conn.Open ();
-			trans = conn.BeginTransaction ();
-			Assert.AreSame (conn, trans.Connection, 
-					"#3 Transaction should reference the same connection");
-			Assert.AreEqual (IsolationLevel.ReadCommitted, trans.IsolationLevel,
-					"#4 Isolation Level shud be ReadCommitted");
+
+			SqlTransaction trans = conn.BeginTransaction ();
+			Assert.AreSame (conn, trans.Connection, "#A1");
+			Assert.AreEqual (IsolationLevel.ReadCommitted, trans.IsolationLevel, "#A2");
 			trans.Rollback ();
 
+			trans = conn.BeginTransaction ();
+
 			try {
-				trans = conn.BeginTransaction ();
-				trans = conn.BeginTransaction ();
 				conn.BeginTransaction ();
-				Assert.Fail ("#5 Parallel Transactions are not supported");
-			}catch (AssertionException e) {
-				throw e;
-			}catch (Exception e) {
-				Assert.AreEqual (typeof(InvalidOperationException), e.GetType(),
-					"#6 Incorrect Exception" + e.StackTrace); 
-			}finally {
+				Assert.Fail ("#B1");
+			} catch (InvalidOperationException ex) {
+				// SqlConnection does not support parallel transactions
+				Assert.AreEqual (typeof(InvalidOperationException), ex.GetType(), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			} finally {
 				trans.Rollback();
 			}
 
@@ -405,191 +382,169 @@ namespace MonoTests.System.Data
 				trans = conn.BeginTransaction ();
 				trans.Rollback ();
 				trans = conn.BeginTransaction ();
-				trans.Commit();
+				trans.Commit ();
 				trans = conn.BeginTransaction ();
-			}catch {
-				Assert.Fail ("#7 Transaction can be opened after a rollback/commit");
-			}finally {
+			} finally {
 				trans.Rollback ();
 			}
 		}
 
 		[Test]
-		public void ConnectionStringPropertyTest ()
+		public void ConnectionString ()
 		{
-			conn = new SqlConnection (connectionString) ;
-			// Test Repeated Keyoword ..Should take the latest value 
-			conn.ConnectionString = conn.ConnectionString + ";server=RepeatedServer;" ;
-			Assert.AreEqual ("RepeatedServer", ((SqlConnection)conn).DataSource,
-					"#1 if keyword is repeated, the latest value should be taken");
+			conn = new SqlConnection (connectionString);
+			// Test Repeated Keyoword should take the latest value
+			conn.ConnectionString = conn.ConnectionString + ";server=RepeatedServer;";
+			Assert.AreEqual ("RepeatedServer", ((SqlConnection)conn).DataSource, "#A1");
 			conn.ConnectionString += ";database=gen;Initial Catalog=gen1";
-			Assert.AreEqual ("gen1", conn.Database,
-					"#2 database and initial catalog are synonyms .. ");
+			Assert.AreEqual ("gen1", conn.Database, "#A2");
 
-			// Test if properties are set correctly 
+			// Test if properties are set correctly
 			string str = "server=localhost1;database=db;user id=user;";
 			str += "password=pwd;Workstation ID=workstation;Packet Size=512;";
 			str += "Connect Timeout=10";
 			conn.ConnectionString = str;
 
-			Assert.AreEqual ("localhost1", conn.DataSource,
-					"#3 DataSource name should be same as passed");
-			Assert.AreEqual ("db", conn.Database,
-					"#4 Database name shud be same as passed");
-			Assert.AreEqual (ConnectionState.Closed, conn.State,
-					"#5 Connection shud be in closed state");
-			Assert.AreEqual ("workstation", conn.WorkstationId,
-					"#6 Workstation Id shud be same as passed");
-			Assert.AreEqual (512, conn.PacketSize,
-					"#7 Packetsize shud be same as passed");
-			Assert.AreEqual (10, conn.ConnectionTimeout,
-					"#8 ConnectionTimeout shud be same as passed");
+			Assert.AreEqual ("localhost1", conn.DataSource, "#B1");
+			Assert.AreEqual ("db", conn.Database, "#B2");
+			Assert.AreEqual (ConnectionState.Closed, conn.State, "#B3");
+			Assert.AreEqual ("workstation", conn.WorkstationId, "#B4");
+			Assert.AreEqual (512, conn.PacketSize, "#B5");
+			Assert.AreEqual (10, conn.ConnectionTimeout, "#B6");
 			
-			// Test if any leftover values exist from previous invocation. 
+			// Test if any leftover values exist from previous invocation
 			conn.ConnectionString = connectionString;
-			conn.ConnectionString = "";
-			Assert.AreEqual ("", conn.DataSource,
-					"#9 Datasource shud be reset to Default : Empty");
-			Assert.AreEqual ("", conn.Database, 
-					"#10 Database shud reset to Default : Empty");
-			Assert.AreEqual (8192, conn.PacketSize, 
-					"#11 Packetsize shud be reset to Default : 8192");
-			Assert.AreEqual (15, conn.ConnectionTimeout, 
-					"#12 ConnectionTimeour shud be reset to Default : 15");
-			Assert.AreEqual (Dns.GetHostName ().ToUpper (), conn.WorkstationId.ToUpper (),
-					"#13 WorkstationId shud be reset to Default : Hostname");
-			
-			// Test Argument Exception is thrown for Invalid Connection Strings
-			foreach (string connString in invalidConnectionStrings) {
-				try {
-					conn.ConnectionString = connString;
-					Assert.Fail (
-						"#14 Exception should be thrown");
-				}catch (AssertionException e){
-					throw e;
-				}catch (Exception e) {
-					Assert.AreEqual (typeof (ArgumentException), e.GetType(),
-						"#15 Incorrect Exception" + e.StackTrace);
-				}
-			}
+			conn.ConnectionString = string.Empty;
+			Assert.AreEqual (string.Empty, conn.DataSource, "#C1");
+			Assert.AreEqual ("", conn.Database, "#C2");
+#if NET_2_0
+			Assert.AreEqual (8000, conn.PacketSize, "#C3");
+#else
+			Assert.AreEqual (8192, conn.PacketSize, "#C3");
+#endif
+			Assert.AreEqual (15, conn.ConnectionTimeout, "#C4");
+			Assert.IsTrue (string.Compare (conn.WorkstationId, Environment.MachineName, true) == 0, "#C5");
+		}
 
-			// Test if ConnectionString is read-only when Connection is OPEN
+		[Test]
+		public void ConnectionString_Connection_Open ()
+		{
+			conn = new SqlConnection (connectionString);
 			conn.ConnectionString = connectionString;
-			conn.Open() ;
+			conn.Open ();
 			try {
-				Assert.AreEqual (conn.State, ConnectionState.Open,
-						"#16 Connection shud be open");
-				conn.ConnectionString =  "server=localhost;database=tmp;" ;
-				Assert.Fail (
-					"#17 ConnectionString should Read-Only when Connection is Open");
-			}catch (AssertionException e){
-				throw e;
-			}catch (Exception e) {
-				Assert.AreEqual (typeof(InvalidOperationException), e.GetType(),
-					"#18 Incorrect Exception" + e.StackTrace); 
+				conn.ConnectionString = "server=localhost;database=tmp;";
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// Not allowed to change the 'ConnectionString'
+				// property. The connection's current state is open
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			} finally {
+				conn.Close ();
 			}
-			conn.Close ();
 		}
 
 		[Test]
 		public void ServerVersionTest ()
-		{	
+		{
 			conn = new SqlConnection (connectionString);
 
 			// Test InvalidOperation Exception is thrown if Connection is CLOSED
 			try {
 				string s = conn.ServerVersion;
-				Assert.Fail ("#1 InvalidOperation Exception Must be thrown if conn is closed");
-				Assert.AreEqual ("", s, "#1a Should be an empty string");
-			} catch (AssertionException e){
-				throw e;
-			} catch (Exception e){
-				Assert.AreEqual(typeof (InvalidOperationException), e.GetType (),
-					"#2 Incorrect Exception" + e.StackTrace);
+				Assert.Fail ("#A1:" + s);
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
 			}
 			
 			// Test if Release Version is as per specification.
 			conn.Open ();
-			String[] version = conn.ServerVersion.Split ('.') ;
+			String [] version = conn.ServerVersion.Split ('.');
 			Assert.AreEqual (2, version[0].Length,
-				"#2 The Major release shud be exactly 2 characters");
+				"#B1 The Major release shud be exactly 2 characters");
 			Assert.AreEqual (2, version[1].Length,
-				"#3 The Minor release shud be exactly 2 characters");
+				"#B2 The Minor release shud be exactly 2 characters");
 			Assert.AreEqual (4, version[2].Length,
-				"#4 The Release version should be exactly 4 digits");
+				"#B3 The Release version should be exactly 4 digits");
 		}
 
 		[Test]
-		public void DatabasePropertyTest ()
+		public void Database ()
 		{
 			conn = new SqlConnection (connectionString);
-			string database = conn.Database ;
+			string database = conn.Database;
 
 			// Test if database property is updated when a query changes database
 			conn.Open ();
-			SqlCommand cmd = new SqlCommand ("use [mono-test]" , conn);
+			SqlCommand cmd = new SqlCommand ("use [master]" , conn);
 			cmd.ExecuteNonQuery ();
-			Assert.AreEqual ("mono-test", conn.Database,
-				"#1 DATABASE name shud change if query changes the db");
+			Assert.AreEqual ("master", conn.Database, "#1");
 			conn.Close ();
-			Assert.AreEqual (database, conn.Database,
-				"#2 Shud be back to default value");
+			Assert.AreEqual (database, conn.Database, "#2");
 
 			// Test if the database property is reset on re-opening the connection
 			conn.ConnectionString = connectionString;
-			conn.Open ();	
-			Assert.AreEqual (database, conn.Database,
-				"#3 Shud be back to original value");
+			conn.Open ();
+			Assert.AreEqual (database, conn.Database, "#3");
 			conn.Close ();
 		}
 
-		[Test]
-		public void StateChangeEventTest () 
+		[Test] // bug #412571
+		public void Dispose ()
 		{
-			conn = new SqlConnection (connectionString);
-			conn.StateChange += new StateChangeEventHandler (
-							StateChangeHandlerTest1);
-			using (conn) {
-				conn.Open ();
-			}
-			Assert.AreEqual (2, stateChangeEventCount,
-				"#1 The handler shud be called twice");
-			stateChangeEventCount =0 ; 
-			conn.StateChange -= new StateChangeEventHandler (
-							StateChangeHandlerTest1);
-			// NOTE : Need to check  the behavior if an exception is raised 
-			// in a handler 
-		}
+			Assert.Ignore ("bug #412571");
 
-		[Test]
-		public void DisposedEventTest ()
-		{
+			StateChangeEventArgs stateChangeArgs;
+			EventArgs disposedArgs;
+
 			conn = new SqlConnection (connectionString);
-			conn.Disposed += new EventHandler (DisposedEventHandlerTest1);
+			conn.Disposed += new EventHandler (Connection_Disposed);
+			conn.Open ();
+			conn.StateChange += new StateChangeEventHandler (Connection_StateChange);
+			Assert.AreEqual (0, events.Count, "#A1");
 			conn.Dispose ();
-			Assert.AreEqual (1, disposedEventCount,
-				 "#1 Disposed eventhandler shud be called");
+			Assert.AreEqual (ConnectionState.Closed, conn.State, "#A2");
+			Assert.AreEqual (2, events.Count, "#A3");
+
+			stateChangeArgs = events [0] as StateChangeEventArgs;
+			Assert.IsNotNull (stateChangeArgs, "#B1");
+			Assert.AreEqual (typeof (StateChangeEventArgs), stateChangeArgs.GetType (), "#B2");
+			Assert.AreEqual (ConnectionState.Open, stateChangeArgs.OriginalState, "#B3");
+			Assert.AreEqual (ConnectionState.Closed, stateChangeArgs.CurrentState, "B4");
+
+			disposedArgs = events [1] as EventArgs;
+			Assert.IsNotNull (disposedArgs, "#C1");
+			Assert.AreEqual (typeof (EventArgs), disposedArgs.GetType (), "#C2");
+
+			conn.Dispose ();
+
+			Assert.AreEqual (ConnectionState.Closed, conn.State, "#D1");
+			Assert.AreEqual (3, events.Count, "#D2");
+
+			disposedArgs = events [2] as EventArgs;
+			Assert.IsNotNull (disposedArgs, "#E1");
+			Assert.AreEqual (typeof (EventArgs), disposedArgs.GetType (), "#E2");
 		}
 
-		void StateChangeHandlerTest1 (object sender , StateChangeEventArgs e)
+		void Connection_StateChange (object sender , StateChangeEventArgs e)
 		{
-			Assert.IsTrue ((e.CurrentState != e.OriginalState),
-				"#1 Current and Original state shud be different");
-			Assert.AreEqual (e.CurrentState, conn.State,
-				"The conn state and the arg received in event shud be same");
-			stateChangeEventCount++ ;
+			events.Add (e);
 		}
 
-		void DisposedEventHandlerTest1 (object sender , EventArgs e)
+		void Connection_Disposed (object sender , EventArgs e)
 		{
-			disposedEventCount++; 
+			events.Add (e);
 		}
-		
+
 #if NET_2_0
 		[Test]
 		public void FireInfoMessageEventOnUserErrorsTest ()
 		{
-			conn = new SqlConnection (); 
+			conn = new SqlConnection ();
 			Assert.AreEqual(false, conn.FireInfoMessageEventOnUserErrors, "#1 The default value should be false");
 			conn.FireInfoMessageEventOnUserErrors = true;
 			Assert.AreEqual(true, conn.FireInfoMessageEventOnUserErrors, "#1 The value should be true after setting the property to true");
@@ -614,40 +569,9 @@ namespace MonoTests.System.Data
 			connBuilder.Password = tmpPassword;
 			SqlConnection.ChangePassword (connBuilder.ConnectionString, oldPassword); // Modify to the original password
 		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void ChangePasswordNullConnStringTest ()
-		{
-			conn = new SqlConnection (connectionString);
-			SqlConnection.ChangePassword (null, "mono");
-		}
-		
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void ChangePasswordNullPasswordTest ()
-		{
-			conn = new SqlConnection (connectionString);
-			SqlConnection.ChangePassword (connectionString, null);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void ChangePasswordEmptyPasswordTest ()
-		{
-			conn = new SqlConnection (connectionString);
-			SqlConnection.ChangePassword (connectionString, "");
-		}
-		
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void ChangePasswordExceedPasswordTest ()
-		{
-			conn = new SqlConnection (connectionString);
-			SqlConnection.ChangePassword (connectionString,"ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
-		}
-#endif		
+#endif
 	}
+
 #if NET_2_0
 	[TestFixture]
 	[Category ("sqlserver")]
@@ -662,11 +586,13 @@ namespace MonoTests.System.Data
 			conn = new SqlConnection(connectionString);
 			conn.Open();
 		}
+
 		[TearDown]
 		public void TearDown()
 		{
 			conn.Close();
 		}
+
 		[Test]
 		public void GetSchemaTest1()
 		{
@@ -687,15 +613,19 @@ namespace MonoTests.System.Data
 			}
 			Assert.AreEqual(true, flag, "#GS1 failed");
 		}
+
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void GetSchemaTest2()
 		{
 			conn.GetSchema(null);
 		}
+
 		[Test]
-		public void GetSchemaTest3()
+		public void GetSchemaTest3 ()
 		{
+			Assert.Ignore ("We currently have no foreign keys defined in the test database");
+
 			bool flag = false;
 			DataTable tab1 = conn.GetSchema("ForeignKeys");
 			foreach (DataRow row in tab1.Rows)
@@ -716,6 +646,7 @@ namespace MonoTests.System.Data
 			}
 			Assert.AreEqual(true, flag, "#GS3 failed");
 		}
+
 		[Test]
 		public void GetSchemaTest4()
 		{
@@ -739,6 +670,7 @@ namespace MonoTests.System.Data
 			}
 			Assert.AreEqual(true, flag, "#GS4 failed");
 		}
+
 		[Test]
 		public void GetSchemaTest5()
 		{
@@ -762,6 +694,7 @@ namespace MonoTests.System.Data
 			}
 			Assert.AreEqual(true, flag, "#GS5 failed");
 		}
+
 		[Test]
 		public void GetSchemaTest6()
 		{
@@ -785,6 +718,7 @@ namespace MonoTests.System.Data
 			}
 			Assert.AreEqual(true, flag, "#GS6 failed");
 		}
+
 		[Test]
 		public void GetSchemaTest7()
 		{
@@ -808,6 +742,7 @@ namespace MonoTests.System.Data
 			}
 			Assert.AreEqual(true, flag, "#GS7 failed");
 		}
+
 		[Test]
 		public void GetSchemaTest8()
 		{
@@ -831,6 +766,7 @@ namespace MonoTests.System.Data
 			}
 			Assert.AreEqual(true, flag, "#GS8 failed");
 		}
+
 		[Test]
 		public void GetSchemaTest9()
 		{
@@ -854,6 +790,8 @@ namespace MonoTests.System.Data
 			}
 			Assert.AreEqual(true, flag, "#GS9 failed");
 		}
+
+		[Test]
 		public void GetSchemaTest10()
 		{
 			bool flag = false;
@@ -876,8 +814,12 @@ namespace MonoTests.System.Data
 			}
 			Assert.AreEqual(true, flag, "#GS10 failed");
 		}
-		public void GetSchemaTest11()
+
+		[Test]
+		public void GetSchemaTest11 ()
 		{
+			Assert.Ignore ("Incorrect syntax near 'TABLE_SCHEMA'");
+
 			bool flag = false;
 			DataTable tab1 = conn.GetSchema("Views");
 			flag = true; // FIXME: Currently MS-SQL 2005 returns empty table. Remove this flag ASAP.
@@ -899,8 +841,12 @@ namespace MonoTests.System.Data
 			}
 			Assert.AreEqual(true, flag, "#GS11 failed");
 		}
-		public void GetSchemaTest12()
+
+		[Test]
+		public void GetSchemaTest12 ()
 		{
+			Assert.Ignore ("Incorrect syntax near '('");
+
 			bool flag = false;
 			DataTable tab1 = conn.GetSchema("ViewColumns");
 			flag = true; // FIXME: Currently MS-SQL 2005 returns empty table. Remove this flag ASAP.
@@ -922,10 +868,14 @@ namespace MonoTests.System.Data
 			}
 			Assert.AreEqual(true, flag, "#GS12 failed");
 		}
-		public void GetSchemaTest13()
+
+		[Test]
+		public void GetSchemaTest13 ()
 		{
+			Assert.Ignore ("The multi-part identifier \"assportemblies.name\" could not be bound");
+
 			bool flag = false;
-			DataTable tab1 = conn.GetSchema("UserDefineTypes");
+			DataTable tab1 = conn.GetSchema("UserDefinedTypes");
 			flag = true; // FIXME: Currently MS-SQL 2005 returns empty table. Remove this flag ASAP.
 			foreach (DataRow row in tab1.Rows)
 			{
@@ -945,6 +895,7 @@ namespace MonoTests.System.Data
 			}
 			Assert.AreEqual(true, flag, "#GS13 failed");
 		}
+
 		[Test]
 		public void GetSchemaTest14()
 		{
@@ -974,6 +925,7 @@ namespace MonoTests.System.Data
 			}
 			Assert.AreEqual(true, flag, "#GS14 failed");
 		}
+
 		[Test]
 		public void GetSchemaTest15()
 		{
@@ -1003,6 +955,7 @@ namespace MonoTests.System.Data
 			}
 			Assert.AreEqual(true, flag, "#GS15 failed");
 		}
+
 		[Test]
 		public void GetSchemaTest16()
 		{
@@ -1032,6 +985,7 @@ namespace MonoTests.System.Data
 			}
 			Assert.AreEqual(true, flag, "#GS16 failed");
 		}
+
 		[Test]
 		public void GetSchemaTest17()
 		{
@@ -1055,6 +1009,7 @@ namespace MonoTests.System.Data
 			}
 			Assert.AreEqual(true, flag, "#GS17 failed");
 		}
+
 		[Test]
 		public void GetSchemaTest18()
 		{
@@ -1078,6 +1033,7 @@ namespace MonoTests.System.Data
 			}
 			Assert.AreEqual(true, flag, "#GS18 failed");
 		}
+
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void GetSchemaTest19 ()
@@ -1085,6 +1041,7 @@ namespace MonoTests.System.Data
 			String [] restrictions = new String[1];
 			conn.GetSchema("RESTRICTIONS", restrictions);
 		}
+
 		[Test]
 		public void GetSchemaTest20 ()
 		{
@@ -1108,6 +1065,7 @@ namespace MonoTests.System.Data
 			}
 			Assert.AreEqual(true, flag, "#GS20 failed");
 		}
+
 		[Test]
 		public void GetSchemaTest21()
 		{
@@ -1154,6 +1112,7 @@ namespace MonoTests.System.Data
 			}
 			Assert.AreEqual(true, flag, "#GS22 failed");
 		}
+
 		[Test]
 		public void GetSchemaTest23()
 		{
@@ -1177,6 +1136,7 @@ namespace MonoTests.System.Data
 			}
 			Assert.AreEqual(false, flag, "#GS23 failed");
 		}
+
 		[Test]
 		public void GetSchemaTest24()
 		{
@@ -1206,6 +1166,7 @@ namespace MonoTests.System.Data
 			}
 			Assert.AreEqual(false, flag, "#GS24 failed");
 		}
+
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void GetSchemaTest25 ()
