@@ -1,3 +1,9 @@
+2008-07-28  Marek Habersack  <mhabersack@novell.com>
+
+	* NunitWeb/Makefile (NunitWeb.dll): added dependency on
+	NunitWeb/Resources/MyPageWithMasterInvalidPlaceHolder.aspx, it is
+	also included in the resources.
+
 2008-07-25  Dean Brettle <dean@brettle.com>
 
 	* NunitWebResources/adapters.browser: added capabilities with 

@@ -74,9 +74,6 @@ namespace MonoTests.System.Web.UI.WebControls
 	[TestFixture]
 	public class MasterPageTest
 	{
-		public const string PAGE_WITH_MASTER = "MyPageWithMaster.aspx";
-		public const string PAGE_WITH_DERIVED_MASTER = "MyPageWithDerivedMaster.aspx";
-
 		[TestFixtureSetUp]
 		public void CopyTestResources ()
 		{
@@ -130,6 +127,15 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			Render_Helper (StandardUrl.PAGE_WITH_DERIVED_MASTER);
 		}
+
+		// Bug #325114
+		[Test]
+		[Category ("NunitWeb")]
+		[ExpectedException (typeof(HttpException))]
+		public void MasterPage_ContentPlaceHolder_Not_Found ()
+		{
+			Render_Helper (StandardUrl.PAGE_WITH_MASTER_INVALID_PLACE_HOLDER);
+		}
 		
 		public void Render_Helper(string url)
 		{
@@ -157,8 +163,7 @@ namespace MonoTests.System.Web.UI.WebControls
 				Assert.Fail ("Master#7");
 			}
 
-
-			if (url == PAGE_WITH_DERIVED_MASTER) {
+			if (url == StandardUrl.PAGE_WITH_DERIVED_MASTER) {
 				if (PageRenderHtml.IndexOf ("Derived header text") < 0) {
 					Assert.Fail ("Master#8");
 				}

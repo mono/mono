@@ -1,3 +1,9 @@
+2008-07-28  Marek Habersack  <mhabersack@novell.com>
+
+	* MasterPage.cs: decouple processing of content templates in
+	CreateMasterPage from checking whether all the content place
+	holder ids are defined. Fixes bug #325114
+
 2008-07-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* LosFormatter.cs (Deserialize): When stream is non-seekable, do not

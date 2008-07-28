@@ -1,3 +1,8 @@
+2008-07-28  Marek Habersack  <mhabersack@novell.com>
+
+	* StandardUrl.cs: added a new standard url -
+	PAGE_WITH_MASTER_INVALID_PLACE_HOLDER.
+
 2008-06-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* PageInvoker.cs: Fixed line endings.

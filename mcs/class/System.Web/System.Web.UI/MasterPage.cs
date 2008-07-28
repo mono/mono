@@ -36,6 +36,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Web.Compilation;
 using System.Web.Util;
+using System.Web.UI.WebControls;
 using System.IO;
 
 namespace System.Web.UI
@@ -50,8 +51,6 @@ namespace System.Web.UI
 		Hashtable definedContentTemplates = new Hashtable ();
 		Hashtable templates = new Hashtable ();
 		ArrayList placeholders = new ArrayList ();
-		List <string> placeholderIds;
-		
 		string parentMasterPageFile = null;
 		MasterPage parentMasterPage;
 
@@ -95,12 +94,7 @@ namespace System.Web.UI
 			
 				return parentMasterPage;
 			}
-		}
-		
-		internal void SetPlaceHolderIds (List <string> ids)
-		{
-			placeholderIds = ids;
-		}
+		}		
 		
 		internal static MasterPage CreateMasterPage (TemplateControl owner, HttpContext context,
 							     string masterPageFile, IDictionary contentTemplateCollection)
@@ -114,20 +108,46 @@ namespace System.Web.UI
 #endif
 			if (masterPage == null)
 				throw new HttpException ("Failed to create MasterPage instance for '" + masterPageFile + "'.");
-			
-			List <string> phids = masterPage.placeholderIds;
+
 			if (contentTemplateCollection != null) {
 				foreach (string templateName in contentTemplateCollection.Keys) {
-					if (phids != null && !phids.Contains (templateName))
-						throw new HttpException (
-							String.Format ("Cannot find ContentPlaceHolder '{0}' in the master page '{1}'",
-								templateName, masterPageFile));
 					if (masterPage.ContentTemplates [templateName] == null)
 						masterPage.ContentTemplates [templateName] = contentTemplateCollection[templateName];
 				}
 			}
+			
 			masterPage.Page = owner.Page;
 			masterPage.InitializeAsUserControlInternal ();
+
+			if (contentTemplateCollection != null) {
+				Dictionary <string, bool> phids = null;
+				ContentPlaceHolder cph;
+				string id;
+				foreach (object ph in masterPage.placeholders) {
+					cph = ph as ContentPlaceHolder;
+					if (cph == null)
+						continue;
+					if (phids == null)
+						phids = new Dictionary <string, bool> ();
+				
+					id = cph.ID;
+					if (phids.ContainsKey (id))
+						continue;
+				
+					phids.Add (id, true);
+				}			
+	
+				foreach (string templateName in contentTemplateCollection.Keys) {
+					if (phids != null && !phids.ContainsKey (templateName)) {
+						phids = null;
+						throw new HttpException (
+							String.Format ("Cannot find ContentPlaceHolder '{0}' in the master page '{1}'",
+								       templateName, masterPageFile));
+					}
+				}
+				phids = null;
+			}
+
 			return masterPage;
 		}
 
