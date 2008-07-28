@@ -1,3 +1,8 @@
+2008-07-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_from_name): Refactor the module searching code into
+	a separate function so it can be reused in the AOT case too.
+
 2008-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_type_is_valid_in_context): Improve the error message.
