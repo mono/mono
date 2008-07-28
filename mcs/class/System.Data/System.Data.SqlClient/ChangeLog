@@ -1,5 +1,14 @@
 2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlCommand.cs (Connection): Do not throw InvalidOperationException
+	if transaction is in progress. Fixes bug #412576. On 1.0 profile, throw
+	InvalidOperationException when a reader is open for the current
+	connection. Do not set transaction to NULL when changing connection,
+	instead set it to null in Transaction when transaction is no longer
+	open.
+
+2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlConnection.cs: Use null as default value for connectionString
 	field. Remove Init method, as initialization is done in
 	SetDefaultConnectionParameters. Initialize parms in

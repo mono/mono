@@ -898,8 +898,6 @@ namespace MonoTests.System.Data.SqlClient
 		[Test] // bug #412576
 		public void Connection ()
 		{
-			Assert.Ignore ("bug #412576");
-
 			SqlConnection connA = null;
 			SqlConnection connB = null;
 			SqlTransaction trans = null;
@@ -932,6 +930,12 @@ namespace MonoTests.System.Data.SqlClient
 				cmd.Connection = connB;
 				Assert.AreSame (connB, cmd.Connection, "#C3");
 				Assert.IsNull (cmd.Transaction, "#C4");
+
+				trans = connA.BeginTransaction ();
+				cmd = new SqlCommand ("select @@version", connA, trans);
+				cmd.Connection = null;
+				Assert.IsNull (cmd.Connection, "#D1");
+				Assert.AreSame (trans, cmd.Transaction, "#D2");
 			}finally {
 				if (trans != null)
 					trans.Dispose ();
@@ -945,10 +949,6 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void Connection_Reader_Open ()
 		{
-#if NET_2_0
-			Assert.Ignore ("NotWorking");
-#endif
-
 			SqlConnection connA = null;
 			SqlConnection connB = null;
 			SqlTransaction trans = null;

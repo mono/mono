@@ -214,11 +214,13 @@ namespace System.Data.SqlClient {
 #endif //NET_2_0
 		SqlConnection Connection {
 			get { return connection; }
-			set {
-				if (transaction != null && connection.Transaction != null && connection.Transaction.IsOpen)
-					throw new InvalidOperationException ("The Connection property was changed while a transaction was in progress.");
-				transaction = null;
-				connection = value; 
+			set
+			{
+#if ONLY_1_1
+				if (connection != null && connection.DataReader != null)
+					throw new InvalidOperationException ("The connection is busy fetching data.");
+#endif
+				connection = value;
 			}
 		}
 
@@ -283,7 +285,11 @@ namespace System.Data.SqlClient {
 #endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new SqlTransaction Transaction {
-			get { return transaction; }
+			get {
+				if (transaction != null && !transaction.IsOpen)
+					transaction = null;
+				return transaction;
+			}
 			set { transaction = value; }
 		}
 
