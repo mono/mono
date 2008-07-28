@@ -1,5 +1,8 @@
 2008-07-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* monitor.c (mono_monitor_try_enter_internal): Allow nterruption of the
+	wait if the thread is in StopRequested state.
+
 	* class.c (mono_class_from_name): Refactor the module searching code into
 	a separate function so it can be reused in the AOT case too.
 
