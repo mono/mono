@@ -1,3 +1,8 @@
+2008-07-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_emit_call): Emi the osx stack alignment at the
+	correct place.
+
 2008-07-28  Bill Holmes  <billholmes54@gmail.com>
 
 	* mini-amd64.c (get_call_info): Winx64 fix for passing floats.
