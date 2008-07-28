@@ -385,6 +385,8 @@ namespace System.Web
 				throw new InvalidOperationException ("Request is missing - cannot map paths.");
 
 			if (File.Exists (file)) {
+				ResourceKey = Path.GetFileName (file);
+				
 				watcher = new FileSystemWatcher ();
 				watcher.NotifyFilter |= NotifyFilters.Size;
 				watcher.Path = Path.GetFullPath (Path.GetDirectoryName (file));
