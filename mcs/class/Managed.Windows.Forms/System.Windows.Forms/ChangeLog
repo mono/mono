@@ -1,3 +1,8 @@
+2008-07-28  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripButton.cs: Update Checked for CheckOnClick before
+	raising the Click event.  [Fixes bug #412505]
+
 2008-07-28  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* Form.cs: Remove some seems leftover code for non-TopLevel's 
