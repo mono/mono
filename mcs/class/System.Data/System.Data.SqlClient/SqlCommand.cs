@@ -290,7 +290,14 @@ namespace System.Data.SqlClient {
 					transaction = null;
 				return transaction;
 			}
-			set { transaction = value; }
+			set
+			{
+#if ONLY_1_1
+				if (connection != null && connection.DataReader != null)
+					throw new InvalidOperationException ("The connection is busy fetching data.");
+#endif
+				transaction = value;
+			}
 		}
 
 #if !NET_2_0

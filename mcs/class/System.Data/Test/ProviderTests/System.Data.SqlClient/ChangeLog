@@ -1,5 +1,9 @@
 2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlCommandTest.cs: Enabled test for bug #412579.
+ 
+2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlCommandTest.cs: Enabled and improved test for bug #412576.
 	Enabled test for changing Connection while reader is open.
 

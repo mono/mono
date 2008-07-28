@@ -1,5 +1,11 @@
 2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlCommand.cs: (Transaction): On the 1.0 profile, do not allow
+	Transaction to be set when a reader is open for the current connection. 
+	Fixes bug #412579. 
+
+2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlCommand.cs (Connection): Do not throw InvalidOperationException
 	if transaction is in progress. Fixes bug #412576. On 1.0 profile, throw
 	InvalidOperationException when a reader is open for the current

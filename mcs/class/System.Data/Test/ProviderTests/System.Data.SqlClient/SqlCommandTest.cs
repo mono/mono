@@ -1079,8 +1079,6 @@ namespace MonoTests.System.Data.SqlClient
 		[Test] // bug #412579
 		public void Transaction_Reader_Open ()
 		{
-			Assert.Ignore ("bug #412579");
-
 			SqlConnection connA = null;
 			SqlConnection connB = null;
 
