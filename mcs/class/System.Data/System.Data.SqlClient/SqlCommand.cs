@@ -527,6 +527,8 @@ namespace System.Data.SqlClient {
 		public new SqlDataReader ExecuteReader (CommandBehavior behavior)
 		{
 			ValidateCommand ("ExecuteReader", false);
+			if ((behavior & CommandBehavior.SingleRow) != 0)
+				behavior |= CommandBehavior.SingleResult;
 			this.behavior = behavior;
 			if ((behavior & CommandBehavior.SequentialAccess) != 0)
 				Tds.SequentialAccess = true;

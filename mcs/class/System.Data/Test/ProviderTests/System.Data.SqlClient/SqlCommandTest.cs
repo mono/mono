@@ -605,8 +605,6 @@ namespace MonoTests.System.Data.SqlClient
 		[Test] // bug #412569
 		public void ExecuteReader ()
 		{
-			Assert.Ignore ("bug 412569");
-
 			// Test for command behaviors
 			DataTable schemaTable = null;
 			SqlDataReader reader = null;

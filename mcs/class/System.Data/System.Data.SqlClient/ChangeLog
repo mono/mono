@@ -1,5 +1,10 @@
 2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlCommand.cs (ExecuteReader): When behavior includes SingleRow,
+	then only return a single result. Fixes bug #412569.
+
+2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlCommand.cs: Fixed order of arguments for ArgumentException in
 	CommandTimeout.
 	* SqlConnection.cs (ChangePassword): Do not allow empty connection
