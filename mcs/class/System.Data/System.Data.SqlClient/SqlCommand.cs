@@ -173,7 +173,12 @@ namespace System.Data.SqlClient {
 			get { return commandTimeout; }
 			set { 
 				if (value < 0)
+#if NET_2_0
+					throw new ArgumentException ("CommandTimeout",
+						"The property value assigned is less than 0.");
+#else
 					throw new ArgumentException ("The property value assigned is less than 0.");
+#endif
 				commandTimeout = value; 
 			}
 		}
@@ -644,10 +649,15 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
 		void Prepare ()
 		{
-			ValidateCommand ("Prepare", false);
+#if NET_2_0
+			if (Connection == null)
+				throw new NullReferenceException ();
+#endif
 
-			if (CommandType == CommandType.StoredProcedure)
+			if (CommandType == CommandType.StoredProcedure || CommandType == CommandType.Text && Parameters.Count == 0)
 				return;
+
+			ValidateCommand ("Prepare", false);
 
 			try {
 				foreach (SqlParameter param in Parameters)
@@ -674,10 +684,18 @@ namespace System.Data.SqlClient {
 		{
 			if (Connection == null)
 				throw new InvalidOperationException (String.Format ("{0}: A Connection object is required to continue.", method));
-			if (Connection.Transaction != null && transaction != Connection.Transaction)
-				throw new InvalidOperationException ("The Connection object does not have the same transaction as the command object.");
+			if (Transaction == null && Connection.Transaction != null)
+				throw new InvalidOperationException (String.Format (
+					"{0} requires a transaction if the command's connection is in a pending transaction.",
+#if NET_2_0
+					method));
+#else
+					"Execute"));
+#endif
+			if (Transaction != null && Transaction.Connection != Connection)
+				throw new InvalidOperationException ("The connection does not have the same transaction as the command.");
 			if (Connection.State != ConnectionState.Open)
-				throw new InvalidOperationException (String.Format ("{0} requires an open Connection object to continue. This connection is closed.", method));
+				throw new InvalidOperationException (String.Format ("{0} requires an open connection to continue. This connection is closed.", method));
 			if (CommandText.Length == 0)
 				throw new InvalidOperationException ("The command text for this Command has not been set.");
 			if (Connection.DataReader != null)

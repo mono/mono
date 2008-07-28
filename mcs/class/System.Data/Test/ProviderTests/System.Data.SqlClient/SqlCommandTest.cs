@@ -251,15 +251,20 @@ namespace MonoTests.System.Data.SqlClient
 					cmd.ExecuteScalar ();
 					Assert.Fail ("#1");
 				} catch (InvalidOperationException ex) {
-					// Execute requires the command to have a
-					// transaction object when the connection
-					// assigned to the command is in a pending
-					// local transaction.  The Transaction
-					// property of the command has not been
-					// initialized
+					// ExecuteScalar requires the command
+					// to have a transaction object when the
+					// connection assigned to the command is
+					// in a pending local transaction.  The
+					// Transaction property of the command
+					// has not been initialized
 					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
 					Assert.IsNull (ex.InnerException, "#3");
 					Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+					Assert.IsTrue (ex.Message.IndexOf ("ExecuteScalar") != -1, "#5:" + ex.Message);
+#else
+					Assert.IsTrue (ex.Message.IndexOf ("Execute") != -1, "#5:" + ex.Message);
+#endif
 				}
 			}
 		}
@@ -289,8 +294,6 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void ExecuteScalar_Transaction_NotAssociated ()
 		{
-			Assert.Ignore ("NotWorking");
-
 			SqlTransaction trans = null;
 			SqlConnection connA = null;
 			SqlConnection connB = null;
@@ -475,15 +478,20 @@ namespace MonoTests.System.Data.SqlClient
 					cmd.ExecuteNonQuery ();
 					Assert.Fail ("#1");
 				} catch (InvalidOperationException ex) {
-					// Execute requires the command to have a
-					// transaction object when the connection
-					// assigned to the command is in a pending
-					// local transaction.  The Transaction
-					// property of the command has not been
-					// initialized
+					// ExecuteNonQuery requires the command
+					// to have a transaction object when the
+					// connection assigned to the command is
+					// in a pending local transaction.  The
+					// Transaction property of the command
+					// has not been initialized
 					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
 					Assert.IsNull (ex.InnerException, "#3");
 					Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+					Assert.IsTrue (ex.Message.IndexOf ("ExecuteNonQuery") != -1, "#5:" + ex.Message);
+#else
+					Assert.IsTrue (ex.Message.IndexOf ("Execute") != -1, "#5:" + ex.Message);
+#endif
 				}
 			}
 		}
@@ -515,8 +523,6 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void ExecuteNonQuery_Transaction_NotAssociated ()
 		{
-			Assert.Ignore ("NotWorking");
-
 			SqlTransaction trans = null;
 			SqlConnection connA = null;
 			SqlConnection connB = null;
@@ -691,15 +697,20 @@ namespace MonoTests.System.Data.SqlClient
 					cmd.ExecuteReader ();
 					Assert.Fail ("#1");
 				} catch (InvalidOperationException ex) {
-					// Execute requires the command to have a
-					// transaction object when the connection
-					// assigned to the command is in a pending
-					// local transaction.  The Transaction
-					// property of the command has not been
-					// initialized
+					// ExecuteReader requires the command
+					// to have a transaction object when the
+					// connection assigned to the command is
+					// in a pending local transaction.  The
+					// Transaction property of the command
+					// has not been initialized
 					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
 					Assert.IsNull (ex.InnerException, "#3");
 					Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+					Assert.IsTrue (ex.Message.IndexOf ("ExecuteReader") != -1, "#5:" + ex.Message);
+#else
+					Assert.IsTrue (ex.Message.IndexOf ("Execute") != -1, "#5:" + ex.Message);
+#endif
 				}
 			}
 		}
@@ -729,8 +740,6 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void ExecuteReader_Transaction_NotAssociated ()
 		{
-			Assert.Ignore ("NotWorking");
-
 			SqlTransaction trans = null;
 			SqlConnection connA = null;
 			SqlConnection connB = null;
@@ -835,7 +844,7 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-		public void PrepareTest ()
+		public void Prepare ()
 		{
 			cmd = new SqlCommand ();
 			conn = new SqlConnection (connectionString);
@@ -887,6 +896,209 @@ namespace MonoTests.System.Data.SqlClient
 
 			cmd.CommandType = CommandType.Text;
 			conn.Close ();
+		}
+
+		[Test]
+		public void Prepare_Connection_PendingTransaction ()
+		{
+			conn = new SqlConnection (connectionString);
+			conn.Open ();
+
+			using (SqlTransaction trans = conn.BeginTransaction ()) {
+				// Text, without parameters
+				cmd = new SqlCommand ("select * from whatever where name=?", conn);
+				cmd.Prepare ();
+
+				// Text, with parameters
+				cmd = new SqlCommand ("select * from whatever where name=?", conn);
+				cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
+				try {
+					cmd.Prepare ();
+					Assert.Fail ("#1");
+				} catch (InvalidOperationException ex) {
+					// Prepare requires the command to have a
+					// transaction object when the connection
+					// assigned to the command is in a pending
+					// local transaction.  The Transaction
+					// property of the command has not been
+					// initialized
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+					Assert.IsTrue (ex.Message.IndexOf ("Prepare") != -1, "#5:" + ex.Message);
+#else
+					Assert.IsTrue (ex.Message.IndexOf ("Execute") != -1, "#5:" + ex.Message);
+#endif
+				}
+
+				// Text, parameters cleared
+				cmd = new SqlCommand ("select * from whatever where name=?", conn);
+				cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
+				cmd.Parameters.Clear ();
+				cmd.Prepare ();
+
+				// StoredProcedure, without parameters
+				cmd = new SqlCommand ("FindCustomer", conn);
+				cmd.CommandType = CommandType.StoredProcedure;
+				cmd.Prepare ();
+
+				// StoredProcedure, with parameters
+				cmd = new SqlCommand ("FindCustomer", conn);
+				cmd.CommandType = CommandType.StoredProcedure;
+				cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
+				cmd.Prepare ();
+			}
+		}
+
+		[Test]
+		public void Prepare_Transaction_NotAssociated ()
+		{
+			SqlTransaction trans = null;
+			SqlConnection connA = null;
+			SqlConnection connB = null;
+
+			try {
+				connA = new SqlConnection (connectionString);
+				connA.Open ();
+
+				connB = new SqlConnection (connectionString);
+				connB.Open ();
+
+				trans = connA.BeginTransaction ();
+
+				// Text, without parameters
+				cmd = new SqlCommand ("select @@version", connB, trans);
+				cmd.Transaction = trans;
+				cmd.Prepare ();
+
+				// Text, with parameters
+				cmd = new SqlCommand ("select @@version", connB, trans);
+				cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
+				try {
+					cmd.Prepare ();
+					Assert.Fail ("#1");
+				} catch (InvalidOperationException ex) {
+					// The transaction is either not associated
+					// with the current connection or has been
+					// completed
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+				}
+
+				// Text, parameters cleared
+				cmd = new SqlCommand ("select @@version", connB, trans);
+				cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
+				cmd.Parameters.Clear ();
+				cmd.Prepare ();
+
+				// StoredProcedure, without parameters
+				cmd = new SqlCommand ("FindCustomer", connB, trans);
+				cmd.CommandType = CommandType.StoredProcedure;
+				cmd.Prepare ();
+
+				// StoredProcedure, with parameters
+				cmd = new SqlCommand ("FindCustomer", connB, trans);
+				cmd.CommandType = CommandType.StoredProcedure;
+				cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
+				cmd.Prepare ();
+			} finally {
+				if (trans != null)
+					trans.Dispose ();
+				if (connA != null)
+					connA.Close ();
+				if (connB != null)
+					connB.Close ();
+			}
+		}
+
+		[Test]
+		public void Prepare_Transaction_Only ()
+		{
+			SqlTransaction trans = null;
+
+			conn = new SqlConnection (connectionString);
+			conn.Open ();
+			trans = conn.BeginTransaction ();
+
+			// Text, without parameters
+			cmd = new SqlCommand ("select count(*) from whatever");
+			cmd.Transaction = trans;
+#if NET_2_0
+			try {
+				cmd.Prepare ();
+				Assert.Fail ("#A1");
+			} catch (NullReferenceException) {
+			}
+#else
+			cmd.Prepare ();
+#endif
+
+			// Text, with parameters
+			cmd = new SqlCommand ("select count(*) from whatever");
+			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
+			cmd.Transaction = trans;
+			try {
+				cmd.Prepare ();
+				Assert.Fail ("#B1");
+#if NET_2_0
+			} catch (NullReferenceException) {
+			}
+#else
+			} catch (InvalidOperationException ex) {
+				// Prepare: Connection property has not been
+				// initialized
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsTrue (ex.Message.StartsWith ("Prepare:"), "#B5");
+			}
+#endif
+
+			// Text, parameters cleared
+			cmd = new SqlCommand ("select count(*) from whatever");
+			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
+			cmd.Parameters.Clear ();
+			cmd.Transaction = trans;
+#if NET_2_0
+			try {
+				cmd.Prepare ();
+				Assert.Fail ("#C1");
+			} catch (NullReferenceException) {
+			}
+#else
+			cmd.Prepare ();
+#endif
+
+			// StoredProcedure, without parameters
+			cmd = new SqlCommand ("FindCustomer");
+			cmd.CommandType = CommandType.StoredProcedure;
+			cmd.Transaction = trans;
+#if NET_2_0
+			try {
+				cmd.Prepare ();
+				Assert.Fail ("#D1");
+			} catch (NullReferenceException) {
+			}
+#else
+			cmd.Prepare ();
+#endif
+
+			// StoredProcedure, with parameters
+			cmd = new SqlCommand ("FindCustomer");
+			cmd.CommandType = CommandType.StoredProcedure;
+			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
+			cmd.Transaction = trans;
+#if NET_2_0
+			try {
+				cmd.Prepare ();
+				Assert.Fail ("#E1");
+			} catch (NullReferenceException) {
+			}
+#else
+			cmd.Prepare ();
+#endif
 		}
 
 		[Test] // bug #412576

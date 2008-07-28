@@ -1,5 +1,11 @@
 2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlCommandTest.cs: Enabled and improved tests for pending transaction
+	and transaction that is not associated with connection. Added tests for
+	Prepare.
+
+2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlCommandTest.cs: Enabled and improved tests for Execute* with 
 	only a transaction set.
 

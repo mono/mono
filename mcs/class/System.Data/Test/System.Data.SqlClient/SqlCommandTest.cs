@@ -297,7 +297,6 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CommandTimeout_Value_Negative ()
 		{
 			SqlCommand cmd = new SqlCommand ();
@@ -482,7 +481,6 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Prepare_Connection_Null ()
 		{
 			SqlCommand cmd;
@@ -561,7 +559,6 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // bug #412586
-		[Category ("NotWorking")]
 		public void Prepare_Connection_Closed ()
 		{
 			string connectionString = "Initial Catalog=a;Server=b;User ID=c;"
@@ -590,7 +587,7 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.IsTrue (ex.Message.IndexOf ("Prepare") != -1, "#A5");
 			}
 
-			// Text, without parameters
+			// Text, parameters cleared
 			cmd = new SqlCommand ("select count(*) from whatever", cn);
 			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
 			cmd.Parameters.Clear ();
