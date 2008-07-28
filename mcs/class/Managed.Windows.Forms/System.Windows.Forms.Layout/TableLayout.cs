@@ -172,17 +172,26 @@ namespace System.Windows.Forms.Layout
 							// I know someone will kill me for using a goto, but 
 							// sometimes they really are the easiest way...
 							goto Found;
+						} else {
+							// MS adds the controls only to the first row if 
+							// GrowStyle is AddColumns and RowCount is 0,
+							// so interrupt the search for a free horizontal cell 
+							// beyond the first one in the given vertical
+							if (settings.GrowStyle == TableLayoutPanelGrowStyle.AddColumns && 
+							    settings.RowCount == 0)
+								break;
 						}
 					}
 				}
 
-				// We ran out of room in the grid, and have more controls, what is our GrowStyle?
+				// MS adds rows instead of columns even when GrowStyle is AddColumns, 
+				// but RowCount is 0.
 				TableLayoutPanelGrowStyle adjustedGrowStyle = settings.GrowStyle;
-				if (panel.LayoutSettings.ColumnCount == 0)
-					adjustedGrowStyle = TableLayoutPanelGrowStyle.AddRows;
-				else if (panel.LayoutSettings.RowCount == 0)
-					adjustedGrowStyle = TableLayoutPanelGrowStyle.AddColumns;
-					
+				if (settings.GrowStyle == TableLayoutPanelGrowStyle.AddColumns) {
+					if (settings.RowCount == 0)
+						adjustedGrowStyle = TableLayoutPanelGrowStyle.AddRows;
+				}
+
 				switch (adjustedGrowStyle) {
 					case TableLayoutPanelGrowStyle.AddColumns:
 						return CalculateControlPositions (panel, columns + 1, rows);
