@@ -1,3 +1,8 @@
+2008-07-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c: Use MonoImage's as keys in the aot_modules hash so the aot
+	can work with netmodules.
+
 2008-07-28  Geoff Norton  <gnorton@novell.com>
 
 	* mini-x86.h: Correct the frame alignment on OSX.  Fixes the jit 
