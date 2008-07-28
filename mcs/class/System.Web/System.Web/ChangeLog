@@ -3,6 +3,9 @@
 	* XmlSiteMapProvider.cs: set the base ResourceKey to the name of
 	our associated site map file, so that localization works
 	correctly. Fixes bug #412493
+	Do not add the root node retrieved from BuildSiteMapRecursive in
+	BuildMap, if the node is already the current root node. Fixes bug
+	#412495
 
 2008-07-23  Marek Habersack  <mhabersack@novell.com>
 
