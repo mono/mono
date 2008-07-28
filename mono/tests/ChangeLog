@@ -1,3 +1,10 @@
+2008-07-28  Bill Holmes  <billholmes54@gmail.com>
+	* libtest.c, winx64structs.cs :
+	  Adding tests to exercise calling managed code from native with struct
+	  arguments on Winx64.
+
+	Contributed under MIT/X11 license.
+
 2008-07-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* test-runner.cs: Cleanup terminated processes on the main thread to prevent
