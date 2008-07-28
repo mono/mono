@@ -1,3 +1,8 @@
+2008-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NtlmClient.cs : if host is not provided in NetworkCredential, get
+	  it from WebRequest. Fixed bug #323375.
+
 2006-11-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* NtlmClient.cs: fixes authentication if the first try fails and the
