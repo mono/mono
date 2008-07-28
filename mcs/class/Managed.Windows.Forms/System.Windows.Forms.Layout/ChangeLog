@@ -1,3 +1,8 @@
+2008-07-28  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TableLayout.cs: MS adds rows instead of columns even when 
+	GrowStyle is AddColumns, but RowCount is 0.
+
 2008-07-26  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TableLayout.cs: Perform layout even if they are no child controls, so 
