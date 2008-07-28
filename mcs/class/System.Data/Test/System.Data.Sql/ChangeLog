@@ -1,0 +1,3 @@
+2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlNotificationRequestTest.cs: Added ctor and property tests.

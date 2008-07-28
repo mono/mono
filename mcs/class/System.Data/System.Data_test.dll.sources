@@ -105,6 +105,7 @@ System.Data.OleDb/OleDbMetaDataCollectionNamesTest.cs
 System.Data.OleDb/OleDbParameterCollectionTest.cs
 System.Data.OleDb/OleDbPermissionAttributeTest.cs
 System.Data.OleDb/OleDbPermissionTest.cs
+System.Data.Sql/SqlNotificationRequestTest.cs
 System.Data.SqlClient/SqlCommandTest.cs
 System.Data.SqlClient/SqlConnectionTest.cs
 System.Data.SqlClient/SqlConnectionStringBuilderTest.cs

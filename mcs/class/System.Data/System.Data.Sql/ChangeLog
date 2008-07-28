@@ -1,3 +1,8 @@
+2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlNotificationRequest.cs: Implemented ctors, and fixed
+	argument checks.
+
 2006-02-17  Chris Toshok  <toshok@ximian.com>
 
 	* SqlNotificationRequest.cs: class is sealed, and s/id/userData

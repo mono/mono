@@ -34,8 +34,9 @@
 
 using System;
 
-namespace System.Data.Sql {
-	public sealed class SqlNotificationRequest 
+namespace System.Data.Sql
+{
+	public sealed class SqlNotificationRequest
 	{
 		#region Fields
 
@@ -47,20 +48,12 @@ namespace System.Data.Sql {
 
 		#region Constructors
 
-		[MonoTODO]
 		public SqlNotificationRequest ()
-			: this (null, null, 0)
 		{
 		}
 
-		[MonoTODO]
 		public SqlNotificationRequest (string userData, string options, int timeout)
 		{
-			if (options == null)
-				throw new ArgumentNullException ();
-			if (timeout < 0)
-				throw new ArgumentOutOfRangeException ();
-
 			UserData = userData;
 			Options = options;
 			Timeout = timeout;
@@ -72,17 +65,32 @@ namespace System.Data.Sql {
 
 		public string UserData {
 			get { return userData; }
-			set { userData = value; }
+			set {
+				if (value != null && value.Length > 0xffff)
+					throw new ArgumentOutOfRangeException (
+						"UserData");
+				userData = value;
+			}
 		}
 
 		public string Options {
 			get { return options; }
-			set { options = value; }
+			set {
+				if (value != null && value.Length > 0xffff)
+					throw new ArgumentOutOfRangeException (
+						"Service");
+				options = value;
+			}
 		}
 
 		public int Timeout {
 			get { return timeout; }
-			set { timeout = value; }
+			set {
+				if (value < 0)
+					throw new ArgumentOutOfRangeException (
+						"Timeout");
+				timeout = value;
+			}
 		}
 
 		#endregion // Properties

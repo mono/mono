@@ -1,3 +1,7 @@
+2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Data_test.dll.sources: Added SqlNotificationRequestTest.cs.
+
 2008-07-01  Marek Safar  <marek.safar@gmail.com>
 
 	* SqlDataReader.cs: Schema key is always a string.
