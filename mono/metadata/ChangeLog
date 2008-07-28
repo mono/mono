@@ -1,3 +1,10 @@
+2008-07-28  Dick Porter  <dick@ximian.com>
+
+	* icall-def.h
+	* process.c
+	(ves_icall_System_Diagnostics_Process_ProcessHandle_duplicate):
+	New internal calls to duplicate and close a process handle.
+
 2008-07-27  Andreas Färber  <andreas.faerber@web.de>
 
 	* object.c (CHECK_ADD_OVERFLOW_UN): Add missing bracket. Fixes #412499.
