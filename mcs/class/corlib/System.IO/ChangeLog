@@ -1,3 +1,7 @@
+2008-07-28  Marek Safar <marek.safar@gmail.com>
+
+	* File.cs: Delay DateTime .cctor invocation.
+
 2008-07-04  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* File.cs: Fix parameter name
