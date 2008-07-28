@@ -1,3 +1,8 @@
+2008-07-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Use custom-modifiers.2.cs instead of custom-modifiers.cs
+	to fix make dist.
+
 2008-07-28  Bill Holmes  <billholmes54@gmail.com>
 	* libtest.c, winx64structs.cs :
 	  Adding tests to exercise calling managed code from native with struct
