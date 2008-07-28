@@ -51,6 +51,7 @@ namespace System.Web.UI.WebControls
 	[Designer ("System.Web.UI.Design.WebControls.TreeViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class TreeView: HierarchicalDataBoundControl, IPostBackEventHandler, IPostBackDataHandler, ICallbackEventHandler
 	{
+		string activeSiteMapPath;
 		bool stylesPrepared;
 		Style hoverNodeStyle;
 		TreeNodeStyle leafNodeStyle;
@@ -982,7 +983,8 @@ namespace System.Web.UI.WebControls
 		private void FillBoundChildrenRecursive (IHierarchicalEnumerable hEnumerable, TreeNodeCollection nodeCollection)
 		{
 			if (hEnumerable == null)
-				return;
+				return;			
+			
 			foreach (object obj in hEnumerable) {
 				IHierarchyData hdata = hEnumerable.GetHierarchyData (obj);
 				TreeNode child = new TreeNode ();
@@ -1234,6 +1236,15 @@ namespace System.Web.UI.WebControls
 		
 		protected internal override void RenderContents (HtmlTextWriter writer)
 		{
+			SiteMapDataSource siteMap = GetDataSource () as SiteMapDataSource;
+			bool checkSitePath = IsBoundUsingDataSourceID && siteMap != null;
+
+			if (checkSitePath) {
+				IHierarchyData data = siteMap.Provider.CurrentNode;
+				if (data != null)
+					activeSiteMapPath = data.Path;
+			}
+			
 			ArrayList levelLines = new ArrayList ();
 			int num = Nodes.Count;
 			for (int n=0; n<num; n++)
@@ -1406,7 +1417,16 @@ namespace System.Web.UI.WebControls
 
 			if (!NodeWrap)
 				writer.AddStyleAttribute ("white-space", "nowrap");
-			AddNodeStyle (writer, node, level);
+
+			bool nodeIsSelected = node == SelectedNode && selectedNodeStyle != null;
+			if (!nodeIsSelected && selectedNodeStyle != null) {
+				if (!String.IsNullOrEmpty (activeSiteMapPath))
+					nodeIsSelected = String.Compare (activeSiteMapPath,
+									 node.NavigateUrl,
+									 HttpRuntime.CaseInsensitive ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) == 0;
+			}
+			
+			AddNodeStyle (writer, node, level, nodeIsSelected);
 			if (EnableClientScript) {
 				writer.AddAttribute ("onmouseout", "TreeView_UnhoverNode(this)", false);
 				writer.AddAttribute ("onmouseover", "TreeView_HoverNode('" + ClientID + "', this)");
@@ -1430,7 +1450,7 @@ namespace System.Web.UI.WebControls
 			
 			if (clientExpand)
 				writer.AddAttribute ("id", GetNodeClientId (node, "txt"));
-			AddNodeLinkStyle (writer, node, level);
+			AddNodeLinkStyle (writer, node, level, nodeIsSelected);
 			BeginNodeTag (writer, node, clientExpand);
 			writer.Write (node.Text);
 			writer.RenderEndTag ();	// style tag
@@ -1547,8 +1567,13 @@ namespace System.Web.UI.WebControls
 			else
 				return Unit.Empty;
 		}
+
+		bool IsNodeForCurrentUrl (TreeNode node)
+		{
+			return false;
+		}
 		
-		void AddNodeStyle (HtmlTextWriter writer, TreeNode node, int level)
+		void AddNodeStyle (HtmlTextWriter writer, TreeNode node, int level, bool nodeIsSelected)
 		{
 			TreeNodeStyle style = new TreeNodeStyle ();
 			if (Page.Header != null) {
@@ -1562,14 +1587,12 @@ namespace System.Web.UI.WebControls
 						style.AddCssClass (leafNodeStyle.CssClass);
 						style.AddCssClass (leafNodeStyle.RegisteredCssClass);
 					}
-				}
-				else if (node.IsRootNode) {
+				} else if (node.IsRootNode) {
 					if (rootNodeStyle != null) {
 						style.AddCssClass (rootNodeStyle.CssClass);
 						style.AddCssClass (rootNodeStyle.RegisteredCssClass);
 					}
-				}
-				else if (node.IsParentNode) {
+				} else if (node.IsParentNode) {
 					if (parentNodeStyle != null) {
 						style.AddCssClass (parentNodeStyle.CssClass);
 						style.AddCssClass (parentNodeStyle.RegisteredCssClass);
@@ -1579,12 +1602,12 @@ namespace System.Web.UI.WebControls
 					style.AddCssClass (levelStyles [level].CssClass);
 					style.AddCssClass (levelStyles [level].RegisteredCssClass);
 				}
-				if (node == SelectedNode && selectedNodeStyle != null) {
+				
+				if (nodeIsSelected) {
 					style.AddCssClass (selectedNodeStyle.CssClass);
 					style.AddCssClass (selectedNodeStyle.RegisteredCssClass);
 				}
-			}
-			else {
+			} else {
 				// styles are not registered
 				if (nodeStyle != null) {
 					style.CopyFrom (nodeStyle);
@@ -1607,14 +1630,16 @@ namespace System.Web.UI.WebControls
 				if (levelStyles != null && levelStyles.Count > level) {
 					style.CopyFrom (levelStyles [level]);
 				}
-				if (node == SelectedNode && selectedNodeStyle != null) {
+				
+				if (nodeIsSelected) {
 					style.CopyFrom (selectedNodeStyle);
 				}
 			}
 			style.AddAttributesToRender (writer);
 		}
 
-		void AddNodeLinkStyle (HtmlTextWriter writer, TreeNode node, int level) {
+		void AddNodeLinkStyle (HtmlTextWriter writer, TreeNode node, int level, bool nodeIsSelected)
+		{
 			Style style = new Style ();
 			if (Page.Header != null) {
 				// styles are registered
@@ -1646,7 +1671,7 @@ namespace System.Web.UI.WebControls
 					style.AddCssClass (levelLinkStyles [level].CssClass);
 					style.AddCssClass (levelLinkStyles [level].RegisteredCssClass);
 				}
-				if (node == SelectedNode && selectedNodeStyle != null) {
+				if (nodeIsSelected) {
 					style.AddCssClass (selectedNodeLinkStyle.CssClass);
 					style.AddCssClass (selectedNodeLinkStyle.RegisteredCssClass);
 				}
@@ -1675,7 +1700,7 @@ namespace System.Web.UI.WebControls
 				if (levelStyles != null && levelStyles.Count > level) {
 					style.CopyFrom (levelLinkStyles [level]);
 				}
-				if (node == SelectedNode && selectedNodeStyle != null) {
+				if (nodeIsSelected) {
 					style.CopyFrom (selectedNodeLinkStyle);
 				}
 				style.AlwaysRenderTextDecoration = true;
