@@ -1,3 +1,9 @@
+2008-07-28 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* invalid_generic_type_with_explicit_layout.il: New test.
+	
+	* Makefile: Fix C# files compilation.
+
 2008-07-25 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_generic_argument_constraints_test.sh: New test
