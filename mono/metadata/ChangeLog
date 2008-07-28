@@ -1,3 +1,10 @@
+2008-07-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* monitor.c (mono_monitor_try_enter_internal): Allow nterruption of the
+	wait if the thread is in StopRequested state.
+
+	Backported from trunk.
+	
 2008-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_type_is_valid_in_context): Improve the error message.
@@ -27,6 +34,8 @@
 
 	* appdomain.c (unload_thread_main): Attach the unload thread to the runtime.
 
+	Backported from trunk.
+	
 2008-07-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (do_branch_op): Handle valuetypes and generic
