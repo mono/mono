@@ -323,7 +323,7 @@ namespace System.Xml
 		}
 
 		public override XmlNameTable NameTable {
-			get { return parserContext.NameTable; }
+			get { return nameTable; }
 		}
 
 		public override XmlNodeType NodeType {
@@ -439,7 +439,7 @@ namespace System.Xml
 #if NET_2_0
 		public IDictionary<string, string> GetNamespacesInScope (XmlNamespaceScope scope)
 		{
-			return parserContext.NamespaceManager.GetNamespacesInScope (scope);
+			return nsmgr.GetNamespacesInScope (scope);
 		}
 
 		IDictionary<string, string> IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
@@ -471,7 +471,7 @@ namespace System.Xml
 
 		private string LookupNamespace (string prefix, bool atomizedNames)
 		{
-			string s = parserContext.NamespaceManager.LookupNamespace (
+			string s = nsmgr.LookupNamespace (
 				prefix, atomizedNames);
 			return s == String.Empty ? null : s;
 		}
@@ -484,7 +484,7 @@ namespace System.Xml
 
 		public string LookupPrefix (string ns, bool atomizedName)
 		{
-			return parserContext.NamespaceManager.LookupPrefix (ns, atomizedName);
+			return nsmgr.LookupPrefix (ns, atomizedName);
 		}
 #endif
 
@@ -849,9 +849,9 @@ namespace System.Xml
 			internal void FillXmlns ()
 			{
 				if (Object.ReferenceEquals (Prefix, XmlNamespaceManager.PrefixXmlns))
-					Reader.parserContext.NamespaceManager.AddNamespace (LocalName, Value);
+					Reader.nsmgr.AddNamespace (LocalName, Value);
 				else if (Object.ReferenceEquals (Name, XmlNamespaceManager.PrefixXmlns))
-					Reader.parserContext.NamespaceManager.AddNamespace (String.Empty, Value);
+					Reader.nsmgr.AddNamespace (String.Empty, Value);
 			}
 
 			internal void FillNamespace ()
@@ -877,6 +877,8 @@ namespace System.Xml
 		private int attributeCount;
 
 		private XmlParserContext parserContext;
+		private XmlNameTable nameTable;
+		private XmlNamespaceManager nsmgr;
 
 		private ReadState readState;
 		private bool disallowReset;
@@ -1043,6 +1045,10 @@ namespace System.Xml
 					String.Empty,
 					XmlSpace.None);
 			}
+			nameTable = parserContext.NameTable;
+			nameTable = nameTable != null ? nameTable : new NameTable ();
+			nsmgr = parserContext.NamespaceManager;
+			nsmgr = nsmgr != null ? nsmgr : new XmlNamespaceManager (nameTable);
 
 			if (url != null && url.Length > 0) {
 				Uri uri = null;
@@ -1262,7 +1268,7 @@ namespace System.Xml
 		private bool ReadContent ()
 		{
 			if (popScope) {
-				parserContext.NamespaceManager.PopScope ();
+				nsmgr.PopScope ();
 				parserContext.PopScope ();
 				popScope = false;
 			}
@@ -1358,7 +1364,7 @@ namespace System.Xml
 				throw NotWFError ("Multiple document element was detected.");
 			currentState = XmlNodeType.Element;
 
-			parserContext.NamespaceManager.PushScope ();
+			nsmgr.PushScope ();
 
 			currentLinkedNodeLineNumber = line;
 			currentLinkedNodeLinePosition = column;
@@ -1423,7 +1429,7 @@ namespace System.Xml
 			if (prefix.Length > 0)
 				currentToken.NamespaceURI = LookupNamespace (prefix, true);
 			else if (namespaces)
-				currentToken.NamespaceURI = parserContext.NamespaceManager.DefaultNamespace;
+				currentToken.NamespaceURI = nsmgr.DefaultNamespace;
 
 			if (namespaces) {
 				if (NamespaceURI == null)
@@ -1524,7 +1530,7 @@ namespace System.Xml
 			if (expected.Prefix.Length > 0)
 				currentToken.NamespaceURI = LookupNamespace (expected.Prefix, true);
 			else if (namespaces)
-				currentToken.NamespaceURI = parserContext.NamespaceManager.DefaultNamespace;
+				currentToken.NamespaceURI = nsmgr.DefaultNamespace;
 
 			popScope = true;
 
@@ -2724,13 +2730,13 @@ namespace System.Xml
 
 			int start = curNodePeekIndex + startOffset;
 
-			string name = parserContext.NameTable.Add (
+			string name = NameTable.Add (
 				peekChars, start, length);
 
 			if (colonAt > 0) {
-				prefix = parserContext.NameTable.Add (
+				prefix = NameTable.Add (
 					peekChars, start, colonAt);
-				localName = parserContext.NameTable.Add (
+				localName = NameTable.Add (
 					peekChars, start + colonAt + 1, length - colonAt - 1);
 			} else {
 				prefix = String.Empty;
@@ -2775,11 +2781,11 @@ namespace System.Xml
 				}
 			}
 
-			string name = parserContext.NameTable.Add (nameBuffer, 0, nameLength);
+			string name = NameTable.Add (nameBuffer, 0, nameLength);
 
 			if (colonAt > 0) {
-				prefix = parserContext.NameTable.Add (nameBuffer, 0, colonAt);
-				localName = parserContext.NameTable.Add (nameBuffer, colonAt + 1, nameLength - colonAt - 1);
+				prefix = NameTable.Add (nameBuffer, 0, colonAt);
+				localName = NameTable.Add (nameBuffer, colonAt + 1, nameLength - colonAt - 1);
 			} else {
 				prefix = String.Empty;
 				localName = name;

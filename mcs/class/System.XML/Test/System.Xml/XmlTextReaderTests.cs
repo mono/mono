@@ -1272,5 +1272,18 @@ namespace MonoTests.System.Xml
 			while (!r.EOF)
 				r.Read ();
 		}
+
+		[Test]
+		public void Bug412657 ()
+		{
+			string s = "<Verifier id='SimpleIntVerifier'/>";
+			MemoryStream stream = new MemoryStream (Encoding.UTF8.GetBytes(s));
+			XmlParserContext ctx = new XmlParserContext (null, null, null, XmlSpace.Default);
+			AssertNull ("#1", ctx.NamespaceManager);
+			AssertNull ("#2", ctx.NameTable);
+			XmlReader reader = new XmlTextReader (stream, XmlNodeType.Element, ctx);
+			AssertNull ("#1", ctx.NamespaceManager);
+			reader.Read (); // should not raise NRE.
+		}
 	}
 }

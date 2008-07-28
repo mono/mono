@@ -101,6 +101,8 @@ namespace System.Xml
 
 		public XmlNamespaceManager (XmlNameTable nameTable)
 		{
+			if (nameTable == null)
+				throw new ArgumentNullException ("nameTable");
 			this.nameTable = nameTable;
 
 			nameTable.Add (PrefixXmlns);
