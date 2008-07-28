@@ -1,5 +1,9 @@
 2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlConnectionTest.cs: Enabled and improved test for bug #412571.
+
+2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlConnectionTest.cs: Enabled test for bug #412574.
 
 2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>

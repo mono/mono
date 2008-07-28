@@ -494,19 +494,27 @@ namespace MonoTests.System.Data
 		[Test] // bug #412571
 		public void Dispose ()
 		{
-			Assert.Ignore ("bug #412571");
-
 			StateChangeEventArgs stateChangeArgs;
 			EventArgs disposedArgs;
 
-			conn = new SqlConnection (connectionString);
+			conn = new SqlConnection (connectionString + ";Connection Timeout=30;Packet Size=512;Workstation Id=Desktop");
 			conn.Disposed += new EventHandler (Connection_Disposed);
 			conn.Open ();
 			conn.StateChange += new StateChangeEventHandler (Connection_StateChange);
 			Assert.AreEqual (0, events.Count, "#A1");
 			conn.Dispose ();
-			Assert.AreEqual (ConnectionState.Closed, conn.State, "#A2");
-			Assert.AreEqual (2, events.Count, "#A3");
+			Assert.AreEqual (string.Empty, conn.ConnectionString, "#A2");
+			Assert.AreEqual (15, conn.ConnectionTimeout, "#A3");
+			Assert.AreEqual (string.Empty, conn.Database, "#A4");
+			Assert.AreEqual (string.Empty, conn.DataSource, "#A5");
+#if NET_2_0
+			Assert.AreEqual (8000, conn.PacketSize, "#A6");
+#else
+			Assert.AreEqual (8192, conn.PacketSize, "#A6");
+#endif
+			Assert.AreEqual (ConnectionState.Closed, conn.State, "#A7");
+			Assert.IsTrue (string.Compare (conn.WorkstationId, Environment.MachineName, true) == 0, "#A8");
+			Assert.AreEqual (2, events.Count, "#A9");
 
 			stateChangeArgs = events [0] as StateChangeEventArgs;
 			Assert.IsNotNull (stateChangeArgs, "#B1");

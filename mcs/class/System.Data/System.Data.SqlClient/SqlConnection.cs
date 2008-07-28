@@ -91,7 +91,7 @@ namespace System.Data.SqlClient
 
 		// Connection parameters
 		
-		TdsConnectionParameters parms = new TdsConnectionParameters ();
+		TdsConnectionParameters parms;
 		bool connectionReset;
 		bool pooling;
 		string dataSource;
@@ -117,21 +117,12 @@ namespace System.Data.SqlClient
 
 		#region Constructors
 
-		public SqlConnection () : this (String.Empty)
+		public SqlConnection () : this (null)
 		{
 		}
 	
 		public SqlConnection (string connectionString)
 		{
-			Init (connectionString);
-		}
-
-		private void Init (string connectionString)
-		{
-			connectionTimeout = DEFAULT_CONNECTIONTIMEOUT;
-			dataSource = string.Empty;
-			packetSize = DEFAULT_PACKETSIZE;
-			port = DEFAULT_PORT;
 			ConnectionString = connectionString;
 		}
 
@@ -160,7 +151,7 @@ namespace System.Data.SqlClient
 			set {
 				if (state == ConnectionState.Open)
 					throw new InvalidOperationException ("Not Allowed to change ConnectionString property while Connection state is OPEN");
-				SetConnectionString (value); 
+				SetConnectionString (value);
 			}
 		}
 	
@@ -465,14 +456,11 @@ namespace System.Data.SqlClient
 
 		protected override void Dispose (bool disposing)
 		{
-			if (disposed)
-				return;
-
 			try {
-				if (disposing) {
+				if (disposing && !disposed) {
 					if (State == ConnectionState.Open) 
 						Close ();
-					ConnectionString = string.Empty;
+					ConnectionString = null;
 				}
 			} finally {
 				disposed = true;
@@ -740,7 +728,10 @@ namespace System.Data.SqlClient
 
 		void SetDefaultConnectionParameters ()
 		{
-			parms.Reset ();
+			if (parms == null)
+				parms = new TdsConnectionParameters ();
+			else
+				parms.Reset ();
 			dataSource = string.Empty;
 			connectionTimeout = DEFAULT_CONNECTIONTIMEOUT;
 			connectionReset = true;
@@ -748,6 +739,7 @@ namespace System.Data.SqlClient
 			maxPoolSize = DEFAULT_MAXPOOLSIZE;
 			minPoolSize = DEFAULT_MINPOOLSIZE;
 			packetSize = DEFAULT_PACKETSIZE;
+			port = DEFAULT_PORT;
  #if NET_2_0
 			async = false;
  #endif

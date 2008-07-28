@@ -1,6 +1,15 @@
 2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
-	* SqlConnection.cs(ChangeState): Return immediately when new state
+	* SqlConnection.cs: Use null as default value for connectionString
+	field. Remove Init method, as initialization is done in
+	SetDefaultConnectionParameters. Initialize parms in
+	SetDefaultConnectionParameters to avoid calling Reset on newly
+	initialized collection. In Dispose (bool), also invoke base.Dispose if
+	SqlConnection was already disposed. Fixes bug #412571. 
+
+2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlConnection.cs (ChangeState): Return immediately when new state
 	equals original state. Fixes bug #412574. Removed extra whitespace.
 
 2008-07-23  Veerapuram Varadhan  <vvaradhan@novell.com>
