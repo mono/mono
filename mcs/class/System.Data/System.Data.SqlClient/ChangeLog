@@ -1,5 +1,12 @@
 2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlCommand.cs: Fixed order of arguments for ArgumentException in
+	CommandTimeout.
+	* SqlConnection.cs (ChangePassword): Do not allow empty connection
+	string. Updated exception messages.
+
+2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlCommand.cs: Fixed param name in ArgumentException for negative
 	CommandTimeout to match MS. On 2.0 profile, throw NRE in Prepare
 	when connection is NULL. In Prepare, return immediately after

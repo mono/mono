@@ -1647,10 +1647,12 @@ namespace System.Data.SqlClient
 		
 		public static void ChangePassword (string connectionString, string newPassword)
 		{
-			if (connectionString == null || newPassword == null || newPassword == String.Empty)
-				throw new ArgumentNullException ();
+			if (String.IsNullOrEmpty (connectionString))
+				throw new ArgumentNullException ("The 'connectionString' cannot be null or empty.");
+			if (String.IsNullOrEmpty (newPassword))
+				throw new ArgumentNullException ("The 'newPassword' cannot be null or empty.");
 			if (newPassword.Length > 128)
-				throw new ArgumentException ("The value of newPassword exceeds its permittable length which is 128");
+				throw new ArgumentException ("The length of 'newPassword' cannot exceed 128 characters.");
 			using (SqlConnection conn = new SqlConnection (connectionString)) {
 				conn.Open ();
 				conn.tds.Execute (String.Format ("sp_password '{0}', '{1}', '{2}'",

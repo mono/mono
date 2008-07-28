@@ -174,8 +174,8 @@ namespace System.Data.SqlClient {
 			set { 
 				if (value < 0)
 #if NET_2_0
-					throw new ArgumentException ("CommandTimeout",
-						"The property value assigned is less than 0.");
+					throw new ArgumentException ("The property value assigned is less than 0.",
+						"CommandTimeout");
 #else
 					throw new ArgumentException ("The property value assigned is less than 0.");
 #endif

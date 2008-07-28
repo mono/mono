@@ -284,7 +284,6 @@ namespace MonoTests.System.Data.SqlClient
 
 #if NET_2_0
 		[Test]
-		[Category ("NotWorking")]
 		public void ChangePassword_ConnectionString_Empty ()
 		{
 			try {
@@ -300,7 +299,6 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ChangePassword_ConnectionString_Null ()
 		{
 			try {
@@ -316,7 +314,6 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ChangePassword_NewPassword_Empty ()
 		{
 			try {
@@ -332,7 +329,6 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ChangePassword_NewPassword_ExceedMaxLength ()
 		{
 			try {
@@ -346,13 +342,12 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsTrue (ex.Message.IndexOf ("'newPassword'") != -1, "#5");
-				Assert.IsTrue (ex.Message.IndexOf ("'128'") != -1, "#6");
+				Assert.IsTrue (ex.Message.IndexOf ("128") != -1, "#6");
 				Assert.IsNull (ex.ParamName, "#7");
 			}
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ChangePassword_NewPassword_Null ()
 		{
 			try {
