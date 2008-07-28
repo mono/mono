@@ -1,3 +1,7 @@
+2008-07-28  Marek Safar <marek.safar@gmail.com>
+
+	* GregorianCalendar.cs: Delay DateTime .cctor invocation.
+
 2008-07-03  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* TextInfo.cs: Fix exceptions

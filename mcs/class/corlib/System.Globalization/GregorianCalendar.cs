@@ -510,20 +510,23 @@ public class GregorianCalendar : Calendar {
 		}
 	}
 
-	static DateTime Min = new DateTime (1, 1, 1, 0, 0, 0);
-	static DateTime Max = new DateTime (9999, 12, 31, 11, 59, 59);
+	static DateTime? Min, Max;
 		
 	[ComVisible (false)]
 	public override DateTime MinSupportedDateTime {
 		get {
-			return Min;
+			if (Min == null)
+				Min = new DateTime (1, 1, 1, 0, 0, 0);
+			return Min.Value;
 		}
 	}
 
 	[ComVisible (false)]
 	public override DateTime MaxSupportedDateTime {
 		get {
-			return Max;
+			if (Max == null)
+				Max = new DateTime (9999, 12, 31, 11, 59, 59);
+			return Max.Value;
 		}
 	}
 #endif
