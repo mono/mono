@@ -1,3 +1,8 @@
+2008-07-28  Dick Porter  <dick@ximian.com>
+
+	* handles.c (_wapi_handle_count_signalled_handles): Remove an
+	unmatched _wapi_handle_ref().  Fixes bug 410743.
+
 2008-07-15  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* versioninfo.c (map_pe_file): Fix memory leak.
