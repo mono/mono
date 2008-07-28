@@ -25,5 +25,10 @@ namespace MonoTests.SystemWeb.Framework
 		/// An empty page, referencing a master page which references another master page.
 		/// </summary>
 		public const string PAGE_WITH_DERIVED_MASTER = "MyPageWithDerivedMaster.aspx";
+		/// <summary>
+		/// A page referencing a master page which tries to use a non-existing content place
+		/// holder
+		/// </summary>
+		public const string PAGE_WITH_MASTER_INVALID_PLACE_HOLDER = "MyPageWithMasterInvalidPlaceHolder.aspx";
 	}
 }

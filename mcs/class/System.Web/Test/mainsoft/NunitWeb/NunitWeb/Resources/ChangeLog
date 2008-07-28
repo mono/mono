@@ -1,3 +1,7 @@
+2008-07-28  Marek Habersack  <mhabersack@novell.com>
+
+	* MyPageWithMasterInvalidPlaceHolder.aspx: added
+
 2007-02-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Web.mono.config: Fixed value of enableSessionState attribute since
