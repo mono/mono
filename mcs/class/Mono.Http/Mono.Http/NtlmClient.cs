@@ -56,8 +56,9 @@ namespace Mono.Http
 			string userName = cred.UserName;
 			string domain = cred.Domain;
 			string password = cred.Password;
-			if (userName == null || userName == "" || domain == null || domain == "")
+			if (userName == null || userName == "")
 				return null;
+			domain = domain != null && domain.Length > 0 ? domain : request.Headers ["Host"];
 
 			bool completed = false;
 			if (message == null) {
