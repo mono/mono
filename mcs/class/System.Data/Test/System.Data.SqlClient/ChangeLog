@@ -1,3 +1,8 @@
+2007-08-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlCommandTest.cs: Enabled and improved tests for Execute* with
+	closed connection.
+
 2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlCommandTest.cs: Enabled test for bug #412584.

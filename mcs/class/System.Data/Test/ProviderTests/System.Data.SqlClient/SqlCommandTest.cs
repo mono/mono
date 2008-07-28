@@ -347,8 +347,6 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void ExecuteScalar_Transaction_Only ()
 		{
-			Assert.Ignore ("NotWorking");
-
 			SqlTransaction trans = null;
 
 			conn = new SqlConnection (connectionString);
@@ -368,7 +366,9 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 #if NET_2_0
-				Assert.IsTrue (ex.Message.IndexOf ("ExecuteScalar") != -1, "#5");
+				Assert.IsTrue (ex.Message.StartsWith ("ExecuteScalar:"), "#5");
+#else
+				Assert.IsTrue (ex.Message.StartsWith ("ExecuteReader:"), "#5");
 #endif
 			} finally {
 				trans.Dispose ();
@@ -573,8 +573,6 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void ExecuteNonQuery_Transaction_Only ()
 		{
-			Assert.Ignore ("NotWorking");
-
 			conn = new SqlConnection (connectionString);
 			conn.Open ();
 
@@ -592,7 +590,7 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("ExecuteNonQuery") != -1, "#5");
+				Assert.IsTrue (ex.Message.StartsWith ("ExecuteNonQuery:"), "#5");
 			} finally {
 				trans.Dispose ();
 			}
@@ -789,10 +787,6 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void ExecuteReader_Transaction_Only ()
 		{
-#if NET_2_0
-			Assert.Ignore ("NotWorking");
-#endif
-
 			SqlTransaction trans = null;
 
 			conn = new SqlConnection (connectionString);
@@ -811,7 +805,7 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsTrue (ex.Message.IndexOf ("ExecuteReader") != -1, "#5");
+				Assert.IsTrue (ex.Message.StartsWith ("ExecuteReader:"), "#5");
 			} finally {
 				trans.Dispose ();
 			}

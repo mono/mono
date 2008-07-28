@@ -357,7 +357,6 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ExecuteNonQuery_Connection_Closed ()
 		{
 			string connectionString = "Initial Catalog=a;Server=b;User ID=c;"
@@ -387,15 +386,16 @@ namespace MonoTests.System.Data.SqlClient
 				cmd.ExecuteNonQuery ();
 				Assert.Fail ("#1");
 			} catch (InvalidOperationException ex) {
-				// Connection property has not been initialized
+				// ExecuteNonQuery: Connection property has not
+				// been initialized
 				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.StartsWith ("ExecuteNonQuery:"), "#5");
 			}
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ExecuteReader_Connection_Closed ()
 		{
 			string connectionString = "Initial Catalog=a;Server=b;User ID=c;"
@@ -425,15 +425,16 @@ namespace MonoTests.System.Data.SqlClient
 				cmd.ExecuteReader ();
 				Assert.Fail ("#1");
 			} catch (InvalidOperationException ex) {
-				// Connection property has not been initialized
+				// ExecuteReader: Connection property has not
+				// been initialized
 				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.StartsWith ("ExecuteReader:"), "#5");
 			}
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ExecuteScalar_Connection_Closed ()
 		{
 			string connectionString = "Initial Catalog=a;Server=b;User ID=c;"
@@ -453,6 +454,8 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.IsNotNull (ex.Message, "#4");
 #if NET_2_0
 				Assert.IsTrue (ex.Message.IndexOf ("ExecuteScalar") != -1, "#5");
+#else
+				Assert.IsTrue (ex.Message.IndexOf ("ExecuteReader") != -1, "#5");
 #endif
 			}
 		}
@@ -465,10 +468,16 @@ namespace MonoTests.System.Data.SqlClient
 				cmd.ExecuteScalar ();
 				Assert.Fail ("#1");
 			} catch (InvalidOperationException ex) {
-				// Connection property has not been initialized
+				// ExecuteScalar: Connection property has not
+				// been initialized
 				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+				Assert.IsTrue (ex.Message.StartsWith ("ExecuteScalar:"), "#5");
+#else
+				Assert.IsTrue (ex.Message.StartsWith ("ExecuteReader:"), "#5");
+#endif
 			}
 		}
 

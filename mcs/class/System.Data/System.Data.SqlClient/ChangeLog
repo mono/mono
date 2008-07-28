@@ -1,5 +1,11 @@
 2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlCommand.cs: Added bool argument to ValidateCommand to specify
+	whether an async method is being executed. Minor changes to exception
+	messages to match MS.
+
+2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlCommand.cs: Avoid NRE in CloseDataReader when connection is NULL.
 	Fixes bug #412584. Removed unused moreResults eargument from
 	CloseDataReader. Removed behavior argument from Execute, and have it

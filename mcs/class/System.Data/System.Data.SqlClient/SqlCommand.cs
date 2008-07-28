@@ -377,7 +377,7 @@ namespace System.Data.SqlClient {
 		{
 			if (commandType != CommandType.StoredProcedure)
 				throw new InvalidOperationException (String.Format ("SqlCommand DeriveParameters only supports CommandType.StoredProcedure, not CommandType.{0}", commandType));
-			ValidateCommand ("DeriveParameters");
+			ValidateCommand ("DeriveParameters", false);
 
 			string procName = CommandText;
 			string schemaName = String.Empty;
@@ -499,7 +499,7 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
 		int ExecuteNonQuery ()
 		{
-			ValidateCommand ("ExecuteNonQuery");
+			ValidateCommand ("ExecuteNonQuery", false);
 			int result = 0;
 			behavior = CommandBehavior.Default;
 
@@ -521,7 +521,7 @@ namespace System.Data.SqlClient {
 
 		public new SqlDataReader ExecuteReader (CommandBehavior behavior)
 		{
-			ValidateCommand ("ExecuteReader");
+			ValidateCommand ("ExecuteReader", false);
 			this.behavior = behavior;
 			if ((behavior & CommandBehavior.SequentialAccess) != 0)
 				Tds.SequentialAccess = true;
@@ -539,7 +539,11 @@ namespace System.Data.SqlClient {
 		{
 			try {
 				object result = null;
-				ValidateCommand ("ExecuteScalar");
+#if NET_2_0
+				ValidateCommand ("ExecuteScalar", false);
+#else
+				ValidateCommand ("ExecuteReader", false);
+#endif
 				behavior = CommandBehavior.Default;
 				Execute (true);
 
@@ -566,7 +570,7 @@ namespace System.Data.SqlClient {
 
 		public XmlReader ExecuteXmlReader ()
 		{
-			ValidateCommand ("ExecuteXmlReader");
+			ValidateCommand ("ExecuteXmlReader", false);
 			behavior = CommandBehavior.Default;
 			try {
 				Execute (true);
@@ -640,7 +644,7 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
 		void Prepare ()
 		{
-			ValidateCommand ("Prepare");
+			ValidateCommand ("Prepare", false);
 
 			if (CommandType == CommandType.StoredProcedure)
 				return;
@@ -666,18 +670,14 @@ namespace System.Data.SqlClient {
 			preparedStatement = null;
 		}
 
-		private void ValidateCommand (string method)
+		private void ValidateCommand (string method, bool async)
 		{
 			if (Connection == null)
-				throw new InvalidOperationException (String.Format ("{0} requires a Connection object to continue.", method));
+				throw new InvalidOperationException (String.Format ("{0}: A Connection object is required to continue.", method));
 			if (Connection.Transaction != null && transaction != Connection.Transaction)
 				throw new InvalidOperationException ("The Connection object does not have the same transaction as the command object.");
 			if (Connection.State != ConnectionState.Open)
-#if NET_2_0
-				throw new NullReferenceException (String.Format ("ExecuteNonQuery requires an open Connection object to continue. This connection is closed.", method));
-#else
-				throw new InvalidOperationException (String.Format ("ExecuteNonQuery requires an open Connection object to continue. This connection is closed.", method));
-#endif
+				throw new InvalidOperationException (String.Format ("{0} requires an open Connection object to continue. This connection is closed.", method));
 			if (CommandText.Length == 0)
 				throw new InvalidOperationException ("The command text for this Command has not been set.");
 			if (Connection.DataReader != null)
@@ -685,7 +685,7 @@ namespace System.Data.SqlClient {
 			if (Connection.XmlReader != null)
 				throw new InvalidOperationException ("There is already an open XmlReader associated with this Connection which must be closed first.");
 #if NET_2_0
-			if (method.StartsWith ("Begin") && !Connection.AsyncProcessing)
+			if (async && !Connection.AsyncProcessing)
 				throw new InvalidOperationException ("This Connection object is not " + 
 					"in Asynchronous mode. Use 'Asynchronous" +
 					" Processing = true' to set it.");
@@ -814,7 +814,7 @@ namespace System.Data.SqlClient {
 
 		public IAsyncResult BeginExecuteNonQuery (AsyncCallback callback, object stateObject)
 		{
-			ValidateCommand ("BeginExecuteNonQuery");
+			ValidateCommand ("BeginExecuteNonQuery", true);
 			SqlAsyncResult ar = new SqlAsyncResult (callback, stateObject);
 			ar.EndMethod = "EndExecuteNonQuery";
 			ar.InternalResult = BeginExecuteInternal (CommandBehavior.Default, false, ar.BubbleCallback, ar);
@@ -850,7 +850,7 @@ namespace System.Data.SqlClient {
 
 		public IAsyncResult BeginExecuteReader (AsyncCallback callback, object stateObject, CommandBehavior behavior)
 		{
-			ValidateCommand ("BeginExecuteReader");
+			ValidateCommand ("BeginExecuteReader", true);
 			this.behavior = behavior;
 			SqlAsyncResult ar = new SqlAsyncResult (callback, stateObject);
 			ar.EndMethod = "EndExecuteReader";
@@ -883,7 +883,7 @@ namespace System.Data.SqlClient {
 
 		public IAsyncResult BeginExecuteXmlReader (AsyncCallback callback, object stateObject)
 		{
-			ValidateCommand ("BeginExecuteXmlReader");
+			ValidateCommand ("BeginExecuteXmlReader", true);
 			SqlAsyncResult ar = new SqlAsyncResult (callback, stateObject);
 			ar.EndMethod = "EndExecuteXmlReader";
 			ar.InternalResult = BeginExecuteInternal (behavior, true, 
