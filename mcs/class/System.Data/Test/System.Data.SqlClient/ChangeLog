@@ -1,3 +1,10 @@
+2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlCommandTest.cs: Added tests for bug #412584, #412586, Moved tests
+	that do not require connection from ProviderTests.
+	* SqlConnectionTest.cs: Moved tests that do not require connection
+	from ProviderTests.
+
 2008-07-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlCommandTest.cs: Removed extra tabs. Update bug number.

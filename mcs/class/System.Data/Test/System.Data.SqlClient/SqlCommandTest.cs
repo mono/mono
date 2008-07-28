@@ -27,7 +27,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Data;
+#if NET_2_0
+using System.Data.Sql;
+#endif
 using System.Data.SqlClient;
 
 using NUnit.Framework;
@@ -214,15 +218,56 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (UpdateRowSource.Both, cmd.UpdatedRowSource, "#C13");
 		}
 
-		[Test] // bug #324386
-		public void Dispose ()
+		[Test]
+		public void Clone ()
 		{
-			string connectionString = "Initial Catalog=a;Server=b;User ID=c;"
-				+ "Password=d";
-			SqlConnection connection = new SqlConnection (connectionString);
-			SqlCommand command = connection.CreateCommand ();
-			command.Dispose ();
-			Assert.AreEqual (connectionString, connection.ConnectionString);
+#if NET_2_0
+			SqlNotificationRequest notificationReq = new SqlNotificationRequest ();
+#endif
+
+			SqlCommand cmd = new SqlCommand ();
+			cmd.CommandText = "sp_insert";
+			cmd.CommandTimeout = 100;
+			cmd.CommandType = CommandType.StoredProcedure;
+			cmd.DesignTimeVisible = false;
+#if NET_2_0
+			cmd.Notification = notificationReq;
+			cmd.NotificationAutoEnlist = false;
+#endif
+			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
+			cmd.Parameters ["@TestPar1"].Value = DBNull.Value;
+#if NET_2_0
+			cmd.Parameters.AddWithValue ("@BirthDate", DateTime.Now);
+#else
+			cmd.Parameters.Add ("@BirthDate", DateTime.Now);
+#endif
+			cmd.UpdatedRowSource = UpdateRowSource.OutputParameters;
+
+			SqlCommand clone = (((ICloneable) (cmd)).Clone ()) as SqlCommand;
+			Assert.AreEqual ("sp_insert", clone.CommandText, "#1");
+			Assert.AreEqual (100, clone.CommandTimeout, "#2");
+			Assert.AreEqual (CommandType.StoredProcedure, clone.CommandType, "#3");
+			Assert.IsNull (cmd.Connection, "#4");
+			Assert.IsFalse (cmd.DesignTimeVisible, "#5");
+#if NET_2_0
+			Assert.AreSame (notificationReq, cmd.Notification, "#6");
+			Assert.IsFalse (cmd.NotificationAutoEnlist, "#7");
+#endif
+			Assert.AreEqual (2, clone.Parameters.Count, "#8");
+			Assert.AreEqual (100, clone.CommandTimeout, "#9");
+#if NET_2_0
+			clone.Parameters.AddWithValue ("@test", DateTime.Now);
+#else
+			clone.Parameters.Add ("@test", DateTime.Now);
+#endif
+			clone.Parameters [0].ParameterName = "@ClonePar1";
+			Assert.AreEqual (3, clone.Parameters.Count, "#10");
+			Assert.AreEqual (2, cmd.Parameters.Count, "#11");
+			Assert.AreEqual ("@ClonePar1", clone.Parameters [0].ParameterName, "#12");
+			Assert.AreEqual ("@TestPar1", cmd.Parameters [0].ParameterName, "#13");
+			Assert.AreEqual ("@BirthDate", clone.Parameters [1].ParameterName, "#14");
+			Assert.AreEqual ("@BirthDate", cmd.Parameters [1].ParameterName, "#15");
+			Assert.IsNull (clone.Transaction, "#16");
 		}
 
 		[Test]
@@ -239,6 +284,376 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (string.Empty, cmd.CommandText, "#4");
 		}
 
+		[Test]
+		public void CommandTimeout ()
+		{
+			SqlCommand cmd = new SqlCommand ();
+			cmd.CommandTimeout = 10;
+			Assert.AreEqual (10, cmd.CommandTimeout, "#1");
+			cmd.CommandTimeout = 25;
+			Assert.AreEqual (25, cmd.CommandTimeout, "#2");
+			cmd.CommandTimeout = 0;
+			Assert.AreEqual (0, cmd.CommandTimeout, "#3");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CommandTimeout_Value_Negative ()
+		{
+			SqlCommand cmd = new SqlCommand ();
+			try {
+				cmd.CommandTimeout = -1;
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Invalid CommandTimeout value -1; the value must be >= 0
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+				Assert.AreEqual ("CommandTimeout", ex.ParamName, "#5");
+#else
+				Assert.IsNull (ex.ParamName, "#5");
+#endif
+			}
+		}
+
+		[Test]
+		public void CommandType_Value_Invalid ()
+		{
+			SqlCommand cmd = new SqlCommand ();
+			try {
+				cmd.CommandType = (CommandType) (666);
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				// The CommandType enumeration value, 666, is invalid
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("666") != -1, "#5");
+				Assert.AreEqual ("CommandType", ex.ParamName, "#6");
+			}
+#else
+			} catch (ArgumentException ex) {
+				// The CommandType enumeration value, 666, is invalid
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("666") != -1, "#5");
+				Assert.IsNull (ex.ParamName, "#6");
+			}
+#endif
+		}
+
+		[Test] // bug #324386
+		public void Dispose ()
+		{
+			string connectionString = "Initial Catalog=a;Server=b;User ID=c;"
+				+ "Password=d";
+			SqlConnection connection = new SqlConnection (connectionString);
+			SqlCommand command = connection.CreateCommand ();
+			command.Dispose ();
+			Assert.AreEqual (connectionString, connection.ConnectionString);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ExecuteNonQuery_Connection_Closed ()
+		{
+			string connectionString = "Initial Catalog=a;Server=b;User ID=c;"
+				+ "Password=d";
+			SqlConnection cn = new SqlConnection (connectionString);
+
+			SqlCommand cmd = new SqlCommand ("delete from whatever", cn);
+			try {
+				cmd.ExecuteNonQuery ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// ExecuteNonQuery requires an open and available
+				// Connection. The connection's current state is
+				// closed.
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("ExecuteNonQuery") != -1, "#5");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ExecuteNonQuery_Connection_Null ()
+		{
+			SqlCommand cmd = new SqlCommand ("delete from whatever");
+			try {
+				cmd.ExecuteNonQuery ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// Connection property has not been initialized
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ExecuteReader_Connection_Closed ()
+		{
+			string connectionString = "Initial Catalog=a;Server=b;User ID=c;"
+				+ "Password=d";
+			SqlConnection cn = new SqlConnection (connectionString);
+
+			SqlCommand cmd = new SqlCommand ("Select count(*) from whatever", cn);
+			try {
+				cmd.ExecuteReader ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// ExecuteReader requires an open and available
+				// Connection. The connection's current state is
+				// closed.
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("ExecuteReader") != -1, "#5");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ExecuteReader_Connection_Null ()
+		{
+			SqlCommand cmd = new SqlCommand ("select * from whatever");
+			try {
+				cmd.ExecuteReader ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// Connection property has not been initialized
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ExecuteScalar_Connection_Closed ()
+		{
+			string connectionString = "Initial Catalog=a;Server=b;User ID=c;"
+				+ "Password=d";
+			SqlConnection cn = new SqlConnection (connectionString);
+
+			SqlCommand cmd = new SqlCommand ("Select count(*) from whatever", cn);
+			try {
+				cmd.ExecuteScalar ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// ExecuteScalar requires an open and available
+				// Connection. The connection's current state is
+				// closed.
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+				Assert.IsTrue (ex.Message.IndexOf ("ExecuteScalar") != -1, "#5");
+#endif
+			}
+		}
+
+		[Test] // bug #412584
+		[Category ("NotWorking")]
+		public void ExecuteScalar_Connection_Null ()
+		{
+			SqlCommand cmd = new SqlCommand ("select count(*) from whatever");
+			try {
+				cmd.ExecuteScalar ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// Connection property has not been initialized
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Prepare_Connection_Null ()
+		{
+			SqlCommand cmd;
+
+			// Text, without parameters
+			cmd = new SqlCommand ("select count(*) from whatever");
+#if NET_2_0
+			try {
+				cmd.Prepare ();
+				Assert.Fail ("#A1");
+			} catch (NullReferenceException) {
+			}
+#else
+			cmd.Prepare ();
+#endif
+
+			// Text, with parameters
+			cmd = new SqlCommand ("select count(*) from whatever");
+			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
+			try {
+				cmd.Prepare ();
+				Assert.Fail ("#B1");
+#if NET_2_0
+			} catch (NullReferenceException) {
+			}
+#else
+			} catch (InvalidOperationException ex) {
+				// Prepare: Connection property has not been
+				// initialized
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
+#endif
+
+			// Text, without parameters
+			cmd = new SqlCommand ("select count(*) from whatever");
+			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
+			cmd.Parameters.Clear ();
+#if NET_2_0
+			try {
+				cmd.Prepare ();
+				Assert.Fail ("#C1");
+			} catch (NullReferenceException) {
+			}
+#else
+			cmd.Prepare ();
+#endif
+
+			// StoredProcedure, without parameters
+			cmd = new SqlCommand ("FindCustomer");
+			cmd.CommandType = CommandType.StoredProcedure;
+#if NET_2_0
+			try {
+				cmd.Prepare ();
+				Assert.Fail ("#D1");
+			} catch (NullReferenceException) {
+			}
+#else
+			cmd.Prepare ();
+#endif
+
+			// StoredProcedure, with parameters
+			cmd = new SqlCommand ("FindCustomer");
+			cmd.CommandType = CommandType.StoredProcedure;
+			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
+#if NET_2_0
+			try {
+				cmd.Prepare ();
+				Assert.Fail ("#E1");
+			} catch (NullReferenceException) {
+			}
+#else
+			cmd.Prepare ();
+#endif
+		}
+
+		[Test] // bug #412586
+		[Category ("NotWorking")]
+		public void Prepare_Connection_Closed ()
+		{
+			string connectionString = "Initial Catalog=a;Server=b;User ID=c;"
+				+ "Password=d";
+			SqlConnection cn = new SqlConnection (connectionString);
+
+			SqlCommand cmd;
+
+			// Text, without parameters
+			cmd = new SqlCommand ("select count(*) from whatever", cn);
+			cmd.Prepare ();
+
+			// Text, with parameters
+			cmd = new SqlCommand ("select count(*) from whatever", cn);
+			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
+			try {
+				cmd.Prepare ();
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException ex) {
+				// Prepare requires an open and available
+				// Connection. The connection's current state
+				// is Closed
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf ("Prepare") != -1, "#A5");
+			}
+
+			// Text, without parameters
+			cmd = new SqlCommand ("select count(*) from whatever", cn);
+			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
+			cmd.Parameters.Clear ();
+			cmd.Prepare ();
+
+			// StoredProcedure, without parameters
+			cmd = new SqlCommand ("FindCustomer", cn);
+			cmd.CommandType = CommandType.StoredProcedure;
+			cmd.Prepare ();
+
+			// StoredProcedure, with parameters
+			cmd = new SqlCommand ("FindCustomer", cn);
+			cmd.CommandType = CommandType.StoredProcedure;
+			cmd.Parameters.Add ("@TestPar1", SqlDbType.Int);
+			cmd.Prepare ();
+
+			// ensure connection was not implictly opened
+			Assert.AreEqual (ConnectionState.Closed, cn.State, "#B");
+		}
+
+		[Test]
+		public void ResetCommandTimeout ()
+		{
+			SqlCommand cmd = new SqlCommand ();
+			cmd.CommandTimeout = 50;
+			Assert.AreEqual (cmd.CommandTimeout, 50, "#1");
+			cmd.ResetCommandTimeout ();
+			Assert.AreEqual (cmd.CommandTimeout, 30, "#2");
+		}
+
+		[Test]
+		public void UpdatedRowSource ()
+		{
+			SqlCommand cmd = new SqlCommand ();
+			cmd.UpdatedRowSource = UpdateRowSource.None;
+			Assert.AreEqual (UpdateRowSource.None, cmd.UpdatedRowSource, "#1");
+			cmd.UpdatedRowSource = UpdateRowSource.OutputParameters;
+			Assert.AreEqual (UpdateRowSource.OutputParameters, cmd.UpdatedRowSource, "#2");
+		}
+
+		[Test]
+		public void UpdatedRowSource_Value_Invalid ()
+		{
+			SqlCommand cmd = new SqlCommand ();
+			try {
+				cmd.UpdatedRowSource = (UpdateRowSource) 666;
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				// The UpdateRowSource enumeration value,666,
+				// is invalid
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("UpdateRowSource", ex.ParamName, "#5");
+			}
+#else
+			} catch (ArgumentException ex) {
+				// The UpdateRowSource enumeration value, 666,
+				// is invalid
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+#endif
+		}
+
+
 #if NET_2_0
 		[Test] // bug #381100
 		public void ParameterCollectionTest ()
@@ -249,3 +664,4 @@ namespace MonoTests.System.Data.SqlClient
 #endif
 	}
 }
+
