@@ -1,3 +1,12 @@
+2008-07-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_type_is_valid_in_context): Improve the error message.
+	Check both the type and it's generic type definition for loader errors.
+	
+	* verify.c (mono_method_is_valid_in_context): Don't generate another
+	error when a type errors occur, this leads to the wrong exception been
+	thrown.
+
 2008-07-28  Dick Porter  <dick@ximian.com>
 
 	* icall-def.h
