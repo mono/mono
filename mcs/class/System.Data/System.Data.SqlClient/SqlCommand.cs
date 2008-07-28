@@ -338,7 +338,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-		void Cancel () 
+		void Cancel ()
 		{
 			if (Connection == null || Connection.Tds == null)
 				return;
@@ -352,20 +352,23 @@ namespace System.Data.SqlClient {
 		}
 #endif // NET_2_0
 
-		internal void CloseDataReader (bool moreResults)
+		internal void CloseDataReader ()
 		{
-			Connection.DataReader = null;
+			if (Connection != null) {
+				Connection.DataReader = null;
 
-			if ((behavior & CommandBehavior.CloseConnection) != 0)
-				Connection.Close ();
+				if ((behavior & CommandBehavior.CloseConnection) != 0)
+					Connection.Close ();
+
+				if (Tds != null)
+					Tds.SequentialAccess = false;
+			}
 
 			// Reset the behavior
 			behavior = CommandBehavior.Default;
-			if (Tds != null)
-				Tds.SequentialAccess = false;
 		}
 
-		public new SqlParameter CreateParameter () 
+		public new SqlParameter CreateParameter ()
 		{
 			return new SqlParameter ();
 		}
@@ -414,7 +417,7 @@ namespace System.Data.SqlClient {
 				throw new InvalidOperationException ("Stored procedure '" + procName + "' does not exist.");
 		}
 
-		private void Execute (CommandBehavior behavior, bool wantResults)
+		private void Execute (bool wantResults)
 		{
 			int index = 0;
 			Connection.Tds.RecordsAffected = -1;
@@ -501,10 +504,9 @@ namespace System.Data.SqlClient {
 			behavior = CommandBehavior.Default;
 
 			try {
-				Execute (CommandBehavior.Default, false);
+				Execute (false);
 				result = Connection.Tds.RecordsAffected;
-			}
-			catch (TdsTimeoutException e) {
+			} catch (TdsTimeoutException e) {
 				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
 			}
 
@@ -523,7 +525,7 @@ namespace System.Data.SqlClient {
 			this.behavior = behavior;
 			if ((behavior & CommandBehavior.SequentialAccess) != 0)
 				Tds.SequentialAccess = true;
-			Execute (behavior, true);
+			Execute (true);
 			Connection.DataReader = new SqlDataReader (this);
 			
 			return Connection.DataReader;
@@ -539,7 +541,7 @@ namespace System.Data.SqlClient {
 				object result = null;
 				ValidateCommand ("ExecuteScalar");
 				behavior = CommandBehavior.Default;
-				Execute (CommandBehavior.Default, true);
+				Execute (true);
 
 				try {
 					if (Connection.Tds.NextResult () && Connection.Tds.NextRow ())
@@ -557,9 +559,8 @@ namespace System.Data.SqlClient {
 				}
 
 				return result;
-			}
-			finally {
-				CloseDataReader (true);
+			} finally {
+				CloseDataReader ();
 			}
 		}
 
@@ -568,7 +569,7 @@ namespace System.Data.SqlClient {
 			ValidateCommand ("ExecuteXmlReader");
 			behavior = CommandBehavior.Default;
 			try {
-				Execute (CommandBehavior.Default, true);
+				Execute (true);
 			} catch (TdsTimeoutException e) {
 				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
 			}
@@ -668,11 +669,7 @@ namespace System.Data.SqlClient {
 		private void ValidateCommand (string method)
 		{
 			if (Connection == null)
-#if NET_2_0
-				throw new NullReferenceException (String.Format ("{0} requires a Connection object to continue.", method));
-#else
 				throw new InvalidOperationException (String.Format ("{0} requires a Connection object to continue.", method));
-#endif
 			if (Connection.Transaction != null && transaction != Connection.Transaction)
 				throw new InvalidOperationException ("The Connection object does not have the same transaction as the command object.");
 			if (Connection.State != ConnectionState.Open)

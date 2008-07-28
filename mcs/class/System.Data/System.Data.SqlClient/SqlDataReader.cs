@@ -211,7 +211,7 @@ namespace System.Data.SqlClient
 			while (NextResult ())
 				;
 			isClosed = true;
-			command.CloseDataReader (moreResults);
+			command.CloseDataReader ();
 		}
 
 		private static DataTable ConstructSchemaTable ()

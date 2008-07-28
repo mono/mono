@@ -1,5 +1,15 @@
 2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlCommand.cs: Avoid NRE in CloseDataReader when connection is NULL.
+	Fixes bug #412584. Removed unused moreResults eargument from
+	CloseDataReader. Removed behavior argument from Execute, and have it
+	use the behavior field instead. In ValidateCommand, throw
+	InvalidOperationException instead of NRE when Connection is NULL.
+	* SqlDataReader.cs: Sync with SqlCommand's CloseDataReader signature
+	change.
+
+2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlCommand.cs: (Transaction): On the 1.0 profile, do not allow
 	Transaction to be set when a reader is open for the current connection. 
 	Fixes bug #412579. 

@@ -380,7 +380,6 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ExecuteNonQuery_Connection_Null ()
 		{
 			SqlCommand cmd = new SqlCommand ("delete from whatever");
@@ -419,7 +418,6 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ExecuteReader_Connection_Null ()
 		{
 			SqlCommand cmd = new SqlCommand ("select * from whatever");
@@ -460,7 +458,6 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test] // bug #412584
-		[Category ("NotWorking")]
 		public void ExecuteScalar_Connection_Null ()
 		{
 			SqlCommand cmd = new SqlCommand ("select count(*) from whatever");

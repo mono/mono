@@ -1,5 +1,9 @@
 2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlCommandTest.cs: Enabled test for bug #412584.
+
+2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlCommandTest.cs: Added tests for bug #412584, #412586, Moved tests
 	that do not require connection from ProviderTests.
 	* SqlConnectionTest.cs: Moved tests that do not require connection
