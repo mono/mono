@@ -175,10 +175,10 @@ namespace System.Windows.Forms
 
 		protected override void OnClick (EventArgs e)
 		{
-			base.OnClick (e);
-
 			if (this.check_on_click)
 				this.Checked = !this.Checked;
+
+			base.OnClick (e);
 		}
 
 		protected override void OnPaint (System.Windows.Forms.PaintEventArgs e)
