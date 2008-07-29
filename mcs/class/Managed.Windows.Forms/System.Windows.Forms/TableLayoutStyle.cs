@@ -35,6 +35,7 @@ namespace System.Windows.Forms
 	public abstract class TableLayoutStyle
 	{
 		private SizeType size_type;
+		private TableLayoutPanel owner;
 		
 		protected TableLayoutStyle ()
 		{
@@ -44,8 +45,19 @@ namespace System.Windows.Forms
 		[DefaultValue (SizeType.AutoSize)]
 		public SizeType SizeType {
 			get { return this.size_type; }
-			set { this.size_type = value; }
-		}	
+			set {
+				if (size_type != value) {
+					size_type = value; 
+					if (owner != null)
+						owner.PerformLayout ();
+				}
+			}
+		}
+		
+		internal TableLayoutPanel Owner {
+			get { return owner; }
+			set { owner = value; }
+		}
 	}
 }
 #endif

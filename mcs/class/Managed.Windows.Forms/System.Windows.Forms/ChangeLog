@@ -1,3 +1,13 @@
+2008-07-30  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TableLayoutStyleCollection, TableLayoutStyle.cs, RowStyle.cs, 
+	ColumnStyle.cs: 
+	Make the TableLayoutStyle owned by the the TableLayoutPanel, so that:
+	 - One style instance can only participate in a single style collection.
+	 - Styles can request their owner to layout whenever their properties 
+	 change.
+	 [Fixes bugs #412583 and #412582]
+
 2008-07-29  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* X11Keyboard.cs: Implement the generation of the LParam for 

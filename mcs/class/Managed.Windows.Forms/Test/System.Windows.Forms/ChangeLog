@@ -1,3 +1,7 @@
+2008-07-30  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TableLayoutTest.cs: Add tests for bug #412582
+
 2008-07-29  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ListBox.cs: Make test not font dependent.
