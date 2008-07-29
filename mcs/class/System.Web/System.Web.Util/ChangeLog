@@ -1,3 +1,8 @@
+2008-07-29  Marek Habersack  <mhabersack@novell.com>
+
+	* UrlUtils.cs: fixed a typo in HasSessionId which made it always
+	return False. Fixes bug #397418
+
 2008-06-27  Robert Jordan  <robertj@gmx.net>
 
 	* TimeUtil.cs (ToUtcTimeString): convert using the invariant
