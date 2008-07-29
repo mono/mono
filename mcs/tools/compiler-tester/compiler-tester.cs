@@ -351,6 +351,7 @@ namespace TestRunner {
 		protected int syntax_errors;
 		string issue_file;
 		StreamWriter log_file;
+		protected string[] extra_compiler_options;
 		// protected string[] compiler_options;
 		// protected string[] dependencies;
 
@@ -386,6 +387,12 @@ namespace TestRunner {
 		public bool Verbose {
 			set {
 				verbose = value;
+			}
+		}
+
+		public string[] ExtraCompilerOptions {
+			set {
+				extra_compiler_options = value;
 			}
 		}
 
@@ -453,6 +460,17 @@ namespace TestRunner {
 			if (!GetExtraOptions (filename, out compiler_options, out dependencies)) {
 				LogFileLine (filename, "ERROR");
 				return false;
+			}
+
+			if (extra_compiler_options != null) {
+				if (compiler_options == null)
+					compiler_options = extra_compiler_options;
+				else {
+					string[] new_options = new string [compiler_options.Length + extra_compiler_options.Length];
+					extra_compiler_options.CopyTo (new_options, 0);
+					compiler_options.CopyTo (new_options, extra_compiler_options.Length);
+					compiler_options = new_options;
+				}
 			}
 
 			TestCase test = CreateTestCase (filename, compiler_options, dependencies);
@@ -1297,7 +1315,10 @@ namespace TestRunner {
 				checker.LogFile = temp;
 			if (GetOption ("verbose", args, false, out temp))
 				checker.Verbose = true;
-
+			if (GetOption ("compiler-options", args, true, out temp)) {
+				string[] extra = temp.Split (' ');
+				checker.ExtraCompilerOptions = extra;
+			}
 
 			string test_pattern;
 			if (!GetOption ("files", args, true, out test_pattern)) {
@@ -1363,6 +1384,7 @@ namespace TestRunner {
 				"compiler-tester -mode:[pos|neg] -compiler:FILE -files:file-list [options]\n" +
 				"   \n" +
 				"   -compiler:FILE   The file which will be used to compiler tests\n" +
+				"   -compiler-options:OPTIONS  Add global compiler options\n" +
 				"   -il:IL-FILE      XML file with expected IL details for each test\n" +
 				"   -issues:FILE     The list of expected failures\n" +
 				"   -log:FILE        Writes any output also to the file\n" +

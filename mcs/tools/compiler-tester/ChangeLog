@@ -2,6 +2,12 @@
 
 	* compiler-tester.cs: Always exercise symbol writer.
 
+2008-07-29  Martin Baulig  <martin@ximian.com>
+
+	* compiler-tester.cs: Added `-compiler-options' command line
+	argument to specify global compiler options in addition to the
+	ones which are read from the test cases.
+
 2008-04-22  Marek Safar  <marek.safar@gmail.com>
 
 	* compiler-tester.cs: Print test name when IL reduction is detected.
