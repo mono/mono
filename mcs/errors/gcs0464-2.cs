@@ -1,5 +1,5 @@
-// CS0464: The result of comparing type `int?' against null is always `false'
-// Line: 10
+// CS0464: The result of comparing type `int?' with null is always `false'
+// Line: 9
 // Compiler options: -warnaserror -warn:2
 
 public class X

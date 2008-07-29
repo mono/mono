@@ -1,8 +1,6 @@
-// CS0472: The result of comparing `int' against null is always `false'. This operation is undocumented and it is temporary supported for compatibility reasons only
-// Line: 10
+// CS0472: The result of comparing value type `int' with null is `false'
+// Line: 8
 // Compiler options: -warnaserror -warn:2
-
-using System;
 
 public class X {
 	public static bool Compute (int x)
