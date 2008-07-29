@@ -680,6 +680,37 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (clientSize, a.ClientSize, "A19");
 		}
 
+		[Test]
+		public void PropertyTopIndex ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			f.Show ();
+			
+			ListBox l = new ListBox ();
+			l.Height = 100;
+			f.Controls.Add (l);
+			
+			l.Items.AddRange (new string[] { "A", "B", "C"});
+			
+			Assert.AreEqual (0, l.TopIndex, "A1");
+			
+			l.TopIndex = 2;
+			Assert.AreEqual (0, l.TopIndex, "A2");
+
+			l.Items.AddRange (new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M" });
+			Assert.AreEqual (0, l.TopIndex, "A3");
+
+			l.TopIndex = 2;
+			Assert.AreEqual (2, l.TopIndex, "A4");
+
+			l.TopIndex = 10;
+			Assert.AreEqual (9, l.TopIndex, "A5");
+			
+			f.Close ();
+			f.Dispose ();
+		}
+		
 		//
 		// Events
 		//

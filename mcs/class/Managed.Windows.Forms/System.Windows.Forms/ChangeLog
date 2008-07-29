@@ -1,3 +1,9 @@
+2008-07-29  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ListBox.cs: Don't let the user set TopIndex so high that it
+	scrolls up far enough to show empty items.
+	[Fixes bug #412728]
+
 2008-07-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ThemeWin32Classic.cs: Actually commit the changes to fix #410880
