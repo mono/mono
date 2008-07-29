@@ -1,4 +1,10 @@
 2008-07-28  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c: Fix bug 412473:
+	- write_statistical_data_block: check if the current MonoThread still
+	exists, and if not avoid calling mono_jit_info_table_find.
+	- profiler_shutdown: flush everything in the current thread.
+
+2008-07-28  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c: Fix the "allocation summaries" feature
 	(I committed it but it never really worked until now).
 
