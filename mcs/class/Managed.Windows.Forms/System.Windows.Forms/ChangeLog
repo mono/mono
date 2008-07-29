@@ -1,3 +1,9 @@
+2008-07-29  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* X11Keyboard.cs: Implement the generation of the LParam for 
+	all keyboard messages.
+	[Fixes bug #378728]
+
 2008-07-28  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripButton.cs: Update Checked for CheckOnClick before

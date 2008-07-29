@@ -295,6 +295,8 @@ namespace System.Windows.Forms {
 				if ((vkey & 0x100) != 0)
 					dw_flags |= KeybdEventFlags.ExtendedKey;
 				msg = SendKeyboardInput ((VirtualKeys) (vkey & 0xFF), bscan, dw_flags, event_time);
+				msg.wParam = (IntPtr) vkey;
+				msg.lParam = GenerateLParam (msg, xevent.KeyEvent.keycode);
 				msg.hwnd = hwnd;
 				break;
 			}
@@ -499,13 +501,48 @@ namespace System.Windows.Forms {
 
 			MSG msg = new MSG ();
 			msg.message = message;
-			msg.wParam = (IntPtr) vkey;
-			if ((key_state_table [(int) VirtualKeys.VK_MENU] & 0x80) != 0)
-				msg.lParam = new IntPtr (0x20000000);
-			else
-				msg.lParam = IntPtr.Zero;
-
 			return msg;
+		}
+
+		private IntPtr GenerateLParam (MSG m, int keyCode)
+		{
+			// http://msdn.microsoft.com/en-us/library/ms646267(VS.85).aspx
+			//
+			byte flags = 0;
+
+			if (m.message == Msg.WM_SYSKEYUP || m.message == Msg.WM_KEYUP)
+				flags |= 0x80; // transition state flag = 1
+
+			flags |= 0x40; // previous key state flag = 1
+
+			if ((key_state_table [(int) VirtualKeys.VK_RMENU] & 0x80) != 0 ||
+			    (key_state_table [(int) VirtualKeys.VK_LMENU] & 0x80) != 0 ||
+			    (key_state_table [(int) VirtualKeys.VK_MENU] & 0x80) != 0)
+				flags |= 0x20; // context code flag = 1
+
+			if ((key_state_table [(int) VirtualKeys.VK_INSERT] & 0x80) != 0 ||
+			    (key_state_table [(int) VirtualKeys.VK_DELETE] & 0x80) != 0 ||
+			    (key_state_table [(int) VirtualKeys.VK_HOME] & 0x80) != 0 ||
+			    (key_state_table [(int) VirtualKeys.VK_END] & 0x80) != 0 ||
+			    (key_state_table [(int) VirtualKeys.VK_UP] & 0x80) != 0 ||
+			    (key_state_table [(int) VirtualKeys.VK_DOWN] & 0x80) != 0 ||
+			    (key_state_table [(int) VirtualKeys.VK_LEFT] & 0x80) != 0 ||
+			    (key_state_table [(int) VirtualKeys.VK_RIGHT] & 0x80) != 0 ||
+			    (key_state_table [(int) VirtualKeys.VK_CONTROL] & 0x80) != 0 ||
+			    (key_state_table [(int) VirtualKeys.VK_MENU] & 0x80) != 0 ||
+			    (key_state_table [(int) VirtualKeys.VK_NUMLOCK] & 0x80) != 0 ||
+			    (key_state_table [(int) VirtualKeys.VK_PRINT] & 0x80) != 0 ||
+			    (key_state_table [(int) VirtualKeys.VK_RETURN] & 0x80) != 0 ||
+			    (key_state_table [(int) VirtualKeys.VK_DIVIDE] & 0x80) != 0 ||
+			    (key_state_table [(int) VirtualKeys.VK_PRIOR] & 0x80) != 0 ||
+			    (key_state_table [(int) VirtualKeys.VK_NEXT] & 0x80) != 0)
+				flags |= 0x01; // extended key flag = 1
+
+			int lparam = ((((int)flags) & 0x000000FF) << 3*8); // message flags
+			lparam |= ((keyCode & 0x000000FF) << 2*8); // scan code
+			lparam |= 0x00000001; // repeat count = 1
+
+			return (IntPtr)lparam;
 		}
 
 		private void GenerateMessage (VirtualKeys vkey, int scan, XEventName type, int event_time)
