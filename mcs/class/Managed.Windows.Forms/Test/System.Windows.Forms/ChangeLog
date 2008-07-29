@@ -1,5 +1,9 @@
 2008-07-29  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ListBox.cs: Make test not font dependent.
+
+2008-07-29  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ListBox.cs: Add test for bug #412728.
 
 2008-07-25  Ivan N. Zlatev  <contact@i-nz.net>

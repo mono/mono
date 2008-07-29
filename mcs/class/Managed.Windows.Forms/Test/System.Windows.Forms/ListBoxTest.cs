@@ -704,8 +704,10 @@ namespace MonoTests.System.Windows.Forms
 			l.TopIndex = 2;
 			Assert.AreEqual (2, l.TopIndex, "A4");
 
-			l.TopIndex = 10;
-			Assert.AreEqual (9, l.TopIndex, "A5");
+			// There aren't items enough for 12 to be the top index, but
+			// the actual value is font height dependent.
+			l.TopIndex = 12;
+			Assert.IsTrue (l.TopIndex < 12, "A5");
 			
 			f.Close ();
 			f.Dispose ();
