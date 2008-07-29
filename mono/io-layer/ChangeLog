@@ -1,3 +1,9 @@
+2008-07-29  Dick Porter  <dick@ximian.com>
+
+	* processes.c (get_module_name): Make a last-ditch effort to
+	figure out the process name.  Fixes bug 413723, patch by Casey
+	Marshall <casey.s.marshall@gmail.com>
+
 2008-07-18  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* versioninfo.c (map_pe_file): Fix memory leak. Backported from trunk.
