@@ -444,6 +444,9 @@ namespace System.Web {
 			get {
 				if (base_virtual_dir == null){
 					base_virtual_dir = FilePath;
+					if (UrlUtils.HasSessionId (base_virtual_dir))
+						base_virtual_dir = UrlUtils.RemoveSessionId (VirtualPathUtility.GetDirectory (base_virtual_dir), base_virtual_dir);
+					
 					int p = base_virtual_dir.LastIndexOf ('/');
 					if (p != -1) {
 						if (p == 0)

@@ -78,7 +78,7 @@ namespace System.Web.Util {
 			if (path == null || path.Length < 5)
 				return false;
 
-			return (StrUtils.StartsWith (path, "/(") && path.IndexOf ("/)") > 2);
+			return (StrUtils.StartsWith (path, "/(") && path.IndexOf (")/") > 2);
 		}
 
 		internal static string RemoveSessionId (string base_path, string file_path)

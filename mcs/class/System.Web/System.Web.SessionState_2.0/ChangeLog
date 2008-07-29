@@ -1,3 +1,9 @@
+2008-07-29  Marek Habersack  <mhabersack@novell.com>
+
+	* SessionStateModule.cs: use Request.FilePath instead of
+	Request.BaseVirtualDirectory to retrieve the cookie-less session
+	identifier. Fixes bug #397418
+
 2008-06-04  Marek Habersack  <mhabersack@novell.com>
 
 	* SessionStateModule.cs: set the application modifier path to bare

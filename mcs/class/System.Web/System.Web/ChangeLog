@@ -1,3 +1,9 @@
+2008-07-29  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRequest.cs: if the FilePath contains embedded cookie-less
+	session identifier, remove it before computing the base virtual
+	directory. Fixes bug #397418
+
 2008-07-28  Marek Habersack  <mhabersack@novell.com>
 
 	* XmlSiteMapProvider.cs: set the base ResourceKey to the name of

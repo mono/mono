@@ -192,16 +192,18 @@ namespace System.Web.SessionState
 			return (bool) cookieless;
 		}
 
-		void OnBeginRequest (object o, EventArgs args) {
+		void OnBeginRequest (object o, EventArgs args)
+		{
 			HttpApplication application = (HttpApplication) o;
 			HttpContext context = application.Context;
-			string base_path = context.Request.BaseVirtualDir;
+			string file_path = context.Request.FilePath;
+			string base_path = VirtualPathUtility.GetDirectory (file_path);
 			string id = UrlUtils.GetSessionId (base_path);
 
 			if (id == null)
 				return;
 
-			string new_path = UrlUtils.RemoveSessionId (base_path, context.Request.FilePath);
+			string new_path = UrlUtils.RemoveSessionId (base_path, file_path);
 			context.Request.SetFilePath (new_path);
 			context.Request.SetHeader (HeaderName, id);
 			context.Response.SetAppPathModifier (id);
