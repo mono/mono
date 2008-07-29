@@ -1,5 +1,10 @@
 2008-07-29  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #412880 by Atsushi Enomoto <atsushi@ximian.com>
+	* modifiers.cs (GetDescription): Fixed FamANDAssem case.
+	
+2008-07-29  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #412595
 	* cfold.cs: Don't cast undefined bool constant.
 
