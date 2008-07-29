@@ -1,3 +1,11 @@
+2008-07-29  Martin Baulig  <martin@ximian.com>
+
+	* symbolwriter.cs
+	(SymbolWriter.Reset): New public static method.
+
+	* driver.cs
+	(CompilerCallableEntryPoint.Reset): Call SymbolWriter.Reset().
+
 2008-07-25  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #412217

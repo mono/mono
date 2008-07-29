@@ -248,5 +248,10 @@ namespace Mono.CSharp {
 
 			return true;
 		}
+
+		public static void Reset ()
+		{
+			symwriter = null;
+		}
 	}
 }
