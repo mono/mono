@@ -44,14 +44,14 @@ namespace System.Windows.Forms {
 		
 		public int Add (TableLayoutStyle style)
 		{
-			return al.Add (style);
+			return ((IList)this).Add (style);
 		}
 		
 		public void Clear ()
 		{
+			foreach (TableLayoutStyle style in al)
+				style.Owner = null;
 			al.Clear ();
-			
-			// FIXME: Need to investigate what happens when the style is gone.
 			table.PerformLayout ();
 		}
 		
@@ -61,7 +61,9 @@ namespace System.Windows.Forms {
 		
 		public void RemoveAt (int index)
 		{
+			((TableLayoutStyle)al[index]).Owner = null;
 			al.RemoveAt (index);
+			table.PerformLayout ();
 		}
 		
 #region IList methods
@@ -70,7 +72,14 @@ namespace System.Windows.Forms {
 		//
 		int IList.Add (object style)
 		{
-			return al.Add ((TableLayoutStyle) style);
+			TableLayoutStyle layoutStyle = (TableLayoutStyle) style;
+			if (layoutStyle.Owner != null)
+				throw new ArgumentException ("Style is already owned");
+
+			layoutStyle.Owner = table;
+			int result = al.Add (layoutStyle);
+			table.PerformLayout ();
+			return result;
 		}
 		
 		bool IList.Contains (object style)
@@ -85,12 +94,18 @@ namespace System.Windows.Forms {
 		
 		void IList.Insert (int index, object style)
 		{
+			if (((TableLayoutStyle)style).Owner != null)
+				throw new ArgumentException ("Style is already owned");
+			((TableLayoutStyle)style).Owner = table;
 			al.Insert (index, (TableLayoutStyle) style);
+			table.PerformLayout ();
 		}
 
 		void IList.Remove (object style)
 		{
+			((TableLayoutStyle)style).Owner = null;
 			al.Remove ((TableLayoutStyle) style);
+			table.PerformLayout ();
 		}
 
 		bool IList.IsFixedSize {
@@ -110,7 +125,11 @@ namespace System.Windows.Forms {
 				return al [index];
 			}
 			set {
+				if (((TableLayoutStyle)value).Owner != null)
+					throw new ArgumentException ("Style is already owned");
+				((TableLayoutStyle)value).Owner = table;
 				al [index] = value;
+				table.PerformLayout ();
 			}
 		}
 #endregion
@@ -142,11 +161,11 @@ namespace System.Windows.Forms {
 #endregion
 		public TableLayoutStyle this [int index] {
 			get {
-				return (TableLayoutStyle)al[index];
+				return (TableLayoutStyle) ((IList)this)[index];
 			}
 
 			set {
-				al[index] = value;
+				((IList)this)[index] = value;
 			}
 		}
 	}

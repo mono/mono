@@ -59,7 +59,11 @@ namespace System.Windows.Forms
 				if (value < 0)
 					throw new ArgumentOutOfRangeException ();
 				
-				width = value; 
+				if (width != value) {
+					width = value; 
+					if (base.Owner != null)
+						base.Owner.PerformLayout ();
+				}
 			}
 		}
 	}

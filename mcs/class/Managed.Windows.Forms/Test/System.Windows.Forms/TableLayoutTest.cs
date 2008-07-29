@@ -1548,6 +1548,32 @@ namespace MonoTests.System.Windows.Forms
 
 			f.Dispose ();
 		}
+
+		[Test]
+		public void TestTableLayoutStyleOwned ()
+		{
+			try {
+				ColumnStyle style = new ColumnStyle ();
+				TableLayoutColumnStyleCollection coll = new TableLayoutPanel ().ColumnStyles;
+				coll.Add (style);
+				TableLayoutColumnStyleCollection coll2 = new TableLayoutPanel ().ColumnStyles;
+				coll2.Add (style);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// PASS
+			}
+
+			try {
+				RowStyle style = new RowStyle ();
+				TableLayoutRowStyleCollection coll = new TableLayoutPanel ().RowStyles;
+				coll.Add (style);
+				TableLayoutRowStyleCollection coll2 = new TableLayoutPanel ().RowStyles;
+				coll2.Add (style);
+				Assert.Fail ("#2");
+			} catch (ArgumentException ex) {
+				// PASS
+			}
+		}
 	}
 }
 #endif
