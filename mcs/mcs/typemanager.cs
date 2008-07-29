@@ -2589,6 +2589,10 @@ namespace Mono.CSharp {
 			if (a.BaseType == TypeManager.enum_type || b.BaseType == TypeManager.enum_type)
 				return a.FullName == b.FullName;
 
+			// Some types are never equal
+			if (a == TypeManager.null_type || a == TypeManager.anonymous_method_type)
+				return false;
+
 			return true;
 		}
 

@@ -1351,8 +1351,11 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (expr_type.Equals (target_type) && expr_type != TypeManager.null_type)
-				return expr;
+			if (expr_type.Equals (target_type)) {
+				if (expr_type != TypeManager.null_type && expr_type != TypeManager.anonymous_method_type)
+					return expr;
+				return null;
+			}
 
 			//
 			// Attempt to do the implicit constant expression conversions

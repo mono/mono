@@ -3925,54 +3925,46 @@ namespace Mono.CSharp {
 				return null;
 
 			eclass = ExprClass.Value;
-			if (true_expr.Type == false_expr.Type) {
-				type = true_expr.Type;
-				if (type == TypeManager.null_type) {
-					// TODO: probably will have to implement ConditionalConstant
-					// to call method without return constant as well
-					Report.Warning (-101, 1, loc, "Conditional expression will always return same value");
-					return true_expr;
-				}
-			} else {
-				Expression conv;
-				Type true_type = true_expr.Type;
-				Type false_type = false_expr.Type;
+			Type true_type = true_expr.Type;
+			Type false_type = false_expr.Type;
+			type = true_type;
 
-				//
-				// First, if an implicit conversion exists from true_expr
-				// to false_expr, then the result type is of type false_expr.Type
-				//
-				conv = Convert.ImplicitConversion (ec, true_expr, false_type, loc);
-				if (conv != null){
+			//
+			// First, if an implicit conversion exists from true_expr
+			// to false_expr, then the result type is of type false_expr.Type
+			//
+			if (!TypeManager.IsEqual (true_type, false_type)) {
+				Expression conv = Convert.ImplicitConversion (ec, true_expr, false_type, loc);
+				if (conv != null) {
 					//
 					// Check if both can convert implicitl to each other's type
 					//
-					if (Convert.ImplicitConversion (ec, false_expr, true_type, loc) != null){
+					if (Convert.ImplicitConversion (ec, false_expr, true_type, loc) != null) {
 						Error (172,
-						       "Can not compute type of conditional expression " +
-						       "as `" + TypeManager.CSharpName (true_expr.Type) +
-						       "' and `" + TypeManager.CSharpName (false_expr.Type) +
-						       "' convert implicitly to each other");
+							   "Can not compute type of conditional expression " +
+							   "as `" + TypeManager.CSharpName (true_expr.Type) +
+							   "' and `" + TypeManager.CSharpName (false_expr.Type) +
+							   "' convert implicitly to each other");
 						return null;
 					}
 					type = false_type;
 					true_expr = conv;
-				} else if ((conv = Convert.ImplicitConversion(ec, false_expr, true_type,loc))!= null){
-					type = true_type;
+				} else if ((conv = Convert.ImplicitConversion (ec, false_expr, true_type, loc)) != null) {
 					false_expr = conv;
 				} else {
-					Report.Error (173, loc, "Type of conditional expression cannot be determined because there is no implicit conversion between `{0}' and `{1}'",
+					Report.Error (173, loc,
+						"Type of conditional expression cannot be determined because there is no implicit conversion between `{0}' and `{1}'",
 						true_expr.GetSignatureForError (), false_expr.GetSignatureForError ());
 					return null;
 				}
-			}
+			}			
 
 			// Dead code optimalization
-			if (expr is BoolConstant){
-				BoolConstant bc = (BoolConstant) expr;
-
-				Report.Warning (429, 4, bc.Value ? false_expr.Location : true_expr.Location, "Unreachable expression code detected");
-				return bc.Value ? true_expr : false_expr;
+			Constant c = expr as Constant;
+			if (c != null){
+				bool value = (bool) c.GetValue ();
+				Report.Warning (429, 4, value ? false_expr.Location : true_expr.Location, "Unreachable expression code detected");
+				return value ? true_expr : false_expr;
 			}
 
 			return this;
