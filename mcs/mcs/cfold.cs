@@ -101,8 +101,8 @@ namespace Mono.CSharp {
 			bool bool_res;
 
 			if (lt == TypeManager.bool_type && lt == rt) {
-				bool lv = ((BoolConstant) left ).Value;
-				bool rv = ((BoolConstant) right).Value;
+				bool lv = (bool) left.GetValue ();
+				bool rv = (bool) right.GetValue ();			
 				switch (oper) {
 				case Binary.Operator.BitwiseAnd:
 				case Binary.Operator.LogicalAnd:
