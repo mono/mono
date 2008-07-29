@@ -1,3 +1,7 @@
+2008-07-28  Marek Safar  <marek.safar@gmail.com>
+
+	* compiler-tester.cs: Removed ExecuteFile.
+
 2008-07-24  Marek Safar  <marek.safar@gmail.com>
 
 	* compiler-tester.cs: Always exercise symbol writer.

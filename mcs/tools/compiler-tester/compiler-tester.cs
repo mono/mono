@@ -798,20 +798,6 @@ namespace TestRunner {
 			return success;
 		}
 
-#if !NET_2_1
-		int ExecFile (string exe_name, string filename)
-		{
-			if (mono == null)
-				pi.FileName = exe_name;
-			else
-				pi.Arguments = exe_name;
-
-			Process p = Process.Start (pi);
-			p.WaitForExit ();
-			return p.ExitCode;
-		}
-#endif
-
 		bool ExecuteFile (MethodInfo entry_point, string exe_name, string filename)
 		{
 			TextWriter stdout = Console.Out;
@@ -831,14 +817,6 @@ namespace TestRunner {
 				}
 			}
 			catch (Exception e) {
-#if !NET_2_1
-				int exit_code = ExecFile (exe_name, filename);
-				if (exit_code == 0) {
-					LogLine ("(appdomain method failed, external executable succeeded)");
-					LogLine (e.ToString ());
-					return true;
-				}
-#endif
 				HandleFailure (filename, TestResult.ExecError, e.ToString ());
 				return false;
 			}
