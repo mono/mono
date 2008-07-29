@@ -95,7 +95,7 @@ namespace Mono.CSharp {
 			if (ma == MethodAttributes.Public)
 				return "public";
 
-			if (ma == MethodAttributes.FamANDAssem)
+			if (ma == MethodAttributes.FamORAssem)
 				return "protected internal";
 
 			if (ma == MethodAttributes.Private)
