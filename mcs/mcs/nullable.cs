@@ -602,11 +602,10 @@ namespace Mono.CSharp.Nullable
 			Constant c = new BoolConstant (Oper == Operator.Inequality, loc);
 
 			if ((Oper & Operator.EqualityMask) != 0) {
-				Report.Warning (472, 2, loc, "The result of comparing `{0}' against null is always `{1}'. " +
-						"This operation is undocumented and it is temporary supported for compatibility reasons only",
+				Report.Warning (472, 2, loc, "The result of comparing value type `{0}' with null is `{1}'",
 						expr.GetSignatureForError (), c.AsString ());
 			} else {
-				Report.Warning (464, 2, loc, "The result of comparing type `{0}' against null is always `{1}'",
+				Report.Warning (464, 2, loc, "The result of comparing type `{0}' with null is always `{1}'",
 						expr.GetSignatureForError (), c.AsString ());
 			}
 

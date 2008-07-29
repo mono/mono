@@ -1,5 +1,9 @@
 2008-07-29  Marek Safar  <marek.safar@gmail.com>
 
+	* nullable.cs (CreateNullConstant): An error messages update.
+
+2008-07-29  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #412595
 	* cfold.cs: Don't cast undefined bool constant.
 
