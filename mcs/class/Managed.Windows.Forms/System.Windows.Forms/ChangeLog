@@ -1,3 +1,8 @@
+2008-07-30  Everaldo Canuto  <ecanuto@novell.com>
+
+	* MenuAPI.cs: Check for null GrabControl on ProcessMnemonic to prevent 
+	runtime errors.
+
 2008-07-30  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* Form.cs: Ensure that we reset the shown_raised flag after 
