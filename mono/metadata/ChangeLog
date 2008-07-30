@@ -1,5 +1,17 @@
 2008-07-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c: Remove some debug code I commited by accident.
+
+	* verify.c (mono_method_is_valid_in_context): Change the return value
+	to make possible to distinguish between invalid and unverifiable.
+
+	* verify.c (verifier_load_method): Don't return NULL for unverifiable
+	methods.
+
+	Backported from trunk.
+
+2008-07-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (mono_generic_param_is_constraint_compatible): Inflate type
 	constraints. Fixes regression in gtest-253.
 
