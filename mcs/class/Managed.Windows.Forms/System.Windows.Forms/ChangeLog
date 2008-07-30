@@ -1,5 +1,9 @@
 2008-07-30  Everaldo Canuto  <ecanuto@novell.com>
 
+	* MenuAPI.cs: Chage grab_control to GrabControl and make it public.
+
+2008-07-30  Everaldo Canuto  <ecanuto@novell.com>
+
 	* MenuAPI.cs: Check if menu is activated before deactivate it in 
 	ProcessShortcut.
 

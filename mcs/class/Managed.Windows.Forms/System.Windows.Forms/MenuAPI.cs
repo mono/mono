@@ -44,7 +44,7 @@ namespace System.Windows.Forms {
 		private bool mouse_down = false;
 		public Menu CurrentMenu;
 		public Menu TopMenu;
-		Control grab_control;
+		public Control GrabControl;
 		Point last_motion = Point.Empty;
 		
 	    public MenuTracker (Menu top_menu)
@@ -56,14 +56,14 @@ namespace System.Windows.Forms {
 			if (top_menu is ContextMenu) {
 	
 				Control source_control = (top_menu as ContextMenu).SourceControl;
-				grab_control = source_control.FindForm ();
-				if (grab_control == null)
-					grab_control = source_control.FindRootParent ();
+				GrabControl = source_control.FindForm ();
+				if (GrabControl == null)
+					GrabControl = source_control.FindRootParent ();
 
-				grab_control.ActiveTracker = this;
+				GrabControl.ActiveTracker = this;
 
 			} else
-				grab_control = top_menu.Wnd.FindForm ();
+				GrabControl = top_menu.Wnd.FindForm ();
 		}
 
 		enum KeyNavState {
@@ -89,7 +89,7 @@ namespace System.Windows.Forms {
 
 		private void UpdateCursor ()
 		{
-			Control child_control = grab_control.GetRealChildAtPoint (Cursor.Position);
+			Control child_control = GrabControl.GetRealChildAtPoint (Cursor.Position);
 			if (child_control != null) {
 				if (active)
 					XplatUI.SetCursor (child_control.Handle, Cursors.Default.handle);
@@ -105,7 +105,7 @@ namespace System.Windows.Forms {
 			active = false;
 			popup_active = false;
 			hotkey_active = false;
-			grab_control.ActiveTracker = null;
+			GrabControl.ActiveTracker = null;
 			keynav_state = KeyNavState.Idle;
 			if (TopMenu is ContextMenu) {
 				PopUpWindow puw = TopMenu.Wnd as PopUpWindow;
@@ -174,7 +174,7 @@ namespace System.Windows.Forms {
 			if ((CurrentMenu == TopMenu) && !popdown_menu)
 				SelectItem (item.Parent, item, item.IsPopup);
 			
-			grab_control.ActiveTracker = this;
+			GrabControl.ActiveTracker = this;
 			return true;
 		}
 
@@ -194,7 +194,7 @@ namespace System.Windows.Forms {
 			if (CurrentMenu.SelectedItem == item)
 				return;
 
-			grab_control.ActiveTracker = (active || item != null) ? this : null;
+			GrabControl.ActiveTracker = (active || item != null) ? this : null;
 
 			if (item == null) {
 				MenuItem old_item = CurrentMenu.SelectedItem;
@@ -284,7 +284,7 @@ namespace System.Windows.Forms {
 			tracker.popup_active = true;
 			menu.tracker = tracker;
 
-			menu.Wnd = new PopUpWindow (tracker.grab_control, menu);
+			menu.Wnd = new PopUpWindow (tracker.GrabControl, menu);
 			menu.Wnd.Location =  menu.Wnd.PointToClient (pnt);
 
 			((PopUpWindow)menu.Wnd).ShowWindow ();
@@ -317,7 +317,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			if (tracker.grab_control.IsDisposed)
+			if (tracker.GrabControl.IsDisposed)
 				return true;
 
 			if (!no_quit)
@@ -411,7 +411,7 @@ namespace System.Windows.Forms {
 			}
 
 			popup_active = true;
-			PopUpWindow puw = new PopUpWindow (grab_control, item);
+			PopUpWindow puw = new PopUpWindow (GrabControl, item);
 			
 			Point pnt;
 			if (menu is MainMenu)
@@ -597,7 +597,7 @@ namespace System.Windows.Forms {
 				case KeyNavState.Idle:
 					keynav_state = KeyNavState.Startup;
 					hotkey_active = true;
-					grab_control.ActiveTracker = this;
+					GrabControl.ActiveTracker = this;
 					CurrentMenu = TopMenu;
 					main_menu.Draw ();
 					break;
@@ -636,7 +636,7 @@ namespace System.Windows.Forms {
 				return false;
 
 			active = true;
-			grab_control.ActiveTracker = this;
+			GrabControl.ActiveTracker = this;
 			
 			SelectItem (CurrentMenu, item, true);
 			if (item.IsPopup) {
@@ -689,7 +689,7 @@ namespace System.Windows.Forms {
 			// If we get Alt-F4, Windows will ignore it because we have a capture,
 			// release the capture and the program will exit.  (X11 doesn't care.)
 			if ((keyData & Keys.Alt) == Keys.Alt && (keyData & Keys.F4) == Keys.F4) {
-				grab_control.ActiveTracker = null;
+				GrabControl.ActiveTracker = null;
 				return false;
 			}
 			
@@ -730,7 +730,7 @@ namespace System.Windows.Forms {
 						SelectItem (item, item.MenuItems [0], false);
 						CurrentMenu = item;
 						active = true;
-						grab_control.ActiveTracker = this;
+						GrabControl.ActiveTracker = this;
 					}
 					return true;
 				}
@@ -803,7 +803,7 @@ namespace System.Windows.Forms {
 						SelectItem (item, item.MenuItems [0], false);
 						CurrentMenu = item;
 						active = true;
-						grab_control.ActiveTracker = this;
+						GrabControl.ActiveTracker = this;
 					}
 					return true;
 				}
