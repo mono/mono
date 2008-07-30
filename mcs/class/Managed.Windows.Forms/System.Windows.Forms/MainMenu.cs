@@ -171,8 +171,10 @@ namespace System.Windows.Forms
 			this.form = form;
 			Wnd = form;
 			
-			if (tracker == null)
-				tracker = new MenuTracker (this); 
+			if (tracker == null) {
+				tracker = new MenuTracker (this);
+				tracker.GrabControl = form;
+			}
 		}
 		
 		internal override void OnMenuChanged (EventArgs e)

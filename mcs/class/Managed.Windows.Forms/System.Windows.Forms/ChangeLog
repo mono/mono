@@ -1,5 +1,11 @@
 2008-07-30  Everaldo Canuto  <ecanuto@novell.com>
 
+	* MenuAPI.cs: On constructor dont set the GrabControl for non ContextMenu.
+
+	* MainMenu.cs: Set GrabControl on SetForm using current form.
+
+2008-07-30  Everaldo Canuto  <ecanuto@novell.com>
+
 	* MenuAPI.cs: Chage grab_control to GrabControl and make it public.
 
 2008-07-30  Everaldo Canuto  <ecanuto@novell.com>
