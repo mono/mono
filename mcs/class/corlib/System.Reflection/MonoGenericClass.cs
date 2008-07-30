@@ -120,6 +120,8 @@ namespace System.Reflection
 
 		internal Type InflateType (Type type)
 		{
+			if (type == null)
+				return null;
 			if (!type.IsGenericParameter && !type.ContainsGenericParameters)
 				return type;
 			return InflateType_internal (type);

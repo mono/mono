@@ -1,3 +1,8 @@
+2008-07-30  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoGenericClass.cs (InflateType): Guard against null types.
+	Fixes #412965.
+
 2008-07-23  Marek Safar  <marek.safar@gmail.com>
 
 	* MethodBase.cs (GetMethodFromHandle): Needed for bootraping.
