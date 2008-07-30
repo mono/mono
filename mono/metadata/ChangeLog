@@ -1,3 +1,12 @@
+2008-07-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_verifier_verify_class): Don't allow generic types
+	with explicit layout.
+
+	* verify.c (mono_method_verify): Check locals and argument types.
+
+	Backported from trunk.
+
 2008-07-24  Massimiliano Mantione  <massi@ximian.com>
 	* profiler.c: Added runtime_initialized_event,
 	mono_profiler_install_runtime_initialized and
