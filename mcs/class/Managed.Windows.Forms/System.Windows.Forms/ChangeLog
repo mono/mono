@@ -1,3 +1,8 @@
+2008-07-30  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* Form.cs: Ensure closing events are raised only once.
+	[Fixes bug #413143]
+
 2008-07-29  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ListBox.cs: Don't let the user set TopIndex so high that it
