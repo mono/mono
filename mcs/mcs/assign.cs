@@ -179,7 +179,7 @@ namespace Mono.CSharp {
 	///   The `is_address' stuff is really just a hack. We need to come up with a better
 	///   way to handle it.
 	/// </remarks>
-	public class LocalTemporary : Expression, IMemoryLocation {
+	public class LocalTemporary : Expression, IMemoryLocation, IAssignMethod {
 		LocalBuilder builder;
 		bool is_address;
 
@@ -218,6 +218,11 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			return this;
+		}
+
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
@@ -230,6 +235,38 @@ namespace Mono.CSharp {
 			if (is_address)
 				LoadFromPtr (ig, type);
 		}
+
+		#region IAssignMethod Members
+
+		public void Emit (EmitContext ec, bool leave_copy)
+		{
+			Emit (ec);
+
+			if (leave_copy)
+				Emit (ec);
+		}
+
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
+		{
+			if (prepare_for_load)
+				throw new NotImplementedException ();
+
+			source.Emit (ec);
+
+			// HACK: variable is already emitted when source is an initializer 
+			if (source is NewInitialize) {
+				if (leave_copy)
+					Emit (ec);
+				return;
+			}
+
+			Store (ec);
+
+			if (leave_copy)
+				Emit (ec);
+		}
+
+		#endregion
 
 		public LocalBuilder Builder {
 			get { return builder; }

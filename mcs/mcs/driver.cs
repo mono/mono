@@ -1961,6 +1961,7 @@ namespace Mono.CSharp
 			AnonymousMethodBody.Reset ();
 			AnonymousMethodStorey.Reset ();
 			SymbolWriter.Reset ();
+			Switch.Reset ();
 		}
 	}
 }

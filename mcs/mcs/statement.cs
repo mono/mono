@@ -2951,6 +2951,10 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public Location Location {
+			get { return loc; }
+		}
+
 		public object Converted {
 			get {
 				return converted;
@@ -3075,8 +3079,13 @@ namespace Mono.CSharp {
 		Label null_target;
 		Expression new_expr;
 		bool is_constant;
+		bool has_null_case;
 		SwitchSection constant_section;
 		SwitchSection default_section;
+
+		ExpressionStatement string_dictionary;
+		FieldExpr switch_cache_field;
+		static int unique_counter;
 
 #if GMCS_SOURCE
 		//
@@ -3153,8 +3162,7 @@ namespace Mono.CSharp {
 					TypeManager.int64_type,
 					TypeManager.uint64_type,
 					TypeManager.char_type,
-					TypeManager.string_type,
-					TypeManager.bool_type
+					TypeManager.string_type
 				};
 			}
 
@@ -3180,10 +3188,7 @@ namespace Mono.CSharp {
 					continue;
 
 				if (converted != null){
-					Report.ExtraInformation (
-						loc,
-						String.Format ("reason: more than one conversion to an integral type exist for type {0}",
-							       TypeManager.CSharpName (expr.Type)));
+					Report.ExtraInformation (loc, "(Ambiguous implicit user defined conversion in previous ");
 					return null;
 				}
 
@@ -3223,6 +3228,9 @@ namespace Mono.CSharp {
 					}
 					
 					object key = sl.Converted;
+					if (key == SwitchLabel.NullStringCase)
+						has_null_case = true;
+
 					try {
 						Elements.Add (key, sl);
 					} catch (ArgumentException) {
@@ -3323,7 +3331,7 @@ namespace Mono.CSharp {
 		/// <param name="ec"></param>
 		/// <param name="val"></param>
 		/// <returns></returns>
-		void TableSwitchEmit (EmitContext ec, LocalBuilder val)
+		void TableSwitchEmit (EmitContext ec, Expression val)
 		{
 			int element_count = Elements.Count;
 			object [] element_keys = new object [element_count];
@@ -3331,7 +3339,7 @@ namespace Mono.CSharp {
 			Array.Sort (element_keys);
 
 			// initialize the block list with one element per key
-			ArrayList key_blocks = new ArrayList ();
+			ArrayList key_blocks = new ArrayList (element_count);
 			foreach (object key in element_keys)
 				key_blocks.Add (new KeyBlock (System.Convert.ToInt64 (key)));
 
@@ -3404,15 +3412,18 @@ namespace Mono.CSharp {
 			for (int iBlock = key_blocks.Count - 1; iBlock >= 0; --iBlock)
 			{
 				KeyBlock kb = ((KeyBlock) key_blocks [iBlock]);
-				lbl_default = (iBlock == 0) ? DefaultTarget : ig.DefineLabel ();
+				lbl_default = (iBlock == 0) ? default_target : ig.DefineLabel ();
 				if (kb.Length <= 2)
 				{
-					foreach (object key in kb.element_keys)
-					{
-						ig.Emit (OpCodes.Ldloc, val);
-						EmitObjectInteger (ig, key);
+					foreach (object key in kb.element_keys) {
 						SwitchLabel sl = (SwitchLabel) Elements [key];
-						ig.Emit (OpCodes.Beq, sl.GetILLabel (ec));
+						if (key is int && (int) key == 0) {
+							val.EmitBranchable (ec, sl.GetILLabel (ec), false);
+						} else {
+							val.Emit (ec);
+							EmitObjectInteger (ig, key);
+							ig.Emit (OpCodes.Beq, sl.GetILLabel (ec));
+						}
 					}
 				}
 				else
@@ -3425,15 +3436,15 @@ namespace Mono.CSharp {
 						// TODO: optimize constant/I4 cases
 
 						// check block range (could be > 2^31)
-						ig.Emit (OpCodes.Ldloc, val);
+						val.Emit (ec);
 						EmitObjectInteger (ig, System.Convert.ChangeType (kb.first, type_keys));
 						ig.Emit (OpCodes.Blt, lbl_default);
-						ig.Emit (OpCodes.Ldloc, val);
+						val.Emit (ec);
 						EmitObjectInteger (ig, System.Convert.ChangeType (kb.last, type_keys));
 						ig.Emit (OpCodes.Bgt, lbl_default);
 
 						// normalize range
-						ig.Emit (OpCodes.Ldloc, val);
+						val.Emit (ec);
 						if (kb.first != 0)
 						{
 							EmitObjectInteger (ig, System.Convert.ChangeType (kb.first, type_keys));
@@ -3444,7 +3455,7 @@ namespace Mono.CSharp {
 					else
 					{
 						// normalize range
-						ig.Emit (OpCodes.Ldloc, val);
+						val.Emit (ec);
 						int first = (int) kb.first;
 						if (first > 0)
 						{
@@ -3492,140 +3503,31 @@ namespace Mono.CSharp {
 
 			// now emit the code for the sections
 			bool found_default = false;
-			bool found_null = false;
-			foreach (SwitchSection ss in Sections)
-			{
-				foreach (SwitchLabel sl in ss.Labels)
-					if (sl.Converted == SwitchLabel.NullStringCase)
-						found_null = true;
-			}
 
-			foreach (SwitchSection ss in Sections)
-			{
-				foreach (SwitchLabel sl in ss.Labels)
-				{
-					ig.MarkLabel (sl.GetILLabel (ec));
-					ig.MarkLabel (sl.GetILLabelCode (ec));
-					if (sl.Converted == SwitchLabel.NullStringCase)
+			foreach (SwitchSection ss in Sections) {
+				foreach (SwitchLabel sl in ss.Labels) {
+					if (sl.Converted == SwitchLabel.NullStringCase) {
 						ig.MarkLabel (null_target);
-					else if (sl.Label == null) {
+					} else if (sl.Label == null) {
 						ig.MarkLabel (lbl_default);
 						found_default = true;
-						if (!found_null)
+						if (!has_null_case)
 							ig.MarkLabel (null_target);
 					}
+					ig.MarkLabel (sl.GetILLabel (ec));
+					ig.MarkLabel (sl.GetILLabelCode (ec));
 				}
 				ss.Block.Emit (ec);
 			}
 			
 			if (!found_default) {
 				ig.MarkLabel (lbl_default);
-				if (HaveUnwrap && !found_null) {
+				if (!has_null_case) {
 					ig.MarkLabel (null_target);
 				}
 			}
 			
 			ig.MarkLabel (lbl_end);
-		}
-		//
-		// This simple emit switch works, but does not take advantage of the
-		// `switch' opcode. 
-		// TODO: remove non-string logic from here
-		// TODO: binary search strings?
-		//
-		void SimpleSwitchEmit (EmitContext ec, LocalBuilder val)
-		{
-			ILGenerator ig = ec.ig;
-			Label end_of_switch = ig.DefineLabel ();
-			Label next_test = ig.DefineLabel ();
-			bool first_test = true;
-			bool pending_goto_end = false;
-			bool null_marked = false;
-			bool null_found;
-			int section_count = Sections.Count;
-
-			// TODO: implement switch optimization for string by using Hashtable
-			//if (SwitchType == TypeManager.string_type && section_count > 7)
-			//	Console.WriteLine ("Switch optimization possible " + loc);
-
-			ig.Emit (OpCodes.Ldloc, val);
-			
-			if (Elements.Contains (SwitchLabel.NullStringCase)){
-				ig.Emit (OpCodes.Brfalse, null_target);
-			} else
-				ig.Emit (OpCodes.Brfalse, default_target);
-			
-			ig.Emit (OpCodes.Ldloc, val);
-			ig.Emit (OpCodes.Call, TypeManager.string_isinterned_string);
-			ig.Emit (OpCodes.Stloc, val);
-
-			for (int section = 0; section < section_count; section++){
-				SwitchSection ss = (SwitchSection) Sections [section];
-
-				if (ss == default_section)
-					continue;
-
-				Label sec_begin = ig.DefineLabel ();
-
-				ig.Emit (OpCodes.Nop);
-
-				if (pending_goto_end)
-					ig.Emit (OpCodes.Br, end_of_switch);
-
-				int label_count = ss.Labels.Count;
-				null_found = false;
-				for (int label = 0; label < label_count; label++){
-					SwitchLabel sl = (SwitchLabel) ss.Labels [label];
-					ig.MarkLabel (sl.GetILLabel (ec));
-					
-					if (!first_test){
-						ig.MarkLabel (next_test);
-						next_test = ig.DefineLabel ();
-					}
-					//
-					// If we are the default target
-					//
-					if (sl.Label != null){
-						object lit = sl.Converted;
-
-						if (lit == SwitchLabel.NullStringCase){
-							null_found = true;
-							if (label + 1 == label_count)
-								ig.Emit (OpCodes.Br, next_test);
-							continue;
-						}
-						
-						ig.Emit (OpCodes.Ldloc, val);
-						ig.Emit (OpCodes.Ldstr, (string)lit);
-						if (label_count == 1)
-							ig.Emit (OpCodes.Bne_Un, next_test);
-						else {
-							if (label+1 == label_count)
-								ig.Emit (OpCodes.Bne_Un, next_test);
-							else
-								ig.Emit (OpCodes.Beq, sec_begin);
-						}
-					}
-				}
-				if (null_found) {
-					ig.MarkLabel (null_target);
-					null_marked = true;
-				}
-				ig.MarkLabel (sec_begin);
-				foreach (SwitchLabel sl in ss.Labels)
-					ig.MarkLabel (sl.GetILLabelCode (ec));
-
-				ss.Block.Emit (ec);
-				pending_goto_end = !ss.Block.HasRet;
-				first_test = false;
-			}
-			ig.MarkLabel (next_test);
-			ig.MarkLabel (default_target);
-			if (!null_marked)
-				ig.MarkLabel (null_target);
-			if (default_section != null)
-				default_section.Block.Emit (ec);
-			ig.MarkLabel (end_of_switch);
 		}
 
 		SwitchSection FindSection (SwitchLabel label)
@@ -3644,6 +3546,11 @@ namespace Mono.CSharp {
 		{
 			foreach (SwitchSection ss in Sections)
 				ss.Block.MutateHoistedGenericType (storey);
+		}
+
+		public static void Reset ()
+		{
+			unique_counter = 0;
 		}
 
 		public override bool Resolve (EmitContext ec)
@@ -3732,12 +3639,126 @@ namespace Mono.CSharp {
 
 			Report.Debug (1, "END OF SWITCH BLOCK", loc, ec.CurrentBranching);
 
-			if (TypeManager.string_isinterned_string == null) {
-				TypeManager.string_isinterned_string = TypeManager.GetPredefinedMethod (TypeManager.string_type,
-					"IsInterned", loc, TypeManager.string_type);
+			if (!ok)
+				return false;
+
+			if (SwitchType == TypeManager.string_type && !is_constant) {
+				// TODO: Optimize single case, and single+default case
+				ResolveStringSwitchMap (ec);
 			}
 
-			return ok;
+			return true;
+		}
+
+		void ResolveStringSwitchMap (EmitContext ec)
+		{
+			FullNamedExpression string_dictionary_type;
+#if GMCS_SOURCE
+			MemberAccess system_collections_generic = new MemberAccess (new MemberAccess (
+				new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Collections", loc), "Generic", loc);
+
+			string_dictionary_type = new MemberAccess (system_collections_generic, "Dictionary",
+				new TypeArguments (loc,
+					new TypeExpression (TypeManager.string_type, loc),
+					new TypeExpression (TypeManager.int32_type, loc)), loc);
+#else
+			MemberAccess system_collections_generic = new MemberAccess (
+				new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Collections", loc);
+
+			string_dictionary_type = new MemberAccess (system_collections_generic, "Hashtable", loc);
+#endif
+			Field field = new Field (ec.TypeContainer, string_dictionary_type,
+				Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED,
+				CompilerGeneratedClass.MakeName (null, "f", "switch$map", unique_counter++), null, loc);
+			if (!field.Define ())
+				return;
+			ec.TypeContainer.PartialContainer.AddField (field);
+
+			ArrayList init = new ArrayList ();
+			int counter = 0;
+			Elements.Clear ();
+			string value = null;
+			foreach (SwitchSection section in Sections) {
+				foreach (SwitchLabel sl in section.Labels) {
+					if (sl.Label == null || sl.Converted == SwitchLabel.NullStringCase) {
+						value = null;
+						continue;
+					}
+
+					value = (string) sl.Converted;
+					ArrayList init_args = new ArrayList (2);
+					init_args.Add (new StringLiteral (value, sl.Location));
+					init_args.Add (new IntConstant (counter, loc));
+					init.Add (new CollectionElementInitializer (init_args, loc));
+				}
+
+				if (value == null)
+					continue;
+
+				Elements.Add (counter, section.Labels [0]);
+				++counter;
+			}
+
+			ArrayList args = new ArrayList (1);
+			args.Add (new Argument (new IntConstant (Sections.Count, loc)));
+			Expression initializer = new NewInitialize (string_dictionary_type, args,
+				new CollectionOrObjectInitializers (init, loc), loc);
+
+			switch_cache_field = new FieldExpr (field.FieldBuilder, loc);
+			string_dictionary = new SimpleAssign (switch_cache_field, initializer.Resolve (ec));
+		}
+
+		void DoEmitStringSwitch (LocalTemporary value, EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			Label l_initialized = ig.DefineLabel ();
+
+			//
+			// Skip initialization when value is null
+			//
+			value.EmitBranchable (ec, null_target, false);
+
+			//
+			// Check if string dictionary is initialized and initialize
+			//
+			switch_cache_field.EmitBranchable (ec, l_initialized, true);
+			string_dictionary.EmitStatement (ec);
+			ig.MarkLabel (l_initialized);
+
+			LocalTemporary string_switch_variable = new LocalTemporary (TypeManager.int32_type);
+
+#if GMCS_SOURCE
+			ArrayList get_value_args = new ArrayList (2);
+			get_value_args.Add (new Argument (value));
+			get_value_args.Add (new Argument (string_switch_variable, Argument.AType.Out));
+			Expression get_item = new Invocation (new MemberAccess (switch_cache_field, "TryGetValue", loc), get_value_args).Resolve (ec);
+			if (get_item == null)
+				return;
+
+			//
+			// A value was not found, go to default case
+			//
+			get_item.EmitBranchable (ec, default_target, false);
+#else
+			ArrayList get_value_args = new ArrayList (1);
+			get_value_args.Add (value);
+
+			Expression get_item = new IndexerAccess (new ElementAccess (switch_cache_field, get_value_args), loc).Resolve (ec);
+			if (get_item == null)
+				return;
+
+			LocalTemporary get_item_object = new LocalTemporary (TypeManager.object_type);
+			get_item_object.EmitAssign (ec, get_item, true, false);
+			ec.ig.Emit (OpCodes.Brfalse, default_target);
+
+			ExpressionStatement get_item_int = (ExpressionStatement) new SimpleAssign (string_switch_variable,
+				new Cast (new TypeExpression (TypeManager.int32_type, loc), get_item_object, loc)).Resolve (ec);
+
+			get_item_int.EmitStatement (ec);
+			get_item_object.Release (ec);
+#endif
+			TableSwitchEmit (ec, string_switch_variable);
+			string_switch_variable.Release (ec);
 		}
 		
 		protected override void DoEmit (EmitContext ec)
@@ -3748,19 +3769,20 @@ namespace Mono.CSharp {
 			null_target = ig.DefineLabel ();
 
 			// Store variable for comparission purposes
-			LocalBuilder value;
+			// TODO: Don't duplicate non-captured VariableReference
+			LocalTemporary value;
 			if (HaveUnwrap) {
-				value = ig.DeclareLocal (SwitchType);
+				value = new LocalTemporary (SwitchType);
 #if GMCS_SOURCE
 				unwrap.EmitCheck (ec);
 				ig.Emit (OpCodes.Brfalse, null_target);
 				new_expr.Emit (ec);
-				ig.Emit (OpCodes.Stloc, value);
+				value.Store (ec);
 #endif
 			} else if (!is_constant) {
-				value = ig.DeclareLocal (SwitchType);
+				value = new LocalTemporary (SwitchType);
 				new_expr.Emit (ec);
-				ig.Emit (OpCodes.Stloc, value);
+				value.Store (ec);
 			} else
 				value = null;
 
@@ -3777,10 +3799,14 @@ namespace Mono.CSharp {
 			if (is_constant) {
 				if (constant_section != null)
 					constant_section.Block.Emit (ec);
-			} else if (SwitchType == TypeManager.string_type)
-				SimpleSwitchEmit (ec, value);
-			else
+			} else if (string_dictionary != null) {
+				DoEmitStringSwitch (value, ec);
+			} else {
 				TableSwitchEmit (ec, value);
+			}
+
+			if (value != null)
+				value.Release (ec);
 
 			// Restore context state. 
 			ig.MarkLabel (ec.LoopEnd);

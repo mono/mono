@@ -1,3 +1,9 @@
+2008-07-30  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs, assign.cs, driver.cs, expression.cs, statement.cs: Rewrote
+	string switch statement implementation to use string dictionary which
+	significantly (2-8x) improves performance of generated code.
+
 2008-07-29  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #412880 by Atsushi Enomoto <atsushi@ximian.com>

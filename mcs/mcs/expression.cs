@@ -4105,8 +4105,6 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			ILGenerator ig = ec.ig;
-
 			if (IsRef)
 				Variable.Emit (ec);
 
@@ -4121,7 +4119,7 @@ namespace Mono.CSharp {
 			}
 
 			if (leave_copy) {
-				ig.Emit (OpCodes.Dup);
+				ec.ig.Emit (OpCodes.Dup);
 				if (IsRef) {
 					temp = new LocalTemporary (Type);
 					temp.Store (ec);
@@ -4129,7 +4127,7 @@ namespace Mono.CSharp {
 			}
 
 			if (IsRef)
-				StoreFromPtr (ig, type);
+				StoreFromPtr (ec.ig, type);
 			else
 				Variable.EmitAssign (ec);
 
@@ -7247,6 +7245,7 @@ namespace Mono.CSharp {
 	public class QualifiedAliasMember : MemberAccess
 	{
 		readonly string alias;
+		public static readonly string GlobalAlias = "global";
 
 		public QualifiedAliasMember (string alias, string identifier, TypeArguments targs, Location l)
 			: base (null, identifier, targs, l)
@@ -7262,7 +7261,7 @@ namespace Mono.CSharp {
 
 		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
 		{
-			if (alias == "global") {
+			if (alias == GlobalAlias) {
 				expr = RootNamespace.Global;
 				return base.ResolveAsTypeStep (ec, silent);
 			}
@@ -9353,7 +9352,11 @@ namespace Mono.CSharp {
 			// for known types like List<T>, Dictionary<T, U>
 			
 			for (int i = 0; i < Arguments.Count; ++i) {
-				Expression expr = ((Expression) Arguments [i]).Resolve (ec);
+				Expression expr = Arguments [i] as Expression;
+				if (expr == null)
+					return null;
+
+				expr = expr.Resolve (ec);
 				if (expr == null)
 					return null;
 
