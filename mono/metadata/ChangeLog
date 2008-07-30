@@ -1,3 +1,10 @@
+2008-07-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_verifier_verify_class): Don't allow generic types
+	with explicit layout.
+
+	* verify.c (mono_method_verify): Check locals and argument types.
+
 2008-07-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* monitor.c (mono_monitor_try_enter_internal): Allow nterruption of the
