@@ -1,3 +1,7 @@
+2008-07-30  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* XmlDataReaderTest.cs: Added test for Bug#377146
+
 2008-07-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlDataLoaderTest.cs: Use temporary file in TEMP dir instead of
