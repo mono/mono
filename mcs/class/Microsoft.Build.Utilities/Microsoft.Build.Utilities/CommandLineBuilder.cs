@@ -38,22 +38,11 @@ namespace Microsoft.Build.Utilities
 	public class CommandLineBuilder
 	{
 		StringBuilder commandLine;
-		static Hashtable chars;
-		static Regex embeddedQuotes;
+		static char [] chars;
 	
 		static CommandLineBuilder ()
 		{
-			chars = new Hashtable ();
-
-			chars.Add (' ', null);
-			chars.Add ('\t', null);
-			chars.Add ('\n', null);
-			chars.Add ('\u000b', null);
-			chars.Add ('\u000c', null);
-			chars.Add ('\'', null);
-			chars.Add ('\"', null);
-
-			embeddedQuotes = new Regex ("\"\"");
+			chars = new char [] {' ', '\t', '\n', '\u000b', '\u000c', '\'', '\"', ';'};
 		}
 		
 		public CommandLineBuilder ()
@@ -66,6 +55,7 @@ namespace Microsoft.Build.Utilities
 			if (fileName == null)
 				return;
 			
+			VerifyThrowNoEmbeddedDoubleQuotes (null, fileName);
 			AppendSpaceIfNotEmpty ();
 			AppendFileNameWithQuoting (fileName);
 		}
@@ -75,8 +65,10 @@ namespace Microsoft.Build.Utilities
 			if (fileItem == null)
 				return;
 			
+			string filename = fileItem.ToString ();
+			VerifyThrowNoEmbeddedDoubleQuotes (null, filename);
 			AppendSpaceIfNotEmpty ();
-			AppendFileNameWithQuoting (fileItem.ToString ());
+			AppendFileNameWithQuoting (filename);
 		}
 		
 		public void AppendFileNamesIfNotNull (string[] fileNames,
@@ -91,13 +83,15 @@ namespace Microsoft.Build.Utilities
 			bool appendDelimiter = false;
 			AppendSpaceIfNotEmpty ();
 			for (int i = 0; i < fileNames.Length; i++) {
-				if (fileNames [i] == null)
+				string filename = fileNames [i];
+				if (filename == null)
 					continue;
+				VerifyThrowNoEmbeddedDoubleQuotes (null, filename);
 				if (appendDelimiter) {
 					commandLine.Append (delimiter);
-					AppendFileNameWithQuoting (fileNames [i]);
+					AppendFileNameWithQuoting (filename);
 				} else {
-					AppendFileNameWithQuoting (fileNames [i]);
+					AppendFileNameWithQuoting (filename);
 					appendDelimiter = true;
 				}
 			}
@@ -115,13 +109,16 @@ namespace Microsoft.Build.Utilities
 			bool appendDelimiter = false;
 			AppendSpaceIfNotEmpty ();
 			for (int i = 0; i < fileItems.Length; i++) {
+				string filename = fileItems [i].ToString ();
 				if (fileItems [i] == null)
 					continue;
+
+				VerifyThrowNoEmbeddedDoubleQuotes (null, filename);
 				if (appendDelimiter) {
 					commandLine.Append (delimiter);
-					AppendFileNameWithQuoting (fileItems [i].ToString ());
+					AppendFileNameWithQuoting (filename);
 				} else {
-					AppendFileNameWithQuoting (fileItems [i].ToString ());
+					AppendFileNameWithQuoting (filename);
 					appendDelimiter = true;
 				}
 			}
@@ -161,10 +158,11 @@ namespace Microsoft.Build.Utilities
 		
 			if (parameter == null)
 				return;
-			
+
+			VerifyThrowNoEmbeddedDoubleQuotes (switchName, parameter);
 			AppendSpaceIfNotEmpty ();
-			commandLine.AppendFormat ("{0}{1}",switchName,
-				parameter);
+			commandLine.Append (switchName);
+			AppendTextWithQuoting (parameter);
 		}
 		
 		public void AppendSwitchIfNotNull (string switchName,
@@ -176,9 +174,11 @@ namespace Microsoft.Build.Utilities
 			if (parameter == null)
 				return;
 			
+			string value = parameter.ToString ();
+			VerifyThrowNoEmbeddedDoubleQuotes (switchName, value);
 			AppendSpaceIfNotEmpty ();
-			commandLine.AppendFormat ("{0}{1}",switchName,
-				parameter.ToString ());
+			commandLine.Append (switchName);
+			AppendTextWithQuoting (value);
 		}
 		
 		public void AppendSwitchIfNotNull (string switchName,
@@ -198,13 +198,16 @@ namespace Microsoft.Build.Utilities
 			commandLine.AppendFormat ("{0}",switchName);
 			bool appendDelimiter = false;
 			for (int i = 0; i < parameters.Length; i++) {
-				if (parameters [i] == null)
+				string value = parameters [i];
+				if (value == null)
 					continue;
+
+				VerifyThrowNoEmbeddedDoubleQuotes (switchName, value);
 				if (appendDelimiter) {
 					commandLine.Append (delimiter);
-					commandLine.Append (parameters [i]);
+					commandLine.Append (value);
 				} else {
-					commandLine.Append (parameters [i]);
+					commandLine.Append (value);
 					appendDelimiter = true;
 				}
 			}
@@ -227,13 +230,16 @@ namespace Microsoft.Build.Utilities
 			commandLine.AppendFormat ("{0}",switchName);
 			bool appendDelimiter = false;
 			for (int i = 0; i < parameters.Length; i++) {
-				if (parameters [i] == null)
+				string value = parameters [i].ToString ();
+				if (value == null)
 					continue;
+
+				VerifyThrowNoEmbeddedDoubleQuotes (switchName, value);
 				if (appendDelimiter) {
 					commandLine.Append (delimiter);
-					commandLine.Append (parameters [i].ToString ());
+					commandLine.Append (value);
 				} else {
-					commandLine.Append (parameters [i].ToString ());
+					commandLine.Append (value);
 					appendDelimiter = true;
 				}
 			}
@@ -341,27 +347,16 @@ namespace Microsoft.Build.Utilities
 		
 		protected virtual bool IsQuotingRequired (string parameter)
 		{
-			parameter.Trim ();
-			// FIXME: change this to regex
-			foreach (char c in parameter) {
-				if (chars.Contains (c))
-					return true;
-			}
-			return false;
+			return parameter != null && parameter.IndexOfAny (chars) >= 0;
 		}
 		
 		protected virtual void VerifyThrowNoEmbeddedDoubleQuotes (string switchName,
 									 string parameter)
 		{
-			if (parameter != null) {
-				Match m = embeddedQuotes.Match (parameter);
-
-				if (m.Success)
-					throw new ArgumentException (
-						String.Format ("Illegal quote passed to the command line switch named \"{0}\". The value was [{1}].",
-							switchName, parameter));
-			}
-
+			if (parameter != null && parameter.IndexOf ('"') >= 0)
+				throw new ArgumentException (
+					String.Format ("Illegal quote passed to the command line switch named \"{0}\". The value was [{1}].",
+						switchName, parameter));
 		}
 		
 		public override string ToString ()

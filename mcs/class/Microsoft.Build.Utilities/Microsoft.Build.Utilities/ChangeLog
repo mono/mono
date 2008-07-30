@@ -1,3 +1,12 @@
+2008-07-31  Ankit Jain  <jankit@novell.com>
+
+	* CommandLineBuilder.cs (chars): Use a char array instead of a
+	hashtable. Add ';' to the list.
+	(embeddedQuotes): Regex not required.
+	(IsQuotingRequired): Update.
+	(VerifyThrowNoEmbeddedDoubleQuotes): Update.
+	Use VerifyThrowNoEmbeddedDoubleQuotes at appropriate points (see tests).
+
 2007-05-16  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* CommandLineBuilder.cs: Add quotes when there are needed.

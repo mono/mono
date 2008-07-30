@@ -1,3 +1,7 @@
+2008-07-31  Ankit Jain  <jankit@novell.com>
+
+	* CommandLineBuilderTest.cs: Add more tests.
+
 2007-05-16  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* CommandLineBuilderTest.cs: Added tests for filenames that contain

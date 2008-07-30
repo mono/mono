@@ -112,7 +112,6 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		[Test]
 		public void TestAppendFileNameIfNotNull2 ()
 		{
-			
 			string filename = "filename.txt";
 			
 			clb = new CommandLineBuilder ();	
@@ -341,19 +340,20 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			
 			clb.AppendSwitchIfNotNull ("/switch", array, null);
 		}
-		
+
 		[Test]
 		public void TestAppendSwitchIfNotNull7 ()
 		{
 			clb = new CommandLineBuilder ();
-			
+
 			clb.AppendSwitchIfNotNull ("/switch:", (string[]) null, ";");
-			
 			Assert.AreEqual (String.Empty, clb.ToString (), "A1");
 			
 			clb.AppendSwitchIfNotNull ("/switch:", array, ";");
-			
 			Assert.AreEqual ("/switch:a;b;c", clb.ToString (), "A2");
+
+			clb.AppendSwitchIfNotNull ("/switch:", "a;b;c");
+			Assert.AreEqual ("/switch:a;b;c /switch:\"a;b;c\"", clb.ToString (), "A3");
 		}
 
 		[Test]
@@ -380,12 +380,36 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			clb = new CommandLineBuilder ();
 			
 			clb.AppendSwitchIfNotNull ("/switch:", (ITaskItem[]) null, ";");
-			
 			Assert.AreEqual (String.Empty, clb.ToString (), "A1");
 			
 			clb.AppendSwitchIfNotNull ("/switch:", items, ";");
-			
 			Assert.AreEqual ("/switch:a;b", clb.ToString (), "A2");
+		}
+
+		[Test]
+		public void TestAppendSwitchIfNotNul11()
+		{
+			clb = new CommandLineBuilder();
+
+			clb.AppendSwitchIfNotNull("/z:", " a  b");
+			clb.AppendSwitchIfNotNull("/z:", "c\tb");
+			clb.AppendSwitchIfNotNull("/z:", "ab\n");
+			clb.AppendSwitchIfNotNull("/z:", "xyz\u000babc");
+			clb.AppendSwitchIfNotNull("/z:", "\u000cabc");
+			clb.AppendSwitchIfNotNull("/z:", "a 'hello' b");
+			clb.AppendSwitchIfNotNull("/z:", "a;b");
+
+			Assert.AreEqual("/z:\" a  b\" /z:\"c\tb\" /z:\"ab\n\" " +
+				"/z:\"xyz\u000babc\" /z:\"\u000cabc\" /z:\"a 'hello' b\" /z:\"a;b\"",
+				clb.ToString(), "A1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestAppendSwitchIfNotNull12()
+		{
+			clb = new CommandLineBuilder();
+			clb.AppendSwitchIfNotNull("/z:", "x \"hello\" y");
 		}
 
 		[Test]
@@ -545,6 +569,7 @@ namespace MonoTests.Microsoft.Build.Utilities {
 		{
 			CLBTester clbt = new CLBTester ();
 
+			Assert.AreEqual (false, clbt.IsQuotingRequired (null), "A0");
 			Assert.AreEqual (false, clbt.IsQuotingRequired (""), "A1");
 			Assert.AreEqual (true, clbt.IsQuotingRequired (" "), "A2");
 			Assert.AreEqual (false, clbt.IsQuotingRequired ("a"), "A3");
@@ -557,6 +582,11 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			Assert.AreEqual (true, clbt.IsQuotingRequired ("\n \n"), "A10");
 			Assert.AreEqual (true, clbt.IsQuotingRequired ("\t\t"), "A11");
 			Assert.AreEqual (true, clbt.IsQuotingRequired ("\t \t"), "A12");
+			Assert.AreEqual (true, clbt.IsQuotingRequired("a;b"), "A13");
+			Assert.AreEqual (true, clbt.IsQuotingRequired("a\u000bc"), "A14");
+			Assert.AreEqual (true, clbt.IsQuotingRequired("a\u000cx"), "A15");
+			Assert.AreEqual (true, clbt.IsQuotingRequired("\""), "A16");
+			Assert.AreEqual (true, clbt.IsQuotingRequired(" abc"), "A17");
 		}
 
 		[Test]
@@ -569,18 +599,118 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			clbt.VerifyThrowNoEmbeddedDoubleQuotes (null, "");
 			clbt.VerifyThrowNoEmbeddedDoubleQuotes (" ", "");
 			clbt.VerifyThrowNoEmbeddedDoubleQuotes ("", " ");
-			clbt.VerifyThrowNoEmbeddedDoubleQuotes ("\"\"", "");
+			clbt.VerifyThrowNoEmbeddedDoubleQuotes ("\"abc\"", "");
+			clbt.VerifyThrowNoEmbeddedDoubleQuotes ("x\"y", "");
 			clbt.VerifyThrowNoEmbeddedDoubleQuotes ("\'\'", "\'\'");
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException),
-			"Illegal quote passed to the command line switch named \"a\". The value was [\"\"].")]
 		public void TestVerifyThrowNoEmbeddedDoubleQuotes2 ()
 		{
-			CLBTester clbt = new CLBTester ();
+			CheckVerifyThrowNoEmbeddedDoubleQuotes (new CLBTester (), "a", 
+					"\"a\"", true, typeof (ArgumentException), "A1");
+		}
 
-			clbt.VerifyThrowNoEmbeddedDoubleQuotes ("a", "\"\"");
+		[Test]
+		public void TestVerifyThrowNoEmbeddedDoubleQuotes3 ()
+		{
+			CheckVerifyThrowNoEmbeddedDoubleQuotes (new CLBTester (), "a", "\"\"", true, typeof(ArgumentException), "A1");
+		}
+
+		[Test]
+		public void TestVerifyThrowNoEmbeddedDoubleQuotes4 ()
+		{
+			CheckVerifyThrowNoEmbeddedDoubleQuotes (new CLBTester (), "a", "\"foo", true, typeof(ArgumentException), "A1");
+		}
+
+		[Test]
+		public void TestVerifyThrowNoEmbeddedDoubleQuotes5 ()
+		{
+			CheckVerifyThrowNoEmbeddedDoubleQuotes (new CLBTester (), null, "a\"b", true, typeof(ArgumentException), "A1");
+		}
+
+		private void CheckVerifyThrowNoEmbeddedDoubleQuotes(CLBTester clbt, string switchName, string parameter,
+				bool expectException, Type exceptionType, string id)
+		{
+			try
+			{
+				clbt.VerifyThrowNoEmbeddedDoubleQuotes(switchName, parameter);
+			} catch (Exception e) {
+				if (!expectException)
+					Assert.Fail("({0}) Unexpected exception : {1}", id, exceptionType.ToString());
+				if (e.GetType () != exceptionType)
+					Assert.Fail("({0}) Expected exception of {1} type but got {2}", id, exceptionType.ToString(), e.ToString());
+				return;
+			}
+
+			if (expectException)
+				Assert.Fail("({0}) Didn't get expected exception {1}", id, exceptionType.ToString());
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestEmbeddedQuotes1()
+		{
+			new CommandLineBuilder().AppendFileNameIfNotNull("a\"b");
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void TestEmbeddedQuotes2()
+		{
+			new CommandLineBuilder().AppendFileNameIfNotNull(new TaskItem ("a\"b"));
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void TestEmbeddedQuotes3()
+		{
+			new CommandLineBuilder().AppendFileNamesIfNotNull(new ITaskItem[] { new TaskItem ("xyz"), new TaskItem("a\"b") }, ":");
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void TestEmbeddedQuotes4()
+		{
+			new CommandLineBuilder().AppendFileNamesIfNotNull(new string[] { "xyz", "a\"b" }, ":");
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void TestEmbeddedQuotes5()
+		{
+			new CommandLineBuilder().AppendSwitchIfNotNull("foo", new TaskItem("a\"b"));
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void TestEmbeddedQuotes6()
+		{
+			new CommandLineBuilder().AppendSwitchIfNotNull("foo", "a\"b");
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void TestEmbeddedQuotes7()
+		{
+			new CommandLineBuilder().AppendSwitchIfNotNull("foo", new ITaskItem[] { new TaskItem ("xyz"), new TaskItem("a\"b") }, ":");
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void TestEmbeddedQuotes8()
+		{
+			new CommandLineBuilder().AppendSwitchIfNotNull("foo", new string[] {"xyz", "a\"b" }, ":");
+		}
+
+		[Test]
+		public void TestEmbeddedQuotes9()
+		{
+			CommandLineBuilder clb = new CommandLineBuilder();
+			clb.AppendSwitchUnquotedIfNotNull("foo", new TaskItem("a\"b"));
+			clb.AppendSwitchUnquotedIfNotNull("foo", "a\"b");
+			clb.AppendSwitchUnquotedIfNotNull("foo", new ITaskItem[] { new TaskItem ("xyz"), new TaskItem("a\"b") }, ":");
+			clb.AppendSwitchUnquotedIfNotNull("foo", new string[] { "xyz", "a\"b" }, ":");
 		}
 	}
 }
