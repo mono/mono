@@ -1,5 +1,12 @@
 2008-07-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (mono_generic_param_is_constraint_compatible): Inflate type
+	constraints. Fixes regression in gtest-253.
+
+	Backported from trunk.
+
+2008-07-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (mono_verifier_verify_class): Don't allow generic types
 	with explicit layout.
 
