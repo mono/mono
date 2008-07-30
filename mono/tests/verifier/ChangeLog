@@ -1,3 +1,9 @@
+2008-07-30 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* invalid_argument_type.il:
+	* invalid_local_variable.il: New tests for invalid types
+	in locals or arguments.
+
 2008-07-28 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* invalid_generic_type_with_explicit_layout.il: New test.
