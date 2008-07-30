@@ -678,7 +678,8 @@ namespace System.Windows.Forms {
 			if (item == null)
 				return false;
 
-			Deactivate ();
+			if (active)
+				Deactivate ();
 			item.PerformClick ();
 			return true;
 		}

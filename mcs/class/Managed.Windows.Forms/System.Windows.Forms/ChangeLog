@@ -1,3 +1,8 @@
+2008-07-30  Everaldo Canuto  <ecanuto@novell.com>
+
+	* MenuAPI.cs: Check if menu is activated before deactivate it in 
+	ProcessShortcut.
+
 2008-07-30  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TableLayoutStyleCollection, TableLayoutStyle.cs, RowStyle.cs, 
