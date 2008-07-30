@@ -90,6 +90,7 @@ namespace System.Windows.Forms {
 		internal int			is_changing_visible_state;
 		internal bool			has_been_visible;
 		private bool			shown_raised;  // The shown event is only raised once
+		private bool                    close_raised;
 		private bool			is_clientsize_set;
 		internal bool			suppress_closing_events;
 		internal bool			waiting_showwindow; // for XplatUIX11
@@ -2388,6 +2389,9 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void SetVisibleCore(bool value)
 		{
+			if (value)
+				close_raised = false;
+
 			if (IsMdiChild && !MdiParent.Visible) {
 				if (value != Visible) {
 					MdiWindowManager wm = (MdiWindowManager) window_manager;
@@ -2564,7 +2568,7 @@ namespace System.Windows.Forms {
 				Hide ();
 			}
 			
-			if (last_check && closed) {
+			if (close_raised || (last_check && closed)) {
 				return false;
 			}
 			
@@ -2578,6 +2582,7 @@ namespace System.Windows.Forms {
 					FireClosedEvents (CloseReason.UserClosing);
 				}
 				closing = true;
+				close_raised = true;
 			} else {
 				DialogResult = DialogResult.None;
 				closing = false;

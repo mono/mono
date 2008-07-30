@@ -1,5 +1,10 @@
 2008-07-30  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* Form.cs: Ensure closing events are raised only once.
+	[Fixes bug #413143]
+
+2008-07-30  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* X11Keyboard.cs: Refactor SendKeyboardInput to accept the keycode, 
 	so that we can successfully generate the LParam in-place instead of 
 	in KeyEvent, which isn't called for e.g. MainMenu. Fixes keyboard 
