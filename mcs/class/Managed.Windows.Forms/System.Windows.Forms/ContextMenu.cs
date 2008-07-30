@@ -58,14 +58,16 @@ namespace System.Windows.Forms
 
 		public ContextMenu () : base (null)
 		{
+			tracker = new MenuTracker (this);
 			right_to_left = RightToLeft.Inherit;
 		}
 
 		public ContextMenu (MenuItem [] menuItems) : base (menuItems)
 		{
+			tracker = new MenuTracker (this);
 			right_to_left = RightToLeft.Inherit;
 		}
-
+		
 		#region Public Properties
 		
 		[Localizable(true)]
