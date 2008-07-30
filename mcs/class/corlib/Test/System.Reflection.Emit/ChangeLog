@@ -1,3 +1,7 @@
+2008-07-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MethodOnTypeBuilderInstTest.cs: Regression test for #412965.
+
 2008-07-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilderTest.cs: New test for the regression found by

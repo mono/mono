@@ -518,6 +518,25 @@ namespace MonoTests.System.Reflection.Emit
 			int inst_token = method_create.MetadataToken;
 			Assert.AreEqual (mb_token, inst_token, "#1");
 		}
+		
+		[Test]
+		[Category ("NotDotNet")] //bug #412965
+		public void NullReturnTypeWorksUnderCompilerContext  ()
+		{
+			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
+
+			Type oldGinst = typeBuilder.MakeGenericType (typeof (double));
+			TypeBuilder.GetMethod (oldGinst, mb_create); //cause it to be inflated
+
+			MethodBuilder method_0 = typeBuilder.DefineMethod ("_0", MethodAttributes.Public, typeParams [0], Type.EmptyTypes);
+			method_0.SetReturnType (null);
+
+			Type newGinst = typeBuilder.MakeGenericType (typeof (float));
+			
+			MethodInfo new_method_0 = TypeBuilder.GetMethod (newGinst, method_0);
+
+			Assert.AreEqual (null, new_method_0.ReturnType, "O#1");
+		}
 
 		[Test]
 		[Category ("NotDotNet")]
@@ -544,7 +563,6 @@ namespace MonoTests.System.Reflection.Emit
 
 			Assert.AreEqual (typeof (GenericType <double>), old_method_1.ReturnType, "O#1");
 			Assert.AreEqual (typeof (GenericType <float>), new_method_1.ReturnType, "N#1");
-
 		}
 
 		[Test]
