@@ -1,3 +1,10 @@
+2008-07-30  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* X11Keyboard.cs: Refactor SendKeyboardInput to accept the keycode, 
+	so that we can successfully generate the LParam in-place instead of 
+	in KeyEvent, which isn't called for e.g. MainMenu. Fixes keyboard 
+	navigation for menus.
+
 2008-07-30  Everaldo Canuto  <ecanuto@novell.com>
 
 	* MenuAPI.cs: When montion don't set the keyboard navigation state to 
