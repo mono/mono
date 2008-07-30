@@ -61,9 +61,7 @@ namespace System.Windows.Forms {
 					GrabControl = source_control.FindRootParent ();
 
 				GrabControl.ActiveTracker = this;
-
-			} else
-				GrabControl = top_menu.Wnd.FindForm ();
+			}
 		}
 
 		enum KeyNavState {
