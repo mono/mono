@@ -1,5 +1,11 @@
 2008-07-30 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* valid_inflated_generic_constraint_compatible.il:
+	Regression test for constraints that require to be
+	inflated.
+
+2008-07-30 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* invalid_argument_type.il:
 	* invalid_local_variable.il: New tests for invalid types
 	in locals or arguments.
