@@ -3396,7 +3396,7 @@ namespace Mono.CSharp {
 			// okay now we can start...
 			ILGenerator ig = ec.ig;
 			Label lbl_end = ig.DefineLabel ();	// at the end ;-)
-			Label lbl_default = ig.DefineLabel ();
+			Label lbl_default = default_target;
 
 			Type type_keys = null;
 			if (element_keys.Length > 0)
@@ -3499,7 +3499,8 @@ namespace Mono.CSharp {
 			//       make sure to mark other labels in the default section
 
 			// the last default just goes to the end
-			ig.Emit (OpCodes.Br, lbl_default);
+			if (element_keys.Length > 0)
+				ig.Emit (OpCodes.Br, lbl_default);
 
 			// now emit the code for the sections
 			bool found_default = false;

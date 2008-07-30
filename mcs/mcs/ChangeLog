@@ -1,5 +1,10 @@
 2008-07-30  Marek Safar  <marek.safar@gmail.com>
 
+	* statement.cs (Switch): Correctly set empty default target for single
+	blocks.
+
+2008-07-30  Marek Safar  <marek.safar@gmail.com>
+
 	* typemanager.cs, assign.cs, driver.cs, expression.cs, statement.cs: Rewrote
 	string switch statement implementation to use string dictionary which
 	significantly (2-8x) improves performance of generated code.
