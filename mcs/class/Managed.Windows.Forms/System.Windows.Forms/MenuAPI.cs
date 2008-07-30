@@ -621,7 +621,7 @@ namespace System.Windows.Forms {
 		{
 			keynav_state = KeyNavState.Navigating;
 			MenuItem item = FindItemByKey (CurrentMenu, msg.WParam);
-			if (item == null)
+			if ((item == null) || (GrabControl == null))
 				return false;
 
 			active = true;
