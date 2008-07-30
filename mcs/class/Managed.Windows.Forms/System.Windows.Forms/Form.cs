@@ -89,7 +89,7 @@ namespace System.Windows.Forms {
 		private bool			is_loaded;
 		internal int			is_changing_visible_state;
 		internal bool			has_been_visible;
-		private bool			shown_raised;  // The shown event is only raised once
+		private bool			shown_raised;
 		private bool                    close_raised;
 		private bool			is_clientsize_set;
 		internal bool			suppress_closing_events;
@@ -2583,6 +2583,7 @@ namespace System.Windows.Forms {
 				}
 				closing = true;
 				close_raised = true;
+				shown_raised = false;
 			} else {
 				DialogResult = DialogResult.None;
 				closing = false;
