@@ -1,3 +1,8 @@
+2008-07-29  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	Fixes ##377146
+	* XmlDataReader.cs (ReadElementElement): Handle custom reference types sanely.
+	
 2008-07-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataColumnCollection.cs (IndexOf): Include name of column - for which
