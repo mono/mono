@@ -1,5 +1,6 @@
 2008-07-30  Everaldo Canuto  <ecanuto@novell.com>
 
+	[Fixed remaining issues of #406773 (#1)]
 	* MenuItem.cs: UpdateMenuItem added to track the shotcut changes.
 
 	* MenuAPI.cs: Don't create tracker on TrackPopupMenu, it will be created in
