@@ -1,12 +1,17 @@
 2008-07-30  Everaldo Canuto  <ecanuto@novell.com>
 
+	* MenuAPI.cs: When montion don't set the keyboard navigation state to 
+	'navigating'. Fixes bug #411356.
+
+2008-07-30  Everaldo Canuto  <ecanuto@novell.com>
+
 	[Fixed remaining issues of #406773 (#1)]
 	* MenuItem.cs: UpdateMenuItem added to track the shotcut changes.
 
 	* MenuAPI.cs: Don't create tracker on TrackPopupMenu, it will be created in
 	MainMenu (already done) and ContextMenu creation.
 
-	* ContextMenu.cs: Create tracker on construction.
+	* ContextMenu.cs: Create tracker on construction. 
 
 2008-07-30  Everaldo Canuto  <ecanuto@novell.com>
 

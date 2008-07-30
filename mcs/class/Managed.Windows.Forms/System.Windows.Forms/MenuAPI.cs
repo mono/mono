@@ -195,8 +195,6 @@ namespace System.Windows.Forms {
 				if (keynav_state == KeyNavState.Navigating)
 					return;
 				
-				keynav_state = KeyNavState.Navigating;
-				
 				// Select parent menu when move outside of menu item
 				if (old_item.Parent is MenuItem) {
 					MenuItem new_item = (old_item.Parent as MenuItem);
