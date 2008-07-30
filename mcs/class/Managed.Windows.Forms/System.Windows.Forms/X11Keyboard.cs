@@ -269,20 +269,20 @@ namespace System.Windows.Forms {
 
 			switch ((VirtualKeys) (vkey & 0xFF)) {
 			case VirtualKeys.VK_NUMLOCK:
-				GenerateMessage (VirtualKeys.VK_NUMLOCK, 0x45, xevent.type, event_time);
+				GenerateMessage (VirtualKeys.VK_NUMLOCK, 0x45, xevent.KeyEvent.keycode, xevent.type, event_time);
 				break;
 			case VirtualKeys.VK_CAPITAL:
-				GenerateMessage (VirtualKeys.VK_CAPITAL, 0x3A, xevent.type, event_time);
+				GenerateMessage (VirtualKeys.VK_CAPITAL, 0x3A, xevent.KeyEvent.keycode, xevent.type, event_time);
 				break;
 			default:
 				if (((key_state_table [(int) VirtualKeys.VK_NUMLOCK] & 0x01) == 0) != ((xevent.KeyEvent.state & NumLockMask) == 0)) {
-					GenerateMessage (VirtualKeys.VK_NUMLOCK, 0x45, XEventName.KeyPress, event_time);
-					GenerateMessage (VirtualKeys.VK_NUMLOCK, 0x45, XEventName.KeyRelease, event_time);
+					GenerateMessage (VirtualKeys.VK_NUMLOCK, 0x45, xevent.KeyEvent.keycode, XEventName.KeyPress, event_time);
+					GenerateMessage (VirtualKeys.VK_NUMLOCK, 0x45, xevent.KeyEvent.keycode, XEventName.KeyRelease, event_time);
 				}
 
 				if (((key_state_table [(int) VirtualKeys.VK_CAPITAL] & 0x01) == 0) != ((xevent.KeyEvent.state & (int) KeyMasks.LockMask) == 0)) {
-					GenerateMessage (VirtualKeys.VK_CAPITAL, 0x3A, XEventName.KeyPress, event_time);
-					GenerateMessage (VirtualKeys.VK_CAPITAL, 0x3A, XEventName.KeyRelease, event_time);
+					GenerateMessage (VirtualKeys.VK_CAPITAL, 0x3A, xevent.KeyEvent.keycode, XEventName.KeyPress, event_time);
+					GenerateMessage (VirtualKeys.VK_CAPITAL, 0x3A, xevent.KeyEvent.keycode, XEventName.KeyRelease, event_time);
 				}
 
 				num_state = false;
@@ -294,9 +294,7 @@ namespace System.Windows.Forms {
 					dw_flags |= KeybdEventFlags.KeyUp;
 				if ((vkey & 0x100) != 0)
 					dw_flags |= KeybdEventFlags.ExtendedKey;
-				msg = SendKeyboardInput ((VirtualKeys) (vkey & 0xFF), bscan, dw_flags, event_time);
-				msg.wParam = (IntPtr) vkey;
-				msg.lParam = GenerateLParam (msg, xevent.KeyEvent.keycode);
+				msg = SendKeyboardInput ((VirtualKeys) (vkey & 0xFF), bscan, xevent.KeyEvent.keycode, dw_flags, event_time);
 				msg.hwnd = hwnd;
 				break;
 			}
@@ -480,7 +478,7 @@ namespace System.Windows.Forms {
 			return msg;
 		}
 
-		private MSG SendKeyboardInput (VirtualKeys vkey, int scan, KeybdEventFlags dw_flags, int time)
+		private MSG SendKeyboardInput (VirtualKeys vkey, int scan, int keycode, KeybdEventFlags dw_flags, int time)
 		{
 			Msg message;
 
@@ -501,6 +499,8 @@ namespace System.Windows.Forms {
 
 			MSG msg = new MSG ();
 			msg.message = message;
+			msg.wParam = (IntPtr) vkey;
+			msg.lParam = GenerateLParam (msg, keycode);
 			return msg;
 		}
 
@@ -545,7 +545,7 @@ namespace System.Windows.Forms {
 			return (IntPtr)lparam;
 		}
 
-		private void GenerateMessage (VirtualKeys vkey, int scan, XEventName type, int event_time)
+		private void GenerateMessage (VirtualKeys vkey, int scan, int key_code, XEventName type, int event_time)
 		{
 			bool state = (vkey == VirtualKeys.VK_NUMLOCK ? num_state : cap_state);
 			KeybdEventFlags up, down;
@@ -561,15 +561,15 @@ namespace System.Windows.Forms {
 						KeybdEventFlags.None) | KeybdEventFlags.KeyUp;
 				if ((key_state_table [(int) vkey] & 0x1) != 0) { // it was on
 					if (type != XEventName.KeyPress) {
-						SendKeyboardInput (vkey, scan, down, event_time);
-						SendKeyboardInput (vkey, scan, up, event_time);
+						SendKeyboardInput (vkey, scan, key_code, down, event_time);
+						SendKeyboardInput (vkey, scan, key_code, up, event_time);
 						SetState (vkey, false);
 						key_state_table [(int) vkey] &= unchecked ((byte) ~0x01);
 					}
 				} else {
 					if (type == XEventName.KeyPress) {
-						SendKeyboardInput (vkey, scan, down, event_time);
-						SendKeyboardInput (vkey, scan, up, event_time);
+						SendKeyboardInput (vkey, scan, key_code, down, event_time);
+						SendKeyboardInput (vkey, scan, key_code, up, event_time);
 						SetState (vkey, true);
 						key_state_table [(int) vkey] |= 0x01;
 					}
