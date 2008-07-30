@@ -52,16 +52,6 @@ namespace System.Windows.Forms {
 			TopMenu = CurrentMenu = top_menu;
 			foreach (MenuItem item in TopMenu.MenuItems)
 				AddShortcuts (item);
-
-			if (top_menu is ContextMenu) {
-	
-				Control source_control = (top_menu as ContextMenu).SourceControl;
-				GrabControl = source_control.FindForm ();
-				if (GrabControl == null)
-					GrabControl = source_control.FindRootParent ();
-
-				GrabControl.ActiveTracker = this;
-			}
 		}
 
 		enum KeyNavState {
@@ -272,24 +262,29 @@ namespace System.Windows.Forms {
 
 		static public bool TrackPopupMenu (Menu menu, Point pnt)
 		{
-			Object	queue_id;
-
 			if (menu.MenuItems.Count <= 0)	// No submenus to track
 				return true;				
 
-			MenuTracker tracker = new MenuTracker (menu);
+			menu.tracker = new MenuTracker (menu);
+			
+			MenuTracker tracker = menu.tracker;
 			tracker.active = true;
 			tracker.popup_active = true;
-			menu.tracker = tracker;
-
+			
+			// Set GrabControl
+			Control src_ctrl = (tracker.TopMenu as ContextMenu).SourceControl;
+			tracker.GrabControl = src_ctrl.FindForm ();
+			if (tracker.GrabControl == null)
+				tracker.GrabControl = src_ctrl.FindRootParent ();
+			tracker.GrabControl.ActiveTracker = tracker;
+			
 			menu.Wnd = new PopUpWindow (tracker.GrabControl, menu);
 			menu.Wnd.Location =  menu.Wnd.PointToClient (pnt);
-
 			((PopUpWindow)menu.Wnd).ShowWindow ();
 
 			bool no_quit = true;
 
-			queue_id = XplatUI.StartLoop(Thread.CurrentThread);
+			Object queue_id = XplatUI.StartLoop(Thread.CurrentThread);
 
 			while ((menu.Wnd != null) && menu.Wnd.Visible && no_quit) {
 				MSG msg = new MSG ();

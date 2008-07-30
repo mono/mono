@@ -1,5 +1,10 @@
 2008-07-30  Everaldo Canuto  <ecanuto@novell.com>
 
+	* MenuAPI.cs: For ContextMenu set GrabControl on TrackPopupMenu, it make
+	possible to instantiate MenuTracker without GrabControl.
+
+2008-07-30  Everaldo Canuto  <ecanuto@novell.com>
+
 	* MenuAPI.cs: On constructor dont set the GrabControl for non ContextMenu.
 
 	* MainMenu.cs: Set GrabControl on SetForm using current form.
