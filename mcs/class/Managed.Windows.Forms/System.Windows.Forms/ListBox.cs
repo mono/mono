@@ -630,7 +630,15 @@ namespace System.Windows.Forms
 				if (value < 0 || value >= Items.Count)
 					return;
 
-				top_index = value;
+				int page_size = (items_area.Height / ItemHeight);
+				
+				if (Items.Count < page_size)
+					value = 0;
+				else if (!multicolumn)
+					top_index = Math.Min (value, Items.Count - page_size);
+				else
+					top_index = value;
+					
 				UpdateTopItem ();
 				base.Refresh ();
 			}
