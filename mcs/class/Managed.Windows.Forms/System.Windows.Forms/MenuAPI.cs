@@ -265,8 +265,6 @@ namespace System.Windows.Forms {
 			if (menu.MenuItems.Count <= 0)	// No submenus to track
 				return true;				
 
-			menu.tracker = new MenuTracker (menu);
-			
 			MenuTracker tracker = menu.tracker;
 			tracker.active = true;
 			tracker.popup_active = true;

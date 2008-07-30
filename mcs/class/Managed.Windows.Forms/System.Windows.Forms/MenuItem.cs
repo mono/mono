@@ -295,6 +295,7 @@ namespace System.Windows.Forms
 					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for Shortcut", value));
 
 				shortcut = value;
+				UpdateMenuItem ();
 			}
 		}
 
@@ -809,6 +810,15 @@ namespace System.Windows.Forms
 				return;
 
 			mdicontainer.ActivateChild (mdichild);
+		}
+
+		private void UpdateMenuItem ()
+		{
+			if ((parent_menu == null) || (parent_menu.Tracker == null))
+				return;
+
+			parent_menu.Tracker.RemoveShortcuts (this);
+			parent_menu.Tracker.AddShortcuts (this);
 		}
 
 		#endregion Private Methods
