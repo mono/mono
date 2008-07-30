@@ -7498,7 +7498,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Test(Nullable`1)">
-        <size>45</size>
+        <size>44</size>
       </method>
       <method name="Int32 Main()">
         <size>42</size>
@@ -10404,7 +10404,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>16</size>
+        <size>4</size>
       </method>
     </type>
   </test>
@@ -18845,7 +18845,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>100</size>
+        <size>99</size>
       </method>
     </type>
   </test>
@@ -18943,7 +18943,7 @@
         <size>29</size>
       </method>
       <method name="Int64 test24(Int32)">
-        <size>68</size>
+        <size>67</size>
       </method>
       <method name="Int64 test25(Int32)">
         <size>44</size>
@@ -18982,7 +18982,7 @@
         <size>41</size>
       </method>
       <method name="Void test37()">
-        <size>44</size>
+        <size>42</size>
       </method>
       <method name="Int32 test38()">
         <size>2</size>
@@ -23092,16 +23092,6 @@
       </method>
     </type>
   </test>
-  <test name="test-298.cs">
-    <type name="X">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Main(System.String[])">
-        <size>16</size>
-      </method>
-    </type>
-  </test>
   <test name="test-299.cs">
     <type name="SampleClass">
       <method name="Void .ctor()">
@@ -23782,7 +23772,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>51</size>
+        <size>50</size>
       </method>
     </type>
   </test>
@@ -24880,7 +24870,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>28</size>
+        <size>27</size>
       </method>
     </type>
   </test>
@@ -24931,7 +24921,7 @@
         <size>7</size>
       </method>
       <method name="Int32 ParseType(System.String)">
-        <size>87</size>
+        <size>164</size>
       </method>
       <method name="Void Main()">
         <size>12</size>
@@ -27554,37 +27544,37 @@
         <size>70</size>
       </method>
       <method name="Int32 tests(System.String)">
-        <size>96</size>
+        <size>152</size>
       </method>
       <method name="Int32 testn(System.String)">
-        <size>31</size>
+        <size>76</size>
       </method>
       <method name="Int32 testm(System.String)">
-        <size>32</size>
+        <size>77</size>
       </method>
       <method name="Int32 testo(System.String)">
-        <size>40</size>
+        <size>79</size>
       </method>
       <method name="Int32 testp(System.String)">
-        <size>56</size>
+        <size>109</size>
       </method>
       <method name="Int32 test_def(System.String)">
-        <size>62</size>
+        <size>119</size>
       </method>
       <method name="Int32 test_coverage(Int32)">
-        <size>19</size>
+        <size>18</size>
       </method>
       <method name="Int32 test_goto(Int32)">
         <size>39</size>
       </method>
       <method name="Int32 test_memberaccess(System.String)">
-        <size>31</size>
+        <size>76</size>
       </method>
       <method name="Int32 test_string_multiple_targets(System.String)">
-        <size>70</size>
+        <size>128</size>
       </method>
       <method name="Int32 test_casts(Int32)">
-        <size>18</size>
+        <size>17</size>
       </method>
       <method name="Int32 testSwitchEnumLong(TestEnum)">
         <size>56</size>
@@ -27593,19 +27583,19 @@
         <size>66</size>
       </method>
       <method name="Int32 tests_default(System.String)">
-        <size>31</size>
+        <size>107</size>
       </method>
       <method name="Int32 tests_default_2(System.String)">
-        <size>67</size>
+        <size>124</size>
       </method>
       <method name="Void test_76590(System.String)">
-        <size>60</size>
+        <size>100</size>
       </method>
       <method name="Void test_77964()">
         <size>37</size>
       </method>
       <method name="Boolean bug_78860()">
-        <size>67</size>
+        <size>107</size>
       </method>
       <method name="Int32 Main()">
         <size>1037</size>
@@ -31545,6 +31535,27 @@
       </method>
       <method name="Void Main()">
         <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-663.cs">
+    <type name="A">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 op_Implicit(A)">
+        <size>2</size>
+      </method>
+      <method name="Boolean op_Implicit(A)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>22</size>
       </method>
     </type>
   </test>
