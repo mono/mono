@@ -1,5 +1,12 @@
 2008-07-30  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* Form.cs: Ensure that we reset the shown_raised flag after 
+	the form is closed, so that we raise the show events the next 
+	time the form is shown.
+	[Fixes bug #413141]
+
+2008-07-30  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* Form.cs: Ensure closing events are raised only once.
 	[Fixes bug #413143]
 
