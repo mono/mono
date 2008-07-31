@@ -245,7 +245,9 @@ namespace Mono.CSharp
 				"   -nowarn:W1[,Wn]    Suppress one or more compiler warnings\n" + 
 				"   -optimize[+|-]     Enables advanced compiler optimizations (short: -o)\n" + 
 				"   -out:FILE          Specifies output assembly name\n" +
+#if !SMCS_SOURCE
 				"   -pkg:P1[,Pn]       References packages P1..Pn\n" + 
+#endif
 				"   -recurse:SPEC      Recursively compiles files according to SPEC pattern\n" + 
 				"   -reference:A1[,An] Imports metadata from the specified assembly (short: -r)\n" +
 				"   -reference:ALIAS=A Imports metadata using specified extern alias (short: -r)\n" +				
@@ -1149,7 +1151,7 @@ namespace Mono.CSharp
 				//
 				Console.WriteLine ("To file bug reports, please visit: http://www.mono-project.com/Bugs");
 				return true;
-
+#if !SMCS_SOURCE
 			case "/pkg": {
 				string packages;
 
@@ -1192,7 +1194,7 @@ namespace Mono.CSharp
 				p.Close ();
 				return true;
 			}
-				
+#endif
 			case "/linkres":
 			case "/linkresource":
 			case "/res":
