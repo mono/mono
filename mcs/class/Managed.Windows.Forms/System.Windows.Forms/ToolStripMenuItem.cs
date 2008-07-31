@@ -256,6 +256,9 @@ namespace System.Windows.Forms
 				this.Checked = !this.Checked;
 
 			base.OnClick (e);
+			
+			if (!this.IsOnDropDown && !this.HasDropDownItems)
+				this.GetTopLevelToolStrip ().Dismiss (ToolStripDropDownCloseReason.ItemClicked);
 		}
 
 		protected override void OnDropDownHide (EventArgs e)
