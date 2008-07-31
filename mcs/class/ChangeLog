@@ -1,3 +1,7 @@
+2008-07-31  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: update net_2_1_bootstrap_SUBDIRS to only build
+	corlib and System.
 2008-05-22  Andreia Gaita <avidigal@novell.com> 
 
 	* Makefile, Mono.Mozilla, Mono.WebBrowser: Long overdue rename of
