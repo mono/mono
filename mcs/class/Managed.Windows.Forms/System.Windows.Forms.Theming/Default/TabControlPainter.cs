@@ -26,6 +26,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 
 namespace System.Windows.Forms.Theming.Default
 {
@@ -294,8 +295,23 @@ namespace System.Windows.Forms.Theming.Default
 			if (tab.ShowSlider) {
 				Rectangle right = GetRightScrollRect (tab);
 				Rectangle left = GetLeftScrollRect (tab);
-				ControlPaint.DrawScrollButton (dc, right, ScrollButton.Right, tab.RightSliderState);
-				ControlPaint.DrawScrollButton (dc, left, ScrollButton.Left, tab.LeftSliderState);
+				DrawScrollButton (dc, right, area, ScrollButton.Right, tab.RightSliderState);
+				DrawScrollButton (dc, left, area, ScrollButton.Left, tab.LeftSliderState);
+			}
+		}
+
+		protected virtual void DrawScrollButton (Graphics dc, Rectangle bounds, Rectangle clippingArea, ScrollButton button, PushButtonState state)
+		{
+			ControlPaint.DrawScrollButton (dc, bounds, button, GetButtonState (state));
+		}
+
+		static ButtonState GetButtonState (PushButtonState state)
+		{
+			switch (state) {
+			case PushButtonState.Pressed:
+				return ButtonState.Pushed;
+			default:
+				return ButtonState.Normal;
 			}
 		}
 

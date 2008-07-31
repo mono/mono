@@ -1,3 +1,7 @@
+2008-07-31  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* TabControlPainter.cs: Added DrawScrollButton, GetButtonState.
+
 2008-06-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TabControlPainter.cs: When calculating the display rectangle for

@@ -945,8 +945,6 @@ namespace System.Windows.Forms
 		public abstract Point TabControlImagePadding { get; }
 		public abstract int TabControlScrollerWidth { get; }
 
-		public abstract Rectangle TabControlGetLeftScrollRect (TabControl tab);
-		public abstract Rectangle TabControlGetRightScrollRect (TabControl tab);
 		public abstract Rectangle TabControlGetDisplayRectangle (TabControl tab);
 		public abstract Rectangle TabControlGetPanelRect (TabControl tab);
 		public abstract Size TabControlGetSpacing (TabControl tab);

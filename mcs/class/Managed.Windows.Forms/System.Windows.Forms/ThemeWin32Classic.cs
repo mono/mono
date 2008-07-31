@@ -4988,16 +4988,6 @@ namespace System.Windows.Forms
 			ThemeElements.CurrentTheme.TabControlPainter.Draw (dc, area, tab);
 		}
 
-		public override Rectangle TabControlGetLeftScrollRect (TabControl tab)
-		{
-			return ThemeElements.CurrentTheme.TabControlPainter.GetLeftScrollRect (tab);
-		}
-
-		public override Rectangle TabControlGetRightScrollRect (TabControl tab)
-		{
-			return ThemeElements.CurrentTheme.TabControlPainter.GetRightScrollRect (tab);
-		}
-
 		public override Rectangle TabControlGetDisplayRectangle (TabControl tab)
 		{
 			return ThemeElements.CurrentTheme.TabControlPainter.GetDisplayRectangle (tab);

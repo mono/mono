@@ -1,3 +1,13 @@
+2008-07-31  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* TabControl.cs: Added hot style handling for the scroll buttons.
+	right_slider_state, left_slider_state are now of type PushButtonState to
+	allow for a hot state. Added tracking of the mouse button being held down
+	on a tab page. Extracted HasHotElementStyles, RightScrollButtonArea,
+	LeftScrollButtonArea.
+	* Theme.cs, ThemeWin32Classic.cs: Removed TabControlGetLeftScrollRect,
+	TabControlGetRightScrollRect.
+
 2008-07-30  Everaldo Canuto  <ecanuto@novell.com>
 
 	* MenuAPI.cs: Check for null GrabControl on ProcessMnemonic to prevent 
