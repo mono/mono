@@ -1,7 +1,13 @@
 2008-07-31  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripButton.cs: If we "click" a top button on a menustrip that has
+	no children with the keyboard, we need to release the keyboard capture.
+	[Fixes bug #413567]
+
+2008-07-31  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripMenuItem.cs: If we "click" a top level menu item that has
-	no children, we need to release the keyboard capture.
+	no children with the keyboard, we need to release the keyboard capture.
 	[Fixes bug #413567]
 
 2008-07-31  George Giolfan  <georgegiolfan@yahoo.com>
