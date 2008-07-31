@@ -693,10 +693,10 @@ namespace System.Web.UI.HtmlControls
 					}
 				}
 				
-				w.WriteAttribute ("value", item.Value);
+				w.WriteAttribute ("value", item.Value, true);
 				w.Write (HtmlTextWriter.TagRightChar);
 				
-				w.Write (item.Text);
+				w.Write (HttpUtility.HtmlEncode(item.Text));
 				w.WriteEndTag ("option");
 				w.WriteLine ();
 

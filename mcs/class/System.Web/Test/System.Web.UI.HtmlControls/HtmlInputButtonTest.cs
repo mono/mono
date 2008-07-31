@@ -166,6 +166,28 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.IsTrue (found >= 0, "#02");
 		}
 
+		[Test]
+		public void OnClickAttributeWithSpecials ()
+		{
+			StringWriter sw = new StringWriter ();
+			HtmlTextWriter tw = new HtmlTextWriter (sw);
+
+			HtmlInputButtonPoker p = new HtmlInputButtonPoker ();
+			p.Page = new Page ();
+			p.Attributes["onclick"] = "alert('<&');";
+			p.DoRenderAttributes (tw);
+			string str = sw.ToString ();
+			int found = str.IndexOf ("alert('&lt;&amp;');");
+			Assert.IsTrue (found >= 0, "#01");
+			p.ServerClick += new EventHandler (EmptyHandler);
+			sw = new StringWriter ();
+			tw = new HtmlTextWriter (sw);
+			p.DoRenderAttributes (tw);
+			str = sw.ToString ();
+			found = str.IndexOf ("alert('&lt;&amp;');");
+			Assert.IsTrue (found >= 0, "#02" + str);
+		}
+
 		private static void EmptyHandler (object sender, EventArgs e)
 		{
 		}
