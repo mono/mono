@@ -1,3 +1,11 @@
+2008-07-31  Bill Holmes  <billholmes54@gmail.com>
+
+	* marshal.c (cominterop_get_native_wrapper) : Backport of r109343.
+	  Adding a call to mono_class_setup_methods if the methods are not
+	  initialized.
+
+	Code is contributed under MIT/X11 license.
+
 2008-07-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: Remove some debug code I commited by accident.
