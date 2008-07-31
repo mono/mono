@@ -1319,8 +1319,10 @@ namespace System.Windows.Forms
 
 				if (bar.Enabled && bar.ThumbPos.Height >= 20) {
 					element = VisualStyleElement.ScrollBar.GripperVertical.Normal;
-					renderer = new VisualStyleRenderer (element);
-					renderer.DrawBackground (dc, bar.ThumbPos, clip);
+					if (VisualStyleRenderer.IsElementDefined (element)) {
+						renderer = new VisualStyleRenderer (element);
+						renderer.DrawBackground (dc, bar.ThumbPos, clip);
+					}
 				}
 				#endregion
 			} else {
@@ -1409,8 +1411,10 @@ namespace System.Windows.Forms
 
 				if (bar.Enabled && bar.ThumbPos.Height >= 20) {
 					element = VisualStyleElement.ScrollBar.GripperHorizontal.Normal;
-					renderer = new VisualStyleRenderer (element);
-					renderer.DrawBackground (dc, bar.ThumbPos, clip);
+					if (VisualStyleRenderer.IsElementDefined (element)) {
+						renderer = new VisualStyleRenderer (element);
+						renderer.DrawBackground (dc, bar.ThumbPos, clip);
+					}
 				}
 				#endregion
 			}
@@ -1444,12 +1448,9 @@ namespace System.Windows.Forms
 			get {
 				return
 					VisualStyleRenderer.IsElementDefined (VisualStyleElement.ScrollBar.ArrowButton.DownDisabled) &&
-					VisualStyleRenderer.IsElementDefined (VisualStyleElement.ScrollBar.GripperHorizontal.Normal) &&
-					VisualStyleRenderer.IsElementDefined (VisualStyleElement.ScrollBar.GripperVertical.Normal) &&
 					VisualStyleRenderer.IsElementDefined (VisualStyleElement.ScrollBar.LeftTrackHorizontal.Disabled) &&
 					VisualStyleRenderer.IsElementDefined (VisualStyleElement.ScrollBar.LowerTrackVertical.Disabled) &&
 					VisualStyleRenderer.IsElementDefined (VisualStyleElement.ScrollBar.RightTrackHorizontal.Disabled) &&
-					VisualStyleRenderer.IsElementDefined (VisualStyleElement.ScrollBar.SizeBox.LeftAlign) &&
 					VisualStyleRenderer.IsElementDefined (VisualStyleElement.ScrollBar.ThumbButtonHorizontal.Disabled) &&
 					VisualStyleRenderer.IsElementDefined (VisualStyleElement.ScrollBar.ThumbButtonVertical.Disabled) &&
 					VisualStyleRenderer.IsElementDefined (VisualStyleElement.ScrollBar.UpperTrackVertical.Disabled);

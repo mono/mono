@@ -3139,7 +3139,17 @@ namespace System.Windows.Forms
 		// Sizing
 		public override int ListViewGetHeaderHeight (ListView listView, Font font)
 		{
+			return ListViewGetHeaderHeight (font);
+		}
+
+		static int ListViewGetHeaderHeight (Font font)
+		{
 			return font.Height + 5;
+		}
+
+		public static int ListViewGetHeaderHeight ()
+		{
+			return ListViewGetHeaderHeight (ThemeEngine.Current.DefaultFont);
 		}
 
 		public override Size ListViewCheckBoxSize {
@@ -4192,13 +4202,13 @@ namespace System.Windows.Forms
 			case 0:
 			default:  // Blocks
 				Rectangle block_rect;
-				int space_betweenblocks = 2;
+				int space_betweenblocks = ProgressBarChunkSpacing;
 				int block_width;
 				int increment;
 				int barpos_pixels;
 				int block_count = 0;
 				
-				block_width = (client_area.Height * 2) / 3;
+				block_width = ProgressBarGetChunkSize (client_area.Height);
 				barpos_pixels = (int)(((double)(ctrl.Value - ctrl.Minimum) * client_area.Width) / (Math.Max (ctrl.Maximum - ctrl.Minimum, 1)));
 				increment = block_width + space_betweenblocks;
 				
@@ -4226,9 +4236,23 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		public const int ProgressBarChunkSpacing = 2;
+
+		public static int ProgressBarGetChunkSize ()
+		{
+			return ProgressBarGetChunkSize (ProgressBarDefaultHeight);
+		}
+		
+		static int ProgressBarGetChunkSize (int progressBarClientAreaHeight)
+		{
+			return (progressBarClientAreaHeight * 2) / 3;
+		}
+
+		const int ProgressBarDefaultHeight = 23;
+
 		public override Size ProgressBarDefaultSize {
 			get {
-				return new Size (100, 23);
+				return new Size (100, ProgressBarDefaultHeight);
 			}
 		}
 
@@ -5514,7 +5538,7 @@ namespace System.Windows.Forms
 				thumb_area.X = area.X + channel_startpoint.X;
 				thumb_area.Y = area.Y + channel_startpoint.Y;
 				thumb_area.Height = area.Height - space_from_right - space_from_left;
-				thumb_area.Width = 4;
+				thumb_area.Width = TrackBarVerticalTrackWidth;
 
 				pixel_len = thumb_area.Height - 11;
 				if (tb.Maximum == tb.Minimum) {
@@ -5562,7 +5586,7 @@ namespace System.Windows.Forms
 				thumb_area.X = area.X + channel_startpoint.X;
 				thumb_area.Y = area.Y + channel_startpoint.Y;
 				thumb_area.Width = area.Width - space_from_right - space_from_left;
-				thumb_area.Height = 4;
+				thumb_area.Height = TrackBarHorizontalTrackHeight;
 
 				pixel_len = thumb_area.Width - 11;
 				if (tb.Maximum == tb.Minimum) {
@@ -5579,9 +5603,18 @@ namespace System.Windows.Forms
 
 		protected virtual Size TrackBarGetThumbSize (TrackBar trackBar)
 		{
+			return TrackBarGetThumbSize ();
+		}
+
+		public static Size TrackBarGetThumbSize ()
+		{
 			/* Draw thumb fixed 10x22 size */
 			return new Size (10, 22);
 		}
+
+		public const int TrackBarVerticalTrackWidth = 4;
+
+		public const int TrackBarHorizontalTrackHeight = 4;
 
 		#region Ticks
 		protected interface ITrackBarTickPainter

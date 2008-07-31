@@ -1,3 +1,9 @@
+2008-07-31  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* GtkPlus.cs, VisualStylesGtkPlus.cs: Added support for some elements,
+	clipping and excluding a rectangle from the painted area.
+	* VisualStyleElement.cs: Added constants for parts and states.
+
 2008-07-14  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* VisualStyleElement.cs: Fixed

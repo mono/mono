@@ -1,5 +1,16 @@
 2008-07-31  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* ThemeVisualStyles.cs: Made ScrollBar rendering less strict so it supports
+	the GTK+-based implementation of VisualStyles.
+	* ThemeWin32Classic.cs: Exposed various layout values for use in the
+	GTK+-based implementation of VisualStyles: ListViewGetHeaderHeight(Font),
+	ListViewGetHeaderHeight(), ProgressBarChunkSpacing, ProgressBarGetChunkSize(),
+	ProgressBarGetChunkSize(int), ProgressBarDefaultHeight,
+	TrackBarGetThumbSize(), TrackBarVerticalTrackWidth,
+	TrackBarHorizontalTrackHeight.
+
+2008-07-31  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* TabControl.cs: Added hot style handling for the scroll buttons.
 	right_slider_state, left_slider_state are now of type PushButtonState to
 	allow for a hot state. Added tracking of the mouse button being held down

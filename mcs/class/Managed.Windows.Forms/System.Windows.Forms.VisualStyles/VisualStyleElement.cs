@@ -37,20 +37,7 @@ namespace System.Windows.Forms.VisualStyles
 		#region Class name/part/state constants
 		private const string BUTTON = "BUTTON";
 		private const string CLOCK = "CLOCK";
-		#region COMBOXBOX
 		private const string COMBOBOX = "COMBOBOX";
-		enum COMBOBOXPARTS
-		{
-			CP_BORDER = 4
-		}
-		enum BORDERSTATES
-		{
-			CBB_NORMAL = 1,
-			CBB_HOT,
-			CBB_FOCUSED,
-			CBB_DISABLED
-		}
-		#endregion
 		#region DATEPICKER
 		const string DATEPICKER = "DATEPICKER";
 		enum DATEPICKERPARTS
@@ -82,20 +69,7 @@ namespace System.Windows.Forms.VisualStyles
 		private const string PAGE = "PAGE";
 		private const string PROGRESS = "PROGRESS";
 		private const string REBAR = "REBAR";
-		#region SCROLLBAR
 		private const string SCROLLBAR = "SCROLLBAR";
-		enum SCROLLBARPARTS
-		{
-			SBP_ARROWBTN = 1
-		}
-		enum ARROWBTNSTATES
-		{
-			ABS_UPHOVER = 17,
-			ABS_DOWNHOVER = 18,
-			ABS_LEFTHOVER = 19,
-			ABS_RIGHTHOVER = 20,
-		}
-		#endregion
 		private const string SPIN = "SPIN";
 		private const string STARTPANEL = "STARTPANEL";
 		private const string STATUS = "STATUS";
@@ -242,27 +216,132 @@ namespace System.Windows.Forms.VisualStyles
 			}
 			public static class GroupBox
 			{
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 4, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 4, 1); } }
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_GROUPBOX,
+							(int)GROUPBOXSTATES.GBS_DISABLED);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_GROUPBOX,
+							(int)GROUPBOXSTATES.GBS_NORMAL);
+					}
+				}
 			}
 			public static class PushButton
 			{
-				public static VisualStyleElement Default { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 1, 5); } }
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 1, 4); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 1, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 1, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 1, 3); } }
+				public static VisualStyleElement Default {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_PUSHBUTTON,
+							(int)PUSHBUTTONSTATES.PBS_DEFAULTED);
+					}
+				}
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_PUSHBUTTON,
+							(int)PUSHBUTTONSTATES.PBS_DISABLED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_PUSHBUTTON,
+							(int)PUSHBUTTONSTATES.PBS_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_PUSHBUTTON,
+							(int)PUSHBUTTONSTATES.PBS_NORMAL);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_PUSHBUTTON,
+							(int)PUSHBUTTONSTATES.PBS_PRESSED);
+					}
+				}
 			}
 			public static class RadioButton
 			{
-				public static VisualStyleElement CheckedDisabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 2, 8); } }
-				public static VisualStyleElement CheckedHot { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 2, 6); } }
-				public static VisualStyleElement CheckedNormal { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 2, 5); } }
-				public static VisualStyleElement CheckedPressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 2, 7); } }
-				public static VisualStyleElement UncheckedDisabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 2, 4); } }
-				public static VisualStyleElement UncheckedHot { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 2, 2); } }
-				public static VisualStyleElement UncheckedNormal { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 2, 1); } }
-				public static VisualStyleElement UncheckedPressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.BUTTON, 2, 3); } }
+				public static VisualStyleElement CheckedDisabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_RADIOBUTTON,
+							(int)RADIOBUTTONSTATES.RBS_CHECKEDDISABLED);
+					}
+				}
+				public static VisualStyleElement CheckedHot {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_RADIOBUTTON,
+							(int)RADIOBUTTONSTATES.RBS_CHECKEDHOT);
+					}
+				}
+				public static VisualStyleElement CheckedNormal {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_RADIOBUTTON,
+							(int)RADIOBUTTONSTATES.RBS_CHECKEDNORMAL);
+					}
+				}
+				public static VisualStyleElement CheckedPressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_RADIOBUTTON,
+							(int)RADIOBUTTONSTATES.RBS_CHECKEDPRESSED);
+					}
+				}
+				public static VisualStyleElement UncheckedDisabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_RADIOBUTTON,
+							(int)RADIOBUTTONSTATES.RBS_UNCHECKEDDISABLED);
+					}
+				}
+				public static VisualStyleElement UncheckedHot {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_RADIOBUTTON,
+							(int)RADIOBUTTONSTATES.RBS_UNCHECKEDHOT);
+					}
+				}
+				public static VisualStyleElement UncheckedNormal {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_RADIOBUTTON,
+							(int)RADIOBUTTONSTATES.RBS_UNCHECKEDNORMAL);
+					}
+				}
+				public static VisualStyleElement UncheckedPressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							BUTTON,
+							(int)BUTTONPARTS.BP_RADIOBUTTON,
+							(int)RADIOBUTTONSTATES.RBS_UNCHECKEDPRESSED);
+					}
+				}
 			}
 			public static class UserButton
 			{
@@ -275,10 +354,38 @@ namespace System.Windows.Forms.VisualStyles
 		{
 			public static class DropDownButton
 			{
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.COMBOBOX, 1, 4); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.COMBOBOX, 1, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.COMBOBOX, 1, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.COMBOBOX, 1, 3); } }
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							COMBOBOX,
+							(int)COMBOBOXPARTS.CP_DROPDOWNBUTTON,
+							(int)COMBOBOXSTYLESTATES.CBXS_DISABLED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							COMBOBOX,
+							(int)COMBOBOXPARTS.CP_DROPDOWNBUTTON,
+							(int)COMBOBOXSTYLESTATES.CBXS_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							COMBOBOX,
+							(int)COMBOBOXPARTS.CP_DROPDOWNBUTTON,
+							(int)COMBOBOXSTYLESTATES.CBXS_NORMAL);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							COMBOBOX,
+							(int)COMBOBOXPARTS.CP_DROPDOWNBUTTON,
+							(int)COMBOBOXSTYLESTATES.CBXS_PRESSED);
+					}
+				}
 			}
 			internal static class Border
 			{
@@ -467,9 +574,30 @@ namespace System.Windows.Forms.VisualStyles
 		{
 			public static class Item
 			{
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.HEADER, 1, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.HEADER, 1, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.HEADER, 1, 3); } }
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							HEADER,
+							(int)HEADERPARTS.HP_HEADERITEM,
+							(int)HEADERITEMSTATES.HIS_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							HEADER,
+							(int)HEADERPARTS.HP_HEADERITEM,
+							(int)HEADERITEMSTATES.HIS_HOT);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							HEADER,
+							(int)HEADERPARTS.HP_HEADERITEM,
+							(int)HEADERITEMSTATES.HIS_PRESSED);
+					}
+				}
 			}
 			public static class ItemLeft
 			{
@@ -606,19 +734,47 @@ namespace System.Windows.Forms.VisualStyles
 		{
 			public static class Bar
 			{
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.PROGRESS, 1, 0); } }
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							PROGRESS,
+							(int)PROGRESSPARTS.PP_BAR,
+							0);
+					}
+				}
 			}
 			public static class BarVertical
 			{
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.PROGRESS, 2, 0); } }
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							PROGRESS,
+							(int)PROGRESSPARTS.PP_BARVERT,
+							0);
+					}
+				}
 			}
 			public static class Chunk
 			{
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.PROGRESS, 3, 0); } }
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							PROGRESS,
+							(int)PROGRESSPARTS.PP_CHUNK,
+							0);
+					}
+				}
 			}
 			public static class ChunkVertical
 			{
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.PROGRESS, 4, 0); } }
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							PROGRESS,
+							(int)PROGRESSPARTS.PP_CHUNKVERT,
+							0);
+					}
+				}
 			}
 		}
 		#endregion
@@ -627,7 +783,14 @@ namespace System.Windows.Forms.VisualStyles
 		{
 			public static class Band
 			{
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.REBAR, 3, 0); } }
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							REBAR,
+							(int)REBARPARTS.RP_BAND,
+							0);
+					}
+				}
 			}
 			public static class Chevron
 			{
@@ -656,22 +819,134 @@ namespace System.Windows.Forms.VisualStyles
 		{
 			public static class ArrowButton
 			{
-				public static VisualStyleElement DownDisabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 1, 8); } }
-				public static VisualStyleElement DownHot { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 1, 6); } }
-				public static VisualStyleElement DownNormal { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 1, 5); } }
-				public static VisualStyleElement DownPressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 1, 7); } }
-				public static VisualStyleElement LeftDisabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 1, 12); } }
-				public static VisualStyleElement LeftHot { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 1, 10); } }
-				public static VisualStyleElement LeftNormal { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 1, 9); } }
-				public static VisualStyleElement LeftPressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 1, 11); } }
-				public static VisualStyleElement RightDisabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 1, 16); } }
-				public static VisualStyleElement RightHot { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 1, 14); } }
-				public static VisualStyleElement RightNormal { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 1, 13); } }
-				public static VisualStyleElement RightPressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 1, 15); } }
-				public static VisualStyleElement UpDisabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 1, 4); } }
-				public static VisualStyleElement UpHot { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 1, 2); } }
-				public static VisualStyleElement UpNormal { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 1, 1); } }
-				public static VisualStyleElement UpPressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 1, 3); } }
+				public static VisualStyleElement DownDisabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_ARROWBTN,
+							(int)ARROWBTNSTATES.ABS_DOWNDISABLED);
+					}
+				}
+				public static VisualStyleElement DownHot {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_ARROWBTN,
+							(int)ARROWBTNSTATES.ABS_DOWNHOT);
+					}
+				}
+				public static VisualStyleElement DownNormal {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_ARROWBTN,
+							(int)ARROWBTNSTATES.ABS_DOWNNORMAL);
+					}
+				}
+				public static VisualStyleElement DownPressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_ARROWBTN,
+							(int)ARROWBTNSTATES.ABS_DOWNPRESSED);
+					}
+				}
+				public static VisualStyleElement LeftDisabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_ARROWBTN,
+							(int)ARROWBTNSTATES.ABS_LEFTDISABLED);
+					}
+				}
+				public static VisualStyleElement LeftHot {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_ARROWBTN,
+							(int)ARROWBTNSTATES.ABS_LEFTHOT);
+					}
+				}
+				public static VisualStyleElement LeftNormal {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_ARROWBTN,
+							(int)ARROWBTNSTATES.ABS_LEFTNORMAL);
+					}
+				}
+				public static VisualStyleElement LeftPressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_ARROWBTN,
+							(int)ARROWBTNSTATES.ABS_LEFTPRESSED);
+					}
+				}
+				public static VisualStyleElement RightDisabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_ARROWBTN,
+							(int)ARROWBTNSTATES.ABS_RIGHTDISABLED);
+					}
+				}
+				public static VisualStyleElement RightHot {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_ARROWBTN,
+							(int)ARROWBTNSTATES.ABS_RIGHTHOT);
+					}
+				}
+				public static VisualStyleElement RightNormal {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_ARROWBTN,
+							(int)ARROWBTNSTATES.ABS_RIGHTNORMAL);
+					}
+				}
+				public static VisualStyleElement RightPressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_ARROWBTN,
+							(int)ARROWBTNSTATES.ABS_RIGHTPRESSED);
+					}
+				}
+				public static VisualStyleElement UpDisabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_ARROWBTN,
+							(int)ARROWBTNSTATES.ABS_UPDISABLED);
+					}
+				}
+				public static VisualStyleElement UpHot {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_ARROWBTN,
+							(int)ARROWBTNSTATES.ABS_UPHOT);
+					}
+				}
+				public static VisualStyleElement UpNormal {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_ARROWBTN,
+							(int)ARROWBTNSTATES.ABS_UPNORMAL);
+					}
+				}
+				public static VisualStyleElement UpPressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_ARROWBTN,
+							(int)ARROWBTNSTATES.ABS_UPPRESSED);
+					}
+				}
 				internal static VisualStyleElement DownHover {
 					get {
 						return new VisualStyleElement (
@@ -707,58 +982,254 @@ namespace System.Windows.Forms.VisualStyles
 			}
 			public static class GripperHorizontal
 			{
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 8, 0); } }
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_GRIPPERHORZ,
+							0);
+					}
+				}
 			}
 			public static class GripperVertical
 			{
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 9, 0); } }
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							VisualStyleElement.SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_GRIPPERVERT,
+							0);
+					}
+				}
 			}
 			public static class LeftTrackHorizontal
 			{
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 5, 4); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 5, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 5, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 5, 3); } }
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_UPPERTRACKHORZ,
+							(int)SCROLLBARSTYLESTATES.SCRBS_DISABLED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_UPPERTRACKHORZ,
+							(int)SCROLLBARSTYLESTATES.SCRBS_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_UPPERTRACKHORZ,
+							(int)SCROLLBARSTYLESTATES.SCRBS_NORMAL);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_UPPERTRACKHORZ,
+							(int)SCROLLBARSTYLESTATES.SCRBS_PRESSED);
+					}
+				}
 			}
 			public static class LowerTrackVertical
 			{
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 6, 4); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 6, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 6, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 6, 3); } }
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_LOWERTRACKVERT,
+							(int)SCROLLBARSTYLESTATES.SCRBS_DISABLED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_LOWERTRACKVERT,
+							(int)SCROLLBARSTYLESTATES.SCRBS_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_LOWERTRACKVERT,
+							(int)SCROLLBARSTYLESTATES.SCRBS_NORMAL);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_LOWERTRACKVERT,
+							(int)SCROLLBARSTYLESTATES.SCRBS_PRESSED);
+					}
+				}
 			}
 			public static class RightTrackHorizontal
 			{
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 4, 4); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 4, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 4, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 4, 3); } }
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_LOWERTRACKHORZ,
+							(int)SCROLLBARSTYLESTATES.SCRBS_DISABLED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_LOWERTRACKHORZ,
+							(int)SCROLLBARSTYLESTATES.SCRBS_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_LOWERTRACKHORZ,
+							(int)SCROLLBARSTYLESTATES.SCRBS_NORMAL);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_LOWERTRACKHORZ,
+							(int)SCROLLBARSTYLESTATES.SCRBS_PRESSED);
+					}
+				}
 			}
 			public static class SizeBox
 			{
-				public static VisualStyleElement LeftAlign { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 10, 2); } }
-				public static VisualStyleElement RightAlign { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 10, 1); } }
+				public static VisualStyleElement LeftAlign {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_SIZEBOX,
+							(int)SIZEBOXSTATES.SZB_LEFTALIGN);
+					}
+				}
+				public static VisualStyleElement RightAlign {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_SIZEBOX,
+							(int)SIZEBOXSTATES.SZB_RIGHTALIGN);
+					}
+				}
 			}
 			public static class ThumbButtonHorizontal
 			{
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 2, 4); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 2, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 2, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 2, 3); } }
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_THUMBBTNHORZ,
+							(int)SCROLLBARSTYLESTATES.SCRBS_DISABLED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_THUMBBTNHORZ,
+							(int)SCROLLBARSTYLESTATES.SCRBS_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_THUMBBTNHORZ,
+							1);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_THUMBBTNHORZ,
+							(int)SCROLLBARSTYLESTATES.SCRBS_PRESSED);
+					}
+				}
 			}
 			public static class ThumbButtonVertical
 			{
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 3, 4); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 3, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 3, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 3, 3); } }
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_THUMBBTNVERT,
+							(int)SCROLLBARSTYLESTATES.SCRBS_DISABLED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_THUMBBTNVERT,
+							(int)SCROLLBARSTYLESTATES.SCRBS_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_THUMBBTNVERT,
+							(int)SCROLLBARSTYLESTATES.SCRBS_NORMAL);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_THUMBBTNVERT,
+							(int)SCROLLBARSTYLESTATES.SCRBS_PRESSED);
+					}
+				}
 			}
 			public static class UpperTrackVertical
 			{
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 7, 4); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 7, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 7, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 7, 3); } }
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_UPPERTRACKVERT,
+							(int)SCROLLBARSTYLESTATES.SCRBS_DISABLED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_UPPERTRACKVERT,
+							(int)SCROLLBARSTYLESTATES.SCRBS_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_UPPERTRACKVERT,
+							(int)SCROLLBARSTYLESTATES.SCRBS_NORMAL);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_UPPERTRACKVERT,
+							(int)SCROLLBARSTYLESTATES.SCRBS_PRESSED);
+					}
+				}
 			}
 		}
 		#endregion
@@ -767,31 +1238,143 @@ namespace System.Windows.Forms.VisualStyles
 		{
 			public static class Down
 			{
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.SPIN, 2, 4); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.SPIN, 2, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.SPIN, 2, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.SPIN, 2, 3); } }
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							SPIN,
+							(int)SPINPARTS.SPNP_DOWN,
+							(int)DOWNSTATES.DNS_DISABLED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							SPIN,
+							(int)SPINPARTS.SPNP_DOWN,
+							(int)DOWNSTATES.DNS_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							SPIN,
+							(int)SPINPARTS.SPNP_DOWN,
+							(int)DOWNSTATES.DNS_NORMAL);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							SPIN,
+							(int)SPINPARTS.SPNP_DOWN,
+							(int)DOWNSTATES.DNS_PRESSED);
+					}
+				}
 			}
 			public static class DownHorizontal
 			{
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.SPIN, 4, 4); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.SPIN, 4, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.SPIN, 4, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.SPIN, 4, 3); } }
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							SPIN,
+							(int)SPINPARTS.SPNP_DOWNHORZ,
+							(int)DOWNHORZSTATES.DNHZS_DISABLED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							SPIN,
+							(int)SPINPARTS.SPNP_DOWNHORZ,
+							(int)DOWNHORZSTATES.DNHZS_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							SPIN,
+							(int)SPINPARTS.SPNP_DOWNHORZ,
+							(int)DOWNHORZSTATES.DNHZS_NORMAL);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							SPIN,
+							(int)SPINPARTS.SPNP_DOWNHORZ,
+							(int)DOWNHORZSTATES.DNHZS_PRESSED);
+					}
+				}
 			}
 			public static class Up
 			{
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.SPIN, 1, 4); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.SPIN, 1, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.SPIN, 1, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.SPIN, 1, 3); } }
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							SPIN,
+							(int)SPINPARTS.SPNP_UP,
+							(int)UPSTATES.UPS_DISABLED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							SPIN,
+							(int)SPINPARTS.SPNP_UP,
+							(int)UPSTATES.UPS_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							SPIN,
+							(int)SPINPARTS.SPNP_UP,
+							(int)UPSTATES.UPS_NORMAL);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							SPIN,
+							(int)SPINPARTS.SPNP_UP,
+							(int)UPSTATES.UPS_PRESSED);
+					}
+				}
 			}
 			public static class UpHorizontal
 			{
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.SPIN, 3, 4); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.SPIN, 3, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.SPIN, 3, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.SPIN, 3, 3); } }
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							SPIN,
+							(int)SPINPARTS.SPNP_UPHORZ,
+							(int)UPHORZSTATES.UPHZS_DISABLED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							SPIN,
+							(int)SPINPARTS.SPNP_UPHORZ,
+							(int)UPHORZSTATES.UPHZS_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							SPIN,
+							(int)SPINPARTS.SPNP_UPHORZ,
+							(int)UPHORZSTATES.UPHZS_NORMAL);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							SPIN,
+							(int)SPINPARTS.SPNP_UPHORZ,
+							(int)UPHORZSTATES.UPHZS_PRESSED);
+					}
+				}
 			}
 		}
 		#endregion
@@ -857,7 +1440,14 @@ namespace System.Windows.Forms.VisualStyles
 			}
 			public static class Gripper
 			{
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.STATUS, 3, 0); } }
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							STATUS,
+							(int)STATUSPARTS.SP_GRIPPER,
+							0);
+					}
+				}
 			}
 			public static class GripperPane
 			{
@@ -874,61 +1464,257 @@ namespace System.Windows.Forms.VisualStyles
 		{
 			public static class Body
 			{
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 10, 0); } }
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_BODY,
+							0);
+					}
+				}
 			}
 			public static class Pane
 			{
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 9, 0); } }
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_PANE,
+							0);
+					}
+				}
 			}
 			public static class TabItem
 			{
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 1, 4); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 1, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 1, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 1, 3); } }
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TABITEM,
+							(int)TABITEMSTATES.TIS_DISABLED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TABITEM,
+							(int)TABITEMSTATES.TIS_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TABITEM,
+							(int)TABITEMSTATES.TIS_NORMAL);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TABITEM,
+							(int)TABITEMSTATES.TIS_SELECTED);
+					}
+				}
 			}
 			public static class TabItemBothEdges
 			{
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 4, 0); } }
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TABITEMBOTHEDGE,
+							0);
+					}
+				}
 			}
 			public static class TabItemLeftEdge
 			{
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 2, 4); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 2, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 2, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 2, 3); } }
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TABITEMLEFTEDGE,
+							(int)TABITEMLEFTEDGESTATES.TILES_DISABLED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TABITEMLEFTEDGE,
+							(int)TABITEMLEFTEDGESTATES.TILES_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TABITEMLEFTEDGE,
+							(int)TABITEMLEFTEDGESTATES.TILES_NORMAL);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TABITEMLEFTEDGE,
+							(int)TABITEMLEFTEDGESTATES.TILES_SELECTED);
+					}
+				}
 			}
 			public static class TabItemRightEdge
 			{
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 3, 4); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 3, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 3, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 3, 3); } }
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TABITEMRIGHTEDGE,
+							(int)TABITEMRIGHTEDGESTATES.TIRES_DISABLED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TABITEMRIGHTEDGE,
+							(int)TABITEMRIGHTEDGESTATES.TIRES_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TABITEMRIGHTEDGE,
+							(int)TABITEMRIGHTEDGESTATES.TIRES_NORMAL);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TABITEMRIGHTEDGE,
+							(int)TABITEMRIGHTEDGESTATES.TIRES_SELECTED);
+					}
+				}
 			}
 			public static class TopTabItem
 			{
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 5, 4); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 5, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 5, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 5, 3); } }
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TOPTABITEM,
+							(int)TOPTABITEMSTATES.TTIS_DISABLED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TOPTABITEM,
+							(int)TOPTABITEMSTATES.TTIS_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TOPTABITEM,
+							(int)TOPTABITEMSTATES.TTIS_NORMAL);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TOPTABITEM,
+							(int)TOPTABITEMSTATES.TTIS_SELECTED);
+					}
+				}
 			}
 			public static class TopTabItemBothEdges
 			{
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 8, 0); } }
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TOPTABITEMBOTHEDGE,
+							0);
+					}
+				}
 			}
 			public static class TopTabItemLeftEdge
 			{
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 6, 4); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 6, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 6, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 6, 3); } }
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TOPTABITEMLEFTEDGE,
+							(int)TOPTABITEMLEFTEDGESTATES.TTILES_DISABLED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TOPTABITEMLEFTEDGE,
+							(int)TOPTABITEMLEFTEDGESTATES.TTILES_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TOPTABITEMLEFTEDGE,
+							(int)TOPTABITEMLEFTEDGESTATES.TTILES_NORMAL);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TOPTABITEMLEFTEDGE,
+							(int)TOPTABITEMLEFTEDGESTATES.TTILES_SELECTED);
+					}
+				}
 			}
 			public static class TopTabItemRightEdge
 			{
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 7, 4); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 7, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 7, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.TAB, 7, 3); } }
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TOPTABITEMRIGHTEDGE,
+							(int)TOPTABITEMRIGHTEDGESTATES.TTIRES_DISABLED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TOPTABITEMRIGHTEDGE,
+							(int)TOPTABITEMRIGHTEDGESTATES.TTIRES_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TOPTABITEMRIGHTEDGE,
+							(int)TOPTABITEMRIGHTEDGESTATES.TTIRES_NORMAL);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							TAB,
+							(int)TABPARTS.TABP_TOPTABITEMRIGHTEDGE,
+							(int)TOPTABITEMRIGHTEDGESTATES.TTIRES_SELECTED);
+					}
+				}
 			}
 		}
 		#endregion
@@ -1004,13 +1790,62 @@ namespace System.Windows.Forms.VisualStyles
 			}
 			public static class TextEdit
 			{
-				public static VisualStyleElement Assist { get { return VisualStyleElement.CreateElement (VisualStyleElement.EDIT, 1, 7); } }
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.EDIT, 1, 4); } }
-				public static VisualStyleElement Focused { get { return VisualStyleElement.CreateElement (VisualStyleElement.EDIT, 1, 5); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.EDIT, 1, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.EDIT, 1, 1); } }
-				public static VisualStyleElement ReadOnly { get { return VisualStyleElement.CreateElement (VisualStyleElement.EDIT, 1, 6); } }
-				public static VisualStyleElement Selected { get { return VisualStyleElement.CreateElement (VisualStyleElement.EDIT, 1, 3); } }
+				public static VisualStyleElement Assist {
+					get {
+						return VisualStyleElement.CreateElement (
+							EDIT,
+							(int)EDITPARTS.EP_EDITTEXT,
+							(int)EDITTEXTSTATES.ETS_ASSIST);
+					}
+				}
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							EDIT,
+							(int)EDITPARTS.EP_EDITTEXT,
+							(int)EDITTEXTSTATES.ETS_DISABLED);
+					}
+				}
+				public static VisualStyleElement Focused {
+					get {
+						return VisualStyleElement.CreateElement (
+							EDIT,
+							(int)EDITPARTS.EP_EDITTEXT,
+							(int)EDITTEXTSTATES.ETS_FOCUSED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							EDIT,
+							(int)EDITPARTS.EP_EDITTEXT,
+							(int)EDITTEXTSTATES.ETS_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							EDIT,
+							(int)EDITPARTS.EP_EDITTEXT,
+							(int)EDITTEXTSTATES.ETS_NORMAL);
+					}
+				}
+				public static VisualStyleElement ReadOnly {
+					get {
+						return VisualStyleElement.CreateElement (
+							EDIT,
+							(int)EDITPARTS.EP_EDITTEXT,
+							(int)EDITTEXTSTATES.ETS_READONLY);
+					}
+				}
+				public static VisualStyleElement Selected {
+					get {
+						return VisualStyleElement.CreateElement (
+							EDIT,
+							(int)EDITPARTS.EP_EDITTEXT,
+							(int)EDITTEXTSTATES.ETS_SELECTED);
+					}
+				}
 			}
 		}
 		#endregion
@@ -1019,12 +1854,54 @@ namespace System.Windows.Forms.VisualStyles
 		{
 			public static class Button
 			{
-				public static VisualStyleElement Checked { get { return VisualStyleElement.CreateElement (VisualStyleElement.TOOLBAR, 1, 5); } }
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.TOOLBAR, 1, 4); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.TOOLBAR, 1, 2); } }
-				public static VisualStyleElement HotChecked { get { return VisualStyleElement.CreateElement (VisualStyleElement.TOOLBAR, 1, 6); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.TOOLBAR, 1, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.TOOLBAR, 1, 3); } }
+				public static VisualStyleElement Checked {
+					get {
+						return VisualStyleElement.CreateElement (
+							TOOLBAR,
+							(int)TOOLBARPARTS.TP_BUTTON,
+							(int)TOOLBARSTYLESTATES.TS_CHECKED);
+					}
+				}
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							TOOLBAR,
+							(int)TOOLBARPARTS.TP_BUTTON,
+							(int)TOOLBARSTYLESTATES.TS_DISABLED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							TOOLBAR,
+							(int)TOOLBARPARTS.TP_BUTTON,
+							(int)TOOLBARSTYLESTATES.TS_HOT);
+					}
+				}
+				public static VisualStyleElement HotChecked {
+					get {
+						return VisualStyleElement.CreateElement (
+							TOOLBAR,
+							(int)TOOLBARPARTS.TP_BUTTON,
+							(int)TOOLBARSTYLESTATES.TS_HOTCHECKED);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							TOOLBAR,
+							(int)TOOLBARPARTS.TP_BUTTON,
+							(int)TOOLBARSTYLESTATES.TS_NORMAL);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							TOOLBAR,
+							(int)TOOLBARPARTS.TP_BUTTON,
+							(int)TOOLBARSTYLESTATES.TS_PRESSED);
+					}
+				}
 			}
 			public static class DropDownButton
 			{
@@ -1097,11 +1974,46 @@ namespace System.Windows.Forms.VisualStyles
 		{
 			public static class Thumb
 			{
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.TRACKBAR, 3, 5); } }
-				public static VisualStyleElement Focused { get { return VisualStyleElement.CreateElement (VisualStyleElement.TRACKBAR, 3, 4); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.TRACKBAR, 3, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.TRACKBAR, 3, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.TRACKBAR, 3, 3); } }
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							TRACKBAR,
+							(int)TRACKBARPARTS.TKP_THUMB,
+							(int)THUMBSTATES.TUS_DISABLED);
+					}
+				}
+				public static VisualStyleElement Focused {
+					get {
+						return VisualStyleElement.CreateElement (
+							TRACKBAR,
+							(int)TRACKBARPARTS.TKP_THUMB,
+							(int)THUMBSTATES.TUS_FOCUSED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							TRACKBAR,
+							(int)TRACKBARPARTS.TKP_THUMB,
+							(int)THUMBSTATES.TUS_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							TRACKBAR,
+							(int)TRACKBARPARTS.TKP_THUMB,
+							(int)THUMBSTATES.TUS_NORMAL);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							TRACKBAR,
+							(int)TRACKBARPARTS.TKP_THUMB,
+							(int)THUMBSTATES.TUS_PRESSED);
+					}
+				}
 			}
 			public static class ThumbBottom
 			{
@@ -1137,11 +2049,46 @@ namespace System.Windows.Forms.VisualStyles
 			}
 			public static class ThumbVertical
 			{
-				public static VisualStyleElement Disabled { get { return VisualStyleElement.CreateElement (VisualStyleElement.TRACKBAR, 6, 5); } }
-				public static VisualStyleElement Focused { get { return VisualStyleElement.CreateElement (VisualStyleElement.TRACKBAR, 6, 4); } }
-				public static VisualStyleElement Hot { get { return VisualStyleElement.CreateElement (VisualStyleElement.TRACKBAR, 6, 2); } }
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.TRACKBAR, 6, 1); } }
-				public static VisualStyleElement Pressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.TRACKBAR, 6, 3); } }
+				public static VisualStyleElement Disabled {
+					get {
+						return VisualStyleElement.CreateElement (
+							TRACKBAR,
+							(int)TRACKBARPARTS.TKP_THUMBVERT,
+							(int)THUMBVERTSTATES.TUVS_DISABLED);
+					}
+				}
+				public static VisualStyleElement Focused {
+					get {
+						return VisualStyleElement.CreateElement (
+							TRACKBAR,
+							(int)TRACKBARPARTS.TKP_THUMBVERT,
+							(int)THUMBVERTSTATES.TUVS_FOCUSED);
+					}
+				}
+				public static VisualStyleElement Hot {
+					get {
+						return VisualStyleElement.CreateElement (
+							TRACKBAR,
+							(int)TRACKBARPARTS.TKP_THUMBVERT,
+							(int)THUMBVERTSTATES.TUVS_HOT);
+					}
+				}
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							TRACKBAR,
+							(int)TRACKBARPARTS.TKP_THUMBVERT,
+							(int)THUMBVERTSTATES.TUVS_NORMAL);
+					}
+				}
+				public static VisualStyleElement Pressed {
+					get {
+						return VisualStyleElement.CreateElement (
+							TRACKBAR,
+							(int)TRACKBARPARTS.TKP_THUMBVERT,
+							(int)THUMBVERTSTATES.TUVS_PRESSED);
+					}
+				}
 			}
 			public static class Ticks
 			{
@@ -1153,11 +2100,25 @@ namespace System.Windows.Forms.VisualStyles
 			}
 			public static class Track
 			{
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.TRACKBAR, 1, 1); } }
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							TRACKBAR,
+							(int)TRACKBARPARTS.TKP_TRACK,
+							(int)TRACKSTATES.TRS_NORMAL);
+					}
+				}
 			}
 			public static class TrackVertical
 			{
-				public static VisualStyleElement Normal { get { return VisualStyleElement.CreateElement (VisualStyleElement.TRACKBAR, 2, 1); } }
+				public static VisualStyleElement Normal {
+					get {
+						return VisualStyleElement.CreateElement (
+							TRACKBAR,
+							(int)TRACKBARPARTS.TKP_TRACKVERT,
+							(int)TRACKVERTSTATES.TRVS_NORMAL);
+					}
+				}
 			}
 		}
 		#endregion
@@ -1183,8 +2144,22 @@ namespace System.Windows.Forms.VisualStyles
 			}
 			public static class Glyph
 			{
-				public static VisualStyleElement Closed { get { return VisualStyleElement.CreateElement (VisualStyleElement.TREEVIEW, 2, 1); } }
-				public static VisualStyleElement Opened { get { return VisualStyleElement.CreateElement (VisualStyleElement.TREEVIEW, 2, 2); } }
+				public static VisualStyleElement Closed {
+					get {
+						return VisualStyleElement.CreateElement (
+							TREEVIEW,
+							(int)TREEVIEWPARTS.TVP_GLYPH,
+							(int)GLYPHSTATES.GLPS_CLOSED);
+					}
+				}
+				public static VisualStyleElement Opened {
+					get {
+						return VisualStyleElement.CreateElement (
+							TREEVIEW,
+							(int)TREEVIEWPARTS.TVP_GLYPH,
+							(int)GLYPHSTATES.GLPS_OPENED);
+					}
+				}
 			}
 			public static class Item
 			{
@@ -1417,9 +2392,33 @@ namespace System.Windows.Forms.VisualStyles
 		#endregion
 		#endregion
 	}
+	#region Part and state constants
+	#region BUTTON
 	enum BUTTONPARTS
 	{
-		BP_CHECKBOX = 3
+		BP_PUSHBUTTON = 1,
+		BP_RADIOBUTTON,
+		BP_CHECKBOX,
+		BP_GROUPBOX
+	}
+	enum PUSHBUTTONSTATES
+	{
+		PBS_NORMAL = 1,
+		PBS_HOT,
+		PBS_PRESSED,
+		PBS_DISABLED,
+		PBS_DEFAULTED
+	}
+	enum RADIOBUTTONSTATES
+	{
+		RBS_UNCHECKEDNORMAL = 1,
+		RBS_UNCHECKEDHOT,
+		RBS_UNCHECKEDPRESSED,
+		RBS_UNCHECKEDDISABLED,
+		RBS_CHECKEDNORMAL,
+		RBS_CHECKEDHOT,
+		RBS_CHECKEDPRESSED,
+		RBS_CHECKEDDISABLED
 	}
 	enum CHECKBOXSTATES
 	{
@@ -1436,4 +2435,283 @@ namespace System.Windows.Forms.VisualStyles
 		CBS_MIXEDPRESSED,
 		CBS_MIXEDDISABLED
 	}
+	enum GROUPBOXSTATES
+	{
+		GBS_NORMAL = 1,
+		GBS_DISABLED
+	}
+	#endregion
+	#region COMBOXBOX
+	enum COMBOBOXPARTS
+	{
+		CP_DROPDOWNBUTTON = 1,
+		CP_BORDER = 4
+	}
+	enum COMBOBOXSTYLESTATES
+	{
+		CBXS_NORMAL = 1,
+		CBXS_HOT,
+		CBXS_PRESSED,
+		CBXS_DISABLED
+	}
+	enum BORDERSTATES
+	{
+		CBB_NORMAL = 1,
+		CBB_HOT,
+		CBB_FOCUSED,
+		CBB_DISABLED
+	}
+	#endregion
+	#region EDIT
+	enum EDITPARTS
+	{
+		EP_EDITTEXT = 1
+	}
+	enum EDITTEXTSTATES {
+		ETS_NORMAL = 1,
+		ETS_HOT,
+		ETS_SELECTED,
+		ETS_DISABLED,
+		ETS_FOCUSED,
+		ETS_READONLY,
+		ETS_ASSIST
+	}
+	#endregion
+	#region HEADER
+	enum HEADERPARTS
+	{
+		HP_HEADERITEM = 1
+	}
+	enum HEADERITEMSTATES
+	{
+		HIS_NORMAL = 1,
+		HIS_HOT,
+		HIS_PRESSED
+	}
+	#endregion
+	#region PROGRESS
+	enum PROGRESSPARTS
+	{
+		PP_BAR = 1,
+		PP_BARVERT,
+		PP_CHUNK,
+		PP_CHUNKVERT
+	}
+	#endregion
+	#region REBAR
+	enum REBARPARTS
+	{
+		RP_BAND = 3
+	}
+	#endregion
+	#region SCROLLBAR
+	enum SCROLLBARPARTS
+	{
+		SBP_ARROWBTN = 1,
+		SBP_THUMBBTNHORZ,
+		SBP_THUMBBTNVERT,
+		SBP_LOWERTRACKHORZ,
+		SBP_UPPERTRACKHORZ,
+		SBP_LOWERTRACKVERT,
+		SBP_UPPERTRACKVERT,
+		SBP_GRIPPERHORZ,
+		SBP_GRIPPERVERT,
+		SBP_SIZEBOX
+	}
+	enum ARROWBTNSTATES
+	{
+		ABS_UPNORMAL = 1,
+		ABS_UPHOT,
+		ABS_UPPRESSED,
+		ABS_UPDISABLED,
+		ABS_DOWNNORMAL,
+		ABS_DOWNHOT,
+		ABS_DOWNPRESSED,
+		ABS_DOWNDISABLED,
+		ABS_LEFTNORMAL,
+		ABS_LEFTHOT,
+		ABS_LEFTPRESSED,
+		ABS_LEFTDISABLED,
+		ABS_RIGHTNORMAL,
+		ABS_RIGHTHOT,
+		ABS_RIGHTPRESSED,
+		ABS_RIGHTDISABLED,
+		ABS_UPHOVER,
+		ABS_DOWNHOVER,
+		ABS_LEFTHOVER,
+		ABS_RIGHTHOVER
+	}
+	enum SCROLLBARSTYLESTATES
+	{
+		SCRBS_NORMAL = 1,
+		SCRBS_HOT,
+		SCRBS_PRESSED,
+		SCRBS_DISABLED
+	}
+	enum SIZEBOXSTATES
+	{
+		SZB_RIGHTALIGN = 1,
+		SZB_LEFTALIGN
+	}
+	#endregion
+	#region SPIN
+	enum SPINPARTS
+	{
+		SPNP_UP = 1,
+		SPNP_DOWN,
+		SPNP_UPHORZ,
+		SPNP_DOWNHORZ
+	}
+	enum UPSTATES
+	{
+		UPS_NORMAL = 1,
+		UPS_HOT,
+		UPS_PRESSED,
+		UPS_DISABLED
+	}
+	enum DOWNSTATES
+	{
+		DNS_NORMAL = 1,
+		DNS_HOT,
+		DNS_PRESSED,
+		DNS_DISABLED
+	}
+	enum UPHORZSTATES
+	{
+		UPHZS_NORMAL = 1,
+		UPHZS_HOT,
+		UPHZS_PRESSED,
+		UPHZS_DISABLED
+	}
+	enum DOWNHORZSTATES
+	{
+		DNHZS_NORMAL = 1,
+		DNHZS_HOT,
+		DNHZS_PRESSED,
+		DNHZS_DISABLED
+	}
+	#endregion
+	#region STATUS
+	enum STATUSPARTS
+	{
+		SP_GRIPPER = 3
+	}
+	#endregion
+	#region TAB
+	enum TABPARTS
+	{
+		TABP_TABITEM = 1,
+		TABP_TABITEMLEFTEDGE,
+		TABP_TABITEMRIGHTEDGE,
+		TABP_TABITEMBOTHEDGE,
+		TABP_TOPTABITEM,
+		TABP_TOPTABITEMLEFTEDGE,
+		TABP_TOPTABITEMRIGHTEDGE,
+		TABP_TOPTABITEMBOTHEDGE,
+		TABP_PANE,
+		TABP_BODY
+	}
+	enum TABITEMSTATES
+	{
+		TIS_NORMAL = 1,
+		TIS_HOT,
+		TIS_SELECTED,
+		TIS_DISABLED
+	}
+	enum TABITEMLEFTEDGESTATES
+	{
+		TILES_NORMAL = 1,
+		TILES_HOT,
+		TILES_SELECTED,
+		TILES_DISABLED
+	}
+	enum TABITEMRIGHTEDGESTATES
+	{
+		TIRES_NORMAL = 1,
+		TIRES_HOT,
+		TIRES_SELECTED,
+		TIRES_DISABLED
+	}
+	enum TOPTABITEMSTATES
+	{
+		TTIS_NORMAL = 1,
+		TTIS_HOT,
+		TTIS_SELECTED,
+		TTIS_DISABLED
+	}
+	enum TOPTABITEMLEFTEDGESTATES
+	{
+		TTILES_NORMAL = 1,
+		TTILES_HOT,
+		TTILES_SELECTED,
+		TTILES_DISABLED
+	}
+	enum TOPTABITEMRIGHTEDGESTATES
+	{
+		TTIRES_NORMAL = 1,
+		TTIRES_HOT,
+		TTIRES_SELECTED,
+		TTIRES_DISABLED
+	}
+	#endregion
+	#region TOOLBAR
+	enum TOOLBARPARTS
+	{
+		TP_BUTTON = 1
+	}
+	enum TOOLBARSTYLESTATES
+	{
+		TS_NORMAL = 1,
+		TS_HOT,
+		TS_PRESSED,
+		TS_DISABLED,
+		TS_CHECKED,
+		TS_HOTCHECKED
+	}
+	#endregion
+	#region TRACKBAR
+	enum TRACKBARPARTS
+	{
+		TKP_TRACK = 1,
+		TKP_TRACKVERT,
+		TKP_THUMB,
+		TKP_THUMBVERT = 6
+	}
+	enum TRACKSTATES
+	{
+		TRS_NORMAL = 1
+	}
+	enum TRACKVERTSTATES
+	{
+		TRVS_NORMAL = 1
+	}
+	enum THUMBSTATES
+	{
+		TUS_NORMAL = 1,
+		TUS_HOT,
+		TUS_PRESSED,
+		TUS_FOCUSED,
+		TUS_DISABLED
+	}
+	enum THUMBVERTSTATES
+	{
+		TUVS_NORMAL = 1,
+		TUVS_HOT,
+		TUVS_PRESSED,
+		TUVS_FOCUSED,
+		TUVS_DISABLED
+	}
+	#endregion
+	#region TREEVIEW
+	enum TREEVIEWPARTS
+	{
+		TVP_GLYPH = 2
+	}
+	enum GLYPHSTATES
+	{
+		GLPS_CLOSED = 1,
+		GLPS_OPENED
+	}
+	#endregion
+	#endregion
 }
