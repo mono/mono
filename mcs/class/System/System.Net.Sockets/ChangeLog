@@ -1,3 +1,10 @@
+2008-07-31  Jb Evain  <jbevain@novell.com>
+
+	* Socket.cs
+	* NetworkStream.cs: cleanup for NET_2_1
+
+	* SocketException_2_1.cs: new specific version for NET_2_1.
+
 2008-06-19  Dick Porter  <dick@ximian.com>
 
 	* Socket.cs: Implement generic Send() and Receive() methods.

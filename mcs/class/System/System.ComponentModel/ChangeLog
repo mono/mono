@@ -1,3 +1,12 @@
+2008-07-31  Jb Evain  <jbevain@novell.com>
+
+	* BackgroundWorker.cs
+	* DoWorkEventArgs.cs
+	* DefaultValueAttribute.cs
+	* RunWorkerCompletedEventArgs.cs: clean up for NET_2_1.
+
+	* TypeConverter_2_1.cs: new specific type for NET_2_1.
+
 2008-07-23  Marek Habersack  <mhabersack@novell.com>
 
 	* EventHandlerList.cs: optimize the implementation.

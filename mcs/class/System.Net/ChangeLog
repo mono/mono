@@ -1,3 +1,7 @@
+2008-07-31  Jb Evain  <jbevain@novell.com>
+
+	* System.Net.dll.sources: fine tune.
+
 2008-07-14  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Net.dll.sources: added

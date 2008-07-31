@@ -31,24 +31,43 @@ using System.Runtime.Serialization;
 
 namespace System.Net.NetworkInformation {
 	[Serializable]
-	public class NetworkInformationException : Win32Exception {
+	public class NetworkInformationException
+#if !NET_2_1
+		: Win32Exception
+#else
+		: Exception
+#endif
+	{
 		int error_code;
 		
 		public NetworkInformationException ()
 		{
 		}
 
+#if !NET_2_1
 		public NetworkInformationException (int errorCode) : base (errorCode)
 		{
 		}
+#else
+		public NetworkInformationException (int errorCode)
+		{
+			error_code = errorCode;
+		}
+#endif
 
+#if !NET_2_1
 		protected NetworkInformationException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 			error_code = info.GetInt32 ("ErrorCode");
 		}
+#endif
 
-		public override int ErrorCode {
+		public
+#if !NET_2_1
+		override
+#endif
+		int ErrorCode {
 			get { return error_code; }
 		}
 	}

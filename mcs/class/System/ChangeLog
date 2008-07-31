@@ -1,3 +1,7 @@
+2008-07-31  Jb Evain  <jbevain@novell.com>
+
+	* net_2_1_raw_System.dll.sources: fine tune.
+
 2008-07-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added HttpWebResponseTest.cs.

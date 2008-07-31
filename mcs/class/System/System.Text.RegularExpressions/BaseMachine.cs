@@ -144,7 +144,12 @@ namespace System.Text.RegularExpressions
 
 			int ptr = startat;
 			int counter = count;
+#if NET_2_1
+			var pieces = new System.Collections.Generic.List<string> ();
+#else
 			StringCollection pieces = new StringCollection ();
+#endif
+			
 			pieces.Add (input.Substring (ptr));
 
 			do {

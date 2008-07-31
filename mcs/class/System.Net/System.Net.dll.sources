@@ -31,13 +31,6 @@ System.Net/WebResponse_2_1.cs
 ../System/System.Net/EndpointPermission.cs
 ../System/System.Net/HttpConnection.cs
 ../System/System.Net/HttpContinueDelegate.cs
-../System/System.Net/HttpListenerBasicIdentity.cs
-../System/System.Net/HttpListenerContext.cs
-../System/System.Net/HttpListener.cs
-../System/System.Net/HttpListenerException.cs
-../System/System.Net/HttpListenerPrefixCollection.cs
-../System/System.Net/HttpListenerRequest.cs
-../System/System.Net/HttpListenerResponse.cs
 ../System/System.Net/HttpRequestCreator.cs
 ../System/System.Net/HttpRequestHeader.cs
 ../System/System.Net/HttpResponseHeader.cs
@@ -97,12 +90,6 @@ System.Net/WebResponse_2_1.cs
 ../System/System.Net.NetworkInformation/NetworkInterfaceType.cs
 ../System/System.Net.NetworkInformation/OperationalStatus.cs
 ../System/System.Net.NetworkInformation/PhysicalAddress.cs
-../System/System.Net.NetworkInformation/PingCompletedEventArgs.cs
-../System/System.Net.NetworkInformation/PingCompletedEventHandler.cs
-../System/System.Net.NetworkInformation/Ping.cs
-../System/System.Net.NetworkInformation/PingException.cs
-../System/System.Net.NetworkInformation/PingOptions.cs
-../System/System.Net.NetworkInformation/PingReply.cs
 ../System/System.Net.NetworkInformation/PrefixOrigin.cs
 ../System/System.Net.NetworkInformation/SuffixOrigin.cs
 ../System/System.Net.NetworkInformation/TcpConnectionInformation.cs
@@ -140,7 +127,7 @@ System.Net/WebResponse_2_1.cs
 ../System/System.Net.Sockets/SelectMode.cs
 ../System/System.Net.Sockets/Socket.cs
 ../System/System.Net.Sockets/SocketError.cs
-../System/System.Net.Sockets/SocketException.cs
+../System/System.Net.Sockets/SocketException_2_1.cs
 ../System/System.Net.Sockets/SocketFlags.cs
 ../System/System.Net.Sockets/SocketInformation.cs
 ../System/System.Net.Sockets/SocketInformationOptions.cs

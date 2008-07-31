@@ -32,7 +32,12 @@
 
 namespace System.ComponentModel
 {
-	public class DoWorkEventArgs : CancelEventArgs
+	public class DoWorkEventArgs
+#if !NET_2_1
+		: CancelEventArgs
+#else
+		: EventArgs
+#endif
 	{
 		public DoWorkEventArgs (object argument)
 		{
@@ -49,6 +54,15 @@ namespace System.ComponentModel
 			get { return result; }
 			set { result = value; }
 		}
+
+#if NET_2_1
+		bool cancel;
+
+		public bool Cancel {
+			get { return cancel; }
+			set { cancel = value; }
+		}
+#endif
 	}
 }
 

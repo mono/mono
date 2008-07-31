@@ -93,10 +93,14 @@ namespace System.ComponentModel
 
 		public DefaultValueAttribute (Type type, string value)
 		{
+#if NET_2_1
+			throw new NotImplementedException ();
+#else
 			try {
 				TypeConverter converter = TypeDescriptor.GetConverter (type);
 				DefaultValue = converter.ConvertFromString (null, CultureInfo.InvariantCulture, value);
 			} catch { }
+#endif
 		}
 
 #if NET_2_0

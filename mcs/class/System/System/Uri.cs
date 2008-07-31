@@ -55,7 +55,9 @@ namespace System {
 
 	[Serializable]
 #if NET_2_0
+#if !NET_2_1
 	[TypeConverter (typeof (UriTypeConverter))]
+#endif
 	public class Uri : ISerializable {
 #else
 	public class Uri : MarshalByRefObject, ISerializable {

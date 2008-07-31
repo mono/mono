@@ -1,12 +1,7 @@
 //
-// RunWorkerCompletedEventArgs.cs
+// TypeConverter for SL 2
 //
-// Author:
-//	Atsushi Enomoto <atsushi@ximian.com>
-//
-// Copyright (C) 2006 Novell, Inc.
-//
-
+// Copyright (C) 2008 Novell, Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,37 +23,45 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+#if NET_2_1
 
-namespace System.ComponentModel
-{
-	public class RunWorkerCompletedEventArgs : AsyncCompletedEventArgs
-	{
-		// LAMESPEC: there is no way to provide UserState. See also:
-		// http://pluralsight.com/blogs/mike/archive/2005/10/21/15783.aspx
-		public RunWorkerCompletedEventArgs (
-			object result, Exception error, bool cancelled)
-			: base (error, cancelled, null)
+using System;
+
+namespace System.ComponentModel {
+
+	public class TypeConverter {
+
+		public virtual bool CanConvertFrom (Type sourceType)
 		{
-			this.result = result;
+			if (sourceType == null)
+				return false;
+
+			return sourceType == typeof (string);
 		}
 
-		object result, user_state;
-
-		public object Result {
-			get {
-				RaiseExceptionIfNecessary ();
-				return result;
-			}
+		public virtual object ConvertFrom (object value)
+		{
+			return null;
 		}
 
-		// It is always null. See .ctor() for details.
-#if !NET_2_1
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-#endif
-		public new object UserState {
-			get { return user_state; }
+		public virtual object ConvertFromString (string text)
+		{
+			return ConvertFrom (text);
+		}
+
+		public virtual bool CanConvertTo (Type destinationType)
+		{
+			return false;
+		}
+
+		public virtual object ConvertTo (object value, Type destinationType)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public virtual string ConvertToString (object value)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

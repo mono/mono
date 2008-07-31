@@ -33,8 +33,12 @@ using System.Threading;
 
 namespace System.ComponentModel
 {
+#if !NET_2_1
 	[DefaultEvent ("DoWork")]
 	public class BackgroundWorker : Component
+#else
+	public class BackgroundWorker
+#endif
 	{
 		public BackgroundWorker ()
 		{
@@ -47,12 +51,16 @@ namespace System.ComponentModel
 		public event ProgressChangedEventHandler ProgressChanged;
 		public event RunWorkerCompletedEventHandler RunWorkerCompleted;
 
+#if !NET_2_1
 		[Browsable (false)]
+#endif
 		public bool CancellationPending {
 			get { return cancel_pending; }
 		}
 
+#if !NET_2_1
 		[Browsable (false)]
+#endif
 		public bool IsBusy {
 			get { return async != null; }
 		}

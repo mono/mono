@@ -1,3 +1,7 @@
+2008-07-31  Jb Evain  <jbevain@novell.com>
+
+	* StringDictionary.cs: remove ComponentModel bits for NET_2_1.
+
 2008-04-13  Jb Evain  <jbevain@novell.com>
 
 	* CollectionsUtil.cs: internalize for the 2.1 profile.

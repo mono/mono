@@ -27,7 +27,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NET_2_1
 using System.ComponentModel.Design.Serialization;
+#endif
 using System.Globalization;
 
 namespace System.Collections.Specialized {
@@ -35,7 +37,9 @@ namespace System.Collections.Specialized {
 #if NET_2_0
 	[Serializable]
 #endif
+#if !NET_2_1
 	[DesignerSerializer ("System.Diagnostics.Design.StringDictionaryCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
+#endif
 	public class StringDictionary : IEnumerable
 	{
 		private Hashtable contents;

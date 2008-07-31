@@ -1,3 +1,7 @@
+2008-07-31  Jb Evain  <jbevain@novell.com>
+
+	* NetworkInformationException.cs: cleanup for NET_2_1.
+
 2008-07-17  Marek Habersack  <mhabersack@novell.com>
 
 	* IPInterfaceProperties.cs: implemented UnicastAddresses

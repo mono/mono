@@ -1,10 +1,10 @@
 //
-// RunWorkerCompletedEventArgs.cs
+// System.Net.Sockets.NetworkStream.cs
 //
 // Author:
-//	Atsushi Enomoto <atsushi@ximian.com>
+//	Dick Porter <dick@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc.
+// (C) 2002 Ximian, Inc.
 //
 
 //
@@ -28,39 +28,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+using System.Runtime.Serialization;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
-namespace System.ComponentModel
-{
-	public class RunWorkerCompletedEventArgs : AsyncCompletedEventArgs
-	{
-		// LAMESPEC: there is no way to provide UserState. See also:
-		// http://pluralsight.com/blogs/mike/archive/2005/10/21/15783.aspx
-		public RunWorkerCompletedEventArgs (
-			object result, Exception error, bool cancelled)
-			: base (error, cancelled, null)
+namespace System.Net.Sockets {
+
+	public class SocketException : Exception {
+
+		int error_code;
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private static extern int WSAGetLastError_internal ();
+
+		public SocketException ()
 		{
-			this.result = result;
+			error_code = WSAGetLastError_internal ();
 		}
 
-		object result, user_state;
-
-		public object Result {
-			get {
-				RaiseExceptionIfNecessary ();
-				return result;
-			}
+		public SocketException (int error)
+		{
+			error_code = error;
 		}
 
-		// It is always null. See .ctor() for details.
-#if !NET_2_1
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-#endif
-		public new object UserState {
-			get { return user_state; }
+		public SocketException (int error, string message)
+		{
+			error_code = error;
+		}
+
+		public int ErrorCode {
+			get { return error_code; }
+		}
+
+		public int NativeErrorCode {
+			get { return error_code; }
+		}
+
+		public SocketError SocketErrorCode {
+			get { return (SocketError) error_code; }
 		}
 	}
 }
-
-#endif

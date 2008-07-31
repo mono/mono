@@ -47,7 +47,9 @@ using System.Text;
 #if NET_2_0
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
+#if !NET_2_1
 using System.Timers;
+#endif
 #endif
 
 namespace System.Net.Sockets 
@@ -2037,7 +2039,7 @@ namespace System.Net.Sockets
 			((IDisposable) this).Dispose ();
 		}
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		public void Close (int timeout) 
 		{
 			System.Timers.Timer close_timer = new System.Timers.Timer ();
