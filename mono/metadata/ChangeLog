@@ -1,3 +1,8 @@
+2008-07-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata-internals.h (struct _MonoAssembly): Change the type of 'aot_module'
+	to gpointer, letting the AOT code decide what to store in it.
+
 2008-07-31  Bill Holmes  <billholmes54@gmail.com>
 
 	* marshal.c (cominterop_get_native_wrapper) : Backport of r109343.
