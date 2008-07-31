@@ -66,12 +66,19 @@
 #define SHARED_EXT ".so"
 #endif
 
-#if defined(sparc) || defined(__ppc__)
+#if defined(sparc) || defined(__ppc__) || defined(__MACH__)
 #define AS_STRING_DIRECTIVE ".asciz"
 #else
 /* GNU as */
 #define AS_STRING_DIRECTIVE ".string"
 #endif
+
+
+// __MACH__
+// .byte generates 1 byte per expression.
+// .short generates 2 bytes per expression.
+// .long generates 4 bytes per expression.
+// .quad generates 8 bytes per expression.
 
 #define ALIGN_PTR_TO(ptr,align) (gpointer)((((gssize)(ptr)) + (align - 1)) & (~(align - 1)))
 #define ROUND_DOWN(VALUE,SIZE)	((VALUE) & ~((SIZE) - 1))
@@ -1284,12 +1291,12 @@ emit_section_change (MonoAotCompile *acfg, const char *section_name, int subsect
 	emit_unset_mode (acfg);
 #if defined(PLATFORM_WIN32)
 	fprintf (acfg->fp, ".section %s\n", section_name);
+#elif defined(__MACH__)
+	/* This needs to be made more precise on mach. */
+	fprintf (acfg->fp, "%s\n", subsection_index == 0 ? ".text" : ".data");
 #elif defined(sparc) || defined(__arm__)
 	/* For solaris as, GNU as should accept the same */
 	fprintf (acfg->fp, ".section \"%s\"\n", section_name);
-#elif defined(__ppc__) && defined(__MACH__)
-	/* This needs to be made more precise on mach. */
-	fprintf (acfg->fp, "%s\n", subsection_index == 0 ? ".text" : ".data");
 #else
 	fprintf (acfg->fp, "%s %d\n", section_name, subsection_index);
 #endif
@@ -1306,13 +1313,15 @@ emit_symbol_type (MonoAotCompile *acfg, const char *name, gboolean func)
 		stype = "object";
 
 	emit_unset_mode (acfg);
-#if defined(sparc) || defined(__arm__)
+#if defined(__MACH__)
+
+#elif defined(sparc) || defined(__arm__)
 	fprintf (acfg->fp, "\t.type %s,#%s\n", name, stype);
 #elif defined(PLATFORM_WIN32)
 
-#elif !(defined(__ppc__) && defined(__MACH__))
-	fprintf (acfg->fp, "\t.type %s,@%s\n", name, stype);
 #elif defined(__x86_64__) || defined(__i386__)
+	fprintf (acfg->fp, "\t.type %s,@%s\n", name, stype);
+#else
 	fprintf (acfg->fp, "\t.type %s,@%s\n", name, stype);
 #endif
 }
@@ -1427,7 +1436,9 @@ emit_int16 (MonoAotCompile *acfg, int value)
 		acfg->col_count = 0;
 	}
 	if ((acfg->col_count++ % 8) == 0)
-#if defined(__arm__)
+#if defined(__MACH__)
+		fprintf (acfg->fp, "\n\t.short ");
+#elif defined(__arm__)
 		/* FIXME: Use .hword on other archs as well */
 		fprintf (acfg->fp, "\n\t.hword ");
 #else
@@ -1475,7 +1486,11 @@ static void
 emit_zero_bytes (MonoAotCompile *acfg, int num)
 {
 	emit_unset_mode (acfg);
+#if defined(__MACH__)
+	fprintf (acfg->fp, "\t.space %d\n", num);
+#else
 	fprintf (acfg->fp, "\t.skip %d\n", num);
+#endif
 }
 
 static int
@@ -2810,7 +2825,12 @@ emit_plt (MonoAotCompile *acfg)
 		fprintf (acfg->fp, "\tldr pc, [ip, #0]\n");
 		emit_symbol_diff (acfg, "plt_jump_table", ".", 0);
 		/* Used by mono_aot_get_plt_info_offset */
+    #if defined(__MACH__)
+		fprintf (acfg->fp, "\n\t.long %d\n", plt_info_offsets [i]);
+    #else
 		fprintf (acfg->fp, "\n\t.word %d\n", plt_info_offsets [i]);
+    #endif
+
 #else
 		g_assert_not_reached ();
 #endif
