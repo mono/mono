@@ -1,5 +1,10 @@
 2008-07-31  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStrip.cs: Fix an NRE caused by clicking on a ToolStripButton
+	sitting on a MenuStrip.
+
+2008-07-31  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripButton.cs: If we "click" a top button on a menustrip that has
 	no children with the keyboard, we need to release the keyboard capture.
 	[Fixes bug #413567]

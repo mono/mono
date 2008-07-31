@@ -867,7 +867,7 @@ namespace System.Windows.Forms
 				if (focused != null && focused != mouse_currently_over)
 					this.FocusInternal (true);
 
-				if (this is MenuStrip && !(mouse_currently_over as ToolStripMenuItem).HasDropDownItems) {
+				if (this is MenuStrip && mouse_currently_over is ToolStripMenuItem && !(mouse_currently_over as ToolStripMenuItem).HasDropDownItems) {
 					if (!menu_selected)
 						(this as MenuStrip).FireMenuActivate ();
 					
