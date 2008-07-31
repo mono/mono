@@ -1,3 +1,9 @@
+2008-07-27  Dean Brettle <dean@brettle.com>
+
+	* HtmlInputButtonTest.cs, HtmlImageTest.cs, HtmlFormTest.cs, 
+	HtmlInputRadioButtonTest.cs, HtmlSelectTest.cs:	Added tests 
+	for HTML-encoded of attributes. 
+
 2008-06-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HtmlAnchorTest.cs: Added RenderAttributes tests for empty or null

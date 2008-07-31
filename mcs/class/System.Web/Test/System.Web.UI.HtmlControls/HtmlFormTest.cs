@@ -47,7 +47,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			get {
 				if (ctx == null) {
 					ctx = new HttpContext (
-						new HttpRequest ("default.aspx", "http://mono-project.com/", "q=1"),
+						new HttpRequest ("default.aspx", "http://mono-project.com/", "q=1&q2=2"),
 						new HttpResponse (new StringWriter ())
 						);
 				}
@@ -213,7 +213,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 
 			// Indirect test for HttpRequest.QueryStringRaw, see
 			// https://bugzilla.novell.com/show_bug.cgi?id=376352
-			Assert.AreEqual (" method=\"post\" action=\"?q=1\"", attrs, "A1");
+			Assert.AreEqual (" method=\"post\" action=\"?q=1&amp;q2=2\"", attrs, "A1");
 		}
 #endif
 #endif
