@@ -8,6 +8,7 @@ System.Net/HttpWebResponse_2_1.cs
 System.Net/WebHeaderCollection_2_1.cs
 System.Net/WebRequest_2_1.cs
 System.Net/WebResponse_2_1.cs
+System.Net.Sockets/SocketException_2_1.cs
 ../System/Assembly/AssemblyInfo.cs
 ../System/System.Net/AuthenticationSchemes.cs
 ../System/System.Net/AuthenticationSchemeSelector.cs
@@ -127,7 +128,6 @@ System.Net/WebResponse_2_1.cs
 ../System/System.Net.Sockets/SelectMode.cs
 ../System/System.Net.Sockets/Socket.cs
 ../System/System.Net.Sockets/SocketError.cs
-../System/System.Net.Sockets/SocketException_2_1.cs
 ../System/System.Net.Sockets/SocketFlags.cs
 ../System/System.Net.Sockets/SocketInformation.cs
 ../System/System.Net.Sockets/SocketInformationOptions.cs
