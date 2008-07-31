@@ -115,6 +115,12 @@ static GHashTable *aot_modules;
 #define mono_aot_unlock() LeaveCriticalSection (&aot_mutex)
 static CRITICAL_SECTION aot_mutex;
 
+/* 
+ * Maps assembly names to the mono_aot_module_<NAME>_info symbols in the
+ * AOT modules registered by mono_aot_register_module ().
+ */
+static GHashTable *static_aot_modules;
+
 /*
  * Disabling this will make a copy of the loaded code and use the copy instead 
  * of the original. This will place the caller and the callee close to each 
@@ -542,23 +548,46 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 	if (assembly->image->dynamic)
 		return;
 
-	TlsSetValue (globals_tls_id, NULL);
+	mono_aot_lock ();
+	if (static_aot_modules)
+		globals = g_hash_table_lookup (static_aot_modules, assembly->aname.name);
+	else
+		globals = NULL;
+	mono_aot_unlock ();
 
-	if (use_aot_cache)
-		assembly->aot_module = load_aot_module_from_cache (assembly, &aot_name);
-	else {
-		char *err;
-		aot_name = g_strdup_printf ("%s%s", assembly->image->name, SHARED_EXT);
+	if (globals) {
+		/* Statically linked AOT module */
+		sofile = NULL;
+		aot_name = g_strdup_printf ("%s", assembly->aname.name);
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "Found statically linked AOT module '%s'.\n", aot_name);
+	} else {
+		TlsSetValue (globals_tls_id, NULL);
 
-		assembly->aot_module = mono_dl_open (aot_name, MONO_DL_LAZY, &err);
+		if (use_aot_cache)
+			sofile = load_aot_module_from_cache (assembly, &aot_name);
+		else {
+			char *err;
+			aot_name = g_strdup_printf ("%s%s", assembly->image->name, SHARED_EXT);
 
-		if (!assembly->aot_module) {
-			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT failed to load AOT module %s: %s\n", aot_name, err);
-			g_free (err);
+			sofile = mono_dl_open (aot_name, MONO_DL_LAZY, &err);
+
+			if (!sofile) {
+				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT failed to load AOT module %s: %s\n", aot_name, err);
+				g_free (err);
+			}
 		}
+
+		/*
+		 * If the image was compiled in no-dlsym mode, it contains no global symbols,
+		 * instead it contains an ELF ctor function which is called by dlopen () which 
+		 * in turn calls mono_aot_register_globals () to register a table which contains
+		 * the name and address of the globals.
+		 */
+		globals = TlsGetValue (globals_tls_id);
+		TlsSetValue (globals_tls_id, NULL);
 	}
 
-	if (!assembly->aot_module) {
+	if (!sofile && !globals) {
 		if (mono_aot_only) {
 			fprintf (stderr, "Failed to load AOT module '%s' in aot-only mode.\n", aot_name);
 			exit (1);
@@ -566,17 +595,6 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 		g_free (aot_name);
 		return;
 	}
-
-	/* 
-	 * If the image was compiled in no-dlsym mode, it contains no global symbols,
-	 * instead it contains an ELF ctor functions which is called by dlopen () which 
-	 * in turn calls mono_aot_register_globals () to register a table which contains
-	 * the name and address of the globals.
-	 */
-	globals = TlsGetValue (globals_tls_id);
-	TlsSetValue (globals_tls_id, NULL);
-
-	sofile = assembly->aot_module;
 
 	find_symbol (sofile, globals, "mono_assembly_guid", (gpointer *) &saved_guid);
 	find_symbol (sofile, globals, "mono_aot_version", (gpointer *) &aot_version);
@@ -623,7 +641,8 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 			exit (1);
 		}
 		g_free (aot_name);
-		mono_dl_close (sofile);
+		if (sofile)
+			mono_dl_close (sofile);
 		assembly->aot_module = NULL;
 		return;
 	}
@@ -753,6 +772,8 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 
 	mono_jit_info_add_aot_module (assembly->image, amodule->code, amodule->code_end);
 
+	assembly->aot_module = amodule;
+
 	/*
 	 * Since we store methoddef and classdef tokens when referring to methods/classes in
 	 * referenced assemblies, we depend on the exact versions of the referenced assemblies.
@@ -783,6 +804,39 @@ void
 mono_aot_register_globals (gpointer *globals)
 {
 	TlsSetValue (globals_tls_id, globals);
+}
+
+/*
+ * mono_aot_register_module:
+ *
+ *   This should be called by embedding code to register AOT modules statically linked
+ * into the executable. AOT_INFO should be the value of the 
+ * 'mono_aot_module_<ASSEMBLY_NAME>_info' global symbol from the AOT module.
+ */
+void
+mono_aot_register_module (gpointer *aot_info)
+{
+	gpointer *globals;
+	char *aname;
+
+	globals = aot_info;
+	g_assert (globals);
+
+	/* Determine the assembly name */
+	find_symbol (NULL, globals, "mono_aot_assembly_name", (gpointer*)&aname);
+	g_assert (aname);
+
+	/* This could be called before startup */
+	if (aot_modules)
+		mono_aot_lock ();
+
+	if (!static_aot_modules)
+		static_aot_modules = g_hash_table_new (g_str_hash, g_str_equal);
+
+	g_hash_table_insert (static_aot_modules, aname, globals);
+
+	if (aot_modules)
+		mono_aot_unlock ();
 }
 
 void

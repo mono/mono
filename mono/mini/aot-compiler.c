@@ -84,6 +84,7 @@ typedef struct MonoAotOptions {
 	gboolean bind_to_runtime_version;
 	gboolean full_aot;
 	gboolean no_dlsym;
+	gboolean static_link;
 } MonoAotOptions;
 
 typedef struct MonoAotStats {
@@ -146,6 +147,7 @@ typedef struct MonoAotCompile {
 	MonoMemPool *mempool;
 	MonoAotStats stats;
 	int method_index;
+	char *static_linking_symbol;
 #ifdef USE_BIN_WRITER
 	BinSymbol *symbols;
 	BinSection *sections;
@@ -1491,14 +1493,31 @@ emit_writeout (MonoAotCompile *acfg)
 #else
 #define AS_OPTIONS ""
 #endif
-	command = g_strdup_printf ("as %s %s -o %s.o", AS_OPTIONS, acfg->tmpfname, acfg->tmpfname);
+
+	if (acfg->aot_opts.static_link) {
+		if (acfg->aot_opts.outfile)
+			objfile = g_strdup_printf ("%s", acfg->aot_opts.outfile);
+		else
+			objfile = g_strdup_printf ("%s.o", acfg->image->name);
+	} else {
+		objfile = g_strdup_printf ("%s.o", acfg->tmpfname);
+	}
+	command = g_strdup_printf ("as %s %s -o %s", AS_OPTIONS, acfg->tmpfname, objfile);
 	printf ("Executing the native assembler: %s\n", command);
 	if (system (command) != 0) {
 		g_free (command);
+		g_free (objfile);
 		return 1;
 	}
 
 	g_free (command);
+
+	if (acfg->aot_opts.static_link) {
+		printf ("Output file: '%s'.\n", objfile);
+		printf ("Linking symbol: '%s'.\n", acfg->static_linking_symbol);
+		g_free (objfile);
+		return 0;
+	}
 
 	if (acfg->aot_opts.outfile)
 		outfile_name = g_strdup_printf ("%s", acfg->aot_opts.outfile);
@@ -1528,13 +1547,12 @@ emit_writeout (MonoAotCompile *acfg)
 		g_free (tmp_outfile_name);
 		g_free (outfile_name);
 		g_free (command);
+		g_free (objfile);
 		return 1;
 	}
 
 	g_free (command);
-	objfile = g_strdup_printf ("%s.o", acfg->tmpfname);
 	unlink (objfile);
-	g_free (objfile);
 	/*com = g_strdup_printf ("strip --strip-unneeded %s%s", acfg->image->name, SHARED_EXT);
 	printf ("Stripping the binary: %s\n", com);
 	system (com);
@@ -1544,6 +1562,7 @@ emit_writeout (MonoAotCompile *acfg)
 
 	g_free (tmp_outfile_name);
 	g_free (outfile_name);
+	g_free (objfile);
 
 	if (acfg->aot_opts.save_temps)
 		printf ("Retained input file.\n");
@@ -3137,6 +3156,9 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->full_aot = TRUE;
 		} else if (str_begins_with (arg, "no-dlsym")) {
 			opts->no_dlsym = TRUE;
+		} else if (str_begins_with (arg, "static")) {
+			opts->static_link = TRUE;
+			opts->no_dlsym = TRUE;
 		} else {
 			fprintf (stderr, "AOT : Unknown argument '%s'.\n", arg);
 			exit (1);
@@ -4005,10 +4027,15 @@ emit_globals (MonoAotCompile *acfg)
 	 * we create an ELF ctor function which will be invoked by dlopen, and which
 	 * will call a function in the AOT loader to register the symbols used by the
 	 * image.
+	 * When static linking, we emit a global which will point to the symbol table.
 	 */
 	if (acfg->aot_opts.no_dlsym) {
 		int i;
 		char *symbol;
+
+		if (acfg->aot_opts.static_link)
+			/* Emit a string holding the assembly name */
+			emit_string_symbol (acfg, "mono_aot_assembly_name", acfg->image->assembly->aname.name);
 
 		/* Emit the names */
 		for (i = 0; i < acfg->globals->len; ++i) {
@@ -4043,46 +4070,59 @@ emit_globals (MonoAotCompile *acfg)
 		emit_pointer (acfg, NULL);
 		emit_pointer (acfg, NULL);
 
-		symbol = g_strdup_printf ("init_%s", acfg->image->assembly->aname.name);
-		emit_section_change (acfg, ".text", 1);
-		emit_alignment (acfg, 8);
-		emit_label (acfg, symbol);
+		if (acfg->aot_opts.static_link) {
+			/* 
+			 * Emit a global symbol which can be passed by an embedding app to
+			 * mono_aot_register_module ().
+			 */
+			symbol = g_strdup_printf ("mono_aot_module_%s_info", acfg->image->assembly->aname.name);
+			acfg->static_linking_symbol = g_strdup (symbol);
+			emit_global_inner (acfg, symbol, FALSE);
+			emit_alignment (acfg, 8);
+			emit_label (acfg, symbol);
+			emit_pointer (acfg, "globals");
+		} else {
+			symbol = g_strdup_printf ("init_%s", acfg->image->assembly->aname.name);
+			emit_section_change (acfg, ".text", 1);
+			emit_alignment (acfg, 8);
+			emit_label (acfg, symbol);
 #ifdef USE_BIN_WRITER
-		g_assert_not_reached ();
+			g_assert_not_reached ();
 #else
 #ifdef __x86_64__
-		fprintf (acfg->fp, "leaq globals(%%rip), %%rdi\n");
-		fprintf (acfg->fp, "call mono_aot_register_globals@PLT\n");
-		fprintf (acfg->fp, "ret\n");
-		fprintf (acfg->fp, ".section .ctors,\"aw\",@progbits\n");
-		emit_alignment (acfg, 8);
-		emit_pointer (acfg, symbol);
+			fprintf (acfg->fp, "leaq globals(%%rip), %%rdi\n");
+			fprintf (acfg->fp, "call mono_aot_register_globals@PLT\n");
+			fprintf (acfg->fp, "ret\n");
+			fprintf (acfg->fp, ".section .ctors,\"aw\",@progbits\n");
+			emit_alignment (acfg, 8);
+			emit_pointer (acfg, symbol);
 #elif defined(__arm__)
-		/* 
-		 * Taken from gcc generated code for:
-		 * static int i;
-		 * void foo () { bar (&i); }
-		 * gcc --shared -fPIC -O2
-		 */
-		fprintf (acfg->fp, "ldr	r3, .L5\n");
-		fprintf (acfg->fp, "ldr	r0, .L5+4\n");
-		fprintf (acfg->fp, ".LPIC0:\n");
-		fprintf (acfg->fp, "add	r3, pc, r3\n");
-		fprintf (acfg->fp, "add	r0, r3, r0\n");
-		fprintf (acfg->fp, "b	mono_aot_register_globals(PLT)\n");
+			/* 
+			 * Taken from gcc generated code for:
+			 * static int i;
+			 * void foo () { bar (&i); }
+			 * gcc --shared -fPIC -O2
+			 */
+			fprintf (acfg->fp, "ldr	r3, .L5\n");
+			fprintf (acfg->fp, "ldr	r0, .L5+4\n");
+			fprintf (acfg->fp, ".LPIC0:\n");
+			fprintf (acfg->fp, "add	r3, pc, r3\n");
+			fprintf (acfg->fp, "add	r0, r3, r0\n");
+			fprintf (acfg->fp, "b	mono_aot_register_globals(PLT)\n");
 
-		fprintf (acfg->fp, ".L5:\n");
-		fprintf (acfg->fp, ".word	_GLOBAL_OFFSET_TABLE_-(.LPIC0+8)\n");
-		fprintf (acfg->fp, ".word	globals(GOTOFF)\n");
+			fprintf (acfg->fp, ".L5:\n");
+			fprintf (acfg->fp, ".word	_GLOBAL_OFFSET_TABLE_-(.LPIC0+8)\n");
+			fprintf (acfg->fp, ".word	globals(GOTOFF)\n");
 
-		fprintf (acfg->fp, ".section	.init_array,\"aw\",%%init_array\n");
-		fprintf (acfg->fp, ".align	2\n");
-		fprintf (acfg->fp, ".word	%s(target1)\n", symbol);
+			fprintf (acfg->fp, ".section	.init_array,\"aw\",%%init_array\n");
+			fprintf (acfg->fp, ".align	2\n");
+			fprintf (acfg->fp, ".word	%s(target1)\n", symbol);
 #else
-		g_assert_not_reached ();
+			g_assert_not_reached ();
 #endif
 #endif
-		g_free (symbol);
+			g_free (symbol);
+		}
 	}
 }
 
@@ -4097,6 +4137,7 @@ acfg_free (MonoAotCompile *acfg)
 	g_free (acfg->cfgs);
 	g_free (acfg->method_got_offsets);
 	g_free (acfg->patch_to_plt_offset_wrapper);
+	g_free (acfg->static_linking_symbol);
 	g_ptr_array_free (acfg->methods, TRUE);
 	g_ptr_array_free (acfg->shared_patches, TRUE);
 	g_ptr_array_free (acfg->image_table, TRUE);
@@ -4109,7 +4150,6 @@ acfg_free (MonoAotCompile *acfg)
 	g_hash_table_destroy (acfg->token_info_hash);
 	g_hash_table_destroy (acfg->image_hash);
 	mono_mempool_destroy (acfg->mempool);
-
 	g_free (acfg);
 }
 
