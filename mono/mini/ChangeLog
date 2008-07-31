@@ -1,5 +1,7 @@
 2008-07-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h: Add a declaration for mono_aot_register_module ().
+
 	* aot-compiler.c aot-runtime.c: Merge some mach changes from Renaldas Zioma.
 
 	* debug-debugger.c (MONO_DEBUGGER__debugger_info): Fix a warning.
