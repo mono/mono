@@ -2614,6 +2614,10 @@ opt_type_argument_list
 	  
 		$$ = $2;
 	  }
+	| OP_GENERICS_LT error
+	  {
+		Error_TypeExpected (lexer.Location);
+	  }
 	;
 
 //
@@ -2628,6 +2632,10 @@ opt_type_parameter_list
 			Report.FeatureIsNotAvailable (GetLocation ($1), "generics");
 	  
 		$$ = $2;
+	  }
+	| OP_GENERICS_LT error
+	  {
+		Error_TypeExpected (lexer.Location);
 	  }
 	;
 

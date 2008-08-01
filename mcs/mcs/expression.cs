@@ -1393,13 +1393,6 @@ namespace Mono.CSharp {
 #endif
 		}
 
-		static void Error_CannotConvertType (Type source, Type target, Location loc)
-		{
-			Report.Error (39, loc, "Cannot convert type `{0}' to `{1}' via a built-in conversion",
-				TypeManager.CSharpName (source),
-				TypeManager.CSharpName (target));
-		}
-		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			if (resolved_type == null) {
@@ -1471,7 +1464,9 @@ namespace Mono.CSharp {
 				return this;
 			}
 
-			Error_CannotConvertType (etype, type, loc);
+			Report.Error (39, loc, "Cannot convert type `{0}' to `{1}' via a built-in conversion",
+				TypeManager.CSharpName (etype), TypeManager.CSharpName (type));
+
 			return null;
 		}
 
@@ -7666,7 +7661,7 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return null;
 
-			if (Expr is Constant)
+			if (Expr is Constant || Expr is MethodGroupExpr)
 				return Expr;
 			
 			eclass = Expr.eclass;
@@ -7726,7 +7721,7 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return null;
 
-			if (Expr is Constant)
+			if (Expr is Constant || Expr is MethodGroupExpr)
 				return Expr;
 			
 			eclass = Expr.eclass;

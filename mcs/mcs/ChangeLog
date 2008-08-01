@@ -1,5 +1,13 @@
 2008-08-01  Marek Safar  <marek.safar@gmail.com>
 
+	* cs-parser.jay: Don't choke on empty generic type arguments.
+	
+	* cs-tokenizer.cs: Handle escaped preprocessor directives.
+	
+	* expression.cs, ecore.cs: Minor expressions bugs.
+
+2008-08-01  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-parser.jay: Removed duplicate interface declaration (fixes 2 conflicts)
 	and added more error handling.
 	

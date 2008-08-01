@@ -4462,24 +4462,19 @@ namespace Mono.CSharp {
 			int a_idx = 0, a_pos = 0;
 			Argument a = null;
 			ArrayList params_initializers = null;
+			bool has_unsafe_arg = false;
 
 			for (; a_idx < arg_count; a_idx++, ++a_pos) {
 				a = (Argument) arguments [a_idx];
 				if (p_mod != Parameter.Modifier.PARAMS) {
 					p_mod = pd.ParameterModifier (a_idx);
 					pt = pd.ParameterType (a_idx);
+					has_unsafe_arg |= pt.IsPointer;
 
 					if (p_mod == Parameter.Modifier.ARGLIST) {
 						if (a.Type != TypeManager.runtime_argument_handle_type)
 							break;
 						continue;
-					}
-
-					if (pt.IsPointer && !ec.InUnsafe) {
-						if (may_fail)
-							return false;
-
-						UnsafeError (loc);
 					}
 
 					if (p_mod == Parameter.Modifier.PARAMS) {
@@ -4551,6 +4546,13 @@ namespace Mono.CSharp {
 						new ArrayCreation (new TypeExpression (pt, loc), "[]",
 						params_initializers, loc).Resolve (ec)));
 				}
+
+				if (has_unsafe_arg && !ec.InUnsafe) {
+					if (!may_fail)
+						UnsafeError (loc);
+					return false;
+				}
+
 				return true;
 			}
 
@@ -5781,7 +5783,11 @@ namespace Mono.CSharp {
 			if (!li.Resolve (ec))
 				return null;
 
-			if (ec.MustCaptureVariable (li) && ec.IsVariableCapturingRequired) {
+			//
+			// Don't capture temporary variables except when using
+			// iterator redirection
+			//
+			if (ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod.IsIterator && ec.IsVariableCapturingRequired) {
 				AnonymousMethodStorey storey = li.Block.Explicit.CreateAnonymousMethodStorey (ec);
 				storey.CaptureLocalVariable (ec, li);
 			}

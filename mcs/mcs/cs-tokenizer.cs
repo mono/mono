@@ -633,6 +633,9 @@ namespace Mono.CSharp
 			case Token.VOID:
 				break;
 
+			case Token.OP_GENERICS_GT:
+				return true;
+
 			default:
 				return false;
 			}
@@ -1405,21 +1408,29 @@ namespace Mono.CSharp
 					goto default;
 				return v;
 			case 'u':
-				v = getHex (4, out error);
-				if (error)
-					goto default;
-				return v;
 			case 'U':
-				v = getHex (8, out error);
-				if (error)
-					goto default;
-				return v;
+				return EscapeUnicode (d);
 			default:
 				Report.Error (1009, Location, "Unrecognized escape sequence `\\{0}'", ((char)d).ToString ());
 				return d;
 			}
 			get_char ();
 			return v;
+		}
+
+		int EscapeUnicode (int ch)
+		{
+			bool error;
+			if (ch == 'U') {
+				ch = getHex (8, out error);
+			} else {
+				ch = getHex (4, out error);
+			}
+
+			if (error)
+				Report.Error (1009, Location, "Unrecognized escape sequence");
+
+			return ch;
 		}
 
 		int get_char ()
@@ -1432,9 +1443,9 @@ namespace Mono.CSharp
 				x = reader.Read ();
 			if (x == '\n') {
 				advance_line ();
-			}
-			else
+			} else {
 				col++;
+			}
 			return x;
 		}
 
@@ -1582,13 +1593,22 @@ namespace Mono.CSharp
 				;
 				
 			while ((c != -1) && (c != '\n') && (c != ' ') && (c != '\t') && (c != '\r')){
-				if (is_identifier_part_character ((char) c)){
-					static_cmd_arg.Append ((char) c);
+				if (is_identifier_part_character ((char)c)){
+					static_cmd_arg.Append ((char)c);
 					c = get_char ();
-				} else {
-					putback (c);
-					break;
+					continue;
 				}
+
+				if (c == '\\') {
+					int peek = peek_char ();
+					if (peek == 'U' || peek == 'u') {
+						c = EscapeUnicode (c);
+						continue;
+					}
+				}
+
+				cmd = null;
+				return;
 			}
 
 			cmd = static_cmd_arg.ToString ();
@@ -1611,11 +1631,16 @@ namespace Mono.CSharp
 			}
 			
 			static_cmd_arg.Length = 0;
-			static_cmd_arg.Append ((char) c);
-			
-			while ((c = get_char ()) != -1 && (c != '\n') && (c != '\r')){
-				static_cmd_arg.Append ((char) c);
-			}
+			do {
+				if (c == '\\') {
+					int peek = peek_char ();
+					if (peek == 'U' || peek == 'u') {
+						c = EscapeUnicode (c);
+						continue;
+					}
+				}
+				static_cmd_arg.Append ((char) c);				
+			} while ((c = get_char ()) != -1 && (c != '\n') && (c != '\r'));
 
 			arg = static_cmd_arg.ToString ();
 		}
