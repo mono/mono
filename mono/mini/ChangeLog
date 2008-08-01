@@ -1,3 +1,9 @@
+
+Fri Aug 1 16:30:37 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini-exceptions.c: increase the exceptions thrown performance
+	counter in mono_handle_exception ().
+
 2008-07-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c: Use MonoImage's as keys in the aot_modules hash so the aot
