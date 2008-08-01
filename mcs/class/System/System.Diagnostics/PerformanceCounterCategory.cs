@@ -219,8 +219,8 @@ namespace System.Diagnostics
 		{
 			CheckCategory (categoryName);
 			CounterCreationData[] items = new CounterCreationData [1];
-			// we use PerformanceCounterType.NumberOfItems64 as the default type
-			items [0] = new CounterCreationData (counterName, counterHelp, PerformanceCounterType.NumberOfItems64);
+			// we use PerformanceCounterType.NumberOfItems32 as the default type
+			items [0] = new CounterCreationData (counterName, counterHelp, PerformanceCounterType.NumberOfItems32);
 			if (!Create (categoryName, categoryHelp, categoryType, items))
 				throw new InvalidOperationException ();
 			return new PerformanceCounterCategory (categoryName, categoryHelp);

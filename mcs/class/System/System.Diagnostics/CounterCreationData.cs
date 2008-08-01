@@ -53,16 +53,20 @@ namespace System.Diagnostics {
 			string counterHelp, 
 			PerformanceCounterType counterType)
 		{
-			name = counterName;
-			help = counterHelp;
-			type = counterType;
+			CounterName = counterName;
+			CounterHelp = counterHelp;
+			CounterType = counterType;
 		}
 
 		[DefaultValue ("")]
 		[MonitoringDescription ("Description of this counter.")]
 		public string CounterHelp {
 			get {return help;}
-			set {help = value;}
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				help = value;
+			}
 		}
 
 		[DefaultValue ("")]
@@ -71,7 +75,13 @@ namespace System.Diagnostics {
 		public string CounterName 
 		{
 			get {return name;}
-			set {name = value;}
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				if (value == "")
+					throw new ArgumentException ("value");
+				name = value;
+			}
 		}
 
 		// may throw InvalidEnumArgumentException
@@ -79,7 +89,11 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("Type of this counter.")]
 		public PerformanceCounterType CounterType {
 			get {return type;}
-			set {type = value;}
+			set {
+				if (!Enum.IsDefined (typeof (PerformanceCounterType), value))
+					throw new InvalidEnumArgumentException ();
+				type = value;
+			}
 		}
 	}
 }

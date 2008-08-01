@@ -1,3 +1,9 @@
+
+Fri Aug 1 16:09:31 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* CounterCreationData.cs, PerformanceCounterCategory.cs: more
+	checks and default type fix.
+
 2008-07-28  Dick Porter  <dick@ximian.com>
 
 	* Process.cs: When passing handle references around, it needs to
