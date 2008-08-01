@@ -2615,7 +2615,11 @@ namespace System.Windows.Forms
 						owner_draw = DrawListViewItemOwnerDraw (dc, item, i);
 					if (!owner_draw)
 #endif
+					{
 						DrawListViewItem (dc, control, item);
+						if (control.View == View.Details)
+							DrawListViewSubItems (dc, control, item);
+					}
 				}
 			}	
 
@@ -2797,9 +2801,14 @@ namespace System.Windows.Forms
 				int count = Math.Min (item.ListView.Columns.Count, item.SubItems.Count);
 				
 				// Do system drawing for subitems if no owner draw is done
-				for (int j = 0; j < count; j++)
-					if (!DrawListViewSubItemOwnerDraw (dc, item, item_state, j))
-						DrawListViewSubItem (dc, item.ListView, item, j);
+				for (int j = 0; j < count; j++) {
+					if (!DrawListViewSubItemOwnerDraw (dc, item, item_state, j)) {
+						if (j == 0) // The first sub item contains the main item semantics
+							DrawListViewItem (dc, item.ListView, item);
+						else
+							DrawListViewSubItem (dc, item.ListView, item, j);
+					}
+				}
 			}
 			
 			return true;
@@ -2972,34 +2981,6 @@ namespace System.Windows.Forms
 					dc.DrawString (item.Text, font, textBrush, text_rect, format);
 			}
 
-			if (control.View == View.Details && control.Columns.Count > 0) {
-				// draw subitems for details view
-				ListViewItem.ListViewSubItemCollection subItems = item.SubItems;
-				int count = (control.Columns.Count < subItems.Count ? 
-					     control.Columns.Count : subItems.Count);
-
-				if (count > 0) {
-					// 0th subitem is the item already drawn
-					for (int index = 1; index < count; index++)
-						DrawListViewSubItem (dc, control, item, index);
-
-					// Fill in selection for remaining columns if Column.Count > SubItems.Count
-					ColumnHeader col;
-					Rectangle sub_item_rect = text_rect;
-					if (item.Selected && (control.Focused || !control.HideSelection) && control.FullRowSelect) {
-						for (int index = count; index < control.Columns.Count; index++) {
-							col = control.Columns [index];
-							sub_item_rect.X = col.Rect.X - control.h_marker;
-							sub_item_rect.Width = col.Wd;
-							if (control.Focused)
-								dc.FillRectangle (SystemBrushes.Highlight, sub_item_rect);
-							else
-								dc.FillRectangle (SystemBrushes.Control, sub_item_rect);
-						}
-					}
-				}
-			}
-
 			if (item.Focused && control.Focused) {				
 				Rectangle focus_rect = highlight_rect;
 				if (control.FullRowSelect && control.View == View.Details) {
@@ -3015,6 +2996,27 @@ namespace System.Windows.Forms
 			}
 
 			format.Dispose ();
+		}
+
+		protected virtual void DrawListViewSubItems (Graphics dc, ListView control, ListViewItem item)
+		{
+			int columns_count = control.Columns.Count;
+			int count = Math.Min (item.SubItems.Count, columns_count);
+			// 0th item already done (in this case)
+			for (int i = 1; i < count; i++)
+				DrawListViewSubItem (dc, control, item, i);
+
+			// Fill in selection for remaining columns if Column.Count > SubItems.Count
+			Rectangle sub_item_rect = item.GetBounds (ItemBoundsPortion.Label);
+			if (item.Selected && (control.Focused || !control.HideSelection) && control.FullRowSelect) {
+				for (int index = count; index < columns_count; index++) {
+					ColumnHeader col = control.Columns [index];
+					sub_item_rect.X = col.Rect.X - control.h_marker;
+					sub_item_rect.Width = col.Wd;
+					dc.FillRectangle (control.Focused ? SystemBrushes.Highlight : SystemBrushes.Control, 
+							sub_item_rect);
+				}
+			}
 		}
 
 		protected virtual void DrawListViewSubItem (Graphics dc, ListView control, ListViewItem item, int index)
