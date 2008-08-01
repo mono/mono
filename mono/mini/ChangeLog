@@ -1,4 +1,8 @@
 
+Fri Aug 1 18:46:42 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: update jitted methods performance counters.
+
 Fri Aug 1 16:30:37 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* mini-exceptions.c: increase the exceptions thrown performance
