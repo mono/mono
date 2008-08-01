@@ -1,3 +1,6 @@
+2008-08-01  Massimiliano Mantione  <massi@ximian.com>
+	* mono.1: Updated description of the logging profiler.
+
 2008-04-22  Robert Jordan  <robertj@gmx.net>
 
 	* mono.1: Document MONO_DEBUG=no-gdb-backtrace.
