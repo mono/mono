@@ -1,3 +1,9 @@
+
+Fri Aug 1 16:07:09 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* class-internals.h, icall-def.h, mono-perfcounters-def.h,
+	mono-perfcounters.c: performance counters implementation.
+
 2008-07-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata-internals.h (struct _MonoAssembly): Change the type of 'aot_module'
