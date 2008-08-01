@@ -96,6 +96,15 @@ namespace MonoTests.System.Windows.Forms
 			obj = ListBindingHelper.GetList (str_coll, "Length");
 			Assert.IsNull (obj, "#H1");
 
+			// IEnumerable that returns instances of ICustomTypeDescriptor
+			// Use DataTable as source, which returns, when enumerating,
+			// instances of DataRowView, which in turn implement ICustomTypeDescriptor
+			DataTable table = new DataTable ();
+			table.Columns.Add ("Id", typeof (int));
+			table.Rows.Add (666);
+			object l = ListBindingHelper.GetList (table, "Id");
+			Assert.AreEqual (666, l, "#J1");
+
 			try {
 				ListBindingHelper.GetList (list_container, "DontExist");
 				Assert.Fail ("#EXC1");
