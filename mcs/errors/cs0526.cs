@@ -1,4 +1,4 @@
-// cs0526.cs: Interfaces cannot contain constructors
+// CS0526: Interfaces cannot contain contructors
 // Line: 5
 
 public interface Interface {

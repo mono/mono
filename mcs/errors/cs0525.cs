@@ -1,5 +1,7 @@
-// cs0525.cs: Interfaces cannot contain fields
-// Line: 5
-interface Interface { 
+// CS0525: Interfaces cannot contain fields or constants
+// Line: 6
+
+interface Interface
+{ 
 	bool value = false;
 }
