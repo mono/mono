@@ -1160,7 +1160,7 @@ namespace Mono.CSharp {
 							  int mod, string real_name, MemberName name,
 							  Parameters parameters)
 				: base (parent, generic, return_type, mod | Modifiers.COMPILER_GENERATED,
-						false, name, parameters, null)
+						name, parameters, null)
 			{
 				this.AnonymousMethod = am;
 				this.Storey = storey;
@@ -1644,7 +1644,7 @@ namespace Mono.CSharp {
 				get_block.AddStatement (new Return (
 					new MemberAccess (new This (p.Location), f.Name), p.Location));
 				Accessor get_accessor = new Accessor (get_block, 0, null, p.Location);
-				Property prop = new Property (a_type, t_args [i], Modifiers.PUBLIC, false,
+				Property prop = new Property (a_type, t_args [i], Modifiers.PUBLIC,
 					new MemberName (p.Name, p.Location), null, get_accessor, null, false);
 				a_type.AddProperty (prop);
 			}
@@ -1679,11 +1679,11 @@ namespace Mono.CSharp {
 			Location loc = Location;
 
 			Method equals = new Method (this, null, TypeManager.system_boolean_expr,
-				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN, false, new MemberName ("Equals", loc),
+				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN, new MemberName ("Equals", loc),
 				new Parameters (new Parameter (TypeManager.system_object_expr, "obj", 0, null, loc)), null);
 
 			Method tostring = new Method (this, null, TypeManager.system_string_expr,
-				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN, false, new MemberName ("ToString", loc),
+				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN, new MemberName ("ToString", loc),
 				Mono.CSharp.Parameters.EmptyReadOnlyParameters, null);
 
 			ToplevelBlock equals_block = new ToplevelBlock (equals.Parameters, loc);
@@ -1776,7 +1776,7 @@ namespace Mono.CSharp {
 			//
 			Method hashcode = new Method (this, null, TypeManager.system_int32_expr,
 				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN,
-				false, new MemberName ("GetHashCode", loc),
+				new MemberName ("GetHashCode", loc),
 				Mono.CSharp.Parameters.EmptyReadOnlyParameters, null);
 
 			//

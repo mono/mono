@@ -25,7 +25,7 @@ namespace Mono.CSharp {
 		public const int EXTERN    = 0x0800;
 		public const int VOLATILE  = 0x1000;
 		public const int UNSAFE    = 0x2000;
-		private const int TOP      = 0x2000;
+		private const int TOP      = 0x4000;
 
 		public const int PROPERTY_CUSTOM = 0x4000; // Custom property modifier
 

@@ -303,7 +303,7 @@ namespace Mono.CSharp {
 			Accessor getter = new Accessor (get_block, 0, null, Location);
 
 			Property current = new Property (
-				this, type, Modifiers.DEBUGGER_HIDDEN, false, name, null, getter, null, false);
+				this, type, Modifiers.DEBUGGER_HIDDEN, name, null, getter, null, false);
 			AddProperty (current);
 		}
 
@@ -312,7 +312,7 @@ namespace Mono.CSharp {
 			Method reset = new Method (
 				this, null, TypeManager.system_void_expr,
 				Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
-				false, new MemberName ("Reset", Location),
+				new MemberName ("Reset", Location),
 				Parameters.EmptyReadOnlyParameters, null);
 			AddMethod (reset);
 
@@ -349,7 +349,7 @@ namespace Mono.CSharp {
 			public GetEnumeratorMethod (IteratorStorey host, bool is_generic)
 				: base (host, null, is_generic ?
 					host.generic_enumerator_type : host.enumerator_type,
-					Modifiers.DEBUGGER_HIDDEN, false, GetMemberName (host, is_generic),
+					Modifiers.DEBUGGER_HIDDEN, GetMemberName (host, is_generic),
 					Parameters.EmptyReadOnlyParameters, null)
 			{
 				this.Host = host;
@@ -464,7 +464,7 @@ namespace Mono.CSharp {
 			public DisposeMethod (IteratorStorey host)
 				: base (host, null, TypeManager.system_void_expr,
 					Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN | Modifiers.COMPILER_GENERATED,
-					false, new MemberName ("Dispose", host.Location),
+					new MemberName ("Dispose", host.Location),
 					Parameters.EmptyReadOnlyParameters, null)
 			{
 				this.Host = host;

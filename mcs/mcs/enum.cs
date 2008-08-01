@@ -128,7 +128,7 @@ namespace Mono.CSharp {
 
 		public Type UnderlyingType;
 
-		public const int AllowedModifiers =
+		const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |

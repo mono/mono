@@ -398,11 +398,16 @@ namespace Mono.CSharp {
 				ordered_member_list = new MemberCoreArrayList ();
 			}
 
-			if(isexplicit) {
+			if (isexplicit) {
+				if (Kind == Kind.Interface) {
+					Report.Error (541, mc.Location,
+						"`{0}': explicit interface declaration can only be declared in a class or struct",
+						mc.GetSignatureForError ());
+				}
+
 				ordered_explicit_member_list.Add (mc);
 				alist.Insert (0, mc);
-			} 
-			else {
+			} else {
 				ordered_member_list.Add (mc);
 				alist.Add (mc);
 			}
@@ -3147,9 +3152,9 @@ namespace Mono.CSharp {
 	public abstract class PropertyBasedMember : InterfaceMemberBase
 	{
 		public PropertyBasedMember (DeclSpace parent, GenericMethod generic,
-			FullNamedExpression type, int mod, int allowed_mod, bool is_iface,
+			FullNamedExpression type, int mod, int allowed_mod,
 			MemberName name, Attributes attrs)
-			: base (parent, generic, type, mod, allowed_mod, is_iface, name, attrs)
+			: base (parent, generic, type, mod, allowed_mod, name, attrs)
 		{
 		}
 
@@ -3174,9 +3179,9 @@ namespace Mono.CSharp {
 		protected ToplevelBlock block;
 
 		public MethodCore (DeclSpace parent, GenericMethod generic,
-			FullNamedExpression type, int mod, int allowed_mod, bool is_iface,
+			FullNamedExpression type, int mod, int allowed_mod,
 			MemberName name, Attributes attrs, Parameters parameters)
-			: base (parent, generic, type, mod, allowed_mod, is_iface, name, attrs)
+			: base (parent, generic, type, mod, allowed_mod, name, attrs)
 		{
 			Parameters = parameters;
 		}
@@ -3318,12 +3323,12 @@ namespace Mono.CSharp {
 		public MethodAttributes flags;
 
 		public InterfaceMemberBase (DeclSpace parent, GenericMethod generic,
-				   FullNamedExpression type, int mod, int allowed_mod, bool is_iface,
+				   FullNamedExpression type, int mod, int allowed_mod,
 				   MemberName name, Attributes attrs)
 			: base (parent, generic, type, mod, allowed_mod, Modifiers.PRIVATE,
 				name, attrs)
 		{
-			IsInterface = is_iface;
+			IsInterface = parent.PartialContainer.Kind == Kind.Interface;
 			IsExplicitImpl = (MemberName.Left != null);
 			explicit_mod_flags = mod;
 		}
@@ -3714,9 +3719,9 @@ namespace Mono.CSharp {
 		static string[] attribute_targets = new string [] { "method", "return" };
 
 		protected MethodOrOperator (DeclSpace parent, GenericMethod generic, FullNamedExpression type, int mod,
-				int allowed_mod, bool is_interface, MemberName name,
+				int allowed_mod, MemberName name,
 				Attributes attrs, Parameters parameters)
-			: base (parent, generic, type, mod, allowed_mod, is_interface, name,
+			: base (parent, generic, type, mod, allowed_mod, name,
 					attrs, parameters)
 		{
 		}
@@ -4081,15 +4086,18 @@ namespace Mono.CSharp {
 		const int AllowedInterfaceModifiers =
 			Modifiers.NEW | Modifiers.UNSAFE;
 
-		//
-		// return_type can be "null" for VOID values.
-		//
 		public Method (DeclSpace parent, GenericMethod generic,
-			       FullNamedExpression return_type, int mod, bool is_iface,
+			       FullNamedExpression return_type, int mod,
 			       MemberName name, Parameters parameters, Attributes attrs)
 			: base (parent, generic, return_type, mod,
-				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
-				is_iface, name, attrs, parameters)
+				parent.PartialContainer.Kind == Kind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
+				name, attrs, parameters)
+		{
+		}
+
+		protected Method (DeclSpace parent, FullNamedExpression return_type, int mod, int amod,
+					MemberName name, Parameters parameters, Attributes attrs)
+			: base (parent, null, return_type, mod, amod, name, attrs, parameters)
 		{
 		}
 		
@@ -4527,7 +4535,7 @@ namespace Mono.CSharp {
 		//
 		public Constructor (DeclSpace parent, string name, int mod, Parameters args,
 				    ConstructorInitializer init, Location loc)
-			: base (parent, null, null, mod, AllowedModifiers, false,
+			: base (parent, null, null, mod, AllowedModifiers,
 				new MemberName (name, loc), null, args)
 		{
 			Initializer = init;
@@ -5203,16 +5211,26 @@ namespace Mono.CSharp {
 	}
 
 	// TODO: Should derive from MethodCore
-	public class Destructor : Method {
+	public class Destructor : Method
+	{
+		const int AllowedModifiers =
+			Modifiers.UNSAFE |
+			Modifiers.EXTERN;
 
 		static string[] attribute_targets = new string [] { "method" };
 
 		public Destructor (DeclSpace parent, FullNamedExpression return_type, int mod,
 				   string name, Parameters parameters, Attributes attrs,
 				   Location l)
-			: base (parent, null, return_type, mod, false, new MemberName (name, l),
+			: base (parent, return_type, mod, AllowedModifiers, new MemberName (name, l),
 				parameters, attrs)
-		{ }
+		{
+			ModFlags &= ~Modifiers.PRIVATE;
+			if (!RootContext.StdLib && parent.Name == "System.Object")
+				ModFlags |= Modifiers.PROTECTED | Modifiers.VIRTUAL;
+			else
+				ModFlags |= Modifiers.PROTECTED | Modifiers.OVERRIDE;
+		}
 
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
 		{
@@ -6387,9 +6405,9 @@ namespace Mono.CSharp {
 		protected bool define_set_first = false;
 
 		public PropertyBase (DeclSpace parent, FullNamedExpression type, int mod_flags,
-				     int allowed_mod, bool is_iface, MemberName name,
+				     int allowed_mod, MemberName name,
 				     Attributes attrs, bool define_set_first)
-			: base (parent, null, type, mod_flags, allowed_mod, is_iface, name,	attrs)
+			: base (parent, null, type, mod_flags, allowed_mod, name, attrs)
 		{
 			 this.define_set_first = define_set_first;
 		}
@@ -6639,22 +6657,22 @@ namespace Mono.CSharp {
 			set_block.ModFlags |= Modifiers.COMPILER_GENERATED;
 		}
 
-		public Property (DeclSpace parent, FullNamedExpression type, int mod, bool is_iface,
+		public Property (DeclSpace parent, FullNamedExpression type, int mod,
 				 MemberName name, Attributes attrs, Accessor get_block,
 				 Accessor set_block, bool define_set_first)
-			: this (parent, type, mod, is_iface, name, attrs, get_block, set_block,
+			: this (parent, type, mod, name, attrs, get_block, set_block,
 				define_set_first, null)
 		{
 		}
 		
-		public Property (DeclSpace parent, FullNamedExpression type, int mod, bool is_iface,
+		public Property (DeclSpace parent, FullNamedExpression type, int mod,
 				 MemberName name, Attributes attrs, Accessor get_block,
 				 Accessor set_block, bool define_set_first, Block current_block)
 			: base (parent, type, mod,
-				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
-				is_iface, name, attrs, define_set_first)
+				parent.PartialContainer.Kind == Kind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
+				name, attrs, define_set_first)
 		{
-			if (!is_iface && (mod & (Modifiers.ABSTRACT | Modifiers.EXTERN)) == 0 &&
+			if (!IsInterface && (mod & (Modifiers.ABSTRACT | Modifiers.EXTERN)) == 0 &&
 				get_block != null && get_block.Block == null &&
 				set_block != null && set_block.Block == null) {
 				if (RootContext.Version <= LanguageVersion.ISO_2)
@@ -6918,9 +6936,9 @@ namespace Mono.CSharp {
 		static readonly string[] attribute_targets = new string [] { "event" }; // "property" target was disabled for 2.0 version
 
 		public EventProperty (DeclSpace parent, FullNamedExpression type, int mod_flags,
-				      bool is_iface, MemberName name,
+				      MemberName name,
 				      Attributes attrs, Accessor add, Accessor remove)
-			: base (parent, type, mod_flags, is_iface, name, attrs)
+			: base (parent, type, mod_flags, name, attrs)
 		{
 			Add = new AddDelegateMethod (this, add);
 			Remove = new RemoveDelegateMethod (this, remove);
@@ -7022,10 +7040,8 @@ namespace Mono.CSharp {
 		public FieldBuilder FieldBuilder;
 		public Expression Initializer;
 
-		public EventField (DeclSpace parent, FullNamedExpression type, int mod_flags,
-				   bool is_iface, MemberName name,
-				   Attributes attrs)
-			: base (parent, type, mod_flags, is_iface, name, attrs)
+		public EventField (DeclSpace parent, FullNamedExpression type, int mod_flags, MemberName name, Attributes attrs)
+			: base (parent, type, mod_flags, name, attrs)
 		{
 			Add = new AddDelegateMethod (this);
 			Remove = new RemoveDelegateMethod (this);
@@ -7222,10 +7238,9 @@ namespace Mono.CSharp {
 
 		Parameters parameters;
 
-		protected Event (DeclSpace parent, FullNamedExpression type, int mod_flags,
-			      bool is_iface, MemberName name, Attributes attrs)
+		protected Event (DeclSpace parent, FullNamedExpression type, int mod_flags, MemberName name, Attributes attrs)
 			: base (parent, null, type, mod_flags,
-				is_iface ? AllowedInterfaceModifiers : AllowedModifiers, is_iface,
+				parent.PartialContainer.Kind == Kind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
 				name, attrs)
 		{
 		}
@@ -7359,7 +7374,9 @@ namespace Mono.CSharp {
 				//
 				// Clone indexer accessor parameters for localized capturing
 				//
-				parameters = ((Indexer) method).parameters.Clone ();
+				if (!IsDummy)
+					parameters = ((Indexer) method).parameters.Clone ();
+
 				return base.Define (parent);
 			}
 			
@@ -7428,15 +7445,12 @@ namespace Mono.CSharp {
 		public readonly Parameters parameters;
 
 		public Indexer (DeclSpace parent, FullNamedExpression type, MemberName name, int mod,
-				bool is_iface, Parameters parameters, Attributes attrs,
+				Parameters parameters, Attributes attrs,
 				Accessor get_block, Accessor set_block, bool define_set_first)
 			: base (parent, type, mod,
-				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
-				is_iface, name, attrs, define_set_first)
+				parent.PartialContainer.Kind == Kind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
+				name, attrs, define_set_first)
 		{
-			if (type == TypeManager.system_void_expr)
-				Report.Error (620, name.Location, "An indexer return type cannot be `void'");
-			
 			this.parameters = parameters;
 
 			if (get_block == null)
@@ -7663,7 +7677,7 @@ namespace Mono.CSharp {
 		public Operator (DeclSpace parent, OpType type, FullNamedExpression ret_type,
 				 int mod_flags, Parameters parameters,
 				 ToplevelBlock block, Attributes attrs, Location loc)
-			: base (parent, null, ret_type, mod_flags, AllowedModifiers, false,
+			: base (parent, null, ret_type, mod_flags, AllowedModifiers,
 				new MemberName ("op_" + type.ToString(), loc), attrs, parameters)
 		{
 			OperatorType = type;

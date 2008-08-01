@@ -1150,6 +1150,10 @@ method_declaration
 		Method method = (Method) $1;
 		method.Block = (ToplevelBlock) $3;
 		current_container.AddMethod (method);
+		
+		if (current_container.Kind == Kind.Interface && method.Block != null) {
+			Report.Error (531, method.Location, "`{0}': interface members cannot have a definition", method.GetSignatureForError ());
+		}
 
 		current_generic_method = null;
 		current_local_parameters = null;
@@ -1211,7 +1215,7 @@ method_header
 			generic.SetParameterInfo ((ArrayList) $10);
 		}
 
-		method = new Method (current_class, generic, (FullNamedExpression) $3, (int) $2, false,
+		method = new Method (current_class, generic, (FullNamedExpression) $3, (int) $2,
 				     name, current_local_parameters, (Attributes) $1);
 
 		current_generic_method = generic;
@@ -1254,7 +1258,7 @@ method_header
 		}
 
 		method = new Method (current_class, generic, TypeManager.system_void_expr,
-				     (int) $2, false, name, current_local_parameters, (Attributes) $1);
+				     (int) $2, name, current_local_parameters, (Attributes) $1);
 
 		current_generic_method = generic;
 
@@ -1311,7 +1315,7 @@ method_header
 		modifiers |= Modifiers.PARTIAL | Modifiers.PRIVATE;
 		
 		method = new Method (current_class, generic, TypeManager.system_void_expr,
-				     modifiers, false, name, current_local_parameters, (Attributes) $1);
+				     modifiers, name, current_local_parameters, (Attributes) $1);
 
 		current_generic_method = generic;
 
@@ -1330,7 +1334,7 @@ method_header
 			"Member modifier `{0}' must precede the member type and name", Modifiers.Name ((int) $4));
 
 		Method method = new Method (current_class, null, TypeManager.system_void_expr,
-					    0, false, name, (Parameters) $7, (Attributes) $1);
+					    0, name, (Parameters) $7, (Attributes) $1);
 
 		current_local_parameters = (Parameters) $7;
 
@@ -1592,7 +1596,7 @@ arglist_modifier
 	  		Report.Error (1669, (Location) $1, "__arglist is not valid in this context");
 	  }
 	;
-
+	
 property_declaration
 	: opt_attributes
 	  opt_modifiers
@@ -1615,21 +1619,34 @@ property_declaration
 	  }
 	  CLOSE_BRACE
 	  { 
-		if ($8 == null)
-			break;
-
 		Property prop;
 		Accessors accessors = (Accessors) $8;
-		Accessor get_block = accessors.get_or_add;
-		Accessor set_block = accessors.set_or_remove;
+		Accessor get_block = accessors != null ? accessors.get_or_add : null;
+		Accessor set_block = accessors != null ? accessors.set_or_remove : null;
+		bool order = accessors != null ? accessors.declared_in_reverse : false;
 
 		MemberName name = (MemberName) $4;
+		FullNamedExpression ptype = (FullNamedExpression) $3;
 
 		if (name.TypeArguments != null)
 			syntax_error (lexer.Location, "a property can't have type arguments");
 
-		prop = new Property (current_class, (FullNamedExpression) $3, (int) $2, false,
-				     name, (Attributes) $1, get_block, set_block, accessors.declared_in_reverse, current_block);
+		prop = new Property (current_class, ptype, (int) $2,
+				     name, (Attributes) $1, get_block, set_block, order, current_block);
+
+		if (ptype == TypeManager.system_void_expr)
+			Report.Error (547, ptype.Location, "`{0}': property return type cannot be `void'", prop.GetSignatureForError ());
+			
+		if (accessors == null)
+			Report.Error (548, prop.Location, "`{0}': property or indexer must have at least one accessor", prop.GetSignatureForError ());
+
+		if (current_container.Kind == Kind.Interface) {
+			if (prop.Get.Block != null)
+				Report.Error (531, prop.Location, "`{0}.get': interface members cannot have a definition", prop.GetSignatureForError ());
+
+			if (prop.Set.Block != null)
+				Report.Error (531, prop.Location, "`{0}.set': interface members cannot have a definition", prop.GetSignatureForError ());
+		}
 
 		current_container.AddProperty (prop);
 		implicit_value_parameter_type = null;
@@ -1639,7 +1656,7 @@ property_declaration
 
 	  }
 	;
-
+	
 accessor_declarations
 	: get_accessor_declaration
 	 {
@@ -1680,7 +1697,7 @@ get_accessor_declaration
 			current_local_parameters = indexer_parameters;
 		lexer.PropertyParsing = false;
 	  }
-          accessor_body
+	  accessor_body
 	  {
 		if (has_get) {
 			Report.Error (1007, (Location) $3, "Property accessor already defined");
@@ -1808,355 +1825,29 @@ interface_member_declarations
 	;
 
 interface_member_declaration
-	: interface_method_declaration		
-	  { 
-		if ($1 == null)
-			break;
-
-		Method m = (Method) $1;
-
-		if (m.IsExplicitImpl)
-		        Report.Error (541, m.Location, "`{0}': explicit interface declaration can only be declared in a class or struct",
-				m.GetSignatureForError ());
-
-		current_container.AddMethod (m);
-
-		if (RootContext.Documentation != null)
-			Lexer.doc_state = XmlCommentState.Allowed;
-	  }
-	| interface_property_declaration	
-	  { 
-		if ($1 == null)
-			break;
-
-		Property p = (Property) $1;
-
-		if (p.IsExplicitImpl)
-		        Report.Error (541, p.Location, "`{0}': explicit interface declaration can only be declared in a class or struct",
-				p.GetSignatureForError ());
-
-		current_container.AddProperty (p);
-
-		if (RootContext.Documentation != null)
-			Lexer.doc_state = XmlCommentState.Allowed;
-	  }
-	| interface_event_declaration 
-          { 
-		if ($1 != null){
-			Event e = (Event) $1;
-
-			if (e.IsExplicitImpl)
-		        Report.Error (541, e.Location, "`{0}': explicit interface declaration can only be declared in a class or struct",
-				e.GetSignatureForError ());
-			
-			current_container.AddEvent (e);
-		}
-
-		if (RootContext.Documentation != null)
-			Lexer.doc_state = XmlCommentState.Allowed;
-	  }
-	| interface_indexer_declaration
-	  { 
-		if ($1 == null)
-			break;
-
-		Indexer i = (Indexer) $1;
-
-		if (i.IsExplicitImpl)
-		        Report.Error (541, i.Location, "`{0}': explicit interface declaration can only be declared in a class or struct",
-				i.GetSignatureForError ());
-
-		current_container.AddIndexer (i);
-
-		if (RootContext.Documentation != null)
-			Lexer.doc_state = XmlCommentState.Allowed;
-	  }
-	| delegate_declaration
-	  {
-		if ($1 != null) {
-			Report.Error (524, GetLocation ($1), "`{0}': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants",
-				((MemberCore)$1).GetSignatureForError ());
-		}
-	  }
-	| class_declaration
-	  {
-		if ($1 != null) {
-			Report.Error (524, GetLocation ($1), "`{0}': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants",
-				((MemberCore)$1).GetSignatureForError ());
-		}
-	  }
-	| struct_declaration
-	  {
-		if ($1 != null) {
-			Report.Error (524, GetLocation ($1), "`{0}': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants",
-				((MemberCore)$1).GetSignatureForError ());
-		}
-	  }
-	| enum_declaration 
-	  {
-		if ($1 != null) {
-			Report.Error (524, GetLocation ($1), "`{0}': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants",
-				((MemberCore)$1).GetSignatureForError ());
-		}
-	  }
-	| interface_declaration 
-	  {
-		if ($1 != null) {
-			Report.Error (524, GetLocation ($1), "`{0}': Interfaces cannot declare classes, structs, interfaces, delegates, enumerations or constants",
-				((MemberCore)$1).GetSignatureForError ());
-		}
-	  } 
-	| constant_declaration
+	: constant_declaration
 	  {
 		Report.Error (525, GetLocation ($1), "Interfaces cannot contain fields or constants");
 	  }
-	;
-
-opt_new
-	: opt_modifiers 
+	| field_declaration
 	  {
-		int val = (int) $1;
-		val = Modifiers.Check (Modifiers.NEW | Modifiers.UNSAFE, val, 0, GetLocation ($1));
-		$$ = val;
+		Report.Error (525, GetLocation ($1), "Interfaces cannot contain fields or constants");
 	  }
-	;
-
-interface_method_declaration_body
-	: OPEN_BRACE 
+	| method_declaration
+	| property_declaration
+	| event_declaration
+	| indexer_declaration
+	| operator_declaration
 	  {
-		Report.Error (531, (Location)$1,
-			      "`{0}.{1}{2}': interface members cannot have a definition",
-			      current_class.GetSignatureForError (),
-			      ((MemberName) $-0).GetSignatureForError (),
-			      ((Parameters)$-4).GetSignatureForError ());
-	  
-		lexer.ConstraintsParsing = false;
+	  	Report.Error (567, GetLocation ($1), "Interfaces cannot contain operators");
 	  }
-	  opt_statement_list CLOSE_BRACE
+	| constructor_declaration
 	  {
-		$$ = null;
+	  	Report.Error (526, GetLocation ($1), "Interfaces cannot contain contructors");
 	  }
-	| SEMICOLON
-	;
-
-interface_method_declaration
-	: opt_attributes opt_new type namespace_or_type_name
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	| type_declaration
 	  {
-		lexer.ConstraintsParsing = true;
-	  }
-	  opt_type_parameter_constraints_clauses
-	  {
-		// Refer to the name as $-1 in interface_method_declaration_body	  
-		$$ = $4;
-	  }
-	  interface_method_declaration_body
-	  {
-		lexer.ConstraintsParsing = false;
-
-		MemberName name = (MemberName) $4;
-
-		if ($9 != null && name.TypeArguments == null)
-			Report.Error (80, lexer.Location,
-				      "Constraints are not allowed on non-generic declarations");
-
-		GenericMethod generic = null;
-		if (name.TypeArguments != null) {
-			generic = new GenericMethod (current_namespace, current_class, name,
-						     (FullNamedExpression) $3, (Parameters) $6);
-
-			generic.SetParameterInfo ((ArrayList) $9);
-		}
-
-		$$ = new Method (current_class, generic, (FullNamedExpression) $3, (int) $2, true, name,
-				 (Parameters) $6, (Attributes) $1);
-		if (RootContext.Documentation != null)
-			((Method) $$).DocComment = Lexer.consume_doc_comment ();
-	  }
-	| opt_attributes opt_new VOID namespace_or_type_name
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
-	  {
-		lexer.ConstraintsParsing = true;
-	  }
-	  opt_type_parameter_constraints_clauses
-	  {
-		$$ = $4;
-	  }
-	  interface_method_declaration_body
-	  {
-		lexer.ConstraintsParsing = false;
-
-		MemberName name = (MemberName) $4;
-
-		if ($9 != null && name.TypeArguments == null)
-			Report.Error (80, lexer.Location,
-				      "Constraints are not allowed on non-generic declarations");
-
-		GenericMethod generic = null;
-		if (name.TypeArguments != null) {
-			generic = new GenericMethod (current_namespace, current_class, name,
-						     TypeManager.system_void_expr, (Parameters) $6);
-
-			generic.SetParameterInfo ((ArrayList) $9);
-		}
-
-		$$ = new Method (current_class, generic, TypeManager.system_void_expr, (int) $2,
-				 true, name, (Parameters) $6, (Attributes) $1);
-		if (RootContext.Documentation != null)
-			((Method) $$).DocComment = Lexer.consume_doc_comment ();
-	  }
-	;
-
-interface_property_declaration
-	: opt_attributes
-	  opt_new
-	  type IDENTIFIER 
-	  OPEN_BRACE 
-	  {
-		lexer.PropertyParsing = true;
-		implicit_value_parameter_type = (FullNamedExpression)$3;
-	  }
-	  accessor_declarations 
-	  {
-		has_get = has_set = false; 
-		lexer.PropertyParsing = false;
-		implicit_value_parameter_type = null;
-	  }
-	  CLOSE_BRACE
-	  {
-		LocatedToken lt = (LocatedToken) $4;
-		MemberName name = new MemberName (lt.Value, lt.Location);
-
-		if ($3 == TypeManager.system_void_expr) {
-			Report.Error (547, lt.Location, "`{0}': property or indexer cannot have void type", lt.Value);
-			break;
-		}
-
-		Property p = null;
-		if ($7 == null) {
-			p = new Property (current_class, (FullNamedExpression) $3, (int) $2, true,
-				   name, (Attributes) $1,
-				   null, null, false);
-
-			Report.Error (548, p.Location, "`{0}': property or indexer must have at least one accessor", p.GetSignatureForError ());
-			break;
-		}
-
-		Accessors accessor = (Accessors) $7;
-		p = new Property (current_class, (FullNamedExpression) $3, (int) $2, true,
-				   name, (Attributes) $1,
-				   accessor.get_or_add, accessor.set_or_remove, accessor.declared_in_reverse);
-
-		if (accessor.get_or_add != null && accessor.get_or_add.Block != null) {
-			Report.Error (531, p.Location, "`{0}.get': interface members cannot have a definition", p.GetSignatureForError ());
-			$$ = null;
-			break;
-		}
-
-		if (accessor.set_or_remove != null && accessor.set_or_remove.Block != null) {
-			Report.Error (531, p.Location, "`{0}.set': interface members cannot have a definition", p.GetSignatureForError ());
-			$$ = null;
-			break;
-		}
-
-		if (RootContext.Documentation != null)
-			p.DocComment = Lexer.consume_doc_comment ();
-
-		$$ = p;
-	  }
-	| opt_attributes
-	  opt_new
-	  type error {
-		CheckIdentifierToken (yyToken, GetLocation ($4));
-		$$ = null;
-	  }
-	;
-
-
-interface_event_declaration
-	: opt_attributes opt_new EVENT type IDENTIFIER SEMICOLON
-	  {
-		LocatedToken lt = (LocatedToken) $5;
-		$$ = new EventField (current_class, (FullNamedExpression) $4, (int) $2, true,
-				     new MemberName (lt.Value, lt.Location),
-				     (Attributes) $1);
-		if (RootContext.Documentation != null)
-			((EventField) $$).DocComment = Lexer.consume_doc_comment ();
-	  }
-	| opt_attributes opt_new EVENT type error {
-		CheckIdentifierToken (yyToken, GetLocation ($5));
-		$$ = null;
-	  }
-	| opt_attributes opt_new EVENT type IDENTIFIER ASSIGN  {
-		LocatedToken lt = (LocatedToken) $5;
-		Report.Error (68, lt.Location, "`{0}.{1}': event in interface cannot have initializer", current_container.Name, lt.Value);
-		$$ = null;
-	  }
-	| opt_attributes opt_new EVENT type IDENTIFIER OPEN_BRACE
-	  {
-		implicit_value_parameter_type = (FullNamedExpression) $4;
-		lexer.EventParsing = true;
-	  }
-	  event_accessor_declarations
-	  {
-		lexer.EventParsing = false;
-		implicit_value_parameter_type = null;
-	  }
-	  CLOSE_BRACE {
-		Report.Error (69, (Location) $3, "Event in interface cannot have add or remove accessors");
- 		$$ = null;
- 	  }
-	;
-
-interface_indexer_declaration 
-	: opt_attributes opt_new type THIS 
-	  OPEN_BRACKET opt_parameter_list_no_mod CLOSE_BRACKET
-	  OPEN_BRACE
-	  {
-		lexer.PropertyParsing = true;
-		implicit_value_parameter_type = (FullNamedExpression)$3;
-	  }
-	  accessor_declarations 
-	  { 
-		has_get = has_set = false;
- 		lexer.PropertyParsing = false;
- 		implicit_value_parameter_type = null;
-	  }
-	  CLOSE_BRACE
-	  {
-		Indexer i = null;
-		if ($10 == null) {
-			i = new Indexer (current_class, (FullNamedExpression) $3,
-				  new MemberName (TypeContainer.DefaultIndexerName, (Location) $4),
-				  (int) $2, true, (Parameters) $6, (Attributes) $1,
-				  null, null, false);
-
-			Report.Error (548, i.Location, "`{0}': property or indexer must have at least one accessor", i.GetSignatureForError ());
-			break;
-		}
-
-		Accessors accessors = (Accessors) $10;
-		i = new Indexer (current_class, (FullNamedExpression) $3,
-				  new MemberName (TypeContainer.DefaultIndexerName, (Location) $4),
-				  (int) $2, true, (Parameters) $6, (Attributes) $1,
-				   accessors.get_or_add, accessors.set_or_remove, accessors.declared_in_reverse);
-
-		if (accessors.get_or_add != null && accessors.get_or_add.Block != null) {
-			Report.Error (531, i.Location, "`{0}.get': interface members cannot have a definition", i.GetSignatureForError ());
-			$$ = null;
-			break;
-		}
-
-		if (accessors.set_or_remove != null && accessors.set_or_remove.Block != null) {
-			Report.Error (531, i.Location, "`{0}.set': interface members cannot have a definition", i.GetSignatureForError ());
-			$$ = null;
-			break;
-		}
-
-		if (RootContext.Documentation != null)
-			i.DocComment = ConsumeStoredComment ();
-
-		$$ = i;
+	  	Report.Error (524, GetLocation ($1), "Interfaces cannot declare classes, structs, interfaces, delegates, or enumerations");
 	  }
 	;
 
@@ -2402,14 +2093,8 @@ constructor_initializer
 	  }
 	;
 
-opt_finalizer
-        : /* EMPTY */           { $$ = 0; }
-        | UNSAFE		{ $$ = Modifiers.UNSAFE; }
-	| EXTERN		{ $$ = Modifiers.EXTERN; }
-        ;
-        
 destructor_declaration
-	: opt_attributes opt_finalizer TILDE 
+	: opt_attributes opt_modifiers TILDE 
 	  {
 		if (RootContext.Documentation != null) {
 			tmpComment = Lexer.consume_doc_comment ();
@@ -2424,17 +2109,9 @@ destructor_declaration
 		} else if (current_container.Kind != Kind.Class){
 			Report.Error (575, lt.Location, "Only class types can contain destructor");
 		} else {
-			Location l = lt.Location;
-
-			int m = (int) $2;
-			if (!RootContext.StdLib && current_container.Name == "System.Object")
-				m |= Modifiers.PROTECTED | Modifiers.VIRTUAL;
-			else
-				m |= Modifiers.PROTECTED | Modifiers.OVERRIDE;
-                        
 			Method d = new Destructor (
-				current_class, TypeManager.system_void_expr, m, "Finalize", 
-				Parameters.EmptyReadOnlyParameters, (Attributes) $1, l);
+				current_class, TypeManager.system_void_expr, (int) $2, "Finalize", 
+				Parameters.EmptyReadOnlyParameters, (Attributes) $1, lt.Location);
 			if (RootContext.Documentation != null)
 				d.DocComment = ConsumeStoredComment ();
 		  
@@ -2456,10 +2133,16 @@ event_declaration
 				var.Location);
 
 			EventField e = new EventField (
-				current_class, (FullNamedExpression) $4, (int) $2, false, name,
+				current_class, (FullNamedExpression) $4, (int) $2, name,
 				(Attributes) $1);
+				
+			if (var.expression_or_array_initializer != null) {
+				if (current_container.Kind == Kind.Interface) {
+					Report.Error (68, e.Location, "`{0}': event in interface cannot have initializer", e.GetSignatureForError ());
+				}
 
-			e.Initializer = var.expression_or_array_initializer;
+				e.Initializer = var.expression_or_array_initializer;
+			}
 
 			current_container.AddEvent (e);
 
@@ -2484,6 +2167,10 @@ event_declaration
 	  CLOSE_BRACE
 	  {
 		MemberName name = (MemberName) $5;
+		
+		if (current_container.Kind == Kind.Interface) {
+			Report.Error (69, (Location) $3, "Event in interface cannot have add or remove accessors");
+		}
 
 		if ($8 == null){
 			Report.Error (65, (Location) $3, "`{0}.{1}': event property must have both add and remove accessors",
@@ -2500,7 +2187,7 @@ event_declaration
 				$$ = null;
 			else {
 				Event e = new EventProperty (
-					current_class, (FullNamedExpression) $4, (int) $2, false, name,
+					current_class, (FullNamedExpression) $4, (int) $2, name,
 					(Attributes) $1, accessors.get_or_add, accessors.set_or_remove);
 				if (RootContext.Documentation != null) {
 					e.DocComment = Lexer.consume_doc_comment ();
@@ -2627,17 +2314,15 @@ indexer_declaration
 	  }
 	  CLOSE_BRACE
 	  { 
-		if ($6 == null)
-			break;
-
 		// The signature is computed from the signature of the indexer.  Look
 	 	// at section 3.6 on the spec
 		Indexer indexer;
 		IndexerDeclaration decl = (IndexerDeclaration) $3;
 		Location loc = decl.location;
 		Accessors accessors = (Accessors) $6;
-		Accessor get_block = accessors.get_or_add;
-		Accessor set_block = accessors.set_or_remove;
+		Accessor get_block = accessors != null ? accessors.get_or_add : null;
+		Accessor set_block = accessors != null ? accessors.set_or_remove : null;
+		bool order = accessors != null ? accessors.declared_in_reverse : false;
 
 		MemberName name;
 		if (decl.interface_type != null)
@@ -2646,8 +2331,22 @@ indexer_declaration
 			name = new MemberName (TypeContainer.DefaultIndexerName, loc);
 
 		indexer = new Indexer (current_class, decl.type, name,
-				       (int) $2, false, decl.param_list, (Attributes) $1,
-				       get_block, set_block, accessors.declared_in_reverse);
+				       (int) $2, decl.param_list, (Attributes) $1,
+				       get_block, set_block, order);
+				       
+		if (decl.type == TypeManager.system_void_expr)
+			Report.Error (620, loc, "`{0}': indexer return type cannot be `void'", indexer.GetSignatureForError ());
+			
+		if (accessors == null)
+			Report.Error (548, indexer.Location, "`{0}': property or indexer must have at least one accessor", indexer.GetSignatureForError ());
+
+		if (current_container.Kind == Kind.Interface) {
+			if (indexer.Get.Block != null)
+				Report.Error (531, indexer.Location, "`{0}.get': interface members cannot have a definition", indexer.GetSignatureForError ());
+
+			if (indexer.Set.Block != null)
+				Report.Error (531, indexer.Location, "`{0}.set': interface members cannot have a definition", indexer.GetSignatureForError ());
+		}
 
 		if (RootContext.Documentation != null)
 			indexer.DocComment = ConsumeStoredComment ();
