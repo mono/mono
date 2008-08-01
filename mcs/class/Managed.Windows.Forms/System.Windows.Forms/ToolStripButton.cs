@@ -179,6 +179,11 @@ namespace System.Windows.Forms
 				this.Checked = !this.Checked;
 
 			base.OnClick (e);
+
+			ToolStrip ts = this.GetTopLevelToolStrip ();
+			
+			if (ts != null)
+				ts.Dismiss (ToolStripDropDownCloseReason.ItemClicked);
 		}
 
 		protected override void OnPaint (System.Windows.Forms.PaintEventArgs e)
