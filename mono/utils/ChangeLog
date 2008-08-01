@@ -1,3 +1,9 @@
+
+Fri Aug 1 15:48:53 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mono-mmap.h, mono-mmap.c: added support for storing some runtime data
+	in a shared memory page.
+
 2008-07-21  Bill Holmes  <billholmes54@gmail.com>
 
 	* mono-membar.h :  From previous commit.  When including glib.h,
