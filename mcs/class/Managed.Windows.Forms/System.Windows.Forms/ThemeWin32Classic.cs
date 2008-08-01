@@ -2423,7 +2423,7 @@ namespace System.Windows.Forms
 					if (!clip_rectangleF.IntersectsWith (fd.drawing_rectangle))
 						continue;
 
-					text = fd.GetText (dtp.Value);
+					text = dtp.editing_part_index == i ? dtp.editing_text : fd.GetText (dtp.Value);
 
 					PointF text_position = new PointF ();
 					SizeF text_size;
@@ -2443,7 +2443,7 @@ namespace System.Windows.Forms
 					else
 						text_format.FormatFlags |= StringFormatFlags.NoClip;
 					
-					if (fd.is_selected) {
+					if (fd.Selected) {
 						dc.FillRectangle (SystemBrushes.Highlight, text_rect);
 						dc.DrawString (text, dtp.Font, SystemBrushes.HighlightText, text_rect, text_format);
 					
