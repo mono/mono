@@ -1,3 +1,8 @@
+2008-08-01  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripButton.cs, ToolStripMenuItem.cs: Guard against a NRE my
+	last change introduced when an item is clicked but isn't on a toolstrip.
+
 2008-07-31  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBindingHelper.cs: When looking for an object's properties, check

@@ -180,7 +180,10 @@ namespace System.Windows.Forms
 
 			base.OnClick (e);
 
-			this.GetTopLevelToolStrip ().Dismiss (ToolStripDropDownCloseReason.ItemClicked);
+			ToolStrip ts = this.GetTopLevelToolStrip ();
+			
+			if (ts != null)
+				ts.Dismiss (ToolStripDropDownCloseReason.ItemClicked);
 		}
 
 		protected override void OnPaint (System.Windows.Forms.PaintEventArgs e)

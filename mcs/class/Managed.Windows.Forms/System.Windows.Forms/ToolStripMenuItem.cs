@@ -257,8 +257,12 @@ namespace System.Windows.Forms
 
 			base.OnClick (e);
 			
-			if (!this.IsOnDropDown && !this.HasDropDownItems)
-				this.GetTopLevelToolStrip ().Dismiss (ToolStripDropDownCloseReason.ItemClicked);
+			if (!this.IsOnDropDown && !this.HasDropDownItems) {
+				ToolStrip ts = this.GetTopLevelToolStrip ();
+
+				if (ts != null)
+					ts.Dismiss (ToolStripDropDownCloseReason.ItemClicked);
+			}
 		}
 
 		protected override void OnDropDownHide (EventArgs e)
