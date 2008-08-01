@@ -1,3 +1,12 @@
+2008-08-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBindingHelper.cs: When looking for an object's properties, check
+	if it implements ICustomTypeDescriptor, in which case we should
+	resolve the propertu based on its GetProperties method, not in its
+	actual properties. This is what .Net seems to do.
+	Fixes a UsingWebBrowser problem during initialization.
+
+
 2008-08-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripButton.cs, ToolStripMenuItem.cs: Guard against a NRE my

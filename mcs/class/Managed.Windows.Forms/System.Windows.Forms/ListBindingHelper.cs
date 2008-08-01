@@ -66,7 +66,7 @@ namespace System.Windows.Forms
 				dataSource = e.Current;
 			}
 
-			PropertyDescriptor property = GetProperty (dataSource.GetType (), dataMember);
+			PropertyDescriptor property = GetProperty (dataSource, dataMember);
 			if (property == null)
 				throw new ArgumentException ("dataMember");
 
@@ -84,7 +84,7 @@ namespace System.Windows.Forms
 				return null;
 
 			if (dataMember != null && dataMember.Length > 0) {
-				PropertyDescriptor property = GetProperty (dataSource.GetType (), dataMember);
+				PropertyDescriptor property = GetProperty (dataSource, dataMember);
 				if (property == null)
 					return typeof (object);
 
@@ -160,10 +160,15 @@ namespace System.Windows.Forms
 			return item_type.Name;
 		}
 
-		static PropertyDescriptor GetProperty (Type type, string property_name)
+		static PropertyDescriptor GetProperty (object obj, string property_name)
 		{
-			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties (type, 
-				new Attribute [] { new BrowsableAttribute (true) });
+			Attribute [] attrs = new Attribute [] { new BrowsableAttribute (true) };
+
+			PropertyDescriptorCollection properties;
+			if (obj is ICustomTypeDescriptor)
+				properties = ((ICustomTypeDescriptor)obj).GetProperties (attrs);
+			else
+				properties = TypeDescriptor.GetProperties (obj.GetType (), attrs);
 
 			return properties [property_name];
 		}
