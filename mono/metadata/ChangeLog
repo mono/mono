@@ -1,4 +1,8 @@
 
+Fri Aug 1 18:47:48 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mono-perfcounters.c: jitted methods and jitted bytes counters.
+
 Fri Aug 1 16:07:09 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* class-internals.h, icall-def.h, mono-perfcounters-def.h,
