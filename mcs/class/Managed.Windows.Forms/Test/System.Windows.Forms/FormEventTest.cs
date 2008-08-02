@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Threading;
+using Timer = System.Windows.Forms.Timer;
 using System.Globalization;
 
 namespace MonoTests.System.Windows.Forms
@@ -25,55 +26,490 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = true;
 		}
 
-		[Test, Ignore ("Manual Intervention")]
-		public void ActivatedTest ()
+		private Form _form;
+
+		[TearDown]
+		public void TearDown ()
 		{
-			Form myform = new Form ();
-			myform.ShowInTaskbar = false;
-			myform.Activated += new EventHandler (New_EventHandler);
-			myform.Activate ();
-			myform.ShowDialog ();
-			Assert.AreEqual (true, eventhandled, "#A1");
+			if (_form != null)
+				_form.Dispose ();
 		}
 
-		[Test, Ignore ("Manual Intervention")]
-		public void ClosedTest ()
+		[Test]
+		public void Activated ()
 		{
-			Form myform = new Form ();
-			myform.ShowInTaskbar = false;
-			myform.Closed += new EventHandler (New_EventHandler);
-			eventhandled = false;
-			myform.Close ();
-			myform.ShowDialog ();
-			Assert.AreEqual (true, eventhandled, "#A2");
+			if (TestHelper.RunningOnUnix)
+				Assert.Ignore ("#7 fails");
+
+			_form = new Form ();
+			EventLogger logger = new EventLogger (_form);
+			_form.ShowInTaskbar = false;
+			Assert.AreEqual (0, logger.CountEvents ("Activated"), "#1");
+			_form.Activate ();
+			Application.DoEvents ();
+			Assert.AreEqual (0, logger.CountEvents ("Activated"), "#2");
+			_form.Show ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("Activated"), "#3");
+			_form.Show ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("Activated"), "#4");
+			_form.Activate ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("Activated"), "#5");
+			_form.Hide ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("Activated"), "#6");
+			_form.Show ();
+			Application.DoEvents ();
+			Assert.AreEqual (2, logger.CountEvents ("Activated"), "#7");
 		}
 
-		[Test, Ignore ("Manual Intervention")]
-		public void DeactivateTest ()
+		[Test]
+		public void Activated_Dialog ()
 		{
-			Form myform = new Form ();
-			myform.ShowInTaskbar = false;
-			myform.Deactivate += new EventHandler (New_EventHandler);
-			eventhandled = false;
-			myform.Close ();
-			myform.Activate ();
-			myform.ShowDialog ();
-			Assert.AreEqual (true, eventhandled, "#A3");
+			if (TestHelper.RunningOnUnix)
+				Assert.Ignore ("#4 fails");
+
+			_form = new DelayedCloseForm ();
+			EventLogger logger = new EventLogger (_form);
+			_form.ShowInTaskbar = false;
+			Assert.AreEqual (0, logger.CountEvents ("Activated"), "#1");
+			_form.Activate ();
+			Assert.AreEqual (0, logger.CountEvents ("Activated"), "#2");
+			_form.ShowDialog ();
+			Assert.AreEqual (1, logger.CountEvents ("Activated"), "#3");
+			_form.ShowDialog ();
+			Assert.AreEqual (2, logger.CountEvents ("Activated"), "#4");
 		}
 
-		[Test, Ignore ("Manual Intervention")]
-		public void LoadTest ()
+		[Test]
+		public void Closed ()
 		{
-			Form myform = new Form ();
-			myform.ShowInTaskbar = false;
-			myform.Load += new EventHandler (New_EventHandler);
-			eventhandled = false;
-			myform.ShowDialog ();
-			Assert.AreEqual (true, eventhandled, "#A4");
-			myform.Dispose ();
+			_form = new Form ();
+			EventLogger logger = new EventLogger (_form);
+			_form.ShowInTaskbar = false;
+			_form.Show ();
+			Application.DoEvents ();
+			Assert.AreEqual (0, logger.CountEvents ("Closed"), "#1");
+			_form.Close ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("Closed"), "#2");
+			_form.Close ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("Closed"), "#3");
 		}
 
-		class MyForm : Form 
+		[Test]
+		public void Closed_Dialog ()
+		{
+			_form = new DelayedCloseForm ();
+			EventLogger logger = new EventLogger (_form);
+			_form.ShowInTaskbar = false;
+			_form.ShowDialog ();
+			Assert.AreEqual (1, logger.CountEvents ("Closed"), "#1");
+			_form.ShowDialog ();
+			Assert.AreEqual (2, logger.CountEvents ("Closed"), "#2");
+			_form.Close ();
+			Application.DoEvents ();
+			Assert.AreEqual (2, logger.CountEvents ("Closed"), "#3");
+		}
+
+		[Test]
+		public void Closing ()
+		{
+			_form = new Form ();
+			EventLogger logger = new EventLogger (_form);
+			_form.ShowInTaskbar = false;
+			_form.Show ();
+			Application.DoEvents ();
+			Assert.AreEqual (0, logger.CountEvents ("Closing"), "#1");
+			_form.Close ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("Closing"), "#2");
+		}
+
+		[Test]
+		public void Closing_Dialog ()
+		{
+			_form = new DelayedCloseForm ();
+			EventLogger logger = new EventLogger (_form);
+			_form.ShowInTaskbar = false;
+			_form.ShowDialog ();
+			Assert.AreEqual (1, logger.CountEvents ("Closing"), "#1");
+			_form.ShowDialog ();
+			Assert.AreEqual (2, logger.CountEvents ("Closing"), "#2");
+			_form.Close ();
+			Application.DoEvents ();
+			Assert.AreEqual (2, logger.CountEvents ("Closing"), "#3");
+		}
+
+		[Test]
+		public void Deactivate ()
+		{
+			if (TestHelper.RunningOnUnix)
+				Assert.Ignore ("#3 or #5 fail");
+
+			_form = new Form ();
+			EventLogger logger = new EventLogger (_form);
+			_form.ShowInTaskbar = false;
+			_form.Activate ();
+			Application.DoEvents ();
+			Assert.AreEqual (0, logger.CountEvents ("Deactivate"), "#1");
+			_form.Show ();
+			Application.DoEvents ();
+			Assert.AreEqual (0, logger.CountEvents ("Deactivate"), "#2");
+			_form.Hide ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("Deactivate"), "#3");
+			_form.Show ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("Deactivate"), "#4");
+			_form.Hide ();
+			Application.DoEvents ();
+			Assert.AreEqual (2, logger.CountEvents ("Deactivate"), "#5");
+			_form.Close ();
+			Application.DoEvents ();
+			Assert.AreEqual (2, logger.CountEvents ("Deactivate"), "#6");
+			_form.Close ();
+			Application.DoEvents ();
+			Assert.AreEqual (2, logger.CountEvents ("Deactivate"), "#7");
+		}
+
+		[Test]
+		public void Deactivate_Dialog ()
+		{
+			if (TestHelper.RunningOnUnix)
+				Assert.Ignore ("#2 sometimes fails");
+
+			_form = new DelayedCloseForm ();
+			EventLogger logger = new EventLogger (_form);
+			_form.ShowInTaskbar = false;
+			_form.Activate ();
+			Assert.AreEqual (0, logger.CountEvents ("Deactivate"), "#1");
+			_form.ShowDialog ();
+			Assert.AreEqual (1, logger.CountEvents ("Deactivate"), "#2");
+			_form.Close ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("Deactivate"), "#3");
+		}
+
+		[Test] // bug #413898
+		public void EventOrder ()
+		{
+			if (TestHelper.RunningOnUnix)
+				Assert.Ignore ("#A3 fails");
+
+			string [] expectedEvents_Show = {
+				"Load",
+				"VisibleChanged",
+				"GotFocus",
+				"Activated" };
+
+			string [] expectedEvents_Close = {
+				"Closing",
+#if NET_2_0
+				"FormClosing",
+#endif
+				"Closed",
+#if NET_2_0
+				"FormClosed",
+#endif
+				"Deactivate",
+				"LostFocus",
+				"HandleDestroyed",
+				"Disposed" };
+
+			_form = new Form ();
+			EventLogger logger = new EventLogger (_form);
+
+			_form.Show ();
+			Application.DoEvents ();
+
+			Assert.IsTrue (logger.ContainsEventsOrdered (expectedEvents_Show), "#A1:" + logger.EventsJoined());
+			Assert.AreEqual (1, logger.CountEvents ("Load"), "#A2");
+			Assert.AreEqual (1, logger.CountEvents ("VisibleChanged"), "#A3");
+			Assert.AreEqual (1, logger.CountEvents ("GotFocus"), "#A4");
+			Assert.AreEqual (1, logger.CountEvents ("Activated"), "#A5");
+			Assert.AreEqual (0, logger.CountEvents ("Closing"), "#A6");
+#if NET_2_0
+			Assert.AreEqual (0, logger.CountEvents ("FormClosing"), "#A7");
+#endif
+			Assert.AreEqual (0, logger.CountEvents ("Closed"), "#A8");
+#if NET_2_0
+			Assert.AreEqual (0, logger.CountEvents ("FormClosed"), "#A9");
+#endif
+			Assert.AreEqual (0, logger.CountEvents ("Deactivate"), "#A10");
+			Assert.AreEqual (0, logger.CountEvents ("LostFocus"), "#A11");
+			Assert.AreEqual (0, logger.CountEvents ("HandleDestroyed"), "#A12");
+			Assert.AreEqual (0, logger.CountEvents ("Disposed"), "#A13");
+
+			logger.Clear ();
+			_form.Close ();
+			Application.DoEvents ();
+
+			Assert.IsTrue (logger.ContainsEventsOrdered (expectedEvents_Close), "#B1:" + logger.EventsJoined ());
+			Assert.AreEqual (0, logger.CountEvents ("Load"), "#B2");
+			Assert.AreEqual (0, logger.CountEvents ("VisibleChanged"), "#B3");
+			Assert.AreEqual (0, logger.CountEvents ("GotFocus"), "#B4");
+			Assert.AreEqual (0, logger.CountEvents ("Activated"), "#B5");
+			Assert.AreEqual (1, logger.CountEvents ("Closing"), "#B6");
+#if NET_2_0
+			Assert.AreEqual (1, logger.CountEvents ("FormClosing"), "#B7");
+#endif
+			Assert.AreEqual (1, logger.CountEvents ("Closed"), "#B8");
+#if NET_2_0
+			Assert.AreEqual (1, logger.CountEvents ("FormClosed"), "#B9");
+#endif
+			Assert.AreEqual (1, logger.CountEvents ("Deactivate"), "#B10");
+			Assert.AreEqual (1, logger.CountEvents ("LostFocus"), "#B11");
+			Assert.AreEqual (1, logger.CountEvents ("HandleDestroyed"), "#B12");
+			Assert.AreEqual (1, logger.CountEvents ("Disposed"), "#B13");
+		}
+
+		[Test] // bug #413898
+		public void EventOrder_Dialog ()
+		{
+			if (TestHelper.RunningOnUnix)
+				Assert.Ignore ("#A1 fails");
+
+			string [] expectedEvents = {
+				"Load",
+				"VisibleChanged",
+				"GotFocus",
+				"Activated",
+				"Closing",
+#if NET_2_0
+				"FormClosing",
+#endif
+				"Closed",
+#if NET_2_0
+				"FormClosed",
+#endif
+				"VisibleChanged",
+				"Deactivate",
+				"LostFocus",
+				"HandleDestroyed" };
+
+			_form = new DelayedCloseForm ();
+			EventLogger logger = new EventLogger (_form);
+
+			_form.ShowDialog ();
+			Assert.IsTrue (logger.ContainsEventsOrdered (expectedEvents), "#A1:" + logger.EventsJoined ());
+			Assert.AreEqual (1, logger.CountEvents ("Load"), "#A2");
+			Assert.AreEqual (2, logger.CountEvents ("VisibleChanged"), "#A3");
+			Assert.AreEqual (1, logger.CountEvents ("GotFocus"), "#A4");
+			Assert.AreEqual (1, logger.CountEvents ("Activated"), "#A5");
+			Assert.AreEqual (1, logger.CountEvents ("Closing"), "#A6");
+#if NET_2_0
+			Assert.AreEqual (1, logger.CountEvents ("FormClosing"), "#A7");
+#endif
+			Assert.AreEqual (1, logger.CountEvents ("Closed"), "#A8");
+#if NET_2_0
+			Assert.AreEqual (1, logger.CountEvents ("FormClosed"), "#A9");
+#endif
+			Assert.AreEqual (1, logger.CountEvents ("Deactivate"), "#A10");
+			Assert.AreEqual (1, logger.CountEvents ("LostFocus"), "#A11");
+			Assert.AreEqual (1, logger.CountEvents ("HandleDestroyed"), "#A12");
+			Assert.AreEqual (0, logger.CountEvents ("Disposed"), "#A13");
+
+			logger.Clear ();
+
+			_form.ShowDialog ();
+			Assert.IsTrue (logger.ContainsEventsOrdered (expectedEvents), "#B1:" + logger.EventsJoined ());
+			Assert.AreEqual (1, logger.CountEvents ("Load"), "#B2");
+			Assert.AreEqual (2, logger.CountEvents ("VisibleChanged"), "#B3");
+			Assert.AreEqual (1, logger.CountEvents ("GotFocus"), "#B4");
+			Assert.AreEqual (1, logger.CountEvents ("Activated"), "#B5");
+			Assert.AreEqual (1, logger.CountEvents ("Closing"), "#B6");
+#if NET_2_0
+			Assert.AreEqual (1, logger.CountEvents ("FormClosing"), "#B7");
+#endif
+			Assert.AreEqual (1, logger.CountEvents ("Closed"), "#B8");
+#if NET_2_0
+			Assert.AreEqual (1, logger.CountEvents ("FormClosed"), "#B9");
+#endif
+			Assert.AreEqual (1, logger.CountEvents ("Deactivate"), "#B10");
+			Assert.AreEqual (1, logger.CountEvents ("LostFocus"), "#B11");
+			Assert.AreEqual (1, logger.CountEvents ("HandleDestroyed"), "#B12");
+			Assert.AreEqual (0, logger.CountEvents ("Disposed"), "#B13");
+		}
+
+#if NET_2_0
+		[Test]
+		public void FormClosed ()
+		{
+			_form = new Form ();
+			EventLogger logger = new EventLogger (_form);
+			_form.ShowInTaskbar = false;
+			Assert.AreEqual (0, logger.CountEvents ("FormClosed"), "#1");
+			_form.Show ();
+			Application.DoEvents ();
+			Assert.AreEqual (0, logger.CountEvents ("FormClosed"), "#2");
+			_form.Close ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("FormClosed"), "#3");
+			_form.Close ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("FormClosed"), "#4");
+			_form.Close ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("FormClosed"), "#5");
+		}
+
+		[Test]
+		public void FormClosed_Dialog ()
+		{
+			_form = new DelayedCloseForm ();
+			EventLogger logger = new EventLogger (_form);
+			_form.ShowInTaskbar = false;
+			Assert.AreEqual (0, logger.CountEvents ("FormClosed"), "#1");
+			_form.ShowDialog ();
+			Assert.AreEqual (1, logger.CountEvents ("FormClosed"), "#2");
+			_form.Close ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("FormClosed"), "#3");
+			_form.Close ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("FormClosed"), "#4");
+		}
+
+		[Test]
+		public void FormClosing ()
+		{
+			_form = new Form ();
+			EventLogger logger = new EventLogger (_form);
+			_form.ShowInTaskbar = false;
+			Assert.AreEqual (0, logger.CountEvents ("FormClosing"), "#1");
+			_form.Show ();
+			Application.DoEvents ();
+			Assert.AreEqual (0, logger.CountEvents ("FormClosing"), "#2");
+			_form.Close ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("FormClosing"), "#3");
+			_form.Close ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("FormClosing"), "#4");
+			_form.Close ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("FormClosing"), "#5");
+		}
+
+		[Test]
+		public void FormClosing_Dialog ()
+		{
+			_form = new DelayedCloseForm ();
+			EventLogger logger = new EventLogger (_form);
+			_form.ShowInTaskbar = false;
+			Assert.AreEqual (0, logger.CountEvents ("FormClosing"));
+			_form.ShowDialog ();
+			Assert.AreEqual (1, logger.CountEvents ("FormClosing"));
+			_form.ShowDialog ();
+			Assert.AreEqual (2, logger.CountEvents ("FormClosing"));
+		}
+#endif
+
+		[Test]
+		public void Load ()
+		{
+			_form = new Form ();
+			EventLogger logger = new EventLogger (_form);
+			_form.ShowInTaskbar = false;
+			Assert.AreEqual (0, logger.CountEvents ("Load"), "#1");
+			_form.Show ();
+			Assert.AreEqual (1, logger.CountEvents ("Load"), "#2");
+			_form.Show ();
+			Assert.AreEqual (1, logger.CountEvents ("Load"), "#3");
+			_form.Hide ();
+			Assert.AreEqual (1, logger.CountEvents ("Load"), "#4");
+			_form.Show ();
+			Assert.AreEqual (1, logger.CountEvents ("Load"), "#5");
+		}
+
+		[Test]
+		public void Load_Dialog ()
+		{
+			_form = new DelayedCloseForm ();
+			EventLogger logger = new EventLogger (_form);
+			_form.ShowInTaskbar = false;
+			Assert.AreEqual (0, logger.CountEvents ("Load"), "#1");
+			_form.ShowDialog ();
+			Assert.AreEqual (1, logger.CountEvents ("Load"), "#2");
+			_form.ShowDialog ();
+			Assert.AreEqual (2, logger.CountEvents ("Load"), "#3");
+		}
+
+#if NET_2_0
+		[Test]
+		public void Shown ()
+		{
+			_form = new Form ();
+			EventLogger logger = new EventLogger (_form);
+			//_form.ShowInTaskbar = false;
+			Assert.AreEqual (0, logger.CountEvents ("Shown"), "#1");
+			_form.Show ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("Shown"), "#2");
+			_form.Show ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("Shown"), "#3");
+			_form.Hide ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("Shown"), "#4");
+			_form.Show ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("Shown"), "#5");
+			_form.Close ();
+			Application.DoEvents ();
+			Assert.AreEqual (1, logger.CountEvents ("Shown"), "#6");
+		}
+
+		[Test]
+		public void Shown_Dialog ()
+		{
+			_form = new DelayedCloseForm ();
+			EventLogger logger = new EventLogger (_form);
+			_form.ShowInTaskbar = false;
+			Assert.AreEqual (0, logger.CountEvents ("Shown"), "#1");
+			_form.ShowDialog ();
+			Assert.AreEqual (1, logger.CountEvents ("Shown"), "#2");
+			_form.ShowDialog ();
+			Assert.AreEqual (2, logger.CountEvents ("Shown"), "#3");
+		}
+#endif
+
+		class DelayedCloseForm : Form
+		{
+			private Timer _timer;
+
+			public DelayedCloseForm ()
+			{
+				_timer = new Timer ();
+				_timer.Tick += new EventHandler (OnTick);
+				_timer.Interval = 50;
+
+				Closed += new EventHandler (OnClosed);
+				Load += new EventHandler (OnLoad);
+			}
+
+			void OnClosed (object sender, EventArgs e)
+			{
+				_timer.Enabled = false;
+			}
+
+			void OnLoad (object sender, EventArgs e)
+			{
+				_timer.Enabled = true;
+			}
+
+			void OnTick (object sender, EventArgs e)
+			{
+				Close ();
+				Application.DoEvents ();
+			}
+		}
+
+		class MyForm : Form
 		{
 			public void MaximizeBoundsTest ()
 			{
@@ -84,24 +520,22 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void MaximizedBoundsChangedTest ()
 		{
-			MyForm myform = new MyForm ();
-			myform.MaximizedBoundsChanged += new EventHandler (New_EventHandler);
+			_form = new MyForm ();
+			_form.MaximizedBoundsChanged += new EventHandler (New_EventHandler);
 			eventhandled = false;
-			myform.MaximizeBoundsTest ();
+			((MyForm) _form).MaximizeBoundsTest ();
 			Assert.AreEqual (true, eventhandled, "#A5");
-			myform.Dispose ();
 		}
 
 		[Test]
 		public void MaximumSizeChangedTest ()
 		{
-			Form myform = new Form ();
-			myform.ShowInTaskbar = false;
-			myform.MaximumSizeChanged += new EventHandler (New_EventHandler);
+			_form = new Form ();
+			_form.ShowInTaskbar = false;
+			_form.MaximumSizeChanged += new EventHandler (New_EventHandler);
 			eventhandled = false;
-			myform.MaximumSize = new Size (500, 500);
+			_form.MaximumSize = new Size (500, 500);
 			Assert.AreEqual (true, eventhandled, "#A6");
-			myform.Dispose ();
 		}
 
 		[Test, Ignore ("Manual Intervention")]
@@ -129,13 +563,12 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void MinimumSizeChangedTest ()
 		{
-			Form myform = new Form ();
-			myform.ShowInTaskbar = false;
-			myform.MinimumSizeChanged += new EventHandler (New_EventHandler);
+			_form = new Form ();
+			_form.ShowInTaskbar = false;
+			_form.MinimumSizeChanged += new EventHandler (New_EventHandler);
 			eventhandled = false;
-			myform.MinimumSize = new Size(100, 100);
+			_form.MinimumSize = new Size(100, 100);
 			Assert.AreEqual (true, eventhandled, "#A10");
-			myform.Dispose ();
 		}
 	}
 
@@ -186,10 +619,8 @@ namespace MonoTests.System.Windows.Forms
 			CultureInfo oldci = Thread.CurrentThread.CurrentCulture;
 			CultureInfo oldcui = Thread.CurrentThread.CurrentUICulture;
 			InputLanguage oldil = InputLanguage.CurrentInputLanguage;
-			try 
-			{
-				if (InputLanguage.InstalledInputLanguages.Count > 1) 
-				{
+			try {
+				if (InputLanguage.InstalledInputLanguages.Count > 1) {
 					InputLanguage.CurrentInputLanguage = InputLanguage.InstalledInputLanguages[0];
 					myform.InputLanguageChanged += new InputLanguageChangedEventHandler (InputLanguage_Handler);
 					Thread.CurrentThread.CurrentCulture = new CultureInfo ("ta-IN");
@@ -197,9 +628,7 @@ namespace MonoTests.System.Windows.Forms
 					InputLanguage.CurrentInputLanguage = InputLanguage.InstalledInputLanguages[1];
 					Assert.AreEqual (true, eventhandled, "#A15");
 				}
-			}
-			finally 
-			{
+			} finally {
 				Thread.CurrentThread.CurrentCulture = oldci;
 				Thread.CurrentThread.CurrentUICulture = oldcui;
 				InputLanguage.CurrentInputLanguage = oldil;
@@ -209,7 +638,7 @@ namespace MonoTests.System.Windows.Forms
 	}
 
 	[TestFixture,Ignore ("Test Breaks")]
-	public class InputLanguageChangingdEvent
+	public class InputLanguageChangingEvent
 	{	
 		static bool eventhandled = false;
 		public void InputLangChanging_Handler(object sender,InputLanguageChangingEventArgs e)
@@ -218,15 +647,14 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		public void InputLanguageChangingEventTest ()		
+		public void InputLanguageChangingEventTest ()
 		{
 			Form myform = new Form ();
 			myform.ShowInTaskbar = false;
 			CultureInfo oldci = Thread.CurrentThread.CurrentCulture;
 			CultureInfo oldcui = Thread.CurrentThread.CurrentUICulture;
 			InputLanguage oldil = InputLanguage.CurrentInputLanguage;
-			try 
-			{
+			try {
 				if (InputLanguage.InstalledInputLanguages.Count > 1) 
 				{
 					InputLanguage.CurrentInputLanguage = InputLanguage.InstalledInputLanguages[0];
@@ -236,9 +664,7 @@ namespace MonoTests.System.Windows.Forms
 					InputLanguage.CurrentInputLanguage = InputLanguage.InstalledInputLanguages[1];
 					Assert.AreEqual (true, eventhandled, "#A16");
 				}
-			}
-			finally 
-			{
+			} finally {
 				Thread.CurrentThread.CurrentCulture = oldci;
 				Thread.CurrentThread.CurrentUICulture = oldcui;
 				InputLanguage.CurrentInputLanguage = oldil;

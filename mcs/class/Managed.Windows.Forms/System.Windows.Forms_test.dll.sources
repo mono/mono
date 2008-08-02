@@ -74,6 +74,7 @@ System.Windows.Forms/ErrorProviderTest.cs
 System.Windows.Forms/FlowPanelTests.cs
 System.Windows.Forms/FocusTest.cs
 System.Windows.Forms/FolderBrowserDialogTest.cs
+System.Windows.Forms/FormEventTest.cs
 System.Windows.Forms/FormHandleTest.cs
 System.Windows.Forms/FormTest.cs
 System.Windows.Forms/EventArgsTest.cs

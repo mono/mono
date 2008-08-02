@@ -1,3 +1,7 @@
+2008-08-02  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Windows.Forms_test.dll.sources: Added FormEventTest.cs.
+
 2008-07-11  Jonathan Pobst  <monkey@jpobst.com>
 
 	* System.Windows.Forms.dll.sources: Remove the clearlooks, nice,
