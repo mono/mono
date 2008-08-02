@@ -1,3 +1,10 @@
+2008-08-02  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Makefile
+	* t47.cs
+	* t47.exe.config
+	* t47.exe.expected: added test for bug #413203.
+
 2008-07-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* t46.cs: Improve test coverage.
