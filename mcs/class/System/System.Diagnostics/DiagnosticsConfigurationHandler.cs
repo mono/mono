@@ -485,6 +485,16 @@ namespace System.Diagnostics
 
 				l.TraceOutputOptions = trace_options;
 			}
+
+			string [] supported_attributes = l.GetSupportedAttributes ();
+			if (supported_attributes != null) {
+				for (int i = 0; i < supported_attributes.Length; i++) {
+					string key = supported_attributes [i];
+					string value = GetAttribute (attributes, key, false, child);
+					if (value != null)
+						l.Attributes.Add (key, value);
+				}
+			}
 #endif
 
 			listeners.Add (l);

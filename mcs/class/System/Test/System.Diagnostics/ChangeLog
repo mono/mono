@@ -1,3 +1,7 @@
+2008-08-02  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TraceListenerTest.cs: Added test for GetSupportedAttributes.
+
 2008-06-21  Robert Jordan  <robertj@gmx.net>
 
 	* ProcessTest.cs (Start_UseShellExecuteWithEmptyUserName):

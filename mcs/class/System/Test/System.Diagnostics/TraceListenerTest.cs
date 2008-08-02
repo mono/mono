@@ -41,6 +41,14 @@ namespace MonoTests.System.Diagnostics
 	{
 #if NET_2_0
 		[Test]
+		public void GetSupportedAttributes ()
+		{
+			MyTraceListener t = new MyTraceListener ();
+			string [] attributes = t.SupportedAttributes;
+			Assert.IsNull (attributes);
+		}
+
+		[Test]
 		public void TraceEventAndTraceData ()
 		{
 			StringWriter sw = new StringWriter ();
@@ -110,6 +118,23 @@ bulldog Transfer: 0 : hoge, relatedActivityId=00000000-0000-0000-0000-0000000000
 			Assert.AreEqual (expected, sw.ToString ().Replace ("\r\n", "\n"));
 		}
 #endif
+
+		class MyTraceListener : TraceListener
+		{
+#if NET_2_0
+			public string [] SupportedAttributes {
+				get { return base.GetSupportedAttributes (); }
+			}
+#endif
+
+			public override void Write (string message)
+			{
+			}
+
+			public override void WriteLine (string message)
+			{
+			}
+		}
 	}
 }
 

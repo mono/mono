@@ -303,13 +303,11 @@ namespace System.Diagnostics {
 			TraceEvent (eventCache, source, TraceEventType.Transfer, id, String.Format ("{0}, relatedActivityId={1}", message, relatedActivityId));
 		}
 
-		[MonoTODO ("The property exists but the values are not considered")]
-		protected virtual string [] GetSupportedAttributes ()
+		protected internal virtual string [] GetSupportedAttributes ()
 		{
-			return empty_array;
+			return null;
 		}
 
-		[MonoTODO ("The property exists but the values are not considered")]
 		public StringDictionary Attributes {
 			get { return attributes; }
 		}

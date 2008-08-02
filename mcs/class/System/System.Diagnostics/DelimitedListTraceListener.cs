@@ -83,7 +83,7 @@ namespace System.Diagnostics
 			}
 		}
 
-		protected override string [] GetSupportedAttributes ()
+		protected internal override string [] GetSupportedAttributes ()
 		{
 			return attributes;
 		}

@@ -1,5 +1,14 @@
+2008-08-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
-Fri Aug 1 16:09:31 CEST 2008 Paolo Molaro <lupus@ximian.com>
+	* DelimitedTraceListener.cs: Changed accessibility of
+	GetSupportedAttributes to protected internal.
+	* DiagnosticsConfigurationHandler.cs: Use GetSupportedAttributes to
+	allow custom attributes on tracelisteners. Fixes bug #413203.
+	* TraceListener.cs: Changed accessibility of GetSupportedAttributes
+	to protected internal. Removed MonoTODO on GetSupportedAttributes and
+	Attributes. Fixed line endings.
+
+2008-08-01  Paolo Molaro <lupus@ximian.com>
 
 	* CounterCreationData.cs, PerformanceCounterCategory.cs: more
 	checks and default type fix.
