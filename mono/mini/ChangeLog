@@ -1,4 +1,11 @@
+2008-08-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c (mono_arch_get_argument_info): Rename frame_size to args_size,
+	and don't align it to MONO_ARCH_FRAME_ALIGNMENT.
+
+	* mini-x86.h: Change MONO_ARCH_FRAME_ALIGNMENT to 8 so doubles stored on
+	the stack are not unaligned. Fixes #413247.
+	
 Fri Aug 1 18:46:42 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: update jitted methods performance counters.
