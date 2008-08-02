@@ -1,3 +1,7 @@
+2008-08-02  Marek Safar  <marek.safar@gmail.com>
+
+	* Type.cs: Removed _MemberInfo from base classes list.
+	
 2008-07-28  Marek Safar  <marek.safar@gmail.com>
 
 	* KnownTerminals.cs: Don't initialize rarely used static data.

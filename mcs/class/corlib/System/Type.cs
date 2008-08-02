@@ -46,7 +46,7 @@ namespace System {
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_Type))]
 #endif
-	public abstract class Type : MemberInfo, IReflect, _Type, _MemberInfo {
+	public abstract class Type : MemberInfo, IReflect, _Type {
 		
 		internal RuntimeTypeHandle _impl;
 
