@@ -1,3 +1,8 @@
+2008-08-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c (add_valuetype): Only reserve half parameter slot for each member of
+	a float HFA. Fixes #413621.
+
 2008-07-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h: Add a declaration for mono_aot_register_module ().
