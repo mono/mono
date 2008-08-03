@@ -1,3 +1,8 @@
+2008-08-03  Andreas Färber  <andreas.faerber@web.de>
+
+	* mono-io-portability.c (mono_portability_find_file): Fix ANSI C compliance.
+	
+	Contributed under MIT/X11 license.
 
 Fri Aug 1 15:48:53 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
