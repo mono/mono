@@ -1,3 +1,8 @@
+2008-08-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* pthread_support.c (GC_thread_exit_proc): Null out the tls key to prevent the
+	dtor function from being callled, since that would read freed memory.
+
 2008-05-23  Massimiliano Mantione  <massi@ximian.com>
 	* alloc.c: Moved emitting "GC_EVENT_START" and "GC_EVENT_END" events
 	from "GC_maybe_gc" to "GC_try_to_collect_inner".
