@@ -370,10 +370,18 @@ namespace System.Linq.Expressions {
 				ig.Emit (is_unsigned ? OpCodes.Rem_Un : OpCodes.Rem);
 				break;
 			case ExpressionType.RightShift:
-				ig.Emit (is_unsigned ? OpCodes.Shr_Un : OpCodes.Shr);
-				break;
 			case ExpressionType.LeftShift:
-				ig.Emit (OpCodes.Shl);
+				if (left.Type == typeof (int)) {
+					ig.Emit (OpCodes.Ldc_I4, 0x1f);
+					ig.Emit (OpCodes.And);
+				} else {
+					ig.Emit (OpCodes.Ldc_I4, 0x3f);
+					ig.Emit (OpCodes.And);
+				}
+				if (NodeType == ExpressionType.RightShift)
+					ig.Emit (is_unsigned ? OpCodes.Shr_Un : OpCodes.Shr);
+				else
+					ig.Emit (OpCodes.Shl);
 				break;
 			case ExpressionType.And:
 				ig.Emit (OpCodes.And);
