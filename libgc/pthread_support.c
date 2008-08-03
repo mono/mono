@@ -1192,6 +1192,11 @@ void GC_thread_exit_proc(void *arg)
     me = GC_lookup_thread(pthread_self());
     GC_destroy_thread_local(me);
     if (me -> flags & DETACHED) {
+# ifdef THREAD_LOCAL_ALLOC
+		/* NULL out the tls key to prevent the dtor function from being called */
+		if (0 != GC_setspecific(GC_thread_key, NULL))
+			ABORT("Failed to set thread specific allocation pointers");
+#endif
     	GC_delete_thread(pthread_self());
     } else {
 	me -> flags |= FINISHED;
