@@ -1,3 +1,13 @@
+2008-08-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBox.cs: Selection changes made in the MouseDown handler should
+	use the *Core versions of selection in SelectedIndices collection,
+	since the SelectedIndexChanged/SelectedValueChanged events are fired
+	until we get a MouseUp event, and thus we need to separate the logic
+	from the events, as done in the keyboard navigation. Also, fire those
+	selection events from keyboard navigation in SelectionMode.None, even
+	if we don't have a selection, as .Net does.
+
 2008-08-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripButton.cs, ToolStripMenuItem.cs: Guard against a NRE my
