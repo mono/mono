@@ -1,3 +1,8 @@
+2008-08-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke2.cs libtest.c: Extend the ia64 single HFA test so it also checks for
+	#109511.
+
 2008-07-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am: Use custom-modifiers.2.cs instead of custom-modifiers.cs
