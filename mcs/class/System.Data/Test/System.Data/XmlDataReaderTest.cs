@@ -107,19 +107,18 @@ namespace Monotests_System.Data
 			
 			StringReader sr = new StringReader (xml);
 			XmlTextReader xr = new XmlTextReader (sr);
-            DataTable tbl = new DataTable("CustomTypesTable");
-            tbl.Columns.Add("Dummy", typeof(System.UInt32));
-            tbl.Columns.Add("FuncXml", typeof(CustomTypeXml));
+			DataTable tbl = new DataTable("CustomTypesTable");
+			tbl.Columns.Add("Dummy", typeof(System.UInt32));
+			tbl.Columns.Add("FuncXml", typeof(CustomTypeXml));
 
-            DataSet ds = new DataSet("CustomTypesData");
-            ds.Tables.Add(tbl);
+			DataSet ds = new DataSet("CustomTypesData");
+			ds.Tables.Add(tbl);
 
-            ds.ReadXml(xr);
+			ds.ReadXml(xr);
 
 			Assert.AreEqual (1, ds.Tables["CustomTypesTable"].Rows.Count, "XDR2");
 			
 			xr.Close ();
-			ds.Close ();
 		}
 		
 		[Serializable]

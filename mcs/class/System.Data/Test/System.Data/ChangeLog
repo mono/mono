@@ -1,3 +1,8 @@
+2008-08-04  Raja R Harinath  <harinath@hurrynot.org>
+
+	* XmlDataReaderTest.cs (XmlLoadCustomTypesTest): Fix compile
+	error, there's no DataSet.Close ().
+
 2008-07-30  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* XmlDataReaderTest.cs: Added test for Bug#377146
