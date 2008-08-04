@@ -1,3 +1,7 @@
+2008-08-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* socket-io.c (get_socket_assembly): Make 'moonlight' variable static.
+
 2008-07-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata-internals.h (struct _MonoAssembly): Change the type of 'aot_module'
