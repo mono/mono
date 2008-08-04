@@ -121,7 +121,6 @@ namespace System.Windows.Forms.CarbonInternal {
 							Form form = c.FindForm ();
 							if (form != null) {
 								Driver.SendMessage (form.Handle, Msg.WM_ACTIVATE, (IntPtr) WindowActiveFlags.WA_ACTIVE, IntPtr.Zero);
-								XplatUICarbon.ActiveWindow = window;
 							}
 						}
 
@@ -150,7 +149,6 @@ namespace System.Windows.Forms.CarbonInternal {
 							Form form = c.FindForm ();
 							if (form != null) {
 								Driver.SendMessage (form.Handle, Msg.WM_ACTIVATE, (IntPtr) WindowActiveFlags.WA_INACTIVE, IntPtr.Zero);
-								XplatUICarbon.ActiveWindow = IntPtr.Zero;
 							}
 						}
 						foreach (IntPtr utility_window in XplatUICarbon.UtilityWindows) {

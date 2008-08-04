@@ -1,3 +1,8 @@
+2008-07-31  Geoff Norton  <gnorton@novell.com>
+
+	* WindowHandler.cs: Dont set ActiveWindow when emitting the event,
+	its set when the event is handled.  Fixes #393317.
+
 2008-05-10  Geoff Norton  <gnorton@novell.com>
 
 	* MouseHandler.cs: Fix the generation of msg.wParam for mouse up/down
