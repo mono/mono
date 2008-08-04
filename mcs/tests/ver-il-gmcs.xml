@@ -9172,7 +9172,7 @@
         <size>46</size>
       </method>
       <method name="Boolean Test_4()">
-        <size>34</size>
+        <size>29</size>
       </method>
       <method name="Int32 Main()">
         <size>60</size>
@@ -11422,7 +11422,7 @@
         <size>7</size>
       </method>
       <method name="T &lt;&gt;m__7()">
-        <size>40</size>
+        <size>35</size>
       </method>
     </type>
     <type name="Test+&lt;ForForeach&gt;c__AnonStorey8`1[T]">
@@ -12158,6 +12158,36 @@
       </method>
       <method name="Decimal &lt;Average&gt;m__1[TSource](Decimal, Decimal)">
         <size>8</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-anon-42.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Test_3[T]()">
+        <size>37</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>12</size>
+      </method>
+      <method name="Void &lt;Test_3&gt;m__0[T]()">
+        <size>11</size>
+      </method>
+    </type>
+    <type name="Test+D">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
       </method>
     </type>
   </test>
@@ -28116,7 +28146,7 @@
         <size>7</size>
       </method>
       <method name="Void test39(Int32 ByRef)">
-        <size>41</size>
+        <size>36</size>
       </method>
       <method name="Void Main()">
         <size>28</size>
@@ -31555,7 +31585,66 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>22</size>
+        <size>17</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-664.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Test(System.String)">
+        <size>137</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>49</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-665.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>14</size>
+      </method>
+      <method name="Int32 Method(System.Object)">
+        <size>2</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-666.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-667.cs">
+    <type name="IA">
+      <method name="Void M()">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="CA">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void IA.M()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="CC">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
       </method>
     </type>
   </test>
