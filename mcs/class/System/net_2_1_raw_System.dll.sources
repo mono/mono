@@ -7,6 +7,7 @@ Assembly/AssemblyInfo.cs
 ../corlib/System.Collections/BitArray.cs
 ../corlib/System.Collections/CaseInsensitiveComparer.cs
 ../corlib/System.Collections/CaseInsensitiveHashCodeProvider.cs
+../corlib/System.Collections/CollectionBase.cs
 ../corlib/System.Collections/Comparer.cs
 ../corlib/System.Collections/Hashtable.cs
 ../corlib/System.Collections/IHashCodeProvider.cs
