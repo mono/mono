@@ -1557,9 +1557,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
 		public void ZLiteral ()
 		{
 			// However, "Z" and "'Z'" are different.
