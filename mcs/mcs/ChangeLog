@@ -1,5 +1,10 @@
 2008-08-04  Marek Safar  <marek.safar@gmail.com>
 
+	* generic.cs, anonymous.cs, statement.cs: Emit inherited anonymous method
+	constraints.
+
+2008-08-04  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-parser.jay: Typeof argument has to be a type expression.
 	
 	* namespace.cs: Check alias and namespace definitions collisions.

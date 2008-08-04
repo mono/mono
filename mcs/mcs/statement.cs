@@ -2522,6 +2522,7 @@ namespace Mono.CSharp {
 				}
 
 				am_storey.DefineType ();
+				am_storey.ResolveType ();				
 				am_storey.DefineMembers ();
 				am_storey.Parent.PartialContainer.AddCompilerGeneratedClass (am_storey);
 			}

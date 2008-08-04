@@ -1675,6 +1675,15 @@ namespace Mono.CSharp {
 
 		static bool HasDefaultConstructor (Type atype)
 		{
+			TypeParameter tparam = TypeManager.LookupTypeParameter (atype);
+			if (tparam != null) {
+				if (tparam.GenericConstraints == null)
+					return false;
+						
+				return tparam.GenericConstraints.HasConstructorConstraint || 
+					tparam.GenericConstraints.HasValueTypeConstraint;
+			}
+		
 			if (atype.IsAbstract)
 				return false;
 
@@ -1698,15 +1707,6 @@ namespace Mono.CSharp {
 
 					return true;
 				}
-			}
-
-			TypeParameter tparam = TypeManager.LookupTypeParameter (atype);
-			if (tparam != null) {
-				if (tparam.GenericConstraints == null)
-					return false;
-						
-				return tparam.GenericConstraints.HasConstructorConstraint || 
-					tparam.GenericConstraints.HasValueTypeConstraint;
 			}
 
 			MemberInfo [] list = TypeManager.MemberLookup (null, null, atype, MemberTypes.Constructor,

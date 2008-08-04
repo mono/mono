@@ -1407,10 +1407,15 @@ namespace Mono.CSharp {
 			if (storey == null && mc.MemberName.IsGeneric) {
 				member_name = new MemberName (name, mc.MemberName.TypeArguments.Clone (), Location);
 
-				generic_method = new GenericMethod (
-					parent.NamespaceEntry, parent, member_name,
+				generic_method = new GenericMethod (parent.NamespaceEntry, parent, member_name,
 					new TypeExpression (ReturnType, Location), parameters);
-				generic_method.SetParameterInfo (null);
+
+				ArrayList list = new ArrayList ();
+				foreach (TypeParameter tparam in ((IMethodData)mc).GenericMethod.CurrentTypeParameters) {
+					if (tparam.Constraints != null)
+						list.Add (tparam.Constraints.Clone ());
+				}
+				generic_method.SetParameterInfo (list);
 			} else {
 				member_name = new MemberName (name, Location);
 				generic_method = null;
