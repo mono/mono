@@ -1,3 +1,8 @@
+2008-08-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Assembly.cs : return UnmanagedMemoryStream from 
+	  GetManifestResourceStream(). Fixed bug #322241.
+
 2008-07-30  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoGenericClass.cs (InflateType): Guard against null types.
@@ -51,7 +56,7 @@
 	* MonoGenericClass.cs (GetConstructor): Put back removed code due to obscure
 	System.Reflection.MonoGenericCMethod.
 
-2008-06-19  Kornél Pál  <kornelpal@gmail.com>
+2008-06-19  Kornel Pal  <kornelpal@gmail.com>
 
 	* Module.cs: Add internal GetHINSTANCE.
 
@@ -90,7 +95,7 @@
 	* Binder.cs: Applied patch from Yves Bastide (doc.formatique@gmail.com). Add 
 	support for converting integers to enums. Fixes #380361.
 
-﻿2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+?2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* IReflect.cs
 	* MethodInfo.cs: Fix parameter names
@@ -419,7 +424,7 @@ Tue Dec 12 19:45:26 CET 2006 Paolo Molaro <lupus@ximian.com>
 	absolute path before passing it to Assembly.InternalGetAssemblyName
 	as the CodeBase is not set in that case.
 
-2006-10-17  Kornél Pál  <kornelpal@gmail.com>
+2006-10-17  Kornel Pal  <kornelpal@gmail.com>
 
 	* FieldInfo.cs: Added GetRawConstantValue (). Note that throwing a
 	  NotSupportedException is the proper implementation.
@@ -1605,7 +1610,7 @@ Sat Jul 10 15:48:34 CEST 2004 Paolo Molaro <lupus@ximian.com>
 	abstract; use an interncall in MonoMethod and a custom
 	implementation in MethodBuilder.	
 
-2003-10-17  Pedro Martínez Juliá  <yoros@wanadoo.es>
+2003-10-17  Pedro Martinez Julia  <yoros@wanadoo.es>
 
 	* MonoEvent.cs: implement ToString method as in MS.NET.
 

@@ -303,7 +303,14 @@ namespace System.Reflection {
 			if (data == (IntPtr) 0)
 				return null;
 			else {
+#if NET_2_0
+				UnmanagedMemoryStream stream;
+				unsafe {
+					stream = new UnmanagedMemoryStream ((byte*) data, size);
+				}
+#else
 				IntPtrStream stream = new IntPtrStream (data, size);
+#endif
 				/* 
 				 * The returned pointer points inside metadata, so
 				 * we have to increase the refcount of the module, and decrease
