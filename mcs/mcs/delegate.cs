@@ -720,6 +720,8 @@ namespace Mono.CSharp {
 				return null;
 
 			delegate_method = (MethodInfo) method_group;
+			Invocation.IsSpecialMethodInvocation (delegate_method, loc);
+
 			ExtensionMethodGroupExpr emg = method_group as ExtensionMethodGroupExpr;
 			if (emg != null) {
 				delegate_instance_expression = emg.ExtensionExpression;

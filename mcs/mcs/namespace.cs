@@ -926,18 +926,33 @@ namespace Mono.CSharp {
 			// Check whether it's in the namespace.
 			//
 			FullNamedExpression fne = ns.Lookup (ds, name, loc);
-			if (fne != null)
-				return fne;
 
 			//
 			// Check aliases. 
 			//
 			if (using_aliases != null) {
 				foreach (UsingAliasEntry ue in using_aliases) {
-					if (ue.Alias == name)
+					if (ue.Alias == name) {
+						if (fne != null) {
+							if (Doppelganger != null) {
+								// TODO: Namespace has broken location
+								//Report.SymbolRelatedToPreviousError (fne.Location, null);
+								Report.SymbolRelatedToPreviousError (ue.Location, null);
+								Report.Error (576, loc,
+									"Namespace `{0}' contains a definition with same name as alias `{1}'",
+									GetSignatureForError (), name);
+							} else {
+								return fne;
+							}
+						}
+
 						return ue.Resolve (Doppelganger);
+					}
 				}
 			}
+
+			if (fne != null)
+				return fne;
 
 			if (IsImplicit)
 				return null;

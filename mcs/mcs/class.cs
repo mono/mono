@@ -2249,8 +2249,7 @@ namespace Mono.CSharp {
 			}
 
 			if (pending != null)
-				if (pending.VerifyPendingMethods ())
-					return;
+				pending.VerifyPendingMethods ();
 
 			if (Report.Errors > 0)
 				return;
@@ -6152,13 +6151,10 @@ namespace Mono.CSharp {
 
 			public override MethodBuilder Define (DeclSpace parent)
 			{
-				if (!CheckForDuplications ())
-					return null;
+				base.Define (parent);
 
 				if (IsDummy)
 					return null;
-				
-				base.Define (parent);
 				
 				method_data = new MethodData (method, ModFlags, flags, this);
 
@@ -6232,13 +6228,10 @@ namespace Mono.CSharp {
 
 			public override MethodBuilder Define (DeclSpace parent)
 			{
-				if (!CheckForDuplications ())
-					return null;
-				
+				base.Define (parent);
+
 				if (IsDummy)
 					return null;
-
-				base.Define (parent);
 
 				method_data = new MethodData (method, ModFlags, flags, this);
 
@@ -6308,6 +6301,21 @@ namespace Mono.CSharp {
 
 			public virtual MethodBuilder Define (DeclSpace parent)
 			{
+				CheckForDuplications ();
+
+				if (IsDummy) {
+					if (method.InterfaceType != null && method.IsExplicitImpl) {
+						MethodInfo mi = parent.PartialContainer.PendingImplementations.IsInterfaceMethod (
+							MethodName.Name, method.InterfaceType, new MethodData (method, ModFlags, flags, this));
+						if (mi != null) {
+							Report.SymbolRelatedToPreviousError (mi);
+							Report.Error (551, Location, "Explicit interface implementation `{0}' is missing accessor `{1}'",
+								method.GetSignatureForError (), TypeManager.CSharpSignature (mi, true));
+						}
+					}
+					return null;
+				}
+
 				TypeContainer container = parent.PartialContainer;
 
 				//
@@ -7374,8 +7382,9 @@ namespace Mono.CSharp {
 				//
 				// Clone indexer accessor parameters for localized capturing
 				//
+				parameters = ((Indexer) method).parameters;
 				if (!IsDummy)
-					parameters = ((Indexer) method).parameters.Clone ();
+					parameters = parameters.Clone ();
 
 				return base.Define (parent);
 			}

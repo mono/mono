@@ -3446,6 +3446,10 @@ typeof_type_expression
 	  {
 		$$ = new UnboundTypeExpression ((MemberName)$1, lexer.Location);
 	  }
+	| error
+	 {
+	 	Error_TypeExpected (lexer.Location);
+	 }
 	;
 	
 unbound_type_name

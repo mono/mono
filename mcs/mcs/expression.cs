@@ -4820,9 +4820,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (IsSpecialMethodInvocation (method)) {
-				return null;
-			}
+			IsSpecialMethodInvocation (method, loc);
 			
 			if (mg.InstanceExpression != null)
 				mg.InstanceExpression.CheckMarshalByRefAccess (ec);
@@ -4836,7 +4834,7 @@ namespace Mono.CSharp {
 			return mg.OverloadResolve (ec, ref Arguments, false, loc);
 		}
 
-		bool IsSpecialMethodInvocation (MethodBase method)
+		public static bool IsSpecialMethodInvocation (MethodBase method, Location loc)
 		{
 			if (!TypeManager.IsSpecialMethod (method))
 				return false;

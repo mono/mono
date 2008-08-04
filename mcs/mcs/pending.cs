@@ -593,29 +593,22 @@ namespace Mono.CSharp {
 						
 						Report.SymbolRelatedToPreviousError (mi);
 						if (candidate != null) {
-							if (mi.IsSpecialName) {
-								string name = TypeManager.CSharpName (mi.DeclaringType) + '.' + mi.Name.Substring (4);
-								Report.Error (551, container.Location, "Explicit interface implementation `{0}.{1}' is missing accessor `{2}'",
-									container.GetSignatureForError (), name, TypeManager.CSharpSignature (mi, true));
+							Report.SymbolRelatedToPreviousError (candidate);
+							if (candidate.IsStatic) {
+								Report.Error (736, container.Location,
+									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' is static",
+									container.GetSignatureForError (), TypeManager.CSharpSignature (mi, true), TypeManager.CSharpSignature (candidate));
+							} else if (!candidate.IsPublic) {
+								Report.Error (737, container.Location,
+									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' in not public",
+									container.GetSignatureForError (), TypeManager.CSharpSignature (mi, true), TypeManager.CSharpSignature (candidate));
 							} else {
-								Report.SymbolRelatedToPreviousError (candidate);
-								if (candidate.IsStatic) {
-									Report.Error (736, container.Location,
-										"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' is static",
-										container.GetSignatureForError (), TypeManager.CSharpSignature (mi, true), TypeManager.CSharpSignature (candidate));
-								} else if (!candidate.IsPublic) {
-									Report.Error (737, container.Location,
-										"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' in not public",
-										container.GetSignatureForError (), TypeManager.CSharpSignature (mi, true), TypeManager.CSharpSignature (candidate));
-								} else {
-									Report.Error (738, container.Location,
-										"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' return type `{3}' does not match interface member return type `{4}'",
-										container.GetSignatureForError (), TypeManager.CSharpSignature (mi, true), TypeManager.CSharpSignature (candidate),
-										TypeManager.CSharpName (candidate.ReturnType), TypeManager.CSharpName (mi.ReturnType));
-								}
+								Report.Error (738, container.Location,
+									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' return type `{3}' does not match interface member return type `{4}'",
+									container.GetSignatureForError (), TypeManager.CSharpSignature (mi, true), TypeManager.CSharpSignature (candidate),
+									TypeManager.CSharpName (candidate.ReturnType), TypeManager.CSharpName (mi.ReturnType));
 							}
-						}
-						else {
+						} else {
 							Report.Error (535, container.Location, "`{0}' does not implement interface member `{1}'",
 								container.GetSignatureForError (), TypeManager.CSharpSignature (mi, true));
 						}

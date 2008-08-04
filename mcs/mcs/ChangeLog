@@ -1,3 +1,14 @@
+2008-08-04  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-parser.jay: Typeof argument has to be a type expression.
+	
+	* namespace.cs: Check alias and namespace definitions collisions.
+	
+	* class.cs, pending.cs: Moved explicit interface accessor implementation
+	check.
+	
+	* delegate.cs, expression.cs: Verify special name invocations.
+	
 2008-08-01  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-parser.jay: Don't choke on empty generic type arguments.
