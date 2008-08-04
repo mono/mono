@@ -1,3 +1,9 @@
+2008-08-04  Jb Evain  <jbevain@novell.com>
+
+	* ArrayList.cs: introduce a helper method to throw
+	ArgumentOutOfRangeExceptions correctly as SL miss some
+	constructors.
+
 2008-05-29  Juraj Skripsky  <js@hotfeet.ch>
 
 	* ArrayList.cs: Create the empty array only once and reuse it.

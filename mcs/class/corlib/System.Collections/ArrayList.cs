@@ -333,13 +333,13 @@ namespace System.Collections
 			{
 				if (startIndex < 0 || startIndex > m_Adaptee.Count) 
 				{
-					throw new ArgumentOutOfRangeException("startIndex", startIndex,
+					ThrowNewArgumentOutOfRangeException ("startIndex", startIndex,
 						"Does not specify valid index.");
 				}
 
 				if (count < 0) 
 				{
-					throw new ArgumentOutOfRangeException("count", count,
+					ThrowNewArgumentOutOfRangeException ("count", count,
 						"Can't be less than 0.");
 				}
 
@@ -388,17 +388,17 @@ namespace System.Collections
 			{
 				if (startIndex < 0) 
 				{
-					throw new ArgumentOutOfRangeException("startIndex", startIndex, "< 0");
+					ThrowNewArgumentOutOfRangeException ("startIndex", startIndex, "< 0");
 				}
 
 				if (count < 0) 
 				{
-					throw new ArgumentOutOfRangeException("count", count, "count is negative.");
+					ThrowNewArgumentOutOfRangeException ("count", count, "count is negative.");
 				}
 
 				if (startIndex - count  + 1 < 0) 
 				{
-					throw new ArgumentOutOfRangeException("count", count, "count is too large.");
+					ThrowNewArgumentOutOfRangeException ("count", count, "count is too large.");
 				}
 
 				if (value == null) 
@@ -439,7 +439,7 @@ namespace System.Collections
 
 				if (index > m_Adaptee.Count) 
 				{
-					throw new ArgumentOutOfRangeException("index", index,
+					ThrowNewArgumentOutOfRangeException ("index", index,
 						"Index must be >= 0 and <= Count.");
 				}
 
@@ -522,19 +522,19 @@ namespace System.Collections
 			{
 				if (index < 0) 
 				{
-					throw new ArgumentOutOfRangeException("index", index,
+					ThrowNewArgumentOutOfRangeException ("index", index,
 						"Can't be less than zero.");
 				}
 
 				if (arrayIndex < 0) 
 				{
-					throw new ArgumentOutOfRangeException("arrayIndex", arrayIndex,
+					ThrowNewArgumentOutOfRangeException ("arrayIndex", arrayIndex,
 						"Can't be less than zero.");
 				}
 
 				if (count < 0) 
 				{
-					throw new ArgumentOutOfRangeException("index", index,
+					ThrowNewArgumentOutOfRangeException ("index", index,
 						"Can't be less than zero.");
 				}
 
@@ -1795,13 +1795,13 @@ namespace System.Collections
 			{
 				if (startIndex < 0 || startIndex > m_InnerCount) 
 				{
-					throw new ArgumentOutOfRangeException("startIndex", startIndex,
+					ThrowNewArgumentOutOfRangeException ("startIndex", startIndex,
 						"Does not specify valid index.");
 				}
 
 				if (count < 0) 
 				{
-					throw new ArgumentOutOfRangeException("count", count,
+					ThrowNewArgumentOutOfRangeException ("count", count,
 						"Can't be less than 0.");
 				}
 
@@ -1840,12 +1840,12 @@ namespace System.Collections
 			{
 				if (startIndex < 0) 
 				{
-					throw new ArgumentOutOfRangeException("startIndex", startIndex,	"< 0");
+					ThrowNewArgumentOutOfRangeException ("startIndex", startIndex,	"< 0");
 				}
 
 				if (count < 0) 
 				{
-					throw new ArgumentOutOfRangeException("count", count, "count is negative.");
+					ThrowNewArgumentOutOfRangeException ("count", count, "count is negative.");
 				}
 
 				int retval = m_InnerArrayList.LastIndexOf(value, m_InnerIndex + startIndex, count);
@@ -1866,7 +1866,7 @@ namespace System.Collections
 				
 				if (index < 0 || index > m_InnerCount) 
 				{
-					throw new ArgumentOutOfRangeException("index", index,
+					ThrowNewArgumentOutOfRangeException ("index", index,
 						"Index must be >= 0 and <= Count.");
 				}
 
@@ -1883,7 +1883,7 @@ namespace System.Collections
 
 				if (index < 0 || index > m_InnerCount) 
 				{
-					throw new ArgumentOutOfRangeException("index", index,
+					ThrowNewArgumentOutOfRangeException ("index", index,
 						"Index must be >= 0 and <= Count.");
 				}
 
@@ -1914,7 +1914,7 @@ namespace System.Collections
 
 				if (index < 0 || index > m_InnerCount) 
 				{
-					throw new ArgumentOutOfRangeException("index", index,
+					ThrowNewArgumentOutOfRangeException ("index", index,
 						"Index must be >= 0 and <= Count.");
 				}
 
@@ -1959,7 +1959,7 @@ namespace System.Collections
 
 				if (index < 0 || index > m_InnerCount) 
 				{
-					throw new ArgumentOutOfRangeException("index", index,
+					ThrowNewArgumentOutOfRangeException ("index", index,
 						"Index must be >= 0 and <= Count.");
 				}
 
@@ -2581,7 +2581,7 @@ namespace System.Collections
 		{
 			if (capacity < 0) 
 			{
-				throw new ArgumentOutOfRangeException("capacity",
+				ThrowNewArgumentOutOfRangeException ("capacity",
 					capacity, "The initial capacity can't be smaller than zero.");
 			}
 
@@ -2644,7 +2644,7 @@ namespace System.Collections
 			{
 				if (index < 0 || index >= _size) 
 				{
-					throw new ArgumentOutOfRangeException("index", index,
+					ThrowNewArgumentOutOfRangeException ("index", index,
 						"Index is less than 0 or more than or equal to the list count.");
 				}
 
@@ -2655,7 +2655,7 @@ namespace System.Collections
 			{
 				if (index < 0 || index >= _size) 
 				{
-					throw new ArgumentOutOfRangeException("index", index,
+					ThrowNewArgumentOutOfRangeException ("index", index,
 						"Index is less than 0 or more than or equal to the list count.");
 				}
 
@@ -2699,7 +2699,7 @@ namespace System.Collections
 			{
 				if (value < _size) 
 				{
-					throw new ArgumentOutOfRangeException("Capacity", value,
+					ThrowNewArgumentOutOfRangeException ("Capacity", value,
 						"Must be more than count.");
 				}
 
@@ -2890,13 +2890,13 @@ namespace System.Collections
 		{
 			if (startIndex < 0 || startIndex > _size) 
 			{
-				throw new ArgumentOutOfRangeException("startIndex", startIndex,
+				ThrowNewArgumentOutOfRangeException ("startIndex", startIndex,
 					"Does not specify valid index.");
 			}
 
 			if (count < 0) 
 			{
-				throw new ArgumentOutOfRangeException("count", count,
+				ThrowNewArgumentOutOfRangeException ("count", count,
 					"Can't be less than 0.");
 			}
 
@@ -2932,7 +2932,7 @@ namespace System.Collections
 		{
 			if (index < 0 || index > _size) 
 			{
-				throw new ArgumentOutOfRangeException("index", index,
+				ThrowNewArgumentOutOfRangeException ("index", index,
 					"Index must be >= 0 and <= Count.");
 			}
 
@@ -2954,7 +2954,7 @@ namespace System.Collections
 
 			if (index < 0 || index > _size) 
 			{
-				throw new ArgumentOutOfRangeException("index", index,
+				ThrowNewArgumentOutOfRangeException ("index", index,
 					"Index must be >= 0 and <= Count.");
 			}
 
@@ -3011,7 +3011,7 @@ namespace System.Collections
 		{
 			if (index < 0 || index >= _size) 
 			{
-				throw new ArgumentOutOfRangeException("index", index,
+				ThrowNewArgumentOutOfRangeException ("index", index,
 					"Less than 0 or more than list count.");
 			}
 
@@ -3236,12 +3236,12 @@ namespace System.Collections
 		{
 			if (index < 0) 
 			{
-				throw new ArgumentOutOfRangeException("index", index, "Can't be less than 0.");
+				ThrowNewArgumentOutOfRangeException ("index", index, "Can't be less than 0.");
 			}
 
 			if (count < 0) 
 			{
-				throw new ArgumentOutOfRangeException("count", count, "Can't be less than 0.");
+				ThrowNewArgumentOutOfRangeException ("count", count, "Can't be less than 0.");
 			}
 
 			// re-ordered to avoid possible integer overflow
@@ -3249,6 +3249,17 @@ namespace System.Collections
 			{
 				throw new ArgumentException("Index and count do not denote a valid range of elements.", "index");
 			}
+		}
+
+		internal static void ThrowNewArgumentOutOfRangeException (string name, object actual, string message)
+		{
+			throw new ArgumentOutOfRangeException (
+#if !INSIDE_CORLIB && NET_2_1
+				name, message
+#else
+				name, actual, message
+#endif
+			);
 		}
 
 		public static ArrayList Adapter(IList list) 
