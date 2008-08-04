@@ -5799,6 +5799,33 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		bool CheckStructLayout (Type type, bool isStatic)
+		{
+			if (TypeManager.IsBuiltinType (type))
+				return true;
+
+			if (isStatic) {
+				if (TypeManager.IsEqual (type, Parent.TypeBuilder))
+					return true;
+			}
+
+			if (!TypeManager.IsEqual (TypeManager.DropGenericTypeArguments (type), Parent.TypeBuilder)) {
+				if (!TypeManager.IsGenericType (type))
+					return true;
+
+				foreach (Type t in TypeManager.GetTypeArguments (type)) {
+					if (!CheckStructLayout (t, false))
+						return false;
+				}
+				return true;
+			}
+			
+			Report.Error (523, Location,
+				"Struct member `{0}' of type `{1}' causes a cycle in the struct layout",
+				GetSignatureForError (), TypeManager.CSharpName (MemberType));
+			return false;
+		}
+
 		public override bool Define ()
 		{
 			if (!base.Define ())
@@ -5815,8 +5842,6 @@ namespace Mono.CSharp {
 						GetSignatureForError ());
 				}
 			}
-
-			FieldAttributes fa = Modifiers.FieldAttr (ModFlags);
 
 			try {
 #if GMCS_SOURCE
@@ -5840,19 +5865,16 @@ namespace Mono.CSharp {
 				TypeManager.RegisterFieldBase (FieldBuilder, this);
 			}
 			catch (ArgumentException) {
-				Report.Warning (-24, 1, Location, "The Microsoft runtime is unable to use [void|void*] as a field type, try using the Mono runtime.");
+				Report.RuntimeMissingSupport (Location, "`void' or `void*' field type");
 				return false;
 			}
 
-			if (initializer != null)
+			if (initializer != null) {
 				((TypeContainer) Parent).RegisterFieldForInitialization (this,
 					new FieldInitializer (FieldBuilder, initializer));
-
-			if (Parent.PartialContainer.Kind == Kind.Struct && (fa & FieldAttributes.Static) == 0 &&
-				MemberType == Parent.TypeBuilder && !TypeManager.IsBuiltinType (MemberType) && initializer == null) {
-				Report.Error (523, Location, "Struct member `{0}' causes a cycle in the structure layout",
-					GetSignatureForError ());
-				return false;
+			} else {
+				if (Parent.PartialContainer.Kind == Kind.Struct)
+					CheckStructLayout (member_type, (ModFlags & Modifiers.STATIC) != 0);
 			}
 
 			return true;
