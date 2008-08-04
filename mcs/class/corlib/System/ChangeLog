@@ -1,3 +1,8 @@
+2008-08-03  Miguel de Icaza  <miguel@novell.com>
+
+	* ConsoleDriver.cs: If the terminal is dumb, do not activate the
+	full terminal support.
+
 2008-08-02  Marek Safar  <marek.safar@gmail.com>
 
 	* Type.cs: Removed _MemberInfo from base classes list.

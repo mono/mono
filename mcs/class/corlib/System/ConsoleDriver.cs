@@ -46,7 +46,15 @@ namespace System {
 			} else if (Environment.IsRunningOnWindows) {
 				driver = CreateWindowsConsoleDriver ();
 			} else {
-				driver = CreateTermInfoDriver ();
+				string term = Environment.GetEnvironmentVariable ("TERM");
+
+				// Perhaps we should let the Terminfo driver return a
+				// success/failure flag based on the terminal properties
+				if (term == "dumb"){
+					is_console = false;
+					driver = CreateNullConsoleDriver ();
+				} else
+					driver = CreateTermInfoDriver (term);
 			}
 		}
 
@@ -61,8 +69,8 @@ namespace System {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.NoInlining)]
-		static IConsoleDriver CreateTermInfoDriver () {
-			return new TermInfoDriver (Environment.GetEnvironmentVariable ("TERM"));
+		static IConsoleDriver CreateTermInfoDriver (string term) {
+			return new TermInfoDriver (term);
 		}
 		
 		public static bool Initialized {
