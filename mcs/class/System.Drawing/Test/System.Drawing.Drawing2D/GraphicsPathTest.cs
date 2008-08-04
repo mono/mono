@@ -2792,5 +2792,41 @@ namespace MonoTests.System.Drawing.Drawing2D {
 				}
 			}
 		}
+
+		[Test]
+		public void bug413461 ()
+		{
+			int dX = 520;
+			int dY = 320;
+			Point[] expected_points = new Point [] {
+				new Point(dX-64, dY-24),//start
+				new Point(dX-59, dY-34),//focal point 1
+				new Point(dX-52, dY-54),//focal point 2
+				new Point(dX-18, dY-66),//top
+				new Point(dX-34, dY-47),//focal point 1
+				new Point(dX-43, dY-27),//focal point 2
+				new Point(dX-44, dY-8),//end
+				};
+			byte[] expected_types = new byte [] {
+				(byte)PathPointType.Start,
+				(byte)PathPointType.Bezier,
+				(byte)PathPointType.Bezier,
+				(byte)PathPointType.Bezier,
+				(byte)PathPointType.Bezier,
+				(byte)PathPointType.Bezier,
+				(byte)PathPointType.Bezier };
+			using (GraphicsPath path = new GraphicsPath (expected_points, expected_types)) {
+				Assert.AreEqual (7, path.PointCount, "PathCount");
+				byte [] actual_types = path.PathTypes;
+				Assert.AreEqual (expected_types [0], actual_types [0], "types-0");
+				Assert.AreEqual (expected_types [1], actual_types [1], "types-1");
+				Assert.AreEqual (expected_types [2], actual_types [2], "types-2");
+				Assert.AreEqual (expected_types [3], actual_types [3], "types-3");
+				Assert.AreEqual (expected_types [4], actual_types [4], "types-4");
+				Assert.AreEqual (expected_types [5], actual_types [5], "types-5");
+				// path is filled like closed but this does not show on the type
+				Assert.AreEqual (expected_types [6], actual_types [6], "types-6");
+			}
+		}
 	}
 }

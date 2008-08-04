@@ -1,3 +1,8 @@
+2008-08-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPathTest.cs: Add test case for "half" closed paths.
+	[Bug #413461]
+
 2007-10-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPathTest.cs: Added IsVisible test cases on ellipses 
