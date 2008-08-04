@@ -1942,7 +1942,7 @@ namespace System.Xml
 #if NET_2_0
 						if (entityHandling == EntityHandling.ExpandEntities) {
 							string value = DTD.GenerateEntityAttributeText (entName);
-							foreach (char c in value)
+							foreach (char c in (IEnumerable<char>) value)
 								AppendValueChar (c);
 						} else
 #endif
