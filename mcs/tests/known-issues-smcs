@@ -63,6 +63,7 @@ test-399-lib.cs
 test-453.cs
 test-463.cs
 test-466.cs
+test-478.cs
 test-489.cs
 test-492.cs
 test-52.cs
@@ -76,6 +77,7 @@ test-93.cs
 test-anon-02.cs
 test-anon-12.cs
 test-anon-31.cs
+test-anon-34.cs
 test-anon-35.cs
 test-anon-49.cs
 test-cls-00.cs
