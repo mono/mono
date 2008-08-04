@@ -16,6 +16,11 @@ using System.Reflection;
 namespace Mono.CSharp {
 
 	public class RootNamespace : Namespace {
+		//
+		// Points to Mono's GetNamespaces method, an
+		// optimization when running on Mono to fetch all the
+		// namespaces in an assembly
+		//
 		static MethodInfo get_namespaces_method;
 
 		string alias_name;
