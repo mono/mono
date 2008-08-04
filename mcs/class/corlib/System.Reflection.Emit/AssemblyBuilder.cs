@@ -375,8 +375,7 @@ namespace System.Reflection.Emit
 			return DefineDynamicModule (name, fileName, emitSymbolInfo, false);
 		}
 
-		private ModuleBuilder DefineDynamicModule (string name, string fileName,
-												   bool emitSymbolInfo, bool transient)
+		private ModuleBuilder DefineDynamicModule (string name, string fileName, bool emitSymbolInfo, bool transient)
 		{
 			check_name_and_filename (name, fileName, false);
 
