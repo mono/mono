@@ -1,3 +1,7 @@
+2008-08-04  Jb Evain  <jbevain@novell.com>
+
+	* TimeZoneInfo.cs: avoid using a SortedDictionary when not needed.
+
 2008-06-25  Jb Evain  <jbevain@novell.com>
 
 	* TimeZoneInfo.cs: remove the dependance to Mono.DataConverter

@@ -668,7 +668,7 @@ namespace System
 
 			Dictionary<int, string> abbreviations = ParseAbbreviations (buffer, 44 + 4 * timecnt + timecnt + 6 * typecnt, charcnt);
 			Dictionary<int, TimeType> time_types = ParseTimesTypes (buffer, 44 + 4 * timecnt + timecnt, typecnt, abbreviations);
-			SortedList<DateTime, TimeType> transitions = ParseTransitions (buffer, 44, timecnt, time_types);
+			List<KeyValuePair<DateTime, TimeType>> transitions = ParseTransitions (buffer, 44, timecnt, time_types);
 
 			if (time_types.Count == 0)
 				throw new InvalidTimeZoneException ();
@@ -685,8 +685,9 @@ namespace System
 			List<AdjustmentRule> adjustmentRules = new List<AdjustmentRule> ();
 
 			for (int i = 0; i < transitions.Count; i++) {
-				DateTime ttime = transitions.Keys [i];
-				TimeType ttype = transitions [ttime];
+				var pair = transitions [i];
+				DateTime ttime = pair.Key;
+				TimeType ttype = pair.Value;
 				if (!ttype.IsDst) {
 					if (standardDisplayName != ttype.Name || baseUtcOffset.TotalSeconds != ttype.Offset) {
 						standardDisplayName = ttype.Name;
@@ -774,16 +775,16 @@ namespace System
 			return types;
 		}
 
-		static SortedList<DateTime, TimeType> ParseTransitions (byte [] buffer, int index, int count, Dictionary<int, TimeType> time_types)
+		static List<KeyValuePair<DateTime, TimeType>> ParseTransitions (byte [] buffer, int index, int count, Dictionary<int, TimeType> time_types)
 		{
-			var trans = new SortedList<DateTime, TimeType> (count);
+			var list = new List<KeyValuePair<DateTime, TimeType>> (count);
 			for (int i = 0; i < count; i++) {
 				int unixtime = ReadBigEndianInt32 (buffer, index + 4 * i);
 				DateTime ttime = DateTimeFromUnixTime (unixtime);
 				byte ttype = buffer [index + 4 * count + i];
-				trans.Add (ttime, time_types [(int)ttype]);
+				list.Add (new KeyValuePair<DateTime, TimeType> (ttime, time_types [(int)ttype]));
 			}
-			return trans;
+			return list;
 		}
 
 		static DateTime DateTimeFromUnixTime (long unix_time)
