@@ -1,6 +1,7 @@
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
+../corlib/System/ICloneable.cs
 ../corlib/System.Collections/Queue.cs
 DummySystemNet.cs
 System.Net/DnsEndPoint_2_1.cs
