@@ -371,13 +371,8 @@ namespace System.Linq.Expressions {
 				break;
 			case ExpressionType.RightShift:
 			case ExpressionType.LeftShift:
-				if (left.Type == typeof (int)) {
-					ig.Emit (OpCodes.Ldc_I4, 0x1f);
-					ig.Emit (OpCodes.And);
-				} else {
-					ig.Emit (OpCodes.Ldc_I4, 0x3f);
-					ig.Emit (OpCodes.And);
-				}
+				ig.Emit (OpCodes.Ldc_I4, left.Type == typeof (int) ? 0x1f : 0x3f);
+				ig.Emit (OpCodes.And);
 				if (NodeType == ExpressionType.RightShift)
 					ig.Emit (is_unsigned ? OpCodes.Shr_Un : OpCodes.Shr);
 				else
