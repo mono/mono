@@ -1,6 +1,8 @@
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
+../corlib/System.Collections/ArrayList.cs
+../corlib/System.Collections/Queue.cs
 DummySystemNet.cs
 System.Net/DnsEndPoint_2_1.cs
 System.Net/HttpWebRequest_2_1.cs
@@ -29,7 +31,6 @@ System.Net.Sockets/SocketException_2_1.cs
 ../System/System.Net/EndPoint.cs
 ../System/System.Net/EndPointListener.cs
 ../System/System.Net/EndPointManager.cs
-../System/System.Net/EndpointPermission.cs
 ../System/System.Net/HttpConnection.cs
 ../System/System.Net/HttpContinueDelegate.cs
 ../System/System.Net/HttpRequestCreator.cs
@@ -84,8 +85,6 @@ System.Net.Sockets/SocketException_2_1.cs
 ../System/System.Net.NetworkInformation/NetworkChange.cs
 ../System/System.Net.NetworkInformation/NetworkInformationAccess.cs
 ../System/System.Net.NetworkInformation/NetworkInformationException.cs
-../System/System.Net.NetworkInformation/NetworkInformationPermissionAttribute.cs
-../System/System.Net.NetworkInformation/NetworkInformationPermission.cs
 ../System/System.Net.NetworkInformation/NetworkInterfaceComponent.cs
 ../System/System.Net.NetworkInformation/NetworkInterface.cs
 ../System/System.Net.NetworkInformation/NetworkInterfaceType.cs
@@ -114,8 +113,6 @@ System.Net.Sockets/SocketException_2_1.cs
 ../System/System.Net.Security/SslStream.cs
 ../System/System.Net.Security/SslPolicyErrors.cs
 ../System/System.Net/SocketAddress.cs
-../System/System.Net/SocketPermissionAttribute.cs
-../System/System.Net/SocketPermission.cs
 ../System/System.Net.Sockets/AddressFamily.cs
 ../System/System.Net.Sockets/IOControlCode.cs
 ../System/System.Net.Sockets/IPv6MulticastOption.cs
