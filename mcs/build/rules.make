@@ -89,7 +89,7 @@ endif
 # Rest of the configuration
 
 ifndef PROFILE
-PROFILE = default
+PROFILE = net_2_0
 endif
 
 include $(topdir)/build/profiles/$(PROFILE).make

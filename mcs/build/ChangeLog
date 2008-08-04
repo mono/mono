@@ -1,3 +1,8 @@
+2008-08-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* rules.make (PROFILE): If no profile is passed on the command line, make
+	net_2_0 the default.
+
 2008-06-30  Marek Safar  <marek.safar@gmail.com>
 
 	* platforms/linux.make: Enable mcs optimizations.
