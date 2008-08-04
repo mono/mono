@@ -31648,6 +31648,21 @@
       </method>
     </type>
   </test>
+  <test name="test-668.cs">
+    <type name="Bar">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-68.cs">
     <type name="Y">
       <method name="Void .ctor()">
