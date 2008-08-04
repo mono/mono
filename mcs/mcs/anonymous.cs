@@ -1292,6 +1292,10 @@ namespace Mono.CSharp {
 		ArrayList referenced_storeys;
 		protected readonly Parameters parameters;
 		AnonymousMethodStorey storey;
+
+		AnonymousMethodMethod method;
+		Field am_cache;
+
 		static int unique_id;
 
 		public AnonymousMethodBody (Parameters parameters,
@@ -1444,22 +1448,21 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			//
-			// It has to be delayed not to polute expression trees
+			// Use same anonymous method implementation for scenarios where same
+			// code is used from multiple blocks, e.g. field initializers
 			//
-			
-			//
-			// Don't create anonymous expression method when we are in probing
-			// mode or unreachable block
-			//
-			// if (ec.IsVariableCapturingRequired) ???
-			
-			AnonymousMethodMethod method = DoCreateMethodHost (ec);
-			method.ResolveMembers ();
-			method.Define ();
+			if (method == null) {
+				//
+				// Delay an anonymous method definition to avoid emitting unused code
+				// for unreachable blocks or expression trees
+				//
+				method = DoCreateMethodHost (ec);
+				method.ResolveMembers ();
+				method.Define ();
+			}
 
-			Field am_cache = null;
 			bool is_static = (method.ModFlags & Modifiers.STATIC) != 0;
-			if (is_static) {
+			if (is_static && am_cache == null) {
 				//
 				// Creates a field cache to store delegate instance if it's not generic or all 
 				// type arguments are closed
