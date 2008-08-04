@@ -76,7 +76,7 @@ namespace System.Windows.Forms {
 			auto_size = false;
 			auto_word_select = false;
 			bullet_indent = 0;
-			max_length = Int32.MaxValue;
+			base.MaxLength = Int32.MaxValue;
 			margin_right = 0;
 			zoom = 1;
 			base.Multiline = true;
@@ -285,13 +285,8 @@ namespace System.Windows.Forms {
 
 		[DefaultValue(Int32.MaxValue)]
 		public override int MaxLength {
-			get {
-				return base.max_length;
-			}
-
-			set {
-				base.max_length = value;
-			}
+			get { return base.MaxLength; }
+			set { base.MaxLength = value; }
 		}
 
 		[DefaultValue(true)]

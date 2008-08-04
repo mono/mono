@@ -1,3 +1,10 @@
+2008-08-04  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TextBoxBase.cs: De-internalize max_length field.
+	* RichTextBox.cs: Use base.MaxLength - both TextBoxBase and RichTextBox 
+	share the same logic.
+	[Fixes bug #414454]
+
 2008-08-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBox.cs: Selection changes made in the MouseDown handler should

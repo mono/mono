@@ -55,7 +55,7 @@ namespace System.Windows.Forms
 		internal bool			backcolor_set;
 		internal CharacterCasing	character_casing;
 		internal bool			hide_selection;
-		internal int			max_length;
+		int				max_length;
 		internal bool			modified;
 		internal char			password_char;
 		internal bool			read_only;
