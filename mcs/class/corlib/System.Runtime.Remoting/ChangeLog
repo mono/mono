@@ -1,3 +1,8 @@
+2008-08-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* RemotingConfiguration.cs : use ordinal comparison in config paths.
+	  Fixed bug #384264.
+
 2008-07-03  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* ServerException.cs:

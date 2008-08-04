@@ -31,6 +31,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Collections;
@@ -440,10 +441,11 @@ namespace System.Runtime.Remoting
 		
 		bool CheckPath (string path)
 		{
-			if (path.StartsWith ("/"))
+			CompareInfo ci = CultureInfo.InvariantCulture.CompareInfo;
+			if (ci.IsPrefix (path, "/", CompareOptions.Ordinal))
 				return path == currentXmlPath;
 			else
-				return currentXmlPath.EndsWith (path);
+				return ci.IsSuffix (currentXmlPath, path, CompareOptions.Ordinal);
 		}
 		
 		public void OnStartParsing (SmallXmlParser parser) {}
