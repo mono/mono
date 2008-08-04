@@ -1,3 +1,8 @@
+2008-08-04  Raja R Harinath  <harinath@hurrynot.org>
+
+	* test-668.cs: New test distilled from
+	System.Web/Test/System.Web.UI.WebControls/CustomValidatorTest.cs.
+
 2008-07-24 Marek Safar <marek.safar@gmail.com>
 
 	* Makefile: Added IL verification for 2.0 profile.

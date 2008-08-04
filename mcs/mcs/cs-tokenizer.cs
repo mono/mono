@@ -1579,70 +1579,49 @@ namespace Mono.CSharp
 		}
 
 		static StringBuilder static_cmd_arg = new System.Text.StringBuilder ();
-		
+
 		void get_cmd_arg (out string cmd, out string arg)
 		{
 			int c;
 			
 			tokens_seen = false;
 			arg = "";
-			static_cmd_arg.Length = 0;
 
 			// skip over white space
-			while ((c = get_char ()) != -1 && (c != '\n') && ((c == '\r') || (c == ' ') || (c == '\t')))
-				;
-				
-			while ((c != -1) && (c != '\n') && (c != ' ') && (c != '\t') && (c != '\r')){
-				if (is_identifier_part_character ((char)c)){
-					static_cmd_arg.Append ((char)c);
-					c = get_char ();
-					continue;
-				}
+			do {
+				c = get_char ();
+			} while (c == '\r' || c == ' ' || c == '\t');
 
+			static_cmd_arg.Length = 0;
+			while (c != -1 && is_identifier_part_character ((char)c)) {
+				static_cmd_arg.Append ((char)c);
+				c = get_char ();
 				if (c == '\\') {
 					int peek = peek_char ();
-					if (peek == 'U' || peek == 'u') {
+					if (peek == 'U' || peek == 'u')
 						c = EscapeUnicode (c);
-						continue;
-					}
 				}
-
-				cmd = null;
-				return;
 			}
 
 			cmd = static_cmd_arg.ToString ();
 
-			if (c == '\n' || c == '\r'){
-				return;
-			}
-
 			// skip over white space
-			while ((c = get_char ()) != -1 && (c != '\n') && ((c == '\r') || (c == ' ') || (c == '\t')))
-				;
+			while (c == '\r' || c == ' ' || c == '\t')
+				c = get_char ();
 
-			if (c == '\n'){
-				return;
-			} else if (c == '\r'){
-				return;
-			} else if (c == -1){
-				arg = "";
-				return;
-			}
-			
 			static_cmd_arg.Length = 0;
-			do {
+			while (c != -1 && c != '\n' && c != '\r') {
 				if (c == '\\') {
 					int peek = peek_char ();
-					if (peek == 'U' || peek == 'u') {
+					if (peek == 'U' || peek == 'u')
 						c = EscapeUnicode (c);
-						continue;
-					}
 				}
-				static_cmd_arg.Append ((char) c);				
-			} while ((c = get_char ()) != -1 && (c != '\n') && (c != '\r'));
+				static_cmd_arg.Append ((char) c);
+				c = get_char ();
+			}
 
-			arg = static_cmd_arg.ToString ();
+			if (static_cmd_arg.Length != 0)
+				arg = static_cmd_arg.ToString ();
 		}
 
 		//
