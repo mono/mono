@@ -1234,6 +1234,13 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override void DoEvents() {
+                        MSG     msg = new MSG ();
+
+			while (PeekMessage (null, ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)) {
+                                TranslateMessage (ref msg);
+                                DispatchMessage (ref msg);
+                        }
+
 		}
 
 		internal override void EnableWindow(IntPtr handle, bool Enable) {
@@ -1561,7 +1568,34 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override bool PeekMessage(Object queue_id, ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
-			return true;
+			IntPtr evtRef = IntPtr.Zero;
+			IntPtr target = GetEventDispatcherTarget();
+			CheckTimers (DateTime.UtcNow);
+			ReceiveNextEvent (0, IntPtr.Zero, 0, true, ref evtRef);
+			if (evtRef != IntPtr.Zero && target != IntPtr.Zero) {
+				SendEventToEventTarget (evtRef, target);
+				ReleaseEvent (evtRef);
+			}
+			
+			lock (queuelock) {
+				if (MessageQueue.Count <= 0) {
+					return false;
+				} else {
+					object queueobj;
+					if (flags == (uint)PeekMessageFlags.PM_REMOVE)
+						queueobj = MessageQueue.Dequeue ();
+					else
+						queueobj = MessageQueue.Peek ();
+
+					if (queueobj is GCHandle) {
+						XplatUIDriverSupport.ExecuteClientMessage((GCHandle)queueobj);
+						return false;
+					}
+					msg = (MSG)queueobj;
+					return true;
+				}
+			}
+			return false;
 		}
 
 		internal override bool PostMessage (IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam) {
