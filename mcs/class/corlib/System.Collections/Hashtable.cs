@@ -60,11 +60,18 @@ namespace System.Collections {
 		}
 
 		[Serializable]
-		internal class KeyMarker: IObjectReference
+		internal class KeyMarker
+#if !NET_2_1
+			: IObjectReference
+#endif
 		{
 			public readonly static KeyMarker Removed = new KeyMarker();
+#if !NET_2_1
 			public object GetRealObject (StreamingContext context)
-			{ return KeyMarker.Removed; }
+			{
+				return KeyMarker.Removed;
+			}
+#endif
 		}
 
 		//
