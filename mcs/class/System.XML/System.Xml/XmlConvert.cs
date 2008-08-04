@@ -315,7 +315,7 @@ namespace System.Xml {
 
 		public static byte ToByte(string s)
 		{
-			return Byte.Parse(s, CultureInfo.InvariantCulture);
+			return Byte.Parse(s, NumberStyles.Integer, CultureInfo.InvariantCulture);
 		}
 
 		public static char ToChar(string s)
@@ -413,7 +413,7 @@ namespace System.Xml {
 		[CLSCompliant (false)]
 		public static SByte ToSByte(string s)
 		{
-			return SByte.Parse(s, CultureInfo.InvariantCulture);
+			return SByte.Parse(s, NumberStyles.Integer, CultureInfo.InvariantCulture);
 		}
 
 		public static float ToSingle(string s)
@@ -709,19 +709,19 @@ namespace System.Xml {
 		[CLSCompliant (false)]
 		public static UInt16 ToUInt16(string s)
 		{
-			return UInt16.Parse(s, CultureInfo.InvariantCulture);
+			return UInt16.Parse(s, NumberStyles.Integer, CultureInfo.InvariantCulture);
 		}
 
 		[CLSCompliant (false)]
 		public static UInt32 ToUInt32(string s)
 		{
-			return UInt32.Parse(s, CultureInfo.InvariantCulture);
+			return UInt32.Parse(s, NumberStyles.Integer, CultureInfo.InvariantCulture);
 		}
 
 		[CLSCompliant (false)]
 		public static UInt64 ToUInt64(string s)
 		{
-			return UInt64.Parse(s, CultureInfo.InvariantCulture);
+			return UInt64.Parse(s, NumberStyles.Integer, CultureInfo.InvariantCulture);
 		}
 
 		public static string VerifyName (string name)
