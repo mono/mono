@@ -35993,6 +35993,36 @@
       </method>
     </type>
   </test>
+  <test name="test-anon-84.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>42</size>
+      </method>
+      <method name="Void .ctor(D)">
+        <size>42</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>19</size>
+      </method>
+      <method name="C &lt;C&gt;m__0(Int32)">
+        <size>4</size>
+      </method>
+    </type>
+    <type name="D">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="C Invoke(Int32)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(Int32, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="C EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void .ctor()">
