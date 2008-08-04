@@ -1,3 +1,6 @@
+2008-08-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* socket-io.c (get_socket_assembly): Make 'moonlight' variable static.
 
 Fri Aug 1 18:47:48 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
