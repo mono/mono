@@ -1369,7 +1369,7 @@ namespace System.Xml
 			if (target == "xml") {
 				ReadTextDeclaration ();
 				return;
-			} else if (String.Compare (target, "xml", true, CultureInfo.InvariantCulture) == 0)
+			} else if (CultureInfo.InvariantCulture.CompareInfo.Compare (target, "xml", CompareOptions.IgnoreCase) == 0)
 				throw NotWFError ("Not allowed processing instruction name which starts with 'X', 'M', 'L' was found.");
 
 			currentInput.AllowTextDecl = false;
