@@ -1,5 +1,11 @@
 2008-08-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* ir-emit.h (EMIT_NEW_ARGSTORE): Fix the usage of param_types and
+	arg_array in the soft-float versions of the LOAD/STORE macros.
+
+	* method-to-ir.c (mono_method_to_ir2): Fix a warning in the arm switch
+	implementation.
+
 	* ir-emit.h (NEW_VARLOADA): Handle SOFT_FLOAT correctly.
 
 2008-08-02  Zoltan Varga  <vargaz@gmail.com>
