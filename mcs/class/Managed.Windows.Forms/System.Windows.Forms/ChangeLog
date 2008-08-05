@@ -1,3 +1,9 @@
+2008-08-05  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* GridEntry.cs: ITypeDescriptorContext should be relative to the parent 
+	GridEntry, not the current.
+	[Fixes bug #413896]
+
 2008-08-04  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TextBoxBase.cs: De-internalize max_length field.
