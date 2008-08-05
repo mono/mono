@@ -1,3 +1,10 @@
+2008-08-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SoapHexBinary.cs: In Byte [] ctor, actually save the value. Fixes
+	bug #414373. In Parse, when passed in value has uneven length throw
+	a RemotingException.  On 2.0 profile, throw RemotingException for
+	invalid hex digits.
+
 2008-07-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* SoapYearMonth.cs:

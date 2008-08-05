@@ -32,6 +32,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Text;
 
 namespace System.Runtime.Remoting.Metadata.W3cXsd2001 
@@ -51,6 +52,7 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 		
 		public SoapHexBinary (byte[] value)
 		{
+			_value = value;
 		}
 		
 		public byte [] Value {
@@ -69,33 +71,50 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 		
 		public static SoapHexBinary Parse (string value)
 		{
-			char [] chars = value.ToCharArray ();
-			byte [] bytes = new byte [chars.Length / 2 + chars.Length % 2];
-			FromBinHexString (chars, 0, chars.Length, bytes);
+			byte [] bytes = FromBinHexString (value);
 			return new SoapHexBinary (bytes);
 		}
 
-		internal static int FromBinHexString (char [] chars, int offset, int charLength, byte [] buffer)
+		internal static byte [] FromBinHexString (string value)
 		{
-			int bufIndex = offset;
+			char [] chars = value.ToCharArray ();
+			byte [] buffer = new byte [chars.Length / 2 + chars.Length % 2];
+			int charLength = chars.Length;
+
+			if (charLength % 2 != 0)
+				throw CreateInvalidValueException (value);
+
+			int bufIndex = 0;
 			for (int i = 0; i < charLength - 1; i += 2) {
-				buffer [bufIndex] = (chars [i] > '9' ?
-						(byte) (chars [i] - 'A' + 10) :
-						(byte) (chars [i] - '0'));
+				buffer [bufIndex] = FromHex (chars [i], value);
 				buffer [bufIndex] <<= 4;
-				buffer [bufIndex] += chars [i + 1] > '9' ?
-						(byte) (chars [i + 1] - 'A' + 10) : 
-						(byte) (chars [i + 1] - '0');
+				buffer [bufIndex] += FromHex (chars [i + 1], value);
 				bufIndex++;
 			}
-			if (charLength %2 != 0)
-				buffer [bufIndex++] = (byte)
-					((chars [charLength - 1] > '9' ?
-						(byte) (chars [charLength - 1] - 'A' + 10) :
-						(byte) (chars [charLength - 1] - '0'))
-					<< 4);
+			return buffer;
+		}
 
-			return bufIndex - offset;
+		static byte FromHex (char hexDigit, string value)
+		{
+			try {
+				return byte.Parse (hexDigit.ToString (),
+					NumberStyles.HexNumber,
+					CultureInfo.InvariantCulture);
+			} catch (FormatException) {
+#if NET_2_0
+				throw CreateInvalidValueException (value);
+#else
+				return (byte) 0;
+#endif
+			}
+		}
+
+		static Exception CreateInvalidValueException (string value)
+		{
+			return new RemotingException (string.Format (
+				CultureInfo.InvariantCulture,
+				"Invalid value '{0}' for xsd:{1}.",
+				value, XsdType));
 		}
 
 		public override string ToString()
