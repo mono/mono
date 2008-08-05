@@ -338,10 +338,9 @@ namespace System.Net
 #endif					
 					while ((nread = st.Read (buffer, 0, length)) != 0){
 #if NET_2_0
-						if (async && DownloadProgressChanged != null){
+						if (async){
 							notify_total += nread;
-							DownloadProgressChanged (
-								this,
+							OnDownloadProgressChanged (
 								new DownloadProgressChangedEventArgs (notify_total, response.ContentLength, userToken));
 												      
 						}
@@ -957,9 +956,9 @@ namespace System.Net
 					size -= nread;
 				}
 #if NET_2_0
-				if (async && DownloadProgressChanged != null){
+				if (async){
 //					total += nread;
-					DownloadProgressChanged (this, new DownloadProgressChangedEventArgs (nread, length, userToken));
+					OnDownloadProgressChanged (new DownloadProgressChangedEventArgs (nread, length, userToken));
 				}
 #endif
 			}

@@ -1,4 +1,9 @@
-2008-07-25  Gert Driesen  <drieseng@users.sourceforge.net>µ
+2008-08-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebClient.cs : it should not invoke delegate directly, but should
+	  call overridable OnDownloadProgressChanged.
+
+2008-07-25  Gert Driesen  <drieseng@users.sourceforge.net>μ
 
 	* HttpWebResponse.cs: Initialize contentLength in ctor, as it must
 	remain accessible after the response is disposed (and the headers are
