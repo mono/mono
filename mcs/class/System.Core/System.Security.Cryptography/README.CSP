@@ -1,0 +1,20 @@
+Even if CNG is replacing CryptoAPI there is still new stuff, well
+wrappers, being added. This is important, for Windows users, since CNG
+is only available in Windows Vista (and later OS).
+
+Since Mono does not support CryptoAPI (even on Windows) all the classes
+with a CryptoServiceProvider suffix are wrappers around managed 
+implementations of the same cryptographic algorithm.
+
+
+New CSP crypto classes		Wrapper around
+----------------------		--------------
+AesCryptoServiceProvider	RijndaelManaged [1]
+SHA256CryptoServiceProvider	SHA256Managed [mscorlib]
+SHA384CryptoServiceProvider	SHA384Managed [mscorlib]
+SHA512CryptoServiceProvider	SHA512Managed [mscorlib]
+
+
+[1] Not a true wrapper but a copy of the source. This is required
+since AesManaged is available in Silverlight 2.0 (and RijndaelManaged
+is not available in mscorlib).

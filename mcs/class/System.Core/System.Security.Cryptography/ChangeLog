@@ -1,0 +1,17 @@
+2008-08-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Aes.cs: New. Base class for AES cipher.
+	* AesCryptoServiceProvider.cs: New. CSP implementation
+	of AES. For mono we're reusing the managed AesTransform
+	* AesManaged.cs: New. Managed implementation of AES.
+	* AesTransform.cs: New. Actual managed code for AES.
+	* CngAlgorithm.cs: New.
+	* CngAlgorithmGroup.cs: New.
+	* MD5Cng.cs: New. Generated code.
+	* SHA1Cng.cs: New. Generated code.
+	* SHA256Cng.cs: New. Generated code.
+	* SHA256CryptoServiceProvider.cs: New. Generated code.
+	* SHA384Cng.cs: New. Generated code.
+	* SHA384CryptoServiceProvider.cs: New. Generated code.
+	* SHA512Cng.cs: New. Generated code.
+	* SHA512CryptoServiceProvider.cs: New. Generated code.

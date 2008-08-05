@@ -1,0 +1,41 @@
+CNG stands for "Cryptography API: Next Generation"
+
+CNG is the replacement for CryptoAPI under Windows Vista (and later) and
+just like CryptoAPI it is a Windows-specific, native (unmanaged) library.
+
+In MS implementation the *Cng classes are simply managed wrappers around
+the native CNG libraries. This is similar to older *CryptoServiceProvider
+classes that provided managed wrappers around CryptoAPI.
+
+In Mono implementation the *Cng classes are, mostly[1], wrappers around 
+existing managed classes provided in older version of the framework. 
+This is essentially similar to what Mono already does for the 
+*CryptoServiceProvider classes (i.e. provide managed implementation).
+
+Of couse this won't affect people using the base algorithm classes to
+create the default instance of their algorithm. 
+
+E.g.
+	SHA256 hash = SHA256.Create ();
+has been working for years and will continue to do so.
+
+
+New CNG crypto classes		Wrapper around
+----------------------		--------------
+ECDsaCng			none [1]
+ECDiffieHellmanCng		none [1]
+MD5Cng				MD5CryptoServiceProvider [mscorlib]
+SHA1Cng				SHA1Managed [mscorlib]
+SHA256Cng			SHA256Managed [mscorlib]
+SHA384Cng			SHA384Managed [mscorlib]
+SHA512Cng			SHA512Managed [mscorlib]
+
+
+[1] Two specific cases, namely ECDH and ECDSA, are new algorithms that
+were not available before CNG and for which Mono does not, at the 
+present time, have managed alternatives.
+
+The *actual* behavior of both class is to throw a PlatformException
+just like running the same code would do under Windows XP (or earlier).
+Once we have managed implementations for both algorithms we'll behave
+like Vista.
