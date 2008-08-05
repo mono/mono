@@ -1,3 +1,7 @@
+2008-08-05  Jb Evain  <jbevain@novell.com>
+
+	* XmlConvert.cs (ToChar): add a specific SL2 version.
+
 2008-07-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlNamespaceManager.cs : check null arg.

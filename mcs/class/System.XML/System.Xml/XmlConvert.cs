@@ -320,7 +320,17 @@ namespace System.Xml {
 
 		public static char ToChar(string s)
 		{
+#if !NET_2_1
 			return Char.Parse(s);
+#else
+			if (s == null)
+				throw new ArgumentNullException ("s");
+
+			if (s.Length != 1)
+				throw new FormatException ("String contain more than one char");
+
+			return s [0];
+#endif
 		}
 
 #if NET_2_0
