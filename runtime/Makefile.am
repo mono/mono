@@ -75,8 +75,13 @@ mcs-do-run-test-profiles: test-support-files
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' run-test-profiles
 
 if PLATFORM_WIN32
+if CROSS_COMPILING
+cur_dir_cmd = pwd
+PLATFORM_PATH_SEPARATOR = :
+else
 cur_dir_cmd = cygpath -w -a .
 PLATFORM_PATH_SEPARATOR = ;
+endif
 else
 cur_dir_cmd = pwd
 PLATFORM_PATH_SEPARATOR = :

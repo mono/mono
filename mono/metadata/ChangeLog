@@ -1,3 +1,7 @@
+2008-08-05  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile.am: added support for cross-compilation
+
 2008-08-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* socket-io.c (get_socket_assembly): Make 'moonlight' variable static.
