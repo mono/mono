@@ -1,3 +1,7 @@
+2008-08-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* ir-emit.h (NEW_VARLOADA): Handle SOFT_FLOAT correctly.
+
 2008-08-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ia64.c (add_valuetype): Only reserve half parameter slot for each member of
