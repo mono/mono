@@ -440,7 +440,7 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			if (Oper == Operator.AddressOf) {
-				Expr = Expr.DoResolveLValue (ec, new EmptyExpression ());
+				Expr = Expr.DoResolveLValue (ec, EmptyExpression.UnaryAddress);
 
 				if (Expr == null || Expr.eclass != ExprClass.Variable){
 					Error (211, "Cannot take the address of the given expression");
@@ -950,7 +950,7 @@ namespace Mono.CSharp {
 
 		Expression ResolveOperator (EmitContext ec)
 		{
-			Type expr_type = expr.Type;
+			type = expr.Type;
 
 			//
 			// Step 1: Perform Operator Overload location
@@ -963,7 +963,7 @@ namespace Mono.CSharp {
 			else
 				op_name = Operator.GetMetadataName (Operator.OpType.Decrement);
 
-			mg = MemberLookup (ec.ContainerType, expr_type, op_name, MemberTypes.Method, AllBindingFlags, loc) as MethodGroupExpr;
+			mg = MemberLookup (ec.ContainerType, type, op_name, MemberTypes.Method, AllBindingFlags, loc) as MethodGroupExpr;
 
 			if (mg != null) {
 				ArrayList args = new ArrayList (1);
@@ -973,11 +973,14 @@ namespace Mono.CSharp {
 					return null;
 
 				method = new UserOperatorCall (mg, args, null, loc);
-				type = method.Type;
-			} else if (!IsIncrementableNumber (expr_type)) {
+				Convert.ImplicitConversionRequired (ec, method, type, loc);
+				return this;
+			}
+
+			if (!IsIncrementableNumber (type)) {
 				Error (187, "No such operator '" + OperName (mode) + "' defined for type '" +
-				       TypeManager.CSharpName (expr_type) + "'");
-				   return null;
+					   TypeManager.CSharpName (type) + "'");
+				return null;
 			}
 
 			//
@@ -985,20 +988,10 @@ namespace Mono.CSharp {
 			// should be an expression that is classified as a variable,
 			// a property access or an indexer access
 			//
-			type = expr_type;
-			if (expr.eclass == ExprClass.Variable){
-				LocalVariableReference var = expr as LocalVariableReference;
-				if ((var != null) && var.IsReadOnly) {
-					Error (1604, "cannot assign to `" + var.Name + "' because it is readonly");
-					return null;
-				}
-			} else if (expr.eclass == ExprClass.IndexerAccess || expr.eclass == ExprClass.PropertyAccess){
-				expr = expr.ResolveLValue (ec, this, Location);
-				if (expr == null)
-					return null;
+			if (expr.eclass == ExprClass.Variable || expr.eclass == ExprClass.IndexerAccess || expr.eclass == ExprClass.PropertyAccess) {
+				expr = expr.ResolveLValue (ec, expr, Location);
 			} else {
 				Report.Error (1059, loc, "The operand of an increment or decrement operator must be a variable, property or indexer");
-				return null;
 			}
 
 			return this;
@@ -1474,9 +1467,9 @@ namespace Mono.CSharp {
 			get { return "as"; }
 		}
 	
-		public override bool GetAttributableValue (Type value_type, out object value)
+		public override bool GetAttributableValue (EmitContext ec, Type value_type, out object value)
 		{
-			return expr.GetAttributableValue (value_type, out value);
+			return expr.GetAttributableValue (ec, value_type, out value);
 		}
 	}
 	
@@ -4294,15 +4287,15 @@ namespace Mono.CSharp {
 					code = 1654; msg = "Cannot assign to members of `{0}' because it is a `{1}'";
 				} else if (right_side == EmptyExpression.LValueMemberOutAccess) {
 					code = 1655; msg = "Cannot pass members of `{0}' as ref or out arguments because it is a `{1}'";
+				} else if (right_side == EmptyExpression.UnaryAddress) {
+					code = 459; msg = "Cannot take the address of {1} `{0}'";
 				} else {
 					code = 1656; msg = "Cannot assign to `{0}' because it is a `{1}'";
 				}
 				Report.Error (code, loc, msg, Name, local_info.GetReadOnlyContext ());
-				return null;
-			}
-
-			if (VariableInfo != null)
+			} else if (VariableInfo != null) {
 				VariableInfo.SetAssigned (ec);
+			}
 
 			return DoResolveBase (ec);
 		}
@@ -5816,7 +5809,7 @@ namespace Mono.CSharp {
 
 				Constant c = a.Expr as Constant;
 				if (c != null) {
-					c = c.ImplicitConversionRequired (TypeManager.int32_type, a.Expr.Location);
+					c = c.ImplicitConversionRequired (ec, TypeManager.int32_type, a.Expr.Location);
 				}
 
 				if (c == null) {
@@ -6410,11 +6403,11 @@ namespace Mono.CSharp {
 				first_emit_temp.Release (ec);
 		}
 
-		public override bool GetAttributableValue (Type value_type, out object value)
+		public override bool GetAttributableValue (EmitContext ec, Type value_type, out object value)
 		{
 			if (arguments.Count != 1) {
 				// Report.Error (-211, Location, "attribute can not encode multi-dimensional arrays");
-				return base.GetAttributableValue (null, out value);
+				return base.GetAttributableValue (ec, null, out value);
 			}
 
 			if (array_data == null) {
@@ -6424,7 +6417,7 @@ namespace Mono.CSharp {
 					return true;
 				}
 				// Report.Error (-212, Location, "array should be initialized when passing it to an attribute");
-				return base.GetAttributableValue (null, out value);
+				return base.GetAttributableValue (ec, null, out value);
 			}
 			
 			Array ret = Array.CreateInstance (array_element_type, array_data.Count);
@@ -6437,7 +6430,7 @@ namespace Mono.CSharp {
 				if (e == null) 
 					continue;
 
-				if (!e.GetAttributableValue (array_element_type, out element_value)) {
+				if (!e.GetAttributableValue (ec, array_element_type, out element_value)) {
 					value = null;
 					return false;
 				}
@@ -6965,7 +6958,7 @@ namespace Mono.CSharp {
 			ec.ig.Emit (OpCodes.Call, TypeManager.system_type_get_type_from_handle);
 		}
 
-		public override bool GetAttributableValue (Type value_type, out object value)
+		public override bool GetAttributableValue (EmitContext ec, Type value_type, out object value)
 		{
 			if (TypeManager.ContainsGenericParameters (typearg) &&
 				!TypeManager.IsGenericTypeDefinition (typearg)) {
@@ -8779,6 +8772,7 @@ namespace Mono.CSharp {
 		public static readonly EmptyExpression OutAccess = new EmptyExpression ();
 		public static readonly EmptyExpression LValueMemberAccess = new EmptyExpression ();
 		public static readonly EmptyExpression LValueMemberOutAccess = new EmptyExpression ();
+		public static readonly EmptyExpression UnaryAddress = new EmptyExpression ();
 
 		static EmptyExpression temp = new EmptyExpression ();
 		public static EmptyExpression Grab ()

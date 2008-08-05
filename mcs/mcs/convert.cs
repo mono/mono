@@ -1387,11 +1387,17 @@ namespace Mono.CSharp {
 			if (e != null)
 				return e;
 
-			if (TypeManager.IsEnumType (target_type) && expr is IntLiteral){
-				IntLiteral i = (IntLiteral) expr;
-
-				if (i.Value == 0)
-					return new EnumConstant ((Constant) expr, target_type);
+			if (expr is IntConstant && TypeManager.IsEnumType (target_type)){
+				Constant i = (Constant) expr;
+				//
+				// LAMESPEC: Conversion from any 0 constant is allowed
+				//
+				// An implicit enumeration conversion permits the decimal-integer-literal 0
+				// to be converted to any enum-type and to any nullable-type whose underlying
+				// type is an enum-type
+				//
+				if (i.IsDefaultValue)
+					return new EnumConstant (i, target_type);
 			}
 
 			if (ec.InUnsafe) {

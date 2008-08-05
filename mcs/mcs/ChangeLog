@@ -1,3 +1,11 @@
+2008-08-05  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs (IsEqual): Guard against null.
+	
+	* ecore.cs, class.cs, convert.cs, const.cs, constant.cs, expression.cs,
+	attribute.cs, enum.cs, statement.cs: Pass EmitContext to constant conversion
+	routine. Fixed few misleading conversion errors.
+
 2008-08-04  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs: Consider generics when checking cycles in struct layout.

@@ -2089,7 +2089,7 @@ namespace Mono.CSharp {
 					if (!variable_type.IsValueType && variable_type != TypeManager.string_type && !ce.IsDefaultValue)
 						Const.Error_ConstantCanBeInitializedWithNullOnly (vi.Location, vi.Name);
 					else
-						ce.Error_ValueCannotBeConverted (null, vi.Location, variable_type, false);
+						ce.Error_ValueCannotBeConverted (ec, vi.Location, variable_type, false);
 					continue;
 				}
 
@@ -3007,7 +3007,7 @@ namespace Mono.CSharp {
 				return true;
 			}
 			
-			c = c.ImplicitConversionRequired (required_type, loc);
+			c = c.ImplicitConversionRequired (ec, required_type, loc);
 			if (c == null)
 				return false;
 
@@ -4488,16 +4488,9 @@ namespace Mono.CSharp {
 				}
 
 				//
-				// For other cases, flag a `this is already fixed expression'
+				// For other cases, report an error
 				//
-				if (e is LocalVariableReference || e is ParameterReference ||
-				    Convert.ImplicitConversionExists (ec, e, vi.VariableType)){
-				    
-					Report.Error (245, loc, "right hand expression is already fixed, no need to use fixed statement ");
-					return false;
-				}
-
-				Report.Error (245, loc, "Fixed statement only allowed on strings, arrays or address-of expressions");
+				Convert.ImplicitConversionRequired (ec, e, vi.VariableType, loc);
 				return false;
 			}
 

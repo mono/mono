@@ -40,14 +40,14 @@ namespace Mono.CSharp {
 			return this.GetType ().Name + " (" + AsString () + ")";
 		}
 
-		public override bool GetAttributableValue (Type value_type, out object value)
+		public override bool GetAttributableValue (EmitContext ec, Type value_type, out object value)
 		{
 			if (value_type == TypeManager.object_type) {
 				value = GetTypedValue ();
 				return true;
 			}
 
-			Constant c = ImplicitConversionRequired (value_type, loc);
+			Constant c = ImplicitConversionRequired (ec, value_type, loc);
 			if (c == null) {
 				value = null;
 				return false;
@@ -78,7 +78,7 @@ namespace Mono.CSharp {
 
 		public override void Error_ValueCannotBeConverted (EmitContext ec, Location loc, Type target, bool expl)
 		{
-			if (!expl && IsLiteral && type != TypeManager.string_type && !TypeManager.IsDelegateType (target)) {
+			if (!expl && IsLiteral && TypeManager.IsPrimitiveType (target) && TypeManager.IsPrimitiveType (type)) {
 				Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
 					GetValue ().ToString (), TypeManager.CSharpName (target));
 			} else {
@@ -86,11 +86,11 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public Constant ImplicitConversionRequired (Type type, Location loc)
+		public Constant ImplicitConversionRequired (EmitContext ec, Type type, Location loc)
 		{
 			Constant c = ConvertImplicitly (type);
 			if (c == null)
-				Error_ValueCannotBeConverted (null, loc, type, false);
+				Error_ValueCannotBeConverted (ec, loc, type, false);
 			return c;
 		}
 

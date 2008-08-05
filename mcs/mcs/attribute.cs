@@ -468,7 +468,7 @@ namespace Mono.CSharp {
 			for (int j = 0; j < pos_arg_count; ++j) {
 				Argument a = (Argument) PosArguments [j];
 
-				if (!a.Expr.GetAttributableValue (a.Type, out pos_values [j]))
+				if (!a.Expr.GetAttributableValue (ec, a.Type, out pos_values [j]))
 					return null;
 			}
 
@@ -583,7 +583,7 @@ namespace Mono.CSharp {
 					}
 
 					object value;
-					if (!a.Expr.GetAttributableValue (member.Type, out value))
+					if (!a.Expr.GetAttributableValue (ec, member.Type, out value))
 						return false;
 
 					PropertyBase pb = TypeManager.GetProperty (pi);
@@ -610,7 +610,7 @@ namespace Mono.CSharp {
 					}
 
  					object value;
-					if (!a.Expr.GetAttributableValue (member.Type, out value))
+					if (!a.Expr.GetAttributableValue (ec, member.Type, out value))
 						return false;
 
 					FieldBase fb = TypeManager.GetField (fi);

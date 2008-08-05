@@ -233,7 +233,7 @@ namespace Mono.CSharp {
 				if (!MemberType.IsValueType && MemberType != TypeManager.string_type && !value.IsDefaultValue)
 					Error_ConstantCanBeInitializedWithNullOnly (Location, GetSignatureForError ());
 				else
-					value.Error_ValueCannotBeConverted (null, Location, MemberType, false);
+					value.Error_ValueCannotBeConverted (ec, Location, MemberType, false);
 			}
 
 			return c;

@@ -133,7 +133,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public virtual bool GetAttributableValue (Type value_type, out object value)
+		public virtual bool GetAttributableValue (EmitContext ec, Type value_type, out object value)
 		{
 			Attribute.Error_AttributeArgumentNotValid (loc);
 			value = null;
@@ -373,15 +373,12 @@ namespace Mono.CSharp {
 					TypeManager.CSharpName (type), TypeManager.CSharpName (target));
 				return;
 			}
-			
-			Expression e = (this is EnumConstant) ? ((EnumConstant)this).Child : this;
-			bool b = Convert.ExplicitNumericConversion (e, target) != null;
 
-			if (b ||
-			    Convert.ExplicitReferenceConversionExists (Type, target) ||
-			    Convert.ExplicitUnsafe (e, target) != null ||
-			    (ec != null && Convert.ExplicitUserConversion (ec, this, target, Location.Null) != null))
-			{
+			Report.DisableReporting ();
+			bool expl_exists = Convert.ExplicitConversion (ec, this, target, Location.Null) != null;
+			Report.EnableReporting ();
+
+			if (expl_exists) {
 				Report.Error (266, loc, "Cannot implicitly convert type `{0}' to `{1}'. " +
 					      "An explicit conversion exists (are you missing a cast?)",
 					TypeManager.CSharpName (Type), TypeManager.CSharpName (target));
@@ -1370,9 +1367,9 @@ namespace Mono.CSharp {
 			child.Emit (ec);
 		}
 
-		public override bool GetAttributableValue (Type value_type, out object value)
+		public override bool GetAttributableValue (EmitContext ec, Type value_type, out object value)
 		{
-			return child.GetAttributableValue (value_type, out value);
+			return child.GetAttributableValue (ec, value_type, out value);
 		}
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
@@ -1696,7 +1693,7 @@ namespace Mono.CSharp {
 			Child.EmitSideEffect (ec);
 		}
 
-		public override bool GetAttributableValue (Type value_type, out object value)
+		public override bool GetAttributableValue (EmitContext ec, Type value_type, out object value)
 		{
 			value = GetTypedValue ();
 			return true;
@@ -5793,6 +5790,11 @@ namespace Mono.CSharp {
 			}
 
 			return this;
+		}
+
+		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			return DoResolve (ec);
 		}
 		
 		public override void Emit (EmitContext ec)

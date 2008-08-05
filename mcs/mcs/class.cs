@@ -5656,8 +5656,8 @@ namespace Mono.CSharp {
 			Constant c = size_expr.ResolveAsConstant (ec, this);
 			if (c == null)
 				return;
-
-			IntConstant buffer_size_const = c.ImplicitConversionRequired (TypeManager.int32_type, Location) as IntConstant;
+			
+			IntConstant buffer_size_const = c.ImplicitConversionRequired (ec, TypeManager.int32_type, Location) as IntConstant;
 			if (buffer_size_const == null)
 				return;
 

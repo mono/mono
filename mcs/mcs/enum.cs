@@ -87,7 +87,7 @@ namespace Mono.CSharp {
 				if (c is EnumConstant)
 					c = ((EnumConstant)c).Child;
 
-				c = c.ImplicitConversionRequired (ParentEnum.UnderlyingType, Location);
+				c = c.ImplicitConversionRequired (ec, ParentEnum.UnderlyingType, Location);
 				if (c == null)
 					return null;
 
