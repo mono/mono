@@ -1,0 +1,5 @@
+2008-08-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* hashwrap.cs: Build wrappers around managed hash implementations 
+	for CNG and CSP types.
+	* Makefile: Build tools and wrappers.
