@@ -1541,7 +1541,7 @@ namespace Mono.CSharp {
 
 		public bool Unchecked {
 			get { return (flags & Flags.Unchecked) != 0; }
-			set { flags |= Flags.Unchecked; }
+			set { flags = value ? flags | Flags.Unchecked : flags & ~Flags.Unchecked; }
 		}
 
 		public bool Unsafe {

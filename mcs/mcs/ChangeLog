@@ -1,5 +1,10 @@
 2008-08-05  Marek Safar  <marek.safar@gmail.com>
 
+	* ecore.cs, constant.cs, expression.cs, statement.cs: Resolve correctly 
+	anonymous method inside checked/unchecked expression.
+
+2008-08-05  Marek Safar  <marek.safar@gmail.com>
+
 	* typemanager.cs (IsEqual): Guard against null.
 	
 	* ecore.cs, class.cs, convert.cs, const.cs, constant.cs, expression.cs,

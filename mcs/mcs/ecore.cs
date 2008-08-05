@@ -4531,6 +4531,7 @@ namespace Mono.CSharp {
 
 				pt = pd.Types [GetApplicableParametersCount (method, pd) - 1];
 				pt = TypeManager.GetElementType (pt);
+				has_unsafe_arg |= pt.IsPointer;
 				params_initializers = new ArrayList (0);
 			}
 
@@ -5492,6 +5493,10 @@ namespace Mono.CSharp {
 			if (IsBase && setter.IsAbstract){
 				Error_CannotCallAbstractBase (TypeManager.GetFullNameSignature (PropertyInfo));
 				return null;
+			}
+
+			if (PropertyInfo.PropertyType.IsPointer && !ec.InUnsafe) {
+				UnsafeError (loc);
 			}
 
 			return this;
