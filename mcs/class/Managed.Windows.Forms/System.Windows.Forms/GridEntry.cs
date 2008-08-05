@@ -256,11 +256,19 @@ namespace System.Windows.Forms.PropertyGridInternal
 		}
 
 		object ITypeDescriptorContext.Instance {
-			get { return PropertyOwner; }
+			get {
+				if (ParentEntry != null)
+					return ParentEntry.PropertyOwner;
+				return PropertyOwner;
+			}
 		}
 
 		PropertyDescriptor ITypeDescriptorContext.PropertyDescriptor {
-			get { return PropertyDescriptor; }
+			get {
+				if (ParentEntry != null)
+					return ParentEntry.PropertyDescriptor; 
+				return PropertyDescriptor;
+			}
 		}
 		#endregion
 
