@@ -1,3 +1,8 @@
+2008-08-05  Jb Evain  <jbevain@novell.com>
+
+	* CaseInsensitiveHashCodeProvider.cs: refactor CultureInfo
+	comparison to also work for SL2.
+
 2008-08-04  Jb Evain  <jbevain@novell.com>
 
 	* Hashtable.cs: cleanup internal KeyMarker type for NET_2_1.

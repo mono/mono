@@ -56,7 +56,7 @@ namespace System.Collections
 		public CaseInsensitiveHashCodeProvider ()
 		{
 			CultureInfo culture = CultureInfo.CurrentCulture;
-			if (culture.LCID != CultureInfo.InvariantCulture.LCID)
+			if (!AreEqual (culture, CultureInfo.InvariantCulture))
 				m_text = CultureInfo.CurrentCulture.TextInfo;
 		}
 
@@ -64,7 +64,7 @@ namespace System.Collections
 		{
 			if (culture == null)
  				throw new ArgumentNullException ("culture");
-			if (culture.LCID != CultureInfo.InvariantCulture.LCID)
+			if (!AreEqual (culture, CultureInfo.InvariantCulture))
 				m_text = culture.TextInfo;
 		}
 
@@ -81,14 +81,32 @@ namespace System.Collections
 					if (singleton == null) {
 						singleton = new CaseInsensitiveHashCodeProvider ();
 					} else if (singleton.m_text == null) {
-						if (CultureInfo.CurrentCulture.LCID != CultureInfo.InvariantCulture.LCID)
+						if (!AreEqual (CultureInfo.CurrentCulture, CultureInfo.InvariantCulture))
 							singleton = new CaseInsensitiveHashCodeProvider ();
-					} else if (singleton.m_text.LCID != CultureInfo.CurrentCulture.LCID) {
+					} else if (!AreEqual (singleton.m_text, CultureInfo.CurrentCulture)) {
 						singleton = new CaseInsensitiveHashCodeProvider ();
 					}
 					return singleton;
 				}
 			}
+		}
+
+		static bool AreEqual (CultureInfo a, CultureInfo b)
+		{
+#if !NET_2_1
+			return a.LCID == b.LCID;
+#else
+			return a.Name == b.Name;
+#endif
+		}
+
+		static bool AreEqual (TextInfo info, CultureInfo culture)
+		{
+#if !NET_2_1
+			return info.LCID == culture.LCID;
+#else
+			return info.CultureName == culture.Name;
+#endif
 		}
 
 #if NET_1_1
@@ -119,7 +137,7 @@ namespace System.Collections
 			int h = 0;
 			char c;
 
-			if ((m_text != null) && (m_text.LCID != CultureInfo.InvariantCulture.LCID)) {
+			if ((m_text != null) && !AreEqual (m_text, CultureInfo.InvariantCulture)) {
 				str = m_text.ToLower (str);
 				for (int i = 0; i < str.Length; i++) {
 					c = str [i];
@@ -127,7 +145,7 @@ namespace System.Collections
 				}
 			} else {
 				for (int i = 0; i < str.Length; i++) {
-					c = Char.ToLowerInvariant (str [i]);
+					c = Char.ToLower (str [i], CultureInfo.InvariantCulture);
 					h = h * 31 + c;
 				}
 			}
