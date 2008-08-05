@@ -1,3 +1,7 @@
+2008-08-05  Jb Evain  <jbevain@novell.com>
+
+	* String.cs: add new NET_2_1 Compare methods.
+
 2008-08-03  Miguel de Icaza  <miguel@novell.com>
 
 	* ConsoleDriver.cs: If the terminal is dumb, do not activate the

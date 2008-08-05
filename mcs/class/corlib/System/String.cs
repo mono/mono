@@ -635,6 +635,34 @@ namespace System
 			return String.Compare (value, this, comparisonType) == 0;
 		}
 #endif
+
+#if NET_2_1
+		public static int Compare (string strA, string strB, CultureInfo culture, CompareOptions options)
+		{
+			if (culture == null)
+				throw new ArgumentNullException ("culture");
+
+			return culture.CompareInfo.Compare (strA, strB, options);
+		}
+
+		public static int Compare (string strA, int indexA, string strB, int indexB, int length, CultureInfo culture, CompareOptions options)
+		{
+			if (culture == null)
+				throw new ArgumentNullException ("culture");
+
+			int len1 = length;
+			int len2 = length;
+			
+			if (length > (strA.Length - indexA))
+				len1 = strA.Length - indexA;
+
+			if (length > (strB.Length - indexB))
+				len2 = strB.Length - indexB;
+
+			return culture.CompareInfo.Compare (strA, indexA, len1, strB, indexB, len2, options);
+		}
+#endif
+
 		public int CompareTo (Object value)
 		{
 			if (value == null)
