@@ -270,6 +270,7 @@ namespace System.Configuration {
 			SettingsProvider provider = null;
 			object defaultValue = null;
 			SettingsSerializeAs serializeAs = SettingsSerializeAs.String;
+			bool explicitSerializeAs = false;
 
 			foreach (Attribute a in prop.GetCustomAttributes (false)) {
 				/* the attributes we handle natively here */
@@ -279,21 +280,11 @@ namespace System.Configuration {
 					provider.Initialize (null, null);
 				}
 				else if (a is DefaultSettingValueAttribute) {
-					defaultValue = ((DefaultSettingValueAttribute)a).Value; /* XXX this is a string.. do we convert? */
-					// note: for StringCollection, TypeDescriptor.GetConverter(prop.PropertyType) returns
-					// CollectionConverter, however this class cannot handle the XML serialized strings
-					if (prop.PropertyType == typeof(StringCollection)) {
-						XmlSerializer xs = new XmlSerializer (typeof (string[]));
-						string[] values = (string[]) xs.Deserialize (new StringReader ((string)defaultValue));
-						StringCollection sc = new StringCollection ();
-						sc.AddRange (values);
-						defaultValue = sc;
-					} else if (prop.PropertyType != typeof(string)) {
-						defaultValue = TypeDescriptor.GetConverter(prop.PropertyType).ConvertFromString((string)defaultValue);
-					}
+					defaultValue = ((DefaultSettingValueAttribute)a).Value;
 				}
 				else if (a is SettingsSerializeAsAttribute) {
 					serializeAs = ((SettingsSerializeAsAttribute)a).SerializeAs;
+					explicitSerializeAs = true;
 				}
 				else if (a is ApplicationScopedSettingAttribute ||
 					 a is UserScopedSettingAttribute) {
@@ -302,6 +293,18 @@ namespace System.Configuration {
 				else {
 					dict.Add (a.GetType(), a);
 				}
+			}
+
+			if (!explicitSerializeAs) {
+				// DefaultValue is a string and if we can't convert from string to the 
+				// property type then the only other option left is for the string to 
+				// be XML.
+				//
+				TypeConverter converter = TypeDescriptor.GetConverter (prop.PropertyType);
+				if (converter != null && 
+				    (!converter.CanConvertFrom (typeof (string)) || 
+				     !converter.CanConvertTo (typeof (string))))
+					serializeAs = SettingsSerializeAs.Xml;
 			}
 
 			SettingsProperty setting =
