@@ -1383,7 +1383,9 @@ namespace System.Net.Sockets
 				sock = Accept_internal(socket, out error);
 			} catch (ThreadAbortException) {
 				if (disposed) {
+#if !NET_2_1
 					Thread.ResetAbort ();
+#endif
 					error = (int) SocketError.Interrupted;
 				}
 			} finally {
@@ -1414,7 +1416,9 @@ namespace System.Net.Sockets
 				sock = Accept_internal (socket, out error);
 			} catch (ThreadAbortException) {
 				if (disposed) {
+#if !NET_2_1
 					Thread.ResetAbort ();
+#endif
 					error = (int)SocketError.Interrupted;
 				}
 			} finally {
