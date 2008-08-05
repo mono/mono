@@ -1,3 +1,12 @@
+2008-08-05  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ApplicationSettingsBase.cs: If there is no explicit 
+	SettingsSerializeAs attribute to specify the format, distinguish 
+	between plain string and XML by checking if the TypeConverter for the 
+	property type supports string conversions. If it doesn't then we are 
+	present with XML.
+	[Fixes bug #414445]
+
 2008-06-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ConfigXmlDocument.cs: Implement IConfigErrorInfo on all Node classes.
