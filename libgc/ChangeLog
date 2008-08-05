@@ -1,3 +1,9 @@
+2008-08-05  Andreas Färber  <andreas.faerber@web.de>
+
+	* autogen.sh: Suppress arguments warning for NOCONFIGURE.
+	
+	Contributed under MIT/X11 license.
+
 2008-08-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* pthread_support.c (GC_thread_exit_proc): Null out the tls key to prevent the
