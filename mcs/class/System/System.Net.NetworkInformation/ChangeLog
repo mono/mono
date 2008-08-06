@@ -1,3 +1,8 @@
+2008-08-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IPGlobalProperties.cs : fixed ToEndPoint() to not bork at 
+	  parsing IPv6 string. Fixed bug #410006.
+
 2008-07-31  Jb Evain  <jbevain@novell.com>
 
 	* NetworkInformationException.cs: cleanup for NET_2_1.

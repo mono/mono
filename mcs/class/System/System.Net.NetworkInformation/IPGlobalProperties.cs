@@ -189,8 +189,15 @@ namespace System.Net.NetworkInformation {
 		IPEndPoint ToEndpoint (string s)
 		{
 			int idx = s.IndexOf (':');
-			return new IPEndPoint (long.Parse (s.Substring (0, idx), NumberStyles.HexNumber),
-						  int.Parse (s.Substring (idx + 1), NumberStyles.HexNumber));
+			int port = int.Parse (s.Substring (idx + 1), NumberStyles.HexNumber);
+			if (s.Length == 13)
+				return new IPEndPoint (long.Parse (s.Substring (0, idx), NumberStyles.HexNumber), port);
+			else {
+				byte [] bytes = new byte [16];
+				for (int i = 0; (i << 1) < idx; i++)
+					bytes [i] = byte.Parse (s.Substring (i << 1, 2), NumberStyles.HexNumber);
+				return new IPEndPoint (new IPAddress (bytes), port);
+			}
 		}
 
 		void GetRows (string file, List<string []> list)
