@@ -1,3 +1,7 @@
+2008-08-06  Miguel de Icaza  <miguel@novell.com>
+
+	* Uri.cs: Use exception-less operations.
+
 2008-07-31  Jb Evain  <jbevain@novell.com>
 
 	* Uri.cs: cleanup for NET_2_1.

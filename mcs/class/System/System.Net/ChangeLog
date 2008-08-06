@@ -1,3 +1,15 @@
+2008-08-06  Miguel de Icaza  <miguel@novell.com>
+
+	* IPAddress.cs (ParseIPV6): Use an exception-less parser for ipv6
+	addresses.
+
+	* IPv6Address.cs: Rewrite most of the parsing code to not use that
+	incredibly fragile, hacky and hacky implementation.
+
+	(TryParse): Provide a exception-less parsing path.
+
+2008-07-25  Gert Driesen  <drieseng@users.sourceforge.net>µ
+
 2008-08-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IPAddress.cs : several IPv4 parsing fix exposed by bug #411920.

@@ -73,11 +73,71 @@ namespace System.Net {
 		{
 			this.scopeId = scopeId;
 		}
-		
+
 		public static IPv6Address Parse (string ipString)
 		{
 			if (ipString == null)
 				throw new ArgumentNullException ("ipString");
+
+			IPv6Address result;
+			if (TryParse (ipString, out result))
+				return result;
+			throw new FormatException ("Not a valid IPv6 address");
+		}
+
+		static int Fill (ushort [] addr, string ipString)
+		{
+			int p = 0;
+			int slot = 0;
+
+			if (ipString.Length == 0)
+				return 0;
+			
+			// Catch double uses of ::
+			if (ipString.IndexOf ("::") != -1)
+				return -1;
+
+			for (int i = 0; i < ipString.Length; i++){
+				char c = ipString [i];
+				int n;
+
+				if (c == ':'){
+					// Trailing : is not allowed.
+					if (i == ipString.Length-1)
+						return -1;
+					
+					if (slot == 8)
+						return -1;
+					
+					addr [slot++] = (ushort) p;
+					p = 0;
+					continue;
+				} if ('0' <= c && c <= '9')
+					n = (int) (c - '0');
+				else if ('a' <= c && c <= 'f')
+					n = (int) (c - 'a' + 10);
+				else if ('A' <= c && c <= 'F')
+					n = (int) (c - 'A' + 10);
+				else 
+					return -1;
+				p = (p << 4) + n;
+				if (p > UInt16.MaxValue)
+					return -1;
+			}
+
+			if (slot == 8)
+				return -1;
+			
+			addr [slot++] = (ushort) p;
+
+			return slot;
+		}
+		
+		public static bool TryParse (string ipString, out IPv6Address result)
+		{
+			result = null;
+			if (ipString == null)
+				return false;
 
 			if (ipString.Length > 2 && 
 			    ipString [0] == '[' && 
@@ -85,7 +145,7 @@ namespace System.Net {
 				ipString = ipString.Substring (1, ipString.Length - 2);
 
 			if (ipString.Length  < 2)
-				throw new FormatException ("Not a valid IPv6 address");
+				return false;
 
 			int prefixLen = 0;
 			int scopeId = 0;
@@ -98,7 +158,7 @@ namespace System.Net {
 					prefixLen = -1;
 				}
 				if (prefixLen < 0 || prefixLen > 128)
-					throw new FormatException ("Not a valid prefix length");
+					return false;
 				ipString = ipString.Substring (0, pos);
 			} else {
 				pos = ipString.LastIndexOf ('%');
@@ -113,99 +173,94 @@ namespace System.Net {
 					ipString = ipString.Substring (0, pos);
 				}			
 			}
-			
+
+			//
+			// At this point the prefix/suffixes have been removed
+			// and we only have to deal with the ipv4 or ipv6 addressed
+			//
 			ushort [] addr = new ushort [8];
-			
+
+			//
+			// Is there an ipv4 address at the end?
+			//
 			bool ipv4 = false;
 			int pos2 = ipString.LastIndexOf (":");
 			if (pos2 == -1)
-				throw new FormatException ("Not a valid IPv6 address");
+				return false;
+
+			int slots = 0;
 			if (pos2 < (ipString.Length - 1)) {
 				string ipv4Str = ipString.Substring (pos2 + 1);
 				if (ipv4Str.IndexOf ('.') != -1) {
-					try {
-						long a = IPAddress.Parse (ipv4Str).InternalIPv4Address;
-						addr [6] = (ushort) (((int) (a & 0xff) << 8) + ((int) ((a >> 8) & 0xff)));
-						addr [7] = (ushort) (((int) ((a >> 16) & 0xff) << 8) + ((int) ((a >> 24) & 0xff)));
-						if (ipString [pos2 - 1] == ':') 
-							ipString = ipString.Substring (0, pos2 + 1);
-						else
-							ipString = ipString.Substring (0, pos2);
-						ipv4 = true;
-					} catch (Exception) {
-						throw new FormatException ("Not a valid IPv6 address");		
-					}
+					IPAddress ip;
+					
+					if (!IPAddress.TryParse (ipv4Str, out ip))
+						return false;
+					
+					long a = ip.InternalIPv4Address;
+					addr [6] = (ushort) (((int) (a & 0xff) << 8) + ((int) ((a >> 8) & 0xff)));
+					addr [7] = (ushort) (((int) ((a >> 16) & 0xff) << 8) + ((int) ((a >> 24) & 0xff)));
+					if (pos2 > 0 && ipString [pos2 - 1] == ':') 
+						ipString = ipString.Substring (0, pos2 + 1);
+					else
+						ipString = ipString.Substring (0, pos2);
+					ipv4 = true;
+					slots = 2;
 				}
 			}	
-			
-			int origLen = ipString.Length;
-			if (origLen < 2)
-				throw new FormatException ("Not a valid IPv6 address");
-			ipString = ipString.Replace ("::", ":!:");
-			int len = ipString.Length;
-			if ((len - origLen) > 1) 
-				throw new FormatException ("Not a valid IPv6 address");
-			
-			if (ipString [1] == '!') 
-				ipString = ipString.Remove (0, 1);
-			if (ipString [len - 2] == '!')
-				ipString = ipString.Remove (len - 1, 1);
-			if ((ipString.Length > 2) && 
-			    ((ipString [0] == ':') || (ipString [ipString.Length - 1] == ':'))) 
-				throw new FormatException ("Not a valid IPv6 address");
-				
-			string [] pieces = ipString.Split (new char [] {':'});
-			len = pieces.Length;
-			if (len > (ipv4 ? 6 : 8)) 
-				throw new FormatException ("Not a valid IPv6 address");
-			int piecedouble = -1;
-			bool ipv6 = false;
-			for (int i = 0; i < len; i++) {
-				string piece = pieces [i];
-				if (piece == "!")
-					piecedouble = i;
-				else {
-					int plen = piece.Length;
-					if (plen > 4)
-						throw new FormatException ("Not a valid IPv6 address");
-					int p = 0;
-					for (int j = 0; j < plen; j++) 
-						try {
-							p = (p << 4) + Uri.FromHex (piece [j]);
-						} catch (ArgumentException) {
-							throw new FormatException ("Not a valid IPv6 address");
-						}
-					addr [i] = (ushort) p;
-					if (p != 0 || (i == 5 && p != 0xffff))
-						ipv6 = true;
+
+			//
+			// Only an ipv6 block remains, either:
+			// "hexnumbers::hexnumbers", "hexnumbers::" or "hexnumbers"
+			//
+			int c = ipString.IndexOf ("::");
+			if (c != -1){
+				int right_slots = Fill (addr, ipString.Substring (c+2));
+				if (right_slots == -1){
+					return false;
 				}
+
+				if (right_slots + slots > 8){
+					return false;
+				}
+
+				int d = 8-slots-right_slots;
+				for (int i = right_slots; i > 0; i--){
+					addr [i+d-1] = addr [i-1];
+					addr [i-1] = 0;
+				}
+				
+				int left_slots = Fill (addr, ipString.Substring (0, c));
+				if (left_slots == -1)
+					return false;
+
+				if (left_slots + right_slots + slots > 7)
+					return false;
+			} else {
+				if (Fill (addr, ipString) != 8-slots)
+					return false;
 			}
 
-			//expand the :: token
-			if (piecedouble != -1) {
-				int totallen = (ipv4 ? 5 : 7);
-				int i = totallen;
-				for (i = totallen; i >= (totallen - (len - piecedouble - 1)); i--) {
-					addr [i] = addr [(len - 1) + i - totallen];
-				}
-				for (; i >= piecedouble; i--) {
-					addr [i] = 0;
-				}
-			} else if (len != (ipv4 ? 6 : 8)) 
-				throw new FormatException ("Not a valid IPv6 address");
-
+			// Now check the results in the ipv6-address range only
+			bool ipv6 = false;
+			for (int i = 0; i < slots; i++){
+				if (addr [i] != 0 || i == 5 && addr [i] != 0xffff)
+					ipv6 = true;
+			}
+			
 			// check IPv4 validity
 			if (ipv4 && !ipv6) {
 				for (int i = 0; i < 5; i++) {
 					if (addr [i] != 0)
-						throw new FormatException ("Not a valid IPv6 address");
+						return false;
 				}
 
 				if (addr [5] != 0 && addr [5] != 0xffff)
-					throw new FormatException ("Not a valid IPv6 address");
+					return false;
 			}
 
-			return new IPv6Address (addr, prefixLen, scopeId);
+			result = new IPv6Address (addr, prefixLen, scopeId);
+			return true;
 		}
 
 		public ushort [] Address {

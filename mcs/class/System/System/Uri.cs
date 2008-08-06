@@ -476,16 +476,18 @@ namespace System {
 
 				if (host == "loopback" || host == "localhost") 
 					return true;
-					
-				try {
-					if (IPAddress.Loopback.Equals (IPAddress.Parse (host)))
-						return true;
-				} catch (FormatException) {}
 
-				try {
-					return IPv6Address.IsLoopback (IPv6Address.Parse (host));
-				} catch (FormatException) {}
-				
+				IPAddress result;
+				if (IPAddress.TryParse (host, out result))
+					if (IPAddress.Loopback.Equals (result))
+						return true;
+
+				IPv6Address result6;
+				if (IPv6Address.TryParse (host, out result6)){
+					if (IPv6Address.IsLoopback (result6))
+						return true;
+				}
+
 				return false;
 			} 
 		}

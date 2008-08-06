@@ -197,6 +197,8 @@ namespace System.Net {
 
 #if NET_2_0
 		public
+#else
+		internal
 #endif
 		static bool TryParse (string ipString, out IPAddress address)
 		{
@@ -286,12 +288,11 @@ namespace System.Net {
 		
 		private static IPAddress ParseIPV6 (string ip)
 		{
-			try {
-				IPv6Address newIPv6Address = IPv6Address.Parse(ip);
-				return new IPAddress (newIPv6Address.Address, newIPv6Address.ScopeId);
-			} catch (Exception) {
-				return null;
-			}
+			IPv6Address newIPv6Address;
+
+			if (IPv6Address.TryParse(ip, out newIPv6Address))
+				return  new IPAddress (newIPv6Address.Address, newIPv6Address.ScopeId);
+			return null;
 		}
 
 		[Obsolete("This property is obsolete. Use GetAddressBytes.")]
