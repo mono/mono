@@ -1,3 +1,7 @@
+2008-08-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* scripts/Makefile.am (EXTRA_DIST): Add patch-quiet.sh.
+
 2008-07-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* configure.in: Patch libtool to avoid the 
