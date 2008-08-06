@@ -246,25 +246,36 @@ namespace System.Net {
 			// Make the number in network order
 			try {
 				long a = 0;
-				byte val = 0;
+				long val = 0;
 				for (int i = 0; i < ips.Length; i++) {
 					string subnet = ips [i];
 					if ((3 <= subnet.Length && subnet.Length <= 4) &&
-					    (subnet [0] == '0') &&
-					    (subnet [1] == 'x' || subnet [2] == 'X')) {
+					    (subnet [0] == '0') && (subnet [1] == 'x' || subnet [1] == 'X')) {
 						if (subnet.Length == 3)
 							val = (byte) Uri.FromHex (subnet [2]);
 						else 
 							val = (byte) ((Uri.FromHex (subnet [2]) << 4) | Uri.FromHex (subnet [3]));
 					} else if (subnet.Length == 0)
 						return null;
-					else 
-						val = byte.Parse (subnet, NumberStyles.None);
+					else if (subnet [0] == '0') {
+						// octal
+						val = 0;
+						for (int j = 1; j < subnet.Length; j++) {
+							if ('0' <= subnet [j] && subnet [j] <= '7')
+								val = (val << 3) + subnet [j] - '0';
+							else
+								return null;
+						}
+					}
+					else
+						val = long.Parse (subnet, NumberStyles.None);
 
-					if (ips.Length < 4 && i == (ips.Length - 1)) 
+					if (i == (ips.Length - 1)) 
 						i = 3;
-
-					a |= (long) val << (i << 3);
+					else if (val > 0xFF)
+						return null; // e.g. 256.0.0.1
+					for (int j = 0; val > 0; j++, val /= 0x100)
+						a |= (val & 0xFF) << ((i - j) << 3);
 				}
 
 				return (new IPAddress (a));

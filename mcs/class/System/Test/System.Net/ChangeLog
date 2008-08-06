@@ -1,3 +1,8 @@
+2008-08-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IPAddressTest.cs : added test strings for bug #411920 as well as
+	  enabling some ipv4ParseOK strings.
+
 2008-07-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpWebResponseTest.cs: Enabled tests.
