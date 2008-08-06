@@ -4387,43 +4387,6 @@ namespace Mono.CSharp {
 					Report.Error (254, loc, "The right hand side of a fixed statement assignment may not be a cast expression");
 					return false;
 				}
-				
-				//
-				// Case 1: & object.
-				//
-				if (e is Unary && ((Unary) e).Oper == Unary.Operator.AddressOf){
-					Expression child = ((Unary) e).Expr;
-
-					if (child is ParameterReference || child is LocalVariableReference){
-						Report.Error (
-							213, loc, 
-							"No need to use fixed statement for parameters or " +
-							"local variable declarations (address is already " +
-							"fixed)");
-						return false;
-					}
-
-					ec.InFixedInitializer = true;
-					e = e.Resolve (ec);
-					ec.InFixedInitializer = false;
-					if (e == null)
-						return false;
-
-					child = ((Unary) e).Expr;
-					
-					if (!TypeManager.VerifyUnManaged (child.Type, loc))
-						return false;
-
-					if (!Convert.ImplicitConversionExists (ec, e, expr_type)) {
-						e.Error_ValueCannotBeConverted (ec, e.Location, expr_type, false);
-						return false;
-					}
-
-					data [i] = new ExpressionEmitter (e, vi);
-					i++;
-
-					continue;
-				}
 
 				ec.InFixedInitializer = true;
 				e = e.Resolve (ec);
@@ -4481,17 +4444,26 @@ namespace Mono.CSharp {
 				}
 
 				// Case 4: fixed buffer
-				FixedBufferPtr fixed_buffer_ptr = e as FixedBufferPtr;
-				if (fixed_buffer_ptr != null) {
-					data [i++] = new ExpressionEmitter (fixed_buffer_ptr, vi);
+				if (e is FixedBufferPtr) {
+					data [i++] = new ExpressionEmitter (e, vi);
 					continue;
 				}
 
 				//
-				// For other cases, report an error
+				// Case 1: & object.
 				//
-				Convert.ImplicitConversionRequired (ec, e, vi.VariableType, loc);
-				return false;
+				Unary u = e as Unary;
+				if (u != null && u.Oper == Unary.Operator.AddressOf) {
+					IVariableReference vr = u.Expr as IVariableReference;
+					if (vr == null || !vr.IsFixedVariable) {
+						data [i] = new ExpressionEmitter (e, vi);
+					}
+				}
+
+				if (data [i++] == null)
+					Report.Error (213, vi.Location, "You cannot use the fixed statement to take the address of an already fixed expression");
+
+				e = Convert.ImplicitConversionRequired (ec, e, expr_type, loc);
 			}
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Conditional, loc);

@@ -97,10 +97,16 @@ namespace Mono.CSharp {
 		void AddressOf (EmitContext ec, AddressOp mode);
 	}
 
-	// TODO: Rename to something meaningful, this is flow-analysis interface only
-	public interface IVariable {
+	//
+	// An expressions resolved as a direct variable reference
+	//
+	public interface IVariableReference {
+		bool IsFixedVariable { get; }
+		bool IsHoisted { get; }
+		string Name { get; }
 		VariableInfo VariableInfo { get; }
-		bool IsFixed { get; }
+
+		void SetHasAddressTaken ();
 	}
 
 	/// <remarks>
@@ -4640,7 +4646,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Fully resolved expression that evaluates to a Field
 	/// </summary>
-	public class FieldExpr : MemberExpr, IAssignMethod, IMemoryLocation, IVariable {
+	public class FieldExpr : MemberExpr, IAssignMethod, IMemoryLocation, IVariableReference {
 		public FieldInfo FieldInfo;
 		readonly Type constructed_generic_type;
 		VariableInfo variable_info;
@@ -4715,6 +4721,13 @@ namespace Mono.CSharp {
 			}
 
 			return base.ResolveMemberAccess (ec, left, loc, original);
+		}
+
+		public void SetHasAddressTaken ()
+		{
+			IVariableReference vr = InstanceExpression as IVariableReference;
+			if (vr != null)
+				vr.SetHasAddressTaken ();
 		}
 
 		public override Expression CreateExpressionTree (EmitContext ec)
@@ -4793,6 +4806,8 @@ namespace Mono.CSharp {
 			}
 
 			IFixedBuffer fb = AttributeTester.GetFixedBuffer (FieldInfo);
+			IVariableReference var = InstanceExpression as IVariableReference;
+			
 			if (fb != null) {
 				if (!ec.InFixedInitializer && ec.ContainerType.IsValueType) {
 					Report.Error (1666, loc, "You cannot use fixed size buffers contained in unfixed expressions. Try using the fixed statement");
@@ -4802,13 +4817,14 @@ namespace Mono.CSharp {
 					Report.SymbolRelatedToPreviousError (FieldInfo);
 					Report.Error (1708, loc, "`{0}': Fixed size buffers can only be accessed through locals or fields",
 						TypeManager.GetFullNameSignature (FieldInfo));
+				} else if (var != null && var.IsHoisted) {
+					AnonymousMethodExpression.Error_AddressOfCapturedVar (var, loc);
 				}
 				
 				return new FixedBufferPtr (this, fb.ElementType, loc).Resolve (ec);
 			}
 
 			// If the instance expression is a local variable or parameter.
-			IVariable var = InstanceExpression as IVariable;
 			if (var == null || var.VariableInfo == null)
 				return this;
 
@@ -4859,7 +4875,7 @@ namespace Mono.CSharp {
 		
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			IVariable var = InstanceExpression as IVariable;
+			IVariableReference var = InstanceExpression as IVariableReference;
 			if (var != null && var.VariableInfo != null)
 				var.VariableInfo.SetFieldAssigned (ec, FieldInfo.Name);
 
@@ -4927,15 +4943,22 @@ namespace Mono.CSharp {
 			return FieldInfo.GetHashCode ();
 		}
 		
-		public bool IsFixed {
+		public bool IsFixedVariable {
 			get {
-				IVariable variable = InstanceExpression as IVariable;
-				// A variable of the form V.I is fixed when V is a fixed variable of a struct type.
-				// We defer the InstanceExpression check after the variable check to avoid a 
-				// separate null check on InstanceExpression.
-				return variable != null && InstanceExpression.Type.IsValueType && variable.IsFixed;
+				//
+				// A variable of the form V.I is fixed when V is a fixed variable of a struct type
+				//
+				IVariableReference variable = InstanceExpression as IVariableReference;
+				return variable != null && InstanceExpression.Type.IsValueType && variable.IsFixedVariable;
 			}
-		}		
+		}
+
+		public bool IsHoisted {
+			get {
+				IVariableReference hv = InstanceExpression as IVariableReference;
+				return hv != null && hv.IsHoisted;
+			}
+		}
 
 		public override bool Equals (object obj)
 		{
@@ -5816,12 +5839,21 @@ namespace Mono.CSharp {
 			get { return li.HoistedVariableReference; }
 		}
 
-		public override bool IsFixed {
+		public override bool IsFixedVariable {
 			get { return true; }
 		}
 
 		public override bool IsRef {
 			get { return false; }
+		}
+
+		public override string Name {
+			get { throw new NotImplementedException (); }
+		}
+
+		public override void SetHasAddressTaken ()
+		{
+			throw new NotImplementedException ();
 		}
 
 		protected override ILocalVariable Variable {

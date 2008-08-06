@@ -440,13 +440,6 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			if (Oper == Operator.AddressOf) {
-				Expr = Expr.DoResolveLValue (ec, EmptyExpression.UnaryAddress);
-
-				if (Expr == null || Expr.eclass != ExprClass.Variable){
-					Error (211, "Cannot take the address of the given expression");
-					return null;
-				}
-
 				return ResolveAddressOf (ec);
 			}
 
@@ -593,8 +586,12 @@ namespace Mono.CSharp {
 
 		Expression ResolveAddressOf (EmitContext ec)
 		{
-			if (!ec.InUnsafe) {
+			if (!ec.InUnsafe)
 				UnsafeError (loc);
+
+			Expr = Expr.DoResolveLValue (ec, EmptyExpression.UnaryAddress);
+			if (Expr == null || Expr.eclass != ExprClass.Variable) {
+				Error (211, "Cannot take the address of the given expression");
 				return null;
 			}
 
@@ -602,39 +599,35 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			IVariable variable = Expr as IVariable;
-			if (variable != null && variable.IsFixed) {
-				if (ec.InFixedInitializer) {
-					Error (213, "You cannot use the fixed statement to take the address of an already fixed expression");
-					return null;
+			IVariableReference vr = Expr as IVariableReference;
+			bool is_fixed;
+			if (vr != null) {
+				VariableInfo vi = vr.VariableInfo;
+				if (vi != null) {
+					if (vi.LocalInfo != null)
+						vi.LocalInfo.Used = true;
+
+					//
+					// A variable is considered definitely assigned if you take its address.
+					//
+					vi.SetAssigned (ec);
+				}
+
+				is_fixed = vr.IsFixedVariable;
+				vr.SetHasAddressTaken ();
+
+				if (vr.IsHoisted) {
+					AnonymousMethodExpression.Error_AddressOfCapturedVar (vr, loc);
 				}
 			} else {
-				if (!ec.InFixedInitializer) {
-					Error (212, "You can only take the address of unfixed expression inside of a fixed statement initializer");
-					return null;
-				}
+				//
+				// A pointer-indirection is always fixed
+				//
+				is_fixed = Expr is Indirection;
 			}
 
-			LocalVariableReference lr = Expr as LocalVariableReference;
-			if (lr != null) {
-				if (lr.IsHoisted) {
-					AnonymousMethodBody.Error_AddressOfCapturedVar (lr.Name, loc);
-					return null;
-				}
-				lr.local_info.AddressTaken = true;
-				lr.local_info.Used = true;
-			}
-
-			ParameterReference pr = Expr as ParameterReference;
-			if ((pr != null) && pr.IsHoisted) {
-				AnonymousMethodBody.Error_AddressOfCapturedVar (pr.Name, loc);
-				return null;
-			}
-
-			// According to the specs, a variable is considered definitely assigned if you take
-			// its address.
-			if ((variable != null) && (variable.VariableInfo != null)) {
-				variable.VariableInfo.SetAssigned (ec);
+			if (!is_fixed && !ec.InFixedInitializer) {
+				Error (212, "You can only take the address of unfixed expression inside of a fixed statement initializer");
 			}
 
 			type = TypeManager.GetPointerType (Expr.Type);
@@ -758,7 +751,7 @@ namespace Mono.CSharp {
 	// after semantic analysis (this is so we can take the address
 	// of an indirection).
 	//
-	public class Indirection : Expression, IMemoryLocation, IAssignMethod, IVariable {
+	public class Indirection : Expression, IMemoryLocation, IAssignMethod {
 		Expression expr;
 		LocalTemporary temporary;
 		bool prepared;
@@ -851,26 +844,11 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Variable;
 			return this;
 		}
-		
+
 		public override string ToString ()
 		{
 			return "*(" + expr + ")";
 		}
-
-		#region IVariable Members
-
-		public VariableInfo VariableInfo {
-			get { return null; }
-		}
-
-		//
-		// A pointer-indirection is always fixed.
-		//		
-		public bool IsFixed {
-			get { return true; }
-		}		
-
-		#endregion
 	}
 	
 	/// <summary>
@@ -4003,13 +3981,15 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public abstract class VariableReference : Expression, IAssignMethod, IMemoryLocation, IVariable {
+	public abstract class VariableReference : Expression, IAssignMethod, IMemoryLocation, IVariableReference {
 		LocalTemporary temp;
 
 		#region Abstract
 		public abstract HoistedVariable HoistedVariable { get; }
-		public abstract bool IsFixed { get; }
+		public abstract bool IsFixedVariable { get; }
 		public abstract bool IsRef { get; }
+		public abstract string Name { get; }
+		public abstract void SetHasAddressTaken ();
 
 		//
 		// Variable IL data, it has to be protected to encapsulate hoisted variables
@@ -4147,7 +4127,7 @@ namespace Mono.CSharp {
 	///   Local variables
 	/// </summary>
 	public class LocalVariableReference : VariableReference {
-		public readonly string Name;
+		readonly string name;
 		public Block Block;
 		public LocalInfo local_info;
 		bool is_readonly;
@@ -4155,7 +4135,7 @@ namespace Mono.CSharp {
 		public LocalVariableReference (Block block, string name, Location l)
 		{
 			Block = block;
-			Name = name;
+			this.name = name;
 			loc = l;
 			eclass = ExprClass.Variable;
 		}
@@ -4181,9 +4161,9 @@ namespace Mono.CSharp {
 		}
 
 		//		
-		// A local Variable is always fixed.
+		// A local variable is always fixed
 		//
-		public override bool IsFixed {
+		public override bool IsFixedVariable {
 			get { return true; }
 		}
 
@@ -4193,6 +4173,10 @@ namespace Mono.CSharp {
 
 		public bool IsReadOnly {
 			get { return is_readonly; }
+		}
+
+		public override string Name {
+			get { return name; }
 		}
 
 		public bool VerifyAssigned (EmitContext ec)
@@ -4208,6 +4192,11 @@ namespace Mono.CSharp {
 				type = local_info.VariableType;
 				is_readonly = local_info.ReadOnly;
 			}
+		}
+
+		public override void SetHasAddressTaken ()
+		{
+			local_info.AddressTaken = true;
 		}
 
 		public override Expression CreateExpressionTree (EmitContext ec)
@@ -4232,10 +4221,8 @@ namespace Mono.CSharp {
 			// flag it for capturing
 			//
 			if (ec.MustCaptureVariable (local_info)) {
-				if (local_info.AddressTaken){
-					AnonymousMethodBody.Error_AddressOfCapturedVar (local_info.Name, loc);
-					return null;
-				}
+				if (local_info.AddressTaken)
+					AnonymousMethodExpression.Error_AddressOfCapturedVar (this, loc);
 
 				if (ec.IsVariableCapturingRequired) {
 					AnonymousMethodStorey storey = local_info.Block.Explicit.CreateAnonymousMethodStorey (ec);
@@ -4361,13 +4348,14 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// A parameter is fixed if it's a value parameter (i.e., no modifier like out, ref, param).
+		// A ref or out parameter is classified as a moveable variable, even 
+		// if the argument given for the parameter is a fixed variable
 		//		
-		public override bool IsFixed {
-			get { return pi.Parameter.ModFlags == Parameter.Modifier.NONE; }
+		public override bool IsFixedVariable {
+			get { return !IsRef; }
 		}
 
-		public string Name {
+		public override string Name {
 			get { return Parameter.Name; }
 		}
 
@@ -4395,7 +4383,12 @@ namespace Mono.CSharp {
 			Report.Error (269, loc, "Use of unassigned out parameter `{0}'", Name);
 			return false;
 		}
-		
+
+		public override void SetHasAddressTaken ()
+		{
+			Parameter.HasAddressTaken = true;
+		}
+
 		void SetAssigned (EmitContext ec)
 		{
 			if (HasOutModifier && ec.DoFlowAnalysis)
@@ -4417,7 +4410,7 @@ namespace Mono.CSharp {
 				if (IsRef) {
 					Report.Error (1628, loc,
 						"Parameter `{0}' cannot be used inside `{1}' when using `ref' or `out' modifier",
-						par.Name, am.ContainerType);
+						Name, am.ContainerType);
 					return false;
 				}
 			} else {
@@ -4426,6 +4419,9 @@ namespace Mono.CSharp {
 			}
 
 			if (ec.IsVariableCapturingRequired) {
+				if (pi.Parameter.HasAddressTaken)
+					AnonymousMethodExpression.Error_AddressOfCapturedVar (this, loc);
+
 				AnonymousMethodStorey storey = declared.CreateAnonymousMethodStorey (ec);
 				storey.CaptureParameter (ec, this);
 			}
@@ -4508,11 +4504,6 @@ namespace Mono.CSharp {
 				}
 			} else
 				ig.Emit (OpCodes.Ldarg, x);
-		}
-		
-		public override string ToString ()
-		{
-			return "ParameterReference[" + Name + "]";
 		}
 	}
 	
@@ -6624,7 +6615,7 @@ namespace Mono.CSharp {
 			get { return variable_info; }
 		}
 
-		public override bool IsFixed {
+		public override bool IsFixedVariable {
 			get { return !TypeManager.IsValueType (type); }
 		}
 
@@ -6747,10 +6738,14 @@ namespace Mono.CSharp {
 
 			if (variable_info != null)
 				variable_info.SetAssigned (ec);
-			
+
 			if (ec.TypeContainer is Class){
-				Error (1604, "Cannot assign to 'this' because it is read-only");
-				return null;
+				if (right_side == EmptyExpression.UnaryAddress)
+					Report.Error (459, loc, "Cannot take the address of `this' because it is read-only");
+				else if (right_side == EmptyExpression.OutAccess)
+					Report.Error (1605, loc, "Cannot pass `this' as a ref or out argument because it is read-only");
+				else
+					Report.Error (1604, loc, "Cannot assign to `this' because it is read-only");
 			}
 
 			return this;
@@ -6759,6 +6754,10 @@ namespace Mono.CSharp {
 		public override int GetHashCode()
 		{
 			return block.GetHashCode ();
+		}
+
+		public override string Name {
+			get { return "this"; }
 		}
 
 		public override bool Equals (object obj)
@@ -6780,6 +6779,11 @@ namespace Mono.CSharp {
 		public void RemoveHoisting ()
 		{
 			TopToplevelBlock.HoistedThisVariable = null;
+		}
+
+		public override void SetHasAddressTaken ()
+		{
+			// Nothing
 		}
 	}
 

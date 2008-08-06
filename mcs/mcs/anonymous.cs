@@ -1111,6 +1111,13 @@ namespace Mono.CSharp {
 			// nothing, as we only exist to not do anything.
 		}
 
+		public static void Error_AddressOfCapturedVar (IVariableReference var, Location loc)
+		{
+			Report.Error (1686, loc,
+				"Local variable or parameter `{0}' cannot have their address taken and be used inside an anonymous method or lambda expression",
+				var.Name);
+		}
+
 		public override string GetSignatureForError ()
 		{
 			return ExprClassName;
@@ -1564,14 +1571,6 @@ namespace Mono.CSharp {
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
 			type = storey.MutateType (type);
-		}
-
-		public static void Error_AddressOfCapturedVar (string name, Location loc)
-		{
-			Report.Error (1686, loc,
-				      "Local variable `{0}' or its members cannot have their " +
-				      "address taken and be used inside an anonymous method block",
-				      name);
 		}
 
 		public static void Reset ()

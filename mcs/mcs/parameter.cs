@@ -255,6 +255,7 @@ namespace Mono.CSharp {
 		protected Type parameter_type;
 		public readonly Location Location;
 		int idx;
+		public bool HasAddressTaken;
 
 		IResolveContext resolve_context;
 		LocalVariableReference expr_tree_variable;

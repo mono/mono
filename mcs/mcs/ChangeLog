@@ -1,3 +1,9 @@
+2008-08-06  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #376826
+	* parameter.cs, ecore.cs, anonymous.cs, expression.cs, statement.cs: An
+	address of hoisted local variable or parameter cannot be taken.
+
 2008-08-05  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs, constant.cs, expression.cs, statement.cs: Resolve correctly 
