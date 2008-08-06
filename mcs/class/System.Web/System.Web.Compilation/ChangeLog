@@ -1,3 +1,11 @@
+2008-08-06  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: handle situation when a property of
+	a control for which we're generating the code is of type
+	'Type'. In such case, variable.GetType() will return
+	System.MonoType, which must not be output to the generated
+	source. Thanks to Robert Jordan for giving the idea for the hack!
+
 2008-06-30  Marek Habersack  <mhabersack@novell.com>
 
 	* AspGenerator.cs: hush the warnings and fix invalid type
