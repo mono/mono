@@ -1,3 +1,8 @@
+2008-08-06  Ankit Jain  <jankit@novell.com>
+
+	* CommandLineBuilder.cs (AppendSwitchIfNotNull): Quote individual items
+	of the array.
+
 2008-07-31  Ankit Jain  <jankit@novell.com>
 
 	* CommandLineBuilder.cs (chars): Use a char array instead of a

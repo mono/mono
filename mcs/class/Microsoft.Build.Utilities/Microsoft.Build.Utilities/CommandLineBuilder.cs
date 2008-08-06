@@ -205,9 +205,9 @@ namespace Microsoft.Build.Utilities
 				VerifyThrowNoEmbeddedDoubleQuotes (switchName, value);
 				if (appendDelimiter) {
 					commandLine.Append (delimiter);
-					commandLine.Append (value);
+					AppendTextWithQuoting (value);
 				} else {
-					commandLine.Append (value);
+					AppendTextWithQuoting (value);
 					appendDelimiter = true;
 				}
 			}
@@ -237,9 +237,9 @@ namespace Microsoft.Build.Utilities
 				VerifyThrowNoEmbeddedDoubleQuotes (switchName, value);
 				if (appendDelimiter) {
 					commandLine.Append (delimiter);
-					commandLine.Append (value);
+					AppendTextWithQuoting (value);
 				} else {
-					commandLine.Append (value);
+					AppendTextWithQuoting (value);
 					appendDelimiter = true;
 				}
 			}

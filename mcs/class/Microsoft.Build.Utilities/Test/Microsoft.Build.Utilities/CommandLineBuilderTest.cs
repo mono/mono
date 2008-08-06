@@ -352,8 +352,11 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			clb.AppendSwitchIfNotNull ("/switch:", array, ";");
 			Assert.AreEqual ("/switch:a;b;c", clb.ToString (), "A2");
 
+			clb.AppendSwitchIfNotNull ("/switch:", new string[] { "a'b", "c" }, ";");
+			Assert.AreEqual ("/switch:a;b;c /switch:\"a'b\";c", clb.ToString(), "A3");
+
 			clb.AppendSwitchIfNotNull ("/switch:", "a;b;c");
-			Assert.AreEqual ("/switch:a;b;c /switch:\"a;b;c\"", clb.ToString (), "A3");
+			Assert.AreEqual ("/switch:a;b;c /switch:\"a'b\";c /switch:\"a;b;c\"", clb.ToString(), "A4");
 		}
 
 		[Test]
@@ -384,6 +387,9 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			
 			clb.AppendSwitchIfNotNull ("/switch:", items, ";");
 			Assert.AreEqual ("/switch:a;b", clb.ToString (), "A2");
+
+			clb.AppendSwitchIfNotNull("/switch:", new ITaskItem[] { new TaskItem("a'b"), new TaskItem("c") }, ";");
+			Assert.AreEqual ("/switch:a;b /switch:\"a'b\";c", clb.ToString(), "A3");
 		}
 
 		[Test]
@@ -493,6 +499,9 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			clb.AppendSwitchUnquotedIfNotNull ("/switch:", array, ";");
 			
 			Assert.AreEqual ("/switch:a;b;c", clb.ToString (), "A2");
+
+			clb.AppendSwitchUnquotedIfNotNull ("/switch:", new string[] { "a'b", "c", "d" }, ";");
+			Assert.AreEqual ("/switch:a;b;c /switch:a'b;c;d", clb.ToString(), "A3");
 		}
 
 		[Test]
