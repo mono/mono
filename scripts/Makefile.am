@@ -135,7 +135,8 @@ EXTRA_DIST =			\
 	mono-nunit.pc.in	\
 	mono-find-provides.in	\
 	mono-find-requires.in	\
-	mono-test-install
+	mono-test-install	\
+	patch-quiet.sh
 
 if USE_JIT
 mono_interp = mono
