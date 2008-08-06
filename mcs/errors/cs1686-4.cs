@@ -8,10 +8,9 @@ unsafe class X {
 	public D T (int a)
 	{
 		return delegate {
-			int *x = &a;
+			int x = a;
 		};
+		
+		int *y = &a;
 	}
-
-	static void Main ()
-	{ }
 }

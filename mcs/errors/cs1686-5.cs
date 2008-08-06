@@ -7,11 +7,10 @@ delegate void D ();
 unsafe class X {
 	public D T (int a)
 	{
+		int *y = &a;
+		
 		return delegate {
-			int *x = &a;
+			int x = a;
 		};
 	}
-
-	static void Main ()
-	{ }
 }
