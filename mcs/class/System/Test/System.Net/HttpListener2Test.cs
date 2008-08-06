@@ -648,6 +648,41 @@ namespace MonoTests.System.Net {
 			string sr =r.ReadToEnd ();
 			HttpListener2Test.Send (c.Response.OutputStream, "Miguel is love");
 		}
+
+		//
+		// As it turns out, when we closed the OutputStream,
+		// we were not shutting down the connection, which was
+		// a documented pattern to close the connection
+		// 
+		[Test]
+		public void Test_MultipleConnections ()
+		{
+			HttpListener listener = HttpListener2Test.CreateAndStartListener ("http://127.0.0.1:9000/multiple/");
+
+			Console.WriteLine ("First");
+			// First one
+			NetworkStream ns = HttpListener2Test.CreateNS (9000);
+			HttpListener2Test.Send (ns, "POST /multiple/ HTTP/1.0\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
+			HttpListenerContext ctx = listener.GetContext ();
+			HttpListener2Test.Send (ctx.Response.OutputStream, "%%%OK%%%");
+			ctx.Response.OutputStream.Close ();
+			string response = HttpListener2Test.Receive (ns, 1024);
+			ns.Close ();
+			Console.WriteLine ("First over");
+
+			// Second one
+			ns = HttpListener2Test.CreateNS (9000);
+			HttpListener2Test.Send (ns, "POST /multiple/ HTTP/1.0\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
+			ctx = listener.GetContext ();
+			HttpListener2Test.Send (ctx.Response.OutputStream, "%%%OK%%%");
+			ctx.Response.OutputStream.Close ();
+			response = HttpListener2Test.Receive (ns, 1024);
+			ns.Close ();
+			
+			Console.WriteLine ("Done");
+			listener.Close ();
+		}
+	
 	}
 }
 #endif
