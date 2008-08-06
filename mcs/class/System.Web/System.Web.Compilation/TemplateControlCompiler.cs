@@ -54,7 +54,9 @@ namespace System.Web.Compilation
 	{
 		static BindingFlags noCaseFlags = BindingFlags.Public | BindingFlags.NonPublic |
 						  BindingFlags.Instance | BindingFlags.IgnoreCase;
-
+		static Type monoTypeType = Type.GetType ("System.MonoType");
+		static Assembly monoTypeAssembly = typeof (object).Assembly;
+		
 		TemplateControlParser parser;
 		int dataBoundAtts;
 		internal ILocation currentLocation;
@@ -489,6 +491,7 @@ namespace System.Web.Compilation
 		{
 			CodeMemberMethod method = builder.method;
 			bool isWritable = IsWritablePropertyOrField (member);
+			
 			if (isDataBound && isWritable) {
 				string dbMethodName = DataBoundProperty (builder, type, var_name, att);
 				AddEventAssign (method, builder, "DataBinding", typeof (EventHandler), dbMethodName);
@@ -1692,7 +1695,7 @@ namespace System.Web.Compilation
 			TypeConverter cvt = GetConverterForMember (member);
 			if (cvt != null && !SafeCanConvertFrom (typeof (string), cvt))
 				cvt = null;
-
+			
 			object convertedFromAttr = null;
 			bool preConverted = false;
 			if (cvt != null && str != null) {
@@ -1713,7 +1716,6 @@ namespace System.Web.Compilation
 				wasNullable = true;
 			}
 #endif
-			
 			if (type == typeof (string)) {
 				if (preConverted)
 					return CreateNullableExpression (originalType,
@@ -1726,9 +1728,7 @@ namespace System.Web.Compilation
 					str = HandleUrlProperty (str, member);
 #endif
 				return CreateNullableExpression (originalType, new CodePrimitiveExpression (str), wasNullable);
-			}
-
-			if (type == typeof (bool)) {
+			} else if (type == typeof (bool)) {
 				if (preConverted)
 					return CreateNullableExpression (originalType,
 									 new CodePrimitiveExpression ((bool) convertedFromAttr),
@@ -1745,7 +1745,8 @@ namespace System.Web.Compilation
 				else
 					throw new ParseException (currentLocation,
 							"Value '" + str  + "' is not a valid boolean.");
-			}
+			} else if (type == monoTypeType && type.GetType ().Assembly == monoTypeAssembly)
+				type = typeof (System.Type);
 			
 			if (str == null)
 				return new CodePrimitiveExpression (null);
@@ -1851,7 +1852,7 @@ namespace System.Web.Compilation
 					if (wasNullable)
 						return CreateNullableExpression (originalType, GenerateInstance (idesc, true),
 										 wasNullable);
-					
+
 					return new CodeCastExpression (type, GenerateInstance (idesc, true));
 				}
 
@@ -1871,7 +1872,7 @@ namespace System.Web.Compilation
 
 				if (wasNullable)
 					return CreateNullableExpression (originalType, invoke, wasNullable);
-				
+
 				return new CodeCastExpression (type, invoke);
 			}
 
