@@ -1,3 +1,9 @@
+2008-08-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (mono_compile_assembly): Correct the computation of 
+	acfg->nmethods.
+	(add_wrappers): Don't emit jit icall wrappers etc. into every image.
+
 2008-08-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ia64.c (add_valuetype): Only reserve half parameter slot for each member of

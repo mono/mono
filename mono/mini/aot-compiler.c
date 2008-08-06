@@ -2082,20 +2082,22 @@ add_wrappers (MonoAotCompile *acfg)
 			add_method (acfg, mono_marshal_get_runtime_invoke (method));
 	}
 
-	/* JIT icall wrappers */
-	/* FIXME: locking */
-	g_hash_table_foreach (mono_get_jit_icall_info (), add_jit_icall_wrapper, acfg);
+	if (strcmp (acfg->image->assembly->aname.name, "mscorlib") == 0) {
+		/* JIT icall wrappers */
+		/* FIXME: locking */
+		g_hash_table_foreach (mono_get_jit_icall_info (), add_jit_icall_wrapper, acfg);
 
-	/* Managed Allocators */
-	nallocators = mono_gc_get_managed_allocator_types ();
-	for (i = 0; i < nallocators; ++i) {
-		m = mono_gc_get_managed_allocator_by_type (i);
-		if (m)
-			add_method (acfg, m);
+		/* Managed Allocators */
+		nallocators = mono_gc_get_managed_allocator_types ();
+		for (i = 0; i < nallocators; ++i) {
+			m = mono_gc_get_managed_allocator_by_type (i);
+			if (m)
+				add_method (acfg, m);
+		}
+
+		/* stelemref */
+		add_method (acfg, mono_marshal_get_stelemref ());
 	}
-
-	/* stelemref */
-	add_method (acfg, mono_marshal_get_stelemref ());
 
 	/* remoting-invoke wrappers */
 	for (i = 0; i < acfg->image->tables [MONO_TABLE_METHOD].rows; ++i) {
@@ -2961,7 +2963,7 @@ emit_trampolines (MonoAotCompile *acfg)
 	
 	g_assert (acfg->image->assembly);
 
-	/* Currently, we only most trampolines into the mscorlib AOT image. */
+	/* Currently, we only emit most trampolines into the mscorlib AOT image. */
 	if (strcmp (acfg->image->assembly->aname.name, "mscorlib") == 0) {
 #ifdef MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES
 		/*
@@ -4232,7 +4234,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	if (acfg->aot_opts.full_aot)
 		add_wrappers (acfg);
 
-	acfg->nmethods = acfg->methods->len;
+	acfg->nmethods = acfg->methods->len + 1;
 	acfg->cfgs = g_new0 (MonoCompile*, acfg->nmethods + 32);
 	acfg->method_got_offsets = g_new0 (guint32, acfg->nmethods + 32);
 
