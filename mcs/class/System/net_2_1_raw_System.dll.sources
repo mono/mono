@@ -13,6 +13,7 @@ Assembly/AssemblyInfo.cs
 ../corlib/System.Collections/IHashCodeProvider.cs
 ../corlib/System.Collections/Queue.cs
 ../corlib/System.Collections/Stack.cs
+System.CodeDom.Compiler/GeneratedCodeAttribute.cs
 System.Collections.Generic/LinkedList.cs
 System.Collections.Generic/LinkedListNode.cs
 System.Collections.Generic/RBTree.cs
