@@ -244,10 +244,10 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			CscExtended csc = new CscExtended ();
 			CommandLineBuilderExtension clbe = new CommandLineBuilderExtension ();
 
-			csc.LangVersion = "A";
+			csc.LangVersion = "A'B";
 			csc.ARFC (clbe);
 
-			Assert.AreEqual ("/langversion:A", clbe.ToString (), "A1");
+			Assert.AreEqual ("/langversion:\"A'B\"", clbe.ToString (), "A1");
 		}
 
 		[Test]
@@ -257,10 +257,10 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			CscExtended csc = new CscExtended ();
 			CommandLineBuilderExtension clbe = new CommandLineBuilderExtension ();
 
-			csc.ModuleAssemblyName = "A";
+			csc.ModuleAssemblyName = "A'B";
 			csc.ARFC (clbe);
 
-			Assert.AreEqual ("/moduleassemblyname:A", clbe.ToString (), "A1");
+			Assert.AreEqual ("/moduleassemblyname:\"A'B\"", clbe.ToString (), "A1");
 		}
 
 		[Test]
@@ -307,10 +307,10 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			CscExtended csc = new CscExtended ();
 			CommandLineBuilderExtension clbe = new CommandLineBuilderExtension ();
 
-			csc.WarningsAsErrors = "A";
+			csc.WarningsAsErrors = "A'B";
 			csc.ARFC (clbe);
 
-			Assert.AreEqual ("/warnaserror+:A", clbe.ToString (), "A1");
+			Assert.AreEqual ("/warnaserror+:\"A'B\"", clbe.ToString (), "A1");
 		}
 		[Test]
 		public void TestWarningNotAsErrors ()
@@ -318,10 +318,10 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			CscExtended csc = new CscExtended ();
 			CommandLineBuilderExtension clbe = new CommandLineBuilderExtension ();
 
-			csc.WarningsNotAsErrors = "A";
+			csc.WarningsNotAsErrors = "A'B";
 			csc.ARFC (clbe);
 
-			Assert.AreEqual ("/warnaserror-:A", clbe.ToString (), "A1");
+			Assert.AreEqual ("/warnaserror-:\"A'B\"", clbe.ToString (), "A1");
 		}
 
 	#endregion
@@ -333,11 +333,11 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			CommandLineBuilderExtension c1 = new CommandLineBuilderExtension ();
 			CommandLineBuilderExtension c2 = new CommandLineBuilderExtension ();
 
-			csc.AdditionalLibPaths = new string [2] { "A", "B" };
+			csc.AdditionalLibPaths = new string [2] { "A'Foo", "B" };
 			csc.ARFC (c1);
 			csc.ACLC (c2);
 
-			Assert.AreEqual ("/lib:A,B", c1.ToString (), "A1");
+			Assert.AreEqual ("/lib:\"A'Foo\",B", c1.ToString (), "A1");
 			Assert.AreEqual (String.Empty, c2.ToString (), "A2");
 		}
 
@@ -363,11 +363,11 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			CommandLineBuilderExtension c1 = new CommandLineBuilderExtension ();
 			CommandLineBuilderExtension c2 = new CommandLineBuilderExtension ();
 
-			csc.MainEntryPoint = "A";
+			csc.MainEntryPoint = "A;B";
 			csc.ARFC (c1);
 			csc.ACLC (c2);
 
-			Assert.AreEqual ("/main:A", c1.ToString (), "A1");
+			Assert.AreEqual ("/main:\"A;B\"", c1.ToString (), "A1");
 			Assert.AreEqual (String.Empty, c2.ToString (), "A2");
 		}
 
@@ -378,11 +378,11 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			CommandLineBuilderExtension c1 = new CommandLineBuilderExtension ();
 			CommandLineBuilderExtension c2 = new CommandLineBuilderExtension ();
 
-			csc.References = new ITaskItem [2] { new TaskItem ("A"), new TaskItem ("B") };
+			csc.References = new ITaskItem [2] { new TaskItem ("A;C"), new TaskItem ("B") };
 			csc.ARFC (c1);
 			csc.ACLC (c2);
 
-			Assert.AreEqual ("/reference:A /reference:B", c1.ToString (), "A1");
+			Assert.AreEqual ("/reference:\"A;C\" /reference:B", c1.ToString (), "A1");
 			Assert.AreEqual (String.Empty, c2.ToString (), "A2");
 		}
 
@@ -393,11 +393,11 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			CommandLineBuilderExtension c1 = new CommandLineBuilderExtension ();
 			CommandLineBuilderExtension c2 = new CommandLineBuilderExtension ();
 
-			csc.ResponseFiles = new ITaskItem [2] { new TaskItem ("A"), new TaskItem ("B") };
+			csc.ResponseFiles = new ITaskItem [2] { new TaskItem ("A\'Foo"), new TaskItem ("B") };
 			csc.ARFC (c1);
 			csc.ACLC (c2);
 
-			Assert.AreEqual ("@A @B", c1.ToString (), "A1");
+			Assert.AreEqual ("@\"A'Foo\" @B", c1.ToString (), "A1");
 			Assert.AreEqual (String.Empty, c2.ToString (), "A2");
 		}
 

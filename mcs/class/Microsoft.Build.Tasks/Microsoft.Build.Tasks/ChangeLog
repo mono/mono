@@ -1,3 +1,8 @@
+2008-08-06  Ankit Jain  <jankit@novell.com>
+
+	* Csc.cs (AddResponseFileCommands): Don't quote DefineConstants.
+	Correctly handle response filenames and win32 resource switch.
+
 2008-06-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AssemblyResolver.cs : do not crash when there is no mono installed.

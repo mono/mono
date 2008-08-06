@@ -60,7 +60,7 @@ namespace Microsoft.Build.Tasks {
 				else
 					commandLine.AppendSwitch ("/checked-");
 
-			commandLine.AppendSwitchIfNotNull ("/define:", DefineConstants);
+			commandLine.AppendSwitchUnquotedIfNotNull ("/define:", DefineConstants);
 
 			commandLine.AppendSwitchIfNotNull ("/nowarn:", DisabledWarnings);
 
@@ -88,7 +88,7 @@ namespace Microsoft.Build.Tasks {
 
 			if (ResponseFiles != null)
 				foreach (ITaskItem item in ResponseFiles) 
-					commandLine.AppendFileNameIfNotNull (String.Format ("@{0}",item.ItemSpec));
+					commandLine.AppendSwitchIfNotNull ("@", item.ItemSpec);
 
 			if (Bag ["WarningLevel"] != null)
 				commandLine.AppendSwitchIfNotNull ("/warn:", WarningLevel.ToString ());
@@ -98,7 +98,7 @@ namespace Microsoft.Build.Tasks {
 			commandLine.AppendSwitchIfNotNull ("/warnaserror-:", WarningsNotAsErrors);
 
 			if (Win32Resource != null)
-				commandLine.AppendSwitchIfNotNull ("/win32res:", String.Format ("\"{0}\"", Win32Resource));
+				commandLine.AppendSwitchIfNotNull ("/win32res:", Win32Resource);
 		}
 
 		[MonoTODO]
