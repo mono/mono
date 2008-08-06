@@ -1659,9 +1659,7 @@ namespace System.Windows.Forms
 				if (new_item != -1) {
 					FocusedItem = new_item;
 
-					if (selection_mode == SelectionMode.None)
-						EnsureVisible (new_item);
-					else if (selection_mode != SelectionMode.MultiSimple)
+					if (selection_mode != SelectionMode.MultiSimple)
 						SelectedItemFromNavigation (new_item);
 				}
 		}
@@ -1723,7 +1721,7 @@ namespace System.Windows.Forms
 
 			foreach (int i in new_selection)
 				if (!sel_indices.Contains (i))
-					selected_indices.Add (i);
+					selected_indices.AddCore (i);
 			ResumeLayout ();
 		}
 
@@ -1739,14 +1737,14 @@ namespace System.Windows.Forms
 
 			switch (SelectionMode) {
 			case SelectionMode.One:
-				SelectedIndex = index;
+				SelectedIndices.AddCore (index); // Unselects previous one
 				break;
 
 			case SelectionMode.MultiSimple:
 				if (SelectedIndices.Contains (index))
-					SelectedIndices.Remove (index);
+					SelectedIndices.RemoveCore (index);
 				else
-					SelectedIndices.Add (index);
+					SelectedIndices.AddCore (index);
 				break;
 
 			case SelectionMode.MultiExtended:
@@ -1757,7 +1755,7 @@ namespace System.Windows.Forms
 					prev_selection = new int [SelectedIndices.Count];
 					SelectedIndices.CopyTo (prev_selection, 0);
 				} else
-					SelectedIndices.Clear ();
+					SelectedIndices.ClearCore ();
 
 				if (!shift_pressed)
 					anchor = index;
@@ -1784,7 +1782,7 @@ namespace System.Windows.Forms
 
 			switch (SelectionMode) {
 			case SelectionMode.One:
-				SelectedIndex = index;
+				SelectedIndices.AddCore (index); // Unselects previous one
 				break;
 
 			case SelectionMode.MultiSimple:
@@ -1895,7 +1893,12 @@ namespace System.Windows.Forms
 		internal void SelectedItemFromNavigation (int index)
 		{
 			switch (SelectionMode) {
-				case SelectionMode.None: // Do nothing
+				case SelectionMode.None:
+					// .Net doesn't select the item, only ensures that it's visible
+					// and fires the selection related events
+					EnsureVisible (index);
+					OnSelectedIndexChanged (EventArgs.Empty);
+					OnSelectedValueChanged (EventArgs.Empty);
 					break;
 				case SelectionMode.One: {
 					SelectedIndex = index;
@@ -2662,15 +2665,22 @@ namespace System.Windows.Forms
 #endif
 			void Clear ()
 			{
+				if (ClearCore ()) {
+					owner.OnSelectedIndexChanged (EventArgs.Empty);
+					owner.OnSelectedValueChanged (EventArgs.Empty);
+				}
+			}
+
+			internal bool ClearCore ()
+			{
 				if (selection.Count == 0)
-					return;
+					return false;
 
 				foreach (int index in selection)
 					owner.InvalidateItem (index);
 
 				selection.Clear ();
-				owner.OnSelectedIndexChanged (EventArgs.Empty);
-				owner.OnSelectedValueChanged (EventArgs.Empty);
+				return true;
 			}
 
 			public bool Contains (int selectedIndex)
