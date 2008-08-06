@@ -55,7 +55,6 @@ namespace System.Web.Compilation
 		static BindingFlags noCaseFlags = BindingFlags.Public | BindingFlags.NonPublic |
 						  BindingFlags.Instance | BindingFlags.IgnoreCase;
 		static Type monoTypeType = Type.GetType ("System.MonoType");
-		static Assembly monoTypeAssembly = typeof (object).Assembly;
 		
 		TemplateControlParser parser;
 		int dataBoundAtts;
@@ -1745,7 +1744,7 @@ namespace System.Web.Compilation
 				else
 					throw new ParseException (currentLocation,
 							"Value '" + str  + "' is not a valid boolean.");
-			} else if (type == monoTypeType && type.GetType ().Assembly == monoTypeAssembly)
+			} else if (type == monoTypeType)
 				type = typeof (System.Type);
 			
 			if (str == null)
