@@ -2162,8 +2162,8 @@ namespace Mono.CSharp {
 	}
 
 	//
-	// Used when resolved expression has different representations for
-	// expression trees and emit phase
+	// Created during resolving pahse when an expression is wrapped or constantified
+	// and original expression can be used later (e.g. for expression trees)
 	//
 	public class ReducedExpression : Expression
 	{
@@ -2189,6 +2189,17 @@ namespace Mono.CSharp {
 			public override Expression CreateExpressionTree (EmitContext ec)
 			{
 				return orig_expr.CreateExpressionTree (ec);
+			}
+
+			public override bool GetAttributableValue (EmitContext ec, Type value_type, out object value)
+			{
+				//
+				// Even if resolved result is a constant original expression was not
+				// and attribute accepts constants only
+				//
+				Attribute.Error_AttributeArgumentNotValid (loc);
+				value = null;
+				return false;
 			}
 
 			public override object GetValue ()

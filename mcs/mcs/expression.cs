@@ -3928,9 +3928,9 @@ namespace Mono.CSharp {
 			// Dead code optimalization
 			Constant c = expr as Constant;
 			if (c != null){
-				bool value = (bool) c.GetValue ();
-				Report.Warning (429, 4, value ? false_expr.Location : true_expr.Location, "Unreachable expression code detected");
-				return value ? true_expr : false_expr;
+				bool is_false = c.IsDefaultValue;
+				Report.Warning (429, 4, is_false ? true_expr.Location : false_expr.Location, "Unreachable expression code detected");
+				return ReducedExpression.Create (is_false ? false_expr : true_expr, this).Resolve (ec);
 			}
 
 			return this;
