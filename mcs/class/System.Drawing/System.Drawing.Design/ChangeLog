@@ -1,3 +1,8 @@
+2008-08-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ToolboxItem.cs: (Initialize) Avoid casting image to Bitmap 2 times.
+	[Found using Gendarme]
+
 2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* UITypeEditor.cs: Associate string[] with StringArrayEditor in the 

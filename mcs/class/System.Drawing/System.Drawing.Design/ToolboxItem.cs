@@ -295,9 +295,8 @@ namespace System.Drawing.Design
 				image = ToolboxBitmapAttribute.GetImageFromResource (type, null, false);
 			
 			if (image != null) {
-				if (image is Bitmap)
-					Bitmap = (Bitmap) image;
-				else
+				Bitmap = (image as Bitmap);
+				if (Bitmap == null)
 					Bitmap = new Bitmap (image);
 			}
 
