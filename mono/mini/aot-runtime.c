@@ -108,6 +108,7 @@ typedef struct MonoAotModule {
 	guint8 *trampolines;
 	guint32 num_trampolines, first_trampoline_got_offset, trampoline_index;
 	gpointer *globals;
+	MonoDl *sofile;
 } MonoAotModule;
 
 static GHashTable *aot_modules;
@@ -661,6 +662,7 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 	amodule->got_size = *got_size_ptr;
 	amodule->got [0] = assembly->image;
 	amodule->globals = globals;
+	amodule->sofile = sofile;
 
 	sscanf (opt_flags, "%d", &amodule->opts);		
 
@@ -2286,12 +2288,11 @@ load_named_code (MonoAotModule *amodule, const char *name)
 	int n_patches, got_index, pindex;
 	MonoMemPool *mp;
 	gpointer code;
-	MonoAssembly *assembly = amodule->assembly;
 
 	/* Load the code */
 
 	symbol = g_strdup_printf ("%s", name);
-	find_symbol (assembly->aot_module, amodule->globals, symbol, (gpointer *)&code);
+	find_symbol (amodule->sofile, amodule->globals, symbol, (gpointer *)&code);
 	g_free (symbol);
 	g_assert (code);
 
@@ -2300,7 +2301,7 @@ load_named_code (MonoAotModule *amodule, const char *name)
 	/* Load info */
 
 	symbol = g_strdup_printf ("%s_p", name);
-	find_symbol (assembly->aot_module, amodule->globals, symbol, (gpointer *)&p);
+	find_symbol (amodule->sofile, amodule->globals, symbol, (gpointer *)&p);
 	g_free (symbol);
 	if (!p)
 		/* Nothing to patch */

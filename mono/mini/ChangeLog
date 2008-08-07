@@ -1,5 +1,8 @@
 2008-08-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (load_named_code): Pass the sofile to find_symbol, not the
+	MonoAotModule.
+
 	* exceptions-arm.c (mono_arch_get_throw_exception_generic): Add aot
 	support.
 
