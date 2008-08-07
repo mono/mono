@@ -1,3 +1,10 @@
+2008-08-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* cpu-arm.md: Increase long_conv_to_ovf_i4_2 max length to 36.
+
+	* mini-arm.c (mono_arch_output_basic_block): Implement long to int conversion
+	with overflow checking.
+
 2008-08-05  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile.am (GENMDESC_PRG): when cross-compiling use full path
