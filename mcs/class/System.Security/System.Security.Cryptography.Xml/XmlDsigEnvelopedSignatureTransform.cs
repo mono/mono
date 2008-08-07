@@ -44,14 +44,14 @@ namespace System.Security.Cryptography.Xml {
 		private bool comments;
 		private object inputObj;
 
-		public XmlDsigEnvelopedSignatureTransform () 
+		public XmlDsigEnvelopedSignatureTransform ()
+			: this (false)
 		{
-			Algorithm = "http://www.w3.org/2000/09/xmldsig#enveloped-signature";
-			comments = false;
 		}
 
 		public XmlDsigEnvelopedSignatureTransform (bool includeComments) 
 		{
+			Algorithm = "http://www.w3.org/2000/09/xmldsig#enveloped-signature";
 			comments = includeComments;
 		}
 

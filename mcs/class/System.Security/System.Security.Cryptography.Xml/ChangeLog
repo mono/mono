@@ -1,3 +1,7 @@
+2008-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* set Algorithm in .ctor(bool), fixed bug #398904.
+
 2008-08-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XmlDsigC14NTransform.cs,
