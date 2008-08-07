@@ -2075,10 +2075,13 @@ namespace System.Linq.Expressions {
 
 		static PropertyInfo GetAssociatedProperty (MethodInfo method)
 		{
+			if (method == null)
+				return null;
+
 			foreach (var prop in method.DeclaringType.GetProperties (All)) {
-				if (prop.GetGetMethod (true) == method)
+				if (method.Equals (prop.GetGetMethod (true)))
 					return prop;
-				if (prop.GetSetMethod (true) ==  method)
+				if (method.Equals (prop.GetSetMethod (true)))
 					return prop;
 			}
 
