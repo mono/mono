@@ -1,3 +1,8 @@
+2008-08-07  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs (GetAssociatedProperty): strengthen accessors
+	comparisons.
+
 2008-08-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* BinaryExpression.cs (EmitBinaryOperator): Mask out the upper bits of the 
