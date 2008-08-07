@@ -1,3 +1,7 @@
+2008-08-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityState.cs: New. Silverlight 2.0 abstract type.
+
 2008-05-30  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CodeAccessPermission.cs,
