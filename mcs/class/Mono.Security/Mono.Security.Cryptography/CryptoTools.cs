@@ -6,7 +6,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -45,24 +45,31 @@ namespace Mono.Security.Cryptography {
 		private KeyBuilder ()
 		{
 		}
+
+		static RandomNumberGenerator Rng {
+			get {
+#if NET_2_1
+				if (rng == null)
+					rng = new RNGCryptoServiceProvider ();
+#else
+				if (rng == null)
+					rng = RandomNumberGenerator.Create ();
+#endif
+				return rng;
+			}
+		}
 	
 		static public byte[] Key (int size) 
 		{
-			if (rng == null)
-				rng = RandomNumberGenerator.Create ();
-
 			byte[] key = new byte [size];
-			rng.GetBytes (key);
+			Rng.GetBytes (key);
 			return key;
 		}
 	
 		static public byte[] IV (int size) 
 		{
-			if (rng == null)
-				rng = RandomNumberGenerator.Create ();
-
 			byte[] iv = new byte [size];
-			rng.GetBytes (iv);
+			Rng.GetBytes (iv);
 			return iv;
 		}
 	}

@@ -1,3 +1,9 @@
+2008-08-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoTools.cs: Make this usable with Silverlight 2.0 (NET_2_1)
+	* SymmetricTransform.cs: Make this (more) usable with SL2 limited
+	crypto support.
+
 2008-04-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConvert.cs: Fix HMAC to respect start index inside an array.
