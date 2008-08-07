@@ -1,3 +1,10 @@
+2008-08-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XmlDsigC14NTransform.cs,
+	* XmlDsigExcC14NTransform.cs
+	* XmlDsigXsltTransform.cs: Don't use is + as.
+	[Found using Gendarme AvoidRepetitiveCastsRule]
+
 2008-06-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XmlDecryptionTransform.cs,
