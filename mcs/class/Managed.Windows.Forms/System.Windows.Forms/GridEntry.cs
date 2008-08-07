@@ -407,8 +407,9 @@ namespace System.Windows.Forms.PropertyGridInternal
 			if (PropertyDescriptor != null) {
 				try { // can happen, because we are missing some editors
 					UITypeEditor editor = null;
-					if (PropertyOwner is ICustomTypeDescriptor)
-						editor = (UITypeEditor) ((ICustomTypeDescriptor)PropertyOwner).GetEditor (typeof (UITypeEditor));
+					ICustomTypeDescriptor customDescriptor = this.Value as ICustomTypeDescriptor;
+					if (customDescriptor != null)
+						editor = (UITypeEditor) customDescriptor.GetEditor (typeof (UITypeEditor));
 					if (editor == null)
 						editor = (UITypeEditor) PropertyDescriptor.GetEditor (typeof (UITypeEditor));
 					return editor;
@@ -422,8 +423,9 @@ namespace System.Windows.Forms.PropertyGridInternal
 		private TypeConverter GetConverter ()
 		{
 			TypeConverter converter = null;
-			if (PropertyOwner is ICustomTypeDescriptor)
-				converter = ((ICustomTypeDescriptor)PropertyOwner).GetConverter ();
+			ICustomTypeDescriptor customDescriptor = this.Value as ICustomTypeDescriptor;
+			if (customDescriptor != null)
+				converter = customDescriptor.GetConverter ();
 			if (converter == null && PropertyDescriptor != null)
 				converter = PropertyDescriptor.Converter;
 			return converter;
