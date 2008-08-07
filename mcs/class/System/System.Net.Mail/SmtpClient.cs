@@ -860,10 +860,10 @@ try {
 				}
 				StartSection (boundary, contentType, att.TransferEncoding, att == body ? null : att.ContentDisposition);
 
+				byte [] content = new byte [att.ContentStream.Length];
+				att.ContentStream.Read (content, 0, content.Length);
 				switch (att.TransferEncoding) {
 				case TransferEncoding.Base64:
-					byte [] content = new byte [att.ContentStream.Length];
-					att.ContentStream.Read (content, 0, content.Length);
 #if TARGET_JVM
 					SendData (Convert.ToBase64String (content));
 #else
@@ -871,13 +871,10 @@ try {
 #endif
 					break;
 				case TransferEncoding.QuotedPrintable:
-					byte [] bytes = new byte [att.ContentStream.Length];
-					att.ContentStream.Read (bytes, 0, bytes.Length);
-					SendData (ToQuotedPrintable (bytes));
+					SendData (ToQuotedPrintable (content));
 					break;
 				case TransferEncoding.SevenBit:
 				case TransferEncoding.Unknown:
-					content = new byte [att.ContentStream.Length];
 					SendData (Encoding.ASCII.GetString (content));
 					break;
 				}

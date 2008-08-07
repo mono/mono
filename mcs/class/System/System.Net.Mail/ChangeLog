@@ -1,3 +1,8 @@
+2008-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SmtpClient.cs : Fixed bug #392809, patch by Ted Unangst. Text body
+	  was not copied to byte array which is being sent. 
+
 2008-04-21  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* SmtpClient.cs: Fix bug with string handling
