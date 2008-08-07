@@ -466,7 +466,10 @@ namespace Novell.Directory.Ldap
 			{
 				return ;
 			}
-			replies.Add(message);
+			lock(replies)
+			{
+				replies.Add(message);
+			}
 			message.RequestingMessage = msg; // Save request message info
 			switch (message.Type)
 			{

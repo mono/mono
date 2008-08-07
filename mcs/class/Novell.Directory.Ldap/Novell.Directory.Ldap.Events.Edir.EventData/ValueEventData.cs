@@ -68,6 +68,14 @@ namespace Novell.Directory.Ldap.Events.Edir.EventData
       }
     }
 
+    protected byte[] binData;
+    public byte[] BinaryData
+    {
+      get
+      {
+	return binData;
+      }
+    }
     protected string strEntry;
     public string Entry
     {
@@ -118,6 +126,7 @@ namespace Novell.Directory.Ldap.Events.Edir.EventData
       : base(eventDataType, message)
     {
         int[] length = new int[1];
+	Asn1OctetString octData;
 
         strPerpetratorDN =
             ((Asn1OctetString) decoder.decode(decodedData, length)).stringValue();
@@ -134,7 +143,9 @@ namespace Novell.Directory.Ldap.Events.Edir.EventData
         timeStampObj =
             new DSETimeStamp((Asn1Sequence) decoder.decode(decodedData, length));
 
-        strData = ((Asn1OctetString) decoder.decode(decodedData, length)).stringValue();
+        octData = ((Asn1OctetString) decoder.decode(decodedData, length));
+	strData = octData.stringValue();
+	binData = SupportClass.ToByteArray(octData.byteValue());
 
         nVerb = ((Asn1Integer) decoder.decode(decodedData, length)).intValue();
 
@@ -152,6 +163,7 @@ namespace Novell.Directory.Ldap.Events.Edir.EventData
       buf.AppendFormat("(Attribute={0})", strAttribute);
       buf.AppendFormat("(Classid={0})", strClassId);
       buf.AppendFormat("(Data={0})", strData);
+      buf.AppendFormat("(Data={0})", binData);
       buf.AppendFormat("(Entry={0})", strEntry);
       buf.AppendFormat("(Perpetrator={0})", strPerpetratorDN);
       buf.AppendFormat("(Syntax={0})", strSyntax);

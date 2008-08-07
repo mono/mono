@@ -1,3 +1,60 @@
+2007-19-09 Palaniappan N <npalaniappan@novell.com>
+
+	The folder is made in sync. with the Novell Forge's C# LDAP SDK with the following updates:
+
+	*Novell.Directory.Ldap :
+		- Connection.cs: Checked the condition, whether the sockets 
+		created by BOTH SSL and cleartext connections are open / null 
+		in Connection.cs
+		- Connection.cs: Added a new catch block in Connection.cs to 
+		catch the socket exceptions.
+		- Connection.cs: Version has been updated to 2.1.8 		
+		- LdapResponse.cs: Changes made to monitor the events which 
+		caused problems with eDirectory 8.8 SP1 release, because of the 
+		LdapResponse structure.
+		- LdapException.cs: A fix for the bug which deals about the 
+		exceptions caused while using events with lots of create/modify events		
+		- LdapAttributeSchema.cs: Superior was not set properly. Corrected.
+		- Message.cs: To fix the issue of seeing duplicate records while searching
+
+	*Novell.Directory.Ldap.Extensions :
+		- Added support for Backup-Restore of LDAP by including the following classes
+			# LdapBackupRequest.cs
+			# LdapBackupResponse.cs
+			# LdapRestoreRequest.cs
+			# BackupRestoreConstants.cs
+	
+	*Novell.Directory.Ldap.Utilclass :
+		- DN.cs: Done a fix in  by correcting the misplaced decrement operator 
+		which caused malfunctioning of isDescendantOf() method
+
+	*Novell.Directory.Ldap.Events :
+		- LdapEventSource.cs: Exception has been thrown in case of supply of 
+		negative sleep interval	
+	
+	*Novell.Directory.Ldap.Events.Edir.EventData :
+		- ValueEventData.cs: A new property BinaryData has been implemented in the 
+		class to enable applications retrieve the binary data as such from the 
+		ASN1OctetString with out converting it in to a String
+
+	*Novell.Directory.Ldap.Rfc2251 :
+		- RfcIntermediateResponse.cs: The variable m_responseNameIndex has been 
+		modified to get value 0 also to fix an issue related to parsing the response.
+		- RfcModifyDNRequest.cs: SetIdentifier method has been applied to newSuperior 
+		to make rename work properly with all LDAP servers.
+
+	* Changelog:
+		- Updated
+
+	* Novell.Directory.Ldap.dll.sources:
+		- Added the new file entries of the Backup-Restore Extension
+
+	* Novell.Directory.Ldap.vmwcsproj:
+		- Added the new file entries of the Backup-Restore Extension
+
+	* Novell.Directory.Ldap20.csproj:
+		- Added the new file entries of the Backup-Restore Extension
+
 2005-12-06 Konstantin Triger <kostat@mainsoft.com>
 
         * Novell.Directory.Ldap.vmwcsproj: fixing conditional compilation constants.

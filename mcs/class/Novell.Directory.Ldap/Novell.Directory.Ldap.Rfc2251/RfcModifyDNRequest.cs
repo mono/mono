@@ -64,7 +64,9 @@ namespace Novell.Directory.Ldap.Rfc2251
 			add(entry);
 			add(newrdn);
 			add(deleteoldrdn);
-			if (newSuperior != null) {
+			if (newSuperior != null)
+			{
+				newSuperior.setIdentifier(new Asn1Identifier(Asn1Identifier.CONTEXT,false,0));
 				add(newSuperior);
 			}
 		}
