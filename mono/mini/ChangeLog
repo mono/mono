@@ -1,3 +1,13 @@
+2008-08-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-arm.c (mono_arch_get_throw_exception_generic): Add aot
+	support.
+
+	* aot-runtime.c (load_named_code): Handle 'mono_arm_throw_exception'.
+
+	* mini-arm.c (mono_arch_register_lowlevel_calls): Register 
+	mono_arm_throw_exception as a jit icall.
+
 2008-08-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (mono_compile_assembly): Correct the computation of 
