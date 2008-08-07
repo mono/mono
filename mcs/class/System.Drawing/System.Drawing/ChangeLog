@@ -1,3 +1,9 @@
+2008-08-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Icon.cs (InitFromStreamWithSize): Move init of iconDir.idCount
+	and imageData until after the number of entries was determined to
+	cope with skipping of 256x256 icons. Fixes bug #410608.
+
 2008-07-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* gdipFunctions.cs: Fix signature for 
