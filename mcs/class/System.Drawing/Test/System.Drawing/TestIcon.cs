@@ -361,6 +361,9 @@ namespace MonoTests.System.Drawing {
 		[Test] // bug #410608
 		public void Save_256 ()
 		{
+			if (RunningOnUnix)
+				Assert.Ignore ("Depends on bug #323511");
+
 			using (Icon icon = new Icon (TestBitmap.getInFile ("bitmaps/323511.ico"))) {
 				SaveAndCompare ("256", icon, true);
 			}
@@ -498,6 +501,16 @@ namespace MonoTests.System.Drawing {
 #endif
 		}
 #endif
+
+		private static bool RunningOnUnix {
+			get {
+#if NET_2_0
+				return Environment.OSVersion.Platform == PlatformID.Unix;
+#else
+				return (int) Environment.OSVersion.Platform == 128;
+#endif
+			}
+		}
 	}
 
 	[TestFixture]
