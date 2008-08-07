@@ -1,5 +1,12 @@
 2008-08-07  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* GridEntry.cs: Check if current property is a ICustomTypeDescriptor 
+	and not the parent one (the propertyowner). Fixes the behavior of 
+	GetConverter/GetEditor.
+	[Fixes bug #415452]
+
+2008-08-07  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* PropertyGrid.cs: Refresh should also repopulate the PropertyGrid.
 	[Fixes part of bug #415452]
 
