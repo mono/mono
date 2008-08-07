@@ -1,3 +1,7 @@
+2008-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeTest.cs : added test for bug #377042.
+
 2008-08-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs : removed NotWorking from ZLiteral as it seems gone

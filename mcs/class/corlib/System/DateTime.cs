@@ -1523,7 +1523,7 @@ namespace System
 					else if (num == 1)
 						tzoffset = _ParseNumber (s, valuePos, 1, 2, true, sloppy_parsing, out num_parsed);
 					else {
-						tzoffset = _ParseNumber (s, valuePos, 1, 2, true, sloppy_parsing, out num_parsed);
+						tzoffset = _ParseNumber (s, valuePos, 1, 2, true, /*sloppy_parsing*/true, out num_parsed);
 						valuePos += num_parsed;
 						if (num_parsed < 0)
 							return false;

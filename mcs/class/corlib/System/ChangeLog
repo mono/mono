@@ -1,3 +1,8 @@
+2008-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs : zzzz format allows non-fixed length of number, even
+	  in exact parsing mode. Fixed bug #377042.
+
 2008-08-05  Jb Evain  <jbevain@novell.com>
 
 	* String.cs: add new NET_2_1 Compare methods.
