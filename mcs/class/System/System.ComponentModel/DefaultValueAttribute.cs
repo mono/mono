@@ -120,15 +120,20 @@ namespace System.ComponentModel
 
 		public override bool Equals (object obj)
 		{
-			if (!(obj is DefaultValueAttribute))
+			DefaultValueAttribute dva = (obj as DefaultValueAttribute);
+			if (dva == null)
 				return false;
-			if (obj == this)
-				return true;
-			return ((DefaultValueAttribute) obj).Value == DefaultValue;
+
+			if (DefaultValue == null)
+				return (dva.Value == null);
+
+			return DefaultValue.Equals (dva.Value);
 		}
 
 		public override int GetHashCode()
 		{
+			if (DefaultValue == null)
+				return base.GetHashCode ();
 			return DefaultValue.GetHashCode();
 		}
 	}

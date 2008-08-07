@@ -1,3 +1,10 @@
+2008-08-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DefaultValueAttribute.cs: Fix Equals (wrt boxing) and 
+	GetHashCode (wrt NRE on null Value).
+	* PropertyChangedEventArgs.cs: Property PropertyName is not
+	virtual for NET_2_1
+
 2008-07-31  Jb Evain  <jbevain@novell.com>
 
 	* BackgroundWorker.cs

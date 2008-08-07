@@ -41,7 +41,11 @@ namespace System.ComponentModel
 			propertyName = name;
 		}
 
+#if NET_2_1
+		public string PropertyName {
+#else
 		public virtual string PropertyName {
+#endif
 			get {
 				return propertyName;
 			}
