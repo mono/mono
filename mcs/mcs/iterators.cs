@@ -212,7 +212,7 @@ namespace Mono.CSharp {
 			get { return hoisted_params; }
 		}
 
-		public override TypeExpr [] GetClassBases (out TypeExpr base_class)
+		protected override TypeExpr [] ResolveBaseTypes (out TypeExpr base_class)
 		{
 			iterator_type_expr = new TypeExpression (MutateType (Iterator.OriginalIteratorType), Location);
 
@@ -250,7 +250,7 @@ namespace Mono.CSharp {
 
 			type_bases = list;
 
-			return base.GetClassBases (out base_class);
+			return base.ResolveBaseTypes (out base_class);
 		}
 
 		protected override string GetVariableMangledName (LocalInfo local_info)

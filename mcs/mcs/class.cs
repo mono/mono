@@ -803,44 +803,76 @@ namespace Mono.CSharp {
 			((TypeContainer) part).type_bases = bases;
 		}
 
-		TypeExpr[] GetNormalBases (out TypeExpr base_class)
+		/// <summary>
+		///   This function computes the Base class and also the
+		///   list of interfaces that the class or struct @c implements.
+		///   
+		///   The return value is an array (might be null) of
+		///   interfaces implemented (as Types).
+		///   
+		///   The @base_class argument is set to the base object or null
+		///   if this is `System.Object'. 
+		/// </summary>
+		protected virtual TypeExpr[] ResolveBaseTypes (out TypeExpr base_class)
 		{
 			base_class = null;
 			if (type_bases == null)
 				return null;
 
 			int count = type_bases.Count;
-			int start = 0, i, j;
+			TypeExpr [] ifaces = null;
+			for (int i = 0, j = 0; i < count; i++){
+				FullNamedExpression fne = (FullNamedExpression) type_bases [i];
 
-			if (Kind == Kind.Class){
-				TypeExpr name = ((Expression) type_bases [0]).ResolveAsBaseTerminal (this, false);
+				//
+				// Standard ResolveAsTypeTerminal cannot be used in this case because
+				// it does ObsoleteAttribute and constraint checks which require
+				// base type to be set
+				//
+				TypeExpr fne_resolved = fne.ResolveAsBaseTerminal (this, false);
+				if (fne_resolved == null)
+					continue;
 
-				if (name == null){
-					return null;
+				if (i == 0 && Kind == Kind.Class && !fne_resolved.Type.IsInterface) {
+					base_class = fne_resolved;
+					continue;
 				}
 
-				if (!name.IsInterface) {
-					// base_class could be a class, struct, enum, delegate.
-					// This is validated in GetClassBases.
-					base_class = name;
-					start = 1;
+				if (ifaces == null)
+					ifaces = new TypeExpr [count - i];
+
+				if (fne_resolved.Type.IsInterface) {
+					for (int ii = 0; ii < j; ++ii) {
+						if (TypeManager.IsEqual (fne_resolved.Type, ifaces [ii].Type)) {
+							Report.Error (528, Location, "`{0}' is already listed in interface list",
+								fne_resolved.GetSignatureForError ());
+							break;
+						}
+					}
+
+					if (Kind == Kind.Interface && !fne_resolved.AsAccessible (this)) {
+						Report.Error (61, fne.Location,
+							"Inconsistent accessibility: base interface `{0}' is less accessible than interface `{1}'",
+							fne_resolved.GetSignatureForError (), GetSignatureForError ());
+					}
+				} else {
+					Report.SymbolRelatedToPreviousError (fne_resolved.Type);
+					if (Kind != Kind.Class) {
+						Report.Error (527, fne.Location, "Type `{0}' in interface list is not an interface", fne_resolved.GetSignatureForError ());
+					} else if (base_class != null)
+						Report.Error (1721, fne.Location, "`{0}': Classes cannot have multiple base classes (`{1}' and `{2}')",
+							GetSignatureForError (), base_class.GetSignatureForError (), fne_resolved.GetSignatureForError ());
+					else {
+						Report.Error (1722, fne.Location, "`{0}': Base class `{1}' must be specified as first",
+							GetSignatureForError (), fne_resolved.GetSignatureForError ());
+					}
 				}
+
+				ifaces [j++] = fne_resolved;
 			}
 
-			TypeExpr [] ifaces = new TypeExpr [count-start];
-			
-			for (i = start, j = 0; i < count; i++, j++){
-				TypeExpr resolved = ((Expression) type_bases [i]).ResolveAsBaseTerminal (this, false);
-				if (resolved == null) {
-					return null;
-				}
-				
-				ifaces [j] = resolved;
-			}
-
-			return ifaces.Length == 0 ? null : ifaces;
+			return ifaces;
 		}
-
 
 		TypeExpr[] GetNormalPartialBases (ref TypeExpr base_class)
 		{
@@ -850,7 +882,7 @@ namespace Mono.CSharp {
 
 			foreach (TypeContainer part in partial_parts) {
 				TypeExpr new_base_class;
-				TypeExpr[] new_ifaces = part.GetClassBases (out new_base_class);
+				TypeExpr[] new_ifaces = part.ResolveBaseTypes (out new_base_class);
 				if (new_base_class != TypeManager.system_object_expr) {
 					if (base_class == TypeManager.system_object_expr)
 						base_class = new_base_class;
@@ -881,65 +913,6 @@ namespace Mono.CSharp {
 				return null;
 
 			return (TypeExpr[])ifaces.ToArray (typeof (TypeExpr));
-		}
-
-		/// <summary>
-		///   This function computes the Base class and also the
-		///   list of interfaces that the class or struct @c implements.
-		///   
-		///   The return value is an array (might be null) of
-		///   interfaces implemented (as Types).
-		///   
-		///   The @base_class argument is set to the base object or null
-		///   if this is `System.Object'. 
-		/// </summary>
-		public virtual TypeExpr [] GetClassBases (out TypeExpr base_class)
-		{
-			TypeExpr[] ifaces = GetNormalBases (out base_class);
-
-			if (ifaces == null)
-				return null;
-
-			int count = ifaces.Length;
-
-			for (int i = 0; i < count; i++) {
-				TypeExpr iface = (TypeExpr) ifaces [i];
-
-				if (!iface.IsInterface) {
-					if (Kind != Kind.Class) {
-						// TODO: location of symbol related ....
-						Error_TypeInListIsNotInterface (Location, iface.GetSignatureForError ());
-					}
-					else if (base_class != null)
-						Report.Error (1721, Location, "`{0}': Classes cannot have multiple base classes (`{1}' and `{2}')",
-							GetSignatureForError (), base_class.GetSignatureForError (), iface.GetSignatureForError ());
-					else {
-						Report.Error (1722, Location, "`{0}': Base class `{1}' must be specified as first",
-							GetSignatureForError (), iface.GetSignatureForError ());
-					}
-					return null;
-				}
-
-				for (int x = 0; x < i; x++) {
-					if (iface.Equals (ifaces [x])) {
-						Report.Error (528, Location,
-							      "`{0}' is already listed in " +
-							      "interface list", iface.GetSignatureForError ());
-						return null;
-					}
-				}
-
-				if ((Kind == Kind.Interface) &&
-				    !iface.AsAccessible (this)) {
-					Report.Error (61, Location,
-						      "Inconsistent accessibility: base " +
-						      "interface `{0}' is less accessible " +
-						      "than interface `{1}'", iface.GetSignatureForError (),
-						      Name);
-					return null;
-				}
-			}
-			return ifaces;
 		}
 
 		bool CheckGenericInterfaces (Type[] ifaces)
@@ -974,11 +947,6 @@ namespace Mono.CSharp {
 
 		bool error = false;
 		
-		protected void Error_TypeInListIsNotInterface (Location loc, string type)
-		{
-			Report.Error (527, loc, "Type `{0}' in interface list is not an interface", type);
-		}
-
 		bool CreateTypeBuilder ()
 		{
 			try {
@@ -1033,7 +1001,7 @@ namespace Mono.CSharp {
 
 		bool DefineBaseTypes ()
 		{
-			iface_exprs = GetClassBases (out base_type);
+			iface_exprs = ResolveBaseTypes (out base_type);
 			if (partial_parts != null) {
 				iface_exprs = GetNormalPartialBases (ref base_type);
 			}
@@ -1051,22 +1019,11 @@ namespace Mono.CSharp {
 			if (!(this is CompilerGeneratedClass))
 				RootContext.RegisterOrder (this); 
 
-			if (IsGeneric && base_type != null && TypeManager.IsAttributeType (base_type.Type)) {
-				Report.Error (698, base_type.Location,
-					      "A generic type cannot derive from `{0}' because it is an attribute class",
-					      base_type.GetSignatureForError ());
-				return false;
-			}
-
 			if (!CheckRecursiveDefinition (this))
 				return false;
 
 			if (base_type != null && base_type.Type != null) {
 				TypeBuilder.SetParent (base_type.Type);
-
-				ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (base_type.Type);
-				if (obsolete_attr != null && !IsInObsoleteScope)
-					AttributeTester.Report_ObsoleteMessage (obsolete_attr, base_type.GetSignatureForError (), Location);
 			}
 
 			// add interfaces that were not added at type creation
@@ -1077,13 +1034,6 @@ namespace Mono.CSharp {
 
 				foreach (Type itype in ifaces)
  					TypeBuilder.AddInterfaceImplementation (itype);
-
-				foreach (TypeExpr ie in iface_exprs) {
-					ObsoleteAttribute oa = AttributeTester.GetObsoleteAttribute (ie.Type);
-					if ((oa != null) && !IsInObsoleteScope)
-						AttributeTester.Report_ObsoleteMessage (
-							oa, ie.GetSignatureForError (), Location);
-				}
 
 				if (!CheckGenericInterfaces (ifaces))
 					return false;
@@ -1385,6 +1335,11 @@ namespace Mono.CSharp {
 		{
 			if (iface_exprs != null) {
 				foreach (TypeExpr iface in iface_exprs) {
+					ObsoleteAttribute oa = AttributeTester.GetObsoleteAttribute (iface.Type);
+					if ((oa != null) && !IsInObsoleteScope)
+						AttributeTester.Report_ObsoleteMessage (
+							oa, iface.GetSignatureForError (), Location);
+
 					ConstructedType ct = iface as ConstructedType;
 					if ((ct != null) && !ct.CheckConstraints (this))
 						return false;
@@ -1392,6 +1347,10 @@ namespace Mono.CSharp {
 			}
 
 			if (base_type != null) {
+				ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (base_type.Type);
+				if (obsolete_attr != null && !IsInObsoleteScope)
+					AttributeTester.Report_ObsoleteMessage (obsolete_attr, base_type.GetSignatureForError (), Location);
+
 				ConstructedType ct = base_type as ConstructedType;
 				if ((ct != null) && !ct.CheckConstraints (this))
 					return false;
@@ -2877,9 +2836,9 @@ namespace Mono.CSharp {
 #endif			
 		}
 
-		public override TypeExpr[] GetClassBases (out TypeExpr base_class)
+		protected override TypeExpr[] ResolveBaseTypes (out TypeExpr base_class)
 		{
-			TypeExpr[] ifaces = base.GetClassBases (out base_class);
+			TypeExpr[] ifaces = base.ResolveBaseTypes (out base_class);
 
 			if (base_class == null) {
 				if (RootContext.StdLib)
@@ -2893,6 +2852,12 @@ namespace Mono.CSharp {
 						"Cannot derive from `{0}' because it is a type parameter",
 						base_class.GetSignatureForError ());
 					return ifaces;
+				}
+
+				if (IsGeneric && TypeManager.IsAttributeType (base_class.Type)) {
+					Report.Error (698, base_class.Location,
+						"A generic type cannot derive from `{0}' because it is an attribute class",
+						base_class.GetSignatureForError ());
 				}
 
 				if (base_class.IsSealed){
@@ -3027,9 +2992,9 @@ namespace Mono.CSharp {
 			TypeAttributes.BeforeFieldInit;
 
 
-		public override TypeExpr[] GetClassBases (out TypeExpr base_class)
+		protected override TypeExpr[] ResolveBaseTypes (out TypeExpr base_class)
 		{
-			TypeExpr[] ifaces = base.GetClassBases (out base_class);
+			TypeExpr[] ifaces = base.ResolveBaseTypes (out base_class);
 			//
 			// If we are compiling our runtime,
 			// and we are defining ValueType, then our

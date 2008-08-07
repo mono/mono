@@ -1064,20 +1064,20 @@ namespace Mono.CSharp {
 		
 		public bool CheckAccessLevel (Type check_type)
 		{
-			TypeBuilder tb;
-			if (this is GenericMethod)
+			TypeBuilder tb = TypeBuilder;
+#if GMCS_SOURCE
+			if (this is GenericMethod) {
 				tb = Parent.TypeBuilder;
-			else
-				tb = TypeBuilder;
+
+				// FIXME: Generic container does not work with nested generic
+				// anonymous method stories
+				if (TypeBuilder == null)
+					return true;
+			}
+#endif
 
 			check_type = TypeManager.DropGenericTypeArguments (check_type);
 			if (check_type == tb)
-				return true;
-			
-			if (TypeBuilder == null)
-				// FIXME: TypeBuilder will be null when invoked by Class.GetNormalBases().
-				//        However, this is invoked again later -- so safe to return true.
-				//        May also be null when resolving top-level attributes.
 				return true;
 
 			//
@@ -1088,9 +1088,6 @@ namespace Mono.CSharp {
 			if (check_type.IsArray || check_type.IsPointer)
 				return CheckAccessLevel (TypeManager.GetElementType (check_type));
 
-			if (TypeManager.IsGenericParameter(check_type))
-				return true; // FIXME
-
 			TypeAttributes check_attr = check_type.Attributes & TypeAttributes.VisibilityMask;
 
 			switch (check_attr){
@@ -1098,20 +1095,14 @@ namespace Mono.CSharp {
 				return true;
 
 			case TypeAttributes.NotPublic:
-
- 				if (TypeBuilder == null)
-					// FIXME: TypeBuilder will be null when invoked by Class.GetNormalBases().
-					//        However, this is invoked again later -- so safe to return true.
-					//        May also be null when resolving top-level attributes.
- 					return true;
-
 				return TypeManager.IsThisOrFriendAssembly (check_type.Assembly);
 				
 			case TypeAttributes.NestedPublic:
-				return true;
+				return CheckAccessLevel (check_type.DeclaringType);
 
 			case TypeAttributes.NestedPrivate:
-				return NestedAccessible (tb, check_type);
+				Type declaring = check_type.DeclaringType;
+				return tb == declaring || TypeManager.IsNestedChildOf (tb, declaring);	
 
 			case TypeAttributes.NestedFamily:
 				//
@@ -1131,22 +1122,13 @@ namespace Mono.CSharp {
 				return TypeManager.IsThisOrFriendAssembly (check_type.Assembly);
 			}
 
-			Console.WriteLine ("HERE: " + check_attr);
-			return false;
-
+			throw new NotImplementedException (check_attr.ToString ());
 		}
 
-		protected bool NestedAccessible (Type tb, Type check_type)
+		static bool FamilyAccessible (Type tb, Type check_type)
 		{
 			Type declaring = check_type.DeclaringType;
-			return TypeBuilder == declaring ||
-				TypeManager.IsNestedChildOf (TypeBuilder, declaring);
-		}
-
-		protected bool FamilyAccessible (Type tb, Type check_type)
-		{
-			Type declaring = check_type.DeclaringType;
-			return TypeManager.IsNestedFamilyAccessible (TypeBuilder, declaring);
+			return TypeManager.IsNestedFamilyAccessible (tb, declaring);
 		}
 
 		public bool IsBaseType (Type baseType)

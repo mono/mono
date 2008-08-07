@@ -270,16 +270,19 @@ namespace Mono.CSharp {
 				}
 			}
 
-			// Skip constrains check for overrides and explicit implementations
-			GenericMethod gm = ec.GenericDeclContainer as GenericMethod;
-			if (gm != null && ((gm.ModFlags & Modifiers.OVERRIDE) != 0 || gm.MemberName.Left != null)) {
-				te.loc = loc;
-				return te;
-			}
-
 			ConstructedType ct = te as ConstructedType;
-			if ((ct != null) && !ct.CheckConstraints (ec))
-				return null;
+			if (ct != null) {
+				// Skip constrains check for overrides and explicit implementations
+				// TODO: they should use different overload
+				GenericMethod gm = ec.GenericDeclContainer as GenericMethod;
+				if (gm != null && ((gm.ModFlags & Modifiers.OVERRIDE) != 0 || gm.MemberName.Left != null)) {
+					te.loc = loc;
+					return te;
+				}
+
+				// TODO: silent flag is ignored
+				ct.CheckConstraints (ec);
+			}
 
 			return te;
 		}
@@ -301,7 +304,7 @@ namespace Mono.CSharp {
 
 			TypeExpr te = fne as TypeExpr;
 
-			if (!te.CheckAccessLevel (ec.DeclContainer)) {
+			if (!te.CheckAccessLevel (ec.GenericDeclContainer)) {
 				Report.SymbolRelatedToPreviousError (te.Type);
 				ErrorIsInaccesible (loc, TypeManager.CSharpName (te.Type));
 				return null;
@@ -5717,9 +5720,12 @@ namespace Mono.CSharp {
 			// This is using the same mechanism as the CS1540 check in PropertyExpr.
 			// However, in the Event case, we reported a CS0122 instead.
 			//
+			// TODO: Exact copy from PropertyExpr
+			//
 			if (must_do_cs1540_check && InstanceExpression != EmptyExpression.Null &&
-			    InstanceExpression.Type != ec.ContainerType &&
-			    TypeManager.IsSubclassOf (ec.ContainerType, InstanceExpression.Type)) {
+			    !TypeManager.IsInstantiationOfSameGenericType (InstanceExpression.Type, ec.ContainerType) &&
+			    !TypeManager.IsNestedChildOf (ec.ContainerType, InstanceExpression.Type) &&
+			    !TypeManager.IsSubclassOf (InstanceExpression.Type, ec.ContainerType)) {
 				Report.SymbolRelatedToPreviousError (EventInfo);
 				ErrorIsInaccesible (loc, TypeManager.CSharpSignature (EventInfo));
 				return false;

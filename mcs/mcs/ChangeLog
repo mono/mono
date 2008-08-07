@@ -1,5 +1,10 @@
 2008-08-07  Marek Safar  <marek.safar@gmail.com>
 
+	* class.cs, decl.cs, iterator.cs, ecore.cs: Refactor base type resolving.
+	Also fixes #362146 and #381592.
+
+2008-08-07  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs: Reduced constant cannot be used as an attribute value.
 	
 	* cs-parser.jay: Base expression has to be a type.
