@@ -2342,6 +2342,10 @@ load_named_code (MonoAotModule *amodule, const char *name)
 				} else if (!strcmp (ji->data.name, "mono_amd64_throw_exception")) {
 					target = mono_amd64_throw_exception;
 #endif
+#ifdef __arm__
+				} else if (!strcmp (ji->data.name, "mono_arm_throw_exception")) {
+					target = mono_arm_throw_exception;
+#endif
 				} else if (strstr (ji->data.name, "trampoline_func_") == ji->data.name) {
 					int tramp_type2 = atoi (ji->data.name + strlen ("trampoline_func_"));
 					target = (gpointer)mono_get_trampoline_func (tramp_type2);
