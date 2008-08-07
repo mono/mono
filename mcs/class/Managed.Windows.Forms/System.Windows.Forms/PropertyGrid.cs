@@ -867,7 +867,8 @@ namespace System.Windows.Forms
 		public override void Refresh () 
 		{
 			base.Refresh ();
-			property_grid_view.UpdateView ();
+			// force a full reload here
+			SelectedObjects = SelectedObjects;
 		}
 
 		private void toolbar_Clicked (PropertyToolBarButton button)

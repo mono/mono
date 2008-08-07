@@ -1,3 +1,8 @@
+2008-08-07  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGrid.cs: Refresh should also repopulate the PropertyGrid.
+	[Fixes part of bug #415452]
+
 2008-08-05  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* GridEntry.cs: ITypeDescriptorContext should be relative to the parent 
