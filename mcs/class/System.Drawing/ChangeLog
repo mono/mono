@@ -1,3 +1,8 @@
+2008-08-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Drawing_test.dll.sources: Add System.Drawing.Imaging.
+	FrameDimension unit tests to the build
+
 2007-10-22  Andreia Gaita  <avidigal@novell.com>
 
 	* SD2K5.csproj: Add 2k5 project

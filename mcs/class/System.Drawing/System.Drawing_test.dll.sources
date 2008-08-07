@@ -51,6 +51,7 @@ System.Drawing.Drawing2D/TestColorBlend.cs
 System.Drawing.Drawing2D/TestHatchBrush.cs
 System.Drawing.Drawing2D/TestMatrix.cs
 System.Drawing.Imaging/EmfPlusRecordTypeTest.cs
+System.Drawing.Imaging/FrameDimensionTest.cs
 System.Drawing.Imaging/GifCodecTest.cs
 System.Drawing.Imaging/IconCodecTest.cs
 System.Drawing.Imaging/MetafileTest.cs
