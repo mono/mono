@@ -1,3 +1,7 @@
+2008-08-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FrameDimensionTest.cs: New. Unit tests for FrameDimension
+
 2007-08-01  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* TestImageAttributes.cs: ImageAttributes tests ignored in TARGET_JVM
