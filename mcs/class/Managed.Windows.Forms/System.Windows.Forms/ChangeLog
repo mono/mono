@@ -1,3 +1,8 @@
+2008-08-07  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGrid.cs: Refresh should also repopulate the PropertyGrid.
+	[Fixes part of bug #415452]
+
 2008-08-07  Andreia Gaita <avidigal@novell.com> 
 
 	* WebBrowser.cs: Remove extraneous CWL. Fixes #411372 (partially)
