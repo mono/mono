@@ -54,8 +54,10 @@ namespace System.Security.Cryptography {
 		{
 			KeySizeValue = 256;
 			BlockSizeValue = 128;
+#if !NET_2_1
+			// Silverlight 2.0 only supports CBC mode (i.e. no feedback)
 			FeedbackSizeValue = 128;
-	
+#endif
 			LegalKeySizesValue = new KeySizes [1];
 			LegalKeySizesValue [0] = new KeySizes (128, 256, 64);
 

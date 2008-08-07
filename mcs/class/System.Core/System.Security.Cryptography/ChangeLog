@@ -1,3 +1,9 @@
+2008-08-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Aes.cs: Don't set the (unexisting) FeedbackSizeValue field
+	for NET_2_1
+	* AesTransform.cs: Remove code for blocksize != 128 bits
+
 2008-08-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Aes.cs: New. Base class for AES cipher.
