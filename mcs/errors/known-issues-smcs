@@ -10,7 +10,6 @@ cs0165-10.cs
 cs0165-11.cs
 cs0187-2.cs
 cs0197.cs
-cs0214-10.cs NO ERROR
 cs0266-15.cs
 cs0266-3.cs
 cs0419-2.cs NO ERROR
@@ -100,7 +99,6 @@ cs1599-2.cs
 cs1599-3.cs
 cs1601-2.cs
 cs1608.cs
-cs1618-2.cs NO ERROR
 cs1624.cs
 cs1690-2.cs
 cs1690-3.cs
@@ -125,6 +123,7 @@ gcs0747-2.cs
 gcs0747.cs
 gcs0820.cs # temporary disabled
 gcs1644-10.cs NO ERROR
+gcs1686.cs
 gcs1708.cs
 gcs1908-2.cs
 gcs1908-3.cs
