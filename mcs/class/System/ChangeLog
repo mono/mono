@@ -1,5 +1,6 @@
-2008-08-07  Sebastien Pouliot  <sebastien@ximian.com>
+2008-08-07  Sebastien Pouliot  <sebastien@ximian.com> 
 
+	* net_2_1_raw_System.dll.sources: Add existing System/UriIdnScope.cs
 	* System_test.dll.sources: Add System.ComponentModel/
 	DefaultValueAttributeTest.cs to the test suite
 
