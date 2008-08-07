@@ -466,7 +466,6 @@ namespace System.Windows.Forms
 
 		protected virtual void OnDocumentCompleted(WebBrowserDocumentCompletedEventArgs e)
 		{
-			Console.Error.WriteLine (Environment.StackTrace);
 			if (DocumentCompleted != null)
 				DocumentCompleted (this, e);
 		}
