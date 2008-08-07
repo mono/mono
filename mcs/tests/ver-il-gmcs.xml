@@ -10672,6 +10672,35 @@
       </method>
     </type>
   </test>
+  <test name="gtest-404.cs">
+    <type name="Test.Program">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="Test.Class1`1[T1]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void add_doSomething(System.EventHandler)">
+        <size>24</size>
+      </method>
+      <method name="Void remove_doSomething(System.EventHandler)">
+        <size>24</size>
+      </method>
+    </type>
+    <type name="Test.Class2`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void add_DoSomething(System.EventHandler)">
+        <size>8</size>
+      </method>
+      <method name="Void remove_DoSomething(System.EventHandler)">
+        <size>8</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -14044,6 +14073,11 @@
     <type name="Tester+&lt;MemberAccessTest_9&gt;c__AnonStoreyA">
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+    <type name="Tester">
+      <method name="Void ConditionTest_5()">
+        <size>107</size>
       </method>
     </type>
   </test>

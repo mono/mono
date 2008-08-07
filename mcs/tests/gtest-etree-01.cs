@@ -730,6 +730,15 @@ class Tester
 		Assert (4, r4.Invoke (new InverseLogicalOperator (false), 3, 4));
 	}
 	
+	void ConditionTest_5 ()
+	{
+		// CSC bug ?
+		Expression<Func<int>> e = () => false ? 1 : 4;
+		AssertNodeType (e, ExpressionType.Conditional);
+		var r = e.Compile ();
+		Assert (4, r.Invoke ());
+	}
+	
 	void ConstantTest ()
 	{
 		Expression<Func<int>> e1 = () => default (int);
