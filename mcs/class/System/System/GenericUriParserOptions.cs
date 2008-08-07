@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -42,7 +42,11 @@ namespace System {
 		NoFragment = 32,
 		DontConvertPathBackslashes = 64,
 		DontCompressPath = 128,
-		DontUnescapePathDotsAndSlashes = 256
+		DontUnescapePathDotsAndSlashes = 256,
+#if NET_2_1
+		Idn = 512,
+		IriParsing = 1024
+#endif
 	}
 }
 

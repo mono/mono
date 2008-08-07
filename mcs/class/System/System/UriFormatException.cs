@@ -7,7 +7,7 @@
 //
 // (C) 2001 Scott Sanders
 // (C) 2002 Ximian, Inc.
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -48,14 +48,19 @@ namespace System {
 			: base (message)
 		{
 		}
-
+#if NET_2_1
+		public UriFormatException (string message, Exception exception)
+			: base (message, exception)
+		{
+		}
+#endif
 		protected UriFormatException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{			
 		}
 
 		// Methods
-		[MonoTODO ("Why override")]
+
 		// This effectively kills the LinkDemand from Exception.GetObjectData (if someone
 		// use the ISerializable interface to serialize the object). See unit tests.
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
@@ -64,4 +69,3 @@ namespace System {
 		}
 	}
 }
-	

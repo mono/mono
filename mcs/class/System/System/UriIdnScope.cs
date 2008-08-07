@@ -34,8 +34,8 @@ namespace System
 	public enum UriIdnScope
 	{
 		None,
-		All,
 		AllExceptIntranet,
+		All,
 	}
 }
 

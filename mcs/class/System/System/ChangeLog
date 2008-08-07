@@ -1,3 +1,9 @@
+2008-08-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GenericUriParserOptions.cs: Add new values for SL2 (NET_2_1)
+	* UriFormatException.cs: Add ctor(string,Exception) for SL2 (NET_2_1)
+	* UriIdnScope.cs: Fix values
+
 2008-08-06  Miguel de Icaza  <miguel@novell.com>
 
 	* Uri.cs: Use exception-less operations.
