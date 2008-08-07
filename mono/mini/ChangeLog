@@ -1,3 +1,8 @@
+2008-08-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* jit-icalls.c (mono_fconv_ovf_u8): Work around soft-float double to long
+	conversion bug under arm.
+
 2008-08-06  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* cpu-arm.md: Increase long_conv_to_ovf_i4_2 max length to 36.
