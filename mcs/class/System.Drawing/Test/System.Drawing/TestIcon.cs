@@ -358,6 +358,14 @@ namespace MonoTests.System.Drawing {
 			SaveAndCompare ("96", icon96, true);
 		}
 
+		[Test] // bug #410608
+		public void Save_256 ()
+		{
+			using (Icon icon = new Icon (TestBitmap.getInFile ("bitmaps/323511.ico"))) {
+				SaveAndCompare ("256", icon, true);
+			}
+		}
+
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
 #if TARGET_JVM

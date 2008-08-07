@@ -1,3 +1,7 @@
+2008-08-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TestIcon.cs: Add test case for bug #410608.
+
 2008-07-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestBitmap.cs: Add test case for #406763 and similar cases.

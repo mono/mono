@@ -649,9 +649,7 @@ namespace System.Drawing
 				throw new System.ArgumentException ("Invalid Argument", "stream");
 
 			ushort dirEntryCount = reader.ReadUInt16();
-			iconDir.idCount = dirEntryCount;
 			iconDir.idEntries = new IconDirEntry [dirEntryCount];
-			imageData = new IconImage [dirEntryCount];
 			bool sizeObtained = false;
 			// now read in the IconDirEntry structures
 			ushort p = 0;
@@ -696,6 +694,10 @@ Console.WriteLine ("\tide.imageOffset: {0}", ide.imageOffset);
 			dirEntryCount = p;
 			if (dirEntryCount == 0)
 				throw new Win32Exception (0, "No valid icon entry were found.");
+
+			iconDir.idCount = dirEntryCount;
+			imageData = new IconImage [dirEntryCount];
+
 			//if we havent found the best match, return the one with the
 			//largest size. Is this approach correct??
 			if (!sizeObtained){
