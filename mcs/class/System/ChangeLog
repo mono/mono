@@ -1,3 +1,8 @@
+2008-08-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System_test.dll.sources: Add System.ComponentModel/
+	DefaultValueAttributeTest.cs to the test suite
+
 2008-08-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* net_2_1_raw_System.dll.sources: Add System.CodeDom.Compiler/
