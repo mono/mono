@@ -1,3 +1,9 @@
+2008-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CSharpCodeGenerator.cs : fixed bug #387878, patch by Ted Unangst.
+	  The number of generic type arguments must not be assumed as less 
+	  than 10.
+
 2008-07-22  Jb Evain  <jbevain@novell.com>
 
 	* CSharpCodeProvider.cs: fix the constructor to take an IDictionary

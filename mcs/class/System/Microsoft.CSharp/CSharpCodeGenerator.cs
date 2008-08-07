@@ -1393,11 +1393,14 @@ namespace Mono.CSharp
 								// skip ` character
 								i++;
 								// determine number of type arguments to output
-								int typeArgCount = baseType[i] - '0';
+								int end = i;
+								while (end < baseType.Length && Char.IsDigit (baseType [end]))
+									end++;
+								int typeArgCount = Int32.Parse (baseType.Substring (i, end - i));
 								// output type arguments
 								OutputTypeArguments (type.TypeArguments, sb, typeArgCount);
 								// skip type argument indicator
-								i++;
+								i = end;
 								// if next character is . or +, then append .
 								if ((i < baseType.Length) && ((baseType[i] == '+') || (baseType[i] == '.'))) {
 									sb.Append ('.');
