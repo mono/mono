@@ -9,7 +9,7 @@
 // Jordi Mas i Hernanez (jordi@ximian.com)
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,63 +31,80 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Drawing.Imaging {
-
 using System;
 
-public sealed class FrameDimension {
+namespace System.Drawing.Imaging {
 
-	readonly Guid guid;
-	
-	// constructor
-	public FrameDimension(Guid guid) 
-	{
-		this.guid = guid;
-	}
+	public sealed class FrameDimension {
 
-	//properties
-	public Guid Guid {
-		get {
-			return guid;
-		}
-	}
-	
-	public static FrameDimension Page {
-		get {
-			return new FrameDimension (new Guid ("7462dc86-6180-4c7e-8e3f-ee7333a7a483"));
-		}
-	}
-	
-	public static FrameDimension Resolution {
-		get {
-			return new FrameDimension (new Guid ("84236f7b-3bd3-428f-8dab-4ea1439ca315" ));			
-		}
-	}
-	
-	public static FrameDimension Time {
-		get {
-			return new FrameDimension (new Guid ("6aedbd6d-3fb5-418a-83a6-7f45229dc872" ));			
-		}
-	}
+		private Guid guid;
+		private string name;
 
-	//methods
-	public override bool Equals(object o) 
-	{
-		if (!(o is FrameDimension))
-			return false;		
+		static FrameDimension page;
+		static FrameDimension resolution;
+		static FrameDimension time;
+
+
+		public FrameDimension (Guid guid) 
+		{
+			this.guid = guid;
+		}
+
+		internal FrameDimension (Guid guid, string name)
+		{
+			this.guid = guid;
+			this.name = name;
+		}
+
+		public Guid Guid {
+			get { return guid; }
+		}
+
+		public static FrameDimension Page {
+			get {
+				if (page == null)
+					page = new FrameDimension (new Guid ("7462dc86-6180-4c7e-8e3f-ee7333a7a483"), "Page");
+				return page;
+			}
+		}
+	
+		public static FrameDimension Resolution {
+			get {
+				if (resolution == null) {
+					resolution = new FrameDimension (new Guid ("84236f7b-3bd3-428f-8dab-4ea1439ca315"), 
+						"Resolution");
+				}
+				return resolution;
+			}
+		}
+	
+		public static FrameDimension Time {
+			get {
+				if (time == null)
+					time = new FrameDimension (new Guid ("6aedbd6d-3fb5-418a-83a6-7f45229dc872"), "Time");
+				return time;
+			}
+		}
+
+		public override bool Equals (object o) 
+		{
+			FrameDimension fd = (o as FrameDimension);
+			if (fd == null)
+				return false;		
 		
-		return (guid == ((FrameDimension)o).guid);			
-	}
+			return (guid == fd.guid);			
+		}
 	
-	public override int GetHashCode() 
-	{
-		return guid.GetHashCode ();
-	}
+		public override int GetHashCode () 
+		{
+			return guid.GetHashCode ();
+		}
 	
-	public override string ToString() 
-	{
-		return "FrameDimension :" + guid;
+		public override string ToString ()
+		{
+			if (name == null)
+				name = String.Format ("[FrameDimension: {0}]", guid);
+			return name;
+		}
 	}
-
-}
 }

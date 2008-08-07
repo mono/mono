@@ -1,3 +1,8 @@
+2008-08-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FrameDimension.cs: Fix double-cast in Equals (found using Gendarme).
+	Then fixed a lot of other things while creating unit tests for it.
+
 2008-07-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ImageAttributes.cs: Fix GetAdjustedPalette using new (and correct)
