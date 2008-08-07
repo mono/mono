@@ -1,3 +1,7 @@
+2008-08-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MiniParser.cs: Remove. It is not used anymore inside corlib
+
 2005-11-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SecurityParser.cs : SecurityElement receives raw XML strings for
