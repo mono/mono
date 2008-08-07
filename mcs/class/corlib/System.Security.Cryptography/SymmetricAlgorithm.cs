@@ -39,14 +39,21 @@ namespace System.Security.Cryptography {
 #endif
 	public abstract class SymmetricAlgorithm : IDisposable {
 		protected int BlockSizeValue; 
-		protected int FeedbackSizeValue; 
 		protected byte[] IVValue; 
 		protected int KeySizeValue; 
 		protected byte[] KeyValue; 
 		protected KeySizes[] LegalBlockSizesValue; 
 		protected KeySizes[] LegalKeySizesValue; 
-		protected CipherMode ModeValue; 
-		protected PaddingMode PaddingValue; 
+#if NET_2_1
+		// Silverlight 2.0 only supports CBC
+		internal int FeedbackSizeValue;
+		internal CipherMode ModeValue;
+		internal PaddingMode PaddingValue;
+#else
+		protected int FeedbackSizeValue;
+		protected CipherMode ModeValue;
+		protected PaddingMode PaddingValue;
+#endif
 		private bool m_disposed;
 
 #if NET_2_0
@@ -59,21 +66,25 @@ namespace System.Security.Cryptography {
 			PaddingValue = PaddingMode.PKCS7;
 			m_disposed = false;
 		}
-		
+
+#if NET_2_1
+		// No Finalizer or IDisposable.Dispose in Silverlight 2.0
+		// Documentation makes it "clear" that Clear MUST BE CALLED to zero out sensitive information
+#else		
 		~SymmetricAlgorithm () 
 		{
 			Dispose (false);
+		}
+#endif
+		void IDisposable.Dispose () 
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);  // Finalization is now unnecessary
 		}
 
 		public void Clear() 
 		{
 			Dispose (true);
-		}
-
-		void IDisposable.Dispose () 
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);  // Finalization is now unnecessary
 		}
 
 		protected virtual void Dispose (bool disposing) 
