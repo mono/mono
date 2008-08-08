@@ -53,9 +53,6 @@ namespace Mono.CSharp {
 #endif
 
 		//
-		// From a one-dimensional array-type S[] to System.Collections.IList<S> and base
-		// interfaces of this interface.
-		//
 		// From a one-dimensional array-type S[] to System.Collections.IList<T> and base
 		// interfaces of this interface, provided there is an implicit reference conversion
 		// from S to T.
@@ -63,7 +60,7 @@ namespace Mono.CSharp {
 		static bool Array_To_IList (Type array, Type list)
 		{
 #if GMCS_SOURCE
-			if (!array.IsArray || (array.GetArrayRank () != 1) || !list.IsGenericType)
+			if ((array.GetArrayRank () != 1) || !list.IsGenericType)
 				return false;
 
 			Type gt = list.GetGenericTypeDefinition ();
@@ -82,7 +79,7 @@ namespace Mono.CSharp {
 				MyEmptyExpr = new EmptyExpression ();
 			MyEmptyExpr.SetType (TypeManager.GetElementType (array));
 
-			return ImplicitReferenceConversionCore (MyEmptyExpr, arg_type);
+			return ImplicitReferenceConversionExists (MyEmptyExpr, arg_type);
 #else
 			return false;
 #endif
@@ -278,7 +275,7 @@ namespace Mono.CSharp {
 				return nl.ConvertImplicitly(target_type);
 			}
 
-			if (ImplicitReferenceConversionCore (expr, target_type)) {
+			if (ImplicitReferenceConversionExists (expr, target_type)) {
 				// 
 				// Reduce implicit reference conversion to object
 				//
@@ -299,9 +296,22 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		static public bool ImplicitReferenceConversionCore (Expression expr, Type target_type)
+		//
+		// 6.1.6 Implicit reference conversions
+		//
+		public static bool ImplicitReferenceConversionExists (Expression expr, Type target_type)
 		{
+			if (target_type.IsValueType)
+				return false;
+
 			Type expr_type = expr.Type;
+
+			// from the null type to any reference-type.
+			if (expr_type == TypeManager.null_type)
+				return target_type != TypeManager.anonymous_method_type;
+
+			if (TypeManager.IsGenericParameter (expr_type))
+				return ImplicitTypeParameterConversion (expr, target_type) != null;
 
 			//
 			// notice that it is possible to write "ValueType v = 1", the ValueType here
@@ -454,33 +464,6 @@ namespace Mono.CSharp {
 			if (TypeManager.IsGenericParameter (expr_type))
 				return ImplicitTypeParameterBoxingConversion (
 					expr_type, target_type, out use_class_cast);
-
-			return false;
-		}
-
-		//
-		// Tests whether an implicit reference conversion exists between expr_type
-		// and target_type
-		//
-		public static bool ImplicitReferenceConversionExists (Expression expr, Type target_type)
-		{
-			if (target_type.IsValueType)
-				return false;
-
-			Type expr_type = expr.Type;
-
-			// from the null type to any reference-type.
-			if (expr_type == TypeManager.null_type){
-				return target_type != TypeManager.anonymous_method_type;
-			}
-
-			if (TypeManager.IsGenericParameter (expr_type))
-				return ImplicitTypeParameterConversion (expr, target_type) != null;
-
-			bool use_class_cast;
-			if (ImplicitReferenceConversionCore (expr, target_type) ||
-			    ImplicitBoxingConversionExists (expr, target_type, out use_class_cast))
-				return true;
 
 			return false;
 		}
@@ -825,6 +808,10 @@ namespace Mono.CSharp {
 			}
 
 			if (ImplicitReferenceConversionExists (expr, target_type))
+				return true;
+
+			bool use_class_cast;
+			if (ImplicitBoxingConversionExists (expr, target_type, out use_class_cast))
 				return true;
 
 			//

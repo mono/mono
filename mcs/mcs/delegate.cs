@@ -447,16 +447,20 @@ namespace Mono.CSharp {
 			return (MethodInfo) mg.Methods[0];
 		}
 
+		//
+		// 15.2 Delegate compatibility
+		//
 		public static bool IsTypeCovariant (Expression a, Type b)
 		{
-			Type a_type = a.Type;
-			if (a_type == b)
+			//
+			// For each value parameter (a parameter with no ref or out modifier), an 
+			// identity conversion or implicit reference conversion exists from the
+			// parameter type in D to the corresponding parameter type in M
+			//
+			if (a.Type == b)
 				return true;
 
 			if (RootContext.Version == LanguageVersion.ISO_1)
-				return false;
-
-			if (!TypeManager.IsReferenceType (a_type))
 				return false;
 
 			return Convert.ImplicitReferenceConversionExists (a, b);

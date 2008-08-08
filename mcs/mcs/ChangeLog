@@ -1,3 +1,7 @@
+2008-08-08  Marek Safar  <marek.safar@gmail.com>
+
+	* convert.cs, delegate.cs: Fixed delegate compatibility conversion. 
+
 2008-08-07  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs, decl.cs, iterator.cs, ecore.cs: Refactor base type resolving.
