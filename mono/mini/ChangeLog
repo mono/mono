@@ -1,6 +1,6 @@
 2008-08-08  Zoltan Varga  <vargaz@gmail.com>
 
-	* mini.c driver.c aot-compiler.c: Update after changes to 
+	* mini.c driver.c aot-compiler.c: Update after
 	mono_marshal_get_native_wrapper () signature changes.
 
 	* mini.c (mono_resolve_patch_target): Error out if an icall is not found.
