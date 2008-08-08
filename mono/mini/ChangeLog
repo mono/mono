@@ -1,5 +1,10 @@
 2008-08-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Handle CEE_MONO_ICALL_ADDR.
+
+	* mini.c (mono_resolve_patch_target): Error out if an icall is not found.
+	(mono_method_to_ir): Handle CEE_MONO_ICALL_ADDR.
+
 	* exceptions-arm.c (mono_arch_get_throw_exception_generic): Add AOT support.
 
 	* method-to-ir.c mini.c driver.c aot-compiler.c: Update after
