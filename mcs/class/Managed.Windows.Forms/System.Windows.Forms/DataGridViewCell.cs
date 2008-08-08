@@ -314,10 +314,10 @@ namespace System.Windows.Forms {
 					return true;
 				
 				if (DataGridView != null) {
-					if (RowIndex >= 0 && DataGridView.Rows [RowIndex].Selected)
+					if (RowIndex >= 0 && RowIndex < DataGridView.Rows.Count && DataGridView.Rows [RowIndex].Selected)
 						return true;
 						
-					if (ColumnIndex >= 0 && DataGridView.Columns [ColumnIndex].Selected)
+					if (ColumnIndex >= 0 && ColumnIndex < DataGridView.Columns.Count && DataGridView.Columns [ColumnIndex].Selected)
 						return true;
 				}
 				
