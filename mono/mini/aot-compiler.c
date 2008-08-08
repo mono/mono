@@ -3176,8 +3176,15 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->bind_to_runtime_version = TRUE;
 		} else if (str_begins_with (arg, "full")) {
 			opts->full_aot = TRUE;
+			/*
+			 * The no-dlsym option is only useful on the iphone, and even there,
+			 * do to other limitations of the dynamic linker, it doesn't seem to
+			 * work. So disable it for now so we don't have to support it.
+			 */
+			/*
 		} else if (str_begins_with (arg, "no-dlsym")) {
 			opts->no_dlsym = TRUE;
+			*/
 		} else if (str_begins_with (arg, "static")) {
 			opts->static_link = TRUE;
 			opts->no_dlsym = TRUE;

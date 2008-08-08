@@ -1,5 +1,7 @@
 2008-08-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (mono_aot_parse_options): Disable no-dlsym option for now.
+	
 	* mini.c (mono_resolve_patch_target): Don't error out on missing icalls
 	while aot compiling.
 	
