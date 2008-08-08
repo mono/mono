@@ -1,3 +1,7 @@
+2008-08-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono.1: Document the 'static' aot option.
+
 2008-04-22  Robert Jordan  <robertj@gmx.net>
 
 	* mono.1: Document MONO_DEBUG=no-gdb-backtrace.

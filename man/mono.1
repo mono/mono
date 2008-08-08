@@ -112,6 +112,18 @@ precompiled with AOT.
 .TP
 .I write-symbols
 Instructs the AOT compiler to emit debug symbol information.
+.TP
+.I static
+Create an ELF object file (.o) which can be statically linked into an executable
+when embedding the mono runtime. When this option is used, the object file needs to
+be registered with the embedded runtime using the mono_aot_register_module function
+which takes as its argument the mono_aot_module_<ASSEMBLY NAME>_info global symbol 
+from the object file:
+
+extern void *mono_aot_module_hello_info;
+
+mono_aot_register_module (mono_aot_module_hello_info);
+
 .ne
 .RE
 .Sp
