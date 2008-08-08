@@ -1,3 +1,11 @@
+2008-08-08  Marek Habersack  <mhabersack@novell.com>
+
+	* UpdatePanel.cs: do not check whether a panel whose children are
+	to be rendered has been marked for update in the async postback
+	mode. It prevents complex scenarios where there is one superior
+	update panel which owns an inferior one, and only the superior one
+	has Update called on it.
+
 2008-06-05  Marek Habersack  <mhabersack@novell.com>
 
 	* ScriptManager.cs: do not throw NREX when there are no profile or
