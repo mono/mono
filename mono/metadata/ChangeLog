@@ -1,4 +1,11 @@
 2008-08-08  Zoltan Varga  <vargaz@gmail.com>
+	
+	* marshal.c (mono_marshal_get_native_wrapper): Add an 'aot' argument, when
+	it is set, looking up the icall address is deferred to the JIT, since 
+	in embedded scenarios, the icall might not be registered in the runtime
+	doing the AOT compilation. Backported from the 2.0 branch.
+
+2008-08-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_remoting_wrapper): Handle nullable types correctly.
 	Fixes #415621.
