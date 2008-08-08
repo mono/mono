@@ -213,16 +213,15 @@ namespace System.Web.UI
 
 		protected override void RenderChildren (HtmlTextWriter writer) {
 			if (ScriptManager.IsInAsyncPostBack){
-				if (RequiresUpdate && !ScriptManager.IsInPartialRendering) {
+				if (!ScriptManager.IsInPartialRendering) {
 					ScriptManager.IsInPartialRendering = true;
 					HtmlTextWriter responseOutput = ((ScriptManager.AlternativeHtmlTextWriter) writer).ResponseOutput;
 					StringBuilder sb = new StringBuilder ();
 					HtmlTextWriter w = new HtmlTextWriter (new StringWriter (sb));
 					base.RenderChildren (w);
 					w.Flush ();
-
+					
 					ScriptManager.WriteCallbackPanel (responseOutput, this, sb);
-
 					ScriptManager.IsInPartialRendering = false;
 				}
 				else {
