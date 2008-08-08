@@ -1,3 +1,8 @@
+2008-08-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewCell.cs: Guard against an AOORE when checking if a cell
+	is selected.  [Fixes bug #414143]
+
 2008-08-07  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* GridEntry.cs: Check if current property is a ICustomTypeDescriptor 
