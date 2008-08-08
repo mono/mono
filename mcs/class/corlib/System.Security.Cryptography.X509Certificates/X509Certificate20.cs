@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006,2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -177,12 +177,14 @@ namespace System.Security.Cryptography.X509Certificates {
 				switch (contentType) {
 				case X509ContentType.Cert:
 					return x509.RawData;
+#if !NET_2_1
 				case X509ContentType.Pfx: // this includes Pkcs12
 					// TODO
 					throw new NotSupportedException ();
 				case X509ContentType.SerializedCert:
 					// TODO
 					throw new NotSupportedException ();
+#endif
 				default:
 					string msg = Locale.GetText ("This certificate format '{0}' cannot be exported.", contentType);
 					throw new CryptographicException (msg);
