@@ -4,7 +4,7 @@
 // Authors:
 //	Marek Safar (marek.safar@gmail.com)
 //
-// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2007-2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,7 +36,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about the System.Core assembly
-// v3.5 Assembly
 
 [assembly: AssemblyTitle ("System.Core.dll")]
 [assembly: AssemblyDescription ("System.Core.dll")]
@@ -54,20 +53,23 @@ using System.Runtime.InteropServices;
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
 #if NET_2_1
+	// attributes specific to FX 3.5
 	[assembly: AssemblyKeyFile ("../silverlight.pub")]
 #else
+	// attributes specific to Silverlight 2.0
 	[assembly: AssemblyKeyFile ("../ecma.pub")]
+
+	[assembly: AllowPartiallyTrustedCallers]
+	[assembly: DefaultDependency (LoadHint.Always)]
+	[assembly: SecurityCritical]
+	[assembly: StringFreezing]
 #endif
 
 [assembly: ComVisible (false)]
-[assembly: AllowPartiallyTrustedCallers]
 
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
 [assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 [assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
 // Extension attribute should be added by compiler
 
-[assembly: StringFreezing]
-[assembly: DefaultDependency (LoadHint.Always)]
-[assembly: SecurityCritical]
 [assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]
