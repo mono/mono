@@ -1,3 +1,8 @@
+2008-08-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c mini.c driver.c aot-compiler.c: Update after
+	mono_marshal_get_native_wrapper () signature changes.
+
 2008-08-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* jit-icalls.c (mono_fconv_ovf_u8): Work around soft-float double to long
