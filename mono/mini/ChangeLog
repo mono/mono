@@ -1,5 +1,8 @@
 2008-08-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c aot-runtime.c: Add support for static aot compilation.
+	MACH fixes. Merged from the 2.0 branch.
+
 	* method-to-ir.c (mono_method_to_ir2): Handle CEE_MONO_ICALL_ADDR.
 
 	* mini.c (mono_resolve_patch_target): Error out if an icall is not found.
