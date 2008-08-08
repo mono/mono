@@ -1,3 +1,8 @@
+2008-08-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* UriTypeConverter.cs: Fix cp typo found when cp (of course ;-) 
+	code into Silverlight's System.Windows.dll
+
 2008-08-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GenericUriParserOptions.cs: Add new values for SL2 (NET_2_1)

@@ -72,7 +72,7 @@ namespace System {
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
-			if (!CanConvertTo (context, value.GetType ()))
+			if (!CanConvertFrom (context, value.GetType ()))
 				throw new NotSupportedException (Locale.GetText ("Cannot convert from value."));
 
 			if (value is Uri)
