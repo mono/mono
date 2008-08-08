@@ -1,5 +1,8 @@
 2008-08-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Remove some code from CEE_MONO_LDPTR
+	now that aot-ed icall wrappers use CEE_MONO_ICALL_ADDR.
+
 	* aot-compiler.c aot-runtime.c: Add support for static aot compilation.
 	MACH fixes. Merged from the 2.0 branch.
 
