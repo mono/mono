@@ -10767,7 +10767,8 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		break;
 	case MONO_PATCH_INFO_ICALL_ADDR:
 		target = mono_lookup_internal_call (patch_info->data.method);
-		if (!target)
+		/* run_cctors == 0 -> AOT */
+		if (!target && run_cctors)
 			g_error ("Unregistered icall '%s'\n", mono_method_full_name (patch_info->data.method, TRUE));
 		break;
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR: {
