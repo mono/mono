@@ -1,3 +1,7 @@
+2008-08-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* nullable_boxing.2.cs: Add test for #415621.
+
 2008-08-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke2.cs libtest.c: Extend the ia64 single HFA test so it also checks for
