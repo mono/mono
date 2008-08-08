@@ -106,12 +106,6 @@ This is currently an experimental feature as it is not complete.
 This instructs Mono to precompile code that has historically not been
 precompiled with AOT.   
 .TP 
-.I no\-dlsym
-On systems where the dynamic loader's dlsym(3) function does not work
-(for example, the iPhone) this instructs the AOT compiler to generate
-a table that can be used to lookup symbols on the generated shared
-object.  
-.TP 
 .I write\-symbols
 Instructs the AOT compiler to emit debug symbol information.
 .TP

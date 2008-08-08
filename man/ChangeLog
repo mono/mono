@@ -1,5 +1,7 @@
 2008-08-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* mono.1: Remove no-dlsym aot option for now.
+	
 	* mono.1: Document the 'static' aot option.
 
 2008-08-01  Massimiliano Mantione  <massi@ximian.com>
