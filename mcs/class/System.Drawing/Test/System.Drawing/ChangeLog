@@ -1,5 +1,9 @@
 2008-08-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* TestIcon.cs: Add test case for bug #415581.
+
+2008-08-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* TestIcon.cs: Modified test for bug #410608 to work around bug
 	#415809.
 

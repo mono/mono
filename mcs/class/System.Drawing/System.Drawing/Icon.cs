@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.ComponentModel;
 using System.Drawing.Imaging;
 using System.IO;
@@ -649,10 +650,9 @@ namespace System.Drawing
 				throw new System.ArgumentException ("Invalid Argument", "stream");
 
 			ushort dirEntryCount = reader.ReadUInt16();
-			iconDir.idEntries = new IconDirEntry [dirEntryCount];
+			ArrayList entries = new ArrayList (dirEntryCount);
 			bool sizeObtained = false;
 			// now read in the IconDirEntry structures
-			ushort p = 0;
 			for (int i = 0; i < dirEntryCount; i++) {
 				IconDirEntry ide;
 				ide.width = reader.ReadByte ();
@@ -674,29 +674,34 @@ Console.WriteLine ("\tide.bitCount: {0}", ide.bitCount);
 Console.WriteLine ("\tide.bytesInRes: {0}", ide.bytesInRes);
 Console.WriteLine ("\tide.imageOffset: {0}", ide.imageOffset);
 #endif
+
 				// 256x256 icons are decoded as 0x0 (width and height are encoded as BYTE)
 				// and we ignore them just like MS does (at least up to fx 2.0)
 				if ((ide.width == 0) && (ide.height == 0))
 					continue;
-				iconDir.idEntries [p++] = ide;
+
+				int index = entries.Add (ide);
 
 				//is this is the best fit??
 				if (!sizeObtained) {
 					if ((ide.height == height) || (ide.width == width)) {
-						this.id = (ushort) i;
+						this.id = (ushort) index;
 						sizeObtained = true;
 						this.iconSize.Height = ide.height;
 						this.iconSize.Width = ide.width;
 					}
 				}
 			}
+
 			// Vista 256x256 icons points directly to a PNG bitmap
-			dirEntryCount = p;
+			dirEntryCount = (ushort) entries.Count;
 			if (dirEntryCount == 0)
 				throw new Win32Exception (0, "No valid icon entry were found.");
 
 			iconDir.idCount = dirEntryCount;
 			imageData = new IconImage [dirEntryCount];
+			iconDir.idEntries = new IconDirEntry [dirEntryCount];
+			entries.CopyTo (iconDir.idEntries);
 
 			//if we havent found the best match, return the one with the
 			//largest size. Is this approach correct??

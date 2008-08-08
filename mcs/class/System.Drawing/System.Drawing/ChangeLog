@@ -1,3 +1,9 @@
+2008-08-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Icon.cs (InitFromStreamWithSize): Use temp ArrayList for IconDirEntry
+	to avoid empty slots in array. Use actual index of IconDirEntry in
+	array when entries have been skipped. Fixes bug #415581.
+
 2008-08-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Icon.cs (InitFromStreamWithSize): Move init of iconDir.idCount
