@@ -1,3 +1,8 @@
+2008-08-08  Jb Evain  <jbevain@novell.com>
+
+	* Enumerable.cs (Take): fix not too consume an uneeded item from
+	the source enumerable. Fix #415644.
+
 2008-05-27  Jb Evain  <jbevain@novell.com>
 
 	* Enumerable.cs (Sum): don't throw if source is empty.

@@ -2016,10 +2016,10 @@ namespace System.Linq
 
 			int counter = 0;
 			foreach (TSource element in source) {
-				if (counter++ == count)
-					yield break;
-
 				yield return element;
+
+				if (++counter == count)
+					yield break;
 			}
 		}
 
