@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -262,6 +263,26 @@ namespace MonoTests.System.Linq {
 			AssertAreSame (new [] {1, 2, 3, 4}, Enumerable.Range (1, 4));
 
 			AssertAreSame (new [] {0, 1, 2, 3}, Enumerable.Range (0, 4));
+		}
+
+		[Test]
+		public void TestTakeTakesProperNumberOfItems ()
+		{
+			var stream = new MemoryStream (new byte [] { 1, 2, 3, 4, 0 });
+
+			Assert.AreEqual (0, stream.Position);
+
+			foreach (byte b in AsEnumerable (stream).Take (2))
+				;
+
+			Assert.AreEqual (2, stream.Position);
+		}
+
+		static IEnumerable<byte> AsEnumerable (Stream stream)
+		{
+			byte b;
+			while ((b = (byte) stream.ReadByte ()) >= 0)
+				yield return b;
 		}
 
 		[Test]
