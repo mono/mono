@@ -1,3 +1,7 @@
+2008-08-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* cil-opcodes.xml: Add an 'icall_addr' opcode.
+
 2008-06-06  Jb Evain  <jbevain@novell.com>
 
 	* cil-opcodes.xml: constrained. is of type InlineType.
