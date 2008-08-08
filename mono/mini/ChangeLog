@@ -1,5 +1,7 @@
 2008-08-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-arm.c (mono_arch_get_throw_exception_generic): Add AOT support.
+
 	* method-to-ir.c mini.c driver.c aot-compiler.c: Update after
 	mono_marshal_get_native_wrapper () signature changes.
 
