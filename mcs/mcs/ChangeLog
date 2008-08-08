@@ -1,5 +1,10 @@
 2008-08-08  Marek Safar  <marek.safar@gmail.com>
 
+	* typemanager.cs, ecore.cs: Ambiguous operators can come from different
+	classes.
+
+2008-08-08  Marek Safar  <marek.safar@gmail.com>
+
 	* convert.cs, delegate.cs: Fixed delegate compatibility conversion. 
 
 2008-08-07  Marek Safar  <marek.safar@gmail.com>

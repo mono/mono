@@ -2432,11 +2432,14 @@ namespace Mono.CSharp {
 	//
 	// Returns whether the array of memberinfos contains the given method
 	//
-	public static bool ArrayContainsMethod (MemberInfo [] array, MethodBase new_method)
+	public static bool ArrayContainsMethod (MemberInfo [] array, MethodBase new_method, bool ignoreDeclType)
 	{
 		Type [] new_args = TypeManager.GetParameterData (new_method).Types;
 		
 		foreach (MethodBase method in array) {
+			if (!ignoreDeclType && method.DeclaringType != new_method.DeclaringType)
+				continue;
+		
 			if (method.Name != new_method.Name)
 				continue;
 
@@ -2490,7 +2493,7 @@ namespace Mono.CSharp {
 		foreach (MemberInfo mi in new_members){
 			MethodBase new_method = (MethodBase) mi;
 			
-			if (!ArrayContainsMethod (target_array, new_method))
+			if (!ArrayContainsMethod (target_array, new_method, true))
 				target_list.Add (new_method);
 		}
 		return target_list;

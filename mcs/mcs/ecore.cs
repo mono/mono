@@ -3970,50 +3970,25 @@ namespace Mono.CSharp {
 
 			return true;
 		}
-		
-		public static MethodGroupExpr MakeUnionSet (Expression mg1, Expression mg2, Location loc)
-		{
-			MemberInfo [] miset;
-			MethodGroupExpr union;
 
+		public static MethodGroupExpr MakeUnionSet (MethodGroupExpr mg1, MethodGroupExpr mg2, Location loc)
+		{
 			if (mg1 == null) {
 				if (mg2 == null)
 					return null;
-				return (MethodGroupExpr) mg2;
-			} else {
-				if (mg2 == null)
-					return (MethodGroupExpr) mg1;
-			}
-			
-			MethodGroupExpr left_set = null, right_set = null;
-			int length1 = 0, length2 = 0;
-			
-			left_set = (MethodGroupExpr) mg1;
-			length1 = left_set.Methods.Length;
-			
-			right_set = (MethodGroupExpr) mg2;
-			length2 = right_set.Methods.Length;
-			
-			ArrayList common = new ArrayList ();
-
-			foreach (MethodBase r in right_set.Methods){
-				if (TypeManager.ArrayContainsMethod (left_set.Methods, r))
-					common.Add (r);
+				return mg2;
 			}
 
-			miset = new MemberInfo [length1 + length2 - common.Count];
-			left_set.Methods.CopyTo (miset, 0);
+			if (mg2 == null)
+				return mg1;
 			
-			int k = length1;
-
-			foreach (MethodBase r in right_set.Methods) {
-				if (!common.Contains (r))
-					miset [k++] = r;
+			ArrayList all = new ArrayList (mg1.Methods);
+			foreach (MethodBase m in mg2.Methods){
+				if (!TypeManager.ArrayContainsMethod (mg1.Methods, m, false))
+					all.Add (m);
 			}
 
-			union = new MethodGroupExpr (miset, mg1.Type, loc);
-			
-			return union;
+			return new MethodGroupExpr (all, null, loc);
 		}		
 
 		static Type MoreSpecific (Type p, Type q)
@@ -4388,6 +4363,7 @@ namespace Mono.CSharp {
 			}
 
 			if (ambiguous != null) {
+				Report.SymbolRelatedToPreviousError (ambiguous);
 				Report.SymbolRelatedToPreviousError (best_candidate);
 				Report.Error (121, loc, "The call is ambiguous between the following methods or properties: `{0}' and `{1}'",
 					TypeManager.CSharpSignature (ambiguous), TypeManager.CSharpSignature (best_candidate));
