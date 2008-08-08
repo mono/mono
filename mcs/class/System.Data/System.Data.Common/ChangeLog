@@ -1,3 +1,11 @@
+2008-08-08  Raja R Harinath  <harinath@hurrynot.org>
+
+	Reduce massive code duplication
+	* DataContainer.cs (DataContainer): Rename from	AbstractDataContainer.
+	Introduce new 'protected abstract' members to encapsulate
+	type-specific handling, and move all common code here.
+	(DataContainer.Create): Rename from CreateInstance.
+
 2008-07-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* DbDataReader.cs: Replace a few Type.GetType by typeof

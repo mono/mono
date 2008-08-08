@@ -1,3 +1,7 @@
+2008-08-08  Raja R Harinath  <harinath@hurrynot.org>
+
+	* DataColumn.cs: Update to changes in DataCollection.
+
 2008-07-29  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	Fixes ##377146

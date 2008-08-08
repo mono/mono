@@ -102,7 +102,7 @@ namespace System.Data {
 		private bool _readOnly;
 		private DataTable _table;
 		private bool _unique;
-		private AbstractDataContainer _dataContainer;
+		private DataContainer _dataContainer;
 
 		#endregion // Fields
 
@@ -472,7 +472,7 @@ namespace System.Data {
 				if (_dataContainer != null && _dataContainer.Type == typeof (DateTime))
 					_datetimeMode = DataSetDateTime.UnspecifiedLocal;
 #endif
-                                _dataContainer = AbstractDataContainer.CreateInstance(value, this);
+                                _dataContainer = DataContainer.Create (value, this);
 
 				//Check AutoIncrement status, make compatible datatype
 				if(AutoIncrement == true) {
@@ -802,7 +802,7 @@ namespace System.Data {
 			}
 		}
 
-		internal AbstractDataContainer DataContainer {
+		internal DataContainer DataContainer {
 			get {
 				return _dataContainer;
 			}
