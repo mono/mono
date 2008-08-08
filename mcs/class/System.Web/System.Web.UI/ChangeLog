@@ -1,3 +1,8 @@
+2008-08-08  Marek Habersack  <mhabersack@novell.com>
+
+	* StateManagedCollection.cs: set all the contained objects state
+	to dirty in SetDirty.
+
 2008-07-28  Marek Habersack  <mhabersack@novell.com>
 
 	* MasterPage.cs: decouple processing of content templates in

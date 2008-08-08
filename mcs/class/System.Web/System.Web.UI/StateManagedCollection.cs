@@ -48,6 +48,8 @@ namespace System.Web.UI {
 		public void SetDirty ()
 		{
 			saveEverything = true;
+			for (int i = 0; i < items.Count; i++)
+				SetDirtyObject (items[i]);
 		}
 
 		protected abstract void SetDirtyObject (object o);
