@@ -1,3 +1,11 @@
+2008-08-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c driver.c aot-compiler.c: Update after changes to 
+	mono_marshal_get_native_wrapper () signature changes.
+
+	* mini.c (mono_resolve_patch_target): Error out if an icall is not found.
+	(mono_method_to_ir): Handle new CEE_MONO_ICALL_ADDR opcode.
+
 2008-08-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (load_named_code): Pass the sofile to find_symbol, not the

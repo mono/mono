@@ -5738,7 +5738,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 
 				if (mono_method_signature (cmethod)->pinvoke) {
-					MonoMethod *wrapper = mono_marshal_get_native_wrapper (cmethod, check_for_pending_exc);
+					MonoMethod *wrapper = mono_marshal_get_native_wrapper (cmethod, check_for_pending_exc, FALSE);
 					fsig = mono_method_signature (wrapper);
 				} else if (constrained_call) {
 					fsig = mono_method_signature (cmethod);
@@ -6067,7 +6067,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					(cmethod->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) {
 					/* Prevent inlining of methods that call wrappers */
 					INLINE_FAILURE;
-					cmethod = mono_marshal_get_native_wrapper (cmethod, check_for_pending_exc);
+					cmethod = mono_marshal_get_native_wrapper (cmethod, check_for_pending_exc, FALSE);
 					allways = TRUE;
 				}
 
@@ -8773,6 +8773,22 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				cfg->disable_aot = 1;
 				break;
 			}
+			case CEE_MONO_ICALL_ADDR: {
+				MonoMethod *cmethod;
+
+				CHECK_STACK_OVF (1);
+				CHECK_OPSIZE (6);
+				token = read32 (ip + 2);
+
+				cmethod = mono_method_get_wrapper_data (method, token);
+
+				g_assert (cfg->compile_aot);
+
+				NEW_AOTCONST (cfg, ins, MONO_PATCH_INFO_ICALL_ADDR, cmethod);
+				*sp++ = ins;
+				ip += 6;
+				break;
+			}
 			case CEE_MONO_VTADDR:
 				CHECK_STACK (1);
 				--sp;
@@ -10751,13 +10767,13 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		break;
 	case MONO_PATCH_INFO_ICALL_ADDR:
 		target = mono_lookup_internal_call (patch_info->data.method);
+		if (!target)
+			g_error ("Unregistered icall '%s'\n", mono_method_full_name (patch_info->data.method, TRUE));
 		break;
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR: {
 		MonoJitICallInfo *mi = mono_find_jit_icall_by_name (patch_info->data.name);
-		if (!mi) {
-			g_warning ("unknown MONO_PATCH_INFO_JIT_ICALL_ADDR %s", patch_info->data.name);
-			g_assert_not_reached ();
-		}
+		if (!mi)
+			g_error ("unknown MONO_PATCH_INFO_JIT_ICALL_ADDR %s", patch_info->data.name);
 		target = mi->func;
 		break;
 	}
@@ -12781,11 +12797,11 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 			else
 				mono_lookup_pinvoke_call (method, NULL, NULL);
 		}
-			nm = mono_marshal_get_native_wrapper (method, check_for_pending_exc);
-			return mono_get_addr_from_ftnptr (mono_compile_method (nm));
+		nm = mono_marshal_get_native_wrapper (method, check_for_pending_exc, FALSE);
+		return mono_get_addr_from_ftnptr (mono_compile_method (nm));
 
-			//if (mono_debug_format != MONO_DEBUG_FORMAT_NONE) 
-			//mono_debug_add_wrapper (method, nm);
+		//if (mono_debug_format != MONO_DEBUG_FORMAT_NONE) 
+		//mono_debug_add_wrapper (method, nm);
 	} else if ((method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME)) {
 		const char *name = method->name;
 		MonoMethod *nm;
