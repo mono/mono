@@ -1,6 +1,11 @@
+2008-08-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_remoting_wrapper): Handle nullable types correctly.
+	Fixes #415621.
+
 2008-08-05  Marek Habersack  <mhabersack@novell.com>
 
-	* Makefile.am: added support for cross-compilation
+	* Makefile.am: added support for cross-compilation.
 
 2008-08-04  Zoltan Varga  <vargaz@gmail.com>
 
