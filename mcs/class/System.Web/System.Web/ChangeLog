@@ -1,3 +1,9 @@
+2008-08-08  Marek Habersack  <mhabersack@novell.com>
+
+	* XmlSiteMapProvider.cs: a better bugfix for bug #412495.
+	Do not call RootNode within BuildSiteMap, as it induces
+	recursion. Fixes bug #415685.
+
 2008-07-29  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRequest.cs: if the FilePath contains embedded cookie-less

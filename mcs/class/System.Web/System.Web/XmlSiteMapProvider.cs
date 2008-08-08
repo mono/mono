@@ -147,10 +147,12 @@ namespace System.Web
 					bool enableLocalization;
 					XmlNode node = FindStartingNode (file, out enableLocalization);
 					EnableLocalization = enableLocalization;
-					root = BuildSiteMapRecursive (node, EnableLocalization);
+					SiteMapNode builtRoot = BuildSiteMapRecursive (node, EnableLocalization);
 
-					if (root != RootNode)
+					if (builtRoot != root) {
+						root = builtRoot;
 						AddNode (root);
+					}
 				} finally {
 					building = false;
 				}
