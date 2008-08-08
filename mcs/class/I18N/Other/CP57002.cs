@@ -87,14 +87,10 @@ public abstract class ISCIIEncoding : MonoEncoding
 				return s.Length;
 			}
 
-	public unsafe override int GetByteCountImpl (char* chars, int count)
+			public unsafe override int GetByteCountImpl (char* chars, int count)
 			{
 #if NET_2_0
-				EncoderFallbackBuffer buffer = null;
 				int index = 0;
-				int charIndex = 0;
-				int byteIndex = 0;
-
 				int length = 0;
 				char ch;
 				char first = (char)shift;

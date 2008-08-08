@@ -34,9 +34,6 @@ namespace I18N.CJK
 		{
 			DbcsConvert gb2312 = GetConvert ();
 			int index = 0;
-#if NET_2_0
-			EncoderFallbackBuffer buffer = null;
-#endif
 			int length = 0;
 			while (count-- > 0) {
 				char c = chars[index++];

@@ -123,9 +123,6 @@ namespace I18N.CJK
             int index = 0;
             int length = 0;
             DbcsConvert convert = GetConvert ();
-#if NET_2_0
-            EncoderFallbackBuffer buffer = null;
-#endif
 
             // 00 00 - FF FF
             while (count-- > 0) {

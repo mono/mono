@@ -33,7 +33,6 @@ namespace I18N.Common
 		}
 
 #if NET_2_0
-		[CLSCompliant (false)]
 		public unsafe void HandleFallback (ref EncoderFallbackBuffer buffer,
 			char* chars, ref int charIndex, ref int charCount,
 			byte* bytes, ref int byteIndex, ref int byteCount)
@@ -184,11 +183,15 @@ namespace I18N.Common
 
 		public abstract class MonoEncoder : Encoder
 		{
+#if NET_2_0
 			MonoEncoding encoding;
+#endif
 
 			public MonoEncoder (MonoEncoding encoding)
 			{
+#if NET_2_0
 				this.encoding = encoding;
+#endif
 			}
 
 			public override int GetByteCount (
@@ -257,7 +260,6 @@ namespace I18N.Common
 				return GetBytesImpl (chars, charCount, bytes, byteCount, flush);
 			}
 
-			//[CLSCompliant (false)]
 			public unsafe void HandleFallback (
 				char* chars, ref int charIndex, ref int charCount,
 				byte* bytes, ref int byteIndex, ref int byteCount)

@@ -35,7 +35,7 @@ using System.Resources;
 public sealed class Strings
 {
 	// Cached copy of the resources for this assembly.
-	private static ResourceManager resources = null;
+	// private static ResourceManager resources = null;
 
 	// Helper for obtaining string resources for this assembly.
 	public static String GetString(String tag)
