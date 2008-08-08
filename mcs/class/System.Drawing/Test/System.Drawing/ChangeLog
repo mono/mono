@@ -1,3 +1,8 @@
+2008-08-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TestIcon.cs: Modified test for bug #410608 to work around bug
+	#415809.
+
 2008-08-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TestIcon.cs: Ignore test for bug #410608 on Unix, since it depends
