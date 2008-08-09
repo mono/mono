@@ -1,5 +1,12 @@
 2008-08-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-ppc.c (mono_jit_walk_stack): Use MONO_INIT_CONTEXT_FROM_CURRENT
+	to reduce differences between this and the generic implementation in
+	mini-exceptions.c.
+	(ves_icall_get_frame_info): Ditto.
+
+	* mini-ppc.h (MONO_INIT_CONTEXT_FROM_CURRENT): Define this for ppc too.
+
 	* mini-exceptions.c (mono_exceptions_init): Remove an #ifdef which is no
 	longer neccesarry.
 
