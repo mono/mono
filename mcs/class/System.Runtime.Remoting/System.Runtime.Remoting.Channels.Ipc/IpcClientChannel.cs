@@ -33,63 +33,62 @@ using System.Collections;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
 
-using Unix  = System.Runtime.Remoting.Channels.Ipc.Unix;
+using Unix = System.Runtime.Remoting.Channels.Ipc.Unix;
 using Win32 = System.Runtime.Remoting.Channels.Ipc.Win32;
 
 namespace System.Runtime.Remoting.Channels.Ipc
 {
-        public class IpcClientChannel : IChannelSender, IChannel
-        {
-                IChannelSender _innerChannel;
+	public class IpcClientChannel : IChannelSender, IChannel
+	{
+		readonly IChannelSender _innerChannel;
 
-                public IpcClientChannel ()
-                {
-                        if (IpcChannel.IsUnix)
-                                _innerChannel = new Unix.IpcClientChannel ();
-                        else
-                                _innerChannel = new Win32.IpcClientChannel ();
-                }
+		public IpcClientChannel ()
+		{
+			if (IpcChannel.IsUnix)
+				_innerChannel = new Unix.IpcClientChannel ();
+			else
+				_innerChannel = new Win32.IpcClientChannel ();
+		}
 
-                public IpcClientChannel (IDictionary properties,
-                                         IClientChannelSinkProvider sinkProvider)
-                {
-                        if (IpcChannel.IsUnix)
-                                _innerChannel = new Unix.IpcClientChannel (properties, sinkProvider);
-                        else
-                                _innerChannel = new Win32.IpcClientChannel (properties, sinkProvider);
-                }
+		public IpcClientChannel (IDictionary properties,
+					 IClientChannelSinkProvider sinkProvider)
+		{
+			if (IpcChannel.IsUnix)
+				_innerChannel = new Unix.IpcClientChannel (properties, sinkProvider);
+			else
+				_innerChannel = new Win32.IpcClientChannel (properties, sinkProvider);
+		}
 
-                public IpcClientChannel (string name,
-                                         IClientChannelSinkProvider sinkProvider)
-                {
-                        if (IpcChannel.IsUnix)
-                                _innerChannel = new Unix.IpcClientChannel (name, sinkProvider);
-                        else
-                                _innerChannel = new Win32.IpcClientChannel (name, sinkProvider);
-                }
+		public IpcClientChannel (string name,
+					 IClientChannelSinkProvider sinkProvider)
+		{
+			if (IpcChannel.IsUnix)
+				_innerChannel = new Unix.IpcClientChannel (name, sinkProvider);
+			else
+				_innerChannel = new Win32.IpcClientChannel (name, sinkProvider);
+		}
 
-                public string ChannelName
-                {
-                        get { return ((IChannel)_innerChannel).ChannelName; }
-                }
+		public string ChannelName {
+			get { return ((IChannel) _innerChannel).ChannelName; }
+		}
 
-                public int ChannelPriority
-                {
-                        get { return ((IChannel)_innerChannel).ChannelPriority; }
-                }
+		public int ChannelPriority {
+			get { return ((IChannel) _innerChannel).ChannelPriority; }
+		}
 
-                public string Parse (string url, out string objectUri)
-                {
-                        return ((IChannel)_innerChannel).Parse (url, out objectUri);
-                }
+		public string Parse (string url, out string objectURI)
+		{
+			return ((IChannel) _innerChannel).Parse (url, out objectURI);
+		}
 
-                public IMessageSink CreateMessageSink (string url,
-                                                       object remoteChannelData,
-                                                       out string objectUri)
-                {
-                        return _innerChannel.CreateMessageSink (url, remoteChannelData, out objectUri);
-                }
-    }
+		public virtual IMessageSink CreateMessageSink (string url,
+							       object remoteChannelData,
+							       out string objectURI)
+		{
+			return _innerChannel.CreateMessageSink (url,
+				remoteChannelData, out objectURI);
+		}
+	}
 }
 
 #endif

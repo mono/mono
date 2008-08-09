@@ -3,6 +3,7 @@
 	* BinaryServerFormatterSink.cs: Fixed argument name to match MS.
 	* SoapClientFormatterSink.cs: Fixed argument name to match MS. Code
 	formatting.
+	* SocketCachePolicy.cs: Added.
 
 2007-05-10  Jonathan Chambers  <joncham@gmail.com>
 

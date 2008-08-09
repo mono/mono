@@ -135,42 +135,42 @@ namespace System.Runtime.Remoting.MetadataServices
 		}
 #endif
 
-		public static void ConvertTypesToSchemaToFile (ServiceType[] servicetypes, SdlType sdltype, string path)
+		public static void ConvertTypesToSchemaToFile (ServiceType [] types, SdlType sdlType, string path)
 		{
 			FileStream fs = new FileStream (path, FileMode.Create, FileAccess.Write);
-			ConvertTypesToSchemaToStream (servicetypes, sdltype, fs);
+			ConvertTypesToSchemaToStream (types, sdlType, fs);
 			fs.Close ();
 		}
 
-		public static void ConvertTypesToSchemaToFile (Type[] types, SdlType sdltype, string path)
+		public static void ConvertTypesToSchemaToFile (Type [] types, SdlType sdlType, string path)
 		{
 			FileStream fs = new FileStream (path, FileMode.Create, FileAccess.Write);
-			ConvertTypesToSchemaToStream (types, sdltype, fs);
+			ConvertTypesToSchemaToStream (types, sdlType, fs);
 			fs.Close ();
 		}
 
-		public static void ConvertTypesToSchemaToStream (Type[] types, SdlType sdltype, Stream stream)
+		public static void ConvertTypesToSchemaToStream (Type [] types, SdlType sdlType, Stream outputStream)
 		{
 			ServiceType[] st = new ServiceType [types.Length];
 			for (int n=0; n<types.Length; n++)
 				st [n] = new ServiceType (types[n]);
-				
-			ConvertTypesToSchemaToStream (st, sdltype, stream);
+
+			ConvertTypesToSchemaToStream (st, sdlType, outputStream);
 		}
 
-		public static void ConvertTypesToSchemaToStream (ServiceType[] servicetypes, SdlType sdltype, Stream stream)
+		public static void ConvertTypesToSchemaToStream (ServiceType [] serviceTypes, SdlType sdlType, Stream outputStream)
 		{
 			MetaDataExporter exporter = new MetaDataExporter ();
 			MemoryStream memStream = new MemoryStream ();
 			
 			StreamWriter sw = new StreamWriter (memStream);
 			XmlTextWriter tw = new XmlTextWriter (sw);
-			
-			exporter.ExportTypes (servicetypes, sdltype, tw);
+
+			exporter.ExportTypes (serviceTypes, sdlType, tw);
 			tw.Flush ();
 			
 			memStream.Position = 0;
-			CopyStream (memStream, stream);
+			CopyStream (memStream, outputStream);
 		}
 		
 		public static void RetrieveSchemaFromUrlToFile (string url, string path)

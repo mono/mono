@@ -28,12 +28,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+using System;
+using System.Runtime.Serialization;
+#endif
+
 namespace System.Runtime.Remoting.MetadataServices
 {
+#if NET_2_0
+	[Serializable]
+#endif
 	public class SUDSParserException : Exception
 	{
 		internal SUDSParserException ()
 		{
 		}
+
+#if NET_2_0
+		protected SUDSParserException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+		}
+#endif
 	}
 }

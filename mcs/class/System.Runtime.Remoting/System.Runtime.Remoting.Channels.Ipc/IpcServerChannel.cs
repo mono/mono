@@ -32,101 +32,98 @@ using System;
 using System.Collections;
 using System.Runtime.Remoting;
 
-using Unix  = System.Runtime.Remoting.Channels.Ipc.Unix;
+using Unix = System.Runtime.Remoting.Channels.Ipc.Unix;
 using Win32 = System.Runtime.Remoting.Channels.Ipc.Win32;
 
 namespace System.Runtime.Remoting.Channels.Ipc
 {
-        public class IpcServerChannel : IChannelReceiver, IChannel
-        {
-                IChannelReceiver _innerChannel;
-                string _portName;
+	public class IpcServerChannel : IChannelReceiver, IChannel
+	{
+		readonly IChannelReceiver _innerChannel;
+		readonly string _portName;
 
-                public IpcServerChannel (string portName)
-                {
-                        _portName = portName;
+		public IpcServerChannel (string portName)
+		{
+			_portName = portName;
 
-                        if (IpcChannel.IsUnix)
-                                _innerChannel = new Unix.IpcServerChannel (portName);
-                        else
-                                _innerChannel = new Win32.IpcServerChannel (portName);
-                }
+			if (IpcChannel.IsUnix)
+				_innerChannel = new Unix.IpcServerChannel (portName);
+			else
+				_innerChannel = new Win32.IpcServerChannel (portName);
+		}
 
-                public IpcServerChannel (IDictionary properties,
-                                         IServerChannelSinkProvider serverSinkProvider)
-                {
-                        if (properties != null)
-                                _portName = properties ["portName"] as string;
+		public IpcServerChannel (IDictionary properties,
+					 IServerChannelSinkProvider sinkProvider)
+		{
+			if (properties != null)
+				_portName = properties ["portName"] as string;
 
-                        if (IpcChannel.IsUnix)
-                                _innerChannel = new Unix.IpcServerChannel (properties, serverSinkProvider);
-                        else
-                                _innerChannel = new Win32.IpcServerChannel (properties, serverSinkProvider);
-                }
+			if (IpcChannel.IsUnix)
+				_innerChannel = new Unix.IpcServerChannel (properties, sinkProvider);
+			else
+				_innerChannel = new Win32.IpcServerChannel (properties, sinkProvider);
+		}
 
-                public IpcServerChannel (string name, string portName,
-                                         IServerChannelSinkProvider serverSinkProvider)
-                {
-                        _portName = portName;
+		public IpcServerChannel (string name, string portName,
+					 IServerChannelSinkProvider sinkProvider)
+		{
+			_portName = portName;
 
-                        if (IpcChannel.IsUnix)
-                                _innerChannel = new Unix.IpcServerChannel (name, portName, serverSinkProvider);
-                        else
-                                _innerChannel = new Win32.IpcServerChannel (name, portName, serverSinkProvider);
-                }
-        
-                public IpcServerChannel (string name, string portName)
-                {
-                        _portName = portName;
+			if (IpcChannel.IsUnix)
+				_innerChannel = new Unix.IpcServerChannel (name, portName, sinkProvider);
+			else
+				_innerChannel = new Win32.IpcServerChannel (name, portName, sinkProvider);
+		}
 
-                        if (IpcChannel.IsUnix)
-                                _innerChannel = new Unix.IpcServerChannel (name, portName);
-                        else
-                                _innerChannel = new Win32.IpcServerChannel (name, portName);
-                }
+		public IpcServerChannel (string name, string portName)
+		{
+			_portName = portName;
 
-                public string ChannelName
-                {
-                        get { return ((IChannel)_innerChannel).ChannelName; }
-                }
+			if (IpcChannel.IsUnix)
+				_innerChannel = new Unix.IpcServerChannel (name, portName);
+			else
+				_innerChannel = new Win32.IpcServerChannel (name, portName);
+		}
 
-                public int ChannelPriority
-                {
-                        get { return ((IChannel)_innerChannel).ChannelPriority; }
-                }
+		public string ChannelName {
+			get { return ((IChannel) _innerChannel).ChannelName; }
+		}
 
-                public string Parse (string url, out string objectUri)
-                {
-                        return ((IChannel)_innerChannel).Parse (url, out objectUri);
-                }
+		public int ChannelPriority {
+			get { return ((IChannel) _innerChannel).ChannelPriority; }
+		}
 
-                public object ChannelData
-                {
-                        get { return _innerChannel.ChannelData; }
-                }
+		public string Parse (string url, out string objectURI)
+		{
+			return ((IChannel) _innerChannel).Parse (url, out objectURI);
+		}
 
-                public string[] GetUrlsForUri (string objectUri)
-                {
-                        return _innerChannel.GetUrlsForUri (objectUri);
-                }
+		public object ChannelData {
+			get { return _innerChannel.ChannelData; }
+		}
 
-                public void StartListening (object data)
-                {
-                        _innerChannel.StartListening (data);
-                }
+		public virtual string [] GetUrlsForUri (string objectUri)
+		{
+			return _innerChannel.GetUrlsForUri (objectUri);
+		}
 
-                public void StopListening (object data)
-                {
-                        _innerChannel.StopListening (data);
-                }
-        
-                public string GetChannelUri ()
-                {
-                        // There is no interface for this member,
-                        // so we cannot delegate to the inner channel.
-                        return Win32.IpcChannelHelper.SchemeStart + _portName;
-                }
-        }
+		public void StartListening (object data)
+		{
+			_innerChannel.StartListening (data);
+		}
+
+		public void StopListening (object data)
+		{
+			_innerChannel.StopListening (data);
+		}
+
+		public string GetChannelUri ()
+		{
+			// There is no interface for this member,
+			// so we cannot delegate to the inner channel.
+			return Win32.IpcChannelHelper.SchemeStart + _portName;
+		}
+	}
 }
 
 #endif

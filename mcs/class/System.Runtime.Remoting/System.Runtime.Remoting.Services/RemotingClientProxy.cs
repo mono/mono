@@ -29,9 +29,15 @@
 
 using System;
 using System.ComponentModel;
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
 
 namespace System.Runtime.Remoting.Services
 {
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public abstract class RemotingClientProxy: Component
 	{
 		protected object _tp;

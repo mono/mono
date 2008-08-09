@@ -1,3 +1,7 @@
+2008-08-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Runtime.Remoting.dll.sources: add SocketCachePolicy.cs.
+
 2008-01-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Runtime.Remoting_test.dll.sources: add TcpChannelTest.cs.

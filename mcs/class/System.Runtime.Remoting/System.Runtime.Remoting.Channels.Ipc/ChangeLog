@@ -1,3 +1,12 @@
+2008-08-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* IpcChannel.cs: Fixed argument names to match MS. Changed spaces to
+	tabs.
+	* IpcClientChannel.cs: Fixed argument names to match MS. Changed spaces
+	to tabs.
+	* IpcServerChannel.cs: Fixed argument names to match MS. Changed spaces
+	to tabs.
+
 2005-11-05  Robert Jordan  <robertj@gmx.net>
 
 	* IpcServerChannel.cs: Implemented missing GetChannelUri ().

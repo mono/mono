@@ -1,12 +1,11 @@
 //
-// System.Runtime.Remoting.MetadataServices.SUDSGeneratorException
+// System.Runtime.Remoting.Channels.SocketCachePolicy.cs
 //
-// Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+// Author:
+//	Gert Driesen (drieseng@users.sourceforge.net)
 //
-// (C) 2003 Martin Willemoes Hansen
+// (C) Copyright 2008 Gert Driesen
 //
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,26 +28,14 @@
 //
 
 #if NET_2_0
-using System;
-using System.Runtime.Serialization;
-#endif
 
-namespace System.Runtime.Remoting.MetadataServices
+namespace System.Runtime.Remoting.Channels
 {
-#if NET_2_0
-	[Serializable]
-#endif
-	public class SUDSGeneratorException : Exception
+	public enum SocketCachePolicy
 	{
-		internal SUDSGeneratorException ()
-		{
-		}
-
-#if NET_2_0
-		protected SUDSGeneratorException (SerializationInfo info, StreamingContext context)
-			: base (info, context)
-		{
-		}
-#endif
+		Default,
+		AbsoluteTimeout
 	}
 }
+
+#endif

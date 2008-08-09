@@ -1,3 +1,8 @@
+2008-08-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TcpChannel.cs: Fixed argument names to match MS.
+	* TcpServerChannel.cs: Fixed argument names to match MS.
+
 2008-06-18  Robert Jordan  <robertj@gmx.net>
 
 	* TcpMessageIO.cs: Handle zero length streams. Fixes #398783.

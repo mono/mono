@@ -60,7 +60,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		private volatile bool stopped = false;
 #endif
 
-		void Init (IServerChannelSinkProvider serverSinkProvider) 
+		void Init (IServerChannelSinkProvider serverSinkProvider)
 		{
 			if (serverSinkProvider == null) 
 			{
@@ -106,7 +106,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		}
 
 		public TcpServerChannel (IDictionary properties,
-					 IServerChannelSinkProvider serverSinkProvider)
+					 IServerChannelSinkProvider sinkProvider)
 		{
 			foreach(DictionaryEntry property in properties)
 			{
@@ -138,16 +138,16 @@ namespace System.Runtime.Remoting.Channels.Tcp
 						host = property.Value as string;
 						break;
 				}
-			}			
-			Init (serverSinkProvider);
+			}
+			Init (sinkProvider);
 		}
 
 		public TcpServerChannel (string name, int port,
-					 IServerChannelSinkProvider serverSinkProvider)
+					 IServerChannelSinkProvider sinkProvider)
 		{
 			this.name = name;
 			this.port = port;
-			Init (serverSinkProvider);
+			Init (sinkProvider);
 		}
 		
 		public TcpServerChannel (string name, int port)
@@ -183,17 +183,18 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		{
 			return "tcp://" + host + ":" + port;
 		}
-		
-		public virtual string[] GetUrlsForUri (string uri)
+
+		public virtual string [] GetUrlsForUri (string objectUri)
 		{
-			if (!uri.StartsWith ("/")) uri = "/" + uri;
+			if (!objectUri.StartsWith ("/"))
+				objectUri = "/" + objectUri;
 
 			string [] chnl_uris = channel_data.ChannelUris;
 			string [] result = new String [chnl_uris.Length];
 
-			for (int i = 0; i < chnl_uris.Length; i++) 
-				result [i] = chnl_uris [i] + uri;
-			
+			for (int i = 0; i < chnl_uris.Length; i++)
+				result [i] = chnl_uris [i] + objectUri;
+
 			return result;
 		}
 

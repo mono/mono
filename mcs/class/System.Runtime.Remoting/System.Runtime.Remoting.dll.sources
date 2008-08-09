@@ -17,6 +17,7 @@ System.Runtime.Remoting.Channels/SoapServerFormatterSink.cs
 System.Runtime.Remoting.Channels/SoapClientFormatterSinkProvider.cs
 System.Runtime.Remoting.Channels/SoapServerFormatterSinkProvider.cs
 System.Runtime.Remoting.Channels/SoapMessageFormatter.cs
+System.Runtime.Remoting.Channels/SocketCachePolicy.cs
 System.Runtime.Remoting.Channels.Ipc/IpcChannel.cs
 System.Runtime.Remoting.Channels.Ipc/IpcClientChannel.cs
 System.Runtime.Remoting.Channels.Ipc/IpcServerChannel.cs

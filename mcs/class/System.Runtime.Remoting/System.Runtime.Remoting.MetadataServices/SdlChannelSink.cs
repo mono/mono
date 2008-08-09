@@ -40,11 +40,11 @@ namespace System.Runtime.Remoting.MetadataServices
 	{
 		IServerChannelSink _next;
 		IChannelReceiver _channel;
-		
-		public SdlChannelSink (IChannelReceiver channel, IServerChannelSink next)
+
+		public SdlChannelSink (IChannelReceiver receiver, IServerChannelSink nextSink)
 		{
-			_next = next;
-			_channel = channel;
+			_next = nextSink;
+			_channel = receiver;
 		}
 
 		public IServerChannelSink NextChannelSink 
