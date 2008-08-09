@@ -105,9 +105,9 @@ namespace System.Runtime.Remoting.Channels.Ipc
                         get { return _innerChannel.ChannelData; }
                 }
 
-                public virtual string[] GetUrlsForUri (string  objectUri)
+                public virtual string[] GetUrlsForUri (string objectUri)
                 {
-                        return _innerChannel.GetUrlsForUri ( objectUri);
+                        return _innerChannel.GetUrlsForUri (objectUri);
                 }
 
                 public void StartListening (object data)
