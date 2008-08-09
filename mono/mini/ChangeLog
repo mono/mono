@@ -1,3 +1,9 @@
+2008-08-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c:
+	* local-propagation.c:
+	* mini-x86.c: Correct the name of arch defines.
+
 2008-08-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_op_to_op_imm_noemul): Correct name of
