@@ -95,17 +95,17 @@ namespace System.Runtime.Remoting.Channels {
 #endif
 
 		public void AsyncProcessResponse (IServerResponseChannelSinkStack sinkStack, object state,
-						  IMessage message, ITransportHeaders headers, Stream stream)
+						  IMessage msg, ITransportHeaders headers, Stream stream)
 		{
 			ITransportHeaders responseHeaders = new TransportHeaders();
 
-			if (sinkStack != null) stream = sinkStack.GetResponseStream (message, responseHeaders);
+			if (sinkStack != null) stream = sinkStack.GetResponseStream (msg, responseHeaders);
 			if (stream == null) stream = new MemoryStream();
 
-			_binaryCore.Serializer.Serialize (stream, message, null);
+			_binaryCore.Serializer.Serialize (stream, msg, null);
 			if (stream is MemoryStream) stream.Position = 0;
 
-			sinkStack.AsyncProcessResponse (message, responseHeaders, stream);
+			sinkStack.AsyncProcessResponse (msg, responseHeaders, stream);
 		}
 
 		public Stream GetResponseStream (IServerResponseChannelSinkStack sinkStack, object state,
