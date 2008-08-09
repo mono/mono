@@ -66,9 +66,9 @@ namespace System.ServiceProcess
 			return (obj is SessionChangeDescription) ? Equals ((SessionChangeDescription) obj) : false;
 		}
 
-		public bool Equals (SessionChangeDescription obj)
+		public bool Equals (SessionChangeDescription changeDescription)
 		{
-			return reason == obj.reason && id == obj.id;
+			return reason == changeDescription.reason && id == changeDescription.id;
 		}
 
 		public override int GetHashCode ()

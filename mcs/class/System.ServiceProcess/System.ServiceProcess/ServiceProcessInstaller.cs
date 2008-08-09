@@ -38,7 +38,9 @@ namespace System.ServiceProcess
 {
 	public class ServiceProcessInstaller : System.Configuration.Install.ComponentInstaller
 	{
-		public ServiceProcessInstaller () {}
+		public ServiceProcessInstaller ()
+		{
+		}
 
 		private ServiceAccount account;
 		private string password;
@@ -84,16 +86,19 @@ namespace System.ServiceProcess
 			}
 		}
 
-		public override void CopyFromComponent (IComponent component) {
-			if (!component.GetType ().IsSubclassOf (typeof (ServiceBase)))
+		public override void CopyFromComponent (IComponent comp)
+		{
+			if (!comp.GetType ().IsSubclassOf (typeof (ServiceBase)))
 				throw new ArgumentException ();
 		}
 
-		public override void Install (IDictionary stateSaver) {
+		public override void Install (IDictionary stateSaver)
+		{
 			throw new NotImplementedException ();
 		}
 	
-		public override void Rollback (IDictionary savedState) {
+		public override void Rollback (IDictionary savedState)
+		{
 			throw new NotImplementedException ();
 		}
 	}

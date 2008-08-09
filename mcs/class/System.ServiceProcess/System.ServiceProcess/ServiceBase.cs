@@ -42,12 +42,12 @@ namespace System.ServiceProcess
 	[Designer ("Microsoft.VisualStudio.Install.UserNTServiceDesigner, " + Consts.AssemblyMicrosoft_VisualStudio, "System.ComponentModel.Design.IRootDesigner")]
 #endif
 	[InstallerType (typeof (ServiceProcessInstaller))]
-	public class ServiceBase : System.ComponentModel.Component
+	public class ServiceBase : Component
 	{
 		internal delegate void RunServiceCallback (ServiceBase [] services);
 
 		// This member is used for interoperation with mono-service
-		internal static RunServiceCallback RunService = null;
+		internal static RunServiceCallback RunService;
 
 		public const int MaxNameLength = 80;
 
@@ -246,10 +246,10 @@ namespace System.ServiceProcess
 			Run (new ServiceBase [] { service });
 		}
 
-		public static void Run (ServiceBase [] servicesToRun)
+		public static void Run (ServiceBase [] services)
 		{
 			if (RunService != null)
-				RunService (servicesToRun);
+				RunService (services);
 		}
 	}
 }

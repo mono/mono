@@ -1,3 +1,10 @@
+2008-08-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ServiceProcessInstaller.cs: Fixed argument name to match MS. Code
+	formatting.
+	* ServiceBase.cs: Fixed argument name to match MS. Code formatting.
+	* SessionChangeDescription.cs: Fixed argument name to match MS.
+
 2007-10-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SessionChangeDescription.cs, SessionChangeReason.cs :
