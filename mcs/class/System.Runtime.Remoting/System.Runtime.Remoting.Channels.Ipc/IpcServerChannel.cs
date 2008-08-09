@@ -53,26 +53,26 @@ namespace System.Runtime.Remoting.Channels.Ipc
                 }
 
                 public IpcServerChannel (IDictionary properties,
-                                         IServerChannelSinkProvider serverSinkProvider)
+                                         IServerChannelSinkProvider  sinkProvider)
                 {
                         if (properties != null)
                                 _portName = properties ["portName"] as string;
 
                         if (IpcChannel.IsUnix)
-                                _innerChannel = new Unix.IpcServerChannel (properties, serverSinkProvider);
+                                _innerChannel = new Unix.IpcServerChannel (properties,  sinkProvider);
                         else
-                                _innerChannel = new Win32.IpcServerChannel (properties, serverSinkProvider);
+                                _innerChannel = new Win32.IpcServerChannel (properties, sinkProvider);
                 }
 
                 public IpcServerChannel (string name, string portName,
-                                         IServerChannelSinkProvider serverSinkProvider)
+                                         IServerChannelSinkProvider sinkProvider)
                 {
                         _portName = portName;
 
                         if (IpcChannel.IsUnix)
-                                _innerChannel = new Unix.IpcServerChannel (name, portName, serverSinkProvider);
+                                _innerChannel = new Unix.IpcServerChannel (name, portName, sinkProvider);
                         else
-                                _innerChannel = new Win32.IpcServerChannel (name, portName, serverSinkProvider);
+                                _innerChannel = new Win32.IpcServerChannel (name, portName, sinkProvider);
                 }
         
                 public IpcServerChannel (string name, string portName)
@@ -95,9 +95,9 @@ namespace System.Runtime.Remoting.Channels.Ipc
                         get { return ((IChannel)_innerChannel).ChannelPriority; }
                 }
 
-                public string Parse (string url, out string objectUri)
+                public string Parse (string url, out string objectURI)
                 {
-                        return ((IChannel)_innerChannel).Parse (url, out objectUri);
+                        return ((IChannel)_innerChannel).Parse (url, out objectURI);
                 }
 
                 public object ChannelData
@@ -105,9 +105,9 @@ namespace System.Runtime.Remoting.Channels.Ipc
                         get { return _innerChannel.ChannelData; }
                 }
 
-                public string[] GetUrlsForUri (string objectUri)
+                public virtual string[] GetUrlsForUri (string  objectUri)
                 {
-                        return _innerChannel.GetUrlsForUri (objectUri);
+                        return _innerChannel.GetUrlsForUri ( objectUri);
                 }
 
                 public void StartListening (object data)

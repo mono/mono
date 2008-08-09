@@ -86,16 +86,16 @@ namespace System.Runtime.Remoting.Channels.Ipc
                         get { return _innerChannel.ChannelPriority; }
                 }
 
-                public string Parse (string url, out string objectUri)
+                public string Parse (string url, out string objectURI)
                 {
-                        return _innerChannel.Parse (url, out objectUri);
+                        return _innerChannel.Parse (url, out objectURI);
                 }
 
                 public IMessageSink CreateMessageSink (string url,
                                                        object remoteChannelData,
-                                                       out string objectUri)
+                                                       out string objectURI)
                 {
-                        return ((IChannelSender)_innerChannel).CreateMessageSink (url, remoteChannelData, out objectUri);
+                        return ((IChannelSender)_innerChannel).CreateMessageSink (url, remoteChannelData, out  objectURI);
                 }
 
                 public object ChannelData
@@ -103,9 +103,9 @@ namespace System.Runtime.Remoting.Channels.Ipc
                         get { return ((IChannelReceiver)_innerChannel).ChannelData; }
                 }
 
-                public string[] GetUrlsForUri (string objectUri)
+                public string[] GetUrlsForUri (string objectURI)
                 {
-                        return ((IChannelReceiver)_innerChannel).GetUrlsForUri (objectUri);
+                        return ((IChannelReceiver)_innerChannel).GetUrlsForUri (objectURI);
                 }
 
                 public void StartListening (object data)

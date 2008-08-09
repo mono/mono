@@ -78,16 +78,16 @@ namespace System.Runtime.Remoting.Channels.Ipc
                         get { return ((IChannel)_innerChannel).ChannelPriority; }
                 }
 
-                public string Parse (string url, out string objectUri)
+                public string Parse (string url, out string objectURI)
                 {
-                        return ((IChannel)_innerChannel).Parse (url, out objectUri);
+                        return ((IChannel)_innerChannel).Parse (url, out objectURI);
                 }
 
-                public IMessageSink CreateMessageSink (string url,
+                public virtual IMessageSink CreateMessageSink (string url,
                                                        object remoteChannelData,
-                                                       out string objectUri)
+                                                       out string objectURI)
                 {
-                        return _innerChannel.CreateMessageSink (url, remoteChannelData, out objectUri);
+                        return _innerChannel.CreateMessageSink (url, remoteChannelData, out objectURI);
                 }
     }
 }
