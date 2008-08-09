@@ -42,6 +42,19 @@ MONO_ARCH_RGCTX_REG can be the same as the IMT register for now, but
 this might change in the future when we implement virtual generic
 method calls (more) efficiently.
 
+This register lifetime starts at the call site that loads it and
+ends in the callee prologue when it is either discarded or stored
+into a local variable.
+
+It's better to avoid registers used for argument passing for the RGCTX
+as it would make the code dealing with calling conventions code a lot harder.
+ 
+** Method prologue
+
+Generic shared code that have a RGCTX receive it in RGCTX_REG. There must be
+a check in mono_arch_emit_prolog for MonoCompile::rgctx_var and if set
+store it. See mini-x86.c for reference.  
+
 ** Dealing with types
 
 Types passed to arch functions might be type parameters
