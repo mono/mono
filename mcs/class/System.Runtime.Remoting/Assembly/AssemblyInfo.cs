@@ -54,7 +54,6 @@ using System.Runtime.InteropServices;
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
 
 [assembly: NeutralResourcesLanguage ("en-US")]
-[assembly: ComVisible (false)]
 [assembly: ComCompatibleVersion (1, 0, 3300, 0)]
 
 #if !TARGET_JVM
@@ -65,6 +64,7 @@ using System.Runtime.InteropServices;
 #if NET_2_0
 	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 	[assembly: CLSCompliant (false)]
+	[assembly: ComVisible (false)]
 	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
 	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 	[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
