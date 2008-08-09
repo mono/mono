@@ -2099,7 +2099,10 @@ namespace MonoTests.System
 				"yyyy-MM-ddTHH:mm:sszzzz",
 				"yyyy-MM-dd"
 				};
-			DateTimeStyles dts = DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal;
+			DateTimeStyles dts = DateTimeStyles.AdjustToUniversal;
+#if NET_2_0
+			dts |= DateTimeStyles.AssumeUniversal;
+#endif
 			DateTime result = DateTime.ParseExact ("2005-01-01T01:11:11+8:00", f, new DateTimeFormatInfo (), dts);
 		}
 

@@ -1,3 +1,7 @@
+2008-08-09  Raja R Harinath  <harinath@hurrynot.org>
+
+	* DateTimeTest.cs (Bug377042): Allow compilation on the 1.1 profile.
+
 2008-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs : added test for bug #377042.
