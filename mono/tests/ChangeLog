@@ -1,3 +1,7 @@
+2008-08-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke3.cs: Add test for #416078.
+
 2008-08-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* nullable_boxing.2.cs: Add test for #415621.
