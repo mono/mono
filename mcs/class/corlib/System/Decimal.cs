@@ -1291,30 +1291,58 @@ namespace System
 			return Convert.ToInt64 (this);
 		}
 
+#if ONLY_1_1
+#pragma warning disable 3019
+		[CLSCompliant (false)]
+#endif
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
 			return Convert.ToSByte (this);
 		}
+#if ONLY_1_1
+#pragma warning restore 3019
+#endif
 
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
 			return Convert.ToSingle (this);
 		}
 
+#if ONLY_1_1
+#pragma warning disable 3019
+		[CLSCompliant (false)]
+#endif
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
 			return Convert.ToUInt16 (this);
 		}
+#if ONLY_1_1
+#pragma warning restore 3019
+#endif
 
+#if ONLY_1_1
+#pragma warning disable 3019
+		[CLSCompliant (false)]
+#endif
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
 			return Convert.ToUInt32 (this);
 		}
+#if ONLY_1_1
+#pragma warning restore 3019
+#endif
 
+#if ONLY_1_1
+#pragma warning disable 3019
+		[CLSCompliant (false)]
+#endif
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
 			return Convert.ToUInt64 (this);
 		}
+#if ONLY_1_1
+#pragma warning restore 3019
+#endif
 
 		public string ToString (string format, IFormatProvider provider) 
 		{

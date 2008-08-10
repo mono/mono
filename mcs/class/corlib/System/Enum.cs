@@ -143,10 +143,17 @@ namespace System
 			return Convert.ToInt64 (get_value (), provider);
 		}
 
+#if ONLY_1_1
+#pragma warning disable 3019
+		[CLSCompliant (false)]
+#endif
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
 			return Convert.ToSByte (get_value (), provider);
 		}
+#if ONLY_1_1
+#pragma warning restore 3019
+#endif
 
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
@@ -158,20 +165,42 @@ namespace System
 			return Convert.ToType (get_value (), type, provider);
 		}
 
+#if ONLY_1_1
+#pragma warning disable 3019
+		[CLSCompliant (false)]
+#endif
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
 			return Convert.ToUInt16 (get_value (), provider);
 		}
+#if ONLY_1_1
+#pragma warning restore 3019
+#endif
 
+#if ONLY_1_1
+#pragma warning disable 3019
+		[CLSCompliant (false)]
+#endif
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
 			return Convert.ToUInt32 (get_value (), provider);
 		}
+#if ONLY_1_1
+#pragma warning restore 3019
+#endif
 
+#if ONLY_1_1
+#pragma warning disable 3019
+		[CLSCompliant (false)]
+#endif
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
 			return Convert.ToUInt64 (get_value (), provider);
 		}
+#if ONLY_1_1
+#pragma warning restore 3019
+#endif
+
 		// <-- End IConvertible methods
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

@@ -1,3 +1,22 @@
+2008-08-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Boolean.cs
+	* Byte.cs
+	* Char.cs
+	* DateTime.cs
+	* DBNull.cs
+	* Decimal.cs
+	* Double.cs
+	* Enum.cs
+	* Int16.cs
+	* Int32.cs
+	* Int64.cs
+	* Single.cs
+	* String.cs
+	* UInt16.cs
+	* UInt32.cs
+	* UInt64.cs: Added missing CLSCompliant attributes for 1.0 profile.
+
 2008-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs : zzzz format allows non-fixed length of number, even

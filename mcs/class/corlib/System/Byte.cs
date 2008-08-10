@@ -218,29 +218,57 @@ namespace System
 			return System.Convert.ToInt64 (m_value);
 		}
 
+#if ONLY_1_1
+#pragma warning disable 3019
+		[CLSCompliant (false)]
+#endif
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
 			return System.Convert.ToSByte (m_value);
 		}
+#if ONLY_1_1
+#pragma warning restore 3019
+#endif
 
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
 			return System.Convert.ToSingle (m_value);
 		}
 
+#if ONLY_1_1
+#pragma warning disable 3019
+		[CLSCompliant (false)]
+#endif
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt16 (m_value);
 		}
+#if ONLY_1_1
+#pragma warning restore 3019
+#endif
 
+#if ONLY_1_1
+#pragma warning disable 3019
+		[CLSCompliant (false)]
+#endif
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt32 (m_value);
 		}
+#if ONLY_1_1
+#pragma warning restore 3019
+#endif
 
+#if ONLY_1_1
+#pragma warning disable 3019
+		[CLSCompliant (false)]
+#endif
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt64 (m_value);
 		}
+#if ONLY_1_1
+#pragma warning restore 3019
+#endif
 	}
 }
