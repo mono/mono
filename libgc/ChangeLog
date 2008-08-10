@@ -1,3 +1,8 @@
+2008-08-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* include/private/gc_locks.h: Add amd64 support so parallel mark works on
+	amd64 too.
+
 2008-08-05  Andreas Färber  <andreas.faerber@web.de>
 
 	* autogen.sh: Suppress arguments warning for NOCONFIGURE.

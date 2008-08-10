@@ -437,6 +437,29 @@
        }
 #     endif /* I386 */
 
+#     if defined(X86_64)
+#      if !defined(GENERIC_COMPARE_AND_SWAP)
+         /* Returns TRUE if the comparison succeeded. */
+         inline static GC_bool GC_compare_and_exchange(volatile GC_word *addr,
+		  				       GC_word old,
+						       GC_word new_val) 
+         {
+	   char result;
+	   __asm__ __volatile__("lock; cmpxchgq %2, %0; setz %1"
+	    	: "+m"(*(addr)), "=r"(result)
+		: "r" (new_val), "a"(old) : "memory");
+	   return (GC_bool) result;
+         }
+#      endif /* !GENERIC_COMPARE_AND_SWAP */
+       inline static void GC_memory_barrier()
+       {
+	 /* We believe the processor ensures at least processor	*/
+	 /* consistent ordering.  Thus a compiler barrier	*/
+	 /* should suffice.					*/
+         __asm__ __volatile__("" : : : "memory");
+       }
+#     endif /* X86_64 */
+
 #     if defined(POWERPC)
 #      if !defined(GENERIC_COMPARE_AND_SWAP)
 #       if CPP_WORDSZ == 64
