@@ -1,3 +1,8 @@
+2008-08-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_object): Implement native-to-managed StringBuilder
+	marshalling. Fixes #416078.
+
 2008-08-08  Zoltan Varga  <vargaz@gmail.com>
 	
 	* marshal.c (mono_marshal_get_native_wrapper): Add an 'aot' argument, when
