@@ -1434,9 +1434,9 @@ namespace System
 			return Normalization.Normalize (this, 0);
 		}
 
-		public string Normalize (NormalizationForm form)
+		public string Normalize (NormalizationForm normalizationForm)
 		{
-			switch (form) {
+			switch (normalizationForm) {
 			default:
 				return Normalization.Normalize (this, 0);
 			case NormalizationForm.FormD:
@@ -1453,9 +1453,9 @@ namespace System
 			return Normalization.IsNormalized (this, 0);
 		}
 
-		public bool IsNormalized (NormalizationForm form)
+		public bool IsNormalized (NormalizationForm normalizationForm)
 		{
-			switch (form) {
+			switch (normalizationForm) {
 			default:
 				return Normalization.IsNormalized (this, 0);
 			case NormalizationForm.FormD:
@@ -1957,20 +1957,20 @@ namespace System
 			return tmp;
 		}
 
-		public static String Concat (Object obj)
+		public static String Concat (Object arg0)
 		{
-			if (obj == null)
+			if (arg0 == null)
 				return String.Empty;
 
-			return obj.ToString ();
+			return arg0.ToString ();
 		}
 
-		public unsafe static String Concat (Object obj1, Object obj2)
+		public unsafe static String Concat (Object arg0, Object arg1)
 		{
 			string s1, s2;
 
-			s1 = (obj1 != null) ? obj1.ToString () : null;
-			s2 = (obj2 != null) ? obj2.ToString () : null;
+			s1 = (arg0 != null) ? arg0.ToString () : null;
+			s2 = (arg1 != null) ? arg1.ToString () : null;
 			
 			if (s1 == null) {
 				if (s2 == null)
@@ -1995,55 +1995,55 @@ namespace System
 			return tmp;
 		}
 
-		public static String Concat (Object obj1, Object obj2, Object obj3)
+		public static String Concat (Object arg0, Object arg1, Object arg2)
 		{
 			string s1, s2, s3;
-			if (obj1 == null)
+			if (arg0 == null)
 				s1 = String.Empty;
 			else
-				s1 = obj1.ToString ();
+				s1 = arg0.ToString ();
 
-			if (obj2 == null)
+			if (arg1 == null)
 				s2 = String.Empty;
 			else
-				s2 = obj2.ToString ();
+				s2 = arg1.ToString ();
 
-			if (obj3 == null)
+			if (arg2 == null)
 				s3 = String.Empty;
 			else
-				s3 = obj3.ToString ();
+				s3 = arg2.ToString ();
 
 			return Concat (s1, s2, s3);
 		}
 
 #if ! BOOTSTRAP_WITH_OLDLIB
 		[CLSCompliant(false)]
-		public static String Concat (Object obj1, Object obj2, Object obj3,
-					     Object obj4, __arglist)
+		public static String Concat (Object arg0, Object arg1, Object arg2,
+					     Object arg3, __arglist)
 		{
 			string s1, s2, s3, s4;
 
-			if (obj1 == null)
+			if (arg0 == null)
 				s1 = String.Empty;
 			else
-				s1 = obj1.ToString ();
+				s1 = arg0.ToString ();
 
-			if (obj2 == null)
+			if (arg1 == null)
 				s2 = String.Empty;
 			else
-				s2 = obj2.ToString ();
+				s2 = arg1.ToString ();
 
-			if (obj3 == null)
+			if (arg2 == null)
 				s3 = String.Empty;
 			else
-				s3 = obj3.ToString ();
+				s3 = arg2.ToString ();
 
 			ArgIterator iter = new ArgIterator (__arglist);
 			int argCount = iter.GetRemainingCount();
 
 			StringBuilder sb = new StringBuilder ();
-			if (obj4 != null)
-				sb.Append (obj4.ToString ());
+			if (arg3 != null)
+				sb.Append (arg3.ToString ());
 
 			for (int i = 0; i < argCount; i++) {
 				TypedReference typedRef = iter.GetNextArg ();
@@ -2056,106 +2056,106 @@ namespace System
 		}
 #endif
 
-		public unsafe static String Concat (String s1, String s2)
+		public unsafe static String Concat (String str0, String str1)
 		{
-			if (s1 == null || s1.Length == 0) {
-				if (s2 == null || s2.Length == 0)
+			if (str0 == null || str0.Length == 0) {
+				if (str1 == null || str1.Length == 0)
 					return String.Empty;
-				return s2;
+				return str1;
 			}
 
-			if (s2 == null || s2.Length == 0)
-				return s1; 
+			if (str1 == null || str1.Length == 0)
+				return str0; 
 
-			String tmp = InternalAllocateStr (s1.length + s2.length);
+			String tmp = InternalAllocateStr (str0.length + str1.length);
 
-			fixed (char *dest = tmp, src = s1)
-				CharCopy (dest, src, s1.length);
-			fixed (char *dest = tmp, src = s2)
-				CharCopy (dest + s1.Length, src, s2.length);
+			fixed (char *dest = tmp, src = str0)
+				CharCopy (dest, src, str0.length);
+			fixed (char *dest = tmp, src = str1)
+				CharCopy (dest + str0.Length, src, str1.length);
 
 			return tmp;
 		}
 
-		public unsafe static String Concat (String s1, String s2, String s3)
+		public unsafe static String Concat (String str0, String str1, String str2)
 		{
-			if (s1 == null || s1.Length == 0){
-				if (s2 == null || s2.Length == 0){
-					if (s3 == null || s3.Length == 0)
+			if (str0 == null || str0.Length == 0){
+				if (str1 == null || str1.Length == 0){
+					if (str2 == null || str2.Length == 0)
 						return String.Empty;
-					return s3;
+					return str2;
 				} else {
-					if (s3 == null || s3.Length == 0)
-						return s2;
+					if (str2 == null || str2.Length == 0)
+						return str1;
 				}
-				s1 = String.Empty;
+				str0 = String.Empty;
 			} else {
-				if (s2 == null || s2.Length == 0){
-					if (s3 == null || s3.Length == 0)
-						return s1;
+				if (str1 == null || str1.Length == 0){
+					if (str2 == null || str2.Length == 0)
+						return str0;
 					else
-						s2 = String.Empty;
+						str1 = String.Empty;
 				} else {
-					if (s3 == null || s3.Length == 0)
-						s3 = String.Empty;
+					if (str2 == null || str2.Length == 0)
+						str2 = String.Empty;
 				}
 			}
 
-			String tmp = InternalAllocateStr (s1.length + s2.length + s3.length);
+			String tmp = InternalAllocateStr (str0.length + str1.length + str2.length);
 
-			if (s1.Length != 0) {
-				fixed (char *dest = tmp, src = s1) {
-					CharCopy (dest, src, s1.length);
+			if (str0.Length != 0) {
+				fixed (char *dest = tmp, src = str0) {
+					CharCopy (dest, src, str0.length);
 				}
 			}
-			if (s2.Length != 0) {
-				fixed (char *dest = tmp, src = s2) {
-					CharCopy (dest + s1.Length, src, s2.length);
+			if (str1.Length != 0) {
+				fixed (char *dest = tmp, src = str1) {
+					CharCopy (dest + str0.Length, src, str1.length);
 				}
 			}
-			if (s3.Length != 0) {
-				fixed (char *dest = tmp, src = s3) {
-					CharCopy (dest + s1.Length + s2.Length, src, s3.length);
+			if (str2.Length != 0) {
+				fixed (char *dest = tmp, src = str2) {
+					CharCopy (dest + str0.Length + str1.Length, src, str2.length);
 				}
 			}
 
 			return tmp;
 		}
 
-		public unsafe static String Concat (String s1, String s2, String s3, String s4)
+		public unsafe static String Concat (String str0, String str1, String str2, String str3)
 		{
-			if (s1 == null && s2 == null && s3 == null && s4 == null)
+			if (str0 == null && str1 == null && str2 == null && str3 == null)
 				return String.Empty;
 
-			if (s1 == null)
-				s1 = String.Empty;
-			if (s2 == null)
-				s2 = String.Empty;
-			if (s3 == null)
-				s3 = String.Empty;
-			if (s4 == null)
-				s4 = String.Empty;
+			if (str0 == null)
+				str0 = String.Empty;
+			if (str1 == null)
+				str1 = String.Empty;
+			if (str2 == null)
+				str2 = String.Empty;
+			if (str3 == null)
+				str3 = String.Empty;
 
-			String tmp = InternalAllocateStr (s1.length + s2.length + s3.length + s4.length);
+			String tmp = InternalAllocateStr (str0.length + str1.length + str2.length + str3.length);
 
-			if (s1.Length != 0) {
-				fixed (char *dest = tmp, src = s1) {
-					CharCopy (dest, src, s1.length);
+			if (str0.Length != 0) {
+				fixed (char *dest = tmp, src = str0) {
+					CharCopy (dest, src, str0.length);
 				}
 			}
-			if (s2.Length != 0) {
-				fixed (char *dest = tmp, src = s2) {
-					CharCopy (dest + s1.Length, src, s2.length);
+			if (str1.Length != 0) {
+				fixed (char *dest = tmp, src = str1) {
+					CharCopy (dest + str0.Length, src, str1.length);
 				}
 			}
-			if (s3.Length != 0) {
-				fixed (char *dest = tmp, src = s3) {
-					CharCopy (dest + s1.Length + s2.Length, src, s3.length);
+			if (str2.Length != 0) {
+				fixed (char *dest = tmp, src = str2) {
+					CharCopy (dest + str0.Length + str1.Length, src, str2.length);
 				}
 			}
-			if (s4.Length != 0) {
-				fixed (char *dest = tmp, src = s4) {
-					CharCopy (dest + s1.Length + s2.Length + s3.Length, src, s4.length);
+			if (str3.Length != 0) {
+				fixed (char *dest = tmp, src = str3) {
+					CharCopy (dest + str0.Length + str1.Length + str2.Length, src, str3.length);
 				}
 			}
 
@@ -2403,9 +2403,9 @@ namespace System
 			return Convert.ToSingle (this, provider);
 		}
 
-		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
+		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			return Convert.ToType (this, conversionType,  provider);
+			return Convert.ToType (this, type, provider);
 		}
 
 #if ONLY_1_1
@@ -3008,10 +3008,10 @@ namespace System
 		unsafe public extern String (sbyte *value, int startIndex, int length, Encoding enc);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern String (char [] val, int startIndex, int length);
+		public extern String (char [] value, int startIndex, int length);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern String (char [] val);
+		public extern String (char [] value);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern String (char c, int count);

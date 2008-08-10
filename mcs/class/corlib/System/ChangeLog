@@ -1,5 +1,10 @@
 2008-08-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* IServiceProvider.cs: Added ComVisible attribute (1.0 only).
+	* String.cs: Fixed argument names to match MS.
+
+2008-08-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* Boolean.cs
 	* Byte.cs
 	* Char.cs
