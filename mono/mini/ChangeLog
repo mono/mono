@@ -1,5 +1,9 @@
 2008-08-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-*c.c (mono_arch_find_jit_info): Remove unused 'trace' and
+	'native_offset' argument, since these are computed in the 
+	mono_find_jit_info () function.
+
 	* mini-exceptions.c (mono_find_jit_info): Make this non-static, as it
 	is used by exceptions-ppc.c.
 
