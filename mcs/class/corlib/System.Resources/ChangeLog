@@ -1,3 +1,8 @@
+2008-08-11  Larry Ewing  <lewing@novell.com>
+
+	* ResourceReader.cs: fix reading/writing beyond the end of the
+	current resource when the resource is larger than 1024 bytes.
+
 2008-06-30  Marek Safar  <marek.safar@gmail.com>
 
 	* ResourceReader.cs: Cache resources enumerator in ResourceReader.

@@ -7,9 +7,10 @@
 //	Dick Porter <dick@ximian.com>
 //	Marek Safar <marek.safar@seznam.cz>
 //	Atsushi Enomoto  <atsushi@ximian.com>
+//      Larry Ewing <lewing@novell.com>
 //
 // (C) 2001, 2002 Ximian Inc, http://www.ximian.com
-// Copyright (C) 2004-2005,2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005,2007-2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -466,10 +467,16 @@ namespace System.Resources
 						ms.Closed += delegate (object o, EventArgs e) {
 							Marshal.FreeHGlobal (ptr);
 						};
+
 						byte [] bytes = new byte [slen < 1024 ? slen : 1024];
-						for (int i = 0; i < slen; i += bytes.Length) {
-							int x = reader.Read (bytes, 0, bytes.Length);
+						while (slen > 0 ) {
+							int x = reader.Read (bytes, 0, (int)Math.Min (bytes.Length, slen));
+
+							if (x == 0)
+								throw new FormatException ("The resource data is corrupt. Resource stream ended");
+
 							ms.Write (bytes, 0, x);
+							slen -= x;
 						}
 						ms.Seek (0, SeekOrigin.Begin);
 						return ms;
