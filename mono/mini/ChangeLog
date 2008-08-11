@@ -1,3 +1,9 @@
+2008-08-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_get_method): Avoid doing all the loading inside
+	the aot lock, to avoid deadlocks when mono_aot_get_class_from_name () is
+	called while holding the loader lock. Fixes #415608.
+
 2008-08-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-ppc.c (mono_jit_walk_stack): Use MONO_INIT_CONTEXT_FROM_CURRENT
