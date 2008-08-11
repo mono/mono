@@ -243,6 +243,10 @@ namespace System.Web.Caching
 			}
 
 			if (it != null) {
+				Timer t = it.Timer;
+				if (t != null)
+					t.Dispose ();
+				
 				if (it.Dependency != null) {
 #if NET_2_0
 					it.Dependency.SetCache (null);

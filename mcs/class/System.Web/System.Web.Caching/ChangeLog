@@ -1,3 +1,9 @@
+2008-08-11  Marek Habersack  <mhabersack@novell.com>
+
+	* Cache.cs: dispose item timer when removing an entry. Fixes bug
+	#416076. Patch provided by Adriaan van Kekem
+	<adriaanvk@gmail.com>, thanks!
+
 2008-06-18  Marek Habersack  <mhabersack@novell.com>
 
 	* SqlCacheDependency.cs: added
