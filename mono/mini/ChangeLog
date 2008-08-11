@@ -1,3 +1,15 @@
+2008-08-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_find_jit_info): Make this non-static, as it
+	is used by exceptions-ppc.c.
+
+	* exceptions-ppc.c: Call mono_find_jit_info () instead of 
+	mono_arch_find_jit_info ().
+	
+	* mini-ppc.h exceptions-ppc.c mini-mips.h mini-mips.c exceptions-mips.c
+	mini-exceptions.c: Get rid of the CUSTOM_STACK_WALK stuff, use the
+	generic code in mini-exceptions.c.
+
 2008-08-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ppc.c (mono_arch_flush_register_windows): Add this for ppc.
