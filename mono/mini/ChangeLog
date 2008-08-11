@@ -1,5 +1,7 @@
 2008-08-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (mono_aot_get_plt_info_offset): Fix a warning.
+	
 	* aot-runtime.c (mono_aot_get_method): Avoid doing all the loading inside
 	the aot lock, to avoid deadlocks when mono_aot_get_class_from_name () is
 	called while holding the loader lock. Fixes #415608.
