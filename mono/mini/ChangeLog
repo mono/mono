@@ -1,5 +1,7 @@
 2008-08-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ppc.c (mono_arch_flush_register_windows): Add this for ppc.
+
 	* aot-runtime.c (mono_aot_get_plt_info_offset): Fix a warning.
 	
 	* aot-runtime.c (mono_aot_get_method): Avoid doing all the loading inside
