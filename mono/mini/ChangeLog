@@ -1,3 +1,10 @@
+2008-08-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_get_method): Avoid doing all the loading inside
+	the aot lock, to avoid deadlocks when mono_aot_get_class_from_name () is
+	called while holding the loader lock. Fixes #415608.
+	(mono_aot_get_method_from_token_inner): Ditto.
+
 2008-08-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (mono_aot_parse_options): Disable no-dlsym option for now.
