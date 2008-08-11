@@ -3,6 +3,9 @@
 	* Cache.cs: dispose item timer when removing an entry. Fixes bug
 	#416076. Patch provided by Adriaan van Kekem
 	<adriaanvk@gmail.com>, thanks!
+	Pass onRemoveCallback along in Insert. Fixes bugs #324528 and
+	#382644. Patch provided by Juraj Skripsky <juraj@hotfeet.ch>,
+	thanks!
 
 2008-06-18  Marek Habersack  <mhabersack@novell.com>
 
