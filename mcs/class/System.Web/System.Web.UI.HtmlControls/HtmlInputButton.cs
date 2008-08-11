@@ -49,7 +49,7 @@ namespace System.Web.UI.HtmlControls{
 							coll.Remove ("onclick");
 						}
 						
-						writer.WriteAttribute ("onclick", script);
+						writer.WriteAttribute ("onclick", script, true);
 					}
 				}
 			}

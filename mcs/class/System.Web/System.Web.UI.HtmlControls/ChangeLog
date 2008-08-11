@@ -1,3 +1,10 @@
+2008-07-25  Dean Brettle <dean@brettle.com>
+
+	* HtmlControl.cs (PreProcessRelativeReference), 
+	HtmlInputButton (RenderAttributes), HtmlInputRadioButton (RenderAttributes):
+	Encode attributes that could contain HTML special chars.
+	Fix for CVE-2008-3422
+
 2005-04-22  Lluis Sanchez Gual <lluis@novell.com>
 
 	* HtmlForm.cs: Use the new WriteSubmitStatements method from
