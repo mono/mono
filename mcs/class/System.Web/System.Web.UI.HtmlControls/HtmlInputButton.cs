@@ -181,7 +181,7 @@ namespace System.Web.UI.HtmlControls {
 				}
 
 				if (onclick.Length > 0) {
-					writer.WriteAttribute ("onclick", onclick);
+					writer.WriteAttribute ("onclick", onclick, true);
 					writer.WriteAttribute ("language", "javascript");
 				}
 			}
@@ -197,7 +197,7 @@ namespace System.Web.UI.HtmlControls {
 				
 				if (oc != null) {
 					writer.WriteAttribute ("language", "javascript");
-					writer.WriteAttribute ("onclick", oc);
+					writer.WriteAttribute ("onclick", oc, true);
 				}
 			}
 #endif

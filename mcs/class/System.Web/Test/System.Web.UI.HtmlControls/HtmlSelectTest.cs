@@ -478,5 +478,17 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.AreEqual (exp, s.Render ());
 		}
 		
+		[Test]
+		public void HtmlEncodeValues ()
+		{
+			TestHtmlSelect s = new TestHtmlSelect ();
+			s.DataSource = new string [] { "&", "<" };
+			s.DataBind ();
+			string exp = @"<select name>
+	<option value=""&amp;"">&amp;</option>
+	<option value=""&lt;"">&lt;</option>
+</select>";
+			HtmlDiff.AssertAreEqual (exp, s.Render (), "HtmlEncodeValues");
+		}
 	}
 }

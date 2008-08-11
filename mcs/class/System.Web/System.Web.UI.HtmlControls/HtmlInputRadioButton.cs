@@ -120,7 +120,7 @@ namespace System.Web.UI.HtmlControls {
 
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
-			writer.WriteAttribute ("value", Value);
+			writer.WriteAttribute ("value", Value, true);
 			Attributes.Remove ("value");
 			base.RenderAttributes (writer);
 		}

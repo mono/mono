@@ -1,3 +1,10 @@
+2008-07-27  Dean Brettle <dean@brettle.com>
+ 
+ 	* HtmlInputButtonTest.cs, HtmlImageTest.cs, HtmlFormTest.cs, 
+ 	HtmlInputRadioButtonTest.cs, HtmlSelectTest.cs:	Added tests 
+ 	for HTML-encoded of attributes. 
+	* Fix for CVE-2008-3422
+ 
 2006-09-17  Igor Zelmanovich  <igorz@mainsoft.com>
 
 	* HtmlAnchorTest.cs: added test for ViewState

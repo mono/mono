@@ -302,7 +302,7 @@ return true;
 			w.WriteAttribute ("name", Name);
 
 			w.WriteAttribute ("method", Method);
-			w.WriteAttribute ("action", action);
+			w.WriteAttribute ("action", action, true);
 
 			if (ID == null) {
 				/* If ID != null then HtmlControl will
