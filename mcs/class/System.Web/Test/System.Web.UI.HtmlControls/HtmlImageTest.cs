@@ -118,13 +118,13 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			img.Alt = "*2*";
 			img.Border = 3;
 			img.Height = 4;
-			img.Src = "*5*";
+			img.Src = "*5<&*";
 			img.Width = 6;
 			
 			Assert.AreEqual (6, img.Attributes.Count, "Attributes.Count");
 
 			HtmlTextWriter writer = img.GetWriter ();
-			Assert.AreEqual (" src=\"*5*\" align=\"*1*\" alt=\"*2*\" border=\"3\" height=\"4\" width=\"6\" /", writer.InnerWriter.ToString ());
+			Assert.AreEqual (" src=\"*5&lt;&amp;*\" align=\"*1*\" alt=\"*2*\" border=\"3\" height=\"4\" width=\"6\" /", writer.InnerWriter.ToString ());
 		}
 	}
 }
