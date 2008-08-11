@@ -2514,6 +2514,12 @@ namespace Mono.CSharp {
 
 		void AddToBounds (Type t, int index)
 		{
+			//
+			// Some types cannot be used as type arguments
+			//
+			if (t == TypeManager.void_type || t.IsPointer)
+				return;
+
 			ArrayList a = bounds [index];
 			if (a == null) {
 				a = new ArrayList ();

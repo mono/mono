@@ -1703,7 +1703,7 @@ get_accessor_declaration
 			Report.Error (1007, (Location) $3, "Property accessor already defined");
 			break;
 		}
-		Accessor accessor = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, (Location) $3);
+		Accessor accessor = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, current_local_parameters, (Location) $3);
 		has_get = true;
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
@@ -1719,28 +1719,15 @@ get_accessor_declaration
 set_accessor_declaration
 	: opt_attributes opt_modifiers SET 
 	  {
-		Parameter [] args;
 		Parameter implicit_value_parameter = new Parameter (
 			implicit_value_parameter_type, "value", 
 			Parameter.Modifier.NONE, null, (Location) $3);
 
-		if (parsing_indexer == false) {
-			args  = new Parameter [1];
-			args [0] = implicit_value_parameter;
-			current_local_parameters = new Parameters (args);
+		if (!parsing_indexer) {
+			current_local_parameters = new Parameters (new Parameter [] { implicit_value_parameter });
 		} else {
-			Parameter [] fpars = indexer_parameters.FixedParameters;
-
-			if (fpars != null){
-				int count = fpars.Length;
-
-				args = new Parameter [count + 1];
-				fpars.CopyTo (args, 0);
-				args [count] = implicit_value_parameter;
-			} else 
-				args = null;
-			current_local_parameters = new Parameters (
-				args);
+			current_local_parameters = Parameters.MergeGenerated (
+				indexer_parameters, true, implicit_value_parameter);
 		}
 		
 		lexer.PropertyParsing = false;
@@ -1751,7 +1738,7 @@ set_accessor_declaration
 			Report.Error (1007, ((LocatedToken) $3).Location, "Property accessor already defined");
 			break;
 		}
-		Accessor accessor = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, (Location) $3);
+		Accessor accessor = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, current_local_parameters, (Location) $3);
 		has_set = true;
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
@@ -2158,6 +2145,10 @@ event_declaration
 	  OPEN_BRACE
 	  {
 		implicit_value_parameter_type = (FullNamedExpression) $4;  
+		current_local_parameters = new Parameters (
+			new Parameter (implicit_value_parameter_type, "value", 
+			Parameter.Modifier.NONE, null, GetLocation ($3)));
+
 		lexer.EventParsing = true;
 	  }
 	  event_accessor_declarations
@@ -2198,6 +2189,7 @@ event_declaration
 				implicit_value_parameter_type = null;
 			}
 		}
+		current_local_parameters = null;
 	  }
 	| opt_attributes opt_modifiers EVENT type namespace_or_type_name error {
 		MemberName mn = (MemberName) $5;
@@ -2236,22 +2228,12 @@ event_accessor_declarations
 add_accessor_declaration
 	: opt_attributes ADD
 	  {
-		Parameter [] args = new Parameter [1];
-		Parameter implicit_value_parameter = new Parameter (
-			implicit_value_parameter_type, "value", 
-			Parameter.Modifier.NONE, null, (Location) $2);
-
-		args [0] = implicit_value_parameter;
-		
-		current_local_parameters = new Parameters (args);  
 		lexer.EventParsing = false;
 	  }
 	  block
 	  {
-		Accessor accessor = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, (Location) $2);
+		Accessor accessor = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, null, (Location) $2);
 		lexer.EventParsing = true;
-		
-		current_local_parameters = null;
 		$$ = accessor;
 	  }
 	| opt_attributes ADD error {
@@ -2267,21 +2249,12 @@ add_accessor_declaration
 remove_accessor_declaration
 	: opt_attributes REMOVE
 	  {
-		Parameter [] args = new Parameter [1];
-		Parameter implicit_value_parameter = new Parameter (
-			implicit_value_parameter_type, "value", 
-			Parameter.Modifier.NONE, null, (Location) $2);
-
-		args [0] = implicit_value_parameter;
-		
-		current_local_parameters = new Parameters (args);  
 		lexer.EventParsing = false;
 	  }
 	  block
 	  {
-		$$ = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, (Location) $2);
+		$$ = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, null, (Location) $2);
 		lexer.EventParsing = true;
-		current_local_parameters = null;
 	  }
 	| opt_attributes REMOVE error {
 		Report.Error (73, (Location) $2, "An add or remove accessor must have a body");

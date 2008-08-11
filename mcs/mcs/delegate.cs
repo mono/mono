@@ -179,8 +179,8 @@ namespace Mono.CSharp {
 							Parameter.Modifier.NONE, null, Location);
 			fixed_pars [1] = new Parameter (TypeManager.intptr_type, "method", 
 							Parameter.Modifier.NONE, null, Location);
-			Parameters const_parameters = new Parameters (fixed_pars);
-			const_parameters.Resolve (null);
+			Parameters const_parameters = Parameters.CreateFullyResolved (fixed_pars,
+				new Type[] { fixed_pars [0].ParameterType, fixed_pars [1].ParameterType});
 			
 			TypeManager.RegisterMethod (ConstructorBuilder, const_parameters);
 			member_cache.AddMember (ConstructorBuilder, this);
@@ -264,7 +264,7 @@ namespace Mono.CSharp {
 			//
 			// BeginInvoke
 			//
-			Parameters async_parameters = Parameters.MergeGenerated (Parameters,
+			Parameters async_parameters = Parameters.MergeGenerated (Parameters, false,
 				new Parameter (TypeManager.asynccallback_type, "callback", Parameter.Modifier.NONE, null, Location),
 				new Parameter (TypeManager.object_type, "object", Parameter.Modifier.NONE, null, Location));
 
@@ -310,7 +310,7 @@ namespace Mono.CSharp {
 				end_parameters = Parameters.EmptyReadOnlyParameters;
 			}
 
-			end_parameters = Parameters.MergeGenerated (end_parameters,
+			end_parameters = Parameters.MergeGenerated (end_parameters, false,
 				new Parameter (TypeManager.iasyncresult_type, "result", Parameter.Modifier.NONE, null, Location));
 
 			//

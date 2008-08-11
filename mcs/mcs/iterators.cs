@@ -300,7 +300,7 @@ namespace Mono.CSharp {
 			ToplevelBlock get_block = new ToplevelBlock (Location);
 			get_block.AddStatement (new CurrentBlock (this, is_generic));
 
-			Accessor getter = new Accessor (get_block, 0, null, Location);
+			Accessor getter = new Accessor (get_block, 0, null, null, Location);
 
 			Property current = new Property (
 				this, type, Modifiers.DEBUGGER_HIDDEN, name, null, getter, null, false);

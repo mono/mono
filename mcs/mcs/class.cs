@@ -5886,12 +5886,14 @@ namespace Mono.CSharp {
 		public Attributes Attributes;
 		public Location Location;
 		public int ModFlags;
+		public Parameters Parameters;
 		
-		public Accessor (ToplevelBlock b, int mod, Attributes attrs, Location loc)
+		public Accessor (ToplevelBlock b, int mod, Attributes attrs, Parameters p, Location loc)
 		{
 			Block = b;
 			Attributes = attrs;
 			Location = loc;
+			Parameters = p;
 			ModFlags = Modifiers.Check (AllowedModifiers, mod, 0, loc);
 		}
 	}
@@ -6176,14 +6178,17 @@ namespace Mono.CSharp {
 			ImplicitParameter param_attr;
 			protected Parameters parameters;
 
-			public SetMethod (PropertyBase method):
+			public SetMethod (PropertyBase method) :
 				base (method, "set_")
 			{
+				parameters = Parameters.CreateFullyResolved (
+					new Parameter (method.type_name, "value", Parameter.Modifier.NONE, null, Location));
 			}
 
 			public SetMethod (PropertyBase method, Accessor accessor):
 				base (method, accessor, "set_")
 			{
+				this.parameters = accessor.Parameters;
 			}
 
 			protected override void ApplyToExtraTarget(Attribute a, CustomAttributeBuilder cb)
@@ -6200,21 +6205,14 @@ namespace Mono.CSharp {
 			}
 
 			public override Parameters ParameterInfo {
-				get {
-					if (parameters == null)
-						DefineParameters ();
-					return parameters;
-				}
-			}
-
-			protected virtual void DefineParameters ()
-			{
-				parameters = Parameters.CreateFullyResolved (
-					new Parameter (method.MemberType, "value", Parameter.Modifier.NONE, null, Location));
+			    get {
+			        return parameters;
+			    }
 			}
 
 			public override MethodBuilder Define (DeclSpace parent)
 			{
+				parameters.Resolve (ResolveContext);
 				base.Define (parent);
 
 				if (IsDummy)
@@ -6259,7 +6257,7 @@ namespace Mono.CSharp {
 				: base (method, accessor, prefix)
 			{
 				this.method = method;
-				this.ModFlags = accessor.ModFlags;
+				this.ModFlags = accessor.ModFlags | (method.ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE));
 
 				if (accessor.ModFlags != 0 && RootContext.Version == LanguageVersion.ISO_1) {
 					Report.FeatureIsNotAvailable (Location, "access modifiers on properties");
@@ -6449,8 +6447,9 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if ((Get.IsDummy || Set.IsDummy)
-			    && (Get.ModFlags != 0 || Set.ModFlags != 0) && (ModFlags & Modifiers.OVERRIDE) == 0) {
+			if ((ModFlags & Modifiers.OVERRIDE) == 0 && 
+				(Get.IsDummy && (Set.ModFlags & Modifiers.Accessibility) != 0) ||
+				(Set.IsDummy && (Get.ModFlags & Modifiers.Accessibility) != 0)) {
 				Report.Error (276, Location, 
 					      "`{0}': accessibility modifiers on accessors may only be used if the property or indexer has both a get and a set accessor",
 					      GetSignatureForError ());
@@ -6645,8 +6644,7 @@ namespace Mono.CSharp {
 			get_block.ModFlags |= Modifiers.COMPILER_GENERATED;
 
 			// Make set block
-			Parameters parameters = new Parameters (new Parameter (type_name, "value", Parameter.Modifier.NONE, null, Location));
-			set_block.Block = new ToplevelBlock (block, parameters, Location);
+			set_block.Block = new ToplevelBlock (block, set_block.Parameters, Location);
 			Assign a = new SimpleAssign (new SimpleName (field.Name, Location), new SimpleName ("value", Location));
 			set_block.Block.AddStatement (new StatementExpression(a));
 			set_block.ModFlags |= Modifiers.COMPILER_GENERATED;
@@ -7354,25 +7352,21 @@ namespace Mono.CSharp {
 		{
 			Parameters parameters;
 
-			public GetIndexerMethod (PropertyBase method):
+			public GetIndexerMethod (Indexer method):
 				base (method)
 			{
+				this.parameters = method.parameters;
 			}
 
 			public GetIndexerMethod (PropertyBase method, Accessor accessor):
 				base (method, accessor)
 			{
+				parameters = accessor.Parameters;
 			}
 
 			public override MethodBuilder Define (DeclSpace parent)
 			{
-				//
-				// Clone indexer accessor parameters for localized capturing
-				//
-				parameters = ((Indexer) method).parameters;
-				if (!IsDummy)
-					parameters = parameters.Clone ();
-
+				parameters.Resolve (ResolveContext);
 				return base.Define (parent);
 			}
 			
@@ -7395,22 +7389,18 @@ namespace Mono.CSharp {
 
 		public class SetIndexerMethod: SetMethod
 		{
-			public SetIndexerMethod (PropertyBase method):
+			public SetIndexerMethod (Indexer method):
 				base (method)
 			{
+				parameters = Parameters.MergeGenerated (method.parameters, false, parameters [0]);
 			}
 
 			public SetIndexerMethod (PropertyBase method, Accessor accessor):
 				base (method, accessor)
 			{
+				parameters = method.Get.IsDummy ? accessor.Parameters : accessor.Parameters.Clone ();			
 			}
 
-			protected override void DefineParameters ()
-			{
-				parameters = Parameters.MergeGenerated (((Indexer)method).parameters,
-					new Parameter (method.MemberType, "value", Parameter.Modifier.NONE, null, method.Location));
-			}
-			
 			public override bool EnableOverloadChecks (MemberCore overload)
 			{
 				if (base.EnableOverloadChecks (overload)) {
@@ -7419,7 +7409,7 @@ namespace Mono.CSharp {
 				}
 
 				return false;
-			}			
+			}
 		}
 
 		const int AllowedModifiers =

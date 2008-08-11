@@ -5757,7 +5757,7 @@ namespace Mono.CSharp {
 			this.rank = rank;
 			loc = l;
 
-			arguments = new ArrayList ();
+			arguments = new ArrayList (exprs.Count);
 
 			foreach (Expression e in exprs) {
 				arguments.Add (new Argument (e, Argument.AType.Expression));
@@ -8993,7 +8993,6 @@ namespace Mono.CSharp {
 
 			if (type.IsPointer && !ec.IsInUnsafeScope){
 				UnsafeError (loc);
-				return null;
 			}
 
 			eclass = ExprClass.Type;

@@ -170,7 +170,9 @@ namespace Mono.CSharp {
 
 		public override Parameter Clone ()
 		{
-			return new ParamsParameter (parameter_type, Name, attributes, Location);
+			return parameter_type == null ?
+				new ParamsParameter (TypeName, Name, attributes, Location) :
+				new ParamsParameter (parameter_type, Name, attributes, Location);
 		}
 
 		public override bool Resolve (IResolveContext ec)
@@ -249,7 +251,7 @@ namespace Mono.CSharp {
 
 		static string[] attribute_targets = new string [] { "param" };
 
-		FullNamedExpression TypeName;
+		protected FullNamedExpression TypeName;
 		readonly Modifier modFlags;
 		public string Name;
 		protected Type parameter_type;
@@ -519,7 +521,9 @@ namespace Mono.CSharp {
 
 		public virtual Parameter Clone ()
 		{
-			return new Parameter (parameter_type, Name, modFlags, attributes, Location);
+			return parameter_type == null ?
+				new Parameter (TypeName, Name, modFlags, attributes, Location) :
+				new Parameter (parameter_type, Name, modFlags, attributes, Location);
 		}
 
 		public ExpressionStatement CreateExpressionTreeVariable (EmitContext ec)
@@ -636,8 +640,8 @@ namespace Mono.CSharp {
 		private Parameters (Parameter[] parameters, Type[] types)
 		{
 			FixedParameters = parameters;
+			count = parameters.Length;
 			this.types = types;
-			count = types.Length;
 		}
 		
 		public Parameters (params Parameter[] parameters)
@@ -647,6 +651,21 @@ namespace Mono.CSharp {
 
 			FixedParameters = parameters;
 			count = parameters.Length;
+
+			if (count < 2)
+				return;
+
+			for (int i = 0; i < count; i++){
+				string base_name = FixedParameters [i].Name;
+				for (int j = i + 1; j < count; j++){
+					if (base_name != FixedParameters [j].Name)
+						continue;
+
+					Report.Error (100, FixedParameters [i].Location,
+						"The parameter name `{0}' is a duplicate", base_name);
+					i = j;
+				}
+			}
 		}
 
 		public Parameters (Parameter[] parameters, bool has_arglist):
@@ -668,22 +687,33 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Use this method when you merge compiler generated argument with user arguments
 		/// </summary>
-		public static Parameters MergeGenerated (Parameters userParams, params Parameter[] compilerParams)
+		public static Parameters MergeGenerated (Parameters userParams, bool checkConflicts, params Parameter[] compilerParams)
 		{
 			Parameter[] all_params = new Parameter [userParams.count + compilerParams.Length];
-			Type[] all_types = new Type[all_params.Length];
 			userParams.FixedParameters.CopyTo(all_params, 0);
-			userParams.Types.CopyTo (all_types, 0);
+
+			Type [] all_types;
+			if (userParams.types != null) {
+				all_types = new Type [all_params.Length];
+				userParams.Types.CopyTo (all_types, 0);
+			} else {
+				all_types = null;
+			}
 
 			int last_filled = userParams.Count;
 			foreach (Parameter p in compilerParams) {
 				for (int i = 0; i < last_filled; ++i) {
 					while (p.Name == all_params [i].Name) {
+						if (checkConflicts && i < userParams.count) {
+							Report.Error (316, userParams [i].Location,
+								"The parameter name `{0}' conflicts with a compiler generated name", p.Name);
+						}
 						p.Name = '_' + p.Name;
 					}
 				}
 				all_params [last_filled] = p;
-				all_types [last_filled] = p.ParameterType;
+				if (all_types != null)
+					all_types [last_filled] = p.ParameterType;
 				++last_filled;
 			}
 			
@@ -724,27 +754,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-
-		bool VerifyArgs ()
-		{
-			if (count < 2)
-				return true;
-
-			for (int i = 0; i < count; i++){
-				string base_name = FixedParameters [i].Name;
-				for (int j = i + 1; j < count; j++){
-					if (base_name != FixedParameters [j].Name)
-						continue;
-
-					Report.Error (100, FixedParameters [i].Location,
-						"The parameter name `{0}' is a duplicate", base_name);
-					return false;
-				}
-			}
-			return true;
-		}
-		
-		
 		/// <summary>
 		///    Returns the paramenter information based on the name
 		/// </summary>
@@ -781,9 +790,6 @@ namespace Mono.CSharp {
 
 			types = new Type [count];
 			
-			if (!VerifyArgs ())
-				return false;
-
 			bool ok = true;
 			Parameter p;
 			for (int i = 0; i < FixedParameters.Length; ++i) {

@@ -1,3 +1,10 @@
+2008-11-08  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs: Add type inference types restriction.
+	
+	* parameter.cs, class.cs, delegate.cs, iterators.cs, cs-parser.jay,
+	anonymous.cs, expression.cs: Allocate less accessor parameters.
+
 2008-08-08  Marek Safar  <marek.safar@gmail.com>
 
 	* typemanager.cs, ecore.cs: Ambiguous operators can come from different
