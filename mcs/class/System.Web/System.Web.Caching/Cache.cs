@@ -135,7 +135,7 @@ namespace System.Web.Caching
 		public void Insert (string key, object value, CacheDependency dependencies, DateTime absoluteExpiration, TimeSpan slidingExpiration,
 				    CacheItemPriority priority, CacheItemRemovedCallback onRemoveCallback)
 		{
-			Insert (key, value, dependencies, absoluteExpiration, slidingExpiration, CacheItemPriority.Normal, null, true);
+			Insert (key, value, dependencies, absoluteExpiration, slidingExpiration, CacheItemPriority.Normal, onRemoveCallback, true);
 		}
 
 		void Insert (string key, object value, CacheDependency dependencies, DateTime absoluteExpiration, TimeSpan slidingExpiration,
