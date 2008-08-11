@@ -1,3 +1,13 @@
+2008-07-25  Dean Brettle <dean@brettle.com>
+ 
+ 	* HtmlControl.cs (PreProcessRelativeReference), 
+ 	HtmlForm.cs (RenderAttributes), HtmlInputButton (RenderAttributes),
+ 	HtmlInputRadioButton (RenderAttributes), HtmlSelect (RenderChildren):
+ 	Encode attributes that could contain HTML special chars.
+ 	
+ 	* HtmlSelect (RenderChildren): HTML-encode option text.
+	* Fix for CVE-2008-3422
+
 2006-11-27  Igor Zelmanovich  <igorz@mainsoft.com>
 
 	* HtmlForm.cs: refactoring: Registering of client scripts

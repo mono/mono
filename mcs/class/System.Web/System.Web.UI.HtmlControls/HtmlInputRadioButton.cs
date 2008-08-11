@@ -123,7 +123,7 @@ namespace System.Web.UI.HtmlControls {
 			if (Page != null)
 				Page.ClientScript.RegisterForEventValidation (this.UniqueID, Value);
 #endif
-			writer.WriteAttribute ("value", Value);
+			writer.WriteAttribute ("value", Value, true);
 			Attributes.Remove ("value");
 			base.RenderAttributes (writer);
 		}
