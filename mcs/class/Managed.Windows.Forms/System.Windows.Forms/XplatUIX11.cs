@@ -4009,7 +4009,7 @@ namespace System.Windows.Forms {
 					if (!hwnd.Enabled) {
 						goto ProcessNextMessage;
 					}
-					if (xevent.CrossingEvent.mode != NotifyMode.NotifyNormal && xevent.CrossingEvent.window != hwnd.client_window) {
+					if (xevent.CrossingEvent.mode != NotifyMode.NotifyNormal) {
 						goto ProcessNextMessage;
 					}
 					msg.message = Msg.WM_MOUSE_ENTER;

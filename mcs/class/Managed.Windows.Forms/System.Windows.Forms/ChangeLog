@@ -1,3 +1,11 @@
+2008-08-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* XplatUIX11.cs: When getting EnterNotify with mode other than
+	NotifyNormal (pseudo motion events), ignore them as we used to do
+	before, since it's breaking our selection code and some drag and drop
+	operations, because of the confusion of generating extra events (not
+	fired by .net, btw).
+
 2008-08-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewCell.cs: Guard against an AOORE when checking if a cell
