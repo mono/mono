@@ -1,5 +1,13 @@
 2008-08-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* driver.c (main_thread_handler): Allow AOT compilation of multiple 
+	assemblies in one run.
+
+	* aot-compiler.c (mono_compile_assembly): Only print out a count of
+	skipped methods if it is not 0.
+
+2008-08-12  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-amd64.c (emit_call_body): Use image->aot_module instead of 
 	assembly->aot_module.
 
