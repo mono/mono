@@ -1,5 +1,14 @@
 2008-08-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* XplatUIX11.cs: Handle the obscured regions while scrolling using
+	GraphicsExpose event, processing it just after we copy the scrolled
+	area. This ensures that the next calls to ScrollWindow will copy
+	regions already updated, and the scrolling will be smooth. Also remove
+	the code that was trying to detect the obscured regions, since we are
+	not using it anymore (too slow).
+
+2008-08-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListBox.cs: Fix the -temporary- broken selection in ListBox for
 	MultiExtended mode, by separating some logic between the ctrl/shift
 	handling. Also ignore any MouseMove events generated together with

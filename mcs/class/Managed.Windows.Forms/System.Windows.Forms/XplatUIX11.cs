@@ -4860,6 +4860,33 @@ namespace System.Windows.Forms {
 			y = dest_y_return;
 		}
 
+		bool GraphicsExposePredicate (IntPtr display, ref XEvent xevent, IntPtr arg)
+		{
+			return (xevent.type == XEventName.GraphicsExpose || xevent.type == XEventName.NoExpose) &&
+				arg == xevent.GraphicsExposeEvent.drawable;
+		}
+
+		delegate bool EventPredicate (IntPtr display, ref XEvent xevent, IntPtr arg);
+
+		void ProcessGraphicsExpose (Hwnd hwnd)
+		{
+			XEvent xevent = new XEvent ();
+			IntPtr handle = Hwnd.HandleFromObject (hwnd);
+			EventPredicate predicate = GraphicsExposePredicate;
+
+			for (;;) {
+				XIfEvent (Display, ref xevent, predicate, handle);
+				if (xevent.type != XEventName.GraphicsExpose)
+					break;
+
+				AddExpose (hwnd, xevent.ExposeEvent.window == hwnd.ClientWindow, xevent.GraphicsExposeEvent.x, xevent.GraphicsExposeEvent.y,
+						xevent.GraphicsExposeEvent.width, xevent.GraphicsExposeEvent.height);
+
+				if (xevent.GraphicsExposeEvent.count == 0)
+					break;
+			}
+		}
+
 		internal override void ScrollWindow(IntPtr handle, Rectangle area, int XAmount, int YAmount, bool with_children) {
 			Hwnd		hwnd;
 			IntPtr		gc;
@@ -4912,6 +4939,8 @@ namespace System.Windows.Forms {
 
 			Rectangle dirty_area = GetDirtyArea (area, dest_rect, XAmount, YAmount);
 			AddExpose (hwnd, true, dirty_area.X, dirty_area.Y, dirty_area.Width, dirty_area.Height);
+
+			ProcessGraphicsExpose (hwnd);
 
 			XFreeGC(DisplayHandle, gc);
 		}
@@ -4966,92 +4995,8 @@ namespace System.Windows.Forms {
 				visible_area.Intersect (r);
 			}
 
-			// If region is null, the entire area is visible.
-			// Get the area not obscured otherwise.
-			Region visible_region = GetVisibleRegion (c, visible_area);
-			if (visible_region != null) {
-				RectangleF rectf = visible_region.GetBounds (Hwnd.GraphicsContext);
-				visible_area = new Rectangle ((int) rectf.X, (int) rectf.Y,
-						(int) rectf.Width, (int) rectf.Height);
-
-				visible_region.Dispose ();
-			}
-
 			visible_area.Location = c.PointToClient (visible_area.Location);
 			return visible_area;
-		}
-
-		// Obscured area by other toplevel windows
-		Region GetVisibleRegion (Control c, Rectangle visible_area)
-		{
-			Region visible_region = null;
-			IntPtr Root;
-			IntPtr Parent;
-			IntPtr Children;
-			int ChildCount;
-
-			Control form = c.FindForm ();
-			if (form == null || !form.IsHandleCreated)
-				return null;
-
-			Hwnd hwnd = Hwnd.GetObjectFromWindow (form.Handle);
-			IntPtr form_handle = hwnd.whole_window;
-
-			lock (XlibLock) {
-				XQueryTree (DisplayHandle, RootWindow, out Root, out Parent, out Children, out ChildCount);
-			}
-
-			int intptr_size = IntPtr.Size;
-			bool above = false;
-
-			for (int i = 0; i < ChildCount; i++) {
-				IntPtr window = Marshal.ReadIntPtr (Children, i * intptr_size);
-
-				XWindowAttributes win_attrs = new XWindowAttributes ();
-				lock (XlibLock) {
-					XGetWindowAttributes (DisplayHandle, window, ref win_attrs);
-				}
-
-				Rectangle win_area = new Rectangle (win_attrs.x, win_attrs.y, 
-						win_attrs.width, win_attrs.height);
-
-				if (win_attrs.map_state != MapState.IsViewable || !win_area.IntersectsWith (visible_area))
-					continue;
-
-				IntPtr SubChildren;
-				int SubChildCount;
-
-				if (above) {
-					if (visible_region == null)
-						visible_region = new Region (visible_area);
-
-					visible_region.Exclude (win_area);
-					continue;
-				}
-
-				lock (XlibLock) {
-					XQueryTree (DisplayHandle, window, out Root, out Parent, out SubChildren, out SubChildCount);
-				}
-
-				if (SubChildren != IntPtr.Zero) {
-					IntPtr sub_win = new IntPtr (Marshal.ReadInt32 (SubChildren));
-
-					lock (XlibLock) {
-						XFree (SubChildren);
-					}
-
-					if (sub_win == form_handle)
-						above = true;
-				}
-			}
-
-			if (Children != IntPtr.Zero) {
-				lock (XlibLock) {
-					XFree (Children);
-				}
-			}
-
-			return visible_region;
 		}
 
 		internal override void SendAsyncMethod (AsyncMethodData method) {
@@ -6286,6 +6231,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11")]
 		internal extern static void XPeekEvent (IntPtr display, ref XEvent xevent);
+
+		[DllImport ("libX11")]
+		internal extern static void XIfEvent (IntPtr display, ref XEvent xevent, Delegate event_predicate, IntPtr arg);
 		#endregion
 	}
 }
