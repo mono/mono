@@ -1,3 +1,8 @@
+2008-08-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata-internals.h: Move the 'aot_module' field from MonoAssembly to
+	MonoImage to simplify the AOT code.
+
 2008-08-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_marshal_object): Implement native-to-managed StringBuilder
