@@ -1134,6 +1134,17 @@ namespace Mono.CSharp {
 			expr = expr.Resolve (ec);
 			if (expr == null)
 				return null;
+
+			if (probe_type_expr.Type == TypeManager.void_type) {
+				// TODO: Void is missing location (ProbeType.Location)
+				Error_VoidInvalidInTheContext (Location);
+				return null;
+			}
+
+			if ((probe_type_expr.Type.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute) {
+				Report.Error (-244, loc, "The `{0}' operator cannot be applied to an operand of a static type",
+					OperatorName);
+			}
 			
 			if (expr.Type.IsPointer || probe_type_expr.Type.IsPointer) {
 				Report.Error (244, loc, "The `{0}' operator cannot be applied to an operand of pointer type",
@@ -6026,11 +6037,6 @@ namespace Mono.CSharp {
 			if (!ResolveArrayType (ec))
 				return null;
 
-			if ((array_element_type.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute) {
-				Report.Error (719, loc, "`{0}': array elements cannot be of static type",
-					TypeManager.CSharpName (array_element_type));
-			}
-
 			//
 			// First step is to validate the initializers and fill
 			// in any missing bits
@@ -8977,10 +8983,17 @@ namespace Mono.CSharp {
 			if (dim == "*" && !TypeManager.VerifyUnManaged (ltype, loc))
 				return null;
 
-			if (dim != "" && dim [0] == '[' &&
-			    (ltype == TypeManager.arg_iterator_type || ltype == TypeManager.typed_reference_type)) {
-				Report.Error (611, loc, "Array elements cannot be of type `{0}'", TypeManager.CSharpName (ltype));
-				return null;
+			if (dim.Length != 0 && dim [0] == '[') {
+				if (ltype == TypeManager.arg_iterator_type || ltype == TypeManager.typed_reference_type) {
+					Report.Error (611, loc, "Array elements cannot be of type `{0}'", TypeManager.CSharpName (ltype));
+					return null;
+				}
+
+				if ((ltype.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute) {
+					Report.SymbolRelatedToPreviousError (ltype);
+					Report.Error (719, loc, "Array elements cannot be of static type `{0}'", 
+						TypeManager.CSharpName (ltype));
+				}
 			}
 
 			if (dim != "")

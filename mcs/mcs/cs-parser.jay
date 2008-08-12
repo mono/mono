@@ -2366,7 +2366,7 @@ indexer_declarator
 enum_declaration
 	: opt_attributes
 	  opt_modifiers
-	  ENUM IDENTIFIER 
+	  ENUM type_name
 	  opt_enum_base {
 		if (RootContext.Documentation != null)
 			enumTypeComment = Lexer.consume_doc_comment ();
@@ -2374,11 +2374,13 @@ enum_declaration
 	  enum_body
 	  opt_semicolon
 	  {
-		LocatedToken lt = (LocatedToken) $4;
-		Location enum_location = lt.Location;
+		MemberName name = (MemberName) $4;
+		if (name.IsGeneric) {
+			Report.Error (1675, name.Location, "Enums cannot have type parameters");
+		}
 
-		MemberName name = MakeName (new MemberName (lt.Value, enum_location));
-		Enum e = new Enum (current_namespace, current_class, (FullNamedExpression) $5, (int) $2,
+		name = MakeName (name);
+		Enum e = new Enum (current_namespace, current_class, (TypeExpr) $5, (int) $2,
 				   name, (Attributes) $1);
 		
 		if (RootContext.Documentation != null)
@@ -2405,7 +2407,20 @@ enum_declaration
 
 opt_enum_base
 	: /* empty */		{ $$ = TypeManager.system_int32_expr; }
-	| COLON type		{ $$ = $2;   }
+	| COLON type
+	 {
+		if ($2 != TypeManager.system_int32_expr && $2 != TypeManager.system_uint32_expr &&
+			$2 != TypeManager.system_int64_expr && $2 != TypeManager.system_uint64_expr &&
+			$2 != TypeManager.system_int16_expr && $2 != TypeManager.system_uint16_expr &&
+			$2 != TypeManager.system_byte_expr && $2 != TypeManager.system_sbyte_expr)
+			Enum.Error_1008 (GetLocation ($2));
+	 
+		$$ = $2;
+	 }
+	| COLON error
+	 {
+	 	Error_TypeExpected (lexer.Location);
+	 }
 	;
 
 enum_body
@@ -2762,6 +2777,7 @@ builtin_types
 	| DECIMAL	{ $$ = TypeManager.system_decimal_expr; }
 	| FLOAT		{ $$ = TypeManager.system_single_expr; }
 	| DOUBLE	{ $$ = TypeManager.system_double_expr; }
+	| VOID		{ $$ = TypeManager.system_void_expr; }	
 	| integral_type
 	;
 
@@ -2775,7 +2791,6 @@ integral_type
 	| LONG		{ $$ = TypeManager.system_int64_expr; }
 	| ULONG		{ $$ = TypeManager.system_uint64_expr; }
 	| CHAR		{ $$ = TypeManager.system_char_expr; }
-	| VOID		{ $$ = TypeManager.system_void_expr; }
 	;
 
 array_type

@@ -124,9 +124,7 @@ namespace Mono.CSharp {
 	{
 		public static readonly string UnderlyingValueField = "value__";
 
-		FullNamedExpression base_type;
-
-		public Type UnderlyingType;
+		TypeExpr base_type;
 
 		const int AllowedModifiers =
 			Modifiers.NEW |
@@ -135,7 +133,7 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Enum (NamespaceEntry ns, DeclSpace parent, FullNamedExpression type,
+		public Enum (NamespaceEntry ns, DeclSpace parent, TypeExpr type,
 			     int mod_flags, MemberName name, Attributes attrs)
 			: base (ns, parent, name, attrs, Kind.Enum)
 		{
@@ -166,26 +164,6 @@ namespace Mono.CSharp {
 			if (!base.DefineNestedTypes ())
 				return false;
 
-			if (!(base_type is TypeLookupExpression)) {
-				Error_1008 (Location);
-				return false;
-			}
-
-			TypeExpr ute = base_type.ResolveAsTypeTerminal (this, false);
-			UnderlyingType = ute.Type;
-
-			if (UnderlyingType != TypeManager.int32_type &&
-			    UnderlyingType != TypeManager.uint32_type &&
-			    UnderlyingType != TypeManager.int64_type &&
-			    UnderlyingType != TypeManager.uint64_type &&
-			    UnderlyingType != TypeManager.short_type &&
-			    UnderlyingType != TypeManager.ushort_type &&
-			    UnderlyingType != TypeManager.byte_type  &&
-			    UnderlyingType != TypeManager.sbyte_type) {
-				Error_1008 (Location);
-				return false;
-			}
-
 			//
 			// Call MapToInternalType for corlib
 			//
@@ -214,6 +192,12 @@ namespace Mono.CSharp {
 			}
 
 			throw new ArgumentOutOfRangeException (value.ToString ());
+		}
+		
+		public Type UnderlyingType {
+			get {
+				return base_type.Type;
+			}
 		}
 
 		protected override bool VerifyClsCompliance ()

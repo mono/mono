@@ -2757,7 +2757,10 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			return ((Statement) statements [0]).CreateExpressionTree (ec);
+			if (statements.Count == 1)
+				return ((Statement) statements [0]).CreateExpressionTree (ec);
+
+			return base.CreateExpressionTree (ec);
 		}
 
 		//

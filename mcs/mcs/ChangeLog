@@ -1,4 +1,12 @@
-2008-11-08  Marek Safar  <marek.safar@gmail.com>
+2008-08-12  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-parser.jay, enum.cs: Simplified enum parsing.
+	
+	* decl.cs: Check all type parameters conflicts.
+	
+	* expression.cs, statement.cs, attribute.cs: More expression checks.
+
+2008-08-11  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs: Add type inference types restriction.
 	

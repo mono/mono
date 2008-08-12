@@ -491,7 +491,8 @@ namespace Mono.CSharp {
 			}
 
 			if (Type == TypeManager.indexer_name_type || Type == TypeManager.conditional_attribute_type) {
-				if (!Tokenizer.IsValidIdentifier ((string)pos_values [0])) {
+				string v = pos_values [0] as string;
+				if (!Tokenizer.IsValidIdentifier (v) || Tokenizer.IsKeyword (v)) {
 					Report.Error (633, ((Argument)PosArguments[0]).Expr.Location,
 						"The argument to the `{0}' attribute must be a valid identifier", GetSignatureForError ());
 					return null;

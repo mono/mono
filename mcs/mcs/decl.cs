@@ -1272,26 +1272,6 @@ namespace Mono.CSharp {
 		protected TypeParameter[] type_params;
 		TypeParameter[] type_param_list;
 
-		bool check_type_parameter (ArrayList list, int start, string name)
-		{
-			for (int i = 0; i < start; i++) {
-				TypeParameter param = (TypeParameter) list [i];
-
-				if (param.Name != name)
-					continue;
-
-				Report.SymbolRelatedToPreviousError (Parent);
-				// TODO: Location is wrong (parent instead of child)
-				Report.Warning (693, 3, Location,
-					"Type parameter `{0}' has the same name as the type parameter from outer type `{1}'",
-					name, Parent.GetSignatureForError ());
-
-				return false;
-			}
-
-			return true;
-		}
-
 		TypeParameter[] initialize_type_params ()
 		{
 			if (type_param_list != null)
@@ -1301,20 +1281,28 @@ namespace Mono.CSharp {
 			if (this is GenericMethod)
 				the_parent = null;
 
-			int start = 0;
 			ArrayList list = new ArrayList ();
 			if (the_parent != null && the_parent.IsGeneric) {
 				// FIXME: move generics info out of DeclSpace
 				TypeParameter[] parent_params = the_parent.PartialContainer.TypeParameters;
-				start = parent_params.Length;
 				list.AddRange (parent_params);
 			}
  
 			int count = type_params != null ? type_params.Length : 0;
 			for (int i = 0; i < count; i++) {
 				TypeParameter param = type_params [i];
-				check_type_parameter (list, start, param.Name);
 				list.Add (param);
+				if (Parent.IsGeneric) {
+					foreach (TypeParameter tp in Parent.PartialContainer.CurrentTypeParameters) {
+						if (tp.Name != param.Name)				
+							continue;
+
+						Report.SymbolRelatedToPreviousError (tp.Location, null);
+						Report.Warning (693, 3, param.Location,
+							"Type parameter `{0}' has the same name as the type parameter from outer type `{1}'",
+							param.Name, Parent.GetSignatureForError ());
+					}
+				}
 			}
 
 			type_param_list = new TypeParameter [list.Count];
