@@ -5770,7 +5770,7 @@ namespace Mono.CSharp {
 				return true;
 
 			if (isStatic) {
-				if (TypeManager.IsEqual (type, Parent.TypeBuilder))
+				if (!TypeManager.IsValueType (type) || TypeManager.IsEqual (type, Parent.TypeBuilder))
 					return true;
 			}
 

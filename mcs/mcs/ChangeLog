@@ -1,5 +1,9 @@
 2008-08-12  Marek Safar  <marek.safar@gmail.com>
 
+	* class.cs: Fixed struct layout check regression.
+
+2008-08-12  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-parser.jay, enum.cs: Simplified enum parsing.
 	
 	* decl.cs: Check all type parameters conflicts.
