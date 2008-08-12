@@ -1,3 +1,13 @@
+2008-08-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c (main_thread_handler): Allow AOT compilation of multiple 
+	assemblies in one run.
+
+	* aot-compiler.c (mono_compile_assembly): Only print out a count of
+	skipped methods if it is not 0.
+
+	* Makefile.am (aotcheck): AOT compile all test assemblies in one run.
+
 2008-08-12  Bill Holmes  <billholmes54@gmail.com>
 
 	* mini.c (mono_codegen):  Changing a preprocessor check from WIN64 to
@@ -18,7 +28,6 @@
 	* mini-amd64.c (mono_arch_setup_jit_tls_data):  Added Winx64 implementation.
 
 	Contributed under MIT/X11 license.
-
 
 2008-08-12  Zoltan Varga  <vargaz@gmail.com>
 
