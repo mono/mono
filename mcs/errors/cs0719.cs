@@ -1,4 +1,4 @@
-// cs0719.cs: `StaticClass': array elements cannot be of static type
+// CS0719: Array elements cannot be of static type `StaticClass'
 // Line: 10
 
 static class StaticClass {
