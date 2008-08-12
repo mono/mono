@@ -1,5 +1,12 @@
 2008-08-12  Bill Holmes  <billholmes54@gmail.com>
 
+	* mini.c (mono_codegen):  Changing a preprocessor check from WIN64 to
+	  MONO_ARCH_HAVE_UNWIND_TABLE.
+
+	Contributed under MIT/X11 license.
+
+2008-08-12  Bill Holmes  <billholmes54@gmail.com>
+
 	* mini-amd64.c (mono_arch_cpu_optimizazions):  Remove peephole and branch
 	  from default optimizaton list on Winx64.
 
