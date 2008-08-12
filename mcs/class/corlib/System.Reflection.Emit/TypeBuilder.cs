@@ -751,6 +751,20 @@ namespace System.Reflection.Emit
 			}
 			return false;
 		}
+
+		// Return whenever this type has a ctor defined using DefineMethod ()
+		private bool has_ctor_method () {
+			MethodAttributes ctor_attrs = MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
+
+			for (int i = 0; i < num_methods; ++i) {
+				MethodBuilder mb = (MethodBuilder)(methods[i]);
+
+				if (mb.Name == ConstructorInfo.ConstructorName && (mb.Attributes & ctor_attrs) == ctor_attrs)
+					return true;
+			}
+
+			return false;
+	    }
 		
 		public Type CreateType()
 		{
@@ -804,7 +818,7 @@ namespace System.Reflection.Emit
 			// On classes, define a default constructor if not provided
 			//
 			if (!(IsInterface || IsValueType) && (ctors == null) && (tname != "<Module>") && 
-				(GetAttributeFlagsImpl () & TypeAttributes.Abstract | TypeAttributes.Sealed) != (TypeAttributes.Abstract | TypeAttributes.Sealed))
+				(GetAttributeFlagsImpl () & TypeAttributes.Abstract | TypeAttributes.Sealed) != (TypeAttributes.Abstract | TypeAttributes.Sealed) && !has_ctor_method ())
 				DefineDefaultConstructor (MethodAttributes.Public);
 
 			if (ctors != null){
