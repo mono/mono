@@ -1,5 +1,10 @@
 2008-08-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (SIG_HANDLER_SIGNATURE): Avoid crashes if the thread is not registered
+	with the runtime.
+
+	* mini-exceptions.c: Ditto.
+	
 	* exceptions-*c.c (mono_arch_find_jit_info): Remove unused 'trace' and
 	'native_offset' argument, since these are computed in the 
 	mono_find_jit_info () function.
