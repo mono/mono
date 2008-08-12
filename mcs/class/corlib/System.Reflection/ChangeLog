@@ -1,3 +1,8 @@
+2008-08-12  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ReflectionSerializationHolder.cs: Removed.
+	* common.src: Removed.
+
 2008-08-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Assembly.cs : return UnmanagedMemoryStream from 

@@ -1,3 +1,7 @@
+2008-08-12  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* corlib.dll.sources: Removed ReflectionSerializationHolder.cs.
+
 2008-08-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Add System.Security/SecurityState.cs
