@@ -1,5 +1,7 @@
 2008-08-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (sigsegv_signal_handler): Fix the build.
+
 	* mini-amd64.c (emit_call_body): Use image->aot_module instead of 
 	assembly->aot_module.
 
