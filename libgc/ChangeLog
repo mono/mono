@@ -1,3 +1,9 @@
+2008-08-12  Geoff Norton  <gnorton@novell.com>
+
+	* pthread_support.c: GCC shipped with SLES9 ppc gets confused with our current
+	GC_setspecific define.  Unfold the define into a static inline on all platforms
+	except ppc where it is a static leaf function.
+
 2008-08-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* include/private/gc_locks.h: Add amd64 support so parallel mark works on
