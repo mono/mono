@@ -1,5 +1,14 @@
 2008-08-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (emit_call_body): Use image->aot_module instead of 
+	assembly->aot_module.
+
+	* aot-runtime.c: Use image->aot_module instead of searching in the aot_modules
+	hash table. This simplifies and speeds up a lot of code, and fixes support
+	for .netmodules.
+
+2008-08-12  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini.c (SIG_HANDLER_SIGNATURE): Avoid crashes if the thread is not registered
 	with the runtime.
 
