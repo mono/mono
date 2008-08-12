@@ -1,3 +1,7 @@
+2008-08-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeBuilderTest.cs: Add new test for #416632.
+
 2008-07-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MethodOnTypeBuilderInstTest.cs: Regression test for #412965.

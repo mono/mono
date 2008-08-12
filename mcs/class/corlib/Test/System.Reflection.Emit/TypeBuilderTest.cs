@@ -195,6 +195,22 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		public void DefineCtorUsingDefineMethod ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public | TypeAttributes.Class);
+			MethodBuilder mb = tb.DefineMethod(".ctor",
+											   MethodAttributes.Public | MethodAttributes.RTSpecialName | MethodAttributes.SpecialName);
+			ILGenerator ilgen = mb.GetILGenerator();
+			ilgen.Emit(OpCodes.Ldarg_0);
+			ilgen.Emit(OpCodes.Call,
+					   typeof(object).GetConstructor(Type.EmptyTypes));
+			ilgen.Emit(OpCodes.Ret);
+			Type t = tb.CreateType();
+
+			Assert.AreEqual (1, t.GetConstructors ().Length);
+		}
+
+		[Test]
 		public void TestGUIDIncomplete ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
