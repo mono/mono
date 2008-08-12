@@ -443,7 +443,7 @@ namespace System.Net.Mail {
 			mutex.WaitOne ();
 			try {
 				messageInProcess = message;
-				SendCore (message);
+				SendInternal (message);
 			} catch (CancellationException) {
 				// This exception is introduced for convenient cancellation process.
 			} finally {
@@ -453,19 +453,35 @@ namespace System.Net.Mail {
 			}
 		}
 
+		private void SendInternal (MailMessage message)
+		{
+			CheckCancellation ();
+
+			try {
+				client = new TcpClient (host, port);
+				stream = client.GetStream ();
+				// FIXME: this StreamWriter creation is bogus.
+				// It expects as if a Stream were able to switch to SSL
+				// mode (such behavior is only in Mainsoft Socket API).
+				writer = new StreamWriter (stream);
+				reader = new StreamReader (stream);
+
+				SendCore (message);
+			} finally {
+				if (writer != null)
+					writer.Close ();
+				if (reader != null)
+					reader.Close ();
+				if (stream != null)
+					stream.Close ();
+				if (client != null)
+					client.Close ();
+			}
+		}
+
 		private void SendCore (MailMessage message)
 		{
 			SmtpResponse status;
-
-			CheckCancellation ();
-
-			client = new TcpClient (host, port);
-			stream = client.GetStream ();
-			// FIXME: this StreamWriter creation is bogus.
-			// It expects as if a Stream were able to switch to SSL
-			// mode (such behavior is only in Mainsoft Socket API).
-			writer = new StreamWriter (stream);
-			reader = new StreamReader (stream);
 
 			status = Read ();
 			if (IsError (status))
@@ -605,11 +621,6 @@ namespace System.Net.Mail {
 			} catch (System.IO.IOException) {
 				// We excuse server for the rude connection closing as a response to QUIT
 			}
-
-			writer.Close ();
-			reader.Close ();
-			stream.Close ();
-			client.Close ();
 		}
 
 		public void Send (string from, string to, string subject, string body)

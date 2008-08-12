@@ -1,3 +1,8 @@
+2008-08-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SmtpClient.cs : fixed bug #392682, in the same spirit in the
+	  patch by Ted Unangst, to assure safety on socket closing.
+
 2008-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SmtpClient.cs : Fixed bug #392809, patch by Ted Unangst. Text body
