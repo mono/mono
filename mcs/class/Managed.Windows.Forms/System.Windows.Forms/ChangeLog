@@ -1,3 +1,11 @@
+2008-08-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBox.cs: Fix the -temporary- broken selection in ListBox for
+	MultiExtended mode, by separating some logic between the ctrl/shift
+	handling. Also ignore any MouseMove events generated together with
+	MouseDown events - we are only interested in the real motion event.
+	Fixes part of #414963.
+
 2008-08-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewCell.cs: Guard against an AOORE when checking if a cell

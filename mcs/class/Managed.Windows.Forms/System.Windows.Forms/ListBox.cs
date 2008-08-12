@@ -1696,6 +1696,7 @@ namespace System.Windows.Forms
 		int anchor = -1;
 		int[] prev_selection;
 		bool button_pressed = false;
+		Point button_pressed_loc = new Point (-1, -1);
 
 		private void SelectExtended (int index)
 		{
@@ -1709,7 +1710,7 @@ namespace System.Windows.Forms
 
 			if (ctrl_pressed)
 				foreach (int i in prev_selection)
-					if (!selected_indices.Contains (i))
+					if (!new_selection.Contains (i))
 						new_selection.Add (i);
 
 			// Need to make a copy since we can't enumerate and modify the collection
@@ -1751,16 +1752,28 @@ namespace System.Windows.Forms
 				shift_pressed = (XplatUI.State.ModifierKeys & Keys.Shift) != 0;
 				ctrl_pressed = (XplatUI.State.ModifierKeys & Keys.Control) != 0;
 
+				if (shift_pressed) {
+					SelectedIndices.ClearCore ();
+					SelectExtended (index);
+					break;
+				}
+
+				anchor = index;
+
 				if (ctrl_pressed) {
 					prev_selection = new int [SelectedIndices.Count];
 					SelectedIndices.CopyTo (prev_selection, 0);
-				} else
-					SelectedIndices.ClearCore ();
 
-				if (!shift_pressed)
-					anchor = index;
+					if (SelectedIndices.Contains (index))
+						SelectedIndices.RemoveCore (index);
+					else
+						SelectedIndices.AddCore (index);
 
-				SelectExtended (index);
+					break;
+				}
+
+				SelectedIndices.ClearCore ();
+				SelectedIndices.AddCore (index);
 				break;
 
 			case SelectionMode.None:
@@ -1770,15 +1783,19 @@ namespace System.Windows.Forms
 			}
 
 			button_pressed = true;
+			button_pressed_loc = new Point (e.X, e.Y);
 			FocusedItem = index;
 		}
 
 		private void OnMouseMoveLB (object sender, MouseEventArgs e)
 		{
-			if (!button_pressed)
+			// Don't take into account MouseMove events generated with MouseDown
+			if (!button_pressed || button_pressed_loc == new Point (e.X, e.Y))
 				return;
 
 			int index = IndexAtClientPoint (e.X, e.Y);
+			if (index == -1)
+				return;
 
 			switch (SelectionMode) {
 			case SelectionMode.One:
