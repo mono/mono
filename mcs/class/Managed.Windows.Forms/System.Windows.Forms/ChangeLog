@@ -1,5 +1,13 @@
 2008-08-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListBox.cs: Fix the -temporary- broken selection in ListBox for
+	MultiExtended mode, by separating some logic between the ctrl/shift
+	handling. Also ignore any MouseMove events generated together with
+	MouseDown events - we are only interested in the real motion event.
+	Fixes part of #414963.
+
+2008-08-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* XplatUIX11.cs: When getting EnterNotify with mode other than
 	NotifyNormal (pseudo motion events), ignore them as we used to do
 	before, since it's breaking our selection code and some drag and drop
