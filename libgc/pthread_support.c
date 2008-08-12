@@ -97,8 +97,11 @@
       typedef pthread_key_t GC_key_t;
 #   endif
 #   if defined(USE_COMPILER_TLS)
+/* Note sles9 gcc on powerpc gets confused by the define to set GC_thread_tls and pthread_setspecific
+ * so we actually use a static inline function decalred below that is equivalent to:
+ *   define GC_setspecific(key, v) (GC_thread_tls = (v), pthread_setspecific ((key), (v)))
+ */
 #     define GC_getspecific(x) (GC_thread_tls)
-#     define GC_setspecific(key, v) (GC_thread_tls = (v), pthread_setspecific ((key), (v)))
 #     define GC_key_create pthread_key_create
       typedef pthread_key_t GC_key_t;
 #   endif
@@ -191,14 +194,19 @@ static
 GC_key_t GC_thread_key;
 
 #ifdef USE_COMPILER_TLS
+__thread MONO_TLS_FAST void* GC_thread_tls;
+
 /*
  * gcc errors out with /tmp/ccdPMFuq.s:2994: Error: symbol `.LTLS4' is already defined
- * if the static is removed on ppc.
+ * if the inline is added on powerpc
  */
-#if defined(__ppc__) || defined(__powerpc__)
-static
+#if !defined(__ppc__) && !defined(__powerpc__)
+inline
 #endif
-__thread MONO_TLS_FAST void* GC_thread_tls;
+static int GC_setspecific (GC_key_t key, void *value) {
+	GC_thread_tls = value;
+	return pthread_setspecific (key, value);
+}
 #endif
 
 static GC_bool keys_initialized;
