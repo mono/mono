@@ -13252,10 +13252,8 @@ SIG_HANDLER_SIGNATURE (sigsegv_signal_handler)
 	MonoException *exc = NULL;
 #endif
 	MonoJitInfo *ji;
-
-#ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
 	MonoJitTlsData *jit_tls = TlsGetValue (mono_jit_tls_id);
-#endif
+
 	GET_CONTEXT;
 
 #ifdef MONO_ARCH_USE_SIGACTION
@@ -13272,7 +13270,6 @@ SIG_HANDLER_SIGNATURE (sigsegv_signal_handler)
 #endif
 
 	/* The thread might no be registered with the runtime */
-	MonoJitTlsData *jit_tls = TlsGetValue (mono_jit_tls_id);
 	if (!mono_domain_get () || !jit_tls)
 		mono_handle_native_sigsegv (SIGSEGV, ctx);
 
