@@ -1,3 +1,8 @@
+2008-08-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeBuilder.cs (CreateType): Avoid creating a default ctor if the
+	type has a constructor defined using DefineMethod. Fixes #416632.
+
 2008-07-11  Marek Safar  <marek.safar@gmail.com>
 
 	* ModuleBuilder.cs: Couple of micro optimizations.
