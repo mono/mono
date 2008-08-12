@@ -1,3 +1,10 @@
+2008-08-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (SIG_HANDLER_SIGNATURE): Avoid crashes if the thread is not registered
+	with the runtime.
+
+	* mini-exceptions.c: Ditto.
+
 2008-08-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (mono_aot_get_method): Avoid doing all the loading inside
