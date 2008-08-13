@@ -519,12 +519,17 @@ namespace System.Data {
 			}
 
 			foreach (DataColumn col in Table.Columns)
-				CheckValue (this [col], col);
+				CheckValue (this [col], col, false);
 		}
 
-		private void CheckValue (object v, DataColumn col) 
+		void CheckValue (object v, DataColumn col)
+		{
+			CheckValue (v, col, true);
+		}
+		
+		private void CheckValue (object v, DataColumn col, bool doROCheck) 
 		{		
-			if (_hasParentCollection && col.ReadOnly) {
+			if (doROCheck && _hasParentCollection && col.ReadOnly) {
 				throw new ReadOnlyException ();
 			}
 

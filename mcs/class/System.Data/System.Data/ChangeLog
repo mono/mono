@@ -1,3 +1,8 @@
+2008-08-13  Marek Habersack  <mhabersack@novell.com>
+
+	* DataRow.cs: do not check whether a column is read-only when
+	importing a record.
+
 2008-07-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataRow.cs: Use indexer of DataColumnCollection instead of IndexOf.
