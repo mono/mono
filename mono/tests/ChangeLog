@@ -1,3 +1,8 @@
+2008-08-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (DISABLED_TESTS): Remove appdomain-unload.exe, it seems to
+	work now, also it is too important to stay disabled.
+
 2008-08-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke3.cs: Add test for #416078.
