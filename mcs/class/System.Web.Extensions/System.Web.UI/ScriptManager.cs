@@ -400,6 +400,7 @@ namespace System.Web.UI
 
 		static void SetCurrent (Page page, ScriptManager instance) {
 			page.Items [ScriptManagerKey] = instance;
+			page.ClientScript.RegisterWebFormClientScript ();
 		}
 
 		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection) {
@@ -1141,8 +1142,15 @@ namespace System.Web.UI
 #endif
 			HttpException httpEx = ex as HttpException;
 			string message = AsyncPostBackErrorMessage;
-			if (String.IsNullOrEmpty (message) && writeMessage)
-				message = ex.Message;
+			if (String.IsNullOrEmpty (message) && writeMessage) {
+				HttpContext ctx = HttpContext.Current;
+				
+				if (IsDebuggingEnabled)
+					message = ex.ToString ();
+				else
+					message = ex.Message;
+			}
+			
 			WriteCallbackOutput (output, error, httpEx == null ? "500" : httpEx.GetHttpCode ().ToString (), message);
 		}
 

@@ -1,3 +1,12 @@
+2008-08-13  Marek Habersack  <mhabersack@novell.com>
+
+	* ScriptManager.cs: always request the webform.js script to be
+	present. It may happen that a control during a dynamic update will
+	need to call one of the WebForm_* functions and the call will fail
+	as the script will be absent.
+	If debugging is enabled, send the full exception backtrace in
+	WriteCallbackException - helps debugging AJAX errors.
+
 2008-08-08  Marek Habersack  <mhabersack@novell.com>
 
 	* UpdatePanel.cs: do not check whether a panel whose children are
