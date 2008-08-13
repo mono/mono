@@ -10701,6 +10701,42 @@
       </method>
     </type>
   </test>
+  <test name="gtest-405.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-406.cs">
+    <type name="Test`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Foo[TOutput](System.Func`2[T,TOutput])">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="C`2[A,B]">
+      <method name="Void .ctor(IEnumerable`1)">
+        <size>46</size>
+      </method>
+      <method name="B &lt;C&gt;m__0(B)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="M">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
