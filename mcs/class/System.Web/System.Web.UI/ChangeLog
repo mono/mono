@@ -1,3 +1,8 @@
+2008-08-13  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateBuilder.cs: use a generic List to store the bindings on
+	2.0+
+
 2008-08-08  Marek Habersack  <mhabersack@novell.com>
 
 	* StateManagedCollection.cs: set all the contained objects state
