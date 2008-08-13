@@ -1,3 +1,8 @@
+2008-08-13  Marek Habersack  <mhabersack@novell.com>
+
+	* DataRow.cs: do not check whether a column is read-only when
+	importing a record.
+
 2008-08-08  Raja R Harinath  <harinath@hurrynot.org>
 
 	* DataColumn.cs: Update to changes in DataCollection.
