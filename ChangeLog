@@ -1,3 +1,10 @@
+2008-08-13  Bill Holmes  <billholmes54@gmail.com>
+
+	* winconfig.h:  Updating the config file for MSVC builds to match
+ 	  the config file used when compiling with gcc in Cygwin.
+
+	Contributed under MIT/X11 license.
+
 2008-08-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* scripts/Makefile.am (EXTRA_DIST): Add patch-quiet.sh.
