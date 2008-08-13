@@ -82,8 +82,8 @@ namespace System.Net
 //		Uri baseAddress;
 //		string baseString;
 //		NameValueCollection queryString;
-//		bool is_busy, async;
-//		Thread async_thread;
+		bool is_busy, async;
+		Thread async_thread;
 //		Encoding encoding = Encoding.Default;
 //		IWebProxy proxy;
 //
@@ -199,32 +199,26 @@ namespace System.Net
 //		}
 //#endif
 //
-//#if NET_2_0
-//		public bool IsBusy {
-//			get { return is_busy; } 
-//		}
-//#else
-//		bool IsBusy {
-//			get { return is_busy; }
-//		}
-//#endif
-//
-//		// Methods
-//
-//		void CheckBusy ()
-//		{
-//			if (IsBusy)
-//				throw new NotSupportedException ("WebClient does not support conccurent I/O operations.");
-//		}
-//
-//		void SetBusy ()
-//		{
-//			lock (this) {
-//				CheckBusy ();
-//				is_busy = true;
-//			}
-//		}
-//
+		public bool IsBusy {
+			get { return is_busy; }
+		}
+
+		// Methods
+
+		void CheckBusy ()
+		{
+			if (IsBusy)
+				throw new NotSupportedException ("WebClient does not support conccurent I/O operations.");
+		}
+
+		void SetBusy ()
+		{
+			lock (this) {
+				CheckBusy ();
+				is_busy = true;
+			}
+		}
+
 //		//   DownloadData
 //
 //		public byte [] DownloadData (string address)
@@ -800,9 +794,9 @@ namespace System.Net
 //
 //		public event DownloadDataCompletedEventHandler DownloadDataCompleted;
 //		public event AsyncCompletedEventHandler DownloadFileCompleted;
-//		public event DownloadProgressChangedEventHandler DownloadProgressChanged;
+		public event DownloadProgressChangedEventHandler DownloadProgressChanged;
 //		public event DownloadStringCompletedEventHandler DownloadStringCompleted;
-//		public event OpenReadCompletedEventHandler OpenReadCompleted;
+		public event OpenReadCompletedEventHandler OpenReadCompleted;
 //		public event OpenWriteCompletedEventHandler OpenWriteCompleted;
 //		public event UploadDataCompletedEventHandler UploadDataCompleted;
 //		public event UploadFileCompletedEventHandler UploadFileCompleted;
@@ -865,17 +859,15 @@ namespace System.Net
 //			return new Uri (baseAddress, path + query, (query != null));
 //		}
 //		
-//		WebRequest SetupRequest (Uri uri)
-//		{
-//			WebRequest request = WebRequest.Create (uri);
-//#if NET_2_0
+		WebRequest SetupRequest (Uri uri)
+		{
+			WebRequest request = WebRequest.Create (uri);
 //			if (Proxy != null)
 //				request.Proxy = Proxy;
-//#endif
 //			request.Credentials = credentials;
-//
-//			// Special headers. These are properties of HttpWebRequest.
-//			// What do we do with other requests differnt from HttpWebRequest?
+
+			// Special headers. These are properties of HttpWebRequest.
+			// What do we do with other requests differnt from HttpWebRequest?
 //			if (headers != null && headers.Count != 0 && (request is HttpWebRequest)) {
 //				HttpWebRequest req = (HttpWebRequest) request;
 //				string expect = headers ["Expect"];
@@ -912,22 +904,22 @@ namespace System.Net
 //			}
 //
 //			responseHeaders = null;
-//			return request;
-//		}
-//
+			return request;
+		}
+
 //		WebRequest SetupRequest (Uri uri, string method)
 //		{
 //			WebRequest request = SetupRequest (uri);
 //			request.Method = DetermineMethod (uri, method);
 //			return request;
 //		}
-//
-//		Stream ProcessResponse (WebResponse response)
-//		{
+
+		Stream ProcessResponse (WebResponse response)
+		{
 //			responseHeaders = response.Headers;
-//			return response.GetResponseStream ();
-//		}
-//
+			return response.GetResponseStream ();
+		}
+
 //		byte [] ReadAll (Stream stream, int length, object userToken)
 //		{
 //			MemoryStream ms = null;
@@ -1035,14 +1027,14 @@ namespace System.Net
 //			}
 //		}
 //
-//		void CompleteAsync ()
-//		{
-//			lock (this){
-//				is_busy = false;
-//				async_thread = null;
-//			}
-//		}
-//
+		void CompleteAsync ()
+		{
+			lock (this){
+				is_busy = false;
+				async_thread = null;
+			}
+		}
+
 //		//    DownloadDataAsync
 //
 //		public void DownloadDataAsync (Uri address)
@@ -1149,44 +1141,47 @@ namespace System.Net
 //			}
 //		}
 //
-//		//    OpenReadAsync
-//
-//		public void OpenReadAsync (Uri address)
-//		{
-//			OpenReadAsync (address, null);
-//		}
-//
-//		public void OpenReadAsync (Uri address, object userToken)
-//		{
-//			if (address == null)
-//				throw new ArgumentNullException ("address");
-//			
-//			lock (this) {
-//				SetBusy ();
-//				async = true;
-//
-//				async_thread = new Thread (delegate (object state) {
-//					object [] args = (object []) state;
-//					WebRequest request = null;
-//					try {
-//						request = SetupRequest ((Uri) args [0]);
-//						WebResponse response = request.GetResponse ();
-//						Stream stream = ProcessResponse (response);
-//						OnOpenReadCompleted (
-//							new OpenReadCompletedEventArgs (stream, null, false, args [1]));
-//					} catch (ThreadInterruptedException){
-//						if (request != null)
-//							request.Abort ();
-//						
-//						OnOpenReadCompleted (new OpenReadCompletedEventArgs (null, null, true, args [1]));
-//					} catch (Exception e){
-//						OnOpenReadCompleted (new OpenReadCompletedEventArgs (null, e, false, args [1]));
-//					} });
-//				object [] cb_args = new object [] {address, userToken};
-//				async_thread.Start (cb_args);
-//			}
-//		}
-//
+		//    OpenReadAsync
+
+		public void OpenReadAsync (Uri address)
+		{
+			OpenReadAsync (address, null);
+		}
+
+		public void OpenReadAsync (Uri address, object userToken)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
+			lock (this) {
+				SetBusy ();
+				async = true;
+
+				async_thread = new Thread (delegate (object state) {
+					object [] args = (object []) state;
+					WebRequest request = null;
+					try {
+						request = SetupRequest ((Uri) args [0]);
+						//WebResponse response = request.GetResponse ();
+						IAsyncResult asyncresult = request.BeginGetResponse (null, userToken);
+						asyncresult.AsyncWaitHandle.WaitOne ();
+						WebResponse response = request.EndGetResponse (asyncresult);
+						Stream stream = ProcessResponse (response);
+						OnOpenReadCompleted (
+							new OpenReadCompletedEventArgs (stream, null, false, args [1]));
+					} catch (ThreadInterruptedException){
+						if (request != null)
+							request.Abort ();
+
+						OnOpenReadCompleted (new OpenReadCompletedEventArgs (null, null, true, args [1]));
+					} catch (Exception e){
+						OnOpenReadCompleted (new OpenReadCompletedEventArgs (null, e, false, args [1]));
+					} });
+				object [] cb_args = new object [] {address, userToken};
+				async_thread.Start (cb_args);
+			}
+		}
+
 //		//    OpenWriteAsync
 //
 //		public void OpenWriteAsync (Uri address)
@@ -1414,12 +1409,12 @@ namespace System.Net
 //				DownloadFileCompleted (this, args);
 //		}
 //
-//		protected virtual void OnDownloadProgressChanged (DownloadProgressChangedEventArgs e)
-//		{
-//			if (DownloadProgressChanged != null)
-//				DownloadProgressChanged (this, e);
-//		}
-//
+		protected virtual void OnDownloadProgressChanged (DownloadProgressChangedEventArgs e)
+		{
+			if (DownloadProgressChanged != null)
+				DownloadProgressChanged (this, e);
+		}
+
 //		protected virtual void OnDownloadStringCompleted (DownloadStringCompletedEventArgs args)
 //		{
 //			CompleteAsync ();
@@ -1427,13 +1422,13 @@ namespace System.Net
 //				DownloadStringCompleted (this, args);
 //		}
 //
-//		protected virtual void OnOpenReadCompleted (OpenReadCompletedEventArgs args)
-//		{
-//			CompleteAsync ();
-//			if (OpenReadCompleted != null)
-//				OpenReadCompleted (this, args);
-//		}
-//
+		protected virtual void OnOpenReadCompleted (OpenReadCompletedEventArgs args)
+		{
+			CompleteAsync ();
+			if (OpenReadCompleted != null)
+				OpenReadCompleted (this, args);
+		}
+
 //		protected virtual void OnOpenWriteCompleted (OpenWriteCompletedEventArgs args)
 //		{
 //			CompleteAsync ();
