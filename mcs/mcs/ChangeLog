@@ -1,3 +1,7 @@
+2008-08-13  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, lambda.cs: Inflate method generic arguments only.
+
 2008-08-12  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs: Fixed struct layout check regression.

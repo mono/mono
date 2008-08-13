@@ -2741,8 +2741,15 @@ namespace Mono.CSharp {
 		//
 		public Type InflateGenericArgument (Type parameter)
 		{
-			if (parameter.IsGenericParameter)
+			if (parameter.IsGenericParameter) {
+				//
+				// Inflate method generic argument (MVAR) only
+				//
+				if (parameter.DeclaringMethod == null)
+					return parameter;
+
 				return fixed_types [parameter.GenericParameterPosition];
+			}
 
 			if (parameter.IsGenericType) {
 				Type [] parameter_targs = parameter.GetGenericArguments ();
