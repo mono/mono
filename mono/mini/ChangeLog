@@ -1,3 +1,10 @@
+2008-08-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (check_inline_called_method_name_limit): Optimize this to
+	avoid calling mono_method_full_name () for every method even if the
+	env var is not set.
+	(check_inline_caller_method_name_limit): Ditto.
+
 2008-08-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* driver.c (main_thread_handler): Allow AOT compilation of multiple 
