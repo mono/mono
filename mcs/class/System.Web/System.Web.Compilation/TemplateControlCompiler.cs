@@ -40,11 +40,11 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.Util;
 using System.ComponentModel.Design.Serialization;
+using System.Text.RegularExpressions;
 #if NET_2_0
 using System.Configuration;
 using System.Collections.Specialized;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Web.Configuration;
 #endif
 
@@ -65,10 +65,11 @@ namespace System.Web.Compilation
 		internal static CodeVariableReferenceExpression ctrlVar = new CodeVariableReferenceExpression ("__ctrl");
 		
 #if NET_2_0
-		static Regex bindRegex = new Regex (@"Bind\s*\(""(.*?)""\)\s*%>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-		static Regex bindRegexInValue = new Regex (@"Bind\s*\(""(.*?)""\)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		static Regex bindRegex = new Regex (@"Bind\s*\([""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\)\s*%>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		static Regex bindRegexInValue = new Regex (@"Bind\s*\([""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 #endif
-
+		static Regex evalRegexInValue = new Regex (@"Eval\s*\([""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		
 		public TemplateControlCompiler (TemplateControlParser parser)
 			: base (parser)
 		{
@@ -434,22 +435,46 @@ namespace System.Web.Compilation
 			return str.Substring (0, str.Length - 2);
 		}
 
+		CodeMethodInvokeExpression CreateEvalInvokeExpression (Regex regex, string value, int first, int second)
+		{
+			Match match = regex.Match (value);
+			if (!match.Success)
+				return null;
+
+			Group secondGroup = match.Groups [second];
+			CodeMethodInvokeExpression ret = new CodeMethodInvokeExpression ();
+
+			ret.Method = new CodeMethodReferenceExpression (thisRef, "Eval");
+			ret.Parameters.Add (new CodePrimitiveExpression (match.Groups [first].Value));
+
+			if (secondGroup.Success)
+				ret.Parameters.Add (new CodePrimitiveExpression (secondGroup.Value));
+
+			return ret;
+		}
+
 		string DataBoundProperty (ControlBuilder builder, Type type, string varName, string value)
 		{
 			value = TrimDB (value);
 			CodeMemberMethod method;
 			string dbMethodName = builder.method.Name + "_DB_" + dataBoundAtts++;
+			CodeExpression valueExpression = null;
+			value = value.Trim ();
+			
 #if NET_2_0
 			bool need_if = false;
-			value = value.Trim ();
 			if (StrUtils.StartsWith (value, "Bind", true)) {
-				Match match = bindRegexInValue.Match (value);
-				if (match.Success) {
-					value = "Eval" + value.Substring (4);
+				valueExpression = CreateEvalInvokeExpression (bindRegexInValue, value, 1, 4);
+				if (valueExpression != null)
 					need_if = true;
-				}
-			}
+			} else
 #endif
+			if (StrUtils.StartsWith (value, "Eval", true))
+				valueExpression = CreateEvalInvokeExpression (evalRegexInValue, value, 1, 4);
+			
+			if (valueExpression == null)
+				valueExpression = new CodeSnippetExpression (value);
+			
 			method = CreateDBMethod (builder, dbMethodName, GetContainerType (builder), builder.ControlType);
 			
 			CodeVariableReferenceExpression targetExpr = new CodeVariableReferenceExpression ("target");
@@ -462,12 +487,10 @@ namespace System.Web.Compilation
 				CodeMethodInvokeExpression tostring = new CodeMethodInvokeExpression ();
 				CodeTypeReferenceExpression conv = new CodeTypeReferenceExpression (typeof (Convert));
 				tostring.Method = new CodeMethodReferenceExpression (conv, "ToString");
-				tostring.Parameters.Add (new CodeSnippetExpression (value));
+				tostring.Parameters.Add (valueExpression);
 				expr = tostring;
-			} else {
-				CodeSnippetExpression snippet = new CodeSnippetExpression (value);
-				expr = new CodeCastExpression (type, snippet);
-			}
+			} else
+				expr = new CodeCastExpression (type, valueExpression);
 
 			CodeAssignStatement assign = new CodeAssignStatement (field, expr);
 #if NET_2_0
@@ -537,7 +560,6 @@ namespace System.Web.Compilation
 				Match match = bindRegex.Match (str);
 				if (match.Success) {
 					string bindingName = match.Groups [1].Value;
-					
 					TemplateBuilder templateBuilder = builder.ParentTemplateBuilder;
 					if (templateBuilder == null || templateBuilder.BindingDirection == BindingDirection.OneWay)
 						throw new HttpException ("Bind expression not allowed in this context.");
@@ -873,20 +895,24 @@ namespace System.Web.Compilation
 			if (!typeof (IAttributeAccessor).IsAssignableFrom (type))
 				throw new ParseException (builder.location, "Unrecognized attribute: " + id);
 
-			string val;
 			CodeMemberMethod method = builder.method;
 			bool databound = IsDataBound (attvalue);
 
 			if (databound) {
-				val = attvalue.Substring (3, attvalue.Length - 5).Trim ();
+				string value = attvalue.Substring (3, attvalue.Length - 5).Trim ();
+				CodeExpression valueExpression = null;
 #if NET_2_0
-				if (StrUtils.StartsWith (val, "Bind", true)) {
-					Match match = bindRegexInValue.Match (val);
-					if (match.Success)
-						val = "Eval" + val.Substring (4);
-				}
+				if (StrUtils.StartsWith (value, "Bind", true))
+					valueExpression = CreateEvalInvokeExpression (bindRegexInValue, value, 1, 4);
+				else
 #endif
-				CreateDBAttributeMethod (builder, id, val);
+				if (StrUtils.StartsWith (value, "Eval", true))
+					valueExpression = CreateEvalInvokeExpression (evalRegexInValue, value, 1, 4);
+				
+				if (valueExpression == null && value != null && value.Trim () != String.Empty)
+					valueExpression = new CodeSnippetExpression (value);
+				
+				CreateDBAttributeMethod (builder, id, valueExpression);
 			} else {
 				CodeCastExpression cast;
 				CodeMethodReferenceExpression methodExpr;
@@ -928,9 +954,9 @@ namespace System.Web.Compilation
 			}
 		}
 
-		void CreateDBAttributeMethod (ControlBuilder builder, string attr, string code)
+		void CreateDBAttributeMethod (ControlBuilder builder, string attr, CodeExpression code)
 		{
-			if (code == null || code.Trim () == "")
+			if (code == null)
 				return;
 
 			string id = builder.GetNextID (null);
@@ -952,7 +978,7 @@ namespace System.Web.Compilation
 			tostring.Method = new CodeMethodReferenceExpression (
 							new CodeTypeReferenceExpression (typeof (Convert)),
 							"ToString");
-			tostring.Parameters.Add (new CodeSnippetExpression (code));
+			tostring.Parameters.Add (code);
 			expr.Parameters.Add (tostring);
 			method.Statements.Add (expr);
 			mainClass.Members.Add (method);

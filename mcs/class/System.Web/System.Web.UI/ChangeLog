@@ -1,3 +1,8 @@
+2008-08-13  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateBuilder.cs: use a generic List to store the bindings on
+	2.0+
+
 2008-07-28  Marek Habersack  <mhabersack@novell.com>
 
 	* MasterPage.cs: decouple processing of content templates in

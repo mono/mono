@@ -32,6 +32,7 @@ using System.Reflection;
 using System.Security.Permissions;
 #if NET_2_0
 using System.ComponentModel;
+using System.Collections.Generic;
 #endif
 
 namespace System.Web.UI {
@@ -45,7 +46,7 @@ namespace System.Web.UI {
 		TemplateContainerAttribute containerAttribute;
 #if NET_2_0
 		TemplateInstanceAttribute instanceAttribute;
-		ArrayList bindings;
+		List <TemplateBinding> bindings;
 #endif
 
 		public TemplateBuilder ()
@@ -85,7 +86,8 @@ namespace System.Web.UI {
 		
 		internal void RegisterBoundProperty (Type controlType, string controlProperty, string controlId, string fieldName)
 		{
-			if (bindings == null) bindings = new ArrayList ();
+			if (bindings == null)
+				bindings = new List <TemplateBinding> ();
 			bindings.Add (new TemplateBinding (controlType, controlProperty, controlId, fieldName));
 		}
 		

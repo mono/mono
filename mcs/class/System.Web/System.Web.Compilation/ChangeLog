@@ -1,3 +1,17 @@
+2008-08-13  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: rewrote the Bind regular expressions
+	to allow for single quotes and an optional second parameter to the
+	"call".
+	Added an Eval regular expression.
+	Both Bind and Eval calls in data expressions are now converted
+	into a CodeDOM method invocations, to allow support for possible
+	languages which use a different call format (previously code
+	snippets were used)
+	Added a method to construct the Eval invoke expression which
+	simplifies code in other areas.
+	
+
 2008-08-06  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: handle situation when a property of

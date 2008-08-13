@@ -300,7 +300,7 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 			if (http_code == 404)
 				builder.Append ("The resource cannot be found.");
 			else
-				builder.AppendFormat (HtmlEncode (ex.Message));
+				builder.Append (HtmlEncode (ex.Message));
 			builder.Append ("</em></h2>\r\n<p><strong>Description: </strong>");
 			
 			if (http_code != 0)
