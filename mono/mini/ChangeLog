@@ -1,5 +1,11 @@
 2008-08-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_emit_call): Nullify call->vret_var if returning
+	arguments in registers.
+
+	* decompose.c (mono_decompose_vtype_opts): Create a var for the vreg in
+	OP_VCALL too, don't depend on OP_OUTARG_VTRETADDR doing it.
+
 	* mini.c (mini_method_compile): Abort aot compilation for generic
 	methods if generic sharing is disabled.
 	
