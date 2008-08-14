@@ -1,5 +1,8 @@
 2008-08-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_method_compile): Abort aot compilation for generic
+	methods if generic sharing is disabled.
+	
 	* mini.c (mono_method_to_ir): Disable AOT for virtual calls requiring
 	an mrgctx.
 
