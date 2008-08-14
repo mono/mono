@@ -1,4 +1,4 @@
-// CS1918: Members of a value type property `C.Value' cannot be assigned with an object initializer
+// CS1918: Members of value type `S' cannot be assigned using a property `C.Value' object initializer
 // Line: 18
 
 
