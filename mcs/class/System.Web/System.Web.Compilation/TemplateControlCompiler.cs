@@ -428,11 +428,17 @@ namespace System.Web.Compilation
 			}
 		}
 
-		string TrimDB (string value)
+		string TrimDB (string value, bool trimTail)
 		{
 			string str = value.Trim ();
-			str = str.Substring (3);
-			return str.Substring (0, str.Length - 2);
+			int len = str.Length;
+			int idx = str.IndexOf ('#', 2) + 1;
+			if (idx >= len)
+				return String.Empty;
+			if (trimTail)
+				len -= 2;
+			
+			return str.Substring (idx, len - idx).Trim ();
 		}
 
 		CodeMethodInvokeExpression CreateEvalInvokeExpression (Regex regex, string value, int first, int second)
@@ -455,7 +461,7 @@ namespace System.Web.Compilation
 
 		string DataBoundProperty (ControlBuilder builder, Type type, string varName, string value)
 		{
-			value = TrimDB (value);
+			value = TrimDB (value, true);
 			CodeMemberMethod method;
 			string dbMethodName = builder.method.Name + "_DB_" + dataBoundAtts++;
 			CodeExpression valueExpression = null;
@@ -534,28 +540,46 @@ namespace System.Web.Compilation
 			method.Statements.Add (AddLinePragma (assign, builder));
 		}
 
-		bool IsDataBound (string value)
+		bool IsDirective (string value, char directiveChar)
 		{
-			if (value == null || value == "")
+			if (value == null || value == String.Empty)
+				return false;
+			
+			value = value.Trim ();
+			if (!StrUtils.StartsWith (value, "<%") || !StrUtils.EndsWith (value, "%>"))
 				return false;
 
-			string str = value.Trim ();
-			return (StrUtils.StartsWith (str, "<%#") && StrUtils.EndsWith (str, "%>"));
+			int dcIndex = value.IndexOf (directiveChar, 2);
+			if (dcIndex == -1)
+				return false;
+
+			if (dcIndex == 2)
+				return true;
+			dcIndex--;
+			
+			while (dcIndex >= 2) {
+				if (!Char.IsWhiteSpace (value [dcIndex]))
+					return false;
+				dcIndex--;
+			}
+
+			return true;
+		}
+		
+		bool IsDataBound (string value)
+		{
+			return IsDirective (value, '#');
 		}
 
 #if NET_2_0
 		bool IsExpression (string value)
 		{
-			if (value == null || value == "")
-				return false;
-			string str = value.Trim ();
-			return (StrUtils.StartsWith (str, "<%$") && StrUtils.EndsWith (str, "%>"));
+			return IsDirective (value, '$');
 		}		
 
 		void RegisterBindingInfo (ControlBuilder builder, string propName, ref string value)
 		{
-			string str = value.Trim ();
-			str = str.Substring (3).Trim ();	// eats "<%#"
+			string str = TrimDB (value, false);
 			if (StrUtils.StartsWith (str, "Bind", true)) {
 				Match match = bindRegex.Match (str);
 				if (match.Success) {
