@@ -1409,10 +1409,26 @@ namespace System.Net
 //				DownloadFileCompleted (this, args);
 //		}
 //
+                public delegate bool GSourceFunc  (IntPtr data);
+
+		[DllImport ("moon")]
+		static extern uint g_idle_add (GSourceFunc callback, IntPtr data);
+
+		private DownloadProgressChangedEventArgs e;
+		private GSourceFunc download_progress_delegate;
 		protected virtual void OnDownloadProgressChanged (DownloadProgressChangedEventArgs e)
 		{
-			if (DownloadProgressChanged != null)
-				DownloadProgressChanged (this, e);
+			if (DownloadProgressChanged != null) {
+				this.e = e;
+				download_progress_delegate = new GSourceFunc (download_progress_callback);
+				g_idle_add (download_progress_delegate, IntPtr.Zero);
+			}
+		}
+		
+		bool download_progress_callback (IntPtr data)
+		{
+			DownloadProgressChanged (this, e);
+			return false;
 		}
 
 //		protected virtual void OnDownloadStringCompleted (DownloadStringCompletedEventArgs args)
@@ -1422,11 +1438,22 @@ namespace System.Net
 //				DownloadStringCompleted (this, args);
 //		}
 //
+		private OpenReadCompletedEventArgs args;
+		private GSourceFunc read_completed_delegate;
 		protected virtual void OnOpenReadCompleted (OpenReadCompletedEventArgs args)
 		{
 			CompleteAsync ();
-			if (OpenReadCompleted != null)
-				OpenReadCompleted (this, args);
+			if (OpenReadCompleted != null) {
+				this.args = args;
+				read_completed_delegate = new GSourceFunc (read_completed_callback);
+				g_idle_add (read_completed_delegate, IntPtr.Zero);
+			}
+		}
+
+		bool read_completed_callback (IntPtr data)
+		{
+			OpenReadCompleted (this, args);
+			return false;
 		}
 
 //		protected virtual void OnOpenWriteCompleted (OpenWriteCompletedEventArgs args)

@@ -1,3 +1,8 @@
+2008-08-14  Geoff Norton  <gnorton@novell.com>
+
+	* WebClient_2_1.cs: A dirty hack to emit the events on the proper thread
+	until we can figure out exactly how to leverage Dispatcher over here.
+
 2008-06-18  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* WebRequest_2_1.cs: Load BrowserHttpWebRequest from the right assembly
