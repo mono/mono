@@ -1,3 +1,14 @@
+2008-08-14  Marek Safar  <marek.safar@gmail.com>
+	
+	A fix for bug #417078
+	* expression.cs: Emit correctly left side pointer operators.
+
+2008-08-04  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #414165
+	* anonymous.cs: Use same anonymous implementation method for all anonymous
+	method emits.
+
 2008-07-29  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #412880 by Atsushi Enomoto <atsushi@ximian.com>

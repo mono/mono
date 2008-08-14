@@ -1744,7 +1744,7 @@ namespace Mono.CSharp {
 				//
 				// When second arguments are same as the first one, the result is same
 				//
-				if (left != right || best_operator.left != best_operator.right) {
+				if (right != null && (left != right || best_operator.left != best_operator.right)) {
 					result |= MethodGroupExpr.BetterTypeConversion (ec, best_operator.right, right);
 				}
 
@@ -1826,6 +1826,11 @@ namespace Mono.CSharp {
 			{
 			}
 
+			public PredefinedPointerOperator (Type ltype, Type rtype, Operator op_mask, Type retType)
+				: base (ltype, rtype, op_mask, retType)
+			{
+			}
+
 			public PredefinedPointerOperator (Type type, Operator op_mask, Type return_type)
 				: base (type, op_mask, return_type)
 			{
@@ -1862,8 +1867,9 @@ namespace Mono.CSharp {
 
 				Type r_type = ReturnType;
 				if (r_type == null) {
-					r_type = b.left.Type;
-					if (r_type == null)
+					if (left == null)
+						r_type = b.left.Type;
+					else 
 						r_type = b.right.Type;
 				}
 
@@ -2381,10 +2387,10 @@ namespace Mono.CSharp {
 			// T* operator + (long y,  T *x);
 			// T* operator + (ulong y, T *x);
 			//
-			temp.Add (new PredefinedPointerOperator (TypeManager.int32_type, null, Operator.AdditionMask));
-			temp.Add (new PredefinedPointerOperator (TypeManager.uint32_type, null, Operator.AdditionMask));
-			temp.Add (new PredefinedPointerOperator (TypeManager.int64_type, null, Operator.AdditionMask));
-			temp.Add (new PredefinedPointerOperator (TypeManager.uint64_type, null, Operator.AdditionMask));
+			temp.Add (new PredefinedPointerOperator (TypeManager.int32_type, null, Operator.AdditionMask, null));
+			temp.Add (new PredefinedPointerOperator (TypeManager.uint32_type, null, Operator.AdditionMask, null));
+			temp.Add (new PredefinedPointerOperator (TypeManager.int64_type, null, Operator.AdditionMask, null));
+			temp.Add (new PredefinedPointerOperator (TypeManager.uint64_type, null, Operator.AdditionMask, null));
 
 			//
 			// long operator - (T* x, T *y)
@@ -3799,14 +3805,21 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			
 			// It must be either array or fixed buffer
-			Type element = TypeManager.HasElementType (op_type) ?
-				TypeManager.GetElementType (op_type) :
-				AttributeTester.GetFixedBuffer (((FieldExpr)left).FieldInfo).ElementType;
+			Type element;
+			if (TypeManager.HasElementType (op_type)) {
+				element = TypeManager.GetElementType (op_type);
+			} else {
+				FieldExpr fe = left as FieldExpr;
+				if (fe != null)
+					element = AttributeTester.GetFixedBuffer (fe.FieldInfo).ElementType;
+				else
+					element = op_type;
+			}
 
 			int size = GetTypeSize (element);
 			Type rtype = right.Type;
 			
-			if (rtype.IsPointer){
+			if ((op & Binary.Operator.SubtractionMask) != 0 && rtype.IsPointer){
 				//
 				// handle (pointer - pointer)
 				//
