@@ -1,3 +1,8 @@
+2008-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlConnectionTest.cs: Enabled connection string related tests that
+	previously failed. Added/improved connection string tests.
+
 2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlConnectionTest.cs: Enabled tests for ChangePassword argument

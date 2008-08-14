@@ -107,7 +107,6 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Constructor2_ConnectionString_Invalid ()
 		{
 			try {
@@ -378,7 +377,6 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConnectionString_Value_Invalid ()
 		{
 			SqlConnection cn = new SqlConnection ();
@@ -408,86 +406,6 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.IsTrue (ex.Message.IndexOf ("'invalidkeyword'") != -1, "#B5");
 				Assert.IsNull (ex.ParamName, "#B6");
 			}
-
-			// invalid packet size (< minimum)
-			try {
-				cn.ConnectionString = "Packet Size=511";
-				Assert.Fail ("#C1");
-			} catch (ArgumentException ex) {
-				// Invalid 'Packet Size'.  The value must be an
-				// integer >= 512 and <= 32768
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
-				Assert.IsNull (ex.InnerException, "#C3");
-				Assert.IsNotNull (ex.Message, "#C4");
-				Assert.IsNull (ex.ParamName, "#C5");
-			}
-
-			// invalid packet size (> maximum)
-			try {
-				cn.ConnectionString = "Packet Size=32769";
-				Assert.Fail ("#D1");
-			} catch (ArgumentException ex) {
-				// Invalid 'Packet Size'.  The value must be an
-				// integer >= 512 and <= 32768
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
-				Assert.IsNull (ex.InnerException, "#D3");
-				Assert.IsNotNull (ex.Message, "#D4");
-				Assert.IsNull (ex.ParamName, "#D5");
-			}
-
-			// negative connect timeout
-			try {
-				cn.ConnectionString = "Connect Timeout=-1";
-				Assert.Fail ("#E1");
-			} catch (ArgumentException ex) {
-				// Invalid value for key 'connect timeout'
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#E2");
-				Assert.IsNull (ex.InnerException, "#E3");
-				Assert.IsNotNull (ex.Message, "#E4");
-				Assert.IsNull (ex.ParamName, "#E5");
-			}
-
-			// negative max pool size
-			try {
-				cn.ConnectionString = "Max Pool Size=-1";
-				Assert.Fail ("#F1");
-			} catch (ArgumentException ex) {
-				// Invalid value for key 'max pool size'
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#F2");
-				Assert.IsNull (ex.InnerException, "#F3");
-				Assert.IsNotNull (ex.Message, "#F4");
-				Assert.IsNull (ex.ParamName, "#F5");
-			}
-
-			// negative min pool size
-			try {
-				cn.ConnectionString = "Min Pool Size=-1";
-				Assert.Fail ("#G1");
-			} catch (ArgumentException ex) {
-				// Invalid value for key 'min pool size'
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#G2");
-				Assert.IsNull (ex.InnerException, "#G3");
-				Assert.IsNotNull (ex.Message, "#G4");
-				Assert.IsNull (ex.ParamName, "#G5");
-			}
-		}
-
-		[Test]
-		public void ConnectionTimeoutSynonyms()
-		{
-			SqlConnection cn = null;
-
-			cn = new SqlConnection ();
-			cn.ConnectionString = "Connection Timeout=25";
-			Assert.AreEqual (25, cn.ConnectionTimeout);
-
-			cn = new SqlConnection ();
-			cn.ConnectionString = "Connect Timeout=25";
-			Assert.AreEqual (25, cn.ConnectionTimeout);
-
-			cn = new SqlConnection ();
-			cn.ConnectionString = "Timeout=25";
-			Assert.AreEqual (25, cn.ConnectionTimeout);
 		}
 
 		[Test]
@@ -615,6 +533,115 @@ namespace MonoTests.System.Data.SqlClient
 #endif
 
 		[Test]
+		public void ConnectionString_AsynchronousProcessing ()
+		{
+			SqlConnection cn = new SqlConnection ();
+#if NET_2_0
+			cn.ConnectionString = "Asynchronous Processing=False";
+			cn.ConnectionString = "Async=True";
+#else
+			try {
+				cn.ConnectionString = "Asynchronous Processing=False";
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Keyword not supported: 'asynchronous processing'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf ("'asynchronous processing'") != -1, "#A5:" + ex.Message);
+				Assert.IsNull (ex.ParamName, "#A6");
+			}
+
+			try {
+				cn.ConnectionString = "Async=True";
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Keyword not supported: 'asynchronous processing'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("'async'") != -1, "#B5:" + ex.Message);
+				Assert.IsNull (ex.ParamName, "#B6");
+			}
+#endif
+		}
+
+		[Test]
+		public void ConnectionString_ConnectTimeout ()
+		{
+			SqlConnection cn = new SqlConnection ();
+			cn.ConnectionString = "Connection Timeout=45";
+			Assert.AreEqual (45, cn.ConnectionTimeout, "#1");
+			cn.ConnectionString = "Connect Timeout=40";
+			Assert.AreEqual (40, cn.ConnectionTimeout, "#2");
+			cn.ConnectionString = "Timeout=";
+			Assert.AreEqual (15, cn.ConnectionTimeout, "#3");
+			cn.ConnectionString = "Timeout=2147483647";
+			Assert.AreEqual (int.MaxValue, cn.ConnectionTimeout, "#4");
+			cn.ConnectionString = "Timeout=0";
+			Assert.AreEqual (0, cn.ConnectionTimeout, "#5");
+		}
+
+		[Test]
+		public void ConnectionString_ConnectTimeout_Invalid ()
+		{
+			SqlConnection cn = new SqlConnection ();
+
+			// negative number
+			try {
+				cn.ConnectionString = "Connection timeout=-1";
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Invalid value for key 'connect timeout'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+#if NET_2_0
+				Assert.IsTrue (ex.Message.IndexOf ("'connect timeout'") != -1, "#A5:" + ex.Message);
+#endif
+				Assert.IsNull (ex.ParamName, "#A6");
+			}
+
+			// invalid number
+			try {
+				cn.ConnectionString = "connect Timeout=BB";
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Invalid value for key 'connect timeout'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.InnerException, "#B3");
+				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#B4");
+				Assert.IsNotNull (ex.Message, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf ("'connect timeout'") != -1, "#B6:" + ex.Message);
+				Assert.IsNull (ex.ParamName, "#B7");
+
+				// Input string was not in a correct format
+				FormatException fe = (FormatException) ex.InnerException;
+				Assert.IsNull (fe.InnerException, "#B8");
+				Assert.IsNotNull (fe.Message, "#B9");
+			}
+
+			// overflow
+			try {
+				cn.ConnectionString = "timeout=2147483648";
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// Invalid value for key 'connect timeout'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNotNull (ex.InnerException, "#C3");
+				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#C4");
+				Assert.IsNotNull (ex.Message, "#C5");
+				Assert.IsTrue (ex.Message.IndexOf ("'connect timeout'") != -1, "#C6:" + ex.Message);
+				Assert.IsNull (ex.ParamName, "#C7");
+
+				// Value was either too large or too small for an Int32
+				OverflowException oe = (OverflowException) ex.InnerException;
+				Assert.IsNull (oe.InnerException, "#C8");
+				Assert.IsNotNull (oe.Message, "#C9");
+			}
+		}
+
+		[Test]
 		public void ConnectionString_Database_Synonyms ()
 		{
 			SqlConnection cn = null;
@@ -655,6 +682,220 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+		public void ConnectionString_MaxPoolSize ()
+		{
+			SqlConnection cn = new SqlConnection ();
+			cn.ConnectionString = "Max Pool Size=2147483647";
+			cn.ConnectionString = "Max Pool Size=1";
+			cn.ConnectionString = "Max Pool Size=500";
+		}
+
+		[Test]
+		public void ConnectionString_MaxPoolSize_Invalid ()
+		{
+			SqlConnection cn = new SqlConnection ();
+
+			// negative number
+			try {
+				cn.ConnectionString = "Max Pool Size=-1";
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Invalid value for key 'max pool size'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+#if NET_2_0
+				Assert.IsTrue (ex.Message.IndexOf ("'max pool size'") != -1, "#A5:" + ex.Message);
+#endif
+				Assert.IsNull (ex.ParamName, "#A6");
+			}
+
+			// invalid number
+			try {
+				cn.ConnectionString = "max Pool size=BB";
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Invalid value for key 'max pool size'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.InnerException, "#B3");
+				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#B4");
+				Assert.IsNotNull (ex.Message, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf ("'max pool size'") != -1, "#B6:" + ex.Message);
+				Assert.IsNull (ex.ParamName, "#B7");
+
+				// Input string was not in a correct format
+				FormatException fe = (FormatException) ex.InnerException;
+				Assert.IsNull (fe.InnerException, "#B8");
+				Assert.IsNotNull (fe.Message, "#B9");
+			}
+
+			// overflow
+			try {
+				cn.ConnectionString = "max pool size=2147483648";
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// Invalid value for key 'max pool size'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNotNull (ex.InnerException, "#C3");
+				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#C4");
+				Assert.IsNotNull (ex.Message, "#C5");
+				Assert.IsTrue (ex.Message.IndexOf ("'max pool size'") != -1, "#C6:" + ex.Message);
+				Assert.IsNull (ex.ParamName, "#C7");
+
+				// Value was either too large or too small for an Int32
+				OverflowException oe = (OverflowException) ex.InnerException;
+				Assert.IsNull (oe.InnerException, "#C8");
+				Assert.IsNotNull (oe.Message, "#C9");
+			}
+
+			// less than minimum (1)
+			try {
+				cn.ConnectionString = "Min Pool Size=0;Max Pool Size=0";
+				Assert.Fail ("#D1");
+			} catch (ArgumentException ex) {
+				// Invalid value for key 'max pool size'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNotNull (ex.Message, "#D4");
+#if NET_2_0
+				Assert.IsTrue (ex.Message.IndexOf ("'max pool size'") != -1, "#D5:" + ex.Message);
+#endif
+				Assert.IsNull (ex.ParamName, "#D6");
+			}
+
+			// less than min pool size
+			try {
+				cn.ConnectionString = "Min Pool Size=5;Max Pool Size=4";
+				Assert.Fail ("#E1");
+			} catch (ArgumentException ex) {
+				// Invalid min or max pool size values, min
+				// pool size cannot be greater than the max
+				// pool size
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#E2");
+				Assert.IsNull (ex.InnerException, "#E3");
+				Assert.IsNotNull (ex.Message, "#E4");
+				Assert.IsNull (ex.ParamName, "#E5");
+			}
+		}
+
+		[Test]
+		public void ConnectionString_MinPoolSize ()
+		{
+			SqlConnection cn = new SqlConnection ();
+			cn.ConnectionString = "min Pool size=0";
+			cn.ConnectionString = "Min Pool size=100";
+			cn.ConnectionString = "Min Pool Size=2147483647;Max Pool Size=2147483647";
+		}
+
+		[Test]
+		public void ConnectionString_MinPoolSize_Invalid ()
+		{
+			SqlConnection cn = cn = new SqlConnection ();
+
+			// negative number
+			try {
+				cn.ConnectionString = "Min Pool Size=-1";
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Invalid value for key 'min pool size'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+#if NET_2_0
+				Assert.IsTrue (ex.Message.IndexOf ("'min pool size'") != -1, "#A5:" + ex.Message);
+#endif
+				Assert.IsNull (ex.ParamName, "#A6");
+			}
+
+			// invalid number
+			try {
+				cn.ConnectionString = "min Pool size=BB";
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Invalid value for key 'min pool size'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNotNull (ex.InnerException, "#B3");
+				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#B4");
+				Assert.IsNotNull (ex.Message, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf ("'min pool size'") != -1, "#B6:" + ex.Message);
+				Assert.IsNull (ex.ParamName, "#B7");
+
+				// Input string was not in a correct format
+				FormatException fe = (FormatException) ex.InnerException;
+				Assert.IsNull (fe.InnerException, "#B8");
+				Assert.IsNotNull (fe.Message, "#B9");
+			}
+
+			// overflow
+			try {
+				cn.ConnectionString = "min pool size=2147483648";
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// Invalid value for key 'min pool size'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNotNull (ex.InnerException, "#C3");
+				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#C4");
+				Assert.IsNotNull (ex.Message, "#C5");
+				Assert.IsTrue (ex.Message.IndexOf ("'min pool size'") != -1, "#C6:" + ex.Message);
+				Assert.IsNull (ex.ParamName, "#C7");
+
+				// Value was either too large or too small for an Int32
+				OverflowException oe = (OverflowException) ex.InnerException;
+				Assert.IsNull (oe.InnerException, "#C8");
+				Assert.IsNotNull (oe.Message, "#C9");
+			}
+		}
+
+		[Test]
+		public void ConnectionString_MultipleActiveResultSets ()
+		{
+			SqlConnection cn = new SqlConnection ();
+#if NET_2_0
+			cn.ConnectionString = "MultipleActiveResultSets=true";
+#else
+			try {
+				cn.ConnectionString = "MultipleActiveResultSets=true";
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Keyword not supported: 'multipleactiveresultsets'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("'multipleactiveresultsets'") != -1, "#5:" + ex.Message);
+				Assert.IsNull (ex.ParamName, "#6");
+			}
+#endif
+		}
+
+		[Test]
+		public void ConnectionString_MultipleActiveResultSets_Invalid ()
+		{
+			SqlConnection cn = new SqlConnection ();
+			try {
+				cn.ConnectionString = "MultipleActiveResultSets=1";
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (ArgumentException ex) {
+				// Invalid value for key 'multipleactiveresultsets'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("'multipleactiveresultsets'") != -1, "#5:" + ex.Message);
+				Assert.IsNull (ex.ParamName, "#6");
+			}
+#else
+			} catch (ArgumentException ex) {
+				// Keyword not supported: 'multipleactiveresultsets'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("'multipleactiveresultsets'") != -1, "#5:" + ex.Message);
+				Assert.IsNull (ex.ParamName, "#6");
+			}
+#endif
+		}
+
+		[Test]
 		public void ConnectionString_NetworkLibrary_Synonyms ()
 		{
 			SqlConnection cn = new SqlConnection ();
@@ -664,39 +905,182 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+		public void ConnectionString_PacketSize ()
+		{
+			SqlConnection cn = new SqlConnection ();
+			cn.ConnectionString = "Packet Size=1024";
+			Assert.AreEqual (1024, cn.PacketSize, "#1");
+			cn.ConnectionString = "packet SizE=533";
+			Assert.AreEqual (533, cn.PacketSize, "#2");
+			cn.ConnectionString = "packet SizE=512";
+			Assert.AreEqual (512, cn.PacketSize, "#3");
+#if NET_2_0
+			cn.ConnectionString = "packet SizE=32768";
+			Assert.AreEqual (32768, cn.PacketSize, "#4");
+#else
+			cn.ConnectionString = "packet SizE=32767";
+			Assert.AreEqual (32767, cn.PacketSize, "#4");
+#endif
+			cn.ConnectionString = "packet Size=";
+#if NET_2_0
+			Assert.AreEqual (8000, cn.PacketSize, "#5");
+#else
+			Assert.AreEqual (8192, cn.PacketSize, "#5");
+#endif
+		}
+
+		[Test]
+		public void ConnectionString_PacketSize_Invalid ()
+		{
+			SqlConnection cn = new SqlConnection ();
+
+			// invalid packet size (< minimum)
+			try {
+				cn.ConnectionString = "Packet Size=511";
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Invalid 'Packet Size'.  The value must be an
+				// integer >= 512 and <= 32768
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf ("'Packet Size'") != -1, "#A5:" + ex.Message);
+				Assert.IsNull (ex.ParamName, "#A6");
+			}
+
+			// invalid packet size (> maximum)
+			try {
+#if NET_2_0
+				cn.ConnectionString = "packet SIze=32769";
+#else
+				cn.ConnectionString = "packet SIze=32768";
+#endif
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Invalid 'Packet Size'.  The value must be an
+				// integer >= 512 and <= 32768
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("'Packet Size'") != -1, "#B5:" + ex.Message);
+				Assert.IsNull (ex.ParamName, "#B6");
+			}
+
+			// overflow
+			try {
+				cn.ConnectionString = "packet SIze=2147483648";
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// Invalid value for key 'packet size'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNotNull (ex.InnerException, "#C3");
+				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#C4");
+				Assert.IsNotNull (ex.Message, "#C5");
+				Assert.IsTrue (ex.Message.IndexOf ("'packet size'") != -1, "#C6:" + ex.Message);
+				Assert.IsNull (ex.ParamName, "#C7");
+
+				// Value was either too large or too small for an Int32
+				OverflowException oe = (OverflowException) ex.InnerException;
+				Assert.IsNull (oe.InnerException, "#C8");
+				Assert.IsNotNull (oe.Message, "#C9");
+			}
+		}
+
+		[Test]
+		public void ConnectionString_Password_Synonyms ()
+		{
+			SqlConnection cn = new SqlConnection ();
+			cn.ConnectionString = "Password=scrambled";
+			cn.ConnectionString = "Pwd=scrambled";
+		}
+
+		[Test]
+		public void ConnectionString_PersistSecurityInfo_Synonyms ()
+		{
+			SqlConnection cn = new SqlConnection ();
+			cn.ConnectionString = "Persist Security Info=true";
+			cn.ConnectionString = "PersistSecurityInfo=true";
+		}
+
+		[Test]
+		public void ConnectionString_UserID_Synonyms ()
+		{
+			SqlConnection cn = new SqlConnection ();
+			cn.ConnectionString = "User Id=test";
+			cn.ConnectionString = "User=test";
+			cn.ConnectionString = "Uid=test";
+		}
+
+		[Test]
+		public void ConnectionString_UserInstance ()
+		{
+			SqlConnection cn = new SqlConnection ();
+#if NET_2_0
+			cn.ConnectionString = "User Instance=true";
+#else
+			try {
+				cn.ConnectionString = "User Instance=true";
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Keyword not supported: 'user instance'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("'user instance'") != -1, "#5:" + ex.Message);
+				Assert.IsNull (ex.ParamName, "#6");
+			}
+#endif
+		}
+
+		[Test]
+		public void ConnectionString_UserInstance_Invalid ()
+		{
+			SqlConnection cn = new SqlConnection ();
+			try {
+				cn.ConnectionString = "User Instance=1";
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (ArgumentException ex) {
+				// Invalid value for key 'user instance'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("'user instance'") != -1, "#5:" + ex.Message);
+				Assert.IsNull (ex.ParamName, "#6");
+			}
+#else
+			} catch (ArgumentException ex) {
+				// Keyword not supported: 'user instance'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("'user instance'") != -1, "#5:" + ex.Message);
+				Assert.IsNull (ex.ParamName, "#6");
+			}
+#endif
+		}
+
+		[Test]
 		public void ConnectionString_OtherKeywords ()
 		{
 			SqlConnection cn = new SqlConnection ();
 			cn.ConnectionString = "Application Name=test";
 			cn.ConnectionString = "App=test";
-			cn.ConnectionString = "Connection LifeTime=1000";
 			cn.ConnectionString = "Connection Reset=true";
 			cn.ConnectionString = "Current Language=test";
 			cn.ConnectionString = "Language=test";
 			cn.ConnectionString = "Encrypt=false";
+			//cn.ConnectionString = "Encrypt=true";
+			//cn.ConnectionString = "Enlist=false";
 			cn.ConnectionString = "Enlist=true";
 			cn.ConnectionString = "Integrated Security=true";
 			cn.ConnectionString = "Trusted_connection=true";
 			cn.ConnectionString = "Max Pool Size=10";
 			cn.ConnectionString = "Min Pool Size=10";
-			cn.ConnectionString = "Password=scrambled";
-			cn.ConnectionString = "Pwd=scrambled";
 			cn.ConnectionString = "Pooling=true";
-			cn.ConnectionString = "User Id=test";
-			cn.ConnectionString = "User=test";
-			cn.ConnectionString = "Uid=test";
-			/*
-			 * NOT IMPLEMENTED YET
-			 */
-			/*
-			cn.ConnectionString = "Persist Security Info=true";
-			cn.ConnectionString = "PersistSecurityInfo=true";
-			cn.ConnectionString = "Encrypt=true";
-			cn.ConnectionString = "Enlist=false";
 			cn.ConnectionString = "attachdbfilename=dunno";
 			cn.ConnectionString = "extended properties=dunno";
 			cn.ConnectionString = "initial file name=dunno";
-			*/
 		}
 
 		[Test]

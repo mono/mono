@@ -1,5 +1,13 @@
 2008-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlConnection.cs: Use constants for min/max values. When value is
+	zero-length string, then fallback to default value for boolean and
+	integer backed properties. Throw ArgumentException when min pool size
+	exceeds max pool size. Check whether value for 'MARS' is a bool.
+	The 'user instance' property is 2.0 only.
+
+2008-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlConnection.cs: Convert keywords to lowercase instead of uppercase
 	to avoid further case changes in exception messages.
 

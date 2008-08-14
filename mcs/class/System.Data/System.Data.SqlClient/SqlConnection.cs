@@ -72,11 +72,15 @@ namespace System.Data.SqlClient
 		static TdsConnectionPoolManager sqlConnectionPools = new TdsConnectionPoolManager (TdsVersion.tds70);
 #if NET_2_0
 		const int DEFAULT_PACKETSIZE = 8000;
+		const int MAX_PACKETSIZE = 32768;
 #else
 		const int DEFAULT_PACKETSIZE = 8192;
+		const int MAX_PACKETSIZE = 32767;
 #endif
+		const int MIN_PACKETSIZE = 512;
 		const int DEFAULT_CONNECTIONTIMEOUT = 15;
 		const int DEFAULT_MAXPOOLSIZE = 100;
+		const int MIN_MAXPOOLSIZE = 1;
 		const int DEFAULT_MINPOOLSIZE = 0;
 		const int DEFAULT_PORT = 1433;
 
@@ -102,7 +106,6 @@ namespace System.Data.SqlClient
 		int port;
 		bool fireInfoMessageEventOnUserErrors;
 		bool statisticsEnabled;
-		bool userInstance;
 		
 		// The current state
 		ConnectionState state = ConnectionState.Closed;
@@ -597,11 +600,14 @@ namespace System.Data.SqlClient
 			if (value.ToUpper() == "SSPI")
 				return true;
 
-			return ConvertToBoolean("integrated security", value);
+			return ConvertToBoolean ("integrated security", value, false);
 		}
 
-		private bool ConvertToBoolean (string key, string value)
+		private bool ConvertToBoolean (string key, string value, bool defaultValue)
 		{
+			if (value.Length == 0)
+				return defaultValue;
+
 			string upperValue = value.ToUpper ();
 
 			if (upperValue == "TRUE" || upperValue == "YES")
@@ -613,13 +619,16 @@ namespace System.Data.SqlClient
 				"Invalid value \"{0}\" for key '{1}'.", value, key));
 		}
 
-		private int ConvertToInt32 (string key, string value)
+		private int ConvertToInt32 (string key, string value, int defaultValue)
 		{
+			if (value.Length == 0)
+				return defaultValue;
+
 			try {
 				return int.Parse (value);
 			} catch (Exception ex) {
 				throw new ArgumentException (string.Format (CultureInfo.InvariantCulture,
-					"Invalid value \"{0}\" for key '{1}'.", value, key));
+					"Invalid value \"{0}\" for key '{1}'.", value, key), ex);
 			}
 		}
 
@@ -722,6 +731,12 @@ namespace System.Data.SqlClient
 				}
 			}
 
+			if (minPoolSize > maxPoolSize)
+				throw new ArgumentException ("Invalid value for "
+					+ "'min pool size' or 'max pool size'; "
+					+ "'min pool size' must not be greater "
+					+ "than 'max pool size'.");
+
 			connectionString = connectionString.Substring (0 , connectionString.Length-1);
 			this.connectionString = connectionString;
 		}
@@ -760,16 +775,17 @@ namespace System.Data.SqlClient
 			case "timeout" :
 			case "connect timeout" :
 			case "connection timeout" :
-				int tmpTimeout = ConvertToInt32 ("connection timeout", value);
+				int tmpTimeout = ConvertToInt32 ("connect timeout", value,
+					DEFAULT_CONNECTIONTIMEOUT);
 				if (tmpTimeout < 0)
-					throw new ArgumentException ("Invalid CONNECTION TIMEOUT .. Must be an integer >=0 ");
+					throw new ArgumentException ("Invalid 'connect timeout'. Must be an integer >=0 ");
 				else 
 					connectionTimeout = tmpTimeout;
 				break;
 			case "connection lifetime" :
 				break;
 			case "connection reset" :
-				connectionReset = ConvertToBoolean ("connection reset", value);
+				connectionReset = ConvertToBoolean ("connection reset", value, true);
 				break;
 			case "language" :
 			case "current language" :
@@ -783,13 +799,13 @@ namespace System.Data.SqlClient
 				dataSource = value;
 				break;
 			case "encrypt":
-				if (ConvertToBoolean(name, value))
+				if (ConvertToBoolean (name, value, false))
 					throw new NotImplementedException("SSL encryption for"
 						+ " data sent between client and server is not"
 						+ " implemented.");
 				break;
 			case "enlist" :
-				if (!ConvertToBoolean(name, value))
+				if (!ConvertToBoolean (name, value, true))
 					throw new NotImplementedException("Disabling the automatic"
 						+ " enlistment of connections in the thread's current"
 						+ " transaction context is not implemented.");
@@ -803,27 +819,31 @@ namespace System.Data.SqlClient
 				parms.DomainLogin = ConvertIntegratedSecurity(value);
 				break;
 			case "max pool size" :
-				int tmpMaxPoolSize = ConvertToInt32 (name, value);
-				if (tmpMaxPoolSize < 0)
-					throw new ArgumentException ("Invalid MAX POOL SIZE. Must be a intger >= 0");
+				int tmpMaxPoolSize = ConvertToInt32 (name, value, DEFAULT_MAXPOOLSIZE);
+				if (tmpMaxPoolSize < MIN_MAXPOOLSIZE)
+					throw new ArgumentException (string.Format (CultureInfo.InvariantCulture,
+						"Invalid '{0}'. The value must be greater than {1}.",
+						name, MIN_MAXPOOLSIZE));
 				else
 					maxPoolSize = tmpMaxPoolSize;
 				break;
 			case "min pool size" :
-				int tmpMinPoolSize = ConvertToInt32 (name, value);
+				int tmpMinPoolSize = ConvertToInt32 (name, value, DEFAULT_MINPOOLSIZE);
 				if (tmpMinPoolSize < 0)
-					throw new ArgumentException ("Invalid MIN POOL SIZE. Must be a intger >= 0");
+					throw new ArgumentException ("Invalid 'min pool size'. Must be a integer >= 0");
 				else
 					minPoolSize = tmpMinPoolSize;
 				break;
 #if NET_2_0
 			case "multipleactiveresultsets":
+				// FIXME: not implemented
+				ConvertToBoolean (name, value, false);
 				break;
 			case "asynchronous processing" :
 			case "async" :
-				async = ConvertToBoolean (name, value);
+				async = ConvertToBoolean (name, value, false);
 				break;
-#endif	
+#endif
 			case "net" :
 			case "network" :
 			case "network library" :
@@ -831,9 +851,11 @@ namespace System.Data.SqlClient
 					throw new ArgumentException ("Unsupported network library.");
 				break;
 			case "packet size" :
-				int tmpPacketSize = ConvertToInt32 (name, value);
-				if (tmpPacketSize < 512 || tmpPacketSize > 32767)
-					throw new ArgumentException ("Invalid 'Packet Size'. The integer must be between 512 and 32767");
+				int tmpPacketSize = ConvertToInt32 (name, value, DEFAULT_PACKETSIZE);
+				if (tmpPacketSize < MIN_PACKETSIZE || tmpPacketSize > MAX_PACKETSIZE)
+					throw new ArgumentException (string.Format (CultureInfo.InvariantCulture,
+						"Invalid 'Packet Size'. The value must be between {0} and {1}.",
+						MIN_PACKETSIZE, MAX_PACKETSIZE));
 				else
 					packetSize = tmpPacketSize;
 				break;
@@ -847,7 +869,7 @@ namespace System.Data.SqlClient
 				// throw new NotImplementedException ();
 				break;
 			case "pooling" :
-				pooling = ConvertToBoolean(name, value);
+				pooling = ConvertToBoolean (name, value, true);
 				break;
 			case "uid" :
 			case "user" :
@@ -858,10 +880,11 @@ namespace System.Data.SqlClient
 			case "workstation id" :
 				parms.Hostname = value;
 				break;
-				
+#if NET_2_0
 			case "user instance":
-				userInstance = ConvertToBoolean (name, value);
+				userInstance = ConvertToBoolean (name, value, false);
 				break;
+#endif
 			default :
 				throw new ArgumentException("Keyword not supported : '" + name + "'.");
 			}
@@ -1692,7 +1715,8 @@ namespace System.Data.SqlClient
 #if NET_2_0
 		#region Fields Net 2
 
-		bool async = false;
+		bool async;
+		bool userInstance;
 
 		#endregion // Fields  Net 2
 
