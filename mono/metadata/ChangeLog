@@ -1,3 +1,8 @@
+2008-08-15  Marek Habersack  <mhabersack@novell.com>
+
+	* mono-perfcounters.c (predef_readonly_counter): added support for
+	reading the ASP.NET Requests Queued counter from another process.
+
 2008-08-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata-internals.h: Move the 'aot_module' field from MonoAssembly to
