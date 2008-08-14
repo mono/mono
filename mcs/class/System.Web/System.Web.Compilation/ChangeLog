@@ -1,3 +1,9 @@
+2008-08-14  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: .NET allows for whitespace between
+	the directive start (<%) and the directive type character. Added
+	code which copes with such situations correctly.
+
 2008-08-13  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: rewrote the Bind regular expressions
