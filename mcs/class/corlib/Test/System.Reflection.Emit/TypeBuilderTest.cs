@@ -198,8 +198,9 @@ namespace MonoTests.System.Reflection.Emit
 		public void DefineCtorUsingDefineMethod ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public | TypeAttributes.Class);
-			MethodBuilder mb = tb.DefineMethod(".ctor",
-											   MethodAttributes.Public | MethodAttributes.RTSpecialName | MethodAttributes.SpecialName);
+			MethodBuilder mb = tb.DefineMethod(
+				".ctor", MethodAttributes.Public | MethodAttributes.RTSpecialName | MethodAttributes.SpecialName,
+				null, null);
 			ILGenerator ilgen = mb.GetILGenerator();
 			ilgen.Emit(OpCodes.Ldarg_0);
 			ilgen.Emit(OpCodes.Call,

@@ -1,3 +1,8 @@
+2008-08-14  Raja R Harinath  <harinath@hurrynot.org>
+
+	* TypeBuilderTest.cs (DefineCtorUsingDefineMethod): Use a
+	'DefineMethod' overload that's present in the 1.1 profile.
+
 2008-08-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeBuilderTest.cs: Add new test for #416632.
