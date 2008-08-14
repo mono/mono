@@ -10,6 +10,7 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 
 using NUnit.Framework;
@@ -483,6 +484,17 @@ namespace MonoTests.System.Globalization
 
 			ci = (CultureInfo) ci.Clone ();
 			Assert.IsFalse (ci.UseUserOverride, "#2");
+		}
+
+		[Test]
+		public void Bug402128 ()
+		{
+			var culture = new CultureInfo ("en-US");
+			var ms = new MemoryStream ();
+			var formatter = new BinaryFormatter ();
+			formatter.Serialize (ms, culture);
+			ms.Seek (0, SeekOrigin.Begin);
+			var deserializedCulture = (CultureInfo) formatter.Deserialize (ms);
 		}
 	}
 }

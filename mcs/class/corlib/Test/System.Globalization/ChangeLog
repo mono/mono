@@ -1,3 +1,7 @@
+2008-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CultureInfoTest.cs : added test for bug #402128.
+
 2008-04-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SortKeyTest.cs : new test, for bug #376171.

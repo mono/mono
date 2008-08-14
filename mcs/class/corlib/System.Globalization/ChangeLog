@@ -1,3 +1,9 @@
+2008-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CultureInfo.cs : applied patch by Robert Jordan,
+	  fixed bug #402128. Create uninitialized parent culture
+	  when required.
+
 2008-07-28  Marek Safar <marek.safar@gmail.com>
 
 	* GregorianCalendar.cs: Delay DateTime .cctor invocation.

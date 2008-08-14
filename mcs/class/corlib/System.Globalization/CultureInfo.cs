@@ -300,6 +300,8 @@ namespace System.Globalization
 		{
 			get {
 				if (parent_culture == null) {
+					if (!constructed)
+						Construct ();
 					if (parent_lcid == cultureID)
 						return null;
 					
