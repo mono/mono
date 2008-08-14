@@ -1,3 +1,8 @@
+2008-08-14  Marek Safar  <marek.safar@gmail.com>
+	
+	A fix for bug #417078
+	* expression.cs: Emit correctly left side pointer operators.
+
 2008-08-13  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs, lambda.cs: Inflate method generic arguments only.
