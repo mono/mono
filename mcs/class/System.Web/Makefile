@@ -199,6 +199,18 @@ LIB_MCS_FLAGS += -define:MONOWEB_DEP -r:$(MONOWEB_DEP)
 $(the_lib): $(MONOWEB_DEP_FILE)
 endif
 
+ifdef DEBUG
+LIB_MCS_FLAGS += -define:DEBUG
+endif
+
+ifdef TRACE
+LIB_MCS_FLAGS += -define:TRACE
+endif
+
+ifdef MONO_TRACE
+LIB_MCS_FLAGS += -define:TRACE -define:MONO_TRACE
+endif
+
 $(the_lib): $(RESX_RES) $(RESOURCE_FILES2) $(RESOURCE_FILES_1)
 
 $(RESX_RES): %.resources: %.resx
