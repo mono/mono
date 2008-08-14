@@ -1,3 +1,8 @@
+2008-08-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (sigprof_signal_handler): Call mono_find_jit_info instead of
+	mono_arch_find_jit_info.
+
 2008-08-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (check_inline_called_method_name_limit): Optimize this to
