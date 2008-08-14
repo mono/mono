@@ -189,14 +189,27 @@ namespace System.Net.Mime {
 				return TransferEncoding.QuotedPrintable;
 		}
 
+		internal static string To2047(byte [] bytes)
+		{
+			System.IO.StringWriter writer = new System.IO.StringWriter ();
+			foreach (byte i in bytes) {
+				if (i > 127 || i == '\t') {
+					writer.Write ("=");
+					writer.Write (Convert.ToString (i, 16).ToUpper ());
+				} else
+				writer.Write (Convert.ToChar (i));
+			}
+			return writer.GetStringBuilder ().ToString ();
+		}
+
 		internal static string EncodeSubjectRFC2047 (string s, Encoding enc)
 		{
 			if (s == null || Encoding.ASCII.Equals (enc))
 				return s;
 			for (int i = 0; i < s.Length; i++)
 				if (s [i] >= '\u0080') {
-				string b64 = Convert.ToBase64String (enc.GetBytes (s));
-				return String.Concat ("=?", enc.HeaderName, "?B?", b64, "?=");
+					string quoted = To2047(enc.GetBytes (s));
+					return String.Concat ("=?", enc.HeaderName, "?Q?", quoted, "?=");
 				}
 			return s;
 		}

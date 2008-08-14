@@ -253,6 +253,26 @@ namespace System.Net.Mail {
 			if (messageInProcess != null)
 				throw new InvalidOperationException ("Cannot set Timeout while Sending a message");
 		}
+		
+		private static string EncodeAddress(MailAddress address)
+		{
+			string encodedDisplayName = ContentType.EncodeSubjectRFC2047 (address.DisplayName, Encoding.UTF8);
+			return "\"" + encodedDisplayName + "\" <" + address.Address + ">";
+		}
+
+		private static string EncodeAddresses(MailAddressCollection addresses)
+		{
+			StringBuilder sb = new StringBuilder();
+			bool first = true;
+			foreach (MailAddress address in addresses) {
+				if (!first) {
+					sb.Append(", ");
+				}
+				sb.Append(EncodeAddress(address));
+				first = false;
+			}
+			return sb.ToString();
+		}
 
 		private string EncodeSubjectRFC2047 (MailMessage message)
 		{
@@ -593,10 +613,10 @@ namespace System.Net.Mail {
 			dt = dt.Remove (dt.Length - 3, 1);
 			SendHeader (HeaderName.Date, dt);
 
-			SendHeader (HeaderName.From, from.ToString ());
-			SendHeader (HeaderName.To, message.To.ToString ());
+			SendHeader (HeaderName.From, EncodeAddress (from));
+			SendHeader (HeaderName.To, EncodeAddresses (message.To));
 			if (message.CC.Count > 0)
-				SendHeader (HeaderName.Cc, message.CC.ToString ());
+				SendHeader (HeaderName.Cc, EncodeAddresses (message.CC));
 			SendHeader (HeaderName.Subject, EncodeSubjectRFC2047 (message));
 
 			foreach (string s in message.Headers.AllKeys)

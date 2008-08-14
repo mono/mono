@@ -1,3 +1,8 @@
+2008-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ContentType.cs : patch by Ted Unangst, fixed bug #392843.
+	  handle RFC2047 encoding.
+
 2008-02-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ContentType.cs : Reject such MediaType that lacks '/'.

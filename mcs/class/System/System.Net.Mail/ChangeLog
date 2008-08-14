@@ -1,3 +1,9 @@
+2008-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SmtpClient.cs : Patch by Ted Unangst, fixed bug #392843.
+	  Encode emails correctly as well as join multiple emails
+	  correctly.
+
 2008-08-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SmtpClient.cs : fixed bug #392682, in the same spirit in the
