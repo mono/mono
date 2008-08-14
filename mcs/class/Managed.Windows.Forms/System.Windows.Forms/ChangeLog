@@ -1,3 +1,9 @@
+2008-08-14  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUICarbon.cs: Properly implement PeekMessage and DoEvents.
+	Fixes #396983.  Properly fix ActiveWindow trackin and do not
+	prematurely show POPUP windows.
+
 2008-08-12  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* XplatUIX11.cs: Handle the obscured regions while scrolling using
