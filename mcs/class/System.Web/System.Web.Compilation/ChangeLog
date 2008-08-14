@@ -1,5 +1,7 @@
 2008-08-14  Marek Habersack  <mhabersack@novell.com>
 
+	* AspGenerator.cs: do not ignore directives inside HTML comments.
+
 	* TemplateControlCompiler.cs: .NET allows for whitespace between
 	the directive start (<%) and the directive type character. Added
 	code which copes with such situations correctly.
