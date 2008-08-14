@@ -1,3 +1,8 @@
+2008-08-14  Marek Safar  <marek.safar@gmail.com>
+	
+	* expression.cs, ecore.cs, anonymous.cs, class.cs: Fixed missing error
+	checks.
+
 2008-08-14  Raja R Harinath  <harinath@hurrynot.org>
 
 	* cs-parser.jay (type): Allow 'var' in mcs too.

@@ -840,6 +840,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (expr.Type == TypeManager.void_ptr_type) {
+				Error (242, "The operation in question is undefined on void pointers");
+				return null;
+			}
+
 			type = TypeManager.GetElementType (expr.Type);
 			eclass = ExprClass.Variable;
 			return this;
@@ -6595,7 +6600,7 @@ namespace Mono.CSharp {
 
 	public class This : VariableReference
 	{
-		class ThisVariable : ILocalVariable
+		sealed class ThisVariable : ILocalVariable
 		{
 			public static readonly ILocalVariable Instance = new ThisVariable ();
 
@@ -6668,6 +6673,20 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public static bool IsThisAvailable (EmitContext ec)
+		{
+			if (ec.IsStatic || ec.IsInFieldInitializer)
+				return false;
+
+			if (ec.CurrentAnonymousMethod == null)
+				return true;
+
+			if (ec.TypeContainer is Struct && ec.CurrentIterator == null)
+				return false;
+
+			return true;
+		}
+
 		public bool ResolveBase (EmitContext ec)
 		{
 			eclass = ExprClass.Variable;
@@ -6677,13 +6696,17 @@ namespace Mono.CSharp {
 			else
 				type = ec.ContainerType;
 
-			is_struct = ec.TypeContainer is Struct;
-
-			if (ec.IsStatic) {
-				Error (26, "Keyword `this' is not valid in a static property, " +
-				       "static method, or static field initializer");
-				return false;
+			if (!IsThisAvailable (ec)) {
+				if (ec.IsStatic) {
+					Error (26, "Keyword `this' is not valid in a static property, static method, or static field initializer");
+				} else {
+					Report.Error (1673, loc,
+						"Anonymous methods inside structs cannot access instance members of `this'. " +
+						"Consider copying `this' to a local variable outside the anonymous method and using the local instead");
+				}
 			}
+
+			is_struct = ec.TypeContainer is Struct;
 
 			if (block != null) {
 				if (block.Toplevel.ThisVariable != null)
@@ -6691,14 +6714,6 @@ namespace Mono.CSharp {
 
 				AnonymousExpression am = ec.CurrentAnonymousMethod;
 				if (am != null) {
-					if (is_struct && !am.IsIterator) {
-						Report.Error (1673, loc, "Anonymous methods inside structs " +
-								  "cannot access instance members of `this'. " +
-								  "Consider copying `this' to a local variable " +
-								  "outside the anonymous method and using the " +
-								  "local instead.");
-					}
-
 					//
 					// this is hoisted to very top level block
 					//
@@ -7818,10 +7833,6 @@ namespace Mono.CSharp {
 
 		Expression MakePointerAccess (EmitContext ec, Type t)
 		{
-			if (t == TypeManager.void_ptr_type){
-				Error (242, "The array index operation is not valid on void pointers");
-				return null;
-			}
 			if (Arguments.Count != 1){
 				Error (196, "A pointer must be indexed by only one value");
 				return null;
@@ -8692,13 +8703,12 @@ namespace Mono.CSharp {
 			Type current_type = ec.ContainerType;
 			Type base_type = current_type.BaseType;
 
-			if (ec.IsStatic){
-				Error (1511, "Keyword `base' is not available in a static method");
-				return null;
-			}
-
-			if (ec.IsInFieldInitializer){
-				Error (1512, "Keyword `base' is not available in the current context");
+			if (!This.IsThisAvailable (ec)) {
+				if (ec.IsStatic) {
+					Error (1511, "Keyword `base' is not available in a static method");
+				} else {
+					Error (1512, "Keyword `base' is not available in the current context");
+				}
 				return null;
 			}
 			

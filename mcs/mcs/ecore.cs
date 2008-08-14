@@ -1174,8 +1174,8 @@ namespace Mono.CSharp {
 		{
 			Report.SymbolRelatedToPreviousError (type);
 			if (ec.CurrentInitializerVariable != null) {
-				Report.Error (1918, loc, "Members of a value type property `{0}' cannot be assigned with an object initializer",
-					GetSignatureForError ());
+				Report.Error (1918, loc, "Members of value type `{0}' cannot be assigned using a property `{1}' object initializer",
+					TypeManager.CSharpName (type), GetSignatureForError ());
 			} else {
 				Report.Error (1612, loc, "Cannot modify a value type return value of `{0}'. Consider storing the value in a temporary variable",
 					GetSignatureForError ());

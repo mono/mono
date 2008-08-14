@@ -877,11 +877,10 @@ namespace Mono.CSharp {
 					      TypeManager.CSharpName (delegate_type), Parameters.Count.ToString ());
 				return false;
 			}
-			
-			if (!HasExplicitParameters)
-				return true;			
 
+			bool has_implicit_parameters = !HasExplicitParameters;
 			bool error = false;
+
 			for (int i = 0; i < Parameters.Count; ++i) {
 				Parameter.Modifier p_mod = invoke_pd.ParameterModifier (i);
 				if (Parameters.ParameterModifier (i) != p_mod && p_mod != Parameter.Modifier.PARAMS) {
@@ -895,8 +894,10 @@ namespace Mono.CSharp {
 						Report.Error (1676, loc, "Parameter `{0}' must be declared with the `{1}' keyword",
 							      (i+1).ToString (), Parameter.GetModifierSignature (p_mod));
 					error = true;
-					continue;
 				}
+
+				if (has_implicit_parameters)
+					continue;
 
 				Type type = invoke_pd.Types [i];
 				

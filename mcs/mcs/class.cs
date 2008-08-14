@@ -5463,8 +5463,8 @@ namespace Mono.CSharp {
 				OptAttributes.Emit ();
 			}
 
-			if (((status & Status.HAS_OFFSET) == 0) && (ModFlags & Modifiers.STATIC) == 0 && Parent.PartialContainer.HasExplicitLayout) {
-				Report.Error (625, Location, "`{0}': Instance field types marked with StructLayout(LayoutKind.Explicit) must have a FieldOffset attribute.", GetSignatureForError ());
+			if (((status & Status.HAS_OFFSET) == 0) && (ModFlags & (Modifiers.STATIC | Modifiers.BACKING_FIELD)) == 0 && Parent.PartialContainer.HasExplicitLayout) {
+				Report.Error (625, Location, "`{0}': Instance field types marked with StructLayout(LayoutKind.Explicit) must have a FieldOffset attribute", GetSignatureForError ());
 			}
 
 			base.Emit ();
@@ -6719,6 +6719,17 @@ namespace Mono.CSharp {
 			TypeManager.RegisterProperty (PropertyBuilder, this);
 			Parent.MemberCache.AddMember (PropertyBuilder, this);
 			return true;
+		}
+
+		public override void Emit ()
+		{
+			if (((Set.ModFlags | Get.ModFlags) & (Modifiers.STATIC | Modifiers.COMPILER_GENERATED)) == Modifiers.COMPILER_GENERATED && Parent.PartialContainer.HasExplicitLayout) {
+				Report.Error (842, Location,
+					"Automatically implemented property `{0}' cannot be used inside a type with an explicit StructLayout attribute",
+					GetSignatureForError ());
+			}
+
+			base.Emit ();
 		}
 
 		protected override PropertyInfo ResolveBaseProperty ()
