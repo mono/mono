@@ -1,3 +1,8 @@
+2008-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlConnection.cs: Convert keywords to lowercase instead of uppercase
+	to avoid further case changes in exception messages.
+
 2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlCommand.cs (ExecuteReader): When behavior includes SingleRow,

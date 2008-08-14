@@ -686,7 +686,7 @@ namespace System.Data.SqlClient
 					else {
 						if (name != String.Empty && name != null) {
 							value = sb.ToString ();
-							SetProperties (name.ToUpper ().Trim() , value);
+							SetProperties (name.ToLower ().Trim() , value);
 						}
 						else if (sb.Length != 0)
 							throw new ArgumentException ("Format of initialization string does not conform to specifications");
@@ -748,122 +748,122 @@ namespace System.Data.SqlClient
 		private void SetProperties (string name , string value)
 		{
 			switch (name) {
-			case "APP" :
-			case "APPLICATION NAME" :
+			case "app" :
+			case "application name" :
 				parms.ApplicationName = value;
 				break;
-			case "ATTACHDBFILENAME" :
-			case "EXTENDED PROPERTIES" :
-			case "INITIAL FILE NAME" :
+			case "attachdbfilename" :
+			case "extended properties" :
+			case "initial file name" :
 				parms.AttachDBFileName = value;
 				break;
-			case "TIMEOUT" :
-			case "CONNECT TIMEOUT" :
-			case "CONNECTION TIMEOUT" :
+			case "timeout" :
+			case "connect timeout" :
+			case "connection timeout" :
 				int tmpTimeout = ConvertToInt32 ("connection timeout", value);
 				if (tmpTimeout < 0)
 					throw new ArgumentException ("Invalid CONNECTION TIMEOUT .. Must be an integer >=0 ");
 				else 
 					connectionTimeout = tmpTimeout;
 				break;
-			case "CONNECTION LIFETIME" :
+			case "connection lifetime" :
 				break;
-			case "CONNECTION RESET" :
+			case "connection reset" :
 				connectionReset = ConvertToBoolean ("connection reset", value);
 				break;
-			case "LANGUAGE" :
-			case "CURRENT LANGUAGE" :
+			case "language" :
+			case "current language" :
 				parms.Language = value;
 				break;
-			case "DATA SOURCE" :
-			case "SERVER" :
-			case "ADDRESS" :
-			case "ADDR" :
-			case "NETWORK ADDRESS" :
+			case "data source" :
+			case "server" :
+			case "address" :
+			case "addr" :
+			case "network address" :
 				dataSource = value;
 				break;
-			case "ENCRYPT":
-				if (ConvertToBoolean("encrypt", value))
+			case "encrypt":
+				if (ConvertToBoolean(name, value))
 					throw new NotImplementedException("SSL encryption for"
 						+ " data sent between client and server is not"
 						+ " implemented.");
 				break;
-			case "ENLIST" :
-				if (!ConvertToBoolean("enlist", value))
+			case "enlist" :
+				if (!ConvertToBoolean(name, value))
 					throw new NotImplementedException("Disabling the automatic"
 						+ " enlistment of connections in the thread's current"
 						+ " transaction context is not implemented.");
 				break;
-			case "INITIAL CATALOG" :
-			case "DATABASE" :
+			case "initial catalog" :
+			case "database" :
 				parms.Database = value;
 				break;
-			case "INTEGRATED SECURITY" :
-			case "TRUSTED_CONNECTION" :
+			case "integrated security" :
+			case "trusted_connection" :
 				parms.DomainLogin = ConvertIntegratedSecurity(value);
 				break;
-			case "MAX POOL SIZE" :
-				int tmpMaxPoolSize = ConvertToInt32 ("max pool size" , value);
+			case "max pool size" :
+				int tmpMaxPoolSize = ConvertToInt32 (name, value);
 				if (tmpMaxPoolSize < 0)
 					throw new ArgumentException ("Invalid MAX POOL SIZE. Must be a intger >= 0");
 				else
 					maxPoolSize = tmpMaxPoolSize;
 				break;
-			case "MIN POOL SIZE" :
-				int tmpMinPoolSize = ConvertToInt32 ("min pool size" , value);
+			case "min pool size" :
+				int tmpMinPoolSize = ConvertToInt32 (name, value);
 				if (tmpMinPoolSize < 0)
 					throw new ArgumentException ("Invalid MIN POOL SIZE. Must be a intger >= 0");
 				else
 					minPoolSize = tmpMinPoolSize;
 				break;
-#if NET_2_0	
-			case "MULTIPLEACTIVERESULTSETS":
+#if NET_2_0
+			case "multipleactiveresultsets":
 				break;
-			case "ASYNCHRONOUS PROCESSING" :
-			case "ASYNC" :
+			case "asynchronous processing" :
+			case "async" :
 				async = ConvertToBoolean (name, value);
 				break;
 #endif	
-			case "NET" :
-			case "NETWORK" :
-			case "NETWORK LIBRARY" :
+			case "net" :
+			case "network" :
+			case "network library" :
 				if (!value.ToUpper ().Equals ("DBMSSOCN"))
 					throw new ArgumentException ("Unsupported network library.");
 				break;
-			case "PACKET SIZE" :
-				int tmpPacketSize = ConvertToInt32 ("packet size", value);
+			case "packet size" :
+				int tmpPacketSize = ConvertToInt32 (name, value);
 				if (tmpPacketSize < 512 || tmpPacketSize > 32767)
-					throw new ArgumentException ("Invalid PACKET SIZE. The integer must be between 512 and 32767");
+					throw new ArgumentException ("Invalid 'Packet Size'. The integer must be between 512 and 32767");
 				else
 					packetSize = tmpPacketSize;
 				break;
-			case "PASSWORD" :
-			case "PWD" :
+			case "password" :
+			case "pwd" :
 				parms.Password = value;
 				break;
-			case "PERSISTSECURITYINFO" :
-			case "PERSIST SECURITY INFO" :
+			case "persistsecurityinfo" :
+			case "persist security info" :
 				// FIXME : not implemented
 				// throw new NotImplementedException ();
 				break;
-			case "POOLING" :
-				pooling = ConvertToBoolean("pooling", value);
+			case "pooling" :
+				pooling = ConvertToBoolean(name, value);
 				break;
-			case "UID" :
-			case "USER" :
-			case "USER ID" :
+			case "uid" :
+			case "user" :
+			case "user id" :
 				parms.User = value;
 				break;
-			case "WSID" :
-			case "WORKSTATION ID" :
+			case "wsid" :
+			case "workstation id" :
 				parms.Hostname = value;
 				break;
 				
-			case "USER INSTANCE":
-				userInstance = ConvertToBoolean ("user instance", value);
+			case "user instance":
+				userInstance = ConvertToBoolean (name, value);
 				break;
 			default :
-				throw new ArgumentException("Keyword not supported :"+name);
+				throw new ArgumentException("Keyword not supported : '" + name + "'.");
 			}
 		}
 
