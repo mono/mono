@@ -1,5 +1,8 @@
 2008-08-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Disable AOT for virtual calls requiring
+	an mrgctx.
+
 	* decompose.c (mono_decompose_vtype_opts): Emit the correct sized
 	store instructions when converting a vcall to a normal call.
 
