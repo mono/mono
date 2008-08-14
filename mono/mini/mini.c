@@ -5906,6 +5906,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					mrgctx = mono_method_lookup_rgctx (mono_class_vtable (cfg->domain, cmethod->klass),
 						mini_method_get_context (cmethod)->method_inst);
 
+					cfg->disable_aot = TRUE;
 					NEW_PCONST (cfg, vtable_arg, mrgctx);
 				}
 
@@ -12242,6 +12243,11 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (try_generic_shared)
 		cfg->generic_sharing_context = (MonoGenericSharingContext*)&cfg->generic_sharing_context;
 	cfg->token_info_hash = g_hash_table_new (NULL, NULL);
+
+	if (cfg->compile_aot && !try_generic_shared && (method->is_generic || method->klass->generic_container)) {
+		cfg->exception_type = MONO_EXCEPTION_GENERIC_SHARING_FAILED;
+		return cfg;
+	}
 
 	/* The debugger has no liveness information, so avoid sharing registers/stack slots */
 	if (mono_debug_using_mono_debugger () || debug_options.mdb_optimizations) {
