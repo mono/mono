@@ -240,7 +240,7 @@ namespace Mono.CSharp
 				"   -langversion:TEXT  Specifies language version modes: ISO-1, ISO-2, or Default\n" + 
 				"   -lib:PATH1[,PATHn] Specifies the location of referenced assemblies\n" +
 				"   -main:CLASS        Specifies the class with the Main method (short: -m)\n" +
-				"   -noconfig[+|-]     Disables implicit references to assemblies\n" +
+				"   -noconfig          Disables implicitly referenced assemblies\n" +
 				"   -nostdlib[+|-]     Does not reference mscorlib.dll library\n" +
 				"   -nowarn:W1[,Wn]    Suppress one or more compiler warnings\n" + 
 				"   -optimize[+|-]     Enables advanced compiler optimizations (short: -o)\n" + 
@@ -765,11 +765,11 @@ namespace Mono.CSharp
 				"System.Windows.Forms"
 #endif
 			};
-			
-			if (RootContext.Version == LanguageVersion.LINQ)
-				soft_references.Add ("System.Core");
 
 			soft_references.AddRange (default_config);
+			
+			if (RootContext.Version > LanguageVersion.ISO_2)
+				soft_references.Add ("System.Core");
 		}
 
 		public static string OutputFile
@@ -1381,12 +1381,7 @@ namespace Mono.CSharp
 				return true;
 			}
 
-			case "/noconfig-":
-				load_default_config = true;
-				return true;
-				
 			case "/noconfig":
-			case "/noconfig+":
 				load_default_config = false;
 				return true;
 
