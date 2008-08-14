@@ -1095,14 +1095,14 @@ namespace MonoTests_System.Data
 			//	Otherwise, if the DataView was created without a DataViewManager, this property is a null reference (Nothing in Visual Basic).
 
 			dvm = dv.DataViewManager;
-			Assert.AreEqual(ds.DefaultViewManager,dvm, "DV114");
+			Assert.AreSame (ds.DefaultViewManager, dvm, "DV114");
 
 			dv = new DataView(dt);
 			dvm = dv.DataViewManager;
-			Assert.AreEqual(null,dvm,"DV115");
+			Assert.IsNull (dvm, "DV115");
 			
 			dv = ds.DefaultViewManager.CreateDataView(dt);
-			Assert.AreEqual(ds.DefaultViewManager,dv.DataViewManager , "DV116");
+			Assert.AreSame (ds.DefaultViewManager, dv.DataViewManager , "DV116");
 		}
 
 		[Test]

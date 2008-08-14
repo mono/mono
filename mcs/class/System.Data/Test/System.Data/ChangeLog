@@ -1,5 +1,11 @@
 2008-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* DataViewTest2.cs (DataViewManager): Check for reference equality
+	instead of using Equals to avoid test regression using more recent
+	versions of NUnit.
+
+2008-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* DataTableTest2.cs: Added test for LoadDataRow with readonly columns.
 
 2008-08-04  Raja R Harinath  <harinath@hurrynot.org>
