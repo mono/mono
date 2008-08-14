@@ -1,3 +1,18 @@
+2008-08-14  Geoff Norton  <gnorton@novell.com>
+	
+	* WindowHandler.cs: Revert the change which didn't set ActiveWindow
+	here and fix the problem in the driver.  Fully fixes #393317.
+
+2008-08-01  Geoff Norton  <gnorton@novell.com>
+
+	* CarbonCursor.cs: If the window doesn't have a cursor set, revert
+	to the default.  Fixes #411114.
+
+2008-07-31  Geoff Norton  <gnorton@novell.com>
+
+	* WindowHandler.cs: Dont set ActiveWindow when emitting the event,
+	its set when the event is handled.  Fixes #393317.
+
 2008-05-10  Geoff Norton  <gnorton@novell.com>
 
 	* MouseHandler.cs: Fix the generation of msg.wParam for mouse up/down

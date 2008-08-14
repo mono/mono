@@ -32,6 +32,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms.CarbonInternal {
 	internal class Cursor {
+		internal static CarbonCursor defcur = new CarbonCursor (StdCursor.Default);
+
                 internal static Bitmap DefineStdCursorBitmap (StdCursor id) {
 			// FIXME
 			return new Bitmap (16, 16);
@@ -47,8 +49,10 @@ namespace System.Windows.Forms.CarbonInternal {
 			return (IntPtr) GCHandle.Alloc (cc);
 		}
 		internal static void SetCursor (IntPtr cursor) {
-			if (cursor == IntPtr.Zero)
+			if (cursor == IntPtr.Zero) {
+				defcur.SetCursor ();
 				return;
+			}
 
 			CarbonCursor cc = (CarbonCursor) ((GCHandle) cursor).Target;
 
