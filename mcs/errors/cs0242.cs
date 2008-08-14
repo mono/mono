@@ -1,6 +1,7 @@
-// cs0242.cs: The array index operation is not valid on void pointers
-// Line: 10
+// CS0242: The operation in question is undefined on void pointers
+// Line: 11
 // Compiler options: -unsafe
+
 using System;
 
 unsafe class ZZ {
