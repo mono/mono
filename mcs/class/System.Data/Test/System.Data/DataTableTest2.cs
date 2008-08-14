@@ -424,6 +424,33 @@ namespace MonoTests_System.Data
 			}
 		}
 
+		[Test] // LoadDataRow (Object [], Boolean)
+		public void LoadDataRow1_Column_ReadOnly ()
+		{
+			DataTable dt = new DataTable ("myTable");
+			DataColumn dcId = new DataColumn ("Id", typeof (int));
+			dcId.ReadOnly = true;
+			dt.Columns.Add (dcId);
+			DataColumn dcName = new DataColumn ("Name", typeof (string));
+			dcName.ReadOnly = true;
+			dt.Columns.Add (dcName);
+			DataColumn dcPassword = new DataColumn ("Password", typeof (string));
+			dt.Columns.Add (dcPassword);
+			dt.PrimaryKey = new DataColumn [] { dcId };
+
+			dt.Rows.Add (new object [] { 5, "Mono", "guess" });
+			dt.AcceptChanges ();
+			dt.LoadDataRow (new object [] { 5, "SysData", "what" }, true);
+
+			Assert.AreEqual (1, dt.Rows.Count, "#1");
+			DataRow row = dt.Rows.Find (5);
+			Assert.IsNotNull (row, "#2");
+			Assert.AreEqual (5, row [dcId], "#3");
+			Assert.AreEqual ("SysData", row [dcName], "#4");
+			Assert.AreEqual ("what", row [dcPassword], "#5");
+			Assert.AreEqual (DataRowState.Unchanged, row.RowState, "#6");
+		}
+
 		[Test]
 		public void LoadDataRow_DuplicateValues ()
 		{

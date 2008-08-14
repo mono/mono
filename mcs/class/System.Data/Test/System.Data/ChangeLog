@@ -1,3 +1,7 @@
+2008-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataTableTest2.cs: Added test for LoadDataRow with readonly columns.
+
 2008-08-04  Raja R Harinath  <harinath@hurrynot.org>
 
 	* XmlDataReaderTest.cs (XmlLoadCustomTypesTest): Fix compile
