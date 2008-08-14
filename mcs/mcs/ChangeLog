@@ -1,3 +1,8 @@
+2008-08-14  Raja R Harinath  <harinath@hurrynot.org>
+
+	* cs-parser.jay (type): Allow 'var' in mcs too.
+	(local_variable_type): Likewise.
+
 2008-08-14  Marek Safar  <marek.safar@gmail.com>
 	
 	* driver.cs: Removed broken -noconfig variants.

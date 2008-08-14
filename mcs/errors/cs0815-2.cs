@@ -8,7 +8,7 @@ public class Test
 	{
 		var v = Foo ();
 	}
-	
+
 	static void Foo ()
 	{
 	}

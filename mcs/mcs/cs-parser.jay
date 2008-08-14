@@ -2672,7 +2672,8 @@ type
 		if ((bool) $2) {
 			$$ = new ComposedCast (name.GetTypeExpression (), "?", lexer.Location);
 		} else {
-			if (RootContext.Version > LanguageVersion.ISO_2 && name.Left == null && name.Name == "var")
+			if (name.Left == null && name.Name == "var" &&
+			    (RootContext.Version > LanguageVersion.ISO_2 || RootContext.Version == LanguageVersion.Default_MCS))
 				$$ = new VarExpr (name.Location);
 			else
 				$$ = name.GetTypeExpression ();
@@ -4298,7 +4299,8 @@ local_variable_type
 			//
 			if (rank_or_nullable.Length == 0) {
 				SimpleName sn = expr as SimpleName;
-				if (sn != null && RootContext.Version > LanguageVersion.ISO_2 && sn.Name == "var")
+				if (sn != null && sn.Name == "var" &&
+				    (RootContext.Version > LanguageVersion.ISO_2 || RootContext.Version == LanguageVersion.Default_MCS))
 					$$ = new VarExpr (sn.Location);
 				else
 					$$ = $1;

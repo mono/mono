@@ -16493,57 +16493,6 @@
       </method>
     </type>
   </test>
-  <test name="gtest-var-01.cs">
-    <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>47</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-var-02.cs">
-    <type name="Class1">
-      <method name="Void .ctor()">
-        <size>15</size>
-      </method>
-      <method name="Boolean Method()">
-        <size>2</size>
-      </method>
-    </type>
-    <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>116</size>
-      </method>
-    </type>
-    <type name="Test+Class2">
-      <method name="Void .ctor()">
-        <size>15</size>
-      </method>
-      <method name="Boolean Method()">
-        <size>2</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-var-03.cs">
-    <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>174</size>
-      </method>
-    </type>
-    <type name="&lt;PrivateImplementationDetails&gt;">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
   <test name="gtest-var-04.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -16551,62 +16500,6 @@
       </method>
       <method name="Int32 Main()">
         <size>218</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-var-05.cs">
-    <type name="MyClass">
-      <method name="Void .ctor(String)">
-        <size>14</size>
-      </method>
-      <method name="Void Dispose()">
-        <size>12</size>
-      </method>
-    </type>
-    <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>61</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-var-06.cs">
-    <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>48</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-var-07.cs">
-    <type name="Test">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void var()">
-        <size>1</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>33</size>
-      </method>
-    </type>
-    <type name="var">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-var-08.cs">
-    <type name="X">
-      <method name="Void .ctor(Int32, Int32)">
-        <size>10</size>
-      </method>
-      <method name="Void Main()">
-        <size>1</size>
       </method>
     </type>
   </test>
@@ -38089,6 +37982,113 @@
     <type name="Mono.Sms.Main">
       <method name="Void &lt;Test&gt;m__0()">
         <size>6</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-var-01.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>47</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-var-02.cs">
+    <type name="Class1">
+      <method name="Void .ctor()">
+        <size>15</size>
+      </method>
+      <method name="Boolean Method()">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>116</size>
+      </method>
+    </type>
+    <type name="Test+Class2">
+      <method name="Void .ctor()">
+        <size>15</size>
+      </method>
+      <method name="Boolean Method()">
+        <size>2</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-var-03.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>174</size>
+      </method>
+    </type>
+    <type name="&lt;PrivateImplementationDetails&gt;">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-var-05.cs">
+    <type name="MyClass">
+      <method name="Void .ctor(String)">
+        <size>14</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>12</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>61</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-var-06.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>48</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-var-07.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void var()">
+        <size>1</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>33</size>
+      </method>
+    </type>
+    <type name="var">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-var-08.cs">
+    <type name="X">
+      <method name="Void .ctor(Int32, Int32)">
+        <size>10</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
       </method>
     </type>
   </test>
