@@ -326,14 +326,9 @@ namespace System.Linq
 		public static IEnumerable<TResult> Cast<TResult> (this IEnumerable source)
 		{
 			Check.Source (source);
-
-			return CreateCastIterator<TResult> (source);
-		}
-
-		static IEnumerable<TResult> CreateCastIterator<TResult> (IEnumerable source)
-		{
-			foreach (object element in source)
-				yield return (TResult) element;
+			
+			foreach (TResult element in source)
+				yield return element;
 		}
 
 		#endregion
