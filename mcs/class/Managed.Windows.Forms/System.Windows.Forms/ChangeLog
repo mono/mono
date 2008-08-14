@@ -1,3 +1,8 @@
+2008-08-14  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUICarbon.cs: Track the ActiveWindow internally for GetActive().
+	Don't prematurely display POPUP windows.  Fully fixed #393317.
+
 2008-08-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* XplatUIX11.cs: Handle the obscured regions while scrolling using

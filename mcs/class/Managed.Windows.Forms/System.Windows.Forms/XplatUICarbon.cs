@@ -775,6 +775,7 @@ namespace System.Windows.Forms {
 				ActivateWindow (HIViewGetWindow (ActiveWindow), false);
 			}
 			ActivateWindow (HIViewGetWindow (handle), true);
+			ActiveWindow = handle;
 		}
 
 		internal override void AudibleAlert() {
@@ -1025,7 +1026,7 @@ namespace System.Windows.Forms {
 			SendMessage (hwnd.Handle, Msg.WM_CREATE, (IntPtr)1, IntPtr.Zero /* XXX unused */);
 			SendParentNotify (hwnd.Handle, Msg.WM_CREATE, int.MaxValue, int.MaxValue);
 
-			if (StyleSet (cp.Style, WindowStyles.WS_VISIBLE) || StyleSet (cp.Style, WindowStyles.WS_POPUP)) {
+			if (StyleSet (cp.Style, WindowStyles.WS_VISIBLE)) {
 				if (WindowHandle != IntPtr.Zero) {
 					if (Control.FromHandle(hwnd.Handle) is Form) {
 						Form f = Control.FromHandle(hwnd.Handle) as Form;
@@ -1255,11 +1256,7 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override IntPtr GetActive() {
-			foreach (DictionaryEntry entry in WindowMapping)
-				if (IsWindowActive ((IntPtr)(entry.Value)))
-					return (IntPtr)(entry.Key);
-
-			return IntPtr.Zero;
+			return ActiveWindow;
 		}
 
 		internal override Region GetClipRegion(IntPtr hwnd) {
