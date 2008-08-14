@@ -1,5 +1,8 @@
 2008-08-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* decompose.c (mono_decompose_vtype_opts): Emit the correct sized
+	store instructions when converting a vcall to a normal call.
+
 	* mini.c (sigprof_signal_handler): Call mono_find_jit_info instead of
 	mono_arch_find_jit_info.
 
