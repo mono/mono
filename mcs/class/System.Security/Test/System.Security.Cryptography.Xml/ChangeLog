@@ -1,3 +1,13 @@
+2008-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* KeyInfoX509DataTest.cs
+	* SignedInfoTest.cs
+	* XmlDsigC14NTransformTest.cs
+	* XmlDsigExcC14NTransformTest.cs
+	* XmlDsigC14NWithCommentsTransformTest.cs
+	* ReferenceTet.cs
+	* SignatureTest.cs: Fixed line endings.
+
 2008-05-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XmlDsigBase64TransformTest.cs: Add test case for InputTypes
