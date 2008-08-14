@@ -549,12 +549,7 @@ namespace System.Web.Compilation
 			if (ignore_text)
 				return;
 
-			bool isComment = text.StartsWith ("<!--"
-#if NET_2_0
-							  , StringComparison.OrdinalIgnoreCase
-#endif
-			);
-			if (!isComment && text.IndexOf ("<%") != -1 && !inScript) {
+			if (text.IndexOf ("<%") != -1 && !inScript) {
 				if (this.text.Length > 0)
 					FlushText (true);
 				CodeRenderParser r = new CodeRenderParser (text, stack.Builder);
