@@ -1,3 +1,10 @@
+2008-08-15  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* GridEntry.cs: Perform stricter check for the ParentEntry's 
+	PropertyDescriptor/PropertyOwner for the ICustomTypeDescriptor 
+	implementation.
+	[Fixes bug #417567]
+
 2008-08-14  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUICarbon.cs: Track the ActiveWindow internally for GetActive().
