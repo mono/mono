@@ -1,3 +1,14 @@
+2008-08-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (encode_method_ref): Handle references to normal methods of
+	generic instances which doesn't have a token.
+
+	* aot-runtime.c (decode_method_ref): Ditto.
+	
+	* method-to-ir.c (handle_unbox_nullable): Don't disable AOT, the aot code
+	can handle this case now.
+	(handle_box): Ditto.
+
 2008-08-15  Geoff Norton  <gnorton@novell.com>
 
 	* mini-x86.c: Fix alignment on Apple x86, and re-disable the alignment
