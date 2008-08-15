@@ -1,4 +1,4 @@
-// gcs0413-2.cs: The as operator requires that the `T' type parameter be constrained by a class
+// CS0413: The `as' operator cannot be used with a non-reference type parameter `T'
 // Line: 8
 
 public class SomeClass {
@@ -15,5 +15,4 @@ class Driver {
 		f.Do ("something");
 	}
 }
-
 
