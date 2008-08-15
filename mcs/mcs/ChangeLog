@@ -1,5 +1,10 @@
 2008-08-15  Marek Safar  <marek.safar@gmail.com>
 	
+	* ecore.cs, linq.cs, const.cs, expression.cs, statement.cs: More robust
+	error checks.
+
+2008-08-15  Marek Safar  <marek.safar@gmail.com>
+	
 	* delegate.cs: Fixed compiler crash when creating delegate using partial
 	method.
 	

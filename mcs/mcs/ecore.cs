@@ -558,11 +558,6 @@ namespace Mono.CSharp {
 			if (e.eclass == ExprClass.Invalid)
 				throw new Exception ("Expression " + e + " ExprClass is Invalid after resolve");
 
-			if (e.eclass == ExprClass.MethodGroup) {
-				((MethodGroupExpr) e).ReportUsageError ();
-				return null;
-			}
-
 			if ((e.type == null) && !(e is ConstructedType))
 				throw new Exception ("Expression " + e + " did not set its type after Resolve");
 

@@ -521,10 +521,10 @@ namespace Mono.CSharp.Linq
 				return e;
 			}
 
-			protected override void Error_InvalidInitializer (Expression initializer)
+			protected override void Error_InvalidInitializer (string initializer)
 			{
 				Report.Error (1932, loc, "A range variable `{0}' cannot be initialized with `{1}'",
-					Name, initializer.GetSignatureForError ());
+					Name, initializer);
 			}			
 		}
 

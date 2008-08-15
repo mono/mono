@@ -230,7 +230,7 @@ namespace Mono.CSharp {
 
 			Constant c = value.ConvertImplicitly (MemberType);
 			if (c == null) {
-				if (!MemberType.IsValueType && MemberType != TypeManager.string_type && !value.IsDefaultValue)
+				if (TypeManager.IsReferenceType (MemberType))
 					Error_ConstantCanBeInitializedWithNullOnly (Location, GetSignatureForError ());
 				else
 					value.Error_ValueCannotBeConverted (ec, Location, MemberType, false);

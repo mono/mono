@@ -1249,14 +1249,14 @@ namespace Mono.CSharp {
 			Type d = expr.Type;
 			bool d_is_nullable = false;
 
-			if (expr is Constant) {
-				//
-				// If E is a method group or the null literal, of if the type of E is a reference
-				// type or a nullable type and the value of E is null, the result is false
-				//
-				if (expr.IsNull)
-					return CreateConstantResult (false);
-			} else if (TypeManager.IsNullableType (d) && !TypeManager.ContainsGenericParameters (d)) {
+			//
+			// If E is a method group or the null literal, or if the type of E is a reference
+			// type or a nullable type and the value of E is null, the result is false
+			//
+			if (expr.IsNull || expr.eclass == ExprClass.MethodGroup)
+				return CreateConstantResult (false);
+
+			if (TypeManager.IsNullableType (d) && !TypeManager.ContainsGenericParameters (d)) {
 				d = TypeManager.GetTypeArguments (d) [0];
 				d_is_nullable = true;
 			}
@@ -1393,38 +1393,19 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Value;
 			Type etype = expr.Type;
 
-			if (type.IsValueType && !TypeManager.IsNullableType (type)) {
-				Report.Error (77, loc, "The `as' operator cannot be used with a non-nullable value type `{0}'",
-					      TypeManager.CSharpName (type));
+			if (!TypeManager.IsReferenceType (type) && !TypeManager.IsNullableType (type)) {
+				if (probe_type_expr is TypeParameterExpr) {
+					Report.Error (413, loc,
+						"The `as' operator cannot be used with a non-reference type parameter `{0}'",
+						probe_type_expr.GetSignatureForError ());
+				} else {
+					Report.Error (77, loc,
+						"The `as' operator cannot be used with a non-nullable value type `{0}'",
+						TypeManager.CSharpName (type));
+				}
 				return null;
-			
 			}
 
-#if GMCS_SOURCE
-			//
-			// If the type is a type parameter, ensure
-			// that it is constrained by a class
-			//
-			TypeParameterExpr tpe = probe_type_expr as TypeParameterExpr;
-			if (tpe != null){
-				GenericConstraints constraints = tpe.TypeParameter.GenericConstraints;
-				bool error = false;
-				
-				if (constraints == null)
-					error = true;
-				else {
-					if (!constraints.HasClassConstraint)
-						if ((constraints.Attributes & GenericParameterAttributes.ReferenceTypeConstraint) == 0)
-							error = true;
-				}
-				if (error){
-					Report.Error (413, loc,
-						      "The as operator requires that the `{0}' type parameter be constrained by a class",
-						      probe_type_expr.GetSignatureForError ());
-					return null;
-				}
-			}
-#endif
 			if (expr.IsNull && TypeManager.IsNullableType (type)) {
 				return Nullable.LiftedNull.CreateFromExpression (this);
 			}
@@ -1587,18 +1568,17 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (TypeManager.IsGenericParameter (type)) {
-				GenericConstraints constraints = TypeManager.GetTypeParameterConstraints(type);
-				if (constraints != null && constraints.IsReferenceType)
-					return new EmptyConstantCast (new NullLiteral (Location), type);
-			} else {
-				Constant c = New.Constantify (type);
-				if (c != null)
-					return c;
+			if (TypeManager.IsReferenceType (type)) {
+				return new EmptyConstantCast (new NullLiteral (Location), type);
 
-				if (!TypeManager.IsValueType (type))
-					return new EmptyConstantCast (new NullLiteral (Location), type);
+				// TODO: ET needs
+				// return ReducedExpression.Create (new NullLiteral (Location), this);
 			}
+
+			Constant c = New.Constantify (type);
+			if (c != null)
+				return c;
+
 			eclass = ExprClass.Variable;
 			return this;
 		}
@@ -6513,7 +6493,7 @@ namespace Mono.CSharp {
 			if (array_element_type == null || array_element_type == TypeManager.null_type ||
 				array_element_type == TypeManager.void_type || array_element_type == TypeManager.anonymous_method_type ||
 				arguments.Count != dimensions) {
-				Report.Error (826, loc, "The type of an implicitly typed array cannot be inferred from the initializer. Try specifying array type explicitly");
+				Error_NoBestType ();
 				return null;
 			}
 
@@ -6527,6 +6507,12 @@ namespace Mono.CSharp {
 			type = TypeManager.GetConstructedType (array_element_type, rank);
 			eclass = ExprClass.Value;
 			return this;
+		}
+
+		void Error_NoBestType ()
+		{
+			Report.Error (826, loc,
+				"The type of an implicitly typed array cannot be inferred from the initializer. Try specifying array type explicitly");
 		}
 
 		//
@@ -6561,8 +6547,8 @@ namespace Mono.CSharp {
 				return element;
 			}
 
-			element.Error_ValueCannotBeConverted (ec, element.Location, array_element_type, false);
-			return element;
+			Error_NoBestType ();
+			return null;
 		}
 	}	
 	
@@ -9818,20 +9804,25 @@ namespace Mono.CSharp {
 			if (e == null)
 				return null;
 
+			if (e.eclass == ExprClass.MethodGroup) {
+				Error_InvalidInitializer (e.ExprClassName);
+				return null;
+			}
+
 			type = e.Type;
 			if (type == TypeManager.void_type || type == TypeManager.null_type ||
 				type == TypeManager.anonymous_method_type || type.IsPointer) {
-				Error_InvalidInitializer (e);
+				Error_InvalidInitializer (e.GetSignatureForError ());
 				return null;
 			}
 
 			return e;
 		}
 
-		protected virtual void Error_InvalidInitializer (Expression initializer)
+		protected virtual void Error_InvalidInitializer (string initializer)
 		{
 			Report.Error (828, loc, "An anonymous type property `{0}' cannot be initialized with `{1}'",
-				Name, initializer.GetSignatureForError ());
+				Name, initializer);
 		}
 
 		public override void Emit (EmitContext ec)
