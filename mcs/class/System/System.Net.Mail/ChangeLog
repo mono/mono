@@ -1,3 +1,8 @@
+2008-08-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SmtpClient.cs : fixed bug #382670, based on the patch by Ted
+	  Unangst. DeriveryMethod.SpecifiedPickupDirectory was not supported.
+
 2008-08-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SmtpClient.cs : Patch by Ted Unangst, fixed bug #392843.

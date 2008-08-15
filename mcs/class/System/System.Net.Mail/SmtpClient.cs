@@ -453,9 +453,17 @@ namespace System.Net.Mail {
 			if (message == null)
 				throw new ArgumentNullException ("message");
 
-			if (String.IsNullOrEmpty (Host))
+			if (deliveryMethod == SmtpDeliveryMethod.Network && String.IsNullOrEmpty (Host))
 				throw new InvalidOperationException ("The SMTP host was not specified");
-			
+			if (deliveryMethod == SmtpDeliveryMethod.SpecifiedPickupDirectory) {
+				if (String.IsNullOrEmpty(pickupDirectoryLocation))
+					throw new SmtpException("The pickup directory was not specified");
+				if (false && pickupDirectoryLocation[0] != '/')
+					throw new SmtpException("Only absolute directories are allowed for pickup directory.");
+			}
+			if (deliveryMethod == SmtpDeliveryMethod.PickupDirectoryFromIis)
+				throw new NotSupportedException("IIS delivery is not supported");
+
 			if (port == 0)
 				port = 25;
 			
@@ -463,7 +471,10 @@ namespace System.Net.Mail {
 			mutex.WaitOne ();
 			try {
 				messageInProcess = message;
-				SendInternal (message);
+				if (deliveryMethod == SmtpDeliveryMethod.SpecifiedPickupDirectory)
+					SendToFile (message, pickupDirectoryLocation + "/" + Guid.NewGuid() + ".eml");
+				else
+					SendInternal (message);
 			} catch (CancellationException) {
 				// This exception is introduced for convenient cancellation process.
 			} finally {
@@ -496,6 +507,41 @@ namespace System.Net.Mail {
 					stream.Close ();
 				if (client != null)
 					client.Close ();
+			}
+		}
+ 
+		// FIXME: simple implementation, could be brushed up.
+		private void SendToFile (MailMessage message, String filename)
+		{
+			try {
+				writer = new StreamWriter(filename);
+
+				MailAddress from = message.From;
+
+				if (from == null)
+					from = defaultFrom;
+				
+				SendHeader (HeaderName.Date, DateTime.Now.ToString ("ddd, dd MMM yyyy HH':'mm':'ss zzz", DateTimeFormatInfo.InvariantInfo));
+				SendHeader (HeaderName.From, from.ToString ());
+				SendHeader (HeaderName.To, message.To.ToString ());
+				if (message.CC.Count > 0)
+					SendHeader (HeaderName.Cc, message.CC.ToString ());
+				SendHeader (HeaderName.Subject, EncodeSubjectRFC2047 (message));
+
+				foreach (string s in message.Headers.AllKeys)
+					SendHeader (s, message.Headers [s]);
+
+				AddPriorityHeader (message);
+
+				boundaryIndex = 0;
+				if (message.Attachments.Count > 0)
+					SendWithAttachments (message);
+				else
+					SendWithoutAttachments (message, null, false);
+
+
+			} finally {
+				if (writer != null) writer.Close(); writer = null;
 			}
 		}
 
