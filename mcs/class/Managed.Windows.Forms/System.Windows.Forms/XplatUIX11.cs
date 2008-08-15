@@ -133,6 +133,9 @@ namespace System.Windows.Forms {
 		// Caret
 		private static CaretStruct	Caret;			//
 
+		// Last window containing the pointer
+		private static IntPtr		LastPointerWindow;	// The last window containing the pointer
+
 		// Our atoms
 		private static IntPtr WM_PROTOCOLS;
 		private static IntPtr WM_DELETE_WINDOW;
@@ -4009,9 +4012,24 @@ namespace System.Windows.Forms {
 					if (!hwnd.Enabled) {
 						goto ProcessNextMessage;
 					}
-					if (xevent.CrossingEvent.mode != NotifyMode.NotifyNormal && xevent.CrossingEvent.window != hwnd.client_window) {
+					if (xevent.CrossingEvent.mode == NotifyMode.NotifyGrab || LastPointerWindow == xevent.CrossingEvent.window ||
+							hwnd.client_window == IntPtr.Zero) {
 						goto ProcessNextMessage;
 					}
+					if (LastPointerWindow != IntPtr.Zero) {
+						Point enter_loc = new Point (xevent.ButtonEvent.x, xevent.ButtonEvent.y);
+
+						// We need this due to EnterNotify being fired on all the parent controls
+						// of the Control being grabbed, and obviously in that scenario we are not
+						// actuallty entering them
+						Control ctrl = Control.FromHandle (hwnd.client_window);
+						foreach (Control child_control in ctrl.Controls)
+							if (child_control.Bounds.Contains (enter_loc))
+								goto ProcessNextMessage;
+					}
+
+					LastPointerWindow = xevent.AnyEvent.window;
+
 					msg.message = Msg.WM_MOUSE_ENTER;
 					HoverState.X = xevent.CrossingEvent.x;
 					HoverState.Y = xevent.CrossingEvent.y;

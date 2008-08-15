@@ -1,3 +1,11 @@
+2008-08-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* XplatUIX11.cs: Increase the interval for the Timer, to not fire our
+	pseudo motion HandleMouseOver method so aggresive. Also, don't call it
+	when the pointer is actually in motion, but only when the pointer
+	seems to stop (as .net does).
+	Fixes part of #381876.
+
 2008-08-15  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* GridEntry.cs: Perform stricter check for the ParentEntry's 
