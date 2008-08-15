@@ -1,5 +1,16 @@
 2008-08-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Allow AOT compilation of methods
+	calling generic methods.
+
+	* aot-compiler.c (encode_patch): Handle MONO_PATCH_INFO_METHOD_RGCTX.
+
+	* aot-runtime.c (decode_patch_info): Ditto.
+
+	* mini.c (mono_resolve_patch_target): Ditto.
+	
+	* patch-info.h: Add METHOD_RGCTX.
+
 	* mini-amd64.c (mono_arch_output_basic_block): Optimize LOCALLOC_IMM.
 
 2008-08-14  Zoltan Varga  <vargaz@gmail.com>
