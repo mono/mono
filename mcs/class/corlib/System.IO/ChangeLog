@@ -1,5 +1,11 @@
 2008-08-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* StreamWriter.cs: Change argument check for buffersize to require
+	positive number. Removed duplicate disposed check for AutoFlush.
+	Removed unnecessary initialization of bools.
+
+2008-08-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* StreamWriter.cs: Removed duplicate argument checks from .ctor taking
 	path, as these checks are already done in FileStream .ctor. Removed
 	parameter name from ArgumentException to match MS.

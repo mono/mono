@@ -49,7 +49,7 @@ namespace System.IO {
 		private Encoding internalEncoding;
 
 		private Stream internalStream;
-		private bool closed = false;
+		private bool closed;
 
 		private bool iflush;
 		
@@ -62,10 +62,10 @@ namespace System.IO {
 		private char[] decode_buf;
 		private int decode_pos;
 
-		private bool DisposedAlready = false;
-		private bool preamble_done = false;
+		private bool DisposedAlready;
+		private bool preamble_done;
 
-		public new static readonly StreamWriter Null = new StreamWriter (Stream.Null, Encoding.UTF8Unmarked, 0);
+		public new static readonly StreamWriter Null = new StreamWriter (Stream.Null, Encoding.UTF8Unmarked, 1);
 
 		public StreamWriter (Stream stream)
 			: this (stream, Encoding.UTF8Unmarked, DefaultBufferSize) {}
@@ -90,7 +90,7 @@ namespace System.IO {
 				throw new ArgumentNullException("stream");
 			if (null == encoding)
 				throw new ArgumentNullException("encoding");
-			if (bufferSize < 0)
+			if (bufferSize <= 0)
 				throw new ArgumentOutOfRangeException("bufferSize");
 			if (!stream.CanWrite)
 				throw new ArgumentException ("Can not write to stream");
@@ -112,7 +112,7 @@ namespace System.IO {
 		public StreamWriter (string path, bool append, Encoding encoding, int bufferSize) {
 			if (null == encoding)
 				throw new ArgumentNullException("encoding");
-			if (bufferSize < 0)
+			if (bufferSize <= 0)
 				throw new ArgumentOutOfRangeException("bufferSize");
 
 			FileMode mode;
@@ -137,13 +137,9 @@ namespace System.IO {
 				return iflush;
 			}
 			set {
-				if (DisposedAlready)
-					throw new ObjectDisposedException("StreamWriter");
 				iflush = value;
-
-				if (iflush) {
+				if (iflush)
 					Flush ();
-				}
 			}
 		}
 

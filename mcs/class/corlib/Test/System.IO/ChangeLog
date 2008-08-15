@@ -1,5 +1,10 @@
 2008-08-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* StreamWriterTest.cs: Added more .ctor tests. Enabled AutoFlush
+	test.
+
+2008-08-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* StreamWriterTest.cs: Moved ctor argument checks to separate methods.
 	Added and improved ctor tests. Added test for Close. Improved
 	(Auto)Flush tests. Use Assert class instead of Assertion.

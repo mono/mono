@@ -53,7 +53,7 @@ public class StreamWriterTest
 		f.Close();
 	}
 
-	[Test]
+	[Test] // .ctor (Stream)
 	public void Constructor1_Stream_NotWritable ()
 	{
 		FileStream f = new FileStream (_thisCodeFileName, FileMode.Open,
@@ -176,20 +176,93 @@ public class StreamWriterTest
 		}
 	}
 
-	[Test] // .ctor (String, Boolean)
+	[Test] // .ctor (Stream, Encoding)
 	public void Constructor3 ()
 	{
+		FileStream f = new FileStream (_codeFileName,
+					      FileMode.Append,
+					      FileAccess.Write);
+		StreamWriter r = new StreamWriter (f, Encoding.ASCII);
+		Assert.IsFalse (r.AutoFlush, "#1");
+		Assert.AreSame (f, r.BaseStream, "#2");
+		Assert.IsNotNull (r.Encoding, "#3");
+		Assert.AreEqual (typeof (ASCIIEncoding), r.Encoding.GetType (), "#4");
+		r.Close ();
+		f.Close ();
+	}
+
+	[Test] // .ctor (Stream, Encoding)
+	public void Constructor3_Encoding_Null ()
+	{
+		MemoryStream m = new MemoryStream ();
+		try {
+			new StreamWriter (m, (Encoding) null);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.AreEqual ("encoding", ex.ParamName, "#5");
+		}
+	}
+
+	[Test] // .ctor (Stream, Encoding)
+	public void Constructor3_Stream_NotWritable ()
+	{
+		FileStream f = new FileStream (_thisCodeFileName, FileMode.Open,
+			FileAccess.Read);
+		try {
+			new StreamWriter (f, Encoding.UTF8);
+			Assert.Fail ("#B1");
+		} catch (ArgumentException ex) {
+			// Stream was not writable
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNull (ex.ParamName, "#5");
+		} finally {
+			f.Close ();
+		}
+	}
+
+	[Test] // .ctor (Stream, Encoding)
+	public void Constructor3_Stream_Null ()
+	{
+		try {
+			new StreamWriter ((Stream) null, Encoding.UTF8);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.AreEqual ("stream", ex.ParamName, "#5");
+		}
+	}
+
+	[Test] // .ctor (String, Boolean)
+	public void Constructor4 ()
+	{
 		using (StreamWriter r = new StreamWriter (_codeFileName, false)) {
+			Assert.IsFalse (r.AutoFlush, "#A1");
+			Assert.IsNotNull (r.BaseStream, "#A2");
+			Assert.AreEqual (typeof (FileStream), r.BaseStream.GetType (), "#A3");
+			Assert.IsNotNull (r.Encoding, "#A4");
+			Assert.AreEqual (typeof (UTF8Encoding), r.Encoding.GetType (), "#A5");
 			r.Close();
 		}
 
 		using (StreamWriter r = new StreamWriter(_codeFileName, true)) {
+			Assert.IsFalse (r.AutoFlush, "#B1");
+			Assert.IsNotNull (r.BaseStream, "#B2");
+			Assert.AreEqual (typeof (FileStream), r.BaseStream.GetType (), "#B3");
+			Assert.IsNotNull (r.Encoding, "#B4");
+			Assert.AreEqual (typeof (UTF8Encoding), r.Encoding.GetType (), "#B5");
 			r.Close();
 		}
 	}
 
 	[Test] // .ctor (String, Boolean)
-	public void Constructor3_Path_DirectoryNotFound ()
+	public void Constructor4_Path_DirectoryNotFound ()
 	{
 		Directory.Delete (TempFolder, true);
 
@@ -217,7 +290,7 @@ public class StreamWriterTest
 	}
 
 	[Test] // .ctor (String, Boolean)
-	public void Constructor3_Path_Empty ()
+	public void Constructor4_Path_Empty ()
 	{
 		try {
 			new StreamWriter (string.Empty, false);
@@ -243,7 +316,7 @@ public class StreamWriterTest
 	}
 
 	[Test] // .ctor (String, Boolean)
-	public void Constructor3_Path_InvalidChars ()
+	public void Constructor4_Path_InvalidChars ()
 	{
 		try {
 			new StreamWriter ("!$what? what? Huh? !$*#" + Path.InvalidPathChars [0], false);
@@ -269,7 +342,7 @@ public class StreamWriterTest
 	}
 
 	[Test] // .ctor (String, Boolean)
-	public void Constructor3_Path_Null ()
+	public void Constructor4_Path_Null ()
 	{
 		try {
 			new StreamWriter ((string) null, false);
@@ -292,7 +365,440 @@ public class StreamWriterTest
 		}
 	}
 
-	// TODO - ctors with Encoding
+	[Test] // .ctor (Stream, Encoding, Int32)
+	public void Constructor5 ()
+	{
+		MemoryStream m;
+		StreamWriter r;
+
+		m = new MemoryStream ();
+		r = new StreamWriter (m, Encoding.ASCII, 10);
+		Assert.IsFalse (r.AutoFlush, "#A1");
+		Assert.AreSame (m, r.BaseStream, "#A2");
+		Assert.IsNotNull (r.Encoding, "#A3");
+		Assert.AreEqual (typeof (ASCIIEncoding), r.Encoding.GetType (), "#A4");
+		r.Close ();
+		m.Close ();
+
+		m = new MemoryStream ();
+		r = new StreamWriter (m, Encoding.UTF8, 1);
+		Assert.IsFalse (r.AutoFlush, "#B1");
+		Assert.AreSame (m, r.BaseStream, "#B2");
+		Assert.IsNotNull (r.Encoding, "#B3");
+		Assert.AreEqual (typeof (UTF8Encoding), r.Encoding.GetType (), "#B4");
+		r.Close ();
+		m.Close ();
+	}
+
+	[Test] // .ctor (Stream, Encoding, Int32)
+	public void Constructor5_BufferSize_NotPositive ()
+	{
+		MemoryStream m = new MemoryStream ();
+
+		try {
+			new StreamWriter (m, Encoding.UTF8, 0);
+			Assert.Fail ("#A1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Positive number required
+			Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.AreEqual ("bufferSize", ex.ParamName, "#A5");
+		}
+
+		try {
+			new StreamWriter (m, Encoding.UTF8, -1);
+			Assert.Fail ("#B1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Positive number required
+			Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+			Assert.AreEqual ("bufferSize", ex.ParamName, "#B5");
+		}
+	}
+
+	[Test] // .ctor (Stream, Encoding, Int32)
+	public void Constructor5_Encoding_Null ()
+	{
+		MemoryStream m = new MemoryStream ();
+		try {
+			new StreamWriter (m, (Encoding) null, 10);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.AreEqual ("encoding", ex.ParamName, "#5");
+		}
+	}
+
+	[Test] // .ctor (Stream, Encoding, Int32)
+	public void Constructor5_Stream_NotWritable ()
+	{
+		FileStream f = new FileStream (_thisCodeFileName, FileMode.Open,
+			FileAccess.Read);
+		try {
+			new StreamWriter (f, Encoding.UTF8, 10);
+			Assert.Fail ("#B1");
+		} catch (ArgumentException ex) {
+			// Stream was not writable
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNull (ex.ParamName, "#5");
+		} finally {
+			f.Close ();
+		}
+	}
+
+	[Test] // .ctor (Stream, Encoding, Int32)
+	public void Constructor5_Stream_Null ()
+	{
+		try {
+			new StreamWriter ((Stream) null, Encoding.UTF8, 10);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.AreEqual ("stream", ex.ParamName, "#5");
+		}
+	}
+
+	[Test] // .ctor (String, Boolean, Encoding)
+	public void Constructor6 ()
+	{
+		using (StreamWriter r = new StreamWriter (_codeFileName, false, Encoding.ASCII)) {
+			Assert.IsFalse (r.AutoFlush, "#A1");
+			Assert.IsNotNull (r.BaseStream, "#A2");
+			Assert.AreEqual (typeof (FileStream), r.BaseStream.GetType (), "#A3");
+			Assert.IsNotNull (r.Encoding, "#A4");
+			Assert.AreEqual (typeof (ASCIIEncoding), r.Encoding.GetType (), "#A5");
+			r.Close ();
+		}
+
+		using (StreamWriter r = new StreamWriter (_codeFileName, true, Encoding.UTF8)) {
+			Assert.IsFalse (r.AutoFlush, "#B1");
+			Assert.IsNotNull (r.BaseStream, "#B2");
+			Assert.AreEqual (typeof (FileStream), r.BaseStream.GetType (), "#B3");
+			Assert.IsNotNull (r.Encoding, "#B4");
+			Assert.AreEqual (typeof (UTF8Encoding), r.Encoding.GetType (), "#B5");
+			r.Close ();
+		}
+	}
+
+	[Test] // .ctor (String, Boolean, Encoding)
+	public void Constructor6_Encoding_Null ()
+	{
+		try {
+			new StreamWriter (_codeFileName, false, (Encoding) null);
+			Assert.Fail ("#A1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.AreEqual ("encoding", ex.ParamName, "#A5");
+		}
+
+		try {
+			new StreamWriter (_codeFileName, true, (Encoding) null);
+			Assert.Fail ("#B1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+			Assert.AreEqual ("encoding", ex.ParamName, "#B5");
+		}
+	}
+
+	[Test] // .ctor (String, Boolean, Encoding)
+	public void Constructor6_Path_DirectoryNotFound ()
+	{
+		Directory.Delete (TempFolder, true);
+
+		try {
+			new StreamWriter (_codeFileName, false, Encoding.UTF8);
+			Assert.Fail ("#A1");
+		} catch (DirectoryNotFoundException ex) {
+			// Could not find a part of the path '...'
+			Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.IsTrue (ex.Message.IndexOf (TempFolder) != -1, "#A5");
+		}
+
+		try {
+			new StreamWriter (_codeFileName, true, Encoding.UTF8);
+			Assert.Fail ("#B1");
+		} catch (DirectoryNotFoundException ex) {
+			// Could not find a part of the path '...'
+			Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+			Assert.IsTrue (ex.Message.IndexOf (TempFolder) != -1, "#B5");
+		}
+	}
+
+	[Test] // .ctor (String, Boolean, Encoding)
+	public void Constructor6_Path_Empty ()
+	{
+		try {
+			new StreamWriter (string.Empty, false, Encoding.UTF8);
+			Assert.Fail ("#A1");
+		} catch (ArgumentException ex) {
+			// Empty path name is not legal
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.IsNull (ex.ParamName, "#A5");
+		}
+
+		try {
+			new StreamWriter (string.Empty, true, Encoding.UTF8);
+			Assert.Fail ("#B1");
+		} catch (ArgumentException ex) {
+			// Empty path name is not legal
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+			Assert.IsNull (ex.ParamName, "#B5");
+		}
+	}
+
+	[Test] // .ctor (String, Boolean, Encoding)
+	public void Constructor6_Path_InvalidChars ()
+	{
+		try {
+			new StreamWriter ("!$what? what? Huh? !$*#" +
+				Path.InvalidPathChars [0], false,
+				Encoding.UTF8);
+			Assert.Fail ("#A1");
+		} catch (ArgumentException ex) {
+			// Illegal characters in path
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.IsNull (ex.ParamName, "#A5");
+		}
+
+		try {
+			new StreamWriter ("!$what? what? Huh? !$*#" +
+				Path.InvalidPathChars [0], true,
+				Encoding.UTF8);
+			Assert.Fail ("#B1");
+		} catch (ArgumentException ex) {
+			// Illegal characters in path
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+			Assert.IsNull (ex.ParamName, "#B5");
+		}
+	}
+
+	[Test] // .ctor (String, Boolean, Encoding)
+	public void Constructor6_Path_Null ()
+	{
+		try {
+			new StreamWriter ((string) null, false, Encoding.UTF8);
+			Assert.Fail ("#A1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.AreEqual ("path", ex.ParamName, "#A5");
+		}
+
+		try {
+			new StreamWriter ((string) null, true, Encoding.UTF8);
+			Assert.Fail ("#B1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+			Assert.AreEqual ("path", ex.ParamName, "#B5");
+		}
+	}
+
+	[Test] // .ctor (String, Boolean, Encoding, Int32)
+	public void Constructor7 ()
+	{
+		using (StreamWriter r = new StreamWriter (_codeFileName, false, Encoding.ASCII, 10)) {
+			Assert.IsFalse (r.AutoFlush, "#A1");
+			Assert.IsNotNull (r.BaseStream, "#A2");
+			Assert.AreEqual (typeof (FileStream), r.BaseStream.GetType (), "#A3");
+			Assert.IsNotNull (r.Encoding, "#A4");
+			Assert.AreEqual (typeof (ASCIIEncoding), r.Encoding.GetType (), "#A5");
+			r.Close ();
+		}
+
+		using (StreamWriter r = new StreamWriter (_codeFileName, true, Encoding.UTF8, 1)) {
+			Assert.IsFalse (r.AutoFlush, "#B1");
+			Assert.IsNotNull (r.BaseStream, "#B2");
+			Assert.AreEqual (typeof (FileStream), r.BaseStream.GetType (), "#B3");
+			Assert.IsNotNull (r.Encoding, "#B4");
+			Assert.AreEqual (typeof (UTF8Encoding), r.Encoding.GetType (), "#B5");
+			r.Close ();
+		}
+	}
+
+	[Test] // .ctor (String, Boolean, Encoding, Int32)
+	public void Constructor7_BufferSize_NotPositive ()
+	{
+		try {
+			new StreamWriter (_codeFileName, false, Encoding.UTF8, 0);
+			Assert.Fail ("#A1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Positive number required
+			Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.AreEqual ("bufferSize", ex.ParamName, "#A5");
+		}
+
+		try {
+			new StreamWriter (_codeFileName, false, Encoding.UTF8, -1);
+			Assert.Fail ("#B1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Positive number required
+			Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+			Assert.AreEqual ("bufferSize", ex.ParamName, "#B5");
+		}
+	}
+
+	[Test] // .ctor (String, Boolean, Encoding, Int32)
+	public void Constructor7_Encoding_Null ()
+	{
+		try {
+			new StreamWriter (_codeFileName, false, (Encoding) null, 10);
+			Assert.Fail ("#A1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.AreEqual ("encoding", ex.ParamName, "#A5");
+		}
+
+		try {
+			new StreamWriter (_codeFileName, true, (Encoding) null, 10);
+			Assert.Fail ("#B1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+			Assert.AreEqual ("encoding", ex.ParamName, "#B5");
+		}
+	}
+
+	[Test] // .ctor (String, Boolean, Encoding, Int32)
+	public void Constructor7_Path_DirectoryNotFound ()
+	{
+		Directory.Delete (TempFolder, true);
+
+		try {
+			new StreamWriter (_codeFileName, false, Encoding.UTF8, 10);
+			Assert.Fail ("#A1");
+		} catch (DirectoryNotFoundException ex) {
+			// Could not find a part of the path '...'
+			Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.IsTrue (ex.Message.IndexOf (TempFolder) != -1, "#A5");
+		}
+
+		try {
+			new StreamWriter (_codeFileName, true, Encoding.UTF8, 10);
+			Assert.Fail ("#B1");
+		} catch (DirectoryNotFoundException ex) {
+			// Could not find a part of the path '...'
+			Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+			Assert.IsTrue (ex.Message.IndexOf (TempFolder) != -1, "#B5");
+		}
+	}
+
+	[Test] // .ctor (String, Boolean, Encoding, Int32)
+	public void Constructor7_Path_Empty ()
+	{
+		try {
+			new StreamWriter (string.Empty, false, Encoding.UTF8, 10);
+			Assert.Fail ("#A1");
+		} catch (ArgumentException ex) {
+			// Empty path name is not legal
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.IsNull (ex.ParamName, "#A5");
+		}
+
+		try {
+			new StreamWriter (string.Empty, true, Encoding.UTF8, 10);
+			Assert.Fail ("#B1");
+		} catch (ArgumentException ex) {
+			// Empty path name is not legal
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+			Assert.IsNull (ex.ParamName, "#B5");
+		}
+	}
+
+	[Test] // .ctor (String, Boolean, Encoding, Int32)
+	public void Constructor7_Path_InvalidChars ()
+	{
+		try {
+			new StreamWriter ("!$what? what? Huh? !$*#" +
+				Path.InvalidPathChars [0], false,
+				Encoding.UTF8, 10);
+			Assert.Fail ("#A1");
+		} catch (ArgumentException ex) {
+			// Illegal characters in path
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.IsNull (ex.ParamName, "#A5");
+		}
+
+		try {
+			new StreamWriter ("!$what? what? Huh? !$*#" +
+				Path.InvalidPathChars [0], true,
+				Encoding.UTF8, 10);
+			Assert.Fail ("#B1");
+		} catch (ArgumentException ex) {
+			// Illegal characters in path
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+			Assert.IsNull (ex.ParamName, "#B5");
+		}
+	}
+
+	[Test] // .ctor (String, Boolean, Encoding, Int32)
+	public void Constructor7_Path_Null ()
+	{
+		try {
+			new StreamWriter ((string) null, false, Encoding.UTF8, 10);
+			Assert.Fail ("#A1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.AreEqual ("path", ex.ParamName, "#A5");
+		}
+
+		try {
+			new StreamWriter ((string) null, true, Encoding.UTF8, 10);
+			Assert.Fail ("#B1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+			Assert.AreEqual ("path", ex.ParamName, "#B5");
+		}
+	}
 
 	[Test]
 	public void AutoFlush ()
@@ -333,7 +839,6 @@ public class StreamWriterTest
 	}
 
 	[Test]
-	[Category ("NotWorking")]
 	public void AutoFlush_Disposed ()
 	{
 		StreamWriter w;
