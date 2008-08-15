@@ -1399,7 +1399,7 @@ namespace Mono.CSharp {
 			return false;
 #endif
 
-		if (t == TypeManager.delegate_type)
+		if (t == TypeManager.delegate_type || t == TypeManager.multicast_delegate_type)
 			return false;
 
 		t = DropGenericTypeArguments (t);

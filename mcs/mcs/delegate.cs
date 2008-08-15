@@ -742,6 +742,23 @@ namespace Mono.CSharp {
 				Error_ConversionFailed (ec, delegate_method, ret_expr);
 			}
 
+			if (Invocation.IsMethodExcluded (delegate_method, loc)) {
+				Report.SymbolRelatedToPreviousError (delegate_method);
+				MethodOrOperator m = TypeManager.GetMethod (delegate_method) as MethodOrOperator;
+				if (m != null && m.IsPartialDefinition) {
+					Report.Error (762, loc, "Cannot create delegate from partial method declaration `{0}'",
+						TypeManager.CSharpSignature (delegate_method));
+				} else {
+					Report.Error (1618, loc, "Cannot create delegate with `{0}' because it has a Conditional attribute",
+						TypeManager.CSharpSignature (delegate_method));
+				}
+			}
+
+			if (TypeManager.IsNullableType (delegate_method.DeclaringType)) {
+				Report.Error (1728, loc, "Cannot create delegate from method `{0}' because it is a member of System.Nullable<T> type",
+					TypeManager.GetFullNameSignature (delegate_method));
+			}
+
 			DoResolveInstanceExpression (ec);
 			eclass = ExprClass.Value;
 			return this;
@@ -918,21 +935,7 @@ namespace Mono.CSharp {
 					Delegate.GetInvokeMethod (ec.ContainerType, e.Type) }, e.Type, loc);
 			}
 
-			if (base.DoResolve (ec) == null)
-				return null;
-
-			if (TypeManager.IsNullableType (method_group.DeclaringType)) {
-				Report.Error (1728, loc, "Cannot use method `{0}' as delegate creation expression because it is member of Nullable type",
-					TypeManager.GetFullNameSignature (delegate_method));
-			}
-
-			if (Invocation.IsMethodExcluded (delegate_method, loc)) {
-				Report.SymbolRelatedToPreviousError (delegate_method);
-				Report.Error (1618, loc, "Cannot create delegate with `{0}' because it has a Conditional attribute",
-					TypeManager.CSharpSignature (delegate_method));
-			}
-
-			return this;
+			return base.DoResolve (ec);
 		}
 
 		void Error_InvalidDelegateArgument ()

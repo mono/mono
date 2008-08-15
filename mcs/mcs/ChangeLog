@@ -1,3 +1,10 @@
+2008-08-15  Marek Safar  <marek.safar@gmail.com>
+	
+	* delegate.cs: Fixed compiler crash when creating delegate using partial
+	method.
+	
+	* typemanager.cs: MulticastDelegate is not a delegate.
+
 2008-08-14  Marek Safar  <marek.safar@gmail.com>
 	
 	* expression.cs, ecore.cs, anonymous.cs, class.cs: Fixed missing error
