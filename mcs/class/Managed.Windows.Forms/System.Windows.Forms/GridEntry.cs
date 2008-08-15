@@ -257,7 +257,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		object ITypeDescriptorContext.Instance {
 			get {
-				if (ParentEntry != null)
+				if (ParentEntry != null && ParentEntry.PropertyOwner != null)
 					return ParentEntry.PropertyOwner;
 				return PropertyOwner;
 			}
@@ -265,7 +265,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		PropertyDescriptor ITypeDescriptorContext.PropertyDescriptor {
 			get {
-				if (ParentEntry != null)
+				if (ParentEntry != null && ParentEntry.PropertyDescriptor != null)
 					return ParentEntry.PropertyDescriptor; 
 				return PropertyDescriptor;
 			}
