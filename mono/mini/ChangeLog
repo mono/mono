@@ -1,3 +1,8 @@
+2008-08-15  Geoff Norton  <gnorton@novell.com>
+
+	* mini-x86.c: Fix alignment on Apple x86, and re-disable the alignment
+	debugging check.
+
 2008-08-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir2): Allow AOT compilation of methods
