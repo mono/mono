@@ -112,13 +112,13 @@ namespace System.Net.NetworkInformation {
 			get { return is_readonly; }
 		}
 
-		public static UnicastIPAddressInformationCollection Win32FromUnicast (IntPtr ptr)
+		public static UnicastIPAddressInformationCollection Win32FromUnicast (int ifIndex, IntPtr ptr)
 		{
 			UnicastIPAddressInformationImplCollection c = new UnicastIPAddressInformationImplCollection (false);
 			Win32_IP_ADAPTER_UNICAST_ADDRESS a;
 			for (IntPtr p = ptr; p != IntPtr.Zero; p = a.Next) {
 				a = (Win32_IP_ADAPTER_UNICAST_ADDRESS) Marshal.PtrToStructure (p, typeof (Win32_IP_ADAPTER_UNICAST_ADDRESS));
-				c.Add (new Win32UnicastIPAddressInformation (a));
+				c.Add (new Win32UnicastIPAddressInformation (ifIndex, a));
 			}
 			c.is_readonly = true;
 			return c;

@@ -1,3 +1,10 @@
+2008-08-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IPInterfaceProperties.cs, UnicastIPAddressInformation.cs,
+	  UnicastIPAddressInformationCollection.cs : fixed bug #416526, based
+	  on the patch by Fredrik Kling. support UnicastIPAddressInformation
+	  on win32.
+
 2008-08-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IPGlobalProperties.cs : fixed ToEndPoint() to not bork at 

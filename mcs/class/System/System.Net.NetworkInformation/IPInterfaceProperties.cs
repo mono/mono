@@ -248,7 +248,11 @@ namespace System.Net.NetworkInformation {
 		}
 
 		public override UnicastIPAddressInformationCollection UnicastAddresses {
-			get { return UnicastIPAddressInformationImplCollection.Win32FromUnicast (addr.FirstUnicastAddress); }
+			get {
+				Win32_IP_ADAPTER_INFO ai = Win32NetworkInterface2.GetAdapterInfoByIndex (mib4.Index);
+				// FIXME: should ipv6 DhcpServer be considered?
+				return ai != null ? UnicastIPAddressInformationImplCollection.Win32FromUnicast ((int) ai.Index, addr.FirstUnicastAddress) : UnicastIPAddressInformationImplCollection.Empty;
+			}
 		}
 
 		public override IPAddressCollection WinsServersAddresses {

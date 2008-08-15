@@ -48,10 +48,12 @@ namespace System.Net.NetworkInformation {
 
 	class Win32UnicastIPAddressInformation : UnicastIPAddressInformation 
 	{
+		int if_index;
 		Win32_IP_ADAPTER_UNICAST_ADDRESS info;
 
-		public Win32UnicastIPAddressInformation (Win32_IP_ADAPTER_UNICAST_ADDRESS info)
+		public Win32UnicastIPAddressInformation (int ifIndex, Win32_IP_ADAPTER_UNICAST_ADDRESS info)
 		{
+			this.if_index = ifIndex;
 			this.info = info;
 		}
 
@@ -85,9 +87,28 @@ namespace System.Net.NetworkInformation {
 			get { return info.DadState; }
 		}
 
-		// FIXME: where to get this info?
 		public override IPAddress IPv4Mask {
-			get { throw new NotImplementedException (); }
+			get {
+				Win32_IP_ADAPTER_INFO ai = Win32NetworkInterface2.GetAdapterInfoByIndex (if_index);
+				if (ai == null)
+					throw new Exception ("huh? " + if_index);
+				if (this.Address == null)
+					return null;
+				string expected = this.Address.ToString ();
+				unsafe {
+					Win32_IP_ADDR_STRING p = ai.IpAddressList;
+					while (true) {
+						if (p.IpAddress == expected)
+							return IPAddress.Parse (p.IpMask);
+						if (p.Next == IntPtr.Zero)
+							break;
+						p = (Win32_IP_ADDR_STRING) Marshal.PtrToStructure (p.Next, typeof (Win32_IP_ADDR_STRING));
+					}
+
+					// Or whatever it should be...
+					return null;
+				}
+			}
 		}
 
 		public override PrefixOrigin PrefixOrigin {
