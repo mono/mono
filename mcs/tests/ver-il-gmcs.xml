@@ -31646,6 +31646,19 @@
       </method>
     </type>
   </test>
+  <test name="test-671.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>19</size>
+      </method>
+      <method name="Boolean Bar(System.Object)">
+        <size>2</size>
+      </method>
+    </type>
+  </test>
   <test name="test-68.cs">
     <type name="Y">
       <method name="Void .ctor()">
