@@ -1,3 +1,9 @@
+2008-08-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_delegate_begin_invoke): Don't set save_lmf, it
+	is not needed, don't check for interruptions either.
+	(mono_marshal_get_delegate_end_invoke): Ditto.
+
 2008-08-15  Marek Habersack  <mhabersack@novell.com>
 
 	* mono-perfcounters.c (predef_readonly_counter): added support for
