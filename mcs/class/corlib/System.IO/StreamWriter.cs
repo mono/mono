@@ -85,7 +85,6 @@ namespace System.IO {
 				preamble_done = true;
 		}
 
-		//[MonoTODO("Nothing is done with bufferSize")]
 		public StreamWriter (Stream stream, Encoding encoding, int bufferSize) {
 			if (null == stream)
 				throw new ArgumentNullException("stream");
@@ -94,7 +93,7 @@ namespace System.IO {
 			if (bufferSize < 0)
 				throw new ArgumentOutOfRangeException("bufferSize");
 			if (!stream.CanWrite)
-				throw new ArgumentException("Can not write to stream", "stream");
+				throw new ArgumentException ("Can not write to stream");
 
 			internalStream = stream;
 
@@ -111,21 +110,10 @@ namespace System.IO {
 			: this (path, append, encoding, DefaultFileBufferSize) {}
 		
 		public StreamWriter (string path, bool append, Encoding encoding, int bufferSize) {
-			if (null == path)
-				throw new ArgumentNullException("path");
-			if (String.Empty == path)
-				throw new ArgumentException("path cannot be empty string");
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException("path contains invalid characters");
-
 			if (null == encoding)
 				throw new ArgumentNullException("encoding");
 			if (bufferSize < 0)
 				throw new ArgumentOutOfRangeException("bufferSize");
-
-			string DirName = Path.GetDirectoryName(path);
-			if (DirName != String.Empty && !Directory.Exists(DirName))
-				throw new DirectoryNotFoundException();
 
 			FileMode mode;
 
