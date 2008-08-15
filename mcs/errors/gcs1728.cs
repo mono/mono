@@ -1,4 +1,4 @@
-// CS1728: Cannot use method `int?.GetValueOrDefault()' as delegate creation expression because it is member of Nullable type
+// CS1728: Cannot create delegate from method `int?.GetValueOrDefault()' because it is a member of System.Nullable<T> type
 // Line: 14
 
 using System;
