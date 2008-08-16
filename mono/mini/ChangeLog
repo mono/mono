@@ -1,3 +1,10 @@
+2008-08-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_emit_method_call): Remove the 'signature' argument
+	as it is equal to method->signature in most cases, add a 
+	mono_emit_method_call_full variant which takes a signature and an imt
+	argument as well.
+
 2008-08-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* jit-icalls.c (mono_helper_compile_generic_method): Don't pass the context
