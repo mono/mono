@@ -1,3 +1,9 @@
+2008-08-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_resolve_patch_target): For PATCH_INFO_METHOD_JUMP, move the
+	insertion into jump_table_hash into mono_codegen (), also implement proper
+	locking.
+
 2008-08-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_method_compile): Abort aot compilation for generic
