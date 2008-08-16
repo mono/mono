@@ -54,7 +54,7 @@ namespace MonoCasTests.System {
 			MonoTests.System.ExceptionTest et = new MonoTests.System.ExceptionTest ();
 			// call most (all but arguments checking) unit tests from ExceptionTest
 			et.TestThrowOnBlockBoundaries ();
-			et.InnerExceptionSource ();
+			et.Source_InnerException ();
 		}
 
 		// CAS tests
