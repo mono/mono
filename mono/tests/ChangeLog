@@ -1,3 +1,7 @@
+2008-08-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* jmpTest.il: Removed, there is already a test for this in mini/iltests.il.
+
 2008-08-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (DISABLED_TESTS): Remove appdomain-unload.exe, it seems to
