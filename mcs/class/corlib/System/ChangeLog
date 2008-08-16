@@ -1,3 +1,9 @@
+2008-08-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Exception.cs: Fixed value of HResult to match MS. Added support for
+	(de)serializing Data. Use deserialized ClassName, if available, to
+	when name of type is used.
+
 2008-08-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* IServiceProvider.cs: Added ComVisible attribute (1.0 only).

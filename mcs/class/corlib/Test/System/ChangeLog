@@ -1,3 +1,9 @@
+2008-08-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ExceptonTest.cs: Added GetObjectData and deserialization ctor tests.
+	Added/improved tests for Source, HResult and StackTrace. Use Assert
+	instead of deriving from TestCase.
+
 2008-08-09  Raja R Harinath  <harinath@hurrynot.org>
 
 	* DateTimeTest.cs (Bug377042): Allow compilation on the 1.1 profile.
