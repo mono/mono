@@ -1,3 +1,11 @@
+2008-08-16  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* GridEntry.cs: Leave the ICustomTypeDescriptor handling up to the 
+	ComponentModel layer, which will properly prioritize the attributes.
+	Avoids wrong prioritization of duplicate attributes when retrieving 
+	the converter and editor.
+	[Fixes bug #417729]
+
 2008-08-15  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* GridEntry.cs: Perform stricter check for the ParentEntry's 

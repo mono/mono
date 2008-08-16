@@ -406,13 +406,8 @@ namespace System.Windows.Forms.PropertyGridInternal
 		{
 			if (PropertyDescriptor != null) {
 				try { // can happen, because we are missing some editors
-					UITypeEditor editor = null;
-					ICustomTypeDescriptor customDescriptor = this.Value as ICustomTypeDescriptor;
-					if (customDescriptor != null)
-						editor = (UITypeEditor) customDescriptor.GetEditor (typeof (UITypeEditor));
-					if (editor == null)
-						editor = (UITypeEditor) PropertyDescriptor.GetEditor (typeof (UITypeEditor));
-					return editor;
+					if (PropertyDescriptor != null)
+						return (UITypeEditor) PropertyDescriptor.GetEditor (typeof (UITypeEditor));
 				} catch {
 					// property_grid.ShowError ("Unable to load UITypeEditor for property '" + PropertyDescriptor.Name + "'.");
 				}
@@ -422,13 +417,9 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		private TypeConverter GetConverter ()
 		{
-			TypeConverter converter = null;
-			ICustomTypeDescriptor customDescriptor = this.Value as ICustomTypeDescriptor;
-			if (customDescriptor != null)
-				converter = customDescriptor.GetConverter ();
-			if (converter == null && PropertyDescriptor != null)
-				converter = PropertyDescriptor.Converter;
-			return converter;
+			if (PropertyDescriptor != null)
+				return PropertyDescriptor.Converter;
+			return null;
 		}
 
 		public bool ToggleValue ()
@@ -638,12 +629,17 @@ namespace System.Windows.Forms.PropertyGridInternal
 				// if (PropertyDescriptor != null) {
 				// 	Console.WriteLine ("=== [" + PropertyDescriptor.Name + "]");
 				// 	Console.WriteLine ("PropertyDescriptor.IsReadOnly: " + PropertyDescriptor.IsReadOnly);
-				// 	Console.WriteLine ("Editor: " + (GetEditor () == null ? "none" : GetEditor ().GetType ().Name));
+				// 	UITypeEditor editor = GetEditor ();
+				// 	Console.WriteLine ("Editor: " + (editor == null ? "none" : GetEditor ().GetType ().Name));
+				// 	if (editor != null)
+				// 		Console.WriteLine ("Editor.EditorStyle: " + editor.GetEditStyle ((ITypeDescriptorContext)this));
 				// 	Console.WriteLine ("Converter: " + (converter == null ? "none" : converter.GetType ().Name));
-				// 	Console.WriteLine ("Converter.GetStandardValuesSupported: " + converter.GetStandardValuesSupported ().ToString ());
-				// 	Console.WriteLine ("Converter.GetStandardValuesExclusive: " + converter.GetStandardValuesExclusive ().ToString ());
-				// 	Console.WriteLine ("ShouldCreateParentInstance: " + this.ShouldCreateParentInstance);
-				// 	Console.WriteLine ("CanConvertFrom (string): " + converter.CanConvertFrom ((ITypeDescriptorContext)this, typeof (string)));
+				// 	if (converter != null) {
+				// 		Console.WriteLine ("Converter.GetStandardValuesSupported: " + converter.GetStandardValuesSupported ((ITypeDescriptorContext)this).ToString ());
+				// 		Console.WriteLine ("Converter.GetStandardValuesExclusive: " + converter.GetStandardValuesExclusive ((ITypeDescriptorContext)this).ToString ());
+				// 		Console.WriteLine ("ShouldCreateParentInstance: " + this.ShouldCreateParentInstance);
+				// 		Console.WriteLine ("CanConvertFrom (string): " + converter.CanConvertFrom ((ITypeDescriptorContext)this, typeof (string)));
+				// 	}
 				// 	Console.WriteLine ("IsArray: " + PropertyDescriptor.PropertyType.IsArray.ToString ());
 				// }
 				if (PropertyDescriptor == null || PropertyOwner == null ||
