@@ -1,5 +1,12 @@
 2008-08-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Use mono_array_new_1 for 1
+	dimensional non-szarrays.
+
+	* mini.c (mini_init): Register mono_array_new_1.
+
+	* jit-icalls.c (mono_array_new_1): New jit icall.
+
 	* mini-trampolines.c (mono_magic_trampoline): For jumps, patch the GOT entries
 	pointing to the method.
 
