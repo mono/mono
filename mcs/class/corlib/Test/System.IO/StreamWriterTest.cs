@@ -161,21 +161,6 @@ public class StreamWriterTest
 		}
 	}
 
-	[Test] // .ctor (String)
-	public void Constructor2_Path_Whitespace ()
-	{
-		try {
-			new StreamWriter (" \r\n ");
-			Assert.Fail ("#1");
-		} catch (ArgumentException ex) {
-			// Illegal characters in path
-			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-			Assert.IsNull (ex.InnerException, "#3");
-			Assert.IsNotNull (ex.Message, "#4");
-			Assert.IsNull (ex.ParamName, "#5");
-		}
-	}
-
 	[Test] // .ctor (Stream, Encoding)
 	public void Constructor3 ()
 	{
@@ -403,7 +388,9 @@ public class StreamWriterTest
 			Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
 			Assert.IsNull (ex.InnerException, "#A3");
 			Assert.IsNotNull (ex.Message, "#A4");
+#if NET_2_0
 			Assert.AreEqual ("bufferSize", ex.ParamName, "#A5");
+#endif
 		}
 
 		try {
@@ -414,7 +401,9 @@ public class StreamWriterTest
 			Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
 			Assert.IsNull (ex.InnerException, "#B3");
 			Assert.IsNotNull (ex.Message, "#B4");
+#if NET_2_0
 			Assert.AreEqual ("bufferSize", ex.ParamName, "#B5");
+#endif
 		}
 	}
 
