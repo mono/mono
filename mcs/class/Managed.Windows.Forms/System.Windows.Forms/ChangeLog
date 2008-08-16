@@ -1,3 +1,11 @@
+2008-08-16  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* GridEntry.cs: Leave the ICustomTypeDescriptor handling up to the 
+	ComponentModel layer, which will properly prioritize the attributes.
+	Avoids wrong prioritization of duplicate attributes when retrieving 
+	the converter and editor.
+	[Fixes bug #417729]
+
 2008-08-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* XplatUIX11.cs: Increase the interval for the Timer, to not fire our
