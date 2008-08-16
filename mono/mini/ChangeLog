@@ -1,5 +1,9 @@
 2008-08-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_resolve_patch_target): For PATCH_INFO_METHOD_JUMP, move the
+	insertion into jump_table_hash into mono_codegen (), also implement proper
+	locking.
+
 	* method-to-ir.c (mono_method_to_ir2): Don't disable AOT for CEE_JMP and
 	tail calls, it is already done by the aot code.
 	
