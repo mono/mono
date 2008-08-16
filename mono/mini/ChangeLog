@@ -1,5 +1,17 @@
 2008-08-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* jit-icalls.c (mono_helper_compile_generic_method): Don't pass the context
+	to this function, since it could be computed easily from the method 
+	argument.
+	(mono_helper_compile_generic_method_wo_context): Removed, not needed any
+	more.
+
+	* method-to-ir.c mini.c: Remove references to 
+	compile_generic_method_wo_context.
+
+	* method-to-ir.c (mono_method_to_ir2): Enable AOT for virtual
+	generic method calls.
+	
 	* method-to-ir.c (mono_method_to_ir2): Use mono_array_new_1 for 1
 	dimensional non-szarrays.
 
