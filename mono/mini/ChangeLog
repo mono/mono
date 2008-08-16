@@ -1,5 +1,24 @@
 2008-08-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (mono_magic_trampoline): For jumps, patch the GOT entries
+	pointing to the method.
+
+	* aot-runtime.c (mono_aot_get_method_from_token): Register GOT slots holding
+	method addresses belonging to METHOD_JUMP patches in the 
+	jump_target_got_slot_hash.
+	(mono_aot_load_method): Ditto.
+
+	* aot-compiler.c (compile_method): Allow AOT compilation of methods with
+	METHOD_JUMP patches.
+
+	* mini.c (mini_create_jit_domain_info): New helper function which 
+	initializes/frees domain->runtime_info.
+	(mini_free_jit_domain_info): Ditto.
+	(mini_init): Install the domain hook functions with the runtime.
+
+	* mini.h (MonoJitDomainInfo): New structure which stores the domain specific
+	information maintained by the JIT.
+
 	* mini.c (mono_resolve_patch_target): For PATCH_INFO_METHOD_JUMP, move the
 	insertion into jump_table_hash into mono_codegen (), also implement proper
 	locking.
