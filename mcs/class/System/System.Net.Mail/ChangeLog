@@ -1,3 +1,14 @@
+2008-08-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SmtpClient.cs: Fixed paramname of Argument(Null)Exceptions to match
+	MS. Removed upper limit check for Port. Modified Send to no longer
+	allow a whitespace-only Host. Moved checks for SpecifiedPickupDirectory
+	delivery method to SendFile, and use Path.IsPathRooted to check for
+	absolute paths instead of using a unix-only check. In Send, wrap all
+	non-SMTP errors in an SmtpException.
+	* SmtpException.cs: Correctly chain up all .ctors. Removed extra
+	null check in deserialization .ctor.
+
 2008-08-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SmtpClient.cs : fixed bug #382670, based on the patch by Ted

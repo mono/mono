@@ -232,6 +232,7 @@ System.Net.Mail/AttachmentTest.cs
 System.Net.Mail/AlternateViewTest.cs
 System.Net.Mail/LinkedResourceCollectionTest.cs
 System.Net.Mail/SmtpClientTest.cs
+System.Net.Mail/SmtpExceptionTest.cs
 System.Net.Mail/SmtpPermissionTest.cs
 System.Net.Mail/SmtpPermissionAttributeTest.cs
 System.Net.Mime/ContentDispositionTest.cs

@@ -190,9 +190,9 @@ namespace System.Net.Mail {
 			get { return host; }
 			set {
 				if (value == null)
-					throw new ArgumentNullException ();
+					throw new ArgumentNullException ("value");
 				if (value.Length == 0)
-					throw new ArgumentException ();
+					throw new ArgumentException ("An empty string is not allowed.", "value");
 				CheckState ();
 				host = value;
 			}
@@ -206,8 +206,8 @@ namespace System.Net.Mail {
 		public int Port {
 			get { return port; }
 			set { 
-				if (value <= 0 || value > 65535)
-					throw new ArgumentOutOfRangeException ();
+				if (value <= 0)
+					throw new ArgumentOutOfRangeException ("value");
 				CheckState ();
 				port = value;
 			}
@@ -222,7 +222,7 @@ namespace System.Net.Mail {
 			get { return timeout; }
 			set { 
 				if (value < 0)
-					throw new ArgumentOutOfRangeException ();
+					throw new ArgumentOutOfRangeException ("value");
 				CheckState ();
 				timeout = value; 
 			}
@@ -453,15 +453,9 @@ namespace System.Net.Mail {
 			if (message == null)
 				throw new ArgumentNullException ("message");
 
-			if (deliveryMethod == SmtpDeliveryMethod.Network && String.IsNullOrEmpty (Host))
+			if (deliveryMethod == SmtpDeliveryMethod.Network && (Host == null || Host.Trim ().Length == 0))
 				throw new InvalidOperationException ("The SMTP host was not specified");
-			if (deliveryMethod == SmtpDeliveryMethod.SpecifiedPickupDirectory) {
-				if (String.IsNullOrEmpty(pickupDirectoryLocation))
-					throw new SmtpException("The pickup directory was not specified");
-				if (false && pickupDirectoryLocation[0] != '/')
-					throw new SmtpException("Only absolute directories are allowed for pickup directory.");
-			}
-			if (deliveryMethod == SmtpDeliveryMethod.PickupDirectoryFromIis)
+			else if (deliveryMethod == SmtpDeliveryMethod.PickupDirectoryFromIis)
 				throw new NotSupportedException("IIS delivery is not supported");
 
 			if (port == 0)
@@ -472,11 +466,15 @@ namespace System.Net.Mail {
 			try {
 				messageInProcess = message;
 				if (deliveryMethod == SmtpDeliveryMethod.SpecifiedPickupDirectory)
-					SendToFile (message, pickupDirectoryLocation + "/" + Guid.NewGuid() + ".eml");
+					SendToFile (message);
 				else
 					SendInternal (message);
 			} catch (CancellationException) {
 				// This exception is introduced for convenient cancellation process.
+			} catch (SmtpException) {
+				throw;
+			} catch (Exception ex) {
+				throw new SmtpException ("Message could not be sent.", ex);
 			} finally {
 				// Release the mutex to allow other threads access
 				mutex.ReleaseMutex ();
@@ -511,8 +509,14 @@ namespace System.Net.Mail {
 		}
  
 		// FIXME: simple implementation, could be brushed up.
-		private void SendToFile (MailMessage message, String filename)
+		private void SendToFile (MailMessage message)
 		{
+			if (!Path.IsPathRooted (pickupDirectoryLocation))
+				throw new SmtpException("Only absolute directories are allowed for pickup directory.");
+
+			string filename = Path.Combine (pickupDirectoryLocation,
+				Guid.NewGuid() + ".eml");
+
 			try {
 				writer = new StreamWriter(filename);
 

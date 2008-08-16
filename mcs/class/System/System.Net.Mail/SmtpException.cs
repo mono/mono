@@ -45,32 +45,26 @@ namespace System.Net.Mail {
 		#region Constructors
 
 		public SmtpException ()
-			: this ("Syntax error, command unrecognized.")
+			: this (SmtpStatusCode.GeneralFailure)
 		{
-			statusCode = SmtpStatusCode.GeneralFailure;
 		}
 
 		public SmtpException (SmtpStatusCode statusCode)
-			: this ()
+			: this (statusCode, "Syntax error, command unrecognized.")
 		{
-			StatusCode = statusCode;
 		}
 
 		public SmtpException (string message)
-			: base (message)
+			: this (SmtpStatusCode.GeneralFailure, message)
 		{
-			statusCode = SmtpStatusCode.GeneralFailure;
 		}
 
 		protected SmtpException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
-			if (info == null)
-				throw new ArgumentNullException ("info");
 			try {
 				statusCode = (SmtpStatusCode) info.GetValue ("Status", typeof (int));
-			}
-			catch (SerializationException) {
+			} catch (SerializationException) {
 				//For compliance with previously serialized version:
 				statusCode = (SmtpStatusCode) info.GetValue ("statusCode", typeof (SmtpStatusCode));
 			}
@@ -79,12 +73,13 @@ namespace System.Net.Mail {
 		public SmtpException (SmtpStatusCode statusCode, string message)
 			: base (message)
 		{
-			StatusCode = statusCode;
+			this.statusCode = statusCode;
 		}
 
 		public SmtpException (string message, Exception innerException)
 			: base (message, innerException)
 		{
+			statusCode = SmtpStatusCode.GeneralFailure;
 		}
 
 		#endregion // Constructors

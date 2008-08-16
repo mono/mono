@@ -1,3 +1,7 @@
+2008-08-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added SmtpExceptionTest.cs.
+
 2008-08-07  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* net_2_1_raw_System.dll.sources: Add existing System/UriIdnScope.cs

@@ -1,3 +1,9 @@
+2008-08-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SmtpClientTest.cs: Added property tests. Added Send argument check
+	tests.
+	* SmtpExceptionTest.cs: Added .ctor and GetObjectData tests.
+
 2007-12-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MailMessageTest.cs : fixed test to just compare codepage. I can't
