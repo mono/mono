@@ -642,7 +642,9 @@ public class StreamWriterTest
 			Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#A2");
 			Assert.IsNull (ex.InnerException, "#A3");
 			Assert.IsNotNull (ex.Message, "#A4");
+#if NET_2_0
 			Assert.AreEqual ("bufferSize", ex.ParamName, "#A5");
+#endif
 		}
 
 		try {
@@ -653,7 +655,9 @@ public class StreamWriterTest
 			Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
 			Assert.IsNull (ex.InnerException, "#B3");
 			Assert.IsNotNull (ex.Message, "#B4");
+#if NET_2_0
 			Assert.AreEqual ("bufferSize", ex.ParamName, "#B5");
+#endif
 		}
 	}
 
