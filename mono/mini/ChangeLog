@@ -1,5 +1,8 @@
 2008-08-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Don't disable AOT for CEE_JMP and
+	tail calls, it is already done by the aot code.
+	
 	* method-to-ir.c (mono_method_to_ir2): Handle CEE_JMP using the tail call
 	mechanism on amd64.
 
