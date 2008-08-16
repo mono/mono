@@ -1,5 +1,10 @@
 2008-08-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Handle CEE_JMP using the tail call
+	mechanism on amd64.
+
+	* iltests.il.in: Make the jmp test a bit more complex.
+
 	* aot-compiler.c (encode_method_ref): Handle references to normal methods of
 	generic instances which doesn't have a token.
 
