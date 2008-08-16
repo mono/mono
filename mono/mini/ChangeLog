@@ -1,5 +1,24 @@
 2008-08-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_resolve_patch_target): Handle LAZY_FETCH_TRAMPOLINE.
+	(mono_codegen): Ditto.
+
+	* aot-compiler.c aot-runtime.c: Ditto.
+
+	* patch-info.h: Add MONO_PATCH_INFO_RGCTX_LAZY_FETCH_TRAMPOLINE.
+
+	* mini-trampolines.c (mono_find_rgctx_lazy_fetch_trampoline_by_addr): New
+	helper function to find the offset corresponding to a lazy fetch trampoline.
+
+	* mini.h (MonoCompile): Add 'orig_method' field to hold the original method
+	when doing generic sharing.
+
+	* aot-compiler.c: Use cfg->orig_method instead of cfg->method in a lot of
+	places.
+	
+	* mini.c (mono_create_rgctx_lazy_fetch_trampoline): Move this to
+	mini-trampolines.c to be with the other trampoline creation functions.
+
 	* method-to-ir.c (mono_emit_method_call): Remove the 'signature' argument
 	as it is equal to method->signature in most cases, add a 
 	mono_emit_method_call_full variant which takes a signature and an imt
