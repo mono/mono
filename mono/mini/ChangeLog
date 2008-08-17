@@ -1,5 +1,12 @@
 2008-08-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Make the patch_to_plt_offset hash table use 
+	mono_patch_info_equals/hash, and use it to massively simplify
+	get_plt_index ().
+
+	* mini.c (mono_patch_info_hash): Simplify this and add support for
+	more patch types.
+
 	* patch-info.h: Rename RGCTX_LAZY_FETCH_TRAMPOLINE to just RGCTX_FETCH.
 
 	* mini.c aot-compiler.c aot-runtime.c: Revert the LAZY_FETCH_TRAMPOLINE
