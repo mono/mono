@@ -1,3 +1,15 @@
+2008-08-17  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c (mono_op_imm_to_op): Add case for OP_IMUL_IMM.
+
+	* method-to-ir.c (mono_method_to_ir2): Decompose OP_CKFINITE.
+
+	* mini-ops.h: Argument and result types for OVF_CARRY ops.
+
+	* decompose.c: PPC decompositions for various ops.
+
+	* cpu-ppc.md, inssel-ppc.brg, mini-ppc.c: PPC changes for Linear IL.
+
 2008-08-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-amd64.c (mono_arch_create_rgctx_lazy_fetch_trampoline): Make this
