@@ -1,5 +1,9 @@
 2008-08-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-amd64.c (mono_arch_create_rgctx_lazy_fetch_trampoline): Make this
+	call the generic trampoline code using a call, instead of a jump, to
+	remove some special casing from the generic trampoline code.
+
 	* mini.c (mono_resolve_patch_target): Handle LAZY_FETCH_TRAMPOLINE.
 	(mono_codegen): Ditto.
 
