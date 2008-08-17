@@ -1,3 +1,7 @@
+2008-08-17  Geoff Norton  <gnorton@novell.com>
+
+	* WebRequest_2_1.cs: We support relative URI's now.
+
 2008-08-14  Geoff Norton  <gnorton@novell.com>
 
 	* WebClient_2_1.cs: A dirty hack to emit the events on the proper thread

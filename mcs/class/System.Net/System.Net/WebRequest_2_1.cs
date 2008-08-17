@@ -57,7 +57,7 @@ namespace System.Net {
 
 		public static WebRequest Create (Uri uri)
 		{
-			if (!uri.Scheme.StartsWith ("http"))
+			if (uri.IsAbsoluteUri && !uri.Scheme.StartsWith ("http"))
 				throw new NotSupportedException (string.Format ("Scheme {0} not supported", uri.Scheme));
 
 			return CreateBrowserHttpRequest (uri);
