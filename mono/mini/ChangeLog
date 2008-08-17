@@ -1,3 +1,8 @@
+2008-08-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Reorganize the got handling code to be a bit more
+	understandable.
+
 2008-08-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c: Make the patch_to_plt_offset hash table use 
