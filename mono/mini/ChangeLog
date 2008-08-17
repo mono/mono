@@ -1,3 +1,12 @@
+2008-08-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* patch-info.h: Rename RGCTX_LAZY_FETCH_TRAMPOLINE to just RGCTX_FETCH.
+
+	* mini.c aot-compiler.c aot-runtime.c: Revert the LAZY_FETCH_TRAMPOLINE
+	handling code, since an offset is not enough to identify a trampoline.
+
+	* method-to-ir.c: Remove some g_assert (!cfg->compile_aot) lines.
+
 2008-08-17  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c (mono_op_imm_to_op): Add case for OP_IMUL_IMM.
