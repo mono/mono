@@ -1,3 +1,8 @@
+2008-08-18  Marek Habersack  <mhabersack@novell.com>
+
+	* Unit.cs: rewrote the unit parser in a slightly slower, but more
+	correct, way. Fixes bug #417502
+
 2008-07-28  Marek Habersack  <mhabersack@novell.com>
 
 	* TreeView.cs: when TreeView is displaying a site map and there is
