@@ -1,3 +1,14 @@
+2008-08-18  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: process expression when they are
+	used used in values of attributes without associated
+	properties. Fixes bug #417883
+
+	* ResourceExpressionBuilder.cs: added two overloads of
+	CreateGetLocalResourceObject to encompass cases when the generated
+	expression is not assigned to a property but rather used as a
+	parameter to the SetAttribute method. Fixes bug #417883
+
 2008-08-14  Marek Habersack  <mhabersack@novell.com>
 
 	* AspGenerator.cs: do not ignore directives inside HTML comments.
