@@ -1,5 +1,11 @@
 2008-08-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* liveness.c (mono_analyze_liveness): Disable the liveness2 code for now
+	as it crashes on the 2.0 mscorlib.
+
+	* aot-compiler.c (is_shared_got_patch): Revert the last change as it seems
+	to cause crashes.
+	
 	* aot-compiler.c: Use is_plt_patch () in a few additional places.
 	(is_shared_got_patch): Add MONO_PATCH_INFO_METHODCONST, which is generated
 	by IMT.
