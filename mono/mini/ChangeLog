@@ -1,5 +1,9 @@
 2008-08-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Use is_plt_patch () in a few additional places.
+	(is_shared_got_patch): Add MONO_PATCH_INFO_METHODCONST, which is generated
+	by IMT.
+
 	* aot-compiler.c: Reorganize the got handling code to be a bit more
 	understandable.
 
