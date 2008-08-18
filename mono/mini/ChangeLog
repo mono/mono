@@ -1,5 +1,8 @@
 2008-08-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-amd64.c mini-amd64.h: Change the VTABLE_REG to RDI since RAX is
+	clobbered by the trampoline code.
+
 	* tramp-amd64.c mini-amd64.h: Change the VTABLE_REG to RAX since that is
 	not clobbered by the indirect calling code.
 
