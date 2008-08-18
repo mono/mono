@@ -1,5 +1,7 @@
 2008-08-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c: Merge generic sharing changes missed earlier.
+
 	* aot-compiler.c (is_shared_got_patch): Add MONO_PATCH_INFO_METHODCONST.
 
 	* aot-runtime.c (decode_patch_info): Refactor the code dealing with the
