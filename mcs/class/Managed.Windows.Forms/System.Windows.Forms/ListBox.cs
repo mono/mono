@@ -2272,7 +2272,7 @@ namespace System.Windows.Forms
 			public void CopyTo (Array destination, int index)
 			{
 				for (int i = 0; i < list.Count; i++)
-					destination.SetValue (list[i], i);
+					destination.SetValue (list[i], index++);
 			}
 			
 			public int IndexOf (int item)
