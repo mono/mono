@@ -73,7 +73,7 @@ namespace System.Web.Compilation {
 				CodeMethodInvokeExpression getgro = new CodeMethodInvokeExpression (new CodeThisReferenceExpression (), "GetGlobalResourceObject", expr);
 				return new CodeCastExpression (entry.PropertyInfo.PropertyType, getgro);
 			} else
-				return CreateGetLocalResourceObject (entry.PropertyInfo, fields.ResourceKey);
+				return CreateGetLocalResourceObject (entry, fields.ResourceKey);
 		}
 
 		public static ResourceExpressionFields ParseExpression (string expression)
@@ -96,8 +96,22 @@ namespace System.Web.Compilation {
 			get { return true; }
 		}
 
+		internal static CodeExpression CreateGetLocalResourceObject (BoundPropertyEntry bpe, string resname)
+		{
+			if (bpe == null || String.IsNullOrEmpty (resname))
+				return null;
+
+			if (bpe.UseSetAttribute)
+				return CreateGetLocalResourceObject (bpe.Type, typeof (string), null, resname);
+			else
+				return CreateGetLocalResourceObject (bpe.PropertyInfo, resname);
+		}
+		
 		internal static CodeExpression CreateGetLocalResourceObject (MemberInfo mi, string resname)
 		{
+			if (String.IsNullOrEmpty (resname))
+				return null;
+			
 			Type member_type = null;
 			if (mi is PropertyInfo)
 				member_type = ((PropertyInfo)mi).PropertyType;
@@ -106,9 +120,17 @@ namespace System.Web.Compilation {
 			else
 				return null; // an "impossible" case
 
-			string memberName = mi.Name;
-			Type declaringType = mi.DeclaringType;
-			TypeConverter converter = TypeDescriptor.GetProperties (declaringType) [memberName].Converter;
+			return CreateGetLocalResourceObject (member_type, mi.DeclaringType, mi.Name, resname);
+		}
+		
+		static CodeExpression CreateGetLocalResourceObject (Type member_type, Type declaringType, string memberName, string resname)
+		{
+			TypeConverter converter;
+
+			if (!String.IsNullOrEmpty (memberName))
+				converter = TypeDescriptor.GetProperties (declaringType) [memberName].Converter;
+			else
+				converter = null;
 
 			if (member_type != typeof (System.Drawing.Color) &&
 			    (converter == null || converter.CanConvertFrom (typeof (String)))) {
@@ -122,8 +144,13 @@ namespace System.Web.Compilation {
 					new CodeTypeReferenceExpression (typeof (System.Convert)),
 					"ToString");
 				convert.Parameters.Add (getlro);
+				convert.Parameters.Add (new CodePropertyReferenceExpression (
+								new CodeTypeReferenceExpression (typeof (System.Globalization.CultureInfo)),
+								"CurrentCulture")
+				);
+				
 				return convert;
-			} else {
+			} else if (!String.IsNullOrEmpty (memberName)) {
 				CodeMethodInvokeExpression getlro = new CodeMethodInvokeExpression (
 					new CodeThisReferenceExpression (),
 					"GetLocalResourceObject",
@@ -135,7 +162,8 @@ namespace System.Web.Compilation {
 				);
 
 				return new CodeCastExpression (member_type, getlro);
-			}
+			} else
+				return null;
 		}
 	}
 

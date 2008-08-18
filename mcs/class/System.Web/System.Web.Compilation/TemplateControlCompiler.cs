@@ -3,9 +3,10 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Marek Habersack (mhabersack@novell.com)
 //
 // (C) 2003 Ximian, Inc (http://www.ximian.com)
-//
+// (C) 2004-2008 Novell, Inc (http://novell.com)
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -716,46 +717,42 @@ namespace System.Web.Compilation
 		}
 
 #if NET_2_0
-		void AddExpressionAssign (CodeMemberMethod method, ControlBuilder builder, MemberInfo member, Type type, string name, string value)
+		CodeExpression CompileExpression (MemberInfo member, Type type, string value, bool useSetAttribute)
 		{
-			CodeAssignStatement assign = new CodeAssignStatement ();
-			assign.Left = new CodePropertyReferenceExpression (ctrlVar, name);
-
 			// First let's find the correct expression builder
 			value = value.Substring (3, value.Length - 5).Trim ();
 			int colon = value.IndexOf (':');
 			if (colon == -1)
-				return;
+				return null;
 			string prefix = value.Substring (0, colon).Trim ();
 			string expr = value.Substring (colon + 1).Trim ();
 			
 			System.Configuration.Configuration config = WebConfigurationManager.OpenWebConfiguration ("");
 			if (config == null)
-				return;
+				return null;
+			
 			CompilationSection cs = (CompilationSection)config.GetSection ("system.web/compilation");
 			if (cs == null)
-				return;
+				return null;
+			
 			if (cs.ExpressionBuilders == null || cs.ExpressionBuilders.Count == 0)
-				return;
+				return null;
 
 			System.Web.Configuration.ExpressionBuilder ceb = cs.ExpressionBuilders[prefix];
 			if (ceb == null)
-				return;
+				return null;
+			
 			string builderType = ceb.Type;
-
 			Type t;
+			
 			try {
 				t = HttpApplication.LoadType (builderType, true);
 			} catch (Exception e) {
-				throw new HttpException (
-					String.Format ("Failed to load expression builder type `{0}'", builderType), e);
+				throw new HttpException (String.Format ("Failed to load expression builder type `{0}'", builderType), e);
 			}
 
 			if (!typeof (System.Web.Compilation.ExpressionBuilder).IsAssignableFrom (t))
-				throw new HttpException (
-					String.Format (
-						"Type {0} is not descendant from System.Web.Compilation.ExpressionBuilder",
-						builderType));
+				throw new HttpException (String.Format ("Type {0} is not descendant from System.Web.Compilation.ExpressionBuilder", builderType));
 
 			System.Web.Compilation.ExpressionBuilder eb = null;
 			object parsedData;
@@ -766,29 +763,40 @@ namespace System.Web.Compilation
 				ctx = new ExpressionBuilderContext (HttpContext.Current.Request.FilePath);
 				parsedData = eb.ParseExpression (expr, type, ctx);
 			} catch (Exception e) {
-				throw new HttpException (
-					String.Format ("Failed to create an instance of type `{0}'", builderType), e);
+				throw new HttpException (String.Format ("Failed to create an instance of type `{0}'", builderType), e);
 			}
 			
-			BoundPropertyEntry bpe = CreateBoundPropertyEntry (member as PropertyInfo, prefix, expr);
-			assign.Right = eb.GetCodeExpression (bpe, parsedData, ctx);
+			BoundPropertyEntry bpe = CreateBoundPropertyEntry (member as PropertyInfo, prefix, expr, useSetAttribute);
+			return eb.GetCodeExpression (bpe, parsedData, ctx);
+		}
+		
+		void AddExpressionAssign (CodeMemberMethod method, ControlBuilder builder, MemberInfo member, Type type, string name, string value)
+		{
+			CodeExpression expr = CompileExpression (member, type, value, false);
+
+			if (expr == null)
+				return;
+			
+			CodeAssignStatement assign = new CodeAssignStatement ();
+			assign.Left = new CodePropertyReferenceExpression (ctrlVar, name);
+			assign.Right = expr;
 			
 			builder.method.Statements.Add (AddLinePragma (assign, builder));
 		}
 
-		BoundPropertyEntry CreateBoundPropertyEntry (PropertyInfo pi, string prefix, string expr)
+		BoundPropertyEntry CreateBoundPropertyEntry (PropertyInfo pi, string prefix, string expr, bool useSetAttribute)
 		{
-			if (pi == null)
-				return null;
-
 			BoundPropertyEntry ret = new BoundPropertyEntry ();
 			ret.Expression = expr;
 			ret.ExpressionPrefix = prefix;
 			ret.Generated = false;
-			ret.Name = pi.Name;
-			ret.PropertyInfo = pi;
-			ret.Type = pi.PropertyType;
-
+			if (pi != null) {
+				ret.Name = pi.Name;
+				ret.PropertyInfo = pi;
+				ret.Type = pi.PropertyType;
+			}
+			ret.UseSetAttribute = useSetAttribute;
+			
 			return ret;
 		}
 		
@@ -920,9 +928,12 @@ namespace System.Web.Compilation
 				throw new ParseException (builder.location, "Unrecognized attribute: " + id);
 
 			CodeMemberMethod method = builder.method;
-			bool databound = IsDataBound (attvalue);
+			bool isDatabound = IsDataBound (attvalue);
+#if NET_2_0
+			bool isExpression = !isDatabound && IsExpression (attvalue);
+#endif
 
-			if (databound) {
+			if (isDatabound) {
 				string value = attvalue.Substring (3, attvalue.Length - 5).Trim ();
 				CodeExpression valueExpression = null;
 #if NET_2_0
@@ -946,10 +957,19 @@ namespace System.Web.Compilation
 				methodExpr = new CodeMethodReferenceExpression (cast, "SetAttribute");
 				expr = new CodeMethodInvokeExpression (methodExpr);
 				expr.Parameters.Add (new CodePrimitiveExpression (id));
-				expr.Parameters.Add (new CodePrimitiveExpression (attvalue));
+
+				CodeExpression valueExpr = null;
+#if NET_2_0
+				if (isExpression)
+					valueExpr = CompileExpression (null, typeof (string), attvalue, true);
+
+				if (valueExpr == null)
+#endif
+					valueExpr = new CodePrimitiveExpression (attvalue);
+				
+				expr.Parameters.Add (valueExpr);
 				method.Statements.Add (AddLinePragma (expr, builder));
 			}
-
 		}
 
 		protected void CreateAssignStatementsFromAttributes (ControlBuilder builder)
