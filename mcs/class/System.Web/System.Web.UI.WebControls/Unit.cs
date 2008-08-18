@@ -41,6 +41,15 @@ namespace System.Web.UI.WebControls {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 #endif
 	public struct Unit {
+		enum ParsingStage
+		{
+			Trim,
+			SignOrSep,
+			DigitOrSep,
+			DigitOrUnit,
+			Unit
+		}
+		
 		UnitType type;
 		double value;
 		public static readonly Unit Empty;
@@ -65,101 +74,189 @@ namespace System.Web.UI.WebControls {
 		{
 		}
 
-		internal Unit (string value, char sep)
+		internal Unit (string input, char sep)
 		{
-			if (value == null || value == String.Empty){
+			if (input == null || input == String.Empty){
 				type = (UnitType) 0;
-				this.value = 0.0;
+				value = 0.0;
 				return;
 			}
 
-			// KLUDGE: the parser below should be rewritten
-			if (value [0] == sep)
-				value = "0" + value;
-			
-			int count = value.Length;
+			value = 0.0;
+			double dv = 0, factor = .1;
 			int i = 0;
-			int sign = 1;
-			
-			while (i < count && Char.IsWhiteSpace (value [i]))
-				i++;
-			if (value [i] == '-'){
-				sign = -1;
-				i++;
-				if (!Char.IsDigit (value [i]))
-					throw new ArgumentOutOfRangeException ("value");
-			} else if (!Char.IsDigit (value [i])) {
-				throw new FormatException ();
-			}
+			int count = input.Length;
+			int sign = 1, unitStart = -1, unitLen = 0, wsCount = 0;
+			char c;
+			ParsingStage ps = ParsingStage.Trim;
+			bool done = false, haveSep = false, haveDigits = false, isWhiteSpace;
 
-			double dv = 0;
-			for (; i < count; i++){
-				char c = value [i];
-				if (!Char.IsDigit (c))
-					break;
-				dv = dv * 10 + ((int) c) - ((int) '0');
-			}
-			dv *= sign;
-			this.value = dv;
-			dv = 0;
-			if (i < count && value [i] == sep){
-				i++;
-				double factor = .1;
-				for (; i < count; i++){
-					char c = value [i];
-					if (!Char.IsDigit (c))
+			while (!done && i < count) {
+				c = input [i];
+
+				switch (ps) {
+					case ParsingStage.Trim:
+						if (Char.IsWhiteSpace (c)) {
+							i++;
+							continue;
+						}
+						ps = ParsingStage.SignOrSep;
+						continue;
+
+					case ParsingStage.SignOrSep:
+						wsCount = 0;
+						if (c == '-') {
+							sign = -1;
+							i++;
+							ps = ParsingStage.DigitOrSep;
+							continue;
+						}
+
+						if (c == sep) {
+							i++;
+							haveSep = true;
+							ps = ParsingStage.DigitOrUnit;
+							dv = 0;
+							continue;
+						}
+
+						if (Char.IsDigit (c)) {
+							ps = ParsingStage.DigitOrSep;
+							continue;
+						}
+	  
+						throw new FormatException ();
+
+					case ParsingStage.DigitOrSep:
+						if (Char.IsDigit (c)) {
+							dv = dv * 10 + ((int) c) - ((int)'0');
+							i++;
+							haveDigits = true;
+							continue;
+						}
+
+						if (c == sep) {
+							if (wsCount > 0)
+								throw new ArgumentOutOfRangeException ("input");
+	    
+							i++;
+							haveSep = true;
+							value = dv * sign;
+							dv = 0;
+							ps = ParsingStage.DigitOrUnit;
+							continue;
+						}
+
+						isWhiteSpace = Char.IsWhiteSpace (c);
+						if (isWhiteSpace || c == '%' || Char.IsLetter (c)) {
+							if (isWhiteSpace) {
+								if (!haveDigits)
+									throw new ArgumentOutOfRangeException ("input");
+								wsCount++;
+								i++;
+								continue;
+							}
+
+							value = dv * sign;
+							dv = 0;
+							unitStart = i;
+	    
+							if (haveSep) {
+								haveDigits = false;
+								ps = ParsingStage.DigitOrUnit;
+							} else
+								ps = ParsingStage.Unit;
+							wsCount = 0;
+							continue;
+						}
+	  
+						throw new FormatException ();
+	  
+					case ParsingStage.DigitOrUnit:
+						if (c == '%') {
+							unitStart = i;
+							unitLen = 1;
+							done = true;
+							continue;
+						}
+
+						isWhiteSpace = Char.IsWhiteSpace (c);
+						if (isWhiteSpace || Char.IsLetter (c)) {
+							if (isWhiteSpace) {
+								wsCount++;
+								i++;
+								continue;
+							}
+	    
+							ps = ParsingStage.Unit;
+							unitStart = i;
+							continue;
+						}
+
+						if (Char.IsDigit (c)) {
+							if (wsCount > 0)
+								throw new ArgumentOutOfRangeException ();
+	    
+							dv = dv + (((int) c) - ((int) '0')) * factor;
+							factor = factor *.1;
+							i++;
+							continue;
+						}
+	  
+						throw new FormatException ();
+
+					case ParsingStage.Unit:
+						if (c == '%' || Char.IsLetter (c)) {
+							i++;
+							unitLen++;
+							continue;
+						}
+
+						if (unitLen == 0 && Char.IsWhiteSpace (c)) {
+							i++;
+							unitStart++;
+							continue;
+						}
+	  
+						done = true;
 						break;
-					dv = dv + (((int) c) - ((int) '0')) * factor;
-					factor = factor *.1;
 				}
-				this.value += dv;
 			}
-			
-			while (i < count && Char.IsWhiteSpace (value [i]))
-				i++;
 
-			if (i == count){
+			value += dv * sign;
+			if (unitStart >= 0) {
+				int unitTail = unitStart + unitLen;
+				if (unitTail < count) {
+					for (int j = unitTail; j < count; j++) {
+						if (!Char.IsWhiteSpace (input [j]))
+							throw new ArgumentOutOfRangeException ("input");
+					}
+				}
+
+				if (unitLen == 1 && input [unitStart] == '%')
+					type = UnitType.Percentage;
+				else {
+					switch (input.Substring (unitStart, unitLen).ToLower (CultureInfo.InvariantCulture)) {
+						case "in": type = UnitType.Inch; break;
+						case "cm": type = UnitType.Cm; break;
+						case "mm": type = UnitType.Mm; break;
+						case "pt": type = UnitType.Point; break;
+						case "pc": type = UnitType.Pica; break;
+						case "em": type = UnitType.Em; break;
+						case "ex": type = UnitType.Ex; break;
+						case "px":
+							type = UnitType.Pixel;
+							break;
+						default:
+							throw new ArgumentOutOfRangeException ("value");
+					}
+				}
+			} else
 				type = UnitType.Pixel;
-				return;
-			}
 
-			if (value [i] == '%'){
-				type = UnitType.Percentage;
-				i++;
-				while (i < count && Char.IsWhiteSpace (value [i]))
-					i++;
-				if (i != count)
-					throw new ArgumentOutOfRangeException ("value");
-				return;
-			}
-			
-			int j = i;
-			while (j < count && Char.IsLetter (value [j]))
-				j++;
-			string code = value.Substring (i, j-i);
-			switch (code.ToLower (CultureInfo.InvariantCulture)){
-			case "in": type = UnitType.Inch; break;
-			case "cm": type = UnitType.Cm; break;
-			case "mm": type = UnitType.Mm; break;
-			case "pt": type = UnitType.Point; break;
-			case "pc": type = UnitType.Pica; break;
-			case "em": type = UnitType.Em; break;
-			case "ex": type = UnitType.Ex; break;
-			case "px":
-				type = UnitType.Pixel;
-				if (dv != 0)
-					throw new FormatException ("Pixel units do not allow floating point values");
-				break;
-			default:
-				throw new ArgumentOutOfRangeException ("value");
-			}
-
-			while (j < count && Char.IsWhiteSpace (value [j]))
-				j++;
-			if (j != count)
-				throw new ArgumentOutOfRangeException ("value");
+			if (haveSep && type == UnitType.Pixel)
+				throw new FormatException ("Pixel units do not allow floating point values");
 		}
-
 		
 		public Unit (string value) : this (value, '.')
 		{
