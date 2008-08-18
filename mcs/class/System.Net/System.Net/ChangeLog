@@ -1,3 +1,7 @@
+2008-08-19  Geoff Norton  <gnorton@novell.com>
+
+	* WebClient_2_1.cs: Keep a reference to the tick callback until its completed.
+
 2008-08-18  Geoff Norton  <gnorton@novell.com>
 
 	* WebRequest_2_1.cs: Set a delegate callback for BrowserHttpWebRequest

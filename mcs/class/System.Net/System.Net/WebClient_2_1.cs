@@ -1428,9 +1428,13 @@ namespace System.Net
 		{
 			CompleteAsync ();
 			if (OpenReadCompleted != null) {
+				GSourceFunc callback = (GSourceFunc) delegate (IntPtr ctx) { OpenReadCompleted (this, (OpenReadCompletedEventArgs) callback_args); wait_event.Set (); return false; };
 				callback_args = args;
-				g_idle_add ((GSourceFunc) delegate (IntPtr ctx) { OpenReadCompleted (this, (OpenReadCompletedEventArgs) callback_args); wait_event.Set (); return false; }, IntPtr.Zero);
+
+				g_idle_add (callback, IntPtr.Zero);
+
 				wait_event.WaitOne ();
+				GC.KeepAlive (callback);
 			}
 		}
 
