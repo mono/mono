@@ -1,5 +1,15 @@
 2008-08-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Emit the generic class inits using
+	mono_emit_abs_call ().
+
+	* patch-info.h: Add GENERIC_CLASS_INIT.
+
+	* mini.c (mono_resolve_patch_target): Handle GENERIC_CLASS_INIT.
+
+	* mini-amd64.c (emit_call_body): Treat abs calls which have a patch info
+	as their target as a near call.
+
 	* mini.c (mono_codegen): Handle patches stored in cfg->abs_patches in the
 	ABS handling code.
 	(mono_resolve_patch_target): Add support for MONO_PATCH_INFO_RGCTX_FETCH.
