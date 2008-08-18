@@ -1,5 +1,10 @@
 2008-08-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (is_shared_got_patch): Add MONO_PATCH_INFO_METHODCONST.
+
+	* aot-runtime.c (decode_patch_info): Refactor the code dealing with the
+	shared patches. Process METHODCONST as a shared patch.
+
 	* liveness.c (mono_analyze_liveness): Disable the liveness2 code for now
 	as it crashes on the 2.0 mscorlib.
 
