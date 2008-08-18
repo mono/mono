@@ -1,5 +1,10 @@
 2008-08-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h: Add missing bblock related prototypes.
+
+	* mini.h (MonoCompile): Remove unused reverse_inst_list and
+	reverse_inst_list_len fields.
+
 	* mini.c: Refactor this file a bit by moving branch optimizations to 
 	branch-opts.c.
 
