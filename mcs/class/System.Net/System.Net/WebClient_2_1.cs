@@ -74,6 +74,8 @@ namespace System.Net
 #if NET_2_1
 	public class WebClient
 	{
+		private delegate void ProgressChangedDelegate (long read, long length, object state);
+
 //		static readonly string urlEncodedCType = "application/x-www-form-urlencoded";
 //		static byte [] hexBytes;
 //		ICredentials credentials;
@@ -904,6 +906,9 @@ namespace System.Net
 //			}
 //
 //			responseHeaders = null;
+			request.SetupProgressDelegate ((ProgressChangedDelegate) delegate (long read, long length, object state) {
+				OnDownloadProgressChanged (new DownloadProgressChangedEventArgs (read, length, state));
+			});
 			return request;
 		}
 
@@ -1409,27 +1414,30 @@ namespace System.Net
 //				DownloadFileCompleted (this, args);
 //		}
 //
-                public delegate bool GSourceFunc  (IntPtr data);
-
-		[DllImport ("moon")]
-		static extern uint g_idle_add (GSourceFunc callback, IntPtr data);
-
-		private DownloadProgressChangedEventArgs e;
-		private GSourceFunc download_progress_delegate;
 		protected virtual void OnDownloadProgressChanged (DownloadProgressChangedEventArgs e)
 		{
 			if (DownloadProgressChanged != null) {
-				this.e = e;
-				download_progress_delegate = new GSourceFunc (download_progress_callback);
-				g_idle_add (download_progress_delegate, IntPtr.Zero);
+				DownloadProgressChanged (this, e);
 			}
 		}
 		
-		bool download_progress_callback (IntPtr data)
+		private ManualResetEvent wait_event = new ManualResetEvent (false);
+		private object callback_args;
+
+		protected virtual void OnOpenReadCompleted (OpenReadCompletedEventArgs args)
 		{
-			DownloadProgressChanged (this, e);
-			return false;
+			CompleteAsync ();
+			if (OpenReadCompleted != null) {
+				callback_args = args;
+				g_idle_add ((GSourceFunc) delegate (IntPtr ctx) { OpenReadCompleted (this, (OpenReadCompletedEventArgs) callback_args); wait_event.Set (); return false; }, IntPtr.Zero);
+				wait_event.WaitOne ();
+			}
 		}
+
+		public delegate bool GSourceFunc (IntPtr data);
+
+		[DllImport ("moon")]
+		static extern uint g_idle_add (GSourceFunc callback, IntPtr data);
 
 //		protected virtual void OnDownloadStringCompleted (DownloadStringCompletedEventArgs args)
 //		{
@@ -1438,23 +1446,6 @@ namespace System.Net
 //				DownloadStringCompleted (this, args);
 //		}
 //
-		private OpenReadCompletedEventArgs args;
-		private GSourceFunc read_completed_delegate;
-		protected virtual void OnOpenReadCompleted (OpenReadCompletedEventArgs args)
-		{
-			CompleteAsync ();
-			if (OpenReadCompleted != null) {
-				this.args = args;
-				read_completed_delegate = new GSourceFunc (read_completed_callback);
-				g_idle_add (read_completed_delegate, IntPtr.Zero);
-			}
-		}
-
-		bool read_completed_callback (IntPtr data)
-		{
-			OpenReadCompleted (this, args);
-			return false;
-		}
 
 //		protected virtual void OnOpenWriteCompleted (OpenWriteCompletedEventArgs args)
 //		{

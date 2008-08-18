@@ -1,3 +1,11 @@
+2008-08-18  Geoff Norton  <gnorton@novell.com>
+
+	* WebRequest_2_1.cs: Set a delegate callback for BrowserHttpWebRequest
+	to update progress.
+	* WebClient_2_1.cs: Refactor the OnDownloadedChanged method, as its already
+	emitting on the right thread.  Clean up the OnOpenReadCompleted method.
+	Set a delegate callback for BrowserHttpWebRequest to updated Progress.
+
 2008-08-17  Geoff Norton  <gnorton@novell.com>
 
 	* WebRequest_2_1.cs: We support relative URI's now.

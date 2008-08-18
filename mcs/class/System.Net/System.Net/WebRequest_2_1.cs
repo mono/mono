@@ -88,6 +88,15 @@ namespace System.Net {
 		{
 			throw new NotSupportedException ();
 		}
+
+		internal void SetupProgressDelegate (Delegate progress_delegate)
+		{
+			if (browser_http_request == null)
+				browser_http_request = GetBrowserHttpFromMoonlight ();
+
+			this.GetType ().GetField ("progress_delegate", BindingFlags.Instance | BindingFlags.NonPublic).SetValue (this, progress_delegate);
+		}
+		
 	}
 }
 
