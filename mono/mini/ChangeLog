@@ -1,5 +1,14 @@
 2008-08-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (encode_patch): Add support for RGCTX_FETCH.
+	(encode_klass_ref): Add support for encoding VARs/MVARs.
+
+	* mini.c (mono_patch_info_dup_mp): Handle RGCTX_FETCH.
+
+	* aot-runtime.c (decode_patch_info): Rename to 'decode_patch'. Split out
+	the handling of the got entries into a separate 'decode_got_entry' function.
+	Add support for RGCTX_FETCH.
+
 	* tramp-amd64.c mini-amd64.h: Change the VTABLE_REG to RDI since RAX is
 	clobbered by the trampoline code.
 
