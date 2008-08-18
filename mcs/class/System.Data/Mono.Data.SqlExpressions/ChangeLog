@@ -1,3 +1,9 @@
+2008-08-18  Marek Habersack  <mhabersack@novell.com>
+
+	* Numeric.cs: Max/Min operations do not convert string
+	IConvertibles to double - they perform a simple string compare
+	instead.
+
 2008-01-23 Konstantin Triger <kostat@mainsoft.com>
 
 	* Like.cs: when rh expresssion is null or DBNull always return false.
