@@ -42,8 +42,11 @@ namespace System.Security.Cryptography.X509Certificates {
 
 	[ComVisible (true)]
 	[MonoTODO ("X509ContentType.SerializedCert isn't supported (anywhere in the class)")]
+#if NET_2_1
+	public partial class X509Certificate {
+#else
 	public partial class X509Certificate : IDeserializationCallback, ISerializable {
-
+#endif
 		private string issuer_name;
 		private string subject_name;
 
@@ -197,10 +200,6 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 		}
 
-		void IDeserializationCallback.OnDeserialization (object sender)
-		{
-		}
-
 		[ComVisible (false)]
 		public virtual void Import (byte[] rawData)
 		{
@@ -275,13 +274,17 @@ namespace System.Security.Cryptography.X509Certificates {
 			byte[] rawData = Load (fileName);
 			Import (rawData, (string)null, keyStorageFlags);
 		}
+#if !NET_2_1
+		void IDeserializationCallback.OnDeserialization (object sender)
+		{
+		}
 
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			// will throw a NRE if info is null (just like MS implementation)
 			info.AddValue ("RawData", x509.RawData);
 		}
-
+#endif
 		[ComVisible (false)]
 		public virtual void Reset ()
 		{
