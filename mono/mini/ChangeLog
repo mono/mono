@@ -1,5 +1,22 @@
 2008-08-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_codegen): Handle patches stored in cfg->abs_patches in the
+	ABS handling code.
+	(mono_resolve_patch_target): Add support for MONO_PATCH_INFO_RGCTX_FETCH.
+
+	* method-to-ir.c (mono_emit_abs_call): New helper function which emits a
+	call to a runtime function described by a patch.
+
+	* method-to-ir.c: Emit rgctx entry fetches and class init trampolines using
+	mono_emit_abs_call, this has the advantage that the ABS handling code in
+	mono_codegen () can handle them both, and can handle other stuff in the
+	future without additional code.
+
+	* mini.h (struct MonoJumpInfoRgctxEntry): New structure describing an rgctx
+	entry.
+	(MonoCompile): Add 'abs_patches' hashtable, which contains patches describing
+	abs addresses.
+
 	* mini.h: Add missing bblock related prototypes.
 
 	* mini.h (MonoCompile): Remove unused reverse_inst_list and
