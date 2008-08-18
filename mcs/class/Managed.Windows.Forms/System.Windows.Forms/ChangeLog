@@ -1,3 +1,10 @@
+2008-08-18  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ThemeWin32Classic.cs: Use ClientRectangle instead of Bounds when
+	drawing a ComboBox's background.  Fixes bad disabled rendering when
+	the control is not at 0,0.
+	[Fixes bug #416063]
+
 2008-08-16  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* GridEntry.cs: Leave the ICustomTypeDescriptor handling up to the 

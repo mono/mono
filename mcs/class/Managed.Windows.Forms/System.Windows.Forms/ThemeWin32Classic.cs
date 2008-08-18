@@ -1599,7 +1599,7 @@ namespace System.Windows.Forms
 		public override void ComboBoxDrawBackground (ComboBox comboBox, Graphics g, Rectangle clippingArea, FlatStyle style)
 		{
 			if (!comboBox.Enabled)
-				g.FillRectangle (ResPool.GetSolidBrush (ColorControl), comboBox.Bounds);
+				g.FillRectangle (ResPool.GetSolidBrush (ColorControl), comboBox.ClientRectangle);
 
 			if (comboBox.DropDownStyle == ComboBoxStyle.Simple)
 				g.FillRectangle (ResPool.GetSolidBrush (comboBox.Parent.BackColor), comboBox.ClientRectangle);
