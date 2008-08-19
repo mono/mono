@@ -1,3 +1,8 @@
+2008-08-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XplatUIWin32.cs : SetTimer() used to set wrong window handle and
+	  it caused timer registration twice. Fixed bug #418107.
+
 2008-08-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	[Correction: This is the actual change to X11Dnd issue, not the

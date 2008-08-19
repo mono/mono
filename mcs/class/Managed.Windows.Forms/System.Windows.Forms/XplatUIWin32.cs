@@ -2542,7 +2542,7 @@ namespace System.Windows.Forms {
 				timer_list[index]=timer;
 			}
 
-			if (Win32SetTimer(FosterParent, index, (uint)timer.Interval, IntPtr.Zero) == IntPtr.Zero)
+			if (Win32SetTimer(FosterParent, index, (uint)timer.Interval, IntPtr.Zero) != IntPtr.Zero)
 				timer.window = FosterParent;
 			else
 				timer.window = IntPtr.Zero;
