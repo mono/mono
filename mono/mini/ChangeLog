@@ -1,5 +1,7 @@
 2008-08-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c (mono_arch_output_basic_block): Disable AOT for OP_JMP.
+
 	* method-to-ir.c (mono_method_to_ir2): When using CEE_JMP, make arguments
 	volatile so they won't be optimized away.
 
