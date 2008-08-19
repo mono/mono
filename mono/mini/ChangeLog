@@ -1,5 +1,13 @@
 2008-08-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (encode_method_ref): Encode the context of generic
+	instance methods.
+
+	* aot-runtime.c (decode_method_ref): Inflate generic methods using
+	the context saved in the aot file.
+
+	* mini.h (MONO_AOT_FILE_VERSION): Bump aot file format version.
+
 	* mini-x86.c (mono_arch_output_basic_block): Disable AOT for OP_JMP.
 
 	* method-to-ir.c (mono_method_to_ir2): When using CEE_JMP, make arguments
