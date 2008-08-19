@@ -1,5 +1,11 @@
 2008-08-19  Andreia Gaita <avidigal@novell.com> 
 
+	* Mono.Mozilla/Base.cs: Clean up list of webcontrol objects when
+	  shutting down, and switch the initialized flag when there are no
+	  more controls loaded. Lock initialization and shutdown.
+
+2008-08-19  Andreia Gaita <avidigal@novell.com> 
+
 	* Assembly/AssemblyInfo.cs, ChangeLog,
 	  Mono.WebBrowser/DOM/IAttribute.cs,
 	  Mono.WebBrowser/DOM/IElementCollection.cs,

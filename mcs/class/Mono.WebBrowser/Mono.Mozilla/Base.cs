@@ -37,6 +37,7 @@ namespace Mono.Mozilla
 		private static Hashtable boundControls;
 		internal static bool gluezillaInstalled;
 		internal static bool initialized;
+		internal static object initLock = new object ();
 
 		private class BindingInfo
 		{
@@ -73,29 +74,31 @@ namespace Mono.Mozilla
 		
 		public static bool Init (WebBrowser control, Platform platform)
 		{
-			if (!initialized) {
-	
-				string monoMozDir = System.IO.Path.Combine (
-					System.IO.Path.Combine (
-					Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData),
-					".mono"), "mozilla");
-	
-				if (!System.IO.Directory.Exists (monoMozDir))
-					System.IO.Directory.CreateDirectory (monoMozDir);
-	
-				Platform mozPlatform;
-				try {
-					gluezilla_init (platform, out mozPlatform);
+			lock (initLock) {
+				if (!initialized) {
+				
+					string monoMozDir = System.IO.Path.Combine (
+						System.IO.Path.Combine (
+						Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData),
+						".mono"), "mozilla");
+
+					if (!System.IO.Directory.Exists (monoMozDir))
+						System.IO.Directory.CreateDirectory (monoMozDir);
+
+					Platform mozPlatform;
+					try {
+						gluezilla_init (platform, out mozPlatform);
+					}
+					catch (DllNotFoundException) {
+						Console.WriteLine ("libgluezilla not found. To have webbrowser support, you need libgluezilla installed");
+						gluezillaInstalled = false;
+						initialized = false;
+						return false;
+					}
+					control.enginePlatform = mozPlatform;
+					gluezillaInstalled = true;
+					initialized = true;
 				}
-				catch (DllNotFoundException) {
-					Console.WriteLine ("libgluezilla not found. To have webbrowser support, you need libgluezilla installed");
-					gluezillaInstalled = false;
-					initialized = false;
-					return false;
-				}
-				control.enginePlatform = mozPlatform;
-				gluezillaInstalled = true;
-				initialized = true;
 			}
 			return initialized;
 		}
@@ -122,11 +125,17 @@ namespace Mono.Mozilla
 
 		public static void Shutdown (IWebBrowser control)
 		{
-			if (!isInitialized ())
-				return;
-			BindingInfo info = getBinding (control);
-
-			gluezilla_shutdown (info.gluezilla);
+			lock (initLock) {
+				if (!initialized)
+					return;
+					
+				BindingInfo info = getBinding (control);
+				
+				gluezilla_shutdown (info.gluezilla);
+				boundControls.Remove (control);
+				if (boundControls.Count == 0)
+					initialized = false;
+			}
 		}
 
 		// layout
