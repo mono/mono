@@ -85,7 +85,7 @@ namespace System.Reflection.Emit
 		bool createTypeCalled;
 		private Type underlying_type;
 
-	public const int UnspecifiedTypeSize = 0;
+		public const int UnspecifiedTypeSize = 0;
 
 		protected override TypeAttributes GetAttributeFlagsImpl ()
 		{
