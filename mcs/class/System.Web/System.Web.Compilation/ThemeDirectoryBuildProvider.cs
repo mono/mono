@@ -77,8 +77,8 @@ namespace System.Web.Compilation
 			string[] css_files = Directory.GetFiles (physicalPath, "*.css");
 			string[] css_urls = new string [css_files.Length];
 			for (int i = 0; i < css_files.Length; i++) {
-				ptp.AddDependency (css_files [i]);
 				css_urls [i] = VirtualPathUtility.Combine (vp, Path.GetFileName (css_files [i]));
+				ptp.AddDependency (css_urls [i]);
 			}
 			ptp.LinkedStyleSheets = css_urls;
 			
