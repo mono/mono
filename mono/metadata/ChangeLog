@@ -83,7 +83,6 @@
 
 	* socket-io.c (get_socket_assembly): Make 'moonlight' variable static.
 
->>>>>>> .r110951
 Fri Aug 1 18:47:48 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* mono-perfcounters.c: jitted methods and jitted bytes counters.
