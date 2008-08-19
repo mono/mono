@@ -190,8 +190,7 @@ namespace System.Windows.Forms
 				if (value.Start <0 || value.Length < -1)
 					throw new ArgumentException ();
 
-				if (Links.IsDefault)
-					Links.Clear ();
+				Links.Clear ();
 
 				if (!value.IsEmpty) {
 					Links.Add (value.Start, value.Length);

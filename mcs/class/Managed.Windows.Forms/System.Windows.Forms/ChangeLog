@@ -1,5 +1,10 @@
 2008-08-19  Jonathan Pobst  <monkey@jpobst.com>
 
+	* LinkLabel.cs: Always clear any previous links when LinkArea
+	is set.  [Fixes bug #410709]
+
+2008-08-19  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripProfessionalRenderer.cs: Revert last change.
 	* ProfessionalColorTable.cs: For Classic, use SystemColors.Window
 	for ToolStripDropDownBackground.
