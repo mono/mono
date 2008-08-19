@@ -1,29 +1,3 @@
-2008-08-19  Andreia Gaita <avidigal@novell.com> 
-
-	* Assembly/AssemblyInfo.cs, ChangeLog,
-	  Mono.WebBrowser/DOM/IAttribute.cs,
-	  Mono.WebBrowser/DOM/IElementCollection.cs,
-	  Mono.WebBrowser/DOM/IWindow.cs, Mono.WebBrowser/DOM/IDocument.cs,
-	  Mono.WebBrowser/DOM/IAttributeCollection.cs,
-	  Mono.WebBrowser/DOM/INodeList.cs,
-	  Mono.WebBrowser/DOM/IWindowCollection.cs,
-	  Mono.WebBrowser/DOM/INode.cs, Mono.WebBrowser/DOM/IElement.cs,
-	  Mono.WebBrowser/DOM/INavigation.cs,
-	  Mono.WebBrowser/DOM/IHistory.cs, Mono.WebBrowser/Exception.cs,
-	  Mono.WebBrowser/IWebBrowser.cs, Mono.Mozilla/DOM/Document.cs,
-	  Mono.Mozilla/DOM/HTMLElement.cs,
-	  Mono.Mozilla/DOM/AttributeCollection.cs,
-	  Mono.Mozilla/DOM/DocumentType.cs, Mono.Mozilla/DOM/NodeList.cs,
-	  Mono.Mozilla/DOM/WindowCollection.cs, Mono.Mozilla/DOM/Node.cs,
-	  Mono.Mozilla/DOM/NamedNodeMap.cs, Mono.Mozilla/DOM/Element.cs,
-	  Mono.Mozilla/DOM/HTMLElementCollection.cs,
-	  Mono.Mozilla/DOM/Navigation.cs, Mono.Mozilla/DOM/History.cs,
-	  Mono.Mozilla/DOM/Attribute.cs, Mono.Mozilla/DOM/DOMObject.cs,
-	  Mono.Mozilla/DOM/Window.cs, Mono.Mozilla/Callback.cs,
-	  Mono.Mozilla/AsciiString.cs, Mono.Mozilla/WebBrowser.cs,
-	  Mono.Mozilla/UniString.cs, Mono.Mozilla/Base.cs: Fix inconsistent
-	  newlines. Add eol-style property
-
 2008-06-11  Andreia Gaita <avidigal@novell.com> 
 
 	* Mono.Mozilla/DOM/Attribute.cs: Fix missing setter
