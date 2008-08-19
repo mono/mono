@@ -57,15 +57,23 @@ namespace System.Web.Util {
 
 		internal static string GetSessionId (string path)
 		{
-			string appvpath = HttpRuntime.AppDomainAppVirtualPath;
-			if (path.Length <= appvpath.Length)
+			if (path == null)
 				return null;
 
-			path = path.Substring (appvpath.Length);
-			if (path.Length == 0 || path [0] != '/')
-				path = '/' + path;
+			string appvpath = HttpRuntime.AppDomainAppVirtualPath;
+			int appvpathlen = appvpath.Length;
 
+			if (path.Length <= appvpathlen)
+				return null;
+
+			path = path.Substring (appvpathlen);
+			
 			int len = path.Length;
+			if (len == 0 || path [0] != '/') {
+				path = '/' + path;
+				len++;
+			}			
+
 			if ((len < SessionId.IdLength + 3) || (path [1] != '(') ||
 			    (path [SessionId.IdLength + 2] != ')'))
 				return null;
