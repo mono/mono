@@ -4002,7 +4002,7 @@ namespace System.Windows.Forms {
 						goto ProcessNextMessage;
 					}
 					if (xevent.CrossingEvent.mode == NotifyMode.NotifyGrab || LastPointerWindow == xevent.CrossingEvent.window ||
-							hwnd.client_window == IntPtr.Zero) {
+							hwnd.client_window != xevent.AnyEvent.window) {
 						goto ProcessNextMessage;
 					}
 					if (LastPointerWindow != IntPtr.Zero) {
