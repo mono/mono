@@ -103,6 +103,30 @@ In the cases above, the number of generated trampolines goes from
 5400 for the IronPython case and from 800 to 150 for the hello world
 case.
 
+Kinds of Trampolines and Thunks
+===============================
+
+This is a list of the trampolines and thunks used in Mono:
+
+- create_fnptr
+- load_aot_method
+- imt thunk
+
+	Interface Method Table, this is used to dispatch calls to
+	interface methods.
+
+- jump table
+- debugger code
+- exception call filter
+- trampoline (various types)
+- throw corlib exception
+- restore context
+- throw exception by name
+- handle stack overflow
+- throw exception
+- delegate invoke implementation
+- cpuid code
+
 
 Implementation for x86/x86-64
 =============================
