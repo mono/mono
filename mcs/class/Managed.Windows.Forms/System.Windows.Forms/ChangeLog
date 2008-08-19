@@ -1,3 +1,9 @@
+2008-08-19  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripProfessionalRenderer.cs: Use Window color for the 
+	background of dropdowns to match .Net when the user is not
+	using the default white.  [Fixes bug #418108]
+
 2008-08-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XplatUIWin32.cs : SetTimer() used to set wrong window handle and

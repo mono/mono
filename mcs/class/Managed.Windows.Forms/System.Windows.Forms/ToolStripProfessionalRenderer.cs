@@ -365,7 +365,7 @@ namespace System.Windows.Forms
 			base.OnRenderToolStripBackground (e);
 
 			if (e.ToolStrip is ToolStripDropDown) {
-				e.Graphics.Clear (this.ColorTable.ToolStripDropDownBackground);
+				e.Graphics.Clear (SystemColors.Window);
 				return;
 			}
 			
