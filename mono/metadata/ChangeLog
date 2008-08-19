@@ -1,3 +1,9 @@
+2008-08-19  Miguel de Icaza  <miguel@novell.com>
+
+	* console-io.c: Fix incredibly annoying behavior on the console
+	after resuming execution after control-z.   This affected every
+	console application.
+
 2008-08-18 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mempool-internals.h: Header for mono private mempool functions. The first
@@ -67,6 +73,7 @@
 
 	* socket-io.c (get_socket_assembly): Make 'moonlight' variable static.
 
+>>>>>>> .r110951
 Fri Aug 1 18:47:48 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* mono-perfcounters.c: jitted methods and jitted bytes counters.
