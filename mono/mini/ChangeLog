@@ -1,5 +1,7 @@
 2008-08-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Fix warnings.
+
 	* aot-runtime.c (decode_klass_ref): Add support for VARs/MVARs.
 
 	* aot-compiler.c (encode_klass_ref): Encode is_method too for VARs/MVARs.
