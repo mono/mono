@@ -1,3 +1,8 @@
+2008-08-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir2): When using CEE_JMP, make arguments
+	volatile so they won't be optimized away.
+
 2008-08-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ssa.c:
