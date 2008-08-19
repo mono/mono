@@ -1,3 +1,9 @@
+2008-08-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	reflection.c (mono_reflection_create_runtime_class): Alloc
+	the nested classes linked list using the dynamic image mempool.
+	Fixes leak in corlib compilation.
+
 2008-08-19  Miguel de Icaza  <miguel@novell.com>
 
 	* console-io.c: Fix incredibly annoying behavior on the console
