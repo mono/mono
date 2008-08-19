@@ -3831,17 +3831,6 @@ namespace System.Windows.Forms {
 					
 					if (msg.message == Msg.WM_LBUTTONDOWN || msg.message == Msg.WM_MBUTTONDOWN || msg.message == Msg.WM_RBUTTONDOWN) {
 						SendParentNotify(msg.hwnd, msg.message, mouse_position.X, mouse_position.Y);
-
-						// Win32 splurts MouseMove events all over the place, regardless of whether the mouse is actually moving or
-						// not, especially after mousedown and mouseup. To support apps relying on mousemove events between and after 
-						// mouse clicks to repaint or whatever, we generate a mousemove event here. *sigh*
-						XEvent motionEvent = new XEvent ();
-						motionEvent.type = XEventName.MotionNotify;
-						motionEvent.MotionEvent.display = DisplayHandle;
-						motionEvent.MotionEvent.window = xevent.ButtonEvent.window;
-						motionEvent.MotionEvent.x = xevent.ButtonEvent.x;
-						motionEvent.MotionEvent.y = xevent.ButtonEvent.y;
-						hwnd.Queue.EnqueueLocked (motionEvent);
 					}
 					
 					break;
