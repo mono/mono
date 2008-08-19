@@ -106,10 +106,29 @@ namespace Newtonsoft.Json
 			}
 
 			protected override IEnumerator<KeyValuePair<string, object>> GetEnumerator () {
+				KeyValuePair <string, object> kvpret;
+				
 				foreach (MemberInfo member in ReflectionUtils.GetFieldsAndProperties (_source.GetType (), BindingFlags.Public | BindingFlags.Instance)) {
 					if (ReflectionUtils.CanReadMemberValue (member) && !member.IsDefined (typeof (ScriptIgnoreAttribute), true))
-						if (!ReflectionUtils.IsIndexedProperty (member))
-							yield return new KeyValuePair<string, object> (member.Name, ReflectionUtils.GetMemberValue (member, _source));
+						if (!ReflectionUtils.IsIndexedProperty (member)) {
+							// A temporary hack to prevent situations
+							// when a type member cannot be serialized
+							// for some reason (e.g. when serializing a
+							// CultureInfo for 'en-US', processing its
+							// Parent property which returns CultureInfo
+							// for 'en' - asking for the Calendar
+							// property value for that one will throw an
+							// exception). Until a better solution is
+							// devised, this has to stay in.
+							try {
+								kvpret = new KeyValuePair<string, object> (member.Name, ReflectionUtils.GetMemberValue (member, _source));
+							} catch (Exception ex) {
+								Console.Error.WriteLine ("HACK WARNING! NOT YIELDING THE VALUE!  Serializing {0}.{1} threw an exception:", _source.GetType (), member.Name);
+								Console.Error.WriteLine (ex);
+								continue;
+							}
+							yield return kvpret;
+						}
 				}
 			}
 		}

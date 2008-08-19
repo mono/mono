@@ -1,3 +1,9 @@
+2008-08-19  Marek Habersack  <mhabersack@novell.com>
+
+	* JsonSerializer.cs: implemented a work-around for a bug in the
+	SerializedLazyDictionary which would fail to serialize a type if
+	any of its properties would throw an exception.
+
 2008-05-20  Jb Evain  <jbevain@novell.com>
 
 	*.cs: all files from JSon.NET are now re-licensed under the
