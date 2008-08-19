@@ -1,3 +1,8 @@
+2008-08-20  Marek Habersack  <mhabersack@novell.com>
+
+	* Membership.cs: implemented the HashAlgorithmType property. Fixes
+	bug #418458
+
 2008-06-30  Marek Habersack  <mhabersack@novell.com>
 
 	* SqliteMembershipProvider.cs, SqliteRoleProvider.cs: remove

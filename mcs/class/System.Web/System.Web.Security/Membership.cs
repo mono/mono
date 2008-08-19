@@ -78,11 +78,26 @@ namespace System.Web.Security
 				return (int) section.UserIsOnlineTimeWindow.TotalMinutes;
 			}
 		}
+		static string hashAlgorithmType {
+			get {
+				MembershipSection section = (MembershipSection) WebConfigurationManager.GetSection ("system.web/membership");
+				string ret = section.HashAlgorithmType;
+
+				if (ret == String.Empty) {
+					MachineKeySection mks = WebConfigurationManager.GetSection ("system.web/machineKey") as MachineKeySection;
+					return mks.Validation;
+				}
+
+				return ret;
+			}
+		}
+		
 #else
 		static MembershipProviderCollection providers;
 		static MembershipProvider provider;
 		static int onlineTimeWindow;
-
+		static string hashAlgorithmType;
+		
 		static Membership ()
 		{
 			MembershipSection section = (MembershipSection) WebConfigurationManager.GetSection ("system.web/membership");
@@ -94,6 +109,15 @@ namespace System.Web.Security
 			provider = providers[section.DefaultProvider];
 
 			onlineTimeWindow = (int) section.UserIsOnlineTimeWindow.TotalMinutes;
+			hashAlgorithmType = section.HashAlgorithmType;
+			if (String.IsNullOrEmpty (hashAlgorithmType)) {
+				MachineKeySection mks = WebConfigurationManager.GetSection ("system.web/machineKey") as MachineKeySection;
+				MachineKeyValidationConverter cvt = new MachineKeyValidationConverter ();
+				hashAlgorithmType = cvt.ConvertTo (null, null, mks.Validation, typeof (string)) as string;
+			}
+			
+			if (String.IsNullOrEmpty (hashAlgorithmType))
+				hashAlgorithmType = "SHA1";
 		}
 #endif
 
@@ -289,7 +313,11 @@ namespace System.Web.Security
 		public static bool EnablePasswordRetrieval {
 			get { return Provider.EnablePasswordRetrieval; }
 		}
-		
+
+		public static string HashAlgorithmType {
+			get { return hashAlgorithmType; }
+		}
+
 		public static bool RequiresQuestionAndAnswer {
 			get { return Provider.RequiresQuestionAndAnswer; }
 		}
