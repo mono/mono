@@ -1,3 +1,15 @@
+2008-08-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	[Correction: This is the actual change to X11Dnd issue, not the
+	previous one, which was actually a different issue.]
+
+	* X11Dnd.cs: Increase the interval for the Timer, to not fire our
+	pseudo motion HandleMouseOver method so aggresive. Also, don't call it
+	when the pointer is actually in motion, but only when the pointer
+	seems to stop (as .net does).
+	Fixes part of #381876.
+
+
 2008-08-18  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ListBox.cs: Fix CopyTo implementation.

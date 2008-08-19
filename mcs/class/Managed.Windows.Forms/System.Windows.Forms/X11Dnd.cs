@@ -345,6 +345,7 @@ namespace System.Windows.Forms {
 
 		private bool tracking = false;
 		private bool dropped = false;
+		private int motion_poll;
 		//private X11Keyboard keyboard;
 
 		public X11Dnd (IntPtr display, X11Keyboard keyboard)
@@ -408,8 +409,7 @@ namespace System.Windows.Forms {
 
 			Timer timer = new Timer ();
 			timer.Tick += new EventHandler (DndTickHandler);
-			timer.Interval = 50;
-			timer.Start ();
+			timer.Interval = 100;
 
 			int suc;
 			drag_data.State = DragState.Dragging;
@@ -427,6 +427,8 @@ namespace System.Windows.Forms {
 			drag_data.CurMousePos = new Point ();
 			dropped = false;
 			tracking = true;
+			motion_poll = 0;
+			timer.Start ();
 
 			while (tracking && XplatUI.GetMessage (queue_id, ref msg, IntPtr.Zero, 0, 0)) {
 
@@ -451,6 +453,8 @@ namespace System.Windows.Forms {
 						RemoveCapture (msg.hwnd);
 						continue;
 					case Msg.WM_MOUSEMOVE:
+						motion_poll = 0;
+
 						drag_data.CurMousePos.X = Control.LowOrder ((int) msg.lParam.ToInt32 ());
 						drag_data.CurMousePos.Y = Control.HighOrder ((int) msg.lParam.ToInt32 ());
 
@@ -486,7 +490,12 @@ namespace System.Windows.Forms {
 					t.Interval = 500;
 			}
 
-			HandleMouseOver ();
+			// If more than 100 milliseconds have lapsed, we assume the pointer is not
+			// in motion anymore, and we simulate the mouse over operation, like .Net does.
+			if (motion_poll > 1)
+				HandleMouseOver ();
+
+			motion_poll++;
 		}
 
 		public void HandleButtonUpMsg ()
