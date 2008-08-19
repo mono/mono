@@ -1,5 +1,9 @@
 2008-08-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.c (mono_arch_output_basic_block): Add OP_FCONV_TO_I.
+
+	* iltests.il.in: Add a test for fconv_to_i.
+
 	* liveness.c: Disable the liveness2 pass for now to save space.
 
 	* regalloc2.c: Include mempool-internals.h to fix warnings.
