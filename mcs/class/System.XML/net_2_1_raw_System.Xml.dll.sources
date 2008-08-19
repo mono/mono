@@ -57,3 +57,9 @@ System.Xml/XmlUrlResolver.cs
 System.Xml/XmlWriter.cs
 System.Xml/XmlWriterSettings.cs
 System.Xml.Schema/XmlSchemaDatatype_2_1.cs
+System.Xml.Schema/XmlSchema_2_1.cs
+System.Xml.Schema/XmlSchemaObject_2_1.cs
+System.Xml.Schema/XmlSchemaSet_2_1.cs
+System.Xml.Serialization/IXmlSerializable.cs
+System.Xml.Serialization/XmlRootAttribute.cs
+System.Xml.Serialization/XmlSchemaProviderAttribute.cs

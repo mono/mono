@@ -1,3 +1,9 @@
+2008-08-19  Jb Evain  <jbevain@novell.com>
+
+	* XmlSchema_2_1.cs
+	* XmlSchemaObject_2_1.cs
+	* XmlSchemaSet_2_1.cs: add new specific files for the net_2_1 profile.
+
 2008-06-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchema.cs : fixed couple of olive regressions caused by

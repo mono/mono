@@ -83,7 +83,7 @@ namespace System.Xml.Serialization
 			get { return ns; } 
 			set { ns = value; }
 		}
-		
+#if !NET_2_1		
 		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{
 			sb.Append ("XRA ");
@@ -93,5 +93,6 @@ namespace System.Xml.Serialization
 			KeyHelper.AddField (sb, 4, isNullable);
 			sb.Append ('|');
 		}
+#endif
 	}
 }
