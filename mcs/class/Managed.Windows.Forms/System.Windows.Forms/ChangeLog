@@ -1,5 +1,11 @@
 2008-08-19  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripProfessionalRenderer.cs: Revert last change.
+	* ProfessionalColorTable.cs: For Classic, use SystemColors.Window
+	for ToolStripDropDownBackground.
+
+2008-08-19  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripProfessionalRenderer.cs: Use Window color for the 
 	background of dropdowns to match .Net when the user is not
 	using the default white.  [Fixes bug #418108]
