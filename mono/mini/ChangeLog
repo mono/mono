@@ -1,5 +1,14 @@
 2008-08-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (decode_klass_ref): Add support for VARs/MVARs.
+
+	* aot-compiler.c (encode_klass_ref): Encode is_method too for VARs/MVARs.
+
+	* method-to-ir.c (emit_get_rgctx_method): Use MONO_PATCH_INFO_METHODCONST
+	as the patch type.
+
+	* mini.c (mono_resolve_patch_target): Ditto.
+	
 	* aot-compiler.c (encode_patch): Add support for RGCTX_FETCH.
 	(encode_klass_ref): Add support for encoding VARs/MVARs.
 
