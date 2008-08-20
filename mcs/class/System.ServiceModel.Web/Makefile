@@ -3,14 +3,13 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.ServiceModel.Web.dll
-LIB_MCS_FLAGS = -r:System.dll -r:System.Xml.dll -r:System.Configuration.dll -r:../lib/net_3_0/System.Runtime.Serialization.dll -r:../lib/net_3_0/System.ServiceModel.dll
+LIB_MCS_FLAGS = -d:NET_3_0 -r:System.dll -r:System.Xml.dll -r:System.Configuration.dll -r:System.Runtime.Serialization.dll -r:System.ServiceModel.dll
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = $(RESOURCE_FILES)
 
-# This is a Orcas only assembly
-VALID_PROFILE := $(filter net_3_5, $(PROFILE))
+VALID_PROFILE := $(filter net_2_0 net_2_1_raw, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.ServiceModel.Web.dll
 NO_INSTALL = yes
@@ -18,7 +17,7 @@ NO_SIGN_ASSEMBLY = yes
 endif
 
 test-data-ondotnet:
-	csc -out:SyndicationSerializerUtil.exe -r:../lib/net_3_5/System.ServiceModel.Web.dll $(LIB_MCS_FLAGS) Test\\System.ServiceModel.Syndication\\SyndicationSerializerUtil.cs Test\\System.ServiceModel.Syndication\\FeedLib.cs
+	csc -out:SyndicationSerializerUtil.exe -r:System.ServiceModel.Web.dll $(LIB_MCS_FLAGS) Test\\System.ServiceModel.Syndication\\SyndicationSerializerUtil.cs Test\\System.ServiceModel.Syndication\\FeedLib.cs
 	./SyndicationSerializerUtil.exe
 
 test-data:

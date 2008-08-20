@@ -8,15 +8,16 @@ RESOURCE_FILES = \
 
 LIBRARY = System.ServiceModel.dll
 LIB_MCS_FLAGS = \
+		/d:NET_3_0	\
 		/nowarn:414,169,67,3005,436,219,618 \
 		/unsafe \
 	        /r:System.dll \
 	        /r:System.Xml.dll \
 	        /r:System.Configuration.dll \
-	        /r:../lib/net_3_0/System.Runtime.Serialization.dll \
+	        /r:System.Runtime.Serialization.dll \
 	        /r:System.Security.dll \
-	        /r:../lib/net_3_0/System.IdentityModel.dll \
-		/r:../lib/net_3_0/System.IdentityModel.Selectors.dll \
+	        /r:System.IdentityModel.dll \
+		/r:System.IdentityModel.Selectors.dll \
 	        /r:System.Transactions.dll \
 		/r:System.Messaging.dll \
 	        /r:System.Web.dll \
@@ -34,12 +35,10 @@ TEST_EXTRA_FILES = \
 
 EXTRA_DISTFILES = $(RESOURCE_FILES) $(TEST_EXTRA_FILES)
 
-# This is a WinFX only assembly
-
 # Useful for debugging under Visual Studio 2005
 # NO_SIGN_ASSEMBLY = yes
 
-VALID_PROFILE := $(filter net_3_0 net_3_5, $(PROFILE))
+VALID_PROFILE := $(filter net_2_0 net_2_1_raw, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.ServiceModel.dll
 NO_INSTALL = yes

@@ -7,6 +7,7 @@ RESOURCE_FILES = \
 
 LIBRARY = System.Runtime.Serialization.dll
 LIB_MCS_FLAGS = \
+			/d:NET_3_0	\
 			/nowarn:168,169,219,414 \
 	        /r:System.dll \
 	        /r:System.Xml.dll \
@@ -20,8 +21,7 @@ EXTRA_DISTFILES = $(RESOURCE_FILES) \
 	Test/Resources/FrameworkTypes/* \
 	Test/System.Runtime.Serialization/one.xml
 
-# This assembly is .NET 3.0 or later only
-VALID_PROFILE := $(filter net_3_0 net_3_5, $(PROFILE))
+VALID_PROFILE := $(filter net_2_0 net_2_1_raw, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.Runtime.Serialization.dll
 NO_INSTALL = yes

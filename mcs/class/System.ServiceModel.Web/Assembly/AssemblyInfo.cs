@@ -54,4 +54,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible (false)]
 
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile("../winfx3.pub")]
+[assembly: AssemblyKeyFile("../winfx.pub")]
