@@ -1,0 +1,7 @@
+2008-04-21  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* WebServiceHostTest.cs: new testfixture.
+
+2008-02-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebGetAttributeTest.cs, WebInvokeAttributeTest.cs : new tests.

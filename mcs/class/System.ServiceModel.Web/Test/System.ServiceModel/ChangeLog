@@ -1,0 +1,7 @@
+2008-02-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebHttpBindingTest.cs : test ReceiveSynchronously.
+
+2008-02-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebHttpBindingTest.cs : new test file.

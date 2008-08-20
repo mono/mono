@@ -1,0 +1,37 @@
+2008-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractJsonSerializerTest.cs : added couple of DBNull tests.
+
+2008-01-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractJsonSerializerTest.cs : added deserialization tests
+	  for typed object with "__type".
+
+2008-01-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonReaderTest.cs : test GetAttribute() for "__type".
+
+2008-01-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonReaderTest.cs : added tests for "__type" attributes (some of
+	  them are not working yet).
+
+2008-01-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonReaderTest.cs : test "type" attribute in several nodes.
+
+2008-01-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractJsonSerializerTest.cs : some more deserialization tests.
+
+2008-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonWriterTest.cs : added test for writing __type attribute.
+	* DataContractJsonSerializerTest.cs : added more random-ish tests.
+
+2007-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractJsonSerializerTest.cs :
+	  moved from Test/System.Runtime.Serialization and fixed some.
+	* JsonReaderTest.cs, JsonWriterTest.cs : moved from Test/System.Xml.
+

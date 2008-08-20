@@ -1,0 +1,69 @@
+2008-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractJsonSerializer.cs : IsStartObject() could raise
+	  an arbitrary exception, so wrap it inside try-catch too to enclose
+	  with SerializationException.
+	* JsonSerializationReader.cs : support DBNull.
+
+2008-01-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractJsonSerializer.cs : fixed .ctor(type, knonwTypes) that
+	  missed to delegate knownTypes correctly.
+	* JsonSerializationReader.cs : consider KnownTypes correctly.
+	  Take "__type" fully into consideration, not just for arrays.
+
+2008-01-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonReader.cs : GetAttribute() was not still missing support for
+	  __type.
+
+2008-01-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonReader.cs : now __type is fully supported in every methods and
+	  properties in correct shape.
+
+2008-01-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonReader.cs : Do not consume "__type" (which is the first content
+	  of an object) as an element content. It must be handled as an
+	  attribute (it needs more changes).
+
+2008-01-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonSerializationReader.cs : when deserializing primitive strings,
+	  make use of "type" attribute (they are supposed to exist).
+	  Output source reader location if available.
+	* JsonReader.cs : implement IXmlLineInfo.
+
+2008-01-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonSerializationReader.cs : new, for JSON deserialization support.
+	* DataContractJsonSerializer.cs, TypeMap.cs :
+	  basic support for deserialization.
+
+2008-01-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractJsonSerializer.cs,
+	  TypeMap.cs,
+	  JsonSerializationWriter.cs : split the first to those three files.
+
+2008-01-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractJsonSerializer.cs : Uri and Guid are serialized as
+	  string. XmlQualifiedName is serialized as local:ns.
+
+2008-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonWriter.cs : allow __type attribute. It required couple of
+	  changes all around the class.
+	* DataContractJsonSerializer.cs : implemented large part of
+	  serialization support (deserialization is not done yet).
+
+2007-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractJsonSerializer.cs :
+	  moved from System.Runtime.Serialization and changed the namespace.
+	* JsonReader.cs, JsonWriter.cs, JsonReaderWriterFactory.cs,
+	  IXmlJsonReaderInitializer.cs, IXmlJsonWriterInitializer.cs :
+	  moved from System.Xml and changed the namespace.
+

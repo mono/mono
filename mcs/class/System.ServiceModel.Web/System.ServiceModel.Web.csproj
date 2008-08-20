@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9B58C41D-B301-4136-8694-E4585BCC01A6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>System.ServiceModel.Web</RootNamespace>
+    <AssemblyName>System.ServiceModel.Web</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET_3_5</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;NET_3_5</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.IdentityModel">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ServiceModel">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs">
+      <Link>Consts.cs</Link>
+    </Compile>
+    <Compile Include="..\..\build\common\Locale.cs">
+      <Link>Locale.cs</Link>
+    </Compile>
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs">
+      <Link>MonoTODOAttribute.cs</Link>
+    </Compile>
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.Runtime.Serialization.Json\DataContractJsonSerializer.cs" />
+    <Compile Include="System.Runtime.Serialization.Json\IXmlJsonReaderInitializer.cs" />
+    <Compile Include="System.Runtime.Serialization.Json\IXmlJsonWriterInitializer.cs" />
+    <Compile Include="System.Runtime.Serialization.Json\JsonReader.cs" />
+    <Compile Include="System.Runtime.Serialization.Json\JsonReaderWriterFactory.cs" />
+    <Compile Include="System.Runtime.Serialization.Json\JsonSerializationReader.cs" />
+    <Compile Include="System.Runtime.Serialization.Json\JsonSerializationWriter.cs" />
+    <Compile Include="System.Runtime.Serialization.Json\JsonWriter.cs" />
+    <Compile Include="System.Runtime.Serialization.Json\TypeMap.cs" />
+    <Compile Include="System.ServiceModel.Activation\WebScriptServiceHostFactory.cs" />
+    <Compile Include="System.ServiceModel.Activation\WebServiceHostFactory.cs" />
+    <Compile Include="System.ServiceModel.Channels\WebBodyFormatMessageProperty.cs" />
+    <Compile Include="System.ServiceModel.Channels\WebContentFormat.cs" />
+    <Compile Include="System.ServiceModel.Channels\WebContentTypeMapper.cs" />
+    <Compile Include="System.ServiceModel.Channels\WebMessageEncoder.cs" />
+    <Compile Include="System.ServiceModel.Channels\WebMessageEncoderFactory.cs" />
+    <Compile Include="System.ServiceModel.Channels\WebMessageEncodingBindingElement.cs" />
+    <Compile Include="System.ServiceModel.Configuration\WebHttpBindingCollectionElement.cs" />
+    <Compile Include="System.ServiceModel.Configuration\WebHttpBindingElement.cs" />
+    <Compile Include="System.ServiceModel.Configuration\WebHttpElement.cs" />
+    <Compile Include="System.ServiceModel.Configuration\WebHttpSecurityElement.cs" />
+    <Compile Include="System.ServiceModel.Configuration\WebMessageEncodingElement.cs" />
+    <Compile Include="System.ServiceModel.Configuration\WebScriptEnablingElement.cs" />
+    <Compile Include="System.ServiceModel.Description\WebHttpBehavior.cs" />
+    <Compile Include="System.ServiceModel.Description\WebScriptEnablingBehavior.cs" />
+    <Compile Include="System.ServiceModel.Dispatcher\JsonQueryStringConverter.cs" />
+    <Compile Include="System.ServiceModel.Dispatcher\QueryStringConverter.cs" />
+    <Compile Include="System.ServiceModel.Dispatcher\WebHttpDispatchOperationSelector.cs" />
+    <Compile Include="System.ServiceModel.Dispatcher\WebMessageFormatter.cs" />
+    <Compile Include="System.ServiceModel.Syndication\Atom10FeedFormatter.cs" />
+    <Compile Include="System.ServiceModel.Syndication\Atom10FeedFormatter_1.cs" />
+    <Compile Include="System.ServiceModel.Syndication\Atom10ItemFormatter.cs" />
+    <Compile Include="System.ServiceModel.Syndication\Atom10ItemFormatter_1.cs" />
+    <Compile Include="System.ServiceModel.Syndication\ISyndicationElement.cs" />
+    <Compile Include="System.ServiceModel.Syndication\Rss20FeedFormatter.cs" />
+    <Compile Include="System.ServiceModel.Syndication\Rss20FeedFormatter_1.cs" />
+    <Compile Include="System.ServiceModel.Syndication\Rss20ItemFormatter.cs" />
+    <Compile Include="System.ServiceModel.Syndication\Rss20ItemFormatter_1.cs" />
+    <Compile Include="System.ServiceModel.Syndication\SyndicationCategory.cs" />
+    <Compile Include="System.ServiceModel.Syndication\SyndicationContent.cs" />
+    <Compile Include="System.ServiceModel.Syndication\SyndicationElementExtension.cs" />
+    <Compile Include="System.ServiceModel.Syndication\SyndicationElementExtensionCollection.cs" />
+    <Compile Include="System.ServiceModel.Syndication\SyndicationExtensions.cs" />
+    <Compile Include="System.ServiceModel.Syndication\SyndicationFeed.cs" />
+    <Compile Include="System.ServiceModel.Syndication\SyndicationFeedFormatter.cs" />
+    <Compile Include="System.ServiceModel.Syndication\SyndicationItem.cs" />
+    <Compile Include="System.ServiceModel.Syndication\SyndicationItemFormatter.cs" />
+    <Compile Include="System.ServiceModel.Syndication\SyndicationLink.cs" />
+    <Compile Include="System.ServiceModel.Syndication\SyndicationPerson.cs" />
+    <Compile Include="System.ServiceModel.Syndication\SyndicationVersions.cs" />
+    <Compile Include="System.ServiceModel.Syndication\TextSyndicationContent.cs" />
+    <Compile Include="System.ServiceModel.Syndication\TextSyndicationContentKind.cs" />
+    <Compile Include="System.ServiceModel.Syndication\UrlSyndicationContent.cs" />
+    <Compile Include="System.ServiceModel.Syndication\XmlSyndicationContent.cs" />
+    <Compile Include="System.ServiceModel.Web\IncomingWebRequestContext.cs" />
+    <Compile Include="System.ServiceModel.Web\IncomingWebResponseContext.cs" />
+    <Compile Include="System.ServiceModel.Web\OutgoingWebRequestContext.cs" />
+    <Compile Include="System.ServiceModel.Web\OutgoingWebResponseContext.cs" />
+    <Compile Include="System.ServiceModel.Web\WebAttributeInfo.cs" />
+    <Compile Include="System.ServiceModel.Web\WebChannelFactory.cs" />
+    <Compile Include="System.ServiceModel.Web\WebGetAttribute.cs" />
+    <Compile Include="System.ServiceModel.Web\WebInvokeAttribute.cs" />
+    <Compile Include="System.ServiceModel.Web\WebMessageBodyStyle.cs" />
+    <Compile Include="System.ServiceModel.Web\WebMessageFormat.cs" />
+    <Compile Include="System.ServiceModel.Web\WebOperationContext.cs" />
+    <Compile Include="System.ServiceModel.Web\WebServiceHost.cs" />
+    <Compile Include="System.ServiceModel\WebHttpBinding.cs" />
+    <Compile Include="System.ServiceModel\WebHttpSecurity.cs" />
+    <Compile Include="System.ServiceModel\WebHttpSecurityMode.cs" />
+    <Compile Include="System\UriTemplate.cs" />
+    <Compile Include="System\UriTemplateEquivalenceComparer.cs" />
+    <Compile Include="System\UriTemplateMatch.cs" />
+    <Compile Include="System\UriTemplateMatchException.cs" />
+    <Compile Include="System\UriTemplateTable.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>@rem "C:\Program Files\Microsoft SDKs\Windows\v6.0A\bin\gacutil.exe" /i "$(TargetPath)" /f
+@rem "C:\Program Files\Mono-1.2.6\bin\gacutil.bat" -i "$(TargetPath)"</PostBuildEvent>
+  </PropertyGroup>
+</Project>

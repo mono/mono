@@ -1,0 +1,10 @@
+2008-02-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebHttpBindingElement.cs : fix build.
+
+2008-02-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebHttpBindingCollectionElement.cs, WebHttpBindingElement.cs,
+	  WebHttpElement.cs, WebHttpSecurityElement.cs,
+	  WebMessageEncodingElement.cs, WebScriptEnablingElement.cs :
+	  new stubs.

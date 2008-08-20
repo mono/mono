@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{05A2DAF1-316D-4350-B07B-B73BE591DE57}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MonoTests.System.ServiceModel.Web</RootNamespace>
+    <AssemblyName>System.ServiceModel.Web_test_net_3_5</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>.\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET_3_5</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IdentityModel">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.IdentityModel.Selectors">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Messaging" />
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ServiceModel.Web">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Test\System.Runtime.Serialization.Json\DataContractJsonSerializerTest.cs" />
+    <Compile Include="Test\System.Runtime.Serialization.Json\JsonReaderTest.cs" />
+    <Compile Include="Test\System.Runtime.Serialization.Json\JsonWriterTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\WebBodyFormatMessagePropertyTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Channels\WebMessageEncodingBindingElementTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Description\WebHttpBehaviorTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Dispatcher\JsonQueryStringConverterTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Dispatcher\QueryStringConverterTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Dispatcher\WebHttpDispatchOperationSelectorTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Syndication\Atom10FeedFormatterTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Syndication\Atom10ItemFormatterTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Syndication\Rss20FeedFormatterTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Syndication\Rss20ItemFormatterTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Syndication\SyndicationElementExtensionTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Syndication\SyndicationFeedTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Syndication\SyndicationItemTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Syndication\SyndicationLinkTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Syndication\TextSyndicationContentTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Syndication\UrlSyndicationContentTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Syndication\XmlSyndicationContentTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Web\WebGetAttributeTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Web\WebInvokeAttributeTest.cs" />
+    <Compile Include="Test\System.ServiceModel.Web\WebServiceHostTest.cs" />
+    <Compile Include="Test\System.ServiceModel\WebHttpBindingTest.cs" />
+    <Compile Include="Test\System\UriTemplateTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\nunit20\framework\nunit.framework.dll20.csproj">
+      <Project>{83DD7E12-A705-4DBA-9D71-09C8973D9382}</Project>
+      <Name>nunit.framework.dll20</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetDir)..\..\nunit20\nunit-console\bin\$(ConfigurationName)\*.exe $(TargetDir)
+copy $(TargetDir)..\..\nunit20\nunit-console\bin\$(ConfigurationName)\*.dll $(TargetDir)</PostBuildEvent>
+  </PropertyGroup>
+</Project>

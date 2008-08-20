@@ -1,0 +1,20 @@
+2008-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonQueryStringConverterTest.cs : new test.
+
+2008-02-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebHttpDispatchOperationSelectorTest.cs : added couple more tests
+	  with different contract contract case.
+
+2008-02-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebHttpDispatchOperationSelectorTest.cs : new test.
+
+2008-02-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* QueryStringConverterTest.cs : enable null-to-char conversion test.
+
+2008-02-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* QueryStringConverterTest.cs : new test.

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.ServiceModel.Web_Test", "System.ServiceModel.Web_Test.csproj", "{05A2DAF1-316D-4350-B07B-B73BE591DE57}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nunit.framework.dll20", "..\..\nunit20\framework\nunit.framework.dll20.csproj", "{83DD7E12-A705-4DBA-9D71-09C8973D9382}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug-Strong|Any CPU = Debug-Strong|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{05A2DAF1-316D-4350-B07B-B73BE591DE57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05A2DAF1-316D-4350-B07B-B73BE591DE57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05A2DAF1-316D-4350-B07B-B73BE591DE57}.Debug-Strong|Any CPU.ActiveCfg = Debug|Any CPU
+		{05A2DAF1-316D-4350-B07B-B73BE591DE57}.Debug-Strong|Any CPU.Build.0 = Debug|Any CPU
+		{05A2DAF1-316D-4350-B07B-B73BE591DE57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05A2DAF1-316D-4350-B07B-B73BE591DE57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83DD7E12-A705-4DBA-9D71-09C8973D9382}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83DD7E12-A705-4DBA-9D71-09C8973D9382}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83DD7E12-A705-4DBA-9D71-09C8973D9382}.Debug-Strong|Any CPU.ActiveCfg = Debug-Strong|Any CPU
+		{83DD7E12-A705-4DBA-9D71-09C8973D9382}.Debug-Strong|Any CPU.Build.0 = Debug-Strong|Any CPU
+		{83DD7E12-A705-4DBA-9D71-09C8973D9382}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83DD7E12-A705-4DBA-9D71-09C8973D9382}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

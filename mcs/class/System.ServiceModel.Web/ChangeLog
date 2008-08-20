@@ -1,0 +1,49 @@
+2008-04-21  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* System.ServiceModel.Web_test.dll.sources: add WebServiceHostTest.cs.
+
+2008-02-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : -r:System.Configuration.dll.
+
+2007-12-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.Web.dll.sources : fixed wrong source name.
+
+2007-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.Web_test.dll.sources,
+	  System.ServiceModel.Web.dll.sources : updated to reflect the latest
+	  file lists.
+	* Makefile : added -r:System.ServiceModel.dll
+
+2007-09-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.Web_test.dll.sources : removed all old tests
+	  for obsoleted types. They must be updated before being added so
+	  that they do not block run-test-ondotnet. Added JsonWriterTest.cs.
+	* System.ServiceModel.Web.dll.sources : added JsonWriter.cs and
+	  JsonReaderWriterFactory.cs.
+	* Makefile : fixed version number. It is not NO_TEST anymore.
+
+2007-06-07  Joel Reed  <joelwreed@comcast.com>
+
+	* ATOM: serialize generator, logo, copyrights, and language
+	add two new unit test data feeds
+
+2007-06-05  Joel Reed  <joelwreed@comcast.com>
+
+	* add SyndicationCategory stubbed out class from Stephen A Jazdzewski,
+	add RSS serialization tests, add richer atom feed serialization test
+
+2007-06-04  Joel Reed  <joelwreed@comcast.com>
+
+	* add properties and constructor implementations for 
+	UrlSyndicationContent and XmlSyndicationContent
+
+2007-05-31  Joel Reed  <joelwreed@comcast.com>
+
+	* add more testcases and stubbed out classes from Stephen A Jazdzewski
+
+	* Move System.ServiceModel.Syndication files into a subdirectory
+

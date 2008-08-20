@@ -1,0 +1,16 @@
+2008-02-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UriTemplateTest.cs : enable query parameter matching test.
+
+2008-02-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UriTemplateTest.cs : added not-working case to be fixed.
+
+2008-02-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UriTemplateTest.cs : Added tests for Match() and more Binding tests.
+
+2008-02-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UriTemplateTest.cs : new. Test .ctor(), BindByName() and 
+	  BindByPosition().

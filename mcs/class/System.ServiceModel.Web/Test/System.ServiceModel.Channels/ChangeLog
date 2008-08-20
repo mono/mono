@@ -1,0 +1,19 @@
+2008-02-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebMessageEncodingBindingElementTest.cs : more MessageEncoder test.
+
+2008-02-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebMessageEncodingBindingElementTest.cs : test
+	  CanBuildChannelFactory() and CanBuildChannelListener().
+	  Small test for BuildChannelFactory().
+
+2008-02-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebMessageEncodingBindingElementTest.cs : added MessageEncoder test.
+	* WebBodyFormatMessagePropertyTest.cs : fixed ToString() test.
+
+2008-02-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebMessageEncodingBindingElementTest.cs,
+	  WebBodyFormatMessagePropertyTest.cs : new test files.

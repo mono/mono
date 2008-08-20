@@ -1,0 +1,5 @@
+2006-02-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebServiceHostFactory.cs, WebScriptServiceHostFactory.cs :
+	  new files.
+
