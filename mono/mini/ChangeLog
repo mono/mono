@@ -1,5 +1,13 @@
 2008-08-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (decode_exception_debug_info): Decode the contents of
+	MonoGenericJitInfo.
+
+	* aot-compiler.c (emit_exception_debug_info): Emit the contents of
+	MonoGenericJitInfo.
+
+	* method-to-ir.c (emit_imt_argument): Fix AOT+gshared support.
+
 	* mini-amd64.c (add_valuetype): Use a dummy gsctx if we didn't receive
 	one from the caller.
 
