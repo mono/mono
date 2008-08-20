@@ -57,6 +57,11 @@ internal
 	public const string FxFileVersion = "3.5.21022.8";
 	
 	public const string VsVersion = "0.0.0.0"; // Useless ?
+#elif NET_3_0
+	public const string FxVersion = "3.0.0.0";
+	public const string VsVersion = "8.0.0.0";
+	public const string FxFileVersion = "3.0.4506.648";
+	public const string VsFileVersion = "6.0.6001.17014";
 #elif NET_2_1
 	// Versions of .NET Framework for SilverLight
 	public const string FxVersion = "2.0.5.0";
