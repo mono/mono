@@ -1,0 +1,7 @@
+2005-10-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DeclaredTypeElementCollection.cs, TypeElement.cs,
+	  DeclaredTypeElement.cs, SerializationSectionGroup.cs,
+	  ParameterElementCollection.cs, TypeElementCollection.cs,
+	  XmlFormatterSection.cs, ParameterElement.cs : new files.
+

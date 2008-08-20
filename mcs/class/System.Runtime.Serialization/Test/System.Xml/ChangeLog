@@ -1,0 +1,140 @@
+2008-04-10  Eyal Alaluf <eyala@mainsoft.com>
+
+	* XmlBinaryDictionaryWriterTest.cs: Tested binary writer WriteXmlnsAttributa
+	  with a null prefix.
+
+2008-03-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryReaderTest.cs : it contained bogus multibyte
+	  characters, so replaced them with \uXXXX.
+	  Removed some NotWorking and FIXMEs.
+
+2008-02-27 Eyal Alaluf <eyala@mainsoft.com>
+
+	* XmlBinaryDictionaryReaderTest.cs: UseCase1 test fails also on .Net
+
+2007-11-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryReaderTest.cs : added [NotWorking]
+
+2007-07-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSimpleDictionaryWriterTest.cs : added test for null prefix case.
+
+2007-03-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryReaderTest.cs : check if it reads nodes
+	  correctly, by comparing direct output to binary writer.
+
+2007-03-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryWriterTest.cs : more WriteValue() cases.
+
+2007-03-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryReaderTest.cs :
+	  ok, now we have pretty simple imports from writer tests so far.
+
+2007-03-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryWriterTest.cs :
+	  WriteValue(Decimal) is working now.
+
+2007-03-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryWriterTest.cs : added test for typed values.
+
+2007-03-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryWriterTest.cs : removed debug code (UseCase2).
+
+2007-03-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryWriterTest.cs : more code comments.
+
+2007-03-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryWriterTest.cs : a few code comments and
+	  XmlDictionaryString.Key value test.
+
+2007-03-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryWriterTest.cs : added more attribute tests.
+	  Reduced extra dictionary creation.
+
+2007-03-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDictionaryReaderQuotasTest.cs : fixed test class name.
+	* XmlBinaryDictionaryWriterTest.cs : added a bunch of tests. Many
+	  tests still fail. They are going to be fixed.
+	* XmlBinaryWriterSessionTest.cs : new test.
+
+2007-03-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDictionaryTest.cs : removed pointless test-breaking return.
+	  Added test for Add() and key index. Added test for Empty.
+	* XmlSimpleDictionaryWriterTest.cs : in .NET 3.0 RTM processing
+	  instructions are supported.
+
+2007-03-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDictionaryReaderAbstractTest.cs : added array reader tests.
+	* XmlSimpleDictionaryWriterTest.cs : added WriteBooleanArray().
+
+2006-07-31  Ankit Jain  <jankit@novell.com>
+
+	* UniqueIdTest.cs: Add new tests.
+
+2006-07-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UniqueIdTest.cs : enable it.
+
+2006-07-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDictionaryReaderQuotasTest.cs : fix build.
+
+2006-03-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSimpleDictionaryWriterTest.cs : AttributeNamespacesXmlnsXmlns()
+	  is updated to match XmlTextWriter test.
+
+2006-02-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UniqueIdTest.cs :
+	  It should not be in System.ServiceModel.dll test.
+
+2006-01-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSimpleDictionaryWriterTest.cs : changed expected exceptions.
+	  Fixed one NotDotNet case (to match 2.0 RTM).
+
+2005-10-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	oops, bad file name. s:/Reader/Writer/.
+
+2005-10-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryWriterTest.cs : new file.
+
+2005-10-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSimpleDictionaryWriterTest.cs : added test for WriteXmlAttribute()
+	  and WriteXmlnsAttribute().
+
+2005-10-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDictionaryReaderAbstractTest.cs,
+	  XmlSimpleDictionaryWriterTest.cs : new files.
+
+2005-10-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDictionaryReaderQuotasTest.cs, XmlDictionaryTest.cs : copyrights.
+
+2005-10-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDictionaryReaderQuotasTest.cs : new test.
+
+2005-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDictionaryTest.cs : new file.
+

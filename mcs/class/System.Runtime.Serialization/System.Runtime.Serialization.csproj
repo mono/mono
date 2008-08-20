@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A9DA8BA0-BEE0-4C51-AE51-BC67583337A9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>System.Runtime.Serialization</RootNamespace>
+    <AssemblyName>System.Runtime.Serialization</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET_2_0,TARGET_DOTNET</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;NET_2_0,TARGET_DOTNET</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\build\common\Locale.cs">
+      <Link>Locale.cs</Link>
+    </Compile>
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs">
+      <Link>MonoTODOAttribute.cs</Link>
+    </Compile>
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.Runtime.Serialization.Configuration\DeclaredTypeElement.cs" />
+    <Compile Include="System.Runtime.Serialization.Configuration\DeclaredTypeElementCollection.cs" />
+    <Compile Include="System.Runtime.Serialization.Configuration\ParameterElement.cs" />
+    <Compile Include="System.Runtime.Serialization.Configuration\ParameterElementCollection.cs" />
+    <Compile Include="System.Runtime.Serialization.Configuration\SerializationSectionGroup.cs" />
+    <Compile Include="System.Runtime.Serialization.Configuration\TypeElement.cs" />
+    <Compile Include="System.Runtime.Serialization.Configuration\TypeElementCollection.cs" />
+    <Compile Include="System.Runtime.Serialization.Configuration\XmlFormatterSection.cs" />
+    <Compile Include="System.Runtime.Serialization\CollectionDataContractAttribute.cs" />
+    <Compile Include="System.Runtime.Serialization\ContractNamespaceAttribute.cs" />
+    <Compile Include="System.Runtime.Serialization\DataContractAttribute.cs" />
+    <Compile Include="System.Runtime.Serialization\DataContractSerializer.cs" />
+    <Compile Include="System.Runtime.Serialization\DataMemberAttribute.cs" />
+    <Compile Include="System.Runtime.Serialization\EnumMemberAttribute.cs" />
+    <Compile Include="System.Runtime.Serialization\ExportOptions.cs" />
+    <Compile Include="System.Runtime.Serialization\ExtensionDataObject.cs" />
+    <Compile Include="System.Runtime.Serialization\IDataContractSurrogate.cs" />
+    <Compile Include="System.Runtime.Serialization\IExtensibleDataObject.cs" />
+    <Compile Include="System.Runtime.Serialization\ImportOptions.cs" />
+    <Compile Include="System.Runtime.Serialization\InvalidDataContractException.cs" />
+    <Compile Include="System.Runtime.Serialization\KnownTypeAttribute.cs" />
+    <Compile Include="System.Runtime.Serialization\KnownTypeCollection.cs" />
+    <Compile Include="System.Runtime.Serialization\NetDataContractSerializer.cs" />
+    <Compile Include="System.Runtime.Serialization\SerializationMap.cs" />
+    <Compile Include="System.Runtime.Serialization\XmlFormatterDeserializer.cs" />
+    <Compile Include="System.Runtime.Serialization\XmlFormatterSerializer.cs" />
+    <Compile Include="System.Runtime.Serialization\XmlObjectSerializer.cs" />
+    <Compile Include="System.Runtime.Serialization\XmlSerializableServices.cs" />
+    <Compile Include="System.Runtime.Serialization\XsdDataContractExporter.cs" />
+    <Compile Include="System.Runtime.Serialization\XsdDataContractImporter.cs" />
+    <Compile Include="System.Xml\IStreamProvider.cs" />
+    <Compile Include="System.Xml\IXmlBinaryReaderInitializer.cs" />
+    <Compile Include="System.Xml\IXmlBinaryWriterInitializer.cs" />
+    <Compile Include="System.Xml\IXmlDictionary.cs" />
+    <Compile Include="System.Xml\IXmlMtomReaderInitializer.cs" />
+    <Compile Include="System.Xml\IXmlMtomWriterInitializer.cs" />
+    <Compile Include="System.Xml\IXmlUTF8ReaderInitializer.cs" />
+    <Compile Include="System.Xml\IXmlUTF8WriterInitializer.cs" />
+    <Compile Include="System.Xml\OnXmlDictionaryReaderClose.cs" />
+    <Compile Include="System.Xml\UniqueId.cs" />
+    <Compile Include="System.Xml\XmlBinaryDictionaryReader.cs" />
+    <Compile Include="System.Xml\XmlBinaryDictionaryWriter.cs" />
+    <Compile Include="System.Xml\XmlBinaryFormat.cs" />
+    <Compile Include="System.Xml\XmlBinaryReaderSession.cs" />
+    <Compile Include="System.Xml\XmlBinaryWriterSession.cs" />
+    <Compile Include="System.Xml\XmlC14NWriter.cs" />
+    <Compile Include="System.Xml\XmlCanonicalWriter.cs" />
+    <Compile Include="System.Xml\XmlDictionary.cs" />
+    <Compile Include="System.Xml\XmlDictionaryReader.cs" />
+    <Compile Include="System.Xml\XmlDictionaryReaderAutoGen.cs" />
+    <Compile Include="System.Xml\XmlDictionaryReaderQuotas.cs" />
+    <Compile Include="System.Xml\XmlDictionaryString.cs" />
+    <Compile Include="System.Xml\XmlDictionaryWriter.cs" />
+    <Compile Include="System.Xml\XmlDictionaryWriterAutoGen.cs" />
+    <Compile Include="System.Xml\XmlSimpleDictionaryReader.cs" />
+    <Compile Include="System.Xml\XmlSimpleDictionaryWriter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs.in">
+      <Link>Consts.cs.in</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+	  <EmbeddedResource Include="resources\mstypes.schema" >
+		  <LogicalName>mstypes.schema</LogicalName>
+	  </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>@rem "C:\Program Files\Microsoft SDKs\Windows\v6.0A\bin\gacutil.exe" /i "$(TargetPath)" /f
+@rem "C:\Program Files\Mono-1.2.6\bin\gacutil.bat" -i "$(TargetPath)"</PostBuildEvent>
+  </PropertyGroup>
+</Project>

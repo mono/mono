@@ -1,0 +1,444 @@
+//
+// XsdDataContractImporterTest.cs
+//
+// Author:
+//	Ankit Jain <jankit@novell.com>
+//
+// Copyright (C) 2006 Novell, Inc.  http://www.novell.com
+
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
+//
+// This test code contains tests for both DataContractSerializer and
+// NetDataContractSerializer. The code could be mostly common.
+//
+
+using System;
+using System.Collections.Generic;
+
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+
+using System.CodeDom;
+using System.CodeDom.Compiler;
+using System.Runtime.Serialization;
+
+using NUnit.Framework;
+using System.ServiceModel.Description;
+
+namespace MonoTests.System.Runtime.Serialization
+{
+	[TestFixture]
+	public class XsdContractImporterTest
+	{
+		MetadataSet metadata;
+		XmlSchemaSet xss;
+
+		[SetUp]
+		public void Setup ()
+		{
+			XmlReader xr = XmlTextReader.Create ("Test/System.Runtime.Serialization/one.xml");
+			metadata = MetadataSet.ReadFrom (xr);
+			NewXmlSchemaSet ();
+		}
+
+		private XmlSchemaSet NewXmlSchemaSet ()
+		{
+			xss = new XmlSchemaSet ();
+			foreach (MetadataSection section in metadata.MetadataSections)
+				if (section.Metadata is XmlSchema)
+					xss.Add (section.Metadata as XmlSchema);
+
+			return xss;
+		}
+
+		private XsdDataContractImporter GetImporter ()
+		{
+			CodeCompileUnit ccu = new CodeCompileUnit ();
+			return new XsdDataContractImporter (ccu);
+		}
+
+		[Test]
+		public void CtorTest ()
+		{
+			XsdDataContractImporter xi = new XsdDataContractImporter ();
+			Assert.IsNotNull (xi.CodeCompileUnit, "#c01");
+
+			xi = new XsdDataContractImporter (null);
+			Assert.IsNotNull (xi.CodeCompileUnit, "#c02");
+
+			xi = new XsdDataContractImporter (new CodeCompileUnit ());
+		}
+
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
+		public void GetCodeTypeReferenceTest ()
+		{
+			XsdDataContractImporter xsdi = GetImporter ();
+			xsdi.GetCodeTypeReference (new XmlQualifiedName ("dc", "http://schemas.datacontract.org/2004/07/"));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void GetCodeTypeReferenceTest2 ()
+		{
+			NewXmlSchemaSet ();
+
+			Assert.IsFalse (xss.IsCompiled, "#g01");
+
+			XsdDataContractImporter xsdi = GetImporter ();
+			xsdi.Import (xss, new XmlQualifiedName ("dc", "http://schemas.datacontract.org/2004/07/"));
+			Assert.IsTrue (xss.IsCompiled, "#g02");
+
+			CodeTypeReference type = xsdi.GetCodeTypeReference (new XmlQualifiedName ("dc", "http://schemas.datacontract.org/2004/07/"));
+
+			//FIXME: How should this type ref be checked?
+			Assert.IsNotNull (type, "#g03");
+			Assert.AreEqual (type.BaseType, "dc", "#g04");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CanImportTest ()
+		{
+			NewXmlSchemaSet ();
+			XsdDataContractImporter xsdi = GetImporter ();
+
+			Assert.IsFalse (xss.IsCompiled, "#ci01");
+
+			Assert.IsTrue (xsdi.CanImport (xss, new XmlQualifiedName ("dc", "http://schemas.datacontract.org/2004/07/")), "#ci02");
+			Assert.IsTrue (xss.IsCompiled, "#ci03");
+
+			Assert.IsFalse (xsdi.CanImport (xss, new XmlQualifiedName ("Echo", "http://myns/echo")), "#ci04");
+			Assert.IsTrue (xsdi.CanImport (xss, new XmlQualifiedName ("int", "http://www.w3.org/2001/XMLSchema")), "#ci05");
+
+			Assert.IsTrue (xsdi.CanImport (xss), "#ci06");
+
+			Assert.IsTrue (xsdi.CanImport (xss, 
+				xss.GlobalElements [new XmlQualifiedName ("dc", "http://schemas.datacontract.org/2004/07/")] as XmlSchemaElement), 
+				"#ci07");
+
+			Assert.IsTrue (xsdi.CanImport (xss,
+				xss.GlobalElements [new XmlQualifiedName ("Echo", "http://myns/echo")] as XmlSchemaElement),
+				"#ci08");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CanImportTest2 ()
+		{
+			NewXmlSchemaSet ();
+			XsdDataContractImporter xsdi = GetImporter ();
+
+			List<XmlQualifiedName> names = new List<XmlQualifiedName> ();
+			names.Add (new XmlQualifiedName ("Echo", "http://myns/echo"));
+			Assert.IsFalse (xsdi.CanImport (xss, names), "#ci20");
+
+			names.Add (new XmlQualifiedName ("dc", "http://schemas.datacontract.org/2004/07/"));
+			Assert.IsFalse (xsdi.CanImport (xss, names), "#ci21");
+
+			names.Clear ();
+			names.Add (new XmlQualifiedName ("dc", "http://schemas.datacontract.org/2004/07/"));
+			Assert.IsTrue (xsdi.CanImport (xss, names), "#ci22");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		[Category ("NotWorking")]
+		public void CanImportNullTest1 ()
+		{
+			XsdDataContractImporter xsdi = GetImporter ();
+			xsdi.CanImport (null);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void CanImportNullTest2 ()
+		{
+			XsdDataContractImporter xsdi = GetImporter ();
+			xsdi.CanImport (xss, (XmlQualifiedName) null);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void CanImportNullTest3 ()
+		{
+			XsdDataContractImporter xsdi = GetImporter ();
+			xsdi.CanImport (xss, (XmlSchemaElement) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ImportTestNullSchemas ()
+		{
+			XsdDataContractImporter xsdi = GetImporter ();
+			xsdi.Import (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ImportTestNullSchemas2 ()
+		{
+			XsdDataContractImporter xsdi = GetImporter ();
+			xsdi.Import (null, new XmlQualifiedName ("foo"));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ImportTestNullSchemas3 ()
+		{
+			XsdDataContractImporter xsdi = GetImporter ();
+			xsdi.Import (null, new List<XmlQualifiedName> ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ImportTestNullTypeName ()
+		{
+			XsdDataContractImporter xsdi = GetImporter ();
+			xsdi.Import (new XmlSchemaSet (), (XmlQualifiedName) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ImportTestNullElement ()
+		{
+			XsdDataContractImporter xsdi = GetImporter ();
+			xsdi.Import (new XmlSchemaSet (), (XmlSchemaElement) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ImportTestNullCollection ()
+		{
+			XsdDataContractImporter xsdi = GetImporter ();
+			xsdi.Import (new XmlSchemaSet (), (ICollection<XmlQualifiedName>) null);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImportTest ()
+		{
+			XsdDataContractImporter xsdi = GetImporter ();
+			XmlSchemaElement element = new XmlSchemaElement();
+			//Assert.IsTrue (xsdi.CanImport (xss, element));
+			Assert.AreEqual (new XmlQualifiedName ("anyType", XmlSchema.Namespace), xsdi.Import (xss, element), "#i02");
+
+			CodeCompileUnit ccu = xsdi.CodeCompileUnit;
+			Assert.AreEqual (1, ccu.Namespaces.Count, "#i03");
+			Assert.AreEqual ("", ccu.Namespaces [0].Name, "#i04");
+
+			Assert.AreEqual (1, ccu.Namespaces [0].Types.Count, "#i05");
+
+			Dictionary<string, string> mbrs = new Dictionary<string, string> ();
+			mbrs.Add ("foo", "System.String");
+			CheckDC (ccu.Namespaces [0].Types [0], "dc", mbrs, "#i06");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImportDataContract1 ()
+		{
+			NewXmlSchemaSet ();
+			Assert.IsFalse (xss.IsCompiled, "#i20");
+
+			XsdDataContractImporter xsdi = GetImporter ();
+
+			xsdi.Import (xss, new XmlQualifiedName ("dc", "http://schemas.datacontract.org/2004/07/"));
+			Assert.IsTrue (xss.IsCompiled, "#i21");
+			CodeCompileUnit ccu = xsdi.CodeCompileUnit;
+
+			Assert.AreEqual (1, ccu.Namespaces.Count, "#i22");
+			Assert.AreEqual ("", ccu.Namespaces [0].Name, "#i23");
+
+			Assert.AreEqual (1, ccu.Namespaces [0].Types.Count, "#i24");
+
+			Dictionary<string, string> mbrs = new Dictionary<string, string> ();
+			mbrs.Add ("foo", "System.String");
+			CheckDC (ccu.Namespaces [0].Types [0], "dc", mbrs, "#i25");
+
+			ccu.Namespaces.Clear ();
+			xsdi.Import (xss, new XmlQualifiedName ("dc", "http://schemas.datacontract.org/2004/07/"));
+			//Importing same data contract again with same importer
+			Assert.AreEqual (0, ccu.Namespaces.Count, "#i26");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImportDataContract2 ()
+		{
+			NewXmlSchemaSet ();
+			XsdDataContractImporter xsdi = GetImporter ();
+
+			xss.Compile ();
+			xsdi.Import (xss, xss.GlobalElements [new XmlQualifiedName ("Echo", "http://myns/echo")] as XmlSchemaElement);
+			CodeCompileUnit ccu = xsdi.CodeCompileUnit;
+
+			Assert.AreEqual (2, ccu.Namespaces.Count, "#i29");
+			Dictionary<string, string> args = new Dictionary<string, string> ();
+			args.Add ("msg", "System.String");
+			args.Add ("num", "System.Int32");
+			args.Add ("d", "dc");
+
+			CheckDC (ccu.Namespaces [0].Types [0], "Echo", args, "#i30");
+
+			args.Clear ();
+			args.Add ("foo", "System.String");
+			CheckDC (ccu.Namespaces [1].Types [0], "dc", args, "#i31");
+
+			ccu.Namespaces.Clear ();
+			xsdi.Import (xss, new XmlQualifiedName ("dc", "http://schemas.datacontract.org/2004/07/"));
+			Assert.AreEqual (0, ccu.Namespaces.Count);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		[Category ("NotWorking")]
+		public void ImportMessageEcho ()
+		{
+			XsdDataContractImporter xsdi = GetImporter ();
+			xsdi.Import (xss, new XmlQualifiedName ("Echo", "http://myns/echo"));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ImportAll ()
+		{
+			NewXmlSchemaSet ();
+			XsdDataContractImporter xsdi = GetImporter ();
+
+			CodeCompileUnit ccu = xsdi.CodeCompileUnit;
+			xsdi.Import (xss);
+
+			Assert.AreEqual (2, ccu.Namespaces.Count, "#i40");
+			Assert.AreEqual ("myns.echo", ccu.Namespaces [0].Name, "#i41");
+			Assert.AreEqual ("", ccu.Namespaces [1].Name, "#i42");
+
+			Assert.AreEqual (4, ccu.Namespaces [0].Types.Count, "#i43");
+
+			/* ns : myns.echo
+			 * Messages */
+			Dictionary <string, string> args = new Dictionary <string, string> ();
+			args.Add ("msg", "System.String");
+			args.Add ("num", "System.Int32");
+			args.Add ("d", "dc");
+			
+			CheckDC (ccu.Namespaces [0].Types [0], "Echo", args, "#i44");
+
+			args.Clear ();
+			args.Add ("EchoResult", "System.String");
+			CheckDC (ccu.Namespaces [0].Types [1], "EchoResponse", args, "#i45");
+
+			args.Clear ();
+			args.Add ("it", "System.Int32");
+			args.Add ("prefix", "System.String");
+			CheckDC (ccu.Namespaces [0].Types [2], "DoubleIt", args, "#i46");
+
+			args.Clear ();
+			args.Add ("DoubleItResult", "System.String");
+			CheckDC (ccu.Namespaces [0].Types [3], "DoubleItResponse", args, "#i47");
+
+			/* ns: "" */
+			args.Clear ();
+			args.Add ("foo", "System.String");
+			CheckDC (ccu.Namespaces [1].Types [0], "dc", args, "#i48");
+
+			ccu.Namespaces.Clear ();
+			xsdi.Import (xss);
+			//Importing same data contract again with same importer
+			Assert.AreEqual (0, ccu.Namespaces.Count, "#i49");
+		}
+
+		/* Helper methods */
+		private void CheckDC (CodeTypeDeclaration type, string name, Dictionary<string, string> members, string msg)
+		{
+			// "dc" DataContract
+			Assert.AreEqual (name, type.Name, msg + "d");
+			//FIXME: Assert.AreEqual (MemberAttributes.Public, type.Attributes);
+			Assert.IsTrue (type.IsClass, msg + "e");
+			Assert.IsTrue (type.IsPartial, msg + "f");
+
+			CheckDataContractAttribute (type, msg);
+			CheckExtensionData (type, msg);
+
+			foreach (KeyValuePair<string, string> pair in members)
+				CheckDataMember (type, pair.Key, pair.Value, true, msg);
+		}
+
+		private void CheckExtensionData (CodeTypeDeclaration type, string msg)
+		{
+			CheckDataMember (type, "extensionDataField", "ExtensionData", "System.Runtime.Serialization.ExtensionDataObject", false, msg);
+		}
+
+		private void CheckDataMember (CodeTypeDeclaration type, string name, string type_name, bool check_attr, string msg)
+		{
+			CheckDataMember (type, name + "Field", name, type_name, check_attr, msg);
+		}
+		 
+		private void CheckDataMember (CodeTypeDeclaration type, string field_name, string prop_name, string type_name, bool check_attr, string msg)
+		{
+			// "field"
+			CodeMemberProperty p = FindMember (type, prop_name) as CodeMemberProperty;
+			Assert.IsNotNull (p, msg + "-dm0");
+			Assert.IsTrue (p.HasGet, msg + "-dm1");
+			Assert.IsTrue (p.HasSet, msg + "-dm2");
+			Assert.AreEqual (type_name, p.Type.BaseType, msg + "-dm3");
+
+			CodeMemberField f = FindMember (type, field_name) as CodeMemberField;
+			Assert.IsNotNull (f, msg + "-dm4");
+			Assert.AreEqual (type_name, f.Type.BaseType, "-dm5");
+
+			if (check_attr)
+				CheckDataContractAttribute (type, msg);
+		}
+
+		private void CheckDataContractAttribute (CodeTypeDeclaration type, string msg)
+		{
+			Assert.AreEqual (3, type.CustomAttributes.Count, msg + "a");
+
+			// DebuggerStepThroughAttribute - skip it
+
+			//GeneratedCodeAttribute
+			CodeAttributeDeclaration ca = type.CustomAttributes [1];
+			Assert.AreEqual ("System.CodeDom.Compiler.GeneratedCodeAttribute", ca.Name, msg + "b");
+
+			ca = type.CustomAttributes [2];
+			Assert.AreEqual ("System.Runtime.Serialization.DataContractAttribute", ca.Name, msg + "c");
+			Assert.AreEqual (2, ca.Arguments.Count, msg + "d");
+		}
+
+		CodeTypeMember FindMember (CodeTypeDeclaration type, string name)
+		{
+			foreach (CodeTypeMember m in type.Members)
+				if (m.Name == name)
+					return m;
+			return null;
+		}
+
+	}
+
+}

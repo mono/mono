@@ -1,0 +1,1 @@
+﻿<?xml version="1.0" encoding="utf-8"?><JulianCalendar xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/System.Globalization"><m_currentEraValue>-1</m_currentEraValue><m_isReadOnly>false</m_isReadOnly><twoDigitYearMax>2029</twoDigitYearMax><MaxYear>9999</MaxYear></JulianCalendar>

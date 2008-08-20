@@ -1,0 +1,423 @@
+2008-06-19  Noam Lampert <noaml@mainsoft.com>
+	
+	* KnownTypeCollection.cs: Support anyUri type
+
+2008-06-05  Noam Lampert <noaml@mainsoft.com>
+	
+	* KnownTypeCollection.cs: Support XmlRoot attribute
+
+2008-06-01  Noam Lampert <noaml@mainsoft.com>
+	
+	* KnownTypeCollection.cs: Implement byte[] serialization.
+
+2008-05-19  Noam Lampert <noaml@mainsoft.com>
+	
+	* KnownTypeCollection.cs: Implement char serialization.
+	   
+2008-05-19  Noam Lampert <noaml@mainsoft.com>
+	
+	* KnownTypeCollection.cs, XmlFormatterDeserializer.cs: Imporve support for 
+	   Nullable types in contracts.
+	   
+2008-04-29  Eyal Alaluf <eyala@mainsoft.com>
+
+	* KnownTypeCollection.cs: Fixed a typo in long conversion.
+
+2008-04-17  Eyal Alaluf <eyala@mainsoft.com>
+
+	* SerializationMap.cs: Implement partially collections deserialization.
+	  Supports arrays and types derived from IList. Needs support for calling
+	  'Add' method and for dictionaries.
+	* SerializationMap.cs XmlFormatterSerializer.cs DataContractSerializer.cs:
+	  Serialize namespaces for base members according to base class namespace.
+
+2008-04-14  Eyal Alaluf <eyala@mainsoft.com>
+
+	* SerializationMap.cs: Use FormatterServices.GetUninitializedObject instead
+	  of Activator.CreateInstance.
+
+2008-04-10  Eyal Alaluf <eyala@mainsoft.com>
+
+	* DataContractSerializer.cs: Write and register the current type namespace
+	  within the writer.
+	* XmlObjectSerializer.cs: ReadObject verifies by default.
+	* XmlFormatterSerializer.cs: Write and register XML namespaces.
+	* XmlFormatterDeserializer.cs: Refactored so Deserialize instance method can
+	  be used from SerializationMap deserialization logic recursively.
+	* SerializationMap.cs: Reimplemented main deserialization logic. Now it
+	  handles better missing entries, consumes the XmlReader until the end
+	  element and handles XML namespaces correctly.
+	  Enabled checks for required fields.
+
+2008-02-27  Eyal Alaluf <eyala@mainsoft.com>
+
+	* SerializationMap.cs: Fix namespace logic at least in simple case where
+	  there are several unknown elements before the current element.
+	* ContractNamespaceAttribute.cs: The ClrNamespace is not set by the ctor.
+	* XmlObjectSerializer.cs: Dispose the XmlWriter created in WriteObject
+	  to a stream.
+	* DataMemberAttribute.cs: Added the EmitDefaultValue property.
+	* XsdDataContractImporter.cs: Handle null arguments in Import methods.
+	* KnownTypeCollection.cs: Use XmlConvert.ToDateTime with roundtrip style.
+
+2007-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlObjectSerializer.cs : some methods became virtual (in Redbits).
+	* DataContractSerializer.cs : added some overriden methods in Redbits.
+	  knownTypes can be null in .ctor().
+
+2007-08-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationMap.cs : for void it cannot be instantiated. Return
+	  null instead.
+
+2007-08-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlFormatterDeserializer.cs DataContractSerializer.cs :
+	  uhoh, the semantic of bool parameter in ReadObject() has
+	  changed in the RTM. Implemented it as verifyObjectName.
+
+2007-03-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationMap.cs
+	  XmlFormatterSerializer.cs
+	  DataContractSerializer.cs :
+	  now it needs some mess to handle serialization namespaces.
+	  Collection items are serialized in its own xml namespace. Others,
+	  (including the collection member itself) is serialized in its
+	  parent xml namespace. Collection items are serialized with its
+	  wrapping element.
+	* XsdDataContractImporter.cs : use constant.
+
+2007-03-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* KnownTypeCollection.cs : added support for Guid serialization.
+
+2006-10-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* KnownTypeCollection.cs : (RemoveItem) don't remove items while 
+	  iterating.
+
+2006-09-06  Ankit Jain  <jankit@novell.com>
+
+	* SerializationMap.cs (SerializationMap.GetSequence): Set minOccurs = 0
+
+2006-09-05  Ankit Jain  <jankit@novell.com>
+
+	* XsdDataContractExporter.cs (XsdDataContractExporter.MSTypesSchema):
+	Load resource mstypes.schema
+	(XsdDataContractExporter.Schemas): Add MSTypesSchema by default.
+
+2006-09-05  Ankit Jain  <jankit@novell.com>
+
+	* SerializationMap.cs (SerializationMap.AddImport): New.
+	(SerializationMap.GetSequence): Use AddImport.
+
+2006-09-04  Ankit Jain  <jankit@novell.com>
+
+	* SerializationMap.cs (SerializationMap.GetSchemaSet): Remove.
+	(SerializationMap.GetSchemaType):
+	(SerializationMap.GetSequence):
+	(SerializationMap.GetSchema): Change XmlSchemas param to XmlSchemaSet.
+	Call XmlSchemaSet.Reprocess whenever an existing schema is modified.
+	* XsdDataContractExporter.cs (XsdDataContractExporter.Export): Update to
+	changes in SerializationMap.
+	(XsdDataContractExporter.CanExport): Implement.
+	(XsdDataContractExporter.GetSchemaType): Implement.
+	(XsdDataContractExporter.GetSchemaTypeName): Implement.
+	(XsdDataContractExporter.KnownTypes): New.
+	(XsdDataContractExporter.GeneratedTypes): New.
+
+2006-09-01  Ankit Jain  <jankit@novell.com>
+
+	* SerializationMap.cs (SerializationMap.GetSchemaSet): New.
+	(SerializationMap.IsPrimitive): New.
+	(SerializationMap.GetSchemaType): New.
+	(SerializationMap.GetSequence): New.
+	(SerializationMap.GetMembers): New.
+	(SerializationMap.GetSchemaElement): New.
+	(SerializationMap.GetSchema): New.
+	(SerializationMap.GetQualifiedName): New.
+	New methods for exporting schema for the type.
+
+	(SharedContractMap.ctor): Move code for building Members list to ..
+	(SharedContractMap.GetMembers): .. here.
+
+	(CollectionTypeMap.Serialize): Mark 'override'.
+	(CollectionTypeMap.GetMembers): 'override' and throw
+	NotImplementedException.
+	(CollectionTypeMap.GetSchemaType): Implement.
+
+	(SharedTypeMap..ctor): Move code to ..
+	(SharedTypeMap.GetMembers): .. here.
+	(EnumMap.GetSchemaType): Implement.
+
+	* XsdDataContractExporter.cs (XsdDataContractExporter.Export):
+	Implement.
+	* KnownTypeCollection.cs (KnownTypeCollection.GetCollectionQName): Use
+	GetQName instead of GetXmlName. Set Namespace for collections of
+	primitive types to MSArraysNamespace
+
+2006-08-31  Ankit Jain  <jankit@novell.com>
+
+	* SerializationMap.cs (EnumMap): New. For de/serializing enums.
+	(EnumMemberInfo): New.
+	(SerializationMap.DeserializeContent): Made protected virtual from private.
+	* DataContractSerializer.cs (WriteStartObject):
+	Ensure that "i:type" is not emitted for enums.
+	* KnownTypeCollection.cs (GetPrimitiveTypeName): Don't treat enum as a
+	primitive type.
+	(GetQName): Likewise. Use GetEnumQName for enums.
+	(GetEnumQName): New.
+	(IsPrimitiveNotEnum): New.
+	(TryRegister): Add support for enums.
+	(RegisterEnum): New.
+
+2006-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlFormatterSerializer.cs : (contd from my previous change)
+	  ... and don't complain at WriteObject(). It is somehow required
+	  in S.SM.D.WSTrustContract (soon to be committed).
+
+2006-07-27  Ankit Jain  <jankit@novell.com>
+
+	* XsdDataContractImporter.cs (Compile): Remove, thanks to eno
+	XmlSchemaSet.Compile () works now.
+	Update to directly use XmlSchemaSet.Compile ()
+
+2006-07-27  Ankit Jain  <jankit@novell.com>
+
+	* XsdDataContractImporter.cs (ImportInternal): New.
+	Update various overloads of Import to use this.
+	(ImportFromTypeMapping): New. Emits code for a DataContract from a
+	XmlTypeMapping. Code is duplicate of
+	ServiceContractGenerator.ExportDataContract .
+	(GetNamespace): New. Duplicate like above.
+	(Compile): New. Temporary hack, will XmlSchemaSet.Compile is not
+	working.
+
+2006-07-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlFormatterSerializer.cs, KnownTypeCollection.cs :
+	  don't raise an error at DataContractSerializer..ctor(). Raise
+	  InvalidDataContractException on WriteObject().
+
+2006-07-12  Ankit Jain  <jankit@novell.com>
+
+	* SerializationMap.cs (XmlSerializableMap): New. Map for classes which
+	implement IXmlSerializable interface.
+	* KnownTypeCollection.cs (KnownTypeCollection.GetQName): Add support for
+	types which implement IXmlSerializable interface. Change the order in
+	which DataContractAttribute/IXmlSerializable/SerializableAttribute get
+	selected.
+	(KnownTypeCollection.TryRegister): Change the order like above.
+	(KnownTypeCollection.RegisterIXmlSerializable): New.
+
+2006-07-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdDataContractExporter.cs, XmlObjectSerializer.cs,
+	  InvalidDataContractException.cs : some June CTP updates.
+
+2006-07-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IDataContractSurrogate.cs, ExportOptions.cs,
+	  DataContractSerializer.cs, KnownTypeCollection.cs :
+	  June CTP updates.
+
+2006-05-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractSerializer.cs : null knownTypes argument is allowed.
+	* KnownTypeCollection.cs : Type.Namespace could be null.
+
+2006-05-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* KnownTypeCollection.cs : for nested classes, treat localName of
+	  the QName as "Parent.Child", not "Child".
+	  Don't encode name here (to pass ".").
+
+2006-05-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractSerializer.cs :
+	  Added maxObjectsInGraph range check.
+	  interface type has BaseType as null, so end base type check when
+	  it is null (I don't think this check is required btw).
+
+2006-04-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractSerializer.cs : xmlns:xsi is not written when the
+	  target type is string.
+
+2006-03-22  Ankit Jain  <jankit@novell.com>
+
+	* SerializationMap.cs (CheckDataContractEqual): Remove.
+	(Deserialize): Allows expected type to be a derived one from actual
+	type.
+	(DeserializeInternal): Handle DataMember of type 'object'.
+	* XmlFormatterSerializer.cs (SerializeNonPrimitive): Serialize types not
+	already known.
+	* DataContractSerializer.cs (.ctor): Use KnownTypeCollection.GetQName
+	instead of doing it manually.
+	(PopulateTypes): Change return type from KnownTypeCollection to void.
+	Scan the base types to ensure that all have DataContract or Serializable
+	attributes.
+	Add all (including inherited) KnownTypeAttribute values to the
+	collection.
+
+2006-03-18  Ankit Jain  <jankit@novell.com>
+
+	* SerializationMap.cs (SerializationMap.GetEmptyInstance): Rename to ..
+	(SerializationMap.GetInstance): .. this. Gets the instance or null if nil=true.
+	(SerializationMap.DeserializeInternal): New. Renamed from .. 
+	(SerializationMap.Deserialize): .. this. Check DataContract equivalence, and use new
+	DeserializeInternal for rest of the work.
+	(DeserializeContent): Cleanup and handle various "null" cases.
+	* XmlFormatterSerializer.cs (Write_i_type): New. Write i:type=".."
+	(SerializeNonPrimitive): Update to use Write_i_type.
+	* DataContractSerializer.cs (WriteStartObject): Add rootType to known_types.
+
+2006-03-16  Ankit Jain  <jankit@novell.com>
+
+	* SerializationMap.cs (SerializationMap.Deserialize): Use NameTable.Get
+	before reader.LookupNamespace.
+	(DataMemberInfo.Compare): Use String.CompareOrdinal instead of
+	String.Compare.
+
+2006-03-16  Ankit Jain  <jankit@novell.com>
+
+	* SerializationMap.cs (SerializationMap.GetEmptyInstance): New.
+	(SerializationMap.Deserialize): Refactor, handle primitive types and nils.
+	(SerializationMap.DeserializeContent): Handle nils and nested DataContracts.
+	(SharedContractMap.ctor): Include inherited properties and fields, in
+	the correct order.
+
+2006-03-15  Ankit Jain  <jankit@novell.com>
+
+	* KnownTypeCollection.cs (IsPrimitiveType): New.
+	* SerializationMap.cs (Deserialize): Handle primitive types.
+
+2006-03-15  Ankit Jain  <jankit@novell.com>
+
+	* DataContractSerializer.cs (WriteObjectContent): Handle null.
+	(WriteStartObject): Rewritten.
+	* KnownTypeCollection.cs (GetQName): New. Return QName for a given type.	
+	(GetContractQName):
+	(GetSerializableQName):
+	(GetCollectionQName): New.
+	(RegisterContract):
+	(RegisterSerializable):
+	(RegisterCollection): Update to use new Get* methods.
+	* SerializationMap.cs (CheckDataContractEqual): New.
+	(Deserialize): Split into this and ..
+	(DeserializeContent): .. this.
+	* XmlDictionaryWriter.cs (CreateTextWriter): Use UTF8Encoding.
+
+2006-03-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractSerializer.cs : xmlns output should be done at
+	  WriteStartObject().
+
+2006-03-08  Ankit Jain  <jankit@novell.com>
+
+	* DataContractSerializer.cs (.ctor): Use name & namespace specified (if any) 
+	with the DataContractAttribute for non-primitive types.
+	(DataContractSerializer.WriteStartObject): DataContractAttribute.Name
+	cannot be "".
+
+2006-03-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractSerializer.cs : Handle primitive type name rather than
+	  raw type name in constructors that don't receive root QName.
+	  In case the actual graph is not of root type, write xsi:type.
+
+2006-03-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* KnownTypeCollection.cs : default namespace contains common MS base
+	  URI fragment.
+	* XmlObjectSerializer.cs : added internal common utility field.
+	* DataContractSerializer.cs : Fixed constructors to fill fields and
+	  make it work.
+	* NetDataContractSerializer.cs : just leave it unimplemented until
+	  we find how it works. It looks different from what
+	  DataContractSerializer does.
+
+2006-01-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlFormatter.cs : extra namespaces are not written in Dec.CTP.
+
+2005-11-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* KnownTypeCollection.cs : override.
+
+2005-11-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationMap.cs, XmlFormatterSerializer.cs, XmlFormatter.cs
+	  XmlFormatterDeserializer.cs, KnownTypeCollection.cs :
+	  several changes. Partial support for collection serialization.
+	  SerializationMap now contains its own Deserialize()/Serialize()
+	  methods.
+
+2005-10-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlFormatterDeserializer.cs : new file.
+	* SerializationMap.cs, XmlFormatter.cs, KnownTypeCollection.cs :
+	  several changes for pretty primitive Deserialize() implementation.
+
+2005-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	Added hacky serialization feature. Actually it should be rewritten to
+	be based on IDataContractSurrogate.
+	* SerializationMap.cs, XmlFormatterSerializer.cs :
+	  new files for Serialize() implementation.
+	* KnownTypeCollection.cs : use serialization maps to check contracts.
+	* XmlFormatter.cs : implemented hacky Serialize().
+	* DataMemberAttribute.cs : default Order is -1.
+	* DataContractAttribute.cs : added tiny comment.
+
+2005-10-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlFormatter.cs : Added implementation switch between
+	  BinaryFormatter and internal DataContractFormatter.
+	* XmlSerializableServices.cs : WriteNodes() impl.
+
+2005-10-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializableServices.cs : ReadNodes() impl.
+
+2005-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* KnownTypeAttribute.cs : fixed attribute usage.
+
+2005-09-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IDataContractSurrogate.cs, ContractNamespaceAttribute.cs,
+	  XsdDataContractExporter.cs, KnownTypeAttribute.cs,
+	  SerializationMode.cs, XmlFormatter.cs, DataMemberAttribute.cs,
+	  ImportOptions.cs, UnknownSerializationData.cs,
+	  SerializationFactoryMethodAttribute.cs, XmlSerializableServices.cs,
+	  DataContractAttribute.cs, ExportOptions.cs,
+	  InvalidDataContractException.cs, IUnknownSerializationData.cs,
+	  CollectionDataContractAttribute.cs, XsdDataContractImporter.cs,
+	  KnownTypeCollection.cs :
+	  #if NET_2_0. coding style was updated.
+
+2005-09-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CollectionDataContractAttribute.cs
+	  ContractNamespaceAttribute.cs
+	  DataContractAttribute.cs
+	  DataMemberAttribute.cs
+	  ExportOptions.cs
+	  IDataContractSurrogate.cs
+	  InvalidDataContractException.cs
+	  IUnknownSerializationData.cs
+	  ImportOptions.cs
+	  KnownTypeAttribute.cs
+	  KnownTypeCollection.cs
+	  SerializationFactoryMethodAttribute.cs
+	  SerializationMode.cs
+	  UnknownSerializationData.cs
+	  XmlFormatter.cs
+	  XmlSerializableServices.cs
+	  XsdDataContractExporter.cs
+	  XsdDataContractImporter.cs : new files.
+

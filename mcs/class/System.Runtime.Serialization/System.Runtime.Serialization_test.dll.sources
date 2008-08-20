@@ -1,0 +1,17 @@
+System.Runtime.Serialization/DataContractSerializerTest_FrameworkTypes.cs
+System.Runtime.Serialization/DataContractSerializerTest_FrameworkTypes_mscorlib.cs
+System.Runtime.Serialization/DataContractSerializerTest_FrameworkTypes_System.cs
+System.Runtime.Serialization/DataContractSerializerTest_FrameworkTypes_System.Data.cs
+System.Runtime.Serialization/XmlObjectSerializerTest.cs
+System.Runtime.Serialization/XsdDataContractExporterTest.cs
+System.Runtime.Serialization/XsdDataContractImporterTest.cs
+System.Xml/UniqueIdTest.cs
+System.Xml/XmlBinaryDictionaryReaderTest.cs
+System.Xml/XmlBinaryDictionaryWriterTest.cs
+System.Xml/XmlBinaryWriterSessionTest.cs
+System.Xml/XmlDictionaryReaderAbstractTest.cs
+System.Xml/XmlDictionaryReaderQuotasTest.cs
+System.Xml/XmlDictionaryTest.cs
+System.Xml/XmlSimpleDictionaryWriterTest.cs
+System.Runtime.Serialization/AttributesTest.cs
+XmlComparer.cs
