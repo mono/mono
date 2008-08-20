@@ -31675,6 +31675,19 @@
       </method>
     </type>
   </test>
+  <test name="test-673.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Foo()">
+        <size>1</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>85</size>
+      </method>
+    </type>
+  </test>
   <test name="test-68.cs">
     <type name="Y">
       <method name="Void .ctor()">
