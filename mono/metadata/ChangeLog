@@ -1,3 +1,8 @@
+2008-08-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_object): Avoid managed-to-native marshalling of
+	delegates with byref out parameter passing. Fixes #351520.
+
 2008-08-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata-internals.h: Move the 'aot_module' field from MonoAssembly to
