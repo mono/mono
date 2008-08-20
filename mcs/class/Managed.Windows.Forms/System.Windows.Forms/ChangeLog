@@ -1,3 +1,12 @@
+2008-08-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* XplatUIX11.cs: Only do the children control bounds check for EnterNotify
+	if mode is NotifyUngrab, and let it flow if mode is NotifyNormal.
+	Also, if we are actually moving into a different window after
+	grabbing, generate a LeaveNotify event for the previous window, since
+	we need to fire the leave events until the grab ends, not when
+	actually moving outside of the control.
+
 2008-08-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* XplatUIX11.cs: The check inside EnterNotify case to fire MouseEnter

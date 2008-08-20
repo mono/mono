@@ -4001,20 +4001,40 @@ namespace System.Windows.Forms {
 					if (!hwnd.Enabled) {
 						goto ProcessNextMessage;
 					}
-					if (xevent.CrossingEvent.mode == NotifyMode.NotifyGrab || LastPointerWindow == xevent.CrossingEvent.window ||
-							hwnd.client_window != xevent.AnyEvent.window) {
+					if (xevent.CrossingEvent.mode == NotifyMode.NotifyGrab || xevent.AnyEvent.window != hwnd.client_window) {
 						goto ProcessNextMessage;
 					}
-					if (LastPointerWindow != IntPtr.Zero) {
-						Point enter_loc = new Point (xevent.ButtonEvent.x, xevent.ButtonEvent.y);
+					if (xevent.CrossingEvent.mode == NotifyMode.NotifyUngrab) { // Pseudo motion caused by grabbing
+						if (LastPointerWindow == xevent.AnyEvent.window)
+							goto ProcessNextMessage;
 
-						// We need this due to EnterNotify being fired on all the parent controls
-						// of the Control being grabbed, and obviously in that scenario we are not
-						// actuallty entering them
-						Control ctrl = Control.FromHandle (hwnd.client_window);
-						foreach (Control child_control in ctrl.Controls)
-							if (child_control.Bounds.Contains (enter_loc))
-								goto ProcessNextMessage;
+						if (LastPointerWindow != IntPtr.Zero) {
+							Point enter_loc = new Point (xevent.ButtonEvent.x, xevent.ButtonEvent.y);
+
+							// We need this due to EnterNotify being fired on all the parent controls
+							// of the Control being grabbed, and obviously in that scenario we are not
+							// actuallty entering them
+							Control ctrl = Control.FromHandle (hwnd.client_window);
+							foreach (Control child_control in ctrl.Controls)
+								if (child_control.Bounds.Contains (enter_loc))
+									goto ProcessNextMessage;
+
+							// A MouseLeave/LeaveNotify event is sent to the previous window
+							// until the mouse is ungrabbed, not when actually leaving its bounds
+							int x = xevent.CrossingEvent.x_root;
+							int y = xevent.CrossingEvent.y_root;
+							ScreenToClient (LastPointerWindow, ref x, ref y);
+
+							XEvent leaveEvent = new XEvent ();
+							leaveEvent.type = XEventName.LeaveNotify;
+							leaveEvent.CrossingEvent.display = DisplayHandle;
+							leaveEvent.CrossingEvent.window = LastPointerWindow;
+							leaveEvent.CrossingEvent.x = x;
+							leaveEvent.CrossingEvent.y = y;
+							leaveEvent.CrossingEvent.mode = NotifyMode.NotifyNormal;
+							Hwnd last_pointer_hwnd = Hwnd.ObjectFromHandle (LastPointerWindow);
+							last_pointer_hwnd.Queue.EnqueueLocked (leaveEvent);
+						}
 					}
 
 					LastPointerWindow = xevent.AnyEvent.window;
@@ -4047,6 +4067,9 @@ namespace System.Windows.Forms {
 					if ((xevent.CrossingEvent.mode != NotifyMode.NotifyNormal) || (xevent.CrossingEvent.window != hwnd.client_window)) {
 						goto ProcessNextMessage;
 					}
+					// If a grab is taking place, ignore it - we handle it in EnterNotify
+					if (Grab.Hwnd != IntPtr.Zero)
+						goto ProcessNextMessage;
 
 					// Reset the cursor explicitly on X11.
 					// X11 remembers the last set cursor for the window and in cases where 
