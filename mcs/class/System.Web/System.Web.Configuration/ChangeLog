@@ -1,3 +1,9 @@
+2008-08-20  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRuntimeConfig.cs: implemented the undocumented (but
+	supported in .NET 1.1) option EnableHeaderChecking to support fix
+	for bug #416620
+
 2008-06-30  Marek Habersack  <mhabersack@novell.com>
 
 	* MachineKeyRegistryStorage.cs: hush the warnings
