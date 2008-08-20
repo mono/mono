@@ -36,8 +36,7 @@ namespace System.Web {
 
       string EncodeHeader (string value)
 		{
-#if NET_2_0
-			if (String.IsNullOrEmpty (value))
+			if (value == null || value.Length == 0)
 				return value;
 			
 				StringBuilder ret = new StringBuilder ();
@@ -60,9 +59,6 @@ namespace System.Web {
 				}
 
 				return ret.ToString ();
-#else
-				return value;
-#endif
 		}
 
       internal HttpResponseHeader(int KnowHeaderId, string value) {
