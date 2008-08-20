@@ -1,4 +1,7 @@
 2008-07-28  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c: Added stack tracking (even if still unused).
+
+2008-07-28  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c: Fix bug 412473:
 	- write_statistical_data_block: check if the current MonoThread still
 	exists, and if not avoid calling mono_jit_info_table_find.
