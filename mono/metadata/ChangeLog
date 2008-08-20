@@ -1,5 +1,8 @@
 2008-08-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (emit_marshal_object): Avoid managed-to-native marshalling of
+	delegates with byref out parameter passing. Fixes #351520.
+
 	* debug-helpers.c (mono_context_get_desc): New helper function to stringify
 	a generic context.
 	(mono_type_get_desc): Add the type arguments for GENERICINST.
