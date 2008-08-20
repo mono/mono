@@ -96,6 +96,7 @@ namespace System.IO.IsolatedStorage {
 			return new IsolatedStorageFile (appdir);
 		}
 
+		// FIXME: we need a separate root for SITE
 		public static IsolatedStorageFile GetUserStoreForSite ()
 		{
 			if (appdir == null)
@@ -118,8 +119,7 @@ namespace System.IO.IsolatedStorage {
 		
 		public void CreateDirectory (string dir)
 		{
-			Verify (dir);
-			Directory.CreateDirectory (dir);
+			Directory.CreateDirectory (Verify (dir));
 		}
 
 		public IsolatedStorageFileStream CreateFile (string path)
@@ -127,34 +127,63 @@ namespace System.IO.IsolatedStorage {
 			PreCheck ();
 			if (path == null)
 				throw new ArgumentNullException ("path");
+			if (path.Length == 0)
+				throw new ArgumentException ("path");
 
-			return new IsolatedStorageFileStream (path, FileMode.Create, this);
+			try {
+				return new IsolatedStorageFileStream (path, FileMode.Create, this);
+			}
+			catch (DirectoryNotFoundException) {
+				// this can happen if the supplied path includes an unexisting directory
+				throw new IsolatedStorageException ();
+			}
 		}
 		
 		public void DeleteDirectory (string dir)
 		{
 			PreCheck ();
-			Verify (dir);
-			Directory.Delete (dir);
+			Directory.Delete (Verify (dir));
+		}
+
+		public void DeleteFile (string file)
+		{
+			PreCheck ();
+			File.Delete (Verify (file));
+		}
+
+		public void Dispose ()
+		{
+			disposed = true;
 		}
 
 		public bool DirectoryExists (string path)
 		{
 			PreCheck ();
-			Verify (path);
-			return Directory.Exists (path);
+			return Directory.Exists (Verify (path));
 		}
 
 		public bool FileExists (string path)
 		{
 			PreCheck ();
-			Verify (path);
-			return File.Exists (path);
+			return File.Exists (Verify (path));
+		}
+
+		private string HideAppDir (string path)
+		{
+			// remove the "isolated" part of the path (and the extra '/')
+			return path.Substring (appdir.Length + 1);
+		}
+
+		private string [] HideAppDirs (string[] paths)
+		{
+			for (int i=0; i < paths.Length; i++)
+				paths [i] = HideAppDir (paths [i]);
+			return paths;
 		}
 
 		public string [] GetDirectoryNames ()
 		{
-			return Directory.GetFiles (appdir);
+			return HideAppDirs (Directory.GetDirectories (appdir));
 		}
 
 		public string [] GetDirectoryNames (string searchPattern)
@@ -162,12 +191,12 @@ namespace System.IO.IsolatedStorage {
 			if (searchPattern.IndexOf ('/') != -1)
 				throw new IsolatedStorageException ();
 			
-			return Directory.GetDirectories (appdir, searchPattern);
+			return HideAppDirs (Directory.GetDirectories (appdir, searchPattern));
 		}
 
 		public string [] GetFileNames ()
 		{
-			return Directory.GetFiles (appdir);
+			return HideAppDirs (Directory.GetFiles (appdir));
 		}
 
 		public string [] GetFileNames (string searchPattern)
@@ -175,18 +204,7 @@ namespace System.IO.IsolatedStorage {
 			if (searchPattern.IndexOf ('/') != -1)
 				throw new IsolatedStorageException ();
 			
-			return Directory.GetFiles (appdir, searchPattern);
-		}
-
-		public void DeleteFile (string file)
-		{
-			Verify (file);
-			File.Delete (file);
-		}
-		
-		public void Dispose ()
-		{
-			disposed = true;
+			return HideAppDirs (Directory.GetFiles (appdir, searchPattern));
 		}
 
 		public IsolatedStorageFileStream OpenFile (string path, FileMode mode)

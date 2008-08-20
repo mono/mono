@@ -1,3 +1,7 @@
+2008-08-20  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* MoonIsolatedStorageFile.cs: More fixes to match unit tests.
+
 2008-08-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MoonIsolatedStorageFile.cs: Fix API to match SL2 beta2. Start
