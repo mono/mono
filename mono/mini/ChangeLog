@@ -1,5 +1,8 @@
 2008-08-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (add_valuetype): Use a dummy gsctx if we didn't receive
+	one from the caller.
+
 	* aot-runtime.c (decode_generic_inst): New function to decode and
 	return a interned generic inst.
 	(decode_klass_ref): Use it.
