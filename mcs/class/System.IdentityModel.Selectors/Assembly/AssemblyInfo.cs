@@ -64,6 +64,3 @@ using System.Runtime.InteropServices;
 [assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 [assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
 [assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]
-
-//[assembly: InternalsVisibleTo ("infocard, PublicKey=00000000000000000400000000000000")]
-//[assembly: InternalsVisibleTo ("infocardsvc, PublicKey=00000000000000000400000000000000")]
