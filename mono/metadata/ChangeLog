@@ -1,3 +1,9 @@
+2008-08-20  Bill Holmes  <billholmes54@gmail.com>
+
+	* console-io.c : Fixing builds for platforms that do not have <termios.h>.
+
+	Code is contributed under MIT/X11 license.
+
 2008-08-20  Miguel de Icaza  <miguel@novell.com>
 
 	* console-io.c (sigcont_handler): We need to restore the entire
