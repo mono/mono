@@ -1,3 +1,10 @@
+2008-08-20  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* ListView.cs: When calling OnCacheVirtualItems, cast to the right
+	type of delegate, instead of EventHandler - this was causing a type
+	cast exception in all apps handling this event.
+	Fixes #417876.
+
 2008-08-20  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripDropDownItem.cs: Always raise DropDownOpening in
