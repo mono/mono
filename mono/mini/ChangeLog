@@ -1,3 +1,13 @@
+2008-08-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (decode_generic_inst): New function to decode and
+	return a interned generic inst.
+	(decode_klass_ref): Use it.
+	(decode_method_ref): Ditto.
+
+	* aot-compiler.c (emit_exception_debug_info): Save 
+	jinfo->has_generic_jit_info too.
+
 2008-08-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ia64.c (mono_arch_output_basic_block): Add OP_FCONV_TO_I.
