@@ -1,5 +1,11 @@
 2008-08-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (MONO_AOT_FILE_VERSION): Bump aot file format version.
+
+	* aot-runtime.c aot-compiler.c patch-info.h mini.c: Get rid of
+	MONO_PATCH_INFO_WRAPPER, encode/decode wrapper methods like the others in
+	encode/decode_method_ref ().
+
 	* aot-compiler.c (encode_patch): Handle STATIC_RGCTX_INVOKE wrappers.
 
 	* aot-runtime.c (decode_patch): Ditto.	
