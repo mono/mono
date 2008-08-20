@@ -1,3 +1,11 @@
+2008-08-20  Bill Holmes  <billholmes54@gmail.com>
+
+	* mini-amd64.c (mono_arch_get_delegate_invoke_impl):  When shifting the
+	  arguments on Winx64 there are only 4 argument registers.  For this
+	  logic to work the last argument must be pulled from the stack.  
+
+	Contributed under MIT/X11 license.
+
 2008-08-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h (MONO_AOT_FILE_VERSION): Bump aot file format version.
