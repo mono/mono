@@ -1,5 +1,14 @@
 2008-08-20  Bill Holmes  <billholmes54@gmail.com>
 
+	Backport of r111197
+
+	* exceptions-amd64.c (seh_handler):  For Winx64 adding missing copy 
+	  of nonvolatile registers back from MonoContext to CONTEXT.
+
+	Contributed under MIT/X11 license.
+
+2008-08-20  Bill Holmes  <billholmes54@gmail.com>
+
 	Backport of r111194
 
 	* mini-amd64.c (mono_arch_get_delegate_invoke_impl):  When shifting the
