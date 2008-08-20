@@ -1,5 +1,12 @@
 2008-08-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* X11Dnd.cs: Don't fire pseudo motion DragOver events if we haven't
+	had any mouse motion since the call to StartDrag, to match the dnd
+	behaviour of .net.
+	Fixes part of #381876.
+
+2008-08-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* XplatUIX11.cs: Only do the children control bounds check for EnterNotify
 	if mode is NotifyUngrab, and let it flow if mode is NotifyNormal.
 	Also, if we are actually moving into a different window after

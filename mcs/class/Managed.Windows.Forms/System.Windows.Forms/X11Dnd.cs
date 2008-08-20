@@ -427,7 +427,7 @@ namespace System.Windows.Forms {
 			drag_data.CurMousePos = new Point ();
 			dropped = false;
 			tracking = true;
-			motion_poll = 0;
+			motion_poll = -1;
 			timer.Start ();
 
 			while (tracking && XplatUI.GetMessage (queue_id, ref msg, IntPtr.Zero, 0, 0)) {
@@ -490,12 +490,14 @@ namespace System.Windows.Forms {
 					t.Interval = 500;
 			}
 
-			// If more than 100 milliseconds have lapsed, we assume the pointer is not
+
+			// If motion_poll is -1, there hasn't been motion at all, so don't simulate motion yet.
+			// Otherwise if more than 100 milliseconds have lapsed, we assume the pointer is not
 			// in motion anymore, and we simulate the mouse over operation, like .Net does.
 			if (motion_poll > 1)
 				HandleMouseOver ();
-
-			motion_poll++;
+			else if (motion_poll > -1)
+				motion_poll++;
 		}
 
 		public void HandleButtonUpMsg ()
