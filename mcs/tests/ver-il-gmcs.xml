@@ -31659,6 +31659,22 @@
       </method>
     </type>
   </test>
+  <test name="test-672.cs">
+    <type name="X">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.Int32* get_Foo()">
+        <size>3</size>
+      </method>
+      <method name="S* get_Foo2()">
+        <size>3</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="test-68.cs">
     <type name="Y">
       <method name="Void .ctor()">
