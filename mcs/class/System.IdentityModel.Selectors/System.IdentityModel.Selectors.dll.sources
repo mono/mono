@@ -1,0 +1,15 @@
+../../build/common/Consts.cs
+../../build/common/Locale.cs
+../../build/common/MonoTODOAttribute.cs
+Assembly/AssemblyInfo.cs
+System.IdentityModel.Selectors/CardSpaceException.cs
+System.IdentityModel.Selectors/CardSpacePolicyElement.cs
+System.IdentityModel.Selectors/CardSpaceSelector.cs
+System.IdentityModel.Selectors/IdentityValidationException.cs
+System.IdentityModel.Selectors/PolicyValidationException.cs
+System.IdentityModel.Selectors/ServiceBusyException.cs
+System.IdentityModel.Selectors/ServiceNotStartedException.cs
+System.IdentityModel.Selectors/StsCommunicationException.cs
+System.IdentityModel.Selectors/UnsupportedPolicyOptionsException.cs
+System.IdentityModel.Selectors/UntrustedRecipientException.cs
+System.IdentityModel.Selectors/UserCancellationException.cs

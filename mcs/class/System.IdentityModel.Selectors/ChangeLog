@@ -1,0 +1,25 @@
+2007-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : added net_3_5 as a valid profile.
+
+2006-07-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Microsoft.InfoCards.Diagnostics has gone.
+
+2006-07-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile: oh, is dependency on System.ServiceModel.dll removed??
+
+2006-07-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : added reference to System.IdentityModel.dll i.e. it
+	  has long been broken :|
+
+2006-07-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : add path to referenced assemblies as gmcs always loads
+	  them from the GAC.
+
+2005-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile, Microsoft.Infocards.dll : initial checkin.

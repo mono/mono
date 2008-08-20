@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F46BBFCE-C0DD-41EC-BD53-B1F4F312DE1A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>System.IdentityModel.Selectors</RootNamespace>
+    <AssemblyName>System.IdentityModel.Selectors</AssemblyName>
+    <TargetFrameworkVersion>v3.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET_2_0,TARGET_DOTNET</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;NET_2_0,TARGET_DOTNET</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.IdentityModel">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\build\common\Locale.cs">
+      <Link>Locale.cs</Link>
+    </Compile>
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs">
+      <Link>MonoTODOAttribute.cs</Link>
+    </Compile>
+    <Compile Include="System.IdentityModel.Selectors\CardSpaceException.cs" />
+    <Compile Include="System.IdentityModel.Selectors\CardSpacePolicyElement.cs" />
+    <Compile Include="System.IdentityModel.Selectors\CardSpaceSelector.cs" />
+    <Compile Include="System.IdentityModel.Selectors\IdentityValidationException.cs" />
+    <Compile Include="System.IdentityModel.Selectors\PolicyValidationException.cs" />
+    <Compile Include="System.IdentityModel.Selectors\ServiceBusyException.cs" />
+    <Compile Include="System.IdentityModel.Selectors\ServiceNotStartedException.cs" />
+    <Compile Include="System.IdentityModel.Selectors\StsCommunicationException.cs" />
+    <Compile Include="System.IdentityModel.Selectors\UnsupportedPolicyOptionsException.cs" />
+    <Compile Include="System.IdentityModel.Selectors\UntrustedRecipientException.cs" />
+    <Compile Include="System.IdentityModel.Selectors\UserCancellationException.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs.in">
+      <Link>Consts.cs.in</Link>
+    </Compile>
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>@rem "C:\Program Files\Microsoft SDKs\Windows\v6.0A\bin\gacutil.exe" /i "$(TargetPath)" /f
+@rem "C:\Program Files\Mono-1.2.6\bin\gacutil.bat" -i "$(TargetPath)"</PostBuildEvent>
+  </PropertyGroup>
+</Project>

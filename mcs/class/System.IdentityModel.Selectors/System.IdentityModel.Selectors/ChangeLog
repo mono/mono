@@ -1,0 +1,102 @@
+2007-05-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CardspaceSelector.cs : so I forgot that I've updated namespace name
+	  for win32 client impl.
+
+2007-04-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	Now the implementation is moved to Mono.ServiceModel.IdentitySelectors.
+	* CardSpaceSelector.cs : now it is reflection based.
+	* CardSpacePolicyElement.cs : removed NativePolicyElement usage.
+	* NativePolicyElement.cs
+	  AsymmetricProofTokenSecurityKey.cs
+	  CardSpaceProofToken.cs
+	  NativeGenericXmlToken.cs
+	  NativeInfocardCryptoHandle.cs
+	  NativeInfocardHandleType.cs : removed.
+
+2007-04-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CardSpacePolicyElement.cs, NativePolicyElement.cs :
+	  fixed field names (privacy -> policy).
+	* CardSpaceSelector.cs : fixed error message (it's implemented).
+	  IsManagedIssuer is true when IssuerAddress is null.
+
+2007-04-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NativePolicyElement.cs : issuer could be null (self-issued card).
+	* CardSpaceSelector.cs : throw correct exceptions.
+	* NativeGenericXmlToken : disposable. Create ProofToken (btw it is
+	  not serializable with WSSecurityTokenSerializer).
+	* NativeInfocardCryptoHandle.cs : several implementation for
+	  ProofToken creation. removed extra types.
+	* AsymmetricProofTokenSecurityKey.cs, CardSpaceProofToken.cs :
+	  New files for ProofToken implementation.
+	  They are largely unimplemented yet.
+
+2007-04-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NativeGenericXmlToken.cs, NativeInfocardCryptoHandle.cs :
+	  they are marshalled as references. Some workarounds.
+	* CardSpaceSelector.cs : get int hresult.
+	* NativePolicyElement.cs : it is marshalled as struct.
+
+2007-04-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NativePolicyElement.cs, NativeGenericXmlToken.cs,
+	  NativeInfocardCryptoHandle.cs :
+	  set CharSet as Unicode in StructLayoutAttributes.
+
+2007-04-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CardSpacePolicyElement.cs : implemented.
+	* CardspaceSelector.cs : win32 implementation.
+	* NativePolicyElement.cs,
+	  NativeGenericXmlToken.cs,
+	  NativeInfocardCryptoHandle.cs,
+	  NativeInfocardHandleType.cs : win32 interop structures.
+
+2006-07-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceBusyException.cs, IdentityValidationException.cs,
+	  UnsupportedPolicyOptionsException.cs,
+	  PolicyValidationException.cs : new files.
+	* Dummy.cs : removed.
+	* StsCommunicationException.cs, UntrustedRecipientException.cs,
+	  CardSpaceException.cs, ServiceNotStartedException.cs,
+	  UserCancellationException.cs,
+	  CardSpacePolicyElement.cs, CardSpaceSelector.cs :
+	  fixed all API to July CTP.
+
+2006-07-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Dummy.cs, CardSpaceSelector.cs :
+	  oh, is dependency on System.ServiceModel.dll removed??
+
+2006-07-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* InfoCardException.cs, CardSpaceException.cs :
+	  renamed former to latter.
+
+2006-07-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Dummy.cs, CardSpacePolicyElement.cs, CardSpaceSelector.cs :
+	  added.
+	* InfoCardClient.cs : removed.
+	* InfoCardException.cs :
+	  changed class name. File name soon to be updated.
+
+2006-05-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* InfoCardClient.cs : build fix.
+
+2005-11-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* InfocardTokenProvider.cs : removed old file (and is build blocker).
+
+2005-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* StsCommunicationException.cs, UntrustedRecipientException.cs
+	  InfoCardTokenProvider.cs, InfoCardClient.cs
+	  InfoCardException.cs, ServiceNotStartedException.cs
+	  UserCancellationException.cs : initial checkin.
