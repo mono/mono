@@ -42,6 +42,15 @@ namespace System.Web {
 			set { headerValue = EncodeHeader (value); }
 		}
 	  
+#if NET_2_0
+		static bool headerCheckingEnabled;
+		
+		static BaseResponseHeader () {
+			HttpRuntimeSection section = WebConfigurationManager.GetSection ("system.web/httpRuntime") as HttpRuntimeSection;
+			headerCheckingEnabled = section == null || section.EnableHeaderChecking;
+		}
+#endif
+
 		internal BaseResponseHeader (string val)
 		{
 			Value = val;
@@ -53,10 +62,7 @@ namespace System.Web {
 			if (String.IsNullOrEmpty (value))
 				return value;
 			
-			HttpRuntimeSection section = WebConfigurationManager.GetSection ("system.web/httpRuntime") as HttpRuntimeSection;
-			bool doEncode = section == null || section.EnableHeaderChecking;
-
-			if (doEncode) {
+			if (headerCheckingEnabled) {
 				StringBuilder ret = new StringBuilder ();
 				int len = value.Length;
 
