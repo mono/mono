@@ -1,3 +1,11 @@
+2008-08-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* debug-helpers.c (mono_context_get_desc): New helper function to stringify
+	a generic context.
+	(mono_type_get_desc): Add the type arguments for GENERICINST.
+	(mono_method_full_name): Stringify the class name using mono_type_full_name
+	so it picks up generic arguments.
+
 2008-08-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* console-io.c: Removed debug output.
