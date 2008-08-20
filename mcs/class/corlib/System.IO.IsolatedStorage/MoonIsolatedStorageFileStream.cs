@@ -91,7 +91,7 @@ namespace System.IO.IsolatedStorage {
 
 		public override void WriteByte (byte value)
 		{
-			WriteByte (value);
+			base.WriteByte (value);
 		}
 
 		public override bool CanRead {
@@ -132,6 +132,26 @@ namespace System.IO.IsolatedStorage {
 			set {
 				base.Position = value;
 			}
+		}
+
+		public override IAsyncResult BeginRead (byte[] buffer, int offset, int numBytes, AsyncCallback userCallback, object stateObject)
+		{
+			return base.BeginRead (buffer, offset, numBytes, userCallback, stateObject);
+		}
+
+		public override IAsyncResult BeginWrite (byte[] buffer, int offset, int numBytes, AsyncCallback userCallback, object stateObject)
+		{
+			return base.BeginWrite (buffer, offset, numBytes, userCallback, stateObject);
+		}
+
+		public override int EndRead (IAsyncResult asyncResult)
+		{
+			return base.EndRead (asyncResult);
+		}
+
+		public override void EndWrite (IAsyncResult asyncResult)
+		{
+			base.EndWrite (asyncResult);
 		}
 	}
 }

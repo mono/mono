@@ -6,7 +6,7 @@
 // Authors
 //      Miguel de Icaza (miguel@novell.com)
 //
-// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2007, 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -50,7 +50,7 @@ namespace System.IO.IsolatedStorage {
 		static IsolatedStorageFile ()
 		{
                         string xdg_data_home = Environment.GetEnvironmentVariable ("XDG_DATA_HOME");
-                        if (xdg_data_home == null || xdg_data_home == String.Empty){
+                        if (String.IsNullOrEmpty (xdg_data_home)) {
                                 xdg_data_home = Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData);
                         }
 
@@ -72,12 +72,31 @@ namespace System.IO.IsolatedStorage {
 			}
 		}
 
+
+		private bool removed = false;
+		private bool disposed = false;
+
 		internal IsolatedStorageFile (string basedir)
 		{
 		}
 		
-		[SecuritySafeCritical]
+		internal void PreCheck ()
+		{
+			if (disposed)
+				throw new ObjectDisposedException ("Storage was disposed");
+			if (removed)
+				throw new IsolatedStorageException ("Storage was removed");
+		}
+
 		public static IsolatedStorageFile GetUserStoreForApplication ()
+		{
+			if (appdir == null)
+				throw new SecurityException ();
+			
+			return new IsolatedStorageFile (appdir);
+		}
+
+		public static IsolatedStorageFile GetUserStoreForSite ()
 		{
 			if (appdir == null)
 				throw new SecurityException ();
@@ -97,21 +116,47 @@ namespace System.IO.IsolatedStorage {
 			throw new IsolatedStorageException ();
 		}
 		
-		[SecuritySafeCritical]
 		public void CreateDirectory (string dir)
 		{
 			Verify (dir);
 			Directory.CreateDirectory (dir);
-		}    
+		}
+
+		public IsolatedStorageFileStream CreateFile (string path)
+		{
+			PreCheck ();
+			if (path == null)
+				throw new ArgumentNullException ("path");
+
+			return new IsolatedStorageFileStream (path, FileMode.Create, this);
+		}
 		
-		[SecuritySafeCritical]
 		public void DeleteDirectory (string dir)
 		{
+			PreCheck ();
 			Verify (dir);
 			Directory.Delete (dir);
 		}
 
-		[SecuritySafeCritical]
+		public bool DirectoryExists (string path)
+		{
+			PreCheck ();
+			Verify (path);
+			return Directory.Exists (path);
+		}
+
+		public bool FileExists (string path)
+		{
+			PreCheck ();
+			Verify (path);
+			return File.Exists (path);
+		}
+
+		public string [] GetDirectoryNames ()
+		{
+			return Directory.GetFiles (appdir);
+		}
+
 		public string [] GetDirectoryNames (string searchPattern)
 		{
 			if (searchPattern.IndexOf ('/') != -1)
@@ -120,42 +165,81 @@ namespace System.IO.IsolatedStorage {
 			return Directory.GetDirectories (appdir, searchPattern);
 		}
 
-		[SecuritySafeCritical]
+		public string [] GetFileNames ()
+		{
+			return Directory.GetFiles (appdir);
+		}
+
 		public string [] GetFileNames (string searchPattern)
 		{
 			if (searchPattern.IndexOf ('/') != -1)
 				throw new IsolatedStorageException ();
 			
-			return Directory.GetDirectories (appdir, searchPattern);
+			return Directory.GetFiles (appdir, searchPattern);
 		}
 
-		[SecuritySafeCritical]
 		public void DeleteFile (string file)
 		{
 			Verify (file);
+			File.Delete (file);
 		}
 		
 		public void Dispose ()
 		{
+			disposed = true;
 		}
 
-		[SecuritySafeCritical]
-		public void Close ()
+		public IsolatedStorageFileStream OpenFile (string path, FileMode mode)
 		{
+			return OpenFile (path, mode, FileAccess.ReadWrite, FileShare.None);
 		}
 
-		[CLSCompliant(false)]
-		public ulong CurrentSize {
-			get {
-				return 0;
+		public IsolatedStorageFileStream OpenFile (string path, FileMode mode, FileAccess access)
+		{
+			return OpenFile (path, mode, access, FileShare.None);
+		}
+
+		public IsolatedStorageFileStream OpenFile (string path, FileMode mode, FileAccess access, FileShare share)
+		{
+			PreCheck ();
+			if (path == null)
+				throw new ArgumentNullException ("path");
+
+			return new IsolatedStorageFileStream (path, mode, access, share, this);
+		}
+
+		public void Remove ()
+		{
+			PreCheck ();
+			try {
+				// TODO - try to clean out everything
+			}
+			finally {
+				removed = true;
 			}
 		}
 
-		[CLSCompliant(false)]
-		public ulong MaximumSize {
+		public long AvailableFreeSpace {
 			get {
+				PreCheck ();
 				return 1024*1024;
 			}
+		}
+
+		public long Quota {
+			get {
+				PreCheck ();
+				return 1024*1024;
+			}
+		}
+
+		public bool IncreaseQuotaTo (long newQuotaSize)
+		{
+			PreCheck ();
+			if (newQuotaSize <= Quota)
+				throw new ArgumentException ("newQuotaSize", "Only increase is possible");
+
+			return true;
 		}
 	}
 }

@@ -1,3 +1,10 @@
+2008-08-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MoonIsolatedStorageFile.cs: Fix API to match SL2 beta2. Start
+	implementing new feature (while writing unit tests).
+	* MoonIsolatedStorageFileStream.cs: Add new async methods [Begin|
+	End][Read|Write] present in b2. Fix endless recursion in WriteByte.
+
 2008-04-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorageFile.cs: Fix CreateDirectory to accept multiple 
