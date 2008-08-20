@@ -60,7 +60,7 @@ namespace Mono.CSharp {
 			if (!TypeManager.IsDelegateType (delegateType))
 				return null;
 
-			ParameterData d_params = TypeManager.GetDelegateParameters (delegateType);
+			AParametersCollection d_params = TypeManager.GetDelegateParameters (delegateType);
 
 			if (explicit_parameters) {
 				if (!VerifyExplicitParameters (delegateType, d_params, ec.IsInProbingMode))
@@ -76,12 +76,10 @@ namespace Mono.CSharp {
 			if (!VerifyParameterCompatibility (delegateType, d_params, ec.IsInProbingMode))
 				return null;
 
-			if (Parameters.Types == null)
-				Parameters.Types = new Type [Parameters.Count];
-
+			Type [] ptypes = new Type [Parameters.Count];
 			for (int i = 0; i < d_params.Count; i++) {
 				// D has no ref or out parameters
-				if ((d_params.ParameterModifier (i) & Parameter.Modifier.ISBYREF) != 0)
+				if ((d_params.FixedParameters [i].ModFlags & Parameter.Modifier.ISBYREF) != 0)
 					return null;
 
 				Type d_param = d_params.Types [i];
@@ -98,8 +96,11 @@ namespace Mono.CSharp {
 					d_param = tic.InflateGenericArgument (d_param);
 				}
 
-				Parameters.Types [i] = Parameters.FixedParameters[i].ParameterType = d_param;
+				ptypes [i] = d_param;
+				((ImplicitLambdaParameter) Parameters.FixedParameters [i]).Type = d_param;
 			}
+
+			Parameters.Types = ptypes;
 			return Parameters;
 		}
 

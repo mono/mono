@@ -1453,9 +1453,9 @@ namespace Mono.CSharp {
 			}
 			
 			foreach (MethodInfo oper in mi) {
-				ParameterData pd = TypeManager.GetParameterData (oper);
+				AParametersCollection pd = TypeManager.GetParameterData (oper);
 
-				if (pd.ParameterType (0) == child.Type && TypeManager.TypeToCoreType (oper.ReturnType) == type)
+				if (pd.Types [0] == child.Type && TypeManager.TypeToCoreType (oper.ReturnType) == type)
 					return oper;
 			}
 
@@ -1508,9 +1508,9 @@ namespace Mono.CSharp {
 				BindingFlags.Static | BindingFlags.Public, operator_name, null);
 
 			foreach (MethodInfo oper in mi) {
-				ParameterData pd = TypeManager.GetParameterData (oper);
+				AParametersCollection pd = TypeManager.GetParameterData (oper);
 
-				if (pd.ParameterType (0) == child.Type && TypeManager.TypeToCoreType (oper.ReturnType) == type)
+				if (pd.Types [0] == child.Type && TypeManager.TypeToCoreType (oper.ReturnType) == type)
 					return oper;
 			}
 
@@ -1551,8 +1551,8 @@ namespace Mono.CSharp {
 
 				operators = new System.Collections.Specialized.HybridDictionary ();
 				foreach (MethodInfo oper in all_oper) {
-					ParameterData pd = TypeManager.GetParameterData (oper);
-					if (pd.ParameterType (0) == TypeManager.decimal_type)
+					AParametersCollection pd = TypeManager.GetParameterData (oper);
+					if (pd.Types [0] == TypeManager.decimal_type)
 						operators.Add (TypeManager.TypeToCoreType (oper.ReturnType), oper);
 				}
 			}
@@ -3542,8 +3542,8 @@ namespace Mono.CSharp {
 			MethodBase candidate, bool candidate_params,
 			MethodBase best, bool best_params)
 		{
-			ParameterData candidate_pd = TypeManager.GetParameterData (candidate);
-			ParameterData best_pd = TypeManager.GetParameterData (best);
+			AParametersCollection candidate_pd = TypeManager.GetParameterData (candidate);
+			AParametersCollection best_pd = TypeManager.GetParameterData (best);
 		
 			bool better_at_least_one = false;
 			bool same = true;
@@ -3551,16 +3551,16 @@ namespace Mono.CSharp {
 			{
 				Argument a = (Argument) args [j];
 
-				Type ct = TypeManager.TypeToCoreType (candidate_pd.ParameterType (c_idx));
-				Type bt = TypeManager.TypeToCoreType (best_pd.ParameterType (b_idx));
+				Type ct = candidate_pd.Types [c_idx];
+				Type bt = best_pd.Types [b_idx];
 
-				if (candidate_params && candidate_pd.ParameterModifier (c_idx) == Parameter.Modifier.PARAMS) 
+				if (candidate_params && candidate_pd.FixedParameters [c_idx].ModFlags == Parameter.Modifier.PARAMS) 
 				{
 					ct = TypeManager.GetElementType (ct);
 					--c_idx;
 				}
 
-				if (best_params && best_pd.ParameterModifier (b_idx) == Parameter.Modifier.PARAMS) 
+				if (best_params && best_pd.FixedParameters [b_idx].ModFlags == Parameter.Modifier.PARAMS) 
 				{
 					bt = TypeManager.GetElementType (bt);
 					--b_idx;
@@ -3634,14 +3634,14 @@ namespace Mono.CSharp {
 			MethodBase orig_candidate = TypeManager.DropGenericMethodArguments (candidate);
 			MethodBase orig_best = TypeManager.DropGenericMethodArguments (best);
 
-			ParameterData orig_candidate_pd = TypeManager.GetParameterData (orig_candidate);
-			ParameterData orig_best_pd = TypeManager.GetParameterData (orig_best);
+			AParametersCollection orig_candidate_pd = TypeManager.GetParameterData (orig_candidate);
+			AParametersCollection orig_best_pd = TypeManager.GetParameterData (orig_best);
 
 			bool specific_at_least_once = false;
 			for (int j = 0; j < candidate_param_count; ++j) 
 			{
-				Type ct = TypeManager.TypeToCoreType (orig_candidate_pd.ParameterType (j));
-				Type bt = TypeManager.TypeToCoreType (orig_best_pd.ParameterType (j));
+				Type ct = orig_candidate_pd.Types [j];
+				Type bt = orig_best_pd.Types [j];
 				if (ct.Equals (bt))
 					continue;
 				Type specific = MoreSpecific (ct, bt);
@@ -3734,13 +3734,13 @@ namespace Mono.CSharp {
 		}
 
 		protected virtual void Error_InvalidArguments (EmitContext ec, Location loc, int idx, MethodBase method,
-													Argument a, ParameterData expected_par, Type paramType)
+													Argument a, AParametersCollection expected_par, Type paramType)
 		{
 			ExtensionMethodGroupExpr emg = this as ExtensionMethodGroupExpr;
 
 			if (a is CollectionElementInitializer.ElementInitializerArgument) {
 				Report.SymbolRelatedToPreviousError (method);
-				if ((expected_par.ParameterModifier (idx) & Parameter.Modifier.ISBYREF) != 0) {
+				if ((expected_par.FixedParameters [idx].ModFlags & Parameter.Modifier.ISBYREF) != 0) {
 					Report.Error (1954, loc, "The best overloaded collection initalizer method `{0}' cannot have 'ref', or `out' modifier",
 						TypeManager.CSharpSignature (method));
 					return;
@@ -3762,7 +3762,7 @@ namespace Mono.CSharp {
 				Report.Error (1594, loc, "Delegate `{0}' has some invalid arguments",
 					TypeManager.CSharpName (delegate_type));
 
-			Parameter.Modifier mod = expected_par.ParameterModifier (idx);
+			Parameter.Modifier mod = idx >= expected_par.Count ? 0 : expected_par.FixedParameters [idx].ModFlags;
 
 			string index = (idx + 1).ToString ();
 			if (((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) ^
@@ -3799,7 +3799,7 @@ namespace Mono.CSharp {
 				Name, TypeManager.CSharpName (target));
 		}
 		
-		protected virtual int GetApplicableParametersCount (MethodBase method, ParameterData parameters)
+		protected virtual int GetApplicableParametersCount (MethodBase method, AParametersCollection parameters)
 		{
 			return parameters.Count;
 		}		
@@ -3822,7 +3822,7 @@ namespace Mono.CSharp {
 		{
 			MethodBase candidate = method;
 
-			ParameterData pd = TypeManager.GetParameterData (candidate);
+			AParametersCollection pd = TypeManager.GetParameterData (candidate);
 			int param_count = GetApplicableParametersCount (candidate, pd);
 
 			if (arg_count != param_count) {
@@ -3875,7 +3875,7 @@ namespace Mono.CSharp {
 					~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK);
 
 				if (p_mod != Parameter.Modifier.PARAMS) {
-					p_mod = pd.ParameterModifier (i) & ~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK);
+					p_mod = pd.FixedParameters [i].ModFlags & ~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK);
 
 					if (p_mod == Parameter.Modifier.ARGLIST) {
 						if (a.Type == TypeManager.runtime_argument_handle_type)
@@ -3884,7 +3884,7 @@ namespace Mono.CSharp {
 						p_mod = 0;
 					}
 
-					pt = pd.ParameterType (i);
+					pt = pd.Types [i];
 				} else {
 					params_expanded_form = true;
 				}
@@ -3946,18 +3946,18 @@ namespace Mono.CSharp {
 			if (!IsAncestralType (base_method.DeclaringType, cand_method.DeclaringType))
 				return false;
 
-			ParameterData cand_pd = TypeManager.GetParameterData (cand_method);
-			ParameterData base_pd = TypeManager.GetParameterData (base_method);
+			AParametersCollection cand_pd = TypeManager.GetParameterData (cand_method);
+			AParametersCollection base_pd = TypeManager.GetParameterData (base_method);
 		
 			if (cand_pd.Count != base_pd.Count)
 				return false;
 
 			for (int j = 0; j < cand_pd.Count; ++j) 
 			{
-				Parameter.Modifier cm = cand_pd.ParameterModifier (j);
-				Parameter.Modifier bm = base_pd.ParameterModifier (j);
-				Type ct = TypeManager.TypeToCoreType (cand_pd.ParameterType (j));
-				Type bt = TypeManager.TypeToCoreType (base_pd.ParameterType (j));
+				Parameter.Modifier cm = cand_pd.FixedParameters [j].ModFlags;
+				Parameter.Modifier bm = base_pd.FixedParameters [j].ModFlags;
+				Type ct = cand_pd.Types [j];
+				Type bt = base_pd.Types [j];
 
 				if (cm != bm || ct != bt)
 					return false;
@@ -4207,7 +4207,7 @@ namespace Mono.CSharp {
 							return null;
 					}
 
-					ParameterData pd = TypeManager.GetParameterData (best_candidate);
+					AParametersCollection pd = TypeManager.GetParameterData (best_candidate);
 					bool cand_params = candidate_to_form != null && candidate_to_form.Contains (best_candidate);
 					if (arg_count == pd.Count || pd.HasParams) {
 						if (TypeManager.IsGenericMethodDefinition (best_candidate)) {
@@ -4442,7 +4442,7 @@ namespace Mono.CSharp {
 							  bool chose_params_expanded,
 							  bool may_fail, Location loc)
 		{
-			ParameterData pd = TypeManager.GetParameterData (method);
+			AParametersCollection pd = TypeManager.GetParameterData (method);
 
 			int errors = Report.Errors;
 			Parameter.Modifier p_mod = 0;
@@ -4455,8 +4455,8 @@ namespace Mono.CSharp {
 			for (; a_idx < arg_count; a_idx++, ++a_pos) {
 				a = (Argument) arguments [a_idx];
 				if (p_mod != Parameter.Modifier.PARAMS) {
-					p_mod = pd.ParameterModifier (a_idx);
-					pt = pd.ParameterType (a_idx);
+					p_mod = pd.FixedParameters [a_idx].ModFlags;
+					pt = pd.Types [a_idx];
 					has_unsafe_arg |= pt.IsPointer;
 
 					if (p_mod == Parameter.Modifier.ARGLIST) {
@@ -4470,8 +4470,6 @@ namespace Mono.CSharp {
 							params_initializers = new ArrayList (arg_count - a_idx);
 							pt = TypeManager.GetElementType (pt);
 						}
-					} else if (p_mod != 0) {
-						pt = TypeManager.GetElementType (pt);
 					}
 				}
 
@@ -5340,7 +5338,7 @@ namespace Mono.CSharp {
 			
 			StringBuilder sig = new StringBuilder (TypeManager.CSharpName (mi.DeclaringType));
 			sig.Append ('.');
-			ParameterData iparams = TypeManager.GetParameterData (mi);
+			AParametersCollection iparams = TypeManager.GetParameterData (mi);
 			sig.Append (getter ? "get_" : "set_");
 			sig.Append (Name);
 			sig.Append (iparams.GetSignatureForError ());

@@ -143,17 +143,21 @@ namespace Mono.CSharp {
 	public class ImplicitLambdaParameter : Parameter
 	{
 		public ImplicitLambdaParameter (string name, Location loc)
-			: base ((Type)null, name, Modifier.NONE, null, loc)
+			: base (null, name, Modifier.NONE, null, loc)
 		{
 		}
 
-		public override bool Resolve (IResolveContext ec)
+		public override Type Resolve (IResolveContext ec)
 		{
 			if (parameter_type == null)
 				throw new InternalErrorException ("A type of implicit lambda parameter `{0}' is not set",
 					Name);
 
-			return true;
+			return parameter_type;
+		}
+
+		public Type Type {
+			set { parameter_type = value; }
 		}
 	}
 
@@ -163,28 +167,22 @@ namespace Mono.CSharp {
 		{
 		}
 
-		ParamsParameter (Type type, string name, Attributes attrs, Location loc)
-			: base (type, name, Modifier.PARAMS, attrs, loc)
-		{
-		}
-
 		public override Parameter Clone ()
 		{
-			return parameter_type == null ?
-				new ParamsParameter (TypeName, Name, attributes, Location) :
-				new ParamsParameter (parameter_type, Name, attributes, Location);
+			return new ParamsParameter (TypeName, Name, attributes, Location);
 		}
 
-		public override bool Resolve (IResolveContext ec)
+		public override Type Resolve (IResolveContext ec)
 		{
-			if (!base.Resolve (ec))
-				return false;
+			if (base.Resolve (ec) == null)
+				return null;
 
 			if (!parameter_type.IsArray || parameter_type.GetArrayRank () != 1) {
 				Report.Error (225, Location, "The params parameter must be a single dimensional array");
-				return false;
+				return null;
 			}
-			return true;
+
+			return parameter_type;
 		}
 
 		public override void ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index)
@@ -210,9 +208,14 @@ namespace Mono.CSharp {
 
 	public class ArglistParameter : Parameter {
 		// Doesn't have proper type because it's never chosen for better conversion
-		public ArglistParameter () :
-			base (typeof (ArglistParameter), String.Empty, Parameter.Modifier.ARGLIST, null, Location.Null)
+		public ArglistParameter (Location loc) :
+			base (null, String.Empty, Parameter.Modifier.ARGLIST, null, loc)
 		{
+		}
+
+		public override void  ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index)
+		{
+			// Nothing to do
 		}
 
 		public override bool CheckAccessibility (InterfaceMemberBase member)
@@ -220,9 +223,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override bool Resolve (IResolveContext ec)
+		public override Type Resolve (IResolveContext ec)
 		{
-			return true;
+			return typeof (ArglistParameter);
 		}
 
 		public override string GetSignatureForError ()
@@ -231,10 +234,17 @@ namespace Mono.CSharp {
 		}
 	}
 
-	/// <summary>
-	///   Represents a single method parameter
-	/// </summary>
-	public class Parameter : ParameterBase, ILocalVariable {
+	public interface IParameterData
+	{
+		bool HasExtensionMethodModifier { get; }
+		Parameter.Modifier ModFlags { get; }
+		string Name { get; }
+	}
+
+	//
+	// Parameter information created by parser
+	//
+	public class Parameter : ParameterBase, IParameterData, ILocalVariable {
 		[Flags]
 		public enum Modifier : byte {
 			NONE    = 0,
@@ -253,7 +263,7 @@ namespace Mono.CSharp {
 
 		protected FullNamedExpression TypeName;
 		readonly Modifier modFlags;
-		public string Name;
+		string name;
 		protected Type parameter_type;
 		public readonly Location Location;
 		int idx;
@@ -266,21 +276,15 @@ namespace Mono.CSharp {
 		public HoistedVariable HoistedVariableReference;
 
 		public Parameter (FullNamedExpression type, string name, Modifier mod, Attributes attrs, Location loc)
-			: this (type.Type, name, mod, attrs, loc)
+			: base (attrs)
 		{
 			if (type == TypeManager.system_void_expr)
 				Report.Error (1536, loc, "Invalid parameter type `void'");
-			
-			TypeName = type;
-		}
 
-		public Parameter (Type type, string name, Modifier mod, Attributes attrs, Location loc)
-			: base (attrs)
-		{
-			Name = name;
+			this.name = name;
 			modFlags = mod;
-			parameter_type = type;
 			Location = loc;
+			TypeName = type;
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
@@ -340,7 +344,7 @@ namespace Mono.CSharp {
 		
 		public virtual bool CheckAccessibility (InterfaceMemberBase member)
 		{
-			if (TypeManager.IsGenericParameter (parameter_type))
+			if (parameter_type == null || TypeManager.IsGenericParameter (parameter_type))
 				return true;
 
 			return member.IsAccessibleAs (parameter_type);
@@ -355,62 +359,53 @@ namespace Mono.CSharp {
 		// <summary>
 		//   Resolve is used in method definitions
 		// </summary>
-		public virtual bool Resolve (IResolveContext ec)
+		public virtual Type Resolve (IResolveContext ec)
 		{
 			// HACK: to resolve attributes correctly
 			this.resolve_context = ec;
 
 			if (parameter_type != null)
-				return true;
+				return parameter_type;
 
 			TypeExpr texpr = TypeName.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
-				return false;
+				return null;
 
 			parameter_type = texpr.Type;
+
+			if ((modFlags & Parameter.Modifier.ISBYREF) != 0) {
+				if (parameter_type == TypeManager.typed_reference_type ||
+					parameter_type == TypeManager.arg_iterator_type) {
+					Report.Error (1601, Location, "Method or delegate parameter cannot be of type `{0}'",
+						GetSignatureForError ());
+					return null;
+				}
+			}
 
 #if GMCS_SOURCE
 			TypeParameterExpr tparam = texpr as TypeParameterExpr;
 			if (tparam != null) {
-				return true;
+				return parameter_type;
 			}
 #endif
 
 			if ((parameter_type.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute) {
 				Report.Error (721, Location, "`{0}': static types cannot be used as parameters",
 					texpr.GetSignatureForError ());
-				return false;
-			}
-
-			if ((modFlags & Parameter.Modifier.ISBYREF) != 0){
-				if (parameter_type == TypeManager.typed_reference_type ||
-				    parameter_type == TypeManager.arg_iterator_type){
-					Report.Error (1601, Location, "Method or delegate parameter cannot be of type `{0}'",
-						GetSignatureForError ());
-					return false;
-				}
+				return parameter_type;
 			}
 
 			if ((modFlags & Modifier.This) != 0 && parameter_type.IsPointer) {
 				Report.Error (1103, Location, "The type of extension method cannot be `{0}'",
 					TypeManager.CSharpName (parameter_type));
-				return false;
 			}
-			
-			return true;
+
+			return parameter_type;
 		}
 
 		public void ResolveVariable (int idx)
 		{
 			this.idx = idx;
-		}
-
-		public Type ExternalType ()
-		{
-			if ((modFlags & Parameter.Modifier.ISBYREF) != 0)
-				return TypeManager.GetReferenceType (parameter_type);
-			
-			return parameter_type;
 		}
 
 		public bool HasExtensionMethodModifier {
@@ -421,40 +416,15 @@ namespace Mono.CSharp {
 			get { return modFlags & ~Modifier.This; }
 		}
 
-		public Type ParameterType {
-			get {
-				return parameter_type;
-			}
-			set {
-				parameter_type = value;
-			}
+		public string Name {
+			get { return name; }
+			set { name = value; }
 		}
 
 		ParameterAttributes Attributes {
-			get {
-				return (modFlags & Modifier.OUT) == Modifier.OUT ?
-					ParameterAttributes.Out : ParameterAttributes.None;
-			}
+			get { return Parameters.GetParameterAttribute (modFlags); }
 		}
 
-		// TODO: should be removed !!!!!!!
-		public static ParameterAttributes GetParameterAttributes (Modifier mod)
-		{
-			int flags = ((int) mod) & ~((int) Parameter.Modifier.ISBYREF);
-			switch ((Modifier) flags) {
-			case Modifier.NONE:
-				return ParameterAttributes.None;
-			case Modifier.REF:
-				return ParameterAttributes.None;
-			case Modifier.OUT:
-				return ParameterAttributes.Out;
-			case Modifier.PARAMS:
-				return 0;
-			}
-				
-			return ParameterAttributes.None;
-		}
-		
 		public override AttributeTargets AttributeTargets {
 			get {
 				return AttributeTargets.Parameter;
@@ -471,7 +441,7 @@ namespace Mono.CSharp {
 
 			string mod = GetModifierSignature (modFlags);
 			if (mod.Length > 0)
-				return String.Concat (mod, ' ', type_name);
+				return String.Concat (mod, " ", type_name);
 
 			return type_name;
 		}
@@ -485,8 +455,6 @@ namespace Mono.CSharp {
 					return "params";
 				case Modifier.REF:
 					return "ref";
-				case Modifier.ARGLIST:
-					return "__arglist";
 				case Modifier.This:
 					return "this";
 				default:
@@ -496,7 +464,7 @@ namespace Mono.CSharp {
 
 		public void IsClsCompliant ()
 		{
-			if (AttributeTester.IsClsCompliant (ExternalType ()))
+			if (AttributeTester.IsClsCompliant (parameter_type))
 				return;
 
 			Report.Warning (3001, 1, Location, "Argument type `{0}' is not CLS-compliant", GetSignatureForError ());
@@ -521,9 +489,7 @@ namespace Mono.CSharp {
 
 		public virtual Parameter Clone ()
 		{
-			return parameter_type == null ?
-				new Parameter (TypeName, Name, modFlags, attributes, Location) :
-				new Parameter (parameter_type, Name, modFlags, attributes, Location);
+			return new Parameter (TypeName, Name, modFlags, attributes, Location);
 		}
 
 		public ExpressionStatement CreateExpressionTreeVariable (EmitContext ec)
@@ -614,69 +580,323 @@ namespace Mono.CSharp {
 		}
 	}
 
+	//
+	// Imported or resolved parameter information
+	//
+	public class ParameterData : IParameterData
+	{
+		readonly string name;
+		readonly Parameter.Modifier modifiers;
+
+		public ParameterData (string name, Parameter.Modifier modifiers)
+		{
+			this.name = name;
+			this.modifiers = modifiers;
+		}
+
+		#region IParameterData Members
+
+		public bool HasExtensionMethodModifier {
+			get { return (modifiers & Parameter.Modifier.This) != 0; }
+		}
+
+		public Parameter.Modifier ModFlags {
+			get { return modifiers & ~Parameter.Modifier.This; }
+		}
+
+		public string Name {
+			get { return name; }
+		}
+
+		#endregion
+	}
+
+	public abstract class AParametersCollection
+	{
+		protected bool has_arglist;
+		protected bool has_params;
+
+		// Null object pattern
+		protected IParameterData [] parameters;
+		protected Type [] types;
+
+		public int Count {
+			get { return parameters.Length; }
+		}
+
+		public Type ExtensionMethodType {
+			get {
+				if (Count == 0)
+					return null;
+
+				return FixedParameters [0].HasExtensionMethodModifier ?
+					types [0] : null;
+			}
+		}
+
+		public IParameterData [] FixedParameters {
+			get {
+				return parameters;
+			}
+		}
+
+		public static ParameterAttributes GetParameterAttribute (Parameter.Modifier modFlags)
+		{
+			return (modFlags & Parameter.Modifier.OUT) == Parameter.Modifier.OUT ?
+				ParameterAttributes.Out : ParameterAttributes.None;
+		}
+
+		public Type [] GetEmitTypes ()
+		{
+			Type [] types = null;
+			if (has_arglist) {
+				if (Count == 1)
+					return Type.EmptyTypes;
+
+				types = new Type [Count - 1];
+				Array.Copy (Types, types, types.Length);
+			}
+
+			for (int i = 0; i < Count; ++i) {
+				if ((FixedParameters [i].ModFlags & Parameter.Modifier.ISBYREF) == 0)
+					continue;
+
+				if (types == null)
+					types = (Type []) Types.Clone ();
+
+				types [i] = TypeManager.GetReferenceType (types [i]);
+			}
+
+			if (types == null)
+				types = Types;
+
+			return types;
+		}
+
+		public string GetSignatureForError ()
+		{
+			StringBuilder sb = new StringBuilder ("(");
+			for (int i = 0; i < Count; ++i) {
+				if (i != 0)
+					sb.Append (", ");
+				sb.Append (ParameterDesc (i));
+			}
+			sb.Append (')');
+			return sb.ToString ();
+		}
+
+		public bool HasArglist {
+			get { return has_arglist; }
+		}
+
+		public bool HasExtensionMethodType {
+			get {
+				if (Count == 0)
+					return false;
+
+				return FixedParameters [0].HasExtensionMethodModifier;
+			}
+		}
+
+		public bool HasParams {
+			get { return has_params; }
+		}
+
+		public bool IsEmpty {
+			get { return parameters.Length == 0; }
+		}
+
+		public string ParameterDesc (int pos)
+		{
+			if (types == null || types [pos] == null)
+				return ((Parameter)FixedParameters [pos]).GetSignatureForError ();
+
+			string type = TypeManager.CSharpName (types [pos]);
+			if (FixedParameters [pos].HasExtensionMethodModifier)
+				return "this " + type;
+
+			Parameter.Modifier mod = FixedParameters [pos].ModFlags & ~Parameter.Modifier.ARGLIST;
+			if (mod == 0)
+				return type;
+
+			return Parameter.GetModifierSignature (mod) + " " + type;
+		}
+
+		public Type[] Types {
+			get { return types; }
+			set { types = value; }
+		}
+	}
+
+	//
+	// A collection of imported or resolved parameters
+	//
+	public class ParametersCollection : AParametersCollection
+	{
+		ParametersCollection (AParametersCollection param, Type[] types)
+		{
+			this.parameters = param.FixedParameters;
+			this.types = types;
+			has_arglist = param.HasArglist;
+			has_params = param.HasParams;
+		}
+
+		ParametersCollection (IParameterData [] parameters, Type [] types, MethodBase method, bool hasParams)
+		{
+			this.parameters = parameters;
+			this.types = types;
+			has_arglist = (method.CallingConvention & CallingConventions.VarArgs) != 0;
+			if (has_arglist) {
+				this.parameters = new IParameterData [parameters.Length + 1];
+				parameters.CopyTo (this.parameters, 0);
+				this.parameters [parameters.Length] = new ArglistParameter (Location.Null);
+				this.types = new Type [types.Length + 1];
+				types.CopyTo (this.types, 0);
+				this.types [types.Length] = TypeManager.arg_iterator_type;
+			}
+			has_params = hasParams;
+		}
+
+		public ParametersCollection (IParameterData [] param, Type[] types)
+		{
+			this.parameters = param;
+			this.types = types;
+		}
+
+		public static AParametersCollection Create (MethodBase method)
+		{
+			return Create (method.GetParameters (), method);
+		}
+
+		//
+		// Generic method parameters importer, param is shared between all instances
+		//
+		public static AParametersCollection Create (AParametersCollection param, MethodBase method)
+		{
+			if (param.IsEmpty)
+				return param;
+
+			ParameterInfo [] pi = method.GetParameters ();
+			Type [] types = new Type [pi.Length];
+			for (int i = 0; i < types.Length; i++) {
+				Type t = pi [i].ParameterType;
+				if (t.IsByRef)
+					t = TypeManager.GetElementType (t);
+
+				types [i] = TypeManager.TypeToCoreType (t);
+			}
+
+			return new ParametersCollection (param, types);
+		}
+
+		//
+		// Imports SRE parameters
+		//
+		public static AParametersCollection Create (ParameterInfo [] pi, MethodBase method)
+		{
+			if (pi.Length == 0) {
+				if (method != null && (method.CallingConvention & CallingConventions.VarArgs) != 0)
+					return new ParametersCollection (new IParameterData [0], Type.EmptyTypes, method, false);
+
+				return Parameters.EmptyReadOnlyParameters;
+			}
+
+			Type [] types = new Type [pi.Length];
+			IParameterData [] par = new IParameterData [pi.Length];
+			bool is_params = false;
+			for (int i = 0; i < types.Length; i++) {
+				types [i] = TypeManager.TypeToCoreType (pi [i].ParameterType);
+
+				ParameterInfo p = pi [i];
+				Parameter.Modifier mod = 0;
+				if (types [i].IsByRef) {
+					if ((p.Attributes & (ParameterAttributes.Out | ParameterAttributes.In)) == ParameterAttributes.Out)
+						mod = Parameter.Modifier.OUT;
+					else
+						mod = Parameter.Modifier.REF;
+
+					//
+					// Strip reference wrapping
+					//
+					types [i] = TypeManager.GetElementType (types [i]);
+				} else if (i == 0 && TypeManager.extension_attribute_type != null && method != null && method.IsStatic &&
+			        (method.DeclaringType.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute &&
+			        method.IsDefined (TypeManager.extension_attribute_type, false)) {
+					mod = Parameter.Modifier.This;
+				} else if (i >= pi.Length - 2 && types [i].IsArray) {
+					if (p.IsDefined (TypeManager.param_array_type, false)) {
+						mod = Parameter.Modifier.PARAMS;
+						is_params = true;
+					}
+				}
+
+				par [i] = new ParameterData (p.Name, mod);
+			}
+
+			return method != null ?
+				new ParametersCollection (par, types, method, is_params) :
+				new ParametersCollection (par, types);
+		}
+	}
+
 	/// <summary>
 	///   Represents the methods parameters
 	/// </summary>
-	public class Parameters : ParameterData {
-		// Null object pattern
-		public readonly Parameter [] FixedParameters;
-		public readonly bool HasArglist;
-		Type [] types;
-		readonly int count;
-
+	public class Parameters : AParametersCollection {
 		public static readonly Parameters EmptyReadOnlyParameters = new Parameters ();
-		static readonly Parameter ArgList = new ArglistParameter ();
-
-#if GMCS_SOURCE
-//		public readonly TypeParameter[] TypeParameters;
-#endif
 
 		private Parameters ()
 		{
-			FixedParameters = new Parameter[0];
+			parameters = new Parameter [0];
 			types = Type.EmptyTypes;
 		}
 
-		private Parameters (Parameter[] parameters, Type[] types)
+		private Parameters (Parameter [] parameters, Type [] types)
 		{
-			FixedParameters = parameters;
-			count = parameters.Length;
-			this.types = types;
+			this.parameters = parameters;
+		    this.types = types;
 		}
 		
 		public Parameters (params Parameter[] parameters)
 		{
 			if (parameters == null)
-				throw new ArgumentException ("Use EmptyReadOnlyPatameters");
+				throw new ArgumentException ("Use EmptyReadOnlyParameters");
 
-			FixedParameters = parameters;
-			count = parameters.Length;
+			this.parameters = parameters;
+			int count = parameters.Length;
 
-			if (count < 2)
+			if (count == 0)
 				return;
 
+			if (count == 1) {
+				has_params = (parameters [0].ModFlags & Parameter.Modifier.PARAMS) != 0;
+				return;
+			}
+
 			for (int i = 0; i < count; i++){
-				string base_name = FixedParameters [i].Name;
+				string base_name = parameters [i].Name;
+				has_params |= (parameters [i].ModFlags & Parameter.Modifier.PARAMS) != 0;
+
 				for (int j = i + 1; j < count; j++){
-					if (base_name != FixedParameters [j].Name)
+					if (base_name != parameters [j].Name)
 						continue;
 
-					Report.Error (100, FixedParameters [i].Location,
+					Report.Error (100, parameters [i].Location,
 						"The parameter name `{0}' is a duplicate", base_name);
 					i = j;
 				}
 			}
 		}
 
-		public Parameters (Parameter[] parameters, bool has_arglist):
+		public Parameters (Parameter [] parameters, bool has_arglist) :
 			this (parameters)
 		{
-			HasArglist = has_arglist;
+			this.has_arglist = has_arglist;
 		}
 		
-		public static Parameters CreateFullyResolved (Parameter p)
+		public static Parameters CreateFullyResolved (Parameter p, Type type)
 		{
-			return new Parameters (new Parameter [] { p }, new Type [] { p.ParameterType });
+			return new Parameters (new Parameter [] { p }, new Type [] { type });
 		}
 		
 		public static Parameters CreateFullyResolved (Parameter[] parameters, Type[] types)
@@ -684,12 +904,19 @@ namespace Mono.CSharp {
 			return new Parameters (parameters, types);
 		}
 
-		/// <summary>
-		/// Use this method when you merge compiler generated argument with user arguments
-		/// </summary>
-		public static Parameters MergeGenerated (Parameters userParams, bool checkConflicts, params Parameter[] compilerParams)
+		public static Parameters MergeGenerated (Parameters userParams, bool checkConflicts, Parameter compilerParams, Type compilerTypes)
 		{
-			Parameter[] all_params = new Parameter [userParams.count + compilerParams.Length];
+			return MergeGenerated (userParams, checkConflicts,
+				new Parameter [] { compilerParams },
+				new Type [] { compilerTypes });
+		}
+
+		//
+		// Use this method when you merge compiler generated parameters with user parameters
+		//
+		public static Parameters MergeGenerated (Parameters userParams, bool checkConflicts, Parameter[] compilerParams, Type[] compilerTypes)
+		{
+			Parameter[] all_params = new Parameter [userParams.Count + compilerParams.Length];
 			userParams.FixedParameters.CopyTo(all_params, 0);
 
 			Type [] all_types;
@@ -701,10 +928,11 @@ namespace Mono.CSharp {
 			}
 
 			int last_filled = userParams.Count;
+			int index = 0;
 			foreach (Parameter p in compilerParams) {
 				for (int i = 0; i < last_filled; ++i) {
 					while (p.Name == all_params [i].Name) {
-						if (checkConflicts && i < userParams.count) {
+						if (checkConflicts && i < userParams.Count) {
 							Report.Error (316, userParams [i].Location,
 								"The parameter name `{0}' conflicts with a compiler generated name", p.Name);
 						}
@@ -713,45 +941,13 @@ namespace Mono.CSharp {
 				}
 				all_params [last_filled] = p;
 				if (all_types != null)
-					all_types [last_filled] = p.ParameterType;
+					all_types [last_filled] = compilerTypes [index++];
 				++last_filled;
 			}
 			
-			return new Parameters (all_params, all_types);
-		}
-
-		public bool Empty {
-			get {
-				return count == 0;
-			}
-		}
-
-		public int Count {
-			get {
-				return HasArglist ? count + 1 : count;
-			}
-		}
-
-		//
-		// The property can be used after parameter types were resolved.
-		//
-		public Type ExtensionMethodType {
-			get {
-				if (count == 0)
-					return null;
-
-				return FixedParameters [0].HasExtensionMethodModifier ?
-					types [0] : null;
-			}
-		}
-
-		public bool HasExtensionMethodType {
-			get {
-				if (count == 0)
-					return false;
-
-				return FixedParameters [0].HasExtensionMethodModifier;
-			}
+			Parameters parameters = new Parameters (all_params, all_types);
+			parameters.has_params = userParams.has_params;
+			return parameters;
 		}
 
 		/// <summary>
@@ -761,7 +957,7 @@ namespace Mono.CSharp {
 		{
 			idx = 0;
 
-			if (count == 0)
+			if (Count == 0)
 				return null;
 
 			int i = 0;
@@ -788,17 +984,19 @@ namespace Mono.CSharp {
 			if (types != null)
 				return true;
 
-			types = new Type [count];
+			types = new Type [Count];
 			
 			bool ok = true;
 			Parameter p;
 			for (int i = 0; i < FixedParameters.Length; ++i) {
-				p = FixedParameters [i];
-				if (!p.Resolve (ec)) {
+				p = this [i];
+				Type t = p.Resolve (ec);
+				if (t == null) {
 					ok = false;
 					continue;
 				}
-				types [i] = p.ExternalType ();
+
+				types [i] = t;
 			}
 
 			return ok;
@@ -807,8 +1005,7 @@ namespace Mono.CSharp {
 		public void ResolveVariable ()
 		{
 			for (int i = 0; i < FixedParameters.Length; ++i) {
-				Parameter p = FixedParameters [i];
-				p.ResolveVariable (i);
+				this [i].ResolveVariable (i);
 			}
 		}
 
@@ -826,22 +1023,22 @@ namespace Mono.CSharp {
 		// the argument names.
 		public void ApplyAttributes (MethodBase builder)
 		{
-			if (count == 0)
+			if (Count == 0)
 				return;
 
 			MethodBuilder mb = builder as MethodBuilder;
 			ConstructorBuilder cb = builder as ConstructorBuilder;
 
-			for (int i = 0; i < FixedParameters.Length; i++) {
-				FixedParameters [i].ApplyAttributes (mb, cb, i + 1);
+			for (int i = 0; i < Count; i++) {
+				this [i].ApplyAttributes (mb, cb, i + 1);
 			}
 		}
 
 #if MS_COMPATIBLE
-		public ParameterData InflateTypes (Type[] genArguments, Type[] argTypes)
+		public AParametersCollection InflateTypes (Type[] genArguments, Type[] argTypes)
 		{
 			Parameters p = Clone ();
-			for (int i = 0; i < count; ++i) {
+			for (int i = 0; i < Count; ++i) {
 				if (types[i].IsGenericType) {
 					Type[] gen_arguments_open = new Type [types[i].GetGenericTypeDefinition ().GetGenericArguments ().Length];
 					Type[] gen_arguments = types[i].GetGenericArguments ();
@@ -853,14 +1050,13 @@ namespace Mono.CSharp {
 							gen_arguments_open[ii] = gen_arguments[ii];
 					}
 
-					p.FixedParameters [i].ParameterType = p.types[i] =
-						types[i].GetGenericTypeDefinition ().MakeGenericType (gen_arguments_open);
+					p.types[i] = types[i].GetGenericTypeDefinition ().MakeGenericType (gen_arguments_open);
 					continue;
 				}
 
 				if (types[i].IsGenericParameter) {
 					Type gen_argument = argTypes[types[i].GenericParameterPosition];
-					p.FixedParameters[i].ParameterType = p.types[i] = gen_argument;
+					p.types[i] = gen_argument;
 					continue;
 				}
 			}
@@ -875,91 +1071,13 @@ namespace Mono.CSharp {
 				p.IsClsCompliant ();
 		}
 
-		public string GetSignatureForError ()
-		{
-			StringBuilder sb = new StringBuilder ("(");
-			if (count > 0) {
-				for (int i = 0; i < FixedParameters.Length; ++i) {
-					sb.Append (FixedParameters[i].GetSignatureForError ());
-					if (i < FixedParameters.Length - 1)
-						sb.Append (", ");
-				}
-			}
-
-			if (HasArglist) {
-				if (sb.Length > 1)
-					sb.Append (", ");
-				sb.Append ("__arglist");
-			}
-
-			sb.Append (')');
-			return sb.ToString ();
-		}
-
-		public Type[] Types {
-			get {
-				return types;
-			}
-			//
-			// Dangerous, used by implicit lambda parameters
-			// only to workaround bad design
-			//
-			set {
-				types = value;
-			}
-		}
-
-		public Parameter this [int pos]
-		{
-			get {
-				if (pos >= count && (HasArglist || HasParams)) {
-					if (HasArglist && (pos == 0 || pos >= count))
-						return ArgList;
-					pos = count - 1;
-				}
-
-				return FixedParameters [pos];
-			}
-		}
-
-		#region ParameterData Members
-
-		public Type ParameterType (int pos)
-		{
-			return this [pos].ExternalType ();
-		}
-
-		public bool HasParams {
-			get {
-				if (count == 0)
-					return false;
-
-				for (int i = count; i != 0; --i) {
-					if ((FixedParameters [i - 1].ModFlags & Parameter.Modifier.PARAMS) != 0)
-						return true;
-				}
-				return false;
-			}
-		}
-
-		public string ParameterName (int pos)
-		{
-			return this [pos].Name;
-		}
-
-		public string ParameterDesc (int pos)
-		{
-			return this [pos].GetSignatureForError ();
-		}
-
-		public Parameter.Modifier ParameterModifier (int pos)
-		{
-			return this [pos].ModFlags;
+		public Parameter this [int pos] {
+			get { return (Parameter) parameters [pos]; }
 		}
 
 		public Expression CreateExpressionTree (EmitContext ec, Location loc)
 		{
-			ArrayList initializers = new ArrayList (count);
+			ArrayList initializers = new ArrayList (Count);
 			foreach (Parameter p in FixedParameters) {
 				//
 				// Each parameter expression is stored to local variable
@@ -988,7 +1106,5 @@ namespace Mono.CSharp {
 				ps.types = (Type[])types.Clone ();
 			return ps;
 		}
-		
-		#endregion
 	}
 }

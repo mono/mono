@@ -3668,7 +3668,7 @@ namespace Mono.CSharp {
 		{
 			MethodInfo method = (MethodInfo)mg;
 			type = TypeManager.TypeToCoreType (method.ReturnType);
-			ParameterData pd = TypeManager.GetParameterData (method);
+			AParametersCollection pd = TypeManager.GetParameterData (method);
 			if (!TypeManager.IsEqual (type, type) || !TypeManager.IsEqual (type, pd.Types [0]) || !TypeManager.IsEqual (type, pd.Types [1])) {
 				Report.Error (217, loc,
 					"A user-defined operator `{0}' must have parameters and return values of the same type in order to be applicable as a short circuit operator",
@@ -4406,8 +4406,7 @@ namespace Mono.CSharp {
 
 		bool DoResolveBase (EmitContext ec)
 		{
-			Parameter par = Parameter;
-			type = par.ParameterType;
+			type = pi.ParameterType;
 			eclass = ExprClass.Variable;
 
 			AnonymousExpression am = ec.CurrentAnonymousMethod;
@@ -4545,12 +4544,7 @@ namespace Mono.CSharp {
 		}
 
 		public Type Type {
-			get {
-				if (ArgType == AType.Ref || ArgType == AType.Out)
-					return TypeManager.GetReferenceType (Expr.Type);
-				else
-					return Expr.Type;
-			}
+			get { return Expr.Type; }
 		}
 
 		public Parameter.Modifier Modifier
@@ -4888,11 +4882,8 @@ namespace Mono.CSharp {
 
 		static Type[] GetVarargsTypes (MethodBase mb, ArrayList arguments)
 		{
-			ParameterData pd = TypeManager.GetParameterData (mb);
-
-			if (arguments == null)
-				return Type.EmptyTypes;
-
+			AParametersCollection pd = TypeManager.GetParameterData (mb);
+			
 			Argument a = (Argument) arguments [pd.Count - 1];
 			Arglist list = (Arglist) a.Expr;
 
@@ -8268,7 +8259,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			protected override int GetApplicableParametersCount (MethodBase method, ParameterData parameters)
+			protected override int GetApplicableParametersCount (MethodBase method, AParametersCollection parameters)
 			{
 				//
 				// Here is the trick, decrease number of arguments by 1 when only

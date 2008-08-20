@@ -854,7 +854,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		protected bool VerifyExplicitParameters (Type delegate_type, ParameterData parameters, bool ignore_error)
+		protected bool VerifyExplicitParameters (Type delegate_type, AParametersCollection parameters, bool ignore_error)
 		{
 			if (VerifyParameterCompatibility (delegate_type, parameters, ignore_error))
 				return true;
@@ -867,7 +867,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		protected bool VerifyParameterCompatibility (Type delegate_type, ParameterData invoke_pd, bool ignore_errors)
+		protected bool VerifyParameterCompatibility (Type delegate_type, AParametersCollection invoke_pd, bool ignore_errors)
 		{
 			if (Parameters.Count != invoke_pd.Count) {
 				if (ignore_errors)
@@ -882,14 +882,14 @@ namespace Mono.CSharp {
 			bool error = false;
 
 			for (int i = 0; i < Parameters.Count; ++i) {
-				Parameter.Modifier p_mod = invoke_pd.ParameterModifier (i);
-				if (Parameters.ParameterModifier (i) != p_mod && p_mod != Parameter.Modifier.PARAMS) {
+				Parameter.Modifier p_mod = invoke_pd.FixedParameters [i].ModFlags;
+				if (Parameters.FixedParameters [i].ModFlags != p_mod && p_mod != Parameter.Modifier.PARAMS) {
 					if (ignore_errors)
 						return false;
 					
 					if (p_mod == Parameter.Modifier.NONE)
 						Report.Error (1677, loc, "Parameter `{0}' should not be declared with the `{1}' keyword",
-							      (i + 1).ToString (), Parameter.GetModifierSignature (Parameters.ParameterModifier (i)));
+							      (i + 1).ToString (), Parameter.GetModifierSignature (Parameters.FixedParameters [i].ModFlags));
 					else
 						Report.Error (1676, loc, "Parameter `{0}' must be declared with the `{1}' keyword",
 							      (i+1).ToString (), Parameter.GetModifierSignature (p_mod));
@@ -908,14 +908,14 @@ namespace Mono.CSharp {
 				if (TypeManager.HasElementType (type) && TypeManager.IsGenericParameter (TypeManager.GetElementType (type)))
 					continue;
 				
-				if (invoke_pd.ParameterType (i) != Parameters.ParameterType (i)) {
+				if (invoke_pd.Types [i] != Parameters.Types [i]) {
 					if (ignore_errors)
 						return false;
 					
 					Report.Error (1678, loc, "Parameter `{0}' is declared as type `{1}' but should be `{2}'",
 						      (i+1).ToString (),
-						      TypeManager.CSharpName (Parameters.ParameterType (i)),
-						      TypeManager.CSharpName (invoke_pd.ParameterType (i)));
+						      TypeManager.CSharpName (Parameters.Types [i]),
+						      TypeManager.CSharpName (invoke_pd.Types [i]));
 					error = true;
 				}
 			}
@@ -944,7 +944,7 @@ namespace Mono.CSharp {
 #endif
 			}
 			
-			ParameterData d_params = TypeManager.GetDelegateParameters (delegate_type);
+			AParametersCollection d_params = TypeManager.GetDelegateParameters (delegate_type);
 			if (d_params.Count != Parameters.Count)
 				return false;
 
@@ -957,7 +957,7 @@ namespace Mono.CSharp {
 					if (!TypeManager.IsGenericParameter (itype.GetElementType ()))
 					    continue;
 				}
-				type_inference.ExactInference (Parameters.FixedParameters[i].ParameterType, itype);
+				type_inference.ExactInference (Parameters.Types [i], itype);
 			}
 			return true;
 		}
@@ -1042,7 +1042,7 @@ namespace Mono.CSharp {
 
 		protected virtual Parameters ResolveParameters (EmitContext ec, TypeInferenceContext tic, Type delegate_type)
 		{
-			ParameterData delegate_parameters = TypeManager.GetDelegateParameters (delegate_type);
+			AParametersCollection delegate_parameters = TypeManager.GetDelegateParameters (delegate_type);
 
 			if (Parameters == null) {
 				//
@@ -1051,8 +1051,8 @@ namespace Mono.CSharp {
 				Parameter[] fixedpars = new Parameter[delegate_parameters.Count];
 
 				for (int i = 0; i < delegate_parameters.Count; i++) {
-					Parameter.Modifier i_mod = delegate_parameters.ParameterModifier (i);
-					if ((i_mod & Parameter.Modifier.OUTMASK) != 0) {
+					Parameter.Modifier i_mod = delegate_parameters.FixedParameters [i].ModFlags;
+					if (i_mod == Parameter.Modifier.OUT) {
 						Report.Error (1688, loc, "Cannot convert anonymous " +
 								  "method block without a parameter list " +
 								  "to delegate type `{0}' because it has " +
@@ -1061,8 +1061,8 @@ namespace Mono.CSharp {
 						return null;
 					}
 					fixedpars[i] = new Parameter (
-						delegate_parameters.ParameterType (i), null,
-						delegate_parameters.ParameterModifier (i), null, loc);
+						null, null,
+						delegate_parameters.FixedParameters [i].ModFlags, null, loc);
 				}
 
 				return Parameters.CreateFullyResolved (fixedpars, delegate_parameters.Types);
@@ -1191,7 +1191,7 @@ namespace Mono.CSharp {
 				if (Storey != null && Storey.IsGeneric && Storey.HasHoistedVariables) {
 					AnonymousMethodStorey gstorey = Storey.GetGenericStorey ();
 					if (gstorey != null) {
-						if (!Parameters.Empty) {
+						if (!Parameters.IsEmpty) {
 							Type [] ptypes = Parameters.Types;
 							for (int i = 0; i < ptypes.Length; ++i)
 								ptypes [i] = gstorey.MutateType (ptypes [i]);
@@ -1688,7 +1688,7 @@ namespace Mono.CSharp {
 
 			Method equals = new Method (this, null, TypeManager.system_boolean_expr,
 				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN, new MemberName ("Equals", loc),
-				Mono.CSharp.Parameters.CreateFullyResolved (new Parameter (TypeManager.system_object_expr, "obj", 0, null, loc)), null);
+				Mono.CSharp.Parameters.CreateFullyResolved (new Parameter (null, "obj", 0, null, loc), TypeManager.object_type), null);
 
 			Method tostring = new Method (this, null, TypeManager.system_string_expr,
 				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN, new MemberName ("ToString", loc),

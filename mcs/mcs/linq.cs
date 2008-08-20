@@ -100,7 +100,7 @@ namespace Mono.CSharp.Linq
 			public bool NoExactMatch (EmitContext ec, MethodBase method)
 			{
 #if GMCS_SOURCE				
-				ParameterData pd = TypeManager.GetParameterData (method);
+				AParametersCollection pd = TypeManager.GetParameterData (method);
 				Type source_type = pd.ExtensionMethodType;
 				if (source_type != null) {
 					Argument a = (Argument) Arguments [0];
@@ -514,8 +514,7 @@ namespace Mono.CSharp.Linq
 					//
 					// Spread resolved initializer type
 					//
-					parameter.ParameterType = type;
-					parameter.Resolve (ec);
+					((ImplicitLambdaParameter) parameter).Type = type;
 				}
 
 				return e;

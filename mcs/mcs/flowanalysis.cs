@@ -1395,7 +1395,7 @@ namespace Mono.CSharp
 		}
 
 		public VariableInfo (Parameters ip, int i, int offset)
-			: this (ip.ParameterName (i), TypeManager.GetElementType (ip.ParameterType (i)), offset)
+			: this (ip.FixedParameters [i].Name, ip.Types [i], offset)
 		{
 			this.IsParameter = true;
 		}

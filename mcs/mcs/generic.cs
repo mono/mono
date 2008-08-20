@@ -535,7 +535,7 @@ namespace Mono.CSharp {
 		///   method.  To do that, we're called on each of the implementing method's
 		///   type parameters.
 		/// </summary>
-		public bool CheckInterfaceMethod (GenericConstraints gc)
+		public bool AreEqual (GenericConstraints gc)
 		{
 			if (gc.Attributes != attrs)
 				return false;
@@ -750,7 +750,7 @@ namespace Mono.CSharp {
 				if (constraints != null) {
 					if (temp_gc == null)
 						ok = false;
-					else if (!constraints.CheckInterfaceMethod (gc))
+					else if (!constraints.AreEqual (gc))
 						ok = false;
 				} else {
 					if (!is_override && (temp_gc != null))
@@ -834,7 +834,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (constraints != null) 
-				return constraints.CheckInterfaceMethod (new_constraints);
+				return constraints.AreEqual (new_constraints);
 
 			constraints = new_constraints;
 			return true;
@@ -1717,7 +1717,7 @@ namespace Mono.CSharp {
 				return false;
 
 			foreach (MethodBase mb in list) {
-				ParameterData pd = TypeManager.GetParameterData (mb);
+				AParametersCollection pd = TypeManager.GetParameterData (mb);
 				if (pd.Count == 0)
 					return true;
 			}
@@ -1886,7 +1886,7 @@ namespace Mono.CSharp {
 
 			bool ok = true;
 			foreach (Parameter p in parameters.FixedParameters){
-				if (!p.Resolve (ec))
+				if (p.Resolve (ec) == null)
 					ok = false;
 			}
 			if ((return_type != null) && (return_type.ResolveAsTypeTerminal (ec, false) == null))
@@ -2101,7 +2101,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Type inference.
 		/// </summary>
-		public static bool InferTypeArguments (ParameterData apd,
+		public static bool InferTypeArguments (AParametersCollection apd,
 						       ref MethodBase method)
 		{
 			if (!TypeManager.IsGenericMethod (method))
@@ -2159,7 +2159,7 @@ namespace Mono.CSharp {
 
 		public override Type[] InferDelegateArguments (MethodBase method)
 		{
-			ParameterData pd = TypeManager.GetParameterData (method);
+			AParametersCollection pd = TypeManager.GetParameterData (method);
 			if (arg_count != pd.Count)
 				return null;
 
@@ -2170,7 +2170,7 @@ namespace Mono.CSharp {
 			Type[] arg_types = (Type[])arguments.ToArray (typeof (Type));
 
 			for (int i = 0; i < arg_count; i++) {
-				param_types[i] = pd.ParameterType (i);
+				param_types[i] = pd.Types [i];
 			}
 
 			if (!InferTypeArguments (param_types, arg_types, inferred_types))
@@ -2181,7 +2181,7 @@ namespace Mono.CSharp {
 
 		public override Type[] InferMethodArguments (EmitContext ec, MethodBase method)
 		{
-			ParameterData pd = TypeManager.GetParameterData (method);
+			AParametersCollection pd = TypeManager.GetParameterData (method);
 			Type[] method_generic_args = method.GetGenericArguments ();
 			Type [] inferred_types = new Type [method_generic_args.Length];
 			Type[] arg_types = new Type [pd.Count];
@@ -2195,12 +2195,12 @@ namespace Mono.CSharp {
 				if (a.Expr is NullLiteral || a.Expr is MethodGroupExpr || a.Expr is AnonymousMethodExpression)
 					continue;
 
-				if (!TypeInferenceV2.UnifyType (pd.ParameterType (i), a.Type, inferred_types))
+				if (!TypeInferenceV2.UnifyType (pd.Types [i], a.Type, inferred_types))
 					return null;
 			}
 
 			if (pd.HasParams) {
-				Type element_type = TypeManager.GetElementType (pd.ParameterType (a_count));
+				Type element_type = TypeManager.GetElementType (pd.Types [a_count]);
 				for (int i = a_count; i < arg_count; i++) {
 					Argument a = (Argument) arguments [i];
 					if (a.Expr is NullLiteral || a.Expr is MethodGroupExpr || a.Expr is AnonymousMethodExpression)
@@ -2342,7 +2342,7 @@ namespace Mono.CSharp {
 
 		public override Type[] InferDelegateArguments (MethodBase method)
 		{
-			ParameterData pd = TypeManager.GetParameterData (method);
+			AParametersCollection pd = TypeManager.GetParameterData (method);
 			if (arg_count != pd.Count)
 				return null;
 
@@ -2372,7 +2372,7 @@ namespace Mono.CSharp {
 			if (!context.UnfixedVariableExists)
 				return Type.EmptyTypes;
 
-			ParameterData pd = TypeManager.GetParameterData (method);
+			AParametersCollection pd = TypeManager.GetParameterData (method);
 			if (!InferInPhases (ec, context, pd))
 				return null;
 
@@ -2382,7 +2382,7 @@ namespace Mono.CSharp {
 		//
 		// Implements method type arguments inference
 		//
-		bool InferInPhases (EmitContext ec, TypeInferenceContext tic, ParameterData methodParameters)
+		bool InferInPhases (EmitContext ec, TypeInferenceContext tic, AParametersCollection methodParameters)
 		{
 			int params_arguments_start;
 			if (methodParameters.HasParams) {
@@ -2438,7 +2438,7 @@ namespace Mono.CSharp {
 			return DoSecondPhase (ec, tic, methodParameters, !fixed_any);
 		}
 
-		bool DoSecondPhase (EmitContext ec, TypeInferenceContext tic, ParameterData methodParameters, bool fixDependent)
+		bool DoSecondPhase (EmitContext ec, TypeInferenceContext tic, AParametersCollection methodParameters, bool fixDependent)
 		{
 			bool fixed_any = false;
 			if (fixDependent && !tic.FixDependentTypes (methodParameters, ref fixed_any))
@@ -2455,7 +2455,7 @@ namespace Mono.CSharp {
 			// contain unfixed type variables but the input types do not,
 			// an output type inference is made
 			for (int i = 0; i < arg_count; i++) {
-				Type t_i = methodParameters.ParameterType (i);
+				Type t_i = methodParameters.Types [i];
 				if (!TypeManager.IsDelegateType (t_i)) {
 					if (TypeManager.DropGenericTypeArguments (t_i) != TypeManager.expression_type)
 						continue;
@@ -2614,7 +2614,7 @@ namespace Mono.CSharp {
 		// a, There is at least one type variable Xj that depends on Xi
 		// b, Xi has a non-empty set of bounds
 		// 
-		public bool FixDependentTypes (ParameterData methodParameters, ref bool fixed_any)
+		public bool FixDependentTypes (AParametersCollection methodParameters, ref bool fixed_any)
 		{
 			for (int i = 0; i < unfixed_types.Length; ++i) {
 				if (unfixed_types[i] == null)
@@ -2635,7 +2635,7 @@ namespace Mono.CSharp {
 		//
 		// All unfixed type variables Xi which depend on no Xj are fixed
 		//
-		public bool FixIndependentTypeArguments (ParameterData methodParameters, ref bool fixed_any)
+		public bool FixIndependentTypeArguments (AParametersCollection methodParameters, ref bool fixed_any)
 		{
 			ArrayList types_to_fix = new ArrayList (unfixed_types);
 			for (int i = 0; i < methodParameters.Types.Length; ++i) {
@@ -2787,7 +2787,7 @@ namespace Mono.CSharp {
 			}
 
 			// All generic input arguments have to be fixed
-			ParameterData d_parameters = TypeManager.GetParameterData (invoke);
+			AParametersCollection d_parameters = TypeManager.GetParameterData (invoke);
 			return AllTypesAreFixed (d_parameters.Types);
 		}
 		
@@ -2815,10 +2815,6 @@ namespace Mono.CSharp {
 		//
 		public int LowerBoundInference (Type u, Type v)
 		{
-			// Remove ref, out modifiers
-			if (v.IsByRef)
-				v = v.GetElementType ();
-			
 			// If V is one of the unfixed type arguments
 			int pos = IsUnfixed (v);
 			if (pos != -1) {
@@ -2918,7 +2914,7 @@ namespace Mono.CSharp {
 				MethodInfo invoke = Delegate.GetInvokeMethod (t, t);
 
 				if (rt == null) {
-					ParameterData pd = TypeManager.GetParameterData (invoke);
+					AParametersCollection pd = TypeManager.GetParameterData (invoke);
 					return ame.Parameters.Count == pd.Count ? 1 : 0;
 				}
 

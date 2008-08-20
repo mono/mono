@@ -1391,7 +1391,7 @@ formal_parameter_list
 	| fixed_parameters COMMA arglist_modifier
 	  {
 		ArrayList pars_list = (ArrayList) $1;
-		//pars_list.Add (new ArglistParameter (GetLocation ($3)));
+		pars_list.Add (new ArglistParameter (GetLocation ($3)));
 
 		Parameter [] pars = new Parameter [pars_list.Count];
 		pars_list.CopyTo (pars);
@@ -1426,7 +1426,7 @@ formal_parameter_list
 	  }
 	| arglist_modifier
 	  {
-		$$ = new Parameters (new Parameter[0], true);
+		$$ = new Parameters (new Parameter [] { new ArglistParameter ((Location) $1) }, true);
 	  }
 	;
 
@@ -1727,7 +1727,7 @@ set_accessor_declaration
 			current_local_parameters = new Parameters (new Parameter [] { implicit_value_parameter });
 		} else {
 			current_local_parameters = Parameters.MergeGenerated (
-				indexer_parameters, true, implicit_value_parameter);
+				indexer_parameters, true, implicit_value_parameter, null);
 		}
 		
 		lexer.PropertyParsing = false;
@@ -2336,7 +2336,7 @@ indexer_declarator
 	: type THIS OPEN_BRACKET opt_parameter_list_no_mod CLOSE_BRACKET
 	  {
 		Parameters pars = (Parameters) $4;
-		if (pars.Empty){
+		if (pars.IsEmpty){
 			Report.Error (1551, (Location) $2, "Indexers must have at least one parameter");
 		}
 		if (RootContext.Documentation != null) {
@@ -2349,7 +2349,7 @@ indexer_declarator
 	| type namespace_or_type_name DOT THIS OPEN_BRACKET opt_formal_parameter_list CLOSE_BRACKET
 	  {
 		Parameters pars = (Parameters) $6;
-		if (pars.Empty){
+		if (pars.IsEmpty){
 			Report.Error (1551, (Location) $4, "Indexers must have at least one parameter");
 		}
 

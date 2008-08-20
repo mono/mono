@@ -2579,6 +2579,11 @@ namespace Mono.CSharp {
 		public Parameter Parameter {
 			get { return Block.Parameters [Index]; }
 		}
+
+		public Type ParameterType {
+			get { return Block.Parameters.Types [Index]; }
+		}
+
 		public Location Location {
 			get { return Parameter.Location; }
 		}
@@ -2660,7 +2665,7 @@ namespace Mono.CSharp {
 			if (parent != null)
 				parent.AddAnonymousChild (this);
 
-			if (!this.parameters.Empty)
+			if (!this.parameters.IsEmpty)
 				ProcessParameters ();
 		}
 
@@ -2861,7 +2866,7 @@ namespace Mono.CSharp {
 			int offset = Parent == null ? 0 : Parent.AssignableSlots;
 
 			for (int i = 0; i < orig_count; ++i) {
-				Parameter.Modifier mod = parameters.ParameterModifier (i);
+				Parameter.Modifier mod = parameters.FixedParameters [i].ModFlags;
 
 				if ((mod & Parameter.Modifier.OUT) != Parameter.Modifier.OUT)
 					continue;

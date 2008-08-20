@@ -461,7 +461,7 @@ namespace Mono.CSharp {
 				return constructor;
 			}
 
-			ParameterData pd = TypeManager.GetParameterData (constructor);
+			AParametersCollection pd = TypeManager.GetParameterData (constructor);
 
 			int pos_arg_count = PosArguments.Count;
 			pos_values = new object [pos_arg_count];
@@ -500,7 +500,7 @@ namespace Mono.CSharp {
 			}
 
 			if (Type == TypeManager.methodimpl_attr_type && pos_values.Length == 1 &&
-				pd.ParameterType (0) == TypeManager.short_type &&
+				pd.Types [0] == TypeManager.short_type &&
 				!System.Enum.IsDefined (typeof (MethodImplOptions), pos_values [0].ToString ())) {
 				Error_AttributeEmitError ("Incorrect argument value.");
 				return null;
@@ -1520,8 +1520,10 @@ namespace Mono.CSharp {
 		/// Returns true if parameters of two compared methods are CLS-Compliant.
 		/// It tests differing only in ref or out, or in array rank.
 		/// </summary>
-		public static Result AreOverloadedMethodParamsClsCompliant (Type[] types_a, Type[] types_b) 
+		public static Result AreOverloadedMethodParamsClsCompliant (AParametersCollection pa, AParametersCollection pb) 
 		{
+			Type [] types_a = pa.Types;
+			Type [] types_b = pb.Types;
 			if (types_a == null || types_b == null)
 				return Result.Ok;
 
@@ -1547,25 +1549,10 @@ namespace Mono.CSharp {
 					}
 				}
 
-				Type aBaseType = aType;
-				bool is_either_ref_or_out = false;
-
-				if (aType.IsByRef || aType.IsPointer) {
-					aBaseType = aType.GetElementType ();
-					is_either_ref_or_out = true;
-				}
-
-				Type bBaseType = bType;
-				if (bType.IsByRef || bType.IsPointer) 
-				{
-					bBaseType = bType.GetElementType ();
-					is_either_ref_or_out = !is_either_ref_or_out;
-				}
-
-				if (aBaseType != bBaseType)
+				if (aType != bType)
 					return Result.Ok;
 
-				if (is_either_ref_or_out)
+				if (pa.FixedParameters [i].ModFlags != pb.FixedParameters [i].ModFlags)
 					result = Result.RefOutArrayError;
 			}
 			return result;
@@ -1589,7 +1576,7 @@ namespace Mono.CSharp {
 			}
 
 			bool result;
-			if (type.IsArray || type.IsByRef) {
+			if (type.IsArray) {
 				result = IsClsCompliant (TypeManager.GetElementType (type));
 			} else if (TypeManager.IsNullableType (type)) {
 				result = IsClsCompliant (TypeManager.GetTypeArguments (type) [0]);

@@ -418,7 +418,7 @@ namespace Mono.CSharp {
 						Type t = TypeManager.CoreLookupType ("System.Threading", "Interlocked", Kind.Class, true);
 						if (t != null) {
 							TypeManager.int_interlocked_compare_exchange = TypeManager.GetPredefinedMethod (
-								t, "CompareExchange", loc, TypeManager.GetReferenceType (TypeManager.int32_type),
+								t, "CompareExchange", loc, TypeManager.int32_type,
 								TypeManager.int32_type, TypeManager.int32_type);
 						}
 					}
@@ -909,7 +909,7 @@ namespace Mono.CSharp {
 					return;
 				}
 
-				if (p.ParameterType.IsPointer) {
+				if (parameters.Types [i].IsPointer) {
 					Report.Error (1637, p.Location,
 							  "Iterators cannot have unsafe parameters or " +
 							  "yield types");

@@ -972,8 +972,8 @@ namespace Mono.CSharp {
 			//
 			Type source_type = source.Type;
 			foreach (MethodBase mb in list){
-				ParameterData pd = TypeManager.GetParameterData (mb);
-				Type param_type = pd.ParameterType (0);
+				AParametersCollection pd = TypeManager.GetParameterData (mb);
+				Type param_type = pd.Types [0];
 
 				if (param_type == source_type)
 					return param_type;
@@ -1105,9 +1105,9 @@ namespace Mono.CSharp {
 			}
 
 			foreach (MethodInfo m in mg.Methods) {
-				ParameterData pd = TypeManager.GetParameterData (m);
+				AParametersCollection pd = TypeManager.GetParameterData (m);
 				Type return_type = TypeManager.TypeToCoreType (m.ReturnType);
-				Type arg_type = pd.ParameterType (0);
+				Type arg_type = pd.Types [0];
 
 				if (source_type != arg_type) {
 					if (!ImplicitStandardConversionExists (source, arg_type)) {
@@ -1186,7 +1186,7 @@ namespace Mono.CSharp {
 			foreach (MethodInfo m in ops) {
 				if (TypeManager.TypeToCoreType (m.ReturnType) != most_specific_target)
 					continue;
-				if (TypeManager.GetParameterData (m).ParameterType (0) != most_specific_source)
+				if (TypeManager.GetParameterData (m).Types [0] != most_specific_source)
 					continue;
 				// Ambiguous: more than one conversion operator satisfies the signature.
 				if (method != null)
@@ -1233,7 +1233,7 @@ namespace Mono.CSharp {
 			if (method == null)
 				return null;
 
-			Type most_specific_source = TypeManager.GetParameterData (method).ParameterType (0);
+			Type most_specific_source = TypeManager.GetParameterData (method).Types [0];
 
 			//
 			// This will do the conversion to the best match that we

@@ -197,12 +197,6 @@ namespace Mono.CSharp {
 	static PtrHashtable builder_to_ifaces;
 
 	// <remarks>
-	//   Maps PropertyBuilder to a Type array that contains
-	//   the arguments to the indexer
-	// </remarks>
-	static Hashtable indexer_arguments;
-
-	// <remarks>
 	//   Maps a MethodBase to its ParameterData (either InternalParameters or ReflectionParameters)
 	// <remarks>
 	static Hashtable method_params;
@@ -237,7 +231,6 @@ namespace Mono.CSharp {
 		builder_to_member_cache = null;
 		builder_to_ifaces = null;
 		builder_to_type_param = null;
-		indexer_arguments = null;
 		method_params = null;
 		builder_to_method = null;
 		
@@ -291,7 +284,6 @@ namespace Mono.CSharp {
 		builder_to_type_param = new PtrHashtable ();
 		method_params = new PtrHashtable ();
 		method_overrides = new PtrHashtable ();
-		indexer_arguments = new PtrHashtable ();
 		builder_to_ifaces = new PtrHashtable ();
 		
 		fieldbuilders_to_fields = new Hashtable ();
@@ -781,7 +773,7 @@ namespace Mono.CSharp {
 		StringBuilder sig = new StringBuilder (CSharpName (mb.DeclaringType));
 		sig.Append ('.');
 
-		ParameterData iparams = GetParameterData (mb);
+		AParametersCollection iparams = GetParameterData (mb);
 		string parameters = iparams.GetSignatureForError ();
 		int accessor_end = 0;
 
@@ -926,7 +918,7 @@ namespace Mono.CSharp {
 					if (mb == null)
 						continue;
 
-					ParameterData pd = TypeManager.GetParameterData (mb);
+					AParametersCollection pd = TypeManager.GetParameterData (mb);
 					if (IsEqual (pd.Types, args))
 						return member;
 				}
@@ -1757,23 +1749,30 @@ namespace Mono.CSharp {
 	///   for anything which is dynamic, and we need this in a number of places,
 	///   we register this information here, and use it afterwards.
 	/// </remarks>
-	static public void RegisterMethod (MethodBase mb, Parameters ip)
+	static public void RegisterMethod (MethodBase mb, AParametersCollection ip)
 	{
 		method_params.Add (mb, ip);
 	}
-	
-	static public ParameterData GetParameterData (MethodBase mb)
+
+	static public void RegisterIndexer (PropertyBuilder pb, AParametersCollection p)
 	{
-		ParameterData pd = (ParameterData)method_params [mb];
+		method_params.Add (pb, p);
+	}
+	
+	static public AParametersCollection GetParameterData (MethodBase mb)
+	{
+		AParametersCollection pd = (AParametersCollection) method_params [mb];
 		if (pd == null) {
 #if MS_COMPATIBLE
 			if (mb.IsGenericMethod && !mb.IsGenericMethodDefinition) {
 				MethodInfo mi = ((MethodInfo) mb).GetGenericMethodDefinition ();
 				pd = GetParameterData (mi);
+				/*
 				if (mi.IsGenericMethod)
 					pd = pd.InflateTypes (mi.GetGenericArguments (), mb.GetGenericArguments ());
 				else
 					pd = pd.InflateTypes (mi.DeclaringType.GetGenericArguments (), mb.GetGenericArguments ());
+				*/
 				method_params.Add (mb, pd);
 				return pd;
 			}
@@ -1782,14 +1781,41 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("Parameters are not registered for method `{0}'",
 					TypeManager.CSharpName (mb.DeclaringType) + "." + mb.Name);
 			}
+
+			pd = ParametersCollection.Create (mb);
+#else
+			MethodBase generic = TypeManager.DropGenericMethodArguments (mb);
+			if (generic != mb) {
+				pd = TypeManager.GetParameterData (generic);
+				pd = ParametersCollection.Create (pd, mb);
+			} else {
+				pd = ParametersCollection.Create (mb);
+			}
 #endif
-			pd = new ReflectionParameters (mb);
 			method_params.Add (mb, pd);
 		}
 		return pd;
 	}
 
-	public static ParameterData GetDelegateParameters (Type t)
+	public static AParametersCollection GetParameterData (PropertyInfo pi)
+	{
+		AParametersCollection pd = (AParametersCollection)method_params [pi];
+		if (pd == null) {
+			if (pi is PropertyBuilder)
+				return Parameters.EmptyReadOnlyParameters;
+
+			ParameterInfo [] p = pi.GetIndexParameters ();
+			if (p == null)
+				return Parameters.EmptyReadOnlyParameters;
+
+			pd = ParametersCollection.Create (p, null);
+			method_params.Add (pi, pd);
+		}
+
+		return pd;
+	}
+
+	public static AParametersCollection GetDelegateParameters (Type t)
 	{
 		Delegate d = builder_to_declspace [t] as Delegate;
 		if (d != null)
@@ -1823,38 +1849,6 @@ namespace Mono.CSharp {
 		return (MethodBase) method_overrides [m];
 	}
 
-	/// <summary>
-	///    Returns the argument types for an indexer based on its PropertyInfo
-	///
-	///    For dynamic indexers, we use the compiler provided types, for
-	///    indexers from existing assemblies we load them from GetParameters,
-	///    and insert them into the cache
-	/// </summary>
-	static public Type [] GetArgumentTypes (PropertyInfo indexer)
-	{
-		if (indexer_arguments.Contains (indexer))
-			return (Type []) indexer_arguments [indexer];
-		else if (indexer is PropertyBuilder)
-			// If we're a PropertyBuilder and not in the
-			// `indexer_arguments' hash, then we're a property and
-			// not an indexer.
-			return Type.EmptyTypes;
-		else {
-			ParameterInfo [] pi = indexer.GetIndexParameters ();
-			// Property, not an indexer.
-			if (pi == null)
-				return Type.EmptyTypes;
-			int c = pi.Length;
-			Type [] types = new Type [c];
-			
-			for (int i = 0; i < c; i++)
-				types [i] = pi [i].ParameterType;
-
-			indexer_arguments.Add (indexer, types);
-			return types;
-		}
-	}
-	
 	public static void RegisterConstant (FieldInfo fb, IConstant ic)
 	{
 		fields.Add (fb, ic);
@@ -1926,11 +1920,6 @@ namespace Mono.CSharp {
 			return null;
 
 		return (EventField) events [ei];
-	}
-
-	static public void RegisterIndexer (PropertyBuilder pb, Type[] args)
-	{
-		indexer_arguments.Add (pb, args);
 	}
 
 	public static bool CheckStructCycles (TypeContainer tc, Hashtable seen)

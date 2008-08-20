@@ -577,7 +577,7 @@ namespace Mono.CSharp {
 			if ((mod_flags & Modifiers.PRIVATE) != 0)
 				return true;
 
-			while (p.IsArray || p.IsPointer || p.IsByRef)
+			while (TypeManager.HasElementType (p))
 				p = TypeManager.GetElementType (p);
 
 #if GMCS_SOURCE
@@ -2335,7 +2335,7 @@ namespace Mono.CSharp {
 					MethodBase mb = (MethodBase)entry.Member;
 
 					IMethodData md = TypeManager.GetMethod (mb);
-					ParameterData pd = md == null ?
+					AParametersCollection pd = md == null ?
 						TypeManager.GetParameterData (mb) : md.ParameterInfo;
 
 					Type ex_type = pd.ExtensionMethodType;
@@ -2363,7 +2363,7 @@ namespace Mono.CSharp {
 		// Because the MemberCache holds members from this class and all the base classes,
 		// we can avoid tons of reflection stuff.
 		//
-		public MemberInfo FindMemberToOverride (Type invocation_type, string name, Type [] param_types, GenericMethod generic_method, bool is_property)
+		public MemberInfo FindMemberToOverride (Type invocation_type, string name, AParametersCollection parameters, GenericMethod generic_method, bool is_property)
 		{
 			ArrayList applicable;
 			if (method_hash != null && !is_property)
@@ -2385,22 +2385,19 @@ namespace Mono.CSharp {
 				PropertyInfo pi = null;
 				MethodInfo mi = null;
 				FieldInfo fi = null;
-				Type [] cmp_attrs = null;
+				AParametersCollection cmp_attrs;
 				
 				if (is_property) {
 					if ((entry.EntryType & EntryType.Field) != 0) {
 						fi = (FieldInfo)entry.Member;
-
-						// TODO: For this case we ignore member type
-						//fb = TypeManager.GetField (fi);
-						//cmp_attrs = new Type[] { fb.MemberType };
+						cmp_attrs = Parameters.EmptyReadOnlyParameters;
 					} else {
 						pi = (PropertyInfo) entry.Member;
-						cmp_attrs = TypeManager.GetArgumentTypes (pi);
+						cmp_attrs = TypeManager.GetParameterData (pi);
 					}
 				} else {
 					mi = (MethodInfo) entry.Member;
-					cmp_attrs = TypeManager.GetParameterData (mi).Types;
+					cmp_attrs = TypeManager.GetParameterData (mi);
 				}
 
 				if (fi != null) {
@@ -2433,14 +2430,23 @@ namespace Mono.CSharp {
 				//
 				// Check the arguments
 				//
-				if (cmp_attrs.Length != param_types.Length)
+				if (cmp_attrs.Count != parameters.Count)
 					continue;
 	
 				int j;
-				for (j = 0; j < cmp_attrs.Length; ++j)
-					if (!TypeManager.IsEqual (param_types [j], cmp_attrs [j]))
+				for (j = 0; j < cmp_attrs.Count; ++j) {
+					//
+					// LAMESPEC: No idea why `params' modifier is ignored
+					//
+					if ((parameters.FixedParameters [j].ModFlags & ~Parameter.Modifier.PARAMS) != 
+						(cmp_attrs.FixedParameters [j].ModFlags & ~Parameter.Modifier.PARAMS))
 						break;
-				if (j < cmp_attrs.Length)
+
+					if (!TypeManager.IsEqual (parameters.Types [j], cmp_attrs.Types [j]))
+						break;
+				}
+
+				if (j < cmp_attrs.Count)
 					continue;
 
 				//
@@ -2528,8 +2534,8 @@ namespace Mono.CSharp {
  
  							// Does exist easier way how to detect indexer ?
  							if ((entry.EntryType & EntryType.Property) != 0) {
- 								Type[] arg_types = TypeManager.GetArgumentTypes ((PropertyInfo)entry.Member);
- 								if (arg_types.Length > 0)
+ 								AParametersCollection arg_types = TypeManager.GetParameterData ((PropertyInfo)entry.Member);
+ 								if (arg_types.Count > 0)
  									continue;
  							}
  						}
@@ -2622,7 +2628,7 @@ namespace Mono.CSharp {
  		
 				MethodBase method_to_compare = (MethodBase)entry.Member;
 				AttributeTester.Result result = AttributeTester.AreOverloadedMethodParamsClsCompliant (
-					method.ParameterTypes, TypeManager.GetParameterData (method_to_compare).Types);
+					method.Parameters, TypeManager.GetParameterData (method_to_compare));
 
  				if (result == AttributeTester.Result.Ok)
  					continue;
@@ -2662,9 +2668,10 @@ namespace Mono.CSharp {
 					return true;
 
 				Type [] p_types;
-				ParameterData pd = null;
+				AParametersCollection pd;
 				if ((ce.EntryType & EntryType.Property) != 0) {
-					p_types = TypeManager.GetArgumentTypes ((PropertyInfo) ce.Member);
+					pd = TypeManager.GetParameterData ((PropertyInfo) ce.Member);
+					p_types = pd.Types;
 				} else {
 					MethodBase mb = (MethodBase) ce.Member;
 #if GMCS_SOURCE					
@@ -2684,8 +2691,9 @@ namespace Mono.CSharp {
 					int ii = method_param_count - 1;
 					Type type_a, type_b;
 					do {
-						type_a = parameters.ParameterType (ii);
+						type_a = parameters.Types [ii];
 						type_b = p_types [ii];
+
 #if GMCS_SOURCE
 						if (type_a.IsGenericParameter && type_a.DeclaringMethod != null)
 							type_a = null;
@@ -2693,6 +2701,10 @@ namespace Mono.CSharp {
 						if (type_b.IsGenericParameter && type_b.DeclaringMethod != null)
 							type_b = null;
 #endif
+						if ((pd.FixedParameters [ii].ModFlags & Parameter.Modifier.ISBYREF) !=
+							(parameters.FixedParameters [ii].ModFlags & Parameter.Modifier.ISBYREF))
+							type_a = null;
+
 					} while (type_a == type_b && ii-- != 0);
 
 					if (ii >= 0)
@@ -2710,9 +2722,9 @@ namespace Mono.CSharp {
 					//
 					// Report difference in parameter modifiers only
 					//
-					if (pd != null && !(member is AbstractPropertyEventMethod)) {
+					if (pd != null && member is MethodCore) {
 						ii = method_param_count;
-						while (ii-- != 0 && parameters.ParameterModifier (ii) == pd.ParameterModifier (ii) &&
+						while (ii-- != 0 && parameters.FixedParameters [ii].ModFlags == pd.FixedParameters [ii].ModFlags &&
 							parameters.ExtensionMethodType == pd.ExtensionMethodType);
 
 						if (ii >= 0) {

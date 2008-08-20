@@ -156,7 +156,7 @@ namespace Mono.CSharp {
 				foreach (MemberInfo m in abstract_methods) {
 					MethodInfo mi = (MethodInfo) m;
 					
-					ParameterData pd = TypeManager.GetParameterData (mi);
+					AParametersCollection pd = TypeManager.GetParameterData (mi);
 					Type [] types = pd.Types;
 					
 					pending_implementations [i].args [j] = types;
@@ -164,7 +164,7 @@ namespace Mono.CSharp {
 					if (pd.Count > 0) {
 						Parameter.Modifier [] pm = new Parameter.Modifier [pd.Count];
 						for (int k = 0; k < pd.Count; k++)
-							pm [k] = pd.ParameterModifier (k);
+							pm [k] = pd.FixedParameters[k].ModFlags;
 						pending_implementations [i].mods [j] = pm;
 					}
 						
@@ -207,13 +207,13 @@ namespace Mono.CSharp {
 					if (m == null)
 						continue;
 
- 					ParameterData pd = TypeManager.GetParameterData (m);
+ 					AParametersCollection pd = TypeManager.GetParameterData (m);
 					pending_implementations [i].args [j] = pd.Types;
  					
  					if (pd.Count > 0){
  						Parameter.Modifier [] pm = new Parameter.Modifier [pd.Count];
  						for (int k = 0; k < pd.Count; k++)
- 							pm [k] = pd.ParameterModifier (k);
+ 							pm [k] = pd.FixedParameters [k].ModFlags;
  						pending_implementations [i].mods [j] = pm;
  					}
 			
@@ -411,15 +411,15 @@ namespace Mono.CSharp {
 					int j;
 
 					for (j = 0; j < arg_len; j++) {
-						if (!TypeManager.IsEqual (tm.args [i][j], args.ParameterType (j)))
+						if (!TypeManager.IsEqual (tm.args [i][j], args.Types [j]))
 							break;
-						if (tm.mods [i][j] == args.ParameterModifier (j))
+						if (tm.mods [i][j] == args.FixedParameters [j].ModFlags)
 							continue;
 						// The modifiers are different, but if one of them
 						// is a PARAMS modifier, and the other isn't, ignore
 						// the difference.
 						if (tm.mods [i][j] != Parameter.Modifier.PARAMS &&
-						    args.ParameterModifier (j) != Parameter.Modifier.PARAMS)
+						    args.FixedParameters [j].ModFlags != Parameter.Modifier.PARAMS)
 							break;
 					}
 					if (j != arg_len)
@@ -470,7 +470,7 @@ namespace Mono.CSharp {
 		///   I.M in Y.
 		/// </summary>
 		void DefineProxy (Type iface, MethodInfo base_method, MethodInfo iface_method,
-				  Type [] args)
+				  AParametersCollection param)
 		{
 			MethodBuilder proxy;
 
@@ -482,17 +482,17 @@ namespace Mono.CSharp {
 				MethodAttributes.NewSlot |
 				MethodAttributes.Virtual,
 				CallingConventions.Standard | CallingConventions.HasThis,
-				base_method.ReturnType, args);
+				base_method.ReturnType, param.GetEmitTypes ());
 
-			ParameterData pd = TypeManager.GetParameterData (iface_method);
+			AParametersCollection pd = TypeManager.GetParameterData (iface_method);
 			proxy.DefineParameter (0, ParameterAttributes.None, "");
 			for (int i = 0; i < pd.Count; i++) {
-				string name = pd.ParameterName (i);
-				ParameterAttributes attr = Parameter.GetParameterAttributes (pd.ParameterModifier (i));
+				string name = pd.FixedParameters [i].Name;
+				ParameterAttributes attr = Parameters.GetParameterAttribute (pd.FixedParameters [i].ModFlags);
 				proxy.DefineParameter (i + 1, attr, name);
 			}
 
-			int top = args.Length;
+			int top = param.Count;
 			ILGenerator ig = proxy.GetILGenerator ();
 
 			for (int i = 0; i <= top; i++)
@@ -513,8 +513,8 @@ namespace Mono.CSharp {
 		{
 			MethodSignature ms;
 			
-			Type [] args = TypeManager.GetParameterData (mi).Types;
-			ms = new MethodSignature (mi.Name, TypeManager.TypeToCoreType (mi.ReturnType), args);
+			AParametersCollection param = TypeManager.GetParameterData (mi);
+			ms = new MethodSignature (mi.Name, TypeManager.TypeToCoreType (mi.ReturnType), param.Types);
 			MemberList list = TypeContainer.FindMembers (
 				container.TypeBuilder.BaseType, MemberTypes.Method | MemberTypes.Property,
 				BindingFlags.Public | BindingFlags.Instance,
@@ -541,7 +541,7 @@ namespace Mono.CSharp {
 			if (!base_method.IsAbstract && !base_method.IsVirtual)
 				// FIXME: We can avoid creating a proxy if base_method can be marked 'final virtual' instead.
 				//        However, it's too late now, the MethodBuilder has already been created (see bug 377519)
-				DefineProxy (iface_type, base_method, mi, args);
+				DefineProxy (iface_type, base_method, mi, param);
 
 			return true;
 		}
@@ -573,8 +573,7 @@ namespace Mono.CSharp {
 							pending_implementations [i].need_proxy [j];
 
 						if (need_proxy != null) {
-							Type [] args = TypeManager.GetParameterData (mi).Types;
-							DefineProxy (type, need_proxy, mi, args);
+							DefineProxy (type, need_proxy, mi, TypeManager.GetParameterData (mi));
 							continue;
 						}
 
