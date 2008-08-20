@@ -103,7 +103,12 @@ net_2_0_dirs := \
 	System.Web.Extensions.Design	\
 	System.Xml.Linq			\
 	System.Data.DataSetExtensions	\
-	System.Data.Linq
+	System.Data.Linq		\
+	System.Runtime.Serialization	\
+	System.IdentityModel		\
+	System.IdentityModel.Selectors	\
+	System.ServiceModel		\
+	System.ServiceModel.Web
 
 net_2_1_dirs := \
 	corlib			\
