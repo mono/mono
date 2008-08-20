@@ -55,7 +55,8 @@ namespace System.Web.Configuration
 		public int IdleTimeout = 20; // minutes
 		public bool Enable = true;
 		public string VersionHeader;
-
+		public bool EnableHeaderChecking = true;
+		
 		/* Only the config. handler should create instances of this. Use GetInstance (context) */
 		public HttpRuntimeConfig (object p)
 		{
@@ -92,6 +93,7 @@ namespace System.Web.Configuration
 			RequireRootSaveAsPath = parent.RequireRootSaveAsPath;
 			IdleTimeout = parent.IdleTimeout;
 			Enable = parent.Enable;
+			EnableHeaderChecking = parent.EnableHeaderChecking;
 		}
 	}
 }
