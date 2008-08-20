@@ -1,5 +1,12 @@
 2008-08-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (encode_patch): Handle STATIC_RGCTX_INVOKE wrappers.
+
+	* aot-runtime.c (decode_patch): Ditto.	
+
+	* mini.c (mono_resolve_patch_target): Handle RGCTX_FETCH sub-patches of type
+	MONO_PATCH_INFO_METHOD.
+
 	* aot-runtime.c (decode_exception_debug_info): Decode the contents of
 	MonoGenericJitInfo.
 
