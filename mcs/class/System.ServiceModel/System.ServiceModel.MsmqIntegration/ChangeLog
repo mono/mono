@@ -1,0 +1,6 @@
+2007-07-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MsmqIntegrationMessageProperty.cs MsmqIntegrationBinding.cs
+	  MsmqMessage.cs MsmqIntegrationBindingElement.cs
+	  MsmqIntegrationSecurity.cs : new stubs.
+

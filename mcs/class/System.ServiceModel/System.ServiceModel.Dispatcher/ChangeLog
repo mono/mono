@@ -1,0 +1,432 @@
+2008-06-18  Noam Lampert <noaml@mainsoft.com>
+
+	* ChannelDispatcher.cs: Avoid aborting host process on faulty input message.
+
+2008-05-22  Noam Lampert <noaml@mainsoft.com>
+
+	* OperationInvokeHandler.cs: Only return fault reply when TargetInvocation occured (not other internal
+	  errors. Serlialize the correct (inner) exception.
+	  
+2008-05-22  Roei Erez  <roeie@mainsoft.com>
+	* fix ContractDescription.GetContract implementation
+	* Refactor Request processing
+	* Add support for message inspectors
+	* Add support for InstanceContextProvider & InstanceProvider, including lifecycles events
+	like: ReleaseServiceInstance, Open, Close...
+	* Add relevant test cases.
+
+2008-05-01  Eyal Alaluf <eyala@mainsoft.com>
+
+	* BaseMessagesFormatter.cs: Handle methods with out parameters that return
+	  void.
+	* DispatchOperation.cs, IOperationInvoker.cs: Simplify method invocation.
+
+2008-04-22  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DispatchOperation.cs: removed dependency on OperationDescription, 
+	allows usage of custom channel dispatcher without endpoint was explicitly 
+	built
+
+2008-04-22  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* MexInstanceContextProvider.cs - remove unused code.
+
+2008-04-21  Roei Erez <roeie@mainsoft.com>
+
+	* ChannelDispatcher.cs - Change order of Dispatcher shutdown
+
+2008-04-17  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ChannelDispatcher.cs, EndpointDispatcher.cs: removed dependency on 
+	ServiceDescription/ServiceEndpoint, allows usage of channel dispatcher
+	without endpoint was explicitly built
+	* EndpointDispatcher.cs: Filters lazy evaluation, refactored
+	communication processing, logic moved to channel dispatcher
+
+2008-04-17  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ActionMessageFilter.cs: fixed Match, match for "*" action
+
+2008-04-17  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DispatchOperation.cs: fixed ProcessRequest, fault message creation
+
+2008-04-10  Eyal Alaluf <eyala@mainsoft.com>
+
+	* DefaultMessageOperationFormatter.cs: Moved to BaseMessagesFormatter.cs.
+	* BaseMessagesFormatter.cs: Refactored so typed messages uses the classes
+	  defined here instead of the other way around.
+	  Added support for by-ref and out parameters.
+	  Added support for XmlSerializerFormat serializaters..
+	* DispatchOperation.cs, ClientOperation.cs: Use BaseMessagesFormatter.Create
+
+2008-04-09  Roei Erez <roeie@mainsoft.com>
+
+	* Remove unused nethod from previous commit
+
+2008-04-08  Roei Erez <roeie@mainsoft.com>
+
+	* ChannelDispatcher.cs
+	  - fix 'Attach' logic
+	  - Add support for Endpoints property
+	  - Remove the hack of 'endpoint_dispatcher' field
+	* ChannelDispatcherCollection.cs
+	  - Add support for 'Attach' 'Detach'
+	* EndpointDispatcher.cs
+	  - By default create MatchAllMessageFilter.
+
+2008-02-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointDispatcher.cs : we don't need AddressFilter workaround
+	  from Feb. 14 anymore.
+
+2008-02-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointDispatcher.cs : after service method call, apply outgoing
+	  headers and properties to the returned message.
+
+2008-02-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : populate DispatchOperations before applying
+	  IEndpointBehaviors so that those behaviors can modify dispatch
+	  operations.
+
+2008-02-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DispatchOperation.cs : Action may be null. For such cases, use 
+	  MessageDirection to determine the message description.
+
+2008-02-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointAddressMessageFilter.cs : implement Match(MessageBuffer).
+	  Use ordinal string comparison.
+	* PrefixEndpointAddressMessageFilter.cs : implement Match() (both).
+
+2008-02-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointDispatcher.cs : moved AddressFilter application only when
+	  DispatchOperation was not selected (it is sort of workaround).
+
+2007-08-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DefaultMessageOperationFormatter.cs : Fixed SerializeReply() for
+	  message contract type to process result, not the parameter.
+
+2007-08-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SingletonInstanceContextProvider.cs : new.
+
+2007-08-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DefaultMessageOperationFormatter.cs : dependent changes on
+	  message serializer and deserializer.
+
+2007-03-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DefaultMessageOperationFormatter.cs :
+	  use it for deserialization as well.
+
+2007-03-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DefaultMessageOperationFormatter.cs : consider message contracts
+	  during message serialization/deserialization.
+
+2007-03-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointDispatcher.cs : now dispatcher-side foundation for token
+	  negotiation is ready. Handle negotiation message on its own way.
+	* DispatchOperation.cs : instead of returning irrelevant SOAP Fault,
+	  simply raise an error and let FaultConverter do better work.
+
+2007-03-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointDispatcher.cs : use ErrorHandlers when error was raised.
+	  Handle exceptions to make into SOAP Fault, using FaultConverter.
+	* ChannelDispatcher.cs : simply get ServiceEndpoint at Attach().
+	* ChannelDispatcherBase.cs : removed MonoTODOs.
+
+2007-03-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs, DispatchRuntime.cs, EndpointDispatcher.cs :
+	  moved most of request/input processing to EndpointDispatcher.cs.
+	  Also, ChannelDispatcher now contains code for behavior
+	  initialization.
+
+2007-03-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : some cosmetic refactoring on error handling
+	  with comments.
+
+2006-12-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs, DispatchRuntime.cs, DispatchOperation.cs :
+	  Support OperationContext and OperationContextScope with
+	  ServiceRuntimeChannel as its .ctor() input.
+
+2006-12-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DispatchRuntime.cs : raise an error when the DispatchOperation
+	  returned null Message.
+
+2006-10-18  Ankit Jain  <jankit@novell.com>
+
+	* MexInstanceContextProvider.cs (HttpGetInstanceContextProvider): New.
+	* DispatchOperation.cs (DoProcessRequest): InstanceContext returned by
+	the provider can be null.
+	* EndpointAddressMessageFilter.cs (Match): Handle IncludeHostNameInComparison.
+
+2006-10-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DispatchOperation.cs : slightly improved exception message.
+
+2006-10-06  Ankit Jain  <jankit@novell.com>
+
+	* ChannelDispatcher.cs (ListenerLoopManager.StartLoopCore):
+	ReceiveRequest can return null.
+
+2006-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientRuntime.cs : added MaxFaultSize.
+
+2006-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : don't reject anonymous and null To.
+
+2006-10-04  Ankit Jain  <jankit@novell.com>
+
+	* ChannelDispatcher.cs (ListenerLoopManager.StartLoopCore): Reply with a 
+	Fault message if message's To doesn't match the endpoint.
+	(ListenerLoopManager.CreateDestinationUnreachable): New.
+	* IInstanceContextProvider.cs: New.
+	* MexInstanceContextProvider.cs: New. InstanceContextProvider for
+	MetadataExchange.
+	(MetadataExchange): Implementation of IMetadataExchange.
+	* DispatchRuntime.cs (InstanceContextProvider): Add missing property.
+	* DispatchOperation.cs (DoProcessRequest): Use InstanceContextProvider
+	if available to obtain service instance.
+	* EndpointDispatcher.cs (.ctor): Set AddressFilter to EndpointAddressMessageFilter.
+	* EndpointAddressMessageFilter.cs (Match): Implement.
+
+2006-10-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientRuntime.cs : added InteractiveChannelInitializer.
+
+2006-09-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DispatchOperation.cs : removed extra comment.
+
+2006-09-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DispatchOperation.cs : workaround to send exception detail.
+
+2006-09-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ICallContextInitializer.cs : new file.
+	* DispatchOperation.cs : use above.
+	  Not sure if it works correctly though.
+
+2006-08-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DispatchOperation.cs : when there is an error during
+	  ProcessRequest(), wrap the exception with MessageFault and return
+	  a fault message.
+
+2006-08-10  Duncan Mak  <duncan@novell.com>
+
+	* ExceptionHandler.cs: New file.
+
+	* ServiceThrottle.cs (MaxConnections): Renamed to
+	MaxConcurrentSessions.
+	(MaxInstances): Renamed to MaxConcurrentInstances.
+
+2006-07-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IInteractiveChannelInitializer.cs : new file.
+
+2006-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IErrorHandler.cs : API updates.
+
+2006-07-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DispatchRuntime.cs :
+	  it was selecting UnhandledOperation unexpectedly.
+	* DispatchOperation.cs : added FIXME comment.
+
+2006-07-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DefaultMessageOperationFormatter.cs : Remove hack for non-
+	  (de)serializing Message-based methods. They are now moved to
+	  ClientBase and ServiceHostBase to explicitly set
+	  [Serialize|Deserialize][Request|Reply].
+
+2006-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DefaultMessageOperationFormatter.cs : don't omit action on
+	  SerializeRequest. Do it in SerializeReply.
+
+2006-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DefaultMessageOperationFormatter.cs : When addressing version is
+	  None, then omit reply action. This logic is moved from MessageImpl.
+
+2006-07-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DefaultMessageOperationFormatter.cs :
+	  return message, not parameter[0]. Removed some extra FIXMEs.
+
+2006-07-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DefaultMessageOperationFormatter.cs : when the parameter is
+	  Message and the return type is Message, then do not use
+	  XmlObjectSerializer.
+
+2006-07-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PrefixEndpointAddressMessageFilter.cs, FaultContractInfo.cs :
+	  new types in June CTP.
+	* ISharedInstanceSessionLifetime.cs:
+	  removed in June CTP.
+	* ChannelDispatcher.cs, MatchAllMessageFilter.cs, DispatchRuntime.cs,
+	  DispatchOperation.cs, ClientRuntime.cs, MatchNoneMessageFilter.cs,
+	  ClientOperation.cs, ActionMessageFilterTable.cs,
+	  EndpointAddressMessageFilterTable.cs :
+	  several minor fixes for June CTP.
+
+2006-07-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DispatchOperation.cs : MessageFault.DefaultAction vanished.
+
+2006-07-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IClientFormatter.cs, IClientMessageFormatter.cs,
+	  IDispatchFormatter.cs, IDispatchMessageFormatter.cs :
+	  renamed former to latter, for each.
+
+2006-07-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs, DispatchRuntime.cs :
+	  IRequestContext -> RequestContext.
+
+2006-07-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs, IDispatchFormatter.cs,
+	  DefaultMessageOperationFormatter.cs, IClientFormatter.cs,
+	  DispatchOperation.cs, ClientOperation.cs :
+	  some June CTP updates.
+
+2006-06-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DefaultMessageOperationFormatter.cs : implement SerializeRequest()
+	  and DeserializeReply(). Now simple ClientBase<T> sample is working.
+
+2006-06-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientOperation.cs : added GetFormatter() to support message
+	  serialization/deserialization.
+	* DispatchOperation.cs : made some internal members private
+	  (they are exposed extraneously). Commented out debugging code.
+
+2006-06-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DefaultMessageOperationFormatter.cs : In SerializeReply(), use
+	  custom BodyWriter() and use MessagePartDescription names. Now
+	  return value and other (ref/out) parameters could be equivalently
+	  serialized (at this method; to support them more love is needed).
+
+2006-06-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DefaultMessageOperationFormatter.cs :
+	  Action for response is null (though it is likely conditional).
+
+2006-06-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DefaultMessageOperationFormatter.cs :
+	  true DeserializeReply implementation using Message.CreateMessage()
+	  with DataContractSerializer (not complete though).
+
+2006-05-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs, DispatchOperation.cs,
+	  ChannelDispatcherBase.cs :
+	  some updated API fixes.
+
+2006-05-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointDispatcher.cs : moved from Sys.ServiceModel.
+
+2006-04-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientRuntime.cs : some minor collection instantiation and comments.
+
+2006-04-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DispatchOperation.cs : Implemented internal MessageVersion.
+	  hacked instance provision by using Activator.CreateInstance.
+	* DefaultMessageOperationFormatter.cs : fixed DeserializeRequest to
+	  be functional. Implemented SerializeReply.
+
+2006-04-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DispatchOperation.cs : return SOAP fault message for nonexistent
+	  request Action.
+	* DefaultMessageOperationFormatter.cs : implemented
+	  DeserializeRequest(), though there is no working example.
+
+2006-03-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DispatchOperation.cs : implemented logic to acquire
+	  OperationDescription. Added code for default IDispatchFormatter
+	  implementation.
+	* DispatchRuntime.cs : fix warning.
+	* DefaultMessageOperationFormatter.cs : new file, for default
+	  IDispatchFormatter implementation (not done yet).
+	* ChannelDispatcher.cs : create EndpointDispatcher in Attach and
+	  bind to this instance.
+
+2006-03-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcherCollection.cs : added parameterless ctor().
+	* ChannelDispatcher.cs DispatchRuntime.cs DispatchOperation.cs :
+	  Set some initial field values as proved in unit tests.
+	  Request/input processing is still ongoing.
+
+2006-03-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs
+	  DispatchRuntime.cs
+	  DispatchOperation.cs : added request/input processing code.
+
+2006-03-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : Get "AcceptChannel" method without ambiguity.
+
+2006-03-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : Added request-processing code.
+
+2006-03-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : implement Attach() and Detach() more to work.
+
+2006-02-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DispatchBehavior.cs : 
+	  Dependent fixes for System.IdentityModel reorgainzation.
+
+2006-02-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* FilterNodeQuotaExceededException.cs
+	  FilterInvalidBodyAccessException.cs DispatchBehavior.cs
+	  DispatchOperation.cs NavigatorInvalidBodyAccessException.cs
+	  MatchNoneFilter.cs ActionFilter.cs
+	  MultipleFilterMatchesException.cs Filter.cs
+	  IInstanceContextInitializer.cs XPathFilter.cs
+	  IDispatchOperationSelector.cs MatchAllFilter.cs
+	  ActionFilterTable.cs EndpointAddressFilter.cs FilterTable.cs
+	  EndpointFilterTable.cs XPathMessageContext.cs
+	  IEndpointDispatcher.cs ProxyBehavior.cs
+	  ProxyOperation.cs XPathFilterTable.cs
+	  EndpointAddressFilterTable.cs InvalidBodyAccessException.cs
+	  IFilterTable.cs IOperationInvoker.cs :
+	  moved from System.ServiceModel due to the API changes.

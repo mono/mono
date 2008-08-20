@@ -1,0 +1,50 @@
+2008-05-22  Roei Erez  <roeie@mainsoft.com>
+	* fix ContractDescription.GetContract implementation
+	* Refactor Request processing
+	* Add support for message inspectors
+	* Add support for InstanceContextProvider & InstanceProvider, including lifecycles events
+	like: ReleaseServiceInstance, Open, Close...
+	* Add relevant test cases.
+
+2008-04-08  Roei Erez <roeie@mainsoft.com>
+	* Add tests ChannelDispatcherTest, EndpointDispatcherTest
+
+2008-04-06  Roei Erez <roeie@mainsoft.com>
+
+	* EndpointDiaptcher: Added new tests (MessageFilter, ContractFilter)
+
+2008-02-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ExceptionHandlerTest.cs : disabled a test that is not in effect.
+
+2008-02-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PrefixEndpointAddressMessageFilterTest.cs : new test (not working).
+
+2006-10-18  Ankit Jain  <jankit@novell.com>
+
+	* EndpointAddressMessageFilterTest.cs (Match): Add more tests.
+
+2006-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointAddressMessageFilterTest.cs : new test.
+	* EndpointDispatcherTest.cs : test type of the filter as well.
+
+2006-08-10  Duncan Mak  <duncan@novell.com>
+
+	* ExceptionHandlerTest.cs: New test.
+
+2006-05-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* InvalidBodyAccessExceptionTest.cs, DispatchOperationTest.cs :
+	  fix tests for beta2. Reduced evil English-only tests.
+
+2006-04-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ContractDescriptionTest.cs : added test to make sure to return
+	  ContractDescription for the contract interface, not the actual type.
+
+2006-03-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DispatchOperationTest.cs DispatchRuntimeTest.cs : new tests.
+

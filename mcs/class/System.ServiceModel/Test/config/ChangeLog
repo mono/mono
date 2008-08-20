@@ -1,0 +1,33 @@
+2008-04-02  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* basicHttpBinding.config: added biding config for testing
+
+2008-04-01  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* service.config: more configuration.
+	
+2008-03-27  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* customBinding.config: change value of messageSecurityVersion attribute
+	due to some API still not implemented.
+
+2008-03-27  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* customBinding.config: more configuration.
+
+2008-03-26  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* client.metadata:
+	* client.metadata.config:
+	* empty:
+	* empty.config:
+	add config files for tests.
+
+2008-03-24  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* userBinding.config: 
+	consider test's assembly name System.ServiceModel_test_net_3_0.
+
+2006-06-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* test1.config : config file for test.

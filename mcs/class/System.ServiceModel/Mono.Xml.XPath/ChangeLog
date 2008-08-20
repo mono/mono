@@ -1,0 +1,39 @@
+2007-07-02  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathDocumentBuilder2.cs : do not bork at non-document element
+	  in XmlReader. Fixed bug #81932.
+
+2007-02-01  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathDocumentWriter2.cs : supply prefix when it was not passed.
+
+2007-02-01  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathNavigator2.cs : apply r72076 to olive too.
+
+2007-01-09  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathDocumentBuilder2.cs : fixed incorrect namespace node links
+	  which happened to following siblings of a node with namespaces.
+
+2006-12-07  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathDocumentWriter2.cs : implemented several members that threw
+	  NotSupportedException. Unlike inside sys.xml they could be invoked.
+
+2006-09-08  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathDocumentWriter2.cs : fill String.Empty for null ns in
+	  WriteStartElement() and WriteStartAttribute().
+
+2006-08-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DTMXPathDocumentWriter2.cs : use String.Empty instead of null for
+	  localName for those nodes which do not have own names.
+
+2006-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DTMXPathDocumentBuilder2.cs, DTMXPathNode2.cs,
+	  DTMXPathNavigator2.cs, DTMXPathDocumentWriter2.cs,
+	  DTMXPathDocument2.cs : initial import from System.XML and made
+	  required changes to implement SeekableXPathNavigator.

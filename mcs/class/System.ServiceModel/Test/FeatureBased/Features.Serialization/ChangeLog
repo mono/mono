@@ -1,0 +1,21 @@
+2008-05-01  Eyal Alaluf  <eyala@mainsoft.com>
+
+	* PrimitiveTesterTest.cs: Fixed TestLong and TestByRef
+
+2008-04-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* added: FaultsTest.cs
+	MessageContractTest.cs
+	AsyncCallTest.cs
+
+2008-04-06  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* added: UntypedMessageTest.cs
+
+2008-04-06  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* added: KnownTypeTest.cs
+
+2006-04-03  Roei Erez  <roeie@ximian.com>
+	* DataContractSerializerTest.cs
+	PrimitiveTesterTest.cs

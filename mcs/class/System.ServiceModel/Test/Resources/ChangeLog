@@ -1,0 +1,7 @@
+2006-12-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* test2.pfx : new file.
+
+2006-08-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* test.pfx : new file for serializer test for now.

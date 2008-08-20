@@ -1,0 +1,63 @@
+2007-08-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* RegisterInfo.cs : marcos would have never thought that this is
+	  the source of message xml incompatibility.
+
+2007-08-19 Marcos Cobena (marcoscobena@gmail.com)
+
+	* PeerCustomResolverSettings.cs, RefreshInfo.cs, RefreshResponseInfo.cs, 
+	ServiceSettingsResponseInfo.cs, UnregisterInfo.cs, UpdateInfo.cs: Bunch of updates.
+
+2007-08-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PeerCustomResolverSettings.cs : this class too.
+
+2007-08-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PeerResolverSettings.cs : there is nothing actually supported in
+	  this class, so don't forget MonoTODOs.
+
+2007-08-17 Marcos Cobena (marcoscobena@gmail.com)
+
+	* CustomPeerResolverService.cs: Updated to dependency types.
+	* RegisterInfo.cs, RegisterResponseInfo.cs, ResolveInfo.cs, 
+	ResolveResponseInfo.cs, UnregisterInfo.cs: Updated to produce same messages as .NET does.
+
+2007-08-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* RegisterInfo.cs : rewritten. Fixed broken approach to static
+	  object and eliminated duplicate fields. Use DataMember on Guid
+	  field directly.
+
+2007-08-16 Marcos Cobena (marcoscobena@gmail.com)
+
+	* PeerReferralPolicy.cs: Moved and updated here from AllEnums.cs.
+	* PeerResolverMode.cs: Updated API.
+	* RefreshResult.cs: Updated API.
+	* RegisterInfo.cs: Almost finished, minus HasBody().
+
+2007-07-24 Marcos Cobena (marcoscobena@gmail.com)
+
+	* CustomPeerResolverService.cs, IPeerResolverContract.cs, RegisterInfo.cs, ResolveInfo.cs: Minor changes.
+	* RegisterResponseInfo.cs: Implemented.
+
+2007-06-28 Marcos Cobena (marcoscobena@gmail.com)
+
+	* CustomPeerResolverService.cs : Minor fixes for working against tests.
+	* New classes initial implementations.
+
+2007-05-18 Marcos Cobena (marcoscobena@gmail.com)
+
+	* IPeerResolverContract.cs
+	  CustomPeerResolverService.cs : Minor fixes. IPeerResolverContract 
+	  works fine now with attributes.
+
+2007-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IPeerResolverContract.cs CustomPeerResolverService.cs :
+	  whitespaces should be replaced with tabs.
+
+2007-05-04 Marcos Cobena (marcoscobena@gmail.com)
+
+	* IPeerResolverContract.cs
+	  CustomPeerResolverService.cs : Initial implementations.

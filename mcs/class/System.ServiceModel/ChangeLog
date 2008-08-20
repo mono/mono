@@ -1,0 +1,304 @@
+2008-05-22  Roei Erez  <roeie@mainsoft.com>
+	* fix ContractDescription.GetContract implementation
+	* Refactor Request processing
+	* Add support for message inspectors
+	* Add support for InstanceContextProvider & InstanceProvider, including lifecycles events
+	like: ReleaseServiceInstance, Open, Close...
+	* Add relevant test cases.
+
+2008-04-21  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* System.ServiceModel_test.dll.sources: Add ServiceDebugBehaviorTest.cs and
+	ServiceMetadataBehaviorTest.cs.
+
+2008-04-17  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* System.ServiceModel.dll.sources: added HttpChannelManager.cs
+
+2008-04-14  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* System.ServiceModel_test.dll.sources: Add ExtensionCollectionTest.cs.
+
+2008-04-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* added: System.ServiceModel_Test.csproj, visual studio tests project
+
+2008-04-10  Eyal Alaluf <eyala@mainsoft.com>
+
+	* System.ServiceModel.dll.sources, System.ServiceModel.csproj:
+	  Moved System.ServiceModel.Dispatcher/DefaultMessageOperationFormatter.cs
+	  to System.ServiceModel.Dispatcher/BaseMessagesFormatter.cs.
+	  Removed System.ServiceModel.Description/ServiceModelInternalConverter.cs.
+
+2008-04-01  Roei Erez <roeie@mainsoft.com>
+
+	* System.ServiceModel_test_net_3_0.dll.config: Added configurations for new tests.
+
+2008-04-01  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* System.ServiceModel_test.dll.sources: Add ServiceHostBaseTest.cs.
+
+2008-03-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : add System.ServiceModel_test_net_3_0.dll.config to
+	  EXTRA_DISTFILES too.
+
+2008-03-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : include Test/config/* in EXTRA_DISTFILES to fix
+	  nunit test failures.
+
+2008-03-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : more EXTRA_DISTFILES.
+
+2008-03-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : oops, wrong EXTRA_DISTFILES.
+
+2008-03-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : add EXTRA_DISTFILES.
+
+2008-02-28  Eyal Alaluf <eyala@mainsoft.com>
+
+	* System.ServiceModel_test_net_3_0.dll.config: Add configurations for
+	  testing ClientBase<T> ctors.
+
+2008-02-27  Eyal Alaluf <eyala@mainsoft.com>
+
+	* Makefile: Ignore common warnings including use of obsolete API (since
+	  Mono.Security.* has several such warnings).
+
+2007-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : added net_3_5 profile as a valid target.
+
+2007-08-18 Marcos Cobena (marcoscobena@gmail.com)
+
+	* System.ServiceModel_test.dll.sources: Updated with new tests for System.ServiceModel.PeerResolvers.
+	* Test/System.ServiceModel.PeerResolvers/CustomPeerResolverServiceTest.cs: New bunch of tests.
+
+2007-08-16 Marcos Cobena (marcoscobena@gmail.com)
+
+	* System.ServiceModel.dll.sources: Updated with System.ServiceModel.PeerResolvers/PeerReferralPolicy.cs.
+	* PeerReferralPolicy.cs: Moved and updated here from AllEnums.cs.
+	* PeerResolverMode.cs: Updated API.
+	* RefreshResult.cs: Updated API.
+	* RegisterInfo.cs: Almost finished, minus HasBody().
+	* AllEnums.cs: PeerReferralPolicy lives now inside System.ServiceModel.PeerResolvers.
+
+2007-07-19 Marcos Cobena (marcoscobena@gmail.com)
+
+	* PeerCustomResolverSettings.cs, PeerResolverMode.cs, PeerResolverSettings.cs, 
+		PeerSecuritySettings.cs: New implementations.
+	* System.ServiceModel.dll.sources, AllEnums.cs, Dummy.cs: Updated to added sources.
+	* NetPeerTcpBinding.cs: Added support to new above implementations.
+
+2007-07-18 Marcos Cobena (marcoscobena@gmail.com)
+
+	* TcpChannelListener.cs, TcpDuplexSessionChannel.cs: Text messaging now works 
+		(both Send() and Receive()), even mixing .NET version with Mono one.
+	* TcpChannelListener.cs: By default, it uses BinaryMessageEncoder.		
+
+2007-07-17 Marcos Cobena (marcoscobena@gmail.com)
+
+	* DuplexSessionChannelBase.cs, TcpChannelListener.cs, TcpDuplexSessionChannel.cs, 
+		TcpTransportBindingElement.cs: Thanks to Atsushi Eno, it starts messaging.
+
+2007-07-12 Marcos Cobena (marcoscobena@gmail.com)
+
+	* DuplexSessionChannelBase.cs, TcpChannelFactory.cs, TcpChannelListener.cs, 
+		TcpDuplexSessionChannel.cs: Added new implementations.
+	* NetTcpBinding.cs, TcpTransportBindingElement.cs: Modified to match new TCP implementations.
+	* System.ServiceModel.dll.sources: Updated to last classes set.
+
+2007-07-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	Makefile : added -r:System.Messaging.dll
+
+2007-06-28 Marcos Cobena (marcoscobena@gmail.com)
+
+	* System.ServiceModel.dll.sources, System.ServiceModel\Dummy.cs : 
+	Modified to match new files under System.ServiceModel.PeerResolvers.
+
+2007-04-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	Makefile : added ws-addr.xsd as a resource.
+
+2007-04-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* fixup-config.xml : updated config section types.
+
+2007-03-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	Makefile : added -r:Mono.Security.dll and some nowarns.
+
+2007-02-27  Wade Berrier  <wberrier@novell.com>
+
+	* Makefile: include resource files in EXTRA_DISTFILES
+
+2006-10-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* fixup-config2.cs, fixup-config2.xml :
+	  It is used to add svc. -> SvcHttpHandler mapping in web.config.
+
+2006-10-04  Ankit Jain  <jankit@novell.com>
+
+	* System.ServiceModel.dll.sources: Update.
+
+2006-09-29  Ankit Jain  <jankit@novell.com>
+
+	* System.ServiceModel.dll.sources: Update.
+
+2006-09-26  Ankit Jain  <jankit@novell.com>
+
+	* System.ServiceModel.dll.sources: Update.
+
+2006-09-07  Ankit Jain  <jankit@novell.com>
+
+	* System.ServiceModel_test.dll.sources: Add WsdlExporterTest.cs
+
+2006-07-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : it used to be referenced by S.IM.Selectors.dll.
+	  Nowadays it references S.IM.Selectors.dll.
+
+2006-07-13  Ankit Jain  <jankit@novell.com>
+
+	* System.ServiceModel_test.dll.sources: Add MetadataResolverTest.cs
+
+2006-07-12  Ankit Jain  <jankit@novell.com>
+
+	* System.ServiceModel.dll.sources: Update for June CTP changes. Add
+	EndpointAddress10.cs
+
+2006-07-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : add path to referenced assemblies as gmcs always loads
+	  them from the GAC.
+
+2006-07-03  Ankit Jain  <jankit@novell.com>
+
+	* System.ServiceModel.dll.sources: Update for June CTP changes.
+
+2006-07-03  Ankit Jain  <jankit@novell.com>
+
+	* System.ServiceModel.dll.sources: Add IMetadataExchange.cs and
+	MetadataExchangeBinding.cs . Update to match changes in June CTP.
+
+2006-06-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* fixup-config.xml : updated to match June CTP config types.
+
+2006-06-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* fixup-config.xml : bindings section has binding sub sections.
+
+2006-06-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* fixup-config.cs : now it supports updating.
+	* fixup-config.xml : "bindings" is in fact just a section.
+	  MS bad naming on class.
+
+2006-06-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* fixup-config.cs, fixup-config.xml : when you try configuration
+	  support, you can run fixup-config.exe and then supplemental
+	  config sections are added.
+
+2006-06-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : remove extra option.
+
+2006-06-12  Ankit Jain  <jankit@novell.com>
+
+	* System.ServiceModel.dll.sources: Add
+	System.ServiceModel.Description/MetadataSectionSerializerBase.cs
+	* System.ServiceModel_test.dll.sources: Add
+	System.ServiceModel.Description/WsdlImporterTest.cs
+
+2006-06-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : use Mono.CodeGeneration.
+
+2006-04-26  Ankit Jain  <jankit@novell.com>
+
+	* System.ServiceModel_test.dll.sources : Add
+	System.ServiceModel.Description/WebServiceHelper.cs .
+
+2006-02-11  Ankit Jain  <jankit@novell.com>
+
+	* System.ServiceModel_test.dll.sources : Add
+	ServiceHostTest.cs and UriSchemeKeyedCollectionTest.cs 
+
+2005-10-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* winfx.pub : new set of assembly, thus new public key.
+
+2005-10-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : eliminated some warning noises.
+
+2005-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : addded /r:System.Transactions.
+
+2005-09-29  Duncan Mak  <duncan@novell.com>
+
+	* Makefile (RESOURCE_FILES): Include
+	resources/WS-Addressing.schema.
+	(LIB_MCS_FLAGS): Add "/resource:" flag.
+
+2005-09-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel_test.dll.sources : required for make run-test.
+
+2005-09-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources : regenerated to add new files.
+
+2005-09-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources : regenerated to add new files.
+
+2005-09-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : reference to sys.configuration.dll.
+	* System.ServiceModel.dll.sources : regenerated to add new files.
+
+2005-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources : regenerated to add new files.
+
+2005-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources : further regen.
+
+2005-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources : regenerated to add new files.
+
+2005-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources : regenerated to add new files.
+
+2005-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources : regenerated to add new files.
+
+2005-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources : regenerated to add new files.
+
+2005-09-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources : regenerated to add new files.
+
+2005-09-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources : added CommunicationErrorEventArgs.
+
+2005-09-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : so now update-dll-sources is common target to all libs.

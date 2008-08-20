@@ -1,0 +1,10 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectView>ShowAllFiles</ProjectView>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <StartAction>Program</StartAction>
+    <StartProgram>nunit-console.exe</StartProgram>
+    <StartArguments>System.ServiceModel_test_net_3_0.dll  /out:TestResults.txt</StartArguments>
+  </PropertyGroup>
+</Project>

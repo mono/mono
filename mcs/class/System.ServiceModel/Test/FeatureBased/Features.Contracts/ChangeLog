@@ -1,0 +1,19 @@
+2008-04-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* added: AsyncCallTester.cs
+	FaultsTester.cs
+	* fixed: MessageContractTester.cs
+
+2008-04-06  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* added UntypedMessageTester.cs
+
+2008-04-06  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* added: KnownTypeTester.cs
+	* removed 3.5 dependencies
+	
+2006-04-03  Roei Erez  <roeie@ximian.com>
+	* DataContractTester.cs
+	MessageContractTester.cs
+	PrimitiveTester

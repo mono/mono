@@ -1,0 +1,4 @@
+2006-07-13 Ankit Jain  <jankit@novell.com>
+
+	* KeyedByTypeCollection.cs (.ctor): Add IEnumerable<> overload.
+

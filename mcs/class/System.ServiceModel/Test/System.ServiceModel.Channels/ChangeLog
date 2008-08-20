@@ -1,0 +1,560 @@
+2008-04-13  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* BindingTest.cs:
+	consider fixed API in BindingElementCollection class.			
+
+2008-02-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TcpTransportBindingElementTest.cs : IDuplexChannel is not supported.
+
+2008-02-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NetNamedPipeTransportBindingElementTest.cs : new test.
+
+2008-02-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EnvelopeVersionTest.cs : updated to work with .NET 3.0 SP1.
+	* TcpTransportBindingElementTest.cs : new test.
+
+2008-02-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpTransportBindingElementTest.cs : test for BuildChannelListener()
+	  without listener URIs.
+
+2007-08-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeadersTest.cs : added couple of property settters and
+	  AddressingVersion.None.
+
+2007-07-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MsmqTransportBindingElementTest.cs : modified or removed copied-and-
+	  commented lines to fit with msmq binding element.
+
+2007-07-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MsmqTransportBindingElementTest.cs : new test.
+
+2007-04-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityBindingElementTest.cs,
+	  AsymmetricSecurityBindingElementTest.cs,
+	  HttpTransportBindingElementTest.cs :
+	  marked some failing tests (on Orcas) as ignored. Some fixes to
+	  make sure that open connection things be closed.
+
+2007-03-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AsymmetricSecurityBindingElementTest.cs : some tests are NotWorking
+	  now, as they depend on internal processing order.
+
+2007-03-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageTest.cs : added IsFault().
+
+2007-03-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityBindingElementTest.cs :
+	  added tests for GetProperty<ISecurityCapabilities>().
+
+2007-03-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AsymmetricSecurityBindingElementTest.cs :
+	  fixed inappropriate test name.
+
+2007-03-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityBindingElementTest.cs : some more test for ssl parameters.
+
+2007-02-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityBindingElementTest.cs : adding [NotWorking]. It happened to
+	  raise an expected type of exception at different (and wrong) stage.
+
+2007-01-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AsymmetricSecurityBindingElementTest.cs : added notworking
+	  RejectInclusionModeNever() case.
+
+2007-01-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AsymmetricSecurityBindingElementTest.cs, CalcSampleProxy.cs : moved
+	  sample proxy type to new file.
+	* SecurityBindingElementTest.cs : some tests for
+	  SupportingTokenParameters.
+
+2006-12-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* InterceptorBindingElement.cs : new utility binding element for
+	  testing.
+
+2006-12-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityBindingElementTest.cs : added duplicate authenticator test.
+
+2006-12-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityBindingElementTest.cs,
+	  SymmetricSecurityBindingElementTest.cs,
+	  AsymmetricSecurityBindingElementTest.cs :
+	  added test for SetKeyDerivation().
+
+2006-12-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpTransportBindingElementTest.cs :
+	  enable CreateChannelInvalidScheme().
+	* MessageHeaderTest.cs :
+	  enable TestIsMessageVersionSupported() and mark IDs.
+
+2006-12-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* FaultConverterTest.cs : new test.
+
+2006-10-13  Ankit Jain  <jankit@novell.com>
+
+	* MessageVersionTest.cs : Add test for MessageVersion.None
+
+2006-10-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CustomBindingTest.cs : fixed build. It has broken code which
+	  recently got reported by improved gmcs.
+
+2006-10-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CommunicationObjectTest.cs :
+	  Some tests on operation at faulted state.
+
+2006-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeadersTest.cs : added some tests for duplicate header items.
+	  The resulting tests are odd though.
+
+2006-10-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AsymmetricSecurityBindingElementTest.cs :
+	  VerifyX509MessageSecurityAtService() is working as a test for async
+	  support, but makes little sense as asymmetric security test now.
+
+2006-09-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AsymmetricSecurityBindingElementTest.cs : added more test for
+	  listener, though not working yet (e.g. because of async support).
+	* SslStreamSecurityBindingElementTest.cs : new file.
+
+2006-09-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AsymmetricSecurityBindingElementTest.cs : added test for listener
+	  whose recipient does not contain symmetric key.
+
+2006-09-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BindingTest.cs : fixed a test that became ambiguous.
+
+2006-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AsymmetricSecurityBindingElementTest.cs : new file.
+
+2006-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpTransportBindingElementTest.cs :
+	  added CreateChannelInvalidScheme().
+
+2006-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SymmetricSecurityBindingElementTest.cs :
+	  added test for making sure to create authenticator and thus reject
+	  UserName parameters to become ProtectionTokenParameters.
+
+2006-09-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SymmetricSecurityBindingElementTest.cs :
+	  added some more tests for service DefaultCertificate.
+	* MessageBufferTest.cs, MessageHeadersTest.cs,
+	  EmptyFaultExceptionTest.cs, MessageHeaderTest.cs :
+	  eliminate console output.
+	* UnknownFaultExceptionTest.cs : removed obsolete file.
+
+2006-09-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SymmetricSecurityBindingElementTest.cs, SecurityBindingElementTest.cs,
+	  SecurityAssert.cs : removed extra code for each source. From now on,
+	  test for SecurityBindingElement factory methods will go into
+	  SecurityBindingElementTest.cs.
+
+2006-09-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityBindingElementTest.cs, SecurityAssert.cs : added copies first.
+
+2006-09-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SymmetricSecurityBindingElementTest.cs : added assertion helpers for
+	  asymmetric binding elements. Actually am going to move them to another
+	  file.
+
+2006-09-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SymmetricSecurityBindingElementTest.cs : tiny comment cleanup.
+
+2006-09-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SymmetricSecurityBindingElementTest.cs : added test that supplies
+	  ChannelProtectionRequirements manually. Added some comments.
+
+2006-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SymmetricSecurityBindingElementTest.cs : removed some NotWorking.
+	* OneWayBindingElementTest.cs : new test.
+
+2006-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpTransportBindingElementTest.cs : make sure to close channels
+	  so that they don't block other tests.
+	* HandlerTransportBindingElement.cs :
+	  be a bit more descriptive on error.
+
+2006-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpTransportBindingElementTest.cs : enable (async) request test.
+	  Added test for creating channel without opening the factory.
+
+2006-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageEncoderTest.cs : message version mismatch check.
+
+2006-09-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SymmetricSecurityBindingElementTest.cs : added test for missing
+	  private key in service certificate.
+	* HandlerTransportBindingElement.cs : fix warning.
+
+2006-09-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HandlerTransportBindingElement.cs : added IOutputChannel impl.
+	* OutputChannelBase.cs : new support file.
+
+2006-09-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelFactoryTest.cs : moved to Test/S.SM.
+
+2006-09-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelFactoryTest.cs : don't use IRequestChannel as a contract
+	  type. It makes no sense and we reject it as a contract.
+	* HandlerBodyWriter.cs : new helper BodyWriter for tests.
+	* MessageTest.cs : added test for null message version argument.
+	* BindingTest.cs : added MessageVersion property test.
+
+2006-09-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SymmetricSecurityBindingElementTest.cs : use OneWayBindingElement
+	  to omit reply check and make some tests meaningful.
+
+2006-09-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SymmetricSecurityBindingElementTest.cs :
+	  non-x509 service cert test is not working.
+
+2006-09-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeadersTest.cs, MessageHeaderTest.cs, MessageBufferTest.cs :
+	  cleaning up NotWorking.
+	* TextMessageEncodingBindingElementTest.cs, CustomBindingTest.cs :
+	  moved some irrelevant tests in former file to latter file.
+
+2006-08-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CustomBindingTest.cs, HttpTransportBindingElementTest.cs : added
+	  test that assures MessageEncodingBindingElement is not mandatory.
+	* MessageTest.cs : added concept test that shows ToString() somehow
+	  allows multi time call.
+	* MessageBufferTest.cs : fix wrong expected exception. Added test
+	  that assures it does not allow multi call to CreateBufferedCopy().
+
+2006-08-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SymmetricSecurityBindingElementTest.cs : added more tests for
+	  different security settings situations.
+
+2006-08-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CustomBindingTest.cs : added EnvelopeVersion.None + security case
+	  (which should be rejected).
+	* HandlerTransportBindingElement.cs :
+	  removed NotImplementedException in OnClose().
+
+2006-08-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageTest.cs : added some XmlReader inputs with some headers.
+
+2006-08-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BindingContextTest.cs : added test to assure that binding parameter
+	  collection is nothing to do with GetInnerProperty().
+
+2006-08-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SymmetricSecurityBindingElementTest.cs :
+	  some annotations. Added secureconversatin factory method test.
+
+2006-08-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DebugBindingElement.cs : new helper for message interception.
+	* SymmetricSecurityBindingElementTest.cs : cosmetic debug code.
+
+2006-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SymmetricSecurityBindingElementTest.cs : add OpenChannelFactory().
+	  Removed one NotWorking.
+
+2006-08-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SymmetricSecurityBindingElementTest.cs : somewhat minor renaming.
+
+2006-08-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SymmetricSecurityBindingElementTest.cs : some tests are working now.
+
+2006-08-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SymmetricSecurityBindingElementTest.cs : added tests on
+	  BuildChannelListener() and reply channels. .NET security binding
+	  is still weird that it causes infinite loop, which blocks me from
+	  further implementation...
+	* HttpTransportBindingElementTest.cs : replaced sync Request() with
+	  async methods and it started working under .NET.
+	* HandlerTransportBindingElement.cs : several refactoring to support
+	  listener and reply channel as well.
+
+2006-08-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HandlerTransportBindingElement.cs : added listener support.
+	* ReplyChannelBase.cs : added, for HandlerTransportBindingElement
+	  listener support.
+	* SymmetricSecurityBindingElementTest.cs : added some tests for request
+	  processing. Like IssuedSecurityTokenProviderTest, still no
+	  successful way to create reply...
+
+2006-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageBufferTest.cs : removed some NotWorking.
+
+2006-08-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HandlerTransportBindingElement.cs : new utility binding element
+	  that supports event hander based transport.
+	* RequestChannelBase.cs :
+	  new file. used by above, copied from S.SM.Channels.
+	* SymmetricSecurityBindingElementTest.cs :
+	  added tests for those factory methods in SecurityBindingElement
+	  that return SymmetricSecurityBindingElement.
+
+2006-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* LocalClientSecuritySettingsTest.cs :
+	  more cosmetic line: assert IdentityVerifier as not null.
+
+2006-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* LocalClientSecuritySettingsTest.cs : new file.
+	* SymmetricSecurityBindingElementTest.cs : added test for
+	  default LocalClientSettings values.
+
+2006-07-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SymmetricSecurityBindingElementTest.cs : Test that
+	  - SecurityTokenParameters is null by default.
+	  - with null SecurityTokenParameters BuildChannelFactory fails.
+
+2006-07-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeadersTest.cs :
+	  Added (ignored) WriteHeaderContentsAddressingNone().
+	* MessageTest.cs : added WriteMessagePOX() (EnvelopeVersion.None).
+
+2006-07-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeadersTest.cs : added null serializer argument tests.
+
+2006-07-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeaderTest.cs : added CreateEndpointAddressTypeHeader(). It
+	  used to fail since DataContractSerializer..ctor() rejected
+	  EndpointAddress.
+
+2006-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageBufferTest.cs : Added CreateBufferedCopyConsumesMessage().
+	  Some are NotWorking right now.
+
+2006-07-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageBufferTest.cs : Don't use Assert.Equals().
+	  Make TestSimpleMessageBuffer() assert that every return value of
+	  CreateBufferedCopy() works for WriteMessage().
+
+2006-07-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageBufferTest.cs : build fix.
+
+2006-07-12  Duncan Mak  <duncan@novell.com>
+
+	* MessageBufferTest.cs
+	(TestEmptyMessageBuffer, TestSimpleMessageBuffer):
+	(TestCreateMessageFromClosedBuffer): New tests.
+	
+2006-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpTransportBindingElementTest.cs : added connection example, but
+	  it's somehow not working.
+
+2006-07-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* FaultExceptionTest.cs : ignore failing TestGetObjectData().
+
+2006-07-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SymmetricSecurityBindingElementTest.cs : new test.
+
+2006-07-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TransactionFlowBindingElementTest.cs : new test.
+
+2006-07-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageBufferTest.cs, MessageHeadersTest.cs, MessageTest.cs,
+	  MessageEncodingBindingElementTest.cs,
+	  TextMessageEncodingBindingElementTest.cs :
+	  June CTP fixes. MessageFault.DefaultAction vanished.
+	  Exception type changes. Duplicate message encoding binding element
+	  now causes (different) exception.
+
+2006-07-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageTest.cs :
+	  Replaced vanished CreateMessage() with remaining one.
+
+2006-07-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpTransportBindingElementTest.cs, CustomBindingTest.cs :
+	  Fixed tests based on run-test-ondotnet results.
+
+2006-07-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CommunicationObjectTest.cs, ChannelFactoryTest.cs :
+	  June CTP requires a bunch of extra stuff.
+
+2006-07-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BindingContextTest.cs :
+	  Now listenUri parameters could be null.
+	  Split TestCtorListenUriRelativeAddressNull() into two tests, one is
+	  for rejecting duplicate message encoding binding element (in June
+	  CTP it is rejected now).
+
+2006-07-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BindingContextTest.cs, MessageEncoderTest.cs,
+	  MessageEncodingBindingElementTest.cs,
+	  TextMessageEncodingBindingElementTest.cs :
+	  reflect June CTP updates.
+
+2006-06-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageTest.cs : added test that assures null action is allowed.
+
+2006-06-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelFactoryTest.cs : Test that only interface can be the Type
+	  argument in ChannelFactory<T>#.ctor(Type).
+
+2006-06-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageTest.cs : Added CreateSimpleNonPrimitive().
+
+2006-05-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* FaultExceptionTest.cs : fix tests for beta2. Ignore English-only
+	  test.
+
+2006-04-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageEncoderTest.cs : test for text binding with Soap11.
+	* MessageTest.cs : more create/write tests. The serialization part
+	  could be shared.
+
+2006-04-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeadersTest.cs : one more removal of NotWorking.
+	* MessageTest.cs : added fault message creation and write test.
+
+2006-03-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeadersTest.cs : removed some NotWorkings.
+	* MessageHeaderTest.cs : uncommented, making several fixes.
+
+2006-03-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TextMessageEncodingBindingElementTest.cs :
+	  added trivial CanBuildChannelFactory test.
+
+2006-03-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageTest.cs : test Action header in CreateFromXmlReader().
+
+2006-03-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageTest.cs : added another CreateMessage(XmlReader,...) test.
+
+2006-03-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageTest.cs : added test for Message.CreateMessage(version,
+	  xmlreader,int) and GetReaderAtBodyContents() etc.
+
+2006-03-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageTest.cs : now the test is working, except for
+	  UnderstoodHeaders.
+	* MessageHeadersTest.cs : added GetReaderAtHeader() tests and so on.
+
+2006-03-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageTest.cs MessageEncoderTest.cs : new tests.
+	* MessageHeadersTest.cs : some tests are working now. Added some more
+	  tests.
+
+2006-03-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* FaultExceptionTest.cs :
+	  Don't test English-specific exception message.
+	  Removed AreEqual() .Don't hide actual cause of assertion failure.
+
+2006-03-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageEncodingBindingElement.cs : with Feb. CTP we can define our
+	  own MessageEncodingBindingElement, so added more tests for such
+	  custom binding element.
+
+2006-03-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AddressHeaderTest.cs : marked EqualsTest() which got to not work
+	  in Feb. CTP.
+	* ChannelFactoryTest.cs : null type argument ctor() does not
+	  exist anymore.
+
+2006-03-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeadersTest.cs
+	  AddressingVersionTest.cs
+	  FaultExceptionTest.cs : updated tests to work fine with Feb. CTP.
+
+2005-10-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CommunicationObjectTest.cs : some State tests.
+
+2005-10-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CommunicationObjectTest.cs : some simple Open/Close tests.
+
+2005-10-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CommunicationObjectTest.cs : new file (testing run-test).

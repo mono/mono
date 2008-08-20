@@ -1,0 +1,3 @@
+2006-06-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PerformanceCounterScope.cs : new namespace/type in June CTP.

@@ -1,0 +1,31 @@
+2005-02-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BinarySecretSecurityTokenAuthenticator.cs
+	  ChannelProtectionRequirements.cs
+	  FederationServiceIssuedSecurityTokenProvider.cs
+	  IKeySizeValidator.cs RequestSecurityToken.cs
+	  RequestSecurityTokenResponse.cs ScopedMessagePartSpecification.cs
+	  SecurityNegotiationException.cs :
+	  Feb. CTP API changes - chapter 1.
+
+2005-11-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* RequestSecurityTokenResponse.cs,
+	  FederationServiceIssuedSecurityTokenProvider.cs,
+	  SecurityNegotiationException.cs : updated to beta2.
+
+2005-10-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BinarySecretSecurityTokenAuthenticator.cs,
+	  RequestSecurityTokenResponse.cs,
+	  FederationServiceIssuedSecurityTokenProvider.cs,
+	  IKeySizeValidator.cs,
+	  SecurityNegotiationException.cs,
+	  ScopedMessagePartSpecification.cs : added all remaining stuff.
+	* Dummy.cs : thus removed itself.
+
+2005-10-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelProtectionRequirements.cs,
+	  RequestSecurityTokens.cs : new files.
+	* Dummy.cs : removed above.
