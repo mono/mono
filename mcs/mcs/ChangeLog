@@ -1,4 +1,9 @@
 2008-08-20  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #362740
+	* cs-tokenizer.cs: Handle UTF-16 surrogates.
+
+2008-08-20  Marek Safar  <marek.safar@gmail.com>
 	
 	* generic.cs, support.cs, typemanager.cs, lambda.cs, parameter.cs,
 	pending.cs, ecore.cs, linq.cs, class.cs, decl.cs, delegate.cs,

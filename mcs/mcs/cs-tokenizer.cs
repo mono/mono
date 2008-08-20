@@ -1334,7 +1334,7 @@ namespace Mono.CSharp
 		//
 		// Accepts exactly count (4 or 8) hex, no more no less
 		//
-		int getHex (int count, out bool error)
+		int getHex (int count, out int surrogate, out bool error)
 		{
 			int i;
 			int total = 0;
@@ -1343,9 +1343,10 @@ namespace Mono.CSharp
 			
 			get_char ();
 			error = false;
+			surrogate = 0;
 			for (i = 0; i < top; i++){
 				c = get_char ();
-				
+
 				if (c >= '0' && c <= '9')
 					c = (int) c - (int) '0';
 				else if (c >= 'A' && c <= 'F')
@@ -1366,18 +1367,33 @@ namespace Mono.CSharp
 						break;
 				}
 			}
+
+			if (top == 8) {
+				if (total > 0x0010FFFF) {
+					error = true;
+					return 0;
+				}
+
+				if (total >= 0x00010000) {
+					total = ((total - 0x00010000) / 0x0400 + 0xD800);
+					surrogate = ((total - 0x00010000) % 0x0400 + 0xDC00);
+				}
+			}
+
 			return total;
 		}
 
-		int escape (int c)
+		int escape (int c, out int surrogate)
 		{
 			bool error;
 			int d;
 			int v;
 
 			d = peek_char ();
-			if (c != '\\')
+			if (c != '\\') {
+				surrogate = 0;
 				return c;
+			}
 			
 			switch (d){
 			case 'a':
@@ -1403,28 +1419,31 @@ namespace Mono.CSharp
 			case '\'':
 				v = '\''; break;
 			case 'x':
-				v = getHex (-1, out error);
+				v = getHex (-1, out surrogate, out error);
 				if (error)
 					goto default;
 				return v;
 			case 'u':
 			case 'U':
-				return EscapeUnicode (d);
+				return EscapeUnicode (d, out surrogate);
 			default:
+				surrogate = 0;
 				Report.Error (1009, Location, "Unrecognized escape sequence `\\{0}'", ((char)d).ToString ());
 				return d;
 			}
+
 			get_char ();
+			surrogate = 0;
 			return v;
 		}
 
-		int EscapeUnicode (int ch)
+		int EscapeUnicode (int ch, out int surrogate)
 		{
 			bool error;
 			if (ch == 'U') {
-				ch = getHex (8, out error);
+				ch = getHex (8, out surrogate, out error);
 			} else {
-				ch = getHex (4, out error);
+				ch = getHex (4, out surrogate, out error);
 			}
 
 			if (error)
@@ -1598,8 +1617,15 @@ namespace Mono.CSharp
 				c = get_char ();
 				if (c == '\\') {
 					int peek = peek_char ();
-					if (peek == 'U' || peek == 'u')
-						c = EscapeUnicode (c);
+					if (peek == 'U' || peek == 'u') {
+						int surrogate;
+						c = EscapeUnicode (c, out surrogate);
+						if (surrogate != 0) {
+							if (is_identifier_part_character ((char) c))
+								static_cmd_arg.Append ((char) c);
+							c = surrogate;
+						}
+					}
 				}
 			}
 
@@ -1613,8 +1639,15 @@ namespace Mono.CSharp
 			while (c != -1 && c != '\n' && c != '\r') {
 				if (c == '\\') {
 					int peek = peek_char ();
-					if (peek == 'U' || peek == 'u')
-						c = EscapeUnicode (c);
+					if (peek == 'U' || peek == 'u') {
+						int surrogate;
+						c = EscapeUnicode (c, out surrogate);
+						if (surrogate != 0) {
+							if (is_identifier_part_character ((char) c))
+								static_cmd_arg.Append ((char) c);
+							c = surrogate;
+						}
+					}
 				}
 				static_cmd_arg.Append ((char) c);
 				c = get_char ();
@@ -2341,9 +2374,14 @@ namespace Mono.CSharp
 				}
 
 				if (!quoted){
-					c = escape (c);
+					int surrogate;
+					c = escape (c, out surrogate);
 					if (c == -1)
 						return Token.ERROR;
+					if (surrogate != 0) {
+						string_builder.Append ((char) c);
+						c = surrogate;
+					}
 				}
 				string_builder.Append ((char) c);
 			}
@@ -2402,13 +2440,20 @@ namespace Mono.CSharp
 			return res;
 		}
 
-		private int consume_identifier (int s, bool quoted) 
+		private int consume_identifier (int c, bool quoted) 
 		{
-			int pos = 1;
-			int c = -1;
-			
-			id_builder [0] = (char) s;
+			int pos = 0;
 
+			if (c == '\\') {
+				int surrogate;
+				c = escape (c, out surrogate);
+				if (surrogate != 0) {
+					id_builder [pos++] = (char) c;
+					c = surrogate;
+				}
+			}
+
+			id_builder [pos++] = (char) c;
 			current_location = new Location (ref_line, hidden ? -1 : Col);
 
 			while ((c = get_char ()) != -1) {
@@ -2422,7 +2467,13 @@ namespace Mono.CSharp
 					id_builder [pos++] = (char) c;
 //					putback_char = -1;
 				} else if (c == '\\') {
-					c = escape (c);
+					int surrogate;
+					c = escape (c, out surrogate);
+					if (surrogate != 0) {
+						if (is_identifier_part_character ((char) c))
+							id_builder [pos++] = (char) c;
+						c = surrogate;
+					}
 					goto loop;
 				} else {
 //					putback_char = c;
@@ -2433,9 +2484,9 @@ namespace Mono.CSharp
 
 			//
 			// Optimization: avoids doing the keyword lookup
-			// on uppercase letters and _
+			// on uppercase letters
 			//
-			if (!quoted && (s >= 'a' || s == '_')){
+			if (id_builder [0] >= '_' && !quoted) {
 				int keyword = GetKeyword (id_builder, pos);
 				if (keyword != -1) {
 					val = Location;
@@ -2681,10 +2732,14 @@ namespace Mono.CSharp
 						Report.Error (1010, Location, "Newline in constant");
 						return Token.ERROR;
 					}
-					c = escape (c);
+
+					int surrogate;
+					c = escape (c, out surrogate);
 					if (c == -1)
 						return Token.ERROR;
-					val = new System.Char ();
+					if (surrogate != 0)
+						throw new NotImplementedException ();
+
 					val = (char) c;
 					c = get_char ();
 
