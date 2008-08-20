@@ -1,4 +1,4 @@
-// CS0121: The call is ambiguous between the following methods or properties: `Foo<int,int>.Test(in int)' and `Foo<int,int>.Test(in int)'
+// CS0121: The call is ambiguous between the following methods or properties: `Foo<int,int>.Test(int)' and `Foo<int,int>.Test(int)'
 // Line: 23
 using System;
 
