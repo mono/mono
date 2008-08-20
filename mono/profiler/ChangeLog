@@ -1,3 +1,8 @@
+2008-08-20  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c: Added directives block, and used it to
+	state that "allocation attribution" done using the stack tracking (so
+	that allocation callers are directly written in the log file).
+
 2008-07-28  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c: Added stack tracking (even if still unused).
 
