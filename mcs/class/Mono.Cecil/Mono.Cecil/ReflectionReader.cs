@@ -1160,7 +1160,7 @@ namespace Mono.Cecil {
 			}
 		}
 
-		private object GetConstantLittleEndian (ElementType elemType, byte[] constant)
+		static object GetConstantLittleEndian (ElementType elemType, byte [] constant)
 		{
 			switch (elemType) {
 			case ElementType.Char :
@@ -1186,7 +1186,7 @@ namespace Mono.Cecil {
 			}
 		}
 
-		private object GetConstantBigEndian (ElementType elemType, byte[] constant)
+		static object GetConstantBigEndian (ElementType elemType, byte [] constant)
 		{
 			// BinaryReader always read it's data in LE format
 			// note: this could be further optimized (even without unsafe code)
