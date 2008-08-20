@@ -1,3 +1,14 @@
+2008-08-20  Daniel Morgan <monodanmorg@yahoo.com>
+
+	* System.Data.OracleClient/OracleConnection.cs: allow 
+	the use of a connection string which allows a
+	TNS network description that is parentheses delimited
+	like the following which has the hostname, port, and
+	service name without requiring use of a TNSNAMES.ORA
+	file.
+
+User ID=SCOTT;Password=TIGER;Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.1.101)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=TESTDB)))
+
 2008-05-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Data.OracleClient_test.dll.sources: Added

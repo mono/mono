@@ -485,6 +485,7 @@ namespace System.Data.OracleClient
 
 			bool inQuote = false;
 			bool inDQuote = false;
+			int inParen = 0;
 
 			string name = String.Empty;
 			StringBuilder sb = new StringBuilder ();
@@ -501,6 +502,14 @@ namespace System.Data.OracleClient
 					break;
 				case '"' :
 					inDQuote = !inDQuote;
+					break;
+				case '(':
+					inParen++;
+					sb.Append (c);
+					break;
+				case ')':
+					inParen--;
+					sb.Append (c);
 					break;
 				case ';' :
 					if (!inDQuote && !inQuote) {
@@ -538,7 +547,7 @@ namespace System.Data.OracleClient
 						sb.Append (c);
 					break;
 				case '=' :
-					if (!inDQuote && !inQuote) {
+					if (!inDQuote && !inQuote && inParen == 0) {
 						name = sb.ToString ();
 						sb = new StringBuilder ();
 					}
@@ -575,6 +584,7 @@ namespace System.Data.OracleClient
 
 			bool inQuote = false;
 			bool inDQuote = false;
+			int inParen = 0;
 
 			string name = String.Empty;
 			string value = String.Empty;
@@ -587,6 +597,14 @@ namespace System.Data.OracleClient
 					break;
 				case '"' :
 					inDQuote = !inDQuote;
+					break;
+				case '(':
+					inParen++;
+					sb.Append (c);
+					break;
+				case ')':
+					inParen--;
+					sb.Append (c);
 					break;
 				case ';' :
 					if (!inDQuote && !inQuote) {
@@ -603,7 +621,7 @@ namespace System.Data.OracleClient
 						sb.Append (c);
 					break;
 				case '=' :
-					if (!inDQuote && !inQuote) {
+					if (!inDQuote && !inQuote && inParen == 0) {
 						name = sb.ToString ();
 						sb = new StringBuilder ();
 					}
