@@ -265,7 +265,7 @@ namespace System {
 		internal static extern int InternalKeyAvailable (int ms_timeout);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern bool TtySetup (string teardown, out byte verase, out byte vsusp, out byte intr);
+		internal static extern bool TtySetup (string keypadXmit, string teardown, out byte verase, out byte vsusp, out byte intr);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern bool SetEcho (bool wantEcho);

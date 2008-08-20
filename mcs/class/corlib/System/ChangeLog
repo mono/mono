@@ -1,3 +1,8 @@
+2008-08-20  Miguel de Icaza  <miguel@novell.com>
+
+	* ConsoleDriver.cs: TtySetup now takes an extra argument: the
+	keypadXmit string.
+
 2008-08-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Exception.cs: Fixed value of HResult to match MS. Added support for

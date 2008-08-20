@@ -200,7 +200,7 @@ namespace System {
 			if (resetColors != null)
 				endString += resetColors;
 
-			if (!ConsoleDriver.TtySetup (endString, out verase, out vsusp, out intr))
+			if (!ConsoleDriver.TtySetup (keypadXmit, endString, out verase, out vsusp, out intr))
 				throw new IOException ("Error initializing terminal.");
 
 			stdin = new StreamReader (Console.OpenStandardInput (0), Console.InputEncoding);
