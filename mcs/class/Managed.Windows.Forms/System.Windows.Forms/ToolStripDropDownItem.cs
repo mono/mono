@@ -138,13 +138,15 @@ namespace System.Windows.Forms
 
 		public void ShowDropDown ()
 		{
+			// Call this before the HasDropDownItems check to give
+			// users a chance to handle it and add drop down items
+			this.OnDropDownShow (EventArgs.Empty);
+			
 			if (!this.HasDropDownItems)
 				return;
 			
 			this.Invalidate ();
-			this.OnDropDownOpening (this, EventArgs.Empty);
 			this.DropDown.Show (this.DropDownLocation);
-			this.OnDropDownShow (EventArgs.Empty);
 			this.OnDropDownOpened (EventArgs.Empty);
 		}
 		#endregion
@@ -209,6 +211,9 @@ namespace System.Windows.Forms
 
 		protected virtual void OnDropDownShow (EventArgs e)
 		{
+			EventHandler eh = (EventHandler)(Events[DropDownOpeningEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected override void OnFontChanged (EventArgs e)
@@ -325,13 +330,6 @@ namespace System.Windows.Forms
 		private void DropDown_ItemAdded (object sender, ToolStripItemEventArgs e)
 		{
 			e.Item.owner_item = this;
-		}
-		
-		private void OnDropDownOpening (object sender, EventArgs e)
-		{
-			EventHandler eh = (EventHandler)(Events[DropDownOpeningEvent]);
-			if (eh != null)
-				eh (this, e);
 		}
 		#endregion
 	}

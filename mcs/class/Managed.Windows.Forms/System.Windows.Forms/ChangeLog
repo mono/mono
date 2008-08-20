@@ -1,3 +1,9 @@
+2008-08-20  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripDropDownItem.cs: Always raise DropDownOpening in
+	ShowDropDown to give the user a chance to dynamically add
+	drop down items.  [Step 1 of fixing bug #417877]
+
 2008-08-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* X11Dnd.cs: Don't fire pseudo motion DragOver events if we haven't
