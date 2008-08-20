@@ -1,0 +1,136 @@
+2007-11-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityTokenRequirement.cs : fill out parameter properly (gmcs
+	  does not report it; see bug #334258).
+
+2007-03-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityTokenRequirement.cs :
+	  Reject type-mismatch in TryGetProperty().
+
+2007-02-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityTokenResolver.cs : fixed some error messages.
+
+2007-02-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X509SecurityTokenAuthenticator.cs : message formatting fix.
+
+2006-09-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityTokenResolver.cs : handle matchLocalId in the default impl.
+
+2006-09-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityTokenProvider.cs : implemented cancel/renew stuff (not
+	  supported by default).
+	* KerberosSecurityTokenProvider.cs : somehow implemented for
+	  tests.
+	* SecurityTokenManager.cs,
+	  SecurityTokenVersion.cs : removed MonoTODOs.
+
+2006-09-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityTokenRequirement.cs : seems like KeyUsage does not exist
+	  by default.
+
+2006-09-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SamlSecurityTokenAuthenticator.cs : missing MonoTODOs.
+	* WindowsUserNameSecurityTokenAuthenticator.cs : fixed ctors.
+
+2006-09-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UserNameSecurityTokenAuthenticator.cs,
+	  RsaSecurityTokenAuthenticator.cs,
+	  CustomUserNameSecurityTokenAuthenticator.cs,
+	  X509SecurityTokenAuthenticator.cs,
+	  UserNamePasswordValidator.cs : implemented.
+	  SamlSecurityTokenAuthenticator.cs : partly implemented.
+	* X509CertificateValidator.cs : "None" was causing error at any time.
+
+2006-09-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X509SecurityTokenProvider.cs : implemented IDisposable. There I
+	  have no other idea than it affects on X509Store.
+
+2006-09-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UserNameSecurityTokenProvider.cs, SecurityTokenProvider.cs :
+	  warning cleanup.
+
+2006-08-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X509SecurityTokenProvider.cs : implemented another constructor.
+
+2006-08-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X509CertificateValidator.cs : implemented.
+
+2006-08-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityTokenRequirement.cs : oops, please no infinite loop.
+	  Fixed default values.
+
+2006-08-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityTokenResolver.cs : added missing members and implemented.
+	* SecurityTokenRequirement.cs : those properties should be accessible
+	  via Properties.
+
+2006-08-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityTokenRequirement.cs : don't access properties directly, it
+	  could be null.
+
+2006-08-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityTokenRequirement.cs : GetProperty() should return an
+	  instance of derived classes without problem.
+	* X509SecurityTokenProvider.cs : fixed .ctor().
+
+2006-07-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityTokenRequirement.cs : fixes from run-test.
+
+2006-07-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityTokenRequirement.cs : June CTP update.
+
+2006-03-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityTokenResolver.cs : updated to Feb.CTP API.
+	  SecurityTokenVersion.cs
+	  X509CertificateValidator.cs
+	  KerberosSecurityTokenProvider.cs
+	  UserNameSecurityTokenProvider.cs
+	  SecurityTokenManager.cs
+	  UserNamePasswordValidator.cs
+	  X509SecurityTokenProvider.cs : stubs for SecurityTokenProvider and
+	  all derived classes.
+	* Dummy.cs : we don't need it anymore.
+
+2006-03-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityTokenRequirement.cs : new file.
+	* SecurityTokenAuthenticator.cs
+	  WindowsUserNameSecurityTokenAuthenticator.cs
+	  WindowsSecurityTokenAuthenticator.cs
+	  SamlSecurityTokenAuthenticator.cs
+	  X509SecurityTokenAuthenticator.cs
+	  CustomUserNameSecurityTokenAuthenticator.cs
+	  KerberosSecurityTokenAuthenticator.cs
+	  UserNameSecurityTokenAuthenticator.cs
+	  RsaSecurityTokenAuthenticator.cs :
+	  new stubs for SecurityTokenAuthenticator and subclasses.
+
+2006-03-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityTokenSerializer.cs : new file.
+	* Dummy.cs : removed above. some API fix.
+	* SecurityTokenProvider.cs SecurityTokenResolver.cs :
+	  updated to Feb.CTP API.
+
+2006-02-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Dummy.cs : added.

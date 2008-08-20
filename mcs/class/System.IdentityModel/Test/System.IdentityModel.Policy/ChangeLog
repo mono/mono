@@ -1,0 +1,3 @@
+2006-10-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AuthorizationContextTest.cs : new test.

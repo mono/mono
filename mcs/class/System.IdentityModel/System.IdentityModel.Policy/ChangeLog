@@ -1,0 +1,66 @@
+2006-12-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AuthorizationContext.cs : (CreateDefaultAuthorizationContext)
+	  check null argument.
+
+2006-10-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AuthorizationContext.cs : changed DefaultAuthorizationContext to
+	  receive DefaultEvaluationContext to implement its properties.
+	  Implemented CreateDefaultAuthorizationContext().
+	* EvaluationContext.cs : (DefaultEvaluationContext) implemented 
+	  AddClaimSet() and RecordExpirationTime().
+
+2006-07-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EvaluationContext.cs, AuthorizationContext.cs : June CTP updates.
+	  Also moved internal default impl. classes into those files.
+	* AcceptClaimSetEventArgs.cs, AuthorizationContextBase.cs,
+	  EvaluationContextBase.cs : removed old code.
+
+2006-03-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EvaluationContext.cs AuthorizationContextBase.cs
+	  AuthorizationContext.cs EvaluationContextBase.cs :
+	  several fixes to match Feb. CTP API.
+
+2006-02-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AcceptClaimSetEventArgs.cs AcceptPolicyEventArgs.cs 
+	  AuthorizationContext.cs AuthorizationContextBase.cs
+	  AuthorizationDomain.cs ClaimComparer.cs EvaluationContext.cs
+	  EvaluationContextBase.cs IAuthorizationComponent.cs
+	  IAuthorizationPolicy.cs ResourceRights.cs ResourceTypes.cs :
+
+	  Moving namespaces to System.IdentityModel.*.
+
+2006-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ResourceTypes.cs EvaluationContext.cs ClaimComparer.cs Claim.cs
+	  AuthorizationDomain.cs ClaimSetBase.cs IAuthorizationComponent.cs
+	  AuthorizationContextBase.cs ClaimSet.cs AuthorizationContext.cs
+	  EvaluationContextBase.cs ResourceRights.cs :
+	  several updates to catch up Jan. CTP API.
+
+2005-09-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClaimSetBase.cs, AuthorizationContextBase.cs : more missing bits.
+
+2005-09-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Dummy.cs: it is not required anymore.
+	* IAuthorizationPolicy.cs, IAuthorizationComponent.cs,
+	  AcceptPolicyEventArgs.cs, AcceptClaimSetEventArgs.cs,
+	  AuthorizationContextBase.cs, AuthorizationContext.cs :
+	  new files.
+	* EvaluationContext.cs: copyright lines.
+	  AuthorizationDomain.cs : added events.
+	  ClaimSetBase.cs: implemented.
+
+2005-09-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClaimSetBase.cs, EvaluationContext.cs, ClaimSet.cs
+	  EvaluationContextBase.cs, AuthorizationDomain.cs : new files.
+	* ClaimComparer.cs, Claim.cs, ResourceRights.cs, ResourceTypes.cs :
+	  added copyright lines.
+	* Dummy.cs : removed lines for added types.

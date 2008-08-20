@@ -1,0 +1,4 @@
+2006-09-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MySecurityTokenSerializer.cs : new support file.
+

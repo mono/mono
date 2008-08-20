@@ -1,0 +1,62 @@
+2007-11-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X509CertificateClaimSet.cs : the semantics of the members has
+	  changed after I practically touched this type last time.
+
+2007-04-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Claim.cs : added serialized fields.
+
+2007-02-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X509CertificateClaimSet.cs : removed extraneous claims.
+
+2006-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClaimSet.cs : implemented System.
+	* Claim.cs : implement everything except for windows specific stuff.
+	* DefaultClaimSet.cs : implemented Initialize().
+	* X509CertificateClaimSet.cs : implemented some members.
+
+2006-09-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClaimSet.cs : warning cleanup.
+
+2006-09-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Claim.cs, Rights.cs : mostly implemented.
+
+2006-09-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClaimTypes.cs, DefaultClaimSet.cs, Claim.cs :
+	  updated namespace URI.
+
+2006-08-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClaimTypes.cs : implemented.
+
+2006-07-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClaimSetBase.cs, DefaultClaimSet.cs : renamed from former to latter.
+
+2006-07-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClaimSetBase.cs, WindowsClaimSet.cs, ClaimSet.cs, Claim.cs,
+	  ClaimTypes.cs, X509CertificateClaimSet.cs : June CTP updates.
+
+2006-03-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WindowsClaimSet.cs X509CertificateClaimSet.cs : new files.
+	* ClaimSetBase.cs Rights.cs ClaimSet.cs Claim.cs : several updates
+	  to match Feb. CTP.
+
+2006-02-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Claim.cs ClaimSet.cs ClaimSetBase.cs :
+
+	  Moving namespaces to System.IdentityModel.*.
+
+2006-02-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Claim.cs ClaimSet.cs ClaimSetBase.cs : moved from
+	  System.ServiceModel (via System.IdentityModel.Policy).

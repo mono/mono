@@ -1,0 +1,7 @@
+2006-09-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* test.cer : added public-only certificate.
+
+2006-07-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* test.pfx : for X509SecurityTokenTest.
