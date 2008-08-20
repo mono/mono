@@ -26,12 +26,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Text;
 
 namespace System.Web {
    internal class HttpResponseHeader {
       private string _sHeader;
       private string _sValue;
       private int _iKnowHeaderId;
+
+      string EncodeHeader (string value)
+		{
+#if NET_2_0
+			if (String.IsNullOrEmpty (value))
+				return value;
+			
+				StringBuilder ret = new StringBuilder ();
+				int len = value.Length;
+
+				for (int i = 0; i < len; i++) {
+					switch (value [i]) {
+						case '\r':
+							ret.Append ("%0d");
+							break;
+
+						case '\n':
+							ret.Append ("%0a");
+							break;
+
+						default:
+							ret.Append (value [i]);
+							break;
+					}
+				}
+
+				return ret.ToString ();
+#else
+				return value;
+#endif
+		}
 
       internal HttpResponseHeader(int KnowHeaderId, string value) {
          _iKnowHeaderId = KnowHeaderId;
@@ -64,9 +96,9 @@ namespace System.Web {
 
       internal void SendContent(HttpWorkerRequest WorkerRequest) {
          if (null != _sHeader) {
-            WorkerRequest.SendUnknownResponseHeader(_sHeader, _sValue);
+            WorkerRequest.SendUnknownResponseHeader(_sHeader, EncodeHeader (_sValue));
          } else {
-            WorkerRequest.SendKnownResponseHeader(_iKnowHeaderId, _sValue);
+            WorkerRequest.SendKnownResponseHeader(_iKnowHeaderId, EncodeHeader (_sValue));
          }
       }
    }
