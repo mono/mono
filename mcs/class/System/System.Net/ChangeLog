@@ -1,3 +1,7 @@
+2008-08-21  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* OpenReadCompletedEventArgs.cs: new Address property for 2.1
+
 2008-08-06  Miguel de Icaza  <miguel@novell.com>
 
 	* IPAddress.cs (ParseIPV6): Use an exception-less parser for ipv6

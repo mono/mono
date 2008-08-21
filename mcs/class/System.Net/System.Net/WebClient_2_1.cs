@@ -1173,14 +1173,14 @@ namespace System.Net
 						WebResponse response = request.EndGetResponse (asyncresult);
 						Stream stream = ProcessResponse (response);
 						OnOpenReadCompleted (
-							new OpenReadCompletedEventArgs (stream, null, false, args [1]));
+							new OpenReadCompletedEventArgs (stream, address, null, false, args [1]));
 					} catch (ThreadInterruptedException){
 						if (request != null)
 							request.Abort ();
 
-						OnOpenReadCompleted (new OpenReadCompletedEventArgs (null, null, true, args [1]));
+						OnOpenReadCompleted (new OpenReadCompletedEventArgs (null, null, null, true, args [1]));
 					} catch (Exception e){
-						OnOpenReadCompleted (new OpenReadCompletedEventArgs (null, e, false, args [1]));
+						OnOpenReadCompleted (new OpenReadCompletedEventArgs (null, null, e, false, args [1]));
 					} });
 				object [] cb_args = new object [] {address, userToken};
 				async_thread.Start (cb_args);

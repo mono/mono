@@ -36,10 +36,17 @@ namespace System.Net
 {
 	public class OpenReadCompletedEventArgs : AsyncCompletedEventArgs
 	{
+#if NET_2_1
+		internal OpenReadCompletedEventArgs (Stream result, Uri address,
+#else
 		internal OpenReadCompletedEventArgs (Stream result,
+#endif
 			Exception error, bool cancelled, object userState)
 			: base (error, cancelled, userState)
 		{
+#if NET_2_1
+			this.address = address;
+#endif
 			this.result = result;
 		}
 
@@ -48,6 +55,13 @@ namespace System.Net
 		public Stream Result {
 			get { return result; }
 		}
+
+#if NET_2_1
+		Uri address;
+		public Uri Address {
+			get { return address; }
+		}
+#endif
 	}
 }
 
