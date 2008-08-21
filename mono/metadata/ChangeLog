@@ -1,5 +1,7 @@
 2008-08-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* console-io.c (console_set_signal_handlers): Fix a warning.
+
 	* marshal.c (mono_marshal_get_synchronized_wrapper): Call the wrapper
 	method normally, the JIT will take care of avoiding recursion.
 
