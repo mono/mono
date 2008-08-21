@@ -30,17 +30,65 @@
 
 using System.Collections;
 using System.Text;
+using System.Web.Configuration;
 
 namespace System.Web {
 
 	internal abstract class BaseResponseHeader {
-		public string Value;
+		string headerValue;
+		
+		public string Value {
+			get { return headerValue; }
+			set { headerValue = EncodeHeader (value); }
+		}
 	  
+		static bool headerCheckingEnabled;
+		
+		static BaseResponseHeader () {
+#if NET_2_0
+			HttpRuntimeSection section = WebConfigurationManager.GetSection ("system.web/httpRuntime") as HttpRuntimeSection;
+#else
+			HttpRuntimeConfig section = HttpContext.GetAppConfig ("system.web/httpRuntime") as HttpRuntimeConfig;
+#endif
+			headerCheckingEnabled = section == null || section.EnableHeaderChecking;
+		}
+
+
 		internal BaseResponseHeader (string val)
 		{
 			Value = val;
 		}
 
+		string EncodeHeader (string value)
+		{
+			if (value == null || value.Length == 0)
+				return value;
+			
+			if (headerCheckingEnabled) {
+				StringBuilder ret = new StringBuilder ();
+				int len = value.Length;
+
+				for (int i = 0; i < len; i++) {
+					switch (value [i]) {
+						case '\r':
+							ret.Append ("%0d");
+							break;
+
+						case '\n':
+							ret.Append ("%0a");
+							break;
+
+						default:
+							ret.Append (value [i]);
+							break;
+					}
+				}
+
+				return ret.ToString ();
+			} else
+				return value;
+		}
+		
 		internal abstract void SendContent (HttpWorkerRequest wr);
 	}
 
