@@ -56,6 +56,11 @@ namespace System
 		}
 
 		//Constructors
+#if NET_2_1
+		protected WeakReference ()
+		{
+		}
+#endif
 		public WeakReference (object target)
 			: this (target, false)
 		{

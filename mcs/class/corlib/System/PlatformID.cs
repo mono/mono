@@ -51,7 +51,11 @@ namespace System
 		WinCE = 3,
 #endif
 #if NET_2_0
-		Unix = 4
+		Unix = 4,
+#endif
+#if NET_2_1
+		Xbox,
+		MacOSX,
 #endif
 	}
 }

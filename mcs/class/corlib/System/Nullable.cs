@@ -41,6 +41,10 @@ namespace System
 {
 	[ComVisible (true)]
 	public static class Nullable {
+
+#if NET_2_1
+		[ComVisible (false)]
+#endif
 		public static int Compare<T> (T? value1, T? value2) where T: struct
 		{
 			if (value1.has_value) {
@@ -53,6 +57,9 @@ namespace System
 			return value2.has_value ? -1 : 0;
 		}
 
+#if NET_2_1
+		[ComVisible (false)]
+#endif
 		public static bool Equals<T> (T? value1, T? value2) where T: struct
 		{
 			if (value1.has_value != value2.has_value)
