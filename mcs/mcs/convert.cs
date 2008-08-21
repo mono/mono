@@ -1967,11 +1967,11 @@ namespace Mono.CSharp {
 				//
 				// LAMESPEC: IntPtr and UIntPtr conversion to any Enum is allowed
 				//
-                if (expr_type == TypeManager.intptr_type || expr_type == TypeManager.uintptr_type) {
+				if (expr_type == TypeManager.intptr_type || expr_type == TypeManager.uintptr_type) {
 					ne = ExplicitUserConversion (ec, expr, TypeManager.GetEnumUnderlyingType (target_type), loc);
 					if (ne != null)
 						return ExplicitConversionCore (ec, ne, target_type, loc);
-                }
+				}
 				
 				return null;
 			}
