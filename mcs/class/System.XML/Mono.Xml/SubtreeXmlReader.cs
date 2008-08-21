@@ -237,6 +237,7 @@ namespace Mono.Xml
 				return false;
 			return Reader.ReadAttributeValue ();
 		}
+#endif
 
 		public override void ResolveEntity ()
 		{
@@ -244,7 +245,6 @@ namespace Mono.Xml
 				return;
 			Reader.ResolveEntity ();
 		}
-#endif
 	}
 }
 

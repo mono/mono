@@ -421,9 +421,7 @@ namespace Mono.Xml
 			return base.ReadString ();
 		}
 
-#if !NET_2_1
 		public override
-#endif
 		void ResolveEntity ()
 		{
 #if NET_2_0

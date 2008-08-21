@@ -700,13 +700,11 @@ namespace System.Xml
 			Clear ();
 		}
 
-#if !NET_2_1
 		public override void ResolveEntity ()
 		{
 			// XmlTextReader does not resolve entities.
 			throw new InvalidOperationException ("XmlTextReader cannot resolve external entities.");
 		}
-#endif
 
 #if NET_2_0
 		[MonoTODO] // FIXME: Implement, for performance improvement

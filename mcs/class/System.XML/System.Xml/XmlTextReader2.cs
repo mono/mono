@@ -601,9 +601,7 @@ namespace System.Xml
 			source.ResetState ();
 		}
 
-#if !NET_2_1
 		public override
-#endif
 		void ResolveEntity ()
 		{
 			if (entity != null)

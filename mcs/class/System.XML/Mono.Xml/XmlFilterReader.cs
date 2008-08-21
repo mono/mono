@@ -275,12 +275,12 @@ namespace Mono.Xml
 			return reader.LookupNamespace (prefix);
 		}
 
-#if !NET_2_1
 		public override void ResolveEntity ()
 		{
 			reader.ResolveEntity ();
 		}
 
+#if !NET_2_1
 		public override bool ReadAttributeValue () {
 			return reader.ReadAttributeValue ();
 		}

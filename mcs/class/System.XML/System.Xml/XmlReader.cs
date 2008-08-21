@@ -1281,9 +1281,7 @@ namespace System.Xml
 				binary = new XmlReaderBinarySupport (this);
 		}
 
-#if !NET_2_1
 		public abstract void ResolveEntity ();
-#endif
 
 		public virtual void Skip ()
 		{

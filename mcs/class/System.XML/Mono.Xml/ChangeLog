@@ -1,3 +1,8 @@
+2008-08-21  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* SubtreeXmlReader.cs
+	* XmlFilterReader.cs: re-enable ResolveEntity for 2.1
+
 2008-05-07  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlFilterReader.cs : clone settings so that it does not depend on

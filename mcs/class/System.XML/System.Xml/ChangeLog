@@ -1,5 +1,12 @@
 2008-08-21  Stephane Delcroix  <sdelcroix@novell.com>
 
+	* EnityResolvingXmlReader.cs:
+	* XmlReader.cs:
+	* XmlTextReader.cs:
+	* XmlTextReader2.cs: re-enable ResolveEntity for 2.1
+
+2008-08-21  Stephane Delcroix  <sdelcroix@novell.com>
+
 	* XmlReaderSettings.cs: adding DtdProcessing and
 	MaxCharactersFromEntities properties for 2.1
 
