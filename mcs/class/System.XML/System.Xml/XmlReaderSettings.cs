@@ -60,6 +60,10 @@ namespace System.Xml
 		private ValidationType validationType;
 #endif
 		private XmlResolver xmlResolver;
+#if NET_2_1
+		private DtdProcessing dtdProcessing;
+		private Int64 maxCharactersFromEntities;
+#endif
 
 		public XmlReaderSettings ()
 		{
@@ -111,6 +115,17 @@ namespace System.Xml
 			get { return conformance; }
 			set { conformance = value; }
 		}
+#if NET_2_1
+		public DtdProcessing DtdProcessing {
+			get { return dtdProcessing; }
+			set { dtdProcessing = value; }
+		}
+
+		public Int64 MaxCharactersFromEntities {
+			get { return maxCharactersFromEntities; }
+			set { maxCharactersFromEntities = value; }
+		}
+#endif
 
 		public bool IgnoreComments {
 			get { return ignoreComments; }

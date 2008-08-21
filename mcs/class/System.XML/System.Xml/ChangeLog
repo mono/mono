@@ -1,5 +1,10 @@
 2008-08-21  Stephane Delcroix  <sdelcroix@novell.com>
 
+	* XmlReaderSettings.cs: adding DtdProcessing and
+	MaxCharactersFromEntities properties for 2.1
+
+2008-08-21  Stephane Delcroix  <sdelcroix@novell.com>
+
 	* DtdProcessing: adding this enum on the 2.1 build
 
 2008-08-05  Jb Evain  <jbevain@novell.com>
