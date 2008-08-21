@@ -17,6 +17,7 @@ Mono.Xml/XmlFilterReader.cs
 System.Xml.Schema/XmlSeverityType.cs
 System.Xml.Schema/XmlTypeCode.cs
 System.Xml/ConformanceLevel.cs
+System.Xml/DtdProcessing.cs
 System.Xml/DTDAutomata.cs
 System.Xml/DTDObjectModel.cs
 System.Xml/DTDReader.cs
