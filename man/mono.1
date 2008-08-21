@@ -701,11 +701,15 @@ This defaults to wbs=1024.
 In its current state, this profiler can also perform heap analysis (like
 heap\-shot), and the decoder is already able to read the data, however
 the user interface for this feature is experimental (the
-\fIheap\-snapshot\-viewer\fR tool in the Mono.Profiler module).
+\fImprof\-heap\-viewer\fR tool in the mono\-tools module).
 .PP 
 Another known issue is that if the timer is not strictly monotonic (like
 rtdsc), differences between times can underflow (they are handled as
 unsigned integers) and weird numbers can show up in the logs.
+.PP 
+Finally, it can happen that when exceptions are thrown the profiler temporarily
+loses track of the execution stack and misattributes the caller for a few
+allocations (and method execution time).
 .PP 
 More explanations are provided here: "http://www.mono\-project.com/LoggingProfiler".
 .SH "EXTERNAL PROFILERS"
