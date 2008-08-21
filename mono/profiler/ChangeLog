@@ -1,3 +1,7 @@
+2008-08-21  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c: Added support for correct accounting of
+	allocations which happened at JIT time.
+
 2008-08-20  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c: Added directives block, and used it to
 	state that "allocation attribution" done using the stack tracking (so
