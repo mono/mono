@@ -520,28 +520,36 @@ the mono runtime, and is controlled attaching further options, like
 \fB\-\-profile=logging:stat\fR for doing statistical profiling (multiple
 options are separated by commas).
 .PP 
-As a quick primer, here are a few examples:
+As a quick primer, here are a few examples of the most common usage modes:
 .PP 
-To collect statistical data:
+To write the resulting data to "mydata.mprof" (defaults to statistical
+profiling):
 .nf 
 
-	mono \-\-profile=logging:s program.exe
+	mono \-\-profile=logging:o=mydata.mprof program.exe
 .fi 
 .PP 
-To profile method enter\-exit and allocations:
+To perform statistical profiling, inspecting call chains up to depth 8:
 .nf 
 
-	mono \-\-profile=logging:c,a program.exe
+	mono \-\-profile=logging:s=8 program.exe
 .fi 
 .PP 
-To profile method enter\-exit and jit time, and write the data to "mydata.mprof":
+To profile allocations with caller method attribution:
 .nf 
 
-	mono \-\-profile=logging:c,j,o=mydata.mprof program.exe
+	mono \-\-profile=logging:a,ts program.exe
 .fi 
 .PP 
-Then you would need to invoke the decoder on "mydata.mprof" to see the
-profiling results.
+To profile garbage collection activity (collection time and objects freed
+at each collection):
+.nf 
+
+	mono \-\-profile=logging:g,as program.exe
+.fi 
+.PP 
+Then you would need to invoke the decoder \fImprof\-decoder(1)\fR
+on the output file to see the profiling results.
 .PP 
 These are all the available oprions, organized by category:
 .PP 
@@ -565,6 +573,11 @@ This can be a time consuming operation.
 \fIjit\fR, \fIj\fR
 Collect information about time spent by the JIT engine compiling
 methods. 
+.TP 
+\fItrack\-stack\fR, \fIts\fR
+Track the execution stack. By itself this option does nothing, but it
+enables more detailed reporting in other options (because the profiler
+will use the stack data).
 .ne
 .RE
 .PP 
@@ -574,12 +587,15 @@ methods.
 .TP 
 \fIallocations\fR, \fIalloc\fR or \fIa\fR
 Collect information about each allocation (object class and size).
-If combined with the "c" option, for each allocation the profiler will
-also show the responsible method.
+If combined with the "ts" option, for each allocation the profiler will
+also show the responsible method (and also correctly dintinguish allocations
+performed during JIT time).
+These information are also available when combining  the "a" and "c" options,
+but since "c" is much more intrusive "ts" should be preferred.
 .TP 
 \fIallocations\-summary\fR or \fIas\fR
 At each collection dump a summary
-of the heap contents (foe each class, the number and collective size of all
+of the heap contents (for each class, the number and collective size of all
 live and freed heap objects). This very lightweight compared to full heap
 snapshots.
 .TP 
