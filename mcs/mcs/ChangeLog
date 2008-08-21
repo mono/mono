@@ -1,3 +1,7 @@
+2008-08-21  Marek Safar  <marek.safar@gmail.com>
+
+	* convert.cs: Implement explicit array to IList<T> conversion.
+
 2008-08-20  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #362740

@@ -57,7 +57,7 @@ namespace Mono.CSharp {
 		// interfaces of this interface, provided there is an implicit reference conversion
 		// from S to T.
 		//
-		static bool Array_To_IList (Type array, Type list)
+		static bool Array_To_IList (Type array, Type list, bool isExplicit)
 		{
 #if GMCS_SOURCE
 			if ((array.GetArrayRank () != 1) || !list.IsGenericType)
@@ -74,6 +74,9 @@ namespace Mono.CSharp {
 
 			if (element_type == arg_type)
 				return true;
+
+			if (isExplicit)
+				return ExplicitReferenceConversionExists (element_type, arg_type);
 
 			if (MyEmptyExpr == null)
 				MyEmptyExpr = new EmptyExpression ();
@@ -358,14 +361,9 @@ namespace Mono.CSharp {
 				}
 			}
 
-			// from any interface type S to interface-type T.
-			if (expr_type.IsInterface && target_type.IsInterface) {
-				return TypeManager.ImplementsInterface (expr_type, target_type);
-			}
-
-			// from an array-type S to an array-type of type T
-			if (expr_type.IsArray && target_type.IsArray) {
-				if (expr_type.GetArrayRank () == target_type.GetArrayRank ()) {
+			if (expr_type.IsArray) {
+				// from an array-type S to an array-type of type T
+				if (target_type.IsArray && expr_type.GetArrayRank () == target_type.GetArrayRank ()) {
 
 					Type expr_element_type = TypeManager.GetElementType (expr_type);
 
@@ -379,15 +377,22 @@ namespace Mono.CSharp {
 						return ImplicitStandardConversionExists (
 							MyEmptyExpr, target_element_type);
 				}
+
+				// from an array-type to System.Array
+				if (target_type == TypeManager.array_type)
+					return true;
+
+				// from an array-type of type T to IList<T>
+				if (Array_To_IList (expr_type, target_type, false))
+					return true;
+
+				return false;
 			}
 
-			// from an array-type to System.Array
-			if (expr_type.IsArray && target_type == TypeManager.array_type)
-				return true;
-
-			// from an array-type of type T to IList<T>
-			if (expr_type.IsArray && Array_To_IList (expr_type, target_type))
-				return true;
+			// from any interface type S to interface-type T.
+			if (expr_type.IsInterface && target_type.IsInterface) {
+				return TypeManager.ImplementsInterface (expr_type, target_type);
+			}
 
 			// from any delegate type to System.Delegate
 			if (target_type == TypeManager.delegate_type &&
@@ -1782,18 +1787,25 @@ namespace Mono.CSharp {
 					Type target_element_type = TypeManager.GetElementType (target_type);
 
 					if (TypeManager.IsGenericParameter (source_element_type) ||
-					    (!source_element_type.IsValueType && !target_element_type.IsValueType))
+						(!source_element_type.IsValueType && !target_element_type.IsValueType))
 						if (ExplicitReferenceConversionExists (source_element_type,
-										       target_element_type))
+											   target_element_type))
 							return true;
 				}
-			}
 
+				// From System.Array to any array-type
+				if (source_type == TypeManager.array_type && target_type.IsArray) {
+					return true;
+				}
 
-			// From System.Array to any array-type
-			if (source_type == TypeManager.array_type &&
-			    target_type.IsArray){
-				return true;
+				//
+				// From a single-dimensional array type S[] to System.Collections.Generic.IList<T> and its base interfaces, 
+				// provided that there is an explicit reference conversion from S to T
+				//
+				if (Array_To_IList (source_type, target_type, true))
+					return true;
+
+				return false;
 			}
 
 			//
@@ -1849,21 +1861,10 @@ namespace Mono.CSharp {
 				return new ClassCast (source, target_type);
 
 			//
-			// From any interface type S to any interface T provided S is not derived from T
-			//
-			if (source_type.IsInterface && target_type.IsInterface){
-				if (TypeManager.ImplementsInterface (source_type, target_type))
-					return null;
-				else
-					return new ClassCast (source, target_type);
-			}
-
-			//
 			// From any class type S to any interface T, provides S is not sealed
 			// and provided S does not implement T.
 			//
-			if (target_type.IsInterface &&
-				(!source_type.IsSealed || source_type.IsArray) &&	// SRE: IsSealed does not work with aggregates
+			if (target_type.IsInterface && !source_type.IsSealed &&
 				!TypeManager.ImplementsInterface (source_type, target_type)) {
 				return new ClassCast (source, target_type);
 			}
@@ -1890,31 +1891,39 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			// From an array type S with an element type Se to an array type T with an
-			// element type Te provided all the following are true:
-			//     * S and T differe only in element type, in other words, S and T
-			//       have the same number of dimensions.
-			//     * Both Se and Te are reference types
-			//     * An explicit referenc conversions exist from Se to Te
-			//
-			if (source_type.IsArray && target_type.IsArray) {
-				if (source_type.GetArrayRank () == target_type.GetArrayRank ()) {
+			if (source_type.IsArray) {
+				//
+				// From an array type S with an element type Se to an array type T with an
+				// element type Te provided all the following are true:
+				//     * S and T differe only in element type, in other words, S and T
+				//       have the same number of dimensions.
+				//     * Both Se and Te are reference types
+				//     * An explicit referenc conversions exist from Se to Te
+				//
+				if (target_type.IsArray && source_type.GetArrayRank () == target_type.GetArrayRank ()) {
 
 					Type source_element_type = TypeManager.GetElementType (source_type);
 					Type target_element_type = TypeManager.GetElementType (target_type);
 
 					if (!source_element_type.IsValueType && !target_element_type.IsValueType)
 						if (ExplicitReferenceConversionExists (source_element_type,
-										       target_element_type))
+											   target_element_type))
 							return new ClassCast (source, target_type);
 				}
-			}
 
+				// From System.Array to any array-type
+				if (source_type == TypeManager.array_type && target_type.IsArray) {
+					return new ClassCast (source, target_type);
+				}
 
-			// From System.Array to any array-type
-			if (source_type == TypeManager.array_type &&
-			    target_type.IsArray) {
-				return new ClassCast (source, target_type);
+				//
+				// From a single-dimensional array type S[] to System.Collections.Generic.IList<T> and its base interfaces, 
+				// provided that there is an explicit reference conversion from S to T
+				//
+				if (Array_To_IList (source_type, target_type, true))
+					return new ClassCast (source, target_type);
+
+				return null;
 			}
 
 			//
