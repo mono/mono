@@ -1,3 +1,11 @@
+2008-08-21  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* MoonIsolatedStorageFile.cs: Split Application and Site storage.
+	Start looking at quota.
+	* MoonIsolatedStorageFileStream.cs: Added more validation to 
+	ctors. Removed IsAsync (not in beta2). (SetLength) Start using some 
+	quota checks 
+
 2008-08-20  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* MoonIsolatedStorageFile.cs: More fixes to match unit tests.

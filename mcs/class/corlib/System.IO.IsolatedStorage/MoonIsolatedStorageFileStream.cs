@@ -6,7 +6,7 @@
 // Authors
 //      Miguel de Icaza (miguel@novell.com)
 //
-// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2007, 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,23 +33,43 @@ using System.IO;
 
 namespace System.IO.IsolatedStorage {
 
+	// NOTES: 
+	// * Silverlight allows extending to more than AvailableFreeSpace (by up to 1024 bytes).
+	//   This looks like a safety buffer.
+
+	[MonoTODO ("this needs to be quota-enabled")]
 	public class IsolatedStorageFileStream : FileStream {
+
 		IsolatedStorageFile container;
-			
+
+		internal static string Verify (IsolatedStorageFile isf, string path)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			if (path.Length == 0)
+				throw new ArgumentException ("path");
+			if (isf == null)
+				throw new ArgumentNullException ("isf");
+
+			isf.PreCheck ();
+			return isf.Verify (path);
+		}
+
 		public IsolatedStorageFileStream (string path, FileMode mode, IsolatedStorageFile isf)
-			: base (IsolatedStorageFile.Verify (path), mode)
+			: base (Verify (isf, path), mode, (mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite), 
+				FileShare.Read, DefaultBufferSize, false, true)
 		{
 			container = isf;
 		}
 
 		public IsolatedStorageFileStream (string path, FileMode mode, FileAccess access, IsolatedStorageFile isf)
-			: base (IsolatedStorageFile.Verify (path), mode, access)
+			: base (Verify (isf, path), mode, access, FileShare.Read, DefaultBufferSize, false, true)
 		{
 			container = isf;
 		}
 
 		public IsolatedStorageFileStream (string path, FileMode mode, FileAccess access, FileShare share, IsolatedStorageFile isf)
-			: base (IsolatedStorageFile.Verify (path), mode, access, share)
+			: base (Verify (isf, path), mode, access, share, DefaultBufferSize, false, true)
 		{
 			container = isf;
 		}
@@ -81,6 +101,10 @@ namespace System.IO.IsolatedStorage {
 
 		public override void SetLength (long value)
 		{
+			// if we're getting bigger then we must ensure we fit in the available free space of our container
+			if (container.CanExtend (value - Length))
+				throw new IsolatedStorageException ();
+
 			base.SetLength (value);
 		}
 
@@ -109,12 +133,6 @@ namespace System.IO.IsolatedStorage {
 		public override bool CanWrite {
 			get {
 				return base.CanWrite;
-			}
-		}
-
-		public override bool IsAsync {
-			get {
-				return base.IsAsync;
 			}
 		}
 

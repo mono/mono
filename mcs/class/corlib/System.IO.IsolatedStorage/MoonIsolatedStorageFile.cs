@@ -35,7 +35,13 @@ using System.Security;
 namespace System.IO.IsolatedStorage {
 
 	public sealed class IsolatedStorageFile : IDisposable {
-		static string appdir;
+
+		// Since we can extend more than AvailableFreeSize we need to substract the "safety" value out of it
+		private const int SafetyZone = 1024;
+
+		static string isolated_root;
+		static string isolated_appdir;
+		static string isolated_sitedir;
 		
 		static string TryDirectory (string path)
 		{
@@ -54,30 +60,28 @@ namespace System.IO.IsolatedStorage {
                                 xdg_data_home = Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData);
                         }
 
-			string basedir;
-			basedir = TryDirectory (Path.Combine (xdg_data_home, "moonlight"));
-			if (basedir == null){
+			string isolated_root;
+			isolated_root = TryDirectory (Path.Combine (xdg_data_home, "moonlight"));
+			if (isolated_root == null){
 				//
 				// Maybe try a few others?
 				//
 				return;
 			}
 
-			// FIXME: Use the actual url from the plugin for this.
-			appdir = Path.Combine (basedir, "url");
-			try {
-				Directory.CreateDirectory (appdir);
-			} catch {
-				appdir = null;
-			}
+			isolated_appdir = TryDirectory (Path.Combine (isolated_root, "application"));
+			isolated_sitedir = TryDirectory (Path.Combine (isolated_root, "site"));
 		}
 
-
+		private string basedir;
 		private bool removed = false;
 		private bool disposed = false;
 
-		internal IsolatedStorageFile (string basedir)
+		internal IsolatedStorageFile (string dir)
 		{
+			basedir = TryDirectory (dir);
+			// FIXME: we need to read the quota allocated to this storage
+			// FIXME: we need to compute the available space for this storage (and keep it updated)
 		}
 		
 		internal void PreCheck ()
@@ -90,26 +94,31 @@ namespace System.IO.IsolatedStorage {
 
 		public static IsolatedStorageFile GetUserStoreForApplication ()
 		{
-			if (appdir == null)
+			if (isolated_appdir == null)
 				throw new SecurityException ();
 			
-			return new IsolatedStorageFile (appdir);
+			// FIXME: we need to construct something based on the application, like:
+			// Application.Current.GetType ().FullName
+			// of course this is outside corlib so we need prior notification of this
+			return new IsolatedStorageFile (Path.Combine (isolated_appdir, "application"));
 		}
 
-		// FIXME: we need a separate root for SITE
 		public static IsolatedStorageFile GetUserStoreForSite ()
 		{
-			if (appdir == null)
+			if (isolated_sitedir == null)
 				throw new SecurityException ();
-			
-			return new IsolatedStorageFile (appdir);
+
+			// FIXME: we need to construct something based on the site, like:
+			// Application.Current.Host.Source.AbsoluteUri (or a subset of this)
+			// of course this is outside corlib so we need prior notification of this
+			return new IsolatedStorageFile (Path.Combine (isolated_sitedir, "site"));
 		}
 
-		internal static string Verify (string path)
+		internal string Verify (string path)
 		{
 			try {
-				string full = Path.GetFullPath (Path.Combine (appdir, path));
-				if (full.StartsWith (appdir + Path.DirectorySeparatorChar))
+				string full = Path.GetFullPath (Path.Combine (basedir, path));
+				if (full.StartsWith (basedir + Path.DirectorySeparatorChar))
 					return full;
 			} catch {
 				throw new IsolatedStorageException ();
@@ -171,7 +180,7 @@ namespace System.IO.IsolatedStorage {
 		private string HideAppDir (string path)
 		{
 			// remove the "isolated" part of the path (and the extra '/')
-			return path.Substring (appdir.Length + 1);
+			return path.Substring (basedir.Length + 1);
 		}
 
 		private string [] HideAppDirs (string[] paths)
@@ -183,7 +192,7 @@ namespace System.IO.IsolatedStorage {
 
 		public string [] GetDirectoryNames ()
 		{
-			return HideAppDirs (Directory.GetDirectories (appdir));
+			return HideAppDirs (Directory.GetDirectories (basedir));
 		}
 
 		public string [] GetDirectoryNames (string searchPattern)
@@ -191,12 +200,12 @@ namespace System.IO.IsolatedStorage {
 			if (searchPattern.IndexOf ('/') != -1)
 				throw new IsolatedStorageException ();
 			
-			return HideAppDirs (Directory.GetDirectories (appdir, searchPattern));
+			return HideAppDirs (Directory.GetDirectories (basedir, searchPattern));
 		}
 
 		public string [] GetFileNames ()
 		{
-			return HideAppDirs (Directory.GetFiles (appdir));
+			return HideAppDirs (Directory.GetFiles (basedir));
 		}
 
 		public string [] GetFileNames (string searchPattern)
@@ -204,7 +213,7 @@ namespace System.IO.IsolatedStorage {
 			if (searchPattern.IndexOf ('/') != -1)
 				throw new IsolatedStorageException ();
 			
-			return HideAppDirs (Directory.GetFiles (appdir, searchPattern));
+			return HideAppDirs (Directory.GetFiles (basedir, searchPattern));
 		}
 
 		public IsolatedStorageFileStream OpenFile (string path, FileMode mode)
@@ -220,9 +229,6 @@ namespace System.IO.IsolatedStorage {
 		public IsolatedStorageFileStream OpenFile (string path, FileMode mode, FileAccess access, FileShare share)
 		{
 			PreCheck ();
-			if (path == null)
-				throw new ArgumentNullException ("path");
-
 			return new IsolatedStorageFileStream (path, mode, access, share, this);
 		}
 
@@ -240,7 +246,9 @@ namespace System.IO.IsolatedStorage {
 		public long AvailableFreeSpace {
 			get {
 				PreCheck ();
-				return 1024*1024;
+				// FIXME: compute real free space
+				// then substract the safety
+				return 1024*1024 - SafetyZone;
 			}
 		}
 
@@ -258,6 +266,11 @@ namespace System.IO.IsolatedStorage {
 				throw new ArgumentException ("newQuotaSize", "Only increase is possible");
 
 			return true;
+		}
+
+		internal bool CanExtend (long request)
+		{
+			return (request <= AvailableFreeSpace + SafetyZone);
 		}
 	}
 }
