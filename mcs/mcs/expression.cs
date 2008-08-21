@@ -8777,7 +8777,7 @@ namespace Mono.CSharp {
 	///   is needed (the `New' class).
 	/// </summary>
 	public class EmptyExpression : Expression {
-		public static readonly EmptyExpression Null = new EmptyExpression ();
+		public static readonly Expression Null = new EmptyExpression ();
 
 		public static readonly EmptyExpression OutAccess = new EmptyExpression ();
 		public static readonly EmptyExpression LValueMemberAccess = new EmptyExpression ();

@@ -1,5 +1,9 @@
 2008-08-21  Marek Safar  <marek.safar@gmail.com>
 
+	* convert.cs, expression.cs: Use single ExplicitReferenceConversion routine.
+
+2008-08-21  Marek Safar  <marek.safar@gmail.com>
+
 	* convert.cs: Implement explicit array to IList<T> conversion.
 
 2008-08-20  Marek Safar  <marek.safar@gmail.com>
