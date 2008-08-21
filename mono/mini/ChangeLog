@@ -1,5 +1,10 @@
 2008-08-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (compile_method): Enable AOT support for generics sharing.
+
+	* method-to-ir.c (mono_method_to_ir2): Remove an aot restriction which is
+	no longer needed.
+
 	* mini-trampolines.c (mono_magic_trampoline): Add a sync wrapper here,
 	use mono_jit_info_table_find () to avoid recursion.
 	(mono_delegate_trampoline): Add a sync wrapper here.
