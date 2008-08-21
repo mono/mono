@@ -38,8 +38,11 @@ namespace System.IO {
 #if NET_2_0
 	[ComVisible (true)]
 #endif
+#if NET_2_1
+	public abstract class TextReader : IDisposable {
+#else
 	public abstract class TextReader : MarshalByRefObject, IDisposable {
-		
+#endif
 		protected TextReader() { }
 		
 		public static readonly TextReader Null;

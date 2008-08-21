@@ -7,7 +7,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2001-2003 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005, 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -40,6 +40,9 @@ using System.Threading;
 #if NET_2_0
 using Microsoft.Win32.SafeHandles;
 using System.Security.AccessControl;
+#endif
+#if NET_2_1
+using System.IO.IsolatedStorage;
 #endif
 
 namespace System.IO
@@ -210,18 +213,36 @@ namespace System.IO
 			if (bufferSize <= 0)
 				throw new ArgumentOutOfRangeException ("bufferSize", "Positive number required.");
 
-			if (mode < FileMode.CreateNew || mode > FileMode.Append)
+			if (mode < FileMode.CreateNew || mode > FileMode.Append) {
+#if NET_2_1
+				if (anonymous)
+					throw new ArgumentException ("mode", "Enum value was out of legal range.");
+				else
+#endif
 				throw new ArgumentOutOfRangeException ("mode", "Enum value was out of legal range.");
+			}
 
-			if (access < FileAccess.Read || access > FileAccess.ReadWrite)
+			if (access < FileAccess.Read || access > FileAccess.ReadWrite) {
+#if NET_2_1
+				if (anonymous)
+					throw new IsolatedStorageException ("Enum value for FileAccess was out of legal range.");
+				else
+#endif
 				throw new ArgumentOutOfRangeException ("access", "Enum value was out of legal range.");
+			}
 
 #if NET_2_0
-			if (share < FileShare.None || share > (FileShare.ReadWrite | FileShare.Delete))
+			if (share < FileShare.None || share > (FileShare.ReadWrite | FileShare.Delete)) {
 #else
-			if (share < FileShare.None || share > FileShare.ReadWrite)
+			if (share < FileShare.None || share > FileShare.ReadWrite) {
+#endif
+#if NET_2_1
+				if (anonymous)
+					throw new IsolatedStorageException ("Enum value for FileShare was out of legal range.");
+				else
 #endif
 				throw new ArgumentOutOfRangeException ("share", "Enum value was out of legal range.");
+			}
 
 			if (path.IndexOfAny (Path.InvalidPathChars) != -1) {
 				throw new ArgumentException ("Name has invalid chars");

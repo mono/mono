@@ -43,7 +43,11 @@ namespace System.IO
 #if NET_2_0
 	[ComVisible (true)]
 #endif
+#if NET_2_1
+	public abstract class Stream : IDisposable
+#else
 	public abstract class Stream : MarshalByRefObject, IDisposable
+#endif
 	{
 		public static readonly Stream Null = new NullStream ();
 

@@ -44,7 +44,11 @@ namespace System.IO {
 #if NET_2_0
 	[ComVisible (true)]
 #endif
+#if NET_2_1
+	public abstract class FileSystemInfo {
+#else
 	public abstract class FileSystemInfo : MarshalByRefObject, ISerializable {
+
 		#region Implementation of ISerializable
 
 		[ComVisible(false)]
@@ -55,7 +59,7 @@ namespace System.IO {
 		}
 
 		#endregion Implementation of ISerializable
-
+#endif
 		// public properties
 
 		public abstract bool Exists { get; }

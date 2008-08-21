@@ -42,7 +42,11 @@ namespace System.IO {
 #if NET_2_0
 	[ComVisible (true)]
 #endif
+#if NET_2_1
+	public abstract class TextWriter : IDisposable {
+#else
 	public abstract class TextWriter : MarshalByRefObject, IDisposable {
+#endif
                 
                 protected TextWriter() {
 			CoreNewLine = System.Environment.NewLine.ToCharArray ();
@@ -666,8 +670,3 @@ namespace System.IO {
 		}
 	}
 }
-
-
-
-
-

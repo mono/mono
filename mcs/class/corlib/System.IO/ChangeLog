@@ -1,3 +1,17 @@
+2008-08-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FileStream.cs: Adjust exception being thrown for Silverlight 2.0.
+	* FileSystemInfo.cs: In Silverlight 2 this type does not inherit from 
+	MarshalByRefObject nor does it implement ISerializable.
+	* Stream.cs: In Silverlight 2 this type does not inherit from 
+	MarshalByRefObject.
+	* TextReader.cs: In Silverlight 2 this type does not inherit from 
+	MarshalByRefObject.
+	* TextWriter.cs: In Silverlight 2 this type does not inherit from 
+	MarshalByRefObject.
+	* UnmanagedMemoryStream.cs: For Silverlight 2 add CLSCompliant(false)
+	to the PositionPointer property.
+
 2008-08-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* StreamWriter.cs: Change argument check for buffersize to require

@@ -157,6 +157,9 @@ namespace System.IO
 			}
 		}
 
+#if NET_2_1
+		[CLSCompliantAttribute(false)]
+#endif
 		public unsafe byte* PositionPointer {
 			get {
 				return (byte *) initial_pointer + current_position;
