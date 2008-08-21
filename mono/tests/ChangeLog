@@ -1,3 +1,8 @@
+2008-08-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* synchronized.cs: Test synchronized state using Monitor.Pulse since
+	Monitor.Exit no longer throws an exception.
+
 2008-08-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke2.cs libtest.c: Add test for out marshalling of delegates. 
