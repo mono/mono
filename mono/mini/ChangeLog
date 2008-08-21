@@ -1,3 +1,20 @@
+2008-08-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_magic_trampoline): Add a sync wrapper here,
+	use mono_jit_info_table_find () to avoid recursion.
+	(mono_delegate_trampoline): Add a sync wrapper here.
+
+	* method-to-ir.c (mono_method_to_ir2): Don't call mono_ldftn_nosyc
+	here.
+
+	* mini.c (mono_method_to_ir): Ditto.
+	
+	* mini-trampolines.c (mono_create_jit_trampoline_in_domain): Remove
+	add_sync_wrapper argument. Don't add a sync wrapper here.
+	(mono_create_jump_trampoline): Don't add a sync wrapper here.
+
+	* jit-icalls.c (mono_ldftn_nosync): Removed, no longer needed.
+	
 2008-08-20  Bill Holmes  <billholmes54@gmail.com>
 
 	* exceptions-amd64.c (seh_handler):  For Winx64 adding missing copy 
