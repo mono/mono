@@ -86,7 +86,7 @@ namespace System.Net
 //		NameValueCollection queryString;
 		bool is_busy, async;
 		Thread async_thread;
-//		Encoding encoding = Encoding.Default;
+		Encoding encoding = Encoding.UTF8;
 //		IWebProxy proxy;
 //
 //		// Constructors
@@ -252,25 +252,28 @@ namespace System.Net
 //			}
 //		}
 //
-//		byte [] DownloadDataCore (Uri address, object userToken)
-//		{
-//			WebRequest request = null;
-//			
-//			try {
-//				request = SetupRequest (address, "GET");
-//				WebResponse response = request.GetResponse ();
-//				Stream st = ProcessResponse (response);
-//				return ReadAll (st, (int) response.ContentLength, userToken);
-//			} catch (ThreadInterruptedException){
-//				if (request != null)
-//					request.Abort ();
-//				throw;
-//			} catch (Exception ex) {
-//				throw new WebException ("An error occurred " +
-//					"performing a WebClient request.", ex);
-//			}
-//		}
-//
+		byte [] DownloadDataCore (Uri address, object userToken)
+		{
+			WebRequest request = null;
+
+			try {
+				request = SetupRequest (address, "GET");
+				//WebResponse response = request.GetResponse ();
+				IAsyncResult asyncresult = request.BeginGetResponse (null, userToken);
+				asyncresult.AsyncWaitHandle.WaitOne ();
+				WebResponse response = request.EndGetResponse (asyncresult);
+				Stream st = ProcessResponse (response);
+				return ReadAll (st, (int) response.ContentLength, userToken);
+			} catch (ThreadInterruptedException){
+				if (request != null)
+					request.Abort ();
+				throw;
+			} catch (Exception ex) {
+				throw new WebException ("An error occurred " +
+					"performing a WebClient request.", ex);
+			}
+		}
+
 //		//   DownloadFile
 //
 //		public void DownloadFile (string address, string fileName)
@@ -434,18 +437,16 @@ namespace System.Net
 //			}
 //		}
 //
-//		private string DetermineMethod (Uri address, string method)
-//		{
-//			if (method != null)
-//				return method;
-//
-//#if NET_2_0
-//			if (address.Scheme == Uri.UriSchemeFtp)
-//				return "RETR";
-//#endif
-//			return "POST";
-//		}
-//
+		private string DetermineMethod (Uri address, string method)
+		{
+			if (method != null)
+				return method;
+
+			if (address.Scheme == Uri.UriSchemeFtp)
+				return "RETR";
+			return "POST";
+		}
+
 //		//   UploadData
 //
 //		public byte [] UploadData (string address, byte [] data)
@@ -797,7 +798,7 @@ namespace System.Net
 //		public event DownloadDataCompletedEventHandler DownloadDataCompleted;
 //		public event AsyncCompletedEventHandler DownloadFileCompleted;
 		public event DownloadProgressChangedEventHandler DownloadProgressChanged;
-//		public event DownloadStringCompletedEventHandler DownloadStringCompleted;
+		public event DownloadStringCompletedEventHandler DownloadStringCompleted;
 		public event OpenReadCompletedEventHandler OpenReadCompleted;
 //		public event OpenWriteCompletedEventHandler OpenWriteCompleted;
 //		public event UploadDataCompletedEventHandler UploadDataCompleted;
@@ -912,12 +913,12 @@ namespace System.Net
 			return request;
 		}
 
-//		WebRequest SetupRequest (Uri uri, string method)
-//		{
-//			WebRequest request = SetupRequest (uri);
-//			request.Method = DetermineMethod (uri, method);
-//			return request;
-//		}
+		WebRequest SetupRequest (Uri uri, string method)
+		{
+			WebRequest request = SetupRequest (uri);
+			request.Method = DetermineMethod (uri, method);
+			return request;
+		}
 
 		Stream ProcessResponse (WebResponse response)
 		{
@@ -925,40 +926,38 @@ namespace System.Net
 			return response.GetResponseStream ();
 		}
 
-//		byte [] ReadAll (Stream stream, int length, object userToken)
-//		{
-//			MemoryStream ms = null;
-//			
-//			bool nolength = (length == -1);
-//			int size = ((nolength) ? 8192 : length);
-//			if (nolength)
-//				ms = new MemoryStream ();
-//
-////			long total = 0;
-//			int nread = 0;
-//			int offset = 0;
-//			byte [] buffer = new byte [size];
-//			while ((nread = stream.Read (buffer, offset, size)) != 0) {
-//				if (nolength) {
-//					ms.Write (buffer, 0, nread);
-//				} else {
-//					offset += nread;
-//					size -= nread;
-//				}
-//#if NET_2_0
-//				if (async){
-////					total += nread;
-//					OnDownloadProgressChanged (new DownloadProgressChangedEventArgs (nread, length, userToken));
-//				}
-//#endif
-//			}
-//
-//			if (nolength)
-//				return ms.ToArray ();
-//
-//			return buffer;
-//		}
-//
+		byte [] ReadAll (Stream stream, int length, object userToken)
+		{
+			MemoryStream ms = null;
+
+			bool nolength = (length == -1);
+			int size = ((nolength) ? 8192 : length);
+			if (nolength)
+				ms = new MemoryStream ();
+
+//			long total = 0;
+			int nread = 0;
+			int offset = 0;
+			byte [] buffer = new byte [size];
+			while ((nread = stream.Read (buffer, offset, size)) != 0) {
+				if (nolength) {
+					ms.Write (buffer, 0, nread);
+				} else {
+					offset += nread;
+					size -= nread;
+				}
+				if (async){
+//					total += nread;
+					OnDownloadProgressChanged (new DownloadProgressChangedEventArgs (nread, length, userToken));
+				}
+			}
+
+			if (nolength)
+				return ms.ToArray ();
+
+			return buffer;
+		}
+
 //		string UrlEncode (string str)
 //		{
 //			StringBuilder result = new StringBuilder ();
@@ -1114,38 +1113,39 @@ namespace System.Net
 //
 //		//    DownloadStringAsync
 //
-//		public void DownloadStringAsync (Uri address)
-//		{
-//			DownloadStringAsync (address, null);
-//		}
-//
-//		public void DownloadStringAsync (Uri address, object userToken)
-//		{
-//			if (address == null)
-//				throw new ArgumentNullException ("address");
-//			
-//			lock (this) {
-//				SetBusy ();
-//				async = true;
-//
-//				async_thread = new Thread (delegate (object state) {
-//					object [] args = (object []) state;
-//					try {
-//						string data = encoding.GetString (DownloadDataCore ((Uri) args [0], args [1]));
-//						OnDownloadStringCompleted (
-//							new DownloadStringCompletedEventArgs (data, null, false, args [1]));
-//					} catch (ThreadInterruptedException){
-//						OnDownloadStringCompleted (
-//							new DownloadStringCompletedEventArgs (null, null, true, args [1]));
-//					} catch (Exception e){
-//						OnDownloadStringCompleted (
-//							new DownloadStringCompletedEventArgs (null, e, false, args [1]));
-//					}});
-//				object [] cb_args = new object [] {address, userToken};
-//				async_thread.Start (cb_args);
-//			}
-//		}
-//
+		public void DownloadStringAsync (Uri address)
+		{
+			DownloadStringAsync (address, null);
+		}
+
+		public void DownloadStringAsync (Uri address, object userToken)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
+			lock (this) {
+				SetBusy ();
+				async = true;
+
+				async_thread = new Thread (delegate (object state) {
+					object [] args = (object []) state;
+					try {
+						byte [] bdata = DownloadDataCore ((Uri) args [0], args [1]);
+						string data = encoding.GetString (bdata, 0, bdata.Length);
+						OnDownloadStringCompleted (
+							new DownloadStringCompletedEventArgs (data, null, false, args [1]));
+					} catch (ThreadInterruptedException){
+						OnDownloadStringCompleted (
+							new DownloadStringCompletedEventArgs (null, null, true, args [1]));
+					} catch (Exception e){
+						OnDownloadStringCompleted (
+							new DownloadStringCompletedEventArgs (null, e, false, args [1]));
+					}});
+				object [] cb_args = new object [] {address, userToken};
+				async_thread.Start (cb_args);
+			}
+		}
+
 		//    OpenReadAsync
 
 		public void OpenReadAsync (Uri address)
@@ -1443,13 +1443,20 @@ namespace System.Net
 		[DllImport ("moon")]
 		static extern uint g_idle_add (GSourceFunc callback, IntPtr data);
 
-//		protected virtual void OnDownloadStringCompleted (DownloadStringCompletedEventArgs args)
-//		{
-//			CompleteAsync ();
-//			if (DownloadStringCompleted != null)
-//				DownloadStringCompleted (this, args);
-//		}
-//
+		protected virtual void OnDownloadStringCompleted (DownloadStringCompletedEventArgs args)
+		{
+			CompleteAsync ();
+			if (DownloadStringCompleted != null) {
+				GSourceFunc callback = (GSourceFunc) delegate (IntPtr ctx) { DownloadStringCompleted (this, (DownloadStringCompletedEventArgs) callback_args); wait_event.Set (); return false; };
+				callback_args = args;
+
+				g_idle_add (callback, IntPtr.Zero);
+
+				wait_event.WaitOne ();
+				GC.KeepAlive (callback);
+			}
+		}
+
 
 //		protected virtual void OnOpenWriteCompleted (OpenWriteCompletedEventArgs args)
 //		{

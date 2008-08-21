@@ -1,3 +1,7 @@
+2008-08-21  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* WebClient_2_1.cs: enable the DownloadStringAsync code
+
 2008-08-19  Geoff Norton  <gnorton@novell.com>
 
 	* WebClient_2_1.cs: Keep a reference to the tick callback until its completed.
