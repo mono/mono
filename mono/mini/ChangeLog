@@ -1,5 +1,11 @@
 2008-08-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-amd64.c (mono_arch_create_rgctx_lazy_fetch_trampoline): Change the
+	order of the arguments to the C trampoline: pass 'slot' as the trampoline
+	argument, and pass the vtable in VTABLE_REG.
+	(mono_arch_create_trampoline_code_full): Remove some special casing for
+	the rgctx fetch trampoline.
+
 	* mini.c (mono_method_to_ir): Fix the STELEM_ANY+null value optimization.
 	Fixes #419273.
 
