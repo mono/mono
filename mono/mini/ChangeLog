@@ -1,3 +1,10 @@
+2008-08-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Fix the STELEM_ANY+null value optimization.
+	Fixes #419273.
+
+	* iltests.il: Add a test for it.
+
 2008-08-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (compile_method): Enable AOT support for generics sharing.
