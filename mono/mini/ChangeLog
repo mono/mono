@@ -1,5 +1,15 @@
 2008-08-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-<ARCH>.c (mono_arch_get_rgctx_lazy_fetch_offset): Removed, no longer
+	needed.
+
+	* mini-trampolines.c (mono_rgctx_lazy_fetch_trampoline): Get the additional
+	trampoline argument from MONO_ARCH_VTABLE_REG.
+
+	* tramp-x86.c (mono_arch_create_rgctx_lazy_fetch_trampoline): Change the
+	order of the arguments to the C trampoline: pass 'slot' as the trampoline
+	argument, and pass the vtable in VTABLE_REG.
+
 	* tramp-amd64.c (mono_arch_create_rgctx_lazy_fetch_trampoline): Change the
 	order of the arguments to the C trampoline: pass 'slot' as the trampoline
 	argument, and pass the vtable in VTABLE_REG.
