@@ -277,7 +277,11 @@ namespace System.IO
 					// don't leak the path information for isolated storage
 					string msg = Locale.GetText ("Could not find a part of the path \"{0}\".");
 					string fname = (anonymous) ? dname : Path.GetFullPath (path);
+#if NET_2_1
+					throw new IsolatedStorageException (String.Format (msg, fname));
+#else
 					throw new DirectoryNotFoundException (String.Format (msg, fname));
+#endif
 				}
 			}
 
@@ -286,7 +290,11 @@ namespace System.IO
 				// don't leak the path information for isolated storage
 				string msg = Locale.GetText ("Could not find file \"{0}\".");
 				string fname = (anonymous) ? Path.GetFileName (path) : Path.GetFullPath (path);
+#if NET_2_1
+				throw new IsolatedStorageException (String.Format (msg, fname));
+#else
 				throw new FileNotFoundException (String.Format (msg, fname), fname);
+#endif
 			}
 
 			// IsolatedStorage needs to keep the Name property to the default "[Unknown]"
