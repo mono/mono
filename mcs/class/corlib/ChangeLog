@@ -1,3 +1,7 @@
+2008-08-22  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* corlib_test.dll.sources: Add unit tests for ObsoleteAttribute
+
 2008-08-12  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* corlib.dll.sources: Removed ReflectionSerializationHolder.cs.
