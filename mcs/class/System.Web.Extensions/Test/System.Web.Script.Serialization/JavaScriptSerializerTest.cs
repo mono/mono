@@ -363,9 +363,7 @@ namespace Tests.System.Web.Script.Serialization
 		}
 
 		[Test]
-#if TARGET_JVM
 		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void TestDeserialize () {
 			JavaScriptSerializer ser = new JavaScriptSerializer ();
 			Assert.IsNull (ser.Deserialize<X> (""));
@@ -384,9 +382,7 @@ namespace Tests.System.Web.Script.Serialization
 		}
 
 		[Test]
-#if TARGET_JVM
 		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void TestDeserializeTypeResolver () 
 		{
 			JavaScriptSerializer ser = new JavaScriptSerializer (new SimpleTypeResolver ());
@@ -877,7 +873,8 @@ namespace Tests.System.Web.Script.Serialization
 
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
-		public void RecursionLimitSerializeToDeap () 
+		[NUnit.Framework.Category ("NotWorking")]
+		public void RecursionLimitSerializeToDeep () 
 		{
 			JavaScriptSerializer ser = new JavaScriptSerializer ();
 			ser.RecursionLimit = 2;
@@ -886,6 +883,7 @@ namespace Tests.System.Web.Script.Serialization
 		}
 
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
 		public void RecursionLimitSerialize2 () 
 		{
 			JavaScriptSerializer ser = new JavaScriptSerializer ();
@@ -904,6 +902,7 @@ namespace Tests.System.Web.Script.Serialization
 		}
 
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
 		public void SimpleTypeResolver () 
 		{
 			JavaScriptSerializer ser = new JavaScriptSerializer (new SimpleTypeResolver ());
@@ -1014,9 +1013,7 @@ namespace Tests.System.Web.Script.Serialization
 		}
 
 		[Test]
-#if TARGET_JVM
 		[NUnit.Framework.Category ("NotWorking")]
-#endif
 		public void CustomTypeResolver ()
 		{
 			JavaScriptSerializer ser = new JavaScriptSerializer (new CustomResolver ());
