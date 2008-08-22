@@ -1,3 +1,14 @@
+2008-08-22  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c: Backported fixes from trunk (making it
+	identical to r111250):
+	- r111250 (correct accounting of allocations happening at JIT time).
+	- r111096 (emit directives blocks).
+	- r111095 (stack tracking).
+	- r109120 (fix bug 412473).
+	- r109069 (fix allocation summaries).
+	- r108633 (emit full type names for loaded classes, by Rodrigo Kumpera).
+	- r108632 (use the "runtime initialized" hook to register the thread).
+
 2008-07-04  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c: Fix an embarassingly stupid problem with
 	buffer sizes.

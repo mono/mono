@@ -1,6 +1,7 @@
 #include <config.h>
 #include <mono/metadata/profiler.h>
 #include <mono/metadata/class.h>
+#include <mono/metadata/class-internals.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/loader.h>
 #include <mono/metadata/threads.h>
@@ -33,8 +34,16 @@ typedef enum {
 	MONO_PROFILER_FILE_BLOCK_KIND_EVENTS = 6,
 	MONO_PROFILER_FILE_BLOCK_KIND_STATISTICAL = 7,
 	MONO_PROFILER_FILE_BLOCK_KIND_HEAP_DATA = 8,
-	MONO_PROFILER_FILE_BLOCK_KIND_HEAP_SUMMARY = 9
+	MONO_PROFILER_FILE_BLOCK_KIND_HEAP_SUMMARY = 9,
+	MONO_PROFILER_FILE_BLOCK_KIND_DIRECTIVES = 10
 } MonoProfilerFileBlockKind;
+
+typedef enum {
+	MONO_PROFILER_DIRECTIVE_END = 0,
+	MONO_PROFILER_DIRECTIVE_ALLOCATIONS_CARRY_CALLER = 1,
+	MONO_PROFILER_DIRECTIVE_LAST
+} MonoProfilerDirectives;
+
 
 #define MONO_PROFILER_LOADED_EVENT_MODULE     1
 #define MONO_PROFILER_LOADED_EVENT_ASSEMBLY   2
@@ -65,7 +74,9 @@ typedef struct _ProfilerEventData {
 typedef enum {
 	MONO_PROFILER_EVENT_METHOD_JIT = 0,
 	MONO_PROFILER_EVENT_METHOD_FREED = 1,
-	MONO_PROFILER_EVENT_METHOD_CALL = 2
+	MONO_PROFILER_EVENT_METHOD_CALL = 2,
+	MONO_PROFILER_EVENT_METHOD_ALLOCATION_CALLER = 3,
+	MONO_PROFILER_EVENT_METHOD_ALLOCATION_JIT_TIME_CALLER = 4
 } MonoProfilerMethodEvents;
 typedef enum {
 	MONO_PROFILER_EVENT_CLASS_LOAD = 0,
@@ -85,7 +96,8 @@ typedef enum {
 	MONO_PROFILER_EVENT_GC_SWEEP = 4,
 	MONO_PROFILER_EVENT_GC_RESIZE = 5,
 	MONO_PROFILER_EVENT_GC_STOP_WORLD = 6,
-	MONO_PROFILER_EVENT_GC_START_WORLD = 7
+	MONO_PROFILER_EVENT_GC_START_WORLD = 7,
+	MONO_PROFILER_EVENT_JIT_TIME_ALLOCATION = 8
 } MonoProfilerEvents;
 typedef enum {
 	MONO_PROFILER_EVENT_KIND_START = 0,
@@ -356,6 +368,13 @@ typedef struct _ProfilerHeapShotWriteJob {
 	gboolean dump_heap_data;
 } ProfilerHeapShotWriteJob;
 
+typedef struct _ProfilerThreadStack {
+	guint32 capacity;
+	guint32 top;
+	MonoMethod **stack;
+	guint8 *method_is_jitted;
+} ProfilerThreadStack;
+
 typedef struct _ProfilerPerThreadData {
 	ProfilerEventData *events;
 	ProfilerEventData *next_free_event;
@@ -366,6 +385,7 @@ typedef struct _ProfilerPerThreadData {
 	guint64 last_event_counter;
 	gsize thread_id;
 	ProfilerHeapShotObjectBuffer *heap_shot_object_buffers;
+	ProfilerThreadStack stack;
 	struct _ProfilerPerThreadData* next;
 } ProfilerPerThreadData;
 
@@ -827,6 +847,8 @@ struct _MonoProfiler {
 		gboolean unreachable_objects;
 		gboolean collection_summary;
 		gboolean heap_shot;
+		gboolean track_stack;
+		gboolean track_calls;
 	} action_flags;
 };
 static MonoProfiler *profiler;
@@ -915,6 +937,116 @@ static int event_counter = 0;
 #define EVENT_MARK() printf ("[EVENT:%d]", ++ event_counter)
 #endif
 
+static void
+thread_stack_initialize_empty (ProfilerThreadStack *stack) {
+	stack->capacity = 0;
+	stack->top = 0;
+	stack->stack = NULL;
+	stack->method_is_jitted = NULL;
+}
+
+static void
+thread_stack_free (ProfilerThreadStack *stack) {
+	stack->capacity = 0;
+	stack->top = 0;
+	if (stack->stack != NULL) {
+		g_free (stack->stack);
+		stack->stack = NULL;
+	}
+	if (stack->method_is_jitted != NULL) {
+		g_free (stack->method_is_jitted);
+		stack->method_is_jitted = NULL;
+	}
+}
+
+static void
+thread_stack_initialize (ProfilerThreadStack *stack, guint32 capacity) {
+	stack->capacity = capacity;
+	stack->top = 0;
+	stack->stack = g_new0 (MonoMethod*, capacity);
+	stack->method_is_jitted = g_new0 (guint8, capacity);
+}
+
+static void
+thread_stack_push_jitted (ProfilerThreadStack *stack, MonoMethod* method, gboolean method_is_jitted) {
+	if (stack->top >= stack->capacity) {
+		MonoMethod **old_stack = stack->stack;
+		guint8 *old_method_is_jitted = stack->method_is_jitted;
+		guint32 top = stack->top;
+		thread_stack_initialize (stack, stack->capacity * 2);
+		memcpy (stack->stack, old_stack, top * sizeof (MonoMethod*));
+		memcpy (stack->method_is_jitted, old_method_is_jitted, top * sizeof (guint8));
+		stack->top = top;
+	}
+	stack->stack [stack->top] = method;
+	stack->method_is_jitted [stack->top] = method_is_jitted;
+	stack->top ++;
+}
+
+static inline void
+thread_stack_push (ProfilerThreadStack *stack, MonoMethod* method) {
+	thread_stack_push_jitted (stack, method, FALSE);
+}
+
+static MonoMethod*
+thread_stack_pop (ProfilerThreadStack *stack) {
+	if (stack->top > 0) {
+		stack->top --;
+		return stack->stack [stack->top];
+	} else {
+		return NULL;
+	}
+}
+
+static MonoMethod*
+thread_stack_top (ProfilerThreadStack *stack) {
+	if (stack->top > 0) {
+		return stack->stack [stack->top - 1];
+	} else {
+		return NULL;
+	}
+}
+
+static gboolean
+thread_stack_top_is_jitted (ProfilerThreadStack *stack) {
+	if (stack->top > 0) {
+		return stack->method_is_jitted [stack->top - 1];
+	} else {
+		return FALSE;
+	}
+}
+
+static MonoMethod*
+thread_stack_index_from_top (ProfilerThreadStack *stack, int index) {
+	if (stack->top > index) {
+		return stack->stack [stack->top - (index + 1)];
+	} else {
+		return NULL;
+	}
+}
+
+static gboolean
+thread_stack_index_from_top_is_jitted (ProfilerThreadStack *stack, int index) {
+	if (stack->top > index) {
+		return stack->method_is_jitted [stack->top - (index + 1)];
+	} else {
+		return FALSE;
+	}
+}
+
+static inline void
+thread_stack_push_safely (ProfilerThreadStack *stack, MonoMethod* method) {
+	if (stack->stack != NULL) {
+		thread_stack_push (stack, method);
+	}
+}
+
+static inline void
+thread_stack_push_jitted_safely (ProfilerThreadStack *stack, MonoMethod* method, gboolean method_is_jitted) {
+	if (stack->stack != NULL) {
+		thread_stack_push_jitted (stack, method, method_is_jitted);
+	}
+}
 
 static ClassIdMappingElement*
 class_id_mapping_element_get (MonoClass *klass) {
@@ -936,7 +1068,7 @@ static ClassIdMappingElement*
 class_id_mapping_element_new (MonoClass *klass) {
 	ClassIdMappingElement *result = g_new (ClassIdMappingElement, 1);
 	
-	result->name = g_strdup_printf ("%s.%s", mono_class_get_namespace (klass), mono_class_get_name (klass));
+	result->name = mono_type_full_name (mono_class_get_type (klass));
 	result->klass = klass;
 	result->next_unwritten = profiler->classes->unwritten;
 	profiler->classes->unwritten = result;
@@ -1416,7 +1548,6 @@ profiler_heap_shot_write_job_new (gboolean heap_shot_was_signalled, gboolean dum
 		job->end = & (job->buffers->buffer [PROFILER_HEAP_SHOT_WRITE_BUFFER_SIZE]);
 	} else {
 		job->buffers = NULL;
-		job->buffers->next = NULL;
 		job->last_next = NULL;
 		job->start = NULL;
 		job->cursor = NULL;
@@ -1439,6 +1570,11 @@ profiler_heap_shot_write_job_new (gboolean heap_shot_was_signalled, gboolean dum
 	printf ("profiler_heap_shot_write_job_new: created job %p with buffer %p(%p-%p) (collection %d, dump %d)\n", job, job->buffers, job->start, job->end, collection, dump_heap_data);
 #endif
 	return job;
+}
+
+static gboolean
+profiler_heap_shot_write_job_has_data (ProfilerHeapShotWriteJob *job) {
+	return ((job->buffers != NULL) || (job->summary.capacity > 0));
 }
 
 static void
@@ -1502,15 +1638,15 @@ profiler_process_heap_shot_write_jobs (void) {
 			next_job = current_job->next_unwritten;
 			
 			if (next_job != NULL) {
-				if (current_job->buffers != NULL) {
+				if (profiler_heap_shot_write_job_has_data (current_job)) {
 					done = FALSE;
 				}
-				if (next_job->buffers == NULL) {
+				if (! profiler_heap_shot_write_job_has_data (next_job)) {
 					current_job->next_unwritten = NULL;
 					next_job = NULL;
 				}
 			} else {
-				if (current_job->buffers != NULL) {
+				if (profiler_heap_shot_write_job_has_data (current_job)) {
 					LOG_WRITER_THREAD ("profiler_process_heap_shot_write_jobs: writing...");
 					profiler_heap_shot_write_block (current_job);
 					LOG_WRITER_THREAD ("profiler_process_heap_shot_write_jobs: done");
@@ -1617,6 +1753,11 @@ profiler_per_thread_data_new (guint32 buffer_size)
 			(profiler->action_flags.collection_summary == TRUE)) {
 		profiler_heap_shot_object_buffer_new (data);
 	}
+	if (profiler->action_flags.track_stack) {
+		thread_stack_initialize (&(data->stack), 64);
+	} else {
+		thread_stack_initialize_empty (&(data->stack));
+	}
 	return data;
 }
 
@@ -1624,6 +1765,7 @@ static void
 profiler_per_thread_data_destroy (ProfilerPerThreadData *data) {
 	g_free (data->events);
 	profiler_heap_shot_object_buffers_destroy (data->heap_shot_object_buffers);
+	thread_stack_free (&(data->stack));
 	g_free (data);
 }
 
@@ -1765,6 +1907,22 @@ write_string (const char *string) {
 		string ++;
 	}
 	WRITE_BYTE (0);
+}
+
+static void write_clock_data (void);
+static void
+write_directives_block (gboolean start) {
+	write_clock_data ();
+	
+	if (start) {
+		if (profiler->action_flags.track_stack) {
+			write_uint32 (MONO_PROFILER_DIRECTIVE_ALLOCATIONS_CARRY_CALLER);
+		}
+	}
+	write_uint32 (MONO_PROFILER_DIRECTIVE_END);
+	
+	write_clock_data ();
+	write_current_block (MONO_PROFILER_FILE_BLOCK_KIND_DIRECTIVES);
 }
 
 #if DEBUG_HEAP_PROFILER
@@ -2105,6 +2263,8 @@ write_event (ProfilerEventData *event) {
 	guint8 event_code;
 	guint64 event_data;
 	guint64 event_value;
+	gboolean write_event_value_extension_1 = FALSE;
+	guint64 event_value_extension_1 = 0;
 
 	event_value = event->value;
 	if (event_value == MAX_EVENT_VALUE) {
@@ -2132,13 +2292,39 @@ write_event (ProfilerEventData *event) {
 		event_data = element->id;
 		
 		if (event->code == MONO_PROFILER_EVENT_CLASS_ALLOCATION) {
-			MONO_PROFILER_EVENT_MAKE_PACKED_CODE (event_code, event_data, MONO_PROFILER_PACKED_EVENT_CODE_CLASS_ALLOCATION);
+			if (! profiler->action_flags.track_stack) {
+				MONO_PROFILER_EVENT_MAKE_PACKED_CODE (event_code, event_data, MONO_PROFILER_PACKED_EVENT_CODE_CLASS_ALLOCATION);
+			} else {
+				MonoMethod *caller_method = next->data.address;
+				
+				if (next->code == MONO_PROFILER_EVENT_METHOD_ALLOCATION_CALLER) {
+					MONO_PROFILER_EVENT_MAKE_PACKED_CODE (event_code, event_data, MONO_PROFILER_PACKED_EVENT_CODE_CLASS_ALLOCATION);
+				} else if (next->code == MONO_PROFILER_EVENT_METHOD_ALLOCATION_JIT_TIME_CALLER) {
+					MONO_PROFILER_EVENT_MAKE_FULL_CODE (event_code, MONO_PROFILER_EVENT_JIT_TIME_ALLOCATION, event->kind, MONO_PROFILER_PACKED_EVENT_CODE_OTHER_EVENT);
+				} else {
+					/* If we are tracking the stack, the next event must be the caller method */
+					g_assert_not_reached ();
+				}
+				if (caller_method != NULL) {
+					MethodIdMappingElement *caller = method_id_mapping_element_get (caller_method);
+					g_assert (caller != NULL);
+					event_value_extension_1 = caller->id;
+				}
+
+				write_event_value_extension_1 = TRUE;
+				next ++;
+			}
 		} else {
 			MONO_PROFILER_EVENT_MAKE_FULL_CODE (event_code, event->code, event->kind, MONO_PROFILER_PACKED_EVENT_CODE_CLASS_EVENT);
 		}
 	} else {
 		event_data = event->data.number;
 		MONO_PROFILER_EVENT_MAKE_FULL_CODE (event_code, event->code, event->kind, MONO_PROFILER_PACKED_EVENT_CODE_OTHER_EVENT);
+	}
+	
+	/* Skip writing JIT events if the user did not ask for them */
+	if ((event->code == MONO_PROFILER_EVENT_METHOD_JIT) && ! profiler->action_flags.jit_time) {
+		return next;
 	}
 	
 #if (DEBUG_LOGGING_PROFILER)
@@ -2152,6 +2338,9 @@ write_event (ProfilerEventData *event) {
 	write_uint64 (event_data);
 	if (write_event_value) {
 		write_uint64 (event_value);
+		if (write_event_value_extension_1) {
+			write_uint64 (event_value_extension_1);
+		}
 	}
 	
 	return next;
@@ -3053,6 +3242,7 @@ flush_all_mappings (void);
 
 static void
 write_statistical_data_block (ProfilerStatisticalData *data) {
+	MonoThread *current_thread = mono_thread_current ();
 	int start_index = data->first_unwritten_index;
 	int end_index = data->next_free_index;
 	gboolean regions_refreshed = FALSE;
@@ -3078,7 +3268,7 @@ write_statistical_data_block (ProfilerStatisticalData *data) {
 		ProfilerStatisticalHit hit = data->hits [base_index];
 		int callers_count;
 		
-		regions_refreshed = write_statistical_hit (hit.domain, hit.address, regions_refreshed);
+		regions_refreshed = write_statistical_hit ((current_thread != NULL) ? hit.domain : NULL, hit.address, regions_refreshed);
 		base_index ++;
 		
 		for (callers_count = 0; callers_count < call_chain_depth; callers_count ++) {
@@ -3094,7 +3284,7 @@ write_statistical_data_block (ProfilerStatisticalData *data) {
 			for (callers_count = 0; callers_count < call_chain_depth; callers_count ++) {
 				hit = data->hits [base_index + callers_count];
 				if (hit.address != NULL) {
-					regions_refreshed = write_statistical_hit (hit.domain, hit.address, regions_refreshed);
+					regions_refreshed = write_statistical_hit ((current_thread != NULL) ? hit.domain : NULL, hit.address, regions_refreshed);
 				} else {
 					break;
 				}
@@ -3152,7 +3342,9 @@ update_mapping (ProfilerPerThreadData *data) {
 			MethodIdMappingElement *element = method_id_mapping_element_get (start->data.address);
 			if (element == NULL) {
 				MonoMethod *method = start->data.address;
-				method_id_mapping_element_new (method);
+				if (method != NULL) {
+					method_id_mapping_element_new (method);
+				}
 			}
 		}
 		
@@ -3185,7 +3377,7 @@ flush_full_event_data_buffer (ProfilerPerThreadData *data) {
 	// We flush all mappings because some id definitions could come
 	// from other threads
 	flush_all_mappings ();
-	g_assert (data->first_unmapped_event >= data->end_event);
+	g_assert (data->first_unmapped_event >= data->next_free_event);
 	
 	write_thread_data_block (data);
 	
@@ -3205,6 +3397,13 @@ flush_full_event_data_buffer (ProfilerPerThreadData *data) {
 	(e) = (d)->next_free_event;\
 	(d)->next_free_event ++;\
 } while (0)
+#define GET_NEXT_FREE_EVENT_LEAVING_ONE_FREE(d,e) {\
+	if ((d)->next_free_event >= ((d)->end_event - 2)) {\
+		flush_full_event_data_buffer (d);\
+	}\
+	(e) = (d)->next_free_event;\
+	(d)->next_free_event ++;\
+} while (0)
 
 static void
 flush_everything (void) {
@@ -3217,6 +3416,7 @@ flush_everything (void) {
 	write_statistical_data_block (profiler->statistical_data);
 }
 
+/* This assumes the lock is held: it just offloads the work to the writer thread. */
 static void
 writer_thread_flush_everything (void) {
 	if (CHECK_WRITER_THREAD ()) {
@@ -3364,11 +3564,13 @@ class_event_code_to_string (MonoProfilerClassEvents code) {
 	}
 }
 static const char*
-method_event_code_to_string (MonoProfilerClassEvents code) {
+method_event_code_to_string (MonoProfilerMethodEvents code) {
 	switch (code) {
 	case MONO_PROFILER_EVENT_METHOD_CALL: return "CALL";
 	case MONO_PROFILER_EVENT_METHOD_JIT: return "JIT";
 	case MONO_PROFILER_EVENT_METHOD_FREED: return "FREED";
+	case MONO_PROFILER_EVENT_METHOD_ALLOCATION_CALLER: return "ALLOCATION_CALLER";
+	case MONO_PROFILER_EVENT_METHOD_ALLOCATION_JIT_TIME_CALLER: return "ALLOCATION_JIT_TIME_CALLER";
 	default: g_assert_not_reached (); return "";
 	}
 }
@@ -3429,9 +3631,9 @@ print_event_data (gsize thread_id, ProfilerEventData *event, guint64 value) {
 				event->kind,
 				event->code,
 				value,
-				mono_class_get_namespace (mono_method_get_class ((MonoMethod*) event->data.address)),
-				mono_class_get_name (mono_method_get_class ((MonoMethod*) event->data.address)),
-				mono_method_get_name ((MonoMethod*) event->data.address));
+				(event->data.address != NULL) ? mono_class_get_namespace (mono_method_get_class ((MonoMethod*) event->data.address)) : "<NULL>",
+				(event->data.address != NULL) ? mono_class_get_name (mono_method_get_class ((MonoMethod*) event->data.address)) : "<NULL>",
+				(event->data.address != NULL) ? mono_method_get_name ((MonoMethod*) event->data.address) : "<NULL>");
 	} else {
 		printf ("[TID %ld] NUMBER[%ld] event [%p] %s:%s[%d-%d-%d] %ld\n",
 				thread_id,
@@ -3453,11 +3655,9 @@ print_event_data (gsize thread_id, ProfilerEventData *event, guint64 value) {
 #define RESULT_TO_EVENT_CODE(r) (((r)==MONO_PROFILE_OK)?MONO_PROFILER_EVENT_RESULT_SUCCESS:MONO_PROFILER_EVENT_RESULT_FAILURE)
 
 #define STORE_EVENT_ITEM_COUNTER(p,i,dt,c,k) do {\
-	ProfilerPerThreadData *data;\
 	ProfilerEventData *event;\
 	guint64 counter;\
 	guint64 delta;\
-	GET_PROFILER_THREAD_DATA (data);\
 	GET_NEXT_FREE_EVENT (data, event);\
 	MONO_PROFILER_GET_CURRENT_COUNTER (counter);\
 	event->data.address = (i);\
@@ -3476,11 +3676,9 @@ print_event_data (gsize thread_id, ProfilerEventData *event, guint64 value) {
 	data->last_event_counter = counter;\
 	LOG_EVENT (data->thread_id, event, delta);\
 } while (0);
-#define STORE_EVENT_ITEM_VALUE(p,i,dt,c,k,v) do {\
-	ProfilerPerThreadData *data;\
+#define STORE_EVENT_ITEM_VALUE_NEXT(p,i,dt,c,k,v,NEXT_FREE_EVENT) do {\
 	ProfilerEventData *event;\
-	GET_PROFILER_THREAD_DATA (data);\
-	GET_NEXT_FREE_EVENT (data, event);\
+	NEXT_FREE_EVENT (data, event);\
 	event->data.address = (i);\
 	event->data_type = (dt);\
 	event->code = (c);\
@@ -3495,12 +3693,12 @@ print_event_data (gsize thread_id, ProfilerEventData *event, guint64 value) {
 	}\
 	LOG_EVENT (data->thread_id, event, (v));\
 }while (0);
+#define STORE_EVENT_ITEM_VALUE(p,i,dt,c,k,v) STORE_EVENT_ITEM_VALUE_NEXT(p,i,dt,c,k,v,GET_NEXT_FREE_EVENT)
+#define STORE_EVENT_ITEM_VALUE_LEAVING_ONE_FREE(p,i,dt,c,k,v) STORE_EVENT_ITEM_VALUE_NEXT(p,i,dt,c,k,v,GET_NEXT_FREE_EVENT_LEAVING_ONE_FREE)
 #define STORE_EVENT_NUMBER_COUNTER(p,n,dt,c,k) do {\
-	ProfilerPerThreadData *data;\
 	ProfilerEventData *event;\
 	guint64 counter;\
 	guint64 delta;\
-	GET_PROFILER_THREAD_DATA (data);\
 	GET_NEXT_FREE_EVENT (data, event);\
 	MONO_PROFILER_GET_CURRENT_COUNTER (counter);\
 	event->data.number = (n);\
@@ -3520,9 +3718,7 @@ print_event_data (gsize thread_id, ProfilerEventData *event, guint64 value) {
 	LOG_EVENT (data->thread_id, event, delta);\
 }while (0);
 #define STORE_EVENT_NUMBER_VALUE(p,n,dt,c,k,v) do {\
-	ProfilerPerThreadData *data;\
 	ProfilerEventData *event;\
-	GET_PROFILER_THREAD_DATA (data);\
 	GET_NEXT_FREE_EVENT (data, event);\
 	event->data.number = (n);\
 	event->data_type = (dt);\
@@ -3539,39 +3735,44 @@ print_event_data (gsize thread_id, ProfilerEventData *event, guint64 value) {
 	LOG_EVENT (data->thread_id, event, (v));\
 }while (0);
 
-
 static void
 class_start_load (MonoProfiler *profiler, MonoClass *klass) {
+	ProfilerPerThreadData *data;
+	GET_PROFILER_THREAD_DATA (data);
 	STORE_EVENT_ITEM_COUNTER (profiler, klass, MONO_PROFILER_EVENT_DATA_TYPE_CLASS, MONO_PROFILER_EVENT_CLASS_LOAD, MONO_PROFILER_EVENT_KIND_START);
 }
 static void
 class_end_load (MonoProfiler *profiler, MonoClass *klass, int result) {
+	ProfilerPerThreadData *data;
+	GET_PROFILER_THREAD_DATA (data);
 	STORE_EVENT_ITEM_COUNTER (profiler, klass, MONO_PROFILER_EVENT_DATA_TYPE_CLASS, MONO_PROFILER_EVENT_CLASS_LOAD | RESULT_TO_EVENT_CODE (result), MONO_PROFILER_EVENT_KIND_END);
 }
 static void
 class_start_unload (MonoProfiler *profiler, MonoClass *klass) {
+	ProfilerPerThreadData *data;
+	GET_PROFILER_THREAD_DATA (data);
 	STORE_EVENT_ITEM_COUNTER (profiler, klass, MONO_PROFILER_EVENT_DATA_TYPE_CLASS, MONO_PROFILER_EVENT_CLASS_UNLOAD, MONO_PROFILER_EVENT_KIND_START);
 }
 static void
 class_end_unload (MonoProfiler *profiler, MonoClass *klass) {
+	ProfilerPerThreadData *data;
+	GET_PROFILER_THREAD_DATA (data);
 	STORE_EVENT_ITEM_COUNTER (profiler, klass, MONO_PROFILER_EVENT_DATA_TYPE_CLASS, MONO_PROFILER_EVENT_CLASS_UNLOAD, MONO_PROFILER_EVENT_KIND_END);
 }
 
 static void
 method_start_jit (MonoProfiler *profiler, MonoMethod *method) {
-	if (profiler->action_flags.jit_time) {
-		STORE_EVENT_ITEM_COUNTER (profiler, method, MONO_PROFILER_EVENT_DATA_TYPE_METHOD, MONO_PROFILER_EVENT_METHOD_JIT, MONO_PROFILER_EVENT_KIND_START);
-	}
+	ProfilerPerThreadData *data;
+	GET_PROFILER_THREAD_DATA (data);
+	thread_stack_push_jitted_safely (&(data->stack), method, TRUE);
+	STORE_EVENT_ITEM_COUNTER (profiler, method, MONO_PROFILER_EVENT_DATA_TYPE_METHOD, MONO_PROFILER_EVENT_METHOD_JIT, MONO_PROFILER_EVENT_KIND_START);
 }
 static void
 method_end_jit (MonoProfiler *profiler, MonoMethod *method, int result) {
-	if (profiler->action_flags.jit_time) {
-		STORE_EVENT_ITEM_COUNTER (profiler, method, MONO_PROFILER_EVENT_DATA_TYPE_METHOD, MONO_PROFILER_EVENT_METHOD_JIT | RESULT_TO_EVENT_CODE (result), MONO_PROFILER_EVENT_KIND_END);
-	}
-	
-	if (! profiler->writer_thread_enabled) {
-		WRITER_EVENT_ENABLE_RAISE ();
-	}
+	ProfilerPerThreadData *data;
+	GET_PROFILER_THREAD_DATA (data);
+	STORE_EVENT_ITEM_COUNTER (profiler, method, MONO_PROFILER_EVENT_DATA_TYPE_METHOD, MONO_PROFILER_EVENT_METHOD_JIT | RESULT_TO_EVENT_CODE (result), MONO_PROFILER_EVENT_KIND_END);
+	thread_stack_pop (&(data->stack));
 }
 
 #if (HAS_OPROFILE)
@@ -3597,37 +3798,75 @@ method_jit_result (MonoProfiler *prof, MonoMethod *method, MonoJitInfo* jinfo, i
 
 static void
 method_enter (MonoProfiler *profiler, MonoMethod *method) {
+	ProfilerPerThreadData *data;
+	
 	CHECK_PROFILER_ENABLED ();
-	STORE_EVENT_ITEM_COUNTER (profiler, method, MONO_PROFILER_EVENT_DATA_TYPE_METHOD, MONO_PROFILER_EVENT_METHOD_CALL, MONO_PROFILER_EVENT_KIND_START);
+	GET_PROFILER_THREAD_DATA (data);
+	if (profiler->action_flags.track_calls) {
+		STORE_EVENT_ITEM_COUNTER (profiler, method, MONO_PROFILER_EVENT_DATA_TYPE_METHOD, MONO_PROFILER_EVENT_METHOD_CALL, MONO_PROFILER_EVENT_KIND_START);
+	}
+	if (profiler->action_flags.track_stack) {
+		thread_stack_push_safely (&(data->stack), method);
+	}
 }
 static void
 method_leave (MonoProfiler *profiler, MonoMethod *method) {
+	ProfilerPerThreadData *data;
+	
 	CHECK_PROFILER_ENABLED ();
-	STORE_EVENT_ITEM_COUNTER (profiler, method, MONO_PROFILER_EVENT_DATA_TYPE_METHOD, MONO_PROFILER_EVENT_METHOD_CALL, MONO_PROFILER_EVENT_KIND_END);
+	GET_PROFILER_THREAD_DATA (data);
+	if (profiler->action_flags.track_calls) {
+		STORE_EVENT_ITEM_COUNTER (profiler, method, MONO_PROFILER_EVENT_DATA_TYPE_METHOD, MONO_PROFILER_EVENT_METHOD_CALL, MONO_PROFILER_EVENT_KIND_END);
+	}
+	if (profiler->action_flags.track_stack) {
+		thread_stack_pop (&(data->stack));
+	}
 }
 
 static void
 method_free (MonoProfiler *profiler, MonoMethod *method) {
+	ProfilerPerThreadData *data;
+	GET_PROFILER_THREAD_DATA (data);
 	STORE_EVENT_ITEM_COUNTER (profiler, method, MONO_PROFILER_EVENT_DATA_TYPE_METHOD, MONO_PROFILER_EVENT_METHOD_FREED, 0);
 }
 
 static void
 thread_start (MonoProfiler *profiler, gsize tid) {
+	ProfilerPerThreadData *data;
+	GET_PROFILER_THREAD_DATA (data);
 	STORE_EVENT_NUMBER_COUNTER (profiler, tid, MONO_PROFILER_EVENT_DATA_TYPE_OTHER, MONO_PROFILER_EVENT_THREAD, MONO_PROFILER_EVENT_KIND_START);
 }
 static void
 thread_end (MonoProfiler *profiler, gsize tid) {
+	ProfilerPerThreadData *data;
+	GET_PROFILER_THREAD_DATA (data);
 	STORE_EVENT_NUMBER_COUNTER (profiler, tid, MONO_PROFILER_EVENT_DATA_TYPE_OTHER, MONO_PROFILER_EVENT_THREAD, MONO_PROFILER_EVENT_KIND_END);
 }
 
 static void
 object_allocated (MonoProfiler *profiler, MonoObject *obj, MonoClass *klass) {
-	ProfilerPerThreadData *thread_data;
+	ProfilerPerThreadData *data;
+	GET_PROFILER_THREAD_DATA (data);
 	
-	STORE_EVENT_ITEM_VALUE (profiler, klass, MONO_PROFILER_EVENT_DATA_TYPE_CLASS, MONO_PROFILER_EVENT_CLASS_ALLOCATION, 0, (guint64) mono_object_get_size (obj));
-	if (profiler->action_flags.unreachable_objects || profiler->action_flags.heap_shot) {
-		GET_PROFILER_THREAD_DATA (thread_data);
-		STORE_ALLOCATED_OBJECT (thread_data, obj);
+	STORE_EVENT_ITEM_VALUE_LEAVING_ONE_FREE (profiler, klass, MONO_PROFILER_EVENT_DATA_TYPE_CLASS, MONO_PROFILER_EVENT_CLASS_ALLOCATION, 0, (guint64) mono_object_get_size (obj));
+	if (profiler->action_flags.unreachable_objects || profiler->action_flags.heap_shot || profiler->action_flags.collection_summary) {
+		STORE_ALLOCATED_OBJECT (data, obj);
+	}
+	
+	if (profiler->action_flags.track_stack) {
+		MonoMethod *caller = thread_stack_top (&(data->stack));
+		gboolean caller_is_jitted = thread_stack_top_is_jitted (&(data->stack));
+		int index = 1;
+		while ((caller != NULL) && (caller->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE)) {
+			caller = thread_stack_index_from_top (&(data->stack), index);
+			caller_is_jitted = thread_stack_index_from_top_is_jitted (&(data->stack), index);
+			index ++;
+		}
+		if (! caller_is_jitted) {
+			STORE_EVENT_ITEM_VALUE (profiler, caller, MONO_PROFILER_EVENT_DATA_TYPE_METHOD, MONO_PROFILER_EVENT_METHOD_ALLOCATION_CALLER, 0, 0);
+		} else {
+			STORE_EVENT_ITEM_VALUE (profiler, caller, MONO_PROFILER_EVENT_DATA_TYPE_METHOD, MONO_PROFILER_EVENT_METHOD_ALLOCATION_JIT_TIME_CALLER, 0, 0);
+		}
 	}
 }
 
@@ -4155,8 +4394,11 @@ handle_heap_profiling (MonoProfiler *profiler, MonoGCEvent ev) {
 
 static void
 gc_event (MonoProfiler *profiler, MonoGCEvent ev, int generation) {
-	gboolean do_heap_profiling = profiler->action_flags.unreachable_objects || profiler->action_flags.heap_shot;
+	ProfilerPerThreadData *data;
+	gboolean do_heap_profiling = profiler->action_flags.unreachable_objects || profiler->action_flags.heap_shot || profiler->action_flags.collection_summary;
 	guint32 event_value;
+	
+	GET_PROFILER_THREAD_DATA (data);
 	
 	if (ev == MONO_GC_EVENT_START) {
 		profiler->garbage_collection_counter ++;
@@ -4175,8 +4417,19 @@ gc_event (MonoProfiler *profiler, MonoGCEvent ev, int generation) {
 
 static void
 gc_resize (MonoProfiler *profiler, gint64 new_size) {
+	ProfilerPerThreadData *data;
+	GET_PROFILER_THREAD_DATA (data);
 	profiler->garbage_collection_counter ++;
 	STORE_EVENT_NUMBER_VALUE (profiler, new_size, MONO_PROFILER_EVENT_DATA_TYPE_OTHER, MONO_PROFILER_EVENT_GC_RESIZE, 0, profiler->garbage_collection_counter);
+}
+
+static void
+runtime_initialized (MonoProfiler *profiler) {
+	LOG_WRITER_THREAD ("runtime_initialized: waking writer thread to enable it...\n");
+	WRITER_EVENT_ENABLE_RAISE ();
+	LOG_WRITER_THREAD ("runtime_initialized: waiting writer thread...\n");
+	WRITER_EVENT_DONE_WAIT ();
+	LOG_WRITER_THREAD ("runtime_initialized: writer thread enabled.\n");
 }
 
 /* called at the end of the program */
@@ -4184,6 +4437,7 @@ static void
 profiler_shutdown (MonoProfiler *prof)
 {
 	ProfilerPerThreadData* current_thread_data;
+	ProfilerPerThreadData* next_thread_data;
 	
 	LOG_WRITER_THREAD ("profiler_shutdown: zeroing relevant flags");
 	mono_profiler_set_events (0);
@@ -4200,7 +4454,7 @@ profiler_shutdown (MonoProfiler *prof)
 	WRITER_EVENT_DESTROY ();
 	
 	LOCK_PROFILER ();
-	writer_thread_flush_everything ();
+	flush_everything ();
 	MONO_PROFILER_GET_CURRENT_TIME (profiler->end_time);
 	MONO_PROFILER_GET_CURRENT_COUNTER (profiler->end_counter);
 	write_end_block ();
@@ -4221,7 +4475,8 @@ profiler_shutdown (MonoProfiler *prof)
 	
 	FREE_PROFILER_THREAD_DATA ();
 	
-	for (current_thread_data = profiler->per_thread_data; current_thread_data != NULL; current_thread_data = current_thread_data->next) {
+	for (current_thread_data = profiler->per_thread_data; current_thread_data != NULL; current_thread_data = next_thread_data) {
+		next_thread_data = current_thread_data->next;
 		profiler_per_thread_data_destroy (current_thread_data);
 	}
 	if (profiler->statistical_data != NULL) {
@@ -4341,7 +4596,6 @@ setup_user_options (const char *arguments) {
 					}
 					profiler->statistical_call_chain_depth = value;
 					profiler->flags |= MONO_PROFILE_STATISTICAL|MONO_PROFILE_JIT_COMPILATION;
-					profiler->action_flags.jit_time = TRUE;
 				}
 			} else if (! (strncmp (argument, "statistical-thread-buffer-size", equals_position) && strncmp (argument, "sbs", equals_position))) {
 				int value = atoi (equals + 1);
@@ -4406,9 +4660,13 @@ setup_user_options (const char *arguments) {
 				profiler->flags |= MONO_PROFILE_THREADS;
 			} else if (! (strcmp (argument, "enter-leave") && strcmp (argument, "calls") && strcmp (argument, "c"))) {
 				profiler->flags |= MONO_PROFILE_ENTER_LEAVE;
+				profiler->action_flags.jit_time = TRUE;
+				profiler->action_flags.track_calls = TRUE;
 			} else if (! (strcmp (argument, "statistical") && strcmp (argument, "stat") && strcmp (argument, "s"))) {
 				profiler->flags |= MONO_PROFILE_STATISTICAL;
-				profiler->action_flags.jit_time = TRUE;
+			} else if (! (strcmp (argument, "track-stack") && strcmp (argument, "ts"))) {
+				profiler->flags |= MONO_PROFILE_ENTER_LEAVE;
+				profiler->action_flags.track_stack = TRUE;
 			} else if (! (strcmp (argument, "start-enabled") && strcmp (argument, "se"))) {
 				profiler->profiler_enabled = TRUE;
 			} else if (! (strcmp (argument, "start-disabled") && strcmp (argument, "sd"))) {
@@ -4507,6 +4765,7 @@ data_writer_thread (gpointer nothing) {
 	static gboolean thread_detached = FALSE;
 	static MonoThread *this_thread = NULL;
 	
+	/* Wait for the OK to attach to the runtime */
 	WRITER_EVENT_ENABLE_WAIT ();
 	if (! profiler->terminate_writer_thread) {
 		MonoDomain * root_domain = mono_get_root_domain ();
@@ -4524,6 +4783,8 @@ data_writer_thread (gpointer nothing) {
 		thread_detached = TRUE;
 	}
 	profiler->writer_thread_enabled = TRUE;
+	/* Notify that we are attached to the runtime */
+	WRITER_EVENT_DONE_RAISE ();
 	
 	for (;;) {
 		ProfilerStatisticalData *statistical_data;
@@ -4544,6 +4805,7 @@ data_writer_thread (gpointer nothing) {
 		
 		if ((!done) && thread_attached) {
 			if (profiler->writer_thread_flush_everything) {
+				/* Note that this assumes the lock is held by the thread that woke us up! */
 				if (! thread_detached) {
 					LOG_WRITER_THREAD ("data_writer_thread: flushing everything...");
 					flush_everything ();
@@ -4652,7 +4914,7 @@ mono_profiler_startup (const char *desc)
 	profiler->executable_files.new_files = NULL; 
 	
 	profiler->heap_shot_write_jobs = NULL;
-	if (profiler->action_flags.unreachable_objects || profiler->action_flags.heap_shot) {
+	if (profiler->action_flags.unreachable_objects || profiler->action_flags.heap_shot || profiler->action_flags.collection_summary) {
 		profiler_heap_buffers_setup (&(profiler->heap));
 	} else {
 		profiler_heap_buffers_clear (&(profiler->heap));
@@ -4669,6 +4931,7 @@ mono_profiler_startup (const char *desc)
 	OPEN_FILE ();
 	
 	write_intro_block ();
+	write_directives_block (TRUE);
 	
 	mono_profiler_install (profiler, profiler_shutdown);
 	
@@ -4688,6 +4951,7 @@ mono_profiler_startup (const char *desc)
 	mono_profiler_install_statistical (statistical_hit);
 	mono_profiler_install_statistical_call_chain (statistical_call_chain, profiler->statistical_call_chain_depth);
 	mono_profiler_install_gc (gc_event, gc_resize);
+	mono_profiler_install_runtime_initialized (runtime_initialized);
 #if (HAS_OPROFILE)
 	mono_profiler_install_jit_end (method_jit_result);
 #endif
