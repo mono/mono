@@ -1,0 +1,5 @@
+
+Name: WCF
+Description: References WCF for compilation
+Version: @VERSION@
+Libs: -r:System.Runtime.Serialization.dll -r:System.IdentityModel.dll -r:System.IdentityModel.Selectors.dll -r:System.ServiceModel.dll -r:System.ServiceModel.Web.dll
