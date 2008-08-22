@@ -1,3 +1,8 @@
+2008-08-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Fix the STELEM_ANY+null value optimization.
+	Fixes #419273.
+
 2008-08-20  Bill Holmes  <billholmes54@gmail.com>
 
 	Backport of r111197
