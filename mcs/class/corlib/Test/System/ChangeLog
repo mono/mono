@@ -1,3 +1,8 @@
+2008-08-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ObsoleteAttributeTest.cs: New. Old tests I forgot to commit when 
+	doing a gendarme rule.
+
 2008-08-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ExceptonTest.cs: Added GetObjectData and deserialization ctor tests.
