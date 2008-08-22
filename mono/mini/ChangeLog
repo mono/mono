@@ -1,3 +1,20 @@
+2008-08-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (struct MonoCallInst): Add dynamic_imt_arg boolean field.
+
+	* exceptions-arm.c (mono_arch_find_jit_info): Set ctx->regs [ARMREG_R11]
+	to sp, since the generics catch code requires it.
+
+	* mini-arm.h (MONO_ARCH_VTABLE_REG): Use R0 for this to avoid needless
+	copying.
+
+	* method-to-ir.c (emit_imt_argument): Pass imt_arg to 
+	mono_arch_emit_imt_argument ().
+
+	* mini-<ARCH>.c (mono_arch_emit_imt_argument): Add an 'imt_arg' argument.
+
+	* mini-arm.c tramp-arm.c: Generic sharing updates.
+
 2008-08-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c: Fix the arm build.
