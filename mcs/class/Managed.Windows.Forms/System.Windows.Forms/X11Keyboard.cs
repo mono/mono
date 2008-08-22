@@ -105,13 +105,26 @@ namespace System.Windows.Forms {
 			KeyboardLayout layout = DetectLayout (layouts);
 			lcid = layout.Lcid;
 			CreateConversionArray (layouts, layout);
+			SetupXIM ();
+			initialized = true;
+		}
+
+		private void SetupXIM ()
+		{
+			xim = IntPtr.Zero;
 
 			if (!XSupportsLocale ()) {
 				Console.Error.WriteLine ("X does not support your locale");
+				return;
 			}
 
 			if (!XSetLocaleModifiers (String.Empty)) {
 				Console.Error.WriteLine ("Could not set X locale modifiers");
+				return;
+			}
+
+			if (Environment.GetEnvironmentVariable (ENV_NAME_XIM_STYLE) == "disabled") {
+				return;
 			}
 
 			xim = XOpenIM (display, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
@@ -119,6 +132,7 @@ namespace System.Windows.Forms {
 				Console.Error.WriteLine ("Could not get XIM");
 			else 
 				utf8_buffer = new byte [100];
+
 			initialized = true;
 		}
 
@@ -1148,6 +1162,7 @@ namespace System.Windows.Forms {
 				keysym = (XKeySym) keysym_res.ToInt32 ();
 				return s.Length;
 			} else {
+				lookup_buffer.Length = 0;
 				res = XLookupString (ref xevent, lookup_buffer, len, out keysym_res, IntPtr.Zero);
 				keysym = (XKeySym) keysym_res.ToInt32 ();
 				return res;
