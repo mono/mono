@@ -76,33 +76,39 @@ namespace System.IO.IsolatedStorage {
 
 		protected override void Dispose (bool disposing)
 		{
+			// no PreCheck required
 			base.Dispose (disposing);
 		}
 
 		public override void Flush ()
 		{
+			container.PreCheck ();
 			base.Flush ();
 		}
 
 		public override int Read (byte [] buffer, int offset, int count)
 		{
+			container.PreCheck ();
 			return base.Read (buffer, offset, count);
 		}
 
 		public override int ReadByte ()
 		{
+			container.PreCheck ();
 			return base.ReadByte ();
 		}
 
 		public override long Seek (long offset, SeekOrigin origin)
 		{
+			container.PreCheck ();
 			return base.Seek (offset, origin);
 		}
 
 		public override void SetLength (long value)
 		{
+			container.PreCheck ();
 			// if we're getting bigger then we must ensure we fit in the available free space of our container
-			if (container.CanExtend (value - Length))
+			if (!container.CanExtend (value - Length))
 				throw new IsolatedStorageException ();
 
 			base.SetLength (value);
@@ -110,55 +116,69 @@ namespace System.IO.IsolatedStorage {
 
 		public override void Write (byte [] buffer, int offset, int count)
 		{
+			container.PreCheck ();
+			// FIXME: check quota, if we grow the file
 			base.Write (buffer, offset, count);
 		}
 
 		public override void WriteByte (byte value)
 		{
+			container.PreCheck ();
+			// if we are in position to grow the file make sure we can extend it by one byte
+			if ((Position == Length) && !container.CanExtend (1))
+				throw new IsolatedStorageException ();
 			base.WriteByte (value);
 		}
 
 		public override bool CanRead {
 			get {
+				// no PreCheck required
 				return base.CanRead;
 			}
 		}
 
 		public override bool CanSeek {
 			get {
+				// no PreCheck required
 				return base.CanSeek;
 			}
 		}
 
 		public override bool CanWrite {
 			get {
+				// no PreCheck required
 				return base.CanWrite;
 			}
 		}
 
 		public override long Length {
 			get {
+				container.PreCheck ();
 				return base.Length;
 			}
 		}
 
 		public override long Position {
 			get {
+				container.PreCheck ();
 				return base.Position;
 			}
-
 			set {
+				container.PreCheck ();
 				base.Position = value;
 			}
 		}
 
 		public override IAsyncResult BeginRead (byte[] buffer, int offset, int numBytes, AsyncCallback userCallback, object stateObject)
 		{
+			container.PreCheck ();
 			return base.BeginRead (buffer, offset, numBytes, userCallback, stateObject);
 		}
 
 		public override IAsyncResult BeginWrite (byte[] buffer, int offset, int numBytes, AsyncCallback userCallback, object stateObject)
 		{
+			container.PreCheck ();
+			// FIXME: check quota, if we grow the file
 			return base.BeginWrite (buffer, offset, numBytes, userCallback, stateObject);
 		}
 

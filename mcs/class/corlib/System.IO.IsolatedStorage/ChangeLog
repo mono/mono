@@ -1,3 +1,10 @@
+2008-08-22  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* MoonIsolatedStorageFile.cs: Implement Remove. Add a bunch of FIXME 
+	mostly related to quota.
+	* MoonIsolatedStorageFileStream.cs: Add a call to the container's
+	PreCheck method in most methods. Add FIXME for quota.
+
 2008-08-21  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* MoonIsolatedStorageFile.cs: Split Application and Site storage.

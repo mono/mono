@@ -5,6 +5,7 @@
 // 
 // Authors
 //      Miguel de Icaza (miguel@novell.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2007, 2008 Novell, Inc (http://www.novell.com)
 //
@@ -33,6 +34,9 @@ using System.IO;
 using System.Security;
 
 namespace System.IO.IsolatedStorage {
+
+	// FIXME: we need to tool to set quota (SL does this on a property page of the "Silverlight Configuration" menu)
+	// the beta2 user interface (that I only see in IE) does not seems to differentiate application and site storage
 
 	public sealed class IsolatedStorageFile : IDisposable {
 
@@ -69,11 +73,16 @@ namespace System.IO.IsolatedStorage {
 				return;
 			}
 
+			// FIXME: we need to store quota (and any other config) outside the stores
+			// - so they can't be modified by the application itself
+			// - so it's not destroyed to Remove
+
 			isolated_appdir = TryDirectory (Path.Combine (isolated_root, "application"));
 			isolated_sitedir = TryDirectory (Path.Combine (isolated_root, "site"));
 		}
 
 		private string basedir;
+		private long quota;
 		private bool removed = false;
 		private bool disposed = false;
 
@@ -81,6 +90,7 @@ namespace System.IO.IsolatedStorage {
 		{
 			basedir = TryDirectory (dir);
 			// FIXME: we need to read the quota allocated to this storage
+			quota = 1024 * 1024;
 			// FIXME: we need to compute the available space for this storage (and keep it updated)
 		}
 		
@@ -236,9 +246,10 @@ namespace System.IO.IsolatedStorage {
 		{
 			PreCheck ();
 			try {
-				// TODO - try to clean out everything
+				Directory.Delete (basedir, true);
 			}
 			finally {
+				TryDirectory (basedir);
 				removed = true;
 			}
 		}
@@ -255,7 +266,7 @@ namespace System.IO.IsolatedStorage {
 		public long Quota {
 			get {
 				PreCheck ();
-				return 1024*1024;
+				return quota;
 			}
 		}
 
@@ -265,6 +276,8 @@ namespace System.IO.IsolatedStorage {
 			if (newQuotaSize <= Quota)
 				throw new ArgumentException ("newQuotaSize", "Only increase is possible");
 
+			// FIXME: save new quota limit to configuration
+			quota = newQuotaSize;
 			return true;
 		}
 
