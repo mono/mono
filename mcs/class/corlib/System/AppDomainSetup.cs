@@ -48,7 +48,11 @@ namespace System
 #if NET_2_0
 	[ComVisible (true)]
 #endif
+#if NET_2_1
+	public sealed class AppDomainSetup
+#else
 	public sealed class AppDomainSetup : IAppDomainSetup
+#endif
 	{
 		string application_base;
 		string application_name;

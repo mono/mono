@@ -1,3 +1,9 @@
+2008-08-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomainSetup.cs: Remove IAppDomainSetup for SL2. This helps
+	the tuner since the methods are then defined correctly (wrt to the
+	implicit implementation of the interfaces)/
+
 2008-08-21  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Nullable.cs: Add two ComVisible(false) for SL2 profile.
