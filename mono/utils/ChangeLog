@@ -1,3 +1,11 @@
+2008-08-20  Mike Voorhees  <vernish13@gmail.com>
+
+	* strenc.h : Adding declaration for mono_utf8_validate_and_len.
+
+	* strenc.c : Adding implementation for mono_utf8_validate_and_len.
+
+	Contributed under MIT/X11 license.
+
 2008-08-03  Andreas Färber  <andreas.faerber@web.de>
 
 	* mono-io-portability.c (mono_portability_find_file): Fix ANSI C compliance.
