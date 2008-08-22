@@ -465,69 +465,211 @@ addr2line utility that comes from the binutils package).
 The
 .I logging profiler
 will eventually replace the default profiler as it is more complete
-and encompasses the functionality of all the other profiler for Mono.
-It is able to track method execution times, allocations, jit times and
-collect statistical data.  Instead of reporting the collected
-information at the end of the execution of the program, it logs these
-events periodically into a file during program execution.  The output
-file contains compressed events, to process the data you should use
-tools like the "Mono.Profiler" tool provided on the Mono SVN
+and encompasses the functionality of all the other profilers for Mono.
+It supports the following execution modes:
+.IP
+.I Statistical:
+the program instruction pointer is periodically sampled (it works also with
+unmanaged functions). If call chains are requested, for each sample the
+profiler gets a partial stack trace (up to a desired depth) so that
+caller-callee information is available.
+.IP
+.I Instrumenting:
+each method enter and exit is logged with a timestamp; further processing of
+the data can show the methods that took the longer to execute, with complete
+accounting for callers and callees. However, this way of profiling is rather
+intrusive and slows down the application significantly.
+.IP
+.I Allocation:
+each allocation is logged.
+.IP
+.I Allocation summary:
+shows, for each collection, a summary of the heap contents broken down by
+class (for each class the number of allocated and released objects is
+given, together with their aggregated size in bytes).
+.IP
+.I Heap snapshot mode:
+dumps the whole heap contents at every collection (or at user specified
+collections). It is also possible to request a collection and snapshot dump
+with a signal.
+.PP
+Moreover, other events can be logged and analyzed, like jit time for each
+method, load and unload for assemblies, modules and and individual classes,
+and appdomain and thread creation and destruction.
+.PP
+Instead of reporting the collected
+information at the end of the execution of the program, this profiler logs
+all the events periodically into a file during program execution.
+To minimize the performance impact with multi-threaded applications,
+the logging uses per-thread buffers that are routinely saved to disk.
+.PP
+The output file contains compressed events, to process the data you should
+use tools like the "Mono.Profiler" tool provided on the Mono SVN
 repository.  
+.PP
+This profiler is activated passing the \fB--profile=logging\fR option to
+the mono runtime, and is controlled attaching further options, like
+\fB--profile=logging:stat\fR for doing statistical profiling (multiple
+options are separated by commas).
+.PP
+As a quick primer, here are a few examples of the most common usage modes:
+.PP
+To write the resulting data to "mydata.mprof" (defaults to statistical
+profiling):
 .nf
 
-	mono --profile=logging[:OPTIONS] program.exe
-
+	mono --profile=logging:o=mydata.mprof program.exe
 .fi
 .PP
-To minimize the performance impact with multi-threaded applications,
-the logging profiler keeps a per-thread buffer that is routinely saved
-to disk.   
+To perform statistical profiling, inspecting call chains up to depth 8:
+.nf
+
+	mono --profile=logging:s=8 program.exe
+.fi
 .PP
-If specified, the options are separated by commas:
+To profile allocations with caller method attribution:
+.nf
+
+	mono --profile=logging:a,ts program.exe
+.fi
+.PP
+To profile garbage collection activity (collection time and objects freed
+at each collection):
+.nf
+
+	mono --profile=logging:g,as program.exe
+.fi
+.PP
+Then you would need to invoke the decoder \fImprof-decoder(1)\fR
+on the output file to see the profiling results.
+.PP
+These are all the available oprions, organized by category:
+.PP
+\fBExecution profiling modes\fR
 .RS
 .ne 8
 .TP
-\fIoutput=FILE\fR, \fIout=FILE\fR or \fIo=FILE\fR
-Use this option to provide the output file name for the profile log.
-If this option is not specified, it will default to profiler-log.prof.
-.TP
-\fIjit\fR, \fIj\fR
-Collect information about time spent by the JIT engine compiling
-methods. 
-.TP
-\fIallocations\fR, \fIalloc\fR or \fIa\fR Collect 
-information about each allocation (object class and size).
+\fIstatistical\fR, \fIstat\fR or \fIs\fR
+Performs statistical profiling.   This is a lightweight profiling
+mechanism and it has a much lower overhead than the \fIenter-leave\fR
+profiling as it works by sampling where the program is spending its
+time by using a timer.
+If specified with \fIs=<number>\fR, also inspect call chains up to level
+<number>.
 .TP
 \fIenter-leave\fR, \fIcalls\fR or \fIc\fR
 Measure the time spent inside each method call, this is done by
 logging the time when a method enters and when the method leaves.
 This can be a time consuming operation. 
 .TP
-\fIstatistical\fR, \fIstat\fR or \fIs\fR
-Performs statistical profiling.   This is a lightweight profiling
-mechanism as it has a much lower overhead than the \fIenter-leave\fR
-profiling as it works by sampling where the program is spending its
-time by using a timer. 
+\fIjit\fR, \fIj\fR
+Collect information about time spent by the JIT engine compiling
+methods. 
+.TP
+\fItrack-stack\fR, \fIts\fR
+Track the execution stack. By itself this option does nothing, but it
+enables more detailed reporting in other options (because the profiler
+will use the stack data).
+.ne
+.RE
+.PP
+\fBAllocation profiling modes\fR
+.RS
+.ne 8
+.TP
+\fIallocations\fR, \fIalloc\fR or \fIa\fR
+Collect information about each allocation (object class and size).
+If combined with the "ts" option, for each allocation the profiler will
+also show the responsible method (and also correctly dintinguish allocations
+performed during JIT time).
+These information are also available when combining  the "a" and "c" options,
+but since "c" is much more intrusive "ts" should be preferred.
+.TP
+\fIallocations-summary\fR or \fIas\fR
+At each collection dump a summary
+of the heap contents (for each class, the number and collective size of all
+live and freed heap objects). This very lightweight compared to full heap
+snapshots.
 .TP
 \fIunreachable\fR, \fIfree\fR or \fIf\fR
-Performs a lighweight profile of the garbage collector.  On each
+Performs a lightweight profile of the garbage collector.  On each
 collection performed by the GC, the list of unreachable objects is
 recorded, and for each object the class and size is provided.  This
-information is useful to compute the heap size broken down by class.
+information can be used to compute the heap size broken down by class
+(combined with "a" can give the same information of "as", but the log
+file contains info about each individual object, while in "as" the
+processing is done directly at runtime and the log file contains only
+the summarized data broken down by class).
+.TP
+\fIgc\fR or \fIg\fR
+Measure the time spent in each collection, and also trace heap resizes.
 .TP
 \fIheap-shot\fR, \fIheap\fR or \fIh\fR
-Performsn full heap profiling.   In this case on each
+Performs full heap profiling.   In this case on each
 collection a full heap snapshot is recorded to disk.
-.TP
-\fIgc-commands=FILE\fR, \fIgc-c=FILE\fR or \fIgcc=FILE\fR 
-Used to specify the file that controls the heap snapshot dumps.
+Inside the snapshots, each object reference is still represented so
+that it's possible to investigate who is responsible for keeping objects
+alive.
+.PP
+The actual production of heap snapshots could produce large log files,
+so it can be controlled in three ways:
 .TP
 \fIgc-dumps=N\fR, \fIgc-d=N\fR, \fIgcd=N\fR
-Used to specify the initial number of heap snapshots to dump (if the control file is not used). 
+states the number of snapshots that must be dumped (since the application
+starts). Zero means no dumps at all, -1 means dump at all collections.
+.TP
+\fIgc-signal=<signal>\fR, \fIgc-s\fR or \fIgcs\fR
+(where <signal> is one of "SIGUSR1", "SIGUSR2", or "SIGPROF")
+specifies a signal that will immediately trigger a collection and a dump.
+.TP
+\fIgc-commands=FILE\fR, \fIgc-c=FILE\fR or \fIgcc=FILE\fR 
+specify a "command file". The file must contain an integer value in ASCII
+form, and the profiler will stat it at every collection.
+If it has been modified it will interpret its contents as a \fIgcd=N\fR
+option value, and dump the required number of snapshots from that moment
+onwards.
+If the file is present at application startup it takes precedence over an
+eventual \fIgcd=N\fR option.
+.ne
+.RE
+.PP
+\fBProfiler activity control\fR
+.RS
+.ne 8
+.TP
+\fIoutput=FILE\fR, \fIout=FILE\fR or \fIo=FILE\fR
+Use this option to provide the output file name for the profile log.
+If this option is not specified, it will default to "<program-name>.mprof".
+.TP
+\fIoutput-suffix=SUFFIX\fR, \fIsuffix=SUFFIX\fR or \fIos=SUFFIX\fR: makes
+the output file name equals to "<program-name>-SUFFIX.mprof".
+.TP
+\fIstart-enabled\fR or \fIse\fR: start with the profiler active
+(which is the default).
+.TP
+\fIstart-disabled\fR or \fIsd\fR: start with the profiler inactive.
+.TP
+\fItoggle-signal=<SIGNAL>\fR or \fIts=<SIGNAL>\fR (where <SIGNAL>
+is one of SIGUSR1, SIGUSR2 or SIGPROF): Choose a signal that will be used to
+toggle the profiler activity on and off. This way you can decide to profile
+only portions of the applicatopn lifetime (for instance, you can decide to
+avoid profiling an initial setup phase using \fIsd\fR, and enable the
+profiler later delivering the signal to the application).
+.TP
+\fIforce-accurate-timer\fR (or \fIfac\fR): the profiler by default uses
+rtdsc to acquire timestamps for frequent events, but this can be imprecise;
+using this option you force the use of "gettimeofday" at every event, which
+is more accurate but much slower.
+.ne
+.RE
+.PP
+\fBInternal buffer sizes\fR
+.RS
+.ne 8
 .TP
 \fIper-thread-buffer-size=N\fR, \fItbs=N\fR
 Use to specify the number of events that a thread buffer
-can hold.   When the thread buffer is full, the log block it is
+can hold.   When the thread buffer is full, a log block is
 written to disk.
 .Sp
 This defaults to tbs=10000.
@@ -536,7 +678,8 @@ This defaults to tbs=10000.
 The number of statistical samples that
 are held in memory before they are dumped to disk (the system does
 double-buffering and the statistical samples are written by a helper
-thread).  
+thread, so the statistical profiler never stops and is able to profile
+the profiler itself).  
 .Sp
 This defaults to sbs=10000.
 .TP
@@ -547,33 +690,18 @@ This defaults to wbs=1024.
 .ne
 .RE
 .PP
-A few invocation samples follow.
-.PP
-To collect statistical data:
-.nf
-
-	mono --profile=logging:s program.exe
-.fi
-.PP
-To profile method enter-exit and allocations:
-.nf
-
-	mono --profile=logging:c,a program.exe
-.fi
-.PP
-To profile method enter-exit and jit time, and write the data to "mydata.mprof":
-.nf
-
-	mono --profile=logging:c,j,o=mydata.mprof program.exe
-.fi
-.PP
-Then you would need to invoke the decoder on "mydata.mprof" to see the
-profiling results.
-.PP
 In its current state, this profiler can also perform heap analysis (like
 heap-shot), and the decoder is already able to read the data, however
-the user interface for this feature has not yet been written (which means
-that the data is not printed by the decoder).
+the user interface for this feature is experimental (the
+\fImprof-heap-viewer\fR tool in the mono-tools module).
+.PP
+Another known issue is that if the timer is not strictly monotonic (like
+rtdsc), differences between times can underflow (they are handled as
+unsigned integers) and weird numbers can show up in the logs.
+.PP
+Finally, it can happen that when exceptions are thrown the profiler temporarily
+loses track of the execution stack and misattributes the caller for a few
+allocations (and method execution time).
 .PP
 More explanations are provided here: "http://www.mono-project.com/LoggingProfiler".
 .SH EXTERNAL PROFILERS
