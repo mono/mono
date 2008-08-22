@@ -1,4 +1,8 @@
-2008-08-01  Massimiliano Mantione  <massi@ximian.com>
+2008-08-22  Massimiliano Mantione  <massi@ximian.com>
+	* mono.1: Restore original nonvisible formatting (' ', '\-', and '"'
+	were added everywhere by mistake in r109428).
+
+2008-08-21  Massimiliano Mantione  <massi@ximian.com>
 	* mono.1: Updated description of the logging profiler.
 
 2008-08-08  Zoltan Varga  <vargaz@gmail.com>

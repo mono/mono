@@ -3,26 +3,26 @@
 .\" (C) 2003 Ximian, Inc. 
 .\" (C) 2004-2005 Novell, Inc. 
 .\" Author:
-.\" Miguel de Icaza (miguel@gnu.org)
-.\" 
-.TH "Mono" "Mono 1.0" "" "" ""
-.SH "NAME"
-mono \- Mono's ECMA\-CLI native code generator (Just\-in\-Time and Ahead\-of\-Time)
-.SH "SYNOPSIS"
-.PP 
+.\"   Miguel de Icaza (miguel@gnu.org)
+.\"
+.TH Mono "Mono 1.0"
+.SH NAME
+mono \- Mono's ECMA-CLI native code generator (Just-in-Time and Ahead-of-Time)
+.SH SYNOPSIS
+.PP
 .B mono [options] file [arguments...]
-.SH "DESCRIPTION"
+.SH DESCRIPTION
 \fImono\fP is a runtime implementation of the ECMA Common Language
 Infrastructure.  This can be used to run ECMA and .NET applications.
-.PP 
+.PP
 The runtime contains a native code generator that transforms the
 Common Intermediate Language into native code.
-.PP 
+.PP
 The code generator can operate in two modes: just in time compilation
 (JIT) or ahead of time compilation (AOT).  Since code can be
 dynamically loaded, the runtime environment and the JIT are always
 present, even if code is compiled ahead of time.
-.PP 
+.PP
 The runtime loads the specified
 .I file
 and optionally passes
@@ -31,73 +31,73 @@ the
 to it.  The 
 .I file
 is an ECMA assembly.  They typically have a .exe or .dll extension.
-.PP 
+.PP
 The runtime provides a number of configuration options for running
 applications, for developing and debugging, and for testing and
 debugging the runtime itself.
-.SH "PORTABILITY"
-On Unix\-based systems, Mono provides a mechanism to emulate the 
-Windows\-style file access, this includes providing a case insensitive
+.SH PORTABILITY
+On Unix-based systems, Mono provides a mechanism to emulate the 
+Windows-style file access, this includes providing a case insensitive
 view of the file system, directory separator mapping (from \\ to /) and
 stripping the drive letters.
-.PP 
+.PP
 This functionality is enabled by setting the 
 .B MONO_IOMAP 
 environment variable to one of 
 .B all, drive
 and 
 .B case.
-.PP 
+.PP
 See the description for 
 .B MONO_IOMAP
 in the environment variables section for more details.
-.SH "RUNTIME OPTIONS"
+.SH RUNTIME OPTIONS
 The following options are available:
-.TP 
-\fB\-\-aot\fR, \fB\-\-aot[=options]\fR
+.TP
+\fB--aot\fR, \fB--aot[=options]\fR
 This option is used to precompile the CIL code in the specified
 assembly to native code.  The generated code is stored in a file with
 the extension .so.  This file will be automatically picked up by the
 runtime when the assembly is executed.  
 .Sp 
-Ahead\-of\-Time compilation is most useful if you use it in combination
-with the \-O=all,\-shared flag which enables all of the optimizations in
+Ahead-of-Time compilation is most useful if you use it in combination
+with the -O=all,-shared flag which enables all of the optimizations in
 the code generator to be performed.  Some of those optimizations are
-not practical for Just\-in\-Time compilation since they might be very
+not practical for Just-in-Time compilation since they might be very
 time consuming.
-.Sp 
-Unlike the .NET Framework, Ahead\-of\-Time compilation will not generate
+.Sp
+Unlike the .NET Framework, Ahead-of-Time compilation will not generate
 domain independent code: it generates the same code that the
-Just\-in\-Time compiler would produce.   Since most applications use a
+Just-in-Time compiler would produce.   Since most applications use a
 single domain, this is fine.   If you want to optimize the generated
-code for use in multi\-domain applications, consider using the
-\-O=shared flag.
-.Sp 
-This pre\-compiles the methods, but the original assembly is still
+code for use in multi-domain applications, consider using the
+-O=shared flag.
+.Sp
+This pre-compiles the methods, but the original assembly is still
 required to execute as this one contains the metadata and exception
 information which is not available on the generated file.  When
 precompiling code, you might want to compile with all optimizations
-(\-O=all).  Pre\-compiled code is position independent code.
-.Sp 
+(-O=all).  Pre-compiled code is position independent code.
+.Sp
 Pre compilation is just a mechanism to reduce startup time, increase
-code sharing across multiple mono processes and avoid just\-in\-time
+code sharing across multiple mono processes and avoid just-in-time
 compilation program startup costs.  The original assembly must still
 be present, as the metadata is contained there.
-.Sp 
+.Sp
 AOT code typically can not be moved from one computer to another
-(CPU\-specific optimizations that are detected at runtime) so you
-should not try to move the pre\-generated assemblies or package the
-pre\-generated assemblies for deployment.    
-.Sp 
+(CPU-specific optimizations that are detected at runtime) so you
+should not try to move the pre-generated assemblies or package the
+pre-generated assemblies for deployment.    
+.Sp
 A few options are available as a parameter to the 
-.B \-\-aot 
+.B --aot 
 command line option.   The options are separated by commas, and more
 than one can be specified:
 .RS
 .ne 8
-.TP 
-.I bind\-to\-runtime\-version
-.Sp 
+.TP
+.I bind-to-runtime-version
+.Sp
 If specified, forces the generated AOT files to be bound to the
 runtime version of the compiling Mono.   This will prevent the AOT
 files from being consumed by a different Mono runtime.
@@ -105,8 +105,8 @@ files from being consumed by a different Mono runtime.
 This is currently an experimental feature as it is not complete.
 This instructs Mono to precompile code that has historically not been
 precompiled with AOT.   
-.TP 
-.I write\-symbols
+.TP
+.I write-symbols
 Instructs the AOT compiler to emit debug symbol information.
 .TP
 .I static
@@ -122,46 +122,46 @@ mono_aot_register_module (mono_aot_module_hello_info);
 
 .ne
 .RE
-.Sp 
-For more information about AOT, see: http://www.mono\-project.com/AOT
-.TP 
-\fB\-\-full\-aot\fR
+.Sp
+For more information about AOT, see: http://www.mono-project.com/AOT
+.TP
+\fB--full-aot\fR
 This is an experimental flag that instructs the Mono runtime to not
 generate any code at runtime and depend exclusively on the code
-generated from using mono \-\-aot=full previously.   This is useful for
+generated from using mono --aot=full previously.   This is useful for
 platforms that do not permit dynamic code generation.
-.Sp 
+.Sp
 Notice that this feature will abort execution at runtime if a codepath
 in your program, or Mono's class libraries attempts to generate code
 dynamically.  You should test your software upfront and make sure that
 you do not use any dynamic features.
-.TP 
-\fB\-\-config filename\fR
+.TP
+\fB--config filename\fR
 Load the specified configuration file instead of the default one(s).
 The default files are /etc/mono/config and ~/.mono/config or the file
 specified in the MONO_CONFIG environment variable, if set.  See the
-mono\-config(5) man page for details on the format of this file.
-.TP 
-\fB\-\-desktop\fR
+mono-config(5) man page for details on the format of this file.
+.TP
+\fB--desktop\fR
 Configures the virtual machine to be better suited for desktop
 applications.  Currently this sets the GC system to avoid expanding
 the heap as much as possible at the expense of slowing down garbage
 collection a bit.
-.TP 
-\fB\-\-help\fR, \fB\-h\fR
+.TP
+\fB--help\fR, \fB-h\fR
 Displays usage instructions.
-.TP 
-\fB\-\-optimize=MODE\fR, \fB\-O=MODE\fR
+.TP
+\fB--optimize=MODE\fR, \fB-O=MODE\fR
 MODE is a comma separated list of optimizations.  They also allow
 optimizations to be turned off by prefixing the optimization name with
 a minus sign.
-.Sp 
+.Sp
 In general, Mono has been tuned to use the default set of flags,
 before using these flags for a deployment setting, you might want to
 actually measure the benefits of using them.    
-.Sp 
+.Sp
 The following optimizations are implemented:
-.nf 
+.nf
              all        Turn on all optimizations
              peephole   Peephole postpass
              branch     Branch optimizations
@@ -171,72 +171,72 @@ The following optimizations are implemented:
              copyprop   Copy propagation
              deadce     Dead code elimination
              linears    Linear scan global reg allocation
-             cmov       Conditional moves [arch\-dependency]
-             shared     Emit per\-domain code
+             cmov       Conditional moves [arch-dependency]
+             shared     Emit per-domain code
              sched      Instruction scheduling
              intrins    Intrinsic method implementations
              tailc      Tail recursion and tail calls
              loop       Loop related optimizations
-             fcmov      Fast x86 FP compares [arch\-dependency]
+             fcmov      Fast x86 FP compares [arch-dependency]
              leaf       Leaf procedures optimizations
              aot        Usage of Ahead Of Time compiled code
              precomp    Precompile all methods before executing Main
              abcrem     Array bound checks removal
              ssapre     SSA based Partial Redundancy Elimination
-             sse2       SSE2 instructions on x86 [arch\-dependency]
+             sse2       SSE2 instructions on x86 [arch-dependency]
              gshared    Enable generic code sharing.
-.fi 
-.Sp 
+.fi
+.Sp
 For example, to enable all the optimization but dead code
 elimination and inlining, you can use:
-.nf 
-	\-O=all,\-deadce,\-inline
-.fi 
-.Sp 
-The flags that are flagged with [arch\-dependency] indicate that the
+.nf
+	-O=all,-deadce,-inline
+.fi
+.Sp
+The flags that are flagged with [arch-dependency] indicate that the
 given option if used in combination with Ahead of Time compilation
-(\-\-aot flag) would produce pre\-compiled code that will depend on the
+(--aot flag) would produce pre-compiled code that will depend on the
 current CPU and might not be safely moved to another computer. 
-.TP 
-\fB\-\-runtime=VERSION\fR
+.TP
+\fB--runtime=VERSION\fR
 Mono supports different runtime versions. The version used depends on the program
 that is being run or on its configuration file (named program.exe.config). This option
 can be used to override such autodetection, by forcing a different runtime version
 to be used. Note that this should only be used to select a later compatible runtime
 version than the one the program was compiled against. A typical usage is for
 running a 1.1 program on a 2.0 version:
-.nf 
-         mono \-\-runtime=v2.0.50727 program.exe
-.fi 
-.TP 
-\fB\-\-security\fR, \fB\-\-security=mode\fR
+.nf
+         mono --runtime=v2.0.50727 program.exe
+.fi
+.TP
+\fB--security\fR, \fB--security=mode\fR
 Activate the security manager, a currently experimental feature in
 Mono and it is OFF by default. The new code verifier can be enabled
 with this option as well.
 .RS
 .ne 8
-.PP 
+.PP
 Using security without parameters is equivalent as calling it with the
 "cas" parameter.  
-.PP 
+.PP
 The following modes are supported:
-.TP 
+.TP
 .I cas
 This allows mono to support declarative security attributes,
-e.g. execution of Code Access Security (CAS) or non\-CAS demands.
+e.g. execution of Code Access Security (CAS) or non-CAS demands.
 .TP 
-.I core\-clr
-Enables the core\-clr security system, typically used for
+.I core-clr
+Enables the core-clr security system, typically used for
 Moonlight/Silverlight applications.  It provides a much simpler
-security system than CAS, see http://www.mono\-project.com/Moonlight
+security system than CAS, see http://www.mono-project.com/Moonlight
 for more details and links to the descriptions of this new system. 
-.TP 
+.TP
 .I validil
 Enables the new verifier and performs basic verification for code
 validity.  In this mode, unsafe code and P/Invoke are allowed. This
 mode provides a better safety guarantee but it is still possible
 for managed code to crash Mono. 
-.TP 
+.TP
 .I verifiable
 Enables the new verifier and performs full verification of the code
 being executed.  It only allows verifiable code to be executed.
@@ -249,342 +249,342 @@ The security system acts on user code: code contained in mscorlib or
 the global assembly cache is always trusted.
 .ne
 .RE
-.TP 
-\fB\-\-server\fR
-Configures the virtual machine to be better suited for server
-operations (currently, a no\-op).
 .TP
-\fB\-\-verify-all\fR 
+\fB--server\fR
+Configures the virtual machine to be better suited for server
+operations (currently, a no-op).
+.TP
+\fB--verify-all\fR 
 Verifies mscorlib and assemblies in the global
 assembly cache for valid IL, and all user code for IL
 verifiability. 
 
-This is different from \fB\-\-security\fR's verifiable
+This is different from \fB--security\fR's verifiable
 or validil in that these options only check user code and skip
 mscorlib and assemblies located on the global assembly cache.
-.TP 
-\fB\-V\fR, \fB\-\-version\fR
+.TP
+\fB-V\fR, \fB--version\fR
 Prints JIT version information (system configuration, release number
 and branch names if available). 
 
 
-.SH "DEVELOPMENT OPTIONS"
+.SH DEVELOPMENT OPTIONS
 The following options are used to help when developing a JITed application.
-.TP 
-\fB\-\-debug\fR, \fB\-\-debug=OPTIONS\fR
+.TP
+\fB--debug\fR, \fB--debug=OPTIONS\fR
 Turns on the debugging mode in the runtime.  If an assembly was
 compiled with debugging information, it will produce line number
 information for stack traces. 
 .RS
 .ne 8
-.PP 
+.PP
 The optional OPTIONS argument is a comma separated list of debugging
 options.  These options are turned off by default since they generate
 much larger and slower code at runtime.
-.TP 
+.TP
 The following options are supported:
-.TP 
+.TP
 .I casts
 Produces a detailed error when throwing a InvalidCastException.
-.TP 
-.I mdb\-optimizations
+.TP
+.I mdb-optimizations
 Disable some JIT optimizations which are usually only disabled when
 running inside the debugger.  This can be helpful if you want to attach
 to the running process with mdb.
 .ne
 .RE
-.TP 
-\fB\-\-profile[=profiler[:profiler_args]]\fR
+.TP
+\fB--profile[=profiler[:profiler_args]]\fR
 Turns on profiling.  For more information about profiling applications
 and code coverage see the sections "PROFILING" and "CODE COVERAGE"
 below. 
-.TP 
-\fB\-\-trace[=expression]\fR
+.TP
+\fB--trace[=expression]\fR
 Shows method names as they are invoked.  By default all methods are
 traced. 
-.Sp 
+.Sp
 The trace can be customized to include or exclude methods, classes or
 assemblies.  A trace expression is a comma separated list of targets,
 each target can be prefixed with a minus sign to turn off a particular
 target.  The words `program', `all' and `disabled' have special
 meaning.  `program' refers to the main program being executed, and
 `all' means all the method calls.
-.Sp 
+.Sp
 The `disabled' option is used to start up with tracing disabled.  It
 can be enabled at a later point in time in the program by sending the
 SIGUSR2 signal to the runtime.
-.Sp 
+.Sp
 Assemblies are specified by their name, for example, to trace all
 calls in the System assembly, use:
-.nf 
+.nf
 
-	mono \-\-trace=System app.exe
+	mono --trace=System app.exe
 
-.fi 
+.fi
 Classes are specified with the T: prefix.  For example, to trace all
 calls to the System.String class, use:
-.nf 
+.nf
 
-	mono \-\-trace=T:System.String app.exe
+	mono --trace=T:System.String app.exe
 
-.fi 
+.fi
 And individual methods are referenced with the M: prefix, and the
 standard method notation:
-.nf 
+.nf
 
-	mono \-\-trace=M:System.Console:WriteLine app.exe
+	mono --trace=M:System.Console:WriteLine app.exe
 
-.fi 
+.fi
 As previously noted, various rules can be specified at once:
-.nf 
+.nf
 
-	mono \-\-trace=T:System.String,T:System.Random app.exe
+	mono --trace=T:System.String,T:System.Random app.exe
 
-.fi 
+.fi
 You can exclude pieces, the next example traces calls to
 System.String except for the System.String:Concat method.
-.nf 
+.nf
 
-	mono \-\-trace=T:System.String,\-M:System.String:Concat
+	mono --trace=T:System.String,-M:System.String:Concat
 
-.fi 
+.fi
 Finally, namespaces can be specified using the N: prefix:
-.nf 
+.nf
 
-	mono \-\-trace=N:System.Xml
+	mono --trace=N:System.Xml
 
-.fi 
-.SH "JIT MAINTAINER OPTIONS"
+.fi
+.SH JIT MAINTAINER OPTIONS
 The maintainer options are only used by those developing the runtime
 itself, and not typically of interest to runtime users or developers.
-.TP 
-\fB\-\-break method\fR
+.TP
+\fB--break method\fR
 Inserts a breakpoint before the method whose name is `method'
 (namespace.class:methodname).  Use `Main' as method name to insert a
 breakpoint on the application's main method.
-.TP 
-\fB\-\-breakonex\fR
+.TP
+\fB--breakonex\fR
 Inserts a breakpoint on exceptions.  This allows you to debug your
 application with a native debugger when an exception is thrown.
-.TP 
-\fB\-\-compile name\fR
+.TP
+\fB--compile name\fR
 This compiles a method (namespace.name:methodname), this is used for
 testing the compiler performance or to examine the output of the code
 generator. 
-.TP 
-\fB\-\-compileall\fR
+.TP
+\fB--compileall\fR
 Compiles all the methods in an assembly.  This is used to test the
 compiler performance or to examine the output of the code generator
 .TP 
-\fB\-\-graph=TYPE METHOD\fR
+\fB--graph=TYPE METHOD\fR
 This generates a postscript file with a graph with the details about
 the specified method (namespace.name:methodname).  This requires `dot'
 and ghostview to be installed (it expects Ghostview to be called
 "gv"). 
-.Sp 
+.Sp
 The following graphs are available:
-.nf 
+.nf
           cfg        Control Flow Graph (CFG)
           dtree      Dominator Tree
           code       CFG showing code
           ssa        CFG showing code after SSA translation
           optcode    CFG showing code after IR optimizations
-.fi 
-.Sp 
+.fi
+.Sp
 Some graphs will only be available if certain optimizations are turned
 on.
-.TP 
-\fB\-\-ncompile\fR
+.TP
+\fB--ncompile\fR
 Instruct the runtime on the number of times that the method specified
-by \-\-compile (or all the methods if \-\-compileall is used) to be
+by --compile (or all the methods if --compileall is used) to be
 compiled.  This is used for testing the code generator performance. 
 .TP 
-\fB\-\-stats\fR
+\fB--stats\fR
 Displays information about the work done by the runtime during the
 execution of an application. 
-.TP 
-\fB\-\-wapi=hps|semdel\fR
+.TP
+\fB--wapi=hps|semdel\fR
 Perform maintenance of the process shared data.
-.Sp 
+.Sp
 semdel will delete the global semaphore.
-.Sp 
+.Sp
 hps will list the currently used handles.
-.TP 
-\fB\-v\fR, \fB\-\-verbose\fR
+.TP
+\fB-v\fR, \fB--verbose\fR
 Increases the verbosity level, each time it is listed, increases the
 verbosity level to include more information (including, for example, 
 a disassembly of the native code produced, code selector info etc.).
-.SH "PROFILING"
+.SH PROFILING
 The mono runtime includes a profiler that can be used to explore
 various performance related problems in your application.  The
-profiler is activated by passing the \-\-profile command line argument
+profiler is activated by passing the --profile command line argument
 to the Mono runtime, the format is:
-.nf 
+.nf
 
-	\-\-profile[=profiler[:profiler_args]]
+	--profile[=profiler[:profiler_args]]
 
-.fi 
-Mono has a built\-in profiler called 'default' (and is also the default
+.fi
+Mono has a built-in profiler called 'default' (and is also the default
 if no arguments are specified), but developers can write custom
 profilers, see the section "CUSTOM PROFILERS" for more details.
-.PP 
+.PP
 If a 
 .I profiler 
 is not specified, the default profiler is used.
-.Sp 
+.Sp
 The 
 .I profiler_args 
-is a profiler\-specific string of options for the profiler itself.
-.Sp 
+is a profiler-specific string of options for the profiler itself.
+.Sp
 The default profiler accepts the following options 'alloc' to profile
 memory consumption by the application; 'time' to profile the time
-spent on each routine; 'jit' to collect time spent JIT\-compiling methods
+spent on each routine; 'jit' to collect time spent JIT-compiling methods
 and 'stat' to perform sample statistical profiling.
 If no options are provided the default is 'alloc,time,jit'. 
-.PP 
+.PP
 By default the
 profile data is printed to stdout: to change this, use the 'file=filename'
 option to output the data to filename.
-.Sp 
+.Sp
 For example:
-.nf 
+.nf
 
-	mono \-\-profile program.exe
+	mono --profile program.exe
 
-.fi 
-.Sp 
+.fi
+.Sp
 That will run the program with the default profiler and will do time
 and allocation profiling.
-.Sp 
-.nf 
+.Sp
+.nf
 
-	mono \-\-profile=default:stat,alloc,file=prof.out program.exe
+	mono --profile=default:stat,alloc,file=prof.out program.exe
 
-.fi 
+.fi
 Will do  sample statistical profiling and allocation profiling on
 program.exe. The profile data is put in prof.out.
-.Sp 
+.Sp
 Note that the statistical profiler has a very low overhead and should
 be the preferred profiler to use (for better output use the full path
 to the mono binary when running and make sure you have installed the
 addr2line utility that comes from the binutils package).
-.SH "LOGGING PROFILER"
-.PP 
+.SH LOGGING PROFILER
+.PP
 The
 .I logging profiler
 will eventually replace the default profiler as it is more complete
 and encompasses the functionality of all the other profilers for Mono.
 It supports the following execution modes:
-.IP 
+.IP
 .I Statistical:
 the program instruction pointer is periodically sampled (it works also with
 unmanaged functions). If call chains are requested, for each sample the
 profiler gets a partial stack trace (up to a desired depth) so that
-caller\-callee information is available.
-.IP 
+caller-callee information is available.
+.IP
 .I Instrumenting:
 each method enter and exit is logged with a timestamp; further processing of
 the data can show the methods that took the longer to execute, with complete
 accounting for callers and callees. However, this way of profiling is rather
 intrusive and slows down the application significantly.
-.IP 
+.IP
 .I Allocation:
 each allocation is logged.
-.IP 
+.IP
 .I Allocation summary:
 shows, for each collection, a summary of the heap contents broken down by
 class (for each class the number of allocated and released objects is
 given, together with their aggregated size in bytes).
-.IP 
+.IP
 .I Heap snapshot mode:
 dumps the whole heap contents at every collection (or at user specified
 collections). It is also possible to request a collection and snapshot dump
 with a signal.
-.PP 
+.PP
 Moreover, other events can be logged and analyzed, like jit time for each
 method, load and unload for assemblies, modules and and individual classes,
 and appdomain and thread creation and destruction.
-.PP 
+.PP
 Instead of reporting the collected
 information at the end of the execution of the program, this profiler logs
 all the events periodically into a file during program execution.
-To minimize the performance impact with multi\-threaded applications,
-the logging uses per\-thread buffers that are routinely saved to disk.
-.PP 
+To minimize the performance impact with multi-threaded applications,
+the logging uses per-thread buffers that are routinely saved to disk.
+.PP
 The output file contains compressed events, to process the data you should
 use tools like the "Mono.Profiler" tool provided on the Mono SVN
 repository.  
-.PP 
-This profiler is activated passing the \fB\-\-profile=logging\fR option to
+.PP
+This profiler is activated passing the \fB--profile=logging\fR option to
 the mono runtime, and is controlled attaching further options, like
-\fB\-\-profile=logging:stat\fR for doing statistical profiling (multiple
+\fB--profile=logging:stat\fR for doing statistical profiling (multiple
 options are separated by commas).
-.PP 
+.PP
 As a quick primer, here are a few examples of the most common usage modes:
-.PP 
+.PP
 To write the resulting data to "mydata.mprof" (defaults to statistical
 profiling):
-.nf 
+.nf
 
-	mono \-\-profile=logging:o=mydata.mprof program.exe
-.fi 
-.PP 
+	mono --profile=logging:o=mydata.mprof program.exe
+.fi
+.PP
 To perform statistical profiling, inspecting call chains up to depth 8:
-.nf 
+.nf
 
-	mono \-\-profile=logging:s=8 program.exe
-.fi 
-.PP 
+	mono --profile=logging:s=8 program.exe
+.fi
+.PP
 To profile allocations with caller method attribution:
-.nf 
+.nf
 
-	mono \-\-profile=logging:a,ts program.exe
-.fi 
-.PP 
+	mono --profile=logging:a,ts program.exe
+.fi
+.PP
 To profile garbage collection activity (collection time and objects freed
 at each collection):
-.nf 
+.nf
 
-	mono \-\-profile=logging:g,as program.exe
-.fi 
-.PP 
-Then you would need to invoke the decoder \fImprof\-decoder(1)\fR
+	mono --profile=logging:g,as program.exe
+.fi
+.PP
+Then you would need to invoke the decoder \fImprof-decoder(1)\fR
 on the output file to see the profiling results.
-.PP 
+.PP
 These are all the available oprions, organized by category:
-.PP 
+.PP
 \fBExecution profiling modes\fR
 .RS
 .ne 8
-.TP 
+.TP
 \fIstatistical\fR, \fIstat\fR or \fIs\fR
 Performs statistical profiling.   This is a lightweight profiling
-mechanism and it has a much lower overhead than the \fIenter\-leave\fR
+mechanism and it has a much lower overhead than the \fIenter-leave\fR
 profiling as it works by sampling where the program is spending its
 time by using a timer.
 If specified with \fIs=<number>\fR, also inspect call chains up to level
 <number>.
-.TP 
-\fIenter\-leave\fR, \fIcalls\fR or \fIc\fR
+.TP
+\fIenter-leave\fR, \fIcalls\fR or \fIc\fR
 Measure the time spent inside each method call, this is done by
 logging the time when a method enters and when the method leaves.
 This can be a time consuming operation. 
-.TP 
+.TP
 \fIjit\fR, \fIj\fR
 Collect information about time spent by the JIT engine compiling
 methods. 
-.TP 
-\fItrack\-stack\fR, \fIts\fR
+.TP
+\fItrack-stack\fR, \fIts\fR
 Track the execution stack. By itself this option does nothing, but it
 enables more detailed reporting in other options (because the profiler
 will use the stack data).
 .ne
 .RE
-.PP 
+.PP
 \fBAllocation profiling modes\fR
 .RS
 .ne 8
-.TP 
+.TP
 \fIallocations\fR, \fIalloc\fR or \fIa\fR
 Collect information about each allocation (object class and size).
 If combined with the "ts" option, for each allocation the profiler will
@@ -592,13 +592,13 @@ also show the responsible method (and also correctly dintinguish allocations
 performed during JIT time).
 These information are also available when combining  the "a" and "c" options,
 but since "c" is much more intrusive "ts" should be preferred.
-.TP 
-\fIallocations\-summary\fR or \fIas\fR
+.TP
+\fIallocations-summary\fR or \fIas\fR
 At each collection dump a summary
 of the heap contents (for each class, the number and collective size of all
 live and freed heap objects). This very lightweight compared to full heap
 snapshots.
-.TP 
+.TP
 \fIunreachable\fR, \fIfree\fR or \fIf\fR
 Performs a lightweight profile of the garbage collector.  On each
 collection performed by the GC, the list of unreachable objects is
@@ -608,29 +608,29 @@ information can be used to compute the heap size broken down by class
 file contains info about each individual object, while in "as" the
 processing is done directly at runtime and the log file contains only
 the summarized data broken down by class).
-.TP 
+.TP
 \fIgc\fR or \fIg\fR
 Measure the time spent in each collection, and also trace heap resizes.
-.TP 
-\fIheap\-shot\fR, \fIheap\fR or \fIh\fR
+.TP
+\fIheap-shot\fR, \fIheap\fR or \fIh\fR
 Performs full heap profiling.   In this case on each
 collection a full heap snapshot is recorded to disk.
 Inside the snapshots, each object reference is still represented so
 that it's possible to investigate who is responsible for keeping objects
 alive.
-.PP 
+.PP
 The actual production of heap snapshots could produce large log files,
 so it can be controlled in three ways:
-.TP 
-\fIgc\-dumps=N\fR, \fIgc\-d=N\fR, \fIgcd=N\fR
+.TP
+\fIgc-dumps=N\fR, \fIgc-d=N\fR, \fIgcd=N\fR
 states the number of snapshots that must be dumped (since the application
-starts). Zero means no dumps at all, \-1 means dump at all collections.
-.TP 
-\fIgc\-signal=<signal>\fR, \fIgc\-s\fR or \fIgcs\fR
+starts). Zero means no dumps at all, -1 means dump at all collections.
+.TP
+\fIgc-signal=<signal>\fR, \fIgc-s\fR or \fIgcs\fR
 (where <signal> is one of "SIGUSR1", "SIGUSR2", or "SIGPROF")
 specifies a signal that will immediately trigger a collection and a dump.
-.TP 
-\fIgc\-commands=FILE\fR, \fIgc\-c=FILE\fR or \fIgcc=FILE\fR 
+.TP
+\fIgc-commands=FILE\fR, \fIgc-c=FILE\fR or \fIgcc=FILE\fR 
 specify a "command file". The file must contain an integer value in ASCII
 form, and the profiler will stat it at every collection.
 If it has been modified it will interpret its contents as a \fIgcd=N\fR
@@ -640,116 +640,116 @@ If the file is present at application startup it takes precedence over an
 eventual \fIgcd=N\fR option.
 .ne
 .RE
-.PP 
+.PP
 \fBProfiler activity control\fR
 .RS
 .ne 8
-.TP 
+.TP
 \fIoutput=FILE\fR, \fIout=FILE\fR or \fIo=FILE\fR
 Use this option to provide the output file name for the profile log.
 If this option is not specified, it will default to "<program-name>.mprof".
-.TP 
+.TP
 \fIoutput-suffix=SUFFIX\fR, \fIsuffix=SUFFIX\fR or \fIos=SUFFIX\fR: makes
 the output file name equals to "<program-name>-SUFFIX.mprof".
-.TP 
+.TP
 \fIstart-enabled\fR or \fIse\fR: start with the profiler active
 (which is the default).
-.TP 
+.TP
 \fIstart-disabled\fR or \fIsd\fR: start with the profiler inactive.
-.TP 
+.TP
 \fItoggle-signal=<SIGNAL>\fR or \fIts=<SIGNAL>\fR (where <SIGNAL>
 is one of SIGUSR1, SIGUSR2 or SIGPROF): Choose a signal that will be used to
 toggle the profiler activity on and off. This way you can decide to profile
 only portions of the applicatopn lifetime (for instance, you can decide to
 avoid profiling an initial setup phase using \fIsd\fR, and enable the
 profiler later delivering the signal to the application).
-.TP 
+.TP
 \fIforce-accurate-timer\fR (or \fIfac\fR): the profiler by default uses
 rtdsc to acquire timestamps for frequent events, but this can be imprecise;
 using this option you force the use of "gettimeofday" at every event, which
 is more accurate but much slower.
 .ne
 .RE
-.PP 
+.PP
 \fBInternal buffer sizes\fR
 .RS
 .ne 8
-.TP 
-\fIper\-thread\-buffer\-size=N\fR, \fItbs=N\fR
+.TP
+\fIper-thread-buffer-size=N\fR, \fItbs=N\fR
 Use to specify the number of events that a thread buffer
 can hold.   When the thread buffer is full, a log block is
 written to disk.
-.Sp 
+.Sp
 This defaults to tbs=10000.
-.TP 
-\fIstatistical\-thread\-buffer\-size=N\fR, \fIsbs=N\fR
+.TP
+\fIstatistical-thread-buffer-size=N\fR, \fIsbs=N\fR
 The number of statistical samples that
 are held in memory before they are dumped to disk (the system does
-double\-buffering and the statistical samples are written by a helper
+double-buffering and the statistical samples are written by a helper
 thread, so the statistical profiler never stops and is able to profile
 the profiler itself).  
-.Sp 
+.Sp
 This defaults to sbs=10000.
-.TP 
-\fIwrite\-buffer\-size\fR, \fIwbs\fR
+.TP
+\fIwrite-buffer-size\fR, \fIwbs\fR
 Specifies the size in bytes of the internal write buffers.
-.Sp 
+.Sp
 This defaults to wbs=1024.
 .ne
 .RE
-.PP 
+.PP
 In its current state, this profiler can also perform heap analysis (like
-heap\-shot), and the decoder is already able to read the data, however
+heap-shot), and the decoder is already able to read the data, however
 the user interface for this feature is experimental (the
-\fImprof\-heap\-viewer\fR tool in the mono\-tools module).
-.PP 
+\fImprof-heap-viewer\fR tool in the mono-tools module).
+.PP
 Another known issue is that if the timer is not strictly monotonic (like
 rtdsc), differences between times can underflow (they are handled as
 unsigned integers) and weird numbers can show up in the logs.
-.PP 
+.PP
 Finally, it can happen that when exceptions are thrown the profiler temporarily
 loses track of the execution stack and misattributes the caller for a few
 allocations (and method execution time).
-.PP 
-More explanations are provided here: "http://www.mono\-project.com/LoggingProfiler".
-.SH "EXTERNAL PROFILERS"
+.PP
+More explanations are provided here: "http://www.mono-project.com/LoggingProfiler".
+.SH EXTERNAL PROFILERS
 There are a number of external profilers that have been developed for
 Mono, we will update this section to contain the profilers.
-.PP 
+.PP
 The heap Shot profiler can track all live objects, and references to
 these objects, and includes a GUI tool, this is our recommended
 profiler.
 To install you must download the profiler
 from Mono's SVN:
-.nf 
-	svn co svn://svn.myrealbox.com/source/trunk/heap\-shot
-	cd heap\-shot
+.nf
+	svn co svn://svn.myrealbox.com/source/trunk/heap-shot
+	cd heap-shot
 	./autogen
 	make
 	make install
-.fi 
-.PP 
+.fi
+.PP
 See the included documentation for details on using it.
-.PP 
+.PP
 The Live Type profiler shows at every GC iteration all of the live
 objects of a given type.   To install you must download the profiler
 from Mono's SVN:
-.nf 
-	svn co svn://svn.myrealbox.com/source/trunk/heap\-prof
-	cd heap\-prof
+.nf
+	svn co svn://svn.myrealbox.com/source/trunk/heap-prof
+	cd heap-prof
 	./autogen
 	make
 	make install
-.fi 
-.PP 
+.fi
+.PP
 To use the profiler, execute:
-.nf 
-	mono \-\-profile=desc\-heap program.exe
-.fi 
-.PP 
+.nf
+	mono --profile=desc-heap program.exe
+.fi
+.PP
 The output of this profiler looks like this:
-.nf 
-	Checkpoint at 102 for heap\-resize
+.nf
+	Checkpoint at 102 for heap-resize
 	   System.MonoType : 708
 	   System.Threading.Thread : 352
 	   System.String : 3230
@@ -757,87 +757,87 @@ The output of this profiler looks like this:
 	   Gnome.ModuleInfo : 112
 	   System.Object[] : 160
 	   System.Collections.Hashtable : 96
-	   System.I nt32[] : 212
+	   System.Int32[] : 212
 	   System.Collections.Hashtable+Slot[] : 296
 	   System.Globalization.CultureInfo : 108
 	   System.Globalization.NumberFormatInfo : 144
-.fi 
-.PP 
+.fi
+.PP
 The first line describes the iteration number for the GC, in this case
 checkpoint 102.
-.PP 
+.PP
 Then on each line the type is displayed as well as the number of bytes
 that are being consumed by live instances of this object.
 .PP 
 The AOT profiler is used to feed back information to the AOT compiler
 about how to order code based on the access patterns for pages.  To
 use it, use:
-.nf 
-	mono \-\-profile=aot program.exe
-.fi 
+.nf
+	mono --profile=aot program.exe
+.fi
 The output of this profile can be fed back into Mono's AOT compiler to
 order the functions on the disk to produce precompiled images that
 have methods in sequential pages.
-.SH "CUSTOM PROFILERS"
+.SH CUSTOM PROFILERS
 Mono provides a mechanism for loading other profiling modules which in
 the form of shared libraries.  These profiling modules can hook up to
 various parts of the Mono runtime to gather information about the code
 being executed.
-.PP 
+.PP
 To use a third party profiler you must pass the name of the profiler
 to Mono, like this:
-.nf 
+.nf
 
-	mono \-\-profile=custom program.exe
+	mono --profile=custom program.exe
 
-.fi 
-.PP 
+.fi
+.PP
 In the above sample Mono will load the user defined profiler from the
-shared library `mono\-profiler\-custom.so'.  This profiler module must
+shared library `mono-profiler-custom.so'.  This profiler module must
 be on your dynamic linker library path.
 .PP 
 A list of other third party profilers is available from Mono's web
-site (www.mono\-project.com/Performance_Tips)
-.PP 
+site (www.mono-project.com/Performance_Tips)
+.PP
 Custom profiles are written as shared libraries.  The shared library
-must be called `mono\-profiler\-NAME.so' where `NAME' is the name of
+must be called `mono-profiler-NAME.so' where `NAME' is the name of
 your profiler.
-.PP 
+.PP
 For a sample of how to write your own custom profiler look in the
 Mono source tree for in the samples/profiler.c.
-.SH "CODE COVERAGE"
+.SH CODE COVERAGE
 Mono ships with a code coverage module.  This module is activated by
-using the Mono \-\-profile=cov option.  The format is:
-\fB\-\-profile=cov[:assembly\-name[/namespace]] test\-suite.exe\fR
-.PP 
+using the Mono --profile=cov option.  The format is:
+\fB--profile=cov[:assembly-name[/namespace]] test-suite.exe\fR
+.PP
 By default code coverage will default to all the assemblies loaded,
 you can limit this by specifying the assembly name, for example to
 perform code coverage in the routines of your program use, for example
 the following command line limits the code coverage to routines in the
 "demo" assembly:
-.nf 
+.nf
 
-	mono \-\-profile=cov:demo demo.exe
+	mono --profile=cov:demo demo.exe
 
-.fi 
-.PP 
+.fi
+.PP
 Notice that the 
-.I assembly\-name
+.I assembly-name
 does not include the extension.
-.PP 
+.PP
 You can further restrict the code coverage output by specifying a
 namespace:
-.nf 
+.nf
 
-	mono \-\-profile=cov:demo/My.Utilities demo.exe
+	mono --profile=cov:demo/My.Utilities demo.exe
 
-.fi 
-.PP 
+.fi
+.PP
 Which will only perform code coverage in the given assembly and
 namespace.  
-.PP 
+.PP
 Typical output looks like this:
-.nf 
+.nf
 
 	Not covered: Class:.ctor ()
 	Not covered: Class:A ()
@@ -846,36 +846,36 @@ Typical output looks like this:
 	Partial coverage: Driver:Main ()
 		offset 0x000a
 
-.fi 
-.PP 
+.fi
+.PP
 The offsets displayed are IL offsets.
-.PP 
+.PP
 A more powerful coverage tool is available in the module `monocov'.
 See the monocov(1) man page for details.
-.SH "DEBUGGING"
+.SH DEBUGGING
 It is possible to obtain a stack trace of all the active threads in
 Mono by sending the QUIT signal to Mono, you can do this from the
 command line, like this:
-.nf 
+.nf
 
-	kill \-QUIT pid
+	kill -QUIT pid
 
-.fi 
+.fi
 Where pid is the Process ID of the Mono process you want to examine.
 The process will continue running afterwards, but its state is not
 guaranteed.
-.PP 
+.PP
 .B Important:
-this is a last\-resort mechanism for debugging applications and should
+this is a last-resort mechanism for debugging applications and should
 not be used to monitor or probe a production application.  The
 integrity of the runtime after sending this signal is not guaranteed
 and the application might crash or terminate at any given point
 afterwards.   
-.PP 
+.PP
 You can use the MONO_LOG_LEVEL and MONO_LOG_MASK environment variables
 to get verbose debugging output about the execution of your
 application within Mono.
-.PP 
+.PP
 The 
 .I MONO_LOG_LEVEL
 environment variable if set, the logging level is changed to the set
@@ -883,10 +883,10 @@ value. Possible values are "error", "critical", "warning", "message",
 "info", "debug". The default value is "error". Messages with a logging
 level greater then or equal to the log level will be printed to
 stdout/stderr.
-.PP 
+.PP
 Use "info" to track the dynamic loading of assemblies.
-.PP 
-.PP 
+.PP
+.PP
 Use the 
 .I MONO_LOG_MASK
 environment variable to limit the extent of the messages you get: 
@@ -897,26 +897,26 @@ The default value is "all". Changing the mask value allows you to display only
 messages for a certain component. You can use multiple masks by comma 
 separating them. For example to see config file messages and assembly loader
 messages set you mask to "asm,cfg".
-.PP 
+.PP
 The following is a common use to track down problems with P/Invoke:
-.nf 
+.nf
 
 	$ MONO_LOG_LEVEL="debug" MONO_LOG_MASK="dll" mono glue.exe
 
-.fi 
-.PP 
-.SH "SERIALIZATION"
-Mono's XML serialization engine by default will use a reflection\-based
+.fi
+.PP
+.SH SERIALIZATION
+Mono's XML serialization engine by default will use a reflection-based
 approach to serialize which might be slow for continuous processing
 (web service applications).  The serialization engine will determine
-when a class must use a hand\-tuned serializer based on a few
+when a class must use a hand-tuned serializer based on a few
 parameters and if needed it will produce a customized C# serializer
 for your types at runtime.  This customized serializer then gets
 dynamically loaded into your application.
-.PP 
+.PP
 You can control this with the MONO_XMLSERIALIZER_THS environment
 variable.
-.PP 
+.PP
 The possible values are 
 .B `no' 
 to disable the use of a C# customized
@@ -928,234 +928,234 @@ serializer generation somehow fails. This behavior can be disabled
 by setting the option
 .B `nofallback'
 (for example: MONO_XMLSERIALIZER_THS=0,nofallback).
-.SH "ENVIRONMENT VARIABLES"
-.TP 
+.SH ENVIRONMENT VARIABLES
+.TP
 \fBGC_DONT_GC\fR
 Turns off the garbage collection in Mono.  This should be only used
 for debugging purposes
-.TP 
+.TP
 \fBMONO_AOT_CACHE\fR
-If set, this variable will instruct Mono to ahead\-of\-time compile new
+If set, this variable will instruct Mono to ahead-of-time compile new
 assemblies on demand and store the result into a cache in
-~/.mono/aot\-cache. 
-.TP 
+~/.mono/aot-cache. 
+.TP
 \fBMONO_CFG_DIR\fR
 If set, this variable overrides the default system configuration directory
 ($PREFIX/etc). It's used to locate machine.config file.
-.TP 
+.TP
 \fBMONO_COM\fR
 Sets the style of COM interop.  If the value of this variable is "MS"
 Mono will use string marhsalling routines from the liboleaut32 for the
-BSTR type library, any other values will use the mono\-builtin BSTR
+BSTR type library, any other values will use the mono-builtin BSTR
 string marshalling.
-.TP 
+.TP
 \fBMONO_CONFIG\fR
 If set, this variable overrides the default runtime configuration file
-($PREFIX/etc/mono/config). The \-\-config command line options overrides the
+($PREFIX/etc/mono/config). The --config command line options overrides the
 environment variable.
-.TP 
+.TP
 \fBMONO_DEBUG\fR
 If set, enables some features of the runtime useful for debugging.
 This variable should contain a comma separated list of debugging options.
 Currently, the following options are supported:
 .RS
 .ne 8
-.TP 
-\fBbreak\-on\-unverified\fR
+.TP
+\fBbreak-on-unverified\fR
 If this variable is set, when the Mono VM runs into a verification
 problem, instead of throwing an exception it will break into the
 debugger.  This is useful when debugging verifier problems
-.TP 
-\fBcollect\-pagefault\-stats\fR
+.TP
+\fBcollect-pagefault-stats\fR
 Collects information about pagefaults.   This is used internally to
 track the number of page faults produced to load metadata.  To display
-this information you must use this option with "\-\-stats" command line
+this information you must use this option with "--stats" command line
 option.
-.TP 
-\fBdont\-free\-domains\fR
-This is an Optimization for multi\-AppDomain applications (most
+.TP
+\fBdont-free-domains\fR
+This is an Optimization for multi-AppDomain applications (most
 commonly ASP.NET applications).  Due to internal limitations Mono,
-Mono by default does not use typed allocations on multi\-appDomain
+Mono by default does not use typed allocations on multi-appDomain
 applications as they could leak memory when a domain is unloaded. 
-.Sp 
+.Sp
 Although this is a fine default, for applications that use more than
 on AppDomain heavily (for example, ASP.NET applications) it is worth
 trading off the small leaks for the increased performance
 (additionally, since ASP.NET applications are not likely going to
 unload the application domains on production systems, it is worth
 using this feature). 
-.TP 
-\fBhandle\-sigint\fR
-Captures the interrupt signal (Control\-C) and displays a stack trace
+.TP
+\fBhandle-sigint\fR
+Captures the interrupt signal (Control-C) and displays a stack trace
 when pressed.  Useful to find out where the program is executing at a
 given point.  This only displays the stack trace of a single thread. 
-.TP 
-\fBkeep\-delegates\fR
+.TP
+\fBkeep-delegates\fR
 This option will leak delegate trampolines that are no longer
 referenced as to present the user with more information about a
 delegate misuse.  Basically a delegate instance might be created,
 passed to unmanaged code, and no references kept in managed code,
 which will garbage collect the code.  With this option it is possible
 to track down the source of the problems. 
-.TP 
-\fBno\-gdb\-backtrace\fR
+.TP
+\fBno-gdb-backtrace\fR
 This option will disable the GDB backtrace emitted by the runtime
 after a SIGSEGV or SIGABRT in unmanaged code.
 .ne
 .RE
-.TP 
+.TP
 \fBMONO_DISABLE_AIO\fR
 If set, tells mono NOT to attempt using native asynchronous I/O services. In
 that case, a default select/poll implementation is used. Currently only epoll()
 is supported.
-.TP 
+.TP
 \fBMONO_DISABLE_MANAGED_COLLATION\fR
 If this environment variable is `yes', the runtime uses unmanaged
-collation (which actually means no culture\-sensitive collation). It
+collation (which actually means no culture-sensitive collation). It
 internally disables managed collation functionality invoked via the
 members of System.Globalization.CompareInfo class. Collation is
 enabled by default.
-.TP 
+.TP
 \fBMONO_EGD_SOCKET\fR
 For platforms that do not otherwise have a way of obtaining random bytes
 this can be set to the name of a file system socket on which an egd or
 prngd daemon is listening.
-.TP 
+.TP
 \fBMONO_EVENTLOG_TYPE\fR
 Sets the type of event log provider to use (for System.Diagnostics.EventLog).
-.Sp 
+.Sp
 Possible values are:
 .RS
-.TP 
+.TP
 .I "local[:path]"
-.Sp 
+.Sp
 Persists event logs and entries to the local file system.
-.Sp 
+.Sp
 The directory in which to persist the event logs, event sources and entries
 can be specified as part of the value.
-.Sp 
+.Sp
 If the path is not explicitly set, it defaults to "/var/lib/mono/eventlog"
 on unix and "%APPDATA%\mono\eventlog" on Windows.
-.TP 
+.TP
 .I "win32"
-.Sp 
+.Sp
 .B 
 Uses the native win32 API to write events and registers event logs and
 event sources in the registry.   This is only available on Windows. 
-.Sp 
+.Sp
 On Unix, the directory permission for individual event log and event source
 directories is set to 777 (with +t bit) allowing everyone to read and write
 event log entries while only allowing entries to be deleted by the user(s)
 that created them.
-.TP 
+.TP
 .I "null"
-.Sp 
+.Sp
 Silently discards any events.
 .ne
-.PP 
+.PP
 The default is "null" on Unix (and versions of Windows before NT), and 
 "win32" on Windows NT (and higher).
 .RE
-.TP 
+.TP
 \fBMONO_EXTERNAL_ENCODINGS\fR
-If set, contains a colon\-separated list of text encodings to try when
-turning externally\-generated text (e.g. command\-line arguments or
+If set, contains a colon-separated list of text encodings to try when
+turning externally-generated text (e.g. command-line arguments or
 filenames) into Unicode.  The encoding names come from the list
 provided by iconv, and the special case "default_locale" which refers
 to the current locale's default encoding.
-.IP 
-When reading externally\-generated text strings UTF\-8 is tried first,
+.IP
+When reading externally-generated text strings UTF-8 is tried first,
 and then this list is tried in order with the first successful
 conversion ending the search.  When writing external text (e.g. new
 filenames or arguments to new processes) the first item in this list
-is used, or UTF\-8 if the environment variable is not set.
-.IP 
+is used, or UTF-8 if the environment variable is not set.
+.IP
 The problem with using MONO_EXTERNAL_ENCODINGS to process your
 files is that it results in a problem: although its possible to get
 the right file name it is not necessarily possible to open the file.
 In general if you have problems with encodings in your filenames you
 should use the "convmv" program.
-.TP 
+.TP
 \fBMONO_GAC_PREFIX\fR
 Provides a prefix the runtime uses to look for Global Assembly Caches.
 Directories are separated by the platform path separator (colons on
 unix). MONO_GAC_PREFIX should point to the top directory of a prefixed
 install. Or to the directory provided in the gacutil /gacdir command. Example:
 .B /home/username/.mono:/usr/local/mono/
-.TP 
+.TP
 \fBMONO_IOMAP\fR
-Enables some filename rewriting support to assist badly\-written
-applications that hard\-code Windows paths.  Set to a colon\-separated
+Enables some filename rewriting support to assist badly-written
+applications that hard-code Windows paths.  Set to a colon-separated
 list of "drive" to strip drive letters, or "case" to do
-case\-insensitive file matching in every directory in a path.  "all"
+case-insensitive file matching in every directory in a path.  "all"
 enables all rewriting methods.  (Backslashes are always mapped to
 slashes if this variable is set to a valid option.)
-.fi 
-.Sp 
+.fi
+.Sp
 For example, this would work from the shell:
-.nf 
+.nf
 
 	MONO_IOMAP=drive:case
 	export MONO_IOMAP
 
-.fi 
+.fi
 If you are using mod_mono to host your web applications, you can use
 the 
 .B MonoSetEnv
 directive, like this:
-.nf 
+.nf
 
 	MonoSetEnv MONO_IOMAP=all
 
-.fi 
-.TP 
+.fi
+.TP
 \fBMONO_MANAGED_WATCHER\fR
-If set to "disabled", System.I O.FileSystemWatcher will use a file watcher 
+If set to "disabled", System.IO.FileSystemWatcher will use a file watcher 
 implementation which silently ignores all the watching requests.
-If set to any other value, System.I O.FileSystemWatcher will use the default
+If set to any other value, System.IO.FileSystemWatcher will use the default
 managed implementation (slow). If unset, mono will try to use inotify, FAM, 
 Gamin, kevent under Unix systems and native API calls on Windows, falling 
 back to the managed implementation on error.
-.TP 
+.TP
 \fBMONO_NO_SMP\fR
 If set causes the mono process to be bound to a single processor. This may be
 useful when debugging or working around race conditions.
-.TP 
+.TP
 \fBMONO_PATH\fR
 Provides a search path to the runtime where to look for library
 files.   This is a tool convenient for debugging applications, but
 should not be used by deployed applications as it breaks the assembly
 loader in subtle ways. 
-.Sp 
+.Sp
 Directories are separated by the platform path separator (colons on unix). Example:
 .B /home/username/lib:/usr/local/mono/lib
-.Sp 
+.Sp
 Alternative solutions to MONO_PATH include: installing libraries into
 the Global Assembly Cache (see gacutil(1)) or having the dependent
-libraries side\-by\-side with the main executable.
-.Sp 
+libraries side-by-side with the main executable.
+.Sp
 For a complete description of recommended practices for application
 deployment, see the
-http://www.mono\-project.com/Guidelines:Application_Deployment page. 
-.TP 
+http://www.mono-project.com/Guidelines:Application_Deployment page. 
+.TP
 \fBMONO_RTC\fR
 Experimental RTC support in the statistical profiler: if the user has
 the permission, more accurate statistics are gathered.  The MONO_RTC
 value must be restricted to what the Linux rtc allows: power of two
 from 64 to 8192 Hz. To enable higher frequencies like 4096 Hz, run as root:
-.nf 
+.nf
 
-	echo 4096 > /proc/sys/dev/rtc/max\-user\-freq
+	echo 4096 > /proc/sys/dev/rtc/max-user-freq
 
-.fi 
-.Sp 
+.fi
+.Sp
 For example:
-.nf 
+.nf
 
-	MONO_RTC=4096 mono \-\-profiler=default:stat program.exe
+	MONO_RTC=4096 mono --profiler=default:stat program.exe
 
-.fi 
-.TP 
+.fi
+.TP
 \fBMONO_NO_TLS\fR
 Disable inlining of thread local accesses. Try setting this if you get a segfault
 early on in the execution of mono.
@@ -1171,78 +1171,78 @@ Uses the string value of this variable as a replacement for the host name when
 creating file names in the ".wapi" directory. This helps if the host name of
 your machine is likely to be changed when a mono application is running or if
 you have a .wapi directory shared among several different computers.
-.Sp 
+.Sp
 Mono typically uses the hostname to create the files that are used to
 share state across multiple Mono processes.  This is done to support
 home directories that might be shared over the network.
-.TP 
+.TP
 \fBMONO_STRICT_IO_EMULATION\fR
 If set, extra checks are made during IO operations.  Currently, this
 includes only advisory locks around file writes.
-.TP 
+.TP
 \fBMONO_DISABLE_SHM\fR
-If set, disables the shared memory files used for cross\-process
+If set, disables the shared memory files used for cross-process
 handles: process have only private handles.  This means that process
 and thread handles are not available to other processes, and named
 mutexes, named events and named semaphores are not visible between
 processes.
-.Sp 
+.Sp
 This is can also be enabled by default by passing the
-"\-\-disable\-shared\-handles" option to configure.
-.TP 
+"--disable-shared-handles" option to configure.
+.TP
 \fBMONO_THEME\fR
 The name of the theme to be used by Windows.Forms.   Available themes today
 include "clearlooks", "nice" and "win32".
-.Sp 
+.Sp
 The default is "win32".  
-.TP 
+.TP
 \fBMONO_TLS_SESSION_CACHE_TIMEOUT\fR
 The time, in seconds, that the SSL/TLS session cache will keep it's entry to
 avoid a new negotiation between the client and a server. Negotiation are very
-CPU intensive so an application\-specific custom value may prove useful for 
+CPU intensive so an application-specific custom value may prove useful for 
 small embedded systems.
-.Sp 
+.Sp
 The default is 180 seconds.
-.TP 
+.TP
 \fBMONO_THREADS_PER_CPU\fR
 The maximum number of threads in the general threadpool will be
 20 + (MONO_THREADS_PER_CPU * number of CPUs). The default value for this
 variable is 5.
-.TP 
+.TP
 \fBMONO_XMLSERIALIZER_THS\fR
 Controls the threshold for the XmlSerializer to produce a custom
-serializer for a given class instead of using the Reflection\-based
+serializer for a given class instead of using the Reflection-based
 interpreter.  The possible values are `no' to disable the use of a
 custom serializer or a number to indicate when the XmlSerializer
 should start serializing.   The default value is 50, which means that
 the a custom serializer will be produced on the 50th use.
-.TP 
+.TP
 \fBMONO_XMLSERIALIZER_DEBUG\fR
 Set this value to 1 to prevent the serializer from removing the
 temporary files that are created for fast serialization;  This might
 be useful when debugging.
-.TP 
+.TP
 \fBMONO_ASPNET_INHIBIT_SETTINGSMAP\fR
 Mono contains a feature which allows modifying settings in the .config files shipped
 with Mono by using config section mappers. The mappers and the mapping rules are
 defined in the $prefix/etc/mono/2.0/settings.map file and, optionally, in the
-settings.map file found in the top\-level directory of your ASP.NET application.
+settings.map file found in the top-level directory of your ASP.NET application.
 Both files are read by System.Web on application startup, if they are found at the
 above locations. If you don't want the mapping to be performed you can set this
 variable in your environment before starting the application and no action will
 be taken.
-.SH "ENVIRONMENT VARIABLES FOR DEBUGGING"
-.TP 
+.SH ENVIRONMENT VARIABLES FOR DEBUGGING
+.TP
 \fBMONO_ASPNET_NODELETE\fR
 If set to any value, temporary source files generated by ASP.NET support
 classes will not be removed. They will be kept in the user's temporary
 directory.
-.TP 
+.TP
 \fBMONO_LOG_LEVEL\fR
 The logging level, possible values are `error', `critical', `warning',
 `message', `info' and `debug'.  See the DEBUGGING section for more
 details.
-.TP 
+.TP
 \fBMONO_LOG_MASK\fR
 Controls the domain of the Mono runtime that logging will apply to. 
 If set, the log mask is changed to the set value. Possible values are
@@ -1252,22 +1252,22 @@ The default value is "all". Changing the mask value allows you to display only
 messages for a certain component. You can use multiple masks by comma 
 separating them. For example to see config file messages and assembly loader
 messages set you mask to "asm,cfg".
-.TP 
+.TP
 \fBMONO_TRACE\fR
 Used for runtime tracing of method calls. The format of the comma separated
 trace options is:
-.nf 
+.nf
 
-	[\-]M:method name
-	[\-]N:namespace
-	[\-]T:class name
-	[\-]all
-	[\-]program
+	[-]M:method name
+	[-]N:namespace
+	[-]T:class name
+	[-]all
+	[-]program
 	disabled		Trace output off upon start.
 
-.fi 
+.fi
 You can toggle trace output on/off sending a SIGUSR2 signal to the program.
-.TP 
+.TP
 \fBMONO_TRACE_LISTENER\fR
 If set, enables the System.Diagnostics.DefaultTraceListener, which will 
 print the output of the System.Diagnostics Trace and Debug classes.  
@@ -1277,139 +1277,139 @@ Console.Out or Console.Error you can append an optional prefix that will
 be used when writing messages like this: Console.Error:MyProgramName.
 See the System.Diagnostics.DefaultTraceListener documentation for more
 information.
-.TP 
+.TP
 \fBMONO_XEXCEPTIONS\fR
 This throws an exception when a X11 error is encountered; by default a
 message is displayed but execution continues
-.TP 
+.TP
 \fBMONO_XSYNC\fR
 This is used in the System.Windows.Forms implementation when running
 with the X11 backend.  This is used to debug problems in Windows.Forms
 as it forces all of the commands send to X11 server to be done
 synchronously.   The default mode of operation is asynchronous which
 makes it hard to isolate the root of certain problems.
-.TP 
+.TP
 \fBMONO_GENERIC_SHARING\fR
 This environment variable controls the kind of generic sharing used.
 This variable is used by internal JIT developers and should not be
 changed in production.  Do not use it.
-.Sp 
+.Sp
 The variable controls which classes will have generic code sharing
 enabled.
-.Sp 
+.Sp
 Permissible values are:
 .RS
 .TP 
 .I "all" 
 All generated code can be shared. 
-.TP 
+.TP
 .I "collections" 
 Only the classes in System.Collections.Generic will have its code
 shared (this is the default value).
-.TP 
+.TP
 .I "corlib"
 Only code in corlib will have its code shared.
-.TP 
+.TP
 .I "none"
 No generic code sharing will be performed.
 .RE
-.Sp 
+.Sp
 Generic code sharing by default only applies to collections.   The
 Mono JIT by default turns this on.
-.SH "VALGRIND"
+.SH VALGRIND
 If you want to use Valgrind, you will find the file `mono.supp'
 useful, it contains the suppressions for the GC which trigger
 incorrect warnings.  Use it like this:
-.nf 
-    valgrind \-\-suppressions=mono.supp mono ...
-.fi 
-.SH "DTRACE"
+.nf
+    valgrind --suppressions=mono.supp mono ...
+.fi
+.SH DTRACE
 On some platforms, Mono can expose a set of DTrace probes (also known
-as user\-land statically defined, USDT Probes).
-.TP 
+as user-land statically defined, USDT Probes).
+.TP
 They are defined in the file `mono.d'.
-.TP 
-.B ves\-init\-begin, ves\-init\-end
-.Sp 
+.TP
+.B ves-init-begin, ves-init-end
+.Sp
 Begin and end of runtime initialization.
-.TP 
-.B method\-compile\-begin, method\-compile\-end
-.Sp 
+.TP
+.B method-compile-begin, method-compile-end
+.Sp
 Begin and end of method compilation.
 The probe arguments are class name, method name and signature,
-and in case of method\-compile\-end success or failure of compilation.
-.TP 
-.B gc\-begin, gc\-end
-.Sp 
+and in case of method-compile-end success or failure of compilation.
+.TP
+.B gc-begin, gc-end
+.Sp
 Begin and end of Garbage Collection.
-.TP 
+.TP
 To verify the availability of the probes, run:
-.nf 
-    dtrace \-P mono'$target' \-l \-c mono
-.fi 
-.SH "FILES"
+.nf
+    dtrace -P mono'$target' -l -c mono
+.fi
+.SH FILES
 On Unix assemblies are loaded from the installation lib directory.  If you set
 `prefix' to /usr, the assemblies will be located in /usr/lib.  On
 Windows, the assemblies are loaded from the directory where mono and
 mint live.
-.TP 
-.B ~/.mono/aot\-cache
-.Sp 
-The directory for the ahead\-of\-time compiler demand creation
+.TP
+.B ~/.mono/aot-cache
+.Sp
+The directory for the ahead-of-time compiler demand creation
 assemblies are located. 
-.TP 
+.TP
 .B /etc/mono/config, ~/.mono/config
-.Sp 
-Mono runtime configuration file.  See the mono\-config(5) manual page
+.Sp
+Mono runtime configuration file.  See the mono-config(5) manual page
 for more information.
-.TP 
+.TP
 .B ~/.config/.mono/certs, /usr/share/.mono/certs
-.Sp 
+.Sp
 Contains Mono certificate stores for users / machine. See the certmgr(1) 
 manual page for more information on managing certificate stores and
 the mozroots(1) page for information on how to import the Mozilla root
 certificates into the Mono certificate store. 
-.TP 
+.TP
 .B ~/.mono/assemblies/ASSEMBLY/ASSEMBLY.config
-.Sp 
+.Sp
 Files in this directory allow a user to customize the configuration
 for a given system assembly, the format is the one described in the
-mono\-config(5) page. 
-.TP 
+mono-config(5) page. 
+.TP
 .B ~/.config/.mono/keypairs, /usr/share/.mono/keypairs
-.Sp 
+.Sp
 Contains Mono cryptographic keypairs for users / machine. They can be 
 accessed by using a CspParameters object with DSACryptoServiceProvider
 and RSACryptoServiceProvider classes.
-.TP 
+.TP
 .B ~/.config/.isolatedstorage, ~/.local/share/.isolatedstorage, /usr/share/.isolatedstorage
-.Sp 
-Contains Mono isolated storage for non\-roaming users, roaming users and 
+.Sp
+Contains Mono isolated storage for non-roaming users, roaming users and 
 local machine. Isolated storage can be accessed using the classes from 
-the System.I O.I solatedStorage namespace.
-.TP 
+the System.IO.IsolatedStorage namespace.
+.TP
 .B <assembly>.config
-.Sp 
+.Sp
 Configuration information for individual assemblies is loaded by the
-runtime from side\-by\-side files with the .config files, see the
-http://www.mono\-project.com/Config for more information.
-.TP 
+runtime from side-by-side files with the .config files, see the
+http://www.mono-project.com/Config for more information.
+.TP
 .B Web.config, web.config
-.Sp 
+.Sp
 ASP.NET applications are configured through these files, the
-configuration is done on a per\-directory basis.  For more information
-on this subject see the http://www.mono\-project.com/Config_system.web
+configuration is done on a per-directory basis.  For more information
+on this subject see the http://www.mono-project.com/Config_system.web
 page. 
-.SH "MAILING LISTS"
+.SH MAILING LISTS
 Mailing lists are listed at the
-http://www.mono\-project.com/Mailing_Lists
-.SH "WEB SITE"
-http://www.mono\-project.com
-.SH "SEE ALSO"
-.PP 
-certmgr(1), mcs(1), monocov(1), monodis(1), mono\-config(5), mozroots(1), xsp(1).
-.PP 
+http://www.mono-project.com/Mailing_Lists
+.SH WEB SITE
+http://www.mono-project.com
+.SH SEE ALSO
+.PP
+certmgr(1), mcs(1), monocov(1), monodis(1), mono-config(5), mozroots(1), xsp(1).
+.PP
 For more information on AOT:
-http://www.mono\-project.com/AOT
-.PP 
-For ASP.NET\-related documentation, see the xsp(1) manual page
+http://www.mono-project.com/AOT
+.PP
+For ASP.NET-related documentation, see the xsp(1) manual page
