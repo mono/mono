@@ -1,5 +1,7 @@
 2008-08-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c: Fix the arm build.
+
 	* generic-sharing.c (mini_type_get_underlying_type): New helper function
 	handling enums, generic instances and generic sharing.
 	(mini_type_stack_size_full): Ditto.
