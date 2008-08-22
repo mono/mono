@@ -1,3 +1,8 @@
+2008-08-22  Robert Jordan  <robertj@gmx.net>
+
+	* console-io.c (ves_icall_System_ConsoleDriver_TtySetup):
+	Fix the Windows build.
+
 2008-08-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_generic_sharing_enabled): Make the default
