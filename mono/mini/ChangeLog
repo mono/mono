@@ -1,5 +1,16 @@
 2008-08-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (mono_create_generic_class_init_trampoline): New
+	helper function to return a generic class init trampoline.
+
+	* method-to-ir.c mini.c: Use it.
+	
+	* tramp-amd64.c (mono_arch_create_generic_class_init_trampoline): New
+	arch-specfic function to return a generic class init trampoline.
+
+	* tramp-amd64.c (mono_arch_create_trampoline_code_full): Remove most of
+	the GENERIC_CLASS_INIT custom code.
+
 	* method-to-ir.c (mono_method_to_ir2): If RGCTX_REG is not defined, that is
 	a fatal error, not a sharing failure.
 
