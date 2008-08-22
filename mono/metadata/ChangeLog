@@ -1,3 +1,8 @@
+2008-08-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_generic_sharing_enabled): Make the default
+	sharing mode 'corlib'.
+
 2008-08-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* console-io.c (console_set_signal_handlers): Fix a warning.
