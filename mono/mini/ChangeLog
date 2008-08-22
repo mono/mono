@@ -1,5 +1,10 @@
 2008-08-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-x86.c (mono_arch_create_generic_class_init_trampoline): Implement
+	this for x86.
+	(mono_arch_create_trampoline_code): Remove most of the GENERIC_CLASS_INIT
+	custom code.
+
 	* mini-trampolines.c (mono_create_generic_class_init_trampoline): New
 	helper function to return a generic class init trampoline.
 
