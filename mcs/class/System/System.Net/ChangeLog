@@ -1,3 +1,14 @@
+2008-08-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* WebConnectionStream.cs (WriteRequest): For small requests,
+	cluster together the header + body in a single write call, avoids
+	the latency problems observed in an TLS application that makes
+	many web service calls. 
+
+2008-08-22  Geoff Norton  <gnorton@novell.com>
+
+	* WebConnection.cs: Set NoDelay
+
 2008-08-21  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* OpenReadCompletedEventArgs.cs: new Address property for 2.1

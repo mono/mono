@@ -540,26 +540,49 @@ namespace System.Net
 			request.InternalContentLength = length;
 			request.SendRequestHeaders ();
 			requestWritten = true;
-			if (!cnc.Write (headers, 0, headers.Length))
-				throw new WebException ("Error writing request.", null, WebExceptionStatus.SendFailure, null);
 
-			headersSent = true;
-			if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100)
-				return;
+			//
+			// For small requests, make a copy, it will reduce the traffic, for large
+			// requests, the NoDelay bit on the socket should take effect (set in WebConnection).
+			//
+			if (headers.Length + length < 8192){
+				byte[] b = new byte [headers.Length + length];
 
-			IAsyncResult result = null;
-			if (length > 0)
-				result = cnc.BeginWrite (bytes, 0, length, null, null);
-
-			if (!initRead) {
-				initRead = true;
-				WebConnection.InitRead (cnc);
-			}
-
-			if (length > 0) 
-				complete_request_written = cnc.EndWrite (result);
-			else
+				headers.CopyTo (b, 0);
+				bytes.CopyTo (b, headers.Length);
+				
+				if (!cnc.Write (b, 0, b.Length))
+					throw new WebException ("Error writing request.", null, WebExceptionStatus.SendFailure, null);
+				
+				headersSent = true;
 				complete_request_written = true;
+				
+				if (!initRead) {
+					initRead = true;
+					WebConnection.InitRead (cnc);
+				}				
+			} else {
+				if (!cnc.Write (headers, 0, headers.Length))
+					throw new WebException ("Error writing request.", null, WebExceptionStatus.SendFailure, null);
+				
+				headersSent = true;
+				if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100)
+					return;
+				
+				IAsyncResult result = null;
+				if (length > 0)
+					result = cnc.BeginWrite (bytes, 0, length, null, null);
+				
+				if (!initRead) {
+					initRead = true;
+					WebConnection.InitRead (cnc);
+				}
+				
+				if (length > 0) 
+					complete_request_written = cnc.EndWrite (result);
+				else
+					complete_request_written = true;
+			}
 		}
 
 		internal void InternalClose ()

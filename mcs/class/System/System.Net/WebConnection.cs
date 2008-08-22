@@ -125,6 +125,7 @@ namespace System.Net
 					IPEndPoint remote = new IPEndPoint (address, sPoint.Address.Port);
 
 #if NET_2_0
+					socket.NoDelay = true;
 					if (!sPoint.CallEndPointDelegate (socket, remote)) {
 						socket.Close ();
 						socket = null;
