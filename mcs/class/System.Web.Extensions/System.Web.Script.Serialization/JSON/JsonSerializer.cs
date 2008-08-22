@@ -334,11 +334,24 @@ namespace Newtonsoft.Json
 		/// <param name="value">The <see cref="Object"/> to serialize.</param>
 		void Serialize(JsonWriter jsonWriter, object value)
 		{
-			SerializeValue(jsonWriter, value);
+			SerializeValue (jsonWriter, value, true, null);
 		}
 
 
 		private void SerializeValue(JsonWriter writer, object value)
+		{
+			SerializeValue (writer, value, false, null);
+		}
+
+		private void WritePropertyName (JsonWriter writer, string name)
+		{
+			if (String.IsNullOrEmpty (name))
+				return;
+
+			writer.WritePropertyName (name);
+		}
+		
+		private void SerializeValue (JsonWriter writer, object value, bool topLevelObject, string propertyName)
 		{
 			//JsonConverter converter;
 			_currentRecursionCounter++;
@@ -347,82 +360,102 @@ namespace Newtonsoft.Json
 			}
 
 			if (value == null) {
+				WritePropertyName (writer, propertyName);
 				writer.WriteNull ();
 			}
 			else {
-				JavaScriptConverter jsconverter = _context.GetConverter (value.GetType ());
+				Type valueType = value.GetType ();
+				JavaScriptConverter jsconverter = _context.GetConverter (valueType);
 				if (jsconverter != null) {
 					value = jsconverter.Serialize (value, _context);
 					if (value == null) {
+						WritePropertyName (writer, propertyName);
 						writer.WriteNull ();
+						_currentRecursionCounter--;
 						return;
 					}
 				}
 
-				Type valueType = value.GetType ();
 				switch (Type.GetTypeCode (valueType)) {
 				case TypeCode.String:
+					WritePropertyName (writer, propertyName);
 					writer.WriteValue ((string) value);
 					break;
 				case TypeCode.Char:
+					WritePropertyName (writer, propertyName);
 					writer.WriteValue ((char) value);
 					break;
 				case TypeCode.Boolean:
+					WritePropertyName (writer, propertyName);
 					writer.WriteValue ((bool) value);
 					break;
 				case TypeCode.SByte:
+					WritePropertyName (writer, propertyName);
 					writer.WriteValue ((sbyte) value);
 					break;
 				case TypeCode.Int16:
+					WritePropertyName (writer, propertyName);
 					writer.WriteValue ((short) value);
 					break;
 				case TypeCode.UInt16:
+					WritePropertyName (writer, propertyName);
 					writer.WriteValue ((ushort) value);
 					break;
 				case TypeCode.Int32:
+					WritePropertyName (writer, propertyName);
 					writer.WriteValue ((int) value);
 					break;
 				case TypeCode.Byte:
+					WritePropertyName (writer, propertyName);
 					writer.WriteValue ((byte) value);
 					break;
 				case TypeCode.UInt32:
+					WritePropertyName (writer, propertyName);
 					writer.WriteValue ((uint) value);
 					break;
 				case TypeCode.Int64:
+					WritePropertyName (writer, propertyName);
 					writer.WriteValue ((long) value);
 					break;
 				case TypeCode.UInt64:
+					WritePropertyName (writer, propertyName);
 					writer.WriteValue ((ulong) value);
 					break;
 				case TypeCode.Single:
+					WritePropertyName (writer, propertyName);
 					writer.WriteValue ((float) value);
 					break;
 				case TypeCode.Double:
+					WritePropertyName (writer, propertyName);
 					writer.WriteValue ((double) value);
 					break;
 				case TypeCode.DateTime:
+					WritePropertyName (writer, propertyName);
 					writer.WriteValue ((DateTime) value);
 					break;
 				case TypeCode.Decimal:
+					WritePropertyName (writer, propertyName);
 					writer.WriteValue ((decimal) value);
 					break;
 				default:
-					
 
 					ThrowOnReferenceLoop (writer, value);
 					writer.SerializeStack.Push (value);
 					try {
 						Type genDictType;
-						if (value is IDictionary)
+						if (value is IDictionary) {
+							WritePropertyName (writer, propertyName);
 							SerializeDictionary (writer, (IDictionary) value);
-						else if (value is IDictionary<string, object>)
+						} else if (value is IDictionary<string, object>) {
+							WritePropertyName (writer, propertyName);
 							SerializeDictionary (writer, (IDictionary<string, object>) value, null);
-						else if ((genDictType = ReflectionUtils.GetGenericDictionary (valueType)) != null)
+						} else if ((genDictType = ReflectionUtils.GetGenericDictionary (valueType)) != null) {
+							WritePropertyName (writer, propertyName);
 							SerializeDictionary (writer, new GenericDictionaryLazyDictionary (value, genDictType), null);
-						else if (value is IEnumerable) {
+						} else if (value is IEnumerable) {
+							WritePropertyName (writer, propertyName);
 							SerializeEnumerable (writer, (IEnumerable) value);
-						}
-						else {
+						} else if (topLevelObject) {
 							SerializeCustomObject (writer, value, valueType);
 						}
 					}
@@ -470,19 +503,20 @@ namespace Newtonsoft.Json
 		private void SerializeDictionary(JsonWriter writer, IDictionary values)
 		{
 			writer.WriteStartObject();
-
+			
 			foreach (DictionaryEntry entry in values)
 				SerializePair (writer, entry.Key.ToString (), entry.Value);
-
+			
 			writer.WriteEndObject();
 		}
 
 		private void SerializeDictionary (JsonWriter writer, IDictionary<string, object> values, string typeID) {
-			writer.WriteStartObject ();
 
+			writer.WriteStartObject ();
+			
 			if (typeID != null) {
 				SerializePair (writer, JavaScriptSerializer.SerializedTypeNameKey, typeID);
-			}
+					}
 
 			foreach (KeyValuePair<string, object> entry in values)
 				SerializePair (writer, entry.Key, entry.Value);
@@ -511,8 +545,7 @@ namespace Newtonsoft.Json
 		}
 
 		private void SerializePair (JsonWriter writer, string key, object value) {
-			writer.WritePropertyName (key);
-			SerializeValue (writer, value);
+			SerializeValue (writer, value, false, key);
 		}
 
 		#endregion

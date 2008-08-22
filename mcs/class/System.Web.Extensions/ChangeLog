@@ -1,3 +1,14 @@
+2008-08-22  Marek Habersack  <mhabersack@novell.com>
+
+	* Test/System.Web.Script.Serialization/JavaScriptSerializerTest.cs:
+	marked several of the JavaScriptSerializer tests as not
+	working. Experiments show that the tests are invalid as they relay
+	on behavior which is different to .NET's.
+
+	* System.Web.Script.Serialization/JavaScriptSerializer.cs:
+	GetConverter now checks whether the requested type is descendant
+	from the type supported by teh converter.
+
 2008-06-11  Marek Habersack  <mhabersack@novell.com>
 
 	* Test/System.Web.UI/ScriptBehaviorDescriptorTest.cs,
