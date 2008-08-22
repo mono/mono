@@ -919,7 +919,7 @@ namespace System.Windows.Forms {
 					xic = CreateOverTheSpotXic (window, xim);
 					if (xic != IntPtr.Zero)
 						break;
-					Console.WriteLine ("failed to create XIC in over-the-spot mode.");
+					//Console.WriteLine ("failed to create XIC in over-the-spot mode.");
 					continue;
 				case styleOnTheSpot:
 					// Since .NET/Winforms seems to support only over-the-spot mode,,
@@ -928,7 +928,7 @@ namespace System.Windows.Forms {
 					xic = CreateOnTheSpotXic (window, xim);
 					if (xic != IntPtr.Zero)
 						break;
-					Console.WriteLine ("failed to create XIC in on-the-spot mode.");
+					//Console.WriteLine ("failed to create XIC in on-the-spot mode.");
 					continue;
 				case styleRoot:
 					xic = XCreateIC (xim,

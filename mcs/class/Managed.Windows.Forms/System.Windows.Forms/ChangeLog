@@ -1,5 +1,9 @@
 2008-08-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* X11Keyboard.cs : comment out some Console.WriteLine().
+
+2008-08-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* X11Keyboard.cs : fixed wrong call to XOpenIM() which happened
 	  even if premises are not filled. Also XLookupString() was not
 	  receiving correct input, which blocked precise input handling
