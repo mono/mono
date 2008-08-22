@@ -1,5 +1,11 @@
 2008-08-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* generic-sharing.c (mini_type_get_underlying_type): New helper function
+	handling enums, generic instances and generic sharing.
+	(mini_type_stack_size_full): Ditto.
+
+	* mini-amd64.c mini-x86.c mini-arm.c: Use the new functions.
+	
 	* mini.h (struct): Add 'uses_rgctx_reg' and 'uses_vtable_reg' fields.
 
 	* method-to-ir.c: Set the new fields when using RGCTX_REG/VTABLE_REG.
