@@ -1,5 +1,14 @@
 2008-08-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (struct): Add 'uses_rgctx_reg' and 'uses_vtable_reg' fields.
+
+	* method-to-ir.c: Set the new fields when using RGCTX_REG/VTABLE_REG.
+
+	* tramp-arm.c: Implement the rgctx fetch and the generic class init 
+	trampolines.
+
+	* mini-arm.c: Various small generic sharing changes.
+
 	* tramp-x86.c (mono_arch_create_generic_class_init_trampoline): Implement
 	this for x86.
 	(mono_arch_create_trampoline_code): Remove most of the GENERIC_CLASS_INIT
