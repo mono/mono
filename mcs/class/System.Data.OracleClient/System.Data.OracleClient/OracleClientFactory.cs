@@ -32,6 +32,8 @@ namespace System.Data.OracleClient
 {
 	using System.Data;
 	using System.Data.Common;
+	using System.Security;
+	using System.Security.Permissions;
 
 	public sealed class OracleClientFactory : DbProviderFactory
 	{
@@ -65,6 +67,10 @@ namespace System.Data.OracleClient
 			return new OracleConnection ();
 		}
 
+		public override DbConnectionStringBuilder CreateConnectionStringBuilder () {
+			return new OracleConnectionStringBuilder ();
+		}
+
 #if !TARGET_JVM
 		public override CodeAccessPermission CreatePermission (PermissionState state) {
 			return new OraclePermission (state);
@@ -76,8 +82,9 @@ namespace System.Data.OracleClient
 		}
 
 		public override DbDataSourceEnumerator CreateDataSourceEnumerator () {
-			//return new OracleDataSourceEnumerator ();
-			throw new NotImplementedException();
+			// Note: there is no OracleDataSourceEnumerator.  
+			// .net 2.0 returns a null here instead of an exception
+			return null;
 		}
 
 		public override DbParameter CreateParameter () {

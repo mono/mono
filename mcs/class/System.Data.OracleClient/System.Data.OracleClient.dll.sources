@@ -38,7 +38,9 @@ System.Data.OracleClient/OracleBFile.cs
 System.Data.OracleClient/OracleBinary.cs
 System.Data.OracleClient/OracleBoolean.cs
 System.Data.OracleClient/OracleCommand.cs
+System.Data.OracleClient/OracleClientFactory.cs
 System.Data.OracleClient/OracleConnection.cs
+System.Data.OracleClient/OracleConnectionStringBuilder.cs
 System.Data.OracleClient/OracleConnectionPool.cs
 System.Data.OracleClient/OracleConnectionPoolManager.cs
 System.Data.OracleClient/OracleDataAdapter.cs

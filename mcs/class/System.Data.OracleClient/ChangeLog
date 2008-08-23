@@ -1,3 +1,17 @@
+2008-08-23  Daniel Morgan <monodanmorg@yahoo.com>
+
+	* System.Data.OracleClient.dll.sources: added 
+	files to build: 
+           OracleClientFactory.cs
+           OracleConnectionStringBuilder.cs
+
+	* System.Data.OracleClient/OracleClientFactory.cs: added
+	method to file: DbConnectionStringBuilder and modified
+	CreateDataSourceEnumerator to return a null
+
+	* System.Data.OracleClient/OracleConnectionStringBuilder.cs: add
+	new file
+
 2008-08-20  Daniel Morgan <monodanmorg@yahoo.com>
 
 	* System.Data.OracleClient/OracleConnection.cs: allow 
