@@ -1,3 +1,11 @@
+2008-08-22  Miguel de Icaza  <miguel@novell.com>
+
+	* console-io.c (sigcont_handler): Support signal chaining for
+	SIGCONT.
+
+	(console_set_signal_handlers): Use best practices with sigaction,
+	clear the structure before using it. 
+
 2008-08-22  Robert Jordan  <robertj@gmx.net>
 
 	* console-io.c (ves_icall_System_ConsoleDriver_TtySetup):
