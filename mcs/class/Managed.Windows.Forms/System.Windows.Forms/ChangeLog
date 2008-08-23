@@ -1,3 +1,8 @@
+2008-08-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Control.cs: Do not modify bounds directly in .ctor's. Fixes bug
+	 #419087.
+
 2008-08-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* X11Keyboard.cs : comment out some Console.WriteLine().

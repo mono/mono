@@ -1097,10 +1097,6 @@ namespace System.Windows.Forms
 		public Control (Control parent, string text, int left, int top, int width, int height) : this()
 		{
 			Parent=parent;
-			bounds.X=left;
-			bounds.Y=top;
-			bounds.Width=width;
-			bounds.Height=height;
 			SetBounds(left, top, width, height, BoundsSpecified.All);
 			Text=text;
 		}
@@ -1112,10 +1108,6 @@ namespace System.Windows.Forms
 
 		public Control (string text, int left, int top, int width, int height) : this()
 		{
-			bounds.X=left;
-			bounds.Y=top;
-			bounds.Width=width;
-			bounds.Height=height;
 			SetBounds(left, top, width, height, BoundsSpecified.All);
 			Text=text;
 		}
