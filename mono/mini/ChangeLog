@@ -1,5 +1,8 @@
 2008-08-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_save_args): Use ARGSTORE instead of TEMPSTORE
+	to handle soft float correctly.
+
 	* tramp-arm.c (mono_arch_create_rgctx_lazy_fetch_trampoline): Implement
 	the fast path.
 
