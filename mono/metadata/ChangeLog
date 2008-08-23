@@ -1,3 +1,8 @@
+2008-08-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_generic_sharing_enabled): Enable generic sharing
+	on arm.
+
 2008-08-22  Miguel de Icaza  <miguel@novell.com>
 
 	* console-io.c (sigcont_handler): Support signal chaining for
