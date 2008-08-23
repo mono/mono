@@ -1,5 +1,7 @@
 2008-08-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* ir-emit.h (NEW_ARGSTORE): Use cfg->args and cfg->arg_types to fix the build.
+
 	* method-to-ir.c (mono_save_args): Use ARGSTORE instead of TEMPSTORE
 	to handle soft float correctly.
 
