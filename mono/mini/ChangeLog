@@ -1,5 +1,8 @@
 2008-08-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-arm.c (mono_arch_create_rgctx_lazy_fetch_trampoline): Implement
+	the fast path.
+
 	* mini.h (struct MonoCallInst): Add dynamic_imt_arg boolean field.
 
 	* exceptions-arm.c (mono_arch_find_jit_info): Set ctx->regs [ARMREG_R11]
