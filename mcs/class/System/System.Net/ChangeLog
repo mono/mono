@@ -1,3 +1,8 @@
+2008-08-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* WebConnectionStream.cs (WriteRequest): Fix the copying in the
+	previous patch, when bytes.Length != length.
+
 2008-08-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* WebConnectionStream.cs (WriteRequest): For small requests,

@@ -548,8 +548,8 @@ namespace System.Net
 			if (headers.Length + length < 8192){
 				byte[] b = new byte [headers.Length + length];
 
-				headers.CopyTo (b, 0);
-				bytes.CopyTo (b, headers.Length);
+				Buffer.BlockCopy (headers, 0, b, 0, headers.Length);
+				Buffer.BlockCopy (bytes, 0, b, headers.Length, length);
 				
 				if (!cnc.Write (b, 0, b.Length))
 					throw new WebException ("Error writing request.", null, WebExceptionStatus.SendFailure, null);
