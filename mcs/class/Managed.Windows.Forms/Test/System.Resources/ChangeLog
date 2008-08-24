@@ -1,3 +1,8 @@
+2008-08-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ResXFileRefTest.cs: Fixed/added attributes on SetUp and TearDown
+	methods.
+
 2008-07-07  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ResXResourceReaderTest.cs: Ignore test that is dependent on

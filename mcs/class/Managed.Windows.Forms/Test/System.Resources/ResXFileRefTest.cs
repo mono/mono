@@ -137,7 +137,7 @@ namespace MonoTests.System.Resources
 	[TestFixture]
 	public class ResXFileRefConverterTest
 	{
-		[Test]
+		[SetUp]
 		public void SetUp ()
 		{
 			_converter = new ResXFileRef.Converter ();
@@ -151,11 +151,11 @@ namespace MonoTests.System.Resources
 			}
 		}
 
+		[TearDown]
 		public void TearDown ()
 		{
-			if (Directory.Exists (_tempDirectory)) {
+			if (Directory.Exists (_tempDirectory))
 				Directory.Delete (_tempDirectory, true);
-			}
 		}
 
 		[Test]
