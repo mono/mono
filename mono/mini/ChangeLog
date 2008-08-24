@@ -1,5 +1,7 @@
 2008-08-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_klass_info): Call mono_class_get_nested_types ().
+
 	* method-to-ir.c (mono_method_to_ir2): Rethrow the correct exception in
 	CEE_RETHROW. Fixes #419634.
 
