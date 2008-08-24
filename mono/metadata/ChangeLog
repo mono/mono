@@ -1,3 +1,14 @@
+2008-08-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_init): Move the initialization of nested classes
+	into mono_class_get_nested_types (). Fixes #418433.
+
+	* class-internals.h (struct _MonoClass): Add a new 'nested_classes_inited'
+	flag.
+
+	* class.c reflection.c icall.c: Use mono_class_get_nested_types () for 
+	iterating tough the nested classes of a class.
+
 2008-08-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_generic_sharing_enabled): Enable generic sharing
