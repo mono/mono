@@ -1,3 +1,8 @@
+2008-08-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* debug-helpers.c (mono_type_get_desc): Fix priting of generic instances
+	with more than one parameter.
+
 2008-08-24  Miguel de Icaza  <miguel@novell.com>
 
 	* console-io.c (ves_icall_System_ConsoleDriver_TtySetup): Disable
