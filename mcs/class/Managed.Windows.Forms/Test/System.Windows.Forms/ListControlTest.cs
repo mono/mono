@@ -512,4 +512,21 @@ namespace MonoTests.System.Windows.Forms
 		private string _text;
 		private int _value;
 	}
+
+	public class MockContainer
+	{
+		MockItem item;
+
+		public MockItem Item
+		{
+			get
+			{
+				return item;
+			}
+			set
+			{
+				item = value;
+			}
+		}
+	}
 }

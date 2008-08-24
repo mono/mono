@@ -1,3 +1,11 @@
+2008-08-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListControlTest.cs: Add a container for a mock item, to test
+	multiple nested properties.
+	* BindingContextTest.cs: New test for the overload of the indexer
+	taking a data source with a data member (including nested properties,
+	or multiple objects, as msdnstates).
+
 2008-08-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ListBoxTest.cs: Added tests for SetItemsCore. Added and improved tests
