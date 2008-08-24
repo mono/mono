@@ -1,3 +1,12 @@
+2008-08-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* generic-sharing.c (mini_type_stack_size): Always pass TRUE as allow_open
+	to mono_type_stack_size_internal () since some callers might not pass in
+	an rgctx.
+
+	* mini-x86.c (mono_arch_emit_prolog): Store the rgctx before calling
+	instrument_prolog. Fixes #419878.
+
 2008-08-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_method_to_ir): Fix the STELEM_ANY+null value optimization.

@@ -292,7 +292,11 @@ mini_get_basic_type_from_generic (MonoGenericSharingContext *gsctx, MonoType *ty
 int
 mini_type_stack_size (MonoGenericSharingContext *gsctx, MonoType *t, int *align)
 {
-	return mono_type_stack_size_internal (t, align, gsctx != NULL);
+	gboolean allow_open = TRUE;
+
+	// FIXME: Some callers might not pass in a gsctx
+	//allow_open = gsctx != NULL;
+	return mono_type_stack_size_internal (t, align, allow_open);
 }
 
 /*
