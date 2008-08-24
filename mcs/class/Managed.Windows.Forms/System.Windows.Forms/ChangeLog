@@ -1,3 +1,10 @@
+2008-08-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* RelatedPropertyManager.cs: PropertyManager instances associated to a
+	nested properties should return not the properties of the data source
+	itself, but the properties of the type of a specific property in the
+	data source - match .net.
+
 2008-08-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ListBox.cs (IntegerCollection): To avoid duplication, moved code for
