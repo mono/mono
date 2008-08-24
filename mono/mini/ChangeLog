@@ -1,3 +1,8 @@
+2008-08-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_compile_create_var_for_vreg): Make the lvars representing
+	doubles in soft float mode volatile.
+
 2008-08-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* ir-emit.h (NEW_ARGSTORE): Use cfg->args and cfg->arg_types to fix the build.
