@@ -1,5 +1,12 @@
 2008-08-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Rethrow the correct exception in
+	CEE_RETHROW. Fixes #419634.
+
+	* mini.c (mono_method_to_ir): Ditto.
+
+	* exceptions.cs: Add a new test.
+	
 	* generic-sharing.c (mini_type_stack_size): Always pass TRUE as allow_open
 	to mono_type_stack_size_internal () since some callers might not pass in
 	an rgctx.
