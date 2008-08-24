@@ -1091,7 +1091,7 @@ namespace System.Windows.Forms
 			BeginUpdate ();
 			try {
 				Items.Clear ();
-				Items.AddRange (value);
+				Items.AddItems (value);
 			} finally {
 				EndUpdate ();
 			}
@@ -2242,22 +2242,26 @@ namespace System.Windows.Forms
 			
 			public void AddRange (int[] items)
 			{
-				foreach (int i in items)
-					if (!list.Contains (i))
-						list.Add (i);
-						
-				list.Sort ();
+				AddItems (items);
 			}
 			
 			public void AddRange (IntegerCollection value)
 			{
-				foreach (int i in value)
+				AddItems (value);
+			}
+
+			void AddItems (IList items)
+			{
+				if (items == null)
+					throw new ArgumentNullException ("items");
+
+				foreach (int i in items)
 					if (!list.Contains (i))
 						list.Add (i);
 
 				list.Sort ();
 			}
-			
+
 			public void Clear ()
 			{
 				list.Clear ();
@@ -2289,6 +2293,9 @@ namespace System.Windows.Forms
 			
 			public void RemoveAt (int index)
 			{
+				if (index < 0)
+					throw new IndexOutOfRangeException ();
+
 				list.RemoveAt (index);
 				list.Sort ();
 				owner.CalculateTabStops ();
@@ -2305,7 +2312,10 @@ namespace System.Windows.Forms
 			#region IList Members
 			int IList.Add (object item)
 			{
-				return Add ((int) item);
+				int? intValue = item as int?;
+				if (!intValue.HasValue)
+					throw new ArgumentException ("item");
+				return Add (intValue.Value);
 			}
 
 			void IList.Clear ()
@@ -2315,17 +2325,26 @@ namespace System.Windows.Forms
 
 			bool IList.Contains (object item)
 			{
-				return Contains ((int) item);
+				int? intValue = item as int?;
+				if (!intValue.HasValue)
+					return false;
+				return Contains (intValue.Value);
 			}
 
 			int IList.IndexOf (object item)
 			{
-				return IndexOf ((int) item);
+				int? intValue = item as int?;
+				if (!intValue.HasValue)
+					return -1;
+				return IndexOf (intValue.Value);
 			}
 
 			void IList.Insert (int index, object value)
 			{
-				throw new Exception ("The method or operation is not implemented.");
+				throw new NotSupportedException (string.Format (
+					CultureInfo.InvariantCulture, "No items "
+					+ "can be inserted into {0}, since it is"
+					+ " a sorted collection.", this.GetType ()));
 			}
 
 			bool IList.IsFixedSize
@@ -2340,7 +2359,11 @@ namespace System.Windows.Forms
 
 			void IList.Remove (object value)
 			{
-				Remove ((int)value);
+				int? intValue = value as int?;
+				if (!intValue.HasValue)
+					throw new ArgumentException ("value");
+
+				Remove (intValue.Value);
 			}
 
 			void IList.RemoveAt (int index)
@@ -2355,14 +2378,12 @@ namespace System.Windows.Forms
 			#endregion
 
 			#region ICollection Members
-			bool ICollection.IsSynchronized
-			{
-				get { throw new Exception ("The method or operation is not implemented."); }
+			bool ICollection.IsSynchronized {
+				get { return true; }
 			}
 
-			object ICollection.SyncRoot
-			{
-				get { throw new Exception ("The method or operation is not implemented."); }
+			object ICollection.SyncRoot {
+				get { return this; }
 			}
 			#endregion
 		}
@@ -2456,29 +2477,26 @@ namespace System.Windows.Forms
 
 			public void AddRange (object[] items)
 			{
-				if (items == null)
-					throw new ArgumentNullException ("items");
-
-				foreach (object mi in items)
-					AddItem (mi);
-
-				owner.CollectionChanged ();
+				AddItems (items);
 			}
 
 			public void AddRange (ObjectCollection value)
 			{
-				if (value == null)
-					throw new ArgumentNullException ("value");
-
-				foreach (object mi in value)
-					AddItem (mi);
-
-				owner.CollectionChanged ();
+				AddItems (value);
 			}
 
-			internal void AddRange (IList list)
+			internal void AddItems (IList items)
 			{
-				foreach (object mi in list)
+				if (items == null)
+					throw new ArgumentNullException ("items");
+
+#if ONLY_1_1
+				foreach (object mi in items)
+					if (mi == null)
+						throw new ArgumentNullException ("item");
+#endif
+
+				foreach (object mi in items)
 					AddItem (mi);
 
 				owner.CollectionChanged ();
@@ -2490,6 +2508,7 @@ namespace System.Windows.Forms
 				object_items.Clear ();
 				owner.CollectionChanged ();
 			}
+
 			public bool Contains (object value)
 			{
 				if (value == null)
@@ -2556,7 +2575,9 @@ namespace System.Windows.Forms
 				if (value == null)
 					return;
 
-				RemoveAt (IndexOf (value));
+				int index = IndexOf (value);
+				if (index != -1)
+					RemoveAt (index);
 			}
 
 			public void RemoveAt (int index)

@@ -1,3 +1,16 @@
+2008-08-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ListBox.cs (IntegerCollection): To avoid duplication, moved code for
+	AddRange overloads into AddItems method, and added missing NULL check.
+	Added extra argument check to RemoveAt for compatibility with MS. 
+	Modified IList implementation of Add, Contains, IndexOf and Remove to
+	throw an ArgumentException if item is not an int. Modified IList.Insert
+	to throw a NotSupportException instead of an Exception. Implemented
+	ICollection.
+	(ObjectCollection): To avoid duplication, use AddItems method from
+	AddRange overloads. On 1.0 profile, first perform NULL check on items
+	in AddItems.
+
 2008-08-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Control.cs: Do not modify bounds directly in .ctor's. Fixes bug

@@ -27,14 +27,14 @@
 //	Jordi Mas i Hernandez <jordi@ximian.com>
 //
 
-
 using System;
-using System.Windows.Forms;
-using System.Drawing;
-using System.Reflection;
-using NUnit.Framework;
 using System.Collections;
 using System.ComponentModel;
+using System.Drawing;
+using System.Reflection;
+using System.Windows.Forms;
+
+using NUnit.Framework;
 
 namespace MonoTests.System.Windows.Forms
 {
@@ -516,7 +516,55 @@ namespace MonoTests.System.Windows.Forms
 			listBox.SelectedValue = null;
 			Assert.AreEqual (listBox.SelectedIndex, 2);
 		}
-		
+
+		[Test]
+		public void SetItemsCore ()
+		{
+			MockListBox l = new MockListBox ();
+			l.InvokeSetItemsCore (new object [] { "A", "B", "C" });
+			Assert.AreEqual (3, l.Items.Count, "#1");
+			Assert.AreEqual ("A", l.Items [0], "#2");
+			Assert.AreEqual ("B", l.Items [1], "#3");
+			Assert.AreEqual ("C", l.Items [2], "#4");
+		}
+
+		[Test]
+		public void SetItemsCore_Item_Null ()
+		{
+			MockListBox l = new MockListBox ();
+			try {
+				l.InvokeSetItemsCore (new object [] { "A", null, "B" });
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("item", ex.ParamName, "#5");
+			}
+
+#if NET_2_0
+			Assert.AreEqual (1, l.Items.Count, "#6");
+			Assert.AreEqual ("A", l.Items [0], "#7");
+#else
+			Assert.AreEqual (0, l.Items.Count, "#6");
+#endif
+		}
+
+		[Test]
+		public void SetItemsCore_Value_Null ()
+		{
+			MockListBox l = new MockListBox ();
+			try {
+				l.InvokeSetItemsCore ((IList) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("items", ex.ParamName, "#5");
+			}
+		}
+
 		[Test]	// Bug #80466
 		public void ListBoxHeight ()
 		{
@@ -730,6 +778,11 @@ namespace MonoTests.System.Windows.Forms
 				get { return base.AllowSelection; }
 			}
 #endif
+
+			public void InvokeSetItemsCore (IList value)
+			{
+				base.SetItemsCore (value);
+			}
 		}
 	}
 
@@ -755,15 +808,59 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		public void AddTest ()
+		public void Add ()
 		{
 			col.Add ("Item1");
 			col.Add ("Item2");
-			Assert.AreEqual (2, col.Count, "#C1");
+			Assert.AreEqual (2, col.Count, "#1");
+			Assert.AreEqual ("Item1", col [0], "#2");
+			Assert.AreEqual ("Item2", col [1], "#3");
 		}
 
 		[Test]
-		public void ClearTest ()
+		public void Add_Item_Null ()
+		{
+			try {
+				col.Add (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("item", ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // AddRange (Object [])
+		public void AddRange1_Items_Null ()
+		{
+			try {
+				col.AddRange ((object []) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("items", ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // AddRange (ListBox.ObjectCollection)
+		public void AddRange2_Value_Null ()
+		{
+			try {
+				col.AddRange ((ListBox.ObjectCollection) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("items", ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		public void Clear ()
 		{
 			col.Add ("Item1");
 			col.Add ("Item2");
@@ -772,90 +869,670 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		public void ContainsTest ()
+		public void Contains ()
 		{
 			object obj = "Item1";
 			col.Add (obj);
-			Assert.AreEqual (true, col.Contains ("Item1"), "#E1");
-			Assert.AreEqual (false, col.Contains ("Item2"), "#E2");
+			Assert.IsTrue (col.Contains ("Item1"), "#1");
+			Assert.IsFalse (col.Contains ("Item2"), "#2");
 		}
 
 		[Test]
-		public void IndexOfTest ()
+		public void Contains_Value_Null ()
+		{
+			try {
+				col.Contains (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+				Assert.AreEqual ("value", ex.ParamName, "#5");
+#else
+				Assert.IsNotNull (ex.ParamName, "#5");
+#endif
+			}
+		}
+
+		[Test]
+		public void Indexer_Value_Null ()
+		{
+			col.Add ("Item1");
+			try {
+				col [0] = null;
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("value", ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		public void IndexOf ()
 		{
 			col.Add ("Item1");
 			col.Add ("Item2");
-			Assert.AreEqual (1, col.IndexOf ("Item2"), "#F1");
+			Assert.AreEqual (1, col.IndexOf ("Item2"), "#1");
+			Assert.AreEqual (0, col.IndexOf ("Item1"), "#2");
+			Assert.AreEqual (-1, col.IndexOf ("Item3"), "#3");
 		}
 
 		[Test]
-		public void RemoveTest ()
+		public void IndexOf_Value_Null ()
+		{
+			try {
+				col.IndexOf (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+				Assert.AreEqual ("value", ex.ParamName, "#5");
+#else
+				Assert.IsNotNull (ex.ParamName, "#5");
+#endif
+			}
+		}
+
+		[Test]
+#if NET_2_0
+		[NUnit.Framework.Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=363285
+#endif
+		public void Insert_Item_Null ()
+		{
+			col.Add ("Item1");
+			try {
+				col.Insert (0, null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("item", ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		public void Remove ()
 		{
 			col.Add ("Item1");
 			col.Add ("Item2");
 			col.Remove ("Item1");
-			Assert.AreEqual (1, col.Count, "#G1");
+			Assert.AreEqual (1, col.Count, "#A1");
+			Assert.AreEqual (-1, col.IndexOf ("Item1"), "#A2");
+			Assert.AreEqual (0, col.IndexOf ("Item2"), "#A3");
+			col.Remove (null);
+			Assert.AreEqual (1, col.Count, "#B1");
+			Assert.AreEqual (-1, col.IndexOf ("Item1"), "#B2");
+			Assert.AreEqual (0, col.IndexOf ("Item2"), "#B3");
+			col.Remove ("Item3");
+			Assert.AreEqual (1, col.Count, "#C1");
+			Assert.AreEqual (-1, col.IndexOf ("Item1"), "#C2");
+			Assert.AreEqual (0, col.IndexOf ("Item2"), "#C3");
+			col.Remove ("Item2");
+			Assert.AreEqual (0, col.Count, "#D1");
+			Assert.AreEqual (-1, col.IndexOf ("Item1"), "#D2");
+			Assert.AreEqual (-1, col.IndexOf ("Item2"), "#D3");
 		}
 
 		[Test]
-		public void RemoveAtTest ()
+		public void RemoveAt ()
 		{
 			col.Add ("Item1");
 			col.Add ("Item2");
 			col.RemoveAt (0);
-			Assert.AreEqual (1, col.Count, "#H1");
-			Assert.AreEqual (true, col.Contains ("Item2"), "#H1");
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void AddRangeNullTest ()
-		{
-			col.AddRange ((object []) null);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void AddRangeNullTest2 ()
-		{
-			col.AddRange ((ListBox.ObjectCollection) null);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void ContainsNullTest ()
-		{
-			col.Contains (null);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void IndexOfNullTest ()
-		{
-			col.IndexOf (null);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void InsertNullTest ()
-		{
-			col.Add ("Item1");
-			col.Insert (0, null);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void IndexerNullTest ()
-		{
-			col.Add ("Item1");
-			col [0] = null;
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void AddNullTest ()
-		{
-			col.Add (null);
+			Assert.AreEqual (1, col.Count, "#1");
+			Assert.AreEqual (-1, col.IndexOf ("Item1"), "#2");
+			Assert.AreEqual (0, col.IndexOf ("Item2"), "#3");
 		}
 	}
+
+#if NET_2_0
+	[TestFixture]
+	public class ListBoxIntegerCollectionTest
+	{
+		ListBox.IntegerCollection col;
+		ListBox listBox;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			listBox = new ListBox ();
+			col = new ListBox.IntegerCollection (listBox);
+		}
+
+		[Test]
+		public void Add ()
+		{
+			col.Add (5);
+			Assert.AreEqual (1, col.Count, "#1");
+			col.Add (7);
+			Assert.AreEqual (2, col.Count, "#2");
+			col.Add (5);
+			Assert.AreEqual (2, col.Count, "#3");
+			col.Add (3);
+			Assert.AreEqual (3, col.Count, "#4");
+		}
+
+		[Test] // AddRange (Int32 [])
+		public void AddRange1 ()
+		{
+			col.Add (5);
+			col.Add (3);
+			col.AddRange (new int [] { 3, 7, 9, 5, 4 });
+			Assert.AreEqual (5, col.Count, "#1");
+			Assert.AreEqual (3, col [0], "#2");
+			Assert.AreEqual (4, col [1], "#3");
+			Assert.AreEqual (5, col [2], "#4");
+			Assert.AreEqual (7, col [3], "#5");
+			Assert.AreEqual (9, col [4], "#6");
+		}
+
+		[Test] // AddRange (Int32 [])
+		public void AddRange1_Items_Null ()
+		{
+			try {
+				col.AddRange ((int []) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("items", ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // AddRange (ListBox.IntegerCollection)
+		public void AddRange2 ()
+		{
+			ListBox.IntegerCollection ints = new ListBox.IntegerCollection (
+				listBox);
+			ints.Add (3);
+			ints.Add (1);
+			ints.Add (-5);
+			ints.Add (4);
+			ints.Add (2);
+
+			col.Add (5);
+			col.Add (3);
+			col.Add (12);
+			col.AddRange (ints);
+
+			Assert.AreEqual (7, col.Count, "#1");
+			Assert.AreEqual (-5, col [0], "#2");
+			Assert.AreEqual (1, col [1], "#3");
+			Assert.AreEqual (2, col [2], "#4");
+			Assert.AreEqual (3, col [3], "#5");
+			Assert.AreEqual (4, col [4], "#6");
+			Assert.AreEqual (5, col [5], "#7");
+		}
+
+		[Test] // AddRange (ListBox.IntegerCollection)
+		public void AddRange2_Items_Null ()
+		{
+			try {
+				col.AddRange ((ListBox.IntegerCollection) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("items", ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=363278
+		public void Clear ()
+		{
+			col.Add (5);
+			col.Add (3);
+			col.Clear ();
+
+			Assert.AreEqual (0, col.Count, "#1");
+			Assert.AreEqual (-1, col.IndexOf (5), "#2");
+			Assert.AreEqual (-1, col.IndexOf (3), "#3");
+		}
+
+		[Test]
+		public void Contains ()
+		{
+			col.Add (5);
+			col.Add (7);
+			Assert.IsTrue (col.Contains (5), "#1");
+			Assert.IsFalse (col.Contains (3), "#2");
+			Assert.IsTrue (col.Contains (7), "#3");
+			Assert.IsFalse (col.Contains (-5), "#4");
+		}
+
+		[Test]
+		public void CopyTo ()
+		{
+			int [] copy = new int [5] { 9, 4, 6, 2, 8 };
+			
+			col.Add (3);
+			col.Add (7);
+			col.Add (5);
+			col.CopyTo (copy, 1);
+
+			Assert.AreEqual (9, copy [0], "#1");
+			Assert.AreEqual (3, copy [1], "#2");
+			Assert.AreEqual (5, copy [2], "#3");
+			Assert.AreEqual (7, copy [3], "#4");
+			Assert.AreEqual (8, copy [4], "#5");
+		}
+
+		[Test]
+		public void CopyTo_Destination_Invalid ()
+		{
+			string [] copy = new string [3] { "A", "B", "C" };
+
+			col.CopyTo (copy, 1);
+			col.Add (3);
+
+			try {
+				col.CopyTo (copy, 1);
+				Assert.Fail ("#1");
+			} catch (InvalidCastException) {
+			}
+		}
+
+		[Test]
+		public void CopyTo_Destination_Null ()
+		{
+			col.CopyTo ((Array) null, 1);
+			col.Add (3);
+
+			try {
+				col.CopyTo ((Array) null, 1);
+				Assert.Fail ("#1");
+			} catch (NullReferenceException) {
+			}
+		}
+
+		[Test]
+		public void CopyTo_Index_Negative ()
+		{
+			int [] copy = new int [5] { 9, 4, 6, 2, 8 };
+
+			col.CopyTo (copy, -5);
+			col.Add (3);
+
+			try {
+				col.CopyTo (copy, -5);
+				Assert.Fail ("#1");
+			} catch (IndexOutOfRangeException ex) {
+				// Index was outside the bounds of the array
+				Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		public void Count ()
+		{
+			Assert.AreEqual (0, col.Count, "#1");
+			col.Add (5);
+			Assert.AreEqual (1, col.Count, "#2");
+			col.Add (7);
+			Assert.AreEqual (2, col.Count, "#3");
+			col.Remove (7);
+			Assert.AreEqual (1, col.Count, "#4");
+		}
+
+		[Test]
+		public void Indexer ()
+		{
+			col.Add (5);
+			col.Add (7);
+			Assert.AreEqual (7, col [1], "#1");
+			Assert.AreEqual (5, col [0], "#2");
+			col [0] = 3;
+			Assert.AreEqual (7, col [1], "#3");
+			Assert.AreEqual (3, col [0], "#4");
+		}
+
+		[Test]
+		public void IndexOf ()
+		{
+			col.Add (5);
+			col.Add (7);
+			Assert.AreEqual (0, col.IndexOf (5), "#1");
+			Assert.AreEqual (-1, col.IndexOf (3), "#2");
+			Assert.AreEqual (1, col.IndexOf (7), "#3");
+			Assert.AreEqual (-1, col.IndexOf (-5), "#4");
+		}
+
+		[Test]
+		public void Remove ()
+		{
+			col.Add (5);
+			col.Add (3);
+			col.Remove (5);
+			col.Remove (7);
+
+			Assert.AreEqual (1, col.Count, "#1");
+			Assert.AreEqual (3, col [0], "#2");
+			col.Remove (3);
+			Assert.AreEqual (0, col.Count, "#3");
+			col.Remove (3);
+			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=363280
+			//Assert.AreEqual (0, col.Count, "#4");
+		}
+
+		[Test]
+		public void RemoveAt ()
+		{
+			col.Add (5);
+			col.Add (3);
+			col.Add (7);
+			col.RemoveAt (1);
+			Assert.AreEqual (2, col.Count, "#A1");
+			Assert.AreEqual (3, col [0], "#A2");
+			Assert.AreEqual (7, col [1], "#A3");
+			col.RemoveAt (0);
+			Assert.AreEqual (1, col.Count, "#B1");
+			Assert.AreEqual (7, col [0], "#B2");
+			col.RemoveAt (0);
+			Assert.AreEqual (0, col.Count, "#C1");
+			Assert.AreEqual (-1, col.IndexOf (5), "#C2");
+			Assert.AreEqual (-1, col.IndexOf (3), "#C3");
+			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=363280
+			//Assert.AreEqual (-1, col.IndexOf (7), "#C4");
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=363276
+		public void RemoveAt_Index_Negative ()
+		{
+			col.Add (5);
+
+			try {
+				col.RemoveAt (-1);
+				Assert.Fail ("#1");
+			} catch (IndexOutOfRangeException ex) {
+				// Index was outside the bounds of the array
+				Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+
+			Assert.AreEqual (1, col.Count, "#5");
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=363276
+		public void RemoveAt_Index_Overflow ()
+		{
+			col.Add (5);
+
+			try {
+				col.RemoveAt (1);
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException ex) {
+				// Index was outside the bounds of the array
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("index", ex.ParamName, "#5");
+			}
+
+			Assert.AreEqual (1, col.Count, "#6");
+		}
+
+		[Test]
+		public void ICollection_IsSynchronized ()
+		{
+			ICollection collection = (ICollection) col;
+			Assert.IsTrue (collection.IsSynchronized);
+		}
+
+		[Test]
+		public void ICollection_SyncRoot ()
+		{
+			ICollection collection = (ICollection) col;
+			Assert.AreSame (collection, collection.SyncRoot);
+		}
+
+		[Test]
+		public void IList_Add ()
+		{
+			IList list = (IList) col;
+			list.Add (5);
+			Assert.AreEqual (1, list.Count, "#1");
+			list.Add (7);
+			Assert.AreEqual (2, list.Count, "#2");
+			list.Add (5);
+			Assert.AreEqual (2, list.Count, "#3");
+			list.Add (3);
+			Assert.AreEqual (3, list.Count, "#4");
+		}
+
+		[Test]
+		public void IList_Add_Item_Invalid ()
+		{
+			IList list = (IList) col;
+
+			try {
+				list.Add (null);
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.AreEqual ("item", ex.Message, "#A4");
+				Assert.IsNull (ex.ParamName, "#A5");
+			}
+
+			try {
+				list.Add ("x");
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.AreEqual ("item", ex.Message, "#B4");
+				Assert.IsNull (ex.ParamName, "#B5");
+			}
+		}
+
+		[Test]
+		public void IList_Clear ()
+		{
+			IList list = (IList) col;
+			list.Add (5);
+			list.Add (7);
+			list.Clear ();
+			Assert.AreEqual (0, list.Count);
+		}
+
+		[Test]
+		public void IList_Contains ()
+		{
+			IList list = (IList) col;
+			list.Add (5);
+			list.Add (7);
+			Assert.IsTrue (list.Contains (5), "#1");
+			Assert.IsFalse (list.Contains (3), "#2");
+			Assert.IsTrue (list.Contains (7), "#3");
+			Assert.IsFalse (list.Contains (null), "#4");
+			Assert.IsFalse (list.Contains ("x"), "#5");
+		}
+
+		[Test]
+		public void IList_Indexer ()
+		{
+			IList list = (IList) col;
+			list.Add (5);
+			list.Add (7);
+			Assert.AreEqual (7, list [1], "#1");
+			Assert.AreEqual (5, list [0], "#2");
+			list [0] = 3;
+			Assert.AreEqual (7, list [1], "#3");
+			Assert.AreEqual (3, list [0], "#4");
+		}
+
+		[Test]
+		public void IList_IndexOf ()
+		{
+			IList list = (IList) col;
+			list.Add (5);
+			list.Add (7);
+			Assert.AreEqual (0, list.IndexOf (5), "#1");
+			Assert.AreEqual (-1, list.IndexOf (3), "#2");
+			Assert.AreEqual (1, list.IndexOf (7), "#3");
+			Assert.AreEqual (-1, list.IndexOf (null), "#4");
+			Assert.AreEqual (-1, list.IndexOf ("x"), "#5");
+		}
+
+		[Test]
+		public void IList_Insert ()
+		{
+			IList list = (IList) col;
+			list.Add (5);
+
+			try {
+				list.Insert (0, 7);
+				Assert.Fail ("#A1");
+			} catch (NotSupportedException ex) {
+				// ListBox.IntegerCollection is sorted, and
+				// items cannot be inserted into it
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+			}
+
+			try {
+				list.Insert (-5, null);
+				Assert.Fail ("#B1");
+			} catch (NotSupportedException ex) {
+				// ListBox.IntegerCollection is sorted, and
+				// items cannot be inserted into it
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
+		}
+
+		[Test]
+		public void IList_IsFixedSize ()
+		{
+			IList list = (IList) col;
+			Assert.IsFalse (list.IsFixedSize);
+		}
+
+		[Test]
+		public void IList_IsReadOnly ()
+		{
+			IList list = (IList) col;
+			Assert.IsFalse (list.IsReadOnly);
+		}
+
+		[Test]
+		public void IList_Remove ()
+		{
+			IList list = (IList) col;
+			list.Add (5);
+			list.Add (3);
+			list.Remove (5);
+			list.Remove (7);
+			list.Remove (int.MinValue);
+			list.Remove (int.MaxValue);
+
+			Assert.AreEqual (1, list.Count, "#1");
+			Assert.AreEqual (3, list [0], "#2");
+			list.Remove (3);
+			Assert.AreEqual (0, list.Count, "#3");
+		}
+
+		[Test]
+		public void IList_Remove_Value_Invalid ()
+		{
+			IList list = (IList) col;
+			list.Add (5);
+
+			try {
+				list.Remove ("x");
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.AreEqual ("value", ex.Message, "#A4");
+				Assert.IsNull (ex.ParamName, "#A5");
+			}
+
+			try {
+				list.Remove (null);
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.AreEqual ("value", ex.Message, "#B4");
+				Assert.IsNull (ex.ParamName, "#B5");
+			}
+		}
+
+		[Test]
+		public void IList_RemoveAt ()
+		{
+			IList list = (IList) col;
+			list.Add (5);
+			list.Add (3);
+			list.Add (7);
+			list.RemoveAt (1);
+			Assert.AreEqual (2, list.Count, "#A1");
+			Assert.AreEqual (3, list [0], "#A2");
+			Assert.AreEqual (7, list [1], "#A3");
+			list.RemoveAt (0);
+			Assert.AreEqual (1, list.Count, "#B1");
+			Assert.AreEqual (7, list [0], "#B2");
+			list.RemoveAt (0);
+			Assert.AreEqual (0, list.Count, "#C");
+		}
+
+		[Test]
+		public void IList_RemoveAt_Index_Negative ()
+		{
+			IList list = (IList) col;
+			list.Add (5);
+
+			try {
+				list.RemoveAt (-1);
+				Assert.Fail ("#1");
+			} catch (IndexOutOfRangeException ex) {
+				// Index was outside the bounds of the array
+				Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+
+			// // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=363276
+			//Assert.AreEqual (1, list.Count, "#5");
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=363276
+		public void IList_RemoveAt_Index_Overflow ()
+		{
+			IList list = (IList) col;
+			list.Add (5);
+
+			try {
+				list.RemoveAt (1);
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException ex) {
+				// Index was outside the bounds of the array
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("index", ex.ParamName, "#5");
+			}
+
+			Assert.AreEqual (1, list.Count, "#6");
+		}
+	}
+#endif
 }
