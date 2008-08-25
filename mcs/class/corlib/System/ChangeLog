@@ -1,3 +1,8 @@
+2008-08-24  Miguel de Icaza  <miguel@novell.com>
+
+	* TermInfoDriver.cs (GetKeyFromBuffer): Add support for reporting
+	Alt-LETTER sequences.   They were ignored previously.
+
 2008-08-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AppDomainSetup.cs: Remove IAppDomainSetup for SL2. This helps
