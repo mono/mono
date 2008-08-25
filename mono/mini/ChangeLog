@@ -1,5 +1,8 @@
 2008-08-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (add_wrappers): Avoid calling get_runtime_invoke with
+	methods it can't handle.
+	
 	* aot-compiler.c (add_method): Avoid adding a method twice.
 	(add_wrappers): Add runtime invoke wrappers for all methods.
 
