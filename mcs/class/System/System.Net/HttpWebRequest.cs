@@ -1178,6 +1178,11 @@ namespace System.Net
 				try {
 					redirected = CheckFinalStatus (r);
 					if (!redirected) {
+						// clear internal buffer so that it does not
+						// hold possible big buffer (bug #397627)
+						if (writeStream != null)
+							writeStream.KillBuffer ();
+
 						r.SetCompleted (false, webResponse);
 						r.DoCallback ();
 					} else {

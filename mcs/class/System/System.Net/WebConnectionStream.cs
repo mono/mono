@@ -637,6 +637,11 @@ namespace System.Net
 			disposed = true;
 		}
 
+		internal void KillBuffer ()
+		{
+			writeBuffer = null;
+		}
+
 		public override long Seek (long a, SeekOrigin b)
 		{
 			throw new NotSupportedException ();
