@@ -76,6 +76,27 @@ namespace Commons.Xml.Relaxng
 		public abstract void Write (XmlWriter writer);
 
 		internal abstract void WriteRnc (RncWriter writer);
+
+		public RelaxngPattern ReadExternalResource (RelaxngGrammar grammar, Uri uri, string nsContext)
+		{
+			XmlTextReader xtr = null;
+			RelaxngGrammar g = null;
+			try {
+				if (grammar.IsSourceCompactSyntax) {
+					return RncParser.ParseRnc (new StreamReader ((Stream) grammar.Resolver.GetEntity (uri, null, typeof (Stream))), null, BaseUri);
+				} else {
+					xtr = new XmlTextReader (uri.AbsoluteUri, (Stream) grammar.Resolver.GetEntity (uri, null, typeof (Stream)));
+					RelaxngReader r = new RelaxngReader (xtr, nsContext, grammar.Resolver);
+					r.MoveToContent ();
+					return r.ReadPattern ();
+				}
+			} catch (Exception ex) { // umm, bad catch though :-(
+				throw new RelaxngException (this, String.Format("Could not include grammar {0}: {1}", uri.AbsoluteUri, ex.Message), ex);
+			} finally {
+				if (xtr != null)
+					xtr.Close ();
+			}
+		}
 	}
 
 	public abstract class RelaxngSingleContentPattern : RelaxngPattern
@@ -326,23 +347,8 @@ namespace Commons.Xml.Relaxng
 					baseUri = new Uri (Path.GetFullPath (BaseUri));
 			}
 			Uri uri = grammar.Resolver.ResolveUri (baseUri, Href);
-			XmlTextReader xtr = null;
-			RelaxngGrammar g = null;
-			try {
-				if (grammar.IsSourceCompactSyntax) {
-					g = RncParser.ParseRnc (new StreamReader ((Stream) grammar.Resolver.GetEntity (uri, null, typeof (Stream))), null, BaseUri) as RelaxngGrammar;
-				} else {
-					xtr = new XmlTextReader (uri.AbsoluteUri, (Stream) grammar.Resolver.GetEntity (uri, null, typeof (Stream)));
-					RelaxngReader r = new RelaxngReader (xtr, ns, grammar.Resolver);
-					r.MoveToContent ();
-					g = r.ReadPattern () as RelaxngGrammar;
-				}
-			} catch (Exception ex) { // umm, bad catch though :-(
-				throw new RelaxngException (this, String.Format("Could not include grammar {0}: {1}", uri.AbsoluteUri, ex.Message), ex);
-			} finally {
-				if (xtr != null)
-					xtr.Close ();
-			}
+
+			RelaxngGrammar g = ReadExternalResource (grammar, uri, ns) as RelaxngGrammar;
 			if (g == null)
 				throw new RelaxngException (this, "Included syntax must start with \"grammar\" element.");
 			g.DataProvider = grammar.Provider;
@@ -1241,23 +1247,14 @@ namespace Commons.Xml.Relaxng
 			if (grammar.Resolver == null)
 				throw new RelaxngException (this, "To compile 'include' element, XmlResolver is required.");
 			Uri uri = grammar.Resolver.ResolveUri (BaseUri != String.Empty ? new Uri (BaseUri) : null, Href);
-			XmlTextReader xtr = null;
-			try {
-				xtr = new XmlTextReader (uri.AbsoluteUri, (Stream) grammar.Resolver.GetEntity (uri, null, typeof (Stream)));
-				RelaxngReader r = new RelaxngReader (xtr, ns, grammar.Resolver);
-				r.MoveToContent ();
-				RelaxngPattern p = r.ReadPattern ();
-				p.DataProvider = grammar.Provider;
+			RelaxngPattern p = ReadExternalResource (grammar, uri, ns);
 
-				RdpPattern ret = p.Compile (grammar);
+			p.DataProvider = grammar.Provider;
+			RdpPattern ret = p.Compile (grammar);
 
-				grammar.IncludedUris.Remove (Href);
+			grammar.IncludedUris.Remove (Href);
 
-				return ret;
-			} finally {
-				if (xtr != null)
-					xtr.Close ();
-			}
+			return ret;
 
 		}
 
