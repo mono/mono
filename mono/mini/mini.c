@@ -8776,6 +8776,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 			case CEE_MONO_ICALL_ADDR: {
 				MonoMethod *cmethod;
+				gpointer ptr;
 
 				CHECK_STACK_OVF (1);
 				CHECK_OPSIZE (6);
@@ -8783,9 +8784,13 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				cmethod = mono_method_get_wrapper_data (method, token);
 
-				g_assert (cfg->compile_aot);
-
-				NEW_AOTCONST (cfg, ins, MONO_PATCH_INFO_ICALL_ADDR, cmethod);
+				if (cfg->compile_aot) {
+					NEW_AOTCONST (cfg, ins, MONO_PATCH_INFO_ICALL_ADDR, cmethod);
+				} else {
+					ptr = mono_lookup_internal_call (cmethod);
+					g_assert (ptr);
+					NEW_PCONST (cfg, ins, ptr);
+				}
 				*sp++ = ins;
 				ip += 6;
 				break;

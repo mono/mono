@@ -1,3 +1,7 @@
+2008-08-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Handle the !aot case in CEE_MONO_ICALL_ADDR.
+
 2008-08-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_method_to_ir2): Rethrow the correct exception in
