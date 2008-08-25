@@ -99,10 +99,6 @@ namespace System.Windows.Forms {
 			null_value = nullValue;
 			format_string = formatString;
 			format_info = formatInfo;
-
-			EventDescriptor prop_changed_event = GetPropertyChangedEvent (data_source, binding_member_info.BindingField);
-			if (prop_changed_event != null)
-				prop_changed_event.AddEventHandler (data_source, new EventHandler (SourcePropertyChangedHandler));
 		}
 #else
 		public Binding (string propertyName, object dataSource, string dataMember)
@@ -111,10 +107,6 @@ namespace System.Windows.Forms {
 			data_source = dataSource;
 			data_member = dataMember;
 			binding_member_info = new BindingMemberInfo (dataMember);
-				
-			EventDescriptor prop_changed_event = GetPropertyChangedEvent (data_source, binding_member_info.BindingField);
-			if (prop_changed_event != null)
-				prop_changed_event.AddEventHandler (data_source, new EventHandler (SourcePropertyChangedHandler));
 		}		
 #endif
 		#endregion	// Public Constructors
@@ -346,9 +338,13 @@ namespace System.Windows.Forms {
 				return;
 
 			if (manager == null) {
-				manager = control.BindingContext [data_source];
+				manager = control.BindingContext [data_source, binding_member_info.BindingPath];
 				manager.AddBinding (this);
 				manager.PositionChanged += new EventHandler (PositionChangedHandler);
+
+				EventDescriptor prop_changed_event = GetPropertyChangedEvent (manager.Current, binding_member_info.BindingField);
+				if (prop_changed_event != null)
+					prop_changed_event.AddEventHandler (manager.Current, new EventHandler (SourcePropertyChangedHandler));
 			}
 
 			if (manager.Position == -1)
