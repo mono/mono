@@ -1,5 +1,8 @@
 2008-08-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (add_method): Avoid adding a method twice.
+	(add_wrappers): Add runtime invoke wrappers for all methods.
+
 	* tramp-amd64.c (mono_arch_create_rgctx_lazy_fetch_trampoline_full): New
 	function to create an aot-compatible version of this trampoline.
 
