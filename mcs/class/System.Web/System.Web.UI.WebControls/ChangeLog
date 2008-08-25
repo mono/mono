@@ -8,6 +8,7 @@
 	the caller.
 	OnLoad gets the data source before initialization, to avoid
 	premature OnDataSourceViewChanged triggers. Fixes bug #398318
+	Do not reconnect to the data source if we already have a valid one.
 
 2008-08-18  Marek Habersack  <mhabersack@novell.com>
 
