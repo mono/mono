@@ -1,5 +1,8 @@
 2008-08-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (add_method): Avoid adding a method twice.
+	(add_wrappers): Add runtime invoke wrappers for all methods.
+
 	* mini.c (mono_method_to_ir): Handle the !aot case in CEE_MONO_ICALL_ADDR.
 
 2008-08-24  Zoltan Varga  <vargaz@gmail.com>

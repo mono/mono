@@ -1960,8 +1960,13 @@ get_method_index (MonoAotCompile *acfg, MonoMethod *method)
 static int
 add_method (MonoAotCompile *acfg, MonoMethod *method)
 {
-	int index = acfg->method_index;
+	int index;
 
+	index = GPOINTER_TO_UINT (g_hash_table_lookup (acfg->method_indexes, method));
+	if (index)
+		return index - 1;
+
+	index = acfg->method_index;
 	add_method_with_index (acfg, method, index);
 
 	/* FIXME: Fix quadratic behavior */
@@ -2005,8 +2010,8 @@ static void
 add_wrappers (MonoAotCompile *acfg)
 {
 	MonoMethod *m;
-	int i, nallocators;
-	MonoMethodSignature *csig;
+	int i, j, nallocators;
+	MonoMethodSignature *sig, *csig;
 
 	/* 
 	 * FIXME: Instead of AOTing all the wrappers, it might be better to redesign them
@@ -2075,10 +2080,27 @@ add_wrappers (MonoAotCompile *acfg)
 	for (i = 0; i < acfg->image->tables [MONO_TABLE_METHOD].rows; ++i) {
 		MonoMethod *method;
 		guint32 token = MONO_TOKEN_METHOD_DEF | (i + 1);
+		gboolean skip = FALSE;
 
 		method = mono_get_method (acfg->image, token, NULL);
 
-		if (!strcmp (method->name, "Main"))
+		if ((method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) ||
+			(method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME) ||
+			(method->flags & METHOD_ATTRIBUTE_ABSTRACT))
+			skip = TRUE;
+
+		/* Skip methods which can not be handled by get_runtime_invoke () */
+		sig = mono_method_signature (method);
+		if ((sig->ret->type == MONO_TYPE_PTR) ||
+			(sig->ret->type == MONO_TYPE_TYPEDBYREF))
+			skip = TRUE;
+
+		for (j = 0; j < sig->param_count; j++) {
+			if (sig->params [j]->type == MONO_TYPE_TYPEDBYREF)
+				skip = TRUE;
+		}
+
+		if (!skip)
 			add_method (acfg, mono_marshal_get_runtime_invoke (method));
 	}
 
