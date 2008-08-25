@@ -1,3 +1,9 @@
+2008-08-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngPattern.cs : unlike "include" element, "external" element
+	  was always resolved as XML syntax, and hence blocked use of
+	  external element in compact syntax.
+
 2007-12-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngPattern.cs : (RelaxngInclude) when a relative Uri is
