@@ -1,3 +1,14 @@
+2008-08-25  Marek Habersack  <mhabersack@novell.com>
+
+	* DataBoundControl.cs: set RequiresDataBinding to true in
+	Initialize only if not in a postback, if not data bound and if the
+	view state is enabled. Fixes bug #398318
+	UpdateViewData removes the OnDataSourceViewChanged handler before
+	connecting to the datasource and restores it before returning to
+	the caller.
+	OnLoad gets the data source before initialization, to avoid
+	premature OnDataSourceViewChanged triggers. Fixes bug #398318
+
 2008-08-18  Marek Habersack  <mhabersack@novell.com>
 
 	* Unit.cs: rewrote the unit parser in a slightly slower, but more
