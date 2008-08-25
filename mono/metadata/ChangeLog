@@ -1,6 +1,11 @@
+2008-08-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c: Applied patch from tom hindle (tom_hindle@sil.org) to fix
+	crashes in bstr marshalling on linux.
+
 2008-08-24  Zoltan Varga  <vargaz@gmail.com>
 
-	* debug-helpers.c (mono_type_get_desc): Fix priting of generic instances
+	* debug-helpers.c (mono_type_get_desc): Fix printing of generic instances
 	with more than one parameter.
 
 2008-08-24  Miguel de Icaza  <miguel@novell.com>
