@@ -1,3 +1,10 @@
+2008-08-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-amd64.c (mono_arch_create_rgctx_lazy_fetch_trampoline_full): New
+	function to create an aot-compatible version of this trampoline.
+
+	* aot-compiler.c aot-runtime.c: Add support for AOT rgctx fetch trampolines.
+
 2008-08-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (compile_method): Skip wrappers of generic icalls.
