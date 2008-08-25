@@ -1,3 +1,8 @@
+2008-08-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c: Applied patch from tom hindle (tom_hindle@sil.org) to fix
+	crashes in bstr marshalling on linux.
+
 2008-08-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_marshal_object): Avoid managed-to-native marshalling of
