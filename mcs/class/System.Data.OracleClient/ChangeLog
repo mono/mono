@@ -1,3 +1,13 @@
+2008-08-25  Daniel Morgan <monodanmorg@yahoo.com>
+
+	* System.Data.OracleClient/OracleCommand.cs
+	* System.Data.OracleClient.Oci/OciHandle.cs
+	* System.Data.OracleClient.Oci/OciRowIdDescriptor.cs: fix
+	bug 378470 by fixing method ExecuteOracleNonQuery 
+        by getting the Universal ROWID and
+	returning it as an output parameter OracleString.
+        This will only work for Oracle 9i clients and above.
+
 2008-08-23  Daniel Morgan <monodanmorg@yahoo.com>
 
 	* System.Data.OracleClient.dll.sources: added 

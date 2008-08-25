@@ -19,6 +19,9 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Security.Cryptography;
+using System.Globalization;
 
 namespace System.Data.OracleClient.Oci {
 	internal abstract class OciHandle : IDisposable {
@@ -227,6 +230,44 @@ namespace System.Data.OracleClient.Oci {
 			return output;
 		}
 
+		[DllImport ("oci", EntryPoint = "OCIAttrGet")]
+		private static extern int OCIAttrGetRowIdDesc (IntPtr trgthndlp,
+			[MarshalAs (UnmanagedType.U4)] OciHandleType trghndltyp,
+			IntPtr attributep,
+			ref uint sizep,
+			[MarshalAs (UnmanagedType.U4)] OciAttributeType attrtype,
+			IntPtr errhp);
+		internal OciRowIdDescriptor GetAttributeRowIdDescriptor (OciErrorHandle errorHandle, OciHandle env)
+		{
+			OciRowIdDescriptor descriptor = null;				
+			IntPtr outputPtr = IntPtr.Zero;
+			int outSize = 16;
+			int status = 0;
+			OciAttributeType attrType = OciAttributeType.RowId; 
+
+			outputPtr = OciCalls.AllocateClear (outSize);
+
+			uint siz = (uint) outSize;
+			status = OCIAttrGetRowIdDesc (Handle,
+				HandleType,
+				outputPtr,
+				ref siz,
+				attrType,
+				errorHandle);
+
+			if (status != 0) {
+				OciErrorInfo info = errorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+
+			if (outputPtr != IntPtr.Zero && siz > 0) {
+				descriptor = (OciRowIdDescriptor) env.Allocate(OciHandleType.RowId);
+				descriptor.SetHandle (outputPtr);
+			}
+
+			return descriptor;
+		}
+
 		public IntPtr GetAttributeIntPtr (OciAttributeType attrType, OciErrorHandle errorHandle) {
 			int status = 0;
 			IntPtr output = IntPtr.Zero;
@@ -263,7 +304,7 @@ namespace System.Data.OracleClient.Oci {
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
 
-			if (outputPtr != IntPtr.Zero && outSize > 0) {
+			if (outputPtr != IntPtr.Zero && outSize > 0) {				
 				object str = Marshal.PtrToStringAnsi (outputPtr, outSize);
 				if (str != null) 
 					output = String.Copy ((string) str);

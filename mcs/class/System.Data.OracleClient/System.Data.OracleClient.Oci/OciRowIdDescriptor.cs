@@ -11,13 +11,16 @@
 //
 // Author:
 //     Tim Coleman <tim@timcoleman.com>
+//     Daniel Morgan <monodanmorg@yahoo.com>
 //
 // Copyright (C) Tim Coleman, 2003
+// Copyright (C) Daniel Morgan, 2008
 //
 
 using System;
 using System.Data.OracleClient;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System.Data.OracleClient.Oci {
 	internal sealed class OciRowIdDescriptor : OciDescriptorHandle, IDisposable
@@ -39,16 +42,6 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Methods
 
-
-		//FIXME: This method only exists in Oracle 9i
-/*
-		[DllImport ("oci")]
-		static extern int OCIRowidToChar (IntPtr rowidDesc,
-						IntPtr outbfp,
-						ref int outbflp,
-						IntPtr errhp);
-*/
-
 		protected override void Dispose (bool disposing)
 		{
 			if (!disposed) {
@@ -57,19 +50,29 @@ namespace System.Data.OracleClient.Oci {
 			}
 		}
 
-		[MonoTODO ("Find a way to get this with 8 or 9.")]
-		public string GetRowId (OciErrorHandle errorHandle)
+		//FIXME: This method only exists in Oracle 9i client and above
+		[DllImport ("oci")]
+		static extern int OCIRowidToChar (IntPtr rowidDesc,
+						IntPtr outbfp,
+						ref ushort outbflp,
+						IntPtr errhp);
+
+		[MonoTODO ("Only will work with 9i and above. Get it to work for 8i as well.")]
+		internal string GetRowIdToString (OciErrorHandle errorHandle)
 		{
 			string output = String.Empty;
-/*
-			int len = 10;
-			IntPtr outputPtr = OciCalls.AllocateClear (len); // FIXME: how big should this be?
+
+			int len = 18; // Universal ROWID has a length of 18
+			int maxByteCount = Encoding.UTF8.GetMaxByteCount (len);
+			IntPtr outputPtr = OciCalls.AllocateClear (maxByteCount); 
 
 			int status = 0;
 
-			status = OCIRowidToChar (this,
+			ushort u = (ushort) maxByteCount;
+
+			status = OCIRowidToChar (Handle,
 						outputPtr,
-						ref len,
+						ref u,
 						errorHandle);
 
                         if (status != 0) {
@@ -77,13 +80,11 @@ namespace System.Data.OracleClient.Oci {
                                 throw new OracleException (info.ErrorCode, info.ErrorMessage);
                         }
 
-                        if (outputPtr != IntPtr.Zero && len > 0) {
+                        if (outputPtr != IntPtr.Zero && maxByteCount > 0) {
 				object str = Marshal.PtrToStringAnsi (outputPtr, len);
 				if (str != null)
 					output = String.Copy ((string) str);
 			}
-*/
-			output = "NOT YET SUPPORTED.";
 
 			return output;
 		}
@@ -91,3 +92,5 @@ namespace System.Data.OracleClient.Oci {
 		#endregion // Methods
 	}
 }
+
+

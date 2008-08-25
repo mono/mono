@@ -439,12 +439,10 @@ namespace System.Data.OracleClient
 
 			try {
 				int retval = ExecuteNonQueryInternal (statement, useAutoCommit);
-
-				OciRowIdDescriptor descriptor = (OciRowIdDescriptor) Environment.Allocate (OciHandleType.RowId);
-				descriptor.SetHandle (statement.GetAttributeIntPtr (OciAttributeType.RowId, ErrorHandle));
-
-				rowid = new OracleString (descriptor.GetRowId (ErrorHandle));
-
+				OciRowIdDescriptor rowIdDescriptor = statement.GetAttributeRowIdDescriptor (ErrorHandle, Environment);
+				string srowid = rowIdDescriptor.GetRowIdToString (ErrorHandle);
+				rowid = new OracleString (srowid);
+				rowIdDescriptor = null;
 				return retval;
 			} finally {
 				SafeDisposeHandle (statement);
