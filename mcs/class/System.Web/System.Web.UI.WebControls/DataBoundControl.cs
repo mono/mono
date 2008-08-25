@@ -126,36 +126,37 @@ namespace System.Web.UI.WebControls {
 
 		private void Initialize ()
 		{
-			if (!IsDataBound)
-				RequiresDataBinding = true;
-
-			UpdateViewData ();
+			Page page = Page;
+			if (page != null)
+				if (!IsDataBound && !page.IsPostBack && IsViewStateEnabled)
+					RequiresDataBinding = true;
 		}
 		
 		void UpdateViewData ()
 		{
-			DataSourceView view = InternalGetData ();
-			if (view == currentView) return;
-
 			if (currentView != null)
 				currentView.DataSourceViewChanged -= new EventHandler (OnDataSourceViewChanged);
+			
+			DataSourceView view = InternalGetData ();
+			if (view != currentView)
+				currentView = view;
 
-			currentView = view;
-
-			if (view != null)
-				view.DataSourceViewChanged += new EventHandler (OnDataSourceViewChanged);
+			if (currentView != null)
+				currentView.DataSourceViewChanged += new EventHandler (OnDataSourceViewChanged);
 		}
 		
 		protected internal override void OnLoad (EventArgs e)
 		{
+			UpdateViewData ();
 			if (!Initialized) {
-				
 				Initialize ();
 
 				// MSDN: The ConfirmInitState method sets the initialized state of the data-bound 
-				// control. The method is called by the DataBoundControl class in its OnLoad method.
+				// control. The method is called by the DataBoundControl class in its OnLoad
+				// method.
 				ConfirmInitState ();
 			}
+			
 			base.OnLoad(e);
 		}
 		
