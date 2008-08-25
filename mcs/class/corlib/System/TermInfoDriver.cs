@@ -896,7 +896,7 @@ namespace System {
 					readpos += 2;
 					AdjustBuffer ();
 					if (buffer [readpos+1] == 127)
-						return new ConsoleKeyInfo ((char)0, ConsoleKey.Backspace, false, true, false);
+						return new ConsoleKeyInfo ((char)8, ConsoleKey.Backspace, false, true, false);
 					return CreateKeyInfoFromInt (buffer [readpos+1], true);
 				} else
 					return null;
