@@ -48,14 +48,16 @@ pushd eglib
 ./autogen.sh --host=arm-apple-darwin9
 popd
 
-./autogen.sh --disable-mcs-build --host=arm-apple-darwin9 --disable-shared-handles --with-tls=pthread --with-sigaltstack=no --with-glib=embedded --with-gc=none $@
+./autogen.sh --disable-mcs-build --host=arm-apple-darwin9 --disable-shared-handles --with-tls=pthread --with-sigaltstack=no --with-glib=embedded $@
 perl -pi -e 's/MONO_SIZEOF_SUNPATH 0/MONO_SIZEOF_SUNPATH 104/' config.h
 perl -pi -e 's/#define HAVE_FINITE 1//' config.h
 make
 
 unsetenv
+pushd mono/monoburg
 /usr/bin/gcc -o monoburg ./monoburg.c parser.c -I../.. -pthread -lm $GLIB_FLAGS
 make
+popd
 
 setenv
 make
