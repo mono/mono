@@ -23,6 +23,9 @@
 .    yyerror(message, null);
 .  }
 .
+.  /* An EOF token */
+.  public int eof_token;
+.
 .  /** (syntax) error message.
 .      Can be overwritten to control message format.
 .      @param message text to be displayed.
@@ -173,6 +176,7 @@ t              debug.shift(yyState, yyTable[yyN], yyErrorFlag-1);
 .            case 0:
 .              // yyerror(String.Format ("syntax error, got token `{0}'", yyname (yyToken)), yyExpecting(yyState));
 t              if (debug != null) debug.error("syntax error");
+.              if (yyToken == 0 || yyToken == eof_token /* eof */) throw new yyParser.yyUnexpectedEof ();
 .              goto case 1;
 .            case 1: case 2:
 .              yyErrorFlag = 3;
@@ -330,6 +334,12 @@ t        if (debug != null) debug.shift(yyStates[yyTop], yyState);
 .    */
 .  internal class yyException : System.Exception {
 .    public yyException (string message) : base (message) {
+.    }
+.  }
+.  internal class yyUnexpectedEof : yyException {
+.    public yyUnexpectedEof (string message) : base (message) {
+.    }
+.    public yyUnexpectedEof () : base ("") {
 .    }
 .  }
 .
