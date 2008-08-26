@@ -462,7 +462,7 @@ namespace System.Web.Compilation {
 				HttpRequest req = ctx != null ? ctx.Request : null;
 
 				if (req != null)
-					vp = VirtualPathUtility.GetDirectory (req.FilePath) + virtualPath;
+					vp = VirtualPathUtility.Combine (VirtualPathUtility.GetDirectory (req.FilePath), virtualPath);
 				else
 					throw new HttpException ("No context, cannot map paths.");
 			} else
