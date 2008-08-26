@@ -26,6 +26,7 @@ using System;
 using System.IO;
 using System.Data;
 using System.Xml;
+using System.Xml.Serialization;
 
 
 namespace System.Data
@@ -297,7 +298,41 @@ namespace System.Data
 
 				bool wasEmpty = reader.IsEmptyElement;
 				int depth = reader.Depth;
-				row [col] = StringToObject (col.DataType, reader.ReadElementString ());
+
+				if (typeof (IXmlSerializable).IsAssignableFrom (col.DataType)) {
+#if NET_2_0
+					try {
+						// NOTE: ReadElementString works fine with proper XML with CDATA etc,
+						// however doesn't behave well with XMLs like the one in 
+						// https://bugzilla.novell.com/show_bug.cgi?id=377146 which is 
+						// apparently supported by MS.NET - to maintain compatibility,
+						// If the obj implements IXmlSerializable, let obj's ReadXml do the reading
+						IXmlSerializable obj = (IXmlSerializable) Activator.CreateInstance (col.DataType, new object [0]);
+						if (!reader.IsEmptyElement) {
+   							reader.ReadStartElement ();
+   							reader.MoveToContent ();
+   							obj.ReadXml (reader);
+   							reader.ReadEndElement ();
+						} else {
+   							reader.Skip ();
+						}						
+						row [col] = obj;
+						
+					} catch (XmlException e) {
+#endif
+						// XML is not in accordance to expected standards, try reading the content as an xml doc
+						row [col] = reader.ReadInnerXml ();
+#if NET_2_0
+					} catch (InvalidOperationException e) {
+#endif
+						row [col] = reader.ReadInnerXml ();
+#if NET_2_0						
+					}
+#endif
+				} else {
+					row [col] = StringToObject (col.DataType, reader.ReadElementString ());
+				}
+					
 				if (!wasEmpty && reader.Depth > depth) {
 				// This means, instance does not match with
 				// the schema (because the instance element

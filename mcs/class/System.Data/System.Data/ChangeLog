@@ -1,3 +1,9 @@
+2008-08-26  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #377146
+	* XmlDataReader.cs (ReadElementElement): For reference types that
+	implement IXmlSerializable, call the corresponding ReadXml.
+	
 2008-08-13  Marek Habersack  <mhabersack@novell.com>
 
 	* DataRow.cs: do not check whether a column is read-only when
