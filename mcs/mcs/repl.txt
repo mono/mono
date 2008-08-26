@@ -1,0 +1,48 @@
+Things to do for the REPL support in MCS:
+
+Documentation for the REPL mode for MCS can be found here:
+
+	      http://mono-project.com/CsharpRepl
+
+Apply the patch repl.patch to this directory, then either rebuild
+Mono, or go to mcs and type:
+
+      	make q
+	make repl
+
+* Mix statements with other top-level declarations.
+
+	Currently we only process statements, but it would be useful
+	to define classes, interfaces and structs inline.   
+
+	These pose a problem, as the grammar conflicts on a few 
+	elements like delegate (delegate declaration or anonymous
+	method declration).
+
+	To address this issue, I should build a mini-parser into
+	repl.cs that does an initial pass at the input stream and
+	determines with as many lookahead tokens as needed whether the
+	text is regular toplevel declaration or our statement
+	declaration.
+
+	This would solve the grammar ambiguity that happens if we just
+	allow both to be starting nodes.
+
+* Implement auto-insert-semicolon
+
+	This is easy to implement, just retry the parse with a
+	semicolon, the question is whether this is a good idea to do
+	in the first place or not.
+
+* Tab Completion
+
+	Implement tab completion on names, variables and type lookups.
+
+	This could be implemented by having the TAB key force the
+	expression to be evaluated with a special COMPLETE token
+	at the end.
+
+	Then the various productions (one by one) would have to
+	add support for COMPLETE, and having Resolve methods be
+	aware of this.
+
