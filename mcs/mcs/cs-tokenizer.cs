@@ -47,6 +47,18 @@ namespace Mono.CSharp
 		ArrayList escaped_identifiers = new ArrayList ();
 		public int parsing_block;
 		internal int query_parsing;
+
+		//
+		// The special character to inject on streams to trigger the EXPRESSION_PARSE
+		// token to be returned.   It just happens to be a Unicode character that
+		// would never be part of a program (can not be an identifier).
+		//
+		// This character is only tested just before the tokenizer is about to report
+		// an error;   So on the regular operation mode, this addition will have no
+		// impact on the tokenizer's performance.
+		//
+		
+		public const int InteractiveParserCharacter = 0x2190;   // Unicode Left Arrow
 		
 		//
 		// XML documentation buffer. The save point is used to divide
@@ -178,7 +190,7 @@ namespace Mono.CSharp
 		//
 		// Values for the associated token returned
 		//
-		int putback_char;
+		internal int putback_char;
 		Object val;
 
 		//
@@ -2772,6 +2784,9 @@ namespace Mono.CSharp
 					}
 				}
 
+				if (c == InteractiveParserCharacter)
+					return Token.INTERACTIVE_PARSER;
+				
 				error_details = ((char)c).ToString ();
 				
 				return Token.ERROR;

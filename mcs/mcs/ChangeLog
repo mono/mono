@@ -1,5 +1,14 @@
 2008-08-26  Miguel de Icaza  <miguel@novell.com>
 
+	* cs-tokenizer.cs: Add support for one of the possible characters
+	we introduce into the token stream.  
+
+	This patch does not affect the regular tokenization process, the
+	only performance hit would happen if there is an invalid character
+	on the input string.
+
+	* support.cs: Move isatty helper routine here.
+
 	* codegen.cs: Small cleanup, and add a mechanism to initialize the
 	code generator for in-memory assemblies.
 
