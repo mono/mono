@@ -1,6 +1,13 @@
 2008-08-26  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	Patch provided by Ernesto <equistango@gmail.com>
+	* OdbcDataReader.cs: Do not call GetSchemaTable in the
+	constructor, fetch column information instead.  Enhances
+	performance. 
+
+2008-08-26  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	Patch provided by Ernesto <equistango@gmail.com>
 	* OdbcParameter.cs (CopyValue): Handle Binary types just like
 	VarBinary/Image.
 	
