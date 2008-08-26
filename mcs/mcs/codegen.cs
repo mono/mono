@@ -95,6 +95,25 @@ namespace Mono.CSharp {
 			}
 		}
 
+#if MS_COMPATIBLE
+		const AssemblyBuilderAccess COMPILER_ACCESS = 0;
+#else
+		/* Keep this in sync with System.Reflection.Emit.AssemblyBuilder */
+		const AssemblyBuilderAccess COMPILER_ACCESS = (AssemblyBuilderAccess) 0x800;
+#endif
+				
+		//
+		// Initializes the code generator variables for interactive use (repl)
+		//
+		static public void InitDynamic (string name)
+		{
+			current_domain = AppDomain.CurrentDomain;
+			AssemblyName an = Assembly.GetAssemblyName (name, name);
+			
+			Assembly.Builder = current_domain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Run | COMPILER_ACCESS);
+			Module.Builder = Assembly.Builder.DefineDynamicModule (Basename (name), false);
+		}
+		
 		//
 		// Initializes the code generator variables
 		//
@@ -124,15 +143,8 @@ namespace Mono.CSharp {
 			current_domain = AppDomain.CurrentDomain;
 
 			try {
-#if MS_COMPATIBLE
-				const AssemblyBuilderAccess COMPILER_ACCESS = 0;
-#else
-				/* Keep this in sync with System.Reflection.Emit.AssemblyBuilder */
-				const AssemblyBuilderAccess COMPILER_ACCESS = (AssemblyBuilderAccess) 0x800;
-#endif
-				
 				Assembly.Builder = current_domain.DefineDynamicAssembly (an,
-					AssemblyBuilderAccess.Save | COMPILER_ACCESS, Dirname (name));
+					AssemblyBuilderAccess.RunAndSave | COMPILER_ACCESS, Dirname (name));
 			}
 			catch (ArgumentException) {
 				// specified key may not be exportable outside it's container

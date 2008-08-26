@@ -1,3 +1,8 @@
+2008-08-26  Miguel de Icaza  <miguel@novell.com>
+
+	* codegen.cs: Small cleanup, and add a mechanism to initialize the
+	code generator for in-memory assemblies.
+
 2008-08-26  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs, ecore.cs, delegate.cs, cs-parser.jay, expression.cs: A type
