@@ -1,3 +1,9 @@
+2008-08-26  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ErrorProvider.cs: Fix a regression NRE when setting properties
+	for a control before it has a parent.
+	[Fixes bug #420305]
+
 2008-08-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Binding.cs: Use the BindingManagerBase.Current value to obtain

@@ -108,6 +108,24 @@ namespace MonoTests.System.Windows.Forms
 			myForm.Dispose ();
 		}
 
+		[Test]
+		public void Bug420305 ()
+		{
+			// Should not throw an NRE
+			Form f = new Form ();
+			TextBox tb = new TextBox ();
+
+			ErrorProvider ep = new ErrorProvider ();
+			ep.ContainerControl = f;
+
+			ep.SetIconAlignment (tb, ErrorIconAlignment.MiddleRight);
+			ep.SetIconPadding (tb, 2);
+
+			f.Controls.Add (tb);
+
+			ep.SetError (tb, "arggggh");
+		}
+		
 #if NET_2_0
 		[Test]
 		public void ErrorProviderPropertyTag ()
