@@ -1,5 +1,12 @@
 2008-08-26  Miguel de Icaza  <miguel@novell.com>
 
+	* getline.cs: A managed implementation of ReadLine under
+	X11/Apache2 license terms.  Easy to embed in other applications as
+	well.
+
+	* namespace.cs: Add some functions to save and restore the
+	namespace state.
+
 	* rootcontext.cs: New public field.
 
 	* cs-tokenizer.cs: Add support for one of the possible characters
