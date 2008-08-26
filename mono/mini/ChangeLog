@@ -1,3 +1,8 @@
+2008-08-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_get_method): Add a cache for wrapper names to
+	avoid repeated linear searches.
+
 2008-08-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (add_method): Avoid adding a method twice.
