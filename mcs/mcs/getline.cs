@@ -739,7 +739,7 @@ namespace Mono.Terminal {
 
 				if (app != null){
 					string dir = Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData);
-					Console.WriteLine (dir);
+					//Console.WriteLine (dir);
 					if (!Directory.Exists (dir)){
 						try {
 							Directory.CreateDirectory (dir);

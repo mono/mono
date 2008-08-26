@@ -99,6 +99,9 @@ namespace Mono.CSharp {
 			dumb = term == "dumb" || term == null || isatty == false;
 
 			SetupEditor ();
+
+			if (isatty)
+				Console.WriteLine ("Mono C# Shell, type \"Help();\" for help\n\nEnter statements below.");
 		}
 		
 		static public int ReadEvalPrintLoop ()
@@ -541,7 +544,7 @@ namespace Mono.CSharp {
 				if (s.StartsWith ("-r:") || s.StartsWith ("/r:") || s.StartsWith ("/reference:")){
 					string lib = s.Substring (s.IndexOf (':')+1);
 
-					Console.WriteLine ("Loading: {0}", lib);
+					//Console.WriteLine ("Loading: {0}", lib);
 					Driver.LoadAssembly (lib, true);
 					continue;
 				}
