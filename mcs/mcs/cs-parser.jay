@@ -2484,7 +2484,7 @@ enum_member_declaration
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 		}
 	  }
-          ASSIGN expression
+	  ASSIGN constant_expression
 	  { 
 		VariableDeclaration vd = new VariableDeclaration (
 			(LocatedToken) $2, $5, (Attributes) $1);
@@ -2941,7 +2941,7 @@ invocation_expression
 	  }
 	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS primary_expression
 	  {
-		$$ = new InvocationOrCast ((Expression) $1, (Expression) $3);
+		$$ = new Cast ((Expression) $1, (Expression) $3);
 	  }
 	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS OPEN_PARENS non_simple_argument CLOSE_PARENS
 	  {

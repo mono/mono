@@ -908,7 +908,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (Arguments == null) {
+			if (Arguments == null || Arguments.Count != 1) {
 				Error_InvalidDelegateArgument ();
 				return null;
 			}
@@ -931,7 +931,7 @@ namespace Mono.CSharp {
 			method_group = e as MethodGroupExpr;
 			if (method_group == null) {
 				if (!TypeManager.IsDelegateType (e.Type)) {
-					Report.Error (149, loc, "Method name expected");
+					e.Error_UnexpectedKind (ResolveFlags.MethodGroup | ResolveFlags.Type, loc);
 					return null;
 				}
 

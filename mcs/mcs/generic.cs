@@ -1102,8 +1102,13 @@ namespace Mono.CSharp {
 
 		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
-			type = type_parameter.Type;
+			throw new NotSupportedException ();
+		}
 
+		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
+		{
+			type = type_parameter.Type;
+			eclass = ExprClass.TypeParameter;
 			return this;
 		}
 

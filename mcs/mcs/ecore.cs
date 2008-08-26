@@ -31,6 +31,7 @@ namespace Mono.CSharp {
 		Variable,
 		Namespace,
 		Type,
+		TypeParameter,
 		MethodGroup,
 		PropertyAccess,
 		EventAccess,
@@ -48,24 +49,26 @@ namespace Mono.CSharp {
 		VariableOrValue		= 1,
 
 		// Returns a type expression.
-		Type			= 2,
+		Type			= 1 << 1,
 
 		// Returns a method group.
-		MethodGroup		= 4,
+		MethodGroup		= 1 << 2,
+
+		TypeParameter	= 1 << 3,
 
 		// Mask of all the expression class flags.
-		MaskExprClass		= 7,
+		MaskExprClass = VariableOrValue | Type | MethodGroup | TypeParameter,
 
 		// Disable control flow analysis while resolving the expression.
 		// This is used when resolving the instance expression of a field expression.
-		DisableFlowAnalysis	= 8,
+		DisableFlowAnalysis	= 1 << 10,
 
 		// Set if this is resolving the first part of a MemberAccess.
-		Intermediate		= 16,
+		Intermediate		= 1 << 11,
 
 		// Disable control flow analysis _of struct_ while resolving the expression.
 		// This is used when resolving the instance expression of a field expression.
-		DisableStructFlowAnalysis	= 32,
+		DisableStructFlowAnalysis	= 1 << 12,
 
 	}
 
@@ -295,14 +298,13 @@ namespace Mono.CSharp {
 
 			if (fne == null)
 				return null;
-
-			if (fne.eclass != ExprClass.Type) {
+				
+			TypeExpr te = fne as TypeExpr;				
+			if (te == null) {
 				if (!silent && errors == Report.Errors)
 					fne.Error_UnexpectedKind (null, "type", loc);
 				return null;
 			}
-
-			TypeExpr te = fne as TypeExpr;
 
 			if (!te.CheckAccessLevel (ec.GenericDeclContainer)) {
 				Report.SymbolRelatedToPreviousError (te.Type);
@@ -431,6 +433,9 @@ namespace Mono.CSharp {
 
 					case ExprClass.MethodGroup:
 						return ResolveFlags.MethodGroup;
+
+					case ExprClass.TypeParameter:
+						return ResolveFlags.TypeParameter;
 
 					case ExprClass.Value:
 					case ExprClass.Variable:
@@ -998,6 +1003,8 @@ namespace Mono.CSharp {
 						return "indexer access";
 					case ExprClass.Nothing:
 						return "null";
+					case ExprClass.TypeParameter:
+						return "type parameter";
 				}
 				throw new Exception ("Should not happen");
 			}
@@ -2812,7 +2819,7 @@ namespace Mono.CSharp {
 	///   Expression that evaluates to a type
 	/// </summary>
 	public abstract class TypeExpr : FullNamedExpression {
-		override public FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
+		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
 		{
 			TypeExpr t = DoResolveAsTypeStep (ec);
 			if (t == null)

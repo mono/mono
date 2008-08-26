@@ -5107,7 +5107,7 @@ namespace Mono.CSharp {
 			}
 		}
 	}
-
+/*
 	public class InvocationOrCast : ExpressionStatement
 	{
 		Expression expr;
@@ -5219,7 +5219,7 @@ namespace Mono.CSharp {
 			target.argument = argument.Clone (clonectx);
 		}
 	}
-
+*/
 	//
 	// This class is used to "disable" the code generation for the
 	// temporary variable when initializing value types.

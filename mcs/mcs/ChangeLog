@@ -1,3 +1,8 @@
+2008-08-26  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, ecore.cs, delegate.cs, cs-parser.jay, expression.cs: A type
+	parameter cannot be always used as a type.
+
 2008-08-21  Marek Safar  <marek.safar@gmail.com>
 
 	* convert.cs, expression.cs: Use single ExplicitReferenceConversion routine.
