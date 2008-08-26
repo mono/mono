@@ -446,4 +446,17 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public class UnixUtils {
+		[System.Runtime.InteropServices.DllImport ("libc", EntryPoint="isatty")]
+		extern static int _isatty (int fd);
+			
+		public static bool isatty (int fd)
+		{
+			try {
+				return _isatty (fd) == 1;
+			} catch {
+				return false;
+			}
+		}
+	}
 }

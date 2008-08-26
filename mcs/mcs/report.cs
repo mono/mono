@@ -478,18 +478,6 @@ namespace Mono.CSharp {
 		{
 			static string prefix, postfix;
 
-			[System.Runtime.InteropServices.DllImport ("libc", EntryPoint="isatty")]
-			extern static int _isatty (int fd);
-			
-			static bool isatty (int fd)
-			{
-				try {
-					return _isatty (fd) == 1;
-				} catch {
-					return false;
-				}
-			}
-			
 			static ErrorMessage ()
 			{
 				string term = Environment.GetEnvironmentVariable ("TERM");
@@ -511,7 +499,7 @@ namespace Mono.CSharp {
 				if (!xterm_colors)
 					return;
 
-				if (!(isatty (1) && isatty (2)))
+				if (!(UnixUtils.isatty (1) && UnixUtils.isatty (2)))
 					return;
 				
 				string config = Environment.GetEnvironmentVariable ("MCS_COLORS");
