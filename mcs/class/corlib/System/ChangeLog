@@ -1,3 +1,9 @@
+2008-08-26  Miguel de Icaza  <miguel@novell.com>
+
+	* New console features are used by gmcs.exe, but since we only
+	build gmcs.exe with the bootstrap corlib, we need to ensure all
+	the new stuff is included in BOOTSTRAP_NET_2_0
+
 2008-08-26  Robert Jordan  <robertj@gmx.net>
 
 	* AppDomain.cs (get_Evidence): Fix endless recursion exposed
