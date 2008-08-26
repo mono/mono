@@ -24,7 +24,7 @@ namespace System.Text.RegularExpressions {
 				throw new Exception ();
 			if (current == offsets.Length) {
 				int[] newarray = new int [offsets.Length * 2];
-				Buffer.BlockCopy (offsets, 0, newarray, 0, offsets.Length);
+				Array.Copy (offsets, newarray, offsets.Length);
 				offsets = newarray;
 			}
 			offsets [current++] = offset;
@@ -709,7 +709,9 @@ namespace System.Text.RegularExpressions {
 		}
 
 		public int GroupCount {
-			get { return program [1] | (program [2] << 8); }
+			get { 
+				return (int)program [1] | ((int)program [2] << 8);
+			}
 		}
 
 		public IDictionary Mapping {

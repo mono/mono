@@ -1,3 +1,7 @@
+2008-08-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* RxCompiler.cs: Use Array.Copy since Buffer.BlockCopy operates on bytes.
+	
 2008-07-31  Jb Evain  <jbevain@novell.com>
 
 	* BaseMachine.cs: clean up for NET_2_1.
