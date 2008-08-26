@@ -169,12 +169,18 @@ namespace System {
 					// ... we will provide our own
 					lock (this) {
 						// the executed assembly from the "default" appdomain
-						// or null if we're not in the default appdomain
+						// or null if we're not in the default appdomain or
+						// if there is no entry assembly (embedded mono)
 						Assembly a = Assembly.GetEntryAssembly ();
-						if (a == null)
-							_evidence = AppDomain.DefaultDomain.Evidence;
-						else
+						if (a == null) {
+							if (this == DefaultDomain)
+								// mono is embedded
+								return new Evidence ();
+							else
+								_evidence = AppDomain.DefaultDomain.Evidence;
+						} else {
 							_evidence = Evidence.GetDefaultHostEvidence (a);
+						}
 					}
 				}
 				return new Evidence (_evidence);	// return a copy

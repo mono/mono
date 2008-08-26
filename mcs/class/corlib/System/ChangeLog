@@ -1,3 +1,8 @@
+2008-08-26  Robert Jordan  <robertj@gmx.net>
+
+	* AppDomain.cs (get_Evidence): Fix endless recursion exposed
+	by the test case of bug #420197.
+
 2008-08-24  Miguel de Icaza  <miguel@novell.com>
 
 	* TermInfoDriver.cs (GetKeyFromBuffer): Add support for reporting
