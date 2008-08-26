@@ -374,7 +374,7 @@ namespace Test.OracleClient
 		{
 			Console.WriteLine("  Create select command...");
 			OracleCommand command = connection.CreateCommand ();
-			command.CommandText = "SELECT * FROM EMP";
+			command.CommandText = "SELECT * FROM SCOTT.EMP";
 
 			Console.WriteLine("  Create data adapter...");
 			OracleDataAdapter adapter = new OracleDataAdapter (command);
@@ -823,14 +823,14 @@ namespace Test.OracleClient
 
 			OracleCommand insert = connection.CreateCommand ();
 			insert.Transaction = transaction;
-			insert.CommandText = "INSERT INTO EMP (EMPNO, ENAME, JOB) VALUES (8787, 'T Coleman', 'Monoist')";
+			insert.CommandText = "INSERT INTO SCOTT.EMP (EMPNO, ENAME, JOB) VALUES (8787, 'T Coleman', 'Monoist')";
 
 			Console.WriteLine ("  Inserting record ...");
 
 			insert.ExecuteNonQuery ();
 
 			OracleCommand select = connection.CreateCommand ();
-			select.CommandText = "SELECT COUNT(*) FROM EMP WHERE EMPNO = 8787";
+			select.CommandText = "SELECT COUNT(*) FROM SCOTT.EMP WHERE EMPNO = 8787";
 			select.Transaction = transaction;
 			OracleDataReader reader = select.ExecuteReader ();
 			reader.Read ();
@@ -843,7 +843,7 @@ namespace Test.OracleClient
 			transaction.Rollback ();
 
 			select = connection.CreateCommand ();
-			select.CommandText = "SELECT COUNT(*) FROM EMP WHERE EMPNO = 8787";
+			select.CommandText = "SELECT COUNT(*) FROM SCOTT.EMP WHERE EMPNO = 8787";
 
 			reader = select.ExecuteReader ();
 			reader.Read ();
@@ -857,14 +857,14 @@ namespace Test.OracleClient
 
 			OracleCommand insert = connection.CreateCommand ();
 			insert.Transaction = transaction;
-			insert.CommandText = "INSERT INTO EMP (EMPNO, ENAME, JOB) VALUES (8787, 'T Coleman', 'Monoist')";
+			insert.CommandText = "INSERT INTO SCOTT.EMP (EMPNO, ENAME, JOB) VALUES (8787, 'T Coleman', 'Monoist')";
 
 			Console.WriteLine ("  Inserting record ...");
 
 			insert.ExecuteNonQuery ();
 
 			OracleCommand select = connection.CreateCommand ();
-			select.CommandText = "SELECT COUNT(*) FROM EMP WHERE EMPNO = 8787";
+			select.CommandText = "SELECT COUNT(*) FROM SCOTT.EMP WHERE EMPNO = 8787";
 			select.Transaction = transaction;
 
 			Console.WriteLine ("  Row count SHOULD BE 1, VALUE IS {0}", select.ExecuteScalar ());
@@ -874,13 +874,13 @@ namespace Test.OracleClient
 			transaction.Commit ();
 
 			select = connection.CreateCommand ();
-			select.CommandText = "SELECT COUNT(*) FROM EMP WHERE EMPNO = 8787";
+			select.CommandText = "SELECT COUNT(*) FROM SCOTT.EMP WHERE EMPNO = 8787";
 
 			Console.WriteLine ("Row count SHOULD BE 1, VALUE IS {0}", select.ExecuteScalar ());
 			transaction = connection.BeginTransaction ();
 			OracleCommand delete = connection.CreateCommand ();
 			delete.Transaction = transaction;
-			delete.CommandText = "DELETE FROM EMP WHERE EMPNO = 8787";
+			delete.CommandText = "DELETE FROM SCOTT.EMP WHERE EMPNO = 8787";
 			delete.ExecuteNonQuery ();
 			transaction.Commit ();
 		}
@@ -1648,7 +1648,7 @@ namespace Test.OracleClient
 				"TYPE t_cursor IS REF CURSOR;\n" +
 				"Procedure open_join_cursor1 (n_EMPNO IN NUMBER, io_cursor IN OUT t_cursor);\n" +
 				"END curspkg_join;";
-
+			cmd.ExecuteNonQuery();
 			cmd.CommandText = 
 				"CREATE OR REPLACE PACKAGE BODY curspkg_join AS\n" +
 				"   Procedure open_join_cursor1 (n_EMPNO IN NUMBER, io_cursor IN OUT t_cursor)\n" +
@@ -2280,14 +2280,18 @@ namespace Test.OracleClient
 			con1.Close ();
 			Console.WriteLine("Closed.");
 
-			ExternalAuthenticationTest();
+			// Need to have an external authentication user setup in Linux and oracle
+			// before running this test
+			//ExternalAuthenticationTest();
 
+			/*
 			TestPersistSucurityInfo1();
 			TestPersistSucurityInfo2();
 			TestPersistSucurityInfo3();
 			TestPersistSucurityInfo4();
 			TestPersistSucurityInfo5();
 			TestPersistSucurityInfo6();
+			*/
 
 			//conStr = conStr + ";pooling=true;min pool size=4;max pool size=" + MAX_CONNECTIONS.ToString ();
 			//ConnectionPoolingTest1 ();

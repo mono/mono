@@ -1,3 +1,19 @@
+2008-08-26  Daniel Morgan <monodanmorg@yahoo.com>
+
+	* System.Data.OracleClient/OracleParameter.cs
+	* System.Data.OracleClient.Oci/OciStatementHandle.cs
+	* System.Data.OracleClient.Oci/OciDefineHandle.cs: fix bug
+	for GetOracleLob in OracleDataReader that was created
+	via a REF CURSOR.  Bug occurred because the cursor when created
+	did not have a ServiceContext - this was solved by passing
+	the connection in which did.  Fixes bug#350408.  In OracleParameter, also
+	show the data type that is not implemented.
+
+	* Test/testblob.cs
+	* Test/TestOracleClient.cs: updated tests
+
+	* Test/refcursortest.cs: added ref cursor test with blob
+
 2008-08-25  Daniel Morgan <monodanmorg@yahoo.com>
 
 	* System.Data.OracleClient/OracleCommand.cs

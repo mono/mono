@@ -399,7 +399,7 @@ namespace System.Data.OracleClient
 				catch(Exception e) {
 					System.IO.TextWriter.Null.WriteLine(e.Message);
 				}
-			}
+			}		
 
 			// TODO: handle InputOutput and Return parameters
 			if (direction == ParameterDirection.Output) {
@@ -455,6 +455,8 @@ namespace System.Data.OracleClient
 						// LAMESPEC: you don't know size until you get it;
 						// therefore, you must allocate an insane size
 						// see OciDefineHandle
+						// FIXME: use piecewise fetching for Long, Clob, Blob, and Long Raw
+						// See http://download.oracle.com/docs/cd/B19306_01/appdev.102/b14250/oci05bnd.htm#sthref724
 						bindSize = OciDefineHandle.LongVarCharMaxValue;
 						bindOutValue = OciCalls.AllocateClear (bindSize);
 						bindType = OciDataType.LongVarChar;
@@ -487,7 +489,7 @@ namespace System.Data.OracleClient
 						break;
 					default:
 						// define other types
-						throw new NotImplementedException ();
+						throw new NotImplementedException ("Data Type not implemented: " + ociType.ToString() + ".");
 				}
 				bindValue = bindOutValue;
 			}
@@ -521,7 +523,7 @@ namespace System.Data.OracleClient
 						dt = (DateTime) odt.Value;
 					}
 					else
-						throw new NotImplementedException (); // ?
+						throw new NotImplementedException ("For OracleType.Timestamp, data type not implemented: " + v.GetType().ToString()); // ?
 
 					short year = (short) dt.Year;
 					byte month = (byte) dt.Month;
@@ -561,7 +563,7 @@ namespace System.Data.OracleClient
 						dt = (DateTime) odt.Value;
 					}
 					else
-						throw new NotImplementedException (); // ?
+						throw new NotImplementedException ("For OracleType.DateTime, data type not implemented: " + v.GetType().ToString() + "."); // ?
 
 					bytes = PackDate (dt);
 					bindType = OciDataType.Date;
@@ -1070,13 +1072,13 @@ namespace System.Data.OracleClient
 				OciStatementHandle cursorStatement = new OciStatementHandle (cmd.Connection.Environment, cursor);
 				cursorStatement.ErrorHandle = cmd.ErrorHandle;
 				cursorStatement.Command = cmd.Connection.CreateCommand ();
-				cursorStatement.SetupRefCursorResult ();
+				cursorStatement.SetupRefCursorResult (cmd.Connection);
 				value = new OracleDataReader (cursorStatement.Command, cursorStatement, true, CommandBehavior.Default);
 				cursor = IntPtr.Zero;
 				cursorStatement = null;
 				break;
 			default:
-				throw new NotImplementedException ();
+				throw new NotImplementedException ("Data Type not implemented: " + ociType.ToString() + ".");
 			}
 			tmp = null;
 			buffer = null;

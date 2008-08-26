@@ -65,7 +65,7 @@ namespace System.Data.OracleClient.Oci
 		{
 		}
 
-		public void DefineByPosition (int position)
+		public void DefineByPosition (int position, OracleConnection connection)
 		{
 			OciParameterDescriptor parameter = ((OciStatementHandle) Parent).GetParameter (position);
 
@@ -75,9 +75,9 @@ namespace System.Data.OracleClient.Oci
 			//precision = parameter.GetPrecision ();
 			scale = parameter.GetScale ();
 
-			Define (position);
+			Define (position, connection);
 
-			parameter.Dispose ();
+			//parameter.Dispose ();
 		}
 
 		#endregion // Constructors
@@ -121,7 +121,7 @@ namespace System.Data.OracleClient.Oci
 
 		#region Methods
 
-		void Define (int position)
+		void Define (int position, OracleConnection connection)
 		{
 			switch (definedType) {
 			case OciDataType.Date:
@@ -132,7 +132,7 @@ namespace System.Data.OracleClient.Oci
 				return;
 			case OciDataType.Clob:
 			case OciDataType.Blob:
-				DefineLob (position, definedType);
+				DefineLob (position, definedType, connection);
 				return;
 			case OciDataType.Raw:
 				DefineRaw( position);
@@ -315,7 +315,7 @@ namespace System.Data.OracleClient.Oci
 			}
 		}
 
-		void DefineLob (int position, OciDataType type)
+		void DefineLob (int position, OciDataType type, OracleConnection connection)
 		{
 			ociType = type;
 
@@ -337,7 +337,8 @@ namespace System.Data.OracleClient.Oci
 
 			value = lobLocator.Handle;
 			lobLocator.ErrorHandle = ErrorHandle;
-			lobLocator.Service = ((OciStatementHandle) Parent).Service;
+			lobLocator.Service = connection.ServiceContext;
+			//lobLocator.Service = ((OciStatementHandle) Parent).Service;
 
 			status = OciCalls.OCIDefineByPosPtr (Parent,
 							out handle,

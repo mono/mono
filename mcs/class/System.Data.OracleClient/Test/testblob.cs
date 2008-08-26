@@ -7,9 +7,9 @@ using System.IO;
 
 class TestBlob 
 {
-	static string infilename = @"mono-win32-setup-dark.bmp";
+	static string infilename = @"../../../tools/mono-win32-setup-dark.bmp";
 	static string outfilename = @"mono-win32-setup-dark2.bmp";
-	static string connectionString = "Data Source=palis;User ID=scott;Password=tiger";
+	static string connectionString = "Data Source=testdb;User ID=scott;Password=tiger";
 
 	public static void Main (string[] args) 
 	{
@@ -135,5 +135,12 @@ class TestBlob
 			
 		reader.Close ();
 		transaction.Commit ();
+		transaction = null;
+		lob = null;
+		reader.Dispose();
+		reader = null;
+		create = null;
+		insert = null;
+		select = null;
 	}
 }

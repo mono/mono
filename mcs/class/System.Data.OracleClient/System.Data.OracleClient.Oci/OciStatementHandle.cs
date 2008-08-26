@@ -113,20 +113,25 @@ namespace System.Data.OracleClient.Oci {
 			return output;
 		}
 
-		public OciDefineHandle GetDefineHandle (int position)
+		public OciDefineHandle GetDefineHandle (int position, OracleConnection connection)
 		{
 			OciDefineHandle defineHandle = new OciDefineHandle (this, IntPtr.Zero);
 			defineHandle.ErrorHandle = ErrorHandle;
-			defineHandle.DefineByPosition (position);
+			defineHandle.DefineByPosition (position, connection);
 
 			return defineHandle;
 		}
 
 		void Define ()
 		{
+			Define (command.Connection);
+		}
+
+		void Define (OracleConnection connection) 
+		{
 			values = new ArrayList ();
 			for (int i = 0; i < columnCount; i += 1)  
-				values.Add (GetDefineHandle (i));
+				values.Add (GetDefineHandle (i, connection));
 		}
 
 		public bool ExecuteQuery (bool schemaOnly)
@@ -188,10 +193,10 @@ namespace System.Data.OracleClient.Oci {
 			return true;
 		}
 		
-		internal void SetupRefCursorResult () 
+		internal void SetupRefCursorResult (OracleConnection connection) 
 		{
 			GetColumnCount ();
-			Define ();
+			Define (connection);
 			moreResults = true;
 		}
 
