@@ -1,3 +1,8 @@
+2008-08-19  Jonathan Pobst  <monkey@jpobst.com>
+
+	* LinkLabel.cs: Always clear any previous links when LinkArea
+	is set.  [Fixes bug #410709]
+
 2008-08-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* X11Keyboard.cs : comment out some Console.WriteLine().
