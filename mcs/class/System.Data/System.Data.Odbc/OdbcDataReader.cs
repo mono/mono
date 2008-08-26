@@ -75,7 +75,7 @@ namespace System.Data.Odbc
 			short colcount = 0;
 			libodbc.SQLNumResultCols (hstmt, ref colcount);
 			cols = new OdbcColumn [colcount];
-			GetSchemaTable ();
+			GetColumns ();
 		}
 
 		internal OdbcDataReader (OdbcCommand command, CommandBehavior behavior,
@@ -224,6 +224,13 @@ namespace System.Data.Odbc
 				cols [ordinal] = c;
 			}
 			return cols [ordinal];
+		}
+		
+		// Load all column descriptions
+		private void GetColumns ()
+		{
+			for(int i = 0; i < cols.Length; i++)
+				GetColumn (i);
 		}
 
 		public
@@ -913,7 +920,7 @@ namespace System.Data.Odbc
 				libodbc.SQLNumResultCols (hstmt, ref colcount);
 				cols = new OdbcColumn [colcount];
 				_dataTableSchema = null; // force fresh creation
-				GetSchemaTable ();
+				GetColumns ();
 			}
 			return (ret == OdbcReturn.Success);
 		}
