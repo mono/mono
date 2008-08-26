@@ -1,3 +1,8 @@
+2008-08-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* generics-sharing.2.cs: Fix invalid generic construct permitted by older
+	versions of gmcs.
+
 2008-08-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am: Add AOT+gshared tests.
