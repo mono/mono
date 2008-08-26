@@ -12,9 +12,7 @@
 // USE -define:DEMO to build this as a standalone file and test it
 //
 // TODO:
-//    Incremental search (C-r, C-s)
 //    Completion support
-//    Loading/saving history
 //    System.Console needs to get the DELETE character, and report accordingly.
 //    Why is Thread.Interrupt not working?   Currently I resort to Abort which is too much.
 //    Console needs SIGWINCH support of some sort
