@@ -12,11 +12,13 @@
 #
 if USE_BATCH_FILES
 SCRIPT_IN=script.bat.in
+CSHARP_IN=csharp.bat.in
 SMCS_IN=smcs.bat.in
 FILTER=sed -e 's,\.bat\.exe,\.exe,g' -e 's,/,\\,g'
 SCRIPT_SUFFIX=.bat
 else
 SCRIPT_IN=script.in
+CSHARP_IN=csharp.in
 SMCS_IN=smcs.in
 FILTER=cat
 SCRIPT_SUFFIX=
@@ -35,6 +37,7 @@ bin_SCRIPTS = \
 	$(scripts_service)	\
 	$(scripts_nunit)	\
 	$(scripts_rpmhelpers)	\
+	csharp$(SCRIPT_SUFFIX)	\
 	mono-test-install
 
 scripts_1_0_compat = \
@@ -121,10 +124,12 @@ scripts_rpmhelpers = mono-find-provides mono-find-requires
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA= mono-nunit.pc
 
-CLEANFILES = $(scripts_1_0) $(scripts_1_0_umask) $(scripts_2_0) $(scripts_2_1) $(scripts_defaults) $(scripts_1_0_compat) mono-service mono-service2 nunit-console nunit-console2 mono-find-provides mono-find-requires
+CLEANFILES = $(scripts_1_0) $(scripts_1_0_umask) $(scripts_2_0) $(scripts_2_1) $(scripts_defaults) $(scripts_1_0_compat) mono-service mono-service2 nunit-console nunit-console2 mono-find-provides mono-find-requires csharp
 DISTCLEANFILES = $(pkgconfig_DATA) $(scripts_rpmhelpers)
 
 EXTRA_DIST =			\
+	csharp.in		\
+	csharp.bat.in		\
 	script.in		\
 	script.bat.in		\
 	script_umask.in		\
@@ -192,6 +197,10 @@ nunit-console2$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
 
 smcs$(SCRIPT_SUFFIX): $(SMCS_IN) Makefile
 	$(REWRITE2_1) -e "s,@""exe_name@,smcs,g" $(srcdir)/$(SMCS_IN) | $(FILTER) > $@.tmp
+	mv $@.tmp $@
+
+csharp$(SCRIPT_SUFFIX): $(CSHARP_IN) Makefile
+	$(REWRITE2) -e "s,@""exe_name@,smcs,g" $(srcdir)/$(CSHARP_IN) | $(FILTER) > $@.tmp
 	mv $@.tmp $@
 
 $(scripts_1_0): $(SCRIPT_IN) Makefile
