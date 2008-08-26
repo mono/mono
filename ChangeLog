@@ -1,3 +1,8 @@
+2008-08-26  Geoff Norton  <gnorton@novell.com>
+
+	* build-iphone.sh: Update build-iphone to not wget old inssel's, and build
+	out of the box with teh current SDK.
+
 2008-08-13  Bill Holmes  <billholmes54@gmail.com>
 
 	* winconfig.h:  Updating the config file for MSVC builds to match
