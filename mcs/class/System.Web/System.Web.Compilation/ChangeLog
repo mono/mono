@@ -1,3 +1,8 @@
+2008-08-26  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: use VirtualPathUtility.Combine in
+	GetAbsoluteVirtualPath for non-rooted paths.
+
 2008-08-19  Marek Habersack  <mhabersack@novell.com>
 
 	* ThemeDirectoryBuildProvider.cs: theme directory dependencies
