@@ -173,6 +173,28 @@ namespace MonoTests.System.Collections.Specialized
 			Assert.AreEqual ("Section{0x1f, 0x0}", s2.ToString (), "ToString()");
 		}
 
+		[Test]
+		public void SectionCorrectSize ()
+		{
+			BitVector32.Section s1 = BitVector32.CreateSection (32767);
+			BitVector32.Section s2 = BitVector32.CreateSection (32767, s1);
+			BitVector32.Section s3 = BitVector32.CreateSection (3, s2);
+			BitVector32 v1 = new BitVector32 (0);
+			v1[s3] = 3;
+			Assert.AreEqual (v1[s3], 3);
+		}
+
+		[Test]
+		public void SectionIncorrectSize ()
+		{
+			BitVector32.Section s1 = BitVector32.CreateSection (32767);
+			BitVector32.Section s2 = BitVector32.CreateSection (32767, s1);
+			try {
+				BitVector32.Section s3 = BitVector32.CreateSection (4, s2);
+				Assert.Fail("Illegal section created");
+			} catch (ArgumentException) {}
+		}
+
                 [Test]
                 public void NegativeIndexer ()
                 {

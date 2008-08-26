@@ -184,11 +184,11 @@ namespace System.Collections.Specialized {
 			if (maxValue < 1)
 				throw new ArgumentException ("maxValue");
 			
-			int bit = HighestSetBit(maxValue) + 1;
+			int bit = HighestSetBit(maxValue);
 			int mask = (1 << bit) - 1;
-			int offset = previous.Offset + NumberOfSetBits (previous.Mask);
+			int offset = previous.Offset + HighestSetBit (previous.Mask);
 
-			if (offset > 32) {
+			if (offset + bit > 32) {
 				throw new ArgumentException ("Sections cannot exceed 32 bits in total");
 			}
 
@@ -227,27 +227,12 @@ namespace System.Collections.Specialized {
 		}
 
 		// Private utilities
-		private static int NumberOfSetBits (int i) 
-		{
-			int count = 0;
-			for (int bit = 0; bit < 32; bit++) {
-				int mask = 1 << bit;
-				if ((i & mask) != 0) 
-					count++;
-			}
-			return count;
-		}
-
 		private static int HighestSetBit (int i) 
 		{
-			for (int bit = 31; bit >= 0; bit--) {
-				int mask = 1 << bit;
-				if ((mask & i) != 0) {
-					return bit;
-				}
-			}
-
-			return -1;
+			int count = 0;
+			while(i >> count != 0)
+				count++;
+			return count;
 		}
 	}
 }

@@ -1,3 +1,10 @@
+2008-08-06  Scott Peterson  <lunchtimemama@gmail.com>
+
+	* BitVector32.cs: Fixed a bug which allowed for invalid sections
+	to be created with CreateSection. Also simplified HighestSetBit
+	algorithm and got rid ofNumberOfSetBits (using HighestSetBit
+	works just fine).
+
 2008-04-13  Jb Evain  <jbevain@novell.com>
 
 	* CollectionsUtil.cs: internalize for the 2.1 profile.
