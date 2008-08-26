@@ -565,16 +565,6 @@ namespace Mono.CSharp {
 	//
 	public class NamespaceEntry : IResolveContext {
 
-		class UsingState {
-			ArrayList using_aliases;
-			ArrayList using_clauses;
-
-			public UsingState (ArrayList ua, ArrayList uc)
-			{
-				
-			}
-		}
-		
 		class UsingEntry {
 			readonly MemberName name;
 			Namespace resolved;
