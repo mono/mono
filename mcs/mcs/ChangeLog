@@ -1,5 +1,43 @@
 2008-08-26  Miguel de Icaza  <miguel@novell.com>
 
+	Interactive support for the C# compiler.   Use gmcs --shell to
+	enter a read-eval-print loop shell.
+
+	Docs: http://www.mono-project.com/CsharpRepl
+	
+	* sources: include repl.cs here and getline.cs for gmcs.exe,
+	everything else is getline.cs impaired.
+
+	* Makefile: when bootstrapping pass a special flag
+	BOOTSTRAP_COMPILER which we use to prevent failures in compilation
+	as we use NET_2_0 define to pull 2.0 APIs from System.Console.
+	This distinguishes those two cases.
+
+	* repl.cs: Support for a read-eval-print loop.   Will be soon
+	refactored into eval support and then REPL on top of it.
+
+	* ecore.cs: If a simplename lookup fails, before erroring out,
+	if we are in EvalMode to resolve the name to a declaration in the
+	Eval-land.    
+
+	This means that variable declarations that happened in previous
+	classes (as repl puts every statement in a separate class) are
+	made visible in this way.
+
+	* cs-parser.jay: UnexpectedEOF, a new flag that is set if we
+	triggered an error due to the end of file being reached.   This is
+	used to do multi-line input, and notify the caller that the user
+	needs to provide more text before a successful parse.
+
+	Add new grammar rules after the INTERACTIVE_PARSER token is seen
+	to drive the evaluation with a custom wrapper. 
+
+	* driver.cs: Add support for --shell, and refactor some code to be
+	reused from repl.cs
+	
+	* namespace.cs: Add support for serializing the contents of the
+	namespaces and reloading them.  
+
 	* getline.cs: A managed implementation of ReadLine under
 	X11/Apache2 license terms.  Easy to embed in other applications as
 	well.

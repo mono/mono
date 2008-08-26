@@ -914,9 +914,4 @@ namespace Mono.Terminal {
 	}
 #endif
 }
-
-#else
-#if !NET_1_1
-#warning No LineEditor compiled, use compiler -define:NET_2_0 to build it
-#endif
 #endif

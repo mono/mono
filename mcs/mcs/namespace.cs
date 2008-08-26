@@ -565,6 +565,16 @@ namespace Mono.CSharp {
 	//
 	public class NamespaceEntry : IResolveContext {
 
+		class UsingState {
+			ArrayList using_aliases;
+			ArrayList using_clauses;
+
+			public UsingState (ArrayList ua, ArrayList uc)
+			{
+				
+			}
+		}
+		
 		class UsingEntry {
 			readonly MemberName name;
 			Namespace resolved;
@@ -609,6 +619,11 @@ namespace Mono.CSharp {
 				}
 				return resolved;
 			}
+
+			public override string ToString ()
+			{
+				return Name;
+			}
 		}
 
 		class UsingAliasEntry {
@@ -632,6 +647,12 @@ namespace Mono.CSharp {
 
 				return fne;
 			}
+
+			public override string ToString ()
+			{
+				return Alias;
+			}
+			
 		}
 
 		class LocalUsingAliasEntry : UsingAliasEntry {
@@ -665,6 +686,11 @@ namespace Mono.CSharp {
 				}
 
 				return (FullNamedExpression)resolved;
+			}
+
+			public override string ToString ()
+			{
+				return String.Format ("{0} = {1}", Alias, value.GetSignatureForError ());
 			}
 		}
 
@@ -715,6 +741,67 @@ namespace Mono.CSharp {
 			this.SlaveDeclSpace = slave ? new RootDeclSpace (this) : null;
 		}
 
+		//
+		// Populates the Namespace with some using declarations, used by the
+		// eval mode. 
+		//
+		public void Populate (ArrayList source_using_aliases, ArrayList source_using_clauses)
+		{
+			foreach (UsingAliasEntry uae in source_using_aliases){
+				if (using_aliases == null)
+					using_aliases = new ArrayList ();
+				
+				using_aliases.Add (uae);
+			}
+
+			foreach (UsingEntry ue in source_using_clauses){
+				if (using_clauses == null)
+					using_clauses = new ArrayList ();
+				
+				using_clauses.Add (ue);
+			}
+		}
+
+		//
+		// Extracts the using alises and using clauses into a couple of
+		// arrays that might already have the same information;  Used by the
+		// C# Eval mode.
+		//
+		public void Extract (ArrayList out_using_aliases, ArrayList out_using_clauses)
+		{
+			if (using_aliases != null){
+				foreach (UsingAliasEntry uae in using_aliases){
+					bool replaced = false;
+					
+					for (int i = 0; i < out_using_aliases.Count; i++){
+						UsingAliasEntry out_uea = (UsingAliasEntry) out_using_aliases [i];
+						
+						if (out_uea.Alias == uae.Alias){
+							out_using_aliases [i] = uae;
+							replaced = true;
+							break;
+						}
+					}
+					if (!replaced)
+						out_using_aliases.Add (uae);
+				}
+			}
+
+			if (using_clauses != null){
+				foreach (UsingEntry ue in using_clauses){
+					bool found = false;
+					
+					foreach (UsingEntry out_ue in out_using_clauses)
+						if (out_ue.Name == ue.Name){
+							found = true;
+							break;
+						}
+					if (!found)
+						out_using_clauses.Add (ue);
+				}
+			}
+		}
+		
 		//
 		// According to section 16.3.1 (using-alias-directive), the namespace-or-type-name is
 		// resolved as if the immediately containing namespace body has no using-directives.

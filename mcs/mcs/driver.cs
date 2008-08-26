@@ -72,6 +72,10 @@ namespace Mono.CSharp
 		bool load_default_config = true;
 
 		//
+		// Whether this is going to be an interactive C-Sharp session 
+		public bool Shell = false;
+
+		//
 		// A list of resource files
 		//
 		static Resources embedded_resources;
@@ -296,7 +300,10 @@ namespace Mono.CSharp
 			if (d == null)
 				return 1;
 
-			if (d.Compile () && Report.Errors == 0) {
+			if (d.Shell)
+				return d.StartInteractiveShell ();
+
+			else if (d.Compile () && Report.Errors == 0) {
 				if (Report.Warnings > 0) {
 					Console.WriteLine ("Compilation succeeded - {0} warning(s)", Report.Warnings);
 				}
@@ -457,6 +464,9 @@ namespace Mono.CSharp
 		/// </summary>
 		static public void LoadReferences ()
 		{
+			link_paths.Add (GetSystemDir ());
+			link_paths.Add (Directory.GetCurrentDirectory ());
+
 			//
 			// Load Core Library for default compilation
 			//
@@ -649,6 +659,12 @@ namespace Mono.CSharp
 			}
 
 			//
+			// For now, very lax error checking
+			//
+			if (Shell)
+				return true;
+					
+			//
 			// If we are an exe, require a source file for the entry point
 			//
 			if (RootContext.Target == Target.Exe || RootContext.Target == Target.WinExe || RootContext.Target == Target.Module) {
@@ -726,7 +742,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		static void DefineDefaultConfig ()
+		public static void DefineDefaultConfig ()
 		{
 			//
 			// For now the "default config" is harcoded into the compiler
@@ -1048,10 +1064,53 @@ namespace Mono.CSharp
 				Report.Warning (-29, 1, "Compatibility: Use -noconfig option instead of --noconfig");
 				load_default_config = false;
 				return true;
+
+			case "--shell":
+				Shell = true;
+				return true;
 			}
 
 			return false;
 		}
+
+#if !SMCS_SOURCE
+		public static string GetPackageFlags (string packages, bool fatal)
+		{
+			ProcessStartInfo pi = new ProcessStartInfo ();
+			pi.FileName = "pkg-config";
+			pi.RedirectStandardOutput = true;
+			pi.UseShellExecute = false;
+			pi.Arguments = "--libs " + packages;
+			Process p = null;
+			try {
+				p = Process.Start (pi);
+			} catch (Exception e) {
+				Report.Error (-27, "Couldn't run pkg-config: " + e.Message);
+				if (fatal)
+					Environment.Exit (1);
+				p.Close ();
+				return null;
+			}
+			
+			if (p.StandardOutput == null){
+				Report.Warning (-27, 1, "Specified package did not return any information");
+				p.Close ();
+				return null;
+			}
+			string pkgout = p.StandardOutput.ReadToEnd ();
+			p.WaitForExit ();
+			if (p.ExitCode != 0) {
+				Report.Error (-27, "Error running pkg-config. Check the above output.");
+				if (fatal)
+					Environment.Exit (1);
+				p.Close ();
+				return null;
+			}
+			p.Close ();
+
+			return pkgout;
+		}
+#endif
 
 		//
 		// This parses the -arg and /arg options to the compiler, even if the strings
@@ -1160,38 +1219,14 @@ namespace Mono.CSharp
 					Environment.Exit (1);
 				}
 				packages = String.Join (" ", value.Split (new Char [] { ';', ',', '\n', '\r'}));
+				string pkgout = GetPackageFlags (packages, true);
 				
-				ProcessStartInfo pi = new ProcessStartInfo ();
-				pi.FileName = "pkg-config";
-				pi.RedirectStandardOutput = true;
-				pi.UseShellExecute = false;
-				pi.Arguments = "--libs " + packages;
-				Process p = null;
-				try {
-					p = Process.Start (pi);
-				} catch (Exception e) {
-					Report.Error (-27, "Couldn't run pkg-config: " + e.Message);
-					Environment.Exit (1);
-				}
-
-				if (p.StandardOutput == null){
-					Report.Warning (-27, 1, "Specified package did not return any information");
-					return true;
-				}
-				string pkgout = p.StandardOutput.ReadToEnd ();
-				p.WaitForExit ();
-				if (p.ExitCode != 0) {
-					Report.Error (-27, "Error running pkg-config. Check the above output.");
-					Environment.Exit (1);
-				}
-
 				if (pkgout != null){
 					string [] xargs = pkgout.Trim (new Char [] {' ', '\n', '\r', '\t'}).
 						Split (new Char [] { ' ', '\t'});
 					args = AddArgs (args, xargs);
 				}
 				
-				p.Close ();
 				return true;
 			}
 #endif
@@ -1548,6 +1583,13 @@ namespace Mono.CSharp
 			
 			return true;
 		}
+
+		int StartInteractiveShell ()
+		{
+			if (load_default_config)
+				DefineDefaultConfig ();
+			return InteractiveShell.ReadEvalPrintLoop ();
+		}
 		
 		//
 		// Main compilation method
@@ -1576,8 +1618,6 @@ namespace Mono.CSharp
 			//
 			if (timestamps)
 				ShowTime ("Loading references");
-			link_paths.Add (GetSystemDir ());
-			link_paths.Add (Directory.GetCurrentDirectory ());
 			LoadReferences ();
 			
 			if (timestamps)
@@ -1939,8 +1979,13 @@ namespace Mono.CSharp
 				return Report.AllWarnings;
 			}
 		}
-		
-		static void Reset ()
+
+		public static void Reset ()
+		{
+			Reset (true);
+		}
+
+		public static void Reset (bool full)
 		{
 			Driver.Reset ();
 			RootContext.Reset ();
@@ -1949,7 +1994,10 @@ namespace Mono.CSharp
 			Report.Reset ();
 			TypeManager.Reset ();
 			TypeHandle.Reset ();
-			RootNamespace.Reset ();
+
+			if (full)
+				RootNamespace.Reset ();
+			
 			NamespaceEntry.Reset ();
 			CodeGen.Reset ();
 			Attribute.Reset ();
@@ -1960,5 +2008,6 @@ namespace Mono.CSharp
 			SymbolWriter.Reset ();
 			Switch.Reset ();
 		}
+
 	}
 }

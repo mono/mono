@@ -19,7 +19,8 @@
 // Possible optimization:
 //   Run memory profiler with parsing only, and consider dropping 
 //   arraylists where not needed.   Some pieces can use linked lists.
-//
+
+
 using System.Text;
 using System.IO;
 using System;
@@ -88,7 +89,16 @@ namespace Mono.CSharp
 		///
 		Stack switch_stack;
 
+		///
+		/// Controls the verbosity of the errors produced by the parser
+		///
 		static public int yacc_verbose_flag;
+
+		/// 
+		/// Used by the interactive shell, flags whether EOF was reached
+		/// and an error was produced
+		///
+		public bool UnexpectedEOF;
 
 		///
 		/// The current file.
@@ -112,6 +122,12 @@ namespace Mono.CSharp
 		bool params_modifiers_not_allowed;
 		bool arglist_allowed;
 
+
+		/// When using the interactive parser, this holds the
+		/// resulting expression
+		public object InteractiveResult;
+
+		static int class_count;
 %}
 
 %token EOF
@@ -300,6 +316,10 @@ namespace Mono.CSharp
 %token GENERIC_DIMENSION
 %token DEFAULT_COLON
 
+// Make the parser go into interactive parsing
+%token INTERACTIVE_PARSER
+
+
 /* Add precedence rules to solve dangling else s/r conflict */
 %nonassoc LOWPREC
 %nonassoc IF
@@ -327,8 +347,9 @@ compilation_unit
         | outer_declarations global_attributes opt_EOF
         | global_attributes opt_EOF
 	| opt_EOF /* allow empty files */
-        ;
-	
+	| interactive_parsing opt_EOF
+	;
+
 opt_EOF
 	: /* empty */
 	  {
@@ -398,6 +419,7 @@ using_alias_directive
 	  }
 	| USING error {
 		CheckIdentifierToken (yyToken, GetLocation ($2));
+		$$ = null;
 	  }
 	;
 
@@ -4396,16 +4418,22 @@ statement_expression
 	: expression
 	  {
 		Expression expr = (Expression) $1;
-		ExpressionStatement s = expr as ExpressionStatement;
+		ExpressionStatement s;
+
+	        if (RootContext.EvalMode)
+		        s = new OptionalAssign (new SimpleName ("___retval___", lexer.Location), expr, lexer.Location);
+		else
+			s = expr as ExpressionStatement;
+
 		if (s == null) {
 			expr.Error_InvalidExpressionStatement ();
 			$$ = null;
-		}
+		} 
 		$$ = new StatementExpression (s);
 	  }
 	| error
 	  {
-		Report.Error (1002, GetLocation ($1), "Expecting `;'");
+		Report.Error (1002, GetLocation ($1), "Expecting `;' (token is: {0})", yyToken);
 		$$ = null;
 	  }
 	;
@@ -5314,6 +5342,65 @@ opt_query_continuation
 	  }
 	;
 	
+//
+// Support for using the compiler as an interactive parser
+//
+// The INTERACTIVE_PARSER token is first sent to parse our
+// productions;  If the result is a Statement, the parsing
+// is repeated, this time with INTERACTIVE_PARSE_WITH_BLOCK
+// to setup the blocks in advance.
+//
+// This setup is here so that in the future we can add 
+// support for other constructs (type parsing, namespaces, etc)
+// that do not require a block to be setup in advance
+//
+
+interactive_parsing
+	: INTERACTIVE_PARSER EOF 
+	| INTERACTIVE_PARSER using_directives { 
+	  	InteractiveResult = current_namespace; 
+	  } 
+	| INTERACTIVE_PARSER { 
+	        InteractiveShell.LoadAliases (current_namespace);
+
+		push_current_class (new Class (current_namespace, current_class, new MemberName ("Class" + class_count++),
+			Modifiers.PUBLIC, null), null);
+
+		ArrayList baseclass_list = new ArrayList ();
+		baseclass_list.Add (new TypeExpression (typeof (InteractiveBase), lexer.Location));
+		current_container.AddBasesForPart (current_class, baseclass_list);
+
+		// (ref object retval)
+		Parameter [] mpar = new Parameter [1];
+		mpar [0] = new Parameter (TypeManager.system_object_expr, "___retval___", Parameter.Modifier.REF, null, Location.Null);
+
+		Parameters pars = new Parameters (mpar);
+		current_local_parameters = pars;
+		Method method = new Method (
+			current_class,
+			null, // generic
+			TypeManager.system_void_expr,
+			Modifiers.PUBLIC | Modifiers.STATIC,
+			new MemberName ("Host"),
+			pars,
+			null /* attributes */);
+
+		oob_stack.Push (method);
+	        ++lexer.parsing_block;
+		start_block (lexer.Location);
+	  }		
+	  statement_list
+	  {
+		--lexer.parsing_block;
+		Method method = (Method) oob_stack.Pop ();
+
+		method.Block = (ToplevelBlock) end_block(lexer.Location);
+		current_container.AddMethod (method);
+
+		InteractiveResult = pop_current_class ();
+		current_local_parameters = null;
+	  } 
+	;
 %%
 
 // <summary>
@@ -5448,6 +5535,51 @@ Block declare_local_variables (Expression type, ArrayList variable_declarators, 
 	ArrayList inits = null;
 
 	//
+	// If we are doing interactive editing, we want variable declarations
+	// that are in the top block to be added instead to the class as 
+	// static variables
+	//
+	if (RootContext.EvalMode){
+		bool hoist = true;
+
+		for (Block b = current_block; b != null; b = b.Parent){
+			if (b is ExplicitBlock && !(b is ToplevelBlock)){
+				// There has been an explicit block, we cant add to the class
+				hoist = false;
+				break;
+			}
+		}		
+		if (hoist){
+			//
+			// We can use "current_block" since we know there are no explicit blocks
+			//
+			foreach (VariableDeclaration decl in variable_declarators){
+				// We can not use the super-handy f.Initializer, because
+				// multiple lines would force code to be executed out of sync
+				if (decl.expression_or_array_initializer != null){
+				        string id = "_____" + decl.identifier;
+					current_block.AddVariable (type, id, decl.Location);					
+
+					LocalVariableReference var;
+					var = new LocalVariableReferenceWithClassSideEffect (current_container, decl.identifier, current_block, id, decl.Location);
+					Assign assign = new SimpleAssign (var, decl.expression_or_array_initializer, decl.Location);
+					current_block.AddStatement (new StatementExpression (assign));
+					assign = new SimpleAssign (new SimpleName (decl.identifier, decl.Location), var);
+					current_block.AddStatement (new StatementExpression (assign));
+				} else {
+					Field f = new Field (current_container, (FullNamedExpression) type, Modifiers.NEW | Modifiers.PUBLIC | Modifiers.STATIC, decl.identifier, null, loc);
+					current_container.AddField (f);
+
+					// Register the field to be visible later as a global variable
+					InteractiveShell.QueueField (f);
+				}
+			}
+
+			return current_block;
+		}
+	}
+
+	//
 	// We use the `Used' property to check whether statements
 	// have been added to the current block.  If so, we need
 	// to create another block to contain the new declaration
@@ -5577,23 +5709,23 @@ public CSharpParser (SeekableStreamReader reader, CompilationUnit file)
 public void parse ()
 {
 	int errors = Report.Errors;
+
+	eof_token = Token.EOF;
+
 	try {
 		if (yacc_verbose_flag > 1)
 			yyparse (lexer, new yydebug.yyDebugSimple ());
 		else
 			yyparse (lexer);
-		Tokenizer tokenizer = lexer as Tokenizer;
-		tokenizer.cleanup ();
 	} catch (Exception e){
-		//
-		// Removed for production use, use parser verbose to get the output.
-		//
-		// Console.WriteLine (e);
+	  	if (e is yyParser.yyUnexpectedEof)
+			UnexpectedEOF = true;
 		if (Report.Errors == errors)
 			Report.Error (-25, lexer.Location, "Parsing error");
-		if (yacc_verbose_flag > 0)
-			Console.WriteLine (e);
 	}
+	Tokenizer tokenizer = lexer as Tokenizer;
+	tokenizer.cleanup ();
+
 
 	if (RootContext.ToplevelTypes.NamespaceEntry != null)
 		throw new InternalErrorException ("who set it?");
@@ -5688,6 +5820,12 @@ AnonymousMethodExpression end_anonymous (ToplevelBlock anon_block, Location loc)
 	current_anonymous_method = (AnonymousMethodExpression) oob_stack.Pop ();
 
 	return retval;
+}
+
+public NamespaceEntry CurrentNamespace {
+       get { 
+       	   return current_namespace;
+       }
 }
 
 /* end end end */

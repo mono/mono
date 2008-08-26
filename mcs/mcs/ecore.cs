@@ -2706,6 +2706,12 @@ namespace Mono.CSharp {
 					}
 				}
 
+				if (RootContext.EvalMode){
+					FieldInfo fi = InteractiveShell.LookupField (Name);
+					if (fi != null)
+						return new FieldExpr (fi, loc);
+				}
+
 				if (almost_matched != null)
 					almost_matched_members = almost_matched;
 				if (almost_matched_type == null)
