@@ -23,7 +23,7 @@
 #endif
 
 // Only compile this code in the 2.0 profile, but not in the Moonlight one
-#if (IN_MCS_BUILD && NET_2_0 && !SMCS_SOURCE && !BOOTSTRAP_COMPILER) || !IN_MCS_BUILD
+#if (IN_MCS_BUILD && NET_2_0 && !SMCS_SOURCE) || !IN_MCS_BUILD
 using System;
 using System.Text;
 using System.IO;
@@ -85,29 +85,26 @@ namespace Mono.Terminal {
 		delegate void KeyHandler ();
 		
 		struct Handler {
-			public ConsoleKeyInfo? CKI;
-			public char? c;
+			public ConsoleKeyInfo CKI;
 			public KeyHandler KeyHandler;
 
 			public Handler (ConsoleKey key, KeyHandler h)
 			{
 				CKI = new ConsoleKeyInfo ((char) 0, key, false, false, false);
 				KeyHandler = h;
-				c = null;
 			}
 
 			public Handler (char c, KeyHandler h)
 			{
 				KeyHandler = h;
-				this.c = c;
-				CKI = null;
+				// Use the "Zoom" as a flag that we only have a character.
+				CKI = new ConsoleKeyInfo ((char) c, ConsoleKey.Zoom, false, false, false);
 			}
 
 			public Handler (ConsoleKeyInfo cki, KeyHandler h)
 			{
 				CKI = cki;
 				KeyHandler = h;
-				c = null;
 			}
 			
 			public static Handler Control (char c, KeyHandler h)
@@ -629,16 +626,14 @@ namespace Mono.Terminal {
 
 				bool handled = false;
 				foreach (Handler handler in handlers){
-					if (handler.CKI.HasValue){
-						ConsoleKeyInfo t = handler.CKI.Value;
+					ConsoleKeyInfo t = handler.CKI;
 
-						if (t.Key == cki.Key && t.Modifiers == cki.Modifiers){
-							handled = true;
-							handler.KeyHandler ();
-							last_handler = handler.KeyHandler;
-							break;
-						} 
-					} else if (handler.c == cki.KeyChar){
+					if (t.Key == cki.Key && t.Modifiers == cki.Modifiers){
+						handled = true;
+						handler.KeyHandler ();
+						last_handler = handler.KeyHandler;
+						break;
+					} else if (t.KeyChar == cki.KeyChar){
 						handled = true;
 						handler.KeyHandler ();
 						last_handler = handler.KeyHandler;

@@ -1,5 +1,13 @@
 2008-08-26  Miguel de Icaza  <miguel@novell.com>
 
+	* Makefile: Drop BOOTSTRAP_COMPILER as that was masking the
+	limitations in Console, instead the 2.0 bootstrap libraries now
+	include the Console bits.
+
+	Also, remove the use of Nullables from getline.cs
+
+	------------
+	
 	Interactive support for the C# compiler.   Use gmcs --shell to
 	enter a read-eval-print loop shell.
 

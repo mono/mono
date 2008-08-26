@@ -30,7 +30,7 @@ namespace Mono.CSharp {
 		static int count;
 		static string current_debug_name;
 
-#if NET_2_0 && !SMCS_SOURCE && !BOOTSTRAP_COMPILER
+#if NET_2_0 && !SMCS_SOURCE
 		static Mono.Terminal.LineEditor editor;
 
 		static void SetupEditor ()
@@ -118,8 +118,6 @@ namespace Mono.CSharp {
 				
 				expr = Evaluate (expr);
 			} 
-
-			return 0;
 		}
 
 		
@@ -408,6 +406,11 @@ namespace Mono.CSharp {
 			return base.Equals (obj);
 		}
 
+		public override int GetHashCode ()
+		{
+			return name.GetHashCode ();
+		}
+		
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			Expression ret = base.DoResolveLValue (ec, right_side);
