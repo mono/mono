@@ -1,3 +1,9 @@
+2008-08-26  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	Patch provided by Ernesto <equistango@gmail.com>
+	* OdbcParameterTest.cs (OdbcTypeTest): Add case for testing Binary
+	type.
+	
 2008-07-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OdbcDataAdapterTest.cs: Added test for UpdateBatchSize.
