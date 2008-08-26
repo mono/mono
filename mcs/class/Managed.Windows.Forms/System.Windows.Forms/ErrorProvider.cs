@@ -79,7 +79,7 @@ namespace System.Windows.Forms {
 				window.Width = ep.icon.Width;
 				window.Height = ep.icon.Height;
 
-				if (ep.container != null) {
+				if (ep.container != null && control.Parent != null) {
 					ep.container.Controls.Add(window);
 					ep.container.Controls.SetChildIndex (window, control.Parent.Controls.IndexOf (control) + 1);
 				} else if (control.Parent != null) {
