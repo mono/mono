@@ -65,6 +65,12 @@ namespace Mono.CSharp {
 		static public bool Checked;
 
 		//
+		// If true, it means that the compiler is executing as
+		// in eval mode.
+		//
+		static public bool EvalMode;
+
+		//
 		// Whether to allow Unsafe code
 		//
 		static public bool Unsafe;
