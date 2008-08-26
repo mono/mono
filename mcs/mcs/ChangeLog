@@ -1,5 +1,7 @@
 2008-08-26  Miguel de Icaza  <miguel@novell.com>
 
+	* rootcontext.cs: New public field.
+
 	* cs-tokenizer.cs: Add support for one of the possible characters
 	we introduce into the token stream.  
 
