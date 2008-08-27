@@ -67,6 +67,7 @@ scripts_1_0_umask = \
 
 scripts_2_0 = \
 	al2			\
+	gacutil2	\
 	genxs2			\
 	gmcs			\
 	httpcfg			\
