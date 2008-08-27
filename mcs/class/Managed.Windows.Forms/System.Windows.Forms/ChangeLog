@@ -1,5 +1,10 @@
 2008-08-27  Mario Carrion  <mcarrion@novell.com>
 
+	* ScrollBar.cs: Control enabled to support accessibility.
+	[Fixes bug #416759]
+
+2008-08-27  Mario Carrion  <mcarrion@novell.com>
+
 	* ComboBox.cs: Control enabled to support accessibility.
 	[Fixes bug #416663]
 
