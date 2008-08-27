@@ -695,6 +695,18 @@ namespace System.Windows.Forms
 
 		#endregion Private Properties
 
+		#region UIA Framework Properties
+
+		internal ScrollBar UIAHScrollBar {
+			get { return hscrollbar; }
+		}
+
+		internal ScrollBar UIAVScrollBar {
+			get { return vscrollbar; }
+		}
+
+		#endregion UIA Framework Properties
+
 		#region Public Methods
 #if NET_2_0
 		[Obsolete ("this method has been deprecated")]
@@ -2404,6 +2416,31 @@ namespace System.Windows.Forms
 
 			private ListBox owner;
 			internal ArrayList object_items = new ArrayList ();
+			
+			#region UIA Framework Events 
+#if NET_2_0
+			//NOTE:
+			//	We are using Reflection to add/remove internal events.
+			//	Class ListProvider uses the events.
+			//
+			//Event used to generate UIA StructureChangedEvent
+			static object UIACollectionChangedEvent = new object ();
+
+			internal event CollectionChangeEventHandler UIACollectionChanged {
+				add { owner.Events.AddHandler (UIACollectionChangedEvent, value); }
+				remove { owner.Events.RemoveHandler (UIACollectionChangedEvent, value); }
+			}
+
+			internal void OnUIACollectionChangedEvent (CollectionChangeEventArgs args)
+			{
+				CollectionChangeEventHandler eh
+					= (CollectionChangeEventHandler) owner.Events [UIACollectionChangedEvent];
+				if (eh != null)
+					eh (owner, args);
+			}
+
+#endif
+			#endregion UIA Framework Events 
 
 			public ObjectCollection (ListBox owner)
 			{
@@ -2445,8 +2482,19 @@ namespace System.Windows.Forms
 						throw new ArgumentOutOfRangeException ("Index of out range");
 					if (value == null)
 						throw new ArgumentNullException ("value");
+						
+#if NET_2_0
+					//UIA Framework event: Item Removed
+					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, index));
+#endif
 
 					object_items[index] = value;
+					
+#if NET_2_0
+					//UIA Framework event: Item Added
+					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, index));
+#endif					
+
 					owner.CollectionChanged ();
 				}
 			}
@@ -2507,6 +2555,11 @@ namespace System.Windows.Forms
 				owner.selected_indices.Clear ();
 				object_items.Clear ();
 				owner.CollectionChanged ();
+
+#if NET_2_0
+				//UIA Framework event: Items list cleared
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, -1));
+#endif
 			}
 
 			public bool Contains (object value)
@@ -2568,6 +2621,11 @@ namespace System.Windows.Forms
 				object_items.Insert (index, item);
 				owner.CollectionChanged ();
 				owner.EndUpdate ();
+				
+#if NET_2_0
+				//UIA Framework event: Item Added
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, index));
+#endif
 			}
 
 			public void Remove (object value)
@@ -2588,6 +2646,11 @@ namespace System.Windows.Forms
 				owner.selected_indices.Remove (index);
 				object_items.RemoveAt (index);
 				owner.CollectionChanged ();
+				
+#if NET_2_0
+				//UIA Framework event: Item Removed
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, index));
+#endif
 			}
 			#endregion Public Methods
 
@@ -2599,6 +2662,12 @@ namespace System.Windows.Forms
 
 				int cnt = object_items.Count;
 				object_items.Add (item);
+
+#if NET_2_0
+				//UIA Framework event: Item Added
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, cnt));
+#endif
+
 				return cnt;
 			}
 
