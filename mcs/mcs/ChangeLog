@@ -1,3 +1,8 @@
+2008-08-27  Miguel de Icaza  <miguel@novell.com>
+
+	* getline.cs: Applied patch from Stuart Carnie <stuart.carnie@gmail.com> 
+	that fixes the cursor key handling, and a history bug.
+	
 2008-08-26  Miguel de Icaza  <miguel@novell.com>
 
 	* Makefile: Drop BOOTSTRAP_COMPILER as that was masking the

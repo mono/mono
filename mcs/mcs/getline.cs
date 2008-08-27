@@ -98,7 +98,7 @@ namespace Mono.Terminal {
 			{
 				KeyHandler = h;
 				// Use the "Zoom" as a flag that we only have a character.
-				CKI = new ConsoleKeyInfo ((char) c, ConsoleKey.Zoom, false, false, false);
+				CKI = new ConsoleKeyInfo (c, ConsoleKey.Zoom, false, false, false);
 			}
 
 			public Handler (ConsoleKeyInfo cki, KeyHandler h)
@@ -819,7 +819,7 @@ namespace Mono.Terminal {
 			public bool NextAvailable ()
 			{
 				int next = (cursor + 1) % history.Length;
-				if (count == 0 || next == head)
+				if (count == 0 || next > head)
 					return false;
 
 				return true;
