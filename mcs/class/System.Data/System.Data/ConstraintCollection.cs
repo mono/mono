@@ -40,16 +40,15 @@ using System.ComponentModel;
 namespace System.Data {
 	[Editor]
 	[Serializable]
-	internal delegate void DelegateValidateRemoveConstraint(ConstraintCollection sender, Constraint constraintToRemove, ref bool fail,ref string failReason);
+	internal delegate void DelegateValidateRemoveConstraint (ConstraintCollection sender, Constraint constraintToRemove, ref bool fail,ref string failReason);
 
 	/// <summary>
 	/// hold collection of constraints for data table
 	/// </summary>
 	[DefaultEvent ("CollectionChanged")]
-	[EditorAttribute("Microsoft.VSDesigner.Data.Design.ConstraintsCollectionEditor, "+Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+Consts.AssemblySystem_Drawing )]
+	[Editor ("Microsoft.VSDesigner.Data.Design.ConstraintsCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
+		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	public partial class ConstraintCollection : InternalDataCollectionBase {
-		//private bool beginInit = false;
-
 		public event CollectionChangeEventHandler CollectionChanged;
 		private DataTable table;
 
@@ -72,12 +71,13 @@ namespace System.Data {
 #if !NET_2_0
 		virtual
 #endif
-		Constraint this[string name] {
+		Constraint this [string name] {
 			get {
 				//If the name is not found we just return null
-				int index = IndexOf(name); //case insensitive
-				if (-1 == index) return null;
-				return this[index];
+				int index = IndexOf (name); //case insensitive
+				if (-1 == index)
+					return null;
+				return this [index];
 			}
 		}
 
@@ -85,29 +85,28 @@ namespace System.Data {
 #if !NET_2_0
 		virtual
 #endif
-		Constraint this[int index] {
+		Constraint this [int index] {
 			get {
 				if (index < 0 || index >= List.Count)
-					throw new IndexOutOfRangeException();
-				return (Constraint)List[index];
+					throw new IndexOutOfRangeException ();
+				return (Constraint) List [index];
 			}
 		}
 
-		private void _handleBeforeConstraintNameChange(object sender, string newName)
+		private void _handleBeforeConstraintNameChange (object sender, string newName)
 		{
-			//null or empty
 			if (newName == null || newName == "")
-				throw new ArgumentException("ConstraintName cannot be set to null or empty " +
-					" after it has been added to a ConstraintCollection.");
+				throw new ArgumentException (
+					"ConstraintName cannot be set to null or empty after adding it to a ConstraintCollection.");
 
-			if (_isDuplicateConstraintName(newName,(Constraint)sender))
-				throw new DuplicateNameException("Constraint name already exists.");
+			if (_isDuplicateConstraintName (newName, (Constraint) sender))
+				throw new DuplicateNameException ("Constraint name already exists.");
 		}
 
-		private bool _isDuplicateConstraintName(string constraintName, Constraint excludeFromComparison)
+		private bool _isDuplicateConstraintName (string constraintName, Constraint excludeFromComparison)
 		{
 			foreach (Constraint cst in List) {
-				if (String.Compare (constraintName, cst.ConstraintName, false, Table.Locale) == 0  && cst != excludeFromComparison)
+				if (String.Compare (constraintName, cst.ConstraintName, false, Table.Locale) == 0 && cst != excludeFromComparison)
 					return true;
 			}
 
@@ -116,23 +115,17 @@ namespace System.Data {
 
 		//finds an open name slot of ConstraintXX
 		//where XX is a number
-		private string _createNewConstraintName()
+		private string _createNewConstraintName ()
 		{
 			bool loopAgain = false;
 			int index = 1;
 
-			do
-			{
+			do {
 				loopAgain = false;
-				foreach (Constraint cst in List)
-				{
+				foreach (Constraint cst in List) {
 					//Case insensitive
-					if (String.Compare (cst.ConstraintName,
-						"Constraint" + index,
-						!Table.CaseSensitive,
-						Table.Locale)
-						== 0)
-					{
+					if (String.Compare (cst.ConstraintName, "Constraint" + index,
+							    !Table.CaseSensitive, Table.Locale) == 0) {
 						loopAgain = true;
 						index++;
 						break;
@@ -141,17 +134,17 @@ namespace System.Data {
 			} while (loopAgain);
 
 			return "Constraint" + index.ToString();
-
 		}
 
 
 		// Overloaded Add method (5 of them)
 		// to add Constraint object to the collection
 
-		public void Add(Constraint constraint)
+		public void Add (Constraint constraint)
 		{
 			//not null
-			if (null == constraint) throw new ArgumentNullException("Can not add null.");
+			if (null == constraint)
+				throw new ArgumentNullException ("Can not add null.");
 
 			if (constraint.InitInProgress)
 				throw new ArgumentException ("Hmm .. Failed to Add to collection");
@@ -159,55 +152,48 @@ namespace System.Data {
 			//check constraint membership
 			//can't already exist in this collection or any other
 			if (this == constraint.ConstraintCollection)
-				throw new ArgumentException("Constraint already belongs to this collection.");
+				throw new ArgumentException ("Constraint already belongs to this collection.");
 			if (null != constraint.ConstraintCollection)
-				throw new ArgumentException("Constraint already belongs to another collection.");
+				throw new ArgumentException ("Constraint already belongs to another collection.");
 
 			//check if a constraint already exists for the datacolums
 			foreach (Constraint c in this) {
-				if (!c.Equals (constraint))
-					continue;
-				throw new DataException ("Constraint matches contraint named '" + c.ConstraintName
-							+ "' already in collection");
+				if (c.Equals (constraint))
+					throw new DataException (
+						"Constraint matches contraint named '" + c.ConstraintName + "' already in collection");
 			}
 
 			//check for duplicate name
-			if (_isDuplicateConstraintName(constraint.ConstraintName,null)  )
-				throw new DuplicateNameException("Constraint name already exists.");
+			if (_isDuplicateConstraintName (constraint.ConstraintName, null))
+				throw new DuplicateNameException ("Constraint name already exists.");
 
 			//Allow constraint to run validation rules and setup
-			constraint.AddToConstraintCollectionSetup(this); //may throw if it can't setup
+			constraint.AddToConstraintCollectionSetup (this); //may throw if it can't setup
 
 			//if name is null or empty give it a name
-			if (constraint.ConstraintName == null ||
-					constraint.ConstraintName == "" )
-			{
-				constraint.ConstraintName = _createNewConstraintName();
-			}
+			if (constraint.ConstraintName == null || constraint.ConstraintName == "")
+				constraint.ConstraintName = _createNewConstraintName ();
 
 			//Add event handler for ConstraintName change
-			constraint.BeforeConstraintNameChange += new DelegateConstraintNameChange(
-					_handleBeforeConstraintNameChange);
+			constraint.BeforeConstraintNameChange += new DelegateConstraintNameChange (_handleBeforeConstraintNameChange);
 
 			constraint.ConstraintCollection = this;
-			List.Add(constraint);
+			List.Add (constraint);
 
-			if (constraint is UniqueConstraint && ((UniqueConstraint)constraint).IsPrimaryKey)
-				table.PrimaryKey = ((UniqueConstraint)constraint).Columns;
+			if (constraint is UniqueConstraint && ((UniqueConstraint) constraint).IsPrimaryKey)
+				table.PrimaryKey = ((UniqueConstraint) constraint).Columns;
 
-			OnCollectionChanged( new CollectionChangeEventArgs( CollectionChangeAction.Add, this) );
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, this));
 		}
 
 		public
 #if !NET_2_0
 		virtual
 #endif
-		Constraint Add(string name, DataColumn column, bool primaryKey)
+		Constraint Add (string name, DataColumn column, bool primaryKey)
 		{
-
-			UniqueConstraint uc = new UniqueConstraint(name, column, primaryKey);
-			Add(uc);
-
+			UniqueConstraint uc = new UniqueConstraint (name, column, primaryKey);
+			Add (uc);
 			return uc;
 		}
 
@@ -215,13 +201,10 @@ namespace System.Data {
 #if !NET_2_0
 		virtual
 #endif
-		Constraint Add(string name, DataColumn primaryKeyColumn,
-				DataColumn foreignKeyColumn)
+		Constraint Add (string name, DataColumn primaryKeyColumn, DataColumn foreignKeyColumn)
 		{
-			ForeignKeyConstraint fc = new ForeignKeyConstraint(name, primaryKeyColumn,
-					foreignKeyColumn);
-			Add(fc);
-
+			ForeignKeyConstraint fc = new ForeignKeyConstraint (name, primaryKeyColumn, foreignKeyColumn);
+			Add (fc);
 			return fc;
 		}
 
@@ -229,11 +212,10 @@ namespace System.Data {
 #if !NET_2_0
 		virtual
 #endif
-		Constraint Add(string name, DataColumn[] columns, bool primaryKey)
+		Constraint Add (string name, DataColumn[] columns, bool primaryKey)
 		{
-			UniqueConstraint uc = new UniqueConstraint(name, columns, primaryKey);
-			Add(uc);
-
+			UniqueConstraint uc = new UniqueConstraint (name, columns, primaryKey);
+			Add (uc);
 			return uc;
 		}
 
@@ -241,17 +223,14 @@ namespace System.Data {
 #if !NET_2_0
 		virtual
 #endif
-		Constraint Add(string name, DataColumn[] primaryKeyColumns,
-			DataColumn[] foreignKeyColumns)
+		Constraint Add (string name, DataColumn[] primaryKeyColumns, DataColumn[] foreignKeyColumns)
 		{
-			ForeignKeyConstraint fc = new ForeignKeyConstraint(name, primaryKeyColumns,
-					foreignKeyColumns);
-			Add(fc);
-
+			ForeignKeyConstraint fc = new ForeignKeyConstraint (name, primaryKeyColumns, foreignKeyColumns);
+			Add (fc);
 			return fc;
 		}
 
-		public void AddRange(Constraint[] constraints)
+		public void AddRange (Constraint[] constraints)
 		{
 			//When AddRange() occurs after BeginInit,
 			//it does not add any elements to the collection until EndInit is called.
@@ -264,10 +243,9 @@ namespace System.Data {
 			if (constraints == null)
 				return;
 
-			for (int i=0; i < constraints.Length; ++i) {
-				if (constraints [i] == null)
-					continue;
-				Add (constraints [i]);
+			for (int i = 0; i < constraints.Length; ++i) {
+				if (constraints [i] != null)
+					Add (constraints [i]);
 			}
 		}
 
@@ -292,12 +270,12 @@ namespace System.Data {
 			_mostRecentConstraints = null;
 		}
 
-		public bool CanRemove(Constraint constraint)
+		public bool CanRemove (Constraint constraint)
 		{
-			return constraint.CanRemoveFromCollection(this, false);
+			return constraint.CanRemoveFromCollection (this, false);
 		}
 
-		public void Clear()
+		public void Clear ()
 		{
 			// Clear should also remove PrimaryKey
 			Table.PrimaryKey = null;
@@ -306,27 +284,25 @@ namespace System.Data {
 			//the Constraints have a reference to us
 			//and we listen to name change events
 			//we should remove these before clearing
-			foreach (Constraint con in List)
-			{
+			foreach (Constraint con in List) {
 				con.ConstraintCollection = null;
-				con.BeforeConstraintNameChange -= new DelegateConstraintNameChange(
-				_handleBeforeConstraintNameChange);
+				con.BeforeConstraintNameChange -= new DelegateConstraintNameChange (_handleBeforeConstraintNameChange);
 			}
 
 			//LAMESPEC: MSFT implementation allows this
 			//even when a ForeignKeyConstraint exist for a UniqueConstraint
 			//thus violating the CanRemove logic
 			//CanRemove will throws Exception incase of the above
-			List.Clear(); //Will violate CanRemove rule
-			OnCollectionChanged( new CollectionChangeEventArgs(CollectionChangeAction.Refresh, this) );
+			List.Clear (); //Will violate CanRemove rule
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, this));
 		}
 
-		public bool Contains(string name)
+		public bool Contains (string name)
 		{
-			return (-1 != IndexOf(name));
+			return -1 != IndexOf (name);
 		}
 
-		public int IndexOf(Constraint constraint)
+		public int IndexOf (Constraint constraint)
 		{
 			int index = 0;
 			foreach (Constraint c in this) {
@@ -341,26 +317,23 @@ namespace System.Data {
 #if !NET_2_0
 		virtual
 #endif
-		int IndexOf(string constraintName)
+		int IndexOf (string constraintName)
 		{
 			//LAMESPEC: Spec doesn't say case insensitive
 			//it should to be consistant with the other
 			//case insensitive comparisons in this class
 
 			int index = 0;
-			foreach (Constraint con in List)
-			{
+			foreach (Constraint con in List) {
 				if (String.Compare (constraintName, con.ConstraintName, !Table.CaseSensitive, Table.Locale) == 0)
-				{
 					return index;
-				}
-
 				index++;
 			}
 			return -1; //not found
 		}
 
-		public void Remove(Constraint constraint) {
+		public void Remove (Constraint constraint)
+		{
 			//LAMESPEC: spec doesn't document the ArgumentException the
 			//will be thrown if the CanRemove rule is violated
 
@@ -371,35 +344,34 @@ namespace System.Data {
 			//ALSO the overloaded remove in the spec doesn't say it throws any exceptions
 
 			//not null
-			if (null == constraint) throw new ArgumentNullException();
+			if (null == constraint)
+				throw new ArgumentNullException();
 
-			if (!constraint.CanRemoveFromCollection(this, true))
+			if (!constraint.CanRemoveFromCollection (this, true))
 				return;
 
-			constraint.RemoveFromConstraintCollectionCleanup(this);
+			constraint.RemoveFromConstraintCollectionCleanup (this);
 			constraint.ConstraintCollection = null;
-			List.Remove(constraint);
-			OnCollectionChanged( new CollectionChangeEventArgs(CollectionChangeAction.Remove,this));
+			List.Remove (constraint);
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, this));
 		}
 
-		public void Remove(string name)
+		public void Remove (string name)
 		{
-			int index = IndexOf(name);
+			int index = IndexOf (name);
 			if (-1 == index)
 				throw new ArgumentException ("Constraint '" + name + "' does not belong to this DataTable.");
 
-			Remove(this[index]);
+			Remove (this [index]);
 		}
 
 		public void RemoveAt(int index)
 		{
-			Remove(this[index]);
+			Remove (this [index]);
 		}
 
 		protected override ArrayList List {
-			get{
-				return base.List;
-			}
+			get { return base.List; }
 		}
 
 
@@ -408,12 +380,10 @@ namespace System.Data {
 #else
 		internal
 #endif
-		void OnCollectionChanged( CollectionChangeEventArgs ccevent)
+		void OnCollectionChanged (CollectionChangeEventArgs ccevent)
 		{
 			if (null != CollectionChanged)
-			{
 				CollectionChanged(this, ccevent);
-			}
 		}
 	}
 
