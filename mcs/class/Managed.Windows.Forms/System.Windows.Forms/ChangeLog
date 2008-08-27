@@ -1,3 +1,8 @@
+2008-08-27  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridView.cs: Raise CellContentClick event.
+	[Fixes part of bug #420351]
+
 2008-08-27  Mario Carrion  <mcarrion@novell.com>
 
 	* ScrollBar.cs: Control enabled to support accessibility.

@@ -3866,8 +3866,11 @@ namespace System.Windows.Forms {
 					
 					DataGridViewCell cell = GetCellInternal (hit.ColumnIndex, hit.RowIndex);
 					
-					if (cell.GetContentBounds (hit.RowIndex).Contains (cellpoint))
-						cell.OnContentClickInternal (new DataGridViewCellEventArgs (hit.ColumnIndex, hit.RowIndex));
+					if (cell.GetContentBounds (hit.RowIndex).Contains (cellpoint)) {
+						DataGridViewCellEventArgs dgvcea = new DataGridViewCellEventArgs (hit.ColumnIndex, hit.RowIndex);
+						OnCellContentClick (dgvcea);
+						cell.OnContentClickInternal (dgvcea);
+					}
 						
 					break;
 				case DataGridViewHitTestType.ColumnHeader:
