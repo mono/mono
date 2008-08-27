@@ -50,8 +50,7 @@ namespace System.Data {
 	[Serializable]
 #endif
 	[TypeConverterAttribute (typeof (ConstraintConverter))]
-	public abstract class Constraint
-	{
+	public abstract class Constraint {
 		static readonly object beforeConstraintNameChange = new object ();
 
 		EventHandlerList events = new EventHandlerList ();
@@ -79,7 +78,7 @@ namespace System.Data {
 		protected Constraint ()
 		{
 			dataSet = null;
-			_properties = new PropertyCollection();
+			_properties = new PropertyCollection ();
 		}
 
 		[CLSCompliant (false)]
@@ -93,13 +92,13 @@ namespace System.Data {
 #endif
 		[DefaultValue ("")]
 		public virtual string ConstraintName {
-			get{ return _constraintName == null ? "" : _constraintName; }
-			set{
+			get { return _constraintName == null ? "" : _constraintName; }
+			set {
 				//This should only throw an exception when it
 				//is a member of a ConstraintCollection which
 				//means we should let the ConstraintCollection
 				//handle exceptions when this value changes
-				_onConstraintNameChange(value);
+				_onConstraintNameChange (value);
 				_constraintName = value;
 			}
 		}
@@ -124,8 +123,8 @@ namespace System.Data {
 		}
 
 		internal ConstraintCollection ConstraintCollection {
-			get{ return _constraintCollection; }
-			set{ _constraintCollection = value; }
+			get { return _constraintCollection; }
+			set { _constraintCollection = value; }
 		}
 
 		private void _onConstraintNameChange (string newName)
@@ -141,7 +140,8 @@ namespace System.Data {
 
 		internal abstract bool IsConstraintViolated ();
 
-		internal static void ThrowConstraintException(){
+		internal static void ThrowConstraintException ()
+		{
 			throw new ConstraintException("Failed to enable constraints. One or more rows contain values violating non-null, unique, or foreign-key constraints.");
 		}
 
@@ -155,18 +155,18 @@ namespace System.Data {
 		{
 		}
 
-		internal void AssertConstraint()
+		internal void AssertConstraint ()
 		{
 			// The order is important.. IsConstraintViolated fills the RowErrors if it detects
 			// a violation
-			if (!IsConstraintViolated())
+			if (!IsConstraintViolated ())
 				return;
 			if (Table._duringDataLoad || (Table.DataSet != null && !Table.DataSet.EnforceConstraints))
 				return;
-			ThrowConstraintException();
+			ThrowConstraintException ();
 		}
 
-		internal abstract void AssertConstraint(DataRow row);
+		internal abstract void AssertConstraint (DataRow row);
 
 		internal virtual void RollbackAssert (DataRow row)
 		{
@@ -187,11 +187,8 @@ namespace System.Data {
 			this.dataSet = dataSet;
 		}
 
-		internal Index Index
-		{
-			get {
-				return _index;
-			}
+		internal Index Index {
+			get { return _index; }
 			set {
 				if (_index != null) {
 					_index.RemoveRef();
@@ -200,14 +197,13 @@ namespace System.Data {
 
 				_index = value;
 
-				if (_index != null) {
+				if (_index != null)
 					_index.AddRef();
-				}
 			}
 		}
 
-		internal abstract bool IsColumnContained(DataColumn column);
-		internal abstract bool CanRemoveFromCollection(ConstraintCollection col, bool shouldThrow);
+		internal abstract bool IsColumnContained (DataColumn column);
+		internal abstract bool CanRemoveFromCollection (ConstraintCollection col, bool shouldThrow);
 
 		/// <summary>
 		/// Gets the ConstraintName, if there is one, as a string.
@@ -216,6 +212,5 @@ namespace System.Data {
 		{
 			return _constraintName == null ? "" : _constraintName;
 		}
-
 	}
 }
