@@ -1,3 +1,8 @@
+2008-08-27  Daniel Morgan <monodanmorg@yahoo.com>
+
+	* System.Data.Common/DbConnectionStringBuilder.cs: Keys and Values
+	get properties should return a ReadOnlyCollection
+
 2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Data_test.dll.sources: Added SqlNotificationRequestTest.cs.

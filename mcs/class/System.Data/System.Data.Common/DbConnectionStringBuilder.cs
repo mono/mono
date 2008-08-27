@@ -31,9 +31,9 @@ using System;
 using System.Text;
 using System.Reflection;
 using System.Collections;
-using System.ComponentModel;
 using System.Collections.Generic;
-
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 
@@ -138,7 +138,12 @@ namespace System.Data.Common
 		[Browsable (false)]
                 public virtual ICollection Keys
                 {
-                        get { return _dictionary.Keys; }
+                        get { 
+				string [] keys = new string [_dictionary.Keys.Count];
+				((ICollection<string>) _dictionary.Keys).CopyTo (keys, 0);
+				ReadOnlyCollection<string> keyColl = new ReadOnlyCollection<string> (keys);
+				return keyColl; 
+			}
                 }
 
                 bool ICollection.IsSynchronized
@@ -160,7 +165,12 @@ namespace System.Data.Common
 		[Browsable (false)]
                 public virtual ICollection Values
                 {
-                        get { return _dictionary.Values; }
+                        get { 
+				object [] values = new object [_dictionary.Values.Count];
+				((ICollection<object>) _dictionary.Values).CopyTo (values, 0);
+				ReadOnlyCollection<object> valuesColl = new ReadOnlyCollection<object> (values);
+				return valuesColl; 
+			}
                 }
 
                 #endregion // Properties
