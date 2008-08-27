@@ -65,9 +65,11 @@ namespace System.Reflection {
 	[Serializable()]
 	internal class MonoMethod : MethodInfo, ISerializable
 	{
+#pragma warning disable 649
 		internal IntPtr mhandle;
 		string name;
 		Type reftype;
+#pragma warning restore 649
 
 		internal MonoMethod () {
 		}
@@ -378,9 +380,11 @@ namespace System.Reflection {
 	
 	internal class MonoCMethod : ConstructorInfo, ISerializable
 	{
+#pragma warning disable 649		
 		internal IntPtr mhandle;
 		string name;
 		Type reftype;
+#pragma warning restore 649		
 		
 		public override MethodImplAttributes GetMethodImplementationFlags() {
 			MonoMethodInfo info;

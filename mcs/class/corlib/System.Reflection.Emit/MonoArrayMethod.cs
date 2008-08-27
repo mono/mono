@@ -38,6 +38,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 	internal class MonoArrayMethod: MethodInfo {
+#pragma warning disable 649
 		internal RuntimeMethodHandle mhandle;
 		internal Type parent;
 		internal Type ret;
@@ -45,6 +46,7 @@ namespace System.Reflection {
 		internal string name;
 		internal int table_idx;
 		internal CallingConventions call_conv;
+#pragma warning restore 649		
 
 		internal MonoArrayMethod (Type arrayClass, string methodName, CallingConventions callingConvention, Type returnType, Type[] parameterTypes) {
 			name = methodName;

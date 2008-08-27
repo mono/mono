@@ -54,7 +54,7 @@ namespace System.Threading {
 	public sealed class Thread : _Thread {
 #endif
 
-#pragma warning disable 169, 414
+#pragma warning disable 169, 414, 649
 		#region Sync with metadata/object-internals.h
 		int lock_thread_id;
 		// stores a thread handle
@@ -113,7 +113,7 @@ namespace System.Threading {
 		private IntPtr unused5;
 		private IntPtr unused6;
 		#endregion
-#pragma warning restore 169, 414
+#pragma warning restore 169, 414, 649
 
 		// the name of local_slots is important as it's used by the runtime.
 		[ThreadStatic] 

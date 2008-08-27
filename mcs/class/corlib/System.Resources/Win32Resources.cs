@@ -708,6 +708,7 @@ internal class Win32ResFileReader {
 //
 internal class ICONDIRENTRY {
 
+#pragma warning disable 649
 	public byte bWidth;
 	public byte bHeight;
 	public byte bColorCount;
@@ -716,7 +717,7 @@ internal class ICONDIRENTRY {
 	public Int16 wBitCount;
 	public Int32 dwBytesInRes;
 	public Int32 dwImageOffset;
-
+#pragma warning restore 649
 	public byte[] image;
 
 	public override string ToString () {

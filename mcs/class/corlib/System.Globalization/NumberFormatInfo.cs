@@ -54,6 +54,10 @@ namespace System.Globalization {
 #endif
 	[Serializable]
 	public sealed class NumberFormatInfo : ICloneable, IFormatProvider {
+
+/* Keep in sync with object-internals.h */
+		
+#pragma warning disable 649
 		private bool isReadOnly;
 		// used for temporary storage. Used in InitPatterns ()
 		string decimalFormats;
@@ -94,6 +98,7 @@ namespace System.Globalization {
 		private string perMilleSymbol;
 		private string positiveInfinitySymbol;
 		private string positiveSign;
+#pragma warning restore 649
 		
 #pragma warning disable 169
 		string ansiCurrencySymbol;	// TODO, MS.NET serializes this.

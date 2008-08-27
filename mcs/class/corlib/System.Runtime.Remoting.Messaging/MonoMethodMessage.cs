@@ -41,6 +41,7 @@ namespace System.Runtime.Remoting.Messaging {
 	[Serializable]
 	internal class MonoMethodMessage : IMethodCallMessage, IMethodReturnMessage, IInternalMessage {
 
+#pragma warning disable 649
 		#region keep in sync with MonoMessage in object-internals.h
 		MonoMethod method;
 		object []  args;
@@ -52,6 +53,7 @@ namespace System.Runtime.Remoting.Messaging {
 		AsyncResult asyncResult;
 		CallType call_type;
 		#endregion
+#pragma warning restore 649
 
 		string uri;
 

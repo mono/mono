@@ -44,9 +44,6 @@ namespace System {
 	public class AppDomainManager : MarshalByRefObject {
 
 		private ApplicationActivator _activator;
-		private Assembly _entry;
-		private HostExecutionContextManager _host_context;
-		private HostSecurityManager _host_security;
 		private AppDomainManagerInitializationOptions _flags;
 
 		public AppDomainManager ()
@@ -55,19 +52,25 @@ namespace System {
 		}
 
 		public virtual ApplicationActivator ApplicationActivator {
-			get { return _activator; }
+			get {
+				if (_activator == null)
+					_activator = new ApplicationActivator ();
+				 return _activator;
+			}
 		}
 
+		[MonoTODO]
 		public virtual Assembly EntryAssembly {
-			get { return _entry; }
+			get { throw new NotImplementedException (); }
 		}
 
+		[MonoTODO]
 		public virtual HostExecutionContextManager HostExecutionContextManager {
-			get { return _host_context; }
+			get { throw new NotImplementedException (); }
 		}
 
 		public virtual HostSecurityManager HostSecurityManager {
-			get { return _host_security; }
+			get { return null; }
 		}
 
 		public AppDomainManagerInitializationOptions InitializationFlags {

@@ -53,6 +53,7 @@ namespace System.Reflection {
 		public static readonly TypeFilter FilterTypeName;
 		public static readonly TypeFilter FilterTypeNameIgnoreCase;
 	
+#pragma warning disable 649	
 		private IntPtr _impl; /* a pointer to a MonoImage */
 		internal Assembly assembly;
 		internal string fqname;
@@ -60,6 +61,7 @@ namespace System.Reflection {
 		internal string scopename;
 		internal bool is_resource;
 		internal int token;
+#pragma warning restore 649		
 	
 		const BindingFlags defaultBindingFlags = 
 			BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;

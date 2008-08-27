@@ -56,10 +56,11 @@ namespace System.Resources
 		public MissingSatelliteAssemblyException (string message, string cultureName)
 			:base (message)
 		{
+			this.culture = cultureName;
 		}
 		
 		protected MissingSatelliteAssemblyException (SerializationInfo info, StreamingContext context)
-				    :base (info, context)
+			:base (info, context)
 		{
 		}
 		

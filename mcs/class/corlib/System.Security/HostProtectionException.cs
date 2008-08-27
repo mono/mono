@@ -59,6 +59,8 @@ namespace System.Security {
 		public HostProtectionException (string message, HostProtectionResource protectedResources, HostProtectionResource demandedResources)
 			: base (message)
 		{
+			this._protected = protectedResources;
+			this._demanded = demandedResources;
 		}
 
 		protected HostProtectionException (SerializationInfo info, StreamingContext context)

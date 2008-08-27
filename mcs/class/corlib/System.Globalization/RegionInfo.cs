@@ -58,8 +58,9 @@ namespace System.Globalization
 
 #if NET_2_0
 		int lcid; // it is used only for Equals() (not even used in GetHashCode()).
-		string currencyEnglishName;		
-#endif		
+#endif
+
+#pragma warning disable 649
 		int regionId;
 		string iso2Name;
 		string iso3Name;
@@ -67,6 +68,8 @@ namespace System.Globalization
 		string englishName;
 		string currencySymbol;
 		string isoCurrencySymbol;
+		string currencyEnglishName;
+#pragma warning restore 649
 
 		public RegionInfo (int culture)
 		{

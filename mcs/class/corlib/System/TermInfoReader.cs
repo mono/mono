@@ -81,7 +81,7 @@ namespace System {
 		//string [] names; // Last one is the description
 		byte [] buffer;
 		int booleansOffset;
-		string term;
+		//string term;
 
 		public TermInfoReader (string term, string filename)
 		{
@@ -110,9 +110,9 @@ namespace System {
 			ReadNames (buffer, ref booleansOffset);
 		}
 
-		public string Term {
-			get { return term; }
-		}
+//		public string Term {
+//			get { return term; }
+//		}
 
 		void ReadHeader (byte [] buffer, ref int position)
 		{

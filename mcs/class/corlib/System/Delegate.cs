@@ -55,7 +55,7 @@ namespace System
 	public abstract class Delegate : ICloneable, ISerializable
 	{
 		#region Sync with object-internals.h
-#pragma warning disable 169, 414
+#pragma warning disable 169, 414, 649
 		private IntPtr method_ptr;
 		private IntPtr invoke_impl;
 		private object m_target;
@@ -69,7 +69,7 @@ namespace System
 		private MethodInfo original_method_info;
 
 		private DelegateData data;
-#pragma warning restore 169, 414
+#pragma warning restore 169, 414, 649
 		#endregion
 
 		protected Delegate (object target, string method)

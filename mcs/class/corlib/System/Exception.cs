@@ -52,7 +52,7 @@ namespace System
 	, _Exception
 #endif
 	{
-#pragma warning disable 169	
+#pragma warning disable 169, 649
 		#region Sync with object-internals.h
 		IntPtr [] trace_ips;
 		Exception inner_exception;
@@ -66,7 +66,7 @@ namespace System
 		string source;
 		IDictionary _data;
 		#endregion
-#pragma warning restore 169		
+#pragma warning restore 169, 649		
 
 		public Exception ()
 		{

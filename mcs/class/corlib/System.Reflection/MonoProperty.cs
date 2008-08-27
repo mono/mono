@@ -66,10 +66,12 @@ namespace System.Reflection {
 
 	[Serializable]
 	internal class MonoProperty : PropertyInfo, ISerializable {
+#pragma warning disable 649
 		internal IntPtr klass;
 		internal IntPtr prop;
 		MonoPropertyInfo info;
 		PInfo cached;
+#pragma warning restore 649
 		
 		public override PropertyAttributes Attributes {
 			get {

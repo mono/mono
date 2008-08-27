@@ -53,7 +53,7 @@ namespace System.Globalization
 		const int GregorianTypeMask = 0x00FFFFFF;
 		const int CalendarTypeBits = 24;
 
-#pragma warning disable 169
+#pragma warning disable 169, 649
 		bool m_isReadOnly;
 		int  cultureID;
 		[NonSerialized]
@@ -99,7 +99,7 @@ namespace System.Globalization
 
 		int m_dataItem;		// MS.NET serializes this.
 		Calendar calendar;	// MS.NET serializes this.
-#pragma warning restore 169
+#pragma warning restore 169, 649
 
 		// Deserialized instances will set this to false
 		[NonSerialized]

@@ -39,6 +39,7 @@ namespace System.Reflection {
 	[ComVisible (true)]
 #endif
 	public sealed class MethodBody {
+#pragma warning disable 649
 		#region Sync with reflection.h
 		ExceptionHandlingClause[] clauses;
 		LocalVariableInfo[] locals;
@@ -47,6 +48,7 @@ namespace System.Reflection {
 		int sig_token;
 		int max_stack;
 		#endregion
+#pragma warning restore 649
 
 		internal MethodBody () {
 		}

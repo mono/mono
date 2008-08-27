@@ -36,9 +36,11 @@ namespace System.Runtime.CompilerServices {
 	[Serializable]
 	public sealed class RuntimeWrappedException : Exception
 	{
+#pragma warning disable 649
 #region Synch with object-internals.h
 		private object wrapped_exception;
 #endregion
+#pragma warning restore 649
 
 		// Called by the runtime
 		private RuntimeWrappedException () 

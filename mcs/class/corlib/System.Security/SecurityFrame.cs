@@ -43,6 +43,7 @@ namespace System.Security {
 	}
 
 	// Must match MonoSecurityFrame in /mono/mini/declsec.h
+#pragma warning disable 649	
 	internal class RuntimeSecurityFrame {
 		public AppDomain domain;
 		public MethodInfo method;
@@ -50,6 +51,7 @@ namespace System.Security {
 		public RuntimeDeclSecurityEntry deny;
 		public RuntimeDeclSecurityEntry permitonly;
 	}
+#pragma warning restore 649	
 
 	internal struct SecurityFrame {
 

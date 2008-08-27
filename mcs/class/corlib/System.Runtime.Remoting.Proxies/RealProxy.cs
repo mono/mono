@@ -47,13 +47,13 @@ using System.Runtime.InteropServices;
 
 namespace System.Runtime.Remoting.Proxies
 {
-#pragma warning disable 169
+#pragma warning disable 169, 649
 	internal class TransparentProxy {
 		public RealProxy _rp;
 		IntPtr _class;
 		bool _custom_type_info;
 	}
-#pragma warning restore 169	
+#pragma warning restore 169, 649
 	
 #if NET_2_0
 	[ComVisible (true)]
