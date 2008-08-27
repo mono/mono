@@ -883,9 +883,7 @@ mono_arch_cpu_optimizazions (guint32 *exclude_mask)
 		} else
 			*exclude_mask |= MONO_OPT_CMOV;
 	}
-#ifdef PLATFORM_WIN32
-	*exclude_mask |= (MONO_OPT_PEEPHOLE | MONO_OPT_BRANCH);
-#endif
+
 	return opts;
 }
 

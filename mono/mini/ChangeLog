@@ -1,5 +1,22 @@
 2008-08-27  Bill Holmes  <billholmes54@gmail.com>
 
+	Backport of r111724.
+
+	* mini-amd64.h : Fix a compiler warning.
+
+	* exceptions-amd64.c (mono_arch_unwindinfo_install_unwind_info) :
+	  Changed to use a callback function to retrieve the unwind info.
+	  This avoids problems observed when code blocks were removed by
+	  unloading an app domain.
+
+	* mini-amd64.c (mono_arch_cpu_optimizazions) : Removing the peephole 
+	  and branch excludes for Winx64.  The fix in exceptions-amd64.c allows them
+	  to work properly.
+
+	Contributed under MIT/X11 license.
+
+2008-08-27  Bill Holmes  <billholmes54@gmail.com>
+
 	Backport of r111722.
 
 	* mini-amd64.c (mono_arch_output_basic_block) : Fix the OP_X86_PUSH_OBJ
