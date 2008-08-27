@@ -651,7 +651,8 @@ namespace Mono.Terminal {
 					continue;
 				}
 
-				HandleChar (cki.KeyChar);
+				if (cki.KeyChar != (char) 0)
+					HandleChar (cki.KeyChar);
 			} 
 		}
 
