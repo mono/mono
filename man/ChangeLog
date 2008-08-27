@@ -1,4 +1,9 @@
+2008-08-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-config.5: Fix a typo.
+
 2008-08-22  Massimiliano Mantione  <massi@ximian.com>
+
 	* mono.1: Updated description of the logging profiler from trunk.
 
 2008-08-08  Zoltan Varga  <vargaz@gmail.com>
