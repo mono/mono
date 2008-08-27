@@ -555,9 +555,9 @@ namespace Mono.CSharp {
 		static public void Help ()
 		{
 			Console.WriteLine ("Static methods:\n"+
-					   "  LoadPackage (pkg) - Loads the given Package (like -pkg:FFF)\n" +
-					   "  ShowVars ();	- Shows defined local variables.\n" +
-					   "  ShowUsing ();	- Show active using decltions.\n" + 
+					   "  LoadPackage (pkg); - Loads the given Package (like -pkg:FILE)\n" +
+					   "  ShowVars ();       - Shows defined local variables.\n" +
+					   "  ShowUsing ();      - Show active using decltions.\n" + 
 					   "  Help ();\n"
 				);
 		}
