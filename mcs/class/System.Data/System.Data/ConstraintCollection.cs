@@ -73,11 +73,8 @@ namespace System.Data {
 #endif
 		Constraint this [string name] {
 			get {
-				//If the name is not found we just return null
-				int index = IndexOf (name); //case insensitive
-				if (-1 == index)
-					return null;
-				return this [index];
+				int index = IndexOf (name);
+				return -1 == index ? null : (Constraint) List [index];
 			}
 		}
 
@@ -106,7 +103,9 @@ namespace System.Data {
 		private bool _isDuplicateConstraintName (string constraintName, Constraint excludeFromComparison)
 		{
 			foreach (Constraint cst in List) {
-				if (String.Compare (constraintName, cst.ConstraintName, false, Table.Locale) == 0 && cst != excludeFromComparison)
+				if (cst == excludeFromComparison)
+					continue;
+				if (String.Compare (constraintName, cst.ConstraintName, false, Table.Locale) == 0)
 					return true;
 			}
 
@@ -117,23 +116,12 @@ namespace System.Data {
 		//where XX is a number
 		private string _createNewConstraintName ()
 		{
-			bool loopAgain = false;
-			int index = 1;
-
-			do {
-				loopAgain = false;
-				foreach (Constraint cst in List) {
-					//Case insensitive
-					if (String.Compare (cst.ConstraintName, "Constraint" + index,
-							    !Table.CaseSensitive, Table.Locale) == 0) {
-						loopAgain = true;
-						index++;
-						break;
-					}
-				}
-			} while (loopAgain);
-
-			return "Constraint" + index.ToString();
+			// FIXME: Do constraint id's need to be reused?  This loop is horrendously slow.
+			for (int i = 1; ; ++i) {
+				string new_name = "Constraint" + i;
+				if (IndexOf (new_name) == -1)
+					return new_name;
+			}
 		}
 
 

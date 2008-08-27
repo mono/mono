@@ -1,5 +1,10 @@
 2008-08-27  Raja R Harinath  <harinath@hurrynot.org>
 
+	* ConstraintCollection.cs (Item) <string variant>: Don't incur
+	additional check for index that's returned by 'IndexOf'.
+	(_createNewConstraintName): Improve readability of code.
+	(_isDuplicateConstraintName): Perform cheaper test first.
+
 	* ConstraintCollection.cs: Reduce some #ifdef by using partial
 	classes.  Move 'sealed' and '[Serializable]' to appropriate
 	partial class declarations.
