@@ -1,3 +1,7 @@
+2008-08-27  Raja R Harinath  <harinath@hurrynot.org>
+
+	* cs-parser.jay (CS1002): Dump 'yyToken' with Report.ExtraInformation.
+
 2008-08-27  Miguel de Icaza  <miguel@novell.com>
 
 	* getline.cs: Applied patch from Stuart Carnie <stuart.carnie@gmail.com> 

@@ -4433,7 +4433,8 @@ statement_expression
 	  }
 	| error
 	  {
-		Report.Error (1002, GetLocation ($1), "Expecting `;' (token is: {0})", yyToken);
+		Report.ExtraInformation (GetLocation ($1), "(token is: " + yyToken + " in previous ");
+		Report.Error (1002, GetLocation ($1), "Expecting `;'");
 		$$ = null;
 	  }
 	;
