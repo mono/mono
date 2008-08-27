@@ -5,7 +5,7 @@
 //	Franklin Wise <gracenote@earthlink.net>
 //	Daniel Morgan
 //      Tim Coleman (tim@timcoleman.com)
-//   
+//
 //
 // (C) Ximian, Inc. 2002
 // Copyright (C) Tim Coleman, 2002
@@ -21,10 +21,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -45,23 +45,23 @@ namespace System.Data {
 	[Serializable]
 	internal delegate void DelegateConstraintNameChange (object sender, string newName);
 
-	[DefaultProperty ("ConstraintName")]	
+	[DefaultProperty ("ConstraintName")]
 #if !NET_2_0
 	[Serializable]
 #endif
 	[TypeConverterAttribute (typeof (ConstraintConverter))]
-	public abstract class Constraint 
+	public abstract class Constraint
 	{
 		static readonly object beforeConstraintNameChange = new object ();
 
 		EventHandlerList events = new EventHandlerList ();
-		
+
 		internal event DelegateConstraintNameChange BeforeConstraintNameChange {
 			add { events.AddHandler (beforeConstraintNameChange, value); }
 			remove { events.RemoveHandler (beforeConstraintNameChange, value); }
 		}
 
-		//if constraintName is not set then a name is 
+		//if constraintName is not set then a name is
 		//created when it is added to
 		//the ConstraintCollection
 		//it can not be set to null, empty or duplicate
@@ -76,7 +76,7 @@ namespace System.Data {
 
 		DataSet dataSet;
 
-		protected Constraint () 
+		protected Constraint ()
 		{
 			dataSet = null;
 			_properties = new PropertyCollection();
@@ -93,7 +93,7 @@ namespace System.Data {
 #endif
 		[DefaultValue ("")]
 		public virtual string ConstraintName {
-			get{ return _constraintName == null ? "" : _constraintName; } 
+			get{ return _constraintName == null ? "" : _constraintName; }
 			set{
 				//This should only throw an exception when it
 				//is a member of a ConstraintCollection which
@@ -127,7 +127,7 @@ namespace System.Data {
 			get{ return _constraintCollection; }
 			set{ _constraintCollection = value; }
 		}
-		
+
 		private void _onConstraintNameChange (string newName)
 		{
 			DelegateConstraintNameChange eh = events [beforeConstraintNameChange] as DelegateConstraintNameChange;
@@ -138,9 +138,9 @@ namespace System.Data {
 		//call once before adding a constraint to a collection
 		//will throw an exception to prevent the add if a rule is broken
 		internal abstract void AddToConstraintCollectionSetup (ConstraintCollection collection);
-					
+
 		internal abstract bool IsConstraintViolated ();
-		
+
 		internal static void ThrowConstraintException(){
 			throw new ConstraintException("Failed to enable constraints. One or more rows contain values violating non-null, unique, or foreign-key constraints.");
 		}
@@ -155,7 +155,7 @@ namespace System.Data {
 		{
 		}
 
-		internal void AssertConstraint() 
+		internal void AssertConstraint()
 		{
 			// The order is important.. IsConstraintViolated fills the RowErrors if it detects
 			// a violation
@@ -210,9 +210,9 @@ namespace System.Data {
 		internal abstract bool CanRemoveFromCollection(ConstraintCollection col, bool shouldThrow);
 
 		/// <summary>
-		/// Gets the ConstraintName, if there is one, as a string. 
+		/// Gets the ConstraintName, if there is one, as a string.
 		/// </summary>
-		public override string ToString () 
+		public override string ToString ()
 		{
 			return _constraintName == null ? "" : _constraintName;
 		}
