@@ -1,3 +1,8 @@
+2008-08-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile (PROGRAM): Always install gacutil into the appropriate profile
+	dir.
+
 2008-04-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* gacutil.exe.sources: Use the StrongNameManager.cs file from sn
