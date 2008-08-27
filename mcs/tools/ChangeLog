@@ -1,3 +1,10 @@
+2008-08-27  Daniel Morgan <monodanmorg@yahoo.com>
+
+	* Makefile: move sqlsharp from SUBDIRS to net_2_0_SUBDIRS
+        so sqlsharp can build using gmcs and the NET_2_0 profile.
+
+	See ChangeLog in sqlsharp.
+
 2008-03-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : add mono-xsd to net_2_0_SUBDIRS to build xsd2.

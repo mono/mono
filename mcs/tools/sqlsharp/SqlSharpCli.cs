@@ -14,20 +14,19 @@
 // To run with mono:
 // $ mono sqlsharp.exe
 //
-// To run with mint:
-// $ mint sqlsharp.exe
-//
 // To run batch commands and get the output, do something like:
 // $ cat commands_example.txt | mono sqlsharp.exe -s > results.txt
 //
 // Author:
-//    Daniel Morgan <danielmorgan@verizon.net>
+//    Daniel Morgan <monodanmorg@yahoo.com>
 //
-// (C)Copyright 2002-2004 Daniel Morgan
+// (C)Copyright 2002-2004, 2008 Daniel Morgan
 //
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.Common;
 using System.Data.OleDb;
@@ -78,10 +77,14 @@ namespace Mono.Data.SqlSharp {
 		private StreamReader inputFilestream = null;
 		private StreamWriter outputFilestream = null;
 
+		private string factoryName = null; 
+		private DbProviderFactory factory = null;
+
 		private FileFormat outputFileFormat = FileFormat.Html;
 
 		private bool silent = false;
 		private bool showHeader = true;
+
 
 		private Hashtable internalVariables = new Hashtable();
 				
@@ -342,7 +345,7 @@ namespace Mono.Data.SqlSharp {
 				StringBuilder sb = new StringBuilder ();
 
 				for (int z = 0; z < bytes.Length; z++)
-					sb.Append (bytes [z].ToString ("x"));
+					sb.AppendFormat("{0:X2}", bytes [z]);
 
 				bvalue = "0x" + sb.ToString ();
 			}
@@ -681,25 +684,32 @@ namespace Mono.Data.SqlSharp {
 		{
 			DbDataAdapter adapter = null;
 
-			switch(provider) {
-			case "OLEDB":
-				adapter = (DbDataAdapter) new OleDbDataAdapter ();
-				break;
-			case "SQLCLIENT":
-				adapter = (DbDataAdapter) new SqlDataAdapter ();
-				break;
-			case "LOADEXTPROVIDER":
-				adapter = CreateExternalDataAdapter (command, connection);
-				if (adapter == null)
-					return null;
-				break;
-			default:
-				Console.WriteLine("Error: Data Adapter not found in provider.");
-				return null;
+			if (factory != null) {
+		                adapter = factory.CreateDataAdapter();
+            			DbCommand cmd = (DbCommand) command;
+                 		adapter.SelectCommand = cmd;
 			}
-			IDbDataAdapter dbAdapter = (IDbDataAdapter) adapter;
-			dbAdapter.SelectCommand = command;
-
+			else {
+				switch(provider) {
+				case "OLEDB":
+					adapter = (DbDataAdapter) new OleDbDataAdapter ();
+					break;
+				case "SQLCLIENT":
+					adapter = (DbDataAdapter) new SqlDataAdapter ();
+					break;
+				case "LOADEXTPROVIDER":
+					adapter = CreateExternalDataAdapter (command, connection);
+					if (adapter == null)
+						return null;
+					break;
+				default:
+					Console.WriteLine("Error: Data Adapter not found in provider.");
+					return null;
+				}
+			
+				IDbDataAdapter dbAdapter = (IDbDataAdapter) adapter;
+				dbAdapter.SelectCommand = command;
+			}
 			return adapter;
 		}
 
@@ -742,16 +752,20 @@ namespace Mono.Data.SqlSharp {
 		{
 			Console.WriteLine ("");
 			Console.WriteLine (@"Type:  \Q to quit");
-			Console.WriteLine (@"       \ConnectionString to set the ConnectionString");
-			Console.WriteLine (@"       \Provider to set the Provider:");
-			Console.WriteLine (@"                 {OleDb,SqlClient,MySql,Odbc,MSODBC,");
-			Console.WriteLine (@"                  Oracle,PostgreSql,Sqlite,Sybase,Tds}");
+			Console.WriteLine (@"       \ListP or \ListProviders to get factory providers");
+			Console.WriteLine (@"       \CS or \ConnectionString to set the ConnectionString");
+			Console.WriteLine (@"       \BCS to Build Connection String");
+			Console.WriteLine (@"       \P or \Provider to set the Provider:");
+			Console.WriteLine (@"                 {OleDb,SqlClient,MySql,Odbc,");
+			Console.WriteLine (@"                  Oracle,PostgreSql,Sqlite,Sybase,Firebird}");
 			Console.WriteLine (@"       \Open to open the connection");
 			Console.WriteLine (@"       \Close to close the connection");
 			Console.WriteLine (@"       \e to execute SQL query (SELECT)");
 			Console.WriteLine (@"       \exenonquery to execute an SQL non query (not a SELECT).");
 			Console.WriteLine (@"       \exescalar to execute SQL to get a single row and single column.");
 			Console.WriteLine (@"       \exexml FILENAME to execute SQL and save output to XML file.");
+			if (!WaitForEnterKey ())
+				return;
 			Console.WriteLine (@"       \f FILENAME to read a batch of SQL# commands from file.");
 			Console.WriteLine (@"       \o FILENAME to write result of commands executed to file.");
 			Console.WriteLine (@"       \load FILENAME to load from file SQL commands into SQL buffer.");
@@ -761,7 +775,8 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine (@"            Provider and ConnectionString.");
 			Console.WriteLine (@"       \s {TRUE, FALSE} to silent messages.");
 			Console.WriteLine (@"       \r to reset or clear the query buffer.");
-			WaitForEnterKey ();
+			if (!WaitForEnterKey ())
+				return;
 			Console.WriteLine (@"       \set NAME VALUE to set an internal variable.");
 			Console.WriteLine (@"       \unset NAME to remove an internal variable.");
 			Console.WriteLine (@"       \variable NAME to display the value of an internal variable.");
@@ -787,8 +802,11 @@ namespace Mono.Data.SqlSharp {
 		public void ShowDefaults() 
 		{
 			Console.WriteLine ();
-			if (provider.Equals (""))
+			if (provider.Equals (String.Empty) && factory == null)
 				Console.WriteLine ("Provider is not set.");
+			else if(factory != null) {
+				Console.WriteLine ("The default Provider is " + factoryName);
+			}
 			else {
 				Console.WriteLine ("The default Provider is " + provider);
 				if (provider.Equals ("LOADEXTPROVIDER")) {
@@ -810,24 +828,33 @@ namespace Mono.Data.SqlSharp {
 		public void OpenDataSource () 
 		{
 			string msg = "";
+
+			if (factoryName.Equals(String.Empty) && provider.Equals(String.Empty)) {
+				Console.Error.WriteLine("Provider not set.");
+				return;
+			}
 			
 			OutputLine ("Opening connection...");
 
 			try {
-				switch (provider) {
-				case "OLEDB":
-					conn = new OleDbConnection ();
-					break;
-				case "SQLCLIENT":
-					conn = new SqlConnection ();
-					break;
-				case "LOADEXTPROVIDER":
-					if (LoadExternalProvider () == false)
+				if (!factoryName.Equals(String.Empty))
+					conn = factory.CreateConnection();
+				else {
+					switch (provider) {
+					case "OLEDB":
+						conn = new OleDbConnection ();
+						break;
+					case "SQLCLIENT":
+						conn = new SqlConnection ();
+						break;
+					case "LOADEXTPROVIDER":
+						if (LoadExternalProvider () == false)
+							return;
+						break;
+					default:
+						Console.WriteLine ("Error: Bad argument or provider not supported.");
 						return;
-					break;
-				default:
-					Console.WriteLine ("Error: Bad argument or provider not supported.");
-					return;
+					}
 				}
 			} catch (Exception e) {
 				msg = "Error: Unable to create Connection object because: " + e.Message;
@@ -867,6 +894,80 @@ namespace Mono.Data.SqlSharp {
 
 		// ChangeProvider - change the provider string variable
 		public void ChangeProvider (string[] parms) {
+
+			factory = null;
+			factoryName = null;
+
+			string[] extp;
+
+			if (parms.Length == 2) {
+				string parm = parms [1].ToUpper ();
+				switch (parm) {
+				case "ORACLE":
+				case "ORACLECLIENT":
+				case "SYSTEM.DATA.ORACLECLIENT":
+					factoryName = "SYSTEM.DATA.ORACLECLIENT";
+					break;
+				case "SYBASE":
+				case "MONO.DATA.SYBASECLIENT":
+					factoryName = "MONO.DATA.SYBASECLIENT";
+					break;
+				case "BYTEFX":
+				case "MYSQL":
+				case "MYSQL.DATA.MYSQLCLIENT":
+					factoryName = "MYSQL.DATA.MYSQLCLIENT";
+					break;
+				case "SQLITE":
+				case "MONO.DATA.SQLITE":
+					factoryName = "MONO.DATA.SQLITE";
+					break;
+				case "ODBC": 
+				case "SYSTEM.DATA.ODBC":
+					factoryName = "SYSTEM.DATA.ODBC";
+					break;
+				case "OLEDB":
+				case "SYSTEM.DATA.OLEDB":
+					factoryName = "SYSTEM.DATA.OLEDB";
+					break;
+				case "FIREBIRD":
+				case "FIREBIRDSQL.DATA.FIREBIRD":
+					factoryName = "FIREBIRDSQL.DATA.FIREBIRD";
+					break;
+				case "POSTGRESQL":
+				case "NPGSQL":
+				case "NPGSQL.DATA":
+					factoryName = "NPGSQL.DATA";
+					break;
+				case "SQLCLIENT":
+				case "SYSTEM.DATA.SQLCLIENT":
+					factoryName = "SYSTEM.DATA.SQLCLIENT";
+					break;
+				default:
+					Console.WriteLine ("Error: " + "Bad argument or Provider not supported.");
+					return;
+				}
+				try {
+					factory = DbProviderFactories.GetFactory(factoryName);
+				} catch(ConfigurationException e) {
+					Console.Error.WriteLine("*** Error: Unable to load provider factory: " + 
+						factoryName + "\n" + 
+						"*** Check your machine.config to see if the provider is " +
+						"listed under section system.data and DbProviderFactories " +
+						"and that your provider assembly is in the GAC.  Your provider " +
+						"may not support ADO.NET 2.0 factory and other features yet.");
+					factoryName = null;
+					ChangeProviderBackwardsCompat (parms);
+					return;
+				}
+				OutputLine ("The default Provider is " + factoryName);
+			}
+			else
+				Console.WriteLine ("Error: provider only has one parameter.");
+		}
+
+		public void ChangeProviderBackwardsCompat (string[] parms) 
+		{
+			Console.Error.WriteLine ("*** Setting provider using Backwards Compatibility mode.");
 
 			string[] extp;
 
@@ -992,10 +1093,10 @@ namespace Mono.Data.SqlSharp {
 		}
 
 		// ChangeConnectionString - change the connection string variable
-		public void ChangeConnectionString (string entry) 
+		public void ChangeConnectionString (string[] parms, string entry) 
 		{		
-			if (entry.Length > 18)
-				connectionString = entry.Substring (18, entry.Length - 18);
+			if (parms.Length >= 2) 
+				connectionString = entry.Substring (parms[0].Length, entry.Length - (parms[0].Length + 1));
 			else
 				connectionString = "";
 		}
@@ -1267,11 +1368,17 @@ namespace Mono.Data.SqlSharp {
 			string userCmd = parms[0].ToUpper ();
 
 			switch (userCmd) {
+			case "\\LISTPROVIDERS":
+			case "\\LISTP":
+				ListProviders ();
+				break;
 			case "\\PROVIDER":
+			case "\\P":
 				ChangeProvider (parms);
 				break;
 			case "\\CONNECTIONSTRING":
-				ChangeConnectionString (entry);
+			case "\\CS":
+				ChangeConnectionString (parms, entry);
 				break;
 			case "\\LOADEXTPROVIDER":
 				SetupExternalProvider (parms);
@@ -1373,6 +1480,9 @@ namespace Mono.Data.SqlSharp {
 				// show the defaults for provider and connection strings
 				ShowDefaults ();
 				break;
+			case "\\BCS":
+				BuildConnectionString ();
+				break;
 			case "\\Q": 
 			case "\\QUIT":
 				// Quit
@@ -1415,6 +1525,22 @@ namespace Mono.Data.SqlSharp {
 			}
 		}
 
+		public void ListProviders() 
+		{
+			DataTable table = DbProviderFactories.GetFactoryClasses();
+			Console.WriteLine("List of Providers:");
+			for (int r = 0; r < table.Rows.Count; r++)
+			{     	        
+				Console.WriteLine("---------------------");
+				Console.WriteLine("   Name: " + table.Rows[r][0].ToString());
+				Console.WriteLine("      Description: " + table.Rows[r][1].ToString());
+				Console.WriteLine("      InvariantName: " + table.Rows[r][2].ToString());
+				Console.WriteLine("      AssemblyQualifiedName: " + table.Rows[r][3].ToString());
+			}
+			Console.WriteLine("---------------------");
+			Console.WriteLine("Providers found: " + table.Rows.Count.ToString());
+		}
+
 		public void DealWithArgs(string[] args) 
 		{
 			for (int a = 0; a < args.Length; a++) {
@@ -1447,8 +1573,33 @@ namespace Mono.Data.SqlSharp {
 				}
 			}
 		}
-		
-		public string ReadSqlSharpCommand() 
+
+		public string GetPasswordFromConsole ()
+		{
+			StringBuilder pb = new StringBuilder ();
+			Console.Write ("\nPassword: ");
+			ConsoleKeyInfo cki = Console.ReadKey (true);
+
+			while (cki.Key != ConsoleKey.Enter) {
+				if (cki.Key == ConsoleKey.Backspace) {
+					if (pb.Length > 0) {
+						pb.Remove (pb.Length - 1, 1);
+						Console.Write ("\b");
+						Console.Write (" ");
+						Console.Write ("\b");
+					}
+				} else {
+					pb.Append (cki.KeyChar);
+					Console.Write ("*");
+				}
+				cki = Console.ReadKey (true);
+			}
+
+			Console.WriteLine ();
+			return pb.ToString ();
+		}
+
+		public string ReadSqlSharpCommand()
 		{
 			string entry = "";
 
@@ -1472,6 +1623,58 @@ namespace Mono.Data.SqlSharp {
 				entry = Console.ReadLine ();
 			}
 			return entry;
+		}
+
+		public string ReadConnectionOption(string option, string defaultVal)
+		{
+			Console.Error.Write ("\nConnectionString Option: {0} [{1}] SQL# ", option, defaultVal);
+			return Console.ReadLine ();
+		}
+
+		public void BuildConnectionString ()
+		{
+			if (factory == null) {
+				Console.WriteLine("Provider is not set.");
+				return;
+			}
+
+			DbConnectionStringBuilder sb = factory.CreateConnectionStringBuilder ();
+			
+			// FIXME: find out why the foreach below throws an System.InvalidOperationException
+			sb.ConnectionString = "SERVER=Server1;User ID=User1;Password=Password1";
+			string[] keys = new string[sb.Keys.Count];
+			((ICollection)sb.Keys).CopyTo(keys, 0);
+			for (int i = 0; i < keys.Length; i++) {
+				string key = keys[i];
+			//foreach (string key in sb.Keys) 
+				//Console.WriteLine("key: " + key);
+				if (key.ToUpper().Equals("PASSWORD") || key.ToUpper().Equals("PWD")) {
+					string pwd = GetPasswordFromConsole ();
+					try {
+						sb[key] = pwd;
+					} catch(Exception e) {
+						Console.Error.WriteLine("Error: unable to set key.  Reason: " + e.Message);
+						return;
+					}
+				} else {
+					string defaultVal = sb[key].ToString ();
+					String val = "";
+					val = ReadConnectionOption (key, defaultVal);
+					if (val.ToUpper ().Equals ("\\STOP"))
+						return;
+					if (val != "") {
+						try {
+							sb[key] = val;
+						} catch(Exception e) {
+							Console.Error.WriteLine("Error: unable to set key.  Reason: " + e.Message);
+							return;
+						}
+					}
+				}
+			}
+			
+			connectionString = sb.ConnectionString;
+			Console.WriteLine("ConnectionString is set.");
 		}
 		
 		public void Run (string[] args) 
@@ -1584,8 +1787,6 @@ namespace Mono.Data.SqlSharp {
 		{	
 			int numParms = 0;
 
-			IDataParameterCollection parms = cmd.Parameters;
-
 			char[] chars = sql.ToCharArray ();
 			bool bStringConstFound = false;
 
@@ -1673,8 +1874,9 @@ namespace Mono.Data.SqlSharp {
 				cmd.Parameters.Add(prm);
 			}
 		}
-	}
 
+	}
+	
 	public class SqlSharpDriver 
 	{
 		public static void Main (string[] args) 

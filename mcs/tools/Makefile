@@ -1,6 +1,6 @@
 thisdir = tools
 SUBDIRS = \
-	al cilc corcompare culevel ictool mono-xsd security wsdl genxs sqlsharp		\
+	al cilc corcompare culevel ictool mono-xsd security wsdl genxs \
 	disco soapsuds browsercaps-updater monop gacutil linker	tuner \
 	resgen macpack mkbundle dtd2rng dtd2xsd mjs prj2make mono-service \
 	mono-shlib-cop compiler-tester mono-xmltool installvst  installutil
@@ -8,7 +8,7 @@ SUBDIRS = \
 net_1_1_bootstrap_SUBDIRS = gacutil security resgen culevel
 net_2_0_bootstrap_SUBDIRS = resgen
 
-net_2_0_SUBDIRS = al corcompare mono-xsd wsdl compiler-tester monop xbuild resgen mono-service mkbundle sgen security mconfig installutil nunitreport
+net_2_0_SUBDIRS = al corcompare mono-xsd wsdl compiler-tester monop xbuild resgen mono-service mkbundle sgen security mconfig installutil nunitreport sqlsharp
 net_2_1_raw_SUBDIRS = compiler-tester
 net_2_1_SUBDIRS = compiler-tester tuner
 
