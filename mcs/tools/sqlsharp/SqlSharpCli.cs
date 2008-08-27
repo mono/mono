@@ -1639,15 +1639,11 @@ namespace Mono.Data.SqlSharp {
 			}
 
 			DbConnectionStringBuilder sb = factory.CreateConnectionStringBuilder ();
-			
-			// FIXME: find out why the foreach below throws an System.InvalidOperationException
+			// FIXME: fix strong types SqlConnectionStringBuilder, Oracle..., Odbc..., etc.
+			// to have Keys and Values overridden with fixed keys, if key is missing
+			// when getting Values, pull from the default.  
 			sb.ConnectionString = "SERVER=Server1;User ID=User1;Password=Password1";
-			string[] keys = new string[sb.Keys.Count];
-			((ICollection)sb.Keys).CopyTo(keys, 0);
-			for (int i = 0; i < keys.Length; i++) {
-				string key = keys[i];
-			//foreach (string key in sb.Keys) 
-				//Console.WriteLine("key: " + key);
+			foreach (string key in sb.Keys) {
 				if (key.ToUpper().Equals("PASSWORD") || key.ToUpper().Equals("PWD")) {
 					string pwd = GetPasswordFromConsole ();
 					try {

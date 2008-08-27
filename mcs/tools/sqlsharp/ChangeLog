@@ -1,4 +1,11 @@
-2008-08-27  Daniel morgan <monodanmorg@yahoo.com>
+2008-08-27  Daniel Morgan <monodanmorg@yahoo.com>
+
+	* SqlSharpcli.cs: use foreach to get keys
+	in DbConnectionStringBuilder
+
+	* ChangeLog: fix previous entry of mine
+
+2008-08-27  Daniel Morgan <monodanmorg@yahoo.com>
 
 	* SqlSharpcli.cs: start using ADO.NET 2.0 features 
 	such as provider factories and connection string builders
@@ -9,7 +16,7 @@
 		\cs short for \connectionstring
 		\p short for \provider
 		\listp or \listproviders to list DbProviderFactories
-		    listed in the GAC.
+		    listed in the machine.config file.
 
 	Building with gmcs now which means the NET_2_0 profile.	
 
