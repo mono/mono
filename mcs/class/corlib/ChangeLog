@@ -1,3 +1,7 @@
+2008-08-27  Marek Safar  <marek.safar@gmail.com>
+
+	* Makefile: Removed disabled global 649 warning.
+
 2008-08-22  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* corlib_test.dll.sources: Add unit tests for ObsoleteAttribute
