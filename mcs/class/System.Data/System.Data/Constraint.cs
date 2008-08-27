@@ -110,9 +110,6 @@ namespace System.Data {
 #endif
 		public PropertyCollection ExtendedProperties {
 			get { return _properties; }
-#if NET_2_0
-			internal set { _properties = value; }
-#endif
 		}
 
 #if !NET_2_0
@@ -185,6 +182,11 @@ namespace System.Data {
 		protected internal void SetDataSet (DataSet dataSet)
 		{
 			this.dataSet = dataSet;
+		}
+
+		internal void SetExtendedProperties (PropertyCollection properties)
+		{
+			_properties = properties;
 		}
 
 		internal Index Index {

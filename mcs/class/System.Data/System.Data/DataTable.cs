@@ -198,7 +198,8 @@ namespace System.Data {
 					fKeyConstraint.AcceptRejectRule = (AcceptRejectRule) ruleArray.GetValue (0);
 					fKeyConstraint.UpdateRule = (Rule) ruleArray.GetValue (1);
 					fKeyConstraint.DeleteRule = (Rule) ruleArray.GetValue (2);
-					fKeyConstraint.ExtendedProperties = (PropertyCollection) tmpArrayList [5];
+					// FIXME: refactor this deserialization code out to ForeighKeyConstraint
+					fKeyConstraint.SetExtendedProperties ((PropertyCollection) tmpArrayList [5]);
 					Constraints.Add (fKeyConstraint);
 					fKeyNavigate = true;
 				} else if (fKeyNavigate == false &&
@@ -224,7 +225,8 @@ namespace System.Data {
 					    Constraints.IndexOf ((string) tmpArrayList[1]) != -1) {
 						continue;
 					}
-					unique.ExtendedProperties = (PropertyCollection) tmpArrayList [4];
+					// FIXME: refactor this deserialization code out to UniqueConstraint
+					unique.SetExtendedProperties ((PropertyCollection) tmpArrayList [4]);
 					Constraints.Add (unique);
 				} else {
 					fKeyNavigate = false;

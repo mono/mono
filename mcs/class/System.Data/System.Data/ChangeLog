@@ -1,3 +1,10 @@
+2008-08-28  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Constraint.cs (SetExtendedProperties): New internal method.
+	Move here from ...
+	(ExtendedProperties.set): ... here.  Kill a #ifdef.
+	* DataTable.cs (DeserializeConstraints): Update to changes.
+
 2008-08-27  Raja R Harinath  <harinath@hurrynot.org>
 
 	* ConstraintCollection.cs (Item) <string variant>: Don't incur
