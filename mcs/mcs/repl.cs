@@ -553,7 +553,6 @@ namespace Mono.CSharp {
 #endif
 
 		static public string help {
-		{
 			get {
 				return  "Static methods:\n"+
 					"  LoadPackage (pkg); - Loads the given Package (like -pkg:FILE)\n" +
