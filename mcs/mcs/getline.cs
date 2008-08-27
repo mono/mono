@@ -296,7 +296,7 @@ namespace Mono.Terminal {
 		{
 			if (cursor == 0)
 				return;
-			
+
 			UpdateCursor (cursor-1);
 		}
 
@@ -633,7 +633,7 @@ namespace Mono.Terminal {
 						handler.KeyHandler ();
 						last_handler = handler.KeyHandler;
 						break;
-					} else if (t.KeyChar == cki.KeyChar){
+					} else if (t.KeyChar == cki.KeyChar && t.Key == ConsoleKey.Zoom){
 						handled = true;
 						handler.KeyHandler ();
 						last_handler = handler.KeyHandler;
