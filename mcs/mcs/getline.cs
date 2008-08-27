@@ -132,6 +132,7 @@ namespace Mono.Terminal {
 				new Handler (ConsoleKey.DownArrow,  CmdHistoryNext),
 				new Handler (ConsoleKey.Enter,      CmdDone),
 				new Handler (ConsoleKey.Backspace,  CmdBackspace),
+				new Handler (ConsoleKey.Delete,     CmdDeleteChar),
 				
 				// Emacs keys
 				Handler.Control ('A', CmdHome),
