@@ -1,3 +1,7 @@
+2008-08-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile (net_2_0_SUBDIRS): Add gacutil.
+
 2008-08-27  Daniel Morgan <monodanmorg@yahoo.com>
 
 	* Makefile: move sqlsharp from SUBDIRS to net_2_0_SUBDIRS

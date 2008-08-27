@@ -10,7 +10,8 @@ net_2_0_bootstrap_SUBDIRS = resgen
 
 net_2_0_SUBDIRS = \
 	al corcompare mono-xsd wsdl compiler-tester monop xbuild resgen \
-	mono-service mkbundle sgen security mconfig installutil nunitreport sqlsharp
+	mono-service mkbundle sgen security mconfig installutil nunitreport sqlsharp \
+	gacutil
 net_2_1_raw_SUBDIRS = compiler-tester
 net_2_1_SUBDIRS = compiler-tester tuner
 
