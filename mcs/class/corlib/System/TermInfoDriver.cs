@@ -1271,6 +1271,11 @@ namespace System {
 			keymap [TermInfoStrings.KeyF22] = new ConsoleKeyInfo ('\0', ConsoleKey.F22, false, false, false);
 			keymap [TermInfoStrings.KeyF23] = new ConsoleKeyInfo ('\0', ConsoleKey.F23, false, false, false);
 			keymap [TermInfoStrings.KeyF24] = new ConsoleKeyInfo ('\0', ConsoleKey.F24, false, false, false);
+
+
+			// These were previously missing:
+			keymap [TermInfoStrings.KeyDc] = new ConsoleKeyInfo ('\0', ConsoleKey.Delete, false, false, false);
+			keymap [TermInfoStrings.KeyIc] = new ConsoleKeyInfo ('\0', ConsoleKey.Insert, false, false, false);
 		}
 
 		void InitKeys ()
@@ -1338,6 +1343,11 @@ namespace System {
 			AddStringMapping (TermInfoStrings.KeyF22);
 			AddStringMapping (TermInfoStrings.KeyF23);
 			AddStringMapping (TermInfoStrings.KeyF24);
+
+			// These were missing
+			AddStringMapping (TermInfoStrings.KeyDc);
+			AddStringMapping (TermInfoStrings.KeyIc);
+			
 			rootmap.Sort ();
 			initKeys = true;
 		}
