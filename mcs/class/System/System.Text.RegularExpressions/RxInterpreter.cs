@@ -751,6 +751,18 @@ namespace System.Text.RegularExpressions {
 						return false;
 					pc++;
 					continue;
+				case RxOp.CategoryAnySingleline:
+					if (strpos < string_end) {
+						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc++;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
 				case RxOp.CategoryWord:
 					if (strpos < string_end) {
 						char c = str [strpos];

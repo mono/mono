@@ -162,6 +162,9 @@ namespace System.Text.RegularExpressions {
 			case Category.EcmaAny:
 				Emit ((RxOp)((int)RxOp.CategoryAny + offset));
 				break;
+			case Category.AnySingleline:
+				Emit ((RxOp)((int)RxOp.CategoryAnySingleline + offset));
+				break;
 			case Category.Word:
 				Emit ((RxOp)((int)RxOp.CategoryWord + offset));
 				break;

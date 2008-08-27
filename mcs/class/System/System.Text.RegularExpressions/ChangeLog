@@ -1,3 +1,8 @@
+2008-08-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* RxInterpreter.cs RxCompiler.cs RxOp.cs: Add support for 
+	Category.AnySingleline.
+
 2008-08-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* RxCompiler.cs: Use Array.Copy since Buffer.BlockCopy operates on bytes.

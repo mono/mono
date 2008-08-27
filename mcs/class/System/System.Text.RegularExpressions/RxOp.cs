@@ -112,6 +112,7 @@ namespace System.Text.RegularExpressions {
 		NoCategoryAny,
 		CategoryAnyReverse,
 		NoCategoryAnyReverse,
+		CategoryAnySingleline,
 		CategoryDigit,
 		NoCategoryDigit,
 		CategoryDigitReverse,
