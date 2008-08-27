@@ -1,5 +1,10 @@
 2008-08-27  Mario Carrion  <mcarrion@novell.com>
 
+	* ComboBox.cs: Control enabled to support accessibility.
+	[Fixes bug #416663]
+
+2008-08-27  Mario Carrion  <mcarrion@novell.com>
+
 	* ListBox.cs: Control enabled to support accessibility.
 	[Fixes bug #416640]
 
