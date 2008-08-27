@@ -54,6 +54,7 @@ namespace System.Threading {
 	public sealed class Thread : _Thread {
 #endif
 
+#pragma warning disable 169, 414
 		#region Sync with metadata/object-internals.h
 		int lock_thread_id;
 		// stores a thread handle
@@ -112,6 +113,7 @@ namespace System.Threading {
 		private IntPtr unused5;
 		private IntPtr unused6;
 		#endregion
+#pragma warning restore 169, 414
 
 		// the name of local_slots is important as it's used by the runtime.
 		[ThreadStatic] 
@@ -119,10 +121,12 @@ namespace System.Threading {
 
 		// can be both a ThreadSart and a ParameterizedThreadStart
 		private MulticastDelegate threadstart;
-		private string thread_name=null;
-		
+		//private string thread_name=null;
+
+#if NET_2_0		
 		private static int _managed_id_counter;
 		private int managed_id;
+#endif		
 		
 		private IPrincipal _principal;
 		internal NumberFormatter _numberFormatter;
@@ -317,10 +321,6 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void Thread_init ();
 
-		private static int GetNewManagedId() {
-			return Interlocked.Increment(ref _managed_id_counter);
-		}
-
 		public Thread(ThreadStart start) {
 			if(start==null) {
 				throw new ArgumentNullException("Null ThreadStart");
@@ -362,8 +362,8 @@ namespace System.Threading {
 			}
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private static extern int current_lcid ();
+		//[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		//private static extern int current_lcid ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern CultureInfo GetCachedCurrentCulture ();
@@ -887,6 +887,10 @@ namespace System.Threading {
 #endif
 
 #if NET_2_0
+		private static int GetNewManagedId() {
+			return Interlocked.Increment(ref _managed_id_counter);
+		}
+
 		public Thread (ThreadStart start, int maxStackSize)
 		{
 			if (start == null)

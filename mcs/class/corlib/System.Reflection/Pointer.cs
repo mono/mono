@@ -46,9 +46,10 @@ namespace System.Reflection {
 #endif
 	[CLSCompliant(false)]
 	public unsafe sealed class Pointer : ISerializable {
-
 		void *data;
+#pragma warning disable 169, 414
 		Type type;
+#pragma warning restore 169, 414
 
 		private Pointer () {
 		}

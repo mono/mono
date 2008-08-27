@@ -44,13 +44,16 @@ namespace System.Globalization
 	public class CultureInfo : ICloneable, IFormatProvider
 	{
 		static volatile CultureInfo invariant_culture_info;
+#if NET_2_0		
 		static object shared_table_lock = new object ();
+#endif		
 		internal static int BootstrapCultureID;
 
 		const int NumOptionalCalendars = 5;
 		const int GregorianTypeMask = 0x00FFFFFF;
 		const int CalendarTypeBits = 24;
 
+#pragma warning disable 169
 		bool m_isReadOnly;
 		int  cultureID;
 		[NonSerialized]
@@ -93,9 +96,10 @@ namespace System.Globalization
 		private Calendar [] optional_calendars;
 		[NonSerialized]
 		CultureInfo parent_culture;
-				
+
 		int m_dataItem;		// MS.NET serializes this.
 		Calendar calendar;	// MS.NET serializes this.
+#pragma warning restore 169
 
 		// Deserialized instances will set this to false
 		[NonSerialized]

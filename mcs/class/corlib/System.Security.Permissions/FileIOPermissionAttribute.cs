@@ -52,7 +52,7 @@ namespace System.Security.Permissions {
 		private FileIOPermissionAccess allLocalFiles;
 		private string changeAccessControl;
 		private string viewAccessControl;
-		private string viewAndModify;
+		//private string viewAndModify;
 #endif
 
 		// Constructor

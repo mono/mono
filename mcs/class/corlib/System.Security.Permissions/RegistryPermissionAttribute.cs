@@ -49,7 +49,7 @@ namespace System.Security.Permissions {
 #if NET_2_0
 		private string changeAccessControl;
 		private string viewAccessControl;
-		private string viewAndModify;
+//		private string viewAndModify;
 #endif
 
 		// Constructor

@@ -221,7 +221,6 @@ namespace System.Reflection.Emit {
 		private LabelFixup[] fixups;
 		private int num_fixups;
 		internal Module module;
-		private Stack scopes;
 		private int cur_block;
 		private Stack open_blocks;
 		private TokenGenerator token_gen;

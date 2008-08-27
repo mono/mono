@@ -1929,9 +1929,6 @@ internal class CCEastAsianLunisolarCalendar
 		throw new Exception ("GetMonth");
 	}
 
-	static readonly int [] leap_month_calc = new int [] {
-		0, 2, 0, 2, 2, 4, 5, 6, 7, 8, 9, 10};
-
 	public static bool IsLeapMonth (int gyear, int month)
 	{
 		int goldenNumber = gyear % 19;

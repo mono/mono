@@ -49,7 +49,6 @@ namespace System.IO {
 		private Encoding internalEncoding;
 
 		private Stream internalStream;
-		private bool closed;
 
 		private bool iflush;
 		
@@ -307,7 +306,6 @@ namespace System.IO {
 
 		public override void Close()
 		{
-                        closed = true;
 			Dispose (true);
 		}
 

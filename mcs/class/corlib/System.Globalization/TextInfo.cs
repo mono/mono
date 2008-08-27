@@ -66,9 +66,12 @@ namespace System.Globalization {
 		bool m_isReadOnly;
 		string customCultureName;
 #endif
+#pragma warning disable 169
 		[NonSerialized]
 		int m_nDataItem;
 		bool m_useUserOverride;
+#pragma warning restore 169		
+
 		int m_win32LangID;
 
 		[NonSerialized]

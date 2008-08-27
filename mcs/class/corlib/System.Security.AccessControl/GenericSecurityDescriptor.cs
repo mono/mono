@@ -33,13 +33,13 @@ using System.Security.Principal;
 namespace System.Security.AccessControl {
 	public abstract class GenericSecurityDescriptor
 	{
-		bool isContainer;
-		bool isDS;
-		ControlFlags flags;
-		SecurityIdentifier owner;
-		SecurityIdentifier group;
-		SystemAcl systemAcl;
-		DiscretionaryAcl discretionaryAcl;
+//		bool isContainer;
+//		bool isDS;
+//		ControlFlags flags;
+//		SecurityIdentifier owner;
+//		SecurityIdentifier group;
+//		SystemAcl systemAcl;
+//		DiscretionaryAcl discretionaryAcl;
 		
 		protected GenericSecurityDescriptor ()
 		{

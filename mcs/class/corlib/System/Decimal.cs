@@ -87,11 +87,6 @@ namespace System
 
 		private static readonly Decimal MaxValueDiv10 = MaxValue / 10;
 
-		// maximal decimal value as double
-		private static readonly double dDecMaxValue = 7.922816251426433759354395033e28;
-		// epsilon decimal value as double
-		private static readonly double dDecEpsilon = 0.5e-28;  // == 0.5 * 1 / 10^28
-
 		// some constants
 		private const int DECIMAL_DIVIDE_BY_ZERO = 5;
 		private const uint MAX_SCALE = 28;
@@ -146,7 +141,6 @@ namespace System
 		public Decimal (uint value) 
 		{
 			lo = value;
-			flags = hi = mid = 0;
 		}
 
 		public Decimal (long value) 
@@ -1371,8 +1365,8 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern int decimal2Int64 (ref Decimal val, out long result);
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern int double2decimal (out Decimal erg, double val, int digits);
+//		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+//		private static extern int double2decimal (out Decimal erg, double val, int digits);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern int decimalIncr (ref Decimal d1, ref Decimal d2);
@@ -1393,8 +1387,8 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void decimalFloorAndTrunc (ref Decimal val, int floorFlag);
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern void decimalRound (ref Decimal val, int decimals);
+//		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+//		private static extern void decimalRound (ref Decimal val, int decimals);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern int decimalMult (ref Decimal pd1, ref Decimal pd2);

@@ -60,8 +60,8 @@ namespace System.Runtime.Remoting
 		
 		static string applicationID = null;
 		static string applicationName = null;
-		static string configFile = "";
-		static SmallXmlParser parser = null; 
+//		static string configFile = "";
+//		static SmallXmlParser parser = null; 
 		static string processGuid = null;
 		static bool defaultConfigRead = false;
 		static bool defaultDelayedConfigRead = false;

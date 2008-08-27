@@ -45,7 +45,7 @@ namespace System.Security.Permissions {
 
 		private const int version = 1;
 
-		EnvironmentPermissionAccess flags;
+//		EnvironmentPermissionAccess flags;
 		PermissionState _state;
 		ArrayList readList;
 		ArrayList writeList;

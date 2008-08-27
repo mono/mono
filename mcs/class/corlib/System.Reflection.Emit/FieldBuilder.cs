@@ -45,6 +45,8 @@ namespace System.Reflection.Emit {
 #endif
 	[ClassInterface (ClassInterfaceType.None)]
 	public sealed class FieldBuilder : FieldInfo, _FieldBuilder {
+	
+#pragma warning disable 169, 414
 		private FieldAttributes attrs;
 		private Type type;
 		private String name;
@@ -58,6 +60,7 @@ namespace System.Reflection.Emit {
 		private RuntimeFieldHandle handle;
 		private Type[] modReq;
 		private Type[] modOpt;
+#pragma warning restore 169, 414
 
 		internal FieldBuilder (TypeBuilder tb, string fieldName, Type type, FieldAttributes attributes, Type[] modReq, Type[] modOpt)
 		{

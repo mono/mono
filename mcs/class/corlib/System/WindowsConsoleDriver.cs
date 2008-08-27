@@ -35,6 +35,7 @@ namespace System {
 		public bool Visible;
 	}
 
+#pragma warning disable 169
 	struct InputRecord {
 		public short EventType;
 		// This is KEY_EVENT_RECORD
@@ -48,6 +49,7 @@ namespace System {
 		bool pad2;
 		//
 	}
+#pragma warning restore 169
 
 	struct CharInfo {
 		public char Character;
@@ -98,7 +100,6 @@ namespace System {
 		IntPtr inputHandle;
 		IntPtr outputHandle;
 		short defaultAttribute;
-		bool inited;
 
 		public WindowsConsoleDriver ()
 		{

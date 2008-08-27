@@ -57,6 +57,7 @@ namespace System.Reflection {
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 	public sealed class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback, _AssemblyName {
 
+#pragma warning disable 169
 		#region Synch with object-internals.h
 		string name;
 		string codebase;
@@ -75,6 +76,7 @@ namespace System.Reflection {
 		int processor_architecture;
 #endif
 		#endregion
+#pragma warning restore 169		
 		
 		public AssemblyName ()
 		{
@@ -262,6 +264,7 @@ namespace System.Reflection {
 			}
 		}
 
+#if NET_2_0
 		private bool IsPublicKeyValid {
 			get {
 				// check for ECMA key
@@ -299,6 +302,7 @@ namespace System.Reflection {
 				return false;
 			}
 		}
+#endif
 
 		private byte [] InternalGetPublicKeyToken ()
 		{

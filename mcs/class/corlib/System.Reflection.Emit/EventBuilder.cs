@@ -45,6 +45,7 @@ namespace System.Reflection.Emit {
 #endif
 	[ClassInterface (ClassInterfaceType.None)]
 	public sealed class EventBuilder : _EventBuilder {
+#pragma warning disable 169, 414
 		string name;
 		Type type;
 		TypeBuilder typeb;
@@ -55,6 +56,7 @@ namespace System.Reflection.Emit {
 		MethodBuilder[] other_methods;
 		EventAttributes attrs;
 		int table_idx;
+#pragma warning restore 169, 414
 
 		internal EventBuilder (TypeBuilder tb, string eventName, EventAttributes eventAttrs, Type eventType) {
 			name = eventName;

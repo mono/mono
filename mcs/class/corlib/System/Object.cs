@@ -141,6 +141,7 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern IntPtr obj_address ();
  
+#pragma warning disable 169
 		void FieldGetter (string typeName, string fieldName, ref object val)
 		{
 			/* never called */
@@ -150,5 +151,6 @@ namespace System {
 		{
 			/* never called */
 		}
+#pragma warning restore 169
 	}
 }

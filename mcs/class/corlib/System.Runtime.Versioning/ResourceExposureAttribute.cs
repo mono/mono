@@ -37,7 +37,6 @@ namespace System.Runtime.Versioning {
 	public sealed class ResourceExposureAttribute: Attribute {
 
 		private ResourceScope exposure;
-		private ResourceScope consumption;
 
 		public ResourceExposureAttribute (ResourceScope exposureLevel)
 		{

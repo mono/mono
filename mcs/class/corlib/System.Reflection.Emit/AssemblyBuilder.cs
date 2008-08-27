@@ -96,6 +96,7 @@ namespace System.Reflection.Emit
 #endif
 	[ClassInterface (ClassInterfaceType.None)]
 	public sealed class AssemblyBuilder : Assembly, _AssemblyBuilder {
+#pragma warning disable 169, 414
 		#region Sync with object-internals.h
 		private UIntPtr dynamic_assembly; /* GC-tracked */
 		private MethodInfo entry_point;
@@ -122,6 +123,8 @@ namespace System.Reflection.Emit
 		bool corlib_internal;
 		Type[] type_forwarders;
 		#endregion
+#pragma warning restore 169, 414
+		
 		internal Type corlib_object_type = typeof (System.Object);
 		internal Type corlib_value_type = typeof (System.ValueType);
 		internal Type corlib_enum_type = typeof (System.Enum);

@@ -2515,8 +2515,10 @@ namespace System.Collections
 		/// Total number of state changes.
 		/// </summary>
 		private int _version;
-		
+
+#if NET_2_0		
 		private static readonly object [] EmptyArray = new object [0]; 
+#endif		
 
 		#endregion
 		

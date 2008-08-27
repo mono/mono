@@ -44,7 +44,9 @@ namespace System.Security.Cryptography {
 #endif
 	public sealed class RC2CryptoServiceProvider : RC2 {
 
+#if NET_2_0
 		private bool _useSalt;
+#endif		
 	
 		public RC2CryptoServiceProvider ()
 		{

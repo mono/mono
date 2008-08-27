@@ -41,6 +41,7 @@ namespace System.Runtime.Remoting.Messaging {
 #endif
 public class AsyncResult : IAsyncResult, IMessageSink {
 
+#pragma warning disable 169, 414
 	object async_state;
 	WaitHandle handle;
 	object async_delegate;
@@ -52,6 +53,7 @@ public class AsyncResult : IAsyncResult, IMessageSink {
 	object async_callback;
 	ExecutionContext current;
 	ExecutionContext original;
+#pragma warning restore 169, 414
 
 	// not part of MonoAsyncResult...
 	MonoMethodMessage call_message;

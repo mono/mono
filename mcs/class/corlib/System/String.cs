@@ -2617,7 +2617,7 @@ namespace System
 
 		// Certain constructors are redirected to CreateString methods with
 		// matching argument list. The this pointer should not be used.
-
+#pragma warning disable 169
 		private unsafe String CreateString (sbyte* value)
 		{
 			if (value == null)
@@ -2786,6 +2786,7 @@ namespace System
 			}
 			return result;
 		}
+#pragma warning restore 169
 
 		/* helpers used by the runtime as well as above or eslewhere in corlib */
 		internal static unsafe void memset (byte *dest, int val, int len)
@@ -3016,26 +3017,26 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern String (char c, int count);
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static string InternalJoin (string separator, string[] value, int sIndex, int count);
+//		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+//		private extern static string InternalJoin (string separator, string[] value, int sIndex, int count);
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern String InternalReplace (String oldValue, string newValue, CompareInfo comp);
+//		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+//		private extern String InternalReplace (String oldValue, string newValue, CompareInfo comp);
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern void InternalCopyTo (int sIndex, char[] dest, int destIndex, int count);
+//		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+//		private extern void InternalCopyTo (int sIndex, char[] dest, int destIndex, int count);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern String[] InternalSplit (char[] separator, int count, int options);
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern String InternalTrim (char[] chars, int typ);
+//		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+//		private extern String InternalTrim (char[] chars, int typ);
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern int InternalLastIndexOfAny (char [] anyOf, int sIndex, int count);
+//		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+//		private extern int InternalLastIndexOfAny (char [] anyOf, int sIndex, int count);
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern String InternalPad (int width, char chr, bool right);
+//		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+//		private extern String InternalPad (int width, char chr, bool right);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static String InternalAllocateStr (int length);

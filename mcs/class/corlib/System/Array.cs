@@ -1383,15 +1383,6 @@ namespace System
 			array [j] = val;
 		}
 
-#if NET_2_0
-		void generic_swapper<T> (int i, int j) {
-			T[] array = this as T[];
-			T val = array [i];
-			array [i] = array [j];
-			array [j] = val;
-		}
-#endif
-
 		static int new_gap (int gap)
 		{
 			gap = (gap * 10) / 13;
@@ -2228,12 +2219,10 @@ namespace System
 		class ArrayReadOnlyList<T> : IList<T>
 		{
 			T [] array;
-			bool is_value_type;
 
 			public ArrayReadOnlyList (T [] array)
 			{
 				this.array = array;
-				is_value_type = typeof (T).IsValueType;
 			}
 
 			public T this [int index] {
@@ -2304,7 +2293,7 @@ namespace System
 				throw ReadOnlyError ();
 			}
 
-			Exception ReadOnlyError ()
+			static Exception ReadOnlyError ()
 			{
 				return new NotSupportedException ("This collection is read-only.");
 			}

@@ -519,11 +519,13 @@ namespace System.IO
 				throw new ArgumentException (Locale.GetText ("Path contains invalid chars"));
 		}
 
+#if !NET_2_0
 		private static IOException CreatePartOfPathNotFoundException (string path)
 		{
 			string msg = Locale.GetText ("Part of the path \"{0}\" could not be found.", path);
 			return new IOException (msg);
 		}
+#endif		
 
 		#endregion
 

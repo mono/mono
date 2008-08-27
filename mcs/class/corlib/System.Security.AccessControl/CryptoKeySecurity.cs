@@ -36,7 +36,7 @@ namespace System.Security.AccessControl
 {
 	public sealed class CryptoKeySecurity : NativeObjectSecurity
 	{
-		CommonSecurityDescriptor securityDescriptor;
+//		CommonSecurityDescriptor securityDescriptor;
 		
 		[MonoTODO]
 		public CryptoKeySecurity ()
@@ -46,7 +46,7 @@ namespace System.Security.AccessControl
 		[MonoTODO]
 		public CryptoKeySecurity (CommonSecurityDescriptor securityDescriptor)
 		{
-			this.securityDescriptor = securityDescriptor;
+//			this.securityDescriptor = securityDescriptor;
 		}
 		
 		public override Type AccessRightType {

@@ -172,7 +172,7 @@ namespace System
 		//
 		// These are called by the JIT
 		//
-		
+#pragma warning disable 169
 		//
 		// JIT implementation of box valuetype System.Nullable`1<T>
 		//
@@ -190,6 +190,7 @@ namespace System
 				return null;
 			return (T) o;
 		}
+#pragma warning restore 169
 	}
 }
 #endif

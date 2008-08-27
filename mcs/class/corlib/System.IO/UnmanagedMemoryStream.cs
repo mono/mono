@@ -42,11 +42,10 @@ namespace System.IO
 	{
 		long length;
 		bool closed;
-		bool canseek = false;
+//		bool canseek;
 		long capacity;
 		FileAccess fileaccess;
 		IntPtr initial_pointer;
-		IntPtr pointer_position;
 		long initial_position;
 		long current_position;
 		
@@ -56,25 +55,19 @@ namespace System.IO
 		protected UnmanagedMemoryStream()
 		{
 			fileaccess = FileAccess.Read;
-			initial_position = 0;
-			canseek = true;
-			closed = false;
-			current_position = initial_position;
+//			canseek = true;
 		}
 		
 		public unsafe UnmanagedMemoryStream (byte *pointer, long length)
+			: this ()
 		{
 			if (pointer == null)
 				throw new ArgumentNullException("pointer");
 			if (length < 0)
 				throw new ArgumentOutOfRangeException("length", "Non-negative number required.");
-			fileaccess = FileAccess.Read;
+
 			this.length = length;
 			capacity = length;
-			initial_position = 0;
-			current_position = initial_position;
-			canseek = true;
-			closed = false;
 			initial_pointer = new IntPtr((void*)pointer);
 		}
 		
@@ -90,15 +83,12 @@ namespace System.IO
 				throw new ArgumentOutOfRangeException("length", "The length cannot be greater than the capacity.");
 			if (!Enum.IsDefined (typeof (FileAccess), access))
 				throw new ArgumentOutOfRangeException ("access", "Enum value was out of legal range.");
+				
 			fileaccess = access;
 			this.length = length;
 			this.capacity = capacity;
-			initial_position = 0;
-			current_position = initial_position;
-			canseek = true;
+//			canseek = true;
 			initial_pointer = new IntPtr ((void*)pointer);
-			closed = false;
-			fileaccess = access;
 		}
 #endregion
 	
@@ -336,7 +326,7 @@ namespace System.IO
 			this.capacity = capacity;
 			initial_position = 0;
 			current_position = initial_position;
-			canseek = true;
+//			canseek = true;
 			initial_pointer = new IntPtr ((void *)pointer);
 			closed = false;
 		}

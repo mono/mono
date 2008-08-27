@@ -342,6 +342,7 @@ namespace System.Runtime.Serialization
 		}
 
 		/* used by the runtime */
+#pragma warning disable 169		
 		private SerializationEntry [] get_entries ()
 		{
 			SerializationEntry [] res = new SerializationEntry [this.MemberCount];
@@ -352,5 +353,6 @@ namespace System.Runtime.Serialization
 			
 			return res;
 		}
+#pragma warning restore 169		
 	}
 }

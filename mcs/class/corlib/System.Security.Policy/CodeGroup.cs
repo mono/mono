@@ -46,7 +46,7 @@ namespace System.Security.Policy {
 		string m_description;
 		string m_name;
 		ArrayList m_children = new ArrayList();
-		PolicyLevel m_level;
+//		PolicyLevel m_level;
 
 #if NET_2_0
 		protected CodeGroup (IMembershipCondition membershipCondition, PolicyStatement policy)
@@ -239,7 +239,7 @@ namespace System.Security.Policy {
 			m_description = e.Attribute("Description");
 
 			// seems like we might need this to Resolve() in subclasses
-			m_level = level;
+			//m_level = level;
 
 			ParseXml (e, level);
 		}

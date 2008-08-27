@@ -402,11 +402,6 @@ Char.IsLetterOrDigit (pair);
 		return posn - byteIndex;
 	}
 
-	private unsafe int Fallback (byte* bytes, int byteCount, char lead, char tail)
-	{
-		throw new NotImplementedException ();
-	}
-
 	// Get the bytes that result from encoding a character buffer.
 	public override int GetBytes (char[] chars, int charIndex, int charCount,
 								 byte[] bytes, int byteIndex)
@@ -1161,14 +1156,14 @@ Char.IsLetterOrDigit (pair);
 	[Serializable]
 	private class UTF8Encoder : Encoder
 	{
-		private bool emitIdentifier;
+//		private bool emitIdentifier;
 		private char leftOverForCount;
 		private char leftOverForConv;
 
 		// Constructor.
 		public UTF8Encoder (bool emitIdentifier)
 		{
-			this.emitIdentifier = emitIdentifier;
+//			this.emitIdentifier = emitIdentifier;
 			leftOverForCount = '\0';
 			leftOverForConv = '\0';
 		}
@@ -1184,7 +1179,7 @@ Char.IsLetterOrDigit (pair);
 		{
 			int result;
 			result = InternalGetBytes (chars, charIndex, charCount, bytes, byteIndex, ref leftOverForConv, flush);
-			emitIdentifier = false;
+//			emitIdentifier = false;
 			return result;
 		}
 
@@ -1199,7 +1194,7 @@ Char.IsLetterOrDigit (pair);
 		{
 			int result;
 			result = InternalGetBytes (chars, charCount, bytes, byteCount, ref leftOverForConv, flush);
-			emitIdentifier = false;
+//			emitIdentifier = false;
 			return result;
 		}
 #endif

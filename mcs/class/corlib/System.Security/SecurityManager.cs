@@ -611,13 +611,6 @@ namespace System.Security {
 			return LinkDemand (mb.ReflectedType.Assembly, &klass, &method);
 		}
 
-		// internal - get called at JIT time
-
-		private static void DemandUnmanaged ()
-		{
-			UnmanagedCode.Demand ();
-		}
-
 		private unsafe static bool LinkDemand (Assembly a, RuntimeDeclSecurityActions *klass, RuntimeDeclSecurityActions *method)
 		{
 			try {
@@ -647,6 +640,7 @@ namespace System.Security {
 			}
 		}
 
+#pragma warning disable 169
 		private static bool LinkDemandFullTrust (Assembly a)
 		{
 			// FullTrust is immutable (and means Unrestricted) 
@@ -785,6 +779,12 @@ namespace System.Security {
 			}
 		}
 
+		// internal - get called at JIT time
+
+		private static void DemandUnmanaged ()
+		{
+			UnmanagedCode.Demand ();
+		}
 
 		// internal - get called by JIT generated code
 
@@ -798,5 +798,6 @@ namespace System.Security {
 		{
 			throw new SecurityException ("SecurityAction.DemandChoice was removed from 2.0");
 		}
+#pragma warning restore 169		
 	}
 }

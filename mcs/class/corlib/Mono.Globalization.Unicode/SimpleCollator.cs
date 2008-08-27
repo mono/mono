@@ -78,9 +78,11 @@ namespace Mono.Globalization.Unicode
 	internal class SimpleCollator
 	{
 		// this environment variable is for debugging quick check.
+#pragma warning disable 169, 414
 		static bool QuickCheckDisabled =
 			Environment.internalGetEnvironmentVariable (
 			"MONO_COLLATION_QUICK_CHECK_DISABLED") == "yes";
+#pragma warning restore 169, 414		
 
 		unsafe internal struct Context
 		{
@@ -741,6 +743,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				len1 == min ? - 1 : 1;
 		}
 
+#if NET_2_0
 		private int CompareOrdinalIgnoreCase (string s1, int idx1, int len1,
 			string s2, int idx2, int len2)
 		{
@@ -757,6 +760,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return len1 == len2 ? 0 :
 				len1 == min ? - 1 : 1;
 		}
+#endif
 
 		public unsafe int Compare (string s1, int idx1, int len1,
 			string s2, int idx2, int len2, CompareOptions options)
@@ -1324,7 +1328,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return IsSuffix (opt, s, target, start, length, ref prev, sk1, sk2);
 */
 		}
-
+/*
 		unsafe bool IsSuffix (string s, string t, int start, int length, ref Context ctx)
 		{
 			int tstart = 0;
@@ -1405,7 +1409,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			return false;
 #endif
 		}
-
+*/
 		#endregion
 
 		#region IndexOf() / LastIndexOf()
@@ -1516,6 +1520,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			return -1;
 		}
 
+#if NET_2_0
 		int IndexOfOrdinalIgnoreCase (string s, string target, int start, int length)
 		{
 			if (target.Length == 0)
@@ -1539,6 +1544,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			}
 			return -1;
 		}
+#endif
 
 		// char
 
@@ -1603,6 +1609,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			return -1;
 		}
 
+#if NET_2_0
 		int IndexOfOrdinalIgnoreCase (string s, char target, int start, int length)
 		{
 			int end = start + length;
@@ -1612,6 +1619,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 					return i;
 			return -1;
 		}
+#endif
 
 		// Searches target byte[] keydata
 		unsafe int IndexOfSortKey (string s, int start, int length, byte* sortkey, char target, int ti, bool noLv4, ref Context ctx)
@@ -1756,6 +1764,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			return -1;
 		}
 
+#if NET_2_0
 		int LastIndexOfOrdinalIgnoreCase (string s, string target, int start, int length)
 		{
 			if (target.Length == 0)
@@ -1783,6 +1792,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			}
 			return -1;
 		}
+#endif		
 
 		// char
 
@@ -1852,6 +1862,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			return -1;
 		}
 
+#if NET_2_0
 		int LastIndexOfOrdinalIgnoreCase (string s, char target, int start, int length)
 		{
 			if (s.Length == 0)
@@ -1863,6 +1874,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 					return i;
 			return -1;
 		}
+#endif		
 
 		// Searches target byte[] keydata
 		unsafe int LastIndexOfSortKey (string s, int start, int orgStart, int length, byte* sortkey, int ti, bool noLv4, ref Context ctx)

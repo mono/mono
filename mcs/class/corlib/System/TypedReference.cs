@@ -41,9 +41,11 @@ namespace System
 #endif
 	public struct TypedReference 
 	{
+#pragma warning disable 169
 		RuntimeTypeHandle type;
 		IntPtr value;
 		IntPtr klass;
+#pragma warning restore 169
 
 		public override bool Equals (object o)
 		{

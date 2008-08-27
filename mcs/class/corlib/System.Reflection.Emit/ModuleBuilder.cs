@@ -48,6 +48,8 @@ namespace System.Reflection.Emit {
 #endif
 	[ClassInterface (ClassInterfaceType.None)]
 	public class ModuleBuilder : Module, _ModuleBuilder {
+
+#pragma warning disable 169, 414
 		#region Sync with object-internals.h
 		private UIntPtr dynamic_image; /* GC-tracked */
 		private int num_types;
@@ -61,6 +63,8 @@ namespace System.Reflection.Emit {
 		bool is_main;
 		private MonoResource[] resources;
 		#endregion
+#pragma warning restore 169, 414
+		
 		private TypeBuilder global_type;
 		private Type global_type_created;
 		Hashtable name_cache;

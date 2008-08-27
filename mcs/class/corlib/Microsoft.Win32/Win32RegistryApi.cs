@@ -91,10 +91,10 @@ namespace Microsoft.Win32
 				ref int nameLength, IntPtr reserved, 
 				ref RegistryValueKind type, IntPtr data, IntPtr dataLength);
 
-		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegSetValueEx")]
-		private static extern int RegSetValueEx (IntPtr keyBase, 
-				string valueName, IntPtr reserved, RegistryValueKind type,
-				StringBuilder data, int rawDataLength);
+//		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegSetValueEx")]
+//		private static extern int RegSetValueEx (IntPtr keyBase, 
+//				string valueName, IntPtr reserved, RegistryValueKind type,
+//				StringBuilder data, int rawDataLength);
 
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegSetValueEx")]
 		private static extern int RegSetValueEx (IntPtr keyBase, 

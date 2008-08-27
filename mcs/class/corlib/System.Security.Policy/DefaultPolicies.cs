@@ -361,6 +361,7 @@ namespace System.Security.Policy {
 			return se;
 		}
 
+#if !NET_2_0
 		private static SecurityElement EventLogPermission (string name, string access)
 		{
 			SecurityElement se = new SecurityElement ("IPermission");
@@ -374,5 +375,6 @@ namespace System.Security.Policy {
 			se.AddChild (child);
 			return se;
 		}
+#endif		
 	}
 }

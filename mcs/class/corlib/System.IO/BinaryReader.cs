@@ -44,7 +44,6 @@ namespace System.IO {
 	public class BinaryReader : IDisposable {
 		Stream m_stream;
 		Encoding m_encoding;
-		int m_encoding_max_byte;
 
 		byte[] m_buffer;
 

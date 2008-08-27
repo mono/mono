@@ -39,12 +39,11 @@ namespace System.Security.Cryptography {
 	public class RSAPKCS1KeyExchangeDeformatter : AsymmetricKeyExchangeDeformatter {
 	
 		private RSA rsa;
-		private string param;
+//		private string param;
 		private RandomNumberGenerator random;
 	
 		public RSAPKCS1KeyExchangeDeformatter () 
 		{
-			rsa = null;
 		}
 	
 		public RSAPKCS1KeyExchangeDeformatter (AsymmetricAlgorithm key) 

@@ -52,10 +52,12 @@ namespace System
 
 	internal class __ComObject : MarshalByRefObject
 	{
+#pragma warning disable 169	
 		#region Sync with object-internals.h
 		IntPtr iunknown;
 		IntPtr hash_table;
 		#endregion
+#pragma warning restore 169
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern __ComObject CreateRCW (Type t);

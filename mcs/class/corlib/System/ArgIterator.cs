@@ -39,10 +39,12 @@ namespace System
 	[StructLayout (LayoutKind.Auto)]
 	public struct ArgIterator
 	{
+#pragma warning disable 169, 414
 		IntPtr sig;
 		IntPtr args;
 		int next_arg;
 		int num_args;
+#pragma warning restore 169, 414
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		extern void Setup (IntPtr argsp, IntPtr start);

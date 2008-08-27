@@ -47,6 +47,8 @@ namespace System.Reflection.Emit {
 #endif
 	[ClassInterface (ClassInterfaceType.None)]
 	public sealed class ConstructorBuilder : ConstructorInfo, _ConstructorBuilder {
+	
+#pragma warning disable 169, 414
 		private RuntimeMethodHandle mhandle;
 		private ILGenerator ilgen;
 		private Type[] parameters;
@@ -61,6 +63,7 @@ namespace System.Reflection.Emit {
 		private Type[][] paramModReq;
 		private Type[][] paramModOpt;
 		private RefEmitPermissionSet[] permissions;
+#pragma warning restore 169, 414
 
 		internal ConstructorBuilder (TypeBuilder tb, MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes, Type[][] paramModReq, Type[][] paramModOpt)
 		{

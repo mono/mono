@@ -43,6 +43,7 @@ namespace System.Reflection.Emit {
 #endif
 	[Serializable]
 	public sealed class UnmanagedMarshal {
+#pragma warning disable 169, 414
 		private int count;
 		private UnmanagedType t;
 		private UnmanagedType tbase;
@@ -52,6 +53,7 @@ namespace System.Reflection.Emit {
 		Type marshaltyperef;
 		private int param_num;
 		private bool has_size;
+#pragma warning restore 169, 414
 		
 		private UnmanagedMarshal (UnmanagedType maint, int cnt) {
 			count = cnt;

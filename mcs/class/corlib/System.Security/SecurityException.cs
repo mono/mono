@@ -49,17 +49,25 @@ namespace System.Security {
 		Type permissionType;
 		private string _granted;
 		private string _refused;
-		private SecurityAction _action;
 		private object _demanded;
+		private IPermission _firstperm;
+//		private IPermission _permfailed;
+		private MethodInfo _method;
+		private Evidence _evidence;
+
+#if !NET_2_0
+	#pragma warning disable 169
+#endif
+		private SecurityAction _action;
 		private object _denyset;
 		private object _permitset;
 		private AssemblyName _assembly;
-		private IPermission _firstperm;
-		private IPermission _permfailed;
-		private MethodInfo _method;
 		private string _url;
 		private SecurityZone _zone;
-		private Evidence _evidence;
+		
+#if !NET_2_0
+	#pragma warning restore 169
+#endif	
 
 		// Properties
 

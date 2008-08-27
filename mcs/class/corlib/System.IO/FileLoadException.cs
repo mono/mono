@@ -49,7 +49,6 @@ namespace System.IO {
 		// Fields
 		const int Result = unchecked ((int)0x80070002);
 		string msg;
-		Exception inner;
 		string fileName;
 		string fusionLog;
 		
@@ -81,7 +80,6 @@ namespace System.IO {
 		{
 			HResult = Result;
 			msg = message;
-			this.inner = inner;
 		}
 
 		public FileLoadException (string message, string fileName, Exception inner)
@@ -90,7 +88,6 @@ namespace System.IO {
 			HResult = Result;
 			this.msg = message;
 			this.fileName = fileName;
-			this.inner = inner;
 		}
 
 		protected FileLoadException (SerializationInfo info, StreamingContext context)

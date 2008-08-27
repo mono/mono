@@ -49,6 +49,7 @@ namespace System.Reflection.Emit
 	[ClassInterface (ClassInterfaceType.None)]
 	public sealed class MethodBuilder : MethodInfo, _MethodBuilder
 	{
+#pragma warning disable 169, 414
 		private RuntimeMethodHandle mhandle;
 		private Type rtype;
 		internal Type[] parameters;
@@ -80,6 +81,7 @@ namespace System.Reflection.Emit
 		private Type[][] paramModReq;
 		private Type[][] paramModOpt;
 		private RefEmitPermissionSet[] permissions;
+#pragma warning restore 169, 414
 
 		internal MethodBuilder (TypeBuilder tb, string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] returnModReq, Type[] returnModOpt, Type[] parameterTypes, Type[][] paramModReq, Type[][] paramModOpt)
 		{

@@ -347,7 +347,7 @@ namespace System.Collections {
 		class BitArrayEnumerator : IEnumerator, ICloneable {
 			BitArray _bitArray;
 			bool _current;
-			int _index, _max, _version;
+			int _index, _version;
 			
 			public object Clone () {
 				return MemberwiseClone ();
@@ -357,7 +357,6 @@ namespace System.Collections {
 			{
 				_index = -1;
 				_bitArray = ba;
-				_max = ba.m_length;
 				_version = ba._version;
 			}
 
@@ -380,9 +379,8 @@ namespace System.Collections {
 					_current = _bitArray [++_index];
 					return true;
 				}
-				else
-					_index = _bitArray.Count;
 				
+				_index = _bitArray.Count;
 				return false;
 			}
 

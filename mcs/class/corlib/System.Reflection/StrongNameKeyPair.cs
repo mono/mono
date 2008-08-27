@@ -51,7 +51,9 @@ public class StrongNameKeyPair
 {		
 	private byte[] _publicKey;
 	private string _keyPairContainer;
+#if NET_2_0	
 	private bool _keyPairExported;
+#endif
 	private byte[] _keyPairArray;
 	
 	[NonSerialized]

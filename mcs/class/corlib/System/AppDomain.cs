@@ -982,6 +982,7 @@ namespace System {
 		}
 
 		// The following methods are called from the runtime. Don't change signatures.
+#pragma warning disable 169		
 		private void DoAssemblyLoad (Assembly assembly)
 		{
 			if (AssemblyLoad == null)
@@ -1105,6 +1106,7 @@ namespace System {
 			else
 				arrResponse = null;
 		}
+#pragma warning restore 169
 
 		// End of methods called from the runtime
 		
@@ -1147,13 +1149,6 @@ namespace System {
 		[method: SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public event UnhandledExceptionEventHandler UnhandledException;
 #endif
-
-		/* Avoid warnings for events used only by the runtime */
-		private void DummyUse () {
-			ProcessExit += (EventHandler)null;
-			ResourceResolve += (ResolveEventHandler)null;
-			UnhandledException += (UnhandledExceptionEventHandler)null;
-		}
 
 #if NET_2_0
 

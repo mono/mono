@@ -50,7 +50,6 @@ namespace System.Runtime.Serialization.Formatters {
 		string exceptionType;
 		string message;
 		string stackTrace;
-		Exception exception;
 
 		public ServerFault (string exceptionType, string message,
 				  string stackTrace)

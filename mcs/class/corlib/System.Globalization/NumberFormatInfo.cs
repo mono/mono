@@ -95,16 +95,19 @@ namespace System.Globalization {
 		private string positiveInfinitySymbol;
 		private string positiveSign;
 		
+#pragma warning disable 169
 		string ansiCurrencySymbol;	// TODO, MS.NET serializes this.
 		int m_dataItem;	// Unused, but MS.NET serializes this.
 		bool m_useUserOverride; // Unused, but MS.NET serializes this.
 		bool validForParseAsNumber; // Unused, but MS.NET serializes this.
 		bool validForParseAsCurrency; // Unused, but MS.NET serializes this.
+#pragma warning restore 169
+		
 #if NET_2_0
 		string[] nativeDigits = invariantNativeDigits;
 		int digitSubstitution = 1; // DigitShapes.None.
 
-		static string [] invariantNativeDigits = new string [] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+		static readonly string [] invariantNativeDigits = new string [] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 #endif
 
 		internal NumberFormatInfo (int lcid, bool read_only)
@@ -167,6 +170,7 @@ namespace System.Globalization {
 		}
 
 		// this is called by mono/mono/metadata/locales.c
+#pragma warning disable 169		
 		void InitPatterns ()
 		{
 			string [] partOne, partTwo;
@@ -335,6 +339,7 @@ namespace System.Globalization {
 			}
 			
 		}
+#pragma warning restore 169
 
 		// =========== Currency Format Properties =========== //
 

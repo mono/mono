@@ -37,7 +37,7 @@ namespace System {
 	class TermInfoDriver : IConsoleDriver {
 		/* Do not rename this field, its looked up from the runtime */
 		static bool need_window_dimensions = true;
-		static uint flag = 0xdeadbeef;
+		//static uint flag = 0xdeadbeef;
 		static string [] locations = { "/etc/terminfo", "/usr/share/terminfo", "/usr/lib/terminfo" };
 
 		TermInfoReader reader;
@@ -54,8 +54,6 @@ namespace System {
 		StreamReader stdin;
 		CStreamWriter stdout;
 		internal byte verase;
-		byte vsusp;
-		byte intr;
 
 		int windowWidth;
 		int windowHeight;
@@ -200,6 +198,8 @@ namespace System {
 			if (resetColors != null)
 				endString += resetColors;
 
+			byte vsusp;
+			byte intr;
 			if (!ConsoleDriver.TtySetup (keypadXmit, endString, out verase, out vsusp, out intr))
 				throw new IOException ("Error initializing terminal.");
 

@@ -64,7 +64,7 @@ namespace System.Globalization
 			= new string[13] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", ""};
 		private static readonly string[] INVARIANT_MONTH_NAMES
 			= new string[13] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", ""};
-		private static readonly string[] INVARIANT_ERA_NAMES = {"A.D."};
+//		private static readonly string[] INVARIANT_ERA_NAMES = {"A.D."};
 #if NET_2_0
 		static readonly string [] INVARIANT_SHORT_DAY_NAMES =
 			new string [7] {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
@@ -73,6 +73,7 @@ namespace System.Globalization
 
 		private const string _RoundtripPattern = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.fffffffK";
 
+#pragma warning disable 169
 		#region Sync with object-internals.h
 		private bool m_isReadOnly;
 		private string amDesignator;
@@ -128,6 +129,7 @@ namespace System.Globalization
 		private DateTimeFormatFlags formatFlags;
 		private string m_name; // Unused, but MS.NET serializes this
 #endif
+#pragma warning restore 169
 
 		internal DateTimeFormatInfo(bool read_only)
 		{

@@ -55,6 +55,7 @@ namespace System
 	public abstract class Delegate : ICloneable, ISerializable
 	{
 		#region Sync with object-internals.h
+#pragma warning disable 169, 414
 		private IntPtr method_ptr;
 		private IntPtr invoke_impl;
 		private object m_target;
@@ -68,6 +69,7 @@ namespace System
 		private MethodInfo original_method_info;
 
 		private DelegateData data;
+#pragma warning restore 169, 414
 		#endregion
 
 		protected Delegate (object target, string method)
@@ -125,18 +127,19 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern void SetMulticastInvoke ();
 
+#if NET_2_0
 		private static bool arg_type_match (Type delArgType, Type argType) {
 			bool match = delArgType == argType;
 
-#if NET_2_0
 			// Delegate contravariance
 			if (!match) {
 				if (!delArgType.IsValueType && (delArgType != typeof (ValueType)) && (argType.IsAssignableFrom (delArgType)))
 					match = true;
 			}
-#endif
+
 			return match;
 		}
+#endif		
 
 		private static bool return_type_match (Type delReturnType, Type returnType) {
 			bool returnMatch = returnType == delReturnType;

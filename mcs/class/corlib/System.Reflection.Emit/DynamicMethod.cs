@@ -46,6 +46,8 @@ namespace System.Reflection.Emit {
 	[ComVisible (true)]
 #endif
 	public sealed class DynamicMethod : MethodInfo {
+
+#pragma warning disable 169, 414
 		#region Sync with reflection.h
 		private RuntimeMethodHandle mhandle;
 		private string name;
@@ -62,6 +64,8 @@ namespace System.Reflection.Emit {
 		private IntPtr referenced_by;
 		private Type owner;
 		#endregion
+#pragma warning restore 169, 414
+		
 		private Delegate deleg;
 		private MonoMethod method;
 		private ParameterBuilder[] pinfo;
@@ -369,10 +373,6 @@ namespace System.Reflection.Emit {
 		private void RejectIfCreated () {
 			if (mhandle.Value != IntPtr.Zero)
 				throw new InvalidOperationException ("Type definition of the method is complete.");
-		}
-
-		private Exception NotSupported () {
-			return new NotSupportedException ("The invoked member is not supported on a dynamic method.");
 		}
 
 		internal int AddRef (object reference) {

@@ -34,6 +34,8 @@ using System.Security.Principal;
 namespace System.Security.AccessControl {
 	public sealed class SystemAcl : CommonAcl
 	{
+//		RawAcl raw_acl;
+		
 		public SystemAcl (bool isContainer, bool isDS, int capacity)
 			: this (isContainer, isDS, 0, capacity)
 		{
@@ -42,7 +44,7 @@ namespace System.Security.AccessControl {
 		public SystemAcl (bool isContainer, bool isDS, RawAcl rawAcl)
 			: this (isContainer, isDS, 0)
 		{
-			this.raw_acl = rawAcl;
+//			this.raw_acl = rawAcl;
 		}
 		
 		public SystemAcl (bool isContainer, bool isDS, byte revision,
@@ -50,8 +52,6 @@ namespace System.Security.AccessControl {
 			: base (isContainer, isDS, revision, capacity)
 		{
 		}
-
-		RawAcl raw_acl;
 
 		public void AddAudit (AuditFlags auditFlags,
 				      SecurityIdentifier sid, int accessMask,

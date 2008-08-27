@@ -45,6 +45,8 @@ namespace System.Reflection.Emit {
 #endif
 	[ClassInterface (ClassInterfaceType.None)]
 	public sealed class PropertyBuilder : PropertyInfo, _PropertyBuilder {
+
+#pragma warning disable 169, 414
 		private PropertyAttributes attrs;
 		private string name;
 		private Type type;
@@ -59,6 +61,7 @@ namespace System.Reflection.Emit {
 		private Type[] returnModOpt;
 		private Type[][] paramModReq;
 		private Type[][] paramModOpt;
+#pragma warning restore 169, 414
 		
 		internal PropertyBuilder (TypeBuilder tb, string name, PropertyAttributes attributes, Type returnType, Type[] returnModReq, Type[] returnModOpt, Type[] parameterTypes, Type[][] paramModReq, Type[][] paramModOpt) {
 			this.name = name;

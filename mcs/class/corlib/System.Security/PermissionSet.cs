@@ -58,7 +58,6 @@ namespace System.Security {
 
 		private PermissionState state;
 		private ArrayList list;
-		private int _hashcode;
 		private PolicyLevel _policyLevel;
 		private bool _declsec;
 		private bool _readOnly;

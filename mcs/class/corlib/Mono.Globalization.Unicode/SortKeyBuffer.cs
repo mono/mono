@@ -39,7 +39,7 @@ namespace Mono.Globalization.Unicode
 		// l4k = katakana flag, l4w = kana width sensitivity
 		int l1, l2, l3, l4s, l4t, l4k, l4w, l5;
 		byte [] l1b, l2b, l3b, l4sb, l4tb, l4kb, l4wb, l5b;
-		int level5LastPos;
+//		int level5LastPos;
 
 		string source;
 		bool processLevel2;
@@ -55,7 +55,7 @@ namespace Mono.Globalization.Unicode
 		public void Reset ()
 		{
 			l1 = l2 = l3 = l4s = l4t = l4k = l4w = l5 = 0;
-			level5LastPos = 0;
+//			level5LastPos = 0;
 			frenchSorted = false;
 		}
 
@@ -195,7 +195,7 @@ namespace Mono.Globalization.Unicode
 			AppendBufferPrimitive ((byte) ((offsetValue / 64) + 0x80), ref l5b, ref l5);
 			AppendBufferPrimitive ((byte) (offsetValue % 64 * 4 + 3), ref l5b, ref l5);
 
-			level5LastPos = l2;
+//			level5LastPos = l2;
 
 			// sortkey value
 			AppendBufferPrimitive (category, ref l5b, ref l5);

@@ -52,6 +52,7 @@ namespace System.Reflection.Emit
 	[ClassInterface (ClassInterfaceType.None)]
 	public sealed class TypeBuilder : Type, _TypeBuilder
 	{
+#pragma warning disable 169		
 		#region Sync with reflection.h
 		private string tname;
 		private string nspace;
@@ -81,12 +82,14 @@ namespace System.Reflection.Emit
 		private RefEmitPermissionSet[] permissions;
 		private Type created;
 		#endregion
+#pragma warning restore 169		
+		
 		string fullname;
 		bool createTypeCalled;
 		private Type underlying_type;
 
 		public const int UnspecifiedTypeSize = 0;
-
+		
 		protected override TypeAttributes GetAttributeFlagsImpl ()
 		{
 			return attrs;
@@ -98,8 +101,10 @@ namespace System.Reflection.Emit
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void create_internal_class (TypeBuilder tb);
 		
+#if NET_2_0 || BOOTSTRAP_NET_2_0
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void setup_generic_class ();
+#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void create_generic_class ();
@@ -1564,8 +1569,6 @@ namespace System.Reflection.Emit
 			return res;
 		}
 
-		static int UnmanagedDataCount = 0;
-		
 		public FieldBuilder DefineUninitializedData (string name, int size, FieldAttributes attributes)
 		{
 			if (name == null)

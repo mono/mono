@@ -689,6 +689,10 @@ namespace System {
 			get { return ((int) Platform != 128); }
 		}
 
+		//
+		// Used by gacutil.exe
+		//
+#pragma warning disable 169		
 		private static string GacPath {
 			get {
 				if (Environment.IsRunningOnWindows) {
@@ -700,6 +704,7 @@ namespace System {
 				return Path.Combine (Path.Combine (internalGetGacPath (), "mono"), "gac");
 			}
 		}
+#pragma warning restore 169
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string [] GetLogicalDrivesInternal ();

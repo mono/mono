@@ -39,11 +39,10 @@ namespace System.Security.Cryptography {
 	public class RSAOAEPKeyExchangeDeformatter : AsymmetricKeyExchangeDeformatter {
 	
 		private RSA rsa;
-		private string param;
+//		private string param;
 	
 		public RSAOAEPKeyExchangeDeformatter ()
 		{
-			rsa = null;
 		}
 	
 		public RSAOAEPKeyExchangeDeformatter (AsymmetricAlgorithm key) 

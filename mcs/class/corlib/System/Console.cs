@@ -686,7 +686,13 @@ namespace System
 		}
 
 		delegate void InternalCancelHandler ();
-		static InternalCancelHandler cancel_handler = new InternalCancelHandler (DoConsoleCancelEvent);
+		
+#pragma warning disable 414
+		//
+		// Used by console-io.c
+		//
+		static readonly InternalCancelHandler cancel_handler = new InternalCancelHandler (DoConsoleCancelEvent);
+#pragma warning restore 414		
 
 		internal static void DoConsoleCancelEvent ()
 		{

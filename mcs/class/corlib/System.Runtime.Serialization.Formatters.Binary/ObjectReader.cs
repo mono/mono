@@ -41,7 +41,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 {
 	internal class ObjectReader
 	{
-		BinaryFormatter _formatter;
+//		BinaryFormatter _formatter;
 		ISurrogateSelector _surrogateSelector;
 		StreamingContext _context;
 		SerializationBinder _binder;
@@ -78,7 +78,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 		public ObjectReader (BinaryFormatter formatter)
 		{
-			_formatter = formatter;
+//			_formatter = formatter;
 			_surrogateSelector = formatter.SurrogateSelector;
 			_context = formatter.Context;
 			_binder = formatter.Binder;

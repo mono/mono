@@ -35,6 +35,8 @@
 
 namespace System {
 
+#pragma warning disable 169
+
 	internal class MonoAsyncCall {
 		#region Sync with the unmanaged ASyncCall structure
 		object     msg;
@@ -46,6 +48,9 @@ namespace System {
 		long       wait_event;
 		#endregion
 	}
+
+#pragma warning restore 169	
+
 }
 
 

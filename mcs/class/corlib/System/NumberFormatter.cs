@@ -1554,11 +1554,6 @@ namespace System
 
 		#region StringBuilder formatting helpers
 
-		private static void ZeroTrimEnd (StringBuilder sb)
-		{
-			ZeroTrimEnd (sb, false);
-		}
-
 		private static void ZeroTrimEnd (StringBuilder sb, bool canEmpty)
 		{
 			int len = 0;

@@ -34,6 +34,8 @@ using System.Security.Principal;
 namespace System.Security.AccessControl {
 	public sealed class DiscretionaryAcl : CommonAcl
 	{
+//		RawAcl raw_acl;
+		
 		public DiscretionaryAcl (bool isContainer, bool isDS,
 					 int capacity)
 			: this (isContainer, isDS, 0, capacity)
@@ -45,7 +47,7 @@ namespace System.Security.AccessControl {
 					 RawAcl rawAcl)
 			: base (isContainer, isDS, 0)
 		{
-			this.raw_acl = rawAcl;
+//			this.raw_acl = rawAcl;
 		}
 		
 		public DiscretionaryAcl (bool isContainer, bool isDS,
@@ -53,8 +55,6 @@ namespace System.Security.AccessControl {
 			: base (isContainer, isDS, revision, capacity)
 		{
 		}
-
-		RawAcl raw_acl;
 
 		public void AddAccess (AccessControlType accessType,
 				       SecurityIdentifier sid, int accessMask,

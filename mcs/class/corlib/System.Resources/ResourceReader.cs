@@ -285,6 +285,7 @@ namespace System.Resources
 			return ret;
 		}
 
+#if NET_2_0
 		object ReadValueVer2 (int type_index)
 		{
 			switch ((PredefinedResourceType)type_index)
@@ -353,6 +354,7 @@ namespace System.Resources
 			type_index -= (int)PredefinedResourceType.FistCustom;
 			return ReadNonPredefinedValue (Type.GetType (typeNames[type_index], true));
 		}
+#endif		
 
 		object ReadValueVer1 (Type type)
 		{

@@ -46,7 +46,9 @@ public abstract class Encoding
 	// Code page used by this encoding.
 	internal int codePage;
 	internal int windows_code_page;
+#if NET_2_0
 	bool is_readonly = true;
+#endif
 
 	// Constructor.
 	protected Encoding ()
@@ -484,7 +486,9 @@ public abstract class Encoding
 		// Try to obtain a code page handler from the I18N handler.
 		Encoding enc = (Encoding)(InvokeI18N ("GetEncoding", codepage));
 		if (enc != null) {
+#if NET_2_0
 			enc.is_readonly = true;
+#endif
 			return enc;
 		}
 
@@ -496,7 +500,9 @@ public abstract class Encoding
 		Type type = assembly.GetType (cpName);
 		if (type != null) {
 			enc = (Encoding)(Activator.CreateInstance (type));
+#if NET_2_0
 			enc.is_readonly = true;
+#endif
 			return enc;
 		}
 
@@ -505,7 +511,9 @@ public abstract class Encoding
 		type = Type.GetType (cpName);
 		if (type != null) {
 			enc = (Encoding)(Activator.CreateInstance (type));
+#if NET_2_0
 			enc.is_readonly = true;
+#endif
 			return enc;
 		}
 
@@ -838,7 +846,6 @@ public abstract class Encoding
 	static volatile Encoding utf8EncodingWithoutMarkers;
 	static volatile Encoding unicodeEncoding;
 	static volatile Encoding isoLatin1Encoding;
-	static volatile Encoding unixConsoleEncoding;
 #if NET_2_0
 	static volatile Encoding utf8EncodingUnsafe;
 	static volatile Encoding utf32Encoding;
@@ -855,7 +862,7 @@ public abstract class Encoding
 				lock (lockobj) {
 					if (asciiEncoding == null) {
 						asciiEncoding = new ASCIIEncoding ();
-						asciiEncoding.is_readonly = true;
+//						asciiEncoding.is_readonly = true;
 					}
 				}
 			}
@@ -872,7 +879,7 @@ public abstract class Encoding
 				lock (lockobj) {
 					if (bigEndianEncoding == null) {
 						bigEndianEncoding = new UnicodeEncoding (true, true);
-						bigEndianEncoding.is_readonly = true;
+//						bigEndianEncoding.is_readonly = true;
 					}
 				}
 			}
@@ -920,7 +927,9 @@ public abstract class Encoding
 							// not supported by underlying OS
 							defaultEncoding = UTF8Unmarked;
 						}
+#if NET_2_0
 						defaultEncoding.is_readonly = true;
+#endif						
 					}
 				}
 			}
@@ -937,7 +946,7 @@ public abstract class Encoding
 				lock (lockobj) {
 					if (isoLatin1Encoding == null) {
 						isoLatin1Encoding = new Latin1Encoding ();
-						isoLatin1Encoding.is_readonly = true;
+//						isoLatin1Encoding.is_readonly = true;
 					}
 				}
 			}
@@ -959,7 +968,7 @@ public abstract class Encoding
 				lock (lockobj) {
 					if (utf7Encoding == null) {
 						utf7Encoding = new UTF7Encoding ();
-						utf7Encoding.is_readonly = true;
+//						utf7Encoding.is_readonly = true;
 					}
 				}
 			}
@@ -976,7 +985,7 @@ public abstract class Encoding
 				lock (lockobj) {
 					if (utf8EncodingWithMarkers == null) {
 						utf8EncodingWithMarkers = new UTF8Encoding (true);
-						utf8EncodingWithMarkers.is_readonly = true;
+//						utf8EncodingWithMarkers.is_readonly = true;
 					}
 				}
 			}
@@ -994,7 +1003,7 @@ public abstract class Encoding
 				lock (lockobj){
 					if (utf8EncodingWithoutMarkers == null){
 						utf8EncodingWithoutMarkers = new UTF8Encoding (false, false);
-						utf8EncodingWithoutMarkers.is_readonly = true;
+//						utf8EncodingWithoutMarkers.is_readonly = true;
 					}
 				}
 			}
@@ -1035,7 +1044,7 @@ public abstract class Encoding
 				lock (lockobj) {
 					if (unicodeEncoding == null) {
 						unicodeEncoding = new UnicodeEncoding (false, true);
-						unicodeEncoding.is_readonly = true;
+//						unicodeEncoding.is_readonly = true;
 					}
 				}
 			}
@@ -1053,7 +1062,7 @@ public abstract class Encoding
 				lock (lockobj) {
 					if (utf32Encoding == null) {
 						utf32Encoding = new UTF32Encoding (false, true);
-						utf32Encoding.is_readonly = true;
+//						utf32Encoding.is_readonly = true;
 					}
 				}
 			}
@@ -1070,7 +1079,7 @@ public abstract class Encoding
 				lock (lockobj) {
 					if (bigEndianUTF32Encoding == null) {
 						bigEndianUTF32Encoding = new UTF32Encoding (true, true);
-						bigEndianUTF32Encoding.is_readonly = true;
+//						bigEndianUTF32Encoding.is_readonly = true;
 					}
 				}
 			}

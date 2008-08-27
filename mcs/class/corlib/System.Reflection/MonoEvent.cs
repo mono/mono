@@ -59,8 +59,10 @@ namespace System.Reflection {
 	internal sealed class MonoEvent: EventInfo
 #endif
 	{
+#pragma warning disable 169
 		IntPtr klass;
 		IntPtr handle;
+#pragma warning restore 169
 
 		public override EventAttributes Attributes {
 			get {

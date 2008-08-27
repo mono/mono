@@ -53,7 +53,9 @@ namespace System.Security.Policy {
 		private bool _locked;
 		private ArrayList hostEvidenceList;	
 		private ArrayList assemblyEvidenceList;
+#if NET_2_0		
 		private int _hashCode;
+#endif
 
 		public Evidence () 
 		{
@@ -136,7 +138,9 @@ namespace System.Security.Policy {
 		public void AddAssembly (object id) 
 		{
 			AssemblyEvidenceList.Add (id);
+#if NET_2_0
 			_hashCode = 0;
+#endif			
 		}
 
 		public void AddHost (object id) 
@@ -145,7 +149,9 @@ namespace System.Security.Policy {
 				new SecurityPermission (SecurityPermissionFlag.ControlEvidence).Demand ();
 			}
 			HostEvidenceList.Add (id);
+#if NET_2_0
 			_hashCode = 0;
+#endif			
 		}
 
 #if NET_2_0
@@ -265,7 +271,9 @@ namespace System.Security.Policy {
 					foreach (object o in evidence.assemblyEvidenceList)
 						AddAssembly (o);
 				}
+#if NET_2_0
 				_hashCode = 0;
+#endif			
 			}
 		}
 

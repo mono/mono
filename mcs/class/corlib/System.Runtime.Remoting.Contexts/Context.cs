@@ -47,11 +47,13 @@ namespace System.Runtime.Remoting.Contexts {
 #endif
 	public class Context 
 	{
+#pragma warning disable 169, 414
 		#region Sync with domain-internals.h
 		int domain_id;
 		int context_id;
 		UIntPtr static_data; /* GC-tracked */
 		#endregion
+#pragma warning restore 169, 414
 
 		// Default server context sink chain
 		static IMessageSink default_server_context_sink;

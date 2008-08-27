@@ -41,6 +41,7 @@ namespace System.Globalization
 	[Serializable]
 	internal sealed class CodePageDataItem
 	{
+#pragma warning disable 169	
 		private string m_bodyName;
 		private int m_codePage;
 		private int m_dataIndex;
@@ -53,5 +54,6 @@ namespace System.Globalization
 		private CodePageDataItem ()
 		{
 		}
+#pragma warning disable 169		
 	}
 }

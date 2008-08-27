@@ -46,6 +46,8 @@ namespace System.Reflection.Emit {
 #endif
 	[ClassInterface (ClassInterfaceType.None)]
 	public class ParameterBuilder : _ParameterBuilder {
+
+#pragma warning disable 169, 414
 		private MethodBase methodb; /* MethodBuilder, ConstructorBuilder or DynamicMethod */
 		private string name;
 		private CustomAttributeBuilder[] cattrs;
@@ -54,6 +56,7 @@ namespace System.Reflection.Emit {
 		private int position;
 		private int table_idx;
 		object def_value;
+#pragma warning restore 169, 414
 		
 		internal ParameterBuilder (MethodBase mb, int pos, ParameterAttributes attributes, string strParamName) {
 			name = strParamName;

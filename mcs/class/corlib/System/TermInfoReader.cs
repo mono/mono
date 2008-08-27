@@ -72,13 +72,13 @@ namespace System {
 	//
 
 	class TermInfoReader {
-		short nameSize;
+		//short nameSize;
 		short boolSize;
 		short numSize;
 		short strOffsets;
-		short strSize;
+		//short strSize;
 
-		string [] names; // Last one is the description
+		//string [] names; // Last one is the description
 		byte [] buffer;
 		int booleansOffset;
 		string term;
@@ -121,7 +121,7 @@ namespace System {
 			if (magic != 282)
 				throw new Exception (String.Format ("Magic number is wrong: {0}", magic));
 			
-			nameSize = GetInt16 (buffer, position);
+			/*nameSize =*/ GetInt16 (buffer, position);
 			position += 2;
 			boolSize = GetInt16 (buffer, position);
 			position += 2;
@@ -129,7 +129,7 @@ namespace System {
 			position += 2;
 			strOffsets = GetInt16 (buffer, position);
 			position += 2;
-			strSize = GetInt16 (buffer, position);
+			/*strSize =*/ GetInt16 (buffer, position);
 			position += 2;
 		}
 
@@ -137,7 +137,7 @@ namespace System {
 		{
 			string prev = GetString (buffer, position);
 			position += prev.Length + 1;
-			names = prev.Split ('|');
+			//names = prev.Split ('|');
 		}
 
 		public bool Get (TermInfoBooleans boolean)

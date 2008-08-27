@@ -42,8 +42,6 @@ namespace System.Resources
 #endif
 	public class MissingManifestResourceException: SystemException
 	{
-		private string param;
-		
 		// Constructors
 		public MissingManifestResourceException ()
 			: base (Locale.GetText ("The assembly does not contain the resources for the required culture."))

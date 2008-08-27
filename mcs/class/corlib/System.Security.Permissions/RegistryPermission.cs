@@ -48,12 +48,12 @@ namespace System.Security.Permissions {
 		private const int version = 1;
 
 		private PermissionState _state;
-		private RegistryPermissionAccess _access;
+//		private RegistryPermissionAccess _access;
 		private ArrayList createList;
 		private ArrayList readList;
 		private ArrayList writeList;
 #if NET_2_0
-		private AccessControlActions _control;
+//		private AccessControlActions _control;
 #endif
 		// Constructors
 

@@ -205,14 +205,6 @@ namespace Mono.Security.Cryptography {
 			j = (p - 1) / q;
 		}
 
-		private bool Validate () 
-		{
-			// J is optional
-			bool okJ = ((j == 0) || (j == ((p - 1) / q)));
-			// TODO: Validate the key parameters (P, Q, G, J) using the Seed and Counter
-			return okJ;
-		}
-
 		private RandomNumberGenerator Random {
 			get { 
 				if (rng == null)

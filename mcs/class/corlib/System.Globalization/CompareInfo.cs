@@ -58,12 +58,15 @@ namespace System.Globalization
 		private int culture;
 		[NonSerialized]
 		private string icu_name;
-		[NonSerialized]
-		private IntPtr ICU_collator;
+//		[NonSerialized]
+//		private IntPtr ICU_collator;
+
+#pragma warning disable 169		
 		private int win32LCID;	// Unused, but MS.NET serializes this
 #if NET_2_0
 		private string m_name; // Unused, but MS.NET serializes this
 #endif
+#pragma warning restore 169
 
 		[NonSerialized]
 		SimpleCollator collator;
@@ -865,7 +868,7 @@ namespace System.Globalization
 				try {
 					this.construct_compareinfo (icu_name);
 				} catch {
-					ICU_collator=IntPtr.Zero;
+				//	ICU_collator=IntPtr.Zero;
 				}
 			}
 		}

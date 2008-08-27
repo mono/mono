@@ -47,11 +47,13 @@ using System.Runtime.InteropServices;
 
 namespace System.Runtime.Remoting.Proxies
 {
+#pragma warning disable 169
 	internal class TransparentProxy {
 		public RealProxy _rp;
 		IntPtr _class;
 		bool _custom_type_info;
 	}
+#pragma warning restore 169	
 	
 #if NET_2_0
 	[ComVisible (true)]
@@ -61,6 +63,8 @@ namespace System.Runtime.Remoting.Proxies
 		// derive from this class so keep these locals
 		// in sync with the definition RealProxy 
 		// in object-internals.h
+		
+#pragma warning disable 169, 414		
 		#region Sync with object-internals.h
 		Type class_to_proxy;
 		internal Context _targetContext;
@@ -71,6 +75,7 @@ namespace System.Runtime.Remoting.Proxies
 		Object _objTP;
 		object _stubData;
         #endregion
+#pragma warning restore 169, 414
 
 		protected RealProxy ()
 		{

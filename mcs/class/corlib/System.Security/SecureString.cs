@@ -232,15 +232,15 @@ namespace System.Security {
 
 		// internal/private stuff
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void EncryptInternal (byte [] data, object scope);
+//		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+//		extern static void EncryptInternal (byte [] data, object scope);
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void DecryptInternal (byte [] data, object scope);
+//		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+//		extern static void DecryptInternal (byte [] data, object scope);
 
-		static readonly object scope = Enum.Parse (
-			Assembly.Load (Consts.AssemblySystem_Security)
-			.GetType ("System.Security.Cryptography.MemoryProtectionScope"), "SameProcess");
+//		static readonly object scope = Enum.Parse (
+//			Assembly.Load (Consts.AssemblySystem_Security)
+//			.GetType ("System.Security.Cryptography.MemoryProtectionScope"), "SameProcess");
 
 		// Note that ProtectedMemory is not supported on non-Windows environment right now.
 		private void Encrypt ()
