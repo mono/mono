@@ -47,15 +47,7 @@ namespace System.Data {
 	/// </summary>
 	[DefaultEvent ("CollectionChanged")]
 	[EditorAttribute("Microsoft.VSDesigner.Data.Design.ConstraintsCollectionEditor, "+Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+Consts.AssemblySystem_Drawing )]
-#if !NET_2_0
-	[Serializable]
-#endif
-	public
-#if NET_2_0
-	sealed
-#endif
-	class ConstraintCollection : InternalDataCollectionBase 
-	{
+	public partial class ConstraintCollection : InternalDataCollectionBase {
 		//private bool beginInit = false;
 		
 		public event CollectionChangeEventHandler CollectionChanged;
@@ -67,14 +59,13 @@ namespace System.Data {
 
 		//Don't allow public instantiation
 		//Will be instantianted from DataTable
-		internal ConstraintCollection(DataTable table){
+		internal ConstraintCollection(DataTable table)
+		{
 			this.table = table;
 		} 
 
-		internal DataTable Table{
-			get{
-				return this.table;
-			}
+		internal DataTable Table {
+			get { return this.table; }
 		}
 
 		public
@@ -424,12 +415,18 @@ namespace System.Data {
 				CollectionChanged(this, ccevent);
 			}
 		}
+	}
 
 #if NET_2_0
+	sealed partial class ConstraintCollection {
 		public void CopyTo (Constraint [] array, int index) 
 		{
 			base.CopyTo (array, index);
 		}
-#endif
 	}
+#else
+	[Serializable]
+	partial class ConstraintCollection {
+	}
+#endif
 }

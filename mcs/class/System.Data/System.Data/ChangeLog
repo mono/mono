@@ -1,3 +1,10 @@
+2008-08-27  Raja R Harinath  <harinath@hurrynot.org>
+
+	* ConstraintCollection.cs: Reduce some #ifdef by using partial
+	classes.  Move 'sealed' and '[Serializable]' to appropriate
+	partial class declarations.
+	* DataRowCollection.cs: Likewise.
+
 2008-08-13  Marek Habersack  <mhabersack@novell.com>
 
 	* DataRow.cs: do not check whether a column is read-only when
@@ -11,12 +18,12 @@
 
 	Fixes ##377146
 	* XmlDataReader.cs (ReadElementElement): Handle custom reference types sanely.
-	
+
 2008-07-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataColumnCollection.cs (IndexOf): Include name of column - for which
 	there are multiple matches in a different case - in the exception
-	message.	
+	message.
 	* DataRow.cs (this [int]): On 2.0 profile, throw ArgumentException if
 	value is null and datatype of column is a value type. On 1.0 profile,
 	only allow null value if datatype of column is string. Do not replace

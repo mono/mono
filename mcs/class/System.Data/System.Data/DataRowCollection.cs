@@ -43,16 +43,7 @@ namespace System.Data
 	/// <summary>
 	/// Collection of DataRows in a DataTable
 	/// </summary>
-
-#if !NET_2_0
-	[Serializable]
-#endif
-	public
-#if NET_2_0
-	sealed
-#endif
-	class DataRowCollection : InternalDataCollectionBase 
-	{
+	public partial class DataRowCollection : InternalDataCollectionBase {
 		private DataTable table;
 		
 		internal event ListChangedEventHandler ListChanged;
@@ -60,7 +51,7 @@ namespace System.Data
 		/// <summary>
 		/// Internal constructor used to build a DataRowCollection.
 		/// </summary>
-		internal DataRowCollection (DataTable table) : base ()
+		internal DataRowCollection (DataTable table)
 		{
 			this.table = table;
 		}
@@ -68,8 +59,7 @@ namespace System.Data
 		/// <summary>
 		/// Gets the row at the specified index.
 		/// </summary>
-		public DataRow this[int index] 
-		{
+		public DataRow this[int index] {
 			get { 
 				if (index < 0 || index >= Count)
 					throw new IndexOutOfRangeException ("There is no row at position " + index + ".");
@@ -77,24 +67,6 @@ namespace System.Data
 				return (DataRow) List[index]; 
 			}
 		}
-
-#if NET_2_0
-		public override int Count {
-			get {
-				return List.Count;
-			}
-		}
-#endif
-
-#if !NET_2_0
-		/// <summary>
-		/// This member overrides InternalDataCollectionBase.List
-		/// </summary>
-		protected override ArrayList List 
-		{
-			get { return base.List; }
-		}
-#endif
 
 		/// <summary>
 		/// Adds the specified DataRow to the DataRowCollection object.
@@ -229,23 +201,6 @@ namespace System.Data
 		{
 			return Find (keys) != null;
 		}
-
-#if NET_2_0
-		public void CopyTo (DataRow [] array, int index)
-		{
-			CopyTo ((Array) array, index);
-		}
-
-		public override void CopyTo (Array array, int index)
-		{
-			base.CopyTo (array, index);
-		}
-
-		public override IEnumerator GetEnumerator ()
-  		{
-  			return base.GetEnumerator ();
-  		}
-#endif
 
 		/// <summary>
 		/// Gets the row specified by the primary key value.
@@ -396,6 +351,38 @@ namespace System.Data
 			if (ListChanged != null)
 				ListChanged (sender, args);
 		}
-
 	}
+
+#if NET_2_0
+	sealed partial class DataRowCollection {
+		public override int Count {
+			get { return List.Count; }
+		}
+
+		public void CopyTo (DataRow [] array, int index)
+		{
+			CopyTo ((Array) array, index);
+		}
+
+		public override void CopyTo (Array array, int index)
+		{
+			base.CopyTo (array, index);
+		}
+
+		public override IEnumerator GetEnumerator ()
+		{
+			return base.GetEnumerator ();
+		}
+	}
+#else
+	[Serializable]
+	partial class DataRowCollection {
+		/// <summary>
+		/// This member overrides InternalDataCollectionBase.List
+		/// </summary>
+		protected override ArrayList List {
+			get { return base.List; }
+		}
+	}
+#endif
 }
