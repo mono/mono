@@ -12,7 +12,7 @@ net_2_0_SUBDIRS = al corcompare mono-xsd wsdl compiler-tester monop xbuild resge
 net_2_1_raw_SUBDIRS = compiler-tester
 net_2_1_SUBDIRS = compiler-tester tuner
 
-DIST_ONLY_SUBDIRS = xbuild sgen mconfig nunitreport
+DIST_ONLY_SUBDIRS = xbuild sgen mconfig nunitreport sqlsharp
 
 include ../build/rules.make
 
