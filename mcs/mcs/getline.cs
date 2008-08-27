@@ -67,7 +67,7 @@ namespace Mono.Terminal {
 		History history;
 
 		// The contents of the kill buffer (cut/paste in Emacs parlance)
-		string kill_buffer;
+		string kill_buffer = "";
 
 		// The string being searched for
 		string search;
