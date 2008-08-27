@@ -319,7 +319,8 @@ namespace System.Windows.Forms
 			this.ComboBox.DropDownClosed += new EventHandler(HandleDropDownClosed);
 			this.ComboBox.DropDownStyleChanged += new EventHandler (HandleDropDownStyleChanged);
 			this.ComboBox.SelectedIndexChanged += new EventHandler (HandleSelectedIndexChanged);
-			this.ComboBox.TextUpdate += new EventHandler(HandleTextUpdate);
+			this.ComboBox.TextChanged += new EventHandler (HandleTextChanged);
+			this.ComboBox.TextUpdate += new EventHandler (HandleTextUpdate);
 		}
 
 		protected virtual void OnTextUpdate (EventArgs e)
@@ -394,6 +395,11 @@ namespace System.Windows.Forms
 		private void HandleSelectedIndexChanged (object sender, EventArgs e)
 		{
 			OnSelectedIndexChanged (e);
+		}
+
+		private void HandleTextChanged (object sender, EventArgs e)
+		{
+			OnTextChanged (e);
 		}
 		
 		private void HandleTextUpdate (object sender, EventArgs e)

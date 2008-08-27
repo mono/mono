@@ -1,3 +1,11 @@
+2008-08-27  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ComboBox.cs: Don't suppress the TextChanged event when changing
+	the SelectedIndex.
+	* ToolStripComboBox.cs: Listen to the ComboBox's TextChanged event
+	and re-raise it.
+	[Fixes bug #420673]
+
 2008-08-26  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ErrorProvider.cs: Fix a regression NRE when setting properties

@@ -675,9 +675,9 @@ namespace System.Windows.Forms
 
 				if (dropdown_style != ComboBoxStyle.DropDownList) {
 					if (value == -1)
-						SetControlText("");
+						SetControlText (string.Empty, false);
 					else
-						SetControlText (GetItemText (Items [value]));
+						SetControlText (GetItemText (Items [value]), false);
 				}
 
 				if (DropDownStyle == ComboBoxStyle.DropDownList)
@@ -799,7 +799,7 @@ namespace System.Windows.Forms
 				if (value == null) {
 					if (SelectedIndex == -1) {
 						if (dropdown_style != ComboBoxStyle.DropDownList)
-							SetControlText ("");
+							SetControlText (string.Empty, false);
 					} else {
 						SelectedIndex = -1;
 					}
@@ -1028,7 +1028,7 @@ namespace System.Windows.Forms
 				return;
 
 			if (selected_index != -1 && DropDownStyle != ComboBoxStyle.DropDownList)
-				SetControlText (GetItemText (Items [selected_index]));
+				SetControlText (GetItemText (Items [selected_index]), true);
 
 			if (!IsHandleCreated)
 				return;
@@ -1834,13 +1834,15 @@ namespace System.Windows.Forms
 			if (process_textchanged_event == false)
 				return; 
 
-			OnTextChanged (EventArgs.Empty);
-
 			int item = FindStringCaseInsensitive (textbox_ctrl.Text);
 			
-			if (item == -1)
+			if (item == -1) {
+				// Setting base.Text below will raise this event
+				// if we found something
+				OnTextChanged (EventArgs.Empty);
 				return;
-
+			}
+			
 			// TODO:  THIS IS BROKEN-ISH
 			// I don't think we should hilight, and setting the top item does weirdness
 			// when there is no scrollbar
@@ -1858,9 +1860,11 @@ namespace System.Windows.Forms
 			selected_index = -1;
 		}
 
-		internal void SetControlText (string s)
+		internal void SetControlText (string s, bool suppressTextChanged)
 		{
-			process_textchanged_event = false;
+			if (suppressTextChanged)
+				process_textchanged_event = false;
+				
 			textbox_ctrl.Text = s;
 			textbox_ctrl.SelectAll ();
 			process_textchanged_event = true;
