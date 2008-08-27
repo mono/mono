@@ -35,7 +35,7 @@ namespace Mono.CSharp {
 
 		static void SetupEditor ()
 		{
-			editor = new Mono.Terminal.LineEditor ("ics");
+			editor = new Mono.Terminal.LineEditor ("csharp");
 		}
 
 		static string GetLine (bool primary)
@@ -101,7 +101,7 @@ namespace Mono.CSharp {
 			SetupEditor ();
 
 			if (isatty)
-				Console.WriteLine ("Mono C# Shell, type \"Help();\" for help\n\nEnter statements below.");
+				Console.WriteLine ("Mono C# Shell, type \"help;\" for help\n\nEnter statements below.");
 		}
 		
 		static public int ReadEvalPrintLoop ()
@@ -552,14 +552,16 @@ namespace Mono.CSharp {
 		}
 #endif
 
-		static public void Help ()
+		static public string help {
 		{
-			Console.WriteLine ("Static methods:\n"+
-					   "  LoadPackage (pkg); - Loads the given Package (like -pkg:FILE)\n" +
-					   "  ShowVars ();       - Shows defined local variables.\n" +
-					   "  ShowUsing ();      - Show active using decltions.\n" + 
-					   "  Help ();\n"
-				);
+			get {
+				return  "Static methods:\n"+
+					"  LoadPackage (pkg); - Loads the given Package (like -pkg:FILE)\n" +
+					"  ShowVars ();       - Shows defined local variables.\n" +
+					"  ShowUsing ();      - Show active using decltions.\n" + 
+					"  help;\n";
+			}
+				
 		}
 		
 	}
