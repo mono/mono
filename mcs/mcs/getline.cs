@@ -197,6 +197,8 @@ namespace Mono.Terminal {
 			int lines = 1 + (screenpos / Console.WindowWidth);
 
 			home_row = Console.CursorTop - (lines - 1);
+			if (home_row < 0)
+				home_row = 0;
 		}
 		
 
@@ -269,7 +271,7 @@ namespace Mono.Terminal {
 			int row = home_row + (actual_pos/Console.WindowWidth);
 			int col = actual_pos % Console.WindowWidth;
 
-			if (row == Console.BufferHeight)
+			if (row >= Console.BufferHeight)
 				row = Console.BufferHeight-1;
 			Console.SetCursorPosition (col, row);
 			
@@ -291,6 +293,7 @@ namespace Mono.Terminal {
 			text = text.Insert (cursor, c);
 			ComputeRendered ();
 			if (prev_lines != LineCount){
+
 				Console.SetCursorPosition (0, home_row);
 				Render ();
 				ForceCursor (++cursor);
