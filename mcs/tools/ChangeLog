@@ -1,3 +1,7 @@
+2008-08-27  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile (DIST_ONLY_SUBDIRS): Add 'sqlsharp'.
+
 2008-08-27  Daniel Morgan <monodanmorg@yahoo.com>
 
 	* Makefile: move sqlsharp from SUBDIRS to net_2_0_SUBDIRS
