@@ -1,3 +1,7 @@
+2008-08-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile (net_2_0_SUBDIRS): Add gacutil.
+
 2008-03-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : add mono-xsd to net_2_0_SUBDIRS to build xsd2.
