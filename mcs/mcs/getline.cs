@@ -173,22 +173,28 @@ namespace Mono.Terminal {
 		{
 			history.Dump ();
 		}
-		
+
 		void Render ()
 		{
 			Console.Write (shown_prompt);
 			Console.Write (rendered_text);
+
+			int max = System.Math.Max (rendered_text.Length + shown_prompt.Length, max_rendered);
+			
 			for (int i = rendered_text.Length + shown_prompt.Length; i < max_rendered; i++)
 				Console.Write (' ');
 			max_rendered = shown_prompt.Length + rendered_text.Length;
-			
-			UpdateHomeRow ();
+
+			// Write one more to ensure that we always wrap around properly if we are at the
+			// end of a line.
+			Console.Write (' ');
+
+			UpdateHomeRow (max);
 		}
 
-		void UpdateHomeRow ()
+		void UpdateHomeRow (int screenpos)
 		{
-			int len = shown_prompt.Length + rendered_text.Length;
-			int lines = 1 + (len / Console.WindowWidth);
+			int lines = 1 + (screenpos / Console.WindowWidth);
 
 			home_row = Console.CursorTop - (lines - 1);
 		}
@@ -239,11 +245,22 @@ namespace Mono.Terminal {
 			return p;
 		}
 
+		int TextToScreenPos (int pos)
+		{
+			return shown_prompt.Length + TextToRenderPos (pos);
+		}
+		
 		string Prompt {
 			get { return prompt; }
 			set { prompt = value; }
 		}
 
+		int LineCount {
+			get {
+				return (shown_prompt.Length + rendered_text.Length)/Console.WindowWidth;
+			}
+		}
+		
 		void ForceCursor (int newpos)
 		{
 			cursor = newpos;
@@ -252,7 +269,10 @@ namespace Mono.Terminal {
 			int row = home_row + (actual_pos/Console.WindowWidth);
 			int col = actual_pos % Console.WindowWidth;
 
+			if (row == Console.BufferHeight)
+				row = Console.BufferHeight-1;
 			Console.SetCursorPosition (col, row);
+			
 			//log.WriteLine ("Going to cursor={0} row={1} col={2} actual={3} prompt={4} ttr={5} old={6}", newpos, row, col, actual_pos, prompt.Length, TextToRenderPos (cursor), cursor);
 			//log.Flush ();
 		}
@@ -267,12 +287,18 @@ namespace Mono.Terminal {
 
 		void InsertChar (char c)
 		{
+			int prev_lines = LineCount;
 			text = text.Insert (cursor, c);
 			ComputeRendered ();
-
-			RenderFrom (cursor);
-			ForceCursor (++cursor);
-			UpdateHomeRow ();
+			if (prev_lines != LineCount){
+				Console.SetCursorPosition (0, home_row);
+				Render ();
+				ForceCursor (++cursor);
+			} else {
+				RenderFrom (cursor);
+				ForceCursor (++cursor);
+				UpdateHomeRow (TextToScreenPos (cursor));
+			}
 		}
 
 		//
@@ -498,12 +524,20 @@ namespace Mono.Terminal {
 
 		void CmdYank ()
 		{
+			int prev_lines = LineCount;
 			text.Insert (cursor, kill_buffer);
 			ComputeRendered ();
-			RenderFrom (cursor);
-			cursor += kill_buffer.Length;
-			ForceCursor (cursor);
-			UpdateHomeRow ();
+			if (prev_lines != LineCount){
+				Console.SetCursorPosition (0, home_row);
+				Render ();
+				cursor += kill_buffer.Length;
+				ForceCursor (cursor);
+			} else {
+				RenderFrom (cursor);
+				cursor += kill_buffer.Length;
+				ForceCursor (cursor);
+				UpdateHomeRow (TextToScreenPos (cursor));
+			}
 		}
 
 		void SetSearchPrompt (string s)
@@ -516,8 +550,6 @@ namespace Mono.Terminal {
 			int p;
 
 			if (cursor == text.Length){
-				log.WriteLine ("At end");
-				log.Flush ();
 				// The cursor is at the end of the string
 				
 				p = text.ToString ().LastIndexOf (search);
@@ -530,8 +562,6 @@ namespace Mono.Terminal {
 			} else {
 				// The cursor is somewhere in the middle of the string
 				int start = (cursor == match_at) ? cursor - 1 : cursor;
-				log.WriteLine ("start={0} cursor={1} match_at={2}", start, cursor, match_at);
-				log.Flush ();
 				if (start != -1){
 					p = text.ToString ().LastIndexOf (search, start);
 					if (p != -1){
@@ -547,8 +577,6 @@ namespace Mono.Terminal {
 			HistoryUpdateLine ();
 			string s = history.SearchBackward (search);
 			if (s != null){
-				log.WriteLine ("Found a backward match: " + s);
-				log.Flush ();
 				match_at = -1;
 				SetText (s);
 				ReverseSearch ();
