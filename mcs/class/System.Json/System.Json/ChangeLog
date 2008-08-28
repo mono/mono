@@ -1,3 +1,7 @@
+2008-08-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonReader.cs : a ReadChar() is missing in number parsing.
+
 2008-06-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* JsonArray.cs, JsonObject.cs, JsonPrimitive.cs, JsonReader.cs,

@@ -181,6 +181,7 @@ namespace System.Json
 					c = PeekChar ();
 					if (c < '0' || '9' < c)
 						break;
+					ReadChar ();
 					frac += (c - '0') / d;
 					d *= 10;
 					fdigits++;
