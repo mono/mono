@@ -4,6 +4,15 @@
 
 2008-08-27  Miguel de Icaza  <miguel@novell.com>
 
+	* cs-parser.jay (interactive_statement_list): A new set of rules
+	for hosting statements that uses the "interactive_" prefix.   
+
+	* repl.cs: Add support for parsing `using' as a statement or as a
+	directive.  Deambiguating before passing this to the parser.
+
+	We need to distinguish statement_expressions that occur at the
+	toplevel vs those that occur embedded into expressions.
+
 	* getline.cs: Applied patch from Stuart Carnie <stuart.carnie@gmail.com> 
 	that fixes the cursor key handling, and a history bug.
 	

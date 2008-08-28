@@ -9,6 +9,8 @@
 // Copyright 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
 // Copyright 2004, 2005, 2006, 2007, 2008 Novell, Inc
 //
+// 
+//
 using System;
 using System.IO;
 using System.Text;
@@ -130,13 +132,13 @@ namespace Mono.CSharp {
 				return null;
 
 			bool partial_input;
-			CSharpParser parser = ParseString (true, input, Tokenizer.InteractiveParserCharacter, out partial_input);
+			CSharpParser parser = ParseString (true, input, out partial_input);
 			if (parser == null){
 				if (partial_input)
 					return input;
 				
 				if (parser == null){
-					ParseString (false, input, Tokenizer.InteractiveParserCharacter, out partial_input);
+					ParseString (false, input, out partial_input);
 					return null;
 				}
 			}
@@ -181,14 +183,10 @@ namespace Mono.CSharp {
 		// reported to the user.  This is used to do various calls to the
 		// parser and check if the expression is parsable.
 		//
-		// @parser_init_code determines which token is injected in the token
-		// stream.   This is used to driver the parser between statement
-		// parsing, or full compilation-unit-like parsing.
-		//
 		// @partial_input: if @silent is true, then it returns whether the
 		// parsed expression was partial, and more data is needed
 		//
-		static CSharpParser ParseString (bool silent, string input, int parser_init_code, out bool partial_input)
+		static CSharpParser ParseString (bool silent, string input, out bool partial_input)
 		{
 			partial_input = false;
 			Reset ();
@@ -196,10 +194,22 @@ namespace Mono.CSharp {
 			
 			Stream s = new MemoryStream (Encoding.Default.GetBytes (input));
 			SeekableStreamReader seekable = new SeekableStreamReader (s, Encoding.Default);
+			Tokenizer t = new Tokenizer (seekable, Location.SourceFiles [0]);
+
+			//
+			// Deambiguate: do we have a using statement, or a using clause
+			//
+			int initial_token;
+			if (t.token () == Token.USING && t.token () == Token.IDENTIFIER)
+				initial_token = Tokenizer.InteractiveParserCharacterUsing;
+			else
+				initial_token = Tokenizer.InteractiveParserCharacter;
+			seekable.Position = 0;
+
 			CSharpParser parser = new CSharpParser (seekable, Location.SourceFiles [0]);
 			parser.ErrorOutput = Report.Stderr;
 
-			parser.Lexer.putback_char = parser_init_code;
+			parser.Lexer.putback_char = initial_token;
 			if (silent)
 				Report.DisableReporting ();
 			try {
@@ -214,7 +224,7 @@ namespace Mono.CSharp {
 				if (silent)
 					Report.EnableReporting ();
 			}
-			
+
 			return parser;
 		}
 
@@ -246,6 +256,11 @@ namespace Mono.CSharp {
 						p (", ");
 				}
 				p (" }");
+			} else if (result is bool){
+				if ((bool) result)
+					p ("true");
+				else
+					p ("false");
 			} else if (result is string){
 				p (String.Format ("\"{0}\"", EscapeString ((string)result)));
 			} else {

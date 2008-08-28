@@ -59,6 +59,7 @@ namespace Mono.CSharp
 		//
 		
 		public const int InteractiveParserCharacter = 0x2190;   // Unicode Left Arrow
+		public const int InteractiveParserCharacterUsing = 0x2191;   // Unicode Down Arrow
 		
 		//
 		// XML documentation buffer. The save point is used to divide
@@ -2786,6 +2787,9 @@ namespace Mono.CSharp
 
 				if (c == InteractiveParserCharacter)
 					return Token.INTERACTIVE_PARSER;
+				
+				if (c == InteractiveParserCharacterUsing)
+					return Token.INTERACTIVE_PARSER_USING_DIRECTIVES;
 				
 				error_details = ((char)c).ToString ();
 				

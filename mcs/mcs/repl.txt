@@ -28,6 +28,13 @@ Mono, or go to mcs and type:
 	This would solve the grammar ambiguity that happens if we just
 	allow both to be starting nodes.
 
+* Clearing data
+
+	TODO: when clearing data for variables that have been overwritten
+	we need to check for structs and clear all the fields that contain
+	reference types.
+
+* 
 * Implement auto-insert-semicolon
 
 	This is easy to implement, just retry the parse with a

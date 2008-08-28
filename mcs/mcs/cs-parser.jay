@@ -318,7 +318,7 @@ namespace Mono.CSharp
 
 // Make the parser go into interactive parsing
 %token INTERACTIVE_PARSER
-
+%token INTERACTIVE_PARSER_USING_DIRECTIVES
 
 /* Add precedence rules to solve dangling else s/r conflict */
 %nonassoc LOWPREC
@@ -4212,10 +4212,52 @@ statement
 	| labeled_statement
 	;
 
+//
+// The interactive_statement and its derivatives are only 
+// used to provide a special version of `expression_statement'
+// that has a side effect of assigning the expression to
+// $retval
+//
+interactive_statement_list
+	: interactive_statement
+	| interactive_statement_list interactive_statement
+	;
+
+interactive_statement
+	: declaration_statement
+	  {
+		if ($1 != null && (Block) $1 != current_block){
+			current_block.AddStatement ((Statement) $1);
+			current_block = (Block) $1;
+		}
+	  }
+	| interactive_valid_declaration_statement
+	  {
+		current_block.AddStatement ((Statement) $1);
+	  }
+	| labeled_statement
+	;
+
 valid_declaration_statement
 	: block
 	| empty_statement
         | expression_statement
+	| selection_statement
+	| iteration_statement
+	| jump_statement		  
+	| try_statement
+	| checked_statement
+	| unchecked_statement
+	| lock_statement
+	| using_statement
+	| unsafe_statement
+	| fixed_statement
+	;
+
+interactive_valid_declaration_statement
+	: block
+	| empty_statement
+        | interactive_expression_statement
 	| selection_statement
 	| iteration_statement
 	| jump_statement		  
@@ -4410,6 +4452,10 @@ expression_statement
 	: statement_expression SEMICOLON { $$ = $1; }
 	;
 
+interactive_expression_statement
+	: interactive_statement_expression SEMICOLON { $$ = $1; }
+	;
+
 	//
 	// We have to do the wrapping here and not in the case above,
 	// because statement_expression is used for example in for_statement
@@ -4420,10 +4466,7 @@ statement_expression
 		Expression expr = (Expression) $1;
 		ExpressionStatement s;
 
-	        if (RootContext.EvalMode)
-		        s = new OptionalAssign (new SimpleName ("$retval", lexer.Location), expr, lexer.Location);
-		else
-			s = expr as ExpressionStatement;
+		s = expr as ExpressionStatement;
 
 		if (s == null) {
 			expr.Error_InvalidExpressionStatement ();
@@ -4439,6 +4482,22 @@ statement_expression
 	  }
 	;
 
+interactive_statement_expression
+	: expression
+	  {
+		Expression expr = (Expression) $1;
+		ExpressionStatement s;
+
+	        s = new OptionalAssign (new SimpleName ("$retval", lexer.Location), expr, lexer.Location);
+		$$ = new StatementExpression (s);
+	  }
+	| error
+	  {
+		Report.Error (1002, GetLocation ($1), "Expecting `;' (token is: {0})", yyToken);
+		$$ = null;
+	  }
+	;
+	
 selection_statement
 	: if_statement
 	| switch_statement
@@ -5358,7 +5417,7 @@ opt_query_continuation
 
 interactive_parsing
 	: INTERACTIVE_PARSER EOF 
-	| INTERACTIVE_PARSER using_directives { 
+	| INTERACTIVE_PARSER_USING_DIRECTIVES { Console.WriteLine ("HERE"); } using_directives { 
 	  	InteractiveResult = current_namespace; 
 	  } 
 	| INTERACTIVE_PARSER { 
@@ -5390,7 +5449,7 @@ interactive_parsing
 	        ++lexer.parsing_block;
 		start_block (lexer.Location);
 	  }		
-	  statement_list
+	  interactive_statement_list
 	  {
 		--lexer.parsing_block;
 		Method method = (Method) oob_stack.Pop ();
