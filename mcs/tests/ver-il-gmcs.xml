@@ -31745,6 +31745,33 @@
       </method>
     </type>
   </test>
+  <test name="test-674.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>56</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__0(Int32)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="Test+D">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Int32 Invoke(Int32)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(Int32, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="test-68.cs">
     <type name="Y">
       <method name="Void .ctor()">
