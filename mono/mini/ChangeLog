@@ -1,5 +1,7 @@
 2008-08-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Add an 'asm-only' AOT option.
+
 	* mini.c: Avoid initializing the runtime when doing AOT compilation.
 		
 	* aot-compiler.c (compile_method): Disable gshared support for now as it
