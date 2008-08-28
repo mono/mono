@@ -1,3 +1,7 @@
+2008-08-28  Marek Safar  <marek.safar@gmail.com>
+	
+	* attribute (IsClsCompliant): Use FALSE value for pointer types.
+
 2008-08-27  Miguel de Icaza  <miguel@novell.com>
 
 	* repl.cs: Add support for aborting the running code with C-c. 

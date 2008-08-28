@@ -1571,7 +1571,7 @@ namespace Mono.CSharp {
 				return type_compliance == TRUE;
 
 			if (type.IsPointer) {
-				analyzed_types.Add (type, null);
+				analyzed_types.Add (type, FALSE);
 				return false;
 			}
 
