@@ -121,7 +121,9 @@ namespace Mono.Terminal {
 
 		static Handler [] handlers;
 
-		public LineEditor (string name)
+		public LineEditor (string name) : this (name, 100) { }
+		
+		public LineEditor (string name, int histsize)
 		{
 			handlers = new Handler [] {
 				new Handler (ConsoleKey.Home,       CmdHome),
@@ -163,7 +165,7 @@ namespace Mono.Terminal {
 			rendered_text = new StringBuilder ();
 			text = new StringBuilder ();
 
-			history = new History (name, 10);
+			history = new History (name, histsize);
 			
 			//if (File.Exists ("log"))File.Delete ("log");
 			//log = File.CreateText ("log"); 
