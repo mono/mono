@@ -1,3 +1,7 @@
+2008-08-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* machine.config: Fix syntax error.
+
 2008-03-23  Dean Brettle  <dean@brettle.com>
 
 	* Makefile.am: added Browsers/Compat.browser
