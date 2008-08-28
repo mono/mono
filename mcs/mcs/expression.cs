@@ -5107,7 +5107,10 @@ namespace Mono.CSharp {
 			}
 		}
 	}
-/*
+
+	//
+	// It's either a cast or delegate invocation
+	//
 	public class InvocationOrCast : ExpressionStatement
 	{
 		Expression expr;
@@ -5127,13 +5130,21 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			Expression e = ResolveCore (ec);
+			if (e == null)
+				return null;
+
+			return e.Resolve (ec);
+		}
+
+		Expression ResolveCore (EmitContext ec)
+		{
 			//
 			// First try to resolve it as a cast.
 			//
-			TypeExpr te = expr.ResolveAsTypeTerminal (ec, true);
-			if ((te != null) && (te.eclass == ExprClass.Type)) {
-				Cast cast = new Cast (te, argument, loc);
-				return cast.Resolve (ec);
+			TypeExpr te = expr.ResolveAsBaseTerminal (ec, true);
+			if (te != null) {
+				return new Cast (te, argument, loc);
 			}
 
 			//
@@ -5147,10 +5158,14 @@ namespace Mono.CSharp {
 			//
 			// Ok, so it's a Cast.
 			//
-			if (expr.eclass == ExprClass.Type) {
-				Cast cast = new Cast (new TypeExpression (expr.Type, loc), argument, loc);
-				return cast.Resolve (ec);
+			if (expr.eclass == ExprClass.Type || expr.eclass == ExprClass.TypeParameter) {
+				return new Cast (expr, argument, loc);
 			}
+
+			if (expr.eclass == ExprClass.Namespace) {
+				expr.Error_UnexpectedKind (null, "type", loc);
+				return null;
+			}			
 
 			//
 			// It's a delegate invocation.
@@ -5160,45 +5175,24 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			ArrayList args = new ArrayList ();
+			ArrayList args = new ArrayList (1);
 			args.Add (new Argument (argument, Argument.AType.Expression));
-			DelegateInvocation invocation = new DelegateInvocation (expr, args, loc);
-			return invocation.Resolve (ec);
+			return new DelegateInvocation (expr, args, loc);
 		}
 
 		public override ExpressionStatement ResolveStatement (EmitContext ec)
 		{
-			//
-			// First try to resolve it as a cast.
-			//
-			TypeExpr te = expr.ResolveAsTypeTerminal (ec, true);
-			if ((te != null) && (te.eclass == ExprClass.Type)) {
+			Expression e = ResolveCore (ec);
+			if (e == null)
+				return null;
+
+			ExpressionStatement s = e as ExpressionStatement;
+			if (s == null) {
 				Error_InvalidExpressionStatement ();
 				return null;
 			}
 
-			//
-			// This can either be a type or a delegate invocation.
-			// Let's just resolve it and see what we'll get.
-			//
-			expr = expr.Resolve (ec, ResolveFlags.Type | ResolveFlags.VariableOrValue);
-			if ((expr == null) || (expr.eclass == ExprClass.Type)) {
-				Error_InvalidExpressionStatement ();
-				return null;
-			}
-
-			//
-			// It's a delegate invocation.
-			//
-			if (!TypeManager.IsDelegateType (expr.Type)) {
-				Error (149, "Method name expected");
-				return null;
-			}
-
-			ArrayList args = new ArrayList ();
-			args.Add (new Argument (argument, Argument.AType.Expression));
-			DelegateInvocation invocation = new DelegateInvocation (expr, args, loc);
-			return invocation.ResolveStatement (ec);
+			return s.ResolveStatement (ec);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -5219,7 +5213,7 @@ namespace Mono.CSharp {
 			target.argument = argument.Clone (clonectx);
 		}
 	}
-*/
+
 	//
 	// This class is used to "disable" the code generation for the
 	// temporary variable when initializing value types.

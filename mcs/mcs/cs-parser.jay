@@ -2963,7 +2963,7 @@ invocation_expression
 	  }
 	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS primary_expression
 	  {
-		$$ = new Cast ((Expression) $1, (Expression) $3);
+		$$ = new InvocationOrCast ((Expression) $1, (Expression) $3);
 	  }
 	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS OPEN_PARENS non_simple_argument CLOSE_PARENS
 	  {
