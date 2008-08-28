@@ -1,3 +1,29 @@
+2008-08-27  Miguel de Icaza  <miguel@novell.com>
+
+	* TermInfoDriver.cs: Adds support for the Insert and Delete keys
+	on the keyboard.   
+
+2008-08-26  Miguel de Icaza  <miguel@novell.com>
+
+	* New console features are used by gmcs.exe, but since we only
+	build gmcs.exe with the bootstrap corlib, we need to ensure all
+	the new stuff is included in BOOTSTRAP_NET_2_0
+
+2008-08-24  Miguel de Icaza  <miguel@novell.com>
+
+	* TermInfoDriver.cs (GetKeyFromBuffer): Add support for reporting
+	Alt-LETTER sequences.   They were ignored previously.
+
+2008-08-20  Miguel de Icaza  <miguel@novell.com>
+
+	* ConsoleDriver.cs: TtySetup now takes an extra argument: the
+	keypadXmit string.
+
+2008-08-03  Miguel de Icaza  <miguel@novell.com>
+
+	* ConsoleDriver.cs: If the terminal is dumb, do not activate the
+	full terminal support.
+
 2008-07-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* ConsoleDriver.cs: Remove unused Suspend icall.

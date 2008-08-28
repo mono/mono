@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0 && !NET_2_1
+#if (NET_2_0||BOOTSTRAP_NET_2_0) && !NET_2_1
 //#define DEBUG
 using System.Collections;
 using System.IO;
@@ -37,7 +37,7 @@ namespace System {
 	class TermInfoDriver : IConsoleDriver {
 		/* Do not rename this field, its looked up from the runtime */
 		static bool need_window_dimensions = true;
-		
+		//static uint flag = 0xdeadbeef;
 		static string [] locations = { "/etc/terminfo", "/usr/share/terminfo", "/usr/lib/terminfo" };
 
 		TermInfoReader reader;
@@ -54,8 +54,6 @@ namespace System {
 		StreamReader stdin;
 		CStreamWriter stdout;
 		internal byte verase;
-		byte vsusp;
-		byte intr;
 
 		int windowWidth;
 		int windowHeight;
@@ -200,7 +198,9 @@ namespace System {
 			if (resetColors != null)
 				endString += resetColors;
 
-			if (!ConsoleDriver.TtySetup (endString, out verase, out vsusp, out intr))
+			byte vsusp;
+			byte intr;
+			if (!ConsoleDriver.TtySetup (keypadXmit, endString, out verase, out vsusp, out intr))
 				throw new IOException ("Error initializing terminal.");
 
 			stdin = new StreamReader (Console.OpenStandardInput (0), Console.InputEncoding);
@@ -371,7 +371,7 @@ namespace System {
 		// Should never get called unless inited
 		public void WriteSpecialKey (char c)
 		{
-			WriteSpecialKey (CreateKeyInfoFromInt (c));
+			WriteSpecialKey (CreateKeyInfoFromInt (c, false));
 		}
 
 		public bool IsSpecialKey (ConsoleKeyInfo key)
@@ -403,7 +403,7 @@ namespace System {
 
 		public bool IsSpecialKey (char c)
 		{
-			return IsSpecialKey (CreateKeyInfoFromInt (c));
+			return IsSpecialKey (CreateKeyInfoFromInt (c, false));
 		}
 
 		public ConsoleColor BackgroundColor {
@@ -847,13 +847,12 @@ namespace System {
 			}
 		}
 
-		ConsoleKeyInfo CreateKeyInfoFromInt (int n)
+		ConsoleKeyInfo CreateKeyInfoFromInt (int n, bool alt)
 		{
 			char c = (char) n;
 			ConsoleKey key = (ConsoleKey)n;
 			bool shift = false;
 			bool ctrl = false;
-			bool alt = false;
 
 			if (n == 10) {
 				key = ConsoleKey.Enter;
@@ -886,13 +885,22 @@ namespace System {
 			if (!cooked || !rootmap.StartsWith (next)) {
 				readpos++;
 				AdjustBuffer ();
-				return CreateKeyInfoFromInt (next);
+				return CreateKeyInfoFromInt (next, false);
 			}
 
 			int used;
 			TermInfoStrings str = rootmap.Match (buffer, readpos, writepos - readpos, out used);
-			if ((int) str == -1)
-				return null;
+			if ((int) str == -1){
+				// Escape sequences: alt keys are sent as ESC-key
+				if (buffer [readpos] == 27 && (writepos - readpos) >= 2){
+					readpos += 2;
+					AdjustBuffer ();
+					if (buffer [readpos+1] == 127)
+						return new ConsoleKeyInfo ((char)8, ConsoleKey.Backspace, false, true, false);
+					return CreateKeyInfoFromInt (buffer [readpos+1], true);
+				} else
+					return null;
+			}
 
 			ConsoleKeyInfo key;
 			if (keymap [str] != null) {
@@ -900,7 +908,7 @@ namespace System {
 			} else {
 				readpos++;
 				AdjustBuffer ();
-				return CreateKeyInfoFromInt (next);
+				return CreateKeyInfoFromInt (next, false);
 			}
 
 			readpos += used;
@@ -1263,6 +1271,11 @@ namespace System {
 			keymap [TermInfoStrings.KeyF22] = new ConsoleKeyInfo ('\0', ConsoleKey.F22, false, false, false);
 			keymap [TermInfoStrings.KeyF23] = new ConsoleKeyInfo ('\0', ConsoleKey.F23, false, false, false);
 			keymap [TermInfoStrings.KeyF24] = new ConsoleKeyInfo ('\0', ConsoleKey.F24, false, false, false);
+
+
+			// These were previously missing:
+			keymap [TermInfoStrings.KeyDc] = new ConsoleKeyInfo ('\0', ConsoleKey.Delete, false, false, false);
+			keymap [TermInfoStrings.KeyIc] = new ConsoleKeyInfo ('\0', ConsoleKey.Insert, false, false, false);
 		}
 
 		void InitKeys ()
@@ -1330,6 +1343,11 @@ namespace System {
 			AddStringMapping (TermInfoStrings.KeyF22);
 			AddStringMapping (TermInfoStrings.KeyF23);
 			AddStringMapping (TermInfoStrings.KeyF24);
+
+			// These were missing
+			AddStringMapping (TermInfoStrings.KeyDc);
+			AddStringMapping (TermInfoStrings.KeyIc);
+			
 			rootmap.Sort ();
 			initKeys = true;
 		}

@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0 && !NET_2_1
+#if (NET_2_0||BOOTSTRAP_NET_2_0) && !NET_2_1
 using System.IO;
 using System.Runtime.CompilerServices;
 
@@ -46,7 +46,15 @@ namespace System {
 			} else if (Environment.IsRunningOnWindows) {
 				driver = CreateWindowsConsoleDriver ();
 			} else {
-				driver = CreateTermInfoDriver ();
+				string term = Environment.GetEnvironmentVariable ("TERM");
+
+				// Perhaps we should let the Terminfo driver return a
+				// success/failure flag based on the terminal properties
+				if (term == "dumb"){
+					is_console = false;
+					driver = CreateNullConsoleDriver ();
+				} else
+					driver = CreateTermInfoDriver (term);
 			}
 		}
 
@@ -61,8 +69,8 @@ namespace System {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.NoInlining)]
-		static IConsoleDriver CreateTermInfoDriver () {
-			return new TermInfoDriver (Environment.GetEnvironmentVariable ("TERM"));
+		static IConsoleDriver CreateTermInfoDriver (string term) {
+			return new TermInfoDriver (term);
 		}
 		
 		public static bool Initialized {
@@ -257,7 +265,7 @@ namespace System {
 		internal static extern int InternalKeyAvailable (int ms_timeout);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern bool TtySetup (string teardown, out byte verase, out byte vsusp, out byte intr);
+		internal static extern bool TtySetup (string keypadXmit, string teardown, out byte verase, out byte vsusp, out byte intr);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern bool SetEcho (bool wantEcho);

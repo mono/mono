@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0 && !NET_2_1
+#if (NET_2_0 || BOOTSTRAP_NET_2_0) && !NET_2_1
 using System.IO;
 using System.Text;
 namespace System {
@@ -72,16 +72,16 @@ namespace System {
 	//
 
 	class TermInfoReader {
-		short nameSize;
+		//short nameSize;
 		short boolSize;
 		short numSize;
 		short strOffsets;
-		short strSize;
+		//short strSize;
 
-		string [] names; // Last one is the description
+		//string [] names; // Last one is the description
 		byte [] buffer;
 		int booleansOffset;
-		string term;
+		//string term;
 
 		public TermInfoReader (string term, string filename)
 		{
@@ -110,9 +110,9 @@ namespace System {
 			ReadNames (buffer, ref booleansOffset);
 		}
 
-		public string Term {
-			get { return term; }
-		}
+//		public string Term {
+//			get { return term; }
+//		}
 
 		void ReadHeader (byte [] buffer, ref int position)
 		{
@@ -121,7 +121,7 @@ namespace System {
 			if (magic != 282)
 				throw new Exception (String.Format ("Magic number is wrong: {0}", magic));
 			
-			nameSize = GetInt16 (buffer, position);
+			/*nameSize =*/ GetInt16 (buffer, position);
 			position += 2;
 			boolSize = GetInt16 (buffer, position);
 			position += 2;
@@ -129,7 +129,7 @@ namespace System {
 			position += 2;
 			strOffsets = GetInt16 (buffer, position);
 			position += 2;
-			strSize = GetInt16 (buffer, position);
+			/*strSize =*/ GetInt16 (buffer, position);
 			position += 2;
 		}
 
@@ -137,7 +137,7 @@ namespace System {
 		{
 			string prev = GetString (buffer, position);
 			position += prev.Length + 1;
-			names = prev.Split ('|');
+			//names = prev.Split ('|');
 		}
 
 		public bool Get (TermInfoBooleans boolean)

@@ -28,6 +28,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if NET_2_0 || BOOTSTRAP_NET_2_0
+#define NET2_API
+#endif
 
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -38,7 +41,7 @@ using System.Text;
 namespace System
 {
 	public
-#if NET_2_0
+#if NET2_API
 	static
 #else
 	sealed
@@ -71,7 +74,7 @@ namespace System
 
 		static Console ()
 		{
-#if !NET_2_0 || NET_2_1
+#if !NET2_API || NET_2_1
 			Encoding inputEncoding;
 			Encoding outputEncoding;
 #endif
@@ -108,7 +111,7 @@ namespace System
 			((StreamWriter)stderr).AutoFlush = true;
 			stderr = TextWriter.Synchronized (stderr, true);
 
-#if NET_2_0 && !NET_2_1
+#if NET2_API && !NET_2_1
 			if (!Environment.IsRunningOnWindows && ConsoleDriver.IsConsole) {
 				StreamWriter w = new CStreamWriter (OpenStandardOutput (0), outputEncoding);
 				w.AutoFlush = true;
@@ -121,7 +124,7 @@ namespace System
 				stdout = TextWriter.Synchronized (stdout, true);
 				stdin = new UnexceptionalStreamReader (OpenStandardInput (0), inputEncoding);
 				stdin = TextReader.Synchronized (stdin);
-#if NET_2_0 && !NET_2_1
+#if NET2_API && !NET_2_1
 			}
 #endif
 
@@ -130,7 +133,7 @@ namespace System
 			GC.SuppressFinalize (stdin);
 		}
 
-#if !NET_2_0
+#if !NET2_API
 		private Console ()
 		{
 		}
@@ -459,7 +462,7 @@ namespace System
 		}
 #endif
 
-#if NET_2_0 && !NET_2_1
+#if NET2_API && !NET_2_1
 		public static int Read ()
 		{
 			if ((stdin is CStreamReader) && ConsoleDriver.IsConsole) {
@@ -490,7 +493,7 @@ namespace System
 
 #endif
 
-#if NET_2_0 && !NET_2_1
+#if NET2_API && !NET_2_1
 		// FIXME: Console should use these encodings when changed
 		static Encoding inputEncoding;
 		static Encoding outputEncoding;
