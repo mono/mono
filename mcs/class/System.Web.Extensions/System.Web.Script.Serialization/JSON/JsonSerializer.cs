@@ -495,7 +495,7 @@ namespace Newtonsoft.Json
 			writer.WriteStartArray ();
 
 			foreach (object value in values)
-				SerializeValue (writer, value);
+				SerializeValue (writer, value, true, null);
 
 			writer.WriteEndArray ();
 		}

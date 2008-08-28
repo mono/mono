@@ -1,3 +1,8 @@
+2008-08-28  Marek Habersack  <mhabersack@novell.com>
+
+	* JsonSerializer.cs: each value stored in an enumerable is treated
+	as a top-level object.
+
 2008-08-22  Marek Habersack  <mhabersack@novell.com>
 
 	* JsonSerializer.cs: do not perform deep object serialization - it
