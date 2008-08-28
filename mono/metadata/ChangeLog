@@ -1,5 +1,7 @@
 2008-08-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* rawbuffer.c (mono_raw_buffer_load_mmap): Disable this on the iphone.
+
 	* reflection.c (_mono_reflection_get_type_from_info): Handle the 
 	special case when the mono_assembly_loaded () returns NULL because the 
 	search hook is not installed.
