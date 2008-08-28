@@ -106,7 +106,7 @@ namespace Mono.CSharp {
 		protected ArrayList hoisted_locals;
 
 		// Hoisted this
-		HoistedThis hoisted_this;
+		protected HoistedThis hoisted_this;
 
 		// Local variable which holds this storey instance
 		public LocalTemporary Instance;
@@ -760,6 +760,10 @@ namespace Mono.CSharp {
 		public override void EmitSymbolInfo ()
 		{
 			SymbolWriter.DefineCapturedThis (storey.ID, field.Name);
+		}
+
+		public Field Field {
+			get { return field; }
 		}
 
 		public void RemoveHoisting ()

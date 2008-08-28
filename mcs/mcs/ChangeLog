@@ -1,5 +1,10 @@
 2008-08-28  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #420832
+	* anonymous.cs, iterators.cs: Also clone hoisted this iterator variable.
+
+2008-08-28  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #420386
 	* nullables.cs: Fixed logic of nullable user comparison operators involving
 	null values.
