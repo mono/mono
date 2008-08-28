@@ -59,10 +59,15 @@
 #    define FREEBSD
 # endif
 
+/* And one for Darwin: */
+# if defined(macosx) || (defined(__APPLE__) && defined(__MACH__))
+#   define DARWIN
+# endif
+
 /* Determine the machine type: */
 # if defined(__arm__) || defined(__thumb__)
 #    define ARM32
-#    if !defined(LINUX) && !defined(NETBSD)
+#    if !defined(LINUX) && !defined(NETBSD) && !defined(DARWIN)
 #      define NOSYS
 #      define mach_type_known
 #    endif
@@ -297,8 +302,7 @@
 #   define MACOS
 #   define mach_type_known
 # endif
-# if defined(macosx) || (defined(__APPLE__) && defined(__MACH__))
-#   define DARWIN
+# ifdef DARWIN
 #   if defined(__ppc__)  || defined(__ppc64__)
 #    define POWERPC
 #    define mach_type_known
@@ -326,6 +330,10 @@
       /* There seems to be some issues with trylock hanging on darwin. This
          should be looked into some more */
 #     define NO_PTHREAD_TRYLOCK
+#   elif defined(__arm__)
+#    define ARM
+#    define mach_type_known
+#    define DARWIN_DONT_PARSE_STACK
 #   endif
 # endif
 # if defined(NeXT) && defined(mc68000)
@@ -1882,6 +1890,14 @@
 #   ifdef MSWINCE
 #     define OS_TYPE "MSWINCE"
 #     define DATAEND /* not needed */
+#   endif
+#   ifdef DARWIN
+#     define OS_TYPE "DARWIN"
+#     define DATASTART ((ptr_t) get_etext())
+#     define DATAEND	((ptr_t) get_end())
+#     define STACKBOTTOM ((ptr_t) 0x30000000)
+#     undef USE_MMAP
+#     undef USE_MUNMAP
 #   endif
 #   ifdef NOSYS
       /* __data_start is usually defined in the target linker script.  */
