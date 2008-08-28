@@ -1,3 +1,7 @@
+2008-08-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-profiler-logging.c (detect_fast_timer): Add missing return type.
+
 2008-08-22  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c: Backported fixes from trunk (making it
 	identical to r111250):
