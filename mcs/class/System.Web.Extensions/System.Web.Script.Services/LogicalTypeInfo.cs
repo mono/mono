@@ -86,11 +86,28 @@ namespace System.Web.Script.Services
 			public void Invoke (IDictionary<string, object> @params, TextWriter writer) {
 				object [] pp = null;
 				if (HasParameters) {
+					Type ptype;
+					int i;
+					object value;
 					pp = new object [_params.Length];
 
 					foreach (KeyValuePair<string, object> pair in @params) {
-						int i = _paramMap [pair.Key];
-						pp [i] = LogicalTypeInfo.JSSerializer.ConvertToType (_params [i].ParameterType, pair.Value);
+						if (!_paramMap.TryGetValue (pair.Key, out i))
+							continue;
+
+						value = pair.Value;
+						if (value is JavaScriptSerializer.LazyDictionary) {
+							var newValue = new Dictionary <string, object> ();
+							foreach (KeyValuePair <string, object> kvp in (JavaScriptSerializer.LazyDictionary)value)
+								newValue.Add (kvp.Key, kvp.Value);
+							value = newValue;
+						}
+						
+						ptype = _params [i].ParameterType;
+						if (ptype == typeof (System.Object))
+							pp [i] = value;
+						else
+							pp [i] = LogicalTypeInfo.JSSerializer.ConvertToType (ptype, value);
 					}
 				}
 
