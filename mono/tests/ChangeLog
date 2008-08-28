@@ -1,3 +1,7 @@
+2008-08-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* libtest.c (mono_xr_as_handle): Initialize ref before returning it.
+
 2008-08-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* generics-sharing.2.cs: Fix invalid generic construct permitted by older
