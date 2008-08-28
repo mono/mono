@@ -1,5 +1,7 @@
 2008-08-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* rules.make: Print the profile in the quiet commands.
+	
 	* rules.make: Make the build process quiet similarly to the runtime build
 	process. Use the V=1 argument to make to make it verbose again.
 
