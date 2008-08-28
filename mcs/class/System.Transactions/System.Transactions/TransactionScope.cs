@@ -27,7 +27,6 @@ namespace System.Transactions
 		/* Num of non-disposed nested scopes */
 		int nested;
 
-		TimeSpan timeout;
 		bool disposed;
 		bool completed;
 		bool isRoot;
@@ -89,7 +88,6 @@ namespace System.Transactions
 			Transaction tx, TransactionOptions options,
 			DTCOption interop, TimeSpan timeout)
 		{
-			this.timeout = timeout;
 			completed = false;
 			isRoot = false;
 			nested = 0;

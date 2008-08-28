@@ -16,15 +16,15 @@ namespace System.Transactions
 	[Serializable]
 	public sealed class DependentTransaction : Transaction, ISerializable
 	{
-		Transaction parent;
-		DependentCloneOption option;
+//		Transaction parent;
+//		DependentCloneOption option;
 		bool completed;
 
 		internal DependentTransaction (Transaction parent,
 			DependentCloneOption option)
 		{
-			this.parent = parent;
-			this.option = option;
+//			this.parent = parent;
+//			this.option = option;
 		}
 
 		internal bool Completed {
@@ -35,15 +35,14 @@ namespace System.Transactions
 		public void Complete ()
 		{
 			throw new NotImplementedException ();
-			completed = true;
 		}
 
 		void ISerializable.GetObjectData (SerializationInfo info,
 			StreamingContext context)
 		{
-			parent = (Transaction) info.GetValue ("parent", typeof (Transaction));
-			option = (DependentCloneOption) info.GetValue (
-				"option", typeof (DependentCloneOption));
+//			parent = (Transaction) info.GetValue ("parent", typeof (Transaction));
+//			option = (DependentCloneOption) info.GetValue (
+//				"option", typeof (DependentCloneOption));
 			completed = info.GetBoolean ("completed");
 		}
 	}

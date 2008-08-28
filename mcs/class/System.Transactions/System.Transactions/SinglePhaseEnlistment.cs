@@ -15,7 +15,7 @@ namespace System.Transactions
 {
 	public class SinglePhaseEnlistment : Enlistment
 	{
-		bool committed = false;
+//		bool committed;
 		Transaction tx;
 		ISinglePhaseNotification enlisted;
 		
@@ -39,7 +39,7 @@ namespace System.Transactions
 		public void Committed ()
 		{
 			/* FIXME */
-			committed = true;
+//			committed = true;
 		}
 
 		[MonoTODO ("Not implemented")]
