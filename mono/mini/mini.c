@@ -168,9 +168,7 @@ static __thread gpointer mono_jit_tls MONO_TLS_FAST;
 
 MonoTraceSpec *mono_jit_trace_calls = NULL;
 gboolean mono_break_on_exc = FALSE;
-#ifndef DISABLE_AOT
 gboolean mono_compile_aot = FALSE;
-#endif
 /* If this is set, no code is generated dynamically, everything is taken from AOT files */
 gboolean mono_aot_only = FALSE;
 /* Whenever to use IMT */
@@ -12702,12 +12700,14 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	mono_arch_fixup_jinfo (cfg);
 #endif
 
-	mono_domain_lock (cfg->domain);
-	mono_jit_info_table_add (cfg->domain, jinfo);
+	if (!cfg->compile_aot) {
+		mono_domain_lock (cfg->domain);
+		mono_jit_info_table_add (cfg->domain, jinfo);
 
-	if (cfg->method->dynamic)
-		mono_dynamic_code_hash_lookup (cfg->domain, cfg->method)->ji = jinfo;
-	mono_domain_unlock (cfg->domain);
+		if (cfg->method->dynamic)
+			mono_dynamic_code_hash_lookup (cfg->domain, cfg->method)->ji = jinfo;
+		mono_domain_unlock (cfg->domain);
+	}
 
 	/* collect statistics */
 	mono_jit_stats.allocated_code_size += cfg->code_len;
@@ -14236,16 +14236,21 @@ mini_init (const char *filename, const char *runtime_version)
 	register_icall (mono_array_new_2, "mono_array_new_2", "object ptr int int", FALSE);
 #endif
 
+	mono_generic_sharing_init ();
+
 #define JIT_RUNTIME_WORKS
 #ifdef JIT_RUNTIME_WORKS
 	mono_install_runtime_cleanup ((MonoDomainFunc)mini_cleanup);
-	mono_runtime_init (domain, mono_thread_start_cb, mono_thread_attach_cb);
+	/* 
+	 * Avoid initializing the runtime when AOT compiling, since the platform
+	 * might only support aot-only execution.
+	 */
+	if (!mono_compile_aot) {
+		mono_runtime_init (domain, mono_thread_start_cb, mono_thread_attach_cb);
+		mono_thread_attach (domain);
+	}
 #endif
 
-	mono_generic_sharing_init ();
-
-	mono_thread_attach (domain);
-	
 	mono_profiler_runtime_initialized ();
 	
 	MONO_PROBE_VES_INIT_END ();
@@ -14365,7 +14370,8 @@ mini_cleanup (MonoDomain *domain)
 	/* This accesses metadata so needs to be called before runtime shutdown */
 	print_jit_stats ();
 
-	mono_runtime_cleanup (domain);
+	if (!mono_compile_aot)
+		mono_runtime_cleanup (domain);
 
 	mono_profiler_shutdown ();
 

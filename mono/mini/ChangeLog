@@ -1,3 +1,9 @@
+2008-08-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c: Avoid initializing the runtime when doing AOT compilation.
+	(mini_method_compile): Don't add the method to the jit_info table when
+	during AOT compilation.
+
 2008-08-27  Bill Holmes  <billholmes54@gmail.com>
 
 	Backport of r111724.
