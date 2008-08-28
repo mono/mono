@@ -80,7 +80,11 @@ namespace Mono.CSharp {
 #endif
 
 	class PtrHashtable : Hashtable {
-		sealed class PtrComparer : IComparer {
+		sealed class PtrComparer : IComparer
+#if NET_2_0
+			, IEqualityComparer
+#endif
+		{
 			private PtrComparer () {}
 
 			public static PtrComparer Instance = new PtrComparer ();
@@ -92,12 +96,28 @@ namespace Mono.CSharp {
 				else
 					return 1;
 			}
+#if NET_2_0
+			bool IEqualityComparer.Equals (object x, object y)
+			{
+				return x == y;
+			}
+			
+			int IEqualityComparer.GetHashCode (object obj)
+			{
+				return obj.GetHashCode ();
+			}
+#endif
+			
 		}
 
-		public PtrHashtable ()
+#if NET_2_0
+		public PtrHashtable () : base (PtrComparer.Instance) {}
+#else
+		public PtrHashtable () 
 		{
 			comparer = PtrComparer.Instance;
 		}
+#endif
 
 #if MS_COMPATIBLE
 		//
