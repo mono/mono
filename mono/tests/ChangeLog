@@ -1,4 +1,9 @@
+2008-08-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* libtest.c (mono_xr_as_handle): Initialize ref before returning it.
+
 2008-07-22  Bill Holmes  <billholmes54@gmail.com>
+
 	* libtest.c, winx64structs.cs :
 	  Adding tests to exercise calling managed code from native with struct
 	  arguments on Winx64.

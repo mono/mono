@@ -2082,6 +2082,8 @@ mono_xr_as_handle (int code)
 {
 	HandleRef ref;
 
+	memset (&ref, 0, sizeof (ref));
+
 	return ref;
 }
  
