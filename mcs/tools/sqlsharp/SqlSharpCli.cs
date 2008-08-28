@@ -85,7 +85,6 @@ namespace Mono.Data.SqlSharp {
 		private bool silent = false;
 		private bool showHeader = true;
 
-
 		private Hashtable internalVariables = new Hashtable();
 				
 		// DisplayResult - used to Read() display a result set
@@ -833,6 +832,11 @@ namespace Mono.Data.SqlSharp {
 				Console.Error.WriteLine("Provider not set.");
 				return;
 			}
+
+			if (IsOpen()) {
+				Console.Error.WriteLine("Error: already connected.");
+				return;
+			}
 			
 			OutputLine ("Opening connection...");
 
@@ -892,11 +896,25 @@ namespace Mono.Data.SqlSharp {
 			}
 		}
 
+		public bool IsOpen () {
+			if (conn != null)
+				if (conn.State.Equals(ConnectionState.Open))
+					return true;
+			return false;
+		}
+
 		// ChangeProvider - change the provider string variable
 		public void ChangeProvider (string[] parms) {
 
+			if (IsOpen()) {
+				Console.Error.WriteLine("Error: already connected.");
+				return;
+			}
+
 			factory = null;
 			factoryName = null;
+			connectionString = "";
+			provider = "";
 
 			string[] extp;
 
@@ -1639,10 +1657,10 @@ namespace Mono.Data.SqlSharp {
 			}
 
 			DbConnectionStringBuilder sb = factory.CreateConnectionStringBuilder ();
-			// FIXME: fix strong types SqlConnectionStringBuilder, Oracle..., Odbc..., etc.
-			// to have Keys and Values overridden with fixed keys, if key is missing
-			// when getting Values, pull from the default.  
-			sb.ConnectionString = "SERVER=Server1;User ID=User1;Password=Password1";
+			if (!connectionString.Equals(String.Empty))
+				sb.ConnectionString = connectionString;
+
+			bool found = false;
 			foreach (string key in sb.Keys) {
 				if (key.ToUpper().Equals("PASSWORD") || key.ToUpper().Equals("PWD")) {
 					string pwd = GetPasswordFromConsole ();
@@ -1667,8 +1685,13 @@ namespace Mono.Data.SqlSharp {
 						}
 					}
 				}
+				found = true;
 			}
-			
+			if (!found) {
+				Console.Error.WriteLine("Warning: your provider does not subclass DbConnectionStringBuilder fully.");
+				return;
+			}
+				
 			connectionString = sb.ConnectionString;
 			Console.WriteLine("ConnectionString is set.");
 		}

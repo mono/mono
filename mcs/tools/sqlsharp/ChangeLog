@@ -1,5 +1,11 @@
 2008-08-27  Daniel Morgan <monodanmorg@yahoo.com>
 
+	* SqlSharpCli.cs: fixes for using DbConnectionStringBuilder,
+	do not allow changing of provider or opening when the
+	connection is already open
+
+2008-08-27  Daniel Morgan <monodanmorg@yahoo.com>
+
 	* SqlSharpcli.cs: use foreach to get keys
 	in DbConnectionStringBuilder
 
