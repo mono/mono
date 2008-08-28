@@ -819,7 +819,12 @@ namespace Mono.CSharp.Nullable
 			ig.MarkLabel (is_null_label);
 
 			if ((Oper & Operator.ComparisonMask) != 0) {
-				if (Oper == Operator.Equality)
+				//
+				// Emit true when equality operator both operands are null
+				// or inequality operator operands has only one null
+				//
+				if ((Oper == Operator.Equality && left_unwrap != null && right_unwrap != null) ||
+					(Oper == Operator.Inequality && left_unwrap != right_unwrap))
 					ig.Emit (OpCodes.Ldc_I4_1);
 				else
 					ig.Emit (OpCodes.Ldc_I4_0);
