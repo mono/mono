@@ -1,5 +1,7 @@
 2008-08-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Add an 'asm-only' AOT option.
+
 	* mini.c: Avoid initializing the runtime when doing AOT compilation.
 	(mini_method_compile): Don't add the method to the jit_info table when
 	during AOT compilation.
