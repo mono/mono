@@ -23,7 +23,6 @@ using System.Threading;
 namespace Mono.CSharp {
 
 	public static class InteractiveShell {
-		static int class_number;
 		static bool isatty = true;
 		static bool dumb;
 		static public ArrayList using_alias_list = new ArrayList ();
@@ -38,9 +37,20 @@ namespace Mono.CSharp {
 #if NET_2_0 && !SMCS_SOURCE
 		static Mono.Terminal.LineEditor editor;
 
-		static void SetupEditor ()
+		static void ConsoleInterrupt (object sender, ConsoleCancelEventArgs a)
+		{
+			// Do not about our program
+			a.Cancel = true;
+
+			if (invoking)
+				invoke_thread.Abort ();
+		}
+		
+		static void SetupConsole ()
 		{
 			editor = new Mono.Terminal.LineEditor ("csharp");
+			Console.CancelKeyPress += ConsoleInterrupt;
+			invoke_thread = System.Threading.Thread.CurrentThread;
 		}
 
 		static string GetLine (bool primary)
@@ -57,7 +67,7 @@ namespace Mono.CSharp {
 			}
 		}
 #else
-		static void SetupEditor ()
+		static void SetupConsole ()
 		{
 			dumb = true;
 		}
@@ -103,24 +113,13 @@ namespace Mono.CSharp {
 			string term = Environment.GetEnvironmentVariable ("TERM");
 			dumb = term == "dumb" || term == null || isatty == false;
 
-			SetupEditor ();
+			SetupConsole ();
 
 			if (isatty)
 				Console.WriteLine ("Mono C# Shell, type \"help;\" for help\n\nEnter statements below.");
 
-			invoke_thread = System.Threading.Thread.CurrentThread;
-			Console.CancelKeyPress += ConsoleInterrupt;
 		}
 
-		static void ConsoleInterrupt (object sender, ConsoleCancelEventArgs a)
-		{
-			// Do not about our program
-			a.Cancel = true;
-
-			if (invoking)
-				invoke_thread.Abort ();
-		}
-		
 		static public int ReadEvalPrintLoop ()
 		{
 			InitTerminal ();
