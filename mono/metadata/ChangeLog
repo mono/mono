@@ -1,5 +1,11 @@
 2008-08-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* appdomain.c (mono_runtime_set_no_exec): New internal function setting
+	the runtime into no-exec mode, useful when running the AOT compiler.
+
+	* appdomain.c gc.c object.c: Avoid executing managed code when running
+	in no-exec mode.
+	
 	* rawbuffer.c (mono_raw_buffer_load_mmap): Disable this on the iphone.
 
 	* reflection.c (_mono_reflection_get_type_from_info): Handle the 
