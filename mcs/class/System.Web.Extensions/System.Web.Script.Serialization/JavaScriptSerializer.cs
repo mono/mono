@@ -372,13 +372,63 @@ namespace System.Web.Script.Serialization
 					Evaluate (value);
 					continue;
 				}
+
+				Type memberType = ReflectionUtils.GetMemberUnderlyingType (member);
+
+				if (memberType.IsInterface) {
+					if (memberType.IsGenericType)
+						memberType = ResolveGenericInterfaceToType (memberType);
+					else
+						memberType = ResolveInterfaceToType (memberType);
+
+					if (memberType == null)
+						throw new JsonSerializationException ("Unable to deserialize a member, as its type is an unknown interface.");
+				}
 				
-				ReflectionUtils.SetMemberValue (member, target, ConvertToType(ReflectionUtils.GetMemberUnderlyingType (member), value));
+				ReflectionUtils.SetMemberValue (member, target, ConvertToType(memberType, value));
 			}
 
 			return target;
 		}
 
+		Type ResolveGenericInterfaceToType (Type type)
+		{
+			Type[] genericArgs = type.GetGenericArguments ();
+			
+			if (ReflectionUtils.IsSubClass (type, typeof (IDictionary <,>)))
+				return typeof (Dictionary <,>).MakeGenericType (genericArgs);
+
+			if (ReflectionUtils.IsSubClass (type, typeof (IList <>)) ||
+			    ReflectionUtils.IsSubClass (type, typeof (ICollection <>)) ||
+			    ReflectionUtils.IsSubClass (type, typeof (IEnumerable <>))
+			)
+				return typeof (List <>).MakeGenericType (genericArgs);
+
+			if (ReflectionUtils.IsSubClass (type, typeof (IComparer <>)))
+				return typeof (Comparer <>).MakeGenericType (genericArgs);
+
+			if (ReflectionUtils.IsSubClass (type, typeof (IEqualityComparer <>)))
+				return typeof (EqualityComparer <>).MakeGenericType (genericArgs);
+
+			return null;
+		}
+
+		Type ResolveInterfaceToType (Type type)
+		{
+			if (typeof (IDictionary).IsAssignableFrom (type))
+				return typeof (Hashtable);
+
+			if (typeof (IList).IsAssignableFrom (type) ||
+			    typeof (ICollection).IsAssignableFrom (type) ||
+			    typeof (IEnumerable).IsAssignableFrom (type))
+				return typeof (ArrayList);
+
+			if (typeof (IComparer).IsAssignableFrom (type))
+				return typeof (Comparer);
+
+			return null;
+		}
+		
 		public object DeserializeObject (string input) {
 			object obj = Evaluate (DeserializeObjectInternal (new StringReader (input)), true);
 			IDictionary dictObj = obj as IDictionary;
