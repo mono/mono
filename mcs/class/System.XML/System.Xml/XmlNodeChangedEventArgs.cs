@@ -37,8 +37,10 @@ namespace System.Xml
 		XmlNode _newParent;
 		XmlNodeChangedAction _action;
 		XmlNode _node;
+#if NET_2_0		
 		string _oldValue;
 		string _newValue;
+#endif		
 
 		// public properties
 		public XmlNodeChangedAction Action 
@@ -111,8 +113,10 @@ namespace System.Xml
 			_node = node;
 			_oldParent = oldParent;
 			_newParent = newParent;
+#if NET_2_0			
 			_oldValue = oldValue;
 			_newValue = newValue;
+#endif			
 			_action = action;
 		}
 	}

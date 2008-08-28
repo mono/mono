@@ -748,7 +748,6 @@ namespace System.Xml.Schema
 #endif
 			// enumeration - value space comparison
 			if (!enumMatched && this.enumarationFacetValues != null) {
-				bool matched = false;
 				XsdAnySimpleType edt = dt;
 				if (edt == null)
 					edt = (XsdAnySimpleType) XmlSchemaDatatype.FromName ("anySimpleType", XmlSchema.Namespace);

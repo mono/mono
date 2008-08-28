@@ -210,7 +210,6 @@ namespace System.Xml.Schema
 
 			// move to top-level element
 			source.MoveToContent ();
-			int depth = source.Depth;
 			if (source.NodeType != XmlNodeType.Element)
 				throw new ArgumentException ("Argument XmlReader content is expected to be an element.");
 

@@ -277,6 +277,7 @@ namespace Mono.Xml.XPath
 			return count;
 		}
 		
+		/*
 		private bool MoveToAttributeNavigator (int i)
 		{
 			if (ReadState != ReadState.Interactive)
@@ -301,7 +302,6 @@ namespace Mono.Xml.XPath
 			return false;
 		}
 
-		/*
 		public override string this [int i] {
 			get {
 				XPathNavigator backup = current.Clone ();

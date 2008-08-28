@@ -71,7 +71,9 @@ namespace System.Xml.Serialization
 			return new InvalidOperationException ("There was an error reflecting '" + map.TypeFullName + "': " + message);
 		}
 
+#if NET_2_0
 		static readonly ParameterModifier [] empty_modifiers = new ParameterModifier [0];
+#endif		
 
 		public static void CheckSerializableType (Type type, bool allowPrivateConstructors)
 		{

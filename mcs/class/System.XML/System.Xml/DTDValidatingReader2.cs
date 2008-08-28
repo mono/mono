@@ -563,11 +563,6 @@ namespace Mono.Xml
 			}
 		}
 
-		private XmlException NotWFError (string message)
-		{
-			return new XmlException (this as IXmlLineInfo, BaseURI, message);
-		}
-
 		private void HandleError (string message, XmlSeverityType severity)
 		{
 			if (validatingReader != null &&

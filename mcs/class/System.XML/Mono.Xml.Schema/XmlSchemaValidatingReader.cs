@@ -92,9 +92,6 @@ namespace Mono.Xml.Schema
 		IXmlLineInfo readerLineInfo;
 		ValidationType validationType;
 		IXmlNamespaceResolver nsResolver;
-		int startDepth;
-
-		StringBuilder tmpBuilder = new StringBuilder ();
 
 		XsAttr [] defaultAttributes = emptyAttributeArray;
 		int currentDefaultAttribute = -1;
@@ -129,7 +126,6 @@ namespace Mono.Xml.Schema
 				options);
 
 			readerLineInfo = reader as IXmlLineInfo;
-			startDepth = reader.Depth;
 			getter = delegate () { return Value; };
 			xsinfo = new XmlSchemaInfo (); // transition cache
 			v.LineInfoProvider = this;

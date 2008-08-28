@@ -1161,7 +1161,7 @@ namespace Mono.Xml
 				if (Root.ExternalResources.Count > DTDObjectModel.AllowedExternalEntitiesMax)
 					throw new InvalidOperationException ("The total amount of external entities exceeded the allowed number.");
 
-			} catch (Exception ex) {
+			} catch (Exception) {
 //				loadException = ex;
 				LiteralEntityValue = String.Empty;
 				LoadFailed = true;

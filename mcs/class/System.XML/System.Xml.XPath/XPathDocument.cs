@@ -97,11 +97,6 @@ namespace System.Xml.XPath
 			document = new InternalBuilder (reader, space).CreateDocument ();
 		}
 
-		private void Initialize (XmlReader reader, XmlSpace space, bool acceptChangesOnLoad)
-		{
-			document = new InternalBuilder (reader, space).CreateDocument ();
-		}
-
 		public XPathNavigator CreateNavigator ()
 		{
 			return document.CreateNavigator ();

@@ -92,17 +92,14 @@ namespace System.Xml.XPath
 		}
 
 #if NET_2_0
-		public bool Equals (object o1, object o2)
+		bool IEqualityComparer.Equals (object o1, object o2)
 		{
 			XPathNavigator nav1 = o1 as XPathNavigator;
 			XPathNavigator nav2 = o2 as XPathNavigator;
-			if (nav1 != null && nav2 != null)
-				return nav1.IsSamePosition (nav2);
-			else
-				return false;
+			return nav1 != null && nav2 != null && nav1.IsSamePosition (nav2);
 		}
 
-		public int GetHashCode (object obj)
+		int IEqualityComparer.GetHashCode (object obj)
 		{
 			return obj.GetHashCode ();
 		}

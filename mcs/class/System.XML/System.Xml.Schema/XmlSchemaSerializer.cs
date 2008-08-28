@@ -114,7 +114,7 @@ namespace System.Xml.Schema
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
-
+/*
 		void WriteObject_XmlSchemaForm (System.Xml.Schema.XmlSchemaForm ob, string element, string namesp, bool isNullable, bool needType, bool writeWrappingElem)
 		{
 			System.Type type = ob.GetType ();
@@ -133,7 +133,7 @@ namespace System.Xml.Schema
 			Writer.WriteString (GetEnumValue_XmlSchemaForm (ob));
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
-
+*/
 		string GetEnumValue_XmlSchemaForm (System.Xml.Schema.XmlSchemaForm val)
 		{
 			switch (val)
@@ -143,7 +143,7 @@ namespace System.Xml.Schema
 				default: return ((long)val).ToString(CultureInfo.InvariantCulture);
 			}
 		}
-
+/*
 		void WriteObject_XmlSchemaDerivationMethod (System.Xml.Schema.XmlSchemaDerivationMethod ob, string element, string namesp, bool isNullable, bool needType, bool writeWrappingElem)
 		{
 			System.Type type = ob.GetType ();
@@ -162,7 +162,7 @@ namespace System.Xml.Schema
 			Writer.WriteString (GetEnumValue_XmlSchemaDerivationMethod (ob));
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
-
+*/
 		string GetEnumValue_XmlSchemaDerivationMethod (System.Xml.Schema.XmlSchemaDerivationMethod val)
 		{
 			switch (val)
@@ -1090,7 +1090,7 @@ namespace System.Xml.Schema
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
-
+/*
 		void WriteObject_XmlSchemaUse (System.Xml.Schema.XmlSchemaUse ob, string element, string namesp, bool isNullable, bool needType, bool writeWrappingElem)
 		{
 			System.Type type = ob.GetType ();
@@ -1109,7 +1109,7 @@ namespace System.Xml.Schema
 			Writer.WriteString (GetEnumValue_XmlSchemaUse (ob));
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
-
+*/
 		string GetEnumValue_XmlSchemaUse (System.Xml.Schema.XmlSchemaUse val)
 		{
 			switch (val)
@@ -2097,7 +2097,7 @@ namespace System.Xml.Schema
 			WriteObject_XmlSchemaAnnotation (ob.@Annotation, "annotation", "http://www.w3.org/2001/XMLSchema", false, false, true);
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
-
+/*
 		void WriteObject_XmlSchemaContentProcessing (System.Xml.Schema.XmlSchemaContentProcessing ob, string element, string namesp, bool isNullable, bool needType, bool writeWrappingElem)
 		{
 			System.Type type = ob.GetType ();
@@ -2116,7 +2116,7 @@ namespace System.Xml.Schema
 			Writer.WriteString (GetEnumValue_XmlSchemaContentProcessing (ob));
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
-
+*/
 		string GetEnumValue_XmlSchemaContentProcessing (System.Xml.Schema.XmlSchemaContentProcessing val)
 		{
 			switch (val)

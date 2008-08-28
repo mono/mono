@@ -1456,6 +1456,7 @@ namespace System.Xml
 
 		// Note that now this method behaves differently from
 		// XmlTextReader's one. It calles AppendValueChar() internally.
+		/*
 		private int ReadCharacterReference ()
 		{
 			int value = 0;
@@ -1502,6 +1503,7 @@ namespace System.Xml
 			AppendValueChar (value);
 			return value;
 		}
+		*/
 
 		private void AppendNameChar (int ch)
 		{

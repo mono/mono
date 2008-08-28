@@ -45,7 +45,7 @@ namespace System.Xml.Serialization
 		#region Fields
 
 #if NET_2_0
-		CodeGenerationOptions options;
+		// CodeGenerationOptions options;
 #else
 		XmlMapCodeGenerator codeGenerator;
 #endif

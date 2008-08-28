@@ -153,7 +153,7 @@ namespace System.Xml.Schema
 		int xsiNilDepth = -1;
 		int skipValidationDepth = -1;
 
-		SOMObject currentType;
+//		SOMObject currentType;
 
 
 		#endregion
@@ -1252,10 +1252,6 @@ namespace System.Xml.Schema
 					}
 				}
 			}
-		}
-
-		private void ProcessKeyEntryOne (XsdKeyEntry entry, bool isAttr, bool isNil, object schemaType, string attrName, string attrNs, XmlValueGetter getter)
-		{
 		}
 
 		private void ValidateEndElementKeyConstraints ()

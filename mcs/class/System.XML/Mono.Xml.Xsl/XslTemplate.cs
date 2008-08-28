@@ -371,7 +371,7 @@ namespace Mono.Xml.Xsl {
 				} catch (XsltException ex) {
 					AppendTemplateFrame (ex);
 					throw ex;
-				} catch (Exception ex) {
+				} catch (Exception) {
 					// Note that this catch causes different
 					// type of error to be thrown (esp.
 					// this causes NUnit test regression).

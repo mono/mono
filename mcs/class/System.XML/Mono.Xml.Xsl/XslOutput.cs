@@ -272,7 +272,6 @@ namespace Mono.Xml.Xsl
 					case OutputMethod.Custom:
 						break;
 					default:
-						IXmlLineInfo li = nav as IXmlLineInfo;
 						throw new XsltCompileException (String.Format ("Unexpected 'indent' attribute value in 'output' element: '{0}'", value), null, nav);
 					}
 					break;

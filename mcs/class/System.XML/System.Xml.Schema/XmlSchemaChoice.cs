@@ -199,7 +199,6 @@ namespace System.Xml.Schema
 			}
 			return true;
 		}
-		*/
 
 		private bool ValidateParticleSection (ref int index, XmlSchemaParticle pd, XmlSchemaParticle pb, ValidationEventHandler h, XmlSchema schema, bool raiseError)
 		{
@@ -231,7 +230,7 @@ namespace System.Xml.Schema
 
 			return true;
 		}
-
+*/
 		internal override decimal GetMinEffectiveTotalRange ()
 		{
 			if (minEffectiveTotalRange >= 0)

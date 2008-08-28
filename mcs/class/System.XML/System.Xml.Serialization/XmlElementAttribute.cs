@@ -46,7 +46,9 @@ namespace System.Xml.Serialization
 		private string ns;
 		private bool isNullable;
 		private Type type;
+#if NET_2_0
 		private int order = -1;
+#endif
 
 		public XmlElementAttribute ()
 		{	

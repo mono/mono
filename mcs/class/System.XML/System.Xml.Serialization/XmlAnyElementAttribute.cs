@@ -42,7 +42,9 @@ namespace System.Xml.Serialization
 	{
 		private string elementName;
 		private string ns;
+#if NET_2_0
 		private int order = -1;
+#endif		
 
 		public XmlAnyElementAttribute ()
 		{

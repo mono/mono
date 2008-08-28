@@ -44,7 +44,9 @@ namespace System.Xml.Serialization
 		private XmlSchemaForm form;
 		private bool isNullable;
 		private string ns;
+#if NET_2_0
 		private int order = -1;
+#endif		
 
 		public XmlArrayAttribute()
 		{

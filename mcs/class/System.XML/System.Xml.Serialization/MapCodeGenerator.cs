@@ -48,7 +48,9 @@ namespace System.Xml.Serialization {
 		CodeAttributeDeclarationCollection includeMetadata;
 		XmlTypeMapping exportedAnyType = null;
 		protected bool includeArrayTypes;
+#if NET_2_0		
 		CodeDomProvider codeProvider;
+#endif		
 		CodeGenerationOptions options;
 		CodeIdentifiers identifiers;
 
@@ -67,9 +69,9 @@ namespace System.Xml.Serialization {
 		{
 			this.codeCompileUnit = codeCompileUnit;
 			this.codeNamespace = codeNamespace;
-			this.codeProvider = codeProvider;
 			this.options = options;
 #if NET_2_0
+			this.codeProvider = codeProvider;
 			this.identifiers = new CodeIdentifiers ((codeProvider.LanguageOptions & LanguageOptions.CaseInsensitive) == 0);
 #else
 			this.identifiers = new CodeIdentifiers ();

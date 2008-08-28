@@ -50,7 +50,7 @@ namespace System.Xml.Schema
 		string stringValue;
 		XmlSchemaType schemaType;
 		XmlTypeCode xmlTypeCode;
-		ICollection valueAsList;
+		//ICollection valueAsList;
 
 		#region Constructors
 

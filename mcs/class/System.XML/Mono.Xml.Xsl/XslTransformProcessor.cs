@@ -55,7 +55,7 @@ namespace Mono.Xml.Xsl {
 		XPathNavigator root;
 		XsltArgumentList args;
 		XmlResolver resolver;
-		bool outputStylesheetXmlns;
+//		bool outputStylesheetXmlns;
 		string currentOutputUri;
 		
 		internal readonly XsltCompiledContext XPathContext;
@@ -77,7 +77,7 @@ namespace Mono.Xml.Xsl {
 			this.args = args;
 			this.root = root;
 			this.resolver = resolver != null ? resolver : new XmlUrlResolver ();
-			this.outputStylesheetXmlns = true;
+//			this.outputStylesheetXmlns = true;
 			this.currentOutputUri = String.Empty;
 
 			XPathExpression exp = root.Compile (".");

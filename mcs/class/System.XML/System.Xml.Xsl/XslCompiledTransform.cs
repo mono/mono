@@ -248,12 +248,13 @@ namespace System.Xml.Xsl
 			{
 				//ShowLocationInTrace (style);
 			}
-
+/*
 			string ShowLocationInTrace (XPathNavigator style)
 			{
 				IXmlLineInfo li = style as IXmlLineInfo;
 				return li != null ? String.Format ("at {0} ({1},{2})", style.BaseURI, li.LineNumber, li.LinePosition) : "(no debug info available)";
 			}
+*/
 		}
 }
 #endif

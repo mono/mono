@@ -38,7 +38,6 @@ namespace System.Xml
 	{
 		XPathNodeIterator source;
 		XPathNodeIterator iterator;
-		XmlNode previous;
 		ArrayList list;
 		bool finished;
 

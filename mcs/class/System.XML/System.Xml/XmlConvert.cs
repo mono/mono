@@ -344,7 +344,6 @@ namespace System.Xml {
 #if NET_2_0
 		public static DateTime ToDateTime (string value, XmlDateTimeSerializationMode mode)
 		{
-			string modestr = null;
 			DateTime dt;
 			switch (mode) {
 			case XmlDateTimeSerializationMode.Local:
@@ -566,7 +565,6 @@ namespace System.Xml {
 		{
 			// Unlike usual DateTime formatting, it preserves
 			// MaxValue/MinValue as is.
-			string modestr = null;
 			switch (mode) {
 			case XmlDateTimeSerializationMode.Local:
 				return (value == DateTime.MinValue ? DateTime.MinValue : value == DateTime.MaxValue ? value : value.ToLocalTime ()).ToString (

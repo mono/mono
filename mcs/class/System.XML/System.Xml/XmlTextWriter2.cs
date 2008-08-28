@@ -756,7 +756,7 @@ namespace Mono.Xml
 			if (open_count == 0)
 				throw InvalidOperation ("There is no more open element.");
 
-			bool isEmpty = state != WriteState.Content;
+			// bool isEmpty = state != WriteState.Content;
 
 			CloseStartElementCore ();
 
