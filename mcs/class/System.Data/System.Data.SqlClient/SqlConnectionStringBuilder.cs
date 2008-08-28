@@ -31,7 +31,7 @@ using System;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
-
+using System.Collections.ObjectModel;
 
 using System.Data;
 using System.Data.Common;
@@ -74,6 +74,7 @@ namespace System.Data.SqlClient
 		private const bool	DEF_TRUSTSERVERCERTIFICATE	= false;
 		private const bool	DEF_USERINSTANCE		= false;  
 		private const bool	DEF_CONTEXTCONNECTION		= false;	
+		private const string	DEF_TRANSACTIONBINDING		= "Implicit Unbind";
 
 
 		#region // Fields
@@ -105,8 +106,10 @@ namespace System.Data.SqlClient
 		private string	_typeSystemVersion;
 		private bool	_userInstance;
 		private bool	_contextConnection;
+		private string	_transactionBinding;
 
 		private static Dictionary <string, string> _keywords; // for mapping duplicate keywords
+		private static Dictionary <string, object> _defaults; 
 		#endregion // Fields
 
 		#region Constructors
@@ -125,7 +128,7 @@ namespace System.Data.SqlClient
 			_keywords = new Dictionary <string, string> ();
 			_keywords ["APP"] 			= "Application Name";
 			_keywords ["APPLICATION NAME"] 		= "Application Name";
-			_keywords ["ATTACHDBFILENAME"] 		= "AttachDBFilename";
+			_keywords ["ATTACHDBFILENAME"] 		= "AttachDbFilename";
 			_keywords ["EXTENDED PROPERTIES"] 	= "Extended Properties";
 			_keywords ["INITIAL FILE NAME"]		= "Initial File Name";
 			_keywords ["TIMEOUT"] 			= "Connect Timeout";
@@ -147,7 +150,7 @@ namespace System.Data.SqlClient
 			_keywords ["TRUSTED_CONNECTION"] 	= "Integrated Security";
 			_keywords ["MAX POOL SIZE"] 		= "Max Pool Size";
 			_keywords ["MIN POOL SIZE"] 		= "Min Pool Size";
-			_keywords ["MULTIPLEACTIVERESULTSETS"] 	= "Multipleactiveresultset";
+			_keywords ["MULTIPLEACTIVERESULTSETS"] 	= "MultipleActiveResultSets";
 			_keywords ["ASYNCHRONOUS PROCESSING"] 	= "Asynchronous Processing";
 			_keywords ["ASYNC"] 			= "Async";
 			_keywords ["NET"] 			= "Network Library";
@@ -159,13 +162,50 @@ namespace System.Data.SqlClient
 			_keywords ["PERSISTSECURITYINFO"]	= "Persist Security Info";
 			_keywords ["PERSIST SECURITY INFO"] 	= "Persist Security Info";
 			_keywords ["POOLING"] 			= "Pooling";
-			_keywords ["UID"] 			= "User Id";
-			_keywords ["USER"] 			= "User Id";
-			_keywords ["USER ID"] 			= "User Id";
-			_keywords ["WSID"] 			= "Workstation Id";
-			_keywords ["WORKSTATION ID"]		= "Workstation Id";
+			_keywords ["UID"] 			= "User ID";
+			_keywords ["USER"] 			= "User ID";
+			_keywords ["USER ID"] 			= "User ID";
+			_keywords ["WSID"] 			= "Workstation ID";
+			_keywords ["WORKSTATION ID"]		= "Workstation ID";
 			_keywords ["USER INSTANCE"]		= "User Instance";
 			_keywords ["CONTEXT CONNECTION"]	= "Context Connection";
+			_keywords ["TRANSACTION BINDING"]	= "Transaction Binding";
+			_keywords ["FAILOVER PARTNER"]		= "Failover Partner";
+			_keywords ["REPLICATION"]		= "Replication";
+			_keywords ["TRUSTSERVERCERTIFICATE"]	= "TrustServerCertificate";
+			_keywords ["LOAD BALANCE TIMEOUT"]	= "Load Balance Timeout";
+			_keywords ["TYPE SYSTEM VERSION"]	= "Type System Version";
+
+			_defaults = new Dictionary<string, object> ();
+			_defaults.Add("Data Source", DEF_DATASOURCE);
+			_defaults.Add("Failover Partner", DEF_FAILOVERPARTNER);
+			_defaults.Add("AttachDbFilename", DEF_ATTACHDBFILENAME);
+			_defaults.Add("Initial Catalog", DEF_INITIALCATALOG);
+			_defaults.Add("Integrated Security", DEF_INTEGRATEDSECURITY);
+			_defaults.Add("Persist Security Info", DEF_PERSISTSECURITYINFO);
+			_defaults.Add("User ID", DEF_USERID);
+			_defaults.Add("Password", DEF_PASSWORD);
+			_defaults.Add("Enlist", DEF_ENLIST);
+			_defaults.Add("Pooling", DEF_POOLING);
+			_defaults.Add("Min Pool Size", DEF_MINPOOLSIZE);
+			_defaults.Add("Max Pool Size", DEF_MAXPOOLSIZE);
+			_defaults.Add("Asynchronous Processing", DEF_ASYNCHRONOUSPROCESSING);
+			_defaults.Add("Connection Reset", DEF_CONNECTIONRESET);
+			_defaults.Add("MultipleActiveResultSets", DEF_MULTIPLEACTIVERESULTSETS);
+			_defaults.Add("Replication", DEF_REPLICATION);
+			_defaults.Add("Connect Timeout", DEF_CONNECTTIMEOUT);
+			_defaults.Add("Encrypt", DEF_ENCRYPT);
+			_defaults.Add("TrustServerCertificate", DEF_TRUSTSERVERCERTIFICATE);
+			_defaults.Add("Load Balance Timeout", DEF_LOADBALANCETIMEOUT);
+			_defaults.Add("Network Library", DEF_NETWORKLIBRARY);
+			_defaults.Add("Packet Size", DEF_PACKETSIZE);
+			_defaults.Add("Type System Version", DEF_TYPESYSTEMVERSION);
+			_defaults.Add("Application Name", DEF_APPLICATIONNAME);
+			_defaults.Add("Current Language", DEF_CURRENTLANGUAGE);
+			_defaults.Add("Workstation ID", DEF_WORKSTATIONID);
+			_defaults.Add("User Instance", DEF_USERINSTANCE);
+			_defaults.Add("Context Connection", DEF_CONTEXTCONNECTION);
+			_defaults.Add("Transaction Binding", DEF_TRANSACTIONBINDING);			
 		}
 		#endregion // Constructors
 
@@ -313,13 +353,49 @@ namespace System.Data.SqlClient
 		public override object this [string keyword] { 
 			get { 
 				string mapped = MapKeyword (keyword);
-				return base [mapped]; 
+				if (base.ContainsKey (mapped)) 
+					return base [mapped];
+				else
+					return _defaults [mapped];
 			}
 			set {SetValue (keyword, value);}
 		}
 
 		public override ICollection Keys { 
-			get { return base.Keys; }
+			get { 
+				List<string> keys = new List<string>();
+                                keys.Add("Data Source");
+                                keys.Add("Failover Partner");
+                                keys.Add("AttachDbFilename");
+                                keys.Add("Initial Catalog");
+                                keys.Add("Integrated Security");
+                                keys.Add("Persist Security Info");
+                                keys.Add("User ID");
+                                keys.Add("Password");
+                                keys.Add("Enlist");
+                                keys.Add("Pooling");
+                                keys.Add("Min Pool Size");
+                                keys.Add("Max Pool Size");
+                                keys.Add("Asynchronous Processing");
+                                keys.Add("Connection Reset");
+                                keys.Add("MultipleActiveResultSets");
+                                keys.Add("Replication");
+                                keys.Add("Connect Timeout");
+                                keys.Add("Encrypt");
+                                keys.Add("TrustServerCertificate");
+                                keys.Add("Load Balance Timeout");
+                                keys.Add("Network Library");
+                                keys.Add("Packet Size");
+                                keys.Add("Type System Version");
+                                keys.Add("Application Name");
+                                keys.Add("Current Language");
+                                keys.Add("Workstation ID");
+                                keys.Add("User Instance");
+                                keys.Add("Context Connection");
+                                keys.Add("Transaction Binding");
+				ReadOnlyCollection<string> coll = new ReadOnlyCollection<string>(keys);
+				return coll;
+			}
 		}
 
 		[DisplayNameAttribute ("Load Balance Timeout")]
@@ -437,7 +513,40 @@ namespace System.Data.SqlClient
 		}
 		
 		public override ICollection Values { 
-			get { return base.Values; }
+			get {
+				List<object> values = new List<object>();
+                                values.Add(_dataSource);
+                                values.Add(_failoverPartner);
+                                values.Add(_attachDBFilename);
+                                values.Add(_initialCatalog);
+                                values.Add(_integratedSecurity);
+                                values.Add(_persistSecurityInfo);
+                                values.Add(_userID);
+                                values.Add(_password);
+                                values.Add(_enlist);
+                                values.Add(_pooling);
+                                values.Add(_minPoolSize);
+                                values.Add(_maxPoolSize);
+                                values.Add(_asynchronousProcessing);
+                                values.Add(_connectionReset);
+                                values.Add(_multipleActiveResultSets);
+                                values.Add(_replication);
+                                values.Add(_connectTimeout);
+                                values.Add(_encrypt);
+                                values.Add(_trustServerCertificate);
+                                values.Add(_loadBalanceTimeout);
+                                values.Add(_networkLibrary);
+                                values.Add(_packetSize);
+                                values.Add(_typeSystemVersion);
+                                values.Add(_applicationName);
+                                values.Add(_currentLanguage);
+                                values.Add(_workstationID);
+                                values.Add(_userInstance);
+                                values.Add(_contextConnection);
+                                values.Add(_transactionBinding);
+				ReadOnlyCollection<object> coll = new ReadOnlyCollection<object>(values);
+				return coll;		 
+			}
 		}
 
 		[DisplayNameAttribute ("Workstation ID")]
@@ -522,6 +631,7 @@ namespace System.Data.SqlClient
 			_typeSystemVersion	= DEF_TYPESYSTEMVERSION;
 			_userInstance		= DEF_USERINSTANCE;
 			_contextConnection	= DEF_CONTEXTCONNECTION;
+			_transactionBinding	= DEF_TRANSACTIONBINDING;
 		}
 
 		public override void Clear ()
@@ -703,6 +813,9 @@ namespace System.Data.SqlClient
 					this.NetworkLibrary = value.ToString ().ToLower ();
 				}
 				break;
+			case "LOAD BALANCE TIMEOUT":
+				// TODO: what is this?
+				break;
 			case "PACKET SIZE" :
 				if (value == null) {
 					_packetSize = DEF_PACKETSIZE;
@@ -752,6 +865,9 @@ namespace System.Data.SqlClient
 					base.Remove (mappedKey);
 				} else 
 					this.WorkstationID = value.ToString ();
+				break;
+			case "TRANSACTION BINDING":
+				// TODO: what is this?
 				break;
 			default :
 				throw new ArgumentException("Keyword not supported :" + key);
