@@ -1,4 +1,10 @@
 2008-08-28  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #420386
+	* nullables.cs: Fixed logic of nullable user comparison operators involving
+	null values.
+
+2008-08-28  Marek Safar  <marek.safar@gmail.com>
 	
 	* attribute (IsClsCompliant): Use FALSE value for pointer types.
 
