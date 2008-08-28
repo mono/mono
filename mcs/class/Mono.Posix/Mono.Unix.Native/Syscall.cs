@@ -818,9 +818,10 @@ namespace Mono.Unix.Native {
 		[ino_t]     public  ulong   st_ino;     // inode
 		[CLSCompliant (false)]
 		public  FilePermissions     st_mode;    // protection
-		[CLSCompliant (false)]
 		[NonSerialized]
+#pragma warning disable 169		
 		private uint                _padding_;  // padding for structure alignment
+#pragma warning restore 169		
 		[CLSCompliant (false)]
 		[nlink_t]   public  ulong   st_nlink;   // number of hard links
 		[CLSCompliant (false)]
@@ -1025,7 +1026,9 @@ namespace Mono.Unix.Native {
 #endif
 	{
 		public  int tz_minuteswest; // minutes W of Greenwich
+#pragma warning disable 169		
 		private int tz_dsttime;     // type of dst correction (OBSOLETE)
+#pragma warning restore 169		
 
 		public override int GetHashCode ()
 		{

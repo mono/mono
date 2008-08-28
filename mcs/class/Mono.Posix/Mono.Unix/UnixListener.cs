@@ -51,7 +51,7 @@ namespace Mono.Unix {
 					conn.Connect (ep);
 					conn.Close ();
 					throw new InvalidOperationException ("There's already a server listening on " + filename);
-				} catch (SocketException se) {
+				} catch (SocketException) {
 				}
 				File.Delete (filename);
 			}

@@ -304,7 +304,7 @@ namespace Mono.Remoting.Channels.Unix
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //                Console.WriteLine (ex);
             }

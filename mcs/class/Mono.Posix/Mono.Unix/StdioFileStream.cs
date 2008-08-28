@@ -120,7 +120,7 @@ namespace Mono.Unix {
 					canWrite = true;  
 				Native.Stdlib.clearerr (file);
 			}
-			catch (Exception e) {
+			catch (Exception) {
 				throw new ArgumentException (Locale.GetText ("Invalid file stream"), "fileStream");
 			}
 			GC.KeepAlive (this);
