@@ -342,7 +342,7 @@ namespace Mono.GetOptions
 				if (Values != null && parameter != null) {
 					try {
 						convertedParameter = Convert.ChangeType(parameter, ParameterType.GetElementType());
-					} catch (Exception ex) {
+					} catch (Exception) {
 						Console.WriteLine(String.Format("The value '{0}' is not convertible to the appropriate type '{1}' for the {2} option", parameter, ParameterType.GetElementType().Name, DefaultForm));						
 					}
 					Values.Add(convertedParameter);
@@ -352,7 +352,7 @@ namespace Mono.GetOptions
 				if (parameter != null) {	
 					try {
 						convertedParameter = Convert.ChangeType(parameter, ParameterType);
-					} catch (Exception ex) {
+					} catch (Exception) {
 						Console.WriteLine(String.Format("The value '{0}' is not convertible to the appropriate type '{1}' for the {2} option", parameter, ParameterType.Name, DefaultForm));												
 						continue;
 					}

@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = Mono.GetOptions.dll
-LIB_MCS_FLAGS = /r:System.dll 
+LIB_MCS_FLAGS = /r:System.dll -nowarn:618
 NO_TEST = yes
 
 EXTRA_DISTFILES = \
