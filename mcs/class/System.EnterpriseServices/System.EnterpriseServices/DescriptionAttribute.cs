@@ -38,7 +38,7 @@ namespace System.EnterpriseServices {
 
 		#region Fields
 
-		string desc;
+//		string desc;
 
 		#endregion // Fields
 
@@ -46,7 +46,7 @@ namespace System.EnterpriseServices {
 
 		public DescriptionAttribute (string desc)
 		{
-			this.desc = desc;
+//			this.desc = desc;
 		}
 
 		#endregion // Constructors

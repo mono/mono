@@ -36,7 +36,7 @@ namespace System.EnterpriseServices {
 
 		#region Fields
 
-		ResourcePool.TransactionEndDelegate cb;
+//		ResourcePool.TransactionEndDelegate cb;
 
 		#endregion // Fields
 
@@ -45,7 +45,7 @@ namespace System.EnterpriseServices {
 		[MonoTODO]
 		public ResourcePool (ResourcePool.TransactionEndDelegate cb)
 		{
-			this.cb = cb;
+//			this.cb = cb;
 		}
 
 		#endregion // Constructors
