@@ -50,7 +50,9 @@ namespace System.Data.Common {
 		#endregion // Constructors
 
 		#region Properties
+#pragma warning disable 618		
 		[RecommendedAsConfigurable (true)]
+#pragma warning restore 618		
 		[RefreshProperties (RefreshProperties.All)]
 		[DefaultValue ("")]
 		public abstract string ConnectionString { get; set; }

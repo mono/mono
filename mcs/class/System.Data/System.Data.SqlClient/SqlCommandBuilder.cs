@@ -53,7 +53,6 @@ namespace System.Data.SqlClient
 		SqlDataAdapter adapter;
 		string quotePrefix;
 		string quoteSuffix;
-		string [] columnNames;
 		string tableName;
 #if NET_2_0
 		string _catalogSeperator = ".";
@@ -257,9 +256,7 @@ namespace System.Data.SqlClient
 			CreateNewCommand (ref deleteCommand);
 
 			string command = String.Format ("DELETE FROM {0}", QuotedTableName);
-			StringBuilder columns = new StringBuilder ();
 			StringBuilder whereClause = new StringBuilder ();
-			string dsColumnName = String.Empty;
 			bool keyFound = false;
 			int parmIndex = 1;
 
@@ -332,7 +329,6 @@ namespace System.Data.SqlClient
 			string sql;
 			StringBuilder columns = new StringBuilder ();
 			StringBuilder values = new StringBuilder ();
-			string dsColumnName = String.Empty;
 
 			int parmIndex = 1;
 			foreach (DataRow schemaRow in dbSchemaTable.Rows) {
@@ -386,7 +382,6 @@ namespace System.Data.SqlClient
 			StringBuilder columns = new StringBuilder ();
 			StringBuilder whereClause = new StringBuilder ();
 			int parmIndex = 1;
-			string dsColumnName = String.Empty;
 			bool keyFound = false;
 
 			// First, create the X=Y list for UPDATE

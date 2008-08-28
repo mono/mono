@@ -596,14 +596,8 @@ namespace System.Data.Odbc
 		{
 			return UnquoteIdentifier (quotedIdentifier);
 		}
-#endif
 
-#if NET_2_0
-		public override
-#else
-		private
-#endif
-		string UnquoteIdentifier (string quotedIdentifier)
+		public override string UnquoteIdentifier (string quotedIdentifier)
 		{
 			if (quotedIdentifier == null || quotedIdentifier.Length == 0)
 				return quotedIdentifier;
@@ -616,6 +610,7 @@ namespace System.Data.Odbc
 				sb.Remove (sb.Length - QuoteSuffix.Length, QuoteSuffix.Length );
 			return sb.ToString ();
 		}
+#endif
 
 		private void OnRowUpdating (object sender, OdbcRowUpdatingEventArgs args)
 		{

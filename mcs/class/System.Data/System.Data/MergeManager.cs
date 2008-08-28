@@ -116,7 +116,6 @@ namespace System.Data
 		// merge a row into a target table.
 		private static void MergeRow(DataTable targetTable, DataRow row, bool preserveChanges)
 		{
-			DataColumnCollection columns = row.Table.Columns;
 			DataColumn[] primaryKeys = targetTable.PrimaryKey;
 			DataRow targetRow = null;
 			DataRowVersion version = DataRowVersion.Default;

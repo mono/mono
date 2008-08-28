@@ -639,6 +639,7 @@ namespace System.Data
 		// {
 		//   return true; // it should be false
 		// }
+		/*
 		private CodeMemberMethod CreateDataSetShouldSerializeTables ()
 		{
 			CodeMemberMethod m = new CodeMemberMethod ();
@@ -649,12 +650,14 @@ namespace System.Data
 			m.Statements.Add (Return (Const (true)));
 			return m;
 		}
-
+		*/
 		// Code:
 		// protected override bool ShouldSerializeRelations ()
 		// {
 		//   return true; // it should be false
 		// }
+		
+		/*
 		private CodeMemberMethod CreateDataSetShouldSerializeRelations ()
 		{
 			CodeMemberMethod m = new CodeMemberMethod ();
@@ -665,6 +668,7 @@ namespace System.Data
 			m.Statements.Add (Return (Const (true)));
 			return m;
 		}
+		*/
 
 		// Code:
 		// protected override void ReadXmlSerializable()
@@ -672,6 +676,7 @@ namespace System.Data
 		//   // TODO: implement
 		//   throw new NotImplementedException ();
 		// }
+		/*
 		private CodeMemberMethod CreateDataSetReadXmlSerializable ()
 		{
 			CodeMemberMethod method = new CodeMemberMethod ();
@@ -684,6 +689,7 @@ namespace System.Data
 			method.Statements.Add (Throw (New (typeof (NotImplementedException))));
 			return method;
 		}
+		*/
 
 		private CodeMemberMethod CreateDataSetGetSchema ()
 		{

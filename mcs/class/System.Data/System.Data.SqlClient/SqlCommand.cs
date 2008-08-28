@@ -65,7 +65,6 @@ namespace System.Data.SqlClient {
 
 		const int DEFAULT_COMMAND_TIMEOUT = 30;
 
-		bool disposed;
 		int commandTimeout;
 		bool designTimeVisible;
 		string commandText;
@@ -77,6 +76,7 @@ namespace System.Data.SqlClient {
 		SqlParameterCollection parameters;
 		string preparedStatement;
 #if NET_2_0
+		bool disposed;
 		SqlNotificationRequest notification;
 		bool notificationAutoEnlist;
 #endif

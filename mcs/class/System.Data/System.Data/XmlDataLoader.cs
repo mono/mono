@@ -181,7 +181,7 @@ namespace System.Data
 		#endregion // reading
 
 		#region Private helper methods
-		
+/*		
 		private void ReadColumns (XmlReader reader, DataRow row, DataTable table, string TableName)
 		{
 			do {
@@ -199,7 +199,7 @@ namespace System.Data
 			} while (table.TableName != reader.LocalName 
 				|| reader.NodeType != XmlNodeType.EndElement);
 		}
-
+*/
 		internal static object StringToObject (Type type, string value)
 		{
 			if (type == null) return value;

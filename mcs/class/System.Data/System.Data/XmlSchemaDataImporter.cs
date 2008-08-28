@@ -769,7 +769,6 @@ namespace System.Data
 		// common process for element and attribute
 		private void ImportColumnMetaInfo (XmlSchemaAnnotated obj, XmlQualifiedName name, DataColumn col)
 		{
-			int ordinal = -1;
 			if (obj.UnhandledAttributes != null) {
 				foreach (XmlAttribute attr in obj.UnhandledAttributes) {
 					if (attr.NamespaceURI != XmlConstants.MsdataNamespace)
@@ -794,7 +793,7 @@ namespace System.Data
 						col.ReadOnly = XmlConvert.ToBoolean (attr.Value);
 						break;
 					case XmlConstants.Ordinal:
-						ordinal = int.Parse (attr.Value);
+						int ordinal = int.Parse (attr.Value);
 						break;
 					}
 				}

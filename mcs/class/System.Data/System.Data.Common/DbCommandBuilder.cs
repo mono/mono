@@ -179,9 +179,7 @@ namespace System.Data.Common {
 			CreateNewCommand (ref _deleteCommand);
 
 			string command = String.Format ("DELETE FROM {0}", QuotedTableName);
-			StringBuilder columns = new StringBuilder ();
 			StringBuilder whereClause = new StringBuilder ();
-			string dsColumnName = String.Empty;
 			bool keyFound = false;
 			int parmIndex = 1;
 
@@ -256,7 +254,6 @@ namespace System.Data.Common {
 			string sql;
 			StringBuilder columns = new StringBuilder ();
 			StringBuilder values = new StringBuilder ();
-			string dsColumnName = String.Empty;
 
 			int parmIndex = 1;
 			foreach (DataRow schemaRow in _dbSchemaTable.Rows) {
@@ -312,7 +309,6 @@ namespace System.Data.Common {
 			StringBuilder columns = new StringBuilder ();
 			StringBuilder whereClause = new StringBuilder ();
 			int parmIndex = 1;
-			string dsColumnName = String.Empty;
 			bool keyFound = false;
 
 			// First, create the X=Y list for UPDATE

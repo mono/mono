@@ -230,7 +230,7 @@ namespace System.Data {
 			}
 		}
 
-		private int defaultNameIndex;
+//		private int defaultNameIndex;
 		private DataRelation inTransition;
 		int index;
 
@@ -242,7 +242,7 @@ namespace System.Data {
 			: base ()
 		{
 			inTransition = null;
-			defaultNameIndex = 1;
+//			defaultNameIndex = 1;
 		}
 
 		/// <summary>

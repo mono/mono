@@ -336,7 +336,6 @@ namespace System.Data {
                                 return _schemaTable;
 			
 			DataTable dt = new DataTable ();
-			DataColumn[] cols = new DataColumn [25];
 			dt.Columns.Add ("ColumnName", typeof (string));
 			dt.Columns.Add ("ColumnOrdinal", typeof (int));
 			dt.Columns.Add ("ColumnSize", typeof (int));

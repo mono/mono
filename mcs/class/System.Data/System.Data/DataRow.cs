@@ -1751,7 +1751,6 @@ namespace System.Data {
                 /// </summary>
                 internal void Load (object [] values, LoadOption loadOption)
                 {
-                        Index index = null;
                         int temp = -1;
 
                         if (loadOption == LoadOption.OverwriteChanges 

@@ -54,8 +54,6 @@ namespace System.Data.OleDb
 #if ONLY_1_1
 		string quotePrefix;
 		string quoteSuffix;
-#endif
-
 		private DataTable		_schema;
 		private string			_tableName;
 		private OleDbCommand	_insertCommand;
@@ -63,6 +61,7 @@ namespace System.Data.OleDb
 		private OleDbCommand	_deleteCommand;
 
 		bool _disposed;
+#endif
 		#endregion // Fields
 
 		#region Constructors
@@ -229,15 +228,6 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-		private OleDbCommand SelectCommand
-		{
-			get {
-				if (DataAdapter == null)
-					return null;
-				return DataAdapter.SelectCommand;
-			}
-		}
-
 #if NET_2_0
 		[MonoTODO]
 		public new OleDbCommand GetUpdateCommand (bool useColumnsForParameterNames)
@@ -275,6 +265,15 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 #else
+		private OleDbCommand SelectCommand
+		{
+			get {
+				if (DataAdapter == null)
+					return null;
+				return DataAdapter.SelectCommand;
+			}
+		}
+
 		public void RefreshSchema ()
 		{
 			// creates metadata

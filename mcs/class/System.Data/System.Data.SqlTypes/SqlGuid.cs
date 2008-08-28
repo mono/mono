@@ -101,21 +101,6 @@ namespace System.Data.SqlTypes
 			}
 		}
 
-		private byte[] GetLastSixBytes()
-		{
-			byte [] lastSixBytes = new byte[6];
-			
-			byte[] guidArray = value.ToByteArray();
-			lastSixBytes[0] = guidArray[10];
-			lastSixBytes[1] = guidArray[11];
-			lastSixBytes[2] = guidArray[12];
-			lastSixBytes[3] = guidArray[13];
-			lastSixBytes[4] = guidArray[14];
-			lastSixBytes[5] = guidArray[15];
-		
-			return lastSixBytes;
-		}	
-
 		#endregion
 
 		#region Methods
@@ -158,18 +143,6 @@ namespace System.Data.SqlTypes
                                 return this.value.CompareTo (value.Value);
 				
 		}
-
-
-		private static int Compare (uint x, uint y)
-                {
-                        if (x < y) {
-                                return -1;
-                        }
-                        else {
-                                return 1;
-                        }
-                }
-
 
 		public override bool Equals (object value)
 		{

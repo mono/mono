@@ -242,7 +242,7 @@ namespace System.Data.Common
                                                 }
                                         }
                                 }
-                        } catch (ArgumentException e) {
+                        } catch (ArgumentException) {
                                 ret = false;
                         }
                         return ret;

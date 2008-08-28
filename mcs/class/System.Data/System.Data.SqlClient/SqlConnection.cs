@@ -949,7 +949,7 @@ namespace System.Data.SqlClient
 				Byte[] rawrq = new Byte [instance.Length + 1];
 				rawrq[0] = 4;
 				enc.GetBytes (instance, 0, instance.Length, rawrq, 1);
-				int bytes = Send (rawrq, rawrq.Length);
+				Send (rawrq, rawrq.Length);
 
 				if (!Active)
 					return -1; // Error

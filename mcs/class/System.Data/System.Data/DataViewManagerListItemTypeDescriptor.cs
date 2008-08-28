@@ -40,7 +40,7 @@ namespace System.Data
 	class DataViewManagerListItemTypeDescriptor : ICustomTypeDescriptor
 	{
 		DataViewManager dvm;
-		PropertyDescriptorCollection propsCollection;
+		//PropertyDescriptorCollection propsCollection;
 
 		internal DataViewManagerListItemTypeDescriptor (DataViewManager dvm)
 		{

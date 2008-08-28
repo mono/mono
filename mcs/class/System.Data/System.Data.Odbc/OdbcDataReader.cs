@@ -535,8 +535,6 @@ namespace System.Data.Odbc
 				DataRow schemaRow;
 
 				for (int i = 0; i < cols.Length; i += 1 ) {
-					string baseTableName = String.Empty;
-					bool isKey = false;
 					OdbcColumn col=GetColumn(i);
 
 					schemaRow = dataTableSchema.NewRow ();
@@ -1021,7 +1019,6 @@ namespace System.Data.Odbc
 				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
 					throw Connection.CreateOdbcException (OdbcHandleType.Stmt, handle);
 
-				int i = 0;
 				while (true) {
 					ret = libodbc.SQLFetch (handle);
 					if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
@@ -1077,7 +1074,6 @@ namespace System.Data.Odbc
 				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
 					throw Connection.CreateOdbcException (OdbcHandleType.Stmt, handle);
 			
-				int i = 0;
 				while (true) {
 					ret = libodbc.SQLFetch (handle);
 					if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)

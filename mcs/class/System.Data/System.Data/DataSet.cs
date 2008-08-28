@@ -771,8 +771,6 @@ namespace System.Data
 
 		public virtual void Reset ()
 		{
-			IEnumerator constraintEnumerator;
-
 			// first we remove all ForeignKeyConstraints (if we will not do that
 			// we will get an exception when clearing the tables).
 			for (int i = 0; i < Tables.Count; i++) {
@@ -1027,7 +1025,6 @@ namespace System.Data
 				((XmlTextReader) reader).WhitespaceHandling = WhitespaceHandling.None;
 			}
 
-			XmlReadMode Result = mode;
 			XmlDiffLoader DiffLoader = null;
 
 			// If diffgram, then read the first element as diffgram 
@@ -1633,9 +1630,7 @@ namespace System.Data
 
 			SplitColumns (table, out atts, out elements, out simple);
 			//sort out the namespacing
-			string nspc = (table.Namespace.Length > 0 || table.DataSet == null) ? table.Namespace : table.DataSet.Namespace;
 			int relationCount = table.ParentRelations.Count;
-			DataRelation oneRel = relationCount == 1 ? table.ParentRelations [0] : null;
 
 			foreach (DataRow row in rows) {
 				if (skipIfNested) {

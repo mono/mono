@@ -17,7 +17,7 @@ endif
 
 LIBRARY = System.Data.dll
 LIB_MCS_FLAGS = \
-	-nowarn:649 -nowarn:169 -nowarn:219 -nowarn:168 -nowarn:1595 \
+	-nowarn:649 \
 	-unsafe \
 	-r:$(corlib)				\
 	-r:$(system)			 	\
@@ -38,7 +38,7 @@ LIB_MCS_FLAGS += \
 	$(OTHER_LIB_MCS_FLAGS)
 endif
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618,169,612,219,168
 
 TEST_MONO_PATH = .
 

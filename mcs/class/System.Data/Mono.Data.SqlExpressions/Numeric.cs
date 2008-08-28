@@ -197,10 +197,7 @@ namespace Mono.Data.SqlExpressions {
 				int result = String.Compare ((string)o1, (string)o2);
 				if (result <= 0)
 					return o1;
-				else
-					return o2;
-				break;
-				
+				return o2;
 			default:
 				return DBNull.Value;
 			}
@@ -221,10 +218,7 @@ namespace Mono.Data.SqlExpressions {
 				int result = String.Compare ((string)o1, (string)o2);
 				if (result >= 0)
 					return o1;
-				else
-					return o2;
-				break;
-				
+				return o2;
 			default:
 				return DBNull.Value;
 			}

@@ -40,7 +40,6 @@ namespace System.Data.Common {
 		string columnName;
 		string tableName;
 		string dataTypeName;
-		object value;
 		bool allowDBNull;
 		bool isReadOnly;
 		int ordinal;

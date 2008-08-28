@@ -313,11 +313,11 @@ namespace System.Data.OleDb
 #endif
 		void Open ()
 		{
-			string provider = "Default";
-			string gdaCncStr = string.Empty;
-			string[] args;
-			int len;
-			char [] separator = { ';' };
+//			string provider = "Default";
+//			string gdaCncStr = string.Empty;
+//			string[] args;
+//			int len;
+//			char [] separator = { ';' };
 			
 			if (State == ConnectionState.Open)
 				throw new InvalidOperationException ();

@@ -62,8 +62,7 @@ namespace System.Data.SqlClient {
 		SqlParameterCollection container = null;
 		DbType dbType;
 		ParameterDirection direction = ParameterDirection.Input;
-		bool isNullable;
-		bool isTypeSet = false;
+		bool isTypeSet;
 		int offset;
 		SqlDbType sqlDbType;
 		string sourceColumn;
@@ -71,7 +70,6 @@ namespace System.Data.SqlClient {
 		SqlCompareOptions compareInfo;
 		int localeId;
 		Object sqlValue;
-		string udtTypeName;
 #if NET_2_0
 		bool sourceColumnNullMapping;
 		string xmlSchemaCollectionDatabase = String.Empty;

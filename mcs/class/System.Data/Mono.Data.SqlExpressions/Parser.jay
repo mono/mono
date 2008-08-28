@@ -48,7 +48,7 @@ namespace Mono.Data.SqlExpressions {
 						new yydebug.yyDebugSimple ());
 				else
 					return (IExpression) yyparse (tokenizer);
-			} catch (yyParser.yyException e) {
+			} catch (yyParser.yyException) {
 				throw new SyntaxErrorException (String.Format ("Expression '{0}' is invalid.", sqlExpr));
 			}
 		}

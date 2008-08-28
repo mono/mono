@@ -62,7 +62,6 @@ namespace System.Data.SqlClient
 		int resultsRead;
 		int rowsRead;
 		DataTable schemaTable;
-		bool hasRows;
 		bool haveRead;
 		bool readResult;
 		bool readResultUsed;
@@ -919,6 +918,7 @@ namespace System.Data.SqlClient
 				return DBNull.Value;
 		}
 
+#if NET_2_0
 		static object GetSchemaValue (object value)
 		{
 			if (value == null)
@@ -926,6 +926,7 @@ namespace System.Data.SqlClient
 
 			return value;
 		}
+#endif		
 		
 		public
 #if NET_2_0

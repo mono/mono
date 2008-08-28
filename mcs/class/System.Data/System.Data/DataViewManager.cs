@@ -209,7 +209,6 @@ namespace System.Data
 			if (xtr.IsEmptyElement)
 				return; // MS does not change the value.
 
-			ArrayList result = new ArrayList ();
 			xtr.Read ();
 			do {
 				xtr.MoveToContent ();

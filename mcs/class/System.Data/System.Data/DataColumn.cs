@@ -66,12 +66,12 @@ namespace System.Data {
 
 		//used for constraint validation
 		//if an exception is fired during this event the change should be canceled
-		[MonoTODO]
-		internal event DelegateColumnValueChange ValidateColumnValueChange;
+		//[MonoTODO]
+		//internal event DelegateColumnValueChange ValidateColumnValueChange;
 
 		//used for FK Constraint Cascading rules
-		[MonoTODO]
-		internal event DelegateColumnValueChange ColumnValueChanging;
+		//[MonoTODO]
+		//internal event DelegateColumnValueChange ColumnValueChanging;
 
 		static readonly object _propertyChangedKey = new object ();
 		internal event PropertyChangedEventHandler PropertyChanged {

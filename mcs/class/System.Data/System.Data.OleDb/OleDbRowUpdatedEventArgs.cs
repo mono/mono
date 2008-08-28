@@ -39,12 +39,6 @@ namespace System.Data.OleDb
 {
 	public sealed class OleDbRowUpdatedEventArgs : RowUpdatedEventArgs
 	{
-		#region Fields
-		
-		OleDbCommand command;
-
-		#endregion // Fields
-
 		#region Constructors
 
 		public OleDbRowUpdatedEventArgs (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)

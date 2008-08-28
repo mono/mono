@@ -522,7 +522,6 @@ namespace System.Data.SqlTypes
 			hi += (ulong)((ulong)this.Data [3] << 32);
 
 			uint rest = 0;
-			String result = string.Empty;
 			StringBuilder Result = new StringBuilder ();
 			for (int i = 0; lo != 0 || hi != 0; i++) {
 				Div128By32 (ref hi, ref lo, 10, ref rest);
@@ -587,7 +586,6 @@ namespace System.Data.SqlTypes
 			ulong hi = 0;
 			int sc = 0; // scale
 			int texp = 0;
-			int rc = 0;
 			byte prec = 0; // precision
 			bool positive = ! (x.positive ^ y.positive);
 
@@ -637,7 +635,6 @@ namespace System.Data.SqlTypes
 			uint overhang = 0;
 			int sc = 0;
 			int i = 0;
-			int rc = 0;
 			int roundBit = 0;
 
 			sc = scale;
@@ -707,7 +704,6 @@ namespace System.Data.SqlTypes
 		private static void Normalize128(ref ulong clo, ref ulong chi, ref int scale, int roundFlag, int roundBit)
 		{
 			int sc = scale;
-			int deltaScale;
 			
 			scale = sc;
 			if ((roundFlag != 0) && (roundBit != 0)) 
@@ -789,6 +785,7 @@ namespace System.Data.SqlTypes
 		}
 
 		// From decimal.c
+		/*
 		private static void RShift192(ref ulong lo, ref ulong mi, ref ulong hi)
 		{
 			lo >>= 1;
@@ -801,6 +798,7 @@ namespace System.Data.SqlTypes
 
 			hi >>= 1;
 		}
+		*/
 
 		// From decimal.c
 		private static void RShift128(ref ulong lo, ref ulong hi)
@@ -915,12 +913,12 @@ namespace System.Data.SqlTypes
 		}
 
 		// From decimal.c
+		/*
 		private static void Mult192By32 (ref ulong clo, ref ulong cmi, ref ulong chi, ulong factor, int roundBit)
 		{
 			ulong a = 0;
 			uint h0 = 0;
 			uint h1 = 0;
-			uint h2 = 0;
 
 			a = ((ulong)(uint)clo) * factor;
 
@@ -952,6 +950,7 @@ namespace System.Data.SqlTypes
 			h1 = (uint)a;
 			chi = ((ulong)h1) << 32 | h0;
 		}
+		*/
 
 		// From decimal.c
 		private static void Mult128By32 (ref ulong clo, ref ulong chi, uint factor, int roundBit)
@@ -959,7 +958,6 @@ namespace System.Data.SqlTypes
 			ulong a = 0;
 			uint h0 = 0;
 			uint h1 = 0;
-			uint h2 = 0;
 
 			a = ((ulong)(uint)clo) * factor;
 

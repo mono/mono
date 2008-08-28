@@ -302,7 +302,6 @@ namespace System.Data {
 		void BinaryDeserializeTable (SerializationInfo info)
 		{
 			ArrayList arrayList = null;
-			PropertyCollection propCollection = null;
 
 			TableName = info.GetString ("DataTable.TableName");
 			Namespace = info.GetString ("DataTable.Namespace");
@@ -366,7 +365,7 @@ namespace System.Data {
 					if (Constraints == null)
 						Constraints = new ConstraintCollection (this);
 					DeserializeConstraints (arrayList);
-				} catch (SerializationException ex) {
+				} catch (SerializationException) {
 				}
 			}
 			try {
@@ -380,7 +379,7 @@ namespace System.Data {
 				Hashtable htRowErrors = (Hashtable) info.GetValue (prefix + "RowErrors",
 										  typeof (Hashtable));
 				DeserializeRecords (arrayList, nullBits, rowStateBitArray);
-			} catch (SerializationException ex) {
+			} catch (SerializationException) {
 			}
 		}
 #endif
@@ -2115,7 +2114,7 @@ namespace System.Data {
 						mode = ds.ReadXml (reader);
 					} else 
 						mode = DataSet.ReadXml (reader);
-				  } catch (DataException e) {
+				  } catch (DataException) {
 					mode = XmlReadMode.DiffGram;
 					if (isTableNameBlank)
 						TableName = String.Empty;

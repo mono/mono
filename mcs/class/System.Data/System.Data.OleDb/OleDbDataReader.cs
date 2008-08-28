@@ -334,7 +334,6 @@ namespace System.Data.OleDb
 		DateTime GetDateTime (int ordinal)
 		{
 			IntPtr value;
-			DateTime dt;
 
 			if (currentResult == -1)
 				throw new InvalidCastException ();
@@ -612,8 +611,6 @@ namespace System.Data.OleDb
 				dataTableSchema.Columns.Add ("IsReadOnly", typeof (bool));
 
 				DataRow schemaRow;
-				DbType dbType;
-				Type typ;
 
 				for (int i = 0; i < this.FieldCount; i += 1 ) {
 					

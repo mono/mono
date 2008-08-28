@@ -678,20 +678,6 @@ namespace System.Data {
 			_mostRecentColumns = null;
 		}
 
-
-		/// <summary>
-		///  Do the same as Constains -method but case sensitive
-		/// </summary>
-		private bool CaseSensitiveContains(string columnName)
-		{
-			DataColumn column = this[columnName];
-			
-			if (column != null)
-				return string.Compare(column.ColumnName, columnName, false) == 0; 
-
-			return false;
-		}
-
 		internal void UpdateAutoIncrement(DataColumn col,bool isAutoIncrement)
 		{
 			if (isAutoIncrement)

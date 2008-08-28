@@ -522,7 +522,6 @@ namespace System.Data.Odbc
 			short txtlen = 0;
 			int nativeerror = 0;
 			OdbcReturn ret = OdbcReturn.Success;
-			ushort recordNumber = 1;
 
 			OdbcErrorCollection errors = new OdbcErrorCollection ();
 

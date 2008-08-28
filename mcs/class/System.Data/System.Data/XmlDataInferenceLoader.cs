@@ -597,6 +597,7 @@ namespace System.Data
 		// Returns if it "might" be a column element (this method is
 		// called per child element, thus it might still consist of
 		// table, since it might be repeated).
+		/*
 		private bool IsPossibleColumnElement (XmlElement el)
 		{
 			foreach (XmlAttribute attr in el.Attributes) {
@@ -613,6 +614,7 @@ namespace System.Data
 					return false;
 			return true;
 		}
+		*/
 	}
 }
 

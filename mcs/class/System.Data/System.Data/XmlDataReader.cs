@@ -130,7 +130,6 @@ namespace System.Data
 
 			// No need to check DataSetName. In fact, it is ignored.
 
-			bool ambiguous = false;
 			DataTable dt = dataset.Tables [local];
 			if (dt == null)
 				return true;

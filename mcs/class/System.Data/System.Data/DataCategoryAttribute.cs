@@ -39,7 +39,7 @@ namespace System.Data {
 	{
 		#region Fields
 
-		string category;
+//		string category;
 
 		#endregion // Fields
 
@@ -47,7 +47,7 @@ namespace System.Data {
 
 		public DataCategoryAttribute (string category)
 		{
-			this.category = category; 
+//			this.category = category; 
 		}
 
 		#endregion // Constructors

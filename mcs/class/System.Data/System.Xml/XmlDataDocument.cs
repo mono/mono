@@ -95,9 +95,6 @@ namespace System.Xml
 		private bool raiseDataSetEvents = true;
 		private bool raiseDocumentEvents = true;
 
-		// this is needed for inserting new row to datatable via xml
-		private Hashtable TempTable = new Hashtable ();
-
 		DataColumnChangeEventHandler columnChanged;
 		DataRowChangeEventHandler rowDeleted;
 		DataRowChangeEventHandler rowChanged;
@@ -589,9 +586,6 @@ namespace System.Xml
 
 			try {
 				// This code is obsolete XmlDataDocument one
-
-				DataRow deletedRow = null;
-				deletedRow = eventArgs.Row;
 
 				XmlElement el = GetElementFromRow (eventArgs.Row);
 				if (el == null)

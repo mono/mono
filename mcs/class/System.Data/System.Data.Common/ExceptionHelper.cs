@@ -212,7 +212,7 @@ namespace System.Data.Common
 		internal static ArgumentNullException CollectionNoNullsAllowed (object collection, object objectsType)
 		{
 			object [] args = new object [] {collection.GetType ().ToString (), objectsType.ToString ()};
-			return new ArgumentNullException (GetExceptionMessage ("The {0} only accepts non-null {1} type objects."));
+			return new ArgumentNullException (GetExceptionMessage ("The {0} only accepts non-null {1} type objects.", args));
 		}
 
 		internal static ArgumentException CollectionAlreadyContains(object objectType,string propertyName, object propertyValue, object collection)

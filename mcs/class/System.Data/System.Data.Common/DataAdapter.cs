@@ -310,7 +310,6 @@ namespace System.Data.Common
 				sourceColumns.Add(realSourceColumnName);
 
 				// generate DataSetColumnName from DataTableMapping, if any
-				string dsColumnName = realSourceColumnName;
 				DataTableMapping tableMapping = null;
 
 				//FIXME : The sourcetable name shud get passed as a parameter.. 
