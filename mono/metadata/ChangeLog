@@ -1,3 +1,9 @@
+2008-08-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (_mono_reflection_get_type_from_info): Handle the 
+	special case when the mono_assembly_loaded () returns NULL because the 
+	search hook is not installed.
+
 2008-08-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c: Applied patch from tom hindle (tom_hindle@sil.org) to fix
