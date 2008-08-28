@@ -1,3 +1,8 @@
+2008-08-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (compile_method): Disable gshared support for now as it
+	doesn't yet work.
+
 2008-08-27  Bill Holmes  <billholmes54@gmail.com>
 
 	* mini-amd64.h : Fix a compiler warning.
