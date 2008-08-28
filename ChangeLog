@@ -1,3 +1,7 @@
+2008-08-28  Geoff Norton  <gnorton@novell.com>
+
+	* build-iphone.sh: iPhone lies about HAVE_MMAP as well.
+
 2008-08-26  Geoff Norton  <gnorton@novell.com>
 
 	* build-iphone.sh: Update build-iphone to not wget old inssel's, and build

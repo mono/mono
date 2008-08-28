@@ -51,6 +51,7 @@ popd
 ./autogen.sh --disable-mcs-build --host=arm-apple-darwin9 --disable-shared-handles --with-tls=pthread --with-sigaltstack=no --with-glib=embedded $@
 perl -pi -e 's/MONO_SIZEOF_SUNPATH 0/MONO_SIZEOF_SUNPATH 104/' config.h
 perl -pi -e 's/#define HAVE_FINITE 1//' config.h
+perl -pi -e 's/#define HAVE_MMAP 1//' config.h
 make
 
 unsetenv
