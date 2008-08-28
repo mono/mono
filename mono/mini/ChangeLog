@@ -1,5 +1,9 @@
 2008-08-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c: Avoid not initializing the runtime when doing AOT compilation, 
+	since too many things depend on it. Instead, call 
+	mono_runtime_set_no_exec ().
+	
 	* mini.c (mono_create_tls_get): Call mono_alloc_preg (cfg) when running with
 	the new JIT.
 
