@@ -48,7 +48,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		// RFC3280 variables
 		private int max_path_length;
 		private X500DistinguishedName working_issuer_name;
-		private string working_public_key_algorithm;
+//		private string working_public_key_algorithm;
 		private AsymmetricAlgorithm working_public_key;
 
 		// other flags
@@ -415,7 +415,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			// 6.1.2 - Initialization (incomplete)
 			// 6.1.2.a-f - policy stuff, some TODO, some not supported
 			// 6.1.2.g - working public key algorithm
-			working_public_key_algorithm = certificate.PublicKey.Oid.Value;
+//			working_public_key_algorithm = certificate.PublicKey.Oid.Value;
 			// 6.1.2.h-i - our key contains both the "working public key" and "working public key parameters" data
 			working_public_key = certificate.PublicKey.Key;
 			// 6.1.2.j - working issuer name
@@ -525,7 +525,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			// 6.1.4.d-e - our key includes both the public key and it's parameters
 			working_public_key = certificate.PublicKey.Key;
 			// 6.1.4.f
-			working_public_key_algorithm = certificate.PublicKey.Oid.Value;
+//			working_public_key_algorithm = certificate.PublicKey.Oid.Value;
 
 			// TODO 6.1.4.g-j
 

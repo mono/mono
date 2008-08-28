@@ -40,11 +40,10 @@ namespace System.Diagnostics
 {
 	public class XmlWriterTraceListener : TextWriterTraceListener
 	{
-		const string e2e_ns = "http://schemas.microsoft.com/2004/06/E2ETraceEvent";
-		const string sys_ns = "http://schemas.microsoft.com/2004/06/windows/eventlog/system";
-		const string default_name = "XmlWriter";
+		static readonly string e2e_ns = "http://schemas.microsoft.com/2004/06/E2ETraceEvent";
+		static readonly string sys_ns = "http://schemas.microsoft.com/2004/06/windows/eventlog/system";
+		static readonly string default_name = "XmlWriter";
 		XmlWriter w;
-		string name;
 
 		public XmlWriterTraceListener (string filename)
 			: this (filename, default_name)
@@ -72,11 +71,11 @@ namespace System.Diagnostics
 		}
 
 		public XmlWriterTraceListener (TextWriter writer, string name)
+			: base (name)
 		{
 			XmlWriterSettings settings = new XmlWriterSettings ();
 			settings.OmitXmlDeclaration = true;
 			w = XmlWriter.Create (writer, settings);
-			this.name = name;
 		}
 
 		public override void Close ()
