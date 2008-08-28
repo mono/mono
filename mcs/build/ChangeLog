@@ -1,3 +1,8 @@
+2008-08-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* rules.make: Make the build process quiet similarly to the runtime build
+	process. Use the V=1 argument to make to make it verbose again.
+
 2008-08-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* rules.make (PROFILE): If no profile is passed on the command line, make
