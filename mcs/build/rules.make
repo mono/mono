@@ -119,7 +119,8 @@ $(STD_TARGETS): %: do-%
 do-run-test:
 	ok=:; $(MAKE) run-test-recursive || ok=false; $(MAKE) run-test-local || ok=false; $$ok
 
-do-%: %-recursive %-local ;
+do-%: %-recursive
+	$(MAKE) %-local
 
 # The way this is set up, any profile-specific subdirs list should
 # be listed _before_ including rules.make.  However, the default

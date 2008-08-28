@@ -1,3 +1,9 @@
+2008-08-29  Raja R Harinath  <harinath@hurrynot.org>
+
+	* rules.make (do-%): Revert change below.  We need the recursion
+	to ensure ordering of %-local after %-recursive.  IOW, we
+	want to ensure strict linearity even with a 'make -j'.
+
 2008-08-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* rules.make (Q_MCS): Use 5 spaces instead of -e '\\t'.
