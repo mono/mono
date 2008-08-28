@@ -3365,7 +3365,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((ModFlags & Modifiers.NEW) == 0) {
-				if (this is Method && conflict_symbol is MethodBase)
+				if (this is MethodOrOperator && conflict_symbol.MemberType == MemberTypes.Method)
 					return true;
 
 				Report.SymbolRelatedToPreviousError (conflict_symbol);

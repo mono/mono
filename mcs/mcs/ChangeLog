@@ -1,5 +1,9 @@
 2008-08-28  Marek Safar  <marek.safar@gmail.com>
 
+	* class.cs (CheckBase): Ignore overloaded operators.
+
+2008-08-28  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #420830
 	* expression.cs, cs-parser.jay: Put back InvocationOrCast expression.
 
