@@ -45,7 +45,9 @@ namespace System.Drawing
 	public sealed class Font : MarshalByRefObject, ISerializable, ICloneable, IDisposable
 	{
 		private IntPtr	fontObject = IntPtr.Zero;
+#if NET_2_0		
 		private string  systemFontName;
+#endif		
 		private float _size;
 		private object olf;
 

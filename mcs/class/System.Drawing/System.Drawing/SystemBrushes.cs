@@ -63,6 +63,7 @@ namespace System.Drawing
 		static SolidBrush scroll_bar;
 		static SolidBrush window;
 		static SolidBrush window_text;
+#if NET_2_0		
 		static SolidBrush button_face;
 		static SolidBrush button_highlight;
 		static SolidBrush button_shadow;
@@ -75,6 +76,7 @@ namespace System.Drawing
 		static SolidBrush menu_highlight;
 		static SolidBrush menu_text;		
 		static SolidBrush window_fame;
+#endif		
  
 		private SystemBrushes() { }
 

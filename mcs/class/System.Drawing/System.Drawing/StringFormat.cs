@@ -36,7 +36,7 @@ namespace System.Drawing {
 
 	public sealed class StringFormat : MarshalByRefObject, IDisposable, ICloneable
 	{
-		private static StringFormat genericDefault;
+//		private static StringFormat genericDefault;
 		private IntPtr nativeStrFmt = IntPtr.Zero;
                 private int language = GDIPlus.LANG_NEUTRAL;
 				

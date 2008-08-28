@@ -45,7 +45,7 @@ namespace System.Drawing.Imaging
 		private PixelFormat	pixel_format; // int
 		private IntPtr		scan0;
 		private int 		reserved;
-
+#pragma warning disable 169
 		// *** Warning ***	don't depend on those fields in managed
 		//			code as they won't exists when using MS
 		//			GDI+
@@ -61,7 +61,7 @@ namespace System.Drawing.Imaging
 		private int		y;
 		private int		transparent;
 		// *** Warning ***
-
+#pragma warning restore 169
 
 		public int Height {
 			get {

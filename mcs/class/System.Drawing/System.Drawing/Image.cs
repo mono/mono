@@ -50,7 +50,9 @@ namespace System.Drawing
 public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISerializable 
 {
 	public delegate bool GetThumbnailImageAbort();
+#if NET_2_0	
 	private object tag;
+#endif	
 	
 	internal IntPtr nativeObject = IntPtr.Zero;
 	// when using MS GDI+ and IStream we must ensure the stream stays alive for all the life of the Image

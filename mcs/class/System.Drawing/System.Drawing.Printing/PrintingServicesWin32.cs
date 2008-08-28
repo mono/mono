@@ -35,7 +35,7 @@ namespace System.Drawing.Printing
 {
 	internal class PrintingServicesWin32 : PrintingServices
 	{
-		private string printer_name;
+//		private string printer_name;
 		private bool is_printer_valid;
 
 		internal PrintingServicesWin32 ()
@@ -50,7 +50,7 @@ namespace System.Drawing.Printing
 
 			int ret = Win32DocumentProperties (IntPtr.Zero, IntPtr.Zero, printer, IntPtr.Zero, IntPtr.Zero, 0);
 			is_printer_valid = (ret > 0);
-			this.printer_name = printer; 
+//			this.printer_name = printer; 
 			return is_printer_valid;
 		}
 

@@ -53,9 +53,11 @@ namespace System.Drawing.Printing
 		// create a new default Margins object (is 1 inch for all margins)
 		Margins margins = new Margins();
 
+#if NET_2_0
 		float hardMarginX;
 		float hardMarginY;
-		RectangleF printableArea;
+		RectangleF printableArea;		
+#endif		
 		PrinterSettings printerSettings;
 		
 		public PageSettings() : this(new PrinterSettings())

@@ -53,6 +53,7 @@ namespace System.Drawing
 		static private Pen menu_text;
 		static private Pen window_frame;
 		static private Pen window_text;
+#if NET_2_0		
 		static private Pen active_border;
 		static private Pen active_caption;
 		static private Pen app_workspace;
@@ -71,6 +72,7 @@ namespace System.Drawing
 		static private Pen menu_highlight;
 		static private Pen scroll_bar;
 		static private Pen window;
+#endif		
 		
 		private SystemPens () {	}
 		
