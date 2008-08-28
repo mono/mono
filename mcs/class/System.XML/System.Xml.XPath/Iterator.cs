@@ -1161,9 +1161,10 @@ namespace System.Xml.XPath
 			: base (iter.NamespaceManager)
 		{
 //			if (iter.Ordered)
-			if (false)
-				this.iter = iter;
-			else {
+//			if (false)
+//				this.iter = iter;
+//			else 
+			{
 				list = new ArrayList ();
 				while (iter.MoveNext ())
 					list.Add (iter.Current);

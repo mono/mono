@@ -570,27 +570,22 @@ namespace System.Xml {
 				return (value == DateTime.MinValue ? DateTime.MinValue : value == DateTime.MaxValue ? value : value.ToLocalTime ()).ToString (
 					"yyyy-MM-ddTHH:mm:ss.FFFFFFFzzz",
 					CultureInfo.InvariantCulture);
-				break;
 			case XmlDateTimeSerializationMode.RoundtripKind:
 				return value.ToString (
 					"yyyy-MM-ddTHH:mm:ss.FFFFFFFK",
 					CultureInfo.InvariantCulture);
-				break;
 			default:
 				return value.ToString (
 					"yyyy-MM-ddTHH:mm:ss.FFFFFFFzzz",
 					CultureInfo.InvariantCulture);
-				break;
 			case XmlDateTimeSerializationMode.Utc:
 				return (value == DateTime.MinValue ? DateTime.MinValue : value == DateTime.MaxValue ? value : value.ToUniversalTime ()).ToString (
 					"yyyy-MM-ddTHH:mm:ss.FFFFFFFZ",
 					CultureInfo.InvariantCulture);
-				break;
 			case XmlDateTimeSerializationMode.Unspecified:
 				return value.ToString (
 					"yyyy-MM-ddTHH:mm:ss.FFFFFFF",
 					CultureInfo.InvariantCulture);
-				break;
 			}
 		}
 #endif

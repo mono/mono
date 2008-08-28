@@ -22,7 +22,7 @@ ifdef USE_BOOT_COMPILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
 
-LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -nowarn:0162,0618,0612,0642,1595
+LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -nowarn:0618,0612,0642
 ifeq (net_1_1_java, $(PROFILE))
 LIB_MCS_FLAGS += \
 	-r:System.Xml.dll		\

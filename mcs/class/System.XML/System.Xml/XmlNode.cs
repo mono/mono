@@ -135,7 +135,6 @@ namespace System.Xml
 				case XmlNodeType.SignificantWhitespace:
 				case XmlNodeType.Whitespace:
  					return Value;
-					break;
 				}
 				if (FirstChild == null)
 					return String.Empty;

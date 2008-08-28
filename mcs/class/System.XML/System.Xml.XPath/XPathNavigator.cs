@@ -965,7 +965,6 @@ namespace System.Xml.XPath
 						"=\"",
 						EscapeString (Value, true),
 						"\"");
-					break;
 				case XPathNodeType.Namespace:
 					return String.Concat (
 						"xmlns",
@@ -974,7 +973,6 @@ namespace System.Xml.XPath
 						"=\"",
 						EscapeString (Value, true),
 						"\"");
-					break;
 				case XPathNodeType.Text:
 					return EscapeString (Value, false);
 				case XPathNodeType.Whitespace:

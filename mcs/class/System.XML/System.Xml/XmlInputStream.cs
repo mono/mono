@@ -489,7 +489,6 @@ namespace System.Xml
 					return c;
 				}
 			}
-			throw new InvalidOperationException ();
 		}
 
 		public Encoding ActualEncoding {
