@@ -396,14 +396,27 @@ namespace Mono.CSharp {
 
 					TypeExpression storey_type_expr = new TypeExpression (host.TypeBuilder, loc);
 					Expression new_storey;
+					ArrayList init = null;
+					if (host.hoisted_this != null) {
+						init = new ArrayList (host.hoisted_params == null ? 1 : host.HoistedParameters.Count + 1);
+						HoistedThis ht = host.hoisted_this;
+						FieldExpr from = new FieldExpr (ht.Field.FieldBuilder, loc);
+						from.InstanceExpression = CompilerGeneratedThis.Instance;
+						init.Add (new ElementInitializer (ht.Field.Name, from, loc));
+					}
+
 					if (host.hoisted_params != null) {
-						ArrayList init = new ArrayList (host.HoistedParameters.Count);
+						if (init == null)
+							init = new ArrayList (host.HoistedParameters.Count);
+
 						foreach (HoistedParameter hp in host.HoistedParameters) {
 							FieldExpr from = new FieldExpr (hp.Field.FieldBuilder, loc);
 							from.InstanceExpression = CompilerGeneratedThis.Instance;
 							init.Add (new ElementInitializer (hp.Field.Name, from, loc));
 						}
+					}
 
+					if (init != null) {
 						new_storey = new NewInitialize (storey_type_expr, new ArrayList (0),
 							new CollectionOrObjectInitializers (init, loc), loc);
 					} else {
