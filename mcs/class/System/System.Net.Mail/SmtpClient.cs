@@ -68,7 +68,9 @@ namespace System.Net.Mail {
 		string pickupDirectoryLocation;
 		SmtpDeliveryMethod deliveryMethod;
 		bool enableSsl;
+#if SECURITY_DEP		
 		X509CertificateCollection clientCertificates;
+#endif		
 
 		TcpClient client;
 		Stream stream;
@@ -99,7 +101,7 @@ namespace System.Net.Mail {
 		}
 
 		AuthMechs authMechs = AuthMechs.None;
-		bool canStartTLS = false;
+		//bool canStartTLS;
 
 		Mutex mutex = new Mutex ();
 
@@ -403,7 +405,7 @@ namespace System.Net.Mail {
 
 		void ResetExtensions()
 		{
-			canStartTLS = false;
+//			canStartTLS = false;
 			authMechs = AuthMechs.None;
 		}
 
@@ -443,7 +445,7 @@ namespace System.Net.Mail {
 						}
 					}
 				} else if (start.StartsWith ("STARTTLS", StringComparison.Ordinal)) {
-					canStartTLS = true;
+//					canStartTLS = true;
 				}
 			}
 		}

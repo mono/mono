@@ -87,8 +87,9 @@ namespace System.Net
 		Uri baseAddress;
 		string baseString;
 		NameValueCollection queryString;
-		bool is_busy, async;
+		bool is_busy;
 #if NET_2_0
+		bool async;
 		Thread async_thread;
 		Encoding encoding = Encoding.Default;
 		IWebProxy proxy;
@@ -256,7 +257,9 @@ namespace System.Net
 
 			try {
 				SetBusy ();
+#if NET_2_0				
 				async = false;
+#endif				
 				return DownloadDataCore (address, null);
 			} finally {
 				is_busy = false;
@@ -308,7 +311,9 @@ namespace System.Net
 
 			try {
 				SetBusy ();
+#if NET_2_0				
 				async = false;
+#endif				
 				DownloadFileCore (address, fileName, null);
 			} catch (Exception ex) {
 				throw new WebException ("An error occurred " +
@@ -380,7 +385,9 @@ namespace System.Net
 			WebRequest request = null;
 			try {
 				SetBusy ();
+#if NET_2_0				
 				async = false;
+#endif				
 				request = SetupRequest (address);
 				WebResponse response = request.GetResponse ();
 				return ProcessResponse (response);
@@ -434,7 +441,9 @@ namespace System.Net
 
 			try {
 				SetBusy ();
+#if NET_2_0				
 				async = false;
+#endif				
 				WebRequest request = SetupRequest (address, method);
 				return request.GetRequestStream ();
 			} catch (Exception ex) {
@@ -501,7 +510,9 @@ namespace System.Net
 
 			try {
 				SetBusy ();
+#if NET_2_0				
 				async = false;
+#endif				
 				return UploadDataCore (address, method, data, null);
 			} catch (Exception ex) {
 				throw new WebException ("An error occurred " +
@@ -577,7 +588,9 @@ namespace System.Net
 
 			try {
 				SetBusy ();
+#if NET_2_0				
 				async = false;
+#endif				
 				return UploadFileCore (address, method, fileName, null);
 			} catch (Exception ex) {
 				throw new WebException ("An error occurred " +
@@ -696,7 +709,9 @@ namespace System.Net
 
 			try {
 				SetBusy ();
+#if NET_2_0				
 				async = false;
+#endif				
 				return UploadValuesCore (address, method, data, null);
 			} catch (Exception ex) {
 				throw new WebException ("An error occurred " +
@@ -1500,5 +1515,3 @@ namespace System.Net
 #endif
 	}
 }
-
-

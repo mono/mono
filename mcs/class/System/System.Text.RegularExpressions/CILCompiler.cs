@@ -20,12 +20,12 @@ namespace System.Text.RegularExpressions {
 	class CILCompiler : RxCompiler, ICompiler {
 		DynamicMethod[] eval_methods;
 		bool[] eval_methods_defined;
-		int group_count;
+//		int group_count;
 
 		static FieldInfo fi_str = typeof (RxInterpreter).GetField ("str", BindingFlags.Instance|BindingFlags.NonPublic);
 		static FieldInfo fi_string_start = typeof (RxInterpreter).GetField ("string_start", BindingFlags.Instance|BindingFlags.NonPublic);
 		static FieldInfo fi_string_end = typeof (RxInterpreter).GetField ("string_end", BindingFlags.Instance|BindingFlags.NonPublic);
-		static FieldInfo fi_match_start = typeof (RxInterpreter).GetField ("match_start", BindingFlags.Instance|BindingFlags.NonPublic);
+//		static FieldInfo fi_match_start = typeof (RxInterpreter).GetField ("match_start", BindingFlags.Instance|BindingFlags.NonPublic);
 		static FieldInfo fi_program = typeof (RxInterpreter).GetField ("program", BindingFlags.Instance|BindingFlags.NonPublic);
 		static FieldInfo fi_marks = typeof (RxInterpreter).GetField ("marks", BindingFlags.Instance|BindingFlags.NonPublic);
 		static FieldInfo fi_groups = typeof (RxInterpreter).GetField ("groups", BindingFlags.Instance|BindingFlags.NonPublic);
@@ -43,7 +43,7 @@ namespace System.Text.RegularExpressions {
 			eval_methods = new DynamicMethod [code.Length];
 			eval_methods_defined = new bool [code.Length];
 
-			group_count = 1 + (code [1] | (code [2] << 8));
+//			group_count = 1 + (code [1] | (code [2] << 8));
 
 			// The main eval method
 		    DynamicMethod main = GetEvalMethod (code, 11);

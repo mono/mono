@@ -108,11 +108,7 @@ namespace System.Diagnostics {
 #endif
 #endif
 
-#if NET_2_0
-		static readonly string [] empty_array = new string [0];
-#endif
-
-		private string name = null;
+		private string name;
 		private bool needIndent = true;
 
 		protected TraceListener () : this ("")

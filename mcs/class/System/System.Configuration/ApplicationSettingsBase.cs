@@ -36,19 +36,17 @@ using System.Collections.Specialized;
 
 namespace System.Configuration {
 
-        public abstract class ApplicationSettingsBase : SettingsBase, INotifyPropertyChanged
+	public abstract class ApplicationSettingsBase : SettingsBase, INotifyPropertyChanged
 	{
-
-                protected ApplicationSettingsBase ()
-                {
+		protected ApplicationSettingsBase ()
+		{
 			Initialize (Context, Properties, Providers);
-                }
+		}
 
 		protected ApplicationSettingsBase (IComponent owner)
 			: this (owner, String.Empty)
 		{
 		}
-
  
 		protected ApplicationSettingsBase (string settingsKey)
 		{
@@ -63,8 +61,9 @@ namespace System.Configuration {
 			if (owner == null)
 				throw new ArgumentNullException ();
 
+#if (CONFIGURATION_DEP)
 			providerService = (ISettingsProviderService)owner.Site.GetService(typeof (ISettingsProviderService));
-
+#endif
 			this.settingsKey = settingsKey;
 
 			Initialize (Context, Properties, Providers);
@@ -374,10 +373,12 @@ namespace System.Configuration {
 
 		string settingsKey;
 		SettingsContext context;
+#if (CONFIGURATION_DEP)		
 		SettingsPropertyCollection properties;
+		ISettingsProviderService providerService;
+#endif
 		SettingsPropertyValueCollection propertyValues;
 		SettingsProviderCollection providers;
-		ISettingsProviderService providerService;
         }
 
 }
