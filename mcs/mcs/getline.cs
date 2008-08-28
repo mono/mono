@@ -226,8 +226,12 @@ namespace Mono.Terminal {
 			for (int i = 0; i < text.Length; i++){
 				int c = (int) text [i];
 				if (c < 26){
-					rendered_text.Append ('^');
-					rendered_text.Append ((char) (c + (int) 'A' - 1));
+					if (c == '\t')
+						rendered_text.Append ("    ");
+					else {
+						rendered_text.Append ('^');
+						rendered_text.Append ((char) (c + (int) 'A' - 1));
+					}
 				} else
 					rendered_text.Append ((char)c);
 			}
@@ -239,9 +243,12 @@ namespace Mono.Terminal {
 			
 			for (int i = 0; i < pos; i++){
 				int c = (int) text [i];
-				if (c < 26)
-					p += 2;
-				else
+				if (c < 26){
+					if (c == 9)
+						p += 4;
+					else
+						p += 2;
+				} else
 					p++;
 			}
 			return p;
