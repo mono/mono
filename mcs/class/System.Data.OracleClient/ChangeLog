@@ -1,3 +1,14 @@
+2008-08-27  Daniel Morgan <monodanmorg@yahoo.com>
+
+	* System.Data.OracleClient/OracleConnectionStringBuilder.cs: modified -
+	add missing connection options, correct case of some connection options,
+	added dictionary for mapping
+	defaults, for Item this indexer needs to return a default
+	for a valid keyword if it does not exist in the dictionary,
+	must override the Keys and Values collection to return all keys
+	and values whether or not they exist in the dictionary and if
+	they do not then return a default value for Values
+
 2008-08-26  Daniel Morgan <monodanmorg@yahoo.com>
 
 	* System.Data.OracleClient/OracleParameter.cs

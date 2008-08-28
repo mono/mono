@@ -33,6 +33,7 @@ using System;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 using System.Data;
 using System.Data.Common;
@@ -72,6 +73,7 @@ namespace System.Data.OracleClient
 		private bool	_omitOracleConnectionName;
 
 		private static Dictionary <string, string> _keywords; // for mapping duplicate keywords
+		private static Dictionary <string, object> _defaults;
 		#endregion // Fields
 
 		#region Constructors
@@ -104,10 +106,26 @@ namespace System.Data.OracleClient
 			_keywords ["PERSISTSECURITYINFO"]	= "Persist Security Info";
 			_keywords ["PERSIST SECURITY INFO"] 	= "Persist Security Info";
 			_keywords ["POOLING"] 			= "Pooling";
-			_keywords ["UID"] 			= "User Id";
-			_keywords ["USER"] 			= "User Id";
-			_keywords ["USER ID"] 			= "User Id";
+			_keywords ["UID"] 			= "User ID";
+			_keywords ["USER"] 			= "User ID";
+			_keywords ["USER ID"] 			= "User ID";
 			_keywords ["UNICODE"] 			= "Unicode";
+			_keywords ["LOAD BALANCE TIMEOUT"]	= "Load Balance Timeout";
+			_keywords ["OMIT ORACLE CONNECTION NAME"] = "Omit Oracle Connection Name";
+
+			_defaults = new Dictionary <string, object> ();
+			_defaults.Add("Data Source", DEF_DATASOURCE);
+			_defaults.Add("Persist Security Info", DEF_PERSISTSECURITYINFO);
+			_defaults.Add("Integrated Security", DEF_INTEGRATEDSECURITY);
+			_defaults.Add("User ID", DEF_USERID);
+			_defaults.Add("Password", DEF_PASSWORD);
+			_defaults.Add("Enlist", DEF_ENLIST);
+			_defaults.Add("Pooling", DEF_POOLING);
+			_defaults.Add("Min Pool Size", DEF_MINPOOLSIZE);
+			_defaults.Add("Max Pool Size", DEF_MAXPOOLSIZE);
+			_defaults.Add("Unicode", DEF_UNICODE);
+			_defaults.Add("Load Balance Timeout", DEF_LOADBALANCETIMEOUT);
+			_defaults.Add("Omit Oracle Connection Name", DEF_OMITORACLECONNECTIONNAME);
 		}
 		#endregion // Constructors
 
@@ -149,13 +167,32 @@ namespace System.Data.OracleClient
 		public override object this [string keyword] { 
 			get { 
 				string mapped = MapKeyword (keyword);
-				return base [mapped]; 
+				if (base.ContainsKey (mapped)) 
+					return base [mapped];
+				else
+					return _defaults [mapped];
 			}
 			set {SetValue (keyword, value);}
 		}
 
 		public override ICollection Keys { 
-			get { return base.Keys; }
+			get { 
+				List<string> keys = new List<string>();
+                                keys.Add("Data Source");
+                                keys.Add("Persist Security Info");
+                                keys.Add("Integrated Security");
+                                keys.Add("User ID");
+                                keys.Add("Password");
+                                keys.Add("Enlist");
+                                keys.Add("Pooling");
+                                keys.Add("Min Pool Size");
+                                keys.Add("Max Pool Size");
+                                keys.Add("Unicode");
+                                keys.Add("Load Balance Timeout");
+                                keys.Add("Omit Oracle Connection Name");
+				ReadOnlyCollection<string> coll = new ReadOnlyCollection<string>(keys);
+				return coll;
+			}
 		}
 
 		[DisplayNameAttribute ("Load Balance Timeout")]
@@ -250,7 +287,23 @@ namespace System.Data.OracleClient
 		}
 		
 		public override ICollection Values { 
-			get { return base.Values; }
+			get {
+				List<object> values = new List<object>();
+                                values.Add(_dataSource);
+                                values.Add(_persistSecurityInfo);
+                                values.Add(_integratedSecurity);
+                                values.Add(_userID);
+                                values.Add(_password);
+                                values.Add(_enlist);
+                                values.Add(_pooling);
+                                values.Add(_minPoolSize);
+                                values.Add(_maxPoolSize);
+                                values.Add(_unicode);
+                                values.Add(_loadBalanceTimeout);
+                                values.Add(_omitOracleConnectionName);
+				ReadOnlyCollection<object> coll = new ReadOnlyCollection<object>(values);
+				return coll;		 
+			}
 		}
 
 		#endregion // Properties
