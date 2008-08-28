@@ -1,5 +1,9 @@
 2008-08-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* rules.make (Q_MCS): Use 5 spaces instead of -e '\\t'.
+
+	* library.make: Make some command quiet.
+
 	* rules.make: Avoid some needless recursive make invocations.
 	
 	* rules.make: Print the profile in the quiet commands.

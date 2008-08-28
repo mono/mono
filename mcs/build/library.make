@@ -94,7 +94,7 @@ ifdef NO_SIGN_ASSEMBLY
 SN = :
 else
 sn = $(topdir)/class/lib/net_1_1_bootstrap/sn.exe
-SN = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(sn)
+SN = $(Q) MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(sn)
 SNFLAGS = -q -R
 endif
 
@@ -297,9 +297,9 @@ $(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir:=/.stamp)
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$(LIBRARY_NAME) $(BUILT_SOURCES_cmdline) @$(response)
 	$(SN) $(SNFLAGS) $(LIBRARY_NAME) $(LIBRARY_SNK)
-	mv $(LIBRARY_NAME) $@
-	test ! -f $(LIBRARY_NAME).mdb || mv $(LIBRARY_NAME).mdb $@.mdb
-	test ! -f $(LIBRARY_NAME:.dll=.pdb) || mv $(LIBRARY_NAME:.dll=.pdb) $(dir $@)$(LIBRARY_NAME:.dll=.pdb)
+	$(Q) mv $(LIBRARY_NAME) $@
+	$(Q) test ! -f $(LIBRARY_NAME).mdb || mv $(LIBRARY_NAME).mdb $@.mdb
+	$(Q) test ! -f $(LIBRARY_NAME:.dll=.pdb) || mv $(LIBRARY_NAME:.dll=.pdb) $(dir $@)$(LIBRARY_NAME:.dll=.pdb)
 else
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 	$(SN) $(SNFLAGS) $@ $(LIBRARY_SNK)
