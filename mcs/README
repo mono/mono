@@ -65,6 +65,11 @@ And to install:
 
 	make PROFILE=net_2_0 install
 
+To turn on verbose mode in the build (for example to diagnose a
+problem), you can use the V=1 flag, like this:
+
+	make PROFILE=net_2_0 V=1
+
 * Running Unit tests
 ====================
 
