@@ -1,3 +1,7 @@
+2008-08-27  Miguel de Icaza  <miguel@novell.com>
+
+	* repl.cs: Add support for aborting the running code with C-c. 
+
 2008-08-27  Raja R Harinath  <harinath@hurrynot.org>
 
 	* cs-parser.jay (CS1002): Dump 'yyToken' with Report.ExtraInformation.

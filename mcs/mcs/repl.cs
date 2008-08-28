@@ -18,7 +18,8 @@ using System.Globalization;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
- 
+using System.Threading;
+
 namespace Mono.CSharp {
 
 	public static class InteractiveShell {
@@ -28,6 +29,8 @@ namespace Mono.CSharp {
 		static public ArrayList using_alias_list = new ArrayList ();
 		static public ArrayList using_list = new ArrayList ();
 		public static Hashtable fields = new Hashtable ();
+
+		static Thread invoke_thread;
 		
 		static int count;
 		static string current_debug_name;
@@ -104,6 +107,18 @@ namespace Mono.CSharp {
 
 			if (isatty)
 				Console.WriteLine ("Mono C# Shell, type \"help;\" for help\n\nEnter statements below.");
+
+			invoke_thread = System.Threading.Thread.CurrentThread;
+			Console.CancelKeyPress += ConsoleInterrupt;
+		}
+
+		static void ConsoleInterrupt (object sender, ConsoleCancelEventArgs a)
+		{
+			// Do not about our program
+			a.Cancel = true;
+
+			if (invoking)
+				invoke_thread.Abort ();
 		}
 		
 		static public int ReadEvalPrintLoop ()
@@ -118,6 +133,9 @@ namespace Mono.CSharp {
 				string input = GetLine (expr == null);
 				if (input == null)
 					return 0;
+
+				if (input == "")
+					continue;
 
 				expr = expr == null ? input : expr + "\n" + input;
 				
@@ -278,6 +296,8 @@ namespace Mono.CSharp {
 		static ArrayList queued_fields = new ArrayList ();
 		
 		static ArrayList types = new ArrayList ();
+
+		static volatile bool invoking;
 		
 		static object ExecuteBlock (Class host)
 		{
@@ -342,7 +362,16 @@ namespace Mono.CSharp {
 			
 			HostSignature invoker = (HostSignature) System.Delegate.CreateDelegate (typeof (HostSignature), mi);
 			object retval = typeof (NoValueSet);
-			invoker (ref retval);
+
+			try {
+				invoking = true;
+				invoker (ref retval);
+			} catch (ThreadAbortException e){
+				Thread.ResetAbort ();
+				Console.WriteLine ("Interrupted!\n{0}", e);
+			} finally {
+				invoking = false;
+			}
 
 			// d.DynamicInvoke  (new object [] { retval });
 
