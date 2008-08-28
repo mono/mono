@@ -32,7 +32,7 @@ using System.Threading;
 namespace Mono.Terminal {
 
 	public class LineEditor {
-		static StreamWriter log;
+		//static StreamWriter log;
 		
 		// The text being edited.
 		StringBuilder text;

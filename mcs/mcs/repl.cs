@@ -24,18 +24,17 @@ namespace Mono.CSharp {
 
 	public static class InteractiveShell {
 		static bool isatty = true;
-		static bool dumb;
 		static public ArrayList using_alias_list = new ArrayList ();
 		static public ArrayList using_list = new ArrayList ();
 		public static Hashtable fields = new Hashtable ();
 
-		static Thread invoke_thread;
-		
 		static int count;
 		static string current_debug_name;
 
 #if NET_2_0 && !SMCS_SOURCE
 		static Mono.Terminal.LineEditor editor;
+		static bool dumb;
+		static Thread invoke_thread;
 
 		static void ConsoleInterrupt (object sender, ConsoleCancelEventArgs a)
 		{
@@ -48,6 +47,9 @@ namespace Mono.CSharp {
 		
 		static void SetupConsole ()
 		{
+			string term = Environment.GetEnvironmentVariable ("TERM");
+			dumb = term == "dumb" || term == null || isatty == false;
+			
 			editor = new Mono.Terminal.LineEditor ("csharp");
 			Console.CancelKeyPress += ConsoleInterrupt;
 			invoke_thread = System.Threading.Thread.CurrentThread;
@@ -69,7 +71,9 @@ namespace Mono.CSharp {
 #else
 		static void SetupConsole ()
 		{
-			dumb = true;
+			// Here just to shut up the compiler warnings about unused invoking variable
+			if (invoking)
+				invoking = false;
 		}
 
 		static string GetLine (bool primary)
@@ -110,8 +114,6 @@ namespace Mono.CSharp {
 		static void InitTerminal ()
 		{
 			isatty = UnixUtils.isatty (0) && UnixUtils.isatty (1);
-			string term = Environment.GetEnvironmentVariable ("TERM");
-			dumb = term == "dumb" || term == null || isatty == false;
 
 			SetupConsole ();
 
