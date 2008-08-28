@@ -1,3 +1,11 @@
+2008-08-28  Bill Holmes  <billholmes54@gmail.com>
+
+	Backport of r111875
+
+	* src/glib.h : Adding a c++ definition for G_BEGIN_DECLS.
+
+	Contributed under MIT/X11 license.
+
 2008-08-04  Bill Holmes  <billholmes54@gmail.com>
 
 	* src/glib.h : Changing the allocation routines to return null if 0 size is
