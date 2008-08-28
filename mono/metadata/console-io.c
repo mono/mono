@@ -1,3 +1,4 @@
+
 /*
  * console-io.c: ConsoleDriver internal calls
  *
@@ -51,7 +52,17 @@
 
 static gboolean setup_finished;
 static gboolean atexit_called;
+
+/* The string used to return the terminal to its previous state */
 static gchar *teardown_str;
+
+/* The string used to set the terminal into keypad xmit mode after SIGCONT is received */
+static gchar *keypad_xmit_str;
+
+#ifdef HAVE_TERMIOS_H
+/* This is the last state used by Mono, used after a CONT signal is received */
+static struct termios mono_attr;
+#endif
 
 #ifdef PLATFORM_WIN32
 MonoBoolean
@@ -81,7 +92,7 @@ ves_icall_System_ConsoleDriver_InternalKeyAvailable (gint32 timeout)
 }
 
 MonoBoolean
-ves_icall_System_ConsoleDriver_TtySetup (MonoString *teardown, char *verase, char *vsusp, char *intr)
+ves_icall_System_ConsoleDriver_TtySetup (MonoString *keypad, MonoString *teardown, char *verase, char *vsusp, char *intr)
 {
 	return FALSE;
 }
@@ -130,12 +141,14 @@ set_property (gint property, gboolean value)
 	if (tcsetattr (STDIN_FILENO, TCSANOW, &attr) == -1)
 		return FALSE;
 
+	mono_attr = attr;
 	return TRUE;
 }
 
 MonoBoolean
 ves_icall_System_ConsoleDriver_SetEcho (MonoBoolean want_echo)
 {
+	
 	return set_property (ECHO, want_echo);
 }
 
@@ -249,13 +262,59 @@ sigint_handler (int signo)
 	in_sigint = FALSE;
 }
 
-MonoBoolean
-ves_icall_System_ConsoleDriver_TtySetup (MonoString *teardown, char *verase, char *vsusp, char*intr)
-{
-	struct termios attr;
-	
-	MONO_ARCH_SAVE_REGS;
+static struct sigaction save_sigcont, save_sigint;
 
+static void
+sigcont_handler (int signo, void *the_siginfo, void *data)
+{
+	// Ignore error, there is not much we can do in the sigcont handler.
+	tcsetattr (STDIN_FILENO, TCSANOW, &mono_attr);
+
+	if (keypad_xmit_str != NULL)
+		write (STDOUT_FILENO, keypad_xmit_str, strlen (keypad_xmit_str));
+
+	if (save_sigcont.sa_sigaction != NULL &&
+	    save_sigcont.sa_sigaction != (void *)SIG_DFL &&
+	    save_sigcont.sa_sigaction != (void *)SIG_IGN)
+		(*save_sigcont.sa_sigaction) (signo, the_siginfo, data);
+}
+
+void
+console_set_signal_handlers ()
+{
+	struct sigaction sigcont, sigint;
+
+	memset (&sigcont, 0, sizeof (struct sigaction));
+	memset (&sigint, 0, sizeof (struct sigaction));
+	
+	// Continuing
+	sigcont.sa_handler = (void *) sigcont_handler;
+	sigcont.sa_flags = 0;
+	sigemptyset (&sigcont.sa_mask);
+	sigaction (SIGCONT, &sigcont, &save_sigcont);
+	
+	// Interrupt handler
+	sigint.sa_handler = sigint_handler;
+	sigint.sa_flags = 0;
+	sigemptyset (&sigint.sa_mask);
+	sigaction (SIGINT, &sigint, &save_sigint);
+}
+
+//
+// Currently unused, should we ever call the restore handler?
+// Perhaps before calling into Process.Start?
+//
+void
+console_restore_signal_handlers ()
+{
+	sigaction (SIGCONT, &save_sigcont, NULL);
+	sigaction (SIGINT, &save_sigint, NULL);
+}
+
+MonoBoolean
+ves_icall_System_ConsoleDriver_TtySetup (MonoString *keypad, MonoString *teardown, char *verase, char *vsusp, char*intr)
+{
+	MONO_ARCH_SAVE_REGS;
 
 	*verase = '\0';
 	*vsusp = '\0';
@@ -263,12 +322,12 @@ ves_icall_System_ConsoleDriver_TtySetup (MonoString *teardown, char *verase, cha
 	if (tcgetattr (STDIN_FILENO, &initial_attr) == -1)
 		return FALSE;
 
-	/* TODO: handle SIGTSTP - Ctrl-Z */
-	attr = initial_attr;
-	attr.c_lflag &= ~ICANON;
-	attr.c_cc [VMIN] = 1;
-	attr.c_cc [VTIME] = 0;
-	if (tcsetattr (STDIN_FILENO, TCSANOW, &attr) == -1)
+	mono_attr = initial_attr;
+	mono_attr.c_lflag &= ~(ICANON);
+	mono_attr.c_iflag &= ~(IXON|IXOFF);
+	mono_attr.c_cc [VMIN] = 1;
+	mono_attr.c_cc [VTIME] = 0;
+	if (tcsetattr (STDIN_FILENO, TCSANOW, &mono_attr) == -1)
 		return FALSE;
 
 	*verase = initial_attr.c_cc [VERASE];
@@ -278,7 +337,9 @@ ves_icall_System_ConsoleDriver_TtySetup (MonoString *teardown, char *verase, cha
 	if (setup_finished)
 		return TRUE;
 
-	signal (SIGINT, sigint_handler);
+	keypad_xmit_str = keypad != NULL ? mono_string_to_utf8 (keypad) : NULL;
+	
+	console_set_signal_handlers ();
 	setup_finished = TRUE;
 	if (!atexit_called) {
 		if (teardown != NULL)
