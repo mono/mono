@@ -1,3 +1,7 @@
+2008-08-28  Marek Safar  <marek.safar@gmail.com>
+	
+	* attribute (IsClsCompliant): Use FALSE value for pointer types.
+
 2008-08-14  Marek Safar  <marek.safar@gmail.com>
 	
 	A fix for bug #417078
