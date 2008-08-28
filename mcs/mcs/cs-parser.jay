@@ -5417,7 +5417,7 @@ opt_query_continuation
 
 interactive_parsing
 	: INTERACTIVE_PARSER EOF 
-	| INTERACTIVE_PARSER_USING_DIRECTIVES { Console.WriteLine ("HERE"); } using_directives { 
+	| INTERACTIVE_PARSER_USING_DIRECTIVES using_directives { 
 	  	InteractiveResult = current_namespace; 
 	  } 
 	| INTERACTIVE_PARSER { 
