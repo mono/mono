@@ -296,10 +296,10 @@ namespace System.Text.RegularExpressions {
 		}
 
 		// used by the IL backend
-//		void SetStartOfMatch (int pos)
-//		{
-//			marks [groups [0]].Start = pos;
-//		}
+		protected void SetStartOfMatch (int pos)
+		{
+			marks [groups [0]].Start = pos;
+		}
 
 		static bool IsWordChar (char c)
 		{

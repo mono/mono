@@ -1,5 +1,8 @@
 2008-08-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* RxInterpreter.cs: Add back SetStartOfMatch, make it protected so as to
+	avoid a warning.
+
 	* CILCompiler.cs RxOp.cs: Merge lots of changes from RxInterpreter.cs,
 	refactor the code.
 
