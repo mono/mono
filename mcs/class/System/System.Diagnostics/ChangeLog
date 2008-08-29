@@ -1,3 +1,11 @@
+2008-07-28  Dick Porter  <dick@ximian.com>
+
+	* Process.cs: When passing handle references around, it needs to
+	be duplicated and freed so the OS doesn't close it.  Makes the
+	testcase in 410743 work again now the underlying bug has been
+	fixed.
+	(Ported from trunk.)
+
 2008-07-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* Process.cs (SetExitCallbackIfNeeded): Avoid a race condition by not

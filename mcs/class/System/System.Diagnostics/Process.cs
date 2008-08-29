@@ -1515,7 +1515,6 @@ namespace System.Diagnostics {
 
 				lock(this) {
 					if(process_handle!=IntPtr.Zero) {
-						
 						Process_free_internal(process_handle);
 						process_handle=IntPtr.Zero;
 					}
@@ -1570,14 +1569,35 @@ namespace System.Diagnostics {
 
 		class ProcessWaitHandle : WaitHandle
 		{
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			private extern static IntPtr ProcessHandle_duplicate (IntPtr handle);
+			
 			public ProcessWaitHandle (IntPtr handle)
 			{
-				Handle = handle;
+				// Need to keep a reference to this handle,
+				// in case the Process object is collected
+				Handle = ProcessHandle_duplicate (handle);
 			}
 
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			private extern static void ProcessHandle_close (IntPtr handle);
+			
+			private bool disposed = false;
+			
 			protected override void Dispose (bool explicitDisposing)
 			{
-				// Do nothing, we don't own the handle and we won't close it.
+				if (this.disposed == false) {
+					this.disposed = true;
+					
+					ProcessHandle_close (Handle);
+					Handle = IntPtr.Zero;
+				}
+				base.Dispose (explicitDisposing);
+			}
+
+			~ProcessWaitHandle ()
+			{
+				Dispose (false);
 			}
 		}
 	}
