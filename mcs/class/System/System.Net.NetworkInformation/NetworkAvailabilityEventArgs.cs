@@ -32,8 +32,9 @@ namespace System.Net.NetworkInformation {
 	public class NetworkAvailabilityEventArgs : EventArgs {
 		bool available;
 
-		internal NetworkAvailabilityEventArgs ()
+		internal NetworkAvailabilityEventArgs (bool available)
 		{
+			this.available = available;
 		}
 
 		public bool IsAvailable {

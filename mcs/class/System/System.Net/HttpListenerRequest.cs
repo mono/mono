@@ -38,7 +38,8 @@ namespace System.Net {
 	public sealed class HttpListenerRequest
 	{
 		string [] accept_types;
-		int client_cert_error;
+//		int client_cert_error;
+//		bool no_get_certificate;
 		Encoding content_encoding;
 		long content_length;
 		bool cl_set;
@@ -46,7 +47,6 @@ namespace System.Net {
 		WebHeaderCollection headers;
 		string method;
 		Stream input_stream;
-		bool is_authenticated;
 		Version version;
 		NameValueCollection query_string; // check if null is ok, check if read-only, check case-sensitiveness
 		string raw_url;
@@ -54,7 +54,6 @@ namespace System.Net {
 		Uri url;
 		Uri referrer;
 		string [] user_languages;
-		bool no_get_certificate;
 		HttpListenerContext context;
 		bool is_chunked;
 		static byte [] _100continue = Encoding.ASCII.GetBytes ("HTTP/1.1 100 Continue\r\n\r\n");
@@ -285,12 +284,16 @@ namespace System.Net {
 			get { return accept_types; }
 		}
 
+		[MonoTODO ("Always returns 0")]
 		public int ClientCertificateError {
 			get {
+/*				
 				if (no_get_certificate)
 					throw new InvalidOperationException (
 						"Call GetClientCertificate() before calling this method.");
 				return client_cert_error;
+*/
+				return 0;
 			}
 		}
 
@@ -335,8 +338,9 @@ namespace System.Net {
 			get { return input_stream; }
 		}
 
+		[MonoTODO ("Always returns false")]
 		public bool IsAuthenticated {
-			get { return is_authenticated; }
+			get { return false; }
 		}
 
 		public bool IsLocal {

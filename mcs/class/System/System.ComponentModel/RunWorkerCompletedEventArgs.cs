@@ -43,7 +43,7 @@ namespace System.ComponentModel
 			this.result = result;
 		}
 
-		object result, user_state;
+		object result;
 
 		public object Result {
 			get {
@@ -58,7 +58,7 @@ namespace System.ComponentModel
 		[EditorBrowsable (EditorBrowsableState.Never)]
 #endif
 		public new object UserState {
-			get { return user_state; }
+			get { return null; }
 		}
 	}
 }
