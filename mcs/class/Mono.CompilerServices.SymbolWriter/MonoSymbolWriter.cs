@@ -271,7 +271,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		string _real_name;
 		IMethodDef _method;
 		ICompileUnit _comp_unit;
-		MethodEntry.Flags _method_flags;
+//		MethodEntry.Flags _method_flags;
 		int _ns_id;
 
 		public SourceMethodBuilder (ICompileUnit comp_unit, int ns_id, IMethodDef method)
@@ -406,7 +406,7 @@ namespace Mono.CompilerServices.SymbolWriter
 
 			MethodEntry entry = new MethodEntry (
 				file, _comp_unit.Entry, _method.Token, ScopeVariables,
-				Locals, lines, Blocks, RealMethodName, _method_flags,
+				Locals, lines, Blocks, RealMethodName, 0, //_method_flags,
 				_ns_id);
 
 			file.AddMethod (entry);
