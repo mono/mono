@@ -3031,8 +3031,6 @@ namespace Mono.CSharp {
 				label = "default";
 			else if (converted == NullStringCase)
 				label = "null";
-			else if (TypeManager.IsEnumType (switch_type)) 
-				label = TypeManager.CSharpEnumValue (switch_type, converted);
 			else
 				label = converted.ToString ();
 			

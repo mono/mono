@@ -1132,7 +1132,6 @@ namespace Mono.CSharp {
 		Type[] atypes;
 		int dimension;
 		bool has_type_args;
-		bool created;
 		
 		public TypeArguments (Location loc)
 		{
@@ -1154,17 +1153,11 @@ namespace Mono.CSharp {
 
 		public void Add (Expression type)
 		{
-			if (created)
-				throw new InvalidOperationException ();
-
 			args.Add (type);
 		}
 
 		public void Add (TypeArguments new_args)
 		{
-			if (created)
-				throw new InvalidOperationException ();
-
 			args.AddRange (new_args.args);
 		}
 
@@ -1949,6 +1942,8 @@ namespace Mono.CSharp {
 
 	public partial class TypeManager
 	{
+		static public Type activator_type;
+	
 		public static TypeContainer LookupGenericTypeContainer (Type t)
 		{
 			t = DropGenericTypeArguments (t);

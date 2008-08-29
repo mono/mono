@@ -115,7 +115,6 @@ namespace Mono.CSharp {
 	static internal Type default_charset_type;
 	static internal Type type_forwarder_attr_type;
 	static internal Type isvolatile_type;
-	static public Type activator_type;
 	static public Type generic_ilist_type;
 	static public Type generic_icollection_type;
 	static public Type generic_ienumerator_type;
@@ -651,19 +650,8 @@ namespace Mono.CSharp {
 		}
 		return sb.ToString ();
 	}
-	
-	// Used for error reporting to show symbolic name instead of underlying value
-	public static string CSharpEnumValue (Type t, object value)
-	{
-		t = DropGenericTypeArguments (t);
-		Enum e = LookupDeclSpace (t) as Enum;
-		if (e == null)
-			return System.Enum.GetName (t, value);
 
-		return e.GetDefinition (value).GetSignatureForError ();
-	}
-
-        /// <summary>
+	/// <summary>
 	///  Returns the signature of the method with full namespace classification
 	/// </summary>
 	static public string GetFullNameSignature (MemberInfo mi)

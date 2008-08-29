@@ -184,10 +184,12 @@ namespace Mono.CSharp {
 
 		TypeExpr enumerator_type;
 		TypeExpr enumerable_type;
+#if GMCS_SOURCE
 		TypeArguments generic_args;
 		TypeExpr generic_enumerator_type;
-#if GMCS_SOURCE		
 		TypeExpr generic_enumerable_type;
+#else
+		const TypeArguments generic_args = null;
 #endif
 
 		int local_name_idx;
@@ -334,11 +336,14 @@ namespace Mono.CSharp {
 			static MemberName GetMemberName (IteratorStorey host, bool is_generic)
 			{
 				MemberName left;
+#if GMCS_SOURCE				
 				if (is_generic) {
 					left = new MemberName (
 						"System.Collections.Generic.IEnumerable",
 						host.generic_args, host.Location);
-				} else {
+				} else
+#endif				
+				{
 					left = new MemberName (
 						"System.Collections.IEnumerable", host.Location);
 				}
@@ -347,8 +352,11 @@ namespace Mono.CSharp {
 			}
 
 			public GetEnumeratorMethod (IteratorStorey host, bool is_generic)
-				: base (host, null, is_generic ?
-					host.generic_enumerator_type : host.enumerator_type,
+				: base (host, null,
+#if GMCS_SOURCE
+					is_generic ? host.generic_enumerator_type :
+#endif					
+					host.enumerator_type,
 					Modifiers.DEBUGGER_HIDDEN, GetMemberName (host, is_generic),
 					Parameters.EmptyReadOnlyParameters, null)
 			{

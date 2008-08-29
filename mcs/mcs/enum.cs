@@ -181,19 +181,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		//
-		// Used for error reporting only
-		//
-		public EnumMember GetDefinition (object value)
-		{
-			foreach (EnumMember e in defined_names.Values) {
-				if (value.Equals (e.Value))
-					return e;
-			}
-
-			throw new ArgumentOutOfRangeException (value.ToString ());
-		}
-		
 		public Type UnderlyingType {
 			get {
 				return base_type.Type;

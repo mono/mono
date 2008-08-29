@@ -1732,7 +1732,7 @@ namespace Mono.CSharp {
 		
 		public override string AsString ()
 		{
-			return TypeManager.CSharpEnumValue (type, Child.GetValue ());
+			return Child.AsString ();
 		}
 
 		public override Constant Increment()

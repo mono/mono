@@ -1555,7 +1555,9 @@ namespace Mono.CSharp {
 		// TODO: make it private and move all builder based methods here
 		public ModuleBuilder Builder;
 		bool m_module_is_unsafe;
+#if GMCS_SOURCE		
 		bool has_default_charset;
+#endif		
 
 		public CharSet DefaultCharSet = CharSet.Ansi;
 		public TypeAttributes DefaultCharSetType = TypeAttributes.AnsiClass;
@@ -1610,7 +1612,11 @@ namespace Mono.CSharp {
 
 		public bool HasDefaultCharSet {
 			get {
+#if GMCS_SOURCE		
 				return has_default_charset;
+#else
+				return false;
+#endif								
 			}
 		}
 

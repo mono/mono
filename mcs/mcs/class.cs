@@ -1610,6 +1610,11 @@ namespace Mono.CSharp {
 			set { caching_flags |= Flags.HasExplicitLayout; }
 		}
 
+		public bool HasStructLayout {
+			get { return (caching_flags & Flags.HasStructLayout) != 0; }
+			set { caching_flags |= Flags.HasStructLayout; }
+		}
+
 		//
 		// Return the nested type with name @name.  Ensures that the nested type
 		// is defined if necessary.  Do _not_ use this when you have a MemberCache handy.
@@ -2106,6 +2111,12 @@ namespace Mono.CSharp {
 							continue;
 						
 						if ((f.caching_flags & Flags.IsAssigned) != 0)
+							continue;
+
+						//
+						// Don't be pendatic over serializable attributes
+						//
+						if (f.OptAttributes != null || PartialContainer.HasStructLayout)
 							continue;
 						
 						Constant c = New.Constantify (f.MemberType);
@@ -2610,8 +2621,11 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (a.Type == TypeManager.struct_layout_attribute_type && a.GetLayoutKindValue () == LayoutKind.Explicit) {
-				PartialContainer.HasExplicitLayout = true;
+			if (a.Type == TypeManager.struct_layout_attribute_type) {
+				PartialContainer.HasStructLayout = true;
+
+				if (a.GetLayoutKindValue () == LayoutKind.Explicit)
+					PartialContainer.HasExplicitLayout = true;
 			}
 
 			base.ApplyAttributeBuilder (a, cb);

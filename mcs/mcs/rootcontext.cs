@@ -133,7 +133,7 @@ namespace Mono.CSharp {
 			root = new RootTypes ();
 			type_container_resolve_order = new ArrayList ();
 			EntryPoint = null;
-			Report.WarningLevel = 3;
+			Report.WarningLevel = 4;
 			Checked = false;
 			Unsafe = false;
 			StdLib = true;
