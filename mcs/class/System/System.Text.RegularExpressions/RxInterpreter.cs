@@ -412,7 +412,6 @@ namespace System.Text.RegularExpressions {
 					}
 					return false;
 				case RxOp.Anchor:
-					// FIXME: test anchor
 					length = program [pc + 3] | (program [pc + 4] << 8);
 					pc += program [pc + 1] | (program [pc + 2] << 8);
 					// it's important to test also the end of the string
@@ -436,7 +435,6 @@ namespace System.Text.RegularExpressions {
 					}
 					return false;
 				case RxOp.AnchorReverse:
-					// FIXME: test anchor
 					length = program [pc + 3] | (program [pc + 4] << 8);
 					pc += program [pc + 1] | (program [pc + 2] << 8);
 					// it's important to test also the end of the string
@@ -1880,9 +1878,8 @@ namespace System.Text.RegularExpressions {
 					}
 
  				repeat_success:
-					// FIXME: Where to continue ?
-					strpos_result = strpos;
-					return true;
+					// We matched the tail too so just return
+					goto Pass;
 				}
 
 				default:
