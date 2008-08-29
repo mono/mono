@@ -1,5 +1,6 @@
 2008-08-29  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #360755
 	* ecore.cs (SimpleName): Exclude indexers from simple name resolve.
 
 2008-08-29  Marek Safar  <marek.safar@gmail.com>
