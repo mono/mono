@@ -43,12 +43,14 @@ namespace System.IO
 		ManualResetEvent wh;
 		AsyncCallback cb;
 		bool completedSynch;
-
+		
+#pragma warning disable 649
 		public byte [] Buffer;
 		public int Offset;
 		public int Count;
 		public int OriginalCount;
 		public int BytesRead;
+#pragma warning restore 649		
 
 		AsyncCallback realcb;
 

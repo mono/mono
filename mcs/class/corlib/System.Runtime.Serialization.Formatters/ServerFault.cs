@@ -50,6 +50,11 @@ namespace System.Runtime.Serialization.Formatters {
 		string exceptionType;
 		string message;
 		string stackTrace;
+		
+#pragma warning disable 169		
+		// Used by some remoting magic
+		Exception exception;
+#pragma warning restore 169		
 
 		public ServerFault (string exceptionType, string message,
 				  string stackTrace)

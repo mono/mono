@@ -51,8 +51,10 @@ namespace System.Reflection
 	internal class MonoGenericClass : MonoType
 	{
 		#region Keep in sync with object-internals.h
+#pragma warning disable 649
 		protected TypeBuilder generic_type;
 		bool initialized;
+#pragma warning restore 649
 		#endregion
 
 		Hashtable fields, ctors, methods;
