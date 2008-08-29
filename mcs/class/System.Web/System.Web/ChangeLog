@@ -1,3 +1,8 @@
+2008-08-29  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplication.cs: do not cache handlers which aren't
+	reusable.
+
 2008-08-20  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpResponseHeader.cs: encode header values if
