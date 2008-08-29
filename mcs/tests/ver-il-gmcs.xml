@@ -31772,6 +31772,33 @@
       </method>
     </type>
   </test>
+  <test name="test-675.cs">
+    <type name="B">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>2</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>2</size>
+      </method>
+      <method name="Boolean op_Equality(B, B)">
+        <size>2</size>
+      </method>
+      <method name="Boolean op_Inequality(B, B)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>2</size>
+      </method>
+    </type>
+  </test>
   <test name="test-68.cs">
     <type name="Y">
       <method name="Void .ctor()">
