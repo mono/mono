@@ -583,11 +583,19 @@ namespace System.Web.Compilation
 			}
 			
 			string baseType = ps.Inherits;
-			bool baseIsGlobal = false;
-			if (String.IsNullOrEmpty (baseType)) {
+			if (String.IsNullOrEmpty (baseType))
 				baseType = "System.Web.Profile.ProfileBase";
-				baseIsGlobal = true;
+			else {
+				string[] parts = baseType.Split (new char[] {','});
+				if (parts.Length > 1)
+					baseType = parts [0].Trim ();
 			}
+			
+			bool baseIsGlobal;
+			if (baseType.IndexOf ('.') != -1)
+				baseIsGlobal = true;
+			else
+				baseIsGlobal = false;
 			
 			BuildProfileClass (ps, "ProfileCommon", props, ns, baseType, baseIsGlobal, groupProperties);
 			return true;
