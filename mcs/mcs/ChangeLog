@@ -1,5 +1,9 @@
 2008-08-29  Marek Safar  <marek.safar@gmail.com>
 
+	* ecore.cs (SimpleName): Exclude indexers from simple name resolve.
+
+2008-08-29  Marek Safar  <marek.safar@gmail.com>
+
 	* generic.cs, iterators.cs, codegen.cs: Removed unused variable.
 	
 	* typemanager.cs, statement.cs, ecore.cs, enum.cs: Don't reconstruct enum

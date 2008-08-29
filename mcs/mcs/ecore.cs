@@ -2664,10 +2664,13 @@ namespace Mono.CSharp {
 
 				e = MemberLookup (ec.ContainerType, lookup_ds.TypeBuilder, Name, loc);
 				if (e != null) {
-					if (e is PropertyExpr) {
+					PropertyExpr pe = e as PropertyExpr;
+					if (pe != null) {
+						AParametersCollection param = TypeManager.GetParameterData (pe.PropertyInfo);
+
 						// since TypeManager.MemberLookup doesn't know if we're doing a lvalue access or not,
 						// it doesn't know which accessor to check permissions against
-						if (((PropertyExpr) e).IsAccessibleFrom (ec.ContainerType, right_side != null))
+						if (param.IsEmpty && pe.IsAccessibleFrom (ec.ContainerType, right_side != null))
 							break;
 					} else if (e is EventExpr) {
 						if (((EventExpr) e).IsAccessibleFrom (ec.ContainerType))
