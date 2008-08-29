@@ -352,7 +352,14 @@ namespace System.Web.Script.Serialization
 			foreach (KeyValuePair<string, object> entry in dict) {
 				object value = entry.Value;
 				if (target is IDictionary) {
-					((IDictionary) target).Add (entry.Key, ConvertToType (ReflectionUtils.GetTypedDictionaryValueType (type), value));
+					Type valueType = ReflectionUtils.GetTypedDictionaryValueType (type);
+					if (value != null && valueType == typeof (System.Object))
+						valueType = value.GetType ();
+					
+					if (typeof (LazyDictionary).IsAssignableFrom (valueType))
+						valueType = typeof (Dictionary <string, object>);
+					
+					((IDictionary) target).Add (entry.Key, ConvertToType (valueType, value));
 					continue;
 				}
 				MemberInfo [] memberCollection = type.GetMember (entry.Key);

@@ -1,3 +1,11 @@
+2008-08-30  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.Script.Serialization/JavaScriptSerializer.cs: if the
+	target type is an IDictionary with value type of System.Object,
+	make sure to NOT convert any values.
+	Any values descendant from JavaScriptSerializer.LazyDictionary are
+	converted to Dictionary <string, object>
+
 2008-08-28  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Web.Script.Services/LogicalTypeInfo.cs: Invoke does not
