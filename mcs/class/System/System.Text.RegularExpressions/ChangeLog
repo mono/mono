@@ -1,3 +1,8 @@
+2008-08-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* CILCompiler.cs RxOp.cs: Merge lots of changes from RxInterpreter.cs,
+	refactor the code.
+
 2008-08-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* RxInterpreter.cs RxCompiler.cs RxOp.cs: Implement/fix this so all the
