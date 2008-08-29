@@ -50,7 +50,7 @@ namespace Mono.CSharp {
 			string term = Environment.GetEnvironmentVariable ("TERM");
 			dumb = term == "dumb" || term == null || isatty == false;
 			
-			editor = new Mono.Terminal.LineEditor ("csharp");
+			editor = new Mono.Terminal.LineEditor ("csharp", 300);
 			Console.CancelKeyPress += ConsoleInterrupt;
 			invoke_thread = System.Threading.Thread.CurrentThread;
 		}
