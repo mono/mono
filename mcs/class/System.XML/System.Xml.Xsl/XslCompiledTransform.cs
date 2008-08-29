@@ -50,7 +50,7 @@ namespace System.Xml.Xsl
 		object debugger;
 		CompiledStylesheet s;
 #if !TARGET_JVM
-		TempFileCollection temporary_files;
+//		TempFileCollection temporary_files;
 #endif
 		XmlWriterSettings output_settings = new XmlWriterSettings ();
 
@@ -75,7 +75,7 @@ namespace System.Xml.Xsl
 #if !TARGET_JVM
 		[MonoTODO]
 		public TempFileCollection TemporaryFiles {
-			get { return temporary_files; }
+			get { return null; /*temporary_files;*/ }
 		}
 #endif
 

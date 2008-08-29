@@ -49,6 +49,8 @@ namespace System.Xml.Serialization
 		public ImportContext (CodeIdentifiers identifiers, bool shareTypes)
 		{
 			_typeIdentifiers = identifiers;
+			this._shareTypes = shareTypes;
+			
 			if (shareTypes) {
 				MappedTypes = new Hashtable ();
 				DataMappedTypes = new Hashtable ();

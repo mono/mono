@@ -2871,7 +2871,9 @@ namespace System.Xml.Serialization
 		public string WriterClassName;
 		public string WriteMethodName;
 		public string Namespace;
+#if NET_2_0		
 		public string SerializerClassName;
+#endif		
 		public string BaseSerializerClassName;
 		public string ImplementationClassName;
 	}
