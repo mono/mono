@@ -327,7 +327,9 @@ namespace System.Web.Configuration {
 			configurations.Remove (GetCurrentPath (ctx));
 		}
 
+#if TARGET_J2EE || MONOWEB_DEP
 		readonly static MethodInfo get_runtime_object = typeof (ConfigurationSection).GetMethod ("GetRuntimeObject", BindingFlags.NonPublic | BindingFlags.Instance);
+#endif		
 
 		public static object GetWebApplicationSection (string sectionName)
 		{

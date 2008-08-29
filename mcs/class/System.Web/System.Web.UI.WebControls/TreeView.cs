@@ -1568,11 +1568,6 @@ namespace System.Web.UI.WebControls
 				return Unit.Empty;
 		}
 
-		bool IsNodeForCurrentUrl (TreeNode node)
-		{
-			return false;
-		}
-		
 		void AddNodeStyle (HtmlTextWriter writer, TreeNode node, int level, bool nodeIsSelected)
 		{
 			TreeNodeStyle style = new TreeNodeStyle ();

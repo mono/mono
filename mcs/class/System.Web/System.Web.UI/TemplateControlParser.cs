@@ -198,11 +198,11 @@ namespace System.Web.UI {
 
 				AddDependency (vp);
 				
-				string filepath = MapPath (vp);
 				Type ctype;
 #if NET_2_0
 				ctype = BuildManager.GetCompiledType (vp);
 #else
+				string filepath = MapPath (vp);
 				if (is_page) {
 					PageParser pp = new PageParser (page, filepath, Context);
 					ctype = pp.CompileIntoType ();

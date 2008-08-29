@@ -158,7 +158,7 @@ endif
 
 LIB_MCS_FLAGS = \
 	-unsafe \
-	-nowarn:612,618,649	\
+	-nowarn:612,618	\
 	-r:$(corlib)	 		\
 	-r:System.dll 			\
 	-r:System.Drawing.dll 		\

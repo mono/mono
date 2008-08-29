@@ -79,7 +79,7 @@ namespace System.Web.Configuration
 
 		[StringValidator (MinLength = 1)]
 		[ConfigurationProperty ("name", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
-		public new string Name {
+		public string Name {
 			get { return (string)base[nameProp]; }
 			set { base[nameProp] = value; }
 		}

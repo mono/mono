@@ -104,10 +104,10 @@ namespace System.Web.UI {
 		Stack <string> includeDirs;
 #else
 		Stack includeDirs;
+		Assembly srcAssembly;		
 #endif
 		ILocation directiveLocation;
 		
-		Assembly srcAssembly;
 		int appAssemblyIndex = -1;
 
 		internal TemplateParser ()
@@ -800,12 +800,16 @@ namespace System.Web.UI {
 				return;
 			}
 			
+#if NET_2_0			
+			Type parent = LoadType (type);
+#else
 			Type parent = null;
 			if (srcAssembly != null)
 				parent = srcAssembly.GetType (type);
 
 			if (parent == null)
 				parent = LoadType (type);
+#endif				
 
 			if (parent == null)
 				ThrowParseException ("Cannot find type " + type);

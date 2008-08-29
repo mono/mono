@@ -97,7 +97,6 @@ namespace System.Web.UI {
 			int stLength = staticLiterals == null ? 0 : staticLiterals.Length;
 			int dbLength = dataBoundLiterals.Length;
 			int max = (stLength > dbLength) ? stLength : dbLength;
-			int length = 0;
 
 			for (int i = 0; i < max; i++){
 				if (i < stLength)

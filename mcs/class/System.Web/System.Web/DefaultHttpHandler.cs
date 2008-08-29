@@ -34,10 +34,9 @@ using System.Collections.Specialized;
 
 namespace System.Web {
 	public class DefaultHttpHandler : IHttpAsyncHandler {
-		HttpContext context;
 
 		protected HttpContext Context {
-			get { return context; }
+			get { return null; }
 		}
 
 		public virtual bool IsReusable {
