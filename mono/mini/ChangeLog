@@ -1,5 +1,11 @@
 2008-08-29  Geoff Norton  <gnorton@novell.com>
 
+	* aot-compiler.c: The Mach/ARM compiler doesn't understand the bss
+	segment, and doesn't properly handle .space as .text.  Fixes
+	AOT Mach/ARM
+
+2008-08-29  Geoff Norton  <gnorton@novell.com>
+
 	* mini.c: Disable the mach exception handler when running on 
 	ARM
 
