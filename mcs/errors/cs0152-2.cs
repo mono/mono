@@ -1,4 +1,4 @@
-// CS0152: The label `case E.Foo:' already occurs in this switch statement
+// CS0152: The label `case 2:' already occurs in this switch statement
 // Line: 19
 
 using System;

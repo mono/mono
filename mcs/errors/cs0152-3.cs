@@ -1,4 +1,4 @@
-// CS0152: The label `case Test.Foo.MUL:' already occurs in this switch statement
+// CS0152: The label `case 0:' already occurs in this switch statement
 // Line: 13
 
 // https://bugzilla.novell.com/show_bug.cgi?id=363791
