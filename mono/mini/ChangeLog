@@ -1,3 +1,8 @@
+2008-08-29  Geoff Norton  <gnorton@novell.com>
+
+	* aot-compiler.c: Patch from Renaldas Zioma to properly register 
+	globals on Darwin/ARM
+
 2008-08-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c: Avoid not initializing the runtime when doing AOT compilation, 
