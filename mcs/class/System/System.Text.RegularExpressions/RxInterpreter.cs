@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace System.Text.RegularExpressions {
 
@@ -21,7 +22,100 @@ namespace System.Text.RegularExpressions {
 		int mark_start; // start of current checkpoint
 		int mark_end; // end of checkpoint/next free mark
 
+		IntStack stack; // utility stack
+
+		RepeatContext repeat;	// current repeat context
+		RepeatContext deep;		// points to the most-nested repeat context
+
+		/* The readonly ensures the JIT can optimize out if (trace_rx) statements */
 		static readonly bool trace_rx = Environment.GetEnvironmentVariable ("RXD") != null;
+
+		// private classes
+
+		private struct IntStack {
+			int [] values;
+			int count;
+			public int Pop ()
+			{
+				return values [--count];
+			}
+			public void Push (int value)
+			{
+				if (values == null) {
+					values = new int [8];
+				} else if (count == values.Length) {
+					int new_size = values.Length;
+					new_size += new_size >> 1;
+					int [] new_values = new int [new_size];
+					for (int i = 0; i < count; ++i)
+						new_values [i] = values [i];
+					values = new_values;
+				}
+				values [count++] = value;
+			}
+			public int Top {
+				get { return values [count - 1]; }
+			}
+			public int Count {
+				get { return count; }
+				set {
+					if (value > count)
+						throw new SystemException ("can only truncate the stack");
+					count = value;
+				}
+			}
+		}
+
+		private class RepeatContext {
+			public RepeatContext (RepeatContext previous, int min, int max, bool lazy, int expr_pc) {
+				this.previous = previous;
+				this.min = min;
+				this.max = max;
+				this.lazy = lazy;
+				this.expr_pc = expr_pc;
+				
+				this.start = -1;
+				this.count = 0;
+			}
+
+			public int Count {
+				get { return count; }
+				set { count = value; }
+			}
+
+			public int Start {
+				get { return start; }
+				set { start = value; }
+			}
+
+			public bool IsMinimum {
+				get { return min <= count; }
+			}
+
+			public bool IsMaximum {
+				get { return max <= count; }
+			}
+
+			public bool IsLazy {
+				get { return lazy; }
+			}
+
+			public int Expression {
+				get { return expr_pc; }
+			}
+
+			public RepeatContext Previous {
+				get { return previous; }
+			}
+		
+			private int start;
+			private int min, max;
+			private bool lazy;
+			private int expr_pc;
+			private RepeatContext previous;
+
+			private int count;
+		}
 
 		static int ReadInt (byte[] code, int pc)
 		{
@@ -38,6 +132,7 @@ namespace System.Text.RegularExpressions {
 			this.eval_del = eval_del;
 			group_count = 1 + (program [1] | (program [2] << 8));
 			groups = new int [group_count];
+			stack = new IntStack ();
 
 			ResetGroups ();
 		}
@@ -77,23 +172,25 @@ namespace System.Text.RegularExpressions {
 		private void Close (int gid, int ptr) {
 	       		marks [groups [gid]].End = ptr;
 		}
-/*
+
 		private bool Balance (int gid, int balance_gid, bool capture, int ptr) {
 			int b = groups [balance_gid];
 
-			if (b == -1 || marks [b].Index < 0) {
+			if(b == -1 || marks[b].Index < 0) {
 				//Group not previously matched
 				return false;
 			}
+			Debug.Assert (marks [b].IsDefined, "Regex", "Balancng group not closed");
 			if (gid > 0 && capture){ 
 				Open (gid, marks [b].Index + marks [b].Length);
 				Close (gid, ptr);
 			}
 
 			groups [balance_gid] = marks[b].Previous;
+
 			return true;
 		}
-*/
+
 		private int Checkpoint () {
 			mark_start = mark_end;
 			return mark_start;
@@ -223,8 +320,10 @@ namespace System.Text.RegularExpressions {
 			int char_group_end = 0;
 			int length, start, end;
 			while (true) {
-				if (trace_rx)
+				if (trace_rx) {
 					Console.WriteLine ("evaluating: {0} at pc: {1}, strpos: {2}, cge: {3}", (RxOp)program [pc], pc, strpos, char_group_end);
+					//Console.WriteLine ("deep: " + (deep == null ? 0 : deep.GetHashCode ()) + " repeat: " + (this.repeat == null ? 0 : this.repeat.GetHashCode ()));
+				}
 				switch ((RxOp)program [pc]) {
 				case RxOp.True:
 					if (char_group_end != 0) {
@@ -336,6 +435,30 @@ namespace System.Text.RegularExpressions {
 						strpos++;
 					}
 					return false;
+				case RxOp.AnchorReverse:
+					// FIXME: test anchor
+					length = program [pc + 3] | (program [pc + 4] << 8);
+					pc += program [pc + 1] | (program [pc + 2] << 8);
+					// it's important to test also the end of the string
+					// position for things like: "" =~ /$/
+					end = 0;
+					while (strpos >= 0) {
+						int res = strpos;
+						if (groups.Length > 1) {
+							ResetGroups ();
+							marks [groups [0]].Start = strpos;
+						}
+						if (EvalByteCode (pc, strpos, ref res)) {
+//							match_start = strpos;
+							marks [groups [0]].Start = strpos;
+							if (groups.Length > 1)
+								marks [groups [0]].End = res;
+							strpos_result = res;
+							return true;
+						}
+						strpos--;
+					}
+					return false;
 				case RxOp.Reference:
 					length = GetLastDefined (program [pc + 1] | (program [pc + 2] << 8));
 					if (length < 0)
@@ -366,8 +489,25 @@ namespace System.Text.RegularExpressions {
 					}
 					pc += 3;
 					continue;
+				case RxOp.ReferenceReverse: {
+					length = GetLastDefined (program [pc + 1] | (program [pc + 2] << 8));
+					if (length < 0)
+						return false;
+					start = marks [length].Index;
+					length = marks [length].Length;
+					if (strpos - length < 0)
+						return false;
+					int p = strpos - length;
+					for (end = start + length; start < end; ++start, ++p) {
+						if (str [p] != str [start])
+							return false;
+					}
+					strpos -= length;
+					pc += 3;
+					continue;
+				}
 				case RxOp.IfDefined:
-					if (GetLastDefined (program [pc + 3] | (program [pc + 4] << 8)) < 0)
+					if (GetLastDefined (program [pc + 3] | (program [pc + 4] << 8)) >= 0)
 						pc += 5;
 					else
 						pc += program [pc + 1] | (program [pc + 2] << 8);
@@ -376,6 +516,7 @@ namespace System.Text.RegularExpressions {
 					int res = 0;
 					if (EvalByteCode (pc + 3, strpos, ref res)) {
 						pc += program [pc + 1] | (program [pc + 2] << 8);
+						strpos = res;
 						continue;
 					}
 					return false;
@@ -398,6 +539,26 @@ namespace System.Text.RegularExpressions {
 					Close (program [pc + 1] | (program [pc + 2] << 8), strpos);
 					pc += 3;
 					continue;
+				case RxOp.BalanceStart: {
+					int res = 0;
+
+					if (!EvalByteCode (pc + 8, strpos, ref res))
+						goto Fail;
+
+					int gid = program [pc + 1] | (program [pc + 2] << 8);
+					int balance_gid = program [pc + 3] | (program [pc + 4] << 8);
+					bool capture = program [pc + 5] > 0;
+					if (!Balance (gid, balance_gid, capture, strpos))
+						goto Fail;
+
+					strpos = res;					
+					pc += program[pc + 6] | (program [pc + 7] << 8);
+					break;
+				}
+				case RxOp.Balance: {
+					goto Pass;
+				}
+
 				case RxOp.Jump:
 					pc += program [pc + 1] | (program [pc + 2] << 8);
 					continue;
@@ -459,20 +620,80 @@ namespace System.Text.RegularExpressions {
 					}
 					pc = end;
 					continue;
+				case RxOp.StringReverse: {
+					start = pc + 2;
+					length = program [pc + 1];
+					if (strpos < length)
+						return false;
+					int p = strpos - length;
+					end = start + length;
+					for (; start < end; ++start, ++p) {
+						if (str [p] != program [start])
+							return false;
+					}
+					strpos -= length;
+					pc = end;
+					continue;
+				}
+
+					/*
+					 * The opcodes below are basically specialized versions of one 
+					 * generic opcode, which has three parameters:
+					 * - reverse (Reverse), revert (No), ignore-case (IgnoreCase)
+					 * Thus each opcode has 8 variants.
+					 * FIXME: Generate the specialized versions using a script, or
+					 * move all unusual variations (Reverse+IgnoreCase+Unicode) 
+					 * into a generic GenericChar opcode like in the old 
+					 * interpreter.
+					 * FIXME: Move all the Reverse opcodes to a separate method.
+					 */
+#if FALSE
+					if (!reverse) {
+						if (strpos < string_end && (COND (str [strpos]))) {
+							if (!revert) {
+								strpos ++;
+								if (char_group_end != 0)
+									goto test_char_group_passed;
+								pc += ins_len;
+								continue;
+							} else {
+								/*
+								 * If we are inside a char group, the cases are ANDed 
+								 * together, so we have to continue checking the
+								 * other cases, and we need to increase strpos after 
+								 * the final check.
+								 * The char group is termined by a True, hence the
+								 * + 1 below.
+								 * FIXME: Optimize this.
+								 */
+								pc += ins_len;
+								if (char_group_end == 0 || (pc + 1 == char_group_end))
+									strpos ++;
+								continue;
+							}
+						} else {
+							if (!revert) {
+								if (char_group_end == 0)
+									return false;
+								pc += ins_len;
+								continue;
+							} else {
+								/* Fail both inside an outside a char group */
+								return false;
+							}
+						}
+					} else {
+						// Same as above, but use:
+						// - strpos > 0 instead of strpos < string_len
+						// - COND (str [strpos - 1]) instead of COND (str [strpos])
+						// - strpos -- instead of strpos ++
+					}
+#endif
+
+					/* Char */
+
 				case RxOp.Char:
 					if (strpos < string_end && (str [strpos] == program [pc + 1])) {
-						strpos++;
-						if (char_group_end != 0)
-							goto test_char_group_passed;
-						pc += 2;
-						continue;
-					}
-					if (char_group_end == 0)
-						return false;
-					pc += 2;
-					continue;
-				case RxOp.NoChar:
-					if (strpos < string_end && (str [strpos] != program [pc + 1])) {
 						strpos++;
 						if (char_group_end != 0)
 							goto test_char_group_passed;
@@ -495,26 +716,50 @@ namespace System.Text.RegularExpressions {
 						return false;
 					pc += 2;
 					continue;
+				case RxOp.NoChar:
+					if (strpos < string_end && (str [strpos] != program [pc + 1])) {
+						pc += 2;
+						if ((char_group_end == 0) || (pc + 1 == char_group_end))
+							strpos ++;
+						continue;
+					} else {
+						return false;
+					}
 				case RxOp.NoCharIgnoreCase:
 					if (strpos < string_end && (Char.ToLower (str [strpos]) != program [pc + 1])) {
-						strpos++;
-						if (char_group_end != 0)
-							goto test_char_group_passed;
 						pc += 2;
+						if (char_group_end == 0 || (pc + 1 == char_group_end))
+							strpos++;
 						continue;
-					}
-					if (char_group_end == 0)
+					} else {
 						return false;
-					pc += 2;
-					continue;
+					}
+
+					/* Range */
+
 				case RxOp.Range:
 					if (strpos < string_end) {
 						int c = str [strpos];
 						if (c >= program [pc + 1] && c <= program [pc + 2]) {
+							pc += 3;
 							strpos++;
 							if (char_group_end != 0)
 								goto test_char_group_passed;
+							continue;
+						}
+					}
+					if (char_group_end == 0)
+						return false;
+					pc += 3;
+					continue;
+				case RxOp.RangeIgnoreCase:
+					if (strpos < string_end) {
+						int c = Char.ToLower (str [strpos]);
+						if (c >= program [pc + 1] && c <= program [pc + 2]) {
 							pc += 3;
+							strpos++;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
 							continue;
 						}
 					}
@@ -525,59 +770,122 @@ namespace System.Text.RegularExpressions {
 				case RxOp.NoRange:
 					if (strpos < string_end) {
 						int c = str [strpos];
-						if (c >= program [pc + 1] && c <= program [pc + 2]) {
-							if (char_group_end == 0)
-								return false;
+						if (!(c >= program [pc + 1] && c <= program [pc + 2])) {
 							pc += 3;
-							continue;
-						}
-						strpos++;
-						if (char_group_end != 0)
-							goto test_char_group_passed;
-						pc += 3;
-						continue;
-					}
-					if (char_group_end == 0)
-						return false;
-					pc += 3;
-					continue;
-				case RxOp.RangeIgnoreCase:
-					if (strpos < string_end) {
-						int c = Char.ToLower (str [strpos]);
-						if (c >= program [pc + 1] && c <= program [pc + 2]) {
-							strpos++;
-							if (char_group_end != 0)
-								goto test_char_group_passed;
-							pc += 3;
+							if ((char_group_end == 0 || (pc + 1 == char_group_end)))
+								strpos ++;
 							continue;
 						}
 					}
-					if (char_group_end == 0)
-						return false;
-					pc += 3;
-					continue;
+					return false;
 				case RxOp.NoRangeIgnoreCase:
 					if (strpos < string_end) {
 						int c = Char.ToLower (str [strpos]);
-						if (c >= program [pc + 1] && c <= program [pc + 2]) {
-							if (char_group_end == 0)
-								return false;
+						if (!(c >= program [pc + 1] && c <= program [pc + 2])) {
 							pc += 3;
+							if ((char_group_end == 0 || (pc + 1 == char_group_end)))
+								strpos ++;
 							continue;
 						}
-						strpos++;
-						if (char_group_end != 0)
-							goto test_char_group_passed;
+					}
+					return false;
+
+					/* UnicodeRange */
+
+				case RxOp.UnicodeRange:
+					if (strpos < string_end) {
+						int c = str [strpos];
+                        int lo = program [pc + 1] | (program [pc + 2] << 8);
+                        int hi = program [pc + 3] | (program [pc + 4] << 8);
+						if (c >= lo && c <= hi) {
+							pc += 5;
+							strpos++;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
+							continue;
+						}
+					}
+					if (char_group_end == 0)
+						return false;
+					pc += 5;
+					continue;
+				case RxOp.UnicodeRangeIgnoreCase:
+					if (strpos < string_end) {
+						int c = Char.ToLower (str [strpos]);
+                        int lo = program [pc + 1] | (program [pc + 2] << 8);
+                        int hi = program [pc + 3] | (program [pc + 4] << 8);
+						if (c >= lo && c <= hi) {
+							pc += 5;
+							strpos++;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
+							continue;
+						}
+					}
+					if (char_group_end == 0)
+						return false;
+					pc += 5;
+					continue;
+				case RxOp.NoUnicodeRange:
+					if (strpos < string_end) {
+						int c = str [strpos];
+                        int lo = program [pc + 1] | (program [pc + 2] << 8);
+                        int hi = program [pc + 3] | (program [pc + 4] << 8);
+						if (!(c >= lo && c <= hi)) {
+							pc += 5;
+							if ((char_group_end == 0 || (pc + 1 == char_group_end)))
+								strpos ++;
+							continue;
+						}
+					}
+					return false;
+				case RxOp.NoUnicodeRangeIgnoreCase:
+					if (strpos < string_end) {
+						int c = Char.ToLower (str [strpos]);
+                        int lo = program [pc + 1] | (program [pc + 2] << 8);
+                        int hi = program [pc + 3] | (program [pc + 4] << 8);
+						if (!(c >= lo && c <= hi)) {
+							pc += 5;
+							if ((char_group_end == 0 || (pc + 1 == char_group_end)))
+								strpos ++;
+							continue;
+						}
+					}
+					return false;
+
+					/* Bitmap */
+
+				case RxOp.Bitmap:
+					if (strpos < string_end) {
+						int c = str [strpos];
+						c -= program [pc + 1];
+						length = program [pc + 2];
+						if (c < 0 || c >= (length << 3)) {
+							if (char_group_end == 0)
+								return false;
+							pc += length + 3;
+							continue;
+						}
 						pc += 3;
+						if ((program [pc + (c >> 3)] & (1 << (c & 0x7))) != 0) {
+							strpos++;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
+							pc += length;
+							continue;
+						}
+						if (char_group_end == 0)
+							return false;
+						pc += length;
 						continue;
 					}
 					if (char_group_end == 0)
 						return false;
-					pc += 3;
+					pc += 3 + program [pc + 2];
 					continue;
-				case RxOp.Bitmap:
+				case RxOp.BitmapIgnoreCase:
 					if (strpos < string_end) {
-						int c = str [strpos];
+						int c = Char.ToLower (str [strpos]);
 						c -= program [pc + 1];
 						length = program [pc + 2];
 						if (c < 0 || c >= (length << 3)) {
@@ -609,10 +917,9 @@ namespace System.Text.RegularExpressions {
 						c -= program [pc + 1];
 						length = program [pc + 2];
 						if (c < 0 || c >= (length << 3)) {
-							strpos++;
-							if (char_group_end != 0)
-								goto test_char_group_passed;
 							pc += 3 + length;
+							if ((char_group_end == 0 || (pc + 1 == char_group_end)))
+								strpos++;
 							continue;
 						}
 						pc += 3;
@@ -622,40 +929,11 @@ namespace System.Text.RegularExpressions {
 							pc += length;
 							continue;
 						} else {
-							strpos++;
-							if (char_group_end != 0)
-								goto test_char_group_passed;
 							pc += length;
+							if ((char_group_end == 0 || (pc + 1 == char_group_end)))
+								strpos++;
 							continue;
 						}
-					}
-					if (char_group_end == 0)
-						return false;
-					pc += 3 + program [pc + 2];
-					continue;
-				case RxOp.BitmapIgnoreCase:
-					if (strpos < string_end) {
-						int c = Char.ToLower (str [strpos]);
-						c -= program [pc + 1];
-						length = program [pc + 2];
-						if (c < 0 || c >= (length << 3)) {
-							if (char_group_end == 0)
-								return false;
-							pc += length + 3;
-							continue;
-						}
-						pc += 3;
-						if ((program [pc + (c >> 3)] & (1 << (c & 0x7))) != 0) {
-							strpos++;
-							if (char_group_end != 0)
-								goto test_char_group_passed;
-							pc += length;
-							continue;
-						}
-						if (char_group_end == 0)
-							return false;
-						pc += length;
-						continue;
 					}
 					if (char_group_end == 0)
 						return false;
@@ -691,6 +969,9 @@ namespace System.Text.RegularExpressions {
 						return false;
 					pc += 3 + program [pc + 2];
 					continue;
+
+					/* UnicodeChar */
+
 				case RxOp.UnicodeChar:
 					if (strpos < string_end && (str [strpos] == (program [pc + 1] | (program [pc + 2] << 8)))) {
 						strpos++;
@@ -739,6 +1020,9 @@ namespace System.Text.RegularExpressions {
 						return false;
 					pc += 3;
 					continue;
+
+					/* CategoryAny */
+
 				case RxOp.CategoryAny:
 					if (strpos < string_end && str [strpos] != '\n') {
 						strpos++;
@@ -751,6 +1035,9 @@ namespace System.Text.RegularExpressions {
 						return false;
 					pc++;
 					continue;
+
+					/* CategoryAnySingleline */
+
 				case RxOp.CategoryAnySingleline:
 					if (strpos < string_end) {
 						strpos++;
@@ -763,6 +1050,9 @@ namespace System.Text.RegularExpressions {
 						return false;
 					pc++;
 					continue;
+
+					/* CategoryWord */
+
 				case RxOp.CategoryWord:
 					if (strpos < string_end) {
 						char c = str [strpos];
@@ -793,6 +1083,9 @@ namespace System.Text.RegularExpressions {
 						return false;
 					pc++;
 					continue;
+
+					/* CategoryDigit */
+
 				case RxOp.CategoryDigit:
 					if (strpos < string_end && Char.IsDigit (str [strpos])) {
 						strpos++;
@@ -817,6 +1110,9 @@ namespace System.Text.RegularExpressions {
 						return false;
 					pc++;
 					continue;
+
+					/* CategoryWhiteSpace */
+
 				case RxOp.CategoryWhiteSpace:
 					if (strpos < string_end && Char.IsWhiteSpace (str [strpos])) {
 						strpos++;
@@ -841,6 +1137,9 @@ namespace System.Text.RegularExpressions {
 						return false;
 					pc++;
 					continue;
+
+					/* CategoryEcmaWord */
+
 				case RxOp.CategoryEcmaWord:
 					if (strpos < string_end) {
 						int c = str [strpos];
@@ -875,6 +1174,9 @@ namespace System.Text.RegularExpressions {
 						return false;
 					pc++;
 					continue;
+
+					/* CategoryEcmaWhiteSpace */
+
 				case RxOp.CategoryEcmaWhiteSpace:
 					if (strpos < string_end) {
 						int c = str [strpos];
@@ -909,6 +1211,9 @@ namespace System.Text.RegularExpressions {
 						return false;
 					pc++;
 					continue;
+
+					/* CategoryUnicodeSpecials */
+
 				case RxOp.CategoryUnicodeSpecials:
 					if (strpos < string_end) {
 						int c = str [strpos];
@@ -943,6 +1248,9 @@ namespace System.Text.RegularExpressions {
 						return false;
 					pc++;
 					continue;
+
+					/* CategoryUnicode */
+
 				case RxOp.CategoryUnicode:
 					if (strpos < string_end && Char.GetUnicodeCategory (str [strpos]) == (UnicodeCategory)program [pc + 1]) {
 						strpos++;
@@ -967,6 +1275,343 @@ namespace System.Text.RegularExpressions {
 						return false;
 					pc += 2;
 					continue;
+
+					/*
+					 * Reverse versions of the above opcodes.
+					 */
+
+				case RxOp.CharReverse:
+					if (strpos > 0 && (str [strpos - 1] == program [pc + 1])) {
+						strpos --;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc += 2;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc += 2;
+					continue;
+				case RxOp.NoCharReverse:
+					if (strpos > 0 && (str [strpos - 1] != program [pc + 1])) {
+						pc += 2;
+						if ((char_group_end == 0) || (pc + 1 == char_group_end))
+							strpos --;
+						continue;
+					} else {
+						return false;
+					}
+				case RxOp.RangeReverse:
+					if (strpos > 0) {
+						int c = str [strpos - 1];
+						if (c >= program [pc + 1] && c <= program [pc + 2]) {
+							pc += 3;
+							strpos--;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
+							continue;
+						}
+					}
+					if (char_group_end == 0)
+						return false;
+					pc += 3;
+					continue;
+				case RxOp.NoRangeReverse:
+					if (strpos > 0) {
+						int c = str [strpos - 1];
+						if (!(c >= program [pc + 1] && c <= program [pc + 2])) {
+							pc += 3;
+							if ((char_group_end == 0 || (pc + 1 == char_group_end)))
+								strpos --;
+							continue;
+						}
+					}
+					return false;
+				case RxOp.BitmapReverse:
+					if (strpos > 0) {
+						int c = str [strpos - 1];
+						c -= program [pc + 1];
+						length = program [pc + 2];
+						if (c < 0 || c >= (length << 3)) {
+							if (char_group_end == 0)
+								return false;
+							pc += length + 3;
+							continue;
+						}
+						pc += 3;
+						if ((program [pc + (c >> 3)] & (1 << (c & 0x7))) != 0) {
+							strpos--;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
+							pc += length;
+							continue;
+						}
+						if (char_group_end == 0)
+							return false;
+						pc += length;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc += 3 + program [pc + 2];
+					continue;
+				case RxOp.NoBitmapReverse:
+					if (strpos > 0) {
+						int c = str [strpos - 1];
+						c -= program [pc + 1];
+						length = program [pc + 2];
+						if (c < 0 || c >= (length << 3)) {
+							pc += 3 + length;
+							if ((char_group_end == 0 || (pc + 1 == char_group_end)))
+								strpos--;
+							continue;
+						}
+						pc += 3;
+						if ((program [pc + (c >> 3)] & (1 << (c & 0x7))) != 0) {
+							if (char_group_end == 0)
+								return false;
+							pc += length;
+							continue;
+						} else {
+							pc += length;
+							if ((char_group_end == 0 || (pc + 1 == char_group_end)))
+								strpos--;
+							continue;
+						}
+					}
+					if (char_group_end == 0)
+						return false;
+					pc += 3 + program [pc + 2];
+					continue;
+				case RxOp.CategoryAnyReverse:
+					if (strpos > 0 && str [strpos - 1] != '\n') {
+						strpos --;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc++;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
+				case RxOp.CategoryAnySinglelineReverse:
+					if (strpos > 0) {
+						strpos --;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc++;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
+				case RxOp.CategoryWordReverse:
+					if (strpos > 0) {
+						char c = str [strpos - 1];
+						if (Char.IsLetterOrDigit (c) || Char.GetUnicodeCategory (c) == UnicodeCategory.ConnectorPunctuation) {
+							strpos --;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
+							pc++;
+							continue;
+						}
+					}
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
+				case RxOp.NoCategoryWordReverse:
+					if (strpos > 0) {
+						char c = str [strpos - 1];
+						if (!Char.IsLetterOrDigit (c) && Char.GetUnicodeCategory (c) != UnicodeCategory.ConnectorPunctuation) {
+							strpos --;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
+							pc++;
+							continue;
+						}
+					}
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
+				case RxOp.CategoryDigitReverse:
+					if (strpos > 0 && Char.IsDigit (str [strpos - 1])) {
+						strpos --;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc++;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
+				case RxOp.NoCategoryDigitReverse:
+					if (strpos > 0 && !Char.IsDigit (str [strpos - 1])) {
+						strpos --;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc++;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
+				case RxOp.CategoryWhiteSpaceReverse:
+					if (strpos > 0 && Char.IsWhiteSpace (str [strpos - 1])) {
+						strpos --;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc++;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
+				case RxOp.NoCategoryWhiteSpaceReverse:
+					if (strpos > 0 && !Char.IsWhiteSpace (str [strpos - 1])) {
+						strpos --;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc++;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
+				case RxOp.CategoryEcmaWordReverse:
+					if (strpos > 0) {
+						int c = str [strpos - 1];
+						if ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || '0' <= c && c <= '9' || c == '_') {
+							strpos --;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
+							pc++;
+							continue;
+						}
+					}
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
+				case RxOp.NoCategoryEcmaWordReverse:
+					if (strpos > 0) {
+						int c = str [strpos - 1];
+						if ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || '0' <= c && c <= '9' || c == '_') {
+							if (char_group_end == 0)
+								return false;
+							pc++;
+							continue;
+						}
+						strpos --;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc++;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
+				case RxOp.CategoryEcmaWhiteSpaceReverse:
+					if (strpos > 0) {
+						int c = str [strpos - 1];
+						if (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f' || c == '\v') {
+							strpos --;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
+							pc++;
+							continue;
+						}
+					}
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
+				case RxOp.NoCategoryEcmaWhiteSpaceReverse:
+					if (strpos > 0) {
+						int c = str [strpos - 1];
+						if (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f' || c == '\v') {
+							if (char_group_end == 0)
+								return false;
+							pc++;
+							continue;
+						}
+						strpos --;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc++;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
+				case RxOp.CategoryUnicodeSpecialsReverse:
+					if (strpos > 0) {
+						int c = str [strpos - 1];
+						if ('\uFEFF' <= c && c <= '\uFEFF' || '\uFFF0' <= c && c <= '\uFFFD') {
+							strpos --;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
+							pc++;
+							continue;
+						}
+					}
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
+				case RxOp.NoCategoryUnicodeSpecialsReverse:
+					if (strpos > 0) {
+						int c = str [strpos - 1];
+						if ('\uFEFF' <= c && c <= '\uFEFF' || '\uFFF0' <= c && c <= '\uFFFD') {
+							if (char_group_end == 0)
+								return false;
+							pc++;
+							continue;
+						}
+						strpos --;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc++;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
+				case RxOp.CategoryUnicodeReverse:
+					if (strpos > 0 && Char.GetUnicodeCategory (str [strpos - 1]) == (UnicodeCategory)program [pc + 1]) {
+						strpos --;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc += 2;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc += 2;
+					continue;
+				case RxOp.NoCategoryUnicodeReverse:
+					if (strpos > 0 && Char.GetUnicodeCategory (str [strpos - 1]) != (UnicodeCategory)program [pc + 1]) {
+						strpos --;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc += 2;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc += 2;
+					continue;
+
 				case RxOp.Branch: {
 					int res = 0;
 					if (EvalByteCode (pc + 3, strpos, ref res)) {
@@ -979,34 +1624,278 @@ namespace System.Text.RegularExpressions {
 				}
 				case RxOp.Repeat:
 				case RxOp.RepeatLazy: {
+					/*
+					 * Repetation is modelled by two opcodes: Repeat and Until which
+					 * contain the the qualified regex between them, i.e.:
+					 * Repeat, <bytecode for the inner regex>, Until, <Tail expr>
+					 * It is processed as follows: 
+					 * Repeat, [Until, <inner expr>]*, <Tail>
+					 * This means that nested quantifiers are processed a bit
+					 * strangely: when the inner quantifier fails to match, its
+					 * tail is processed which includes the outer Until.
+					 *
+					 * This code is from the old interpreter.cs.
+					 *
+					 * FIXME: Rethink this.
+					 */
+
 					int res = 0;
-					start = ReadInt (program, pc + 3);
-					end = ReadInt (program, pc + 7);
-					//Console.WriteLine ("min: {0}, max: {1}", start, end);
-					length = 0;
-					int cp = Checkpoint ();
-					while (length < end) {
-						if (!EvalByteCode (pc + 11, strpos, ref res)) {
-							if (length >= start) {
-								goto repeat_success;
-							}
-							return false;
+
+					this.repeat = new RepeatContext (
+						this.repeat,			// previous context
+						ReadInt (program, pc + 3),		// minimum
+						ReadInt (program, pc + 7),		// maximum
+						(RxOp)program [pc] == RxOp.RepeatLazy, // lazy
+						pc + 11				// subexpression
+					);
+
+					int until = pc + program [pc + 1] | (program [pc + 2] << 8);
+					if (!EvalByteCode (until, strpos, ref res)) {
+						this.repeat = this.repeat.Previous;
+						return false;
+					}
+
+					strpos = res;
+					strpos_result = strpos;
+					return true;
+				}
+				case RxOp.Until: {
+					RepeatContext current = this.repeat;
+					int res = 0;
+
+					//
+					// Can we avoid recursion?
+					//
+					// Backtracking can be forced in nested quantifiers from the tail of this quantifier.
+					// Thus, we cannot, in general, use a simple loop on repeat.Expression to handle
+					// quantifiers.
+					//
+					// If 'deep' was unmolested, that implies that there was no nested quantifiers.
+					// Thus, we can safely avoid recursion.
+					//
+					if (deep == current)
+						goto Pass;
+
+					start = current.Start;
+					int start_count = current.Count;
+
+					// First match at least 'start' items without backtracking
+					while (!current.IsMinimum) {
+						++ current.Count;
+						current.Start = strpos;
+						deep = current;
+						if (!EvalByteCode (current.Expression, strpos, ref res)) {
+							current.Start = start;
+							current.Count = start_count;
+							goto Fail;
 						}
 						strpos = res;
-						length++;
-						Backtrack (cp);
+						if (deep != current)	// recursive mode
+							goto Pass;
 					}
-					if (length != end)
-						return false;
-				repeat_success:
-					pc += program [pc + 1] | (program [pc + 2] << 8);
-					continue;
+
+					if (strpos == current.Start) {
+						// degenerate match ... match tail or fail
+						this.repeat = current.Previous;
+						deep = null;
+						if (EvalByteCode (pc + 1, strpos, ref res)) {
+							strpos = res;
+							goto Pass;
+						}
+						this.repeat = current;
+						goto Fail;
+					}
+
+					if (current.IsLazy) {
+						for (;;) {
+							// match tail first ...
+							this.repeat = current.Previous;
+							deep = null;
+							int cp = Checkpoint ();
+							if (EvalByteCode (pc + 1, strpos, ref res)) {
+								strpos = res;
+								goto Pass;
+							}
+
+							Backtrack (cp);
+
+							// ... then match more
+							this.repeat = current;
+							if (current.IsMaximum)
+								goto Fail;
+							++ current.Count;
+							current.Start = strpos;
+							deep = current;
+							if (!EvalByteCode (current.Expression, strpos, ref res)) {
+								current.Start = start;
+								current.Count = start_count;
+								goto Fail;
+							}
+							strpos = res;
+							if (deep != current)	// recursive mode
+								goto Pass;
+							// Degenerate match: ptr has not moved since the last (failed) tail match.
+							// So, next and subsequent tail matches will fail.
+							if (strpos == current.Start)
+								goto Fail;
+						}
+					} else {
+						int stack_size = stack.Count;
+
+						// match greedily as much as possible
+						while (!current.IsMaximum) {
+							int cp = Checkpoint ();
+							int old_ptr = strpos;
+							int old_start = current.Start;
+
+							++ current.Count;
+							if (trace_rx)
+								Console.WriteLine ("recurse with count {0}.", current.Count);
+							current.Start = strpos;
+							deep = current;
+							if (!EvalByteCode (current.Expression, strpos, ref res)) {
+								-- current.Count;
+								current.Start = old_start;
+								Backtrack (cp);
+								break;
+							}
+							strpos = res;
+							if (deep != current) {
+								// recursive mode: no more backtracking, truncate the stack
+								stack.Count = stack_size;
+								goto Pass;
+							}
+							stack.Push (cp);
+							stack.Push (old_ptr);
+
+							// Degenerate match: no point going on
+							if (strpos == current.Start)
+								break;
+						}
+
+						if (trace_rx)
+							Console.WriteLine ("matching tail: {0} pc={1}", strpos, pc + 1);
+						// then, match the tail, backtracking as necessary.
+						this.repeat = current.Previous;
+						for (;;) {
+							deep = null;
+							if (EvalByteCode (pc + 1, strpos, ref res)) {
+								strpos = res;
+								stack.Count = stack_size;
+								goto Pass;
+							}
+							if (stack.Count == stack_size) {
+								this.repeat = current;
+								goto Fail;
+							}
+
+							--current.Count;
+							strpos = stack.Pop ();
+							Backtrack (stack.Pop ());
+							if (trace_rx)
+								Console.WriteLine ("backtracking to {0} expr={1} pc={2}", strpos, current.Expression, pc);
+						}
+					}
 				}
+
+				case RxOp.FastRepeat:
+				case RxOp.FastRepeatLazy: {
+					/*
+					 * A FastRepeat is a simplified version of Repeat which does
+					 * not contain another repeat inside, so backtracking is 
+					 * easier.
+					 */
+					bool lazy = program [pc] == (byte)RxOp.FastRepeatLazy;
+					int res = 0;
+					int tail = pc + program [pc + 1] | (program [pc + 2] << 8);
+ 					start = ReadInt (program, pc + 3);
+ 					end = ReadInt (program, pc + 7);
+					//Console.WriteLine ("min: {0}, max: {1} tail: {2}", start, end, tail);
+ 					length = 0;
+
+					deep = null;
+
+					// First match at least 'start' items
+					while (length < start) {
+						if (!EvalByteCode (pc + 11, strpos, ref res))
+ 							return false;
+ 						strpos = res;
+ 						length++;
+ 					}
+					
+					if (lazy) {
+						while (true) {
+							// Match the tail
+							int cp = Checkpoint ();
+							if (EvalByteCode (tail, strpos, ref res)) {
+								strpos = res;
+								goto repeat_success;
+							}
+							Backtrack (cp);
+
+							if (length >= end)
+								return false;
+
+							// Match an item
+							if (!EvalByteCode (pc + 11, strpos, ref res))
+								return false;
+							strpos = res;
+							length ++;
+						}
+					} else {
+						// Then match as many items as possible, recording
+						// backtracking information
+						int old_stack_size = stack.Count;
+						while (length < end) {
+							int cp = Checkpoint ();
+							if (!EvalByteCode (pc + 11, strpos, ref res)) {
+								Backtrack (cp);
+								break;
+							}
+							stack.Push (cp);
+							stack.Push (strpos);
+							strpos = res;
+							length++;
+						}	
+
+						if (tail <= pc)
+							throw new Exception ();
+
+						// Then, match the tail, backtracking as necessary.
+						while (true) {
+							if (EvalByteCode (tail, strpos, ref res)) {
+								strpos = res;
+								stack.Count = old_stack_size;
+								goto repeat_success;
+							}
+							if (stack.Count == old_stack_size)
+								return false;
+
+							// Backtrack
+							strpos = stack.Pop ();
+							Backtrack (stack.Pop ());
+							if (trace_rx)
+								Console.WriteLine ("backtracking to: {0}", strpos);
+						}
+					}
+
+ 				repeat_success:
+					// FIXME: Where to continue ?
+					strpos_result = strpos;
+					return true;
+				}
+
 				default:
 					Console.WriteLine ("evaluating: {0} at pc: {1}, strpos: {2}", (RxOp)program [pc], pc, strpos);
 					throw new NotSupportedException ();
 				}
 				continue;
+
+			Pass:
+				strpos_result = strpos;
+				return true;
+			Fail:
+				return false;
 			test_char_group_passed:
 				pc = char_group_end;
 				char_group_end = 0;

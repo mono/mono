@@ -1,3 +1,8 @@
+2008-08-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* RxInterpreter.cs RxCompiler.cs RxOp.cs: Implement/fix this so all the
+	regex tests now run. The Repeat code is taken from the old interpreter.
+
 2008-08-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* RxInterpreter.cs RxCompiler.cs RxOp.cs: Add support for 

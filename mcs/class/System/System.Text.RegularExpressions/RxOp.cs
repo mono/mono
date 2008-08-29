@@ -89,13 +89,13 @@ namespace System.Text.RegularExpressions {
 		// followed by unicode char min and max chars
 		// keep the order, see EmitRange ()
 		UnicodeRange,
-		UnicodeNoRange,
+		NoUnicodeRange,
 		UnicodeRangeIgnoreCase,
-		UnicodeNoRangeIgnoreCase,
+		NoUnicodeRangeIgnoreCase,
 		UnicodeRangeReverse,
-		UnicodeNoRangeReverse,
+		NoUnicodeRangeReverse,
 		UnicodeRangeIgnoreCaseReverse,
-		UnicodeNoRangeIgnoreCaseReverse,
+		NoUnicodeRangeIgnoreCaseReverse,
 
 		// followed by lowchar and length of the bitmap and by the bitmap
 		UnicodeBitmap,
@@ -113,6 +113,9 @@ namespace System.Text.RegularExpressions {
 		CategoryAnyReverse,
 		NoCategoryAnyReverse,
 		CategoryAnySingleline,
+		NoCategoryAnySingleline,
+		CategoryAnySinglelineReverse,
+		NoCategoryAnySinglelineReverse,
 		CategoryDigit,
 		NoCategoryDigit,
 		CategoryDigitReverse,
@@ -186,6 +189,9 @@ namespace System.Text.RegularExpressions {
 		// followed by two-byte group id
 		OpenGroup,
 		CloseGroup,
+		
+		BalanceStart,
+		Balance,
 
 		// followed by offset and two-byte group id
 		IfDefined,
@@ -215,6 +221,9 @@ namespace System.Text.RegularExpressions {
 		// followed by min, max ints
 		Repeat,
 		RepeatLazy,
+		Until,
+		FastRepeat,
+		FastRepeatLazy,
 		// followed by min byte
 		RepeatInfinite,
 		RepeatInfiniteLazy,

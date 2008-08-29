@@ -557,13 +557,17 @@ namespace System.Text.RegularExpressions {
 
 		public void EmitBalanceStart(int gid, int balance, bool capture,  LinkRef tail)
 		{
-			throw new NotSupportedException ();
+			BeginLink (tail);
+			Emit (RxOp.BalanceStart);
+			Emit ((ushort)gid);
+			Emit ((ushort)balance);
+			Emit ((byte)(capture ? 1 : 0));
+			EmitLink (tail);
 		}
 
 		public void EmitBalance ()
 		{
-			// it doesn't seem we need to do anything, so just don't emit anything
-			//throw new NotSupportedException ();
+			Emit (RxOp.Balance);
 		}
 
 		public void EmitReference (int gid, bool ignore, bool reverse)
@@ -619,22 +623,27 @@ namespace System.Text.RegularExpressions {
 			EmitLink (target);
 		}
 
-		public void EmitRepeat (int min, int max, bool lazy, LinkRef until)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void EmitUntil (LinkRef repeat)
-		{
-			throw new NotSupportedException ();
-		}
-
 		public void EmitIn (LinkRef tail)
 		{
 			// emitted for things like [\dabcfh]
 			BeginLink (tail);
 			Emit (RxOp.TestCharGroup);
 			EmitLink (tail);
+		}
+
+		public void EmitRepeat (int min, int max, bool lazy, LinkRef until)
+		{
+			BeginLink (until);
+			Emit (lazy ? RxOp.RepeatLazy : RxOp.Repeat);
+			EmitLink (until);
+			Emit (min);
+			Emit (max);
+		}
+
+		public void EmitUntil (LinkRef repeat)
+		{
+			ResolveLink (repeat);
+			Emit (RxOp.Until);
 		}
 
 		public void EmitInfo (int count, int min, int max)
@@ -650,10 +659,7 @@ namespace System.Text.RegularExpressions {
 		public void EmitFastRepeat (int min, int max, bool lazy, LinkRef tail)
 		{
 			BeginLink (tail);
-			if (lazy)
-				Emit (RxOp.RepeatLazy);
-			else
-				Emit (RxOp.Repeat);
+			Emit (lazy ? RxOp.FastRepeatLazy : RxOp.FastRepeat);
 			EmitLink (tail);
 			Emit (min);
 			Emit (max);
