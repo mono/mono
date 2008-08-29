@@ -1,3 +1,8 @@
+2008-08-29  Marek Habersack  <mhabersack@novell.com>
+
+	* AppCodeCompiler.cs: properly handle profile base class
+	specifications which refer to full type names.
+
 2008-08-26  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: use VirtualPathUtility.Combine in
