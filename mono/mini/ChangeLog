@@ -1,5 +1,10 @@
 2008-08-29  Geoff Norton  <gnorton@novell.com>
 
+	* mini.c: Disable the mach exception handler when running on 
+	ARM
+
+2008-08-29  Geoff Norton  <gnorton@novell.com>
+
 	* aot-compiler.c: Patch from Renaldas Zioma to properly register 
 	globals on Darwin/ARM
 
