@@ -1592,7 +1592,6 @@ namespace System.Windows.Forms {
 					return true;
 				}
 			}
-			return false;
 		}
 
 		internal override bool PostMessage (IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam) {

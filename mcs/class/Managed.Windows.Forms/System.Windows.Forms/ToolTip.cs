@@ -872,6 +872,7 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+/*
 		private void Hide (Control sender)
 		{
 			timer.Stop();
@@ -884,6 +885,7 @@ namespace System.Windows.Forms {
 			if (last_control == sender)
 				last_control = null;
 		}
+*/
 #endif
 
 		private void control_MouseMove(object sender, MouseEventArgs e) {

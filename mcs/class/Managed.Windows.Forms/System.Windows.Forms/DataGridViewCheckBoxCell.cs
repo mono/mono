@@ -42,7 +42,7 @@ namespace System.Windows.Forms {
 		private object indeterminateValue;
 		private bool threeState;
 		private object trueValue;
-		private Type valueType;
+//		private Type valueType;
 		private PushButtonState check_state;
 
 		public DataGridViewCheckBoxCell ()

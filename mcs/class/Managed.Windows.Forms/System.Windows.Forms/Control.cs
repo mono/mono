@@ -5772,12 +5772,12 @@ namespace System.Windows.Forms
 				
 					// Make sure all our children are properly parented to us
 					Control [] controls = child_controls.GetAllControls ();
-					bool parented = false;
+//					bool parented = false;
 					for (int i=0; i<controls.Length; i++) {
 						if (controls [i].is_visible && controls[i].IsHandleCreated)
 							if (XplatUI.GetParent (controls[i].Handle) != window.Handle) {
 								XplatUI.SetParent(controls[i].Handle, window.Handle);
-								parented = true;
+//								parented = true;
 							}
 
 					}

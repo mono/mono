@@ -4295,7 +4295,7 @@ namespace System.Windows.Forms {
 			
 			int rows_displayed = 0;
 			int first_row_height = Rows.Count > 0 ? Rows[Math.Min (Rows.Count - 1, first_row_index)].Height : 0;
-			int room_left = this.Height;
+//			int room_left = this.Height;
 			
 			// Reset all columns to !Displayed
 			for (int i = 0; i < Columns.Count; i++)

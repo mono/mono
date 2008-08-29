@@ -140,7 +140,7 @@ namespace System.Windows.Forms
 		public string Prompt (string message, string defaultInputValue)
 		{
 			WebBrowserDialogs.Prompt prompt = new WebBrowserDialogs.Prompt ("Prompt", message, defaultInputValue);
-			DialogResult ret = prompt.Show ();
+			prompt.Show ();
 			return prompt.Text;
 		}
 		

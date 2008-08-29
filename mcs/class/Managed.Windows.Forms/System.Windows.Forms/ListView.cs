@@ -1846,7 +1846,9 @@ namespace System.Windows.Forms
 					ListViewItem item = items [i];
 					item.Layout ();
 					item.DisplayIndex = display_index;
+#if NET_2_0					
 					item.SetPosition (new Point (x, y));
+#endif					
 				}
 
 
@@ -1977,7 +1979,9 @@ namespace System.Windows.Forms
 				{
 					display_index = i;
 					SetItemLocation (i, 0, y, 0, 0);
+#if NET_2_0					
 					item.SetPosition (new Point (0, y));
+#endif					
 					y += item_height;
 				}
 #if NET_2_0

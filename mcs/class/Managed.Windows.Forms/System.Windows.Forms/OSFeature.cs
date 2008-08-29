@@ -53,7 +53,9 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		public static bool IsPresent (SystemParameter enumVal)
 		{
+#pragma warning disable 219			
 			object o;
+#pragma warning restore 219			
 
 			switch (enumVal) {
 				case SystemParameter.DropShadow:

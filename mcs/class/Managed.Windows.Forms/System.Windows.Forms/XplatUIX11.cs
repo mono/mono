@@ -3973,8 +3973,6 @@ namespace System.Windows.Forms {
 					} else {
 						HitTest	ht;
 						IntPtr dummy;
-						int screen_x;
-						int screen_y;
 
 						#if DriverDebugExtra
 							Console.WriteLine("GetMessage(): non-client area {0:X} MotionNotify x={1} y={2}", client ? hwnd.client_window.ToInt32() : hwnd.whole_window.ToInt32(), xevent.MotionEvent.x, xevent.MotionEvent.y);

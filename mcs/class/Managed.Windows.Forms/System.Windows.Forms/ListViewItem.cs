@@ -52,8 +52,8 @@ namespace System.Windows.Forms
 		private string image_key = String.Empty;
 		string tooltip_text = String.Empty;
 		int indent_count;
+		Point position = new Point (-1, -1);		// cached to mimic .Net behaviour	
 #endif
-		Point position = new Point (-1, -1);		// cached to mimic .Net behaviour
 		Rectangle bounds = Rectangle.Empty;
 		Rectangle checkbox_rect;	// calculated by CalcListViewItem method
 		Rectangle icon_rect;
@@ -893,11 +893,11 @@ namespace System.Windows.Forms
 			this.group = group;
 		}
 
-#endif
 		internal void SetPosition (Point position)
 		{
 			this.position = position;
 		}
+#endif	
 
 		// When focus changed, we need to invalidate area
 		// with previous layout and with the new one

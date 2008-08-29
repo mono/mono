@@ -920,7 +920,9 @@ namespace System.Windows.Forms
 		public class LinkCollection :  IList, ICollection, IEnumerable
 		{
 			private LinkLabel owner;
-			private bool links_added = false;
+#if NET_2_0			
+			private bool links_added;
+#endif			
 
 			public LinkCollection (LinkLabel owner)
 			{
@@ -982,7 +984,9 @@ namespace System.Windows.Forms
 				}
 
 				int idx = owner.links.Add (value);
+#if NET_2_0				
 				links_added = true;
+#endif				
 
 				owner.sorted_links = null;
 				owner.CheckLinks ();

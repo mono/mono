@@ -49,7 +49,9 @@ namespace System.Resources
 		private TextWriter	textwriter;
 		private XmlTextWriter	writer;
 		private bool		written;
+#if NET_2_0		
 		private string		base_path;
+#endif		
 		#endregion	// Local Variables
 
 		#region Static Fields
