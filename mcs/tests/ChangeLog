@@ -1,3 +1,7 @@
+2008-08-29  Raja R Harinath  <harinath@hurrynot.org>
+
+	* test-xml-052.cs: Fix unrelated warning.
+
 2008-08-04  Raja R Harinath  <harinath@hurrynot.org>
 
 	* test-668.cs: New test distilled from

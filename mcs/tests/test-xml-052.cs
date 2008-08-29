@@ -10,7 +10,7 @@
 		/// <summary>Inner Class</summary>
 		public delegate void Del ();
 
-		public static void Main ()
+		static void Main ()
 		{
 		}
 	}
