@@ -1477,7 +1477,7 @@ namespace System.Web {
 			cache.Clear ();
 		}
 		
-		internal object LocateHandler (string verb, string url)
+		object LocateHandler (string verb, string url)
 		{
 			Hashtable cache = GetHandlerCache ();
 			string id = String.Concat (verb, url);
@@ -1494,7 +1494,10 @@ namespace System.Web {
 			ret = factory_config.LocateHandler (verb, url);
 #endif
 
-			cache [id] = ret;
+			IHttpHandler handler = ret as IHttpHandler;
+			if (handler != null && handler.IsReusable)
+				cache [id] = ret;
+			
 			return ret;
 		}
 

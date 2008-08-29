@@ -54,10 +54,16 @@ namespace System.Web.UI.HtmlControls
 		
 		protected internal override void OnInit (EventArgs e)
 		{
+			base.OnInit (e);
+			Page page = Page;
+			
+			if (page == null)
+				throw new HttpException ("The <head runat=\"server\"> control requires a page.");
+			
 			//You can only have one <head runat="server"> control on a page.
-			if(Page.Header!=null)
+			if(page.Header != null)
 				throw new HttpException ("You can only have one <head runat=\"server\"> control on a page.");
-			Page.SetHeader (this);
+			page.SetHeader (this);
 		}
 		
 		protected internal override void RenderChildren (HtmlTextWriter writer)
