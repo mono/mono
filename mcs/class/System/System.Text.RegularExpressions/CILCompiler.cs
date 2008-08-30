@@ -250,6 +250,7 @@ namespace System.Text.RegularExpressions {
 					// Optimize some common cases by inlining the code generated for the
 					// anchor body 
 					RxOp anch_op = (RxOp)program [pc];
+
 					// FIXME: Do this even if the archor op is not the last in the regex
 					if (!reverse && group_count == 1 && anch_op == RxOp.Char && (RxOp)program [pc + 2] == RxOp.True) {
 
@@ -316,6 +317,11 @@ namespace System.Text.RegularExpressions {
 						ilgen.Emit (OpCodes.Ldarg_0);
 						ilgen.Emit (OpCodes.Ldarg_1);
 						ilgen.Emit (OpCodes.Call, GetMethod (typeof (RxInterpreter), "SetStartOfMatch", ref mi_set_start_of_match));
+						//  strpos++;
+						ilgen.Emit (OpCodes.Ldarg_1);
+						ilgen.Emit (OpCodes.Ldc_I4_1);
+						ilgen.Emit (OpCodes.Add);
+						ilgen.Emit (OpCodes.Starg, 1);
 						//    return true;
 						ilgen.Emit (OpCodes.Br, frame.label_pass);
 
