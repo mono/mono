@@ -9083,6 +9083,19 @@ namespace MonoTests.System.Reflection.Emit
 				tb3.FullName + "[]")), "#R2");
 			Assert.IsFalse (typeof (Baz []).IsAssignableFrom (module.GetType (
 				tb3.FullName + "[]")), "#R3");
+
+#if NET_2_0
+			TypeBuilder tb4 = module.DefineType (genTypeName (),
+				TypeAttributes.Public, null,
+				new Type [] { typeof (IWater) });
+			tb4.DefineGenericParameters ("T");
+
+			Type inst = tb4.MakeGenericType (typeof (int));
+			Type emitted_type4 = tb4.CreateType ();
+			Assert.IsFalse (typeof (IComparable).IsAssignableFrom (inst));
+			// This returns True if CreateType () is called _before_ MakeGenericType...
+			//Assert.IsFalse (typeof (IWater).IsAssignableFrom (inst));
+#endif
 		}
 
 		[Test]
