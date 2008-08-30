@@ -12,7 +12,6 @@
 // USE -define:DEMO to build this as a standalone file and test it
 //
 // TODO:
-//    Word-move does not skip over "="
 //    Enter an error (a = 1);  Notice how the prompt is in the wrong line
 //		This is caused by Stderr not being tracked by System.Console.
 //    Typing before the program start causes the cursor position to be wrong
@@ -435,7 +434,7 @@ namespace Mono.Terminal {
 			if (i == 0)
 				return 0;
 			
-			if (Char.IsPunctuation (text [i]) || Char.IsWhiteSpace (text[i])){
+			if (Char.IsPunctuation (text [i]) || Char.IsSymbol (text [i]) || Char.IsWhiteSpace (text[i])){
 				for (; i >= 0; i--){
 					if (Char.IsLetterOrDigit (text [i]))
 						break;
