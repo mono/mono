@@ -42,12 +42,19 @@ namespace System.Text.RegularExpressions {
 		static FieldInfo fi_program = typeof (RxInterpreter).GetField ("program", BindingFlags.Instance|BindingFlags.NonPublic);
 		static FieldInfo fi_marks = typeof (RxInterpreter).GetField ("marks", BindingFlags.Instance|BindingFlags.NonPublic);
 		static FieldInfo fi_groups = typeof (RxInterpreter).GetField ("groups", BindingFlags.Instance|BindingFlags.NonPublic);
+		static FieldInfo fi_deep = typeof (RxInterpreter).GetField ("deep", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
+		static FieldInfo fi_stack = typeof (RxInterpreter).GetField ("stack", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
 		static FieldInfo fi_mark_start = typeof (Mark).GetField ("Start", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
 		static FieldInfo fi_mark_end = typeof (Mark).GetField ("End", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
 		static MethodInfo mi_is_word_char = typeof (RxInterpreter).GetMethod ("IsWordChar", BindingFlags.Static|BindingFlags.NonPublic);
 		static MethodInfo mi_reset_groups = typeof (RxInterpreter).GetMethod ("ResetGroups", BindingFlags.Instance|BindingFlags.NonPublic);
+		static MethodInfo mi_checkpoint = typeof (RxInterpreter).GetMethod ("Checkpoint", BindingFlags.Instance|BindingFlags.NonPublic);
+		static MethodInfo mi_backtrack = typeof (RxInterpreter).GetMethod ("Backtrack", BindingFlags.Instance|BindingFlags.NonPublic);
 		static MethodInfo mi_open = typeof (RxInterpreter).GetMethod ("Open", BindingFlags.Instance|BindingFlags.NonPublic);
 		static MethodInfo mi_close = typeof (RxInterpreter).GetMethod ("Close", BindingFlags.Instance|BindingFlags.NonPublic);
+
+		static MethodInfo mi_stack_get_count, mi_stack_set_count, mi_stack_push, mi_stack_pop;
+		static MethodInfo mi_set_start_of_match;
 
 		public CILCompiler () {
 			generic_ops = new Dictionary <int, int> ();
@@ -81,9 +88,18 @@ namespace System.Text.RegularExpressions {
 			return eval_methods [pc];
 		}
 
-		private MethodInfo GetInterpreterMethod (string name) {
-			return typeof (RxInterpreter).GetMethod (name, BindingFlags.Instance|BindingFlags.NonPublic);
+		private MethodInfo GetMethod (Type t, string name, ref MethodInfo cached) {
+			if (cached == null) {
+				cached = t.GetMethod (name, BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
+				if (cached == null)
+					throw new Exception ("Method not found: " + name);
+			}
+			return cached;
 		}
+
+		private MethodInfo GetMethod (string name, ref MethodInfo cached) {
+			return GetMethod (typeof (RxInterpreter), name, ref cached);
+	    }
 
 		private int ReadInt (byte[] code, int pc) {
 			int val = code [pc];
@@ -193,11 +209,11 @@ namespace System.Text.RegularExpressions {
 		 * generate code for one opcode and set out_pc to the next pc after the opcode.
 		 * If no_bump is true, don't bump strpos in char matching opcodes.
 		 * Keep this in synch with RxInterpreter.EvalByteCode (). It it is sync with
-		 * the version in r96072.
-		 * FIXME: In the new interpreter and the IL compiler, '<.+>' does not match '<FOO>'
-		 * Also, '<.+?' matches '<FOO>', but the match is '<FOO>' instead of '<F'
+		 * the version in r111969.
 		 * FIXME: Modify the regex tests so they are run with RegexOptions.Compiled as
 		 * well.
+		 * FIXME: The generated actually overwrites strpos (arg 1), so 
+		 * frame.local_strpos_res is not really needed.
 		 */
 		private DynamicMethod EmitEvalMethodBody (DynamicMethod m, ILGenerator ilgen,
 												  Frame frame, byte[] program, int pc,
@@ -213,7 +229,19 @@ namespace System.Text.RegularExpressions {
 			while (true) {
 				RxOp op = (RxOp)program [pc];
 
-				//Console.WriteLine (op);
+				if (RxInterpreter.trace_rx) {
+					//Console.WriteLine ("compiling {0} pc={1}", op, pc);
+
+					//Console.WriteLine ("evaluating: {0} at pc: {1}, strpos: {2}", op, pc, strpos);
+					ilgen.Emit (OpCodes.Ldstr, "evaluating: {0} at pc: {1}, strpos: {2}");
+					ilgen.Emit (OpCodes.Ldc_I4, (int)op);
+					ilgen.Emit (OpCodes.Box, typeof (RxOp));
+					ilgen.Emit (OpCodes.Ldc_I4, pc);
+					ilgen.Emit (OpCodes.Box, typeof (int));
+					ilgen.Emit (OpCodes.Ldarg_1);
+					ilgen.Emit (OpCodes.Box, typeof (int));
+					ilgen.Emit (OpCodes.Call, typeof (Console).GetMethod ("WriteLine", new Type [] { typeof (string), typeof (object), typeof (object), typeof (object) }));
+				}
 
 				// FIXME: Optimize this
 				if (generic_ops.ContainsKey (pc))
@@ -306,7 +334,7 @@ namespace System.Text.RegularExpressions {
 						// call SetStartOfMatch (strpos)
 						ilgen.Emit (OpCodes.Ldarg_0);
 						ilgen.Emit (OpCodes.Ldarg_1);
-						ilgen.Emit (OpCodes.Call, GetInterpreterMethod ("SetStartOfMatch"));
+						ilgen.Emit (OpCodes.Call, GetMethod (typeof (RxInterpreter), "SetStartOfMatch", ref mi_set_start_of_match));
 						//    return true;
 						ilgen.Emit (OpCodes.Br, frame.label_pass);
 
@@ -1039,6 +1067,267 @@ namespace System.Text.RegularExpressions {
 
 					break;
 				}
+
+				case RxOp.FastRepeat: {
+					/*
+					 * A FastRepeat is a simplified version of Repeat which does
+					 * not contain another repeat inside, so backtracking is 
+					 * easier.
+					 * FIXME: Implement faster backtracking versions for
+					 * simple inner exceptions like chars/strings.
+					 */
+					bool lazy = program [pc] == (byte)RxOp.FastRepeatLazy;
+					int tail = pc + program [pc + 1] | (program [pc + 2] << 8);
+ 					start = ReadInt (program, pc + 3);
+ 					end = ReadInt (program, pc + 7);
+					//Console.WriteLine ("min: {0}, max: {1} tail: {2}", start, end, tail);
+
+					//  deep = null;
+					ilgen.Emit (OpCodes.Ldarg_0);
+					ilgen.Emit (OpCodes.Ldnull);
+					ilgen.Emit (OpCodes.Stfld, fi_deep);
+
+					LocalBuilder local_length = ilgen.DeclareLocal (typeof (int));
+					
+					// First match at least 'start' items
+					if (start > 0) {
+						//for (length = 0; length < start; ++length) {
+
+						ilgen.Emit (OpCodes.Ldc_I4_0);
+						ilgen.Emit (OpCodes.Stloc, local_length);
+						Label l_loop_footer = ilgen.DefineLabel ();
+						ilgen.Emit (OpCodes.Br, l_loop_footer);
+						Label l_loop_body = ilgen.DefineLabel ();
+						ilgen.MarkLabel (l_loop_body);
+
+						// int old_strpos = strpos;
+						LocalBuilder local_old_strpos = ilgen.DeclareLocal (typeof (int));
+						ilgen.Emit (OpCodes.Ldarg_1);
+						ilgen.Emit (OpCodes.Stloc, local_old_strpos);
+						
+						// if (!EvalByteCode (pc + 11, strpos, ref res))
+						Frame new_frame = new Frame (ilgen);
+						m = EmitEvalMethodBody (m, ilgen, new_frame, program, pc + 11, false, false, out out_pc);
+						if (m == null)
+							return null;
+
+						// Fail
+						// return false;
+						ilgen.MarkLabel (new_frame.label_fail);
+						ilgen.Emit (OpCodes.Br, frame.label_fail);
+
+						// Pass
+						ilgen.MarkLabel (new_frame.label_pass);
+						//  strpos = res;
+						ilgen.Emit (OpCodes.Ldloc, new_frame.local_strpos_res);
+						ilgen.Emit (OpCodes.Starg, 1);
+						// length++
+						ilgen.Emit (OpCodes.Ldloc, local_length);
+						ilgen.Emit (OpCodes.Ldc_I4_1);
+						ilgen.Emit (OpCodes.Add);
+						ilgen.Emit (OpCodes.Stloc, local_length);
+						// Loop footer
+						ilgen.MarkLabel (l_loop_footer);
+						ilgen.Emit (OpCodes.Ldloc, local_length);
+						ilgen.Emit (OpCodes.Ldc_I4, start);
+						ilgen.Emit (OpCodes.Blt, l_loop_body);
+					}
+
+					if (lazy) {
+						// FIXME:
+						return null;
+					} else {
+						// Then match as many items as possible, recording
+						// backtracking information
+						
+						//int old_stack_size = stack.Count;
+						LocalBuilder local_old_stack_size = ilgen.DeclareLocal (typeof (int));
+						ilgen.Emit (OpCodes.Ldarg_0);
+						ilgen.Emit (OpCodes.Ldflda, fi_stack);
+						ilgen.Emit (OpCodes.Call, GetMethod (typeof (RxInterpreter.IntStack), "get_Count", ref mi_stack_get_count));
+						ilgen.Emit (OpCodes.Stloc, local_old_stack_size);
+						//while (length < end) {
+						Label l_loop_footer = ilgen.DefineLabel ();
+						ilgen.Emit (OpCodes.Br, l_loop_footer);
+						Label l_loop_body = ilgen.DefineLabel ();
+						ilgen.MarkLabel (l_loop_body);
+						//  int cp = Checkpoint ();
+						LocalBuilder local_cp = ilgen.DeclareLocal (typeof (int));
+						ilgen.Emit (OpCodes.Ldarg_0);
+						ilgen.Emit (OpCodes.Call, mi_checkpoint);
+						ilgen.Emit (OpCodes.Stloc, local_cp);
+
+						// int old_strpos = strpos;
+						// Needed because the code generated by EvalByCode
+						// actually overwrites strpos.
+						LocalBuilder local_old_strpos = ilgen.DeclareLocal (typeof (int));
+						ilgen.Emit (OpCodes.Ldarg_1);
+						ilgen.Emit (OpCodes.Stloc, local_old_strpos);
+
+						//  if (!EvalByteCode (pc + 11, strpos, ref res)) {
+						Frame new_frame = new Frame (ilgen);
+						m = EmitEvalMethodBody (m, ilgen, new_frame, program, pc + 11, false, false, out out_pc);
+						if (m == null)
+							return null;
+
+						// Fail:
+						ilgen.MarkLabel (new_frame.label_fail);
+						// strpos = old_strpos
+						ilgen.Emit (OpCodes.Ldloc, local_old_strpos);
+						ilgen.Emit (OpCodes.Starg, 1);
+						//    Backtrack (cp);
+						ilgen.Emit (OpCodes.Ldarg_0);
+						ilgen.Emit (OpCodes.Ldloc, local_cp);
+						ilgen.Emit (OpCodes.Call, mi_backtrack);
+
+						//    break;
+						Label l_after_loop = ilgen.DefineLabel ();
+						ilgen.Emit (OpCodes.Br, l_after_loop);
+
+						// Success:
+						ilgen.MarkLabel (new_frame.label_pass);
+						// strpos = old_strpos
+						ilgen.Emit (OpCodes.Ldloc, local_old_strpos);
+						ilgen.Emit (OpCodes.Starg, 1);
+
+						//stack.Push (cp);
+						ilgen.Emit (OpCodes.Ldarg_0);
+						ilgen.Emit (OpCodes.Ldflda, fi_stack);
+						ilgen.Emit (OpCodes.Ldloc, local_cp);
+						ilgen.Emit (OpCodes.Call, GetMethod (typeof (RxInterpreter.IntStack), "Push", ref mi_stack_push));
+						//stack.Push (strpos);
+						ilgen.Emit (OpCodes.Ldarg_0);
+						ilgen.Emit (OpCodes.Ldflda, fi_stack);
+						ilgen.Emit (OpCodes.Ldarg, 1);
+						ilgen.Emit (OpCodes.Call, GetMethod (typeof (RxInterpreter.IntStack), "Push", ref mi_stack_push));
+						// strpos = res;
+						ilgen.Emit (OpCodes.Ldloc, new_frame.local_strpos_res);
+						ilgen.Emit (OpCodes.Starg, 1);
+						// length++
+						ilgen.Emit (OpCodes.Ldloc, local_length);
+						ilgen.Emit (OpCodes.Ldc_I4_1);
+						ilgen.Emit (OpCodes.Add);
+						ilgen.Emit (OpCodes.Stloc, local_length);
+						// Loop footer
+						ilgen.MarkLabel (l_loop_footer);
+						ilgen.Emit (OpCodes.Ldloc, local_length);
+						ilgen.Emit (OpCodes.Ldc_I4, end);
+						ilgen.Emit (OpCodes.Blt, l_loop_body);
+
+						ilgen.MarkLabel (l_after_loop);
+
+						// Then, match the tail, backtracking as necessary.
+
+						//while (true) {
+						l_loop_footer = ilgen.DefineLabel ();
+						ilgen.Emit (OpCodes.Br, l_loop_footer);
+						l_loop_body = ilgen.DefineLabel ();
+						ilgen.MarkLabel (l_loop_body);
+
+
+						//  if (EvalByteCode (tail, strpos, ref res)) {
+						new_frame = new Frame (ilgen);
+						m = EmitEvalMethodBody (m, ilgen, new_frame, program, tail, false, false, out out_pc);
+						if (m == null)
+							return null;
+
+						// Success:
+						ilgen.MarkLabel (new_frame.label_pass);
+						//	stack.Count = old_stack_size;
+						ilgen.Emit (OpCodes.Ldarg_0);
+						ilgen.Emit (OpCodes.Ldflda, fi_stack);
+						ilgen.Emit (OpCodes.Ldloc, local_old_stack_size);
+						ilgen.Emit (OpCodes.Call, GetMethod (typeof (RxInterpreter.IntStack), "set_Count", ref mi_stack_set_count));
+						//  strpos_result = res;
+						ilgen.Emit (OpCodes.Ldloc, new_frame.local_strpos_res);
+						ilgen.Emit (OpCodes.Stloc, frame.local_strpos_res);
+						//  return true;
+						ilgen.Emit (OpCodes.Br, frame.label_pass);
+
+						// Fail:
+						ilgen.MarkLabel (new_frame.label_fail);
+						//  if (stack.Count == old_stack_size)
+						//		return false;
+						ilgen.Emit (OpCodes.Ldarg_0);
+						ilgen.Emit (OpCodes.Ldflda, fi_stack);
+						ilgen.Emit (OpCodes.Call, GetMethod (typeof (RxInterpreter.IntStack), "get_Count", ref mi_stack_get_count));
+						ilgen.Emit (OpCodes.Ldloc, local_old_stack_size);
+						ilgen.Emit (OpCodes.Beq, frame.label_fail);
+						
+						// Backtrack
+						//strpos = stack.Pop ();
+						ilgen.Emit (OpCodes.Ldarg_0);
+						ilgen.Emit (OpCodes.Ldflda, fi_stack);
+						ilgen.Emit (OpCodes.Call, GetMethod (typeof (RxInterpreter.IntStack), "Pop", ref mi_stack_pop));
+						ilgen.Emit (OpCodes.Starg, 1);
+						//Backtrack (stack.Pop ());
+						ilgen.Emit (OpCodes.Ldarg_0);
+						ilgen.Emit (OpCodes.Ldarg_0);
+						ilgen.Emit (OpCodes.Ldflda, fi_stack);
+						ilgen.Emit (OpCodes.Call, GetMethod (typeof (RxInterpreter.IntStack), "Pop", ref mi_stack_pop));
+						ilgen.Emit (OpCodes.Call, GetMethod ("Backtrack", ref mi_backtrack));
+
+						if (RxInterpreter.trace_rx) {
+							//Console.WriteLine ("backtracking to: {0}", strpos);
+							ilgen.Emit (OpCodes.Ldstr, "backtracking to: {0}");
+							ilgen.Emit (OpCodes.Ldarg_1);
+							ilgen.Emit (OpCodes.Box, typeof (int));
+							ilgen.Emit (OpCodes.Call, typeof (Console).GetMethod ("WriteLine", new Type [] { typeof (string), typeof (object) }));
+						}
+
+						// Loop footer
+						ilgen.MarkLabel (l_loop_footer);
+						ilgen.Emit (OpCodes.Br, l_loop_body);
+					}
+
+#if FALSE
+					if (lazy) {
+						while (true) {
+							// Match the tail
+							int cp = Checkpoint ();
+							if (EvalByteCode (tail, strpos, ref res)) {
+								strpos = res;
+								goto repeat_success;
+							}
+							Backtrack (cp);
+
+							if (length >= end)
+								return false;
+
+							// Match an item
+							if (!EvalByteCode (pc + 11, strpos, ref res))
+								return false;
+							strpos = res;
+							length ++;
+						}
+					} else {
+						// Then, match the tail, backtracking as necessary.
+						while (true) {
+							if (EvalByteCode (tail, strpos, ref res)) {
+								strpos = res;
+								stack.Count = old_stack_size;
+								goto repeat_success;
+							}
+							if (stack.Count == old_stack_size)
+								return false;
+
+							// Backtrack
+							strpos = stack.Pop ();
+							Backtrack (stack.Pop ());
+							if (trace_rx)
+								Console.WriteLine ("backtracking to: {0}", strpos);
+						}
+					}
+
+ 				repeat_success:
+					// We matched the tail too so just return
+					goto Pass;
+#endif
+					// We already processed the tail
+					goto End;
+				}
+
+#if FALSE
 				case RxOp.Repeat: {
 					// FIXME: This is the old repeat, need to reimplement it as
 					// FastRepeat/FastRepeatLazy. The general Repeat/Until opcodes
@@ -1112,28 +1401,8 @@ namespace System.Text.RegularExpressions {
 					pc += program [pc + 1] | (program [pc + 2] << 8);
 					break;
 				}
-#if FALSE
-					//if (strpos < string_end && str [strpos] != '\n') {
-					ilgen.Emit (OpCodes.Ldarg_1);
-					ilgen.Emit (OpCodes.Ldarg_0);
-					ilgen.Emit (OpCodes.Ldfld, fi_string_end);
-					ilgen.Emit (OpCodes.Bge, frame.label_fail);
-					ilgen.Emit (OpCodes.Ldarg_0);
-					ilgen.Emit (OpCodes.Ldfld, fi_str);
-					ilgen.Emit (OpCodes.Ldarg_1);
-					ilgen.Emit (OpCodes.Callvirt, typeof (string).GetMethod ("get_Chars"));
-					ilgen.Emit (OpCodes.Ldc_I4, (int)'\n');
-					ilgen.Emit (OpCodes.Beq, frame.label_fail);
-					//	strpos++;
-					ilgen.Emit (OpCodes.Ldarg_1);
-					ilgen.Emit (OpCodes.Ldc_I4_1);
-					ilgen.Emit (OpCodes.Add);
-					ilgen.Emit (OpCodes.Starg, 1);
-
-					pc++;
-					break;
-				}
 #endif
+
 				case RxOp.CategoryAny:
 				case RxOp.CategoryAnySingleline:
 				case RxOp.CategoryWord:
@@ -1332,13 +1601,15 @@ namespace System.Text.RegularExpressions {
 					ilgen.MarkLabel (l_match);
 
 					//    strpos++;
-					ilgen.Emit (OpCodes.Ldarg_1);
-					ilgen.Emit (OpCodes.Ldc_I4_1);
-					if (reverse)
-						ilgen.Emit (OpCodes.Sub);
-					else
-						ilgen.Emit (OpCodes.Add);
-					ilgen.Emit (OpCodes.Starg, 1);
+					if (!no_bump) {
+						ilgen.Emit (OpCodes.Ldarg_1);
+						ilgen.Emit (OpCodes.Ldc_I4_1);
+						if (reverse)
+							ilgen.Emit (OpCodes.Sub);
+						else
+							ilgen.Emit (OpCodes.Add);
+						ilgen.Emit (OpCodes.Starg, 1);
+					}
 					//  }
 					Label l2 = ilgen.DefineLabel ();
 					ilgen.Emit (OpCodes.Br, l2);

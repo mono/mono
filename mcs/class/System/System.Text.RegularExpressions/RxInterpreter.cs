@@ -28,11 +28,11 @@ namespace System.Text.RegularExpressions {
 		RepeatContext deep;		// points to the most-nested repeat context
 
 		/* The readonly ensures the JIT can optimize out if (trace_rx) statements */
-		static readonly bool trace_rx = Environment.GetEnvironmentVariable ("RXD") != null;
+		public static readonly bool trace_rx = Environment.GetEnvironmentVariable ("RXD") != null;
 
 		// private classes
 
-		private struct IntStack {
+		internal struct IntStack {
 			int [] values;
 			int count;
 			public int Pop ()

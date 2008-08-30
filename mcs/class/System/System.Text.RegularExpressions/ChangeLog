@@ -1,5 +1,7 @@
 2008-08-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* CILCompiler.cs: Implement FastRepeat.
+
 	* RxInterpreter.cs: Add back SetStartOfMatch, make it protected so as to
 	avoid a warning.
 
