@@ -1,5 +1,7 @@
 2008-08-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* CILCompiler.cs: Implement FastRepeatLazy.
+	
 	* CILCompiler.cs: Get rid of commented out code. Also get rid of
 	frame.local_strpos_res, since the generated code already set Arg1 to
 	the same value.
