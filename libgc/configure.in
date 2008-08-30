@@ -112,29 +112,9 @@ case "$THREADS" in
 	AC_DEFINE(THREAD_LOCAL_ALLOC)
 	THREADDLLIBS="-lpthread -lrt"
 	;;
-     *-*-freebsd4*)
-	AC_MSG_WARN("FreeBSD does not yet fully support threads with Boehm GC.")
+      *-*-freebsd*)
 	AC_DEFINE(GC_FREEBSD_THREADS)
-	if test "x$PTHREAD_CFLAGS" = "x"; then
-		INCLUDES="$INCLUDES -pthread"
-	else
-		INCLUDES="$INCLUDES $PTHREAD_CFLAGS"
-	fi
-	if test "x$PTHREAD_LIBS" = "x"; then
-		THREADDLLIBS=-pthread
-	else
-		THREADDLLIBS=$PTHREAD_LIBS
-	fi
-      	;;
-     *-*-freebsd5*)
-	AC_MSG_WARN("FreeBSD does not yet fully support threads with Boehm GC.")
-	AC_DEFINE(GC_FREEBSD_THREADS)
-	INCLUDES="$INCLUDES -pthread"
-	THREADDLLIBS=-pthread
-      	;;
-	 *-*-freebsd6*)
-	 AC_DEFINE(GC_FREEBSD_THREADS)
-	 if test "x$PTHREAD_CFLAGS" != "x"; then
+	if test "x$PTHREAD_CFLAGS" != "x"; then
 		INCLUDES="$INCLUDES $PTHREAD_CFLAGS"
 	fi
 	if test "x$PTHREAD_LIBS" = "x"; then
