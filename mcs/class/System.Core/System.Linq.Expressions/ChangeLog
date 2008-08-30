@@ -1,3 +1,7 @@
+2008-08-30  Marek Safar  <marek.safar@gmail.com>
+
+	* MemberBinding.cs: Made MemberBinding ctor public
+
 2008-08-07  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs (GetAssociatedProperty): strengthen accessors
