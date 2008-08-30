@@ -12,6 +12,11 @@
 // USE -define:DEMO to build this as a standalone file and test it
 //
 // TODO:
+//    Enter an error (a = 1);  Notice how the prompt is in the wrong line
+//		This is caused by Stderr not being tracked by System.Console.
+//    Typing before the program start causes the cursor position to be wrong
+//              This is caused by Console not reading all the available data
+//              before sending the report-position sequence and reading it back.
 //    Completion support
 //    System.Console needs to get the DELETE character, and report accordingly.
 //    Why is Thread.Interrupt not working?   Currently I resort to Abort which is too much.
@@ -912,8 +917,6 @@ namespace Mono.Terminal {
 
 			public string SearchBackward (string term)
 			{
-				Dump ();
-				
 				for (int i = 1; i < count; i++){
 					int slot = cursor-i;
 					if (slot < 0)
