@@ -38,7 +38,6 @@ namespace System.Text.RegularExpressions {
 		static FieldInfo fi_str = typeof (RxInterpreter).GetField ("str", BindingFlags.Instance|BindingFlags.NonPublic);
 		static FieldInfo fi_string_start = typeof (RxInterpreter).GetField ("string_start", BindingFlags.Instance|BindingFlags.NonPublic);
 		static FieldInfo fi_string_end = typeof (RxInterpreter).GetField ("string_end", BindingFlags.Instance|BindingFlags.NonPublic);
-//		static FieldInfo fi_match_start = typeof (RxInterpreter).GetField ("match_start", BindingFlags.Instance|BindingFlags.NonPublic);
 		static FieldInfo fi_program = typeof (RxInterpreter).GetField ("program", BindingFlags.Instance|BindingFlags.NonPublic);
 		static FieldInfo fi_marks = typeof (RxInterpreter).GetField ("marks", BindingFlags.Instance|BindingFlags.NonPublic);
 		static FieldInfo fi_groups = typeof (RxInterpreter).GetField ("groups", BindingFlags.Instance|BindingFlags.NonPublic);
@@ -46,15 +45,10 @@ namespace System.Text.RegularExpressions {
 		static FieldInfo fi_stack = typeof (RxInterpreter).GetField ("stack", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
 		static FieldInfo fi_mark_start = typeof (Mark).GetField ("Start", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
 		static FieldInfo fi_mark_end = typeof (Mark).GetField ("End", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
-		static MethodInfo mi_is_word_char = typeof (RxInterpreter).GetMethod ("IsWordChar", BindingFlags.Static|BindingFlags.NonPublic);
-		static MethodInfo mi_reset_groups = typeof (RxInterpreter).GetMethod ("ResetGroups", BindingFlags.Instance|BindingFlags.NonPublic);
-		static MethodInfo mi_checkpoint = typeof (RxInterpreter).GetMethod ("Checkpoint", BindingFlags.Instance|BindingFlags.NonPublic);
-		static MethodInfo mi_backtrack = typeof (RxInterpreter).GetMethod ("Backtrack", BindingFlags.Instance|BindingFlags.NonPublic);
-		static MethodInfo mi_open = typeof (RxInterpreter).GetMethod ("Open", BindingFlags.Instance|BindingFlags.NonPublic);
-		static MethodInfo mi_close = typeof (RxInterpreter).GetMethod ("Close", BindingFlags.Instance|BindingFlags.NonPublic);
 
 		static MethodInfo mi_stack_get_count, mi_stack_set_count, mi_stack_push, mi_stack_pop;
-		static MethodInfo mi_set_start_of_match;
+		static MethodInfo mi_set_start_of_match, mi_is_word_char, mi_reset_groups;
+		static MethodInfo mi_checkpoint, mi_backtrack, mi_open, mi_close;
 
 		public CILCompiler () {
 			generic_ops = new Dictionary <int, int> ();
@@ -90,7 +84,7 @@ namespace System.Text.RegularExpressions {
 
 		private MethodInfo GetMethod (Type t, string name, ref MethodInfo cached) {
 			if (cached == null) {
-				cached = t.GetMethod (name, BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
+				cached = t.GetMethod (name, BindingFlags.Static|BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
 				if (cached == null)
 					throw new Exception ("Method not found: " + name);
 			}
@@ -319,13 +313,6 @@ namespace System.Text.RegularExpressions {
 
 						// True case
 						ilgen.MarkLabel (l3);
-						//    match_start = strpos;
-						// match_start doesn't seem to be used
-						/* 
-						ilgen.Emit (OpCodes.Ldarg_0);
-						ilgen.Emit (OpCodes.Ldarg_1);
-						ilgen.Emit (OpCodes.Stfld, fi_match_start);
-						*/
 						//    strpos_result = strpos + 1;
 						ilgen.Emit (OpCodes.Ldarg_1);
 						ilgen.Emit (OpCodes.Ldc_I4_1);
@@ -364,7 +351,7 @@ namespace System.Text.RegularExpressions {
 						//}
 						if (group_count > 1) {
 							ilgen.Emit (OpCodes.Ldarg_0);
-							ilgen.Emit (OpCodes.Call, mi_reset_groups);
+							ilgen.Emit (OpCodes.Call, GetMethod ("ResetGroups", ref mi_reset_groups));
 
 							ilgen.Emit (OpCodes.Ldarg_0);
 							ilgen.Emit (OpCodes.Ldfld, fi_marks);
@@ -392,13 +379,6 @@ namespace System.Text.RegularExpressions {
 
 						// Pass
 						ilgen.MarkLabel (new_frame.label_pass);
-						//    match_start = old_strpos;
-						// match_start doesn't seem to be used
-						/*
-						ilgen.Emit (OpCodes.Ldarg_0);
-						ilgen.Emit (OpCodes.Ldloc, local_old_strpos);
-						ilgen.Emit (OpCodes.Stfld, fi_match_start);
-						*/
 						//    strpos_result = res;
 						ilgen.Emit (OpCodes.Ldloc, new_frame.local_strpos_res);
 						ilgen.Emit (OpCodes.Stloc, frame.local_strpos_res);
@@ -723,7 +703,7 @@ namespace System.Text.RegularExpressions {
 					ilgen.Emit (OpCodes.Ldfld, fi_str);
 					ilgen.Emit (OpCodes.Ldarg_1);
 					ilgen.Emit (OpCodes.Callvirt, typeof (string).GetMethod ("get_Chars"));
-					ilgen.Emit (OpCodes.Call, mi_is_word_char);
+					ilgen.Emit (OpCodes.Call, GetMethod ("IsWordChar", ref mi_is_word_char));
 					ilgen.Emit (negate ? OpCodes.Brtrue : OpCodes.Brfalse, frame.label_fail);
 					ilgen.Emit (OpCodes.Br, l_match);
 
@@ -742,7 +722,7 @@ namespace System.Text.RegularExpressions {
 					ilgen.Emit (OpCodes.Ldc_I4_1);
 					ilgen.Emit (OpCodes.Sub);
 					ilgen.Emit (OpCodes.Callvirt, typeof (string).GetMethod ("get_Chars"));
-					ilgen.Emit (OpCodes.Call, mi_is_word_char);
+					ilgen.Emit (OpCodes.Call, GetMethod ("IsWordChar", ref mi_is_word_char));
 					ilgen.Emit (negate ? OpCodes.Brtrue : OpCodes.Brfalse, frame.label_fail);
 					ilgen.Emit (OpCodes.Br, l_match);
 
@@ -754,14 +734,14 @@ namespace System.Text.RegularExpressions {
 					ilgen.Emit (OpCodes.Ldfld, fi_str);
 					ilgen.Emit (OpCodes.Ldarg_1);
 					ilgen.Emit (OpCodes.Callvirt, typeof (string).GetMethod ("get_Chars"));
-					ilgen.Emit (OpCodes.Call, mi_is_word_char);
+					ilgen.Emit (OpCodes.Call, GetMethod ("IsWordChar", ref mi_is_word_char));
 					ilgen.Emit (OpCodes.Ldarg_0);
 					ilgen.Emit (OpCodes.Ldfld, fi_str);
 					ilgen.Emit (OpCodes.Ldarg_1);
 					ilgen.Emit (OpCodes.Ldc_I4_1);
 					ilgen.Emit (OpCodes.Sub);
 					ilgen.Emit (OpCodes.Callvirt, typeof (string).GetMethod ("get_Chars"));
-					ilgen.Emit (OpCodes.Call, mi_is_word_char);
+					ilgen.Emit (OpCodes.Call, GetMethod ("IsWordChar", ref mi_is_word_char));
 					ilgen.Emit (negate ? OpCodes.Bne_Un : OpCodes.Beq, frame.label_fail);
 					ilgen.Emit (OpCodes.Br, l_match);
 
@@ -979,7 +959,7 @@ namespace System.Text.RegularExpressions {
 					ilgen.Emit (OpCodes.Ldarg_0);
 					ilgen.Emit (OpCodes.Ldc_I4, group_id);
 					ilgen.Emit (OpCodes.Ldarg_1);
-					ilgen.Emit (OpCodes.Call, mi_open);
+					ilgen.Emit (OpCodes.Call, GetMethod ("Open", ref mi_open));
 
 					pc += 3;
 					break;
@@ -990,7 +970,7 @@ namespace System.Text.RegularExpressions {
 					ilgen.Emit (OpCodes.Ldarg_0);
 					ilgen.Emit (OpCodes.Ldc_I4, group_id);
 					ilgen.Emit (OpCodes.Ldarg_1);
-					ilgen.Emit (OpCodes.Call, mi_close);
+					ilgen.Emit (OpCodes.Call, GetMethod ("Close", ref mi_close));
 
 					pc += 3;
 					break;
@@ -1154,7 +1134,7 @@ namespace System.Text.RegularExpressions {
 						//  int cp = Checkpoint ();
 						LocalBuilder local_cp = ilgen.DeclareLocal (typeof (int));
 						ilgen.Emit (OpCodes.Ldarg_0);
-						ilgen.Emit (OpCodes.Call, mi_checkpoint);
+						ilgen.Emit (OpCodes.Call, GetMethod ("Checkpoint", ref mi_checkpoint));
 						ilgen.Emit (OpCodes.Stloc, local_cp);
 
 						// int old_strpos = strpos;
@@ -1178,7 +1158,7 @@ namespace System.Text.RegularExpressions {
 						//    Backtrack (cp);
 						ilgen.Emit (OpCodes.Ldarg_0);
 						ilgen.Emit (OpCodes.Ldloc, local_cp);
-						ilgen.Emit (OpCodes.Call, mi_backtrack);
+						ilgen.Emit (OpCodes.Call, GetMethod ("Backtrack", ref mi_backtrack));
 
 						//    break;
 						Label l_after_loop = ilgen.DefineLabel ();
