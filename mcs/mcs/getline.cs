@@ -12,6 +12,7 @@
 // USE -define:DEMO to build this as a standalone file and test it
 //
 // TODO:
+//    Word-move does not skip over "="
 //    Enter an error (a = 1);  Notice how the prompt is in the wrong line
 //		This is caused by Stderr not being tracked by System.Console.
 //    Typing before the program start causes the cursor position to be wrong
@@ -62,9 +63,6 @@ namespace Mono.Terminal {
 		// If we are done editing, this breaks the interactive loop
 		bool done = false;
 
-		// History: if this is the first time that the user navigates history
-		bool history_appended = false;
-		
 		// The thread where the Editing started taking place
 		Thread edit_thread;
 
@@ -126,7 +124,7 @@ namespace Mono.Terminal {
 
 		static Handler [] handlers;
 
-		public LineEditor (string name) : this (name, 100) { }
+		public LineEditor (string name) : this (name, 10) { }
 		
 		public LineEditor (string name, int histsize)
 		{
@@ -502,13 +500,7 @@ namespace Mono.Terminal {
 		//
 		void HistoryUpdateLine ()
 		{
-			if (!history_appended){
-				if (text.Length != 0){
-					history.Append (text.ToString ());
-				} 
-				history_appended = true;
-			} else
-				history.Update (text.ToString ());
+			history.Update (text.ToString ());
 		}
 		
 		void CmdHistoryPrev ()
@@ -731,14 +723,14 @@ namespace Mono.Terminal {
 			Console.CancelKeyPress += InterruptEdit;
 			
 			done = false;
-			history_appended = false;
 			history.CursorToEnd ();
 			max_rendered = 0;
 			
 			Prompt = prompt;
 			shown_prompt = prompt;
 			InitText (initial);
-
+			history.Append (initial);
+			
 			do {
 				try {
 					EditLoop ();
@@ -760,12 +752,11 @@ namespace Mono.Terminal {
 			}
 
 			string result = text.ToString ();
-			if (result != ""){
-				if (history_appended)
-					history.Update (result);
-				else
-					history.Append (result);
-			}
+			if (result != "")
+				history.Accept (result);
+			else
+				history.RemoveLast ();
+
 			return result;
 		}
 
@@ -854,6 +845,22 @@ namespace Mono.Terminal {
 				history [cursor] = s;
 			}
 
+			public void RemoveLast ()
+			{
+				head = head-1;
+				if (head < 0)
+					head = history.Length-1;
+			}
+			
+			public void Accept (string s)
+			{
+				int t = head-1;
+				if (t < 0)
+					t = history.Length-1;
+				
+				history [t] = s;
+			}
+			
 			public bool PreviousAvailable ()
 			{
 				//Console.WriteLine ("h={0} t={1} cursor={2}", head, tail, cursor);
@@ -944,7 +951,7 @@ namespace Mono.Terminal {
 	class Demo {
 		static void Main ()
 		{
-			LineEditor le = new LineEditor ("mcs");
+			LineEditor le = new LineEditor (null);
 			string s;
 			
 			while ((s = le.Edit ("shell> ", "")) != null){
