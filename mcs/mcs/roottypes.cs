@@ -25,7 +25,7 @@ namespace Mono.CSharp
 	{
 		// TODO: It'd be so nice to have generics
 		Hashtable anonymous_types;
-
+		
 		public RootTypes ()
 			: base (null, null, MemberName.Null, null, Kind.Root)
 		{
@@ -86,10 +86,17 @@ namespace Mono.CSharp
 			return true;
 		}
 
+		protected override void RemoveMemberType (DeclSpace ds)
+		{
+			ds.NamespaceEntry.NS.RemoveDeclSpace (ds.Basename);
+			base.RemoveMemberType (ds);
+		}
+		
 		public override TypeContainer AddPartial (TypeContainer nextPart)
 		{
 			return AddPartial (nextPart, nextPart.Name);
 		}
+
 	}
 
 	public class RootDeclSpace : DeclSpace {

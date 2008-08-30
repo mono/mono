@@ -66,10 +66,18 @@ namespace Mono.CSharp {
 
 		//
 		// If true, it means that the compiler is executing as
-		// in eval mode.
+		// in eval mode so unresolved variables are resolved in
+		// static classes maintained by the eval engine.
 		//
 		static public bool EvalMode;
 
+		//
+		// If true, the compiler is operating in statement mode,
+		// this currently turns local variable declaration into
+		// static variables of a class
+		//
+		static public bool StatementMode;
+		
 		//
 		// Whether to allow Unsafe code
 		//
@@ -125,12 +133,19 @@ namespace Mono.CSharp {
 		//
 		static RootContext ()
 		{
-			Reset ();
+			Reset (true);
 		}
 
-		public static void Reset ()
+		public static void PartialReset ()
 		{
-			root = new RootTypes ();
+			Reset (false);
+		}
+		
+		public static void Reset (bool full)
+		{
+			if (full)
+				root = new RootTypes ();
+			
 			type_container_resolve_order = new ArrayList ();
 			EntryPoint = null;
 			Report.WarningLevel = 4;

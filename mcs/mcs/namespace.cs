@@ -441,6 +441,15 @@ namespace Mono.CSharp {
 					//
 					tdecl.DefineType ();
 					t = tdecl.TypeBuilder;
+
+					if (RootContext.EvalMode){
+						// Replace the TypeBuilder with a System.Type, as
+						// Reflection.Emit fails otherwise (we end up pretty
+						// much with Random type definitions later on).
+						Type tt = t.Assembly.GetType (t.Name);
+						if (tt != null)
+							t = tt;
+					}
 				}
 			}
 			string lookup = t != null ? t.FullName : (fullname.Length == 0 ? name : fullname + "." + name);
@@ -544,6 +553,11 @@ namespace Mono.CSharp {
 			declspaces.Add (name, ds);
 		}
 
+		public void RemoveDeclSpace (string name)
+		{
+			declspaces.Remove (name);
+		}
+		
 		/// <summary>
 		///   The qualified name of the current namespace
 		/// </summary>

@@ -14,14 +14,17 @@
 // TODO:
 //    Enter an error (a = 1);  Notice how the prompt is in the wrong line
 //		This is caused by Stderr not being tracked by System.Console.
+//    Completion support
+//    Why is Thread.Interrupt not working?   Currently I resort to Abort which is too much.
+//
+// Limitations in System.Console:
+//    Console needs SIGWINCH support of some sort
+//    Console needs a way of updating its position after things have been written
+//    behind its back (P/Invoke puts for example).
+//    System.Console needs to get the DELETE character, and report accordingly.
 //    Typing before the program start causes the cursor position to be wrong
 //              This is caused by Console not reading all the available data
 //              before sending the report-position sequence and reading it back.
-//    Completion support
-//    System.Console needs to get the DELETE character, and report accordingly.
-//    Why is Thread.Interrupt not working?   Currently I resort to Abort which is too much.
-//    Console needs SIGWINCH support of some sort
-//
 //
 #if NET_2_0 || NET_1_1
 #define IN_MCS_BUILD
@@ -33,6 +36,7 @@ using System;
 using System.Text;
 using System.IO;
 using System.Threading;
+using System.Reflection;
 
 namespace Mono.Terminal {
 
@@ -176,6 +180,8 @@ namespace Mono.Terminal {
 		void CmdDebug ()
 		{
 			history.Dump ();
+			Console.WriteLine ();
+			Render ();
 		}
 
 		void Render ()
@@ -729,7 +735,7 @@ namespace Mono.Terminal {
 			shown_prompt = prompt;
 			InitText (initial);
 			history.Append (initial);
-			
+
 			do {
 				try {
 					EditLoop ();
@@ -796,7 +802,8 @@ namespace Mono.Terminal {
 						string line;
 						
 						while ((line = sr.ReadLine ()) != null){
-							Append (line);
+							if (line != "")
+								Append (line);
 						}
 					}
 				}

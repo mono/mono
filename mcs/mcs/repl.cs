@@ -9,7 +9,11 @@
 // Copyright 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
 // Copyright 2004, 2005, 2006, 2007, 2008 Novell, Inc
 //
-// 
+//
+// TODO:
+//   Do not print results in Evaluate, do that elsewhere in preparation for Eval refactoring.
+//   Driver.PartialReset should not reset the coretypes, nor the optional types, to avoid
+//      computing that on every call.
 //
 using System;
 using System.IO;
@@ -68,12 +72,15 @@ namespace Mono.CSharp {
 				return editor.Edit (prompt, "");
 			}
 		}
+
 #else
 		static void SetupConsole ()
 		{
 			// Here just to shut up the compiler warnings about unused invoking variable
 			if (invoking)
 				invoking = false;
+
+			Console.Error.WriteLine ("Warning: limited functionality in 1.0 mode");
 		}
 
 		static string GetLine (bool primary)
@@ -85,13 +92,17 @@ namespace Mono.CSharp {
 
 			return Console.ReadLine ();
 		}
+
 #endif
+		delegate string ReadLiner (bool primary);
 
 		static void Reset ()
 		{
-			CompilerCallableEntryPoint.Reset (false);
-			Driver.LoadReferences ();
+			CompilerCallableEntryPoint.PartialReset ();
 
+			//
+			// PartialReset should not reset the core types, this is very redundant.
+			//
 			if (!TypeManager.InitCoreTypes ())
 				throw new Exception ("Failed to InitCoreTypes");
 			TypeManager.InitOptionalCoreTypes ();
@@ -115,6 +126,11 @@ namespace Mono.CSharp {
 		{
 			isatty = UnixUtils.isatty (0) && UnixUtils.isatty (1);
 
+			// Work around, since Console is not accounting for
+			// cursor position when writing to Stderr.  It also
+			// has the undesirable side effect of making
+			// errors plain, with no coloring.
+			Report.Stderr = Console.Out;
 			SetupConsole ();
 
 			if (isatty)
@@ -122,18 +138,37 @@ namespace Mono.CSharp {
 
 		}
 
-		static public int ReadEvalPrintLoop ()
+		static void LoadStartupFiles ()
 		{
-			InitTerminal ();
-			RootContext.EvalMode = true;
+			string dir = Path.Combine (
+				Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData),
+				"csharp");
+			if (!Directory.Exists (dir))
+				return;
 
-			InitializeUsing ();
-			
+			foreach (string file in Directory.GetFiles (dir)){
+				string l = file.ToLower ();
+				
+				if (l.EndsWith (".cs")){
+					try {
+						using (StreamReader r = File.OpenText (file)){
+							ReadEvalPrintLoopWith (p => r.ReadLine ());
+						}
+					} catch {
+					}
+				} else if (l.EndsWith (".dll")){
+					Driver.LoadAssembly (file, true);
+				}
+			}
+		}
+
+		static void ReadEvalPrintLoopWith (ReadLiner readline)
+		{
 			string expr = null;
 			while (true){
-				string input = GetLine (expr == null);
+				string input = readline (expr == null);
 				if (input == null)
-					return 0;
+					return;
 
 				if (input == "")
 					continue;
@@ -142,6 +177,23 @@ namespace Mono.CSharp {
 				
 				expr = Evaluate (expr);
 			} 
+		}
+		
+		static public int ReadEvalPrintLoop ()
+		{
+			CompilerCallableEntryPoint.Reset ();
+			Driver.LoadReferences ();
+			
+			InitTerminal ();
+			RootContext.EvalMode = true;
+
+			InitializeUsing ();
+
+
+			LoadStartupFiles ();
+			ReadEvalPrintLoopWith (GetLine);
+
+			return 0;
 		}
 
 		
@@ -156,10 +208,8 @@ namespace Mono.CSharp {
 				if (partial_input)
 					return input;
 				
-				if (parser == null){
-					ParseString (false, input, out partial_input);
-					return null;
-				}
+				ParseString (false, input, out partial_input);
+				return null;
 			}
 			
 			// 
@@ -170,31 +220,136 @@ namespace Mono.CSharp {
 			//
 			object result = parser.InteractiveResult;
 			
-			if (result is Class){
-				try { 
-					object rval = ExecuteBlock ((Class) result);
-					
-					//
-					// We use a reference to a compiler type, in this case
-					// Driver as a flag to indicate that this was a statement
-					//
-					if (rval != typeof (NoValueSet)){
-						PrettyPrint (rval);
-						Console.WriteLine ();
-					}
-				} catch (Exception e){
-					Console.WriteLine (e);
+			try { 
+				if (!(result is Class))
+					parser.CurrentNamespace.Extract (using_alias_list, using_list);
+
+				object rval = ExecuteBlock (result as Class, parser.undo);
+				//
+				// We use a reference to a compiler type, in this case
+				// Driver as a flag to indicate that this was a statement
+				//
+				if (rval != typeof (NoValueSet)){
+					PrettyPrint (rval);
+					Console.WriteLine ();
 				}
-			} else if (result is NamespaceEntry){
-				((NamespaceEntry)result).Extract (using_alias_list, using_list);
-			} else if (result == null){
-				// Just a happy parse.
-			} else {
-				Console.Error.WriteLine ("Support for {0} is not available on the shell", parser.InteractiveResult);
+			} catch (Exception e){
+				Console.WriteLine (e);
 			}
 			return null;
 		}
 
+		enum InputKind {
+			EOF,
+			StatementOrExpression,
+			CompilationUnit,
+			Error
+		}
+
+		//
+		// Deambiguates the input string to determine if we
+		// want to process a statement or if we want to
+		// process a compilation unit.
+		//
+		// This is done using a top-down predictive parser,
+		// since the yacc/jay parser can not deambiguage this
+		// without more than one lookahead token.   There are very
+		// few ambiguities.
+		//
+		static InputKind ToplevelOrStatement (SeekableStreamReader seekable)
+		{
+			Tokenizer tokenizer = new Tokenizer (seekable, Location.SourceFiles [0]);
+			
+			int t = tokenizer.token ();
+			switch (t){
+			case Token.EOF:
+				return InputKind.EOF;
+				
+			// These are toplevels
+			case Token.EXTERN:
+			case Token.OPEN_BRACKET:
+			case Token.ABSTRACT:
+			case Token.CLASS:
+			case Token.ENUM:
+			case Token.INTERFACE:
+			case Token.INTERNAL:
+			case Token.NAMESPACE:
+			case Token.PRIVATE:
+			case Token.PROTECTED:
+			case Token.PUBLIC:
+			case Token.SEALED:
+			case Token.STATIC:
+			case Token.STRUCT:
+				return InputKind.CompilationUnit;
+				
+			// Definitely expression
+			case Token.FIXED:
+			case Token.BOOL:
+			case Token.BYTE:
+			case Token.CHAR:
+			case Token.DECIMAL:
+			case Token.DOUBLE:
+			case Token.FLOAT:
+			case Token.INT:
+			case Token.LONG:
+			case Token.NEW:
+			case Token.OBJECT:
+			case Token.SBYTE:
+			case Token.SHORT:
+			case Token.STRING:
+			case Token.UINT:
+			case Token.ULONG:
+				return InputKind.StatementOrExpression;
+
+			// These need deambiguation help
+			case Token.USING:
+				t = tokenizer.token ();
+				if (t == Token.EOF)
+					return InputKind.EOF;
+
+				if (t == Token.IDENTIFIER)
+					return InputKind.CompilationUnit;
+				return InputKind.StatementOrExpression;
+
+
+			// Distinguish between:
+			//    delegate opt_anonymous_method_signature block
+			//    delegate type 
+			case Token.DELEGATE:
+				t = tokenizer.token ();
+				if (t == Token.EOF)
+					return InputKind.EOF;
+				if (t == Token.OPEN_PARENS || t == Token.OPEN_BRACE)
+					return InputKind.StatementOrExpression;
+				return InputKind.CompilationUnit;
+
+			// Distinguih between:
+			//    unsafe block
+			//    unsafe as modifier of a type declaration
+			case Token.UNSAFE:
+				t = tokenizer.token ();
+				if (t == Token.EOF)
+					return InputKind.EOF;
+				if (t == Token.OPEN_PARENS)
+					return InputKind.StatementOrExpression;
+				return InputKind.CompilationUnit;
+				
+		        // These are errors: we list explicitly what we had
+			// from the grammar, ERROR and then everything else
+
+			case Token.READONLY:
+			case Token.OVERRIDE:
+			case Token.ERROR:
+				return InputKind.Error;
+
+			// This catches everything else allowed by
+			// expressions.  We could add one-by-one use cases
+			// if needed.
+			default:
+				return InputKind.StatementOrExpression;
+			}
+		}
+		
 		//
 		// Parses the string @input and returns a CSharpParser if succeeful.
 		//
@@ -210,25 +365,44 @@ namespace Mono.CSharp {
 			partial_input = false;
 			Reset ();
 			queued_fields.Clear ();
-			
+
 			Stream s = new MemoryStream (Encoding.Default.GetBytes (input));
 			SeekableStreamReader seekable = new SeekableStreamReader (s, Encoding.Default);
-			Tokenizer t = new Tokenizer (seekable, Location.SourceFiles [0]);
 
-			//
-			// Deambiguate: do we have a using statement, or a using clause
-			//
-			int initial_token;
-			if (t.token () == Token.USING && t.token () == Token.IDENTIFIER)
-				initial_token = Tokenizer.InteractiveParserCharacterUsing;
-			else
-				initial_token = Tokenizer.InteractiveParserCharacter;
+			InputKind kind = ToplevelOrStatement (seekable);
+			if (kind == InputKind.Error){
+				if (!silent)
+					Report.Error (-25, "Detection Parsing Error");
+				partial_input = false;
+				return null;
+			}
+
+			if (kind == InputKind.EOF){
+				if (silent == false)
+					Console.Error.WriteLine ("Internal error: EOF condition should have been detected in a previous call with silent=true");
+				partial_input = true;
+				return null;
+				
+			}
 			seekable.Position = 0;
 
 			CSharpParser parser = new CSharpParser (seekable, Location.SourceFiles [0]);
 			parser.ErrorOutput = Report.Stderr;
 
-			parser.Lexer.putback_char = initial_token;
+			if (kind == InputKind.StatementOrExpression){
+				parser.Lexer.putback_char = Tokenizer.EvalStatementParserCharacter;
+				RootContext.StatementMode = true;
+			} else {
+				//
+				// Do not activate EvalCompilationUnitParserCharacter until
+				// I have figured out all the limitations to invoke methods
+				// in the generated classes.  See repl.txt
+				//
+				parser.Lexer.putback_char = Tokenizer.EvalUsingDeclarationsParserCharacter;
+				//parser.Lexer.putback_char = Tokenizer.EvalCompilationUnitParserCharacter;
+				RootContext.StatementMode = false;
+			}
+
 			if (silent)
 				Report.DisableReporting ();
 			try {
@@ -237,13 +411,14 @@ namespace Mono.CSharp {
 				if (Report.Errors != 0){
 					if (silent && parser.UnexpectedEOF)
 						partial_input = true;
+
+					parser.undo.ExecuteUndo ();
 					parser = null;
 				}
 
 				if (silent)
 					Report.EnableReporting ();
 			}
-
 			return parser;
 		}
 
@@ -296,33 +471,44 @@ namespace Mono.CSharp {
 		//
 		static ArrayList queued_fields = new ArrayList ();
 		
-		static ArrayList types = new ArrayList ();
+		//static ArrayList types = new ArrayList ();
 
 		static volatile bool invoking;
 		
-		static object ExecuteBlock (Class host)
+		static object ExecuteBlock (Class host, Undo undo)
 		{
 			RootContext.ResolveTree ();
+			if (Report.Errors != 0){
+				undo.ExecuteUndo ();
+				return typeof (NoValueSet);
+			}
+			
 			RootContext.PopulateTypes ();
 			RootContext.DefineTypes ();
 
-			if (Report.Errors != 0)
+			if (Report.Errors != 0){
+				undo.ExecuteUndo ();
 				return typeof (NoValueSet);
-
-			TypeBuilder tb = host.TypeBuilder;
-			types.Add (tb);
-			MethodBuilder mb = null;
-			foreach (MemberCore member in host.Methods){
-				if (member.Name != "Host")
-					continue;
-
-				MethodOrOperator method = (MethodOrOperator) member;
-				mb = method.MethodBuilder;
-				break;
 			}
 
-			if (mb == null)
-				throw new Exception ("Internal error: did not find the method builder for the generated method");
+			TypeBuilder tb = null;
+			MethodBuilder mb = null;
+				
+			if (host != null){
+				tb = host.TypeBuilder;
+				mb = null;
+				foreach (MemberCore member in host.Methods){
+					if (member.Name != "Host")
+						continue;
+					
+					MethodOrOperator method = (MethodOrOperator) member;
+					mb = method.MethodBuilder;
+					break;
+				}
+
+				if (mb == null)
+					throw new Exception ("Internal error: did not find the method builder for the generated method");
+			}
 			
 			RootContext.EmitCode ();
 			if (Report.Errors != 0)
@@ -333,19 +519,22 @@ namespace Mono.CSharp {
 			if (Environment.GetEnvironmentVariable ("SAVE") != null)
 				CodeGen.Save (current_debug_name, false);
 
+			if (host == null)
+				return typeof (NoValueSet);
+			
 			//
 			// Unlike Mono, .NET requires that the MethodInfo is fetched, it cant
 			// work from MethodBuilders.   Retarded, I know.
 			//
 			Type tt = CodeGen.Assembly.Builder.GetType (tb.Name);
 			MethodInfo mi = tt.GetMethod (mb.Name);
-
+			
 			// Pull the FieldInfos from the type, and keep track of them
 			foreach (Field field in queued_fields){
 				FieldInfo fi = tt.GetField (field.Name);
-
+				
 				FieldInfo old = (FieldInfo) fields [field.Name];
-
+				
 				// If a previous value was set, nullify it, so that we do
 				// not leak memory
 				if (old != null){
@@ -359,11 +548,13 @@ namespace Mono.CSharp {
 				
 				fields [field.Name] = fi;
 			}
+			//types.Add (tb);
+
 			queued_fields.Clear ();
 			
 			HostSignature invoker = (HostSignature) System.Delegate.CreateDelegate (typeof (HostSignature), mi);
 			object retval = typeof (NoValueSet);
-
+			
 			try {
 				invoking = true;
 				invoker (ref retval);
@@ -373,7 +564,7 @@ namespace Mono.CSharp {
 			} finally {
 				invoking = false;
 			}
-
+			
 			// d.DynamicInvoke  (new object [] { retval });
 
 			return retval;
@@ -466,7 +657,7 @@ namespace Mono.CSharp {
 				return null;
 
 			Field f = new Field (container, new TypeExpression (ret.Type, Location),
-					     Modifiers.NEW | Modifiers.PUBLIC | Modifiers.STATIC,
+					     Modifiers.PUBLIC | Modifiers.STATIC,
 					     name, null, Location);
 			container.AddField (f);
 			if (f.Define ())
@@ -526,6 +717,40 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public class Undo {
+		ArrayList undo_types;
+		
+		public Undo ()
+		{
+			undo_types = new ArrayList ();
+		}
+
+		public void AddTypeContainer (TypeContainer current_container, TypeContainer tc)
+		{
+			if (current_container == tc){
+				Console.Error.WriteLine ("Internal error: inserting container into itself");
+				return;
+			}
+			
+			if (undo_types == null)
+				undo_types = new ArrayList ();
+			undo_types.Add (new Pair (current_container, tc));
+		}
+
+		public void ExecuteUndo ()
+		{
+			if (undo_types == null)
+				return;
+
+			foreach (Pair p in undo_types){
+				TypeContainer current_container = (TypeContainer) p.First;
+
+				current_container.RemoveTypeContainer ((TypeContainer) p.Second);
+			}
+			undo_types = null;
+		}
+	}
+	
 	/// <summary>
 	///   The base class for every interaction line
 	/// </summary>

@@ -58,8 +58,9 @@ namespace Mono.CSharp
 		// impact on the tokenizer's performance.
 		//
 		
-		public const int InteractiveParserCharacter = 0x2190;   // Unicode Left Arrow
-		public const int InteractiveParserCharacterUsing = 0x2191;   // Unicode Down Arrow
+		public const int EvalStatementParserCharacter = 0x2190;   // Unicode Left Arrow
+		public const int EvalCompilationUnitParserCharacter = 0x2191;  // Unicode Arrow
+		public const int EvalUsingDeclarationsParserCharacter = 0x2192;  // Unicode Arrow
 		
 		//
 		// XML documentation buffer. The save point is used to divide
@@ -2785,11 +2786,12 @@ namespace Mono.CSharp
 					}
 				}
 
-				if (c == InteractiveParserCharacter)
-					return Token.INTERACTIVE_PARSER;
-				
-				if (c == InteractiveParserCharacterUsing)
-					return Token.INTERACTIVE_PARSER_USING_DIRECTIVES;
+				if (c == EvalStatementParserCharacter)
+					return Token.EVAL_STATEMENT_PARSER;
+				if (c == EvalCompilationUnitParserCharacter)
+					return Token.EVAL_COMPILATION_UNIT_PARSER;
+				if (c == EvalUsingDeclarationsParserCharacter)
+					return Token.EVAL_USING_DECLARATIONS_UNIT_PARSER;
 				
 				error_details = ((char)c).ToString ();
 				

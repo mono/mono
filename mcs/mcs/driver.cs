@@ -1985,17 +1985,22 @@ namespace Mono.CSharp
 			Reset (true);
 		}
 
-		public static void Reset (bool full)
+		public static void PartialReset ()
+		{
+			Reset (false);
+		}
+		
+		public static void Reset (bool full_flag)
 		{
 			Driver.Reset ();
-			RootContext.Reset ();
+			RootContext.Reset (full_flag);
 			Tokenizer.Reset ();
 			Location.Reset ();
 			Report.Reset ();
 			TypeManager.Reset ();
 			TypeHandle.Reset ();
 
-			if (full)
+			if (full_flag)
 				RootNamespace.Reset ();
 			
 			NamespaceEntry.Reset ();

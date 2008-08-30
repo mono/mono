@@ -1686,6 +1686,11 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		protected override void RemoveFromContainer (string name)
+		{
+			defined_names.Remove (name);
+		}
+
 		void DefineOverrides ()
 		{
 			Location loc = Location;

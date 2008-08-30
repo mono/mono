@@ -12,21 +12,69 @@ Mono, or go to mcs and type:
 
 * Mix statements with other top-level declarations.
 
-	Currently we only process statements, but it would be useful
-	to define classes, interfaces and structs inline.   
+csharp> class Y {static void Main () {Console.WriteLine ("Foo"); }}
+csharp> typeof (Y);
+Y
+csharp> Y.Main ();
+Exception caught by the compiler while compiling:
+   Block that caused the problem begin at: Internal(1,1):
+                     Block being compiled: [<interactive>(1,2):,<interactive>(1,11):]
+System.NotSupportedException: The invoked member is not supported in a dynamic module.
+Internal compiler error at Internal(1,1):: exception caught while emitting MethodBuilder [Class2::Host]
+System.NotSupportedException: The invoked member is not supported in a dynamic module.
+  at System.Reflection.Emit.AssemblyBuilder.get_Location () [0x00000] in /second/home/cvs/mcs/class/corlib/System.Reflection.Emit/AssemblyBuilder.cs:214 
+  at Mono.CSharp.Report.SymbolRelatedToPreviousError (System.Reflection.MemberInfo mi) [0x00036] in /second/home/cvs/mcs/mcs/report.cs:664 
+  at Mono.CSharp.Expression.Error_MemberLookupFailed (System.Type container_type, System.Type qualifier_type, System.Type queried_type, System.String name, System.String class_name, MemberTypes mt, BindingFlags bf) [0x00121] in /second/home/cvs/mcs/mcs/ecore.cs:857 
+  at Mono.CSharp.MemberAccess.DoResolve (Mono.CSharp.EmitContext ec, Mono.CSharp.Expression right_side) [0x00230] in /second/home/cvs/mcs/mcs/expression.cs:7426 
+  at Mono.CSharp.MemberAccess.DoResolve (Mono.CSharp.EmitContext ec) [0x00000] in /second/home/cvs/mcs/mcs/expression.cs:7494 
+  at Mono.CSharp.Expression.Resolve (Mono.CSharp.EmitContext ec, ResolveFlags flags) [0x00075] in /second/home/cvs/mcs/mcs/ecore.cs:479 
+  at Mono.CSharp.Invocation.DoResolve (Mono.CSharp.EmitContext ec) [0x0000d] in /second/home/cvs/mcs/mcs/expression.cs:4725 
+  at Mono.CSharp.Expression.Resolve (Mono.CSharp.EmitContext ec, ResolveFlags flags) [0x00075] in /second/home/cvs/mcs/mcs/ecore.cs:479 
+  at Mono.CSharp.Expression.Resolve (Mono.CSharp.EmitContext ec) [0x00000] in /second/home/cvs/mcs/mcs/ecore.cs:506 
+  at Mono.CSharp.OptionalAssign.DoResolve (Mono.CSharp.EmitContext ec) [0x00013] in /second/home/cvs/mcs/mcs/repl.cs:681 
+  at Mono.CSharp.Expression.Resolve (Mono.CSharp.EmitContext ec, ResolveFlags flags) [0x00075] in /second/home/cvs/mcs/mcs/ecore.cs:479 
+  at Mono.CSharp.Expression.Resolve (Mono.CSharp.EmitContext ec) [0x00000] in /second/home/cvs/mcs/mcs/ecore.cs:506 
+  at Mono.CSharp.ExpressionStatement.ResolveStatement (Mono.CSharp.EmitContext ec) [0x00000] in /second/home/cvs/mcs/mcs/ecore.cs:1307 
+  at Mono.CSharp.StatementExpression.Resolve (Mono.CSharp.EmitContext ec) [0x0000b] in /second/home/cvs/mcs/mcs/statement.cs:743 
+  at Mono.CSharp.Block.Resolve (Mono.CSharp.EmitContext ec) [0x000f0] in /second/home/cvs/mcs/mcs/statement.cs:2254 
+  at Mono.CSharp.ExplicitBlock.Resolve (Mono.CSharp.EmitContext ec) [0x00000] in /second/home/cvs/mcs/mcs/statement.cs:2550 
+  at Mono.CSharp.EmitContext.ResolveTopBlock (Mono.CSharp.EmitContext anonymous_method_host, Mono.CSharp.ToplevelBlock block, Mono.CSharp.Parameters ip, IMethodData md, System.Boolean& unreachable) [0x00087] in /second/home/cvs/mcs/mcs/codegen.cs:796 
+csharp>  
 
-	These pose a problem, as the grammar conflicts on a few 
-	elements like delegate (delegate declaration or anonymous
-	method declration).
+* Another one:
 
-	To address this issue, I should build a mini-parser into
-	repl.cs that does an initial pass at the input stream and
-	determines with as many lookahead tokens as needed whether the
-	text is regular toplevel declaration or our statement
-	declaration.
+csharp> class X { X (){ Console.WriteLine ("Called"); } }              
+csharp> new X ();
+Exception caught by the compiler while compiling:
+   Block that caused the problem begin at: Internal(1,1):
+                     Block being compiled: [<interactive>(1,2):,<interactive>(1,10):]
+System.NotSupportedException: The invoked member is not supported in a dynamic module.
+Internal compiler error at Internal(1,1):: exception caught while emitting MethodBuilder [Class0::Host]
+System.NotSupportedException: The invoked member is not supported in a dynamic module.
+  at System.Reflection.Emit.AssemblyBuilder.get_Location () [0x00000] in /second/home/cvs/mcs/class/corlib/System.Reflection.Emit/AssemblyBuilder.cs:214 
+  at Mono.CSharp.Report.SymbolRelatedToPreviousError (System.Reflection.MemberInfo mi) [0x00036] in /second/home/cvs/mcs/mcs/report.cs:664 
+  at Mono.CSharp.Expression.Error_MemberLookupFailed (System.Type container_type, System.Type qualifier_type, System.Type queried_type, System.String name, System.String class_name, MemberTypes mt, BindingFlags bf) [0x00121] in /second/home/cvs/mcs/mcs/ecore.cs:857 
+  at Mono.CSharp.Expression.MemberLookupFinal (Mono.CSharp.EmitContext ec, System.Type qualifier_type, System.Type queried_type, System.String name, MemberTypes mt, BindingFlags bf, Location loc) [0x0002f] in /second/home/cvs/mcs/mcs/ecore.cs:804 
+  at Mono.CSharp.New.DoResolve (Mono.CSharp.EmitContext ec) [0x002ad] in /second/home/cvs/mcs/mcs/expression.cs:5486 
+  at Mono.CSharp.Expression.Resolve (Mono.CSharp.EmitContext ec, ResolveFlags flags) [0x00075] in /second/home/cvs/mcs/mcs/ecore.cs:479 
+  at Mono.CSharp.Expression.Resolve (Mono.CSharp.EmitContext ec) [0x00000] in /second/home/cvs/mcs/mcs/ecore.cs:506 
+  at Mono.CSharp.OptionalAssign.DoResolve (Mono.CSharp.EmitContext ec) [0x00013] in /second/home/cvs/mcs/mcs/repl.cs:687 
+  at Mono.CSharp.Expression.Resolve (Mono.CSharp.EmitContext ec, ResolveFlags flags) [0x00075] in /second/home/cvs/mcs/mcs/ecore.cs:479 
+  at Mono.CSharp.Expression.Resolve (Mono.CSharp.EmitContext ec) [0x00000] in /second/home/cvs/mcs/mcs/ecore.cs:506 
+  at Mono.CSharp.ExpressionStatement.ResolveStatement (Mono.CSharp.EmitContext ec) [0x00000] in /second/home/cvs/mcs/mcs/ecore.cs:1307 
+  at Mono.CSharp.StatementExpression.Resolve (Mono.CSharp.EmitContext ec) [0x0000b] in /second/home/cvs/mcs/mcs/statement.cs:743 
+  at Mono.CSharp.Block.Resolve (Mono.CSharp.EmitContext ec) [0x000f0] in /second/home/cvs/mcs/mcs/statement.cs:2254 
+  at Mono.CSharp.ExplicitBlock.Resolve (Mono.CSharp.EmitContext ec) [0x00000] in /second/home/cvs/mcs/mcs/statement.cs:2550 
+  at Mono.CSharp.EmitContext.ResolveTopBlock (Mono.CSharp.EmitContext anonymous_method_host, Mono.CSharp.ToplevelBlock block, Mono.CSharp.Parameters ip, IMethodData md, System.Boolean& unreachable) [0x00087] in /second/home/cvs/mcs/mcs/codegen.cs:796 
+csharp>  
 
-	This would solve the grammar ambiguity that happens if we just
-	allow both to be starting nodes.
+* Important: we need to replace TypeBuidlers with Types after things
+  have been emitted, or stuff like this happens:
+
+csharp> public class y  {}
+csharp> typeof (y); 
+Class1
+
 
 * Clearing data
 

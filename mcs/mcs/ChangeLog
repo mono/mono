@@ -1,3 +1,73 @@
+2008-08-30  Miguel de Icaza  <miguel@novell.com>
+
+	* namespace.cs (LookupType): In EvalMode, try to replace
+	the TypeBuilder from our cache with a Type as Reflection.Emit does
+	not  like to mix code from older assemblies emitted and new
+	assemblies emitted. 
+
+	This sounds like a serious Mono bug that prevents multiple
+	assemblies to be generated and consumed at the same time.
+
+	* cs-parser.jay (push_current_class): Do not make interactive
+	classes internal or private, make them public as we currently
+	generate each new class in a new assembly.   
+
+2008-08-29  Miguel de Icaza  <miguel@novell.com>
+
+ 	* decl.cs, roottypes.cs, class.cs:: Add an infrastructure to
+ 	remove types that are entered into the global namespace during
+ 	parsing so that we can remove them on failure.
+ 
+ 	* cs-parser.jay: Parsing: we now keep track of types that are
+ 	entered into global variables and queue those in case the parsing
+ 	or resolution fail.
+ 
+ 	This happens in a few situations: during partial-input, we invoke
+ 	the parser repeatedly for example with the string "class X", this
+ 	would cause X to be registed, and we need to remove this
+ 	registration so that another parse attempt later with say "class X {"
+ 	would actually work.
+ 
+ 	Additionally, if there is an error in the resolution phase, for
+ 	example: "class X : NonExistant {}" th
+ 	
+	* cs-parser.jay: Be more precise with the errors being raised,
+	instead of flagging all exceptions during parsing to be attributed
+	to the parsing process, distinguish those from errors happening in
+	the actions and hint that using -v would produce the actual
+	exception. 
+
+	* repl.cs: Do not load all compiler references on each reset,
+	doing the partial reset takes care of this.
+	
+2008-08-28  Miguel de Icaza  <miguel@novell.com>
+
+	* repl.cs: Add support for loading all the files from
+	~/.config/csharp/*cs as startup scripts and ~/.config/csharp/*.dll
+	as shell libraries.
+
+	Introduce a micro-parser that is able to deambiguate on its input
+	whether we are dealing with a compilation unit (namespace, class,
+	interface, struct, delegate) declaration or a statement.   This
+	allows both declarations and statements to be entered. 
+
+	Set history size by default to 300 lines.
+
+	Instead of distinguishing based on the parser.InteractiveResult,
+	have only two cases: statements were parsed, or a compilation unit
+	was.   Always pull the Using statement additions from the
+	compilation unit parse.
+	
+	* cs-tokenizer.cs: Rename tokens to better describe their intent
+	(EvalStatementParserCharacter and EvalCompilationUnitParserCharacter).
+	
+	* rootcontext.cs: Split EvalMode into EvalMode and StatementMode.
+	EvalMode is used to trigger the lookup of global variables while
+	StatementMode is used turn variable declarations into static
+	fields.
+
+	* getline.cs: Allow history size to be set.
+	
 2008-08-29  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #360755

@@ -299,6 +299,11 @@ namespace Mono.CSharp {
 			return AddToContainer (ds, ds.Basename);
 		}
 
+		protected virtual void RemoveMemberType (DeclSpace ds)
+		{
+			RemoveFromContainer (ds.Basename);
+		}
+
 		public void AddConstant (Const constant)
 		{
 			if (!AddMember (constant))
@@ -380,6 +385,13 @@ namespace Mono.CSharp {
 			return tc;
 		}
 
+		public virtual void RemoveTypeContainer (TypeContainer next_part)
+		{
+			if (types != null)
+				types.Remove (next_part);
+			RemoveMemberType (next_part);
+		}
+		
 		public void AddDelegate (Delegate d)
 		{
 			if (!AddMemberType (d))

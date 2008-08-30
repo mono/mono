@@ -969,6 +969,11 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		protected virtual void RemoveFromContainer (string name)
+		{
+			defined_names.Remove (name);
+		}
+		
 		/// <summary>
 		///   Returns the MemberCore associated with a given name in the declaration
 		///   space. It doesn't return method based symbols !!

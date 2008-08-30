@@ -127,6 +127,12 @@ namespace Mono.CSharp
 		/// resulting expression
 		public object InteractiveResult;
 
+		//
+		// Keeps track of global data changes to undo on parser error
+		//
+		public Undo undo;
+
+		// A counter to create new class names in interactive mode
 		static int class_count;
 %}
 
@@ -316,9 +322,10 @@ namespace Mono.CSharp
 %token GENERIC_DIMENSION
 %token DEFAULT_COLON
 
-// Make the parser go into interactive parsing
-%token INTERACTIVE_PARSER
-%token INTERACTIVE_PARSER_USING_DIRECTIVES
+// Make the parser go into eval mode parsing (statements and compilation units).
+%token EVAL_STATEMENT_PARSER
+%token EVAL_COMPILATION_UNIT_PARSER
+%token EVAL_USING_DECLARATIONS_UNIT_PARSER
 
 /* Add precedence rules to solve dangling else s/r conflict */
 %nonassoc LOWPREC
@@ -2420,8 +2427,11 @@ enum_declaration
 
 			e.AddEnumMember (em);
 		}
+		if (RootContext.EvalMode)
+			undo.AddTypeContainer (current_container, e);
 
 		current_container.AddTypeContainer (e);
+
 		$$ = e;
 
 	  }
@@ -5416,11 +5426,9 @@ opt_query_continuation
 //
 
 interactive_parsing
-	: INTERACTIVE_PARSER EOF 
-	| INTERACTIVE_PARSER_USING_DIRECTIVES using_directives { 
-	  	InteractiveResult = current_namespace; 
-	  } 
-	| INTERACTIVE_PARSER { 
+	: EVAL_STATEMENT_PARSER EOF 
+	| EVAL_USING_DECLARATIONS_UNIT_PARSER using_directives 
+	| EVAL_STATEMENT_PARSER { 
 	        InteractiveShell.LoadAliases (current_namespace);
 
 		push_current_class (new Class (current_namespace, current_class, new MemberName ("Class" + class_count++),
@@ -5460,6 +5468,10 @@ interactive_parsing
 		InteractiveResult = pop_current_class ();
 		current_local_parameters = null;
 	  } 
+//	| EVAL_COMPILATION_UNIT_PARSER {
+//	        InteractiveShell.LoadAliases (current_namespace);
+//	  }
+//	  compilation_unit
 	;
 %%
 
@@ -5553,10 +5565,17 @@ static void Error_TypeExpected (Location loc)
 
 void push_current_class (TypeContainer tc, object partial_token)
 {
+	if (RootContext.EvalMode){
+		tc.ModFlags = (tc.ModFlags & ~(Modifiers.PRIVATE|Modifiers.INTERNAL)) | Modifiers.PUBLIC;
+		undo.AddTypeContainer (current_container, tc);
+	}
+
 	if (partial_token != null)
 		current_container = current_container.AddPartial (tc);
 	else
 		current_container = current_container.AddTypeContainer (tc);
+
+
 	current_class = tc;
 }
 
@@ -5599,7 +5618,7 @@ Block declare_local_variables (Expression type, ArrayList variable_declarators, 
 	// that are in the top block to be added instead to the class as 
 	// static variables
 	//
-	if (RootContext.EvalMode){
+	if (RootContext.StatementMode){
 		bool hoist = true;
 
 		for (Block b = current_block; b != null; b = b.Parent){
@@ -5627,7 +5646,7 @@ Block declare_local_variables (Expression type, ArrayList variable_declarators, 
 					assign = new SimpleAssign (new SimpleName (decl.identifier, decl.Location), var);
 					current_block.AddStatement (new StatementExpression (assign));
 				} else {
-					Field f = new Field (current_container, (FullNamedExpression) type, Modifiers.NEW | Modifiers.PUBLIC | Modifiers.STATIC, decl.identifier, null, loc);
+					Field f = new Field (current_container, (FullNamedExpression) type, Modifiers.PUBLIC | Modifiers.STATIC, decl.identifier, null, loc);
 					current_container.AddField (f);
 
 					// Register the field to be visible later as a global variable
@@ -5758,6 +5777,9 @@ static CSharpParser ()
 
 public CSharpParser (SeekableStreamReader reader, CompilationUnit file)
 {
+	if (RootContext.EvalMode)
+		undo = new Undo ();
+
 	this.file = file;
 	current_namespace = new NamespaceEntry (null, file, null);
 	current_class = current_namespace.SlaveDeclSpace;
@@ -5768,8 +5790,6 @@ public CSharpParser (SeekableStreamReader reader, CompilationUnit file)
 
 public void parse ()
 {
-	int errors = Report.Errors;
-
 	eof_token = Token.EOF;
 
 	try {
@@ -5780,12 +5800,15 @@ public void parse ()
 	} catch (Exception e){
 	  	if (e is yyParser.yyUnexpectedEof)
 			UnexpectedEOF = true;
-		if (Report.Errors == errors)
+		else if (yacc_verbose_flag > 0)
+		        Console.WriteLine (e);
+		if (e is yyParser.yyException)
 			Report.Error (-25, lexer.Location, "Parsing error");
+		else 
+		        Report.Error (-32, lexer.Location, "Internal compiler error during parsing, Run with -v for details");
 	}
 	Tokenizer tokenizer = lexer as Tokenizer;
 	tokenizer.cleanup ();
-
 
 	if (RootContext.ToplevelTypes.NamespaceEntry != null)
 		throw new InternalErrorException ("who set it?");
