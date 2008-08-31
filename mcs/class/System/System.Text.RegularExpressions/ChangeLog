@@ -1,5 +1,10 @@
 2008-08-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* RxInterpreter.cs: Port the Anchor+StartOfString optimization from the old
+	interpreter. Add credits.
+
+	* RxCompiler.cs (EmitString): Lowercase the string if ignore is true.
+
 	* CILCompiler.cs: Fix the setting of the match position in the
 	anchor+char optimization.
 	

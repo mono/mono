@@ -477,6 +477,8 @@ namespace System.Text.RegularExpressions {
 				offset += 1;
 			if (reverse)
 				offset += 2;
+			if (ignore)
+				str = str.ToLower ();
 			if (str.Length < 256) {
 				islatin1 = true;
 				for (i = 0; i < str.Length; ++i) {

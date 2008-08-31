@@ -1,4 +1,6 @@
 
+// Based upon interpreter.cs, written by Dan Lewis (dlewis@gmx.co.uk)
+
 using System;
 using System.Collections;
 using System.Globalization;
@@ -296,7 +298,7 @@ namespace System.Text.RegularExpressions {
 		}
 
 		// used by the IL backend
-		protected void SetStartOfMatch (int pos)
+	    internal void SetStartOfMatch (int pos)
 		{
 			marks [groups [0]].Start = pos;
 		}
@@ -414,6 +416,31 @@ namespace System.Text.RegularExpressions {
 				case RxOp.Anchor:
 					length = program [pc + 3] | (program [pc + 4] << 8);
 					pc += program [pc + 1] | (program [pc + 2] << 8);
+
+					RxOp anch_op = (RxOp)(program[pc] & 0x00ff);
+
+					// Optimize some common cases
+
+					if (anch_op == RxOp.StartOfString) {
+						if (strpos == 0) {
+							int res = strpos;
+							if (groups.Length > 1) {
+								ResetGroups ();
+								marks [groups [0]].Start = strpos;
+							}
+							if (EvalByteCode (pc + 1, strpos, ref res)) {
+								marks [groups [0]].Start = strpos;
+								if (groups.Length > 1)
+									marks [groups [0]].End = res;
+								strpos_result = res;
+								return true;
+							}
+						}
+						return false;
+					}
+
+					// FIXME: Add more special cases from interpreter.cs
+
 					// it's important to test also the end of the string
 					// position for things like: "" =~ /$/
 					end = string_end + 1;
