@@ -1,3 +1,8 @@
+2008-08-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* BitArray.cs (CopyTo): Allow an index equal to the array length if
+	the bit array has no elements. Fixes #421803.
+
 2008-05-29  Juraj Skripsky  <js@hotfeet.ch>
 
 	* ArrayList.cs: Create the empty array only once and reuse it.
