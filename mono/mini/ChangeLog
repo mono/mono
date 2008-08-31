@@ -1,3 +1,9 @@
+2008-08-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (handle_isinst): Do the assignment at the beginning, so the
+	other assignment can be if converted. Saves 1.5% on corlib size and fixes
+	#421807.
+
 2008-08-29  Geoff Norton  <gnorton@novell.com>
 
         * aot-compiler.c: The Mach/ARM compiler doesn't understand the bss
