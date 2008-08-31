@@ -1,3 +1,14 @@
+2008-08-31  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: trust builder.BindingContainerType
+	in the 2.0+ profile - do not use container properties to detect
+	the type.
+	Added a helper method, compiled only when DEBUG is defined, to
+	generate Console.WriteLine CodeDOM calls.
+
+	* BaseCompiler.cs: add line pragmas only if enabled for the
+	current file.
+
 2008-08-29  Marek Habersack  <mhabersack@novell.com>
 
 	* AppCodeCompiler.cs: properly handle profile base class
