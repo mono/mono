@@ -1,2 +1,0 @@
-#!/bin/sh
-exec /usr/local/bin/mono $MONO_OPTIONS /usr/local/lib/mono/2.0/gacutil.exe "$@"
