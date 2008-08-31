@@ -212,6 +212,15 @@ public class BitArrayTest : TestCase
     }
   }
 
+  [Test]
+  public void CopyToEmptyEmpty () {
+	  BitArray bitarray = new BitArray(0);
+
+	  int[] intarray = new int[0];
+
+	  bitarray.CopyTo(intarray, 0);
+  }
+
   public void TestCopyToByte()
   {
     try {
