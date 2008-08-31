@@ -301,6 +301,21 @@ namespace System.Web.Compilation
 				}
 #endif
 
+				// Process template children before anything else
+				ArrayList templates = builder.TemplateChildren;
+				if (templates != null && templates.Count > 0) {
+					foreach (TemplateBuilder tb in templates) {
+						CreateControlTree (tb, true, false);
+#if NET_2_0
+						if (tb.BindingDirection == BindingDirection.TwoWay) {
+							string extractMethod = CreateExtractValuesMethod (tb);
+							AddBindableTemplateInvocation (builder, tb.TagName, tb.method.Name, extractMethod);
+						} else
+#endif
+							AddTemplateInvocation (builder, tb.TagName, tb.method.Name);
+					}
+				}
+
 				// process ID here. It should be set before any other attributes are
 				// assigned, since the control code may rely on ID being set. We
 				// skip ID in CreateAssignStatementsFromAttributes
@@ -309,6 +324,7 @@ namespace System.Web.Compilation
 					if (ctl_id != null && ctl_id != String.Empty)
 						CreateAssignStatementFromAttribute (builder, "id");
 				}
+				
 #if NET_2_0
 				if (typeof (ContentPlaceHolder).IsAssignableFrom (type)) {
 					CodePropertyReferenceExpression prop = new CodePropertyReferenceExpression (thisRef, "ContentPlaceHolders");
@@ -1103,7 +1119,7 @@ namespace System.Web.Compilation
 				AddRenderControl (parent);
 		}
 
-		void AddTemplateInvocation (CodeMemberMethod method, string name, string methodName)
+		void AddTemplateInvocation (ControlBuilder builder, string name, string methodName)
 		{
 			CodePropertyReferenceExpression prop = new CodePropertyReferenceExpression (ctrlVar, name);
 
@@ -1114,11 +1130,11 @@ namespace System.Web.Compilation
 			newCompiled.Parameters.Add (newBuild);
 
 			CodeAssignStatement assign = new CodeAssignStatement (prop, newCompiled);
-			method.Statements.Add (assign);
+			builder.method.Statements.Add (AddLinePragma (assign, builder));
 		}
 
 #if NET_2_0
-		void AddBindableTemplateInvocation (CodeMemberMethod method, string name, string methodName, string extractMethodName)
+		void AddBindableTemplateInvocation (ControlBuilder builder, string name, string methodName, string extractMethodName)
 		{
 			CodePropertyReferenceExpression prop = new CodePropertyReferenceExpression (ctrlVar, name);
 
@@ -1133,7 +1149,7 @@ namespace System.Web.Compilation
 			newCompiled.Parameters.Add (newExtract);
 			
 			CodeAssignStatement assign = new CodeAssignStatement (prop, newCompiled);
-			method.Statements.Add (assign);
+			builder.method.Statements.Add (AddLinePragma (assign, builder));
 		}
 		
 		string CreateExtractValuesMethod (TemplateBuilder builder)
@@ -1394,8 +1410,8 @@ namespace System.Web.Compilation
 				CreateAssignStatementsFromAttributes (builder);
 
 			if (builder.Children != null && builder.Children.Count > 0) {
-				ArrayList templates = null;
-
+				int templateInsertIndex = builder.method.Statements.Count - 1;
+				
 				StringBuilder sb = new StringBuilder ();
 				foreach (object b in builder.Children) {
 					if (b is string) {
@@ -1432,14 +1448,9 @@ namespace System.Web.Compilation
 						continue;
 					}
 #endif
-
-					if (b is TemplateBuilder) {
-						if (templates == null)
-							templates = new ArrayList ();
-
-						templates.Add (b);
+					// Ignore TemplateBuilders - they are processed in InitMethod
+					if (b is TemplateBuilder)
 						continue;
-					}
 
 					if (b is CodeRenderBuilder) {
 						AddCodeRender (builder, (CodeRenderBuilder) b);
@@ -1462,21 +1473,6 @@ namespace System.Web.Compilation
 				}
 
 				FlushText (builder, sb);
-
-				if (templates != null) {
-					foreach (TemplateBuilder b in templates) {
-						CreateControlTree (b, true, false);
-#if NET_2_0
-						if (b.BindingDirection == BindingDirection.TwoWay) {
-							string extractMethod = CreateExtractValuesMethod (b);
-							AddBindableTemplateInvocation (builder.method, b.TagName, b.method.Name, extractMethod);
-						}
-						else
-#endif
-						AddTemplateInvocation (builder.method, b.TagName, b.method.Name);
-					}
-				}
-
 			}
 
 			if (builder.defaultPropertyBuilder != null) {

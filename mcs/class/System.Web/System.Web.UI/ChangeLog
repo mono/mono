@@ -1,11 +1,15 @@
 2008-08-31  Marek Habersack  <mhabersack@novell.com>
 
+	* Control.cs: improved FillControlCache
+
 	* TemplateParser.cs: added support for the LinePragmas directive
 	attribute.
 
 	* ControlBuilder.cs: if this instance is a TemplateBuilder do not
 	call MyNamingContainer, so that our own ContainerType can be used
 	as the binding container (if present).
+	Added a cache for children of TemplateBuilder, used later in
+	TemplateControlCompiler.
 
 2008-08-26  Marek Habersack  <mhabersack@novell.com>
 

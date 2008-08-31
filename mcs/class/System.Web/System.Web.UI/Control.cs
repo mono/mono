@@ -790,19 +790,16 @@ namespace System.Web.UI
 				return;
 
 			InitControlsCache ();
-			FillControlCache (this);
+			FillControlCache (this, Controls);
 
 		}
 
-		void FillControlCache (Control control)
+		void FillControlCache (Control control, ControlCollection controls)
 		{
-			if (!HasControls ())
-				return;
-
-			foreach (Control c in control._controls) {
+			foreach (Control c in controls) {
 				try {
 					if (c._userId != null)
-						_controlsCache.Add (c._userId, c);
+						control._controlsCache.Add (c._userId, c);
 				} catch (ArgumentException) {
 					throw new HttpException (
 						"Multiple controls with the same ID '" + 
@@ -811,7 +808,7 @@ namespace System.Web.UI
 				}
 
 				if ((c.stateMask & IS_NAMING_CONTAINER) == 0 && c.HasControls ())
-					FillControlCache (c);
+					control.FillControlCache (control, c.Controls);
 			}
 		}
 
@@ -843,12 +840,13 @@ namespace System.Web.UI
 				namingContainer = NamingContainer;
 				if (namingContainer == null)
 					return null;
-
+				
 				return namingContainer.FindControl (id, pathOffset);
 			}
 
 			if (!HasControls ())
 				return null;
+			
 			int separatorIdx = id.IndexOf (IdSeparator, pathOffset);
 			if (separatorIdx == -1)
 				return LookForControlByName (id.Substring (pathOffset));

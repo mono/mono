@@ -5,6 +5,8 @@
 	the type.
 	Added a helper method, compiled only when DEBUG is defined, to
 	generate Console.WriteLine CodeDOM calls.
+	Templates are processed before anything else, so that children
+	which may depend on parent's templates can get access to them.
 
 	* BaseCompiler.cs: add line pragmas only if enabled for the
 	current file.
