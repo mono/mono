@@ -1,3 +1,15 @@
+2008-09-01  Marek Habersack  <mhabersack@novell.com>
+
+	* BaseCompiler.cs: AssignAppRelativeVirtualPath works with
+	null/empty parser.InputFile now.
+
+	* AspGenerator.cs: AddTypeToCache works checks whether inputFile
+	is null or empty and does not assume the dependencies ArrayList is
+	present.
+
+	* CachingCompiler.cs: expect the dependencies ArrayList to be null
+	or empty.
+
 2008-08-31  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: trust builder.BindingContainerType

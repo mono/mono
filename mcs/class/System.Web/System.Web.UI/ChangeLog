@@ -1,3 +1,9 @@
+2008-09-01  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControl.cs: changed the way in which ParseControl is
+	implemented for the 2.0+ profile. Still not quite there, but
+	better and closer to .NET
+
 2008-08-31  Marek Habersack  <mhabersack@novell.com>
 
 	* Control.cs: improved FillControlCache
