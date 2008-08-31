@@ -303,8 +303,10 @@ namespace System.Web.Compilation
 #if NET_2_0
 		void AssignAppRelativeVirtualPath (CodeConstructor ctor)
 		{
+			if (String.IsNullOrEmpty (parser.InputFile))
+				return;
+			
 			Type baseType = parser.CodeFileBaseClassType;
-
 			if (baseType == null)
 				baseType = parser.BaseType;
 			if (baseType == null)

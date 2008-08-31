@@ -99,17 +99,20 @@ namespace System.Web.Compilation
 				CompilerParameters options = compiler.CompilerParameters;
 				GetExtraAssemblies (options);
 				results = comp.CompileAssemblyFromDom (options, compiler.CompileUnit);
-				string [] deps = (string []) compiler.Parser.Dependencies.ToArray (typeof (string));
-				HttpContext ctx = HttpContext.Current;
-				HttpRequest req = ctx != null ? ctx.Request : null;
+				ArrayList dependencies = compiler.Parser.Dependencies;
+				if (dependencies != null && dependencies.Count > 0) {
+					string [] deps = (string []) dependencies.ToArray (typeof (string));
+					HttpContext ctx = HttpContext.Current;
+					HttpRequest req = ctx != null ? ctx.Request : null;
 
-				if (req == null)
-					throw new HttpException ("No current context, cannot compile.");
+					if (req == null)
+						throw new HttpException ("No current context, cannot compile.");
 				
-				for (int i = 0; i < deps.Length; i++)
-					deps [i] = req.MapPath (deps [i]);
+					for (int i = 0; i < deps.Length; i++)
+						deps [i] = req.MapPath (deps [i]);
 				
-				cache.Insert (key, results, new CacheDependency (deps));
+					cache.Insert (key, results, new CacheDependency (deps));
+				}
 			} finally {
 				Monitor.Exit (ticket);
 				if (acquired)

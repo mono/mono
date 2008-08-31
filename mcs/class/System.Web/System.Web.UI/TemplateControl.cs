@@ -320,12 +320,33 @@ namespace System.Web.UI {
 				throw new ArgumentNullException ("content");
 
 #if NET_2_0
+			// FIXME: This method needs to be rewritten in some sane way - the way it is now,
+			// is a kludge. New version should not use
+			// UserControlParser.GetCompiledType, but instead resort to some other way
+			// of creating the content (template instantiation? BuildManager? TBD)
 			TextReader reader = new StringReader (content);
 			Type control = UserControlParser.GetCompiledType (reader, HttpContext.Current);
 			if (control == null)
 				return null;
+
+			TemplateControl parsedControl = Activator.CreateInstance (control, null) as TemplateControl;
+			if (parsedControl == null)
+				return null;
+
+			if (this is System.Web.UI.Page)
+				parsedControl.Page = (System.Web.UI.Page) this;
+			parsedControl.FrameworkInitialize ();
 			
-			return Activator.CreateInstance (control, null) as Control;
+			Control ret = new Control ();
+			int count = parsedControl.Controls.Count;
+			Control[] parsedControlControls = new Control [count];
+			parsedControl.Controls.CopyTo (parsedControlControls, 0);
+
+			for (int i = 0; i < count; i++)
+				ret.Controls.Add (parsedControlControls [i]);
+
+			parsedControl = null;
+			return ret;
 #else
 			return null;
 #endif
