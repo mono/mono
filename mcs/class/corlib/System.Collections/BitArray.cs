@@ -224,7 +224,7 @@ namespace System.Collections {
 			if (array.Rank != 1)
 				throw new ArgumentException ("array", "Array rank must be 1");
 			
-			if (index >= array.Length)
+			if (index >= array.Length && m_length > 0)
 				throw new ArgumentException ("index", "index is greater than array.Length");
 			
 			// in each case, check to make sure enough space in array
