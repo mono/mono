@@ -1,5 +1,7 @@
 2008-08-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_is_assignable_from): Fix the build.
+	
 	* class.c (mono_class_is_assignable_from): Call mono_class_setup_vtable ()
 	before accessing klass->interface_bitmap. Fixes #421744.
 
