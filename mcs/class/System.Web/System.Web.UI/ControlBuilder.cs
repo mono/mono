@@ -180,12 +180,12 @@ namespace System.Web.UI {
 #endif
 		Type BindingContainerType {
 			get {
-				ControlBuilder cb = MyNamingContainer;
+				ControlBuilder cb = (this is TemplateBuilder) ? this : MyNamingContainer;
 				if (cb == null)
 					return typeof (Control);
 
 #if NET_2_0
-				if (cb is ContentBuilderInternal)
+				if (cb != this && cb is ContentBuilderInternal)
 					return cb.BindingContainerType;
 #endif
 

@@ -597,7 +597,10 @@ namespace System.Web.UI {
 			
 			strictOn = GetBool (atts, "Strict", compConfig.Strict);
 			explicitOn = GetBool (atts, "Explicit", compConfig.Explicit);
-			linePragmasOn = GetBool (atts, "LinePragmas", false);
+			if (atts.ContainsKey ("LinePragmas"))
+				linePragmasOn = GetBool (atts, "LinePragmas", false);
+			else
+				linePragmasOn = true;
 			
 			string inherits = GetString (atts, "Inherits", null);
 #if NET_2_0

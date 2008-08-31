@@ -101,8 +101,11 @@ namespace System.Web.Compilation
 			return AddLinePragma (statement, location.BeginLine, location.Filename);
 		}
 
-		static bool IgnoreFile (string fileName)
+		bool IgnoreFile (string fileName)
 		{
+			if (parser != null && !parser.LinePragmasOn)
+				return true;
+			
 			return String.Compare (fileName, "@@inner_string@@",
 #if NET_2_0
 					    StringComparison.OrdinalIgnoreCase

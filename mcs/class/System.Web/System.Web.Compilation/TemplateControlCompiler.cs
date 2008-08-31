@@ -1245,20 +1245,17 @@ namespace System.Web.Compilation
 			return null;
 		}
 
+#if !NET_2_0
 		static string[] containerPropNames = {"Items", "Rows"};
+#endif
 		
 		static Type GetContainerType (ControlBuilder builder)
 		{
-			TemplateBuilder tb = builder as TemplateBuilder;
-			if (tb != null && tb.ContainerType != null)
-				return tb.ContainerType;
-
 			Type type = builder.BindingContainerType;
-
+			
 #if NET_2_0
-			if (typeof (IDataItemContainer).IsAssignableFrom (type))
-				return type;
-#endif
+			return type;
+#else
 			
 			PropertyInfo prop = GetContainerProperty (type, containerPropNames);
 			if (prop == null)
@@ -1273,6 +1270,7 @@ namespace System.Web.Compilation
 				return type;
 
 			return prop.PropertyType;
+#endif
 		}
 		
 		CodeMemberMethod CreateDBMethod (ControlBuilder builder, string name, Type container, Type target)
@@ -2063,6 +2061,21 @@ namespace System.Web.Compilation
 			}
 			return null;
 		}
+
+#if DEBUG
+		CodeMethodInvokeExpression CreateConsoleWriteLineCall (string format, params CodeExpression[] parms)
+		{
+			CodeMethodReferenceExpression cwl = new CodeMethodReferenceExpression (new CodeTypeReferenceExpression (typeof (System.Console)), "WriteLine");
+			CodeMethodInvokeExpression cwlCall = new CodeMethodInvokeExpression (cwl);
+
+			cwlCall.Parameters.Add (new CodePrimitiveExpression (format));
+			if (parms != null && parms.Length > 0)
+				foreach (CodeExpression expr in parms)
+					cwlCall.Parameters.Add (expr);
+
+			return cwlCall;
+		}
+#endif
 	}
 }
 
