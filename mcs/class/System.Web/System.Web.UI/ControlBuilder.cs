@@ -64,6 +64,7 @@ namespace System.Web.UI {
 		bool hasAspCode;
 		internal ControlBuilder defaultPropertyBuilder;
 		ArrayList children;
+		ArrayList templateChildren;
 		static int nextID;
 
 		internal bool haveParserVariable;
@@ -134,6 +135,10 @@ namespace System.Web.UI {
 			get { return children; }
 		}
 
+		internal ArrayList TemplateChildren {
+			get { return templateChildren; }
+		}
+		
 		internal void SetControlType (Type t)
 		{
 			type = t;
@@ -231,6 +236,19 @@ namespace System.Web.UI {
 		internal bool ChildrenAsProperties {
 			get { return childrenAsProperties; }
 		}
+
+		void AddChild (object child)
+		{
+			if (children == null)
+				children = new ArrayList ();
+			
+			children.Add (child);
+			if (child is TemplateBuilder) {
+				if (templateChildren == null)
+					templateChildren = new ArrayList ();
+				templateChildren.Add (child);
+			}
+		}
 		
 		public virtual bool AllowWhitespaceLiterals ()
 		{
@@ -259,10 +277,7 @@ namespace System.Web.UI {
 			if (HtmlDecodeLiterals ())
 				s = HttpUtility.HtmlDecode (s);
 
-			if (children == null)
-				children = new ArrayList ();
-
-			children.Add (s);
+			AddChild (s);
 		}
 
 		public virtual void AppendSubBuilder (ControlBuilder subBuilder)
@@ -280,10 +295,7 @@ namespace System.Web.UI {
 				return;
 			}
 
-			if (children == null)
-				children = new ArrayList ();
-
-			children.Add (subBuilder);
+			AddChild (subBuilder);
 		}
 
 		void AppendToProperty (ControlBuilder subBuilder)
@@ -296,10 +308,7 @@ namespace System.Web.UI {
 				return;
 			}
 
-			if (children == null)
-				children = new ArrayList ();
-
-			children.Add (subBuilder);
+			AddChild (subBuilder);
 		}
 
 		void AppendCode (ControlBuilder subBuilder)
@@ -310,10 +319,7 @@ namespace System.Web.UI {
 			if (typeof (CodeRenderBuilder) == subBuilder.GetType ())
 				hasAspCode = true;
 
-			if (children == null)
-				children = new ArrayList ();
-
-			children.Add (subBuilder);
+			AddChild (subBuilder);
 		}
 
 		public virtual void CloseControl ()
