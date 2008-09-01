@@ -1,5 +1,11 @@
 2008-09-01  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil/ReflectionReader.cs: properly compose mod and byref types
+	for parameters and return types.
+	Based on a patch by Carlo Kok <ck@remobjects.com>
+
+2008-09-01  Jb Evain  <jbevain@novell.com>
+
 	* Mono.Cecil.Signatures/SignatureReader.cs: Avoid a crash
 	when looking for an enumeration definition when the assembly
 	could not be resolved. Patch by Carlo Kok <ck@remobjects.com>

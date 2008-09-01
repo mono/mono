@@ -888,14 +888,15 @@ namespace Mono.Cecil {
 		{
 			TypeReference paramType;
 
-			if (signature.ByRef)
-				paramType = new ReferenceType (GetTypeRefFromSig (signature.Type, context));
-			else if (signature.TypedByRef)
+			if (signature.TypedByRef)
 				paramType = SearchCoreType (Constants.TypedReference);
 			else
 				paramType = GetTypeRefFromSig (signature.Type, context);
 
 			paramType = GetModifierType (signature.CustomMods, paramType);
+
+			if (signature.ByRef)
+				paramType = new ReferenceType (paramType);
 
 			parameter.ParameterType = paramType;
 		}
@@ -997,14 +998,15 @@ namespace Mono.Cecil {
 			TypeReference retType;
 			if (msig.RetType.Void)
 				retType = SearchCoreType (Constants.Void);
-			else if (msig.RetType.ByRef)
-				retType = new ReferenceType (GetTypeRefFromSig (msig.RetType.Type, context));
 			else if (msig.RetType.TypedByRef)
 				retType = SearchCoreType (Constants.TypedReference);
 			else
 				retType = GetTypeRefFromSig (msig.RetType.Type, context);
 
 			retType = GetModifierType (msig.RetType.CustomMods, retType);
+
+			if (msig.RetType.ByRef)
+				retType = new ReferenceType (retType);
 
 			return new MethodReturnType (retType);
 		}
