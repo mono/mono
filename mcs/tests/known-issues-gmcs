@@ -9,7 +9,6 @@ test-539.cs IGNORE	# In 2.0 profile, RuntimeCompatilityAttribute is added by def
 
 gtest-230.cs
 gtest-344.cs
-gtest-395.cs 		# In 2.0 profile, GenericMethod does not correctly deal with base implementations (according to marek)
 
 gtest-etree-03.cs
 gtest-etree-07.cs

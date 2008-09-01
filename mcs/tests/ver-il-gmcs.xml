@@ -10495,6 +10495,34 @@
       </method>
     </type>
   </test>
+  <test name="gtest-395.cs">
+    <type name="RuleBuilder`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="IDynamicObject">
+      <method name="RuleBuilder`1[T] GetRule[T]()">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="RubyMethod">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="RuleBuilder`1[T] IDynamicObject.GetRule[T]()">
+        <size>6</size>
+      </method>
+    </type>
+    <type name="T">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-396.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -12000,10 +12028,10 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>65</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[Foo, gtest-anon-5, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]].GetEnumerator()">
-        <size>53</size>
+        <size>65</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>98</size>
@@ -14796,10 +14824,10 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>53</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
-        <size>39</size>
+        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>194</size>
@@ -14822,10 +14850,10 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>65</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>53</size>
+        <size>65</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>213</size>
@@ -14872,10 +14900,10 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>53</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>39</size>
+        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>39</size>
@@ -36265,10 +36293,10 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>65</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>53</size>
+        <size>65</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>183</size>
@@ -36621,10 +36649,10 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>53</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>39</size>
+        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>165</size>
