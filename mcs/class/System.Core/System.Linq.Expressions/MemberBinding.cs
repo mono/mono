@@ -45,7 +45,7 @@ namespace System.Linq.Expressions {
 			get { return member; }
 		}
 
-		internal MemberBinding (MemberBindingType binding_type, MemberInfo member)
+		protected MemberBinding (MemberBindingType binding_type, MemberInfo member)
 		{
 			this.binding_type = binding_type;
 			this.member = member;
