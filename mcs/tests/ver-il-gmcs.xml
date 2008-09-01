@@ -2085,7 +2085,7 @@
         <size>7</size>
       </method>
       <method name="Void A.IExtensible`1[T].AddAll[U](U)">
-        <size>8</size>
+        <size>18</size>
       </method>
       <method name="Void InsertAll(T)">
         <size>1</size>
@@ -2164,7 +2164,7 @@
         <size>7</size>
       </method>
       <method name="Void AddAll[U](U)">
-        <size>8</size>
+        <size>18</size>
       </method>
       <method name="Void InsertAll(T)">
         <size>1</size>
@@ -12083,7 +12083,7 @@
         <size>7</size>
       </method>
       <method name="Boolean &lt;&gt;m__0()">
-        <size>187</size>
+        <size>202</size>
       </method>
     </type>
     <type name="Foo`1+&lt;ContainsAll&gt;c__AnonStorey0`1+&lt;ContainsAll&gt;c__AnonStorey1`1[T,U]">
@@ -14257,7 +14257,7 @@
         <size>7</size>
       </method>
       <method name="Boolean ContainsAll[U](IEnumerable`1)">
-        <size>177</size>
+        <size>192</size>
       </method>
       <method name="Boolean Contains(T)">
         <size>2</size>
