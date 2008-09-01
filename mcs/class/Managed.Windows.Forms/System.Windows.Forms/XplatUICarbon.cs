@@ -2203,6 +2203,12 @@ namespace System.Windows.Forms {
 		internal override bool MouseButtonsSwapped { get{ throw new NotImplementedException(); } }
 		internal override bool MouseWheelPresent { get{ throw new NotImplementedException(); } }
 
+		internal override MouseButtons MouseButtons {
+			get {
+				return MouseState;
+			}
+		}
+
 		internal override Rectangle VirtualScreen {
 			get {
 				return WorkingArea;
