@@ -123,6 +123,14 @@ namespace Mono.CSharp {
 			this.nameEscaped = nameEscaped;
 		}
 
+		public Attribute Clone ()
+		{
+			Attribute a = new Attribute (ExplicitTarget, LeftExpr, Identifier, null, loc, nameEscaped);
+			a.PosArguments = PosArguments;
+			a.NamedArguments = NamedArguments;
+			return a;
+		}
+
 		static Attribute ()
 		{
 			Reset ();
@@ -1402,6 +1410,15 @@ namespace Mono.CSharp {
 		{
 			foreach (Attribute a in Attrs)
 				a.AttachTo (attributable);
+		}
+
+		public Attributes Clone ()
+		{
+			ArrayList al = new ArrayList (Attrs.Count);
+			foreach (Attribute a in Attrs)
+				al.Add (a.Clone ());
+
+			return new Attributes (al);
 		}
 
 		/// <summary>
