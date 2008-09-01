@@ -114,12 +114,12 @@ namespace System.Configuration
 					switch (property.SerializeAs)
 					{
 					case SettingsSerializeAs.String:
-						serializedValue = TypeDescriptor.GetConverter (property.PropertyType).ConvertToString (propertyValue);
+						serializedValue = TypeDescriptor.GetConverter (property.PropertyType).ConvertToInvariantString (propertyValue);
 						break;
 #if (XML_DEP)
 					case SettingsSerializeAs.Xml:
 						XmlSerializer serializer = new XmlSerializer (propertyValue.GetType());
-						StringWriter w = new StringWriter();
+						StringWriter w = new StringWriter(CultureInfo.InvariantCulture);
 
 						serializer.Serialize (w, propertyValue);
 						serializedValue = w.ToString();
@@ -171,7 +171,7 @@ namespace System.Configuration
 
 			if (!property.PropertyType.IsAssignableFrom (property.DefaultValue.GetType ())) {
 				TypeConverter converter = TypeDescriptor.GetConverter (property.PropertyType);
-				return converter.ConvertFrom (property.DefaultValue);
+				return converter.ConvertFrom (null, CultureInfo.InvariantCulture, property.DefaultValue);
 			}
 			return property.DefaultValue;
 		}
@@ -187,7 +187,7 @@ namespace System.Configuration
 				switch (property.SerializeAs) {
 					case SettingsSerializeAs.String:
 						if (serializedValue is string && ((string) serializedValue).Length > 0)
-							deserializedObject = TypeDescriptor.GetConverter (property.PropertyType).ConvertFromString ((string) serializedValue);
+							deserializedObject = TypeDescriptor.GetConverter (property.PropertyType).ConvertFromInvariantString ((string) serializedValue);
 						break;
 #if (XML_DEP)
 					case SettingsSerializeAs.Xml:
