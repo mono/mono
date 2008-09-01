@@ -1476,8 +1476,12 @@ namespace System.Linq.Expressions {
 				throw new ArgumentException (string.Format ("Different number of arguments in delegate {0}", delegateType), "delegateType");
 
 			for (int i = 0; i < invoke_parameters.Length; i++) {
-				if (!CanAssign (parameters [i].Type, invoke_parameters [i].ParameterType))
-					throw new ArgumentException (String.Format ("Can not assign a {0} to a {1}", invoke_parameters [i].ParameterType, parameters [i].Type));
+				var parameter = parameters [i];
+				if (parameter == null)
+					throw new ArgumentNullException ("parameters");
+
+				if (!CanAssign (parameter.Type, invoke_parameters [i].ParameterType))
+					throw new ArgumentException (String.Format ("Can not assign a {0} to a {1}", invoke_parameters [i].ParameterType, parameter.Type));
 			}
 
 			if (invoke.ReturnType != typeof (void)) {
