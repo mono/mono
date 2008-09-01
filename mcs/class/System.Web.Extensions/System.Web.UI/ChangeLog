@@ -1,3 +1,10 @@
+2008-09-01  Marek Habersack  <mhabersack@novell.com>
+
+	* UpdatePanel.cs: if the writer passed to RenderChildren is not
+	derived from ScriptManager.AlternativeHtmlTextWriter, check
+	whether its InnerWriter derives from that type and, if yes, use
+	it from that point onwards.
+
 2008-08-13  Marek Habersack  <mhabersack@novell.com>
 
 	* ScriptManager.cs: always request the webform.js script to be
