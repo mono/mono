@@ -1,5 +1,9 @@
 2008-09-01  Jb Evain  <jbevain@novell.com>
 
+	* MemberBinding.cs: make .ctor protected instead of public.
+
+2008-09-01  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs: guard against null parameters passed to Lambda.
 
 2008-08-30  Marek Safar  <marek.safar@gmail.com>
