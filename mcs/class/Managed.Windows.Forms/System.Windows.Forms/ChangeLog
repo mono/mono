@@ -1,3 +1,8 @@
+2008-09-01  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TextBox.cs: Invalidate after UseSystemPasswordChar, so that the 
+	change takes effect.
+
 2008-08-24  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* XplatUIX11.cs: Provide MouseButtons/State information to the XPlatUI.
