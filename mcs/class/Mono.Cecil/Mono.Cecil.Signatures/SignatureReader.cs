@@ -845,7 +845,9 @@ namespace Mono.Cecil.Signatures {
 
 				AssemblyDefinition asm = AssemblyResolver.Resolve (
 					((AssemblyNameReference) enumType.Scope).FullName);
-				type = asm.MainModule.Types [enumType.FullName];
+
+				if (asm != null)
+					type = asm.MainModule.Types [enumType.FullName];
 			}
 
 			if (type != null && type.IsEnum)

@@ -1,5 +1,11 @@
 2008-09-01  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil.Signatures/SignatureReader.cs: Avoid a crash
+	when looking for an enumeration definition when the assembly
+	could not be resolved. Patch by Carlo Kok <ck@remobjects.com>
+
+2008-09-01  Jb Evain  <jbevain@novell.com>
+
 	* Mono.Cecil/ReflectionWriter.cs: fix for writing null string
 	constants. Patch by Ewout Prangsma <ewout@tallapplications.com>.
 
