@@ -2258,6 +2258,12 @@ namespace System.Windows.Forms {
 			}
 		} 
 
+		internal override MouseButtons MouseButtons {
+			get {
+				return MouseState;
+			}
+		}
+
 		internal override  Rectangle VirtualScreen {
 			get {
 				IntPtr			actual_atom;

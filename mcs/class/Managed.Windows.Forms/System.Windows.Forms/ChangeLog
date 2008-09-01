@@ -1,3 +1,8 @@
+2008-08-24  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* XplatUIX11.cs: Provide MouseButtons/State information to the XPlatUI.
+	[Fixes bug #419001]
+
 2008-08-27  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridView.cs: Raise CellContentClick event.
