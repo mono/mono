@@ -4502,14 +4502,9 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				Expression conv;
-				if (TypeManager.IsEqual (a.Type, pt)) {
-					conv = a.Expr;
-				} else {
-					conv = Convert.ImplicitConversion (ec, a.Expr, pt, loc);
-					if (conv == null)
-						break;
-				}
+				Expression conv = Convert.ImplicitConversion (ec, a.Expr, pt, loc);
+				if (conv == null)
+					break;
 
 				//
 				// Convert params arguments to an array initializer

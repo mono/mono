@@ -673,6 +673,17 @@ namespace Mono.CSharp {
 			if (expr_type == TypeManager.void_type)
 				return false;
 
+			if (expr.eclass == ExprClass.MethodGroup) {
+				if (TypeManager.IsDelegateType (target_type) && RootContext.Version != LanguageVersion.ISO_1) {
+					MethodGroupExpr mg = expr as MethodGroupExpr;
+					if (mg != null) {
+						return DelegateCreation.ImplicitStandardConversionExists (mg, target_type) != null;
+					}
+				}
+
+				return false;
+			}
+
 			//Console.WriteLine ("Expr is {0}", expr);
 			//Console.WriteLine ("{0} -> {1} ?", expr_type, target_type);
 			if (TypeManager.IsEqual (expr_type, target_type))
@@ -783,17 +794,6 @@ namespace Mono.CSharp {
 				//
 				if (target_type == TypeManager.double_type)
 					return true;
-			}
-
-			if (expr.eclass == ExprClass.MethodGroup){
-				if (TypeManager.IsDelegateType (target_type) && RootContext.Version != LanguageVersion.ISO_1){
-					MethodGroupExpr mg = expr as MethodGroupExpr;
-					if (mg != null){
-						return DelegateCreation.ImplicitStandardConversionExists (mg, target_type) != null;
-					}
-				}
-
-				return false;
 			}
 
 			if (ImplicitReferenceConversionExists (expr, target_type))
