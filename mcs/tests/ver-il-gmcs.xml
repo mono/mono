@@ -14303,6 +14303,27 @@
       </method>
     </type>
   </test>
+  <test name="gtest-etree-12.cs">
+    <type name="TestCase">
+      <method name="Void .cctor()">
+        <size>68</size>
+      </method>
+      <method name="Boolean StaticMethodTakingAnExpression(System.Linq.Expressions.Expression`1[System.Func`2[System.Object,System.Boolean]])">
+        <size>2</size>
+      </method>
+      <method name="Void DummyToMakeTheStaticsInitialize()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-exmethod-01.cs">
     <type name="SimpleTest">
       <method name="System.String Prefix(System.String, System.String)">
