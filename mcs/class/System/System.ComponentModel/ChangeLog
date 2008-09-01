@@ -1,3 +1,9 @@
+2008-09-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ReflectionPropertyDescriptor.cs (SetValue, GetValue) : Lookup
+	the MethodInfo for accessors in parent types in case of partial
+	overrides of virtual properties.
+
 2008-08-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DefaultValueAttribute.cs: Fix Equals (wrt boxing) and 

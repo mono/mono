@@ -1,3 +1,8 @@
+2008-09-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* PropertyDescriptorTest.cs: Tests for Get/Set Value of partial
+	overrides of virtual properties.
+
 2008-08-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DefaultValueAttributeTest.cs: New. A few unit tests for 

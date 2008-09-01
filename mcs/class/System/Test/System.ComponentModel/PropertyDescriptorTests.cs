@@ -25,6 +25,31 @@ namespace MonoTests.System.ComponentModel
 	{
 	}
 
+	class VirtPropParent
+	{
+		string _someProperty;
+
+		public virtual string SomeProperty {
+			get { return _someProperty; }
+			set { _someProperty = value; }
+		}
+	}
+
+	class VirtPropChildNoSetter : VirtPropParent
+	{
+		public override string SomeProperty {
+			get { return base.SomeProperty + ": modified"; }
+		}
+	}
+
+	class VirtPropChildNoGetter : VirtPropParent
+	{
+		public override string SomeProperty {
+			get { return base.SomeProperty + ": modified"; }
+		}
+	}
+
+
 	[TestFixture]
 	public class PropertyDescriptorTests
 	{
@@ -457,6 +482,32 @@ namespace MonoTests.System.ComponentModel
 			pd = properties ["PropBase1"];
 			Assert.IsNull (FindAttribute (pd, typeof (DescriptionAttribute)), "#F1");
 			Assert.IsNotNull (FindAttribute (pd, typeof (PropTestAttribute)), "#F2");
+		}
+
+		[Test]
+		public void VirtualPropertyDontOverrideSetter ()
+		{
+			VirtPropChildNoSetter c = new VirtPropChildNoSetter ();
+			PropertyDescriptorCollection pdc = TypeDescriptor.GetProperties (c);
+			foreach (PropertyDescriptor pd in pdc) {
+				if (pd.Name != "SomeProperty")
+					continue;
+				pd.SetValue (c, "testing2");
+				pd.GetValue (c);
+			}
+		}
+
+		[Test]
+		public void VirtualPropertyDontOverrideGetter ()
+		{
+			VirtPropChildNoGetter c = new VirtPropChildNoGetter ();
+			PropertyDescriptorCollection pdc = TypeDescriptor.GetProperties (c);
+			foreach (PropertyDescriptor pd in pdc) {
+				if (pd.Name != "SomeProperty")
+					continue;
+				pd.SetValue (c, "testing2");
+				pd.GetValue (c);
+			}
 		}
 
 		[Test]
