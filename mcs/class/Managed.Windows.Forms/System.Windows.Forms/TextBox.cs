@@ -379,6 +379,7 @@ namespace System.Windows.Forms {
 						document.PasswordChar = PasswordChar.ToString ();
 					else
 						document.PasswordChar = string.Empty;
+					Invalidate ();
 				}
 			}
 		}
