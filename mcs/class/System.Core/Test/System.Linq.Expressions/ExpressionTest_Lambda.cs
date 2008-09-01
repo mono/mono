@@ -98,6 +98,13 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void NullParameter ()
+		{
+			Expression.Lambda<Func<int, int>> (Expression.Constant (1), new ParameterExpression [] { null });
+		}
+
+		[Test]
 		public void Assignability ()
 		{
 			// allowed: string to object
