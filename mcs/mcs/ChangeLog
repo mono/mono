@@ -78,7 +78,6 @@
 
 	* getline.cs: Allow history size to be set.
 	
->>>>>>> .r112006
 2008-08-29  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #360755
