@@ -1410,8 +1410,6 @@ namespace System.Web.Compilation
 				CreateAssignStatementsFromAttributes (builder);
 
 			if (builder.Children != null && builder.Children.Count > 0) {
-				int templateInsertIndex = builder.method.Statements.Count - 1;
-				
 				StringBuilder sb = new StringBuilder ();
 				foreach (object b in builder.Children) {
 					if (b is string) {

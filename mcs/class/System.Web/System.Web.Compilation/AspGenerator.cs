@@ -787,7 +787,7 @@ namespace System.Web.Compilation
 		bool CloseControl (string tagid)
 		{
 			ControlBuilder current = stack.Builder;
-			string btag = current.TagName;
+			string btag = current.OriginalTagName;
 			if (String.Compare (btag, "tbody", true, CultureInfo.InvariantCulture) != 0 &&
 			    String.Compare (tagid, "tbody", true, CultureInfo.InvariantCulture) == 0) {
 				if (!current.ChildrenAsProperties) {
