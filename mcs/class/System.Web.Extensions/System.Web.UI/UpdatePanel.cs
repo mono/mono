@@ -215,7 +215,13 @@ namespace System.Web.UI
 			if (ScriptManager.IsInAsyncPostBack){
 				if (!ScriptManager.IsInPartialRendering) {
 					ScriptManager.IsInPartialRendering = true;
-					HtmlTextWriter responseOutput = ((ScriptManager.AlternativeHtmlTextWriter) writer).ResponseOutput;
+					ScriptManager.AlternativeHtmlTextWriter altWriter = writer as ScriptManager.AlternativeHtmlTextWriter;
+					if (altWriter == null)
+						altWriter = writer.InnerWriter as ScriptManager.AlternativeHtmlTextWriter;
+					if (altWriter == null)
+						throw new InvalidOperationException ("Internal error. Invalid writer object.");
+					
+					HtmlTextWriter responseOutput = altWriter.ResponseOutput;
 					StringBuilder sb = new StringBuilder ();
 					HtmlTextWriter w = new HtmlTextWriter (new StringWriter (sb));
 					base.RenderChildren (w);
