@@ -1,3 +1,8 @@
+2008-09-01  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #421736
+	* iterators.cs: Don't crash on unreachable iterators.
+
 2008-08-28  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #420832
