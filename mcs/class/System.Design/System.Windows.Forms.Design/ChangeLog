@@ -1,3 +1,8 @@
+2008-09-01  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ParentControlDesigner.cs: Be nice with Components that are no 
+	Controls in CreateToolCore. 
+
 2008-05-30  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ControlBindingsConverter.cs: Fix 1.1 build.

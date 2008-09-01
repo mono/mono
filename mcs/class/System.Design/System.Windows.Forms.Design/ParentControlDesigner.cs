@@ -164,7 +164,10 @@ namespace System.Windows.Forms.Design
 
 			foreach (IComponent component in components)
 			{
-				if (!this.CanParent ((ControlDesigner)host.GetDesigner (component))) {
+				ControlDesigner controlDesigner = host.GetDesigner (component) as ControlDesigner;
+				if (controlDesigner == null) { // not a Control, but e.g. a plain Component
+					continue;
+				} else if (!this.CanParent (controlDesigner)) {
 					host.DestroyComponent (component);
 					continue;
 				}
