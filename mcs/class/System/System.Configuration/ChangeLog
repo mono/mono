@@ -1,3 +1,9 @@
+2008-09-01  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* SettingsPropertyValue.cs: Explicitly use the Invariant culture 
+	instead of the current.
+	[Fixes bug #374516]
+
 2008-08-05  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ApplicationSettingsBase.cs: If there is no explicit 
