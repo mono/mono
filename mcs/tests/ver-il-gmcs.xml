@@ -10747,6 +10747,24 @@
       </method>
     </type>
   </test>
+  <test name="gtest-408.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>92</size>
+      </method>
+    </type>
+    <type name="Test+IFoo">
+      <method name="Int32 get_Item(System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void set_Item(System.Object, Int32)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -31793,6 +31811,27 @@
     <type name="Test">
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>2</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-676.cs">
+    <type name="N.Item">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="N.Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="N.Item get_Item(N.Test)">
+        <size>2</size>
+      </method>
+      <method name="Void Foo(ItemSlot)">
+        <size>27</size>
       </method>
       <method name="Int32 Main()">
         <size>2</size>
