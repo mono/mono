@@ -1,3 +1,7 @@
+2008-09-01  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs: guard against null parameters passed to Lambda.
+
 2008-08-30  Marek Safar  <marek.safar@gmail.com>
 
 	* MemberBinding.cs: Made MemberBinding ctor public
@@ -9,7 +13,7 @@
 
 2008-08-02  Zoltan Varga  <vargaz@gmail.com>
 
-	* BinaryExpression.cs (EmitBinaryOperator): Mask out the upper bits of the 
+	* BinaryExpression.cs (EmitBinaryOperator): Mask out the upper bits of the
 	shift amount like mcs compiled code does.
 
 2008-07-19  Jb Evain  <jbevain@novell.com>
