@@ -1,5 +1,10 @@
 2008-09-01  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #421736
+	* iterators.cs: Don't crash on unreachable iterators.
+
+2008-09-01  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #421628
 	* parameter.cs, attribute.cs: Clone also parameter attributes.
 

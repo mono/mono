@@ -82,7 +82,8 @@ namespace Mono.CSharp {
 					return false;
 			}
 
-			unwind_protect = ec.CurrentBranching.AddResumePoint (this, loc, out resume_pc);
+			if (!ec.CurrentBranching.CurrentUsageVector.IsUnreachable)
+				unwind_protect = ec.CurrentBranching.AddResumePoint (this, loc, out resume_pc);
 
 			return true;
 		}
