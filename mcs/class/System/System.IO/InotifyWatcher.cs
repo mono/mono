@@ -176,21 +176,6 @@ namespace System.IO {
 		{
 			int wd = data.Watch;
 
-			/* If AddDirectoryWatch() in
-			 * StartMonitoringDirectory() returns a watch
-			 * descriptor that's already being used, it
-			 * means it modified an existing watch.  So
-			 * remove the old one, so we don't report
-			 * duplicate entries.  But don't call
-			 * StopMonitoringDirectory (like after every
-			 * other call to RemoveRequestData), as that
-			 * will stop monitoring the new one too.  See
-			 * bug 322330
-			 */
-			foreach (InotifyData fd in GetEnumerator (requests[wd])) {
-				RemoveRequestData (fd);
-			}
-
 			object obj = requests [wd];
 			ArrayList list = null;
 			if (obj == null) {
