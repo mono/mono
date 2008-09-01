@@ -1,3 +1,8 @@
+2008-09-01  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #421628
+	* parameter.cs, attribute.cs: Clone also parameter attributes.
+
 2008-08-30  Miguel de Icaza  <miguel@novell.com>
 
 	* namespace.cs (LookupType): In EvalMode, try to replace
@@ -68,6 +73,7 @@
 
 	* getline.cs: Allow history size to be set.
 	
+>>>>>>> .r112006
 2008-08-29  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #360755

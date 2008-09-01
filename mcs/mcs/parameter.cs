@@ -167,11 +167,6 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Parameter Clone ()
-		{
-			return new ParamsParameter (TypeName, Name, attributes, Location);
-		}
-
 		public override Type Resolve (IResolveContext ec)
 		{
 			if (base.Resolve (ec) == null)
@@ -487,9 +482,15 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public virtual Parameter Clone ()
+		public Parameter Clone ()
 		{
-			return new Parameter (TypeName, Name, modFlags, attributes, Location);
+			Parameter p = (Parameter) MemberwiseClone ();
+			if (attributes != null) {
+				p.attributes = attributes.Clone ();
+				p.attributes.AttachTo (p);
+			}
+
+			return p;
 		}
 
 		public ExpressionStatement CreateExpressionTreeVariable (EmitContext ec)
