@@ -1,3 +1,8 @@
+2008-09-01  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/ReflectionWriter.cs: fix for writing null string
+	constants. Patch by Ewout Prangsma <ewout@tallapplications.com>.
+
 2008-06-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Cecil.dll.sources

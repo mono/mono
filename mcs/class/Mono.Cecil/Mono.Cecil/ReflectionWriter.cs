@@ -682,7 +682,7 @@ namespace Mono.Cecil {
 			} else
 				et = GetCorrespondingType (type.FullName);
 
-			if (et == ElementType.Object || et == ElementType.Type)
+			if (et == ElementType.Object || et == ElementType.Type || et == ElementType.String)
 				et = hc.Constant == null ?
 					ElementType.Class :
 					GetCorrespondingType (hc.Constant.GetType ().FullName);
