@@ -6,6 +6,8 @@
 	* AspGenerator.cs: AddTypeToCache works checks whether inputFile
 	is null or empty and does not assume the dependencies ArrayList is
 	present.
+	CloseControl uses ControlBuilder's OriginalTagName property,
+	should the property/tag name be prefixed with 'prefix:'
 
 	* CachingCompiler.cs: expect the dependencies ArrayList to be null
 	or empty.

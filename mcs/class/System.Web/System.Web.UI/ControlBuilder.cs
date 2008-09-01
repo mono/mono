@@ -55,6 +55,7 @@ namespace System.Web.UI {
 		internal ControlBuilder parentBuilder;
 		Type type;	       
 		string tagName;
+		string originalTagName;
 		string id;
 		internal IDictionary attribs;
 		internal int line;
@@ -224,6 +225,14 @@ namespace System.Web.UI {
 			get { return tagName; }
 		}
 
+		internal string OriginalTagName {
+			get {
+				if (originalTagName == null || originalTagName.Length == 0)
+					return TagName;
+				return originalTagName;
+			}
+		}
+		
 		internal RootBuilder Root {
 			get {
 				if (GetType () == typeof (RootBuilder))
@@ -441,12 +450,20 @@ namespace System.Web.UI {
 		{
 			return false;
 		}
-
+		
 		ControlBuilder CreatePropertyBuilder (string propName, TemplateParser parser, IDictionary atts)
 		{
-			PropertyInfo prop = type.GetProperty (propName, flagsNoCase);
+			int idx;
+			string propertyName;
+			
+			if ((idx = propName.IndexOf (':')) >= 0)
+				propertyName = propName.Substring (idx + 1);
+			else
+				propertyName = propName;
+			
+			PropertyInfo prop = type.GetProperty (propertyName, flagsNoCase);
 			if (prop == null) {
-				string msg = String.Format ("Property {0} not found in type {1}", propName, type);
+				string msg = String.Format ("Property {0} not found in type {1}", propertyName, type);
 				throw new HttpException (msg);
 			}
 
@@ -462,6 +479,8 @@ namespace System.Web.UI {
 				builder = CreateBuilderFromType (parser, parentBuilder, propType, prop.Name,
 								 null, atts, line, fileName);
 				builder.isProperty = true;
+				if (idx >= 0)
+					builder.originalTagName = propName;
 				return builder;
 			}
 
@@ -469,6 +488,8 @@ namespace System.Web.UI {
 			builder.fileName = fileName;
 			builder.line = line;
 			builder.isProperty = true;
+			if (idx >= 0)
+				builder.originalTagName = propName;
 			return builder;
 		}
 		
