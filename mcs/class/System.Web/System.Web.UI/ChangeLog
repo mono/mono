@@ -4,6 +4,7 @@
 	property names with prefixes (e.g. 'prefix:PropertyName'). 
 	Original, parsed, tag name is stored to properly handle closing
 	tags.
+	CreateSubBuilder compares tagid to tagName case-insensitively now.
 
 	* TemplateControl.cs: changed the way in which ParseControl is
 	implemented for the 2.0+ profile. Still not quite there, but
