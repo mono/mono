@@ -1,5 +1,10 @@
 2008-09-01  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #418908
+	* class.cs: Use AddScopeStatement for field initializers.
+
+2008-09-01  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #415385
 	* ecore.cs, convert.cs: Do method group conversion for equal group types.
 

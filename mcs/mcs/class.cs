@@ -714,27 +714,33 @@ namespace Mono.CSharp {
 				if (initialized_static_fields == null)
 					return;
 
-				bool has_complex_initializer = false;
+				bool has_complex_initializer = !RootContext.Optimize;
 				using (ec.Set (EmitContext.Flags.InFieldInitializer)) {
-					foreach (FieldInitializer fi in initialized_static_fields) {
-						fi.ResolveStatement (ec);
-						if (!fi.IsComplexInitializer)
-							continue;
+					int i;
+					ExpressionStatement[] init = new ExpressionStatement [initialized_static_fields.Count];
+					for (i = 0; i < initialized_static_fields.Count; ++i) {
+						FieldInitializer fi = (FieldInitializer) initialized_static_fields [i];
+						ExpressionStatement s = fi.ResolveStatement (ec);
+						if (s == null) {
+							s = EmptyExpressionStatement.Instance;
+						} else if (fi.IsComplexInitializer) {
+							has_complex_initializer |= true;
+						}
 
-						has_complex_initializer = true;
+						init [i] = s;
 					}
 
-					// Need special check to not optimize code like this
-					// static int a = b = 5;
-					// static int b = 0;
-					if (!has_complex_initializer && RootContext.Optimize) {
-						for (int i = 0; i < initialized_static_fields.Count; ++i) {
-							FieldInitializer fi = (FieldInitializer) initialized_static_fields [i];
-							if (fi.IsDefaultInitializer) {
-								initialized_static_fields.RemoveAt (i);
-								--i;
-							}
-						}
+					for (i = 0; i < initialized_static_fields.Count; ++i) {
+						FieldInitializer fi = (FieldInitializer) initialized_static_fields [i];
+						//
+						// Need special check to not optimize code like this
+						// static int a = b = 5;
+						// static int b = 0;
+						//
+						if (!has_complex_initializer && fi.IsDefaultInitializer)
+							continue;
+
+						ec.CurrentBlock.AddScopeStatement (new StatementExpression (init [i]));
 					}
 				}
 
@@ -747,12 +753,17 @@ namespace Mono.CSharp {
 			using (ec.Set (EmitContext.Flags.InFieldInitializer)) {
 				for (int i = 0; i < initialized_fields.Count; ++i) {
 					FieldInitializer fi = (FieldInitializer) initialized_fields [i];
-					fi.ResolveStatement (ec);
-					if (fi.IsDefaultInitializer && RootContext.Optimize) {
-						// Field is re-initialized to its default value => removed
-						initialized_fields.RemoveAt (i);
-						--i;
-					}
+					ExpressionStatement s = fi.ResolveStatement (ec);
+					if (s == null)
+						continue;
+
+					//
+					// Field is re-initialized to its default value => removed
+					//
+					if (fi.IsDefaultInitializer && RootContext.Optimize)
+						continue;
+
+					ec.CurrentBlock.AddScopeStatement (new StatementExpression (s));
 				}
 			}
 		}
@@ -4734,9 +4745,6 @@ namespace Mono.CSharp {
 
 				if (Report.Errors > 0)
 					return;
-
-				if (emit_field_initializers)
-					Parent.PartialContainer.EmitFieldInitializers (ec);
 
 				ec.EmitResolvedTopBlock (block, unreachable);
 			}
