@@ -1,3 +1,8 @@
+2008-09-01  Dick Porter  <dick@ximian.com>
+
+	* InotifyWatcher.cs: Revert fix for bug 322330, as it is somehow
+	breaking other stuff.
+
 2008-06-20  Dick Porter  <dick@ximian.com>
 
 	* InotifyWatcher.cs: If a directory is renamed, make sure the old
