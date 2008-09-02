@@ -1661,7 +1661,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>65</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>65</size>
@@ -4450,7 +4450,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>53</size>
@@ -4888,7 +4888,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>53</size>
@@ -4958,7 +4958,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
         <size>53</size>
@@ -5210,7 +5210,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
         <size>39</size>
@@ -5236,7 +5236,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
         <size>39</size>
@@ -5262,7 +5262,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Collections.Generic.KeyValuePair`2[S,T], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>39</size>
@@ -5288,7 +5288,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
         <size>39</size>
@@ -5314,7 +5314,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
         <size>53</size>
@@ -5340,7 +5340,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
         <size>53</size>
@@ -5366,7 +5366,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[T[], gtest-191, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]].GetEnumerator()">
         <size>53</size>
@@ -5462,7 +5462,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[S].GetEnumerator()">
         <size>39</size>
@@ -5528,7 +5528,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[S].GetEnumerator()">
         <size>39</size>
@@ -6124,7 +6124,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>65</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[Rr].GetEnumerator()">
         <size>65</size>
@@ -6150,7 +6150,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>65</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>65</size>
@@ -6466,7 +6466,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
         <size>53</size>
@@ -10222,7 +10222,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>39</size>
@@ -10248,7 +10248,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>39</size>
@@ -10826,7 +10826,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>65</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
         <size>65</size>
@@ -12169,7 +12169,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>39</size>
@@ -12318,7 +12318,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>65</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[Foo, gtest-anon-5, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]].GetEnumerator()">
         <size>65</size>
@@ -12409,7 +12409,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>53</size>
@@ -12516,7 +12516,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>39</size>
@@ -12542,7 +12542,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>65</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[Test, gtest-anon-9, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]].GetEnumerator()">
         <size>65</size>
@@ -15181,7 +15181,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
         <size>53</size>
@@ -15207,7 +15207,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>65</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>65</size>
@@ -15257,7 +15257,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>53</size>
@@ -15304,7 +15304,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>65</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
         <size>65</size>
@@ -15356,7 +15356,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>65</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[TResult].GetEnumerator()">
         <size>65</size>
@@ -15403,7 +15403,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>53</size>
@@ -16531,7 +16531,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>65</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[TR].GetEnumerator()">
         <size>65</size>
@@ -26306,7 +26306,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>39</size>
@@ -30832,7 +30832,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>39</size>
@@ -31291,7 +31291,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>39</size>
@@ -33757,7 +33757,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>53</size>
@@ -34691,7 +34691,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>53</size>
@@ -36985,7 +36985,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>39</size>
@@ -37065,7 +37065,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>53</size>
@@ -37091,7 +37091,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>53</size>
@@ -37130,7 +37130,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>65</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>65</size>
@@ -37183,7 +37183,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>39</size>
@@ -37225,7 +37225,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>65</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>65</size>
@@ -37251,7 +37251,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>53</size>
@@ -37277,7 +37277,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>53</size>
@@ -37303,7 +37303,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>53</size>
@@ -37347,7 +37347,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>53</size>
@@ -37394,7 +37394,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>65</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>65</size>
@@ -37500,7 +37500,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>53</size>
@@ -37581,7 +37581,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>53</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>53</size>
@@ -37631,7 +37631,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>39</size>
@@ -37952,7 +37952,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>39</size>
@@ -38041,7 +38041,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>39</size>
@@ -38067,7 +38067,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>39</size>
@@ -38093,7 +38093,7 @@
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
-        <size>39</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
         <size>39</size>
