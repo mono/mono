@@ -220,7 +220,15 @@ namespace System.ComponentModel
 			}
 
 			//In order to detect that this is a virtual property with override, we check the non null accessor
+#if NET_2_0
 			MethodInfo mi = getter ?? setter;
+#else
+			MethodInfo mi;
+			if (getter != null)
+				mi = getter;
+			else
+				mi = setter;
+#endif
 			if (mi == null || !mi.IsVirtual || (mi.Attributes & MethodAttributes.NewSlot) == MethodAttributes.NewSlot) {
 				accessors_inited = true;
 				return;
