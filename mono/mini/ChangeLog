@@ -1,3 +1,9 @@
+2008-09-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c (initialize_array_data): Handle field with RVA from
+	dynamic images.
+	(Ported from trunk)
+
 2008-08-29  Geoff Norton  <gnorton@novell.com>
 
 	* aot-compiler.c: The Mach/ARM compiler doesn't understand the bss
