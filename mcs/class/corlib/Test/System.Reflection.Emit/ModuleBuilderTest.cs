@@ -402,5 +402,12 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsFalse (typeToken.Token == TypeToken.Empty.Token, "#1");
 #endif
 		}
+		
+		
+		[Test]
+		public void GetGenericArguments_Returns_Null_For_Non_Generic_Methods ()
+		{
+			
+		}
 	}
 }

@@ -23,6 +23,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
+using System.Runtime.CompilerServices;
 
 #if NET_2_0
 using System.Collections.Generic;
@@ -9889,6 +9890,31 @@ namespace MonoTests.System.Reflection.Emit
 				Thread.GetDomain ().ExecuteAssembly(Path.GetTempPath () + Path.DirectorySeparatorChar + "Instance.exe");
 		}
 
+		[Test]
+		public void FieldWithInitializedDataWorksWithCompilerRuntimeHelpers ()
+		{
+			TypeBuilder tb = module.DefineType ("Type1", TypeAttributes.Public);
+			FieldBuilder fb = tb.DefineInitializedData ("Foo", new byte [] {1,2,3,4}, FieldAttributes.Static|FieldAttributes.Public);
+			tb.CreateType ();
+
+			assembly = Thread.GetDomain ().DefineDynamicAssembly (new AssemblyName (ASSEMBLY_NAME+"2"), AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
+			module = assembly.DefineDynamicModule ("Instance.exe");
+
+			TypeBuilder tb2 = module.DefineType ("Type2", TypeAttributes.Public);
+			MethodBuilder mb = tb2.DefineMethod ("Test", MethodAttributes.Public | MethodAttributes.Static, typeof (object), new Type [0]);
+			ILGenerator il = mb.GetILGenerator ();
+
+			il.Emit (OpCodes.Ldc_I4_1);
+			il.Emit (OpCodes.Newarr, typeof (int));
+			il.Emit (OpCodes.Dup);
+			il.Emit (OpCodes.Ldtoken, fb);
+			il.Emit (OpCodes.Call, typeof (RuntimeHelpers).GetMethod ("InitializeArray"));
+			il.Emit (OpCodes.Ret);
+
+			Type t = tb2.CreateType ();
+			int[] res = (int[])t.GetMethod ("Test").Invoke (null, new object[0]);
+			Console.WriteLine (res[0]);
+		}
 #endif
 
 		public interface IDelegateFactory

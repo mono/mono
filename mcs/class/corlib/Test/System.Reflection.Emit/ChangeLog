@@ -1,3 +1,8 @@
+2008-09-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilderTest.cs: New test for a field with initialized data
+	that is referenced from another assembly.
+
 2008-08-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeBuilderTest.cs: Add a test for IsAssignableFrom and generic instances
