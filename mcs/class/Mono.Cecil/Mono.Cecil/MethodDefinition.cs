@@ -266,6 +266,16 @@ namespace Mono.Cecil {
 			}
 		}
 
+		public bool IsCheckAccessOnOverride {
+			get { return (m_attributes & MethodAttributes.CheckAccessOnOverride) != 0; }
+			set {
+				if (value)
+					m_attributes |= MethodAttributes.CheckAccessOnOverride;
+				else
+					m_attributes &= ~MethodAttributes.CheckAccessOnOverride;
+			}
+		}
+
 		public bool IsAbstract {
 			get { return (m_attributes & MethodAttributes.Abstract) != 0; }
 			set {

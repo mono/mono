@@ -1,5 +1,10 @@
 2008-09-02  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil/MethodAttributes.cs: add CheckAccessOnOverride.
+	* Mono.Cecil/MethodDefinition.cs: add IsCheckAccessOnOverride.
+
+2008-09-02  Jb Evain  <jbevain@novell.com>
+
 	* Mono.Cecil/GenericParameter.cs: fix Has*Constraint properties.
 
 2008-09-02  Jb Evain  <jbevain@novell.com>
