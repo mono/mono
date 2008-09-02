@@ -1,3 +1,7 @@
+2008-09-02  Jb Evain  <jbevain@novell.com>
+
+	* object.c (mono_ldstr_metdata_sig): renamed to mono_ldstr_metadata_sig.
+
 2008-09-02 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	reflection.c (typebuilder_setup_fields): Handle classes with
