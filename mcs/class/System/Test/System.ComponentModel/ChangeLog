@@ -1,3 +1,8 @@
+2008-09-02  Rodrigo Kumpera  <rkumpera@novell.com>
+	[Backport to 2.0]
+	* PropertyDescriptorTest.cs: Tests for Get/Set Value of partial
+	overrides of virtual properties.
+
 2008-07-16  Jonathan Pobst  <monkey@jpobst.com>
 	[Backport to 2.0]
 	* BackgroundWorkerTest.cs: Add some asserts for bug #364365.

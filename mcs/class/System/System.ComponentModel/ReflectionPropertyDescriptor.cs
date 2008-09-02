@@ -41,6 +41,8 @@ namespace System.ComponentModel
 		PropertyInfo _member;
 		Type _componentType;
 		Type _propertyType;
+		MethodInfo getter, setter;
+		bool accessors_inited;
 
 		public ReflectionPropertyDescriptor (Type componentType, PropertyDescriptor oldPropertyDescriptor, Attribute [] attributes)
 		: base (oldPropertyDescriptor, attributes)
@@ -143,7 +145,8 @@ namespace System.ComponentModel
 		public override object GetValue (object component)
 		{
 			component = MemberDescriptor.GetInvokee (_componentType, component);
-			return GetPropertyInfo ().GetValue (component, null);
+			InitAccessors ();
+			return getter.Invoke (component, new object[0]);
 		}
 
 		DesignerTransaction CreateTransaction (object obj, string description)
@@ -183,6 +186,65 @@ namespace System.ComponentModel
 				tran.Cancel ();
 		}
 
+		/*
+		This method exists because reflection is way too low level for what we need.
+		A given virtual property that is partially overriden by a child won't show the
+		non-overriden accessor in PropertyInfo. IOW:
+		class Parent {
+			public virtual string Prop { get; set; }
+		}
+		class Child : Parent {
+			public override string Prop {
+				get { return "child"; }
+			}
+		}
+		PropertyInfo pi = typeof (Child).GetProperty ("Prop");
+		pi.GetGetMethod (); //returns the MethodInfo for the overridden getter
+		pi.GetSetMethod (); //returns null as no override exists
+		*/
+		void InitAccessors () {
+			if (accessors_inited)
+				return;
+			PropertyInfo prop = GetPropertyInfo ();
+
+			setter = prop.GetSetMethod (true);
+			getter = prop.GetGetMethod (true);
+
+			if (setter != null && getter != null) {//both exist
+				accessors_inited = true;
+				return;
+			}
+			if (setter == null && getter == null) {//neither exist, this is a broken property
+				accessors_inited = true;
+				return;
+			}
+
+			//In order to detect that this is a virtual property with override, we check the non null accessor
+			MethodInfo mi = getter != null ? getter : setter;
+			if (mi == null || !mi.IsVirtual || (mi.Attributes & MethodAttributes.NewSlot) == MethodAttributes.NewSlot) {
+				accessors_inited = true;
+				return;
+			}
+
+			Type type = _componentType.BaseType;
+			while (type != null && type != typeof (object)) {
+				prop = type.GetProperty (Name, BindingFlags.GetProperty | BindingFlags.NonPublic | 
+										      BindingFlags.Public | BindingFlags.Instance,
+										      null, this.PropertyType,
+										      new Type[0], new ParameterModifier[0]);
+				if (prop == null) //nothing left to search
+					break;
+				if (setter == null)
+					setter = mi = prop.GetSetMethod ();
+				else
+					getter = mi = prop.GetGetMethod ();
+				if (mi != null)
+					break;
+				type = type.BaseType;
+			}
+			accessors_inited = true;
+		}
+
 		public override void SetValue (object component, object value)
 		{
 			DesignerTransaction tran = CreateTransaction (component, "Set Property '" + Name + "'");
@@ -191,7 +253,8 @@ namespace System.ComponentModel
 			object old = GetValue (propertyHolder);
 
 			try {
-				GetPropertyInfo ().SetValue (propertyHolder, value, null);
+				InitAccessors ();
+				setter.Invoke (propertyHolder, new object[] { value });
 				EndTransaction (component, tran, old, value, true);
 			} catch {
 				EndTransaction (component, tran, old, value, false);
