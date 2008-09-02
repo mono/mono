@@ -1,3 +1,8 @@
+2008-09-02  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/SecurityDeclarationReader.cs: fix reading
+	multiple permissions. Patch by Carsten Keutmann.
+
 2008-09-01  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/ReflectionReader.cs: properly compose mod and byref types

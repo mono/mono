@@ -156,6 +156,8 @@ namespace Mono.Cecil {
 				}
 			}
 
+			start = (int) br.BaseStream.Position;
+
 			return sa;
 		}
 #endif
