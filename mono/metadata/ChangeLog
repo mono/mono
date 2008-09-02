@@ -1,3 +1,11 @@
+2008-09-02  Bill Holmes  <billholmes54@gmail.com>
+
+	* marshal.c (ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi,
+	  ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni) :
+	  Changed to use GlobalAlloc for the memory returned on Windows platforms.
+
+	Code is contributed under MIT/X11 license.
+
 2008-09-02  Jb Evain  <jbevain@novell.com>
 
 	* object.c (mono_ldstr_metdata_sig): renamed to mono_ldstr_metadata_sig.
