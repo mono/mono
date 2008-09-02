@@ -1,13 +1,3 @@
-Iterators
-=========
-
-
-	Ok, solved part of the problem, but not the second.
-
-	Apparently there are 2 scopes in test-iter-05.cs that
-	are referenced, but when we call "ComputeMethodHost" in
-	iterators.cs:854 this information is not yet available.
-
 ===========================================
 
 * Value Parameter
@@ -59,10 +49,6 @@ Error Reporting:
 ----------------
 
 	* Make yyerror show a nice syntax error, instead of the current mess.
-
-Iterators
----------
-	* Reset should throw not implemented now.
 
 Optimization ideas
 ------------------
@@ -145,13 +131,6 @@ BUGS
 
 	They should transfer control to the finally block if inside a try/catch
 	block.
-
-* Method Registration and error CS111
-
-	The way we use the method registration to signal 111 is wrong.
-	
-	Method registration should only be used to register methodbuilders,
-	we need an alternate method of checking for duplicates.
 
 *
 > // CSC sets beforefieldinit
@@ -241,15 +220,4 @@ RECOMMENDATIONS
 
 	Notice how numbering of the arguments changes as the
 	{ oob_stack.Push (lexer.Location) } takes a "slot"  in the productions.
-
-
-* Anonymous Methods
-===================
-
-In EmitAnonymousHelperClasses we set the "NeedThis" parameter of all
-the roots, but this is not necessary.  We should track the
-"HaveCapturedFields" on a per-ScopeInfo basis, and only set the
-HaveCapturedFields on the proper roots, instead of all the roots.
-
-
 
