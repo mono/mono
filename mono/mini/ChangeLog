@@ -1,3 +1,8 @@
+2008-09-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c (initialize_array_data): Handle field with RVA from
+	dynamic images.
+
 2008-08-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (handle_isinst): Do the assignment at the beginning, so the
