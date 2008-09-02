@@ -752,7 +752,6 @@ namespace Mono.CSharp
 				"System",
 				"System.Xml",
 #if NET_2_1
-				"System.Core",
 				"System.Net",
 				"System.Windows",
 				"System.Windows.Browser",
@@ -783,9 +782,6 @@ namespace Mono.CSharp
 			};
 
 			soft_references.AddRange (default_config);
-			
-			if (RootContext.Version > LanguageVersion.ISO_2)
-				soft_references.Add ("System.Core");
 		}
 
 		public static string OutputFile
@@ -1609,9 +1605,13 @@ namespace Mono.CSharp
 			if (load_default_config)
 				DefineDefaultConfig ();
 
-			if (Report.Errors > 0){
-				return false;
-			}
+			//
+			// Yet another SRE related problem, we have to always load System.Core
+			// even with -noconfig, otherwise the check for ExtensionAttribute in
+			// loaded assemblies won't work
+			// 
+			if (RootContext.Version > LanguageVersion.ISO_2 && (load_default_config || references.Count != 0))
+				soft_references.Add ("System.Core");
 
 			//
 			// Load assemblies required

@@ -1,5 +1,10 @@
 2008-09-02  Marek Safar  <marek.safar@gmail.com>
 
+	* driver.cs: Fixed import of extension methods when using -noconfig
+	option.
+
+2008-09-02  Marek Safar  <marek.safar@gmail.com>
+
 	* iterator.cs: Don't emit GetEnumerator method twice but call a generic
 	version from non-generic implementation instead.
 
