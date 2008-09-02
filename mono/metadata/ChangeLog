@@ -1,3 +1,9 @@
+2008-09-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (typebuilder_setup_fields): Handle classes with
+	explicit size.
+	(Ported from trunk)
+
 2008-08-29  Dick Porter  <dick@ximian.com>
  
 	* icall-def.h

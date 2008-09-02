@@ -9695,13 +9695,21 @@ typebuilder_setup_fields (MonoClass *klass)
 	MonoMemPool *mp = klass->image->mempool;
 	const char *p, *p2;
 	int i;
-	guint32 len, idx;
+	guint32 len, idx, real_size = 0;
 
 	klass->field.count = tb->num_fields;
 	klass->field.first = 0;
 
-	if (!klass->field.count)
+	if (tb->class_size) {
+		g_assert ((tb->packing_size & 0xfffffff0) == 0);
+		klass->packing_size = tb->packing_size;
+		real_size = klass->instance_size + tb->class_size;
+	}
+
+	if (!klass->field.count) {
+		klass->instance_size = MAX (klass->instance_size, real_size);
 		return;
+	}
 	
 	klass->fields = mp_g_new0 (mp, MonoClassField, klass->field.count);
 
@@ -9735,6 +9743,8 @@ typebuilder_setup_fields (MonoClass *klass)
 			memcpy ((gpointer)field->data, p, len);
 		}
 	}
+
+	klass->instance_size = MAX (klass->instance_size, real_size);
 	mono_class_layout_fields (klass);
 }
 
