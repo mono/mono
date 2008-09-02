@@ -98,6 +98,7 @@ namespace Mono.Xml.Schema
 		ArrayList defaultAttributesCache = new ArrayList ();
 		bool defaultAttributeConsumed;
 		XmlSchemaType currentAttrType;
+		bool validationDone;
 
 		// Extra for XmlSchemaValidtingReader
 		// (not in XsdValidatingReader)
@@ -673,7 +674,10 @@ namespace Mono.Xml.Schema
 		public override bool Read ()
 		{
 			if (!reader.Read ()) {
-				v.EndValidation ();
+				if (!validationDone) {
+					v.EndValidation ();
+					validationDone = true;
+				}
 				return false;
 			}
 

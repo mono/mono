@@ -1,3 +1,8 @@
+2008-09-02  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaValidatingReader.cs : call EndValidation() only once.
+	  Fixed a bug additionally reported to #324606 (but wrong to attach).
+
 2008-04-02  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdParticleValidationState.cs : a choice with only empty particle
