@@ -1,3 +1,8 @@
+2008-09-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPathTest.cs: Add a bunch of unit tests to check when 
+	points can be compressed (removed) when adding shapes to a path.
+
 2008-08-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPathTest.cs: Add test case for "half" closed paths.

@@ -130,6 +130,48 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
+		public void GraphicsPath_SamePoint ()
+		{
+			Point[] points = new Point [] {
+				new Point (1, 1),
+				new Point (1, 1),
+				new Point (1, 1),
+				new Point (1, 1),
+				new Point (1, 1),
+				new Point (1, 1),
+			};
+			byte [] types = new byte [6] { 0, 1, 1, 1, 1, 1 };
+			using (GraphicsPath gp = new GraphicsPath (points, types)) {
+				Assert.AreEqual (6, gp.PointCount, "0-PointCount");
+			}
+			types [0] = 1;
+			using (GraphicsPath gp = new GraphicsPath (points, types)) {
+				Assert.AreEqual (6, gp.PointCount, "1-PointCount");
+			}
+		}
+
+		[Test]
+		public void GraphicsPath_SamePointF ()
+		{
+			PointF [] points = new PointF [] {
+				new PointF (1f, 1f),
+				new PointF (1f, 1f),
+				new PointF (1f, 1f),
+				new PointF (1f, 1f),
+				new PointF (1f, 1f),
+				new PointF (1f, 1f),
+			};
+			byte [] types = new byte [6] { 0, 1, 1, 1, 1, 1 };
+			using (GraphicsPath gp = new GraphicsPath (points, types)) {
+				Assert.AreEqual (6, gp.PointCount, "0-PointCount");
+			}
+			types [0] = 1;
+			using (GraphicsPath gp = new GraphicsPath (points, types)) {
+				Assert.AreEqual (6, gp.PointCount, "1-PointCount");
+			}
+		}
+
+		[Test]
 		[ExpectedException (typeof (SC.InvalidEnumArgumentException))]
 		public void FillMode_Invalid ()
 		{
@@ -306,6 +348,46 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		}
 
 		[Test]
+		public void AddBezier_SamePoint ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddBezier (1, 1, 1, 1, 1, 1, 1, 1);
+			// all points are present
+			Assert.AreEqual (4, gp.PointCount, "1-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [0], "1-PathTypes[0]");
+			Assert.AreEqual (3, gp.PathTypes [1], "1-PathTypes[1]");
+			Assert.AreEqual (3, gp.PathTypes [2], "1-PathTypes[2]");
+			Assert.AreEqual (3, gp.PathTypes [3], "1-PathTypes[3]");
+
+			gp.AddBezier (new Point (1, 1), new Point (1, 1), new Point (1, 1), new Point (1, 1));
+			// the first point (move to) can be compressed (i.e. removed)
+			Assert.AreEqual (7, gp.PointCount, "2-PointCount");
+			Assert.AreEqual (3, gp.PathTypes [4], "2-PathTypes[4]");
+			Assert.AreEqual (3, gp.PathTypes [5], "2-PathTypes[5]");
+			Assert.AreEqual (3, gp.PathTypes [6], "2-PathTypes[6]");
+		}
+
+		[Test]
+		public void AddBezier_SamePointF ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddBezier (new PointF (1f, 1f), new PointF (1f, 1f), new PointF (1f, 1f), new PointF (1f, 1f));
+			// all points are present
+			Assert.AreEqual (4, gp.PointCount, "1-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [0], "1-PathTypes[0]");
+			Assert.AreEqual (3, gp.PathTypes [1], "1-PathTypes[1]");
+			Assert.AreEqual (3, gp.PathTypes [2], "1-PathTypes[2]");
+			Assert.AreEqual (3, gp.PathTypes [3], "1-PathTypes[3]");
+
+			gp.AddBezier (new PointF (1f, 1f), new PointF (1f, 1f), new PointF (1f, 1f), new PointF (1f, 1f));
+			// the first point (move to) can be compressed (i.e. removed)
+			Assert.AreEqual (7, gp.PointCount, "2-PointCount");
+			Assert.AreEqual (3, gp.PathTypes [4], "2-PathTypes[4]");
+			Assert.AreEqual (3, gp.PathTypes [5], "2-PathTypes[5]");
+			Assert.AreEqual (3, gp.PathTypes [6], "2-PathTypes[6]");
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void AddBeziers_Point_Null ()
 		{
@@ -349,6 +431,48 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			GraphicsPath gp = new GraphicsPath ();
 			gp.AddBeziers (new PointF[4] { new PointF (1f, 1f), new PointF (2f, 2f), new PointF (3f, 3f), new PointF (4f, 4f) });
 			CheckBezier (gp);
+		}
+
+		[Test]
+		public void AddBeziers_SamePoint ()
+		{
+			Point [] points = new Point [4] { new Point (1, 1), new Point (1, 1), new Point (1, 1), new Point (1, 1) };
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddBeziers (points);
+			// all points are present
+			Assert.AreEqual (4, gp.PointCount, "1-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [0], "1-PathTypes[0]");
+			Assert.AreEqual (3, gp.PathTypes [1], "1-PathTypes[1]");
+			Assert.AreEqual (3, gp.PathTypes [2], "1-PathTypes[2]");
+			Assert.AreEqual (3, gp.PathTypes [3], "1-PathTypes[3]");
+
+			gp.AddBeziers (points);
+			// the first point (move to) can be compressed (i.e. removed)
+			Assert.AreEqual (7, gp.PointCount, "2-PointCount");
+			Assert.AreEqual (3, gp.PathTypes [4], "2-PathTypes[4]");
+			Assert.AreEqual (3, gp.PathTypes [5], "2-PathTypes[5]");
+			Assert.AreEqual (3, gp.PathTypes [6], "2-PathTypes[6]");
+		}
+
+		[Test]
+		public void AddBeziers_SamePointF ()
+		{
+			PointF[] points = new PointF [4] { new PointF (1f, 1f), new PointF (1f, 1f), new PointF (1f, 1f), new PointF (1f, 1f) };
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddBeziers (points);
+			// all points are present
+			Assert.AreEqual (4, gp.PointCount, "1-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [0], "1-PathTypes[0]");
+			Assert.AreEqual (3, gp.PathTypes [1], "1-PathTypes[1]");
+			Assert.AreEqual (3, gp.PathTypes [2], "1-PathTypes[2]");
+			Assert.AreEqual (3, gp.PathTypes [3], "1-PathTypes[3]");
+
+			gp.AddBeziers (points);
+			// the first point (move to) can be compressed (i.e. removed)
+			Assert.AreEqual (7, gp.PointCount, "2-PointCount");
+			Assert.AreEqual (3, gp.PathTypes [4], "2-PathTypes[4]");
+			Assert.AreEqual (3, gp.PathTypes [5], "2-PathTypes[5]");
+			Assert.AreEqual (3, gp.PathTypes [6], "2-PathTypes[6]");
 		}
 
 		private void CheckEllipse (GraphicsPath path)
@@ -460,9 +584,60 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		{
 			GraphicsPath gp = new GraphicsPath ();
 			gp.AddLine (new Point (1, 1), new Point (1, 1));
+			Assert.AreEqual (2, gp.PointCount, "1-PointCount");
+			Assert.AreEqual (0, gp.PathTypes[0], "1-PathTypes[0]");
+			Assert.AreEqual (1, gp.PathTypes[1], "1-PathTypes[1]");
+
+			gp.AddLine (new Point (1, 1), new Point (1, 1));
+			// 3 not 4 points, the first point (only) is compressed
+			Assert.AreEqual (3, gp.PointCount, "2-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [0], "2-PathTypes[0]");
+			Assert.AreEqual (1, gp.PathTypes [1], "2-PathTypes[1]");
+			Assert.AreEqual (1, gp.PathTypes [2], "2-PathTypes[2]");
+
+			gp.AddLine (new Point (1, 1), new Point (1, 1));
+			// 4 not 5 (or 6) points, the first point (only) is compressed
+			Assert.AreEqual (4, gp.PointCount, "3-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [0], "3-PathTypes[0]");
+			Assert.AreEqual (1, gp.PathTypes [1], "3-PathTypes[1]");
+			Assert.AreEqual (1, gp.PathTypes [2], "3-PathTypes[2]");
+			Assert.AreEqual (1, gp.PathTypes [3], "3-PathTypes[3]");
+		}
+
+		[Test]
+		public void AddLine_SamePointF ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddLine (new PointF (49.2f, 157f), new PointF (49.2f, 157f));
 			Assert.AreEqual (2, gp.PointCount, "PointCount");
-			Assert.AreEqual (0, gp.PathTypes[0], "PathTypes[0]");
-			Assert.AreEqual (1, gp.PathTypes[1], "PathTypes[1]");
+			Assert.AreEqual (0, gp.PathTypes [0], "PathTypes[0]");
+			Assert.AreEqual (1, gp.PathTypes [1], "PathTypes[1]");
+
+			gp.AddLine (new PointF (49.2f, 157f), new PointF (49.2f, 157f));
+			// 3 not 4 points, the first point (only) is compressed
+			Assert.AreEqual (3, gp.PointCount, "2-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [0], "2-PathTypes[0]");
+			Assert.AreEqual (1, gp.PathTypes [1], "2-PathTypes[1]");
+			Assert.AreEqual (1, gp.PathTypes [2], "2-PathTypes[2]");
+		}
+
+		[Test]
+		public void AddLine_SamePointsF ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddLine (new PointF (49.2f, 157f), new PointF (75.6f, 196f));
+			gp.AddLine (new PointF (75.6f, 196f), new PointF (102f, 209f));
+			Assert.AreEqual (3, gp.PointCount, "1-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [0], "1-PathTypes[0]");
+			Assert.AreEqual (1, gp.PathTypes [1], "1-PathTypes[1]");
+			Assert.AreEqual (1, gp.PathTypes [2], "1-PathTypes[2]");
+
+			gp.AddLine (new PointF (102f, 209f), new PointF (75.6f, 196f));
+			Assert.AreEqual (4, gp.PointCount, "2-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [0], "2-PathTypes[0]");
+			Assert.AreEqual (1, gp.PathTypes [1], "2-PathTypes[1]");
+			Assert.AreEqual (1, gp.PathTypes [2], "2-PathTypes[2]");
+			Assert.AreEqual (1, gp.PathTypes [3], "2-PathTypes[3]");
 		}
 
 		[Test]
@@ -531,6 +706,57 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			GraphicsPath gp = new GraphicsPath ();
 			gp.AddLines (new PointF[2] { new PointF (1f, 1f), new PointF (2f, 2f) });
 			CheckLine (gp);
+		}
+
+		[Test]
+		public void AddLines_SamePoint ()
+		{
+			Point [] points = new Point [] { new Point (1, 1), new Point (1, 1) };
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddLines (points);
+			Assert.AreEqual (2, gp.PointCount, "1-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [0], "1-PathTypes[0]");
+			Assert.AreEqual (1, gp.PathTypes [1], "1-PathTypes[1]");
+
+			gp.AddLines (points);
+			// 3 not 4 points, the first point (only) is compressed
+			Assert.AreEqual (3, gp.PointCount, "2-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [0], "2-PathTypes[0]");
+			Assert.AreEqual (1, gp.PathTypes [1], "2-PathTypes[1]");
+			Assert.AreEqual (1, gp.PathTypes [2], "2-PathTypes[2]");
+
+			gp.AddLines (points);
+			// 4 not 5 (or 6) points, the first point (only) is compressed
+			Assert.AreEqual (4, gp.PointCount, "3-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [0], "3-PathTypes[0]");
+			Assert.AreEqual (1, gp.PathTypes [1], "3-PathTypes[1]");
+			Assert.AreEqual (1, gp.PathTypes [2], "3-PathTypes[2]");
+			Assert.AreEqual (1, gp.PathTypes [3], "3-PathTypes[3]");
+		}
+
+		[Test]
+		public void AddLines_SamePointF ()
+		{
+			PointF [] points = new PointF [] { new PointF (49.2f, 157f), new PointF (49.2f, 157f), new PointF (49.2f, 157f), new PointF (49.2f, 157f) };
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddLines (points);
+			// all identical points are added
+			Assert.AreEqual (4, gp.PointCount, "PointCount");
+			Assert.AreEqual (0, gp.PathTypes [0], "PathTypes[0]");
+			Assert.AreEqual (1, gp.PathTypes [1], "PathTypes[1]");
+			Assert.AreEqual (1, gp.PathTypes [2], "PathTypes[2]");
+			Assert.AreEqual (1, gp.PathTypes [3], "PathTypes[3]");
+
+			gp.AddLines (points);
+			// only the first new point is compressed
+			Assert.AreEqual (7, gp.PointCount, "2-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [0], "2-PathTypes[0]");
+			Assert.AreEqual (1, gp.PathTypes [1], "2-PathTypes[1]");
+			Assert.AreEqual (1, gp.PathTypes [2], "2-PathTypes[2]");
+			Assert.AreEqual (1, gp.PathTypes [3], "2-PathTypes[3]");
+			Assert.AreEqual (1, gp.PathTypes [4], "2-PathTypes[4]");
+			Assert.AreEqual (1, gp.PathTypes [5], "2-PathTypes[5]");
+			Assert.AreEqual (1, gp.PathTypes [6], "2-PathTypes[6]");
 		}
 
 		private void CheckPie (GraphicsPath path)
@@ -695,6 +921,74 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			CheckPolygon (gp);
 		}
 
+		[Test]
+		public void AddPolygon_SamePoint ()
+		{
+			Point [] points = new Point [3] { new Point (1, 1), new Point (1, 1), new Point (1, 1) };
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddPolygon (points);
+			// all identical points are added
+			Assert.AreEqual (3, gp.PointCount, "PointCount");
+			Assert.AreEqual (0, gp.PathTypes [0], "PathTypes[0]");
+			Assert.AreEqual (1, gp.PathTypes [1], "PathTypes[1]");
+			Assert.AreEqual (129, gp.PathTypes [2], "PathTypes[2]");
+
+			gp.AddPolygon (points);
+			// all identical points are added (again)
+			Assert.AreEqual (6, gp.PointCount, "2-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [3], "2-PathTypes[3]");
+			Assert.AreEqual (1, gp.PathTypes [4], "2-PathTypes[4]");
+			Assert.AreEqual (129, gp.PathTypes [5], "2-PathTypes[5]");
+
+			gp.AddLines (points);
+			// all identical points are added as a line (because previous point is closed)
+			Assert.AreEqual (9, gp.PointCount, "3-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [6], "3-PathTypes[6]");
+			Assert.AreEqual (1, gp.PathTypes [7], "3-PathTypes[7]");
+			Assert.AreEqual (1, gp.PathTypes [8], "3-PathTypes[8]");
+
+			gp.AddPolygon (points);
+			// all identical points are added (again)
+			Assert.AreEqual (12, gp.PointCount, "4-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [9], "4-PathTypes[9]");
+			Assert.AreEqual (1, gp.PathTypes [10], "4-PathTypes[10]");
+			Assert.AreEqual (129, gp.PathTypes [11], "4-PathTypes[11]");
+		}
+
+		[Test]
+		public void AddPolygon_SamePointF ()
+		{
+			PointF [] points = new PointF [3] { new PointF (1f, 1f), new PointF (1f, 1f), new PointF (1f, 1f) };
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddPolygon (points);
+			// all identical points are added
+			Assert.AreEqual (3, gp.PointCount, "PointCount");
+			Assert.AreEqual (0, gp.PathTypes [0], "PathTypes[0]");
+			Assert.AreEqual (1, gp.PathTypes [1], "PathTypes[1]");
+			Assert.AreEqual (129, gp.PathTypes [2], "PathTypes[2]");
+
+			gp.AddPolygon (points);
+			// all identical points are added (again)
+			Assert.AreEqual (6, gp.PointCount, "2-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [3], "2-PathTypes[3]");
+			Assert.AreEqual (1, gp.PathTypes [4], "2-PathTypes[4]");
+			Assert.AreEqual (129, gp.PathTypes [5], "2-PathTypes[5]");
+
+			gp.AddLines (points);
+			// all identical points are added as a line (because previous point is closed)
+			Assert.AreEqual (9, gp.PointCount, "3-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [6], "3-PathTypes[6]");
+			Assert.AreEqual (1, gp.PathTypes [7], "3-PathTypes[7]");
+			Assert.AreEqual (1, gp.PathTypes [8], "3-PathTypes[8]");
+
+			gp.AddPolygon (points);
+			// all identical points are added (again)
+			Assert.AreEqual (12, gp.PointCount, "4-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [9], "4-PathTypes[9]");
+			Assert.AreEqual (1, gp.PathTypes [10], "4-PathTypes[10]");
+			Assert.AreEqual (129, gp.PathTypes [11], "4-PathTypes[11]");
+		}
+
 		private void CheckRectangle (GraphicsPath path, int count)
 		{
 			Assert.AreEqual (count, path.PathPoints.Length, "PathPoints");
@@ -737,6 +1031,56 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			GraphicsPath gp = new GraphicsPath ();
 			gp.AddRectangle (new RectangleF (1f, 1f, 2f, 2f));
 			CheckRectangle (gp, 4);
+		}
+
+		[Test]
+		public void AddRectangle_SamePoint ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddRectangle (new Rectangle (1, 1, 0, 0));
+			Assert.AreEqual (0, gp.PointCount, "0-PointCount");
+
+			gp.AddRectangle (new Rectangle (1, 1, 1, 1));
+			Assert.AreEqual (4, gp.PointCount, "1-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [0], "1-PathTypes[0]");
+			Assert.AreEqual (1, gp.PathTypes [1], "1-PathTypes[1]");
+			Assert.AreEqual (1, gp.PathTypes [2], "1-PathTypes[2]");
+			Assert.AreEqual (129, gp.PathTypes [3], "1-PathTypes[3]");
+			PointF end = gp.PathPoints [3];
+
+			// add rectangle at the last path point
+			gp.AddRectangle (new Rectangle ((int)end.X, (int)end.Y, 1, 1));
+			// no compression (different type)
+			Assert.AreEqual (8, gp.PointCount, "2-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [0], "2-PathTypes[0]");
+			Assert.AreEqual (1, gp.PathTypes [1], "2-PathTypes[1]");
+			Assert.AreEqual (1, gp.PathTypes [2], "2-PathTypes[2]");
+			Assert.AreEqual (129, gp.PathTypes [3], "2-PathTypes[3]");
+		}
+
+		[Test]
+		public void AddRectangle_SamePointF ()
+		{
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddRectangle (new RectangleF (1f, 1f, 0f, 0f));
+			Assert.AreEqual (0, gp.PointCount, "0-PointCount");
+
+			gp.AddRectangle (new RectangleF (1f, 1f, 1f, 1f));
+			Assert.AreEqual (4, gp.PointCount, "1-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [0], "1-PathTypes[0]");
+			Assert.AreEqual (1, gp.PathTypes [1], "1-PathTypes[1]");
+			Assert.AreEqual (1, gp.PathTypes [2], "1-PathTypes[2]");
+			Assert.AreEqual (129, gp.PathTypes [3], "1-PathTypes[3]");
+			PointF end = gp.PathPoints [3];
+
+			// add rectangle at the last path point
+			gp.AddRectangle (new RectangleF (end.X, end.Y, 1f, 1f));
+			// no compression (different type)
+			Assert.AreEqual (8, gp.PointCount, "2-PointCount");
+			Assert.AreEqual (0, gp.PathTypes [0], "2-PathTypes[0]");
+			Assert.AreEqual (1, gp.PathTypes [1], "2-PathTypes[1]");
+			Assert.AreEqual (1, gp.PathTypes [2], "2-PathTypes[2]");
+			Assert.AreEqual (129, gp.PathTypes [3], "2-PathTypes[3]");
 		}
 
 		[Test]
@@ -803,6 +1147,19 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			Assert.AreEqual (2f, rect.Height, "Bounds.Height");
 			// second rectangle is completely within the first one
 			CheckRectangle (gp, 8);
+		}
+
+		[Test]
+		public void AddRectangles_SamePoint ()
+		{
+			Rectangle r1 = new Rectangle (1, 1, 0, 0);
+			Rectangle r2 = new Rectangle (1, 1, 1, 1);
+			Rectangle r3 = new Rectangle (1, 2, 1, 1);
+
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddRectangles (new Rectangle[] { r1, r2, r3 });
+			Assert.AreEqual (8, gp.PointCount, "1-PointCount");
+			// first rect is ignore, then all other 2x4 (8) points are present, no compression
 		}
 
 		[Test]
@@ -917,6 +1274,28 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			GraphicsPath gp = new GraphicsPath ();
 			gp.AddClosedCurve (new PointF[3] { new PointF (1f, 1f), new PointF (2f, 2f), new PointF (3f, 3f) });
 			CheckClosedCurve (gp);
+		}
+
+		[Test]
+		public void AddClosedCurve_SamePoint ()
+		{
+			Point [] points = new Point [3] { new Point (1, 1), new Point (1, 1), new Point (1, 1) };
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddClosedCurve (points);
+			Assert.AreEqual (10, gp.PointCount, "1-PointCount");
+			gp.AddClosedCurve (points);
+			Assert.AreEqual (20, gp.PointCount, "2-PointCount");
+		}
+
+		[Test]
+		public void AddClosedCurve_SamePointF ()
+		{
+			PointF [] points = new PointF [3] { new PointF (1f, 1f), new PointF (1f, 1f), new PointF (1f, 1f) };
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddClosedCurve (points);
+			Assert.AreEqual (10, gp.PointCount, "1-PointCount");
+			gp.AddClosedCurve (points);
+			Assert.AreEqual (20, gp.PointCount, "2-PointCount");
 		}
 
 		private void CheckCurve (GraphicsPath path)
@@ -1096,6 +1475,28 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			gp.AddCurve (new PointF[4] { new PointF (1f, 1f), new PointF (0f, 20f), new PointF (20f, 0f), new PointF (0f, 10f) }, 1, 2, 0.5f);
 			Assert.AreEqual (7, gp.PointCount, "PointCount");
 			gp.Dispose ();
+		}
+
+		[Test]
+		public void AddCurve_SamePoint ()
+		{
+			Point [] points = new Point [2] { new Point (1, 1), new Point (1, 1) };
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddCurve (points);
+			Assert.AreEqual (4, gp.PointCount, "1-PointCount");
+			gp.AddCurve (points);
+			Assert.AreEqual (7, gp.PointCount, "2-PointCount");
+		}
+
+		[Test]
+		public void AddCurve_SamePointF ()
+		{
+			PointF [] points = new PointF [2] { new PointF (1f, 1f), new PointF (1f, 1f) };
+			GraphicsPath gp = new GraphicsPath ();
+			gp.AddCurve (points);
+			Assert.AreEqual (4, gp.PointCount, "1-PointCount");
+			gp.AddCurve (points);
+			Assert.AreEqual (7, gp.PointCount, "2-PointCount");
 		}
 
 		private FontFamily GetFontFamily ()
@@ -1322,7 +1723,6 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		{
 			new GraphicsPath ().Transform (null);
 		}
-
 		[Test]
 		public void Transform_Empty ()
 		{
