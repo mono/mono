@@ -1,3 +1,8 @@
+2008-09-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	reflection.c (typebuilder_setup_fields): Handle classes with
+	explicit size.
+
 2008-09-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	class.c (mono_class_setup_events): Add memory barrier due to
