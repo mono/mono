@@ -1,5 +1,9 @@
 2008-09-02  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil.Metadata/UserStringsHeap.cs: fix reading of some unicode fu.
+
+2008-09-02  Jb Evain  <jbevain@novell.com>
+
 	* Mono.Cecil/MethodAttributes.cs: add CheckAccessOnOverride.
 	* Mono.Cecil/MethodDefinition.cs: add IsCheckAccessOnOverride.
 

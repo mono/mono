@@ -61,7 +61,12 @@ namespace Mono.Cecil.Metadata {
 			if (length < 1)
 				return string.Empty;
 
-			return Encoding.Unicode.GetString (this.Data, offset, length);
+			char [] chars = new char [length / 2];
+
+			for (int i = offset, j = 0; i < offset + length; i += 2)
+				chars [j++] = (char) (Data [i] | (Data [i + 1] << 8));
+
+			return new string (chars);
 		}
 
 		public override void Accept (IMetadataVisitor visitor)
