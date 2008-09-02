@@ -1,3 +1,11 @@
+2008-09-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Binding.cs: When connecting the event handler for the "Changed"
+	event for the property, only do it for PropertyManager, and not for
+	CurrencyManager - this is exactly what does .Net, totally ignoring any
+	change in the property of the elements of a list.
+	Fixes the tests.
+
 2008-09-02  Jonathan Pobst  <monkey@jpobst.com>
 
 	* XplatUIWin32.cs: Ensure we never send the WS_EX_MDICHILD flag

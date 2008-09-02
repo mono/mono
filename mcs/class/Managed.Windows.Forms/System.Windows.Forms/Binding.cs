@@ -342,9 +342,11 @@ namespace System.Windows.Forms {
 				manager.AddBinding (this);
 				manager.PositionChanged += new EventHandler (PositionChangedHandler);
 
-				EventDescriptor prop_changed_event = GetPropertyChangedEvent (manager.Current, binding_member_info.BindingField);
-				if (prop_changed_event != null)
-					prop_changed_event.AddEventHandler (manager.Current, new EventHandler (SourcePropertyChangedHandler));
+				if (manager is PropertyManager) { // Match .net, which only watchs simple objects
+					EventDescriptor prop_changed_event = GetPropertyChangedEvent (manager.Current, binding_member_info.BindingField);
+					if (prop_changed_event != null)
+						prop_changed_event.AddEventHandler (manager.Current, new EventHandler (SourcePropertyChangedHandler));
+				}
 			}
 
 			if (manager.Position == -1)
