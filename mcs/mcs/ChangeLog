@@ -1,3 +1,9 @@
+2008-09-02  Miguel de Icaza  <miguel@novell.com>
+
+	* getline.cs (CmdRefresh): Apply patch from Douglas S. Blank
+	<dblank@cs.brynmawr.edu> which updates the cursor position on
+	refresh.
+	
 2008-09-02  Marek Safar  <marek.safar@gmail.com>
 
 	* driver.cs: Fixed import of extension methods when using -noconfig

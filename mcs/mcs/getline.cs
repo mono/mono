@@ -641,6 +641,7 @@ namespace Mono.Terminal {
 			Console.Clear ();
 			max_rendered = 0;
 			Render ();
+			ForceCursor (cursor);
 		}
 
 		void InterruptEdit (object sender, ConsoleCancelEventArgs a)
