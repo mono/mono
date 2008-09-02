@@ -920,5 +920,44 @@ namespace MonoTests.System.Xml.TestClasses
 		[DefaultValue (typeof (int), "123456")]
 		public int Numeric;
 	}
+
+	public class XmlSerializableImplicitConvertible
+	{
+		public BaseClass B = new DerivedClass ();
+
+		public class XmlSerializable : IXmlSerializable
+		{
+			public void WriteXml (XmlWriter writer)
+			{
+			}
+
+			public void ReadXml (XmlReader reader)
+			{
+			}
+
+			public XmlSchema GetSchema ()
+			{
+				return null;
+			}
+		}
+
+		public class BaseClass
+		{
+			public static implicit operator XmlSerializable (BaseClass b)
+			{
+				return new XmlSerializable ();
+
+			}
+
+			public static implicit operator BaseClass (XmlSerializable x)
+			{
+				return new BaseClass ();
+			}
+		}
+
+		public class DerivedClass : BaseClass
+		{
+		}
+	}
 }
 

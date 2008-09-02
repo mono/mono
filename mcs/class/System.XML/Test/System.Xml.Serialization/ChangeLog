@@ -1,3 +1,8 @@
+2008-09-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializerTestClasses.cs, XmlSerializerTests.cs:
+	  added test for bug #419973.
+
 2008-06-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializerTestClasses.cs, DeserializeTests.cs,

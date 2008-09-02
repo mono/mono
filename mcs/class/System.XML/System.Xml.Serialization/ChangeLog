@@ -1,3 +1,11 @@
+2008-09-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationCodeGenerator.cs
+	  XmlSerializationWriterInterpreter.cs : fixed bug #419973.
+	  Sometimes implicit operators could involve and it affects on
+	  typecasting. It's simple for code generator, but very bad for
+	  reflection.
+
 2008-08-19  Jb Evain  <jbevain@novell.com>
 
 	* XmlRootAttribute.cs: ifdef out parts to compile on net_2_1.

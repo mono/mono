@@ -2396,6 +2396,22 @@ namespace MonoTests.System.XmlSerialization
 		}
 #endif
 
+		[Test]
+		public void SupportIXmlSerializableImplicitlyConvertible ()
+		{
+			XmlAttributes attrs = new XmlAttributes ();
+			XmlElementAttribute attr = new XmlElementAttribute ();
+			attr.ElementName = "XmlSerializable";
+			attr.Type = typeof (XmlSerializableImplicitConvertible.XmlSerializable);
+			attrs.XmlElements.Add (attr);
+			XmlAttributeOverrides attrOverrides = new
+			XmlAttributeOverrides ();
+			attrOverrides.Add (typeof (XmlSerializableImplicitConvertible), "B", attrs);
+
+			XmlSerializableImplicitConvertible x = new XmlSerializableImplicitConvertible ();
+			new XmlSerializer (typeof (XmlSerializableImplicitConvertible), attrOverrides).Serialize (TextWriter.Null, x);
+		}
+
 		#region GenericsSeralizationTests
 
 #if NET_2_0

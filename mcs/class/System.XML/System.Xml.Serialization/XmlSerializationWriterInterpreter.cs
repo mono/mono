@@ -342,12 +342,33 @@ namespace System.Xml.Serialization
 					break;
 
 				case SchemaTypes.XmlSerializable:
+					// bug #419973
+					if (!elem.MappedType.TypeData.Type.IsInstanceOfType (memberValue))
+						memberValue = ImplicitConvert (memberValue, elem.MappedType.TypeData.Type);
 					WriteSerializable ((IXmlSerializable) memberValue, elem.ElementName, elem.Namespace, elem.IsNullable);
 					break;
 
 				default:
 					throw new NotSupportedException ("Invalid value type");
 			}
+		}
+
+		object ImplicitConvert (object obj, Type type)
+		{
+			if (obj == null)
+				return null;
+			for (Type t = type; t != typeof (object); t = t.BaseType) {
+				MethodInfo mi = t.GetMethod ("op_Implicit", new Type [] {t});
+				if (mi != null && mi.ReturnType.IsAssignableFrom (obj.GetType ()))
+					return mi.Invoke (null, new object [] {obj});
+			}
+
+			for (Type t = obj.GetType (); t != typeof (object); t = t.BaseType) {
+				MethodInfo mi = t.GetMethod ("op_Implicit", new Type [] {t});
+				if (mi != null && mi.ReturnType == type)
+					return mi.Invoke (null, new object [] {obj});
+			}
+			return obj;
 		}
 
 		void WritePrimitiveValueLiteral (object memberValue, string name, string ns, XmlTypeMapping mappedType, TypeData typeData, bool wrapped, bool isNullable)

@@ -941,7 +941,7 @@ namespace System.Xml.Serialization
 					break;
 
 				case SchemaTypes.XmlSerializable:
-					WriteMetCall ("WriteSerializable", memberValue, GetLiteral(elem.ElementName), GetLiteral(elem.Namespace), GetLiteral(elem.IsNullable));
+					WriteMetCall ("WriteSerializable",  "(" + ToCSharpFullName (elem.MappedType.TypeData.Type) + ") " + memberValue, GetLiteral(elem.ElementName), GetLiteral(elem.Namespace), GetLiteral(elem.IsNullable));
 					break;
 
 				default:
