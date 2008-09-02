@@ -121,35 +121,32 @@ namespace Mono.Cecil {
 		}
 
 		public bool HasReferenceTypeConstraint {
-			get { return (m_attributes & GenericParameterAttributes.SpecialConstraintMask) == GenericParameterAttributes.ReferenceTypeConstraint; }
+			get { return (m_attributes & GenericParameterAttributes.ReferenceTypeConstraint) != 0; }
 			set {
 				if (value) {
-					m_attributes &= ~GenericParameterAttributes.SpecialConstraintMask;
 					m_attributes |= GenericParameterAttributes.ReferenceTypeConstraint;
 				} else
-					m_attributes &= ~(GenericParameterAttributes.SpecialConstraintMask & GenericParameterAttributes.ReferenceTypeConstraint);
+					m_attributes &= ~GenericParameterAttributes.ReferenceTypeConstraint;
 			}
 		}
 
 		public bool HasNotNullableValueTypeConstraint {
-			get { return (m_attributes & GenericParameterAttributes.SpecialConstraintMask) == GenericParameterAttributes.NotNullableValueTypeConstraint; }
+			get { return (m_attributes & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0; }
 			set {
 				if (value) {
-					m_attributes &= ~GenericParameterAttributes.SpecialConstraintMask;
 					m_attributes |= GenericParameterAttributes.NotNullableValueTypeConstraint;
 				} else
-					m_attributes &= ~(GenericParameterAttributes.SpecialConstraintMask & GenericParameterAttributes.NotNullableValueTypeConstraint);
+					m_attributes &= ~GenericParameterAttributes.NotNullableValueTypeConstraint;
 			}
 		}
 
 		public bool HasDefaultConstructorConstraint {
-			get { return (m_attributes & GenericParameterAttributes.SpecialConstraintMask) == GenericParameterAttributes.DefaultConstructorConstraint; }
+			get { return (m_attributes & GenericParameterAttributes.DefaultConstructorConstraint) != 0; }
 			set {
 				if (value) {
-					m_attributes &= ~GenericParameterAttributes.SpecialConstraintMask;
 					m_attributes |= GenericParameterAttributes.DefaultConstructorConstraint;
 				} else
-					m_attributes &= ~(GenericParameterAttributes.SpecialConstraintMask & GenericParameterAttributes.DefaultConstructorConstraint);
+					m_attributes &= ~GenericParameterAttributes.DefaultConstructorConstraint;
 			}
 		}
 

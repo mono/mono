@@ -1,5 +1,9 @@
 2008-09-02  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil/GenericParameter.cs: fix Has*Constraint properties.
+
+2008-09-02  Jb Evain  <jbevain@novell.com>
+
 	* Mono.Cecil/SecurityDeclarationReader.cs: fix reading
 	multiple permissions. Patch by Carsten Keutmann.
 
