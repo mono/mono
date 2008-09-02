@@ -1,3 +1,9 @@
+2008-09-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* XplatUIWin32.cs: Ensure we never send the WS_EX_MDICHILD flag
+	to Windows when creating a window, as we fake MDI stuffs.
+	[Fixes bug #421858]
+
 2008-09-01  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TextBox.cs: Invalidate after UseSystemPasswordChar, so that the 

@@ -1612,6 +1612,11 @@ namespace System.Windows.Forms {
 			string class_name = RegisterWindowClass (cp.ClassStyle);
 			HwndCreating = hwnd;
 
+			// We cannot actually send the WS_EX_MDICHILD flag to Windows because we
+			// are faking MDI, not uses Windows' version.
+			if ((cp.WindowExStyle & WindowExStyles.WS_EX_MDICHILD) == WindowExStyles.WS_EX_MDICHILD)
+				cp.WindowExStyle ^= WindowExStyles.WS_EX_MDICHILD;
+				
 			WindowHandle = Win32CreateWindow (cp.WindowExStyle, class_name, cp.Caption, cp.WindowStyle, location.X, location.Y, cp.Width, cp.Height, ParentHandle, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 
 			HwndCreating = null;
