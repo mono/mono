@@ -1,3 +1,8 @@
+2008-09-02  Marek Safar  <marek.safar@gmail.com>
+
+	* iterator.cs: Don't emit GetEnumerator method twice but call a generic
+	version from non-generic implementation instead.
+
 2008-09-01  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #418908
