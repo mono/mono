@@ -15429,6 +15429,45 @@
       </method>
     </type>
   </test>
+  <test name="gtest-iter-08.cs">
+    <type name="App">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerable QueryEnumerable[T]()">
+        <size>16</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>87</size>
+      </method>
+    </type>
+    <type name="App+&lt;QueryEnumerable&gt;c__Iterator0`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>12</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
+        <size>39</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>50</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>8</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-linq-01.cs">
     <type name="from.ITest">
       <method name="Int32 get_Id()">
