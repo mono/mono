@@ -1,5 +1,9 @@
 2008-09-03  Marek Safar  <marek.safar@gmail.com>
 
+	* driver.cs: Don't self reference System.Core assembly.
+
+2008-09-03  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #422507
 	* expression.cs (StringConcat): Add missing type mutator.
 

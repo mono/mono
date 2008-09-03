@@ -1610,7 +1610,9 @@ namespace Mono.CSharp
 			// even with -noconfig, otherwise the check for ExtensionAttribute in
 			// loaded assemblies won't work
 			// 
-			if (RootContext.Version > LanguageVersion.ISO_2 && (load_default_config || references.Count != 0))
+			if (RootContext.Version > LanguageVersion.ISO_2 &&
+				(load_default_config || references.Count != 0) &&
+				Driver.OutputFile != "System.Core.dll")
 				soft_references.Add ("System.Core");
 
 			//
