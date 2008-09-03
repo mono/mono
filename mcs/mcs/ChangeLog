@@ -1,6 +1,11 @@
 2008-09-03  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #422507
+	* expression.cs (UnboxCast): Add missing child expression mutator.
+
+2008-09-03  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #422507
 	* expression.cs (StringConcat): Add missing type mutator.
 
 2008-09-01  Marek Safar  <marek.safar@gmail.com>
