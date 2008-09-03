@@ -15438,7 +15438,7 @@
         <size>16</size>
       </method>
       <method name="Int32 Main()">
-        <size>87</size>
+        <size>114</size>
       </method>
     </type>
     <type name="App+&lt;QueryEnumerable&gt;c__Iterator0`1[T]">
@@ -15464,6 +15464,14 @@
         <size>8</size>
       </method>
       <method name="Void Reset()">
+        <size>6</size>
+      </method>
+    </type>
+    <type name="App">
+      <method name="T TestType[T]()">
+        <size>21</size>
+      </method>
+      <method name="System.Object TestType(System.Type)">
         <size>6</size>
       </method>
     </type>
