@@ -95,7 +95,10 @@ namespace System.Windows.Forms
 				if (value < 0)
 					throw new ArgumentOutOfRangeException();
 					
-				column_count = value;
+				if (column_count != value) {
+					column_count = value;
+					panel.PerformLayout (panel, "ColumnCount");
+				}
 			}
 		}
 
@@ -111,7 +114,10 @@ namespace System.Windows.Forms
 				if (!Enum.IsDefined (typeof(TableLayoutPanelGrowStyle), value))
 					throw new ArgumentException();
 					
-				grow_style = value;
+				if (grow_style != value) {
+					grow_style = value;
+					panel.PerformLayout (panel, "GrowStyle");
+				}
 			}
 		}
 		
@@ -125,7 +131,11 @@ namespace System.Windows.Forms
 			set {
 				if (value < 0)
 					throw new ArgumentOutOfRangeException ();
-				row_count = value;
+
+				if (row_count != value) {
+					row_count = value;
+					panel.PerformLayout (panel, "RowCount");
+				}
 			}
 		}
 
@@ -215,6 +225,7 @@ namespace System.Windows.Forms
 
 			columns[control] = cellPosition.Column;
 			rows[control] = cellPosition.Row;
+			panel.PerformLayout ();
 		}
 
 		public void SetColumn (Object control, int column)
@@ -225,6 +236,7 @@ namespace System.Windows.Forms
 				throw new ArgumentException ();
 				
 			columns[control] = column;
+			panel.PerformLayout ();
 		}
 
 		public void SetColumnSpan (Object control, int value)
@@ -235,6 +247,7 @@ namespace System.Windows.Forms
 				throw new ArgumentException ();
 
 			column_spans[control] = value;
+			panel.PerformLayout ();
 		}
 
 		public void SetRow (Object control, int row)
@@ -245,6 +258,7 @@ namespace System.Windows.Forms
 				throw new ArgumentException ();
 
 			rows[control] = row;
+			panel.PerformLayout ();
 		}
 
 		public void SetRowSpan (Object control, int value)
@@ -255,6 +269,7 @@ namespace System.Windows.Forms
 				throw new ArgumentException ();
 
 			row_spans[control] = value;
+			panel.PerformLayout ();
 		}
 		#endregion
 

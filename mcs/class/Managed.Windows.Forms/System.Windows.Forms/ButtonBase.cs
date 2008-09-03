@@ -131,6 +131,8 @@ namespace System.Windows.Forms {
 						text_format_flags |= TextFormatFlags.WordBreak;
 					}
 
+					if (Parent != null)
+						Parent.PerformLayout (this, "AutoEllipsis");
 					this.Invalidate ();
 				}
 			}
@@ -172,6 +174,9 @@ namespace System.Windows.Forms {
 			set { 
 				if (flat_style != value) {
 					flat_style = value;
+
+					if (Parent != null)
+						Parent.PerformLayout (this, "FlatStyle");
 					Invalidate();
 				}
 			}
@@ -430,6 +435,8 @@ namespace System.Windows.Forms {
 			set {
 				if (use_compatible_text_rendering != value) {
 					use_compatible_text_rendering = value;
+					if (Parent != null)
+						Parent.PerformLayout (this, "UseCompatibleTextRendering");
 					Invalidate ();
 				}
 			}

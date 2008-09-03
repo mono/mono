@@ -170,6 +170,9 @@ namespace System.Windows.Forms {
 				if (value != appearance) {
 					appearance = value;
 					OnAppearanceChanged (EventArgs.Empty);
+
+					if (Parent != null)
+						Parent.PerformLayout (this, "Appearance");
 					Invalidate();
 				}
 			}
@@ -197,7 +200,8 @@ namespace System.Windows.Forms {
 			set {
 				if (value != check_alignment) {
 					check_alignment = value;
-
+					if (Parent != null)
+						Parent.PerformLayout (this, "CheckAlign");
 					Invalidate();
 				}
 			}

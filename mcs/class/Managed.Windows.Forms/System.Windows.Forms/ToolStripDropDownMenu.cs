@@ -68,13 +68,23 @@ namespace System.Windows.Forms
 		[DefaultValue (false)]
 		public bool ShowCheckMargin {
 			get { return this.show_check_margin; }
-			set { this.show_check_margin = value; }
+			set { 
+				if (this.show_check_margin != value) {
+					this.show_check_margin = value;
+					PerformLayout (this, "ShowCheckMargin");
+				}
+			}
 		}
 
 		[DefaultValue (true)]
 		public bool ShowImageMargin {
 			get { return this.show_image_margin; }
-			set { this.show_image_margin = value; }
+			set { 
+				if (this.show_image_margin != value) {
+					this.show_image_margin = value;
+					PerformLayout (this, "ShowImageMargin");
+				}
+			}
 		}
 		#endregion
 

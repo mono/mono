@@ -136,8 +136,10 @@ namespace System.Windows.Forms
 			set { 
 				if (value < 0)
 					throw new ArgumentOutOfRangeException ();
-					
-				this.drop_down_button_width = value;
+				if (this.drop_down_button_width != value) {
+					this.drop_down_button_width = value;
+					CalculateAutoSize ();
+				}
 			}
 		}
 

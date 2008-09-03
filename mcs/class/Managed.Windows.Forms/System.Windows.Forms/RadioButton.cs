@@ -188,6 +188,8 @@ namespace System.Windows.Forms {
 					EventHandler eh = (EventHandler)(Events [AppearanceChangedEvent]);
 					if (eh != null)
 						eh (this, EventArgs.Empty);
+					if (Parent != null)
+						Parent.PerformLayout (this, "Appearance");
 					Invalidate();
 				}
 			}

@@ -2234,9 +2234,13 @@ namespace System.Windows.Forms
 					auto_size = value;
 					
 					// If we're turning this off, reset our size
-					if (!value)
+					if (!value) {
 						Size = explicit_bounds.Size;
-						
+					} else {
+						if (Parent != null)
+							Parent.PerformLayout (this, "AutoSize");
+					}
+
 					OnAutoSizeChanged (EventArgs.Empty);
 				}
 			}
@@ -3037,6 +3041,8 @@ namespace System.Windows.Forms
 			set { 
 				if (this.margin != value) {
 					this.margin = value; 
+					if (Parent != null)
+						Parent.PerformLayout (this, "Margin");
 					OnMarginChanged (EventArgs.Empty);
 				}
 			}

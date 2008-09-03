@@ -186,6 +186,8 @@ namespace System.Windows.Forms
 					else
 						string_format.Trimming = StringTrimming.Character;
 
+					if (Parent != null)
+						Parent.PerformLayout (this, "AutoEllipsis");
 					this.Invalidate ();
 				}
 			}
@@ -289,6 +291,8 @@ namespace System.Windows.Forms
 					return;
 
 				flat_style = value;
+				if (Parent != null)
+					Parent.PerformLayout (this, "FlatStyle");
 				Invalidate ();
 			}
 		}
