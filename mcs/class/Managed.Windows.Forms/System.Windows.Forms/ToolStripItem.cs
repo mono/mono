@@ -217,7 +217,10 @@ namespace System.Windows.Forms
 				if (!Enum.IsDefined (typeof (ToolStripItemAlignment), value))
 					throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ToolStripItemAlignment", value));
 
-				this.alignment = value;
+				if (this.alignment != value) {
+					this.alignment = value;
+					this.CalculateAutoSize (); 
+				}
 			}
 		}
 
@@ -340,8 +343,6 @@ namespace System.Windows.Forms
 					this.display_style = value; 
 					this.CalculateAutoSize (); 
 					OnDisplayStyleChanged (EventArgs.Empty);
-					if (this.Parent != null)
-						this.Parent.PerformLayout ();
 				}
 			}
 		}
@@ -477,8 +478,10 @@ namespace System.Windows.Forms
 				if (!Enum.IsDefined (typeof (ContentAlignment), value))
 					throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ContentAlignment", value));
 
-				this.image_align = value;
-				this.Invalidate ();
+				if (image_align != value) {
+					this.image_align = value;
+					this.CalculateAutoSize (); 
+				}
 			}
 		}
 
@@ -529,9 +532,10 @@ namespace System.Windows.Forms
 		public ToolStripItemImageScaling ImageScaling {
 			get { return this.image_scaling; }
 			set { 
-				this.image_scaling = value; 
-				this.CalculateAutoSize (); 
-				this.Invalidate (); 
+				if (image_scaling != value) {
+					this.image_scaling = value; 
+					this.CalculateAutoSize (); 
+				}
 			}
 		}
 
@@ -720,8 +724,11 @@ namespace System.Windows.Forms
 			set {
 				if (!Enum.IsDefined (typeof (ContentAlignment), value))
 					throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ContentAlignment", value));
-				this.text_align = value;
-				this.Invalidate ();
+
+				if (this.text_align != value) {
+					this.text_align = value;
+					this.CalculateAutoSize (); 
+				}
 			}
 		}
 

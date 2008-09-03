@@ -1,3 +1,14 @@
+2008-09-03  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ButtonBase.cs CheckBox.cs, Control.cs, FlowLayoutPanel.cs, 
+	  FlowLayoutSettings.cs, GroupBox.cs, Label.cs, ListBox.cs, 
+	  PropertyGrid.cs, RadioButton.cs, TableLayoutPanel.cs, 
+	  TableLayoutSettings.cs, ToolStrip.cs, ToolStripDropDownButton.cs, 
+	  ToolStripDropDownMenu.cs, ToolStripItem.cs, ToolStripSplitButton.cs, 
+	  ToolStripStatusLabel.cs: Add missing PerformLayout calls to various 
+	  properties.
+	  [Fixes bug #418684]
+
 2008-09-03  Neville Gao <nevillegao@gmail.com>
 
 	* StatusBar.cs: Control enabled to support accessibility.

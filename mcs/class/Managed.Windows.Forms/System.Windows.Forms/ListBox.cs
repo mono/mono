@@ -323,6 +323,8 @@ namespace System.Windows.Forms
 				else
 					item_heights = null;
 
+				if (Parent != null)
+					Parent.PerformLayout (this, "DrawMode");
 				base.Refresh ();
 			}
 		}

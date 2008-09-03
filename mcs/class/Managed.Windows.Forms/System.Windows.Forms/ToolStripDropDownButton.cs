@@ -86,7 +86,12 @@ namespace System.Windows.Forms
 		[DefaultValue (true)]
 		public bool ShowDropDownArrow {
 			get { return this.show_drop_down_arrow; }
-			set { this.show_drop_down_arrow = value; }
+			set { 
+				if (this.show_drop_down_arrow != value) {
+					this.show_drop_down_arrow = value;
+					CalculateAutoSize ();
+				}
+			}
 		}
 		#endregion
 

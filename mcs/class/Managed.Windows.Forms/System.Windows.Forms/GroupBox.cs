@@ -307,7 +307,12 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				use_compatible_text_rendering = value;
+				if (use_compatible_text_rendering != value) {
+					use_compatible_text_rendering = value;
+					if (Parent != null)
+						Parent.PerformLayout (this, "UseCompatibleTextRendering");
+					Invalidate ();
+				}
 			}
 		}
 #endif

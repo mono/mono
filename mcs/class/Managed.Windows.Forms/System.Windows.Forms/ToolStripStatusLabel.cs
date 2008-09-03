@@ -98,7 +98,12 @@ namespace System.Windows.Forms
 		[DefaultValue (false)]
 		public bool Spring {
 			get { return this.spring; }
-			set { this.spring = value; }
+			set {
+				if (this.spring != value) {
+					this.spring = value;
+					CalculateAutoSize ();
+				}
+			}
 		}
 		#endregion
 

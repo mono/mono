@@ -762,7 +762,14 @@ namespace System.Windows.Forms
 		[DefaultValue (false)]
 		public bool UseCompatibleTextRendering {
 			get { return use_compatible_text_rendering; }
-			set { use_compatible_text_rendering = value; }
+			set {
+				if (use_compatible_text_rendering != value) {
+					use_compatible_text_rendering = value;
+					if (Parent != null)
+						Parent.PerformLayout (this, "UseCompatibleTextRendering");
+					Invalidate ();
+				}
+			}
 		}
 #endif
 

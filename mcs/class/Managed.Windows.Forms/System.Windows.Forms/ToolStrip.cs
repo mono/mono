@@ -335,7 +335,7 @@ namespace System.Windows.Forms
 					if (!Enum.IsDefined (typeof (ToolStripGripStyle), value))
 						throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ToolStripGripStyle", value));
 					this.grip_style = value;
-					this.PerformLayout ();
+					this.PerformLayout (this, "GripStyle");
 				}
 			}
 		}
@@ -403,7 +403,12 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public LayoutSettings LayoutSettings {
 			get { return this.layout_settings; }
-			set { this.layout_settings = value; }
+			set { 
+				if (this.layout_settings != value) {
+					this.layout_settings = value;
+					PerformLayout (this, "LayoutSettings");
+				}
+			}
 		}
 		
 		[AmbientValue (ToolStripLayoutStyle.StackWithOverflow)]
@@ -435,7 +440,7 @@ namespace System.Windows.Forms
 						
 					this.layout_settings = this.CreateLayoutSettings (value);
 					
-					this.PerformLayout ();
+					this.PerformLayout (this, "LayoutStyle");
 					this.OnLayoutStyleChanged (EventArgs.Empty);
 				}
 			}
@@ -465,7 +470,7 @@ namespace System.Windows.Forms
 				if (this.renderer != value) {
 					this.renderer = value; 
 					this.render_mode = ToolStripRenderMode.Custom;
-					this.PerformLayout ();
+					this.PerformLayout (this, "Renderer");
 					this.OnRendererChanged (EventArgs.Empty);
 				}
 			}
@@ -704,7 +709,7 @@ namespace System.Windows.Forms
 		{
 			switch (layoutStyle) {
 				case ToolStripLayoutStyle.Flow:
-					return new FlowLayoutSettings ();
+					return new FlowLayoutSettings (this);
 				case ToolStripLayoutStyle.Table:
 					//return new TableLayoutSettings ();
 				case ToolStripLayoutStyle.StackWithOverflow:

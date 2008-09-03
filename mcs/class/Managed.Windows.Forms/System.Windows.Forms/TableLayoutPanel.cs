@@ -96,12 +96,7 @@ namespace System.Windows.Forms
 		[DefaultValue (0)]
 		public int ColumnCount {
 			get { return settings.ColumnCount; }
-			set {
-				if (settings.ColumnCount != value) {
-					settings.ColumnCount = value; 
-					this.PerformLayout (this, "ColumnCount");
-				}
-			}
+			set { settings.ColumnCount = value; }
 		}
 
 		[Browsable (false)]
@@ -121,12 +116,7 @@ namespace System.Windows.Forms
 		[DefaultValue (TableLayoutPanelGrowStyle.AddRows)]
 		public TableLayoutPanelGrowStyle GrowStyle {
 			get { return settings.GrowStyle; }
-			set { 
-				if (settings.GrowStyle != value) {
-					settings.GrowStyle = value;
-					PerformLayout (this, "GrowStyle");
-				}
-			}
+			set { settings.GrowStyle = value; }
 		}
 
 		public override System.Windows.Forms.Layout.LayoutEngine LayoutEngine {
@@ -155,12 +145,7 @@ namespace System.Windows.Forms
 		[DefaultValue (0)]
 		public int RowCount {
 			get { return settings.RowCount; }
-			set {
-				if (settings.RowCount != value) {
-					settings.RowCount = value; 
-					this.PerformLayout (this, "RowCount");
-				}
-			}
+			set { settings.RowCount = value; }
 		}
 
 		[Browsable (false)]
@@ -252,31 +237,26 @@ namespace System.Windows.Forms
 		public void SetCellPosition (Control control, TableLayoutPanelCellPosition position)
 		{
 			settings.SetCellPosition (control, position);
-			this.PerformLayout ();
 		}
 
 		public void SetColumn (Control control, int column)
 		{
 			settings.SetColumn (control, column);
-			this.PerformLayout ();
 		}
 
 		public void SetColumnSpan (Control control, int value)
 		{
 			settings.SetColumnSpan (control, value);
-			this.PerformLayout ();
 		}
 
 		public void SetRow (Control control, int row)
 		{
 			settings.SetRow (control, row);
-			this.PerformLayout ();
 		}
 
 		public void SetRowSpan (Control control, int value)
 		{
 			settings.SetRowSpan (control, value);
-			this.PerformLayout ();
 		}
 		#endregion
 
@@ -526,7 +506,7 @@ namespace System.Windows.Forms
 
 		internal override Size GetPreferredSizeCore (Size proposedSize)
 		{
-			// If the tablelayoutpanel is autosize, we have to make sure it is big enough
+			// If the tablelayoutowner is autosize, we have to make sure it is big enough
 			// to hold every non-autosize control
 			actual_positions = (LayoutEngine as TableLayout).CalculateControlPositions (this, Math.Max (ColumnCount, 1), Math.Max (RowCount, 1));
 			
@@ -534,7 +514,7 @@ namespace System.Windows.Forms
 			int actual_cols = actual_positions.GetLength (0);
 			int actual_rows = actual_positions.GetLength (1);
 			
-			// Figure out how wide the panel needs to be
+			// Figure out how wide the owner needs to be
 			int[] column_widths = new int[actual_cols];
 			float total_column_percentage = 0f;
 			
@@ -560,7 +540,7 @@ namespace System.Windows.Forms
 			}
 
 			// Because percentage based rows divy up the remaining space,
-			// we have to make the panel big enough so that all the rows
+			// we have to make the owner big enough so that all the rows
 			// get bigger, even if we only need one to be bigger.
 			int non_percent_total_width = 0;
 			int percent_total_width = 0;
@@ -573,7 +553,7 @@ namespace System.Windows.Forms
 			}
 
 
-			// Figure out how tall the panel needs to be
+			// Figure out how tall the owner needs to be
 			int[] row_heights = new int[actual_rows];
 			float total_row_percentage = 0f;
 		
@@ -599,7 +579,7 @@ namespace System.Windows.Forms
 			}
 			
 			// Because percentage based rows divy up the remaining space,
-			// we have to make the panel big enough so that all the rows
+			// we have to make the owner big enough so that all the rows
 			// get bigger, even if we only need one to be bigger.
 			int non_percent_total_height = 0;
 			int percent_total_height = 0;

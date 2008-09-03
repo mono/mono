@@ -70,7 +70,7 @@ namespace System.Windows.Forms
 		internal FlowLayoutSettings LayoutSettings {
 			get { 
 				if (this.settings == null)
-					this.settings = new FlowLayoutSettings ();
+					this.settings = new FlowLayoutSettings (this);
 					
 				return this.settings;
 			}
@@ -89,7 +89,6 @@ namespace System.Windows.Forms
 		public void SetFlowBreak (Control control, bool value)
 		{
 			LayoutSettings.SetFlowBreak (control, value);
-			this.PerformLayout (control, "FlowBreak");
 		}		
 		#endregion
 		

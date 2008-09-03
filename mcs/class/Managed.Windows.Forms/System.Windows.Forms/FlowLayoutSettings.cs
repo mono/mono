@@ -40,19 +40,31 @@ namespace System.Windows.Forms
 		private bool wrap_contents;
 		private LayoutEngine layout_engine;
 		private Dictionary<object, bool> flow_breaks;
+		private Control owner;
 
-		internal FlowLayoutSettings ()
+		internal FlowLayoutSettings () : this (null)
+		{
+		}
+
+		internal FlowLayoutSettings (Control owner)
 		{
 			flow_breaks = new Dictionary<object, bool> ();
 			wrap_contents = true;
 			flow_direction = FlowDirection.LeftToRight;
+			this.owner = owner;
 		}
 
 		#region Public Properties
 		[DefaultValue (FlowDirection.LeftToRight)]
 		public FlowDirection FlowDirection {
 			get { return this.flow_direction; }
-			set { this.flow_direction = value; }
+			set { 
+				if (this.flow_direction != value) {
+					this.flow_direction = value;
+					if (owner != null)
+						owner.PerformLayout (owner, "FlowDirection");
+				}
+			}
 		}
 
 		public override LayoutEngine LayoutEngine {
@@ -67,7 +79,13 @@ namespace System.Windows.Forms
 		[DefaultValue (true)]
 		public bool WrapContents {
 			get { return this.wrap_contents; }
-			set { this.wrap_contents = value; }
+			set { 
+				if (this.wrap_contents != value) {
+					this.wrap_contents = value;
+					if (owner != null)
+						owner.PerformLayout (owner, "WrapContents");
+				}
+			}
 		}
 		#endregion
 
@@ -85,6 +103,8 @@ namespace System.Windows.Forms
 		public void SetFlowBreak (Object child, bool value)
 		{
 			flow_breaks[child] = value;
+			if (owner != null)
+				owner.PerformLayout ((Control)child, "FlowBreak");
 		}
 		#endregion
 	}
