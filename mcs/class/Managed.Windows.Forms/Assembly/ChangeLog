@@ -1,3 +1,8 @@
+2008-09-03  Mario Carrion  <mcarrion@novell.com>
+
+	* AssemblyInfo.cs: Added InternalsVisibleTo attribute to support 
+	  UIAutomationWinforms assembly.
+
 2008-05-09  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Locale.cs: Comment out everything but GetText, modify GetText
