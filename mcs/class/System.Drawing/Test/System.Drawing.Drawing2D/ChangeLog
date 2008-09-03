@@ -1,3 +1,8 @@
+2008-09-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPathTest.cs: Add unit test to check for an open curve
+	points.
+
 2008-09-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPathTest.cs: Add a bunch of unit tests to check when 

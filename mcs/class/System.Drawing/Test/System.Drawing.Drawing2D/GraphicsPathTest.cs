@@ -1499,6 +1499,67 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			Assert.AreEqual (7, gp.PointCount, "2-PointCount");
 		}
 
+		[Test]
+		public void AddCurve ()
+		{
+			PointF [] points = new PointF [] {
+				new PointF (37f, 185f),
+				new PointF (99f, 185f),
+				new PointF (161f, 159f),
+				new PointF (223f, 185f),
+				new PointF (285f, 54f),
+			};
+			int[] count = { 4, 7, 10, 13 };
+
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				for (int i = 0; i < points.Length - 1; i++) {
+					gp.AddCurve (points, i, 1, 0.5f);
+					// all non-curves points are compressed expect the first one (positioning)
+					Assert.AreEqual (count [i], gp.PointCount, i.ToString ());
+				}
+
+				Assert.AreEqual (0, gp.PathData.Types [0], "Types[0]");
+				Assert.AreEqual (37f, gp.PathData.Points [0].X, 0.001, "Points[0].X");
+				Assert.AreEqual (185f, gp.PathData.Points [1].Y, 0.001, "Points[0].Y");
+				Assert.AreEqual (3, gp.PathData.Types [1], "Types[1]");
+				Assert.AreEqual (47.3334f, gp.PathData.Points [1].X, 0.001, "Points[1].X");
+				Assert.AreEqual (185f, gp.PathData.Points [1].Y, 0.001, "Points[1].Y");
+				Assert.AreEqual (3, gp.PathData.Types [2], "Types[2]");
+				Assert.AreEqual (78.33333f, gp.PathData.Points [2].X, 0.001, "Points[2].X");
+				Assert.AreEqual (189.3333f, gp.PathData.Points [2].Y, 0.001, "Points[2].Y");
+				Assert.AreEqual (3, gp.PathData.Types [3], "Types[3]");
+				Assert.AreEqual (99f, gp.PathData.Points [3].X, 0.001, "Points[3].X");
+				Assert.AreEqual (185f, gp.PathData.Points [3].Y, 0.001, "Points[3].Y");
+				Assert.AreEqual (3, gp.PathData.Types [4], "Types[4]");
+				Assert.AreEqual (119.6667f, gp.PathData.Points [4].X, 0.001, "Points[4].X");
+				Assert.AreEqual (180.6667f, gp.PathData.Points [4].Y, 0.001, "Points[4].Y");
+				Assert.AreEqual (3, gp.PathData.Types [5], "Types[5]");
+				Assert.AreEqual (140.3333f, gp.PathData.Points [5].X, 0.001, "Points[5].X");
+				Assert.AreEqual (159f, gp.PathData.Points [5].Y, 0.001, "Points[5].Y");
+				Assert.AreEqual (3, gp.PathData.Types [6], "Types[6]");
+				Assert.AreEqual (161f, gp.PathData.Points [6].X, 0.001, "Points[6].X");
+				Assert.AreEqual (159f, gp.PathData.Points [6].Y, 0.001, "Points[6].Y");
+				Assert.AreEqual (3, gp.PathData.Types [7], "Types[7]");
+				Assert.AreEqual (181.6667f, gp.PathData.Points [7].X, 0.001, "Points[7].X");
+				Assert.AreEqual (159f, gp.PathData.Points [7].Y, 0.001, "Points[7].Y");
+				Assert.AreEqual (3, gp.PathData.Types [8], "Types[8]");
+				Assert.AreEqual (202.3333f, gp.PathData.Points [8].X, 0.001, "Points[8].X");
+				Assert.AreEqual (202.5f, gp.PathData.Points [8].Y, 0.001, "Points[8].Y");
+				Assert.AreEqual (3, gp.PathData.Types [9], "Types[9]");
+				Assert.AreEqual (223f, gp.PathData.Points [9].X, 0.001, "Points[9].X");
+				Assert.AreEqual (185f, gp.PathData.Points [9].Y, 0.001, "Points[9].Y");
+				Assert.AreEqual (3, gp.PathData.Types [10], "Types[10]");
+				Assert.AreEqual (243.6667f, gp.PathData.Points [10].X, 0.001, "Points[10].X");
+				Assert.AreEqual (167.5f, gp.PathData.Points [10].Y, 0.001, "Points[10].Y");
+				Assert.AreEqual (3, gp.PathData.Types [11], "Types[11]");
+				Assert.AreEqual (274.6667f, gp.PathData.Points [11].X, 0.001, "Points[11].X");
+				Assert.AreEqual (75.83334f, gp.PathData.Points [11].Y, 0.001, "Points[11].Y");
+				Assert.AreEqual (3, gp.PathData.Types [12], "Types[12]");
+				Assert.AreEqual (285f, gp.PathData.Points [12].X, 0.001, "Points[12].X");
+				Assert.AreEqual (54f, gp.PathData.Points [12].Y, 0.001, "Points[12].Y");
+			}
+		}
+
 		private FontFamily GetFontFamily ()
 		{
 			try {
