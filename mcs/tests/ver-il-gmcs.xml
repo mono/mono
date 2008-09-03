@@ -11680,7 +11680,7 @@
         <size>7</size>
       </method>
       <method name="Boolean TryAction[T](Test+Creator`1[T], T ByRef)">
-        <size>2</size>
+        <size>17</size>
       </method>
       <method name="Boolean Func1[T](IList`1, Boolean, T ByRef)">
         <size>32</size>

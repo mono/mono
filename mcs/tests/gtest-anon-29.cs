@@ -6,6 +6,7 @@ class Test
 
 	static bool TryAction<T> (Creator<T> creator, out T output)
 	{
+		output = default (T);
 		return false;
 	}
 
