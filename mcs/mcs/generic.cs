@@ -2486,6 +2486,7 @@ namespace Mono.CSharp {
 		readonly Type[] unfixed_types;
 		readonly Type[] fixed_types;
 		readonly ArrayList[] bounds;
+		bool failed;
 		
 		public TypeInferenceContext (Type[] typeArguments)
 		{
@@ -2689,6 +2690,9 @@ namespace Mono.CSharp {
 			if (unfixed_types[i] == null)
 				throw new InternalErrorException ("Type argument has been already fixed");
 
+			if (failed)
+				return false;
+
 			ArrayList candidates = (ArrayList)bounds [i];
 			if (candidates == null)
 				return false;
@@ -2878,7 +2882,8 @@ namespace Mono.CSharp {
 				u_candidates.AddRange (TypeManager.GetInterfaces (u));
 
 				Type open_v = v.GetGenericTypeDefinition ();
-				int score = 0;
+				Type [] unique_candidate_targs = null;
+				Type [] ga_v = v.GetGenericArguments ();			
 				foreach (Type u_candidate in u_candidates) {
 					if (!u_candidate.IsGenericType || u_candidate.IsGenericTypeDefinition)
 						continue;
@@ -2886,17 +2891,35 @@ namespace Mono.CSharp {
 					if (TypeManager.DropGenericTypeArguments (u_candidate) != open_v)
 						continue;
 
-					Type [] ga_u = u_candidate.GetGenericArguments ();
-					Type [] ga_v = v.GetGenericArguments ();
-					bool all_exact = true;
-					for (int i = 0; i < ga_u.Length; ++i)
-						if (ExactInference (ga_u [i], ga_v [i]) == 0)
-							all_exact = false;
+					//
+					// The unique set of types U1..Uk means that if we have an interface C<T>,
+					// class U: C<int>, C<long> then no type inference is made when inferring
+					// from U to C<T> because T could be int or long
+					//
+					if (unique_candidate_targs != null) {
+						Type[] second_unique_candidate_targs = u_candidate.GetGenericArguments ();
+						if (TypeManager.IsEqual (unique_candidate_targs, second_unique_candidate_targs)) {
+							unique_candidate_targs = second_unique_candidate_targs;
+							continue;
+						}
+						
+						//
+						// This should always cause type inference failure
+						//
+						failed = true;
+						return 1;
+					}
 
-					if (all_exact && score == 0)
-						++score;
+					unique_candidate_targs = u_candidate.GetGenericArguments ();
 				}
-				return score;
+
+				if (unique_candidate_targs != null) {
+					int score = 0;
+					for (int i = 0; i < unique_candidate_targs.Length; ++i)
+						if (ExactInference (unique_candidate_targs [i], ga_v [i]) == 0)
+							++score;
+					return score;
+				}
 			}
 
 			return 0;
