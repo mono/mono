@@ -1,3 +1,12 @@
+2008-09-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (verify_type_compatibility_full): Revert change
+	to allow converting a native int to unmanaged pointer be verifiable
+	under non-strict mode.
+	It turns out that "(IntPtr)null" is indeed unverifiable, go figure.
+
+	* verify.c: Added some TODOs.
+
 2008-09-02  Bill Holmes  <billholmes54@gmail.com>
 
 	* marshal.c (ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi,
