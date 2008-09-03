@@ -15,7 +15,6 @@ class App
 	
     public static IEnumerable QueryEnumerable<T> ()
     {
-		Console.WriteLine ("Type: " + typeof(T));
-		yield break;
+		yield return "Type: " + typeof(T);
     }
 }

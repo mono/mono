@@ -15458,7 +15458,7 @@
         <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>50</size>
+        <size>84</size>
       </method>
       <method name="Void Dispose()">
         <size>8</size>
