@@ -6,6 +6,7 @@
 	
 2008-09-02  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #367145
 	* driver.cs: Fixed import of extension methods when using -noconfig
 	option.
 
