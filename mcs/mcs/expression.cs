@@ -3704,6 +3704,12 @@ namespace Mono.CSharp {
 			if (concat != null)
 				concat.Emit (ec);
 		}
+		
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			foreach (Argument a in arguments)
+				a.Expr.MutateHoistedGenericType (storey);
+		}		
 	}
 
 	//
