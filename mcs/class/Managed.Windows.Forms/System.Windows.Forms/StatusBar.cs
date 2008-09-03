@@ -460,6 +460,25 @@ namespace System.Windows.Forms {
 #endif
 			#endregion	// Fields
 
+			#region UIA Framework Events
+#if NET_2_0
+			static object UIACollectionChangedEvent = new object ();
+
+			internal event CollectionChangeEventHandler UIACollectionChanged {
+				add { owner.Events.AddHandler (UIACollectionChangedEvent, value); }
+				remove { owner.Events.RemoveHandler (UIACollectionChangedEvent, value); }
+			}
+			
+			internal void OnUIACollectionChangedEvent (CollectionChangeEventArgs args)
+			{
+				CollectionChangeEventHandler eh
+					= (CollectionChangeEventHandler) owner.Events [UIACollectionChangedEvent];
+				if (eh != null)
+					eh (owner, args);
+			}
+#endif
+			#endregion
+
 			#region Public Constructors
 			public StatusBarPanelCollection (StatusBar owner)
 			{
@@ -509,9 +528,19 @@ namespace System.Windows.Forms {
 					if (index < 0 || index >= Count)
 						throw new ArgumentOutOfRangeException ("index");
 
+#if NET_2_0
+					// UIA Framework Event: Panel Removed
+					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, index));
+#endif
+
 					value.SetParent (owner);
 
 					panels [index] = value;
+
+#if NET_2_0
+					// UIA Framework Event: Panel Added
+					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, index));
+#endif
 				}
 			}
 			
@@ -557,6 +586,11 @@ namespace System.Windows.Forms {
 				panels.Clear ();
 
 				owner.Refresh ();
+
+#if NET_2_0
+				// UIA Framework Event: Panel Cleared
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, -1));
+#endif
 			}
 
 			public bool Contains (StatusBarPanel panel) {
@@ -614,6 +648,11 @@ namespace System.Windows.Forms {
 
 				panels.Insert(index, value);
 				owner.Refresh ();
+
+#if NET_2_0
+				// UIA Framework Event: Panel Added
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, index));
+#endif
 			}
 
 			public virtual void Remove (StatusBarPanel value) {
@@ -622,6 +661,11 @@ namespace System.Windows.Forms {
 
 			public virtual void RemoveAt (int index) {
 				panels.RemoveAt (index);
+
+#if NET_2_0
+				// UIA Framework Event: Panel Removed
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, index));
+#endif
 			}
 
 #if NET_2_0

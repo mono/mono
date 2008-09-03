@@ -1,3 +1,8 @@
+2008-09-03  Neville Gao <nevillegao@gmail.com>
+
+	* StatusBar.cs: Control enabled to support accessibility.
+	[Fixes bug #419079]
+
 2008-09-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Binding.cs: When connecting the event handler for the "Changed"
