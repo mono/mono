@@ -1,3 +1,9 @@
+2008-09-03 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* strict_native_int_converts_to_unamanged_pointer.cs: It turns
+	out that this test should generate unverifiable code. Big WTF
+	for me as well. 
+
 2008-07-30 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* valid_inflated_generic_constraint_compatible.il:
