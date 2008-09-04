@@ -742,8 +742,23 @@ namespace Mono.CSharp
 			}
 		}
 
-		public static void DefineDefaultConfig ()
+		public void ProcessDefaultConfig ()
 		{
+			bool need_system_core = RootContext.Version > LanguageVersion.ISO_2;
+			
+			if (!load_default_config){
+				//
+				// Yet another SRE related problem, we have to always load System.Core
+				// even with -noconfig, otherwise the check for ExtensionAttribute in
+				// loaded assemblies won't work
+				//
+				Console.WriteLine ("HERE");
+				if (need_system_core && references.Count != 0 && Driver.OutputFile != "System.Core.dll")
+					soft_references.Add ("System.Core");
+				
+				return;
+			}
+			
 			//
 			// For now the "default config" is harcoded into the compiler
 			// we can move this outside later
@@ -782,6 +797,9 @@ namespace Mono.CSharp
 			};
 
 			soft_references.AddRange (default_config);
+
+			if (need_system_core)
+				soft_references.Add ("System.Core");
 		}
 
 		public static string OutputFile
@@ -1582,8 +1600,7 @@ namespace Mono.CSharp
 
 		int StartInteractiveShell ()
 		{
-			if (load_default_config)
-				DefineDefaultConfig ();
+			ProcessDefaultConfig ();
 			return InteractiveShell.ReadEvalPrintLoop ();
 		}
 		
@@ -1602,18 +1619,7 @@ namespace Mono.CSharp
 			if (RootContext.ToplevelTypes.NamespaceEntry != null)
 				throw new InternalErrorException ("who set it?");
 
-			if (load_default_config)
-				DefineDefaultConfig ();
-
-			//
-			// Yet another SRE related problem, we have to always load System.Core
-			// even with -noconfig, otherwise the check for ExtensionAttribute in
-			// loaded assemblies won't work
-			// 
-			if (RootContext.Version > LanguageVersion.ISO_2 &&
-				(load_default_config || references.Count != 0) &&
-				Driver.OutputFile != "System.Core.dll")
-				soft_references.Add ("System.Core");
+			ProcessDefaultConfig ();
 
 			//
 			// Load assemblies required

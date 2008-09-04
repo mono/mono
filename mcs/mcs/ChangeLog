@@ -1,3 +1,11 @@
+2008-09-03  Miguel de Icaza  <miguel@novell.com>
+
+	* driver.cs (ProcessDefaultConfig): Now it encapsulates all the
+	handling of the default config handling, including the special
+	treatment of System.Core assembly. 
+
+	Fixes the REPL processing for LINQ.
+
 2008-09-03  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #422507
