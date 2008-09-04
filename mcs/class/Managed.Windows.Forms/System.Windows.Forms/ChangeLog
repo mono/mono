@@ -1,5 +1,10 @@
 2008-09-04  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextControl.cs: Add "_" to the list of valid characters in a URL.
+	[Fixes bug #423408]
+
+2008-09-04  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: If using OptimizedDoubleBuffer, ensure the clip 
 	region gets set.
 	[Fixes bug #414166]

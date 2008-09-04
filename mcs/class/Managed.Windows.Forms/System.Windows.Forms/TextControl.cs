@@ -1039,7 +1039,7 @@ namespace System.Windows.Forms {
 						}
 					} else {
 						if (char.IsLetterOrDigit (line_no_breaks_string [i]) == false &&
-							"@-/:~.?=".IndexOf (line_no_breaks_string [i].ToString ()) == -1) {
+							"@-/:~.?=_".IndexOf (line_no_breaks_string [i].ToString ()) == -1) {
 							link_end = i - 1;
 							line_no_breaks_index = i;
 							break;
