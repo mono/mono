@@ -1,3 +1,7 @@
+2008-09-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* driver.c (mono_main): Enable the new verifier under core-clr and cas.
+
 2008-09-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-arm.c (mono_arch_nullify_class_init_trampoline): Implement this.
