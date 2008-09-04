@@ -457,6 +457,23 @@ namespace Mono.CSharp {
 					p ("false");
 			} else if (result is string){
 				p (String.Format ("\"{0}\"", EscapeString ((string)result)));
+			} else if (result is Hashtable){
+				Hashtable h = (Hashtable) result;
+				int top = h.Count, count = 0;
+				
+				p ("{");
+				foreach (object k in h.Keys){
+					count++;
+					p ("{ ");
+					PrettyPrint (k);
+					p (", ");
+					PrettyPrint (h [k]);
+					if (count != top)
+						p (" }, ");
+					else
+						p (" }");
+				}
+				p ("}");
 			} else {
 				p (result.ToString ());
 			}
@@ -683,7 +700,7 @@ namespace Mono.CSharp {
 		{
 			CloneContext cc = new CloneContext ();
 			Expression clone = source.Clone (cc);
-			
+
 			clone = clone.Resolve (ec);
 			if (clone == null)
 				return null;
@@ -827,7 +844,9 @@ namespace Mono.CSharp {
 				return  "Static methods:\n"+
 					"  LoadPackage (pkg); - Loads the given Package (like -pkg:FILE)\n" +
 					"  ShowVars ();       - Shows defined local variables.\n" +
-					"  ShowUsing ();      - Show active using decltions.\n" + 
+					"  ShowUsing ();      - Show active using decltions.\n" +
+					"  Prompt             - The prompt used by the C# shell\n" +
+					"  ContinuationPrompt - The prompt for partial input\n" + 
 					"  help;\n";
 			}
 				

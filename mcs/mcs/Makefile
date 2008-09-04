@@ -142,6 +142,7 @@ q: cs-parser.cs qh
 	echo -e 'var a = 1;\na + 2;' | mono --debug gmcs.exe -v --shell
 	echo -e 'int j;\nj = 1;' | mono --debug gmcs.exe -v --shell
 	echo -e 'var a = new int[]{1,2,3};\nfrom x in a select x;' | mono --debug gmcs.exe -v --shell
+	echo -e 'var a = from f in System.IO.Directory.GetFiles ("/tmp") where f == "passwd" select f;' | mono gmcs.exe --shell
 
 # read-eval-print-loop test target, for quickly hackign
 repl: 

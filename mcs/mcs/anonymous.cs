@@ -1596,7 +1596,7 @@ namespace Mono.CSharp {
 		readonly ArrayList parameters;
 
 		private AnonymousTypeClass (DeclSpace parent, MemberName name, ArrayList parameters, Location loc)
-			: base (parent, name, Modifiers.SEALED)
+			: base (parent, name, (RootContext.EvalMode ? Modifiers.PUBLIC : 0) | Modifiers.SEALED)
 		{
 			this.parameters = parameters;
 		}

@@ -1,3 +1,12 @@
+2008-09-04  Miguel de Icaza  <miguel@novell.com>
+
+	* repl.cs (PrettyPrint): Add Hashtable prettyprint
+
+	* anonymous.cs (AnonymousTypeClass): On EvalMode make the class
+	public. 
+
+	* repl.cs: Update help.
+
 2008-09-03  Miguel de Icaza  <miguel@novell.com>
 
 	* driver.cs (ProcessDefaultConfig): Now it encapsulates all the
