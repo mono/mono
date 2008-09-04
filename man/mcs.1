@@ -339,6 +339,12 @@ shell will perform globbing, so you might want to use it like this:
 		$ mcs -recurse:'*.cs' 
 .fi
 .TP
+.I \-\-shell
+Starts up the compiler in interactive mode, providing a C# shell for
+statements and expressions.   A shortcut is to use the
+.I csharp
+command directly.
+.TP
 .I \-\-stacktrace
 Generates a stack trace at the time the error is reported, useful for
 debugging the compiler.
@@ -505,12 +511,12 @@ Martin Baulig, Marek Safar and Raja Harinath.  The development was
 funded by Ximian, Novell and Marek Safar.
 .PP
 .SH LICENSE
-The Mono Compiler Suite is released under the terms of the GNU GPL.
-Please read the accompanying `COPYING' file for details.  Alternative
-licensing for the compiler is available from Novell.
+The Mono Compiler Suite is released under the terms of the GNU GPL or
+the MIT X11.  Please read the accompanying `COPYING' file for details.
+Alternative licensing for the compiler is available from Novell.
 .PP
 .SH SEE ALSO
-mdb(1), mono(1), mopen(1), mint(1), sn(1)
+csharp(1), mdb(1), mono(1), mopen(1), mint(1), pkg-config(1),sn(1)
 .PP
 .SH BUGS
 To report bugs in the compiler, you must file them on our bug tracking

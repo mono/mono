@@ -1,0 +1,275 @@
+.de Sp \" Vertical space (when we can't use .PP)
+.if t .sp .5v
+.if n .sp
+..
+.TH csharp 1 "4 September 2008"
+.SH NAME 
+csharp \- Interactive C# Shell 
+.SH SYNOPSIS
+.B csharp 
+[options] 
+.SH DESCRIPTION
+The 
+.I csharp
+is an interactive C# shell that allows the user to enter and evaluate
+C# statements and expressions from the command line.
+.PP
+This command is a shortcut to invoke the 
+.I gmcs
+command with the 
+.I \-\- shell 
+command line option.   All of the regular compiler options available
+to gmcs are available in the interactive shell.
+.SH OPERATION
+Once you launch the csharp command, you will be greeted with the
+interactive prompt:
+.PP
+.nf
+$ csharp
+Mono C# Shell, type "help;" for help
+ 
+Enter statements below.
+csharp>
+.fi
+.PP
+A number of namespaces are pre-defined with C# these include System,
+System.Linq, System.Collections and System.Collections.Generic.
+Unlike the compiled mode, it is possible to add new using statements
+as you type code, for example:
+.PP
+.nf
+csharp> new XmlDocument ();
+<interactive>(1,6): error CS0246: The type or namespace name `XmlDocument' could not be found. Are you missing a using directive or an assembly reference?
+csharp> using System.Xml;
+csharp> new XmlDocument (); 
+System.Xml.XmlDocument
+.fi
+.PP
+Every time a command is typed, the scope of that command is one of a
+class that derives from the class Mono.CSharp.InteractiveBase.   This
+class defines a number of static properties and methods.   To display
+a list of available commands access the `help' property:
+.nf
+csharp> help;
+"Static methods:
+  LoadPackage (pkg); - Loads the given Package (like -pkg:FILE)
+  [...]
+  ShowVars ();       - Shows defined local variables.
+  ShowUsing ();      - Show active using decltions.
+  help;
+"
+csharp>
+.fi
+.PP
+When expressions are entered, the C# shell will display the result of
+executing the expression:
+.PP
+.nf
+csharp> Math.Sin (Math.PI/4); 
+0.707106781186547
+csharp> 1+1;
+2
+csharp> "Hello, world".IndexOf (',');
+5
+.fi
+.PP
+The C# shell uses the ToString() method on the returned object to
+display the object, this sometimes can be limiting since objects that
+do not override the ToString() method will get the default behavior
+from System.Object which is merely to display their type name:
+.PP
+.nf
+csharp> var a = new XmlDocument ();
+csharp> a;
+System.Xml.Document
+csharp> csharp> a.Name;    
+"#document"
+csharp>
+.fi
+.PP
+It is possible to use LINQ directly in the C# interactive shell since
+the System.Linq namespace has been imported at startup.   The
+following sample gets a list of all the files that have not been
+accessed in a week from /tmp:
+.PP
+.nf
+csharp> using System.IO;
+csharp> var last_week = DateTime.Now - TimeSpan.FromDays (7);
+csharp> var old_files = from f in Directory.GetFiles ("/tmp") 
+      >   let fi = new FileInfo (f) 
+      >   where fi.LastAccessTime < LastWeek select f;
+csharp>
+.fi
+.PP
+You can of course print the results in a single statement as well:
+.PP
+.nf
+csharp> using System.IO;
+csharp> var last_week = DateTime.Now - TimeSpan.FromDays (7);
+csharp> foreach (var old from f in Directory.GetFiles ("/tmp") 
+      >   let fi = new FileInfo (f) 
+      >   where fi.LastAccessTime < LastWeek select f) 
+      >     Console.WriteLine (old);
+[...]
+csharp>
+.fi
+.PP
+Unlike compiled C#, the type of a variable can be changed if a new
+declaration is entered, for example:
+.PP
+.nf
+csharp> var a = 1;
+csharp> a.GetType ();
+System.Int32
+csharp> var a = "Hello";
+csharp> a.GetType ();
+System.String
+csharp> ShowVars ();
+string a = "Hello"
+.fi
+.PP
+In the case that an expression or a statement is not completed in a
+single line, a continuation prompt is displayed, for example:
+.PP
+.nf
+csharp> var protocols = new string [] {
+      >    "ftp",
+      >    "http",
+      >    "gopher" 
+      > };
+csharp> protocols;
+{ "ftp", "http", "gopher" }
+.fi
+.PP
+Long running computations can be interrupted by using the Control-C
+sequence:
+.PP
+.nf
+csharp> var done = false;
+csharp> while (!done) { }
+Interrupted!
+System.Threading.ThreadAbortException: Thread was being aborted
+  at Class1.Host (System.Object& $retval) [0x00000] 
+  at Mono.CSharp.InteractiveShell.ExecuteBlock (Mono.CSharp.Class host, Mono.CSharp.Undo undo) [0x00000] 
+csharp>
+.fi
+.PP
+.SH INTERACTIVE EDITING
+The C# interactive shell contains a line-editor that provides a more
+advanced command line editing functionality than the operating system
+provides.     
+.PP
+The command set is similar to many other applications (cursor keys)
+and incorporates some of the Emacs commands for editing as well as a
+history mechanism to 
+.PP
+.PP
+The following keyboard input is supported:
+.TP 
+.I Home Key, Control-a
+Goes to the beginning of the line.
+.TP 
+.I End Key, Control-e
+Goes to the end of the line.
+.TP 
+.I Left Arrow Key, Control-b
+Moves the cursor back one character.
+.TP 
+.I Right Arrow Key, Control-f
+Moves the cursor forward one character.
+.TP
+.I Up Arrow Key, Control-p
+Goes back in the history, replaces the current line with the previous
+line in the history.
+.TP
+.I Down Arrow Key, Control-n
+Moves forward in the history, replaces the current line with the next
+lien in the history.
+.TP
+.I Return
+Executes the current line if the statement or expression is complete,
+or waits for further input.
+.TP 
+.I Control-C
+Cancel the current line being edited.  This will kill any currently
+in-progress edits or partial editing and go back to a toplevel
+definition.
+.TP
+.I Backspace Key
+Deletes the character before the cursor
+.TP
+.I Delete Key, Control-d
+Deletes the character at the current cursor position.
+.TP
+.I Control-k
+Erases the contents of the line until the end of the line and places
+the result in the cut and paste buffer. 
+.TP
+.I Alt-D
+Deletes the word starting at the cursor position and appends into the
+cut and paste buffer.    By pressing Alt-d repeatedly, multiple words
+can be appended into the paste buffer. 
+.TP
+.I Control-Y
+Pastes the content of the kill buffer at the current cursor position. 
+.TP
+.I Control-Q
+This is the quote character.   It allows the user to enter
+control-characters that are otherwise taken by the command editing
+facility.   Press Control-Q followed by the character you want to
+insert, and it will be inserted verbatim into the command line. 
+.SH STATIC PROPERTIES AND METHODS
+Since the methods and properties of the base class from where the
+statements and expressions are executed are static, they can be
+invoked directly from the shell.   These are the available properties
+and methods:
+.TP
+.I void LoadPackage(string package)
+Imports the package specified.   This is equivalent to invoking the
+compiler with the -pkg: flag with the specified string.
+.TP
+.I string Prompt { get; set } 
+The prompt used by the shell.  It defaults to the value "csharp> ".
+.I string ContinuationPrompt { get; set; } 
+The prompt used by the shell when further input is required to
+complete the expression or statement. 
+.TP 
+.I void ShowVars()
+Displays all the variables that have been defined so far and their
+types.    In the csharp shell declaring new variables will shadow
+previous variable declarations, this is different than C# when
+compiled.   
+.I void ShowUsing()
+Displays all the using statements in effect.
+.SH STARTUP FILES
+The C# shell will load all the C# script files and Mono assemblies
+located in the ~/.config/csharp directory on Unix.  C# script files
+are files that have the extension .cs and they should only contain
+statements and expressions, they can not contain full class
+definitions (at least not as of Mono 2.0).   Full class definitions
+should be compiled into dlls and stored in that directory.
+.SH AUTHORS
+The Mono C# Compiler was written by Miguel de Icaza, Ravi Pratap,
+Martin Baulig, Marek Safar and Raja Harinath.  The development was
+funded by Ximian, Novell and Marek Safar.
+.SH LICENSE
+The Mono Compiler Suite is released under the terms of the GNU GPL or
+the MIT X11.  Please read the accompanying `COPYING' file for details.
+Alternative licensing for the compiler is available from Novell.
+.SH SEE ALSO
+gmcs(1), mcs(1), mdb(1), mono(1), pkg-config(1)
+.SH BUGS
+To report bugs in the compiler, you must file them on our bug tracking
+system, at:
+http://www.mono-project.com/Bugs 
+.SH MAILING LIST
+The Mono Mailing lists are listed at http://www.mono-project.com/Mailing_Lists
+.SH MORE INFORMATION
+The Mono C# compiler was developed by Novell, Inc
+(http://www.novell.com, http) and is based on the
+ECMA C# language standard available here:
+http://www.ecma.ch/ecma1/STAND/ecma-334.htm
+.PP
+The home page for the Mono C# compiler is at
+http://www.mono-project.com/CSharp_Compiler  information about the
+interactive mode for C# is available in http://mono-project.com/CsharpRepl
