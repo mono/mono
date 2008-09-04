@@ -369,24 +369,27 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (TypeManager.IsEqual (target_type, source_type)) {
-				if (target.eclass == ExprClass.Variable) {
-					New n = source as New;
-					if (n == null)
-						return this;
+			if (!TypeManager.IsEqual (target_type, source_type)){
+				Expression resolved = ResolveConversions (ec);
 
-					if (n.HasInitializer) {
-						n.SetTargetVariable (target);
-					} else if (target_type.IsValueType) {
-						n.SetTargetVariable (target);
-						return n;
-					}
-				}
-
-				return this;
+				if (resolved != this)
+					return resolved;
 			}
-
-			return ResolveConversions (ec);
+			
+			if (target.eclass == ExprClass.Variable) {
+				New n = source as New;
+				if (n == null)
+					return this;
+				
+				if (n.HasInitializer) {
+					n.SetTargetVariable (target);
+				} else if (target_type.IsValueType) {
+					n.SetTargetVariable (target);
+					return n;
+				}
+			}
+			
+			return this;
 		}
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)

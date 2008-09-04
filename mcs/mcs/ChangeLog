@@ -1,4 +1,11 @@
 2008-09-04  Marek Safar  <marek.safar@gmail.com>
+			Miguel de Icaza  <miguel@novell.com>
+
+	A fix for bug #422951
+	* assign.cs (Assign.DoResolve): Perform the type conversions
+	checks before we attempt to initialize `New' initializers. 
+
+2008-09-04  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #422853
 	* delegate.cs (DelegateCreation): Add special handling for
