@@ -457,23 +457,33 @@ namespace Mono.CSharp {
 					p ("false");
 			} else if (result is string){
 				p (String.Format ("\"{0}\"", EscapeString ((string)result)));
-			} else if (result is Hashtable){
-				Hashtable h = (Hashtable) result;
-				int top = h.Count, count = 0;
+			} else if (result is IDictionary){
+				IDictionary dict = (IDictionary) result;
+				int top = dict.Count, count = 0;
 				
 				p ("{");
-				foreach (object k in h.Keys){
+				foreach (DictionaryEntry entry in dict){
 					count++;
 					p ("{ ");
-					PrettyPrint (k);
+					PrettyPrint (entry.Key);
 					p (", ");
-					PrettyPrint (h [k]);
+					PrettyPrint (entry.Value);
 					if (count != top)
 						p (" }, ");
 					else
 						p (" }");
 				}
 				p ("}");
+			} else if (result is IEnumerable) {
+				int i = 0;
+				p ("{ ");
+				foreach (object item in (IEnumerable) result) {
+					if (i++ != 0)
+						p (", ");
+
+					PrettyPrint (item);
+				}
+				p (" }");
 			} else {
 				p (result.ToString ());
 			}
@@ -847,10 +857,16 @@ namespace Mono.CSharp {
 					"  ShowUsing ();      - Show active using decltions.\n" +
 					"  Prompt             - The prompt used by the C# shell\n" +
 					"  ContinuationPrompt - The prompt for partial input\n" + 
+					"  quit;\n" +
 					"  help;\n";
 			}
-				
 		}
-		
+
+		static public object quit {
+			get {
+				Environment.Exit (0);
+				return null;
+			}
+		}
 	}
 }

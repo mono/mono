@@ -1,3 +1,9 @@
+2008-09-04  Jb Evain  <jbevain@novell.com>
+
+	* repl.cs (PrettyPrint): pretty print everything that
+	implements IDictionary, as well as IEnumerables. Also,
+	add a quit helper property.
+
 2008-09-04  Marek Safar  <marek.safar@gmail.com>
 
 	* constant.cs: Better error reporting for decimal literals.
