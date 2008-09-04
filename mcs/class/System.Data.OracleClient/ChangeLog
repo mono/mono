@@ -1,3 +1,27 @@
+2008-09-04  Daniel Morgan <monodanmorg@yahoo.com>
+	
+	* System.Data.OracleClient/OracleCommand.cs: removed AssertNoDataReader
+	because oracle allows multiple result sets and has since .NET 1.0,
+	fix bug where REF CURSOR would not work for ExecuteReader or
+	filling a DataSet via an OracleDataAdapter.  The REF CURSOR is used to
+	populate the DataSet.
+
+	* System.Data.OracleClient/OracleDataReader.cs: fix for getting
+	next result set; implement NET_2_0 methods 
+	GetProviderSpecificFieldType,
+	GetProviderSpecificValuee, 
+	GetProviderSpecificValue; and validate the reader is open
+	before allowing a Read or NextResult, otherwise, throw
+	an InvalidOperationException
+
+	* System.Data.OracleClient/OracleParameter.cs: fix for
+	getting one or more REF CURSOR out parameters if
+	ExecuteReader was called. 
+
+	* System.Data.OracleClient.Oci/OciErrorHandle.cs
+	* System.Data.OracleClient.Oci/OciHandle.cs: add addiional method
+	for getting error, such as, INVALID_HANDLE being passed to OCI
+
 2008-08-27  Daniel Morgan <monodanmorg@yahoo.com>
 
 	* System.Data.OracleClient/OracleConnectionStringBuilder.cs: modified -

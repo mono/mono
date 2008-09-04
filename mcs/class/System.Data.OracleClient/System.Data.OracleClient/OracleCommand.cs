@@ -53,7 +53,8 @@ namespace System.Data.OracleClient
 		OracleTransaction transaction;
 		UpdateRowSource updatedRowSource;
 		OciStatementHandle preparedStatement;
-		//OciStatementType statementType;
+		
+		int moreResults;
 
 		#endregion // Fields
 
@@ -76,6 +77,7 @@ namespace System.Data.OracleClient
 
 		public OracleCommand (string commandText, OracleConnection connection, OracleTransaction tx)
 		{
+			moreResults = -1;
 			preparedStatement = null;
 			CommandText = commandText;
 			Connection = connection;
@@ -258,12 +260,6 @@ namespace System.Data.OracleClient
 				throw new InvalidOperationException ("An open Connection object is required to continue.");
 		}
 
-		private void AssertNoDataReader ()
-		{
-			if (Connection.DataReader != null)
-				throw new InvalidOperationException ("There is already an open DataReader associated with this Connection which must be closed first.");
-		}
-
 		private void AssertTransactionMatch ()
 		{
 			if (Connection.Transaction != null && Transaction != Connection.Transaction)
@@ -330,13 +326,11 @@ namespace System.Data.OracleClient
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		protected override DbParameter CreateDbParameter ()
 		{
 			return CreateParameter ();
 		}
 
-		[MonoTODO]
 		protected override DbDataReader ExecuteDbDataReader (CommandBehavior behavior)
 		{
 			return ExecuteReader (behavior);
@@ -345,16 +339,33 @@ namespace System.Data.OracleClient
 
 		internal void UpdateParameterValues ()
 		{
+			moreResults = -1;
 			if (Parameters.Count > 0) {
-				foreach (OracleParameter parm in Parameters)
-					parm.Update (this);
+				bool foundCursor = false;
+				for (int p = 0; p < Parameters.Count; p++) {
+					OracleParameter parm = Parameters [p];
+					if (parm.OracleType.Equals (OracleType.Cursor)) {
+						if (!foundCursor && parm.Direction != ParameterDirection.Input) {
+							// if there are multiple REF CURSORs,
+							// you only can get the first cursor for now
+							// because user of OracleDataReader
+							// will do a NextResult to get the next 
+							// REF CURSOR (if it exists)
+							foundCursor = true;
+							parm.Update (this);
+							if (p + 1 == Parameters.Count)
+								moreResults = -1;
+							else
+								moreResults = p;
+						}
+					} else
+						parm.Update (this);
+				}
 			}
 		}
 
 		internal void CloseDataReader ()
 		{
-			UpdateParameterValues ();
-
 			Connection.DataReader = null;
 			if ((behavior & CommandBehavior.CloseConnection) != 0)
 				Connection.Close ();
@@ -381,6 +392,8 @@ namespace System.Data.OracleClient
 
 		private int ExecuteNonQueryInternal (OciStatementHandle statement, bool useAutoCommit)
 		{
+			moreResults = -1;
+
 			if (preparedStatement == null)
 				PrepareStatement (statement);
 
@@ -405,6 +418,8 @@ namespace System.Data.OracleClient
 #endif
 		int ExecuteNonQuery ()
 		{
+			moreResults = -1;
+
 			AssertConnectionIsOpen ();
 			AssertTransactionMatch ();
 			AssertCommandTextIsSet ();
@@ -425,6 +440,8 @@ namespace System.Data.OracleClient
 
 		public int ExecuteOracleNonQuery (out OracleString rowid)
 		{
+			moreResults = -1;
+
 			AssertConnectionIsOpen ();
 			AssertTransactionMatch ();
 			AssertCommandTextIsSet ();
@@ -449,9 +466,10 @@ namespace System.Data.OracleClient
 			}
 		}
 
-		[MonoTODO]
 		public object ExecuteOracleScalar ()
 		{
+			moreResults = -1;
+
 			object output = DBNull.Value;
 
 			AssertConnectionIsOpen ();
@@ -524,7 +542,9 @@ namespace System.Data.OracleClient
 			AssertConnectionIsOpen ();
 			AssertTransactionMatch ();
 			AssertCommandTextIsSet ();
-			AssertNoDataReader ();
+
+			moreResults = -1;
+
 			bool hasRows = false;
 
 			this.behavior = behavior;
@@ -545,16 +565,32 @@ namespace System.Data.OracleClient
 
 				BindParameters (statement);
 
-				if (isNonQuery)
+				if (isNonQuery) 
 					ExecuteNonQueryInternal (statement, false);
-				else {
+				else {	
 					if ((behavior & CommandBehavior.SchemaOnly) != 0)
 						statement.ExecuteQuery (true);
 					else
 						hasRows = statement.ExecuteQuery (false);
+
+					UpdateParameterValues ();
 				}
 
-				rd = new OracleDataReader (this, statement, hasRows, behavior);
+				if (Parameters.Count > 0) {
+					for (int p = 0; p < Parameters.Count; p++) {
+						OracleParameter parm = Parameters [0];
+						if (parm.OracleType.Equals (OracleType.Cursor)) {
+							if (parm.Direction != ParameterDirection.Input) {
+								rd = (OracleDataReader) parm.Value;
+								break;
+							}
+						}
+					}					
+				}
+
+				if (rd == null)
+					rd = new OracleDataReader (this, statement, hasRows, behavior);
+
 			} finally {
 				if (statement != null && rd == null)
 					statement.Dispose();
@@ -569,6 +605,7 @@ namespace System.Data.OracleClient
 #endif
 		object ExecuteScalar ()
 		{
+			moreResults = -1;
 			object output = null;//if we find nothing we return this
 
 			AssertConnectionIsOpen ();
@@ -619,6 +656,38 @@ namespace System.Data.OracleClient
 			}
 
 			return output;
+		}
+
+		internal OciStatementHandle GetNextResult () 
+		{
+			if (moreResults == -1)
+				return null;
+
+			if (Parameters.Count > 0) {
+				int p = moreResults + 1;
+				
+				if (p >= Parameters.Count) {
+					moreResults = -1;
+					return null;
+				}
+
+				for (; p < Parameters.Count; p++) {
+					OracleParameter parm = Parameters [p];
+					if (parm.OracleType.Equals (OracleType.Cursor)) {
+						if (parm.Direction != ParameterDirection.Input) {
+							if (p + 1 == Parameters.Count)
+								moreResults = -1;
+							else 
+								moreResults = p;
+							return parm.GetOutRefCursor (this);
+							
+						}
+					} 
+				}
+			}
+
+			moreResults = -1;
+			return null;
 		}
 
 		private OciStatementHandle GetStatementHandle ()

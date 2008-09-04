@@ -1069,19 +1069,26 @@ namespace System.Data.OracleClient
 				value = lob;
 				break;
 			case OciDataType.RSet: // REF CURSOR
-				OciStatementHandle cursorStatement = new OciStatementHandle (cmd.Connection.Environment, cursor);
-				cursorStatement.ErrorHandle = cmd.ErrorHandle;
-				cursorStatement.Command = cmd.Connection.CreateCommand ();
-				cursorStatement.SetupRefCursorResult (cmd.Connection);
+				OciStatementHandle cursorStatement = GetOutRefCursor (cmd);
 				value = new OracleDataReader (cursorStatement.Command, cursorStatement, true, CommandBehavior.Default);
-				cursor = IntPtr.Zero;
-				cursorStatement = null;
 				break;
 			default:
 				throw new NotImplementedException ("Data Type not implemented: " + ociType.ToString() + ".");
 			}
 			tmp = null;
 			buffer = null;
+		}
+
+		internal OciStatementHandle GetOutRefCursor (OracleCommand cmd) 
+		{
+				OciStatementHandle cursorStatement = new OciStatementHandle (cmd.Connection.ServiceContext, cursor);
+
+				cursorStatement.ErrorHandle = cmd.ErrorHandle;
+				cursorStatement.Command = cmd;
+				cursorStatement.SetupRefCursorResult (cmd.Connection);
+				cursorStatement.Service = cmd.Connection.ServiceContext;
+				cursor = IntPtr.Zero;
+				return cursorStatement;			
 		}
 
 		internal void Update (OracleCommand cmd)

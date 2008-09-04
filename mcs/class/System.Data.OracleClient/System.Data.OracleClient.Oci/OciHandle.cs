@@ -223,7 +223,7 @@ namespace System.Data.OracleClient.Oci {
 				errorHandle);
 
 			if (status != 0) {
-				OciErrorInfo info = errorHandle.HandleError ();
+				OciErrorInfo info = OciErrorHandle.HandleError (errorHandle, status);
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
 

@@ -838,14 +838,31 @@ namespace System.Data.OracleClient
 			return defineHandle.IsNull;
 		}
 
-		[MonoTODO]
+		void ValidateState ()
+		{
+			if (IsClosed)
+				throw new InvalidOperationException ("Invalid attempt to read data when reader is closed");
+		}
+
 		public
 #if NET_2_0
 		override
 #endif
 		bool NextResult ()
 		{
-			// FIXME: get next result
+			ValidateState ();
+
+			if (statement == null)
+				return false;
+
+			statement.Dispose ();
+			statement = null;
+			
+			statement = command.GetNextResult ();
+			
+			if (statement == null)
+				return false;
+
 			return false; 
 		}
 
@@ -855,6 +872,8 @@ namespace System.Data.OracleClient
 #endif
 		bool Read ()
 		{
+			ValidateState ();
+
 			if (hasRows) {
 				bool retval = statement.Fetch ();
 				hasRows = retval;
@@ -867,19 +886,19 @@ namespace System.Data.OracleClient
 		[MonoTODO]
 		public override Type GetProviderSpecificFieldType (int i)
 		{
-			throw new NotImplementedException ();
+			return GetOracleValue (i).GetType ();
 		}
 
 		[MonoTODO]
 		public override object GetProviderSpecificValue (int i)
 		{
-			throw new NotImplementedException ();
+			return GetOracleValue (i);
 		}
 
 		[MonoTODO]
 		public override int GetProviderSpecificValues (object [] values)
 		{
-			throw new NotImplementedException ();
+			return GetOracleValues (values);
 		}
 #endif
 
