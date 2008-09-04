@@ -78,9 +78,11 @@ namespace Mono.CSharp {
 
 		public override void Error_ValueCannotBeConverted (EmitContext ec, Location loc, Type target, bool expl)
 		{
-			if (!expl && IsLiteral && TypeManager.IsPrimitiveType (target) && TypeManager.IsPrimitiveType (type)) {
+			if (!expl && IsLiteral && 
+				(TypeManager.IsPrimitiveType (target) || type == TypeManager.decimal_type) &&
+				(TypeManager.IsPrimitiveType (type) || type == TypeManager.decimal_type)) {
 				Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
-					GetValue ().ToString (), TypeManager.CSharpName (target));
+					AsString (), TypeManager.CSharpName (target));
 			} else {
 				base.Error_ValueCannotBeConverted (ec, loc, target, expl);
 			}
@@ -186,8 +188,13 @@ namespace Mono.CSharp {
 				return TryReduce (ec, target_type);
 			}
 			catch (OverflowException) {
-				Report.Error (221, loc, "Constant value `{0}' cannot be converted to a `{1}' (use `unchecked' syntax to override)",
-					GetValue ().ToString (), TypeManager.CSharpName (target_type));
+				if (ec.ConstantCheckState) {				
+					Report.Error (221, loc, "Constant value `{0}' cannot be converted to a `{1}' (use `unchecked' syntax to override)",
+						GetValue ().ToString (), TypeManager.CSharpName (target_type));
+				} else {
+					Error_ValueCannotBeConverted (ec, loc, target_type, false);
+				}
+
 				return New.Constantify (target_type);
 			}
 		}
@@ -1645,7 +1652,7 @@ namespace Mono.CSharp {
 
 		override public string AsString ()
 		{
-			return Value.ToString ();
+			return Value.ToString () + "M";
 		}
 
 		public override object GetValue ()

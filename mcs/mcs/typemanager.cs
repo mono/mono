@@ -181,6 +181,7 @@ namespace Mono.CSharp {
 
 	// C# 2.0
 	static internal ConstructorInfo fixed_buffer_attr_ctor;
+	static internal CustomAttributeBuilder unsafe_value_type_attr;
 
 	// C# 3.0
 	static internal CustomAttributeBuilder extension_attribute_attr;
@@ -320,6 +321,7 @@ namespace Mono.CSharp {
 
 		param_array_attr =
 		compiler_generated_attr =
+		unsafe_value_type_attr =
 		extension_attribute_attr = null;
 
 		isvolatile_type = null;

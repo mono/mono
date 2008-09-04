@@ -3017,17 +3017,29 @@ namespace Mono.CSharp {
 			this.ModFlags |= Modifiers.SEALED;
 		}
 
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		{
+			base.ApplyAttributeBuilder (a, cb);
+
+			//
+			// When struct constains fixed fixed and struct layout has explicitly
+			// set CharSet, its value has to be propagated to compiler generated
+			// fixed field types
+			//
+			if (a.Type == TypeManager.struct_layout_attribute_type && Fields != null && a.HasField ("CharSet")) {
+				for (int i = 0; i < Fields.Count; ++i) {
+					FixedField ff = Fields [i] as FixedField;
+					if (ff != null)
+						ff.SetCharSet (TypeBuilder.Attributes);
+				}
+			}
+		}
+
 		public override AttributeTargets AttributeTargets {
 			get {
 				return AttributeTargets.Struct;
 			}
 		}
-
-		const TypeAttributes DefaultTypeAttributes =
-			TypeAttributes.SequentialLayout |
-			TypeAttributes.Sealed |
-			TypeAttributes.BeforeFieldInit;
-
 
 		protected override TypeExpr[] ResolveBaseTypes (out TypeExpr base_class)
 		{
@@ -3054,6 +3066,11 @@ namespace Mono.CSharp {
 		//
 		protected override TypeAttributes TypeAttr {
 			get {
+				const TypeAttributes DefaultTypeAttributes =
+					TypeAttributes.SequentialLayout |
+					TypeAttributes.Sealed |
+					TypeAttributes.BeforeFieldInit;
+
 				return base.TypeAttr | DefaultTypeAttributes;
 			}
 		}
@@ -5633,7 +5650,7 @@ namespace Mono.CSharp {
 			
 			// Create nested fixed buffer container
 			string name = String.Format ("<{0}>__FixedBuffer{1}", Name, GlobalCounter++);
-			fixed_buffer_type = Parent.TypeBuilder.DefineNestedType (name,
+			fixed_buffer_type = Parent.TypeBuilder.DefineNestedType (name, CodeGen.Module.DefaultCharSetType |
 				TypeAttributes.NestedPublic | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, TypeManager.value_type);
 			
 			element = fixed_buffer_type.DefineField (FixedElementName, MemberType, FieldAttributes.Public);
@@ -5679,6 +5696,28 @@ namespace Mono.CSharp {
 
 			buffer_size *= type_size;
 			EmitFieldSize (buffer_size);
+
+#if GMCS_SOURCE
+			//
+			// Emit compiler generated fixed buffer type attribute
+			//
+			CustomAttributeBuilder cab = TypeManager.unsafe_value_type_attr;
+			if (cab == null) {
+				Type attr_type = TypeManager.CoreLookupType (
+					"System.Runtime.CompilerServices", "UnsafeValueTypeAttribute", Kind.Class, true);
+
+				if (attr_type != null) {
+					ConstructorInfo ci = TypeManager.GetPredefinedConstructor (attr_type, Location);
+					if (ci != null) {
+						cab = new CustomAttributeBuilder (ci, new object [0]);
+						TypeManager.unsafe_value_type_attr = cab;
+					}
+				}
+			}
+
+			if (cab != null)
+				fixed_buffer_type.SetCustomAttribute (cab);
+#endif
 			base.Emit ();
 		}
 
@@ -5737,6 +5776,27 @@ namespace Mono.CSharp {
 		protected override bool IsFieldClsCompliant {
 			get {
 				return false;
+			}
+		}
+
+		public void SetCharSet (TypeAttributes ta)
+		{
+			TypeAttributes cta = fixed_buffer_type.Attributes;
+			if ((cta & TypeAttributes.UnicodeClass) != (ta & TypeAttributes.UnicodeClass))
+				SetTypeBuilderCharSet ((cta & ~TypeAttributes.AutoClass) | TypeAttributes.UnicodeClass);
+			else if ((cta & TypeAttributes.AutoClass) != (ta & TypeAttributes.AutoClass))
+				SetTypeBuilderCharSet ((cta & ~TypeAttributes.UnicodeClass) | TypeAttributes.AutoClass);
+			else if (cta == 0 && ta != 0)
+				SetTypeBuilderCharSet (cta & ~(TypeAttributes.UnicodeClass | TypeAttributes.AutoClass));
+		}
+
+		void SetTypeBuilderCharSet (TypeAttributes ta)
+		{
+			MethodInfo mi = typeof (TypeBuilder).GetMethod ("SetCharSet", BindingFlags.Instance | BindingFlags.NonPublic);
+			if (mi == null) {
+				Report.RuntimeMissingSupport (Location, "TypeBuilder::SetCharSet");
+			} else {
+				mi.Invoke (fixed_buffer_type, new object [] { ta });
 			}
 		}
 

@@ -1,4 +1,11 @@
 2008-09-04  Marek Safar  <marek.safar@gmail.com>
+
+	* constant.cs: Better error reporting for decimal literals.
+	
+	* class.cs, attribute.cs, typemanager.cs: Emit more fixed buffer
+	field attributes.
+	
+2008-09-04  Marek Safar  <marek.safar@gmail.com>
 			Miguel de Icaza  <miguel@novell.com>
 
 	A fix for bug #422951

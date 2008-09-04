@@ -1137,6 +1137,19 @@ namespace Mono.CSharp {
 			return (CharSet)System.Enum.Parse (typeof (CharSet), pos_values [0].ToString ());
 		}
 
+		public bool HasField (string fieldName)
+		{
+			if (field_info_arr == null)
+				return false;
+
+			foreach (FieldInfo fi in field_info_arr) {
+				if (fi.Name == fieldName)
+					return true;
+			}
+
+			return false;
+		}
+
 		public bool IsInternalMethodImplAttribute {
 			get {
 				if (Type != TypeManager.methodimpl_attr_type)
