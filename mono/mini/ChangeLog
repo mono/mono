@@ -1,3 +1,13 @@
+2008-09-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-arm.c (mono_arch_nullify_class_init_trampoline): Implement this.
+	(mono_arch_patch_plt_entry): Fix the calculation of the jump_entry.
+	(mono_arch_get_nullified_class_init_trampoline): Return 'code' instead of
+	'buf'.
+
+	* aot-compiler.c (emit_plt): Fix the arm plt entries, previously they all 
+	jumped to the same entry in plt_jump_table.
+
 2008-09-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* method-to-ir.c (initialize_array_data): Handle field with RVA from
