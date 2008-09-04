@@ -752,7 +752,6 @@ namespace Mono.CSharp
 				// even with -noconfig, otherwise the check for ExtensionAttribute in
 				// loaded assemblies won't work
 				//
-				Console.WriteLine ("HERE");
 				if (need_system_core && references.Count != 0 && Driver.OutputFile != "System.Core.dll")
 					soft_references.Add ("System.Core");
 				
