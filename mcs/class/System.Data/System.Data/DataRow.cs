@@ -185,13 +185,14 @@ namespace System.Data {
 				_rowChanged = true;
 
 				CheckValue (value, column);
-				bool orginalEditing = Proposed >= 0;
-				if (!orginalEditing)
+				bool already_editing = Proposed >= 0;
+				if (!already_editing)
 					BeginEdit ();
 
 				column [Proposed] = value;
 				_table.ChangedDataColumn (this, column, value);
-				if (!orginalEditing)
+
+				if (!already_editing)
 					EndEdit ();
 			}
 		}
@@ -220,8 +221,7 @@ namespace System.Data {
 					throw new ArgumentException (string.Format (CultureInfo.InvariantCulture,
 						"The column '{0}' does not belong to the table : {1}.",
 						column.ColumnName, _table.TableName));
-				int columnIndex = column.Ordinal;
-				return this [columnIndex, version];
+				return this [column.Ordinal, version];
 			}
 		}
 
@@ -258,6 +258,8 @@ namespace System.Data {
 				int recordIndex = IndexFromVersion (version);
 
 				if (column.Expression != String.Empty && _table.Rows.IndexOf (this) != -1) {
+					// FIXME: how does this handle 'version'?
+					// TODO: Can we avoid the Eval each time by using the cached value?
 					object o = column.CompiledExpression.Eval (this);
 					if (o != null && o != DBNull.Value)
 						o = Convert.ChangeType (o, column.DataType);
@@ -278,17 +280,15 @@ namespace System.Data {
 				if (RowState == DataRowState.Deleted)
 					throw new DeletedRowInaccessibleException ("Deleted row information cannot be accessed through the row.");
 
-				int index = 0;
-				if (RowState == DataRowState.Detached)
+				int index = Current;
+				if (RowState == DataRowState.Detached) {
 					// Check if datarow is removed from the table.
 					if (Proposed < 0)
-						throw new RowNotInTableException(
-								"This row has been removed from a table and does not have any data."
-								+"  BeginEdit() will allow creation of new data in this row.");
-					else
-						index = Proposed;
-				else
-					index = Current;
+						throw new RowNotInTableException (
+							"This row has been removed from a table and does not have any data."
+							+ "  BeginEdit() will allow creation of new data in this row.");
+					index = Proposed;
+				}
 
 				object[] items = new object [_table.Columns.Count];
 
@@ -589,11 +589,11 @@ namespace System.Data {
 
 		internal void SetOriginalValue (string columnName, object val)
 		{
-			DataColumn column = _table.Columns[columnName];
+			DataColumn column = _table.Columns [columnName];
 			_table.ChangingDataColumn (this, column, val);
 
 			if (Original < 0 || Original == Current)
-				Original = Table.RecordCache.NewRecord();
+				Original = Table.RecordCache.NewRecord ();
 
 			CheckValue (val, column);
 			column [Original] = val;
@@ -605,7 +605,7 @@ namespace System.Data {
 		/// </summary>
 		public void AcceptChanges ()
 		{
-			EndEdit(); // in case it hasn't been called
+			EndEdit (); // in case it hasn't been called
 
 			_table.ChangingDataRow (this, DataRowAction.Commit);
 			CheckChildRows (DataRowAction.Commit);
@@ -646,7 +646,7 @@ namespace System.Data {
 			if (!HasVersion (DataRowVersion.Proposed)) {
 				Proposed = Table.RecordCache.NewRecord ();
 				int from = HasVersion (DataRowVersion.Current) ? Current : Table.DefaultValuesRowIndex;
-				for(int i = 0; i < Table.Columns.Count; i++){
+				for (int i = 0; i < Table.Columns.Count; i++){
 					DataColumn column = Table.Columns [i];
 					column.DataContainer.CopyValue (from, Proposed);
 				}
@@ -724,35 +724,34 @@ namespace System.Data {
 		// check the child rows of this row before deleting the row.
 		private void CheckChildRows (DataRowAction action)
 		{
-			// in this method we find the row that this row is in a relation with them.
-			// in shortly we find all child rows of this row.
-			// then we function according to the DeleteRule of the foriegnkey.
+			DataSet ds = _table.DataSet;
 
-			// 1. find if this row is attached to dataset.
-			// 2. find if EnforceConstraints is true.
-			// 3. find if there are any constraint on the table that the row is in.
-			if (_table.DataSet != null && _table.DataSet.EnforceConstraints && _table.Constraints.Count > 0) {
-				foreach (DataTable table in _table.DataSet.Tables) {
-					// loop on all ForeignKeyConstrain of the table.
-					foreach (Constraint constraint in table.Constraints) {
-						if (constraint is ForeignKeyConstraint) {
-							ForeignKeyConstraint fk = (ForeignKeyConstraint) constraint;
-							if (fk.RelatedTable == _table) {
-								switch (action) {
-								case DataRowAction.Delete:
-									CheckChildRows (fk, action, fk.DeleteRule);
-									break;
-								case DataRowAction.Commit:
-								case DataRowAction.Rollback:
-									if (fk.AcceptRejectRule != AcceptRejectRule.None)
-										CheckChildRows (fk, action, Rule.Cascade);
-									break;
-								default:
-									CheckChildRows (fk, action, fk.UpdateRule);
-									break;
-								}
-							}
-						}
+			if (ds == null || !ds.EnforceConstraints)
+				return;
+
+			// if the table we're attached-to doesn't have an constraints, no foreign keys are pointing to us ...
+			if (_table.Constraints.Count == 0)
+				return;
+
+			foreach (DataTable table in ds.Tables) {
+				// loop on all ForeignKeyConstrain of the table.
+				foreach (Constraint constraint in table.Constraints) {
+					ForeignKeyConstraint fk = constraint as ForeignKeyConstraint;
+					if (fk == null || fk.RelatedTable != _table)
+						continue;
+
+					switch (action) {
+					case DataRowAction.Delete:
+						CheckChildRows (fk, action, fk.DeleteRule);
+						break;
+					case DataRowAction.Commit:
+					case DataRowAction.Rollback:
+						if (fk.AcceptRejectRule != AcceptRejectRule.None)
+							CheckChildRows (fk, action, Rule.Cascade);
+						break;
+					default:
+						CheckChildRows (fk, action, fk.UpdateRule);
+						break;
 					}
 				}
 			}
@@ -760,71 +759,66 @@ namespace System.Data {
 
 		private void CheckChildRows (ForeignKeyConstraint fkc, DataRowAction action, Rule rule)
 		{
-			DataRow[] childRows = GetChildRows (fkc, DataRowVersion.Current);
+			DataRow [] childRows = GetChildRows (fkc, DataRowVersion.Current);
+			if (childRows == null)
+				return;
+
 			switch (rule) {
 			case Rule.Cascade:  // delete or change all relted rows.
-				if (childRows != null) {
+				switch (action) {
+				case DataRowAction.Delete:
 					for (int j = 0; j < childRows.Length; j++) {
-						// if action is delete we delete all child rows
-						switch(action) {
-						case DataRowAction.Delete: {
-							if (childRows[j].RowState != DataRowState.Deleted)
-								childRows[j].Delete ();
-
-							break;
-						}
-						case DataRowAction.Change: {
-							// if action is change we change the values in the child row
-							// change only the values in the key columns
-							// set the childcolumn value to the new parent row value
-							for (int k = 0; k < fkc.Columns.Length; k++)
-								if (!fkc.RelatedColumns [k].DataContainer [Current].Equals (fkc.RelatedColumns [k].DataContainer [Proposed]))
-									childRows [j][fkc.Columns [k]] = this [fkc.RelatedColumns [k], DataRowVersion.Proposed];
-
-							break;
-						}
-						case DataRowAction.Rollback: {
-							if (childRows [j].RowState != DataRowState.Unchanged)
-								childRows [j].RejectChanges ();
-							break;
-						}
-						}
+						if (childRows [j].RowState != DataRowState.Deleted)
+							childRows [j].Delete ();
 					}
+					break;
+				case DataRowAction.Change:
+					for (int j = 0; j < childRows.Length; j++) {
+						// if action is change we change the values in the child row
+						// change only the values in the key columns
+						// set the childcolumn value to the new parent row value
+						for (int k = 0; k < fkc.Columns.Length; k++)
+							if (!fkc.RelatedColumns [k].DataContainer [Current].Equals (fkc.RelatedColumns [k].DataContainer [Proposed]))
+								childRows [j][fkc.Columns [k]] = this [fkc.RelatedColumns [k], DataRowVersion.Proposed];
+					}
+					break;
+				case DataRowAction.Rollback:
+					for (int j = 0; j < childRows.Length; j++) {
+						if (childRows [j].RowState != DataRowState.Unchanged)
+							childRows [j].RejectChanges ();
+					}
+					break;
 				}
 				break;
 			case Rule.None: // throw an exception if there are any child rows.
-				if (childRows != null) {
-					for (int j = 0; j < childRows.Length; j++) {
-						if (childRows[j].RowState != DataRowState.Deleted) {
-							string changeStr = "Cannot change this row because constraints are enforced on relation " + fkc.ConstraintName +", and changing this row will strand child rows.";
-							string delStr = "Cannot delete this row because constraints are enforced on relation " + fkc.ConstraintName +", and deleting this row will strand child rows.";
-							string message = action == DataRowAction.Delete ? delStr : changeStr;
-							throw new InvalidConstraintException (message);
-						}
+				for (int j = 0; j < childRows.Length; j++) {
+					if (childRows[j].RowState != DataRowState.Deleted) {
+						string changeStr = "Cannot change this row because constraints are enforced on relation " + fkc.ConstraintName +", and changing this row will strand child rows.";
+						string delStr = "Cannot delete this row because constraints are enforced on relation " + fkc.ConstraintName +", and deleting this row will strand child rows.";
+						string message = action == DataRowAction.Delete ? delStr : changeStr;
+						throw new InvalidConstraintException (message);
 					}
 				}
 				break;
-			case Rule.SetDefault: // set the values in the child rows to the defult value of the columns.
-				if (childRows != null && childRows.Length > 0) {
+			case Rule.SetDefault: // set the values in the child rows to the default value of the columns.
+				if (childRows.Length > 0) {
 					int defaultValuesRowIndex = childRows [0].Table.DefaultValuesRowIndex;
 					foreach (DataRow childRow in childRows) {
 						if (childRow.RowState != DataRowState.Deleted) {
 							int defaultIdx = childRow.IndexFromVersion (DataRowVersion.Default);
-							foreach(DataColumn column in fkc.Columns)
+							foreach (DataColumn column in fkc.Columns)
 								column.DataContainer.CopyValue (defaultValuesRowIndex, defaultIdx);
 						}
 					}
 				}
 				break;
 			case Rule.SetNull: // set the values in the child row to null.
-				if (childRows != null) {
-					for (int j = 0; j < childRows.Length; j++) {
-						DataRow child = childRows [j];
-						if (childRows[j].RowState != DataRowState.Deleted) {
-							// set only the key columns to DBNull
-							for (int k = 0; k < fkc.Columns.Length; k++)
-								child.SetNull (fkc.Columns[k]);
-						}
+				for (int j = 0; j < childRows.Length; j++) {
+					DataRow child = childRows [j];
+					if (childRows[j].RowState != DataRowState.Deleted) {
+						// set only the key columns to DBNull
+						for (int k = 0; k < fkc.Columns.Length; k++)
+							child.SetNull (fkc.Columns[k]);
 					}
 				}
 				break;
@@ -840,66 +834,64 @@ namespace System.Data {
 		public void EndEdit ()
 		{
 			if (_inChangingEvent)
-				throw new InRowChangingEventException("Cannot call EndEdit inside an OnRowChanging event.");
+				throw new InRowChangingEventException ("Cannot call EndEdit inside an OnRowChanging event.");
 
-			if (RowState == DataRowState.Detached)
+			if (RowState == DataRowState.Detached || !HasVersion (DataRowVersion.Proposed))
 				return;
 
-			if (HasVersion (DataRowVersion.Proposed)) {
-				CheckReadOnlyStatus();
+			CheckReadOnlyStatus();
 
-				_inChangingEvent = true;
-				try {
-					_table.ChangingDataRow (this, DataRowAction.Change);
-				} finally {
-					_inChangingEvent = false;
-				}
+			_inChangingEvent = true;
+			try {
+				_table.ChangingDataRow (this, DataRowAction.Change);
+			} finally {
+				_inChangingEvent = false;
+			}
 
-				DataRowState oldState = RowState;
+			DataRowState oldState = RowState;
 
-				int oldRecord = Current;
+			int oldRecord = Current;
+			Current = Proposed;
+			Proposed = -1;
+
+			//FIXME : ideally  indexes shouldnt be maintained during dataload.But this needs to
+			//be implemented at multiple places.For now, just maintain the index.
+			//if (!Table._duringDataLoad) {
+			foreach (Index index in Table.Indexes)
+				index.Update (this, oldRecord, DataRowVersion.Current, oldState);
+			//}
+
+			try {
+				AssertConstraints ();
+
+				// restore previous state to let the cascade update to find the rows
+				Proposed = Current;
+				Current = oldRecord;
+
+				CheckChildRows (DataRowAction.Change);
+
+				// apply new state
 				Current = Proposed;
 				Proposed = -1;
-
-				//FIXME : ideally  indexes shouldnt be maintained during dataload.But this needs to
-				//be implemented at multiple places.For now, just maintain the index.
+			} catch {
+				int proposed = Proposed >= 0 ? Proposed : Current;
+				Current = oldRecord;
 				//if (!Table._duringDataLoad) {
 				foreach (Index index in Table.Indexes)
-					index.Update (this, oldRecord, DataRowVersion.Current, oldState);
+					index.Update (this, proposed, DataRowVersion.Current, RowState);
 				//}
+				throw;
+			}
 
-				try {
-					AssertConstraints ();
+			if (Original != oldRecord)
+				Table.RecordCache.DisposeRecord (oldRecord);
 
-					// restore previous state to let the cascade update to find the rows
-					Proposed = Current;
-					Current = oldRecord;
-
-					CheckChildRows(DataRowAction.Change);
-
-					// apply new state
-					Current = Proposed;
-					Proposed = -1;
-				} catch {
-					int proposed = Proposed >= 0 ? Proposed : Current;
-					Current = oldRecord;
-					//if (!Table._duringDataLoad) {
-					foreach (Index index in Table.Indexes)
-						index.Update (this, proposed, DataRowVersion.Current, RowState);
-					//}
-					throw;
-				}
-
-				if (Original != oldRecord)
-					Table.RecordCache.DisposeRecord(oldRecord);
-
-				// Note : row state must not be changed before all the job on indexes finished,
-				// since the indexes works with recods rather than with rows and the decision
-				// which of row records to choose depends on row state.
-				if (_rowChanged == true) {
-					_table.ChangedDataRow (this, DataRowAction.Change);
-					_rowChanged = false;
-				}
+			// Note : row state must not be changed before all the job on indexes finished,
+			// since the indexes works with recods rather than with rows and the decision
+			// which of row records to choose depends on row state.
+			if (_rowChanged == true) {
+				_table.ChangedDataRow (this, DataRowAction.Change);
+				_rowChanged = false;
 			}
 		}
 
@@ -1282,16 +1274,14 @@ namespace System.Data {
 		/// <summary>
 		/// Returns a value indicating whether all of the row columns specified contain a null value.
 		/// </summary>
-		internal bool IsNullColumns (DataColumn[] columns)
+		internal bool IsNullColumns (DataColumn [] columns)
 		{
-			bool allNull = true;
-			for (int i = 0; i < columns.Length; i++) {
-				if (!IsNull(columns[i])) {
-					allNull = false;
+			int i;
+			for (i = 0; i < columns.Length; i++) {
+				if (!IsNull (columns [i]))
 					break;
-				}
 			}
-			return allNull;
+			return i == columns.Length;
 		}
 
 		/// <summary>

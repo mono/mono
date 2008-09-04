@@ -1,5 +1,12 @@
 2008-09-04  Raja R Harinath  <harinath@hurrynot.org>
 
+	* DataRow.cs (CheckChildRows) <1-arg variant>: Remove excessive
+	indentation.
+	(CheckChildRows) <3-arg variant>: Likewise.  Move/split loop
+	inside a switch.
+	(EndEdit): Out-dent some code.
+	(IsNullColumns): Simplify slightly.
+
 	* DataRelationCollection.cs (CanRemove): Simplify slightly.
 
 	* DataRelation.cs (CheckStateForProperty): Use the childColumn to
