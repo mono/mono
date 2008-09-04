@@ -1,3 +1,8 @@
+2008-09-04  Jb Evain  <jbevain@novell.com>
+
+	* class.c (mono_class_is_assignable_from): fix assignability of nullables
+	to nullables.
+
 2008-09-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (verify_type_compatibility_full): Revert change
