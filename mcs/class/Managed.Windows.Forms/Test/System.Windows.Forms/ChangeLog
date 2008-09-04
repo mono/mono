@@ -1,3 +1,8 @@
+2008-09-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingTest.cs: New tests for multiple nested properties in the
+	data source, by Andy Hume.
+
 2008-08-26  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ErrorProviderTest.cs: Add test for bug #420305.

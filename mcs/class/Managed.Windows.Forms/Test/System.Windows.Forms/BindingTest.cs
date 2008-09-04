@@ -263,6 +263,88 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
+		public void DataSourcePropertyChanged_Original ()
+		{
+			Control c = new Control ();
+			c.BindingContext = new BindingContext ();
+			c.CreateControl ();
+
+			MockItem item = new MockItem ("A", 0);
+			Binding binding = new Binding ("Text", item, "Text");
+
+			c.DataBindings.Add (binding);
+			Assert.AreEqual ("A", c.Text, "#A1");
+
+			item.Text = "B";
+			Assert.AreEqual ("B", c.Text, "#B1");
+		}
+
+		[Test]
+		public void DataSourcePropertyChanged_Original_BadName ()
+		{
+			Control c = new Control ();
+			c.BindingContext = new BindingContext ();
+			c.CreateControl ();
+
+			MockItem item = new MockItem ("A", 0);
+			Binding binding = new Binding ("Text", item, "xxxxxxTextXXXXX");
+
+			try {
+				c.DataBindings.Add (binding);
+				Assert.Fail ("exc1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual ("dataMember", ex.ParamName, "ex.ParamName"); // (test is not locale dependent)
+			}
+		}
+
+		[Test]
+		public void DataSourcePropertyChanged_OneDeep ()
+		{
+			Control c = new Control ();
+			c.BindingContext = new BindingContext ();
+			c.CreateControl ();
+
+			MockItem item = new MockItem ("A", 0);
+			One parent = new One ();
+			parent.MockItem = item;
+			Binding binding = new Binding ("Text", parent, "MockItem.Text");
+
+			c.DataBindings.Add (binding);
+			Assert.AreEqual ("A", c.Text, "#A1");
+
+			item.Text = "B";
+			Assert.AreEqual ("B", c.Text, "#B1");
+		}
+
+		[Test]
+		public void DataSourcePropertyChanged_ThreeDeep ()
+		{
+			Control c = new Control ();
+			c.BindingContext = new BindingContext ();
+			c.CreateControl ();
+
+			MockItem item = new MockItem ("A", 0);
+			One parent = new One ();
+			parent.Two = new Two ();
+			parent.Two.Three = new Three ();
+			parent.Two.Three.MockItem = item;
+			Binding binding = new Binding ("Text", parent, "Two.Three.MockItem.Text");
+
+			c.DataBindings.Add (binding);
+			Console.WriteLine ("c.Text: " + c.Text);
+			Assert.AreEqual ("A", c.Text, "#A1");
+
+			item.Text = "B";
+			Assert.AreEqual ("B", c.Text, "#B1");
+
+			Assert.AreEqual (1, c.DataBindings.Count, "c.DataBindings.Count");
+			BindingMemberInfo bmi = c.DataBindings[0].BindingMemberInfo;
+			Assert.AreEqual ("Two.Three.MockItem", bmi.BindingPath, "bmi.BindingPath");
+			Assert.AreEqual ("Two.Three.MockItem.Text", bmi.BindingMember, "bmi.BindingMember");
+			Assert.AreEqual ("Text", bmi.BindingField, "bmi.BindingField");
+		}
+
+		[Test]
 		public void IsBindingTest ()
 		{
 			MockItem [] items = new MockItem [] { new MockItem ("A", 0) };
@@ -522,6 +604,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.AreEqual (String.Empty, binding.FormatString, "#A1");
 		}
 #endif
+
 	}
 
 	class ChildMockItem : MockItem
@@ -572,5 +655,91 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 	}
 #endif
+
+	class One
+	{
+		//----
+		//private global::System.Collections.Generic.IList<Two> m_twoList
+		//    = new global::System.Collections.Generic.List<Two> ();
+		//
+		//public global::System.Collections.Generic.IList<Two> TwoList
+		//{
+		//    get { return m_twoList; }
+		//}
+
+		//----
+		private Two m_two;
+
+		public Two Two
+		{
+			get { return m_two; }
+			set { m_two = value; }
+		}
+	
+		//----
+		private MockItem m_MockItem;
+
+		public MockItem MockItem
+		{
+			get { return m_MockItem; }
+			set { m_MockItem = value; }
+		}
+	
+		//----
+		public override string ToString ()
+		{
+			return "!!! ToString on One !!!";
+		}
+	}
+
+	class Two
+	{
+		//private global::System.Collections.Generic.IList<MockItem> m_MockItemList
+		//    = new global::System.Collections.Generic.List<MockItem> ();
+		//
+		//public global::System.Collections.Generic.IList<MockItem> MockItemList
+		//{
+		//    get { return m_MockItemList; }
+		//}
+
+		//----
+		private MockItem m_MockItem;
+
+		public MockItem MockItem
+		{
+			get { return m_MockItem; }
+			set { m_MockItem = value; }
+		}
+
+		private Three m_Three;
+
+		public Three Three
+		{
+			get { return m_Three; }
+			set { m_Three = value; }
+		}
+
+		public override string ToString ()
+		{
+			return "!!! ToString on Two !!!";
+		}
+	}
+
+	class Three
+	{
+		private MockItem m_MockItem;
+
+		public MockItem MockItem
+		{
+			get { return m_MockItem; }
+			set { m_MockItem = value; }
+		}
+
+		public override string ToString ()
+		{
+			return "!!! ToString on Three !!!";
+		}
+	}
+
 }
 
