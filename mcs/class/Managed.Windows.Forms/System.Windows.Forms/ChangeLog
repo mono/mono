@@ -1,5 +1,11 @@
 2008-09-04  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs: If using OptimizedDoubleBuffer, ensure the clip 
+	region gets set.
+	[Fixes bug #414166]
+
+2008-09-04  Jonathan Pobst  <monkey@jpobst.com>
+
 	* FontDialog.cs: When storing our font size from the starting font,
 	use SizeInPoints instead of Size in case Size is a different unit
 	from Points.

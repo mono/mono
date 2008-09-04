@@ -5512,7 +5512,11 @@ namespace System.Windows.Forms
 				//}
 				current_buffer.Start (paint_event);
 			}
-				
+
+			// If using OptimizedDoubleBuffer, ensure the clip region gets set
+			if (GetStyle (ControlStyles.OptimizedDoubleBuffer))
+				paint_event.Graphics.SetClip (Rectangle.Intersect (paint_event.ClipRectangle, this.ClientRectangle));
+
 			if (!GetStyle(ControlStyles.Opaque)) {
 				OnPaintBackground (paint_event);
 			}
