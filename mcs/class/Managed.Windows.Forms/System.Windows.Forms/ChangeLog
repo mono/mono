@@ -1,4 +1,11 @@
-2008-09-03  Jonathan Pobst  <monkey@jpobst.com>
+2008-09-04  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FontDialog.cs: When storing our font size from the starting font,
+	use SizeInPoints instead of Size in case Size is a different unit
+	from Points.
+	[Fixes bug #416489]
+
+2008-09-04  Jonathan Pobst  <monkey@jpobst.com>
 
 	* FileDialog.cs: When enter is pressed on a SaveFileDialog and we
 	don't use it for anything else, check if a directory is highlighted.

@@ -407,7 +407,7 @@ namespace System.Windows.Forms
 					font = new Font(value, value.Style);
 					
 					currentFontStyle = font.Style;
-					currentSize = font.Size;
+					currentSize = font.SizeInPoints;
 					currentFontName = font.Name;
 					
 					strikethroughCheckBox.Checked = font.Strikeout;
@@ -1048,7 +1048,7 @@ namespace System.Windows.Forms
 		
 		void UpdateFontSizeListBox ()
 		{
-			int index = fontsizeListBox.FindString(((int)(currentSize)).ToString());
+			int index = fontsizeListBox.FindString(((int)Math.Round ((currentSize))).ToString());
 			
 			if (index != -1)
 				fontsizeListBox.SelectedIndex = index;
