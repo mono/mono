@@ -6666,6 +6666,9 @@ namespace Mono.CSharp {
 
 		public bool ResolveBase (EmitContext ec)
 		{
+			if (eclass != ExprClass.Invalid)
+				return true;
+
 			eclass = ExprClass.Variable;
 
 			if (ec.TypeContainer.CurrentType != null)

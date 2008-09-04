@@ -1149,19 +1149,11 @@ namespace Mono.CSharp {
 				return ec.CurrentBranching.CheckRethrow (loc);
 			}
 
-			expr = expr.Resolve (ec);
+			expr = expr.Resolve (ec, ResolveFlags.Type | ResolveFlags.VariableOrValue);
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
 
 			if (expr == null)
 				return false;
-
-			ExprClass eclass = expr.eclass;
-
-			if (!(eclass == ExprClass.Variable || eclass == ExprClass.PropertyAccess ||
-			      eclass == ExprClass.Value || eclass == ExprClass.IndexerAccess)) {
-				expr.Error_UnexpectedKind (ec.DeclContainer, "value, variable, property or indexer access ", loc);
-				return false;
-			}
 
 			Type t = expr.Type;
 

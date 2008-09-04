@@ -4374,7 +4374,6 @@ namespace Mono.CSharp {
 			}
 
 			if (ambiguous != null) {
-				Report.SymbolRelatedToPreviousError (ambiguous);
 				Report.SymbolRelatedToPreviousError (best_candidate);
 				Report.Error (121, loc, "The call is ambiguous between the following methods or properties: `{0}' and `{1}'",
 					TypeManager.CSharpSignature (ambiguous), TypeManager.CSharpSignature (best_candidate));

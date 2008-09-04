@@ -1185,12 +1185,14 @@ namespace Mono.CSharp
 				if (type.Module == CodeGen.Module.Builder) {
 					TypeContainer tc = TypeManager.LookupTypeContainer (TypeManager.DropGenericTypeArguments (type));
 
-					ArrayList fields = null;
-					if (tc != null)
-						fields = tc.Fields;
-
 					ArrayList public_fields = new ArrayList ();
 					ArrayList non_public_fields = new ArrayList ();
+
+					//
+					// TODO: tc != null is needed because FixedBuffers are not cached
+					//
+					if (tc != null) {					
+					ArrayList fields = tc.Fields;
 
 					if (fields != null) {
 						foreach (FieldBase field in fields) {
@@ -1201,6 +1203,23 @@ namespace Mono.CSharp
 							else
 								non_public_fields.Add (field.FieldBuilder);
 						}
+					}
+
+					if (tc.Events != null) {
+						foreach (Event e in tc.Events) {
+							if ((e.ModFlags & Modifiers.STATIC) != 0)
+								continue;
+
+							EventField ef = e as EventField;
+							if (ef == null)
+								continue;
+
+							if ((ef.ModFlags & Modifiers.PUBLIC) != 0)
+								public_fields.Add (ef.FieldBuilder);
+							else
+								non_public_fields.Add (ef.FieldBuilder);
+						}
+					}
 					}
 
 					CountPublic = public_fields.Count;
@@ -1292,6 +1311,9 @@ namespace Mono.CSharp
 			{
 				if (!TypeManager.IsValueType (type) || TypeManager.IsEnumType (type) ||
 				    TypeManager.IsBuiltinType (type))
+					return null;
+
+				if (TypeManager.IsGenericParameter (type))
 					return null;
 
 				StructInfo info = (StructInfo) field_type_hash [type];
