@@ -21,10 +21,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -41,7 +41,7 @@ using System.Runtime.Serialization;
 namespace System.Data
 {
 	/// <summary>
-	/// DataRelation is used for a parent/child relationship 
+	/// DataRelation is used for a parent/child relationship
 	/// between two DataTable objects
 	/// </summary>
 	[Editor ("Microsoft.VSDesigner.Data.Design.DataRelationEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
@@ -50,14 +50,14 @@ namespace System.Data
 #if !NET_2_0
 	[Serializable]
 #endif
-	[TypeConverterAttribute (typeof (RelationshipConverter))]	
+	[TypeConverterAttribute (typeof (RelationshipConverter))]
 	public class DataRelation {
 		private DataSet dataSet;
 		private string relationName;
 		private UniqueConstraint parentKeyConstraint;
 		private ForeignKeyConstraint childKeyConstraint;
-		private DataColumn[] parentColumns;
-		private DataColumn[] childColumns;
+		private DataColumn [] parentColumns;
+		private DataColumn [] childColumns;
 		private bool nested;
 		internal bool createConstraints = true;
 		private bool initFinished;
@@ -67,46 +67,47 @@ namespace System.Data
 		string _relationName;
 		string _parentTableName;
 		string _childTableName;
-		string[] _parentColumnNames;
-		string[] _childColumnNames;
+		string [] _parentColumnNames;
+		string [] _childColumnNames;
 		bool _nested;
 		bool initInProgress = false;
 #if NET_2_0
 		string _parentTableNameSpace = String.Empty;
 		string _childTableNameSpace = String.Empty;
 #endif
-	
+
 		#region Constructors
 
-		public DataRelation (string relationName, DataColumn parentColumn, DataColumn childColumn) 
-		: this(relationName, parentColumn, childColumn, true)
+		public DataRelation (string relationName, DataColumn parentColumn, DataColumn childColumn)
+			: this (relationName, parentColumn, childColumn, true)
 		{
 		}
 
-		public DataRelation (string relationName, DataColumn[] parentColumns, DataColumn[] childColumns) 
-		: this(relationName, parentColumns, childColumns, true)
+		public DataRelation (string relationName, DataColumn [] parentColumns, DataColumn [] childColumns)
+			: this (relationName, parentColumns, childColumns, true)
 		{
 		}
 
 		public DataRelation (string relationName, DataColumn parentColumn, DataColumn childColumn, bool createConstraints)
-		: this(relationName, new DataColumn[] { parentColumn }, new DataColumn[] { childColumn }, createConstraints)
+			: this (relationName, new DataColumn[] { parentColumn }, new DataColumn [] { childColumn }, createConstraints)
 		{
 		}
 
-		public DataRelation (string relationName, DataColumn[] parentColumns, DataColumn[] childColumns, bool createConstraints) 
+		public DataRelation (string relationName, DataColumn [] parentColumns, DataColumn [] childColumns, bool createConstraints)
 		{
-			this.extendedProperties = new PropertyCollection();
-			if (relationName == null) relationName = string.Empty;
-			this.relationName = relationName;
-			if (parentColumns == null) throw new ArgumentNullException ();
+			this.extendedProperties = new PropertyCollection ();
+			this.relationName = relationName == null ? string.Empty : relationName;
+			if (parentColumns == null)
+				throw new ArgumentNullException ("parentColumns");
 			this.parentColumns = parentColumns;
-			if (childColumns == null) throw new ArgumentNullException ();
+			if (childColumns == null)
+				throw new ArgumentNullException ("childColumns");
 			this.childColumns = childColumns;
 			this.createConstraints = createConstraints;
 			if (parentColumns.Length != childColumns.Length)
 				throw new ArgumentException ("ParentColumns and ChildColumns should be the same length");
-			DataTable parentTable = parentColumns[0].Table;
-			DataTable childTable = childColumns[0].Table;
+			DataTable parentTable = parentColumns [0].Table;
+			DataTable childTable = childColumns [0].Table;
 			if (parentTable.DataSet != childTable.DataSet)
 				throw new InvalidConstraintException ();
 			foreach (DataColumn column in parentColumns)
@@ -117,13 +118,13 @@ namespace System.Data
 					throw new InvalidConstraintException ();
 
 			for (int i = 0; i < ChildColumns.Length; i++)
-				if (!parentColumns[i].DataTypeMatches (childColumns [i]))
-					throw new InvalidConstraintException("Parent Columns and Child Columns don't have " + 
-							"matching column types");
+				if (!parentColumns [i].DataTypeMatches (childColumns [i]))
+					throw new InvalidConstraintException (
+						"Parent Columns and Child Columns don't have matching column types");
 		}
 
 		[Browsable (false)]
-		public DataRelation (string relationName, string parentTableName, string childTableName, string[] parentColumnNames, string[] childColumnNames, bool nested) 
+		public DataRelation (string relationName, string parentTableName, string childTableName, string [] parentColumnNames, string[] childColumnNames, bool nested)
 		{
 			_relationName = relationName;
 			_parentTableName = parentTableName;
@@ -139,7 +140,7 @@ namespace System.Data
 		public DataRelation (string relationName, string parentTableName,
 				     string parentTableNameSpace, string childTableName,
 				     string childTableNameSpace, string[] parentColumnNames,
-				     string[] childColumnNames, bool nested) 
+				     string[] childColumnNames, bool nested)
 		{
 			_relationName = relationName;
 			_parentTableName = parentTableName;
@@ -152,7 +153,7 @@ namespace System.Data
 			InitInProgress = true;
 		}
 #endif
-	
+
 		internal bool InitInProgress {
 			get { return initInProgress; }
 			set { initInProgress = value; }
@@ -160,8 +161,7 @@ namespace System.Data
 
 		internal void FinishInit (DataSet ds)
 		{
-			if (!ds.Tables.Contains (_parentTableName) ||
-				!ds.Tables.Contains (_childTableName))
+			if (!ds.Tables.Contains (_parentTableName) || !ds.Tables.Contains (_childTableName))
 				throw new InvalidOperationException ();
 
 			if (_parentColumnNames.Length != _childColumnNames.Length)
@@ -173,7 +173,7 @@ namespace System.Data
 			parentColumns = new DataColumn [_parentColumnNames.Length];
 			childColumns = new DataColumn [_childColumnNames.Length];
 
-			for (int i=0; i < _parentColumnNames.Length; ++i) {
+			for (int i = 0; i < _parentColumnNames.Length; ++i) {
 				if (!parent.Columns.Contains (_parentColumnNames [i]))
 					throw new InvalidOperationException ();
 				parentColumns [i] = parent.Columns [_parentColumnNames [i]];
@@ -188,12 +188,10 @@ namespace System.Data
 			this.extendedProperties = new PropertyCollection ();
 			InitInProgress = false;
 #if NET_2_0
-			if (_parentTableNameSpace != String.Empty) {
+			if (_parentTableNameSpace != String.Empty)
 				parent.Namespace = _parentTableNameSpace;
-			}
-			if (_childTableNameSpace != String.Empty) {
+			if (_childTableNameSpace != String.Empty)
 				child.Namespace = _childTableNameSpace;
-			}
 #endif
 		}
 
@@ -205,34 +203,27 @@ namespace System.Data
 #if !NET_2_0
 		[DataSysDescription ("Indicates the child columns of this relation.")]
 #endif
-		public virtual DataColumn[] ChildColumns {
-			get {
-				return childColumns;
-			}
+		public virtual DataColumn [] ChildColumns {
+			get { return childColumns; }
 		}
 
 		public virtual ForeignKeyConstraint ChildKeyConstraint {
-			get {
-				return childKeyConstraint;
-			}
+			get { return childKeyConstraint; }
 		}
 
-		internal void SetChildKeyConstraint (ForeignKeyConstraint foreignKeyConstraint) {
+		internal void SetChildKeyConstraint (ForeignKeyConstraint foreignKeyConstraint)
+		{
 			childKeyConstraint = foreignKeyConstraint;
 		}
 
 		public virtual DataTable ChildTable {
-			get {
-				return childColumns[0].Table;
-			}
+			get { return childColumns [0].Table; }
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual DataSet DataSet {
-			get {
-				return childColumns [0].Table.DataSet;
-			}
+			get { return childColumns [0].Table.DataSet; }
 		}
 
 		[Browsable (false)]
@@ -254,13 +245,8 @@ namespace System.Data
 #endif
 		[DefaultValue (false)]
 		public virtual bool Nested {
-			get {
-				return nested;
-			} 
-			
-			set {
-				nested = value;
-			}
+			get { return nested; }
+			set { nested = value; }
 		}
 
 		[DataCategory ("Data")]
@@ -268,29 +254,25 @@ namespace System.Data
 		[DataSysDescription ("Indicates the parent columns of this relation.")]
 #endif
 		public virtual DataColumn[] ParentColumns {
-			get {
-				return parentColumns;
-			}
+			get { return parentColumns; }
 		}
 
 		public virtual UniqueConstraint ParentKeyConstraint {
-			get {
-				return parentKeyConstraint;
-			}
+			get { return parentKeyConstraint; }
 		}
 
-		internal void SetParentKeyConstraint (UniqueConstraint uniqueConstraint) {
+		internal void SetParentKeyConstraint (UniqueConstraint uniqueConstraint)
+		{
 			parentKeyConstraint = uniqueConstraint;
 		}
 
-		internal void SetDataSet (DataSet ds) {
+		internal void SetDataSet (DataSet ds)
+		{
 			dataSet = ds;
 		}
 
 		public virtual DataTable ParentTable {
-			get {
-				return parentColumns [0].Table;
-			}
+			get { return parentColumns [0].Table; }
 		}
 
 		[DataCategory ("Data")]
@@ -299,33 +281,30 @@ namespace System.Data
 #endif
 		[DefaultValue ("")]
 		public virtual string RelationName {
-			get {
-				return relationName;
-			}
-			
-			set {
-				relationName = value;
-			}
+			get { return relationName; }
+			set { relationName = value; }
 		}
 
 		#endregion // Properties
 
 		#region Methods
 
-		protected void CheckStateForProperty () 
+		protected void CheckStateForProperty ()
 		{
 			// TODO: check consistency of constraints
-			DataTable parentTable = parentColumns[0].Table;
-			DataTable childTable = parentColumns[0].Table;
+			DataTable parentTable = parentColumns [0].Table;
+			DataTable childTable = parentColumns [0].Table;
 			if (parentTable.DataSet != childTable.DataSet)
 				throw new DataException ();
 			bool allColumnsEqual = false;
 			for (int colCnt = 0; colCnt < parentColumns.Length; ++colCnt) {
 				if (!parentColumns [colCnt].DataType.Equals (childColumns [colCnt].DataType))
 					throw new DataException ();
-				if (parentColumns [colCnt] != childColumns [colCnt]) allColumnsEqual = false;
+				if (parentColumns [colCnt] != childColumns [colCnt])
+					allColumnsEqual = false;
 			}
-			if (allColumnsEqual) throw new DataException ();
+			if (allColumnsEqual)
+				throw new DataException ();
 		}
 
 		protected internal void OnPropertyChanging (PropertyChangedEventArgs pcevent)
@@ -339,102 +318,102 @@ namespace System.Data
 			OnPropertyChanging(new PropertyChangedEventArgs(name));
 		}
 
-		public override string ToString () 
+		public override string ToString ()
 		{
 			return relationName;
 		}
-                
-        internal void UpdateConstraints ()
-        {
-            if (initFinished || ! createConstraints)
-                return;
-            
-            ForeignKeyConstraint    foreignKeyConstraint    = null;
-            UniqueConstraint        uniqueConstraint        = null;
-            
-            foreignKeyConstraint    = FindForeignKey (ChildTable.Constraints);
-            uniqueConstraint        = FindUniqueConstraint (ParentTable.Constraints); 
 
-            // if we did not find the unique constraint in the parent table.
-            // we generate new uniqueConstraint and add it to the parent table.
-            if (uniqueConstraint == null) {
-                uniqueConstraint = new UniqueConstraint (ParentColumns, false);
-                ParentTable.Constraints.Add (uniqueConstraint);
-            }
-            
-            // if we did not find the foreign key constraint in the parent table.
-            // we generate new foreignKeyConstraint and add it to the parent table.
-            if (foreignKeyConstraint == null) {
-                foreignKeyConstraint = new ForeignKeyConstraint (RelationName, 
-                                                                    ParentColumns, 
-                                                                    ChildColumns);
-                ChildTable.Constraints.Add (foreignKeyConstraint);
-            }
+		internal void UpdateConstraints ()
+		{
+			if (initFinished || ! createConstraints)
+				return;
 
-            SetParentKeyConstraint (uniqueConstraint);
-            SetChildKeyConstraint (foreignKeyConstraint);
-        }
+			ForeignKeyConstraint    foreignKeyConstraint    = null;
+			UniqueConstraint        uniqueConstraint        = null;
 
-        private static bool CompareDataColumns (DataColumn [] dc1, DataColumn [] dc2)
-        {
-            if (dc1.Length != dc2.Length)
-                return false;
+			foreignKeyConstraint    = FindForeignKey (ChildTable.Constraints);
+			uniqueConstraint        = FindUniqueConstraint (ParentTable.Constraints);
 
-            for (int columnCnt = 0; columnCnt < dc1.Length; ++columnCnt){
-                if (dc1 [columnCnt] != dc2 [columnCnt])
-                    return false;
-            }
-            return true;
-        }
-        
-        private ForeignKeyConstraint FindForeignKey (ConstraintCollection cl)
-        {
-            ForeignKeyConstraint fkc = null; 
-            foreach (Constraint o in cl) {
-                if (! (o is ForeignKeyConstraint))
-                    continue;
-                fkc = (ForeignKeyConstraint) o;
-                /* Check ChildColumns & ParentColumns */
-                if (CompareDataColumns (ChildColumns, fkc.Columns) && 
-                    CompareDataColumns (ParentColumns, fkc.RelatedColumns))
-                    return fkc;
-            }
-            return null;
-        }
+			// if we did not find the unique constraint in the parent table.
+			// we generate new uniqueConstraint and add it to the parent table.
+			if (uniqueConstraint == null) {
+				uniqueConstraint = new UniqueConstraint (ParentColumns, false);
+				ParentTable.Constraints.Add (uniqueConstraint);
+			}
 
-        private UniqueConstraint FindUniqueConstraint (ConstraintCollection cl)
-        {
-            UniqueConstraint uc = null;
-            // find if the unique constraint already exists in the parent table.
-            foreach (Constraint o in cl){
-                if (! (o is UniqueConstraint))
-                    continue;
-                uc = (UniqueConstraint) o;
-                //Check in ParentColumns
-                if (CompareDataColumns (ParentColumns, uc.Columns))
-                    return uc;
-            }
-            return null;
-        }
+			// if we did not find the foreign key constraint in the parent table.
+			// we generate new foreignKeyConstraint and add it to the parent table.
+			if (foreignKeyConstraint == null) {
+				foreignKeyConstraint = new ForeignKeyConstraint (RelationName,
+										 ParentColumns,
+										 ChildColumns);
+				ChildTable.Constraints.Add (foreignKeyConstraint);
+			}
 
-        /// <summary>
-        ///     Check whether the given column is part of this relation.
-        /// <summary>
-        /// <returns>
-        ///     true if the column is part of this relation, otherwise false.
-        /// </returns>
-        internal bool Contains (DataColumn column)
-        {
-            foreach (DataColumn col in ParentColumns)
-                if (col == column)
-                    return true;
+			SetParentKeyConstraint (uniqueConstraint);
+			SetChildKeyConstraint (foreignKeyConstraint);
+		}
 
-            foreach (DataColumn col in ChildColumns)
-                if (col == column)
-                    return true;
-            return false;
-        }
-                
+		private static bool CompareDataColumns (DataColumn [] dc1, DataColumn [] dc2)
+		{
+			if (dc1.Length != dc2.Length)
+				return false;
+
+			for (int columnCnt = 0; columnCnt < dc1.Length; ++columnCnt){
+				if (dc1 [columnCnt] != dc2 [columnCnt])
+					return false;
+			}
+			return true;
+		}
+
+		private ForeignKeyConstraint FindForeignKey (ConstraintCollection cl)
+		{
+			ForeignKeyConstraint fkc = null;
+			foreach (Constraint o in cl) {
+				if (! (o is ForeignKeyConstraint))
+					continue;
+				fkc = (ForeignKeyConstraint) o;
+				/* Check ChildColumns & ParentColumns */
+				if (CompareDataColumns (ChildColumns, fkc.Columns) &&
+				    CompareDataColumns (ParentColumns, fkc.RelatedColumns))
+					return fkc;
+			}
+			return null;
+		}
+
+		private UniqueConstraint FindUniqueConstraint (ConstraintCollection cl)
+		{
+			UniqueConstraint uc = null;
+			// find if the unique constraint already exists in the parent table.
+			foreach (Constraint o in cl){
+				if (! (o is UniqueConstraint))
+					continue;
+				uc = (UniqueConstraint) o;
+				//Check in ParentColumns
+				if (CompareDataColumns (ParentColumns, uc.Columns))
+					return uc;
+			}
+			return null;
+		}
+
+		/// <summary>
+		///     Check whether the given column is part of this relation.
+		/// <summary>
+		/// <returns>
+		///     true if the column is part of this relation, otherwise false.
+		/// </returns>
+		internal bool Contains (DataColumn column)
+		{
+			foreach (DataColumn col in ParentColumns)
+				if (col == column)
+					return true;
+
+			foreach (DataColumn col in ChildColumns)
+				if (col == column)
+					return true;
+			return false;
+		}
+
 		#endregion // Methods
 	}
 }
