@@ -749,8 +749,9 @@ namespace Mono.CSharp {
 			if (delegate_instance_expression != null)
 				return;
 
-			if (method_group.InstanceExpression != null) {
-				delegate_instance_expression = method_group.InstanceExpression;
+			Expression instance = method_group.InstanceExpression;
+			if (instance != null && instance != EmptyExpression.Null) {
+				delegate_instance_expression = instance;
 				Type instance_type = delegate_instance_expression.Type;
 				if (TypeManager.IsValueType (instance_type) || TypeManager.IsGenericParameter (instance_type)) {
 					delegate_instance_expression = new BoxedCast (

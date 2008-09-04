@@ -1,3 +1,10 @@
+2008-09-04  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #422853
+	* delegate.cs (DelegateCreation): Add special handling for
+	EmptyExpression.Null instance expression which is just another
+	hack for undecided member instance exression.
+
 2008-09-03  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #422507
