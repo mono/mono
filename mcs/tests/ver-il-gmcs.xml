@@ -31919,6 +31919,50 @@
       </method>
     </type>
   </test>
+  <test name="test-677.cs">
+    <type name="InvokeWindow">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void add_E(D)">
+        <size>24</size>
+      </method>
+      <method name="Void remove_E(D)">
+        <size>24</size>
+      </method>
+      <method name="Void Run()">
+        <size>12</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>32</size>
+      </method>
+      <method name="Void OnDeleteEvent()">
+        <size>1</size>
+      </method>
+      <method name="Void OnDeleteEvent(Int32)">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="D">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="test-68.cs">
     <type name="Y">
       <method name="Void .ctor()">
