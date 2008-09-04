@@ -266,6 +266,24 @@ previous variable declarations, this is different than C# when
 compiled.   
 .I void ShowUsing()
 Displays all the using statements in effect.
+.I TimeSpan Time (Action a)
+Handy routine to time the time that some code takes to execute.   The
+parameter is an Action delegate, and the return value is a TimeSpan.
+For example:
+.PP
+.nf
+csharp> Time (() => { for (int i = 0; i < 5; i++) Console.WriteLine (i);});
+0
+1
+2
+3
+4
+00:00:00.0043230
+csharp>
+.fi
+.PP
+The return value is a TimeSpan, that you can store in a variable for
+benchmarking purposes. 
 .SH STARTUP FILES
 The C# shell will load all the C# script files and Mono assemblies
 located in the ~/.config/csharp directory on Unix.  C# script files
