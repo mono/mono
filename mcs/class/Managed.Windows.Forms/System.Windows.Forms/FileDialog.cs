@@ -989,6 +989,16 @@ namespace System.Windows.Forms
 				while (fileNameComboBox.Items.Count > MaxFileNameItems)
 					fileNameComboBox.Items.RemoveAt (MaxFileNameItems);
 			} else {
+				// If a directory is selected, navigate into it
+				foreach (FileViewListViewItem item in mwfFileView.SelectedItems) {
+					FSEntry fsEntry = item.FSEntry;
+					
+					if ((fsEntry.Attributes & FileAttributes.Directory) == FileAttributes.Directory) {
+						mwfFileView.ChangeDirectory (null, fsEntry.FullName, CustomFilter);
+						return;
+					}
+				}
+
 				return;
 			}
 

@@ -1,34 +1,9 @@
-2008-09-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+2008-09-03  Jonathan Pobst  <monkey@jpobst.com>
 
-	* Binding.cs: When acquiring a BindingManagerBase for the first time,
-	check that the specified property actually exists in the data source,
-	and throw an ArgumentException if that's not the case - this is only
-	done for this scenario, since for later cases (such Position changes)
-	we throw different exceptions (match .Net).
-
-2008-09-03  Ivan N. Zlatev  <contact@i-nz.net>
-
-	* ButtonBase.cs CheckBox.cs, Control.cs, FlowLayoutPanel.cs, 
-	  FlowLayoutSettings.cs, GroupBox.cs, Label.cs, ListBox.cs, 
-	  PropertyGrid.cs, RadioButton.cs, TableLayoutPanel.cs, 
-	  TableLayoutSettings.cs, ToolStrip.cs, ToolStripDropDownButton.cs, 
-	  ToolStripDropDownMenu.cs, ToolStripItem.cs, ToolStripSplitButton.cs, 
-	  ToolStripStatusLabel.cs: Add missing PerformLayout calls to various 
-	  properties.
-	  [Fixes bug #418684]
-
-2008-09-03  Neville Gao <nevillegao@gmail.com>
-
-	* StatusBar.cs: Control enabled to support accessibility.
-	[Fixes bug #419079]
-
-2008-09-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
-
-	* Binding.cs: When connecting the event handler for the "Changed"
-	event for the property, only do it for PropertyManager, and not for
-	CurrencyManager - this is exactly what does .Net, totally ignoring any
-	change in the property of the elements of a list.
-	Fixes the tests.
+	* FileDialog.cs: When enter is pressed on a SaveFileDialog and we
+	don't use it for anything else, check if a directory is highlighted.
+	If it is, navigate into it.
+	[Fixes bug #422087]
 
 2008-09-02  Jonathan Pobst  <monkey@jpobst.com>
 
