@@ -293,7 +293,7 @@ namespace System.Data
 		{
 			// TODO: check consistency of constraints
 			DataTable parentTable = parentColumns [0].Table;
-			DataTable childTable = parentColumns [0].Table;
+			DataTable childTable = childColumns [0].Table;
 			if (parentTable.DataSet != childTable.DataSet)
 				throw new DataException ();
 			bool allColumnsEqual = false;
