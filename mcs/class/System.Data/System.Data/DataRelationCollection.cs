@@ -508,17 +508,7 @@ namespace System.Data {
 
 			// check if the relation doesnot belong to this collection
 			int tmp = IndexOf (relation.RelationName);
-			// if we found a relation with same name we have to check
-			// that it is the same case.
-			// indexof can return a table with different case letters.
-			if (tmp != -1) {
-			       if(relation.RelationName != this[tmp].RelationName)
-					return false;
-			} else {
-				return false;
-			}
-
-			return true;
+			return tmp != -1 && relation.RelationName == this [tmp].RelationName;
 		}
 
 		public virtual void Clear ()

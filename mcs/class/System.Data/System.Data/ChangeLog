@@ -1,5 +1,7 @@
 2008-09-04  Raja R Harinath  <harinath@hurrynot.org>
 
+	* DataRelationCollection.cs (CanRemove): Simplify slightly.
+
 	* DataRelation.cs (CheckStateForProperty): Use the childColumn to
 	get the child table.
 
