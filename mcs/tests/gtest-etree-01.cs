@@ -495,6 +495,15 @@ class Tester
 		Assert<MyEnum> (0, e3.Compile ().Invoke (MyEnum.Value_1, MyEnum.Value_2));
 		Assert (MyEnum.Value_2, e3.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_2));
 	}
+	
+	void AndTest_4 ()
+	{
+		Expression<Func<int, int>> e = (a) => a & 0;
+		AssertNodeType (e, ExpressionType.And);
+		var c = e.Compile ();
+		
+		Assert (0, c (1));
+	}
 
 	void AndNullableTest ()
 	{

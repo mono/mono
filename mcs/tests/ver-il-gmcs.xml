@@ -12575,7 +12575,7 @@
         <size>39</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>78</size>
+        <size>63</size>
       </method>
       <method name="System.String ToString()">
         <size>57</size>
@@ -12613,7 +12613,7 @@
         <size>39</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>78</size>
+        <size>63</size>
       </method>
       <method name="System.String ToString()">
         <size>57</size>
@@ -12643,7 +12643,7 @@
         <size>69</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>101</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()">
         <size>108</size>
@@ -12673,7 +12673,7 @@
         <size>39</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>78</size>
+        <size>63</size>
       </method>
       <method name="System.String ToString()">
         <size>57</size>
@@ -12693,7 +12693,7 @@
         <size>69</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>101</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()">
         <size>108</size>
@@ -12731,7 +12731,7 @@
         <size>69</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>101</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()">
         <size>108</size>
@@ -12775,7 +12775,7 @@
         <size>123</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>147</size>
+        <size>132</size>
       </method>
       <method name="System.String ToString()">
         <size>240</size>
@@ -12808,7 +12808,7 @@
         <size>69</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>101</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()">
         <size>108</size>
@@ -12828,7 +12828,7 @@
         <size>69</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>101</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()">
         <size>108</size>
@@ -12858,7 +12858,7 @@
         <size>39</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>78</size>
+        <size>63</size>
       </method>
       <method name="System.String ToString()">
         <size>57</size>
@@ -12882,7 +12882,7 @@
         <size>15</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>55</size>
+        <size>40</size>
       </method>
       <method name="System.String ToString()">
         <size>6</size>
@@ -12909,7 +12909,7 @@
         <size>69</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>101</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()">
         <size>108</size>
@@ -14066,7 +14066,7 @@
         <size>69</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>101</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()">
         <size>108</size>
@@ -14142,6 +14142,9 @@
     <type name="Tester">
       <method name="Void ConditionTest_5()">
         <size>107</size>
+      </method>
+      <method name="Void AndTest_4()">
+        <size>92</size>
       </method>
     </type>
   </test>
@@ -15518,7 +15521,7 @@
         <size>69</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>101</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()">
         <size>108</size>
@@ -15538,7 +15541,7 @@
         <size>69</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>101</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()">
         <size>108</size>
@@ -15558,7 +15561,7 @@
         <size>69</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>101</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()">
         <size>108</size>
@@ -15578,7 +15581,7 @@
         <size>69</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>101</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()">
         <size>108</size>
@@ -15949,7 +15952,7 @@
         <size>69</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>101</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()">
         <size>108</size>
@@ -15969,7 +15972,7 @@
         <size>69</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>101</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()">
         <size>108</size>
@@ -16019,7 +16022,7 @@
         <size>69</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>101</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()">
         <size>108</size>
@@ -16039,7 +16042,7 @@
         <size>69</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>101</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()">
         <size>108</size>
@@ -16062,7 +16065,7 @@
         <size>96</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>124</size>
+        <size>109</size>
       </method>
       <method name="System.String ToString()">
         <size>183</size>
@@ -16163,7 +16166,7 @@
         <size>39</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>78</size>
+        <size>63</size>
       </method>
       <method name="System.String ToString()">
         <size>57</size>
@@ -16183,7 +16186,7 @@
         <size>69</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>101</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()">
         <size>108</size>
@@ -16273,7 +16276,7 @@
         <size>69</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>101</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()">
         <size>108</size>
@@ -16293,7 +16296,7 @@
         <size>69</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>101</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()">
         <size>108</size>
@@ -16383,7 +16386,7 @@
         <size>69</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>101</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()">
         <size>108</size>
@@ -16403,7 +16406,7 @@
         <size>69</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>101</size>
+        <size>86</size>
       </method>
       <method name="System.String ToString()">
         <size>108</size>
