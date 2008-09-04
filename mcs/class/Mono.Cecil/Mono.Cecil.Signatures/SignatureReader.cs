@@ -370,18 +370,28 @@ namespace Mono.Cecil.Signatures {
 			case ElementType.ByRef :
 				rt.TypedByRef = rt.Void = false;
 				rt.ByRef = true;
-
-				if (rt.CustomMods == null || rt.CustomMods.Length == 0)
-					rt.CustomMods = ReadCustomMods (data, start, out start);
-
+				rt.CustomMods = CombineCustomMods(rt.CustomMods, ReadCustomMods (data, start, out start));
 				rt.Type = ReadType (data, start, out start);
 				break;
 			default :
 				rt.TypedByRef = rt.Void = rt.ByRef = false;
+				rt.CustomMods = CombineCustomMods (rt.CustomMods, ReadCustomMods (data, start, out start));
 				rt.Type = ReadType (data, curs, out start);
 				break;
 			}
+
 			return rt;
+		}
+
+		static CustomMod [] CombineCustomMods (CustomMod [] original, CustomMod [] next)
+		{
+			if (next == null || next.Length == 0)
+				return original;
+
+			CustomMod [] mods = new CustomMod [original.Length + next.Length];
+			Array.Copy (original, mods, original.Length);
+			Array.Copy (next, 0, mods, original.Length, next.Length);
+			return mods;
 		}
 
 		Param [] ReadParameters (int length, byte [] data, int pos, out int start)
@@ -439,6 +449,9 @@ namespace Mono.Cecil.Signatures {
 			default :
 				p.TypedByRef = false;
 				p.ByRef = false;
+
+				p.CustomMods = ReadCustomMods (data, start, out start);
+
 				p.Type = ReadType (data, curs, out start);
 				break;
 			}
@@ -452,7 +465,7 @@ namespace Mono.Cecil.Signatures {
 			switch (element) {
 			case ElementType.ValueType :
 				VALUETYPE vt = new VALUETYPE ();
-				vt.Type = Utilities.GetMetadataToken(CodedIndex.TypeDefOrRef,
+				vt.Type = Utilities.GetMetadataToken (CodedIndex.TypeDefOrRef,
 					(uint) Utilities.ReadCompressedInteger (data, start, out start));
 				return vt;
 			case ElementType.Class :
@@ -552,6 +565,9 @@ namespace Mono.Cecil.Signatures {
 			start = pos;
 			while (true) {
 				int buf = start;
+				if (buf == data.Length)
+					break;
+
 				ElementType flag = (ElementType) Utilities.ReadCompressedInteger (data, start, out start);
 				start = buf;
 				if (!((flag == ElementType.CModOpt) || (flag == ElementType.CModReqD)))

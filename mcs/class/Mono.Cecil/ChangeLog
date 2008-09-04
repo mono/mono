@@ -1,3 +1,8 @@
+2008-09-04  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Signatures/SignatureReader.cs: better read modifiers on
+	return types and parameters.
+
 2008-09-02  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Metadata/UserStringsHeap.cs: fix reading of some unicode fu.
