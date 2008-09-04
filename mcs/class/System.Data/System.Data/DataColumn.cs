@@ -208,31 +208,14 @@ namespace System.Data {
 		public bool AllowDBNull {
 			get { return _allowDBNull; }
 			set {
-				//TODO: If we are a part of the table and this value changes
-				//we need to validate that all the existing values conform to the new setting
-
-				if (value) {
-					_allowDBNull = true;
-					return;
-				}
-
-				if (null != _table) {
-					if (_table.Rows.Count > 0) {
-						bool nullsFound = false;
-						for (int r = 0; r < _table.Rows.Count; r++) {
-							DataRow row = _table.Rows [r];
-							DataRowVersion version = row.HasVersion (DataRowVersion.Default) ?
-								DataRowVersion.Default : DataRowVersion.Original;
-							if(row.IsNull (this, version)) {
-								nullsFound = true;
-								break;
-							}
-						}
-
-						if (nullsFound)
+				if (!value && null != _table) {
+					for (int r = 0; r < _table.Rows.Count; r++) {
+						DataRow row = _table.Rows [r];
+						DataRowVersion version = row.HasVersion (DataRowVersion.Default) ?
+							DataRowVersion.Default : DataRowVersion.Original;
+						if (row.IsNull (this, version))
 							throw new DataException ("Column '" + ColumnName + "' has null values in it.");
-						//TODO: Validate no null values exist
-						//do we also check different versions of the row??
+						//TODO: do we also check different versions of the row??
 					}
 				}
 
@@ -268,13 +251,10 @@ namespace System.Data {
 
 					if (!CanAutoIncrement (DataType))
 						DataType = typeof (Int32);
-
-					if (_table != null)
-						_table.Columns.UpdateAutoIncrement (this, true);
-				} else {
-					if (_table != null)
-						_table.Columns.UpdateAutoIncrement (this, false);
 				}
+
+				if (_table != null)
+					_table.Columns.UpdateAutoIncrement (this, value);
 				_autoIncrement = value;
 			}
 		}
@@ -339,18 +319,8 @@ namespace System.Data {
 		[DataSysDescription ("Indicates the default user-interface caption for this column.")]
 #endif
 		public string Caption {
-			get {
-				if (_caption == null)
-					return ColumnName;
-				else
-					return _caption;
-			}
-			set {
-				if (value == null)
-					value = String.Empty;
-
-				_caption = value;
-			}
+			get { return _caption == null ? ColumnName : _caption; }
+			set { _caption = value == null ? String.Empty : value; }
 		}
 
 #if !NET_2_0
@@ -410,7 +380,6 @@ namespace System.Data {
 		public Type DataType {
 			get { return DataContainer.Type; }
 			set {
-
 				if (value == null)
 					return;
 
@@ -449,10 +418,8 @@ namespace System.Data {
 
 				if (DefaultValue != GetDefaultValueForType (prevType))
 					SetDefaultValue (DefaultValue, true);
-#if NET_2_0
 				else
 					_defaultValue = GetDefaultValueForType (DataType);
-#endif
 			}
 		}
 
@@ -472,38 +439,29 @@ namespace System.Data {
 
 			set {
 				if (AutoIncrement)
-					throw new ArgumentException("Can not set default value while AutoIncrement is true on this column.");
+					throw new ArgumentException ("Can not set default value while AutoIncrement is true on this column.");
 				SetDefaultValue (value, false);
 			}
 		}
 
 		void SetDefaultValue (object value, bool forcedTypeCheck)
 		{
-			object tmpObj;
-			if (forcedTypeCheck|| !this._defaultValue.Equals(value)) {
-				if (value == null)
-					tmpObj = DBNull.Value;
+			if (forcedTypeCheck || !this._defaultValue.Equals (value)) {
+				if (value == null || value == DBNull.Value)
+					_defaultValue = GetDefaultValueForType (DataType);
+				else if (DataType.IsInstanceOfType (value))
+					_defaultValue = value;
 				else
-					tmpObj = value;
-
-				if (!this.DataType.IsInstanceOfType (tmpObj) && tmpObj != DBNull.Value) {
 					try {
-						//Casting to the new type
-						tmpObj= Convert.ChangeType(tmpObj,this.DataType);
+						_defaultValue = Convert.ChangeType (value, DataType);
 					} catch (InvalidCastException) {
-						string msg = String.Format ("Default Value of type '{0}' is not compatible with column type '{1}'", tmpObj.GetType (), DataType);
+						string msg = String.Format ("Default Value of type '{0}' is not compatible with column type '{1}'", value.GetType (), DataType);
 #if NET_2_0
 						throw new DataException (msg);
 #else
 						throw new ArgumentException (msg);
 #endif
 					}
-				}
-#if NET_2_0
-				if (tmpObj == DBNull.Value)
-					tmpObj = GetDefaultValueForType (DataType);
-#endif
-				_defaultValue = tmpObj;
 			}
 
 			// store default value in the table if already belongs to
@@ -648,11 +606,7 @@ namespace System.Data {
 		[DefaultValue ("")]
 		public string Prefix {
 			get { return _prefix; }
-			set {
-				if (value == null)
-					value = String.Empty;
-				_prefix = value;
-			}
+			set { _prefix = value == null ? String.Empty : value; }
 		}
 
 		[DataCategory ("Data")]
@@ -720,9 +674,9 @@ namespace System.Data {
 			get { return _dataContainer; }
 		}
 
-		internal static bool CanAutoIncrement(Type type)
+		internal static bool CanAutoIncrement (Type type)
 		{
-			switch (Type.GetTypeCode(type)) {
+			switch (Type.GetTypeCode (type)) {
 				case TypeCode.Int16:
 				case TypeCode.Int32:
 				case TypeCode.Int64:
@@ -738,7 +692,7 @@ namespace System.Data {
 		#region Methods
 
 		[MonoTODO]
-		internal DataColumn Clone()
+		internal DataColumn Clone ()
 		{
 			DataColumn copy = new DataColumn ();
 
@@ -879,7 +833,7 @@ namespace System.Data {
 
 		internal int CompareValues (int index1, int index2)
 		{
-			return DataContainer.CompareValues(index1, index2);
+			return DataContainer.CompareValues (index1, index2);
 		}
 
 		/// <summary>

@@ -1,3 +1,10 @@
+2008-09-04  Raja R Harinath  <harinath@hurrynot.org>
+
+	* DataColumn.cs (AllowDBNull.set): Rearrange code to be more readable.
+	(AutoIncrement.set): Likewise.
+	(Caption): Likewise.
+	(SetDefaultValue): Likewise.
+
 2008-08-28  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Constraint.cs (SetExtendedProperties): New internal method.
