@@ -3,7 +3,11 @@
 // Fixed buffers tests
 
 using System;
+using System.Runtime.InteropServices;
 
+//[module: DefaultCharSet (CharSet.Ansi)]
+
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 public unsafe struct TestNew {
 	private fixed char test_1 [128];
 	public fixed bool test2 [4];
@@ -42,7 +46,13 @@ public class C {
 
 		foreach (Type t in typeof (TestNew).GetNestedTypes ()) {
 			if (Attribute.GetCustomAttribute (t, typeof (System.Runtime.CompilerServices.CompilerGeneratedAttribute)) == null)
-				return 4;
+				return 40;
+				
+			if (Attribute.GetCustomAttribute (t, typeof (System.Runtime.CompilerServices.UnsafeValueTypeAttribute)) == null)
+				return 41;
+				
+			if (!t.IsUnicodeClass)
+				return 42;
 		}
 
 		Console.WriteLine ("OK");

@@ -4475,7 +4475,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Test()">
-        <size>289</size>
+        <size>328</size>
       </method>
       <method name="Int32 Main()">
         <size>6</size>
