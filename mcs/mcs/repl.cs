@@ -792,7 +792,7 @@ namespace Mono.CSharp {
 			
 			return "\"" + s + "\"";
 		}
-		
+
 		static public void ShowVars ()
 		{
 			foreach (DictionaryEntry de in InteractiveShell.fields){
@@ -822,6 +822,15 @@ namespace Mono.CSharp {
 			InteractiveShell.ShowUsing ();
 		}
 
+		public delegate void Simple ();
+		
+		static public TimeSpan Time (Simple a)
+		{
+			DateTime start = DateTime.Now;
+			a ();
+			return DateTime.Now - start;
+		}
+		
 #if !SMCS_SOURCE
 		static public void LoadPackage (string pkg)
 		{
@@ -856,7 +865,8 @@ namespace Mono.CSharp {
 					"  ShowVars ();       - Shows defined local variables.\n" +
 					"  ShowUsing ();      - Show active using decltions.\n" +
 					"  Prompt             - The prompt used by the C# shell\n" +
-					"  ContinuationPrompt - The prompt for partial input\n" + 
+					"  ContinuationPrompt - The prompt for partial input\n" +
+					"  Time(() -> { })    - Times the specified code\n" +
 					"  quit;\n" +
 					"  help;\n";
 			}

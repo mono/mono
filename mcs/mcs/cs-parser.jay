@@ -5468,10 +5468,17 @@ interactive_parsing
 		InteractiveResult = pop_current_class ();
 		current_local_parameters = null;
 	  } 
-//	| EVAL_COMPILATION_UNIT_PARSER {
-//	        InteractiveShell.LoadAliases (current_namespace);
-//	  }
-//	  compilation_unit
+	| EVAL_COMPILATION_UNIT_PARSER {
+	        InteractiveShell.LoadAliases (current_namespace);
+	  }
+	  interactive_compilation_unit
+	;
+
+interactive_compilation_unit
+	: outer_declarations 
+	| outer_declarations global_attributes 
+	| global_attributes 
+	| /* nothing */
 	;
 %%
 
