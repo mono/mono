@@ -1,5 +1,10 @@
 2008-09-04  Marek Safar  <marek.safar@gmail.com>
 
+	* expression.cs, ecore.cs: Emit full expression tree for reduced
+	binary expressions.
+
+2008-09-04  Marek Safar  <marek.safar@gmail.com>
+
 	* expression.cs (This): Guard against multi-resolving.
 	
 	* ecore.cs, statement.cs (Throw): Simplified.

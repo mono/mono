@@ -147,6 +147,9 @@ namespace Mono.CSharp {
 		// </summary>
 		Constant TryReduceConstant (EmitContext ec, Constant e)
 		{
+			if (e is EmptyConstantCast)
+				return TryReduceConstant (ec, ((EmptyConstantCast) e).child);
+			
 			if (e is SideEffectConstant) {
 				Constant r = TryReduceConstant (ec, ((SideEffectConstant) e).value);
 				return r == null ? null : new SideEffectConstant (r, e, r.Location);
@@ -2544,13 +2547,14 @@ namespace Mono.CSharp {
 						return null;
 					}
 
-					if (rc != null) {
-						right = left;
-						lc = rc;
-					}
-
+					//
 					// The result is a constant with side-effect
-					return new SideEffectConstant (lc, right, loc);
+					//
+					Constant side_effect = rc == null ?
+						new SideEffectConstant (lc, right, loc) :
+						new SideEffectConstant (rc, left, loc);
+
+					return ReducedExpression.Create (side_effect, this);
 				}
 			}
 

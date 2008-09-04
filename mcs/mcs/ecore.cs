@@ -1664,6 +1664,11 @@ namespace Mono.CSharp {
 				return null;
 			return child.ConvertImplicitly (target_type);
 		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			child.MutateHoistedGenericType (storey);
+		}
 	}
 
 
@@ -2172,23 +2177,14 @@ namespace Mono.CSharp {
 	//
 	public class ReducedExpression : Expression
 	{
-		class ReducedConstantExpression : Constant
+		sealed class ReducedConstantExpression : EmptyConstantCast
 		{
-			readonly Constant expr;
 			readonly Expression orig_expr;
 
 			public ReducedConstantExpression (Constant expr, Expression orig_expr)
-				: base (expr.Location)
+				: base (expr, expr.Type)
 			{
-				this.expr = expr;
 				this.orig_expr = orig_expr;
-				eclass = expr.eclass;
-				type = expr.Type;
-			}
-
-			public override string AsString ()
-			{
-				return expr.AsString ();
 			}
 
 			public override Expression CreateExpressionTree (EmitContext ec)
@@ -2207,46 +2203,14 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			public override object GetValue ()
-			{
-				return expr.GetValue ();
-			}
-
 			public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
 			{
 				throw new NotImplementedException ();
 			}
 
-			public override Expression DoResolve (EmitContext ec)
-			{
-				return this;
-			}
-
 			public override Constant Increment ()
 			{
 				throw new NotImplementedException ();
-			}
-
-			public override bool IsDefaultValue {
-				get {
-					return expr.IsDefaultValue;
-				}
-			}
-
-			public override bool IsNegative {
-				get {
-					return expr.IsNegative;
-				}
-			}
-
-			public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
-			{
-				expr.MutateHoistedGenericType (storey);
-			}
-
-			public override void Emit (EmitContext ec)
-			{
-				expr.Emit (ec);
 			}
 		}
 
@@ -2259,7 +2223,7 @@ namespace Mono.CSharp {
 			this.loc = orig_expr.Location;
 		}
 
-		public static Expression Create (Constant expr, Expression original_expr)
+		public static Constant Create (Constant expr, Expression original_expr)
 		{
 			return new ReducedConstantExpression (expr, original_expr);
 		}
