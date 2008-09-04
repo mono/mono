@@ -26,10 +26,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -46,25 +46,24 @@ using System.ComponentModel;
 namespace System.Data
 {
 	/// <summary>
-	/// Base class for System.Data collection classes 
+	/// Base class for System.Data collection classes
 	/// that are used within a DataTable object
-	/// to represent a collection of 
+	/// to represent a collection of
 	/// relations, tables, rows, columns, and constraints
 	/// </summary>
 
-	public class InternalDataCollectionBase : ICollection, IEnumerable 
-	{
+	public class InternalDataCollectionBase : ICollection, IEnumerable {
 		#region Fields
 
 		private ArrayList list = null;
 		private bool readOnly = false;
-		private bool synchronized = false; 
+		private bool synchronized = false;
 
 		#endregion
 
 		#region Constructors
 
-		public InternalDataCollectionBase() 
+		public InternalDataCollectionBase ()
 		{
 			list = new ArrayList();
 		}
@@ -72,7 +71,7 @@ namespace System.Data
 		#endregion
 
 		#region Properties
-	
+
 		/// <summary>
 		/// Gets the total number of elements in a collection.
 		/// </summary>
@@ -109,9 +108,7 @@ namespace System.Data
 		/// </summary>
 		[Browsable (false)]
 		public object SyncRoot {
-			get {
-				return this;
-			}
+			get { return this; }
 		}
 
 
@@ -131,7 +128,7 @@ namespace System.Data
 		{
   			list.CopyTo (ar, index);
   		}
-  
+
   		/// <summary>
   		/// Gets an IEnumerator for the collection.
   		/// </summary>
@@ -139,7 +136,7 @@ namespace System.Data
 #if NET_2_0
 		virtual
 #endif
-		IEnumerator GetEnumerator () 
+		IEnumerator GetEnumerator ()
   		{
   			return list.GetEnumerator ();
   		}

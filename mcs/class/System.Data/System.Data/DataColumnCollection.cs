@@ -21,10 +21,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -53,7 +53,7 @@ namespace System.Data {
 		// Array of exact column names
 		public ArrayList columnNames = new ArrayList ();
 	}
-	
+
 	[Editor ("Microsoft.VSDesigner.Data.Design.ColumnsCollectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 #if !NET_2_0
@@ -64,8 +64,7 @@ namespace System.Data {
 #if NET_2_0
 	sealed
 #endif
-	class DataColumnCollection : InternalDataCollectionBase
-	{
+	class DataColumnCollection : InternalDataCollectionBase	{
 		//This hashtable maps between unique case insensetive column name to a doublet containing column ref and column count
 #if NET_2_0
 		private Hashtable columnNameCount = new Hashtable (StringComparer.OrdinalIgnoreCase);
@@ -73,21 +72,21 @@ namespace System.Data {
 		private Hashtable columnNameCount = new Hashtable (CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
 #endif
 		//This hashtable maps between column name to DataColumn object.
-		private Hashtable columnFromName = new Hashtable();
+		private Hashtable columnFromName = new Hashtable ();
 		//This ArrayList contains the auto-increment columns names
-		private ArrayList autoIncrement = new ArrayList();
+		private ArrayList autoIncrement = new ArrayList ();
 		//This holds the next index to use for default column name.
 		private int defaultColumnIndex = 1;
 		//table should be the DataTable this DataColumnCollection belongs to.
 		private DataTable parentTable = null;
 		// Keep reference to most recent columns passed to AddRange()
 		// so that they can be added when EndInit() is called.
-		DataColumn[] _mostRecentColumns = null;
-		
+		DataColumn [] _mostRecentColumns = null;
+
 		static readonly string ColumnPrefix = "Column";
 
 		// Internal Constructor.  This Class can only be created from other classes in this assembly.
-		internal DataColumnCollection(DataTable table):base()
+		internal DataColumnCollection (DataTable table)
 		{
 			parentTable = table;
 		}
@@ -99,14 +98,11 @@ namespace System.Data {
 #if !NET_2_0
 		virtual
 #endif
-		DataColumn this[int index]
-		{
-			get
-			{
-				if (index < 0 || index >= base.List.Count) {
-					throw new IndexOutOfRangeException("Cannot find column " + index + ".");
-				}
-				return (DataColumn) base.List[index];
+		DataColumn this [int index] {
+			get {
+				if (index < 0 || index >= base.List.Count)
+					throw new IndexOutOfRangeException ("Cannot find column " + index + ".");
+				return (DataColumn) base.List [index];
 			}
 		}
 
@@ -117,44 +113,31 @@ namespace System.Data {
 #if !NET_2_0
 		virtual
 #endif
-		DataColumn this[string name]
-		{
-			get
-			{
+		DataColumn this [string name] {
+			get {
 #if NET_2_0
 				if (name == null)
 					throw new ArgumentNullException ("name");
 #endif
 
-				DataColumn dc = columnFromName[name] as DataColumn;
-				
+				DataColumn dc = columnFromName [name] as DataColumn;
 				if (dc != null)
 					return dc;
 
-				int tmp = IndexOf(name, true);
-				if (tmp == -1)
-					return null;
-				return this[tmp]; 
+				int tmp = IndexOf (name, true);
+				return tmp == -1 ? null : base.List [tmp];
 			}
 		}
 
 		/// <summary>
 		/// Gets a list of the DataColumnCollection items.
 		/// </summary>
-		protected override ArrayList List 
-		{
-			get
-			{
-				return base.List;
-			}
+		protected override ArrayList List {
+			get { return base.List; }
 		}
 
-		internal ArrayList AutoIncrmentColumns 
-		{
-			get
-			{
-				return autoIncrement;
-			}
+		internal ArrayList AutoIncrmentColumns {
+			get { return autoIncrement; }
 		}
 
 		//Add Logic
@@ -177,7 +160,7 @@ namespace System.Data {
 #if !NET_2_0
 		virtual
 #endif
-		DataColumn Add()
+		DataColumn Add ()
 		{
 			DataColumn column = new DataColumn (null);
 			Add (column);
@@ -191,12 +174,12 @@ namespace System.Data {
 		}
 #endif
 
-		internal void RegisterName(string name, DataColumn column)
+		internal void RegisterName (string name, DataColumn column)
 		{
 			try {
 				columnFromName.Add (name, column);
 			} catch (ArgumentException) {
-				throw new DuplicateNameException("A DataColumn named '" + name + "' already belongs to this DataTable.");
+				throw new DuplicateNameException ("A DataColumn named '" + name + "' already belongs to this DataTable.");
 			}
 
 			// Get existing doublet
@@ -207,60 +190,55 @@ namespace System.Data {
 				// Add a new name
 				d.columnNames.Add (name);
 			} else {
-				// no existing doublet 
+				// no existing doublet
 				// create one
 				d = new Doublet (1, name);
 				columnNameCount [name] = d;
 			}
-			
-#if NET_2_0			
+
+#if NET_2_0
 			if (name.Length <= ColumnPrefix.Length || !name.StartsWith (ColumnPrefix, StringComparison.Ordinal))
 				return;
-#else			
+#else
 			if (name.Length <= ColumnPrefix.Length || !name.StartsWith (ColumnPrefix))
 				return;
-#endif			
-			
-			if (name == MakeName(defaultColumnIndex + 1)) {
-				do
-				{
+#endif
+
+			if (name == MakeName (defaultColumnIndex + 1)) {
+				do {
 					defaultColumnIndex++;
-				}
-				while (Contains(MakeName(defaultColumnIndex + 1)));
-			}			
+				} while (Contains (MakeName (defaultColumnIndex + 1)));
+			}
 		}
 
-		internal void UnregisterName(string name)
+		internal void UnregisterName (string name)
 		{
-			if (columnFromName.Contains(name))
-				columnFromName.Remove(name);
-	
+			if (columnFromName.Contains (name))
+				columnFromName.Remove (name);
+
 			// Get the existing doublet
 			Doublet d = (Doublet) columnNameCount [name];
 			if (d != null) {
 				// decrease reference count
-				d.count--;	
+				d.count--;
 				d.columnNames.Remove (name);
 				// remove doublet if no more references
-				if (d.count == 0 )
+				if (d.count == 0)
 					columnNameCount.Remove (name);
 			}
-			
-			if (name.StartsWith(ColumnPrefix) && name == MakeName(defaultColumnIndex - 1))
-			{
-				do
-				{
+
+			if (name.StartsWith(ColumnPrefix) && name == MakeName(defaultColumnIndex - 1)) {
+				do {
 					defaultColumnIndex--;
-				}
-				while (!Contains(MakeName(defaultColumnIndex - 1)) && defaultColumnIndex > 1);
+				} while (!Contains (MakeName (defaultColumnIndex - 1)) && defaultColumnIndex > 1);
 			}
 		}
 
 		private string GetNextDefaultColumnName ()
 		{
-			string defColumnName = MakeName(defaultColumnIndex);
-			for (int index = defaultColumnIndex + 1; Contains(defColumnName); ++index) {
-				defColumnName = MakeName(index);
+			string defColumnName = MakeName (defaultColumnIndex);
+			for (int index = defaultColumnIndex + 1; Contains (defColumnName); ++index) {
+				defColumnName = MakeName (index);
 				defaultColumnIndex++;
 			}
 			defaultColumnIndex++;
@@ -272,18 +250,16 @@ namespace System.Data {
 		static string MakeName (int index)
 		{
 			if (index < 10)
-				return TenColumns[index];
-
-			return String.Concat(ColumnPrefix, index.ToString());
+				return TenColumns [index];
+			return String.Concat (ColumnPrefix, index.ToString());
 		}
 
 		/// <summary>
 		/// Creates and adds the specified DataColumn object to the DataColumnCollection.
 		/// </summary>
 		/// <param name="column">The DataColumn to add.</param>
-		public void Add(DataColumn column)
+		public void Add (DataColumn column)
 		{
-
 			if (column == null)
 				throw new ArgumentNullException ("column", "'column' argument cannot be null.");
 
@@ -305,27 +281,26 @@ namespace System.Data {
 				throw new ArgumentException ("Column '" + column.ColumnName + "' already belongs to this or another DataTable.");
 
 			column.SetTable (parentTable);
-			RegisterName(column.ColumnName, column);
-			int ordinal = base.List.Add(column);
+			RegisterName (column.ColumnName, column);
+			int ordinal = base.List.Add (column);
 
 #if NET_2_0
 			column.Ordinal = ordinal;
 #else
 			column.SetOrdinal (ordinal);
 #endif
-		
-			// Check if the Column Expression is ok	
+
+			// Check if the Column Expression is ok
 			if (column.CompiledExpression != null)
 				if (parentTable.Rows.Count == 0)
 					column.CompiledExpression.Eval (parentTable.NewRow());
 				else
 					column.CompiledExpression.Eval (parentTable.Rows[0]);
 
-			// if table already has rows we need to allocate space 
-			// in the column data container 
-			if ( parentTable.Rows.Count > 0 ) {
+			// if table already has rows we need to allocate space
+			// in the column data container
+			if (parentTable.Rows.Count > 0)
 				column.DataContainer.Capacity = parentTable.RecordCache.CurrentCapacity;
-			}
 
 			if (column.AutoIncrement) {
 				DataRowCollection rows = column.Table.Rows;
@@ -334,7 +309,7 @@ namespace System.Data {
 			}
 
 			if (column.AutoIncrement)
-				autoIncrement.Add(column);
+				autoIncrement.Add (column);
 
 #if NET_2_0
 			column.PropertyChanged += new PropertyChangedEventHandler (ColumnPropertyChanged);
@@ -352,9 +327,9 @@ namespace System.Data {
 #if !NET_2_0
 		virtual
 #endif
-		DataColumn Add(string columnName)
+		DataColumn Add (string columnName)
 		{
-			DataColumn column = new DataColumn(columnName);
+			DataColumn column = new DataColumn (columnName);
 			Add (column);
 			return column;
 		}
@@ -369,14 +344,12 @@ namespace System.Data {
 #if !NET_2_0
 		virtual
 #endif
-		DataColumn Add(string columnName, Type type)
+		DataColumn Add (string columnName, Type type)
 		{
 			if (columnName == null || columnName == "")
-			{
 				columnName = GetNextDefaultColumnName ();
-			}
-			
-			DataColumn column = new DataColumn(columnName, type);
+
+			DataColumn column = new DataColumn (columnName, type);
 			Add (column);
 			return column;
 		}
@@ -392,14 +365,12 @@ namespace System.Data {
 #if !NET_2_0
 		virtual
 #endif
-		DataColumn Add(string columnName, Type type, string expression)
+		DataColumn Add (string columnName, Type type, string expression)
 		{
 			if (columnName == null || columnName == "")
-			{
 				columnName = GetNextDefaultColumnName ();
-			}
-			
-			DataColumn column = new DataColumn(columnName, type, expression);
+
+			DataColumn column = new DataColumn (columnName, type, expression);
 			Add (column);
 			return column;
 		}
@@ -408,7 +379,7 @@ namespace System.Data {
 		/// Copies the elements of the specified DataColumn array to the end of the collection.
 		/// </summary>
 		/// <param name="columns">The array of DataColumn objects to add to the collection.</param>
-		public void AddRange(DataColumn[] columns)
+		public void AddRange (DataColumn [] columns)
 		{
 			if (parentTable.InitInProgress){
 				_mostRecentColumns = columns;
@@ -435,24 +406,24 @@ namespace System.Data {
 				if (Array.IndexOf (rel.ParentColumns, column) != -1)
 					return String.Format (" parent key for relationship {0}.", rel.RelationName);
 
-			foreach (Constraint c in parentTable.Constraints) 
+			foreach (Constraint c in parentTable.Constraints)
 				if (c.IsColumnContained (column))
-					return String.Format (" constraint {0} on the table {1}.", 
+					return String.Format (" constraint {0} on the table {1}.",
 							c.ConstraintName, parentTable);
-			
-			
+
+
 			// check if the foreign-key constraint on any table in the dataset refers to this column.
-			// though a forignkeyconstraint automatically creates a uniquecontrainton the parent 
+			// though a forignkeyconstraint automatically creates a uniquecontrainton the parent
 			// table and would fail above, but we still need to check, as it is legal to manually remove
 			// the constraint on the parent table.
 			if (parentTable.DataSet != null)
 				foreach (DataTable table in parentTable.DataSet.Tables)
 					foreach (Constraint c in table.Constraints)
 						if (c is ForeignKeyConstraint && c.IsColumnContained(column))
-							return String.Format (" constraint {0} on the table {1}.", 
-									c.ConstraintName, table.TableName);
-			
-			foreach (DataColumn col in this) 
+							return String.Format (
+								" constraint {0} on the table {1}.", c.ConstraintName, table.TableName);
+
+			foreach (DataColumn col in this)
 				if (col.CompiledExpression != null && col.CompiledExpression.DependsOn (column))
 					return  col.Expression;
 			return String.Empty;
@@ -463,9 +434,9 @@ namespace System.Data {
 		/// </summary>
 		/// <param name="column">A DataColumn in the collection.</param>
 		/// <returns>true if the column can be removed; otherwise, false.</returns>
-		public bool CanRemove(DataColumn column)
+		public bool CanRemove (DataColumn column)
 		{
-			if (column == null || column.Table != parentTable || GetColumnDependency(column) != String.Empty) 
+			if (column == null || column.Table != parentTable || GetColumnDependency (column) != String.Empty)
 				return false;
 			return true;
 		}
@@ -473,7 +444,7 @@ namespace System.Data {
 		/// <summary>
 		/// Clears the collection of any columns.
 		/// </summary>
-		public void Clear()
+		public void Clear ()
 		{
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Refresh, this);
 
@@ -482,36 +453,36 @@ namespace System.Data {
 			// in which case, throw an exception.
 			// Also, shudnt check for expression columns since all the columns in the table
 			// are being removed.
-			if (parentTable.Constraints.Count != 0 || 
+			if (parentTable.Constraints.Count != 0 ||
 			    parentTable.ParentRelations.Count != 0 ||
 			    parentTable.ChildRelations.Count != 0)
 				foreach (DataColumn col in this) {
 					string s = GetColumnDependency (col);
 					if (s != String.Empty)
-						throw new ArgumentException (
-								"Cannot remove this column, because it is part of the"+ s);
+						throw new ArgumentException ("Cannot remove this column, because it is part of the" + s);
 				}
 
 			if (parentTable.DataSet != null)
 				foreach (DataTable table in parentTable.DataSet.Tables)
 					foreach (Constraint c in table.Constraints) {
 						if (!(c is ForeignKeyConstraint) ||
-						    ((ForeignKeyConstraint)c).RelatedTable != parentTable)
+						    ((ForeignKeyConstraint) c).RelatedTable != parentTable)
 							continue;
-						throw new ArgumentException (String.Format ("Cannot remove this column, " +
-									"because it is part of the constraint {0} on " +
-									"the table {1}", c.ConstraintName, table.TableName));
+						throw new ArgumentException (
+							String.Format (
+								"Cannot remove this column, because it is part of the constraint {0} on the table {1}",
+								c.ConstraintName, table.TableName));
 					}
-			
+
 			foreach (DataColumn col in this)
 				col.ResetColumnInfo ();
 
-			columnFromName.Clear();
-			autoIncrement.Clear();
+			columnFromName.Clear ();
+			autoIncrement.Clear ();
 			columnNameCount.Clear ();
-			base.List.Clear();
+			base.List.Clear ();
 			defaultColumnIndex = 1;
-			OnCollectionChanged(e);
+			OnCollectionChanged (e);
 		}
 
 		/// <summary>
@@ -519,12 +490,12 @@ namespace System.Data {
 		/// </summary>
 		/// <param name="name">The ColumnName of the column to check for.</param>
 		/// <returns>true if a column exists with this name; otherwise, false.</returns>
-		public bool Contains(string name)
+		public bool Contains (string name)
 		{
-			if (columnFromName.Contains(name))
+			if (columnFromName.Contains (name))
 				return true;
-			
-			return (IndexOf(name, false) != -1);
+
+			return (IndexOf (name, false) != -1);
 		}
 
 		/// <summary>
@@ -536,11 +507,11 @@ namespace System.Data {
 #if !NET_2_0
 		virtual
 #endif
-		int IndexOf(DataColumn column)
+		int IndexOf (DataColumn column)
 		{
 			if (column == null)
 				return -1;
-			return base.List.IndexOf(column);
+			return base.List.IndexOf (column);
 		}
 
 		/// <summary>
@@ -548,16 +519,16 @@ namespace System.Data {
 		/// </summary>
 		/// <param name="columnName">The name of the column to find.</param>
 		/// <returns>The zero-based index of the column with the specified name, or -1 if the column doesn't exist in the collection.</returns>
-		public int IndexOf(string columnName)
+		public int IndexOf (string columnName)
 		{
 			if (columnName == null)
 				return -1;
-			DataColumn dc = columnFromName[columnName] as DataColumn;
-				
-			if (dc != null)
-				return IndexOf(dc);
+			DataColumn dc = columnFromName [columnName] as DataColumn;
 
-			return IndexOf(columnName, false);
+			if (dc != null)
+				return IndexOf (dc);
+
+			return IndexOf (columnName, false);
 		}
 
 		/// <summary>
@@ -569,11 +540,11 @@ namespace System.Data {
 #else
 		internal
 #endif
-		void OnCollectionChanged(CollectionChangeEventArgs ccevent)
+		void OnCollectionChanged (CollectionChangeEventArgs ccevent)
 		{
-			parentTable.ResetPropertyDescriptorsCache();
-			if (CollectionChanged != null) 
-				CollectionChanged(this, ccevent);
+			parentTable.ResetPropertyDescriptorsCache ();
+			if (CollectionChanged != null)
+				CollectionChanged (this, ccevent);
 		}
 
 		/// <summary>
@@ -585,7 +556,7 @@ namespace System.Data {
 #else
 		internal
 #endif
-		void OnCollectionChanging(CollectionChangeEventArgs ccevent)
+		void OnCollectionChanging (CollectionChangeEventArgs ccevent)
 		{
 			if (CollectionChanged != null) {
 				//FIXME: this is not right
@@ -598,27 +569,27 @@ namespace System.Data {
 		/// Removes the specified DataColumn object from the collection.
 		/// </summary>
 		/// <param name="column">The DataColumn to remove.</param>
-		public void Remove(DataColumn column)
+		public void Remove (DataColumn column)
 		{
 			if (column == null)
 				throw new ArgumentNullException ("column", "'column' argument cannot be null.");
 
-			if (!Contains(column.ColumnName))
+			if (!Contains (column.ColumnName))
 				throw new ArgumentException ("Cannot remove a column that doesn't belong to this table.");
 
 			string dependency = GetColumnDependency (column);
 			if (dependency != String.Empty)
 				throw new ArgumentException ("Cannot remove this column, because it is part of " + dependency);
 
-			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Remove, column);
-			
+			CollectionChangeEventArgs e = new CollectionChangeEventArgs (CollectionChangeAction.Remove, column);
+
 			int ordinal = column.Ordinal;
-			UnregisterName(column.ColumnName);
-			base.List.Remove(column);
-			
+			UnregisterName (column.ColumnName);
+			base.List.Remove (column);
+
 			// Reset column info
 			column.ResetColumnInfo ();
-	
+
 			//Update the ordinals
 			for( int i = ordinal ; i < this.Count ; i ++ )
 #if NET_2_0
@@ -628,40 +599,40 @@ namespace System.Data {
 #endif
 
 			if (parentTable != null)
-				parentTable.OnRemoveColumn(column);
+				parentTable.OnRemoveColumn (column);
 
 			if (column.AutoIncrement)
-				autoIncrement.Remove(column);
+				autoIncrement.Remove (column);
 
 			column.PropertyChanged -= new PropertyChangedEventHandler (ColumnPropertyChanged);
 
-			OnCollectionChanged(e);
+			OnCollectionChanged (e);
 		}
 
 		/// <summary>
 		/// Removes the DataColumn object with the specified name from the collection.
 		/// </summary>
 		/// <param name="name">The name of the column to remove.</param>
-		public void Remove(string name)
+		public void Remove (string name)
 		{
-			DataColumn column = this[name];
-			
+			DataColumn column = this [name];
+
 			if (column == null)
 				throw new ArgumentException ("Column '" + name + "' does not belong to table " + ( parentTable == null ? "" : parentTable.TableName ) + ".");
-			Remove(column);
+			Remove (column);
 		}
 
 		/// <summary>
 		/// Removes the column at the specified index from the collection.
 		/// </summary>
 		/// <param name="index">The index of the column to remove.</param>
-		public void RemoveAt(int index)
+		public void RemoveAt (int index)
 		{
 			if (Count <= index)
 				throw new IndexOutOfRangeException ("Cannot find column " + index + ".");
 
-			DataColumn column = this[index];
-			Remove(column);
+			DataColumn column = this [index];
+			Remove (column);
 		}
 
 		// Helper AddRange() - Call this function when EndInit is called
@@ -678,17 +649,14 @@ namespace System.Data {
 			_mostRecentColumns = null;
 		}
 
-		internal void UpdateAutoIncrement(DataColumn col,bool isAutoIncrement)
+		internal void UpdateAutoIncrement (DataColumn col,bool isAutoIncrement)
 		{
-			if (isAutoIncrement)
-			{
-				if (!autoIncrement.Contains(col))
-					autoIncrement.Add(col);
-			}
-			else
-			{
-				if (autoIncrement.Contains(col))
-					autoIncrement.Remove(col);
+			if (isAutoIncrement) {
+				if (!autoIncrement.Contains (col))
+					autoIncrement.Add (col);
+			} else {
+				if (autoIncrement.Contains (col))
+					autoIncrement.Remove (col);
 			}
 		}
 
@@ -698,36 +666,36 @@ namespace System.Data {
 			// Get existing doublet
 			Doublet d = (Doublet) columnNameCount [name];
 			if (d != null) {
-				if (d.count == 1)	{
+				if (d.count == 1) {
 					// There's only one
 					// return index of the column from the only column name of the doublet
 					return base.List.IndexOf (columnFromName [d.columnNames [0]]);
 				} else if (d.count > 1 && error) {
 					// there's more than one, exception!
 					throw new ArgumentException ("There is no match for '" + name + "' in the same case and there are multiple matches in different case.");
-				}
-				else 
+				} else {
 					return -1;
+				}
 			}
 			return -1;
 		}
-		
+
 		#region Events
 
 		/// <summary>
 		/// Occurs when the columns collection changes, either by adding or removing a column.
 		/// </summary>
-                [ResDescriptionAttribute ("Occurs whenever this collection's membership changes.")] 
+		[ResDescriptionAttribute ("Occurs whenever this collection's membership changes.")]
 		public event CollectionChangeEventHandler CollectionChanged;
 
 		internal event CollectionChangeEventHandler CollectionMetaDataChanged;
-		#endregion 
+		#endregion
 
-		private void OnCollectionMetaDataChanged(CollectionChangeEventArgs ccevent)
+		private void OnCollectionMetaDataChanged (CollectionChangeEventArgs ccevent)
 		{
-			parentTable.ResetPropertyDescriptorsCache();
-			if (CollectionMetaDataChanged != null) 
-				CollectionMetaDataChanged(this, ccevent);
+			parentTable.ResetPropertyDescriptorsCache ();
+			if (CollectionMetaDataChanged != null)
+				CollectionMetaDataChanged (this, ccevent);
 		}
 
 		private void ColumnPropertyChanged (object sender, PropertyChangedEventArgs args)
@@ -742,15 +710,15 @@ namespace System.Data {
 				throw new ArgumentOutOfRangeException ("ordinal", "Ordinal '" + newOrdinal + "' exceeds the maximum number.");
 			if (oldOrdinal == newOrdinal)
 				return;
-			
+
 			int start = newOrdinal > oldOrdinal ? oldOrdinal : newOrdinal;
 			int end = newOrdinal > oldOrdinal ?  newOrdinal : oldOrdinal;
 			int direction = newOrdinal > oldOrdinal ? 1 : (-1);
 
 			DataColumn currColumn = this [start];
-			for (int i=start; i < end; i+=direction) {
+			for (int i = start; i < end; i += direction) {
 				List [i] = List [i+direction];
-				((DataColumn)List [i]).Ordinal = i;
+				((DataColumn) List [i]).Ordinal = i;
 			}
 			List [end] = currColumn;
 			currColumn.Ordinal = end;
