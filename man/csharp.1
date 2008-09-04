@@ -88,8 +88,9 @@ csharp>
 .fi
 .PP
 A few datatypes are handled specially by the C# interactive shell like
-arrays, System.Collections.Hashtable and are rendered specially
-instead of just using ToString ():
+arrays, System.Collections.Hashtable, objects that implement
+System.Collections.IEnumerable and IDictionary and are rendered
+specially instead of just using ToString ():
 .PP
 .nf
 csharp> var pages = new Hashtable () { 
@@ -98,7 +99,6 @@ csharp> var pages = new Hashtable () {
 csharp> pages;
 {{ "Mono", "http://www.mono-project.com/" }, { "Linux", "http://kernel.org" }}
 .fi
-.PP
 .PP
 It is possible to use LINQ directly in the C# interactive shell since
 the System.Linq namespace has been imported at startup.   The
@@ -119,13 +119,22 @@ You can of course print the results in a single statement as well:
 .nf
 csharp> using System.IO;
 csharp> var last_week = DateTime.Now - TimeSpan.FromDays (7);
-csharp> foreach (var old from f in Directory.GetFiles ("/tmp") 
+csharp> from f in Directory.GetFiles ("/tmp") 
       >   let fi = new FileInfo (f) 
-      >   where fi.LastAccessTime < LastWeek select f) 
-      >     Console.WriteLine (old);
+      >   where fi.LastAccessTime < last_week select f;
 [...]
 csharp>
 .fi
+.PP
+LINQ and its functional foundation produce on-demand code for
+IEnumerable return values.  For instance, the return value from a
+using `from' is an IEnumerable that is evaluated on demand.   The
+automatic rendering of IEnumerables on the command line will trigger
+the IEnumerable pipeline to execute at that point instead of having
+its execution delayed until a later point.
+.PP
+If you want to avoid having the IEnumerable rendered at this point,
+simply assign the value to a variable.
 .PP
 Unlike compiled C#, the type of a variable can be changed if a new
 declaration is entered, for example:
