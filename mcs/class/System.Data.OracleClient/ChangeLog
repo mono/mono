@@ -1,4 +1,9 @@
 2008-09-04  Daniel Morgan <monodanmorg@yahoo.com>
+
+	* System.Data.OracleClient/OracleDataReader.cs: return true
+	in NextResult if another result	
+
+2008-09-04  Daniel Morgan <monodanmorg@yahoo.com>
 	
 	* System.Data.OracleClient/OracleCommand.cs: removed AssertNoDataReader
 	because oracle allows multiple result sets and has since .NET 1.0,

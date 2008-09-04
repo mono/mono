@@ -863,7 +863,7 @@ namespace System.Data.OracleClient
 			if (statement == null)
 				return false;
 
-			return false; 
+			return true; 
 		}
 
 		public
