@@ -125,7 +125,7 @@ namespace System.Data {
 					return dc;
 
 				int tmp = IndexOf (name, true);
-				return tmp == -1 ? null : base.List [tmp];
+				return tmp == -1 ? null : (DataColumn) base.List [tmp];
 			}
 		}
 
