@@ -345,6 +345,37 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
+		public void DataSourcePropertyChanged_DataSet ()
+		{
+			DataSet ds = new DataSet ();
+
+			DataTable table1 = new DataTable ("Customers");
+			table1.Columns.Add ("Id", typeof (int));
+			table1.Columns.Add ("Name", typeof (string));
+			table1.Rows.Add (3, "customer1");
+			table1.Rows.Add (7, "customer2");
+			ds.Tables.Add (table1);
+
+			DataTable table2 = new DataTable ("Orders");
+			table2.Columns.Add ("OrderId", typeof (int));
+			table2.Columns.Add ("CustomerId", typeof (int));
+			table2.Rows.Add (56, 7);
+			table2.Rows.Add (57, 3);
+			ds.Tables.Add (table2);
+
+			DataRelation relation = new DataRelation ("CustomerOrders", table1.Columns ["Id"],
+					table2.Columns ["CustomerId"]);
+			ds.Relations.Add (relation);
+
+			Control ctrl = new Control ();
+			ctrl.BindingContext = new BindingContext ();
+			ctrl.CreateControl ();
+
+			ctrl.DataBindings.Add ("Text", ds, "Customers.CustomerOrders.OrderId");
+			Assert.AreEqual ("57", ctrl.Text, "A1");
+		}
+
+		[Test]
 		public void IsBindingTest ()
 		{
 			MockItem [] items = new MockItem [] { new MockItem ("A", 0) };

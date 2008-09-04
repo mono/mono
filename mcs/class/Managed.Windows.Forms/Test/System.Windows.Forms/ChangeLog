@@ -1,5 +1,9 @@
 2008-09-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* BindingTest.cs: New test for nested properties using a DataSet.
+
+2008-09-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* BindingTest.cs: New tests for multiple nested properties in the
 	data source, by Andy Hume.
 
