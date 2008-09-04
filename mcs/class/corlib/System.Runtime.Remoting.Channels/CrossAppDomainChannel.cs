@@ -48,8 +48,12 @@ namespace System.Runtime.Remoting.Channels
 	[Serializable]
 	internal class CrossAppDomainData 
 	{
+#pragma warning disable 169	
 		// TODO: Add context support
-		// private int _ContextID;
+		// Never used but possible required for .NET compatibility
+		private int _ContextID;
+#pragma warning restore 169		
+		
 		private int _DomainID;
 		private string _processGuid;
 
