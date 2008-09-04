@@ -1419,6 +1419,14 @@ namespace System.Reflection.Emit
 				return created.TypeHandle;
 			}
 		}
+		
+		//
+		// Used internally by mcs only
+		//
+		internal void SetCharSet (TypeAttributes ta)
+		{
+			this.attrs = ta;
+		}
 
 		public void SetCustomAttribute (CustomAttributeBuilder customBuilder)
 		{

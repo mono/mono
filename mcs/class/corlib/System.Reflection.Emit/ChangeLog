@@ -1,3 +1,7 @@
+2008-09-04  Marek Safar  <marek.safar@gmail.com>
+
+	* TypeBuilder.cs: Add mcs specific SetCharSet method.
+
 2008-08-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeBuilder.cs (CreateType): Avoid creating a default ctor if the
