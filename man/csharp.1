@@ -87,6 +87,19 @@ csharp> csharp> a.Name;
 csharp>
 .fi
 .PP
+A few datatypes are handled specially by the C# interactive shell like
+arrays, System.Collections.Hashtable and are rendered specially
+instead of just using ToString ():
+.PP
+.nf
+csharp> var pages = new Hashtable () { 
+      >  { "Mono",    "http://www.mono-project.com/" },
+      >  { "Linux",   "http://kernel.org" } };
+csharp> pages;
+{{ "Mono", "http://www.mono-project.com/" }, { "Linux", "http://kernel.org" }}
+.fi
+.PP
+.PP
 It is possible to use LINQ directly in the C# interactive shell since
 the System.Linq namespace has been imported at startup.   The
 following sample gets a list of all the files that have not been
