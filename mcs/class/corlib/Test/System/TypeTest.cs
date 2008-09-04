@@ -2870,6 +2870,13 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void IsInstanceOfArrayOfNullable ()
+		{
+			Assert.IsTrue (typeof (Nullable<int>[]).IsInstanceOfType (new Nullable<int> [0]));
+		}
+
+		[Test]
 		public void ByrefType ()
 		{
 			Type foo_type = typeof (Foo<>);

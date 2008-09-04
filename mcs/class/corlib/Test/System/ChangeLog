@@ -1,3 +1,7 @@
+2008-09-04  Jb Evain  <jbevain@novell.com>
+
+	* TypeTest.cs: add test for IsInstanceOfType on arrays of nullables.
+
 2008-08-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ObsoleteAttributeTest.cs: New. Old tests I forgot to commit when 
