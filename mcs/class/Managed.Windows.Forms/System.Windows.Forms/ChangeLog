@@ -1,3 +1,11 @@
+2008-09-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Binding.cs: When acquiring a BindingManagerBase for the first time,
+	check that the specified property actually exists in the data source,
+	and throw an ArgumentException if that's not the case - this is only
+	done for this scenario, since for later cases (such Position changes)
+	we throw different exceptions (match .Net).
+
 2008-09-03  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ButtonBase.cs CheckBox.cs, Control.cs, FlowLayoutPanel.cs, 
