@@ -11403,7 +11403,7 @@
         <size>16</size>
       </method>
       <method name="Void &lt;Main&gt;m__4()">
-        <size>60</size>
+        <size>59</size>
       </method>
       <method name="Void &lt;Main&gt;m__5()">
         <size>51</size>
@@ -13098,6 +13098,19 @@
       </method>
       <method name="Int32 Main()">
         <size>69</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-collectioninit-03.cs">
+    <type name="X">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>34</size>
+      </method>
+      <method name="Void R(System.Object ByRef)">
+        <size>27</size>
       </method>
     </type>
   </test>
