@@ -1,3 +1,7 @@
+2008-09-05  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-tokenizer.cs: Fixed swaped UTF-16 surrogates parsing.
+
 2008-09-05  Miguel de Icaza  <miguel@novell.com>
 
 	* repl.cs: Add workaround for old compilers.

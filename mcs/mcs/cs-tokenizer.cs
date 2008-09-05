@@ -1389,8 +1389,8 @@ namespace Mono.CSharp
 				}
 
 				if (total >= 0x00010000) {
+					surrogate = ((total - 0x00010000) % 0x0400 + 0xDC00);					
 					total = ((total - 0x00010000) / 0x0400 + 0xD800);
-					surrogate = ((total - 0x00010000) % 0x0400 + 0xDC00);
 				}
 			}
 
