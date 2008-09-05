@@ -1,3 +1,8 @@
+2008-09-05  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ThreadExceptionDialog.cs: Disable AutoScaling for this dialog.
+	[Fixes bug #423040]
+
 2008-09-04  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* GridEntry.cs, CategoryGridEntry.cs, RootGridEntry.cs, PropertyGrid.cs, 

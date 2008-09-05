@@ -132,7 +132,6 @@ namespace System.Windows.Forms
 			// ThreadExceptionDialog
 			// 
 			this.AcceptButton = this.buttonIgnore;
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.CancelButton = this.buttonAbort;
 			this.ClientSize = new System.Drawing.Size(428, 374);
 			this.Controls.Add(this.label1);
