@@ -1,3 +1,8 @@
+2008-09-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SmtpClient.cs : attachment stream consumption was insufficient.
+	  Fix bug #347553, by David Ion.
+
 2008-08-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SmtpClient.cs: Fixed paramname of Argument(Null)Exceptions to match

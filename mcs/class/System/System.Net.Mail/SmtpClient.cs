@@ -882,6 +882,7 @@ try {
 				case TransferEncoding.SevenBit:
 				case TransferEncoding.Unknown:
 					content = new byte [av.ContentStream.Length];
+					av.ContentStream.Read (content, 0, content.Length);
 					SendData (Encoding.ASCII.GetString (content));
 					break;
 				}
@@ -926,6 +927,7 @@ try {
 				case TransferEncoding.SevenBit:
 				case TransferEncoding.Unknown:
 					content = new byte [lr.ContentStream.Length];
+					lr.ContentStream.Read (content, 0, content.Length);
 					SendData (Encoding.ASCII.GetString (content));
 					break;
 				}
