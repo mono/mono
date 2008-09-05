@@ -1,3 +1,10 @@
+2008-09-05  Raja R Harinath  <harinath@hurrynot.org>
+
+	* DataContainer.cs (*.ZeroOut): Rename from the somewhat unclear
+	'SetDefaultValue'.
+	(IsNull): Use a more idiomatic form of the short-circuit.
+	(*.SetValue): Convert to one-liners.
+
 2008-08-08  Raja R Harinath  <harinath@hurrynot.org>
 
 	Reduce massive code duplication

@@ -25,8 +25,7 @@ using System.Collections;
 
 namespace System.Data.Common
 {
-	internal abstract class DataContainer
-	{
+	internal abstract class DataContainer {
 		BitArray null_values;
 		System.Type _type;
 		DataColumn _column;
@@ -35,7 +34,10 @@ namespace System.Data.Common
 		protected abstract object GetValue (int index);
 		internal abstract long GetInt64 (int index);
 
-		protected abstract void SetDefaultValue (int index);
+		// used to set the array value to something neutral when the corresponding item is null (in the database sense)
+		// note: we don't actually ever look at the value written there, but the GC may like us to avoid keeping stale
+		// values in the array.
+		protected abstract void ZeroOut (int index);
 		protected abstract void SetValue (int index, object value);
 		protected abstract void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field);
 
@@ -54,7 +56,7 @@ namespace System.Data.Common
 
 				bool is_dbnull = value == DBNull.Value;
 				if (is_dbnull)
-					SetDefaultValue (index);
+					ZeroOut (index);
 				else
 					SetValue (index, value);
 				null_values [index] = is_dbnull;
@@ -133,7 +135,7 @@ namespace System.Data.Common
 				container = new DecimalDataContainer ();
 				break;
 			default:
-				container = new ObjectDataContainer();
+				container = new ObjectDataContainer ();
 				break;
 			}
 			container._type = type;
@@ -143,7 +145,7 @@ namespace System.Data.Common
 
 		internal bool IsNull (int index)
 		{
-			return null_values != null ? null_values [index] : true;
+			return null_values == null || null_values [index];
 		}
 
 		internal void FillValues (int fromIndex)
@@ -184,8 +186,7 @@ namespace System.Data.Common
 		}
 	}
 
-	sealed class BitDataContainer : DataContainer
-	{
+	sealed class BitDataContainer : DataContainer {
 		BitArray _values;
 
 		protected override object GetValue (int index)
@@ -193,17 +194,14 @@ namespace System.Data.Common
 			return _values [index];
 		}
 
-		protected override void SetDefaultValue (int index)
+		protected override void ZeroOut (int index)
 		{
 			_values [index] = false;
 		}
 
 		protected override void SetValue (int index, object value)
 		{
-			if (value is bool)
-				_values [index] = (bool) value;
-			else
-				_values [index] = Convert.ToBoolean (value);
+			_values [index] = value is bool ? (bool) value : Convert.ToBoolean (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -213,7 +211,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((BitDataContainer)from)._values [from_index];
+			_values [to_index] = ((BitDataContainer) from)._values [from_index];
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -225,12 +223,10 @@ namespace System.Data.Common
 
 		protected override void Resize (int size)
 		{
-			if (_values == null) {
+			if (_values == null)
 				_values = new BitArray (size);
-				return;
-			}
-
-			_values.Length = size;
+			else
+				_values.Length = size;
 		}
 
 		internal override long GetInt64 (int index)
@@ -239,8 +235,7 @@ namespace System.Data.Common
 		}
 	}
 
-	sealed class CharDataContainer : DataContainer
-	{
+	sealed class CharDataContainer : DataContainer {
 		char [] _values;
 
 		protected override object GetValue (int index)
@@ -248,17 +243,14 @@ namespace System.Data.Common
 			return _values [index];
 		}
 
-		protected override void SetDefaultValue (int index)
+		protected override void ZeroOut (int index)
 		{
 			_values [index] = '\0';
 		}
 
 		protected override void SetValue (int index, object value)
 		{
-			if (value is char)
-				_values [index] = (char) value;
-			else
-				_values [index] = Convert.ToChar (value);
+			_values [index] = value is char ? (char) value : Convert.ToChar (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -268,7 +260,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((CharDataContainer)from)._values [from_index];
+			_values [to_index] = ((CharDataContainer) from)._values [from_index];
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -296,8 +288,7 @@ namespace System.Data.Common
 		}
 	}
 
-	sealed class ByteDataContainer : DataContainer
-	{
+	sealed class ByteDataContainer : DataContainer {
 		byte [] _values;
 
 		protected override object GetValue (int index)
@@ -305,17 +296,14 @@ namespace System.Data.Common
 			return _values [index];
 		}
 
-		protected override void SetDefaultValue (int index)
+		protected override void ZeroOut (int index)
 		{
 			_values [index] = 0;
 		}
 
 		protected override void SetValue (int index, object value)
 		{
-			if (value is byte)
-				_values [index] = (byte) value;
-			else
-				_values [index] = Convert.ToByte (value);
+			_values [index] = value is byte ? (byte) value : Convert.ToByte (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -325,7 +313,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((ByteDataContainer)from)._values [from_index];
+			_values [to_index] = ((ByteDataContainer) from)._values [from_index];
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -353,8 +341,7 @@ namespace System.Data.Common
 		}
 	}
 
-	sealed class SByteDataContainer : DataContainer
-	{
+	sealed class SByteDataContainer : DataContainer {
 		sbyte [] _values;
 
 		protected override object GetValue (int index)
@@ -362,17 +349,14 @@ namespace System.Data.Common
 			return _values [index];
 		}
 
-		protected override void SetDefaultValue (int index)
+		protected override void ZeroOut (int index)
 		{
 			_values [index] = 0;
 		}
 
 		protected override void SetValue (int index, object value)
 		{
-			if (value is sbyte)
-				_values [index] = (sbyte) value;
-			else
-				_values [index] = Convert.ToSByte (value);
+			_values [index] = value is sbyte ? (sbyte) value : Convert.ToSByte (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -382,7 +366,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((SByteDataContainer)from)._values [from_index];
+			_values [to_index] = ((SByteDataContainer) from)._values [from_index];
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -410,8 +394,7 @@ namespace System.Data.Common
 		}
 	}
 
-	sealed class Int16DataContainer : DataContainer
-	{
+	sealed class Int16DataContainer : DataContainer {
 		short [] _values;
 
 		protected override object GetValue (int index)
@@ -419,17 +402,14 @@ namespace System.Data.Common
 			return _values [index];
 		}
 
-		protected override void SetDefaultValue (int index)
+		protected override void ZeroOut (int index)
 		{
 			_values [index] = 0;
 		}
 
 		protected override void SetValue (int index, object value)
 		{
-			if (value is short)
-				_values [index] = (short) value;
-			else
-				_values [index] = Convert.ToInt16 (value);
+			_values [index] = value is short ? (short) value : Convert.ToInt16 (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -439,7 +419,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((Int16DataContainer)from)._values [from_index];
+			_values [to_index] = ((Int16DataContainer) from)._values [from_index];
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -467,8 +447,7 @@ namespace System.Data.Common
 		}
 	}
 
-	sealed class UInt16DataContainer : DataContainer
-	{
+	sealed class UInt16DataContainer : DataContainer {
 		ushort [] _values;
 
 		protected override object GetValue (int index)
@@ -476,17 +455,14 @@ namespace System.Data.Common
 			return _values [index];
 		}
 
-		protected override void SetDefaultValue (int index)
+		protected override void ZeroOut (int index)
 		{
 			_values [index] = 0;
 		}
 
 		protected override void SetValue (int index, object value)
 		{
-			if (value is ushort)
-				_values [index] = (ushort) value;
-			else
-				_values [index] = Convert.ToUInt16 (value);
+			_values [index] = value is ushort ? (ushort) value : Convert.ToUInt16 (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -496,7 +472,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((UInt16DataContainer)from)._values [from_index];
+			_values [to_index] = ((UInt16DataContainer) from)._values [from_index];
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -524,8 +500,7 @@ namespace System.Data.Common
 		}
 	}
 
-	sealed class Int32DataContainer : DataContainer
-	{
+	sealed class Int32DataContainer : DataContainer {
 		int [] _values;
 
 		protected override object GetValue (int index)
@@ -533,17 +508,14 @@ namespace System.Data.Common
 			return _values [index];
 		}
 
-		protected override void SetDefaultValue (int index)
+		protected override void ZeroOut (int index)
 		{
 			_values [index] = 0;
 		}
 
 		protected override void SetValue (int index, object value)
 		{
-			if (value is int)
-				_values [index] = (int) value;
-			else
-				_values [index] = Convert.ToInt32 (value);
+			_values [index] = value is int ? (int) value : Convert.ToInt32 (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -553,7 +525,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((Int32DataContainer)from)._values [from_index];
+			_values [to_index] = ((Int32DataContainer) from)._values [from_index];
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -581,8 +553,7 @@ namespace System.Data.Common
 		}
 	}
 
-	sealed class UInt32DataContainer : DataContainer
-	{
+	sealed class UInt32DataContainer : DataContainer {
 		uint [] _values;
 
 		protected override object GetValue (int index)
@@ -590,17 +561,14 @@ namespace System.Data.Common
 			return _values [index];
 		}
 
-		protected override void SetDefaultValue (int index)
+		protected override void ZeroOut (int index)
 		{
 			_values [index] = 0;
 		}
 
 		protected override void SetValue (int index, object value)
 		{
-			if (value is uint)
-				_values [index] = (uint) value;
-			else
-				_values [index] = Convert.ToUInt32 (value);
+			_values [index] = value is uint ? (uint) value : Convert.ToUInt32 (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -610,7 +578,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((UInt32DataContainer)from)._values [from_index];
+			_values [to_index] = ((UInt32DataContainer) from)._values [from_index];
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -638,8 +606,7 @@ namespace System.Data.Common
 		}
 	}
 
-	sealed class Int64DataContainer : DataContainer
-	{
+	sealed class Int64DataContainer : DataContainer {
 		long [] _values;
 
 		protected override object GetValue (int index)
@@ -647,17 +614,14 @@ namespace System.Data.Common
 			return _values [index];
 		}
 
-		protected override void SetDefaultValue (int index)
+		protected override void ZeroOut (int index)
 		{
 			_values [index] = 0;
 		}
 
 		protected override void SetValue (int index, object value)
 		{
-			if (value is long)
-				_values [index] = (long) value;
-			else
-				_values [index] = Convert.ToInt64 (value);
+			_values [index] = value is long ? (long) value : Convert.ToInt64 (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -667,7 +631,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((Int64DataContainer)from)._values [from_index];
+			_values [to_index] = ((Int64DataContainer) from)._values [from_index];
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -695,8 +659,7 @@ namespace System.Data.Common
 		}
 	}
 
-	sealed class UInt64DataContainer : DataContainer
-	{
+	sealed class UInt64DataContainer : DataContainer {
 		ulong [] _values;
 
 		protected override object GetValue (int index)
@@ -704,17 +667,14 @@ namespace System.Data.Common
 			return _values [index];
 		}
 
-		protected override void SetDefaultValue (int index)
+		protected override void ZeroOut (int index)
 		{
 			_values [index] = 0;
 		}
 
 		protected override void SetValue (int index, object value)
 		{
-			if (value is ulong)
-				_values [index] = (ulong) value;
-			else
-				_values [index] = Convert.ToUInt64 (value);
+			_values [index] = value is ulong ? (ulong) value : Convert.ToUInt64 (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -724,7 +684,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((UInt64DataContainer)from)._values [from_index];
+			_values [to_index] = ((UInt64DataContainer) from)._values [from_index];
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -752,8 +712,7 @@ namespace System.Data.Common
 		}
 	}
 
-	sealed class SingleDataContainer : DataContainer
-	{
+	sealed class SingleDataContainer : DataContainer {
 		float [] _values;
 
 		protected override object GetValue (int index)
@@ -761,17 +720,14 @@ namespace System.Data.Common
 			return _values [index];
 		}
 
-		protected override void SetDefaultValue (int index)
+		protected override void ZeroOut (int index)
 		{
 			_values [index] = 0;
 		}
 
 		protected override void SetValue (int index, object value)
 		{
-			if (value is float)
-				_values [index] = (float) value;
-			else
-				_values [index] = Convert.ToSingle (value);
+			_values [index] = value is float ? (float) value : Convert.ToSingle (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -781,7 +737,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((SingleDataContainer)from)._values [from_index];
+			_values [to_index] = ((SingleDataContainer) from)._values [from_index];
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -809,8 +765,7 @@ namespace System.Data.Common
 		}
 	}
 
-	sealed class DoubleDataContainer : DataContainer
-	{
+	sealed class DoubleDataContainer : DataContainer {
 		double [] _values;
 
 		protected override object GetValue (int index)
@@ -818,17 +773,14 @@ namespace System.Data.Common
 			return _values [index];
 		}
 
-		protected override void SetDefaultValue (int index)
+		protected override void ZeroOut (int index)
 		{
 			_values [index] = 0;
 		}
 
 		protected override void SetValue (int index, object value)
 		{
-			if (value is double)
-				_values [index] = (double) value;
-			else
-				_values [index] = Convert.ToDouble (value);
+			_values [index] = value is double ? (double) value : Convert.ToDouble (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -838,7 +790,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((DoubleDataContainer)from)._values [from_index];
+			_values [to_index] = ((DoubleDataContainer) from)._values [from_index];
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -866,8 +818,7 @@ namespace System.Data.Common
 		}
 	}
 
-	class ObjectDataContainer : DataContainer
-	{
+	class ObjectDataContainer : DataContainer {
 		object [] _values;
 
 		protected override object GetValue (int index)
@@ -875,7 +826,7 @@ namespace System.Data.Common
 			return _values [index];
 		}
 
-		protected override void SetDefaultValue (int index)
+		protected override void ZeroOut (int index)
 		{
 			_values [index] = null;
 		}
@@ -892,7 +843,7 @@ namespace System.Data.Common
 
 		protected override void DoCopyValue (DataContainer from, int from_index, int to_index)
 		{
-			_values [to_index] = ((ObjectDataContainer)from)._values [from_index];
+			_values [to_index] = ((ObjectDataContainer) from)._values [from_index];
 		}
 
 		protected override int DoCompareValues (int index1, int index2)
@@ -935,8 +886,7 @@ namespace System.Data.Common
 		}
 	}
 
-	sealed class DateTimeDataContainer : ObjectDataContainer
-	{
+	sealed class DateTimeDataContainer : ObjectDataContainer {
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
 		{
 			base.SetValue (index, record.GetDateTimeSafe (field));
@@ -948,34 +898,29 @@ namespace System.Data.Common
 		}
 	}
 
-	sealed class DecimalDataContainer : ObjectDataContainer
-	{
+	sealed class DecimalDataContainer : ObjectDataContainer {
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
 		{
 			base.SetValue (index, record.GetDecimalSafe (field));
 		}
 
-		protected override void SetValue(int index, object value)
+		protected override void SetValue (int index, object value)
 		{
 			base.SetValue (index, Convert.ToDecimal (value));
 		}
 	}
 
-	sealed class StringDataContainer : ObjectDataContainer
-	{
+	sealed class StringDataContainer : ObjectDataContainer {
 		private void SetValue (int index, string value)
 		{
-			if (value != null && Column.MaxLength >= 0 && Column.MaxLength < value.Length )
-				throw new ArgumentException("Cannot set column '" + Column.ColumnName + "' to '" + value + "'. The value violates the MaxLength limit of this column.");
+			if (value != null && Column.MaxLength >= 0 && Column.MaxLength < value.Length)
+				throw new ArgumentException ("Cannot set column '" + Column.ColumnName + "' to '" + value + "'. The value violates the MaxLength limit of this column.");
 			base.SetValue (index, value);
 		}
 
 		protected override void SetValue (int index, object value)
 		{
-			if (value is string)
-				SetValue (index, (string) value);
-			else
-				SetValue (index, Convert.ToString (value));
+			SetValue (index, value is string ? (string) value : Convert.ToString (value));
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
