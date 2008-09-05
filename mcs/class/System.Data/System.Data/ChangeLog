@@ -1,5 +1,8 @@
 2008-09-05  Raja R Harinath  <harinath@hurrynot.org>
 
+	* DataTable.cs (NewRowArray): Special case size == 0 to avoid
+	creating a lot of garbage.
+
 	* DataRow.cs (Detach): Rename from DetachRow.  Make private.
 	Simplify code to be more uniform.  Move common prefix code here ...
 	(AcceptChanges) [Deleted]: ... from here ...

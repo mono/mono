@@ -2013,14 +2013,17 @@ namespace System.Data {
 		/// This member supports the .NET Framework infrastructure
 		///  and is not intended to be used directly from your code.
 		/// </summary>
-		protected internal DataRow[] NewRowArray (int size) 
+		DataRow [] empty_rows;
+		protected internal DataRow [] NewRowArray (int size) 
 		{
+			if (size == 0 && empty_rows != null)
+				return empty_rows;
 			Type t = GetRowType ();
 			/* Avoid reflection if possible */
-			if (t == typeof (DataRow))
-				return new DataRow [size];
-			else
-				return (DataRow[]) Array.CreateInstance (GetRowType (), size);
+			DataRow [] rows = t == typeof (DataRow) ? new DataRow [size] : (DataRow []) Array.CreateInstance (t, size);
+			if (size == 0)
+				empty_rows = rows;
+			return rows;
 		}
 
 		/// <summary>
