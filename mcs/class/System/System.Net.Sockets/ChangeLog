@@ -1,3 +1,8 @@
+2008-09-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Socket.cs : (SocketAsyncResult) release byte buffer early so that
+	  it does not have to store extra data in pool. Fixed bug #397627.
+
 2008-06-19  Dick Porter  <dick@ximian.com>
 
 	* Socket.cs: Implement generic Send() and Receive() methods.

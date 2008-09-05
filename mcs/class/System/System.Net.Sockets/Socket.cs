@@ -148,6 +148,8 @@ namespace System.Net.Sockets
 					cb = new WaitCallback (ares.CompleteDisposed);
 					ThreadPool.QueueUserWorkItem (cb, null);
 				}
+				if (pending.Length == 0)
+					Buffer = null;
 			}
 
 			void CompleteDisposed (object unused)
@@ -191,6 +193,7 @@ namespace System.Net.Sockets
 
 				if (callback != null)
 					callback (this);
+				Buffer = null;
 			}
 
 			SocketAsyncCall GetDelegate (Worker worker, SocketOperation op)
