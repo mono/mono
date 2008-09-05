@@ -603,7 +603,6 @@ namespace System.Windows.Forms
 
 		internal void OnPropertyValueChangedInternal (GridItem item, object property_value) 
 		{
-			PopulateSubGridItems (selected_grid_item);
 			property_grid_view.UpdateView ();
 			OnPropertyValueChanged (new PropertyValueChangedEventArgs (item, property_value));
 		}
@@ -1590,141 +1589,10 @@ namespace System.Windows.Forms
 		{
 			if (objects.Length > 0) {
 				root_grid_item = new RootGridEntry (this, objects);
-				PopulateRootGridItems (root_grid_item, objects, GetMergedPropertyNames (objects));
+				root_grid_item.Expanded = true;
+				UpdateSortLayout (root_grid_item);
 			} else {
 				root_grid_item = null;
-			}
-		}
-
-		private bool IsPropertyVisible (PropertyDescriptor property, bool merging)
-		{
-			if (property == null)
-				return false;
-				
-			if (merging) {
-				MergablePropertyAttribute attrib = property.Attributes [typeof (MergablePropertyAttribute)] as MergablePropertyAttribute;
-				if (attrib != null && !attrib.AllowMerge)
-					return false;
-			}
-
-			return true;
-		}
-
-		private string[] GetMergedPropertyNames (object [] objects)
-		{
-			ArrayList intersection = null;
-			for (int i = 0; i < objects.Length; i ++) {
-				if (objects [i] == null)
-					continue;
-
-				PropertyDescriptorCollection properties = GetProperties (objects[i], BrowsableAttributes);
-				ArrayList new_intersection = new ArrayList ();
-
-				foreach (PropertyDescriptor currentProperty in (i == 0 ? (ICollection)properties : (ICollection)intersection)) {
-					PropertyDescriptor matchingProperty = (i == 0 ? currentProperty : properties [currentProperty.Name]);
-
-					if (!IsPropertyVisible (matchingProperty, objects.Length > 1))
-						continue;
-					if (matchingProperty.PropertyType == currentProperty.PropertyType)
-						new_intersection.Add (matchingProperty);
-				}
-
-				intersection = new_intersection;
-			}
-
-			string[] propertyNames = new string [intersection.Count];
-			for (int i=0; i < intersection.Count; i++)
-				propertyNames[i] = ((PropertyDescriptor)intersection[i]).Name;
-				
-			return propertyNames;
-		}
-
-		private PropertyDescriptor GetPropertyDescriptor (object propertyOwner, string propertyName)
-		{
-			if (propertyOwner == null || propertyName == null)
-				return null;
-
-			PropertyDescriptorCollection properties = GetProperties (propertyOwner, BrowsableAttributes);
-			if (properties != null)
-				return properties[propertyName];
-			return null;
-		}
-
-		private PropertyDescriptorCollection GetProperties (object propertyOwner, AttributeCollection attributes)
-		{
-			if (propertyOwner == null || selected_tab == null)
-				return new PropertyDescriptorCollection (null);
-
-			Attribute[] atts = new Attribute[attributes.Count];
-			attributes.CopyTo (atts, 0);
-			return selected_tab.GetProperties (propertyOwner, atts);
-		}
-
-		private void PopulateRootGridItems (GridEntry rootItem, object[] propertyOwners, string[] propertyNames)
-		{
-			if (propertyOwners == null || propertyNames == null)
-				return;
-
-			bool categorized = property_sort == PropertySort.Categorized || 
-				property_sort == PropertySort.CategorizedAlphabetical;
-			rootItem.GridItems.Clear ();
-
-			foreach (string propertyName in propertyNames) {
-				GridEntry item = null;
-				PropertyDescriptor[] properties = new PropertyDescriptor[propertyOwners.Length];
-				for (int i=0; i < propertyOwners.Length; i++)
-					properties[i] = GetPropertyDescriptor (propertyOwners[i], propertyName);
-
-				if (categorized) {
-					string categoryName = null;
-					foreach (PropertyDescriptor property in properties) {
-						categoryName = property.Category;
-						if (categoryName != null)
-							break;
-					}
-					if (categoryName == null)
-						categoryName = UNCATEGORIZED_CATEGORY_LABEL;
-					GridEntry category = (GridEntry)root_grid_item.GridItems[categoryName];
-					if (category == null) {
-						category = new CategoryGridEntry (this, categoryName, rootItem);
-						category.Expanded = true;
-						rootItem.GridItems.Add (category);
-					}
-					item = new GridEntry (this, properties, category);
-					category.GridItems.Add (item);
-				} else {
-					item = new GridEntry (this, properties, rootItem);
-					rootItem.GridItems.Add (item);
-				}
-
-				PopulateSubGridItems (item);
-			}
-		}
-
-		private void PopulateSubGridItems (GridEntry parentItem)
-		{
-			parentItem.GridItems.Clear ();
-			if (!parentItem.IsExpandable)
-				return;
-
-			object[] propertyOwners = parentItem.Values;
-			if (propertyOwners == null)
-				return;
-
-			PropertyDescriptorCollection propertiesCollection = GetProperties (propertyOwners[0], BrowsableAttributes);
-			if (propertiesCollection == null)
-				return;
-
-			foreach (PropertyDescriptor property in propertiesCollection) {
-				string propertyName = property.Name;
-
-				PropertyDescriptor[] properties = new PropertyDescriptor[propertyOwners.Length];
-				for (int i=0; i < propertyOwners.Length; i++)
-					properties[i] = GetPropertyDescriptor (propertyOwners[i], propertyName);
-
-				GridEntry item = new GridEntry (this, properties, parentItem);
-				parentItem.GridItems.Add (item);
-				PopulateSubGridItems (item);
 			}
 		}
 

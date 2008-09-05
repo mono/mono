@@ -44,6 +44,10 @@ namespace System.Windows.Forms.PropertyGridInternal
 			get { return GridItemType.Category; }
 		}
 
+		public override bool Expandable {
+			get { return GridItems.Count > 0; }
+		}
+
 		public override string Label {
 			get { return label; }
 		}
