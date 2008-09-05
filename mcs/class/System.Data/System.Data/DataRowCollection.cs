@@ -20,10 +20,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -45,7 +45,7 @@ namespace System.Data
 	/// </summary>
 	public partial class DataRowCollection : InternalDataCollectionBase {
 		private DataTable table;
-		
+
 		internal event ListChangedEventHandler ListChanged;
 
 		/// <summary>
@@ -59,36 +59,36 @@ namespace System.Data
 		/// <summary>
 		/// Gets the row at the specified index.
 		/// </summary>
-		public DataRow this[int index] {
-			get { 
+		public DataRow this [int index] {
+			get {
 				if (index < 0 || index >= Count)
 					throw new IndexOutOfRangeException ("There is no row at position " + index + ".");
 
-				return (DataRow) List[index]; 
+				return (DataRow) List [index];
 			}
 		}
 
 		/// <summary>
 		/// Adds the specified DataRow to the DataRowCollection object.
 		/// </summary>
-		public void Add (DataRow row) 
+		public void Add (DataRow row)
 		{
 			//TODO: validation
 			if (row == null)
-				throw new ArgumentNullException("row", "'row' argument cannot be null.");
+				throw new ArgumentNullException ("row", "'row' argument cannot be null.");
 
 			if (row.Table != this.table)
 				throw new ArgumentException ("This row already belongs to another table.");
-			
+
 			// If row id is not -1, we know that it is in the collection.
 			if (row.RowID != -1)
 				throw new ArgumentException ("This row already belongs to this table.");
-			
-			row.BeginEdit();
 
-			row.Validate();
+			row.BeginEdit ();
 
-			AddInternal(row);
+			row.Validate ();
+
+			AddInternal (row);
 		}
 
 #if NET_2_0
@@ -96,36 +96,36 @@ namespace System.Data
 #else
 		internal
 #endif
-		int IndexOf (DataRow row) 
+		int IndexOf (DataRow row)
 		{
 			if (row == null)
 				return -1;
 
+			// FIXME: Use the RowID
 			int i = 0;
 			foreach (DataRow dr in this) {
-				if (dr == row) {
+				if (dr == row)
 					return i;
-				}
 				i++;
 			}
 
 			return -1;
 		}
 
-		internal void AddInternal (DataRow row) {
+		internal void AddInternal (DataRow row)
+		{
 			AddInternal (row, DataRowAction.Add);
 		}
 
-		internal void AddInternal(DataRow row, DataRowAction action) {
+		internal void AddInternal (DataRow row, DataRowAction action)
+		{
 			row.Table.ChangingDataRow (row, action);
 			row.HasParentCollection = true;
 			List.Add (row);
-			// Set the row id.
 			row.RowID = List.Count - 1;
 			row.AttachRow ();
 #if NET_2_0
-			if ((action & (DataRowAction.ChangeCurrentAndOriginal |
-							DataRowAction.ChangeOriginal)) != 0)
+			if ((action & (DataRowAction.ChangeCurrentAndOriginal | DataRowAction.ChangeOriginal)) != 0)
 				row.Original = row.Current;
 #endif
 			row.Table.ChangedDataRow (row, action);
@@ -137,18 +137,18 @@ namespace System.Data
 		/// Creates a row using specified values and adds it to the DataRowCollection.
 		/// </summary>
 #if NET_2_0
-		public DataRow Add (params object[] values) 
+		public DataRow Add (params object[] values)
 #else
-		public virtual DataRow Add (object[] values) 
+		public virtual DataRow Add (object[] values)
 #endif
 		{
 			if (values == null)
 				throw new NullReferenceException ();
-			DataRow row = table.NewNotInitializedRow();
-			int newRecord = table.CreateRecord(values);
-			row.ImportRecord(newRecord);
+			DataRow row = table.NewNotInitializedRow ();
+			int newRecord = table.CreateRecord (values);
+			row.ImportRecord (newRecord);
 
-			row.Validate();
+			row.Validate ();
 			AddInternal (row);
 			return row;
 		}
@@ -156,12 +156,12 @@ namespace System.Data
 		/// <summary>
 		/// Clears the collection of all rows.
 		/// </summary>
-		public void Clear () 
+		public void Clear ()
 		{
 			if (this.table.DataSet != null && this.table.DataSet.EnforceConstraints) {
 				foreach (Constraint c in table.Constraints) {
 					UniqueConstraint uc = c as UniqueConstraint;
-					if (uc == null) 
+					if (uc == null)
 						continue;
 					if (uc.ChildConstraint == null || uc.ChildConstraint.Table.Rows.Count == 0)
 						continue;
@@ -178,7 +178,7 @@ namespace System.Data
 
 			List.Clear ();
 
-                        // Remove from indexes
+			// Remove from indexes
 			table.ResetIndexes ();
 
 			OnListChanged (this, new ListChangedEventArgs (ListChangedType.Reset, -1, -1));
@@ -188,16 +188,16 @@ namespace System.Data
 		/// Gets a value indicating whether the primary key of any row in the collection contains
 		/// the specified value.
 		/// </summary>
-		public bool Contains (object key) 
+		public bool Contains (object key)
 		{
 			return Find (key) != null;
 		}
 
 		/// <summary>
-		/// Gets a value indicating whether the primary key column(s) of any row in the 
+		/// Gets a value indicating whether the primary key column(s) of any row in the
 		/// collection contains the values specified in the object array.
 		/// </summary>
-		public bool Contains (object[] keys) 
+		public bool Contains (object [] keys)
 		{
 			return Find (keys) != null;
 		}
@@ -205,10 +205,10 @@ namespace System.Data
 		/// <summary>
 		/// Gets the row specified by the primary key value.
 		/// </summary>
-		public DataRow Find (object key) 
+		public DataRow Find (object key)
 		{
-			return Find (new object[]{key}, DataViewRowState.CurrentRows);
-                }
+			return Find (new object []{key}, DataViewRowState.CurrentRows);
+		}
 
 		/// <summary>
 		/// Gets the row containing the specified primary key values.
@@ -219,7 +219,7 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Gets the row containing the specified primary key values by searching the rows 
+		/// Gets the row containing the specified primary key values by searching the rows
 		/// filtered by the state.
 		/// </summary>
 		internal DataRow Find (object [] keys, DataViewRowState rowStateFilter)
@@ -236,7 +236,7 @@ namespace System.Data
 			if (record != -1 || !table._duringDataLoad)
 				return (record != -1 ? table.RecordCache [record] : null);
 
-			// If the key is not found using Index *and* if DataTable is under BeginLoadData 
+			// If the key is not found using Index *and* if DataTable is under BeginLoadData
 			// then, check all the DataRows for the key
 			record = table.RecordCache.NewRecord ();
 			try {
@@ -245,7 +245,6 @@ namespace System.Data
 
 				bool found;
 				foreach (DataRow row in this) {
-
 					int rowIndex = Key.GetRecord (row, rowStateFilter);
 					if (rowIndex == -1)
 						continue;
@@ -269,37 +268,35 @@ namespace System.Data
 		/// <summary>
 		/// Inserts a new row into the collection at the specified location.
 		/// </summary>
-		public void InsertAt (DataRow row, int pos) 
+		public void InsertAt (DataRow row, int pos)
 		{
 			if (pos < 0)
 				throw new IndexOutOfRangeException ("The row insert position " + pos + " is invalid.");
-			
+
 			if (row == null)
-				throw new ArgumentNullException("row", "'row' argument cannot be null.");
-	
+				throw new ArgumentNullException ("row", "'row' argument cannot be null.");
+
 			if (row.Table != this.table)
 				throw new ArgumentException ("This row already belongs to another table.");
 
 			// If row id is not -1, we know that it is in the collection.
 			if (row.RowID != -1)
 				throw new ArgumentException ("This row already belongs to this table.");
-			
-			row.Validate();
-				
+
+			row.Validate ();
+
 			row.Table.ChangingDataRow (row, DataRowAction.Add);
 
 			if (pos >= List.Count) {
 				row.RowID = List.Count;
 				List.Add (row);
-			}
-			else {
+			} else {
 				List.Insert (pos, row);
 				row.RowID = pos;
-				for (int i = pos+1; i < List.Count; i++) {
-        	                        ((DataRow)List [i]).RowID = i;
-	                        }
+				for (int i = pos+1; i < List.Count; i++)
+					((DataRow) List [i]).RowID = i;
 			}
-				
+
 			row.HasParentCollection = true;
 			row.AttachRow ();
 			row.Table.ChangedDataRow (row, DataRowAction.Add);
@@ -308,42 +305,41 @@ namespace System.Data
 		/// <summary>
 		/// Removes the specified DataRow from the internal list. Used by DataRow to commit the removing.
 		/// </summary>
-		internal void RemoveInternal (DataRow row) {
-			if (row == null) {
+		internal void RemoveInternal (DataRow row)
+		{
+			if (row == null)
 				throw new IndexOutOfRangeException ("The given datarow is not in the current DataRowCollection.");
-			}
-			int index = List.IndexOf(row);
-			if (index < 0) {
+			int index = List.IndexOf (row);
+			if (index < 0)
 				throw new IndexOutOfRangeException ("The given datarow is not in the current DataRowCollection.");
-			}
-			List.RemoveAt(index);
+			List.RemoveAt (index);
+			// FIXME: Change RowIDs of subsequent rows
 		}
 
 		/// <summary>
 		/// Removes the specified DataRow from the collection.
 		/// </summary>
-		public void Remove (DataRow row) 
+		public void Remove (DataRow row)
 		{
-			if (!List.Contains(row))
+			if (!List.Contains (row))
 				throw new IndexOutOfRangeException ("The given datarow is not in the current DataRowCollection.");
 
 			DataRowState state = row.RowState;
-			if (state != DataRowState.Deleted &&
-				state != DataRowState.Detached) {
+			if (state != DataRowState.Deleted && state != DataRowState.Detached) {
 				row.Delete();
 				// if the row was in added state it will be in Detached state after the
 				// delete operation, so we have to check it.
 				if (row.RowState != DataRowState.Detached)
-					row.AcceptChanges();
+					row.AcceptChanges ();
 			}
 		}
 
 		/// <summary>
 		/// Removes the row at the specified index from the collection.
 		/// </summary>
-		public void RemoveAt (int index) 
-		{			
-			Remove(this[index]);
+		public void RemoveAt (int index)
+		{
+			Remove (this [index]);
 		}
 
 		internal void OnListChanged (object sender, ListChangedEventArgs args)

@@ -839,7 +839,7 @@ namespace System.Data {
 			if (RowState == DataRowState.Detached || !HasVersion (DataRowVersion.Proposed))
 				return;
 
-			CheckReadOnlyStatus();
+			CheckReadOnlyStatus ();
 
 			_inChangingEvent = true;
 			try {
@@ -992,18 +992,18 @@ namespace System.Data {
 
 		private DataRow [] GetChildRows (ForeignKeyConstraint fkc, DataRowVersion version)
 		{
-			ArrayList rows = new ArrayList();
+			ArrayList rows = new ArrayList ();
 			DataColumn [] parentColumns = fkc.RelatedColumns;
 			DataColumn [] childColumns = fkc.Columns;
 			int numColumn = parentColumns.Length;
 
 			Index index = fkc.Index;
 
-			int curIndex = IndexFromVersion(version);
-			int tmpRecord = fkc.Table.RecordCache.NewRecord();
+			int curIndex = IndexFromVersion (version);
+			int tmpRecord = fkc.Table.RecordCache.NewRecord ();
 			for (int i = 0; i < numColumn; i++)
 				// according to MSDN: the DataType value for both columns must be identical.
-				childColumns[i].DataContainer.CopyValue (parentColumns[i].DataContainer, curIndex, tmpRecord);
+				childColumns [i].DataContainer.CopyValue (parentColumns [i].DataContainer, curIndex, tmpRecord);
 
 			try {
 				if (index != null) {
@@ -1598,7 +1598,7 @@ namespace System.Data {
 			for (int i = 0; i < Table.Columns.Count; ++i) {
 				DataColumn column = Table.Columns [i];
 				if (!column.AllowDBNull && IsNull (column))
-					throw new NoNullAllowedException(_nullConstraintMessage);
+					throw new NoNullAllowedException (_nullConstraintMessage);
 			}
 
 			foreach (Constraint constraint in Table.Constraints) {
@@ -1617,7 +1617,7 @@ namespace System.Data {
 				if (HasVersion (DataRowVersion.Proposed)) {
 					foreach (DataColumn column in Table.Columns) {
 						if (IsNull (column) && !column.AllowDBNull)
-							throw new NoNullAllowedException(_nullConstraintMessage);
+							throw new NoNullAllowedException (_nullConstraintMessage);
 					}
 				}
 				_nullConstraintViolation = false;
@@ -1628,8 +1628,8 @@ namespace System.Data {
 		{
 			int defaultIdx = IndexFromVersion (DataRowVersion.Default);
 			foreach(DataColumn column in Table.Columns) {
-				if ((column.DataContainer.CompareValues(defaultIdx,Proposed) != 0) && column.ReadOnly)
-					throw new ReadOnlyException();
+				if ((column.DataContainer.CompareValues (defaultIdx,Proposed) != 0) && column.ReadOnly)
+					throw new ReadOnlyException ();
 			}
 		}
 
