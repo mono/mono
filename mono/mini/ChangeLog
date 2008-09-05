@@ -1,3 +1,10 @@
+2008-09-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* branch-opts.c (mono_optimize_branches): Avoid nullifying the exit bblock.
+	Also avoid optimizing branches pointing to themselves.
+
+	* mini.c (mini_method_compile): Ditto. Fixes #422947.
+
 2008-09-05  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* driver.c (mono_main): Enable the new verifier under core-clr and cas.
