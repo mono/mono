@@ -13,11 +13,11 @@ class Test
 		const string b = "\U0010FEDC";
 		
 		Console.WriteLine ((int) a[0]);
-		if ((int) a[0] != 55296)
+		if ((int) a[0] != 0xD800)
 			return 1;
 
 		Console.WriteLine ((int) a[1]);
-		if ((int) a[1] != 56320)
+		if ((int) a[1] != 0xDC41)
 			return 2;
 		
 		Foo ();
