@@ -1,5 +1,13 @@
 2008-09-05  Raja R Harinath  <harinath@hurrynot.org>
 
+	* DataRowCollection.cs (InsertRow): Delegate setting of RowId
+	to the row itself.  Use 'row.AttachAt' instead of 'row.AttachRow'.
+	(AddInternal): Likewise.  Also delegate handling of
+	ChangeCurrentAndOriginal to AttachAt.
+	* DataRow.cs (AttachAt): Rename from AttachRow.  Set rowId from
+	passed-in id.  Handle ChangeCurrentAndOriginal and ChangeOriginal
+	actions.
+
 	* DataRow.cs (_hasParentCollection): Remove.  Implied by _rowId >= 0.
 	(HasParentCollection): Remove.
 	* DataRowCollection.cs (AddInternal, InsertAt): Update to changes.

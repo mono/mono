@@ -436,17 +436,20 @@ namespace System.Data {
 		#endregion
 
 		#region Methods
-
-		//FIXME?: Couldn't find a way to set the RowState when adding the DataRow
-		//to a Datatable so I added this method. Delete if there is a better way.
-		internal void AttachRow ()
+		// Called by DataRowCollection.Add/InsertAt
+		internal void AttachAt (int row_id, DataRowAction action)
 		{
+			_rowId = row_id;
 			if (Proposed != -1) {
 				if (Current >= 0)
 					Table.RecordCache.DisposeRecord (Current);
 				Current = Proposed;
 				Proposed = -1;
 			}
+#if NET_2_0
+			if ((action & (DataRowAction.ChangeCurrentAndOriginal | DataRowAction.ChangeOriginal)) != 0)
+				Original = Current;
+#endif
 		}
 
 		void Detach ()

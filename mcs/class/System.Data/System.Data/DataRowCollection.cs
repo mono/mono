@@ -121,12 +121,7 @@ namespace System.Data
 		{
 			row.Table.ChangingDataRow (row, action);
 			List.Add (row);
-			row.RowID = List.Count - 1;
-			row.AttachRow ();
-#if NET_2_0
-			if ((action & (DataRowAction.ChangeCurrentAndOriginal | DataRowAction.ChangeOriginal)) != 0)
-				row.Original = row.Current;
-#endif
+			row.AttachAt (List.Count - 1, action);
 			row.Table.ChangedDataRow (row, action);
 			if (row._rowChanged)
 				row._rowChanged = false;
@@ -287,16 +282,15 @@ namespace System.Data
 			row.Table.ChangingDataRow (row, DataRowAction.Add);
 
 			if (pos >= List.Count) {
-				row.RowID = List.Count;
+				pos = List.Count;
 				List.Add (row);
 			} else {
 				List.Insert (pos, row);
-				row.RowID = pos;
 				for (int i = pos+1; i < List.Count; i++)
 					((DataRow) List [i]).RowID = i;
 			}
 
-			row.AttachRow ();
+			row.AttachAt (pos, DataRowAction.Add);
 			row.Table.ChangedDataRow (row, DataRowAction.Add);
 		}
 
