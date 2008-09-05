@@ -1,3 +1,11 @@
+2008-09-05  Raja R Harinath  <harinath@hurrynot.org>
+
+	* DataRow.cs (Detach): Rename from DetachRow.  Make private.
+	Simplify code to be more uniform.  Move common prefix code here ...
+	(AcceptChanges) [Deleted]: ... from here ...
+	(Delete) [Added]: ... and here ...
+	(RejectChanges) [Added]: ... and here.
+
 2008-09-04  Raja R Harinath  <harinath@hurrynot.org>
 
 	* DataRow.cs (CheckChildRows) <1-arg variant>: Remove excessive

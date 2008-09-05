@@ -450,30 +450,22 @@ namespace System.Data {
 			}
 		}
 
-		//FIXME?: Couldn't find a way to set the RowState when removing the DataRow
-		//from a Datatable so I added this method. Delete if there is a better way.
-		internal void DetachRow ()
+		void Detach ()
 		{
-			if (Proposed >= 0) {
+			Table.DeleteRowFromIndexes (this);
+			_table.Rows.RemoveInternal (this);
+
+			if (Proposed >= 0 && Proposed != Current && Proposed != Original)
 				_table.RecordCache.DisposeRecord (Proposed);
-				if (Proposed == Current)
-					Current = -1;
-				if (Proposed == Original)
-					Original = -1;
-				Proposed = -1;
-			}
+			Proposed = -1;
 
-			if (Current >= 0) {
+			if (Current >= 0 && Current != Original)
 				_table.RecordCache.DisposeRecord (Current);
-				if (Current == Original)
-					Original = -1;
-				Current = -1;
-			}
+			Current = -1;
 
-			if (Original >= 0) {
+			if (Original >= 0)
 				_table.RecordCache.DisposeRecord (Original);
-				Original = -1;
-			}
+			Original = -1;
 
 			_rowId = -1;
 			_hasParentCollection = false;
@@ -619,9 +611,7 @@ namespace System.Data {
 				Original = Current;
 				break;
 			case DataRowState.Deleted:
-				Table.DeleteRowFromIndexes (this);
-				_table.Rows.RemoveInternal (this);
-				DetachRow ();
+				Detach ();
 				break;
 			case DataRowState.Detached:
 				throw new RowNotInTableException("Cannot perform this operation on a row not in the table.");
@@ -693,13 +683,8 @@ namespace System.Data {
 			_table.DeletingDataRow (this, DataRowAction.Delete);
 			switch (RowState) {
 			case DataRowState.Added:
-				// check what to do with child rows
 				CheckChildRows (DataRowAction.Delete);
-				_table.DeleteRowFromIndexes (this);
-				Table.Rows.RemoveInternal (this);
-
-				// if row was in Added state we move it to Detached.
-				DetachRow ();
+				Detach ();
 				break;
 			case DataRowState.Deleted:
 			case DataRowState.Detached:
@@ -1300,9 +1285,7 @@ namespace System.Data {
 			//TODO : Need to Verify the constraints..
 			switch (RowState) {
 			case DataRowState.Added:
-				_table.DeleteRowFromIndexes (this);
-				_table.Rows.RemoveInternal (this);
-				DetachRow ();
+				Detach ();
 				break;
 			case DataRowState.Modified:
 				int current = Current;
