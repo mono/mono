@@ -79,3 +79,6 @@ System.Security.Cryptography/SHA384Cng.cs
 System.Security.Cryptography/SHA384CryptoServiceProvider.cs
 System.Security.Cryptography/SHA512Cng.cs
 System.Security.Cryptography/SHA512CryptoServiceProvider.cs
+System.Threading/LockRecursionException.cs
+System.Threading/LockRecursionPolicy.cs
+

@@ -1,3 +1,7 @@
+2008-09-05  Marek Safar  <marek.safar@gmail.com>
+
+	* System.Core.dll.sources: Add System.Threading
+
 2008-08-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Core.dll.sources: Add new files for crypto.
