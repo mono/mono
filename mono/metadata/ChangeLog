@@ -1,4 +1,10 @@
-2008-09-03 Rodrigo Kumpera  <rkumpera@novell.com>+ 
+2008-09-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (_mono_reflection_get_type_from_info): Revert the last change
+	(r111766) as it is not needed after the no-exec changes.
+
+2008-09-03 Rodrigo Kumpera  <rkumpera@novell.com> 
+	
  	* verify.c (verify_type_compatibility_full): Revert change
  	to allow converting a native int to unmanaged pointer be verifiable
  	under non-strict mode.
