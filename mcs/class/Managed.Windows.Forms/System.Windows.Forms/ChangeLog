@@ -1,5 +1,10 @@
 2008-09-05  Jonathan Pobst  <monkey@jpobst.com>
 
+	* MenuAPI.cs: Add a null check to the Alt-F4 code.
+	[Fixes bug #420309]
+
+2008-09-05  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ThreadExceptionDialog.cs: Disable AutoScaling for this dialog.
 	[Fixes bug #423040]
 

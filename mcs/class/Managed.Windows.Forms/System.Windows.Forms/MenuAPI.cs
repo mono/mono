@@ -678,7 +678,9 @@ namespace System.Windows.Forms {
 			// If we get Alt-F4, Windows will ignore it because we have a capture,
 			// release the capture and the program will exit.  (X11 doesn't care.)
 			if ((keyData & Keys.Alt) == Keys.Alt && (keyData & Keys.F4) == Keys.F4) {
-				GrabControl.ActiveTracker = null;
+				if (GrabControl != null)
+					GrabControl.ActiveTracker = null;
+					
 				return false;
 			}
 			
