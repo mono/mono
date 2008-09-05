@@ -1,5 +1,8 @@
 2008-09-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c: Remove the CHECK_BBLOCK () stuff it is not needed since
+	we identify bblocks before method_to_ir () is ran.
+
 	* branch-opts.c (mono_optimize_branches): Avoid nullifying the exit bblock.
 	Also avoid optimizing branches pointing to themselves.
 
