@@ -138,6 +138,11 @@ namespace Mono.CSharp {
 
 		}
 
+#if BOOTSTRAP_WITH_OLDLIB
+		static void LoadStartupFiles ()
+		{
+		}
+#else
 		static void LoadStartupFiles ()
 		{
 			string dir = Path.Combine (
@@ -161,6 +166,7 @@ namespace Mono.CSharp {
 				}
 			}
 		}
+#endif
 
 		static void ReadEvalPrintLoopWith (ReadLiner readline)
 		{
@@ -188,7 +194,6 @@ namespace Mono.CSharp {
 			RootContext.EvalMode = true;
 
 			InitializeUsing ();
-
 
 			LoadStartupFiles ();
 			ReadEvalPrintLoopWith (GetLine);

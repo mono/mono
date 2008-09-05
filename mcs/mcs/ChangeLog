@@ -1,3 +1,7 @@
+2008-09-05  Miguel de Icaza  <miguel@novell.com>
+
+	* repl.cs: Add workaround for old compilers.
+
 2008-09-04  Jb Evain  <jbevain@novell.com>
 
 	* repl.cs (PrettyPrint): pretty print everything that
@@ -39,6 +43,9 @@
 	* flowanalysis.cs: Also verify event fields.
 
 2008-09-04  Miguel de Icaza  <miguel@novell.com>
+
+	* assign.cs (Assign.DoResolve): Perform the type conversions
+	checks before we attempt to initialize `New' initializers. 
 
 	* repl.cs (PrettyPrint): Add Hashtable prettyprint
 
