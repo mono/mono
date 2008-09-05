@@ -98,18 +98,11 @@ namespace System.Data
 #endif
 		int IndexOf (DataRow row)
 		{
-			if (row == null)
+			if (row == null || row.Table != table)
 				return -1;
 
-			// FIXME: Use the RowID
-			int i = 0;
-			foreach (DataRow dr in this) {
-				if (dr == row)
-					return i;
-				i++;
-			}
-
-			return -1;
+			int id = row.RowID;
+			return (id >= 0 && id < List.Count && row == List [id]) ? id : -1;
 		}
 
 		internal void AddInternal (DataRow row)
@@ -305,7 +298,8 @@ namespace System.Data
 			if (index < 0)
 				throw new IndexOutOfRangeException ("The given datarow is not in the current DataRowCollection.");
 			List.RemoveAt (index);
-			// FIXME: Change RowIDs of subsequent rows
+			for (; index < List.Count; ++index)
+				((DataRow) List [index]).RowID = index;
 		}
 
 		/// <summary>
@@ -313,12 +307,12 @@ namespace System.Data
 		/// </summary>
 		public void Remove (DataRow row)
 		{
-			if (!List.Contains (row))
+			if (IndexOf (row) < 0)
 				throw new IndexOutOfRangeException ("The given datarow is not in the current DataRowCollection.");
 
 			DataRowState state = row.RowState;
 			if (state != DataRowState.Deleted && state != DataRowState.Detached) {
-				row.Delete();
+				row.Delete ();
 				// if the row was in added state it will be in Detached state after the
 				// delete operation, so we have to check it.
 				if (row.RowState != DataRowState.Detached)

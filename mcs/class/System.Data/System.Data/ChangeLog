@@ -1,5 +1,11 @@
 2008-09-05  Raja R Harinath  <harinath@hurrynot.org>
 
+	* DataRowCollection.cs (RemoveInternal): Update RowIDs of rows
+	after the deleted row.
+	(IndexOf): Avoid loop to search for a row, since we already know
+	where a row is: its RowID.
+	(Remove): Use IndexOf rather than List.Contains.
+
 	* DataRowCollection.cs (InsertRow): Delegate setting of RowId
 	to the row itself.  Use 'row.AttachAt' instead of 'row.AttachRow'.
 	(AddInternal): Likewise.  Also delegate handling of
