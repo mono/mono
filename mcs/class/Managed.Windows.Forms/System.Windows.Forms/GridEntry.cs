@@ -48,6 +48,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 		private PropertyDescriptor[] property_descriptors;
 		private int top;
 		private Rectangle plus_minus_bounds;
+		private GridItemCollection child_griditems_cache;
 		#endregion	// Local Variables
 
 		#region  Contructors
@@ -61,6 +62,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 			grid_items = new GridItemCollection ();
 			expanded = false;
 			this.parent = parent;
+			child_griditems_cache = null;
 		}
 
 		// Cannot use one PropertyDescriptor for all owners, because the
@@ -78,7 +80,16 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 
 		public override bool Expandable {
-			get { return grid_items.Count > 0; }
+			get {
+				TypeConverter converter = GetConverter ();
+				if (converter == null || !converter.GetPropertiesSupported ((ITypeDescriptorContext)this))
+					return false;
+
+				if (GetChildGridItemsCached ().Count > 0)
+					return true;
+
+				return false;
+			}
 		}
 
 		public override bool Expanded {
@@ -86,6 +97,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 			set {
 				if (expanded != value) {
 					expanded = value;
+					PopulateChildGridItems ();
 					if (value)
 						property_grid.OnExpandItem (this);
 					else
@@ -95,7 +107,10 @@ namespace System.Windows.Forms.PropertyGridInternal
 		}
 
 		public override GridItemCollection GridItems {
-			get { return grid_items; }
+			get {
+				PopulateChildGridItems ();
+				return grid_items; 
+			}
 		}
 
 		public override GridItemType GridItemType {
@@ -661,15 +676,6 @@ namespace System.Windows.Forms.PropertyGridInternal
 			}
 		}
 
-		public bool IsExpandable {
-			get {
-				TypeConverter converter = GetConverter ();
-				if (converter != null && converter.GetPropertiesSupported ((ITypeDescriptorContext)this))
-					return true;
-				return false;
-			}
-		}
-
 		public bool IsPassword {
 			get {
 #if NET_2_0
@@ -723,5 +729,98 @@ namespace System.Windows.Forms.PropertyGridInternal
 			}
 		}
 
+#region Population
+		protected void PopulateChildGridItems ()
+		{
+			grid_items = GetChildGridItemsCached ();
+		}
+
+		private GridItemCollection GetChildGridItemsCached ()
+		{
+			if (child_griditems_cache == null)
+				child_griditems_cache = GetChildGridItems ();
+			return child_griditems_cache;
+		}
+
+		private GridItemCollection GetChildGridItems ()
+		{
+			object[] propertyOwners = this.Values;
+			string[] propertyNames = GetMergedPropertyNames (propertyOwners);
+			GridItemCollection items = new GridItemCollection ();
+
+			foreach (string propertyName in propertyNames) {
+				PropertyDescriptor[] properties = new PropertyDescriptor[propertyOwners.Length];
+				for (int i=0; i < propertyOwners.Length; i++)
+					properties[i] = GetPropertyDescriptor (propertyOwners[i], propertyName);
+				items.Add (new GridEntry (property_grid, properties, this));
+			}
+
+			return items;
+		}
+
+		private bool IsPropertyMergeable (PropertyDescriptor property)
+		{
+			if (property == null)
+				return false;
+				
+			MergablePropertyAttribute attrib = property.Attributes [typeof (MergablePropertyAttribute)] as MergablePropertyAttribute;
+			if (attrib != null && !attrib.AllowMerge)
+				return false;
+
+			return true;
+		}
+
+		private string[] GetMergedPropertyNames (object [] objects)
+		{
+			if (objects == null || objects.Length == 0)
+				return new string[0];
+
+			ArrayList intersection = new ArrayList ();
+			for (int i = 0; i < objects.Length; i ++) {
+				if (objects [i] == null)
+					continue;
+
+				PropertyDescriptorCollection properties = GetProperties (objects[i], property_grid.BrowsableAttributes);
+				ArrayList new_intersection = new ArrayList ();
+
+				foreach (PropertyDescriptor currentProperty in (i == 0 ? (ICollection)properties : (ICollection)intersection)) {
+					PropertyDescriptor matchingProperty = (i == 0 ? currentProperty : properties [currentProperty.Name]);
+					if (objects.Length > 1 && !IsPropertyMergeable (matchingProperty))
+						continue;
+					if (matchingProperty.PropertyType == currentProperty.PropertyType)
+						new_intersection.Add (matchingProperty);
+				}
+
+				intersection = new_intersection;
+			}
+
+			string[] propertyNames = new string [intersection.Count];
+			for (int i=0; i < intersection.Count; i++)
+				propertyNames[i] = ((PropertyDescriptor)intersection[i]).Name;
+				
+			return propertyNames;
+		}
+
+		private PropertyDescriptor GetPropertyDescriptor (object propertyOwner, string propertyName)
+		{
+			if (propertyOwner == null || propertyName == null)
+				return null;
+
+			PropertyDescriptorCollection properties = GetProperties (propertyOwner, property_grid.BrowsableAttributes);
+			if (properties != null)
+				return properties[propertyName];
+			return null;
+		}
+
+		private PropertyDescriptorCollection GetProperties (object propertyOwner, AttributeCollection attributes)
+		{
+			if (propertyOwner == null || property_grid.SelectedTab == null)
+				return new PropertyDescriptorCollection (null);
+
+			Attribute[] atts = new Attribute[attributes.Count];
+			attributes.CopyTo (atts, 0);
+			return property_grid.SelectedTab.GetProperties ((ITypeDescriptorContext)this, propertyOwner, atts);
+		}
+#endregion
 	}
 }

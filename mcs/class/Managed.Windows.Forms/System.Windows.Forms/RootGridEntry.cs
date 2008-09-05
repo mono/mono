@@ -44,6 +44,10 @@ namespace System.Windows.Forms.PropertyGridInternal
 			val = obj;
 		}
 
+		public override bool Expandable {
+			get { return true; }
+		}
+
 		public override GridItemType GridItemType {
 			get { return GridItemType.Root; }
 		}

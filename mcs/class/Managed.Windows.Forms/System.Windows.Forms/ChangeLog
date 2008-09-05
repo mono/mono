@@ -1,3 +1,10 @@
+2008-09-04  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* GridEntry.cs, CategoryGridEntry.cs, RootGridEntry.cs, PropertyGrid.cs, 
+	PropertyGridView.sc: Implement lazy/delayed propertygrid population 
+	on item expansion. Improves performance and fixes bug #417955.
+	[Fixes bug #417955]
+
 2008-09-03  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ButtonBase.cs CheckBox.cs, Control.cs, FlowLayoutPanel.cs, 
