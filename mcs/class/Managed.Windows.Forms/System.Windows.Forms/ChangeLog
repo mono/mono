@@ -1,3 +1,12 @@
+2008-09-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Don't call Invalidate at all from SetItemLocation,
+	since we are already calling Invalidate for the entire control when
+	needed - and call Redraw() when size changes, since we need to paint
+	there by ourselved and not anymore from the mentioned method. 
+	This should improve the layout process. Also clean some not needed calls 
+	here and there.
+
 2008-09-05  Jonathan Pobst  <monkey@jpobst.com>
 
 	* MenuAPI.cs: Add a null check to the Alt-F4 code.

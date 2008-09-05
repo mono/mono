@@ -968,7 +968,8 @@ namespace System.Windows.Forms
 					throw new ArgumentOutOfRangeException ("value");
 
 				tile_size = value;
-				Redraw (true);
+				if (view == View.Tile)
+					Redraw (true);
 			}
 		}
 #endif
@@ -1160,7 +1161,6 @@ namespace System.Windows.Forms
 				CalculateListView (this.alignment);
 
 			Refresh ();
-			Update ();
 		}
 
 		void InvalidateSelection ()
@@ -1574,9 +1574,6 @@ namespace System.Windows.Forms
 			if (old_location.X == x && old_location.Y == y)
 				return;
 
-			Size item_size = ItemSize;
-			Rectangle old_rect = new Rectangle (GetItemLocation (index), item_size);
-
 			items_location [index] = new Point (x, y);
 			items_matrix_location [index] = new ItemMatrixLocation (row, col);
 
@@ -1584,10 +1581,6 @@ namespace System.Windows.Forms
 			// Initial position matches item's position in ListViewItemCollection
 			//
 			reordered_items_indices [index] = index;
-
-			// Invalidate both previous and new bounds
-			item_control.Invalidate (old_rect);
-			item_control.Invalidate (new Rectangle (GetItemLocation (index), item_size));
 		}
 
 #if NET_2_0
@@ -3267,7 +3260,7 @@ namespace System.Windows.Forms
 
 		private void ListView_SizeChanged (object sender, EventArgs e)
 		{
-			CalculateListView (alignment);
+			Redraw (true);
 		}
 		
 		private void SetFocusedItem (int display_index)
@@ -3607,11 +3600,8 @@ namespace System.Windows.Forms
 		public void ArrangeIcons (ListViewAlignment value)
 		{
 			// Icons are arranged only if view is set to LargeIcon or SmallIcon
-			if (view == View.LargeIcon || view == View.SmallIcon) {
-				this.CalculateListView (value);
-				// we have done the calculations already
-				this.Redraw (false);
-			}
+			if (view == View.LargeIcon || view == View.SmallIcon)
+				Redraw (true);
 		}
 
 #if NET_2_0
