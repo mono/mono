@@ -1,3 +1,10 @@
+2008-09-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MoonIsolatedStorageFile.cs: Add calls to PreCheck inside EndRead
+	and EndWrite methods.
+	* MoonIsolatedStorageFileStream.cs: Throw an IsolatedStorageException
+	when DeleteFile is called on an unexisting file.
+
 2008-08-22  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* MoonIsolatedStorageFile.cs: Implement Remove. Add a bunch of FIXME 

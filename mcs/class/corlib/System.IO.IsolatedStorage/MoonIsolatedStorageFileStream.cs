@@ -184,11 +184,13 @@ namespace System.IO.IsolatedStorage {
 
 		public override int EndRead (IAsyncResult asyncResult)
 		{
+			container.PreCheck ();
 			return base.EndRead (asyncResult);
 		}
 
 		public override void EndWrite (IAsyncResult asyncResult)
 		{
+			container.PreCheck ();
 			base.EndWrite (asyncResult);
 		}
 	}

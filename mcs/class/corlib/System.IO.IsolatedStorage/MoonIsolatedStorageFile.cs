@@ -167,7 +167,10 @@ namespace System.IO.IsolatedStorage {
 		public void DeleteFile (string file)
 		{
 			PreCheck ();
-			File.Delete (Verify (file));
+			string checked_filename = Verify (file);
+			if (!File.Exists (checked_filename))
+				throw new IsolatedStorageException ("File does not exists");
+			File.Delete (checked_filename);
 		}
 
 		public void Dispose ()
