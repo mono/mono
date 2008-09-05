@@ -67,7 +67,6 @@ namespace System.Data {
 		internal int xmlRowID = 0;
 		internal bool _nullConstraintViolation;
 		private string _nullConstraintMessage;
-		private bool _hasParentCollection;
 		private bool _inChangingEvent;
 		private int _rowId;
 		internal bool _rowChanged = false;
@@ -468,7 +467,6 @@ namespace System.Data {
 			Original = -1;
 
 			_rowId = -1;
-			_hasParentCollection = false;
 		}
 
 		internal void ImportRecord (int record)
@@ -492,7 +490,7 @@ namespace System.Data {
 
 		private void CheckValue (object v, DataColumn col, bool doROCheck)
 		{
-			if (doROCheck && _hasParentCollection && col.ReadOnly)
+			if (doROCheck && _rowId != -1 && col.ReadOnly)
 				throw new ReadOnlyException ();
 
 			if (v == null || v == DBNull.Value) {
@@ -1558,11 +1556,6 @@ namespace System.Data {
 			}
 
 			return false;
-		}
-
-		internal bool HasParentCollection {
-			get { return _hasParentCollection; }
-			set { _hasParentCollection = value; }
 		}
 
 		internal void Validate ()

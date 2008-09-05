@@ -120,7 +120,6 @@ namespace System.Data
 		internal void AddInternal (DataRow row, DataRowAction action)
 		{
 			row.Table.ChangingDataRow (row, action);
-			row.HasParentCollection = true;
 			List.Add (row);
 			row.RowID = List.Count - 1;
 			row.AttachRow ();
@@ -297,7 +296,6 @@ namespace System.Data
 					((DataRow) List [i]).RowID = i;
 			}
 
-			row.HasParentCollection = true;
 			row.AttachRow ();
 			row.Table.ChangedDataRow (row, DataRowAction.Add);
 		}

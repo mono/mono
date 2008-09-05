@@ -1,5 +1,9 @@
 2008-09-05  Raja R Harinath  <harinath@hurrynot.org>
 
+	* DataRow.cs (_hasParentCollection): Remove.  Implied by _rowId >= 0.
+	(HasParentCollection): Remove.
+	* DataRowCollection.cs (AddInternal, InsertAt): Update to changes.
+
 	* DataTable.cs (NewRowArray): Special case size == 0 to avoid
 	creating a lot of garbage.
 
