@@ -3,14 +3,14 @@
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
-//   Daniel Morgan (danmorg@sc.rr.com)
+//   Daniel Morgan (monodanmorg@yahoo.com)
 //   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc 2002
-// (C) Daniel Morgan 2002
+// (C) Daniel Morgan 2002, 2008
 // Copyright (C) Tim Coleman, 2002
 //
-
+//
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -41,7 +41,11 @@ using System.Data;
 using System.Data.Common;
 
 namespace Mono.Data.SybaseClient {
+#if NET_2_0
+	public class SybaseDataReader : DbDataReader, IDataReader, IDisposable, IDataRecord
+#else
 	public sealed class SybaseDataReader : MarshalByRefObject, IEnumerable, IDataReader, IDisposable, IDataRecord
+#endif // NET_2_0
 	{
 		#region Fields
 
@@ -55,20 +59,53 @@ namespace Mono.Data.SybaseClient {
 		int resultsRead;
 		int rowsRead;
 		DataTable schemaTable;
+		bool haveRead;
+		bool readResult;
+		bool readResultUsed;
+#if NET_2_0
+		int visibleFieldCount;
+#endif
 
 		#endregion // Fields
+
+		const int COLUMN_NAME_IDX = 0;
+		const int COLUMN_ORDINAL_IDX = 1;
+		const int COLUMN_SIZE_IDX = 2;
+		const int NUMERIC_PRECISION_IDX = 3;
+		const int NUMERIC_SCALE_IDX = 4;
+		const int IS_UNIQUE_IDX = 5;
+		const int IS_KEY_IDX = 6;
+		const int BASE_SERVER_NAME_IDX = 7;
+		const int BASE_CATALOG_NAME_IDX = 8;
+		const int BASE_COLUMN_NAME_IDX = 9;
+		const int BASE_SCHEMA_NAME_IDX = 10;
+		const int BASE_TABLE_NAME_IDX = 11;
+		const int DATA_TYPE_IDX = 12;
+		const int ALLOW_DBNULL_IDX = 13;
+		const int PROVIDER_TYPE_IDX = 14;
+		const int IS_ALIASED_IDX = 15;
+		const int IS_EXPRESSION_IDX = 16;
+		const int IS_IDENTITY_IDX = 17;
+		const int IS_AUTO_INCREMENT_IDX = 18;
+		const int IS_ROW_VERSION_IDX = 19;
+		const int IS_HIDDEN_IDX = 20;
+		const int IS_LONG_IDX = 21;
+		const int IS_READ_ONLY_IDX = 22;
 
 		#region Constructors
 
 		internal SybaseDataReader (SybaseCommand command)
 		{
+			readResult = false;
+			haveRead = false;
+			readResultUsed = false;
 			this.command = command;
-			schemaTable = ConstructSchemaTable ();
 			resultsRead = 0;
-			fieldCount = 0;
 			isClosed = false;
-			isSelect = (command.CommandText.Trim ().ToUpper ().StartsWith ("SELECT"));
-			command.Tds.RecordsAffected = 0;
+			command.Tds.RecordsAffected = -1;
+#if NET_2_0
+			visibleFieldCount = 0;
+#endif
 			NextResult ();
 		}
 
@@ -76,40 +113,93 @@ namespace Mono.Data.SybaseClient {
 
 		#region Properties
 
-		public int Depth {
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		int Depth {
 			get { return 0; }
 		}
 
-		public int FieldCount {
-			get { return fieldCount; }
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		int FieldCount {
+			get { return command.Tds.Columns.Count; }
 		}
 
-		public bool IsClosed {
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		bool IsClosed {
 			get { return isClosed; }
 		}
 
-		public object this [int i] {
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		object this [int i] {
 			get { return GetValue (i); }
 		}
 
-		public object this [string name] {
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		object this [string name] {
 			get { return GetValue (GetOrdinal (name)); }
 		}
 	
-		public int RecordsAffected {
-			get { 
-				if (isSelect) 
-					return -1;
-				else
-					return command.Tds.RecordsAffected; 
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		int RecordsAffected {
+			get {
+				return command.Tds.RecordsAffected; 
 			}
 		}
+
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		bool HasRows {
+			get {
+				if (haveRead) 
+					return readResult;
+			
+				haveRead = true;
+				readResult = ReadRecord ();
+				return readResult;
+			}
+		}
+#if NET_2_0
+		public override int VisibleFieldCount {
+			get { return visibleFieldCount; }
+		}
+
+		protected SybaseConnection Connection {
+			get { return command.Connection; }
+		}
+
+		protected bool IsCommandBehavior (CommandBehavior condition) {
+			return condition == command.CommandBehavior;
+		}
+#endif
 
 		#endregion // Properties
 
 		#region Methods
 
-		public void Close ()
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		void Close ()
 		{
 			isClosed = true;
 			command.CloseDataReader (moreResults);
@@ -151,7 +241,205 @@ namespace Mono.Data.SybaseClient {
 			return schemaTable;
 		}
 
-		private void Dispose (bool disposing) 
+		private void GetSchemaRowTypeName (TdsColumnType ctype, int csize, out string typeName) 
+		{
+			int dbType;
+			bool isLong;
+			Type fieldType;
+			
+			GetSchemaRowType (ctype, csize, out dbType, out fieldType, out isLong, out typeName);
+		}
+
+		private void GetSchemaRowFieldType (TdsColumnType ctype, int csize, out Type fieldType) 
+		{
+			int dbType;
+			bool isLong;
+			string typeName;
+			
+			GetSchemaRowType (ctype, csize, out dbType, out fieldType, out isLong, out typeName);
+		}
+
+		private void GetSchemaRowDbType (TdsColumnType ctype, int csize, out int dbType) 
+		{
+			Type fieldType;
+			bool isLong;
+			string typeName;
+			
+			GetSchemaRowType (ctype, csize, out dbType, out fieldType, out isLong, out typeName);
+		}
+		
+		private void GetSchemaRowType (TdsColumnType ctype, int csize, 
+		                               out int dbType, out Type fieldType, 
+		                               out bool isLong, out string typeName)
+		{
+			dbType = -1;
+			typeName = string.Empty;
+			isLong = false;
+			fieldType = typeof (Type);
+			
+			switch (ctype) {
+				case TdsColumnType.Int1:
+				case TdsColumnType.Int2:
+				case TdsColumnType.Int4:
+				case TdsColumnType.IntN:
+					switch (csize) {
+					case 1:
+						typeName = "tinyint";
+						dbType = (int) SybaseType.TinyInt;
+						fieldType = typeof (byte);
+						isLong = false;
+						break;
+					case 2:
+						typeName = "smallint";
+						dbType = (int) SybaseType.SmallInt;
+						fieldType = typeof (short);
+						isLong = false;
+						break;
+					case 4:
+						typeName = "int";
+						dbType = (int) SybaseType.Int;
+						fieldType = typeof (int);
+						isLong = false;
+						break;
+					case 8:
+						typeName = "bigint";
+						dbType = (int) SybaseType.BigInt;
+						fieldType = typeof (long);
+						isLong = false;
+						break;
+					}
+					break;
+				case TdsColumnType.Real:
+				case TdsColumnType.Float8:
+				case TdsColumnType.FloatN:
+					switch (csize) {
+					case 4:
+						typeName = "real";
+						dbType = (int) SybaseType.Real;
+						fieldType = typeof (float);
+						isLong = false;
+						break;
+					case 8:
+						typeName = "float";
+						dbType = (int) SybaseType.Float;
+						fieldType = typeof (double);
+						isLong = false;
+						break;
+					}
+					break;
+				case TdsColumnType.Image :
+					typeName = "image";
+					dbType = (int) SybaseType.Image;
+					fieldType = typeof (byte[]);
+					isLong = true;
+					break;
+				case TdsColumnType.Text :
+					typeName = "text";
+					dbType = (int) SybaseType.Text;
+					fieldType = typeof (string);
+					isLong = true;
+					break;
+				case TdsColumnType.UniqueIdentifier :
+					typeName = "uniqueidentifier";
+					dbType = (int) SybaseType.UniqueIdentifier;
+					fieldType = typeof (Guid);
+					isLong = false;
+					break;
+				case TdsColumnType.VarBinary :
+				case TdsColumnType.BigVarBinary :
+					typeName = "varbinary";
+					dbType = (int) SybaseType.VarBinary;
+					fieldType = typeof (byte[]);
+					isLong = true;
+					break;
+				case TdsColumnType.VarChar :
+				case TdsColumnType.BigVarChar :
+					typeName = "varchar";
+					dbType = (int) SybaseType.VarChar;
+					fieldType = typeof (string);
+					isLong = false;
+					break;
+				case TdsColumnType.Binary :
+				case TdsColumnType.BigBinary :
+					typeName = "binary";
+					dbType = (int) SybaseType.Binary;
+					fieldType = typeof (byte[]);
+					isLong = true;
+					break;
+				case TdsColumnType.Char :
+				case TdsColumnType.BigChar :
+					typeName = "char";
+					dbType = (int) SybaseType.Char;
+					fieldType = typeof (string);
+					isLong = false;
+					break;
+				case TdsColumnType.Bit :
+				case TdsColumnType.BitN :
+					typeName = "bit";
+					dbType = (int) SybaseType.Bit;
+					fieldType = typeof (bool);
+					isLong = false;
+					break;
+				case TdsColumnType.DateTime4 :
+				case TdsColumnType.DateTime :
+				case TdsColumnType.DateTimeN :
+					typeName = "datetime";
+					dbType = (int) SybaseType.DateTime;
+					fieldType = typeof (DateTime);
+					isLong = false;
+					break;
+				case TdsColumnType.Money :
+				case TdsColumnType.MoneyN :
+				case TdsColumnType.Money4 :
+					typeName = "money";
+					dbType = (int) SybaseType.Money;
+					fieldType = typeof (decimal);
+					isLong = false;
+					break;
+				case TdsColumnType.NText :
+					typeName = "ntext";
+					dbType = (int) SybaseType.NText;
+					fieldType = typeof (string);
+					isLong = true;
+					break;
+				case TdsColumnType.NVarChar :
+					typeName = "nvarchar";
+					dbType = (int) SybaseType.NVarChar;
+					fieldType = typeof (string);
+					isLong = false;
+					break;
+				case TdsColumnType.Decimal :
+				case TdsColumnType.Numeric :
+					typeName = "decimal";
+					dbType = (int) SybaseType.Decimal;
+					fieldType = typeof (decimal);
+					isLong = false;
+					break;
+				case TdsColumnType.NChar :
+					typeName = "nchar";
+					dbType = (int) SybaseType.NChar;
+					fieldType = typeof (string);
+					isLong = false;
+					break;
+				case TdsColumnType.SmallMoney :
+					typeName = "smallmoney";
+					dbType = (int) SybaseType.SmallMoney;
+					fieldType = typeof (decimal);
+					isLong = false;
+					break;
+				default :
+					typeName = "variant";
+					dbType = (int) SybaseType.Variant;
+					fieldType = typeof (object);
+					isLong = false;
+					break;
+			}
+		}
+
+#if NET_2_0
+		new
+#endif
+		void Dispose (bool disposing) 
 		{
 			if (!disposed) {
 				if (disposing) {
@@ -162,7 +450,11 @@ namespace Mono.Data.SybaseClient {
 			}
 		}
 
-		public bool GetBoolean (int i)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		bool GetBoolean (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is bool)) {
@@ -172,7 +464,11 @@ namespace Mono.Data.SybaseClient {
 			return (bool) value;
 		}
 
-		public byte GetByte (int i)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		byte GetByte (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is byte)) {
@@ -182,7 +478,11 @@ namespace Mono.Data.SybaseClient {
 			return (byte) value;
 		}
 
-		public long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
 			object value = GetValue (i);
 			if (!(value is byte [])) {
@@ -193,7 +493,11 @@ namespace Mono.Data.SybaseClient {
 			return ((byte []) value).Length - dataIndex;
 		}
 
-		public char GetChar (int i)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		char GetChar (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is char)) {
@@ -203,7 +507,11 @@ namespace Mono.Data.SybaseClient {
 			return (char) value;
 		}
 
-		public long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length)
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length)
 		{
 			object value = GetValue (i);
 			if (!(value is char[])) {
@@ -215,17 +523,42 @@ namespace Mono.Data.SybaseClient {
 		}
 
 		[MonoTODO ("Implement GetData")]
+#if !NET_2_0
 		public IDataReader GetData (int i)
 		{
-			throw new NotImplementedException ();
+			return ((IDataReader) this [i]);
 		}
+#endif
 
-		public string GetDataTypeName (int i)
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		string GetDataTypeName (int i)
 		{
-			return (string) dataTypeNames [i];
+			TdsColumnType ctype;
+			string datatypeName = null;
+			int csize;
+			
+			if (i < 0 || i >= command.Tds.Columns.Count)
+				throw new IndexOutOfRangeException ();
+#if NET_2_0
+			ctype = (TdsColumnType) command.Tds.Columns[i].ColumnType;
+			csize = (int) command.Tds.Columns[i].ColumnSize;
+#else
+			ctype = (TdsColumnType) command.Tds.Columns[i]["ColumnType"];
+			csize = (int) command.Tds.Columns[i]["ColumnSize"];
+#endif
+			GetSchemaRowTypeName (ctype, csize, out datatypeName);
+			return datatypeName;
+
 		}
 
-		public DateTime GetDateTime (int i)
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		DateTime GetDateTime (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is DateTime)) {
@@ -235,7 +568,11 @@ namespace Mono.Data.SybaseClient {
 			return (DateTime) value;
 		}
 
-		public decimal GetDecimal (int i)
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		decimal GetDecimal (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is decimal)) {
@@ -245,7 +582,11 @@ namespace Mono.Data.SybaseClient {
 			return (decimal) value;
 		}
 
-		public double GetDouble (int i)
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		double GetDouble (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is double)) {
@@ -255,12 +596,34 @@ namespace Mono.Data.SybaseClient {
 			return (double) value;
 		}
 
-		public Type GetFieldType (int i)
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		Type GetFieldType (int i)
 		{
-			return (Type) schemaTable.Rows[i]["DataType"];
+			TdsColumnType ctype;
+			Type fieldType = null;
+			int csize;
+			
+			if (i < 0 || i >= command.Tds.Columns.Count)
+				throw new IndexOutOfRangeException ();
+#if NET_2_0
+			ctype = (TdsColumnType) command.Tds.Columns[i].ColumnType;
+			csize = (int) command.Tds.Columns[i].ColumnSize;
+#else
+			ctype = (TdsColumnType) command.Tds.Columns[i]["ColumnType"];
+			csize = (int) command.Tds.Columns[i]["ColumnSize"];
+#endif
+			GetSchemaRowFieldType (ctype, csize, out fieldType);			
+			return fieldType;
 		}
 
-		public float GetFloat (int i)
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		float GetFloat (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is float)) {
@@ -270,7 +633,11 @@ namespace Mono.Data.SybaseClient {
 			return (float) value;
 		}
 
-		public Guid GetGuid (int i)
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		Guid GetGuid (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is Guid)) {
@@ -280,7 +647,11 @@ namespace Mono.Data.SybaseClient {
 			return (Guid) value;
 		}
 
-		public short GetInt16 (int i)
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		short GetInt16 (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is short)) {
@@ -290,7 +661,11 @@ namespace Mono.Data.SybaseClient {
 			return (short) value;
 		}
 
-		public int GetInt32 (int i)
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		int GetInt32 (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is int)) {
@@ -300,7 +675,11 @@ namespace Mono.Data.SybaseClient {
 			return (int) value;
 		}
 
-		public long GetInt64 (int i)
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		long GetInt64 (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is long)) {
@@ -310,205 +689,137 @@ namespace Mono.Data.SybaseClient {
 			return (long) value;
 		}
 
-		public string GetName (int i)
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		string GetName (int i)
 		{
-			return (string) schemaTable.Rows[i]["ColumnName"];
+			if (i < 0 || i >= command.Tds.Columns.Count)
+				throw new IndexOutOfRangeException ();
+#if NET_2_0
+			return (string) command.Tds.Columns[i].ColumnName;
+#else
+			return (string) command.Tds.Columns[i]["ColumnName"];
+#endif
 		}
 
-		public int GetOrdinal (string name)
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		int GetOrdinal (string name)
 		{
-			foreach (DataRow schemaRow in schemaTable.Rows)
-				if (((string) schemaRow ["ColumnName"]).Equals (name))
-					return (int) schemaRow ["ColumnOrdinal"];
-			foreach (DataRow schemaRow in schemaTable.Rows)
-				if (String.Compare (((string) schemaRow ["ColumnName"]), name, true) == 0)
-					return (int) schemaRow ["ColumnOrdinal"];
+			string colName;
+			foreach (TdsDataColumn schema in command.Tds.Columns) {
+#if NET_2_0
+				colName = schema.ColumnName;
+				if (colName.Equals (name) || String.Compare (colName, name, true) == 0)
+					return (int) schema.ColumnOrdinal;
+#else
+				colName = (string) schema["ColumnName"];
+				if (colName.Equals (name) || String.Compare (colName, name, true) == 0)
+					return (int) schema["ColumnOrdinal"];
+#endif						
+			}			
 			throw new IndexOutOfRangeException ();
 		}
 
-		public DataTable GetSchemaTable ()
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		DataTable GetSchemaTable ()
 		{
+			ValidateState ();
+
+			if (schemaTable == null)
+				schemaTable = ConstructSchemaTable ();
+
 			if (schemaTable.Rows != null && schemaTable.Rows.Count > 0)
 				return schemaTable;
 
 			if (!moreResults)
 				return null;
 
-			fieldCount = 0;
-
-			dataTypeNames = new ArrayList ();
+			dataTypeNames = new ArrayList (command.Tds.Columns.Count);
 
 			foreach (TdsDataColumn schema in command.Tds.Columns) {
 				DataRow row = schemaTable.NewRow ();
 
+#if NET_2_0
+				row [COLUMN_NAME_IDX]		= GetSchemaValue (schema.ColumnName);
+				row [COLUMN_ORDINAL_IDX]		= GetSchemaValue (schema.ColumnOrdinal);
+				row [IS_UNIQUE_IDX]		= GetSchemaValue (schema.IsUnique);
+				row [IS_AUTO_INCREMENT_IDX]		= GetSchemaValue (schema.IsAutoIncrement);
+				row [IS_ROW_VERSION_IDX]		= GetSchemaValue (schema.IsRowVersion);
+				row [IS_HIDDEN_IDX]		= GetSchemaValue (schema.IsHidden);
+				row [IS_IDENTITY_IDX]		= GetSchemaValue (schema.IsIdentity);
+				row [COLUMN_SIZE_IDX]		= GetSchemaValue (schema.ColumnSize);
+				row [NUMERIC_PRECISION_IDX]	= GetSchemaValue (schema.NumericPrecision);
+				row [NUMERIC_SCALE_IDX]		= GetSchemaValue (schema.NumericScale);
+				row [IS_KEY_IDX]			= GetSchemaValue (schema.IsKey);
+				row [IS_ALIASED_IDX]		= GetSchemaValue (schema.IsAliased);
+				row [IS_EXPRESSION_IDX]		= GetSchemaValue (schema.IsExpression);
+				row [IS_READ_ONLY_IDX]		= GetSchemaValue (schema.IsReadOnly);
+				row [BASE_SERVER_NAME_IDX]		= GetSchemaValue (schema.BaseServerName);
+				row [BASE_CATALOG_NAME_IDX]		= GetSchemaValue (schema.BaseCatalogName);
+				row [BASE_COLUMN_NAME_IDX]		= GetSchemaValue (schema.BaseColumnName);
+				row [BASE_SCHEMA_NAME_IDX]		= GetSchemaValue (schema.BaseSchemaName);
+				row [BASE_TABLE_NAME_IDX]		= GetSchemaValue (schema.BaseTableName);
+				row [ALLOW_DBNULL_IDX]		= GetSchemaValue (schema.AllowDBNull);
+#else
 				row ["ColumnName"]		= GetSchemaValue (schema, "ColumnName");
-				row ["ColumnSize"]		= GetSchemaValue (schema, "ColumnSize"); 
 				row ["ColumnOrdinal"]		= GetSchemaValue (schema, "ColumnOrdinal");
+				row ["IsUnique"]		= GetSchemaValue (schema, "IsUnique");
+				row ["IsAutoIncrement"]		= GetSchemaValue (schema, "IsAutoIncrement");
+				row ["IsRowVersion"]		= GetSchemaValue (schema, "IsRowVersion");
+				row ["IsHidden"]		= GetSchemaValue (schema, "IsHidden");
+				row ["IsIdentity"]		= GetSchemaValue (schema, "IsIdentity");
+				row ["ColumnSize"]		= GetSchemaValue (schema, "ColumnSize");
 				row ["NumericPrecision"]	= GetSchemaValue (schema, "NumericPrecision");
 				row ["NumericScale"]		= GetSchemaValue (schema, "NumericScale");
-				row ["IsUnique"]		= GetSchemaValue (schema, "IsUnique");
 				row ["IsKey"]			= GetSchemaValue (schema, "IsKey");
+				row ["IsAliased"]		= GetSchemaValue (schema, "IsAliased");
+				row ["IsExpression"]		= GetSchemaValue (schema, "IsExpression");
+				row ["IsReadOnly"]		= GetSchemaValue (schema, "IsReadOnly");
 				row ["BaseServerName"]		= GetSchemaValue (schema, "BaseServerName");
 				row ["BaseCatalogName"]		= GetSchemaValue (schema, "BaseCatalogName");
 				row ["BaseColumnName"]		= GetSchemaValue (schema, "BaseColumnName");
 				row ["BaseSchemaName"]		= GetSchemaValue (schema, "BaseSchemaName");
 				row ["BaseTableName"]		= GetSchemaValue (schema, "BaseTableName");
 				row ["AllowDBNull"]		= GetSchemaValue (schema, "AllowDBNull");
-				row ["IsAliased"]		= GetSchemaValue (schema, "IsAliased");
-				row ["IsExpression"]		= GetSchemaValue (schema, "IsExpression");
-				row ["IsIdentity"]		= GetSchemaValue (schema, "IsIdentity");
-				row ["IsAutoIncrement"]		= GetSchemaValue (schema, "IsAutoIncrement");
-				row ["IsRowVersion"]		= GetSchemaValue (schema, "IsRowVersion");
-				row ["IsHidden"]		= GetSchemaValue (schema, "IsHidden");
-				row ["IsReadOnly"]		= GetSchemaValue (schema, "IsReadOnly");
-
+#endif
 				// We don't always get the base column name.
-				if (row ["BaseColumnName"] == DBNull.Value)
-					row ["BaseColumnName"] = row ["ColumnName"];
+				if (row [BASE_COLUMN_NAME_IDX] == DBNull.Value)
+					row [BASE_COLUMN_NAME_IDX] = row [COLUMN_NAME_IDX];
 
-				switch ((TdsColumnType) schema ["ColumnType"]) {
-					case TdsColumnType.Image :
-						dataTypeNames.Add ("image");
-						row ["ProviderType"] = (int) SybaseType.Image;
-						row ["DataType"] = typeof (byte[]);
-						row ["IsLong"] = true;
-						break;
-					case TdsColumnType.Text :
-						dataTypeNames.Add ("text");
-						row ["ProviderType"] = (int) SybaseType.Text;
-						row ["DataType"] = typeof (string);
-						row ["IsLong"] = true;
-						break;
-					case TdsColumnType.UniqueIdentifier :
-						dataTypeNames.Add ("uniqueidentifier");
-						row ["ProviderType"] = (int) SybaseType.UniqueIdentifier;
-						row ["DataType"] = typeof (Guid);
-						row ["IsLong"] = false;
-						break;
-					case TdsColumnType.VarBinary :
-					case TdsColumnType.BigVarBinary :
-						dataTypeNames.Add ("varbinary");
-						row ["ProviderType"] = (int) SybaseType.VarBinary;
-						row ["DataType"] = typeof (byte[]);
-						row ["IsLong"] = true;
-						break;
-					case TdsColumnType.IntN :
-					case TdsColumnType.Int4 :
-						dataTypeNames.Add ("int");
-						row ["ProviderType"] = (int) SybaseType.Int;
-						row ["DataType"] = typeof (int);
-						row ["IsLong"] = false;
-						break;
-					case TdsColumnType.VarChar :
-					case TdsColumnType.BigVarChar :
-						dataTypeNames.Add ("varchar");
-						row ["ProviderType"] = (int) SybaseType.VarChar;
-						row ["DataType"] = typeof (string);
-						row ["IsLong"] = false;
-						break;
-					case TdsColumnType.Binary :
-					case TdsColumnType.BigBinary :
-						dataTypeNames.Add ("binary");
-						row ["ProviderType"] = (int) SybaseType.Binary;
-						row ["DataType"] = typeof (byte[]);
-						row ["IsLong"] = true;
-						break;
-					case TdsColumnType.Char :
-					case TdsColumnType.BigChar :
-						dataTypeNames.Add ("char");
-						row ["ProviderType"] = (int) SybaseType.Char;
-						row ["DataType"] = typeof (string);
-						row ["IsLong"] = false;
-						break;
-					case TdsColumnType.Int1 :
-						dataTypeNames.Add ("tinyint");
-						row ["ProviderType"] = (int) SybaseType.TinyInt;
-						row ["DataType"] = typeof (byte);
-						row ["IsLong"] = false;
-						break;
-					case TdsColumnType.Bit :
-					case TdsColumnType.BitN :
-						dataTypeNames.Add ("bit");
-						row ["ProviderType"] = (int) SybaseType.Bit;
-						row ["DataType"] = typeof (bool);
-						row ["IsLong"] = false;
-						break;
-					case TdsColumnType.Int2 :
-						dataTypeNames.Add ("smallint");
-						row ["ProviderType"] = (int) SybaseType.SmallInt;
-						row ["DataType"] = typeof (short);
-						row ["IsLong"] = false;
-						break;
-					case TdsColumnType.DateTime4 :
-					case TdsColumnType.DateTime :
-					case TdsColumnType.DateTimeN :
-						dataTypeNames.Add ("datetime");
-						row ["ProviderType"] = (int) SybaseType.DateTime;
-						row ["DataType"] = typeof (DateTime);
-						row ["IsLong"] = false;
-						break;
-					case TdsColumnType.Real :
-						dataTypeNames.Add ("real");
-						row ["ProviderType"] = (int) SybaseType.Real;
-						row ["DataType"] = typeof (float);
-						break;
-					case TdsColumnType.Money :
-					case TdsColumnType.MoneyN :
-					case TdsColumnType.Money4 :
-						dataTypeNames.Add ("money");
-						row ["ProviderType"] = (int) SybaseType.Money;
-						row ["DataType"] = typeof (decimal);
-						row ["IsLong"] = false;
-						break;
-					case TdsColumnType.Float8 :
-					case TdsColumnType.FloatN :
-						dataTypeNames.Add ("float");
-						row ["ProviderType"] = (int) SybaseType.Float;
-						row ["DataType"] = typeof (double);
-						row ["IsLong"] = false;
-						break;
-					case TdsColumnType.NText :
-						dataTypeNames.Add ("ntext");
-						row ["ProviderType"] = (int) SybaseType.NText;
-						row ["DataType"] = typeof (string);
-						row ["IsLong"] = true;
-						break;
-					case TdsColumnType.NVarChar :
-						dataTypeNames.Add ("nvarchar");
-						row ["ProviderType"] = (int) SybaseType.NVarChar;
-						row ["DataType"] = typeof (string);
-						row ["IsLong"] = false;
-						break;
-					case TdsColumnType.Decimal :
-					case TdsColumnType.Numeric :
-						dataTypeNames.Add ("decimal");
-						row ["ProviderType"] = (int) SybaseType.Decimal;
-						row ["DataType"] = typeof (decimal);
-						row ["IsLong"] = false;
-						break;
-					case TdsColumnType.NChar :
-						dataTypeNames.Add ("nchar");
-						row ["ProviderType"] = (int) SybaseType.NChar;
-						row ["DataType"] = typeof (string);
-						row ["IsLong"] = false;
-						break;
-					case TdsColumnType.SmallMoney :
-						dataTypeNames.Add ("smallmoney");
-						row ["ProviderType"] = (int) SybaseType.SmallMoney;
-						row ["DataType"] = typeof (decimal);
-						row ["IsLong"] = false;
-						break;
-					default :
-						dataTypeNames.Add ("variant");
-						row ["ProviderType"] = (int) SybaseType.Variant;
-						row ["DataType"] = typeof (object);
-						row ["IsLong"] = false;
-						break;
-				}
+				TdsColumnType ctype;
+				int csize, dbType;				
+				Type fieldType;
+				bool isLong;
+				string typeName;
+#if NET_2_0
+				ctype = (TdsColumnType) schema.ColumnType;
+				csize = (int) schema.ColumnSize;
+#else
+				ctype = (TdsColumnType) schema ["ColumnType"];
+				csize = (int) schema ["ColumnSize"];
+#endif
+
+				GetSchemaRowType (ctype, csize, out dbType, 
+									out fieldType, out isLong, out typeName);
+				
+				dataTypeNames.Add (typeName);
+				row [PROVIDER_TYPE_IDX] = dbType;
+				row [DATA_TYPE_IDX] = fieldType;
+				row [IS_LONG_IDX] = isLong;			
+#if NET_2_0
+				if ((bool)row [IS_HIDDEN_IDX] == false)
+					visibleFieldCount += 1;
+#endif
 
 				schemaTable.Rows.Add (row);
-
-				fieldCount += 1;
 			}
 			return schemaTable;
 		}		
@@ -522,12 +833,30 @@ namespace Mono.Data.SybaseClient {
 				return DBNull.Value;
 		}
 
-		public SybaseBinary GetSybaseBinary (int i)
+#if NET_2_0
+		static object GetSchemaValue (object value)
+		{
+			if (value == null)
+				return DBNull.Value;
+
+			return value;
+		}
+#endif		
+
+		public
+#if NET_2_0
+		virtual
+#endif
+		SybaseBinary GetSybaseBinary (int i)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public SybaseBoolean GetSybaseBoolean (int i) 
+		public
+#if NET_2_0
+		virtual
+#endif
+		SybaseBoolean GetSybaseBoolean (int i) 
 		{
 			object value = GetSybaseValue (i);
 			if (!(value is SybaseBoolean))
@@ -535,7 +864,11 @@ namespace Mono.Data.SybaseClient {
 			return (SybaseBoolean) value;
 		}
 
-		public SybaseByte GetSybaseByte (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SybaseByte GetSybaseByte (int i)
 		{
 			object value = GetSybaseValue (i);
 			if (!(value is SybaseByte))
@@ -543,7 +876,11 @@ namespace Mono.Data.SybaseClient {
 			return (SybaseByte) value;
 		}
 
-		public SybaseDateTime GetSybaseDateTime (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SybaseDateTime GetSybaseDateTime (int i)
 		{
 			object value = GetSybaseValue (i);
 			if (!(value is SybaseDateTime))
@@ -551,7 +888,11 @@ namespace Mono.Data.SybaseClient {
 			return (SybaseDateTime) value;
 		}
 
-		public SybaseDecimal GetSybaseDecimal (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SybaseDecimal GetSybaseDecimal (int i)
 		{
 			object value = GetSybaseValue (i);
 			if (!(value is SybaseDecimal))
@@ -559,7 +900,11 @@ namespace Mono.Data.SybaseClient {
 			return (SybaseDecimal) value;
 		}
 
-		public SybaseDouble GetSybaseDouble (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SybaseDouble GetSybaseDouble (int i)
 		{
 			object value = GetSybaseValue (i);
 			if (!(value is SybaseDouble))
@@ -567,7 +912,11 @@ namespace Mono.Data.SybaseClient {
 			return (SybaseDouble) value;
 		}
 
-		public SybaseGuid GetSybaseGuid (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SybaseGuid GetSybaseGuid (int i)
 		{
 			object value = GetSybaseValue (i);
 			if (!(value is SybaseGuid))
@@ -575,7 +924,11 @@ namespace Mono.Data.SybaseClient {
 			return (SybaseGuid) value;
 		}
 
-		public SybaseInt16 GetSybaseInt16 (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SybaseInt16 GetSybaseInt16 (int i)
 		{
 			object value = GetSybaseValue (i);
 			if (!(value is SybaseInt16))
@@ -583,7 +936,11 @@ namespace Mono.Data.SybaseClient {
 			return (SybaseInt16) value;
 		}
 
-		public SybaseInt32 GetSybaseInt32 (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SybaseInt32 GetSybaseInt32 (int i)
 		{
 			object value = GetSybaseValue (i);
 			if (!(value is SybaseInt32))
@@ -591,7 +948,11 @@ namespace Mono.Data.SybaseClient {
 			return (SybaseInt32) value;
 		}
 
-		public SybaseInt64 GetSybaseInt64 (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SybaseInt64 GetSybaseInt64 (int i)
 		{
 			object value = GetSybaseValue (i);
 			if (!(value is SybaseInt64))
@@ -599,7 +960,11 @@ namespace Mono.Data.SybaseClient {
 			return (SybaseInt64) value;
 		}
 
-		public SybaseMoney GetSybaseMoney (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SybaseMoney GetSybaseMoney (int i)
 		{
 			object value = GetSybaseValue (i);
 			if (!(value is SybaseMoney))
@@ -607,7 +972,11 @@ namespace Mono.Data.SybaseClient {
 			return (SybaseMoney) value;
 		}
 
-		public SybaseSingle GetSybaseSingle (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SybaseSingle GetSybaseSingle (int i)
 		{
 			object value = GetSybaseValue (i);
 			if (!(value is SybaseSingle))
@@ -615,7 +984,11 @@ namespace Mono.Data.SybaseClient {
 			return (SybaseSingle) value;
 		}
 
-		public SybaseString GetSybaseString (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		SybaseString GetSybaseString (int i)
 		{
 			object value = GetSybaseValue (i);
 			if (!(value is SybaseString))
@@ -624,7 +997,11 @@ namespace Mono.Data.SybaseClient {
 		}
 
 		[MonoTODO ("Implement TdsBigDecimal conversion.  SybaseType.Real fails tests?")]
-		public object GetSybaseValue (int i)
+		public
+#if NET_2_0
+		virtual
+#endif
+		object GetSybaseValue (int i)
 		{
 			SybaseType type = (SybaseType) (schemaTable.Rows [i]["ProviderType"]);
 			object value = GetValue (i);
@@ -699,7 +1076,11 @@ namespace Mono.Data.SybaseClient {
 			throw new InvalidOperationException ("The type of this column is unknown.");
 		}
 
-		public int GetSybaseValues (object[] values)
+		public
+#if NET_2_0
+		virtual
+#endif
+		int GetSybaseValues (object[] values)
 		{
 			int count = 0;
 			int columnCount = schemaTable.Rows.Count;
@@ -716,7 +1097,11 @@ namespace Mono.Data.SybaseClient {
 			return count;
 		}
 
-		public string GetString (int i)
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		string GetString (int i)
 		{
 			object value = GetValue (i);
 			if (!(value is string)) {
@@ -726,12 +1111,20 @@ namespace Mono.Data.SybaseClient {
 			return (string) value;
 		}
 
-		public object GetValue (int i)
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		object GetValue (int i)
 		{
 			return command.Tds.ColumnValues [i];
 		}
 
-		public int GetValues (object[] values)
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		int GetValues (object[] values)
 		{
 			int len = values.Length;
 			int bigDecimalIndex = command.Tds.ColumnValues.BigDecimalIndex;
@@ -751,48 +1144,122 @@ namespace Mono.Data.SybaseClient {
 			GC.SuppressFinalize (this);
 		}
 
+#if NET_2_0
+		public override IEnumerator GetEnumerator ()
+#else
 		IEnumerator IEnumerable.GetEnumerator ()
+#endif
 		{
 			return new DbEnumerator (this);
 		}
 
-		public bool IsDBNull (int i)
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		bool IsDBNull (int i)
 		{
 			return GetValue (i) == DBNull.Value;
 		}
 
-		public bool NextResult ()
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		bool NextResult ()
 		{
+			ValidateState ();
+
 			if ((command.CommandBehavior & CommandBehavior.SingleResult) != 0 && resultsRead > 0)
 				return false;
-			if (command.Tds.DoneProc)
-				return false;
 
-			schemaTable.Rows.Clear ();
-
-			moreResults = command.Tds.NextResult ();
-			GetSchemaTable ();
+			try {
+				moreResults = command.Tds.NextResult ();
+			} catch (TdsInternalException ex) {
+				command.Connection.Close ();
+				throw SybaseException.FromTdsInternalException ((TdsInternalException) ex);
+			}
+			if (!moreResults)
+				command.GetOutputParameters ();
+			else {
+				// new schema - don't do anything except reset schemaTable as command.Tds.Columns is already updated
+				schemaTable = null;
+				dataTypeNames = null;
+			}
 
 			rowsRead = 0;
 			resultsRead += 1;
 			return moreResults;
 		}
 
-		public bool Read ()
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		bool Read ()
 		{
+			ValidateState ();
+
 			if ((command.CommandBehavior & CommandBehavior.SingleRow) != 0 && rowsRead > 0)
 				return false;
 			if ((command.CommandBehavior & CommandBehavior.SchemaOnly) != 0)
 				return false;
 			if (!moreResults)
 				return false;
-
-			bool result = command.Tds.NextRow ();
-
-			rowsRead += 1;
-
-			return result;
+	
+			if ((haveRead) && (!readResultUsed))
+			{
+				readResultUsed = true;
+				return true;
+			}
+			return (ReadRecord ());
 		}
+
+		internal bool ReadRecord ()
+		{
+			try {
+				bool result = command.Tds.NextRow ();
+			
+				rowsRead += 1;
+				return result;
+			} catch (TdsInternalException ex) {
+				command.Connection.Close ();
+				throw SybaseException.FromTdsInternalException ((TdsInternalException) ex);
+			}
+		}
+
+		void ValidateState ()
+		{
+			if (IsClosed)
+				throw new InvalidOperationException ("Invalid attempt to read data when reader is closed");
+		}
+
+#if NET_2_0
+		public override Type GetProviderSpecificFieldType (int i)
+		{
+			return (GetSybaseValue (i).GetType());
+		}
+
+		public override object GetProviderSpecificValue (int i)
+		{
+			return (GetSybaseValue (i));
+		}
+
+		public override int GetProviderSpecificValues (object [] values)
+		{
+			return (GetSybaseValues (values));
+		}
+
+/* TODO: create SybaseBytes
+		public virtual SybaseBytes GetSybaseBytes (int i)
+		{
+			Byte[] val = (byte[])GetValue(i);
+			SybaseBytes sb = new SybaseBytes (val);
+			return (sb);
+		}
+*/
+
+#endif // NET_2_0
 
 		#endregion // Methods
 	}

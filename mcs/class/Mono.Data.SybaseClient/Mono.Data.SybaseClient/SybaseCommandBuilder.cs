@@ -33,6 +33,7 @@ using System.Data;
 using System.ComponentModel;
 
 namespace Mono.Data.SybaseClient {
+	[MonoTODO("Implement getting KeyInfo in SybaseDataReader before implementing SybaseCommandBuilder.")]
 	public sealed class SybaseCommandBuilder : Component 
 	{
 		#region Constructors
@@ -146,4 +147,5 @@ namespace Mono.Data.SybaseClient {
 		}
 	}
 }
+
 

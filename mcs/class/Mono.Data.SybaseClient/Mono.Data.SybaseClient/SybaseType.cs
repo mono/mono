@@ -3,10 +3,11 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Daniel Morgan (monodanmorg@yahoo.com)
 //
 // Copyright (C) Tim Coleman, 2002
+// Copyright (C) Daniel Morgan, 2008
 //
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,7 +32,9 @@
 using System;
 
 namespace Mono.Data.SybaseClient {
+#if !NET_2_0
 	[Serializable]
+#endif
 	public enum SybaseType
 	{
 		BigInt = 0,

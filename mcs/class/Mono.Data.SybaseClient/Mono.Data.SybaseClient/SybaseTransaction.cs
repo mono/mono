@@ -3,8 +3,9 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Daniel Morgan (monodanmorg@yahoo.com)
 //
-// Copyright (C) Tim Coleman, 2002
+// Copyright (C) Tim Coleman, 2002, 2008
 //
 
 //
@@ -33,7 +34,11 @@ using System.Data;
 using System.Data.Common;
 
 namespace Mono.Data.SybaseClient {
+#if NET_2_0
+	public sealed class SybaseTransaction : DbTransaction, IDbTransaction, IDisposable
+#else
 	public sealed class SybaseTransaction : MarshalByRefObject, IDbTransaction, IDisposable
+#endif // NET_2_0
 	{
 		#region Fields
 
@@ -58,7 +63,11 @@ namespace Mono.Data.SybaseClient {
 
 		#region Properties
 
-		public SybaseConnection Connection {
+		public
+#if NET_2_0
+		new
+#endif // NET_2_0
+		SybaseConnection Connection {
 			get { return connection; }
 		}
 
@@ -66,19 +75,33 @@ namespace Mono.Data.SybaseClient {
 			get { return isOpen; }
 		}
 
-		public IsolationLevel IsolationLevel {
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		IsolationLevel IsolationLevel {
 			get { return isolationLevel; }
 		}
 		
-		IDbConnection IDbTransaction.Connection	{
+#if NET_2_0
+		protected override DbConnection DbConnection {
 			get { return Connection; }
 		}
+#else
+		IDbConnection IDbTransaction.Connection {
+			get { return Connection; }
+		}
+#endif
 
 		#endregion // Properties
                
 		#region Methods
 
-		public void Commit ()
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		void Commit ()
 		{
 			if (!isOpen)
 				throw new InvalidOperationException ("The Transaction was not open.");
@@ -87,7 +110,10 @@ namespace Mono.Data.SybaseClient {
 			isOpen = false;
 		}		
 
-		private void Dispose (bool disposing)
+#if NET_2_0
+		protected override
+#endif
+		void Dispose (bool disposing)
 		{
 			if (!disposed) {
 				if (disposing)
@@ -96,23 +122,38 @@ namespace Mono.Data.SybaseClient {
 			}
 		}
 
+#if !NET_2_0
 		public void Dispose ()
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);
 		}
+#endif
 
-		public void Rollback ()
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		void Rollback ()
 		{
 			Rollback (String.Empty);
 		}
 
 		public void Rollback (string transactionName)
 		{
+#if NET_2_0
+			if (disposed)
+				return;
+#endif
+
 			if (!isOpen)
 				throw new InvalidOperationException ("The Transaction was not open.");
-			connection.Tds.Execute (String.Format ("ROLLBACK TRANSACTION {0}", transactionName));
+
+			connection.Tds.Execute (String.Format ("IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION {0}",
+								transactionName));
 			isOpen = false;
+			connection.Transaction = null;
+			connection = null;
 		}
 
 		public void Save (string savePointName)

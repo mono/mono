@@ -2,9 +2,11 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
+Mono.Data.SybaseClient/SybaseClientFactory.cs
 Mono.Data.SybaseClient/SybaseCommand.cs
 Mono.Data.SybaseClient/SybaseCommandBuilder.cs
 Mono.Data.SybaseClient/SybaseConnection.cs
+Mono.Data.SybaseClient/SybaseConnectionStringBuilder.cs
 Mono.Data.SybaseClient/SybaseDataAdapter.cs
 Mono.Data.SybaseClient/SybaseDataReader.cs
 Mono.Data.SybaseClient/SybaseError.cs

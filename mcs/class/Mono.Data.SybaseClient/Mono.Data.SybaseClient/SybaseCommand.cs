@@ -3,11 +3,11 @@
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
-//   Daniel Morgan (danmorg@sc.rr.com)
+//   Daniel Morgan (monodanmorg@yahoo.com))
 //   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc 2002 http://www.ximian.com/
-// (C) Daniel Morgan, 2002
+// (C) Daniel Morgan, 2002, 2008
 // Copyright (C) Tim Coleman, 2002
 //
 
@@ -46,7 +46,11 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Mono.Data.SybaseClient {
+#if NET_2_0
+	public sealed class SybaseCommand : DbCommand, IDbCommand, ICloneable
+#else
 	public sealed class SybaseCommand : Component, IDbCommand, ICloneable
+#endif // NET_2_0
 	{
 		#region Fields
 
@@ -94,6 +98,20 @@ namespace Mono.Data.SybaseClient {
 			parameters = new SybaseParameterCollection (this);
 		}
 
+		private SybaseCommand(string commandText, SybaseConnection connection, SybaseTransaction transaction, CommandType commandType, UpdateRowSource updatedRowSource, bool designTimeVisible, int commandTimeout, SybaseParameterCollection parameters)
+		{
+			this.commandText = commandText;
+			this.connection = connection;
+			this.transaction = transaction;
+			this.commandType = commandType;
+			this.updatedRowSource = updatedRowSource;
+			this.designTimeVisible = designTimeVisible;
+			this.commandTimeout = commandTimeout;
+			this.parameters = new SybaseParameterCollection(this);
+			for (int i = 0;i < parameters.Count;i++)
+				this.parameters.Add(((ICloneable)parameters[i]).Clone());
+		}
+
 		#endregion // Constructors
 
 		#region Properties
@@ -102,7 +120,11 @@ namespace Mono.Data.SybaseClient {
 			get { return behavior; }
 		}
 
-		public string CommandText {
+		public
+#if NET_2_0
+		override
+#endif //NET_2_0
+		string CommandText {
 			get { return commandText; }
 			set { 
 				if (value != commandText && preparedStatement != null)
@@ -111,7 +133,11 @@ namespace Mono.Data.SybaseClient {
 			}
 		}
 
-		public int CommandTimeout {
+		public
+#if NET_2_0
+		override
+#endif //NET_2_0
+		int CommandTimeout {
 			get { return commandTimeout;  }
 			set { 
 				if (commandTimeout < 0)
@@ -120,7 +146,11 @@ namespace Mono.Data.SybaseClient {
 			}
 		}
 
-		public CommandType CommandType	{
+		public
+#if NET_2_0
+		override
+#endif //NET_2_0
+		CommandType CommandType	{
 			get { return commandType; }
 			set { 
 				if (value == CommandType.TableDirect)
@@ -129,7 +159,11 @@ namespace Mono.Data.SybaseClient {
 			}
 		}
 
-		public SybaseConnection Connection {
+		public
+#if NET_2_0
+		new
+#endif //NET_2_0
+		SybaseConnection Connection {
 			get { return connection; }
 			set { 
 				if (transaction != null && connection.Transaction != null && connection.Transaction.IsOpen)
@@ -139,12 +173,20 @@ namespace Mono.Data.SybaseClient {
 			}
 		}
 
-		public bool DesignTimeVisible {
+		public
+#if NET_2_0
+		override
+#endif //NET_2_0
+		bool DesignTimeVisible {
 			get { return designTimeVisible; } 
 			set { designTimeVisible = value; }
 		}
 
-		public SybaseParameterCollection Parameters {
+		public
+#if NET_2_0
+		new
+#endif //NET_2_0
+		SybaseParameterCollection Parameters {
 			get { return parameters; }
 		}
 
@@ -152,6 +194,7 @@ namespace Mono.Data.SybaseClient {
 			get { return Connection.Tds; }
 		}
 
+#if !NET_2_0
 		IDbConnection IDbCommand.Connection {
 			get { return Connection; }
 			set { 
@@ -173,13 +216,29 @@ namespace Mono.Data.SybaseClient {
 				Transaction = (SybaseTransaction) value; 
 			}
 		}
+#endif // !NET_2_0
 
-		public SybaseTransaction Transaction {
-			get { return transaction; }
-			set { transaction = value; }
-		}	
+		public new SybaseTransaction Transaction {
+			get {
+				if (transaction != null && !transaction.IsOpen)
+					transaction = null;
+				return transaction;
+			}
+			set
+			{
+#if ONLY_1_1
+				if (connection != null && connection.DataReader != null)
+					throw new InvalidOperationException ("The connection is busy fetching data.");
+#endif
+				transaction = value;
+			}
+		}
 
-		public UpdateRowSource UpdatedRowSource	{
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		UpdateRowSource UpdatedRowSource	{
 			get { return updatedRowSource; }
 			set { updatedRowSource = value; }
 		}
@@ -188,12 +247,23 @@ namespace Mono.Data.SybaseClient {
 
 		#region Methods
 
-		public void Cancel () 
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		void Cancel () 
 		{
 			if (Connection == null || Connection.Tds == null)
 				return;
 			Connection.Tds.Cancel ();
 		}
+
+#if NET_2_0
+		public SybaseCommand Clone ()
+		{
+			return new SybaseCommand (commandText, connection, transaction, commandType, updatedRowSource, designTimeVisible, commandTimeout, parameters);
+		}
+#endif // NET_2_0
 
 		internal void CloseDataReader (bool moreResults)
 		{
@@ -204,7 +274,7 @@ namespace Mono.Data.SybaseClient {
 				Connection.Close ();
 		}
 
-		public SybaseParameter CreateParameter () 
+		public new SybaseParameter CreateParameter () 
 		{
 			return new SybaseParameter ();
 		}
@@ -273,7 +343,11 @@ namespace Mono.Data.SybaseClient {
 				Connection.Tds.ExecPrepared (preparedStatement, parms, CommandTimeout, wantResults);
 		}
 
-		public int ExecuteNonQuery ()
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		int ExecuteNonQuery ()
 		{
 			ValidateCommand ("ExecuteNonQuery");
 			int result = 0;
@@ -290,12 +364,12 @@ namespace Mono.Data.SybaseClient {
 			return result;
 		}
 
-		public SybaseDataReader ExecuteReader ()
+		public new SybaseDataReader ExecuteReader ()
 		{
 			return ExecuteReader (CommandBehavior.Default);
 		}
 
-		public SybaseDataReader ExecuteReader (CommandBehavior behavior)
+		public new SybaseDataReader ExecuteReader (CommandBehavior behavior)
 		{
 			ValidateCommand ("ExecuteReader");
 			try {
@@ -308,7 +382,11 @@ namespace Mono.Data.SybaseClient {
 			return Connection.DataReader;
 		}
 
-		public object ExecuteScalar ()
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0 
+		object ExecuteScalar ()
 		{
 			ValidateCommand ("ExecuteScalar");
 			try {
@@ -326,7 +404,7 @@ namespace Mono.Data.SybaseClient {
 			return result;
 		}
 
-		private void GetOutputParameters ()
+		internal void GetOutputParameters ()
 		{
 			Connection.Tds.SkipToEnd ();
 
@@ -347,9 +425,10 @@ namespace Mono.Data.SybaseClient {
 
 		object ICloneable.Clone ()
 		{
-			return new SybaseCommand (commandText, Connection);
+			return new SybaseCommand (commandText, connection, transaction, commandType, updatedRowSource, designTimeVisible, commandTimeout, parameters);
 		}
 
+#if !NET_2_0
 		IDbDataParameter IDbCommand.CreateParameter ()
 		{
 			return CreateParameter ();
@@ -364,9 +443,22 @@ namespace Mono.Data.SybaseClient {
 		{
 			return ExecuteReader (behavior);
 		}
+#endif
 
-		public void Prepare ()
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		void Prepare ()
 		{
+#if NET_2_0
+			if (Connection == null)
+				throw new NullReferenceException ();
+#endif
+
+			if (CommandType == CommandType.StoredProcedure || CommandType == CommandType.Text && Parameters.Count == 0)
+				return;
+
 			ValidateCommand ("Prepare");
 			if (CommandType == CommandType.Text) 
 				preparedStatement = Connection.Tds.Prepare (CommandText, Parameters.MetaParameters);
@@ -396,6 +488,31 @@ namespace Mono.Data.SybaseClient {
 			if (Connection.DataReader != null)
 				throw new InvalidOperationException ("There is already an open DataReader associated with this Connection which must be closed first.");
 		}
+#if NET_2_0
+		protected override DbParameter CreateDbParameter ()
+		{
+			return CreateParameter ();
+		}
+
+		protected override DbDataReader ExecuteDbDataReader (CommandBehavior behavior)
+		{
+			return ExecuteReader (behavior);
+		}
+
+		protected override DbConnection DbConnection {
+			get { return Connection; }
+			set { Connection = (SybaseConnection) value; }
+		}
+
+		protected override DbParameterCollection DbParameterCollection {
+			get { return Parameters; }
+		}
+
+		protected override DbTransaction DbTransaction {
+			get { return Transaction; }
+			set { Transaction = (SybaseTransaction) value; }
+		}
+#endif // NET_2_0
 
 		#endregion // Methods
 	}

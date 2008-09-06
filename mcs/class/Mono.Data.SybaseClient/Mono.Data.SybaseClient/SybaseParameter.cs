@@ -3,13 +3,13 @@
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
-//   Daniel Morgan (danmorg@sc.rr.com)
+//   Daniel Morgan (monodanmorg@yahoo.com)
 //   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc. 2002
 // Copyright (C) Tim Coleman, 2002
+// Copyright (C) Daniel Morgan, 2008
 //
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -41,7 +41,11 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Mono.Data.SybaseClient {
+#if NET_2_0
+	public sealed class SybaseParameter : DbParameter, IDbDataParameter, IDataParameter, ICloneable
+#else
 	public sealed class SybaseParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
+#endif // NET_2_0
 	{
 		#region Fields
 
@@ -57,6 +61,9 @@ namespace Mono.Data.SybaseClient {
 		SybaseType sybaseType;
 		string sourceColumn;
 		DataRowVersion sourceVersion;
+#if NET_2_0
+		bool sourceColumnNullMapping;
+#endif
 
 		#endregion // Fields
 
@@ -147,7 +154,11 @@ namespace Mono.Data.SybaseClient {
 			set { container = value; }
 		}
 
-		public DbType DbType {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		DbType DbType {
 			get { return dbType; }
 			set { 
 				SetDbType (value); 
@@ -155,7 +166,11 @@ namespace Mono.Data.SybaseClient {
 			}
 		}
 
-		public ParameterDirection Direction {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		ParameterDirection Direction {
 			get { return direction; }
 			set { 
 				direction = value; 
@@ -173,7 +188,11 @@ namespace Mono.Data.SybaseClient {
 			set { metaParameter.ParameterName = value; }
 		}
 
-		public bool IsNullable	{
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		bool IsNullable	{
 			get { return metaParameter.IsNullable; }
 			set { metaParameter.IsNullable = value; }
 		}
@@ -182,8 +201,12 @@ namespace Mono.Data.SybaseClient {
 			get { return offset; }
 			set { offset = value; }
 		}
-		
-		public string ParameterName {
+
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0		
+		string ParameterName {
 			get { return metaParameter.ParameterName; }
 			set { metaParameter.ParameterName = value; }
 		}
@@ -198,21 +221,36 @@ namespace Mono.Data.SybaseClient {
 			set { metaParameter.Scale = value; }
 		}
 
-                public int Size {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+                int Size {
 			get { return metaParameter.Size; }
 			set { metaParameter.Size = value; }
 		}
 
-		public string SourceColumn {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		string SourceColumn {
 			get { return sourceColumn; }
 			set { sourceColumn = value; }
 		}
 
-		public DataRowVersion SourceVersion {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		DataRowVersion SourceVersion {
 			get { return sourceVersion; }
 			set { sourceVersion = value; }
 		}
-		
+
+#if NET_2_0
+		[DbProviderSpecificTypeProperty(true)]
+#endif		
 		public SybaseType SybaseType {
 			get { return sybaseType; }
 			set { 
@@ -221,7 +259,11 @@ namespace Mono.Data.SybaseClient {
 			}
 		}
 
-		public object Value {
+		public 
+#if NET_2_0
+		override
+#endif // NET_2_0
+		object Value {
 			get { return metaParameter.Value; }
 			set { 
 				if (!isTypeSet)
@@ -229,6 +271,13 @@ namespace Mono.Data.SybaseClient {
 				metaParameter.Value = value; 
 			}
 		}
+
+#if NET_2_0
+		public override bool SourceColumnNullMapping {
+			get { return sourceColumnNullMapping; }
+			set { sourceColumnNullMapping = value; }
+		}
+#endif
 
 		#endregion // Properties
 
@@ -572,6 +621,18 @@ namespace Mono.Data.SybaseClient {
 		{
 			return ParameterName;
 		}
+
+#if NET_2_0
+		public override void ResetDbType ()
+		{
+			InferSybaseType (metaParameter.Value);
+		}
+
+		public void ResetSybaseDbType ()
+		{
+			InferSybaseType (metaParameter.Value);
+		}
+#endif // NET_2_0
 
 		#endregion // Methods
 	}

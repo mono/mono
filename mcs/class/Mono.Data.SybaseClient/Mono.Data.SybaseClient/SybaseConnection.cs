@@ -3,10 +3,10 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
-//   Daniel Morgan (danmorg@sc.rr.com)
+//   Daniel Morgan (monodanmorg@yahoo.com)
 //
 // Copyright (C) Tim Coleman, 2002-2003
-// Copyright (C) Daniel Morgan, 2003
+// Copyright (C) Daniel Morgan, 2003, 2008
 //
 
 //
@@ -43,8 +43,17 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
+#if NET_2_0
+using System.Collections.Generic;
+#endif
+
 namespace Mono.Data.SybaseClient {
-	public sealed class SybaseConnection : Component, IDbConnection, ICloneable	
+	[DefaultEvent ("InfoMessage")]
+#if NET_2_0
+	public sealed class SybaseConnection : DbConnection, IDbConnection, ICloneable
+#else
+	public sealed class SybaseConnection : Component, IDbConnection, ICloneable
+#endif // NET_2_0
 	{
 		#region Fields
 		bool disposed = false;
@@ -98,16 +107,28 @@ namespace Mono.Data.SybaseClient {
 
 		#region Properties
 		
-		public string ConnectionString	{
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0 
+		string ConnectionString	{
 			get { return connectionString; }
 			set { SetConnectionString (value); }
 		}
 		
-		public int ConnectionTimeout {
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		int ConnectionTimeout {
 			get { return connectionTimeout; }
 		}
 
-		public string Database	{
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0 
+		string Database	{
 			get { return tds.Database; }
 		}
 
@@ -116,7 +137,11 @@ namespace Mono.Data.SybaseClient {
 			set { dataReader = value; }
 		}
 
-		public string DataSource {
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0 
+		string DataSource {
 			get { return dataSource; }
 		}
 
@@ -124,11 +149,19 @@ namespace Mono.Data.SybaseClient {
 			get { return packetSize; }
 		}
 
-		public string ServerVersion {
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0 
+		string ServerVersion {
 			get { return tds.ServerVersion; }
 		}
 
-		public ConnectionState State {
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		ConnectionState State {
 			get { return state; }
 		}
 
@@ -150,7 +183,10 @@ namespace Mono.Data.SybaseClient {
 		#region Events and Delegates
                 
 		public event SybaseInfoMessageEventHandler InfoMessage;
-		public event StateChangeEventHandler StateChange;
+
+#if !NET_2_0
+		public new event StateChangeEventHandler StateChange;
+#endif
 		
 		private void ErrorHandler (object sender, TdsInternalErrorMessageEventArgs e)
 		{
@@ -166,12 +202,12 @@ namespace Mono.Data.SybaseClient {
 
 		#region Methods
 
-		public SybaseTransaction BeginTransaction ()
+		public new SybaseTransaction BeginTransaction ()
 		{
 			return BeginTransaction (IsolationLevel.ReadCommitted, String.Empty);
 		}
 
-		public SybaseTransaction BeginTransaction (IsolationLevel iso)
+		public new SybaseTransaction BeginTransaction (IsolationLevel iso)
 		{
 			return BeginTransaction (iso, String.Empty);
 		}
@@ -212,7 +248,11 @@ namespace Mono.Data.SybaseClient {
 			return transaction;
 		}
 
-		public void ChangeDatabase (string database) 
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		void ChangeDatabase (string database) 
 		{
 			if (!IsValidDatabaseName (database))
 				throw new ArgumentException (String.Format ("The database name {0} is not valid."));
@@ -228,20 +268,40 @@ namespace Mono.Data.SybaseClient {
 			OnStateChange (CreateStateChangeEvent (originalState, currentState));
 		}
 
-		public void Close () 
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		void Close () 
 		{
-			if (Transaction != null && Transaction.IsOpen)
-				Transaction.Rollback ();
-			if (pooling)
-				pool.ReleaseConnection (tds);
-			else
-				tds.Disconnect ();
-			tds.TdsErrorMessage -= new TdsInternalErrorMessageEventHandler (ErrorHandler);
-			tds.TdsInfoMessage -= new TdsInternalInfoMessageEventHandler (MessageHandler);
+			if (transaction != null && transaction.IsOpen)
+				transaction.Rollback ();
+
+			if (dataReader != null) {
+				if(tds != null) tds.SkipToEnd ();
+				dataReader = null;
+			}
+
+			if (tds != null && tds.IsConnected) {
+				if (pooling && tds.Pooling) {
+#if NET_2_0
+					if(pool != null) pool.ReleaseConnection (ref tds);
+#else
+					if(pool != null) pool.ReleaseConnection (tds);
+#endif
+				}else
+					if(tds != null) tds.Disconnect ();
+			}
+
+			if (tds != null) {
+				tds.TdsErrorMessage -= new TdsInternalErrorMessageEventHandler (ErrorHandler);
+				tds.TdsInfoMessage -= new TdsInternalInfoMessageEventHandler (MessageHandler);
+			}
+
 			ChangeState (ConnectionState.Closed);
 		}
 
-		public SybaseCommand CreateCommand () 
+		public new SybaseCommand CreateCommand () 
 		{
 			SybaseCommand command = new SybaseCommand ();
 			command.Connection = this;
@@ -283,6 +343,17 @@ namespace Mono.Data.SybaseClient {
 			return new SybaseConnection (ConnectionString);
 		}
 
+#if NET_2_0
+		protected override DbTransaction BeginDbTransaction (IsolationLevel isolationLevel)
+		{
+			return BeginTransaction (isolationLevel);
+		}
+
+		protected override DbCommand CreateDbCommand ()
+		{
+			return CreateCommand ();
+		}
+#else
 		IDbTransaction IDbConnection.BeginTransaction ()
 		{
 			return BeginTransaction ();
@@ -297,6 +368,7 @@ namespace Mono.Data.SybaseClient {
 		{
 			return CreateCommand ();
 		}
+#endif
 
 		void IDisposable.Dispose ()
 		{
@@ -305,7 +377,11 @@ namespace Mono.Data.SybaseClient {
 		}
 
 		[MonoTODO ("Figure out the Sybase way to reset the connection.")]
-		public void Open () 
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		void Open () 
 		{
 			string serverName = "";
 			if (connectionString == null || connectionString.Equals (""))
@@ -471,8 +547,13 @@ namespace Mono.Data.SybaseClient {
 				parameters["PERSIST SECURITY INFO"] = "false";
 			if (null == parameters.Get ("POOLING"))
 				parameters["POOLING"] = "true";
-			if (null == parameters.Get ("WORKSTATION ID"))
+			if (null == parameters.Get ("WORKSTATION ID")) {
+#if NET_2_0
+				parameters["WORKSTATION ID"] = Dns.GetHostEntry ("localhost").HostName;
+#else
 				parameters["WORKSTATION ID"] = Dns.GetHostByName ("localhost").HostName;
+#endif
+			}
 		}
 
 		private void SetProperties (NameValueCollection parameters)
@@ -575,11 +656,47 @@ namespace Mono.Data.SybaseClient {
 				InfoMessage (this, value);
 		}
 
+#if !NET_2_0
 		private void OnStateChange (StateChangeEventArgs value)
 		{
 			if (StateChange != null)
 				StateChange (this, value);
 		}
+#endif
+
+#if NET_2_0
+		public override DataTable GetSchema ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override DataTable GetSchema (String collectionName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override DataTable GetSchema (String collectionName, string [] restrictionValues)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public static void ChangePassword (string connectionString, string newPassword)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static void ClearAllPools ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static void ClearPool (SybaseConnection connection)
+		{
+			throw new NotImplementedException ();
+		}
+
+#endif // NET_2_0
+
 
 		#endregion // Methods
 	}

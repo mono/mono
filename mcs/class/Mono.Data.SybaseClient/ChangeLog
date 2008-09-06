@@ -1,3 +1,29 @@
+2008-09-06  Daniel Morgan <monodanmorg@yahoo.com>
+
+	* Mono.Data.SybaseClient/SybaseClientFactory.cs:
+	* Mono.Data.SybaseClient/SybaseConnectionStringBuilder.cs: add new files
+	based on mono's System.Data.SqlClient implementation
+
+	* Mono.Data.SybaseClient.dll.sources: add files
+	to build: 
+		Mono.Data.SybaseClient/SybaseClientFactory.cs
+		Mono.Data.SybaseClient/SybaseConnectionStringBuilder.cs
+
+	* Mono.Data.SybaseClient/SybaseDataAdapter.cs
+	* Mono.Data.SybaseClient/SybaseCommand.cs
+	* Mono.Data.SybaseClient/SybaseParameter.cs
+	* Mono.Data.SybaseClient/SybaseType.cs
+	* Mono.Data.SybaseClient/SybaseTransaction.cs
+	* Mono.Data.SybaseClient/SybaseCommandBuilder.cs
+	* Mono.Data.SybaseClient/SybaseDataReader.cs
+	* Mono.Data.SybaseClient/SybaseParameterCollection.cs
+	* Mono.Data.SybaseClient/SybaseConnection.cs: modified to
+	support NET_2_0 profile based on the changes done in mono's 
+	System.Data.SqlClient implementation.
+
+	Do not forget about updating mono/data/net_2_0/machine.config 
+	by adding Mono.Dataq.SybaseClient to DbProvidersFactory section.
+
 2008-07-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Mono.Data.SybaseClient/SybaseDataReader.cs: Replace a few 
