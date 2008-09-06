@@ -1187,7 +1187,6 @@ public class Tests {
 	public static int test_0_pass_return_float () {
 		float f = mono_test_marshal_pass_return_float (1.5f);
 
-		Console.WriteLine (f);
 		return (f == 2.5f) ? 0 : 1;
 	}
 

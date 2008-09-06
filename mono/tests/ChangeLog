@@ -1,5 +1,7 @@
 2008-09-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* pinvoke2.cs: Remove a stray Console.WriteLine.
+
 	* libtest.c pinvoke2.cs: Add float tests.
 
 2008-08-28  Zoltan Varga  <vargaz@gmail.com>
