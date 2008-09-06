@@ -389,24 +389,92 @@ namespace System.Data.OracleClient
 
 			bool isnull = false;
 			if (direction == ParameterDirection.Input || direction == ParameterDirection.InputOutput) {
-				try {
-					Type nullable = v.GetType ().GetInterface ("System.Data.SqlTypes.INullable", false);
-					if (nullable != null) {
-						INullable mynullable = (INullable)v;
+				if (v == null || v == DBNull.Value)
+					isnull = true;
+				else {
+					INullable mynullable = v as INullable;
+					if (mynullable != null)
 						isnull = mynullable.IsNull;
-					}
-				}
-				catch(Exception e) {
-					System.IO.TextWriter.Null.WriteLine(e.Message);
-				}
-			}		
+				}					
+			} 
 
-			// TODO: handle InputOutput and Return parameters
-			if (direction == ParameterDirection.Output) {
-				// TODO: need to figure out how OracleParameter
-				//       which uses OciBindHandle to share code
-				//       with OciDefineHandle
+			if (isnull == true && direction == ParameterDirection.Input) {
+				indicator = 0;
+				bindType = OciDataType.VarChar2;
+				bindSize = 0;
+			} else {
+/*
 				switch(ociType) {
+				case OciDataType.VarChar2:
+				case OciDataType.String:
+				case OciDataType.VarChar:
+				case OciDataType.Char:
+				case OciDataType.CharZ:
+				case OciDataType.OciString:
+					//BindString();
+					bindType = OciDataType.Char;
+					if (direction == ParameterDirection.Input || 
+						direction == ParameterDirection.InputOutput) {
+						
+						// coerce (convert) value from type to type
+						string svalue = v.ToString () + '\0';
+						// set bind length to actual length of data value
+					} else {
+						// set bind length to defined length of data value
+					}
+					// allocate unmanaged memory based on bind length
+					if (direction == ParameterDirection.Input ||
+						direction == ParameterDirection.InputOutput) {
+						
+						// convert managed type to unmanaged data allocated earlier
+					}
+					// do actual bind via OCI Bind call
+					break;
+				case OciDataType.RowIdDescriptor:
+					//BindRowIdDescriptor (); // bind via BindString() with defined size of 10 or 18?
+					// set bind type to OciDataType
+					if (direction == ParameterDirection.Input || 
+						direction == ParameterDirection.InputOutput) {
+						
+						// coerce (convert) value from type to type
+						//string svalue = v.ToString () + '\0';
+						// set bind length to actual length of data value
+					} else {
+						// set bind length to defined length of data value
+					}
+					// allocate unmanaged memory based on bind length
+					if (direction == ParameterDirection.Input ||
+						direction == ParameterDirection.InputOutput) {
+						
+						// convert managed type to unmanaged data allocated earlier
+					}
+					// do actual bind via OCI Bind call
+					
+					break;
+				case OciDataType.Date:
+					BindDate ();
+					break;
+				case OciDataType.TimeStamp:
+					BindTimestamp ();
+					break;
+				case OciDataType.Number:
+					BindNumber ();
+					break;
+				case OciDataType.Long:
+				case OciDataType.LongVarChar:
+					BindLongVarChar ();
+					break;
+				case OciDataType.Blob:
+				case OciDataType.Clob:
+					BindLob ();
+					break;
+				case OciDataType.RSet: // REF CURSOR
+					BindRefCursor ();
+					break;
+				}
+*/
+		if (direction == ParameterDirection.Output || direction == ParameterDirection.InputOutput || direction == ParameterDirection.ReturnValue) {
+					switch(ociType) {
 					case OciDataType.VarChar2:
 					case OciDataType.String:
 					case OciDataType.VarChar:
@@ -633,6 +701,7 @@ namespace System.Data.OracleClient
 					bindSize = svalue.Length;
 				}
 			}
+}
 
 			// Now, call the appropriate OCI Bind function;
 

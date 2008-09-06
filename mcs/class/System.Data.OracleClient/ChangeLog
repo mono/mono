@@ -1,3 +1,29 @@
+2008-09-06  Daniel Morgan <monodanmorg@yahoo.com>
+
+	* Test/TestOracleClient.cs: get oracle connected tests
+	going again
+	
+	*  System.Data.OracleClient.Oci/OciDefineHandle.cs
+	* System.Data.OracleClient/OracleDataReader.cs
+	* System.Data.OracleClient/OracleCommand.cs: fix character
+	field value for a reader that was retrieved from a REF CURSOR.
+	It was failing due to OCI_INVALID_HANDLE - resolve the error
+	by passing a connection object which has a valid environment
+	handle.
+
+	* System.Data.OracleClient.Oci/OciCalls.cs: correct 
+	call to OCIDefineByPos
+
+	* System.Data.OracleClient/OracleParameter.cs: better way to
+	determine if the input value Is Null instead of using reflection.
+	Flush - Re-arraning how variables are being bound.
+
+	* System.Data.OracleClient/OciGlue.cs: add function
+	to convert OCI Return / Error Status Code to a String Description
+ 
+	* System.Data.OracleClient.Oci/OciErrorHandle.cs: better
+	error handling
+
 2008-09-04  Daniel Morgan <monodanmorg@yahoo.com>
 
 	* System.Data.OracleClient/OracleDataReader.cs: return true

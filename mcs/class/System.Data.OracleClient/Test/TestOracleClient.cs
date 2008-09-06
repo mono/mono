@@ -1255,6 +1255,8 @@ namespace Test.OracleClient
 			StringBuilder sb2 = new StringBuilder();
 			for (int z = 0; z < bytes.Length; z++) {
 				byte byt = bytes[z];
+				if (byt < 0x10)
+					sb2.Append ("0");
 				sb2.Append (byt.ToString("x"));
 			}
 			if (sb2.Length > 0)
@@ -1545,7 +1547,7 @@ namespace Test.OracleClient
 			cmd3.ExecuteNonQuery ();
 			DateTime outValue = (DateTime) myParameter2.Value;
 			Console.WriteLine ("    Out Value should be: 2004-12-18");
-			Console.WriteLine ("    Out Value: {0}", outValue.ToString ("yyyy-mm-dd"));
+			Console.WriteLine ("    Out Value: {0}", outValue.ToString ("yyyy-MM-dd"));
 		}
 
 		static void ShowConnectionProperties (OracleConnection con) 
@@ -1643,12 +1645,15 @@ namespace Test.OracleClient
 		
 			OracleCommand cmd = con.CreateCommand();
 
+			Console.Error.WriteLine("    create or replace package curspkg_join...");
 			cmd.CommandText = 
 				"CREATE OR REPLACE PACKAGE curspkg_join AS\n" +
 				"TYPE t_cursor IS REF CURSOR;\n" +
 				"Procedure open_join_cursor1 (n_EMPNO IN NUMBER, io_cursor IN OUT t_cursor);\n" +
 				"END curspkg_join;";
 			cmd.ExecuteNonQuery();
+
+			Console.Error.WriteLine("    create or replace package body curspkg_join...");			
 			cmd.CommandText = 
 				"CREATE OR REPLACE PACKAGE BODY curspkg_join AS\n" +
 				"   Procedure open_join_cursor1 (n_EMPNO IN NUMBER, io_cursor IN OUT t_cursor)\n" +
@@ -1658,14 +1663,14 @@ namespace Test.OracleClient
 				"        IF n_EMPNO <> 0 THEN\n" +
 				"             OPEN v_cursor FOR\n" +
 				"             SELECT EMP.EMPNO, EMP.ENAME, DEPT.DEPTNO, DEPT.DNAME\n" +
-				"                  FROM EMP, DEPT\n" +
+				"                  FROM SCOTT.EMP, SCOTT.DEPT\n" +
 				"                  WHERE EMP.DEPTNO = DEPT.DEPTNO\n" +
 				"                  AND EMP.EMPNO = n_EMPNO;\n" +
 				"\n" +
 				"        ELSE\n" +
 				"             OPEN v_cursor FOR\n" +
 				"             SELECT EMP.EMPNO, EMP.ENAME, DEPT.DEPTNO, DEPT.DNAME\n" +
-				"                  FROM EMP, DEPT\n" +
+				"                  FROM SCOTT.EMP, SCOTT.DEPT\n" +
 				"                  WHERE EMP.DEPTNO = DEPT.DEPTNO;\n" +
 				"\n" +
 				"        END IF;\n" +
@@ -1673,11 +1678,14 @@ namespace Test.OracleClient
 				"   END open_join_cursor1;\n" +
 				"END curspkg_join;";
 			cmd.ExecuteNonQuery();
+
+			cmd.CommandText = "commit";
+			cmd.ExecuteNonQuery();
 		}
 
 		public static void RefCursorTest4(OracleConnection connection) 
 		{
-			Console.WriteLine("Setup test package and data...");
+			Console.WriteLine("Setup test package and data for RefCursorTest4...");
 			OracleCommand cmddrop = connection.CreateCommand();
 
 			cmddrop.CommandText = "DROP TABLE TESTTABLE";
@@ -1696,7 +1704,7 @@ namespace Test.OracleClient
 			cmd.CommandText = 
 				"create table TESTTABLE (\n" +
 				" col1 numeric(18,0),\n" +
-				" col2 varchar(32),\n" +
+				" col2 char(32),\n" +
 				" col3 date)";
 			cmd.ExecuteNonQuery();
 
@@ -1767,7 +1775,7 @@ namespace Test.OracleClient
 				Console.WriteLine("Row {0}", r);
 				for (int f = 0; f < reader.FieldCount; f ++) {
 					object val = reader.GetValue(f);
-					Console.WriteLine("    Field {0} Value: {1}", f, val);
+					Console.WriteLine("    Field {0} Value: {1}", f, val.ToString());
 				}
 				r ++;
 			}

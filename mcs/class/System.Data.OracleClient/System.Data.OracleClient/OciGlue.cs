@@ -37,13 +37,13 @@ namespace System.Data.OracleClient.Oci {
 		OciServiceHandle service;
 		OciSessionHandle session;
 
-		// other codes
+		// OCI Return Codes
 		public const int OCI_DEFAULT = 0;
 		public const int OCI_SUCCESS = 0;
-		public const int OCI_SUCCESS_WITH_INFO = 1;
+		public const int OCI_SUCCESS_WITH_INFO = 1; // Diagnostic or Warning message - call OCIErrorGet 
 		public const int OCI_RESERVED_FOR_INT_USE = 200;
 		public const int OCI_NO_DATA = 100;
-		public const int OCI_ERROR = -1;
+		public const int OCI_ERROR = -1; // use error handle to get error code and description - call OCIErrorGet
 		public const int OCI_INVALID_HANDLE = -2;
 		public const int OCI_NEED_DATA = 99;
 		public const int OCI_STILL_EXECUTING = -3123;
@@ -199,6 +199,32 @@ namespace System.Data.OracleClient.Oci {
 			}
 		}
 
+		public static string ReturnCodeToString (int status) 
+		{
+			switch (status) {
+			case OCI_DEFAULT:
+				return "OCI_DEFAULT or OCI_SUCCESS"; // both are zero
+			case OCI_SUCCESS_WITH_INFO:
+				return "OCI_SUCCESS_WITH_INFO"; 
+			case OCI_RESERVED_FOR_INT_USE:
+				return "OCI_RESERVED_FOR_INT_USE";
+			case OCI_NO_DATA:
+				return "OCI_NO_DATA";
+			case OCI_ERROR:
+				return "OCI_ERROR";
+			case OCI_INVALID_HANDLE:
+				return "OCI_INVALID_HANDLE";
+			case OCI_NEED_DATA:
+				return "OCI_NEED_DATA";
+			case OCI_STILL_EXECUTING:
+				return "OCI_STILL_EXECUTING";
+			case OCI_CONTINUE:
+				return "OCI_CONTINUE";
+			}
+			return "Unknown Error";
+		}
+
 		#endregion // Methods
 	}
 }
+

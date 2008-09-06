@@ -172,7 +172,7 @@ namespace System.Data.OracleClient.Oci
 
 			[DllImport ("oci")]
 			internal static extern int OCIDefineByPos (IntPtr stmtp,
-				ref IntPtr defnpp,
+				out IntPtr defnpp,
 				IntPtr errhp,
 				[MarshalAs (UnmanagedType.U4)] int position,
 				IntPtr valuep,
@@ -660,7 +660,7 @@ namespace System.Data.OracleClient.Oci
 			out uint fsec);
 
 		internal static int OCIDefineByPos (IntPtr stmtp,
-			ref IntPtr defnpp,
+			out IntPtr defnpp,
 			IntPtr errhp,
 			int position,
 			IntPtr valuep,
@@ -674,7 +674,7 @@ namespace System.Data.OracleClient.Oci
 			#if TRACE
 			Trace.WriteLineIf(traceOci, "OCIDefineByPos", "OCI");
 			#endif
-			return OciNativeCalls.OCIDefineByPos (stmtp, ref defnpp, errhp, position, valuep,
+			return OciNativeCalls.OCIDefineByPos (stmtp, out defnpp, errhp, position, valuep,
 				value_sz, dty, ref indp, ref rlenp, rcodep, mode);
 		}
 

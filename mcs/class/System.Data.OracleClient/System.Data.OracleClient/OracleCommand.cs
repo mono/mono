@@ -496,7 +496,7 @@ namespace System.Data.OracleClient
 					if (statement.Fetch ()) {
 						OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [0];
 						if (!defineHandle.IsNull)
-							output = defineHandle.GetOracleValue (Connection.SessionFormatProvider);
+							output = defineHandle.GetOracleValue (Connection.SessionFormatProvider, Connection);
 						switch (defineHandle.DataType) {
 						case OciDataType.Blob:
 						case OciDataType.Clob:
@@ -637,14 +637,14 @@ namespace System.Data.OracleClient
 							case OciDataType.Blob:
 							case OciDataType.Clob:
 								OracleLob lob = (OracleLob) defineHandle.GetValue (
-									Connection.SessionFormatProvider);
+									Connection.SessionFormatProvider, Connection);
 								lob.connection = Connection;
 								output = lob.Value;
 								lob.Close ();
 								break;
 							default:
 								output = defineHandle.GetValue (
-									Connection.SessionFormatProvider);
+									Connection.SessionFormatProvider, Connection);
 								break;
 							}
 						}

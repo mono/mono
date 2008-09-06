@@ -54,7 +54,6 @@ namespace System.Data.OracleClient.Oci
 
 		OciLobLocator lobLocator;
 		OciDateTimeDescriptor dateTimeDesc;
-		//byte[] date;
 
 		#endregion // Fields
 
@@ -77,7 +76,7 @@ namespace System.Data.OracleClient.Oci
 
 			Define (position, connection);
 
-			//parameter.Dispose ();
+			parameter.Dispose ();
 		}
 
 		#endregion // Constructors
@@ -125,46 +124,46 @@ namespace System.Data.OracleClient.Oci
 		{
 			switch (definedType) {
 			case OciDataType.Date:
-				DefineDate (position);
+				DefineDate (position, connection);
 				return;
 			case OciDataType.TimeStamp:
-				DefineTimeStamp (position);
+				DefineTimeStamp (position, connection);
 				return;
 			case OciDataType.Clob:
 			case OciDataType.Blob:
 				DefineLob (position, definedType, connection);
 				return;
 			case OciDataType.Raw:
-				DefineRaw( position);
+				DefineRaw( position, connection);
 				return;
 			case OciDataType.RowIdDescriptor:
 				definedSize = 10;
-				DefineChar (position);
+				DefineChar (position, connection);
 				return;
 			case OciDataType.Integer:
 			case OciDataType.Number:
 			case OciDataType.Float:
-				DefineNumber (position);
+				DefineNumber (position, connection);
 				return;
 			case OciDataType.Long:
 			case OciDataType.LongVarChar:
-				DefineLong (position);
+				DefineLong (position, connection);
 				return;
 			default:
-				DefineChar (position); // HANDLE ALL OTHERS AS CHAR FOR NOW
+				DefineChar (position, connection); // HANDLE ALL OTHERS AS CHAR FOR NOW
 				return;
 			}
 		}
 
-		void DefineTimeStamp (int position)
+		void DefineTimeStamp (int position, OracleConnection connection)
 		{
 			definedSize = -1;
 			ociType = OciDataType.TimeStamp;
 			fieldType = typeof(System.DateTime);
 
-			dateTimeDesc = (OciDateTimeDescriptor) Parent.Parent.Allocate (OciHandleType.TimeStamp);
+			dateTimeDesc = (OciDateTimeDescriptor) connection.Environment.Allocate (OciHandleType.TimeStamp);
 			if (dateTimeDesc == null) {
-				OciErrorInfo info = ErrorHandle.HandleError ();
+				OciErrorInfo info = connection.ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
 
@@ -188,12 +187,12 @@ namespace System.Data.OracleClient.Oci
 			definedSize = 11;
 
 			if (status != 0) {
-				OciErrorInfo info = ErrorHandle.HandleError ();
+				OciErrorInfo info = connection.ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
 		}
 
-		void DefineDate (int position)
+		void DefineDate (int position, OracleConnection connection)
 		{
 			definedSize = 7;
 			ociType = OciDataType.Date;
@@ -204,7 +203,7 @@ namespace System.Data.OracleClient.Oci
 			int status = 0;
 
 			status = OciCalls.OCIDefineByPos (Parent,
-						ref handle,
+						out handle,
 						ErrorHandle,
 						position + 1,
 						value,
@@ -221,7 +220,7 @@ namespace System.Data.OracleClient.Oci
 			}
 		}
 
-		void DefineLong (int position)
+		void DefineLong (int position, OracleConnection connection)
 		{
 			fieldType = typeof (System.String);
 
@@ -241,7 +240,7 @@ namespace System.Data.OracleClient.Oci
 
 			int status = 0;
 			status = OciCalls.OCIDefineByPos (Parent,
-				ref handle,
+				out handle,
 				ErrorHandle,
 				position + 1,
 				value,
@@ -259,7 +258,7 @@ namespace System.Data.OracleClient.Oci
 			}
 		}
 
-		void DefineChar (int position)
+		void DefineChar (int position, OracleConnection connection)
 		{
 			fieldType = typeof (System.String);
 
@@ -271,7 +270,7 @@ namespace System.Data.OracleClient.Oci
 			int status = 0;
 
 			status = OciCalls.OCIDefineByPos (Parent,
-						ref handle,
+						out handle,
 						ErrorHandle,
 						position + 1,
 						value,
@@ -281,14 +280,10 @@ namespace System.Data.OracleClient.Oci
 						ref rlenp,
 						IntPtr.Zero,
 						0);
-
-			if (status != 0) {
-				OciErrorInfo info = ErrorHandle.HandleError ();
-				throw new OracleException (info.ErrorCode, info.ErrorMessage);
-			}
+			OciErrorHandle.ThrowExceptionIfError (ErrorHandle, status);
 		}
 
-		void DefineNumber (int position)
+		void DefineNumber (int position, OracleConnection connection)
 		{
 			fieldType = typeof (System.Decimal);
 			value = OciCalls.AllocateClear (definedSize);
@@ -298,7 +293,7 @@ namespace System.Data.OracleClient.Oci
 			int status = 0;
 
 			status = OciCalls.OCIDefineByPos (Parent,
-				ref handle,
+				out handle,
 				ErrorHandle,
 				position + 1,
 				value,
@@ -328,17 +323,16 @@ namespace System.Data.OracleClient.Oci
 
 			definedSize = -1;
 
-			lobLocator = (OciLobLocator) Parent.Parent.Allocate (OciHandleType.LobLocator);
+			lobLocator = (OciLobLocator) connection.Environment.Allocate (OciHandleType.LobLocator);
 
 			if (lobLocator == null) {
-				OciErrorInfo info = ErrorHandle.HandleError ();
+				OciErrorInfo info = connection.ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
 
 			value = lobLocator.Handle;
-			lobLocator.ErrorHandle = ErrorHandle;
+			lobLocator.ErrorHandle = connection.ErrorHandle;
 			lobLocator.Service = connection.ServiceContext;
-			//lobLocator.Service = ((OciStatementHandle) Parent).Service;
 
 			status = OciCalls.OCIDefineByPosPtr (Parent,
 							out handle,
@@ -355,12 +349,12 @@ namespace System.Data.OracleClient.Oci
 			definedSize = Int32.MaxValue;
 
 			if (status != 0) {
-				OciErrorInfo info = ErrorHandle.HandleError ();
+				OciErrorInfo info = connection.ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
 		}
 
-		void DefineRaw (int position)
+		void DefineRaw (int position, OracleConnection connection)
 		{
 			ociType = OciDataType.Raw;
 			fieldType = typeof (byte[]);
@@ -370,7 +364,7 @@ namespace System.Data.OracleClient.Oci
 			int status = 0;
 
 			status = OciCalls.OCIDefineByPos (Parent,
-							ref handle,
+							out handle,
 							ErrorHandle,
 							position + 1,
 							value,
@@ -412,7 +406,7 @@ namespace System.Data.OracleClient.Oci
 			return new OracleLob (lobLocator, ociType);
 		}
 
-                public object GetValue (IFormatProvider formatProvider)
+                public object GetValue (IFormatProvider formatProvider, OracleConnection conn)
 		{
 			object tmp;
 
@@ -431,12 +425,15 @@ namespace System.Data.OracleClient.Oci
 
 				// Get length of returned string
 				int 	rsize = 0;
-				IntPtr	env = Parent.Parent;	// Parent is statement, grandparent is environment
-				OciCalls.OCICharSetToUnicode (env, null, buffer, out rsize);
+				//IntPtr	env = Parent.Parent;	// Parent is statement, grandparent is environment
+				IntPtr env = conn.Environment;
+				int status = OciCalls.OCICharSetToUnicode (env, null, buffer, out rsize);
+				OciErrorHandle.ThrowExceptionIfError (ErrorHandle, status);
 
 				// Get string
 				StringBuilder ret = new StringBuilder(rsize);
-				OciCalls.OCICharSetToUnicode (env, ret, buffer, out rsize);
+				status = OciCalls.OCICharSetToUnicode (env, ret, buffer, out rsize);
+				OciErrorHandle.ThrowExceptionIfError (ErrorHandle, status);
 
 				return ret.ToString ();
 			case OciDataType.LongVarChar:
@@ -471,14 +468,16 @@ namespace System.Data.OracleClient.Oci
 			case OciDataType.Blob:
 			case OciDataType.Clob:
 				return GetOracleLob ();
+			default:
+				throw new Exception("OciDataType not implemented: " + DataType.ToString ());
 			}
 
 			return DBNull.Value;
 		}
 
-                internal object GetOracleValue (IFormatProvider formatProvider)
+                internal object GetOracleValue (IFormatProvider formatProvider, OracleConnection conn)
 		{
-                        object ovalue = GetValue (formatProvider);
+                        object ovalue = GetValue (formatProvider, conn);
 
 			switch (DataType) {
 			case OciDataType.Raw:
