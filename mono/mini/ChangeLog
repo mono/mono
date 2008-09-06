@@ -1,3 +1,9 @@
+2008-09-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_get_method): Add another cache mapping wrapper
+	methods to their code to avoid computing the full name of wrappers and
+	doing a lookup in a string hash table.
+
 2008-09-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c: Remove the CHECK_BBLOCK () stuff it is not needed since
