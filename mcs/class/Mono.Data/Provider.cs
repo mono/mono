@@ -36,6 +36,9 @@ using System.IO;
 
 namespace Mono.Data
 {
+#if NET_2_0
+	[Obsolete("ProviderFactory in assembly Mono.Data has been made obsolete by DbProviderFactories in assembly System.Data.")]
+#endif
 	public class Provider
 	{
 		private string name = null;

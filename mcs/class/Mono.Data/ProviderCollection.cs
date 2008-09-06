@@ -43,6 +43,9 @@ namespace Mono.Data
 	/// </summary>
 	/// <seealso cref='.ProviderCollection'/>
 	[Serializable ()]
+#if NET_2_0
+	[Obsolete("ProviderFactory in assembly Mono.Data has been made obsolete by DbProviderFactories in assembly System.Data.")]
+#endif
 	public class ProviderCollection : DictionaryBase  
 	{
 		

@@ -1,3 +1,14 @@
+2008-09-06  Daniel Morgan <monodanmorg@yahoo.com>
+
+	* ProviderSectionHandler.cs
+	* ProviderFactory.cs
+	* ProviderCollection.cs
+	* DataTools.cs
+	* Provider.cs: for the NET_2_0 profile, 
+	added Obsolete attribute
+	to all classes in assembly Mono.Data because it
+	has been superceded by DbProviderFactories in System.Data
+
 2006-02-13  Daniel Morgan <danielmorgan@verizon.net>
 	
 	* ProviderSectionHandler.cs
