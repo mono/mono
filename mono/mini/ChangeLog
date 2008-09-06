@@ -1,5 +1,7 @@
 2008-09-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_spill_call): Handle pinvoke+soft float on arm.
+
 	* aot-runtime.c (mono_aot_get_method): Add another cache mapping wrapper
 	methods to their code to avoid computing the full name of wrappers and
 	doing a lookup in a string hash table.

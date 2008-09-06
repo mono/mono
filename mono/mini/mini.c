@@ -2631,8 +2631,27 @@ mono_spill_call (MonoCompile *cfg, MonoBasicBlock *bblock, MonoCallInst *call, M
 			if (store->opcode == CEE_STIND_R4) {
 				/*FIXME implement proper support for to_end*/
 				g_assert (!to_end);
-				NEW_TEMPLOADA (cfg, store, temp->inst_c0);
-				handle_store_float (cfg, bblock, store, ins, ip);
+				if (sig->pinvoke) {
+					/* The called function really returns a float in an int reg */
+					switch (ins->opcode) {
+					case OP_FCALL:
+						ins->opcode = OP_CALL;
+						break;
+					case OP_FCALL_REG:
+						ins->opcode = OP_CALL_REG;
+						break;
+					case OP_FCALL_MEMBASE:
+						ins->opcode = OP_CALL_MEMBASE;
+						break;
+					default:
+						g_assert_not_reached ();
+					}
+					store->opcode = CEE_STIND_I4;
+					MONO_ADD_INS (bblock, store);
+				} else {
+					NEW_TEMPLOADA (cfg, store, temp->inst_c0);
+					handle_store_float (cfg, bblock, store, ins, ip);
+				}
 			} else
 #endif
 			if (to_end)
@@ -6143,6 +6162,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				no_spill = TRUE;
 			else
 				no_spill = FALSE;
+
+#ifdef MONO_ARCH_SOFT_FLOAT
+			if (fsig->pinvoke && fsig->ret->type == MONO_TYPE_R4)
+				/* The code to handle this is in spill_call () */
+				no_spill = FALSE;
+#endif
 
 			/* FIXME: only do this for generic methods if
 			   they are not shared! */
@@ -14075,7 +14100,6 @@ mini_init (const char *filename, const char *runtime_version)
 				ves_icall_System_Security_SecurityFrame_GetSecurityStack);
 	mono_add_internal_call ("Mono.Runtime::mono_runtime_install_handlers", 
 				mono_runtime_install_handlers);
-
 
 	create_helper_signature ();
 
