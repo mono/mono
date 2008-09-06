@@ -233,17 +233,22 @@ namespace System.Text.RegularExpressions {
 			this._groupNumberToNameMap = this.machineFactory.NamesMapping;
 		}
 
+		static readonly bool old_rx = Environment.GetEnvironmentVariable ("MONO_OLD_RX") != null;
+
 		private static IMachineFactory CreateMachineFactory (string pattern, RegexOptions options) 
 		{
 			Parser psr = new Parser ();
 			RegularExpression re = psr.ParseRegularExpression (pattern, options);
 
 			ICompiler cmp;
-			//if ((options & RegexOptions.Compiled) != 0)
-			//	//throw new Exception ("Not implemented.");
-			//	cmp = new CILCompiler ();
-			//else
-			cmp = new PatternCompiler ();
+			if (!old_rx) {
+				if ((options & RegexOptions.Compiled) != 0)
+					cmp = new CILCompiler ();
+				else
+					cmp = new RxCompiler ();
+			} else {
+				cmp = new PatternCompiler ();
+			}
 
 			re.Compile (cmp, (options & RegexOptions.RightToLeft) != 0);
 

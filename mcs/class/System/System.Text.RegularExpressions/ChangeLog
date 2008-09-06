@@ -1,3 +1,7 @@
+2008-09-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* Regex.cs: Make the new regex interpreter+compiler the default.
+
 2008-08-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* RxInterpreter.cs: Port the Anchor+StartOfString optimization from the old
