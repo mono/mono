@@ -1,5 +1,8 @@
 2008-09-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (MONO_AOT_FILE_VERSION): Bump this because of the arm AOT
+	changes.
+
 	* mini.c (mono_spill_call): Handle pinvoke+soft float on arm.
 
 	* aot-runtime.c (mono_aot_get_method): Add another cache mapping wrapper
