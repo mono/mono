@@ -1,3 +1,11 @@
+2008-09-07  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* GridEntry.cs, PropertyGridView.cs: 
+	   - Update the ReadOnly detection and rendering to finally hopefully 
+	   match the one of MSFT.
+	   - Niceify and move the debug CWLS.
+	[Fixes bug #409028]
+
 2008-09-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Don't call Invalidate at all from SetItemLocation,
