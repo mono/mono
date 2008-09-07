@@ -1,4 +1,4 @@
-// 
+//
 // System.Data/DataSet.cs
 //
 // Author:
@@ -25,10 +25,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -87,7 +87,8 @@ namespace System.Data
 
 		#region Constructors
 
-		public DataSet () : this ("NewDataSet") 
+		public DataSet ()
+			: this ("NewDataSet")
 		{
 		}
 
@@ -100,7 +101,8 @@ namespace System.Data
 			prefix = String.Empty;
 		}
 
-		protected DataSet (SerializationInfo info, StreamingContext context) : this ()
+		protected DataSet (SerializationInfo info, StreamingContext context)
+			: this ()
 		{
 			GetSerializationData (info, context);
 		}
@@ -122,21 +124,18 @@ namespace System.Data
 #endif
 		[DefaultValue (false)]
 		public bool CaseSensitive {
-			get {
-				return caseSensitive;
-			}
+			get { return caseSensitive; }
 			set {
-				caseSensitive = value; 
+				caseSensitive = value;
 				if (!caseSensitive) {
 					foreach (DataTable table in Tables) {
-						table.ResetCaseSensitiveIndexes();
+						table.ResetCaseSensitiveIndexes ();
 						foreach (Constraint c in table.Constraints)
 							c.AssertConstraint ();
 					}
-				}
-				else {
+				} else {
 					foreach (DataTable table in Tables) {
-						table.ResetCaseSensitiveIndexes();
+						table.ResetCaseSensitiveIndexes ();
 					}
 				}
 			}
@@ -146,12 +145,8 @@ namespace System.Data
 		SerializationFormat remotingFormat = SerializationFormat.Xml;
 		[DefaultValue (SerializationFormat.Xml)]
 		public SerializationFormat RemotingFormat {
-			get {
-				return remotingFormat;
-			}
-			set {
-				remotingFormat = value;
-			}
+			get { return remotingFormat; }
+			set { remotingFormat = value; }
 		}
 #endif
 		[DataCategory ("Data")]
@@ -182,9 +177,7 @@ namespace System.Data
 		[DefaultValue (true)]
 		public bool EnforceConstraints {
 			get { return enforceConstraints; }
-			set {
-				InternalEnforceConstraints (value, true);
-			}
+			set { InternalEnforceConstraints (value, true); }
 		}
 
 		[Browsable (false)]
@@ -213,7 +206,7 @@ namespace System.Data
 #if NET_2_0
 		[Browsable (false)]
 		public bool IsInitialized {
-			get { return dataSetInitialized;}
+			get { return dataSetInitialized; }
 		}
 #endif
 		[DataCategory ("Data")]
@@ -221,9 +214,7 @@ namespace System.Data
 		[DataSysDescription ("Indicates a locale under which to compare strings within the DataSet.")]
 #endif
 		public CultureInfo Locale {
-			get {
-				return locale != null ? locale : Thread.CurrentThread.CurrentCulture;
-			}
+			get { return locale != null ? locale : Thread.CurrentThread.CurrentCulture; }
 			set {
 				if (locale == null || !locale.Equals (value)) {
 					// TODO: check if the new locale is valid
@@ -237,9 +228,9 @@ namespace System.Data
 			get { return locale != null; }
 		}
 
-		internal void InternalEnforceConstraints(bool value,bool resetIndexes)
+		internal void InternalEnforceConstraints (bool value,bool resetIndexes)
 		{
-			if (value == enforceConstraints) 
+			if (value == enforceConstraints)
 				return;
 
 			if (value) {
@@ -249,10 +240,10 @@ namespace System.Data
 					// In Fill from BeginLoadData till EndLoadData indexes are not updated (reset in EndLoadData)
 					// In DataRow.EndEdit indexes are always updated.
 					foreach (DataTable table in Tables)
-						table.ResetIndexes();
+						table.ResetIndexes ();
 				}
 
-				// TODO : Need to take care of Error handling and settting of RowErrors 
+				// TODO : Need to take care of Error handling and settting of RowErrors
 				bool constraintViolated = false;
 				foreach (DataTable table in Tables) {
 					foreach (Constraint constraint in table.Constraints)
@@ -282,39 +273,39 @@ namespace System.Data
 		{
 			Merge (table, false, MissingSchemaAction.Add);
 		}
-		
+
 		public void Merge (DataSet dataSet, bool preserveChanges)
 		{
 			Merge (dataSet, preserveChanges, MissingSchemaAction.Add);
 		}
-		
+
 		public void Merge (DataRow[] rows, bool preserveChanges, MissingSchemaAction missingSchemaAction)
 		{
 			if (rows == null)
 				throw new ArgumentNullException ("rows");
 			if (!IsLegalSchemaAction (missingSchemaAction))
 				throw new ArgumentOutOfRangeException ("missingSchemaAction");
-			
+
 			MergeManager.Merge (this, rows, preserveChanges, missingSchemaAction);
 		}
-		
+
 		public void Merge (DataSet dataSet, bool preserveChanges, MissingSchemaAction missingSchemaAction)
 		{
 			if (dataSet == null)
 				throw new ArgumentNullException ("dataSet");
 			if (!IsLegalSchemaAction (missingSchemaAction))
 				throw new ArgumentOutOfRangeException ("missingSchemaAction");
-			
+
 			MergeManager.Merge (this, dataSet, preserveChanges, missingSchemaAction);
 		}
-		
+
 		public void Merge (DataTable table, bool preserveChanges, MissingSchemaAction missingSchemaAction)
 		{
 			if (table == null)
 				throw new ArgumentNullException ("table");
 			if (!IsLegalSchemaAction (missingSchemaAction))
 				throw new ArgumentOutOfRangeException ("missingSchemaAction");
-			
+
 			MergeManager.Merge (this, table, preserveChanges, missingSchemaAction);
 		}
 
@@ -325,7 +316,7 @@ namespace System.Data
 				return true;
 			return false;
 		}
-		
+
 		[DataCategory ("Data")]
 #if !NET_2_0
 		[DataSysDescription ("Indicates the XML uri namespace for the root element pointed at by this DataSet.")]
@@ -359,7 +350,7 @@ namespace System.Data
 						throw new DataException ("Prefix '" + value + "' is not valid, because it contains special characters.");
 				}
 
-				if (value != this.prefix) 
+				if (value != this.prefix)
 					RaisePropertyChanging ("Prefix");
 				prefix = value;
 			}
@@ -371,20 +362,14 @@ namespace System.Data
 #endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataRelationCollection Relations {
-			get {
-				return relationCollection;
-			}
+			get { return relationCollection; }
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override ISite Site {
-			get {
-				return base.Site;
-			}
-			set {
-				base.Site = value;
-			}
+			get { return base.Site; }
+			set { base.Site = value; }
 		}
 
 		[DataCategory ("Data")]
@@ -400,16 +385,14 @@ namespace System.Data
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		public virtual SchemaSerializationMode SchemaSerializationMode {
-			get {
-				return SchemaSerializationMode.IncludeSchema;
-			}
+			get { return SchemaSerializationMode.IncludeSchema; }
 			set {
-				if (value != SchemaSerializationMode.IncludeSchema) 
+				if (value != SchemaSerializationMode.IncludeSchema)
 					throw new InvalidOperationException (
 							"Only IncludeSchema Mode can be set for Untyped DataSet");
 			}
 		}
-#endif 
+#endif
 
 		#endregion // Public Properties
 
@@ -438,21 +421,21 @@ namespace System.Data
 		public virtual DataSet Clone ()
 		{
 			// need to return the same type as this...
-			DataSet Copy = (DataSet) Activator.CreateInstance(GetType(), true);
-	
+			DataSet Copy = (DataSet) Activator.CreateInstance (GetType (), true);
+
 			CopyProperties (Copy);
 
 			foreach (DataTable Table in Tables) {
 				// tables are often added in no-args constructor, don't add them
 				// twice.
-				if (!Copy.Tables.Contains(Table.TableName))
+				if (!Copy.Tables.Contains (Table.TableName))
 					Copy.Tables.Add (Table.Clone ());
 			}
 
 			//Copy Relationships between tables after existance of tables
 			//and setting properties correctly
 			CopyRelations (Copy);
-			
+
 			return Copy;
 		}
 
@@ -460,7 +443,7 @@ namespace System.Data
 		public DataSet Copy ()
 		{
 			// need to return the same type as this...
-			DataSet Copy = (DataSet) Activator.CreateInstance(GetType(), true);
+			DataSet Copy = (DataSet) Activator.CreateInstance (GetType (), true);
 
 			CopyProperties (Copy);
 
@@ -500,10 +483,9 @@ namespace System.Data
 			Copy.Namespace = Namespace;
 			Copy.Prefix = Prefix;
 			//Copy.Site = Site; // FIXME : Not sure of this.
-
 		}
-		
-		
+
+
 		private void CopyRelations (DataSet Copy)
 		{
 
@@ -519,10 +501,10 @@ namespace System.Data
 
 				string pTable = MyRelation.ParentTable.TableName;
 				string cTable = MyRelation.ChildTable.TableName;
-				DataColumn[] P_DC = new DataColumn[MyRelation.ParentColumns.Length]; 
+				DataColumn[] P_DC = new DataColumn[MyRelation.ParentColumns.Length];
 				DataColumn[] C_DC = new DataColumn[MyRelation.ChildColumns.Length];
 				int i = 0;
-				
+
 				foreach (DataColumn DC in MyRelation.ParentColumns) {
 					P_DC[i]=Copy.Tables[pTable].Columns[DC.ColumnName];
 					i++;
@@ -534,16 +516,16 @@ namespace System.Data
 					C_DC[i]=Copy.Tables[cTable].Columns[DC.ColumnName];
 					i++;
 				}
-				
+
 				DataRelation cRel = new DataRelation (MyRelation.RelationName, P_DC, C_DC, false);
 				Copy.Relations.Add (cRel);
 			}
-			
+
 			// Foreign Key constraints are not cloned in DataTable.Clone
 			// so, these constraints should be cloned when copying the relations.
 			foreach (DataTable table in this.Tables) {
 				foreach (Constraint c in table.Constraints) {
-					if (!(c is ForeignKeyConstraint) 
+					if (!(c is ForeignKeyConstraint)
 						|| Copy.Tables[table.TableName].Constraints.Contains (c.ConstraintName))
 						continue;
 					ForeignKeyConstraint fc = (ForeignKeyConstraint)c;
@@ -565,12 +547,12 @@ namespace System.Data
 			return GetChanges (DataRowState.Added | DataRowState.Deleted | DataRowState.Modified);
 		}
 
-		
+
 		public DataSet GetChanges (DataRowState rowStates)
 		{
 			if (!HasChanges (rowStates))
 				return null;
-			
+
 			DataSet copySet = Clone ();
 			bool prev = copySet.EnforceConstraints;
 			copySet.EnforceConstraints = false;
@@ -590,13 +572,14 @@ namespace System.Data
 			copySet.EnforceConstraints = prev;
 			return copySet;
 		}
-		
+
 		private void AddChangedRow (Hashtable addedRows, DataTable copyTable, DataRow row)
 		{
-			if (addedRows.ContainsKey (row)) return;
+			if (addedRows.ContainsKey (row))
+				return;
 
 			foreach (DataRelation relation in row.Table.ParentRelations) {
-				DataRow parent = ( row.RowState != DataRowState.Deleted ? 
+				DataRow parent = ( row.RowState != DataRowState.Deleted ?
 						   row.GetParentRow (relation) :
 						   row.GetParentRow (relation, DataRowVersion.Original)
 						   );
@@ -608,8 +591,8 @@ namespace System.Data
 			}
 
 			// add the current row
-			DataRow newRow = copyTable.NewNotInitializedRow();
-			copyTable.Rows.AddInternal(newRow);
+			DataRow newRow = copyTable.NewNotInitializedRow ();
+			copyTable.Rows.AddInternal (newRow);
 			row.CopyValuesToRow (newRow);
 			newRow.XmlRowID = row.XmlRowID;
 			addedRows.Add (row, row);
@@ -626,7 +609,7 @@ namespace System.Data
 			return new DataTableReader ((DataTable[])Tables.ToArray (typeof (DataTable)));
 		}
 #endif
-		
+
 		public string GetXml ()
 		{
 			StringWriter Writer = new StringWriter ();
@@ -663,10 +646,10 @@ namespace System.Data
 			DataRow row;
 
 			for (int i = 0; i < tableCollection.Count; i++) {
-				table = tableCollection[i];
+				table = tableCollection [i];
 				rowCollection = table.Rows;
 				for (int j = 0; j < rowCollection.Count; j++) {
-					row = rowCollection[j];
+					row = rowCollection [j];
 					if ((row.RowState & rowStates) != 0)
 						return true;
 				}
@@ -716,9 +699,8 @@ namespace System.Data
 				throw new ArgumentNullException ("Value cannot be null. Parameter name: reader");
 
 			foreach (DataTable dt in tables) {
-				if (dt.DataSet == null || dt.DataSet != this) {
+				if (dt.DataSet == null || dt.DataSet != this)
 					throw new ArgumentException ("Table " + dt.TableName + " does not belong to this DataSet.");
-				}
 				dt.Load (reader, loadOption);
 				reader.NextResult ();
 			}
@@ -748,9 +730,8 @@ namespace System.Data
 				throw new ArgumentNullException ("Value cannot be null. Parameter name: reader");
 
 			foreach (DataTable dt in tables) {
-				if (dt.DataSet == null || dt.DataSet != this) {
+				if (dt.DataSet == null || dt.DataSet != this)
 					throw new ArgumentException ("Table " + dt.TableName + " does not belong to this DataSet.");
-				}
 				dt.Load (reader, loadOption, errorHandler);
 				reader.NextResult ();
 			}
@@ -762,7 +743,7 @@ namespace System.Data
 			int i;
 			bool oldEnforceConstraints = this.EnforceConstraints;
 			this.EnforceConstraints = false;
-			
+
 			for (i = 0; i < this.Tables.Count;i++)
 				this.Tables[i].RejectChanges ();
 
@@ -827,7 +808,7 @@ namespace System.Data
 			XmlTextWriter writer = new XmlTextWriter (fileName, null);
 			writer.Formatting = Formatting.Indented;
 			writer.WriteStartDocument (true);
-			
+
 			try {
 				WriteXml (writer, mode);
 			} finally {
@@ -856,22 +837,22 @@ namespace System.Data
 				SetRowsID();
 				WriteDiffGramElement(writer);
 			}
-			
+
 			// It should not write when there is no content to be written
 			bool shouldOutputContent = (mode != XmlWriteMode.DiffGram);
 			for (int n = 0; n < tableCollection.Count && !shouldOutputContent; n++)
 				shouldOutputContent = tableCollection [n].Rows.Count > 0;
-				
+
 			if (shouldOutputContent) {
 				WriteStartElement (writer, mode, Namespace, Prefix, XmlHelper.Encode (DataSetName));
-				
+
 				if (mode == XmlWriteMode.WriteSchema)
 					DoWriteXmlSchema (writer);
-				
+
 				WriteTables (writer, mode, Tables, DataRowVersion.Default);
 				writer.WriteEndElement ();
 			}
-			
+
 			if (mode == XmlWriteMode.DiffGram) {
 				if (HasChanges(DataRowState.Modified | DataRowState.Deleted)) {
 					DataSet beforeDS = GetChanges (DataRowState.Modified | DataRowState.Deleted);
@@ -880,7 +861,7 @@ namespace System.Data
 					writer.WriteEndElement ();
 				}
 			}
-			
+
 			if (mode == XmlWriteMode.DiffGram)
 				writer.WriteEndElement (); // diffgr:diffgram
 
@@ -891,7 +872,7 @@ namespace System.Data
 		{
 			XmlTextWriter writer = new XmlTextWriter (stream, null );
 			writer.Formatting = Formatting.Indented;
-			WriteXmlSchema (writer);	
+			WriteXmlSchema (writer);
 		}
 
 		public void WriteXmlSchema (string fileName)
@@ -920,7 +901,7 @@ namespace System.Data
 
 		public void WriteXmlSchema (XmlWriter writer)
 		{
-			//Create a skeleton doc and then write the schema 
+			//Create a skeleton doc and then write the schema
 			//proper which is common to the WriteXml method in schema mode
 			DoWriteXmlSchema (writer);
 		}
@@ -1027,7 +1008,7 @@ namespace System.Data
 
 			XmlDiffLoader DiffLoader = null;
 
-			// If diffgram, then read the first element as diffgram 
+			// If diffgram, then read the first element as diffgram
 			if (reader.LocalName == "diffgram" && reader.NamespaceURI == XmlConstants.DiffgrNamespace) {
 				switch (mode) {
 					case XmlReadMode.Auto:
@@ -1048,7 +1029,7 @@ namespace System.Data
 				}
 			}
 
-			// If schema, then read the first element as schema 
+			// If schema, then read the first element as schema
 			if (reader.LocalName == "schema" && reader.NamespaceURI == XmlSchema.Namespace) {
 				switch (mode) {
 					case XmlReadMode.IgnoreSchema:
@@ -1117,7 +1098,7 @@ namespace System.Data
 						case XmlReadMode.InferSchema:
 							reader.Skip ();
 							break;
-						
+
 						default:
 							ReadXmlSchema (reader);
 							retMode = XmlReadMode.ReadSchema;
@@ -1128,7 +1109,7 @@ namespace System.Data
 
 					continue;
 				}
-	
+
 				if ((reader.LocalName == "diffgram") && (reader.NamespaceURI == XmlConstants.DiffgrNamespace)) {
 					if ((mode == XmlReadMode.DiffGram) || (mode == XmlReadMode.IgnoreSchema)
 						|| mode == XmlReadMode.Auto) {
@@ -1196,14 +1177,14 @@ namespace System.Data
 		{
 			return DefaultViewManager;
 		}
-		
+
 		bool IListSource.ContainsListCollection {
 			get {
 				return true;
 			}
 		}
 		#endregion IListSource methods
-		
+
 		#region ISupportInitialize methods
 
 		internal bool InitInProgress {
@@ -1218,7 +1199,7 @@ namespace System.Data
 			dataSetInitialized = false;
 #endif
 		}
-		
+
 		public void EndInit ()
 		{
 			// Finsh the init'ing the tables only after adding all the
@@ -1310,7 +1291,7 @@ namespace System.Data
 				DoWriteXmlSchema (writer);
 				writer.Flush ();
 				info.AddValue ("XmlSchema", sw.ToString ());
-			
+
 				sw = new StringWriter ();
 				writer = new XmlTextWriter (sw);
 				WriteXml (writer, XmlWriteMode.DiffGram);
@@ -1410,7 +1391,7 @@ namespace System.Data
 			}
 		}
 #endif
-		
+
 		#region Protected Methods
 		protected void GetSerializationData (SerializationInfo info, StreamingContext context)
 		{
@@ -1430,13 +1411,13 @@ namespace System.Data
 			ReadXml (reader, XmlReadMode.DiffGram);
 			reader.Close ();
 		}
-		
-		
+
+
 		protected virtual System.Xml.Schema.XmlSchema GetSchemaSerializable ()
 		{
 			return null;
 		}
-		
+
 		protected virtual void ReadXmlSerializable (XmlReader reader)
 		{
 			ReadXml (reader, XmlReadMode.DiffGram);
@@ -1446,7 +1427,7 @@ namespace System.Data
 		{
 			ReadXmlSerializable(reader);
 		}
-		
+
 		void IXmlSerializable.WriteXml (XmlWriter writer)
 		{
 			DoWriteXmlSchema (writer);
@@ -1476,7 +1457,7 @@ namespace System.Data
 		{
 			return true;
 		}
-		
+
 		protected virtual bool ShouldSerializeTables ()
 		{
 			return true;
@@ -1595,10 +1576,10 @@ namespace System.Data
 			if (o is byte[]) return Convert.ToBase64String ((byte[])o);
 			return o.ToString ();
 		}
-		
+
 		private void WriteTables (XmlWriter writer, XmlWriteMode mode, DataTableCollection tableCollection, DataRowVersion version)
 		{
-			//WriteTable takes care of skipping a table if it has a 
+			//WriteTable takes care of skipping a table if it has a
 			//Nested Parent Relationship
 			foreach (DataTable table in tableCollection)
 				WriteTable ( writer, table, mode, version);
@@ -1649,11 +1630,11 @@ namespace System.Data
 						continue;
 				}
 
-				if (!row.HasVersion(version) || 
-				   (mode == XmlWriteMode.DiffGram && row.RowState == DataRowState.Unchanged 
+				if (!row.HasVersion(version) ||
+				   (mode == XmlWriteMode.DiffGram && row.RowState == DataRowState.Unchanged
 				      && version == DataRowVersion.Original))
 					continue;
-				
+
 				// First check are all the rows null. If they are we just write empty element
 				bool AllNulls = true;
 				foreach (DataColumn dc in table.Columns) {
@@ -1668,9 +1649,9 @@ namespace System.Data
 					writer.WriteElementString (XmlHelper.Encode (table.TableName), "");
 					continue;
 				}
-				
+
 				WriteTableElement (writer, mode, table, row, version);
-				
+
 				foreach (DataColumn col in atts)
 					WriteColumnAsAttribute (writer, mode, col, row, version);
 
@@ -1680,12 +1661,12 @@ namespace System.Data
 					foreach (DataColumn col in elements)
 						WriteColumnAsElement (writer, mode, col, row, version);
 				}
-				
+
 				foreach (DataRelation relation in table.ChildRelations) {
 					if (relation.Nested)
 						WriteTable (writer, row.GetChildRows (relation), mode, version, false);
 				}
-				
+
 				writer.WriteEndElement ();
 			}
 
@@ -1701,7 +1682,7 @@ namespace System.Data
 
 			if (col.Namespace != String.Empty)
 				colnspc = col.Namespace;
-	
+
 			//TODO check if I can get away with write element string
 			WriteStartElement (writer, mode, colnspc, col.Prefix, XmlHelper.Encode (col.ColumnName));
 			writer.WriteString (WriteObjectXml (rowObject));
@@ -1739,7 +1720,7 @@ namespace System.Data
 		{
 			writer.WriteStartElement (prefix, name, nspc);
 		}
-		
+
 		internal static void WriteAttributeString (XmlWriter writer, XmlWriteMode mode, string nspc, string prefix, string name, string stringValue)
 		{
 			switch ( mode) {
@@ -1754,23 +1735,23 @@ namespace System.Data
 					break;
 			};
 		}
-		
+
 		internal void WriteIndividualTableContent (XmlWriter writer, DataTable table, XmlWriteMode mode)
 		{
 			if (mode == XmlWriteMode.DiffGram) {
 				table.SetRowsID ();
 				WriteDiffGramElement (writer);
 			}
-			
+
 			WriteStartElement (writer, mode, Namespace, Prefix, XmlHelper.Encode (DataSetName));
-			
+
 			WriteTable (writer, table, mode, DataRowVersion.Default);
-			
+
 			if (mode == XmlWriteMode.DiffGram) {
 				writer.WriteEndElement (); //DataSet name
 				if (HasChanges (DataRowState.Modified | DataRowState.Deleted)) {
 
-					DataSet beforeDS = GetChanges (DataRowState.Modified | DataRowState.Deleted);	
+					DataSet beforeDS = GetChanges (DataRowState.Modified | DataRowState.Deleted);
 					WriteStartElement (writer, XmlWriteMode.DiffGram, XmlConstants.DiffgrNamespace, XmlConstants.DiffgrPrefix, "before");
 					WriteTable (writer, beforeDS.Tables [table.TableName], mode, DataRowVersion.Original);
 					writer.WriteEndElement ();
@@ -1778,21 +1759,21 @@ namespace System.Data
 			}
 			writer.WriteEndElement (); // DataSet name or diffgr:diffgram
 		}
-		
+
 		private void DoWriteXmlSchema (XmlWriter writer)
 		{
 			if (writer.WriteState == WriteState.Start)
 				writer.WriteStartDocument ();
 			XmlSchemaWriter.WriteXmlSchema (this, writer);
 		}
-		
+
 		///<summary>
 		/// Helper function to split columns into attributes elements and simple
 		/// content
 		/// </summary>
-		internal static void SplitColumns (DataTable table, 
-			out ArrayList atts, 
-			out ArrayList elements, 
+		internal static void SplitColumns (DataTable table,
+			out ArrayList atts,
+			out ArrayList elements,
 			out DataColumn simple)
 		{
 			//The columns can be attributes, hidden, elements, or simple content
@@ -1800,7 +1781,7 @@ namespace System.Data
 			atts = new System.Collections.ArrayList ();
 			elements = new System.Collections.ArrayList ();
 			simple = null;
-			
+
 			//Sort out the columns
 			foreach (DataColumn col in table.Columns) {
 				switch (col.ColumnMapping) {
@@ -1823,18 +1804,18 @@ namespace System.Data
 			}
 		}
 
-		internal static void WriteDiffGramElement(XmlWriter writer)
+		internal static void WriteDiffGramElement (XmlWriter writer)
 		{
 			WriteStartElement (writer, XmlWriteMode.DiffGram, XmlConstants.DiffgrNamespace, XmlConstants.DiffgrPrefix, "diffgram");
-			WriteAttributeString(writer, XmlWriteMode.DiffGram, null, "xmlns", XmlConstants.MsdataPrefix, XmlConstants.MsdataNamespace);
+			WriteAttributeString (writer, XmlWriteMode.DiffGram, null, "xmlns", XmlConstants.MsdataPrefix, XmlConstants.MsdataNamespace);
 		}
 
-		private void SetRowsID()
+		private void SetRowsID ()
 		{
 			foreach (DataTable table in Tables)
-				table.SetRowsID();
+				table.SetRowsID ();
 		}
-		
+
 		#endregion //Private Xml Serialisation
 	}
 }
