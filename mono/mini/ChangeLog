@@ -1,3 +1,8 @@
+2008-09-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c mini-mips.h mini-s390.h exceptions-mips.c: Kill
+	the CUSTOM_EXCEPTION_HANDLING and CUSTOM_STACK_WALK defines.
+
 2008-09-07  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir2): Disable tail calls for PPC
