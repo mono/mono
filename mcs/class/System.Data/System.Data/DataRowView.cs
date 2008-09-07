@@ -20,10 +20,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -73,71 +73,66 @@ namespace System.Data
 
 		public override bool Equals (object other)
 		{
-			return (other != null &&
-					other is DataRowView && 
-					((DataRowView)other)._dataRow != null && 
-					((DataRowView)other)._dataRow.Equals(_dataRow));
+			return other != null &&
+				other is DataRowView &&
+				((DataRowView) other)._dataRow != null &&
+				((DataRowView) other)._dataRow.Equals (_dataRow);
 		}
 
 		public void BeginEdit ()
 		{
-			_dataRow.BeginEdit();
+			_dataRow.BeginEdit ();
 		}
 
 		public void CancelEdit ()
 		{
 			// FIXME:
-			if (this.Row == DataView._lastAdded) {
-				DataView.CompleteLastAdded(false);
-			}
-			else {
+			if (this.Row == DataView._lastAdded)
+				DataView.CompleteLastAdded (false);
+			else
 				_dataRow.CancelEdit();
-			}
 		}
 
 		public DataView CreateChildView (DataRelation relation)
 		{
-			return DataView.CreateChildView(relation,_index);
+			return DataView.CreateChildView (relation, _index);
 		}
 
 		public DataView CreateChildView (string relationName)
 		{
-			return CreateChildView (
-				Row.Table.ChildRelations [relationName]);
+			return CreateChildView (Row.Table.ChildRelations [relationName]);
 		}
 
 		public void Delete ()
 		{
-			DataView.Delete(_index);
+			DataView.Delete (_index);
 		}
 
 		public void EndEdit ()
 		{
 			// FIXME:
-			if (this.Row == DataView._lastAdded) {
+			if (this.Row == DataView._lastAdded)
 				DataView.CompleteLastAdded(true);
-			}
-			else {
+			else
 				_dataRow.EndEdit();
-			}
 		}
 
 		private void CheckAllowEdit ()
 		{
 			if (!DataView.AllowEdit && (Row != DataView._lastAdded))
-				throw new DataException("Cannot edit on a DataSource where AllowEdit is false.");
+				throw new DataException ("Cannot edit on a DataSource where AllowEdit is false.");
 		}
 
 		#endregion // Methods
 
 		#region Properties
-		
+
 		public DataView DataView {
 			get { return _dataView; }
 		}
 
 		public bool IsEdit {
-			get { return _dataRow.HasVersion(DataRowVersion.Proposed); }
+			get { return _dataRow.HasVersion (DataRowVersion.Proposed); }
 		}
 
 		// It becomes true when this instance is created by
@@ -145,11 +140,9 @@ namespace System.Data
 		// "Detached", and when this.EndEdit() is invoked, the row
 		// will be added to the table.
 		public bool IsNew {
-			get {
-				return Row == DataView._lastAdded;
-			}
+			get { return Row == DataView._lastAdded; }
 		}
-		
+
 		[System.Runtime.CompilerServices.IndexerName("Item")]
 		public object this [string property] {
 			get {
@@ -157,19 +150,19 @@ namespace System.Data
 
 				if (dc == null) {
 					string error = property + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName;
-					throw new ArgumentException(error);
+					throw new ArgumentException (error);
 				}
-				return _dataRow[dc, GetActualRowVersion ()];
+				return _dataRow [dc, GetActualRowVersion ()];
 			}
 			set {
-				CheckAllowEdit();
+				CheckAllowEdit ();
 				DataColumn dc = _dataView.Table.Columns [property];
 
 				if (dc == null) {
 					string error = property + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName;
 					throw new ArgumentException(error);
 				}
-				_dataRow[dc] = value;
+				_dataRow [dc] = value;
 			}
 		}
 
@@ -183,17 +176,17 @@ namespace System.Data
 					string error = ndx + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName;
 					throw new ArgumentException(error);
 				}
-				return _dataRow[dc, GetActualRowVersion ()];
+				return _dataRow [dc, GetActualRowVersion ()];
 			}
 			set {
-				CheckAllowEdit();
+				CheckAllowEdit ();
 				DataColumn dc = _dataView.Table.Columns [ndx];
 
 				if (dc == null) {
 					string error = ndx + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName;
-					throw new ArgumentException(error);
+					throw new ArgumentException (error);
 				}
-				_dataRow[dc] = value;
+				_dataRow [dc] = value;
 
 			}
 		}
@@ -215,9 +208,7 @@ namespace System.Data
 		}
 
 		public DataRow Row {
-			get {
-				return _dataRow;
-			}
+			get { return _dataRow; }
 		}
 
 		public DataRowVersion RowVersion {
@@ -240,9 +231,9 @@ namespace System.Data
 		}
 
 		#endregion // Properties
-		
+
 		#region ICustomTypeDescriptor implementations
-		
+
 		AttributeCollection ICustomTypeDescriptor.GetAttributes ()
 		{
 			System.ComponentModel.AttributeCollection attributes;
@@ -255,7 +246,7 @@ namespace System.Data
 		{
 			return string.Empty;
 		}
-		
+
 		[MonoTODO ("Not implemented.   Always returns null")]
 		string ICustomTypeDescriptor.GetComponentName ()
 		{
@@ -273,40 +264,38 @@ namespace System.Data
 		{
 			return null;
 		}
-		
+
 		[MonoTODO ("Not implemented.   Always returns null")]
 		PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty ()
 		{
 			return null;
 		}
-		
+
 		[MonoTODO ("Not implemented.   Always returns null")]
 		object ICustomTypeDescriptor.GetEditor (Type editorBaseType)
 		{
 			return null;
 		}
-		
+
 		[MonoTODO ("Not implemented.   Always returns an empty collection")]
 		EventDescriptorCollection ICustomTypeDescriptor.GetEvents ()
 		{
-			return new EventDescriptorCollection(null);
+			return new EventDescriptorCollection (null);
 		}
 
 		[MonoTODO ("Not implemented.   Always returns an empty collection")]
 		EventDescriptorCollection ICustomTypeDescriptor.GetEvents (Attribute [] attributes)
 		{
-			return new EventDescriptorCollection(null);
+			return new EventDescriptorCollection (null);
 		}
 
 		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties ()
 		{
 			if (DataView == null) {
 				ITypedList typedList = (ITypedList) _dataView;
-			return typedList.GetItemProperties(new PropertyDescriptor[0]);
+				return typedList.GetItemProperties (new PropertyDescriptor [0]);
 			}
-			else {
-				return DataView.Table.GetPropertyDescriptorCollection();
-			}
+			return DataView.Table.GetPropertyDescriptorCollection ();
 		}
 
 		[MonoTODO ("It currently reports more descriptors than necessary")]
@@ -316,11 +305,11 @@ namespace System.Data
 			descriptors = ((ICustomTypeDescriptor) this).GetProperties ();
 			// TODO: filter out descriptors which do not contain
 			//       any of those attributes
-			//       except, those descriptors 
+			//       except, those descriptors
 			//       that contain DefaultMemeberAttribute
 			return descriptors;
 		}
-		
+
 		[MonoTODO]
 		object ICustomTypeDescriptor.GetPropertyOwner (PropertyDescriptor pd)
 		{
@@ -332,21 +321,17 @@ namespace System.Data
 		#region IDataErrorInfo implementation
 
 		string IDataErrorInfo.Error {
-			[MonoTODO("Not implemented, always returns String.Empty")]
-			get {
-				return string.Empty; // FIXME
-			}
+			[MonoTODO ("Not implemented, always returns String.Empty")]
+			get { return string.Empty; }
 		}
 
 		string IDataErrorInfo.this [string colName] {
-			[MonoTODO("Not implemented, always returns String.Empty")]
-			get {
-				return string.Empty; // FIXME
-			}
+			[MonoTODO ("Not implemented, always returns String.Empty")]
+			get { return string.Empty; }
 		}
 
 		#endregion // IDataErrorInfo implementation
-		
+
 #if NET_2_0
 		#region INotifyPropertyChanged
 
