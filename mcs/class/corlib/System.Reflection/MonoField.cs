@@ -105,6 +105,7 @@ namespace System.Reflection {
 		{
 			if (!IsStatic && obj == null)
 				throw new TargetException ("Non-static field requires a target");
+			CheckGeneric ();
 			return GetValueInternal (obj);
 		}
 
@@ -123,6 +124,7 @@ namespace System.Reflection {
 				throw new FieldAccessException ("Cannot set a constant field");
 			if (binder == null)
 				binder = Binder.DefaultBinder;
+			CheckGeneric ();
 			if (val != null) {
 				object newVal;
 				newVal = binder.ChangeType (val, type, culture);
@@ -155,5 +157,12 @@ namespace System.Reflection {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public override extern object GetRawConstantValue ();
 #endif
+
+		void CheckGeneric () {
+#if NET_2_0
+			if (DeclaringType.ContainsGenericParameters)
+				throw new InvalidOperationException ("Late bound operations cannot be performed on fields with types for which Type.ContainsGenericParameters is true.");
+#endif
+	    }
 	}
 }
