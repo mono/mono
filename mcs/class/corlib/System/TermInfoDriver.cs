@@ -35,8 +35,13 @@ using System.Text;
 using System.Runtime.InteropServices;
 namespace System {
 	class TermInfoDriver : IConsoleDriver {
-		/* Do not rename this field, its looked up from the runtime */
-		static bool need_window_dimensions = true;
+
+		// This points to a variable that is updated by unmanage code on window size changes.
+		unsafe static int *native_terminal_size;
+
+		// The current size that we believe we have
+		static int terminal_size;
+		
 		//static uint flag = 0xdeadbeef;
 		static string [] locations = { "/etc/terminfo", "/usr/share/terminfo", "/usr/lib/terminfo" };
 
@@ -200,8 +205,12 @@ namespace System {
 
 			byte vsusp;
 			byte intr;
-			if (!ConsoleDriver.TtySetup (keypadXmit, endString, out verase, out vsusp, out intr))
-				throw new IOException ("Error initializing terminal.");
+			unsafe {
+				if (!ConsoleDriver.TtySetup (keypadXmit, endString, out verase, out vsusp, out intr, out native_terminal_size))
+					throw new IOException ("Error initializing terminal.");
+
+				Console.WriteLine ("Value: 0x{0:x} and 0x{1:x}", (ulong) native_terminal_size, *native_terminal_size);
+			}
 
 			stdin = new StreamReader (Console.OpenStandardInput (0), Console.InputEncoding);
 			clear = reader.Get (TermInfoStrings.ClearScreen);
@@ -694,42 +703,36 @@ namespace System {
 			}
 		}
 
-		void GetWindowDimensions ()
+		unsafe void CheckWindowDimensions ()
 		{
-			/* Try the ioctl first */
-			if (!ConsoleDriver.GetTtySize (MonoIO.ConsoleOutput, out windowWidth, out windowHeight)) {
-				windowWidth = reader.Get (TermInfoNumbers.Columns);
-				string env = Environment.GetEnvironmentVariable ("COLUMNS");
-				if (env != null) {
-					try {
-						windowWidth = (int) UInt32.Parse (env);
-					} catch {
-					}
-				}
+			if (terminal_size == *native_terminal_size)
+				return;
 
-				windowHeight = reader.Get (TermInfoNumbers.Lines);
-				env = Environment.GetEnvironmentVariable ("LINES");
-				if (env != null) {
-					try {
-						windowHeight = (int) UInt32.Parse (env);
-					} catch {
-					}
-				}
+			terminal_size = *native_terminal_size;
+			if (*native_terminal_size == -1){
+				int c = reader.Get (TermInfoNumbers.Columns);
+				if (c != 0)
+					windowWidth = c;
+				
+				c = reader.Get (TermInfoNumbers.Lines);
+				if (c != 0)
+					windowHeight = c;
+			} else {
+				windowWidth = terminal_size >> 16;
+				windowHeight = terminal_size & 0xffff;
 			}
-
 			bufferHeight = windowHeight;
 			bufferWidth = windowWidth;
-			need_window_dimensions = false;
 		}
 
+		
 		public int WindowHeight {
 			get {
 				if (!inited) {
 					Init ();
 				}
 
-				if (need_window_dimensions)
-					GetWindowDimensions ();
+				CheckWindowDimensions ();
 				return windowHeight;
 			}
 			set {
@@ -747,7 +750,7 @@ namespace System {
 					Init ();
 				}
 
-				//GetWindowDimensions ();
+				//CheckWindowDimensions ();
 				return 0;
 			}
 			set {
@@ -765,7 +768,7 @@ namespace System {
 					Init ();
 				}
 
-				//GetWindowDimensions ();
+				//CheckWindowDimensions ();
 				return 0;
 			}
 			set {
@@ -783,8 +786,7 @@ namespace System {
 					Init ();
 				}
 
-				if (need_window_dimensions)
-					GetWindowDimensions ();
+				CheckWindowDimensions ();
 				return windowWidth;
 			}
 			set {
@@ -1167,8 +1169,8 @@ namespace System {
 				Init ();
 			}
 
-			if (bufferWidth == 0 && need_window_dimensions)
-				GetWindowDimensions ();
+			if (bufferWidth == 0)
+				CheckWindowDimensions ();
 
 			if (left < 0 || left >= bufferWidth)
 				throw new ArgumentOutOfRangeException ("left", "Value must be positive and below the buffer width.");

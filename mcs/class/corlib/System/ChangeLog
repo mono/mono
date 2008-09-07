@@ -1,3 +1,8 @@
+2008-09-07  Miguel de Icaza  <miguel@novell.com>
+
+	* TermInfoDriver.cs: Add support for updating the size of the
+	terminal when it changes.   
+
 2008-08-27  Miguel de Icaza  <miguel@novell.com>
 
 	* TermInfoDriver.cs: Adds support for the Insert and Delete keys
