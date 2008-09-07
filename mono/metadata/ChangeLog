@@ -1,3 +1,21 @@
+2008-09-07  Miguel de Icaza  <miguel@novell.com>
+
+	* console-io.c: Add support for tracking the window size if it
+	changes.
+
+	The setup is very simple: the TtySetup function will now return a
+	pointer to a location in memory that tracks the current console
+	size.  The managed code checks its current value every time its
+	queried against the last value set, and updates accordingly.
+
+	With this setup we can work with multiple consoles, and we do not
+	require to poke into managed code from a signal handler.
+
+	Additionally, the environment for COLUMNS and LINES is now handled
+	in unmanaged code.
+
+	(ves_icall_System_ConsoleDriver_GetTtySize): This is now gone.
+
 2008-09-07  Mark Probst  <mark.probst@gmail.com>
 
 	* marshal.c (mono_type_native_stack_size): Treat
