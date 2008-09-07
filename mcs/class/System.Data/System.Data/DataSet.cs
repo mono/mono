@@ -45,9 +45,7 @@ using System.Globalization;
 using System.Threading;
 using System.IO;
 using System.Runtime.Serialization;
-#if NET_2_0
 using System.Runtime.Serialization.Formatters.Binary;
-#endif
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -58,17 +56,9 @@ namespace System.Data
 	[ToolboxItem ("Microsoft.VSDesigner.Data.VS.DataSetToolboxItem, " + Consts.AssemblyMicrosoft_VSDesigner)]
 	[DefaultProperty ("DataSetName")]
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataSetDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
-#if NET_2_0
-	[XmlSchemaProvider ("GetDataSetSchema")]
-	[XmlRootAttribute ("DataSet")]
-#endif
 	[Serializable]
-	public class DataSet : MarshalByValueComponent, IListSource, ISupportInitialize,
-			       ISerializable, IXmlSerializable
-#if NET_2_0
-			       , ISupportInitializeNotification
-#endif
-	{
+	public partial class DataSet : MarshalByValueComponent, IListSource, ISupportInitialize,
+			       ISerializable, IXmlSerializable {
 		private string dataSetName;
 		private string _namespace = string.Empty;
 		private string prefix;
@@ -80,9 +70,6 @@ namespace System.Data
 		private DataViewManager defaultView;
 		private CultureInfo locale;
 		internal XmlDataDocument _xmlDataDocument;
-#if NET_2_0
-		private bool dataSetInitialized = true;
-#endif
 		bool initInProgress;
 
 		#region Constructors
@@ -107,13 +94,6 @@ namespace System.Data
 			GetSerializationData (info, context);
 		}
 
-#if NET_2_0
-		[MonoTODO]
-		protected DataSet (SerializationInfo info, StreamingContext context, bool constructSchema)
-			: this (info, context)
-		{
-		}
-#endif
 		#endregion // Constructors
 
 		#region Public Properties
@@ -141,14 +121,6 @@ namespace System.Data
 			}
 		}
 
-#if NET_2_0
-		SerializationFormat remotingFormat = SerializationFormat.Xml;
-		[DefaultValue (SerializationFormat.Xml)]
-		public SerializationFormat RemotingFormat {
-			get { return remotingFormat; }
-			set { remotingFormat = value; }
-		}
-#endif
 		[DataCategory ("Data")]
 #if !NET_2_0
 		[DataSysDescription ("The name of this DataSet.")]
@@ -203,12 +175,6 @@ namespace System.Data
 			}
 		}
 
-#if NET_2_0
-		[Browsable (false)]
-		public bool IsInitialized {
-			get { return dataSetInitialized; }
-		}
-#endif
 		[DataCategory ("Data")]
 #if !NET_2_0
 		[DataSysDescription ("Indicates a locale under which to compare strings within the DataSet.")]
@@ -380,19 +346,6 @@ namespace System.Data
 		public DataTableCollection Tables {
 			get { return tableCollection; }
 		}
-
-#if NET_2_0
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[Browsable (false)]
-		public virtual SchemaSerializationMode SchemaSerializationMode {
-			get { return SchemaSerializationMode.IncludeSchema; }
-			set {
-				if (value != SchemaSerializationMode.IncludeSchema)
-					throw new InvalidOperationException (
-							"Only IncludeSchema Mode can be set for Untyped DataSet");
-			}
-		}
-#endif
 
 		#endregion // Public Properties
 
@@ -598,18 +551,6 @@ namespace System.Data
 			addedRows.Add (row, row);
 		}
 
-#if NET_2_0
-		public DataTableReader CreateDataReader (params DataTable[] dataTables)
-		{
-			return new DataTableReader (dataTables);
-		}
-
-		public DataTableReader CreateDataReader ()
-		{
-			return new DataTableReader ((DataTable[])Tables.ToArray (typeof (DataTable)));
-		}
-#endif
-
 		public string GetXml ()
 		{
 			StringWriter Writer = new StringWriter ();
@@ -624,12 +565,6 @@ namespace System.Data
 			return Writer.ToString ();
 		}
 
-#if NET_2_0
-		public static XmlSchemaComplexType GetDataSetSchema (XmlSchemaSet schemaSet)
-		{
-			return new XmlSchemaComplexType ();
-		}
-#endif
 		public bool HasChanges ()
 		{
 			return HasChanges (DataRowState.Added | DataRowState.Deleted | DataRowState.Modified);
@@ -691,52 +626,6 @@ namespace System.Data
 				reader.Close ();
 			}
 		}
-
-#if NET_2_0
-		public void Load (IDataReader reader, LoadOption loadOption, params DataTable[] tables)
-		{
-			if (reader == null)
-				throw new ArgumentNullException ("Value cannot be null. Parameter name: reader");
-
-			foreach (DataTable dt in tables) {
-				if (dt.DataSet == null || dt.DataSet != this)
-					throw new ArgumentException ("Table " + dt.TableName + " does not belong to this DataSet.");
-				dt.Load (reader, loadOption);
-				reader.NextResult ();
-			}
-		}
-
-		public void Load (IDataReader reader, LoadOption loadOption, params string[] tables)
-		{
-			if (reader == null)
-				throw new ArgumentNullException ("Value cannot be null. Parameter name: reader");
-
-			foreach (string tableName in tables) {
-				DataTable dt = Tables [tableName];
-
-				if (dt == null) {
-					dt = new DataTable (tableName);
-					Tables.Add (dt);
-				}
-				dt.Load (reader, loadOption);
-				reader.NextResult ();
-			}
-		}
-
-		public virtual void Load (IDataReader reader, LoadOption loadOption,
-					  FillErrorEventHandler errorHandler, params DataTable[] tables)
-		{
-			if (reader == null)
-				throw new ArgumentNullException ("Value cannot be null. Parameter name: reader");
-
-			foreach (DataTable dt in tables) {
-				if (dt.DataSet == null || dt.DataSet != this)
-					throw new ArgumentException ("Table " + dt.TableName + " does not belong to this DataSet.");
-				dt.Load (reader, loadOption, errorHandler);
-				reader.NextResult ();
-			}
-		}
-#endif
 
 		public virtual void RejectChanges ()
 		{
@@ -1166,10 +1055,6 @@ namespace System.Data
 #endif
 		public event MergeFailedEventHandler MergeFailed;
 
-#if NET_2_0
-		public event EventHandler Initialized;
-#endif
-
 		#endregion // Public Events
 
 		#region IListSource methods
@@ -1220,59 +1105,6 @@ namespace System.Data
 		}
 		#endregion
 
-#if NET_2_0
-		void BinarySerialize (SerializationInfo si)
-		{
-			Version vr = new Version(2, 0);
-			si.AddValue ("DataSet.RemotingVersion", vr, typeof (Version));
-			si.AddValue ("DataSet.RemotingFormat", RemotingFormat, typeof (SerializationFormat));
-			si.AddValue ("DataSet.DataSetName", DataSetName);
-			si.AddValue ("DataSet.Namespace", Namespace);
-			si.AddValue ("DataSet.Prefix", Prefix);
-			si.AddValue ("DataSet.CaseSensitive", CaseSensitive);
-			si.AddValue ("DataSet.LocaleLCID", Locale.LCID);
-			si.AddValue ("DataSet.EnforceConstraints", EnforceConstraints);
-			si.AddValue ("DataSet.ExtendedProperties", properties, typeof (PropertyCollection));
-			si.AddValue ("DataSet.Tables.Count", Tables.Count);
-			for (int i = 0; i < Tables.Count; i++) {
-				DataTable dt = Tables[i];
-				MemoryStream ms = new MemoryStream ();
-				BinaryFormatter bf = new BinaryFormatter ();
-				bf.Serialize (ms, dt);
-				byte [] serializedStream = ms.ToArray ();
-				ms.Close ();
-				si.AddValue ("DataSet.Tables_" + i, serializedStream, typeof (Byte[]));
-				for (int j = 0; j < dt.Columns.Count; j++) {
-					si.AddValue ("DataTable_" + i + ".DataColumn_" + j + ".Expression",
-						     dt.Columns[j].Expression);
-				}
-				dt.dataSet = this;
-				dt.BinarySerialize (si, "DataTable_" + i + ".");
-			}
-			ArrayList relationList = new ArrayList ();
-			for (int j = 0; j < Relations.Count; j++)
-			{
-				DataRelation dr = Relations[j];
-				ArrayList tmpArrayList = new ArrayList ();
-				tmpArrayList.Add (dr.RelationName);
-				Array relationArray = new int [2];
-				DataTable dt = dr.ParentTable;
-				relationArray.SetValue (Tables.IndexOf (dt), 0);
-				relationArray.SetValue (dt.Columns.IndexOf (Relations[j].ParentColumns [0]), 1);
-				tmpArrayList.Add (relationArray);
-				relationArray = new int [2];
-				dt = dr.ChildTable;
-				relationArray.SetValue (Tables.IndexOf (dt), 0);
-				relationArray.SetValue (dt.Columns.IndexOf (Relations [j].ChildColumns [0]), 1);
-				tmpArrayList.Add (relationArray);
-				tmpArrayList.Add (false); // FIXME
-				tmpArrayList.Add (null); // FIXME
-				relationList.Add (tmpArrayList);
-			}
-			si.AddValue ("DataSet.Relations", relationList, typeof (ArrayList));
-		}
-#endif
-
 		#region ISerializable
 #if NET_2_0
 		public virtual
@@ -1304,93 +1136,6 @@ namespace System.Data
 #endif
 		}
 		#endregion
-
-#if NET_2_0
-		void BinaryDeserialize (SerializationInfo info)
-		{
-			ArrayList arrayList = null;
-
-			DataSetName = info.GetString ("DataSet.DataSetName");
-			Namespace = info.GetString ("DataSet.Namespace");
-			CaseSensitive = info.GetBoolean ("DataSet.CaseSensitive");
-			Locale = new CultureInfo (info.GetInt32 ("DataSet.LocaleLCID"));
-			EnforceConstraints = info.GetBoolean ("DataSet.EnforceConstraints");
-			Prefix = info.GetString ("DataSet.Prefix");
-			/*
-			  FIXME: Private variable available in SerializationInfo
-			  this.RemotingVersion = (System.Version) info.GetValue("DataSet.RemotingVersion",
-			  typeof(System.Version));
-			*/
-			properties = (PropertyCollection) info.GetValue ("DataSet.ExtendedProperties",
-									 typeof (PropertyCollection));
-			int tableCount = info.GetInt32 ("DataSet.Tables.Count");
-
-			Byte [] bytes;
-			DataTable dt = null;
-			for (int i = 0; i < tableCount; i++) {
-				bytes = (Byte []) info.GetValue ("DataSet.Tables_" + i,
-								 typeof (Byte[]));
-				MemoryStream ms = new MemoryStream (bytes);
-				BinaryFormatter bf = new BinaryFormatter ();
-				dt = (DataTable) bf.Deserialize (ms);
-				ms.Close ();
-				for (int j = 0; j < dt.Columns.Count; j++) {
-					dt.Columns[j].Expression = info.GetString ("DataTable_" + i +
-										   ".DataColumn_" + j +
-										   ".Expression");
-				}
-				/*
-				  Not using
-				  int rowsCount = info.GetInt32 ("DataTable_" + i + ".Rows.Count");
-				  int recordsCount = info.GetInt32 ("DataTable_" + i + ".Records.Count");
-				*/
-				ArrayList nullBits = (ArrayList) info.GetValue ("DataTable_" + i + ".NullBits",
-										typeof (ArrayList));
-				arrayList = (ArrayList) info.GetValue ("DataTable_" + i + ".Records",
-								       typeof (ArrayList));
-				BitArray rowStateBitArray = (BitArray) info.GetValue ("DataTable_" + i + ".RowStates",
-										      typeof (BitArray));
-				dt.DeserializeRecords (arrayList, nullBits, rowStateBitArray);
-				Tables.Add (dt);
-			}
-			for (int i = 0; i < tableCount; i++) {
-				dt = Tables [i];
-				dt.dataSet = this;
-				arrayList = (ArrayList) info.GetValue ("DataTable_" + i + ".Constraints",
-								       typeof (ArrayList));
-				if (dt.Constraints == null)
-					dt.Constraints = new ConstraintCollection (dt);
-				dt.DeserializeConstraints (arrayList);
-			}
-			arrayList = (ArrayList) info.GetValue ("DataSet.Relations",
-							       typeof (ArrayList));
-			bool bParentColumn = true;
-			for (int l = 0; l < arrayList.Count; l++) {
-				ArrayList tmpArrayList = (ArrayList) arrayList[l];
-				ArrayList childColumns = new ArrayList ();
-				ArrayList parentColumns = new ArrayList ();
-				for (int k = 0; k < tmpArrayList.Count; k++) {
-					if (tmpArrayList[k] != null && typeof (int) == tmpArrayList[k].GetType().GetElementType()) {
-						Array dataColumnArray = (Array)tmpArrayList[k];
-						if (bParentColumn) {
-							parentColumns.Add (Tables [(int) dataColumnArray.GetValue (0)].
-									   Columns [(int) dataColumnArray.GetValue (1)]);
-							bParentColumn = false;
-						}
-						else {
-							childColumns.Add (Tables [(int) dataColumnArray.GetValue (0)].
-									  Columns [(int) dataColumnArray.GetValue (1)]);
-							bParentColumn = true;
-						}
-					}
-				}
-				Relations.Add ((string) tmpArrayList [0],
-					       (DataColumn []) parentColumns.ToArray (typeof (DataColumn)),
-					       (DataColumn []) childColumns.ToArray (typeof (DataColumn)),
-					       false);
-			}
-		}
-#endif
 
 		#region Protected Methods
 		protected void GetSerializationData (SerializationInfo info, StreamingContext context)
@@ -1445,14 +1190,6 @@ namespace System.Data
 			return XmlSchema.Read(new XmlTextReader(stream), (ValidationEventHandler)null);
 		}
 
-#if NET_2_0
-		private void OnDataSetInitialized (EventArgs e) {
-			if (null != Initialized) {
-				Initialized (this, e);
-			}
-		}
-#endif
-
 		protected virtual bool ShouldSerializeRelations ()
 		{
 			return true;
@@ -1462,21 +1199,6 @@ namespace System.Data
 		{
 			return true;
 		}
-
-#if NET_2_0
-		private void DataSetInitialized ()
-		{
-			EventArgs e = new EventArgs ();
-			OnDataSetInitialized (e);
-		}
-
-		[MonoTODO]
-		protected virtual void InitializeDerivedDataSet ()
-		{
-			throw new NotImplementedException ();
-		}
-
-#endif
 
 		[MonoTODO]
 		protected internal virtual void OnPropertyChanging (PropertyChangedEventArgs pcevent)
@@ -1509,28 +1231,6 @@ namespace System.Data
 		{
 		}
 
-#if NET_2_0
-		protected SchemaSerializationMode DetermineSchemaSerializationMode (XmlReader reader)
-		{
-			return SchemaSerializationMode.IncludeSchema;
-		}
-
-		protected SchemaSerializationMode DetermineSchemaSerializationMode (SerializationInfo info, StreamingContext context)
-		{
-			return SchemaSerializationMode.IncludeSchema;
-		}
-
-		protected bool IsBinarySerialized (SerializationInfo info, StreamingContext context)
-		{
-			SerializationInfoEnumerator e = info.GetEnumerator ();
-			while (e.MoveNext()) {
-				if (e.ObjectType == typeof(System.Data.SerializationFormat)) {
-					return true;
-				}
-			}
-			return false;
-		}
-#endif
 		#endregion
 
 		#region Private Methods
@@ -1818,4 +1518,275 @@ namespace System.Data
 
 		#endregion //Private Xml Serialisation
 	}
+
+#if NET_2_0
+	[XmlSchemaProvider ("GetDataSetSchema")]
+	[XmlRoot ("DataSet")]
+	partial class DataSet : ISupportInitializeNotification {
+		private bool dataSetInitialized = true;
+		public event EventHandler Initialized;
+
+		[MonoTODO]
+		protected DataSet (SerializationInfo info, StreamingContext context, bool constructSchema)
+			: this (info, context)
+		{
+		}
+
+		SerializationFormat remotingFormat = SerializationFormat.Xml;
+		[DefaultValue (SerializationFormat.Xml)]
+		public SerializationFormat RemotingFormat {
+			get { return remotingFormat; }
+			set { remotingFormat = value; }
+		}
+
+		[Browsable (false)]
+		public bool IsInitialized {
+			get { return dataSetInitialized; }
+		}
+
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		public virtual SchemaSerializationMode SchemaSerializationMode {
+			get { return SchemaSerializationMode.IncludeSchema; }
+			set {
+				if (value != SchemaSerializationMode.IncludeSchema)
+					throw new InvalidOperationException (
+							"Only IncludeSchema Mode can be set for Untyped DataSet");
+			}
+		}
+
+		public DataTableReader CreateDataReader (params DataTable[] dataTables)
+		{
+			return new DataTableReader (dataTables);
+		}
+
+		public DataTableReader CreateDataReader ()
+		{
+			return new DataTableReader ((DataTable[])Tables.ToArray (typeof (DataTable)));
+		}
+
+		public static XmlSchemaComplexType GetDataSetSchema (XmlSchemaSet schemaSet)
+		{
+			return new XmlSchemaComplexType ();
+		}
+
+		public void Load (IDataReader reader, LoadOption loadOption, params DataTable[] tables)
+		{
+			if (reader == null)
+				throw new ArgumentNullException ("Value cannot be null. Parameter name: reader");
+
+			foreach (DataTable dt in tables) {
+				if (dt.DataSet == null || dt.DataSet != this)
+					throw new ArgumentException ("Table " + dt.TableName + " does not belong to this DataSet.");
+				dt.Load (reader, loadOption);
+				reader.NextResult ();
+			}
+		}
+
+		public void Load (IDataReader reader, LoadOption loadOption, params string[] tables)
+		{
+			if (reader == null)
+				throw new ArgumentNullException ("Value cannot be null. Parameter name: reader");
+
+			foreach (string tableName in tables) {
+				DataTable dt = Tables [tableName];
+
+				if (dt == null) {
+					dt = new DataTable (tableName);
+					Tables.Add (dt);
+				}
+				dt.Load (reader, loadOption);
+				reader.NextResult ();
+			}
+		}
+
+		public virtual void Load (IDataReader reader, LoadOption loadOption,
+					  FillErrorEventHandler errorHandler, params DataTable[] tables)
+		{
+			if (reader == null)
+				throw new ArgumentNullException ("Value cannot be null. Parameter name: reader");
+
+			foreach (DataTable dt in tables) {
+				if (dt.DataSet == null || dt.DataSet != this)
+					throw new ArgumentException ("Table " + dt.TableName + " does not belong to this DataSet.");
+				dt.Load (reader, loadOption, errorHandler);
+				reader.NextResult ();
+			}
+		}
+
+		void BinarySerialize (SerializationInfo si)
+		{
+			Version vr = new Version(2, 0);
+			si.AddValue ("DataSet.RemotingVersion", vr, typeof (Version));
+			si.AddValue ("DataSet.RemotingFormat", RemotingFormat, typeof (SerializationFormat));
+			si.AddValue ("DataSet.DataSetName", DataSetName);
+			si.AddValue ("DataSet.Namespace", Namespace);
+			si.AddValue ("DataSet.Prefix", Prefix);
+			si.AddValue ("DataSet.CaseSensitive", CaseSensitive);
+			si.AddValue ("DataSet.LocaleLCID", Locale.LCID);
+			si.AddValue ("DataSet.EnforceConstraints", EnforceConstraints);
+			si.AddValue ("DataSet.ExtendedProperties", properties, typeof (PropertyCollection));
+			si.AddValue ("DataSet.Tables.Count", Tables.Count);
+			for (int i = 0; i < Tables.Count; i++) {
+				DataTable dt = Tables[i];
+				MemoryStream ms = new MemoryStream ();
+				BinaryFormatter bf = new BinaryFormatter ();
+				bf.Serialize (ms, dt);
+				byte [] serializedStream = ms.ToArray ();
+				ms.Close ();
+				si.AddValue ("DataSet.Tables_" + i, serializedStream, typeof (Byte[]));
+				for (int j = 0; j < dt.Columns.Count; j++) {
+					si.AddValue ("DataTable_" + i + ".DataColumn_" + j + ".Expression",
+						     dt.Columns[j].Expression);
+				}
+				dt.dataSet = this;
+				dt.BinarySerialize (si, "DataTable_" + i + ".");
+			}
+			ArrayList relationList = new ArrayList ();
+			for (int j = 0; j < Relations.Count; j++)
+			{
+				DataRelation dr = Relations[j];
+				ArrayList tmpArrayList = new ArrayList ();
+				tmpArrayList.Add (dr.RelationName);
+				Array relationArray = new int [2];
+				DataTable dt = dr.ParentTable;
+				relationArray.SetValue (Tables.IndexOf (dt), 0);
+				relationArray.SetValue (dt.Columns.IndexOf (Relations[j].ParentColumns [0]), 1);
+				tmpArrayList.Add (relationArray);
+				relationArray = new int [2];
+				dt = dr.ChildTable;
+				relationArray.SetValue (Tables.IndexOf (dt), 0);
+				relationArray.SetValue (dt.Columns.IndexOf (Relations [j].ChildColumns [0]), 1);
+				tmpArrayList.Add (relationArray);
+				tmpArrayList.Add (false); // FIXME
+				tmpArrayList.Add (null); // FIXME
+				relationList.Add (tmpArrayList);
+			}
+			si.AddValue ("DataSet.Relations", relationList, typeof (ArrayList));
+		}
+
+		void BinaryDeserialize (SerializationInfo info)
+		{
+			ArrayList arrayList = null;
+
+			DataSetName = info.GetString ("DataSet.DataSetName");
+			Namespace = info.GetString ("DataSet.Namespace");
+			CaseSensitive = info.GetBoolean ("DataSet.CaseSensitive");
+			Locale = new CultureInfo (info.GetInt32 ("DataSet.LocaleLCID"));
+			EnforceConstraints = info.GetBoolean ("DataSet.EnforceConstraints");
+			Prefix = info.GetString ("DataSet.Prefix");
+			/*
+			  FIXME: Private variable available in SerializationInfo
+			  this.RemotingVersion = (System.Version) info.GetValue("DataSet.RemotingVersion",
+			  typeof(System.Version));
+			*/
+			properties = (PropertyCollection) info.GetValue ("DataSet.ExtendedProperties",
+									 typeof (PropertyCollection));
+			int tableCount = info.GetInt32 ("DataSet.Tables.Count");
+
+			Byte [] bytes;
+			DataTable dt = null;
+			for (int i = 0; i < tableCount; i++) {
+				bytes = (Byte []) info.GetValue ("DataSet.Tables_" + i,
+								 typeof (Byte[]));
+				MemoryStream ms = new MemoryStream (bytes);
+				BinaryFormatter bf = new BinaryFormatter ();
+				dt = (DataTable) bf.Deserialize (ms);
+				ms.Close ();
+				for (int j = 0; j < dt.Columns.Count; j++) {
+					dt.Columns[j].Expression = info.GetString ("DataTable_" + i +
+										   ".DataColumn_" + j +
+										   ".Expression");
+				}
+				/*
+				  Not using
+				  int rowsCount = info.GetInt32 ("DataTable_" + i + ".Rows.Count");
+				  int recordsCount = info.GetInt32 ("DataTable_" + i + ".Records.Count");
+				*/
+				ArrayList nullBits = (ArrayList) info.GetValue ("DataTable_" + i + ".NullBits",
+										typeof (ArrayList));
+				arrayList = (ArrayList) info.GetValue ("DataTable_" + i + ".Records",
+								       typeof (ArrayList));
+				BitArray rowStateBitArray = (BitArray) info.GetValue ("DataTable_" + i + ".RowStates",
+										      typeof (BitArray));
+				dt.DeserializeRecords (arrayList, nullBits, rowStateBitArray);
+				Tables.Add (dt);
+			}
+			for (int i = 0; i < tableCount; i++) {
+				dt = Tables [i];
+				dt.dataSet = this;
+				arrayList = (ArrayList) info.GetValue ("DataTable_" + i + ".Constraints",
+								       typeof (ArrayList));
+				if (dt.Constraints == null)
+					dt.Constraints = new ConstraintCollection (dt);
+				dt.DeserializeConstraints (arrayList);
+			}
+			arrayList = (ArrayList) info.GetValue ("DataSet.Relations",
+							       typeof (ArrayList));
+			bool bParentColumn = true;
+			for (int l = 0; l < arrayList.Count; l++) {
+				ArrayList tmpArrayList = (ArrayList) arrayList[l];
+				ArrayList childColumns = new ArrayList ();
+				ArrayList parentColumns = new ArrayList ();
+				for (int k = 0; k < tmpArrayList.Count; k++) {
+					if (tmpArrayList[k] != null && typeof (int) == tmpArrayList[k].GetType().GetElementType()) {
+						Array dataColumnArray = (Array)tmpArrayList[k];
+						if (bParentColumn) {
+							parentColumns.Add (Tables [(int) dataColumnArray.GetValue (0)].
+									   Columns [(int) dataColumnArray.GetValue (1)]);
+							bParentColumn = false;
+						}
+						else {
+							childColumns.Add (Tables [(int) dataColumnArray.GetValue (0)].
+									  Columns [(int) dataColumnArray.GetValue (1)]);
+							bParentColumn = true;
+						}
+					}
+				}
+				Relations.Add ((string) tmpArrayList [0],
+					       (DataColumn []) parentColumns.ToArray (typeof (DataColumn)),
+					       (DataColumn []) childColumns.ToArray (typeof (DataColumn)),
+					       false);
+			}
+		}
+
+		private void OnDataSetInitialized (EventArgs e)
+		{
+			if (null != Initialized)
+				Initialized (this, e);
+		}
+
+		private void DataSetInitialized ()
+		{
+			EventArgs e = new EventArgs ();
+			OnDataSetInitialized (e);
+		}
+
+		[MonoTODO]
+		protected virtual void InitializeDerivedDataSet ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected SchemaSerializationMode DetermineSchemaSerializationMode (XmlReader reader)
+		{
+			return SchemaSerializationMode.IncludeSchema;
+		}
+
+		protected SchemaSerializationMode DetermineSchemaSerializationMode (SerializationInfo info, StreamingContext context)
+		{
+			return SchemaSerializationMode.IncludeSchema;
+		}
+
+		protected bool IsBinarySerialized (SerializationInfo info, StreamingContext context)
+		{
+			SerializationInfoEnumerator e = info.GetEnumerator ();
+			while (e.MoveNext ()) {
+				if (e.ObjectType == typeof (System.Data.SerializationFormat))
+					return true;
+			}
+			return false;
+		}
+	}
+#endif
 }

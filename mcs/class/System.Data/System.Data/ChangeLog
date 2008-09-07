@@ -1,5 +1,8 @@
 2008-09-07  Raja R Harinath  <harinath@hurrynot.org>
 
+	* DataSet.cs: Convert to a partial class and sequester NET_2_0
+	pieces into a separate part.
+
 	* DataRowView.cs: Convert to a partial class, and sequester
 	NET_2_0 parts into a separate part.  Use partial classes instead
 	of ugly #region directives.
