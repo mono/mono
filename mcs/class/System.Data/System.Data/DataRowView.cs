@@ -44,21 +44,10 @@ namespace System.Data
 	/// Represents a customized view of a DataRow exposed as a fully featured Windows Forms control.
 	/// </summary>
 	// FIXME: correct exceptions in this[] methods
-#if NET_2_0
-	public class DataRowView : ICustomTypeDescriptor, IEditableObject, IDataErrorInfo, INotifyPropertyChanged
-#else
-	public class DataRowView : ICustomTypeDescriptor, IEditableObject, IDataErrorInfo
-#endif
-	{
-		#region Fields
-
+	public partial class DataRowView : IEditableObject {
 		DataView _dataView;
 		DataRow _dataRow;
 		int _index = -1;
-
-		#endregion // Fields
-
-		#region Constructors
 
 		internal DataRowView (DataView dataView, DataRow row, int index)
 		{
@@ -66,10 +55,6 @@ namespace System.Data
 			_dataRow = row;
 			_index = index;
 		}
-
-		#endregion // Constructors
-
-		#region Methods
 
 		public override bool Equals (object other)
 		{
@@ -123,10 +108,6 @@ namespace System.Data
 				throw new DataException ("Cannot edit on a DataSource where AllowEdit is false.");
 		}
 
-		#endregion // Methods
-
-		#region Properties
-
 		public DataView DataView {
 			get { return _dataView; }
 		}
@@ -143,51 +124,39 @@ namespace System.Data
 			get { return Row == DataView._lastAdded; }
 		}
 
-		[System.Runtime.CompilerServices.IndexerName("Item")]
 		public object this [string property] {
 			get {
 				DataColumn dc = _dataView.Table.Columns [property];
-
-				if (dc == null) {
-					string error = property + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName;
-					throw new ArgumentException (error);
-				}
+				if (dc == null)
+					throw new ArgumentException (
+						property + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName);
 				return _dataRow [dc, GetActualRowVersion ()];
 			}
 			set {
 				CheckAllowEdit ();
 				DataColumn dc = _dataView.Table.Columns [property];
-
-				if (dc == null) {
-					string error = property + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName;
-					throw new ArgumentException(error);
-				}
+				if (dc == null)
+					throw new ArgumentException (
+						property + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName);
 				_dataRow [dc] = value;
 			}
 		}
 
-		// the compiler creates a DefaultMemeberAttribute from
-		// this IndexerNameAttribute
 		public object this [int ndx] {
 			get {
 				DataColumn dc = _dataView.Table.Columns [ndx];
-
-				if (dc == null) {
-					string error = ndx + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName;
-					throw new ArgumentException(error);
-				}
+				if (dc == null)
+					throw new ArgumentException (
+						ndx + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName);
 				return _dataRow [dc, GetActualRowVersion ()];
 			}
 			set {
 				CheckAllowEdit ();
 				DataColumn dc = _dataView.Table.Columns [ndx];
-
-				if (dc == null) {
-					string error = ndx + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName;
-					throw new ArgumentException (error);
-				}
+				if (dc == null)
+					throw new ArgumentException (
+						ndx + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName);
 				_dataRow [dc] = value;
-
 			}
 		}
 
@@ -229,11 +198,9 @@ namespace System.Data
 		internal int Index {
 			get { return _index; }
 		}
+	}
 
-		#endregion // Properties
-
-		#region ICustomTypeDescriptor implementations
-
+	partial class DataRowView : ICustomTypeDescriptor {
 		AttributeCollection ICustomTypeDescriptor.GetAttributes ()
 		{
 			System.ComponentModel.AttributeCollection attributes;
@@ -315,11 +282,9 @@ namespace System.Data
 		{
 			return this;
 		}
+	}
 
-		#endregion // ICustomTypeDescriptor implementations
-
-		#region IDataErrorInfo implementation
-
+	partial class DataRowView : IDataErrorInfo {
 		string IDataErrorInfo.Error {
 			[MonoTODO ("Not implemented, always returns String.Empty")]
 			get { return string.Empty; }
@@ -329,12 +294,10 @@ namespace System.Data
 			[MonoTODO ("Not implemented, always returns String.Empty")]
 			get { return string.Empty; }
 		}
-
-		#endregion // IDataErrorInfo implementation
+	}
 
 #if NET_2_0
-		#region INotifyPropertyChanged
-
+	partial class DataRowView : INotifyPropertyChanged {
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		void OnPropertyChanged (string propertyName)
@@ -344,8 +307,6 @@ namespace System.Data
 				PropertyChanged (this, args);
 			}
 		}
-
-		#endregion
-#endif
 	}
+#endif
 }

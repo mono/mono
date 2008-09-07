@@ -1,3 +1,10 @@
+2008-09-07  Raja R Harinath  <harinath@hurrynot.org>
+
+	* DataRowView.cs: Convert to a partial class, and sequester
+	NET_2_0 parts into a separate part.  Use partial classes instead
+	of ugly #region directives.
+	(Item): Remove redundant attributes.  Cleanup slightly.
+
 2008-09-05  Raja R Harinath  <harinath@hurrynot.org>
 
 	* DataRowCollection.cs (RemoveInternal): Update RowIDs of rows
