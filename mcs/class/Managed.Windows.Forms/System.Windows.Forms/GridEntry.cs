@@ -478,6 +478,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 				return false;
 
 			if (SetValueCore (value, out error)) {
+				InvalidateChildGridItemsCache ();
 				property_grid.OnPropertyValueChangedInternal (this, this.Value);
 				return true;
 			}
@@ -725,6 +726,14 @@ namespace System.Windows.Forms.PropertyGridInternal
 		protected void PopulateChildGridItems ()
 		{
 			grid_items = GetChildGridItemsCached ();
+		}
+
+		private void InvalidateChildGridItemsCache ()
+		{
+			if (child_griditems_cache != null) {
+				child_griditems_cache = null;
+				PopulateChildGridItems ();
+			}
 		}
 
 		private GridItemCollection GetChildGridItemsCached ()
