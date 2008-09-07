@@ -1,5 +1,10 @@
 2008-09-07  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* GridEntry.cs: Invalidate the child items cache when the property 
+	value changes.
+
+2008-09-07  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* GridEntry.cs, PropertyGridView.cs: 
 	   - Update the ReadOnly detection and rendering to finally hopefully 
 	   match the one of MSFT.
