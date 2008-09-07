@@ -447,6 +447,27 @@ namespace MonoTests.System.Reflection
 			typeof (FieldInfoTest).GetField ("non_const_field").GetRawConstantValue ();
 		}
 
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void GetValueOpenGeneric ()
+		{
+			typeof(Foo<>).GetField ("field").GetValue (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void SetValueOpenGeneric ()
+		{
+			typeof(Foo<>).GetField ("field").GetValue (null);
+		}
+
+		public class Foo<T>
+		{
+			public static int field;
+		}
+#endif
+
 		public enum IntEnum {
 			First = 1,
 			Second = 2,

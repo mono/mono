@@ -1,3 +1,7 @@
+2008-09-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* FieldInfoTest.cs: Add tests for #424077.
+
 2008-06-30  Rodrigo Kumpera <rkumpera@novell.com>
 
 	* MethodBase.cs: Fix the 1.0 build.
