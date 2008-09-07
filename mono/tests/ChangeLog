@@ -1,3 +1,7 @@
+2008-09-07  Mark Probst  <mark.probst@gmail.com>
+
+	* libtest.c: Darwin structure alignment also applies to PPC.
+
 2008-09-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* libtest.c pinvoke2.cs: Add float tests.

@@ -1,3 +1,19 @@
+2008-09-07  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir2): Disable tail calls for PPC
+	until they're implemented properly.
+
+	* exceptions-ppc.c: Use arch-independent exception-handling code
+	instead of custom one.
+
+	* exceptions-ppc.c, mini-ppc.c, mini-ppc.h: Bug fixes and changes
+	for Linear IR.
+
+	* tramp-ppc.c, mini-ppc.c: Fixed warnings.
+
+	* decompose.c, aot-runtime.c, aot-compiler.c: PPC code also
+	applies when __powerpc__ is defined.
+
 2008-09-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (mono_aot_get_method): Add another cache mapping wrapper

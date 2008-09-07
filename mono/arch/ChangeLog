@@ -1,3 +1,8 @@
+2008-09-07  Mark Probst  <mark.probst@gmail.com>
+
+	* ppc/ppc-codegen.h (ppc_load): Inserted cast to fix some
+	warnings.
+
 2008-06-16  Mark Probst  <mark.probst@gmail.com>
 
 	* amd64/amd64-codegen.h: Removed extraneous parenthesis in a macro
