@@ -640,26 +640,18 @@ namespace System.Windows.Forms.PropertyGridInternal
 		//
 		public virtual bool IsReadOnly {
 			get {
-				TypeConverter converter = GetConverter ();
-				// if (PropertyDescriptor != null) {
-				// 	Console.WriteLine ("=== [" + PropertyDescriptor.Name + "]");
-				// 	Console.WriteLine ("PropertyDescriptor.IsReadOnly: " + PropertyDescriptor.IsReadOnly);
-				// 	UITypeEditor editor = GetEditor ();
-				// 	Console.WriteLine ("Editor: " + (editor == null ? "none" : GetEditor ().GetType ().Name));
-				// 	if (editor != null)
-				// 		Console.WriteLine ("Editor.EditorStyle: " + editor.GetEditStyle ((ITypeDescriptorContext)this));
-				// 	Console.WriteLine ("Converter: " + (converter == null ? "none" : converter.GetType ().Name));
-				// 	if (converter != null) {
-				// 		Console.WriteLine ("Converter.GetStandardValuesSupported: " + converter.GetStandardValuesSupported ((ITypeDescriptorContext)this).ToString ());
-				// 		Console.WriteLine ("Converter.GetStandardValuesExclusive: " + converter.GetStandardValuesExclusive ((ITypeDescriptorContext)this).ToString ());
-				// 		Console.WriteLine ("ShouldCreateParentInstance: " + this.ShouldCreateParentInstance);
-				// 		Console.WriteLine ("CanConvertFrom (string): " + converter.CanConvertFrom ((ITypeDescriptorContext)this, typeof (string)));
-				// 	}
-				// 	Console.WriteLine ("IsArray: " + PropertyDescriptor.PropertyType.IsArray.ToString ());
-				// }
-				if (PropertyDescriptor == null || PropertyOwner == null ||
-				    (PropertyDescriptor.IsReadOnly && !this.ShouldCreateParentInstance && 
-				     EditorStyle != UITypeEditorEditStyle.Modal))
+       				TypeConverter converter = GetConverter ();
+				if (PropertyDescriptor == null || PropertyOwner == null)
+					return true;
+				else if (PropertyDescriptor.IsReadOnly && 
+					 (EditorStyle != UITypeEditorEditStyle.Modal || PropertyDescriptor.PropertyType.IsValueType) && 
+					 !this.ShouldCreateParentInstance)
+					return true;
+				else if (PropertyDescriptor.IsReadOnly && 
+					 TypeDescriptor.GetAttributes (PropertyDescriptor.PropertyType)
+					  [typeof(ImmutableObjectAttribute)].Equals (ImmutableObjectAttribute.Yes))
+					return true;
+				else if (ShouldCreateParentInstance && ParentEntry.IsReadOnly)
 					return true;
 				else if (!HasCustomEditor && converter == null)
 					return true;
@@ -737,10 +729,43 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		private GridItemCollection GetChildGridItemsCached ()
 		{
-			if (child_griditems_cache == null)
+			if (child_griditems_cache == null) {
 				child_griditems_cache = GetChildGridItems ();
+				// foreach (GridEntry item in child_griditems_cache)
+				// 	PrintDebugInfo (item);
+			}
+
 			return child_griditems_cache;
 		}
+
+		// private static void PrintDebugInfo (GridEntry item)
+		// {
+       		// 	if (item.PropertyDescriptor != null) {
+       		// 		Console.WriteLine ("=== [" + item.PropertyDescriptor.Name + "] ===");
+		// 		try {
+		// 			TypeConverter converter = item.GetConverter ();
+		// 			Console.WriteLine ("IsReadOnly: " + item.IsReadOnly);
+		// 			Console.WriteLine ("IsEditable: " + item.IsEditable);
+		// 			Console.WriteLine ("PropertyDescriptor.IsReadOnly: " + item.PropertyDescriptor.IsReadOnly);
+		// 			if (item.ParentEntry != null)
+		// 				Console.WriteLine ("ParentEntry.IsReadOnly: " + item.ParentEntry.IsReadOnly);
+		// 			Console.WriteLine ("ImmutableObjectAttribute.Yes: " + TypeDescriptor.GetAttributes (item.PropertyDescriptor.PropertyType)
+		// 					   [typeof(ImmutableObjectAttribute)].Equals (ImmutableObjectAttribute.Yes));
+		// 			UITypeEditor editor = item.GetEditor ();
+		// 			Console.WriteLine ("Editor: " + (editor == null ? "none" : editor.GetType ().Name));
+		// 			if (editor != null)
+		// 				Console.WriteLine ("Editor.EditorStyle: " + editor.GetEditStyle ((ITypeDescriptorContext)item));
+		// 			Console.WriteLine ("Converter: " + (converter == null ? "none" : converter.GetType ().Name));
+		// 			if (converter != null) {
+		// 				Console.WriteLine ("Converter.GetStandardValuesSupported: " + converter.GetStandardValuesSupported ((ITypeDescriptorContext)item).ToString ());
+		// 				Console.WriteLine ("Converter.GetStandardValuesExclusive: " + converter.GetStandardValuesExclusive ((ITypeDescriptorContext)item).ToString ());
+		// 				Console.WriteLine ("ShouldCreateParentInstance: " + item.ShouldCreateParentInstance);
+		// 				Console.WriteLine ("CanConvertFrom (string): " + converter.CanConvertFrom ((ITypeDescriptorContext)item, typeof (string)));
+		// 			}
+		// 			Console.WriteLine ("IsArray: " + item.PropertyDescriptor.PropertyType.IsArray.ToString ());
+		// 		} catch { /* Some converters and editor throw NotImplementedExceptions */ }
+		// 	}
+		// }
 
 		private GridItemCollection GetChildGridItems ()
 		{
