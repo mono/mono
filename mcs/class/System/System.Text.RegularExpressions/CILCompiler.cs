@@ -143,6 +143,11 @@ namespace System.Text.RegularExpressions {
 			((ICompiler)this).EmitCategory (cat, !negate, reverse);
 		}
 
+		void ICompiler.EmitSet (char lo, BitArray set, bool negate, bool ignore, bool reverse) {
+			op_flags [curpos] = (int)MakeFlags (negate, ignore, reverse, false);
+			base.EmitSet (lo, set, negate, ignore, reverse);
+	    }
+
 		class Frame {
 			public Label label_pass, label_fail;
 
