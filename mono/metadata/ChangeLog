@@ -1,3 +1,8 @@
+2008-09-08  Miguel de Icaza  <miguel@novell.com>
+
+	* console-io.c (ves_icall_System_ConsoleDriver_TtySetup): Fix
+	windows build.
+
 2008-09-07  Miguel de Icaza  <miguel@novell.com>
 
 	* console-io.c: Add support for tracking the window size if it
