@@ -1,3 +1,11 @@
+2008-09-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_wrapper_info): Omit the klass name from
+	runtime-invoke wrappers to work around the problem of them getting
+	assigned to a random class.
+
+	* aot-runtime.c (mono_aot_get_method): Ditto.
+	
 2008-09-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c mini-mips.h mini-s390.h exceptions-mips.c: Kill
