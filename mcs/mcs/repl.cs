@@ -863,10 +863,16 @@ namespace Mono.CSharp {
 		}
 #endif
 
+		static public void LoadAssembly (string assembly)
+		{
+			Driver.LoadAssembly (assembly, true);
+		}
+		
 		static public string help {
 			get {
 				return  "Static methods:\n"+
 					"  LoadPackage (pkg); - Loads the given Package (like -pkg:FILE)\n" +
+					"  LoadAssembly (ass) - Loads the given assembly (like -r:ASS)\n" + 
 					"  ShowVars ();       - Shows defined local variables.\n" +
 					"  ShowUsing ();      - Show active using decltions.\n" +
 					"  Prompt             - The prompt used by the C# shell\n" +

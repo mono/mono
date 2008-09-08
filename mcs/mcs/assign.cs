@@ -556,7 +556,10 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			throw new InternalErrorException ("don't know what to emit");
+			if (RootContext.EvalMode)
+				EmitStatement (ec);
+			else
+				throw new InternalErrorException ("don't know what to emit");				
 		}
 
 		public override void EmitStatement (EmitContext ec)
