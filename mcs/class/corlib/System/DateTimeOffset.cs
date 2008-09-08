@@ -207,13 +207,34 @@ namespace System
 			return dt.GetHashCode () ^ utc_offset.GetHashCode ();
 		}
 
+		[System.Security.Permissions.SecurityPermission (System.Security.Permissions.SecurityAction.LinkDemand, SerializationFormatter = true)]
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
 				throw new ArgumentNullException ("info");
+			// An example SOAP serialization on MSFT is the following, so field 
+			// names "DateTime" and "OffsetMinutes":
+			//    <SOAP-ENV:Envelope ...>
+			//    <SOAP-ENV:Body>
+			//    <a1:DateTimeOffset id="ref-1" xmlns:a1="http://schemas.microsoft.com/clr/ns/System">
+			//    <DateTime xsi:type="xsd:dateTime">2007-01-02T12:30:50.0000000+00:00</DateTime>
+			//    <OffsetMinutes>0</OffsetMinutes>
+			//    </a1:DateTimeOffset>
+			//    </SOAP-ENV:Body>
+			//    </SOAP-ENV:Envelope>
+			DateTime dt0 = new DateTime (dt.Ticks).Subtract (utc_offset);
+			info.AddValue ("DateTime", dt0);
+			// MSFT BinaryFormatter output contains primitive code 6, i.e. Int16.
+			info.AddValue ("OffsetMinutes", (Int16)utc_offset.TotalMinutes);
+		}
 
-			info.AddValue ("datetime", dt);
-			info.AddValue ("offset", utc_offset);
+		[System.Security.Permissions.SecurityPermission (System.Security.Permissions.SecurityAction.LinkDemand, SerializationFormatter = true)]
+		private DateTimeOffset(SerializationInfo info, StreamingContext context)
+		{
+			DateTime dt0 = (DateTime)info.GetValue ("DateTime", typeof(DateTime));
+			Int16 totalMinutes = info.GetInt16 ("OffsetMinutes");
+			utc_offset = TimeSpan.FromMinutes(totalMinutes);
+			dt = dt0.Add(utc_offset);
 		}
 
 		public static bool operator > (DateTimeOffset left, DateTimeOffset right)
