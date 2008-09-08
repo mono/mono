@@ -1,3 +1,16 @@
+2008-09-08  Andreia Gaita <avidigal@novell.com> 
+
+	* Mono.Mozilla/Base.cs: Create cache directory with a version specific
+	  name so there's no conflict when the user has both xulrunner
+	  runtime 1.8 and 1.9 installed. Get rid of gluezillaInstalled flag,
+	  redundant. Bind now returns bool so I can check if the engine is
+	  actually running properly after initialization. Check the return
+	  value of createBrowserWindow and bail out if no valid pointer is
+	  returned. Protect the string functions with a check so they don't
+	  get called if the engine is not initialized.
+	* Mono.Mozilla/WebBrowser.cs: Update the loaded flag so users can now
+	  if the engine is actually running properly.
+
 2008-08-19  Andreia Gaita <avidigal@novell.com> 
 
 	* Mono.Mozilla/Base.cs: Clean up list of webcontrol objects when
