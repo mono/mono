@@ -1,3 +1,9 @@
+2008-09-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* BackgroundWorker.cs: If the user sets Cancel to true, but then
+	throws an exception in DoWork, we need to set Cancel back to false.
+	[Fixes bug #328830]
+
 2008-09-01  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ReflectionPropertyDescriptor.cs (SetValue, GetValue) : Lookup

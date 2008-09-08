@@ -125,6 +125,7 @@ namespace System.ComponentModel
 				OnDoWork (e);
 			} catch (Exception ex) {
 				error = ex;
+				e.Cancel = false;
 			}
 			callback (new object [] {
 				new RunWorkerCompletedEventArgs (
