@@ -1,5 +1,15 @@
-2008-09-07  Miguel de Icaza  <miguel@novell.com>
+2008-09-07 Andy Hume <andyhume32@yahoo.co.uk>
 
+	* DateTimeOffset.cs: DateTimeOffset currently has no
+	deserialization constructor, thus deserialization
+	fails ("SerializationException: The constructor to deserialize an
+	object of type System.DateTimeOffset was not found.")
+
+	Patch attached, implements GetObjectData and that constructor.
+	Also includes tests, which include round-tripping to/from MSFT.
+	
+2008-09-07  Miguel de Icaza  <miguel@novell.com>
+	
 	* TermInfoDriver.cs: Add support for updating the size of the
 	terminal when it changes.   
 
