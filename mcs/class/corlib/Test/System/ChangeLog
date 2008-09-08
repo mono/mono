@@ -1,3 +1,7 @@
+2008-09-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeTest.cs EnumTest.cs: Fix warnings.
+
 2008-09-04  Jb Evain  <jbevain@novell.com>
 
 	* TypeTest.cs: enable test as r112307 fixes it.

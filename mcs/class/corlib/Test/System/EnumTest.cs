@@ -895,11 +895,11 @@ namespace MonoTests.System
 			Assert.AreEqual (EnUInt32.C.GetHashCode(), UInt32.MaxValue.GetHashCode (), "u32#2");
 	
 			Assert.AreEqual (EnInt64.A.GetHashCode(), Int64.MinValue.GetHashCode (), "i64#0");
-			Assert.AreEqual (EnInt64.B.GetHashCode(), 3488924689489l.GetHashCode (), "i64#1");
+			Assert.AreEqual (EnInt64.B.GetHashCode(), 3488924689489L.GetHashCode (), "i64#1");
 			Assert.AreEqual (EnInt64.C.GetHashCode(), Int64.MaxValue.GetHashCode (), "i64#2");
 	
 			Assert.AreEqual (EnUInt64.A.GetHashCode(), UInt64.MinValue.GetHashCode (), "u64#0");
-			Assert.AreEqual (EnUInt64.B.GetHashCode(), 3488924689489l.GetHashCode (), "u64#1");
+			Assert.AreEqual (EnUInt64.B.GetHashCode(), 3488924689489L.GetHashCode (), "u64#1");
 			Assert.AreEqual (EnUInt64.C.GetHashCode(), UInt64.MaxValue.GetHashCode (), "u64#2");
 		}
 
@@ -1074,13 +1074,13 @@ namespace MonoTests.System
 		
 		enum EnInt64 : long{
 			A = Int64.MinValue,
-			B = 3488924689489l,
+			B = 3488924689489L,
 			C = Int64.MaxValue,
 		}
 		
 		enum EnUInt64 : ulong {
 			A = UInt64.MinValue,
-			B = 3488924689489l,
+			B = 3488924689489L,
 			C = UInt64.MaxValue,
 		}
 	}

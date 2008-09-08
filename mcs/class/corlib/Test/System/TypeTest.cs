@@ -1839,7 +1839,7 @@ PublicKeyToken=b77a5c561934e089"));
 			typeof(B).InvokeMember ("", BindingFlags.CreateInstance, null, null, new object [] { 1 });
 		}
 
-		static string bug336841 (string param1, params string [] param2)
+		internal static string bug336841 (string param1, params string [] param2)
 		{
 			StringBuilder sb = new StringBuilder ();
 			sb.Append ("#A:");
@@ -1853,12 +1853,12 @@ PublicKeyToken=b77a5c561934e089"));
 			return sb.ToString ();
 		}
 
-		static string bug336841 (string param1)
+		internal static string bug336841 (string param1)
 		{
 			return "#B:" + param1;
 		}
 
-		static string bug336841 (params string [] param1)
+		internal static string bug336841 (params string [] param1)
 		{
 			StringBuilder sb = new StringBuilder ();
 			sb.Append ("#C:");
