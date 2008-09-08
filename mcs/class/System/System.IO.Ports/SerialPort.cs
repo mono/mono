@@ -118,9 +118,7 @@ namespace System.IO.Ports
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public Stream BaseStream {
 			get {
-				if (!is_open)
-					throw new InvalidOperationException ();
-
+				CheckOpen ();
 				return (Stream) stream;
 			}
 		}
