@@ -208,8 +208,6 @@ namespace System {
 			unsafe {
 				if (!ConsoleDriver.TtySetup (keypadXmit, endString, out verase, out vsusp, out intr, out native_terminal_size))
 					throw new IOException ("Error initializing terminal.");
-
-				Console.WriteLine ("Value: 0x{0:x} and 0x{1:x}", (ulong) native_terminal_size, *native_terminal_size);
 			}
 
 			stdin = new StreamReader (Console.OpenStandardInput (0), Console.InputEncoding);
