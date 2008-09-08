@@ -412,7 +412,10 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				icon = value;
+				if (icon.Height != 16 || icon.Width != 16)
+					icon = new Icon (value, 16, 16);
+				else
+					icon = value;
 			}
 		}
 

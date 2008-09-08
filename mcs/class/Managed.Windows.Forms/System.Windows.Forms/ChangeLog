@@ -1,3 +1,8 @@
+2008-09-08  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ErrorProvider.cs: Icon should always be 16x16.
+	[Fixes bug #424380]
+
 2008-09-07  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* GridEntry.cs: Invalidate the child items cache when the property 
