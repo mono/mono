@@ -249,6 +249,10 @@ statements and expressions are executed are static, they can be
 invoked directly from the shell.   These are the available properties
 and methods:
 .TP
+.I void LoadAssembly(string assembly)
+Loads the given assembly.   This is equivalent to passing the compiler
+the -r: flag with the specified string. 
+.TP
 .I void LoadPackage(string package)
 Imports the package specified.   This is equivalent to invoking the
 compiler with the -pkg: flag with the specified string.
