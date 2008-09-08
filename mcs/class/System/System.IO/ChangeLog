@@ -1,3 +1,8 @@
+2008-09-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* InotifyWatcher.cs: Really fix #359181.
+	(Ported from trunk)
+	
 2008-09-01  Dick Porter  <dick@ximian.com>
 
 	* InotifyWatcher.cs: Revert fix for bug 322330, as it is somehow
