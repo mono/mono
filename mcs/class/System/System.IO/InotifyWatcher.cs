@@ -512,7 +512,7 @@ namespace System.IO {
 							nread += i;
 							action = FileAction.RenamedNewName;
 							renamed = new RenamedEventArgs (WatcherChangeTypes.Renamed, data.Directory, to.Name, evt.Name);
-							if (evt.Name != data.Directory && fsw.Pattern.IsMatch (evt.Name))
+							if (evt.Name != data.Directory && !fsw.Pattern.IsMatch (evt.Name))
 								filename = to.Name;
 						}
 					} else if ((mask & InotifyMask.MovedTo) != 0) {
