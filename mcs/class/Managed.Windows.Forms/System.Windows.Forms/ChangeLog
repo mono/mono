@@ -1,5 +1,10 @@
 2008-09-08  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ComboBox.cs: Fix IOORE when setting SelectedItem to null.
+	[Fixes bug #424270]
+
+2008-09-08  Jonathan Pobst  <monkey@jpobst.com>
+
 	* MdiClient.cs: When looking for menustrips on a child form to merge,
 	look inside ToolStripContainers.
 	[Fixes bug #424264]

@@ -701,7 +701,11 @@ namespace System.Windows.Forms
 				object item = selected_index == -1 ? null : Items [selected_index];
 				if (item == value)
 					return;
-				SelectedIndex = Items.IndexOf (value);
+
+				if (value == null)
+					SelectedIndex = -1;
+				else
+					SelectedIndex = Items.IndexOf (value);
 			}
 		}
 		

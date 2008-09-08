@@ -1164,6 +1164,23 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (cb.Height > original, string.Format ("ComboBox height ({0}) should be bigger than original ({1})", cb.Height, original));
 		}
 		
+		[Test]
+		public void Bug424270 ()
+		{
+			ComboBox cb = new ComboBox ();
+			cb.Items.Add ("ab");
+			
+			cb.SelectedIndex = 0;
+
+			Assert.AreEqual (0, cb.SelectedIndex, "A1");
+			Assert.AreEqual ("ab", cb.SelectedItem, "A2");
+			
+			cb.SelectedItem = null;
+			
+			Assert.AreEqual (-1, cb.SelectedIndex, "A3");
+			Assert.AreEqual (null, cb.SelectedItem, "A4");
+		}
+		
 #if NET_2_0
 		[Test]
 		public void BehaviorAutoSize ()
