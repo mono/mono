@@ -459,7 +459,7 @@ namespace MonoTests.System.Reflection
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void SetValueOpenGeneric ()
 		{
-			typeof(Foo<>).GetField ("field").GetValue (null);
+			typeof(Foo<>).GetField ("field").SetValue (null, 0);
 		}
 
 		public class Foo<T>

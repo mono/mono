@@ -1,3 +1,7 @@
+2008-09-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* FieldInfoTest.cs (SetValueOpenGeneric): Fix copy-paste error.
+
 2008-09-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* FieldInfoTest.cs: Add tests for #424077.
