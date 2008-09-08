@@ -837,11 +837,7 @@ namespace System.Windows.Forms {
 				if (parent_menu.IsCurrentlyMerged)
 					ToolStripManager.RevertMerge (parent_menu);
 					
-				MenuStrip child_menu = null;
-
-				foreach (Control c in form.Controls)
-					if (c is MenuStrip)
-						child_menu = (MenuStrip)c;
+				MenuStrip child_menu = LookForChildMenu (form);
 
 				if (form.WindowState != FormWindowState.Maximized)
 					RemoveControlMenuItems (wm);
@@ -878,6 +874,23 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		private MenuStrip LookForChildMenu (Control parent)
+		{
+			foreach (Control c in parent.Controls) {
+				if (c is MenuStrip)
+					return (MenuStrip)c;
+					
+				if (c is ToolStripContainer || c is ToolStripPanel) {
+					MenuStrip ms = LookForChildMenu (c);
+					
+					if (ms != null)
+						return ms;
+				}
+			}
+			
+			return null;
+		}
+		
 		internal void RemoveControlMenuItems (MdiWindowManager wm)
 		{
 			Form form = wm.form;
