@@ -138,9 +138,19 @@ namespace System.Net {
 				return;
 			}
 
-			if (host == null || host.Length == 0)
+			string path;
+			Uri raw_uri;
+			if (Uri.MaybeUri (raw_url) && Uri.TryCreate (raw_url, UriKind.Absolute, out raw_uri))
+				path = raw_uri.PathAndQuery;
+			else
+				path = raw_url;
+
+			if ((host == null || host.Length == 0))
 				host = UserHostAddress;
 
+			if (raw_uri != null)
+				host = raw_uri.Host;
+	
 			int colon = host.IndexOf (':');
 			if (colon >= 0)
 				host = host.Substring (0, colon);
@@ -149,10 +159,9 @@ namespace System.Net {
 								(IsSecureConnection) ? "https" : "http",
 								host,
 								LocalEndPoint.Port);
-			try {
-				url = new Uri (base_uri + raw_url);
-			} catch {
-				context.ErrorMessage = "Invalid url";
+
+			if (!Uri.TryCreate (base_uri + path, UriKind.Absolute, out url)){
+				context.ErrorMessage = "Invalid url: " + base_uri + path;
 				return;
 			}
 

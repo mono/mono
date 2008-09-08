@@ -1733,6 +1733,18 @@ namespace System {
 			return false;
 		}
 
+		internal static bool MaybeUri (string s)
+		{
+			int p = s.IndexOf (':');
+			if (p == -1)
+				return false;
+
+			if (p >= 10)
+				return false;
+
+			return IsPredefinedScheme (s.Substring (0, p));
+		}
+		
 		private static bool IsPredefinedScheme (string scheme)
 		{
 			switch (scheme) {

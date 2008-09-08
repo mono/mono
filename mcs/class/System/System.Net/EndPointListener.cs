@@ -149,7 +149,13 @@ namespace System.Net {
 					host = host.Substring (0, colon);
 			}
 
-			string path = HttpUtility.UrlDecode (raw_url);
+			string path;
+			Uri raw_uri;
+			if (Uri.MaybeUri (raw_url) && Uri.TryCreate (raw_url, UriKind.Absolute, out raw_uri))
+				path = raw_uri.PathAndQuery;
+			else
+				path = HttpUtility.UrlDecode (raw_url);
+			
 			string path_slash = path [path.Length - 1] == '/' ? path : path + "/";
 			
 			HttpListener best_match = null;

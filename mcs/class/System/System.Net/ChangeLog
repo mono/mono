@@ -1,3 +1,13 @@
+2008-09-08  Miguel de Icaza  <miguel@novell.com>
+
+	* EndPointListener.cs (SearchListener): Cope with the raw_url not
+	being merely a path, but potentially a full URI (see the proxy
+	case). 
+
+	* HttpListenerRequest.cs: Cope with raw_url not being merely a
+	path, but potentially a full Uri.   Also uses TryCreate, hoping
+	that one day it will be faster.
+
 2008-08-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* WebConnectionStream.cs (WriteRequest): Fix the copying in the

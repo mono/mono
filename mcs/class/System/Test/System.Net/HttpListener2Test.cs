@@ -682,7 +682,38 @@ namespace MonoTests.System.Net {
 			Console.WriteLine ("Done");
 			listener.Close ();
 		}
-	
+
+		//
+		// Test case for bug 341443, an pretty old bug, filed on November of 2007.
+		//
+		[Test]
+		public void Test_HostInUri ()
+		{
+			var wait = new ManualResetEvent (false);
+			var wait2 = new ManualResetEvent (false);
+			
+			Thread t = new Thread (delegate (object a) {
+				wait.WaitOne ();
+
+				NetworkStream ns = HttpListener2Test.CreateNS (9145);
+				HttpListener2Test.Send (ns, "GET http://www.google.com/ HTTP/1.1\r\nHost: www.google.com\r\nContent-Length: 3\r\n\r\n123456");
+
+				wait2.WaitOne ();
+				ns.Close ();
+			});
+			t.Start ();
+				
+			HttpListener listener = HttpListener2Test.CreateAndStartListener ("http://*:9145/");
+			wait.Set ();
+			HttpListenerContext ctx = listener.GetContext ();
+			
+			Assert.AreEqual ("http://www.google.com:9145/", ctx.Request.Url.ToString ());
+			Assert.AreEqual ("http://www.google.com/", ctx.Request.RawUrl);
+			wait2.Set ();
+
+			listener.Close ();
+		}
+		
 	}
 }
 #endif

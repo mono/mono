@@ -1,3 +1,9 @@
+2008-09-08  Miguel de Icaza  <miguel@novell.com>
+
+	* Uri.cs (MaybeUri): A helper routine for methods in other classes
+	to quickly determine if something might be a Uri, before calling
+	the more expensive Uri.TryCreate (see bug 424192).
+
 2008-08-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UriTypeConverter.cs: Fix cp typo found when cp (of course ;-) 
