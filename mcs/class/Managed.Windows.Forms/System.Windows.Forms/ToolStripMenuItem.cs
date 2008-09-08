@@ -285,9 +285,8 @@ namespace System.Windows.Forms
 			if (!this.IsOnDropDown && this.HasDropDownItems && this.DropDown.Visible)
 				this.close_on_mouse_release = true;
 				
-			if (this.HasDropDownItems && Enabled)
-				if (!this.DropDown.Visible)
-					this.ShowDropDown ();
+			if (Enabled && !this.DropDown.Visible)
+				this.ShowDropDown ();
 
 			base.OnMouseDown (e);
 		}

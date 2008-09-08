@@ -872,19 +872,15 @@ namespace System.Windows.Forms
 				if (focused != null && focused != mouse_currently_over)
 					this.FocusInternal (true);
 
-				if (this is MenuStrip && mouse_currently_over is ToolStripMenuItem && !(mouse_currently_over as ToolStripMenuItem).HasDropDownItems) {
-					if (!menu_selected)
-						(this as MenuStrip).FireMenuActivate ();
-					
-					return;
-				}
-					
-				mouse_currently_over.FireEvent (mea, ToolStripItemEventType.MouseDown);
-				
 				if (this is MenuStrip && !menu_selected) {
 					(this as MenuStrip).FireMenuActivate ();
 					menu_selected = true;				
 				}
+					
+				mouse_currently_over.FireEvent (mea, ToolStripItemEventType.MouseDown);
+				
+				if (this is MenuStrip && mouse_currently_over is ToolStripMenuItem && !(mouse_currently_over as ToolStripMenuItem).HasDropDownItems)
+					return;
 			} else {
 				if (this is MenuStrip)
 					this.HideMenus (true, ToolStripDropDownCloseReason.AppClicked);

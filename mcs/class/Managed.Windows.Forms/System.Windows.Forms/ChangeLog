@@ -1,5 +1,14 @@
 2008-09-08  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStrip.cs: Ensure MouseDown gets called for MenuStrip items.
+	* ToolStripDropDownItem.cs: Don't fire events and such again if
+	ShowDropDown is called on an already dropped down item.
+	* ToolStripMenuItem.cs: Call ShowDropDown even if there aren't any
+	subitems, the user may add some in the DropDownOpening event.
+	[Fixes bug #417877]
+
+2008-09-08  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ComboBox.cs: Fix IOORE when setting SelectedItem to null.
 	[Fixes bug #424270]
 

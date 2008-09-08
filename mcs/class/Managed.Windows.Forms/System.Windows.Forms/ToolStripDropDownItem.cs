@@ -138,6 +138,11 @@ namespace System.Windows.Forms
 
 		public void ShowDropDown ()
 		{
+			// Don't go through this whole deal if
+			// the DropDown is already visible
+			if (this.DropDown.Visible)
+				return;
+				
 			// Call this before the HasDropDownItems check to give
 			// users a chance to handle it and add drop down items
 			this.OnDropDownShow (EventArgs.Empty);
