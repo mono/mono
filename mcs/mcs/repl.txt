@@ -4,11 +4,22 @@ Documentation for the REPL mode for MCS can be found here:
 
 	      http://mono-project.com/CsharpRepl
 
-Apply the patch repl.patch to this directory, then either rebuild
-Mono, or go to mcs and type:
+* Embedding API
 
-      	make q
-	make repl
+	* Booting the compiler without Main ()
+	* Expose LoadAssembly/LoadPackage
+	* Register fields?
+	* Register a lookup function for fields?
+	* Register classes to expose to REPL
+
+* Embedded Library
+
+	* Run a REPL on a socket (from Joe Shaw)
+	* Host a REPL on XSP (from Nat).
+
+* Other ideas:
+
+	MD addin for "csharp"
 
 * Mix statements with other top-level declarations.
 
@@ -82,8 +93,7 @@ Class1
 	we need to check for structs and clear all the fields that contain
 	reference types.
 
-* 
-* Implement auto-insert-semicolon
+* DEBATABLE: Implement auto-insert-semicolon
 
 	This is easy to implement, just retry the parse with a
 	semicolon, the question is whether this is a good idea to do
