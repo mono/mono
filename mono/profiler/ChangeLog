@@ -1,3 +1,7 @@
+2008-09-08  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c: Added three icalls to control the profiler
+	from the profiled application.
+
 2008-08-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-profiler-logging.c (detect_fast_timer): Add missing return type.
