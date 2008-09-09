@@ -1,3 +1,12 @@
+2008-09-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DateTimePicker.cs: 'hh' and 'HH' formats (12 and 24 hour formats
+	respectively) should handled different, since the 12 hours format
+	needs the value typed by the user to be adjusted depending on the
+	a.m/p.m value, so it is preserved, and only changed when the value
+	reaches the 12 value (when it changes from a.m to p.m).
+	Fixes part of #416555.
+
 2008-09-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStrip.cs: Ensure MouseDown gets called for MenuStrip items.

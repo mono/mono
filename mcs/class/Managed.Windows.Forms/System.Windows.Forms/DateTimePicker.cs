@@ -1276,7 +1276,7 @@ namespace System.Windows.Forms {
 			if (selected_index == -1) {
 				return;
 			}
-			
+
 			DateTimePart dt_part = part_data [selected_index].date_time_part;
 			switch (dt_part)
 			{
@@ -1296,6 +1296,7 @@ namespace System.Windows.Forms {
 				case DateTimePart.DayName:
 					Value = Value.AddDays(delta);
 					break;
+				case DateTimePart.AMPMHour:
 				case DateTimePart.Hour:
 					SetPart(Value.Hour + delta, dt_part);
 					break;
@@ -1514,6 +1515,7 @@ namespace System.Windows.Forms {
 						case DateTimePart.Month:
 						case DateTimePart.Seconds:
 						case DateTimePart.Minutes:
+						case DateTimePart.AMPMHour:
 						case DateTimePart.Hour:
 							date_part_max_length = 2;
 							break;
@@ -1576,6 +1578,16 @@ namespace System.Windows.Forms {
 						value = 59;
 					if (value >= 0 && value <= 59)
 						Value = new DateTime(Value.Year, Value.Month, Value.Day, Value.Hour, value, Value.Second, Value.Millisecond);
+					break;
+				case DateTimePart.AMPMHour:
+					if (value == -1)
+						value = 23;
+					if (value >= 0 && value <= 23) {
+						int prev_hour = Value.Hour;
+						if ((prev_hour >= 12 && prev_hour <= 23) && value < 12) // Adjust to p.m.
+							value += 12;
+						Value = new DateTime (Value.Year, Value.Month, Value.Day, value, Value.Minute, Value.Second, Value.Millisecond);
+					}
 					break;
 				case DateTimePart.Hour:
 					if (value == -1)
@@ -1783,6 +1795,7 @@ namespace System.Windows.Forms {
 		internal enum DateTimePart {
 			Seconds,
 			Minutes,
+			AMPMHour,
 			Hour,
 			Day,
 			DayName,
@@ -1877,6 +1890,7 @@ namespace System.Windows.Forms {
 						return DateTimePart.Minutes;
 					case "h":
 					case "hh":
+						return DateTimePart.AMPMHour;
 					case "H":
 					case "HH":
 						return DateTimePart.Hour;
