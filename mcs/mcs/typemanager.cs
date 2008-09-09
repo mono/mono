@@ -1618,6 +1618,11 @@ namespace Mono.CSharp {
 		return false;
 	}
 
+	public static bool IsSpecialType (Type t)
+	{
+		return t == arg_iterator_type || t == typed_reference_type;
+	}
+
 	//
 	// Checks whether `extern_type' is friend of the output assembly
 	//

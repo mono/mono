@@ -1,5 +1,10 @@
 2008-09-09  Marek Safar  <marek.safar@gmail.com>
 
+	* typemanager.cs, generic.cs, parameter.cs, expression.cs, class.cs,
+	delegate.cs: Share special type check.
+
+2008-09-09  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #423981
 	* expression.cs (EmitBranchable): Correctly emit inverted float conditions.
 

@@ -1281,9 +1281,10 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				if (te.Type.IsPointer) {
-					Report.Error (306, Location, "The type `{0}' may not be used " +
-							  "as a type argument", TypeManager.CSharpName (te.Type));
+				if (te.Type.IsPointer || TypeManager.IsSpecialType (te.Type)) {
+					Report.Error (306, Location,
+						"The type `{0}' may not be used as a type argument",
+						TypeManager.CSharpName (te.Type));
 					return false;
 				}
 
@@ -1667,7 +1668,22 @@ namespace Mono.CSharp {
 			if (Convert.ImplicitStandardConversionExists (expr, ctype))
 				return true;
 
-			Error_TypeMustBeConvertible (expr.Type, ctype, ptype);
+			Report_SymbolRelatedToPreviousError ();
+			Report.SymbolRelatedToPreviousError (expr.Type);
+
+			if (TypeManager.IsNullableType (expr.Type) && ctype.IsInterface) {
+				Report.Error (313, loc,
+					"The type `{0}' cannot be used as type parameter `{1}' in the generic type or method `{2}'. " +
+					"The nullable type `{0}' never satisfies interface constraint of type `{3}'",
+					TypeManager.CSharpName (expr.Type), TypeManager.CSharpName (ptype),
+					GetSignatureForError (), TypeManager.CSharpName (ctype));
+			} else {
+				Report.Error (309, loc,
+					"The type `{0}' must be convertible to `{1}' in order to " +
+					"use it as parameter `{2}' in the generic type or method `{3}'",
+					TypeManager.CSharpName (expr.Type), TypeManager.CSharpName (ctype),
+					TypeManager.CSharpName (ptype), GetSignatureForError ());
+			}
 			return false;
 		}
 
@@ -1725,17 +1741,6 @@ namespace Mono.CSharp {
 
 		protected abstract string GetSignatureForError ();
 		protected abstract void Report_SymbolRelatedToPreviousError ();
-
-		void Error_TypeMustBeConvertible (Type atype, Type gc, Type ptype)
-		{
-			Report_SymbolRelatedToPreviousError ();
-			Report.SymbolRelatedToPreviousError (atype);
-			Report.Error (309, loc, 
-				      "The type `{0}' must be convertible to `{1}' in order to " +
-				      "use it as parameter `{2}' in the generic type or method `{3}'",
-				      TypeManager.CSharpName (atype), TypeManager.CSharpName (gc),
-				      TypeManager.CSharpName (ptype), GetSignatureForError ());
-		}
 
 		public static bool CheckConstraints (EmitContext ec, MethodBase definition,
 						     MethodBase instantiated, Location loc)

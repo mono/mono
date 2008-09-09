@@ -368,13 +368,11 @@ namespace Mono.CSharp {
 
 			parameter_type = texpr.Type;
 
-			if ((modFlags & Parameter.Modifier.ISBYREF) != 0) {
-				if (parameter_type == TypeManager.typed_reference_type ||
-					parameter_type == TypeManager.arg_iterator_type) {
-					Report.Error (1601, Location, "Method or delegate parameter cannot be of type `{0}'",
-						GetSignatureForError ());
-					return null;
-				}
+			if ((modFlags & Parameter.Modifier.ISBYREF) != 0 &&
+				TypeManager.IsSpecialType (parameter_type)) {
+				Report.Error (1601, Location, "Method or delegate parameter cannot be of type `{0}'",
+					GetSignatureForError ());
+				return null;
 			}
 
 #if GMCS_SOURCE

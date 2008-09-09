@@ -230,7 +230,7 @@ namespace Mono.CSharp {
 
 			CheckProtectedModifier ();
 
-			if (RootContext.StdLib && (ret_type == TypeManager.arg_iterator_type || ret_type == TypeManager.typed_reference_type)) {
+			if (RootContext.StdLib && TypeManager.IsSpecialType (ret_type)) {
 				Method.Error1599 (Location, ret_type);
 				return false;
 			}

@@ -8981,7 +8981,7 @@ namespace Mono.CSharp {
 				return null;
 
 			if (dim.Length != 0 && dim [0] == '[') {
-				if (ltype == TypeManager.arg_iterator_type || ltype == TypeManager.typed_reference_type) {
+				if (TypeManager.IsSpecialType (ltype)) {
 					Report.Error (611, loc, "Array elements cannot be of type `{0}'", TypeManager.CSharpName (ltype));
 					return null;
 				}

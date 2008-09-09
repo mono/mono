@@ -4228,7 +4228,7 @@ namespace Mono.CSharp {
 			if (!base.Define ())
 				return false;
 
-			if (RootContext.StdLib && (ReturnType == TypeManager.arg_iterator_type || ReturnType == TypeManager.typed_reference_type)) {
+			if (RootContext.StdLib && TypeManager.IsSpecialType (ReturnType)) {
 				Error1599 (Location, ReturnType);
 				return false;
 			}
@@ -5367,7 +5367,7 @@ namespace Mono.CSharp {
 
 		protected bool IsTypePermitted ()
 		{
-			if (MemberType == TypeManager.arg_iterator_type || MemberType == TypeManager.typed_reference_type) {
+			if (TypeManager.IsSpecialType (MemberType)) {
 				Report.Error (610, Location, "Field or property cannot be of type `{0}'", TypeManager.CSharpName (MemberType));
 				return false;
 			}
