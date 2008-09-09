@@ -1,3 +1,8 @@
+2008-09-09  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: build System.Runtime.Serialization
+	during the net_2_1_raw profile.
+
 2008-08-21  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: add wcf and cardspace to the build.

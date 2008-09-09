@@ -115,7 +115,8 @@ net_2_1_dirs := \
 	System			\
 	System.Net		\
 	System.XML		\
-	System.Core
+	System.Core		\
+	System.Runtime.Serialization
 
 net_3_5_dirs := \
 	System.Web.Extensions		\
