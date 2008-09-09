@@ -1,3 +1,9 @@
+2008-09-09  Miguel de Icaza  <miguel@novell.com>
+
+	* skeleton.cs: A little refactoring to support producing a list of
+	tokens as opposed to a list of token strings for code that uses
+	the yyExpecting code.
+
 2006-05-29  Raja R Harinath  <rharinath@novell.com>
 
 	* skeleton.cs: Implement a better translation for named-loop continues.
