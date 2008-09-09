@@ -45,269 +45,275 @@ namespace System.Web
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class HttpResponseBase
 	{
-		[MonoTODO]
-		public virtual bool Buffer { get; set; }
-		[MonoTODO]
-		public virtual bool BufferOutput { get; set; }
-		[MonoTODO]
-		public virtual HttpCachePolicyBase Cache { get; private set; }
-		[MonoTODO]
-		public virtual string CacheControl { get; set; }
-		[MonoTODO]
-		public virtual string Charset { get; set; }
-		[MonoTODO]
-		public virtual Encoding ContentEncoding { get; set; }
-		[MonoTODO]
-		public virtual string ContentType { get; set; }
-		[MonoTODO]
-		public virtual HttpCookieCollection Cookies { get; private set; }
-		[MonoTODO]
-		public virtual int Expires { get; set; }
-		[MonoTODO]
-		public virtual DateTime ExpiresAbsolute { get; set; }
-		[MonoTODO]
-		public virtual Stream Filter { get; set; }
-		[MonoTODO]
-		public virtual Encoding HeaderEncoding { get; set; }
-		[MonoTODO]
-		public virtual NameValueCollection Headers { get; private set; }
-		[MonoTODO]
-		public virtual bool IsClientConnected { get; private set; }
-		[MonoTODO]
-		public virtual bool IsRequestBeingRedirected { get; private set; }
-		[MonoTODO]
-		public virtual TextWriter Output { get; private set; }
-		[MonoTODO]
-		public virtual Stream OutputStream { get; private set; }
-		[MonoTODO]
-		public virtual string RedirectLocation { get; set; }
-		[MonoTODO]
-		public virtual string Status { get; set; }
-		[MonoTODO]
-		public virtual int StatusCode { get; set; }
-		[MonoTODO]
-		public virtual string StatusDescription { get; set; }
-		[MonoTODO]
-		public virtual int SubStatusCode { get; set; }
-		[MonoTODO]
-		public virtual bool SuppressContent { get; set; }
-		[MonoTODO]
-		public virtual bool TrySkipIisCustomErrors { get; set; }
+		void NotImplemented ()
+		{
+			throw new NotImplementedException ();
+		}
 
-		[MonoTODO]
+
+		public virtual bool Buffer { get { NotImplemented (); return false; } set { NotImplemented (); } }
+
+		public virtual bool BufferOutput { get { NotImplemented (); return false; } set { NotImplemented (); } }
+
+		public virtual HttpCachePolicyBase Cache { get { NotImplemented (); return null; } }
+
+		public virtual string CacheControl { get { NotImplemented (); return null; } set { NotImplemented (); } }
+
+		public virtual string Charset { get { NotImplemented (); return null; } set { NotImplemented (); } }
+
+		public virtual Encoding ContentEncoding { get { NotImplemented (); return null; } set { NotImplemented (); } }
+
+		public virtual string ContentType { get { NotImplemented (); return null; } set { NotImplemented (); } }
+
+		public virtual HttpCookieCollection Cookies { get { NotImplemented (); return null; } }
+
+		public virtual int Expires { get { NotImplemented (); return 0; } set { NotImplemented (); } }
+
+		public virtual DateTime ExpiresAbsolute { get { NotImplemented (); return DateTime.MinValue; } set { NotImplemented (); } }
+
+		public virtual Stream Filter { get { NotImplemented (); return null; } set { NotImplemented (); } }
+
+		public virtual Encoding HeaderEncoding { get { NotImplemented (); return null; } set { NotImplemented (); } }
+
+		public virtual NameValueCollection Headers { get { NotImplemented (); return null; } }
+
+		public virtual bool IsClientConnected { get { NotImplemented (); return false; } }
+
+		public virtual bool IsRequestBeingRedirected { get { NotImplemented (); return false; } }
+
+		public virtual TextWriter Output { get { NotImplemented (); return null; } }
+
+		public virtual Stream OutputStream { get { NotImplemented (); return null; } }
+
+		public virtual string RedirectLocation { get { NotImplemented (); return null; } set { NotImplemented (); } }
+
+		public virtual string Status { get { NotImplemented (); return null; } set { NotImplemented (); } }
+
+		public virtual int StatusCode { get { NotImplemented (); return 0; } set { NotImplemented (); } }
+
+		public virtual string StatusDescription { get { NotImplemented (); return null; } set { NotImplemented (); } }
+
+		public virtual int SubStatusCode { get { NotImplemented (); return 0; } set { NotImplemented (); } }
+
+		public virtual bool SuppressContent { get { NotImplemented (); return false; } set { NotImplemented (); } }
+
+		public virtual bool TrySkipIisCustomErrors { get { NotImplemented (); return false; } set { NotImplemented (); } }
+
+
 		public virtual void AddCacheDependency (params CacheDependency [] dependencies)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void AddCacheItemDependencies (ArrayList cacheKeys)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void AddCacheItemDependencies (string [] cacheKeys)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void AddCacheItemDependency (string cacheKey)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void AddFileDependencies (ArrayList filenames)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void AddFileDependencies (string [] filenames)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void AddFileDependency (string filename)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void AddHeader (string name, string value)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void AppendCookie (HttpCookie cookie)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void AppendHeader (string name, string value)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void AppendToLog (string param)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual string ApplyAppPathModifier (string virtualPath)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
+
 		public virtual void BinaryWrite (byte [] buffer)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void Clear ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void ClearContent ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void ClearHeaders ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void Close ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void DisableKernelCache ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void End ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void Flush ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void Pics (string value)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void Redirect (string url)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void Redirect (string url, bool endResponse)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void RemoveOutputCacheItem (string path)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void SetCookie (HttpCookie cookie)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void TransmitFile (string filename)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void TransmitFile (string filename, long offset, long length)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void Write (char ch)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void Write (object obj)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void Write (string s)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void Write (char [] buffer, int index, int count)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void WriteFile (string filename)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void WriteFile (string filename, bool readIntoMemory)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void WriteFile (IntPtr fileHandle, long offset, long size)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void WriteFile (string filename, long offset, long size)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
+
 		public virtual void WriteSubstitution (HttpResponseSubstitutionCallback callback)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 	}
 }

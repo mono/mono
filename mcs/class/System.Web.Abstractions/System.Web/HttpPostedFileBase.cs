@@ -41,19 +41,22 @@ namespace System.Web
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class HttpPostedFileBase
 	{
-		[MonoTODO]
-		public virtual int ContentLength { get; private set; }
-		[MonoTODO]
-		public virtual string ContentType { get; private set; }
-		[MonoTODO]
-		public virtual string FileName { get; private set; }
-		[MonoTODO]
-		public virtual Stream InputStream { get; private set; }
-
-		[MonoTODO]
-		public virtual void SaveAs (string filename)
+		void NotImplemented ()
 		{
 			throw new NotImplementedException ();
+		}
+
+		public virtual int ContentLength { get { NotImplemented (); return 0; } }
+
+		public virtual string ContentType { get { NotImplemented (); return null; } }
+
+		public virtual string FileName { get { NotImplemented (); return null; } }
+
+		public virtual Stream InputStream { get { NotImplemented (); return null; } }
+
+		public virtual void SaveAs (string filename)
+		{
+			NotImplemented ();
 		}
 	}
 }

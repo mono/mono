@@ -44,93 +44,91 @@ namespace System.Web
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class HttpSessionStateBase : ICollection, IEnumerable
 	{
-		[MonoTODO]
-		public virtual int CodePage { get; set; }
-		[MonoTODO]
-		public virtual HttpSessionStateBase Contents { get; private set; }
-		[MonoTODO]
-		public virtual HttpCookieMode CookieMode { get; private set; }
-		[MonoTODO]
-		public virtual int Count { get; private set; }
-		[MonoTODO]
-		public virtual bool IsCookieless { get; private set; }
-		[MonoTODO]
-		public virtual bool IsNewSession { get; private set; }
-		[MonoTODO]
-		public virtual bool IsReadOnly { get; private set; }
-		[MonoTODO]
-		public virtual bool IsSynchronized { get; private set; }
-		[MonoTODO]
-		public virtual object this [int index] {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		void NotImplemented ()
+		{
+			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		public virtual object this [string name] {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-		[MonoTODO]
-		public virtual NameObjectCollectionBase.KeysCollection Keys { get; private set; }
-		[MonoTODO]
-		public virtual int LCID { get; set; }
-		[MonoTODO]
-		public virtual SessionStateMode Mode { get; private set; }
-		[MonoTODO]
-		public virtual string SessionID { get; private set; }
-		[MonoTODO]
-		public virtual HttpStaticObjectsCollectionBase StaticObjects { get; private set; }
-		[MonoTODO]
-		public virtual object SyncRoot { get; private set; }
-		[MonoTODO]
-		public virtual int Timeout { get; set; }
 
-		[MonoTODO]
+		public virtual int CodePage { get { NotImplemented (); return 0; } set { NotImplemented (); } }
+
+		public virtual HttpSessionStateBase Contents { get { NotImplemented (); return null; } }
+
+		public virtual HttpCookieMode CookieMode { get { NotImplemented (); return default (HttpCookieMode); } }
+
+		public virtual int Count { get { NotImplemented (); return 0; } }
+
+		public virtual bool IsCookieless { get { NotImplemented (); return false; } }
+
+		public virtual bool IsNewSession { get { NotImplemented (); return false; } }
+
+		public virtual bool IsReadOnly { get { NotImplemented (); return false; } }
+
+		public virtual bool IsSynchronized { get { NotImplemented (); return false; } }
+
+		public virtual object this [int index] {
+			get { NotImplemented (); return null; }
+			set { NotImplemented (); }
+		}
+
+		public virtual object this [string name] {
+			get { NotImplemented (); return null; }
+			set { NotImplemented (); }
+		}
+
+		public virtual NameObjectCollectionBase.KeysCollection Keys { get { NotImplemented (); return null; } }
+
+		public virtual int LCID { get { NotImplemented (); return 0; } set { NotImplemented (); } }
+
+		public virtual SessionStateMode Mode { get { NotImplemented (); return default (SessionStateMode); } }
+
+		public virtual string SessionID { get { NotImplemented (); return null; } }
+
+		public virtual HttpStaticObjectsCollectionBase StaticObjects { get { NotImplemented (); return null; } }
+
+		public virtual object SyncRoot { get { NotImplemented (); return null; } }
+
+		public virtual int Timeout { get { NotImplemented (); return 0; } set { NotImplemented (); } }
+
+
 		public virtual void Abandon ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void Add (string name, object value)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void Clear ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void CopyTo (Array array, int index)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual IEnumerator GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual void Remove (string name)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void RemoveAll ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void RemoveAt (int index)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 	}
 }

@@ -44,177 +44,166 @@ namespace System.Web
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class HttpServerUtilityBase
 	{
-		[MonoTODO]
-		public virtual string MachineName { get; private set; }
-		[MonoTODO]
-		public virtual int ScriptTimeout { get; set; }
+		void NotImplemented ()
+		{
+			throw new NotImplementedException ();
+		}
 
-		[MonoTODO]
+		public virtual string MachineName { get { NotImplemented (); return null; } }
+
+		public virtual int ScriptTimeout { get { NotImplemented (); return 0; } set { NotImplemented (); } }
+
+
 		public virtual void ClearError ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
-		public virtual Object CreateObject (string progID)
+		public virtual object CreateObject (string progID)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
-		public virtual Object CreateObject (Type type)
+		public virtual object CreateObject (Type type)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
-		public virtual Object CreateObjectFromClsid (string clsid)
+		public virtual object CreateObjectFromClsid (string clsid)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual void Execute (string path)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void Execute (string path, bool preserveForm)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void Execute (string path, TextWriter writer)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void Execute (string path, TextWriter writer, bool preserveForm)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void Execute (IHttpHandler handler, TextWriter writer, bool preserveForm)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual Exception GetLastError ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual string HtmlDecode (string s)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual void HtmlDecode (string s, TextWriter output)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual string HtmlEncode (string s)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual void HtmlEncode (string s, TextWriter output)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual string MapPath (string path)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual void Transfer (string path)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void Transfer (string path, bool preserveForm)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void Transfer (IHttpHandler handler, bool preserveForm)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void TransferRequest (string path)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void TransferRequest (string path, bool preserveForm)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void TransferRequest (string path, bool preserveForm, string method, NameValueCollection headers)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual string UrlDecode (string s)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual void UrlDecode (string s, TextWriter output)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual string UrlEncode (string s)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual void UrlEncode (string s, TextWriter output)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual string UrlPathEncode (string s)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual byte [] UrlTokenDecode (string input)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual string UrlTokenEncode (byte [] input)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 	}
 }

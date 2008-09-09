@@ -41,131 +41,115 @@ namespace System.Web
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class HttpCachePolicyBase
 	{
-		[MonoTODO]
-		public virtual HttpCacheVaryByContentEncodings VaryByContentEncodings { get; private set; }
-		[MonoTODO]
-		public virtual HttpCacheVaryByHeaders VaryByHeaders { get; private set; }
-		[MonoTODO]
-		public virtual HttpCacheVaryByParams VaryByParams { get; private set; }
+		void NotImplemented ()
+		{
+			throw new NotImplementedException ();
+		}
 
-		[MonoTODO]
+		public virtual HttpCacheVaryByContentEncodings VaryByContentEncodings { get { NotImplemented (); return null; } }
+
+		public virtual HttpCacheVaryByHeaders VaryByHeaders { get { NotImplemented (); return null; } }
+
+		public virtual HttpCacheVaryByParams VaryByParams { get { NotImplemented (); return null; } }
+
 		public virtual void AddValidationCallback (HttpCacheValidateHandler handler, object data)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void AppendCacheExtension (string extension)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void SetAllowResponseInBrowserHistory (bool allow)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void SetCacheability (HttpCacheability cacheability)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void SetCacheability (HttpCacheability cacheability, string field)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void SetETag (string etag)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void SetETagFromFileDependencies ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void SetExpires (DateTime date)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void SetLastModified (DateTime date)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void SetLastModifiedFromFileDependencies ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void SetMaxAge (TimeSpan delta)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void SetNoServerCaching ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void SetNoStore ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void SetNoTransforms ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void SetOmitVaryStar (bool omit)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void SetProxyMaxAge (TimeSpan delta)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void SetRevalidation (HttpCacheRevalidation revalidation)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void SetSlidingExpiration (bool slide)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void SetValidUntilExpires (bool validUntilExpires)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void SetVaryByCustom (string custom)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 	}
 }

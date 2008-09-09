@@ -44,43 +44,45 @@ namespace System.Web
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class HttpStaticObjectsCollectionBase : ICollection, IEnumerable
 	{
-		[MonoTODO]
-		public virtual int Count { get; private set; }
-		[MonoTODO]
-		public virtual bool IsReadOnly { get; private set; }
-		[MonoTODO]
-		public virtual bool IsSynchronized { get; private set; }
-		[MonoTODO]
-		public virtual object this [string name] {
-			get { throw new NotImplementedException (); }
+		void NotImplemented ()
+		{
+			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		public virtual bool NeverAccessed { get; private set; }
-		[MonoTODO]
-		public virtual object SyncRoot { get; private set; }
 
-		[MonoTODO]
+		public virtual int Count { get { NotImplemented (); return 0; } }
+
+		public virtual bool IsReadOnly { get { NotImplemented (); return false; } }
+
+		public virtual bool IsSynchronized { get { NotImplemented (); return false; } }
+
+		public virtual object this [string name] {
+			get { NotImplemented (); return null; }
+		}
+
+		public virtual bool NeverAccessed { get { NotImplemented (); return false; } }
+
+		public virtual object SyncRoot { get { NotImplemented (); return null; } }
+
 		public virtual void CopyTo (Array array, int index)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual IEnumerator GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual object GetObject (string name)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual void Serialize (BinaryWriter writer)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 	}
 }

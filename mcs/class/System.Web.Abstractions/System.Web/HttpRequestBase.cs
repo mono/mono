@@ -45,121 +45,124 @@ namespace System.Web
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class HttpRequestBase
 	{
-		[MonoTODO]
-		public virtual string [] AcceptTypes { get; private set; }
-		[MonoTODO]
-		public virtual string AnonymousID { get; private set; }
-		[MonoTODO]
-		public virtual string ApplicationPath { get; private set; }
-		[MonoTODO]
-		public virtual string AppRelativeCurrentExecutionFilePath { get; private set; }
-		[MonoTODO]
-		public virtual HttpBrowserCapabilitiesBase Browser { get; private set; }
-		[MonoTODO]
-		public virtual HttpClientCertificate ClientCertificate { get; private set; }
-		[MonoTODO]
-		public virtual Encoding ContentEncoding { get; set; }
-		[MonoTODO]
-		public virtual int ContentLength { get; private set; }
-		[MonoTODO]
-		public virtual string ContentType { get; set; }
-		[MonoTODO]
-		public virtual HttpCookieCollection Cookies { get; private set; }
-		[MonoTODO]
-		public virtual string CurrentExecutionFilePath { get; private set; }
-		[MonoTODO]
-		public virtual string FilePath { get; private set; }
-		[MonoTODO]
-		public virtual HttpFileCollectionBase Files { get; private set; }
-		[MonoTODO]
-		public virtual Stream Filter { get; set; }
-		[MonoTODO]
-		public virtual NameValueCollection Form { get; private set; }
-		[MonoTODO]
-		public virtual NameValueCollection Headers { get; private set; }
-		[MonoTODO]
-		public virtual string HttpMethod { get; private set; }
-		[MonoTODO]
-		public virtual Stream InputStream { get; private set; }
-		[MonoTODO]
-		public virtual bool IsAuthenticated { get; private set; }
-		[MonoTODO]
-		public virtual bool IsLocal { get; private set; }
-		[MonoTODO]
-		public virtual bool IsSecureConnection { get; private set; }
-		[MonoTODO]
+		void NotImplemented ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public virtual string [] AcceptTypes { get { NotImplemented (); return null; } }
+
+		public virtual string AnonymousID { get { NotImplemented (); return null; } }
+
+		public virtual string ApplicationPath { get { NotImplemented (); return null; } }
+
+		public virtual string AppRelativeCurrentExecutionFilePath { get { NotImplemented (); return null; } }
+
+		public virtual HttpBrowserCapabilitiesBase Browser { get { NotImplemented (); return null; } }
+
+		public virtual HttpClientCertificate ClientCertificate { get { NotImplemented (); return null; } }
+
+		public virtual Encoding ContentEncoding { get { NotImplemented (); return null; } set { NotImplemented (); } }
+
+		public virtual int ContentLength { get { NotImplemented (); return 0; } }
+
+		public virtual string ContentType { get { NotImplemented (); return null; } set { NotImplemented (); } }
+
+		public virtual HttpCookieCollection Cookies { get { NotImplemented (); return null; } }
+
+		public virtual string CurrentExecutionFilePath { get { NotImplemented (); return null; } }
+
+		public virtual string FilePath { get { NotImplemented (); return null; } }
+
+		public virtual HttpFileCollectionBase Files { get { NotImplemented (); return null; } }
+
+		public virtual Stream Filter { get { NotImplemented (); return null; } set { NotImplemented (); } }
+
+		public virtual NameValueCollection Form { get { NotImplemented (); return null; } }
+
+		public virtual NameValueCollection Headers { get { NotImplemented (); return null; } }
+
+		public virtual string HttpMethod { get { NotImplemented (); return null; } }
+
+		public virtual Stream InputStream { get { NotImplemented (); return null; } }
+
+		public virtual bool IsAuthenticated { get { NotImplemented (); return false; } }
+
+		public virtual bool IsLocal { get { NotImplemented (); return false; } }
+
+		public virtual bool IsSecureConnection { get { NotImplemented (); return false; } }
+
 		public virtual string this [string key] {
 			get { throw new NotImplementedException (); }
 		}
-		[MonoTODO]
-		public virtual WindowsIdentity LogonUserIdentity { get; private set; }
-		[MonoTODO]
-		public virtual NameValueCollection Params { get; private set; }
-		[MonoTODO]
-		public virtual string Path { get; private set; }
-		[MonoTODO]
-		public virtual string PathInfo { get; private set; }
-		[MonoTODO]
-		public virtual string PhysicalApplicationPath { get; private set; }
-		[MonoTODO]
-		public virtual string PhysicalPath { get; private set; }
-		[MonoTODO]
-		public virtual NameValueCollection QueryString { get; private set; }
-		[MonoTODO]
-		public virtual string RawUrl { get; private set; }
-		[MonoTODO]
-		public virtual string RequestType { get; set; }
-		[MonoTODO]
-		public virtual NameValueCollection ServerVariables { get; private set; }
-		[MonoTODO]
-		public virtual int TotalBytes { get; private set; }
-		[MonoTODO]
-		public virtual Uri Url { get; private set; }
-		[MonoTODO]
-		public virtual Uri UrlReferrer { get; private set; }
-		[MonoTODO]
-		public virtual string UserAgent { get; private set; }
-		[MonoTODO]
-		public virtual string UserHostAddress { get; private set; }
-		[MonoTODO]
-		public virtual string UserHostName { get; private set; }
-		[MonoTODO]
-		public virtual string [] UserLanguages { get; private set; }
 
-		[MonoTODO]
+		public virtual WindowsIdentity LogonUserIdentity { get { NotImplemented (); return null; } }
+
+		public virtual NameValueCollection Params { get { NotImplemented (); return null; } }
+
+		public virtual string Path { get { NotImplemented (); return null; } }
+
+		public virtual string PathInfo { get { NotImplemented (); return null; } }
+
+		public virtual string PhysicalApplicationPath { get { NotImplemented (); return null; } }
+
+		public virtual string PhysicalPath { get { NotImplemented (); return null; } }
+
+		public virtual NameValueCollection QueryString { get { NotImplemented (); return null; } }
+
+		public virtual string RawUrl { get { NotImplemented (); return null; } }
+
+		public virtual string RequestType { get { NotImplemented (); return null; } set { NotImplemented (); } }
+
+		public virtual NameValueCollection ServerVariables { get { NotImplemented (); return null; } }
+
+		public virtual int TotalBytes { get { NotImplemented (); return 0; } }
+
+		public virtual Uri Url { get { NotImplemented (); return null; } }
+
+		public virtual Uri UrlReferrer { get { NotImplemented (); return null; } }
+
+		public virtual string UserAgent { get { NotImplemented (); return null; } }
+
+		public virtual string UserHostAddress { get { NotImplemented (); return null; } }
+
+		public virtual string UserHostName { get { NotImplemented (); return null; } }
+
+		public virtual string [] UserLanguages { get { NotImplemented (); return null; } }
+
+
 		public virtual byte [] BinaryRead (int count)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual int [] MapImageCoordinates (string imageFieldName)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual string MapPath (string virtualPath)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual string MapPath (string virtualPath, string baseVirtualDir, bool allowCrossAppMapping)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual void SaveAs (string filename, bool includeHeaders)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void ValidateInput ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 	}
 }

@@ -38,126 +38,123 @@ using System.Web.Profile;
 
 namespace System.Web
 {
-	[MonoTODO]
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class HttpContextBase : IServiceProvider
 	{
-		[MonoTODO]
-		public virtual Exception [] AllErrors { get; private set; }
-		[MonoTODO]
-		public virtual HttpApplicationStateBase Application { get; private set; }
-		[MonoTODO]
-		public virtual HttpApplication ApplicationInstance { get; set; }
-		[MonoTODO]
-		public virtual Cache Cache { get; private set; }
-		[MonoTODO]
-		public virtual IHttpHandler CurrentHandler { get; private set; }
-		[MonoTODO]
-		public virtual RequestNotification CurrentNotification { get; private set; }
-		[MonoTODO]
-		public virtual Exception Error { get; private set; }
-		[MonoTODO]
-		public virtual IHttpHandler Handler { get; set; }
-		[MonoTODO]
-		public virtual bool IsCustomErrorEnabled { get; private set; }
-		[MonoTODO]
-		public virtual bool IsDebuggingEnabled { get; private set; }
-		[MonoTODO]
-		public virtual bool IsPostNotification { get; private set; }
-		[MonoTODO]
-		public virtual IDictionary Items { get; private set; }
-		[MonoTODO]
-		public virtual IHttpHandler PreviousHandler { get; private set; }
-		[MonoTODO]
-		public virtual ProfileBase Profile { get; private set; }
-		[MonoTODO]
-		public virtual HttpRequestBase Request { get; private set; }
-		[MonoTODO]
-		public virtual HttpResponseBase Response { get; private set; }
-		[MonoTODO]
-		public virtual HttpServerUtilityBase Server { get; private set; }
-		[MonoTODO]
-		public virtual HttpSessionStateBase Session { get; private set; }
-		[MonoTODO]
-		public virtual bool SkipAuthorization { get; set; }
-		[MonoTODO]
-		public virtual DateTime Timestamp { get; private set; }
-		[MonoTODO]
-		public virtual TraceContext Trace { get; private set; }
-		[MonoTODO]
-		public virtual IPrincipal User { get; set; }
+		void NotImplemented ()
+		{
+			throw new NotImplementedException ();
+		}
 
-		[MonoTODO]
+		public virtual Exception [] AllErrors { get { NotImplemented (); return null; } }
+
+		public virtual HttpApplicationStateBase Application { get { NotImplemented (); return null; } }
+
+		public virtual HttpApplication ApplicationInstance { get { NotImplemented (); return null; } set { NotImplemented (); } }
+
+		public virtual Cache Cache { get { NotImplemented (); return null; } }
+
+		public virtual IHttpHandler CurrentHandler { get { NotImplemented (); return null; } }
+
+		public virtual RequestNotification CurrentNotification { get { NotImplemented (); return default (RequestNotification); } }
+
+		public virtual Exception Error { get { NotImplemented (); return null; } }
+
+		public virtual IHttpHandler Handler { get { NotImplemented (); return null; } set { NotImplemented (); } }
+
+		public virtual bool IsCustomErrorEnabled { get { NotImplemented (); return false; } }
+
+		public virtual bool IsDebuggingEnabled { get { NotImplemented (); return false; } }
+
+		public virtual bool IsPostNotification { get { NotImplemented (); return false; } }
+
+		public virtual IDictionary Items { get { NotImplemented (); return null; } }
+
+		public virtual IHttpHandler PreviousHandler { get { NotImplemented (); return null; } }
+
+		public virtual ProfileBase Profile { get { NotImplemented (); return null; } }
+
+		public virtual HttpRequestBase Request { get { NotImplemented (); return null; } }
+
+		public virtual HttpResponseBase Response { get { NotImplemented (); return null; } }
+
+		public virtual HttpServerUtilityBase Server { get { NotImplemented (); return null; } }
+
+		public virtual HttpSessionStateBase Session { get { NotImplemented (); return null; } }
+
+		public virtual bool SkipAuthorization { get { NotImplemented (); return false; } set { NotImplemented (); } }
+
+		public virtual DateTime Timestamp { get { NotImplemented (); return DateTime.MinValue; } }
+
+		public virtual TraceContext Trace { get { NotImplemented (); return null; } }
+
+		public virtual IPrincipal User { get { NotImplemented (); return null; } set { NotImplemented (); } }
+
 		public virtual void AddError (Exception errorInfo)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void ClearError ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual object GetGlobalResourceObject (string classKey, string resourceKey)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual object GetGlobalResourceObject (string classKey, string resourceKey, CultureInfo culture)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual object GetLocalResourceObject (string virtualPath, string resourceKey)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual object GetLocalResourceObject (string virtualPath, string resourceKey, CultureInfo culture)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual object GetSection (string sectionName)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual object GetService (Type serviceType)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual void RewritePath (string path)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void RewritePath (string path, bool rebaseClientPath)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void RewritePath (string filePath, string pathInfo, string queryString)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void RewritePath (string filePath, string pathInfo, string queryString, bool setClientFilePath)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 	}
 }

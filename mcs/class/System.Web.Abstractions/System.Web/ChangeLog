@@ -1,3 +1,18 @@
+2008-09-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpApplicationStateBase.cs
+	  HttpBrowserCapabilitiesBase.cs
+	  HttpCachePolicyBase.cs
+	  HttpContextBase.cs
+	  HttpFileCollectionBase.cs
+	  HttpPostedFileBase.cs
+	  HttpRequestBase.cs
+	  HttpResponseBase.cs
+	  HttpServerUtilityBase.cs
+	  HttpSessionStateBase.cs
+	  HttpStaticObjectsCollectionBase.cs : they are just to throw NIE.
+	* HttpPostedFileWrapper.cs : lacked implementation.
+
 2008-09-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	*.cs : initial checkin.

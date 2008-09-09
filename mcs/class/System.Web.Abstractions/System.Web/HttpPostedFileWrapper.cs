@@ -41,24 +41,34 @@ namespace System.Web
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class HttpPostedFileWrapper : HttpPostedFileBase
 	{
-		[MonoTODO]
+		HttpPostedFile w;
+
 		public HttpPostedFileWrapper (HttpPostedFile httpPostedFile)
 		{
+			if (httpPostedFile == null)
+				throw new ArgumentNullException ("httpPostedFile");
+			w = httpPostedFile;
 		}
 
-		[MonoTODO]
-		public override int ContentLength { get; private set; }
-		[MonoTODO]
-		public override string ContentType { get; private set; }
-		[MonoTODO]
-		public override string FileName { get; private set; }
-		[MonoTODO]
-		public override Stream InputStream { get; private set; }
+		public override int ContentLength {
+			get { return w.ContentLength; }
+		}
 
-		[MonoTODO]
+		public override string ContentType {
+			get { return w.ContentType; }
+		}
+
+		public override string FileName {
+			get { return w.FileName; }
+		}
+
+		public override Stream InputStream {
+			get { return w.InputStream; }
+		}
+
 		public override void SaveAs (string filename)
 		{
-			throw new NotImplementedException ();
+			w.SaveAs (filename);
 		}
 	}
 }

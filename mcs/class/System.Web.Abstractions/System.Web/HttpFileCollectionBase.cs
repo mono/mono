@@ -38,58 +38,60 @@ using System.Web.Caching;
 
 namespace System.Web
 {
-	[MonoTODO]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class HttpFileCollectionBase : NameObjectCollectionBase, ICollection, IEnumerable
 	{
-		[MonoTODO]
-		public virtual string [] AllKeys { get; private set; }
-		[MonoTODO]
-		public override int Count {
-			get { throw new NotImplementedException (); }
+		void NotImplemented ()
+		{
+			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		public virtual bool IsSynchronized { get; private set; }
-		[MonoTODO]
+
+		public virtual string [] AllKeys { get { NotImplemented (); return null; } }
+
+		public override int Count {
+			get { NotImplemented (); return 0; }
+		}
+
+		public virtual bool IsSynchronized { get { NotImplemented (); return false; } }
+
 		public virtual HttpPostedFileBase this [int index] {
 			get { return Get (index); }
 		}
-		[MonoTODO]
+
 		public virtual HttpPostedFileBase this [string name] {
 			get { return Get (name); }
 		}
-		[MonoTODO]
-		public virtual object SyncRoot { get; private set; }
 
-		[MonoTODO]
+		public virtual object SyncRoot { get { NotImplemented (); return null; } }
+
 		public virtual void CopyTo (Array dest, int index)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual HttpPostedFileBase Get (int index)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual HttpPostedFileBase Get (string name)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public override IEnumerator GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual string GetKey (int index)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 	}
 }

@@ -1,3 +1,7 @@
+2008-09-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Web.Abstractions_test.dll.sources: new.
+
 2008-09-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile, System.Web.Abstractions.dll.sources: initial checkin.

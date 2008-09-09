@@ -42,106 +42,111 @@ namespace System.Web
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class HttpApplicationStateBase : NameObjectCollectionBase, ICollection, IEnumerable
 	{
-		[MonoTODO]
-		public virtual string [] AllKeys { get; private set; }
-		[MonoTODO]
-		public virtual HttpApplicationStateBase Contents { get; private set; }
-		[MonoTODO]
-		public override int Count {
-			get { throw new NotImplementedException (); }
+		void NotImplemented ()
+		{
+			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		public virtual bool IsSynchronized { get; private set; }
-		[MonoTODO]
+
+		public virtual string [] AllKeys {
+			get { NotImplemented (); return null; }
+		}
+
+		public virtual HttpApplicationStateBase Contents {
+			get { NotImplemented (); return null; }
+		}
+
+		public override int Count {
+			get { NotImplemented (); return 0; }
+		}
+
+		public virtual bool IsSynchronized {
+			get { NotImplemented (); return false; }
+		}
+
 		public virtual object this [int index] {
 			get { return Get (index); }
 		}
-		[MonoTODO]
+
 		public virtual object this [string name] {
 			get { return Get (name); }
 			set { Set (name, value); }
 		}
-		[MonoTODO]
-		public virtual HttpStaticObjectsCollectionBase StaticObjects { get; private set; }
-		[MonoTODO]
-		public virtual object SyncRoot { get; private set; }
 
-		[MonoTODO]
+		public virtual HttpStaticObjectsCollectionBase StaticObjects {
+			get { NotImplemented (); return null; }
+		}
+
+		public virtual object SyncRoot {
+			get { NotImplemented (); return null; }
+		}
+
 		public virtual void Add (string name, object value)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void Clear ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void CopyTo (Array array, int index)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual object Get (int index)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual object Get (string name)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public override IEnumerator GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual string GetKey (int index)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
+			return null;
 		}
 
-		[MonoTODO]
 		public virtual void Lock ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void Remove (string name)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void RemoveAll ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void RemoveAt (int index)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void Set (string name, object value)
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 
-		[MonoTODO]
 		public virtual void UnLock ()
 		{
-			throw new NotImplementedException ();
+			NotImplemented ();
 		}
 	}
 }
