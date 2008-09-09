@@ -1,3 +1,10 @@
+2008-09-09  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc.c: Partially implement tail calls (struct arguments and
+	return values not supported).
+
+	* method-to-ir.c: Enable tail calls on PPC.
+
 2008-09-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_wrapper_info): Omit the klass name from
