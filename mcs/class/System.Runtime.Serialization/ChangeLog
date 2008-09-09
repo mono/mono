@@ -1,3 +1,10 @@
+2008-09-09  Atsushi Enomoto  <atsushi@ximian.com>
+			Jb Evain  <jbevain@novell.com>
+
+	* net_2_1_raw_System.Runtime.Serialization.dll.sources: new sources
+	file for the SL2 profile.
+	* Makefile: add support for SL2 profile.
+
 2008-03-31  Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Makefile : add reference to System.Data.dll, 

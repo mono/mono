@@ -1,10 +1,10 @@
 //
-// IDataContractSurrogate.cs
+// System.Xml.Schema/XmlSchema.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2008 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,36 +25,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
-using System;
-using System.CodeDom;
-using System.Collections.ObjectModel;
-using System.Reflection;
 
-namespace System.Runtime.Serialization
+// This is a dummy class that just holds constants
+
+#if NET_2_1
+
+namespace System.Xml.Schema
 {
-	public interface IDataContractSurrogate
+	internal class XmlSchema
 	{
-		object GetCustomDataToExport (MemberInfo memberInfo,
-			Type dataContractType);
-		object GetCustomDataToExport (Type clrType,
-			Type dataContractType);
-
-		Type GetDataContractType (Type type);
-
-		object GetDeserializedObject (object obj, Type targetType);
-
-		void GetKnownCustomDataTypes (Collection<Type> customDataTypes);
-
-		object GetObjectToSerialize (object obj, Type targetType);
-#if !NET_2_1
-		Type GetReferencedTypeOnImport (string typeName,
-			string typeNamespace, object customData);
-
-		CodeTypeDeclaration ProcessImportedType (
-			CodeTypeDeclaration typeDeclaration,
-			CodeCompileUnit compileUnit);
-#endif
+		public const string Namespace = "http://www.w3.org/2001/XMLSchema";
+		public const string InstanceNamespace = "http://www.w3.org/2001/XMLSchema-instance";
 	}
 }
 #endif

@@ -1,3 +1,9 @@
+2008-09-09  Atsushi Enomoto  <atsushi@ximian.com>
+			Jb Evain  <jbevain@novell.com>
+
+	* XmlBinaryDictionaryReader.cs, XmlSimpleDictionaryReader.cs:
+	add support to build on the net_2_1 profile.
+
 2008-04-10  Eyal Alaluf <eyala@mainsoft.com>
 
 	* XmlBinaryDictionaryWriter.cs: WriteXmlnsAttribute generates a prefix

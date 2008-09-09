@@ -1,3 +1,9 @@
+2008-09-09  Atsushi Enomoto  <atsushi@ximian.com>
+			Jb Evain  <jbevain@novell.com>
+
+	* IDataContractSurrogater.cs, SerializationMap.cs:
+	add support to build on the net_2_1 profile.
+
 2008-06-19  Noam Lampert <noaml@mainsoft.com>
 	
 	* KnownTypeCollection.cs: Support anyUri type

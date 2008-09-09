@@ -7,13 +7,14 @@ RESOURCE_FILES = \
 
 LIBRARY = System.Runtime.Serialization.dll
 LIB_MCS_FLAGS = \
-			/d:NET_3_0	\
 			/nowarn:168,169,219,414 \
 	        /r:System.dll \
 	        /r:System.Xml.dll \
-	        /r:System.Data.dll \
-		/r:System.Configuration.dll \
-		$(RESOURCE_FILES:%=/resource:%)
+	        $(RESOURCE_FILES:%=/resource:%)
+
+ifneq (2.1, $(FRAMEWORK_VERSION))
+LIB_MCS_FLAGS += /d:NET_3_0 /r:System.Data.dll /r:System.Configuration.dll
+endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) /r:System.ServiceModel.dll
 

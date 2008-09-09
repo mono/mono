@@ -87,7 +87,9 @@ namespace System.Runtime.Serialization
 		public readonly Type RuntimeType;
 		public readonly QName XmlName;
 		public List<DataMemberInfo> Members;
+#if !NET_2_1
 		XmlSchemaSet schema_set;
+#endif
  
 		//FIXME FIXME
 		Dictionary<Type, QName> qname_table = new Dictionary<Type, QName> ();
@@ -120,6 +122,7 @@ namespace System.Runtime.Serialization
 			return (Type.GetTypeCode (type) != TypeCode.Object || type == typeof (object));
 		}
 
+#if !NET_2_1
 		/* Returns the XmlSchemaType AND adds it to @schemas */
 		public virtual XmlSchemaType GetSchemaType (XmlSchemaSet schemas, Dictionary<QName, XmlSchemaType> generated_schema_types)
 		{
@@ -221,6 +224,7 @@ namespace System.Runtime.Serialization
 			imp.Namespace = ns;
 			schema.Includes.Add (imp);
 		}
+#endif
 
 		//Returns list of data members for this type ONLY
 		public virtual List<DataMemberInfo> GetMembers ()
@@ -228,6 +232,7 @@ namespace System.Runtime.Serialization
 			throw new NotImplementedException (String.Format ("Implement me for {0}", this));
 		}
 
+#if !NET_2_1
 		protected XmlSchemaElement GetSchemaElement (QName qname, XmlSchemaType schemaType)
 		{
 			XmlSchemaElement schemaElement = new XmlSchemaElement ();
@@ -259,6 +264,7 @@ namespace System.Runtime.Serialization
 
 			return schema;
 		}
+#endif
 
 		//FIXME: redundant?
 		protected XmlQualifiedName GetQualifiedName (Type type)
@@ -490,6 +496,7 @@ namespace System.Runtime.Serialization
 			throw new NotImplementedException ();
 		}
 		
+#if !NET_2_1
 		public override XmlSchemaType GetSchemaType (XmlSchemaSet schemas, Dictionary<QName, XmlSchemaType> generated_schema_types)
 		{
 			if (generated_schema_types.ContainsKey (XmlName))
@@ -531,6 +538,7 @@ namespace System.Runtime.Serialization
 
 			return complex_type;
 		}
+#endif
 	}
 
 	internal class SharedTypeMap : SerializationMap
@@ -615,6 +623,7 @@ namespace System.Runtime.Serialization
 			return (EnumMemberAttribute) atts [0];
 		}
 
+#if !NET_2_1
 		public override XmlSchemaType GetSchemaType (XmlSchemaSet schemas, Dictionary<QName, XmlSchemaType> generated_schema_types)
 		{
 			if (generated_schema_types.ContainsKey (XmlName))
@@ -644,6 +653,7 @@ namespace System.Runtime.Serialization
 
 			return simpleType;
 		}
+#endif
 
 		public override void Serialize (object graph,
 			XmlFormatterSerializer serializer)
