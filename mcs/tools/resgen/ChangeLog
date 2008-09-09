@@ -1,3 +1,8 @@
+2008-09-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* monoresgen.cs: Make resgen2 report a bit more useful by considering
+	the extra XmlException in the exception chain.
+
 2007-04-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* monoresgen.cs: Clean up resources when resource file cannot be
