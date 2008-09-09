@@ -1,3 +1,8 @@
+2008-09-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaValidator.cs : do not try to validate CloseStartElement
+	  when it should be skipped. Fixed bug #422581.
+
 2008-08-19  Jb Evain  <jbevain@novell.com>
 
 	* XmlSchema_2_1.cs

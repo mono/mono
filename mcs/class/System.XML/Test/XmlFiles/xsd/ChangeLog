@@ -1,3 +1,7 @@
+2008-09-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* 422581.xsd, 422581.xml : new files.
+
 2008-06-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* importNamespaceTest.xsd, xsdimporttest.xml, importedNamespace.xsd:

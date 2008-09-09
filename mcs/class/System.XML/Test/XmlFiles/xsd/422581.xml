@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<root foo="1">
+  <dummy>
+      <bar>
+          <elmnt name="value" />
+      </bar>
+  </dummy>
+  <dummy2></dummy2>
+</root>

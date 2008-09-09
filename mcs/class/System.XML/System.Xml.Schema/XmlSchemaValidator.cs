@@ -502,7 +502,9 @@ namespace System.Xml.Schema
 				if (schemas.Count == 0)
 					return;
 
-				AssessCloseStartElementSchemaValidity (info);
+				if (skipValidationDepth < 0 || depth <= skipValidationDepth)
+					AssessCloseStartElementSchemaValidity (info);
+				depth++;
 			} finally {
 				occuredAtts.Clear ();
 			}
@@ -720,8 +722,6 @@ namespace System.Xml.Schema
 					next = state.Create (XmlSchemaParticle.Empty);
 			}
 			Context.State = next;
-
-			depth++;
 		}
 
 		// It must be invoked after xsi:nil turned out not to be in

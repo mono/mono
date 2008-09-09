@@ -69,6 +69,18 @@ namespace MonoTests.System.Xml
 			v.ValidateElement ("foo", "", info, null, null, null, null);
 			v.ValidateAttribute ("bar", "", "", info);
 		}
+
+		[Test]
+		public void SkipInvolved () // bug #422581
+		{
+			XmlReader schemaReader = XmlReader.Create ("Test/XmlFiles/xsd/422581.xsd");
+			XmlSchema schema = XmlSchema.Read (schemaReader, null);
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.ValidationType = ValidationType.Schema;
+			settings.Schemas.Add (schema);
+			XmlReader reader = XmlReader.Create ("Test/XmlFiles/xsd/422581.xml", settings);
+			while (reader.Read ());
+		}
 	}
 }
 
