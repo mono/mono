@@ -44,8 +44,14 @@ namespace System.Diagnostics {
 		private ArrayList listeners = ArrayList.Synchronized (new ArrayList (1));
 
 		internal TraceListenerCollection ()
+			: this (true)
 		{
-			Add (new DefaultTraceListener ());
+		}
+
+		internal TraceListenerCollection (bool addDefault)
+		{
+			if (addDefault)
+				Add (new DefaultTraceListener ());
 		}
 
 		public int Count{
