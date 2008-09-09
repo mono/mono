@@ -2187,6 +2187,14 @@ namespace Mono.CSharp {
 				this.orig_expr = orig_expr;
 			}
 
+			public override Constant ConvertImplicitly (Type target_type)
+			{
+				Constant c = base.ConvertImplicitly (target_type);
+				if (c != null)
+					c = new ReducedConstantExpression (c, orig_expr);
+				return c;
+			}
+
 			public override Expression CreateExpressionTree (EmitContext ec)
 			{
 				return orig_expr.CreateExpressionTree (ec);
@@ -2205,12 +2213,10 @@ namespace Mono.CSharp {
 
 			public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
 			{
-				throw new NotImplementedException ();
-			}
-
-			public override Constant Increment ()
-			{
-				throw new NotImplementedException ();
+				Constant c = base.ConvertExplicitly (in_checked_context, target_type);
+				if (c != null)
+					c = new ReducedConstantExpression (c, orig_expr);
+				return c;
 			}
 		}
 

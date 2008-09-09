@@ -1,5 +1,10 @@
 2008-09-09  Marek Safar  <marek.safar@gmail.com>
 
+	* ecore.cs (ReducedConstantExpression): Implemented ConvertExplicitly and
+	ConvertImplicitly.
+
+2008-09-09  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bugs: #324750, #335946
 	* cs-tokenizer.cs, cs-parser.jay, expression.cs: Use a custom 
 	lookup rule to determine ?-based tokens.
