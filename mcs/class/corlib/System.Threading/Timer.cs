@@ -47,10 +47,18 @@ namespace System.Threading
 		bool disposed;
 #endregion
 
+		// timers that expire after FutureTime will be put in future_jobs
+		// 5 seconds seems reasonable, this must be at least 1 second
+		const long FutureTime = 5 * 1000;
+		const long FutureTimeTicks = FutureTime * TimeSpan.TicksPerMillisecond;
+
 #region Timer static fields
 		static Thread scheduler;
 		static Hashtable jobs;
+		static Hashtable future_jobs;
+		static Timer future_checker;
 		static AutoResetEvent change_event;
+		static object locker;
 #endregion
 
 		/* we use a static initializer to avoid race issues with the thread creation */
@@ -58,6 +66,8 @@ namespace System.Threading
 		{
 			change_event = new AutoResetEvent (false);
 			jobs = new Hashtable ();
+			future_jobs = new Hashtable ();
+			locker = new object ();
 			scheduler = new Thread (SchedulerThread);
 			scheduler.IsBackground = true;
 			scheduler.Start ();
@@ -72,10 +82,11 @@ namespace System.Threading
 		{
 			Thread.CurrentThread.Name = "Timer-Scheduler";
 			while (true) {
-				long min_wait = long.MaxValue;
-				lock (jobs) {
+				long min_next_run = long.MaxValue;
+				lock (locker) {
 					ArrayList expired = null;
 					long ticks = Ticks ();
+					bool future_queue_activated = false;
 					foreach (Timer t1 in jobs.Keys) {
 						if (t1.next_run <= ticks) {
 							ThreadPool.QueueUserWorkItem (new WaitCallback (t1.callback), t1.state);
@@ -85,12 +96,25 @@ namespace System.Threading
 									expired = new ArrayList ();
 								expired.Add (t1);
 							} else {
-								t1.next_run = ticks + TimeSpan.TicksPerMillisecond * t1.period_ms;
+								t1.next_run = Ticks () + TimeSpan.TicksPerMillisecond * t1.period_ms;
+								// if it expires too late, postpone to future_jobs
+								if (t1.period_ms >= FutureTime) {
+									if (future_jobs.Count == 0)
+										future_queue_activated = true;
+									future_jobs [t1] = t1;
+									if (expired == null)
+										expired = new ArrayList ();
+									expired.Add (t1);
+								}
 							}
 						}
 						if (t1.next_run != long.MaxValue) {
-							min_wait = Math.Min (min_wait, t1.next_run - ticks);
+							min_next_run = Math.Min (min_next_run, t1.next_run);
 						}
+					}
+					if (future_queue_activated) {
+						StartFutureHandler ();
+						min_next_run = Math.Min (min_next_run, future_checker.next_run);
 					}
 					if (expired != null) {
 						int count = expired.Count;
@@ -102,8 +126,10 @@ namespace System.Threading
 							expired = null;
 					}
 				}
-				if (min_wait != long.MaxValue) {
-					change_event.WaitOne ((int)(min_wait / TimeSpan.TicksPerMillisecond), true);
+				if (min_next_run != long.MaxValue) {
+					long diff = min_next_run - Ticks ();
+					if (diff >= 0)
+						change_event.WaitOne ((int)(diff / TimeSpan.TicksPerMillisecond), true);
 				} else {
 					change_event.WaitOne (Timeout.Infinite, true);
 				}
@@ -163,6 +189,41 @@ namespace System.Threading
 			return Change ((long)dueTime, (long)period);
 		}
 
+		// FIXME: handle this inside the scheduler, so no additional timer is ever active
+		static void CheckFuture (object state) {
+			lock (locker) {
+				ArrayList moved = null;
+				long now = Ticks ();
+				foreach (Timer t1 in future_jobs.Keys) {
+					if (t1.next_run <= now + FutureTimeTicks) {
+						if (moved == null)
+							moved = new ArrayList ();
+						moved.Add (t1);
+						jobs [t1] = t1;
+					}
+				}
+				if (moved != null) {
+					int count = moved.Count;
+					for (int i = 0; i < count; ++i) {
+						future_jobs.Remove (moved [i]);
+					}
+					moved.Clear ();
+					change_event.Set ();
+				}
+				// no point in keeping this helper timer running
+				if (future_jobs.Count == 0) {
+					future_checker.Dispose ();
+					future_checker = null;
+				}
+			}
+		}
+
+		static void StartFutureHandler ()
+		{
+			if (future_checker == null)
+				future_checker = new Timer (CheckFuture, null, FutureTime - 500, FutureTime - 500);
+		}
+
 		public bool Change (long dueTime, long period)
 		{
 			if(dueTime > 4294967294)
@@ -182,21 +243,38 @@ namespace System.Threading
 
 			due_time_ms = dueTime;
 			period_ms = period;
+			long now = Ticks ();
 			if (dueTime == 0) {
-				next_run = Ticks ();
+				next_run = now;
 			} else if (dueTime == Timeout.Infinite) {
 				next_run = long.MaxValue;
 			} else {
-				next_run = dueTime * TimeSpan.TicksPerMillisecond + Ticks ();
+				next_run = dueTime * TimeSpan.TicksPerMillisecond + now;
 			}
-			lock (jobs) {
+			lock (locker) {
 				if (next_run != long.MaxValue) {
+					bool is_future = next_run - now > FutureTimeTicks;
 					Timer t = jobs [this] as Timer;
-					if (t == null)
-						jobs [this] = this;
+					if (t == null) {
+						t = future_jobs [this] as Timer;
+					} else {
+						if (is_future) {
+							future_jobs [this] = this;
+							jobs.Remove (this);
+						}
+					}
+					if (t == null) {
+						if (is_future)
+							future_jobs [this] = this;
+						else
+							jobs [this] = this;
+					}
+					if (is_future)
+						StartFutureHandler ();
 					change_event.Set ();
 				} else {
 					jobs.Remove (this);
+					future_jobs.Remove (this);
 				}
 			}
 			return true;
@@ -222,8 +300,9 @@ namespace System.Threading
 		public void Dispose ()
 		{
 			disposed = true;
-			lock (jobs) {
+			lock (locker) {
 				jobs.Remove (this);
+				future_jobs.Remove (this);
 			}
 		}
 
