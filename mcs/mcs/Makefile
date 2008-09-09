@@ -133,7 +133,8 @@ profile : $(PROGRAM)
 # quick hack target, to quickly develop the gmcs compiler
 # Update manually.
 qh:
-	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) ../class/lib/net_2_0/gmcs.exe  /codepage:65001 -d:GMCS_SOURCE  -d:NET_1_1 -d:NET_2_0 -debug -target:exe -out:gmcs.exe cs-parser.cs  @gmcs.exe.sources  
+	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) ../class/lib/net_2_0/gmcs.exe  /codepage:65001 -d:GMCS_SOURCE  -d:NET_1_1 -d:NET_2_0 -debug -target:exe -out:gmcs.exe cs-parser.cs  @gmcs.exe.sources
+	@ cp $(COMPILER_NAME).exe* $(topdir)/class/lib/$(PROFILE)/
 
 q: cs-parser.cs qh
 	echo 'System.Console.WriteLine ("Hello");' | mono --debug gmcs.exe -v --shell
