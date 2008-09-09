@@ -246,72 +246,72 @@ namespace Mono.CSharp
 %token INTERR_NULLABLE
 
 /* C# keywords which are not really keywords */
-%token GET           "get"
-%token SET           "set"
+%token GET
+%token SET
 
 %left LAST_KEYWORD
 
 /* C# single character operators/punctuation. */
-%token OPEN_BRACE    "{"
-%token CLOSE_BRACE   "}"
-%token OPEN_BRACKET  "["
-%token CLOSE_BRACKET "]"
-%token OPEN_PARENS   "("
-%token CLOSE_PARENS  ")"
-%token DOT           "."
-%token COMMA         ","
-%token COLON         ":"
-%token SEMICOLON     ";"
-%token TILDE         "~"
+%token OPEN_BRACE
+%token CLOSE_BRACE
+%token OPEN_BRACKET
+%token CLOSE_BRACKET
+%token OPEN_PARENS
+%token CLOSE_PARENS
+%token DOT
+%token COMMA
+%token COLON
+%token SEMICOLON
+%token TILDE
 
-%token PLUS           "+"
-%token MINUS          "-"
-%token BANG           "!"
-%token ASSIGN         "="
-%token OP_LT          "<"
-%token OP_GENERICS_LT "<"
-%token OP_GT          ">"
-%token OP_GENERICS_GT ">"
-%token BITWISE_AND    "&"
-%token BITWISE_OR     "|"
-%token STAR           "*"
-%token PERCENT        "%"
-%token DIV            "/"
-%token CARRET         "^"
-%token INTERR         "?"
+%token PLUS
+%token MINUS
+%token BANG
+%token ASSIGN
+%token OP_LT
+%token OP_GENERICS_LT
+%token OP_GT
+%token OP_GENERICS_GT
+%token BITWISE_AND
+%token BITWISE_OR
+%token STAR
+%token PERCENT
+%token DIV
+%token CARRET
+%token INTERR
 
 /* C# multi-character operators. */
-%token DOUBLE_COLON	      "::"
-%token OP_INC                 "++"
-%token OP_DEC                 "--"
-%token OP_SHIFT_LEFT          "<<"
-%token OP_SHIFT_RIGHT         ">>"
-%token OP_LE                  "<="
-%token OP_GE                  ">="
-%token OP_EQ                  "=="
-%token OP_NE                  "!="
-%token OP_AND                 "&&"
-%token OP_OR                  "||"
-%token OP_MULT_ASSIGN         "*="
-%token OP_DIV_ASSIGN          "/="
-%token OP_MOD_ASSIGN          "%="
-%token OP_ADD_ASSIGN          "+="
-%token OP_SUB_ASSIGN          "-="
-%token OP_SHIFT_LEFT_ASSIGN   "<<="
-%token OP_SHIFT_RIGHT_ASSIGN  ">>="
-%token OP_AND_ASSIGN          "&="
-%token OP_XOR_ASSIGN          "^="
-%token OP_OR_ASSIGN           "|="
-%token OP_PTR                 "->"
-%token OP_COALESCING          "??"
+%token DOUBLE_COLON
+%token OP_INC
+%token OP_DEC
+%token OP_SHIFT_LEFT
+%token OP_SHIFT_RIGHT
+%token OP_LE
+%token OP_GE
+%token OP_EQ
+%token OP_NE
+%token OP_AND
+%token OP_OR
+%token OP_MULT_ASSIGN
+%token OP_DIV_ASSIGN
+%token OP_MOD_ASSIGN
+%token OP_ADD_ASSIGN
+%token OP_SUB_ASSIGN
+%token OP_SHIFT_LEFT_ASSIGN
+%token OP_SHIFT_RIGHT_ASSIGN
+%token OP_AND_ASSIGN
+%token OP_XOR_ASSIGN
+%token OP_OR_ASSIGN
+%token OP_PTR
+%token OP_COALESCING
 
 /* Numbers */
-%token LITERAL_INTEGER           "int literal"
-%token LITERAL_FLOAT             "float literal"
-%token LITERAL_DOUBLE            "double literal"
-%token LITERAL_DECIMAL           "decimal literal"
-%token LITERAL_CHARACTER         "character literal"
-%token LITERAL_STRING            "string literal"
+%token LITERAL_INTEGER
+%token LITERAL_FLOAT
+%token LITERAL_DOUBLE
+%token LITERAL_DECIMAL
+%token LITERAL_CHARACTER
+%token LITERAL_STRING
 
 %token IDENTIFIER
 %token OPEN_PARENS_LAMBDA
@@ -719,7 +719,7 @@ attribute_target
 	| RETURN { $$ = "return"; }
 	| error
 	  {
-  		string name = yyNames [yyToken].ToLower ();
+  		string name = GetTokenName (yyToken);
 		$$ = CheckAttributeTarget (name, GetLocation ($1));
 	  }
 	;
@@ -4475,8 +4475,7 @@ statement_expression
 	  }
 	| error
 	  {
-		Report.ExtraInformation (GetLocation ($1), "(token is: " + yyToken + " in previous ");
-		Report.Error (1002, GetLocation ($1), "Expecting `;'");
+		Report.Error (1002, GetLocation ($1), "Expecting {0}, got {1}", GetExpecting (), GetTokenName (yyToken));
 		$$ = null;
 	  }
 	;
@@ -4492,7 +4491,7 @@ interactive_statement_expression
 	  }
 	| error
 	  {
-		Report.Error (1002, GetLocation ($1), "Expecting `;' (token is: {0})", yyToken);
+		Report.Error (1002, GetLocation ($1), "Expecting {0}, got {1}", GetExpecting (), GetTokenName (yyToken));
 		$$ = null;
 	  }
 	;
@@ -5813,7 +5812,7 @@ public void parse ()
 static void CheckToken (int error, int yyToken, string msg, Location loc)
 {
 	if (yyToken >= Token.FIRST_KEYWORD && yyToken <= Token.LAST_KEYWORD)
-		Report.Error (error, loc, "{0}: `{1}' is a keyword", msg, yyNames [yyToken].ToLower ());
+		Report.Error (error, loc, "{0}: `{1}' is a keyword", msg, GetTokenName (yyToken));
 	else
 		Report.Error (error, loc, msg);
 }
@@ -5905,6 +5904,373 @@ public NamespaceEntry CurrentNamespace {
        get { 
        	   return current_namespace;
        }
+}
+
+public string GetExpecting ()
+{
+	int [] tokens = yyExpectingTokens (yyExpectingState);
+	if (tokens.Length == 1)
+		return "`" + GetTokenName (tokens [0]) + "'";
+	
+	StringBuilder sb = new StringBuilder ();
+	ArrayList names = new ArrayList ();
+	for (int i = 0; i < tokens.Length; i++){
+		string name = GetTokenName (tokens [i]);
+		if (name == "<internal>")
+			continue;
+		if (names.Contains (name))
+			continue;
+		
+		names.Add (name);
+	}
+
+	int count = names.Count;
+	for (int i = 0; i < count; i++){
+		bool last = i + 1 == count;
+		if (last)
+			sb.Append ("or ");
+		sb.Append ('`');
+		sb.Append (names [i]);
+		sb.Append (last ? "'" : "', ");
+	}
+	return sb.ToString ();
+}
+
+static public string GetTokenName (int token)
+{
+	switch (token){
+	case Token.ABSTRACT:
+		return "abstract";
+	case Token.AS:
+		return "as";
+	case Token.ADD:
+		return "add";
+	case Token.ASSEMBLY:
+		return "assembly";
+	case Token.BASE:
+		return "base";
+	case Token.BOOL:
+		return "bool";
+	case Token.BREAK:
+		return "break";
+	case Token.BYTE:
+		return "byte";
+	case Token.CASE:
+		return "case";
+	case Token.CATCH:
+		return "catch";
+	case Token.CHAR:
+		return "char";
+	case Token.CHECKED:
+		return "checked";
+	case Token.CLASS:
+		return "class";
+	case Token.CONST:
+		return "const";
+	case Token.CONTINUE:
+		return "continue";
+	case Token.DECIMAL:
+		return "decimal";
+	case Token.DEFAULT:
+		return "default";
+	case Token.DELEGATE:
+		return "delegate";
+	case Token.DO:
+		return "do";
+	case Token.DOUBLE:
+		return "double";
+	case Token.ELSE:
+		return "else";
+	case Token.ENUM:
+		return "enum";
+	case Token.EVENT:
+		return "event";
+	case Token.EXPLICIT:
+		return "explicit";
+	case Token.EXTERN:
+		return "extern";
+	case Token.FALSE:
+		return "false";
+	case Token.FINALLY:
+		return "finally";
+	case Token.FIXED:
+		return "fixed";
+	case Token.FLOAT:
+		return "float";
+	case Token.FOR:
+		return "for";
+	case Token.FOREACH:
+		return "foreach";
+	case Token.GOTO:
+		return "goto";
+	case Token.IF:
+		return "if";
+	case Token.IMPLICIT:
+		return "implicit";
+	case Token.IN:
+		return "in";
+	case Token.INT:
+		return "int";
+	case Token.INTERFACE:
+		return "interface";
+	case Token.INTERNAL:
+		return "internal";
+	case Token.IS:
+		return "is";
+	case Token.LOCK:
+		return "lock";
+	case Token.LONG:
+		return "long";
+	case Token.NAMESPACE:
+		return "namespace";
+	case Token.NEW:
+		return "new";
+	case Token.NULL:
+		return "null";
+	case Token.OBJECT:
+		return "object";
+	case Token.OPERATOR:
+		return "operator";
+	case Token.OUT:
+		return "out";
+	case Token.OVERRIDE:
+		return "override";
+	case Token.PARAMS:
+		return "params";
+	case Token.PRIVATE:
+		return "private";
+	case Token.PROTECTED:
+		return "protected";
+	case Token.PUBLIC:
+		return "public";
+	case Token.READONLY:
+		return "readonly";
+	case Token.REF:
+		return "ref";
+	case Token.RETURN:
+		return "return";
+	case Token.REMOVE:
+		return "remove";
+	case Token.SBYTE:
+		return "sbyte";
+	case Token.SEALED:
+		return "sealed";
+	case Token.SHORT:
+		return "short";
+	case Token.SIZEOF:
+		return "sizeof";
+	case Token.STACKALLOC:
+		return "stackalloc";
+	case Token.STATIC:
+		return "static";
+	case Token.STRING:
+		return "string";
+	case Token.STRUCT:
+		return "struct";
+	case Token.SWITCH:
+		return "switch";
+	case Token.THIS:
+		return "this";
+	case Token.THROW:
+		return "throw";
+	case Token.TRUE:
+		return "true";
+	case Token.TRY:
+		return "try";
+	case Token.TYPEOF:
+		return "typeof";
+	case Token.UINT:
+		return "uint";
+	case Token.ULONG:
+		return "ulong";
+	case Token.UNCHECKED:
+		return "unchecked";
+	case Token.UNSAFE:
+		return "unsafe";
+	case Token.USHORT:
+		return "ushort";
+	case Token.USING:
+		return "using";
+	case Token.VIRTUAL:
+		return "virtual";
+	case Token.VOID:
+		return "void";
+	case Token.VOLATILE:
+		return "volatile";
+	case Token.WHERE:
+		return "where";
+	case Token.WHILE:
+		return "while";
+	case Token.ARGLIST:
+		return "arglist";
+	case Token.PARTIAL:
+		return "partial";
+	case Token.ARROW:
+		return "=>";
+	case Token.QUERY_FIRST_TOKEN:
+		return "query first token";
+	case Token.FROM:
+		return "from";
+	case Token.JOIN:
+		return "join";
+	case Token.ON:
+		return "on";
+	case Token.EQUALS:
+		return "equals";
+	case Token.SELECT:
+		return "select";
+	case Token.GROUP:
+		return "group";
+	case Token.BY:
+		return "by";
+	case Token.LET:
+		return "let";
+	case Token.ORDERBY:
+		return "orderby";
+	case Token.ASCENDING:
+		return "ascending";
+	case Token.DESCENDING:
+		return "descending";
+	case Token.INTO:
+		return "into";
+	case Token.QUERY_LAST_TOKEN:
+		return "query last token";
+	case Token.GET:
+		return "get";
+	case Token.SET:
+		return "set";
+	case Token.LAST_KEYWORD:
+		return "last keyword";
+	case Token.OPEN_BRACE:
+		return "{";
+	case Token.CLOSE_BRACE:
+		return "}";
+	case Token.OPEN_BRACKET:
+		return "[";
+	case Token.CLOSE_BRACKET:
+		return "]";
+	case Token.DEFAULT_OPEN_PARENS:
+	case Token.OPEN_PARENS_LAMBDA:
+	case Token.OPEN_PARENS:
+		return "(";
+	case Token.CLOSE_PARENS_CAST:
+	case Token.CLOSE_PARENS_NO_CAST:
+	case Token.CLOSE_PARENS_OPEN_PARENS:
+	case Token.CLOSE_PARENS_MINUS:
+	case Token.CLOSE_PARENS:
+		return ")";
+	case Token.DOT:
+		return ".";
+	case Token.COMMA:
+		return ",";
+	case Token.DEFAULT_COLON:
+	case Token.COLON:
+		return ":";
+	case Token.SEMICOLON:
+		return ";";
+	case Token.TILDE:
+		return "~";
+	case Token.PLUS:
+		return "+";
+	case Token.UMINUS:
+	case Token.MINUS:
+		return "-";
+	case Token.BANG:
+		return "!";
+	case Token.ASSIGN:
+		return "=";
+	case Token.OP_LT:
+	case Token.OP_GENERICS_LT:
+	case Token.GENERIC_DIMENSION:
+		return "<";
+	case Token.OP_GT:
+	case Token.OP_GENERICS_GT:
+		return ">";
+	case Token.BITWISE_AND:
+		return "&";
+	case Token.BITWISE_OR:
+		return "|";
+	case Token.STAR:
+		return "*";
+	case Token.PERCENT:
+		return "%";
+	case Token.DIV:
+		return "/";
+	case Token.CARRET:
+		return "^";
+	case Token.INTERR:
+		return "?";
+	case Token.DOUBLE_COLON:
+		return "::";
+	case Token.OP_INC:
+		return "++";
+	case Token.OP_DEC:
+		return "--";
+	case Token.OP_SHIFT_LEFT:
+		return "<<";
+	case Token.OP_SHIFT_RIGHT:
+		return ">>";
+	case Token.OP_LE:
+		return "<=";
+	case Token.OP_GE:
+		return ">=";
+	case Token.OP_EQ:
+		return "==";
+	case Token.OP_NE:
+		return "!=";
+	case Token.OP_AND:
+		return "&&";
+	case Token.OP_OR:
+		return "||";
+	case Token.OP_MULT_ASSIGN:
+		return "*=";
+	case Token.OP_DIV_ASSIGN:
+		return "/=";
+	case Token.OP_MOD_ASSIGN:
+		return "%=";
+	case Token.OP_ADD_ASSIGN:
+		return "+=";
+	case Token.OP_SUB_ASSIGN:
+		return "-=";
+	case Token.OP_SHIFT_LEFT_ASSIGN:
+		return "<<=";
+	case Token.OP_SHIFT_RIGHT_ASSIGN:
+		return ">>=";
+	case Token.OP_AND_ASSIGN:
+		return "&=";
+	case Token.OP_XOR_ASSIGN:
+		return "^=";
+	case Token.OP_OR_ASSIGN:
+		return "|=";
+	case Token.OP_PTR:
+		return "->";
+	case Token.OP_COALESCING:
+		return "??";
+	case Token.LITERAL_FLOAT:
+	case Token.LITERAL_INTEGER:
+	case Token.LITERAL_DOUBLE:
+	case Token.LITERAL_DECIMAL:
+	case Token.LITERAL_CHARACTER:
+	case Token.LITERAL_STRING:
+		return "literal";
+	case Token.IDENTIFIER:
+		return "identifier";
+
+		// All of these are internal.
+	case Token.NONE:
+	case Token.ERROR:
+	case Token.FIRST_KEYWORD:
+	case Token.EOF:
+	case Token.EVAL_COMPILATION_UNIT_PARSER:
+	case Token.EVAL_USING_DECLARATIONS_UNIT_PARSER:
+	case Token.EVAL_STATEMENT_PARSER:
+	case Token.LOWPREC:
+		return "<internal>";
+
+		// A bit more robust.
+	default:
+		return yyNames [token];
+        }
 }
 
 /* end end end */

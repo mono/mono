@@ -1,3 +1,13 @@
+2008-09-09  Miguel de Icaza  <miguel@novell.com>
+
+	* cs-parser.jay: Improve error reporting for syntax errors in
+	statements and expressions, we now report the expected tokens
+	instead of reporting the useless "; expected".
+
+	Drop the strings from the token declaration, it turns out that
+	they did not do what I thought they did.  Instead they were adding
+	two sets of tokens to the tables.
+
 2008-09-09  Marek Safar  <marek.safar@gmail.com>
 
 	* typemanager.cs, generic.cs, parameter.cs, expression.cs, class.cs,
