@@ -1416,6 +1416,8 @@ again:
 		
 		type = _WAPI_PRIVATE_HANDLES(idx).type;
 
+		_wapi_handle_ref (handle);
+		
 #ifdef DEBUG
 		g_message ("%s: Checking handle %p", __func__, handle);
 #endif
