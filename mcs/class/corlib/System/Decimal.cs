@@ -178,7 +178,8 @@ namespace System
 
 		public Decimal (float value) 
 		{
-			if (value > (float)Decimal.MaxValue || value < (float)Decimal.MinValue) {
+			if (value > (float)Decimal.MaxValue || value < (float)Decimal.MinValue ||
+				float.IsNaN (value) || float.IsNegativeInfinity (value) || float.IsPositiveInfinity (value)) {
 				throw new OverflowException (Locale.GetText (
 					"Value {0} is greater than Decimal.MaxValue or less than Decimal.MinValue", value));
 			}
@@ -193,7 +194,8 @@ namespace System
 
 		public Decimal (double value) 
 		{
-			if (value > (double)Decimal.MaxValue || value < (double)Decimal.MinValue) {
+			if (value > (double)Decimal.MaxValue || value < (double)Decimal.MinValue ||
+				double.IsNaN (value) || double.IsNegativeInfinity (value) || double.IsPositiveInfinity (value)) {
 				throw new OverflowException (Locale.GetText (
 					"Value {0} is greater than Decimal.MaxValue or less than Decimal.MinValue", value));
 			}

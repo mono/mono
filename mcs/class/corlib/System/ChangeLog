@@ -1,3 +1,7 @@
+2008-09-09  Marek Safar  <marek.safar@gmail.com>
+
+	* Convert.cs, Decimal.cs: Fixed float/double to decimal range check.
+
 2008-09-07  Miguel de Icaza  <miguel@novell.com>
 
 	* TermInfoDriver.cs: Add support for updating the size of the

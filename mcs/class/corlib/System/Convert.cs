@@ -834,11 +834,7 @@ namespace System {
 
 		public static decimal ToDecimal (double value) 
 		{ 
-			if (value > (double)Decimal.MaxValue || value < (double)Decimal.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Decimal.MaxValue or less than Decimal.MinValue"));
-
-			return (decimal)value; 
+			return (decimal) value; 
 		}
 
 		public static decimal ToDecimal (float value) 
