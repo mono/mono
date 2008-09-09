@@ -1,3 +1,9 @@
+2008-09-09  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bugs: #324750, #335946
+	* cs-tokenizer.cs, cs-parser.jay, expression.cs: Use a custom 
+	lookup rule to determine ?-based tokens.
+
 2008-09-08  Miguel de Icaza  <miguel@novell.com>
 
 	* repl.cs (OptionalAssign.EmitStatement): It is possible that some

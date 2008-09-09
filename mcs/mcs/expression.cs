@@ -8955,17 +8955,6 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public Expression RemoveNullable ()
-		{
-			if (dim.EndsWith ("?")) {
-				dim = dim.Substring (0, dim.Length - 1);
-				if (dim.Length == 0)
-					return left;
-			}
-
-			return this;
-		}
-
 		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
 			TypeExpr lexpr = left.ResolveAsTypeTerminal (ec, false);

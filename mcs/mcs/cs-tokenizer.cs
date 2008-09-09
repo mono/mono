@@ -45,6 +45,12 @@ namespace Mono.CSharp
 		Location current_location;
 		Location current_comment_location = Location.Null;
 		ArrayList escaped_identifiers = new ArrayList ();
+		
+		//
+		// Used mainly for parser optimizations. Some expressions for instance
+		// can appear only in block (including initializer, base initializer)
+		// scope only
+		//
 		public int parsing_block;
 		internal int query_parsing;
 
@@ -192,7 +198,7 @@ namespace Mono.CSharp
 		//
 		// Values for the associated token returned
 		//
-		internal int putback_char;
+		internal int putback_char; 	// Used by repl only
 		Object val;
 
 		//
@@ -660,7 +666,7 @@ namespace Mono.CSharp
 				return true;
 			else if (the_token == Token.COMMA || the_token == Token.DOT || the_token == Token.DOUBLE_COLON)
 				goto start;
-			else if (the_token == Token.INTERR || the_token == Token.STAR)
+			else if (the_token == Token.INTERR_NULLABLE || the_token == Token.STAR)
 				goto again;
 			else if (the_token == Token.OP_GENERICS_LT) {
 				if (!parse_less_than ())
@@ -679,34 +685,6 @@ namespace Mono.CSharp
 			return false;
 		}
 
-		public void PutbackNullable ()
-		{
-			if (nullable_pos < 0)
-				throw new Exception ();
-
-			current_token = -1;
-			val = null;
-			reader.Position = nullable_pos;
-
-			putback_char = '?';
-		}
-
-		public void PutbackCloseParens ()
-		{
-			putback_char = ')';
-		}
-
-
-		int nullable_pos = -1;
-
-		public void CheckNullable (bool is_nullable)
-		{
-			if (is_nullable)
-				nullable_pos = reader.Position;
-			else
-				nullable_pos = -1;
-		}
-		
 		bool parse_generic_dimension (out int dimension)
 		{
 			dimension = 1;
@@ -758,7 +736,10 @@ namespace Mono.CSharp
 			case ']':
 				return Token.CLOSE_BRACKET;
 			case '(':
-				if (!lambda_arguments_parsing) {
+				//
+				// A lambda expression can appear in block context only
+				//
+				if (parsing_block != 0 && !lambda_arguments_parsing) {
 					lambda_arguments_parsing = true;
 					PushPosition ();
 					bool lambda_start = IsLambdaOpenParens ();
@@ -803,14 +784,9 @@ namespace Mono.CSharp
 				val = Location;
 				return Token.TILDE;
 			case '?':
-				d = peek_char ();
-				if (d == '?') {
-					get_char ();
-					return Token.OP_COALESCING;
-				}
-				return Token.INTERR;
+				return TokenizePossibleNullableType ();
 			}
-			
+
 			if (c == '<') {
 				if (parsing_generic_less_than++ > 0)
 					return Token.OP_GENERICS_LT;
@@ -1000,6 +976,117 @@ namespace Mono.CSharp
 			}
 
 			return Token.ERROR;
+		}
+
+		//
+		// Tonizes `?' using custom disambiguous rules to return one
+		// of following tokens: INTERR_NULLABLE, OP_COALESCING, INTERR
+		//
+		// Tricky expression look like:
+		//
+		// Foo ? a = x ? b : c;
+		//
+		int TokenizePossibleNullableType ()
+		{
+			if (parsing_block == 0)
+				return Token.INTERR_NULLABLE;
+
+			int d = peek_char ();
+			if (d == '?') {
+				get_char ();
+				return Token.OP_COALESCING;
+			}
+
+			switch (current_token) {
+				case Token.CLOSE_PARENS:
+				case Token.TRUE:
+				case Token.FALSE:
+				case Token.NULL:
+				case Token.LITERAL_INTEGER:
+				case Token.LITERAL_STRING:
+					return Token.INTERR;
+			}
+
+			if (d != ' ') {
+				if (d == ',' || d == ';' || d == '>')
+					return Token.INTERR_NULLABLE;
+				if (d == '*' || (d >= '0' && d <= '9'))
+					return Token.INTERR;
+			}
+
+			PushPosition ();
+			int next_token;
+			switch (xtoken ()) {
+				case Token.LITERAL_INTEGER:
+				case Token.LITERAL_STRING:
+				case Token.LITERAL_CHARACTER:
+				case Token.LITERAL_DECIMAL:
+				case Token.LITERAL_DOUBLE:
+				case Token.LITERAL_FLOAT:
+				case Token.TRUE:
+				case Token.FALSE:
+				case Token.NULL:
+				case Token.THIS:
+					next_token = Token.INTERR;
+					break;
+
+				case Token.SEMICOLON:
+				case Token.COMMA:
+				case Token.CLOSE_PARENS:
+				case Token.OPEN_BRACKET:
+				case Token.OP_GENERICS_GT:
+					next_token = Token.INTERR_NULLABLE;
+					break;
+
+				default:
+					next_token = -1;
+					break;
+			}
+
+			if (next_token == -1) {
+				switch (xtoken ()) {
+					case Token.COMMA:
+					case Token.SEMICOLON:
+					case Token.OPEN_BRACE:
+					case Token.CLOSE_PARENS:
+					case Token.IN:
+						next_token = Token.INTERR_NULLABLE;
+						break;
+						
+					case Token.COLON:
+						next_token = Token.INTERR;
+						break;							
+
+					default:
+						int ntoken;
+						int interrs = 1;
+						int colons = 0;
+						//
+						// All shorcuts failed, do it hard way
+						//
+						while ((ntoken = xtoken ()) != Token.EOF) {
+						if (ntoken == Token.SEMICOLON)
+								break;
+
+							if (ntoken == Token.COLON) {
+								if (++colons == interrs)
+									break;
+								continue;
+							}
+
+							if (ntoken == Token.INTERR) {
+								++interrs;
+								continue;
+							}
+						}
+
+						next_token = colons != interrs ? Token.INTERR_NULLABLE : Token.INTERR;
+						break;
+				}
+			}
+			
+			PopPosition ();
+			return next_token;
 		}
 
 		int deambiguate_close_parens = 0;

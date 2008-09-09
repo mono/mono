@@ -243,6 +243,7 @@ namespace Mono.CSharp
 %token DESCENDING
 %token INTO
 %token QUERY_LAST_TOKEN
+%token INTERR_NULLABLE
 
 /* C# keywords which are not really keywords */
 %token GET           "get"
@@ -694,7 +695,7 @@ attribute_section
 	  {
 		$$ = $3;
  	  }
-        | OPEN_BRACKET attribute_list opt_comma CLOSE_BRACKET
+	  | OPEN_BRACKET attribute_list opt_comma CLOSE_BRACKET
 	  {
 		$$ = $2;
 	  }
@@ -742,15 +743,20 @@ attribute_list
 	;
 
 attribute
-	: attribute_name opt_attribute_arguments
+	: attribute_name
 	  {
+		++lexer.parsing_block;
+	  }
+	 opt_attribute_arguments
+	  {
+		--lexer.parsing_block;
 		MemberName mname = (MemberName) $1;
 		if (mname.IsGeneric) {
 			Report.Error (404, lexer.Location,
 				      "'<' unexpected: attributes cannot be generic");
 		}
 
-		object [] arguments = (object []) $2;
+		object [] arguments = (object []) $3;
 		MemberName left = mname.Left;
 		string identifier = mname.Name;
 
@@ -1129,9 +1135,14 @@ variable_declarators
 	;
 
 variable_declarator
-	: IDENTIFIER ASSIGN variable_initializer
+	: IDENTIFIER ASSIGN
 	  {
-		$$ = new VariableDeclaration ((LocatedToken) $1, $3);
+	  	++lexer.parsing_block;
+	  }
+	  variable_initializer
+	  {
+	  	--lexer.parsing_block;
+		$$ = new VariableDeclaration ((LocatedToken) $1, $4);
 	  }
 	| IDENTIFIER
 	  {
@@ -2095,13 +2106,23 @@ constructor_body
 	;
 
 constructor_initializer
-	: COLON BASE OPEN_PARENS opt_argument_list CLOSE_PARENS
+	: COLON BASE OPEN_PARENS
 	  {
-		$$ = new ConstructorBaseInitializer ((ArrayList) $4, (Location) $2);
+		++lexer.parsing_block;
 	  }
-	| COLON THIS OPEN_PARENS opt_argument_list CLOSE_PARENS
+	  opt_argument_list CLOSE_PARENS
 	  {
-		$$ = new ConstructorThisInitializer ((ArrayList) $4, (Location) $2);
+	  	--lexer.parsing_block;
+		$$ = new ConstructorBaseInitializer ((ArrayList) $5, (Location) $2);
+	  }
+	| COLON THIS OPEN_PARENS
+	  {
+		++lexer.parsing_block;
+	  }
+	  opt_argument_list CLOSE_PARENS
+	  {
+	  	--lexer.parsing_block;
+		$$ = new ConstructorThisInitializer ((ArrayList) $5, (Location) $2);
 	  }
 	| COLON error {
 		Report.Error (1018, (Location) $1, "Keyword this or base expected");
@@ -2566,17 +2587,14 @@ delegate_declaration
 opt_nullable
 	: /* empty */
 	  {
-		lexer.CheckNullable (false);
-		$$ = false;
+		$$ = null;
 	  }
-	| INTERR
+	| INTERR_NULLABLE
 	  {
-	  	// FIXME: A hack with parsing conditional operator as nullable type
-		//if (RootContext.Version < LanguageVersion.ISO_2)
-		//	Report.FeatureIsNotAvailable (lexer.Location, "nullable types");
-	  		
-		lexer.CheckNullable (true);
-		$$ = true;
+		if (RootContext.Version < LanguageVersion.ISO_2)
+			Report.FeatureIsNotAvailable (lexer.Location, "nullable types");
+	  
+	  	$$ = this;
 	  }
 	;
 
@@ -2701,7 +2719,7 @@ type
 	  {
 		MemberName name = (MemberName) $1;
 
-		if ((bool) $2) {
+		if ($2 != null) {
 			$$ = new ComposedCast (name.GetTypeExpression (), "?", lexer.Location);
 		} else {
 			if (name.Left == null && name.Name == "var" &&
@@ -2713,7 +2731,7 @@ type
 	  }
 	| builtin_types opt_nullable
 	  {
-		if ((bool) $2)
+		if ($2 != null)
 			$$ = new ComposedCast ((FullNamedExpression) $1, "?", lexer.Location);
 	  }
 	| array_type
@@ -2739,7 +2757,7 @@ pointer_type
 non_expression_type
 	: builtin_types opt_nullable
 	  {
-		if ((bool) $2)
+		if ($2 != null)
 			$$ = new ComposedCast ((FullNamedExpression) $1, "?", lexer.Location);
 	  }
 	| non_expression_type rank_specifier
@@ -2756,7 +2774,6 @@ non_expression_type
 			loc = lexer.Location;
 		$$ = new ComposedCast ((FullNamedExpression) $1, "*", loc);
 	  }
-	
 	//
 	// We need this because the parser will happily go and reduce IDENTIFIER STAR
 	// through this different path
@@ -2931,7 +2948,7 @@ parenthesized_expression
 	| parenthesized_expression_0 CLOSE_PARENS
 	  {
 		$$ = $1;
-	  } 	  
+	  }
 	| parenthesized_expression_0 CLOSE_PARENS_MINUS
 	  {
 		// If a parenthesized expression is followed by a minus, we need to wrap
@@ -3350,21 +3367,17 @@ opt_rank_specifier
 	;
 
 opt_rank_specifier_or_nullable
-	: /* empty */
+	: opt_nullable
 	  {
-		$$ = string.Empty;
-	  }
-	| INTERR
-	  {
-		if (RootContext.Version < LanguageVersion.ISO_2)
-			Report.FeatureIsNotAvailable (lexer.Location, "nullable types");
-
-		$$ = "?";
+		if ($1 != null)
+			$$ = "?";
+		else
+			$$ = string.Empty;
 	  }
 	| opt_nullable rank_specifiers
 	  {
-		if ((bool) $1)
-			$$ = "?" + $2;
+		if ($1 != null)
+			$$ = "?" + (string) $2;
 		else
 			$$ = $2;
 	  }
@@ -3704,28 +3717,6 @@ shift_expression
 	  }
 	; 
 
-opt_error
-	: /* empty */
-	  {
-		$$ = false;
-	  }
-	| error
-	  {
-		lexer.PutbackNullable ();
-		$$ = true;
-	  }
-	;
-
-nullable_type_or_conditional
-	: type opt_error
-	  {
-		if (((bool) $2) && ($1 is ComposedCast))
-			$$ = ((ComposedCast) $1).RemoveNullable ();
-		else
-			$$ = $1;
-	  }
-	;
-
 relational_expression
 	: shift_expression
 	| relational_expression OP_LT shift_expression
@@ -3748,19 +3739,13 @@ relational_expression
 		$$ = new Binary (Binary.Operator.GreaterThanOrEqual, 
 			         (Expression) $1, (Expression) $3);
 	  }
-	| relational_expression IS
+	| relational_expression IS type
 	  {
-		yyErrorFlag = 3;
-	  } nullable_type_or_conditional
-	  {
-		$$ = new Is ((Expression) $1, (Expression) $4, (Location) $2);
+		$$ = new Is ((Expression) $1, (Expression) $3, (Location) $2);
 	  }
-	| relational_expression AS
+	| relational_expression AS type
 	  {
-		yyErrorFlag = 3;
-	  } nullable_type_or_conditional
-	  {
-		$$ = new As ((Expression) $1, (Expression) $4, (Location) $2);
+		$$ = new As ((Expression) $1, (Expression) $3, (Location) $2);
 	  }
 	;
 
@@ -3836,11 +3821,15 @@ conditional_expression
 			
 		$$ = new Nullable.NullCoalescingOperator ((Expression) $1, (Expression) $3, lexer.Location);
 	  }
-	// We'll be resolved into a `parenthesized_expression_0' later on.
-	| conditional_or_expression INTERR CLOSE_PARENS
+	| primary_expression INTERR_NULLABLE opt_rank_specifier
 	  {
-		$$ = new ComposedCast ((FullNamedExpression) $1, "?", lexer.Location);
-		lexer.PutbackCloseParens ();
+	  	//
+	  	// TODO: Is this the best place to handle `= (foo?)a;' ?
+	  	//
+		if (RootContext.Version < LanguageVersion.ISO_2)
+			Report.FeatureIsNotAvailable (GetLocation ($1), "nullable types");
+	  	
+		$$ = new ComposedCast ((FullNamedExpression) $1, "?" + (string)$3, lexer.Location);
 	  }
 	;
 
