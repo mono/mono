@@ -3304,7 +3304,8 @@ namespace Mono.CSharp {
 			right.Emit (ec);
 
 			Type t = left.Type;
-			bool is_unsigned = IsUnsigned (t) || IsFloat (t);
+			bool is_float = IsFloat (t);
+			bool is_unsigned = is_float || IsUnsigned (t);
 			
 			switch (oper){
 			case Operator.Equality:
@@ -3323,7 +3324,7 @@ namespace Mono.CSharp {
 
 			case Operator.LessThan:
 				if (on_true)
-					if (is_unsigned)
+					if (is_unsigned && !is_float)
 						ig.Emit (OpCodes.Blt_Un, target);
 					else
 						ig.Emit (OpCodes.Blt, target);
@@ -3336,7 +3337,7 @@ namespace Mono.CSharp {
 
 			case Operator.GreaterThan:
 				if (on_true)
-					if (is_unsigned)
+					if (is_unsigned && !is_float)
 						ig.Emit (OpCodes.Bgt_Un, target);
 					else
 						ig.Emit (OpCodes.Bgt, target);
@@ -3349,7 +3350,7 @@ namespace Mono.CSharp {
 
 			case Operator.LessThanOrEqual:
 				if (on_true)
-					if (is_unsigned)
+					if (is_unsigned && !is_float)
 						ig.Emit (OpCodes.Ble_Un, target);
 					else
 						ig.Emit (OpCodes.Ble, target);
@@ -3363,7 +3364,7 @@ namespace Mono.CSharp {
 
 			case Operator.GreaterThanOrEqual:
 				if (on_true)
-					if (is_unsigned)
+					if (is_unsigned && !is_float)
 						ig.Emit (OpCodes.Bge_Un, target);
 					else
 						ig.Emit (OpCodes.Bge, target);

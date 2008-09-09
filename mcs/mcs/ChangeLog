@@ -1,5 +1,10 @@
 2008-09-09  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #423981
+	* expression.cs (EmitBranchable): Correctly emit inverted float conditions.
+
+2008-09-09  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs (ReducedConstantExpression): Implemented ConvertExplicitly and
 	ConvertImplicitly.
 
