@@ -10765,6 +10765,50 @@
       </method>
     </type>
   </test>
+  <test name="gtest-409.cs">
+    <type name="ConditionalParsing">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Nullable`1 Test_3[T](System.Func`3[T,T,T], T)">
+        <size>17</size>
+      </method>
+      <method name="Void Test_1(Boolean)">
+        <size>20</size>
+      </method>
+      <method name="Void Test_2()">
+        <size>31</size>
+      </method>
+      <method name="Void Test_4(Boolean, Boolean)">
+        <size>39</size>
+      </method>
+      <method name="Void Test_5(Boolean, IDisposable)">
+        <size>45</size>
+      </method>
+      <method name="Void Test_6(Boolean)">
+        <size>51</size>
+      </method>
+      <method name="Void Test_7(System.Object)">
+        <size>8</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="ConditionalParsing+T">
+      <method name="Void .ctor(String, Boolean)">
+        <size>28</size>
+      </method>
+      <method name="Void .ctor(String, Boolean, Int32, Int32, Int32)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="&lt;PrivateImplementationDetails&gt;">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
