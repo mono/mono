@@ -1277,6 +1277,8 @@ namespace System.Windows.Forms {
 				return;
 			}
 
+			EndDateEdit (false);
+
 			DateTimePart dt_part = part_data [selected_index].date_time_part;
 			switch (dt_part)
 			{
@@ -1541,11 +1543,7 @@ namespace System.Windows.Forms {
 			if (editing_part_index == -1)
 				return;
 
-			int prev_selected_idx = GetSelectedPartIndex ();
-			if (prev_selected_idx == -1)
-				return;
-
-			PartData part = part_data [prev_selected_idx];
+			PartData part = part_data [editing_part_index];
 			if (part.date_time_part == DateTimePart.Year) { // Special case
 				// Infer, like .Net does
 				if (editing_number > 0 && editing_number < 30)
@@ -1862,9 +1860,7 @@ namespace System.Windows.Forms {
 					if (value == is_selected)
 						return;
 
-					if (is_selected)
-						owner.EndDateEdit (false);
-
+					owner.EndDateEdit (false);
 					is_selected = value;
 				}
 			}

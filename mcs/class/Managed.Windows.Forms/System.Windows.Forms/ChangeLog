@@ -1,3 +1,14 @@
+2008-09-09  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* DateTimePicker.cs: Before incrementing or decrementing any part in
+	the textbox, end any current edit. Also when ending the current edit
+	use the editing_part_index field instead of the current selected
+	value, since they can be out of synch, and we really need to work on
+	the *real* current edit part. Finally when PartData.Selected changes,
+	always try to end any ongoing edit.
+	This should fix some small errors handling mouse navigation and
+	increase/decrease operations.
+
 2008-09-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* DateTimePicker.cs: 'hh' and 'HH' formats (12 and 24 hour formats
