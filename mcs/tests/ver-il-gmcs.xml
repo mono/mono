@@ -32020,6 +32020,16 @@
       </method>
     </type>
   </test>
+  <test name="test-678.cs">
+    <type name="NaNTest">
+      <method name="Void .ctor(Double, Double)">
+        <size>171</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>26</size>
+      </method>
+    </type>
+  </test>
   <test name="test-68.cs">
     <type name="Y">
       <method name="Void .ctor()">
