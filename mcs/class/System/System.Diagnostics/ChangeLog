@@ -1,3 +1,23 @@
+2008-09-09  Jonathan Pryor  <jpryor@novell.com>
+
+	* TraceImpl.cs:
+	  - Remove the "lock-free" code, which (come to think of it) would be 
+	    faulty in a multithreaded environment anyway because the "other"
+	    threads won't wait (block) until initialization is complete...
+	  - Add InitOnce() calls to all public properties, so that
+	    `Debug.AutoFlush=true' will cause InitOnce() to be loaded, lest
+	    a `Debug.AutoFlush=true; Debug.Listeners.Add(...)` sequence cause
+	    .AutoFlush=true to be ignored as the InitOnce implied by .Add() 
+	    will "overwrite" the .AutoFlush.
+	  - Split up TraceListenerCollection creation from DefaultTraceListener 
+	    addition, as TraceListenerCollection.Add() calls back into 
+	    TraceImpl, so if these aren't separate we get an infinite loop
+	    and never actually initialize anything.
+	  - Fixes #424370.
+	* TraceListenerCollection.cs: Add a TraceListenerCollection(bool)
+	  constructor, which provides a way to NOT add the
+	  DefaultTraceListener (needed by TraceImpl; see above).
+
 2008-07-28  Dick Porter  <dick@ximian.com>
 
 	* Process.cs: When passing handle references around, it needs to

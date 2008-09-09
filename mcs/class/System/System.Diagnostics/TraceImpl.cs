@@ -39,9 +39,7 @@ namespace System.Diagnostics {
 
 	internal class TraceImpl {
 
-#if NO_LOCK_FREE
-		private static object lock_ = new object ();
-#endif
+		private static object initLock = new object ();
 
 		private static bool autoFlush;
 
@@ -89,12 +87,21 @@ namespace System.Diagnostics {
 		}
 
 		public static bool AutoFlush {
-			get {return autoFlush;}
-			set {autoFlush = value;}
+			get {
+				InitOnce ();
+				return autoFlush;
+			}
+			set {
+				InitOnce ();
+				autoFlush = value;
+			}
 		}
 
 		public static int IndentLevel {
-			get {return indentLevel;}
+			get {
+				InitOnce ();
+				return indentLevel;
+			}
 			set {
 				lock (ListenersSyncRoot) {
 					indentLevel = value;
@@ -107,7 +114,10 @@ namespace System.Diagnostics {
 		}
 
 		public static int IndentSize {
-			get {return indentSize;}
+			get {
+				InitOnce ();
+				return indentSize;
+			}
 			set {
 				lock (ListenersSyncRoot) {
 					indentSize = value;
@@ -119,13 +129,13 @@ namespace System.Diagnostics {
 			}
 		}
 
-		private static object listeners;
+		private static TraceListenerCollection listeners;
 
 		public static TraceListenerCollection Listeners {
 			get {
 				InitOnce ();
 
-				return (TraceListenerCollection) listeners;
+				return listeners;
 			}
 		}
 
@@ -140,14 +150,23 @@ namespace System.Diagnostics {
 		static CorrelationManager correlation_manager = new CorrelationManager ();
 
 		public static CorrelationManager CorrelationManager {
-			get { return correlation_manager; }
+			get {
+				InitOnce ();
+		 		return correlation_manager;
+			}
 		}
 #endif
 
 		[MonoLimitation ("the property exists but it does nothing.")]
 		public static bool UseGlobalLock {
-			get { return use_global_lock; }
-			set { use_global_lock = value; }
+			get {
+				InitOnce ();
+				return use_global_lock;
+			}
+			set {
+				InitOnce ();
+				use_global_lock = value;
+			}
 		}
 
 		// Initialize the world.
@@ -169,27 +188,17 @@ namespace System.Diagnostics {
 		private static object InitOnce ()
 		{
 			object d = null;
-#if !NO_LOCK_FREE
-			// The lock-free version
+
 			if (listeners == null) {
-				TraceListenerCollection c = new TraceListenerCollection ();
-				Thread.MemoryBarrier ();
-				while (Interlocked.CompareExchange (ref listeners, c, null) == null) {
-					// Read in the .config file and get the ball rolling...
-					d = DiagnosticsConfiguration.Settings;
-				}
-				Thread.MemoryBarrier ();
-			}
-#else
-			// The lock version (saved for posterity and potential debugging)
-			lock (lock_) {
-				if (listeners == null) {
-					listeners = new TraceListenerCollection ();
-					// Read in the .config file and get the ball rolling...
-					d = DiagnosticsConfiguration.Settings;
+				lock (initLock) {
+					if (listeners == null) {
+						listeners = new TraceListenerCollection (false);
+						listeners.Add (new DefaultTraceListener ());
+						d = DiagnosticsConfiguration.Settings;
+					}
 				}
 			}
-#endif
+
 			return d;
 		}
 
