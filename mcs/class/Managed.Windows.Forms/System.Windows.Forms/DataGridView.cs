@@ -2187,7 +2187,8 @@ namespace System.Windows.Forms {
 			
 			DataGridViewCell cell = currentCell;
 			Type editType = cell.EditType;
-			if (editType == null)
+			
+			if (editType == null && !(cell is IDataGridViewEditingCell))
 				return false;
 				
 			// Give user a chance to cancel the edit
@@ -2198,25 +2199,41 @@ namespace System.Windows.Forms {
 				return false;
 				
 			cell.SetIsInEditMode (true);
-			Control ctrl = EditingControlInternal;
-			bool isCorrectType = ctrl != null && ctrl.GetType () == editType;
-			if (ctrl != null && !isCorrectType) {
-				ctrl = null;
-			}
-			if (ctrl == null) {
-				ctrl = (Control) Activator.CreateInstance (editType);
-				EditingControlInternal = ctrl;
+			
+			// The cell has an editing control we need to setup
+			if (editType != null) {
+				Control ctrl = EditingControlInternal;
+				
+				// Check if we can reuse the one we already have
+				bool isCorrectType = ctrl != null && ctrl.GetType () == editType;
+				
+				if (!isCorrectType)
+					ctrl = null;
+				
+				// We couldn't use the existing one, create a new one
+				if (ctrl == null) {
+					ctrl = (Control) Activator.CreateInstance (editType);
+					EditingControlInternal = ctrl;
+				}
+				
+				// Call some functions that allows the editing control to get setup
+				DataGridViewCellStyle style = cell.RowIndex == -1 ? DefaultCellStyle : cell.InheritedStyle;
+				
+				cell.InitializeEditingControl (cell.RowIndex, cell.FormattedValue, style);
+				cell.PositionEditingControl (true, true, this.GetCellDisplayRectangle (cell.ColumnIndex, cell.RowIndex, false), bounds, style, false, false, (columns [cell.ColumnIndex].DisplayIndex == 0), (cell.RowIndex == 0));
+
+				// Show the editing control
+				EditingControlInternal.Visible = true;
+
+				// Allow editing control to set focus as needed
+				(EditingControlInternal as IDataGridViewEditingControl).PrepareEditingControlForEdit (selectAll);
+				
+				return true;
 			}
 
-			IDataGridViewEditingControl edControl = ctrl as IDataGridViewEditingControl;
-			DataGridViewCellStyle style = cell.RowIndex == -1 ? DefaultCellStyle : cell.InheritedStyle;
-			cell.InitializeEditingControl (cell.RowIndex, cell.FormattedValue, style);
-			
-			cell.PositionEditingControl (true, true, this.GetCellDisplayRectangle (cell.ColumnIndex, cell.RowIndex, false), bounds, style, false, false, (columns [cell.ColumnIndex].DisplayIndex == 0), (cell.RowIndex == 0));
-			EditingControlInternal.Visible = true;
-			
-			if (edControl != null)
-				(EditingControlInternal as IDataGridViewEditingControl).PrepareEditingControlForEdit (selectAll);
+			// If we are here, it means we have a cell that does not have an editing control
+			// and simply implements IDataGridViewEditingCell itself.
+			(cell as IDataGridViewEditingCell).PrepareEditingCellForEdit (selectAll);
 
 			return true;
 		}
@@ -2285,12 +2302,18 @@ namespace System.Windows.Forms {
 		public bool EndEdit ()
 		{
 			if (currentCell != null && currentCell.IsInEditMode) {
-				IDataGridViewEditingControl ctrl = EditingControl as IDataGridViewEditingControl;
-				ctrl.GetEditingControlFormattedValue (DataGridViewDataErrorContexts.Commit);
-				currentCell.Value = ctrl.GetEditingControlFormattedValue (DataGridViewDataErrorContexts.Commit);
-				
-				currentCell.SetIsInEditMode (false);
-				currentCell.DetachEditingControl ();
+				if (EditingControl != null) {
+					IDataGridViewEditingControl ctrl = EditingControl as IDataGridViewEditingControl;
+					ctrl.GetEditingControlFormattedValue (DataGridViewDataErrorContexts.Commit);
+					currentCell.Value = ctrl.GetEditingControlFormattedValue (DataGridViewDataErrorContexts.Commit);
+					
+					currentCell.SetIsInEditMode (false);
+					currentCell.DetachEditingControl ();	
+				} else if (currentCell is IDataGridViewEditingCell) {
+					currentCell.Value = (currentCell as IDataGridViewEditingCell).EditingCellFormattedValue;
+					currentCell.SetIsInEditMode (false);
+				}
+
 				OnCellEndEdit (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
 			}
 			
@@ -3869,7 +3892,6 @@ namespace System.Windows.Forms {
 					if (cell.GetContentBounds (hit.RowIndex).Contains (cellpoint)) {
 						DataGridViewCellEventArgs dgvcea = new DataGridViewCellEventArgs (hit.ColumnIndex, hit.RowIndex);
 						OnCellContentClick (dgvcea);
-						cell.OnContentClickInternal (dgvcea);
 					}
 						
 					break;
@@ -4057,6 +4079,7 @@ namespace System.Windows.Forms {
 			
 			if (cell == currentCell) {
 				BeginEdit (true);
+				return;
 			} else if (currentCell != null) {
 				EndEdit ();
 				OnCellLeave(new DataGridViewCellEventArgs(currentCell.ColumnIndex, currentCell.RowIndex));

@@ -34,8 +34,7 @@ namespace System.Windows.Forms {
 	public class DataGridViewCheckBoxColumn : DataGridViewColumn {
 
 		public DataGridViewCheckBoxColumn (bool threeState) {
-			CellTemplate = new DataGridViewCheckBoxCell();
-			(CellTemplate as DataGridViewCheckBoxCell).ThreeState = threeState;
+			CellTemplate = new DataGridViewCheckBoxCell (threeState);
 		}
 
 		public DataGridViewCheckBoxColumn () : this (false) {

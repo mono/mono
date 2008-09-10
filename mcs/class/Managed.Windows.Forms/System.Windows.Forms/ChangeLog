@@ -1,3 +1,17 @@
+2008-09-10  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewCheckBoxColumn.cs: Use the threestate constructor for
+	the cell template.
+	* DataGridViewCheckBoxCell.cs: Add proper support for threestate.
+	* DataGridViewCell.cs: Implement GetEditedFormattedValue for types
+	without EditingControls, paint background selection for types without
+	EditingControls, reset the EditingCellValueChanged flag when the
+	cell's value is committed.
+	* DataGridView.cs: Make BeginEdit and EndEdit work with cells that don't
+	have EditingControls, remove a double call to a cell's OnContentClickInternal,
+	don't do cell changing logic in OnMouseDown if the cell didn't change.
+	[Fixes bug #420351]
+
 2008-09-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* DateTimePicker.cs: Fix the edition of am/pm specifier.

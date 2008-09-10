@@ -469,11 +469,16 @@ namespace System.Windows.Forms {
 			if (rowIndex < 0 || rowIndex >= DataGridView.RowCount)
 				throw new ArgumentOutOfRangeException ("rowIndex", "Specified argument was out of the range of valid values.");
 			
+			// If we are in edit mode, this returns the value of the editing control
+			// If we aren't in edit mode, return the cell's value
+			// Basically, return what the user is currently seeing
 			if (IsInEditMode) {
-				IDataGridViewEditingControl ctrl = DataGridView.EditingControl as IDataGridViewEditingControl;
-				return ctrl.GetEditingControlFormattedValue (context);
+				if (DataGridView.EditingControl != null)
+					return (DataGridView.EditingControl as IDataGridViewEditingControl).GetEditingControlFormattedValue (context);
+				else
+					return (this as IDataGridViewEditingCell).GetEditingCellFormattedValue (context);
 			}
-			
+				
 			DataGridViewCellStyle style = InheritedStyle;
 			
 			return GetFormattedValue (GetValue (rowIndex), rowIndex, ref style, null, null, context);
@@ -1283,7 +1288,7 @@ namespace System.Windows.Forms {
 			if ((cellState & DataGridViewElementStates.Selected) != DataGridViewElementStates.Selected)
 				return;
 
-			if (RowIndex >= 0 && IsInEditMode)
+			if (RowIndex >= 0 && IsInEditMode && EditType != null)
 				return;
 				
 			Color color = cellStyle.SelectionBackColor;
@@ -1318,7 +1323,12 @@ namespace System.Windows.Forms {
 		protected virtual bool SetValue (int rowIndex, object value) {
 			if (valuex != value) {
 				valuex = value;
+					
 				RaiseCellValueChanged (new DataGridViewCellEventArgs (ColumnIndex, RowIndex));
+				
+				// Set this dirty flag back to false
+				if (this is IDataGridViewEditingCell)
+					(this as IDataGridViewEditingCell).EditingCellValueChanged = false;
 				
 				if (DataGridView != null)
 					DataGridView.InvalidateCell (this);

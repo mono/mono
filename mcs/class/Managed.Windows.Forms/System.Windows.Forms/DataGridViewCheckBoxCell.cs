@@ -48,6 +48,7 @@ namespace System.Windows.Forms {
 		public DataGridViewCheckBoxCell ()
 		{
 			check_state = PushButtonState.Normal;
+			editingCellFormattedValue = false;
 			editingCellValueChanged = false;
 			falseValue = null;
 			flatStyle = FlatStyle.Standard;
@@ -60,6 +61,7 @@ namespace System.Windows.Forms {
 		public DataGridViewCheckBoxCell (bool threeState) : this()
 		{
 			this.threeState = threeState;
+			editingCellFormattedValue = CheckState.Unchecked;
 		}
 
 		public virtual object EditingCellFormattedValue {
@@ -147,6 +149,7 @@ namespace System.Windows.Forms {
 		{
 			DataGridViewCheckBoxCell cell = (DataGridViewCheckBoxCell) base.Clone();
 			cell.editingCellValueChanged = this.editingCellValueChanged;
+			cell.editingCellFormattedValue = this.editingCellFormattedValue;
 			cell.falseValue = this.falseValue;
 			cell.flatStyle = this.flatStyle;
 			cell.indeterminateValue = this.indeterminateValue;
@@ -164,10 +167,14 @@ namespace System.Windows.Forms {
 			if ((context & DataGridViewDataErrorContexts.ClipboardContent) != 0) {
 				return Convert.ToString(Value);
 			}
-			if (ThreeState) {
-				return (CheckState) Value;
-			}
-			return (Boolean) Value;
+
+			if (editingCellFormattedValue == null)
+				if (threeState)
+					return CheckState.Indeterminate;
+				else
+					return false;
+
+			return editingCellFormattedValue;
 		}
 
 		public override object ParseFormattedValue (object formattedValue, DataGridViewCellStyle cellStyle, TypeConverter formattedValueTypeConverter, TypeConverter valueTypeConverter)
@@ -187,6 +194,7 @@ namespace System.Windows.Forms {
 
 		public virtual void PrepareEditingCellForEdit (bool selectAll)
 		{
+			editingCellFormattedValue = GetCurrentValue ();
 		}
 
 		public override string ToString ()
@@ -228,17 +236,13 @@ namespace System.Windows.Forms {
 
 		protected override object GetFormattedValue (object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context)
 		{
-			if (DataGridView == null)
-				return null;
-			
-			if (value == falseValue)
-				return false;
-			if (value == trueValue)
-				return true;
-			if (value == DBNull.Value)
-				return false;
-				
-			return Convert.ToBoolean (value);
+			if (DataGridView == null || value == null)
+				if (threeState)
+					return CheckState.Indeterminate;
+				else
+					return false;
+					
+			return value;
 		}
 
 		protected override Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize)
@@ -283,14 +287,23 @@ namespace System.Windows.Forms {
 
 		protected override void OnContentClick (DataGridViewCellEventArgs e)
 		{
-			DataGridViewCellStyle current_style = InheritedStyle;
-			
-			bool current = (bool)GetFormattedValue (Value, e.RowIndex, ref current_style, null, null, DataGridViewDataErrorContexts.Parsing);
-			
-			if (current)
-				Value = falseValue == null ? false : falseValue;
-			else
-				Value = trueValue == null ? true : trueValue;
+			CheckState cs = GetCurrentValue ();
+
+			if (threeState) {
+				if (cs == CheckState.Indeterminate)
+					editingCellFormattedValue = CheckState.Unchecked;
+				else if (cs == CheckState.Checked)
+					editingCellFormattedValue = CheckState.Indeterminate;
+				else
+					editingCellFormattedValue = CheckState.Checked;
+			} else {
+				if (cs == CheckState.Checked)
+					editingCellFormattedValue = false;
+				else
+					editingCellFormattedValue = true;
+			}
+
+			editingCellValueChanged = true;
 		}
 
 		protected override void OnContentDoubleClick (DataGridViewCellEventArgs e)
@@ -366,16 +379,45 @@ namespace System.Windows.Forms {
 		internal override void PaintPartContent (Graphics graphics, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, DataGridViewCellStyle cellStyle, object formattedValue)
 		{
 			CheckBoxState state;
-			
-			if ((bool)formattedValue == false)
+			CheckState value = GetCurrentValue ();
+
+			if ((CheckState)value == CheckState.Unchecked)
 				state = (CheckBoxState)check_state;
-			else if ((bool)formattedValue == true)
+			else if ((CheckState)editingCellFormattedValue == CheckState.Checked)
 				state = (CheckBoxState)((int)check_state + 4);
-			else
+			else if (threeState)
 				state = (CheckBoxState)((int)check_state + 8);
-			
+			else
+				state = (CheckBoxState)check_state;
+					
 			Point p = new Point (cellBounds.X + (Size.Width - 13) / 2, cellBounds.Y + (Size.Height - 13) / 2);
 			CheckBoxRenderer.DrawCheckBox (graphics, p, state);
+		}
+		
+		private CheckState GetCurrentValue ()
+		{
+			CheckState cs = CheckState.Indeterminate;
+			
+			object current_obj;
+			
+			if (editingCellValueChanged)
+				current_obj = editingCellFormattedValue;
+			else
+				current_obj = valuex;
+
+			if (current_obj == null)
+				cs = CheckState.Indeterminate;
+			else if (current_obj is bool)
+			{
+				if ((bool)current_obj == true)
+					cs = CheckState.Checked;
+				else if ((bool)current_obj == false)
+					cs = CheckState.Unchecked;
+			}
+			else if (current_obj is CheckState)
+				cs = (CheckState)current_obj;
+
+			return cs;
 		}
 		
 		protected class DataGridViewCheckBoxCellAccessibleObject : DataGridViewCellAccessibleObject {
