@@ -137,13 +137,13 @@ qh:
 	@ cp $(COMPILER_NAME).exe* $(topdir)/class/lib/$(PROFILE)/
 
 q: cs-parser.cs qh
-	echo 'System.Console.WriteLine ("Hello");' | mono --debug gmcs.exe -v --shell
-	echo -e 'using System;\nConsole.WriteLine ("hello");' | mono --debug gmcs.exe -v --shell
-	echo -e '"foo" == "bar";' | mono --debug gmcs.exe -v --shell
-	echo -e 'var a = 1;\na + 2;' | mono --debug gmcs.exe -v --shell
-	echo -e 'int j;\nj = 1;' | mono --debug gmcs.exe -v --shell
-	echo -e 'var a = new int[]{1,2,3};\nfrom x in a select x;' | mono --debug gmcs.exe -v --shell
-	echo -e 'var a = from f in System.IO.Directory.GetFiles ("/tmp") where f == "passwd" select f;' | mono gmcs.exe --shell
+	echo 'System.Console.WriteLine ("Hello");' | csharp
+	echo -e 'using System;\nConsole.WriteLine ("hello");' | csharp
+	echo -e '"foo" == "bar";' | csharp
+	echo -e 'var a = 1;\na + 2;' | csharp
+	echo -e 'int j;\nj = 1;' | csharp
+	echo -e 'var a = new int[]{1,2,3};\nfrom x in a select x;' | csharp
+	echo -e 'var a = from f in System.IO.Directory.GetFiles ("/tmp") where f == "passwd" select f;' | csharp
 
 # read-eval-print-loop test target, for quickly hackign
 repl: 

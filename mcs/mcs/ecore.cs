@@ -794,7 +794,6 @@ namespace Mono.CSharp {
 			Expression e;
 
 			int errors = Report.Errors;
-
 			e = MemberLookup (ec.ContainerType, qualifier_type, queried_type, name, mt, bf, loc);
 
 			if (e != null || errors != Report.Errors)
@@ -2680,7 +2679,7 @@ namespace Mono.CSharp {
 				}
 
 				if (RootContext.EvalMode){
-					FieldInfo fi = InteractiveShell.LookupField (Name);
+					FieldInfo fi = CSharpEvaluator.LookupField (Name);
 					if (fi != null)
 						return new FieldExpr (fi, loc);
 				}

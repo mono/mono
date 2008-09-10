@@ -9,13 +9,13 @@ net_1_1_bootstrap_SUBDIRS = gacutil security resgen culevel
 net_2_0_bootstrap_SUBDIRS = resgen
 
 net_2_0_SUBDIRS = \
-	al corcompare mono-xsd wsdl compiler-tester monop xbuild resgen \
+	al corcompare csharp mono-xsd wsdl compiler-tester monop xbuild resgen \
 	mono-service mkbundle sgen security mconfig installutil nunitreport sqlsharp \
 	gacutil
 net_2_1_raw_SUBDIRS = compiler-tester
 net_2_1_SUBDIRS = compiler-tester tuner
 
-DIST_ONLY_SUBDIRS = xbuild sgen mconfig nunitreport sqlsharp
+DIST_ONLY_SUBDIRS = xbuild sgen mconfig nunitreport sqlsharp csharp
 
 include ../build/rules.make
 

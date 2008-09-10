@@ -72,10 +72,6 @@ namespace Mono.CSharp
 		bool load_default_config = true;
 
 		//
-		// Whether this is going to be an interactive C-Sharp session 
-		public bool Shell = false;
-
-		//
 		// A list of resource files
 		//
 		static Resources embedded_resources;
@@ -109,10 +105,10 @@ namespace Mono.CSharp
 			encoding = Encoding.Default;
 		}
 
-		public static Driver Create (string [] args)
+		public static Driver Create (string [] args, bool require_files)
 		{
 			Driver d = new Driver ();
-			if (!d.ParseArguments (args))
+			if (!d.ParseArguments (args, require_files))
 				return null;
 
 			return d;
@@ -296,12 +292,9 @@ namespace Mono.CSharp
 
 			Location.InEmacs = Environment.GetEnvironmentVariable ("EMACS") == "t";
 
-			Driver d = Driver.Create (args);
+			Driver d = Driver.Create (args, true);
 			if (d == null)
 				return 1;
-
-			if (d.Shell)
-				return d.StartInteractiveShell ();
 
 			else if (d.Compile () && Report.Errors == 0) {
 				if (Report.Warnings > 0) {
@@ -582,7 +575,7 @@ namespace Mono.CSharp
 			Location.AddFile (f);
 		}
 
-		bool ParseArguments (string[] args)
+		bool ParseArguments (string[] args, bool require_files)
 		{
 			references = new ArrayList ();
 			external_aliases = new Hashtable ();
@@ -658,10 +651,7 @@ namespace Mono.CSharp
 				ProcessSourceFiles (arg, false);
 			}
 
-			//
-			// For now, very lax error checking
-			//
-			if (Shell)
+			if (require_files == false)
 				return true;
 					
 			//
@@ -1076,10 +1066,6 @@ namespace Mono.CSharp
 			case "--noconfig":
 				Report.Warning (-29, 1, "Compatibility: Use -noconfig option instead of --noconfig");
 				load_default_config = false;
-				return true;
-
-			case "--shell":
-				Shell = true;
 				return true;
 			}
 
@@ -1597,12 +1583,6 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		int StartInteractiveShell ()
-		{
-			ProcessDefaultConfig ();
-			return InteractiveShell.ReadEvalPrintLoop ();
-		}
-		
 		//
 		// Main compilation method
 		//
@@ -1969,7 +1949,7 @@ namespace Mono.CSharp
 		{
 			Report.Stderr = error;
 			try {
-				Driver d = Driver.Create (args);
+				Driver d = Driver.Create (args, true);
 				if (d == null)
 					return false;
 

@@ -5417,13 +5417,13 @@ interactive_parsing
 	: EVAL_STATEMENT_PARSER EOF 
 	| EVAL_USING_DECLARATIONS_UNIT_PARSER using_directives 
 	| EVAL_STATEMENT_PARSER { 
-	        InteractiveShell.LoadAliases (current_namespace);
+	        CSharpEvaluator.LoadAliases (current_namespace);
 
 		push_current_class (new Class (current_namespace, current_class, new MemberName ("Class" + class_count++),
 			Modifiers.PUBLIC, null), null);
 
 		ArrayList baseclass_list = new ArrayList ();
-		baseclass_list.Add (new TypeExpression (typeof (InteractiveBase), lexer.Location));
+		baseclass_list.Add (new TypeExpression (CSharpEvaluator.InteractiveBaseClass, lexer.Location));
 		current_container.AddBasesForPart (current_class, baseclass_list);
 
 		// (ref object retval)
@@ -5457,7 +5457,7 @@ interactive_parsing
 		current_local_parameters = null;
 	  } 
 	| EVAL_COMPILATION_UNIT_PARSER {
-	        InteractiveShell.LoadAliases (current_namespace);
+	        CSharpEvaluator.LoadAliases (current_namespace);
 	  }
 	  interactive_compilation_unit
 	;
@@ -5645,7 +5645,7 @@ Block declare_local_variables (Expression type, ArrayList variable_declarators, 
 					current_container.AddField (f);
 
 					// Register the field to be visible later as a global variable
-					InteractiveShell.QueueField (f);
+					CSharpEvaluator.QueueField (f);
 				}
 			}
 

@@ -1,5 +1,5 @@
 //
-// repl.cs: Support for using the compiler in interactive mode (read-eval-print loop)
+// eval.cs: Evaluation and Hosting API for the C# compiler
 //
 // Authors:
 //   Miguel de Icaza (miguel@gnome.org)
@@ -9,93 +9,81 @@
 // Copyright 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
 // Copyright 2004, 2005, 2006, 2007, 2008 Novell, Inc
 //
-//
-// TODO:
-//   Do not print results in Evaluate, do that elsewhere in preparation for Eval refactoring.
-//   Driver.PartialReset should not reset the coretypes, nor the optional types, to avoid
-//      computing that on every call.
-//
 using System;
-using System.IO;
-using System.Text;
-using System.Globalization;
+using System.Threading;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Threading;
+using System.IO;
+using System.Globalization;
+using System.Text;
 
 namespace Mono.CSharp {
 
-	public static class InteractiveShell {
-		static bool isatty = true;
+	/// <summary>
+	///   CSharpEvaluator: provides an API to evaluate C# statements and
+	///   expressions dynamically.
+	/// </summary>
+	/// <remarks>
+	///   This class exposes static methods to evaluate expressions in the
+	///   current program.
+	///
+	///   To initialize the evaluator with a number of compiler
+	///   options call the Init(string[]args) method with a set of
+	///   command line options that the compiler recognizes.
+	///
+	///   To interrupt execution of a statement, you can invoke the
+	///   CSharpEvaluator.Interrupt method.
+	/// </remarks>
+	public class CSharpEvaluator {
+		static CSharpEvaluator evaluator;
+		static string current_debug_name;
+		static int count;
+		static Thread invoke_thread;
+		
 		static public ArrayList using_alias_list = new ArrayList ();
 		static public ArrayList using_list = new ArrayList ();
-		public static Hashtable fields = new Hashtable ();
+		static public Hashtable fields = new Hashtable ();
 
-		static int count;
-		static string current_debug_name;
+		static Type   interactive_base_class = typeof (InteractiveBase);
+		static Driver driver;
+		static bool inited;
 
-#if NET_2_0 && !SMCS_SOURCE
-		static Mono.Terminal.LineEditor editor;
-		static bool dumb;
-		static Thread invoke_thread;
-
-		static void ConsoleInterrupt (object sender, ConsoleCancelEventArgs a)
+		/// <summary>
+		///   Optioanl initialization for the CSharpEvaluator.
+		/// </summary>
+		/// <remarks>
+		///  Initializes the CSharpEvaluator with the command line options
+		///  that would be processed by the command line compiler.  Only
+		///  the first call to Init will work, any future invocations are
+		///  ignored.
+		///
+		///  You can safely avoid calling this method if your application
+		///  does not need any of the features exposed by the command line
+		///  interface.
+		/// </remarks>
+		public static void Init (string [] args)
 		{
-			// Do not about our program
-			a.Cancel = true;
+			if (inited)
+				return;
 
-			if (invoking)
-				invoke_thread.Abort ();
+			RootContext.Version = LanguageVersion.Default;
+			Driver driver = Driver.Create (args, false);
+			if (driver == null)
+				throw new Exception ("Failed to create compiler driver with the given arguments");
+
+			driver.ProcessDefaultConfig ();
+			CompilerCallableEntryPoint.Reset ();
+			Driver.LoadReferences ();
+			RootContext.EvalMode = true;
+			inited = true;
+		}
+
+		static void Init ()
+		{
+			Init (new string [0]);
 		}
 		
-		static void SetupConsole ()
-		{
-			string term = Environment.GetEnvironmentVariable ("TERM");
-			dumb = term == "dumb" || term == null || isatty == false;
-			
-			editor = new Mono.Terminal.LineEditor ("csharp", 300);
-			Console.CancelKeyPress += ConsoleInterrupt;
-			invoke_thread = System.Threading.Thread.CurrentThread;
-		}
-
-		static string GetLine (bool primary)
-		{
-			string prompt = primary ? InteractiveBase.Prompt : InteractiveBase.ContinuationPrompt;
-
-			if (dumb){
-				if (isatty)
-					Console.Write (prompt);
-
-				return Console.ReadLine ();
-			} else {
-				return editor.Edit (prompt, "");
-			}
-		}
-
-#else
-		static void SetupConsole ()
-		{
-			// Here just to shut up the compiler warnings about unused invoking variable
-			if (invoking)
-				invoking = false;
-
-			Console.Error.WriteLine ("Warning: limited functionality in 1.0 mode");
-		}
-
-		static string GetLine (bool primary)
-		{
-			string prompt = primary ? InteractiveBase.Prompt : InteractiveBase.ContinuationPrompt;
-
-			if (isatty)
-				Console.Write (prompt);
-
-			return Console.ReadLine ();
-		}
-
-#endif
-		delegate string ReadLiner (bool primary);
-
 		static void Reset ()
 		{
 			CompilerCallableEntryPoint.PartialReset ();
@@ -117,96 +105,86 @@ namespace Mono.CSharp {
 				CodeGen.InitDynamic (current_debug_name);
 		}
 
-		static void InitializeUsing ()
-		{
-			Evaluate ("using System; using System.Linq; using System.Collections.Generic; using System.Collections;");
-		}
+		/// <summary>
+		///   The base class for the classes that host the user generated code
+		/// </summary>
+		/// <remarks>
+		///
+		///   This is the base class that will host the code
+		///   executed by the CSharpEvaluator.  By default
+		///   this is the Mono.CSharp.InteractiveBase class
+		///   which is useful for interactive use.
+		///
+		///   By changing this property you can control the
+		///   base class and the static members that are
+		///   available to your evaluated code.
+		/// </remarks>
+		static public Type InteractiveBaseClass {
+			get {
+				return interactive_base_class;
+			}
 
-		static void InitTerminal ()
-		{
-			isatty = UnixUtils.isatty (0) && UnixUtils.isatty (1);
-
-			// Work around, since Console is not accounting for
-			// cursor position when writing to Stderr.  It also
-			// has the undesirable side effect of making
-			// errors plain, with no coloring.
-			Report.Stderr = Console.Out;
-			SetupConsole ();
-
-			if (isatty)
-				Console.WriteLine ("Mono C# Shell, type \"help;\" for help\n\nEnter statements below.");
-
-		}
-
-#if BOOTSTRAP_WITH_OLDLIB
-		static void LoadStartupFiles ()
-		{
-		}
-#else
-		static void LoadStartupFiles ()
-		{
-			string dir = Path.Combine (
-				Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData),
-				"csharp");
-			if (!Directory.Exists (dir))
-				return;
-
-			foreach (string file in Directory.GetFiles (dir)){
-				string l = file.ToLower ();
+			set {
+				if (value == null)
+					throw new ArgumentNullException ();
 				
-				if (l.EndsWith (".cs")){
-					try {
-						using (StreamReader r = File.OpenText (file)){
-							ReadEvalPrintLoopWith (p => r.ReadLine ());
-						}
-					} catch {
-					}
-				} else if (l.EndsWith (".dll")){
-					Driver.LoadAssembly (file, true);
-				}
+				interactive_base_class = value;
 			}
 		}
-#endif
 
-		static void ReadEvalPrintLoopWith (ReadLiner readline)
+		/// <summary>
+		///   Interrupts the evaluation of an expression.
+		/// </summary>
+		/// <remarks>
+		///   Use this method to interrupt long-running invocations.
+		/// </remarks>
+		public static void Interrupt ()
 		{
-			string expr = null;
-			while (true){
-				string input = readline (expr == null);
-				if (input == null)
-					return;
-
-				if (input == "")
-					continue;
-
-				expr = expr == null ? input : expr + "\n" + input;
-				
-				expr = Evaluate (expr);
-			} 
-		}
-		
-		static public int ReadEvalPrintLoop ()
-		{
-			CompilerCallableEntryPoint.Reset ();
-			Driver.LoadReferences ();
+			if (!inited || !invoking)
+				return;
 			
-			InitTerminal ();
-			RootContext.EvalMode = true;
-
-			InitializeUsing ();
-
-			LoadStartupFiles ();
-			ReadEvalPrintLoopWith (GetLine);
-
-			return 0;
+			if (invoke_thread != null)
+				invoke_thread.Abort ();
 		}
 
-		
-		static string Evaluate (string input)
+		//
+		// Todo: Should we handle errors, or expect the calling code to setup
+		// the recording themselves?
+		//
+
+		/// <summary>
+		///   Evaluates and expression or statement and returns any result values.
+		/// </summary>
+		/// <remarks>
+		///   Evaluates the input string as a C# expression or
+		///   statement.  If the input string is an expression
+		///   the result will be stored in the result variable
+		///   and the result_set variable will be set to true.
+		///
+		///   It is necessary to use the result/result_set
+		///   pair to identify when a result was set (for
+		///   example, execution of user-provided input can be
+		///   an expression, a statement or others, and
+		///   result_set would only be set if the input was an
+		///   expression.
+		///
+		///   If the return value of this function is null,
+		///   this indicates that the parsing was complete.
+		///   If the return value is a string, it indicates
+		///   that the input is partial and that the user
+		///   should provide an updated string.
+		/// </remarks>
+		public static string Evaluate (string input, out object result, out bool result_set)
 		{
-			if (input == null)
+			result_set = false;
+			result = null;
+			
+			if (input == null || input.Length == 0)
 				return null;
 
+			if (!inited)
+				Init ();
+			
 			bool partial_input;
 			CSharpParser parser = ParseString (true, input, out partial_input);
 			if (parser == null){
@@ -216,34 +194,67 @@ namespace Mono.CSharp {
 				ParseString (false, input, out partial_input);
 				return null;
 			}
-			
-			// 
-			// The parser.InteractiveResult will eventually be multiple
-			// different things.  Currently they are statements, but
-			// we will add support for copy-pasting entire blocks of
-			// code, so we will allow namespaces, types, etc
-			//
-			object result = parser.InteractiveResult;
-			
-			try { 
-				if (!(result is Class))
-					parser.CurrentNamespace.Extract (using_alias_list, using_list);
 
-				object rval = ExecuteBlock (result as Class, parser.undo);
-				//
-				// We use a reference to a compiler type, in this case
-				// Driver as a flag to indicate that this was a statement
-				//
-				if (rval != typeof (NoValueSet)){
-					PrettyPrint (rval);
-					Console.WriteLine ();
-				}
-			} catch (Exception e){
-				Console.WriteLine (e);
-			}
+			object parser_result = parser.InteractiveResult;
+			
+			if (!(parser_result is Class))
+				parser.CurrentNamespace.Extract (using_alias_list, using_list);
+
+			result = ExecuteBlock (parser_result as Class, parser.undo);
+			//
+			// We use a reference to a compiler type, in this case
+			// Driver as a flag to indicate that this was a statement
+			//
+			if (result != typeof (NoValueSet))
+				result_set = true;
+
 			return null;
 		}
 
+		/// <summary>
+		///   Executes the given expression or statement.
+		/// </summary>
+		/// <remarks>
+		///    Executes the provided statement, returns true
+		///    on success, false on parsing errors.  Exceptions
+		///    might be thrown by the called code.
+		/// </remarks>
+		public static bool Run (string statement)
+		{
+			if (!inited)
+				Init ();
+			
+			object result;
+			bool result_set;
+			
+			bool ok = Evaluate (statement, out result, out result_set) == null;
+			
+			return ok;
+		}
+
+		/// <summary>
+		///   Evaluates and expression or statement and returns the result.
+		/// </summary>
+		/// <remarks>
+		///   Evaluates the input string as a C# expression or
+		///   statement and returns the value.   
+		///
+		///   This method will throw an exception if there is a syntax error,
+		///   of if the provided input is not an expression but a statement.
+		/// </remarks>
+		public static object Evaluate (string input)
+		{
+			object result;
+			bool result_set;
+			
+			string r = Evaluate (input, out result, out result_set);
+
+			if (r != null || result_set == false)
+				throw new ArgumentException ("Syntax error on input");
+
+			return result;
+		}
+		
 		enum InputKind {
 			EOF,
 			StatementOrExpression,
@@ -427,73 +438,6 @@ namespace Mono.CSharp {
 			return parser;
 		}
 
-		static void p (string s)
-		{
-			Console.Write (s);
-		}
-
-		static string EscapeString (string s)
-		{
-			return s.Replace ("\"", "\\\"");
-		}
-		
-		static void PrettyPrint (object result)
-		{
-			if (result == null){
-				p ("null");
-				return;
-			}
-			
-			if (result is Array){
-				Array a = (Array) result;
-				
-				p ("{ ");
-				int top = a.GetUpperBound (0);
-				for (int i = a.GetLowerBound (0); i <= top; i++){
-					PrettyPrint (a.GetValue (i));
-					if (i != top)
-						p (", ");
-				}
-				p (" }");
-			} else if (result is bool){
-				if ((bool) result)
-					p ("true");
-				else
-					p ("false");
-			} else if (result is string){
-				p (String.Format ("\"{0}\"", EscapeString ((string)result)));
-			} else if (result is IDictionary){
-				IDictionary dict = (IDictionary) result;
-				int top = dict.Count, count = 0;
-				
-				p ("{");
-				foreach (DictionaryEntry entry in dict){
-					count++;
-					p ("{ ");
-					PrettyPrint (entry.Key);
-					p (", ");
-					PrettyPrint (entry.Value);
-					if (count != top)
-						p (" }, ");
-					else
-						p (" }");
-				}
-				p ("}");
-			} else if (result is IEnumerable) {
-				int i = 0;
-				p ("{ ");
-				foreach (object item in (IEnumerable) result) {
-					if (i++ != 0)
-						p (", ");
-
-					PrettyPrint (item);
-				}
-				p (" }");
-			} else {
-				p (result.ToString ());
-			}
-		}
-		
 		delegate void HostSignature (ref object retvalue);
 
 		//
@@ -570,7 +514,11 @@ namespace Mono.CSharp {
 				// If a previous value was set, nullify it, so that we do
 				// not leak memory
 				if (old != null){
-					if (!old.FieldType.IsValueType){
+					if (old.FieldType.IsValueType){
+						//
+						// TODO: Clear fields for structs
+						//
+					} else {
 						try {
 							old.SetValue (null, null);
 						} catch {
@@ -586,8 +534,9 @@ namespace Mono.CSharp {
 			
 			HostSignature invoker = (HostSignature) System.Delegate.CreateDelegate (typeof (HostSignature), mi);
 			object retval = typeof (NoValueSet);
-			
+
 			try {
+				invoke_thread = System.Threading.Thread.CurrentThread;
 				invoking = true;
 				invoker (ref retval);
 			} catch (ThreadAbortException e){
@@ -602,7 +551,7 @@ namespace Mono.CSharp {
 			return retval;
 		}
 
-		static public void LoadAliases (NamespaceEntry ns)
+		static internal void LoadAliases (NamespaceEntry ns)
 		{
 			ns.Populate (using_alias_list, using_list);
 		}
@@ -613,7 +562,7 @@ namespace Mono.CSharp {
 		class NoValueSet {
 		}
 
-		static public FieldInfo LookupField (string name)
+		static internal FieldInfo LookupField (string name)
 		{
 			FieldInfo fi =  (FieldInfo) fields [name];
 
@@ -631,18 +580,159 @@ namespace Mono.CSharp {
 		// This also serves for the parser to register Field classes
 		// that should be exposed as global variables
 		//
-		static public void QueueField (Field f)
+		static internal void QueueField (Field f)
 		{
 			queued_fields.Add (f);
 		}
 
-		static public void ShowUsing ()
+		static string Quote (string s)
 		{
+			if (s.IndexOf ('"') != -1)
+				s = s.Replace ("\"", "\\\"");
+			
+			return "\"" + s + "\"";
+		}
+
+		static public string GetUsing ()
+		{
+			StringBuilder sb = new StringBuilder ();
+			
 			foreach (object x in using_alias_list)
-				Console.WriteLine ("using {0};", x);
+				sb.Append (String.Format ("using {0};\n", x));
 
 			foreach (object x in using_list)
-				Console.WriteLine ("using {0};", x);
+				sb.Append (String.Format ("using {0};\n", x));
+
+			return sb.ToString ();
+		}
+
+		static public string GetVars ()
+		{
+			StringBuilder sb = new StringBuilder ();
+			
+			foreach (DictionaryEntry de in fields){
+				FieldInfo fi = LookupField ((string) de.Key);
+				object value = null;
+				bool error = false;
+				
+				try {
+					if (value == null)
+						value = "null";
+					value = fi.GetValue (null);
+					if (value is string)
+						value = Quote ((string)value);
+				} catch {
+					error = true;
+				}
+
+				if (error)
+					sb.Append (String.Format ("{0} {1} <error reading value>", TypeManager.CSharpName(fi.FieldType), de.Key));
+				else
+					sb.Append (String.Format ("{0} {1} = {2}", TypeManager.CSharpName(fi.FieldType), de.Key, value));
+			}
+
+			return sb.ToString ();
+		}
+
+		/// <summary>
+		///    Loads the given assembly and exposes the API to the user.
+		/// </summary>
+		static public void LoadAssembly (string file)
+		{
+			Driver.LoadAssembly (file, true);
+		}
+
+		/// <summary>
+		///    Exposes the API of the given assembly to the CSharpEvaluator
+		/// </summary>
+		static public void ReferenceAssembly (Assembly a)
+		{
+			RootNamespace.Global.AddAssemblyReference (a);
+		}
+		
+	}
+
+	/// <summary>
+	///   The default base class for every interaction line
+	/// </summary>
+	public class InteractiveBase {
+		public static TextWriter Output = Console.Out;
+		public static TextWriter Error = Console.Error;
+		public static string Prompt             = "csharp> ";
+		public static string ContinuationPrompt = "      > ";
+
+		static public void ShowVars ()
+		{
+			Output.Write (CSharpEvaluator.GetVars ());
+			Output.Flush ();
+		}
+
+		static public void ShowUsing ()
+		{
+			Output.Write (CSharpEvaluator.GetUsing ());
+			Output.Flush ();
+		}
+
+		public delegate void Simple ();
+		
+		static public TimeSpan Time (Simple a)
+		{
+			DateTime start = DateTime.Now;
+			a ();
+			return DateTime.Now - start;
+		}
+		
+#if !SMCS_SOURCE
+		static public void LoadPackage (string pkg)
+		{
+			if (pkg == null){
+				Error.WriteLine ("Invalid package specified");
+				return;
+			}
+
+			string pkgout = Driver.GetPackageFlags (pkg, false);
+			if (pkgout == null)
+				return;
+
+			string [] xargs = pkgout.Trim (new Char [] {' ', '\n', '\r', '\t'}).
+				Split (new Char [] { ' ', '\t'});
+
+			foreach (string s in xargs){
+				if (s.StartsWith ("-r:") || s.StartsWith ("/r:") || s.StartsWith ("/reference:")){
+					string lib = s.Substring (s.IndexOf (':')+1);
+
+					Driver.LoadAssembly (lib, true);
+					continue;
+				}
+			}
+		}
+#endif
+
+		static public void LoadAssembly (string assembly)
+		{
+			Driver.LoadAssembly (assembly, true);
+		}
+		
+		static public string help {
+			get {
+				return  "Static methods:\n"+
+					"  LoadPackage (pkg); - Loads the given Package (like -pkg:FILE)\n" +
+					"  LoadAssembly (ass) - Loads the given assembly (like -r:ASS)\n" + 
+					"  ShowVars ();       - Shows defined local variables.\n" +
+					"  ShowUsing ();      - Show active using decltions.\n" +
+					"  Prompt             - The prompt used by the C# shell\n" +
+					"  ContinuationPrompt - The prompt for partial input\n" +
+					"  Time(() -> { })    - Times the specified code\n" +
+					"  quit;\n" +
+					"  help;\n";
+			}
+		}
+
+		static public object quit {
+			get {
+				Environment.Exit (0);
+				return null;
+			}
 		}
 	}
 
@@ -693,7 +783,7 @@ namespace Mono.CSharp {
 					     name, null, Location);
 			container.AddField (f);
 			if (f.Define ())
-				InteractiveShell.QueueField (f);
+				CSharpEvaluator.QueueField (f);
 			
 			return ret;
 		}
@@ -783,111 +873,5 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	/// <summary>
-	///   The base class for every interaction line
-	/// </summary>
-	public class InteractiveBase {
-		public static string Prompt             = "csharp> ";
-		public static string ContinuationPrompt = "      > ";
-
-		static string Quote (string s)
-		{
-			if (s.IndexOf ('"') != -1)
-				s = s.Replace ("\"", "\\\"");
-			
-			return "\"" + s + "\"";
-		}
-
-		static public void ShowVars ()
-		{
-			foreach (DictionaryEntry de in InteractiveShell.fields){
-				FieldInfo fi = InteractiveShell.LookupField ((string) de.Key);
-				object value = null;
-				bool error = false;
-				
-				try {
-					if (value == null)
-						value = "null";
-					value = fi.GetValue (null);
-					if (value is string)
-						value = Quote ((string)value);
-				} catch {
-					error = true;
-				}
-
-				if (error)
-					Console.WriteLine ("{0} {1} <error reading value>", TypeManager.CSharpName(fi.FieldType), de.Key);
-				else
-					Console.WriteLine ("{0} {1} = {2}", TypeManager.CSharpName(fi.FieldType), de.Key, value);
-			}
-		}
-
-		static public void ShowUsing ()
-		{
-			InteractiveShell.ShowUsing ();
-		}
-
-		public delegate void Simple ();
-		
-		static public TimeSpan Time (Simple a)
-		{
-			DateTime start = DateTime.Now;
-			a ();
-			return DateTime.Now - start;
-		}
-		
-#if !SMCS_SOURCE
-		static public void LoadPackage (string pkg)
-		{
-			if (pkg == null){
-				Console.Error.WriteLine ("Invalid package specified");
-				return;
-			}
-
-			string pkgout = Driver.GetPackageFlags (pkg, false);
-			if (pkgout == null)
-				return;
-
-			string [] xargs = pkgout.Trim (new Char [] {' ', '\n', '\r', '\t'}).
-				Split (new Char [] { ' ', '\t'});
-
-			foreach (string s in xargs){
-				if (s.StartsWith ("-r:") || s.StartsWith ("/r:") || s.StartsWith ("/reference:")){
-					string lib = s.Substring (s.IndexOf (':')+1);
-
-					//Console.WriteLine ("Loading: {0}", lib);
-					Driver.LoadAssembly (lib, true);
-					continue;
-				}
-			}
-		}
-#endif
-
-		static public void LoadAssembly (string assembly)
-		{
-			Driver.LoadAssembly (assembly, true);
-		}
-		
-		static public string help {
-			get {
-				return  "Static methods:\n"+
-					"  LoadPackage (pkg); - Loads the given Package (like -pkg:FILE)\n" +
-					"  LoadAssembly (ass) - Loads the given assembly (like -r:ASS)\n" + 
-					"  ShowVars ();       - Shows defined local variables.\n" +
-					"  ShowUsing ();      - Show active using decltions.\n" +
-					"  Prompt             - The prompt used by the C# shell\n" +
-					"  ContinuationPrompt - The prompt for partial input\n" +
-					"  Time(() -> { })    - Times the specified code\n" +
-					"  quit;\n" +
-					"  help;\n";
-			}
-		}
-
-		static public object quit {
-			get {
-				Environment.Exit (0);
-				return null;
-			}
-		}
-	}
 }
+	

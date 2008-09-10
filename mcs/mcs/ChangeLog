@@ -1,3 +1,13 @@
+2008-09-10  Miguel de Icaza  <miguel@novell.com>
+
+	* driver.cs: Drop --shell argument, the compiler is no longer a
+	REPL. 
+
+	* eval.cs: Move most of the code that deals with evaluation into
+	this file and document the public API from repl.cs
+
+	* repl.cs: Remove from here.
+	
 2008-09-10  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #424684
