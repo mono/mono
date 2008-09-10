@@ -1,5 +1,13 @@
 2008-09-10  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs: Add an internal field to force doublebuffering regardless
+	of what the public mechanisms are set to.  This is because MS's native
+	controls are doublebuffered even though their .Net bits are set to false.
+	* ProgressBar.cs: Set force_double_buffer to true.
+	[Fixes bug #406595]
+
+2008-09-10  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewCheckBoxColumn.cs: Use the threestate constructor for
 	the cell template.
 	* DataGridViewCheckBoxCell.cs: Add proper support for threestate.

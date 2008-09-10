@@ -238,6 +238,8 @@ namespace System.Windows.Forms
 #endif
 				, false);
 
+			force_double_buffer = true;
+			
 #if NET_2_0
 			ForeColor = defaultForeColor;
 #endif

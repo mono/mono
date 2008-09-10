@@ -108,6 +108,7 @@ namespace System.Windows.Forms
 		internal                BorderStyle		border_style;		// Border style of control
 		bool                    show_keyboard_cues; // Current keyboard cues 
 		internal bool           show_focus_cues; // Current focus cues 
+		internal bool		force_double_buffer;	// Always doublebuffer regardless of ControlStyle
 
 		// Layout
 		internal enum LayoutType {
@@ -2002,6 +2003,12 @@ namespace System.Windows.Forms
 				if (!ThemeEngine.Current.DoubleBufferingSupported)
 					return false;
 
+				// Since many of .Net's controls are unmanaged, they are doublebuffered
+				// even though their bits may not be set in managed land.  This allows
+				// us to doublebuffer as well without affecting public style bits.
+				if (force_double_buffer)
+					return true;
+					
 #if NET_2_0
 				if (DoubleBuffered)
 					return true;
