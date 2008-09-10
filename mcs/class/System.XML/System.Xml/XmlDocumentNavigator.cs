@@ -43,22 +43,12 @@ namespace System.Xml
 		#region Constructors
 
 		internal XmlDocumentNavigator (XmlNode node)
-			: this (node, null)
 		{
-			nsNodeXml = document.CreateAttribute ("xmlns", "xml", Xmlns);
-			nsNodeXml.Value = XmlnsXML;
+			this.node = node;
 			if (node.NodeType == XmlNodeType.Attribute && node.NamespaceURI == XmlNamespaceManager.XmlnsXmlns) {
 				nsNode = (XmlAttribute) node; 
 				node = nsNode.OwnerElement;
 			}
-		}
-
-		private XmlDocumentNavigator (XmlNode node, XmlAttribute nsNodeXml)
-		{
-			this.node = node;
-			this.document = node.NodeType == XmlNodeType.Document ?
-				node as XmlDocument : node.OwnerDocument;
-			this.nsNodeXml = nsNodeXml;
 		}
 
 		#endregion
@@ -67,15 +57,17 @@ namespace System.Xml
 		private const string Xmlns = "http://www.w3.org/2000/xmlns/";
 		private const string XmlnsXML = "http://www.w3.org/XML/1998/namespace";
 
-		private XmlAttribute nsNodeXml;
 		private XmlNode node;
-		private XmlDocument document;
 		// Current namespace node (ancestor's attribute of current node).
 		private XmlAttribute nsNode;
 		private ArrayList iteratedNsNames;
 		#endregion
 
 		#region Properties
+
+		internal XmlDocument Document {
+			get { return node.NodeType == XmlNodeType.Document ? node as XmlDocument : node.OwnerDocument; }
+		}
 
 		public override string BaseURI {
 			get {
@@ -144,7 +136,7 @@ namespace System.Xml
 			get {
 				XmlAttribute nsNode = NsNode;
 				if (nsNode != null) {
-					if (nsNode == nsNodeXml)
+					if (nsNode == Document.NsNodeXml)
 						return "xml";
 					else
 						return (nsNode.Name == "xmlns") ? String.Empty : nsNode.LocalName;
@@ -180,9 +172,7 @@ namespace System.Xml
 		}
 
 		public override XmlNameTable NameTable {
-			get {
-				return document.NameTable;
-			}
+			get { return Document.NameTable; }
 		}
 
 		public override XPathNodeType NodeType {
@@ -254,7 +244,7 @@ namespace System.Xml
 				case XPathNodeType.Root:
 					return node.InnerText;
 				case XPathNodeType.Namespace:
-					return NsNode == nsNodeXml ? XmlnsXML : NsNode.Value;
+					return NsNode == Document.NsNodeXml ? XmlnsXML : NsNode.Value;
 				}
 				return String.Empty;
 			}
@@ -292,7 +282,7 @@ namespace System.Xml
 
 		public override XPathNavigator Clone ()
 		{
-			XmlDocumentNavigator clone = new XmlDocumentNavigator (node, nsNodeXml);
+			XmlDocumentNavigator clone = new XmlDocumentNavigator (node);
 			clone.nsNode = nsNode;
 			clone.iteratedNsNames = (iteratedNsNames == null || iteratedNsNames.IsReadOnly) ? iteratedNsNames : ArrayList.ReadOnly(iteratedNsNames);
 			return clone;
@@ -346,7 +336,7 @@ namespace System.Xml
 		{
 			XmlDocumentNavigator otherDocumentNavigator = other as XmlDocumentNavigator;
 			if (otherDocumentNavigator != null) {
-				if (document == otherDocumentNavigator.document) {
+				if (Document == otherDocumentNavigator.Document) {
 					node = otherDocumentNavigator.node;
 					NsNode = otherDocumentNavigator.NsNode;
 					return true;
@@ -429,9 +419,9 @@ namespace System.Xml
 			} while (el != null);
 
 			if (namespaceScope == XPathNamespaceScope.All) {
-				if (CheckNsNameAppearance (nsNodeXml.Name, nsNodeXml.Value))
+				if (CheckNsNameAppearance (Document.NsNodeXml.Name, Document.NsNodeXml.Value))
 					return false;
-				NsNode = nsNodeXml;
+				NsNode = Document.NsNodeXml;
 				return true;
 			}
 			else
@@ -440,7 +430,7 @@ namespace System.Xml
 
 		public override bool MoveToId (string id)
 		{
-			XmlElement eltNew = document.GetElementById (id);
+			XmlElement eltNew = Document.GetElementById (id);
 			if (eltNew == null)
 				return false;
 
@@ -451,7 +441,7 @@ namespace System.Xml
 		public override bool MoveToNamespace (string name)
 		{
 			if (name == "xml") {
-				NsNode = nsNodeXml;
+				NsNode = Document.NsNodeXml;
 				return true;
 			}
 
@@ -538,7 +528,7 @@ namespace System.Xml
 
 		public override bool MoveToNextNamespace (XPathNamespaceScope namespaceScope)
 		{
-			if (NsNode == nsNodeXml)
+			if (NsNode == Document.NsNodeXml)
 				// Current namespace is "xml", so there should be no more namespace nodes.
 				return false;
 
@@ -590,9 +580,9 @@ namespace System.Xml
 			}
 
 			if (namespaceScope == XPathNamespaceScope.All) {
-				if (CheckNsNameAppearance (nsNodeXml.Name, nsNodeXml.Value))
+				if (CheckNsNameAppearance (Document.NsNodeXml.Name, Document.NsNodeXml.Value))
 					return false;
-				NsNode = nsNodeXml;
+				NsNode = Document.NsNodeXml;
 				return true;
 			}
 			return false;

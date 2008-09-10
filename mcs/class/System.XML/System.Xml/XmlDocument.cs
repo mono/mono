@@ -61,6 +61,7 @@ namespace System.Xml
 		Hashtable idTable = new Hashtable ();
 		XmlNameEntryCache nameCache;
 		XmlLinkedNode lastLinkedChild;
+		XmlAttribute nsNodeXml;
 #if NET_2_0
 		XmlSchemaSet schemas;
 		IXmlSchemaInfo schemaInfo;
@@ -119,6 +120,16 @@ namespace System.Xml
 		#endregion
 
 		#region Properties
+
+		internal XmlAttribute NsNodeXml {
+			get {
+				if (nsNodeXml == null) {
+					nsNodeXml = CreateAttribute ("xmlns", "xml", "http://www.w3.org/2000/xmlns/");
+					nsNodeXml.Value = "http://www.w3.org/XML/1998/namespace";
+				}
+				return nsNodeXml;
+			}
+		}
 
 		XmlLinkedNode IHasXmlChildNode.LastLinkedChild {
 			get { return lastLinkedChild; }
