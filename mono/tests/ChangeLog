@@ -1,3 +1,7 @@
+2008-09-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal9.cs: Add test for #425001.
+
 2008-09-07  Mark Probst  <mark.probst@gmail.com>
 
 	* libtest.c: Darwin structure alignment also applies to PPC.
