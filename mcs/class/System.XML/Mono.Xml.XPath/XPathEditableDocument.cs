@@ -494,6 +494,18 @@ namespace Mono.Xml.XPath
 			get { return navigator.Value; }
 		}
 
+		public override string XmlLang {
+			get { return navigator.XmlLang; }
+		}
+
+		public override bool HasChildren {
+			get { return navigator.HasChildren; }
+		}
+
+		public override bool HasAttributes {
+			get { return navigator.HasAttributes; }
+		}
+
 		public override XPathNavigator Clone ()
 		{
 			return new XmlDocumentEditableNavigator (this);
@@ -724,6 +736,54 @@ namespace Mono.Xml.XPath
 			while (n.FirstChild != null)
 				n.RemoveChild (n.FirstChild);
 			n.InnerText = value;
+		}
+
+		public override void MoveToRoot ()
+		{
+			navigator.MoveToRoot ();
+		}
+
+		public override bool MoveToNamespace (string name)
+		{
+			return navigator.MoveToNamespace (name);
+		}
+
+		public override bool MoveToFirst ()
+		{
+			return navigator.MoveToFirst ();
+		}
+
+		public override bool MoveToAttribute (string localName, string namespaceURI)
+		{
+			return navigator.MoveToAttribute (localName, namespaceURI);
+		}
+
+		public override bool IsDescendant (XPathNavigator nav)
+		{
+			XmlDocumentEditableNavigator e = nav as XmlDocumentEditableNavigator;
+			if (e != null)
+				return navigator.IsDescendant (e.navigator);
+			else
+				return navigator.IsDescendant (nav);
+		}
+
+		public override string GetNamespace (string name)
+		{
+			return navigator.GetNamespace (name);
+		}
+
+		public override string GetAttribute (string localName, string namespaceURI)
+		{
+			return navigator.GetAttribute (localName, namespaceURI);
+		}
+
+		public override XmlNodeOrder ComparePosition (XPathNavigator nav)
+		{
+			XmlDocumentEditableNavigator e = nav as XmlDocumentEditableNavigator;
+			if (e != null)
+				return navigator.ComparePosition (e.navigator);
+			else
+				return navigator.ComparePosition (nav);
 		}
 	}
 }
