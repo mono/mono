@@ -82,6 +82,12 @@ namespace System.Net.Sockets
 		private sealed class SocketAsyncResult: IAsyncResult
 		{
 			/* Same structure in the runtime */
+			/*
+			  Keep this in sync with MonoSocketAsyncResult in
+  			  metadata/socket-io.h and ProcessAsyncReader
+  			  in System.Diagnostics/Process.cs.
+			*/
+
 			public Socket Sock;
 			public IntPtr handle;
 			object state;
