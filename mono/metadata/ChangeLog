@@ -1,3 +1,12 @@
+2008-09-10  Bill Holmes  <billholmes54@gmail.com>
+
+	Backport of 112680.
+
+	* socket-io.h : Adding a comment to provide locations where
+	  changes to MonoSocketAsyncResult need to be synced.
+
+	Code is contributed under MIT/X11 license.
+
 2008-09-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (_mono_reflection_get_type_from_info): Revert the last change
