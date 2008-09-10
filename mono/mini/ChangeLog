@@ -1,5 +1,10 @@
 2008-09-10  Mark Probst  <mark.probst@gmail.com>
 
+	* iltests.il.in: Disable the fconv test on PPC (the result is
+	undefined according to ECMA).
+
+2008-09-10  Mark Probst  <mark.probst@gmail.com>
+
 	* iltests.il.in: Enable tail call tests for PPC.
 
 	* mini.h: Add variable for storing incoming valuetype argument
