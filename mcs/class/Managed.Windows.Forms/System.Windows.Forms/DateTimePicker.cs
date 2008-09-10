@@ -1312,7 +1312,9 @@ namespace System.Windows.Forms {
 					SetPart(Value.Second + delta, dt_part);
 					break;
 				case DateTimePart.AMPMSpecifier:
-					SetPart(Value.Hour + delta * 12, dt_part);
+					int hour = Value.Hour;
+					hour = hour >= 0 && hour <= 11 ? hour + 12 : hour - 12;
+					SetPart (hour, DateTimePart.Hour);
 					break;
 				case DateTimePart.Year:
 					SetPart(Value.Year + delta, dt_part);
