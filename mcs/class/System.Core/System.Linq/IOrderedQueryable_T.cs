@@ -25,7 +25,7 @@ using System.Collections.Generic;
 
 namespace System.Linq {
 
-	public interface IOrderedQueryable<T> : IOrderedQueryable, IEnumerable<T>, IQueryable<T>
+	public interface IOrderedQueryable<T> : IOrderedQueryable, IQueryable<T>
 	{
 	}
 }
