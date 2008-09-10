@@ -182,7 +182,7 @@ namespace Mono.CSharp {
 			if (resolved)
 				return true;
 
-			iface_constraints = new ArrayList ();
+			iface_constraints = new ArrayList (2);	// TODO: Too expensive allocation
 			type_param_constraints = new ArrayList ();
 
 			foreach (object obj in constraints) {
@@ -256,11 +256,10 @@ namespace Mono.CSharp {
 					type_param_constraints.Add (expr);
 				else if (expr.IsInterface)
 					iface_constraints.Add (expr);
-				else if (class_constraint != null) {
+				else if (class_constraint != null || iface_constraints.Count != 0) {
 					Report.Error (406, loc,
-						      "`{0}': the class constraint for `{1}' " +
-						      "must come before any other constraints.",
-						      expr.GetSignatureForError (), name);
+						"The class type constraint `{0}' must be listed before any other constraints. Consider moving type constraint to the beginning of the constraint list",
+						expr.GetSignatureForError ());
 					return false;
 				} else if (HasReferenceTypeConstraint || HasValueTypeConstraint) {
 					Report.Error (450, loc, "`{0}': cannot specify both " +

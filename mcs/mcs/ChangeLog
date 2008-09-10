@@ -1,3 +1,8 @@
+2008-09-10  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #424684
+	* generic.cs: Generic class constraints must come first.
+
 2008-09-09  Miguel de Icaza  <miguel@novell.com>
 
 	* cs-parser.jay: Improve error reporting for syntax errors in
