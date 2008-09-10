@@ -1,3 +1,7 @@
+2008-09-10  Marek Safar  <marek.safar@gmail.com>
+
+	* compiler-tester.cs: Add non-varags LogLine overload.
+
 2008-07-28  Marek Safar  <marek.safar@gmail.com>
 
 	* compiler-tester.cs: Removed ExecuteFile.

@@ -586,6 +586,13 @@ namespace TestRunner {
 				log_file.Write (msg, rest);
 		}
 
+		protected void LogLine (string msg)
+		{
+			Console.WriteLine (msg);
+			if (log_file != null)
+				log_file.WriteLine (msg);
+		}
+
 		protected void LogLine (string msg, params object [] rest)
 		{
 			Console.WriteLine (msg, rest);
