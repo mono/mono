@@ -1,3 +1,8 @@
+2008-09-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_custom): Call NativeToManaged for non-out 
+	parameters as well. Fixes #425001.
+
 2008-09-08  Miguel de Icaza  <miguel@novell.com>
 
 	* console-io.c (ves_icall_System_ConsoleDriver_TtySetup): Fix
