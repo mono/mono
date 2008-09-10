@@ -84,14 +84,12 @@ namespace System.Collections.Specialized {
 
 			public override int GetHashCode ()
 			{
-				return (((Int16) mask).GetHashCode () << 16) + 
-				       ((Int16) offset).GetHashCode ();
+				return mask << offset; 
 			}
 			
 			public override string ToString ()
 			{
-				return "Section{0x" + Convert.ToString(mask, 16) + 
-				       ", 0x" + Convert.ToString(offset, 16) + "}";
+				return ToString (this); 
 			}
 
 			public static string ToString (Section value)
@@ -197,10 +195,7 @@ namespace System.Collections.Specialized {
 		
 		public override bool Equals (object o)
 		{
-			if (!(o is BitVector32))
-				return false;
-
-			return bits == ((BitVector32) o).bits;
+			return (o is BitVector32) && bits == ((BitVector32) o).bits;
 		}
 
 		public override int GetHashCode ()

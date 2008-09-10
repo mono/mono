@@ -1,3 +1,8 @@
+2008-09-09  Scott Peterson  <lunchtimemama@gmail.com>
+
+	* BitVector32.cs: Minor fixes. Simplified Section.ToString and
+	GetHashCode, and BitVector32.Equals.
+
 2008-08-06  Scott Peterson  <lunchtimemama@gmail.com>
 
 	* BitVector32.cs: Fixed a bug which allowed for invalid sections
