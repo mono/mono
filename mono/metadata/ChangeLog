@@ -1,5 +1,13 @@
 2008-09-10  Bill Holmes  <billholmes54@gmail.com>
 
+	* process.c (complete_path) : Removing quotes from the 
+	  input path.  The glib file routines do not handle file paths
+	  that have quotes around them.
+
+	Code is contributed under MIT/X11 license.
+
+2008-09-10  Bill Holmes  <billholmes54@gmail.com>
+
 	* socket-io.h : Adding a comment to provide locations where 
 	  changes to MonoSocketAsyncResult need to be synced.
 
