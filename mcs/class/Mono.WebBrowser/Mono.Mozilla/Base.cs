@@ -35,8 +35,9 @@ namespace Mono.Mozilla
 	internal class Base
 	{
 		private static Hashtable boundControls;
-		internal static bool gluezillaInstalled;
 		internal static bool initialized;
+		private static object initLock = new object ();
+		private static string monoMozDir;
 
 		private class BindingInfo
 		{
@@ -46,7 +47,7 @@ namespace Mono.Mozilla
 
 		private static bool isInitialized ()
 		{
-			if (!gluezillaInstalled)
+			if (!initialized)
 				return false;
 			return true;
 		}
@@ -73,60 +74,72 @@ namespace Mono.Mozilla
 		
 		public static bool Init (WebBrowser control, Platform platform)
 		{
-			if (!initialized) {
-	
-				string monoMozDir = System.IO.Path.Combine (
-					System.IO.Path.Combine (
-					Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData),
-					".mono"), "mozilla");
-	
-				if (!System.IO.Directory.Exists (monoMozDir))
-					System.IO.Directory.CreateDirectory (monoMozDir);
-	
-				Platform mozPlatform;
-				try {
-					gluezilla_init (platform, out mozPlatform);
+			lock (initLock) {
+				if (!initialized) {
+				
+					Platform mozPlatform;
+					try {
+						short version = gluezilla_init (platform, out mozPlatform);
+
+						monoMozDir = System.IO.Path.Combine (
+						System.IO.Path.Combine (
+						Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData),
+						".mono"), "mozilla-" + version);
+
+					if (!System.IO.Directory.Exists (monoMozDir))
+						System.IO.Directory.CreateDirectory (monoMozDir);
+						
+					}
+					catch (DllNotFoundException) {
+						Console.WriteLine ("libgluezilla not found. To have webbrowser support, you need libgluezilla installed");
+						initialized = false;
+						return false;
+					}
+					control.enginePlatform = mozPlatform;
+					initialized = true;
 				}
-				catch (DllNotFoundException) {
-					Console.WriteLine ("libgluezilla not found. To have webbrowser support, you need libgluezilla installed");
-					gluezillaInstalled = false;
-					initialized = false;
-					return false;
-				}
-				control.enginePlatform = mozPlatform;
-				gluezillaInstalled = true;
-				initialized = true;
 			}
 			return initialized;
 		}
 
-		public static void Bind (WebBrowser control, IntPtr handle, int width, int height)
+		public static bool Bind (WebBrowser control, IntPtr handle, int width, int height)
 		{
 			if (!isInitialized ())
-				return;
+				return false;
 
 			BindingInfo info = new BindingInfo ();
 			info.callback = new CallbackBinder (control.callbacks);
 			IntPtr ptrCallback = Marshal.AllocHGlobal (Marshal.SizeOf (info.callback));
 			Marshal.StructureToPtr (info.callback, ptrCallback, true);
 			
-			string monoMozDir = System.IO.Path.Combine (
-				System.IO.Path.Combine (
-				Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData),
-				".mono"), "mozilla");
 			info.gluezilla = gluezilla_createBrowserWindow (ptrCallback, handle, width, height, Environment.CurrentDirectory, monoMozDir, control.platform);
-			
+			lock (initLock) {
+				if (info.gluezilla == IntPtr.Zero) {
+					Marshal.FreeHGlobal (ptrCallback);
+					info = null;
+					initialized = false;
+					return false;
+				}
+			}			
 			boundControls.Add (control as IWebBrowser, info);
-			
+			return true;			
 		}
 
 		public static void Shutdown (IWebBrowser control)
 		{
-			if (!isInitialized ())
-				return;
-			BindingInfo info = getBinding (control);
-
-			gluezilla_shutdown (info.gluezilla);
+			lock (initLock) {
+				if (!initialized)
+					return;
+					
+				BindingInfo info = getBinding (control);
+				
+				gluezilla_shutdown (info.gluezilla);
+				boundControls.Remove (control);
+				if (boundControls.Count == 0) {
+					info = null;
+					initialized = false;
+				}
+			}
 		}
 
 		// layout
@@ -197,25 +210,32 @@ namespace Mono.Mozilla
 
 		public static IntPtr StringInit ()
 		{
+			if (!isInitialized ())
+				return IntPtr.Zero;
 			return gluezilla_stringInit ();
 		}
 
 		public static void StringFinish (HandleRef str)
 		{
+			if (!isInitialized ())
+				return;
 			gluezilla_stringFinish (str);
 		}
 
 		public static string StringGet (HandleRef str)
 		{
+			if (!isInitialized ())
+				return String.Empty;
 			IntPtr p = gluezilla_stringGet (str);
 			return Marshal.PtrToStringUni (p);
 		}
 
 		public static void StringSet (HandleRef str, string text)
 		{
+			if (!isInitialized ())
+				return;
 			gluezilla_stringSet (str, text);
 		}
-
 
 		public static object GetProxyForObject (IWebBrowser control, Guid iid, object obj)
 		{
@@ -245,7 +265,7 @@ namespace Mono.Mozilla
 		private static extern void gluezilla_debug(int signal);
 
 		[DllImport("gluezilla")]
-		private static extern IntPtr gluezilla_init (Platform platform, out Platform mozPlatform);
+		private static extern short gluezilla_init (Platform platform, out Platform mozPlatform);
 
 		[DllImport ("gluezilla")]
 		private static extern IntPtr gluezilla_shutdown (IntPtr instance);

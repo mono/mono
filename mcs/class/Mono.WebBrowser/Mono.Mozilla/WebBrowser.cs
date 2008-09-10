@@ -64,7 +64,7 @@ namespace Mono.Mozilla
 
 		public bool Load (IntPtr handle, int width, int height)
 		{
-			Base.Bind (this, handle, width, height);
+			loaded = Base.Bind (this, handle, width, height);
 			return loaded;
 		}
 
