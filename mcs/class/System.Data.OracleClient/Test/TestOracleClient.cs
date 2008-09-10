@@ -1487,7 +1487,7 @@ namespace Test.OracleClient
 		    else
 		        outValue = (string)myParameter2.Value;
 		    if( myParameter3.Value == DBNull.Value)
-		        inOutValue = "Value is DBNullValue";
+		        inOutValue = "Value is DBNull.Value";
 		    else
 		        inOutValue = (string)myParameter3.Value;
 		    if (myParameter4.Value == DBNull.Value)
@@ -2433,6 +2433,7 @@ namespace Test.OracleClient
 
 			con1.InfoMessage += new OracleInfoMessageEventHandler (OnInfoMessage);
 			con1.StateChange += new StateChangeEventHandler (OnStateChange);
+
 			Console.WriteLine("Opening...");
 			con1.Open ();
 			Console.WriteLine("Opened.");
@@ -2532,23 +2533,20 @@ namespace Test.OracleClient
 			con1.Close ();
 			Console.WriteLine("Closed.");
 
+			conStr = conStr + ";pooling=true;min pool size=4;max pool size=" + MAX_CONNECTIONS.ToString ();
+			ConnectionPoolingTest1 ();			ConnectionPoolingTest2 ();
+
 			// Need to have an external authentication user setup in Linux and oracle
 			// before running this test
 			//ExternalAuthenticationTest();
 
-			/*
 			TestPersistSucurityInfo1();
 			TestPersistSucurityInfo2();
 			TestPersistSucurityInfo3();
 			TestPersistSucurityInfo4();
 			TestPersistSucurityInfo5();
 			TestPersistSucurityInfo6();
-			*/
-
-			//conStr = conStr + ";pooling=true;min pool size=4;max pool size=" + MAX_CONNECTIONS.ToString ();
-			//ConnectionPoolingTest1 ();
-			//ConnectionPoolingTest2 ();
-
+			
 			Console.WriteLine("Done.");
 		}
 	}

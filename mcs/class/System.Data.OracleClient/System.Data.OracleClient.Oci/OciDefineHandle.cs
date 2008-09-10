@@ -147,7 +147,7 @@ namespace System.Data.OracleClient.Oci
 				return;
 			case OciDataType.Long:
 			case OciDataType.LongVarChar:
-				DefineLong (position, connection);
+				DefineLongVarChar (position, connection);
 				return;
 			default:
 				DefineChar (position, connection); // HANDLE ALL OTHERS AS CHAR FOR NOW
@@ -220,7 +220,7 @@ namespace System.Data.OracleClient.Oci
 			}
 		}
 
-		void DefineLong (int position, OracleConnection connection)
+		void DefineLongVarChar (int position, OracleConnection connection)
 		{
 			fieldType = typeof (System.String);
 

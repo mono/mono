@@ -1,3 +1,18 @@
+2008-09-10  Daniel Morgan <monodanmorg@yahoo.com>
+
+	* Test/TestOracleClient.cs: fix typo,
+	  enable more test,
+          Tests pass for parameters for Character, Number, and Date
+	  for Input, Output, InputOutput, and ReturnValue and
+	  situations when any of these could be DBNull.Value
+
+	* System.Data.OracleClient/OracleParameter.cs: fix
+	handling of parameters for character, number, and date
+	types.  Need to redo all the other types based on the above.
+
+	* System.Data.OracleClient.Oci/OciDefineHandle.cs: rename private
+	method DefineLong to DefineLongVarChar
+
 2008-09-06  Daniel Morgan <monodanmorg@yahoo.com>
 
 	* Test/TestOracleClient.cs: get oracle connected tests
