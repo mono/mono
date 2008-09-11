@@ -1,5 +1,10 @@
 2008-09-11  Mark Probst  <mark.probst@gmail.com>
 
+	* icall.c: Boolean arguments to a runtime invoke are MonoBoolean,
+	not gboolean.
+
+2008-09-11  Mark Probst  <mark.probst@gmail.com>
+
 	* debug-mono-symfile.c (mono_debug_symfile_lookup_location):
 	Endianness fixes for MonoSymbolFileOffsetTable.
 
