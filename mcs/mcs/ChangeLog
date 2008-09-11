@@ -1,5 +1,9 @@
 2008-09-11  Marek Safar  <marek.safar@gmail.com>
 
+	* cs-parser.jay: Reduced number of printed tokens, add sorting.
+
+2008-09-11  Marek Safar  <marek.safar@gmail.com>
+
 	* generic.cs (InflatedConstraints): Don't crash when constraints
 	are different.
 	

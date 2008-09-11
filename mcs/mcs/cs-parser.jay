@@ -5929,6 +5929,7 @@ public string GetExpecting ()
 		names.Add (name);
 	}
 
+	names.Sort ();
 	int count = names.Count;
 	for (int i = 0; i < count; i++){
 		bool last = i + 1 == count;
@@ -5954,18 +5955,12 @@ static public string GetTokenName (int token)
 		return "assembly";
 	case Token.BASE:
 		return "base";
-	case Token.BOOL:
-		return "bool";
 	case Token.BREAK:
 		return "break";
-	case Token.BYTE:
-		return "byte";
 	case Token.CASE:
 		return "case";
 	case Token.CATCH:
 		return "catch";
-	case Token.CHAR:
-		return "char";
 	case Token.CHECKED:
 		return "checked";
 	case Token.CLASS:
@@ -5974,16 +5969,12 @@ static public string GetTokenName (int token)
 		return "const";
 	case Token.CONTINUE:
 		return "continue";
-	case Token.DECIMAL:
-		return "decimal";
 	case Token.DEFAULT:
 		return "default";
 	case Token.DELEGATE:
 		return "delegate";
 	case Token.DO:
 		return "do";
-	case Token.DOUBLE:
-		return "double";
 	case Token.ELSE:
 		return "else";
 	case Token.ENUM:
@@ -6000,8 +5991,6 @@ static public string GetTokenName (int token)
 		return "finally";
 	case Token.FIXED:
 		return "fixed";
-	case Token.FLOAT:
-		return "float";
 	case Token.FOR:
 		return "for";
 	case Token.FOREACH:
@@ -6014,8 +6003,6 @@ static public string GetTokenName (int token)
 		return "implicit";
 	case Token.IN:
 		return "in";
-	case Token.INT:
-		return "int";
 	case Token.INTERFACE:
 		return "interface";
 	case Token.INTERNAL:
@@ -6024,8 +6011,6 @@ static public string GetTokenName (int token)
 		return "is";
 	case Token.LOCK:
 		return "lock";
-	case Token.LONG:
-		return "long";
 	case Token.NAMESPACE:
 		return "namespace";
 	case Token.NEW:
@@ -6056,20 +6041,14 @@ static public string GetTokenName (int token)
 		return "return";
 	case Token.REMOVE:
 		return "remove";
-	case Token.SBYTE:
-		return "sbyte";
 	case Token.SEALED:
 		return "sealed";
-	case Token.SHORT:
-		return "short";
 	case Token.SIZEOF:
 		return "sizeof";
 	case Token.STACKALLOC:
 		return "stackalloc";
 	case Token.STATIC:
 		return "static";
-	case Token.STRING:
-		return "string";
 	case Token.STRUCT:
 		return "struct";
 	case Token.SWITCH:
@@ -6084,22 +6063,14 @@ static public string GetTokenName (int token)
 		return "try";
 	case Token.TYPEOF:
 		return "typeof";
-	case Token.UINT:
-		return "uint";
-	case Token.ULONG:
-		return "ulong";
 	case Token.UNCHECKED:
 		return "unchecked";
 	case Token.UNSAFE:
 		return "unsafe";
-	case Token.USHORT:
-		return "ushort";
 	case Token.USING:
 		return "using";
 	case Token.VIRTUAL:
 		return "virtual";
-	case Token.VOID:
-		return "void";
 	case Token.VOLATILE:
 		return "volatile";
 	case Token.WHERE:
@@ -6112,8 +6083,6 @@ static public string GetTokenName (int token)
 		return "partial";
 	case Token.ARROW:
 		return "=>";
-	case Token.QUERY_FIRST_TOKEN:
-		return "query first token";
 	case Token.FROM:
 		return "from";
 	case Token.JOIN:
@@ -6138,14 +6107,10 @@ static public string GetTokenName (int token)
 		return "descending";
 	case Token.INTO:
 		return "into";
-	case Token.QUERY_LAST_TOKEN:
-		return "query last token";
 	case Token.GET:
 		return "get";
 	case Token.SET:
 		return "set";
-	case Token.LAST_KEYWORD:
-		return "last keyword";
 	case Token.OPEN_BRACE:
 		return "{";
 	case Token.CLOSE_BRACE:
@@ -6175,89 +6140,81 @@ static public string GetTokenName (int token)
 		return ";";
 	case Token.TILDE:
 		return "~";
+		
 	case Token.PLUS:
-		return "+";
 	case Token.UMINUS:
 	case Token.MINUS:
-		return "-";
 	case Token.BANG:
-		return "!";
+	case Token.OP_LT:
+	case Token.OP_GT:
+	case Token.BITWISE_AND:
+	case Token.BITWISE_OR:
+	case Token.STAR:
+	case Token.PERCENT:
+	case Token.DIV:
+	case Token.CARRET:
+	case Token.OP_INC:
+	case Token.OP_DEC:
+	case Token.OP_SHIFT_LEFT:
+	case Token.OP_SHIFT_RIGHT:
+	case Token.OP_LE:
+	case Token.OP_GE:
+	case Token.OP_EQ:
+	case Token.OP_NE:
+	case Token.OP_AND:
+	case Token.OP_OR:
+	case Token.OP_PTR:
+	case Token.OP_COALESCING:	
+		return "<operator>";
+	
+	case Token.OP_MULT_ASSIGN:
+	case Token.OP_DIV_ASSIGN:
+	case Token.OP_MOD_ASSIGN:
+	case Token.OP_ADD_ASSIGN:
+	case Token.OP_SUB_ASSIGN:
+	case Token.OP_SHIFT_LEFT_ASSIGN:
+	case Token.OP_SHIFT_RIGHT_ASSIGN:
+	case Token.OP_AND_ASSIGN:
+	case Token.OP_XOR_ASSIGN:
+	case Token.OP_OR_ASSIGN:
+		return "<operator>";
+
+	case Token.BOOL:
+	case Token.BYTE:
+	case Token.CHAR:
+	case Token.VOID:
+	case Token.DECIMAL:
+	case Token.DOUBLE:
+	case Token.FLOAT:
+	case Token.INT:
+	case Token.LONG:
+	case Token.SBYTE:
+	case Token.SHORT:
+	case Token.STRING:
+	case Token.UINT:
+	case Token.ULONG:
+	case Token.USHORT:
+		return "<type>";
+	
 	case Token.ASSIGN:
 		return "=";
-	case Token.OP_LT:
 	case Token.OP_GENERICS_LT:
 	case Token.GENERIC_DIMENSION:
 		return "<";
-	case Token.OP_GT:
 	case Token.OP_GENERICS_GT:
 		return ">";
-	case Token.BITWISE_AND:
-		return "&";
-	case Token.BITWISE_OR:
-		return "|";
-	case Token.STAR:
-		return "*";
-	case Token.PERCENT:
-		return "%";
-	case Token.DIV:
-		return "/";
-	case Token.CARRET:
-		return "^";
 	case Token.INTERR:
+	case Token.INTERR_NULLABLE:
 		return "?";
 	case Token.DOUBLE_COLON:
 		return "::";
-	case Token.OP_INC:
-		return "++";
-	case Token.OP_DEC:
-		return "--";
-	case Token.OP_SHIFT_LEFT:
-		return "<<";
-	case Token.OP_SHIFT_RIGHT:
-		return ">>";
-	case Token.OP_LE:
-		return "<=";
-	case Token.OP_GE:
-		return ">=";
-	case Token.OP_EQ:
-		return "==";
-	case Token.OP_NE:
-		return "!=";
-	case Token.OP_AND:
-		return "&&";
-	case Token.OP_OR:
-		return "||";
-	case Token.OP_MULT_ASSIGN:
-		return "*=";
-	case Token.OP_DIV_ASSIGN:
-		return "/=";
-	case Token.OP_MOD_ASSIGN:
-		return "%=";
-	case Token.OP_ADD_ASSIGN:
-		return "+=";
-	case Token.OP_SUB_ASSIGN:
-		return "-=";
-	case Token.OP_SHIFT_LEFT_ASSIGN:
-		return "<<=";
-	case Token.OP_SHIFT_RIGHT_ASSIGN:
-		return ">>=";
-	case Token.OP_AND_ASSIGN:
-		return "&=";
-	case Token.OP_XOR_ASSIGN:
-		return "^=";
-	case Token.OP_OR_ASSIGN:
-		return "|=";
-	case Token.OP_PTR:
-		return "->";
-	case Token.OP_COALESCING:
-		return "??";
 	case Token.LITERAL_FLOAT:
 	case Token.LITERAL_INTEGER:
 	case Token.LITERAL_DOUBLE:
 	case Token.LITERAL_DECIMAL:
 	case Token.LITERAL_CHARACTER:
 	case Token.LITERAL_STRING:
-		return "literal";
+		return "value";
 	case Token.IDENTIFIER:
 		return "identifier";
 
@@ -6270,6 +6227,9 @@ static public string GetTokenName (int token)
 	case Token.EVAL_USING_DECLARATIONS_UNIT_PARSER:
 	case Token.EVAL_STATEMENT_PARSER:
 	case Token.LOWPREC:
+	case Token.QUERY_LAST_TOKEN:
+	case Token.QUERY_FIRST_TOKEN:
+	case Token.LAST_KEYWORD:	
 		return "<internal>";
 
 		// A bit more robust.
