@@ -562,8 +562,11 @@ namespace System.Windows.Forms {
 			if (e.Value == Convert.DBNull)
 				return e.Value;
 #if NET_2_0
-			if (e.Value == null)
-				return data_type.IsByRef ? null : Convert.DBNull;
+			if (e.Value == null) {
+				bool nullable = data_type.IsGenericType && !data_type.ContainsGenericParameters &&
+					data_type.GetGenericTypeDefinition () == typeof (Nullable<>);
+				return data_type.IsByRef || nullable ? null : Convert.DBNull;
+			}
 #endif
 
 			return ConvertData (e.Value, data_type);

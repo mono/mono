@@ -1,3 +1,10 @@
+2008-09-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Binding.cs: When the value retrieved from the control property is
+	null, don't return Convert.DBNull for Nullable instances, since they
+	can *actually* get a null value.
+	Fixes #424265.
+
 2008-09-10  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Add an internal field to force doublebuffering regardless
