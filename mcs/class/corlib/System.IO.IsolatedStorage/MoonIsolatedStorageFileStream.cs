@@ -5,6 +5,7 @@
 // 
 // Authors
 //      Miguel de Icaza (miguel@novell.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2007, 2008 Novell, Inc (http://www.novell.com)
 //
@@ -37,7 +38,6 @@ namespace System.IO.IsolatedStorage {
 	// * Silverlight allows extending to more than AvailableFreeSpace (by up to 1024 bytes).
 	//   This looks like a safety buffer.
 
-	[MonoTODO ("this needs to be quota-enabled")]
 	public class IsolatedStorageFileStream : FileStream {
 
 		IsolatedStorageFile container;
@@ -107,9 +107,15 @@ namespace System.IO.IsolatedStorage {
 		public override void SetLength (long value)
 		{
 			container.PreCheck ();
-			// if we're getting bigger then we must ensure we fit in the available free space of our container
+			// don't worry about quota if we can't write to the stream, 
+			// the base class will throw the expected NotSupportedException
+			if (!base.CanWrite)
+				return;
+
+			// will that request put us in a position to grow *or shrink* the file ?
+			// note: this can be negative, e.g. calling SetLength(0), so we can't call EnsureQuotaLimits directly
 			if (!container.CanExtend (value - Length))
-				throw new IsolatedStorageException ();
+				throw new IsolatedStorageException ("Requested size is larger than remaining quota allowance.");
 
 			base.SetLength (value);
 		}
@@ -117,16 +123,14 @@ namespace System.IO.IsolatedStorage {
 		public override void Write (byte [] buffer, int offset, int count)
 		{
 			container.PreCheck ();
-			// FIXME: check quota, if we grow the file
+			EnsureQuotaLimits (count);
 			base.Write (buffer, offset, count);
 		}
 
 		public override void WriteByte (byte value)
 		{
 			container.PreCheck ();
-			// if we are in position to grow the file make sure we can extend it by one byte
-			if ((Position == Length) && !container.CanExtend (1))
-				throw new IsolatedStorageException ();
+			EnsureQuotaLimits (1);
 			base.WriteByte (value);
 		}
 
@@ -153,7 +157,9 @@ namespace System.IO.IsolatedStorage {
 
 		public override long Length {
 			get {
-				container.PreCheck ();
+				// FileStream ctor sometimes calls Length, i.e. before container is set
+				if (container != null)
+					container.PreCheck ();
 				return base.Length;
 			}
 		}
@@ -178,7 +184,7 @@ namespace System.IO.IsolatedStorage {
 		public override IAsyncResult BeginWrite (byte[] buffer, int offset, int numBytes, AsyncCallback userCallback, object stateObject)
 		{
 			container.PreCheck ();
-			// FIXME: check quota, if we grow the file
+			EnsureQuotaLimits (numBytes);
 			return base.BeginWrite (buffer, offset, numBytes, userCallback, stateObject);
 		}
 
@@ -192,6 +198,22 @@ namespace System.IO.IsolatedStorage {
 		{
 			container.PreCheck ();
 			base.EndWrite (asyncResult);
+		}
+
+		private void EnsureQuotaLimits (long request)
+		{
+			// don't worry about quota if we can't write to the stream, 
+			// the base class will throw the expected NotSupportedException
+			if (!base.CanWrite)
+				return;
+
+			// will that request put us in a position to grow the file ?
+			long grow = Position + request - Length;
+			if (grow < 0)
+				return;
+
+			if (!container.CanExtend (grow))
+				throw new IsolatedStorageException ("Requested size is larger than remaining quota allowance.");
 		}
 	}
 }

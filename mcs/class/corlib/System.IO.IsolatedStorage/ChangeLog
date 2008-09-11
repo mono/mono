@@ -1,3 +1,11 @@
+2008-09-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MoonIsolatedStorageFile.cs: Add application and iste specific 
+	initialization. Add rumenditary quota support (not thread or cross 
+	process safe). Add a bunch of TODO & FIXME.
+	* MoonIsolatedStorageFileStream.cs: Add quota checks (delegated 
+	into MoonIsolatedStorageFile).
+
 2008-09-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MoonIsolatedStorageFile.cs: Add calls to PreCheck inside EndRead

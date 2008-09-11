@@ -35,17 +35,34 @@ using System.Security;
 
 namespace System.IO.IsolatedStorage {
 
+	// Most of the time there will only be a single instance of both 
+	// * Application Store (GetUserStoreForApplication)
+	// * Site Store (GetUserStoreForSite)
+	// However both can have multiple concurrent uses
+	// E.g. another instance of the same application (same URL) running in another Moonlight instance
+	// E.g. another application on the same site (i.e. host) for a site store
+
+	// TODO: use shared memory (and locks) to keep the quota and used values synchronized
+
+	// TODO: we need to be initialized by Application (System.Windows.dll) to know the correct root directories
+
 	// FIXME: we need to tool to set quota (SL does this on a property page of the "Silverlight Configuration" menu)
 	// the beta2 user interface (that I only see in IE) does not seems to differentiate application and site storage
 
+	// notes:
+	// * quota seems computed in (disk) blocks, i.e. a small file will have a (non-small) size
+
 	public sealed class IsolatedStorageFile : IDisposable {
 
+		private const long DefaultQuota = 1024 * 1024;
 		// Since we can extend more than AvailableFreeSize we need to substract the "safety" value out of it
 		private const int SafetyZone = 1024;
 
 		static string isolated_root;
 		static string isolated_appdir;
 		static string isolated_sitedir;
+
+		static object locker = new object ();
 		
 		static string TryDirectory (string path)
 		{
@@ -66,32 +83,33 @@ namespace System.IO.IsolatedStorage {
 
 			string isolated_root;
 			isolated_root = TryDirectory (Path.Combine (xdg_data_home, "moonlight"));
-			if (isolated_root == null){
-				//
-				// Maybe try a few others?
-				//
-				return;
-			}
-
-			// FIXME: we need to store quota (and any other config) outside the stores
-			// - so they can't be modified by the application itself
-			// - so it's not destroyed to Remove
+			if (isolated_root == null)
+				throw new IsolatedStorageException ("No root");
 
 			isolated_appdir = TryDirectory (Path.Combine (isolated_root, "application"));
 			isolated_sitedir = TryDirectory (Path.Combine (isolated_root, "site"));
 		}
 
 		private string basedir;
+		private string datafile;
 		private long quota;
+		private long used;
 		private bool removed = false;
 		private bool disposed = false;
 
-		internal IsolatedStorageFile (string dir)
+		internal IsolatedStorageFile (string root, string dirname)
 		{
+			string dir = Path.Combine (root, dirname);
 			basedir = TryDirectory (dir);
-			// FIXME: we need to read the quota allocated to this storage
-			quota = 1024 * 1024;
-			// FIXME: we need to compute the available space for this storage (and keep it updated)
+
+			datafile = Path.Combine (root, dirname + ".data");
+			if (File.Exists (datafile)) {
+				ReadStoreData ();
+			} else {
+				used = 0;
+				quota = DefaultQuota;
+				UpdateStoreData ();
+			}
 		}
 		
 		internal void PreCheck ()
@@ -107,10 +125,13 @@ namespace System.IO.IsolatedStorage {
 			if (isolated_appdir == null)
 				throw new SecurityException ();
 			
-			// FIXME: we need to construct something based on the application, like:
-			// Application.Current.GetType ().FullName
-			// of course this is outside corlib so we need prior notification of this
-			return new IsolatedStorageFile (Path.Combine (isolated_appdir, "application"));
+			// from System.Windows.Application we made "xap_uri" correspond to
+			//	 Application.Current.Host.Source.AbsoluteUri
+			string app = (AppDomain.CurrentDomain.GetData ("xap_uri") as string);
+			if (app == null)
+				throw new SecurityException ();
+
+			return new IsolatedStorageFile (isolated_appdir, app.Replace ("/", "%27"));
 		}
 
 		public static IsolatedStorageFile GetUserStoreForSite ()
@@ -118,17 +139,28 @@ namespace System.IO.IsolatedStorage {
 			if (isolated_sitedir == null)
 				throw new SecurityException ();
 
-			// FIXME: we need to construct something based on the site, like:
-			// Application.Current.Host.Source.AbsoluteUri (or a subset of this)
-			// of course this is outside corlib so we need prior notification of this
-			return new IsolatedStorageFile (Path.Combine (isolated_sitedir, "site"));
+			// from System.Windows.Application we made "xap_host" correspond to
+			//	Application.Current.Host.Source.Host
+			string site = (AppDomain.CurrentDomain.GetData ("xap_host") as string);
+			if (site == null)
+				throw new SecurityException ();
+			// no host is defined for things like: file://home/...
+			if (site.Length == 0)
+				site = "localhost:file";
+
+			return new IsolatedStorageFile (isolated_sitedir, site);
 		}
 
 		internal string Verify (string path)
 		{
+			// outside of try/catch since we want to get things like
+			// 	ArgumentNullException for null paths
+			//	ArgumentException for invalid characters
+			string combined = Path.Combine (basedir, path);
 			try {
-				string full = Path.GetFullPath (Path.Combine (basedir, path));
-				if (full.StartsWith (basedir + Path.DirectorySeparatorChar))
+				string full = Path.GetFullPath (combined);
+				full = Path.GetFullPath (combined);
+				if (full.StartsWith (basedir))
 					return full;
 			} catch {
 				throw new IsolatedStorageException ();
@@ -138,17 +170,13 @@ namespace System.IO.IsolatedStorage {
 		
 		public void CreateDirectory (string dir)
 		{
+			PreCheck ();
 			Directory.CreateDirectory (Verify (dir));
 		}
 
 		public IsolatedStorageFileStream CreateFile (string path)
 		{
 			PreCheck ();
-			if (path == null)
-				throw new ArgumentNullException ("path");
-			if (path.Length == 0)
-				throw new ArgumentException ("path");
-
 			try {
 				return new IsolatedStorageFileStream (path, FileMode.Create, this);
 			}
@@ -252,23 +280,30 @@ namespace System.IO.IsolatedStorage {
 				Directory.Delete (basedir, true);
 			}
 			finally {
+				used = 0;
+				quota = DefaultQuota;
+				UpdateStoreData ();
 				TryDirectory (basedir);
 				removed = true;
 			}
 		}
 
+		// note: available free space could be changed from another application (same URL, another ML instance) or
+		// another application on the same site
 		public long AvailableFreeSpace {
 			get {
 				PreCheck ();
-				// FIXME: compute real free space
-				// then substract the safety
-				return 1024*1024 - SafetyZone;
+				ReadStoreData ();
+				return quota - used - SafetyZone;
 			}
 		}
 
+		// note: quota could be changed from another application (same URL, another ML instance) or
+		// another application on the same site
 		public long Quota {
 			get {
 				PreCheck ();
+				ReadStoreData ();
 				return quota;
 			}
 		}
@@ -276,17 +311,48 @@ namespace System.IO.IsolatedStorage {
 		public bool IncreaseQuotaTo (long newQuotaSize)
 		{
 			PreCheck ();
-			if (newQuotaSize <= Quota)
-				throw new ArgumentException ("newQuotaSize", "Only increase is possible");
 
-			// FIXME: save new quota limit to configuration
-			quota = newQuotaSize;
-			return true;
+			if (newQuotaSize <= quota)
+				throw new ArgumentException ("newQuotaSize", "Only increases are possible");
+
+			// FIXME: we must ensure this is called from an event handler (or return false)
+			// we need to find out where it's valid (e.g. Page.Loaded and Page.MouseLeftButtonUp are not)
+
+			// FIXME: need plugin UI to confirm the change
+
+			return false;
 		}
 
 		internal bool CanExtend (long request)
 		{
-			return (request <= AvailableFreeSpace + SafetyZone);
+			bool result = (request <= AvailableFreeSpace + SafetyZone);
+			if (result) {
+				lock (locker) {
+					used += request;
+				}
+			}
+			return result;
+		}
+
+		// TEMPORARY - not thread (or cross process) safe
+
+		private byte [] data = new byte [16];
+
+		internal void ReadStoreData ()
+		{
+			using (FileStream fs = new FileStream (datafile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
+				fs.Read (data, 0, 16);
+				quota = BitConverter.ToInt64 (data, 0);
+				used = BitConverter.ToInt64 (data, 8);
+			}
+		}
+
+		internal void UpdateStoreData ()
+		{
+			using (FileStream fs = new FileStream (datafile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite)) {
+				fs.Write (BitConverter.GetBytes (quota), 0, 8);
+				fs.Write (BitConverter.GetBytes (used), 0, 8);
+			}
 		}
 	}
 }
