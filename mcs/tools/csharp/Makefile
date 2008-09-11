@@ -10,7 +10,7 @@ else
 PROGRAM = 
 endif
 
-DISTFILES = repl.txt
+DISTFILES = repl.txt csharp.exe.sources
 
 CLEAN_FILES = csharp.exe *.mdb
 
