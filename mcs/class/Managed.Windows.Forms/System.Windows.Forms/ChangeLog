@@ -1,3 +1,8 @@
+2008-09-11  Jonathan Pobst  <monkey@jpobst.com>
+
+	* MessageBox.cs: Handle shortcut keys to dialog buttons.
+	[Fixes bug #425425]
+
 2008-09-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Binding.cs: When the value retrieved from the control property is

@@ -314,6 +314,23 @@ namespace System.Windows.Forms
 				return base.ProcessDialogKey (keyData);
 			}
 
+			protected override bool ProcessDialogChar (char charCode)
+			{
+				// Shortcut keys, kinda like mnemonics, except you don't have to press Alt
+				if ((charCode == 'N' || charCode == 'n') && (CancelButton as Button).Text == "No")
+					CancelButton.PerformClick ();
+				else if ((charCode == 'Y' || charCode == 'y') && (AcceptButton as Button).Text == "Yes")
+					AcceptButton.PerformClick ();
+				else if ((charCode == 'A' || charCode == 'a') && (CancelButton as Button).Text == "Abort")
+					CancelButton.PerformClick ();
+				else if ((charCode == 'R' || charCode == 'r') && (AcceptButton as Button).Text == "Retry")
+					AcceptButton.PerformClick ();
+				else if ((charCode == 'I' || charCode == 'i') && buttons.Length >= 3 && buttons[2].Text == "Ignore")
+					buttons[2].PerformClick ();
+				
+				return base.ProcessDialogChar (charCode);
+			}
+			
 			private void Copy ()
 			{
 				string separator = "---------------------------" + Environment.NewLine;
