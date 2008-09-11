@@ -1,3 +1,13 @@
+2008-09-11  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewRow.cs: Better implementation of GetPreferredHeight.
+	Store the user set explicit height so that the row can be AutoSized
+	and then when AutoSize is turned off, it can get its original size back.
+	* DataGridView.cs: Use the Row's GetPreferredHeight instead of 
+	duplicating the logic.  When setting AutoSizeRowsMode to None, reset
+	rows' heights back to their explicit values.
+	[Fixes bug #415780]
+
 2008-09-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* DateTimePicker.cs: When getting focus, select the checkbox if we are

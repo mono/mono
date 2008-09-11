@@ -383,7 +383,13 @@ namespace System.Windows.Forms {
 						throw new InvalidOperationException("Cant set this property to AllHeaders or DisplayedHeaders in this DataGridView.");
 					}
 					autoSizeRowsMode = value;
-					AutoResizeRows (value);
+					
+					if (value == DataGridViewAutoSizeRowsMode.None)
+						foreach (DataGridViewRow row in Rows)
+							row.ResetToExplicitHeight ();
+					else
+						AutoResizeRows (value);
+						
 					OnAutoSizeRowsModeChanged(new DataGridViewAutoSizeModeEventArgs(false));
 					Invalidate ();
 					////////////////////////////////////////////////////////////////
@@ -2093,32 +2099,12 @@ namespace System.Windows.Forms {
 
 		public void AutoResizeRow (int rowIndex)
 		{
-			AutoResizeRow (rowIndex, DataGridViewAutoSizeRowMode.AllCells);
+			AutoResizeRow (rowIndex, DataGridViewAutoSizeRowMode.AllCells, true);
 		}
 
 		public void AutoResizeRow (int rowIndex, DataGridViewAutoSizeRowMode autoSizeRowMode)
 		{
-			if (autoSizeRowMode == DataGridViewAutoSizeRowMode.RowHeader && !rowHeadersVisible)
-				throw new InvalidOperationException ("row headers are not visible");
-			if (rowIndex < 0 || rowIndex > Rows.Count - 1)
-				throw new ArgumentOutOfRangeException ("rowIndex");
-			
-			DataGridViewRow row = GetRowInternal (rowIndex);
-			
-			if (autoSizeRowMode == DataGridViewAutoSizeRowMode.RowHeader) {
-				row.Height = row.HeaderCell.PreferredSize.Height;
-				return;
-			}
-			
-			int row_height = 0;
-			
-			foreach (DataGridViewCell cell in row.Cells)
-				row_height = Math.Max (row_height, cell.PreferredSize.Height);
-				
-			if (autoSizeRowMode == DataGridViewAutoSizeRowMode.AllCellsExceptHeader)
-				row.Height = row_height;
-			else
-				row.Height = Math.Max (row_height, row.HeaderCell.PreferredSize.Height);
+			AutoResizeRow (rowIndex, autoSizeRowMode, true);
 		}
 
 		public void AutoResizeRowHeadersWidth (DataGridViewRowHeadersWidthSizeMode rowHeadersWidthSizeMode)
@@ -2166,11 +2152,11 @@ namespace System.Windows.Forms {
 		public void AutoResizeRows (DataGridViewAutoSizeRowsMode autoSizeRowsMode)
 		{
 			if (!Enum.IsDefined(typeof(DataGridViewAutoSizeRowsMode), autoSizeRowsMode))
-				throw new InvalidEnumArgumentException ("Parameter AutoSizeRowsMode is not valid DataGridViewRowsMode.");
+				throw new InvalidEnumArgumentException ("Parameter autoSizeRowsMode is not a valid DataGridViewRowsMode.");
 			if ((autoSizeRowsMode == DataGridViewAutoSizeRowsMode.AllHeaders || autoSizeRowsMode == DataGridViewAutoSizeRowsMode.DisplayedHeaders) && rowHeadersVisible == false)
-				throw new InvalidOperationException ("Parameter AutoSizeRowsMode cant be AllHeaders or DisplayedHeaders in this DataGridView.");
+				throw new InvalidOperationException ("Parameter autoSizeRowsMode cannot be AllHeaders or DisplayedHeaders in this DataGridView.");
 			if (autoSizeRowsMode == DataGridViewAutoSizeRowsMode.None)
-				throw new ArgumentException ("Parameter AutoSieRowsMode cant be None.");
+				throw new ArgumentException ("Parameter autoSizeRowsMode cannot be None.");
 			
 			AutoResizeRows (autoSizeRowsMode, false);
 		}
@@ -2956,7 +2942,17 @@ namespace System.Windows.Forms {
 		[MonoTODO ("Does not use fixedWidth parameter")]
 		protected void AutoResizeRow (int rowIndex, DataGridViewAutoSizeRowMode autoSizeRowMode, bool fixedWidth)
 		{
-			AutoResizeRow (rowIndex, autoSizeRowMode);
+			if (autoSizeRowMode == DataGridViewAutoSizeRowMode.RowHeader && !rowHeadersVisible)
+				throw new InvalidOperationException ("row headers are not visible");
+			if (rowIndex < 0 || rowIndex > Rows.Count - 1)
+				throw new ArgumentOutOfRangeException ("rowIndex");
+
+			DataGridViewRow row = GetRowInternal (rowIndex);
+
+			int new_height = row.GetPreferredHeight (rowIndex, autoSizeRowMode, true);
+
+			if (row.Height != new_height)
+				row.SetAutoSizeHeight (new_height);
 		}
 
 		[MonoTODO ("Does not use fixedColumnHeadersHeight or fixedRowsHeight parameter")]
@@ -2971,58 +2967,46 @@ namespace System.Windows.Forms {
 			AutoResizeRowHeadersWidth (rowHeadersWidthSizeMode);
 		}
 
-		[MonoTODO ("Does not use fixedMode parameter")]
+		[MonoTODO ("Does not use fixedWidth parameter")]
 		protected void AutoResizeRows (DataGridViewAutoSizeRowsMode autoSizeRowsMode, bool fixedWidth)
 		{
 			if (autoSizeRowsMode == DataGridViewAutoSizeRowsMode.None)
 				return;
 				
-			bool include_headers = false;
-			bool include_cells = false;
 			bool displayed_only = false;
-
+			DataGridViewAutoSizeRowMode mode = DataGridViewAutoSizeRowMode.AllCells;
+			
 			switch (autoSizeRowsMode) {
 				case DataGridViewAutoSizeRowsMode.AllHeaders:
-					include_headers = true;
+					mode = DataGridViewAutoSizeRowMode.RowHeader;
 					break;
 				case DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders:
-					include_cells = true;
+					mode = DataGridViewAutoSizeRowMode.AllCellsExceptHeader;
 					break;
 				case DataGridViewAutoSizeRowsMode.AllCells:
-					include_cells = true;
-					include_headers = true;
+					mode = DataGridViewAutoSizeRowMode.AllCells;
 					break;
 				case DataGridViewAutoSizeRowsMode.DisplayedHeaders:
-					include_headers = true;
+					mode = DataGridViewAutoSizeRowMode.RowHeader;
 					displayed_only = true;
 					break;
 				case DataGridViewAutoSizeRowsMode.DisplayedCellsExceptHeaders:
-					include_cells = true;
+					mode = DataGridViewAutoSizeRowMode.AllCellsExceptHeader;
 					displayed_only = true;
 					break;
 				case DataGridViewAutoSizeRowsMode.DisplayedCells:
-					include_cells = true;
-					include_headers = true;
+					mode = DataGridViewAutoSizeRowMode.AllCells;
 					displayed_only = true;
 					break;
 			}
 			
 			foreach (DataGridViewRow row in Rows) {
-				int new_height = 0;
-				
-				if (include_headers)
-					if (!displayed_only || row.HeaderCell.Displayed)
-						new_height = Math.Max (new_height, row.HeaderCell.PreferredSize.Height);
+				if (!displayed_only || row.Displayed) {
+					int new_height = row.GetPreferredHeight (row.Index, mode, fixedWidth);
 
-				if (include_cells)
-					foreach (DataGridViewCell cell in row.Cells)
-						if (!displayed_only || cell.Displayed)
-							new_height = Math.Max (new_height, cell.PreferredSize.Height);
-				
-				new_height = Math.Max (new_height, row.MinimumHeight);
-				
-				if (row.Height != new_height)
-					row.Height = new_height;
+					if (row.Height != new_height)
+						row.SetAutoSizeHeight (new_height);
+				}
 			}
 		}
 
