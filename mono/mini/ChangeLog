@@ -1,3 +1,12 @@
+2008-09-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c ssa2.c mini.c mini-amd64.c decompose.c ssa.c abcremoval.c
+	abcremoval2.c branch-opts.c driver.c dominators.c: Disable parts of the
+	JIT if DISABLE_JIT is defined.
+
+	* Makefile.am: Avoid compiling/linking in inssel.c if DISABLE_JIT is
+	defined.
+
 2008-09-10  Mark Probst  <mark.probst@gmail.com>
 
 	* iltests.il.in: Disable the fconv test on PPC (the result is
