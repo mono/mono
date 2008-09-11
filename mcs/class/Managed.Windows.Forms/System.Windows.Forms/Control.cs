@@ -983,7 +983,7 @@ namespace System.Windows.Forms
 
 			#endregion // ControlCollection Interface Methods
 		
-			private class ControlCollectionEnumerator : IEnumerator
+			internal class ControlCollectionEnumerator : IEnumerator
 			{
 				private ArrayList list;
 				int position = -1;

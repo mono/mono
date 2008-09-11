@@ -1,5 +1,9 @@
 2008-09-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs: Make the custom Enumerator internal to fix build.
+
+2008-09-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewCheckBoxCell.cs: If our content is clicked and we aren't
 	already in edit mode, begin edit mode.  Generally edit mode isn't
 	started until the second click, but CheckBoxes are special.
