@@ -1,3 +1,9 @@
+2008-09-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c: Add a --agent argument (not supported yet) to load managed
+	agent assemblies before loading the main assembly, similarly to how the
+	Java VM handles agents.
+
 2008-09-11  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc.c (mono_arch_allocate_vars): Use arch-independent
