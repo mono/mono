@@ -1,4 +1,4 @@
-.TH sqlsharp 1 "25 December 2005"
+.TH sqlsharp 1 "9 September 2008"
 .SH NAME 
 sqlsharp \- Mono SQL Query command-line tool
 .SH SYNOPSIS
@@ -69,6 +69,8 @@ Sets the Connection String
 
 Example:
 	SQL# \\ConnectionString Database=testdb
+	or
+	SQL# \\cs Database=testdb
 
 For more examples, see section CONNECTION STRING EXAMPLES.
 
@@ -80,10 +82,58 @@ Sets the Provider of the Data Source.  For list of Providers, see section PROVID
 	
 Example: to set the provider for MySQL:
 	SQL# \\provider mysql
+           or
+	SQL# \\p mysql
 		
 Note: if you need to load an external provider in SQL#, 
       see the SQL# command \\loadextprovider 
       
+.fi
+.TP
+.I "ListProviders"
+List ADO.NET 2.0 Providers available
+.nf
+
+Example:
+	SQL# \\ListProviders 
+	   or
+	SQL# \\listp
+
+.fi
+.TP
+.I "BCS"
+Prompts you for building each connection parameter and builds the connection string
+and also allows you to enter a password wich does not echo.
+.nf
+
+Example:
+	SQL# \\bcs
+
+	ConnectionString Option: Data Source [] SQL# blazer
+
+	ConnectionString Option: Persist Security Info [False] SQL# 
+
+	ConnectionString Option: Integrated Security [False] SQL# 
+
+	ConnectionString Option: User ID [] SQL# scott
+
+	Password: *****
+
+	ConnectionString Option: Enlist [False] SQL# 
+
+	ConnectionString Option: Pooling [True] SQL# 
+
+	ConnectionString Option: Min Pool Size [0] SQL# 
+
+	ConnectionString Option: Max Pool Size [100] SQL# 
+
+	ConnectionString Option: Unicode [False] SQL# 
+
+	ConnectionString Option: Load Balance Timeout [0] SQL# 
+
+	ConnectionString Option: Omit Oracle Connection Name [False] SQL# 
+	ConnectionString is set.	
+
 .fi
 .TP
 .I "LoadExtProvider"
@@ -344,32 +394,30 @@ ption defaulting to true.
 
 PROVIDER   NAME          NAMESPACE                  ASSEMBLY
 
-oracle     Oracle 8i     System.Data.OracleClient   System.Data.OracleClient
+oracle     Oracle 8i-11g System.Data.OracleClient   System.Data.OracleClient
 postgresql NetPostgreSQL Npgsql                     Npgsql
 bytefx     ByteFX MySQL  ByteFX.Data.MySqlClient    ByteFX.Data
-sqlclient  MS SQL 7/2000 System.Data.SqlClient      System.Data
+sqlclient  MS SQL 7-2008 System.Data.SqlClient      System.Data
 odbc       ODBC          System.Data.Odbc           System.Data
 sqlite     SQL Lite      Mono.Data.SqliteClient     Mono.Data.SqliteClient
 sybase     Sybase        Mono.Data.SybaseClient     Mono.Data.SybaseClient
-olebb      OLE DB        System.Data.OleDb          System.Data 
-tds        TDS Generic   Mono.Data.TdsClient        Mono.Data.TdsClient
-msodbc     MS ODBC       Microsoft.Data.Odbc        Microsoft.Data.Odbc
 firebird   Firebird SQL  FirebirdSql.Data.FirebirdSql FirebirdSql.Data.Firebird
 mysql      MySQL AB      MySql.Data.MySqlClient     MySql.Data
 
 NOTES:
 
-npgsql maps to postgresql above.
-mysqlnet maps to mysql above.
-odbc is treated as an external provider for .NET 1.1 and above.
-msodbc is an external provider for compatibility with .NET 1.0
+Ngsql is the .Net Data Provider for PosgreSQL.  The
+latest verison can be downloaded from 
+http://npgsql.projects.postgresql.org/
 
-MySql.Data has replaced the mysql provider.  If you still need to use ByteFX.Data, then
-use bytefx.
+MySql.Data is the MySQL Connector/Net for connecting to MySql databases.
+For MySQL, it is strongly recommend to use MySql.Data instead of the old
+ByteFX.Data provider.  Unfortunately, MySql.Data is not included with Mono.
+You can download the latest MySQL Connector/Net from MySQL AB at
+http://dev.mysql.com/downloads/
 
-MySql.Data is not included with Mono.  You need to 
-download the MySQL Connector/Net from MySQL AB at
-http://dev.mysql.com/downloads/connector/net/1.0.html
+FirebirdSql.Data.Firebird can be downloaded from here:
+http://www.firebirdsql.org/index.php?op=files&id=netprovider
 
 .fi
 .SH CONNECTION STRING SAMPLES
@@ -385,10 +433,17 @@ Connection String examples:
 
 
 Microsoft SQL Server via System.Data.SqlClient 
-or Mono.Data.TdsClient provider:
 
-	Server=DANPC;Database=pubs;User ID=saPassword=
+	Server=DANPC;Database=pubs;User ID=saPassword=;
 
+	For Integrated Security, bear in mind that Mono is not
+	integrated with Windows, SQL Server client nor server, nor
+	Windows Server.  Therefore, you must provide the Windows Domain
+	name and domain user name and password for this user.
+
+	Server=DANPC;Database=pubs;User ID=DOMAIN\user;Password=pass;Integrated Security=SSPI
+
+	For a server locally, you can use localhost.
 	
 ODBC via System.Data.Odbc provider using 
 a DSN named "MSSQLDSN"	I set up 
@@ -397,6 +452,8 @@ which connects to Microsoft SQL Server 2000:
 
 	DSN=MSSQLDSN;UID=danmorg;PWD=freetds
 
+To use ODBC ON Unix, consider unixODBC from http://www.unixodbc.org/
+or use iODBC from http://www.iodbc.org/
 
 SQL Lite via Mono.Data.SqliteClient 
 provider which connects to the
@@ -405,16 +462,20 @@ the file is created:
 
 	URI=file:SqliteTest.db
 
-
-OLE DB via System.Data.OleDb provider 
-which connects to a PostgreSQL database:
-
-	Provider=PostgreSQL;Addr=127.0.0.1;Database=rodrigo
-
-		
 Oracle via System.Data.OracleClient
 
 	Data Source=testdb;User ID=scott;Password=tiger
+
+        If you prefer to not use a tnsnames.ora file, you can 
+	use a connection string which allows a
+	TNS network description that is parentheses delimited
+	like the following which has the host, port, and
+	service name.  For host, you can specify an IP address
+        instead of a hostname.
+
+User ID=SCOTT;
+Password=TIGER;
+Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.1.101)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=TESTDB)))
 
 		
 Npgsql (.NET PostgreSQL) from 
@@ -425,15 +486,17 @@ http://gborg.postgresql.org/project/npgsql/projdisplay.php
 		
 ByteFX (ByteFX MySQL) from 
 
+	Please use MySql.Data instead.
+
 	Server=localhost;Database=test;User ID=mysql;Password=
 
 
-FirebirdSql via FirebirdSql.Data.Firebird (not included with Mono)
+FirebirdSql via FirebirdSql.Data.Firebird (download latest form FirebirdSql.org)
 
 	Database=C:\\FIREBIRD\\EXAMPLES\\EMPLOYEE.FDB;User=SYSDBA;Password=masterkey;Dialect=3;Server=localhost
 
 
-MySQL (MySQL AB) from http://www.mysql.com/
+MySQL via (MySql.Data) MySQL Connector/Net from http://www.mysql.com/
 
 	Server=localhost;Database=test;User ID=mysql;Password=mypass;Pooling=false
 
@@ -444,7 +507,7 @@ No support for tracing right now.
 .SH AUTHORS
 The Mono SQL Query Tool was written 
 .nf
-by Daniel Morgan <danielmorgan@verizon.net>
+by Daniel Morgan <monodanmorg@yahoo.com>
 .fi
 .PP
 .SH LICENSE
@@ -470,5 +533,5 @@ http://www.mono-project.com
 .fi
 .PP
 .SH SEE ALSO
-mono(1), mint(1)
+mono(1)
 
