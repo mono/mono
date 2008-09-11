@@ -5197,8 +5197,10 @@ namespace System.Windows.Forms
 				if (owner != null && owner.VirtualMode)
 					throw new InvalidOperationException ();
 #endif
-				
-				return list.GetEnumerator ();
+
+				// This enumerator makes a copy of the collection so
+				// it can be deleted from in a foreach
+				return new Control.ControlCollection.ControlCollectionEnumerator (list);
 			}
 
 			int IList.Add (object item)

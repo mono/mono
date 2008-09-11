@@ -1,5 +1,11 @@
 2008-09-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ListView.cs: Use a custom enumerator for ListViewItemCollection
+	so items can be deleted in a foreach.
+	[Fixes bug #425342]
+
+2008-09-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewRow.cs: Better implementation of GetPreferredHeight.
 	Store the user set explicit height so that the row can be AutoSized
 	and then when AutoSize is turned off, it can get its original size back.

@@ -1735,6 +1735,22 @@ namespace MonoTests.System.Windows.Forms
 			form.Dispose ();
 		}
 
+		[Test]
+		public void DeleteFromEnumerator ()	// bug 425342
+		{
+			ListView lv = new ListView ();
+			
+			lv.Items.Add ("A");
+			lv.Items.Add ("B");
+			lv.Items.Add ("C");
+			
+			foreach (ListViewItem lvi in lv.Items)
+				if (lvi.Text == "B")
+					lv.Items.Remove (lvi);
+					
+			Assert.AreEqual (2, lv.Items.Count);
+		}
+		
 #if NET_2_0
 		[Test]
 		public void ListViewItemCollectionTest_RemoveByKey ()

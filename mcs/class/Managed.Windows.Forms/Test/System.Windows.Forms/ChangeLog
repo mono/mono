@@ -1,3 +1,7 @@
+2008-09-11  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ListViewCollectionsTest.cs: Add test for bug #425342.
+
 2008-09-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComboBoxTest.cs: Add test for bug #424270.
