@@ -287,6 +287,9 @@ namespace System.Windows.Forms {
 
 		protected override void OnContentClick (DataGridViewCellEventArgs e)
 		{
+			if (!IsInEditMode)
+				DataGridView.BeginEdit (false);
+				
 			CheckState cs = GetCurrentValue ();
 
 			if (threeState) {

@@ -1,5 +1,11 @@
 2008-09-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewCheckBoxCell.cs: If our content is clicked and we aren't
+	already in edit mode, begin edit mode.  Generally edit mode isn't
+	started until the second click, but CheckBoxes are special.
+
+2008-09-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ErrorProvider.cs: Never try to add our icons to ContainerControl,
 	since that can be set to anything.  Always add them to the Control's
 	parent.  [Fixes bug #416058]
