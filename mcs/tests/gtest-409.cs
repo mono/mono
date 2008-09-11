@@ -18,6 +18,11 @@ public class ConditionalParsing
 		}
 	}
 	
+	class Const
+	{
+		const int c = true ? 1 : 2;
+	}
+	
 	struct S
 	{
 	}

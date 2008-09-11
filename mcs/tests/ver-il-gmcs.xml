@@ -10808,6 +10808,11 @@
         <size>7</size>
       </method>
     </type>
+    <type name="ConditionalParsing+Const">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
   </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
