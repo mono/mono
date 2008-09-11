@@ -1,3 +1,8 @@
+2008-09-11  Jb Evain  <jbevain@novell.com>
+
+	* Enumerable.cs (Iterate*): use a bool empty instead of an int counter.
+	Fixes #425344.
+
 2007-08-14  Marek Safar  <marek.safar@gmail.com>
 
 	* Enumerable.cs (Cast): Simplified.

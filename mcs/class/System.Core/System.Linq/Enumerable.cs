@@ -334,7 +334,7 @@ namespace System.Linq
 		{
 			foreach (TResult element in source)
 				yield return element;
-		}			
+		}
 
 		#endregion
 
@@ -578,12 +578,12 @@ namespace System.Linq
 		public static TSource First<TSource> (this IEnumerable<TSource> source)
 		{
 			Check.Source (source);
-			
+
 			var list = source as IList<TSource>;
 			if (list != null) {
 				if (list.Count != 0)
 					return list [0];
-				
+
 				throw new InvalidOperationException ();
 			} else {
 				using (var enumerator = source.GetEnumerator ()) {
@@ -591,7 +591,7 @@ namespace System.Linq
 						return enumerator.Current;
 				}
 			}
-			
+
 			throw new InvalidOperationException ();
 		}
 
@@ -1069,7 +1069,7 @@ namespace System.Linq
 
 		static T? IterateNullable<T> (IEnumerable<T?> source, T initValue, Func<T?, T?, bool> selector) where T : struct
 		{
-			int counter = 0;
+			bool empty = true;
 			T? value = initValue;
 			foreach (var element in source) {
 				if (!element.HasValue)
@@ -1077,10 +1077,11 @@ namespace System.Linq
 
 				if (selector (element.Value, value))
 					value = element;
-				++counter;
+
+				empty = false;
 			}
 
-			if (counter == 0)
+			if (empty)
 				return null;
 
 			return value;
@@ -1155,13 +1156,13 @@ namespace System.Linq
 
 		static U Iterate<T, U> (IEnumerable<T> source, U initValue, Func<T, U, U> selector)
 		{
-			int counter = 0;
+			bool empty = true;
 			foreach (var element in source) {
 				initValue = selector (element, initValue);
-				++counter;
+				empty = false;
 			}
 
-			if (counter == 0)
+			if (empty)
 				throw new InvalidOperationException ();
 
 			return initValue;
@@ -1169,17 +1170,17 @@ namespace System.Linq
 
 		static U? IterateNullable<T, U> (IEnumerable<T> source, U initialValue, Func<T, U?, U?> selector) where U : struct
 		{
-			int counter = 0;
+			bool empty = true;
 			U? value = initialValue;
 			foreach (var element in source) {
 				value = selector (element, value);
 				if (!value.HasValue)
 					continue;
 
-				++counter;
+				empty = false;
 			}
 
-			if (counter == 0)
+			if (empty)
 				return null;
 
 			return value;
