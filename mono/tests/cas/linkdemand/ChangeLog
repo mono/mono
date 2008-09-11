@@ -1,3 +1,10 @@
+2008-09-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile.am: Don't use --security to execute SN (since it's not
+	part of the tests and fails verification due to other issues).
+	<kumpera> spouliot: the issue is that, for some reason, M.M.BinInteger
+	is been treated a code not under full trust (so no unsafe code)
+
 2006-06-27  Wade Berrier <wberrier@novell.com>
 
 	* Makefile.am: Use mcs and sn from the mcs tree instead of
