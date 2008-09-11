@@ -2729,7 +2729,7 @@ type
 		} else {
 			if (name.Left == null && name.Name == "var" &&
 			    (RootContext.Version > LanguageVersion.ISO_2 || RootContext.Version == LanguageVersion.Default_MCS))
-				$$ = new VarExpr (name.Location);
+				$$ = current_array_type = new VarExpr (name.Location);
 			else
 				$$ = name.GetTypeExpression ();
 		}
@@ -4369,7 +4369,7 @@ local_variable_type
 				SimpleName sn = expr as SimpleName;
 				if (sn != null && sn.Name == "var" &&
 				    (RootContext.Version > LanguageVersion.ISO_2 || RootContext.Version == LanguageVersion.Default_MCS))
-					$$ = new VarExpr (sn.Location);
+					$$ = current_array_type = new VarExpr (sn.Location);
 				else
 					$$ = $1;
 			} else {

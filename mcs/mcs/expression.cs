@@ -5993,6 +5993,11 @@ namespace Mono.CSharp {
 				Report.Error (622, loc, "Can only use array initializer expressions to assign to array types. Try using a new expression instead");
 				return false;
 			}
+
+			if (requested_base_type is VarExpr) {
+				Report.Error (820, loc, "An implicitly typed local variable declarator cannot use an array initializer");
+				return false;
+			}
 			
 			StringBuilder array_qualifier = new StringBuilder (rank);
 

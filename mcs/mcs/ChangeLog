@@ -1,5 +1,10 @@
 2008-09-11  Marek Safar  <marek.safar@gmail.com>
 
+	* cs-parser.jay, expression.cs: An implicitly typed local variable
+	declarator cannot use an array initializer.
+
+2008-09-11  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-parser.jay: Reduced number of printed tokens, add sorting.
 
 2008-09-11  Marek Safar  <marek.safar@gmail.com>
