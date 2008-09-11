@@ -1044,7 +1044,7 @@ namespace Mono.CSharp {
 				if (t == null)
 					return null;
 				if (t.IsGenericParameter)
-					return dargs [t.GenericParameterPosition];
+					return t.GenericParameterPosition < dargs.Length ? dargs [t.GenericParameterPosition] : t;
 				if (t.IsGenericType) {
 					Type[] args = t.GetGenericArguments ();
 					Type[] inflated = new Type [args.Length];

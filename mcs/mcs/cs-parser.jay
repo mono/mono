@@ -719,7 +719,7 @@ attribute_target
 	| RETURN { $$ = "return"; }
 	| error
 	  {
-  		string name = GetTokenName (yyToken);
+		string name = GetTokenName (yyToken);
 		$$ = CheckAttributeTarget (name, GetLocation ($1));
 	  }
 	;
@@ -1011,9 +1011,14 @@ constant_declarators
 	;
 
 constant_declarator
-	: IDENTIFIER ASSIGN constant_expression
+	: IDENTIFIER ASSIGN
 	  {
-		$$ = new VariableDeclaration ((LocatedToken) $1, $3);
+	  	++lexer.parsing_block;
+	  }	
+	  constant_expression
+	  {
+	  	--lexer.parsing_block;
+		$$ = new VariableDeclaration ((LocatedToken) $1, $4);
 	  }
 	| IDENTIFIER
 	  {
