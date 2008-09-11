@@ -113,6 +113,7 @@ cs3009-2.cs
 cs3010.cs
 gcs0030.cs
 gcs0133.cs NO ERROR
+gcs0306-3.cs
 gcs0729.cs
 gcs0730.cs
 gcs0733.cs
@@ -121,9 +122,7 @@ gcs0735.cs
 gcs0739.cs
 gcs0747-2.cs
 gcs0747.cs
-gcs0820.cs # temporary disabled
 gcs1061-6.cs
-gcs1644-10.cs NO ERROR
 gcs1686.cs
 gcs1708.cs
 gcs1908-2.cs
