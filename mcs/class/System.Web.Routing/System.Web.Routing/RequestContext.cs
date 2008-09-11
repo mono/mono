@@ -37,15 +37,19 @@ namespace System.Web.Routing
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class RequestContext
 	{
-		[MonoTODO]
 		public RequestContext (HttpContextBase httpContext, RouteData routeData)
 		{
+			if (httpContext == null)
+				throw new ArgumentNullException ("httpContext");
+			if (routeData == null)
+				throw new ArgumentNullException ("routeData");
+
+			HttpContext = httpContext;
+			RouteData = routeData;
 		}
 
-		[MonoTODO]
-		public HttpContextBase HttpContext { get; internal set; }
+		public HttpContextBase HttpContext { get; private set; }
 
-		[MonoTODO]
-		public RouteData RouteData { get; internal set; }
+		public RouteData RouteData { get; private set; }
 	}
 }

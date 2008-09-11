@@ -33,137 +33,128 @@ using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Web;
 
+using PairCollection = System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<string, object>>;
+
 namespace System.Web.Routing
 {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class RouteValueDictionary : IDictionary<string, object>, 
-		ICollection<KeyValuePair<string, object>>, IEnumerable<KeyValuePair<string, object>>, 
-		IEnumerable
+	public class RouteValueDictionary : IDictionary<string, object>
 	{
-		[MonoTODO]
+		Dictionary<string,object> d = new Dictionary<string,object> ();
+
 		public RouteValueDictionary ()
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public RouteValueDictionary (IDictionary<string, object> dictionary)
 		{
-			throw new NotImplementedException ();
+			if (dictionary == null)
+				throw new ArgumentNullException ("dictionary");
+			foreach (var p in dictionary)
+				Add (p.Key, p.Value);
 		}
 
-		[MonoTODO]
 		public RouteValueDictionary (object values)
 		{
-			throw new NotImplementedException ();
+			if (values == null)
+				throw new ArgumentNullException ("values");
+			foreach (var p in (IEnumerable<KeyValuePair<string,object>>) values)
+				Add (p.Key, p.Value);
 		}
 
-		[MonoTODO]
-		public int Count { get; private set; }
-		[MonoTODO]
-		bool ICollection<KeyValuePair<string, object>>.IsReadOnly {
-			get { throw new NotImplementedException (); }
+		public int Count {
+			get { return d.Count; }
 		}
 
-		[MonoTODO]
+		bool PairCollection.IsReadOnly {
+			get { return ((PairCollection) d).IsReadOnly; }
+		}
+
 		ICollection<string> IDictionary<string, object>.Keys {
-			get { throw new NotImplementedException (); }
+			get { return d.Keys; }
 		}
 
-		[MonoTODO]
 		ICollection<Object> IDictionary<string, object>.Values {
-			get { throw new NotImplementedException (); }
+			get { return d.Values; }
 		}
 
-		[MonoTODO]
 		public object this [string key] {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return d [key]; }
+			set { d [key] = value; }
 		}
 
-		[MonoTODO]
-		public Dictionary<string, object>.KeyCollection Keys { get; private set; }
+		public Dictionary<string, object>.KeyCollection Keys {
+			get { return d.Keys; }
+		}
 
-		[MonoTODO]
-		public Dictionary<string, object>.ValueCollection Values { get; private set; }
+		public Dictionary<string, object>.ValueCollection Values {
+			get { return d.Values; }
+		}
 
-		[MonoTODO]
 		public void Add (string key, object value)
 		{
-			throw new NotImplementedException ();
+			d.Add (key, value);
 		}
 
-		[MonoTODO]
 		public void Clear ()
 		{
-			throw new NotImplementedException ();
+			d.Clear ();
 		}
 
-		[MonoTODO]
 		public bool ContainsKey (string key)
 		{
-			throw new NotImplementedException ();
+			return d.ContainsKey (key);
 		}
 
-		[MonoTODO]
 		public bool ContainsValue (object value)
 		{
-			throw new NotImplementedException ();
+			return d.ContainsValue (value);
 		}
 
-		[MonoTODO]
 		public Dictionary<string, object>.Enumerator GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return d.GetEnumerator ();
 		}
 
-		[MonoTODO]
 		void ICollection<KeyValuePair<string, object>>.Add (KeyValuePair<string, object> item)
 		{
-			throw new NotImplementedException ();
+			((PairCollection) d).Add (item);
 		}
 
-		[MonoTODO]
 		bool ICollection<KeyValuePair<string, object>>.Contains (KeyValuePair<string, object> item)
 		{
-			throw new NotImplementedException ();
+			return ((PairCollection) d).Contains (item);
 		}
 
-		[MonoTODO]
 		void ICollection<KeyValuePair<string, object>>.CopyTo (KeyValuePair<string, object> [] array, int arrayIndex)
 		{
-			throw new NotImplementedException ();
+			((PairCollection) d).CopyTo (array, arrayIndex);
 		}
 
-		[MonoTODO]
 		bool ICollection<KeyValuePair<string, object>>.Remove (KeyValuePair<string, object> item)
 		{
-			throw new NotImplementedException ();
+			return ((PairCollection) d).Remove (item);
 		}
 
-		[MonoTODO]
 		IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator()
 		{
-			throw new NotImplementedException ();
+			return d.GetEnumerator ();
 		}
 
-		[MonoTODO]
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return d.GetEnumerator ();
 		}
 
-		[MonoTODO]
 		public bool Remove (string key)
 		{
-			throw new NotImplementedException ();
+			return d.Remove (key);
 		}
 
-		[MonoTODO]
 		public bool TryGetValue (string key, out object value)
 		{
-			throw new NotImplementedException ();
+			return d.TryGetValue (key, out value);
 		}
 	}
 }

@@ -1,0 +1,6 @@
+2008-09-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpMethodConstraintTest.cs, RouteCollectionTest.cs,
+	  RouteDataTest.cs, RouteTest.cs, StopRoutingHandlerTest.cs,
+	  TestStubTypes.cs, UrlRoutingHandlerTest.cs,
+	  VirtualPathDataTest.cs : initial checkin.

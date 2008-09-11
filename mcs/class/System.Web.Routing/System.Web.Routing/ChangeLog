@@ -1,3 +1,11 @@
+2008-09-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpMethodConstraint.cs, RequestContext.cs, Route.cs,
+	  RouteCollection.cs, RouteData.cs, RouteTable.cs,
+	  RouteValueDictionary.cs, StopRoutingHandler.cs,
+	  UrlRoutingHandler.cs, UrlRoutingModule.cs, VirtualPathData.cs:
+	  some implementation.
+
 2008-09-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	*.cs: initial checkin.

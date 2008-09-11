@@ -41,47 +41,88 @@ namespace System.Web.Routing
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class RouteCollection : Collection<RouteBase>
 	{
-		[MonoTODO]
-		public RouteCollection ()
+		class Lock : IDisposable
 		{
-			throw new NotImplementedException ();
+			RouteCollection owner;
+			bool read;
+
+			public Lock (RouteCollection owner, bool read)
+			{
+				this.owner = owner;
+				this.read = read;
+			}
+
+			public void Dispose ()
+			{
+				//if (read)
+				//	owner.read_lock = null;
+				//else
+				//	owner_write_lock = null;
+			}
 		}
 
-		[MonoTODO]
+		public RouteCollection ()
+			: this (null)
+		{
+		}
+
 		public RouteCollection (VirtualPathProvider virtualPathProvider)
 		{
-			throw new NotImplementedException ();
+			// null argument is allowed
+			provider = virtualPathProvider;
+
+			read_lock = new Lock (this, true);
+			write_lock = new Lock (this, false);
 		}
 
-		[MonoTODO]
+		VirtualPathProvider provider;
+		Dictionary<string,RouteBase> d = new Dictionary<string,RouteBase> ();
+
+		Lock read_lock, write_lock;
+
 		public RouteBase this [string name] {
-			get { throw new NotImplementedException (); }
+			get {
+				foreach (var p in d)
+					if (p.Key == name)
+						return p.Value;
+				return null;
+			}
 		}
 
 		[MonoTODO]
 		public bool RouteExistingFiles { get; set; }
 
-		[MonoTODO]
 		public void Add (string name, RouteBase item)
 		{
-			throw new NotImplementedException ();
+			lock (GetWriteLock ()) {
+				base.Add (item);
+				if (!String.IsNullOrEmpty (name))
+					d.Add (name, item);
+			}
 		}
 
-		[MonoTODO]
 		protected override void ClearItems ()
 		{
-			throw new NotImplementedException ();
+			lock (GetWriteLock ())
+				base.ClearItems ();
 		}
 
-		[MonoTODO]
 		public IDisposable GetReadLock ()
 		{
-			throw new NotImplementedException ();
+			return read_lock;
 		}
 
 		[MonoTODO]
 		public RouteData GetRouteData (HttpContextBase httpContext)
 		{
+			if (httpContext == null)
+				throw new ArgumentNullException ("httpContext");
+			var path = httpContext.Request.AppRelativeCurrentExecutionFilePath;
+
+			// some matching test is done here.
+
+			var pathInfo = httpContext.Request.PathInfo;
+
 			throw new NotImplementedException ();
 		}
 
@@ -97,28 +138,47 @@ namespace System.Web.Routing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public IDisposable GetWriteLock ()
 		{
-			throw new NotImplementedException ();
+			return write_lock;
 		}
 
-		[MonoTODO]
 		protected override void InsertItem (int index, RouteBase item)
 		{
-			throw new NotImplementedException ();
+			// FIXME: what happens wrt its name?
+			lock (GetWriteLock ())
+				base.InsertItem (index, item);
 		}
 
-		[MonoTODO]
 		protected override void RemoveItem (int index)
 		{
-			throw new NotImplementedException ();
+			// FIXME: what happens wrt its name?
+			lock (GetWriteLock ()) {
+				string k = GetKey (index);
+				base.RemoveItem (index);
+				if (k != null)
+					d.Remove (k);
+			}
 		}
 
-		[MonoTODO]
 		protected override void SetItem (int index, RouteBase item)
 		{
-			throw new NotImplementedException ();
+			// FIXME: what happens wrt its name?
+			lock (GetWriteLock ()) {
+				string k = GetKey (index);
+				base.SetItem (index, item);
+				if (k != null)
+					d.Remove (k);
+			}
+		}
+
+		string GetKey (int index)
+		{
+			var item = this [index];
+			foreach (var p in d)
+				if (p.Value == item)
+					return p.Key;
+			return null;
 		}
 	}
 }

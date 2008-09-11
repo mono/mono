@@ -37,10 +37,9 @@ namespace System.Web.Routing
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class StopRoutingHandler : IRouteHandler
 	{
-		[MonoTODO]
 		protected virtual IHttpHandler GetHttpHandler (RequestContext requestContext)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 
 		IHttpHandler IRouteHandler.GetHttpHandler (RequestContext requestContext)

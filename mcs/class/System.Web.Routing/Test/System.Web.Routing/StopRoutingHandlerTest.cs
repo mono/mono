@@ -1,5 +1,5 @@
 //
-// VirtualPathData.cs
+// StopRoutingHandlerTest.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
@@ -28,27 +28,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
-using System.Security.Permissions;
 using System.Web;
+using System.Web.Routing;
+using NUnit.Framework;
 
-namespace System.Web.Routing
+namespace MonoTests.System.Web.Routing
 {
-	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class VirtualPathData
+	[TestFixture]
+	public class StopRoutingHandlerTest
 	{
-		public VirtualPathData (RouteBase route, string virtualPath)
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void GetHandler ()
 		{
-			// arguments can be null.
-			Route = route;
-			VirtualPath = virtualPath;
-			DataTokens = new RouteValueDictionary ();
+			new MyStopRoutingHandler ().CallGetHttpHandler (new RequestContext (new HttpContextStub (), new RouteData ()));
 		}
-
-		public RouteValueDictionary DataTokens { get; private set; }
-
-		public RouteBase Route { get; set; }
-
-		public string VirtualPath { get; set; }
 	}
 }

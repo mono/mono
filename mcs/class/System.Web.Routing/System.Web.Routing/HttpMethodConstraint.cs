@@ -42,21 +42,30 @@ namespace System.Web.Routing
 		[MonoTODO]
 		public HttpMethodConstraint (params string[] allowedMethods)
 		{
-			throw new NotImplementedException ();
+			if (allowedMethods == null)
+				throw new ArgumentNullException ("allowedMethods");
+			AllowedMethods = allowedMethods;
 		}
 
-		[MonoTODO]
 		public ICollection<string> AllowedMethods { get; private set; }
 
-		[MonoTODO]
 		bool IRouteConstraint.Match (HttpContextBase httpContext, Route route, string parameterName, RouteValueDictionary values, RouteDirection routeDirection)
 		{
-			throw new NotImplementedException ();
+			return Match (httpContext, route, parameterName, values, routeDirection);
 		}
 
 		[MonoTODO]
 		protected virtual bool Match (HttpContextBase httpContext, Route route, string parameterName, RouteValueDictionary values, RouteDirection routeDirection)
 		{
+			if (httpContext == null)
+				throw new ArgumentNullException ("httpContext");
+			if (route == null)
+				throw new ArgumentNullException ("route");
+			if (parameterName == null)
+				throw new ArgumentNullException ("parameterName");
+			if (values == null)
+				throw new ArgumentNullException ("values");
+
 			throw new NotImplementedException ();
 		}
 	}

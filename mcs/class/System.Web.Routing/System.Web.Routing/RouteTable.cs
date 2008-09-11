@@ -38,7 +38,11 @@ namespace System.Web.Routing
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class RouteTable
 	{
-		[MonoTODO]
+		static RouteTable ()
+		{
+			Routes = new RouteCollection ();
+		}
+
 		public static RouteCollection Routes { get; private set; }
 	}
 }

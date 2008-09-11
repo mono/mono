@@ -37,39 +37,43 @@ namespace System.Web.Routing
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class Route : RouteBase
 	{
-		[MonoTODO]
+		string url;
+
 		public RouteValueDictionary Constraints { get; set; }
-		[MonoTODO]
+
 		public RouteValueDictionary DataTokens { get; set; }
-		[MonoTODO]
+
 		public RouteValueDictionary Defaults { get; set; }
-		[MonoTODO]
+
 		public IRouteHandler RouteHandler { get; set; }
-		[MonoTODO]
-		public string Url { get; set; }
 
-		[MonoTODO]
+		public string Url {
+			get { return url; }
+			set { url = value ?? String.Empty; }
+		}
+
 		public Route (string url, IRouteHandler routeHandler)
+			: this (url, null, routeHandler)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public Route (string url, RouteValueDictionary defaults, IRouteHandler routeHandler)
+			: this (url, defaults, null, routeHandler)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public Route (string url, RouteValueDictionary defaults, RouteValueDictionary constraints, IRouteHandler routeHandler)
+			: this (url, defaults, constraints, null, routeHandler)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public Route (string url, RouteValueDictionary defaults, RouteValueDictionary constraints, RouteValueDictionary dataTokens, IRouteHandler routeHandler)
 		{
-			throw new NotImplementedException ();
+			Url = url;
+			Defaults = defaults;
+			Constraints = constraints;
+			DataTokens = dataTokens;
+			RouteHandler = routeHandler;
 		}
 
 		[MonoTODO]
@@ -81,6 +85,10 @@ namespace System.Web.Routing
 		[MonoTODO]
 		public override VirtualPathData GetVirtualPath (RequestContext requestContext, RouteValueDictionary values)
 		{
+			if (requestContext == null)
+				throw new ArgumentNullException ("requestContext");
+			// null values is allowed.
+
 			throw new NotImplementedException ();
 		}
 

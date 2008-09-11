@@ -40,10 +40,8 @@ namespace System.Web.Routing
 		[MonoTODO]
 		public RouteCollection RouteCollection { get; set; }
 
-		[MonoTODO]
 		protected virtual void Dispose ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		void IHttpModule.Dispose ()
@@ -56,10 +54,23 @@ namespace System.Web.Routing
 			Init (application);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("FIXME: add correct arguments")]
 		protected virtual void Init (HttpApplication application)
 		{
-			throw new NotImplementedException ();
+			application.PostMapRequestHandler += PostMapRequestHandler;
+			application.PostResolveRequestCache += PostResolveRequestCache;
+		}
+
+		void PostMapRequestHandler (object o, EventArgs e)
+		{
+			var app = (HttpApplication) o;
+			PostMapRequestHandler (new HttpContextWrapper (app.Context));
+		}
+
+		void PostResolveRequestCache (object o, EventArgs e)
+		{
+			var app = (HttpApplication) o;
+			PostResolveRequestCache (new HttpContextWrapper (app.Context));
 		}
 
 		[MonoTODO]

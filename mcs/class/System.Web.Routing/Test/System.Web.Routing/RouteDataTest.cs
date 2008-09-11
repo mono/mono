@@ -1,5 +1,5 @@
 //
-// VirtualPathData.cs
+// RouteDataTest.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
@@ -28,27 +28,62 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
-using System.Security.Permissions;
 using System.Web;
+using System.Web.Routing;
+using NUnit.Framework;
 
-namespace System.Web.Routing
+namespace MonoTests.System.Web.Routing
 {
-	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class VirtualPathData
+	[TestFixture]
+	public class RouteDataTest
 	{
-		public VirtualPathData (RouteBase route, string virtualPath)
+		[Test]
+		public void ConstructorNullArgs ()
 		{
-			// arguments can be null.
-			Route = route;
-			VirtualPath = virtualPath;
-			DataTokens = new RouteValueDictionary ();
+			new RouteData (null, null);
 		}
 
-		public RouteValueDictionary DataTokens { get; private set; }
+		[Test]
+		public void DefaultValues ()
+		{
+			var d = new RouteData ();
+			Assert.IsNull (d.Route, "#1");
+			Assert.IsNull (d.RouteHandler, "#2");
+			Assert.AreEqual (0, d.DataTokens.Count, "#3");
+			Assert.AreEqual (0, d.Values.Count, "#4");
+		}
 
-		public RouteBase Route { get; set; }
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetRequiredStringNull ()
+		{
+			var d = new RouteData ();
+			d.GetRequiredString (null);
+		}
 
-		public string VirtualPath { get; set; }
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void GetRequiredStringNonexistent ()
+		{
+			var d = new RouteData ();
+			d.GetRequiredString ("a");
+		}
+
+		[Test]
+		public void GetRequiredStringExistent ()
+		{
+			var d = new RouteData ();
+			d.Values.Add ("a", "x");
+			Assert.AreEqual ("x", d.GetRequiredString ("a"));
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void GetRequiredStringForNonStringValue ()
+		{
+			var d = new RouteData ();
+			d.Values.Add ("a", 10);
+			Assert.AreEqual ("10", d.GetRequiredString ("a"));
+		}
 	}
 }

@@ -37,32 +37,46 @@ namespace System.Web.Routing
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class UrlRoutingHandler : IHttpHandler
 	{
-		[MonoTODO]
+		RouteCollection routes;
+
 		bool IHttpHandler.IsReusable {
 			get { return IsReusable; }
 		}
 
-		[MonoTODO]
-		protected virtual bool IsReusable { get; private set; }
+		protected virtual bool IsReusable { get { return false; } }
 
-		[MonoTODO]
-		public RouteCollection RouteCollection { get; set; }
+		public RouteCollection RouteCollection {
+			get {
+				if (routes == null)
+					routes = RouteTable.Routes;
+				return routes;
+			}
+			set { routes = value; }
+		}
 
 		void IHttpHandler.ProcessRequest (HttpContext context)
 		{
 			ProcessRequest (context);
 		}
 
-		[MonoTODO]
 		protected virtual void ProcessRequest (HttpContext httpContext)
 		{
-			throw new NotImplementedException ();
+			ProcessRequest (new HttpContextWrapper (httpContext));
 		}
 
 		[MonoTODO]
 		protected virtual void ProcessRequest (HttpContextBase httpContext)
 		{
+			var rd = RouteCollection.GetRouteData (httpContext);
+			if (rd == null)
+				throw new HttpException ("The incoming request does not match any route");
+
 			throw new NotImplementedException ();
+
+			RequestContext rc = null;
+
+			var hh = rd.RouteHandler.GetHttpHandler (rc);
+			VerifyAndProcessRequest (hh, httpContext);
 		}
 
 		protected abstract void VerifyAndProcessRequest (IHttpHandler httpHandler, HttpContextBase httpContext);

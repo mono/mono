@@ -38,29 +38,37 @@ namespace System.Web.Routing
 	public class RouteData
 	{
 		public RouteData ()
+			: this (null, null)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public RouteData (RouteBase route, IRouteHandler routeHandler)
 		{
-			throw new NotImplementedException ();
+			// arguments can be null.
+			Route = route;
+			RouteHandler = routeHandler;
+
+			DataTokens = new RouteValueDictionary ();
+			Values = new RouteValueDictionary ();
 		}
 
-		[MonoTODO]
 		public RouteValueDictionary DataTokens { get; private set; }
-		[MonoTODO]
+
 		public RouteBase Route { get; set; }
-		[MonoTODO]
+
 		public IRouteHandler RouteHandler { get; set; }
-		[MonoTODO]
+
 		public RouteValueDictionary Values { get; private set; }
 
-		[MonoTODO]
 		public string GetRequiredString (string valueName)
 		{
-			throw new NotImplementedException ();
+			object o;
+			if (!Values.TryGetValue (valueName, out o))
+				throw new InvalidOperationException (String.Format ("value name {0} does not match any of the values.", valueName));
+			string s = o as string;
+			if (String.IsNullOrEmpty (s))
+				throw new InvalidOperationException (String.Format ("The value for the name {0} must be a non-empty string", valueName));
+			return s;
 		}
 	}
 }

@@ -1,5 +1,5 @@
 //
-// VirtualPathData.cs
+// VirtualPathDataTest.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
@@ -28,27 +28,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
-using System.Security.Permissions;
 using System.Web;
+using System.Web.Routing;
+using NUnit.Framework;
 
-namespace System.Web.Routing
+namespace MonoTests.System.Web.Routing
 {
-	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class VirtualPathData
+	[TestFixture]
+	public class VirtualPathDataTest
 	{
-		public VirtualPathData (RouteBase route, string virtualPath)
+		[Test]
+		public void ConstructorNullArgs ()
 		{
-			// arguments can be null.
-			Route = route;
-			VirtualPath = virtualPath;
-			DataTokens = new RouteValueDictionary ();
+			new VirtualPathData (null, null);
 		}
-
-		public RouteValueDictionary DataTokens { get; private set; }
-
-		public RouteBase Route { get; set; }
-
-		public string VirtualPath { get; set; }
 	}
 }
