@@ -1,5 +1,10 @@
 2008-09-11  Mark Probst  <mark.probst@gmail.com>
 
+	* mini-ppc.c (mono_arch_allocate_vars): Use arch-independent
+	function to do stack layout of local variables.
+
+2008-09-11  Mark Probst  <mark.probst@gmail.com>
+
 	* mini-ppc.c (calculate_sizes): Bugfix in sigcookie position
 	calculation.
 
