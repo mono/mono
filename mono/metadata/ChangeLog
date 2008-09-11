@@ -1,3 +1,8 @@
+2008-09-11  Mark Probst  <mark.probst@gmail.com>
+
+	* debug-mono-symfile.c (mono_debug_symfile_lookup_location):
+	Endianness fixes for MonoSymbolFileOffsetTable.
+
 2008-09-10  Bill Holmes  <billholmes54@gmail.com>
 
 	* process.c (complete_path) : Removing quotes from the 
