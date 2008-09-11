@@ -79,10 +79,7 @@ namespace System.Windows.Forms {
 				window.Width = ep.icon.Width;
 				window.Height = ep.icon.Height;
 
-				if (ep.container != null && control.Parent != null) {
-					ep.container.Controls.Add(window);
-					ep.container.Controls.SetChildIndex (window, control.Parent.Controls.IndexOf (control) + 1);
-				} else if (control.Parent != null) {
+				if (control.Parent != null) {
 					control.Parent.Controls.Add(window);
 					control.Parent.Controls.SetChildIndex(window, control.Parent.Controls.IndexOf (control) + 1);
 				}
@@ -255,10 +252,7 @@ namespace System.Windows.Forms {
 
 			private void control_ParentChanged (object sender, EventArgs e)
 			{
-				if (ep.container != null) {
-					ep.container.Controls.Add (window);
-					ep.container.Controls.SetChildIndex (window, control.Parent.Controls.IndexOf (control) + 1);
-				} else {
+				if (control.Parent != null) {
 					control.Parent.Controls.Add (window);
 					control.Parent.Controls.SetChildIndex (window, control.Parent.Controls.IndexOf (control) + 1);
 				}

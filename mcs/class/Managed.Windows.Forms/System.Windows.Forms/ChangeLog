@@ -1,5 +1,11 @@
 2008-09-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ErrorProvider.cs: Never try to add our icons to ContainerControl,
+	since that can be set to anything.  Always add them to the Control's
+	parent.  [Fixes bug #416058]
+
+2008-09-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ListView.cs: Use a custom enumerator for ListViewItemCollection
 	so items can be deleted in a foreach.
 	[Fixes bug #425342]
