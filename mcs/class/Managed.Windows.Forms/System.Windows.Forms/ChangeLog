@@ -1,3 +1,12 @@
+2008-09-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DateTimePicker.cs: When getting focus, select the checkbox if we are
+	already showing it. Also, don't change its value when pressing space
+	if the checkbox is not visible (ShowCheckBox as false). Finally, the
+	checkbox should remain selected as long as Checked is false, and the
+	other parts are disabled.
+	Fixes #424267.
+	
 2008-09-11  Jonathan Pobst  <monkey@jpobst.com>
 
 	* MessageBox.cs: Handle shortcut keys to dialog buttons.

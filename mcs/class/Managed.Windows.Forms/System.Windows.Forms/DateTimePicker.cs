@@ -195,6 +195,7 @@ namespace System.Windows.Forms {
 			updown_timer.Tick += new EventHandler (UpDownTimerTick);
 			KeyPress += new KeyPressEventHandler (KeyPressHandler);
 			KeyDown += new KeyEventHandler (KeyDownHandler);
+			GotFocus += new EventHandler (GotFocusHandler);
 			LostFocus += new EventHandler (LostFocusHandler);
 			MouseDown += new MouseEventHandler (MouseDownHandler);			
 			MouseUp += new MouseEventHandler (MouseUpHandler);
@@ -1482,10 +1483,8 @@ namespace System.Windows.Forms {
 		{
 			switch (e.KeyChar) {
 				case ' ':
-					if (is_checkbox_selected)
-					{
+					if (show_check_box && is_checkbox_selected)
 						Checked = !Checked;
-					}
 					break;
 				case '0':
 				case '1':
@@ -1629,6 +1628,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		private void GotFocusHandler (object sender, EventArgs e)
+		{
+			if (ShowCheckBox) {
+				is_checkbox_selected = true;
+				Invalidate (CheckBoxRect);
+			}
+		}
+
 		// if we loose focus deselect any selected parts.
 		private void LostFocusHandler (object sender, EventArgs e) 
 		{
@@ -1694,8 +1701,6 @@ namespace System.Windows.Forms {
 			if (e.Button != MouseButtons.Left)
 				return;
 
-			is_checkbox_selected = false;
-
 			if (ShowCheckBox && CheckBoxRect.Contains(e.X, e.Y))
 			{
 				is_checkbox_selected = true;
@@ -1703,6 +1708,10 @@ namespace System.Windows.Forms {
 				return;
 			}
 
+			// Deselect the checkbox only if the pointer is not on it
+			// *and* the other parts are enabled (Checked as true)
+			if (Checked)
+				is_checkbox_selected = false;
 
 			if (ShowUpDown && drop_down_arrow_rect.Contains (e.X, e.Y))
 			{
