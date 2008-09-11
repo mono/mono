@@ -1,3 +1,8 @@
+2008-09-11  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc.c (calculate_sizes): Bugfix in sigcookie position
+	calculation.
+
 2008-09-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c ssa2.c mini.c mini-amd64.c decompose.c ssa.c abcremoval.c
