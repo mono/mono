@@ -39,7 +39,7 @@ namespace Mono {
 			// Do not about our program
 			a.Cancel = true;
 
-			Mono.CSharp.CSharpEvaluator.Interrupt ();
+			Mono.CSharp.Evaluator.Interrupt ();
 		}
 		
 		static void SetupConsole ()
@@ -107,7 +107,7 @@ namespace Mono {
 					} catch {
 					}
 				} else if (l.EndsWith (".dll")){
-					CSharpEvaluator.LoadAssembly (file);
+					Evaluator.LoadAssembly (file);
 				}
 			}
 		}
@@ -147,7 +147,7 @@ namespace Mono {
 			object result;
 
 			try {
-				input = CSharpEvaluator.Evaluate (input, out result, out result_set);
+				input = Evaluator.Evaluate (input, out result, out result_set);
 
 				if (result_set){
 					PrettyPrint (result);
@@ -230,7 +230,7 @@ namespace Mono {
 		static int Main (string [] args)
 		{
 			try {
-				CSharpEvaluator.Init (args);
+				Evaluator.Init (args);
 			} catch {
 				return 1;
 			}

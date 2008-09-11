@@ -21,7 +21,7 @@ using System.Text;
 namespace Mono.CSharp {
 
 	/// <summary>
-	///   CSharpEvaluator: provides an API to evaluate C# statements and
+	///   Evaluator: provides an API to evaluate C# statements and
 	///   expressions dynamically.
 	/// </summary>
 	/// <remarks>
@@ -33,10 +33,9 @@ namespace Mono.CSharp {
 	///   command line options that the compiler recognizes.
 	///
 	///   To interrupt execution of a statement, you can invoke the
-	///   CSharpEvaluator.Interrupt method.
+	///   Evaluator.Interrupt method.
 	/// </remarks>
-	public class CSharpEvaluator {
-		static CSharpEvaluator evaluator;
+	public class Evaluator {
 		static string current_debug_name;
 		static int count;
 		static Thread invoke_thread;
@@ -50,10 +49,10 @@ namespace Mono.CSharp {
 		static bool inited;
 
 		/// <summary>
-		///   Optioanl initialization for the CSharpEvaluator.
+		///   Optional initialization for the Evaluator.
 		/// </summary>
 		/// <remarks>
-		///  Initializes the CSharpEvaluator with the command line options
+		///  Initializes the Evaluator with the command line options
 		///  that would be processed by the command line compiler.  Only
 		///  the first call to Init will work, any future invocations are
 		///  ignored.
@@ -111,7 +110,7 @@ namespace Mono.CSharp {
 		/// <remarks>
 		///
 		///   This is the base class that will host the code
-		///   executed by the CSharpEvaluator.  By default
+		///   executed by the Evaluator.  By default
 		///   this is the Mono.CSharp.InteractiveBase class
 		///   which is useful for interactive use.
 		///
@@ -249,8 +248,11 @@ namespace Mono.CSharp {
 			
 			string r = Evaluate (input, out result, out result_set);
 
-			if (r != null || result_set == false)
-				throw new ArgumentException ("Syntax error on input");
+			if (r != null)
+				throw new ArgumentException ("Syntax error on input: partial input");
+			
+			if (result_set == false)
+				throw new ArgumentException ("The expression did not set a result");
 
 			return result;
 		}
@@ -643,7 +645,7 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///    Exposes the API of the given assembly to the CSharpEvaluator
+		///    Exposes the API of the given assembly to the Evaluator
 		/// </summary>
 		static public void ReferenceAssembly (Assembly a)
 		{
@@ -663,13 +665,13 @@ namespace Mono.CSharp {
 
 		static public void ShowVars ()
 		{
-			Output.Write (CSharpEvaluator.GetVars ());
+			Output.Write (Evaluator.GetVars ());
 			Output.Flush ();
 		}
 
 		static public void ShowUsing ()
 		{
-			Output.Write (CSharpEvaluator.GetUsing ());
+			Output.Write (Evaluator.GetUsing ());
 			Output.Flush ();
 		}
 
@@ -783,7 +785,7 @@ namespace Mono.CSharp {
 					     name, null, Location);
 			container.AddField (f);
 			if (f.Define ())
-				CSharpEvaluator.QueueField (f);
+				Evaluator.QueueField (f);
 			
 			return ret;
 		}
