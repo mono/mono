@@ -1,3 +1,8 @@
+2008-09-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (MONO_IS_JUMP_TABLE): Handle GOT_ENTRY.
+	(MONO_JUMP_TABLE_FROM_INS): Ditto.
+
 2008-09-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* driver.c: Add a --agent argument (not supported yet) to load managed
