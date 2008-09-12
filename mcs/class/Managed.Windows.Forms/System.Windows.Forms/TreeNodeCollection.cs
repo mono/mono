@@ -434,9 +434,7 @@ namespace System.Windows.Forms {
 			}
 
 			if (owner != null && tree_view != null && (owner.IsExpanded || owner.IsRoot)) {
-				// tree_view.UpdateBelow (owner);
-				tree_view.UpdateNode (owner);
-				tree_view.UpdateNode (node);
+				 tree_view.UpdateBelow (owner);
 			} else if (owner != null && tree_view != null) {
 				tree_view.UpdateBelow (owner);
 			}

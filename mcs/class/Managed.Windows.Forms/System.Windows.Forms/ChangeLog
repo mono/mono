@@ -1,5 +1,12 @@
 2008-09-12  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TreeNodeCollection.cs: When adding a new node to an opened node,
+	we have to invalidate everything below the parent node because
+	every node scoots down and we have to repaint them.
+	[Fixes bug #411386]
+
+2008-09-12  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ThemeWin32Classic.cs: Take CheckBox and RadioButton's CheckAlign
 	property into account when drawing.
 	[Fixes bug #416064]
