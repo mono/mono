@@ -712,6 +712,25 @@ namespace MonoTests.System.Collections.Generic {
 		}
 
 		[Test]
+		public void IDictionary_Add_Null ()
+		{
+			IDictionary d = new Dictionary<int, string> ();
+			d.Add (1, null);
+			d [2] = null;
+
+			Assert.IsNull (d [1]);
+			Assert.IsNull (d [2]);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void IDictionary_Add_Null_2 ()
+		{
+			IDictionary d = new Dictionary<int, int> ();
+			d.Add (1, null);
+		}
+
+		[Test]
 		public void IDictionary_Remove1 ()
 		{
 			IDictionary d = new Dictionary<int, int> ();

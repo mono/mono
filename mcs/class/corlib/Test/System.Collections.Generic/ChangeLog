@@ -1,3 +1,7 @@
+2008-09-12  Jb Evain  <jbevain@novell.com>
+
+	* DictionaryTest.cs: add tests for #425693.
+
 2008-06-16  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* DictionaryTest.cs: Add test for an incompatibility
