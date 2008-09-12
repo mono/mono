@@ -1,5 +1,11 @@
 2008-09-12  Raja R Harinath  <harinath@hurrynot.org>
 
+	* DataTable.cs (AssertNotNullConstraints): Hoist out a more useful
+	loop-invariant by inverting loops.
+	(RowExists): Outdent.  Rewrite for slightly better clarity.
+	(BeginLoadData): Outdent.
+	(GetChanges): Outdent.  Replace GetEnumerator/while with foreach.
+
 	* DataTable.cs: Convert to a partial class, sequester NET_2_0
 	specific and IXmlSerializable specific pieces into separate parts.
 

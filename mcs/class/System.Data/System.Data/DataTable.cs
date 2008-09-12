@@ -640,27 +640,22 @@ namespace System.Data {
 			if (_duringDataLoad && !_nullConstraintViolationDuringDataLoad)
 				return;
 
-			bool result = false;
-			String errMsg;
-			for (int j = 0; j < Rows.Count; j++) {
-				if (!Rows [j].HasVersion (DataRowVersion.Default))
+			bool seen = false;
+			for (int i = 0; i < Columns.Count; i++) {
+				DataColumn column = Columns [i];
+				if (column.AllowDBNull)
 					continue;
-				errMsg = String.Empty;
-				for (int i = 0; i < Columns.Count; i++) {
-					DataColumn column = Columns[i];
-					if (column.AllowDBNull || !Rows[j].IsNull (column))
-						continue;
-					result = true;
-					errMsg =  String.Format("Column '{0}' does not allow DBNull.Value.",
-							column.ColumnName);
-					Rows [j].SetColumnError (i, errMsg);
+				for (int j = 0; j < Rows.Count; j++) {
+					if (Rows [j].HasVersion (DataRowVersion.Default) && Rows[j].IsNull (column)) {
+						seen = true;
+						string errMsg = String.Format ("Column '{0}' does not allow DBNull.Value.",
+									       column.ColumnName);
+						Rows [j].SetColumnError (i, errMsg);
+						Rows [j].RowError = errMsg;
+					}
 				}
-				// ms.net sets the last ColumnError as RowError
-				if (errMsg != String.Empty)
-					Rows [j].RowError = errMsg;
 			}
-			if (!result)
-				_nullConstraintViolationDuringDataLoad = false;
+			_nullConstraintViolationDuringDataLoad = seen;
 		}
 
 		internal bool RowsExist (DataColumn [] columns, DataColumn [] relatedColumns, DataRow row)
@@ -671,46 +666,39 @@ namespace System.Data {
 			try {
 				for (int i = 0; i < relatedColumns.Length; i++)
 					// according to MSDN: the DataType value for both columns must be identical.
-					columns[i].DataContainer.CopyValue (relatedColumns [i].DataContainer, curIndex, tmpRecord);
+					columns [i].DataContainer.CopyValue (relatedColumns [i].DataContainer, curIndex, tmpRecord);
 				return RowsExist (columns, tmpRecord);
 			} finally {
 				RecordCache.DisposeRecord (tmpRecord);
 			}
 		}
 
-		bool RowsExist (DataColumn[] columns, int index)
+		bool RowsExist (DataColumn [] columns, int index)
 		{
-			bool rowsExist = false;
-			Index indx = this.FindIndex(columns);
+			Index indx = this.FindIndex (columns);
 
-			if (indx != null) { // lookup for a row in index
-				rowsExist = (indx.Find(index) != -1);
-			} else {
-				// we have to perform full-table scan
- 				// check that there is a parent for this row.
-				foreach (DataRow thisRow in this.Rows) {
-					if (thisRow.RowState != DataRowState.Deleted) {
-						bool match = true;
-						// check if the values in the columns are equal
-						int thisIndex = -1;
-						if (thisRow.RowState == DataRowState.Modified)
-							thisIndex = thisRow.IndexFromVersion(DataRowVersion.Original);
-						else
-							thisIndex = thisRow.IndexFromVersion(DataRowVersion.Current);
-						foreach (DataColumn column in columns) {
-							if (column.DataContainer.CompareValues(thisIndex, index) != 0) {
-								match = false;
-								break;
-							}
-						}
-						if (match) {// there is a row with columns values equals to those supplied.
-							rowsExist = true;
-							break;
-						}
+			if (indx != null)
+				return indx.Find (index) != -1;
+
+			// we have to perform full-table scan
+			// check that there is a parent for this row.
+			foreach (DataRow thisRow in this.Rows) {
+				if (thisRow.RowState == DataRowState.Deleted)
+					continue;
+				// check if the values in the columns are equal
+				int thisIndex = thisRow.IndexFromVersion (
+					thisRow.RowState == DataRowState.Modified ? DataRowVersion.Original : DataRowVersion.Current);
+				bool match = true;
+				foreach (DataColumn column in columns) {
+					if (column.DataContainer.CompareValues (thisIndex, index) != 0) {
+						match = false;
+						break;
 					}
 				}
+				if (match)
+					return true;
 			}
-			return rowsExist;
+			return false;
 		}
 
 		/// <summary>
@@ -760,21 +748,22 @@ namespace System.Data {
 		/// </summary>
 		public void BeginLoadData ()
 		{
-			if (!this._duringDataLoad) {
-				//duringDataLoad is important to EndLoadData and
-				//for not throwing unexpected exceptions.
-				this._duringDataLoad = true;
-				this._nullConstraintViolationDuringDataLoad = false;
+			if (this._duringDataLoad)
+				return;
 
-				if (this.dataSet != null) {
-					//Saving old Enforce constraints state for later
-					//use in the EndLoadData.
-					this.dataSetPrevEnforceConstraints = this.dataSet.EnforceConstraints;
-					this.dataSet.EnforceConstraints = false;
-				} else {
-					//if table does not belong to any data set use EnforceConstraints of the table
-					this.EnforceConstraints = false;
-				}
+			//duringDataLoad is important to EndLoadData and
+			//for not throwing unexpected exceptions.
+			this._duringDataLoad = true;
+			this._nullConstraintViolationDuringDataLoad = false;
+
+			if (this.dataSet != null) {
+				//Saving old Enforce constraints state for later
+				//use in the EndLoadData.
+				this.dataSetPrevEnforceConstraints = this.dataSet.EnforceConstraints;
+				this.dataSet.EnforceConstraints = false;
+			} else {
+				//if table does not belong to any data set use EnforceConstraints of the table
+				this.EnforceConstraints = false;
 			}
 			return;
 		}
@@ -1008,21 +997,19 @@ namespace System.Data {
 		{
 			DataTable copyTable = null;
 
-			IEnumerator rowEnumerator = Rows.GetEnumerator();
-			while (rowEnumerator.MoveNext()) {
-				DataRow row = (DataRow) rowEnumerator.Current;
+			foreach (DataRow row in Rows) {
 				// The spec says relationship constraints may cause Unchanged parent rows to be included but
 				// MS .NET 1.1 does not include Unchanged rows even if their child rows are changed.
-				if (row.IsRowChanged (rowStates)) {
-					if (copyTable == null)
-						copyTable = Clone ();
-					DataRow newRow = copyTable.NewNotInitializedRow ();
-					row.CopyValuesToRow (newRow);
+				if (!row.IsRowChanged (rowStates))
+					continue;
+				if (copyTable == null)
+					copyTable = Clone ();
+				DataRow newRow = copyTable.NewNotInitializedRow ();
+				row.CopyValuesToRow (newRow);
 #if NET_2_0
-					newRow.XmlRowID = row.XmlRowID;
+				newRow.XmlRowID = row.XmlRowID;
 #endif
-					copyTable.Rows.AddInternal (newRow);
-				}
+				copyTable.Rows.AddInternal (newRow);
 			}
 
 			return copyTable;
@@ -1238,9 +1225,9 @@ namespace System.Data {
 				if (fAcceptChanges)
 					row.AcceptChanges ();
 
-			} catch (Exception e) {
+			} catch {
 				this.RecordCache.DisposeRecord (tmpRecord);
-				throw e;
+				throw;
 			}
 			return row;
 		}
