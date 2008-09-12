@@ -12297,7 +12297,7 @@
   <test name="gtest-anon-41.cs">
     <type name="C">
       <method name="Decimal Average[TSource](IEnumerable`1, System.Func`2[TSource,System.Decimal])">
-        <size>71</size>
+        <size>37</size>
       </method>
       <method name="TResult Average[TElement,TAggregate,TResult](IEnumerable`1, System.Func`3[TAggregate,TElement,TAggregate], System.Func`3[TAggregate,TElement,TResult])">
         <size>6</size>
@@ -12319,7 +12319,7 @@
         <size>7</size>
       </method>
       <method name="Void Test_3[T]()">
-        <size>37</size>
+        <size>20</size>
       </method>
       <method name="Int32 Main()">
         <size>12</size>
@@ -12340,6 +12340,22 @@
       </method>
       <method name="Void EndInvoke(IAsyncResult)">
         <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-anon-43.cs">
+    <type name="TestC">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.Func`1[System.Type] Test[T]()">
+        <size>13</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>66</size>
+      </method>
+      <method name="System.Type &lt;Test&gt;m__0[T]()">
+        <size>11</size>
       </method>
     </type>
   </test>
