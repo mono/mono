@@ -88,7 +88,10 @@ namespace System.Runtime.Remoting.Channels.Http
 			
 			// Dispatch the request
 			
-			transportSink.DispatchRequest (request.InputStream, theaders, out responseStream, out responseHeaders);
+//FIXME			
+//			transportSink.DispatchRequest (request.InputStream, theaders, out responseStream, out responseHeaders);
+			responseStream = null;
+			responseHeaders = null;
 
 			// Write the response
 			

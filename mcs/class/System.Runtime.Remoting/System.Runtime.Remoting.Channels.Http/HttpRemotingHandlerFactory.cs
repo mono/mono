@@ -99,8 +99,8 @@ namespace System.Runtime.Remoting.Channels.Http
 				string channelUrl = context.Request.Url.GetLeftPart(UriPartial.Authority);
 				channelUrl += context.Request.ApplicationPath;
 				chook.AddHookChannelUri (channelUrl);
-					
-				transportSink = new HttpServerTransportSink (chook.ChannelSinkChain, null);
+				
+				transportSink = new HttpServerTransportSink (chook.ChannelSinkChain);
 				webConfigLoaded = true;
 			}
 		}
