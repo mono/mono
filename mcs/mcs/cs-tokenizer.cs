@@ -2523,7 +2523,8 @@ namespace Mono.CSharp
 
 				if (ok) {
 					if (next_token == Token.VOID) {
-						if (RootContext.Version <= LanguageVersion.ISO_2)
+						if (RootContext.Version == LanguageVersion.ISO_1 ||
+						    RootContext.Version == LanguageVersion.ISO_2)
 							Report.FeatureIsNotAvailable (Location, "partial methods");
 					} else if (RootContext.Version == LanguageVersion.ISO_1)
 						Report.FeatureIsNotAvailable (Location, "partial types");

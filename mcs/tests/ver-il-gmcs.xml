@@ -16679,48 +16679,6 @@
       </method>
     </type>
   </test>
-  <test name="gtest-partial-01.cs">
-    <type name="C">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>2</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-partial-02.cs">
-    <type name="C">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Partial_A()">
-        <size>15</size>
-      </method>
-      <method name="Void Partial_B()">
-        <size>15</size>
-      </method>
-      <method name="Void Partial_S()">
-        <size>14</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>52</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-partial-03.cs">
-    <type name="N.C">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
-      <method name="Void Foo()">
-        <size>1</size>
-      </method>
-    </type>
-  </test>
   <test name="gtest-var-04.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -38431,6 +38389,48 @@
     <type name="Mono.Sms.Main">
       <method name="Void &lt;Test&gt;m__0()">
         <size>6</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-partial-22.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>2</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-partial-23.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Partial_A()">
+        <size>15</size>
+      </method>
+      <method name="Void Partial_B()">
+        <size>15</size>
+      </method>
+      <method name="Void Partial_S()">
+        <size>14</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>52</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-partial-24.cs">
+    <type name="N.C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void Foo()">
+        <size>1</size>
       </method>
     </type>
   </test>
