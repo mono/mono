@@ -117,25 +117,44 @@ namespace System.Web.Routing
 		{
 			if (httpContext == null)
 				throw new ArgumentNullException ("httpContext");
+
 			var path = httpContext.Request.AppRelativeCurrentExecutionFilePath;
+			// FIXME: do some check wrt the property above.
 
-			// some matching test is done here.
+			if (Count == 0)
+				return null;
 
-			var pathInfo = httpContext.Request.PathInfo;
+			foreach (RouteBase rb in this) {
+				var rd = rb.GetRouteData (httpContext);
+				if (rd != null)
+					return rd;
+			}
 
-			throw new NotImplementedException ();
+			return null;
 		}
 
 		[MonoTODO]
 		public VirtualPathData GetVirtualPath (RequestContext requestContext, RouteValueDictionary values)
 		{
-			throw new NotImplementedException ();
+			return GetVirtualPath (requestContext, null, values);
 		}
 
 		[MonoTODO]
 		public VirtualPathData GetVirtualPath (RequestContext requestContext, string name, RouteValueDictionary values)
 		{
-			throw new NotImplementedException ();
+			if (requestContext == null)
+				throw new ArgumentNullException ("httpContext");
+
+			if (Count == 0)
+				return null;
+
+			foreach (RouteBase rb in this) {
+				var vp = rb.GetVirtualPath (requestContext, values);
+				if (vp != null)
+					return vp;
+			}
+
+			return null;
 		}
 
 		public IDisposable GetWriteLock ()

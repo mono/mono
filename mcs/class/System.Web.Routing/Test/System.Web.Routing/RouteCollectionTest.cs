@@ -111,6 +111,37 @@ namespace MonoTests.System.Web.Routing
 		}
 
 		[Test]
+		public void GetRouteDataWrongPathNoRoute ()
+		{
+			new RouteCollection ().GetRouteData (new HttpContextStub (String.Empty, String.Empty));
+		}
+
+		/*
+		comment out those tests; I cannot explain those tests.
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void GetRouteDataWrongPathOneRoute ()
+		{
+			var c = new RouteCollection ();
+			var r = new Route ("foo", null);
+			c.Add (null, r);
+			// it somehow causes ArgumentOutOfRangeException for 
+			// Request.AppRelativeCurrentExecutionFilePath.
+			c.GetRouteData (new HttpContextStub (String.Empty, String.Empty));
+		}
+
+		[Test]
+		public void GetRouteDataWrongPathOneRoute2 ()
+		{
+			var c = new RouteCollection ();
+			var r = new Route ("foo", null);
+			c.Add (null, r);
+			c.GetRouteData (new HttpContextStub ("/~", String.Empty));
+		}
+		*/
+
+		[Test]
 		[ExpectedException (typeof (NotImplementedException))]
 		public void GetRouteDataForPathInfoNIE ()
 		{
@@ -125,25 +156,11 @@ namespace MonoTests.System.Web.Routing
 		public void GetRouteDataForNullHandler ()
 		{
 			var c = new RouteCollection ();
-			var r = new Route ("foo", null);
+			var r = new Route ("foo", null); // allowed
 			c.Add (null, r);
 			var rd = c.GetRouteData (new HttpContextStub ("~/foo", String.Empty));
-			Assert.AreEqual (r, rd.Route);
-		}
-
-		[Test]
-		public void GetRouteDataWithTemplate ()
-		{
-			var c = new RouteCollection ();
-			var r = new Route ("{foo}/{bar}", new StopRoutingHandler ());
-			c.Add (null, r);
-			Assert.IsNull (c.GetRouteData (new HttpContextStub ("x/y", String.Empty)));
-			var rd = c.GetRouteData (new HttpContextStub ("{foo}/{bar}/baz", String.Empty));
-			Assert.IsNull (rd, "#1");
-			rd = c.GetRouteData (new HttpContextStub ("{foo}/{bar}", String.Empty));
-			Assert.IsNotNull (rd, "#2");
-			Assert.AreEqual (0, rd.DataTokens.Count, "#3");
-			Assert.AreEqual (2, rd.Values.Count, "#4");
+			Assert.IsNotNull (rd, "#1");
+			Assert.AreEqual (r, rd.Route, "#2");
 		}
 	}
 }

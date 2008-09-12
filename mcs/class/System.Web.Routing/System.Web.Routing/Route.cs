@@ -76,10 +76,35 @@ namespace System.Web.Routing
 			RouteHandler = routeHandler;
 		}
 
-		[MonoTODO]
 		public override RouteData GetRouteData (HttpContextBase httpContext)
 		{
-			throw new NotImplementedException ();
+			var path = httpContext.Request.AppRelativeCurrentExecutionFilePath;
+			var pathInfo = httpContext.Request.PathInfo;
+
+			if (pathInfo != String.Empty)
+				throw new NotImplementedException ();
+
+			// probably code like this causes ArgumentOutOfRangeException under .NET.
+			// It somehow allows such path that is completely equivalent to the Url. Dunno why.
+			if (Url != path && path.Substring (0, 2) != "~/")
+				return null;
+			path = path.Substring (2);
+
+			var values = url.Match (path, Defaults);
+			if (values == null)
+				return null;
+
+			if (Constraints != null)
+				foreach (var p in Constraints)
+					if (!ProcessConstraint (httpContext, p.Value, p.Key, values, RouteDirection.IncomingRequest))
+						return null;
+
+			// FIXME: where to use DataTokens?
+
+			var rd = new RouteData (this, RouteHandler);
+			foreach (var p in values)
+				rd.Values.Add (p.Key, p.Value);
+			return rd;
 		}
 
 		[MonoTODO]
@@ -95,6 +120,10 @@ namespace System.Web.Routing
 		[MonoTODO]
 		protected virtual bool ProcessConstraint (HttpContextBase httpContext, object constraint, string parameterName, RouteValueDictionary values, RouteDirection routeDirection)
 		{
+			IRouteConstraint irc = constraint as IRouteConstraint;
+			if (irc != null && irc.Match (httpContext, this, parameterName, values, routeDirection))
+				return true;
+
 			throw new NotImplementedException ();
 		}
 	}

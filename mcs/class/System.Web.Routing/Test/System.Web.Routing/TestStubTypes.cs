@@ -49,9 +49,16 @@ namespace MonoTests.System.Web.Routing
 		}
 
 		public HttpContextStub (string dummyRequestPath, string pathInfo)
+			: this (dummyRequestPath, pathInfo, null)
 		{
-			if (dummyRequestPath != null)
+		}
+
+		public HttpContextStub (string dummyRequestPath, string pathInfo, string method)
+		{
+			if (dummyRequestPath != null) {
 				req = new HttpRequestStub (dummyRequestPath, pathInfo);
+				req.Method = method;
+			}
 		}
 
 		public override HttpRequestBase Request {
@@ -76,6 +83,12 @@ namespace MonoTests.System.Web.Routing
 		public override string PathInfo {
 			get { return path_info ?? base.PathInfo; }
 		}
+
+		public override string HttpMethod {
+			get { return Method; }
+		}
+
+		public string Method { get; set; }
 	}
 
 	public class MyStopRoutingHandler : StopRoutingHandler

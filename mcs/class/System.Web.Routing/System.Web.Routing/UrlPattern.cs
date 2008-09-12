@@ -84,5 +84,64 @@ namespace System.Web.Routing
 				}
 			}
 		}
+
+		RouteValueDictionary tmp = new RouteValueDictionary ();
+
+		public RouteValueDictionary Match (string path, RouteValueDictionary defaults)
+		{
+			tmp.Clear ();
+
+			// quick check
+			if (Url == path && Url.IndexOf ('{') < 0)
+				return tmp;
+
+			string [] argSegs = path.Split ('/');
+			if (argSegs.Length != segments.Length)
+				return null;
+
+			for (int i = 0; i < segments.Length; i++) {
+				if (segment_flags [i]) {
+					string t = segments [i];
+					string v = argSegs [i];
+					int tfrom = 0, vfrom = 0;
+					while (tfrom < t.Length) {
+						int start = t.IndexOf ('{', tfrom);
+						if (start < 0) {
+							int tlen = t.Length - tfrom;
+							int vlen = v.Length - vfrom;
+							if (tlen != vlen ||
+							    String.Compare (t, tfrom, v, vfrom, tlen, StringComparison.Ordinal) != 0)
+								return null; // mismatch
+							break;
+						}
+
+						// if there is a string literal before next template item, check it in the value string.
+						int len = start - tfrom;
+						if (len > 0 && String.CompareOrdinal (t, tfrom, v, vfrom, len) != 0)
+							return null; // mismatch
+						vfrom += len;
+
+						int end = t.IndexOf ('}', start + 1);
+						int next = t.IndexOf ('{', end + 1);
+						string key = t.Substring (start + 1, end - start - 1);
+						if (next < 0) {
+							tmp.Add (key, vfrom == 0 ? v : v.Substring (vfrom));
+							vfrom = v.Length;
+						} else {
+							string nextToken = t.Substring (end + 1, next - end - 1);
+							int vnext = v.IndexOf (nextToken, vfrom + 1, StringComparison.Ordinal);
+							if (vnext < 0)
+								return null; // mismatch
+							tmp.Add (key, v.Substring (vfrom, vnext - vfrom));
+							vfrom = vnext;
+						}
+						tfrom = end + 1;
+					}
+				} else if (segments [i] != argSegs [i])
+					return null;
+			}
+
+			return tmp;
+		}
 	}
 }

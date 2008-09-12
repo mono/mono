@@ -154,6 +154,18 @@ namespace MonoTests.System.Web.Routing
 		}
 
 		[Test]
+		public void GetRouteDataNoTemplate ()
+		{
+			var r = new Route ("foo/bar", null);
+			var hc = new HttpContextStub ("~/foo/bar", String.Empty);
+			var rd = r.GetRouteData (hc);
+			Assert.IsNotNull (rd, "#1");
+			Assert.AreEqual (r, rd.Route, "#2");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#3");
+			Assert.AreEqual (0, rd.Values.Count, "#4");
+		}
+
+		[Test]
 		public void GetRouteData ()
 		{
 			var r = new Route ("{foo}/{bar}", null);
@@ -189,6 +201,40 @@ namespace MonoTests.System.Web.Routing
 			var hc = new HttpContextStub ("~/x/y/z", String.Empty);
 			var rd = r.GetRouteData (hc);
 			Assert.IsNull (rd); // mismatch
+		}
+
+		[Test]
+		public void GetRouteData4 ()
+		{
+			var r = new Route ("{foo}/{bar}", null);
+			var hc = new HttpContextStub ("~/x", String.Empty);
+			var rd = r.GetRouteData (hc);
+			Assert.IsNull (rd); // mismatch
+		}
+
+		[Test]
+		public void GetRouteData5 ()
+		{
+			var r = new Route ("{foo}/{bar}", new StopRoutingHandler ());
+			/*
+			var rd = r.GetRouteData (new HttpContextStub ("x/y", String.Empty));
+			Assert.IsNull (rd, "#1");
+			rd = r.GetRouteData (new HttpContextStub ("~/x/y", String.Empty));
+			Assert.IsNotNull (rd, "#2");
+			rd = r.GetRouteData (new HttpContextStub ("~/x/y/z", String.Empty));
+			Assert.IsNull (rd, "#3");
+			rd = r.GetRouteData (new HttpContextStub ("~x/y", String.Empty));
+			Assert.IsNull (rd, "#4");
+			rd = r.GetRouteData (new HttpContextStub ("/x/y", String.Empty));
+			Assert.IsNull (rd, "#5");
+
+			rd = r.GetRouteData (new HttpContextStub ("{foo}/{bar}/baz", String.Empty));
+			Assert.IsNull (rd, "#6");
+			*/
+			var rd = r.GetRouteData (new HttpContextStub ("{foo}/{bar}", String.Empty));
+			Assert.IsNotNull (rd, "#7");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#7-2");
+			Assert.AreEqual (2, rd.Values.Count, "#7-3");
 		}
 
 		[Test]

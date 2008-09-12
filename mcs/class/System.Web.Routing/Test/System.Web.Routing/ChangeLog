@@ -1,5 +1,11 @@
 2008-09-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* RouteTest.cs, TestStubTypes.cs, HttpMethodConstraintTest.cs,
+	  RouteCollectionTest.cs : test for Route.GetRouteData() and
+	  HttpMethodConstraint.Match().
+
+2008-09-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* RouteTest.cs, RouteCollectionTest.cs: added couple of tests for
 	  Route Url parser.
 

@@ -1,5 +1,11 @@
 2008-09-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpMethodConstraint.cs, Route.cs, UrlPattern.cs, 
+	  RouteCollection.cs : implement Route.GetRouteData() and
+	  HttpMethodConstraint.Match().
+
+2008-09-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UrlPattern.cs : new file for URL pattern processing.
 	* Route.cs : use above.
 

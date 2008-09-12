@@ -101,5 +101,25 @@ namespace MonoTests.System.Web.Routing
 			var c = new MyHttpMethodConstraint (new string [0]);
 			Assert.IsFalse (c.CallMatch (new HttpContextStub (), new Route (null, null), "foo", new RouteValueDictionary (), RouteDirection.IncomingRequest));
 		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void MatchDependsOnRequest ()
+		{
+			// it tries to get HttpContext.Request only when HttpMethodConstraint actually has one or more values.
+			var c = new MyHttpMethodConstraint (new string [] {"GET"});
+			c.CallMatch (new HttpContextStub (), new Route (null, null), "foo", new RouteValueDictionary (), RouteDirection.IncomingRequest);
+		}
+
+		[Test]
+		public void Match2 ()
+		{
+			var c = new MyHttpMethodConstraint (new string [] {"GET"});
+			Assert.IsFalse (c.CallMatch (new HttpContextStub (""), new Route (null, null), "foo", new RouteValueDictionary (), RouteDirection.IncomingRequest), "#1");
+			Assert.IsTrue (c.CallMatch (new HttpContextStub ("", "", "GET"), new Route (null, null), "", new RouteValueDictionary (), RouteDirection.IncomingRequest), "#2");
+			Assert.IsFalse (c.CallMatch (new HttpContextStub ("", "", "POST"), new Route (null, null), "", new RouteValueDictionary (), RouteDirection.IncomingRequest), "#3");
+			// LAMESPEC: .NET allows case-insensitive comparison, which violates RFC 2616
+			// Assert.IsFalse (c.CallMatch (new HttpContextStub ("", "", "get"), new Route (null, null), "", new RouteValueDictionary (), RouteDirection.IncomingRequest), "#4");
+		}
 	}
 }

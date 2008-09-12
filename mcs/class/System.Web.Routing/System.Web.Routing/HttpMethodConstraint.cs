@@ -54,7 +54,6 @@ namespace System.Web.Routing
 			return Match (httpContext, route, parameterName, values, routeDirection);
 		}
 
-		[MonoTODO]
 		protected virtual bool Match (HttpContextBase httpContext, Route route, string parameterName, RouteValueDictionary values, RouteDirection routeDirection)
 		{
 			if (httpContext == null)
@@ -66,7 +65,12 @@ namespace System.Web.Routing
 			if (values == null)
 				throw new ArgumentNullException ("values");
 
-			throw new NotImplementedException ();
+			foreach (string allowed in AllowedMethods)
+				// LAMESPEC: .NET allows case-insensitive comparison, which violates RFC 2616
+				if (httpContext.Request.HttpMethod == allowed)
+					return true;
+
+			return false;
 		}
 	}
 }
