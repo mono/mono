@@ -105,7 +105,11 @@ namespace System.Collections.Generic {
 			if (collection == null)
 				throw new ArgumentNullException ("collection");
 
-			int capacity = collection.Count ();
+			int capacity = 0;
+			var col = collection as ICollection<T>;
+			if (col != null)
+				capacity = col.Count;
+
 			Init (capacity, comparer);
 			foreach (var item in collection)
 				Add (item);

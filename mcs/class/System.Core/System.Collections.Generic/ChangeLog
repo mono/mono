@@ -1,3 +1,9 @@
+2008-09-12  Jb Evain  <jbevain@novell.com>
+
+	* HashSet.cs (.ctor (IEnumerable<T>,*)): only get the count of the
+	enumerable if the source collection implements ICollection<T>, so that
+	we only iterate once over the source collection.
+
 2008-04-29  Jb Evain  <jbevain@novell.com>
 
 	* HashSet.cs: clear empty slots to allow the GC to collect
