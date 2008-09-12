@@ -348,20 +348,43 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		bool CheckTypeParameterConstraints (TypeParameter tparam, Hashtable seen)
+		bool CheckTypeParameterConstraints (TypeParameter tparam, ref TypeExpr prevConstraint, ArrayList seen)
 		{
-			seen.Add (tparam, true);
+			seen.Add (tparam);
 
 			Constraints constraints = tparam.Constraints;
 			if (constraints == null)
 				return true;
 
 			if (constraints.HasValueTypeConstraint) {
-				Report.Error (456, loc, "Type parameter `{0}' has " +
-					      "the `struct' constraint, so it cannot " +
-					      "be used as a constraint for `{1}'",
-					      tparam.Name, name);
+				Report.Error (456, loc,
+					"Type parameter `{0}' has the `struct' constraint, so it cannot be used as a constraint for `{1}'",
+					tparam.Name, name);
 				return false;
+			}
+
+			//
+			//  Checks whether there are no conflicts between type parameter constraints
+			//
+			//   class Foo<T, U>
+			//      where T : A
+			//      where U : A, B	// A and B are not convertible
+			//
+			if (constraints.HasClassConstraint) {
+				if (prevConstraint != null) {
+					Type t2 = constraints.ClassConstraint;
+					TypeExpr e2 = constraints.class_constraint;
+
+					if (!Convert.ImplicitReferenceConversionExists (prevConstraint, t2) &&
+						!Convert.ImplicitReferenceConversionExists (e2, prevConstraint.Type)) {
+						Report.Error (455, loc,
+							"Type parameter `{0}' inherits conflicting constraints `{1}' and `{2}'",
+							name, TypeManager.CSharpName (prevConstraint.Type), TypeManager.CSharpName (t2));
+						return false;
+					}
+				}
+
+				prevConstraint = constraints.class_constraint;
 			}
 
 			if (constraints.type_param_constraints == null)
@@ -375,7 +398,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				if (!CheckTypeParameterConstraints (expr.TypeParameter, seen))
+				if (!CheckTypeParameterConstraints (expr.TypeParameter, ref prevConstraint, seen))
 					return false;
 			}
 
@@ -401,10 +424,14 @@ namespace Mono.CSharp {
 					return false;
 			}
 
-			foreach (TypeParameterExpr expr in type_param_constraints) {
-				Hashtable seen = new Hashtable ();
-				if (!CheckTypeParameterConstraints (expr.TypeParameter, seen))
-					return false;
+			if (type_param_constraints.Count != 0) {
+				ArrayList seen = new ArrayList ();
+				TypeExpr prev_constraint = class_constraint;
+				foreach (TypeParameterExpr expr in type_param_constraints) {
+					if (!CheckTypeParameterConstraints (expr.TypeParameter, ref prev_constraint, seen))
+						return false;
+					seen.Clear ();
+				}
 			}
 
 			for (int i = 0; i < iface_constraints.Count; ++i) {
@@ -418,66 +445,6 @@ namespace Mono.CSharp {
 			if (class_constraint != null) {
 				class_constraint = class_constraint.ResolveAsTypeTerminal (ec, false);
 				if (class_constraint == null)
-					return false;
-			}
-
-			return true;
-		}
-
-		/// <summary>
-		///   Check whether there are no conflicts in our type parameter constraints.
-		///
-		///   This is an example:
-		///
-		///   class Foo<T,U>
-		///      where T : class
-		///      where U : T, struct
-		/// </summary>
-		public bool CheckDependencies ()
-		{
-			foreach (TypeParameterExpr expr in type_param_constraints) {
-				if (!CheckDependencies (expr.TypeParameter))
-					return false;
-			}
-
-			return true;
-		}
-
-		bool CheckDependencies (TypeParameter tparam)
-		{
-			Constraints constraints = tparam.Constraints;
-			if (constraints == null)
-				return true;
-
-			if (HasValueTypeConstraint && constraints.HasClassConstraint) {
-				Report.Error (455, loc, "Type parameter `{0}' inherits " +
-					      "conflicting constraints `{1}' and `{2}'",
-					      name, TypeManager.CSharpName (constraints.ClassConstraint),
-					      "System.ValueType");
-				return false;
-			}
-
-			if (HasClassConstraint && constraints.HasClassConstraint) {
-				Type t1 = ClassConstraint;
-				TypeExpr e1 = class_constraint;
-				Type t2 = constraints.ClassConstraint;
-				TypeExpr e2 = constraints.class_constraint;
-
-				if (!Convert.ImplicitReferenceConversionExists (e1, t2) &&
-				    !Convert.ImplicitReferenceConversionExists (e2, t1)) {
-					Report.Error (455, loc,
-						      "Type parameter `{0}' inherits " +
-						      "conflicting constraints `{1}' and `{2}'",
-						      name, TypeManager.CSharpName (t1), TypeManager.CSharpName (t2));
-					return false;
-				}
-			}
-
-			if (constraints.type_param_constraints == null)
-				return true;
-
-			foreach (TypeParameterExpr expr in constraints.type_param_constraints) {
-				if (!CheckDependencies (expr.TypeParameter))
 					return false;
 			}
 
@@ -790,23 +757,6 @@ namespace Mono.CSharp {
 			type.SetInterfaceConstraints (gc.InterfaceConstraints);
 			type.SetGenericParameterAttributes (gc.Attributes);
 			TypeManager.RegisterBuilder (type, gc.InterfaceConstraints);
-
-			return true;
-		}
-
-		/// <summary>
-		///   Check whether there are no conflicts in our type parameter constraints.
-		///
-		///   This is an example:
-		///
-		///   class Foo<T,U>
-		///      where T : class
-		///      where U : T, struct
-		/// </summary>
-		public bool CheckDependencies ()
-		{
-			if (constraints != null)
-				return constraints.CheckDependencies ();
 
 			return true;
 		}
@@ -1377,7 +1327,7 @@ namespace Mono.CSharp {
 
 		public override string GetSignatureForError ()
 		{
-			return TypeManager.RemoveGenericArity (gt.FullName) + "<" + args.GetSignatureForError () + ">";
+			return TypeManager.CSharpName (type);
 		}
 
 		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)

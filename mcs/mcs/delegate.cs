@@ -147,11 +147,6 @@ namespace Mono.CSharp {
 					if (!type_param.DefineType (this))
 						return false;
 				}
-
-				foreach (TypeParameter type_param in TypeParameters) {
-					if (!type_param.CheckDependencies ())
-						return false;
-				}
 			}
 #endif
 			member_cache = new MemberCache (TypeManager.multicast_delegate_type, this);

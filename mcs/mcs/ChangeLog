@@ -1,3 +1,8 @@
+2008-09-12  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, class.cs, delegate.cs: Check recursive inherited
+	conflicting constraints.
+
 2008-09-12  Raja R Harinath  <harinath@hurrynot.org>
 
 	* cs-tokenizer.cs (consume_identifier): Allow partial methods in

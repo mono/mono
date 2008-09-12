@@ -1251,23 +1251,13 @@ namespace Mono.CSharp {
 			}
 
 			current_type = new ConstructedType (TypeBuilder, TypeParameters, Location);
-
-			foreach (TypeParameter type_param in TypeParameters)
-				if (!type_param.CheckDependencies ()) {
-					error = true;
-					return false;
-				}
-
-			if (current_type != null) {
-				current_type = current_type.ResolveAsTypeTerminal (this, false);
-				if (current_type == null) {
-					error = true;
-					return false;
-				}
-
-				CurrentType = current_type.Type;
+			current_type = current_type.ResolveAsTypeTerminal (this, false);
+			if (current_type == null) {
+				error = true;
+				return false;
 			}
 
+			CurrentType = current_type.Type;
 			return true;
 		}
 
