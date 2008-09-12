@@ -1,3 +1,8 @@
+2008-09-12  Mark Probst  <mark.probst@gmail.com>
+
+	* cil-coff.h, image.c, reflection.c: Endianness fixes in image
+	writing code.
+
 2008-09-11  Mark Probst  <mark.probst@gmail.com>
 
 	* icall.c: Boolean arguments to a runtime invoke are MonoBoolean,
