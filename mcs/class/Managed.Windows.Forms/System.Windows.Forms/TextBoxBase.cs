@@ -1222,10 +1222,11 @@ namespace System.Windows.Forms
 						}
 					}
 
-					OnTextChanged(EventArgs.Empty);
 					document.AlignCaret();
 					document.UpdateCaret();
 					CaretMoved(this, null);
+					OnTextChanged (EventArgs.Empty);
+		
 					return true;
 				}
 			}
@@ -1376,8 +1377,9 @@ namespace System.Windows.Forms
 					if (!read_only && accepts_tab && document.multiline) {
 						document.InsertCharAtCaret ('\t', true);
 
-						OnTextChanged(EventArgs.Empty);
 						CaretMoved(this, null);
+						OnTextChanged (EventArgs.Empty);
+
 						return true;
 					}
 					break;
@@ -1476,9 +1478,10 @@ namespace System.Windows.Forms
 				}
 			}
 
+			CaretMoved (this, null);
+
 			if (fire_changed)
 				OnTextChanged(EventArgs.Empty);
-			CaretMoved(this, null);
 		}
 
 		private void HandleEnter ()
@@ -1496,10 +1499,9 @@ namespace System.Windows.Forms
 				line.ending = LineEnding.Rich;
 				document.InsertString (line, line.text.Length, document.LineEndingToString (line.ending));
 				
-				OnTextChanged (EventArgs.Empty);
-
 				document.UpdateView (line, document.Lines - line.line_no, 0);
 				CaretMoved (this, null);
+				OnTextChanged (EventArgs.Empty);
 			}
 		}
 		
@@ -1577,8 +1579,9 @@ namespace System.Windows.Forms
 #if NET_2_0
 						OnTextUpdate ();
 #endif
+						CaretMoved (this, null);
 						OnTextChanged(EventArgs.Empty);
-						CaretMoved(this, null);
+
 					} else {
 						XplatUI.AudibleAlert();
 					}
