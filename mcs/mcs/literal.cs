@@ -81,16 +81,10 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant ConvertImplicitly (Type targetType)
+		public override Constant ConvertExplicitly (bool inCheckedContext, Type targetType)
 		{
-			//
-			// Null literal is of object type
-			//
-			if (targetType == TypeManager.object_type)
-				return this;
-		
 			if (targetType.IsPointer)
-				return new EmptyConstantCast (NullPointer.Null, targetType);
+				return new EmptyConstantCast (new NullPointer (loc), targetType);
 
 			// Exlude internal compiler types
 			if (targetType == TypeManager.anonymous_method_type)
@@ -100,6 +94,17 @@ namespace Mono.CSharp {
 				return new EmptyConstantCast (this, targetType);
 
 			return null;
+		}
+
+		public override Constant ConvertImplicitly (Type targetType)
+		{
+			//
+			// Null literal is of object type
+			//
+			if (targetType == TypeManager.object_type)
+				return this;
+
+			return ConvertExplicitly (false, targetType);
 		}
 
 		public override object GetValue ()
@@ -132,24 +137,14 @@ namespace Mono.CSharp {
 		public override bool IsZeroInteger {
 			get { return true; }
 		}
-
-		public override Constant ConvertExplicitly(bool inCheckedContext, Type target_type)
-		{
-			if (!TypeManager.IsValueType (target_type))
-				return new EmptyConstantCast (this, target_type);
-
-			return null;
-		}
 	}
 
 	//
 	// A null literal in a pointer context
 	//
 	public class NullPointer : NullLiteral {
-		public static readonly NullLiteral Null = new NullPointer ();
-
-		private NullPointer ():
-			base (Location.Null)
+		public NullPointer (Location loc):
+			base (loc)
 		{
 			type = TypeManager.object_type;
 		}
@@ -158,7 +153,9 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 				
-			// TODO: why not use Ldnull instead ?
+			//
+			// Emits null pointer
+			//
 			ig.Emit (OpCodes.Ldc_I4_0);
 			ig.Emit (OpCodes.Conv_U);
 		}

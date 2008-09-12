@@ -1571,6 +1571,13 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if ((type.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute) {
+				Report.Error (-244, loc, "The `default value' operator cannot be applied to an operand of a static type");
+			}
+
+			if (type.IsPointer)
+				return new NullLiteral (Location).ConvertImplicitly (type);
+
 			if (TypeManager.IsReferenceType (type)) {
 				return new EmptyConstantCast (new NullLiteral (Location), type);
 

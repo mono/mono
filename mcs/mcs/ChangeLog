@@ -1,3 +1,8 @@
+2008-09-12  Marek Safar  <marek.safar@gmail.com>
+
+	* literal.cs, convert.cs, expression.cs, statement.cs: More null
+	to null pointer conversion fixes.
+
 2008-09-11  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-parser.jay, expression.cs: An implicitly typed local variable

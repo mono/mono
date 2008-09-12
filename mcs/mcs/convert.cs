@@ -1394,7 +1394,7 @@ namespace Mono.CSharp {
 				}
 
 				if (expr_type == TypeManager.null_type && target_type.IsPointer)
-					return EmptyCast.Create (NullPointer.Null, target_type);
+					return EmptyCast.Create (new NullPointer (loc), target_type);
 			}
 
 			if (expr_type == TypeManager.anonymous_method_type){

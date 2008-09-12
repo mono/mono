@@ -4422,7 +4422,7 @@ namespace Mono.CSharp {
 					converted = new Conditional (new Binary (Binary.Operator.LogicalOr,
 						new Binary (Binary.Operator.Equality, e, new NullLiteral (loc)),
 						new Binary (Binary.Operator.Equality, new MemberAccess (e, "Length"), new IntConstant (0, loc))),
-							NullPointer.Null,
+							new NullPointer (loc),
 							converted);
 
 					converted = converted.Resolve (ec);					
