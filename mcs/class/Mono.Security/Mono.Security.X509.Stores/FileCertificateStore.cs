@@ -92,9 +92,8 @@ namespace Mono.Security.X509.Stores {
 		{
 			if (_saveOnClose) {
 				byte[] store = _spc.GetBytes ();
-				using (FileStream fs = File.OpenWrite (_name)) {
+				using (FileStream fs = File.Create (_name)) {
 					fs.Write (store, 0, store.Length);
-					fs.Close ();
 				}
 			}
 		}
