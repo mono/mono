@@ -1,3 +1,10 @@
+2008-09-12  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpListenerPrefixCollection.cs, EndPointListener.cs,
+	HttpListener.cs, EndPointManager.cs, HttpConnection.cs: Remove
+	generics support where necessary to allow this code to be reused
+	in the 1.0 profile.
+
 2008-09-08  Miguel de Icaza  <miguel@novell.com>
 
 	* EndPointListener.cs (SearchListener): Cope with the raw_url not
