@@ -1,3 +1,7 @@
+2008-09-12  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: add System.ServiceModel to the net_2_1_raw build.
+
 2008-09-09  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: build System.Runtime.Serialization
