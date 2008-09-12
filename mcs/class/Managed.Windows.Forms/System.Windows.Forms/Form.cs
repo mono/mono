@@ -1729,6 +1729,10 @@ namespace System.Windows.Forms {
 			if (owner_to_be != null)
 				this.owner = owner_to_be;
 				
+			// If our owner is topmost, we better be too, or else we'll show up under our owner
+			if (this.owner != null && this.owner.TopMost)
+				this.TopMost = true;
+				
 			#if broken
 			// Can't do this, will screw us in the modal loop
 			form_parent_window.Parent = this.owner;

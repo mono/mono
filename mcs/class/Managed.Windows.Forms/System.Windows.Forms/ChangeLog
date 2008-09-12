@@ -1,5 +1,11 @@
 2008-09-12  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Form.cs: When we are showing a dialog box, if its owner is TopMost,
+	make the dialog TopMost as well.
+	[Fixes bug #425984]
+
+2008-09-12  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Win32DnD.cs, XplatUIWin32.cs: Applied patch from Andy Hume that handles
 	clipboard data better.
 	[Fixes bug #414446]
