@@ -82,7 +82,51 @@ namespace MonoTests.System.Runtime.Remoting.Channels.Tcp
 
 			ChannelServices.UnregisterChannel (chn);
 		}
-
+		
+		struct ParseURLTestCase {
+			public readonly string input;
+			public readonly string retval;
+			public readonly string objectURI;
+			
+			public ParseURLTestCase (string s0, string s1, string s2)
+			{
+				input = s0;
+				retval = s1;
+				objectURI = s2;
+			}
+		};
+		
+		ParseURLTestCase[] ParseURLTests = new ParseURLTestCase[] {
+			new ParseURLTestCase ("tcp:", "tcp:", null),
+			new ParseURLTestCase ("tcp://", "tcp://", null),
+			new ParseURLTestCase ("tcp:localhost", null, null),
+			new ParseURLTestCase ("tcp://localhost", "tcp://localhost", null),
+			new ParseURLTestCase ("tCp://localhost", "tCp://localhost", null),
+			new ParseURLTestCase ("tcp://localhost:/", "tcp://localhost:", "/"),
+			new ParseURLTestCase ("tcp://localhost:9090", "tcp://localhost:9090", null),
+			new ParseURLTestCase ("tcp://localhost:9090/", "tcp://localhost:9090", "/"),
+			new ParseURLTestCase ("tcp://localhost:9090/RemoteObject.rem", "tcp://localhost:9090", "/RemoteObject.rem"),
+			new ParseURLTestCase ("tcp://localhost:q24691247abc1297/RemoteObject.rem", "tcp://localhost:q24691247abc1297", "/RemoteObject.rem"),
+		};
+		
+		[Test] // TcpChannel.Parse ()
+		public void ParseURL ()
+		{
+			TcpChannel channel;
+			int i;
+			
+			channel = new TcpChannel ();
+			
+			for (i = 0; i < ParseURLTests.Length; i++) {
+				string retval, objectURI;
+				
+				retval = channel.Parse (ParseURLTests[i].input, out objectURI);
+				
+				Assert.AreEqual (ParseURLTests[i].retval, retval, "#C1");
+				Assert.AreEqual (ParseURLTests[i].objectURI, objectURI, "#C2");
+			}
+		}
+		
 		public class MarshalObject : ContextBoundObject
 		{
 			public MarshalObject ()

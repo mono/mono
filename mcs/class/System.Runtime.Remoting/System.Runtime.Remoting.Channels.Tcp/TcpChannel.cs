@@ -130,47 +130,57 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		{
 			if (url == null)
 				throw new ArgumentNullException ("url");
-
-			int port;
-
-			string host = ParseTcpURL (url, out objectURI, out port);
-			if (host != null)
-				return "tcp://" + host + ":" + port;
-			return null;
+			
+			string port;
+			
+			return ParseTcpURL (url, out port, out objectURI);
 		}
 
-		internal static string ParseTcpURL (string url, out string objectURI, out int port)
+		internal static string ParseTcpURL (string url, out string port, out string objectURI)
 		{
 			// format: "tcp://host:port/path/to/object"
-			
 			objectURI = null;
-			port = 0;
-
-			if (!url.StartsWith ("tcp://"))
-				return null;
-			int colon = url.IndexOf (':', 6);
-			if (colon == -1)
-				return null;
-			string host = url.Substring (6, colon - 6);
-
-			int slash = url.IndexOf ('/', colon + 1);
-			if (slash == -1)
-				slash = url.Length;
-			string port_str = url.Substring (colon + 1, slash - colon - 1);
+			port = null;
 			
-			if (slash < url.Length)
-				objectURI = url.Substring (slash + 1);
-
-			try {
-				port = Convert.ToInt32 (port_str);
-			} catch {
+			// url needs to be at least "tcp:"
+			if (url.Length < 4 || url[3] != ':' ||
+			    (url[0] != 'T' && url[0] != 't') ||
+			    (url[1] != 'C' && url[1] != 'c') ||
+			    (url[2] != 'P' && url[2] != 'p'))
 				return null;
+			
+			// "tcp:" is acceptable
+			if (url.Length == 4)
+				return url;
+			
+			// must be of the form "tcp://"
+			if (url.Length <= 5 || url[4] != '/' || url[5] != '/')
+				return null;
+			
+			int i;
+			for (i = 6; i < url.Length; i++) {
+				if (url[i] == ':' || url[i] == '/')
+					break;
 			}
-
-			if (objectURI == string.Empty)
-				objectURI = null;
-
-			return host;
+			
+			if (i + 1 < url.Length && url[i] == ':') {
+				int start = i + 1;
+				
+				for (i++; i < url.Length; i++) {
+					if (url[i] == '/')
+						break;
+				}
+				
+				if (i > start)
+					port = url.Substring (start, i - start);
+			}
+			
+			if (i >= url.Length || url[i] != '/')
+				return url;
+			
+			objectURI = url.Substring (i);
+			
+			return url.Substring (0, i);
 		}
 	}
 }

@@ -1,3 +1,17 @@
+2008-09-12  Jeffrey Stedfast  <fejj@novell.com>
+
+	Fix for bug #320298
+
+	* TcpClientTransportSink.cs: Updated for change to
+	TcpChannel.ParseTcpURL(). We now need to do our own integer
+	conversion/validation of the port.
+
+	* TcpChannel.cs (ParseTcpURL): We need to match the
+	protocol ("tcp") case-insensitively. The objectURI is supposed to
+	include the leading '/' character. Also, we need to ignore invalid
+	port designators since Microsoft's .NET implementation of
+	TcpChannel.Parse() doesn't seem to care that they are valid.
+
 2008-08-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TcpChannel.cs: Fixed argument names to match MS.

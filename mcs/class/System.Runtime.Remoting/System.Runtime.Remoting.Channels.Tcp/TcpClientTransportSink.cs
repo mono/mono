@@ -45,7 +45,19 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		public TcpClientTransportSink (string url)
 		{
 			string objectUri;
-			_host = TcpChannel.ParseTcpURL (url, out objectUri, out _port);
+			string port;
+			
+			_host = TcpChannel.ParseTcpURL (url, out port, out objectUri);
+			
+			try {
+				if (port != null)
+					_port = Convert.ToInt32 (port);
+				else
+					_port = 0;
+			} catch {
+				_host = null;
+				_port = -1;
+			}
 		}
 
 		public IDictionary Properties
