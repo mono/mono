@@ -1,3 +1,9 @@
+2008-09-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS12.cs, X509Store.cs: Use File.Create instead of OpenWrite to
+	make sure nothing else if left at the end of the file. Issue reported
+	by Christophe Chevalier.
+
 2008-06-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: Accept text before the PEM certificate itself.

@@ -1898,11 +1898,9 @@ namespace Mono.Security.X509 {
 			if (filename == null)
 				throw new ArgumentNullException ("filename");
 
-			using (FileStream fs = File.OpenWrite (filename)) {
+			using (FileStream fs = File.Create (filename)) {
 				byte[] data = GetBytes ();
 				fs.Write (data, 0, data.Length);
-				fs.Flush ();
-				fs.Close ();
 			}
 		}
 
