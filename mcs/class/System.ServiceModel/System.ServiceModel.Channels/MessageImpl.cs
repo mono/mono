@@ -150,6 +150,9 @@ namespace System.ServiceModel.Channels
 			if (isEmptyHeader)
 				return;
 
+#if NET_2_1 // FIXME: implement CreateInternalHeader() without XmlElement
+			throw new NotImplementedException ();
+#else
 			XmlDocument doc = null;
 			while (!reader.EOF && reader.NodeType != XmlNodeType.EndElement) {
 				if (doc == null)
@@ -160,6 +163,7 @@ namespace System.ServiceModel.Channels
 				// FIXME: handle UnderstoodHeaders as well.
 				reader.MoveToContent ();
 			}
+#endif
 			reader.ReadEndElement ();
 			reader.MoveToContent ();
 		}

@@ -207,8 +207,10 @@ namespace System.ServiceModel.Channels
 			MessageHeader item = (MessageHeader) l [index];
 
 			XmlReader reader =
+#if !NET_2_1 // FIXME: implement RawMessageHeader
 				item is MessageHeader.RawMessageHeader ?
 				((MessageHeader.RawMessageHeader) item).CreateReader () :
+#endif
 				XmlReader.Create (
 					new StringReader (item.ToString ()),
 					reader_settings);
@@ -318,6 +320,7 @@ namespace System.ServiceModel.Channels
 			get { return l.Count; }
 		}
 
+#if !NET_2_1
 		public EndpointAddress FaultTo {
 			get {
 				int idx = FindHeader ("FaultTo", Constants.WSA1);
@@ -351,6 +354,7 @@ namespace System.ServiceModel.Channels
 						EndpointAddress10.FromEndpointAddress (value)));
 			}
 		}
+#endif
 
 		public MessageHeaderInfo this [int index] {
 			get { return l [index]; }
@@ -393,6 +397,7 @@ namespace System.ServiceModel.Channels
 
 		}
 
+#if !NET_2_1
 		public EndpointAddress ReplyTo {
 			get {
 				int idx = FindHeader ("ReplyTo", Constants.WSA1);
@@ -409,6 +414,7 @@ namespace System.ServiceModel.Channels
 						EndpointAddress10.FromEndpointAddress (value)));
 			}
 		}
+#endif
 
 		public Uri To {
 			get {

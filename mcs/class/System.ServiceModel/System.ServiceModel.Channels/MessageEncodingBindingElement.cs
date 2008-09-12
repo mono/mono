@@ -50,6 +50,7 @@ namespace System.ServiceModel.Channels
 
 		public abstract MessageVersion MessageVersion { get; set; }
 
+#if !NET_2_1
 		[MonoTODO]
 		protected virtual void OnImportPolicy (XmlElement assertion,
 			MessageVersion messageVersion,
@@ -58,5 +59,6 @@ namespace System.ServiceModel.Channels
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 	}
 }

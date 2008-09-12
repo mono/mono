@@ -148,6 +148,7 @@ namespace System.ServiceModel.Channels
 			}
 		}
 
+#if !NET_2_1
 		public IChannelListener<TChannel>
 			BuildInnerChannelListener<TChannel> ()
 			where TChannel : class, IChannel
@@ -160,6 +161,7 @@ namespace System.ServiceModel.Channels
 					elements = empty_collection;
 			}
 		}
+#endif
 
 		public bool CanBuildInnerChannelFactory<TChannel> ()
 		{
@@ -173,6 +175,7 @@ namespace System.ServiceModel.Channels
 			}
 		}
 
+#if !NET_2_1
 		public bool CanBuildInnerChannelListener<TChannel> ()
 			where TChannel : class, IChannel
 		{
@@ -185,6 +188,7 @@ namespace System.ServiceModel.Channels
 					elements = empty_collection;
 			}
 		}
+#endif
 
 		public T GetInnerProperty<T> () where T : class
 		{

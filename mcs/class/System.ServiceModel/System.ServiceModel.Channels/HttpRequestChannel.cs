@@ -91,7 +91,9 @@ namespace System.ServiceModel.Channels
 			web_request.Method = "POST";
 			web_request.ContentType = Encoder.ContentType;
 
+#if !NET_2_1 // FIXME: implement this to not depend on Timeout property
 			web_request.Timeout = (int) timeout.TotalMilliseconds;
+#endif
 
 			// There is no SOAP Action/To header when AddressingVersion is None.
 			if (message.Version.Addressing == AddressingVersion.None) {
@@ -104,6 +106,7 @@ namespace System.ServiceModel.Channels
 
 			// apply HttpRequestMessageProperty if exists.
 			bool suppressEntityBody = false;
+#if !NET_2_1
 			string pname = HttpRequestMessageProperty.Name;
 			if (message.Properties.ContainsKey (pname)) {
 				HttpRequestMessageProperty hp = (HttpRequestMessageProperty) message.Properties [pname];
@@ -113,6 +116,7 @@ namespace System.ServiceModel.Channels
 				if (hp.SuppressEntityBody)
 					suppressEntityBody = true;
 			}
+#endif
 
 			if (!suppressEntityBody && String.Compare (web_request.Method, "GET", StringComparison.OrdinalIgnoreCase) != 0) {
 				MemoryStream buffer = new MemoryStream ();
@@ -121,15 +125,17 @@ namespace System.ServiceModel.Channels
 				if (buffer.Length > int.MaxValue)
 					throw new InvalidOperationException ("The argument message is too large.");
 
+#if !NET_2_1
 				web_request.ContentLength = (int) buffer.Length;
-				Stream requestStream = web_request.GetRequestStream ();
+#endif
+				Stream requestStream = web_request.EndGetRequestStream (web_request.BeginGetRequestStream (null, null));
 				requestStream.Write (buffer.GetBuffer (), 0, (int) buffer.Length);
 				requestStream.Close ();
 			}
 
 			WebResponse res;
 			try {
-				res = web_request.GetResponse ();
+				res = web_request.EndGetResponse (web_request.BeginGetResponse (null, null));
 			}
 			catch (WebException we) {
 				res = we.Response;

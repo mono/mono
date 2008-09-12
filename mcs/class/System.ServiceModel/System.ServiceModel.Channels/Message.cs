@@ -138,7 +138,7 @@ namespace System.ServiceModel.Channels
 		void WriteXsiNil (XmlDictionaryWriter writer)
 		{
 			writer.WriteStartElement ("z", "anyType", Constants.MSSerialization);
-			writer.WriteAttributeString ("i", "nil", XmlSchema.InstanceNamespace, "true");
+			writer.WriteAttributeString ("i", "nil", "http://www.w3.org/2001/XMLSchema-instance", "true");
 			writer.WriteEndElement ();
 		}
 
@@ -217,10 +217,17 @@ namespace System.ServiceModel.Channels
 		protected virtual MessageBuffer OnCreateBufferedCopy (
 			int maxBufferSize)
 		{
+#if NET_2_1
+			StringWriter sw = new StringWriter ();
+			XmlDictionaryWriter w = XmlDictionaryWriter.CreateDictionaryWriter (XmlWriter.Create (sw));
+			WriteMessage (w);
+			return new DefaultMessageBuffer (Headers, Properties, new XmlReaderBodyWriter (XmlDictionaryReader.CreateDictionaryReader (XmlReader.Create (new StringReader (sw.ToString ())))), false);
+#else
 			DTMXPathDocumentWriter2 pw = new DTMXPathDocumentWriter2 (new NameTable (), 100);
 			XmlDictionaryWriter w = XmlDictionaryWriter.CreateDictionaryWriter (pw);
 			WriteMessage (w);
 			return new XPathMessageBuffer (pw.CreateDocument (), Version, Headers.Count, this.Properties);
+#endif
 		}
 
 		protected virtual string OnGetBodyAttribute (

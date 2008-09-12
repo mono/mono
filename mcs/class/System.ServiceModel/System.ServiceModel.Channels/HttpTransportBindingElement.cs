@@ -147,11 +147,13 @@ namespace System.ServiceModel.Channels
 			return typeof (TChannel) == typeof (IRequestChannel);
 		}
 
+#if !NET_2_1
 		public override bool CanBuildChannelListener<TChannel> (
 			BindingContext context)
 		{
 			return typeof (TChannel) == typeof (IReplyChannel);
 		}
+#endif
 
 		public override IChannelFactory<TChannel> BuildChannelFactory<TChannel> (
 			BindingContext context)
@@ -161,6 +163,7 @@ namespace System.ServiceModel.Channels
 			return new HttpChannelFactory<TChannel> (this, context);
 		}
 
+#if !NET_2_1
 		public override IChannelListener<TChannel> BuildChannelListener<TChannel> (
 			BindingContext context)
 		{
@@ -168,6 +171,7 @@ namespace System.ServiceModel.Channels
 			// element that always causes an error is ignored.
 			return new HttpChannelListener<TChannel> (this, context);
 		}
+#endif
 
 		public override BindingElement Clone ()
 		{
@@ -180,6 +184,7 @@ namespace System.ServiceModel.Channels
 			return base.GetProperty<T> (context);
 		}
 
+#if !NET_2_1
 		[MonoTODO]
 		void IPolicyExportExtension.ExportPolicy (
 			MetadataExporter exporter,
@@ -201,5 +206,6 @@ namespace System.ServiceModel.Channels
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 	}
 }

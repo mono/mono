@@ -138,9 +138,11 @@ namespace System.ServiceModel
 			get { return factory; }
 		}
 
+#if !NET_2_1
 		public ClientCredentials ClientCredentials {
 			get { return ChannelFactory.Credentials; }
 		}
+#endif
 
 		public ServiceEndpoint Endpoint {
 			get { return factory.Endpoint; }

@@ -54,10 +54,12 @@ namespace System.ServiceModel.Channels
 		static bool default_relay = false;
 		static Type [] knownTypes = new Type [1] {typeof (EndpointAddress10)};
 
+#if !NET_2_1 // FIXME: eliminate XmlElement
 		internal static MessageHeader CreateInternalHeader (XmlElement el, string soap_ns)
 		{
 			return new RawMessageHeader (el, soap_ns);
 		}
+#endif
 
 		public static MessageHeader CreateHeader (string name, string ns, object value)
 		{
@@ -203,6 +205,7 @@ namespace System.ServiceModel.Channels
 
 		public override bool Relay { get { return default_relay; }}
 
+#if !NET_2_1 // FIXME: this should be rewritten to eliminate XmlElement
 		internal class RawMessageHeader : MessageHeader
 		{
 			XmlElement source;
@@ -249,6 +252,7 @@ namespace System.ServiceModel.Channels
 
 			public override bool Relay { get { return relay; }}
 		}
+#endif
 
 		internal class DefaultMessageHeader : MessageHeader
 		{

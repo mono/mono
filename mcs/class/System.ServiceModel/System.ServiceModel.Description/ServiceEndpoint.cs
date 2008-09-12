@@ -97,6 +97,7 @@ namespace System.ServiceModel.Description
 		}
 
 		internal void Validate () {
+#if !NET_2_1
 			foreach (IContractBehavior b in Contract.Behaviors)
 				b.Validate (Contract, this);
 			foreach (IEndpointBehavior b in Behaviors)
@@ -105,6 +106,7 @@ namespace System.ServiceModel.Description
 				foreach (IOperationBehavior b in operation.Behaviors)
 					b.Validate (operation);
 			}
+#endif
 		}
 	}
 }

@@ -62,6 +62,7 @@ namespace System.ServiceModel
 		{
 		}
 
+#if !NET_2_1
 		public BasicHttpBinding (string configurationName)
 			: this ()
 		{
@@ -71,6 +72,7 @@ namespace System.ServiceModel
 
 			el.ApplyConfiguration (this);
 		}
+#endif
 
 		public BasicHttpBinding (
 			BasicHttpSecurityMode securityMode)
@@ -174,6 +176,7 @@ namespace System.ServiceModel
 			CreateBindingElements ()
 		{
 			switch (Security.Mode) {
+#if !NET_2_1
 			case BasicHttpSecurityMode.Message:
 			case BasicHttpSecurityMode.TransportWithMessageCredential:
 				if (Security.Message.ClientCredentialType != BasicHttpMessageCredentialType.Certificate)
@@ -183,7 +186,7 @@ namespace System.ServiceModel
 					new AsymmetricSecurityBindingElement (),
 					BuildMessageEncodingBindingElement (),
 					GetTransport ()});
-
+#endif
 			default:
 				return new BindingElementCollection (new BindingElement [] {
 					BuildMessageEncodingBindingElement (),
@@ -201,8 +204,12 @@ namespace System.ServiceModel
 				return tm;
 			}
 			else
+#if NET_2_1
+				throw new SystemException ("INTERNAL ERROR: should not happen");
+#else
 				return new MtomMessageEncodingBindingElement (
 					MessageVersion.CreateVersion (EnvelopeVersion, AddressingVersion.None), TextEncoding);
+#endif
 		}
 
 		TransportBindingElement GetTransport ()

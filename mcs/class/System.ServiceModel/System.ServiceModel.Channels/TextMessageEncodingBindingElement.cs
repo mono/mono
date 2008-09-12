@@ -104,6 +104,7 @@ namespace System.ServiceModel.Channels
 			return base.BuildChannelFactory<TChannel> (context);
 		}
 
+#if !NET_2_1
 		public override IChannelListener<TChannel> BuildChannelListener<TChannel> (
 			BindingContext context)
 		{
@@ -120,6 +121,7 @@ namespace System.ServiceModel.Channels
 				throw new ArgumentNullException ("context");
 			return context.CanBuildInnerChannelListener<TChannel> ();
 		}
+#endif
 
 		public override BindingElement Clone ()
 		{
@@ -138,6 +140,7 @@ namespace System.ServiceModel.Channels
 			return new TextMessageEncoderFactory (this);
 		}
 
+#if !NET_2_1
 		[MonoTODO]
 		protected override void OnImportPolicy (XmlElement assertion,
 			MessageVersion messageVersion,
@@ -167,5 +170,6 @@ namespace System.ServiceModel.Channels
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 	}
 }

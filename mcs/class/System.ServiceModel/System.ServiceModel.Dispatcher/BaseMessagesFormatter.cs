@@ -74,9 +74,12 @@ namespace System.ServiceModel.Dispatcher
 		public static BaseMessagesFormatter Create (OperationDescription desc)
 		{
 			MethodInfo attrProvider = desc.SyncMethod ?? desc.BeginMethod;
-			object [] attrs = attrProvider.GetCustomAttributes (typeof (XmlSerializerFormatAttribute), false);
+			object [] attrs;
+#if !NET_2_1
+			attrs = attrProvider.GetCustomAttributes (typeof (XmlSerializerFormatAttribute), false);
 			if (attrs != null && attrs.Length > 0)
 				return new XmlMessagesFormatter (desc, (XmlSerializerFormatAttribute) attrs [0]);
+#endif
 
 			attrs = attrProvider.GetCustomAttributes (typeof (DataContractFormatAttribute), false);
 			DataContractFormatAttribute dataAttr = null;
@@ -213,6 +216,7 @@ namespace System.ServiceModel.Dispatcher
 		}
 	}
 
+#if !NET_2_1
 	class XmlMessagesFormatter : BaseMessagesFormatter
 	{
 		XmlSerializerFormatAttribute attr;
@@ -303,6 +307,7 @@ namespace System.ServiceModel.Dispatcher
 			}
 		}
 	}
+#endif
 
 	class DataContractMessagesFormatter : BaseMessagesFormatter
 	{

@@ -217,8 +217,10 @@ namespace System.ServiceModel.Description
 				foreach (object obj in serviceMethod.GetCustomAttributes (typeof(IOperationBehavior),true))
 					od.Behaviors.Add ((IOperationBehavior) obj);
 			}
+#if !NET_2_1
 			if (od.Behaviors.Find<OperationBehaviorAttribute>() == null)
 				od.Behaviors.Add (new OperationBehaviorAttribute ());
+#endif
 			// FIXME: fill KnownTypes, Behaviors and Faults.
 
 			return od;

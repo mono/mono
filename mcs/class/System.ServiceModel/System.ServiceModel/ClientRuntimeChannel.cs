@@ -249,10 +249,12 @@ namespace System.ServiceModel
 				new BindingParameterCollection ();
 
 			ContractDescription cd = factory.Endpoint.Contract;
+#if !NET_2_1
 			pl.Add (ChannelProtectionRequirements.CreateFromContract (cd));
 
 			foreach (IEndpointBehavior behavior in factory.Endpoint.Behaviors)
 				behavior.AddBindingParameters (factory.Endpoint, pl);
+#endif
 
 			return pl;
 		}

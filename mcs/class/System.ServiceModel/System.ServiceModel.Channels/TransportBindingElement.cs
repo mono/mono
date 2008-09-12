@@ -82,10 +82,12 @@ namespace System.ServiceModel.Channels
 				q.MaxStringContentLength = (int) MaxReceivedMessageSize;
 				return (T) (object) q;
 			}
+#if !NET_2_1
 			if (typeof (T) == typeof (ChannelProtectionRequirements))
 				// blank one, basically it should not be used
 				// for any secure channels (
 				return (T) (object) new ChannelProtectionRequirements ();
+#endif
 			if (typeof (T) == typeof (MessageVersion))
 				return (T) (object) MessageVersion.Default;
 			return null;

@@ -96,9 +96,11 @@ namespace System.ServiceModel.Dispatcher
 			set { end_method = value; }
 		}
 
+#if !NET_2_1
 		public SynchronizedCollection<FaultContractInfo> FaultContractInfos {
 			get { throw new NotImplementedException (); }
 		}
+#endif
 
 		public IClientMessageFormatter Formatter {
 			get { return formatter; }

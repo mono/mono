@@ -51,9 +51,11 @@ namespace System.ServiceModel
 			get { return service_endpoint; }
 		}
 
+#if !NET_2_1
 		public ClientCredentials Credentials {
 			get { return Endpoint.Behaviors.Find<ClientCredentials> (); }
 		}
+#endif
 
 		protected internal override TimeSpan DefaultCloseTimeout {
 			get { return Endpoint.Binding.CloseTimeout; }
@@ -65,6 +67,7 @@ namespace System.ServiceModel
 
 		protected virtual void ApplyConfiguration (string endpointConfig)
 		{
+#if !NET_2_1
 			if (endpointConfig == null)
 				return;
 
@@ -89,8 +92,10 @@ namespace System.ServiceModel
 
 			if (res.BehaviorConfiguration != "")
 				ApplyBehavior (res.BehaviorConfiguration);
+#endif
 		}
 
+#if !NET_2_1
 		private void ApplyBehavior (string behaviorConfig)
 		{
 			BehaviorsSection behaviorsSection = (BehaviorsSection) ConfigurationManager.GetSection ("system.serviceModel/behaviors");
@@ -102,6 +107,7 @@ namespace System.ServiceModel
 				Endpoint.Behaviors.Add (behavior);
 			}
 		}
+#endif
 
 		[MonoTODO]
 		protected virtual IChannelFactory CreateFactory ()
@@ -203,10 +209,12 @@ namespace System.ServiceModel
 		}
 	}
 
+#if obsolete
 	[ServiceContract]
 	interface UninitializedContract
 	{
 		[OperationContract]
 		void ItShouldReallyGone ();
 	}
+#endif
 }

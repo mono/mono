@@ -52,6 +52,7 @@ namespace System.ServiceModel.Channels
 			return context.BuildInnerChannelFactory<TChannel> ();
 		}
 
+#if !NET_2_1
 		public virtual IChannelListener<TChannel>
 			BuildChannelListener<TChannel> (
 			BindingContext context)
@@ -61,6 +62,7 @@ namespace System.ServiceModel.Channels
 				throw new ArgumentNullException ("context");
 			return context.BuildInnerChannelListener<TChannel> ();
 		}
+#endif
 
 		public virtual bool CanBuildChannelFactory<TChannel> (
 			BindingContext context)
@@ -68,12 +70,14 @@ namespace System.ServiceModel.Channels
 			return context.CanBuildInnerChannelFactory<TChannel> ();
 		}
 
+#if !NET_2_1
 		public virtual bool CanBuildChannelListener<TChannel> (
 			BindingContext context)
 			where TChannel : class, IChannel
 		{
 			return context.CanBuildInnerChannelListener<TChannel> ();
 		}
+#endif
 
 		public abstract BindingElement Clone ();
 

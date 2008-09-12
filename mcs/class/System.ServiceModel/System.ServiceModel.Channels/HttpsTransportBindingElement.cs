@@ -69,6 +69,7 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 
+#if !NET_2_1
 		[MonoTODO]
 		public override IChannelListener<TChannel>
 			BuildChannelListener<TChannel> (
@@ -76,16 +77,19 @@ namespace System.ServiceModel.Channels
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		public override BindingElement Clone ()
 		{
 			return new HttpsTransportBindingElement (this);
 		}
 
+#if !NET_2_1
 		[MonoTODO]
 		public XmlElement GetTransportTokenAssertion ()
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 	}
 }

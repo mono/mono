@@ -82,6 +82,7 @@ namespace System.ServiceModel.Channels
 		}
 	}
 
+#if !NET_2_1
 	internal class XPathMessageBuffer : MessageBuffer
 	{
 		IXPathNavigable source;
@@ -114,4 +115,5 @@ namespace System.ServiceModel.Channels
 			get { return 0; }
 		}
 	}
+#endif
 }

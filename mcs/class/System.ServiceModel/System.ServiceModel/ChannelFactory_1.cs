@@ -138,7 +138,9 @@ namespace System.ServiceModel
 		{
 			ContractDescription cd = ContractDescription.GetContract (typeof (TChannel));
 			ServiceEndpoint ep = new ServiceEndpoint (cd);
+#if !NET_2_1
 			ep.Behaviors.Add (new ClientCredentials ());
+#endif
 			return ep;
 		}
 
@@ -151,6 +153,7 @@ namespace System.ServiceModel
 				if (!proxy.Operations.Contains (od.Name))
 					PopulateClientOperation (proxy, od);
 
+#if !NET_2_1
 			foreach (IEndpointBehavior b in se.Behaviors)
 				b.ApplyClientBehavior (se, proxy);
 
@@ -159,6 +162,7 @@ namespace System.ServiceModel
 			foreach (OperationDescription od in se.Contract.Operations)
 				foreach (IOperationBehavior ob in od.Behaviors)
 					ob.ApplyClientBehavior (od, proxy.Operations [od.Name]);
+#endif
 
 			return proxy;
 		}

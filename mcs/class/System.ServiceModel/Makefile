@@ -8,22 +8,30 @@ RESOURCE_FILES = \
 
 LIBRARY = System.ServiceModel.dll
 LIB_MCS_FLAGS = \
-		/d:NET_3_0	\
 		/nowarn:414,169,67,3005,436,219,618 \
 		/unsafe \
 	        /r:System.dll \
 	        /r:System.Xml.dll \
-	        /r:System.Configuration.dll \
 	        /r:System.Runtime.Serialization.dll \
-	        /r:System.Security.dll \
-	        /r:System.IdentityModel.dll \
-		/r:System.IdentityModel.Selectors.dll \
-	        /r:System.Transactions.dll \
-		/r:System.Messaging.dll \
-	        /r:System.Web.dll \
-		/r:System.Web.Services.dll \
-		/r:Mono.Security.dll \
 		$(RESOURCE_FILES:%=/resource:%)
+
+ifneq (2.1, $(FRAMEWORK_VERSION))
+LIB_MCS_FLAGS += /d:NET_3_0 	\
+			/r:System.Configuration.dll \
+			/r:System.Data.dll	\
+			/r:System.Security.dll \
+			/r:System.IdentityModel.dll \
+			/r:System.IdentityModel.Selectors.dll \
+			/r:System.Transactions.dll \
+			/r:System.Messaging.dll \
+			/r:System.Web.dll \
+			/r:System.Web.Services.dll \
+			/r:Mono.Security.dll
+endif
+
+ifeq (2.1, $(FRAMEWORK_VERSION))
+LIB_MCS_FLAGS += /r:System.Net
+endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
@@ -45,6 +53,7 @@ NO_INSTALL = yes
 NO_SIGN_ASSEMBLY = yes
 NO_TEST = yes
 endif
+
 
 
 include ../../build/library.make

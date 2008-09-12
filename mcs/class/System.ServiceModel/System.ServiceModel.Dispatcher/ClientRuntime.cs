@@ -40,7 +40,9 @@ namespace System.ServiceModel.Dispatcher
 			= new SynchronizedCollection<IChannelInitializer> ();
 		SynchronizedCollection<IInteractiveChannelInitializer> interactive_channel_initializers
 			= new SynchronizedCollection<IInteractiveChannelInitializer> ();
+#if !NET_2_1
 		DispatchRuntime dispatch;
+#endif
 		SynchronizedCollection<IClientMessageInspector> inspectors
 			= new SynchronizedCollection<IClientMessageInspector> ();
 		ClientOperation.ClientOperationCollection operations
@@ -51,6 +53,7 @@ namespace System.ServiceModel.Dispatcher
 		string contract_name, contract_ns;
 		int max_fault_size = 0x10000; // FIXME: not verified.
 
+#if !NET_2_1
 		// .ctor() for DispatchRuntime.CallbackClientRuntime
 		internal ClientRuntime (DispatchRuntime parent)
 		{
@@ -59,6 +62,7 @@ namespace System.ServiceModel.Dispatcher
 			contract_name = dispatch.EndpointDispatcher.ContractName;
 			contract_ns = dispatch.EndpointDispatcher.ContractNamespace;
 		}
+#endif
 
 		// .ctor() for Clients
 		internal ClientRuntime (ServiceEndpoint endpoint)
@@ -94,9 +98,11 @@ namespace System.ServiceModel.Dispatcher
 			set { contract = value; }
 		}
 
+#if !NET_2_1
 		public DispatchRuntime CallbackDispatchRuntime {
 			get { return dispatch; }
 		}
+#endif
 
 		public SynchronizedCollection<IClientMessageInspector> MessageInspectors {
 			get { return inspectors; }

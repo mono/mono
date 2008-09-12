@@ -32,7 +32,6 @@ using System.Reflection;
 using System.Resources;
 using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
-using System.Security.Cryptography.Xml;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -114,6 +113,7 @@ namespace System.ServiceModel
 			get { return address; }
 		}
 
+#if !NET_2_1
 		internal static XmlSchema Schema {
 			get {
 				if (schema == null) {
@@ -125,6 +125,7 @@ namespace System.ServiceModel
 				return schema;
 			}
 		}
+#endif
 
 		[MonoTODO]
 		public void ApplyTo (Message message)
@@ -183,6 +184,7 @@ namespace System.ServiceModel
 			return ! (address1 == address2);
 		}
 
+#if !NET_2_1
 		[MonoTODO]
 		public static EndpointAddress ReadFrom (
 			XmlDictionaryReader reader)
@@ -313,6 +315,7 @@ namespace System.ServiceModel
 			return new EndpointAddress (uri, identity,
 				AddressHeader.CreateAddressHeader (metadata));
 		}
+#endif
 
 		public override string ToString ()
 		{
@@ -324,11 +327,15 @@ namespace System.ServiceModel
 			AddressingVersion addressingVersion,
 			XmlDictionaryWriter writer)
 		{
+#if NET_2_1
+			writer.WriteString (Uri.AbsoluteUri);
+#else
 			if (addressingVersion == AddressingVersion.WSAddressing10) {
 				((IXmlSerializable) EndpointAddress10.FromEndpointAddress (this)).WriteXml (writer);
 			} else {
 				writer.WriteString (Uri.AbsoluteUri);
 			}
+#endif
 		}
 
 		public void WriteContentsTo (
