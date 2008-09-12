@@ -1,5 +1,11 @@
 2008-09-12  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #425669
+	* generic.cs: Don't cache generic static anonymous method 
+	containers.
+
+2008-09-12  Marek Safar  <marek.safar@gmail.com>
+
 	* generic.cs, class.cs, delegate.cs: Check recursive inherited
 	conflicting constraints.
 
