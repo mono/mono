@@ -1,5 +1,9 @@
 2008-09-12  Raja R Harinath  <harinath@hurrynot.org>
 
+	* DataTable.cs: Sequester ISupportInitializationNotification
+	pieces into separate part.
+	(DataTableInitialized): Turn into a 'partial method' to avoid #ifs.
+
 	* DataTable.cs (AssertNotNullConstraints): Hoist out a more useful
 	loop-invariant by inverting loops.
 	(RowExists): Outdent.  Rewrite for slightly better clarity.

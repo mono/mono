@@ -933,12 +933,12 @@ namespace System.Data {
 		void EndInit ()
 		{
 			InitInProgress = false;
-#if NET_2_0
-			tableInitialized = true;
 			DataTableInitialized ();
-#endif
 			FinishInit ();
 		}
+
+		// defined in NET_2_0 profile
+		partial void DataTableInitialized ();
 
 		internal bool InitInProgress {
 			get { return fInitInProgress; }
@@ -2357,15 +2357,31 @@ namespace System.Data {
 	partial class DataTable : ISupportInitializeNotification {
 		private bool tableInitialized = true;
 
+		[Browsable (false)]
+		public bool IsInitialized {
+			get { return tableInitialized; }
+		}
+
+		public event EventHandler Initialized;
+
+		private void OnTableInitialized (EventArgs e)
+		{
+			if (null != Initialized)
+				Initialized (this, e);
+		}
+
+		partial void DataTableInitialized ()
+		{
+			tableInitialized = true;
+			OnTableInitialized (new EventArgs ());
+		}
+	}
+
+	partial class DataTable {
 		public DataTable (string tableName, string tbNamespace)
 			: this (tableName)
 		{
 			_nameSpace = tbNamespace;
-		}
-
-		[Browsable (false)]
-		public bool IsInitialized {
-			get { return tableInitialized; }
 		}
 
 		SerializationFormat remotingFormat = SerializationFormat.Xml;
@@ -2816,12 +2832,6 @@ namespace System.Data {
 			OnTableNewRow (e);
 		}
 
-		private void DataTableInitialized ()
-		{
-			EventArgs e = new EventArgs ();
-			OnTableInitialized (e);
-		}
-
 		public DataTableReader CreateDataReader ()
 		{
 			return new DataTableReader (this);
@@ -2970,7 +2980,6 @@ namespace System.Data {
 		public event DataTableClearEventHandler TableClearing;
 
 		public event DataTableNewRowEventHandler TableNewRow;
-		public event EventHandler Initialized;
 
 		/// <summary>
 		/// Raises TableCleared Event and delegates to subscribers
@@ -2991,12 +3000,6 @@ namespace System.Data {
 		{
 			if (null != TableNewRow)
 				TableNewRow (this, e);
-		}
-
-		private void OnTableInitialized (EventArgs e)
-		{
-			if (null != Initialized)
-				Initialized (this, e);
 		}
 	}
 #endif
