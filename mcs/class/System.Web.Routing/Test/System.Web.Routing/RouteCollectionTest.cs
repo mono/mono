@@ -130,5 +130,20 @@ namespace MonoTests.System.Web.Routing
 			var rd = c.GetRouteData (new HttpContextStub ("~/foo", String.Empty));
 			Assert.AreEqual (r, rd.Route);
 		}
+
+		[Test]
+		public void GetRouteDataWithTemplate ()
+		{
+			var c = new RouteCollection ();
+			var r = new Route ("{foo}/{bar}", new StopRoutingHandler ());
+			c.Add (null, r);
+			Assert.IsNull (c.GetRouteData (new HttpContextStub ("x/y", String.Empty)));
+			var rd = c.GetRouteData (new HttpContextStub ("{foo}/{bar}/baz", String.Empty));
+			Assert.IsNull (rd, "#1");
+			rd = c.GetRouteData (new HttpContextStub ("{foo}/{bar}", String.Empty));
+			Assert.IsNotNull (rd, "#2");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#3");
+			Assert.AreEqual (2, rd.Values.Count, "#4");
+		}
 	}
 }

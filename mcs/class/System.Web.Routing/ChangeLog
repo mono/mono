@@ -1,3 +1,7 @@
+2008-09-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Web.Routing.dll.sources: add UrlPattern.cs.
+
 2008-09-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile, System.Web.Routing.dll.sources: initial checkin.

@@ -1,3 +1,8 @@
+2008-09-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* RouteTest.cs, RouteCollectionTest.cs: added couple of tests for
+	  Route Url parser.
+
 2008-09-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpMethodConstraintTest.cs, RouteCollectionTest.cs,

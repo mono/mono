@@ -37,7 +37,7 @@ namespace System.Web.Routing
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class Route : RouteBase
 	{
-		string url;
+		UrlPattern url;
 
 		public RouteValueDictionary Constraints { get; set; }
 
@@ -48,8 +48,8 @@ namespace System.Web.Routing
 		public IRouteHandler RouteHandler { get; set; }
 
 		public string Url {
-			get { return url; }
-			set { url = value ?? String.Empty; }
+			get { return url != null ? url.Url : String.Empty; }
+			set { url = value != null ? new UrlPattern (value) : null; }
 		}
 
 		public Route (string url, IRouteHandler routeHandler)

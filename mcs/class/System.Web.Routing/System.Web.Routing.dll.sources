@@ -13,6 +13,7 @@ System.Web.Routing/RouteDirection.cs
 System.Web.Routing/RouteTable.cs
 System.Web.Routing/RouteValueDictionary.cs
 System.Web.Routing/StopRoutingHandler.cs
+System.Web.Routing/UrlPattern.cs
 System.Web.Routing/UrlRoutingHandler.cs
 System.Web.Routing/UrlRoutingModule.cs
 System.Web.Routing/VirtualPathData.cs
