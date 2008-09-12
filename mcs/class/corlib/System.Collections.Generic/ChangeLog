@@ -1,3 +1,9 @@
+2008-09-12  Jb Evain  <jbevain@novell.com>
+
+	* Dictionary.cs: (ToTValue) allow null values to be added for non
+	value types TValues to the dictionary when using the
+	non generic IDictionary. Fixes #425693.
+
 2008-06-16  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* String.cs: Dictionary: Do not change the index data when using the indexer for

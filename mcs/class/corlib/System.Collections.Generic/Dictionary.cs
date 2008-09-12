@@ -590,6 +590,8 @@ namespace System.Collections.Generic {
 
 		TValue ToTValue (object value)
 		{
+			if (value == null && !typeof (TValue).IsValueType)
+				return default (TValue);
 			if (!(value is TValue))
 				throw new ArgumentException ("not of type: " + typeof (TValue).ToString (), "value");
 			return (TValue) value;
