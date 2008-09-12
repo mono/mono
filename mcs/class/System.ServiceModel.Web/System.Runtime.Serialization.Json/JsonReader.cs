@@ -161,6 +161,7 @@ namespace System.Runtime.Serialization.Json
 			}
 		}
 
+#if !NET_2_1
 		public override bool HasValue {
 			get {
 				switch (NodeType) {
@@ -172,6 +173,7 @@ namespace System.Runtime.Serialization.Json
 				}
 			}
 		}
+#endif
 
 		public override bool IsEmptyElement {
 			get { return false; }
@@ -339,6 +341,7 @@ namespace System.Runtime.Serialization.Json
 				return MoveToAttribute ("__type");
 		}
 
+#if !NET_2_1
 		public override bool ReadAttributeValue ()
 		{
 			switch (attr_state) {
@@ -351,6 +354,7 @@ namespace System.Runtime.Serialization.Json
 			}
 			return false;
 		}
+#endif
 
 		public override void ResolveEntity ()
 		{
