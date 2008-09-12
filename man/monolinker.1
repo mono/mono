@@ -46,6 +46,13 @@ Specify the output directory, default is 'output'.
 If you specify the directory `.', please ensure that you won't write over
 important assemblies of yours.
 .TP
+.I "-b true | false"
+Specify whether to generate debug symbols or not, default is false.
+.TP
+.I "-g true | false"
+Specify whether to generate a new guid for each linked module or reuse the
+existing one, default is false.
+.TP
 .I "-l i18n_assemblies"
 Specify what to do with the region specific assemblies
 .Sp
@@ -86,8 +93,8 @@ their size.
 .ne
 .RE
 .Sp
-.TP "-p action assembly"
-.I
+.TP
+.I "-p action assembly"
 Specify per assembly which action to apply.
 .TP
 .I "-x descriptor"
