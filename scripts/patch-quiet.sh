@@ -25,5 +25,6 @@ sed -e 's/\tmv -f/\t$(if $(V),,@)mv -f/g' < $src > $src.tmp && cp $src.tmp $src 
 # libtool messages
 sed -e 's/\$(LIBTOOL)/$(LIBTOOL) $(if $(V),,--quiet)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
 
-# FIXME: libtool message which is not silenced by --quiet:
-# $echo "copying selected object files to avoid basename conflicts..."
+# This causes this script to be rerun if Makefile.am changes
+sed -e 's/am__depfiles_maybe = depfiles/am__depfiles_maybe = depfiles quiet/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
+
