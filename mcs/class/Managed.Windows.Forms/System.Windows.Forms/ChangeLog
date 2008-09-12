@@ -1,5 +1,11 @@
 2008-09-12  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Win32DnD.cs, XplatUIWin32.cs: Applied patch from Andy Hume that handles
+	clipboard data better.
+	[Fixes bug #414446]
+
+2008-09-12  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextBoxBase.cs: Applied patch from John Mortlock that ensures
 	TextChanged and SelectionChanged events fire in the same order as .Net.
 	[Fixes bug #425725]

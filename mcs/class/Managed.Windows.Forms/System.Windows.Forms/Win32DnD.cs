@@ -845,12 +845,14 @@ namespace System.Windows.Forms {
 
 			switch(cfFormat) {
 				case ClipboardFormats.CF_TEXT: {
-					hmem = Marshal.StringToHGlobalAnsi((string)data);
+					b = XplatUIWin32.StringToAnsi ((string)data);
+					hmem = XplatUIWin32.CopyToMoveableMemory (b);
 					break;
 				}
 
 				case ClipboardFormats.CF_UNICODETEXT: {
-					hmem = Marshal.StringToHGlobalUni((string)data);
+					b = XplatUIWin32.StringToUnicode ((string)data);
+					hmem = XplatUIWin32.CopyToMoveableMemory (b);
 					break;
 				}
 
@@ -901,11 +903,7 @@ namespace System.Windows.Forms {
 
 				case ClipboardFormats.CF_DIB: {
 					b = XplatUIWin32.ImageToDIB((Image)data);
-
-					hmem = XplatUIWin32.Win32GlobalAlloc(XplatUIWin32.GAllocFlags.GMEM_MOVEABLE | XplatUIWin32.GAllocFlags.GMEM_DDESHARE, b.Length);
-					hmem_ptr = XplatUIWin32.Win32GlobalLock(hmem);
-					Marshal.Copy(b, 0, hmem_ptr, b.Length);
-					XplatUIWin32.Win32GlobalUnlock(hmem);
+					hmem = XplatUIWin32.CopyToMoveableMemory (b);
 					break;
 				}
 

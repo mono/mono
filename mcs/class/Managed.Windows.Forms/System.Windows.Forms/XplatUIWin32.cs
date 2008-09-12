@@ -2891,9 +2891,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void ClipboardStore(IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter) {
-			byte[]	data;
-			IntPtr	hmem;
-			IntPtr	hmem_ptr;
+			byte[]	data = null;
 
 			if (handle != clip_magic) {
 				throw new ArgumentException("handle is not a valid clipboard handle");
@@ -2915,51 +2913,105 @@ namespace System.Windows.Forms {
 			}
 
 			if (type == DataFormats.GetFormat(DataFormats.Rtf).Id) {
-				hmem = Marshal.StringToHGlobalAnsi((string)obj);
-				if (Win32SetClipboardData((uint)type, hmem) == IntPtr.Zero )
-					throw new ExternalException("Win32SetClipboardData");
-				return;
+				data = StringToAnsi ((string)obj);
 			} else switch((ClipboardFormats)type) {
 				case ClipboardFormats.CF_UNICODETEXT: {
-					hmem = Marshal.StringToHGlobalUni((string)obj);
-					if (Win32SetClipboardData((uint)type, hmem) == IntPtr.Zero)
-						throw new ExternalException("Win32SetClipboardData");
-					return;
+					data = StringToUnicode ((string)obj);
+					break;
 				}
 
 				case ClipboardFormats.CF_TEXT: {
-					hmem = Marshal.StringToHGlobalAnsi((string)obj);
-					if (Win32SetClipboardData((uint)type, hmem) == IntPtr.Zero)
-						throw new ExternalException("Win32SetClipboardData");
-					return;
+					data = StringToAnsi ((string)obj);
+					break;
 				}
 
 				case ClipboardFormats.CF_BITMAP:
 				case ClipboardFormats.CF_DIB: {
-					data = ImageToDIB((Image)obj);
-
-					hmem = Win32GlobalAlloc(GAllocFlags.GMEM_MOVEABLE | GAllocFlags.GMEM_DDESHARE, data.Length);
-					hmem_ptr = Win32GlobalLock(hmem);
-					Marshal.Copy(data, 0, hmem_ptr, data.Length);
-					Win32GlobalUnlock(hmem);
-					if (Win32SetClipboardData((uint)ClipboardFormats.CF_DIB, hmem) == IntPtr.Zero)
-						throw new ExternalException("Win32SetClipboardData");
-					return;
+					data = ImageToDIB ((Image)obj);
+					type = (int)ClipboardFormats.CF_DIB;
+					break;
 				}
 
 				default: {
-					if (converter != null && converter(ref type, obj, out data)) {
-						hmem = Win32GlobalAlloc(GAllocFlags.GMEM_MOVEABLE | GAllocFlags.GMEM_DDESHARE, data.Length);
-						hmem_ptr = Win32GlobalLock(hmem);
-						Marshal.Copy(data, 0, hmem_ptr, data.Length);
-						Win32GlobalUnlock(hmem);
-						if (Win32SetClipboardData((uint)type, hmem) == IntPtr.Zero)
-							throw new ExternalException("Win32SetClipboardData");
+					if (converter != null && !converter(ref type, obj, out data)) {
+						data = null; // ensure that a failed conversion leaves null.
 					}
-					return;
+					break;
 				}
 			}
+			if (data != null) {
+				SetClipboardData ((uint)type, data);
+			}
 		}
+
+		internal static byte[] StringToUnicode (string text)
+		{
+			return Encoding.Unicode.GetBytes (text + "\0");
+		}
+
+		internal static byte[] StringToAnsi (string text)
+		{
+			// FIXME, follow the behaviour of the previous code using UTF-8,
+			// but this should be 'ANSI' on Windows, i.e. the current code page.
+			// Does Encoding.Default work on Windows?
+			return Encoding.UTF8.GetBytes (text + "\0");
+		}
+
+		private void SetClipboardData (uint type, byte[] data)
+		{
+			if (data.Length == 0)
+				// Shouldn't call Win32SetClipboard with NULL, as, from MSDN:
+				// "This parameter can be NULL, indicating that the window provides data 
+				//  in the specified clipboard format (renders the format) upon request."
+				// and I don't think we support that...
+				// Note this is unrelated to the fact that passing a null obj to 
+				// ClipboardStore is actually a request to empty the clipboard!
+				return;
+			IntPtr hmem = CopyToMoveableMemory (data);
+			if (hmem == IntPtr.Zero)
+				// As above, should not call with null.
+				// (Not that CopyToMoveableMemory should ever return null!)
+				throw new ExternalException ("CopyToMoveableMemory failed.");
+			if (Win32SetClipboardData (type, hmem) == IntPtr.Zero)
+				throw new ExternalException ("Win32SetClipboardData");
+		}
+
+		/// <summary>
+		/// Creates a memory block with GlobalAlloc(GMEM_MOVEABLE), copies the data 
+		/// into it, and returns the handle to the memory.
+		/// </summary>
+		/// -
+		/// <param name="data">The data.  Must not be null or zero-length &#x2014; 
+		/// see the exception notes.</param>
+		/// -
+		/// <returns>The *handle* to the allocated GMEM_MOVEABLE block.</returns>
+		/// -
+		/// <exception cref="T:System.ArgumentException">The data was null or zero 
+		/// length.  This is disallowed since a zero length allocation can't be made
+		/// </exception>
+		/// <exception cref="T:System.ComponentModel.Win32Exception">The allocation, 
+		/// or locking (handle->pointer) failed.
+		/// Either out of memory or the handle table is full (256 max currently).
+		/// Note Win32Exception is a subclass of ExternalException so this is OK in 
+		/// the documented Clipboard interface.
+		/// </exception>
+		internal static IntPtr CopyToMoveableMemory (byte[] data)
+		{
+			if (data == null || data.Length == 0)
+				// detect this before GlobalAlloc does.
+				throw new ArgumentException ("Can't create a zero length memory block.");
+
+			IntPtr hmem = Win32GlobalAlloc (GAllocFlags.GMEM_MOVEABLE | GAllocFlags.GMEM_DDESHARE, data.Length);
+			if (hmem == IntPtr.Zero)
+				throw new Win32Exception ();
+			IntPtr hmem_ptr = Win32GlobalLock (hmem);
+			if (hmem_ptr == IntPtr.Zero) // If the allocation was valid this shouldn't occur.
+				throw new Win32Exception ();
+			Marshal.Copy (data, 0, hmem_ptr, data.Length);
+			Win32GlobalUnlock (hmem);
+			return hmem;
+		}
+
 
 		internal override void SetAllowDrop(IntPtr hwnd, bool allowed) {
 			if (allowed) {
