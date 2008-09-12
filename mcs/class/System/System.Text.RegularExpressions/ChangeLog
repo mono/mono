@@ -1,3 +1,7 @@
+2008-09-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* RxInterpreter.cs RxCompiler.cs: Implement some missing Category opcodes.
+
 2008-09-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* CILCompiler.cs: Override ICompiler.EmitSet too so we set op_flags for 

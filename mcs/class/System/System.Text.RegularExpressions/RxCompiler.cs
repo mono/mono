@@ -150,6 +150,12 @@ namespace System.Text.RegularExpressions {
 			Emit ((byte)cat);
 		}
 
+		void EmitCatGeneral (Category cat, int offset)
+		{
+			Emit ((RxOp)((int)RxOp.CategoryGeneral + offset));
+			Emit ((byte)cat);
+		}
+
 		public void EmitCategory (Category cat, bool negate, bool reverse)
 		{
 			int offset = 0;
@@ -398,10 +404,19 @@ namespace System.Text.RegularExpressions {
 				EmitRange ('\uFE70', '\uFEFE', negate, false, reverse); break;
 			case Category.UnicodeHalfwidthandFullwidthForms:
 				EmitRange ('\uFF00', '\uFFEF', negate, false, reverse); break;
+
+				// Complex categories
+			case Category.UnicodeL:
+			case Category.UnicodeM:
+			case Category.UnicodeN:
+			case Category.UnicodeZ:
+			case Category.UnicodeP:
+			case Category.UnicodeS:
+			case Category.UnicodeC:
+				EmitCatGeneral (cat, offset); break;
+
 			default:
-				Console.WriteLine ("Missing category: {0}", cat);
-				EmitFalse ();
-				break;
+				throw new NotImplementedException ("Missing category: " + cat);
 			}
 		}
 

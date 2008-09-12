@@ -177,6 +177,12 @@ namespace System.Text.RegularExpressions {
 		NoCategoryUnicodeOtherReverse,
 		// add more categories
 
+		// followed by Category value (byte)
+		CategoryGeneral,
+		NoCategoryGeneral,
+		CategoryGeneralReverse,
+		NoCategoryGeneralReverse,
+
 		// backreferences
 		// followed by two-byte reference number
 		// keep the order, see EmitReference ()

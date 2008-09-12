@@ -1301,6 +1301,32 @@ namespace System.Text.RegularExpressions {
 					pc += 2;
 					continue;
 
+					/* General category case */
+				case RxOp.CategoryGeneral:
+					if (strpos < string_end && CategoryUtils.IsCategory ((Category)program [pc + 1], str [strpos])) {
+						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc += 2;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc += 2;
+					continue;
+				case RxOp.NoCategoryGeneral:
+					if (strpos < string_end && !CategoryUtils.IsCategory ((Category)program [pc + 1], str [strpos])) {
+						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc += 2;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc += 2;
+					continue;
+
 					/*
 					 * Reverse versions of the above opcodes.
 					 */
@@ -1626,6 +1652,30 @@ namespace System.Text.RegularExpressions {
 					continue;
 				case RxOp.NoCategoryUnicodeReverse:
 					if (strpos > 0 && Char.GetUnicodeCategory (str [strpos - 1]) != (UnicodeCategory)program [pc + 1]) {
+						strpos --;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc += 2;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc += 2;
+					continue;
+				case RxOp.CategoryGeneralReverse:
+					if (strpos > 0 && CategoryUtils.IsCategory ((Category)program [pc + 1], str [strpos - 1])) {
+						strpos --;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc += 2;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc += 2;
+					continue;
+				case RxOp.NoCategoryGeneralReverse:
+					if (strpos > 0 && !CategoryUtils.IsCategory ((Category)program [pc + 1], str [strpos - 1])) {
 						strpos --;
 						if (char_group_end != 0)
 							goto test_char_group_passed;
