@@ -2554,7 +2554,7 @@ namespace System.Windows.Forms
 
 			public virtual void Clear ()
 			{
-				owner.selected_indices.Clear ();
+				owner.selected_indices.ClearCore ();
 				object_items.Clear ();
 				owner.CollectionChanged ();
 

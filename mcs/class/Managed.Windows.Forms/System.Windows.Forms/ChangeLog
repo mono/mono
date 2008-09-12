@@ -1,3 +1,11 @@
+2008-09-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBox.cs: When calling Items.Clear(), call
+	SelectedIndexCollection.ClearCore instead of normal Clear method, to
+	not fire any Selected*Changed event - this is done to match .net and
+	don't have invalid values when changing the DataSourceProperty.
+	Fixes #424273.
+
 2008-09-12  Mario Carrion  <mcarrion@novell.com>
 
 	* HelpProvider.cs: Control enabled to support accessibility.
