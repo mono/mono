@@ -1,3 +1,8 @@
+2008-09-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ASN1.cs: Use File.Create instead of OpenWrite to make sure nothing
+	else if left at the end of the file.
+
 2008-04-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StrongName.cs: Add support for verifying strongnames on a stream.
