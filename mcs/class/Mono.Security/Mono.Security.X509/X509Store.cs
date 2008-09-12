@@ -108,7 +108,7 @@ namespace Mono.Security.X509 {
 
 			string filename = Path.Combine (_storePath, GetUniqueName (certificate));
 			if (!File.Exists (filename)) {
-				using (FileStream fs = File.OpenWrite (filename)) {
+				using (FileStream fs = File.Create (filename)) {
 					byte[] data = certificate.RawData;
 					fs.Write (data, 0, data.Length);
 					fs.Close ();
@@ -122,10 +122,9 @@ namespace Mono.Security.X509 {
 
 			string filename = Path.Combine (_storePath, GetUniqueName (crl));
 			if (!File.Exists (filename)) {
-				using (FileStream fs = File.OpenWrite (filename)) {
+				using (FileStream fs = File.Create (filename)) {
 					byte[] data = crl.RawData;
 					fs.Write (data, 0, data.Length);
-					fs.Close ();
 				}
 			}
 		}
