@@ -100,6 +100,16 @@ namespace System.Windows.Forms {
 			controls = new Hashtable();
 			tooltip = new ToolTip.ToolTipWindow();
 
+#if NET_2_0
+			//UIA Framework: Event used to indicate that ToolTip is shown
+			tooltip.VisibleChanged += delegate (object sender, EventArgs args) {
+				if (tooltip.Visible == true)
+					OnUIAHelpRequested (this, new ControlEventArgs (UIAControl));
+				else 
+					OnUIAHelpUnRequested (this, new ControlEventArgs (UIAControl));
+			};
+#endif
+
 			HideToolTipHandler = new EventHandler(HideToolTip);
 			HideToolTipKeyHandler = new KeyPressEventHandler(HideToolTipKey);
 			HideToolTipMouseHandler = new MouseEventHandler(HideToolTipMouse);
@@ -254,6 +264,11 @@ namespace System.Windows.Forms {
 
 			control = (Control)sender;
 
+#if NET_2_0
+			//UIA Framework: Associates requested control with internal variable to generate event
+			UIAControl = control;
+#endif
+
 			if (GetHelpProperty(control).Text == null) {
 				return;
 			}
@@ -291,5 +306,32 @@ namespace System.Windows.Forms {
 			e.Handled = true;
 		}
 		#endregion	// Private Methods
+
+		#region UIA Framework: Events, Delegates and Methods
+#if NET_2_0
+		private Control uia_control;
+
+		private Control UIAControl {
+			get { return uia_control; }
+			set { uia_control = value; }
+		}
+
+		internal static event ControlEventHandler UIAHelpRequested;
+		internal static event ControlEventHandler UIAHelpUnRequested;
+
+		internal static void OnUIAHelpRequested (HelpProvider provider, ControlEventArgs args)
+		{
+			if (UIAHelpRequested != null)
+				UIAHelpRequested (provider, args);
+		}
+
+		internal static void OnUIAHelpUnRequested (HelpProvider provider, ControlEventArgs args)
+		{
+			if (UIAHelpUnRequested != null)
+				UIAHelpUnRequested (provider, args);
+		}
+
+#endif
+		#endregion
 	}
 }

@@ -1,3 +1,9 @@
+2008-09-12  Mario Carrion  <mcarrion@novell.com>
+
+	* HelpProvider.cs: Control enabled to support accessibility.
+	* Application.cs: Updated to Initialize UIA in HelpProvider.
+	[Fixes bug #425988]
+
 2008-09-12  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Form.cs: When we are showing a dialog box, if its owner is TopMost,
@@ -35,11 +41,6 @@
 	* ToolTip.cs: Control enabled to support accessibility.
 	* Application.cs: Updated to Initialize UIA in ToolTip.
 	[Fixes bug #425277]
-
-2008-08-27  Mario Carrion  <mcarrion@novell.com>
-
-	* ComboBox.cs: Control enabled to support accessibility.
-	[Fixes bug #416663]
 
 2008-09-11  Jonathan Pobst  <monkey@jpobst.com>
 

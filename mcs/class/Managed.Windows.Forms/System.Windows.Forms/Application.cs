@@ -206,6 +206,14 @@ namespace System.Windows.Forms
 					if (init_method != null)
 						init_method.Invoke (null, new object [] {});
 				}
+				//HelpProviderListener
+				listener_type_name = "Mono.UIAutomation.Winforms.HelpProviderListener";
+				listener_type = mwf_providers.GetType (listener_type_name, false);
+				if (listener_type != null) {
+					init_method = listener_type.GetMethod (init_method_name, BindingFlags.Static | BindingFlags.Public);
+					if (init_method != null)
+						init_method.Invoke (null, new object [] {});
+				}
 			} catch { }
 
 
