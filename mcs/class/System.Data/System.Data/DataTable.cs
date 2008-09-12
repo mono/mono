@@ -226,7 +226,7 @@ namespace System.Data {
 		internal void ChangedDataColumn (DataRow dr, DataColumn dc, object pv)
 		{
 			DataColumnChangeEventArgs e = new DataColumnChangeEventArgs (dr, dc, pv);
-			OnColumnChanged(e);
+			OnColumnChanged (e);
 		}
 
 		internal void ChangingDataColumn (DataRow dr, DataColumn dc, object pv)
@@ -244,7 +244,7 @@ namespace System.Data {
 		internal void DeletingDataRow (DataRow dr, DataRowAction action)
 		{
 			DataRowChangeEventArgs e = new DataRowChangeEventArgs (dr, action);
-			OnRowDeleting(e);
+			OnRowDeleting (e);
 		}
 
 		internal void ChangedDataRow (DataRow dr, DataRowAction action)
@@ -545,7 +545,7 @@ namespace System.Data {
 				UniqueConstraint.SetAsPrimaryKey (Constraints, uc);
 				_primaryKeyConstraint = uc;
 
-				for (int j=0; j < uc.Columns.Length; ++j)
+				for (int j = 0; j < uc.Columns.Length; ++j)
 					uc.Columns [j].AllowDBNull = false;
 			}
 		}
@@ -663,24 +663,22 @@ namespace System.Data {
 				_nullConstraintViolationDuringDataLoad = false;
 		}
 
-		internal bool RowsExist(DataColumn[] columns, DataColumn[] relatedColumns,DataRow row)
+		internal bool RowsExist (DataColumn [] columns, DataColumn [] relatedColumns, DataRow row)
 		{
-			int curIndex = row.IndexFromVersion(DataRowVersion.Default);
-			int tmpRecord = RecordCache.NewRecord();
+			int curIndex = row.IndexFromVersion (DataRowVersion.Default);
+			int tmpRecord = RecordCache.NewRecord ();
 
 			try {
-				for (int i = 0; i < relatedColumns.Length; i++) {
+				for (int i = 0; i < relatedColumns.Length; i++)
 					// according to MSDN: the DataType value for both columns must be identical.
 					columns[i].DataContainer.CopyValue (relatedColumns [i].DataContainer, curIndex, tmpRecord);
-				}
 				return RowsExist (columns, tmpRecord);
-			}
-			finally {
+			} finally {
 				RecordCache.DisposeRecord (tmpRecord);
 			}
 		}
 
-		bool RowsExist(DataColumn[] columns, int index)
+		bool RowsExist (DataColumn[] columns, int index)
 		{
 			bool rowsExist = false;
 			Index indx = this.FindIndex(columns);
@@ -727,8 +725,7 @@ namespace System.Data {
 			// we do not use foreach because if one of the rows is in Delete state
 			// it will be romeved from Rows and we get an exception.
 			DataRow myRow;
-			for (int i = 0; i < Rows.Count; )
-			{
+			for (int i = 0; i < Rows.Count; ) {
 				myRow = Rows [i];
 				myRow.AcceptChanges ();
 
@@ -785,7 +782,8 @@ namespace System.Data {
 		/// <summary>
 		/// Clears the DataTable of all data.
 		/// </summary>
-		public void Clear () {
+		public void Clear ()
+		{
 #if NET_2_0
 			OnTableClearing (new DataTableClearEventArgs (this));
 #endif // NET_2_0
@@ -852,7 +850,7 @@ namespace System.Data {
 			return copy;
 		}
 
-		internal void CopyRow (DataRow fromRow,DataRow toRow)
+		internal void CopyRow (DataRow fromRow, DataRow toRow)
 		{
 			if (fromRow.HasErrors)
 				fromRow.CopyErrors (toRow);
@@ -861,11 +859,10 @@ namespace System.Data {
 				toRow.Original = toRow.Table.RecordCache.CopyRecord (this, fromRow.Original, -1);
 
 			if (fromRow.HasVersion (DataRowVersion.Current)) {
-				if (fromRow.Original != fromRow.Current) {
+				if (fromRow.Original != fromRow.Current)
 					toRow.Current = toRow.Table.RecordCache.CopyRecord (this, fromRow.Current, -1);
-				} else {
+				else
 					toRow.Current = toRow.Original;
-				}
 			}
 		}
 
@@ -984,7 +981,7 @@ namespace System.Data {
 			if (this._duringDataLoad) {
 				//Getting back to previous EnforceConstraint state
 				if (this.dataSet != null)
-					this.dataSet.InternalEnforceConstraints(this.dataSetPrevEnforceConstraints,true);
+					this.dataSet.InternalEnforceConstraints (this.dataSetPrevEnforceConstraints, true);
 				else
 					this.EnforceConstraints = true;
 
@@ -1092,15 +1089,15 @@ namespace System.Data {
 			if (row.HasVersion (DataRowVersion.Original)) {
 				original = row.IndexFromVersion (DataRowVersion.Original);
 				newRow.Original = RecordCache.NewRecord ();
-				RecordCache.CopyRecord (row.Table,original, newRow.Original);
+				RecordCache.CopyRecord (row.Table, original, newRow.Original);
 			}
 
 			if (row.HasVersion (DataRowVersion.Current)) {
 				int current = row.IndexFromVersion (DataRowVersion.Current);
-				if (current == original)
+				if (current == original) {
 					newRow.Current = newRow.Original;
-				else {
-					newRow.Current = RecordCache.NewRecord();
+				} else {
+					newRow.Current = RecordCache.NewRecord ();
 					RecordCache.CopyRecord (row.Table, current, newRow.Current);
 				}
 			}
@@ -1257,7 +1254,7 @@ namespace System.Data {
 
 			DataRow newRow = NewRowFromBuilder (RowBuilder);
 
-			newRow.Proposed = CreateRecord(null);
+			newRow.Proposed = CreateRecord (null);
 #if NET_2_0
 			NewRowAdded (newRow);
 #endif
@@ -1328,9 +1325,9 @@ namespace System.Data {
 			return new DataRow (builder);
 		}
 
-		internal DataRow NewNotInitializedRow()
+		internal DataRow NewNotInitializedRow ()
 		{
-			EnsureDefaultValueRowIndex();
+			EnsureDefaultValueRowIndex ();
 
 			return NewRowFromBuilder (RowBuilder);
 		}
@@ -1354,7 +1351,7 @@ namespace System.Data {
 		/// </summary>
 		public virtual void Reset ()
 		{
-			Clear();
+			Clear ();
 			while (ParentRelations.Count > 0) {
 				if (dataSet.Relations.Contains (ParentRelations [ParentRelations.Count - 1].RelationName))
 					dataSet.Relations.Remove (ParentRelations [ParentRelations.Count - 1]);
