@@ -773,18 +773,17 @@ namespace System.Data {
 		/// </summary>
 		public void Clear ()
 		{
-#if NET_2_0
-			OnTableClearing (new DataTableClearEventArgs (this));
-#endif // NET_2_0
+			DataTableClearing ();
 			// Foriegn key constraints are checked in _rows.Clear method
 			_rows.Clear ();
 			foreach (Index index in Indexes)
 				index.Reset ();
-#if NET_2_0
-			OnTableCleared (new DataTableClearEventArgs (this));
-#endif // NET_2_0
-
+			DataTableCleared ();
 		}
+
+		// defined in the NET_2_0 profile
+		partial void DataTableClearing ();
+		partial void DataTableCleared ();
 
 		/// <summary>
 		/// Clones the structure of the DataTable, including
@@ -1240,13 +1239,13 @@ namespace System.Data {
 			EnsureDefaultValueRowIndex();
 
 			DataRow newRow = NewRowFromBuilder (RowBuilder);
-
 			newRow.Proposed = CreateRecord (null);
-#if NET_2_0
 			NewRowAdded (newRow);
-#endif
 			return newRow;
 		}
+
+		// defined in the NET_2_0 profile
+		partial void NewRowAdded (DataRow dr);
 
 		internal int CreateRecord (object [] values)
 		{
@@ -2826,12 +2825,6 @@ namespace System.Data {
 				       htColumnErrors, typeof (Hashtable));
 		}
 
-		private void NewRowAdded (DataRow dr)
-		{
-			DataTableNewRowEventArgs e = new DataTableNewRowEventArgs (dr);
-			OnTableNewRow (e);
-		}
-
 		public DataTableReader CreateDataReader ()
 		{
 			return new DataTableReader (this);
@@ -2990,16 +2983,31 @@ namespace System.Data {
 				TableCleared (this, e);
 		}
 
+		partial void DataTableCleared ()
+		{
+			OnTableCleared (new DataTableClearEventArgs (this));
+		}
+
 		protected virtual void OnTableClearing (DataTableClearEventArgs e)
 		{
 			if (TableClearing != null)
 				TableClearing (this, e);
 		}
 
+		partial void DataTableClearing ()
+		{
+			OnTableClearing (new DataTableClearEventArgs (this));
+		}
+
 		protected virtual void OnTableNewRow (DataTableNewRowEventArgs e)
 		{
 			if (null != TableNewRow)
 				TableNewRow (this, e);
+		}
+
+		partial void NewRowAdded (DataRow dr)
+		{
+			OnTableNewRow (new DataTableNewRowEventArgs (dr));
 		}
 	}
 #endif

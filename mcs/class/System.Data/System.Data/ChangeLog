@@ -1,5 +1,9 @@
 2008-09-12  Raja R Harinath  <harinath@hurrynot.org>
 
+	* DataTable.cs (NewRowAdded): Make into partial method.
+	(DataTableClearing, DataTableCleared): New partial methods.
+	(Clear): Use them.
+
 	* DataTable.cs: Sequester ISupportInitializationNotification
 	pieces into separate part.
 	(DataTableInitialized): Turn into a 'partial method' to avoid #ifs.
