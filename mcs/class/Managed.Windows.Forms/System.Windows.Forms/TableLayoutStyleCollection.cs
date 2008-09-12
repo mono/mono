@@ -78,7 +78,10 @@ namespace System.Windows.Forms {
 
 			layoutStyle.Owner = table;
 			int result = al.Add (layoutStyle);
-			table.PerformLayout ();
+
+			if (table != null)
+				table.PerformLayout ();
+
 			return result;
 		}
 		

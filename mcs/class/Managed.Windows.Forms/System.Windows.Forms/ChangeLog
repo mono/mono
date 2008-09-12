@@ -1,3 +1,11 @@
+2008-09-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayoutSettings.cs, TableLayoutStyleCollection.cs: Guard
+	against NRE's when the settings have a null panel.
+	* TableLayoutPanel.cs: When setting the TableLayoutSettings, ensure
+	the panel gets set.
+	[Fixes bug #425647]
+
 2008-09-11  Mario Carrion  <mcarrion@novell.com>
 
 	* ToolTip.cs: Control enabled to support accessibility.

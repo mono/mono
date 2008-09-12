@@ -48,7 +48,7 @@ namespace System.Windows.Forms
 		private Dictionary<Object, int> column_spans;
 		private Dictionary<Object, int> rows;
 		private Dictionary<Object, int> row_spans;
-		private TableLayoutPanel panel;
+		internal TableLayoutPanel panel;
 		internal bool isSerialized;
 
 		#region Internal Constructor
@@ -134,7 +134,9 @@ namespace System.Windows.Forms
 
 				if (row_count != value) {
 					row_count = value;
-					panel.PerformLayout (panel, "RowCount");
+
+					if (panel != null)
+						panel.PerformLayout ();
 				}
 			}
 		}
@@ -225,7 +227,9 @@ namespace System.Windows.Forms
 
 			columns[control] = cellPosition.Column;
 			rows[control] = cellPosition.Row;
-			panel.PerformLayout ();
+
+			if (panel != null)
+				panel.PerformLayout ();
 		}
 
 		public void SetColumn (Object control, int column)
@@ -236,7 +240,9 @@ namespace System.Windows.Forms
 				throw new ArgumentException ();
 				
 			columns[control] = column;
-			panel.PerformLayout ();
+
+			if (panel != null)
+				panel.PerformLayout ();
 		}
 
 		public void SetColumnSpan (Object control, int value)
@@ -247,7 +253,9 @@ namespace System.Windows.Forms
 				throw new ArgumentException ();
 
 			column_spans[control] = value;
-			panel.PerformLayout ();
+
+			if (panel != null)
+				panel.PerformLayout ();
 		}
 
 		public void SetRow (Object control, int row)
@@ -258,7 +266,9 @@ namespace System.Windows.Forms
 				throw new ArgumentException ();
 
 			rows[control] = row;
-			panel.PerformLayout ();
+
+			if (panel != null)
+				panel.PerformLayout ();
 		}
 
 		public void SetRowSpan (Object control, int value)
@@ -269,7 +279,9 @@ namespace System.Windows.Forms
 				throw new ArgumentException ();
 
 			row_spans[control] = value;
-			panel.PerformLayout ();
+			
+			if (panel != null)
+				panel.PerformLayout ();
 		}
 		#endregion
 

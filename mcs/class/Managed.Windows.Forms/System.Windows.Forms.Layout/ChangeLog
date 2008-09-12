@@ -1,3 +1,9 @@
+2008-09-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayoutSettingsTypeConverter.cs: Don't create an instance of 
+	TableLayoutPanel in ConvertFrom.
+	[Fixes bug #425647]
+
 2008-07-28  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TableLayout.cs: MS adds rows instead of columns even when 
