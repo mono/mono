@@ -1,3 +1,8 @@
+2008-09-12  Raja R Harinath  <harinath@hurrynot.org>
+
+	* DataTable.cs: Convert to a partial class, sequester NET_2_0
+	specific and IXmlSerializable specific pieces into separate parts.
+
 2008-09-07  Raja R Harinath  <harinath@hurrynot.org>
 
 	* DataSet.cs: Convert to a partial class and sequester NET_2_0
