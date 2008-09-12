@@ -957,13 +957,60 @@ namespace System.Windows.Forms
 			if (button is CheckBox)
 				check_size = (button as CheckBox).Appearance == Appearance.Normal ? 13 : 0;
 				
-			glyphArea = new Rectangle (0, (button.Height - check_size) / 2, check_size, check_size);
+			glyphArea = new Rectangle (0, 2, check_size, check_size);
+			
+			Rectangle content_rect = button.ClientRectangle;
+			ContentAlignment align = ContentAlignment.TopLeft;;
+			
+			if (button is CheckBox)
+				align = (button as CheckBox).CheckAlign;
+			else if (button is RadioButton)
+				align = (button as RadioButton).CheckAlign;
+
+			switch (align) {
+				case ContentAlignment.BottomCenter:
+					glyphArea.Y = button.Height - check_size;
+					glyphArea.X = (button.Width - check_size) / 2 - 2;
+					break;
+				case ContentAlignment.BottomLeft:
+					glyphArea.Y = button.Height - check_size - 2;
+					content_rect.Width -= check_size;
+					content_rect.Offset (check_size, 0);
+					break;
+				case ContentAlignment.BottomRight:
+					glyphArea.Y = button.Height - check_size - 2;
+					glyphArea.X = button.Width - check_size;
+					content_rect.Width -= check_size;
+					break;
+				case ContentAlignment.MiddleCenter:
+					glyphArea.Y = (button.Height - check_size) / 2;
+					glyphArea.X = (button.Width - check_size) / 2;
+					break;
+				case ContentAlignment.MiddleLeft:
+					glyphArea.Y = (button.Height - check_size) / 2;
+					content_rect.Width -= check_size;
+					content_rect.Offset (check_size, 0);
+					break;
+				case ContentAlignment.MiddleRight:
+					glyphArea.Y = (button.Height - check_size) / 2;
+					glyphArea.X = button.Width - check_size;
+					content_rect.Width -= check_size;
+					break;
+				case ContentAlignment.TopCenter:
+					glyphArea.X = (button.Width - check_size) / 2;
+					break;
+				case ContentAlignment.TopLeft:
+					content_rect.Width -= check_size;
+					content_rect.Offset (check_size, 0);
+					break;
+				case ContentAlignment.TopRight:
+					glyphArea.X = button.Width - check_size;
+					content_rect.Width -= check_size;
+					break;
+			}
 			
 			Image image = button.Image;
 			string text = button.Text;
-			Rectangle content_rect = button.ClientRectangle;
-			content_rect.Width -= check_size;
-			content_rect.Offset (check_size, 0);
 			
 			Size proposed = Size.Empty;
 			

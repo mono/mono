@@ -1,3 +1,9 @@
+2008-09-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ThemeWin32Classic.cs: Take CheckBox and RadioButton's CheckAlign
+	property into account when drawing.
+	[Fixes bug #416064]
+
 2008-09-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBox.cs: When calling Items.Clear(), call
