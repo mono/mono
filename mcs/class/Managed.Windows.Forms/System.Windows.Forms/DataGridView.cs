@@ -2831,7 +2831,20 @@ namespace System.Windows.Forms {
 
 			EndEdit ();
 			
-			ColumnSorter sorter = new ColumnSorter (dataGridViewColumn, direction);
+			// Figure out if this is a numeric sort or text sort
+			bool is_numeric = true;
+			double n;
+			
+			foreach (DataGridViewRow row in Rows) {
+				object val = row.Cells[dataGridViewColumn.Index].Value;
+				
+				if (val != null && !double.TryParse (val.ToString (), out n)) {
+					is_numeric = false;
+					break;
+				}
+			}
+			
+			ColumnSorter sorter = new ColumnSorter (dataGridViewColumn, direction, is_numeric);
 			Rows.Sort (sorter);
 
 			sortedColumn = dataGridViewColumn;
@@ -5853,11 +5866,13 @@ namespace System.Windows.Forms {
 		{
 			int column;
 			int direction = 1;
-
-			public ColumnSorter (DataGridViewColumn column, ListSortDirection direction)
+			bool numeric_sort;
+			
+			public ColumnSorter (DataGridViewColumn column, ListSortDirection direction, bool numeric)
 			{
 				this.column = column.Index;
-
+				this.numeric_sort = numeric;
+				
 				if (direction == ListSortDirection.Descending)
 					this.direction = -1;
 			}
@@ -5878,7 +5893,10 @@ namespace System.Windows.Forms {
 				if (val2 == null)
 					return -1 * direction;
 
-				return string.Compare (val1.ToString (), val2.ToString ()) * direction;
+				if (numeric_sort)
+					return (int)(double.Parse (val1.ToString ()) - double.Parse (val2.ToString ())) * direction;
+				else
+					return string.Compare (val1.ToString (), val2.ToString ()) * direction;
 			}
 			#endregion
 		}

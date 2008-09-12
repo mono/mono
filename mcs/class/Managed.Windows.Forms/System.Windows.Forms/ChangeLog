@@ -1,5 +1,11 @@
 2008-09-12  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridView.cs: When sorting a column, if it only contains numbers,
+	do a numeric sort instead of a string sort.
+	[Fixes bug #425849]
+
+2008-09-12  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TableLayoutSettings.cs, TableLayoutStyleCollection.cs: Guard
 	against NRE's when the settings have a null panel.
 	* TableLayoutPanel.cs: When setting the TableLayoutSettings, ensure
