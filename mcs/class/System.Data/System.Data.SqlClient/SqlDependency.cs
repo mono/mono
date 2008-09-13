@@ -31,7 +31,7 @@ using System.Security.Permissions;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace System.Data
+namespace System.Data.SqlClient
 {
 	public sealed class SqlDependency
 	{
