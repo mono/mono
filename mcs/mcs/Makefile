@@ -126,6 +126,9 @@ do-corlib:
 
 PROFILER=default
 
+do-gettext:
+	xgettext --keyword='Report.Error:3' --keyword='Report.Error:2' --keyword='Report.Warning:3' --keyword='Report.Warning:2' -o mcs.po --language='C#' `cat gmcs.exe.sources | grep -v /`
+
 profile : $(PROGRAM)
 	$(RUNTIME) $(RUNTIME_FLAGS) --profile=$(PROFILER) $(PROGRAM) $(USE_MCS_FLAGS) -target:exe -out:mcs2.exe $(BUILT_SOURCES) @$(response)
 
@@ -148,4 +151,5 @@ q: cs-parser.cs qh
 # read-eval-print-loop test target, for quickly hackign
 repl: 
 	mono --debug gmcs.exe -v --shell
+
 
