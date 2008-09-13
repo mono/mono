@@ -132,3 +132,7 @@ TEST_HARNESS_EXCLUDES = /exclude:NotWorking,ValueAdd,CAS,InetAccess,PKITS
 TEST_HARNESS_EXCLUDES_ONDOTNET = /exclude:NotDotNet,CAS,PKITS
 endif
 endif
+
+# Helper target to run the perl regex test suite
+regex-check:
+	$(MAKE) check FIXTURE=System.Text.RegularExpressions.PerlTest
