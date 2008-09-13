@@ -1,3 +1,7 @@
+2008-09-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* library.make: Allow FIXTURE make variable to be passed to nunit.
+
 2008-08-29  Raja R Harinath  <harinath@hurrynot.org>
 
 	* rules.make (do-%): Revert change below.  We need the recursion

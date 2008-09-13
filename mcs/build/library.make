@@ -210,10 +210,14 @@ TEST_HARNESS_POSTPROC = (echo ''; cat TestResult-$(PROFILE).log) | sed '1,/^Test
 TEST_HARNESS_POSTPROC_ONDOTNET = (echo ''; cat TestResult-ondotnet-$(PROFILE).log) | sed '1,/^Tests run: /d'
 endif
 
+ifdef FIXTURE
+FIXTURE_ARG = /fixture:MonoTests.$(FIXTURE)
+endif
+
 ## FIXME: i18n problem in the 'sed' command below
 run-test-lib: test-local
 	ok=:; \
-	MONO_REGISTRY_PATH="$(HOME)/.mono/registry" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(TEST_HARNESS_OUTPUT) /xml:TestResult-$(PROFILE).xml $(test_assemblies) || ok=false; \
+	MONO_REGISTRY_PATH="$(HOME)/.mono/registry" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(TEST_HARNESS_OUTPUT) /xml:TestResult-$(PROFILE).xml $(test_assemblies) $(FIXTURE_ARG) || ok=false; \
 	$(TEST_HARNESS_POSTPROC) ; $$ok
 
 run-test-ondotnet-lib: test-local
