@@ -1,0 +1,5 @@
+2008-09-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DynamicDataSourceOperation.cs, DynamicValidatorEventArgs.cs,
+	  IDynamicDataSource.cs, IDynamicValidatorException.cs :
+	  new in 3.5 SP1.

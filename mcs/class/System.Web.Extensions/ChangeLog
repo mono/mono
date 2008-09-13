@@ -1,3 +1,8 @@
+2008-09-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Web.Extensions.dll.sources :
+	  added sys.web.DynamicData types.
+
 2008-08-30  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Web.Script.Serialization/JavaScriptSerializer.cs: if the
