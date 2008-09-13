@@ -31,7 +31,7 @@ using System;
 using System.Security.Permissions;
 using System.Web;
 
-namespace System.Web.Script.Services
+namespace System.Web.DynamicData
 {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]

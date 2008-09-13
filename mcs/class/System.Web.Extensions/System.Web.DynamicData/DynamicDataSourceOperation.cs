@@ -31,7 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace System.Web.Script.Services
+namespace System.Web.DynamicData
 {
 	public enum DynamicDataSourceOperation
 	{
