@@ -272,9 +272,6 @@ namespace System {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern bool SetBreak (bool wantBreak);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern bool GetTtySize (IntPtr handle, out int width, out int height);
 	}
 }
 #endif
