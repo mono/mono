@@ -508,6 +508,44 @@ namespace System.Data.OracleClient
 						OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, out rsize);
 					} 
 					break;
+					case OciDataType.Long:
+					case OciDataType.LongVarChar:
+						bindType = OciDataType.LongVarChar;
+
+						// FIXME: use piecewise fetching for Long, Clob, Blob, and Long Raw
+						// See http://download.oracle.com/docs/cd/B19306_01/appdev.102/b14250/oci05bnd.htm#sthref724
+						
+						bindSize = Size + 5; // 4 bytes prepended for length, bytes, 1 byte NUL character
+
+						indicator = 0;
+						svalue = "\0";
+						// convert value from managed type to type to marshal
+						if (direction == ParameterDirection.Input || 
+							direction == ParameterDirection.InputOutput) {
+
+							svalue = v.ToString () + '\0';
+						}
+
+						bytes = new byte [bindSize];
+						// LONG is only ANSI 
+						ASCIIEncoding enc = new ASCIIEncoding ();
+						
+						if (direction == ParameterDirection.Input || 
+							direction == ParameterDirection.InputOutput) {
+							int byteCount = 0;
+							if (svalue.Length > 0) {	
+								byteCount = enc.GetBytes (svalue, 4, svalue.Length, bytes, 0);
+								// LONG VARCHAR prepends a 4-byte length
+								if (byteCount > 0) {
+									byte[] byteArrayLen = BitConverter.GetBytes ((uint) byteCount);
+									bytes[0] = byteArrayLen[0];
+									bytes[1] = byteArrayLen[1];
+									bytes[2] = byteArrayLen[2];
+									bytes[3] = byteArrayLen[3];
+								}
+							}
+						}
+						break;
 				default:
 					// FIXME: move this up - see how Char, Number, and Date are done...
 					if (direction == ParameterDirection.Output || 
@@ -519,12 +557,6 @@ namespace System.Data.OracleClient
 							size = 10;
 							bindType = OciDataType.Char;
 							bindSize = size * 2;
-							bindOutValue = OciCalls.AllocateClear (bindSize);
-							bindValue = bindOutValue;
-							break;
-						case OciDataType.Date:
-							bindSize = 7;
-							bindType = OciDataType.Date;
 							bindOutValue = OciCalls.AllocateClear (bindSize);
 							bindValue = bindOutValue;
 							break;
@@ -540,18 +572,6 @@ namespace System.Data.OracleClient
 							bindOutValue = dateTimeDesc.Handle;
 							bindValue = dateTimeDesc.Handle;
 							useRef = true;
-							break;
-						case OciDataType.Long:
-						case OciDataType.LongVarChar:
-							// LAMESPEC: you don't know size until you get it;
-							// therefore, you must allocate an insane size
-							// see OciDefineHandle
-							// FIXME: use piecewise fetching for Long, Clob, Blob, and Long Raw
-							// See http://download.oracle.com/docs/cd/B19306_01/appdev.102/b14250/oci05bnd.htm#sthref724
-							bindSize = OciDefineHandle.LongVarCharMaxValue;
-							bindOutValue = OciCalls.AllocateClear (bindSize);
-							bindType = OciDataType.LongVarChar;
-							bindValue = bindOutValue;
 							break;
 						case OciDataType.Blob:
 						case OciDataType.Clob:
@@ -633,30 +653,6 @@ namespace System.Data.OracleClient
 								year, month, day, hour, min, sec, fsec,
 								timezone);
 							useRef = true;
-						}
-						else if (oracleType == OracleType.DateTime) {
-							sDate = "";
-							dt = DateTime.MinValue;
-							if (v is String) {
-								sDate = (string) v;
-								dt = DateTime.Parse (sDate);
-							}
-							else if (v is DateTime)
-								dt = (DateTime) v;
-							else if (v is OracleString) {
-								sDate = (string) v;
-								dt = DateTime.Parse (sDate);
-							}
-							else if (v is OracleDateTime) {
-								OracleDateTime odt = (OracleDateTime) v;
-								dt = (DateTime) odt.Value;
-							}
-							else
-								throw new NotImplementedException ("For OracleType.DateTime, data type not implemented: " + v.GetType().ToString() + "."); // ?
-
-							bytes = PackDate (dt);
-							bindType = OciDataType.Date;
-							bindSize = bytes.Length;
 						}
 						else if (oracleType == OracleType.Blob) {
 							bytes = (byte[]) v;
@@ -1117,17 +1113,15 @@ namespace System.Data.OracleClient
 				break;
 			case OciDataType.Long:
 			case OciDataType.LongVarChar:
-				//buffer = new byte [OciDefineHandle.LongVarCharMaxValue];
-				//Marshal.Copy (Value, buffer, 0, buffer.Length);
-
 				int longSize = 0;
 				if (BitConverter.IsLittleEndian)
-					longSize = BitConverter.ToInt32 (new byte [] {buffer [0], buffer [1], buffer [2], buffer [3]}, 0);
+					longSize = BitConverter.ToInt32 (new byte [] {bytes [0], bytes [1], bytes [2], bytes [3]}, 0);
 				else
-					longSize = BitConverter.ToInt32 (new byte [] {buffer [3], buffer [2], buffer [1], buffer [0]}, 0);
+					longSize = BitConverter.ToInt32 (new byte [] {bytes [3], bytes [2], bytes [1], bytes [0]}, 0);
 
 				ASCIIEncoding encoding = new ASCIIEncoding ();
-				value = encoding.GetString (buffer, 4, longSize);
+				value = encoding.GetString (bytes, 4, longSize);
+				encoding = null;
 				break;
 			case OciDataType.Integer:
 			case OciDataType.Number:
@@ -1156,7 +1150,7 @@ namespace System.Data.OracleClient
 				lob.connection = connection;
 				value = lob;
 				break;
-			case OciDataType.RSet: // REF CURSOR
+			case OciDataType.RSet: // REF CURSOR				
 				OciStatementHandle cursorStatement = GetOutRefCursor (cmd);
 				value = new OracleDataReader (cursorStatement.Command, cursorStatement, true, CommandBehavior.Default);
 				break;

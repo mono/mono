@@ -1,3 +1,15 @@
+2008-09-13  Daniel Morgan <monodanmorg@yahoo.com>
+
+	* Test/TestOracleClient.cs: add test for LONG (long varchar)
+	testing paramters for Input, Output, 
+	InputOutput, and ReturnValue and
+	situations when any of these could be DBNull.Value
+
+	* System.Data.OracleClient/OracleParameter.cs: fix
+	handling of parameters LONG (long varchar).  However,
+	it probably would be better to implement LONG using
+	piecewise operation.  Also, remove old code.
+
 2008-09-10  Daniel Morgan <monodanmorg@yahoo.com>
 
 	* Test/TestOracleClient.cs: fix typo,

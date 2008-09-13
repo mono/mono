@@ -1794,6 +1794,143 @@ namespace Test.OracleClient
 
 		}
 
+		static void OutParmTest4(OracleConnection con)
+		{
+		    // test stored fuctions with 4 parameters
+		    // 1. input long
+		    // 2. output long
+		    // 3. input output long
+		    // 4. return long
+
+		    Console.WriteLine("  Create stored function SP_OUTPUTPARMTEST4 for testing LONG VARCHAR Input, Output, InputOutput, Return parameters...");
+
+		    OracleCommand cmd2 = con.CreateCommand();
+		    cmd2.CommandText =
+			"CREATE OR REPLACE FUNCTION SP_OUTPUTPARMTEST4(parm1 IN LONG, parm2 OUT LONG, parm3 IN OUT LONG) RETURN LONG " +
+			"IS " +
+			"    returnValue LONG := 'A very, very, very long value in a far away memory space.'; " +
+			"BEGIN " +
+			"   IF parm1 IS NULL THEN " +
+			"        parm2 := 'parm1 is null'; " +
+			"        returnValue := 'Another one bytes the dust.'; " +
+			"   ELSE " +
+			"	     parm2 := 'One' || parm1 || 'Three'; " +
+			"   END IF; " +
+			"   IF parm3 IS NOT NULL THEN " +
+			"       parm3 := parm2 || parm3 || 'Five'; " +
+			"   ELSE " +
+			"       parm3 := 'parm3 in was NULL'; " +
+			"   END IF; " +
+			"   IF parm1 IS NOT NULL THEN " +
+			"       IF parm1 = '999' THEN " +
+			"          parm2 := NULL; " +
+			"          parm3 := NULL; " +
+			"          returnValue := NULL; " +
+			"       END IF; " +
+			"   END IF; " +
+			"   RETURN returnValue; " +
+			"END;";
+
+		    cmd2.ExecuteNonQuery();
+
+		    Console.WriteLine("  COMMIT...");
+		    cmd2.CommandText = "COMMIT";
+		    cmd2.ExecuteNonQuery();
+
+		    Console.WriteLine("  Call stored procedure SP_OUTPUTPARMTEST4 with 4 parameters...");
+		    OracleCommand cmd3 = con.CreateCommand();
+		    cmd3.CommandType = CommandType.Text;
+		    cmd3.CommandText =
+			"BEGIN " +
+			"	:ReturnValue := SP_OUTPUTPARMTEST4(:p1, :p2, :p3); " +
+			"END;";
+		    OracleParameter myParameter1 = new OracleParameter("p1", OracleType.LongVarChar);
+		    myParameter1.Size = 1000;
+		    myParameter1.Direction = ParameterDirection.Input;
+		    myParameter1.Value = "Two";
+
+		    OracleParameter myParameter2 = new OracleParameter("p2", OracleType.LongVarChar);
+		    myParameter2.Size = 1000;
+		    myParameter2.Direction = ParameterDirection.Output;
+
+		    OracleParameter myParameter3 = new OracleParameter("p3", OracleType.LongVarChar);
+		    myParameter3.Value = "Four";
+		    myParameter3.Size = 1000;
+		    myParameter3.Direction = ParameterDirection.InputOutput;
+
+		    OracleParameter myParameter4 = new OracleParameter("ReturnValue", OracleType.LongVarChar);
+		    myParameter4.Size = 1000;
+		    myParameter4.Direction = ParameterDirection.ReturnValue;
+
+		    cmd3.Parameters.Add(myParameter1);
+		    cmd3.Parameters.Add(myParameter2);
+		    cmd3.Parameters.Add(myParameter3);
+		    cmd3.Parameters.Add(myParameter4);
+
+		    cmd3.ExecuteNonQuery();
+		    string outValue = (string)myParameter2.Value;
+		    string inOutValue = (string)myParameter3.Value;
+		    string returnValue = (string)myParameter4.Value;
+		    Console.WriteLine("    1Out Value should be: OneTwoThree");
+		    Console.WriteLine("    1Out Value: " + outValue);
+		    Console.WriteLine("    1InOut Value should be: OneTwoThreeFourFive");
+		    Console.WriteLine("    1InOut Value: " + inOutValue);
+		    Console.WriteLine("    1Return Value should be: A very, very, very long value in a far away memory space.");
+		    Console.WriteLine("    1Return Value: " + returnValue);
+		    Console.WriteLine();
+
+		    myParameter1.Value = DBNull.Value;
+		    myParameter3.Value = "Hello";
+		    cmd3.ExecuteNonQuery();
+		    outValue = (string)myParameter2.Value;
+		    inOutValue = (string)myParameter3.Value;
+		    returnValue = (string)myParameter4.Value;
+		    Console.WriteLine("    2Out Value should be: parm1 is null");
+		    Console.WriteLine("    2Out Value: " + outValue);
+		    Console.WriteLine("    2InOut Value should be: parm1 is nullHelloFive");
+		    Console.WriteLine("    2InOut Value: " + inOutValue);
+		    Console.WriteLine("    2Return Value should be: Another one bytes the dust.");
+		    Console.WriteLine("    2Return Value: " + returnValue);
+		    Console.WriteLine();
+
+		    myParameter1.Value = "999";
+		    myParameter3.Value = "Bye";
+		    cmd3.ExecuteNonQuery();
+		    if (myParameter2.Value == DBNull.Value)
+			outValue = "Value is DBNull.Value";
+		    else
+			outValue = (string)myParameter2.Value;
+		    if (myParameter3.Value == DBNull.Value)
+			inOutValue = "Value is DBNullValue";
+		    else
+			inOutValue = (string)myParameter3.Value;
+		    if (myParameter4.Value == DBNull.Value)
+			returnValue = "Value is DBNull.Value";
+		    else
+			returnValue = (string)myParameter4.Value;
+		    Console.WriteLine("    3Out Value should be: Value is DBNull.Value");
+		    Console.WriteLine("    3Out Value: " + outValue);
+		    Console.WriteLine("    3InOut Value should be: Value is DBNull.Value");
+		    Console.WriteLine("    3InOut Value: " + inOutValue);
+		    Console.WriteLine("    3Return Value should be: Value is DBNull.Value");
+		    Console.WriteLine("    3Return Value: " + returnValue);
+		    Console.WriteLine();
+
+		    myParameter1.Value = "***";
+		    myParameter3.Value = DBNull.Value;
+		    cmd3.ExecuteNonQuery();
+		    outValue = (string)myParameter2.Value;
+		    inOutValue = (string)myParameter3.Value;
+		    returnValue = (string)myParameter4.Value;
+		    Console.WriteLine("    4Out Value should be: One***Three");
+		    Console.WriteLine("    4Out Value: " + outValue);
+		    Console.WriteLine("    4InOut Value should be: parm3 in was NULL");
+		    Console.WriteLine("    4InOut Value: " + inOutValue);
+		    Console.WriteLine("    4Return Value should be: A very, very, very long value in a far away memory space.");
+		    Console.WriteLine("    4Return Value: " + returnValue);
+		    Console.WriteLine();
+		}
+
 		static void ShowConnectionProperties (OracleConnection con) 
 		{
 			try {
@@ -2512,6 +2649,10 @@ namespace Test.OracleClient
 			Console.WriteLine ("Out Parameter and PL/SQL Block Test 3 BEGIN...");
 			OutParmTest3 (con1); 
 			Console.WriteLine ("Out Parameter and PL/SQL Block Test 3 END...");
+
+			Console.WriteLine ("Out Parameter and PL/SQL Block Test 4 BEGIN...");
+			OutParmTest4 (con1); 
+			Console.WriteLine ("Out Parameter and PL/SQL Block Test 4 END...");
 
 			Wait ("");
 
