@@ -1,3 +1,7 @@
+2008-09-13  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc.c: Convert result to single for OP_ICONV_TO_R4.
+
 2008-09-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h (MONO_IS_JUMP_TABLE): Handle GOT_ENTRY.
