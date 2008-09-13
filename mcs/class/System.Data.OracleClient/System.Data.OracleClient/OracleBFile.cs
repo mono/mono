@@ -26,9 +26,9 @@ namespace System.Data.OracleClient
 
 		public static readonly new OracleBFile Null = new OracleBFile ();
 
-		OracleConnection connection;
-		bool isOpen = true;
-		bool notNull;
+		//OracleConnection connection;
+		//bool isOpen;
+		//bool notNull;
 
 		#endregion // Fields
 
@@ -36,6 +36,7 @@ namespace System.Data.OracleClient
 
 		internal OracleBFile ()
 		{
+			throw new NotImplementedException ();
 		}
 
 		#endregion // Constructors
@@ -43,26 +44,38 @@ namespace System.Data.OracleClient
 		#region Properties
 
 		public override bool CanRead {
-			get { return (IsNull || isOpen); }
+			get { 
+				//return (IsNull || isOpen); 
+				throw new NotImplementedException ();
+			}
 		}
 
 		public override bool CanSeek {
-			get { return (IsNull || isOpen); }
+			get { 
+				//return (IsNull || isOpen);
+				throw new NotImplementedException ();
+			}
 		}
 
 		public override bool CanWrite {
-			get { return false; }
+			get { 
+				//return false; 
+				throw new NotImplementedException ();				
+			}
 		}
 
 		public OracleConnection Connection {
-			get { return connection; }
+			get { 				
+				//return connection; 
+				throw new NotImplementedException ();
+			}
 		}
 
 		public string DirectoryName {
 			[MonoTODO]
 			get { 
-				if (!isOpen)
-					throw new ObjectDisposedException ("OracleBFile");
+				//if (!isOpen)
+				//	throw new ObjectDisposedException ("OracleBFile");
 				throw new NotImplementedException ();
 			}
 		}
@@ -70,10 +83,10 @@ namespace System.Data.OracleClient
 		public bool FileExists {
 			[MonoTODO]
 			get { 
-				if (!isOpen)
-					throw new ObjectDisposedException ("OracleBFile");
-				if (Connection.State == ConnectionState.Closed)
-					throw new InvalidOperationException ();
+				//if (!isOpen)
+				//	throw new ObjectDisposedException ("OracleBFile");
+				//if (Connection.State == ConnectionState.Closed)
+				//	throw new InvalidOperationException ();
 				throw new NotImplementedException ();
 			}
 		}
@@ -81,23 +94,26 @@ namespace System.Data.OracleClient
 		public string FileName {
 			[MonoTODO]
 			get {
-				if (!isOpen)
-					throw new ObjectDisposedException ("OracleBFile");
-				if (IsNull)
-					return String.Empty;
+				//if (!isOpen)
+				//	throw new ObjectDisposedException ("OracleBFile");
+				//if (IsNull)
+				//	return String.Empty;
 				throw new NotImplementedException ();
 			}
 		}
 
 		public bool IsNull {
-			get { return !notNull; }
+			get { 
+				//return !notNull; 
+				throw new NotImplementedException ();				
+			}
 		}
 
 		public override long Length {
 			[MonoTODO]
 			get { 
-				if (!isOpen)
-					throw new ObjectDisposedException ("OracleBFile");
+				//if (!isOpen)
+				//	throw new ObjectDisposedException ("OracleBFile");
 				throw new NotImplementedException ();
 			}
 		}
@@ -105,16 +121,16 @@ namespace System.Data.OracleClient
 		public override long Position {
 			[MonoTODO]
 			get { 
-				if (!isOpen)
-					throw new ObjectDisposedException ("OracleBFile");
+				//if (!isOpen)
+				//	throw new ObjectDisposedException ("OracleBFile");
 				throw new NotImplementedException ();
 			}
 			[MonoTODO]
 			set {
-				if (!isOpen)
-					throw new ObjectDisposedException ("OracleBFile");
-				if (value > Length) 
-					throw new ArgumentOutOfRangeException ();
+				//if (!isOpen)
+				//	throw new ObjectDisposedException ("OracleBFile");
+				//if (value > Length) 
+				//	throw new ArgumentOutOfRangeException ();
 				throw new NotImplementedException ();
 			}
 		}
@@ -206,3 +222,5 @@ namespace System.Data.OracleClient
 		#endregion // Methods
 	}
 }
+
+

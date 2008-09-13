@@ -23,7 +23,7 @@ namespace System.Data.OracleClient.Oci {
 	{
 		#region Constructors
 
-		public OciDescriptorHandle (OciHandleType type, OciHandle parent, IntPtr newHandle)
+		internal OciDescriptorHandle (OciHandleType type, OciHandle parent, IntPtr newHandle)
 			: base (type, parent, newHandle)
 		{
 		}

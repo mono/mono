@@ -1083,8 +1083,6 @@ namespace System.Data.OracleClient
 			if (indicator == -1)
 				return;
 
-			byte[] buffer = null;
-			object tmp = null;
 			int rsize = 0;
 			IntPtr env = IntPtr.Zero;
 			StringBuilder ret = null;
@@ -1157,8 +1155,6 @@ namespace System.Data.OracleClient
 			default:
 				throw new NotImplementedException ("Data Type not implemented: " + ociType.ToString() + ".");
 			}
-			tmp = null;
-			buffer = null;
 		}
 
 		internal OciStatementHandle GetOutRefCursor (OracleCommand cmd) 

@@ -307,8 +307,8 @@ namespace System.Data.OracleClient
 				newParm.Offset = parm.Offset;
 				newParm.OracleType = parm.OracleType;
 				newParm.ParameterName = parm.ParameterName;
-				newParm.Precision = parm.Precision;
-				newParm.Scale = parm.Scale;
+				//newParm.Precision = parm.Precision;
+				//newParm.Scale = parm.Scale;
 				newParm.SourceColumn = parm.SourceColumn;
 				newParm.SourceVersion = parm.SourceVersion;
 				newParm.Value = parm.Value;

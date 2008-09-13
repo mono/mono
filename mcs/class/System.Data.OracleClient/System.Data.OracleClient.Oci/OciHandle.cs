@@ -28,7 +28,8 @@ namespace System.Data.OracleClient.Oci {
 		#region Fields
 
 		bool disposed = false;
-		IntPtr handle = IntPtr.Zero;
+
+		protected internal IntPtr handle = IntPtr.Zero;
 		OciHandle parent = null;
 		OciHandleType type;
 
@@ -36,7 +37,7 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Constructors
 
-		public OciHandle (OciHandleType type, OciHandle parent, IntPtr newHandle) {
+		internal OciHandle (OciHandleType type, OciHandle parent, IntPtr newHandle) {
 			this.type = type;
 			this.parent = parent;
 			this.handle = newHandle;
@@ -50,15 +51,15 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Properties
 
-		public OciHandle Parent {
+		internal OciHandle Parent {
 			get { return parent; }
 		}
 
-		public IntPtr Handle { 
+		internal IntPtr Handle { 
 			get { return handle; }
 		}
 
-		public OciHandleType HandleType { 
+		internal OciHandleType HandleType { 
 			get { return type; }
 		}
 
@@ -66,7 +67,7 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Methods
 
-		public OciHandle Allocate (OciHandleType type) {
+		internal OciHandle Allocate (OciHandleType type) {
 			int status = 0;
 			IntPtr newHandle = IntPtr.Zero;
 
@@ -150,11 +151,11 @@ namespace System.Data.OracleClient.Oci {
 			}
 		}
 
-		public bool GetAttributeBool (OciAttributeType attrType, OciErrorHandle errorHandle) {
+		internal bool GetAttributeBool (OciAttributeType attrType, OciErrorHandle errorHandle) {
 			return (GetAttributeInt32 (attrType, errorHandle) != 0);
 		}
 
-		public sbyte GetAttributeSByte (OciAttributeType attrType, OciErrorHandle errorHandle) {
+		internal sbyte GetAttributeSByte (OciAttributeType attrType, OciErrorHandle errorHandle) {
 			int status = 0;
 			sbyte output;
 
@@ -173,7 +174,7 @@ namespace System.Data.OracleClient.Oci {
 			return output;
 		}
 
-		public byte GetAttributeByte (OciAttributeType attrType, OciErrorHandle errorHandle) {
+		internal byte GetAttributeByte (OciAttributeType attrType, OciErrorHandle errorHandle) {
 			int status = 0;
 			byte output;
 
@@ -192,7 +193,7 @@ namespace System.Data.OracleClient.Oci {
 			return output;
 		}
 
-		public ushort GetAttributeUInt16 (OciAttributeType attrType, OciErrorHandle errorHandle) {
+		internal ushort GetAttributeUInt16 (OciAttributeType attrType, OciErrorHandle errorHandle) {
 			int status = 0;
 			ushort output;
 
@@ -211,7 +212,7 @@ namespace System.Data.OracleClient.Oci {
 			return output;
 		}
 
-		public int GetAttributeInt32 (OciAttributeType attrType, OciErrorHandle errorHandle) {
+		internal int GetAttributeInt32 (OciAttributeType attrType, OciErrorHandle errorHandle) {
 			int status = 0;
 			int output;
 
@@ -231,7 +232,7 @@ namespace System.Data.OracleClient.Oci {
 		}
 
 		[DllImport ("oci", EntryPoint = "OCIAttrGet")]
-		private static extern int OCIAttrGetRowIdDesc (IntPtr trgthndlp,
+		internal static extern int OCIAttrGetRowIdDesc (IntPtr trgthndlp,
 			[MarshalAs (UnmanagedType.U4)] OciHandleType trghndltyp,
 			IntPtr attributep,
 			ref uint sizep,
@@ -268,7 +269,7 @@ namespace System.Data.OracleClient.Oci {
 			return descriptor;
 		}
 
-		public IntPtr GetAttributeIntPtr (OciAttributeType attrType, OciErrorHandle errorHandle) {
+		internal IntPtr GetAttributeIntPtr (OciAttributeType attrType, OciErrorHandle errorHandle) {
 			int status = 0;
 			IntPtr output = IntPtr.Zero;
 			status = OciCalls.OCIAttrGetIntPtr (Handle,
@@ -286,7 +287,7 @@ namespace System.Data.OracleClient.Oci {
 			return output;
 		}
 
-		public string GetAttributeString (OciAttributeType attrType, OciErrorHandle errorHandle) {
+		internal string GetAttributeString (OciAttributeType attrType, OciErrorHandle errorHandle) {
 			string output = String.Empty;
 			IntPtr outputPtr = IntPtr.Zero;
 			int outSize;
@@ -313,7 +314,7 @@ namespace System.Data.OracleClient.Oci {
 			return output;
 		}
 
-		public void SetAttributeString (string attribute, OciAttributeType attrType, OciErrorHandle errorHandle) 
+		internal void SetAttributeString (string attribute, OciAttributeType attrType, OciErrorHandle errorHandle) 
 		{
 			int status = 0;
 			
@@ -330,7 +331,7 @@ namespace System.Data.OracleClient.Oci {
 			}
 		}
 
-		public void SetHandle (IntPtr h)
+		internal void SetHandle (IntPtr h)
 		{
 			handle = h;
 		}

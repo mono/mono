@@ -30,7 +30,7 @@ namespace System.Data.OracleClient.Oci
 
 		bool disposed = false;
 
-		IntPtr handle = IntPtr.Zero;
+		//IntPtr handle;
 		IntPtr value;
 		short indicator;
 		//OracleType type;
@@ -59,12 +59,12 @@ namespace System.Data.OracleClient.Oci
 
 		#region Constructors
 
-		public OciDefineHandle (OciHandle parent, IntPtr newHandle)
+		internal OciDefineHandle (OciHandle parent, IntPtr newHandle)
 			: base (OciHandleType.Define, parent, newHandle)
 		{
 		}
 
-		public void DefineByPosition (int position, OracleConnection connection)
+		internal void DefineByPosition (int position, OracleConnection connection)
 		{
 			OciParameterDescriptor parameter = ((OciStatementHandle) Parent).GetParameter (position);
 
@@ -83,36 +83,36 @@ namespace System.Data.OracleClient.Oci
 
 		#region Properties
 
-		public OciDataType DataType {
+		internal OciDataType DataType {
 			get { return definedType; }
 		}
 
-		public Type FieldType {
+		internal Type FieldType {
 			get { return fieldType; }
 		}
 
-		public int DefinedSize {
+		internal int DefinedSize {
 			get { return definedSize; }
 		}
 
-		public OciErrorHandle ErrorHandle {
+		internal OciErrorHandle ErrorHandle {
 			get { return errorHandle; }
 			set { errorHandle = value; }
 		}
 
-		public bool IsNull {
+		internal bool IsNull {
 			get { return (indicator == -1); }
 		}
 
-		public short Scale {
+		internal short Scale {
 			get { return scale; }
 		}
 
-		public short Size {
+		internal short Size {
 			get { return rlenp; }
 		}
 
-		public IntPtr Value {
+		internal IntPtr Value {
 			get { return value; }
 		}
 
@@ -401,12 +401,12 @@ namespace System.Data.OracleClient.Oci
 			}
 		}
 
-		public OracleLob GetOracleLob ()
+		internal OracleLob GetOracleLob ()
 		{
 			return new OracleLob (lobLocator, ociType);
 		}
 
-                public object GetValue (IFormatProvider formatProvider, OracleConnection conn)
+                internal object GetValue (IFormatProvider formatProvider, OracleConnection conn)
 		{
 			object tmp;
 

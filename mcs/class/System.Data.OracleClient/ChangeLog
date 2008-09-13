@@ -1,5 +1,18 @@
 2008-09-13  Daniel Morgan <monodanmorg@yahoo.com>
 
+	* System.Data.OracleClient/OracleConnection.cs: add stubs
+	for method GetSchema which is part of NET_2_0, and clean up warnings
+
+	* System.Data.OracleClient/OracleCommand.cs
+	* ystem.Data.OracleClient/OracleParameter.cs
+	* System.Data.OracleClient/OracleBFile.cs
+	* System.Data.OracleClient.Oci/OciHandle.cs: clean up warnings
+
+	* System.Data.OracleClient.Oci/OciDescriptorHandle.cs
+	* System.Data.OracleClient.Oci/OciDefineHandle.cs: make methods internal
+
+2008-09-13  Daniel Morgan <monodanmorg@yahoo.com>
+
 	* Test/TestOracleClient.cs: add test for LONG (long varchar)
 	testing paramters for Input, Output, 
 	InputOutput, and ReturnValue and
