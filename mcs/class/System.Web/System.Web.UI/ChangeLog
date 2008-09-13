@@ -1,5 +1,9 @@
 2008-09-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CssClassPropertyAttribute.cs : new in 3.5 SP1.
+
+2008-09-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* IBindableControl.cs : new in 3.5 SP1.
 
 2008-09-01  Marek Habersack  <mhabersack@novell.com>

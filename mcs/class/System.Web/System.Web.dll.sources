@@ -527,6 +527,7 @@ System.Web.UI/Control.cs
 System.Web.UI/ControlSkin.cs
 System.Web.UI/ControlSkinDelegate.cs
 System.Web.UI/ControlValuePropertyAttribute.cs
+System.Web.UI/CssClassPropertyAttribute.cs
 System.Web.UI/CssStyleCollection.cs
 System.Web.UI/DataBinder.cs
 System.Web.UI/DataBindingBuilder.cs
