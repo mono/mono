@@ -1,5 +1,10 @@
 2008-09-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* System.Web.dll.sources: added System.Web.UI/IAutoFieldGenerator.cs
+	  and System.Web.UI.WebControls/IPersistedSelector.cs.
+
+2008-09-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* System.Web.dll.sources: added
 	  System.Web.UI/CssClassPropertyAttribute.cs.
 
