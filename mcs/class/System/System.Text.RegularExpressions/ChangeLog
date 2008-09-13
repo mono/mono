@@ -1,3 +1,8 @@
+2008-09-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* RxInterpreter.cs: Fix the failure case of the No<XXX> opcodes. Fixes
+	#426142.
+
 2008-09-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* RxInterpreter.cs RxCompiler.cs: Implement some missing Category opcodes.

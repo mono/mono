@@ -703,7 +703,7 @@ namespace System.Text.RegularExpressions {
 								pc += ins_len;
 								continue;
 							} else {
-								/* Fail both inside an outside a char group */
+								/* Fail both inside and outside a char group */
 								return false;
 							}
 						}
@@ -960,10 +960,7 @@ namespace System.Text.RegularExpressions {
 							continue;
 						}
 					}
-					if (char_group_end == 0)
-						return false;
-					pc += 3 + program [pc + 2];
-					continue;
+					return false;
 				case RxOp.NoBitmapIgnoreCase:
 					if (strpos < string_end) {
 						int c = str [strpos];
@@ -990,10 +987,7 @@ namespace System.Text.RegularExpressions {
 							continue;
 						}
 					}
-					if (char_group_end == 0)
-						return false;
-					pc += 3 + program [pc + 2];
-					continue;
+					return false;
 
 					/* UnicodeChar */
 
@@ -1017,10 +1011,7 @@ namespace System.Text.RegularExpressions {
 						pc += 3;
 						continue;
 					}
-					if (char_group_end == 0)
-						return false;
-					pc += 3;
-					continue;
+					return false;
 				case RxOp.UnicodeCharIgnoreCase:
 					if (strpos < string_end && (Char.ToLower (str [strpos]) == (program [pc + 1] | (program [pc + 2] << 8)))) {
 						strpos++;
@@ -1041,10 +1032,7 @@ namespace System.Text.RegularExpressions {
 						pc += 3;
 						continue;
 					}
-					if (char_group_end == 0)
-						return false;
-					pc += 3;
-					continue;
+					return false;
 
 					/* CategoryAny */
 
@@ -1104,10 +1092,7 @@ namespace System.Text.RegularExpressions {
 							continue;
 						}
 					}
-					if (char_group_end == 0)
-						return false;
-					pc++;
-					continue;
+					return false;
 
 					/* CategoryDigit */
 
@@ -1131,10 +1116,7 @@ namespace System.Text.RegularExpressions {
 						pc++;
 						continue;
 					}
-					if (char_group_end == 0)
-						return false;
-					pc++;
-					continue;
+					return false;
 
 					/* CategoryWhiteSpace */
 
@@ -1158,10 +1140,7 @@ namespace System.Text.RegularExpressions {
 						pc++;
 						continue;
 					}
-					if (char_group_end == 0)
-						return false;
-					pc++;
-					continue;
+					return false;
 
 					/* CategoryEcmaWord */
 
@@ -1195,10 +1174,7 @@ namespace System.Text.RegularExpressions {
 						pc++;
 						continue;
 					}
-					if (char_group_end == 0)
-						return false;
-					pc++;
-					continue;
+					return false;
 
 					/* CategoryEcmaWhiteSpace */
 
@@ -1232,10 +1208,7 @@ namespace System.Text.RegularExpressions {
 						pc++;
 						continue;
 					}
-					if (char_group_end == 0)
-						return false;
-					pc++;
-					continue;
+					return false;
 
 					/* CategoryUnicodeSpecials */
 
@@ -1269,10 +1242,7 @@ namespace System.Text.RegularExpressions {
 						pc++;
 						continue;
 					}
-					if (char_group_end == 0)
-						return false;
-					pc++;
-					continue;
+					return false;
 
 					/* CategoryUnicode */
 
@@ -1296,10 +1266,7 @@ namespace System.Text.RegularExpressions {
 						pc += 2;
 						continue;
 					}
-					if (char_group_end == 0)
-						return false;
-					pc += 2;
-					continue;
+					return false;
 
 					/* General category case */
 				case RxOp.CategoryGeneral:
@@ -1322,10 +1289,7 @@ namespace System.Text.RegularExpressions {
 						pc += 2;
 						continue;
 					}
-					if (char_group_end == 0)
-						return false;
-					pc += 2;
-					continue;
+					return false;
 
 					/*
 					 * Reverse versions of the above opcodes.
@@ -1430,10 +1394,7 @@ namespace System.Text.RegularExpressions {
 							continue;
 						}
 					}
-					if (char_group_end == 0)
-						return false;
-					pc += 3 + program [pc + 2];
-					continue;
+					return false;
 				case RxOp.CategoryAnyReverse:
 					if (strpos > 0 && str [strpos - 1] != '\n') {
 						strpos --;
@@ -1484,10 +1445,7 @@ namespace System.Text.RegularExpressions {
 							continue;
 						}
 					}
-					if (char_group_end == 0)
-						return false;
-					pc++;
-					continue;
+					return false;
 				case RxOp.CategoryDigitReverse:
 					if (strpos > 0 && Char.IsDigit (str [strpos - 1])) {
 						strpos --;
@@ -1508,10 +1466,7 @@ namespace System.Text.RegularExpressions {
 						pc++;
 						continue;
 					}
-					if (char_group_end == 0)
-						return false;
-					pc++;
-					continue;
+					return false;
 				case RxOp.CategoryWhiteSpaceReverse:
 					if (strpos > 0 && Char.IsWhiteSpace (str [strpos - 1])) {
 						strpos --;
@@ -1532,10 +1487,7 @@ namespace System.Text.RegularExpressions {
 						pc++;
 						continue;
 					}
-					if (char_group_end == 0)
-						return false;
-					pc++;
-					continue;
+					return false;
 				case RxOp.CategoryEcmaWordReverse:
 					if (strpos > 0) {
 						int c = str [strpos - 1];
@@ -1566,10 +1518,7 @@ namespace System.Text.RegularExpressions {
 						pc++;
 						continue;
 					}
-					if (char_group_end == 0)
-						return false;
-					pc++;
-					continue;
+					return false;
 				case RxOp.CategoryEcmaWhiteSpaceReverse:
 					if (strpos > 0) {
 						int c = str [strpos - 1];
@@ -1600,10 +1549,7 @@ namespace System.Text.RegularExpressions {
 						pc++;
 						continue;
 					}
-					if (char_group_end == 0)
-						return false;
-					pc++;
-					continue;
+					return false;
 				case RxOp.CategoryUnicodeSpecialsReverse:
 					if (strpos > 0) {
 						int c = str [strpos - 1];
@@ -1634,10 +1580,7 @@ namespace System.Text.RegularExpressions {
 						pc++;
 						continue;
 					}
-					if (char_group_end == 0)
-						return false;
-					pc++;
-					continue;
+					return false;
 				case RxOp.CategoryUnicodeReverse:
 					if (strpos > 0 && Char.GetUnicodeCategory (str [strpos - 1]) == (UnicodeCategory)program [pc + 1]) {
 						strpos --;
@@ -1658,10 +1601,7 @@ namespace System.Text.RegularExpressions {
 						pc += 2;
 						continue;
 					}
-					if (char_group_end == 0)
-						return false;
-					pc += 2;
-					continue;
+					return false;
 				case RxOp.CategoryGeneralReverse:
 					if (strpos > 0 && CategoryUtils.IsCategory ((Category)program [pc + 1], str [strpos - 1])) {
 						strpos --;
@@ -1682,10 +1622,7 @@ namespace System.Text.RegularExpressions {
 						pc += 2;
 						continue;
 					}
-					if (char_group_end == 0)
-						return false;
-					pc += 2;
-					continue;
+					return false;
 
 				case RxOp.Branch: {
 					int res = 0;
