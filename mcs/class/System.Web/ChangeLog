@@ -1,3 +1,8 @@
+2008-09-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Web.dll.sources: added
+	  System.Web.UI.WebControls/DataBoundControlMode.cs.
+
 2008-08-14  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile: allow compiling with the DEBUG, TRACE and MONO_TRACE

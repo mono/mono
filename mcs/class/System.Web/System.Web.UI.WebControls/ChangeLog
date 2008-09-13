@@ -1,3 +1,7 @@
+2008-09-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataBoundControlMode.cs : new 3.5 SP1 type.
+
 2008-08-25  Marek Habersack  <mhabersack@novell.com>
 
 	* DataBoundControl.cs: set RequiresDataBinding to true in

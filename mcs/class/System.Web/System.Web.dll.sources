@@ -771,6 +771,7 @@ System.Web.UI.WebControls/CreateUserWizard.cs
 System.Web.UI.WebControls/CreateUserWizardStep.cs
 System.Web.UI.WebControls/CustomValidator.cs
 System.Web.UI.WebControls/DataBoundControl.cs
+System.Web.UI.WebControls/DataBoundControlMode.cs
 System.Web.UI.WebControls/DataControlButton.cs
 System.Web.UI.WebControls/DataControlCellType.cs
 System.Web.UI.WebControls/DataControlCommands.cs
