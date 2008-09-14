@@ -532,7 +532,7 @@ namespace Mono.CSharp {
 				string member_name = (string) de.Key;
 
 				if (seen_names.Contains(member_name)) {
-					Report.Error(643, Location, "'" + member_name + "' duplicate named attribute argument");
+					Report.Error(643, Location, "'{0}' duplicate named attribute argument", member_name);
 					return false;
 				}				
 				seen_names.Add(member_name);
