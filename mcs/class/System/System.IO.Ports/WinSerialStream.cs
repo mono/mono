@@ -388,12 +388,13 @@ namespace System.IO.Ports
 		}
 
 		[DllImport ("kernel32", SetLastError=true)]
-		static extern bool ClearCommError (int handle, out CommStat stat);
+		static extern bool ClearCommError (int handle, out uint errors, out CommStat stat);
 
 		public int BytesToRead {
 			get {
+				uint errors;
 				CommStat stat;
-				if (!ClearCommError (handle, out stat))
+				if (!ClearCommError (handle, out errors, out stat))
 					ReportIOError (null);
 
 				return (int)stat.BytesIn;
@@ -402,8 +403,9 @@ namespace System.IO.Ports
 
 		public int BytesToWrite {
 			get {
+				uint errors;
 				CommStat stat;
-				if (!ClearCommError (handle, out stat))
+				if (!ClearCommError (handle, out errors, out stat))
 					ReportIOError (null);
 
 				return (int)stat.BytesOut;
