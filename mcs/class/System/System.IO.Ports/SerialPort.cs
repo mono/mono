@@ -302,6 +302,8 @@ namespace System.IO.Ports
 			set {
 				if (value == null)
 					throw new ArgumentNullException ("value");
+				if (value.Length == 0)
+					throw new ArgumentException ("NewLine cannot be null or empty.", "value");
 				
 				new_line = value;
 			}
