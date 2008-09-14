@@ -1,3 +1,16 @@
+2008-09-14  Daniel Morgan <monodanmorg@yahoo.com>
+
+	* Test/TestOracleClient.cs: add tests for parameters
+	of oracle type CLOB, add tests for setting oracle type
+	directly or inferred via the value, and 
+	clean up compile warnings
+
+	* System.Data.OracleClient/OracleParameter.cs: fix
+	for handling parameters of oracle type CLOB for
+	Input, Output, and Return.  InputOutput is not supported.
+	And handle CLOB parameters that are DBNull.Value or
+	their value length is zero.
+
 2008-09-13  Daniel Morgan <monodanmorg@yahoo.com>
 
 	* System.Data.OracleClient/OracleConnection.cs: add stubs

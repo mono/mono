@@ -15,9 +15,9 @@
 // mcs TestOracleClient.cs /r:System.Data.dll /r:System.Data.OracleClient.dll /nowarn:0168
 //
 // Author: 
-//     Daniel Morgan <danielmorgan@verizon.net>
+//     Daniel Morgan <monodanmorg@yahoo.com>
 //         
-// Copyright (C) Daniel Morgan, 2002, 2004-2005
+// Copyright (C) Daniel Morgan, 2002, 2004-2005, 2008
 // 
 
 using System;
@@ -470,7 +470,6 @@ namespace Test.OracleClient
 			}
 
 			OracleCommand cmd = null;
-			int rowsAffected = 0;
 
 			Console.WriteLine("  Creating table mono_adapter_test...");
 			cmd = new OracleCommand ();
@@ -499,7 +498,7 @@ namespace Test.OracleClient
 				" blob_value Blob ) ";
 			*/
 
-			rowsAffected = cmd.ExecuteNonQuery();
+			cmd.ExecuteNonQuery();
 
 			Console.WriteLine("  Begin Trans for table mono_adapter_test...");
 			OracleTransaction trans = con.BeginTransaction ();
@@ -554,7 +553,7 @@ namespace Test.OracleClient
 						"  EMPTY_BLOB() " +
 						")";
 			*/
-			rowsAffected = cmd.ExecuteNonQuery();
+			cmd.ExecuteNonQuery();
 
 			Console.WriteLine("  Select/Update CLOB columns on table mono_adapter_test...");
 		
@@ -633,6 +632,9 @@ namespace Test.OracleClient
 			da.Update(ds, "mono_adapter_test");
 
 			transaction.Commit();
+
+			mycb.Dispose();
+			mycb = null;
 		}
 
 		public static void DataAdapterTest2_Update (OracleConnection con) 
@@ -688,6 +690,9 @@ namespace Test.OracleClient
 			da.Update(ds, "mono_adapter_test");
 
 			transaction.Commit();
+
+			mycb.Dispose();
+			mycb = null;
 		}
 
 		public static void DataAdapterTest2_Delete (OracleConnection con) 
@@ -718,6 +723,9 @@ namespace Test.OracleClient
 
 			Console.WriteLine("Commit...");
 			transaction.Commit();
+
+			mycb.Dispose();
+			mycb = null;
 		}
 
 		static void TestNonQueryUsingExecuteReader(OracleConnection con) 
@@ -1931,6 +1939,221 @@ namespace Test.OracleClient
 		    Console.WriteLine();
 		}
 
+		static void OutParmTest5(OracleConnection con)
+		{
+			// test stored fuctions with 4 parameters
+			// 1. input CLOB
+			// 2. output CLOB
+			// 3. input output CLOB
+			// 4. return CLOB
+
+			Console.WriteLine("  Create stored function SP_OUTPUTPARMTEST5 for testing CLOB Input, Output, InputOutput, Return parameters...");
+
+			OracleCommand cmd2 = con.CreateCommand();
+			cmd2.CommandText =
+			    "CREATE OR REPLACE FUNCTION SP_OUTPUTPARMTEST5(parm1 IN CLOB, parm2 OUT CLOB, parm3 IN OUT CLOB) RETURN CLOB " +
+			    " IS " +
+			    "    returnValue CLOB := 'Clobber'; " +
+			    " BEGIN " +
+			    "   IF parm1 IS NULL THEN " +
+			    "        parm2 := 'parm1 is null'; " +
+			    "   ELSE " +
+			    "	     parm2 := 'One' || parm1 || 'Three'; " +
+			    "   END IF; " +
+			    "   IF parm3 IS NOT NULL THEN " +
+			    "       parm3 := parm2 || parm3 || 'Five'; " +
+			    "   ELSE " +
+			    "       parm3 := 'parm3 in was NULL'; " +
+			    "   END IF; " +
+			    "   IF parm1 IS NOT NULL THEN " +
+			    "       IF parm1 = '999' THEN " +
+			    "          parm2 := NULL; " +
+			    "          parm3 := NULL; " +
+			    "          returnValue := NULL; " +
+			    "       ELSIF LENGTH(parm1) = 0 THEN " +
+			    "          parm2 := 'parm1 is zero length'; " +
+			    "          IF LENGTH(parm3) = 0 THEN " +
+			    "              parm3 := 'parm3 is zero length';" +
+			    "          ELSE " +
+			    "              parm3 := 'Uh oh, parm3 is not zero length like we thought'; " +
+			    "          END IF; " +
+			    "          returnValue := 'parm1 is zero length'; " +
+			    "       ELSIF parm1 = '888' THEN " +
+			    "          parm2 := EMPTY_CLOB(); " +
+			    "          parm3 := EMPTY_CLOB(); " +
+			    "          returnValue := EMPTY_CLOB(); " +
+			    "       END IF; " +
+			    "   END IF; " +
+			    "   RETURN returnValue; " +
+			    "END;";
+
+			cmd2.ExecuteNonQuery();
+
+			Console.WriteLine("  COMMIT...");
+			cmd2.CommandText = "COMMIT";
+			cmd2.ExecuteNonQuery();
+
+			Console.WriteLine("  Call stored procedure SP_OUTPUTPARMTEST5 with 4 parameters...");
+			//OracleTransaction trans = con.BeginTransaction();
+			//OracleCommand cmd4 = con.CreateCommand();
+			//cmd4.Transaction = trans;
+			//OracleLob lob = CreateTemporaryLobLocator(cmd4, OracleType.Clob);
+
+			OracleCommand cmd3 = con.CreateCommand();
+			//cmd3.Transaction = trans;
+			cmd3.CommandType = CommandType.Text;
+			cmd3.CommandText =
+			    "DECLARE " +
+			    "       tempP3 CLOB; " +
+			    "BEGIN " +
+			    "	tempP3 := :inp3; " +
+			    "	:ReturnValue := SP_OUTPUTPARMTEST5(:p1, :p2, tempP3); " +
+			    "	:outp3 := tempP3;" +
+			    "END;";
+			OracleParameter myParameter1 = new OracleParameter("p1", OracleType.Clob);
+			myParameter1.Size = 1000;
+			myParameter1.Direction = ParameterDirection.Input;
+			myParameter1.Value = "Two";
+
+			OracleParameter myParameter2 = new OracleParameter("p2", OracleType.Clob);
+			myParameter2.Size = 1000;
+			myParameter2.Direction = ParameterDirection.Output;
+
+			// impossible to use one OracleParameter for an CLOB IN OUT parameter?
+			// I had to create two parameters for the 3rd parameter: in3 as input and out3 as output
+			// and in the anonymous PL/SQL block, get and set the 3rd parameter appropriately
+
+			OracleParameter myParameterIn3 = new OracleParameter("inp3", OracleType.Clob);
+			myParameterIn3.Size = 1000;
+			myParameterIn3.Direction = ParameterDirection.Input;
+			string s = "Everything";
+			myParameterIn3.Value = s;
+
+			OracleParameter myParameterOut3 = new OracleParameter("outp3", OracleType.Clob);
+			myParameterOut3.Size = 1000;
+			myParameterOut3.Direction = ParameterDirection.Output;
+
+			OracleParameter myParameter4 = new OracleParameter("ReturnValue", OracleType.Clob);
+			myParameter4.Size = 1000;
+			myParameter4.Direction = ParameterDirection.ReturnValue;
+
+			cmd3.Parameters.Add(myParameter1);
+			cmd3.Parameters.Add(myParameter2);
+			cmd3.Parameters.Add(myParameterIn3);
+			cmd3.Parameters.Add(myParameterOut3);
+			cmd3.Parameters.Add(myParameter4);
+
+			cmd3.ExecuteNonQuery();
+
+			string outValue = GetOracleClobValue(myParameter2); 
+			string inOutValue = GetOracleClobValue(myParameterOut3);
+			string returnValue = GetOracleClobValue(myParameter4);
+			Console.WriteLine("    1Out Value should be: OneTwoThree");
+			Console.WriteLine("    1Out Value: " + outValue);
+			Console.WriteLine("    1InOut Value should be: OneTwoThreeEverythingFive");
+			Console.WriteLine("    1InOut Value: " + inOutValue);
+			Console.WriteLine("    1Return Value should be: Clobber");
+			Console.WriteLine("    1Return Value: " + returnValue);
+			Console.WriteLine();
+
+			myParameter1.Value = DBNull.Value;
+			myParameterIn3.Value = "Hello";
+			cmd3.ExecuteNonQuery();
+			outValue = GetOracleClobValue(myParameter2);
+			inOutValue = GetOracleClobValue(myParameterOut3);
+			returnValue = GetOracleClobValue(myParameter4);
+			Console.WriteLine("    2Out Value should be: parm1 is null");
+			Console.WriteLine("    2Out Value: " + outValue);
+			Console.WriteLine("    2InOut Value should be: parm1 is nullHelloFive");
+			Console.WriteLine("    2InOut Value: " + inOutValue);
+			Console.WriteLine("    2Return Value should be: Clobber");
+			Console.WriteLine("    2Return Value: " + returnValue);
+			Console.WriteLine();
+
+			myParameter1.Value = "999";
+			myParameterIn3.Value = "Bye";
+			cmd3.ExecuteNonQuery();
+			outValue = GetOracleClobValue(myParameter2);
+			inOutValue = GetOracleClobValue(myParameterOut3);
+			returnValue = GetOracleClobValue(myParameter4);
+			Console.WriteLine("    3Out Value should be: Value is DBNull.Value");
+			Console.WriteLine("    3Out Value: " + outValue);
+			Console.WriteLine("    3InOut Value should be: Value is DBNull.Value");
+			Console.WriteLine("    3InOut Value: " + inOutValue);
+			Console.WriteLine("    3Return Value should be: Value is DBNull.Value");
+			Console.WriteLine("    3Return Value: " + returnValue);
+			Console.WriteLine();
+
+			myParameter1.Value = "***";
+			myParameterIn3.Value = DBNull.Value;
+			cmd3.ExecuteNonQuery();
+			outValue = GetOracleClobValue(myParameter2);
+			inOutValue = GetOracleClobValue(myParameterOut3);
+			returnValue = GetOracleClobValue(myParameter4);
+			Console.WriteLine("    4Out Value should be: One***Three");
+			Console.WriteLine("    4Out Value: " + outValue);
+			Console.WriteLine("    4InOut Value should be: parm3 in was NULL");
+			Console.WriteLine("    4InOut Value: " + inOutValue);
+			Console.WriteLine("    4Return Value should be: Clobber");
+			Console.WriteLine("    4Return Value: " + returnValue);
+			Console.WriteLine();
+			
+			myParameter1.Value = OracleLob.Null;
+			myParameterIn3.Value = "bass";
+			cmd3.ExecuteNonQuery();
+			outValue = GetOracleClobValue(myParameter2);
+			inOutValue = GetOracleClobValue(myParameterOut3);
+			returnValue = GetOracleClobValue(myParameter4);
+			Console.WriteLine("    5Out Value should be: parm1 is null");
+			Console.WriteLine("    5Out Value: " + outValue);
+			Console.WriteLine("    5InOut Value should be: parm1 is nullbassFive");
+			Console.WriteLine("    5InOut Value: " + inOutValue);
+			Console.WriteLine("    5Return Value should be: Clobber");
+			Console.WriteLine("    5Return Value: " + returnValue);
+			Console.WriteLine();
+			
+			myParameter1.Value = "888";
+			myParameterIn3.Value = "777";
+			cmd3.ExecuteNonQuery();
+			outValue = GetOracleClobValue(myParameter2);
+			inOutValue = GetOracleClobValue(myParameterOut3);
+			returnValue = GetOracleClobValue(myParameter4);
+			Console.WriteLine("    6Out Value should be: Zero Length");
+			Console.WriteLine("    6Out Value: " + outValue);
+			Console.WriteLine("    6InOut Value should be: Zero Length");
+			Console.WriteLine("    6InOut Value: " + inOutValue);
+			Console.WriteLine("    6Return Value should be: Zero Length");
+			Console.WriteLine("    6Return Value: " + returnValue);
+			Console.WriteLine();		
+		}
+
+		public static string GetOracleClobValue (OracleParameter parm)
+		{
+			if (parm.Value.Equals (DBNull.Value))
+				return "Clob is DBNull.Value";
+			OracleLob lob = (OracleLob) parm.Value;
+			if (lob.Length == 0)
+				return "Zero Length";
+			return lob.Value.ToString ();
+		}
+
+		public static OracleLob CreateTemporaryLobLocator (OracleCommand cmd, OracleType lobType)
+		{
+			cmd.CommandText =
+				"DECLARE TEMP_LOB " + lobType.ToString () + "; " +
+				"   BEGIN " +
+				"       SYS.DBMS_LOB.CREATETEMPORARY (TEMP_LOB, FALSE); " +
+				"       :TempLobLocator := TEMP_LOB; " +
+				" END;";
+
+			OracleParameter parm = cmd.Parameters.Add ("TempLobLocator", lobType);
+			parm.Direction = ParameterDirection.Output;
+
+			cmd.ExecuteNonQuery ();
+
+			return (OracleLob)parm.Value;
+		}
+
 		static void ShowConnectionProperties (OracleConnection con) 
 		{
 			try {
@@ -2546,6 +2769,38 @@ namespace Test.OracleClient
 			System.Environment.Exit (0);
 		}
 
+		private static void SetParameterOracleType (OracleConnection con) 
+		{
+			Console.WriteLine();
+			OracleParameter p = con.CreateCommand().CreateParameter();
+			Console.WriteLine("p.OracleType [VarChar]: " + p.OracleType.ToString());
+			p.OracleType = OracleType.Clob;
+			Console.WriteLine("p.OracleType [Clob]: " + p.OracleType.ToString());
+			p.Value = "SomeString";
+			Console.WriteLine("p.OracleType [Clob]: " + p.OracleType.ToString());
+			Console.WriteLine();
+
+			OracleParameter p2 = con.CreateCommand().CreateParameter();
+			Console.WriteLine("p2.OracleType [VarChar]: " + p2.OracleType.ToString());
+			p2.Value = new byte[] { 0x01, 0x02, 0x03, 0x04 };
+			Console.WriteLine("p2.OracleType [VarChar]: " + p2.OracleType.ToString());
+			p2.OracleType = OracleType.Blob;
+			Console.WriteLine("p2.OracleType [Blob]: " + p2.OracleType.ToString());
+			Console.WriteLine();
+
+			OracleParameter p3 = new OracleParameter("test", OracleType.Clob);
+			Console.WriteLine("p3.OracleType [Clob]: " + p3.OracleType.ToString());
+			p3.Value = "blah";
+			Console.WriteLine("p3.OracleType [Clob]: " + p3.OracleType.ToString());
+			Console.WriteLine();
+
+			OracleParameter p4 = new OracleParameter("test", "blah");
+			Console.WriteLine("p4.OracleType [VarChar]: " + p4.OracleType.ToString());
+			p4.OracleType = OracleType.Clob;
+			Console.WriteLine("p4.OracleType [Clob]: " + p4.OracleType.ToString());
+			Console.WriteLine();
+		}
+
 		[STAThread]
 		static void Main(string[] args) 
 		{ 	
@@ -2638,6 +2893,8 @@ namespace Test.OracleClient
 			ReadSimpleTest(con1, "SELECT * FROM MONO_TEST_TABLE2");
 			Console.WriteLine ("Stored Proc Test 2 END...");
 
+			SetParameterOracleType (con1);
+
 			Console.WriteLine ("Out Parameter and PL/SQL Block Test 1 BEGIN...");
 			OutParmTest1 (con1); 
 			Console.WriteLine ("Out Parameter and PL/SQL Block Test 1 END...");
@@ -2653,6 +2910,10 @@ namespace Test.OracleClient
 			Console.WriteLine ("Out Parameter and PL/SQL Block Test 4 BEGIN...");
 			OutParmTest4 (con1); 
 			Console.WriteLine ("Out Parameter and PL/SQL Block Test 4 END...");
+
+			Console.WriteLine ("Out Parameter and PL/SQL Block Test 5 BEGIN...");
+			OutParmTest5 (con1); 
+			Console.WriteLine ("Out Parameter and PL/SQL Block Test 5 END...");
 
 			Wait ("");
 

@@ -60,6 +60,7 @@ namespace System.Data.OracleClient
 		DbType dbType = DbType.AnsiString;
 		int offset;
 		bool sizeSet;
+		bool oracleTypeSet;
 		object value = DBNull.Value;
 		OciLobLocator lobLocator;  // only if Blob or Clob
 		IntPtr bindOutValue = IntPtr.Zero;
@@ -68,23 +69,22 @@ namespace System.Data.OracleClient
 
 		OracleParameterCollection container;
 		OciBindHandle bindHandle;
-		//OciErrorHandle errorHandle;
 		OracleConnection connection;
 		byte[] bytes;
 		IntPtr bindValue = IntPtr.Zero;
 		bool useRef;
 		OciDataType bindType;
+		OracleType bindOracleType;
 
-		short indicator; // TODO: handle indicator to indicate NULL value for OUT parameters
+		short indicator; 
 		int bindSize;
-		//uint position = 0;
 
 		#endregion // Fields
 
 		#region Constructors
 
 		// constructor for cloning the object
-		internal OracleParameter (OracleParameter value)
+		private OracleParameter (OracleParameter value)
 		{
 			this.name = value.name;
 			this.oracleType = value.oracleType;
@@ -101,11 +101,22 @@ namespace System.Data.OracleClient
 			this.sizeSet = value.sizeSet;
 			this.value = value.value;
 			this.lobLocator = value.lobLocator;
+			this.oracleTypeSet = value.oracleTypeSet;
 		}
 
 		public OracleParameter ()
-			: this (String.Empty, OracleType.VarChar, 0, ParameterDirection.Input, false, 0, 0, String.Empty, DataRowVersion.Current, null)
 		{
+			this.name = String.Empty;
+			this.oracleType = OracleType.VarChar;
+			this.size = 0;
+			this.direction = ParameterDirection.Input;
+			this.isNullable = false;
+			this.precision = 0;
+			this.scale = 0;
+			this.srcColumn = String.Empty;
+			this.srcVersion = DataRowVersion.Current;
+			this.value = null;
+			this.oracleTypeSet = false;
 		}
 
 		public OracleParameter (string name, object value)
@@ -234,7 +245,10 @@ namespace System.Data.OracleClient
 #endif
 		public OracleType OracleType {
 			get { return oracleType; }
-			set { SetOracleType (value); }
+			set { 
+				oracleTypeSet = true;
+				SetOracleType (value, false); 
+			}
 		}
 
 #if !NET_2_0
@@ -329,7 +343,6 @@ namespace System.Data.OracleClient
 #endif
 		[RefreshProperties (RefreshProperties.All)]
 		[TypeConverter (typeof(StringConverter))]
-		[MonoTODO("InferOracleType is not always needed")]
 		public
 #if NET_2_0
 		override
@@ -338,7 +351,8 @@ namespace System.Data.OracleClient
 			get { return this.value; }
 			set {
 				this.value = value;
-				InferOracleType (value);
+				if (!oracleTypeSet)
+					InferOracleType (value);
 			}
 		}
 
@@ -383,11 +397,11 @@ namespace System.Data.OracleClient
 			bindType = ociType;
 			int rsize = 0;
 
-			string svalue = null;
-			string sDate = "";
-			DateTime dt = DateTime.MinValue;
-
+			string svalue;
+			string sDate;
+			DateTime dt;
 			bool isnull = false;
+
 			if (direction == ParameterDirection.Input || direction == ParameterDirection.InputOutput) {
 				if (v == null)
 					isnull = true;
@@ -546,6 +560,39 @@ namespace System.Data.OracleClient
 							}
 						}
 						break;
+					case OciDataType.Clob:
+						if (direction == ParameterDirection.Input) {
+							svalue = v.ToString();
+							rsize = 0;
+
+							// Get size of buffer
+							OciCalls.OCIUnicodeToCharSet (statement.Parent, null, svalue, out rsize);
+
+							// Fill buffer
+							bytes = new byte[rsize];
+							OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, out rsize);
+
+							bindType = OciDataType.Long;
+							bindSize = bytes.Length;
+						} 
+						else if (direction == ParameterDirection.InputOutput)
+							// not the exact error that .net 2.0 throws, but this is better
+							throw new NotImplementedException ("Parameters of OracleType.Clob with direction of InputOutput are not supported.");
+						else {
+							// Output and Return parameters
+							bindSize = -1;
+							lobLocator = (OciLobLocator) connection.Environment.Allocate (OciHandleType.LobLocator);
+							if (lobLocator == null) {
+								OciErrorInfo info = connection.ErrorHandle.HandleError ();
+								throw new OracleException (info.ErrorCode, info.ErrorMessage);
+							}
+							bindOutValue = lobLocator.Handle;
+							bindValue = lobLocator.Handle;
+							lobLocator.ErrorHandle = connection.ErrorHandle;
+							lobLocator.Service = statement.Service;
+							useRef = true;
+						}
+						break;
 				default:
 					// FIXME: move this up - see how Char, Number, and Date are done...
 					if (direction == ParameterDirection.Output || 
@@ -574,7 +621,6 @@ namespace System.Data.OracleClient
 							useRef = true;
 							break;
 						case OciDataType.Blob:
-						case OciDataType.Clob:
 							bindSize = -1;
 							lobLocator = (OciLobLocator) connection.Environment.Allocate (OciHandleType.LobLocator);
 							if (lobLocator == null) {
@@ -612,7 +658,7 @@ namespace System.Data.OracleClient
 					else {
 						sDate = "";
 						dt = DateTime.MinValue;
-						if (oracleType == OracleType.Timestamp){
+						if (bindOracleType == OracleType.Timestamp){
 							bindType = OciDataType.TimeStamp;
 							bindSize = 11;
 							dt = DateTime.MinValue;
@@ -654,26 +700,12 @@ namespace System.Data.OracleClient
 								timezone);
 							useRef = true;
 						}
-						else if (oracleType == OracleType.Blob) {
+						else if (bindOracleType == OracleType.Blob) {
 							bytes = (byte[]) v;
 							bindType = OciDataType.LongRaw;
 							bindSize = bytes.Length;
 						}
-						else if (oracleType == OracleType.Clob) {
-							string sv = v.ToString();
-							rsize = 0;
-
-							// Get size of buffer
-							OciCalls.OCIUnicodeToCharSet (statement.Parent, null, sv, out rsize);
-
-							// Fill buffer
-							bytes = new byte[rsize];
-							OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, sv, out rsize);
-
-							bindType = OciDataType.Long;
-							bindSize = bytes.Length;
-						}
-						else if (oracleType == OracleType.Raw) {
+						else if (bindOracleType == OracleType.Raw) {
 							byte[] val = v as byte[];
 							bindValue = OciCalls.AllocateClear (val.Length);
 							Marshal.Copy (val, 0, bindValue, val.Length);
@@ -798,43 +830,45 @@ namespace System.Data.OracleClient
 			string exception = String.Format ("The parameter data type of {0} is invalid.", type.FullName);
 			switch (type.FullName) {
 			case "System.Int64":
-				SetOracleType (OracleType.Number);
+				SetOracleType (OracleType.Number, true);
 				break;
 			case "System.Boolean":
 			case "System.Byte":
-				SetOracleType (OracleType.Byte);
+				SetOracleType (OracleType.Byte, true);
 				break;
 			case "System.String":
 			case "System.Data.OracleClient.OracleString":
-				SetOracleType (OracleType.VarChar);
+				SetOracleType (OracleType.VarChar, true);
 				break;
 			case "System.Data.OracleClient.OracleDateTime":
 			case "System.DateTime":
-				SetOracleType (OracleType.DateTime);
+				SetOracleType (OracleType.DateTime, true);
 				break;
 			case "System.Decimal":
 			case "System.Data.OracleClient.OracleNumber":
-				SetOracleType (OracleType.Number);
-				//scale = ((decimal) value).Scale;
+				SetOracleType (OracleType.Number, true);
 				break;
 			case "System.Double":
-				SetOracleType (OracleType.Double);
+				SetOracleType (OracleType.Double, true);
 				break;
 			case "System.Byte[]":
 			case "System.Guid":
-				SetOracleType (OracleType.Raw);
+				SetOracleType (OracleType.Raw, true);
 				break;
 			case "System.Int32":
-				SetOracleType (OracleType.Int32);
+				SetOracleType (OracleType.Int32, true);
 				break;
 			case "System.Single":
-				SetOracleType (OracleType.Float);
+				SetOracleType (OracleType.Float, true);
 				break;
 			case "System.Int16":
-				SetOracleType (OracleType.Int16);
+				SetOracleType (OracleType.Int16, true);
 				break;
 			case "System.DBNull":
 				break; //unable to guess type
+			case "System.Data.OracleClient.OracleLob":
+				SetOracleType (((OracleLob) value).LobType, true); 
+				break;
 			default:
 				throw new ArgumentException (exception);
 			}
@@ -958,7 +992,7 @@ namespace System.Data.OracleClient
 			dbType = type;
 		}
 
-		private void SetOracleType (OracleType type)
+		private void SetOracleType (OracleType type, bool inferring)
 		{
 			FreeHandle ();
 			string exception = String.Format ("No mapping exists from OracleType {0} to a known DbType.", type);
@@ -1055,7 +1089,9 @@ namespace System.Data.OracleClient
 				throw new ArgumentException (exception);
 			}
 
-			oracleType = type;
+			if (!inferring)
+				oracleType = type;
+			bindOracleType = type;
 		}
 
 #if NET_2_0
@@ -1066,6 +1102,7 @@ namespace System.Data.OracleClient
 
 		public void ResetOracleType ()
 		{
+			oracleTypeSet = false;
 			InferOracleType (value);
 		}
 #endif // NET_2_0
