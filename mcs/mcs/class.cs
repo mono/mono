@@ -3547,14 +3547,12 @@ namespace Mono.CSharp {
 				Report.SymbolRelatedToPreviousError (t);
 				if (this is Indexer)
 					Report.Error (55, Location,
-						"Inconsistent accessibility: parameter type `" +
-						TypeManager.CSharpName (t) + "' is less " +
-						"accessible than indexer `" + GetSignatureForError () + "'");
+						      "Inconsistent accessibility: parameter type `{0}' is less accessible than indexer `{1}'",
+						      TypeManager.CSharpName (t), GetSignatureForError ());
 				else if (this is Operator)
 					Report.Error (57, Location,
-						"Inconsistent accessibility: parameter type `" +
-						TypeManager.CSharpName (t) + "' is less " +
-						"accessible than operator `" + GetSignatureForError () + "'");
+						      "Inconsistent accessibility: parameter type `{0}' is less accessible than operator `{1}'",
+						      TypeManager.CSharpName (t), GetSignatureForError ());
 				else
 					Report.Error (51, Location,
 						"Inconsistent accessibility: parameter type `{0}' is less accessible than method `{1}'",

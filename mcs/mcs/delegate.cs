@@ -201,9 +201,9 @@ namespace Mono.CSharp {
 				if (!IsAccessibleAs (partype)) {
 					Report.SymbolRelatedToPreviousError (partype);
 					Report.Error (59, Location,
-						      "Inconsistent accessibility: parameter type `" +
-						      TypeManager.CSharpName (partype) + "' is less " +
-							  "accessible than delegate `" + GetSignatureForError () + "'");
+						      "Inconsistent accessibility: parameter type `{0}' is less accessible than delegate `{1}'",
+						      TypeManager.CSharpName (partype),
+						      GetSignatureForError ());
 					return false;
 				}
 			}
