@@ -64,8 +64,82 @@ namespace MonoTests.System.Configuration {
 				Directory.Delete (tempFolder, true);
 		}
 
-		[Test]
-		public void UserLevelNone ()
+		[Test] // OpenExeConfiguration (ConfigurationUserLevel)
+		[Category ("NotWorking")] // bug #323622
+		public void OpenExeConfiguration1_Remote ()
+		{
+			AppDomain domain = null;
+			string config_file;
+			string config_xml = @"
+				<configuration>
+					<appSettings>
+						<add key='anyKey' value='42' />
+					</appSettings>
+				</configuration>";
+
+			config_file = Path.Combine (tempFolder, "otherConfig.noconfigext");
+			File.WriteAllText (config_file, config_xml);
+
+			try {
+				AppDomainSetup setup = new AppDomainSetup();
+				setup.ConfigurationFile = config_file;
+				setup.ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+				domain = AppDomain.CreateDomain("foo", null, setup);
+
+				RemoteConfig config = RemoteConfig.GetInstance (domain);
+
+				ConfigurationUserLevel userLevel = ConfigurationUserLevel.None;
+				Assert.AreEqual (config_file, config.GetFilePath (userLevel));
+				Assert.AreEqual ("42", config.GetSettingValue (userLevel, "anyKey"));
+				Assert.AreEqual ("42", config.GetSettingValue ("anyKey"));
+			} finally {
+				if (domain != null)
+					AppDomain.Unload (domain);
+				File.Delete (config_file);
+			}
+
+			config_file = Path.Combine (tempFolder, "otherConfig.exe.config");
+			File.WriteAllText (config_file, config_xml);
+
+			try {
+				AppDomainSetup setup = new AppDomainSetup();
+				setup.ConfigurationFile = config_file;
+				setup.ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+				domain = AppDomain.CreateDomain("foo", null, setup);
+
+				RemoteConfig config = RemoteConfig.GetInstance (domain);
+
+				ConfigurationUserLevel userLevel = ConfigurationUserLevel.None;
+				Assert.AreEqual (config_file, config.GetFilePath (userLevel));
+				Assert.AreEqual ("42", config.GetSettingValue (userLevel, "anyKey"));
+				Assert.AreEqual ("42", config.GetSettingValue ("anyKey"));
+			} finally {
+				if (domain != null)
+					AppDomain.Unload (domain);
+				File.Delete (config_file);
+			}
+
+			try {
+				AppDomainSetup setup = new AppDomainSetup();
+				setup.ConfigurationFile = config_file;
+				setup.ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+				domain = AppDomain.CreateDomain("foo", null, setup);
+
+				RemoteConfig config = RemoteConfig.GetInstance (domain);
+
+				ConfigurationUserLevel userLevel = ConfigurationUserLevel.None;
+				Assert.AreEqual (config_file, config.GetFilePath (userLevel));
+				Assert.IsNull (config.GetSettingValue (userLevel, "anyKey"));
+				Assert.IsNull (config.GetSettingValue ("anyKey"));
+			} finally {
+				if (domain != null)
+					AppDomain.Unload (domain);
+				File.Delete (config_file);
+			}
+		}
+
+		[Test] // OpenExeConfiguration (ConfigurationUserLevel)
+		public void OpenExeConfiguration1_UserLevel_None ()
 		{
 			SysConfig config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
@@ -79,7 +153,7 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
-		public void UserLevelPerRoaming ()
+		public void OpenExeConfiguration1_UserLevel_PerUserRoaming ()
 		{
 			SysConfig config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoaming);
 			Console.WriteLine("roaming user config path: {0}", config.FilePath);
@@ -89,7 +163,7 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
-		public void UserLevelPerRoamingAndLocal ()
+		public void OpenExeConfiguration1_UserLevel_PerUserRoamingAndLocal ()
 		{
 			SysConfig config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
 			Console.WriteLine("local user config path: {0}", config.FilePath);
@@ -152,7 +226,6 @@ namespace MonoTests.System.Configuration {
 		[Test] // OpenExeConfiguration (String)
 		public void OpenExeConfiguration2_ExePath_DoesNotExist ()
 		{
-			AppDomain domain = AppDomain.CurrentDomain;
 			String exePath = Path.Combine (tempFolder, "DoesNotExist.exe");
 
 			try {
@@ -191,8 +264,8 @@ namespace MonoTests.System.Configuration {
 			SysConfig config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoaming);
 			string filePath = config.FilePath;
 			string applicationData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-			Assert.IsTrue (filePath.StartsWith (applicationData), "#1");
-			Assert.AreEqual ("user.config", Path.GetFileName (filePath), "#2");
+			Assert.IsTrue (filePath.StartsWith (applicationData), "#1:" + filePath);
+			Assert.AreEqual ("user.config", Path.GetFileName (filePath), "#2:" + filePath);
 		}
 
 		[Test]
@@ -201,8 +274,8 @@ namespace MonoTests.System.Configuration {
 			SysConfig config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
 			string filePath = config.FilePath;
 			string applicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-			Assert.IsTrue (filePath.StartsWith (applicationData), "#1");
-			Assert.AreEqual ("user.config", Path.GetFileName (filePath), "#2");
+			Assert.IsTrue (filePath.StartsWith (applicationData), "#1:" + filePath);
+			Assert.AreEqual ("user.config", Path.GetFileName (filePath), "#2:" + filePath);
 		}
 
 		[Test]
@@ -371,6 +444,51 @@ namespace MonoTests.System.Configuration {
 			IEnumerator e = col.GetEnumerator ();
 			e.MoveNext ();
 			Assert.IsTrue (e.Current is ConfigurationSection);
+		}
+
+		class RemoteConfig : MarshalByRefObject
+		{
+			public static RemoteConfig GetInstance (AppDomain domain)
+			{
+				RemoteConfig config = (RemoteConfig) domain.CreateInstanceAndUnwrap (
+					typeof (RemoteConfig).Assembly.FullName,
+					typeof (RemoteConfig).FullName, new object [0]);
+				return config;
+			}
+
+			public string GetFilePath (string exePath)
+			{
+				global::System.Configuration.Configuration config =
+					ConfigurationManager.OpenExeConfiguration (exePath);
+				return config.FilePath;
+			}
+
+			public string GetFilePath (ConfigurationUserLevel userLevel)
+			{
+				global::System.Configuration.Configuration config =
+					ConfigurationManager.OpenExeConfiguration (userLevel);
+				return config.FilePath;
+			}
+
+			public string GetSettingValue (string exePath, string key)
+			{
+				global::System.Configuration.Configuration config =
+					ConfigurationManager.OpenExeConfiguration (exePath);
+				return config.AppSettings.Settings [key].Value;
+			}
+
+			public string GetSettingValue (ConfigurationUserLevel userLevel, string key)
+			{
+				global::System.Configuration.Configuration config =
+					ConfigurationManager.OpenExeConfiguration (userLevel);
+				KeyValueConfigurationElement value = config.AppSettings.Settings [key];
+				return value != null ? value.Value : null;
+			}
+
+			public string GetSettingValue (string key)
+			{
+				return ConfigurationManager.AppSettings [key];
+			}
 		}
 	}
 }

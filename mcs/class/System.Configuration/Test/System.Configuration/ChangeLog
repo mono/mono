@@ -1,3 +1,7 @@
+2008-09-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ConfigurationManagerTest.cs: Added test for bug #323622.
+
 2008-07-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ConfigurationManagerTest.cs: Added/improved tests for
