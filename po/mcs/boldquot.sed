@@ -1,0 +1,1 @@
+/usr/share/gettext/po/boldquot.sed

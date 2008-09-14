@@ -1,0 +1,12 @@
+2008-09-14  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* Makefile.in.in: New file, from gettext-0.17.
+	* boldquot.sed: New file, from gettext-0.17.
+	* en@boldquot.header: New file, from gettext-0.17.
+	* en@quot.header: New file, from gettext-0.17.
+	* insert-header.sin: New file, from gettext-0.17.
+	* quot.sed: New file, from gettext-0.17.
+	* remove-potcdate.sin: New file, from gettext-0.17.
+	* Rules-quot: New file, from gettext-0.17.
+	* POTFILES.in: New file.
+
