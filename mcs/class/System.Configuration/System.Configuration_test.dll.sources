@@ -30,3 +30,4 @@ System.Configuration/TimeSpanValidatorTest.cs
 System.Configuration/TypeNameConverterTest.cs
 System.Configuration/WhiteSpaceTrimStringConverterTest.cs
 System.Configuration.Provider/ProviderBaseTest.cs
+System.Configuration.Provider/ProviderCollectionTest.cs
