@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Text.RegularExpressions
 {
 	[TestFixture]
-	public class RegexBugsn
+	public class RegexBugs
 	{
 		[Test] // bug #51146
 		public void SplitGroup ()
@@ -418,6 +418,13 @@ namespace MonoTests.System.Text.RegularExpressions
 		}
 
 		[Test]
+		public void Trials ()
+		{
+			foreach (RegexTrial trial in trials)
+				trial.Execute ();
+		}
+
+		[Test]
 		public void Bug80554_0 ()
 		{
 			bug80554_trials [0].Execute ();
@@ -491,5 +498,9 @@ namespace MonoTests.System.Text.RegularExpressions
 			new RegexTrial (bug80554_s, RegexOptions.None, "statics", "Pass. Group[0]=(0,6) Group[1]= Group[2]=(0,6)"),
 			new RegexTrial (bug80554_s, RegexOptions.None, "dynamic", "Fail.")
 		};
+
+		static RegexTrial[] trials = {
+			new RegexTrial (@"^[^.\d]*(\d+)(?:\D+(\d+))?", RegexOptions.None, "MD 9.18", "Pass. Group[0]=(0,7) Group[1]=(3,1) Group[2]=(5,2)")
+	    };
 	}
 }

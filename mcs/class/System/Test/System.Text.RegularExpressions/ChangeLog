@@ -1,3 +1,7 @@
+2008-09-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* RegexBugs.cs: Add a test for #426142.
+
 2008-06-05  Roei Erez  <roeie@mainsoft.com>
 
 	* RegexTest.cs: Add test case where a match that contains
