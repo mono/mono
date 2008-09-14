@@ -183,7 +183,7 @@ t              debug.shift(yyState, yyTable[yyN], yyErrorFlag-1);
 .              yyExpectingState = yyState;
 .              // yyerror(String.Format ("syntax error, got token `{0}'", yyname (yyToken)), yyExpecting(yyState));
 t              if (debug != null) debug.error("syntax error");
-.              if (yyToken == 0 || yyToken == eof_token /* eof */) throw new yyParser.yyUnexpectedEof ();
+.              if (yyToken == 0 /*eof*/ || yyToken == eof_token) throw new yyParser.yyUnexpectedEof ();
 .              goto case 1;
 .            case 1: case 2:
 .              yyErrorFlag = 3;
