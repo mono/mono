@@ -1818,11 +1818,11 @@ namespace Mono.CSharp
 			}
 
 			if (!is_identifier_start_character (ident [0]))
-				Report.Error (1001, Location, "Identifier expected: " + ident);
+				Report.Error (1001, Location, "Identifier expected: {0}", ident);
 			
 			foreach (char c in ident.Substring (1)){
 				if (!is_identifier_part_character (c)){
-					Report.Error (1001, Location, "Identifier expected: " + ident);
+					Report.Error (1001, Location, "Identifier expected: {0}",  ident);
 					return;
 				}
 			}
@@ -2210,7 +2210,7 @@ namespace Mono.CSharp
 		{
 			Report.Error (
 				1028, Location,
-				"Unexpected processor directive (" + extra + ")");
+				"Unexpected processor directive ({0})", extra);
 		}
 
 		void Error_TokenExpected (string token)
@@ -2417,7 +2417,7 @@ namespace Mono.CSharp
 					
 			switch (cmd){
 			case "error":
-				Report.Error (1029, Location, "#error: '" + arg + "'");
+				Report.Error (1029, Location, "#error: '{0}'", arg);
 				return true;
 
 			case "warning":
