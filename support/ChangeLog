@@ -1,3 +1,9 @@
+2008-09-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* serial.c: When writing bytes and polling, take into account negative
+	values to indicate infinite timeout. Patch by Leszek Ciesielski.
+	Fixes #399245.
+
 2008-07-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (patch-libtool): New helper target.

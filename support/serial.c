@@ -104,7 +104,7 @@ write_serial (int fd, guchar *buffer, int offset, int count, int timeout)
 	{
 		size_t t;
 			
-		if (timeout > 0) {
+		if (timeout != 0) {
 			int c;
 			
 			while ((c = poll (&pinfo, 1, timeout)) == -1 && errno == EINTR)
