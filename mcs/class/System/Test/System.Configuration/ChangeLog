@@ -1,5 +1,9 @@
 2008-09-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* ConfigXmlDocumentTest.cs: Added test for Load (String).
+
+2008-09-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* ProviderCollectionTest.cs: Moved to System.Configuration assembly.
 
 2008-06-25  Gert Driesen  <drieseng@users.sourceforge.net>

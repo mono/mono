@@ -1,3 +1,7 @@
+2008-09-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added ConfigXmlDocumentTest.cs.
+
 2008-09-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile (regex-check): New helper target to run the perl regex test suite.

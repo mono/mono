@@ -1,3 +1,7 @@
+2008-09-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ConfigXmlDocument.cs: Dispose XmlTextReader in Load (String).
+
 2008-09-01  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* SettingsPropertyValue.cs: Explicitly use the Invariant culture 
