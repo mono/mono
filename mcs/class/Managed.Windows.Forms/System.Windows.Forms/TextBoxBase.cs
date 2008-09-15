@@ -1109,6 +1109,12 @@ namespace System.Windows.Forms
 #endif
 		protected override bool ProcessDialogKey (Keys keyData)
 		{
+			// The user can use Ctrl-Tab or Ctrl-Shift-Tab to move control focus
+			// instead of inserting a Tab.  However, the focus-moving-tab-stuffs
+			// doesn't work if Ctrl is pushed, so we remove it before sending it.
+			if (accepts_tab && (keyData & (Keys.Control | Keys.Tab)) == (Keys.Control | Keys.Tab))
+				keyData ^= Keys.Control;
+				
 			return base.ProcessDialogKey(keyData);
 		}
 
