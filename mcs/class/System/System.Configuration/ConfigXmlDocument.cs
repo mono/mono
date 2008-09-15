@@ -88,9 +88,12 @@ namespace System.Configuration
 
 		public override void Load (string filename)
 		{
-			using (XmlTextReader rd = new XmlTextReader (filename)) {
+			XmlTextReader rd = new XmlTextReader (filename);
+			try {
 				rd.MoveToContent ();
 				LoadSingleElement (filename, rd);
+			} finally {
+				rd.Close ();
 			}
 		}
 

@@ -1,3 +1,8 @@
+2008-09-15  Raja R Harinath  <harinath@hurrynot.org>
+
+	* ConfigXmlDocument.cs (Load): Fix build break in 1.1 profile.
+	Open code the 'using' with try/finally/Close.
+
 2008-09-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ConfigXmlDocument.cs: Dispose XmlTextReader in Load (String).
