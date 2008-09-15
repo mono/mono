@@ -1,3 +1,8 @@
+2008-09-15  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc.c (mono_arch_emit_call): Convert floats to R4 when
+	doing a method call and the argument is an R4.
+
 2008-09-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (add_wrappers): Do not generate runtime invoke wrappers for
