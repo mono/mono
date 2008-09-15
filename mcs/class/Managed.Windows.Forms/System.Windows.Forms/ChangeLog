@@ -1,10 +1,3 @@
-2008-09-15  Ivan N. Zlatev  <contact@i-nz.net>
-
-	* MimeIcon.cs: Add null checks in the GnomeHandler, because it might 
-	happen that the icons from the theme is missing or the particular size 
-	unavailable.
-	[Fixes bug #424981]
-
 2008-09-08  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ErrorProvider.cs: Unbreak my previous commit.
