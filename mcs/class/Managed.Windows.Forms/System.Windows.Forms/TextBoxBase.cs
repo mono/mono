@@ -1502,7 +1502,7 @@ namespace System.Windows.Forms
 				line = document.CaretLine;
 
 				document.Split (document.CaretLine, document.CaretTag, document.CaretPosition);
-				line.ending = LineEnding.Rich;
+				line.ending = document.StringToLineEnding (Environment.NewLine);
 				document.InsertString (line, line.text.Length, document.LineEndingToString (line.ending));
 				
 				document.UpdateView (line, document.Lines - line.line_no, 0);

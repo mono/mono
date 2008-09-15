@@ -1,3 +1,10 @@
+2008-09-15  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TextControl.cs: Add a method to convert a string newline to the
+	newline enum.
+	* TextBoxBase.cs: When the user hits enter, insert a native newline.
+	[Fixes part 1 of bug #388115]
+
 2008-09-15  Mario Carrion <mcarrion@novell.com>
 
 	* ToolTip.cs: UnPopup event set to internal to match public API.

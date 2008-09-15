@@ -1941,6 +1941,22 @@ namespace System.Windows.Forms {
 			return string.Empty;
 		}
 
+		internal LineEnding StringToLineEnding (string ending)
+		{
+			switch (ending) {
+				case "\r":
+					return LineEnding.Limp;
+				case "\r\n":
+					return LineEnding.Hard;
+				case "\r\r\n":
+					return LineEnding.Soft;
+				case "\n":
+					return LineEnding.Rich;
+				default:
+					return LineEnding.None;
+			}
+		}
+		
 		internal void Insert (Line line, int pos, bool update_caret, string s)
 		{
 			Insert (line, pos, update_caret, s, line.FindTag (pos));
