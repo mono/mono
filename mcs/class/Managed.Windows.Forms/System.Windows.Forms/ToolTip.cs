@@ -289,7 +289,7 @@ namespace System.Windows.Forms {
 			}
 
 #if NET_2_0
-			public event PopupEventHandler UnPopup {
+			internal event PopupEventHandler UnPopup {
 				add { Events.AddHandler (UnPopupEvent, value); }
 				remove { Events.RemoveHandler (UnPopupEvent, value); }
 			}

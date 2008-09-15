@@ -1,3 +1,7 @@
+2008-09-15  Mario Carrion <mcarrion@novell.com>
+
+	* ToolTip.cs: UnPopup event set to internal to match public API.
+
 2008-09-15  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextBoxBase.cs: If the user is using Ctrl-Tab to move focus, we
