@@ -565,7 +565,7 @@ namespace System.Windows.Forms {
 			if (e.Value == null) {
 				bool nullable = data_type.IsGenericType && !data_type.ContainsGenericParameters &&
 					data_type.GetGenericTypeDefinition () == typeof (Nullable<>);
-				return data_type.IsByRef || nullable ? null : Convert.DBNull;
+				return data_type.IsValueType && !nullable ? Convert.DBNull : null;
 			}
 #endif
 
