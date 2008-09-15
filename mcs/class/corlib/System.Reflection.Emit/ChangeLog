@@ -1,3 +1,9 @@
+2008-09-16  Jb Evain  <jbevain@novell.com>
+
+	* AssemblyBuilder.cs (AddTypeForwarder): correctly grow the
+	type_forwarders array, to make that work for more than one
+	type forwarder. Managed part of the fix for #422929.
+
 2008-09-04  Marek Safar  <marek.safar@gmail.com>
 
 	* TypeBuilder.cs: Add mcs specific SetCharSet method.

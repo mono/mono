@@ -352,6 +352,7 @@ namespace System.Reflection.Emit
 			} else {
 				Type[] arr = new Type [type_forwarders.Length + 1];
 				Array.Copy (type_forwarders, arr, type_forwarders.Length);
+				arr [type_forwarders.Length] = t;
 				type_forwarders = arr;
 			}
 		}
