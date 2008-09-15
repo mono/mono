@@ -1,3 +1,11 @@
+2008-09-15  Jonathan Pobst  <monkey@jpobst.com>
+
+	* CheckedListBox.cs: Return the real item index from Add.  It may not be
+	the last item if the list is sorted.  The user can change the NewValue in
+	the ItemCheck event, we need to use that value if so.
+	* ListBox.cs: Return the real item index from a sorted Add.
+	[Fixes bug #426166]
+
 2008-09-15  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* MimeIcon.cs: Add null checks in the GnomeHandler, because it might 

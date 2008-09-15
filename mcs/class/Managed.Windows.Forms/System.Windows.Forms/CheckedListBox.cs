@@ -332,13 +332,14 @@ namespace System.Windows.Forms
 			
 			if (old_value == value)
 				return;
-			
-    			OnItemCheck (new ItemCheckEventArgs (index, value, old_value));
 
-			switch (value) {
+			ItemCheckEventArgs icea = new ItemCheckEventArgs (index, value, old_value);
+    			OnItemCheck (icea);
+
+			switch (icea.NewValue) {
 			case CheckState.Checked:
 			case CheckState.Indeterminate:
-    				check_states [Items[index]] = value;
+				check_states[Items[index]] = icea.NewValue;
     				break;
 			case CheckState.Unchecked:
 				check_states.Remove (Items[index]);
@@ -421,13 +422,18 @@ namespace System.Windows.Forms
 			
 			public int Add (object item, CheckState check)
 			{
-				Add (item);
-				if (check != CheckState.Unchecked)
-					owner.check_states [item] = check;
+				int idx = Add (item);
+
+				ItemCheckEventArgs icea = new ItemCheckEventArgs (idx, check, CheckState.Unchecked);
+				
 				if (check == CheckState.Checked)
-					owner.OnItemCheck (new ItemCheckEventArgs (Count-1, check, CheckState.Unchecked));
+					owner.OnItemCheck (icea);
+					
+				if (icea.NewValue != CheckState.Unchecked)
+					owner.check_states[item] = icea.NewValue;
+					
 				owner.UpdateCollections ();
-				return Count - 1;
+				return idx;
 			}
 		}
 

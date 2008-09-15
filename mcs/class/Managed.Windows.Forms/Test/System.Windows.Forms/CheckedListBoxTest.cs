@@ -560,5 +560,279 @@ namespace MonoTests.System.Windows.Forms
 #endif
 		}
 
+		//--------------------------------------------------------------
+		// Add method checking add index and event when sorted and not.
+
+		public static object[] Items = new string[] { "c", "a", "d", "b", };
+		//
+		public static int[] ExpectedAddPositionsSorted = { 0, 0, 2, 1 };
+		public static int[] ExpectedAddPositionsUnsorted = { 0, 1, 2, 3 };
+		//
+		const string ExpectedEventsUnchecked = "";
+		const string ExpectedEventsCheckedSorted
+			= "ItemCheck, index 0, is: Unchecked, will be: Checked, item is: 'c'" + ", CheckedIndices: { }" + ";\n"
+			+ "ItemCheck, index 0, is: Unchecked, will be: Checked, item is: 'a'" + ", CheckedIndices: { '1', }" + ";\n"
+			+ "ItemCheck, index 2, is: Unchecked, will be: Checked, item is: 'd'" + ", CheckedIndices: { '0', '1', }" + ";\n"
+			+ "ItemCheck, index 1, is: Unchecked, will be: Checked, item is: 'b'" + ", CheckedIndices: { '0', '2', '3', }" + ";\n";
+		const string ExpectedEventsCheckedUnsorted
+			= "ItemCheck, index 0, is: Unchecked, will be: Checked, item is: 'c'" + ", CheckedIndices: { }" + ";\n"
+			+ "ItemCheck, index 1, is: Unchecked, will be: Checked, item is: 'a'" + ", CheckedIndices: { '0', }" + ";\n"
+			+ "ItemCheck, index 2, is: Unchecked, will be: Checked, item is: 'd'" + ", CheckedIndices: { '0', '1', }" + ";\n"
+			+ "ItemCheck, index 3, is: Unchecked, will be: Checked, item is: 'b'" + ", CheckedIndices: { '0', '1', '2', }" + ";\n";
+
+		class ItemCheckLoggingReceiver
+		{
+			public string _allItemCheckEvents;
+
+			public void HandleItemCheck (object sender, ItemCheckEventArgs e)
+			{
+				CheckedListBox clb = (CheckedListBox)sender;
+				string text
+					= String.Format ("ItemCheck, index {0}, is: {1}, will be: {2}, item is: '{3}'" + ", CheckedIndices: {{ {4}}}" + ";\n",
+						e.Index, e.CurrentValue, e.NewValue, clb.Items[e.Index], Join (clb.CheckedIndices));
+				_allItemCheckEvents += text;
+			}
+		}
+
+		[Test]
+		public void AddCheckedBoolToSorted ()
+		{
+			AddBoolItems (true, Items, true, ExpectedAddPositionsSorted, ExpectedEventsCheckedSorted);
+		}
+
+		[Test]
+		public void AddUncheckedBoolToSorted ()
+		{
+			AddBoolItems (true, Items, false, ExpectedAddPositionsSorted, ExpectedEventsUnchecked);
+		}
+
+		[Test]
+		public void AddCheckedBoolToUnsorted ()
+		{
+			AddBoolItems (false, Items, true, ExpectedAddPositionsUnsorted, ExpectedEventsCheckedUnsorted);
+		}
+
+		[Test]
+		public void AddUncheckedBoolToUnsorted ()
+		{
+			AddBoolItems (false, Items, false, ExpectedAddPositionsUnsorted, ExpectedEventsUnchecked);
+		}
+
+		void AddBoolItems (bool sorted, object[] items, bool isChecked, int[] expectedAddPositions, string expectedEvents)
+		{
+			CheckedListBox clb = new CheckedListBox ();
+			clb.Sorted = sorted;
+			ItemCheckLoggingReceiver target = new ItemCheckLoggingReceiver ();
+			clb.ItemCheck += new ItemCheckEventHandler (target.HandleItemCheck);
+			target._allItemCheckEvents = String.Empty;
+			ArrayList addedAtList = new ArrayList ();
+			foreach (object cur in items) {
+				int idx = clb.Items.Add (cur, isChecked);
+				addedAtList.Add (idx);
+			}
+			if (isChecked)
+				AssertAllItemsChecked (clb);
+			else
+				AssertAllItemsUnchecked (clb);
+			Assert.AreEqual ((Array)expectedAddPositions, (Array)addedAtList.ToArray (typeof (int)), "addedAtList");
+			Assert.AreEqual (expectedEvents, target._allItemCheckEvents, "events");
+		}
+
+		[Test]
+		public void AddCheckedCheckStateToSorted ()
+		{
+			AddCheckStateItems (true, Items, CheckState.Checked, ExpectedAddPositionsSorted, ExpectedEventsCheckedSorted);
+		}
+
+		[Test]
+		public void AddUncheckedCheckStateToSorted ()
+		{
+			AddCheckStateItems (true, Items, CheckState.Unchecked, ExpectedAddPositionsSorted, ExpectedEventsUnchecked);
+		}
+
+		[Test]
+		public void AddCheckedCheckStateToUnsorted ()
+		{
+			AddCheckStateItems (false, Items, CheckState.Checked, ExpectedAddPositionsUnsorted, ExpectedEventsCheckedUnsorted);
+		}
+
+		[Test]
+		public void AddUncheckedCheckStateToUnsorted ()
+		{
+			AddCheckStateItems (false, Items, CheckState.Unchecked, ExpectedAddPositionsUnsorted, ExpectedEventsUnchecked);
+		}
+
+		void AddCheckStateItems (bool sorted, object[] items, CheckState checkState, int[] expectedAddPositions, string expectedEvents)
+		{
+			CheckedListBox clb = new CheckedListBox ();
+			clb.Sorted = sorted;
+			ItemCheckLoggingReceiver target = new ItemCheckLoggingReceiver ();
+			clb.ItemCheck += new ItemCheckEventHandler (target.HandleItemCheck);
+			target._allItemCheckEvents = String.Empty;
+			ArrayList addedAtList = new ArrayList ();
+			foreach (object cur in items) {
+				int idx = clb.Items.Add (cur, checkState);
+				addedAtList.Add (idx);
+			}
+			if (checkState != CheckState.Unchecked)
+				AssertAllItemsChecked (clb);
+			else
+				AssertAllItemsUnchecked (clb);
+			Assert.AreEqual ((Array)expectedAddPositions, (Array)addedAtList.ToArray (typeof (int)), "addedAtList");
+			Assert.AreEqual (expectedEvents, target._allItemCheckEvents, "events");
+		}
+
+		static void AssertAllItemsChecked (CheckedListBox clb)
+		{
+			//Dump("clb.Items", clb.Items);
+			//Dump("clb.CheckedIndices", clb.CheckedIndices);
+			//Dump("clb.CheckedItems", clb.CheckedItems);
+			Assert.AreEqual (clb.Items.Count, clb.CheckedIndices.Count, "checked count");
+			for (int i = 0; i < clb.Items.Count; ++i)
+				Assert.AreEqual (i, clb.CheckedIndices[i], "CheckedIndices[i] @" + i);
+			for (int i = 0; i < clb.Items.Count; ++i)
+				Assert.AreEqual (clb.Items[i], clb.CheckedItems[i], "CheckedItems[i] @" + i);
+		}
+
+		static void AssertAllItemsUnchecked (CheckedListBox clb)
+		{
+			Assert.AreEqual (0, clb.CheckedIndices.Count, "checked count");
+			Assert.AreEqual (clb.CheckedIndices.Count, clb.CheckedItems.Count, "checked consistency");
+		}
+
+
+		//----
+		static string Join (IEnumerable list)
+		{
+			global::System.Text.StringBuilder bldr = new global::System.Text.StringBuilder ();
+			bldr.Append ("'");
+			foreach (object cur in list) {
+				bldr.Append (cur);
+				bldr.Append ("', '");
+			}
+			bldr.Append ("'");
+			bldr.Length -= 2;
+			return bldr.ToString ();
+		}
+
+		//static void Dump (string name, IEnumerable list)
+		//{
+		//	Console.Write (name);
+		//	Console.Write (" ");
+		//	Dump (list);
+		//}
+		//
+		//static void Dump (IEnumerable list)
+		//{
+		//	Console.WriteLine ("[" + Join (list) + "]");
+		//}
+
+		//--------
+		// Check that if the ItemCheck event handler changes the NewValue property 
+		// that the new value is used for the item state.
+
+		[Test]
+		public void ItemCheckSetNewValue_Adding()
+		{
+			CheckedListBox clb = new CheckedListBox();
+			ItemCheckNewValueSetReceiver target = new ItemCheckNewValueSetReceiver();
+			clb.ItemCheck += new ItemCheckEventHandler(target.HandleItemCheck);
+			int idx;
+			// Unchecked addition.  Note these are not touched by the event
+			// as there's no 'check' action.
+			target._checkState = CheckState.Indeterminate;
+			idx = clb.Items.Add("aaU_x", false);
+			Assert.IsFalse(clb.CheckedIndices.Contains(idx), "U_x " + idx);
+			target._checkState = CheckState.Unchecked;
+			idx = clb.Items.Add("aaU_U", false);
+			Assert.IsFalse(clb.CheckedIndices.Contains(idx), "U_U " + idx);
+			target._checkState = CheckState.Checked;
+			idx = clb.Items.Add("aaU_C", false);
+			Assert.IsFalse(clb.CheckedIndices.Contains(idx), "U_C " + idx);
+			// Checked addition
+			idx = clb.Items.Add("aaC_x", true);
+			Assert.IsTrue(clb.CheckedIndices.Contains(idx), "U_x " + idx);
+			target._checkState = CheckState.Unchecked;
+			idx = clb.Items.Add("aaC_U", true);
+			Assert.IsFalse(clb.CheckedIndices.Contains(idx), "C_U " + idx);
+			target._checkState = CheckState.Checked;
+			idx = clb.Items.Add("aaC_C", true);
+			Assert.IsTrue(clb.CheckedIndices.Contains(idx), "C_C " + idx);
+		}
+
+		[Test]
+		public void ItemCheckSetNewValue_Setting()
+		{
+			CheckedListBox clb = new CheckedListBox();
+			ItemCheckNewValueSetReceiver target = new ItemCheckNewValueSetReceiver();
+			clb.Items.Add("aaaa");
+			clb.ItemCheck += new ItemCheckEventHandler(target.HandleItemCheck);
+			const int idx = 0;
+			// Note here the SetItemChecked(idx, false) actions *do* raise an item 
+			// check event so the result is touched by the event handler.
+			// Uncheck!
+			SetInitialState(clb, idx, true, target);
+			target._checkState = CheckState.Indeterminate;
+			clb.SetItemChecked(idx, false);
+			Assert.IsFalse(clb.CheckedIndices.Contains(idx), "C_U_x ");
+			SetInitialState(clb, idx, true, target);
+			target._checkState = CheckState.Unchecked;
+			clb.SetItemChecked(idx, false);
+			Assert.IsFalse(clb.CheckedIndices.Contains(idx), "C_U_U ");
+			SetInitialState(clb, idx, true, target);
+			target._checkState = CheckState.Checked;
+			clb.SetItemChecked(idx, false);
+			Assert.IsTrue(clb.CheckedIndices.Contains(idx), "C_U_C ");
+			// Check!
+			SetInitialState(clb, idx, false, target);
+			target._checkState = CheckState.Indeterminate;
+			clb.SetItemChecked(idx, true);
+			Assert.IsTrue(clb.CheckedIndices.Contains(idx), "U_C_x ");
+			SetInitialState(clb, idx, false, target);
+			target._checkState = CheckState.Unchecked;
+			clb.SetItemChecked(idx, true);
+			Assert.IsFalse(clb.CheckedIndices.Contains(idx), "U_C_U ");
+			SetInitialState(clb, idx, false, target);
+			target._checkState = CheckState.Checked;
+			clb.SetItemChecked(idx, true);
+			Assert.IsTrue(clb.CheckedIndices.Contains(idx), "U_C_C ");
+		}
+		private void SetInitialState(CheckedListBox clb, int index, bool isChecked, ItemCheckNewValueSetReceiver target)
+		{
+			CheckState originalCS = target._checkState;
+			target._checkState = CheckState.Indeterminate;  // No touchee in the event handler.
+			clb.SetItemChecked(index, isChecked);
+			target._checkState = originalCS;
+		}
+
+		class ItemCheckNewValueSetReceiver
+		{
+			public CheckState _checkState = CheckState.Indeterminate;
+
+			public void HandleItemCheck(object sender, ItemCheckEventArgs e)
+			{
+				CheckState originalNewValue = e.NewValue; //logging
+				bool changed = false; //logging
+				switch (_checkState) {
+					case CheckState.Unchecked:
+						e.NewValue = CheckState.Unchecked;
+						changed = true;
+						break;
+					case CheckState.Checked:
+						e.NewValue = CheckState.Checked;
+						changed = true;
+						break;
+					default:    // No touchee!
+						global::System.Diagnostics.Debug.Assert(_checkState == CheckState.Indeterminate);
+						break;
+				}
+#if false // logging
+				Console.WriteLine("ItemCheck, item#: {0,2}, current: {1,9}, new was: {2,9}{4}",
+					e.Index, e.CurrentValue, originalNewValue, e.NewValue,
+					(changed ? String.Format(", ! is: {0,9}", e.NewValue) : String.Empty));
+#endif
+			}
+		}
+
 	}
 }

@@ -784,6 +784,31 @@ namespace MonoTests.System.Windows.Forms
 				base.SetItemsCore (value);
 			}
 		}
+
+		[Test]
+		public void AddToSorted ()
+		{
+			AddItems (true, CheckedListBoxTest.Items, CheckedListBoxTest.ExpectedAddPositionsSorted);
+		}
+
+		[Test]
+		public void AddToUnsorted ()
+		{
+			AddItems (false, CheckedListBoxTest.Items, CheckedListBoxTest.ExpectedAddPositionsUnsorted);
+		}
+
+		void AddItems (bool sorted, object[] items, int[] expectedAddPositions)
+		{
+			ListBox clb = new ListBox ();
+			clb.Sorted = sorted;
+			ArrayList addedAtList = new ArrayList ();
+			foreach (object cur in items)
+			{
+				int idx = clb.Items.Add (cur);
+				addedAtList.Add (idx);
+			}
+			Assert.AreEqual ((Array)expectedAddPositions, (Array)addedAtList.ToArray (typeof (int)), "addedAtList");
+		}
 	}
 
 	[TestFixture]

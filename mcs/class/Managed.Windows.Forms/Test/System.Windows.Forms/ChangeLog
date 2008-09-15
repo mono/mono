@@ -1,3 +1,8 @@
+2008-09-15  Jonathan Pobst  <monkey@jpobst.com>
+
+	* CheckedListBoxTest.cs, ListBoxTest.cs: Add some tests from Andy
+	Hume for bug #426166.
+
 2008-09-11  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ListViewCollectionsTest.cs: Add test for bug #425342.

@@ -2522,6 +2522,11 @@ namespace System.Windows.Forms
 
 				idx = AddItem (item);
 				owner.CollectionChanged ();
+				
+				// If we are sorted, the item probably moved indexes, get the real one
+				if (owner.sorted)
+					return this.IndexOf (item);
+					
 				return idx;
 			}
 
