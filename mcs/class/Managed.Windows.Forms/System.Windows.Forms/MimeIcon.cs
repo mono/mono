@@ -358,11 +358,12 @@ namespace System.Windows.Forms
 				if (internal_mime_type == "harddisk/harddisk" || internal_mime_type == "cdrom/cdrom" || internal_mime_type == "removable/removable")
 					image = ResourceImageLoader.Get ("text-x-generic.png");
 			}
-			
-			index = MimeIconEngine.SmallIcons.Images.Add (image, Color.Transparent);
-			MimeIconEngine.LargeIcons.Images.Add (image, Color.Transparent);
-			
-			MimeIconEngine.MimeIconIndex.Add (internal_mime_type, index);
+
+			if (image != null) {
+				index = MimeIconEngine.SmallIcons.Images.Add (image, Color.Transparent);
+				MimeIconEngine.LargeIcons.Images.Add (image, Color.Transparent);
+				MimeIconEngine.MimeIconIndex.Add (internal_mime_type, index);
+			}
 		}
 		
 		public override object AddAndGetIconIndex (string filename, string mime_type)
@@ -370,11 +371,11 @@ namespace System.Windows.Forms
 			int index = -1;
 			
 			Image image = GnomeUtil.GetIcon (filename, mime_type, 48);
-			
-			index = MimeIconEngine.SmallIcons.Images.Add (image, Color.Transparent);
-			MimeIconEngine.LargeIcons.Images.Add (image, Color.Transparent);
-			
-			MimeIconEngine.MimeIconIndex.Add (mime_type, index);
+			if (image != null) {
+				index = MimeIconEngine.SmallIcons.Images.Add (image, Color.Transparent);
+				MimeIconEngine.LargeIcons.Images.Add (image, Color.Transparent);
+				MimeIconEngine.MimeIconIndex.Add (mime_type, index);
+			}
 			
 			return index;
 		}
@@ -384,11 +385,11 @@ namespace System.Windows.Forms
 			int index = -1;
 			
 			Image image = GnomeUtil.GetIcon (mime_type, 48);
-			
-			index = MimeIconEngine.SmallIcons.Images.Add (image, Color.Transparent);
-			MimeIconEngine.LargeIcons.Images.Add (image, Color.Transparent);
-			
-			MimeIconEngine.MimeIconIndex.Add (mime_type, index);
+			if (image != null) {
+				index = MimeIconEngine.SmallIcons.Images.Add (image, Color.Transparent);
+				MimeIconEngine.LargeIcons.Images.Add (image, Color.Transparent);
+				MimeIconEngine.MimeIconIndex.Add (mime_type, index);
+			}
 			
 			return index;
 		}
