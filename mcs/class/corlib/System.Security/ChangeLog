@@ -1,3 +1,8 @@
+2008-09-15  Jb Evain  <jbevain@novell.com>
+
+	* SecuritySafeCriticalAttribute.cs: Include SecuritySafeCritical in
+	the net_2_0 profile, as a recent sp includes it.
+
 2008-08-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityState.cs: New. Silverlight 2.0 abstract type.
