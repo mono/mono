@@ -1133,6 +1133,11 @@ namespace Mono.CSharp {
 
 		public static void Error_NamespaceNotFound (Location loc, string name)
 		{
+			if (RootContext.EvalMode){
+				// Do not report this, it might be an error on the eval side, and we are lax there.
+				return;
+			}
+			
 			Report.Error (246, loc, "The type or namespace name `{0}' could not be found. Are you missing a using directive or an assembly reference?",
 				name);
 

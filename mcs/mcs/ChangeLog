@@ -1,3 +1,7 @@
+2008-09-15  Miguel de Icaza  <miguel@novell.com>
+
+	* namespace.cs: Do not report CS0246 (name
+
 2008-09-12  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #425669
