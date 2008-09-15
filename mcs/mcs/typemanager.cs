@@ -1034,6 +1034,28 @@ namespace Mono.CSharp {
 	//
 	public static void InitOptionalCoreTypes ()
 	{
+		system_string_expr.Type = string_type;
+		system_boolean_expr.Type = bool_type;
+		system_decimal_expr.Type = decimal_type;
+		system_single_expr.Type = float_type;
+		system_double_expr.Type = double_type;
+		system_sbyte_expr.Type = sbyte_type;
+		system_byte_expr.Type = byte_type;
+		system_int16_expr.Type = short_type;
+		system_uint16_expr.Type = ushort_type;
+		system_int32_expr.Type = int32_type;
+		system_uint32_expr.Type = uint32_type;
+		system_int64_expr.Type = int64_type;
+		system_uint64_expr.Type = uint64_type;
+		system_char_expr.Type = char_type;
+		system_void_expr.Type = void_type;
+
+		//
+		// These are only used for compare purposes
+		//
+		anonymous_method_type = typeof (AnonymousMethodBody);
+		null_type = typeof (NullLiteral);
+		
 		void_ptr_type = GetPointerType (void_type);
 		char_ptr_type = GetPointerType (char_type);
 
@@ -1132,28 +1154,6 @@ namespace Mono.CSharp {
 					TypeManager.CSharpName (system_4_type_arg));
 			}
 		}
-
-		system_string_expr.Type = string_type;
-		system_boolean_expr.Type = bool_type;
-		system_decimal_expr.Type = decimal_type;
-		system_single_expr.Type = float_type;
-		system_double_expr.Type = double_type;
-		system_sbyte_expr.Type = sbyte_type;
-		system_byte_expr.Type = byte_type;
-		system_int16_expr.Type = short_type;
-		system_uint16_expr.Type = ushort_type;
-		system_int32_expr.Type = int32_type;
-		system_uint32_expr.Type = uint32_type;
-		system_int64_expr.Type = int64_type;
-		system_uint64_expr.Type = uint64_type;
-		system_char_expr.Type = char_type;
-		system_void_expr.Type = void_type;
-
-		//
-		// These are only used for compare purposes
-		//
-		anonymous_method_type = typeof (AnonymousMethodBody);
-		null_type = typeof (NullLiteral);
 	}
 
 	const BindingFlags instance_and_static = BindingFlags.Static | BindingFlags.Instance;

@@ -421,6 +421,11 @@ namespace Mono.CSharp {
 			return ns;
 		}
 
+		public bool HasDefinition (string name)
+		{
+			return declspaces != null && declspaces [name] != null;
+		}
+
 		TypeExpr LookupType (string name, Location loc)
 		{
 			if (cached_types.Contains (name))

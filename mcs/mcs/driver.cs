@@ -742,9 +742,17 @@ namespace Mono.CSharp
 				// even with -noconfig, otherwise the check for ExtensionAttribute in
 				// loaded assemblies won't work
 				//
-				if (need_system_core && references.Count != 0 && Driver.OutputFile != "System.Core.dll")
-					soft_references.Add ("System.Core");
-				
+
+				if (need_system_core && references.Count != 0) {
+					//
+					// TODO: use TypeManager.CoreLookupType (...) when it stops defining types
+					// on your back
+					//
+					Namespace n = GlobalRootNamespace.Global.GetNamespace ("System.Runtime.CompilerServices", false);
+					if (n == null || !n.HasDefinition ("ExtensionAttribute")) {
+						soft_references.Add ("System.Core");
+					}
+				}
 				return;
 			}
 			
