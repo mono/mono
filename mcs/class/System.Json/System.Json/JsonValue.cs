@@ -9,7 +9,7 @@ using JsonPair = System.Collections.Generic.KeyValuePair<string, System.Json.Jso
 
 namespace System.Json
 {
-	public abstract class JsonValue
+	public abstract class JsonValue : IEnumerable
 	{
 		public static JsonValue Load (Stream stream)
 		{
@@ -109,6 +109,11 @@ namespace System.Json
 			StringWriter sw = new StringWriter ();
 			Save (sw);
 			return sw.ToString ();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			throw new InvalidOperationException ();
 		}
 
 		internal string EscapeString (string src)

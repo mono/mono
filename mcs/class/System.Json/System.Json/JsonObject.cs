@@ -11,7 +11,7 @@ using JsonPairEnumerable = System.Collections.Generic.IEnumerable<System.Collect
 
 namespace System.Json
 {
-	public class JsonObject : JsonValue//, IDictionary<string, JsonValue>, ICollection<KeyValuePair<string, JsonValue>>
+	public class JsonObject : JsonValue, IDictionary<string, JsonValue>, ICollection<KeyValuePair<string, JsonValue>>
 	{
 		int known_count = -1;
 		Dictionary<string, JsonValue> map;
@@ -58,6 +58,10 @@ namespace System.Json
 			get { return false; }
 		}
 
+		bool ICollection<JsonPair>.IsReadOnly {
+			get { return ((ICollection<JsonPair>) map).IsReadOnly; }
+		}
+
 		public override sealed JsonValue this [string key] {
 			get {
 				foreach (JsonPair pair in AsEnumerable ())
@@ -75,17 +79,17 @@ namespace System.Json
 			get { return JsonType.Object; }
 		}
 
-		public IEnumerable<string> Keys {
+		public ICollection<string> Keys {
 			get {
-				foreach (JsonPair pair in AsEnumerable ())
-					yield return pair.Key;
+				PopulateMap ();
+				return map.Keys;
 			}
 		}
 
-		public IEnumerable<JsonValue> Values {
+		public ICollection<JsonValue> Values {
 			get {
-				foreach (JsonPair pair in AsEnumerable ())
-					yield return pair.Value;
+				PopulateMap ();
+				return map.Values;
 			}
 		}
 
@@ -127,12 +131,17 @@ namespace System.Json
 				source = empty;
 		}
 
+		bool ICollection<JsonPair>.Contains (JsonPair item)
+		{
+			return ContainsKey (item.Key);
+		}
+
 		public override bool ContainsKey (string key)
 		{
 			if (key == null)
 				throw new ArgumentNullException ("key");
-			foreach (string k in Keys)
-				if (k == key)
+			foreach (JsonPair p in AsEnumerable ())
+				if (p.Key == key)
 					return true;
 			return false;
 		}
@@ -143,10 +152,15 @@ namespace System.Json
 				array [arrayIndex++] = p;
 		}
 
-		public void Remove (string key)
+		public bool Remove (string key)
 		{
 			PopulateMap ();
-			map.Remove (key);
+			return map.Remove (key);
+		}
+
+		bool ICollection<JsonPair>.Remove (JsonPair item)
+		{
+			return ((ICollection<JsonPair>) map).Remove (item);
 		}
 
 		public override void Save (Stream stream)
@@ -164,6 +178,17 @@ namespace System.Json
 				pair.Value.Save (stream);
 			}
 			stream.WriteByte ((byte) '}');
+		}
+
+		public bool TryGetValue (string key, out JsonValue value)
+		{
+			foreach (JsonPair p in AsEnumerable ())
+				if (p.Key == key) {
+					value = p.Value;
+					return true;
+				}
+			value = null;
+			return false;
 		}
 
 		void PopulateMap ()
