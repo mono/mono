@@ -388,6 +388,148 @@ namespace MonoTests.System {
 			Assert.IsFalse (offset1.Equals (offset2), "1!=2");
 			Assert.IsFalse (offset2.Equals (offset1), "2!=1");
 		}
+
+		[Test]
+		public void Serialization()
+		{
+			global::System.IO.MemoryStream dst = new global::System.IO.MemoryStream ();
+			global::System.Runtime.Serialization.IFormatter fmtr
+				= new global::System.Runtime.Serialization.Formatters.Binary.BinaryFormatter ();
+			for (int i = 0; i < SerializationCases.Length; ++i) {
+				dst.SetLength (0);
+				DateTimeOffset cur = SerializationCases[i].Input;
+				fmtr.Serialize (dst, cur);
+				String result = BitConverter.ToString (dst.GetBuffer (), 0, (int)dst.Length);
+				Assert.AreEqual (SerializationCases[i].ResultBinaryString, result, "resultToString #" + i);
+			}//for
+		}
+
+		[Test]
+		public void Deserialization()
+		{
+			global::System.Runtime.Serialization.IFormatter fmtr
+				= new global::System.Runtime.Serialization.Formatters.Binary.BinaryFormatter ();
+			global::System.IO.MemoryStream src;
+			for (int i = 0; i < SerializationCases.Length; ++i) {
+				src = new global::System.IO.MemoryStream (
+					BitConverter_ByteArray_FromString (SerializationCases[i].ResultBinaryString));
+				DateTimeOffset result = (DateTimeOffset)fmtr.Deserialize (src);
+#if false // DUMP_TO_CONSOLE
+				Console.WriteLine ("#{0} input.o/s : {1}", i, SerializationCases[i].Input.Offset);
+				Console.WriteLine ("#{0} result.o/s: {1}", i, result.Offset);
+				Console.WriteLine ("#{0} input.dt : {1}={1:R}={1:u}", i, SerializationCases[i].Input.DateTime);
+				Console.WriteLine ("#{0} result.dt: {1}={1:R}={1:u}", i, result.DateTime);
+				Console.WriteLine ("#{0} input.dtK: {1}", i, SerializationCases[i].Input.DateTime.Kind);
+				Console.WriteLine ("#{0} input : {1}={1:R}={1:u}", i, SerializationCases[i].Input);
+				Console.WriteLine ("#{0} result: {1}={1:R}={1:u}", i, result);
+#endif
+				Assert.AreEqual (SerializationCases[i].Input.Offset, result.Offset, ".Offset #" + i);
+				Assert.AreEqual (SerializationCases[i].Input.DateTime, result.DateTime, ".DateTime #" + i);
+				Assert.AreEqual (SerializationCases[i].Input, result, "equals #" + i);
+				// DateTimeOffset always stores as Kind==Unspecified
+				Assert.AreEqual (DateTimeKind.Unspecified, SerializationCases[i].Input.DateTime.Kind, ".DateTime.Kind==unspec #" + i);
+				Assert.AreEqual (SerializationCases[i].Input.DateTime.Kind, result.DateTime.Kind, ".DateTime.Kind #" + i);
+			}//for
+		}
+
+		public class TestRow
+		{
+			public DateTimeOffset Input;
+			public String ResultBinaryString;
+
+			public TestRow(DateTimeOffset input, String resultBinaryString)
+			{
+				this.Input = input;
+				this.ResultBinaryString = resultBinaryString;
+			}
+		}
+		readonly TestRow[] SerializationCases = {
+			// Multiple tests of Unspecified and different timezone offsets; one 
+			// for UTC; and one for Local which is disabled as it suits only a machine
+			// in GMT or similar.
+#if ___MACHINE_TIMEZONE_HAS_ZERO_OFFSET
+			// The "new DateTimeOffset(new DateTime(...)))" expression results in a 
+			// DTO that has an offset set to the machine timezone offset.  So, as 
+			// with the test case at the bottom we can't test this around the world.
+			new TestRow (new DateTimeOffset (new DateTime (2007, 01, 02, 12, 30, 50)),
+				"00-01-00-00-00-FF-FF-FF-FF-01-00-00-00-00-00-00-"
+				+ "00-04-01-00-00-00-15-53-79-73-74-65-6D-2E-44-61-"
+				+ "74-65-54-69-6D-65-4F-66-66-73-65-74-02-00-00-00-"
+				+ "08-44-61-74-65-54-69-6D-65-0D-4F-66-66-73-65-74-"
+				+ "4D-69-6E-75-74-65-73-00-00-0D-07-00-39-75-F8-80-"
+				+ "FC-C8-08-00-00-0B"),
+#endif
+			new TestRow (new DateTimeOffset (new DateTime (2007, 01, 02, 12, 30, 50), new TimeSpan (0, 0, 0)),
+				"00-01-00-00-00-FF-FF-FF-FF-01-00-00-00-00-00-00-"
+				+ "00-04-01-00-00-00-15-53-79-73-74-65-6D-2E-44-61-"
+				+ "74-65-54-69-6D-65-4F-66-66-73-65-74-02-00-00-00-"
+				+ "08-44-61-74-65-54-69-6D-65-0D-4F-66-66-73-65-74-"
+				+ "4D-69-6E-75-74-65-73-00-00-0D-07-00-39-75-F8-80-"
+				+ "FC-C8-08-00-00-0B"),
+			new TestRow (new DateTimeOffset (new DateTime (2007, 01, 02, 12, 30, 50), new TimeSpan (1, 0, 0)),
+				"00-01-00-00-00-FF-FF-FF-FF-01-00-00-00-00-00-00-"
+				+ "00-04-01-00-00-00-15-53-79-73-74-65-6D-2E-44-61-"
+				+ "74-65-54-69-6D-65-4F-66-66-73-65-74-02-00-00-00-"
+				+ "08-44-61-74-65-54-69-6D-65-0D-4F-66-66-73-65-74-"
+				+ "4D-69-6E-75-74-65-73-00-00-0D-07-00-D1-B0-96-78-"
+				+ "FC-C8-08-3C-00-0B"),
+			new TestRow (new DateTimeOffset (new DateTime (2007, 01, 02, 12, 30, 50), new TimeSpan (0, 30, 0)),
+				"00-01-00-00-00-FF-FF-FF-FF-01-00-00-00-00-00-00-"
+				+ "00-04-01-00-00-00-15-53-79-73-74-65-6D-2E-44-61-"
+				+ "74-65-54-69-6D-65-4F-66-66-73-65-74-02-00-00-00-"
+				+ "08-44-61-74-65-54-69-6D-65-0D-4F-66-66-73-65-74-"
+				+ "4D-69-6E-75-74-65-73-00-00-0D-07-00-05-93-C7-7C-"
+				+ "FC-C8-08-1E-00-0B"),
+			new TestRow (new DateTimeOffset (new DateTime (2007, 01, 02, 12, 30, 50), new TimeSpan (-5, 0, 0)),
+				"00-01-00-00-00-FF-FF-FF-FF-01-00-00-00-00-00-00-"
+				+ "00-04-01-00-00-00-15-53-79-73-74-65-6D-2E-44-61-"
+				+ "74-65-54-69-6D-65-4F-66-66-73-65-74-02-00-00-00-"
+				+ "08-44-61-74-65-54-69-6D-65-0D-4F-66-66-73-65-74-"
+				+ "4D-69-6E-75-74-65-73-00-00-0D-07-00-41-4B-E1-AA-"
+				+ "FC-C8-08-D4-FE-0B"),
+			new TestRow (new DateTimeOffset (new DateTime (2007, 01, 02, 12, 30, 50), new TimeSpan (-10, 30, 0)),
+				"00-01-00-00-00-FF-FF-FF-FF-01-00-00-00-00-00-00-"
+				+ "00-04-01-00-00-00-15-53-79-73-74-65-6D-2E-44-61-"
+				+ "74-65-54-69-6D-65-4F-66-66-73-65-74-02-00-00-00-"
+				+ "08-44-61-74-65-54-69-6D-65-0D-4F-66-66-73-65-74-"
+				+ "4D-69-6E-75-74-65-73-00-00-0D-07-00-15-3F-99-D0-"
+				+ "FC-C8-08-C6-FD-0B"),
+			// invalid case: .ctor ArgEx "non whole minutes"
+			//	new DateTimeOffset(new DateTime(2007, 01, 02, 12, 30, 50), new TimeSpan(1, 2, 3));
+			//----
+			new TestRow (new DateTimeOffset (new DateTime (2007, 01, 02, 12, 30, 50, DateTimeKind.Utc)),
+				"00-01-00-00-00-FF-FF-FF-FF-01-00-00-00-00-00-00-"
+				+ "00-04-01-00-00-00-15-53-79-73-74-65-6D-2E-44-61-"
+				+ "74-65-54-69-6D-65-4F-66-66-73-65-74-02-00-00-00-"
+				+ "08-44-61-74-65-54-69-6D-65-0D-4F-66-66-73-65-74-"
+				+ "4D-69-6E-75-74-65-73-00-00-0D-07-00-39-75-F8-80-"
+				+ "FC-C8-08-00-00-0B"),
+			//----
+#if ___MACHINE_TIMEZONE_HAS_ZERO_OFFSET
+			// Local needs offset to be the same as the machine timezone,
+			// not easy to cope with the tests being run around the world!
+			// This one works in UK, etc.
+			new TestRow (new DateTimeOffset (new DateTime (2007, 01, 02, 12, 30, 50, DateTimeKind.Local), new TimeSpan (0,0,0)),
+				"00-01-00-00-00-FF-FF-FF-FF-01-00-00-00-00-00-00-"
+				+ "00-04-01-00-00-00-15-53-79-73-74-65-6D-2E-44-61-"
+				+ "74-65-54-69-6D-65-4F-66-66-73-65-74-02-00-00-00-"
+				+ "08-44-61-74-65-54-69-6D-65-0D-4F-66-66-73-65-74-"
+				+ "4D-69-6E-75-74-65-73-00-00-0D-07-00-39-75-F8-80-"
+				+ "FC-C8-08-00-00-0B"),
+#endif
+		};
+
+		static byte[] BitConverter_ByteArray_FromString(String hexString)
+		{
+			String[] numbers = hexString.Split('-');
+			byte[] result = new byte[numbers.Length];
+			for (int i = 0; i < numbers.Length; ++i) {
+				byte x = Byte.Parse (numbers[i], NumberStyles.HexNumber, global::System.Globalization.CultureInfo.InvariantCulture);
+				result[i] = x;
+			}
+			return result;
+		}
+
 	}
 }
 #endif

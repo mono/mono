@@ -1,3 +1,13 @@
+2008-09-15  Andy Hume  <andyhume32@yahoo.co.uk>
+
+	* DateTimeOffset.cs: DateTimeOffset currently has no
+	deserialization constructor, thus deserialization
+	fails ("SerializationException: The constructor to deserialize an
+	object of type System.DateTimeOffset was not found.")
+
+	Patch attached, implements GetObjectData and that constructor.
+	Also includes tests, which include round-tripping to/from MSFT.
+
 2008-09-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* ConsoleDriver.cs: Remove obsolete GetTtySize icall.
