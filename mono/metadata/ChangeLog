@@ -1,3 +1,8 @@
+2008-09-15  Mark Probst  <mark.probst@gmail.com>
+
+	* object-internals.h: enum ComInterfaceType in
+	MonoInterfaceTypeAttribute is guint32, not guint16.
+
 2008-09-12  Mark Probst  <mark.probst@gmail.com>
 
 	* cil-coff.h, image.c, reflection.c: Endianness fixes in image
