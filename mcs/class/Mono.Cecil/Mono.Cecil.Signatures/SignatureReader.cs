@@ -565,7 +565,7 @@ namespace Mono.Cecil.Signatures {
 			start = pos;
 			while (true) {
 				int buf = start;
-				if (buf == data.Length)
+				if (buf >= data.Length - 1)
 					break;
 
 				ElementType flag = (ElementType) Utilities.ReadCompressedInteger (data, start, out start);
