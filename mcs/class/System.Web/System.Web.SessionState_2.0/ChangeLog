@@ -1,3 +1,10 @@
+2008-09-15  Marek Habersack  <mhabersack@novell.com>
+
+	* SessionStateModule.cs: correctly let the handler know if an item
+	is new when calling SetAndReleaseItemExclusive. Fixes bug #424797
+	If handler's GetItem doesn't initialize storeLockId to a non-null
+	value, initialize it to 0. Fixes bug #424797
+
 2008-07-29  Marek Habersack  <mhabersack@novell.com>
 
 	* SessionStateModule.cs: use Request.FilePath instead of

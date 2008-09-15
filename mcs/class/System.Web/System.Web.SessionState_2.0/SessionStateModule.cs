@@ -82,7 +82,8 @@ namespace System.Web.SessionState
 		TimeSpan storeLockAge;
 		object storeLockId;
 		SessionStateActions storeSessionAction;
-
+		bool storeIsNew;
+		
 		// Session state
 		SessionStateStoreData storeData;
 		HttpSessionStateContainer container;
@@ -229,9 +230,9 @@ namespace System.Web.SessionState
 
 			GetStoreData (context, sessionId, isReadOnly);
 
-			bool isNew = false;
+			storeIsNew = false;
 			if (storeData == null && !storeLocked) {
-				isNew = true;
+				storeIsNew = true;
 				sessionId = idManager.CreateSessionID (context);
 				Trace.WriteLine ("New session ID allocated: " + sessionId);
 				bool redirected;
@@ -256,9 +257,9 @@ namespace System.Web.SessionState
 				storeData = handler.CreateNewStoreData (context, (int)config.Timeout.TotalMinutes);
 			}
 
-			container = CreateContainer (sessionId, storeData, isNew, isReadOnly);
+			container = CreateContainer (sessionId, storeData, storeIsNew, isReadOnly);
 			SessionStateUtility.AddHttpSessionStateToContext (app.Context, container);
-			if (isNew) {
+			if (storeIsNew) {
 				OnSessionStart ();
 				HttpSessionState hss = app.Session;
 
@@ -284,7 +285,7 @@ namespace System.Web.SessionState
 					Trace.WriteLine ("\tnot abandoned");
 					if (!container.IsReadOnly) {
 						Trace.WriteLine ("\tnot read only, storing and releasing");
-						handler.SetAndReleaseItemExclusive (context, container.SessionID, storeData, storeLockId, false);
+						handler.SetAndReleaseItemExclusive (context, container.SessionID, storeData, storeLockId, storeIsNew);
 					}
 					else {
 						Trace.WriteLine ("\tread only, releasing");
@@ -343,6 +344,8 @@ namespace System.Web.SessionState
 									  out storeLockAge,
 									  out storeLockId,
 									  out storeSessionAction);
+			if (storeLockId == null)
+				storeLockId = 0;
 		}
 
 		void WaitForStoreUnlock (HttpContext context, string sessionId, bool isReadonly) {
