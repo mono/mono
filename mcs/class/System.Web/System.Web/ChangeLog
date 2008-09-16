@@ -1,3 +1,8 @@
+2008-09-16  Juraj Skripsky  <js@hotfeet.ch>
+
+	* HttpServerUtility.cs (UrlDecode, UrlEncode): Respect request/response
+	encoding. Fixes bug #426539.
+
 2008-08-29  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplication.cs: do not cache handlers which aren't
