@@ -1,4 +1,3 @@
-
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -9,10 +8,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -26,49 +25,40 @@ using System.Collections;
 
 namespace System.Data.Common
 {
-	internal class RecordCache
-	{
+	internal class RecordCache {
 		#region Fields
 
 		const int MIN_CACHE_SIZE = 128;
 
-		Stack _records = new Stack(16);
+		Stack _records = new Stack (16);
 		int _nextFreeIndex = 0;
 		int _currentCapacity = 0;
 		DataTable _table;
-		DataRow[] _rowsToRecords;
+		DataRow [] _rowsToRecords;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		internal RecordCache(DataTable table)
+		internal RecordCache (DataTable table)
 		{
 			_table = table;
-			_rowsToRecords = table.NewRowArray(16);
+			_rowsToRecords = table.NewRowArray (16);
 		}
 
 		#endregion //Constructors
 
 		#region Properties
 
-		internal int CurrentCapacity 
-		{
-			get {
-				return _currentCapacity;
-			}
+		internal int CurrentCapacity {
+			get { return _currentCapacity; }
 		}
 
-		internal DataRow this[int index]
-		{
-			get {
-				return _rowsToRecords[index];
-			}
-
+		internal DataRow this [int index] {
+			get { return _rowsToRecords [index]; }
 			set {
-				if (index >= 0) {
-					_rowsToRecords[index] = value;
-				}
+				if (index >= 0)
+					_rowsToRecords [index] = value;
 			}
 		}
 
@@ -76,16 +66,15 @@ namespace System.Data.Common
 
 		#region Methods
 
-		internal int NewRecord()
+		internal int NewRecord ()
 		{
 			if (_records.Count > 0) {
-                                return (int)_records.Pop();
-			}
-			else {
+				return (int) _records.Pop ();
+			} else {
 				DataColumnCollection cols = _table.Columns;
 				if (_nextFreeIndex >= _currentCapacity) {
 					_currentCapacity *= 2;
-					if ( _currentCapacity < MIN_CACHE_SIZE ) {
+					if (_currentCapacity < MIN_CACHE_SIZE) {
 						_currentCapacity = MIN_CACHE_SIZE;
 					}
 					for (int i = 0; i < cols.Count; ++i) {
@@ -93,72 +82,65 @@ namespace System.Data.Common
 						col.DataContainer.Capacity = _currentCapacity;
 					}
 
-					DataRow[] old = _rowsToRecords;
-					_rowsToRecords = _table.NewRowArray(_currentCapacity);
-					Array.Copy(old,0,_rowsToRecords,0,old.Length);
+					DataRow [] old = _rowsToRecords;
+					_rowsToRecords = _table.NewRowArray (_currentCapacity);
+					Array.Copy (old, 0, _rowsToRecords, 0, old.Length);
 				}
 				return _nextFreeIndex++;
 			}
 		}
 
-		internal void DisposeRecord(int index)
+		internal void DisposeRecord (int index)
 		{
-			if ( index < 0 ) {
-				throw new ArgumentException();
-			}
-                        if (!_records.Contains (index))
-                                _records.Push(index);
+			if (index < 0)
+				throw new ArgumentException ();
 
-			this[index] = null;
+			if (!_records.Contains (index))
+				_records.Push (index);
+
+			this [index] = null;
 		}
 
-		internal int CopyRecord(DataTable fromTable,int fromRecordIndex,int toRecordIndex)
+		internal int CopyRecord (DataTable fromTable, int fromRecordIndex, int toRecordIndex)
 		{
 			int recordIndex = toRecordIndex;
 			if (toRecordIndex == -1) {
-				recordIndex = NewRecord();
+				recordIndex = NewRecord ();
 			}
 
-			try
-			{
-				foreach(DataColumn fromColumn in fromTable.Columns) 
-				{
-					DataColumn column = _table.Columns[fromColumn.ColumnName];
-					if (column != null) 
-					{
-						column.DataContainer.CopyValue(fromColumn.DataContainer,fromRecordIndex,recordIndex);
-					}
+			try {
+				foreach (DataColumn fromColumn in fromTable.Columns) {
+					DataColumn column = _table.Columns [fromColumn.ColumnName];
+					if (column != null)
+						column.DataContainer.CopyValue (fromColumn.DataContainer, fromRecordIndex, recordIndex);
 				}
 
 				return recordIndex;
-			}
-			catch
-			{
+			} catch {
 				if (toRecordIndex == -1)
-					DisposeRecord(recordIndex);
+					DisposeRecord (recordIndex);
 
 				throw;
 			}
 		}
 
-		internal void ReadIDataRecord(int recordIndex, IDataRecord record, int[] mapping, int length)
+		internal void ReadIDataRecord (int recordIndex, IDataRecord record, int[] mapping, int length)
 		{
-			if ( mapping.Length > _table.Columns.Count)
+			if (mapping.Length > _table.Columns.Count)
 				throw new ArgumentException ();
 
-			int i=0;
+			int i = 0;
 			for(; i < length; i++) {
-				DataColumn column = _table.Columns[mapping[i]];
-				column.DataContainer.SetItemFromDataRecord(recordIndex, record,i);
+				DataColumn column = _table.Columns [mapping [i]];
+				column.DataContainer.SetItemFromDataRecord (recordIndex, record, i);
 			}
 
-			for (; i < mapping.Length; i++)
-			{
-				DataColumn column = _table.Columns[mapping[i]];
-				if ( column.AutoIncrement ) 
-					column.DataContainer[recordIndex] = column.AutoIncrementValue ();
+			for (; i < mapping.Length; i++) {
+				DataColumn column = _table.Columns [mapping [i]];
+				if (column.AutoIncrement)
+					column.DataContainer [recordIndex] = column.AutoIncrementValue ();
 				else
-					column.DataContainer[recordIndex] = column.DefaultValue;
+					column.DataContainer [recordIndex] = column.DefaultValue;
 			}
 		}
 
