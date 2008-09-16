@@ -11,3 +11,11 @@ public class C
 		return typeof (C).FullName;
 	}
 }
+
+public class D
+{
+	public static string Print ()
+	{
+		return typeof (D).FullName;
+	}
+}

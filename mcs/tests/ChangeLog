@@ -1,3 +1,8 @@
+2008-09-16  Jb Evain  <jbevain@novell.com>
+
+	* gtest-278.cs, gtest-278-3-lib.cs, gtest-278-2-lib.cs: complete
+	test for forwarded types with more than only one type forwarded.
+
 2008-08-29  Raja R Harinath  <harinath@hurrynot.org>
 
 	* test-xml-052.cs: Fix unrelated warning.
