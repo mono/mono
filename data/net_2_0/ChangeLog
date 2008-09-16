@@ -1,3 +1,9 @@
+2008-09-02  Marek Habersack  <mhabersack@novell.com>
+
+	* web.config: removed System.Web.Extensions.dll from the assemblies
+	(reverting r112073) - it would break all the ASP.NET applications
+	which use System.Web.Extensions other than 3.5.0.0
+
 2008-09-06  Daniel Morgan  <monodanmorg@yahoo.com>
 
 	* machine.config: added Mono.Data.SybaseClient
