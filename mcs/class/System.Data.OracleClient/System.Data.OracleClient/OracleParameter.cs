@@ -522,77 +522,102 @@ namespace System.Data.OracleClient
 						OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, out rsize);
 					} 
 					break;
-					case OciDataType.Long:
-					case OciDataType.LongVarChar:
-						bindType = OciDataType.LongVarChar;
+				case OciDataType.Long:
+				case OciDataType.LongVarChar:
+					bindType = OciDataType.LongVarChar;
 
-						// FIXME: use piecewise fetching for Long, Clob, Blob, and Long Raw
-						// See http://download.oracle.com/docs/cd/B19306_01/appdev.102/b14250/oci05bnd.htm#sthref724
-						
-						bindSize = Size + 5; // 4 bytes prepended for length, bytes, 1 byte NUL character
+					// FIXME: use piecewise fetching for Long, Clob, Blob, and Long Raw
+					// See http://download.oracle.com/docs/cd/B19306_01/appdev.102/b14250/oci05bnd.htm#sthref724
+					
+					bindSize = Size + 5; // 4 bytes prepended for length, bytes, 1 byte NUL character
 
-						indicator = 0;
-						svalue = "\0";
-						// convert value from managed type to type to marshal
-						if (direction == ParameterDirection.Input || 
-							direction == ParameterDirection.InputOutput) {
+					indicator = 0;
+					svalue = "\0";
+					// convert value from managed type to type to marshal
+					if (direction == ParameterDirection.Input || 
+						direction == ParameterDirection.InputOutput) {
 
-							svalue = v.ToString () + '\0';
-						}
+						svalue = v.ToString () + '\0';
+					}
 
-						bytes = new byte [bindSize];
-						// LONG is only ANSI 
-						ASCIIEncoding enc = new ASCIIEncoding ();
-						
-						if (direction == ParameterDirection.Input || 
-							direction == ParameterDirection.InputOutput) {
-							int byteCount = 0;
-							if (svalue.Length > 0) {	
-								byteCount = enc.GetBytes (svalue, 4, svalue.Length, bytes, 0);
-								// LONG VARCHAR prepends a 4-byte length
-								if (byteCount > 0) {
-									byte[] byteArrayLen = BitConverter.GetBytes ((uint) byteCount);
-									bytes[0] = byteArrayLen[0];
-									bytes[1] = byteArrayLen[1];
-									bytes[2] = byteArrayLen[2];
-									bytes[3] = byteArrayLen[3];
-								}
+					bytes = new byte [bindSize];
+					// LONG is only ANSI 
+					ASCIIEncoding enc = new ASCIIEncoding ();
+					
+					if (direction == ParameterDirection.Input || 
+						direction == ParameterDirection.InputOutput) {
+						int byteCount = 0;
+						if (svalue.Length > 0) {	
+							byteCount = enc.GetBytes (svalue, 4, svalue.Length, bytes, 0);
+							// LONG VARCHAR prepends a 4-byte length
+							if (byteCount > 0) {
+								byte[] byteArrayLen = BitConverter.GetBytes ((uint) byteCount);
+								bytes[0] = byteArrayLen[0];
+								bytes[1] = byteArrayLen[1];
+								bytes[2] = byteArrayLen[2];
+								bytes[3] = byteArrayLen[3];
 							}
 						}
-						break;
-					case OciDataType.Clob:
-						if (direction == ParameterDirection.Input) {
-							svalue = v.ToString();
-							rsize = 0;
+					}
+					break;
+				case OciDataType.Clob:
+					if (direction == ParameterDirection.Input) {
+						svalue = v.ToString();
+						rsize = 0;
 
-							// Get size of buffer
-							OciCalls.OCIUnicodeToCharSet (statement.Parent, null, svalue, out rsize);
+						// Get size of buffer
+						OciCalls.OCIUnicodeToCharSet (statement.Parent, null, svalue, out rsize);
 
-							// Fill buffer
-							bytes = new byte[rsize];
-							OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, out rsize);
+						// Fill buffer
+						bytes = new byte[rsize];
+						OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, out rsize);
 
-							bindType = OciDataType.Long;
-							bindSize = bytes.Length;
-						} 
-						else if (direction == ParameterDirection.InputOutput)
-							// not the exact error that .net 2.0 throws, but this is better
-							throw new NotImplementedException ("Parameters of OracleType.Clob with direction of InputOutput are not supported.");
-						else {
-							// Output and Return parameters
-							bindSize = -1;
-							lobLocator = (OciLobLocator) connection.Environment.Allocate (OciHandleType.LobLocator);
-							if (lobLocator == null) {
-								OciErrorInfo info = connection.ErrorHandle.HandleError ();
-								throw new OracleException (info.ErrorCode, info.ErrorMessage);
-							}
-							bindOutValue = lobLocator.Handle;
-							bindValue = lobLocator.Handle;
-							lobLocator.ErrorHandle = connection.ErrorHandle;
-							lobLocator.Service = statement.Service;
-							useRef = true;
+						bindType = OciDataType.Long;
+						bindSize = bytes.Length;
+					} 
+					else if (direction == ParameterDirection.InputOutput) {
+						// not the exact error that .net 2.0 throws, but this is better
+						throw new NotImplementedException ("Parameters of OracleType.Clob with direction of InputOutput are not supported.");
+					}
+					else {
+						// Output and Return parameters
+						bindSize = -1;
+						lobLocator = (OciLobLocator) connection.Environment.Allocate (OciHandleType.LobLocator);
+						if (lobLocator == null) {
+							OciErrorInfo info = connection.ErrorHandle.HandleError ();
+							throw new OracleException (info.ErrorCode, info.ErrorMessage);
 						}
-						break;
+						bindOutValue = lobLocator.Handle;
+						bindValue = lobLocator.Handle;
+						lobLocator.ErrorHandle = connection.ErrorHandle;
+						lobLocator.Service = statement.Service;
+						useRef = true;
+					}
+					break;
+				case OciDataType.Blob:
+					if (direction == ParameterDirection.Input) {
+						bytes = (byte[]) v;
+						bindType = OciDataType.LongRaw;
+						bindSize = bytes.Length;
+					}
+					else if (direction == ParameterDirection.InputOutput) {
+						// not the exact error that .net 2.0 throws, but this is better
+						throw new NotImplementedException ("Parameters of OracleType.Blob with direction of InputOutput are not supported.");
+					}
+					else {
+						bindSize = -1;
+						lobLocator = (OciLobLocator) connection.Environment.Allocate (OciHandleType.LobLocator);
+						if (lobLocator == null) {
+							OciErrorInfo info = connection.ErrorHandle.HandleError ();
+							throw new OracleException (info.ErrorCode, info.ErrorMessage);
+						}
+						bindOutValue = lobLocator.Handle;
+						bindValue = lobLocator.Handle;
+						lobLocator.ErrorHandle = connection.ErrorHandle;
+						lobLocator.Service = statement.Service;
+						useRef = true;
+					}
+					break;					
 				default:
 					// FIXME: move this up - see how Char, Number, and Date are done...
 					if (direction == ParameterDirection.Output || 
@@ -618,19 +643,6 @@ namespace System.Data.OracleClient
 							bindType = OciDataType.TimeStamp;
 							bindOutValue = dateTimeDesc.Handle;
 							bindValue = dateTimeDesc.Handle;
-							useRef = true;
-							break;
-						case OciDataType.Blob:
-							bindSize = -1;
-							lobLocator = (OciLobLocator) connection.Environment.Allocate (OciHandleType.LobLocator);
-							if (lobLocator == null) {
-								OciErrorInfo info = connection.ErrorHandle.HandleError ();
-								throw new OracleException (info.ErrorCode, info.ErrorMessage);
-							}
-							bindOutValue = lobLocator.Handle;
-							bindValue = lobLocator.Handle;
-							lobLocator.ErrorHandle = connection.ErrorHandle;
-							lobLocator.Service = statement.Service;
 							useRef = true;
 							break;
 						case OciDataType.RSet: // REF CURSOR
@@ -699,11 +711,6 @@ namespace System.Data.OracleClient
 								year, month, day, hour, min, sec, fsec,
 								timezone);
 							useRef = true;
-						}
-						else if (bindOracleType == OracleType.Blob) {
-							bytes = (byte[]) v;
-							bindType = OciDataType.LongRaw;
-							bindSize = bytes.Length;
 						}
 						else if (bindOracleType == OracleType.Raw) {
 							byte[] val = v as byte[];
@@ -984,7 +991,8 @@ namespace System.Data.OracleClient
 				break;
 			case DbType.StringFixedLength:
 				oracleType = OracleType.NChar;
-				ociType = OciDataType.Char;
+				ociType = OciDataType.Char;																																																																																																																																																																																																																																																														
+
 				break;
 			default:
 				throw new ArgumentException (exception);
