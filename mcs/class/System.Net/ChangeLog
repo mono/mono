@@ -1,3 +1,7 @@
+2008-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Net.dll.sources: Add new security-socket related files.
+
 2008-07-31  Jb Evain  <jbevain@novell.com>
 
 	* System.Net.dll.sources: fine tune.
