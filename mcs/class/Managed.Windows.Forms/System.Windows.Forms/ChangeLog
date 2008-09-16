@@ -26,7 +26,7 @@
 
 	* TextControl.cs: When getting the SelectedText, don't add in
 	NewLine characters, as they are already contained in the lines.
-	[Fixes bug #321143]
+	[Fixes bug #388115]
 
 2008-09-16  Jonathan Pobst  <monkey@jpobst.com>
 
