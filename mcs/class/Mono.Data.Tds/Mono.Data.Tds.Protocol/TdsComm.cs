@@ -39,7 +39,7 @@ namespace Mono.Data.Tds.Protocol {
 	{
 		#region Fields
 
-		NetworkStream stream;
+		internal NetworkStream stream;
 		int packetSize;
 		TdsPacketType packetType = TdsPacketType.None;
 		Encoding encoder;

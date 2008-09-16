@@ -1,3 +1,11 @@
+2008-09-16  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	Patch from Christian Hergert <christian.hergert@gmail.com>
+	* TdsComm.cs: Expose the stream to be internally used by other
+	classes
+	* Tds70.cs (Reset): Validate whether the connection is available
+	or not.
+	
 2008-07-09  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* TdsComm.cs:  Cleanup stray Console.WriteLine that got in during last commit

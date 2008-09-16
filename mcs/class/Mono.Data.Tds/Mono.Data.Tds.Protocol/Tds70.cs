@@ -353,6 +353,11 @@ namespace Mono.Data.Tds.Protocol
 
 		public override bool Reset ()
 		{
+			// Check validity of the connection - a false removes
+			// the connection from the pool
+			if (!Comm.stream.CanWrite)
+				return false;
+			
 			try {
 				ExecProc ("sp_reset_connection");
 				base.Reset ();
