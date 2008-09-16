@@ -873,7 +873,7 @@ namespace System.Windows.Forms {
 						offset_x, 
 						line.Y - viewport_y + offset_y, 
 						viewport_width, 
-						owner.Height - line.Y - viewport_y));
+						owner.Height - (line.Y - viewport_y)));
 				} else {
 					// The tag was above the visible area, draw everything
 					owner.Invalidate();
