@@ -1,3 +1,8 @@
+2008-09-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingTest.cs: New .ctor asertion for DataSourceNullValue default
+	value.
+
 2008-09-15  Jonathan Pobst  <monkey@jpobst.com>
 
 	* CheckedListBoxTest.cs, ListBoxTest.cs: Add some tests from Andy

@@ -67,6 +67,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.AreEqual (String.Empty, b.FormatString, "ctor8");
 			Assert.IsNull (b.FormatInfo, "ctor9");
 			Assert.IsNull (b.NullValue, "ctor10");
+			Assert.AreEqual (Convert.DBNull, b.DataSourceNullValue, "ctor11");
 #endif
 		}
 
