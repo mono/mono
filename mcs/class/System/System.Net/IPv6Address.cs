@@ -34,6 +34,7 @@
 
 
 using System;
+using System.Globalization;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -132,6 +133,20 @@ namespace System.Net {
 
 			return slot;
 		}
+
+		static bool TryParse (string s, out int res)
+		{
+#if NET_2_0
+			return Int32.TryParse (s, NumberStyles.Integer, CultureInfo.InvariantCulture, out res);
+#else
+			try {
+				res = Int32.Parse (prefix, NumberStyles.Integer, CultureInfo.InvariantCulture);
+			} catch (Exception) {
+				res = -1;
+				return false;
+			}
+#endif
+		}
 		
 		public static bool TryParse (string ipString, out IPv6Address result)
 		{
@@ -152,11 +167,8 @@ namespace System.Net {
 			int pos = ipString.LastIndexOf ('/');
 			if (pos != -1) {
 				string prefix = ipString.Substring (pos + 1);
-				try {
-					prefixLen = Int32.Parse (prefix);
-				} catch (Exception) {
+				if (!TryParse (prefix , out prefixLen))
 					prefixLen = -1;
-				}
 				if (prefixLen < 0 || prefixLen > 128)
 					return false;
 				ipString = ipString.Substring (0, pos);
@@ -164,12 +176,8 @@ namespace System.Net {
 				pos = ipString.LastIndexOf ('%');
 				if (pos != -1) {
 					string prefix = ipString.Substring (pos + 1);
-					try  {
-						scopeId = Int32.Parse (prefix);
-					} 
-					catch (Exception) {
+					if (!TryParse (prefix, out scopeId))
 						scopeId = 0;
-					}
 					ipString = ipString.Substring (0, pos);
 				}			
 			}

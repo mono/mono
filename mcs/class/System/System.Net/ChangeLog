@@ -1,3 +1,8 @@
+2008-09-16  Miguel de Icaza  <miguel@novell.com>
+
+	* IPv6Address.cs: On the 2.0 profile, avoid throwing/catching
+	exceptions inside TryParse.
+
 2008-09-12  Miguel de Icaza  <miguel@novell.com>
 
 	* HttpListenerPrefixCollection.cs, EndPointListener.cs,
