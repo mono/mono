@@ -388,7 +388,7 @@ namespace System.Windows.Forms
 					if (i == value.Length - 1 && value[i].Length == 0)
 						break;
 						
-					sb.AppendLine (value[i]);
+					sb.Append (value[i] + Environment.NewLine);
 				}
 
 				int newline_length = Environment.NewLine.Length;
