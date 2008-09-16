@@ -3152,11 +3152,11 @@ namespace System.Windows.Forms {
 				start = selection_start.line.line_no;
 				end = selection_end.line.line_no;
 
-				sb.Append(selection_start.line.text.ToString(selection_start.pos, selection_start.line.text.Length - selection_start.pos) + Environment.NewLine);
+				sb.Append(selection_start.line.text.ToString(selection_start.pos, selection_start.line.text.Length - selection_start.pos));
 
 				if ((start + 1) < end) {
 					for (i = start + 1; i < end; i++) {
-						sb.Append(GetLine(i).text.ToString() + Environment.NewLine);
+						sb.Append(GetLine(i).text.ToString());
 					}
 				}
 
