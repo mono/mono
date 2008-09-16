@@ -1,5 +1,11 @@
 2008-09-16  Mario Carrion <mcarrion@novell.com>
 
+	* ScrollBar.cs: New event added: UIAValueChanged, generated when
+	  LargeChange, SmallChange, Maximum or Minimum values are changed.
+	[Fixes bug #426464]
+
+2008-09-16  Mario Carrion <mcarrion@novell.com>
+
 	* ErrorProvider.cs: Component enabled to support accessibility.
 	* Application.cs: Updated to Initialize UIA in ErrorProvider.
 	[Fixes bug #426459]
