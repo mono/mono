@@ -1,3 +1,9 @@
+2008-09-16  Mario Carrion <mcarrion@novell.com>
+
+	* ErrorProvider.cs: Component enabled to support accessibility.
+	* Application.cs: Updated to Initialize UIA in ErrorProvider.
+	[Fixes bug #426459]
+
 2008-09-16  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextBoxBase.cs: Flag has_been_focused when SelectionStart is set

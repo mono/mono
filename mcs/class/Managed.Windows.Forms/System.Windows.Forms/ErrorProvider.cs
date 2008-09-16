@@ -79,7 +79,24 @@ namespace System.Windows.Forms {
 				window.Width = ep.icon.Width;
 				window.Height = ep.icon.Height;
 
+#if NET_2_0
+				// UIA Framework: Associate ErrorProvider with Control
+				ErrorProvider.OnUIAErrorProviderHookUp (ep, new ControlEventArgs (control));
+
+				// UIA Framework: Generate event to associate UserControl with ErrorProvider
+				window.VisibleChanged += delegate (object sender, EventArgs args) {
+					if (window.Visible == true)
+						ErrorProvider.OnUIAControlHookUp (control, new ControlEventArgs (window));
+					else 
+						ErrorProvider.OnUIAControlUnhookUp (control, new ControlEventArgs (window));
+				};
+#endif
+
 				if (control.Parent != null) {
+#if NET_2_0
+					// UIA Framework: Generate event to associate UserControl with ErrorProvider
+					ErrorProvider.OnUIAControlHookUp (control, new ControlEventArgs (window));
+#endif
 					control.Parent.Controls.Add(window);
 					control.Parent.Controls.SetChildIndex(window, control.Parent.Controls.IndexOf (control) + 1);
 				}
@@ -231,6 +248,12 @@ namespace System.Windows.Forms {
 					} else {
 						ep.tooltip.Top = pt.Y - size.Height;
 					}
+
+#if NET_2_0
+					// UIA Framework: Associate Control with ToolTip, used on Popup events
+					ep.UIAControl = control;
+#endif
+
 					ep.tooltip.Visible = true;
 				}
 			}
@@ -253,8 +276,18 @@ namespace System.Windows.Forms {
 			private void control_ParentChanged (object sender, EventArgs e)
 			{
 				if (control.Parent != null) {
+#if NET_2_0
+
+					// UIA Framework: Generate event to disassociate UserControl with ErrorProvider
+					ErrorProvider.OnUIAControlUnhookUp (control, new ControlEventArgs (window));
+#endif
 					control.Parent.Controls.Add (window);
 					control.Parent.Controls.SetChildIndex (window, control.Parent.Controls.IndexOf (control) + 1);
+	
+#if NET_2_0
+					// UIA Framework: Generate event to associate UserControl with ErrorProvider
+					ErrorProvider.OnUIAControlHookUp (control, new ControlEventArgs (window));
+#endif
 				}
 			}
 
@@ -317,6 +350,15 @@ namespace System.Windows.Forms {
 
 			icon = ResourceImageLoader.GetIcon ("errorProvider.ico");
 			tooltip = new ToolTip.ToolTipWindow();
+#if NET_2_0
+			//UIA Framework: Event used to indicate the ToolTip is shown/hidden.
+			tooltip.VisibleChanged += delegate (object sender, EventArgs args) {
+				if (tooltip.Visible == true)
+					OnUIAPopup (this, new PopupEventArgs (UIAControl, UIAControl, false, Size.Empty));
+				else if (tooltip.Visible == false)
+					OnUIAUnPopup (this, new PopupEventArgs (UIAControl, UIAControl, false, Size.Empty));
+			};
+#endif
 		}
 
 		public ErrorProvider(ContainerControl parentControl) : this ()
@@ -548,6 +590,72 @@ namespace System.Windows.Forms {
 			add { Events.AddHandler (RightToLeftChangedEvent, value); }
 			remove { Events.RemoveHandler (RightToLeftChangedEvent, value); }
 		}
+#endif
+		#endregion
+
+		#region UIA Framework: Events, Properties and Methods
+#if NET_2_0
+		// NOTE: 
+		//	We are using Reflection to add/remove internal events.
+		//      Class ToolTipListener uses the events.
+		//
+		//	- UIAControlHookUp. Event used to associate UserControl with ErrorProvider
+		//	- UIAControlUnhookUp. Event used to disassociate UserControl with ErrorProvider
+		//	- UIAErrorProviderHookUp. Event used to associate Control with ErrorProvider
+		//	- UIAErrorProviderUnhookUp. Event used to disassociate Control with ErrorProvider
+		//	- UIAPopup. Event used show Popup
+		//	- UIAUnPopup. Event used to hide popup.
+
+		private Control uia_control;
+
+		internal Control UIAControl {
+			get { return uia_control; }
+			set { uia_control = value; }
+		}
+
+		internal static event ControlEventHandler UIAControlHookUp;
+		internal static event ControlEventHandler UIAControlUnhookUp;
+		internal static event ControlEventHandler UIAErrorProviderHookUp;
+		internal static event ControlEventHandler UIAErrorProviderUnhookUp;
+		internal static event PopupEventHandler UIAPopup;
+		internal static event PopupEventHandler UIAUnPopup;
+
+		internal static void OnUIAPopup (ErrorProvider sender, PopupEventArgs args)
+		{
+			if (UIAPopup != null)
+				UIAPopup (sender, args);
+		}
+
+		internal static void OnUIAUnPopup (ErrorProvider sender, PopupEventArgs args)
+		{
+			if (UIAUnPopup != null)
+				UIAUnPopup (sender, args);
+		}
+
+		internal static void OnUIAControlHookUp (object sender, ControlEventArgs args)
+		{
+			if (UIAControlHookUp != null)
+				UIAControlHookUp (sender, args);
+		}
+
+		internal static void OnUIAControlUnhookUp (object sender, ControlEventArgs args)
+		{
+			if (UIAControlUnhookUp != null)
+				UIAControlUnhookUp (sender, args);
+		}
+
+		internal static void OnUIAErrorProviderHookUp (object sender, ControlEventArgs args) 
+		{
+			if (UIAErrorProviderHookUp != null)
+				UIAErrorProviderHookUp (sender, args);
+		}
+
+		internal static void OnUIAErrorProviderUnhookUp (object sender, ControlEventArgs args) 
+		{
+			if (UIAErrorProviderUnhookUp != null)
+				UIAErrorProviderUnhookUp (sender, args);
+		}
+
 #endif
 		#endregion
 	}
