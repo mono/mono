@@ -464,7 +464,7 @@ namespace System.Windows.Forms.Theming.Default
 				return res;
 			}
 
-			if (page.Parent.Focused && is_selected) {
+			if (page.Parent.Focused && is_selected && tab.ShowFocusCues) {
 				ThemeEngine.Current.CPDrawFocusRectangle (dc, interior, tab.ForeColor, tab.BackColor);
 			}
 
