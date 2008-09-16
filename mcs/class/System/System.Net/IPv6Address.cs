@@ -134,10 +134,10 @@ namespace System.Net {
 			return slot;
 		}
 
-		static bool TryParse (string s, out int res)
+		static bool TryParse (string prefix, out int res)
 		{
 #if NET_2_0
-			return Int32.TryParse (s, NumberStyles.Integer, CultureInfo.InvariantCulture, out res);
+			return Int32.TryParse (prefix, NumberStyles.Integer, CultureInfo.InvariantCulture, out res);
 #else
 			try {
 				res = Int32.Parse (prefix, NumberStyles.Integer, CultureInfo.InvariantCulture);
@@ -145,6 +145,8 @@ namespace System.Net {
 				res = -1;
 				return false;
 			}
+
+			return true;
 #endif
 		}
 		
