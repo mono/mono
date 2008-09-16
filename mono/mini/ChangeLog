@@ -1,3 +1,9 @@
+
+Tue Sep 16 16:39:16 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* trace.c: make tracing more useful and correct, with per-thread
+	id and indent info.
+
 2008-09-15  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc.c (mono_arch_emit_call): Convert floats to R4 when
