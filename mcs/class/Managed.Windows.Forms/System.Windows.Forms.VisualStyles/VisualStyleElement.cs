@@ -587,7 +587,7 @@ namespace System.Windows.Forms.VisualStyles
 						return VisualStyleElement.CreateElement (
 							HEADER,
 							(int)HEADERPARTS.HP_HEADERITEM,
-							(int)HEADERITEMSTATES.HIS_HOT);
+							(int)HEADERITEMSTATES.HIS_NORMAL);
 					}
 				}
 				public static VisualStyleElement Pressed {
