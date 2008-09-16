@@ -2919,8 +2919,17 @@ namespace System.Windows.Forms {
 
 			if (!IsDisposed) {
 				OnSizeInitializedOrChanged ();
-				OnLoad (e);
 				
+				// We do this here because when we load the MainForm,
+				// it happens before the exception catcher in NativeWindow,
+				// so the user can error in handling Load and we wouldn't catch it.
+				try {
+					OnLoad (e);
+				}
+				catch (Exception ex) {
+					Application.OnThreadException (ex);
+				}
+
 				if (!IsDisposed)
 					is_visible = true;
 			}

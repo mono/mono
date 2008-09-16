@@ -226,13 +226,15 @@ namespace System.Windows.Forms
 #if debug
 			Console.WriteLine("NativeWindow.cs ({0}, {1}, {2}, {3}): result {4}", hWnd, msg, wParam, lParam, m.Result);
 #endif
-			//try {
+			NativeWindow window = null;
+			
+			try {
 			object current = null;
 			lock (window_collection) {
 				current = window_collection[hWnd];
 			}
 
-			NativeWindow window = current as NativeWindow;
+			window = current as NativeWindow;
 			if (current == null)
 				window = EnsureCreated (window, hWnd);
 
@@ -255,15 +257,15 @@ namespace System.Windows.Forms
 			} else {
 				result = XplatUI.DefWndProc (ref m);
 			}
-//            }
-//            catch (Exception ex) {
-//#if !ExternalExceptionHandler				
-//                if (window != null)
-//                    window.OnThreadException(ex);
-//#else
-//                throw;
-//#endif
-//            }
+			}
+			catch (Exception ex) {
+#if !ExternalExceptionHandler
+				if (window != null)
+					window.OnThreadException (ex);
+#else
+				throw;
+#endif
+			}
 			#if debug
 				Console.WriteLine("NativeWindow.cs: Message {0}, result {1}", msg, m.Result);
 			#endif

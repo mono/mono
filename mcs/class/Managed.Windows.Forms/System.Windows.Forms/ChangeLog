@@ -1,5 +1,13 @@
 2008-09-16  Jonathan Pobst  <monkey@jpobst.com>
 
+	* NativeWindow.cs: Reenable the ThreadExceptionDialog I accidentally
+	disabled over a year ago.
+	* Form.cs: Wrap calling Load in a try/catch because it can happen
+	before the catch-all one in NativeWindow.
+	[Fixes bug #425414]
+
+2008-09-16  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripDropDownMenu.cs: Calculate the connected area better
 	to take into account when the drop down is not directly under the
 	owner item.
