@@ -1,3 +1,22 @@
+2008-09-16  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes#421336 - Patch provided by <christian_hoff@gmx.net> 	
+	DbCommandBuilder.cs: Several scenarios leading to exceptions when
+	creating the update, insert and delete commands: 
+
+	1. The "IsExpression" column in the column schema table can also
+	be DBNull which is equivalent to "false" but the DBCommandBuilder
+	does not check for DBNull and simply tries to cast it into a bool,
+	which will fail.
+
+	2. The commands do not get refreshed after a call to
+	UpdateSchema() because they are not set to NULL. This has the
+	consequence that empty commands(created with CreateNewCommand())
+	are returned afterwards.
+
+	3. Multiple parameters with the same name are generated if the
+	parameter names should be named after the columns.
+	
 2008-09-05  Raja R Harinath  <harinath@hurrynot.org>
 
 	* DataContainer.cs (*.ZeroOut): Rename from the somewhat unclear
