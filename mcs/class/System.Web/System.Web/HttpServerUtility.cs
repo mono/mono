@@ -342,8 +342,9 @@ namespace System.Web {
 
 		public string UrlDecode (string s)
 		{
-			if(context.Request != null)
-				return HttpUtility.UrlDecode (s, context.Request.ContentEncoding);
+			HttpRequest request = context.Request;
+			if(request != null)
+				return HttpUtility.UrlDecode (s, request.ContentEncoding);
 			else
 				return HttpUtility.UrlDecode (s);
 		}
@@ -356,7 +357,11 @@ namespace System.Web {
 
 		public string UrlEncode (string s)
 		{
-			return HttpUtility.UrlEncode (s, context.Response.ContentEncoding);
+			HttpResponse response = context.Response;
+			if (response != null)
+				return HttpUtility.UrlEncode (s, response.ContentEncoding);
+			else
+				return HttpUtility.UrlEncode (s);
 		}
 
 		public void UrlEncode (string s, TextWriter output)
