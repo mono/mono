@@ -1,3 +1,7 @@
+2008-09-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* bug-426309.2.il: New test.
+
 2008-09-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal9.cs: Add test for #425001.
