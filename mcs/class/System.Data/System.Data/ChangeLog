@@ -1,3 +1,10 @@
+2008-09-16  brandin claar  <brandin.claar@gmail.com>
+	    Raja R Harinath  <harinath@hurrynot.org>
+
+	* DataTable.cs (BinarySerialize): Handle empty DataTables.
+	(DeserializeRecords): Likewise.
+	(BinaryDeserializeTable): Allow DefaultValue to be set to any value.
+
 2008-09-12  Raja R Harinath  <harinath@hurrynot.org>
 
 	* DataTable.cs (NewRowAdded): Make into partial method.

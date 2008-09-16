@@ -2497,6 +2497,8 @@ namespace System.Data {
 		internal void DeserializeRecords (ArrayList arrayList, ArrayList nullBits, BitArray rowStateBitArray)
 		{
 			BitArray  nullBit = null;
+			if (arrayList == null || arrayList.Count < 1)
+				return;
 			int len = ((Array) arrayList [0]).Length;
 			object [] tmpArray = new object [arrayList.Count];
 			int k = 0;
@@ -2566,8 +2568,8 @@ namespace System.Data {
 				Columns[i].Prefix = info.GetString (prefix + "Prefix");
 				Columns[i].DataType = (Type) info.GetValue (prefix + "DataType",
 									    typeof (Type));
-				Columns[i].DefaultValue = (DBNull) info.GetValue (prefix + "DefaultValue",
-										  typeof (DBNull));
+				Columns[i].DefaultValue = info.GetValue (prefix + "DefaultValue",
+										  typeof (Object));
 				Columns[i].AllowDBNull = info.GetBoolean (prefix + "AllowDBNull");
 				Columns[i].AutoIncrement = info.GetBoolean (prefix + "AutoIncrement");
 				Columns[i].AutoIncrementStep = info.GetInt64 (prefix + "AutoIncrementStep");
@@ -2752,6 +2754,8 @@ namespace System.Data {
 			}
 			SerializeConstraints (info, prefix + "Constraints");
 			for (int j = 0; j < columnsCount; j++) {
+				if (rowsCount == 0)
+					continue;
 				BitArray nullBits = new BitArray (rowsCount);
 				Array recordArray = Array.CreateInstance (Rows[0][j].GetType (), recordsCount);
 				DataColumn column = Columns [j];
@@ -2775,7 +2779,7 @@ namespace System.Data {
 						version = DataRowVersion.Default;
 					}
 					if (dr.IsNull (column, version) == false) {
-						nullBits [l] =  false;
+						nullBits [l] = false;
 						recordArray.SetValue (dr [j, version], l);
 					} else {
 						nullBits [l] = true;

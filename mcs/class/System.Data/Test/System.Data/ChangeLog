@@ -1,3 +1,8 @@
+2008-09-16  brandin claar  <brandin.claar@gmail.com>
+
+	* BinarySerializationTest.cs (TestDefaultValues): New.
+	(TestEmptyTable): New.
+
 2008-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataViewTest2.cs (DataViewManager): Check for reference equality
