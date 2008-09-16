@@ -389,7 +389,7 @@ namespace System.Windows.Forms
 				if (e.ToolStrip is ToolStripOverflow)
 					e.Graphics.DrawLines (ThemeEngine.Current.ResPool.GetPen (this.ColorTable.MenuBorder), new Point[] { e.AffectedBounds.Location, new Point (e.AffectedBounds.Left, e.AffectedBounds.Bottom - 1), new Point (e.AffectedBounds.Right - 1, e.AffectedBounds.Bottom - 1), new Point (e.AffectedBounds.Right - 1, e.AffectedBounds.Top), new Point (e.AffectedBounds.Left, e.AffectedBounds.Top) });
 				else
-					e.Graphics.DrawLines (ThemeEngine.Current.ResPool.GetPen (this.ColorTable.MenuBorder), new Point[] { e.AffectedBounds.Location, new Point (e.AffectedBounds.Left, e.AffectedBounds.Bottom - 1), new Point (e.AffectedBounds.Right - 1, e.AffectedBounds.Bottom - 1), new Point (e.AffectedBounds.Right - 1, e.AffectedBounds.Top), new Point (e.AffectedBounds.Left + e.ConnectedArea.Right, e.AffectedBounds.Top) });
+					e.Graphics.DrawLines (ThemeEngine.Current.ResPool.GetPen (this.ColorTable.MenuBorder), new Point[] { new Point (e.AffectedBounds.Left + e.ConnectedArea.Left, e.AffectedBounds.Top), e.AffectedBounds.Location, new Point (e.AffectedBounds.Left, e.AffectedBounds.Bottom - 1), new Point (e.AffectedBounds.Right - 1, e.AffectedBounds.Bottom - 1), new Point (e.AffectedBounds.Right - 1, e.AffectedBounds.Top), new Point (e.AffectedBounds.Left + e.ConnectedArea.Right, e.AffectedBounds.Top) });
 				return;
 			}
 

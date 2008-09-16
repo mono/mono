@@ -1,3 +1,10 @@
+2008-09-16  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripDropDownMenu.cs: Calculate the connected area better
+	to take into account when the drop down is not directly under the
+	owner item.
+	* ToolStripProfessionalRenderer.cs: Draw the whole unconnected area.
+
 2008-09-16  Mario Carrion <mcarrion@novell.com>
 
 	* ScrollBar.cs: New event added: UIAValueChanged, generated when

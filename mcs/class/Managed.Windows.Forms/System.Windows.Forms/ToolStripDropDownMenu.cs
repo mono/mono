@@ -180,8 +180,10 @@ namespace System.Windows.Forms
 		#region Internal Methods
 		internal override Rectangle CalculateConnectedArea ()
 		{
-			if (this.OwnerItem != null && !this.OwnerItem.IsOnDropDown && !(this.OwnerItem is MdiControlStrip.SystemMenuItem))
-				return new Rectangle (1, 0, this.OwnerItem.Width - 2, 2);
+			if (this.OwnerItem != null && !this.OwnerItem.IsOnDropDown && !(this.OwnerItem is MdiControlStrip.SystemMenuItem)) {
+				Point owner_screen_loc = OwnerItem.GetCurrentParent ().PointToScreen (OwnerItem.Location);
+				return new Rectangle (owner_screen_loc.X - Left, 0, this.OwnerItem.Width - 1, 2);
+			}
 
 			return base.CalculateConnectedArea ();
 		}
