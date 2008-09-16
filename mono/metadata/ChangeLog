@@ -1,3 +1,8 @@
+2008-09-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_object_get_virtual_method): Handle the case method->slot
+	is not set. Fixes #426309.
+
 2008-09-16  Jb Evain  <jbevain@novell.com>
 
 	* class.c (mono_class_from_name): fix the exported type look up
