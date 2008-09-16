@@ -1,4 +1,9 @@
 
+Tue Sep 16 21:07:11 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* *.c, *.md, mini-ops.h: introduced relaxed_nop opcode for spin wait
+	implementation.
+
 Tue Sep 16 16:39:16 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* trace.c: make tracing more useful and correct, with per-thread
