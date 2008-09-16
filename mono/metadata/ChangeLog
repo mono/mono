@@ -1,3 +1,9 @@
+
+Tue Sep 16 21:03:58 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* icall-def.h, threads-types.h, threads.c: fixed SpinWait()
+	implementation (bug #423582).
+
 2008-09-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (mono_object_get_virtual_method): Handle the case method->slot
