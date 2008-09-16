@@ -1,3 +1,11 @@
+2008-09-16  Miguel de Icaza  <miguel@novell.com>
+
+	* Uri.cs (TryCreate): Implement one of the TryCreate methods
+	without throwing exceptions.   Still two more to go, the hardest
+	ones. 
+
+	Part of a fix for #424192.
+
 2008-09-08  Miguel de Icaza  <miguel@novell.com>
 
 	* Uri.cs (MaybeUri): A helper routine for methods in other classes
