@@ -3036,10 +3036,12 @@ namespace System.Windows.Forms
 						width += col.Width;
 					focus_rect = new Rectangle (0, full_rect.Y, width, full_rect.Height);
 				}
-				if (item.Selected)
-					CPDrawFocusRectangle (dc, focus_rect, ColorHighlightText, ColorHighlight);
-				else
-					CPDrawFocusRectangle (dc, focus_rect, control.ForeColor, control.BackColor);
+				if (control.ShowFocusCues) {
+					if (item.Selected)
+						CPDrawFocusRectangle (dc, focus_rect, ColorHighlightText, ColorHighlight);
+					else
+						CPDrawFocusRectangle (dc, focus_rect, control.ForeColor, control.BackColor);
+				}
 			}
 
 			format.Dispose ();
