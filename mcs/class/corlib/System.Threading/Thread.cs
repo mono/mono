@@ -730,7 +730,7 @@ namespace System.Threading {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static void SpinWait_internal (int iterations);
+		private extern static void SpinWait_nop ();
 
 
 #if NET_2_0
@@ -738,7 +738,12 @@ namespace System.Threading {
 #endif
 		public static void SpinWait (int iterations) 
 		{
-			SpinWait_internal (iterations);
+			if (iterations < 0)
+				return;
+			while (iterations-- > 0)
+			{
+				SpinWait_nop ();
+			}
 		}
 
 		public void Start() {

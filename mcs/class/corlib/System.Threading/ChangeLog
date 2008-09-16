@@ -1,4 +1,8 @@
 
+Tue Sep 16 21:02:59 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* Thread.cs: fixed SpinWait() implementation (bug #423582).
+
 Tue Sep 9 15:19:48 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* Timer.cs: use a separate queue for timers that are far in the future
