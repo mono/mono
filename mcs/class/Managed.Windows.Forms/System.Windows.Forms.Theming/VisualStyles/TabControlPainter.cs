@@ -70,7 +70,7 @@ namespace System.Windows.Forms.Theming.VisualStyles
 			}
 			if (page.Text != null)
 				dc.DrawString (page.Text, page.Font, SystemBrushes.ControlText, text_area, DefaultFormatting);
-			if (tab.Focused && is_selected)
+			if (tab.Focused && is_selected && tab.ShowFocusCues)
 				ControlPaint.DrawFocusRectangle (dc, bounds);
 			return 0;
 		}
