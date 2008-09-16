@@ -1,5 +1,10 @@
 2008-09-16  Jb Evain  <jbevain@novell.com>
 
+	* class.c (mono_class_from_name): fix the exported type look up
+	when the type is defined in a referenced assembly.
+
+2008-09-16  Jb Evain  <jbevain@novell.com>
+
 	* reflection.c (mono_image_fill_export_table_from_type_forwarders):
 	increment the next index counter on each iteration to make that work
 	for more than one type forwarder. Unmanaged part to fix #422929.
