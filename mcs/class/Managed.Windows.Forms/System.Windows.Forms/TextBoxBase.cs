@@ -601,6 +601,9 @@ namespace System.Windows.Forms
 #endif
 				}
 
+				// If SelectionStart has been used, we don't highlight on focus
+				has_been_focused = true;
+				
 				document.InvalidateSelectionArea ();
 				document.SetSelectionStart (value, false);
 				if (selection_length > -1)

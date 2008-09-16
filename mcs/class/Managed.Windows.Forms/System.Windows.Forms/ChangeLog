@@ -1,5 +1,11 @@
 2008-09-16  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextBoxBase.cs: Flag has_been_focused when SelectionStart is set
+	so we don't highlight on first focus.
+	[Fixes bug #360869]
+
+2008-09-16  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextControl.cs: Correctly calculate the height of the area we 
 	need to invalidate when we have started scrolling and viewport_y
 	is used.  [Fixes bug #387608]
