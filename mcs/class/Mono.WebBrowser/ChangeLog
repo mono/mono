@@ -1,3 +1,8 @@
+2008-09-16  Andreia Gaita <avidigal@novell.com> 
+
+	* Mono.Mozilla/AsciiString.cs: Change marshalling to ansi - auto is no
+	  good on windows. Fixes #414146
+
 2008-09-08  Andreia Gaita <avidigal@novell.com> 
 
 	* Mono.Mozilla/Base.cs: Create cache directory with a version specific

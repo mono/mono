@@ -96,7 +96,7 @@ namespace Mono.Mozilla
 					IntPtr buf;
 					bool term;
 					Base.gluezilla_CStringGetData (handle, out buf, out term);
-					str = Marshal.PtrToStringAuto (buf);
+					str = Marshal.PtrToStringAnsi (buf);
 					dirty = false;
 				}
 				return str;
