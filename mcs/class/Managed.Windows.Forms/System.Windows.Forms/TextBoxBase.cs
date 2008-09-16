@@ -380,34 +380,24 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				int	i;
-				int	l;
-
-				document.Empty();
-
-				l = value.Length;
-
-				document.SuspendRecalc ();
-				for (i = 0; i < l; i++) {
-
+				StringBuilder sb = new StringBuilder ();
+			
+				for (int i = 0; i < value.Length; i++) {
 					// Don't add the last line if it is just an empty line feed
 					// the line feed is reflected in the previous line's ending 
-					if (i == l - 1 && value [i].Length == 0)
+					if (i == value.Length - 1 && value[i].Length == 0)
 						break;
-
-					LineEnding ending = LineEnding.Rich;
-					if (value [i].EndsWith ("\r"))
-						ending = LineEnding.Hard;
-
-					document.Add (i + 1, CaseAdjust (value[i]), alignment, Font, this.ForeColor, ending);
+						
+					sb.AppendLine (value[i]);
 				}
 
-				document.ResumeRecalc (true);
+				int newline_length = Environment.NewLine.Length;
 
-				if (IsHandleCreated)
-					CalculateDocument ();
+				// We want to remove the final new line character
+				if (sb.Length >= newline_length)
+					sb.Remove (sb.Length - newline_length, newline_length);
 
-				OnTextChanged(EventArgs.Empty);
+				Text = sb.ToString ();
 			}
 		}
 
