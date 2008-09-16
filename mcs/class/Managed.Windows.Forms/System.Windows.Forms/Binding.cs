@@ -56,7 +56,7 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		private DataSourceUpdateMode datasource_update_mode;
 		private ControlUpdateMode control_update_mode;
-		private object datasource_null_value;
+		private object datasource_null_value = Convert.DBNull;
 		private object null_value;
 		private IFormatProvider format_info;
 		private string format_string;
@@ -582,9 +582,8 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 			if (formatting_enabled) {
-				if (e.Value == null || e.Value == Convert.DBNull) {
+				if ((e.Value == null || e.Value == Convert.DBNull) && null_value != null)
 					return null_value;
-				}
 				
 				if (e.Value is IFormattable && data_type == typeof (string)) {
 					IFormattable formattable = (IFormattable) e.Value;
