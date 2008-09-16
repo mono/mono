@@ -1,0 +1,7 @@
+2008-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CrossDomainSocketPolicyManager.cs: New.
+	* ISocketPolicyManager.cs: New.
+	* SocketPolicyAsyncResult.cs: New.
+	* SocketPolicyCheckCallback.cs: New.
+	* SocketSecurityState.cs: New.
