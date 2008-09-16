@@ -2117,10 +2117,10 @@ namespace System.Windows.Forms {
 			mouse_click_node = node;
 #endif
 
-			if (show_plus_minus && IsPlusMinusArea (node, e.X)) {
+			if (show_plus_minus && IsPlusMinusArea (node, e.X) && e.Button == MouseButtons.Left) {
 				node.Toggle ();
 				return;
-			} else if (checkboxes && IsCheckboxArea (node, e.X)) {
+			} else if (checkboxes && IsCheckboxArea (node, e.X) && e.Button == MouseButtons.Left) {
 				node.check_reason = TreeViewAction.ByMouse;
 				node.Checked = !node.Checked;
 				UpdateNode(node);
@@ -2128,7 +2128,7 @@ namespace System.Windows.Forms {
 			} else if (IsSelectableArea (node, e.X) || full_row_select) {
 				TreeNode old_highlighted = highlighted_node;
 				highlighted_node = node;
-				if (label_edit && e.Clicks == 1 && highlighted_node == old_highlighted) {
+				if (label_edit && e.Clicks == 1 && highlighted_node == old_highlighted && e.Button == MouseButtons.Left) {
 					BeginEdit (node);
 				} else if (highlighted_node != focused_node) {
 					Size ds = SystemInformation.DragSize;

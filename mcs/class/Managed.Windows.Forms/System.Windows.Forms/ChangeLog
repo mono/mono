@@ -1,5 +1,10 @@
 2008-09-16  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TreeView.cs: Don't start editing a node on right click, only
+	left click.
+
+2008-09-16  Jonathan Pobst  <monkey@jpobst.com>
+
 	* NativeWindow.cs: Reenable the ThreadExceptionDialog I accidentally
 	disabled over a year ago.
 	* Form.cs: Wrap calling Load in a try/catch because it can happen
