@@ -45,6 +45,13 @@ namespace MonoTests.System.Web.Routing
 		}
 
 		[Test]
+		public void RouteExistingFiles ()
+		{
+			var c = new RouteCollection ();
+			Assert.IsFalse (c.RouteExistingFiles);
+		}
+
+		[Test]
 		public void AddNullMame ()
 		{
 			var c = new RouteCollection ();
@@ -161,6 +168,64 @@ namespace MonoTests.System.Web.Routing
 			var rd = c.GetRouteData (new HttpContextStub ("~/foo", String.Empty));
 			Assert.IsNotNull (rd, "#1");
 			Assert.AreEqual (r, rd.Route, "#2");
+		}
+
+		// below tests in RouteCollection, unlike Route, do some additional checks than Route.GetVirtualPath().
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void GetVirtualPathNoApplicationPath ()
+		{
+			var c = new RouteCollection ();
+			c.Add (new MyRoute ("{foo}/{bar}", new MyRouteHandler ()));
+			var hc = new HttpContextStub2 ("~/x/y", String.Empty);
+			var rd = c.GetRouteData (hc);
+			// it tries to get HttpContextBase.Request.ApplicationPath and then throws NIE.
+			var vpd = c.GetVirtualPath (new RequestContext (hc, rd), rd.Values);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void GetVirtualPathNoApplyAppPathModifier ()
+		{
+			var c = new RouteCollection ();
+			c.Add (new MyRoute ("{foo}/{bar}", new MyRouteHandler ()));
+			var hc = new HttpContextStub2 ("~/x/y", String.Empty, "apppath");
+			// it tries to call HttpContextBase.Response.ApplyAppPathModifier() and then causes NIE.
+			hc.SetResponse (new HttpResponseStub ());
+			var rd = c.GetRouteData (hc);
+			var vpd = c.GetVirtualPath (new RequestContext (hc, rd), rd.Values);
+		}
+
+		[Test]
+		public void GetVirtualPathCheckVirtualPathToModify ()
+		{
+			var c = new RouteCollection ();
+			c.Add (new MyRoute ("{foo}/{bar}", new MyRouteHandler ()));
+			var hc = new HttpContextStub2 ("~/x/y", String.Empty, "apppath");
+			// it tries to get HttpContextBase.Response, so set it.
+			hc.SetResponse (new HttpResponseStub (1));
+			var rd = c.GetRouteData (hc);
+			try {
+				var vpd = c.GetVirtualPath (new RequestContext (hc, rd), rd.Values);
+				Assert.Fail ("#1");
+			} catch (ApplicationException ex) {
+				Assert.AreEqual ("apppath/x/y", ex.Message, "#2");
+			}
+		}
+
+		[Test]
+		public void GetVirtualPath ()
+		{
+			var c = new RouteCollection ();
+			c.Add (new MyRoute ("{foo}/{bar}", new MyRouteHandler ()));
+			var hc = new HttpContextStub2 ("~/x/y", String.Empty, "apppath");
+			// it tries to get HttpContextBase.Response, so set it.
+			hc.SetResponse (new HttpResponseStub (2));
+			var rd = c.GetRouteData (hc);
+			var vpd = c.GetVirtualPath (new RequestContext (hc, rd), rd.Values);
+			Assert.AreEqual ("apppath/x/y_modified", vpd.VirtualPath, "#1");
+			Assert.AreEqual (0, vpd.DataTokens.Count, "#2");
 		}
 	}
 }

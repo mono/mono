@@ -1,3 +1,9 @@
+2008-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Web.Routing_test.dll.sources: 
+	  (oops, was already added in previous checkins)
+	  add UrlRoutingModuleTest.cs.
+
 2008-09-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Web.Routing.dll.sources: add UrlPattern.cs.

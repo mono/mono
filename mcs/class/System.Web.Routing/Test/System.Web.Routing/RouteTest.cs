@@ -216,7 +216,6 @@ namespace MonoTests.System.Web.Routing
 		public void GetRouteData5 ()
 		{
 			var r = new Route ("{foo}/{bar}", new StopRoutingHandler ());
-			/*
 			var rd = r.GetRouteData (new HttpContextStub ("x/y", String.Empty));
 			Assert.IsNull (rd, "#1");
 			rd = r.GetRouteData (new HttpContextStub ("~/x/y", String.Empty));
@@ -230,8 +229,7 @@ namespace MonoTests.System.Web.Routing
 
 			rd = r.GetRouteData (new HttpContextStub ("{foo}/{bar}/baz", String.Empty));
 			Assert.IsNull (rd, "#6");
-			*/
-			var rd = r.GetRouteData (new HttpContextStub ("{foo}/{bar}", String.Empty));
+			rd = r.GetRouteData (new HttpContextStub ("{foo}/{bar}", String.Empty));
 			Assert.IsNotNull (rd, "#7");
 			Assert.AreEqual (0, rd.DataTokens.Count, "#7-2");
 			Assert.AreEqual (2, rd.Values.Count, "#7-3");
@@ -284,6 +282,55 @@ namespace MonoTests.System.Web.Routing
 			var vp = r.GetVirtualPath (new RequestContext (hc, rd), null);
 			Assert.IsNotNull (vp, "#1");
 			Assert.AreEqual ("x/y", vp.VirtualPath, "#2");
+			Assert.AreEqual (r, vp.Route, "#3");
+			Assert.AreEqual (0, vp.DataTokens.Count, "#4");
+		}
+
+		[Test]
+		public void GetVirtualPath3 ()
+		{
+			var r = new MyRoute ("{foo}/{bar}", new MyRouteHandler ());
+			var hc = new HttpContextStub2 ("~/x/y", String.Empty);
+			var rd = r.GetRouteData (hc);
+			var vp = r.GetVirtualPath (new RequestContext (hc, rd), rd.Values);
+
+			Assert.IsNotNull (vp, "#1");
+			Assert.AreEqual ("x/y", vp.VirtualPath, "#2");
+			Assert.AreEqual (r, vp.Route, "#3");
+			Assert.AreEqual (0, vp.DataTokens.Count, "#4");
+		}
+
+		[Test]
+		public void GetVirtualPath4 ()
+		{
+			var r = new MyRoute ("{foo}/{bar}", new MyRouteHandler ());
+			var hc = new HttpContextStub2 ("~/x/y", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			// override a value incompletely
+			var values = new RouteValueDictionary ();
+			values ["foo"] = "A";
+
+			var vp = r.GetVirtualPath (new RequestContext (hc, rd), values);
+			Assert.IsNull (vp);
+		}
+
+		[Test]
+		public void GetVirtualPath5 ()
+		{
+			var r = new MyRoute ("{foo}/{bar}", new MyRouteHandler ());
+			var hc = new HttpContextStub2 ("~/x/y", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			// override values completely.
+			var values = new RouteValueDictionary ();
+			values ["foo"] = "A";
+			values ["bar"] = "B";
+
+			var vp = r.GetVirtualPath (new RequestContext (hc, rd), values);
+
+			Assert.IsNotNull (vp, "#1");
+			Assert.AreEqual ("A/B", vp.VirtualPath, "#2");
 			Assert.AreEqual (r, vp.Route, "#3");
 			Assert.AreEqual (0, vp.DataTokens.Count, "#4");
 		}

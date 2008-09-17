@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections;
 using System.Web;
 using System.Web.Routing;
 using NUnit.Framework;
@@ -91,6 +92,112 @@ namespace MonoTests.System.Web.Routing
 		public string Method { get; set; }
 	}
 
+	class MyDictionary : Hashtable
+	{
+		public override ICollection Keys {
+			get { return null; }
+		}
+
+		public override object this [object key] {
+			get {
+				Console.Error.WriteLine (key);
+				return base [key];
+			}
+			set { base [key] = value; }
+		}
+	}
+
+	class HttpContextStub2 : HttpContextBase
+	{
+		public HttpContextStub2 ()
+			: this (null, null)
+		{
+		}
+
+		public HttpContextStub2 (string requestUrl, string path)
+			: this (requestUrl, path, null)
+		{
+		}
+
+		public HttpContextStub2 (string requestUrl, string path, string appPath)
+		{
+			request = new HttpRequestStub2 (requestUrl, path, appPath);
+		}
+
+		Hashtable items = new Hashtable ();
+		HttpRequestStub request;
+		HttpResponseBase response;
+
+		public override IDictionary Items {
+			get { return items; }
+		}
+
+		public override HttpRequestBase Request {
+			get { return request ?? base.Request; }
+		}
+
+		public override HttpResponseBase Response {
+			get { return response ?? base.Response; }
+		}
+
+		public override void RewritePath (string path)
+		{
+			throw new ApplicationException (path);
+		}
+
+		public void SetResponse (HttpResponseBase response)
+		{
+			this.response = response;
+		}
+	}
+
+	class HttpRequestStub2 : HttpRequestStub
+	{
+		public HttpRequestStub2 (string dummyRequestPath, string dummyPath, string appPath)
+			: base (dummyRequestPath, String.Empty)
+		{
+			path = dummyPath;
+			app_path = appPath;
+		}
+
+		string path, app_path;
+
+		public override string ApplicationPath {
+			get { return app_path ?? base.ApplicationPath; }
+		}
+
+		public override string Path {
+			get { return path ?? base.Path; }
+		}
+	}
+
+	public class HttpResponseStub : HttpResponseBase
+	{
+		public HttpResponseStub ()
+			: this (0)
+		{
+		}
+
+		int impl_type;
+
+		public HttpResponseStub (int implType)
+		{
+			this.impl_type = implType;
+		}
+
+		public override string ApplyAppPathModifier (string virtualPath)
+		{
+			switch (impl_type) {
+			case 2:
+				return virtualPath + "_modified";
+			case 1:
+				throw new ApplicationException (virtualPath);
+			default:
+				return base.ApplyAppPathModifier (virtualPath);
+			}
+		}
+	}
+
 	public class MyStopRoutingHandler : StopRoutingHandler
 	{
 		public IHttpHandler CallGetHttpHandler (RequestContext rc)
@@ -117,6 +224,69 @@ namespace MonoTests.System.Web.Routing
 		public IHttpHandler GetHttpHandler (RequestContext requestContext)
 		{
 			throw new ApplicationException ();
+		}
+	}
+
+	public class MyRouteHandler : IRouteHandler
+	{
+		public MyRouteHandler ()
+			: this (new MyHttpHandler ())
+		{
+		}
+
+		public MyRouteHandler (IHttpHandler handler)
+		{
+			this.handler = handler;
+		}
+
+		IHttpHandler handler;
+
+		public IHttpHandler GetHttpHandler (RequestContext requestContext)
+		{
+			return handler;
+		}
+	}
+
+	public class MyHttpHandler : IHttpHandler
+	{
+		public bool IsReusable {
+			get { return true; }
+		}
+
+		public void ProcessRequest (HttpContext ctx)
+		{
+			throw new Exception ("HOGE");
+		}
+	}
+
+	public class NullRouteHandler : IRouteHandler
+	{
+		public IHttpHandler GetHttpHandler (RequestContext requestContext)
+		{
+			return null;
+		}
+	}
+
+	public class MyRoute : Route
+	{
+		public MyRoute (string url, IRouteHandler handler)
+			: this (url, handler, null)
+		{
+		}
+
+		public MyRoute (string url, IRouteHandler handler, Exception ex)
+			: base (url, handler)
+		{
+			this.ex = ex;
+		}
+
+		Exception ex;
+
+		public override VirtualPathData GetVirtualPath (RequestContext requestContext, RouteValueDictionary values)
+		{
+			if (ex != null)
+				throw ex;
+			return base.GetVirtualPath (requestContext, values);
 		}
 	}
 }

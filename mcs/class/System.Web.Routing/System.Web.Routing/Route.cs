@@ -99,22 +99,28 @@ namespace System.Web.Routing
 					if (!ProcessConstraint (httpContext, p.Value, p.Key, values, RouteDirection.IncomingRequest))
 						return null;
 
-			// FIXME: where to use DataTokens?
-
 			var rd = new RouteData (this, RouteHandler);
 			foreach (var p in values)
 				rd.Values.Add (p.Key, p.Value);
 			return rd;
 		}
 
-		[MonoTODO]
 		public override VirtualPathData GetVirtualPath (RequestContext requestContext, RouteValueDictionary values)
 		{
 			if (requestContext == null)
 				throw new ArgumentNullException ("requestContext");
-			// null values is allowed.
+			if (url == null)
+				return new VirtualPathData (this, String.Empty);
 
-			throw new NotImplementedException ();
+			// null values is allowed.
+			if (values == null)
+				values = requestContext.RouteData.Values;
+
+			string s;
+			if (!url.TrySubstitute (values, out s))
+				return null;
+
+			return new VirtualPathData (this, s);
 		}
 
 		[MonoTODO]

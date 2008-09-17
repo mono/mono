@@ -148,10 +148,23 @@ namespace System.Web.Routing
 			if (Count == 0)
 				return null;
 
-			foreach (RouteBase rb in this) {
-				var vp = rb.GetVirtualPath (requestContext, values);
-				if (vp != null)
-					return vp;
+			VirtualPathData vp = null;
+			if (name != null) {
+				RouteBase rb = this [name];
+				if (rb != null)
+					vp = rb.GetVirtualPath (requestContext, values);
+			} else {
+				foreach (RouteBase rb in this) {
+					vp = rb.GetVirtualPath (requestContext, values);
+					if (vp != null)
+						break;
+				}
+			}
+
+			if (vp != null) {
+				var pathWithApp = String.Concat (requestContext.HttpContext.Request.ApplicationPath, "/", vp.VirtualPath);
+				vp.VirtualPath = requestContext.HttpContext.Response.ApplyAppPathModifier (pathWithApp);
+				return vp;
 			}
 
 			return null;

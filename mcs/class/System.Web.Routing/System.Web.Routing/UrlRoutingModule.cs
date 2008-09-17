@@ -37,8 +37,16 @@ namespace System.Web.Routing
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class UrlRoutingModule : IHttpModule
 	{
-		[MonoTODO]
-		public RouteCollection RouteCollection { get; set; }
+		RouteCollection routes;
+
+		public RouteCollection RouteCollection {
+			get {
+				if (routes == null)
+					routes = RouteTable.Routes;
+				return routes;
+			}
+			set { routes = value; }
+		}
 
 		protected virtual void Dispose ()
 		{
@@ -76,13 +84,36 @@ namespace System.Web.Routing
 		[MonoTODO]
 		public virtual void PostMapRequestHandler (HttpContextBase context)
 		{
-			throw new NotImplementedException ();
+			// FIXME: find out what it actually does.
 		}
 
 		[MonoTODO]
 		public virtual void PostResolveRequestCache (HttpContextBase context)
 		{
-			throw new NotImplementedException ();
+			if (context == null)
+				throw new ArgumentNullException ("context");
+
+			var rd = RouteCollection.GetRouteData (context);
+			if (rd == null)
+				return; // do nothing
+
+			if (rd.RouteHandler == null)
+				throw new InvalidOperationException ("No  IRouteHandler is assigned to the selected route");
+
+			var rc = new RequestContext (context, rd);
+
+			IHttpHandler http = rd.RouteHandler.GetHttpHandler (rc);
+			if (http == null)
+				throw new InvalidOperationException ("The mapped IRouteHandler did not return an IHttpHandler");
+
+			// note: It does not resolve paths using GetVirtualPath():
+			//var vpd = RouteCollection.GetVirtualPath (rc, rd.Values);
+			//context.RewritePath (vpd.VirtualPath);
+
+			// FIXME: use it somewhere.
+			string path = context.Request.Path;
+
+			context.RewritePath ("~/UrlRouting.axd");
 		}
 	}
 }

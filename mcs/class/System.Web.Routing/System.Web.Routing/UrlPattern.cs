@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Web;
 
@@ -37,6 +38,7 @@ namespace System.Web.Routing
 	{
 		string [] segments;
 		bool [] segment_flags;
+		string [] tokens;
 
 		public UrlPattern (string url)
 		{
@@ -54,8 +56,12 @@ namespace System.Web.Routing
 				throw new ArgumentException ("Url must not start with '~' or '/'");
 			if (Url.IndexOf ('?') >= 0)
 				throw new ArgumentException ("Url must not contain '?'");
+
+			var tokens = new List<string> ();
+
 			segments = Url.Split ('/');
 			segment_flags = new bool [segments.Length];
+
 			for (int i = 0; i < segments.Length; i++) {
 				string s = segments [i];
 				if (s.Length == 0 && i < segments.Length - 1)
@@ -80,13 +86,19 @@ namespace System.Web.Routing
 						throw new ArgumentException ("Empty URL parameter name is not allowed");
 					if (next == end + 1)
 						throw new ArgumentException ("Two consecutive URL parameters are not allowed. Split into a different segment by '/', or a literal string.");
+					string token = s.Substring (start + 1, end - start - 1);
+					if (!tokens.Contains (token))
+						tokens.Add (token);
 					from = end + 1;
 				}
 			}
+
+			this.tokens = tokens.ToArray ();
 		}
 
 		RouteValueDictionary tmp = new RouteValueDictionary ();
 
+		// FIXME: how is "defaults" used?
 		public RouteValueDictionary Match (string path, RouteValueDictionary defaults)
 		{
 			tmp.Clear ();
@@ -142,6 +154,35 @@ namespace System.Web.Routing
 			}
 
 			return tmp;
+		}
+
+		static readonly string [] substsep = {"{{"};
+
+		// it may return null for invalid values.
+		public bool TrySubstitute (RouteValueDictionary values, out string value)
+		{
+			if (values == null) {
+				value = Url;
+				return true;
+			} else {
+				foreach (string token in tokens) {
+					if (!values.ContainsKey (token)) {
+						value = null;
+						return false;
+					}
+				}
+			}
+
+			// horrible hack, but should work
+			string [] arr = Url.Split (substsep, StringSplitOptions.None);
+			for (int i = 0; i < arr.Length; i++) {
+				string s = arr [i];
+				foreach (var p in values)
+					s = s.Replace ("{" + p.Key + "}", p.Value.ToString ());
+				arr [i] = s;
+			}
+			value = String.Join ("{{", arr);
+			return true;
 		}
 	}
 }

@@ -39,7 +39,6 @@ namespace System.Web.Routing
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class HttpMethodConstraint : IRouteConstraint
 	{
-		[MonoTODO]
 		public HttpMethodConstraint (params string[] allowedMethods)
 		{
 			if (allowedMethods == null)

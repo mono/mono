@@ -1,3 +1,9 @@
+2008-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UrlRoutingModuleTest.cs: new test (including "huh?" ones).
+	* RouteTest.cs, TestStubTypes.cs, RouteCollectionTest.cs:
+	  some test updates.
+
 2008-09-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* RouteTest.cs, TestStubTypes.cs, HttpMethodConstraintTest.cs,

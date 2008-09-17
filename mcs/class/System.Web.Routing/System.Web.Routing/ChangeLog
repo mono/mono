@@ -1,3 +1,9 @@
+2008-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpMethodConstraint.cs, Route.cs, RouteCollection.cs,
+	  UrlPattern.cs, UrlRoutingModule.cs:
+	  ongoing UrlRoutingModule implementation.
+
 2008-09-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpMethodConstraint.cs, Route.cs, UrlPattern.cs, 
