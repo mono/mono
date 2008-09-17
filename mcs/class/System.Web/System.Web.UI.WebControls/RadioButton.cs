@@ -88,7 +88,17 @@ namespace System.Web.UI.WebControls {
 
 		internal string ValueAttribute {
 			get {
-				return ViewState.GetString ("Value", String.Empty);
+				string val = (string)ViewState ["Value"];
+				if (val != null)
+					return val;
+				
+#if NET_2_0
+				string id = ID;
+				if (!String.IsNullOrEmpty (id))
+					return id;
+				else
+#endif
+					return UniqueID;
 			}
 			set {
 				ViewState["Value"] = value;
@@ -98,18 +108,7 @@ namespace System.Web.UI.WebControls {
 		internal override void InternalAddAttributesToRender (HtmlTextWriter w) 
 		{
 			base.InternalAddAttributesToRender (w);
-			string val = ValueAttribute;
-			if (val == null || val.Length == 0) {
-#if NET_2_0
-				string id = ID;
-				if (!String.IsNullOrEmpty (id))
-					val = id;
-				else
-#endif
-					val = UniqueID;
-			}
-			
-			w.AddAttribute (HtmlTextWriterAttribute.Value, val);
+			w.AddAttribute (HtmlTextWriterAttribute.Value, ValueAttribute);
 		}
 
 #if NET_2_0
@@ -127,7 +126,7 @@ namespace System.Web.UI.WebControls {
 #endif
 		bool LoadPostData (string postDataKey, NameValueCollection postCollection) 
 		{
-			bool checkedOnClient = postCollection[NameAttribute] == postDataKey;
+			bool checkedOnClient = postCollection[NameAttribute] == ValueAttribute;
 			if (Checked == checkedOnClient)
 				return false;
 
