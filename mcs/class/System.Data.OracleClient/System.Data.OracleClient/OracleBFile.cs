@@ -36,7 +36,6 @@ namespace System.Data.OracleClient
 
 		internal OracleBFile ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		#endregion // Constructors

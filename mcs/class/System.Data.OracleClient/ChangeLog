@@ -1,5 +1,10 @@
 2008-09-16  Daniel Morgan <monodanmorg@yahoo.com>
 
+	* System.Data.OracleClient/OracleBFile.cs: do not
+	throw a NotImplementedException in internal constructor
+
+2008-09-16  Daniel Morgan <monodanmorg@yahoo.com>
+
 	* Test/TestOracleClient.cs: add tests
 	for TIMESTAMP Input, Output, InputOutput, Return 
 	parameters and handle DBNull.Value too
