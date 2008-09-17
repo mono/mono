@@ -1,3 +1,8 @@
+2008-09-17  Jeffrey Stedfast  <fejj@novell.com>
+
+	* TcpChannel.cs (ParseTcpURL): TcpClientTransportSink needs the
+	host component, so extract that info into its own string as well.
+
 2008-09-12  Jeffrey Stedfast  <fejj@novell.com>
 
 	Fix for bug #320298

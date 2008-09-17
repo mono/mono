@@ -131,15 +131,16 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			if (url == null)
 				throw new ArgumentNullException ("url");
 			
-			string port;
+			string host, port;
 			
-			return ParseTcpURL (url, out port, out objectURI);
+			return ParseTcpURL (url, out host, out port, out objectURI);
 		}
 
-		internal static string ParseTcpURL (string url, out string port, out string objectURI)
+		internal static string ParseTcpURL (string url, out string host, out string port, out string objectURI)
 		{
 			// format: "tcp://host:port/path/to/object"
 			objectURI = null;
+			host = null;
 			port = null;
 			
 			// url needs to be at least "tcp:"
@@ -162,6 +163,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				if (url[i] == ':' || url[i] == '/')
 					break;
 			}
+			
+			host = url.Substring (6, i - 6);
 			
 			if (i + 1 < url.Length && url[i] == ':') {
 				int start = i + 1;

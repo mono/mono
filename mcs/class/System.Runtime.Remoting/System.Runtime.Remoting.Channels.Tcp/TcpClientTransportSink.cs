@@ -47,7 +47,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			string objectUri;
 			string port;
 			
-			_host = TcpChannel.ParseTcpURL (url, out port, out objectUri);
+			_host = TcpChannel.ParseTcpURL (url, out _host, out port, out objectUri);
 			
 			try {
 				if (port != null)
