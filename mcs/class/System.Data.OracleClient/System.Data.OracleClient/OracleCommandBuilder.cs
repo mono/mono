@@ -87,7 +87,11 @@ namespace System.Data.OracleClient {
 
 		//[DataSysDescription ("The DataAdapter for which to automatically generate OracleCommands")]
 		[DefaultValue (null)]
-		public new OracleDataAdapter DataAdapter {
+		public
+#if NET_2_0
+		new
+#endif
+		OracleDataAdapter DataAdapter {
 			get { return adapter; }
 			set {
 				if (adapter != null)

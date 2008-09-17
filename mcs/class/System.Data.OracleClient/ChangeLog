@@ -1,3 +1,20 @@
+2008-09-16  Daniel Morgan <monodanmorg@yahoo.com>
+
+	* Test/TestOracleClient.cs: add tests
+	for TIMESTAMP Input, Output, InputOutput, Return 
+	parameters and handle DBNull.Value too
+
+	* System.Data.OracleClient/OracleCommandBuilder.cs
+	* System.Data.OracleClient/OracleDataAdapter.cs: cleanup warnings
+	for default profile
+
+	* System.Data.OracleClient.Oci/OciDateTimeDescriptor.cs
+	* System.Data.OracleClient/OracleParameter.cs: fix parameters
+	for TIMESTAMP Input, Output, InputOutput, Return
+	parameters and handle DBNUll.Value via indicator = -1
+	However, TIMESTAMP WITH TIMEZONE and TIMESTAMP WITH LOCAL TIMESTAMP
+	not tested.
+
 2008-09-14  Daniel Morgan <monodanmorg@yahoo.com>
 
 	* System.Data.OracleClient/OracleParameter.cs: fixes

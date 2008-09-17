@@ -65,11 +65,12 @@ namespace System.Data.OracleClient.Oci {
 		{
 			// Get size of buffer
 			int rsize = 0;
-			OciCalls.OCIUnicodeToCharSet (handle, null, timezone, out rsize);
+			int status = OciCalls.OCIUnicodeToCharSet (handle, null, timezone, out rsize);
 
 			// Fill buffer
 			byte[] bytes = new byte[rsize];
-			OciCalls.OCIUnicodeToCharSet (handle, bytes, timezone, out rsize);
+			if (status == 0 && rsize > 0)
+				OciCalls.OCIUnicodeToCharSet (handle, bytes, timezone, out rsize);
 
 			if (fsec > 0)
 				fsec = fsec * 1000000;

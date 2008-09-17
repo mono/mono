@@ -2154,6 +2154,148 @@ namespace Test.OracleClient
 			return (OracleLob)parm.Value;
 		}
 
+		static void OutParmTest6 (OracleConnection con) 
+		{
+		    // test stored function with 4 parameters
+		    // 1. input timestamp
+		    // 2. output timestamp
+		    // 3. input output timestamp
+		    // 4. return timestamp
+
+		    // a TIMESTAMP type in Oracle has Date and Time          
+
+		    Console.WriteLine("  Create stored function SF_TESTOUTPARM6 to test Date parameters...");
+
+		    OracleCommand cmd2 = con.CreateCommand();
+		    cmd2.CommandText =
+		        "CREATE OR REPLACE FUNCTION SF_TESTOUTPARM6(parm1 IN TIMESTAMP, parm2 OUT TIMESTAMP, parm3 IN OUT TIMESTAMP) RETURN TIMESTAMP " +
+		        "IS " +
+		        "   returnValue TIMESTAMP := TO_TIMESTAMP('2001-07-01 15:32:52', 'YYYY-MM-DD HH24:MI:SS');" +
+		        "BEGIN " +
+		        "   IF parm1 IS NULL THEN " +
+		        "      parm2 := TO_TIMESTAMP('1900-12-31', 'YYYY-MM-DD'); " +
+		        "      parm3 := TO_TIMESTAMP('1900-12-31', 'YYYY-MM-DD'); " +
+		        "   ELSIF parm1 = TO_TIMESTAMP('1979-11-25','YYYY-MM-DD') THEN " +
+		        "      parm2 := NULL;" +
+		        "      parm3 := NULL;" +
+		        "      returnValue := NULL;"+
+		        "   ELSIF parm3 IS NULL THEN " +
+		        "      parm2 := TO_TIMESTAMP('2008-08-08', 'YYYY-MM-DD');" +
+		        "      parm3 := TO_TIMESTAMP('2000-01-01', 'YYYY-MM-DD');" +
+		        "   ELSE " +
+		        "      -- add 3 days to date\n " +
+		        "	   parm2 := parm1 + 3; " +
+		        "      parm3 := parm3 + 5; " +
+		        "   END IF; " +
+		        "   RETURN returnValue;" +
+		        "END;";
+
+		    cmd2.ExecuteNonQuery();
+
+		    Console.WriteLine("  COMMIT...");
+		    cmd2.CommandText = "COMMIT";
+		    cmd2.ExecuteNonQuery();
+
+		    Console.WriteLine("  Call stored function SF_TESTOUTPARM6 with 4 parameters...");
+		    OracleCommand cmd3 = con.CreateCommand();
+		    cmd3.CommandType = CommandType.Text;
+		    cmd3.CommandText =
+		        "BEGIN " +
+		        "	:returnValue := SF_TESTOUTPARM6(:p1, :p2, :p3);" +
+		        "END;";
+		    OracleParameter myParameter1 = new OracleParameter("p1", OracleType.Timestamp);
+		    myParameter1.Value = new DateTime(2004, 12, 15);
+		    myParameter1.Direction = ParameterDirection.Input;
+
+		    OracleParameter myParameter2 = new OracleParameter("p2", OracleType.Timestamp);
+		    myParameter2.Direction = ParameterDirection.Output;
+
+		    OracleParameter myParameter3 = new OracleParameter("p3", OracleType.Timestamp);
+		    myParameter3.Value = new DateTime(2008, 10, 14, 20, 21, 22);
+		    myParameter3.Direction = ParameterDirection.InputOutput;
+
+		    OracleParameter myParameter4 = new OracleParameter("returnValue", OracleType.Timestamp);
+		    myParameter4.Direction = ParameterDirection.ReturnValue;
+
+		    cmd3.Parameters.Add(myParameter1);
+		    cmd3.Parameters.Add(myParameter2);
+		    cmd3.Parameters.Add(myParameter3);
+		    cmd3.Parameters.Add(myParameter4);
+
+		    cmd3.ExecuteNonQuery();
+		    DateTime outValue = (DateTime)myParameter2.Value;
+		    DateTime inOutValue = (DateTime)myParameter3.Value;
+		    DateTime returnValue = (DateTime)myParameter4.Value;
+		    Console.WriteLine("    1Out Value should be: 2004-12-18 00:00:00");
+		    Console.WriteLine("    1Out Value: {0}", outValue.ToString("yyyy-MM-dd HH:mm:ss"));
+		    Console.WriteLine("    1InOut Value should be: 2008-10-19 20:21:22");
+		    Console.WriteLine("    1InOut Value: {0}", inOutValue.ToString("yyyy-MM-dd HH:mm:ss"));
+		    Console.WriteLine("    1Return Value should be: 2001-07-01 15:32:52");
+		    Console.WriteLine("    1Return Value: {0}", returnValue.ToString("yyyy-MM-dd HH:mm:ss"));
+		    Console.WriteLine();
+
+		    myParameter1.Value = DBNull.Value;
+		    myParameter3.Value = new DateTime(1980, 11, 22);
+		    cmd3.ExecuteNonQuery();
+		    outValue = (DateTime)myParameter2.Value;
+		    inOutValue = (DateTime)myParameter3.Value;
+		    returnValue = (DateTime)myParameter4.Value;
+		    Console.WriteLine("    2Out Value should be: 1900-12-31 00:00:00");
+		    Console.WriteLine("    2Out Value: {0}", outValue.ToString("yyyy-MM-dd HH:mm:ss"));
+		    Console.WriteLine("    2InOut Value should be: 1900-12-31 00:00:00");
+		    Console.WriteLine("    2InOut Value: {0}", inOutValue.ToString("yyyy-MM-dd HH:mm:ss"));
+		    Console.WriteLine("    2Return Value should be: 2001-07-01 15:32:52");
+		    Console.WriteLine("    2Return Value: {0}", returnValue.ToString("yyyy-MM-dd HH:mm:ss"));
+		    Console.WriteLine();
+
+		    myParameter1.Value = new DateTime(1979, 11, 25);
+		    myParameter3.Value = new DateTime(1981, 12, 14);
+		    cmd3.ExecuteNonQuery();
+		    string soutValue = "";
+		    string sinOutValue = "";
+		    string sreturnValue = "";
+		    if (myParameter2.Value == DBNull.Value) 
+		        soutValue = "DBNull.Value";
+		    else {
+		        outValue = (DateTime)myParameter2.Value;
+		        soutValue = outValue.ToString("yyyy-MM-dd HH:mm:ss");
+		    }
+		    if (myParameter3.Value == DBNull.Value) 
+		        sinOutValue = "DBNull.Value";
+		    else {
+		        inOutValue = (DateTime)myParameter3.Value;
+		        sinOutValue = inOutValue.ToString("yyyy-MM-dd HH:mm:ss");
+		    }
+		    if (myParameter4.Value == DBNull.Value) 
+		        sreturnValue = "DBNull.Value";
+		    else {
+		        returnValue = (DateTime)myParameter4.Value;
+		        sreturnValue = returnValue.ToString("yyyy-MM-dd HH:mm:ss");
+		    }
+		    Console.WriteLine("    3Out Value should be: DBNull.Value");
+		    Console.WriteLine("    3Out Value: {0}", soutValue);
+		    Console.WriteLine("    3InOut Value should be: DBNull.Value");
+		    Console.WriteLine("    3InOut Value: {0}", sinOutValue);
+		    Console.WriteLine("    3Return Value should be: DBNull.Value");
+		    Console.WriteLine("    3Return Value: {0}", sreturnValue);
+		    Console.WriteLine();
+
+		    myParameter1.Value = new DateTime(1976, 7, 4);
+		    myParameter3.Value = DBNull.Value;
+		    cmd3.ExecuteNonQuery();
+		    outValue = (DateTime)myParameter2.Value;
+		    inOutValue = (DateTime)myParameter3.Value;
+		    returnValue = (DateTime)myParameter4.Value;
+		    Console.WriteLine("    4Out Value should be: 2008-08-08 00:00:00");
+		    Console.WriteLine("    4Out Value: {0}", outValue.ToString("yyyy-MM-dd HH:mm:ss"));
+		    Console.WriteLine("    4InOut Value should be: 2000-01-01 00:00:00");
+		    Console.WriteLine("    4InOut Value: {0}", inOutValue.ToString("yyyy-MM-dd HH:mm:ss"));
+		    Console.WriteLine("    4Return Value should be: 2001-07-01 15:32:52");
+		    Console.WriteLine("    4Return Value: {0}", returnValue.ToString("yyyy-MM-dd HH:mm:ss"));
+		    Console.WriteLine();
+
+		}
+
 		static void ShowConnectionProperties (OracleConnection con) 
 		{
 			try {
@@ -2914,6 +3056,10 @@ namespace Test.OracleClient
 			Console.WriteLine ("Out Parameter and PL/SQL Block Test 5 BEGIN...");
 			OutParmTest5 (con1); 
 			Console.WriteLine ("Out Parameter and PL/SQL Block Test 5 END...");
+
+			Console.WriteLine ("Out Parameter and PL/SQL Block Test 6 BEGIN...");
+			OutParmTest6 (con1); 
+			Console.WriteLine ("Out Parameter and PL/SQL Block Test 6 END...");
 
 			Wait ("");
 

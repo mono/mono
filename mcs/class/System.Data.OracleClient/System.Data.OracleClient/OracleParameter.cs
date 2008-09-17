@@ -491,6 +491,56 @@ namespace System.Data.OracleClient
 						bytes = new byte [7];
 					}
 					break;
+				case OciDataType.TimeStamp:
+					dateTimeDesc = (OciDateTimeDescriptor) connection.Environment.Allocate (OciHandleType.TimeStamp);
+					if (dateTimeDesc == null) {
+						OciErrorInfo info = connection.ErrorHandle.HandleError ();
+						throw new OracleException (info.ErrorCode, info.ErrorMessage);
+					}
+					dateTimeDesc.ErrorHandle = connection.ErrorHandle;
+					bindSize = 11;
+					bindType = OciDataType.TimeStamp;
+					bindOutValue = dateTimeDesc.Handle;
+					bindValue = dateTimeDesc.Handle;
+					useRef = true;
+					if (direction == ParameterDirection.Input || 
+						direction == ParameterDirection.InputOutput) {
+
+						dt = DateTime.MinValue;
+						sDate = "";
+						if (isnull)
+							indicator = -1;
+						else if (v is String) {
+							sDate = (string) v;
+							dt = DateTime.Parse (sDate);
+						}
+						else if (v is DateTime)
+							dt = (DateTime) v;
+						else if (v is OracleString) {
+							sDate = (string) v;
+							dt = DateTime.Parse (sDate);
+						}
+						else if (v is OracleDateTime) {
+							OracleDateTime odt = (OracleDateTime) v;
+							dt = (DateTime) odt.Value;
+						}
+						else
+							throw new NotImplementedException ("For OracleType.Timestamp, data type not implemented: " + v.GetType().ToString()); // ?
+
+						short year = (short) dt.Year;
+						byte month = (byte) dt.Month;
+						byte day = (byte) dt.Day;
+						byte hour = (byte) dt.Hour;
+						byte min = (byte) dt.Minute;
+						byte sec = (byte) dt.Second;
+						uint fsec = (uint) dt.Millisecond;
+						string timezone = "";
+						dateTimeDesc.SetDateTime (connection.Session,
+							connection.ErrorHandle,
+							year, month, day, hour, min, sec, fsec,
+							timezone);
+					}
+					break;
 				case OciDataType.Number:
 					bindType = OciDataType.String;
 					indicator = 0;
@@ -617,7 +667,7 @@ namespace System.Data.OracleClient
 						lobLocator.Service = statement.Service;
 						useRef = true;
 					}
-					break;					
+					break;
 				default:
 					// FIXME: move this up - see how Char, Number, and Date are done...
 					if (direction == ParameterDirection.Output || 
@@ -631,19 +681,6 @@ namespace System.Data.OracleClient
 							bindSize = size * 2;
 							bindOutValue = OciCalls.AllocateClear (bindSize);
 							bindValue = bindOutValue;
-							break;
-						case OciDataType.TimeStamp:
-							dateTimeDesc = (OciDateTimeDescriptor) connection.Environment.Allocate (OciHandleType.TimeStamp);
-							if (dateTimeDesc == null) {
-								OciErrorInfo info = connection.ErrorHandle.HandleError ();
-								throw new OracleException (info.ErrorCode, info.ErrorMessage);
-							}
-							dateTimeDesc.ErrorHandle = connection.ErrorHandle;
-							bindSize = 11;
-							bindType = OciDataType.TimeStamp;
-							bindOutValue = dateTimeDesc.Handle;
-							bindValue = dateTimeDesc.Handle;
-							useRef = true;
 							break;
 						case OciDataType.RSet: // REF CURSOR
 							cursor = IntPtr.Zero;
@@ -668,51 +705,7 @@ namespace System.Data.OracleClient
 						bindSize = 0;
 					}
 					else {
-						sDate = "";
-						dt = DateTime.MinValue;
-						if (bindOracleType == OracleType.Timestamp){
-							bindType = OciDataType.TimeStamp;
-							bindSize = 11;
-							dt = DateTime.MinValue;
-							sDate = "";
-							if (v is String){
-								sDate = (string) v;
-								dt = DateTime.Parse (sDate);
-							}
-							else if (v is DateTime)
-								dt = (DateTime) v;
-							else if (v is OracleString){
-								sDate = (string) v;
-								dt = DateTime.Parse (sDate);
-							}
-							else if (v is OracleDateTime) {
-								OracleDateTime odt = (OracleDateTime) v;
-								dt = (DateTime) odt.Value;
-							}
-							else
-								throw new NotImplementedException ("For OracleType.Timestamp, data type not implemented: " + v.GetType().ToString()); // ?
-
-							short year = (short) dt.Year;
-							byte month = (byte) dt.Month;
-							byte day = (byte) dt.Day;
-							byte hour = (byte) dt.Hour;
-							byte min = (byte) dt.Minute;
-							byte sec = (byte) dt.Second;
-							uint fsec = (uint) dt.Millisecond;
-							string timezone = "";
-							dateTimeDesc = (OciDateTimeDescriptor) connection.Environment.Allocate (OciHandleType.TimeStamp);
-							if (dateTimeDesc == null) {
-								OciErrorInfo info = connection.ErrorHandle.HandleError ();
-								throw new OracleException (info.ErrorCode, info.ErrorMessage);
-							}
-							dateTimeDesc.ErrorHandle = connection.ErrorHandle;
-							dateTimeDesc.SetDateTime (connection.Session,
-								connection.ErrorHandle,
-								year, month, day, hour, min, sec, fsec,
-								timezone);
-							useRef = true;
-						}
-						else if (bindOracleType == OracleType.Raw) {
+						if (bindOracleType == OracleType.Raw) {
 							byte[] val = v as byte[];
 							bindValue = OciCalls.AllocateClear (val.Length);
 							Marshal.Copy (val, 0, bindValue, val.Length);
