@@ -1,5 +1,10 @@
 2008-05-12  Everaldo Canuto  <ecanuto@novell.com>
 
+	* DataGridTextBoxColumn.cs: Uncomment code accidentally commited in last
+	patch.
+	
+2008-05-12  Everaldo Canuto  <ecanuto@novell.com>
+
 	[Fixes most od DBNull and HeadersVisible problems]
 	
 	* DataGrid.cs:
