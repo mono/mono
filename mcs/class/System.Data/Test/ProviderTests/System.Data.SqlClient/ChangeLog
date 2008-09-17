@@ -1,3 +1,7 @@
+2008-09-17  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlCommandBuilderTest.cs: Added test for DeriverParameters.
+	
 2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlCommandTest.cs: Enabled test for bug #412569.

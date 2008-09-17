@@ -409,5 +409,26 @@ namespace MonoTests.System.Data
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
+
+		[Test]
+		public void DeriveParametersTest_Default ()
+		{
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
+				SqlCommand cmd = new SqlCommand ();
+
+				cmd.CommandText = "[dbo].[sp_326182]";
+				cmd.CommandType = CommandType.StoredProcedure;
+				cmd.CommandTimeout = 90;
+				cmd.Connection =  conn;
+				
+				SqlCommandBuilder.DeriveParameters (cmd);
+				Assert.AreEqual (5, cmd.Parameters.Count, "#4");
+				
+			} finally {
+			  	ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
 	}
 }
