@@ -6512,7 +6512,7 @@ namespace Mono.CSharp {
 			for (int i = 0; i < array_data.Count; ++i) {
 				Expression e = (Expression)array_data[i];
 				if (e != null)
-					array_data [i] = Convert.ImplicitConversionStandard (ec, e, array_element_type, Location.Null);
+					array_data [i] = Convert.ImplicitConversion (ec, e, array_element_type, Location.Null);
 			}
 		}
 
@@ -6527,11 +6527,11 @@ namespace Mono.CSharp {
 				return element;
 			}
 
-			if (Convert.ImplicitStandardConversionExists (element, array_element_type)) {
+			if (Convert.ImplicitConversionExists (ec, element, array_element_type)) {
 				return element;
 			}
 
-			if (Convert.ImplicitStandardConversionExists (new TypeExpression (array_element_type, loc), element.Type)) {
+			if (Convert.ImplicitConversionExists (ec, new TypeExpression (array_element_type, loc), element.Type)) {
 				array_element_type = element.Type;
 				return element;
 			}

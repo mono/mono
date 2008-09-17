@@ -1,5 +1,11 @@
 2008-09-17  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #426385
+	* expression.cs (ImplicitlyTypedArrayCreation): Use full implicit
+	conversion for array elements.
+
+2008-09-17  Marek Safar  <marek.safar@gmail.com>
+
 	* expression.cs, statement.cs, class.cs, cs-parser.jay: Fixed
 	void parsing conflicts.
 
