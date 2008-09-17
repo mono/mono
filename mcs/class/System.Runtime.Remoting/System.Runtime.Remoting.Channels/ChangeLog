@@ -1,3 +1,13 @@
+2008-09-17  Michael Hutchinson  <michael@>
+
+	* SoapServerFormatterSink.cs: Do not try to parse text/xml code
+	unless there is a SOAPAction.   
+
+	Set position on outgoing streams to zero, so they can be properly
+	parsed in the general infrastructure.
+
+	Do not try to seek on incoming streams.
+
 2007-05-10  Jonathan Chambers  <joncham@gmail.com>
 
 	* BinaryClientFormatterSinkProvider.cs: Allow typeFilterLevel property

@@ -146,18 +146,14 @@ namespace System.Runtime.Remoting.Channels {
 			// Note that a null content-type is handled as suitable,
 			// otherwise no other sink will be able to handle the request.
 			string contentType = requestHeaders["Content-Type"] as string;
-			if (contentType != null && !contentType.StartsWith ("text/xml")) {
-				try {
-					return next_sink.ProcessMessage (sinkStack,
-						requestMsg,
-						requestHeaders,
-						requestStream,
-						out responseMsg,
-						out responseHeaders,
-						out responseStream);
-				} catch {
-					// Let this formatter handle the exception.
-				}
+			if (contentType == null || !contentType.StartsWith ("text/xml") || requestHeaders["SOAPAction"] == null) {
+				return next_sink.ProcessMessage (sinkStack,
+					requestMsg,
+					requestHeaders,
+					requestStream,
+					out responseMsg,
+					out responseHeaders,
+					out responseStream);
 			}
 
 			responseMsg = null;
@@ -179,7 +175,6 @@ namespace System.Runtime.Remoting.Channels {
 				SoapFormatter fm = _soapCore.GetSafeDeserializer ();
 				SoapMessage soapMessage = soapMsgFormatter.CreateSoapMessage (true);
 				fm.TopObject = soapMessage;
-				requestStream.Position = 0;
 				fm.Deserialize(requestStream);
 
 				requestMsg = soapMsgFormatter.BuildMethodCallFromSoapMessage(soapMessage, uri);
@@ -192,6 +187,7 @@ namespace System.Runtime.Remoting.Channels {
 						object rtnMessageObject = soapMsgFormatter.BuildSoapMessageFromMethodResponse((IMethodReturnMessage) responseMsg, out responseHeaders);
 						responseStream = new MemoryStream();
 						_soapCore.Serializer.Serialize(responseStream, rtnMessageObject);
+						responseStream.Position = 0;
 					}
 				}
 			}
@@ -201,6 +197,7 @@ namespace System.Runtime.Remoting.Channels {
 				object rtnMessageObject = soapMsgFormatter.BuildSoapMessageFromMethodResponse((IMethodReturnMessage) responseMsg, out responseHeaders);
 				responseStream = new MemoryStream();
 				_soapCore.Serializer.Serialize(responseStream, rtnMessageObject);
+				responseStream.Position = 0;
 				sp = ServerProcessing.Complete;
 			}
 
