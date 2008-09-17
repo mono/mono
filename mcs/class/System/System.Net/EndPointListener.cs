@@ -36,7 +36,8 @@ using System.Security.Cryptography.X509Certificates;
 using Mono.Security.Authenticode;
 
 namespace System.Net {
-	sealed class EndPointListener
+	
+	sealed class EndPointListener : IHttpListenerContextBinder
 	{
 		IPEndPoint endpoint;
 		Socket sock;
@@ -49,10 +50,12 @@ namespace System.Net {
 
 		public EndPointListener (IPAddress addr, int port, bool secure)
 		{
+#if !EMBEDDED_IN_1_0
 			if (secure) {
 				this.secure = secure;
 				LoadCertificateAndKey (addr, port);
 			}
+#endif
 
 			endpoint = new IPEndPoint (addr, port);
 			sock = new Socket (addr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -61,7 +64,7 @@ namespace System.Net {
 			sock.BeginAccept (OnAccept, this);
 			prefixes = new Hashtable ();
 		}
-
+#if !EMBEDDED_IN_1_0
 		void LoadCertificateAndKey (IPAddress addr, int port)
 		{
 			// Actually load the certificate
@@ -77,7 +80,7 @@ namespace System.Net {
 				// ignore errors
 			}
 		}
-
+#endif
 		static void OnAccept (IAsyncResult ares)
 		{
 			EndPointListener epl = (EndPointListener) ares.AsyncState;

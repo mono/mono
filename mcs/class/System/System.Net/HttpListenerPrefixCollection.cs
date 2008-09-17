@@ -72,9 +72,9 @@ namespace System.Net {
 		public void Clear ()
 		{
 			listener.CheckDisposed ();
-			prefixes.Clear ();
 			if (listener.IsListening)
 				EndPointManager.RemoveListener (listener);
+			prefixes.Clear ();
 		}
 
 		public bool Contains (string uriPrefix)
@@ -100,7 +100,10 @@ namespace System.Net {
 		{
 			return prefixes.GetEnumerator ();
 		}
+#else
+		object ICollection.SyncRoot { get { return this; } }
 #endif
+
 	
 		IEnumerator IEnumerable.GetEnumerator ()
 		{

@@ -34,15 +34,24 @@ using System.Reflection;
 using System.Text;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+
+#if !EMBEDDED_IN_1_0
 using Mono.Security.Protocol.Tls;
+#endif
 
 namespace System.Net {
+	
+	interface IHttpListenerContextBinder {
+		bool BindContext (HttpListenerContext context);
+		void UnbindContext (HttpListenerContext context);
+	}
+	
 	sealed class HttpConnection
 	{
 		const int BufferSize = 8192;
 		Socket sock;
 		Stream stream;
-		EndPointListener epl;
+		IHttpListenerContextBinder epl;
 		MemoryStream ms;
 		byte [] buffer;
 		HttpListenerContext context;
@@ -56,7 +65,16 @@ namespace System.Net {
 		bool secure;
 		AsymmetricAlgorithm key;
 
-		public HttpConnection (Socket sock, EndPointListener epl, bool secure, X509Certificate2 cert, AsymmetricAlgorithm key)
+#if EMBEDDED_IN_1_0
+		public HttpConnection (Socket sock, IHttpListenerContextBinder epl)
+		{
+			this.sock = sock;
+			this.epl = epl;
+			stream = new NetworkStream (sock, false);
+			Init ();
+		}
+#else
+		public HttpConnection (Socket sock, IHttpListenerContextBinder epl, bool secure, X509Certificate2 cert, AsymmetricAlgorithm key)
 		{
 			this.sock = sock;
 			this.epl = epl;
@@ -65,16 +83,14 @@ namespace System.Net {
 			if (secure == false) {
 				stream = new NetworkStream (sock, false);
 			} else {
-#if EMBEDDED_IN_1_0
-				throw new NotImplementedException ();
-#else
 				SslServerStream ssl_stream = new SslServerStream (new NetworkStream (sock, false), cert, false, false);
 				ssl_stream.PrivateKeyCertSelectionDelegate += OnPVKSelection;
 				stream = ssl_stream;
-#endif
+
 			}
 			Init ();
 		}
+#endif
 
 		AsymmetricAlgorithm OnPVKSelection (X509Certificate certificate, string targetHost)
 		{
