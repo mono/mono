@@ -1,4 +1,4 @@
-//
+﻿//
 // HttpClientTransportSink.cs
 // 
 // Author:
@@ -37,99 +37,184 @@ namespace System.Runtime.Remoting.Channels.Http
 	class HttpClientTransportSink : IClientChannelSink
 	{
 		string url;
-		
-		public HttpClientTransportSink (string url)
+		HttpClientChannel channel;
+
+		public HttpClientTransportSink (HttpClientChannel channel, string url)
 		{
+			this.channel = channel;
 			this.url = url;
 		}
-		
+
 		//always the last sink in the chain
-		public IClientChannelSink NextChannelSink {
+		public IClientChannelSink NextChannelSink
+		{
 			get { return null; }
 		}
-		
+
 		public void AsyncProcessRequest (IClientChannelSinkStack sinkStack, IMessage msg,
 			ITransportHeaders headers, Stream requestStream)
 		{
-			/*
-			HttpConnection connection = null;
 			bool isOneWay = RemotingServices.IsOneWay (((IMethodMessage)msg).MethodBase);
-
-			try
-			{
-				if (headers == null) headers = new TransportHeaders();
-				headers [CommonTransportKeys.RequestUri] = ((IMethodMessage)msg).Uri;
-				
-				// Sends the stream using a connection from the pool
-				// and creates a WorkItem that will wait for the
-				// response of the server
-
-				connection = HttpConnectionPool.GetConnection (_host, _port);
-				HttpMessageIO.SendMessageStream (connection.Stream, requestStream, headers, connection.Buffer, isOneWay);
-				connection.Stream.Flush ();
-
-				if (!isOneWay) 
-				{
-					sinkStack.Push (this, connection);
-					ThreadPool.QueueUserWorkItem (new WaitCallback(ReadAsyncHttpMessage), sinkStack);
-				}
-				else
-					connection.Release();
+			
+			HttpWebRequest request = CreateRequest (headers);
+			
+			Stream targetStream = request.GetRequestStream ();
+			CopyStream (requestStream, targetStream, 1024);
+			targetStream.Close ();
+			
+			if (!isOneWay) {
+				sinkStack.Push (this, request);
+			} else {
+				request.BeginGetResponse (new AsyncCallback (AsyncProcessResponseCallback), sinkStack);
 			}
-			catch
-			{
-				if (connection != null) connection.Release();
-				if (!isOneWay) throw;
-			}
-			*/
 		}
 		
-		public void AsyncProcessResponse (IClientResponseChannelSinkStack sinkStack, object state, 
+		void AsyncProcessResponseCallback (IAsyncResult ar)
+		{
+			IClientChannelSinkStack sinkStack = (IClientChannelSinkStack)ar.AsyncState;
+			HttpWebRequest request = (HttpWebRequest)sinkStack.Pop(this);
+			
+			WebResponse response;
+			try {
+				response = request.EndGetResponse (ar);
+			} catch (WebException ex) {
+				response = ex.Response;
+				//only error 500 is handled by the romoting stack
+				HttpWebResponse httpResponse = response as HttpWebResponse;
+				if (httpResponse == null || httpResponse.StatusCode != HttpStatusCode.InternalServerError)
+					throw;
+			}
+			
+			//this is only valid after the response is fetched
+			SetConnectionLimit (request);
+
+			Stream responseStream = response.GetResponseStream ();
+			ITransportHeaders responseHeaders = GetHeaders (response);
+			sinkStack.AsyncProcessResponse (responseHeaders, responseStream);
+		}
+
+		public void AsyncProcessResponse (IClientResponseChannelSinkStack sinkStack, object state,
 			ITransportHeaders headers, Stream stream)
 		{
 			// Should never be called
-			throw new NotSupportedException();
+			throw new NotSupportedException ();
 		}
-		
+
 		public Stream GetRequestStream (IMessage msg, ITransportHeaders headers)
 		{
 			return null;
 		}
+
+		HttpWebRequest CreateRequest (ITransportHeaders requestHeaders)
+		{
+			//NOTE: on mono this seems to be set, but on .NET it's null. 
+			//Hence we shouldn't use it:  requestHeaders[CommonTransportKeys.RequestUri])
+			HttpWebRequest request = (HttpWebRequest)WebRequest.Create (url);
+			request.UserAgent = string.Format ("Mozilla/4.0+(compatible; Mono Remoting; Mono {0})",
+				System.Environment.Version);
+			
+			//Only set these if they deviate from the defaults, as some map to 
+			//properties that throw NotImplementedExceptions
+			request.Timeout = channel.Timeout;
+			if (channel.AllowAutoRedirect == false)
+				request.AllowAutoRedirect = false;
+			if (channel.Credentials != null)
+				request.Credentials = channel.Credentials;
+#if NET_2_0
+			if (channel.UseDefaultCredentials == true)
+				request.UseDefaultCredentials = true;
+#endif
+			if (channel.UnsafeAuthenticatedConnectionSharing == true)
+				request.UnsafeAuthenticatedConnectionSharing = true;
+			if (channel.ConnectionGroupName != null)
+				request.ConnectionGroupName = channel.ConnectionGroupName;
+			
+			/*
+			FIXME: implement these
+			MachineName
+			Domain
+			Password
+			Username
+			ProxyName
+			ProxyPort
+			ProxyUri
+			ServicePrincipalName
+			UseAuthenticatedConnectionSharing
+			*/
+			
+			//build the headers
+			request.ContentType = (string)requestHeaders["Content-Type"];
+			
+			//BUG: Mono formatters/dispatcher don't set this. Something in the MS stack does.
+			string method = (string)requestHeaders["__RequestVerb"];
+			if (method == null)
+				method = "POST";
+			request.Method = method;
+			
+			foreach (DictionaryEntry entry in requestHeaders) {
+				string key = entry.Key.ToString ();
+				if (key != "__RequestVerb" && key != "Content-Type") {
+					request.Headers.Add (key, entry.Value.ToString ());
+				}
+			}
+			return request;
+		}
 		
+		void SetConnectionLimit (HttpWebRequest request)
+		{
+			if (channel.ClientConnectionLimit != 2) {
+				request.ServicePoint.ConnectionLimit = channel.ClientConnectionLimit;
+			}
+		}
+
+		static TransportHeaders GetHeaders (WebResponse response)
+		{
+			TransportHeaders headers = new TransportHeaders ();
+			foreach (string key in response.Headers) {
+				headers[key] = response.Headers[key];
+			}
+			return headers;
+		}
+
+		internal static void CopyStream (Stream source, Stream target, int bufferSize)
+		{
+			byte[] buffer = new byte[bufferSize];
+			int readLen = source.Read (buffer, 0, buffer.Length);
+			while (readLen > 0) {
+				target.Write (buffer, 0, readLen);
+				readLen = source.Read (buffer, 0, buffer.Length);
+			}
+		}
+
 		public void ProcessMessage (IMessage msg, ITransportHeaders requestHeaders, Stream requestStream,
 			out ITransportHeaders responseHeaders, out Stream responseStream)
 		{
-			responseStream = null;
-			responseHeaders = null;
-			/*
-			HttpConnection connection = null;
-			try
-			{
-				if (requestHeaders == null) requestHeaders = new TransportHeaders();
-				requestHeaders [CommonTransportKeys.RequestUri] = ((IMethodMessage)msg).Uri;
-				
-				// Sends the message
-				connection = HttpConnectionPool.GetConnection (_host, _port);
-				HttpMessageIO.SendMessageStream (connection.Stream, requestStream, requestHeaders, connection.Buffer);
-				connection.Stream.Flush ();
-
-				// Reads the response
-				MessageStatus status = HttpMessageIO.ReceiveMessageStatus (connection.Stream, connection.Buffer);
-
-				if (status != MessageStatus.MethodMessage)
-					throw new RemotingException ("Unknown response message from server");
-
-				responseStream = HttpMessageIO.ReceiveMessageStream (connection.Stream, out responseHeaders, connection.Buffer);
+			HttpWebRequest request = CreateRequest (requestHeaders);
+			
+			Stream targetStream = request.GetRequestStream ();
+			CopyStream (requestStream, targetStream, 1024);
+			targetStream.Close ();
+			
+			WebResponse response;
+			try {
+				response = request.GetResponse ();
+			} catch (WebException ex) {
+				response = ex.Response;
+				//only error 500 is handled by the romoting stack
+				HttpWebResponse httpResponse = response as HttpWebResponse;
+				if (httpResponse == null || httpResponse.StatusCode != HttpStatusCode.InternalServerError)
+					throw;
 			}
-			finally
-			{
-				if (connection != null) 
-					connection.Release();
-			}
-			*/
+			
+			//this is only valid after the response is fetched
+			SetConnectionLimit (request);
+			
+			responseHeaders = GetHeaders (response);
+			responseStream = response.GetResponseStream ();
 		}
-		
-		public IDictionary Properties {
+
+		public IDictionary Properties
+		{
 			get { return null; }
 		}
 	}

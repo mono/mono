@@ -14,3 +14,6 @@ TEST_MONO_PATH = .
 EXTRA_DISTFILES = Test/corba-example.cs Test/simple-example.cs
 
 include ../../build/library.make
+
+update-http: get_mono_http
+	./get_mono_http
