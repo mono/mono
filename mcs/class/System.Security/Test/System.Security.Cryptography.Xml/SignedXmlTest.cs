@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005, 2008 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -824,9 +824,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-#if NET_2_0
 		[Ignore ("This is a bad test case which should basically just check the computed signature value instead of comparing XML document literal string, and thus caused inconsistency between .NET 1.1 and .NET 2.0. Not deleting this test case, to easily find the reason for potentially happening regression in the future (which should not waste time).")]
-#endif
 		public void SignedXML_LF_Valid ()
 		{
 			X509Certificate2 cert = new X509Certificate2 (_pkcs12, "mono");
@@ -1143,6 +1141,152 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			0x3e, 0x38, 0x04, 0x14, 0x52, 0xf8, 0xb3, 0xeb, 0xc3, 0xda, 0x79,
 			0xfa, 0x75, 0x89, 0x67, 0x33, 0x01, 0xd0, 0xb0, 0x13, 0xfa, 0x11,
 			0x94, 0xac, 0x02, 0x02, 0x07, 0xd0 };
+
+		public SignedXml SignHMAC (string uri, KeyedHashAlgorithm mac, bool ok)
+		{
+			string input = "<foo/>";
+
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (input);
+
+			SignedXml sig = new SignedXml (doc);
+			Reference r = new Reference ("");
+			r.AddTransform (new XmlDsigEnvelopedSignatureTransform ());
+			r.DigestMethod = uri;
+			sig.AddReference (r);
+
+			sig.ComputeSignature (mac);
+			doc.DocumentElement.AppendChild (doc.ImportNode (sig.GetXml (), true));
+			// doc.Save (System.Console.Out);
+
+			sig.LoadXml (doc.DocumentElement ["Signature"]);
+			AssertEquals ("CheckSignature", ok, sig.CheckSignature (mac));
+			return sig;
+		}
+
+		static byte [] hmackey = new byte [0];
+		private const string more256 = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256";
+		private const string more384 = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha384";
+		private const string more512 = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha512";
+		private const string moreripe = "http://www.w3.org/2001/04/xmldsig-more#hmac-ripemd160";
+
+		[Test]
+		public void SignHMAC_SHA256 ()
+		{
+			SignedXml sign = SignHMAC (EncryptedXml.XmlEncSHA256Url, new HMACSHA256 (hmackey), true);
+			AssertEquals ("SignatureMethod", more256, sign.SignatureMethod);
+		}
+
+		[Test]
+		public void SignHMAC_SHA256_Bad ()
+		{
+			SignedXml sign = SignHMAC (more256, new HMACSHA256 (hmackey), false);
+			AssertEquals ("SignatureMethod", more256, sign.SignatureMethod);
+		}
+
+		[Test]
+		public void VerifyHMAC_SHA256 ()
+		{
+			string xml = "<?xml version=\"1.0\" encoding=\"Windows-1252\"?><foo><Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\" /><SignatureMethod Algorithm=\"http://www.w3.org/2001/04/xmldsig-more#hmac-sha256\" /><Reference URI=\"\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\" /></Transforms><DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\" /><DigestValue>sKG2hDPEHiPrzpd3QA8BZ0eMzMbSEPPMh9QqXgkP7Cs=</DigestValue></Reference></SignedInfo><SignatureValue>Faad3KInJdIpaGcBn5e04Zv080u45fSjAKqrgevdWQw=</SignatureValue></Signature></foo>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+
+			SignedXml sign = new SignedXml (doc);
+			sign.LoadXml (doc.DocumentElement ["Signature"]);
+
+			// verify MS-generated signature
+			Assert (sign.CheckSignature (new HMACSHA256 (hmackey)));
+		}
+
+		[Test]
+		public void SignHMAC_SHA512 ()
+		{
+			SignedXml sign = SignHMAC (EncryptedXml.XmlEncSHA512Url, new HMACSHA512 (hmackey), true);
+			AssertEquals ("SignatureMethod", more512, sign.SignatureMethod);
+		}
+
+		[Test]
+		public void SignHMAC_SHA512_Bad ()
+		{
+			SignedXml sign = SignHMAC (more512, new HMACSHA512 (hmackey), false);
+			AssertEquals ("SignatureMethod", more512, sign.SignatureMethod);
+		}
+
+		[Test]
+		public void VerifyHMAC_SHA512 ()
+		{
+			string xml = "<?xml version=\"1.0\" encoding=\"Windows-1252\"?><foo><Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\" /><SignatureMethod Algorithm=\"http://www.w3.org/2001/04/xmldsig-more#hmac-sha512\" /><Reference URI=\"\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\" /></Transforms><DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha512\" /><DigestValue>2dvMkpTUE8Z76ResJG9pwPpVJNYo7t6s2L02V81xUVJ0oF8yJ7v8CTojjuL76s0iVdBxAOhP80Ambd1YaSkwSw==</DigestValue></Reference></SignedInfo><SignatureValue>wFenihRlm1x5/n0cifdX/TDOYqlbg2oVIbD/gyrAc0Q2hiIUTtwfBIMY5rQhKcErSz6YNoIl8RBQBmww/0rv5g==</SignatureValue></Signature></foo>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+
+			SignedXml sign = new SignedXml (doc);
+			sign.LoadXml (doc.DocumentElement ["Signature"]);
+
+			// verify MS-generated signature
+			Assert (sign.CheckSignature (new HMACSHA512 (hmackey)));
+		}
+
+		[Test]
+		public void SignHMAC_SHA384 ()
+		{
+			// works as long as the string can be used by CryptoConfig to create 
+			// an instance of the required hash algorithm
+			SignedXml sign = SignHMAC ("SHA384", new HMACSHA384 (hmackey), true);
+			AssertEquals ("SignatureMethod", more384, sign.SignatureMethod);
+		}
+
+		[Test]
+		public void SignHMAC_SHA384_Bad ()
+		{
+			// we can't verity the signature if the URI is used
+			SignedXml sign = SignHMAC (more384, new HMACSHA384 (hmackey), false);
+			AssertEquals ("SignatureMethod", more384, sign.SignatureMethod);
+		}
+
+		[Test]
+		public void VerifyHMAC_SHA384 ()
+		{
+			string xml = "<?xml version=\"1.0\" encoding=\"Windows-1252\"?><foo><Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\" /><SignatureMethod Algorithm=\"http://www.w3.org/2001/04/xmldsig-more#hmac-sha384\" /><Reference URI=\"\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\" /></Transforms><DigestMethod Algorithm=\"SHA384\" /><DigestValue>kH9C0LeZocNVXhjfzpz00M5fc3WJf0QU8gxK4I7pAN7HN602yHo8yYDSlG14b5YS</DigestValue></Reference></SignedInfo><SignatureValue>LgydOfhv8nqpFLFPC+xg3ZnjC8D+V3mpzxv6GOdH1HDdw1r+LH/BFM2U7dntxgf0</SignatureValue></Signature></foo>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+
+			SignedXml sign = new SignedXml (doc);
+			sign.LoadXml (doc.DocumentElement ["Signature"]);
+
+			// verify MS-generated signature
+			Assert (sign.CheckSignature (new HMACSHA384 (hmackey)));
+		}
+
+		[Test]
+		public void SignHMAC_RIPEMD160 ()
+		{
+			// works as long as the string can be used by CryptoConfig to create 
+			// an instance of the required hash algorithm
+			SignedXml sign = SignHMAC ("RIPEMD160", new HMACRIPEMD160 (hmackey), true);
+			AssertEquals ("SignatureMethod", moreripe, sign.SignatureMethod);
+		}
+
+		[Test]
+		public void SignHMAC_RIPEMD160_Bad ()
+		{
+			// we can't verity the signature if the URI is used
+			SignedXml sign = SignHMAC (moreripe, new HMACRIPEMD160 (hmackey), false);
+			AssertEquals ("SignatureMethod", moreripe, sign.SignatureMethod);
+		}
+
+		[Test]
+		public void VerifyHMAC_RIPEMD160 ()
+		{
+			string xml = "<?xml version=\"1.0\" encoding=\"Windows-1252\"?><foo><Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><SignedInfo><CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\" /><SignatureMethod Algorithm=\"http://www.w3.org/2001/04/xmldsig-more#hmac-ripemd160\" /><Reference URI=\"\"><Transforms><Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\" /></Transforms><DigestMethod Algorithm=\"RIPEMD160\" /><DigestValue>+uyqtoSDPvgrsXCl1KCimhFpOVw=</DigestValue></Reference></SignedInfo><SignatureValue>8E2m/A5lyU6mBug7uskBqpDHuvs=</SignatureValue></Signature></foo>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+
+			SignedXml sign = new SignedXml (doc);
+			sign.LoadXml (doc.DocumentElement ["Signature"]);
+
+			// verify MS-generated signature
+			Assert (sign.CheckSignature (new HMACRIPEMD160 (hmackey)));
+		}
 #endif
 	}
 }

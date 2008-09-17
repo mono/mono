@@ -1,3 +1,9 @@
+2008-09-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SignedXmlTest.cs: Add test cases for HMACSHA[256|384|512] and
+	HMACRIPEMD160 which are supported in 2.0. Based on test case from
+	Fredrik Olsson on bug #425724.
+
 2008-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* KeyInfoX509DataTest.cs
