@@ -1,3 +1,7 @@
+2008-09-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConfigTest.cs: Add test cases for HMAC URI.
+
 2008-07-13  Nestor Salceda  <nestor.salceda@gmail.com>
 
 	* RSAPKCS1KeyExchangeFormatterTest.cs: Add test case where you are
