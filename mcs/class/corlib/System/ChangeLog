@@ -1,3 +1,8 @@
+2008-09-17  Robert Jordan  <robertj@gmx.net>
+
+	* DelegateSerializationHolder.cs: Starting with .NET 2.0, delegates
+	of non-public methods are allowed to be serialized. Fixes #425345.
+
 2008-09-15  Andy Hume  <andyhume32@yahoo.co.uk>
 
 	* DateTimeOffset.cs: DateTimeOffset currently has no
