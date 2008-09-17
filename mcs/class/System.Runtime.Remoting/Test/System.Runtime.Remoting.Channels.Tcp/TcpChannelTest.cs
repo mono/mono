@@ -35,7 +35,7 @@ using System.Runtime.Remoting.Channels.Tcp;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Runtime.Remoting.Channels.Tcp
+namespace MonoTests.Remoting
 {
 	[TestFixture]
 	public class TcpChannelTest
@@ -69,7 +69,7 @@ namespace MonoTests.System.Runtime.Remoting.Channels.Tcp
 			Assert.AreEqual ("tcp://" + IPAddress.Loopback.ToString () + ":1236", ds.ChannelUris [0], "#A6");
 
 			ChannelServices.UnregisterChannel (chn);
-
+			
 			chn = new TcpChannel ((IDictionary) null, null, null);
 
 			ChannelServices.RegisterChannel (chn);
@@ -100,6 +100,7 @@ namespace MonoTests.System.Runtime.Remoting.Channels.Tcp
 			new ParseURLTestCase ("tcp:", "tcp:", null),
 			new ParseURLTestCase ("tcp://", "tcp://", null),
 			new ParseURLTestCase ("tcp:localhost", null, null),
+			new ParseURLTestCase ("ftp://localhost", null, null),
 			new ParseURLTestCase ("tcp://localhost", "tcp://localhost", null),
 			new ParseURLTestCase ("tCp://localhost", "tCp://localhost", null),
 			new ParseURLTestCase ("tcp://localhost:/", "tcp://localhost:", "/"),
@@ -132,6 +133,46 @@ namespace MonoTests.System.Runtime.Remoting.Channels.Tcp
 			public MarshalObject ()
 			{
 			}
+		}
+		
+		TcpServerChannel GetServerChannel (string name, int port)
+		{
+			TcpServerChannel serverChannel = new TcpServerChannel (name + "Server", port);
+			ChannelServices.RegisterChannel (serverChannel);
+			
+			RemotingConfiguration.RegisterWellKnownServiceType (
+				typeof (RemoteObject), "RemoteObject.rem", 
+				WellKnownObjectMode.Singleton);
+			
+			return serverChannel;
+		}
+		
+		TcpClientChannel GetClientChannel (string name, string uri)
+		{
+			TcpClientChannel clientChannel = new TcpClientChannel (name + "Client", null);
+			ChannelServices.RegisterChannel (clientChannel);
+			
+			WellKnownClientTypeEntry remoteType = new WellKnownClientTypeEntry (
+				typeof (RemoteObject), uri + "/RemoteObject.rem");
+			RemotingConfiguration.RegisterWellKnownClientType (remoteType);
+			
+			return clientChannel;
+		}
+		
+		[Test]
+		[Category ("NotWorking")]  // seems to hang - "too many open files" ???
+		public void TestTcpRemoting ()
+		{
+			TcpServerChannel serverChannel = GetServerChannel ("TcpRemotingTest", 9090);
+			string uri = serverChannel.GetChannelUri ();
+			
+			Assert.IsNotNull (uri, "Server channel URI is null");
+			
+			TcpClientChannel clientChannel = GetClientChannel ("TcpRemotingTest", uri);
+			
+			RemoteObject remoteObject = new RemoteObject (); 
+			
+			Assert.IsTrue (remoteObject.ReturnOne () == 1, "Invoking RemoteObject.ReturnOne() failed");
 		}
 	}
 }
