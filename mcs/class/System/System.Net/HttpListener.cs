@@ -28,7 +28,7 @@
 
 #if NET_2_0 && SECURITY_DEP
 
-using System.Collections.Generic;
+using System.Collections;
 using System.Threading;
 //TODO: logging
 namespace System.Net {
@@ -42,16 +42,16 @@ namespace System.Net {
 		bool listening;
 		bool disposed;
 
-		Dictionary<HttpListenerContext,HttpListenerContext> registry;
-		List<HttpListenerContext> ctx_queue;
-		List<ListenerAsyncResult> wait_queue;
+		Hashtable registry;   // Dictionary<HttpListenerContext,HttpListenerContext> 
+		ArrayList ctx_queue;  // List<HttpListenerContext> ctx_queue;
+		ArrayList wait_queue; // List<ListenerAsyncResult> wait_queue;
 
 		public HttpListener ()
 		{
 			prefixes = new HttpListenerPrefixCollection (this);
-			registry = new Dictionary<HttpListenerContext,HttpListenerContext> ();
-			ctx_queue = new List<HttpListenerContext> ();
-			wait_queue = new List<ListenerAsyncResult> ();
+			registry = new Hashtable ();
+			ctx_queue = new ArrayList ();
+			wait_queue = new ArrayList ();
 			auth_schemes = AuthenticationSchemes.Anonymous;
 		}
 
@@ -271,7 +271,7 @@ namespace System.Net {
 			if (ctx_queue.Count == 0)
 				return null;
 
-			HttpListenerContext context = ctx_queue [0];
+			HttpListenerContext context = (HttpListenerContext) ctx_queue [0];
 			ctx_queue.RemoveAt (0);
 			return context;
 		}
@@ -286,7 +286,7 @@ namespace System.Net {
 				if (wait_queue.Count == 0) {
 					ctx_queue.Add (context);
 				} else {
-					ListenerAsyncResult ares = wait_queue [0];
+					ListenerAsyncResult ares = (ListenerAsyncResult) wait_queue [0];
 					wait_queue.RemoveAt (0);
 					ares.Complete (context);
 				}

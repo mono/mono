@@ -30,7 +30,7 @@
 
 using System.IO;
 using System.Net.Sockets;
-using System.Collections.Generic;
+using System.Collections;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Mono.Security.Authenticode;
@@ -40,9 +40,9 @@ namespace System.Net {
 	{
 		IPEndPoint endpoint;
 		Socket sock;
-		Dictionary<ListenerPrefix, HttpListener> prefixes;
-		List<ListenerPrefix> unhandled; // host = '*'
-		List<ListenerPrefix> all; // host = '+'
+		Hashtable prefixes;  // Dictionary <ListenerPrefix, HttpListener>
+		ArrayList unhandled; // List<ListenerPrefix> unhandled; host = '*'
+		ArrayList all;       // List<ListenerPrefix> all;  host = '+'
 		X509Certificate2 cert;
 		AsymmetricAlgorithm key;
 		bool secure;
@@ -59,7 +59,7 @@ namespace System.Net {
 			sock.Bind (endpoint);
 			sock.Listen (500);
 			sock.BeginAccept (OnAccept, this);
-			prefixes = new Dictionary<ListenerPrefix, HttpListener> ();
+			prefixes = new Hashtable ();
 		}
 
 		void LoadCertificateAndKey (IPAddress addr, int port)
@@ -164,7 +164,7 @@ namespace System.Net {
 
 						if (p.Host == host && (path.StartsWith (ppath) || path_slash.StartsWith (ppath))) {
 							best_length = ppath.Length;
-							best_match = prefixes [p];
+							best_match = (HttpListener) prefixes [p];
 							prefix = p;
 						}
 					}
@@ -183,7 +183,7 @@ namespace System.Net {
 			return null;
 		}
 
-		HttpListener MatchFromList (string host, string path, List<ListenerPrefix> list, out ListenerPrefix prefix)
+		HttpListener MatchFromList (string host, string path, ArrayList list, out ListenerPrefix prefix)
 		{
 			prefix = null;
 			if (list == null)
@@ -207,7 +207,7 @@ namespace System.Net {
 			return best_match;
 		}
 
-		void AddSpecial (List<ListenerPrefix> coll, ListenerPrefix prefix)
+		void AddSpecial (ArrayList coll, ListenerPrefix prefix)
 		{
 			if (coll == null)
 				return;
@@ -220,14 +220,14 @@ namespace System.Net {
 			coll.Add (prefix);
 		}
 
-		void RemoveSpecial (List<ListenerPrefix> coll, ListenerPrefix prefix)
+		void RemoveSpecial (ArrayList coll, ListenerPrefix prefix)
 		{
 			if (coll == null)
 				return;
 
 			int c = coll.Count;
 			for (int i = 0; i < c; i++) {
-				ListenerPrefix p = coll [i];
+				ListenerPrefix p = (ListenerPrefix) coll [i];
 				if (p.Path == prefix.Path) {
 					coll.RemoveAt (i);
 					CheckIfRemove ();
@@ -260,7 +260,7 @@ namespace System.Net {
 			lock (prefixes) {
 				if (prefix.Host == "*") {
 					if (unhandled == null)
-						unhandled = new List<ListenerPrefix> ();
+						unhandled = new ArrayList ();
 
 					prefix.Listener = listener;
 					AddSpecial (unhandled, prefix);
@@ -269,14 +269,14 @@ namespace System.Net {
 
 				if (prefix.Host == "+") {
 					if (all == null)
-						all = new List<ListenerPrefix> ();
+						all = new ArrayList ();
 					prefix.Listener = listener;
 					AddSpecial (all, prefix);
 					return;
 				}
 
 				if (prefixes.ContainsKey (prefix)) {
-					HttpListener other = prefixes [prefix];
+					HttpListener other = (HttpListener) prefixes [prefix];
 					if (other != listener) // TODO: code.
 						throw new HttpListenerException (400, "There's another listener for " + prefix);
 					return;

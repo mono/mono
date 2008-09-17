@@ -65,9 +65,13 @@ namespace System.Net {
 			if (secure == false) {
 				stream = new NetworkStream (sock, false);
 			} else {
+#if EMBEDDED_IN_1_0
+				throw new NotImplementedException ();
+#else
 				SslServerStream ssl_stream = new SslServerStream (new NetworkStream (sock, false), cert, false, false);
 				ssl_stream.PrivateKeyCertSelectionDelegate += OnPVKSelection;
 				stream = ssl_stream;
+#endif
 			}
 			Init ();
 		}

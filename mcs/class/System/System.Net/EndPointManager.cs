@@ -33,8 +33,8 @@ using System.Collections.Generic;
 namespace System.Net {
 	sealed class EndPointManager
 	{
-		static Dictionary<IPAddress, Dictionary<int, EndPointListener>> ip_to_endpoints =
-				new Dictionary<IPAddress, Dictionary<int, EndPointListener>> ();
+		// Dictionary<IPAddress, Dictionary<int, EndPointListener>>
+		static Hashtable ip_to_endpoints = new Hashtable ();
 		
 		private EndPointManager ()
 		{
@@ -42,7 +42,7 @@ namespace System.Net {
 
 		public static void AddListener (HttpListener listener)
 		{
-			List<string> added = new List<string> ();
+			ArrayList added = new ArrayList ();
 			try {
 				lock (ip_to_endpoints) {
 					foreach (string prefix in listener.Prefixes) {
@@ -81,17 +81,17 @@ namespace System.Net {
 
 		static EndPointListener GetEPListener (IPAddress addr, int port, HttpListener listener, bool secure)
 		{
-			Dictionary<int, EndPointListener> p = null;
+			Hashtable p = null;  // Dictionary<int, EndPointListener>
 			if (ip_to_endpoints.ContainsKey (addr)) {
-				p = ip_to_endpoints [addr];
+				p = (Hashtable) ip_to_endpoints [addr];
 			} else {
-				p = new Dictionary<int, EndPointListener> ();
+				p = new Hashtable ();
 				ip_to_endpoints [addr] = p;
 			}
 
 			EndPointListener epl = null;
 			if (p.ContainsKey (port)) {
-				epl = p [port];
+				epl = (EndPointListener) p [port];
 			} else {
 				epl = new EndPointListener (addr, port, secure);
 				p [port] = epl;
@@ -103,8 +103,9 @@ namespace System.Net {
 		public static void RemoveEndPoint (EndPointListener epl, IPEndPoint ep)
 		{
 			lock (ip_to_endpoints) {
-				Dictionary<int, EndPointListener> p = null;
-				p = ip_to_endpoints [ep.Address];
+				// Dictionary<int, EndPointListener> p
+				Hashtable p = null;
+				p = (Hashtable) ip_to_endpoints [ep.Address];
 				p.Remove (ep.Port);
 				epl.Close ();
 			}
