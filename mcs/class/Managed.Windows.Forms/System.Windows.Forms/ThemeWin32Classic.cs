@@ -660,7 +660,7 @@ namespace System.Windows.Forms
 				check_or_radio_checked = ((RadioButton)button).Checked;
 			}
 			
-			if ((button.Focused || button.paint_as_acceptbutton) && button.Enabled && !check_or_radio) {
+			if (button.Focused && button.Enabled && !check_or_radio) {
 				// shrink the rectangle for the normal button drawing inside the focus rectangle
 				borderRectangle = Rectangle.Inflate (button.ClientRectangle, -1, -1);
 			} else {

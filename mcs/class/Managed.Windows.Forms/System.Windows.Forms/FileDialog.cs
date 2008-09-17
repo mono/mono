@@ -161,7 +161,6 @@ namespace System.Windows.Forms
 			menueToolBarButton = new ToolBarButton ();
 			fileTypeLabel = new Label ();
 			openSaveButton = new Button ();
-			form.AcceptButton = openSaveButton;
 			helpButton = new Button ();
 			popupButtonPanel = new PopupButtonPanel ();
 			upToolBarButton = new ToolBarButton ();
@@ -184,15 +183,15 @@ namespace System.Windows.Forms
 			
 			// searchLabel
 			searchSaveLabel.FlatStyle = FlatStyle.System;
-			searchSaveLabel.Location = new Point (7, 8);
-			searchSaveLabel.Size = new Size (72, 21);
+			searchSaveLabel.Location = new Point (6, 6);
+			searchSaveLabel.Size = new Size (86, 22);
 			searchSaveLabel.TextAlign = ContentAlignment.MiddleRight;
 			
 			// dirComboBox
 			dirComboBox.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left) | AnchorStyles.Right)));
 			dirComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-			dirComboBox.Location = new Point (99, 8);
-			dirComboBox.Size = new Size (260, 21);
+			dirComboBox.Location = new Point (99, 6);
+			dirComboBox.Size = new Size (261, 22);
 			dirComboBox.TabIndex = 7;
 			
 			// smallButtonToolBar
@@ -217,13 +216,15 @@ namespace System.Windows.Forms
 			
 			// buttonPanel
 			popupButtonPanel.Dock = DockStyle.None;
-			popupButtonPanel.Location = new Point (7, 37);
+			popupButtonPanel.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Left))));
+			popupButtonPanel.Location = new Point (6, 35);
+			popupButtonPanel.Size = new Size (87, 338);
 			popupButtonPanel.TabIndex = 9;
 			
 			// mwfFileView
 			mwfFileView.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Left) | AnchorStyles.Right)));
-			mwfFileView.Location = new Point (99, 37);
-			mwfFileView.Size = new Size (449, 282);
+			mwfFileView.Location = new Point (99, 35);
+			mwfFileView.Size = new Size (450, 283);
 			mwfFileView.MultiSelect = false;
 			mwfFileView.TabIndex = 10;
 			mwfFileView.RegisterSender (dirComboBox);
@@ -232,15 +233,15 @@ namespace System.Windows.Forms
 			// fileNameLabel
 			fileNameLabel.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Left)));
 			fileNameLabel.FlatStyle = FlatStyle.System;
-			fileNameLabel.Location = new Point (102, 330);
+			fileNameLabel.Location = new Point (101, 326);
 			fileNameLabel.Size = new Size (70, 21);
 			fileNameLabel.Text = "File name:";
 			fileNameLabel.TextAlign = ContentAlignment.MiddleLeft;
 			
 			// fileNameComboBox
 			fileNameComboBox.Anchor = ((AnchorStyles)(((AnchorStyles.Bottom | AnchorStyles.Left) | AnchorStyles.Right)));
-			fileNameComboBox.Location = new Point (195, 330);
-			fileNameComboBox.Size = new Size (245, 21);
+			fileNameComboBox.Location = new Point (195, 326);
+			fileNameComboBox.Size = new Size (246, 22);
 			fileNameComboBox.TabIndex = 1;
 			fileNameComboBox.MaxDropDownItems = MaxFileNameItems;
 			fileNameComboBox.RestoreContextMenu ();
@@ -249,7 +250,7 @@ namespace System.Windows.Forms
 			// fileTypeLabel
 			fileTypeLabel.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Left)));
 			fileTypeLabel.FlatStyle = FlatStyle.System;
-			fileTypeLabel.Location = new Point (102, 356);
+			fileTypeLabel.Location = new Point (101, 355);
 			fileTypeLabel.Size = new Size (90, 21);
 			fileTypeLabel.Text = "Files of type:";
 			fileTypeLabel.TextAlign = ContentAlignment.MiddleLeft;
@@ -257,8 +258,8 @@ namespace System.Windows.Forms
 			// fileTypeComboBox
 			fileTypeComboBox.Anchor = ((AnchorStyles)(((AnchorStyles.Bottom | AnchorStyles.Left) | AnchorStyles.Right)));
 			fileTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-			fileTypeComboBox.Location = new Point (195, 356);
-			fileTypeComboBox.Size = new Size (245, 21);
+			fileTypeComboBox.Location = new Point (195, 355);
+			fileTypeComboBox.Size = new Size (246, 22);
 			fileTypeComboBox.TabIndex = 2;
 			
 			// backToolBarButton
@@ -287,16 +288,16 @@ namespace System.Windows.Forms
 			// openSaveButton
 			openSaveButton.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
 			openSaveButton.FlatStyle = FlatStyle.System;
-			openSaveButton.Location = new Point (475, 330);
-			openSaveButton.Size = new Size (72, 21);
+			openSaveButton.Location = new Point (474, 326);
+			openSaveButton.Size = new Size (75, 23);
 			openSaveButton.TabIndex = 4;
 			openSaveButton.FlatStyle = FlatStyle.System;
 			
 			// cancelButton
 			cancelButton.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
 			cancelButton.FlatStyle = FlatStyle.System;
-			cancelButton.Location = new Point (475, 356);
-			cancelButton.Size = new Size (72, 21);
+			cancelButton.Location = new Point (474, 353);
+			cancelButton.Size = new Size (75, 23);
 			cancelButton.TabIndex = 5;
 			cancelButton.Text = "Cancel";
 			cancelButton.FlatStyle = FlatStyle.System;
@@ -304,11 +305,12 @@ namespace System.Windows.Forms
 			// helpButton
 			helpButton.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
 			helpButton.FlatStyle = FlatStyle.System;
-			helpButton.Location = new Point (475, 350);
-			helpButton.Size = new Size (72, 21);
+			helpButton.Location = new Point (474, 353);
+			helpButton.Size = new Size (75, 23);
 			helpButton.TabIndex = 6;
 			helpButton.Text = "Help";
 			helpButton.FlatStyle = FlatStyle.System;
+			helpButton.Visible = false;
 			
 			// checkBox
 			readonlyCheckBox.Anchor = ((AnchorStyles)(((AnchorStyles.Bottom | AnchorStyles.Left) | AnchorStyles.Right)));
@@ -317,16 +319,16 @@ namespace System.Windows.Forms
 			readonlyCheckBox.Size = new Size (245, 21);
 			readonlyCheckBox.TabIndex = 3;
 			readonlyCheckBox.FlatStyle = FlatStyle.System;
+			readonlyCheckBox.Visible = false;
 			
 			form.SizeGripStyle = SizeGripStyle.Show;
-			
+			form.AcceptButton = openSaveButton;
 			form.MaximizeBox = true;
 			form.MinimizeBox = true;
 			form.FormBorderStyle = FormBorderStyle.Sizable;
-			form.MinimumSize = new Size (554, 405);
-			
-			form.ClientSize =  new Size (554, 405); // 384
-			
+			form.ClientSize =  new Size (555, 385);
+			form.MinimumSize = form.Size;
+
 			form.Controls.Add (smallButtonToolBar);
 			form.Controls.Add (cancelButton);
 			form.Controls.Add (openSaveButton);
@@ -338,11 +340,13 @@ namespace System.Windows.Forms
 			form.Controls.Add (dirComboBox);
 			form.Controls.Add (searchSaveLabel);
 			form.Controls.Add (popupButtonPanel);
+			form.Controls.Add (helpButton);
+			form.Controls.Add (readonlyCheckBox);
 			
-			form.ResumeLayout (false);
-			
+			form.ResumeLayout (true);
+
 			if (formConfigSize != Size.Empty) {
-				form.Size = formConfigSize;
+				form.ClientSize = formConfigSize;
 			}
 			
 			if (formConfigLocation != Point.Empty) {
@@ -1254,33 +1258,26 @@ namespace System.Windows.Forms
 		private void ResizeAndRelocateForHelpOrReadOnly ()
 		{
 			form.SuspendLayout ();
-			if (ShowHelp || ShowReadOnly) {
-				mwfFileView.Size = new Size (449, 250); 
-				fileNameLabel.Location = new Point (102, 298);
-				fileNameComboBox.Location = new Point (195, 298);
-				fileTypeLabel.Location = new Point (102, 324);
-				fileTypeComboBox.Location = new Point (195, 324);
-				openSaveButton.Location = new Point (475, 298);
-				cancelButton.Location = new Point (475, 324);
-			} else {
-				mwfFileView.Size = new Size (449, 282);
-				fileNameLabel.Location = new Point (102, 330);
-				fileNameComboBox.Location = new Point (195, 330);
-				fileTypeLabel.Location = new Point (102, 356);
-				fileTypeComboBox.Location = new Point (195, 356);
-				openSaveButton.Location = new Point (475, 330);
-				cancelButton.Location = new Point (475, 356);
-			}
+
+			int fx = form.Size.Width - form.MinimumSize.Width;
+			int fy = form.Size.Height - form.MinimumSize.Height;
+
+			if (!ShowHelp && !ShowReadOnly)
+				fy += 29;
+
+			mwfFileView.Size = new Size (450 + fx, 254 + fy);
+			fileNameLabel.Location = new Point (101, 298 + fy);
+			fileNameComboBox.Location = new Point (195, 298 + fy);
+			fileTypeLabel.Location = new Point (101, 326 + fy);
+			fileTypeComboBox.Location = new Point (195, 326 + fy);
+			openSaveButton.Location = new Point (474 + fx, 298 + fy);
+			cancelButton.Location = new Point (474 + fx, 324 + fy);
+			helpButton.Location = new Point (474 + fx, 353 + fy);
+			readonlyCheckBox.Location = new Point (195, 350 + fy);
+
+			helpButton.Visible = ShowHelp;
+			readonlyCheckBox.Visible = ShowReadOnly;
 			
-			if (ShowHelp)
-				form.Controls.Add (helpButton);
-			else
-				form.Controls.Remove (helpButton);
-			
-			if (ShowReadOnly)
-				form.Controls.Add (readonlyCheckBox);
-			else
-				form.Controls.Remove (readonlyCheckBox);
 			form.ResumeLayout ();
 		}
 		

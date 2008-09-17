@@ -1,3 +1,10 @@
+2008-09-17  Everaldo Canuto  <ecanuto@novell.com>
+
+	* FileDialog.cs: Lots of layout fixes to mimic Win32. [Fixes #408752]
+	
+	* ThemeWin32Classic.cs: We don't need to reduce button size when it is
+	AcceptButton.
+
 2008-09-17  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TextBoxBase.cs: For standard textbox the scrollbars are always 
