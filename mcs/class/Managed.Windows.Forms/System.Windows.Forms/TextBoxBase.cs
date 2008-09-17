@@ -2097,7 +2097,10 @@ namespace System.Windows.Forms
 				switch (scrollbars) {
 				case RichTextBoxScrollBars.Both:
 				case RichTextBoxScrollBars.Horizontal:
-					hscroll.Visible = hscroll.Enabled;
+					if (richtext)
+						hscroll.Visible = hscroll.Enabled;
+					else
+						hscroll.Visible = this.Multiline;
 					break;
 				case RichTextBoxScrollBars.ForcedBoth:
 				case RichTextBoxScrollBars.ForcedHorizontal:
@@ -2114,12 +2117,10 @@ namespace System.Windows.Forms
 			switch (scrollbars) {
 			case RichTextBoxScrollBars.Both:
 			case RichTextBoxScrollBars.Vertical:
-
-				if (richtext) {
+				if (richtext)
 					vscroll.Visible = vscroll.Enabled;
-				} else {
-					vscroll.Visible = true;
-				}
+				else 
+					vscroll.Visible = this.Multiline;
 				break;
 			case RichTextBoxScrollBars.ForcedBoth:
 			case RichTextBoxScrollBars.ForcedVertical:
