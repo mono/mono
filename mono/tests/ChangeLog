@@ -1,3 +1,8 @@
+
+2008-09-17  Robert Jordan  <robertj@gmx.net>
+
+	* Makefile.am: Add test for #415577.
+
 2008-09-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* bug-426309.2.il: New test.
