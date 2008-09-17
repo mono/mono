@@ -1,5 +1,8 @@
 2008-09-17  Jeffrey Stedfast  <fejj@novell.com>
 
+	* TcpClientChannel.cs (TcpClientChannel): Use the default
+	SinkProviders if the sinkProvider argument is null.
+
 	* TcpChannel.cs (ParseTcpURL): TcpClientTransportSink needs the
 	host component, so extract that info into its own string as well.
 

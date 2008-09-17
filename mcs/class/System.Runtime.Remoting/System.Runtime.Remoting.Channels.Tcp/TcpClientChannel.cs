@@ -82,12 +82,19 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		public TcpClientChannel (string name, IClientChannelSinkProvider sinkProvider)
 		{
 			this.name = name;
-			_sinkProvider = sinkProvider;
-
-			// add the tcp provider at the end of the chain
-			IClientChannelSinkProvider prov = sinkProvider;
-			while (prov.Next != null) prov = prov.Next;
-			prov.Next = new TcpClientTransportSinkProvider ();
+			
+			if (sinkProvider != null) {
+				_sinkProvider = sinkProvider;
+				
+				// add the tcp provider at the end of the chain
+				IClientChannelSinkProvider prov = sinkProvider;
+				while (prov.Next != null)
+					prov = prov.Next;
+				prov.Next = new TcpClientTransportSinkProvider ();
+			} else {
+				_sinkProvider = new BinaryClientFormatterSinkProvider ();
+				_sinkProvider.Next = new TcpClientTransportSinkProvider ();
+			}
 		}
 		
 		public string ChannelName
