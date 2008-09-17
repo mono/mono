@@ -23,7 +23,7 @@ namespace MonoTests.Remoting
 		}
 	}
 
-	[TestFixture]
+	//[TestFixture]
 	public class HttpAsyncCallTest : AsyncCallTest
 	{
 		public override ChannelManager CreateChannelManager ()
@@ -49,6 +49,15 @@ namespace MonoTests.Remoting
 			return new HttpChannelManager ();
 		}
 	}
+	
+	[TestFixture]
+	public class HttpBinarySyncCallTest : SyncCallTest
+	{
+		public override ChannelManager CreateChannelManager ()
+		{
+			return new HttpChannelManager ();
+		}
+	}
 
 	[Serializable]
 	public class HttpChannelManager : ChannelManager
@@ -56,6 +65,20 @@ namespace MonoTests.Remoting
 		public override IChannelSender CreateClientChannel ()
 		{
 			return new HttpChannel ();
+		}
+
+		public override IChannelReceiver CreateServerChannel ()
+		{
+			return new HttpChannel (0);
+		}
+	}
+	
+	[Serializable]
+	public class HttpBinaryChannelManager : ChannelManager
+	{
+		public override IChannelSender CreateClientChannel ()
+		{
+			return new HttpClientChannel ("test channel", new BinaryClientFormatterSinkProvider ());
 		}
 
 		public override IChannelReceiver CreateServerChannel ()
