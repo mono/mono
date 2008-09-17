@@ -5394,13 +5394,20 @@ namespace System.Windows.Forms {
 
 			if (enabled) {
 				lock (XlibLock) {
-					int[] atoms = new int[8];
-					atoms[0] = _NET_WM_STATE_ABOVE.ToInt32();
-					XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_STATE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
+					if (hwnd.Mapped) {
+						SendNetWMMessage(hwnd.WholeWindow, _NET_WM_STATE, (IntPtr) NetWmStateRequest._NET_WM_STATE_ADD, _NET_WM_STATE_ABOVE, IntPtr.Zero);
+					} else {
+						int[] atoms = new int[8];
+						atoms[0] = _NET_WM_STATE_ABOVE.ToInt32();
+						XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_STATE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
+					}
 				}
 			} else {
 				lock (XlibLock) {
-					XDeleteProperty(DisplayHandle, hwnd.whole_window, _NET_WM_STATE);
+					if (hwnd.Mapped)
+						SendNetWMMessage(hwnd.WholeWindow, _NET_WM_STATE, (IntPtr) NetWmStateRequest._NET_WM_STATE_REMOVE, _NET_WM_STATE_ABOVE, IntPtr.Zero);
+					else
+						XDeleteProperty(DisplayHandle, hwnd.whole_window, _NET_WM_STATE);
 				}
 			}
 			return true;

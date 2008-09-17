@@ -1,3 +1,10 @@
+2008-09-17  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* XplatUIX11.cs, X11Structs.cs: For mapped windows SetTopMost should 
+	ask the window manager to do the work instead of changing the property 
+	directly.
+	[Fixes bug #423417]
+
 2008-09-17  Everaldo Canuto  <ecanuto@novell.com>
 
 	* CurrencyManager.cs: Check for positon before call ChangeRecordState in
