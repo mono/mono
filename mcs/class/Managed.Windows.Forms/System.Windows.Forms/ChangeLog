@@ -1,3 +1,28 @@
+2008-05-12  Everaldo Canuto  <ecanuto@novell.com>
+
+	[Fixes most od DBNull and HeadersVisible problems]
+	
+	* DataGrid.cs:
+	- ShowingColumnHeaders removed because we dont need it, ColumnHeadersVisible
+	returns the value that we need.
+	- Fixed FromPixelToColumn method that return zero for first	column and for
+	row header cell, now it returns -1 for row header cell.
+	- Fixed HitTest to check row header cell in column header area, it now
+	returns HitTestType.None. [Fixes #322864]
+	- Fixed the calculation of visible columns in UpdateVisibleColumn, now it
+	checks for RowHeadersVisible and other things.
+	- If an exception occurs when setting CurrentCell and user type 'yes' in
+	message dialog, invalidade current and new cell and set setting_current_cell
+	to false to prevent future errors. [Partially fixes #323050]
+
+	* DataGridColumnStyle.cs: Don't call EndEdit after set property_descriptor
+	value (SetColumnValueAtRow), it must be done by grid to properly show 
+	messages. [Fixes #323050]
+
+	* ThemeWin32Classic.cs: Lots of fixes in DataGridPaintColumnHeaders to
+	better draw column and row header. Also dont draw anything when column
+	headers is not visible.
+
 2008-09-16  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ThemeWin32Classic.cs: Hook ListViewItems into the ShowFocusCues

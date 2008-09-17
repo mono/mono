@@ -511,6 +511,9 @@ namespace System.Windows.Forms
 											  "Error when committing the row to the original data source",
 											  MessageBoxButtons.YesNo);
 							if (r == DialogResult.Yes) {
+								InvalidateRowHeader (value.RowNumber);
+								InvalidateRowHeader (current_cell.RowNumber);
+								setting_current_cell = false;
 								Edit ();
 								return;
 							}
@@ -1185,7 +1188,10 @@ namespace System.Windows.Forms
 				int offset_x = x + horiz_pixeloffset;
 				int column_x;
 				int column_under_mouse = FromPixelToColumn (offset_x, out column_x);
-				
+
+				if (column_under_mouse == -1)
+					return new HitTestInfo (-1, -1, HitTestType.None);
+
 				if ((column_x + CurrentTableStyle.GridColumnStyles[column_under_mouse].Width - offset_x < RESIZE_HANDLE_HORIZ_SIZE)
 				    && column_under_mouse < CurrentTableStyle.GridColumnStyles.Count) {
 
@@ -1532,6 +1538,10 @@ namespace System.Windows.Forms
 				
 				list.ApplySort (prop, direction);
 				Refresh ();
+				if (this.is_editing)
+					//CurrentTableStyle.GridColumnStyles[CurrentColumn].UpdateUI ();
+					this.InvalidateColumn (CurrentTableStyle.GridColumnStyles[CurrentColumn]);
+
 				break;
 
 			case HitTestType.ColumnResize:
@@ -2759,7 +2769,7 @@ namespace System.Windows.Forms
 		#region Public Instance Methods
 
 		// Calc the max with of all columns
-		int CalcAllColumnsWidth ()
+		private int CalcAllColumnsWidth ()
 		{
 			int width = 0;
 			int cnt = CurrentTableStyle.GridColumnStyles.Count;
@@ -2774,18 +2784,20 @@ namespace System.Windows.Forms
 		}
 
 		// Gets a column from a pixel
-		int FromPixelToColumn (int pixel, out int column_x)
+		private int FromPixelToColumn (int pixel, out int column_x)
 		{
 			int width = 0;
 			int cnt = CurrentTableStyle.GridColumnStyles.Count;
 			column_x = 0;
 
 			if (cnt == 0)
-				return 0;
+				return -1;
 				
 			if (CurrentTableStyle.CurrentRowHeadersVisible) {
 				width += row_headers_area.X + row_headers_area.Width;
 				column_x += row_headers_area.X + row_headers_area.Width;
+				if (pixel < width)
+					return -1;
 			}
 
 			for (int col = 0; col < cnt; col++) {
@@ -2910,7 +2922,7 @@ namespace System.Windows.Forms
 				if (ShowParentRows)
 					parent_rows.Width -= vert_scrollbar.Width;
 
-				if (!ShowingColumnHeaders) {
+				if (!ColumnHeadersVisible) {
 					if (column_headers_area.X + column_headers_area.Width > vert_scrollbar.Location.X) {
 						column_headers_area.Width -= vert_scrollbar.Width;
 					}
@@ -3003,7 +3015,7 @@ namespace System.Windows.Forms
 					column_headers_area.Width += RowHeaderWidth;
 			}
 
-			if (ShowingColumnHeaders)
+			if (ColumnHeadersVisible)
 				column_headers_area.Height = CurrentTableStyle.HeaderFont.Height + 6;
 			else
 				column_headers_area.Height = 0;
@@ -3064,23 +3076,25 @@ namespace System.Windows.Forms
 
 		void UpdateVisibleColumn ()
 		{
-			if (CurrentTableStyle.GridColumnStyles.Count == 0) {
-				visible_column_count = 0;
-				return;
-			}
-			
-			int col;
-			int max_pixel = horiz_pixeloffset + cells_area.Width;
-			int unused;
-
-			first_visible_column = FromPixelToColumn (horiz_pixeloffset, out unused);
-
-			col = FromPixelToColumn (max_pixel, out unused);
-			
-			visible_column_count = 1 + col - first_visible_column;
-
 			visible_column_count = 0;
-			for (int i = first_visible_column; i <= col; i ++) {
+			
+			if (CurrentTableStyle.GridColumnStyles.Count == 0)
+				return;
+
+			int min_pixel;
+			int max_pixel;
+			int max_col;
+			int unused;
+			
+			min_pixel = horiz_pixeloffset;
+			if (CurrentTableStyle.CurrentRowHeadersVisible)
+				min_pixel += row_headers_area.X + row_headers_area.Width;
+			max_pixel = min_pixel + cells_area.Width;
+
+			first_visible_column = FromPixelToColumn (min_pixel, out unused);
+			max_col = FromPixelToColumn (max_pixel, out unused);
+
+			for (int i = first_visible_column; i <= max_col; i ++) {
 				if (CurrentTableStyle.GridColumnStyles[i].bound)
 					visible_column_count++;
 			}
@@ -3207,10 +3221,6 @@ namespace System.Windows.Forms
 				}
 				return columns_area;
 			}
-		}
-
-		bool ShowingColumnHeaders {
-			get { return ColumnHeadersVisible && CurrentTableStyle.GridColumnStyles.Count > 0; }
 		}
 
 		internal Rectangle RowHeadersArea {

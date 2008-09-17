@@ -481,9 +481,6 @@ namespace System.Windows.Forms
 				editable.BeginEdit ();
 
 			property_descriptor.SetValue (source [rowNum], value);
-
-			if (editable != null)
-				editable.EndEdit ();
 		}
 
 		protected virtual void SetDataGrid (DataGrid value)

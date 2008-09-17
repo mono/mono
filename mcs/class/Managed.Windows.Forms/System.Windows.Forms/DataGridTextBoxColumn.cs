@@ -131,7 +131,7 @@ namespace System.Windows.Forms
 			if (textbox.IsInEditOrNavigateMode)
 				return true;
 
-			try {
+			//try {
 				string existing_text = GetFormattedValue (dataSource, rowNum);
 
 				if (existing_text != textbox.Text) {
@@ -153,9 +153,9 @@ namespace System.Windows.Forms
 						SetColumnValueAtRow (dataSource, rowNum, newValue);
 					}
 				}
-			} catch {
-				return false;
-			}
+			//} catch {
+			//	return false;
+			//}
 			
 			EndEdit ();
 			return true;

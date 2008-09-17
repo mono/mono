@@ -1751,37 +1751,28 @@ namespace System.Windows.Forms
 
 		public override void DataGridPaintColumnHeaders (Graphics g, Rectangle clip, DataGrid grid)
 		{
+			if (!grid.CurrentTableStyle.ColumnHeadersVisible)
+				return;
+
 			Rectangle columns_area = grid.column_headers_area;
 
-            // Paint corner shared between row and column header
+			// Paint corner shared between row and column header
 			if (grid.CurrentTableStyle.CurrentRowHeadersVisible) {
 				Rectangle rect_bloc = grid.column_headers_area;
 				rect_bloc.Width = grid.RowHeaderWidth;
 				if (clip.IntersectsWith (rect_bloc)) {
-					if (grid.VisibleColumnCount > 0) {
-						if (grid.FlatMode)
-							g.FillRectangle (ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderBackColor), rect_bloc);
-						else
-							CPDrawBorder3D (g, rect_bloc, Border3DStyle.RaisedInner, 
-								Border3DSide.Left | Border3DSide.Right | 
-								Border3DSide.Top | Border3DSide.Bottom | Border3DSide.Middle, 
-								grid.CurrentTableStyle.CurrentHeaderBackColor);
-					} else {
-						g.FillRectangle (ResPool.GetSolidBrush (grid.BackgroundColor), rect_bloc);
-					}
+					if (grid.FlatMode)
+						g.FillRectangle (ResPool.GetSolidBrush (grid.CurrentTableStyle.CurrentHeaderBackColor), rect_bloc);
+					else
+						CPDrawBorder3D (g, rect_bloc, Border3DStyle.RaisedInner, 
+							Border3DSide.Left | Border3DSide.Right | 
+							Border3DSide.Top | Border3DSide.Bottom | Border3DSide.Middle, 
+							grid.CurrentTableStyle.CurrentHeaderBackColor);
 				}
 
 				columns_area.X += grid.RowHeaderWidth;
 				columns_area.Width -= grid.RowHeaderWidth;
 			}
-
-			// Set unused area
-			Rectangle column_headers_area_complete = columns_area;
-			column_headers_area_complete.Width = grid.column_headers_max_width;
-			
-			if (grid.CurrentTableStyle.CurrentRowHeadersVisible) {
-				column_headers_area_complete.Width -= grid.RowHeaderWidth;
-			}		
 
 			// Set column painting
 			Rectangle rect_columnhdr = new Rectangle ();
@@ -1815,11 +1806,10 @@ namespace System.Windows.Forms
 
 			g.Clip = prev_clip;
 				
-			Rectangle not_usedarea = column_headers_area_complete;				
-			not_usedarea.X = rect_columnhdr.X + rect_columnhdr.Width;
-			not_usedarea.Width = grid.ClientRectangle.X + grid.ClientRectangle.Width - rect_columnhdr.X - rect_columnhdr.Height;		
+			Rectangle not_usedarea = grid.column_headers_area;
+			not_usedarea.X = (column_cnt == 0) ? grid.RowHeaderWidth : rect_columnhdr.X + rect_columnhdr.Width;
+			not_usedarea.Width = grid.ClientRectangle.X + grid.ClientRectangle.Width - not_usedarea.X;
 			g.FillRectangle (ResPool.GetSolidBrush (grid.BackgroundColor), not_usedarea);
-			
 		}
 
 		public override void DataGridPaintColumnHeader (Graphics g, Rectangle bounds, DataGrid grid, int col)
@@ -3036,12 +3026,10 @@ namespace System.Windows.Forms
 						width += col.Width;
 					focus_rect = new Rectangle (0, full_rect.Y, width, full_rect.Height);
 				}
-				if (control.ShowFocusCues) {
-					if (item.Selected)
-						CPDrawFocusRectangle (dc, focus_rect, ColorHighlightText, ColorHighlight);
-					else
-						CPDrawFocusRectangle (dc, focus_rect, control.ForeColor, control.BackColor);
-				}
+				if (item.Selected)
+					CPDrawFocusRectangle (dc, focus_rect, ColorHighlightText, ColorHighlight);
+				else
+					CPDrawFocusRectangle (dc, focus_rect, control.ForeColor, control.BackColor);
 			}
 
 			format.Dispose ();
