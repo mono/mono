@@ -1,3 +1,10 @@
+
+Wed Sep 17 11:48:00 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* Timer.cs: rewritten to use Threading.Timer so it doesn't create a
+	thread per timer and behaves better. Fixed also a few implementation
+	bugs.
+
 2008-07-17  Jb Evain  <jbevain@novell.com>
 
 	* Timer.cs: Fix ArgumentException message.

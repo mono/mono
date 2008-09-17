@@ -39,14 +39,10 @@ namespace System.Timers
 	[DefaultProperty("Interval")]
 	public class Timer : Component, ISupportInitialize
 	{
-		bool autoReset;
-		bool enabled;
-		bool exiting;
 		double interval;
+		bool autoReset;
+		System.Threading.Timer timer;
 		ISynchronizeInvoke so;
-		ManualResetEvent wait;
-		WeakReference weak_thread;
-		readonly object locker = new object ();
 
 		[Category("Behavior")]
 		[TimersDescription("Occurs when the Interval has elapsed.")]
@@ -83,25 +79,17 @@ namespace System.Timers
 		public bool Enabled
 		{
 			get {
-				return enabled && !exiting;
+				return timer != null;
 			}
 			set {
 				if (Enabled == value)
 					return;
 
-				enabled = value;
 				if (value) {
-					if (exiting)
-						StopTimer ();
-					exiting = false;
-					wait = new ManualResetEvent (false);
-					Thread thread = new Thread (new ThreadStart (StartTimer));
-					weak_thread = new WeakReference (thread);
-					
-					thread.IsBackground = true;
-					thread.Start ();
+					timer = new System.Threading.Timer (Callback, this, (int)interval, autoReset? (int)interval: 0);
 				} else {
-					StopTimer ();
+					timer.Dispose ();
+					timer = null;
 				}
 			}
 		}
@@ -119,6 +107,8 @@ namespace System.Timers
 					throw new ArgumentException ("Invalid value: " + value);
 
 				interval = value;
+				if (timer != null)
+					timer.Change ((int)interval, autoReset? (int)interval: 0);
 			}
 		}
 
@@ -174,51 +164,23 @@ namespace System.Timers
 		static void Callback (object state)
 		{
 			Timer timer = (Timer) state;
-			if (timer.Elapsed == null)
+			ElapsedEventHandler events = timer.Elapsed;
+			if (!timer.autoReset)
+				timer.Enabled = false;
+			if (events == null)
 				return;
 
 			ElapsedEventArgs arg = new ElapsedEventArgs (DateTime.Now);
 
 			if (timer.so != null && timer.so.InvokeRequired) {
-				timer.so.BeginInvoke (timer.Elapsed, new object [2] {timer, arg});
+				timer.so.BeginInvoke (events, new object [2] {timer, arg});
 			} else {
-				timer.Elapsed (timer, arg);
+				try {
+					events (timer, arg);
+				} catch {
+				}
 			}
 		}
 
-		void StartTimer ()
-		{
-			WaitCallback wc = new WaitCallback (Callback);
-
-			while (wait.WaitOne ((int) interval, false) == false) {
-				exiting = !autoReset;
-
-				ThreadPool.QueueUserWorkItem (wc, this);
-
-				if (exiting)
-					break;
-			}
-
-			lock (locker) {
-				wait.Close ();
-				wait = null;
-			}
-		}
-
-		void StopTimer ()
-		{
-			lock (locker) {
-				if (wait != null)
-					wait.Set ();
-			}
-
-			// the sleep speeds up the join under linux
-			Thread.Sleep (0);
-
-			Thread thread = (Thread)weak_thread.Target;
-			
-			if (thread != null)
-				thread.Join ();
-		}
 	}
 }
