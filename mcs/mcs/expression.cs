@@ -1143,12 +1143,6 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 
-			if (probe_type_expr.Type == TypeManager.void_type) {
-				// TODO: Void is missing location (ProbeType.Location)
-				Error_VoidInvalidInTheContext (Location);
-				return null;
-			}
-
 			if ((probe_type_expr.Type.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute) {
 				Report.Error (-244, loc, "The `{0}' operator cannot be applied to an operand of a static type",
 					OperatorName);
@@ -1471,9 +1465,6 @@ namespace Mono.CSharp {
 			this.target_type = cast_type;
 			this.expr = expr;
 			this.loc = loc;
-
-			if (target_type == TypeManager.system_void_expr)
-				Error_VoidInvalidInTheContext (loc);
 		}
 
 		public Expression TargetType {
@@ -1565,11 +1556,6 @@ namespace Mono.CSharp {
 				return null;
 
 			type = texpr.Type;
-
-			if (type == TypeManager.void_type) {
-				Error_VoidInvalidInTheContext (loc);
-				return null;
-			}
 
 			if ((type.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute) {
 				Report.Error (-244, loc, "The `default value' operator cannot be applied to an operand of a static type");
@@ -5416,11 +5402,6 @@ namespace Mono.CSharp {
 
 			type = texpr.Type;
 
-			if (type == TypeManager.void_type) {
-				Error_VoidInvalidInTheContext (loc);
-				return null;
-			}
-
 			if (type.IsPointer) {
 				Report.Error (1919, loc, "Unsafe type `{0}' cannot be used in an object creation expression",
 					TypeManager.CSharpName (type));
@@ -7220,11 +7201,6 @@ namespace Mono.CSharp {
 			if (TypeManager.IsEnumType (type_queried))
 				type_queried = TypeManager.GetEnumUnderlyingType (type_queried);
 
-			if (type_queried == TypeManager.void_type) {
-				Expression.Error_VoidInvalidInTheContext (loc);
-				return null;
-			}
-
 			int size_of = GetTypeSize (type_queried);
 			if (size_of > 0) {
 				return new IntConstant (size_of, loc);
@@ -8975,11 +8951,6 @@ namespace Mono.CSharp {
 				return null;
 
 			Type ltype = lexpr.Type;
-			if ((ltype == TypeManager.void_type) && (dim != "*")) {
-				Error_VoidInvalidInTheContext (loc);
-				return null;
-			}
-
 #if GMCS_SOURCE
 			if ((dim.Length > 0) && (dim [0] == '?')) {
 				TypeExpr nullable = new Nullable.NullableType (left, loc);

@@ -2800,11 +2800,6 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				if ((m.ModFlags & Modifiers.PROTECTED) != 0) {
-					m.CheckProtectedModifier ();
-					continue;
-				}
-
 				if (m is Indexer) {
 					Report.Error (720, m.Location, "`{0}': cannot declare indexers in a static class", m.GetSignatureForError ());
 					continue;
@@ -5463,12 +5458,6 @@ namespace Mono.CSharp {
 			if (TypeManager.IsGenericParameter (MemberType))
 				return true;
 
-			if (MemberType == TypeManager.void_type) {
-				// TODO: wrong location
-				Expression.Error_VoidInvalidInTheContext (Location);
-				return false;
-			}
-
 			if (MemberType.IsSealed && MemberType.IsAbstract) {
 				Error_VariableOfStaticClass (Location, GetSignatureForError (), MemberType);
 				return false;
@@ -7792,11 +7781,6 @@ namespace Mono.CSharp {
 				Parent.MemberCache.CheckExistingMembersOverloads (this, GetMetadataName (OpType.Implicit), Parameters);
 			else if (OperatorType == OpType.Implicit)
 				Parent.MemberCache.CheckExistingMembersOverloads (this, GetMetadataName (OpType.Explicit), Parameters);
-
-			if (MemberType == TypeManager.void_type) {
-				Report.Error (590, Location, "User-defined operators cannot return void");
-				return false;
-			}
 
 			Type declaring_type = MethodData.DeclaringType;
 			Type return_type = MemberType;

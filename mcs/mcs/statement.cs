@@ -1389,11 +1389,6 @@ namespace Mono.CSharp {
 			if (TypeManager.IsGenericParameter (VariableType))
 				return true;
 
-			if (VariableType == TypeManager.void_type) {
-				Expression.Error_VoidInvalidInTheContext (Location);
-				return false;
-			}
-
 			if (VariableType.IsAbstract && VariableType.IsSealed) {
 				FieldBase.Error_VariableOfStaticClass (Location, Name, VariableType);
 				return false;

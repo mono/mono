@@ -1031,11 +1031,14 @@ constant_declarator
 field_declaration
 	: opt_attributes
 	  opt_modifiers
-	  type 
+	  type_and_void
 	  variable_declarators
 	  SEMICOLON
 	  { 
 		FullNamedExpression type = (FullNamedExpression) $3;
+		if (type == TypeManager.system_void_expr)
+			Report.Error (670, GetLocation ($3), "Fields cannot have void type");
+		
 		int mod = (int) $2;
 
 		current_array_type = null;
@@ -1057,11 +1060,12 @@ field_declaration
 	| opt_attributes
 	  opt_modifiers
 	  FIXED
-	  type 
+	  type_and_void
 	  fixed_variable_declarators
 	  SEMICOLON
 	  { 
 			FullNamedExpression type = (FullNamedExpression) $4;
+			
 			int mod = (int) $2;
 
 			current_array_type = null;
@@ -1081,18 +1085,10 @@ field_declaration
 	| opt_attributes
 	  opt_modifiers
 	  FIXED
-	  type 
+	  type_and_void
 	  error
 	  {
 		Report.Error (1641, GetLocation ($4), "A fixed size buffer field must have the array size specifier after the field name");
-	  }
-	| opt_attributes
-	  opt_modifiers
-	  VOID  
-	  variable_declarators
-	  SEMICOLON {
-		current_array_type = null;
-		Report.Error (670, (Location) $3, "Fields cannot have void type");
 	  }
 	;
 
@@ -1170,7 +1166,7 @@ variable_initializer
 	  {
 		$$ = $1;
 	  }
-	| STACKALLOC type OPEN_BRACKET expression CLOSE_BRACKET
+	| STACKALLOC type_expression OPEN_BRACKET expression CLOSE_BRACKET
 	  {
 		$$ = new StackAlloc ((Expression) $2, (Expression) $4, (Location) $1);
 	  }
@@ -1230,7 +1226,7 @@ opt_error_modifier
 method_header
 	: opt_attributes
 	  opt_modifiers
-	  type member_name
+	  type_and_void member_name
 	  OPEN_PARENS
 	  {
 		arglist_allowed = true;
@@ -1270,48 +1266,6 @@ method_header
 
 		$$ = method;
 	  }
-	| opt_attributes
-	  opt_modifiers
-	  VOID member_name
-	  OPEN_PARENS
-	  {
-		arglist_allowed = true;
-	  }	  
-	  opt_formal_parameter_list CLOSE_PARENS
-	  {
-		lexer.ConstraintsParsing = true;
-	  }
-	  opt_type_parameter_constraints_clauses
-	  {
-		lexer.ConstraintsParsing = false;
-		arglist_allowed = false;
-
-		MemberName name = (MemberName) $4;
-		current_local_parameters = (Parameters) $7;
-
-		if ($10 != null && name.TypeArguments == null)
-			Report.Error (80, lexer.Location,
-				      "Constraints are not allowed on non-generic declarations");
-
-		Method method;
-		GenericMethod generic = null;
-		if (name.TypeArguments != null) {
-			generic = new GenericMethod (current_namespace, current_class, name,
-						     TypeManager.system_void_expr, current_local_parameters);
-
-			generic.SetParameterInfo ((ArrayList) $10);
-		}
-
-		method = new Method (current_class, generic, TypeManager.system_void_expr,
-				     (int) $2, name, current_local_parameters, (Attributes) $1);
-
-		current_generic_method = generic;
-
-		if (RootContext.Documentation != null)
-			method.DocComment = Lexer.consume_doc_comment ();
-
-		$$ = method;
-	}
 	| opt_attributes
 	  opt_modifiers
 	  PARTIAL
@@ -1371,7 +1325,7 @@ method_header
 	  }
 	| opt_attributes
 	  opt_modifiers
-	  type 
+	  type_and_void 
 	  modifiers member_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 		MemberName name = (MemberName) $5;
@@ -1645,7 +1599,7 @@ arglist_modifier
 property_declaration
 	: opt_attributes
 	  opt_modifiers
-	  type
+	  type_and_void
 	  namespace_or_type_name
 	  {
 		if (RootContext.Documentation != null)
@@ -1654,7 +1608,6 @@ property_declaration
 	  OPEN_BRACE 
 	  {
 		implicit_value_parameter_type = (FullNamedExpression) $3;
-
 		lexer.PropertyParsing = true;
 	  }
 	  accessor_declarations 
@@ -1680,7 +1633,7 @@ property_declaration
 				     name, (Attributes) $1, get_block, set_block, order, current_block);
 
 		if (ptype == TypeManager.system_void_expr)
-			Report.Error (547, ptype.Location, "`{0}': property return type cannot be `void'", prop.GetSignatureForError ());
+			Report.Error (547, name.Location, "`{0}': property or indexer cannot have void type", prop.GetSignatureForError ());
 			
 		if (accessors == null)
 			Report.Error (548, prop.Location, "`{0}': property or indexer must have at least one accessor", prop.GetSignatureForError ());
@@ -1701,7 +1654,7 @@ property_declaration
 
 	  }
 	;
-	
+
 accessor_declarations
 	: get_accessor_declaration
 	 {
@@ -1915,8 +1868,17 @@ operator_body
 	| SEMICOLON { $$ = null; }
 	; 
 
+operator_type
+	: type_expression_or_array
+	| VOID
+	  {
+		Report.Error (590, lexer.Location, "User-defined operators cannot return void");
+		$$ = TypeManager.system_void_expr;		
+	  }
+	;
+
 operator_declarator
-	: type OPERATOR overloadable_operator OPEN_PARENS
+	: operator_type OPERATOR overloadable_operator OPEN_PARENS
 	  {
 		params_modifiers_not_allowed = true;
 	  }
@@ -2388,7 +2350,7 @@ indexer_declaration
 	;
 
 indexer_declarator
-	: type THIS OPEN_BRACKET opt_parameter_list_no_mod CLOSE_BRACKET
+	: type_and_void THIS OPEN_BRACKET opt_parameter_list_no_mod CLOSE_BRACKET
 	  {
 		Parameters pars = (Parameters) $4;
 		if (pars.IsEmpty){
@@ -2401,7 +2363,7 @@ indexer_declarator
 
 		$$ = new IndexerDeclaration ((FullNamedExpression) $1, null, pars, (Location) $2);
 	  }
-	| type namespace_or_type_name DOT THIS OPEN_BRACKET opt_formal_parameter_list CLOSE_BRACKET
+	| type_and_void namespace_or_type_name DOT THIS OPEN_BRACKET opt_formal_parameter_list CLOSE_BRACKET
 	  {
 		Parameters pars = (Parameters) $6;
 		if (pars.IsEmpty){
@@ -2558,7 +2520,7 @@ delegate_declaration
 	: opt_attributes
 	  opt_modifiers
 	  DELEGATE
-	  type type_name
+	  type_and_void type_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 		MemberName name = MakeName ((MemberName) $5);
@@ -2712,14 +2674,36 @@ type_argument
 		$$ = $2;  	  
   	  }
  	;
-	
-/* 
- * Before you think of adding a return_type, notice that we have been
- * using two rules in the places where it matters (one rule using type
- * and another identical one that uses VOID as the return type).  This
- * gets rid of a shift/reduce couple
- */
+
+//
+// All types where void is allowed
+//
+type_and_void
+	: type_expression_or_array
+	| VOID
+	  {
+		$$ = TypeManager.system_void_expr;
+	  }
+	;
+
+//
+// A type which does not allow `void' to be used
+//
 type
+	: type_expression_or_array
+	| VOID
+	  {
+	  	Expression.Error_VoidInvalidInTheContext (lexer.Location);
+		$$ = TypeManager.system_void_expr;
+	  }	
+	;
+
+type_expression_or_array
+	: type_expression
+	| array_type	  
+	;
+	
+type_expression
 	: namespace_or_type_name opt_nullable
 	  {
 		MemberName name = (MemberName) $1;
@@ -2739,12 +2723,7 @@ type
 		if ($2 != null)
 			$$ = new ComposedCast ((FullNamedExpression) $1, "?", lexer.Location);
 	  }
-	| array_type
-	| pointer_type
-	;
-
-pointer_type
-	: type STAR
+	| type_expression STAR
 	  {
 		//
 		// Note that here only unmanaged types are allowed but we
@@ -2756,7 +2735,7 @@ pointer_type
 	| VOID STAR
 	  {
 		$$ = new ComposedCast (TypeManager.system_void_expr, "*", (Location) $1);
-	  }
+	  }	
 	;
 
 non_expression_type
@@ -2764,6 +2743,10 @@ non_expression_type
 	  {
 		if ($2 != null)
 			$$ = new ComposedCast ((FullNamedExpression) $1, "?", lexer.Location);
+	  }
+	| VOID
+	  {
+		$$ = TypeManager.system_void_expr;
 	  }
 	| non_expression_type rank_specifier
 	  {
@@ -2832,7 +2815,6 @@ builtin_types
 	| DECIMAL	{ $$ = TypeManager.system_decimal_expr; }
 	| FLOAT		{ $$ = TypeManager.system_single_expr; }
 	| DOUBLE	{ $$ = TypeManager.system_double_expr; }
-	| VOID		{ $$ = TypeManager.system_void_expr; }	
 	| integral_type
 	;
 
@@ -2849,10 +2831,18 @@ integral_type
 	;
 
 array_type
-	: type rank_specifiers
+	: type_expression rank_specifiers
 	  {
 		string rank_specifiers = (string) $2;
 		$$ = current_array_type = new ComposedCast ((FullNamedExpression) $1, rank_specifiers);
+	  }
+	;
+
+predefined_type
+	: builtin_types
+	| VOID
+	  {
+		$$ = TypeManager.system_void_expr;	
 	  }
 	;
 
@@ -2975,10 +2965,6 @@ member_access
 		// TODO: Location is wrong as some predefined types doesn't hold a location
 		$$ = new MemberAccess ((Expression) $1, lt.Value, (TypeArguments) $4, lt.Location);
 	  }
-	;
-
-predefined_type
-	: builtin_types
 	;
 
 invocation_expression
@@ -3269,13 +3255,13 @@ object_or_delegate_creation_expression
 	;
 
 array_creation_expression
-	: NEW type OPEN_BRACKET expression_list CLOSE_BRACKET 
+	: NEW type_expression OPEN_BRACKET expression_list CLOSE_BRACKET 
 	  opt_rank_specifier
 	  opt_array_initializer
 	  {
 		$$ = new ArrayCreation ((FullNamedExpression) $2, (ArrayList) $4, (string) $6, (ArrayList) $7, (Location) $1);
 	  }
-	| NEW type rank_specifiers array_initializer
+	| NEW type_expression rank_specifiers array_initializer
 	  {
 		$$ = new ArrayCreation ((FullNamedExpression) $2, (string) $3, (ArrayList) $4, (Location) $1);
 	  }
@@ -3286,9 +3272,9 @@ array_creation_expression
 	| NEW error
 	  {
 		Report.Error (1031, (Location) $1, "Type expected");
-                $$ = null;
+		$$ = null;
 	  }          
-	| NEW type error 
+	| NEW type_expression error
 	  {
 		Report.Error (1526, (Location) $1, "A new expression requires () or [] after type");
 		$$ = null;
@@ -3481,7 +3467,7 @@ typeof_expression
 	;
 	
 typeof_type_expression
-	: type
+	: type_and_void
 	  {
 		$$ = $1;
 	  }
@@ -3636,6 +3622,9 @@ cast_expression
 	: cast_list
 	| OPEN_PARENS non_expression_type CLOSE_PARENS prefixed_unary_expression
 	  {
+	  	if ($2 == TypeManager.system_void_expr)
+	  		Expression.Error_VoidInvalidInTheContext (GetLocation ($2));
+
 		// TODO: wrong location
 		$$ = new Cast ((Expression) $2, (Expression) $4, lexer.Location);
 	  }
@@ -4387,7 +4376,12 @@ local_variable_type
 		else
 			$$ = current_array_type = new ComposedCast ((FullNamedExpression) $1, (string) $2, lexer.Location);
 	  }
-        ;
+	| VOID opt_rank_specifier
+	  {
+		Expression.Error_VoidInvalidInTheContext (lexer.Location);
+		$$ = TypeManager.system_void_expr;
+	  }
+	;
 
 local_variable_pointer_type
 	: primary_expression STAR
@@ -5005,7 +4999,7 @@ unsafe_statement
 
 fixed_statement
 	: FIXED OPEN_PARENS 
-	  type fixed_pointer_declarators 
+	  type_and_void fixed_pointer_declarators 
 	  CLOSE_PARENS
 	  {
 		ArrayList list = (ArrayList) $4;
