@@ -1,3 +1,8 @@
+2008-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializer.cs : in 2.0 profile it seems to create XmlReader
+	  for stream and textreader, that skips whitespaces.
+
 2008-09-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationCodeGenerator.cs

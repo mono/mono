@@ -323,18 +323,28 @@ namespace System.Xml.Serialization
 
 		public object Deserialize (Stream stream)
 		{
+#if NET_2_0
+			var s = new XmlReaderSettings () { IgnoreWhitespace = true };
+			return Deserialize (XmlReader.Create (stream, s));
+#else
 			XmlTextReader xmlReader = new XmlTextReader(stream);
 			xmlReader.Normalization = true;
 			xmlReader.WhitespaceHandling = WhitespaceHandling.Significant;
 			return Deserialize(xmlReader);
+#endif
 		}
 
 		public object Deserialize (TextReader textReader)
 		{
+#if NET_2_0
+			var s = new XmlReaderSettings () { IgnoreWhitespace = true };
+			return Deserialize (XmlReader.Create (textReader, s));
+#else
 			XmlTextReader xmlReader = new XmlTextReader(textReader);
 			xmlReader.Normalization = true;
 			xmlReader.WhitespaceHandling = WhitespaceHandling.Significant;
 			return Deserialize(xmlReader);
+#endif
 		}
 
 		public object Deserialize (XmlReader xmlReader)
