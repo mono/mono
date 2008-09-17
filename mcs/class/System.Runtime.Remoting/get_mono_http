@@ -1,0 +1,70 @@
+#!/bin/bash
+for i in \
+	AuthenticationSchemes.cs \
+	AuthenticationSchemeSelector.cs \
+	HttpResponseHeader.cs \
+	HttpRequestHeader.cs \
+	ChunkedInputStream.cs \
+	ChunkStream.cs \
+	EndPointManager.cs \
+	EndPointListener.cs \
+	HttpConnection.cs \
+	HttpListener.cs \
+	HttpListenerContext.cs \
+	HttpListenerBasicIdentity.cs \
+	HttpListenerException.cs \
+	HttpListenerPrefixCollection.cs \
+	HttpListenerRequest.cs \
+	HttpListenerResponse.cs \
+	HttpStreamAsyncResult.cs \
+	HttpUtility.cs \
+	ListenerAsyncResult.cs \
+	ListenerPrefix.cs \
+	RequestStream.cs \
+	ResponseStream.cs \
+	WebHeaderCollection.cs;
+do sed -e '1{
+i\#define EMBEDDED_IN_1_0\n
+}' \
+	-e 's/#if NET_2_0 && SECURITY_DEP/#if EMBEDDED_IN_1_0/' \
+	-e 's/#if NET_2_0/#if EMBEDDED_IN_1_0/' \
+	-e 's/public sealed class/internal class/' \
+	-e 's/public class/internal class/' \
+	-e 's/public delegate/internal delegate/' \
+	-e 's/public enum/internal enum/' \
+	-e 's/public interface/internal delegate/' \
+	-e 's/namespace System.Net/using System; using System.Net; namespace MonoHttp/' \
+	../System/System.Net/$i > MonoHttp/$i; done
+
+#these are only needed in 1.0
+for f in \
+	AuthenticationSchemes.cs \
+	AuthenticationSchemeSelector.cs \
+	EndPointManager.cs \
+	EndPointListener.cs \
+	HttpListener.cs \
+	HttpListenerException.cs \
+	HttpListenerPrefixCollection.cs \
+	HttpListenerBasicIdentity.cs \
+	HttpResponseHeader.cs \
+	HttpRequestHeader.cs;
+do sed -e '0,/#if.*EMBEDDED_IN_1_0.*$/s//#if !NET_2_0/' -i MonoHttp/$f; done
+
+#break some other internal dependencies
+sed -e 's/cookie.ToClientString ()/MonoHttp.Utility.ToClientString (cookie)/' -i MonoHttp/HttpListenerResponse.cs
+sed -e 's#bool ign = (listener == null)#bool ign = false;//#' -i MonoHttp/HttpConnection.cs
+
+#rewrite 2.0->1.0 API
+sed -e 's/if (Uri.MaybeUri (raw_url) && Uri.TryCreate (raw_url, UriKind.Absolute, out raw_uri))/#if NET_2_0\nif (MonoHttp.Utility.MaybeUri (raw_url) \&\& Uri.TryCreate (raw_url, UriKind.Absolute, out raw_uri))\n#else\ntry { raw_uri = new Uri (raw_url); } catch { raw_uri = null; } if (url != raw_uri \&\& (raw_uri.Host == null || raw_uri.Host.Length == 0)) raw_uri = null; if (raw_uri != null)\n#endif\n/' \
+    -e 's/if (!Uri.TryCreate (base_uri + path, UriKind.Absolute, out url)){/#if NET_2_0\nif (!Uri.TryCreate (base_uri + path, UriKind.Absolute, out url)){\n#else\ntry { url = new Uri (base_uri + path); } catch {}; if (url != null \&\& (url.Host == null || url.Host.Length == 0)) url = null;  if (url == null) {\n#endif\n/' \
+    -e 's/string.Compare (method, m, StringComparison.InvariantCultureIgnoreCase)/string.Compare (method, m, true, System.Globalization.CultureInfo.InvariantCulture)/' \
+    -i MonoHttp/HttpListenerRequest.cs
+
+sed -e 's/X509Certificate2 cert;//' \
+    -e 's/epl.cert == null || //' \
+    -e 's/new HttpConnection (accepted, epl, epl.secure, epl.cert, epl.key);/new HttpConnection (accepted, epl);/' \
+    -e 's/if (Uri.MaybeUri (raw_url) && Uri.TryCreate (raw_url, UriKind.Absolute, out raw_uri))/#if NET_2_0\nif (MonoHttp.Utility.MaybeUri (raw_url) \&\& Uri.TryCreate (raw_url, UriKind.Absolute, out raw_uri))\n#else\ntry { raw_uri = new Uri (raw_url); } catch { raw_uri = null; } if (raw_uri != null)\n#endif\n/' \
+-i MonoHttp/EndPointListener.cs
+
+sed -e 's/prefixes.Remove (uriPrefix);/prefixes.Contains (uriPrefix); if (result) &;/' \
+	-i MonoHttp/HttpListenerPrefixCollection.cs
