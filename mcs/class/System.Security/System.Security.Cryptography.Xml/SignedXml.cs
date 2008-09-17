@@ -269,7 +269,7 @@ namespace System.Security.Cryptography.Xml {
 			}
 		}
 
-		private byte[] GetReferenceHash (Reference r) 
+		private byte[] GetReferenceHash (Reference r, bool check_hmac) 
 		{
 			Stream s = null;
 			XmlDocument doc = null;
@@ -364,8 +364,8 @@ namespace System.Security.Cryptography.Xml {
 					s = ApplyTransform (new XmlDsigC14NTransform (), doc);
 				}
 			}
-			HashAlgorithm digest = GetHash (r.DigestMethod);
-			return digest.ComputeHash (s);
+			HashAlgorithm digest = GetHash (r.DigestMethod, check_hmac);
+			return (digest == null) ? null : digest.ComputeHash (s);
 		}
 
 		private void DigestReferences () 
@@ -376,7 +376,7 @@ namespace System.Security.Cryptography.Xml {
 				// assume SHA-1 if nothing is specified
 				if (r.DigestMethod == null)
 					r.DigestMethod = XmlDsigSHA1Url;
-				r.DigestValue = GetReferenceHash (r);
+				r.DigestValue = GetReferenceHash (r, false);
 			}
 		}
 
@@ -445,7 +445,7 @@ namespace System.Security.Cryptography.Xml {
 		}
 
 		// reuse hash - most document will always use the same hash
-		private HashAlgorithm GetHash (string algorithm) 
+		private HashAlgorithm GetHash (string algorithm, bool check_hmac) 
 		{
 			HashAlgorithm hash = (HashAlgorithm) hashes [algorithm];
 			if (hash == null) {
@@ -459,6 +459,9 @@ namespace System.Security.Cryptography.Xml {
 				// important before reusing an hash object
 				hash.Initialize ();
 			}
+			// we can sign using any hash algorith, including HMAC, but we can only verify hash (MS compatibility)
+			if (check_hmac && (hash is KeyedHashAlgorithm))
+				return null;
 			return hash;
 		}
 
@@ -475,7 +478,7 @@ namespace System.Security.Cryptography.Xml {
 			// check digest (hash) for every reference
 			foreach (Reference r in referenceList) {
 				// stop at first broken reference
-				byte[] hash = GetReferenceHash (r);
+				byte[] hash = GetReferenceHash (r, true);
 				if (! Compare (r.DigestValue, hash))
 					return false;
 			}
@@ -550,7 +553,7 @@ namespace System.Security.Cryptography.Xml {
 				verifier.SetKey (key);
 				verifier.SetHashAlgorithm (sd.DigestAlgorithm);
 
-				HashAlgorithm hash = GetHash (sd.DigestAlgorithm);
+				HashAlgorithm hash = GetHash (sd.DigestAlgorithm, true);
 				// get the hash of the C14N SignedInfo element
 				MemoryStream ms = (MemoryStream) SignedInfoTransformed ();
 
@@ -652,7 +655,7 @@ namespace System.Security.Cryptography.Xml {
 				if (signer != null) {
 					SignatureDescription sd = (SignatureDescription) CryptoConfig.CreateFromName (m_signature.SignedInfo.SignatureMethod);
 
-					HashAlgorithm hash = GetHash (sd.DigestAlgorithm);
+					HashAlgorithm hash = GetHash (sd.DigestAlgorithm, false);
 					// get the hash of the C14N SignedInfo element
 					byte[] digest = hash.ComputeHash (SignedInfoTransformed ());
 
@@ -669,14 +672,28 @@ namespace System.Security.Cryptography.Xml {
 			if (macAlg == null)
 				throw new ArgumentNullException ("macAlg");
 
-			if (macAlg is HMACSHA1) {
-				DigestReferences ();
+			string method = null;
 
-				m_signature.SignedInfo.SignatureMethod = XmlDsigHMACSHA1Url;
-				m_signature.SignatureValue = macAlg.ComputeHash (SignedInfoTransformed ());
+			if (macAlg is HMACSHA1) {
+				method = XmlDsigHMACSHA1Url;
+#if NET_2_0
+			} else if (macAlg is HMACSHA256) {
+				method = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256";
+			} else if (macAlg is HMACSHA384) {
+				method = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha384";
+			} else if (macAlg is HMACSHA512) {
+				method = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha512";
+			} else if (macAlg is HMACRIPEMD160) {
+				method = "http://www.w3.org/2001/04/xmldsig-more#hmac-ripemd160";
+#endif
 			}
-			else 
+
+			if (method == null)
 				throw new CryptographicException ("unsupported algorithm");
+
+			DigestReferences ();
+			m_signature.SignedInfo.SignatureMethod = method;
+			m_signature.SignatureValue = macAlg.ComputeHash (SignedInfoTransformed ());
 		}
 
 		public virtual XmlElement GetIdElement (XmlDocument document, string idValue) 

@@ -1,3 +1,9 @@
+2008-09-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SignedXmlTest.cs: Add support for signing XML using HMACSHA256,
+	HMACSHA384, HMACSHA512 and HMACRIPEMD160.
+	[Fix bug #425724]
+
 2008-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* set Algorithm in .ctor(bool), fixed bug #398904.
