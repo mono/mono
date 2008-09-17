@@ -197,6 +197,12 @@ public class CryptoConfig {
 	private const string urlXmlDecryption = "http://www.w3.org/2002/07/decrypt#XML";
 	private const string urlExcC14NWithComments = "http://www.w3.org/2001/10/xml-exc-c14n#WithComments";
 	private const string urlExcC14N = "http://www.w3.org/2001/10/xml-exc-c14n#";
+	private const string urlSHA256 = "http://www.w3.org/2001/04/xmlenc#sha256";
+	private const string urlSHA512 = "http://www.w3.org/2001/04/xmlenc#sha512";
+	private const string urlHMACSHA256 = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256";
+	private const string urlHMACSHA384 = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha384";
+	private const string urlHMACSHA512 = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha512";
+	private const string urlHMACRIPEMD160 = "http://www.w3.org/2001/04/xmldsig-more#hmac-ripemd160";
 #endif
 
 	// LAMESPEC: only documentated in ".NET Framework Security" book
@@ -324,6 +330,13 @@ public class CryptoConfig {
 		algorithms.Add (urlExcC14N, defaultExcC14N);
 		algorithms.Add (urlExcC14NWithComments, defaultExcC14NWithComments);
 		algorithms.Add (urlXmlDecryption, defaultXmlDecryption);
+		algorithms.Add (urlSHA256, defaultSHA256);
+		// xmlenc does not include a definition for SHA384
+		algorithms.Add (urlSHA512, defaultSHA512);
+		algorithms.Add (urlHMACSHA256, defaultHMACSHA256);
+		algorithms.Add (urlHMACSHA384, defaultHMACSHA384);
+		algorithms.Add (urlHMACSHA512, defaultHMACSHA512);
+		algorithms.Add (urlHMACRIPEMD160, defaultHMACRIPEMD160);
 #endif
 		// LAMESPEC: only documentated in ".NET Framework Security" book
 		algorithms.Add (urlX509Data, defaultX509Data);
