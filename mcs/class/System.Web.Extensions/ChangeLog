@@ -1,3 +1,27 @@
+2008-09-17  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.Extensions.dll.sources: added
+	System.Web.Script.Serialization/Json.cs,
+	System.Web.Script.Serialization/JsonSerializer.cs and
+	System.Web.Script.Serialization/StringBuilderExtensions.cs
+
+	* System.Web.Script.Serialization/Json.cs: helper class to invoke
+	de/serializer.
+
+	* System.Web.Script.Serialization/JsonSerializer.cs: new
+	implementation of Json serializer that is free of issues found in
+	the old one (and faster + simpler).
+
+	* System.Web.Script.Serialization/JavaScriptSerializer.cs: staging
+	transition to the new Json (de)serializer. For now deserialization
+	is done using the old JSON code, serialization uses the new
+	serializer.
+
+	* System.Web.Script.Serialization/StringBuilderExtensions.cs: a
+	set of simple StringBuilder extension methods which check the size
+	of the builder against some value and throw an exception if the
+	value is exceeded.
+
 2008-09-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Web.Extensions.dll.sources :

@@ -179,6 +179,10 @@ namespace System.Web.Script.Serialization
 			}
 		}
 
+		internal JavaScriptTypeResolver TypeResolver {
+			get { return _typeResolver; }
+		}
+		
 		public T ConvertToType<T> (object obj) {
 			if (obj == null)
 				return default (T);
@@ -330,8 +334,8 @@ namespace System.Web.Script.Serialization
 		object ConvertToObject (IDictionary<string, object> dict, Type type) 
 		{
 			if (_typeResolver != null) {
-				if (dict is JsonSerializer.DeserializerLazyDictionary) {
-					JsonSerializer.DeserializerLazyDictionary lazyDict = (JsonSerializer.DeserializerLazyDictionary) dict;
+				if (dict is Newtonsoft.Json.JsonSerializer.DeserializerLazyDictionary) {
+					Newtonsoft.Json.JsonSerializer.DeserializerLazyDictionary lazyDict = (Newtonsoft.Json.JsonSerializer.DeserializerLazyDictionary) dict;
 					object first = lazyDict.PeekFirst ();
 					if (first != null) {
 						KeyValuePair<string, object> firstPair = (KeyValuePair<string, object>) first;
@@ -344,7 +348,7 @@ namespace System.Web.Script.Serialization
 					}
 				}
 
-				if (!(dict is JsonSerializer.DeserializerLazyDictionary) && dict.Keys.Contains(SerializedTypeNameKey)) {
+				if (!(dict is Newtonsoft.Json.JsonSerializer.DeserializerLazyDictionary) && dict.Keys.Contains(SerializedTypeNameKey)) {
 					// already Evaluated
 					type = _typeResolver.ResolveType ((string) dict [SerializedTypeNameKey]);
 				}
@@ -454,7 +458,7 @@ namespace System.Web.Script.Serialization
 		}
 
 		internal object DeserializeObjectInternal (TextReader input) {
-			JsonSerializer ser = new JsonSerializer (this, _typeResolver);
+			Newtonsoft.Json.JsonSerializer ser = new Newtonsoft.Json.JsonSerializer (this, _typeResolver);
 			ser.MaxJsonLength = MaxJsonLength;
 			ser.RecursionLimit = RecursionLimit;
 			return ser.Deserialize (input);
@@ -488,11 +492,12 @@ namespace System.Web.Script.Serialization
 		}
 
 		public void Serialize (object obj, StringBuilder output) {
-			Serialize (obj, new StringWriter (output));
+// 			Serialize (obj, new StringWriter (output));
+			Json.Serialize (obj, this, output);
 		}
 
 		internal void Serialize (object obj, TextWriter output) {
-			JsonSerializer ser = new JsonSerializer (this, _typeResolver);
+			Newtonsoft.Json.JsonSerializer ser = new Newtonsoft.Json.JsonSerializer (this, _typeResolver);
 			ser.MaxJsonLength = MaxJsonLength;
 			ser.RecursionLimit = RecursionLimit;
 			ser.Serialize (output, obj);
