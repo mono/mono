@@ -1,5 +1,11 @@
 2008-09-17  Everaldo Canuto  <ecanuto@novell.com>
 
+	* FileDialog.cs: Remove OnPaint method on PopupButtonPanel and set 
+	InternalBorderStyle to BorderStyle.Fixed3D. It is the best way to get 3d
+	border and fixes some drawing issues when resize form.
+
+2008-09-17  Everaldo Canuto  <ecanuto@novell.com>
+
 	* FileDialog.cs: Lots of layout fixes to mimic Win32. [Fixes #408752]
 	
 	* ThemeWin32Classic.cs: We don't need to reduce button size when it is

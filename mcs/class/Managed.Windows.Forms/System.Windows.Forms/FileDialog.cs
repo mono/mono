@@ -1564,6 +1564,7 @@ namespace System.Windows.Forms
 			
 			BackColor = Color.FromArgb (128, 128, 128);
 			Size = new Size (85, 336);
+			InternalBorderStyle = BorderStyle.Fixed3D;
 			
 			recentlyusedButton = new PopupButton ();
 			desktopButton = new PopupButton ();
@@ -1703,12 +1704,6 @@ namespace System.Windows.Forms
 			get {
 				return currentPath;
 			}
-		}
-		
-		protected override void OnPaint (PaintEventArgs e)
-		{
-			ControlPaint.DrawBorder3D (e.Graphics, ClientRectangle, Border3DStyle.Sunken);
-			base.OnPaint (e);
 		}
 		
 		protected override void OnGotFocus (EventArgs e)
