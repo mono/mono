@@ -2086,6 +2086,27 @@ namespace MonoTests.System.Xml
 			Assert ("#3", !s.Read ());
 			AssertEquals ("#4", XmlNodeType.None, s.NodeType);
 		}
+
+		public void ReadSubtreeEmptyElementWithAttribute ()
+		{
+			string xml = @"<root><x a='b'/></root>";
+			XmlReader r = XmlReader.Create (new StringReader (xml));
+			r.Read ();
+			r.Read ();
+			XmlReader r2 = r.ReadSubtree ();
+			Console.WriteLine ("X");
+			r2.Read ();
+			XmlReader r3 = r2.ReadSubtree ();
+			r2.MoveToFirstAttribute ();
+			Assert ("#1", !r.IsEmptyElement);
+			Assert ("#2", !r2.IsEmptyElement);
+			r3.Close ();
+			Assert ("#3", r.IsEmptyElement);
+			Assert ("#4", r2.IsEmptyElement);
+			r2.Close ();
+			Assert ("#5", r.IsEmptyElement);
+			Assert ("#6", r2.IsEmptyElement);
+		}
 #endif
 	}
 }

@@ -1,5 +1,9 @@
 2008-09-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlReader.cs : detailed error location in ReadSubtree().
+
+2008-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlReader.cs : ReadSubtree() is valid only on an element.
 
 2008-09-10  Atsushi Enomoto  <atsushi@ximian.com>

@@ -142,7 +142,7 @@ namespace Mono.Xml
 
 		public override void Close ()
 		{
-			while (Reader.Depth > startDepth && Read ())
+			while (Read ())
 				;
 		}
 
@@ -221,11 +221,13 @@ namespace Mono.Xml
 			}
 			if (!read) {
 				read = true;
+				Reader.MoveToElement ();
 				bool ret = !Reader.IsEmptyElement && Reader.Read ();
 				if (!ret)
 					eof = true;
 				return ret;
 			}
+			Reader.MoveToElement ();
 			if (Reader.Depth > startDepth)
 				if (Reader.Read ())
 					return true;

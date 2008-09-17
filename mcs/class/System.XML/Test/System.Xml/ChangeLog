@@ -1,5 +1,9 @@
 2008-09-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlReaderCommonTests.cs : another Subtree+EmptyElement case.
+
+2008-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlReaderCommonTests.cs :
 	  added test for NodeType for empty element.
 

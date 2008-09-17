@@ -881,7 +881,7 @@ namespace System.Xml
 		public virtual XmlReader ReadSubtree ()
 		{
 			if (NodeType != XmlNodeType.Element)
-				throw new InvalidOperationException ("ReadSubtree() can be invoked only when the reader is positioned on an element");
+				throw new InvalidOperationException (String.Format ("ReadSubtree() can be invoked only when the reader is positioned on an element. Current node is {0}. {1}", NodeType, GetLocation ()));
 			return new SubtreeXmlReader (this);
 		}
 

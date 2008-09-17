@@ -1,5 +1,10 @@
 2008-09-17  Atsushi Enomoto <atsushi@ximian.com>
 
+	* SubtreeXmlReader.cs : Close() should correctly skip empty element.
+	  In Read(), make sure to move from Element state.
+
+2008-09-17  Atsushi Enomoto <atsushi@ximian.com>
+
 	* SubtreeXmlReader.cs : make sure to set eof for empty element after
 	  Read().
 
