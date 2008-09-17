@@ -1,3 +1,9 @@
+2008-09-17  Andreia Gaita <avidigal@novell.com> 
+
+	* Mono.Mozilla/AsciiString.cs: Change marshalling to ansi - auto is no
+	  good on windows. Fixes #414146.
+	  [backport of r113117]
+
 2008-09-10  Andreia Gaita <avidigal@novell.com> 
 
 	* Mono.Mozilla/WebBrowser.cs: Update the loaded flag so users can now
