@@ -1,5 +1,10 @@
 2008-09-17  Everaldo Canuto  <ecanuto@novell.com>
 
+	* CurrencyManager.cs: Check for positon before call ChangeRecordState in
+	AddNew to fix some navigation for empty datasets. [Fixes #323053]
+
+2008-09-17  Everaldo Canuto  <ecanuto@novell.com>
+
 	* FileDialog.cs: Remove OnPaint method on PopupButtonPanel and set 
 	InternalBorderStyle to BorderStyle.Fixed3D. It is the best way to get 3d
 	border and fixes some drawing issues when resize form.

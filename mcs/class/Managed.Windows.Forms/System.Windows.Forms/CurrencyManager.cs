@@ -191,7 +191,8 @@ namespace System.Windows.Forms {
 
 			ibl.AddNew ();
 
-			ChangeRecordState (list.Count - 1, true, true, true, true);
+			bool validate = (Position != (list.Count - 1));
+			ChangeRecordState (list.Count - 1, validate, validate, true, true);
 		}
 
 
