@@ -2054,6 +2054,26 @@ namespace MonoTests.System.Xml
 			AssertEquals ("#1", XmlNodeType.EndElement, reader.NodeType);
 			AssertEquals ("#2", "item-list", reader.Name);
 		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ReadSubtreeOnNonElement ()
+		{
+			string xml = @"<x> <y/></x>";
+			XmlReader r = XmlReader.Create (new StringReader (xml));
+			r.Read (); // x
+			r.Read (); // ws
+			r.ReadSubtree ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ReadSubtreeOnNonElement2 ()
+		{
+			string xml = @"<x> <y/></x>";
+			XmlReader r = XmlReader.Create (new StringReader (xml));
+			r.ReadSubtree ();
+		}
 #endif
 	}
 }
