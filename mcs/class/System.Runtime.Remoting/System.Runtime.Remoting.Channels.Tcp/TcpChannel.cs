@@ -158,6 +158,10 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			if (url.Length <= 5 || url[4] != '/' || url[5] != '/')
 				return null;
 			
+			// "tcp://" is acceptable
+			if (url.Length == 6)
+				return url;
+			
 			int i;
 			for (i = 6; i < url.Length; i++) {
 				if (url[i] == ':' || url[i] == '/')
