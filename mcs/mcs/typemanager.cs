@@ -600,8 +600,11 @@ namespace Mono.CSharp {
 		if (t == typeof (AnonymousMethodBody))
 			return "anonymous method";
 
+		if (t == null)
+			return "internal error";
+
 		return CSharpName (GetFullName (t));
-    }
+	}
 
 	static readonly char [] elements = new char [] { '*', '[' };
 
