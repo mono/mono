@@ -2074,6 +2074,18 @@ namespace MonoTests.System.Xml
 			XmlReader r = XmlReader.Create (new StringReader (xml));
 			r.ReadSubtree ();
 		}
+
+		public void ReadSubtreeEmptyElement ()
+		{
+			string xml = @"<x/>";
+			XmlReader r = XmlReader.Create (new StringReader (xml));
+			r.Read ();
+			XmlReader s = r.ReadSubtree ();
+			Assert ("#1", s.Read ());
+			AssertEquals ("#2", XmlNodeType.Element, s.NodeType);
+			Assert ("#3", !s.Read ());
+			AssertEquals ("#4", XmlNodeType.None, s.NodeType);
+		}
 #endif
 	}
 }

@@ -1,6 +1,11 @@
 2008-09-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlReaderCommonTests.cs :
+	  added test for NodeType for empty element.
+
+2008-09-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlReaderCommonTests.cs :
 	  added test for ReadSubtree() on non-element.
 
 2008-07-28  Atsushi Enomoto  <atsushi@ximian.com>
