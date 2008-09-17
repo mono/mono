@@ -1,3 +1,7 @@
+2008-09-17  Robert Jordan  <robertj@gmx.net>
+
+	* SerializationTest2.cs: Add test case for bug #421664.
+
 2006-10-29  Robert Jordan  <robertj@gmx.net>
 
 	* SerializationCallbackTest.cs: Add test case for bug #78594.

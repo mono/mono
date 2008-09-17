@@ -632,7 +632,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				if (!metadata.Type.IsSerializable)
 					throw new SerializationException("Serializable objects must be marked with the Serializable attribute");
 
-				metadata.NeedsSerializationInfo = (metadata.Type.GetInterface ("ISerializable") != null);
+				metadata.NeedsSerializationInfo = typeof (ISerializable).IsAssignableFrom (metadata.Type);
 				if (!metadata.NeedsSerializationInfo)
 				{
 					metadata.MemberInfos = new MemberInfo [fieldCount];

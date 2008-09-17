@@ -1,3 +1,7 @@
+2008-09-04  Robert Jordan  <robertj@gmx.net>
+
+	* corlib_test.dll: Add S.R.S/SerializationTest2.cs
+
 2008-08-27  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Removed disabled global 649 warning.
