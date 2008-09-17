@@ -157,7 +157,7 @@ namespace System.Data.SqlClient {
 			set {
 				if (value != commandText && preparedStatement != null)
 					Unprepare ();
-				commandText = value; 
+				commandText = value;
 			}
 		}
 
@@ -378,6 +378,54 @@ namespace System.Data.SqlClient {
 			return new SqlParameter ();
 		}
 
+		private string EscapeProcName (string name, bool schema)
+		{
+			string procName;
+			string tmpProcName = name.Trim ();
+			int procNameLen = tmpProcName.Length;
+			char[] brkts = new char [] {'[', ']'};
+			bool foundMatching = false;
+			int start = 0, count = procNameLen;
+			int sindex = -1, eindex = -1;
+			
+			// We try to match most of the "brackets" combination here, however
+			// there could be other combinations that may generate a different type
+			// of exception in MS.NET
+			
+			if (procNameLen > 1) {
+				if ((sindex = tmpProcName.IndexOf ('[')) == 0)
+					foundMatching = true;
+				else
+					foundMatching = false;
+			
+				if (foundMatching == true) {
+					eindex = tmpProcName.IndexOf (']');
+					if (sindex > eindex && eindex != -1) {
+						foundMatching = false;
+					} else if (eindex == procNameLen-1) {
+						if (tmpProcName.IndexOfAny (brkts, 1, procNameLen-2) != -1) {
+							foundMatching = false;
+						} else {
+							start = 1;
+							count = procNameLen - 2;
+						}
+					} else if (eindex == -1 && schema) {
+						foundMatching = true;
+					} else {
+						foundMatching = false;
+					}
+				}
+			
+				if (foundMatching)
+					procName = tmpProcName.Substring (start, count);
+				else
+					throw new ArgumentException (String.Format ("SqlCommand.CommandText property value is an invalid multipart name {0}, incorrect usage of quotes", CommandText));
+			} else {
+				procName = tmpProcName;
+			}
+			
+			return procName;
+		}
 		internal void DeriveParameters ()
 		{
 			if (commandType != CommandType.StoredProcedure)
@@ -391,6 +439,9 @@ namespace System.Data.SqlClient {
 				schemaName = procName.Substring (0, dotPosition);
 				procName = procName.Substring (dotPosition + 1);
 			}
+			
+			procName = EscapeProcName (procName, false);
+			schemaName = EscapeProcName (schemaName, true);
 			
 			SqlParameterCollection localParameters = new SqlParameterCollection (this);
 			localParameters.Add ("@procedure_name", SqlDbType.NVarChar, procName.Length).Value = procName;
