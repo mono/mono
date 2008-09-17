@@ -23,7 +23,7 @@ namespace MonoTests.Remoting
 		}
 	}
 
-	//[TestFixture]
+	[TestFixture]
 	public class HttpAsyncCallTest : AsyncCallTest
 	{
 		public override ChannelManager CreateChannelManager ()
