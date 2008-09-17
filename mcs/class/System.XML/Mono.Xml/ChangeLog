@@ -1,3 +1,7 @@
+2008-09-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* SubtreeXmlReader.cs : return appropriate property values for EOF.
+
 2008-08-21  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* SubtreeXmlReader.cs

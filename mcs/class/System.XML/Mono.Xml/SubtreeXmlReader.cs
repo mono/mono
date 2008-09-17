@@ -94,16 +94,16 @@ namespace Mono.Xml
 
 #if !NET_2_1
 		public override bool HasValue {
-			get { return initial ? false : Reader.HasValue; }
+			get { return initial || eof ? false : Reader.HasValue; }
 		}
 #endif
 
 		public override string LocalName {
-			get { return initial ? String.Empty : Reader.LocalName; }
+			get { return initial || eof ? String.Empty : Reader.LocalName; }
 		}
 
 		public override string Name {
-			get { return initial ? String.Empty : Reader.Name; }
+			get { return initial || eof ? String.Empty : Reader.Name; }
 		}
 
 		public override XmlNameTable NameTable {
@@ -111,15 +111,15 @@ namespace Mono.Xml
 		}
 
 		public override string NamespaceURI {
-			get { return initial ? String.Empty : Reader.NamespaceURI; }
+			get { return initial || eof ? String.Empty : Reader.NamespaceURI; }
 		}
 
 		public override XmlNodeType NodeType {
-			get { return initial ? XmlNodeType.None : Reader.NodeType; }
+			get { return initial || eof ? XmlNodeType.None : Reader.NodeType; }
 		}
 
 		public override string Prefix {
-			get { return initial ? String.Empty : Reader.Prefix; }
+			get { return initial || eof ? String.Empty : Reader.Prefix; }
 		}
 
 		public override ReadState ReadState {
