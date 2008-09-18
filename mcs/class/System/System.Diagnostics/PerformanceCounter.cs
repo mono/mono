@@ -56,7 +56,9 @@ namespace System.Diagnostics {
 		private string machineName;
 		IntPtr impl;
 		PerformanceCounterType type;
+		CounterSample old_sample;
 		private bool readOnly;
+		bool valid_old;
 		bool changed;
 		bool is_custom;
 #if NET_2_0
@@ -259,6 +261,7 @@ namespace System.Diagnostics {
 				if (changed)
 					UpdateInfo ();
 				GetSample (impl, true, out sample);
+				// should this update old_sample as well?
 				return sample.RawValue;
 			}
 			set {
@@ -306,10 +309,9 @@ namespace System.Diagnostics {
 			return IncrementBy (-1);
 		}
 
-		[MonoTODO]
 		protected override void Dispose (bool disposing)
 		{
-			throw new NotImplementedException ();
+			Close ();
 		}
 
 		// may throw InvalidOperationException, Win32Exception
@@ -338,14 +340,26 @@ namespace System.Diagnostics {
 			if (changed)
 				UpdateInfo ();
 			GetSample (impl, false, out sample);
+			valid_old = true;
+			old_sample = sample;
 			return sample;
 		}
 
 		// may throw InvalidOperationException, Win32Exception
-		[MonoTODO]
 		public float NextValue ()
 		{
-			throw new NotImplementedException ();
+			CounterSample sample;
+			if (changed)
+				UpdateInfo ();
+			GetSample (impl, false, out sample);
+			float val;
+			if (valid_old)
+				val = CounterSampleCalculator.ComputeCounterValue (old_sample, sample);
+			else
+				val = CounterSampleCalculator.ComputeCounterValue (sample);
+			valid_old = true;
+			old_sample = sample;
+			return val;
 		}
 
 		// may throw InvalidOperationException, Win32Exception

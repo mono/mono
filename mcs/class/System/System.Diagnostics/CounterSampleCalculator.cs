@@ -99,6 +99,9 @@ namespace System.Diagnostics {
 				return ((float)(newSample.RawValue - oldSample.RawValue))/(float)(newSample.TimeStamp - oldSample.TimeStamp) * 100.0f;
 			case PerformanceCounterType.Timer100NsInverse:
 				return (1f - ((float)(newSample.RawValue - oldSample.RawValue))/(float)(newSample.TimeStamp - oldSample.TimeStamp)) * 100.0f;
+			case PerformanceCounterType.RateOfCountsPerSecond32:
+			case PerformanceCounterType.RateOfCountsPerSecond64:
+				return ((float)(newSample.RawValue - oldSample.RawValue))/(float)(newSample.TimeStamp - oldSample.TimeStamp) * 10000000;
 			default:
 				Console.WriteLine ("Counter type {0} not handled", newSample.CounterType);
 				return 0;
