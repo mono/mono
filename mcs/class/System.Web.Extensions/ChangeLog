@@ -1,3 +1,7 @@
+2008-09-18  Marek Safar  <marek.safar@gmail.com>
+
+	* Makefile: Add System.Core reference.
+
 2008-09-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Web.Extensions.dll.sources: added LinqDataSource stuff.
