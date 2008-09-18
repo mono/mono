@@ -1,5 +1,11 @@
 2008-09-18  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #414758
+	* expression.cs, ecore.cs: Fixed crash when accessing non-static
+	property.
+
+2008-09-18  Marek Safar  <marek.safar@gmail.com>
+
 	* driver.cs, namespace.cs: Read types and namespaces after all
 	requested assemblies are loaded, fixes issues with System.Core
 	auto-reference, and #419888.

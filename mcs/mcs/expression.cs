@@ -4785,6 +4785,10 @@ namespace Mono.CSharp {
 						MemberExpr.error176 (loc, mg.GetSignatureForError ());
 						return null;
 					}
+				} else {
+					if (iexpr == null) {
+						SimpleName.Error_ObjectRefRequired (ec, loc, mg.GetSignatureForError ());
+					}
 				}
 			}
 
@@ -4975,11 +4979,6 @@ namespace Mono.CSharp {
 			
 			bool is_static = method.IsStatic;
 			if (!is_static){
-				if (instance_expr == EmptyExpression.Null) {
-					SimpleName.Error_ObjectRefRequired (ec, loc, TypeManager.CSharpSignature (method));
-					return;
-				}
-
 				this_call = instance_expr is This;
 				if (decl_type.IsValueType || (!this_call && instance_expr.Type.IsValueType))
 					struct_call = true;

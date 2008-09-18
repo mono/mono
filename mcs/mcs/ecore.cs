@@ -2426,8 +2426,8 @@ namespace Mono.CSharp {
 					"A field initializer cannot reference the nonstatic field, method, or property `{0}'",
 					name);
 			else
-				Report.Error (
-					120, l, "`{0}': An object reference is required for the nonstatic field, method or property",
+				Report.Error (120, l,
+					"An object reference is required to access non-static member `{0}'",
 					name);
 		}
 
@@ -3246,7 +3246,7 @@ namespace Mono.CSharp {
 				SimpleName.Error_ObjectRefRequired (ec, loc, GetSignatureForError ());
 				return;
 			}
-				
+
 			if (InstanceExpression.Type.IsValueType) {
 				if (InstanceExpression is IMemoryLocation) {
 					((IMemoryLocation) InstanceExpression).AddressOf (ec, AddressOp.LoadStore);
@@ -3417,10 +3417,6 @@ namespace Mono.CSharp {
 		public bool IdenticalTypeName {
 			get {
 				return identical_type_name;
-			}
-
-			set {
-				identical_type_name = value;
 			}
 		}
 
@@ -3716,7 +3712,7 @@ namespace Mono.CSharp {
 		{
 			if (!(left is TypeExpr) &&
 			    original != null && original.IdenticalNameAndTypeName (ec, left, loc))
-				IdenticalTypeName = true;
+				identical_type_name = true;
 
 			return base.ResolveMemberAccess (ec, left, loc, original);
 		}
