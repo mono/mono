@@ -84,6 +84,10 @@ KEEP_OUTPUT_FILE_COPY = yes
 include ../build/executable.make
 endif
 
+#
+# Below this line we have local targets used for testing and development
+#
+
 # Testing targets
 
 TIME = time
