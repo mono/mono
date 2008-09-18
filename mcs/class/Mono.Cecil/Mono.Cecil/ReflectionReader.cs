@@ -980,6 +980,9 @@ namespace Mono.Cecil {
 				CustomMod cmod = cmods [i];
 				TypeReference modType;
 
+				if (cmod.TypeDefOrRef.RID == 0)
+					continue;
+
 				if (cmod.TypeDefOrRef.TokenType == TokenType.TypeDef)
 					modType = GetTypeDefAt (cmod.TypeDefOrRef.RID);
 				else
