@@ -1,3 +1,9 @@
+
+Thu Sep 18 18:16:45 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mono-mmap.c, mono-mmap.h: added mono_shared_area_instances ()
+	too return the list of mono processes with performance counter data.
+
 2008-08-27  Bill Holmes  <billholmes54@gmail.com>
 
 	* strenc.c : Fixing some waringings and compiler errors when using
