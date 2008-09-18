@@ -1,3 +1,12 @@
+2008-09-18  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* XplatUIX11.cs: 
+	 - Do not set _NET_WM_WINDOW_TYPE_DIALOG for modal forms, because this 
+	 leads to the window manager overriding our border style and zorder. 
+	 - Allow the activation of non-modal forms, which are children of a 
+	 modal form.
+	[Fixes bug #423417]
+
 2008-09-17  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* XplatUIX11.cs, X11Structs.cs: For mapped windows SetTopMost should 

@@ -1073,8 +1073,6 @@ namespace System.Windows.Forms {
 				// needed! map toolwindows to _NET_WM_WINDOW_TYPE_UTILITY to make newer metacity versions happy
 				// and get those windows in front of their parents
 				window_type = _NET_WM_WINDOW_TYPE_UTILITY;
-			} else if (form != null && form.Modal) {
-				window_type = _NET_WM_WINDOW_TYPE_DIALOG;
 			} else {
 				window_type = _NET_WM_WINDOW_TYPE_NORMAL;
 			}
@@ -1786,11 +1784,23 @@ namespace System.Windows.Forms {
 							if (ModalWindows.Count == 0) {
 								break;
 							} else {
-								// Modality handling, if we are modal and the new active window is one
-								// of ours but not the modal one, switch back to the modal window
+								// Modality Handling
+								// 
+								// If there is a modal window on the stack and the new active 
+								// window is MWF window, but not the modal one and not a non-modal 
+								// child of the modal one, switch back to the modal window.
+								//
+								// To identify if a non-modal form is child of a modal form 
+								// we match their ApplicationContexts, which will be the same.
+								// This is because each modal form runs the loop with a 
+								// new ApplicationContext, which is inherited by the non-modal 
+								// forms.
 
-								if (NativeWindow.FromHandle(ActiveWindow) != null) {
-									if (ActiveWindow != (IntPtr)ModalWindows.Peek()) {
+								Form activeForm = Control.FromHandle (ActiveWindow) as Form;
+								if (activeForm != null) {
+									Form modalForm = Control.FromHandle ((IntPtr)ModalWindows.Peek()) as Form;
+									if (ActiveWindow != (IntPtr)ModalWindows.Peek() && 
+									    (modalForm == null || activeForm.context == modalForm.context)) {
 										Activate((IntPtr)ModalWindows.Peek());
 									}
 								}
