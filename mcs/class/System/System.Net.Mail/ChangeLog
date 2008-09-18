@@ -1,3 +1,8 @@
+2008-09-17  Miguel de Icaza  <miguel@novell.com>
+
+	* SmtpClient.cs: Actually set some of the headers like Priority,
+	ReplyTo and Sender.
+
 2008-09-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SmtpClient.cs : attachment stream consumption was insufficient.

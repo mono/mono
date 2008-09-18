@@ -671,6 +671,27 @@ namespace System.Net.Mail {
 				SendHeader (HeaderName.Cc, EncodeAddresses (message.CC));
 			SendHeader (HeaderName.Subject, EncodeSubjectRFC2047 (message));
 
+			string v = "normal";
+				
+			switch (message.Priority){
+			case MailPriority.Normal:
+				v = "normal";
+				break;
+				
+			case MailPriority.Low:
+				v = "non-urgent";
+				break;
+				
+			case MailPriority.High:
+				v = "urgent";
+				break;
+			}
+			SendHeader ("Priority", v);
+			if (message.Sender != null)
+				SendHeader ("Sender", EncodeAddress (message.Sender));
+			if (message.ReplyTo != null)
+				SendHeader ("ReplyTo", EncodeAddress (message.ReplyTo));
+			
 			foreach (string s in message.Headers.AllKeys)
 				SendHeader (s, message.Headers [s]);
 
