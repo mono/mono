@@ -215,7 +215,7 @@ namespace MonoTests.System.Web.Routing
 
 		protected override void VerifyAndProcessRequest (IHttpHandler httpHandler, HttpContextBase httpContext)
 		{
-			throw new ApplicationException ();
+			throw new ApplicationException ("MyUrlRoutingHandler");
 		}
 	}
 
@@ -223,7 +223,7 @@ namespace MonoTests.System.Web.Routing
 	{
 		public IHttpHandler GetHttpHandler (RequestContext requestContext)
 		{
-			throw new ApplicationException ();
+			throw new ApplicationException ("ErrorRouteHandler");
 		}
 	}
 

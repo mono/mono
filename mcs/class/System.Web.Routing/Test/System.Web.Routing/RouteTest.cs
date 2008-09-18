@@ -166,6 +166,18 @@ namespace MonoTests.System.Web.Routing
 		}
 
 		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void InvalidConstraint ()
+		{
+			var r = new Route ("{foo}/{bar}", new StopRoutingHandler ());
+			var c = new RouteValueDictionary ();
+			c ["foo"] = Guid.NewGuid ();
+			r.Constraints = c;
+			var hc = new HttpContextStub ("~/x/y", String.Empty);
+			var rd = r.GetRouteData (hc);
+		}
+
+		[Test]
 		public void GetRouteData ()
 		{
 			var r = new Route ("{foo}/{bar}", null);

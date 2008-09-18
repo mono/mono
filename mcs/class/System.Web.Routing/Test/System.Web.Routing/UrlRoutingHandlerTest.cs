@@ -134,13 +134,17 @@ namespace MonoTests.System.Web.Routing
 		}
 
 		[Test]
-		[ExpectedException (typeof (ApplicationException))]
 		public void ProcessRequestMatchError ()
 		{
 			var h = new MyUrlRoutingHandler ();
 			var r = new Route ("foo", new ErrorRouteHandler ());
 			h.RouteCollection.Add (r);
-			h.DoProcessRequest (new HttpContextStub ("~/foo", String.Empty));
+			try {
+				h.DoProcessRequest (new HttpContextStub ("~/foo", String.Empty));
+				Assert.Fail ("#1");
+			} catch (ApplicationException ex) {
+				Assert.AreEqual ("ErrorRouteHandler", ex.Message, "#2");
+			}
 		}
 	}
 }

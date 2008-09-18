@@ -113,6 +113,7 @@ namespace System.Web.Routing
 			// FIXME: use it somewhere.
 			string path = context.Request.Path;
 
+			// default handler (forbidden in MVC/DynamicData projects)
 			context.RewritePath ("~/UrlRouting.axd");
 		}
 	}

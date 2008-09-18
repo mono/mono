@@ -29,6 +29,7 @@
 //
 using System;
 using System.Security.Permissions;
+using System.Text.RegularExpressions;
 using System.Web;
 
 namespace System.Web.Routing
@@ -123,14 +124,19 @@ namespace System.Web.Routing
 			return new VirtualPathData (this, s);
 		}
 
-		[MonoTODO]
 		protected virtual bool ProcessConstraint (HttpContextBase httpContext, object constraint, string parameterName, RouteValueDictionary values, RouteDirection routeDirection)
 		{
 			IRouteConstraint irc = constraint as IRouteConstraint;
-			if (irc != null && irc.Match (httpContext, this, parameterName, values, routeDirection))
-				return true;
+			if (irc != null)
+				return irc.Match (httpContext, this, parameterName, values, routeDirection);
 
-			throw new NotImplementedException ();
+			string s = constraint as string;
+			if (s != null) {
+				string v = values [parameterName] as string;
+				return Regex.Match (v, s).Success;
+			}
+
+			throw new InvalidOperationException (String.Format ("Constraint parameter '{0}' must be either a string or an IRouteConstraint instance", parameterName));
 		}
 	}
 }

@@ -64,16 +64,18 @@ namespace System.Web.Routing
 			ProcessRequest (new HttpContextWrapper (httpContext));
 		}
 
-		[MonoTODO]
 		protected virtual void ProcessRequest (HttpContextBase httpContext)
 		{
+			if (httpContext == null)
+				throw new ArgumentNullException ("httpContext");
+
 			var rd = RouteCollection.GetRouteData (httpContext);
 			if (rd == null)
 				throw new HttpException ("The incoming request does not match any route");
+			if (rd.RouteHandler == null)
+				throw new InvalidOperationException ("No  IRouteHandler is assigned to the selected route");
 
-			throw new NotImplementedException ();
-
-			RequestContext rc = null;
+			RequestContext rc = new RequestContext (httpContext, rd);
 
 			var hh = rd.RouteHandler.GetHttpHandler (rc);
 			VerifyAndProcessRequest (hh, httpContext);

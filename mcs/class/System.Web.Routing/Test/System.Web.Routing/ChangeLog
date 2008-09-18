@@ -1,3 +1,9 @@
+2008-09-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* RouteTest.cs : test ProcessConstraint().
+	* UrlRoutingHandlerTest.cs : more cosmetic test on thrown exception.
+	* TestStubTypes.cs : some notations.
+
 2008-09-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UrlRoutingModuleTest.cs: new test (including "huh?" ones).

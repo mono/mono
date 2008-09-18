@@ -1,3 +1,9 @@
+2008-09-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Route.cs : reject invalid constraint.
+	* UrlRoutingHandler.cs : more ProcessRequest() impl.
+	* UrlRoutingModule.cs : note.
+
 2008-09-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpMethodConstraint.cs, Route.cs, RouteCollection.cs,
