@@ -1,3 +1,10 @@
+
+Thu Sep 18 18:18:47 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mono-perfcounters-def.h: fix the types of a few counters.
+	* mono-perfcounters.c: implemented the instance names getter
+	and a few bugfixes.
+
 2008-09-18  Atsushi Enomoot  <atsushi@ximian.com>
 
 	* culture-info-table.h : regenerated.
