@@ -44,7 +44,7 @@ namespace System.Runtime.Remoting.Channels.Http
 
 		//TODO: use these
 		string machineName = null;
-		IPAddress[] bindAddresses = new IPAddress[] { IPAddress.Any };
+		IPAddress bindAddress = IPAddress.Any;
 		int port = -1; // querying GetChannelUri () on .NET indicates this is the default value
 		bool suppressChannelData = false;
 		bool useIPAddress = true;
@@ -91,7 +91,7 @@ namespace System.Runtime.Remoting.Channels.Http
 						this.suppressChannelData = Convert.ToBoolean (property.Value);
 						break;
 					case "bindTo":
-						bindAddresses [0] = IPAddress.Parse ((string)property.Value);
+						bindAddress = IPAddress.Parse ((string)property.Value);
 						break;
 					case "useIpAddress":
 						this.useIPAddress = Convert.ToBoolean (property.Value);
@@ -137,18 +137,19 @@ namespace System.Runtime.Remoting.Channels.Http
 			//resolve names (modified from TcpChannel)
 			if (machineName == null) {
 				if (useIPAddress) {
-					if (!bindAddresses[0].Equals (IPAddress.Any)) {
-						machineName = bindAddresses[0].ToString ();
+					if (!bindAddress.Equals (IPAddress.Any)) {
+						machineName = bindAddress.ToString ();
 					} else {
 						IPHostEntry hostEntry = Dns.Resolve (Dns.GetHostName ());
 						if (hostEntry.AddressList.Length == 0)
 							throw new RemotingException ("IP address could not be determined for this host");
-						bindAddresses = hostEntry.AddressList;
-						machineName = bindAddresses[0].ToString ();
+						// We DON'T want to take the resolved address from the hostEntry, since the socket
+						// should still bind to IPAddress.Any, so that we get the loopback too
+						machineName = hostEntry.AddressList[0].ToString ();
 					}
 				} else {
 					IPHostEntry hostEntry = Dns.GetHostByName (Dns.GetHostName ());
-					bindAddresses = hostEntry.AddressList;
+					bindAddress = hostEntry.AddressList[0];
 					machineName = hostEntry.HostName;
 				}
 			}
@@ -236,17 +237,6 @@ namespace System.Runtime.Remoting.Channels.Http
 			return result;
 		}
 
-		static int GetFreePort (IPAddress address)
-		{
-			IPEndPoint endPoint = new IPEndPoint (address, 0);
-			using (System.Net.Sockets.Socket s = new System.Net.Sockets.Socket (endPoint.AddressFamily,
-				System.Net.Sockets.SocketType.Stream, System.Net.Sockets.ProtocolType.Tcp))
-			{
-				s.Bind (endPoint);
-				return ((IPEndPoint)s.LocalEndPoint).Port;
-			}
-		}
-
 		public void StartListening (object data)
 		{
 			if (listener != null)
@@ -256,7 +246,7 @@ namespace System.Runtime.Remoting.Channels.Http
 				return;
 
 			try {
-				listener = new RemotingHttpListener (bindAddresses[0], port, sink);
+				listener = new RemotingHttpListener (bindAddress, port, sink);
 			} catch (Exception) {
 				DestroyListener ();
 				throw;

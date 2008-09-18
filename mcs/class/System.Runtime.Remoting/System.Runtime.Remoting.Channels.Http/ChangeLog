@@ -1,5 +1,12 @@
 2008-09-18  Michael Hutchinson  <mhutchinson@novell.com>
 
+	* HttpServerChannel.cs: Don't try to resolve IPAddress.Any, so that 
+	by default we bind to localhost/lo as well as the host address.
+	Also remove dead code for binding to multiple IP addresses; I don't 
+	think we need to handle that.
+
+2008-09-18  Michael Hutchinson  <mhutchinson@novell.com>
+
 	* HttpChannel.cs: Fix default channel name.
 
 2008-09-18  Michael Hutchinson  <mhutchinson@novell.com>
