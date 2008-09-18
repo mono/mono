@@ -40,9 +40,9 @@ namespace Mono.CSharp {
 		static int count;
 		static Thread invoke_thread;
 		
-		static public ArrayList using_alias_list = new ArrayList ();
-		static public ArrayList using_list = new ArrayList ();
-		static public Hashtable fields = new Hashtable ();
+		static ArrayList using_alias_list = new ArrayList ();
+		static ArrayList using_list = new ArrayList ();
+		static Hashtable fields = new Hashtable ();
 
 		static Type   interactive_base_class = typeof (InteractiveBase);
 		static Driver driver;
@@ -67,7 +67,7 @@ namespace Mono.CSharp {
 				return;
 
 			RootContext.Version = LanguageVersion.Default;
-			Driver driver = Driver.Create (args, false);
+			driver = Driver.Create (args, false);
 			if (driver == null)
 				throw new Exception ("Failed to create compiler driver with the given arguments");
 
