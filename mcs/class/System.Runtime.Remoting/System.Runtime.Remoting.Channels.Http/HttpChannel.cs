@@ -40,7 +40,7 @@ namespace System.Runtime.Remoting.Channels.Http
 	{
 		HttpClientChannel client;
 		HttpServerChannel server;
-		string name = "http server";
+		string name = "http";
 
 		#region Constructors
 

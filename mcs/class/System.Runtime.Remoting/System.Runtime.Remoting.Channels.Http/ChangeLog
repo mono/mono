@@ -1,5 +1,9 @@
 2008-09-18  Michael Hutchinson  <mhutchinson@novell.com>
 
+	* HttpChannel.cs: Fix default channel name.
+
+2008-09-18  Michael Hutchinson  <mhutchinson@novell.com>
+
 	* HttpClientTransportSink: Fix logic error that broke async client 
 	functionality. Fixes HttpAsyncCallTest tests.
 
