@@ -79,6 +79,7 @@ namespace Mono.Audio
 		{
 			if (!_disposed) {
 				Stop ();
+				_disposed = true;
 			}
 		}
 
