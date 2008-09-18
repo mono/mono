@@ -1,3 +1,14 @@
+2008-09-18  Bill Holmes  <billholmes54@gmail.com>
+
+	* marshal.c (emit_marshal_variant) : Change the attribute checks to 
+	  handle "[in] ref" and "[in][out] ref" cases.
+
+	* marshal.c (cominterop_get_ccw) : The wrong signature was being passed
+	  to mono_mb_create_method.  This was causing problems calling native to
+	  managed passing Variants by value.
+
+	Code is contributed under MIT/X11 license.
+
 2008-09-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (can_access_internals): Call mono_assembly_load_friends ()
