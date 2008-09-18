@@ -385,6 +385,7 @@ System.Windows.Forms/IDeviceContext.cs
 System.Windows.Forms/IDropTarget.cs
 System.Windows.Forms/IFeatureSupport.cs
 System.Windows.Forms/IFileReaderService.cs
+System.Windows.Forms/IKeyFilter.cs
 System.Windows.Forms/IMessageFilter.cs
 System.Windows.Forms/IRootGridEntry.cs
 System.Windows.Forms/IWin32Window.cs

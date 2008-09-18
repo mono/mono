@@ -1,3 +1,7 @@
+2008-09-18  Mike Gorse <<mgorse@novell.com>
+
+	* System.Windows.Forms.dll.sources: Added IKeyFilter.cs.
+
 2008-08-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Windows.Forms_test.dll.sources: Added FormEventTest.cs.

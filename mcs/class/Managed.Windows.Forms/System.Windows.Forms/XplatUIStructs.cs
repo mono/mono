@@ -815,6 +815,15 @@ namespace System.Windows.Forms {
 		internal POINT			ptMaxTrackSize;
 	}
 
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
+	internal struct KeyFilterData {
+			internal bool Down;
+			internal int keycode;
+			internal int keysym;
+			internal Keys ModifierKeys;
+			internal String str;
+		}
+
 	internal enum ScrollBarCommands {
 		SB_LINEUP		= 0,
 		SB_LINELEFT		= 0,

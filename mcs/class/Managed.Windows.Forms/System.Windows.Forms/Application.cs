@@ -508,6 +508,11 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal static void AddKeyFilter (IKeyFilter value)
+		{
+			XplatUI.AddKeyFilter (value);
+		}
+
 		public static void DoEvents ()
 		{
 			XplatUI.DoEvents ();

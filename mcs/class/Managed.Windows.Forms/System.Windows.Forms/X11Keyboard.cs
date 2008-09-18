@@ -180,6 +180,22 @@ namespace System.Windows.Forms {
 				return IntPtr.Zero;
 		}
 
+		private bool FilterKey (XEvent e, int vkey)
+		{
+			if (XplatUI.key_filters.Count == 0)
+				return false;
+			IntPtr status;
+			XKeySym ks;
+			KeyFilterData data;
+			data.Down = (e.type == XEventName.KeyPress);
+			data.ModifierKeys = ModifierKeys;
+			LookupString (ref e, 0, out ks, out status);
+			data.keysym = (int)ks;
+			data.keycode = e.KeyEvent.keycode;
+			data.str = lookup_buffer.ToString (0, lookup_buffer.Length);
+			return XplatUI.FilterKey (data);
+		}
+
 		public void FocusIn (IntPtr window)
 		{
 			if (xim == IntPtr.Zero)
@@ -281,6 +297,8 @@ namespace System.Windows.Forms {
 				vkey = (int) VirtualKeys.VK_NONAME;
 			}
 
+			if (FilterKey (xevent, vkey))
+				return;
 			switch ((VirtualKeys) (vkey & 0xFF)) {
 			case VirtualKeys.VK_NUMLOCK:
 				GenerateMessage (VirtualKeys.VK_NUMLOCK, 0x45, xevent.KeyEvent.keycode, xevent.type, event_time);

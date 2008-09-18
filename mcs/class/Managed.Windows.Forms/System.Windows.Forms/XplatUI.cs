@@ -44,6 +44,7 @@ namespace System.Windows.Forms {
 		#region Local Variables
 		static XplatUIDriver		driver;
 		static String			default_class_name;
+		internal static ArrayList key_filters = new ArrayList ();
 		#endregion	// Local Variables
 
 		#region Private Methods
@@ -1254,6 +1255,25 @@ namespace System.Windows.Forms {
 		// Santa's little helper
 		internal static void Version() {
 			Console.WriteLine("Xplat version $Revision: $");
+		}
+
+		internal static void AddKeyFilter (IKeyFilter value)
+		{
+			lock (key_filters) {
+				key_filters.Add (value);
+			}
+		}
+
+		internal static bool FilterKey (KeyFilterData key)
+		{
+			lock (key_filters) {
+				for (int i = 0; i < key_filters.Count; i++) {
+					IKeyFilter filter = (IKeyFilter) key_filters[i];
+					if (filter.PreFilterKey (key))
+						return true;
+				}
+			}
+			return false;
 		}
 		#endregion	// Public Static Methods
 
