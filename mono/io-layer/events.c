@@ -192,6 +192,7 @@ static gpointer event_create (WapiSecurityAttributes *security G_GNUC_UNUSED,
 		SetLastError (ERROR_GEN_FAILURE);
 		return(NULL);
 	}
+	_wapi_handle_ref(handle);
 
 	pthread_cleanup_push ((void(*)(void *))_wapi_handle_unlock_handle,
 			      handle);
