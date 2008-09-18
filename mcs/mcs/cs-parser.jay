@@ -1015,7 +1015,7 @@ constant_declarator
 	  {
 	  	++lexer.parsing_block;
 	  }	
-	  constant_expression
+	  constant_initializer
 	  {
 	  	--lexer.parsing_block;
 		$$ = new VariableDeclaration ((LocatedToken) $1, $4);
@@ -1026,6 +1026,11 @@ constant_declarator
 		Report.Error (145, ((LocatedToken) $1).Location, "A const field requires a value to be provided");
 		$$ = null;
 	  }
+	;
+	
+constant_initializer
+	: constant_expression
+	| array_initializer
 	;
 
 field_declaration

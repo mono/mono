@@ -522,7 +522,11 @@ namespace Mono.CSharp {
 			if (c != null)
 				return c;
 
-			Const.Error_ExpressionMustBeConstant (loc, mc.GetSignatureForError ());
+			if (type != null && TypeManager.IsReferenceType (type))
+				Const.Error_ConstantCanBeInitializedWithNullOnly (type, loc, mc.GetSignatureForError ());
+			else
+				Const.Error_ExpressionMustBeConstant (loc, mc.GetSignatureForError ());
+
 			return null;
 		}
 
@@ -2205,7 +2209,7 @@ namespace Mono.CSharp {
 				// Even if resolved result is a constant original expression was not
 				// and attribute accepts constants only
 				//
-				Attribute.Error_AttributeArgumentNotValid (loc);
+				Attribute.Error_AttributeArgumentNotValid (orig_expr.Location);
 				value = null;
 				return false;
 			}
@@ -2216,6 +2220,46 @@ namespace Mono.CSharp {
 				if (c != null)
 					c = new ReducedConstantExpression (c, orig_expr);
 				return c;
+			}
+		}
+
+		sealed class ReducedExpressionStatement : ExpressionStatement
+		{
+			readonly Expression orig_expr;
+			readonly ExpressionStatement stm;
+
+			public ReducedExpressionStatement (ExpressionStatement stm, Expression orig)
+			{
+				this.orig_expr = orig;
+				this.stm = stm;
+				this.loc = orig.Location;
+			}
+
+			public override Expression CreateExpressionTree (EmitContext ec)
+			{
+				return orig_expr.CreateExpressionTree (ec);
+			}
+
+			public override Expression DoResolve (EmitContext ec)
+			{
+				eclass = stm.eclass;
+				type = stm.Type;
+				return this;
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				stm.Emit (ec);
+			}
+
+			public override void EmitStatement (EmitContext ec)
+			{
+				stm.EmitStatement (ec);
+			}
+
+			public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+			{
+				stm.MutateHoistedGenericType (storey);
 			}
 		}
 
@@ -2233,11 +2277,20 @@ namespace Mono.CSharp {
 			return new ReducedConstantExpression (expr, original_expr);
 		}
 
+		public static ExpressionStatement Create (ExpressionStatement s, Expression orig)
+		{
+			return new ReducedExpressionStatement (s, orig);
+		}
+
 		public static Expression Create (Expression expr, Expression original_expr)
 		{
 			Constant c = expr as Constant;
 			if (c != null)
 				return Create (c, original_expr);
+
+			ExpressionStatement s = expr as ExpressionStatement;
+			if (s != null)
+				return Create (s, original_expr);
 
 			return new ReducedExpression (expr, original_expr);
 		}

@@ -2074,7 +2074,7 @@ namespace Mono.CSharp {
 				e = ce.ConvertImplicitly (variable_type);
 				if (e == null) {
 					if (TypeManager.IsReferenceType (variable_type))
-						Const.Error_ConstantCanBeInitializedWithNullOnly (vi.Location, vi.Name);
+						Const.Error_ConstantCanBeInitializedWithNullOnly (variable_type, vi.Location, vi.Name);
 					else
 						ce.Error_ValueCannotBeConverted (ec, vi.Location, variable_type, false);
 					continue;

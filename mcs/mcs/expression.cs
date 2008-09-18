@@ -5409,9 +5409,9 @@ namespace Mono.CSharp {
 			}
 
 			if (Arguments == null) {
-				Expression c = Constantify (type);
+				Constant c = Constantify (type);
 				if (c != null)
-					return c;
+					return ReducedExpression.Create (c, this);
 			}
 
 			if (TypeManager.IsDelegateType (type)) {
@@ -9406,7 +9406,7 @@ namespace Mono.CSharp {
 			if (eclass != ExprClass.Invalid)
 				return this;
 
-			bool is_elements_initialization = false;
+			bool is_collection_initialization = false;
 			ArrayList element_names = null;
 			for (int i = 0; i < initializers.Count; ++i) {
 				Expression initializer = (Expression) initializers [i];
@@ -9414,7 +9414,6 @@ namespace Mono.CSharp {
 
 				if (i == 0) {
 					if (element_initializer != null) {
-						is_elements_initialization = true;
 						element_names = new ArrayList (initializers.Count);
 						element_names.Add (element_initializer.Name);
 					} else {
@@ -9427,15 +9426,16 @@ namespace Mono.CSharp {
 								TypeManager.CSharpName (TypeManager.ienumerable_type));
 							return null;
 						}
+						is_collection_initialization = true;
 					}
 				} else {
-					if (is_elements_initialization == (element_initializer == null)) {
+					if (is_collection_initialization != (element_initializer == null)) {
 						Report.Error (747, initializer.Location, "Inconsistent `{0}' member declaration",
-							is_elements_initialization ? "object initializer" : "collection initializer");
+							is_collection_initialization ? "collection initializer" : "object initializer");
 						continue;
 					}
-					
-					if (is_elements_initialization) {
+
+					if (!is_collection_initialization) {
 						if (element_names.Contains (element_initializer.Name)) {
 							Report.Error (1912, element_initializer.Location,
 								"An object initializer includes more than one member `{0}' initialization",
@@ -9453,7 +9453,7 @@ namespace Mono.CSharp {
 					initializers [i] = e;
 			}
 
-			type = is_elements_initialization ? typeof (ElementInitializer) : typeof (CollectionOrObjectInitializers);
+			type = is_collection_initialization ? typeof (CollectionOrObjectInitializers) : typeof (ElementInitializer);
 			eclass = ExprClass.Variable;
 			return this;
 		}
@@ -9549,7 +9549,8 @@ namespace Mono.CSharp {
 		{
 			ArrayList args = new ArrayList (2);
 			args.Add (new Argument (base.CreateExpressionTree (ec)));
-			args.Add (new Argument (initializers.CreateExpressionTree (ec)));
+			if (!initializers.IsEmpty)
+				args.Add (new Argument (initializers.CreateExpressionTree (ec)));
 
 			return CreateExpressionFactoryCall (
 				initializers.IsCollectionInitializer ? "ListInit" : "MemberInit",
@@ -9566,8 +9567,10 @@ namespace Mono.CSharp {
 				return null;
 
 			// Empty initializer can be optimized to simple new
-			if (initializers.IsEmpty)
-				return e;
+			if (initializers.IsEmpty) {
+				initializers.Resolve (ec);
+				return ReducedExpression.Create (e, this).Resolve (ec);
+			}
 
 			Expression previous = ec.CurrentInitializerVariable;
 			ec.CurrentInitializerVariable = new InitializerTargetExpression (this);
@@ -9674,7 +9677,8 @@ namespace Mono.CSharp {
 			type.DefineMembers ();
 			type.Define ();
 			type.EmitType ();
-			type.CloseType ();
+			if (Report.Errors == 0)
+				type.CloseType ();
 
 			RootContext.ToplevelTypes.AddAnonymousType (type);
 			return type;

@@ -183,10 +183,10 @@ namespace Mono.CSharp {
 				mc.GetSignatureForError ());
 		}
 
-		public static void Error_ConstantCanBeInitializedWithNullOnly (Location loc, string name)
+		public static void Error_ConstantCanBeInitializedWithNullOnly (Type type, Location loc, string name)
 		{
-			Report.Error (134, loc, "`{0}': the constant of reference type other than string can only be initialized with null",
-				name);
+			Report.Error (134, loc, "A constant `{0}' of reference type `{1}' can only be initialized with null",
+				name, TypeManager.CSharpName (type));
 		}
 
 		public static void Error_InvalidConstantType (Type t, Location loc)
@@ -231,7 +231,7 @@ namespace Mono.CSharp {
 			Constant c = value.ConvertImplicitly (MemberType);
 			if (c == null) {
 				if (TypeManager.IsReferenceType (MemberType))
-					Error_ConstantCanBeInitializedWithNullOnly (Location, GetSignatureForError ());
+					Error_ConstantCanBeInitializedWithNullOnly (MemberType, Location, GetSignatureForError ());
 				else
 					value.Error_ValueCannotBeConverted (ec, Location, MemberType, false);
 			}

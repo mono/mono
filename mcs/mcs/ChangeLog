@@ -1,3 +1,9 @@
+2008-09-18  Marek Safar  <marek.safar@gmail.com>
+
+	* const.cs, expression.cs, statement.cs, ecore.cs, cs-parser.jay:
+	Fixed expression tree representation of empty new expression and
+	new initializer expression.
+
 2008-09-18  Miguel de Icaza  <miguel@novell.com>
 
 	* eval.cs: Remove warning, keep reference to driver around.
