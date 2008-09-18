@@ -1,3 +1,11 @@
+2008-09-18  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* RelatedPropertyManager.cs: The properties returned by
+	GetItemProperties should be that ones of the *actual* object returned
+	by the property, not the property type - this is very special when the
+	property exposes a type, but the returned object actually is a child
+	class and implements more functionality and properties.
+
 2008-09-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Binding.cs: Don't look for the property in the data source if the
