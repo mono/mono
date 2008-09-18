@@ -44,6 +44,8 @@ namespace Mono.Web.Util
 	{
 		const string settingsMapFileName = "settings.map";
 		const string localSettingsMapFileName = settingsMapFileName + ".config";
+
+		static object mapperLock = new object ();
 		
 		static SettingsMappingManager _instance;
 		static string _mappingFile;
@@ -157,9 +159,11 @@ namespace Mono.Web.Util
 				return mappedSection;
 			
 			object ret = _instance.MapSection (input, input.GetType ());
-			if (ret != null && !_mappedSections.ContainsKey (ret))
-				_mappedSections.Add (ret, ret);
-
+			lock (mapperLock) {
+				if (ret != null && !_mappedSections.ContainsKey (ret))
+					_mappedSections.Add (ret, ret);
+			}
+			
 			return ret;
 		}
 

@@ -1,3 +1,8 @@
+2008-09-18  Marek Habersack  <mhabersack@novell.com>
+
+	* SettingsMappingManager.cs: take care of a small race condition
+	when mapping sections.
+
 2008-03-01  Marek Habersack  <mhabersack@novell.com>
 
 	* ISectionSettingsMapper.cs, MembershipSectionMapper.cs,
