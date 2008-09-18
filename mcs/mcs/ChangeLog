@@ -1,5 +1,11 @@
 2008-09-18  Marek Safar  <marek.safar@gmail.com>
 
+	* driver.cs, namespace.cs: Read types and namespaces after all
+	requested assemblies are loaded, fixes issues with System.Core
+	auto-reference, and #419888.
+
+2008-09-18  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #417705
 	* cs-parser.jay: Fixed as/is operator expression split.
 

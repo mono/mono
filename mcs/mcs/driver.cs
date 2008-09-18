@@ -474,8 +474,8 @@ namespace Mono.CSharp
 
 			foreach (DictionaryEntry entry in external_aliases)
 				LoadAssembly ((string) entry.Value, (string) entry.Key, false);
-			
-			return;
+				
+			RootNamespace.ComputeNamespaces ();
 		}
 
 		static string [] LoadArgs (string file)
@@ -734,28 +734,9 @@ namespace Mono.CSharp
 
 		public void ProcessDefaultConfig ()
 		{
-			bool need_system_core = RootContext.Version > LanguageVersion.ISO_2;
-			
-			if (!load_default_config){
-				//
-				// Yet another SRE related problem, we have to always load System.Core
-				// even with -noconfig, otherwise the check for ExtensionAttribute in
-				// loaded assemblies won't work
-				//
-
-				if (need_system_core && references.Count != 0) {
-					//
-					// TODO: use TypeManager.CoreLookupType (...) when it stops defining types
-					// on your back
-					//
-					Namespace n = GlobalRootNamespace.Global.GetNamespace ("System.Runtime.CompilerServices", false);
-					if (n == null || !n.HasDefinition ("ExtensionAttribute")) {
-						soft_references.Add ("System.Core");
-					}
-				}
+			if (!load_default_config)
 				return;
-			}
-			
+	
 			//
 			// For now the "default config" is harcoded into the compiler
 			// we can move this outside later
@@ -795,7 +776,7 @@ namespace Mono.CSharp
 
 			soft_references.AddRange (default_config);
 
-			if (need_system_core)
+			if (RootContext.Version > LanguageVersion.ISO_2)
 				soft_references.Add ("System.Core");
 		}
 
