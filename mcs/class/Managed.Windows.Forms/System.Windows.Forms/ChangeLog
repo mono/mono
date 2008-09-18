@@ -1,5 +1,10 @@
 2008-09-18  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* XplatUIX11.cs: Send WM_HELP when F1 is pressed.
+	[Fixes bug #427073]
+
+2008-09-18  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* XplatUIX11.cs: 
 	 - Do not set _NET_WM_WINDOW_TYPE_DIALOG for modal forms, because this 
 	 leads to the window manager overriding our border style and zorder. 

@@ -3736,6 +3736,22 @@ namespace System.Windows.Forms {
 			switch(xevent.type) {
 				case XEventName.KeyPress: {
 					Keyboard.KeyEvent (FocusWindow, xevent, ref msg);
+
+					// F1 key special case - WM_HELP sending
+					if (msg.wParam == (IntPtr)VirtualKeys.VK_F1 || msg.wParam == (IntPtr)VirtualKeys.VK_HELP) {
+						// Send the keypress message first
+						NativeWindow.WndProc (hwnd.client_window, msg.message, msg.wParam, msg.lParam);
+
+						// Send wM_HELP
+						HELPINFO helpInfo = new HELPINFO ();
+						GetCursorPos (IntPtr.Zero, out helpInfo.MousePos.x, out helpInfo.MousePos.y);
+						IntPtr helpInfoPtr = Marshal.AllocHGlobal (Marshal.SizeOf (helpInfo));
+						Marshal.StructureToPtr (helpInfo, helpInfoPtr, true);
+						NativeWindow.WndProc (hwnd.client_window, Msg.WM_HELP, IntPtr.Zero, helpInfoPtr);
+						Marshal.FreeHGlobal (helpInfoPtr);
+
+						goto ProcessNextMessage;
+					}
 					break;
 				}
 
