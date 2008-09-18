@@ -1,3 +1,8 @@
+2008-09-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* TcpConnectionPool.cs: Set the NoDelay flag on the socket to avoid 
+	excessive waiting by the tcp stack. Fixes #416462.
+
 2008-09-17  Jeffrey Stedfast  <fejj@novell.com>
 
 	* TcpChannel.cs (ParseTcpURL): If given "tcp://", don't set host
