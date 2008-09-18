@@ -1,3 +1,7 @@
+2008-09-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* sv_SE.xml : fix bug #426942 (sv-SE time format was old).
+
 2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* es_ES.xml : couple of format string fixes for bug #335298.
