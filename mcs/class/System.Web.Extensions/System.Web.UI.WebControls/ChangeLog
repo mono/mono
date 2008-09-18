@@ -1,3 +1,15 @@
+2008-09-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* LinqDataSource.cs, LinqDataSourceView.cs
+	  LinqDataSourceContextEventArgs.cs
+	  LinqDataSourceDeleteEventArgs.cs
+	  LinqDataSourceDisposeEventArgs.cs
+	  LinqDataSourceInsertEventArgs.cs
+	  LinqDataSourceSelectEventArgs.cs
+	  LinqDataSourceStatusEventArgs.cs
+	  LinqDataSourceUpdateEventArgs.cs
+	  LinqDataSourceValidationException.cs : stubbed out.
+
 2008-05-08  Marek Habersack  <mhabersack@novell.com>
 
 	* DataPager.cs, DataPager.cs, DataPagerFieldCollection.cs,

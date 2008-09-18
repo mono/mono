@@ -1,3 +1,7 @@
+2008-09-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Web.Extensions.dll.sources: added LinqDataSource stuff.
+
 2008-09-17  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Web.Extensions.dll.sources: added

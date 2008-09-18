@@ -119,3 +119,13 @@
 ./System.Web.DynamicData/DynamicValidatorEventArgs.cs
 ./System.Web.DynamicData/IDynamicDataSource.cs
 ./System.Web.DynamicData/IDynamicValidatorException.cs
+./System.Web.UI.WebControls/LinqDataSource.cs
+./System.Web.UI.WebControls/LinqDataSourceContextEventArgs.cs
+./System.Web.UI.WebControls/LinqDataSourceDeleteEventArgs.cs
+./System.Web.UI.WebControls/LinqDataSourceDisposeEventArgs.cs
+./System.Web.UI.WebControls/LinqDataSourceInsertEventArgs.cs
+./System.Web.UI.WebControls/LinqDataSourceSelectEventArgs.cs
+./System.Web.UI.WebControls/LinqDataSourceStatusEventArgs.cs
+./System.Web.UI.WebControls/LinqDataSourceUpdateEventArgs.cs
+./System.Web.UI.WebControls/LinqDataSourceValidationException.cs
+./System.Web.UI.WebControls/LinqDataSourceView.cs
