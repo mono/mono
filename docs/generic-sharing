@@ -9,15 +9,30 @@ Generic code sharing
 
 The generic class init trampoline is very similar to the class init
 trampoline, with the exception that the VTable of the class to be
-inited is passed in a register, MONO_ARCH_VTABLE_REG.  That can be the
-same as the IMT register.
+inited is passed in a register, MONO_ARCH_VTABLE_REG.  That register
+can be the same as the IMT register.
 
 The call to the generic class init trampoline is never patched because
 the VTable is not constant - it depends on the type arguments of the
 class/method doing the call to the trampoline.  For that reason, the
 trampoline needs a fast path for the case that the class is already
-inited.  See tramp-x86.c for how to portably figure out the number of
-the bit in the bit-field that needs to be checked.
+inited, i.e. the trampoline needs to check the initialized bit of the
+MonoVTable and immediately return if it is set.  See tramp-x86.c for
+how to portably figure out the number of the bit in the bit-field that
+needs to be checked.
+
+Since the MONO_ARCH_VTABLE_REG is needed by the generic class init
+trampoline function (in mini-trampolines.c) it needs to be saved by
+the generic trampoline code in the register save block which is passed
+to the trampoline.  This also applies to the RGCTX fetch trampoline
+(see below).
+
+Like the normal class init trampoline, the result of the generic class
+init trampoline function is not a pointer to code that needs to be
+jumped to.  Instead, just like for the class init trampoline, the
+generic trampoline code must return to the caller instead of jumping
+to the returned value.  The same applies for the RGCTX fetch
+trampoline (see below).
 
 ** RGCTX register
 
@@ -47,13 +62,14 @@ ends in the callee prologue when it is either discarded or stored
 into a local variable.
 
 It's better to avoid registers used for argument passing for the RGCTX
-as it would make the code dealing with calling conventions code a lot harder.
- 
+as it would make the code dealing with calling conventions code a lot
+harder.
+
 ** Method prologue
 
-Generic shared code that have a RGCTX receive it in RGCTX_REG. There must be
-a check in mono_arch_emit_prolog for MonoCompile::rgctx_var and if set
-store it. See mini-x86.c for reference.  
+Generic shared code that have a RGCTX receive it in RGCTX_REG.  There
+must be a check in mono_arch_emit_prolog for MonoCompile::rgctx_var
+and if set store it.  See mini-x86.c for reference.
 
 ** Dealing with types
 
@@ -88,14 +104,14 @@ the layout of a RGCTX:
         .
         .
 
-For fetching a slot from a RGCTX the trampoline is passed a pointer to
-the VTable.  From there it has to fetch the pointer to the RGCTX,
-which might be null.  Then it has to traverse the correct number of
-"next" links, each of which might be NULL.  Arriving at the right
-array it needs to fetch the slot, which might also be NULL.  If any of
-the NULL cases, the trampoline must transition to unmanaged code to
-potentially setup the RGCTX and fill the slot.  Here is pseudo-code
-for fetching slot 11:
+For fetching a slot from a RGCTX the trampoline is passed a pointer
+(as a normal integer argument) to the VTable.  From there it has to
+fetch the pointer to the RGCTX, which might be null.  Then it has to
+traverse the correct number of "next" links, each of which might be
+NULL.  Arriving at the right array it needs to fetch the slot, which
+might also be NULL.  If any of the NULL cases, the trampoline must
+transition to unmanaged code to potentially setup the RGCTX and fill
+the slot.  Here is pseudo-code for fetching slot 11:
 
     ; vtable ptr in r1
     ; fetch RGCTX array 0
@@ -141,6 +157,18 @@ slot number.  Use the macro MONO_RGCTX_SLOT_IS_MRGCTX to query whether
 a trampoline for an MRGCTX is needed, as opposed to one for a RGCTX.
 Use MONO_RGCTX_SLOT_INDEX to get the index of the slot (like 2 for
 "slot 2" as above).
+
+The unmanaged fetch code is yet another trampoline created via
+mono_arch_create_specific_trampoline(), of type
+MONO_TRAMPOLINE_RGCTX_LAZY_FETCH.  It's given the slot number as the
+trampoline argument.  In addition, the pointer to the VTable/MRGCTX is
+passed in MONO_ARCH_VTABLE_REG (like the VTable to the generic class
+init trampoline - see above).
+
+Like the class init and generic class init trampolines, the RGCTX
+fetch trampoline code doesn't return code that must be jumped to, so,
+like for those trampolines (see above), the generic trampoline code
+must do a normal return instead.
 
 
 * Getting generics information about a stack frame
