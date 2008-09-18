@@ -1,4 +1,4 @@
-// Compiler options: -noconfig -r:gtest-exmethod-22-lib.dll
+// Compiler options: -noconfig -r:gtest-exmethod-22-lib.dll -r:System.Core.dll
 
 using System;
 
