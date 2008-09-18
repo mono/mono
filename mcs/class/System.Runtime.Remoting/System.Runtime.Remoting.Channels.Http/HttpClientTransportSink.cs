@@ -64,7 +64,6 @@ namespace System.Runtime.Remoting.Channels.Http
 			
 			if (!isOneWay) {
 				sinkStack.Push (this, request);
-			} else {
 				request.BeginGetResponse (new AsyncCallback (AsyncProcessResponseCallback), sinkStack);
 			}
 		}
