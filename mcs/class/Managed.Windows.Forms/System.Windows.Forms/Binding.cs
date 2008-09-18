@@ -339,7 +339,8 @@ namespace System.Windows.Forms {
 
 			if (manager == null) {
 				manager = control.BindingContext [data_source, binding_member_info.BindingPath];
-				if (manager.Position > -1 && 
+
+				if (manager.Position > -1 && binding_member_info.BindingField != String.Empty &&
 					TypeDescriptor.GetProperties (manager.Current).Find (binding_member_info.BindingField, true) == null)
 					throw new ArgumentException ("Cannot bind to property '" + binding_member_info.BindingField + "' on DataSource.", 
 							"dataMember");
