@@ -81,6 +81,18 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
+		public void CtorEmptyProperty ()
+		{
+			Binding b = new Binding ("Text", 6, String.Empty);
+			Control c = new Control ();
+			c.BindingContext = new BindingContext ();
+			c.CreateControl ();
+
+			c.DataBindings.Add (b);
+			Assert.AreEqual ("6", c.Text, "A1");
+		}
+
+		[Test]
 		public void BindingManagerBaseTest ()
 		{
 			if (TestHelper.RunningOnUnix) {
