@@ -1,4 +1,4 @@
-// cs0120-9.cs: `X.Y(System.Text.StringBuilder)': An object reference is required for the nonstatic field, method or property
+// CS0120: An object reference is required to access non-static member `X.Y(System.Text.StringBuilder)'
 // Line: 8
 
 using System.Text;

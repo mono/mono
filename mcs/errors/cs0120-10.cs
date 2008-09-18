@@ -1,4 +1,4 @@
-// CS0120: `TestNamespace.TestClass.HelloWorld()': An object reference is required for the nonstatic field, method or property
+// CS0120: An object reference is required to access non-static member `TestNamespace.TestClass.HelloWorld()'
 // Line: 31
 
 using System;

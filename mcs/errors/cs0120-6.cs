@@ -1,4 +1,4 @@
-// cs0120-6.cs: `MemRefMonoBug.Int32': An object reference is required for the nonstatic field, method or property
+// CS0120: An object reference is required to access non-static member `MemRefMonoBug.Int32'
 // Line: 11
 
 using System;
@@ -11,4 +11,3 @@ public class MemRefMonoBug {
 		Int32 = 0;	// mcs crashes in this line
 	}
 }
-
