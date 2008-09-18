@@ -152,8 +152,5 @@ q: cs-parser.cs qh
 	echo -e 'var a = new int[]{1,2,3};\nfrom x in a select x;' | csharp
 	echo -e 'var a = from f in System.IO.Directory.GetFiles ("/tmp") where f == "passwd" select f;' | csharp
 
-# read-eval-print-loop test target, for quickly hackign
-repl: 
-	mono --debug gmcs.exe -v --shell
 
 
