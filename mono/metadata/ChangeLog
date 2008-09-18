@@ -1,3 +1,15 @@
+2008-09-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (can_access_internals): Call mono_assembly_load_friends ()
+	before accessing the friend_assembly_names field.
+
+	* assembly.c (mono_assembly_load_friends): Make this callable multiple
+	times.
+	(mono_assembly_load_from_full): Avoid calling load_friends (), it is
+	called lazily when it is needed.
+
+	* metadata-internals.h (struct _MonoAssembly): Add 
+	'friend_assembly_names_inited' flag.
 
 Thu Sep 18 18:18:47 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
