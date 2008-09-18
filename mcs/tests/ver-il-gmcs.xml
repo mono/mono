@@ -32063,6 +32063,16 @@
       </method>
     </type>
   </test>
+  <test name="test-680.cs">
+    <type name="AsStringProblem.MainClass">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>94</size>
+      </method>
+    </type>
+  </test>
   <test name="test-69.cs">
     <type name="Blah">
       <method name="Void .ctor()">
