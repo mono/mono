@@ -1,5 +1,5 @@
-// cs0134.cs: `o': the constant of reference type other than string can only be initialized with null
-// Line: 6
+// CS0134: A constant `o' of reference type `object' can only be initialized with null
+// Line: 8
 
 public class C
 {
