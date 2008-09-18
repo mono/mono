@@ -1,5 +1,10 @@
 2008-09-18  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* XplatUIX11.cs: Comment out _NET_WM_WINDOW_TYPE_DIALOG in order to 
+	fix unused variable warnings.
+
+2008-09-18  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* XplatUIX11.cs: Send WM_HELP when F1 is pressed.
 	[Fixes bug #427073]
 

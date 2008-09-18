@@ -196,7 +196,7 @@ namespace System.Windows.Forms {
 		//private static IntPtr _NET_WM_WINDOW_TYPE_MENU;
 		private static IntPtr _NET_WM_WINDOW_TYPE_UTILITY;
 		//private static IntPtr _NET_WM_WINDOW_TYPE_SPLASH;
-		private static IntPtr _NET_WM_WINDOW_TYPE_DIALOG;
+		// private static IntPtr _NET_WM_WINDOW_TYPE_DIALOG;
 		private static IntPtr _NET_WM_WINDOW_TYPE_NORMAL;
 		private static IntPtr CLIPBOARD;
 		private static IntPtr PRIMARY;
@@ -593,7 +593,7 @@ namespace System.Windows.Forms {
 				//"_NET_WM_WINDOW_TYPE_TOOLBAR",
 				//"_NET_WM_WINDOW_TYPE_MENU",
 				"_NET_WM_WINDOW_TYPE_UTILITY",
-				"_NET_WM_WINDOW_TYPE_DIALOG",
+				// "_NET_WM_WINDOW_TYPE_DIALOG",
 				//"_NET_WM_WINDOW_TYPE_SPLASH",
 				"_NET_WM_WINDOW_TYPE_NORMAL",
 				"CLIPBOARD",
@@ -667,7 +667,7 @@ namespace System.Windows.Forms {
 			//_NET_WM_WINDOW_TYPE_TOOLBAR = atoms [off++];
 			//_NET_WM_WINDOW_TYPE_MENU = atoms [off++];
 			_NET_WM_WINDOW_TYPE_UTILITY = atoms [off++];
-			_NET_WM_WINDOW_TYPE_DIALOG = atoms [off++];
+			// _NET_WM_WINDOW_TYPE_DIALOG = atoms [off++];
 			//_NET_WM_WINDOW_TYPE_SPLASH = atoms [off++];
 			_NET_WM_WINDOW_TYPE_NORMAL = atoms [off++];
 			CLIPBOARD = atoms [off++];
