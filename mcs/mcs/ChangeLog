@@ -1,5 +1,10 @@
 2008-09-18  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #417705
+	* cs-parser.jay: Fixed as/is operator expression split.
+
+2008-09-18  Marek Safar  <marek.safar@gmail.com>
+
 	* const.cs, expression.cs, statement.cs, ecore.cs, cs-parser.jay:
 	Fixed expression tree representation of empty new expression and
 	new initializer expression.

@@ -3700,6 +3700,14 @@ additive_expression
 		$$ = new Binary (Binary.Operator.Subtraction, 
 			         (Expression) $1, (Expression) $3);
 	  }
+	| additive_expression AS type
+	  {
+		$$ = new As ((Expression) $1, (Expression) $3, (Location) $2);
+	  }
+	| additive_expression IS type
+	  {
+		$$ = new Is ((Expression) $1, (Expression) $3, (Location) $2);
+	  }	  
 	;
 
 shift_expression
@@ -3737,14 +3745,6 @@ relational_expression
 	  {
 		$$ = new Binary (Binary.Operator.GreaterThanOrEqual, 
 			         (Expression) $1, (Expression) $3);
-	  }
-	| relational_expression IS type
-	  {
-		$$ = new Is ((Expression) $1, (Expression) $3, (Location) $2);
-	  }
-	| relational_expression AS type
-	  {
-		$$ = new As ((Expression) $1, (Expression) $3, (Location) $2);
 	  }
 	;
 
