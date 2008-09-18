@@ -149,5 +149,22 @@ namespace MonoTests.System.Web.Routing
 				Assert.AreEqual ("~/UrlRouting.axd", ex.Message, "#2");
 			}
 		}
+
+		[Test]
+		[Ignore ("looks like RouteExistingFiles ( = false) does not affect... so this test needs more investigation")]
+		public void PathToExistingFile ()
+		{
+			var m = new UrlRoutingModule ();
+			RouteTable.Routes.Add (new MyRoute ("{foo}/{bar}", new MyRouteHandler ()));
+			var hc = new HttpContextStub2 ("~/Test/test.html", String.Empty, ".");
+			// it tries to get HttpContextBase.Response, so set it.
+			hc.SetResponse (new HttpResponseStub (3));
+			try {
+				m.PostResolveRequestCache (hc);
+				Assert.Fail ("#1");
+			} catch (ApplicationException ex) {
+				Assert.AreEqual ("~/UrlRouting.axd", ex.Message, "#2");
+			}
+		}
 	}
 }

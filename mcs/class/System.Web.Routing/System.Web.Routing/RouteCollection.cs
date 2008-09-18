@@ -31,6 +31,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Security.Permissions;
 using System.Web;
 using System.Web.Hosting;
@@ -89,7 +90,6 @@ namespace System.Web.Routing
 			}
 		}
 
-		[MonoTODO]
 		public bool RouteExistingFiles { get; set; }
 
 		public void Add (string name, RouteBase item)
@@ -112,14 +112,18 @@ namespace System.Web.Routing
 			return read_lock;
 		}
 
-		[MonoTODO]
 		public RouteData GetRouteData (HttpContextBase httpContext)
 		{
 			if (httpContext == null)
 				throw new ArgumentNullException ("httpContext");
 
-			var path = httpContext.Request.AppRelativeCurrentExecutionFilePath;
-			// FIXME: do some check wrt the property above.
+			if (!RouteExistingFiles) {
+				var path = httpContext.Request.AppRelativeCurrentExecutionFilePath;
+				if (path.StartsWith ("~/", StringComparison.Ordinal))
+					path = path.Substring (2);
+				if (File.Exists (path))
+					return null;
+			}
 
 			if (Count == 0)
 				return null;
@@ -133,13 +137,11 @@ namespace System.Web.Routing
 			return null;
 		}
 
-		[MonoTODO]
 		public VirtualPathData GetVirtualPath (RequestContext requestContext, RouteValueDictionary values)
 		{
 			return GetVirtualPath (requestContext, null, values);
 		}
 
-		[MonoTODO]
 		public VirtualPathData GetVirtualPath (RequestContext requestContext, string name, RouteValueDictionary values)
 		{
 			if (requestContext == null)

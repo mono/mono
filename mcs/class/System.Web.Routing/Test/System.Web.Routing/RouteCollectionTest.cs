@@ -118,6 +118,19 @@ namespace MonoTests.System.Web.Routing
 		}
 
 		[Test]
+		public void GetRouteDataForNonExistent2 ()
+		{
+			var rd = new RouteCollection () { RouteExistingFiles = true }.GetRouteData (new HttpContextStub2 (null, null, null));
+			Assert.IsNull (rd);
+			try {
+				new RouteCollection ().GetRouteData (new HttpContextStub2 (null, null, null));
+				Assert.Fail ("#1");
+			} catch (NotImplementedException) {
+				// it should fail due to the NIE on AppRelativeCurrentExecutionFilePath.
+			}
+		}
+
+		[Test]
 		public void GetRouteDataWrongPathNoRoute ()
 		{
 			new RouteCollection ().GetRouteData (new HttpContextStub (String.Empty, String.Empty));
@@ -225,6 +238,21 @@ namespace MonoTests.System.Web.Routing
 			var rd = c.GetRouteData (hc);
 			var vpd = c.GetVirtualPath (new RequestContext (hc, rd), rd.Values);
 			Assert.AreEqual ("apppath/x/y_modified", vpd.VirtualPath, "#1");
+			Assert.AreEqual (0, vpd.DataTokens.Count, "#2");
+		}
+
+		[Test]
+		[Ignore ("looks like RouteExistingFiles ( = false) does not affect... so this test needs more investigation")]
+		public void GetVirtualPathToExistingFile ()
+		{
+			var c = new RouteCollection ();
+			c.Add (new MyRoute ("{foo}/{bar}", new MyRouteHandler ()));
+			var hc = new HttpContextStub2 ("~/Test/test.html", String.Empty, ".");
+			// it tries to get HttpContextBase.Response, so set it.
+			hc.SetResponse (new HttpResponseStub (3));
+			var rd = c.GetRouteData (hc);
+			var vpd = c.GetVirtualPath (new RequestContext (hc, rd), rd.Values);
+			Assert.AreEqual ("./Test/test.html", vpd.VirtualPath, "#1");
 			Assert.AreEqual (0, vpd.DataTokens.Count, "#2");
 		}
 	}

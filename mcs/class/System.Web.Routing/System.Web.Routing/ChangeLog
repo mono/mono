@@ -1,5 +1,10 @@
 2008-09-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UrlRoutingModule.cs, RouteCollection.cs :
+	  handle RouteExistingFiles.
+
+2008-09-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Route.cs : reject invalid constraint.
 	* UrlRoutingHandler.cs : more ProcessRequest() impl.
 	* UrlRoutingModule.cs : note.

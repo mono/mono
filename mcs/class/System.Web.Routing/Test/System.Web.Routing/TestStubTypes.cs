@@ -188,6 +188,8 @@ namespace MonoTests.System.Web.Routing
 		public override string ApplyAppPathModifier (string virtualPath)
 		{
 			switch (impl_type) {
+			case 3:
+				return virtualPath; // pass thru
 			case 2:
 				return virtualPath + "_modified";
 			case 1:
