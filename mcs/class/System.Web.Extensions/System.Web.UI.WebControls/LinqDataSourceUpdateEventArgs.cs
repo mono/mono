@@ -41,24 +41,24 @@ namespace System.Web.UI.WebControls
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class LinqDataSourceUpdateEventArgs : CancelEventArgs
 	{
-		[MonoTODO]
+
 		public LinqDataSourceUpdateEventArgs (LinqDataSourceValidationException exception)
 		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public LinqDataSourceUpdateEventArgs (object originalObject, object newObject)
-		{
-			throw new NotImplementedException ();
+			Exception = exception;
 		}
 
-		[MonoTODO]
+		public LinqDataSourceUpdateEventArgs (object originalObject, object newObject)
+		{
+			OriginalObject = originalObject;
+			NewObject = newObject;
+		}
+
 		public LinqDataSourceValidationException Exception { get; private set; }
-		[MonoTODO]
+
 		public bool ExceptionHandled { get; set; }
-		[MonoTODO]
+
 		public object NewObject { get; private set; }
-		[MonoTODO]
+
 		public object OriginalObject { get; private set; }
 	}
 }

@@ -40,29 +40,29 @@ namespace System.Web.UI.WebControls
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class LinqDataSourceStatusEventArgs : EventArgs
 	{
-		[MonoTODO]
 		public LinqDataSourceStatusEventArgs (Exception exception)
 		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public LinqDataSourceStatusEventArgs (object result)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public LinqDataSourceStatusEventArgs (object result, int totalRowCount)
-		{
-			throw new NotImplementedException ();
+			Exception = exception;
 		}
 
-		[MonoTODO]
+		public LinqDataSourceStatusEventArgs (object result)
+		{
+			Result = result;
+		}
+
+		public LinqDataSourceStatusEventArgs (object result, int totalRowCount)
+		{
+			Result = result;
+			// no range check
+			TotalRowCount = totalRowCount;
+		}
+
 		public Exception Exception { get; private set; }
-		[MonoTODO]
+
 		public bool ExceptionHandled { get; set; }
-		[MonoTODO]
+
 		public object Result { get; private set; }
-		[MonoTODO]
+
 		public int TotalRowCount { get; private set; }
 	}
 }

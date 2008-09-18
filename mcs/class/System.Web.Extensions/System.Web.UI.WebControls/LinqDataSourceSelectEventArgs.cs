@@ -41,7 +41,6 @@ namespace System.Web.UI.WebControls
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class LinqDataSourceSelectEventArgs : CancelEventArgs
 	{
-		[MonoTODO]
 		public LinqDataSourceSelectEventArgs (
 			DataSourceSelectArguments arguments,
 			IDictionary<string, object> whereParameters,
@@ -50,22 +49,27 @@ namespace System.Web.UI.WebControls
 			IDictionary<string, object> orderGroupsByParameters,
 			IDictionary<string, object> selectParameters)
 		{
-			throw new NotImplementedException ();
+			// all nullable.
+			Arguments = arguments;
+			WhereParameters = whereParameters;
+			OrderByParameters = orderByParameters;
+			GroupByParameters = groupByParameters;
+			OrderGroupsByParameters = orderGroupsByParameters;
+			SelectParameters = selectParameters;
 		}
 
-		[MonoTODO]
 		public DataSourceSelectArguments Arguments { get; private set; }
-		[MonoTODO]
+
 		public IDictionary<string, object> GroupByParameters { get; private set; }
-		[MonoTODO]
+
 		public IOrderedDictionary OrderByParameters { get; private set; }
-		[MonoTODO]
+
 		public IDictionary<string, object> OrderGroupsByParameters { get; private set; }
-		[MonoTODO]
+
 		public object Result { get; set; }
-		[MonoTODO]
+
 		public IDictionary<string, object> SelectParameters { get; private set; }
-		[MonoTODO]
+
 		public IDictionary<string, object> WhereParameters { get; private set; }
 	}
 }

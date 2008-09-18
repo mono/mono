@@ -41,10 +41,9 @@ namespace System.Web.UI.WebControls
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class LinqDataSourceContextEventArgs : EventArgs
 	{
-		[MonoTODO]
 		public LinqDataSourceContextEventArgs ()
+			: this (DataSourceOperation.Select)
 		{
-			throw new NotImplementedException ();
 		}
 
 		public LinqDataSourceContextEventArgs (DataSourceOperation operation)
@@ -52,9 +51,8 @@ namespace System.Web.UI.WebControls
 			Operation = operation;
 		}
 
-		[MonoTODO]
 		public object ObjectInstance { get; set; }
-		[MonoTODO]
+
 		public DataSourceOperation Operation { get; private set; }
 	}
 }

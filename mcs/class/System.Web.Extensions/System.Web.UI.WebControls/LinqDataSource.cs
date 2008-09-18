@@ -32,6 +32,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Security.Permissions;
+using System.Web;
 using System.Web.DynamicData;
 using System.Web.UI;
 
@@ -42,172 +43,369 @@ namespace System.Web.UI.WebControls
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class LinqDataSource : DataSourceControl, IDynamicDataSource
 	{
+		static readonly string [] empty_names = new string [] { "DefaultView" };
+
 		public LinqDataSource ()
 		{
 		}
 
-		[MonoTODO]
-		protected virtual LinqDataSourceView CreateView ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public int Delete (IDictionary keys, IDictionary oldValues)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override DataSourceView GetView (string viewName)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override ICollection GetViewNames ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public int Insert (IDictionary values)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override void LoadViewState (object savedState)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		protected internal override void OnInit (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			Page.LoadComplete += OnPageLoadComplete;
 		}
 
-		[MonoTODO]
+		void OnPageLoadComplete (object sender, EventArgs e)
+		{
+			SelectParameters.UpdateValues (Context, this);
+			WhereParameters.UpdateValues (Context, this);
+			GroupByParameters.UpdateValues (Context, this);
+			OrderByParameters.UpdateValues (Context, this);
+			OrderGroupsByParameters.UpdateValues (Context, this);
+		}
+
 		protected internal override void OnUnload (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			base.OnUnload (e);
+
+			// no further things to do?
 		}
 
-		[MonoTODO]
-		protected override object SaveViewState ()
+		#region View
+
+		LinqDataSourceView view;
+		LinqDataSourceView View {
+			get {
+				if (view == null) {
+					view = CreateView ();
+					if (IsTrackingViewState)
+						((IStateManager) view).TrackViewState ();
+				}
+				return view;
+			}
+		}
+
+		protected virtual LinqDataSourceView CreateView ()
 		{
-			throw new NotImplementedException ();
+			var view = new LinqDataSourceView (this, Guid.NewGuid ().ToString (), HttpContext.Current);
+			if (IsTrackingViewState)
+				((IStateManager) view).TrackViewState ();
+			return view;
 		}
 
-		[MonoTODO]
-		protected override void TrackViewState ()
+		protected override DataSourceView GetView (string viewName)
 		{
-			throw new NotImplementedException ();
+			if (String.IsNullOrEmpty (viewName) || (String.Compare (viewName, empty_names [0], StringComparison.InvariantCultureIgnoreCase) == 0))
+				return View;
+			throw new ArgumentException ("viewName must be 'DefaultView' in LinqDataSource");
 		}
 
-		[MonoTODO]
+		protected override ICollection GetViewNames ()
+		{
+			return empty_names;
+		}
+
+		#endregion
+
+		[Category ("Behavior")]
+		[DefaultValue (false)]
+		public bool AutoGenerateOrderByClause {
+			get { return View.AutoGenerateOrderByClause; }
+			set { View.AutoGenerateOrderByClause = value; }
+		}
+
+		[Category ("Behavior")]
+		[DefaultValue (false)]
+		public bool AutoGenerateWhereClause {
+			get { return View.AutoGenerateWhereClause; }
+			set { View.AutoGenerateWhereClause = value; }
+		}
+
+		[Category ("Behavior")]
+		[DefaultValue (true)]
+		public bool AutoPage {
+			get { return View.AutoPage; }
+			set { View.AutoPage = value; }
+		}
+
+		[Category ("Behavior")]
+		[DefaultValue (true)]
+		public bool AutoSort {
+			get { return View.AutoSort; }
+			set { View.AutoSort = value; }
+		}
+
+		[Category ("Data")]
+		[DefaultValue ("")]
+		[MonoTODO ("looks like we need System.Web.Query.Dynamic stuff or alternative")]
+		public string ContextTypeName {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO ("looks like we need System.Web.Query.Dynamic stuff or alternative")]
+		Type IDynamicDataSource.ContextType { get; set; }
+
+		string IDynamicDataSource.EntitySetName {
+			get { return TableName; }
+			set { TableName = value; }
+		}
+
+		[Category ("Data")]
+		[DefaultValue ("")]
+		public string TableName {
+			get { return View.TableName; }
+			set { View.TableName = value; }
+		}
+
+		[Category ("Behavior")]
+		[DefaultValue (false)]
+		public bool EnableDelete {
+			get { return View.EnableDelete; }
+			set { View.EnableDelete = value; }
+		}
+
+		[Category ("Behavior")]
+		[DefaultValue (false)]
+		public bool EnableInsert {
+			get { return View.EnableInsert; }
+			set { View.EnableInsert = value; }
+		}
+
+		[Category ("Behavior")]
+		[DefaultValue (false)]
+		public bool EnableObjectTracking {
+			get { return View.EnableObjectTracking; }
+			set { View.EnableObjectTracking = value; }
+		}
+
+		[Category ("Behavior")]
+		[DefaultValue (false)]
+		public bool EnableUpdate {
+			get { return View.EnableUpdate; }
+			set { View.EnableUpdate = value; }
+		}
+
+		[Category ("Data")]
+		[DefaultValue ("")]
+		public string GroupBy {
+			get { return View.GroupBy; }
+			set { View.GroupBy = value; }
+		}
+
+		[Category ("Data")]
+		[DefaultValue ("")]
+		public string OrderBy {
+			get { return View.OrderBy; }
+			set { View.OrderBy = value; }
+		}
+
+		[Category ("Data")]
+		[DefaultValue ("")]
+		public string OrderGroupsBy {
+			get { return View.OrderGroupsBy; }
+			set { View.OrderGroupsBy = value; }
+		}
+
+		[Category ("Data")]
+		[DefaultValue ("")]
+		public string Select {
+			get { return View.SelectNew; }
+			set { View.SelectNew = value; }
+		}
+
+		[Category ("Data")]
+		[DefaultValue ("")]
+		public string Where {
+			get { return View.Where; }
+			set { View.Where = value; }
+		}
+
+		[MergableProperty (false)]
+		[Category ("Data")]
+		[DefaultValue (null)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[Browsable (false)]
+		public ParameterCollection SelectParameters {
+			get { return View.SelectNewParameters; }
+		}
+
+		[MergableProperty (false)]
+		[Category ("Data")]
+		[DefaultValue (null)]
+		[Browsable (false)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		public ParameterCollection WhereParameters {
+			get { return View.WhereParameters; }
+		}
+
+		[MergableProperty (false)]
+		[Category ("Data")]
+		[DefaultValue (null)]
+		[Browsable (false)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		public ParameterCollection GroupByParameters {
+			get { return View.GroupByParameters; }
+		}
+
+		[MergableProperty (false)]
+		[Category ("Data")]
+		[DefaultValue (null)]
+		[Browsable (false)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		public ParameterCollection OrderByParameters {
+			get { return View.OrderByParameters; }
+		}
+
+		[MergableProperty (false)]
+		[Category ("Data")]
+		[DefaultValue (null)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[Browsable (false)]
+		public ParameterCollection OrderGroupsByParameters {
+			get { return View.OrderGroupsByParameters; }
+		}
+
+		[MergableProperty (false)]
+		[Category ("Data")]
+		[DefaultValue (null)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[Browsable (false)]
+		public ParameterCollection DeleteParameters {
+			get { return View.DeleteParameters; }
+		}
+
+		[MergableProperty (false)]
+		[Category ("Data")]
+		[DefaultValue (null)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[Browsable (false)]
+		public ParameterCollection InsertParameters {
+			get { return View.InsertParameters; }
+		}
+
+		[MergableProperty (false)]
+		[Category ("Data")]
+		[DefaultValue (null)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[Browsable (false)]
+		public ParameterCollection UpdateParameters {
+			get { return View.UpdateParameters; }
+		}
+
+		public int Delete (IDictionary keys, IDictionary oldValues)
+		{
+			return View.Delete (keys, oldValues);
+		}
+
+		public int Insert (IDictionary values)
+		{
+			return View.Insert (values);
+		}
+
 		public int Update (IDictionary keys, IDictionary values, IDictionary oldValues)
 		{
-			throw new NotImplementedException ();
+			return View.Update (keys, values, oldValues);
 		}
 
-		[MonoTODO]
-		public bool AutoGenerateOrderByClause { get; set; }
-		[MonoTODO]
-		public bool AutoGenerateWhereClause { get; set; }
-		[MonoTODO]
-		public bool AutoPage { get; set; }
-		[MonoTODO]
-		public bool AutoSort { get; set; }
-		[MonoTODO]
-		public string ContextTypeName { get; set; }
-		[MonoTODO]
-		[PersistenceMode (PersistenceMode.InnerProperty)]
-		[Browsable (false)]
-		public ParameterCollection DeleteParameters { get; private set; }
-		[MonoTODO]
-		public bool EnableDelete { get; set; }
-		[MonoTODO]
-		public bool EnableInsert { get; set; }
-		[MonoTODO]
-		public bool EnableObjectTracking { get; set; }
-		[MonoTODO]
-		public bool EnableUpdate { get; set; }
-		[MonoTODO]
-		public string GroupBy { get; set; }
-		[MonoTODO]
-		[Browsable (false)]
-		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public ParameterCollection GroupByParameters { get; private set; }
-		[MonoTODO]
-		Type IDynamicDataSource.ContextType { get; set; }
-		[MonoTODO]
-		string IDynamicDataSource.EntitySetName { get; set; }
-		[MonoTODO]
-		[PersistenceMode (PersistenceMode.InnerProperty)]
-		[Browsable (false)]
-		public ParameterCollection InsertParameters { get; private set; }
-		[MonoTODO]
-		public string OrderBy { get; set; }
-		[MonoTODO]
-		[Browsable (false)]
-		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public ParameterCollection OrderByParameters { get; private set; }
-		[MonoTODO]
-		public string OrderGroupsBy { get; set; }
-		[MonoTODO]
-		[PersistenceMode (PersistenceMode.InnerProperty)]
-		[Browsable (false)]
-		public ParameterCollection OrderGroupsByParameters { get; private set; }
-		[MonoTODO]
-		public string Select { get; set; }
-		[MonoTODO]
-		[PersistenceMode (PersistenceMode.InnerProperty)]
-		[Browsable (false)]
-		public ParameterCollection SelectParameters { get; private set; }
-		[MonoTODO]
-		public bool StoreOriginalValuesInViewState { get; set; }
-		[MonoTODO]
-		public string TableName { get; set; }
-		[MonoTODO]
-		[PersistenceMode (PersistenceMode.InnerProperty)]
-		[Browsable (false)]
-		public ParameterCollection UpdateParameters { get; private set; }
-		[MonoTODO]
-		public string Where { get; set; }
-		[MonoTODO]
-		[Browsable (false)]
-		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public ParameterCollection WhereParameters { get; private set; }
+		#region ViewState
 
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceStatusEventArgs> ContextCreated;
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceContextEventArgs> ContextCreating;
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceDisposeEventArgs> ContextDisposing;
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceStatusEventArgs> Deleted;
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceDeleteEventArgs> Deleting;
-		[MonoTODO]
+		[Category ("Behavior")]
+		[DefaultValue (true)]
+		public bool StoreOriginalValuesInViewState {
+			get { return View.StoreOriginalValuesInViewState; }
+			set { View.StoreOriginalValuesInViewState = value; }
+		}
+
+		protected override void LoadViewState (object savedState)
+		{
+			Pair p = savedState as Pair;
+			if (p != null) {
+				base.LoadViewState (p.First);
+				((IStateManager) View).LoadViewState (p.Second);
+			}
+		}
+
+		protected override object SaveViewState ()
+		{
+			object me = base.SaveViewState (), view = ((IStateManager) View).SaveViewState ();
+			if (me != null || view != null)
+				return new Pair (me, view);
+			else
+				return null;
+		}
+
+		protected override void TrackViewState ()
+		{
+			base.TrackViewState ();
+			if (view != null)
+				((IStateManager) view).TrackViewState ();
+		}
+
+		#endregion
+
+		#region Events (Dispatching)
+
+		public event EventHandler<LinqDataSourceStatusEventArgs> ContextCreated {
+			add { View.ContextCreated += value; }
+			remove { View.ContextCreated -= value; }
+		}
+
+		public event EventHandler<LinqDataSourceContextEventArgs> ContextCreating {
+			add { View.ContextCreating += value; }
+			remove { View.ContextCreating -= value; }
+		}
+
+		public event EventHandler<LinqDataSourceDisposeEventArgs> ContextDisposing {
+			add { View.ContextDisposing += value; }
+			remove { View.ContextDisposing -= value; }
+		}
+
+		public event EventHandler<LinqDataSourceStatusEventArgs> Deleted {
+			add { View.Deleted += value; }
+			remove { View.Deleted -= value; }
+		}
+
+		public event EventHandler<LinqDataSourceDeleteEventArgs> Deleting {
+			add { View.Deleting += value; }
+			remove { View.Deleting -= value; }
+		}
+
 		event EventHandler<DynamicValidatorEventArgs> IDynamicDataSource.Exception {
-			add { throw new NotImplementedException (); }
-			remove { throw new NotImplementedException (); }
+			add { View.Exception += value; }
+			remove { View.Exception -= value; }
 		}
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceStatusEventArgs> Inserted;
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceInsertEventArgs> Inserting;
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceStatusEventArgs> Selected;
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceSelectEventArgs> Selecting;
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceStatusEventArgs> Updated;
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceUpdateEventArgs> Updating;
+
+		public event EventHandler<LinqDataSourceStatusEventArgs> Inserted {
+			add { View.Inserted += value; }
+			remove { View.Inserted -= value; }
+		}
+
+		public event EventHandler<LinqDataSourceInsertEventArgs> Inserting {
+			add { View.Inserting += value; }
+			remove { View.Inserting -= value; }
+		}
+
+		public event EventHandler<LinqDataSourceStatusEventArgs> Selected {
+			add { View.Selected += value; }
+			remove { View.Selected -= value; }
+		}
+
+		public event EventHandler<LinqDataSourceSelectEventArgs> Selecting {
+			add { View.Selecting += value; }
+			remove { View.Selecting -= value; }
+		}
+
+		public event EventHandler<LinqDataSourceStatusEventArgs> Updated {
+			add { View.Updated += value; }
+			remove { View.Updated -= value; }
+		}
+
+		public event EventHandler<LinqDataSourceUpdateEventArgs> Updating {
+			add { View.Updating += value; }
+			remove { View.Updating -= value; }
+		}
+
+		#endregion
 	}
 }
 #endif

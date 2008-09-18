@@ -42,23 +42,18 @@ namespace System.Web.UI.WebControls
 	{
 		public LinqDataSourceInsertEventArgs (object newObject)
 		{
-			if (newObject == null)
-				throw new ArgumentNullException ("newObject");
 			NewObject = newObject;
 		}
 
 		public LinqDataSourceInsertEventArgs (LinqDataSourceValidationException exception)
 		{
-			if (exception == null)
-				throw new ArgumentNullException ("exception");
 			Exception = exception;
 		}
 
-		[MonoTODO]
 		public LinqDataSourceValidationException Exception { get; private set; }
-		[MonoTODO]
+
 		public bool ExceptionHandled { get; set; }
-		[MonoTODO]
+
 		public object NewObject { get; private set; }
 	}
 }

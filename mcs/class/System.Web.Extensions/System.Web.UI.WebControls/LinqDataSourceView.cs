@@ -30,6 +30,7 @@
 #if NET_3_5
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using System.Security.Permissions;
@@ -42,35 +43,36 @@ namespace System.Web.UI.WebControls
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class LinqDataSourceView : DataSourceView, IStateManager
 	{
-		[MonoTODO]
 		public LinqDataSourceView (LinqDataSource owner, string name, HttpContext context)
 			: base (owner, name)
 		{
-			throw new NotImplementedException ();
+			source = owner;
 		}
 
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceStatusEventArgs> ContextCreated;
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceContextEventArgs> ContextCreating;
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceDisposeEventArgs> ContextDisposing;
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceStatusEventArgs> Deleted;
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceDeleteEventArgs> Deleting;
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceStatusEventArgs> Inserted;
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceInsertEventArgs> Inserting;
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceStatusEventArgs> Selected;
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceSelectEventArgs> Selecting;
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceStatusEventArgs> Updated;
-		[MonoTODO]
-		public event EventHandler<LinqDataSourceUpdateEventArgs> Updating;
+		LinqDataSource source;
+
+		bool tracking;
+		ParameterCollection delete_parameters,
+			insert_parameters,
+			select_new_parameters,
+			update_parameters;
+		ParameterCollection group_by_parameters,
+			order_by_parameters,
+			order_group_by_parameters,
+			where_parameters;
+
+		IEnumerable<ParameterCollection> AllParameters {
+			get {
+				yield return delete_parameters;
+				yield return insert_parameters;
+				yield return select_new_parameters;
+				yield return update_parameters;
+				yield return group_by_parameters;
+				yield return order_by_parameters;
+				yield return order_group_by_parameters;
+				yield return where_parameters;
+			}
+		}
 
 		[MonoTODO]
 		public bool AutoGenerateOrderByClause { get; set; }
@@ -80,40 +82,40 @@ namespace System.Web.UI.WebControls
 		public bool AutoPage { get; set; }
 		[MonoTODO]
 		public bool AutoSort { get; set; }
-		[MonoTODO]
+
 		public override bool CanDelete {
-			get { throw new NotImplementedException (); }
+			get { return EnableDelete; }
 		}
-		[MonoTODO]
+
 		public override bool CanInsert {
-			get { throw new NotImplementedException (); }
+			get { return EnableInsert; }
 		}
-		[MonoTODO]
+
 		public override bool CanPage {
-			get { throw new NotImplementedException (); }
+			get { return true; }
 		}
-		[MonoTODO]
+
 		public override bool CanRetrieveTotalRowCount {
-			get { throw new NotImplementedException (); }
+			get { return true; }
 		}
-		[MonoTODO]
+
 		public override bool CanSort {
-			get { throw new NotImplementedException (); }
+			get { return true; }
 		}
-		[MonoTODO]
+
 		public override bool CanUpdate {
-			get { throw new NotImplementedException (); }
+			get { return EnableUpdate; }
 		}
-		[MonoTODO]
+
 		protected virtual Type ContextType {
-			get { throw new NotImplementedException (); }
+			get { return ((IDynamicDataSource) source).ContextType; }
 		}
-		[MonoTODO]
-		public virtual string ContextTypeName { get; set; }
-		[MonoTODO]
-		public ParameterCollection DeleteParameters {
-			get { throw new NotImplementedException (); }
+
+		public virtual string ContextTypeName {
+			get { return source.ContextTypeName; }
+			set { source.ContextTypeName = value; }
 		}
+
 		[MonoTODO]
 		public bool EnableDelete { get; set; }
 		[MonoTODO]
@@ -122,55 +124,143 @@ namespace System.Web.UI.WebControls
 		public bool EnableObjectTracking { get; set; }
 		[MonoTODO]
 		public bool EnableUpdate { get; set; }
-		[MonoTODO]
-		public string GroupBy { get; set; }
-		[MonoTODO]
-		public ParameterCollection GroupByParameters {
-			get { throw new NotImplementedException (); }
-		}
-		[MonoTODO]
-		public ParameterCollection InsertParameters {
-			get { throw new NotImplementedException (); }
-		}
-		[MonoTODO]
-		bool IStateManager.IsTrackingViewState {
-			get { throw new NotImplementedException (); }
-		}
-		[MonoTODO]
-		protected bool IsTrackingViewState {
-			get { throw new NotImplementedException (); }
-		}
-		[MonoTODO]
-		public string OrderBy { get; set; }
-		[MonoTODO]
-		public ParameterCollection OrderByParameters {
-			get { throw new NotImplementedException (); }
-		}
-		[MonoTODO]
-		public string OrderGroupsBy { get; set; }
-		[MonoTODO]
-		public ParameterCollection OrderGroupsByParameters {
-			get { throw new NotImplementedException (); }
-		}
-		[MonoTODO]
-		public string SelectNew { get; set; }
-		[MonoTODO]
-		public ParameterCollection SelectNewParameters {
-			get { throw new NotImplementedException (); }
-		}
-		[MonoTODO]
-		public bool StoreOriginalValuesInViewState { get; set; }
+
 		[MonoTODO]
 		public string TableName { get; set; }
+
 		[MonoTODO]
-		public ParameterCollection UpdateParameters {
-			get { throw new NotImplementedException (); }
-		}
+		public string GroupBy { get; set; }
+
+		[MonoTODO]
+		public string OrderBy { get; set; }
+
+		[MonoTODO]
+		public string OrderGroupsBy { get; set; }
+
+		[MonoTODO]
+		public string SelectNew { get; set; }
+
 		[MonoTODO]
 		public string Where { get; set; }
-		[MonoTODO]
+
+		public ParameterCollection DeleteParameters {
+			get { return GetParameterCollection (ref delete_parameters, false, false); }
+		}
+
+		public ParameterCollection InsertParameters {
+			get { return GetParameterCollection (ref insert_parameters, false, false); }
+		}
+
+		public ParameterCollection UpdateParameters {
+			get { return GetParameterCollection (ref update_parameters, true, true); }
+		}
+
+		public ParameterCollection SelectNewParameters {
+			get { return GetParameterCollection (ref select_new_parameters, false, false); }
+		}
+
 		public ParameterCollection WhereParameters {
-			get { throw new NotImplementedException (); }
+			get { return GetParameterCollection (ref where_parameters, true, true); }
+		}
+
+		public ParameterCollection GroupByParameters {
+			get { return GetParameterCollection (ref group_by_parameters, true, true); }
+		}
+
+		public ParameterCollection OrderByParameters {
+			get { return GetParameterCollection (ref order_by_parameters, true, true); }
+		}
+
+		public ParameterCollection OrderGroupsByParameters {
+			get { return GetParameterCollection (ref order_group_by_parameters, true, true); }
+		}
+
+		ParameterCollection GetParameterCollection (ref ParameterCollection output, bool propagateTrackViewState, bool subscribeChanged)
+		{
+			if (output != null)
+				return output;
+			
+			output = new ParameterCollection ();
+			if (subscribeChanged)
+				output.ParametersChanged += new EventHandler (ParametersChanged);
+			
+			if (IsTrackingViewState && propagateTrackViewState)
+				((IStateManager) output).TrackViewState ();
+			
+			return output;
+		}
+
+		void ParametersChanged (object source, EventArgs args)
+		{
+			OnDataSourceViewChanged (EventArgs.Empty);
+		}
+
+		public int Delete (IDictionary keys, IDictionary oldValues)
+		{
+			return ExecuteDelete (keys, oldValues);
+		}
+
+		public int Insert (IDictionary values)
+		{
+			return ExecuteInsert (values);
+		}
+
+		public IEnumerable Select (DataSourceSelectArguments arguments)
+		{
+			return ExecuteSelect (arguments);
+		}
+
+		public int Update (IDictionary keys, IDictionary values, IDictionary oldValues)
+		{
+			return ExecuteUpdate (keys, values, oldValues);
+		}
+
+		[MonoTODO]
+		protected override int ExecuteDelete (IDictionary keys, IDictionary oldValues)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected override int ExecuteInsert (IDictionary values)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected override int ExecuteUpdate (IDictionary keys, IDictionary values, IDictionary oldValues)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected internal override IEnumerable ExecuteSelect (DataSourceSelectArguments arguments)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected virtual void DeleteDataObject (object dataContext, object table, object oldDataObject)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected virtual void InsertDataObject (object dataContext, object table, object newDataObject)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected virtual void ResetDataObject (object table, object dataObject)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected virtual void UpdateDataObject (object dataContext, object table, object oldDataObject, object newDataObject)
+		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -178,166 +268,21 @@ namespace System.Web.UI.WebControls
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		public int Delete (IDictionary keys, IDictionary oldValues)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void DeleteDataObject (object dataContext, object table, object oldDataObject)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected override int ExecuteDelete (IDictionary keys, IDictionary oldValues)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected override int ExecuteInsert (IDictionary values)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected internal override IEnumerable ExecuteSelect (DataSourceSelectArguments arguments)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected override int ExecuteUpdate (IDictionary keys, IDictionary values, IDictionary oldValues)
-		{
-			throw new NotImplementedException ();
-		}
+
 		[MonoTODO]
 		protected virtual Type GetDataObjectType (Type tableType)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected virtual MemberInfo GetTableMemberInfo (Type contextType)
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		public int Insert (IDictionary values)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void InsertDataObject (object dataContext, object table, object newDataObject)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		void IStateManager.LoadViewState (object savedState)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		object IStateManager.SaveViewState ()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		void IStateManager.TrackViewState ()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void LoadViewState (object savedState)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnContextCreated (LinqDataSourceStatusEventArgs e)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnContextCreating (LinqDataSourceContextEventArgs e)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnContextDisposing (LinqDataSourceDisposeEventArgs e)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnDeleted (LinqDataSourceStatusEventArgs e)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnDeleting (LinqDataSourceDeleteEventArgs e)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnException (DynamicValidatorEventArgs e)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnInserted (LinqDataSourceStatusEventArgs e)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnInserting (LinqDataSourceInsertEventArgs e)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnSelected (LinqDataSourceStatusEventArgs e)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnSelecting (LinqDataSourceSelectEventArgs e)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnUpdated (LinqDataSourceStatusEventArgs e)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void OnUpdating (LinqDataSourceUpdateEventArgs e)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void ResetDataObject (object table, object dataObject)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual object SaveViewState ()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public IEnumerable Select (DataSourceSelectArguments arguments)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void TrackViewState ()
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public int Update (IDictionary keys, IDictionary values, IDictionary oldValues)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		protected virtual void UpdateDataObject (object dataContext, object table, object oldDataObject, object newDataObject)
-		{
-			throw new NotImplementedException ();
-		}
+
+		#region Validation
+
 		[MonoTODO]
 		protected virtual void ValidateContextType (Type contextType, bool selecting)
 		{
@@ -373,6 +318,177 @@ namespace System.Web.UI.WebControls
 		{
 			throw new NotImplementedException ();
 		}
+
+		#endregion
+
+		#region ViewState
+
+		bool IStateManager.IsTrackingViewState {
+			get { return IsTrackingViewState; }
+		}
+
+		protected bool IsTrackingViewState {
+			get { return tracking; }
+		}
+
+		[MonoTODO]
+		public bool StoreOriginalValuesInViewState { get; set; }
+
+		void IStateManager.LoadViewState (object savedState)
+		{
+			LoadViewState (savedState);
+		}
+
+		object IStateManager.SaveViewState ()
+		{
+			return SaveViewState ();
+		}
+
+		void IStateManager.TrackViewState ()
+		{
+			TrackViewState ();
+		}
+
+		protected virtual void LoadViewState (object savedState)
+		{
+			object [] vs = savedState as object [];
+			if (vs == null)
+				return;
+			int i = 0;
+			foreach (var p in AllParameters) {
+				if (vs [i] != null)
+					((IStateManager) p).LoadViewState (vs [i]);
+				i++;
+			}
+		}
+
+		protected virtual object SaveViewState ()
+		{
+			object [] vs = new object [8];
+			int i = 0;
+			foreach (var p in AllParameters) {
+				if (p != null)
+					vs [i] = ((IStateManager) p).SaveViewState ();
+				i++;
+			}
+
+			foreach (object o in vs)
+				if (o != null)
+					return vs;
+			return null;
+		}
+
+		protected virtual void TrackViewState ()
+		{
+			tracking = true;
+
+			foreach (var p in AllParameters)
+				if (p != null)
+					((IStateManager) p).TrackViewState ();
+		}
+
+		#endregion
+
+		#region Events and Overridable Event Handler Invocations
+
+		[MonoTODO]
+		public event EventHandler<LinqDataSourceStatusEventArgs> ContextCreated;
+		[MonoTODO]
+		public event EventHandler<LinqDataSourceContextEventArgs> ContextCreating;
+		[MonoTODO]
+		public event EventHandler<LinqDataSourceDisposeEventArgs> ContextDisposing;
+		[MonoTODO]
+		public event EventHandler<LinqDataSourceStatusEventArgs> Deleted;
+		[MonoTODO]
+		public event EventHandler<LinqDataSourceDeleteEventArgs> Deleting;
+		[MonoTODO]
+		internal event EventHandler<DynamicValidatorEventArgs> Exception;
+		[MonoTODO]
+		public event EventHandler<LinqDataSourceStatusEventArgs> Inserted;
+		[MonoTODO]
+		public event EventHandler<LinqDataSourceInsertEventArgs> Inserting;
+		[MonoTODO]
+		public event EventHandler<LinqDataSourceStatusEventArgs> Selected;
+		[MonoTODO]
+		public event EventHandler<LinqDataSourceSelectEventArgs> Selecting;
+		[MonoTODO]
+		public event EventHandler<LinqDataSourceStatusEventArgs> Updated;
+		[MonoTODO]
+		public event EventHandler<LinqDataSourceUpdateEventArgs> Updating;
+
+		protected virtual void OnContextCreated (LinqDataSourceStatusEventArgs e)
+		{
+			if (ContextCreated != null)
+				ContextCreated (this, e);
+		}
+
+		protected virtual void OnContextCreating (LinqDataSourceContextEventArgs e)
+		{
+			if (ContextCreating != null)
+				ContextCreating (this, e);
+		}
+
+		protected virtual void OnContextDisposing (LinqDataSourceDisposeEventArgs e)
+		{
+			if (ContextDisposing != null)
+				ContextDisposing (this, e);
+		}
+
+		protected virtual void OnDeleted (LinqDataSourceStatusEventArgs e)
+		{
+			if (Deleted != null)
+				Deleted (this, e);
+		}
+
+		protected virtual void OnDeleting (LinqDataSourceDeleteEventArgs e)
+		{
+			if (Deleting != null)
+				Deleting (this, e);
+		}
+
+		protected virtual void OnException (DynamicValidatorEventArgs e)
+		{
+			if (Exception != null)
+				Exception (this, e);
+		}
+
+		protected virtual void OnInserted (LinqDataSourceStatusEventArgs e)
+		{
+			if (Inserted != null)
+				Inserted (this, e);
+		}
+
+		protected virtual void OnInserting (LinqDataSourceInsertEventArgs e)
+		{
+			if (Inserting != null)
+				Inserting (this, e);
+		}
+
+		protected virtual void OnSelected (LinqDataSourceStatusEventArgs e)
+		{
+			if (Selected != null)
+				Selected (this, e);
+		}
+
+		protected virtual void OnSelecting (LinqDataSourceSelectEventArgs e)
+		{
+			if (Selecting != null)
+				Selecting (this, e);
+		}
+
+		protected virtual void OnUpdated (LinqDataSourceStatusEventArgs e)
+		{
+			if (Updated != null)
+				Updated (this, e);
+		}
+
+		protected virtual void OnUpdating (LinqDataSourceUpdateEventArgs e)
+		{
+			if (Updating != null)
+				Updating (this, e);
+		}
+
+		#endregion
 	}
 }
 #endif

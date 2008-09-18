@@ -40,23 +40,20 @@ namespace System.Web.UI.WebControls
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class LinqDataSourceDeleteEventArgs : CancelEventArgs
 	{
-		[MonoTODO]
 		public LinqDataSourceDeleteEventArgs (object originalObject)
 		{
-			throw new NotImplementedException ();
+			OriginalObject = originalObject;
 		}
 
-		[MonoTODO]
 		public LinqDataSourceDeleteEventArgs (LinqDataSourceValidationException exception)
 		{
-			throw new NotImplementedException ();
+			Exception = exception;
 		}
 
-		[MonoTODO]
 		public LinqDataSourceValidationException Exception { get; private set; }
-		[MonoTODO]
+
 		public bool ExceptionHandled { get; set; }
-		[MonoTODO]
+
 		public object OriginalObject { get; private set; }
 	}
 }

@@ -7,6 +7,17 @@
 	  LinqDataSourceInsertEventArgs.cs
 	  LinqDataSourceSelectEventArgs.cs
 	  LinqDataSourceStatusEventArgs.cs
+	  LinqDataSourceUpdateEventArgs.cs : easy implementation parts.
+
+2008-09-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* LinqDataSource.cs, LinqDataSourceView.cs
+	  LinqDataSourceContextEventArgs.cs
+	  LinqDataSourceDeleteEventArgs.cs
+	  LinqDataSourceDisposeEventArgs.cs
+	  LinqDataSourceInsertEventArgs.cs
+	  LinqDataSourceSelectEventArgs.cs
+	  LinqDataSourceStatusEventArgs.cs
 	  LinqDataSourceUpdateEventArgs.cs
 	  LinqDataSourceValidationException.cs : stubbed out.
 

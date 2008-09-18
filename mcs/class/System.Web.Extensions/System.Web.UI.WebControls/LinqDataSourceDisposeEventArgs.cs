@@ -42,8 +42,6 @@ namespace System.Web.UI.WebControls
 	{
 		public LinqDataSourceDisposeEventArgs (object instance)
 		{
-			if (instance == null)
-				throw new ArgumentNullException ("instance");
 			ObjectInstance = instance;
 		}
 
