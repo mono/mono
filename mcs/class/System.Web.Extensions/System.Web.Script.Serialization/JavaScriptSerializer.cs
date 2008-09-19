@@ -207,8 +207,8 @@ namespace System.Web.Script.Serialization
 
 				return ConvertToObject ((IDictionary<string, object>) obj, type);
 			}
-			if (obj is IEnumerable<object>)
-				return ConvertToList ((IEnumerable<object>) obj, type);
+			if (obj is ArrayList)
+				return ConvertToList ((ArrayList) obj, type);
 
 			if (type == null)
 				return obj;
@@ -257,17 +257,16 @@ namespace System.Web.Script.Serialization
 		static object Evaluate (object value, bool convertListToArray) {
 			if (value is IDictionary<string, object>)
 				value = EvaluateDictionary ((IDictionary<string, object>) value, convertListToArray);
-			else
-			if (value is IEnumerable<object>)
-				value = EvaluateList ((IEnumerable<object>) value, convertListToArray);
+			else if (value is ArrayList)
+				value = EvaluateList ((ArrayList) value, convertListToArray);
 			return value;
 		}
 
-		static object EvaluateList (IEnumerable<object> e) {
+		static object EvaluateList (ArrayList e) {
 			return EvaluateList (e, false);
 		}
 
-		static object EvaluateList (IEnumerable<object> e, bool convertListToArray) {
+		static object EvaluateList (ArrayList e, bool convertListToArray) {
 			ArrayList list = new ArrayList ();
 			foreach (object value in e)
 				list.Add (Evaluate (value, convertListToArray));
@@ -280,8 +279,6 @@ namespace System.Web.Script.Serialization
 		}
 
 		static IDictionary<string, object> EvaluateDictionary (IDictionary<string, object> dict, bool convertListToArray) {
-			if (dict is Dictionary<string, object>)
-				return dict;
 			Dictionary<string, object> d = new Dictionary<string, object> (StringComparer.Ordinal);
 			foreach (KeyValuePair<string, object> entry in dict) {
 				d.Add (entry.Key, Evaluate (entry.Value, convertListToArray));
@@ -293,13 +290,13 @@ namespace System.Web.Script.Serialization
 		static readonly Type typeofObject = typeof(object);
 		static readonly Type typeofGenList = typeof (List<>);
 
-		object ConvertToList (IEnumerable<object> col, Type type) {
+		object ConvertToList (ArrayList col, Type type) {
 			Type elementType = null;
 			if (type != null && type.HasElementType)
 				elementType = type.GetElementType ();
 
 			IList list;
-			if (type == null || type.IsArray || typeofObject == type)
+			if (type == null || type.IsArray || typeofObject == type || typeof (ArrayList).IsAssignableFrom (type))
 				list = new ArrayList ();
 			else if (ReflectionUtils.IsInstantiatableType (type))
 				// non-generic typed list
@@ -310,12 +307,10 @@ namespace System.Web.Script.Serialization
 					elementType = genArgs [0];
 					// generic list
 					list = (IList) Activator.CreateInstance (typeofGenList.MakeGenericType (genArgs));
-				}
-				else
+				} else
 					list = new ArrayList ();
-			}
-			else
-				throw new JsonSerializationException (string.Format ("Deserializing list type '{0}' not supported.", type.GetType ().Name));
+			} else
+				throw new InvalidOperationException (String.Format ("Deserializing list type '{0}' not supported.", type.GetType ().Name));
 
 			if (list.IsReadOnly) {
 				EvaluateList (col);
@@ -334,21 +329,7 @@ namespace System.Web.Script.Serialization
 		object ConvertToObject (IDictionary<string, object> dict, Type type) 
 		{
 			if (_typeResolver != null) {
-				if (dict is Newtonsoft.Json.JsonSerializer.DeserializerLazyDictionary) {
-					Newtonsoft.Json.JsonSerializer.DeserializerLazyDictionary lazyDict = (Newtonsoft.Json.JsonSerializer.DeserializerLazyDictionary) dict;
-					object first = lazyDict.PeekFirst ();
-					if (first != null) {
-						KeyValuePair<string, object> firstPair = (KeyValuePair<string, object>) first;
-						if (firstPair.Key == SerializedTypeNameKey) {
-							type = _typeResolver.ResolveType ((string) firstPair.Value);
-						}
-						else {
-							dict = EvaluateDictionary (dict);
-						}
-					}
-				}
-
-				if (!(dict is Newtonsoft.Json.JsonSerializer.DeserializerLazyDictionary) && dict.Keys.Contains(SerializedTypeNameKey)) {
+				if (dict.Keys.Contains(SerializedTypeNameKey)) {
 					// already Evaluated
 					type = _typeResolver.ResolveType ((string) dict [SerializedTypeNameKey]);
 				}
@@ -362,9 +343,6 @@ namespace System.Web.Script.Serialization
 					Type valueType = ReflectionUtils.GetTypedDictionaryValueType (type);
 					if (value != null && valueType == typeof (System.Object))
 						valueType = value.GetType ();
-					
-					if (typeof (LazyDictionary).IsAssignableFrom (valueType))
-						valueType = typeof (Dictionary <string, object>);
 					
 					((IDictionary) target).Add (entry.Key, ConvertToType (valueType, value));
 					continue;
@@ -393,7 +371,7 @@ namespace System.Web.Script.Serialization
 						memberType = ResolveInterfaceToType (memberType);
 
 					if (memberType == null)
-						throw new JsonSerializationException ("Unable to deserialize a member, as its type is an unknown interface.");
+						throw new InvalidOperationException ("Unable to deserialize a member, as its type is an unknown interface.");
 				}
 				
 				ReflectionUtils.SetMemberValue (member, target, ConvertToType(memberType, value));
@@ -441,7 +419,7 @@ namespace System.Web.Script.Serialization
 		}
 		
 		public object DeserializeObject (string input) {
-			object obj = Evaluate (DeserializeObjectInternal (new StringReader (input)), true);
+			object obj = Evaluate (DeserializeObjectInternal (input), true);
 			IDictionary dictObj = obj as IDictionary;
 			if (dictObj != null && dictObj.Contains(SerializedTypeNameKey)){
 				if (_typeResolver == null) {
@@ -454,14 +432,11 @@ namespace System.Web.Script.Serialization
 		}
 
 		internal object DeserializeObjectInternal (string input) {
-			return DeserializeObjectInternal (new StringReader (input));
+			return Json.Deserialize (input, this);
 		}
 
 		internal object DeserializeObjectInternal (TextReader input) {
-			Newtonsoft.Json.JsonSerializer ser = new Newtonsoft.Json.JsonSerializer (this, _typeResolver);
-			ser.MaxJsonLength = MaxJsonLength;
-			ser.RecursionLimit = RecursionLimit;
-			return ser.Deserialize (input);
+			return Json.Deserialize (input, this);
 		}
 
 		public void RegisterConverters (IEnumerable<JavaScriptConverter> converters) {
@@ -492,15 +467,11 @@ namespace System.Web.Script.Serialization
 		}
 
 		public void Serialize (object obj, StringBuilder output) {
-// 			Serialize (obj, new StringWriter (output));
 			Json.Serialize (obj, this, output);
 		}
 
 		internal void Serialize (object obj, TextWriter output) {
-			Newtonsoft.Json.JsonSerializer ser = new Newtonsoft.Json.JsonSerializer (this, _typeResolver);
-			ser.MaxJsonLength = MaxJsonLength;
-			ser.RecursionLimit = RecursionLimit;
-			ser.Serialize (output, obj);
+			Json.Serialize (obj, this, output);
 		}
 	}
 }

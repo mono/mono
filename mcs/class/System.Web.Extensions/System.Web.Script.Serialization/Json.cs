@@ -28,6 +28,7 @@
 //
 
 using System;
+using System.IO;
 using System.Text;
 
 namespace System.Web.Script.Serialization
@@ -39,6 +40,30 @@ namespace System.Web.Script.Serialization
 			JsonSerializer js = new JsonSerializer (jss);
 			js.Serialize (obj, output);
 			js = null;
+		}
+
+		public static void Serialize (object obj, JavaScriptSerializer jss, TextWriter output)
+		{
+			JsonSerializer js = new JsonSerializer (jss);
+			js.Serialize (obj, output);
+			js = null;
+		}
+		
+		public static object Deserialize (string input, JavaScriptSerializer jss)
+		{
+			if (jss == null)
+				throw new ArgumentNullException ("jss");
+			
+			return Deserialize (new StringReader (input), jss);
+		}
+
+		public static object Deserialize (TextReader input, JavaScriptSerializer jss)
+		{
+			if (jss == null)
+				throw new ArgumentNullException ("jss");
+			
+			JsonDeserializer ser = new JsonDeserializer (jss);
+			return ser.Deserialize (input);
 		}
 	}
 }

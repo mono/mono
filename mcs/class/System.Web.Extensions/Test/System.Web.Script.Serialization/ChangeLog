@@ -1,0 +1,5 @@
+2008-09-19  Marek Habersack  <mhabersack@novell.com>
+
+	* JavaScriptSerializerTest.cs: enabled some tests which were
+	failing with the old (de)serializer, but work with the new one.
+

@@ -1,3 +1,9 @@
+2008-09-19  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.Extensions.dll.sources: removed most of the
+	Newtonsoft JSON code, leaving only ReflectionUtils and
+	JavaScriptUtils.
+
 2008-09-18  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Add System.Core reference.

@@ -1,0 +1,19 @@
+2008-09-19  Marek Habersack  <mhabersack@novell.com>
+
+	* Json.cs: added new Serialize overload which takes a TextWriter
+	for its output parameter.
+	Added Deserialize methods.
+
+	* JsonSerializer.cs: made InitialJavaScriptDateTicks internal.
+	Added new Serialize overload which takes a TextWriter for its
+	output parameter.
+	Added WriteValue overloads for float and double - they must not be
+	converted to strings as IConvertibles because their Max/MinValue
+	end up converted incorrectly.
+
+	* JavaScriptSerializer.cs: adjustments for the new JSON
+	(de)serializer.
+
+	* JsonDeserializer.cs: new JSON deserializer code, fully compliant
+	with the .NET AJAX one.
+

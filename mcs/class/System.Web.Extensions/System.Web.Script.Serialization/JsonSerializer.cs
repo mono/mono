@@ -32,6 +32,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 using System.Text;
 
@@ -39,7 +40,7 @@ namespace System.Web.Script.Serialization
 {
 	internal sealed class JsonSerializer
 	{
-		static readonly long InitialJavaScriptDateTicks = new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
+		internal static readonly long InitialJavaScriptDateTicks = new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
                 static readonly DateTime MinimumJavaScriptDate = new DateTime (100, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 		static readonly MethodInfo serializeGenericDictionary = typeof (JsonSerializer).GetMethod ("SerializeGenericDictionary", BindingFlags.NonPublic | BindingFlags.Static);
 
@@ -67,11 +68,26 @@ namespace System.Web.Script.Serialization
 			if (output == null)
 				throw new ArgumentNullException ("output");
 			
+			DoSerialize (obj, output);
+		}
+
+		public void Serialize (object obj, TextWriter output)
+		{
+			if (output == null)
+				throw new ArgumentNullException ("output");
+
+			StringBuilder sb = new StringBuilder ();
+			DoSerialize (obj, sb);
+			output.Write (sb.ToString ());
+		}
+
+		void DoSerialize (object obj, StringBuilder output)
+		{
 			recursionDepth = 0;
 			objectCache = new Dictionary <object, bool> ();
 			SerializeValue (obj, output);
 		}
-
+		
 		void SerializeValue (object obj, StringBuilder output)
 		{
 			recursionDepth++;
@@ -135,10 +151,16 @@ namespace System.Web.Script.Serialization
 						WriteEnumValue (output, obj, typeCode);
 						return;
 					}
-					goto case TypeCode.Single;
+					goto case TypeCode.Decimal;
 					
                                 case TypeCode.Single:
+					WriteValue (output, (float)obj);
+					return;
+					
                                 case TypeCode.Double:
+					WriteValue (output, (double)obj);
+					return;
+					
 				case TypeCode.Decimal:
 					WriteValue (output, obj as IConvertible);
                                         return;
@@ -384,6 +406,16 @@ namespace System.Web.Script.Serialization
 				default:
 					throw new InvalidOperationException (String.Format ("Invalid type code for enum: {0}", typeCode));
 			}
+		}
+
+		void WriteValue (StringBuilder output, float value)
+		{
+			output.AppendCount (maxJsonLength, value.ToString ("r"));
+		}
+
+		void WriteValue (StringBuilder output, double value)
+		{
+			output.AppendCount (maxJsonLength, value.ToString ("r"));
 		}
 		
 		void WriteValue (StringBuilder output, Guid value)
