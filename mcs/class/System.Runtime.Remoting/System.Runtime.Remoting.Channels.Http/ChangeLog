@@ -1,5 +1,14 @@
 2008-09-18  Michael Hutchinson  <mhutchinson@novell.com>
 
+	* HttpServerTransportSink.cs:
+	* HttpServerChannel.cs: Cleanup.
+	* HttpClientTransportSink.cs: Use username/password/domain parameters, 
+	  fix some spelling, add FIXME comment regarding stream copying.
+	* HttpClientChannel.cs: 
+	* HttpChannel.cs: Fix 1.1 API slip.
+
+2008-09-18  Michael Hutchinson  <mhutchinson@novell.com>
+
 	* HttpServerChannel.cs: Don't try to resolve IPAddress.Any, so that 
 	by default we bind to localhost/lo as well as the host address.
 	Also remove dead code for binding to multiple IP addresses; I don't 

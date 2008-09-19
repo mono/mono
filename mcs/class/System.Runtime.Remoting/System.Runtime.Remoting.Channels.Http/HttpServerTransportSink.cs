@@ -54,6 +54,7 @@ namespace System.Runtime.Remoting.Channels.Http
 		{
 			ContextWithId ctx = (ContextWithId) state;
 			WriteOut (ctx.Context, headers, responseStream);
+			ctx.Context.Connection.Close ();
 		}
 
 		public Stream GetResponseStream (IServerResponseChannelSinkStack sinkStack, object state,
@@ -118,6 +119,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			switch (proc) {
 			case ServerProcessing.Complete:
 				WriteOut (context, responseHeaders, responseStream);
+				context.Connection.Close ();
 				break;
 
 			case ServerProcessing.Async:
@@ -161,7 +163,6 @@ namespace System.Runtime.Remoting.Channels.Http
 				}
 			}
 			HttpClientTransportSink.CopyStream (responseStream, context.Response.OutputStream, 1024);
-			context.Connection.Close ();
 		}
 
 		class ContextWithId
@@ -179,35 +180,14 @@ namespace System.Runtime.Remoting.Channels.Http
 			{
 				this.context = context;
 				lock (lockObj) {
-					this.id = nextId++;
+					//FIXME: is it really valid to roll arund and reset the ID?
+					unchecked {
+						this.id = nextId++;
+					}
 				}
 			}
 
 		}
 
 	}
-/*
-	class LoggingTransportHeaders : ITransportHeaders 
-	{
-		TransportHeaders headers = new TransportHeaders ();
-
-		public IEnumerator GetEnumerator ()
-		{
-			return headers.GetEnumerator ();
-		}
-
-		public object this[object key]
-		{
-			get
-			{
-				object o = headers[key];
-				return o;
-			}
-			set
-			{
-				headers[key] = value;
-			}
-		}
-	}
-*/
 }

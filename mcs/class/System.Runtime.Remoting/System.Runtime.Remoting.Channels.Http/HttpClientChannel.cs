@@ -65,8 +65,7 @@ namespace System.Runtime.Remoting.Channels.Http
 		bool useAuthenticatedConnectionSharing = false;
 		bool useDefaultCredentials = false;
 		string username = null;
-
-		//FIXME: set to correct default
+		
 		bool isSecured = false;
 
 		IClientChannelSinkProvider sinkProvider;
@@ -268,16 +267,20 @@ namespace System.Runtime.Remoting.Channels.Http
 		}
 
 		#endregion
-
+		
+#if NET_2_0
 		#region ISecurableChannel
-
+		
 		public bool IsSecured
 		{
 			get { return isSecured; }
-			set { isSecured = value; }
+			set {
+				throw new NotImplementedException ();
+			}
 		}
-
+		
 		#endregion
+#endif
 		
 		#region Internal properties
 		

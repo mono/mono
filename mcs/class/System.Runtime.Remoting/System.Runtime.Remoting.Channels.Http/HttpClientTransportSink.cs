@@ -78,7 +78,7 @@ namespace System.Runtime.Remoting.Channels.Http
 				response = request.EndGetResponse (ar);
 			} catch (WebException ex) {
 				response = ex.Response;
-				//only error 500 is handled by the romoting stack
+				//only error 500 is handled by the remoting stack
 				HttpWebResponse httpResponse = response as HttpWebResponse;
 				if (httpResponse == null || httpResponse.StatusCode != HttpStatusCode.InternalServerError)
 					throw;
@@ -114,15 +114,25 @@ namespace System.Runtime.Remoting.Channels.Http
 			
 			//Only set these if they deviate from the defaults, as some map to 
 			//properties that throw NotImplementedExceptions
-			request.Timeout = channel.Timeout;
+			if (channel.Timeout != -1)
+				request.Timeout = channel.Timeout;
 			if (channel.AllowAutoRedirect == false)
 				request.AllowAutoRedirect = false;
 			if (channel.Credentials != null)
 				request.Credentials = channel.Credentials;
 #if NET_2_0
-			if (channel.UseDefaultCredentials == true)
+			else if (channel.UseDefaultCredentials == true)
 				request.UseDefaultCredentials = true;
 #endif
+			else if (channel.Username != null && channel.Username.Length > 0) {
+				if (channel.Domain != null && channel.Domain.Length > 0) {
+					request.Credentials = new NetworkCredential (channel.Username, channel.Password,
+						channel.Domain);
+				} else {
+					request.Credentials = new NetworkCredential (channel.Username, channel.Password);
+				}
+			}
+			
 			if (channel.UnsafeAuthenticatedConnectionSharing == true)
 				request.UnsafeAuthenticatedConnectionSharing = true;
 			if (channel.ConnectionGroupName != null)
@@ -131,9 +141,6 @@ namespace System.Runtime.Remoting.Channels.Http
 			/*
 			FIXME: implement these
 			MachineName
-			Domain
-			Password
-			Username
 			ProxyName
 			ProxyPort
 			ProxyUri
@@ -189,7 +196,6 @@ namespace System.Runtime.Remoting.Channels.Http
 			out ITransportHeaders responseHeaders, out Stream responseStream)
 		{
 			HttpWebRequest request = CreateRequest (requestHeaders);
-			
 			Stream targetStream = request.GetRequestStream ();
 			CopyStream (requestStream, targetStream, 1024);
 			targetStream.Close ();
@@ -199,7 +205,7 @@ namespace System.Runtime.Remoting.Channels.Http
 				response = request.GetResponse ();
 			} catch (WebException ex) {
 				response = ex.Response;
-				//only error 500 is handled by the romoting stack
+				//only error 500 is handled by the remoting stack
 				HttpWebResponse httpResponse = response as HttpWebResponse;
 				if (httpResponse == null || httpResponse.StatusCode != HttpStatusCode.InternalServerError)
 					throw;
@@ -208,6 +214,8 @@ namespace System.Runtime.Remoting.Channels.Http
 			//this is only valid after the response is fetched
 			SetConnectionLimit (request);
 			
+			//FIXME: can we assume that the formatters will close the stream? Or do we need to make
+			// a copy and close it ourselves?
 			responseHeaders = GetHeaders (response);
 			responseStream = response.GetResponseStream ();
 		}

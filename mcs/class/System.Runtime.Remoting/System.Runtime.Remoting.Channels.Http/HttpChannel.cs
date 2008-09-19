@@ -219,6 +219,7 @@ namespace System.Runtime.Remoting.Channels.Http
 
 		#endregion
 
+#if NET_2_0
 		#region ISecurableChannel
 
 		public bool IsSecured
@@ -228,5 +229,6 @@ namespace System.Runtime.Remoting.Channels.Http
 		}
 
 		#endregion
+#endif
 	}
 }

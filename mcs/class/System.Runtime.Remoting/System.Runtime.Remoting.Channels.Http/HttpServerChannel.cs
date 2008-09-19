@@ -41,8 +41,7 @@ namespace System.Runtime.Remoting.Channels.Http
 	{
 		string name = "http server";
 		int priority = 1;
-
-		//TODO: use these
+		
 		string machineName = null;
 		IPAddress bindAddress = IPAddress.Any;
 		int port = -1; // querying GetChannelUri () on .NET indicates this is the default value
@@ -248,7 +247,10 @@ namespace System.Runtime.Remoting.Channels.Http
 			try {
 				listener = new RemotingHttpListener (bindAddress, port, sink);
 			} catch (Exception) {
-				DestroyListener ();
+				if (listener != null) {
+					listener.Dispose ();
+					listener = null;
+				}
 				throw;
 			}
 			
@@ -256,18 +258,11 @@ namespace System.Runtime.Remoting.Channels.Http
 				port = listener.AssignedPort;
 		}
 
-		void DestroyListener ()
+		public void StopListening (object data)
 		{
 			if (listener != null) {
 				listener.Dispose ();
 				listener = null;
-			}
-		}
-
-		public void StopListening (object data)
-		{
-			if (listener != null) {
-				DestroyListener ();
 			}
 		}
 
@@ -293,6 +288,7 @@ namespace System.Runtime.Remoting.Channels.Http
 		public void AddHookChannelUri (string channelUri)
 		{
 			//FIXME: what does this do?
+			throw new NotImplementedException ();
 		}
 
 		public string ChannelScheme
