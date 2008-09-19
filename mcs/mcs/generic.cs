@@ -2414,7 +2414,10 @@ namespace Mono.CSharp {
 			// contain unfixed type variables but the input types do not,
 			// an output type inference is made
 			for (int i = 0; i < arg_count; i++) {
-				Type t_i = methodParameters [i];
+				
+				// Align params arguments
+				Type t_i = methodParameters [i >= methodParameters.Length ? methodParameters.Length - 1: i];
+				
 				if (!TypeManager.IsDelegateType (t_i)) {
 					if (TypeManager.DropGenericTypeArguments (t_i) != TypeManager.expression_type)
 						continue;
