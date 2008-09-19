@@ -1,3 +1,9 @@
+2008-09-19  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-type-builder.2.cs: Test case for a generic sharing issue
+	with dynamic methods.
+
+	* Makefile.am: Test added.
 
 2008-09-17  Robert Jordan  <robertj@gmx.net>
 

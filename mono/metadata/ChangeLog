@@ -1,3 +1,7 @@
+2008-09-19  Mark Probst  <mark.probst@gmail.com>
+
+	* reflection.c (inflate_mono_method): When the class the method is
+	to be inflated for is itself not inflated, just return the method.
 
 Fri Sep 19 11:51:36 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
