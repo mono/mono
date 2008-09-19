@@ -1,3 +1,8 @@
+2008-09-20  Marek Habersack  <mhabersack@novell.com>
+
+	* JsonDeserializer.cs: added support for stand-alone NaN, Infinity
+	and -Infinity values, as well as the same within an array.
+
 2008-09-19  Marek Habersack  <mhabersack@novell.com>
 
 	* Json.cs: added new Serialize overload which takes a TextWriter

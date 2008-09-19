@@ -1024,5 +1024,141 @@ namespace Tests.System.Web.Script.Serialization
 			X x2 = ser.Deserialize<X> (s);
 			Assert.IsTrue (x.Equals (x2), "x != x2");
 		}
+
+		[Test]
+		public void InfinityAndNaN ()
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+
+			double nan = Double.NaN;
+			string s = ser.Serialize (nan);
+			Assert.AreEqual (s, "NaN", "#A1");
+			nan = (double)ser.DeserializeObject (s);
+			Assert.AreEqual (Double.NaN, nan, "#A2");
+			nan = (double)ser.Deserialize <double> (s);
+			Assert.AreEqual (Double.NaN, nan, "#A3");
+			
+			double infinity = Double.PositiveInfinity;
+			s = ser.Serialize (infinity);
+			Assert.AreEqual (s, "Infinity", "#B1");
+			infinity = (double)ser.DeserializeObject (s);
+			Assert.AreEqual (Double.PositiveInfinity, infinity, "#B2");
+			infinity = ser.Deserialize <double> (s);
+			Assert.AreEqual (Double.PositiveInfinity, infinity, "#B3");
+			
+			infinity = Double.NegativeInfinity;
+			s = ser.Serialize (infinity);
+			Assert.AreEqual (s, "-Infinity", "#C1");
+			infinity = (double)ser.DeserializeObject (s);
+			Assert.AreEqual (Double.NegativeInfinity, infinity, "#C2");
+			infinity = ser.Deserialize <double> (s);
+			Assert.AreEqual (Double.NegativeInfinity, infinity, "#C3");
+
+			var dict = new Dictionary <string, object> ();
+			dict.Add ("A", Double.NaN);
+			dict.Add ("B", Double.PositiveInfinity);
+			dict.Add ("C", Double.NegativeInfinity);
+			s = ser.Serialize (dict);
+			Assert.AreEqual ("{\"A\":NaN,\"B\":Infinity,\"C\":-Infinity}", s, "#D1");
+			
+			dict = (Dictionary <string, object>)ser.DeserializeObject (s);
+			Assert.AreEqual (Double.NaN, dict ["A"], "#D2");
+			Assert.AreEqual (Double.PositiveInfinity, dict ["B"], "#D3");
+			Assert.AreEqual (Double.NegativeInfinity, dict ["C"], "#D4");
+
+			dict = (Dictionary <string, object>)ser.Deserialize <Dictionary <string, object>> (s);
+			Assert.AreEqual (Double.NaN, dict ["A"], "#D5");
+			Assert.AreEqual (Double.PositiveInfinity, dict ["B"], "#D6");
+			Assert.AreEqual (Double.NegativeInfinity, dict ["C"], "#D7");
+
+			var arr = new ArrayList () {
+					Double.NaN,
+					Double.PositiveInfinity,
+					Double.NegativeInfinity};
+			s = ser.Serialize (arr);
+			Assert.AreEqual ("[NaN,Infinity,-Infinity]", s, "#E1");
+
+			object[] arr2 = (object[])ser.DeserializeObject (s);
+			Assert.AreEqual (3, arr2.Length, "#E2");
+			Assert.AreEqual (Double.NaN, arr2 [0], "#E3");
+			Assert.AreEqual (Double.PositiveInfinity, arr2 [1], "#E4");
+			Assert.AreEqual (Double.NegativeInfinity, arr2 [2], "#E5");
+
+			arr = ser.Deserialize <ArrayList> (s);
+			Assert.AreEqual (3, arr.Count, "#E6");
+			Assert.AreEqual (Double.NaN, arr [0], "#E7");
+			Assert.AreEqual (Double.PositiveInfinity, arr [1], "#E8");
+			Assert.AreEqual (Double.NegativeInfinity, arr [2], "#E9");
+		}
+
+		[Test]
+		public void StandalonePrimitives ()
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+
+			object o;
+			int i;
+			
+			o = ser.DeserializeObject ("1");
+			Assert.AreEqual (typeof (global::System.Int32), o.GetType (), "#A1");
+			i = (int)o;
+			Assert.AreEqual (1, i, "#A2");
+			o =ser.DeserializeObject ("-1");
+			Assert.AreEqual (typeof (global::System.Int32), o.GetType (), "#A3");
+			i = (int)o;
+			Assert.AreEqual (-1, i, "#A4");
+			
+			o = ser.DeserializeObject ("2147483649");
+			Assert.AreEqual (typeof (global::System.Int64), o.GetType (), "#B1");
+			long l = (long)o;
+			Assert.AreEqual (2147483649, l, "#B2");
+			o = ser.DeserializeObject ("-2147483649");
+			Assert.AreEqual (typeof (global::System.Int64), o.GetType (), "#B3");
+			l = (long)o;
+			Assert.AreEqual (-2147483649, l, "#B4");
+
+			o = ser.DeserializeObject ("9223372036854775808");
+			Assert.AreEqual (typeof (global::System.Decimal), o.GetType (), "#C1");
+			decimal d = (decimal)o;
+			Assert.AreEqual (9223372036854775808m, d, "#C2");
+			o = ser.DeserializeObject ("-9223372036854775809");
+			Assert.AreEqual (typeof (global::System.Decimal), o.GetType (), "#C3");
+			d = (decimal)o;
+			Assert.AreEqual (-9223372036854775809m, d, "#C4");
+
+			o = ser.DeserializeObject ("79228162514264337593543950336");
+			Assert.AreEqual (typeof (global::System.Double), o.GetType (), "#D1");
+			double db = (double)o;
+			Assert.AreEqual (79228162514264337593543950336.0, db, "#D2");
+			o = ser.DeserializeObject ("-79228162514264337593543950336");
+			Assert.AreEqual (typeof (global::System.Double), o.GetType (), "#D3");
+			db = (double)o;
+			Assert.AreEqual (-79228162514264337593543950336.0, db, "#D4");
+			
+			o = ser.DeserializeObject ("\"test string\"");
+			Assert.AreEqual (typeof (global::System.String), o.GetType (), "#E1");
+			string s = (string)o;
+			Assert.AreEqual ("test string", s, "#E2");
+
+			o = ser.DeserializeObject ("true");
+			Assert.AreEqual (typeof (global::System.Boolean), o.GetType (), "#F1");
+			bool b = (bool)o;
+			Assert.AreEqual (true, b, "#F2");
+
+			o = ser.DeserializeObject ("false");
+			Assert.AreEqual (typeof (global::System.Boolean), o.GetType (), "#F3");
+			b = (bool)o;
+			Assert.AreEqual (false, b, "#F4");
+
+			o = ser.DeserializeObject ("-1.7976931348623157E+308");
+			Assert.AreEqual (typeof (global::System.Double), o.GetType (), "#G1");
+			db = (double)o;
+			Assert.AreEqual (Double.MinValue, db, "#G2");
+
+			o = ser.DeserializeObject ("1.7976931348623157E+308");
+			Assert.AreEqual (typeof (global::System.Double), o.GetType (), "#G3");
+			db = (double)o;
+			Assert.AreEqual (Double.MaxValue, db, "#G4");
+		}
 	}
 }
