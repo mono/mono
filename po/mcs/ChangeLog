@@ -1,3 +1,8 @@
+2008-09-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ja.po : new.
+	* LINGUAS : added ja.
+
 2008-09-14  gettextize  <bug-gnu-gettext@gnu.org>
 
 	* Makefile.in.in: New file, from gettext-0.17.
