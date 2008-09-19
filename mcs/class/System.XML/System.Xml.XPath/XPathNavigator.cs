@@ -676,7 +676,12 @@ namespace System.Xml.XPath
 			return table;
 		}
 
-		public virtual string LookupNamespace (string prefix)
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		virtual string LookupNamespace (string prefix)
 		{
 			XPathNavigator nav = Clone ();
 			if (nav.NodeType != XPathNodeType.Element)
@@ -686,7 +691,12 @@ namespace System.Xml.XPath
 			return null;
 		}
 
-		public virtual string LookupPrefix (string namespaceUri)
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		virtual string LookupPrefix (string namespaceUri)
 		{
 			XPathNavigator nav = Clone ();
 			if (nav.NodeType != XPathNodeType.Element)
@@ -710,17 +720,32 @@ namespace System.Xml.XPath
 				return false;
 		}
 
-		public virtual bool MoveToChild (XPathNodeType type)
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		virtual bool MoveToChild (XPathNodeType type)
 		{
 			return MoveTo (SelectChildren (type));
 		}
 
-		public virtual bool MoveToChild (string localName, string namespaceURI)
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		virtual bool MoveToChild (string localName, string namespaceURI)
 		{
 			return MoveTo (SelectChildren (localName, namespaceURI));
 		}
 
-		public virtual bool MoveToNext (string localName, string namespaceURI)
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		virtual bool MoveToNext (string localName, string namespaceURI)
 		{
 			XPathNavigator nav = Clone ();
 			while (nav.MoveToNext ()) {
@@ -733,7 +758,12 @@ namespace System.Xml.XPath
 			return false;
 		}
 
-		public virtual bool MoveToNext (XPathNodeType type)
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		virtual bool MoveToNext (XPathNodeType type)
 		{
 			XPathNavigator nav = Clone ();
 			while (nav.MoveToNext ()) {
@@ -745,13 +775,23 @@ namespace System.Xml.XPath
 			return false;
 		}
 
-		public virtual bool MoveToFollowing (string localName,
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		virtual bool MoveToFollowing (string localName,
 			string namespaceURI)
 		{
 			return MoveToFollowing (localName, namespaceURI, null);
 		}
 
-		public virtual bool MoveToFollowing (string localName,
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		virtual bool MoveToFollowing (string localName,
 			string namespaceURI, XPathNavigator end)
 		{
 			if (localName == null)
@@ -793,12 +833,22 @@ namespace System.Xml.XPath
 			} while (true);
 		}
 
-		public virtual bool MoveToFollowing (XPathNodeType type)
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		virtual bool MoveToFollowing (XPathNodeType type)
 		{
 			return MoveToFollowing (type, null);
 		}
 
-		public virtual bool MoveToFollowing (XPathNodeType type,
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		virtual bool MoveToFollowing (XPathNodeType type,
 			XPathNavigator end)
 		{
 			if (type == XPathNodeType.Root)

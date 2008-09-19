@@ -1,3 +1,8 @@
+2008-09-19  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigator.cs : made some 2.0-only methods available in 1.x
+	  so that we don't have to hesitate to optimize xpath using them.
+
 2008-06-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Expression.cs : help diagnose variable resolution failure.
