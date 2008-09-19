@@ -1,5 +1,10 @@
 2008-09-19  Marek Safar  <marek.safar@gmail.com>
 
+	* nullable.cs, expression.cs, namespace.cs, delegate.cs: Duplicate
+	error reporting.
+
+2008-09-19  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #416110
 	* generic.cs: Struct constraint results in default ctor and
 	ValueType base type constraint to be set.

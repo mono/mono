@@ -727,6 +727,13 @@ namespace Mono.CSharp {
 				return null;
 
 			delegate_method = (MethodInfo) method_group;
+			
+			if (TypeManager.IsNullableType (delegate_method.DeclaringType)) {
+				Report.Error (1728, loc, "Cannot create delegate from method `{0}' because it is a member of System.Nullable<T> type",
+					TypeManager.GetFullNameSignature (delegate_method));
+				return null;
+			}		
+			
 			Invocation.IsSpecialMethodInvocation (delegate_method, loc);
 
 			ExtensionMethodGroupExpr emg = method_group as ExtensionMethodGroupExpr;
@@ -755,11 +762,6 @@ namespace Mono.CSharp {
 					Report.Error (1618, loc, "Cannot create delegate with `{0}' because it has a Conditional attribute",
 						TypeManager.CSharpSignature (delegate_method));
 				}
-			}
-
-			if (TypeManager.IsNullableType (delegate_method.DeclaringType)) {
-				Report.Error (1728, loc, "Cannot create delegate from method `{0}' because it is a member of System.Nullable<T> type",
-					TypeManager.GetFullNameSignature (delegate_method));
 			}
 
 			DoResolveInstanceExpression (ec);

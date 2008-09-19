@@ -47,6 +47,11 @@ namespace Mono.CSharp.Nullable
 			ConstructedType ctype = new ConstructedType (TypeManager.generic_nullable_type, args, loc);
 			return ctype.ResolveAsTypeTerminal (ec, false);
 		}
+
+		public override TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
+		{
+			return ResolveAsBaseTerminal (ec, silent);
+		}		
 	}
 
 	public sealed class NullableInfo

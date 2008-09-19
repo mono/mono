@@ -9001,6 +9001,11 @@ namespace Mono.CSharp {
 
 			target.left = (FullNamedExpression)left.Clone (clonectx);
 		}
+		
+		public override TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
+		{
+			return ResolveAsBaseTerminal (ec, silent);
+		}		
 	}
 
 	public class FixedBufferPtr : Expression {

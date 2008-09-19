@@ -692,12 +692,14 @@ namespace Mono.CSharp {
 
 			public override FullNamedExpression Resolve (IResolveContext rc)
 			{
-				if (resolved != null)
+				if (resolved != null || value == null)
 					return (FullNamedExpression)resolved;
 
 				resolved = value.GetTypeExpression ().ResolveAsTypeStep (rc, false);
-				if (resolved == null)
+				if (resolved == null) {
+					value = null;
 					return null;
+				}
 
 				// FIXME: This is quite wrong, the accessibility is not global
 				if (resolved.Type != null) {
