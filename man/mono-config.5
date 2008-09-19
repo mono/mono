@@ -81,7 +81,12 @@ Allowed values are: linux, osx, solaris, freebsd, openbsd, netbsd, windows, aix,
 .TP
 .I cpu
 This is the name of the architecture for which the mapping should be applied.
-Allowed values are: x86, x86-64, sparc, ppc, s390, s390x, arm, mips, alpha, hppa, ia64.
+Allowed values are: x86, x86-64, sparc, ppc, s390, s390x, arm, mips,
+alpha, hppa, ia64.
+.TP
+.I bits
+This is the size of registers on the target architecture, it can be
+either 32 or 64.  
 .PP
 The attribute value for both attributes can be a comma-separated list of the allowed
 values. Additionally, the first character may be a

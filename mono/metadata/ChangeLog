@@ -1,3 +1,8 @@
+2008-09-19  Miguel de Icaza  <miguel@novell.com>
+
+	* mono-config.c (dllmap_start): Add support for the bits keyword
+	on dllentry and dllmap to easily detect 32 vs 64 bit systems.
+
 2008-09-19  Mark Probst  <mark.probst@gmail.com>
 
 	* reflection.c (inflate_mono_method): When the class the method is
