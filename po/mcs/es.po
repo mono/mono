@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: mono 2.1\n"
 "Report-Msgid-Bugs-To: http://www.mono-project.com/Bugs\n"
-"POT-Creation-Date: 2008-09-14 18:26-0400\n"
-"PO-Revision-Date: 2008-09-14 18:28-0400\n"
+"POT-Creation-Date: 2008-09-16 17:11-0400\n"
+"PO-Revision-Date: 2008-09-19 13:28-0400\n"
 "Last-Translator: Miguel de Icaza <miguel@novell.com>\n"
 "Language-Team: es <mono-list@lists.ximian.com>\n"
 "MIME-Version: 1.0\n"
@@ -1541,220 +1541,220 @@ msgstr ""
 msgid "No files to compile were specified"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:813
+#: ../mcs/mcs/driver.cs:821
 msgid "Warning level must be in the range 0-4"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:847
+#: ../mcs/mcs/driver.cs:855
 msgid "Compatibility: Use -main:CLASS instead of --main CLASS or -m CLASS"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:856
+#: ../mcs/mcs/driver.cs:864
 msgid "Compatibility: Use -unsafe instead of --unsafe"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:867
+#: ../mcs/mcs/driver.cs:875
 msgid "Compatibility: Use -d:SYMBOL instead of --define SYMBOL"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:881
+#: ../mcs/mcs/driver.cs:889
 msgid "Compatibility: Use -out:FILE instead of --output FILE or -o FILE"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:890
+#: ../mcs/mcs/driver.cs:898
 msgid "Compatibility: Use -checked instead of --checked"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:900
+#: ../mcs/mcs/driver.cs:908
 msgid "Compatibility: Use -linkres:VALUE instead of --linkres VALUE"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:903
+#: ../mcs/mcs/driver.cs:911
 msgid "Missing argument to --linkres"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:914
+#: ../mcs/mcs/driver.cs:922
 msgid "Compatibility: Use -res:VALUE instead of --res VALUE"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:917
+#: ../mcs/mcs/driver.cs:925
 msgid "Missing argument to --resource"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:927
+#: ../mcs/mcs/driver.cs:935
 msgid "Compatibility: Use -target:KIND instead of --target KIND"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:959
+#: ../mcs/mcs/driver.cs:967
 msgid "Compatibility: Use -r:LIBRARY instead of -r library"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:978
+#: ../mcs/mcs/driver.cs:986
 msgid "Compatibility: Use -lib:ARG instead of --L arg"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:987
+#: ../mcs/mcs/driver.cs:995
 msgid "Compatibility: Use -nostdlib instead of --nostdlib"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:996
+#: ../mcs/mcs/driver.cs:1004
 msgid "Compatibility: Use -warnaserror: option instead of --werror"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1001
+#: ../mcs/mcs/driver.cs:1009
 msgid "Compatibility: Use -nowarn instead of --nowarn"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1018
+#: ../mcs/mcs/driver.cs:1026
 msgid "Compatibility: Use -warn:LEVEL instead of --wlevel LEVEL"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1022
+#: ../mcs/mcs/driver.cs:1030
 msgid "--wlevel requires a value from 0 to 4"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1031
+#: ../mcs/mcs/driver.cs:1039
 msgid "--mcs-debug requires an argument"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1038
+#: ../mcs/mcs/driver.cs:1046
 msgid "Invalid argument to --mcs-debug"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1048
+#: ../mcs/mcs/driver.cs:1056
 msgid "Compatibility: Use -recurse:PATTERN option instead --recurse PATTERN"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1050
+#: ../mcs/mcs/driver.cs:1058
 msgid "--recurse requires an argument"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1062
+#: ../mcs/mcs/driver.cs:1070
 msgid "Compatibility: Use -debug option instead of -g or --debug"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1067
+#: ../mcs/mcs/driver.cs:1075
 msgid "Compatibility: Use -noconfig option instead of --noconfig"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1087
+#: ../mcs/mcs/driver.cs:1095
 msgid "Couldn't run pkg-config: "
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1095
+#: ../mcs/mcs/driver.cs:1103
 msgid "Specified package did not return any information"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1102
+#: ../mcs/mcs/driver.cs:1110
 msgid "Error running pkg-config. Check the above output."
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1198
+#: ../mcs/mcs/driver.cs:1206
 #, csharp-format
 msgid "Invalid conditional define symbol `{0}'"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1252
+#: ../mcs/mcs/driver.cs:1260
 #, csharp-format
 msgid ""
 "Invalid resource visibility option `{0}'. Use either `public' or `private' "
 "instead"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1258
+#: ../mcs/mcs/driver.cs:1266
 #, csharp-format
 msgid "Wrong number of arguments for option `{0}'"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1266
+#: ../mcs/mcs/driver.cs:1274
 msgid "-recurse requires an argument"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1275
+#: ../mcs/mcs/driver.cs:1283
 msgid "-reference requires an argument"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1297 ../mcs/mcs/driver.cs:1309
-#: ../mcs/mcs/driver.cs:1318 ../mcs/mcs/driver.cs:1327
-#: ../mcs/mcs/driver.cs:1436 ../mcs/mcs/driver.cs:1456
-#: ../mcs/mcs/driver.cs:1463
+#: ../mcs/mcs/driver.cs:1305 ../mcs/mcs/driver.cs:1317
+#: ../mcs/mcs/driver.cs:1326 ../mcs/mcs/driver.cs:1335
+#: ../mcs/mcs/driver.cs:1444 ../mcs/mcs/driver.cs:1464
+#: ../mcs/mcs/driver.cs:1471
 msgid " requires an argument"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1337
+#: ../mcs/mcs/driver.cs:1345
 msgid "/lib requires an argument"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1399
+#: ../mcs/mcs/driver.cs:1407
 msgid "/nowarn requires an argument"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1493
+#: ../mcs/mcs/driver.cs:1501
 #, csharp-format
 msgid ""
 "Invalid option `{0}' for /langversion. It must be either `ISO-1', `ISO-2' or "
 "`Default'"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1509
+#: ../mcs/mcs/driver.cs:1517
 #, csharp-format
 msgid "Code page `{0}' is invalid or not installed"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1521
+#: ../mcs/mcs/driver.cs:1529
 #, csharp-format
 msgid "Unrecognized command-line option: `{0}'"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1551
+#: ../mcs/mcs/driver.cs:1559
 msgid "Invalid reference alias '"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1556
+#: ../mcs/mcs/driver.cs:1564
 msgid "Invalid extern alias for /reference. Alias '"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1622
+#: ../mcs/mcs/driver.cs:1630
 msgid ""
 "If no source files are specified you must specify the output file with -out:"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1746
+#: ../mcs/mcs/driver.cs:1754
 #, csharp-format
 msgid "Could not find `{0}' specified for Main method"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1751
+#: ../mcs/mcs/driver.cs:1759
 #, csharp-format
 msgid "`{0}' specified for Main method must be a valid class or struct"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1755
+#: ../mcs/mcs/driver.cs:1763
 #, csharp-format
 msgid "`{0}' does not have a suitable static Main method"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1760
+#: ../mcs/mcs/driver.cs:1768
 #, csharp-format
 msgid ""
 "Program `{0}' does not contain a static `Main' method suitable for an entry "
 "point"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1767
+#: ../mcs/mcs/driver.cs:1775
 msgid "Cannot specify -main if building a module or library"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1772
+#: ../mcs/mcs/driver.cs:1780
 msgid "Cannot link resource file when building a module"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1921
+#: ../mcs/mcs/driver.cs:1929
 #, csharp-format
 msgid "The resource identifier `{0}' has already been used in this assembly"
 msgstr ""
 
-#: ../mcs/mcs/driver.cs:1935
+#: ../mcs/mcs/driver.cs:1943
 #, csharp-format
 msgid "Error reading resource file `{0}'"
 msgstr ""
@@ -2846,48 +2846,48 @@ msgstr ""
 msgid "The non-generic {0} `{1}' cannot be used with the type arguments"
 msgstr ""
 
-#: ../mcs/mcs/namespace.cs:621
+#: ../mcs/mcs/namespace.cs:626
 #, csharp-format
 msgid ""
 "`{0}' is a type not a namespace. A using namespace directive can only be "
 "applied to namespaces"
 msgstr ""
 
-#: ../mcs/mcs/namespace.cs:648
+#: ../mcs/mcs/namespace.cs:653
 #, csharp-format
 msgid "The extern alias `{0}' was not specified in -reference option"
 msgstr ""
 
-#: ../mcs/mcs/namespace.cs:857 ../mcs/mcs/namespace.cs:879
+#: ../mcs/mcs/namespace.cs:862 ../mcs/mcs/namespace.cs:884
 msgid ""
 "A using clause must precede all other namespace elements except extern alias "
 "declarations"
 msgstr ""
 
-#: ../mcs/mcs/namespace.cs:903
+#: ../mcs/mcs/namespace.cs:908
 msgid "An extern alias declaration must precede all other elements"
 msgstr ""
 
-#: ../mcs/mcs/namespace.cs:921
+#: ../mcs/mcs/namespace.cs:926
 #, csharp-format
 msgid "The using alias `{0}' appeared previously in this namespace"
 msgstr ""
 
-#: ../mcs/mcs/namespace.cs:994
+#: ../mcs/mcs/namespace.cs:999
 #, csharp-format
 msgid "`{0}' is an ambiguous reference between `{1}' and `{2}'"
 msgstr ""
 
-#: ../mcs/mcs/namespace.cs:1033
+#: ../mcs/mcs/namespace.cs:1038
 #, csharp-format
 msgid "Namespace `{0}' contains a definition with same name as alias `{1}'"
 msgstr ""
 
-#: ../mcs/mcs/namespace.cs:1126
+#: ../mcs/mcs/namespace.cs:1131
 msgid "You cannot redefine the global extern alias"
 msgstr ""
 
-#: ../mcs/mcs/namespace.cs:1131
+#: ../mcs/mcs/namespace.cs:1141
 #, csharp-format
 msgid ""
 "The type or namespace name `{0}' could not be found. Are you missing a using "
@@ -3183,26 +3183,26 @@ msgstr ""
 #: ../mcs/mcs/typemanager.cs:869
 #, csharp-format
 msgid "The predefined type `{0}.{1}' is not defined or imported"
-msgstr ""
+msgstr "El tipo predefinido `{0}.{1}' no está definido o no ha sido importado"
 
 #: ../mcs/mcs/typemanager.cs:893
 #, csharp-format
 msgid "The predefined type `{0}.{1}' is not declared correctly"
-msgstr ""
+msgstr "El tipo predefinido `{0}.{1}' fue incorrectamente declarado"
 
 #: ../mcs/mcs/typemanager.cs:943
 #, csharp-format
 msgid ""
 "The compiler required member `{0}.{1}{2}' could not be found or is "
 "inaccessible"
-msgstr ""
+msgstr "El compilador no encuentra el miembro `{0}.{1}{2}' o no es accessible"
 
-#: ../mcs/mcs/typemanager.cs:1130
+#: ../mcs/mcs/typemanager.cs:1152
 #, csharp-format
 msgid ""
 "The compilation may fail due to missing `{0}.SetCorlibTypeBuilders({1})' "
 "method"
-msgstr ""
+msgstr "La compilación puede fallar ya que el método `{0}.SetCorlibTypeBuilders({1})' no existe"
 
 #: ../mcs/mcs/typemanager.cs:1696
 msgid "Friend access was granted to `"
@@ -3212,11 +3212,11 @@ msgstr ""
 #, csharp-format
 msgid ""
 "Struct member `{0}.{1}' of type `{2}' causes a cycle in the struct layout"
-msgstr ""
+msgstr "El miembro `{0}.{1}' con tipo `{2}' produce un ciclo recursivo en la estructura"
 
 #: ../mcs/mcs/typemanager.cs:2300
 #, csharp-format
 msgid ""
 "Cannot take the address of, get the size of, or declare a pointer to a "
 "managed type `{0}'"
-msgstr ""
+msgstr "No es posible obtener la dirección, el tamaño o declarar un apuntador a un tipo gestionado `{0}'"
