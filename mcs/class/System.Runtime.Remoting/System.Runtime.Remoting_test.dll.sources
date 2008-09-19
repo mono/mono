@@ -16,3 +16,4 @@ RemotingServicesTest.cs
 IpcCalls.cs
 GenericTest.cs
 IpcChannelTest.cs
+HttpServerChannelTests.cs
