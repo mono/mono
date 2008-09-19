@@ -1,5 +1,11 @@
 2008-09-19  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #416110
+	* generic.cs: Struct constraint results in default ctor and
+	ValueType base type constraint to be set.
+
+2008-09-19  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #423791
 	* generic.cs: Fixed params output type type-inference.
 

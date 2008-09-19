@@ -344,6 +344,9 @@ namespace Mono.CSharp {
 			else
 				effective_base_type = TypeManager.object_type;
 
+			if ((attrs & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0)
+				attrs |= GenericParameterAttributes.DefaultConstructorConstraint;
+
 			resolved = true;
 			return true;
 		}
@@ -751,8 +754,8 @@ namespace Mono.CSharp {
 			if (gc == null)
 				return true;
 
-			if (gc.HasClassConstraint)
-				type.SetBaseTypeConstraint (gc.ClassConstraint);
+			if (gc.HasClassConstraint || gc.HasValueTypeConstraint)
+				type.SetBaseTypeConstraint (gc.EffectiveBaseClass);
 
 			type.SetInterfaceConstraints (gc.InterfaceConstraints);
 			type.SetGenericParameterAttributes (gc.Attributes);
