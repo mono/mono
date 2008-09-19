@@ -1836,11 +1836,8 @@ namespace Mono.CSharp {
 					    ec, mb, implementing, is_override))
 					return false;
 
-			bool ok = true;
-			foreach (Parameter p in parameters.FixedParameters){
-				if (p.Resolve (ec) == null)
-					ok = false;
-			}
+			bool ok = parameters.Resolve (ec);
+
 			if ((return_type != null) && (return_type.ResolveAsTypeTerminal (ec, false) == null))
 				ok = false;
 
