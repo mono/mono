@@ -2532,8 +2532,11 @@ namespace Mono.CSharp
 					return res;
 				}
 
-				if (next_token < Token.LAST_KEYWORD)
-					Report.Error (267, Location, "The `partial' modifier can be used only immediately before `class', `struct', `interface', or `void' keyword");
+				if (next_token < Token.LAST_KEYWORD) {
+					Report.Error (267, Location,
+						"The `partial' modifier can be used only immediately before `class', `struct', `interface', or `void' keyword");
+					return token ();
+				}					
 
 				val = new LocatedToken (Location, "partial");
 				return Token.IDENTIFIER;
