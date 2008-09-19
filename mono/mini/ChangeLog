@@ -1,3 +1,8 @@
+2008-09-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c: Extract stloc micro-optimization to a
+	function and apply it to all cases.
+
 2008-09-19  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c: Don't fail generic code sharing in cases we
