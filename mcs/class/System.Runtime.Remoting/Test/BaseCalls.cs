@@ -507,11 +507,23 @@ namespace MonoTests.Remoting
 	
 	public class RemoteObject : AbstractRemoteObject, IRemoteObject
 	{
+		int inc = 0;
+		
 		public override int Simple ()
 		{
 			return 130772 + Thread.GetDomainID();
 		}
-
+		
+		public int ReturnOne ()
+		{
+			return 1;
+		}
+		
+		public int Increment ()
+		{
+			return inc++;
+		}
+		
 		public override string PrimitiveParams (int a, uint b, char c, string d)
 		{
 			return "" + a + "-" + b + "-" + c + "-" + d + "@" + Thread.GetDomainID();

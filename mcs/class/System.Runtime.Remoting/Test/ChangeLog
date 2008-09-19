@@ -1,3 +1,8 @@
+2008-09-19  Jeffrey Stedfast  <fejj@novell.com>
+
+	* HttpServerChannelTests.cs: More unit tests for
+	HttpServerChannel.
+
 2008-01-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ActivationTests.cs: Only stop server if it was actually created.
