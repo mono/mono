@@ -115,6 +115,9 @@ namespace System.Runtime.Remoting.Channels.Http
 
 		internal static string ParseInternal (string url, out string objectURI)
 		{
+			if (url == null)
+				throw new ArgumentNullException ("url");
+			
 			// format: "http://host:port/path/to/object"
 			objectURI = null;
 			
