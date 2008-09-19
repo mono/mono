@@ -303,264 +303,264 @@ msgstr "`{0}': インターフェースの明示的な実装は、クラスま�
 
 #: ../mcs/mcs/class.cs:447
 msgid "Class, struct, or interface method must have a return type"
-msgstr ""
+msgstr "クラス、構造体、インターフェースのメソッドには戻り値型が必要です"
 
 #: ../mcs/mcs/class.cs:459
 #: ../mcs/mcs/decl.cs:2820
 #, csharp-format
 msgid "A member `{0}' is already defined. Rename this member or use different parameter types"
-msgstr ""
+msgstr "メンバ `{0}' が既に定義されています。このメンバの名前を変更するか、別のパラメータ型を使用してください"
 
 #: ../mcs/mcs/class.cs:576
 msgid "Cannot specify the `DefaultMember' attribute on type containing an indexer"
-msgstr ""
+msgstr "インデクサを含む型には`DefaultMember'属性を指定できません"
 
 #: ../mcs/mcs/class.cs:870
 #, csharp-format
 msgid "`{0}' is already listed in interface list"
-msgstr ""
+msgstr "`{0}'は既にインターフェースのリストに含まれています"
 
 #: ../mcs/mcs/class.cs:878
 #, csharp-format
 msgid "Inconsistent accessibility: base interface `{0}' is less accessible than interface `{1}'"
-msgstr ""
+msgstr "一貫性の無いアクセス修飾子です: 基底インターフェース `{0}' はインターフェース `{1}' よりもアクセスが限定的です"
 
 #: ../mcs/mcs/class.cs:884
 #, csharp-format
 msgid "Type `{0}' in interface list is not an interface"
-msgstr ""
+msgstr "インターフェースリストに含まれる型 `{0}' はインターフェースではありません"
 
 #: ../mcs/mcs/class.cs:886
 #, csharp-format
 msgid "`{0}': Classes cannot have multiple base classes (`{1}' and `{2}')"
-msgstr ""
+msgstr "`{0}': クラスには複数の基底クラスを指定することはできません（`{1}' と `{2}'）"
 
 #: ../mcs/mcs/class.cs:889
 #, csharp-format
 msgid "`{0}': Base class `{1}' must be specified as first"
-msgstr ""
+msgstr "`{0}': 基底クラス `{1}' が先に指定されなければなりません"
 
 #: ../mcs/mcs/class.cs:916
 #, csharp-format
 msgid "Partial declarations of `{0}' must not specify different base classes"
-msgstr ""
+msgstr "`{0}' の部分的な宣言の間で、別々の基底クラスを指定することはできません"
 
 #: ../mcs/mcs/class.cs:957
 #, csharp-format
 msgid "`{0}' cannot implement both `{1}' and `{2}' because they may unify for some type parameter substitutions"
-msgstr ""
+msgstr "`{0}' は `{1}' と `{2}' が型パラメータ置換後に重複する可能性があるため、これらの両方を実装することはできません"
 
 #: ../mcs/mcs/class.cs:1179
 #, csharp-format
 msgid "Partial declarations of `{0}' must have the same type parameter names in the same order"
-msgstr ""
+msgstr "`{0}' の部分的な宣言では、同一の型パラメータ名を同一の順序で定義しなければなりません"
 
 #: ../mcs/mcs/class.cs:1199
 #, csharp-format
 msgid "Partial declarations of `{0}' have inconsistent constraints for type parameter `{1}'"
-msgstr ""
+msgstr "`{0}' の部分的な宣言の間で、型パラメータ `{1}' について一貫性のない制約が含まれています"
 
 #: ../mcs/mcs/class.cs:1289
 #, csharp-format
 msgid "Inherited interface `{0}' causes a cycle in the interface hierarchy of `{1}'"
-msgstr ""
+msgstr "継承されたインターフェース `{0}' で、`{1}' のインターフェース階層構造の循環定義が生じています"
 
 #: ../mcs/mcs/class.cs:1294
 #, csharp-format
 msgid "Circular base class dependency involving `{0}' and `{1}'"
-msgstr ""
+msgstr "`{0}' と `{1}' の間で基底クラスの循環依存が生じています"
 
 #: ../mcs/mcs/class.cs:1327
 #: ../mcs/mcs/decl.cs:1037
 msgid "Keyword `new' is not allowed on namespace elements"
-msgstr ""
+msgstr "キーワード `new' は名前空間要素で認められていません"
 
 #: ../mcs/mcs/class.cs:1482
 msgid "Two indexers have different names; the IndexerName attribute must be used with the same name on every indexer within a type"
-msgstr ""
+msgstr "2つのインデクサ間で別々の名前が定義されています; 1つの型において、IndexerName属性は全てのインデクサにおいて同一の名前をもたなければなりません"
 
 #: ../mcs/mcs/class.cs:2322
 #, csharp-format
 msgid "A static member `{0}' cannot be marked as override, virtual or abstract"
-msgstr ""
+msgstr "staticメンバ `{0}' はoverride, virtual, abstractとして宣言することはできません"
 
 #: ../mcs/mcs/class.cs:2336
 #, csharp-format
 msgid "A member `{0}' marked as override cannot be marked as new or virtual"
-msgstr ""
+msgstr "overrideとして宣言されたメンバ `{0}' にはnewおよびvirtualを指定できません"
 
 #: ../mcs/mcs/class.cs:2348
 #, csharp-format
 msgid "`{0}' cannot be both extern and abstract"
-msgstr ""
+msgstr "`{0}' はexternかつabstractとすることはできません"
 
 #: ../mcs/mcs/class.cs:2353
 #, csharp-format
 msgid "`{0}' cannot be both abstract and sealed"
-msgstr ""
+msgstr "`{0}' はabstractかつsealedとすることはできません"
 
 #: ../mcs/mcs/class.cs:2358
 #, csharp-format
 msgid "The abstract method `{0}' cannot be marked virtual"
-msgstr ""
+msgstr "abstractメソッド `{0}' はvirtualとすることはできません"
 
 #: ../mcs/mcs/class.cs:2364
 #, csharp-format
 msgid "`{0}' is abstract but it is declared in the non-abstract class `{1}'"
-msgstr ""
+msgstr "`{0}' はabstractですが、abstractでないクラス `{1}' の中で宣言されています"
 
 #: ../mcs/mcs/class.cs:2372
 #, csharp-format
 msgid "`{0}': virtual or abstract members cannot be private"
-msgstr ""
+msgstr "`{0}': virtualまたはabstractのメンバはprivateにはできません"
 
 #: ../mcs/mcs/class.cs:2379
 #, csharp-format
 msgid "`{0}' cannot be sealed because it is not an override"
-msgstr ""
+msgstr "`{0}' はoverrideではないため、sealedとすることはできません"
 
 #: ../mcs/mcs/class.cs:2465
 #, csharp-format
 msgid "`{0}': containing type does not implement interface `{1}'"
-msgstr ""
+msgstr "`{0}' を含む型はインターフェース `{1}' を実装しません"
 
 #: ../mcs/mcs/class.cs:2599
 #, csharp-format
 msgid "Type parameter `{0}' has same name as containing type, or method"
-msgstr ""
+msgstr "型パラメータ `{0}' が、その宣言型あるいはメソッドと同じ名前になっています"
 
 #: ../mcs/mcs/class.cs:2605
 #, csharp-format
 msgid "`{0}': member names cannot be the same as their enclosing type"
-msgstr ""
+msgstr "`{0}': メンバ名はその宣言型と同一にはできません"
 
 #: ../mcs/mcs/class.cs:2741
 msgid "The class System.Object cannot have a base class or implement an interface."
-msgstr ""
+msgstr "クラス System.Object には基底クラスやインターフェースを指定することはできません"
 
 #: ../mcs/mcs/class.cs:2750
 #, csharp-format
 msgid "Attribute `{0}' is only valid on classes derived from System.Attribute"
-msgstr ""
+msgstr "属性 `{0}' はSystem.Attribute から派生したクラスでのみ有効です"
 
 #: ../mcs/mcs/class.cs:2755
 msgid "Attribute `System.Diagnostics.ConditionalAttribute' is only valid on methods or attribute classes"
-msgstr ""
+msgstr "属性 `System.Diagnostics.ConditionalAttribute' はメソッドまたは属性クラスでのみ有効です"
 
 #: ../mcs/mcs/class.cs:2794
 #, csharp-format
 msgid "`{0}': Static classes cannot contain user-defined operators"
-msgstr ""
+msgstr "`{0}': staticクラスにはユーザー定義の演算子を含むことはできません"
 
 #: ../mcs/mcs/class.cs:2799
 #, csharp-format
 msgid "`{0}': Static classes cannot contain destructor"
-msgstr ""
+msgstr "`{0}': staticクラスではデストラクタを定義できません"
 
 #: ../mcs/mcs/class.cs:2809
 #, csharp-format
 msgid "`{0}': cannot declare indexers in a static class"
-msgstr ""
+msgstr "`{0}': staticクラスではインデクサを宣言できません"
 
 #: ../mcs/mcs/class.cs:2817
 #, csharp-format
 msgid "`{0}': Static classes cannot have instance constructors"
-msgstr ""
+msgstr "`{0}': staticクラスではインスタンス コンストラクタを定義できません"
 
 #: ../mcs/mcs/class.cs:2823
 #, csharp-format
 msgid "`{0}': Extension methods must be declared static"
-msgstr ""
+msgstr "`{0}': 拡張メソッドはstaticで宣言されなければなりません"
 
 #: ../mcs/mcs/class.cs:2827
 #, csharp-format
 msgid "`{0}': cannot declare instance members in a static class"
-msgstr ""
+msgstr "`{0}': インスタンス メンバをstaticクラスで宣言することはできません"
 
 #: ../mcs/mcs/class.cs:2836
 #, csharp-format
 msgid "`{0}': an abstract class cannot be sealed or static"
-msgstr ""
+msgstr "`{0}': abstractクラスはsealedまたはstaticにはできません"
 
 #: ../mcs/mcs/class.cs:2841
 #, csharp-format
 msgid "`{0}': a class cannot be both static and sealed"
-msgstr ""
+msgstr "`{0}': クラスはstaticかつsealedとすることはできません"
 
 #: ../mcs/mcs/class.cs:2879
 #, csharp-format
 msgid "Cannot derive from `{0}' because it is a type parameter"
-msgstr ""
+msgstr "`{0}' は型パラメータであるため、ここから派生することはできません"
 
 #: ../mcs/mcs/class.cs:2886
 #, csharp-format
 msgid "A generic type cannot derive from `{0}' because it is an attribute class"
-msgstr ""
+msgstr "`{0}' は属性クラスなので、ここからジェネリック型を派生することはできません"
 
 #: ../mcs/mcs/class.cs:2893
 #, csharp-format
 msgid "`{0}': Cannot derive from static class `{1}'"
-msgstr ""
+msgstr "`{0}': staticクラス '{1}' から派生することはできません"
 
 #: ../mcs/mcs/class.cs:2896
 #, csharp-format
 msgid "`{0}': cannot derive from sealed class `{1}'"
-msgstr ""
+msgstr "`{0}': sealedクラス `{1}' から派生することはできません"
 
 #: ../mcs/mcs/class.cs:2903
 #, csharp-format
 msgid "`{0}' cannot derive from special class `{1}'"
-msgstr ""
+msgstr "`{0}' は特別なクラス `{1}' から派生することはできません"
 
 #: ../mcs/mcs/class.cs:2910
 #, csharp-format
 msgid "Inconsistent accessibility: base class `{0}' is less accessible than class `{1}'"
-msgstr ""
+msgstr "一貫性の無いアクセス修飾子: 基底クラス `{0}' はクラス `{1}' よりもアクセスが限定的です"
 
 #: ../mcs/mcs/class.cs:2917
 #, csharp-format
 msgid "Static class `{0}' cannot derive from type `{1}'. Static classes must derive from object"
-msgstr ""
+msgstr "staticクラス `{0}' は型 `{1}' から派生できません。staticクラスはobjectから派生しなければなりません"
 
 #: ../mcs/mcs/class.cs:2925
 #, csharp-format
 msgid "Static class `{0}' cannot implement interfaces"
-msgstr ""
+msgstr "staticクラス `{0}' はインターフェースを実装できません"
 
 #: ../mcs/mcs/class.cs:3071
 #, csharp-format
 msgid "`{0}': Structs cannot have instance field initializers"
-msgstr ""
+msgstr "`{0}': 構造体ではインスタンス フィールドを初期化できません"
 
 #: ../mcs/mcs/class.cs:3392
 #, csharp-format
 msgid "`{0}': cannot override because `{1}' is not an event"
-msgstr ""
+msgstr "`{0}': `{1}' はイベントではないため、オーバーライドできません"
 
 #: ../mcs/mcs/class.cs:3394
 #, csharp-format
 msgid "`{0}': cannot override because `{1}' is not a property"
-msgstr ""
+msgstr "`{0}': `{1}' はプロパティではないため、オーバーライドできません"
 
 #: ../mcs/mcs/class.cs:3396
 #, csharp-format
 msgid "`{0}': cannot override because `{1}' is not a method"
-msgstr ""
+msgstr "`{0}': `{1}' はメソッドではないため、オーバーライドできません"
 
 #: ../mcs/mcs/class.cs:3398
 #, csharp-format
 msgid "`{0}' is marked as an override but no suitable {1} found to override"
-msgstr ""
+msgstr "`{0}' はoverrideとして宣言されていますが、オーバーライドすべき{1}が見つかりません"
 
 #: ../mcs/mcs/class.cs:3437
 #, csharp-format
 msgid "`{0}': cannot override inherited member `{1}' because it is not marked virtual, abstract or override"
-msgstr ""
+msgstr "`{0}': 継承しようとするメンバ `{1}' は、virtual, abstractあるいはoverrideとして宣言されていないので、オーバーライドすることはできません"
 
 #: ../mcs/mcs/class.cs:3446
 #, csharp-format
 msgid "`{0}': cannot override inherited member `{1}' because it is sealed"
-msgstr ""
+msgstr "`{0}': 継承しようとするメンバ `{1}' はsealedであるため、オーバーライドできません"
 
 #: ../mcs/mcs/class.cs:3464
 #, csharp-format
