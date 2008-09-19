@@ -1,5 +1,9 @@
 2008-09-19  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathComparer.cs : no need to limit to BaseIterator.
+
+2008-09-19  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathNavigator.cs : oops, wrong #if ranges.
 
 2008-09-19  Atsushi Enomoto <atsushi@ximian.com>

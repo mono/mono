@@ -45,8 +45,8 @@ namespace System.Xml.XPath
 
 		public int Compare (object o1, object o2)
 		{
-			BaseIterator nav1 = o1 as BaseIterator;
-			BaseIterator nav2 = o2 as BaseIterator;
+			XPathNodeIterator nav1 = o1 as XPathNodeIterator;
+			XPathNodeIterator nav2 = o2 as XPathNodeIterator;
 			if (nav1 == null)
 				return -1;
 			if (nav2 == null)
