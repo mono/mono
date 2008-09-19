@@ -321,6 +321,11 @@ namespace System.Threading
 			}
 		}
 
+		public virtual bool WaitOne (int millisecondsTimeout)
+		{
+			return WaitOne (millisecondsTimeout, false);
+		}
+
 		public virtual bool WaitOne(TimeSpan timeout, bool exitContext)
 		{
 			CheckDisposed ();
