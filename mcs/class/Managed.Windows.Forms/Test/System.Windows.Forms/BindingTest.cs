@@ -26,6 +26,7 @@
 using System;
 using System.Data;
 using System.Collections;
+using System.Globalization;
 using System.Windows.Forms;
 
 using NUnit.Framework;
@@ -386,6 +387,21 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 
 			ctrl.DataBindings.Add ("Text", ds, "Customers.CustomerOrders.OrderId");
 			Assert.AreEqual ("57", ctrl.Text, "A1");
+		}
+
+		[Test]
+		public void DataSourcePropertyDifferentType ()
+		{
+			Exception exc = new Exception (String.Empty, new ArgumentNullException ("PARAM"));
+
+			// The type of the property is Exception, but we know that the value
+			// is actually an ArgumentException, thus specify the ParamName property
+			Control ctrl = new Control ();
+			ctrl.BindingContext = new BindingContext ();
+			ctrl.CreateControl ();
+
+			ctrl.DataBindings.Add ("Text", exc, "InnerException.ParamName");
+			Assert.AreEqual ("PARAM", ctrl.Text, "A1");
 		}
 
 		[Test]
