@@ -1,3 +1,8 @@
+
+Fri Sep 19 11:51:36 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mono-perfcounters.c: use more user friendly process instance names.
+
 2008-09-18  Bill Holmes  <billholmes54@gmail.com>
 
 	* marshal.c (emit_marshal_variant) : Change the attribute checks to 
