@@ -132,6 +132,7 @@ namespace System.Windows.Forms
 			set {
 				if (format_info != value) {
 					format_info = value;
+					RefreshItems ();
 					OnFormatInfoChanged (EventArgs.Empty);
 				}
 			}
@@ -145,6 +146,7 @@ namespace System.Windows.Forms
 			set {
 				if (format_string != value) {
 					format_string = value;
+					RefreshItems ();
 					OnFormatStringChanged (EventArgs.Empty);
 				}
 			}
@@ -156,6 +158,7 @@ namespace System.Windows.Forms
 			set { 
 				if (formatting_enabled != value) {
 					formatting_enabled = value;
+					RefreshItems ();
 					OnFormattingEnabledChanged (EventArgs.Empty);
 				}
 			}

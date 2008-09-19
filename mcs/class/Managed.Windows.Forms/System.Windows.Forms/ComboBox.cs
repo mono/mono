@@ -1250,6 +1250,12 @@ namespace System.Windows.Forms
 			for (int i = 0; i < Items.Count; i++) {
 				RefreshItem (i);
 			}
+
+			LayoutComboBox ();
+			Refresh ();
+
+			if (selected_index != -1 && DropDownStyle != ComboBoxStyle.DropDownList)
+				SetControlText (GetItemText (Items [selected_index]), false);
 		}
 
 		public override void ResetText ()

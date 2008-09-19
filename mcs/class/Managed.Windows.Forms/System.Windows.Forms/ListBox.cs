@@ -1037,6 +1037,9 @@ namespace System.Windows.Forms
 			for (int i = 0; i < Items.Count; i++) {
 				RefreshItem (i);
 			}
+
+			LayoutListBox ();
+			Refresh ();
 		}
 
 		public override void ResetBackColor ()
