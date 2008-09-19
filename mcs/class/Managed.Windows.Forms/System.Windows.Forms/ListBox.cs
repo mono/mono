@@ -1392,14 +1392,11 @@ namespace System.Windows.Forms
 				else
 					hscrollbar.Value = col;
 			} else {
-				int val = vscrollbar.Value;
 				if (top_index > vscrollbar.Maximum)
 					vscrollbar.Value = vscrollbar.Maximum;
 				else
 					vscrollbar.Value = top_index;
 				Scroll (vscrollbar, vscrollbar.Value - top_index);
-				if (IsHandleCreated)
-					XplatUI.ScrollWindow (Handle, items_area, 0, ItemHeight * (val - vscrollbar.Value), false);
 			}
 		}
 		
