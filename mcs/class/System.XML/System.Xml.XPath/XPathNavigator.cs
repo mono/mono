@@ -675,6 +675,7 @@ namespace System.Xml.XPath
 			} while (nav.MoveToNextNamespace (xpscope));
 			return table;
 		}
+#endif
 
 #if NET_2_0
 		public
@@ -880,6 +881,7 @@ namespace System.Xml.XPath
 			} while (true);
 		}
 
+#if NET_2_0
 		public virtual XmlReader ReadSubtree ()
 		{
 			switch (NodeType) {
