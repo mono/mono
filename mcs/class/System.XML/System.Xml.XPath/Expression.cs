@@ -114,7 +114,7 @@ namespace System.Xml.XPath
 			try
 			{
 #endif
-				BaseIterator iterResults = (BaseIterator) _expr.EvaluateNodeSet (iter);
+				BaseIterator iterResults = _expr.EvaluateNodeSet (iter);
 				if (_sorters != null)
 					return _sorters.Sort (iterResults);
 				return iterResults;
@@ -456,8 +456,12 @@ namespace System.Xml.XPath
 				if (iterResult != null)
 					return iterResult;
 				XPathNavigator nav = o as XPathNavigator;
-				if (nav != null)
-					iterResult = nav.SelectChildren (XPathNodeType.All) as BaseIterator;
+				if (nav != null) {
+					XPathNodeIterator xiter = nav.SelectChildren (XPathNodeType.All);
+					iterResult = xiter as BaseIterator;
+					if (iterResult == null && xiter != null)
+						iterResult = new WrapperIterator (xiter, iter.NamespaceManager);
+				}
 				if (iterResult != null)
 					return iterResult;
 				break;

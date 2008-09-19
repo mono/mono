@@ -1,5 +1,9 @@
 2008-09-19  Atsushi Enomoto <atsushi@ximian.com>
 
+	* DefaultContext.cs, Expression.cs: do not premise BaseIterator.
+
+2008-09-19  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathComparer.cs : no need to limit to BaseIterator.
 
 2008-09-19  Atsushi Enomoto <atsushi@ximian.com>
