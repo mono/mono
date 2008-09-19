@@ -1696,10 +1696,9 @@ namespace Mono.CSharp {
 
 	static void Error_FriendAccessNameNotMatching (string other_name)
 	{
-		Report.Error (281, "Friend access was granted to `" + other_name + 
-				"', but the output assembly is named `" + CodeGen.Assembly.Name.FullName +
-				"'. Try adding a reference to `" + other_name + 
-				"' or change the output assembly name to match it");
+		Report.Error (281,
+			      "Friend access was granted to `{0}', but the output assembly is named `{1}'.  Try adding a reference to `{0}' " +
+			      " or change the output assembly name to match it", other_name, CodeGen.Assembly.Name.FullName);
 	}
 #endif
 
