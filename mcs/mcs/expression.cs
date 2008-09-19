@@ -7530,14 +7530,13 @@ namespace Mono.CSharp {
 			if (tnew_expr == null)
 				return null;
 
-			Type expr_type = tnew_expr.Type;
-
-			if (expr_type.IsPointer){
-				Error (23, "The `.' operator can not be applied to pointer operands (" +
-				       TypeManager.CSharpName (expr_type) + ")");
+			if (tnew_expr is TypeParameterExpr) {
+				Report.Error (704, loc, "A nested type cannot be specified through a type parameter `{0}'",
+					tnew_expr.GetSignatureForError ());
 				return null;
 			}
 
+			Type expr_type = tnew_expr.Type;
 			Expression member_lookup = MemberLookup (
 				rc.DeclContainer.TypeBuilder, expr_type, expr_type, LookupIdentifier,
 				MemberTypes.NestedType, BindingFlags.Public | BindingFlags.NonPublic, loc);
@@ -9289,6 +9288,22 @@ namespace Mono.CSharp {
 			}
 		}
 
+		sealed class AddMemberAccess : MemberAccess
+		{
+			public AddMemberAccess (Expression expr, Location loc)
+				: base (expr, "Add", loc)
+			{
+			}
+
+			protected override void Error_TypeDoesNotContainDefinition (Type type, string name)
+			{
+				if (TypeManager.HasElementType (type))
+					return;
+
+				base.Error_TypeDoesNotContainDefinition (type, name);
+			}
+		}
+
 		public CollectionElementInitializer (Expression argument)
 			: base (null, new ArrayList (1), true)
 		{
@@ -9345,7 +9360,7 @@ namespace Mono.CSharp {
 				Arguments [i] = new ElementInitializerArgument (expr);
 			}
 
-			base.expr = new MemberAccess (ec.CurrentInitializerVariable, "Add", loc);
+			base.expr = new AddMemberAccess (ec.CurrentInitializerVariable, loc);
 
 			return base.DoResolve (ec);
 		}
@@ -9452,7 +9467,17 @@ namespace Mono.CSharp {
 					initializers [i] = e;
 			}
 
-			type = is_collection_initialization ? typeof (CollectionOrObjectInitializers) : typeof (ElementInitializer);
+			if (is_collection_initialization) {
+				if (TypeManager.HasElementType (ec.CurrentInitializerVariable.Type)) {
+					Report.Error (1925, loc, "Cannot initialize object of type `{0}' with a collection initializer",
+						TypeManager.CSharpName (ec.CurrentInitializerVariable.Type));
+				}
+
+				type = typeof (CollectionOrObjectInitializers);
+			} else {
+				type = typeof (ElementInitializer);
+			}
+
 			eclass = ExprClass.Variable;
 			return this;
 		}
@@ -9691,6 +9716,11 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			AnonymousTypeClass anonymous_type;
+
+			if (!ec.IsAnonymousMethodAllowed) {
+				Report.Error (836, loc, "Anonymous types cannot be used in this expression");
+				return null;
+			}
 
 			if (parameters == null) {
 				anonymous_type = CreateAnonymousType (EmptyParameters);

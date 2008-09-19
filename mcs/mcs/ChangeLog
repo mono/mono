@@ -1,5 +1,9 @@
 2008-09-19  Marek Safar  <marek.safar@gmail.com>
 
+	* cs-parser.jay, expression.cs: Fixed few expression crashes.
+	
+2008-09-19  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-tokenizer.cs: Don't break on extra partial modifier.
 
 2008-09-19  Marek Safar  <marek.safar@gmail.com>

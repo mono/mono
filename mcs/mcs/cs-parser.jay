@@ -4474,8 +4474,9 @@ statement_expression
 		if (s == null) {
 			expr.Error_InvalidExpressionStatement ();
 			$$ = null;
-		} 
-		$$ = new StatementExpression (s);
+		} else {
+			$$ = new StatementExpression (s);
+		}
 	  }
 	| error
 	  {
