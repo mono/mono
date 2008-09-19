@@ -2341,6 +2341,8 @@ namespace Mono.CSharp {
 			} else {
 				params_arguments_start = arg_count;
 			}
+
+			Type [] ptypes = methodParameters.Types;
 			
 			//
 			// The first inference phase
@@ -2356,6 +2358,9 @@ namespace Mono.CSharp {
 						method_parameter = methodParameters.Types [params_arguments_start];
 					else
 						method_parameter = TypeManager.GetElementType (methodParameters.Types [params_arguments_start]);
+
+					ptypes = (Type[]) ptypes.Clone ();
+					ptypes [i] = method_parameter;
 				}
 
 				//
@@ -2383,16 +2388,16 @@ namespace Mono.CSharp {
 			// we don't need to call it in cycle
 			//
 			bool fixed_any = false;
-			if (!tic.FixIndependentTypeArguments (methodParameters, ref fixed_any))
+			if (!tic.FixIndependentTypeArguments (ptypes, ref fixed_any))
 				return false;
 
-			return DoSecondPhase (ec, tic, methodParameters, !fixed_any);
+			return DoSecondPhase (ec, tic, ptypes, !fixed_any);
 		}
 
-		bool DoSecondPhase (EmitContext ec, TypeInferenceContext tic, AParametersCollection methodParameters, bool fixDependent)
+		bool DoSecondPhase (EmitContext ec, TypeInferenceContext tic, Type[] methodParameters, bool fixDependent)
 		{
 			bool fixed_any = false;
-			if (fixDependent && !tic.FixDependentTypes (methodParameters, ref fixed_any))
+			if (fixDependent && !tic.FixDependentTypes (ref fixed_any))
 				return false;
 
 			// If no further unfixed type variables exist, type inference succeeds
@@ -2406,7 +2411,7 @@ namespace Mono.CSharp {
 			// contain unfixed type variables but the input types do not,
 			// an output type inference is made
 			for (int i = 0; i < arg_count; i++) {
-				Type t_i = methodParameters.Types [i];
+				Type t_i = methodParameters [i];
 				if (!TypeManager.IsDelegateType (t_i)) {
 					if (TypeManager.DropGenericTypeArguments (t_i) != TypeManager.expression_type)
 						continue;
@@ -2566,7 +2571,7 @@ namespace Mono.CSharp {
 		// a, There is at least one type variable Xj that depends on Xi
 		// b, Xi has a non-empty set of bounds
 		// 
-		public bool FixDependentTypes (AParametersCollection methodParameters, ref bool fixed_any)
+		public bool FixDependentTypes (ref bool fixed_any)
 		{
 			for (int i = 0; i < unfixed_types.Length; ++i) {
 				if (unfixed_types[i] == null)
@@ -2587,11 +2592,11 @@ namespace Mono.CSharp {
 		//
 		// All unfixed type variables Xi which depend on no Xj are fixed
 		//
-		public bool FixIndependentTypeArguments (AParametersCollection methodParameters, ref bool fixed_any)
+		public bool FixIndependentTypeArguments (Type[] methodParameters, ref bool fixed_any)
 		{
 			ArrayList types_to_fix = new ArrayList (unfixed_types);
-			for (int i = 0; i < methodParameters.Types.Length; ++i) {
-				Type t = methodParameters.Types [i];
+			for (int i = 0; i < methodParameters.Length; ++i) {
+				Type t = methodParameters[i];
 				if (t.IsGenericParameter)
 					continue;
 

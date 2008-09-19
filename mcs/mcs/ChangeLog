@@ -1,5 +1,10 @@
 2008-09-19  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #423791
+	* generic.cs: Fixed params output type type-inference.
+
+2008-09-19  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-parser.jay, expression.cs: Fixed few expression crashes.
 	
 2008-09-19  Marek Safar  <marek.safar@gmail.com>
