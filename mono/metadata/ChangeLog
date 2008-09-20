@@ -1,3 +1,11 @@
+2008-09-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (add_custom_modifiers): New helper function to merge custom
+	modifiers stored in objects to a MonoType.
+	(fieldref_encode_signature): Encode custom modifiers.
+	(mono_image_get_generic_field_token): Call add_custom_modifiers ().
+	(fieldbuilder_to_mono_class_field): Ditto. Fixes #424663.
+
 2008-09-19  Kornél Pál  <kornelpal@gmail.com>
 
 	* coree.c (_CorValidateImage): Some 64-bit IL only images have entry point
