@@ -1,5 +1,10 @@
+2008-09-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
-Thu Sep 18 18:14:25 CEST 2008 Paolo Molaro <lupus@ximian.com>
+	* DiagnosticsConfigurationHandler.cs (AddTraceAttributes): Avoid
+	wrapping configuration errors thrown during initialization of
+	TraceImpl. Fixed line endings.
+
+2008-09-18  Paolo Molaro <lupus@ximian.com>
 
 	* CounterSampleCalculator.cs: added more calculated types.
 	* PerformanceCounter.cs: NextValue() works as well as RawValue.

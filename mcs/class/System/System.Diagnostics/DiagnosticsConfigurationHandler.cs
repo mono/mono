@@ -267,33 +267,30 @@ namespace System.Diagnostics
 		private void AddTraceAttributes (IDictionary d, XmlNode node)
 		{
 			XmlAttributeCollection c = node.Attributes;
-			string autoflush = GetAttribute (c, "autoflush", false, node);
-			string indentsize = GetAttribute (c, "indentsize", false, node);
+			string autoflushConf = GetAttribute (c, "autoflush", false, node);
+			string indentsizeConf = GetAttribute (c, "indentsize", false, node);
 			ValidateInvalidAttributes (c, node);
-			if (autoflush != null) {
+			if (autoflushConf != null) {
+				bool autoflush = false;
 				try {
-					bool b = bool.Parse (autoflush);
-					d ["autoflush"] = b;
-					TraceImpl.AutoFlush = b;
-				}
-				catch (Exception e) {
+					autoflush = bool.Parse (autoflushConf);
+					d ["autoflush"] = autoflush;
+				} catch (Exception e) {
 					throw new ConfigurationException ("The `autoflush' attribute must be `true' or `false'",
 							e, node);
 				}
+				TraceImpl.AutoFlush = autoflush;
 			}
-			if (indentsize != null) {
+			if (indentsizeConf != null) {
+				int indentsize = 0;
 				try {
-					int n = int.Parse (indentsize);
-					d ["indentsize"] = n;
-					TraceImpl.IndentSize = n;
-				}
-				catch (ConfigurationException) {
-					throw;
-				}
-				catch (Exception e) {
+					indentsize = int.Parse (indentsizeConf);
+					d ["indentsize"] = indentsize;
+				} catch (Exception e) {
 					throw new ConfigurationException ("The `indentsize' attribute must be an integral value.",
 							e, node);
 				}
+				TraceImpl.IndentSize = indentsize;
 			}
 		}
 
