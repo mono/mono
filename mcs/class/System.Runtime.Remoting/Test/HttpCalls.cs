@@ -7,6 +7,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Http;
@@ -64,7 +65,9 @@ namespace MonoTests.Remoting
 	{
 		public override IChannelSender CreateClientChannel ()
 		{
-			return new HttpChannel ();
+			Hashtable options = new Hashtable ();
+			options ["timeout"] = 10000; // 10s
+			return new HttpClientChannel (options, null);
 		}
 
 		public override IChannelReceiver CreateServerChannel ()
@@ -78,7 +81,10 @@ namespace MonoTests.Remoting
 	{
 		public override IChannelSender CreateClientChannel ()
 		{
-			return new HttpClientChannel ("test channel", new BinaryClientFormatterSinkProvider ());
+			Hashtable options = new Hashtable ();
+			options ["timeout"] = 10000; // 10s
+			options ["name"] = "binary http channel";
+			return new HttpClientChannel (options,  new BinaryClientFormatterSinkProvider ());
 		}
 
 		public override IChannelReceiver CreateServerChannel ()
