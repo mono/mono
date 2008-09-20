@@ -1,3 +1,9 @@
+2008-09-19 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
+
+	* WebConnectionStream.cs: when receiving a 0 content-length, free up
+	the slot for the next request immediately.
+	Fixes bug #427974.
+	
 2008-09-17  Michael Hutchinson  <mhutchinson@novell.com>
 
 	* HttpListenerPrefixCollection.cs:
