@@ -76,6 +76,9 @@ namespace System.Net
 
 				try {
 					contentLength = Int32.Parse (clength);
+					if (contentLength == 0) {
+						ReadAll ();
+					}
 				} catch {
 					contentLength = Int32.MaxValue;
 				}
