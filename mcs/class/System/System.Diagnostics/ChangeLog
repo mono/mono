@@ -1,5 +1,11 @@
 2008-09-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* PerformanceCounter.cs:
+	* Stopwatch.cs:
+	* TraceImpl.cs: Fixed line endings.
+
+2008-09-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* DiagnosticsConfigurationHandler.cs (AddTraceAttributes): Avoid
 	wrapping configuration errors thrown during initialization of
 	TraceImpl. Fixed line endings.
