@@ -395,10 +395,12 @@ namespace System.Data.SqlClient {
 			if (procNameLen > 1) {
 				if ((sindex = tmpProcName.IndexOf ('[')) == 0)
 					foundMatching = true;
+				else if (sindex == -1)
+					foundMatching = true;
 				else
 					foundMatching = false;
 			
-				if (foundMatching == true) {
+				if (foundMatching == true && sindex > -1) {
 					eindex = tmpProcName.IndexOf (']');
 					if (sindex > eindex && eindex != -1) {
 						foundMatching = false;

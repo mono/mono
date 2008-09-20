@@ -1,3 +1,8 @@
+2008-09-20  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlCommand.cs (DeriveParameters): Handle no square brackets 
+	case in schema/procedure names.
+	
 2008-09-17  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlCommand.cs (DeriveParameters): Escape/trim both
