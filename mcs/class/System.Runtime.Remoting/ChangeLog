@@ -1,3 +1,7 @@
+2008-09-19  Michael Hutchinson  <mhutchinson@novell.com>
+
+	* System.Runtime.Remoting_test.dll.sources: add HttpBugtests.cs.
+
 2008-01-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Runtime.Remoting_test.dll.sources: add TcpChannelTest.cs.
