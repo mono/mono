@@ -1,3 +1,15 @@
+2008-09-19  Kornél Pál  <kornelpal@gmail.com>
+
+	Backport of r113614.
+
+	* coree.c (_CorValidateImage): Some 64-bit IL only images have entry point
+	calling _CorDllMain imported from mscoree.dll. Set entry point RVA to 0 for
+	64-bit IL only images because imports are not resolved for IL only images.
+	Special thanks to Bill Holmes for finding this bug and testing the patch.
+	Also fail for 64-bit images marked as CLI_FLAGS_32BITREQUIRED.
+
+	Contributed under MIT/X11 license.
+
 2008-09-10  Bill Holmes  <billholmes54@gmail.com>
 
 	Backport of r112680.
