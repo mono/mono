@@ -1,5 +1,9 @@
 2008-09-20  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	* SqlCommand.cs (DeriveParameters): Simplification of the if-else loop.
+	
+2008-09-20  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	* SqlCommand.cs (DeriveParameters): Handle no square brackets 
 	case in schema/procedure names.
 	

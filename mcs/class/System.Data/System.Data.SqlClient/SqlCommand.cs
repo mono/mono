@@ -393,9 +393,7 @@ namespace System.Data.SqlClient {
 			// of exception in MS.NET
 			
 			if (procNameLen > 1) {
-				if ((sindex = tmpProcName.IndexOf ('[')) == 0)
-					foundMatching = true;
-				else if (sindex == -1)
+				if ((sindex = tmpProcName.IndexOf ('[')) <= 0)
 					foundMatching = true;
 				else
 					foundMatching = false;
