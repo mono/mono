@@ -209,6 +209,7 @@ namespace System.Runtime.Remoting.Channels.Http
 		public bool WantsToListen
 		{
 			get { return server.WantsToListen; }
+			set { server.WantsToListen = value; }
 		}
 
 		#endregion

@@ -76,7 +76,9 @@ namespace System.Runtime.Remoting.Channels.Http
 		{
 			BuildSink (null);
 		}
-
+		
+		[MonoTODO ("Handle the machineName, proxyName, proxyPort, servicePrincipalName, " + 
+			"useAuthenticatedConnectionSharing properties")]
 		public HttpClientChannel (IDictionary properties, IClientChannelSinkProvider sinkProvider)
 		{
 			if (properties != null) {
@@ -240,7 +242,7 @@ namespace System.Runtime.Remoting.Channels.Http
 
 		#region IChannelSender (: IChannel)
 
-		public IMessageSink CreateMessageSink (string url, object remoteChannelData, out string objectURI)
+		public virtual IMessageSink CreateMessageSink (string url, object remoteChannelData, out string objectURI)
 		{
 			//Mostly copied from TcpClientChannel
 			if (url == null || Parse (url, out objectURI) != null) {
@@ -275,7 +277,7 @@ namespace System.Runtime.Remoting.Channels.Http
 		{
 			get { return isSecured; }
 			set {
-				throw new NotImplementedException ();
+				throw new NotImplementedException ("Unable to determine expected behaviour yet.");
 			}
 		}
 		

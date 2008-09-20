@@ -1,3 +1,9 @@
+2008-09-19  Michael Hutchinson  <mhutchinson@novell.com>
+
+	* HttpServerChannel.cs:
+	* HttpClientChannel.cs:
+	* HttpChannel.cs: Fixes from corcompare, and some cleanup.
+
 2008-09-19  Jeffrey Stedfast  <fejj@novell.com>
 
 	* HttpChannel.cs: Throw ArgumentNullException if url is null.

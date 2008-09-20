@@ -69,7 +69,8 @@ namespace System.Runtime.Remoting.Channels.Http
 			this.port = port;
 			BuildSink (null);
 		}
-
+		
+		[MonoTODO ("Handle the listen property")]
 		public HttpServerChannel (IDictionary properties, IServerChannelSinkProvider sinkProvider)
 		{
 
@@ -110,12 +111,6 @@ namespace System.Runtime.Remoting.Channels.Http
 				}
 			}
 
-			BuildSink (sinkProvider);
-		}
-
-		public HttpServerChannel (string name, IServerChannelSinkProvider sinkProvider)
-		{
-			this.name = name;
 			BuildSink (sinkProvider);
 		}
 
@@ -287,8 +282,7 @@ namespace System.Runtime.Remoting.Channels.Http
 
 		public void AddHookChannelUri (string channelUri)
 		{
-			//FIXME: what does this do?
-			throw new NotImplementedException ();
+			throw new NotImplementedException ("Behaviour not yet determined");
 		}
 
 		public string ChannelScheme
@@ -304,6 +298,9 @@ namespace System.Runtime.Remoting.Channels.Http
 		public bool WantsToListen
 		{
 			get { return wantsToListen; }
+			set {
+				throw new NotImplementedException ("Behaviour not yet determined");
+			}
 		}
 
 		#endregion
