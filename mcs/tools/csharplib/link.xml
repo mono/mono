@@ -1,0 +1,7 @@
+<linker>
+  <assembly fullname="csharplib">
+    <type fullname="Mono.CSharp.Evaluator"/>
+    <type fullname="Mono.CompilerServices.SymbolWriter.MonoDebuggerSupport" />
+    <type fullname="Mono.CSharp.CompilerCallableEntryPoint" />
+  </assembly>
+</linker>

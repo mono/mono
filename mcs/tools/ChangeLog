@@ -1,3 +1,10 @@
+2008-09-21  Miguel de Icaza  <miguel@novell.com>
+
+	* csharplib/Makefile: Add a setup to build GMCS as a GAC assembly
+	called `csharplib' with only the public classes that we want
+	exposed: Mono.CSharp.Evaluator, Mono.CSharp.InteractiveBase and
+	Mono.CSharp.InteractiveBase+Simple
+
 2008-09-10  Miguel de Icaza  <miguel@novell.com>
 
 	* Makefile (thisdir): Add csharp here.
