@@ -1,3 +1,9 @@
+2008-09-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_image_get_field_on_inst_token): Call 
+	field_encode_signature () since that handles custom modifiers too.
+	Fixes #424663.
+
 2008-09-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (add_custom_modifiers): New helper function to merge custom
