@@ -10876,6 +10876,16 @@
       </method>
     </type>
   </test>
+  <test name="gtest-413.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>95</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-684.cs">
     <type name="C">
       <method name="Void .ctor()">
@@ -12445,6 +12455,30 @@
       </method>
       <method name="Void &lt;ThisCausesACrash&gt;m__0[I](System.Object, System.EventArgs)">
         <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-anon-45.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void AnyMethod[T]()">
+        <size>20</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>12</size>
+      </method>
+      <method name="Void &lt;AnyMethod&gt;m__0[T]()">
+        <size>31</size>
+      </method>
+    </type>
+    <type name="C+&lt;AnyMethod&gt;c__AnonStorey0`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__1(System.String)">
+        <size>14</size>
       </method>
     </type>
   </test>
