@@ -1,5 +1,10 @@
 2008-09-22  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #378294
+	* class.cs: Make fixed size buffers gmcs feature only.
+
+2008-09-22  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #355622, #324993
 	* assign.cs, const.cs, class.cs: Create new EmitContext for each
 	field initializer.
