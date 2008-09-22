@@ -2753,7 +2753,7 @@ non_expression_type
 	  {
 		$$ = TypeManager.system_void_expr;
 	  }
-	| non_expression_type rank_specifier
+	| non_expression_type rank_specifiers
 	  {
 		Location loc = GetLocation ($1);
 		if (loc.IsNull)
@@ -3382,9 +3382,9 @@ opt_rank_specifier_or_nullable
 rank_specifiers
 	: rank_specifier opt_rank_specifier
 	  {
-		  $$ = (string) $2 + (string) $1;
+		$$ = (string) $2 + (string) $1;
 	  }
-        ;
+	;
 
 rank_specifier
 	: OPEN_BRACKET opt_dim_separators CLOSE_BRACKET

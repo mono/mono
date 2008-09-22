@@ -1,5 +1,11 @@
 2008-09-22  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #324917
+	* cs-parser.jay: Add missing multidimensional non-expression type
+	ranks.
+	
+2008-09-22  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #428191
 	* anonymous.cs: Create an outer generic fields also for non-storey
 	anonymous methods.
