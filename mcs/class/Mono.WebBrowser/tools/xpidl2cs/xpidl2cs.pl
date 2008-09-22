@@ -26,6 +26,7 @@ die "Usage: xpidl2cs.pl file.idl [/path/to/idl/]" if scalar(@ARGV) < 1;
 my $file = shift;
 my $path = shift if scalar(@ARGV) > 0;
 my $nosig = shift if scalar(@ARGV) > 0;
+$nosig = "" if !$nosig;
 
 open FILE, '<', $path.$file or die "Can't open file $path$file";
 
@@ -115,12 +116,14 @@ my %dependents;
 my $class_implementation;
 
 sub trim{
+#print "trim\n";
     $_[0]=~s/^\s+//;
     $_[0]=~s/\s+$//;
     return;
 }
 
 sub parse_parent {
+#print "parse_parent\n";
     my $x = shift;
 
 	print "Parsing parent $x\n";
@@ -149,11 +152,13 @@ sub parse_parent {
 }
 
 sub has_setter {
+#print "has_setter\n";
     my $x = shift;
     return !$properties{$x}->{"setter"};
 }
 
 sub get_name {
+#print "get_name\n";
     my $x = shift;
 
     if (exists $names{$x}) {
@@ -163,6 +168,7 @@ sub get_name {
 }
 
 sub get_type {
+#print "get_type\n";
     my $x = shift;
     my $out = shift;
     my $arr = shift;
@@ -192,6 +198,7 @@ sub get_type {
 }
 
 sub get_out {
+#print "get_out\n";
     my $x = shift;
     if (exists $types{$x}) {
 		return $types{$x}->{"out"};
@@ -200,6 +207,7 @@ sub get_out {
 }
 
 sub get_marshal {
+#print "get_marshal\n";
     my $x = shift;
     my $out = shift;
     my $arr = shift;
@@ -224,6 +232,7 @@ sub get_marshal {
 }
 
 sub get_return_value {
+#print "get_return_value\n";
     my $x = shift;
     if (exists $returnvalues{$x}) {
 		return $returnvalues{$x}->{"value"};
@@ -233,11 +242,13 @@ sub get_return_value {
 
 		
 sub is_property {
+#print "is_property\n";
     my $x = shift;
     return (exists $properties{$x});
 }
 
 sub add_external {
+#print "add_external\n";
     my $x = shift;
     if ($x !~ /nsISupports/ && !exists $types{$x} && !exists $dependents{$x}) {
 		$dependents{$x} = $x;
@@ -246,6 +257,7 @@ sub add_external {
 }
 
 sub get_params {
+#print "get_params\n";
     my $x = shift;
     my %list;
 #print $methods{$x}->{"params"}."\n";
@@ -364,12 +376,13 @@ sub get_params {
 		$methods{$x}->{"type"} = $list{$lastoutparam}->{"type"};
 		pop (@ret);
 	}
-print "@ret\n";
+#print "@ret\n";
 	
 	return join (",", @ret);
 }
 
 sub parse_file {
+#print "parse_file\n";
     my $method = 0;
     my $mname = '';
     my $mtype = '';
@@ -494,7 +507,7 @@ sub parse_file {
 
 
 sub output {
-
+#print "output\n";
     my $name = $interface->{"class"};
     print "$name.cs\n";
     open X, ">$name.cs";
@@ -646,17 +659,18 @@ sub output {
 }
 
 sub generate_dependents {
-    for my $file (keys %dependents) {
-		if (! (-e "$file.cs") && -e "$path$file.idl") {
-			print "generating $path$file.idl\n";
-			my $ret = `perl xpidl2cs.pl $file.idl $path $nosig`;
+#print "generate_dependents\n";
+    for my $dependent (keys %dependents) {
+		if (! (-e "$dependent.cs") && -e "$path$dependent.idl" && $file != $dependent) {
+			print "generating $path$dependent.idl\n";
+			my $ret = `perl xpidl2cs.pl $dependent.idl $path $nosig`;
 			print "\n$ret";
 		}
     }
 }
 
 sub generate_class_implementation_example {
-
+#print "generate_class_implementation_example\n";
     my $name = $interface->{"class"};
 	my $interfacename = $interface->{"class"};
     my $helpername = $name;

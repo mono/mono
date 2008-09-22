@@ -1,3 +1,9 @@
+2008-09-22  Andreia Gaita <avidigal@novell.com> 
+
+	* xpidl2cs.pl: fix infinite loop for generate_dependents, conflict 
+	between global variable $file and local one. Add some more prints
+	for debugging purposes.
+
 2008-06-10  Andreia Gaita <avidigal@novell.com> 
 
 	* xpidl2cs.pl: Added generate_class_implementation, to output a class
