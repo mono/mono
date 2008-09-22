@@ -3645,7 +3645,7 @@ namespace System.Windows.Forms
 
 		public void EnsureVisible (int index)
 		{
-			if (index < 0 || index >= items.Count || scrollable == false)
+			if (index < 0 || index >= items.Count || scrollable == false || updating)
 				return;
 
 			Rectangle view_rect = item_control.ClientRectangle;

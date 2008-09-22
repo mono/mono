@@ -1,3 +1,9 @@
+2008-09-22  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* ListView.cs: Don't do anything when EnsureVisible is called inside a
+	BeginUpdate/EndUpdate block.
+	Fixes #425049.
+
 2008-09-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItem.cs: The semantics for the public .ctor of
