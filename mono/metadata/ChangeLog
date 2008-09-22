@@ -1,4 +1,9 @@
 
+Mon Sep 22 17:33:12 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* domain.c, monitor.c, boehm-gc.c, gc.c: update some of the GC and
+	loader-related counters.
+
 Mon Sep 22 17:29:54 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* mono-perfcounters-def.h, mono-perfcounters.c, class-internals.h:
