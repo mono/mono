@@ -30183,6 +30183,24 @@
       </method>
     </type>
   </test>
+  <test name="test-591.cs">
+    <type name="C1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Foo(System.String)">
+        <size>51</size>
+      </method>
+    </type>
+    <type name="C2">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="test-592.cs">
     <type name="T">
       <method name="Void .ctor()">
