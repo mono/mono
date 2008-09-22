@@ -474,10 +474,12 @@ namespace Mono.CSharp {
 		// Keep resolved value because field initializers have their own rules
 		//
 		ExpressionStatement resolved;
+		IResolveContext rc;
 
-		public FieldInitializer (FieldBuilder field, Expression expression)
+		public FieldInitializer (FieldBuilder field, Expression expression, IResolveContext rc)
 			: base (new FieldExpr (field, expression.Location, true), expression, expression.Location)
 		{
+			this.rc = rc;
 			if (!field.IsStatic)
 				((FieldExpr)target).InstanceExpression = CompilerGeneratedThis.Instance;
 		}
@@ -488,8 +490,25 @@ namespace Mono.CSharp {
 			if (source == null)
 				return null;
 
-			if (resolved == null)
-				resolved = base.DoResolve (ec) as ExpressionStatement;
+			if (resolved == null) {
+				//
+				// Field initializers are tricky for partial classes. They have to
+				// share same costructor (block) but they have they own resolve scope.
+				//
+
+				// TODO: Use ResolveContext only
+				EmitContext f_ec = new EmitContext (rc, rc.DeclContainer, loc, null, TypeManager.void_type, 0, true);
+				f_ec.IsStatic = ec.IsStatic;
+				f_ec.CurrentBlock = ec.CurrentBlock;
+
+				EmitContext.Flags flags = EmitContext.Flags.InFieldInitializer;
+				if (ec.IsInUnsafeScope)
+					flags |= EmitContext.Flags.InUnsafe;
+
+				f_ec.Set (flags);
+
+				resolved = base.DoResolve (f_ec) as ExpressionStatement;
+			}
 
 			return resolved;
 		}

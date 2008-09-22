@@ -693,19 +693,12 @@ namespace Mono.CSharp {
 
 		public void ResolveFieldInitializers (EmitContext ec)
 		{
-			// Field initializers are tricky for partial classes. They have to
-			// share same costructor (block) but they have they own resolve scope.
-			DeclSpace orig = ec.DeclContainer;
-
 			if (partial_parts != null) {
 				foreach (TypeContainer part in partial_parts) {
-					ec.DeclContainer = part;
 					part.DoResolveFieldInitializers (ec);
 				}
 			}
-			ec.DeclContainer = PartialContainer;
 			DoResolveFieldInitializers (ec);
-			ec.DeclContainer = orig; 
 		}
 
 		void DoResolveFieldInitializers (EmitContext ec)
@@ -715,33 +708,31 @@ namespace Mono.CSharp {
 					return;
 
 				bool has_complex_initializer = !RootContext.Optimize;
-				using (ec.Set (EmitContext.Flags.InFieldInitializer)) {
-					int i;
-					ExpressionStatement[] init = new ExpressionStatement [initialized_static_fields.Count];
-					for (i = 0; i < initialized_static_fields.Count; ++i) {
-						FieldInitializer fi = (FieldInitializer) initialized_static_fields [i];
-						ExpressionStatement s = fi.ResolveStatement (ec);
-						if (s == null) {
-							s = EmptyExpressionStatement.Instance;
-						} else if (fi.IsComplexInitializer) {
-							has_complex_initializer |= true;
-						}
-
-						init [i] = s;
+				int i;
+				ExpressionStatement [] init = new ExpressionStatement [initialized_static_fields.Count];
+				for (i = 0; i < initialized_static_fields.Count; ++i) {
+					FieldInitializer fi = (FieldInitializer) initialized_static_fields [i];
+					ExpressionStatement s = fi.ResolveStatement (ec);
+					if (s == null) {
+						s = EmptyExpressionStatement.Instance;
+					} else if (fi.IsComplexInitializer) {
+						has_complex_initializer |= true;
 					}
 
-					for (i = 0; i < initialized_static_fields.Count; ++i) {
-						FieldInitializer fi = (FieldInitializer) initialized_static_fields [i];
-						//
-						// Need special check to not optimize code like this
-						// static int a = b = 5;
-						// static int b = 0;
-						//
-						if (!has_complex_initializer && fi.IsDefaultInitializer)
-							continue;
+					init [i] = s;
+				}
 
-						ec.CurrentBlock.AddScopeStatement (new StatementExpression (init [i]));
-					}
+				for (i = 0; i < initialized_static_fields.Count; ++i) {
+					FieldInitializer fi = (FieldInitializer) initialized_static_fields [i];
+					//
+					// Need special check to not optimize code like this
+					// static int a = b = 5;
+					// static int b = 0;
+					//
+					if (!has_complex_initializer && fi.IsDefaultInitializer)
+						continue;
+
+					ec.CurrentBlock.AddScopeStatement (new StatementExpression (init [i]));
 				}
 
 				return;
@@ -750,21 +741,19 @@ namespace Mono.CSharp {
 			if (initialized_fields == null)
 				return;
 
-			using (ec.Set (EmitContext.Flags.InFieldInitializer)) {
-				for (int i = 0; i < initialized_fields.Count; ++i) {
-					FieldInitializer fi = (FieldInitializer) initialized_fields [i];
-					ExpressionStatement s = fi.ResolveStatement (ec);
-					if (s == null)
-						continue;
+			for (int i = 0; i < initialized_fields.Count; ++i) {
+				FieldInitializer fi = (FieldInitializer) initialized_fields [i];
+				ExpressionStatement s = fi.ResolveStatement (ec);
+				if (s == null)
+					continue;
 
-					//
-					// Field is re-initialized to its default value => removed
-					//
-					if (fi.IsDefaultInitializer && RootContext.Optimize)
-						continue;
+				//
+				// Field is re-initialized to its default value => removed
+				//
+				if (fi.IsDefaultInitializer && RootContext.Optimize)
+					continue;
 
-					ec.CurrentBlock.AddScopeStatement (new StatementExpression (s));
-				}
+				ec.CurrentBlock.AddScopeStatement (new StatementExpression (s));
 			}
 		}
 
@@ -5909,7 +5898,7 @@ namespace Mono.CSharp {
 
 			if (initializer != null) {
 				((TypeContainer) Parent).RegisterFieldForInitialization (this,
-					new FieldInitializer (FieldBuilder, initializer));
+					new FieldInitializer (FieldBuilder, initializer, this));
 			} else {
 				if (Parent.PartialContainer.Kind == Kind.Struct)
 					CheckStructLayout (member_type, (ModFlags & Modifiers.STATIC) != 0);
@@ -7173,7 +7162,7 @@ namespace Mono.CSharp {
 				}
 
 				((TypeContainer) Parent).RegisterFieldForInitialization (this,
-					new FieldInitializer (FieldBuilder, Initializer));
+					new FieldInitializer (FieldBuilder, Initializer, this));
 			}
 
 			return true;

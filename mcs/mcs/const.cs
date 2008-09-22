@@ -99,7 +99,7 @@ namespace Mono.CSharp {
 
 			if (ttype == TypeManager.decimal_type)
 				Parent.PartialContainer.RegisterFieldForInitialization (this,
-					new FieldInitializer (FieldBuilder, initializer));
+					new FieldInitializer (FieldBuilder, initializer, this));
 
 			return true;
 		}

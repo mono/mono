@@ -1,3 +1,9 @@
+2008-09-22  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #355622, #324993
+	* assign.cs, const.cs, class.cs: Create new EmitContext for each
+	field initializer.
+
 2008-09-19  Marek Safar  <marek.safar@gmail.com>
 
 	* nullable.cs, expression.cs, namespace.cs, delegate.cs: Duplicate
