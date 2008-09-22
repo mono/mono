@@ -919,6 +919,12 @@ namespace Mono.CSharp {
 			label.AddReference ();
 		}
 
+
+		protected override void CloneTo (CloneContext clonectx, Statement target)
+		{
+			// Nothing to clone
+		}
+
 		protected override void DoEmit (EmitContext ec)
 		{
 			if (label == null)
