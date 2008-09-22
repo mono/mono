@@ -266,7 +266,7 @@ namespace Mono.CSharp {
 				// Use current method type parameter (MVAR) for top level storey only. All
 				// nested storeys use class type parameter (VAR)
 				//
-				TypeParameter[] tparams = ec.CurrentAnonymousMethod != null ?
+				TypeParameter[] tparams = ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod.Storey != null ?
 					ec.CurrentAnonymousMethod.Storey.CurrentTypeParameters :
 					ec.GenericDeclContainer.CurrentTypeParameters;
 
@@ -652,7 +652,7 @@ namespace Mono.CSharp {
 		//
 		protected FieldExpr GetFieldExpression (EmitContext ec)
 		{
-			if (ec.CurrentAnonymousMethod == null) {
+			if (ec.CurrentAnonymousMethod == null || ec.CurrentAnonymousMethod.Storey == null) {
 				//
 				// When setting top-level hoisted variable in generic storey
 				// change storey generic types to method generic types (VAR -> MVAR)
