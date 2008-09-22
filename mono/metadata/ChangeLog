@@ -1,3 +1,9 @@
+
+Mon Sep 22 17:29:54 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mono-perfcounters-def.h, mono-perfcounters.c, class-internals.h:
+	added more MS-compatible counters.
+
 2008-09-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_setup_fields): Call setup_fields before accessing
