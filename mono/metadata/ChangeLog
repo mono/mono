@@ -1,3 +1,8 @@
+2008-09-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_fields): Call setup_fields before accessing
+	class->blittable. Fixes #428217.
+
 2008-09-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (mono_image_get_field_on_inst_token): Call 
