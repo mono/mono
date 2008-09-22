@@ -10876,6 +10876,19 @@
       </method>
     </type>
   </test>
+  <test name="gtest-684.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Goo()">
+        <size>11</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -27260,19 +27273,6 @@
       </method>
     </type>
   </test>
-  <test name="test-466.cs">
-    <type name="C">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void Goo()">
-        <size>11</size>
-      </method>
-      <method name="Void Main()">
-        <size>1</size>
-      </method>
-    </type>
-  </test>
   <test name="test-467.cs">
     <type name="ExceptionWithAnonMethod">
       <method name="Void .ctor()">
@@ -32180,6 +32180,41 @@
       </method>
       <method name="Void EndInvoke(IAsyncResult)">
         <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-682.cs">
+    <type name="broken_cast">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void report(System.String)">
+        <size>7</size>
+      </method>
+      <method name="Void conv_ovf_i(Int64, Boolean)">
+        <size>73</size>
+      </method>
+      <method name="Void conv_ovf_i_un(Int64, Boolean)">
+        <size>73</size>
+      </method>
+      <method name="Void conv_ovf_u(Int64, Boolean)">
+        <size>73</size>
+      </method>
+      <method name="Void conv_ovf_u_un(Int64, Boolean)">
+        <size>73</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>324</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-683.cs">
+    <type name="broken_cast">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>32</size>
       </method>
     </type>
   </test>
