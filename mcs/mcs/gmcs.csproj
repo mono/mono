@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D4A01C5B-A1B5-48F5-BB5B-D2E1BD236E56}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE;NET_2_0;MS_COMPATIBLE;GMCS_SOURCE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -71,6 +72,7 @@
     </Compile>
     <Compile Include="convert.cs">
     </Compile>
+    <Compile Include="eval.cs" />
     <Compile Include="lambda.cs">
     </Compile>
     <Compile Include="cs-parser.cs" />
