@@ -1,3 +1,7 @@
+2008-09-22  Jb Evain  <jbevain@novell.com>
+
+	* ExpressionTest_TypeIs.cs: add test for bug #428309.
+
 2008-05-13  Roei Erez  <roeie@mainsoft.com>
 
 	* ExpressionTest.cs: Exclude tests only in JAVAEE environment.

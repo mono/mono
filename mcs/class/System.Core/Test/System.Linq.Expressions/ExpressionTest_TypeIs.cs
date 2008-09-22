@@ -111,5 +111,20 @@ namespace MonoTests.System.Linq.Expressions
 		{
 			Expression.TypeIs ("yoyo".ToConstant (), typeof (void));
 		}
+
+		public static void TacTac ()
+		{
+		}
+
+		[Test]
+		public void VoidIsObject ()
+		{
+			var vio = Expression.Lambda<Func<bool>> (
+				Expression.TypeIs (
+					Expression.Call (GetType ().GetMethod ("TacTac")),
+					typeof (object))).Compile ();
+
+			Assert.IsFalse (vio ());
+		}
 	}
 }
