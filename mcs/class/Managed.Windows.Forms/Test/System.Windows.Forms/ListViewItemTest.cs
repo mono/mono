@@ -1340,6 +1340,24 @@ namespace MonoTests.System.Windows.Forms
 	public class ListViewSubItemCollectionTest
 	{
 		[Test]
+		public void Ctor ()
+		{
+			ListViewItem item = new ListViewItem ();
+			item.Text = "MAIN";
+
+			ListViewItem.ListViewSubItemCollection sub_items;
+			sub_items = new ListViewItem.ListViewSubItemCollection (item);
+
+			Assert.AreEqual (1, sub_items.Count, "#A1");
+			Assert.AreEqual ("MAIN", sub_items [0].Text, "#A2");
+
+			sub_items.Add ("A");
+
+			Assert.AreEqual (2, sub_items.Count, "#B1");
+			Assert.AreEqual ("A", sub_items [1].Text, "#B2");
+		}
+
+		[Test]
 		public void AddRange1 ()
 		{
 			ListViewItem item = new ListViewItem ();
