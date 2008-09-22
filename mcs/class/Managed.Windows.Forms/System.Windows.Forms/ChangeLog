@@ -1,3 +1,12 @@
+2008-09-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewItem.cs: The semantics for the public .ctor of
+	ListViewSubItemCollection need us to already have a Text value for the
+	item, which in our implementation have as available *after* adding the
+	first sub item. So create an internal .ctor that satisfies our needs
+	and let the public .ctor have the same semantics as .net.
+	Fixes #427561.
+
 2008-09-19  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* ListControl.cs: Changes in Formatting related values should call

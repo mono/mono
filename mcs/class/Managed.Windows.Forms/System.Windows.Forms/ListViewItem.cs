@@ -86,7 +86,7 @@ namespace System.Windows.Forms
 
 		public ListViewItem (ListViewItem.ListViewSubItem [] subItems, int imageIndex)
 		{
-			this.sub_items = new ListViewSubItemCollection (this);
+			this.sub_items = new ListViewSubItemCollection (this, null);
 			for (int i = 0; i < subItems.Length; i++)
 				sub_items.Add (subItems [i]);
 			this.image_index = imageIndex;
@@ -95,13 +95,12 @@ namespace System.Windows.Forms
 		public ListViewItem (string text, int imageIndex)
 		{
 			this.image_index = imageIndex;
-			this.sub_items = new ListViewSubItemCollection (this);
-			this.sub_items.Add (text);
+			this.sub_items = new ListViewSubItemCollection (this, text);
 		}
 
 		public ListViewItem (string [] items, int imageIndex)
 		{
-			this.sub_items = new ListViewSubItemCollection (this);
+			this.sub_items = new ListViewSubItemCollection (this, null);
 			if (items != null) {
 				for (int i = 0; i < items.Length; i++)
 					sub_items.Add (new ListViewSubItem (this, items [i]));
@@ -130,7 +129,7 @@ namespace System.Windows.Forms
 
 		public ListViewItem(ListViewSubItem[] subItems, string imageKey)
 		{
-			this.sub_items = new ListViewSubItemCollection (this);
+			this.sub_items = new ListViewSubItemCollection (this, null);
 			for (int i = 0; i < subItems.Length; i++)
 				this.sub_items.Add (subItems [i]);
 			this.ImageKey = imageKey;
@@ -661,7 +660,7 @@ namespace System.Windows.Forms
 			clone.selected = this.selected;
 			clone.font = this.font;
 			clone.state_image_index = this.state_image_index;
-			clone.sub_items = new ListViewSubItemCollection (this);
+			clone.sub_items = new ListViewSubItemCollection (this, null);
 			
 			foreach (ListViewSubItem subItem in this.sub_items)
 				clone.sub_items.Add (subItem.Text, subItem.ForeColor,
@@ -773,7 +772,7 @@ namespace System.Windows.Forms
 		#region Protected Methods
 		protected virtual void Deserialize (SerializationInfo info, StreamingContext context)
 		{
-			sub_items = new ListViewSubItemCollection (this);
+			sub_items = new ListViewSubItemCollection (this, null);
 
 			Type lvsubitem_type = typeof (ListViewSubItem);
 
@@ -1347,13 +1346,18 @@ namespace System.Windows.Forms
 			internal ListViewItem owner;
 
 			#region Public Constructors
-			public ListViewSubItemCollection (ListViewItem owner)
+			public ListViewSubItemCollection (ListViewItem owner) : this (owner, owner.Text)
 			{
-				this.owner = owner;
-				this.list = new ArrayList ();
  			}
 			#endregion // Public Constructors
 
+			internal ListViewSubItemCollection (ListViewItem owner, string text)
+			{
+				this.owner = owner;
+				this.list = new ArrayList ();
+				if (text != null)
+					Add (text);
+			}
 			#region Public Properties
 			[Browsable (false)]
 			public int Count {
