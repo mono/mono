@@ -784,7 +784,7 @@ namespace System.Windows.Forms
 
 		public void Clear ()
 		{
-			Text = null;
+			Text = string.Empty;
 		}
 
 		public void ClearUndo ()
