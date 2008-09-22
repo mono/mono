@@ -1,3 +1,10 @@
+2008-09-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mini_emit_memset): Use a default alignment of 4.
+	(mini_emit_memcpy2): Ditto.
+
+	* mini-amd64.c: Fix a warning.
+
 2008-09-21  Mark Probst  <mark.probst@gmail.com>
 
 	* exceptions-ppc.c (mono_arch_get_call_filter): Fixed stack frame
