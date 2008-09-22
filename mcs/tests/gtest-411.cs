@@ -26,5 +26,6 @@ class Test {
 	public static void Main ()
 	{
 		Extensions.Match ("a", s => Maybe.C(s));
+		Extensions.Match ("a", s => Maybe.C(s), s => Maybe.C("a"));
 	}
 }
