@@ -1,3 +1,14 @@
+2008-09-22  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c (type_to_eval_stack_type): Remove duplicated function.
+
+	* method-to-ir.c (type_to_eval_stack_type): Make this version compatible with both JIT.
+
+	* mini.h: Export type_to_eval_stack_type.
+
+	This function was nearly duplicated in method-to-ir.c and mini.c. The difference
+	is only ins->klass of byref types.
+
 2008-09-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mini_emit_memset): Use a default alignment of 4.
