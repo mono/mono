@@ -1,3 +1,8 @@
+2008-09-23  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlXml.cs (.ctor, get_Value, CreateReader): Implemented and
+	removed MonoTODO and MethodNotImplementedException.
+	
 2008-06-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SqlDateTime.cs, SqlDecimal.cs, SqlInt32.cs, SqlInt16.cs,
