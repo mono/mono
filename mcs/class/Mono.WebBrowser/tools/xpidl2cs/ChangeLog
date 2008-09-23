@@ -1,5 +1,9 @@
 2008-09-23  Andreia Gaita <avidigal@novell.com> 
 
+	* xpidl2cs.pl: whitespace clean up
+
+2008-09-23  Andreia Gaita <avidigal@novell.com> 
+
 	* xpidl2cs.pl: fix parameter duplication. Add more type conversions
 
 2008-09-22  Andreia Gaita <avidigal@novell.com> 

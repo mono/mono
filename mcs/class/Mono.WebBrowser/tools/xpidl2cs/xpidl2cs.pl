@@ -70,17 +70,17 @@ $types{"DOMString"} = {name => "/*DOMString*/ HandleRef", out => "", marshal => 
 $types{"AUTF8String"} = {name => "/*AUTF8String*/ HandleRef", out => "", marshal => ""};
 $types{"ACString"} = {name => "/*ACString*/ HandleRef", out => "", marshal => ""};
 $types{"AString"} = {name => "/*AString*/ HandleRef", out => "", marshal => ""};
-$types{"wstring"} = {name => "string", out => "", marshal => "MarshalAs(UnmanagedType.LPWStr) "};
-$types{"nsCIDRef"} = {name => "Guid", out => "out", marshal => "MarshalAs (UnmanagedType.LPStruct) "};
-$types{"nsIIDRef"} = {name => "Guid", out => "out", marshal => "MarshalAs (UnmanagedType.LPStruct) "};
-$types{"Guid"} = {name => "Guid", out => "out", marshal => "MarshalAs (UnmanagedType.LPStruct) "};
-$types{"nsCID"} = {name => "Guid", out => "out", marshal => "MarshalAs (UnmanagedType.LPStruct) "};
-$types{"nsCIDPtr"} = {name => "Guid", out => "out", marshal => "MarshalAs (UnmanagedType.LPStruct) "};
-$types{"string"} = {name => "string", out => "ref", marshal => "MarshalAs (UnmanagedType.LPStr) "};
+$types{"wstring"} = {name => "string", out => "", marshal => "MarshalAs(UnmanagedType.LPWStr)"};
+$types{"nsCIDRef"} = {name => "Guid", out => "out", marshal => "MarshalAs (UnmanagedType.LPStruct)"};
+$types{"nsIIDRef"} = {name => "Guid", out => "out", marshal => "MarshalAs (UnmanagedType.LPStruct)"};
+$types{"Guid"} = {name => "Guid", out => "out", marshal => "MarshalAs (UnmanagedType.LPStruct)"};
+$types{"nsCID"} = {name => "Guid", out => "out", marshal => "MarshalAs (UnmanagedType.LPStruct)"};
+$types{"nsCIDPtr"} = {name => "Guid", out => "out", marshal => "MarshalAs (UnmanagedType.LPStruct)"};
+$types{"string"} = {name => "string", out => "ref", marshal => "MarshalAs (UnmanagedType.LPStr)"};
 $types{"refstring"} = {name => "IntPtr", out => "ref", marshal => ""};
 $types{"charPtr"} = {name => "StringBuilder", out => "", marshal => ""};
 $types{"voidPtr"} = {name => "IntPtr", out => "", marshal => ""};
-$types{"nsISupports"} = {name => "IntPtr", out => "out", marshal =>"MarshalAs (UnmanagedType.Interface) "};
+$types{"nsISupports"} = {name => "IntPtr", out => "out", marshal =>"MarshalAs (UnmanagedType.Interface)"};
 $types{"DOMTimeStamp"} = {name => "int", out => "out", marshal => ""};
 $types{"nsWriteSegmentFun"} = {name => "nsIWriteSegmentFunDelegate", out => "", marshal => ""};
 $types{"nsReadSegmentFun"} = {name => "nsIReadSegmentFunDelegate", out => "", marshal => ""};
@@ -96,7 +96,7 @@ $types{"nsIDocument"} = {name => "/*nsIDocument*/ IntPtr", out => "out", marshal
 $types{"nsIFrame"} = {name => "/*nsIFrame*/ IntPtr", out => "out", marshal => ""};
 $types{"nsObjectFrame"} = {name => "/*nsObjectFrame*/ IntPtr", out => "out", marshal => ""};
 $types{"nsIContent"} = {name => "/*nsIContent*/ IntPtr", out => "out", marshal => ""};
-$types{"others"} = {name => "", out => "out", marshal => "MarshalAs (UnmanagedType.Interface) "};
+$types{"others"} = {name => "", out => "out", marshal => "MarshalAs (UnmanagedType.Interface)"};
 
 my %returnvalues;
 $returnvalues{"short"} = {value => "0"};
