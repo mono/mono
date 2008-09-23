@@ -1,198 +1,185 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿//
+// Interpreter.cs
+//
+// (C) 2008 Mainsoft, Inc. (http://www.mainsoft.com)
+// (C) 2008 db4objects, Inc. (http://www.db4o.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
+using System;
 using System.Linq;
-using System.Text;
-using System.Reflection;
-using System.Collections.Specialized;
 using System.Linq.Expressions;
+using System.Reflection;
 
-namespace System.Linq.jvm
-{
+namespace System.Linq.jvm {
 
-    public class Interpreter
-    {
-        private class InternalVoidSubstitute
-        {
-        }
+	class Interpreter {
 
-        private static readonly Type VOID_SUBSTITUTE = 
-            typeof(InternalVoidSubstitute);
+		class VoidTypeMarker {
+		}
 
-        LambdaExpression _expression;
+		static readonly Type VoidMarker = typeof (VoidTypeMarker);
+		static readonly MethodInfo [] delegates = new MethodInfo [5];
 
-        static MethodInfo [] _delegateMap = null;
+		LambdaExpression lambda;
 
-        private const int MapSize = 5;
+		static Interpreter ()
+		{
+			var methods = from method in typeof (Interpreter).GetMethods (
+							  BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
+						  where method.Name == "GetDelegate"
+						  select method;
 
-        static Interpreter()
-        {
-            InitDelegateMap();
-        }
+			foreach (var method in methods)
+				delegates [method.GetGenericArguments ().Length - 1] = method;
+		}
 
-        private static void InitDelegateMap()
-        {
-            MethodInfo[] mia = 
-                typeof(Interpreter).GetMethods(
-                BindingFlags.Instance | 
-                BindingFlags.Public);
-            _delegateMap = new MethodInfo[MapSize];
-            foreach (MethodInfo m in mia)
-            {
-                if (m.Name == "GetDelegate")
-                {
-                    _delegateMap[m.GetGenericArguments().Length - 1] = m;
-                }
-            }
-        }
+		public Interpreter (LambdaExpression lambda)
+		{
+			this.lambda = lambda;
+		}
 
+		public Delegate CreateDelegate ()
+		{
+			var types = GetGenericSignature ();
+			var creator = delegates [types.Length - 1].MakeGenericMethod (types);
 
-        public LambdaExpression Expression
-        {
-            get { return _expression; }
-        }
+			return (Delegate) creator.Invoke (this, new object [0]);
+		}
 
-        public Interpreter(LambdaExpression expression)
-        {
-            _expression = expression;
-        }
+		public void Validate ()
+		{
+			new ExpressionValidator (lambda).Validate ();
+		}
 
-        public Delegate CreateDelegate()
-        {
-            Type[] arr = ExtractGenerecParameters();
-            MethodInfo mi = _delegateMap[arr.Length - 1];
-            MethodInfo mgi = mi.MakeGenericMethod(arr);
-            return (Delegate)mgi.Invoke(this, new object[0]);    
-        }
+		Type [] GetGenericSignature ()
+		{
+			var count = lambda.Parameters.Count;
+			var types = new Type [count + 1];
 
-        public void Validate()
-        {
-            ExpressionValidator validator = new ExpressionValidator(this.Expression);
-            validator.Validate();
-        }
+			var return_type = lambda.GetReturnType ();
+			if (return_type == typeof (void))
+				return_type = VoidMarker;
 
-        private Type[] ExtractGenerecParameters()
-        {
-            Type[] arr = new Type[Expression.Parameters.Count + 1];
-            Type rt = Expression.GetReturnType();
-            if (rt == typeof(void))
-            {
-                rt = VOID_SUBSTITUTE;
-            }
-            arr[Expression.Parameters.Count] = rt;
-            for (int i = 0; i < Expression.Parameters.Count; i++)
-            {
-                arr[i] = Expression.Parameters[i].Type;
-            }
-            return arr;
-        }
+			types [count] = return_type;
+			for (int i = 0; i < count; i++) {
+				types [i] = lambda.Parameters [i].Type;
+			}
 
-        private object Run(object[] arg)
-        {
-            ExpressionInterpreter inter = new ExpressionInterpreter(arg);
-            inter.Run((LambdaExpression)_expression);
-            return inter.Value;
-        }
+			return types;
+		}
 
-        public Delegate GetDelegate<TResult>()
-        {
-            if (typeof(TResult) == VOID_SUBSTITUTE)
-            {
-                return new Action(this.ActionAccessor);
-            }
-            return new Func<TResult>(this.FuncAccessor<TResult>);
-        }
+		object Run (object [] arg)
+		{
+			return ExpressionInterpreter.Interpret (lambda, arg);
+		}
 
-        public TResult FuncAccessor<TResult>()
-        {
-            return (TResult) Run(new object[0]);
-        }
+		Delegate GetDelegate<TResult> ()
+		{
+			if (typeof (TResult) == VoidMarker)
+				return new Action (ActionRunner);
 
-        public void ActionAccessor()
-        {
-            Run(new object[0]);
-        }
-        
-        public Delegate GetDelegate<T, TResult>()
-        {
-            if (typeof(TResult) == VOID_SUBSTITUTE)
-            {
-                return new Action<T>(this.ActionAccessor<T>);
-            }
-            return new Func<T, TResult>(this.FuncAccessor<T, TResult>);           
-        }
+			return new Func<TResult> (FuncRunner<TResult>);
+		}
 
-        public TResult FuncAccessor<T, TResult>(T arg)
-        {
-            return (TResult)Run(new object[] { arg });
-        }
+		TResult FuncRunner<TResult> ()
+		{
+			return (TResult) Run (new object [0]);
+		}
 
-        public void ActionAccessor<T>(T arg)
-        {
-            Run(new object[] { arg });
-        }
+		void ActionRunner ()
+		{
+			Run (new object [0]);
+		}
 
-        public Delegate GetDelegate<T1, T2, TResult>()
-        {
-            if (typeof(TResult) == VOID_SUBSTITUTE)
-            {
-                return new Action<T1, T2>(this.ActionAccessor<T1, T2>);
-            }
-            return new Func<T1, T2, TResult>(this.FuncAccessor<T1, T2, TResult>);
-        }
+		Delegate GetDelegate<T, TResult> ()
+		{
+			if (typeof (TResult) == VoidMarker)
+				return new Action<T> (ActionRunner<T>);
 
-        public TResult FuncAccessor<T1, T2, TResult>(T1 arg1, T2 arg2)
-        {
-            return (TResult)Run(new object[] { arg1, arg2 });
-        }
+			return new Func<T, TResult> (FuncRunner<T, TResult>);
+		}
 
-        public void ActionAccessor<T1, T2>(T1 arg1, T2 arg2)
-        {
-            Run(new object[] { arg1, arg2 });
-        }
+		TResult FuncRunner<T, TResult> (T arg)
+		{
+			return (TResult) Run (new object [] { arg });
+		}
 
-        public Delegate GetDelegate<T1, T2, T3, TResult>()
-        {
-            if (typeof(TResult) == VOID_SUBSTITUTE)
-            {
-                return new Action<T1, T2, T3>(this.ActionAccessor<T1, T2, T3>);
-            }
-            return new Func<T1, T2, T3, TResult>(this.FuncAccessor<T1, T2, T3, TResult>);
-        }
+		void ActionRunner<T> (T arg)
+		{
+			Run (new object [] { arg });
+		}
 
-        public TResult FuncAccessor<T1, T2, T3, TResult>(T1 arg1, T2 arg2, T3 arg3)
-        {
-            return (TResult)Run(new object[] { arg1, arg2, arg3 });
-        }
+		Delegate GetDelegate<T1, T2, TResult> ()
+		{
+			if (typeof (TResult) == VoidMarker)
+				return new Action<T1, T2> (ActionRunner<T1, T2>);
 
-        public void ActionAccessor<T1, T2, T3>(T1 arg1, T2 arg2, T3 arg3)
-        {
-            Run(new object[] { arg1, arg2, arg3 });
-        }
+			return new Func<T1, T2, TResult> (FuncRunner<T1, T2, TResult>);
+		}
 
-        public Delegate GetDelegate<T1, T2, T3, T4, TResult>()
-        {
-            if (typeof(TResult) == VOID_SUBSTITUTE)
-            {
-                return new Action<T1, T2, T3, T4>(this.ActionAccessor<T1, T2, T3, T4>);
-            }
-            return new Func<T1, T2, T3, T4, TResult>(this.FuncAccessor<T1, T2, T3, T4, TResult>);
-        }
+		TResult FuncRunner<T1, T2, TResult> (T1 arg1, T2 arg2)
+		{
+			return (TResult) Run (new object [] { arg1, arg2 });
+		}
 
-        public TResult FuncAccessor<T1, T2, T3, T4, TResult>(T1 arg1, T2 arg2, T3 arg3, T4 arg4)
-        {
-            return (TResult)Run(new object[] { arg1, arg2, arg3, arg4});
-        }
+		void ActionRunner<T1, T2> (T1 arg1, T2 arg2)
+		{
+			Run (new object [] { arg1, arg2 });
+		}
 
-        public void ActionAccessor<T1, T2, T3, T4>(T1 arg1, T2 arg2, T3 arg3, T4 arg4)
-        {
-            Run(new object[] { arg1, arg2, arg3, arg4 });
-        }
+		Delegate GetDelegate<T1, T2, T3, TResult> ()
+		{
+			if (typeof (TResult) == VoidMarker)
+				return new Action<T1, T2, T3> (ActionRunner<T1, T2, T3>);
 
-        
-    }    
-   
+			return new Func<T1, T2, T3, TResult> (FuncRunner<T1, T2, T3, TResult>);
+		}
 
-    
+		TResult FuncRunner<T1, T2, T3, TResult> (T1 arg1, T2 arg2, T3 arg3)
+		{
+			return (TResult) Run (new object [] { arg1, arg2, arg3 });
+		}
+
+		void ActionRunner<T1, T2, T3> (T1 arg1, T2 arg2, T3 arg3)
+		{
+			Run (new object [] { arg1, arg2, arg3 });
+		}
+
+		Delegate GetDelegate<T1, T2, T3, T4, TResult> ()
+		{
+			if (typeof (TResult) == VoidMarker)
+				return new Action<T1, T2, T3, T4> (ActionRunner<T1, T2, T3, T4>);
+
+			return new Func<T1, T2, T3, T4, TResult> (FuncRunner<T1, T2, T3, T4, TResult>);
+		}
+
+		TResult FuncRunner<T1, T2, T3, T4, TResult> (T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+		{
+			return (TResult) Run (new object [] { arg1, arg2, arg3, arg4 });
+		}
+
+		void ActionRunner<T1, T2, T3, T4> (T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+		{
+			Run (new object [] { arg1, arg2, arg3, arg4 });
+		}
+	}
 }

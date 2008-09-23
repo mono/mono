@@ -1,473 +1,831 @@
-﻿using System;
+﻿//
+// ExpressionInterpreter.cs
+//
+// (C) 2008 Mainsoft, Inc. (http://www.mainsoft.com)
+// (C) 2008 db4objects, Inc. (http://www.db4o.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Reflection;
-using System.Collections.Specialized;
 using System.Linq.Expressions;
+using System.Reflection;
 
-namespace System.Linq.jvm
-{
-    class ExpressionInterpreter : ExpressionVisitor
-    {
- 
-        LambdaExpression _exp;
+namespace System.Linq.jvm {
 
-        object[] _args;
+	class ExpressionInterpreter : ExpressionVisitor {
 
-        object _value = null;
+		LambdaExpression lambda;
+		object [] arguments;
+		Stack<object> stack = new Stack<object> ();
 
-        public object Value
-        {
-            get { return _value; }
-        }
-
-        public ExpressionInterpreter(object[] args)
-        {
-            _args = args;
-        }
-
-
-        public void Run(LambdaExpression exp)
-        {
-            _exp = exp;
-            Visit(exp.Body);
-        }
-
-		protected override void Visit (Expression expression)
+		void Push (object value)
 		{
-			if (expression == null) {
+			stack.Push (value);
+		}
+
+		object Pop ()
+		{
+			return stack.Pop ();
+		}
+
+		public ExpressionInterpreter (LambdaExpression lambda, object [] arguments)
+		{
+			this.lambda = lambda;
+			this.arguments = arguments;
+		}
+
+		private void VisitCoalesce (BinaryExpression binary)
+		{
+			Visit (binary.Left);
+
+			var left = Pop ();
+
+			if (left == null) {
+				Visit (binary.Right);
 				return;
 			}
-			if (expression.NodeType == ExpressionType.Power) {
-				VisitBinary ((BinaryExpression) expression);
+
+			if (binary.Conversion == null) {
+				Push (left);
+				return;
 			}
-			else {
-				base.Visit (expression);
+
+			Push (Invoke (binary.Conversion.Compile (), new [] { left }));
+		}
+
+		void VisitAndAlso (BinaryExpression binary)
+		{
+			object left = null;
+			object right = null;
+
+			Visit (binary.Left);
+
+			left = Pop ();
+
+			if (left == null || ((bool) left)) {
+				Visit (binary.Right);
+				right = Pop ();
+			}
+
+			Push (Math.And (left, right));
+		}
+
+		void VisitUserDefinedAndAlso (BinaryExpression binary)
+		{
+			object left = null;
+			object right = null;
+
+			Visit (binary.Left);
+
+			left = Pop ();
+
+			if (InvokeFalseOperator (binary, left)) {
+				Push (left);
+				return;
+			}
+
+			Visit (binary.Right);
+			right = Pop ();
+
+			if (binary.IsLiftedToNull && right == null) {
+				Push (null);
+				return;
+			}
+
+			Push (InvokeMethod (binary.Method, null, new [] { left, right }));
+		}
+
+		static bool InvokeTrueOperator (BinaryExpression binary, object target)
+		{
+			return (bool) InvokeMethod (GetTrueOperator (binary), null, new [] { target });
+		}
+
+		static bool InvokeFalseOperator (BinaryExpression binary, object target)
+		{
+			return (bool) InvokeMethod (GetFalseOperator (binary), null, new [] { target });
+		}
+
+		static MethodInfo GetFalseOperator (BinaryExpression binary)
+		{
+			return Expression.GetFalseOperator (binary.Left.Type.GetNotNullableType ());
+		}
+
+		static MethodInfo GetTrueOperator (BinaryExpression binary)
+		{
+			return Expression.GetTrueOperator (binary.Left.Type.GetNotNullableType ());
+		}
+
+		void VisitOrElse (BinaryExpression binary)
+		{
+			object left = null;
+			object right = null;
+
+			Visit (binary.Left);
+			left = Pop ();
+
+			if (left == null || !((bool) left)) {
+				Visit (binary.Right);
+				right = Pop ();
+			}
+
+			Push (Math.Or (left, right));
+		}
+
+		void VisitUserDefinedOrElse (BinaryExpression binary)
+		{
+			object left = null;
+			object right = null;
+
+			Visit (binary.Left);
+			left = Pop ();
+
+			if (InvokeTrueOperator (binary, left)) {
+				Push (left);
+				return;
+			}
+
+			Visit (binary.Right);
+			right = Pop ();
+
+			if (binary.IsLiftedToNull && right == null) {
+				Push (null);
+				return;
+			}
+
+			Push (InvokeMethod (binary.Method, null, new [] { left, right }));
+		}
+
+		void VisitLogicalBinary (BinaryExpression binary)
+		{
+			Visit (binary.Left);
+			Visit (binary.Right);
+
+			var right = Pop ();
+			var left = Pop ();
+
+			Push (Math.Evaluate (left, right, binary.Type, binary.NodeType));
+		}
+
+		void VisitArithmeticBinary (BinaryExpression binary)
+		{
+			Visit (binary.Left);
+			Visit (binary.Right);
+
+			if (IsNullBinaryLifting (binary))
+				return;
+
+			var right = Pop ();
+			var left = Pop ();
+
+			switch (binary.NodeType) {
+			case ExpressionType.RightShift:
+				Push (Math.RightShift (left, Convert.ToInt32 (right), Type.GetTypeCode (binary.Type.GetNotNullableType ())));
+				return;
+			case ExpressionType.LeftShift:
+				Push (Math.LeftShift (left, Convert.ToInt32 (right), Type.GetTypeCode (binary.Type.GetNotNullableType ())));
+				return;
+			default:
+				Push (Math.Evaluate (left, right, binary.Type, binary.NodeType));
+				break;
 			}
 		}
 
-        private void VisitCoalesce(BinaryExpression binary)
-        {
-            Visit(binary.Left);
-            if (_value == null)
-            {
-                Visit(binary.Right);
-            }
-        }
+		bool IsNullRelationalBinaryLifting (BinaryExpression binary)
+		{
+			var right = Pop ();
+			var left = Pop ();
 
-        private void VisitAndAlso(BinaryExpression binary)
-        {
-            object right = null;
-            object left = null;
+			if (binary.IsLifted && (left == null || right == null)) {
+				if (binary.IsLiftedToNull) {
+					Push (null);
+					return true;
+				}
 
-            Visit(binary.Left);
-            right = _value;
+				switch (binary.NodeType) {
+				case ExpressionType.Equal:
+					Push (BinaryEqual (binary, left, right));
+					break;
+				case ExpressionType.NotEqual:
+					Push (BinaryNotEqual (binary, left, right));
+					break;
+				default:
+					Push (false);
+					break;
+				}
 
-            if (right == null || ((bool)right))
-            {
-                Visit(binary.Right);
-                left = _value;
-            }
-
-            _value = Math.And(right, left);
-            
-        }
-
-        private void VisitOrElse(BinaryExpression binary)
-        {
-            object right = null;
-            object left = null;
-
-            Visit(binary.Left);
-            right = _value;
-
-            if (right == null || !((bool)right))
-            {
-                Visit(binary.Right);
-                left = _value;
-            }
-            _value = Math.Or(right, left);
-        }
-
-        private void VisitCommonBinary(BinaryExpression binary)
-        {
-            try
-            {
-                Visit(binary.Left);
-                object left = _value;
-                Visit(binary.Right);
-                object right = _value;
-
-                if (binary.Method != null)
-                {
-                    _value = binary.Method.Invoke(null, new object[] { left, right });
-                    return;
-                }
-
-                TypeCode tc = Type.GetTypeCode(binary.Type);
-
-                switch (binary.NodeType)
-                {
-                    case ExpressionType.ArrayIndex:
-                        _value = ((Array)left).GetValue((int)right);
-                        return;
-                    case ExpressionType.Equal:
-						if (typeof(ValueType).IsAssignableFrom(binary.Right.Type))
-							_value = ValueType.Equals (left, right);
-						else
-							_value = (left == right);
-                        return;
-                    case ExpressionType.NotEqual:
-                        _value = !left.Equals(right);
-                        return;
-                    case ExpressionType.LessThan:
-                        _value = (Comparer.Default.Compare(left, right) < 0);
-                        return;
-                    case ExpressionType.LessThanOrEqual:
-                        _value = (Comparer.Default.Compare(left, right) <= 0);
-                        return;
-                    case ExpressionType.GreaterThan:
-                        _value = (Comparer.Default.Compare(left, right) > 0);
-                        return;
-                    case ExpressionType.GreaterThanOrEqual:
-                        _value = (Comparer.Default.Compare(left, right) >= 0);
-                        return;
-                    case ExpressionType.RightShift:
-                        _value = Math.RightShift(left, Convert.ToInt32(right), tc);
-                        return;
-                    case ExpressionType.LeftShift:
-                        _value = Math.LeftShift(left, Convert.ToInt32(right), tc);
-                        return;
-                    default:
-                        _value = Math.Evaluate(left, right, binary.Type, binary.NodeType);
-                        break;
-
-                }
-            }
-            catch (OverflowException)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-
-                throw new NotImplementedException(
-                    string.Format(
-                    "Interpriter for BinaryExpression with NodeType {0} is not implimented",
-                    binary.NodeType),
-                    e);
-            }
-        }
-
-        protected override void VisitBinary(BinaryExpression binary)
-        {
-            switch (binary.NodeType)
-            {
-                case ExpressionType.AndAlso:
-                    VisitAndAlso(binary);
-                    return;
-                case ExpressionType.OrElse:
-                    VisitOrElse(binary);
-                    return;
-                case ExpressionType.Coalesce:
-                    VisitCoalesce(binary);
-                    return;
-                default:
-                    VisitCommonBinary(binary);
-                    break;
-            }
-        }
-
-        protected override void VisitUnary(UnaryExpression unary)
-        {
-			if (unary.NodeType == ExpressionType.Quote) 
-			{
-				_value = unary.Operand;
-				return;
+				return true;
 			}
-            Visit(unary.Operand);
-            object o = _value;
 
-            if (unary.Method != null)
-            {
-                _value = unary.Method.Invoke(null, new object[] { o });
-                return;
-            }
+			Push (left);
+			Push (right);
 
-            switch (unary.NodeType)
-            {
-                case ExpressionType.TypeAs:
-                    if (o == null || !Math.IsType(unary.Type, o))
-                    {
-                        _value = null;
-                    }
-                    return;
-                case ExpressionType.ArrayLength:
-                    _value = ((Array)o).Length;
-                    return;
-                case ExpressionType.Negate:
-                    _value = Math.Negete(o, Type.GetTypeCode(unary.Type));
-                    return;
-                case ExpressionType.NegateChecked:
-                    _value = Math.NegeteChecked(o, Type.GetTypeCode(unary.Type));
-                    return;
-                case ExpressionType.Not:
-					if (unary.Type == typeof(bool))
-						_value = ! Convert.ToBoolean(o);
-					else
-						_value = ~Convert.ToInt32(o);
-                    return;
-                case ExpressionType.UnaryPlus:
-                    _value = o;
-                    return;
-                case ExpressionType.Convert:
-					_value = Math.ConvertToTypeUnchecked (o, unary.Operand.Type, unary.Type);					
-                    return;
-                case ExpressionType.ConvertChecked:
-                    _value = Math.ConvertToTypeChecked(o,unary.Operand.Type, unary.Type);
-                    return;				
-            }
-            throw new NotImplementedException(
-                string.Format(
-                "Interpriter for UnaryExpression with NodeType {0} is not implimented",
-                unary.NodeType));
-
-        }
-
-        protected override void VisitNew(NewExpression nex)
-        {
-            if (nex.Constructor == null)
-            {
-                _value = System.Activator.CreateInstance(nex.Type);
-            }
-            else
-            {
-                object[] parameters = VisitListExpressions(nex.Arguments);
-                _value = nex.Constructor.Invoke(parameters);
-            }
-        }
-
-        protected override void VisitTypeIs(TypeBinaryExpression type)
-        {
-            Visit(type.Expression);
-            _value = Math.IsType(type.TypeOperand, _value);
-        }
-
-        private void VisitMemberInfo(MemberInfo mi)
-        {
-            object o = _value;
-            switch (mi.MemberType)
-            {
-                case MemberTypes.Field:
-                    _value = ((FieldInfo)mi).GetValue(o);
-                    return;
-                case MemberTypes.Property:
-                    _value = ((PropertyInfo)mi).GetValue(o, null);
-                    return;
-            }
-
-            throw new NotImplementedException(
-                string.Format(
-                "Interpriter for MemberInfo with MemberType {0} is not implimented",
-                mi.MemberType));
-        }
-
-        protected override void VisitMemberAccess(MemberExpression member)
-        {
-            Visit(member.Expression);
-            VisitMemberInfo(member.Member);
-        }
-
-
-        protected override void VisitNewArray(NewArrayExpression newArray)
-        {
-            switch (newArray.NodeType)
-            {
-                case ExpressionType.NewArrayInit:
-                    VisitNewArrayInit(newArray);
-                    return;
-                case ExpressionType.NewArrayBounds:
-                    VisitNewArrayBounds(newArray);
-                    return;
-            }
-            throw new NotImplementedException(
-               string.Format(
-               "Interpriter for VisitNewArray with NodeType {0} is not implimented",
-               newArray.NodeType));
-        }
-
-        private void VisitNewArrayBounds(NewArrayExpression newArray)
-        {
-            int[] lengths = new int[newArray.Expressions.Count];
-            for (int i = 0; i < lengths.Length; i++)
-            {
-                Visit(newArray.Expressions[i]);
-                lengths[i] = (int)_value;
-            }
-            _value = Array.CreateInstance(newArray.Type.GetElementType(), lengths);
-
-        }
-
-        private void VisitNewArrayInit(NewArrayExpression newArray)
-        {
-            Array arr = Array.CreateInstance(
-                        newArray.Type.GetElementType(),
-                        newArray.Expressions.Count);
-            for (int i = 0; i < arr.Length; i++)
-            {
-                Visit(newArray.Expressions[i]);
-                arr.SetValue(_value, i);
-            }
-            _value = arr;
-        }
-
-        protected override void VisitConditional(ConditionalExpression conditional)
-        {
-            Visit(conditional.Test);
-            if ((bool)_value)
-            {
-                Visit(conditional.IfTrue);
-            }
-            else
-            {
-                Visit(conditional.IfFalse);
-            }
-        }
-
-        protected override void VisitMethodCall(MethodCallExpression call)
-        {
-            if (call.Object != null)
-            {
-                Visit(call.Object);
-            }
-            object callObject = _value;
-            object[] arguments = VisitListExpressions(call.Arguments);
-            _value = call.Method.Invoke(callObject, arguments);
-        }
-
-        protected override void VisitParameter(ParameterExpression parameter)
-        {
-            for (int i = 0; i < _exp.Parameters.Count; i++)
-            {
-                if (_exp.Parameters[i].Name.Equals(parameter.Name))
-                {
-                    _value = _args[i];
-                    return;
-                }
-            }
-            _value = null;
-        }
-
-        protected override void VisitConstant(ConstantExpression constant)
-        {
-            _value = constant.Value;
-        }
-
-        protected override void VisitInvocation(InvocationExpression invocation)
-        {
-            Visit(invocation.Expression);
-            object o = _value;
-            object[] arguments = VisitListExpressions(invocation.Arguments);
-            _value = ((Delegate)o).DynamicInvoke(arguments);
-        }
-
-        protected override void VisitMemberListBinding(MemberListBinding binding)
-        {
-            object o = _value;
-            try
-            {
-                VisitMemberInfo(binding.Member);
-                base.VisitMemberListBinding(binding);
-            }
-            finally
-            {
-                _value = o;
-            }
-        }
-
-        protected override void VisitElementInitializer(ElementInit initializer)
-        {
-            object o = _value;
-            try
-            {
-                object[] arguments =
-                    VisitListExpressions(initializer.Arguments);
-                initializer.AddMethod.Invoke(o, arguments);
-
-            }
-            finally
-            {
-                _value = o;
-            }
-        }
-
-        protected override void VisitMemberMemberBinding(MemberMemberBinding binding)
-        {
-            object o = _value;
-            try
-            {
-                VisitMemberInfo(binding.Member);
-                base.VisitMemberMemberBinding(binding);
-            }
-            finally
-            {
-                _value = o;
-            }
-        }
-
-        protected override void VisitMemberAssignment(MemberAssignment assignment)
-        {
-            object o = _value;
-            try
-            {
-                Visit(assignment.Expression);
-                switch (assignment.Member.MemberType)
-                {
-                    case MemberTypes.Field:
-                        ((FieldInfo)assignment.Member).SetValue(o, _value);
-                        return;
-                    case MemberTypes.Property:
-                        ((PropertyInfo)assignment.Member).SetValue(o, _value, null);
-                        return;
-                }
-                throw new NotImplementedException(
-                    string.Format(
-                    "Interpriter for MemberExpression with MemberType {0} is not implimented",
-                    assignment.Member.MemberType));
-            }
-            finally
-            {
-                _value = o;
-            }
-        }
-
-		protected override void VisitLambda (LambdaExpression lambda) {
-			_value = lambda.Compile ();
+			return false;
 		}
 
-        private object[] VisitListExpressions(ReadOnlyCollection<Expression> collection)
-        {
-            object o = _value;
-            try
-            {
-                object[] results = new object[collection.Count];
-                for (int i = 0; i < results.Length; i++)
-                {
-                    Visit(collection[i]);
-                    results[i] = _value;
-                }
+		void VisitRelationalBinary (BinaryExpression binary)
+		{
+			Visit (binary.Left);
+			Visit (binary.Right);
 
-                return results;
-            }
-            finally
-            {
-                _value = o;
-            }
-        }
+			if (IsNullRelationalBinaryLifting (binary))
+				return;
 
-    }
+			var right = Pop ();
+			var left = Pop ();
 
+			switch (binary.NodeType) {
+			case ExpressionType.Equal:
+				Push (BinaryEqual (binary, left, right));
+				return;
+			case ExpressionType.NotEqual:
+				Push (BinaryNotEqual (binary, left, right));
+				return;
+			case ExpressionType.LessThan:
+				Push (Comparer.Default.Compare (left, right) < 0);
+				return;
+			case ExpressionType.LessThanOrEqual:
+				Push (Comparer.Default.Compare (left, right) <= 0);
+				return;
+			case ExpressionType.GreaterThan:
+				Push (Comparer.Default.Compare (left, right) > 0);
+				return;
+			case ExpressionType.GreaterThanOrEqual:
+				Push (Comparer.Default.Compare (left, right) >= 0);
+				return;
+			}
+		}
+
+		void VisitLogicalShortCircuitBinary (BinaryExpression binary)
+		{
+			switch (binary.NodeType) {
+			case ExpressionType.AndAlso:
+				VisitAndAlso (binary);
+				return;
+			case ExpressionType.OrElse:
+				VisitOrElse (binary);
+				return;
+			}
+		}
+
+		void VisitArrayIndex (BinaryExpression binary)
+		{
+			Visit (binary.Left);
+			var left = Pop ();
+			Visit (binary.Right);
+			var right = Pop ();
+
+			Push (((Array) left).GetValue ((int) right));
+		}
+
+		bool IsNullBinaryLifting (BinaryExpression binary)
+		{
+			var right = Pop ();
+			var left = Pop ();
+
+			if (binary.IsLifted && (right == null || left == null)) {
+				if (binary.IsLiftedToNull)
+					Push (null);
+				else
+					Push (GetDefaultValue (binary.Type));
+
+				return true;
+			}
+
+			Push (left);
+			Push (right);
+
+			return false;
+		}
+
+		static object GetDefaultValue (Type type)
+		{
+			var array = (Array) Array.CreateInstance (type, 1);
+			return array.GetValue (0);
+		}
+
+		void VisitUserDefinedBinary (BinaryExpression binary)
+		{
+			switch (binary.NodeType) {
+			case ExpressionType.AndAlso:
+			case ExpressionType.OrElse:
+				VisitUserDefinedLogicalShortCircuitBinary (binary);
+				return;
+			case ExpressionType.Equal:
+			case ExpressionType.NotEqual:
+				VisitUserDefinedRelationalBinary (binary);
+				return;
+			default:
+				VisitUserDefinedCommonBinary (binary);
+				return;
+			}
+		}
+
+		void VisitUserDefinedLogicalShortCircuitBinary (BinaryExpression binary)
+		{
+			switch (binary.NodeType) {
+			case ExpressionType.AndAlso:
+				VisitUserDefinedAndAlso (binary);
+				return;
+			case ExpressionType.OrElse:
+				VisitUserDefinedOrElse (binary);
+				return;
+			}
+		}
+
+		void VisitUserDefinedRelationalBinary (BinaryExpression binary)
+		{
+			Visit (binary.Left);
+			Visit (binary.Right);
+
+			if (IsNullRelationalBinaryLifting (binary))
+				return;
+
+			var right = Pop ();
+			var left = Pop ();
+
+			Push (InvokeBinary (binary, left, right));
+		}
+
+		void VisitUserDefinedCommonBinary (BinaryExpression binary)
+		{
+			Visit (binary.Left);
+			Visit (binary.Right);
+
+			if (IsNullBinaryLifting (binary))
+				return;
+
+			var right = Pop ();
+			var left = Pop ();
+
+			Push (InvokeBinary (binary, left, right));
+		}
+
+		object InvokeBinary (BinaryExpression binary, object left, object right)
+		{
+			return InvokeMethod (binary.Method, null, new [] { left, right });
+		}
+
+		bool BinaryEqual (BinaryExpression binary, object left, object right)
+		{
+			if (typeof (ValueType).IsAssignableFrom (binary.Right.Type))
+				return ValueType.Equals (left, right);
+			else
+				return left == right;
+		}
+
+		bool BinaryNotEqual (BinaryExpression binary, object left, object right)
+		{
+			if (typeof (ValueType).IsAssignableFrom (binary.Right.Type))
+				return !ValueType.Equals (left, right);
+			else
+				return left != right;
+		}
+
+		protected override void VisitBinary (BinaryExpression binary)
+		{
+			if (binary.Method != null) {
+				VisitUserDefinedBinary (binary);
+				return;
+			}
+
+			switch (binary.NodeType) {
+			case ExpressionType.ArrayIndex:
+				VisitArrayIndex (binary);
+				return;
+			case ExpressionType.Coalesce:
+				VisitCoalesce (binary);
+				return;
+			case ExpressionType.AndAlso:
+			case ExpressionType.OrElse:
+				VisitLogicalShortCircuitBinary (binary);
+				return;
+			case ExpressionType.Equal:
+			case ExpressionType.NotEqual:
+			case ExpressionType.GreaterThan:
+			case ExpressionType.GreaterThanOrEqual:
+			case ExpressionType.LessThan:
+			case ExpressionType.LessThanOrEqual:
+				VisitRelationalBinary (binary);
+				return;
+			case ExpressionType.And:
+			case ExpressionType.Or:
+				VisitLogicalBinary (binary);
+				return;
+			case ExpressionType.Power:
+			case ExpressionType.Add:
+			case ExpressionType.AddChecked:
+			case ExpressionType.Divide:
+			case ExpressionType.ExclusiveOr:
+			case ExpressionType.LeftShift:
+			case ExpressionType.Modulo:
+			case ExpressionType.Multiply:
+			case ExpressionType.MultiplyChecked:
+			case ExpressionType.RightShift:
+			case ExpressionType.Subtract:
+			case ExpressionType.SubtractChecked:
+				VisitArithmeticBinary (binary);
+				return;
+			}
+		}
+
+		void VisitTypeAs (UnaryExpression unary)
+		{
+			Visit (unary.Operand);
+
+			var value = Pop ();
+			if (value == null || !Math.IsType (unary.Type, value))
+				Push (null);
+			else
+				Push (value);
+		}
+
+		void VisitArrayLength (UnaryExpression unary)
+		{
+			Visit (unary.Operand);
+
+			var array = (Array) Pop ();
+			Push (array.Length);
+		}
+
+		void VisitConvert (UnaryExpression unary)
+		{
+			if (unary.NodeType == ExpressionType.ConvertChecked)
+				VisitConvertChecked (unary);
+			else
+				VisitConvertUnchecked (unary);
+		}
+
+		void VisitConvertChecked (UnaryExpression unary)
+		{
+			VisitConvert (unary, Math.ConvertToTypeChecked);
+		}
+
+		void VisitConvertUnchecked (UnaryExpression unary)
+		{
+			VisitConvert (unary, Math.ConvertToTypeUnchecked);
+		}
+
+		void VisitConvert (UnaryExpression unary, Func<object, Type, Type, object> converter)
+		{
+			Visit (unary.Operand);
+			Push (converter (Pop (), unary.Operand.Type, unary.Type));
+		}
+
+		bool IsNullUnaryLifting (UnaryExpression unary)
+		{
+			var value = Pop ();
+
+			if (unary.IsLifted && value == null) {
+				if (unary.IsLiftedToNull) {
+					Push (null);
+					return true;
+				} else {
+					throw new InvalidOperationException ();
+				}
+			}
+
+			Push (value);
+			return false;
+		}
+
+		void VisitQuote (UnaryExpression unary)
+		{
+			Push (unary.Operand);
+		}
+
+		void VisitUserDefinedUnary (UnaryExpression unary)
+		{
+			Visit (unary.Operand);
+
+			if (IsNullUnaryLifting (unary))
+				return;
+
+			var value = Pop ();
+
+			Push (InvokeUnary (unary, value));
+		}
+
+		object InvokeUnary (UnaryExpression unary, object value)
+		{
+			return InvokeMethod (unary.Method, null, new [] { value });
+		}
+
+		void VisitArithmeticUnary (UnaryExpression unary)
+		{
+			Visit (unary.Operand);
+
+			if (IsNullUnaryLifting (unary))
+				return;
+
+			var value = Pop ();
+
+			switch (unary.NodeType) {
+			case ExpressionType.Not:
+				if (unary.Type.GetNotNullableType () == typeof (bool))
+					Push (!Convert.ToBoolean (value));
+				else
+					Push (~Convert.ToInt32 (value));
+				return;
+			case ExpressionType.Negate:
+				Push (Math.Negate (value, Type.GetTypeCode (unary.Type.GetNotNullableType ())));
+				return;
+			case ExpressionType.NegateChecked:
+				Push (Math.NegateChecked (value, Type.GetTypeCode (unary.Type.GetNotNullableType ())));
+				return;
+			case ExpressionType.UnaryPlus:
+				Push (value);
+				return;
+			}
+		}
+
+		protected override void VisitUnary (UnaryExpression unary)
+		{
+			if (unary.Method != null) {
+				VisitUserDefinedUnary (unary);
+				return;
+			}
+
+			switch (unary.NodeType) {
+			case ExpressionType.Quote:
+				VisitQuote (unary);
+				return;
+			case ExpressionType.TypeAs:
+				VisitTypeAs (unary);
+				return;
+			case ExpressionType.ArrayLength:
+				VisitArrayLength (unary);
+				return;
+			case ExpressionType.Convert:
+			case ExpressionType.ConvertChecked:
+				VisitConvert (unary);
+				return;
+			case ExpressionType.Negate:
+			case ExpressionType.NegateChecked:
+			case ExpressionType.Not:
+			case ExpressionType.UnaryPlus:
+				VisitArithmeticUnary (unary);
+				return;
+			default:
+				throw new NotImplementedException (unary.NodeType.ToString ());
+			}
+		}
+
+		protected override void VisitNew (NewExpression nex)
+		{
+			if (nex.Constructor == null)
+				Push (Activator.CreateInstance (nex.Type));
+			else
+				Push (InvokeConstructor (nex.Constructor, VisitListExpressions (nex.Arguments)));
+		}
+
+		static object InvokeConstructor (ConstructorInfo constructor, object [] arguments)
+		{
+			try {
+				return constructor.Invoke (arguments);
+			} catch (TargetInvocationException e) {
+				throw e.InnerException;
+			}
+		}
+
+		protected override void VisitTypeIs (TypeBinaryExpression type)
+		{
+			Visit (type.Expression);
+			Push (Math.IsType (type.TypeOperand, Pop ()));
+		}
+
+		void VisitMemberInfo (MemberInfo mi)
+		{
+			mi.OnFieldOrProperty (
+				field => {
+					object target = null;
+					if (!field.IsStatic)
+						target = Pop ();
+
+					Push (field.GetValue (target));
+				},
+				property => {
+					object target = null;
+					var getter = property.GetGetMethod (true);
+					if (!getter.IsStatic)
+						target = Pop ();
+
+					Push (property.GetValue (target, null));
+				});
+		}
+
+		protected override void VisitMemberAccess (MemberExpression member)
+		{
+			Visit (member.Expression);
+			VisitMemberInfo (member.Member);
+		}
+
+		protected override void VisitNewArray (NewArrayExpression newArray)
+		{
+			switch (newArray.NodeType) {
+			case ExpressionType.NewArrayInit:
+				VisitNewArrayInit (newArray);
+				return;
+			case ExpressionType.NewArrayBounds:
+				VisitNewArrayBounds (newArray);
+				return;
+			}
+
+			throw new NotSupportedException ();
+		}
+
+		void VisitNewArrayBounds (NewArrayExpression newArray)
+		{
+			var lengths = new int [newArray.Expressions.Count];
+			for (int i = 0; i < lengths.Length; i++) {
+				Visit (newArray.Expressions [i]);
+				lengths [i] = (int) Pop ();
+			}
+
+			Push (Array.CreateInstance (newArray.Type.GetElementType (), lengths));
+		}
+
+		void VisitNewArrayInit (NewArrayExpression newArray)
+		{
+			var array = Array.CreateInstance (
+				newArray.Type.GetElementType (),
+				newArray.Expressions.Count);
+
+			for (int i = 0; i < array.Length; i++) {
+				Visit (newArray.Expressions [i]);
+				array.SetValue (Pop (), i);
+			}
+
+			Push (array);
+		}
+
+		protected override void VisitConditional (ConditionalExpression conditional)
+		{
+			Visit (conditional.Test);
+
+			if ((bool) Pop ())
+				Visit (conditional.IfTrue);
+			else
+				Visit (conditional.IfFalse);
+		}
+
+		protected override void VisitMethodCall (MethodCallExpression call)
+		{
+			object instance = null;
+			if (call.Object != null) {
+				Visit (call.Object);
+				instance = Pop ();
+			}
+
+			Push (InvokeMethod (call.Method, instance, VisitListExpressions (call.Arguments)));
+		}
+
+		protected override void VisitParameter (ParameterExpression parameter)
+		{
+			for (int i = 0; i < lambda.Parameters.Count; i++) {
+				if (lambda.Parameters [i] != parameter)
+					continue;
+
+				Push (arguments [i]);
+				return;
+			}
+
+			throw new ArgumentException ();
+		}
+
+		protected override void VisitConstant (ConstantExpression constant)
+		{
+			Push (constant.Value);
+		}
+
+		protected override void VisitInvocation (InvocationExpression invocation)
+		{
+			Visit (invocation.Expression);
+			Push (Invoke ((Delegate) Pop (), VisitListExpressions (invocation.Arguments)));
+		}
+
+		static object Invoke (Delegate dlg, object [] arguments)
+		{
+			return InvokeMethod (dlg.Method, dlg.Target, arguments);
+		}
+
+		static object InvokeMethod (MethodBase method, object obj, object [] arguments)
+		{
+			try {
+				return method.Invoke (obj, arguments);
+			} catch (TargetInvocationException e) {
+				throw e.InnerException;
+			}
+		}
+
+		protected override void VisitMemberListBinding (MemberListBinding binding)
+		{
+			var value = Pop ();
+			Push (value);
+			VisitMemberInfo (binding.Member);
+			VisitElementInitializerList (binding.Initializers);
+			Pop (); // pop the member
+			Push (value); // push the original target
+		}
+
+		protected override void VisitElementInitializer (ElementInit initializer)
+		{
+			object target = null;
+			if (!initializer.AddMethod.IsStatic)
+				target = Pop ();
+
+			var arguments = VisitListExpressions (initializer.Arguments);
+			InvokeMethod (initializer.AddMethod, target, arguments);
+
+			if (!initializer.AddMethod.IsStatic)
+				Push (target);
+		}
+
+		protected override void VisitMemberMemberBinding (MemberMemberBinding binding)
+		{
+			var value = Pop ();
+			Push (value);
+			VisitMemberInfo (binding.Member);
+			VisitBindingList (binding.Bindings);
+			Pop ();
+			Push (value);
+		}
+
+		protected override void VisitMemberAssignment (MemberAssignment assignment)
+		{
+			Visit (assignment.Expression);
+
+			var value = Pop ();
+
+			assignment.Member.OnFieldOrProperty (
+				field => {
+					object target = null;
+					if (!field.IsStatic)
+						target = Pop ();
+
+					field.SetValue (target, value);
+
+					if (!field.IsStatic)
+						Push (target);
+				},
+				property => {
+					object target = null;
+					var getter = property.GetGetMethod (true);
+					if (!getter.IsStatic)
+						target = Pop ();
+
+					property.SetValue (target, value, null);
+
+					if (!getter.IsStatic)
+						Push (target);
+				});
+		}
+
+		protected override void VisitLambda (LambdaExpression lambda)
+		{
+			Push (lambda.Compile ());
+		}
+
+		private object [] VisitListExpressions (ReadOnlyCollection<Expression> collection)
+		{
+			object [] results = new object [collection.Count];
+			for (int i = 0; i < results.Length; i++) {
+				Visit (collection [i]);
+				results [i] = Pop ();
+			}
+
+			return results;
+		}
+
+		public static object Interpret (LambdaExpression lambda, object [] arguments)
+		{
+			var interpreter = new ExpressionInterpreter (lambda, arguments);
+			interpreter.Visit (lambda.Body);
+
+			if (lambda.GetReturnType () != typeof (void))
+				return interpreter.Pop ();
+
+			return null;
+		}
+	}
 }
