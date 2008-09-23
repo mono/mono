@@ -1,5 +1,9 @@
 2008-09-23  Marek Safar  <marek.safar@gmail.com>
 
+	* codegen.cs: Report better error when symbol writer is missing.
+
+2008-09-23  Marek Safar  <marek.safar@gmail.com>
+
 	* codegen.cs: Set .NET symbol writer.
 	
 	* decl.cs: Guard against null generic arguments.

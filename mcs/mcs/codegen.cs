@@ -83,18 +83,6 @@ namespace Mono.CSharp {
 
 		static public string FileName;
 
-		//
-		// Initializes the symbol writer
-		//
-		static void InitializeSymbolWriter (string filename)
-		{
-			if (!SymbolWriter.Initialize (Module.Builder, filename)) {
-				Report.Warning (
-					-18, 1, "Could not find the symbol writer assembly (Mono.CompilerServices.SymbolWriter.dll). This is normally an installation problem. Please make sure to compile and install the mcs/class/Mono.CompilerServices.SymbolWriter directory.");
-				return;
-			}
-		}
-
 #if MS_COMPATIBLE
 		const AssemblyBuilderAccess COMPILER_ACCESS = 0;
 #else
@@ -177,14 +165,23 @@ namespace Mono.CSharp {
 			// If the third argument is true, the ModuleBuilder will dynamically
 			// load the default symbol writer.
 			//
-			Module.Builder = Assembly.Builder.DefineDynamicModule (
-				Basename (name), Basename (output), want_debugging_support);
+			try {
+				Module.Builder = Assembly.Builder.DefineDynamicModule (
+					Basename (name), Basename (output), want_debugging_support);
 
 #if !MS_COMPATIBLE
-			// TODO: This should go into DefineDynamicModule
-			if (want_debugging_support)
-				InitializeSymbolWriter (output);
+				// TODO: We should use SymbolWriter from DefineDynamicModule
+				if (want_debugging_support && !SymbolWriter.Initialize (Module.Builder, output)) {
+					Report.Error (40, "Unexpected debug information initialization error `{0}'",
+						"Could not find the symbol writer assembly (Mono.CompilerServices.SymbolWriter.dll)");
+					return false;
+				}
 #endif
+			} catch (ExecutionEngineException e) {
+				Report.Error (40, "Unexpected debug information initialization error `{0}'",
+					e.Message);
+				return false;
+			}
 
 			return true;
 		}
