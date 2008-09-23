@@ -1,3 +1,8 @@
+2008-09-23  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c (type_to_eval_stack_type): The code path for the new JIT
+	was wrong at it choked against target_type_is_incompatible for byref types.
+
 2008-09-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-codegen.c: Use 'bank' macros instead of 'is_fp' macros in most 
