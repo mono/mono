@@ -708,7 +708,11 @@ namespace Mono.CSharp {
 
 		static void SymbolRelatedToPreviousError (string loc, string symbol)
 		{
-			extra_information.Add (String.Format ("{0} (Location of the symbol related to previous ", loc));
+			string msg = String.Format ("{0} (Location of the symbol related to previous ", loc);
+			if (extra_information.Contains (msg))
+				return;
+
+			extra_information.Add (msg);
 		}
 
 		public static void ExtraInformation (Location loc, string msg)

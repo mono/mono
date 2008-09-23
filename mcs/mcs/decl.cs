@@ -2460,9 +2460,9 @@ namespace Mono.CSharp {
 				//
 				if (mi != null) {
 					Type [] cmpGenArgs = TypeManager.GetGenericArguments (mi);
-					if (generic_method == null && cmpGenArgs.Length != 0)
+					if (generic_method == null && cmpGenArgs != null && cmpGenArgs.Length != 0)
 						continue;
-					if (generic_method != null && cmpGenArgs.Length != generic_method.TypeParameters.Length)
+					if (generic_method != null && cmpGenArgs != null && cmpGenArgs.Length != generic_method.TypeParameters.Length)
 						continue;
 				}
 

@@ -1,3 +1,11 @@
+2008-09-23  Marek Safar  <marek.safar@gmail.com>
+
+	* codegen.cs: Set .NET symbol writer.
+	
+	* decl.cs: Guard against null generic arguments.
+	
+	* report.cs: Don't report exactly same additional details.
+
 2008-09-22  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #324917

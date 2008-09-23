@@ -178,10 +178,13 @@ namespace Mono.CSharp {
 			// load the default symbol writer.
 			//
 			Module.Builder = Assembly.Builder.DefineDynamicModule (
-				Basename (name), Basename (output), false);
+				Basename (name), Basename (output), want_debugging_support);
 
+#if !MS_COMPATIBLE
+			// TODO: This should go into DefineDynamicModule
 			if (want_debugging_support)
 				InitializeSymbolWriter (output);
+#endif
 
 			return true;
 		}
