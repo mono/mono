@@ -43,7 +43,8 @@ namespace Mono.WebBrowser.DOM
 		INode		Parent {get;}
 		INode 		Previous { get; }
 		NodeType 	Type { get;}
-		string 		Value {get; set;} 
+		string 		Value {get; set;}
+		IntPtr		AccessibleObject {get;}
 		
 		void FireEvent	(string eventName);
 		int 		GetHashCode ();

@@ -45,6 +45,7 @@ Mono.Mozilla/interfaces/nsIDOMStyleSheet.cs
 Mono.Mozilla/interfaces/nsIDOMStyleSheetList.cs
 Mono.Mozilla/interfaces/nsIDOMUIEvent.cs
 Mono.Mozilla/interfaces/nsIDOMViewCSS.cs
+Mono.Mozilla/interfaces/nsIErrorService.cs
 Mono.Mozilla/interfaces/nsIFile.cs
 Mono.Mozilla/interfaces/nsIIOService.cs
 Mono.Mozilla/interfaces/nsILoadGroup.cs

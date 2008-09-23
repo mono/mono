@@ -124,6 +124,7 @@
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMStyleSheetList.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMUIEvent.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMViewCSS.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIErrorService.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIFile.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIIOService.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsILoadGroup.cs" />

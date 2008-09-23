@@ -153,8 +153,10 @@ namespace Mono.Mozilla
 		nsIServiceManager servMan;
 		internal nsIServiceManager ServiceManager {
 			get {
-				if (servMan == null)
+				if (servMan == null) {
 					servMan = Base.gluezilla_getServiceManager ();
+					servMan = nsServiceManager.GetProxy (this, servMan);
+				}
 				return servMan;
 			}
 		}
@@ -165,10 +167,7 @@ namespace Mono.Mozilla
 				if (ioService == null) {
 					IntPtr ioServicePtr = IntPtr.Zero;
 
-					
-
-					if (ioServicePtr == IntPtr.Zero)
-						ServiceManager.getServiceByContractID ("@mozilla.org/network/io-service;1", typeof (nsIIOService).GUID, out ioServicePtr);
+					ioServicePtr = ServiceManager.getServiceByContractID ("@mozilla.org/network/io-service;1", typeof (nsIIOService).GUID);
 					if (ioServicePtr == IntPtr.Zero)
 						throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.IOService);
 
@@ -179,6 +178,46 @@ namespace Mono.Mozilla
 					}
 				}
 				return ioService;
+			}
+		}
+
+		nsIAccessibilityService accessibilityService;
+		internal nsIAccessibilityService AccessibilityService {
+			get {
+				if (accessibilityService == null) {
+					IntPtr accessibilityServicePtr = IntPtr.Zero;
+					accessibilityServicePtr = ServiceManager.getServiceByContractID ("@mozilla.org/accessibilityService;1", typeof (nsIAccessibilityService).GUID);
+					if (accessibilityServicePtr == IntPtr.Zero) {
+						throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.AccessibilityService);
+					}
+
+					try {
+						accessibilityService = (nsIAccessibilityService)Marshal.GetObjectForIUnknown (accessibilityServicePtr);
+					} catch (System.Exception ex) {
+						throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.AccessibilityService, ex);
+					}
+				}
+				return accessibilityService;
+			}
+		}
+
+		nsIErrorService errorService;
+		internal nsIErrorService ErrorService {
+			get {
+				if (errorService == null) {
+					IntPtr errorServicePtr = IntPtr.Zero;
+
+					errorServicePtr = ServiceManager.getServiceByContractID ("@mozilla.org/xpcom/error-service;1", typeof (nsIErrorService).GUID);
+					if (errorServicePtr == IntPtr.Zero)
+						return null;
+
+					try {
+						errorService = (nsIErrorService)Marshal.GetObjectForIUnknown (errorServicePtr);
+					} catch (System.Exception ex) {
+						return null;
+					}
+				}
+				return errorService;
 			}
 		}		
 		

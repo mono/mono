@@ -220,6 +220,38 @@ namespace Mono.Mozilla.DOM
 				node.setNodeValue (storage);
 			}
 		}
+
+		public virtual IntPtr AccessibleObject {
+			get {
+				nsIAccessible access = null;
+				try {
+					nsIAccessibilityService serv = control.AccessibilityService;
+					nsIDOMDocument doc;
+					this.node.getOwnerDocument (out doc);
+					serv.getAccessibleFor (doc, out access);
+				} catch (Mono.WebBrowser.Exception ex) {
+					Console.Error.WriteLine (ex.Message);
+					goto no_accessibility;
+				} catch (System.Exception ex) {
+					Console.Error.WriteLine (ex.Message);
+					goto no_accessibility;
+				}
+
+				if (access == null) {
+					goto no_accessibility;				
+				}
+				IntPtr ptr = IntPtr.Zero;
+				if (access.getNativeInterface (out ptr) != 0) {
+					goto no_accessibility;
+				}
+				return ptr;
+
+				no_accessibility: {
+					Console.Error.WriteLine ("Accessibility not available");
+					return IntPtr.Zero;
+				}			
+			}
+		}
 		
 		#endregion
 		
