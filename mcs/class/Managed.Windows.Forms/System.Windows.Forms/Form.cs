@@ -95,10 +95,10 @@ namespace System.Windows.Forms {
 		internal bool			suppress_closing_events;
 		internal bool			waiting_showwindow; // for XplatUIX11
 		private bool                    is_minimizing;
+		private bool			show_icon = true;
 
 #if NET_2_0
 		private MenuStrip		main_menu_strip;
-		private bool			show_icon = true;
 		private bool			right_to_left_layout;
 		private Rectangle		restore_bounds;
 		private bool			autoscale_base_size_set;
@@ -1961,7 +1961,8 @@ namespace System.Windows.Forms {
 			}
 
 			XplatUI.SetWindowMinMax(window.Handle, maximized_bounds, minimum_size, maximum_size);
-			if ((FormBorderStyle != FormBorderStyle.FixedDialog) && (icon != null)) {
+			
+			if (show_icon && (FormBorderStyle != FormBorderStyle.FixedDialog) && (icon != null)) {
 				XplatUI.SetIcon(window.Handle, icon);
 			}
 

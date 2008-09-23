@@ -1,5 +1,10 @@
 2008-09-23  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Form.cs: Do not set the Form's icon in the backend if showicon = false.
+	[Fixes bug #428114]
+
+2008-09-23  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ThemeWin32Classic.cs: Allow tooltips to be multiline.
 	[Fixes bug #427884]
 
