@@ -295,10 +295,15 @@ namespace System.Web {
 		{
 			return 0;
 		}
+
+		public virtual void SendCalculatedContentLength (long contentLength)
+		{
+			SendCalculatedContentLength ((int)contentLength);
+		}
 #endif
 		public virtual void SendCalculatedContentLength (int contentLength)
 		{
-			throw new NotImplementedException ();
+			// apparently does nothing in MS.NET
 		}
 
 #if !TARGET_JVM
