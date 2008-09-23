@@ -1,3 +1,28 @@
+2008-09-23  Andreia Gaita <avidigal@novell.com> 
+
+	* Mono.Mozilla/interfaces/nsIDOMRGBColor.cs,
+	  Mono.Mozilla/interfaces/nsITimer.cs,
+	  Mono.Mozilla/interfaces/nsIAccessible.cs,
+	  Mono.Mozilla/interfaces/nsIDOMDOMStringList.cs,
+	  Mono.Mozilla/interfaces/nsIAccessibleRetrieval.cs,
+	  Mono.Mozilla/interfaces/nsIAccessibleRelation.cs,
+	  Mono.Mozilla/interfaces/nsITimerCallback.cs,
+	  Mono.Mozilla/interfaces/nsIAccessibilityService.cs,
+	  Mono.Mozilla/interfaces/nsIOutputStream.cs,
+	  Mono.Mozilla/interfaces/nsIPersistentProperties.cs,
+	  Mono.Mozilla/interfaces/nsIDOMCSSPrimitiveValue.cs,
+	  Mono.Mozilla/interfaces/nsIDOMCounter.cs,
+	  Mono.Mozilla/interfaces/nsIObserver.cs,
+	  Mono.Mozilla/interfaces/extras/nsIReadSegmentFun.cs,
+	  Mono.Mozilla/interfaces/extras/nsITimerCallbackDelegate.cs,
+	  Mono.Mozilla/interfaces/nsIProperties.cs,
+	  Mono.Mozilla/interfaces/nsIDOMRect.cs,
+	  Mono.Mozilla/interfaces/nsIAccessNode.cs,
+	  Mono.Mozilla/interfaces/nsIArray.cs,
+	  Mono.Mozilla/interfaces/nsIAccessibleDocument.cs,
+	  Mono.WebBrowser.dll.sources, Mono.WebBrowser2K5.csproj: Added
+	  Accessibility interfaces
+
 2008-09-16  Andreia Gaita <avidigal@novell.com> 
 
 	* Mono.Mozilla/AsciiString.cs: Change marshalling to ansi - auto is no
