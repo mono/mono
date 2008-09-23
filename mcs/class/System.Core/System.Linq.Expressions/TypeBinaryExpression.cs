@@ -53,6 +53,11 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec)
 		{
+			if (expression.Type == typeof (void)) {
+				ec.ig.Emit (OpCodes.Ldc_I4_0);
+				return;
+			}
+
 			ec.EmitIsInst (expression, type_operand);
 
 			ec.ig.Emit (OpCodes.Ldnull);

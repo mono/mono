@@ -1,3 +1,8 @@
+2008-09-22  Jb Evain  <jbevain@novell.com>
+
+	* TypeBinaryExpression.cs: protect against testing void expressions.
+	Fixes bug #428309.
+
 2008-09-01  Jb Evain  <jbevain@novell.com>
 
 	* MemberBinding.cs: make .ctor protected.
