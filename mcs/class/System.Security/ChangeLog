@@ -1,3 +1,7 @@
+2008-09-23  Marek Safar <marek.safar@gmail.com>
+
+	* Makefile: Don't override global debug flag.
+
 2007-06-12  Marek Safar <marek.safar@gmail.com>
 
 	* Makefile: Check only major framework version to do 2.x build.

@@ -4,8 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Security.dll
 LIB_MCS_FLAGS = -nowarn:618 \
-	-r:$(corlib) -r:System.dll -r:System.Xml.dll \
-	-debug+
+	-r:$(corlib) -r:System.dll -r:System.Xml.dll
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:169,219,1595
 
