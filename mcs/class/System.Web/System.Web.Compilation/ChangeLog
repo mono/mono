@@ -1,3 +1,9 @@
+2008-09-23  Marek Habersack  <mhabersack@novell.com>
+
+	* AspGenerator.cs: ignore whitespace only if it's between
+	CodeRender blocks, not between DataBinding and
+	CodeRenderExpression.
+
 2008-09-01  Marek Habersack  <mhabersack@novell.com>
 
 	* BaseCompiler.cs: AssignAppRelativeVirtualPath works with

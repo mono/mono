@@ -477,7 +477,6 @@ namespace System.Web.Compilation
 			case TagType.CodeRenderExpression:
 				goto case TagType.CodeRender;
 			case TagType.CodeRender:
-				lastTag = TagType.CodeRender;
 				if (isApplication)
 					throw new ParseException (location, "Invalid content for application file.");
 			
