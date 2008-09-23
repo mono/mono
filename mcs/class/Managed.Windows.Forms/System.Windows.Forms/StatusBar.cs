@@ -462,7 +462,7 @@ namespace System.Windows.Forms {
 		{
 			string tooltip = tooltip_currently_showing.ToolTipText;
 
-			if (!string.IsNullOrEmpty (tooltip))
+			if (tooltip != null && tooltip.Length > 0)
 				ToolTipWindow.Present (this, tooltip);
 
 			ToolTipTimer.Stop ();
