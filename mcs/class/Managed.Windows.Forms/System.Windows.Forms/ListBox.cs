@@ -226,6 +226,30 @@ namespace System.Windows.Forms
 		}
 		#endregion // Events
 
+		#region UIA Framework Events 
+#if NET_2_0
+		//NOTE:
+		//	We are using Reflection to add/remove internal events.
+		//	Class ListProvider uses the events.
+		//
+		//Event used to generate UIA Selection Pattern 
+		static object UIASelectionModeChangedEvent = new object ();
+
+		internal event EventHandler UIASelectionModeChanged {
+			add { Events.AddHandler (UIASelectionModeChangedEvent, value); }
+			remove { Events.RemoveHandler (UIASelectionModeChangedEvent, value); }
+		}
+
+		internal void OnUIASelectionModeChangedEvent ()
+		{
+			EventHandler eh = (EventHandler) Events [UIASelectionModeChangedEvent];
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+		}
+
+#endif
+		#endregion UIA Framework Events 
+
 		#region Public Properties
 		public override Color BackColor {
 			get { return base.BackColor; }
@@ -576,6 +600,11 @@ namespace System.Windows.Forms
 				default:
 					break;
 				}
+
+#if NET_2_0
+				// UIA Framework: Generates SelectionModeChanged event.
+				OnUIASelectionModeChangedEvent ();
+#endif
 			}
 		}
 
@@ -2692,6 +2721,32 @@ namespace System.Windows.Forms
 			ArrayList selection;
 			bool sorting_needed; // Selection state retrieval is done sorted - we do it lazyly
 
+			#region UIA Framework Events 
+#if NET_2_0
+			//NOTE:
+			//	We are using Reflection to add/remove internal events.
+			//	Class ListProvider uses the events.
+			//
+			//Event used to generate UIA StructureChangedEvent
+			static object UIACollectionChangedEvent = new object ();
+
+			internal event CollectionChangeEventHandler UIACollectionChanged {
+				add { owner.Events.AddHandler (UIACollectionChangedEvent, value); }
+				remove { owner.Events.RemoveHandler (UIACollectionChangedEvent, value); }
+			}
+
+			internal void OnUIACollectionChangedEvent (CollectionChangeEventArgs args)
+			{
+				CollectionChangeEventHandler eh
+					= (CollectionChangeEventHandler) owner.Events [UIACollectionChangedEvent];
+				if (eh != null)
+					eh (owner, args);
+			}
+
+#endif
+			#endregion UIA Framework Events 
+
+
 			public SelectedIndexCollection (ListBox owner)
 			{
 				this.owner = owner;
@@ -2768,6 +2823,10 @@ namespace System.Windows.Forms
 				owner.EnsureVisible (index);
 				owner.FocusedItem = index;
 				owner.InvalidateItem (index);
+#if NET_2_0
+				// UIA Framework event: Selected item added
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, index));
+#endif 
 
 				return true;
 			}
@@ -2794,6 +2853,10 @@ namespace System.Windows.Forms
 					owner.InvalidateItem (index);
 
 				selection.Clear ();
+#if NET_2_0
+				// UIA Framework event: Selected items list updated
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, -1));
+#endif 
 				return true;
 			}
 
@@ -2848,6 +2911,12 @@ namespace System.Windows.Forms
 
 				selection.RemoveAt (idx);
 				owner.InvalidateItem (index);
+
+#if NET_2_0
+				// UIA Framework event: Selected item removed from selection
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, idx));
+#endif 
+
 
 				return true;
 			}
