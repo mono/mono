@@ -3062,6 +3062,7 @@ namespace System.Windows.Forms
 			ColumnHeader col = control.Columns [index];
 			StringFormat format = new StringFormat ();
 			format.Alignment = col.Format.Alignment;
+			format.LineAlignment = StringAlignment.Center;
 			format.FormatFlags = StringFormatFlags.NoWrap;
 			format.Trimming = StringTrimming.EllipsisCharacter;
 
