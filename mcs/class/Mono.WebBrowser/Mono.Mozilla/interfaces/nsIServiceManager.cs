@@ -38,31 +38,21 @@ namespace Mono.Mozilla {
 	internal interface nsIServiceManager {
 
 #region nsIServiceManager
-		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getService (
-				[MarshalAs (UnmanagedType.LPStruct)]   Guid aClass,
-				[MarshalAs (UnmanagedType.LPStruct)]   Guid aIID,
-				  out IntPtr result);
+		IntPtr getService ([MarshalAs (UnmanagedType.LPStruct)]  Guid aClass,
+				[MarshalAs (UnmanagedType.LPStruct)]  Guid aIID);
 
-		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getServiceByContractID (
-				[MarshalAs (UnmanagedType.LPStr)]   string aContractID,
-				[MarshalAs (UnmanagedType.LPStruct)]   Guid aIID,
-				  out IntPtr result);
+		IntPtr getServiceByContractID ([MarshalAs (UnmanagedType.LPStr)]  string aContractID,
+				[MarshalAs (UnmanagedType.LPStruct)]  Guid aIID);
 
-		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int isServiceInstantiated (
-				[MarshalAs (UnmanagedType.LPStruct)]   Guid aClass,
-				[MarshalAs (UnmanagedType.LPStruct)]   Guid aIID, out bool ret);
+		bool isServiceInstantiated ([MarshalAs (UnmanagedType.LPStruct)]  Guid aClass,
+				[MarshalAs (UnmanagedType.LPStruct)]  Guid aIID);
 
-		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int isServiceInstantiatedByContractID (
-				[MarshalAs (UnmanagedType.LPStr)]   string aContractID,
-				[MarshalAs (UnmanagedType.LPStruct)]   Guid aIID, out bool ret);
+		bool isServiceInstantiatedByContractID ([MarshalAs (UnmanagedType.LPStr)]  string aContractID,
+				[MarshalAs (UnmanagedType.LPStruct)]  Guid aIID);
 
 #endregion
 	}
@@ -76,3 +66,50 @@ namespace Mono.Mozilla {
 		}
 	}
 }
+#if example
+
+using System;
+using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
+using System.Text;
+
+	internal class ServiceManager : nsIServiceManager {
+
+#region nsIServiceManager
+		[return: MarshalAs (UnmanagedType.Interface)] IntPtr nsIServiceManager.getService ([MarshalAs (UnmanagedType.LPStruct)]  Guid aClass,
+				[MarshalAs (UnmanagedType.LPStruct)]  Guid aIID,
+				out IntPtr result)
+		{
+			return ;
+		}
+
+
+
+		[return: MarshalAs (UnmanagedType.Interface)] IntPtr nsIServiceManager.getServiceByContractID ([MarshalAs (UnmanagedType.LPStr)]  string aContractID,
+				[MarshalAs (UnmanagedType.LPStruct)]  Guid aIID,
+				out IntPtr result)
+		{
+			return ;
+		}
+
+
+
+		bool nsIServiceManager.isServiceInstantiated ([MarshalAs (UnmanagedType.LPStruct)]  Guid aClass,
+				[MarshalAs (UnmanagedType.LPStruct)]  Guid aIID)
+		{
+			return ;
+		}
+
+
+
+		bool nsIServiceManager.isServiceInstantiatedByContractID ([MarshalAs (UnmanagedType.LPStr)]  string aContractID,
+				[MarshalAs (UnmanagedType.LPStruct)]  Guid aIID)
+		{
+			return ;
+		}
+
+
+
+#endregion
+	}
+#endif

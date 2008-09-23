@@ -1,5 +1,10 @@
 2008-09-23  Andreia Gaita <avidigal@novell.com> 
 
+	* Mono.Mozilla/interfaces/nsIServiceManager.cs: change signature to
+	  return the object immediately
+
+2008-09-23  Andreia Gaita <avidigal@novell.com> 
+
 	* Mono.Mozilla/DOM/Node.cs, Mono.WebBrowser/DOM/INode.cs,
 	  Mono.Mozilla/WebBrowser.cs: Expose native accessibility object
 	* Mono.WebBrowser/Exception.cs, Mono.WebBrowser2K5.csproj,
