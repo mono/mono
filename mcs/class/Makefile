@@ -118,7 +118,8 @@ net_2_1_dirs := \
 	System.Core		\
 	System.Runtime.Serialization	\
 	System.ServiceModel	\
-	System.ServiceModel.Web
+	System.ServiceModel.Web	\
+	Mono.CompilerServices.SymbolWriter
 
 net_3_5_dirs := \
 	System.Web.Extensions		\

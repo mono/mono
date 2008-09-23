@@ -1,3 +1,7 @@
+2008-09-23  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: compile the SymbolWriter during net_2_1_raw.
+
 2008-09-12  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: add System.ServiceModel.Web to the net_2_1_raw build.
