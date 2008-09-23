@@ -1,4 +1,13 @@
 
+Tue Sep 23 15:24:03 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, domain-internals.h, domain.c, generic-sharing.c, image.c,
+	loader.c, marshal.c, metadata-internals.h, metadata.c,
+	method-builder.c, object.c, reflection.c: introduced specific functions
+	to allocate from the domain and image mempools and cleaned up most of
+	the code to use them (still missing a few in reflection.c).
+	Keep the loader bytes counter updated.
+
 Mon Sep 22 17:33:12 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* domain.c, monitor.c, boehm-gc.c, gc.c: update some of the GC and
