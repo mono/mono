@@ -1,3 +1,8 @@
+2008-09-23  Marek Habersack  <mhabersack@novell.com>
+
+	* ScriptManager.cs: CultureInfoSerializer no longer derives from
+	the obsolete LazyDictionary.
+
 2008-09-01  Marek Habersack  <mhabersack@novell.com>
 
 	* UpdatePanel.cs: if the writer passed to RenderChildren is not

@@ -1532,7 +1532,7 @@ namespace System.Web.UI
 			}
 		}
 
-		sealed class CultureInfoSerializer : JavaScriptSerializer.LazyDictionary
+		sealed class CultureInfoSerializer
 		{
 			readonly CultureInfo _ci;
 			public CultureInfoSerializer (CultureInfo ci) {
@@ -1540,11 +1540,18 @@ namespace System.Web.UI
 					throw new ArgumentNullException ("ci");
 				_ci = ci;
 			}
-			protected override IEnumerator<KeyValuePair<string, object>> GetEnumerator () {
-				yield return new KeyValuePair<string, object> ("name", _ci.Name);
-				yield return new KeyValuePair<string, object> ("numberFormat", _ci.NumberFormat);
-				yield return new KeyValuePair<string, object> ("dateTimeFormat", _ci.DateTimeFormat);
+
+			public string Name {
+				get { return _ci.Name; }
 			}
+
+			public NumberFormatInfo NumberFormat {
+				get { return _ci.NumberFormat; }
+			}
+
+			public DateTimeFormatInfo DateTimeFormat {
+				get { return _ci.DateTimeFormat; }
+			}			
 		}
 
 		sealed class ScriptReferenceEntry
