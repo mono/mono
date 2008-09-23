@@ -1,3 +1,10 @@
+2008-09-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TreeView.cs: Redraw the whole node area when the selected node changes.
+	Things like state images were not getting redrawn because the invalid
+	rectangle was too small.
+	[Fixes bug #428211]
+
 2008-09-23  Mario Carrion  <mcarrion@novell.com>
 
 	* ListBox.cs: UIA Selection Pattern fully supported in ListBox control.

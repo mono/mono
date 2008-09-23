@@ -2194,10 +2194,8 @@ namespace System.Windows.Forms {
 					invalid = Bloat (prev_highlighted_node.Bounds);
 				}
 
-				if (full_row_select || draw_mode != TreeViewDrawMode.Normal) {
-					invalid.X = 0;
-					invalid.Width = ViewportRectangle.Width;
-				}
+				invalid.X = 0;
+				invalid.Width = ViewportRectangle.Width;
 
 				Invalidate (invalid);
 			} else {
