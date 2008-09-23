@@ -1,3 +1,8 @@
+2008-09-23  Marek Habersack  <mhabersack@novell.com>
+
+	* JavaScriptSerializer.cs: removed the LazyDictionary class, it's
+	not needed anymore.
+
 2008-09-23  Juraj Skripsky  <js@hotfeet.ch>
 
 	* JsonSerializer.cs: "SerializeGenericDictionary" is an instance method,

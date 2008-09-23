@@ -66,35 +66,26 @@ namespace System.Web.Script.Services
 
 		#endregion
 
-		#region NameValueCollectionDictionary
-
-		sealed class NameValueCollectionDictionary : JavaScriptSerializer.LazyDictionary
-		{
-			readonly NameValueCollection _nmc;
-			public NameValueCollectionDictionary (NameValueCollection nmc) {
-				_nmc = nmc;
-			}
-			protected override IEnumerator<KeyValuePair<string, object>> GetEnumerator () {
-				for (int i = 0, max = _nmc.Count; i < max; i++)
-					yield return new KeyValuePair<string, object> (_nmc.GetKey (i), JavaScriptSerializer.DefaultSerializer.DeserializeObjectInternal (_nmc.Get (i)));
-			}
-		}
-
-		#endregion
-
 		#region ExceptionSerializer
 
-		sealed class ExceptionSerializer : JavaScriptSerializer.LazyDictionary
+		sealed class ExceptionSerializer
 		{
 			readonly Exception _e;
 			public ExceptionSerializer (Exception e) {
 				_e = e;
 			}
-			protected override IEnumerator<KeyValuePair<string, object>> GetEnumerator () {
-				yield return new KeyValuePair<string, object> ("Message", _e.Message);
-				yield return new KeyValuePair<string, object> ("StackTrace", _e.StackTrace);
-				yield return new KeyValuePair<string, object> ("ExceptionType", _e.GetType ().FullName);
+
+			public string Message {
+				get { return _e.Message; }
 			}
+
+			public string StackTrace {
+				get { return _e.StackTrace; }
+			}
+
+			public string ExceptionType {
+				get { return _e.GetType ().FullName; }
+			}			
 		}
 
 		#endregion
@@ -140,7 +131,7 @@ namespace System.Web.Script.Services
 		public bool IsReusable {
 			get { return false; }
 		}
-
+		
 		public void ProcessRequest (HttpContext context) {
 			HttpRequest request = context.Request;
 			HttpResponse response = context.Response;
@@ -152,7 +143,7 @@ namespace System.Web.Script.Services
 
 			IDictionary<string, object> @params =
 				"GET".Equals (request.RequestType, StringComparison.OrdinalIgnoreCase)
-				? new NameValueCollectionDictionary (request.QueryString) :
+				? GetNameValueCollectionDictionary (request.QueryString) :
 				(IDictionary<string, object>) JavaScriptSerializer.DefaultSerializer.DeserializeObjectInternal
 				(new StreamReader (request.InputStream, request.ContentEncoding));
 			
@@ -168,6 +159,16 @@ namespace System.Web.Script.Services
 			}
 		}
 
+		IDictionary <string, object> GetNameValueCollectionDictionary (NameValueCollection nvc)
+		{
+			var ret = new Dictionary <string, object> ();
+
+			for (int i = nvc.Count - 1; i >= 0; i--)
+				ret.Add (nvc.GetKey (i), JavaScriptSerializer.DefaultSerializer.DeserializeObjectInternal (nvc.Get (i)));
+
+			return ret;
+		}
+		
 		#endregion
 	}
 }

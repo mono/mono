@@ -40,32 +40,6 @@ namespace System.Web.Script.Services
 {
 	sealed class ProfileService
 	{
-		#region ProfileSerializer
-
-		sealed class ProfileSerializer : JavaScriptSerializer.LazyDictionary
-		{
-			readonly string [] _properties;
-			public ProfileSerializer (string [] properties) {
-				_properties = properties;
-			}
-			protected override IEnumerator<KeyValuePair<string, object>> GetEnumerator () {
-				if (_properties == null)
-					yield break;
-
-				ProfileBase profile = HttpContext.Current.Profile;
-				for (int i = 0; i < _properties.Length; i++) {
-					string name = _properties [i];
-					int dot = name.IndexOf ('.');
-					object value = (dot > 0) ? profile.GetProfileGroup (name.Substring (0, dot))
-						.GetPropertyValue (name.Substring (dot + 1)) :
-						profile.GetPropertyValue (name);
-					yield return new KeyValuePair<string, object> (name, value);
-				}
-			}
-		}
-
-		#endregion
-
 		public const string DefaultWebServicePath = "/Profile_JSON_AppService.axd";
 
 		readonly ScriptingProfileServiceSection _section;
@@ -83,9 +57,32 @@ namespace System.Web.Script.Services
 			}
 		}
 
+		public IDictionary <string, object> GetProfileDictionary (string[] properties)
+		{
+			var ret = new Dictionary <string, object> ();
+
+			int len = properties != null ? properties.Length : 0;
+			if (len <= 0)
+				return ret;
+
+			ProfileBase profile = HttpContext.Current.Profile;
+			string name;
+			int dot;
+			object value;
+			
+			for (int i = 0; i < len; i++) {
+				name = properties [i];
+				dot = name.IndexOf ('.');
+				value = (dot > 0) ? profile.GetProfileGroup (name.Substring (0, dot)).GetPropertyValue (name.Substring (dot + 1)) : profile.GetPropertyValue (name);
+				ret.Add (name, value);
+			}
+
+			return ret;
+		}
+		
 		[WebMethod()]
 		public IDictionary<string, object> GetAllPropertiesForCurrentUser (bool authenticatedUserOnly) {
-			return new ProfileSerializer (ScriptingProfileServiceSection.ReadAccessProperties);
+			return GetProfileDictionary (ScriptingProfileServiceSection.ReadAccessProperties);
 		}
 
 		[WebMethod ()]
@@ -112,7 +109,7 @@ namespace System.Web.Script.Services
 				}
 			}
 
-			return new ProfileSerializer (list != null ? list.ToArray () : properties);
+			return GetProfileDictionary (list != null ? list.ToArray () : properties);
 		}
 
 		[WebMethod ()]

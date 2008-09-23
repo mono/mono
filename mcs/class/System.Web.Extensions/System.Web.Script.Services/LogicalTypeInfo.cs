@@ -96,13 +96,6 @@ namespace System.Web.Script.Services
 							continue;
 
 						value = pair.Value;
-						if (value is JavaScriptSerializer.LazyDictionary) {
-							var newValue = new Dictionary <string, object> ();
-							foreach (KeyValuePair <string, object> kvp in (JavaScriptSerializer.LazyDictionary)value)
-								newValue.Add (kvp.Key, kvp.Value);
-							value = newValue;
-						}
-						
 						ptype = _params [i].ParameterType;
 						if (ptype == typeof (System.Object))
 							pp [i] = value;
@@ -400,7 +393,7 @@ if (typeof({0}) === 'undefined') {{", className);
 {0}.prototype = {1}
 {0}.registerEnum('{0}', {2});",
 				className,
-				JSSerializer.Serialize(new EnumPrototypeSerializer(gsta.Type)),
+				JSSerializer.Serialize(GetEnumPrototypeDictionary (gsta.Type)),
 				Attribute.GetCustomAttribute (gsta.Type, typeof (FlagsAttribute)) != null ? "true" : "false");
 				
 			}
@@ -429,20 +422,17 @@ Type.registerNamespace('{0}');",
 			return name;
 		}
 
-		sealed class EnumPrototypeSerializer : JavaScriptSerializer.LazyDictionary
+		static IDictionary <string, object> GetEnumPrototypeDictionary (Type type)
 		{
-			readonly Type _type;
-			public EnumPrototypeSerializer (Type type) {
-				_type = type;
-			}
-			protected override IEnumerator<KeyValuePair<string, object>> GetEnumerator () {
-				String [] names = Enum.GetNames (_type);
-				Array values = Enum.GetValues (_type);
-				for (int i = 0; i < names.Length; i++)
-					yield return new KeyValuePair<string, object> (names [i], values.GetValue (i));
-			}
-		}
+			var ret = new Dictionary <string, object> ();
+			string [] names = Enum.GetNames (type);
+			Array values = Enum.GetValues (type);
+			for (int i = 0; i < names.Length; i++)
+				ret.Add (names [i], values.GetValue (i));
 
+			return ret;
+		}
+		
 		static MethodInfo FindInInterface (Type ifaceType, MethodInfo method) {
 			int nameStartIndex = 0;
 			if (method.IsPrivate) {
