@@ -1,3 +1,12 @@
+2008-09-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel.brg (mini_emit_castclass): Avoid the szarray!=array checks for
+	arrays of arrays. Fixes #428406.
+
+	* method-to-ir.c (mini_emit_castclass): Ditto.
+
+	* objects.cs: Add new test.
+	
 2008-09-23  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* method-to-ir.c (type_to_eval_stack_type): The code path for the new JIT
