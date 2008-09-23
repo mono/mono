@@ -1,3 +1,8 @@
+2008-09-23  Neville Gao <nevillegao@gmail.com>
+
+	* StatusBar.cs: Add UIA event in AddInternal () to support accessibility.
+	[Fixes bug #419079]
+
 2008-09-22  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextBoxBase.cs: Set Text to "" instead of null in Clear().

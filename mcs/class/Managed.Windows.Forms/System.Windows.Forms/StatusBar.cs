@@ -469,7 +469,7 @@ namespace System.Windows.Forms {
 				remove { owner.Events.RemoveHandler (UIACollectionChangedEvent, value); }
 			}
 			
-			internal void OnUIACollectionChangedEvent (CollectionChangeEventArgs args)
+			internal void OnUIACollectionChanged (CollectionChangeEventArgs args)
 			{
 				CollectionChangeEventHandler eh
 					= (CollectionChangeEventHandler) owner.Events [UIACollectionChangedEvent];
@@ -499,6 +499,11 @@ namespace System.Windows.Forms {
 					owner.CalcPanelSizes ();
 					owner.Refresh ();
 				}
+
+#if NET_2_0
+				// UIA Framework Event: Panel Added
+				OnUIACollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, res));
+#endif
 
 				return res;
 			}
@@ -530,7 +535,7 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 					// UIA Framework Event: Panel Removed
-					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, index));
+					OnUIACollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, index));
 #endif
 
 					value.SetParent (owner);
@@ -539,7 +544,7 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 					// UIA Framework Event: Panel Added
-					OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, index));
+					OnUIACollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, index));
 #endif
 				}
 			}
@@ -589,7 +594,7 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 				// UIA Framework Event: Panel Cleared
-				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, -1));
+				OnUIACollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, -1));
 #endif
 			}
 
@@ -651,7 +656,7 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 				// UIA Framework Event: Panel Added
-				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, index));
+				OnUIACollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, index));
 #endif
 			}
 
@@ -664,7 +669,7 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 				// UIA Framework Event: Panel Removed
-				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, index));
+				OnUIACollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, index));
 #endif
 			}
 
