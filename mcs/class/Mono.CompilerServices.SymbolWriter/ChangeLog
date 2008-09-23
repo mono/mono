@@ -1,3 +1,8 @@
+2008-09-23  Marek Safar  <marek.safar@gmail.com>
+
+	* Makefile: Use bootstrap profile to build with correct symbol
+	writer.
+
 2008-06-18  Martin Baulig  <martin@ximian.com>
 
 	* MonoSymbolTable.cs

@@ -1,4 +1,4 @@
-thisdir = class/Mono.CSharp.Debugger
+thisdir = class/Mono.CompilerServices.SymbolWriter
 SUBDIRS =
 include ../../build/rules.make
 
@@ -7,6 +7,14 @@ LIBRARY_USE_INTERMEDIATE_FILE = yes
 
 LIB_MCS_FLAGS = /r:$(corlib)
 NO_TEST = yes
+
+ifneq (basic, $(PROFILE))
+USE_BOOT_COMPILE = yes
+endif
+
+ifdef USE_BOOT_COMPILE
+LIBRARY_COMPILE = $(BOOT_COMPILE)
+endif
 
 ifeq (win32default, $(PLATFORM)$(PROFILE))
 LIBRARY_COMPILE = MONO_PATH="$(topdir)/class/lib/$(PROFILE);$$MONO_PATH" $(INTERNAL_MCS) $(USE_MCS_FLAGS)
