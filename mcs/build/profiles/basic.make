@@ -25,7 +25,7 @@ FRAMEWORK_VERSION = 1.0
 #
 # Copy from rules.make because I don't know how to unset MCS_FLAGS
 #
-USE_MCS_FLAGS = /codepage:$(CODEPAGE) $(LOCAL_MCS_FLAGS) $(PROFILE_MCS_FLAGS)
+USE_MCS_FLAGS = /codepage:$(CODEPAGE) $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS)
 
 .PHONY: profile-check do-profile-check
 profile-check:
