@@ -1,5 +1,8 @@
 2008-09-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h regalloc.h mini-codegen.c: Generalize the regalloc code to allow 
+	multiple register banks in the future.
+
 	* mini-codegen.c (mono_local_regalloc): Fix a warning.
 
 2008-09-22  Rodrigo Kumpera  <rkumpera@novell.com>
