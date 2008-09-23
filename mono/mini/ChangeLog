@@ -1,3 +1,9 @@
+
+Tue Sep 23 15:28:29 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* aot-runtime.c, method-to-ir.c, mini.c, mini-trampolines.c: use the
+	new functions to allocate from persistent mempools.
+
 2008-09-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h regalloc.h mini-codegen.c: Generalize the regalloc code to allow 
