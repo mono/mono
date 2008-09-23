@@ -1,3 +1,10 @@
+2008-09-23  Michael Hutchinson  <mhutchinson@novell.com>
+
+	* SoapServerFormatterSink.cs: Do not try to parse text/xml code 
+	  unless there is a SOAPAction.  Set position on outgoing streams to 
+	  zero, so they can be properly parsed in the general infrastructure.
+	  Do not try to seek on incoming streams.
+
 2008-08-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* BinaryServerFormatterSink.cs: Fixed argument name to match MS.
