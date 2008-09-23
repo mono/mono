@@ -42,7 +42,7 @@ namespace System.Web.Script.Serialization
 	{
 		internal static readonly long InitialJavaScriptDateTicks = new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
                 static readonly DateTime MinimumJavaScriptDate = new DateTime (100, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-		static readonly MethodInfo serializeGenericDictionary = typeof (JsonSerializer).GetMethod ("SerializeGenericDictionary", BindingFlags.NonPublic | BindingFlags.Static);
+		static readonly MethodInfo serializeGenericDictionary = typeof (JsonSerializer).GetMethod ("SerializeGenericDictionary", BindingFlags.NonPublic | BindingFlags.Instance);
 
 		Dictionary <object, bool> objectCache;
 		JavaScriptSerializer serializer;
@@ -191,24 +191,27 @@ namespace System.Web.Script.Serialization
 					throw new InvalidOperationException ("Circular reference detected.");
 				objectCache.Add (obj, true);
 
+				Type closedIDict = GetClosedIDictionaryBase(valueType);
+				if (closedIDict != null) {
+					if (serializeGenericDictionaryMethods == null)
+						serializeGenericDictionaryMethods = new Dictionary <Type, MethodInfo> ();
+
+					MethodInfo mi;
+					if (!serializeGenericDictionaryMethods.TryGetValue (closedIDict, out mi)) {
+						Type[] types = closedIDict.GetGenericArguments ();
+						mi = serializeGenericDictionary.MakeGenericMethod (types [0], types [1]);
+						serializeGenericDictionaryMethods.Add (closedIDict, mi);
+					}
+
+					mi.Invoke (this, new object[] {output, obj});
+					return;
+				}				
+
 				IDictionary dict = obj as IDictionary;
 				if (dict != null) {
 					SerializeDictionary (output, dict);
 					return;
 				}
-
-				if (valueType.IsGenericType && typeof (IDictionary <,>).IsAssignableFrom (valueType.GetGenericTypeDefinition ())) {
-					MethodInfo mi;
-
-					if (!serializeGenericDictionaryMethods.TryGetValue (valueType, out mi)) {
-						Type[] types = valueType.GetGenericArguments ();
-						mi = serializeGenericDictionary.MakeGenericMethod (types [0], types [1]);
-						serializeGenericDictionaryMethods.Add (valueType, mi);
-					}
-
-					mi.Invoke (this, new object[] {obj});
-					return;
-				}				
 
 				IEnumerable enumerable = obj as IEnumerable;
 				if (enumerable != null) {
@@ -220,6 +223,18 @@ namespace System.Web.Script.Serialization
 			} finally {
 				objectCache.Remove (obj);
 			}
+		}
+		
+		Type GetClosedIDictionaryBase(Type t) {
+			if(t.IsGenericType && typeof (IDictionary <,>).IsAssignableFrom (t.GetGenericTypeDefinition ()))
+				return t;
+				
+			foreach(Type iface in t.GetInterfaces()) {
+				if(iface.IsGenericType && typeof (IDictionary <,>).IsAssignableFrom (iface.GetGenericTypeDefinition ()))
+					return iface;
+			}
+
+			return null;
 		}
 
 		bool ShouldIgnoreMember (MemberInfo mi, out MethodInfo getMethod)

@@ -1160,5 +1160,91 @@ namespace Tests.System.Web.Script.Serialization
 			db = (double)o;
 			Assert.AreEqual (Double.MaxValue, db, "#G4");
 		}
+
+		class SomeDict : IDictionary<string, object>
+		{
+			void IDictionary<string, object>.Add (string key, object value) {
+				throw new NotSupportedException ();
+			}
+
+			bool IDictionary<string, object>.ContainsKey (string key) {
+				throw new NotSupportedException ();
+			}
+
+			ICollection<string> IDictionary<string, object>.Keys {
+				get { throw new NotSupportedException (); }
+			}
+
+			bool IDictionary<string, object>.Remove (string key) {
+				throw new NotSupportedException ();
+			}
+
+			bool IDictionary<string, object>.TryGetValue (string key, out object value) {
+				throw new NotSupportedException ();
+			}
+
+			ICollection<object> IDictionary<string, object>.Values {
+				get { throw new NotSupportedException (); }
+			}
+
+			object IDictionary<string, object>.this [string key] {
+				get { throw new NotSupportedException (); }
+				set { throw new NotSupportedException (); }
+			}
+
+			void ICollection<KeyValuePair<string, object>>.Add (KeyValuePair<string, object> item) {
+				throw new NotSupportedException ();
+			}
+
+			void ICollection<KeyValuePair<string, object>>.Clear () {
+				throw new NotSupportedException ();
+			}
+
+			bool ICollection<KeyValuePair<string, object>>.Contains (KeyValuePair<string, object> item) {
+				throw new NotSupportedException ();
+			}
+
+			void ICollection<KeyValuePair<string, object>>.CopyTo (KeyValuePair<string, object> [] array, int arrayIndex) {
+				throw new NotSupportedException ();
+			}
+
+			int ICollection<KeyValuePair<string, object>>.Count {
+				get { throw new NotSupportedException (); }
+			}
+
+			bool ICollection<KeyValuePair<string, object>>.IsReadOnly {
+				get { throw new NotSupportedException (); }
+			}
+
+			bool ICollection<KeyValuePair<string, object>>.Remove (KeyValuePair<string, object> item) {
+				throw new NotSupportedException ();
+			}
+
+			IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator () {
+				return GetEnumerator ();
+			}
+
+			IEnumerator IEnumerable.GetEnumerator () {
+				return ((IEnumerable<KeyValuePair<string, object>>) this).GetEnumerator ();
+			}
+
+			protected IEnumerator<KeyValuePair<string, object>> GetEnumerator () {
+				yield return new KeyValuePair<string, object> ("hello", "world");
+			}
+		}
+
+		[Test] //bug #424704
+		public void NonGenericClassImplementingClosedGenericIDictionary ()
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+
+			SomeDict dictIn = new SomeDict ();
+
+			string s = ser.Serialize (dictIn);
+
+			Dictionary<string, object> dictOut = ser.Deserialize<Dictionary<string, object>> (s);
+			Assert.AreEqual (dictOut.Count, 1, "#1");
+			Assert.AreEqual (dictOut["hello"], "world", "#2");
+		}
 	}
 }

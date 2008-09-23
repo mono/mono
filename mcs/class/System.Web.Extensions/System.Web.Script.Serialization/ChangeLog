@@ -1,3 +1,13 @@
+2008-09-23  Juraj Skripsky  <js@hotfeet.ch>
+
+	* JsonSerializer.cs: "SerializeGenericDictionary" is an instance method,
+	fix retrieval of its MethodInfo.
+	Initialize serializeGenericDictionaryMethods (lazily).
+	Add and use GetClosedIDictionaryBase to also handle cases where a
+	non-generic class implements a closed IDictionary<,> (e.g.
+	SomeDictionary : IDictionary<string, object>). Fixes bug #424704.
+	First check for IDictionary<,>, then for IDictionary.
+
 2008-09-20  Marek Habersack  <mhabersack@novell.com>
 
 	* JsonDeserializer.cs: added support for stand-alone NaN, Infinity
