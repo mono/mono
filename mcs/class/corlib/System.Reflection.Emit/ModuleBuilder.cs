@@ -95,14 +95,18 @@ namespace System.Reflection.Emit {
 			
 			if (emitSymbolInfo) {
 				Assembly asm = Assembly.LoadWithPartialName ("Mono.CompilerServices.SymbolWriter");
+				if (asm == null)
+					throw new ExecutionEngineException ("The assembly for default symbol writer cannot be loaded");
+
 				Type t = asm.GetType ("Mono.CompilerServices.SymbolWriter.SymbolWriterImpl");
-				if (t != null) {
-					symbolWriter = (ISymbolWriter) Activator.CreateInstance (t, new object[] { this });
-					string fileName = fqname;
-					if (assemblyb.AssemblyDir != null)
-						fileName = Path.Combine (assemblyb.AssemblyDir, fileName);
-					symbolWriter.Initialize (IntPtr.Zero, fileName, true);
-				}
+				if (t == null)
+					throw new ExecutionEngineException ("The type that implements the default symbol writer interface cannot be found");
+
+				symbolWriter = (ISymbolWriter) Activator.CreateInstance (t, new object[] { this });
+				string fileName = fqname;
+				if (assemblyb.AssemblyDir != null)
+					fileName = Path.Combine (assemblyb.AssemblyDir, fileName);
+				symbolWriter.Initialize (IntPtr.Zero, fileName, true);
 			}
 		}
 

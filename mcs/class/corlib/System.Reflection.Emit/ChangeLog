@@ -1,3 +1,8 @@
+2008-09-23  Marek Safar  <marek.safar@gmail.com>
+
+	* ModuleBuilder.cs: Fixed NRE when default symbol writer cannot be
+	loaded. 
+ 
 2008-09-16  Jb Evain  <jbevain@novell.com>
 
 	* AssemblyBuilder.cs (AddTypeForwarder): correctly grow the
