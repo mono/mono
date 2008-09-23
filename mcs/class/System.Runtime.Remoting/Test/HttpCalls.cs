@@ -7,6 +7,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Http;
@@ -49,13 +50,41 @@ namespace MonoTests.Remoting
 			return new HttpChannelManager ();
 		}
 	}
+	
+	[TestFixture]
+	public class HttpBinarySyncCallTest : SyncCallTest
+	{
+		public override ChannelManager CreateChannelManager ()
+		{
+			return new HttpChannelManager ();
+		}
+	}
 
 	[Serializable]
 	public class HttpChannelManager : ChannelManager
 	{
 		public override IChannelSender CreateClientChannel ()
 		{
-			return new HttpChannel ();
+			Hashtable options = new Hashtable ();
+			options ["timeout"] = 10000; // 10s
+			return new HttpClientChannel (options, null);
+		}
+
+		public override IChannelReceiver CreateServerChannel ()
+		{
+			return new HttpChannel (0);
+		}
+	}
+	
+	[Serializable]
+	public class HttpBinaryChannelManager : ChannelManager
+	{
+		public override IChannelSender CreateClientChannel ()
+		{
+			Hashtable options = new Hashtable ();
+			options ["timeout"] = 10000; // 10s
+			options ["name"] = "binary http channel";
+			return new HttpClientChannel (options,  new BinaryClientFormatterSinkProvider ());
 		}
 
 		public override IChannelReceiver CreateServerChannel ()

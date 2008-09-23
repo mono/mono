@@ -65,7 +65,6 @@ namespace System.Runtime.Remoting.Channels.Http
 			HttpResponse response = context.Response;
 			
 			// Create transport headers for the request
-			
 			TransportHeaders theaders = new TransportHeaders();
 
 			string objectUri = request.RawUrl;
@@ -86,12 +85,16 @@ namespace System.Runtime.Remoting.Channels.Http
 			ITransportHeaders responseHeaders;
 			Stream responseStream;
 			
-			// Dispatch the request
+			// Dispatch the request	
+			ServerProcessing proc = transportSink.SynchronousDispatch 
+				(theaders, request.InputStream, out responseHeaders, out responseStream);
 			
-			transportSink.DispatchRequest (request.InputStream, theaders, out responseStream, out responseHeaders);
+			if (proc == ServerProcessing.Async) {
+				throw new NotSupportedException ("HttpRemotingHandler does not support async processing in " +
+					"the synchronous HTTP pipeline" );
+			}
 
 			// Write the response
-			
 			if (responseHeaders != null && responseHeaders["__HttpStatusCode"] != null) 
 			{
 				// The formatter can set the status code
@@ -108,15 +111,10 @@ namespace System.Runtime.Remoting.Channels.Http
 						response.AppendHeader(key, entry.Value.ToString());
 				}
 			}
-
-			byte[] bodyBuffer = new byte [responseStream.Length];
-			responseStream.Seek (0, SeekOrigin.Begin);
 			
-			int nr = 0;
-			while (nr < responseStream.Length)
-				nr += responseStream.Read (bodyBuffer, nr, bodyBuffer.Length - nr);
-			
-			response.OutputStream.Write (bodyBuffer, 0, bodyBuffer.Length);
+			if (responseStream != null) {
+				HttpClientTransportSink.CopyStream (responseStream, response.OutputStream, 1024);
+			}
 		}
 	}	
 }

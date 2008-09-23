@@ -7,6 +7,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
@@ -20,7 +21,7 @@ namespace MonoTests.Remoting
 	{
 		ActivationServer server;
 		TcpChannel tcp;
-		HttpChannel http;
+		HttpClientChannel http;
 			
 		[TestFixtureSetUp]
 		public void Run()
@@ -28,7 +29,10 @@ namespace MonoTests.Remoting
 			try
 			{
 				tcp =  new TcpChannel (0);
-				http =  new HttpChannel (0);
+				
+				Hashtable options = new Hashtable ();
+				options ["timeout"] = 10000; // 10s
+				http = new HttpClientChannel (options, null);
 			
 				ChannelServices.RegisterChannel (tcp);
 				ChannelServices.RegisterChannel (http);

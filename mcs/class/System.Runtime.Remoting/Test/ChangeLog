@@ -1,3 +1,10 @@
+2008-09-19  Michael Hutchinson  <mhutchinson@novell.com>
+
+	* ActivationTests.cs:
+	* HttpCalls.cs: Add a timeout on the client.
+	* HttpBugTests.cs: Add tests for some bugzilla bugs. One's not fixed, 
+	  so is marked as not working.
+
 2008-09-19  Jeffrey Stedfast  <fejj@novell.com>
 
 	* HttpServerChannelTests.cs: More unit tests for

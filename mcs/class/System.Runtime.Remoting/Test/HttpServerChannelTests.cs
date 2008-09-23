@@ -271,7 +271,7 @@ namespace MonoTests.Remoting {
 		}
 		
 		[Test]
-		[Category ("NotWorking")] // currently the HttpServer responds with a SOAP stackdump because it isn't using the BinaryServerSinkProvider like it should.
+		[Category ("NotWorking")] // the faked request content string might be wrong?
 		public void TestBinaryTransport ()
 		{
 			string assemblyName = Assembly.GetExecutingAssembly ().GetName ().Name;
@@ -393,7 +393,8 @@ namespace MonoTests.Remoting {
 						 "</SOAP-ENV:Body>\r\n" +
 						 "</SOAP-ENV:Envelope>\r\n", methodName, typeof (RemoteObject).FullName, assemblyName);
 #else
-			content = String.Format ("<SOAP-ENV:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
+			// Mono's HttpServer chunks the response
+			content = String.Format ("27e\r\n<SOAP-ENV:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
 						 "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" " +
 						 "xmlns:SOAP-ENC=\"http://schemas.xmlsoap.org/soap/encoding/\" " +
 						 "xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
@@ -404,7 +405,7 @@ namespace MonoTests.Remoting {
 						 "      <return xsi:type=\"xsd:int\">1</return>\n" +
 						 "    </i2:{0}Response>\n" +
 						 "  </SOAP-ENV:Body>\n" +
-						 "</SOAP-ENV:Envelope>", methodName, typeof (RemoteObject).FullName, assemblyName);
+						 "</SOAP-ENV:Envelope>\r\n0\r\n\r\n", methodName, typeof (RemoteObject).FullName, assemblyName);
 #endif
 			
 			headers = String.Format ("HTTP/1.1 200 OK\r\nContent-Type: text/xml; charset=\"utf-8\"\r\n" +
