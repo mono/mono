@@ -30,6 +30,7 @@ common_dirs := \
 	corlib				\
 	System				\
 	System.XML			\
+	Mono.CompilerServices.SymbolWriter \
 	Mono.Security			\
 	System				\
 	System.Security			\
@@ -45,7 +46,6 @@ common_dirs := \
 	System.Data			\
 	Mono.Data			\
 	Mono.GetOptions			\
-	Mono.CompilerServices.SymbolWriter \
 	Mono.Posix			\
 	Accessibility			\
 	Mono.WebBrowser			\
