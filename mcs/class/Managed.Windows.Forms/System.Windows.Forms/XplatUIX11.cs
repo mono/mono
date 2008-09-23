@@ -4045,7 +4045,7 @@ namespace System.Windows.Forms {
 							// of the Control being grabbed, and obviously in that scenario we are not
 							// actuallty entering them
 							Control ctrl = Control.FromHandle (hwnd.client_window);
-							foreach (Control child_control in ctrl.Controls)
+							foreach (Control child_control in ctrl.Controls.GetAllControls ())
 								if (child_control.Bounds.Contains (enter_loc))
 									goto ProcessNextMessage;
 
