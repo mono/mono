@@ -1,4 +1,8 @@
 
+Tue Sep 23 15:31:45 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini-exceptions.c: update a few more exceptions-related counters.
+
 Tue Sep 23 15:28:29 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* aot-runtime.c, method-to-ir.c, mini.c, mini-trampolines.c: use the
