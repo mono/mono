@@ -1541,15 +1541,15 @@ namespace System.Web.UI
 				_ci = ci;
 			}
 
-			public string Name {
+			public string name {
 				get { return _ci.Name; }
 			}
 
-			public NumberFormatInfo NumberFormat {
+			public NumberFormatInfo numberFormat {
 				get { return _ci.NumberFormat; }
 			}
 
-			public DateTimeFormatInfo DateTimeFormat {
+			public DateTimeFormatInfo dateTimeFormat {
 				get { return _ci.DateTimeFormat; }
 			}			
 		}
