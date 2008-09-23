@@ -1,5 +1,10 @@
 2008-09-23  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ThemeWin32Classic.cs: Allow tooltips to be multiline.
+	[Fixes bug #427884]
+
+2008-09-23  Jonathan Pobst  <monkey@jpobst.com>
+
 	* StatusBar.cs: Add tooltip support.
 	[Fixes bug #428113]
 

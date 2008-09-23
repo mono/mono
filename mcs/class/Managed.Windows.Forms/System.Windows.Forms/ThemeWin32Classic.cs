@@ -5359,7 +5359,7 @@ namespace System.Windows.Forms
 #else
 			Color foreground = this.ColorInfoText;
 #endif
-			TextFormatFlags flags = TextFormatFlags.HidePrefix | TextFormatFlags.SingleLine | TextFormatFlags.VerticalCenter;
+			TextFormatFlags flags = TextFormatFlags.HidePrefix;
 			TextRenderer.DrawTextInternal (dc, control.Text, control.Font, text_rect, foreground, flags, false);
 		}
 
