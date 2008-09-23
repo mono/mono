@@ -45,11 +45,16 @@ my %methods = {
 
 my %types;
 $types{"short"} = {name => "short", out => "out", marshal => ""};
+$types{"PRUint8"} = {name => "char", out => "out", marshal => ""};
+$types{"PRInt8"} = {name => "char", out => "out", marshal => ""};
 $types{"unsigned,short"} = {name => "ushort", out => "out", marshal => ""};
+$types{"PRUint16"} = {name => "ushort", out => "out", marshal => ""};
+$types{"PRInt16"} = {name => "short", out => "out", marshal => ""};
 $types{"int"} = {name => "int", out => "out", marshal => ""};
 $types{"nsresult"} = {name => "int", out => "out", marshal => ""};
 $types{"unsigned,int"} = {name => "uint", out => "out", marshal => ""};
 $types{"PRUint32"} = {name => "UInt32", out => "out", marshal => ""};
+$types{"PRInt32"} = {name => "Int32", out => "out", marshal => ""};
 $types{"PRInt64"} = {name => "long", out => "out", marshal => ""};
 $types{"long"} = {name => "int", out => "out", marshal => ""};
 $types{"size_t"} = {name => "int", out => "out", marshal => ""};
@@ -59,6 +64,7 @@ $types{"boolean"} = {name => "bool", out => "out", marshal => ""};
 $types{"PRBool"} = {name => "bool", out => "out", marshal => ""};
 $types{"void"} = {name => "", out => "", marshal => ""};
 $types{"octet"} = {name => "byte", out => "out", marshal => ""};
+$types{"octet[]"} = {name => "IntPtr", out => "out", marshal => " "};
 $types{"byte"} = {name => "byte", out => "out", marshal => ""};
 $types{"DOMString"} = {name => "/*DOMString*/ HandleRef", out => "", marshal => ""};
 $types{"AUTF8String"} = {name => "/*AUTF8String*/ HandleRef", out => "", marshal => ""};
@@ -77,12 +83,19 @@ $types{"voidPtr"} = {name => "IntPtr", out => "", marshal => ""};
 $types{"nsISupports"} = {name => "IntPtr", out => "out", marshal =>"MarshalAs (UnmanagedType.Interface) "};
 $types{"DOMTimeStamp"} = {name => "int", out => "out", marshal => ""};
 $types{"nsWriteSegmentFun"} = {name => "nsIWriteSegmentFunDelegate", out => "", marshal => ""};
+$types{"nsReadSegmentFun"} = {name => "nsIReadSegmentFunDelegate", out => "", marshal => ""};
+$types{"nsTimerCallbackFunc"} = {name => "nsITimerCallbackDelegate", out => "", marshal => ""};
 $types{"nsLoadFlags"} = {name => "ulong", out => "out", marshal => ""};
 $types{"nsQIResult"} = {name => "IntPtr", out => "out", marshal => ""};
 $types{"nsIIDPtr[]"} = {name => "IntPtr", out => "out", marshal => ""};
 $types{"PRFileDescStar"} = {name => "IntPtr", out => "out", marshal => ""};
 $types{"PRLibraryStar"} = {name => "IntPtr", out => "out", marshal => ""};
 $types{"FILE"} = {name => "IntPtr", out => "out", marshal => ""};
+$types{"nsIPresShell"} = {name => "/*nsIPresShell*/ IntPtr", out => "out", marshal => ""};
+$types{"nsIDocument"} = {name => "/*nsIDocument*/ IntPtr", out => "out", marshal => ""};
+$types{"nsIFrame"} = {name => "/*nsIFrame*/ IntPtr", out => "out", marshal => ""};
+$types{"nsObjectFrame"} = {name => "/*nsObjectFrame*/ IntPtr", out => "out", marshal => ""};
+$types{"nsIContent"} = {name => "/*nsIContent*/ IntPtr", out => "out", marshal => ""};
 $types{"others"} = {name => "", out => "out", marshal => "MarshalAs (UnmanagedType.Interface) "};
 
 my %returnvalues;
@@ -350,23 +363,28 @@ sub get_params {
 
 		$marshal = "" if $marshal eq " ";
 
-		my $tmp = "\n\t\t\t\t";
+#		my $tmp = "\n\t\t\t\t";
+		my $tmp = "";
 		$tmp .= "[$marshal] " if $marshal;
 		$tmp .= "$out $type $name";
 		push (@ret, $tmp);
 		$lastoutparam = $name if $isout;
+#print "tmp:$tmp\n";
     }
 
 #print "$methods{$x}->{\"type\"}\n";
+#print "nosig:$nosig;x:$x;type:" . &get_type ($methods{$x}->{"type"}) . ";\n";
 	if (!$nosig && $x !~ /void/ && &get_type ($methods{$x}->{"type"}) ne "") {
 		$type = $methods{$x}->{"type"};
 		$type =~ s/\[.*\],//;
 		$marshal = &get_marshal ($type);
 
-		my $tmp = "[$marshal] " if $marshal;
+		my $tmp = "";
+		$tmp = "[$marshal] " if $marshal;
 		$tmp .= &get_out($type);
 		$tmp .= " " . &get_type ($type);
 		$tmp .= " ret";
+#print "tmp 2:$tmp\n";
 		push (@ret, $tmp);
 		
 		&add_external ($type);
@@ -378,7 +396,7 @@ sub get_params {
 	}
 #print "@ret\n";
 	
-	return join (",", @ret);
+	return join (",\n\t\t\t\t", @ret);
 }
 
 sub parse_file {
