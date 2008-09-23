@@ -1,3 +1,8 @@
+2008-09-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* StatusBar.cs: Add tooltip support.
+	[Fixes bug #428113]
+
 2008-09-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ThemeWin32Classic.cs: Use StringAlignment.Center for the vertical
