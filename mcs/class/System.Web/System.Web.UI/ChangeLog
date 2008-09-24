@@ -1,3 +1,8 @@
+2008-09-25  Marek Habersack  <mhabersack@novell.com>
+
+	* Page.cs: make sure view state is loaded for PreviousPage during
+	cross-page postback.
+
 2008-09-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CssClassPropertyAttribute.cs : new in 3.5 SP1.

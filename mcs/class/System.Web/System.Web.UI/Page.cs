@@ -1914,7 +1914,11 @@ public partial class Page : TemplateControl, IHttpHandler
 	{
 		Pair sState = LoadPageStateFromPersistenceMedium () as Pair;
 		if (sState != null) {
-			if (allow_load) {
+			if (allow_load
+#if NET_2_0
+			    || isCrossPagePostBack
+#endif
+			) {
 #if NET_2_0
 				LoadPageControlState (sState.Second);
 #endif
