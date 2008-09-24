@@ -13,6 +13,7 @@
 
 cs0158-5.cs
 cs0162-7.cs NO ERROR
+cs0619-42.cs
 cs1041.cs # new in GMCS; grammar issue
 cs1525.cs
 cs1528.cs
@@ -24,7 +25,4 @@ cs0457.cs
 
 # Errors fixed in version 2.0 only
 cs1533.cs IGNORE
-
-# Reported as csc issues
-gcs0133.cs NO ERROR
 
