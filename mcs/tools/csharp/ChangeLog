@@ -1,3 +1,8 @@
+2008-09-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile repl.cs: Add support for attaching to arbitrary mono
+	processes.
+
 2008-09-10  Miguel de Icaza  <miguel@novell.com>
 
 	* Move the repl shell here.

@@ -2,7 +2,7 @@ thisdir = tools/csharp
 SUBDIRS = 
 include ../../build/rules.make
 
-LOCAL_MCS_FLAGS = -r:$(topdir)/class/lib/$(PROFILE)/gmcs.exe
+LOCAL_MCS_FLAGS = -r:$(topdir)/class/lib/$(PROFILE)/gmcs.exe -r:$(topdir)/class/lib/$(PROFILE)/Mono.Posix.dll -r:Mono.Management.dll
 
 PROGRAM = $(topdir)/class/lib/$(PROFILE)/csharp.exe
 
