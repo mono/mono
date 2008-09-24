@@ -1,0 +1,4 @@
+2008-09-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* New assembly, currently contains the managed code to discover
+	mono processes and load managed agents into them.

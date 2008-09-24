@@ -1,0 +1,4 @@
+2008-09-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* VirtualMachine.cs: New file.
+
