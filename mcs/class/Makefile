@@ -113,7 +113,7 @@ net_2_0_dirs := \
 
 net_2_1_dirs := \
 	corlib			\
-	Mono.CompilerServices.SymbolWriter \	
+	Mono.CompilerServices.SymbolWriter \
 	System			\
 	System.Net		\
 	System.XML		\
