@@ -162,7 +162,23 @@ namespace System.Runtime.Remoting.Channels.Http
 					}
 				}
 			}
-			HttpClientTransportSink.CopyStream (responseStream, context.Response.OutputStream, 1024);
+			
+			//we need a stream with a length, so if it's not a MemeoryStream we copy it
+			MemoryStream ms;
+			if (responseStream is MemoryStream) {
+				ms = (MemoryStream) responseStream;
+			} else {
+				ms = new MemoryStream ();
+				HttpClientTransportSink.CopyStream (responseStream, ms, 1024);
+				ms.Position = 0;
+				responseStream.Close ();
+			}
+			
+			//FIXME: WHY DOES CHUNKING BREAK THE TESTS?
+			//now we can set the content length so that the server doesn't use chunking
+			context.Response.ContentLength64 = ms.Length;
+			HttpClientTransportSink.CopyStream (ms, context.Response.OutputStream, 1024);
+			ms.Close ();
 		}
 
 		class ContextWithId
