@@ -1,3 +1,8 @@
+2008-09-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* attach.c (ipc_connect): Use AF_UNIX instead of AF_FILE to fix the
+	osx build.
+
 2008-09-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* gc.c (mono_gc_add_finalizer_thread_callback): New function to
