@@ -1,3 +1,9 @@
+2008-09-24  Michael Hutchinson  <mhutchinson@novell.com>
+
+	* HttpServerChannelTests.cs: Don't check for a chunked response from 
+	  the Mono HTTP server; it no longer chunks since that was breaking 
+	  other tests.
+
 2008-09-19  Michael Hutchinson  <mhutchinson@novell.com>
 
 	* ActivationTests.cs:
