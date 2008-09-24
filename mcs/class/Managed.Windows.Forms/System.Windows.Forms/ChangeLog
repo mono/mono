@@ -1,5 +1,10 @@
 2008-09-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* FileDialog.cs: Take into account Tile view when selecting the view
+	(2.0 profile).
+
+2008-09-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ThemeWin32Classic.cs: When drawing gridlines for ListView don't use
 	the item bounds, since we can't iterate over them in virtual mode.
 	Also fix wrong calculation of the gridlines when using scrolling.

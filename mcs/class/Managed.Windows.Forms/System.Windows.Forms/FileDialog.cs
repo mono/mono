@@ -2869,7 +2869,11 @@ namespace System.Windows.Forms
 					View = View.SmallIcon;
 					break;
 				case 1:
+#if NET_2_0
+					View = View.Tile;
+#else
 					View = View.LargeIcon;
+#endif
 					break;
 				case 2:
 					View = View.LargeIcon;
