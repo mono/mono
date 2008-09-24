@@ -1,5 +1,14 @@
 2008-09-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* gc.c (mono_gc_add_finalizer_thread_callback): New function to
+	register a callback which is called when the finalizer thread is woken
+	up.
+	(finalizer_thread): Call the callback if it exists.
+
+	* attach.h attach.c: New files, implementing the attach mechanism.
+
+	* appdomain.c: Init/cleanup the attach mechanism on startup/shutdown.
+	
 	* object.c (mono_object_get_virtual_method): Fix an assertion introduced
 	by the previous change.
 
