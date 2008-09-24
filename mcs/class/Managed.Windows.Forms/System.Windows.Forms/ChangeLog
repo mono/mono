@@ -1,5 +1,11 @@
 2008-09-24  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ImageList.cs: Change CopyTo implementation to ensure clones are
+	created of our images.
+	[Fixes bug #409169]
+
+2008-09-24  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: When setting fonts, we need to ensure we change our
 	reference to the new font object, even if it represents the same
 	font as before.  If we don't, the original font can get disposed
