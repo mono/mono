@@ -2685,30 +2685,24 @@ namespace System.Windows.Forms
 			
 			// draw the gridlines
 			if (details && control.GridLines) {
+				Size control_size = control.ClientSize;
 				int top = (control.HeaderStyle == ColumnHeaderStyle.None) ?
-					2 : control.Font.Height + 2;
+					0 : control.header_control.Height;
 
 				// draw vertical gridlines
-				foreach (ColumnHeader col in control.Columns)
+				foreach (ColumnHeader col in control.Columns) {
+					int column_right = col.Rect.Right - control.h_marker;
 					dc.DrawLine (SystemPens.Control,
-						     col.Rect.Right, top,
-						     col.Rect.Right, control.TotalHeight);
-				// draw horizontal gridlines
-				ListViewItem last_item = null;
-				foreach (ListViewItem item in control.Items) {
-					dc.DrawLine (SystemPens.Control,
-						     item.GetBounds (ItemBoundsPortion.Entire).Left, item.GetBounds (ItemBoundsPortion.Entire).Top,
-						     control.TotalWidth, item.GetBounds (ItemBoundsPortion.Entire).Top);
-					last_item = item;
+						     column_right, top,
+						     column_right, control_size.Height);
 				}
 
-				// draw a line after at the bottom of the last item
-				if (last_item != null) {
-					dc.DrawLine (SystemPens.Control,
-						     last_item.GetBounds (ItemBoundsPortion.Entire).Left,
-						     last_item.GetBounds (ItemBoundsPortion.Entire).Bottom,
-						     control.TotalWidth,
-						     last_item.GetBounds (ItemBoundsPortion.Entire).Bottom);
+				// draw horizontal gridlines
+				int item_height = control.ItemSize.Height;
+				int y = top + item_height - (control.v_marker % item_height); // scroll bar offset
+				while (y < control_size.Height) {
+					dc.DrawLine (SystemPens.Control, 0, y, control_size.Width, y);
+					y += item_height;
 				}
 			}			
 			
