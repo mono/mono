@@ -33,6 +33,7 @@ using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NUnit.Framework;
+using System.Text;
 
 namespace MonoTests.Microsoft.Build.BuildEngine {
 
@@ -1142,6 +1143,173 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.SetProjectExtensions ("name", "1");
 			Assert.AreEqual ("1", project.GetProjectExtensions ("name"), "A1");
 			Assert.IsTrue (project.IsDirty, "A2");
+		}
+
+		[Test]
+		public void TestBuildProjectError1 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			Assert.IsFalse (project.Build ((string) null), "A1");
+			Assert.IsFalse (project.Build ((string[]) null), "A2");
+			Assert.IsFalse (project.Build ((string []) null, null), "A3");
+			Assert.IsFalse (project.Build ((string []) null, null, BuildSettings.None), "A4");
+		}
+
+		[Test]
+		public void TestBuildProjectError2 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			try {
+				project.Build (new string [] { null });
+			} catch {
+				return;
+			}
+			Assert.Fail ("Expected exception for project.Build, null string in targetNames []");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestBuildProjectFile1 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			string projectText = CreateProjectString (false, new string [] { "1", "2" }, new bool [] { true, true });
+			project.LoadXml (projectText);
+			CheckProjectBuild (engine, project, new string [] { "main" }, true, new string [] { "main" });
+		}
+
+		[Test]
+		public void TestBuildProjectFile2 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			string projectText = CreateProjectString (false, new string [] { "1", "2", "3" }, new bool [] { true, false, true });
+			project.LoadXml (projectText);
+			CheckProjectBuild (engine, project, new string [] { "main" }, false, new string [0]);
+		}
+
+		[Test]
+		public void TestBuildProjectFile3 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			string projectText = CreateProjectString (false, new string [] { "1", "2", "3" }, new bool [] { true, true, true });
+			project.LoadXml (projectText);
+			CheckProjectBuild (engine, project, new string [] { "1", "2" }, true, new string [] { "1", "2" });
+		}
+
+		[Test]
+		public void TestBuildProjectFile4 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			string projectText = CreateProjectString (false, new string [] { "1", "2", "3" }, new bool [] { true, false, true });
+			project.LoadXml (projectText);
+			CheckProjectBuild (engine, project, new string [] { "main" }, false, new string [0]);
+		}
+
+		//Run separate tests
+
+		//Run single target
+		[Test]
+		public void TestBuildProjectFile5 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			string projectText = CreateProjectString (true, new string [] { "1", "2", "3" }, new bool [] { true, false, true });
+			project.LoadXml (projectText);
+			CheckProjectBuild (engine, project, new string [] { "main" }, false, new string [0]);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestBuildProjectFile6 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			string projectText = CreateProjectString (true, new string [] { "1", "2", "3" }, new bool [] { true, true, true });
+			project.LoadXml (projectText);
+			CheckProjectBuild (engine, project, new string [] { "main" }, true, new string [] { "main" });
+		}
+
+		// run multiple targets
+		[Test]
+		public void TestBuildProjectFile7 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			string projectText = CreateProjectString (true, new string [] { "1", "2", "3" }, new bool [] { true, true, true });
+			project.LoadXml (projectText);
+
+			CheckProjectBuild (engine, project, new string [] { "1", "2", "3" }, true, new string [] { "1", "2", "3" });
+		}
+
+		[Test]
+		public void TestBuildProjectFile8 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			string projectText = CreateProjectString (true, new string [] { "1", "2", "3" }, new bool [] { true, true, false });
+			project.LoadXml (projectText);
+
+			CheckProjectBuild (engine, project, new string [] { "1", "2", "3" }, false, new string [] { "1", "2"});
+		}
+
+		void CheckProjectBuild (Engine engine, Project project, string [] targetNames, bool result, string [] outputNames)
+		{
+			IDictionary targetOutputs = new Hashtable ();
+
+			Assert.AreEqual (result, project.Build (targetNames, targetOutputs), "A1");
+			Assert.AreEqual (outputNames.Length, targetOutputs.Keys.Count, "A2");
+
+			foreach (string outputName in outputNames) {
+				Assert.IsTrue (targetOutputs.Contains (outputName), "A3: target " + outputName);
+
+				object o = targetOutputs [outputName];
+				Assert.IsTrue (typeof (ITaskItem []).IsAssignableFrom (o.GetType ()), "A4: target " + outputName);
+
+				ITaskItem [] items = (ITaskItem [])o;
+				Assert.AreEqual (0, items.Length, "A5: target " + outputName);
+			}
+		}
+
+		string CreateProjectString (bool run_separate, string [] targets, bool [] results)
+		{
+			StringBuilder sb = new StringBuilder ();
+			sb.Append (@"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">");
+			sb.AppendFormat ("<Target Name = \"{0}\"><Message Text = \"#Target {0} called\" />", "main");
+
+			sb.AppendFormat ("<CallTarget Targets=\"");
+			for (int i = 0; i < targets.Length; i++)
+				sb.AppendFormat ("{0};", targets [i]);
+			sb.AppendFormat ("\" ");
+
+			if (run_separate)
+				sb.AppendFormat (" RunEachTargetSeparately=\"true\" ");
+			sb.AppendFormat ("/></Target>\n");
+
+			for (int i = 0; i < targets.Length; i++) {
+				sb.AppendFormat ("<Target Name = \"{0}\"><Message Text = \"#Target {0} called\" />", targets [i]);
+				if (!results [i])
+					sb.AppendFormat ("<Error Message = \"#Error message for target {0}\"/>", targets [i]);
+				sb.Append ("</Target>\n");
+			}
+
+			sb.Append ("</Project>");
+
+			return sb.ToString ();
 		}
 	}
 }

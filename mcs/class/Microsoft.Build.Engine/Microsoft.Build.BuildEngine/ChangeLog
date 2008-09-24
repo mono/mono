@@ -1,3 +1,8 @@
+2008-09-24  Ankit Jain  <jankit@novell.com>
+
+	* Engine.cs: Add argument checks.
+	* Project.cs: Likewise.
+
 2007-03-06  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Project.cs (Build): Add outputs to targetOutputs.

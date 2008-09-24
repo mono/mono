@@ -226,6 +226,8 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO ("Not tested")]
 		public bool Build (string targetName)
 		{
+			if (targetName == null)
+				return false;
 			return Build (new string [1] { targetName });
 		}
 		
@@ -248,6 +250,9 @@ namespace Microsoft.Build.BuildEngine {
 				   BuildSettings buildFlags)
 		
 		{
+			if (targetNames == null)
+				return false;
+
 			CheckUnloaded ();
 			ParentEngine.StartBuild ();
 			NeedToReevaluate ();
@@ -262,6 +267,9 @@ namespace Microsoft.Build.BuildEngine {
 			}
 			
 			foreach (string target in targetNames) {
+				if (target == null)
+					throw new ArgumentException ("targetNames cannot contain null strings");
+
 				if (!targets.Exists (target))
 					// FIXME: test if it's logged
 					return false;

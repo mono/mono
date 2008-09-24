@@ -217,5 +217,66 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			Assert.IsFalse (cul.Anything, "A1");
 		}
+
+		[Test]
+		public void TestBuildError1 ()
+		{
+			engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			Assert.IsFalse (project.Build ());
+			Assert.IsFalse (project.Build ((string)null));
+			Assert.IsFalse (project.Build ((string [])null));
+			Assert.IsFalse (project.Build (null, null));
+			Assert.IsFalse (project.Build (null, null, BuildSettings.None));
+			//FIXME: Add test for Build (null, non-null-target)
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestBuildProject1 ()
+		{
+			engine = new Engine (Consts.BinPath);
+			engine.BuildProject (null);
+		}
+
+		[Test]
+		public void TestBuildProject2 ()
+		{
+			engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			Assert.IsFalse (engine.BuildProject (project, (string)null), "#A1");
+			Assert.IsFalse (engine.BuildProject (project, (string [])null), "#A2");
+			Assert.IsFalse (engine.BuildProject (project, (string [])null, null), "#A3");
+			Assert.IsFalse (engine.BuildProject (project, (string [])null, null, BuildSettings.None), "#A4");
+
+			bool caught_exception = false;
+			try {
+				//null string in targetNames [] param
+				engine.BuildProject (project, new string [] {null}, null);
+			} catch {
+				caught_exception = true;
+			}
+			if (!caught_exception)
+				Assert.Fail ("Expected exception for Engine.BuildProject");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestBuildProjectNull1 ()
+		{
+			engine = new Engine (Consts.BinPath);
+			engine.BuildProject (null, "foo");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestBuildProjectNull2 ()
+		{
+			engine = new Engine (Consts.BinPath);
+			engine.BuildProject (null, (string)null);
+		}
+
 	}
 }

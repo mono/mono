@@ -1,3 +1,8 @@
+2008-09-24  Ankit Jain  <jankit@novell.com>
+
+	* EngineTest.cs:
+	* ProjectTest.cs: Add tests for Build*
+
 2007-03-17  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Consts.cs: Check for runtime not platform.

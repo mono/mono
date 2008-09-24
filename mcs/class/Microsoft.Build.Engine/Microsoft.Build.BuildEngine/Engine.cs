@@ -81,12 +81,19 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO]
 		public bool BuildProject (Project project)
 		{
+			if (project == null)
+				throw new ArgumentException ("project");
 			return project.Build ();
 		}
 		
 		[MonoTODO]
 		public bool BuildProject (Project project, string targetName)
 		{
+			if (project == null)
+				throw new ArgumentException ("project");
+			if (targetName == null)
+				return false;
+
 			return BuildProject (project, new string[] { targetName}, null, BuildSettings.None);
 		}
 		
@@ -111,6 +118,10 @@ namespace Microsoft.Build.BuildEngine {
 					  BuildSettings buildFlags)
 		{
 			bool result;
+			if (project == null)
+				throw new ArgumentException ("project");
+			if (targetNames == null)
+				return false;
 
 			StartBuild ();
 			
