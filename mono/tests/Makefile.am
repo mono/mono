@@ -316,6 +316,7 @@ endif
 
 if IA64
 TEST_CS_SRC+=async-exc-compilation.cs
+PLATFORM_DISABLED_TESTS=winx64structs.exe
 endif
 
 if X86

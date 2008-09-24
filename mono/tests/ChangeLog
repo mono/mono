@@ -1,3 +1,8 @@
+2008-09-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (PLATFORM_DISABLED_TESTS): Disable winx64structs.exe
+	on ia64 for the release.
+
 2008-09-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke2.cs: Remove a stray Console.WriteLine.
