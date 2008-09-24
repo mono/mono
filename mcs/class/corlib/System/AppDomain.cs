@@ -859,7 +859,22 @@ namespace System {
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo,string appBasePath,
 		                                      string appRelativeSearchPath, bool shadowCopyFiles)
 		{
-			return CreateDomain (friendlyName, securityInfo, appBasePath, appRelativeSearchPath, shadowCopyFiles, null, null);
+			return CreateDomain (friendlyName, securityInfo, CreateDomainSetup (appBasePath, appRelativeSearchPath, shadowCopyFiles));
+		}
+
+		static AppDomainSetup CreateDomainSetup (string appBasePath, string appRelativeSearchPath, bool shadowCopyFiles)
+		{
+			AppDomainSetup info = new AppDomainSetup ();
+
+			info.ApplicationBase = appBasePath;
+			info.PrivateBinPath = appRelativeSearchPath;
+
+			if (shadowCopyFiles)
+				info.ShadowCopyFiles = "true";
+			else
+				info.ShadowCopyFiles = "false";
+
+			return info;
 		}
 
 #if NET_2_0
@@ -1186,15 +1201,7 @@ namespace System {
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, string appBasePath,
 			string appRelativeSearchPath, bool shadowCopyFiles, AppDomainInitializer adInit, string[] adInitArgs)
 		{
-			AppDomainSetup info = new AppDomainSetup ();
-
-			info.ApplicationBase = appBasePath;
-			info.PrivateBinPath = appRelativeSearchPath;
-
-			if (shadowCopyFiles)
-				info.ShadowCopyFiles = "true";
-			else
-				info.ShadowCopyFiles = "false";
+			AppDomainSetup info = CreateDomainSetup (appBasePath, appRelativeSearchPath, shadowCopyFiles);
 
 			info.AppDomainInitializerArguments = adInitArgs;
 			info.AppDomainInitializer = adInit;
