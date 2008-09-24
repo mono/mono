@@ -1,3 +1,6 @@
+2008-09-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (MonoJitStats): Remove unused analyze_stack_repeat.
 
 Wed Sep 24 16:01:49 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
