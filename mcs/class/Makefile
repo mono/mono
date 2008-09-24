@@ -109,7 +109,8 @@ net_2_0_dirs := \
 	System.IdentityModel		\
 	System.IdentityModel.Selectors	\
 	System.ServiceModel		\
-	System.ServiceModel.Web
+	System.ServiceModel.Web	\
+	Mono.Management
 
 net_2_1_dirs := \
 	corlib			\
