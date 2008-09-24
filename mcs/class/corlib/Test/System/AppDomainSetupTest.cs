@@ -204,23 +204,27 @@ namespace MonoTests.System
 		}
 
 #if NET_2_0
-		static bool app_domain_initialized;
-
 		[Test]
 		public void AppDomainInitializer1 ()
 		{
 			AppDomainSetup s = new AppDomainSetup ();
 			s.AppDomainInitializer = AppDomainInitialized1;
 			s.AppDomainInitializerArguments = new string [] {"A", "B"};
-			AppDomain.CreateDomain ("MyDomain", null, s);
-			Assert.IsTrue (app_domain_initialized, "#1");
+			AppDomain domain = AppDomain.CreateDomain ("MyDomain", null, s);
+
+			object data = domain.GetData ("Initialized");
+			Assert.IsNotNull (data);
+			Assert.IsTrue ((bool) data);
 		}
 
 		static void AppDomainInitialized1 (string [] args)
 		{
-			Assert.AreEqual ("A", args [0], "#x1");
-			Assert.AreEqual ("B", args [1], "#x2");
-			app_domain_initialized = true;
+			bool initialized = true;
+			initialized &= args [0] == "A";
+			initialized &= args [1] == "B";
+			initialized &= AppDomain.CurrentDomain.FriendlyName == "MyDomain";
+			
+			AppDomain.CurrentDomain.SetData ("Initialized", initialized);
 		}
 
 		public void InstanceInitializer (string [] args)
