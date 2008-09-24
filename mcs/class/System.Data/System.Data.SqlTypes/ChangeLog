@@ -1,3 +1,9 @@
+2008-09-24  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlXml.cs (.ctor): Handle 0 length streams.
+	(get_Value): Throw SqlNullValueException if data is
+	null.
+	
 2008-09-23  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlXml.cs (.ctor, get_Value, CreateReader): Implemented and

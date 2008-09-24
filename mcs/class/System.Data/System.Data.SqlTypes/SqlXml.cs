@@ -3,6 +3,7 @@
 //
 // Author:
 //	Umadevi S (sumadevi@novell.com)
+//	Veerapuram Varadhan  (vvaradhan@novell.com>)
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -46,6 +47,7 @@ namespace System.Data.SqlTypes
 		bool notNull;
 		string xmlValue;
 		
+		public static readonly SqlXml Null;
 		public SqlXml ()
 		{
 			notNull = false;
@@ -59,28 +61,33 @@ namespace System.Data.SqlTypes
 				xmlValue = null;
 			} else {
 				int len = (int) value.Length;
-				int bufSize = 8192;	
-				StringBuilder sb = new StringBuilder (len);
-        		
-				value.Position = 0;
- 				// Now read value into a byte buffer.
-				byte [] bytes = null;
 				
-				if (len < bufSize)
-					bufSize = len;
-				bytes = new byte [bufSize];
+				if (len < 1) {
+					xmlValue = String.Empty;
+				} else {
+					int bufSize = 8192;
+					StringBuilder sb = new StringBuilder (len);
+		    		
+					value.Position = 0;
+	 				// Now read value into a byte buffer.
+					byte [] bytes = null;
+				
+					if (len < bufSize)
+						bufSize = len;
+					bytes = new byte [bufSize];
 
-				while (len > 0) {
-				    // Read may return anything from 0 to numBytesToRead.
-				    int n = value.Read(bytes, 0, bufSize);
-					sb.Append (Encoding.Unicode.GetString (bytes, 0, n));
+					while (len > 0) {
+						// Read may return anything from 0 to bufSize.
+						int n = value.Read(bytes, 0, bufSize);
+						sb.Append (Encoding.ASCII.GetString (bytes, 0, n));
 					
-				    // The end of the file is reached.
-				    if (n==0)
-				        break;
-				    len -= n;
+						// The end of the file is reached.
+						if (n==0)
+						    break;
+						len -= n;
+					}
+					xmlValue = sb.ToString ();
 				}
-				xmlValue = sb.ToString ();
 				notNull = true;
 			}
 		}
@@ -109,7 +116,9 @@ namespace System.Data.SqlTypes
 
 		public string Value {
 			get {
-				return xmlValue;
+				if (notNull)
+					return xmlValue;
+				throw new SqlNullValueException ();
 			}
 		}
 
