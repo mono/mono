@@ -282,7 +282,12 @@ namespace System.Runtime.Remoting.Channels.Http
 
 		public void AddHookChannelUri (string channelUri)
 		{
-			throw new NotImplementedException ("Behaviour not yet determined");
+			string [] newUris = new string[1] { channelUri };
+			if (channelData == null)
+				channelData = new ChannelDataStore (newUris);
+			else
+				channelData.ChannelUris = newUris;
+			wantsToListen = false;
 		}
 
 		public string ChannelScheme

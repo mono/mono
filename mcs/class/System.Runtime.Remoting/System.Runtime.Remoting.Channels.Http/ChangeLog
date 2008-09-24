@@ -1,3 +1,12 @@
+2008-09-24  Michael Hutchinson  <mhutchinson@novell.com>
+
+	* HttpServerTransportSink.cs: Disable chunking on the server, as 
+	  for some reason it was breaking the tests. This reduces efficiency 
+	  but right now is unavoidable.
+	  
+	* HttpServerChannel.cs: Implement AddHookChannelUri. Thanks to 
+	  Lluis for the patch.
+
 2008-09-23  Michael Hutchinson  <mhutchinson@novell.com>
 
 	* HttpClientChannel.cs: Fix logic error from ==/!= typo. Stops 
