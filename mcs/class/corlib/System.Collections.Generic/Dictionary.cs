@@ -740,7 +740,7 @@ namespace System.Collections.Generic {
 
 			public void Reset ()
 			{
-				((IEnumerator)host_enumerator).Reset ();
+				host_enumerator.Reset ();
 			}
 		}
 
@@ -812,6 +812,11 @@ namespace System.Collections.Generic {
 			}
 
 			void IEnumerator.Reset ()
+			{
+				Reset ();
+			}
+
+			internal void Reset ()
 			{
 				curTableItem = -1;
 				cur = NO_SLOT;
@@ -992,7 +997,7 @@ namespace System.Collections.Generic {
 
 				void IEnumerator.Reset ()
 				{
-					((IEnumerator)host_enumerator).Reset ();
+					host_enumerator.Reset ();
 				}
 			}
 		}
@@ -1115,7 +1120,7 @@ namespace System.Collections.Generic {
 
 				void IEnumerator.Reset ()
 				{
-					((IEnumerator)host_enumerator).Reset ();
+					host_enumerator.Reset ();
 				}
 			}
 		}

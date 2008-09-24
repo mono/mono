@@ -1,3 +1,8 @@
+2008-09-24  Jb Evain  <jbevain@novell.com>
+
+	* Dictionary.cs: properly reset all compounds enumerators.
+	Fixes #429530.
+
 2008-09-12  Jb Evain  <jbevain@novell.com>
 
 	* Dictionary.cs: (ToTValue) allow null values to be added for non
