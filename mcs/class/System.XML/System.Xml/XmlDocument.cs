@@ -264,7 +264,11 @@ namespace System.Xml
 		}
 
 		public XmlSchemaSet Schemas {
-			get { return schemas; }
+			get {
+				if (schemas == null)
+					schemas = new XmlSchemaSet ();
+				return schemas;
+			}
 			set { schemas = value; }
 		}
 

@@ -1,3 +1,8 @@
+2008-09-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDocument.cs : it returns non-null Schemas by default (and
+	  returns non-empty set after being set null).
+
 2008-09-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlReader.cs : detailed error location in ReadSubtree().
