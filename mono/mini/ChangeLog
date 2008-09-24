@@ -1,5 +1,10 @@
 2008-09-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* ssapre.c: Disable this to save space since it is not yet ported to
+	linear IR.
+
+	* regalloc2.c: Disable this to save space.
+
 	* mini.h (MonoJitStats): Remove unused analyze_stack_repeat.
 
 Wed Sep 24 16:01:49 CEST 2008 Paolo Molaro <lupus@ximian.com>
