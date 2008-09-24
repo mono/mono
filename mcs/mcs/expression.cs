@@ -4960,20 +4960,6 @@ namespace Mono.CSharp {
 
 			Type decl_type = method.DeclaringType;
 
-			if (!ec.IsInObsoleteScope) {
-				//
-				// This checks ObsoleteAttribute on the method and on the declaring type
-				//
-				ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (method);
-				if (oa != null)
-					AttributeTester.Report_ObsoleteMessage (oa, TypeManager.CSharpSignature (method), loc);
-
-				oa = AttributeTester.GetObsoleteAttribute (method.DeclaringType);
-				if (oa != null) {
-					AttributeTester.Report_ObsoleteMessage (oa, method.DeclaringType.FullName, loc);
-				}
-			}
-
 			if (IsMethodExcluded (method, loc))
 				return;
 			
@@ -8880,7 +8866,6 @@ namespace Mono.CSharp {
 			this.method = method;
 			this.source = source;
 			type = TypeManager.TypeToCoreType (method.ReturnType);
-			eclass = ExprClass.Value;
 			loc = l;
 		}
 
@@ -8901,9 +8886,11 @@ namespace Mono.CSharp {
 			
 		public override Expression DoResolve (EmitContext ec)
 		{
-			//
-			// We are born fully resolved
-			//
+			ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (method);
+			if (oa != null)
+				AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc);
+
+			eclass = ExprClass.Value;
 			return this;
 		}
 
@@ -8911,6 +8898,11 @@ namespace Mono.CSharp {
 		{
 			source.Emit (ec);
 			ec.ig.Emit (OpCodes.Call, method);
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return TypeManager.CSharpSignature (method);
 		}
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)

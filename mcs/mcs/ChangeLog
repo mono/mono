@@ -1,3 +1,10 @@
+2008-09-24  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs, decl.cs, convert.cs, assign.cs, expression.cs,
+	ecore.cs, attribute.cs: Moved obsolete method checks from emit
+	phase to resolve phase. It resolves problems with expression trees
+	and fixes bugs #323796, #325156.
+
 2008-09-23  Marek Safar  <marek.safar@gmail.com>
 
 	* codegen.cs: Report better error when symbol writer is missing.

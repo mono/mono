@@ -477,7 +477,7 @@ namespace Mono.CSharp {
 		IResolveContext rc;
 
 		public FieldInitializer (FieldBuilder field, Expression expression, IResolveContext rc)
-			: base (new FieldExpr (field, expression.Location, true), expression, expression.Location)
+			: base (new FieldExpr (field, expression.Location), expression, expression.Location)
 		{
 			this.rc = rc;
 			if (!field.IsStatic)

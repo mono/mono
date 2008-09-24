@@ -457,13 +457,6 @@ namespace Mono.CSharp {
 				return null;
 			
 			ConstructorInfo constructor = (ConstructorInfo)mg;
-
-			// TODO: move to OverloadResolve
-			ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (constructor);
-			if (oa != null && !Owner.ResolveContext.IsInObsoleteScope) {
-				AttributeTester.Report_ObsoleteMessage (oa, mg.GetSignatureForError (), mg.Location);
-			}
-
 			if (PosArguments == null) {
 				pos_values = EmptyObject;
 				return constructor;

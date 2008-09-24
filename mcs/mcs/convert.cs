@@ -1238,7 +1238,7 @@ namespace Mono.CSharp {
 			if (source == null)
 				return null;
 
-			return new UserCast (method, source, loc);
+			return new UserCast (method, source, loc).DoResolve (ec);
 		}
 
 		/// <summary>

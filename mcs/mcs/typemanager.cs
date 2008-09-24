@@ -773,8 +773,14 @@ namespace Mono.CSharp {
 		if (!mb.IsConstructor && TypeManager.IsSpecialMethod (mb)) {
 			string op_name = Operator.GetName (mb.Name);
 			if (op_name != null) {
-				sig.Append ("operator ");
-				sig.Append (op_name);
+				if (op_name == "explicit" || op_name == "implicit") {
+					sig.Append (op_name);
+					sig.Append (" operator ");
+					sig.Append (CSharpName (((MethodInfo)mb).ReturnType));
+				} else {
+					sig.Append ("operator ");
+					sig.Append (op_name);
+				}
 				sig.Append (parameters);
 				return sig.ToString ();
 			}

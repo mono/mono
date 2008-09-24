@@ -1431,19 +1431,23 @@ namespace Mono.CSharp {
 		}
 	}
 
-	/// <summary>
-	///    Performs a cast using an operator (op_Explicit or op_Implicit)
-	/// </summary>
+	//
+	// Used for predefined class library user casts (no obsolete check, etc.)
+	//
 	public class OperatorCast : TypeCast {
 		MethodInfo conversion_operator;
-		bool find_explicit;
 			
-		public OperatorCast (Expression child, Type target_type) : this (child, target_type, false) {}
+		public OperatorCast (Expression child, Type target_type) 
+			: this (child, target_type, false)
+		{
+		}
 
 		public OperatorCast (Expression child, Type target_type, bool find_explicit)
 			: base (child, target_type)
 		{
-			this.find_explicit = find_explicit;
+			conversion_operator = GetConversionOperator (find_explicit);
+			if (conversion_operator == null)
+				throw new InternalErrorException ("Outer conversion routine is out of sync");
 		}
 
 		// Returns the implicit operator that converts from
@@ -1470,68 +1474,27 @@ namespace Mono.CSharp {
 			}
 
 			return null;
-
-
 		}
+
 		public override void Emit (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-
 			child.Emit (ec);
-			conversion_operator = GetConversionOperator (find_explicit);
-
-			if (conversion_operator == null)
-				throw new InternalErrorException ("Outer conversion routine is out of sync");
-
-			ig.Emit (OpCodes.Call, conversion_operator);
+			ec.ig.Emit (OpCodes.Call, conversion_operator);
 		}
-		
 	}
 	
 	/// <summary>
 	/// 	This is a numeric cast to a Decimal
 	/// </summary>
-	public class CastToDecimal : TypeCast {
-		MethodInfo conversion_operator;
-
+	public class CastToDecimal : OperatorCast {
 		public CastToDecimal (Expression child)
 			: this (child, false)
 		{
 		}
 
 		public CastToDecimal (Expression child, bool find_explicit)
-			: base (child, TypeManager.decimal_type)
+			: base (child, TypeManager.decimal_type, find_explicit)
 		{
-			conversion_operator = GetConversionOperator (find_explicit);
-
-			if (conversion_operator == null)
-				throw new InternalErrorException ("Outer conversion routine is out of sync");
-		}
-
-		// Returns the implicit operator that converts from
-		// 'child.Type' to System.Decimal.
-		MethodInfo GetConversionOperator (bool find_explicit)
-		{
-			string operator_name = find_explicit ? "op_Explicit" : "op_Implicit";
-			
-			MemberInfo [] mi = TypeManager.MemberLookup (type, type, type, MemberTypes.Method,
-				BindingFlags.Static | BindingFlags.Public, operator_name, null);
-
-			foreach (MethodInfo oper in mi) {
-				AParametersCollection pd = TypeManager.GetParameterData (oper);
-
-				if (pd.Types [0] == child.Type && TypeManager.TypeToCoreType (oper.ReturnType) == type)
-					return oper;
-			}
-
-			return null;
-		}
-		public override void Emit (EmitContext ec)
-		{
-			ILGenerator ig = ec.ig;
-			child.Emit (ec);
-
-			ig.Emit (OpCodes.Call, conversion_operator);
 		}
 	}
 
@@ -1734,6 +1697,9 @@ namespace Mono.CSharp {
 			if (!RootContext.StdLib) {
 				return Child.GetValue ();
 			}
+
+			if (type.Module == CodeGen.Module.Builder)
+				return Child.GetValue ();
 
 			return System.Enum.ToObject (type, Child.GetValue ());
 		}
@@ -3208,9 +3174,21 @@ namespace Mono.CSharp {
 			//
 
 			if (left is TypeExpr) {
-				left = left.ResolveAsTypeTerminal (ec, true);
+				left = left.ResolveAsBaseTerminal (ec, false);
 				if (left == null)
 					return null;
+
+				// TODO: Same problem as in class.cs, TypeTerminal does not
+				// always do all necessary checks
+				ObsoleteAttribute oa = AttributeTester.GetObsoleteAttribute (left.Type);
+				if (oa != null && !ec.IsInObsoleteScope) {
+					AttributeTester.Report_ObsoleteMessage (oa, left.GetSignatureForError (), loc);
+				}
+
+				ConstructedType ct = left as ConstructedType;
+				if (ct != null && !ct.CheckConstraints (ec))
+					return null;
+				//
 
 				if (!IsStatic) {
 					SimpleName.Error_ObjectRefRequired (ec, loc, GetSignatureForError ());
@@ -4458,6 +4436,13 @@ namespace Mono.CSharp {
 				return null;
 #endif
 
+			//
+			// Check ObsoleteAttribute on the best method
+			//
+			ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (the_method);
+			if (oa != null && !ec.IsInObsoleteScope)
+				AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc);
+
 			IMethodData data = TypeManager.GetMethod (the_method);
 			if (data != null)
 				data.SetMemberIsUsed ();
@@ -4664,18 +4649,10 @@ namespace Mono.CSharp {
 		
 		LocalTemporary temp;
 		bool prepared;
-		bool in_initializer;
-
-		public FieldExpr (FieldInfo fi, Location l, bool in_initializer):
-			this (fi, l)
-		{
-			this.in_initializer = in_initializer;
-		}
 		
 		public FieldExpr (FieldInfo fi, Location l)
 		{
 			FieldInfo = fi;
-			eclass = ExprClass.Variable;
 			type = TypeManager.TypeToCoreType (fi.FieldType);
 			loc = l;
 		}
@@ -4801,16 +4778,16 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (!in_initializer && !ec.IsInFieldInitializer) {
-				ObsoleteAttribute oa;
+			// TODO: the code above uses some non-standard multi-resolve rules
+			if (eclass != ExprClass.Invalid)
+				return this;
+
+			if (!ec.IsInObsoleteScope) {
 				FieldBase f = TypeManager.GetField (FieldInfo);
 				if (f != null) {
-					if (!ec.IsInObsoleteScope)
-						f.CheckObsoleteness (loc);
-                                
-					// To be sure that type is external because we do not register generated fields
-				} else if (!(FieldInfo.DeclaringType is TypeBuilder)) {                                
-					oa = AttributeTester.GetMemberObsoleteAttribute (FieldInfo);
+					f.CheckObsoleteness (loc);
+				} else {
+					ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (FieldInfo);
 					if (oa != null)
 						AttributeTester.Report_ObsoleteMessage (oa, TypeManager.GetFullNameSignature (FieldInfo), loc);
 				}
@@ -4834,6 +4811,8 @@ namespace Mono.CSharp {
 				
 				return new FixedBufferPtr (this, fb.ElementType, loc).Resolve (ec);
 			}
+
+			eclass = ExprClass.Variable;
 
 			// If the instance expression is a local variable or parameter.
 			if (var == null || var.VariableInfo == null)
@@ -5320,7 +5299,10 @@ namespace Mono.CSharp {
 				InstanceExpression.MutateHoistedGenericType (storey);
 
 			type = storey.MutateType (type);
-			getter = storey.MutateGenericMethod (getter);
+			if (getter != null)
+				getter = storey.MutateGenericMethod (getter);
+			if (setter != null)
+				setter = storey.MutateGenericMethod (setter);
 		}
 
 		bool InstanceResolve (EmitContext ec, bool lvalue_instance, bool must_do_cs1540_check)
@@ -5448,12 +5430,21 @@ namespace Mono.CSharp {
 			//
 			if (IsBase && getter.IsAbstract) {
 				Error_CannotCallAbstractBase (TypeManager.GetFullNameSignature (PropertyInfo));
-				return null;
 			}
 
 			if (PropertyInfo.PropertyType.IsPointer && !ec.InUnsafe){
 				UnsafeError (loc);
-				return null;
+			}
+
+			if (!ec.IsInObsoleteScope) {
+				PropertyBase pb = TypeManager.GetProperty (PropertyInfo);
+				if (pb != null) {
+					pb.CheckObsoleteness (loc);
+				} else {
+					ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (PropertyInfo);
+					if (oa != null)
+						AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc);
+				}
 			}
 
 			resolved = true;
@@ -5526,11 +5517,21 @@ namespace Mono.CSharp {
 			//
 			if (IsBase && setter.IsAbstract){
 				Error_CannotCallAbstractBase (TypeManager.GetFullNameSignature (PropertyInfo));
-				return null;
 			}
 
 			if (PropertyInfo.PropertyType.IsPointer && !ec.InUnsafe) {
 				UnsafeError (loc);
+			}
+
+			if (!ec.IsInObsoleteScope) {
+				PropertyBase pb = TypeManager.GetProperty (PropertyInfo);
+				if (pb != null) {
+					pb.CheckObsoleteness (loc);
+				} else {
+					ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (PropertyInfo);
+					if (oa != null)
+						AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc);
+				}
 			}
 
 			return this;
@@ -5766,6 +5767,17 @@ namespace Mono.CSharp {
 			if (!ec.IsInCompoundAssignment) {
 				Error_CannotAssign ();
 				return null;
+			}
+
+			if (!ec.IsInObsoleteScope) {
+				EventField ev = TypeManager.GetEventField (EventInfo);
+				if (ev != null) {
+					ev.CheckObsoleteness (loc);
+				} else {
+					ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (EventInfo);
+					if (oa != null)
+						AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc);
+				}
 			}
 			
 			return this;

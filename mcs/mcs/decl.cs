@@ -469,26 +469,24 @@ namespace Mono.CSharp {
 		/// </summary>
 		public virtual ObsoleteAttribute GetObsoleteAttribute ()
 		{
-			// ((flags & (Flags.Obsolete_Undetected | Flags.Obsolete)) == 0) is slower, but why ?
-			if ((caching_flags & Flags.Obsolete_Undetected) == 0 && (caching_flags & Flags.Obsolete) == 0) {
+			if ((caching_flags & (Flags.Obsolete_Undetected | Flags.Obsolete)) == 0)
 				return null;
-			}
 
 			caching_flags &= ~Flags.Obsolete_Undetected;
 
 			if (OptAttributes == null || TypeManager.obsolete_attribute_type == null)
 				return null;
 
-			Attribute obsolete_attr = OptAttributes.Search (
-				TypeManager.obsolete_attribute_type);
+			Attribute obsolete_attr = OptAttributes.Search (TypeManager.obsolete_attribute_type);
 			if (obsolete_attr == null)
 				return null;
+
+			caching_flags |= Flags.Obsolete;
 
 			ObsoleteAttribute obsolete = obsolete_attr.GetObsoleteAttribute ();
 			if (obsolete == null)
 				return null;
 
-			caching_flags |= Flags.Obsolete;
 			return obsolete;
 		}
 
@@ -497,15 +495,9 @@ namespace Mono.CSharp {
 		/// </summary>
 		public virtual void CheckObsoleteness (Location loc)
 		{
-			if (Parent != null)
-				Parent.CheckObsoleteness (loc);
-
 			ObsoleteAttribute oa = GetObsoleteAttribute ();
-			if (oa == null) {
-				return;
-			}
-
-			AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc);
+			if (oa != null)
+				AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc);
 		}
 
 		// Access level of a type.
