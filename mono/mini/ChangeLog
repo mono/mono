@@ -1,5 +1,8 @@
 2008-09-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_output_basic_block): Add support for
+	--break-at-bb.
+
 	* inssel.brg (mini_emit_castclass): Avoid the szarray!=array checks for
 	arrays of arrays. Fixes #428406.
 
