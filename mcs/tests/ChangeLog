@@ -1,3 +1,8 @@
+2008-09-24  Miguel de Icaza  <miguel@novell.com>
+
+	* eval-test.cs: Add an evaluation test, to test the basic
+	primitives of the expression evaluator.
+
 2008-09-16  Jb Evain  <jbevain@novell.com>
 
 	* gtest-278.cs, gtest-278-3-lib.cs, gtest-278-2-lib.cs: complete

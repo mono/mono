@@ -54,6 +54,8 @@ test-casts: boot-casts.out mcs-casts.out
 
 test-local: casts-boot.exe
 
+eval.exe: eval-tests.cs
+	
 ifeq (net_2_1, $(PROFILE))
 COMPILER_NAME = smcs
 TEST_PATTERN = '*test-*.cs'
@@ -76,9 +78,17 @@ TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(LOCAL_RUNT
 
 TEST_ILS := $(wildcard *-lib.il)
 
+ifeq (net_2_0, $(PROFILE))
+eval-test: 
+	$(RUNTIME) $(RUNTIME_FLAGS) $(COMPILER) eval-test.cs -r:$(COMPILER)
+	MONO_PATH=$(topdir)/class/lib/$(PROFILE):. $(RUNTIME) eval-test.exe
+else
+eval-test:
+endif
+
 check: run-test
 
-run-test-local: $(TEST_ILS:.il=.dll)
+run-test-local: $(TEST_ILS:.il=.dll) eval-test
 	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TOPTIONS)
 
 test-everything:
@@ -108,7 +118,7 @@ ilasm:
 	$(ILASM) /dll property-il.il
 	$(CSCOMPILE) /r:property-il.dll property-main.cs /out:property-main.exe
 	$(TEST_RUNTIME) property-main.exe
-	
+
 	$(CSCOMPILE) -t:library dlls/test-679-2/test-679-lib-2.cs
 	$(CSCOMPILE) -t:library dlls/test-679-1/test-679-lib.cs -r:dlls/test-679-2/test-679-lib-2.dll
 endif
