@@ -1,3 +1,9 @@
+2008-09-24  Andreia Gaita <avidigal@novell.com> 
+ 
+	* AspParser.cs: When parsing text which contain xml tags that resemble
+	the end string, append the original text instead of the end string,
+	because the casing might not match between the two. Fixes #320445
+
 2008-09-23  Marek Habersack  <mhabersack@novell.com>
 
 	* AspGenerator.cs: ignore whitespace only if it's between

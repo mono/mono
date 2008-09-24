@@ -404,6 +404,7 @@ namespace System.Web.Compilation
 		string GetVerbatim (int token, string end)
 		{
 			StringBuilder vb_text = new StringBuilder ();
+			StringBuilder tmp = new StringBuilder ();
 			int i = 0;
 
 			if (tokenizer.Value.Length > 1){
@@ -413,15 +414,17 @@ namespace System.Web.Compilation
 			}
 
 			end = end.ToLower (CultureInfo.InvariantCulture);
+			
 			while (token != Token.EOF){
 				if (Char.ToLower ((char) token, CultureInfo.InvariantCulture) == end [i]){
 					if (++i >= end.Length)
 						break;
+					tmp.Append ((char) token);
 					token = tokenizer.get_token ();
 					continue;
 				} else if (i > 0) {
-					for (int j = 0; j < i; j++)
-						vb_text.Append (end [j]);
+					vb_text.Append (tmp.ToString ());
+					tmp.Remove (0, tmp.Length);
 					i = 0;
 				}
 
