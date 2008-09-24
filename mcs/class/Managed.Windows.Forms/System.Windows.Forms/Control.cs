@@ -2819,7 +2819,7 @@ namespace System.Windows.Forms
 
 			[param:MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Font))]
 			set {
-				if (font != null && font.Equals (value)) {
+				if (font != null && font == value) {
 					return;
 				}
 

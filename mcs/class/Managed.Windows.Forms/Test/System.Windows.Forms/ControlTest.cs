@@ -2865,6 +2865,28 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual (new Rectangle (50, 60, 30, 40), myControl.Bounds, "A1");
 		}
+		
+		[Test]
+		public void Bug386450 ()
+		{
+			// Should not crash.  We have to check for the font object
+			// being different, not just if they represent the same font.
+			Form f = new Form ();
+			Label l = new Label ();
+			l.Text = "Hello";
+
+			Font f1 = new Font ("Arial", 12);
+			Font f2 = new Font ("Arial", 12);
+
+			l.Font = f1;
+			l.Font = f2;
+
+			f1.Dispose ();
+
+			f.Controls.Add (l);
+			f.Show ();
+			f.Dispose ();
+		}
 	}
 
 	[TestFixture]
