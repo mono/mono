@@ -113,14 +113,14 @@ net_2_0_dirs := \
 
 net_2_1_dirs := \
 	corlib			\
+	Mono.CompilerServices.SymbolWriter \	
 	System			\
 	System.Net		\
 	System.XML		\
 	System.Core		\
 	System.Runtime.Serialization	\
 	System.ServiceModel	\
-	System.ServiceModel.Web	\
-	Mono.CompilerServices.SymbolWriter
+	System.ServiceModel.Web
 
 net_3_5_dirs := \
 	System.Web.Extensions		\
