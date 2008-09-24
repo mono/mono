@@ -416,7 +416,7 @@ namespace System.Windows.Forms.Theming.Default
 
 			interior = new Rectangle (bounds.Left + focusRectSpacing.X + borderThickness.Left, 
 				bounds.Top + focusRectSpacing.Y +  + borderThickness.Top,
-				bounds.Width - (focusRectSpacing.X * 2) - borderThickness.Width, 
+				bounds.Width - (focusRectSpacing.X * 2) - borderThickness.Width + 1, 
 				bounds.Height - (focusRectSpacing.Y * 2) - borderThickness.Height);
 
 			if (tab.DrawMode == TabDrawMode.Normal && page.Text != null) {
@@ -465,6 +465,7 @@ namespace System.Windows.Forms.Theming.Default
 			}
 
 			if (page.Parent.Focused && is_selected && tab.ShowFocusCues) {
+				interior.Width -= 1;
 				ThemeEngine.Current.CPDrawFocusRectangle (dc, interior, tab.ForeColor, tab.BackColor);
 			}
 
