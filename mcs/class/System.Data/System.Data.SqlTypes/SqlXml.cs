@@ -79,7 +79,7 @@ namespace System.Data.SqlTypes
 					while (len > 0) {
 						// Read may return anything from 0 to bufSize.
 						int n = value.Read(bytes, 0, bufSize);
-						sb.Append (Encoding.ASCII.GetString (bytes, 0, n));
+						sb.Append (Encoding.Unicode.GetString (bytes, 0, n));
 					
 						// The end of the file is reached.
 						if (n==0)

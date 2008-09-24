@@ -1,5 +1,9 @@
 2008-09-24  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	* SqlXml.cs (.ctor): Use unicode encoding instead of ASCII.
+	
+2008-09-24  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	* SqlXml.cs (.ctor): Handle 0 length streams.
 	(get_Value): Throw SqlNullValueException if data is
 	null.
