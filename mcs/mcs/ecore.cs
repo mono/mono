@@ -1698,8 +1698,17 @@ namespace Mono.CSharp {
 				return Child.GetValue ();
 			}
 
+#if MS_COMPATIBLE
+			// Small workaround for big problem
+			// System.Enum.ToObject cannot be called on dynamic types
+			// EnumBuilder has to be used, but we cannot use EnumBuilder
+			// because it does not properly support generics
+			//
+			// This works only sometimes
+			//
 			if (type.Module == CodeGen.Module.Builder)
 				return Child.GetValue ();
+#endif
 
 			return System.Enum.ToObject (type, Child.GetValue ());
 		}
