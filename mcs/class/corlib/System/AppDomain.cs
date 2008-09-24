@@ -847,14 +847,58 @@ namespace System {
 
 #if NET_2_0
 			if (info.AppDomainInitializer != null) {
-				if ((info.AppDomainInitializer.Method.Attributes & MethodAttributes.Static) == 0)
+				if (!info.AppDomainInitializer.Method.IsStatic)
 					throw new ArgumentException ("Non-static methods cannot be invoked as an appdomain initializer");
-				info.AppDomainInitializer (info.AppDomainInitializerArguments);
+
+				Loader loader = new Loader (
+					info.AppDomainInitializer.Method.DeclaringType.Assembly.Location);
+				ad.DoCallBack (loader.Load);
+
+				Initializer initializer = new Initializer (
+					info.AppDomainInitializer,
+					info.AppDomainInitializerArguments);
+				ad.DoCallBack (initializer.Initialize);
 			}
 #endif
 
 			return ad;
 		}
+
+#if NET_2_0
+		[Serializable]
+		class Loader {
+
+			string assembly;
+
+			public Loader (string assembly)
+			{
+				this.assembly = assembly;
+			}
+
+			public void Load ()
+			{
+				Assembly.LoadFrom (assembly);
+			}
+		}
+
+		[Serializable]
+		class Initializer {
+
+			AppDomainInitializer initializer;
+			string [] arguments;
+
+			public Initializer (AppDomainInitializer initializer, string [] arguments)
+			{
+				this.initializer = initializer;
+				this.arguments = arguments;
+			}
+
+			public void Initialize ()
+			{
+				initializer (arguments);
+			}
+		}
+#endif
 
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo,string appBasePath,
 		                                      string appRelativeSearchPath, bool shadowCopyFiles)
