@@ -116,14 +116,20 @@ be registered with the embedded runtime using the mono_aot_register_module funct
 which takes as its argument the mono_aot_module_<ASSEMBLY NAME>_info global symbol 
 from the object file:
 
+.nf
 extern void *mono_aot_module_hello_info;
 
 mono_aot_register_module (mono_aot_module_hello_info);
-
+.fi
 .ne
-.RE
-.Sp
+
+.PP
 For more information about AOT, see: http://www.mono-project.com/AOT
+.RE
+.TP
+\fB--attach=[options]\fR
+Currently the only option supported by this command line argument is
+\fBdisable\fR which disables the attach functionality.
 .TP
 \fB--full-aot\fR
 This is an experimental flag that instructs the Mono runtime to not
@@ -244,7 +250,7 @@ Unsafe code is not allowed but P/Invoke is.  This mode should
 not allow managed code to crash mono.  The verification is not as
 strict as ECMA 335 standard in order to stay compatible with the MS
 runtime.
-.TP
+.PP
 The security system acts on user code: code contained in mscorlib or
 the global assembly cache is always trusted.
 .ne
@@ -285,7 +291,9 @@ much larger and slower code at runtime.
 The following options are supported:
 .TP
 .I casts
-Produces a detailed error when throwing a InvalidCastException.
+Produces a detailed error when throwing a InvalidCastException.   This
+option needs to be enabled as this generates more verbose code at
+execution time. 
 .TP
 .I mdb-optimizations
 Disable some JIT optimizations which are usually only disabled when
@@ -414,6 +422,22 @@ hps will list the currently used handles.
 Increases the verbosity level, each time it is listed, increases the
 verbosity level to include more information (including, for example, 
 a disassembly of the native code produced, code selector info etc.).
+.SH ATTACH SUPPORT
+The Mono runtime allows external processes to attach to a running
+process and load assemblies into the running program.   To attach to
+the process, a special protocol implemented in the Mono.Management
+assembly. 
+.PP
+With this support it is possible to load assemblies that have an entry
+point (they are created with -target:exe or -target:winexe) to be
+loaded and executed in the Mono process.
+.PP
+The code is loaded into the root domain, and it starts execution on
+the special runtime attach thread.    The attached program should
+create its own threads and return after invocation.
+.PP
+This support allows for example debugging applications by having the
+csharp shell attach to running processes.
 .SH PROFILING
 The mono runtime includes a profiler that can be used to explore
 various performance related problems in your application.  The
@@ -852,7 +876,11 @@ The offsets displayed are IL offsets.
 .PP
 A more powerful coverage tool is available in the module `monocov'.
 See the monocov(1) man page for details.
-.SH DEBUGGING
+.SH DEBUGGING AIDS
+To debug managed applications, you can use the 
+.B mdb
+command, a command line debugger.  
+.PP
 It is possible to obtain a stack trace of all the active threads in
 Mono by sending the QUIT signal to Mono, you can do this from the
 command line, like this:
@@ -871,6 +899,10 @@ not be used to monitor or probe a production application.  The
 integrity of the runtime after sending this signal is not guaranteed
 and the application might crash or terminate at any given point
 afterwards.   
+.PP
+The \fB--debug=casts\FR option can be used to get more detailed
+information for Invalid Cast operations, it will provide information
+about the types involved.   
 .PP
 You can use the MONO_LOG_LEVEL and MONO_LOG_MASK environment variables
 to get verbose debugging output about the execution of your
@@ -1407,7 +1439,7 @@ http://www.mono-project.com/Mailing_Lists
 http://www.mono-project.com
 .SH SEE ALSO
 .PP
-certmgr(1), mcs(1), monocov(1), monodis(1), mono-config(5), mozroots(1), xsp(1).
+certmgr(1), csharp(1), mcs(1), mdb(1), monocov(1), monodis(1), mono-config(5), mozroots(1), xsp(1).
 .PP
 For more information on AOT:
 http://www.mono-project.com/AOT
