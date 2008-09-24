@@ -1,3 +1,8 @@
+2008-09-24  Jb Evain  <jbevain@novell.com>
+
+	* AppDomain.cs: implement the CreateDomain overload which
+	takes an AppDomain initializer. Fixes #429545.
+
 2008-09-17  Robert Jordan  <robertj@gmx.net>
 
 	* DelegateSerializationHolder.cs: Starting with .NET 2.0, delegates

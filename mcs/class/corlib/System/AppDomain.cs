@@ -859,17 +859,7 @@ namespace System {
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo,string appBasePath,
 		                                      string appRelativeSearchPath, bool shadowCopyFiles)
 		{
-			AppDomainSetup info = new AppDomainSetup ();
-
-			info.ApplicationBase = appBasePath;
-			info.PrivateBinPath = appRelativeSearchPath;
-
-			if (shadowCopyFiles)
-				info.ShadowCopyFiles = "true";
-			else
-				info.ShadowCopyFiles = "false";
-
-			return CreateDomain (friendlyName, securityInfo, info);
+			return CreateDomain (friendlyName, securityInfo, appBasePath, appRelativeSearchPath, shadowCopyFiles, null, null);
 		}
 
 #if NET_2_0
@@ -1193,11 +1183,23 @@ namespace System {
 
 		// static methods
 
-		[MonoTODO ("add support for new delegate")]
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, string appBasePath,
 			string appRelativeSearchPath, bool shadowCopyFiles, AppDomainInitializer adInit, string[] adInitArgs)
 		{
-			return CreateDomain (friendlyName, securityInfo, appBasePath, appRelativeSearchPath, shadowCopyFiles);
+			AppDomainSetup info = new AppDomainSetup ();
+
+			info.ApplicationBase = appBasePath;
+			info.PrivateBinPath = appRelativeSearchPath;
+
+			if (shadowCopyFiles)
+				info.ShadowCopyFiles = "true";
+			else
+				info.ShadowCopyFiles = "false";
+
+			info.AppDomainInitializerArguments = adInitArgs;
+			info.AppDomainInitializer = adInit;
+
+			return CreateDomain (friendlyName, securityInfo, info);
 		}
 
 		public int ExecuteAssemblyByName (string assemblyName)
