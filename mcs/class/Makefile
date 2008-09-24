@@ -2,13 +2,14 @@ thisdir = class
 
 bootstrap_dirs := \
 	corlib					\
+	Mono.CompilerServices.SymbolWriter	\
 	System					\
 	System.XML				\
 	Mono.Security				\
 	System.Security				\
 	System.Configuration			\
-	System					\
-	Mono.CompilerServices.SymbolWriter
+	System
+
 
 # Note that Mono.Security and System.Security aren't listed.
 # We may have to add those if 'mcs' starts using them.
