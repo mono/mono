@@ -1,3 +1,7 @@
+2008-09-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c: Use macros everywhere for checking floats instead of == 'f'.
+
 2008-09-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h (MonoCompile): Add 'disable_vreg_to_lvreg' flag.
