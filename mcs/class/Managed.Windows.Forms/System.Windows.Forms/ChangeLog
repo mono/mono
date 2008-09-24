@@ -1,5 +1,10 @@
 2008-09-24  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ThemeVisualStyles.cs: Use ClientRectangle instead of Bounds to
+	correctly draw tooltip backgrounds.
+
+2008-09-24  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ImageList.cs: Change CopyTo implementation to ensure clones are
 	created of our images.
 	[Fixes bug #409169]

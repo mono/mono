@@ -1738,7 +1738,7 @@ namespace System.Windows.Forms
 				base.ToolTipDrawBackground (dc, clip_rectangle, control);
 				return;
 			}
-			new VisualStyleRenderer (element).DrawBackground (dc, control.Bounds);
+			new VisualStyleRenderer (element).DrawBackground (dc, control.ClientRectangle);
 		}
 		public override bool ToolTipTransparentBackground {
 			get {
