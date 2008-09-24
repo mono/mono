@@ -344,7 +344,7 @@ namespace System {
 					if (c == 'e' || c == 'E')
 						goto case State_Decimal;
 					
-					if (decimal_separator != null &&
+					if (decimal_separator_len > 0 &&
 					    decimal_separator [0] == c) {
 						if (String.CompareOrdinal (s, sidx, decimal_separator, 0, decimal_separator_len) == 0) {
 							b [didx++] = (byte) '.';
@@ -353,7 +353,7 @@ namespace System {
 							break;
 						}
 					}
-					if (group_separator != null &&
+					if (group_separator_len > 0 &&
 					    group_separator [0] == c){
 						if (s.Substring (sidx, group_separator_len) ==
 						    group_separator){
@@ -362,7 +362,7 @@ namespace System {
 							break;
 						}
 					}
-					if (currency_symbol != null &&
+					if (currency_symbol_len > 0 &&
 					    currency_symbol [0] == c){
 						if (s.Substring (sidx, currency_symbol_len) ==
 						    currency_symbol){
