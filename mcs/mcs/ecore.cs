@@ -828,6 +828,7 @@ namespace Mono.CSharp {
 					
 					Report.SymbolRelatedToPreviousError (m);
 					if (qualifier_type == null) {
+						Console.WriteLine ("ct={0} qt={1} que={2} name={3} class={4} member={5}", container_type, qualifier_type, queried_type, name, class_name, m.Name);
 						Report.Error (38, loc, "Cannot access a nonstatic member of outer type `{0}' via nested type `{1}'",
 							      TypeManager.CSharpName (m.DeclaringType),
 							      TypeManager.CSharpName (container_type));
@@ -4664,6 +4665,7 @@ namespace Mono.CSharp {
 			FieldInfo = fi;
 			type = TypeManager.TypeToCoreType (fi.FieldType);
 			loc = l;
+			eclass = ExprClass.Variable;
 		}
 
 		public FieldExpr (FieldInfo fi, Type genericType, Location l)
