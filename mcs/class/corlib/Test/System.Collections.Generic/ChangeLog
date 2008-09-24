@@ -1,3 +1,7 @@
+2008-09-24  Jb Evain  <jbevain@novell.com>
+
+	* DictionaryTest.cs: add tests for bug #429530.
+
 2008-09-12  Jb Evain  <jbevain@novell.com>
 
 	* DictionaryTest.cs: add tests for #425693.

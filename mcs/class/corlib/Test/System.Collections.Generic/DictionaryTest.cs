@@ -797,6 +797,69 @@ namespace MonoTests.System.Collections.Generic {
 				comp = s;
 			Assert.IsTrue (Object.ReferenceEquals (s1, comp));
 		}
+
+		[Test]
+		public void ResetKeysEnumerator ()
+		{
+			Dictionary<string, string> test = new Dictionary<string, string> ();
+			test.Add ("monkey", "singe");
+			test.Add ("singe", "mono");
+			test.Add ("mono", "monkey");
+
+			IEnumerator enumerator = test.Keys.GetEnumerator ();
+
+			Assert.IsTrue (enumerator.MoveNext ());
+			Assert.IsTrue (enumerator.MoveNext ());
+
+			enumerator.Reset ();
+
+			Assert.IsTrue (enumerator.MoveNext ());
+			Assert.IsTrue (enumerator.MoveNext ());
+			Assert.IsTrue (enumerator.MoveNext ());
+			Assert.IsFalse (enumerator.MoveNext ());
+		}
+
+		[Test]
+		public void ResetValuesEnumerator ()
+		{
+			Dictionary<string, string> test = new Dictionary<string, string> ();
+			test.Add ("monkey", "singe");
+			test.Add ("singe", "mono");
+			test.Add ("mono", "monkey");
+
+			IEnumerator enumerator = test.Values.GetEnumerator ();
+
+			Assert.IsTrue (enumerator.MoveNext ());
+			Assert.IsTrue (enumerator.MoveNext ());
+
+			enumerator.Reset ();
+
+			Assert.IsTrue (enumerator.MoveNext ());
+			Assert.IsTrue (enumerator.MoveNext ());
+			Assert.IsTrue (enumerator.MoveNext ());
+			Assert.IsFalse (enumerator.MoveNext ());
+		}
+
+		[Test]
+		public void ResetShimEnumerator ()
+		{
+			IDictionary test = new Dictionary<string, string> ();
+			test.Add ("monkey", "singe");
+			test.Add ("singe", "mono");
+			test.Add ("mono", "monkey");
+
+			IEnumerator enumerator = test.GetEnumerator ();
+
+			Assert.IsTrue (enumerator.MoveNext ());
+			Assert.IsTrue (enumerator.MoveNext ());
+
+			enumerator.Reset ();
+
+			Assert.IsTrue (enumerator.MoveNext ());
+			Assert.IsTrue (enumerator.MoveNext ());
+			Assert.IsTrue (enumerator.MoveNext ());
+			Assert.IsFalse (enumerator.MoveNext ());
+		}
 	}
 }
 
