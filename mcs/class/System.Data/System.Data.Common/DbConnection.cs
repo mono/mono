@@ -243,7 +243,7 @@ namespace System.Data.Common {
 			}
 		}
 
-		static class MetaDataCollections
+		internal static class MetaDataCollections
 		{
 			static readonly ColumnInfo [] columns = {
 				new ColumnInfo ("CollectionName", typeof (string)),
