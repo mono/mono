@@ -1,5 +1,10 @@
 2008-09-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* driver.c (mono_main): Add --attach= option to pass options to
+	the attach agent.
+
+	* mini.c (sigquit_signal_handler): Start the attach agent.
+
 	* ssapre.c: Disable this to save space since it is not yet ported to
 	linear IR.
 
