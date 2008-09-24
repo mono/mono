@@ -1,4 +1,4 @@
-// CS0122:
+// CS0122: `A.X' is inaccessible due to its protection level
 // Line: 18
 
 using System;
