@@ -1,5 +1,12 @@
 2008-09-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (MonoCompile): Add 'disable_vreg_to_lvreg' flag.
+
+	* mini.c (mini_method_compile): Set it when running under the debugger.	
+
+	* method-to-ir.c (mono_handle_global_vregs): Disable global->local
+	vreg optimization if the flag is set.
+
 	* driver.c (mono_main): Add --attach= option to pass options to
 	the attach agent.
 
