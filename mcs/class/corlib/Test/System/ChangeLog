@@ -1,3 +1,7 @@
+2008-09-24  Jb Evain  <jbevain@novell.com>
+
+	* AppDomainTest.cs: add test for bug #429545.
+
 2008-09-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeTest.cs EnumTest.cs: Fix warnings.

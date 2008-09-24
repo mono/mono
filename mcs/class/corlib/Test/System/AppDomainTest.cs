@@ -2033,6 +2033,28 @@ namespace MonoTests.System
 			// evidence isn't copied but referenced
 		}
 
+#if NET_2_0
+		[Test]
+		public void CreateDomain_WithInitializer ()
+		{
+			init_args = null;
+
+			string [] args = new string [] { "foo", "bar" };
+
+			AppDomain domain = AppDomain.CreateDomain ("Foo", null, null, null, false, OnDomainInit, args);
+
+			Assert.IsNotNull (domain);
+			Assert.AreEqual (args, init_args);
+		}
+
+		static string [] init_args;
+
+		static void OnDomainInit (string [] args)
+		{
+			init_args = args;
+		}
+#endif
+
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void CreateDomain_StringNullEvidenceAppDomainSetup ()
