@@ -45,7 +45,7 @@ namespace System.Linq.Expressions {
 
 		public static bool IsNullable (this Type self)
 		{
-			return self.IsGenericInstanceOf (typeof (Nullable<>));
+			return self.IsValueType && self.IsGenericInstanceOf (typeof (Nullable<>));
 		}
 
 		public static bool IsExpression (this Type self)
