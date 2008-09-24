@@ -47,7 +47,6 @@ namespace System.Data.SqlTypes
 		bool notNull;
 		string xmlValue;
 		
-		public static readonly SqlXml Null;
 		public SqlXml ()
 		{
 			notNull = false;
