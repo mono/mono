@@ -1,3 +1,8 @@
+2008-09-25  Dick Porter  <dick@ximian.com>
+
+	* wait.c: Make sure we keep references to handles we're waiting
+	for.  Fixes bug 424851.
+
 2008-07-29  Dick Porter  <dick@ximian.com>
 
 	* processes.c (get_module_name): Make a last-ditch effort to
