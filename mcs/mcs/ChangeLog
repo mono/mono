@@ -1,5 +1,9 @@
 2008-09-24  Miguel de Icaza  <miguel@novell.com>
 
+	* ecore.cs (FieldExpr): Only initialize eclass when we return a
+	fully constructed FieldExpr, fixes the regression introduced in
+	the last commit.
+	
 	* ecore.cs, expression.cs: Plug back the eclass initialization as
 	otherwise it regresses `csharp'. 
 

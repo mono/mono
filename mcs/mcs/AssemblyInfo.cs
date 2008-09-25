@@ -45,7 +45,3 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyDescription ("Mono C# Compiler")]
 #endif
 
-#if LIBRARY
-[assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../class/mono.pub")]
-#endif

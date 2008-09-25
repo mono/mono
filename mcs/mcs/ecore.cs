@@ -4664,7 +4664,6 @@ namespace Mono.CSharp {
 			FieldInfo = fi;
 			type = TypeManager.TypeToCoreType (fi.FieldType);
 			loc = l;
-			eclass = ExprClass.Variable;
 		}
 
 		public FieldExpr (FieldInfo fi, Type genericType, Location l)
@@ -4833,6 +4832,7 @@ namespace Mono.CSharp {
 				return null;
 
 			variable_info = vi.GetSubStruct (FieldInfo.Name);
+			eclass = ExprClass.Variable;
 			return this;
 		}
 
@@ -4921,6 +4921,7 @@ namespace Mono.CSharp {
 						GetSignatureForError ());
 			}
 
+			eclass = ExprClass.Variable;
 			return this;
 		}
 

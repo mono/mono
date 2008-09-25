@@ -8867,7 +8867,6 @@ namespace Mono.CSharp {
 			this.source = source;
 			type = TypeManager.TypeToCoreType (method.ReturnType);
 			loc = l;
-			eclass = ExprClass.Value;
 		}
 
 		public Expression Source {
