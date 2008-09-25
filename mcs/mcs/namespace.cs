@@ -19,11 +19,11 @@ namespace Mono.CSharp {
 		static MethodInfo get_namespaces_method;
 
 		string alias_name;
-		Assembly referenced_assembly;
+		protected Assembly [] referenced_assemblies;
 
 		Hashtable all_namespaces;
 
-		static Hashtable root_namespaces;
+		static ListDictionary root_namespaces;
 		public static GlobalRootNamespace Global;
 		
 		static RootNamespace ()
@@ -35,33 +35,60 @@ namespace Mono.CSharp {
 
 		public static void Reset ()
 		{
-			root_namespaces = new Hashtable ();
+			root_namespaces = new ListDictionary ();
 			Global = new GlobalRootNamespace ();
 			root_namespaces ["global"] = Global;
 		}
 
-		protected RootNamespace (string alias_name, Assembly assembly)
+		protected RootNamespace (string alias_name)
 			: base (null, String.Empty)
 		{
 			this.alias_name = alias_name;
-			referenced_assembly = assembly;
+			referenced_assemblies = new Assembly [0];
 
 			all_namespaces = new Hashtable ();
 			all_namespaces.Add ("", this);
-
-			if (referenced_assembly != null)
-				ComputeNamespaces (this.referenced_assembly);
 		}
 
-		public static void DefineRootNamespace (string name, Assembly assembly)
+		public void AddAssemblyReference (Assembly a)
 		{
-			if (name == "global") {
+			foreach (Assembly assembly in referenced_assemblies) {
+				if (a == assembly)
+					return;
+			}
+
+			// How to test whether attribute exists without loading the assembly :-(
+#if NET_2_1
+			const string SystemCore = "System.Core, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e"; 
+#else
+			const string SystemCore = "System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"; 
+#endif
+ 			if (TypeManager.extension_attribute_type == null &&
+ 				a.FullName == SystemCore) {
+ 				TypeManager.extension_attribute_type = a.GetType("System.Runtime.CompilerServices.ExtensionAttribute");
+ 			}
+
+			int top = referenced_assemblies.Length;
+			Assembly [] n = new Assembly [top + 1];
+			referenced_assemblies.CopyTo (n, 0);
+			n [top] = a;
+			referenced_assemblies = n;
+		}
+
+		public static void DefineRootNamespace (string alias, Assembly assembly)
+		{
+			if (alias == "global") {
 				NamespaceEntry.Error_GlobalNamespaceRedefined (Location.Null);
 				return;
 			}
-			RootNamespace retval = GetRootNamespace (name);
-			if (retval == null || retval.referenced_assembly != assembly)
-				root_namespaces [name] = new RootNamespace (name, assembly);
+
+			RootNamespace retval = GetRootNamespace (alias);
+			if (retval == null) {
+				retval = new RootNamespace (alias);
+				root_namespaces.Add (alias, retval);
+			}
+
+			retval.AddAssemblyReference (assembly);
 		}
 
 		public static RootNamespace GetRootNamespace (string name)
@@ -69,9 +96,44 @@ namespace Mono.CSharp {
 			return (RootNamespace) root_namespaces [name];
 		}
 
+		public static void ComputeNamespaces ()
+		{
+			foreach (RootNamespace rn in root_namespaces.Values) {
+				foreach (Assembly a in rn.referenced_assemblies) {
+					try {
+						rn.ComputeNamespaces (a);
+					} catch (TypeLoadException e) {
+						Report.Error (11, Location.Null, e.Message);
+					} catch (System.IO.FileNotFoundException) {
+						Report.Error (12, Location.Null, "An assembly `{0}' is used without being referenced",
+							a.FullName);
+					}
+				}
+			}
+		}
+
 		public virtual Type LookupTypeReflection (string name, Location loc)
 		{
-			return GetTypeInAssembly (referenced_assembly, name);
+			Type found_type = null;
+
+			foreach (Assembly a in referenced_assemblies) {
+				Type t = GetTypeInAssembly (a, name);
+				if (t == null)
+					continue;
+
+				if (found_type == null) {
+					found_type = t;
+					continue;
+				}
+
+				Report.SymbolRelatedToPreviousError (found_type);
+				Report.SymbolRelatedToPreviousError (t);
+				Report.Error (433, loc, "The imported type `{0}' is defined multiple times", name);
+
+				return found_type;
+			}
+
+			return found_type;
 		}
 
 		public void RegisterNamespace (Namespace child)
@@ -103,17 +165,6 @@ namespace Mono.CSharp {
 
   		protected void ComputeNamespaces (Assembly assembly)
   		{
-			// How to test whether attribute exists without loading the assembly :-(
-#if NET_2_1
-			const string SystemCore = "System.Core, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e"; 
-#else
-			const string SystemCore = "System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"; 
-#endif
- 			if (TypeManager.extension_attribute_type == null &&
- 				assembly.FullName == SystemCore) {
- 				TypeManager.extension_attribute_type = assembly.GetType("System.Runtime.CompilerServices.ExtensionAttribute");
- 			}
- 
  			bool contains_extension_methods = TypeManager.extension_attribute_type != null &&
  					assembly.IsDefined(TypeManager.extension_attribute_type, false);
  
@@ -167,37 +218,19 @@ namespace Mono.CSharp {
 	}
 
 	public class GlobalRootNamespace : RootNamespace {
-		Assembly [] assemblies;
 		Module [] modules;
 
 		public GlobalRootNamespace ()
-			: base ("global", null)
+			: base ("global")
 		{
-			assemblies = new Assembly [0];
 		}
 
 		public Assembly [] Assemblies {
-			get { return assemblies; }
+		    get { return referenced_assemblies; }
 		}
 
 		public Module [] Modules {
 			get { return modules; }
-		}
-
-		public void AddAssemblyReference (Assembly a)
-		{
-			foreach (Assembly assembly in assemblies) {
-				if (a == assembly)
-					return;
-			}
-
-			int top = assemblies.Length;
-			Assembly [] n = new Assembly [top + 1];
-			assemblies.CopyTo (n, 0);
-			n [top] = a;
-			assemblies = n;
-
-			ComputeNamespaces (a);
 		}
 
 		public void AddModuleReference (Module m)
@@ -224,24 +257,7 @@ namespace Mono.CSharp {
 
 		public override Type LookupTypeReflection (string name, Location loc)
 		{
-			Type found_type = null;
-		
-			foreach (Assembly a in assemblies) {
-				Type t = GetTypeInAssembly (a, name);
-				if (t == null)
-					continue;
-					
-				if (found_type == null) {
-					found_type = t;
-					continue;
-				}
-
-				Report.SymbolRelatedToPreviousError (found_type);
-				Report.SymbolRelatedToPreviousError (t);
-				Report.Error (433, loc, "The imported type `{0}' is defined multiple times", name);
-					
-				return found_type;
-			}
+			Type found_type = base.LookupTypeReflection (name, loc);
 
 			if (modules != null) {
 				foreach (Module module in modules) {

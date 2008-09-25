@@ -480,8 +480,8 @@ namespace Mono.CSharp
 
 			foreach (DictionaryEntry entry in external_aliases)
 				LoadAssembly ((string) entry.Value, (string) entry.Key, false);
-			
-			return;
+				
+			RootNamespace.ComputeNamespaces ();
 		}
 
 		static string [] LoadArgs (string file)

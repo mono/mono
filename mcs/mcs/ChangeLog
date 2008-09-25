@@ -1,3 +1,9 @@
+2008-09-25  Marek Safar  <marek.safar at gmail.com>
+  
+	* driver.cs, namespace.cs: Read types and namespaces after all
+	requested assemblies are loaded, fixes issues with System.Core
+	auto-reference, and #419888.
+
 2008-09-04  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #422853
