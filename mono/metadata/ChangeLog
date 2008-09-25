@@ -1,5 +1,13 @@
 2008-09-25  Mark Probst  <mark.probst@gmail.com>
 
+	* generic-sharing.c, class-internals.h: New function for checking
+	whether a method needs a static RGCTX invoke wrapper.  A few
+	funtions moved from mini/generic-sharing.c.
+
+	* icall.c: New function used.
+
+2008-09-25  Mark Probst  <mark.probst@gmail.com>
+
 	* icall.c (ves_icall_System_Delegate_CreateDelegate_internal):
 	Static RGCTX invoke wrapping applies to value type methods, too.
 

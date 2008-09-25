@@ -1,5 +1,14 @@
 2008-09-25  Mark Probst  <mark.probst@gmail.com>
 
+	* method-to-ir.c, mini.c, jit-icalls.c: New function for checking
+	whether method needs a static RGCTX wrapper used instead of
+	complex conditions.
+
+	* generic-sharing.c, mini.h: A few functions moved to
+	metadata/generic-sharing.c.
+
+2008-09-25  Mark Probst  <mark.probst@gmail.com>
+
 	* method-to-ir.c, mini.c, mini-exceptions.c, mini-trampolines.c:
 	Generic code sharing for value types, which essentially means
 	treating value type methods like static methods.  The RGCTX is
