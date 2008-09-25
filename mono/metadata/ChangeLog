@@ -1,3 +1,11 @@
+2008-09-25  Mark Probst  <mark.probst@gmail.com>
+
+	* icall.c (ves_icall_System_Delegate_CreateDelegate_internal):
+	Static RGCTX invoke wrapping applies to value type methods, too.
+
+	* class.c (mono_class_setup_vtable_general): In generic-shared
+	value types, wrap methods with a static RGCTX invoke wrapper.
+
 2008-09-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* attach.c (ipc_connect): Use AF_UNIX instead of AF_FILE to fix the

@@ -1,3 +1,10 @@
+2008-09-25  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c, mini.c, mini-exceptions.c, mini-trampolines.c:
+	Generic code sharing for value types, which essentially means
+	treating value type methods like static methods.  The RGCTX is
+	passed in the same way.
+
 2008-09-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir2): Avoid an assert in the NEWOBJ
