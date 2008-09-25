@@ -1,3 +1,11 @@
+2008-09-25  Dick Porter  <dick@ximian.com>
+
+	* events.c (event_create): Revert previous kludge as it's no
+	longer needed.
+
+	* wait.c: Make sure we keep references to handles we're waiting
+	for.  Fixes bug 424851.
+
 2008-09-18  Dick Porter  <dick@ximian.com>
 
 	* events.c (event_create): Start event handles with a reference
