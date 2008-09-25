@@ -32256,7 +32256,7 @@
         <size>73</size>
       </method>
       <method name="Int32 Main()">
-        <size>324</size>
+        <size>442</size>
       </method>
     </type>
   </test>
@@ -32267,6 +32267,19 @@
       </method>
       <method name="Int32 Main()">
         <size>32</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-684.cs">
+    <type name="mono_bug.Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>71</size>
+      </method>
+      <method name="System.Double[][,] ReturnArray()">
+        <size>62</size>
       </method>
     </type>
   </test>
