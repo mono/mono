@@ -50,7 +50,7 @@ namespace Mono.Cecil {
 
 		public string [] GetSearchDirectories ()
 		{
-			return (string []) m_directories.ToArray ();
+			return (string []) m_directories.ToArray (typeof (string));
 		}
 
 		public virtual AssemblyDefinition Resolve (string fullName)
