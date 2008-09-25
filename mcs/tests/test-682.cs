@@ -98,7 +98,7 @@ public class broken_cast
 			++i;
 			conv_ovf_u (biggerThanI4, true && is32bits);
 			++i;
-			conv_ovf_u (smallerThanI4, true);
+			conv_ovf_u (smallerThanI4, true && is32bits);
 			++i;
 			conv_ovf_u (biggerThanU4, true && is32bits);
 
@@ -109,7 +109,7 @@ public class broken_cast
 			++i;
 			conv_ovf_u_un (biggerThanI4, true && is32bits);
 			++i;
-			conv_ovf_u_un (smallerThanI4, true);
+			conv_ovf_u_un (smallerThanI4, true && is32bits);
 			++i;
 			conv_ovf_u_un (biggerThanU4, true && is32bits);
 
