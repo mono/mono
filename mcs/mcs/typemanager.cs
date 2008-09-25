@@ -1088,7 +1088,7 @@ namespace Mono.CSharp {
 		if (obsolete_attribute_type != null) {
 			Class c = TypeManager.LookupClass (obsolete_attribute_type);
 			if (c != null)
-				c.DefineMembers ();
+				c.Define ();
 		}
 
 		dllimport_type = CoreLookupType ("System.Runtime.InteropServices", "DllImportAttribute", Kind.Class, false);

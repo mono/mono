@@ -1849,11 +1849,11 @@ namespace Mono.CSharp {
 			AddMethod (tostring);
 		}
 
-		public override bool DefineMembers ()
+		public override bool Define ()
 		{
 			DefineOverrides ();
 
-			return base.DefineMembers ();
+			return base.Define ();
 		}
 
 		public override string GetSignatureForError ()

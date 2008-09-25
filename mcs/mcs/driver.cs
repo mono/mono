@@ -1666,8 +1666,6 @@ namespace Mono.CSharp
 				RootContext.BootCorlib_PopulateCoreTypes ();
 			RootContext.PopulateTypes ();
 
-			RootContext.DefineTypes ();
-			
 			if (Report.Errors == 0 &&
 				RootContext.Documentation != null &&
 				!RootContext.Documentation.OutputDocComment (

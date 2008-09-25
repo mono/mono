@@ -267,11 +267,6 @@ namespace Mono.CSharp
 			throw new NotImplementedException ();
 		}
 
-		public override bool DefineMembers ()
-		{
-			throw new NotImplementedException ();
-		}
-		
 		internal static void Error_ParameterNameCollision (Location loc, string name, string collisionWith)
 		{
 		}

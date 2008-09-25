@@ -1019,19 +1019,6 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public abstract TypeBuilder DefineType ();
 
-		/// <summary>
-		///   Define all members, but don't apply any attributes or do anything which may
-		///   access not-yet-defined classes.  This method also creates the MemberCache.
-		/// </summary>
-		public virtual bool DefineMembers ()
-		{
-			if (((ModFlags & Modifiers.NEW) != 0) && IsTopLevel) {
-				Report.Error (1530, Location, "Keyword `new' is not allowed on namespace elements");
-				return false;
-			}
-			return true;
-		}
-
 		protected void Error_MissingPartialModifier (MemberCore type)
 		{
 			Report.Error (260, type.Location,

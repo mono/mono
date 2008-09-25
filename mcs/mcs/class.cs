@@ -1311,21 +1311,13 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public static void Error_KeywordNotAllowed (Location loc)
-		{
-			Report.Error (1530, loc, "Keyword `new' is not allowed on namespace elements");
-		}
-
 		/// <summary>
 		///   Populates our TypeBuilder with fields and methods
 		/// </summary>
-		public override bool DefineMembers ()
+		public override bool Define ()
 		{
 			if (members_defined)
 				return members_defined_ok;
-
-			if (!base.DefineMembers ())
-				return false;
 
 			members_defined_ok = DoDefineMembers ();
 			members_defined = true;
@@ -1510,12 +1502,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool Define ()
-		{
-			CheckProtectedModifier ();
-			return true;
-		}
-
 		public MemberInfo FindBaseMemberWithSameName (string name, bool ignore_methods)
 		{
 			return BaseCache == null ? null : BaseCache.FindMemberWithSameName (name, ignore_methods, null);
@@ -1545,7 +1531,7 @@ namespace Mono.CSharp {
 		{
 			ArrayList members = new ArrayList ();
 
-			DefineMembers ();
+			Define ();
 
 			if (methods != null) {
 				int len = methods.Count;
@@ -2660,17 +2646,23 @@ namespace Mono.CSharp {
 
 		public override bool Define ()
 		{
-			if (default_static_constructor == null && PartialContainer.HasStaticFieldInitializer)
-				DefineDefaultConstructor (true);
+			CheckProtectedModifier ();
+
+			base.Define ();
 
 			if (default_static_constructor != null)
 				default_static_constructor.Define ();
 
-			return base.Define ();
+			return true;
 		}
 
 		public override void Emit ()
 		{
+			if (default_static_constructor == null && PartialContainer.HasStaticFieldInitializer) {
+				DefineDefaultConstructor (true);
+				default_static_constructor.Define ();
+			}
+
 			base.Emit ();
 
 			if (declarative_security != null) {
@@ -2814,19 +2806,17 @@ namespace Mono.CSharp {
 			base.DefineContainerMembers (list);
 		}
 
-		public override TypeBuilder DefineType ()
+		public override bool Define ()
 		{
 			if ((ModFlags & Modifiers.ABSTRACT) == Modifiers.ABSTRACT && (ModFlags & (Modifiers.SEALED | Modifiers.STATIC)) != 0) {
 				Report.Error (418, Location, "`{0}': an abstract class cannot be sealed or static", GetSignatureForError ());
-				return null;
 			}
 
 			if ((ModFlags & (Modifiers.SEALED | Modifiers.STATIC)) == (Modifiers.SEALED | Modifiers.STATIC)) {
 				Report.Error (441, Location, "`{0}': a class cannot be both static and sealed", GetSignatureForError ());
-				return null;
 			}
 
-			return base.DefineType ();
+			return base.Define ();
 		}
 
 		protected override bool DoDefineMembers ()
@@ -3108,13 +3098,13 @@ namespace Mono.CSharp {
 			}
 		}
 
-		const TypeAttributes DefaultTypeAttributes =
-			TypeAttributes.AutoLayout |
-			TypeAttributes.Abstract |
-			TypeAttributes.Interface;
-
 		protected override TypeAttributes TypeAttr {
 			get {
+				const TypeAttributes DefaultTypeAttributes =
+					TypeAttributes.AutoLayout |
+					TypeAttributes.Abstract |
+					TypeAttributes.Interface;
+
 				return base.TypeAttr | DefaultTypeAttributes;
 			}
 		}

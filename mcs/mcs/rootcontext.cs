@@ -288,7 +288,6 @@ namespace Mono.CSharp {
 			if (ds == null)
 				return;
 
-			ds.DefineMembers ();
 			ds.Define ();
 		}
 		
@@ -313,13 +312,13 @@ namespace Mono.CSharp {
 				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.ResolveType ();
 				foreach (TypeContainer tc in type_container_resolve_order)
-					tc.DefineMembers ();
+					tc.Define ();
 			}
 
 			ArrayList delegates = root.Delegates;
 			if (delegates != null){
 				foreach (Delegate d in delegates)
-					d.DefineMembers ();
+					d.Define ();
 			}
 
 			//
@@ -329,33 +328,6 @@ namespace Mono.CSharp {
 				Hashtable seen = new Hashtable ();
 				foreach (TypeContainer tc in type_container_resolve_order)
 					TypeManager.CheckStructCycles (tc, seen);
-			}
-		}
-
-		//
-		// DefineTypes is used to fill in the members of each type.
-		//
-		static public void DefineTypes ()
-		{
-			ArrayList delegates = root.Delegates;
-			if (delegates != null){
-				foreach (Delegate d in delegates)
-					d.Define ();
-			}
-
-			if (type_container_resolve_order != null){
-				foreach (TypeContainer tc in type_container_resolve_order) {
-					// When compiling corlib, these types have already been
-					// populated from BootCorlib_PopulateCoreTypes ().
-					if (!RootContext.StdLib &&
-					    ((tc.Name == "System.Object") ||
-					     (tc.Name == "System.Attribute") ||
-					     (tc.Name == "System.ValueType") ||
-					     (tc.Name == "System.Runtime.CompilerServices.IndexerNameAttribute")))
-						continue;
-
-					tc.Define ();
-				}
 			}
 		}
 

@@ -462,7 +462,6 @@ namespace Mono.CSharp {
 			}
 			
 			RootContext.PopulateTypes ();
-			RootContext.DefineTypes ();
 
 			if (Report.Errors != 0){
 				undo.ExecuteUndo ();

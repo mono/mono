@@ -4060,7 +4060,12 @@ modifiers
 	;
 
 modifier
-	: NEW			{ $$ = Modifiers.NEW; }
+	: NEW
+	  {
+		$$ = Modifiers.NEW;
+		if (current_container == RootContext.ToplevelTypes)
+			Report.Error (1530, lexer.Location, "Keyword `new' is not allowed on namespace elements");
+	  }
 	| PUBLIC		{ $$ = Modifiers.PUBLIC; }
 	| PROTECTED		{ $$ = Modifiers.PROTECTED; }
 	| INTERNAL		{ $$ = Modifiers.INTERNAL; }

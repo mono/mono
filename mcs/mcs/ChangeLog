@@ -1,3 +1,10 @@
+2008-09-25  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs, generic.cs, eval.cs, decl.cs, anonymous.cs,
+	expression.cs, statement.cs, rootcontext.cs, class.cs, 
+	cs-parser.jay, driver.cs, generic-mcs.cs, enum.cs: Removed obsolete
+	DefineMembers.
+
 2008-09-24  Miguel de Icaza  <miguel@novell.com>
 
 	* ecore.cs (FieldExpr): Only initialize eclass when we return a

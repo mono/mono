@@ -9695,7 +9695,6 @@ namespace Mono.CSharp {
 				return null;
 
 			type.DefineType ();
-			type.DefineMembers ();
 			type.Define ();
 			type.EmitType ();
 			if (Report.Errors == 0)

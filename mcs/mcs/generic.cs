@@ -1856,11 +1856,6 @@ namespace Mono.CSharp {
 				OptAttributes.Emit ();
 		}
 
-		public override bool DefineMembers ()
-		{
-			return true;
-		}
-
 		public override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
 							MemberFilter filter, object criteria)
 		{
