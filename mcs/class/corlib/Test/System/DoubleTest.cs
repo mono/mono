@@ -580,6 +580,20 @@ namespace MonoTests.System
 				null, out value));
 		}
 
+		[Test]
+		public void TryParse_NonDigitStrings ()
+		{
+			double value;
+			Assert.IsFalse (Double.TryParse ("string", NumberStyles.Any, null, out value), "#1");
+			Assert.IsFalse (Double.TryParse ("with whitespace", NumberStyles.Any, null, out value), "#2");
+			
+#if NET_2_0
+			Assert.IsFalse (Double.TryParse ("string", out value), "#3");
+			Assert.IsFalse (Double.TryParse ("with whitespace", out value), "#4");
+#endif
+		}
+
+					
 		[Test] // bug #77721
 		public void ParseCurrency ()
 		{
