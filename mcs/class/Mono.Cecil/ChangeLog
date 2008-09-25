@@ -1,3 +1,9 @@
+2008-09-25  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Binary/MemoryBinaryWriter.cs: Make sure QuadAlign
+	properly enlarge the memory stream if needed.
+	Patch by Regis Vaquette <rvaquette@yahoo.fr>.
+
 2008-09-18  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/ReflectionReader.cs (GetModifierType): protect against

@@ -47,8 +47,8 @@ namespace Mono.Cecil.Binary {
 
 		public void Empty ()
 		{
-			this.BaseStream.Position = 0;
-			this.BaseStream.SetLength (0);
+			BaseStream.Position = 0;
+			BaseStream.SetLength (0);
 		}
 
 		public void Write (MemoryBinaryWriter writer)
@@ -58,13 +58,16 @@ namespace Mono.Cecil.Binary {
 
 		public byte [] ToArray ()
 		{
-			return this.MemoryStream.ToArray ();
+			return MemoryStream.ToArray ();
 		}
 
 		public void QuadAlign ()
 		{
-			this.BaseStream.Position += 3;
-			this.BaseStream.Position &= ~3;
+			BaseStream.Position += 3;
+			BaseStream.Position &= ~3;
+
+			if (BaseStream.Position > BaseStream.Length)
+				BaseStream.SetLength (BaseStream.Position);
 		}
 	}
 }
