@@ -1,3 +1,8 @@
+2008-09-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_generic_sharing_enabled): Experimentally change 
+	the default generic sharing mode to 'all'.
+
 2008-09-25  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-sharing.c, class-internals.h: New function for checking
