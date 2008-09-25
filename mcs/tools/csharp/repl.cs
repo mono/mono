@@ -158,6 +158,7 @@ namespace Mono {
 				}
 			} catch (Exception e){
 				Console.WriteLine (e);
+				return null;
 			}
 			
 			return input;

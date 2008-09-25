@@ -1,3 +1,7 @@
+2008-09-25  Miguel de Icaza  <miguel@novell.com>
+
+	* repl.cs: On errors, return null.
+
 2008-09-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile repl.cs: Add support for attaching to arbitrary mono
