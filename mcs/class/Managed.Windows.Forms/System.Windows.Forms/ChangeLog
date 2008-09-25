@@ -1,3 +1,9 @@
+2008-09-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ThemeWin32Classis.cs: When drawing gridlines take into account the
+	case where ListView.ItemSize hasn't been computed, and provide a
+	fallback as well. This prevents a division by 0.
+
 2008-09-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ThemeVisualStyles.cs: Use ClientRectangle instead of Bounds to

@@ -2699,6 +2699,9 @@ namespace System.Windows.Forms
 
 				// draw horizontal gridlines
 				int item_height = control.ItemSize.Height;
+				if (item_height == 0)
+					item_height =  control.Font.Height + 2;
+
 				int y = top + item_height - (control.v_marker % item_height); // scroll bar offset
 				while (y < control_size.Height) {
 					dc.DrawLine (SystemPens.Control, 0, y, control_size.Width, y);
