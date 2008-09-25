@@ -1,3 +1,8 @@
+2008-09-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c: Merge the emit_get_rgctx () calls into the 
+	emit_get_rgctx_... functions.
+
 2008-09-25  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c: Eliminated macro EMIT_GET_RGCTX.
