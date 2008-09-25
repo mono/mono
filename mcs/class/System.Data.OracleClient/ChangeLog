@@ -1,3 +1,15 @@
+2008-09-24  Daniel Morgan <monodanmorg@yahoo.com>
+
+	* Test/testblob.cs
+	* Test/TestOracleClient.cs: update tests for parameter type of blob
+
+	* System.Data.OracleClient/OracleLob.cs: position was never
+	being reset to the offset causing the reading of a Blob to
+	be out of range
+
+	* System.Data.OracleClient/OracleParameter.cs: fixes for 
+	character and blob types
+
 2008-09-16  Daniel Morgan <monodanmorg@yahoo.com>
 
 	* System.Data.OracleClient/OracleBFile.cs: do not

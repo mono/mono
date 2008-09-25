@@ -433,14 +433,23 @@ namespace System.Data.OracleClient
 					if (direction == ParameterDirection.Input || 
 						direction == ParameterDirection.InputOutput) {
 
-						svalue = v.ToString () + '\0';
+						svalue = v.ToString ();
+
+						if (direction == ParameterDirection.Input && size > 0 && svalue.Length > size)
+							svalue = svalue.Substring(0, size);
+
+						svalue = svalue.ToString () + '\0';
 					}
 
 					// set bind length to size of data
-					bindSize = (size + 1) * 4;
+					//bindSize = (size + 1) * 4;
+					if (direction == ParameterDirection.Input)
+						bindSize = Encoding.UTF8.GetMaxByteCount (svalue.Length);
+					else
+						bindSize = Encoding.UTF8.GetMaxByteCount (size + 1);
 
 					// allocate memory based on bind length
-					bytes = new byte[bindSize];				
+					bytes = new byte [bindSize];				
 
 					if (direction == ParameterDirection.Input ||
 						direction == ParameterDirection.InputOutput) {
@@ -646,9 +655,26 @@ namespace System.Data.OracleClient
 					break;
 				case OciDataType.Blob:
 					if (direction == ParameterDirection.Input) {
-						bytes = (byte[]) v;
-						bindType = OciDataType.LongRaw;
-						bindSize = bytes.Length;
+						if (v is byte[]) {
+							bytes = (byte[]) v;
+							bindType = OciDataType.LongRaw;
+							bindSize = bytes.Length;
+						}
+						else if (v is OracleLob) {
+							OracleLob lob = (OracleLob) v;
+							if (lob.LobType == OracleType.Blob) {
+								lobLocator = lob.Locator;
+								bindOutValue = lobLocator.Handle;
+								bindValue = lobLocator.Handle;
+								lobLocator.ErrorHandle = connection.ErrorHandle;
+								lobLocator.Service = connection.ServiceContext;
+								useRef = true;
+							}
+							else
+								throw new NotImplementedException("For OracleType.Blob, data type OracleLob of LobType Clob/NClob is not implemented.");
+						}
+						else
+							throw new NotImplementedException ("For OracleType.Blob, data type not implemented: " + v.GetType().ToString()); // ?
 					}
 					else if (direction == ParameterDirection.InputOutput) {
 						// not the exact error that .net 2.0 throws, but this is better
@@ -656,15 +682,26 @@ namespace System.Data.OracleClient
 					}
 					else {
 						bindSize = -1;
-						lobLocator = (OciLobLocator) connection.Environment.Allocate (OciHandleType.LobLocator);
+						if (value != null && value is OracleLob) {
+							OracleLob blob = (OracleLob) value;
+							if (blob.LobType == OracleType.Blob)
+								if (value != OracleLob.Null) {
+									lobLocator = blob.Locator;
+									byte[] bs = (byte[]) blob.Value;
+									bindSize = bs.Length;
+								}
+						}
 						if (lobLocator == null) {
-							OciErrorInfo info = connection.ErrorHandle.HandleError ();
-							throw new OracleException (info.ErrorCode, info.ErrorMessage);
+							lobLocator = (OciLobLocator) connection.Environment.Allocate (OciHandleType.LobLocator);
+							if (lobLocator == null) {
+								OciErrorInfo info = connection.ErrorHandle.HandleError ();
+								throw new OracleException (info.ErrorCode, info.ErrorMessage);
+							}
 						}
 						bindOutValue = lobLocator.Handle;
 						bindValue = lobLocator.Handle;
 						lobLocator.ErrorHandle = connection.ErrorHandle;
-						lobLocator.Service = statement.Service;
+						lobLocator.Service = connection.ServiceContext;
 						useRef = true;
 					}
 					break;
@@ -722,7 +759,7 @@ namespace System.Data.OracleClient
 							OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, out rsize);
 
 							bindType = OciDataType.String;
-							bindSize = svalue.Length;
+							bindSize = bytes.Length;
 						} // else oracleType
 					} // else - Input, Ouput...
 					break;
@@ -1090,7 +1127,7 @@ namespace System.Data.OracleClient
 				throw new ArgumentException (exception);
 			}
 
-			if (!inferring)
+			if (!oracleTypeSet || !inferring )
 				oracleType = type;
 			bindOracleType = type;
 		}
@@ -1182,9 +1219,15 @@ namespace System.Data.OracleClient
 				break;
 			case OciDataType.Blob:
 			case OciDataType.Clob:
-				OracleLob lob = new OracleLob (lobLocator, ociType);
-				lob.connection = connection;
-				value = lob;
+				if (value != null && value is OracleLob && value != OracleLob.Null) {
+					OracleLob lob2 = (OracleLob) value;
+					lob2.connection = connection;
+				}
+				else {
+					OracleLob lob = new OracleLob (lobLocator, ociType);
+					lob.connection = connection;
+					value = lob;
+				}
 				break;
 			case OciDataType.RSet: // REF CURSOR				
 				OciStatementHandle cursorStatement = GetOutRefCursor (cmd);

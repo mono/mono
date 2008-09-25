@@ -10,6 +10,7 @@ class TestBlob
 	static string infilename = @"../../../tools/mono-win32-setup-dark.bmp";
 	static string outfilename = @"mono-win32-setup-dark2.bmp";
 	static string connectionString = "Data Source=testdb;User ID=scott;Password=tiger";
+	static byte[] bytes1 = null;
 
 	public static void Main (string[] args) 
 	{
@@ -44,6 +45,11 @@ class TestBlob
 		Console.WriteLine ("  CHUNK SIZE: {0}", lob2.ChunkSize);
 
 		byte[] lobvalue = (byte[]) lob2.Value;
+		
+		if (ByteArrayCompare(bytes1, lobvalue) == true)
+			Console.WriteLine("bytes1 and bytes2 are equal: good");
+		else 
+			Console.WriteLine("bytes1 and bytes2 are not equal: bad");
 
 		FileStream fs = new FileStream(outfilename, FileMode.CreateNew);
 		BinaryWriter w = new BinaryWriter(fs);
@@ -68,7 +74,7 @@ class TestBlob
 			cmd2.CommandText = "DROP TABLE BLOBTEST";
 			cmd2.ExecuteNonQuery ();
 		}
-		catch (OracleException oe1) {
+		catch (OracleException) {
 			// ignore if table already exists
 		}
 
@@ -100,7 +106,7 @@ class TestBlob
 		Console.WriteLine ("  LENGTH: {0}", lob.Length);
 		Console.WriteLine ("  CHUNK SIZE: {0}", lob.ChunkSize);
 
-		try {
+		//try {
 			if (File.Exists(infilename) == false) {
 				Console.WriteLine("Filename does not exist: " + infilename);
 				return;
@@ -116,6 +122,7 @@ class TestBlob
 			while(bytes.Length > 0) {
 				Console.WriteLine("byte count: " + bytes.Length.ToString());
 				lob.Write (bytes, 0, bytes.Length);
+				bytes1 = ByteArrayCombine (bytes1, bytes);
 				if (bytes.Length < bufferLen)
 					break;
 				bytes = r.ReadBytes (bufferLen);
@@ -123,11 +130,11 @@ class TestBlob
 
 			r.Close();
 			fs.Close ();	
-		}
-		catch (Exception e) {
-			Console.WriteLine("The file could not be read:");
-			Console.WriteLine(e.Message);
-		}
+		//}
+		//catch (Exception e) {
+		//	Console.WriteLine("The file could not be read:");
+		//	Console.WriteLine(e.Message);
+		//}
 
 		lob.Close ();
 
@@ -143,4 +150,53 @@ class TestBlob
 		insert = null;
 		select = null;
 	}
+
+	static byte[] ByteArrayCombine (byte[] b1, byte[] b2) 
+	{
+		if (b1 == null)
+			b1 = new byte[0];
+		if (b2 == null)
+			b2 = new byte[0];
+		
+		byte[] bytes = new byte[b1.Length + b2.Length];
+		int i = 0;
+		for (int j = 0; j < b1.Length; j++) {
+			bytes[i] = b1[j];
+			i++;
+		}
+		for (int k = 0; k < b2.Length; k++) {
+			bytes[i] = b2[k];
+			i++;
+		}
+		return bytes;
+	}
+
+        static bool ByteArrayCompare(byte[] ba1, byte[] ba2)
+        {
+            if (ba1 == null && ba2 == null)
+                return true;
+
+            if (ba1 == null)
+                return false;
+
+            if (ba2 == null)
+                return false;
+
+            if (ba1.Length != ba2.Length)
+                return false;
+
+            for (int i = 0; i < ba1.Length; i++)
+            {
+		Console.WriteLine("i: " + i.ToString() + " ba1: " + ba1[i].ToString() + " ba2: " + ba2[i].ToString());
+            }
+
+            for (int i = 0; i < ba1.Length; i++)
+            {
+                if (ba1[i] != ba2[i])
+                    return false;
+            }
+
+            return true;
+        }
+
 }

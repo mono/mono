@@ -331,6 +331,7 @@ namespace System.Data.OracleClient
 			int bytesRead;
 			byte[] output = new byte [count];
 
+			position = offset;
 			bytesRead = locator.Read (output, (uint) Position + 1, (uint) count, LobType == OracleType.Blob);
 			output.CopyTo (buffer, offset);
 			position += bytesRead;
@@ -394,7 +395,6 @@ namespace System.Data.OracleClient
 				value = new byte[count];
 				Array.Copy (buffer, offset, value, 0, count);
 			}
-
 			position += locator.Write (value, (uint) Position + 1, (uint) value.Length, LobType);
 		}
 

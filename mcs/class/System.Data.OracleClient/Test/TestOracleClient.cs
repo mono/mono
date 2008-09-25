@@ -2941,6 +2941,247 @@ namespace Test.OracleClient
 			p4.OracleType = OracleType.Clob;
 			Console.WriteLine("p4.OracleType [Clob]: " + p4.OracleType.ToString());
 			Console.WriteLine();
+
+			OracleParameter p5 = new OracleParameter ((string) null, new DateTime (2005, 3, 8));
+			Console.WriteLine("p5.OracleType [DateTime]: " + p5.OracleType.ToString());
+		}
+
+                public static void InsertBlobTest(OracleConnection con)
+                {
+			checkTNS();
+			SetupMyPackage(con);
+                        InsertBlob(con);
+                }
+
+		public static void checkTNS()
+		{
+			//string tnsAdmin = System.Environment.GetEnvironmentVariable("TNS_ADMIN");
+			//if ( (tnsAdmin == null)|| (string.Empty.Equals(tnsAdmin)) )
+			//{
+			//	System.Environment.SetEnvironmentVariable("TNS_ADMIN", "~/instantclient");
+			//}
+		}
+
+		public static decimal InsertBlob(OracleConnection con)
+		{
+			byte[] ByteArray = new byte[2000]; // test Blob data
+			byte j = 0;
+			for (int i = 0; i < ByteArray.Length; i++) {
+				ByteArray[i] = j;
+				if (j > 255)
+					j = 0;
+				j++;
+			}
+			Console.WriteLine("Test Blob Data beginning: " + GetHexString (ByteArray));
+
+			decimal retVal = -1;
+
+			string sproc = "MyPackage" + ".InsertBlob";
+
+			OracleCommand cmd = new OracleCommand();
+			cmd.CommandText = sproc;
+			cmd.CommandType = CommandType.StoredProcedure;
+			cmd.Connection = con;
+			//cmd.Connection.Open();
+			cmd.Transaction = cmd.Connection.BeginTransaction();
+
+			try {
+				OracleParameter p1 = new OracleParameter("i_Sig_File", OracleType.Blob);
+				p1.Direction = ParameterDirection.Input;
+
+				//EXCEPTION thrown here
+				//p1.Value = GetOracleLob(cmd.Transaction, ByteArray);
+				OracleLob lob2 = GetOracleLob(cmd.Transaction, ByteArray);
+				byte[] b2 = (byte[]) lob2.Value;
+				Console.WriteLine("Test Blob Data here: " + GetHexString (b2));
+				p1.Value = lob2.Value;
+				//p1.Value = ByteArray;
+
+				cmd.Parameters.Add(p1);
+
+				cmd.ExecuteNonQuery();
+
+				cmd.Transaction.Commit();
+			
+				OracleCommand select = con.CreateCommand ();
+				//select.Transaction = transaction;
+				select.CommandText = "SELECT BLOB_COLUMN FROM BLOBTEST2";
+				Console.WriteLine ("  SELECTING A BLOB (Binary) VALUE FROM BLOBTEST2");
+
+				OracleDataReader reader = select.ExecuteReader ();
+				if (!reader.Read ())
+					Console.WriteLine ("ERROR: RECORD NOT FOUND");
+
+				Console.WriteLine ("  TESTING OracleLob OBJECT ...");
+				if (reader.IsDBNull(0))
+					Console.WriteLine("Lob IsNull");
+				else {
+					OracleLob lob = reader.GetOracleLob (0);
+					if (lob == OracleLob.Null)
+						Console.WriteLine("Lob is OracleLob.Null");
+					else {
+						byte[] blob = (byte[]) lob.Value;
+						string result = GetHexString(blob);
+						Console.WriteLine("Blob result: " + result);
+						if (ByteArrayCompare (ByteArray, blob))
+							Console.WriteLine("ByteArray and blob are the same: good");
+						else
+							Console.WriteLine("ByteArray and blob are not the same: bad");
+					}
+				}
+		    }
+		    catch(Exception ex) {
+		        Console.WriteLine("I exploded:" + ex.ToString());
+		        cmd.Transaction.Rollback();
+
+		    }
+
+		    return retVal;
+
+		}
+
+		private static OracleLob GetOracleLob(OracleTransaction transaction, byte[] blob)
+		{
+		    string BLOB_CREATE = "DECLARE dpBlob BLOB; "	
+		    + "BEGIN "
+		    + "   DBMS_LOB.CREATETEMPORARY(dpBlob , False, 0); " 
+		    + "  :tempBlob := dpBlob; "
+		    + "END;";
+
+		    OracleLob tempLob = OracleLob.Null;
+		    if (blob != null)
+		    {
+		        // Create a new command using the same connection
+		        OracleCommand command = transaction.Connection.CreateCommand();
+
+		        // Assign the transaction to the command
+		        command.Transaction = transaction;
+
+		        // Create blob storage on the Oracle server
+		        command.CommandText = BLOB_CREATE;
+
+		        // Add a new output paramter to accept the blob storage	reference
+			OracleParameter parm = new OracleParameter("tempBlob", OracleType.Blob);
+			parm.Direction = ParameterDirection.Output;
+			command.Parameters.Add(parm);
+//		        command.Parameters.Add( 
+//				new OracleParameter("tempBlob", OracleType.Blob)).Direction =
+//			        	ParameterDirection.Output;
+
+		        // Fire as your guns bear...
+		        command.ExecuteNonQuery();
+
+		        // Retrieve the blob stream from the OracleLob parameter 
+		        //tempLob = (OracleLob)command.Parameters[0].Value;
+			tempLob = (OracleLob) parm.Value;
+
+		        // Prevent server side events from firing while we write to the	stream
+		        tempLob.BeginBatch(OracleLobOpenMode.ReadWrite);
+
+		        // Write bytes to the stream
+		        tempLob.Write(blob, 0, blob.Length);
+			
+		        // Resume firing server events
+		        tempLob.EndBatch();
+		    }
+
+		    return tempLob;
+		}
+
+		static void SetupMyPackage(OracleConnection con) 
+		{
+			Console.WriteLine("Setup Oracle package curspkg_join...");
+		
+			Console.WriteLine ("  Drop table BLOBTEST2 ...");
+			try {
+				OracleCommand cmd2 = con.CreateCommand ();
+				//cmd2.Transaction = transaction;
+				cmd2.CommandText = "DROP TABLE BLOBTEST2";
+				cmd2.ExecuteNonQuery ();
+			}
+			catch (OracleException) {
+				// ignore if table already exists
+			}
+
+			Console.WriteLine ("  CREATE TABLE ...");
+
+			OracleCommand create = con.CreateCommand ();
+			//create.Transaction = transaction;
+			create.CommandText = "CREATE TABLE BLOBTEST2 (BLOB_COLUMN BLOB)";
+			create.ExecuteNonQuery ();
+
+			create.CommandText = "commit";
+			create.ExecuteNonQuery();
+
+			Console.Error.WriteLine("    create or replace package MyPackage...");
+			OracleCommand cmd = con.CreateCommand();
+			cmd.CommandText = 
+				"CREATE OR REPLACE PACKAGE MyPackage AS\n" +
+				" Procedure InsertBlob (i_Sig_File blob);\n" +
+				"END MyPackage;";
+			cmd.ExecuteNonQuery();
+
+			Console.Error.WriteLine("    create or replace package body MyPackage...");			
+			cmd.CommandText = 
+				"CREATE OR REPLACE PACKAGE BODY MyPackage AS\n" +
+				"   Procedure InsertBlob (i_Sig_File blob)\n" +
+				"   IS\n" +
+				"   BEGIN\n" +
+				"	INSERT INTO BLOBTEST2 (BLOB_COLUMN) VALUES(i_Sig_File); " +
+				"   END InsertBlob; " +
+				"END MyPackage;";
+			cmd.ExecuteNonQuery();
+
+			cmd.CommandText = "commit";
+			cmd.ExecuteNonQuery();
+		}
+
+		static byte[] ByteArrayCombine (byte[] b1, byte[] b2) 
+		{
+			if (b1 == null)
+				b1 = new byte[0];
+			if (b2 == null)
+				b2 = new byte[0];
+		
+			byte[] bytes = new byte[b1.Length + b2.Length];
+			int i = 0;
+			for (int j = 0; j < b1.Length; j++) {
+				bytes[i] = b1[j];
+				i++;
+			}
+			for (int k = 0; k < b2.Length; k++) {
+				bytes[i] = b2[k];
+				i++;
+			}
+			return bytes;
+		}
+
+		static bool ByteArrayCompare(byte[] ba1, byte[] ba2)
+		{
+		    if (ba1 == null && ba2 == null)
+		        return true;
+
+		    if (ba1 == null)
+		        return false;
+
+		    if (ba2 == null)
+		        return false;
+
+		    if (ba1.Length != ba2.Length)
+		        return false;
+
+		   // for (int i = 0; i < ba1.Length; i++)
+		   // {
+			//Console.WriteLine("i: " + i.ToString() + " ba1: " + ba1[i].ToString() + " ba2: " + ba2[i].ToString());
+		    //}
+
+		    for (int i = 0; i < ba1.Length; i++)
+		    {
+		        if (ba1[i] != ba2[i])
+		            return false;
+		    }
+
+		    return true;
 		}
 
 		[STAThread]
@@ -2973,6 +3214,8 @@ namespace Test.OracleClient
 			Console.WriteLine("Opened.");
 
 			ShowConnectionProperties (con1);
+
+			InsertBlobTest (con1);
 
 			Console.WriteLine ("Mono Oracle Test BEGIN ...");
 			MonoTest (con1);
