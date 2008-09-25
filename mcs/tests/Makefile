@@ -80,7 +80,7 @@ TEST_ILS := $(wildcard *-lib.il)
 
 ifeq (net_2_0, $(PROFILE))
 eval-test: 
-	$(RUNTIME) $(RUNTIME_FLAGS) $(COMPILER) eval-test.cs -r:$(COMPILER)
+	$(CSCOMPILE) eval-test.cs -r:$(COMPILER)
 	MONO_PATH=$(topdir)/class/lib/$(PROFILE):. $(RUNTIME) eval-test.exe
 else
 eval-test:
