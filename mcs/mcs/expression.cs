@@ -8217,6 +8217,7 @@ namespace Mono.CSharp {
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
 			type = storey.MutateType (type);
+			ea.Expr.Type = storey.MutateType (ea.Expr.Type);
 		}
 	}
 

@@ -1,5 +1,11 @@
 2008-09-25  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #429264
+	* expression.cs: Missing mutator for access to multidimensional
+	arrays.
+
+2008-09-25  Marek Safar  <marek.safar@gmail.com>
+
 	* class.cs, statement: Emit DebuggerHidden attribute for iterator
 	entry wrapper.
 	
