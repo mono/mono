@@ -15711,6 +15711,45 @@
       </method>
     </type>
   </test>
+  <test name="gtest-iter-09.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerable`1 Create[T](T[,])">
+        <size>23</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>99</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Create&gt;c__Iterator0`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>12</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
+        <size>53</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>130</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>8</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-linq-01.cs">
     <type name="from.ITest">
       <method name="Int32 get_Id()">
