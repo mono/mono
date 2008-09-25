@@ -1,5 +1,13 @@
 2008-09-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Avoid an assert in the NEWOBJ
+	opcode when creating multi-dimensional arrays of open types.
+
+	* generic-sharing.c (mono_method_check_context_used): Handle arrays of
+	open generic types.
+
+	* generics.cs: Add a test.
+
 	* mini-codegen.c: Use macros everywhere for checking floats instead of == 'f'.
 
 2008-09-24  Zoltan Varga  <vargaz@gmail.com>
