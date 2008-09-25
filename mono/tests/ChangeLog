@@ -1,3 +1,10 @@
+2008-09-25  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-synchronized.2.cs: Test case for synchronized generic
+	methods.
+
+	* Makefile.am: Test added.
+
 2008-09-21  Mark Probst  <mark.probst@gmail.com>
 
 	* exception17.cs: New test case for throwing an exception from

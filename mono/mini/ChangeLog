@@ -1,5 +1,10 @@
 2008-09-25  Mark Probst  <mark.probst@gmail.com>
 
+	* mini-trampolines.c (mono_magic_trampoline): Unwrap wrappers
+	before asserting that method is sharable.
+
+2008-09-25  Mark Probst  <mark.probst@gmail.com>
+
 	* method-to-ir.c, mini.c, jit-icalls.c: New function for checking
 	whether method needs a static RGCTX wrapper used instead of
 	complex conditions.
