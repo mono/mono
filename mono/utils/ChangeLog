@@ -1,3 +1,6 @@
+2008-09-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-mmap.c (mono_shared_area_for_pid): Fix a warning.
 
 Thu Sep 18 18:16:45 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
