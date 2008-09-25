@@ -1,3 +1,9 @@
+2008-09-25  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* FileDialog.cs: Implement basic support for sorting by columns in
+	Details view. Patch by Eric Petit.
+	Fixes #428006.
+
 2008-09-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ThemeWin32Classis.cs: When drawing gridlines take into account the

@@ -23,6 +23,7 @@
 //
 //  Alexander Olk	alex.olk@googlemail.com
 //  Gert Driesen (drieseng@users.sourceforge.net)
+//  Eric Petit (surfzoid2002@yahoo.fr)
 //
 // TODO:
 // Keyboard shortcuts (DEL, F5, F2)
@@ -88,6 +89,7 @@ namespace System.Windows.Forms
 		private ComboBox fileNameComboBox;
 		private Label fileNameLabel;
 		private MWFFileView mwfFileView;
+		private MwfFileViewItemComparer file_view_comparer;
 		private Label searchSaveLabel;
 		private ToolBarButton newdirToolBarButton;
 		private ToolBarButton backToolBarButton;
@@ -364,10 +366,11 @@ namespace System.Windows.Forms
 			mwfFileView.SelectedFileChanged += new EventHandler (OnSelectedFileChangedFileView);
 			mwfFileView.ForceDialogEnd += new EventHandler (OnForceDialogEndFileView);
 			mwfFileView.SelectedFilesChanged += new EventHandler (OnSelectedFilesChangedFileView);
+			mwfFileView.ColumnClick += new ColumnClickEventHandler(OnColumnClickFileView);
 			
 			dirComboBox.DirectoryChanged += new EventHandler (OnDirectoryChangedDirComboBox);
 			popupButtonPanel.DirectoryChanged += new EventHandler (OnDirectoryChangedPopupButtonPanel);
-			
+
 			readonlyCheckBox.CheckedChanged += new EventHandler (OnCheckCheckChanged);
 #if NET_2_0
 			form.FormClosed += new FormClosedEventHandler (OnFileDialogFormClosed);
@@ -1211,7 +1214,21 @@ namespace System.Windows.Forms
 			HandleFormClosedEvent (sender);
 		}
 #endif
-		
+
+		private void OnColumnClickFileView (object sender, ColumnClickEventArgs e)
+		{
+			if (file_view_comparer == null)
+				file_view_comparer = new MwfFileViewItemComparer (true);
+
+			file_view_comparer.ColumnIndex = e.Column;
+			file_view_comparer.Ascendent = !file_view_comparer.Ascendent;
+
+			if (mwfFileView.ListViewItemSorter == null)
+				mwfFileView.ListViewItemSorter = file_view_comparer;
+			else
+				mwfFileView.Sort ();
+		}
+
 		void HandleFormClosedEvent (object sender)
 		{
 			if (!disable_form_closed_event)
@@ -2890,8 +2907,10 @@ namespace System.Windows.Forms
 
 			if (View == View.Details)
 				Columns.AddRange (columns);
-			else
+			else {
+				ListViewItemSorter = null;
 				Columns.Clear ();
+			}
 
 			EndUpdate ();
 		}
@@ -3053,8 +3072,56 @@ namespace System.Windows.Forms
 			}
 		}
 	}
+
 	#endregion
 	
+	#region MwfFileViewItemComparer
+	class MwfFileViewItemComparer : IComparer
+	{
+		int column_index;
+		bool asc;
+
+		public MwfFileViewItemComparer (bool asc)
+		{
+			this.asc = asc;
+		}
+
+		public int ColumnIndex {
+			get {
+				return column_index;
+			}
+			set {
+				column_index = value;
+			}
+		}
+
+		public bool Ascendent {
+			get {
+				return asc;
+			}
+			set {
+				asc = value;
+			}
+		}
+
+		public int Compare (object a, object b)
+		{
+			ListViewItem item_a = (ListViewItem)a;
+			ListViewItem item_b = (ListViewItem)b;
+
+			int retval;
+			if (asc)
+				retval = String.Compare (item_a.SubItems [column_index].Text, 
+						item_b.SubItems [column_index].Text);
+			else
+				retval = String.Compare (item_b.SubItems [column_index].Text,
+						item_a.SubItems [column_index].Text);
+
+			return retval;
+		}
+	}
+	#endregion
+
 	#region IUpdateFolder
 	internal interface IUpdateFolder
 	{
