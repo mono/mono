@@ -3798,8 +3798,14 @@ namespace Mono.CSharp {
 			if (!CheckBase ())
 				return false;
 
-			if (block != null && block.IsIterator && !(Parent is IteratorStorey))
+			if (block != null && block.IsIterator && !(Parent is IteratorStorey)) {
+				//
+				// Current method is turned into automatically generated
+				// wrapper which creates an instance of iterator
+				//
 				Iterator.CreateIterator (this, Parent.PartialContainer, ModFlags);
+				ModFlags |= Modifiers.DEBUGGER_HIDDEN;
+			}
 
 			if (IsPartialDefinition) {
 				caching_flags &= ~Flags.Excluded_Undetected;

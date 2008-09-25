@@ -2316,11 +2316,10 @@ namespace Mono.CSharp {
 			if (scope_initializers != null) {
 				SymbolWriter.OpenCompilerGeneratedBlock (ec.ig);
 
-				bool omit_debug_info = ec.OmitDebuggingInfo;
-				ec.OmitDebuggingInfo = true;
-				foreach (StatementExpression s in scope_initializers)
-					s.Emit (ec);
-				ec.OmitDebuggingInfo = omit_debug_info;
+				using (ec.Set (EmitContext.Flags.OmitDebuggingInfo)) {
+					foreach (StatementExpression s in scope_initializers)
+						s.Emit (ec);
+				}
 
 				SymbolWriter.CloseCompilerGeneratedBlock (ec.ig);
 			}

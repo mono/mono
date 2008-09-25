@@ -1298,6 +1298,9 @@ namespace Mono.CSharp
 					Report.Error (5, arg + " requires an argument");
 					Environment.Exit (1);
 				}
+				
+				if (win32IconFile != null)
+					Report.Error (1565, "Cannot specify the `win32res' and the `win32ico' compiler option at the same time");
 
 				win32ResourceFile = value;
 				return true;
@@ -1307,6 +1310,9 @@ namespace Mono.CSharp
 					Report.Error (5, arg + " requires an argument");
 					Environment.Exit (1);
 				}
+
+				if (win32ResourceFile != null)
+					Report.Error (1565, "Cannot specify the `win32res' and the `win32ico' compiler option at the same time");
 
 				win32IconFile = value;
 				return true;
@@ -1778,11 +1784,12 @@ namespace Mono.CSharp
 			}
 
 			if (win32IconFile != null) {
-				MethodInfo define_icon = typeof (AssemblyBuilder).GetMethod ("DefineIconResource", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
+				MethodInfo define_icon = typeof (AssemblyBuilder).GetMethod ("DefineIconResource", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 				if (define_icon == null) {
 					Report.RuntimeMissingSupport (Location.Null, "resource embeding");
+				} else {
+					define_icon.Invoke (CodeGen.Assembly.Builder, new object [] { win32IconFile });
 				}
-				define_icon.Invoke (CodeGen.Assembly.Builder, new object [] { win32IconFile });
 			}
 
 			if (Report.Errors > 0)
