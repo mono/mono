@@ -1,3 +1,8 @@
+2008-09-25  Marek Habersack  <mhabersack@novell.com>
+
+	* WebUIValidation_2.0.js: do not trim the control value in
+	CompareValidatorEvaluateIsValid.
+
 2008-01-21 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* WebUIValidation_2.0.js:

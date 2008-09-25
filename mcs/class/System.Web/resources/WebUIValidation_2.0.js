@@ -376,8 +376,8 @@ webForm.CompareValidatorEvaluateIsValid = function (validator)
 	var ControlToValidate = validator.controltovalidate;
 	var DataType = validator.type;
 
-	var ctrl_value = webForm.ValidatorTrim (webForm.ValidatorGetValue (ControlToValidate));
-	if (ctrl_value == "") {
+	var ctrl_value = webForm.ValidatorGetValue (ControlToValidate);
+	if (webForm.ValidatorTrim (ctrl_value) == "") {
 		webForm.ValidatorSucceeded (validator);
 		return true;
 	}
@@ -395,7 +395,7 @@ webForm.CompareValidatorEvaluateIsValid = function (validator)
       
 	var compare = "";
 	if (typeof(validator.controltocompare) == "string" && document.getElementById(validator.controltocompare))
-		compare = webForm.ValidatorTrim(webForm.ValidatorGetValue(validator.controltocompare));
+		compare = webForm.ValidatorGetValue(validator.controltocompare);
 	else if (typeof(validator.valuetocompare) == "string")
 		compare = validator.valuetocompare;
 
