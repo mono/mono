@@ -1438,7 +1438,7 @@ msgstr "/nowarn benötigt ein Argument"
 #: ../mcs/mcs/driver.cs:1482
 #, csharp-format
 msgid "Invalid option `{0}' for /langversion. It must be either `ISO-1', `ISO-2' or `Default'"
-msgstr "Ungültige Option für /langversion. Es muss entweder `ISO-1', `ISO-2' oder `Default' sein"
+msgstr "Ungültige Option `{0}' für /langversion. Es muss entweder `ISO-1', `ISO-2' oder `Default' sein"
 
 #: ../mcs/mcs/driver.cs:1498
 #, csharp-format
