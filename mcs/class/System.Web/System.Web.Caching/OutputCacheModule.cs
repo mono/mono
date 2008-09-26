@@ -70,7 +70,7 @@ namespace System.Web.Caching {
 				return;
 
 			key = varyby.CreateKey (vary_key, context);
-			c = context.Cache [key] as CachedRawResponse;
+			c = context.InternalCache [key] as CachedRawResponse;
 
 			if (c == null)
 				return;
@@ -145,7 +145,7 @@ namespace System.Web.Caching {
 				string [] files = new string [] { path };
 				string [] keys = new string [0];
 				varyby = new CachedVaryBy (context.Response.Cache, vary_key);
-				context.InternalCache.Insert (vary_key, varyby,
+				context.Cache.Insert (vary_key, varyby,
 							      new CacheDependency (files, keys),
 							      Cache.NoAbsoluteExpiration,
 							      Cache.NoSlidingExpiration,
@@ -156,7 +156,7 @@ namespace System.Web.Caching {
 			key = varyby.CreateKey (vary_key, context);
 
 			if (lookup)
-				prev = context.Cache [key] as CachedRawResponse;
+				prev = context.InternalCache [key] as CachedRawResponse;
 			
 			if (prev == null) {
 				CachedRawResponse c = context.Response.GetCachedResponse ();

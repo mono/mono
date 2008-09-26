@@ -1,3 +1,9 @@
+2008-09-26  Juraj Skripsky  <js@hotfeet.ch>
+
+	* OutputCacheModule.cs: Consistently use InternalCache for
+	CachedRawResponse items and Cache for CachedVaryBy items.
+	Partial fix for bug #429926.   
+
 2008-08-11  Marek Habersack  <mhabersack@novell.com>
 
 	* Cache.cs: dispose item timer when removing an entry. Fixes bug
