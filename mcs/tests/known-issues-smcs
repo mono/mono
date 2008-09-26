@@ -25,6 +25,8 @@ gtest-354.cs
 gtest-358.cs
 gtest-374.cs
 gtest-380.cs
+gtest-683.cs
+gtest-684.cs
 gtest-anon-24.cs
 gtest-collectioninit-01.cs
 gtest-collectioninit-03.cs
@@ -64,7 +66,6 @@ test-399.cs
 test-399-lib.cs
 test-453.cs
 test-463.cs
-test-466.cs
 test-478.cs
 test-489.cs
 test-492.cs
@@ -72,7 +73,6 @@ test-52.cs
 test-539.cs
 test-580.cs
 test-581.cs
-test-591.cs
 test-651.cs
 test-657.cs
 test-93.cs
