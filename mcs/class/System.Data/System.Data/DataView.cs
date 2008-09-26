@@ -10,7 +10,7 @@
 //
 // Copyright (C) Daniel Morgan, 2002, 2003
 // (C) Ximian, Inc 2002
-// Copyright (C) Tim Coleman, 2002-2003		
+// Copyright (C) Tim Coleman, 2002-2003
 
 using System;
 using System.Collections;
@@ -64,7 +64,7 @@ namespace System.Data
 		DataViewRowState initRowState;
 
 		// FIXME: what are the default values?
-		bool allowNew = true; 
+		bool allowNew = true;
 		bool allowEdit = true;
 		bool allowDelete = true;
 		bool applyDefaultSort;
@@ -73,16 +73,16 @@ namespace System.Data
 		bool isOpen;
 
 		bool useDefaultSort = true;
-		
+
 		Index _index;
 		internal DataRow _lastAdded;
-		
+
 		private DataViewManager dataViewManager;
 		internal static ListChangedEventArgs ListResetEventArgs = new ListChangedEventArgs (ListChangedType.Reset,-1,-1);
 
 		#region Constructors
 
-		public DataView () 
+		public DataView ()
 		{
 			rowState = DataViewRowState.CurrentRows;
 			Open ();
@@ -128,12 +128,8 @@ namespace System.Data
 #endif
 		[DefaultValue (true)]
 		public bool AllowDelete {
-			get {
-				return allowDelete;
-			}
-			set {
-				allowDelete = value;
-			}
+			get { return allowDelete; }
+			set { allowDelete = value; }
 		}
 
 		[DataCategory ("Data")]
@@ -142,12 +138,8 @@ namespace System.Data
 #endif
 		[DefaultValue (true)]
 		public bool AllowEdit {
-			get {
-				return allowEdit;
-			}
-			set {
-				allowEdit = value;
-			}
+			get { return allowEdit; }
+			set { allowEdit = value; }
 		}
 
 		[DataCategory ("Data")]
@@ -156,13 +148,8 @@ namespace System.Data
 #endif
 		[DefaultValue (true)]
 		public bool AllowNew {
-			get {
-				return allowNew;
-			}
-			
-			set {
-				allowNew = value;
-			}
+			get { return allowNew; }
+			set { allowNew = value; }
 		}
 
 		[DataCategory ("Data")]
@@ -182,8 +169,7 @@ namespace System.Data
 					return;
 
 				applyDefaultSort = value;
-				if (applyDefaultSort == true &&
-					(sort == null || sort == string.Empty))
+				if (applyDefaultSort == true && (sort == null || sort == string.Empty))
 					PopulateDefaultSort ();
 				if (!inEndInit) {
 					UpdateIndex (true);
@@ -191,16 +177,14 @@ namespace System.Data
 				}
 			}
 		}
-		// get the count of rows in the DataView after RowFilter 
+		// get the count of rows in the DataView after RowFilter
 		// and RowStateFilter have been applied
 		[Browsable (false)]
 #if !NET_2_0
 		[DataSysDescription ("Returns the number of items currently in this view.")]
 #endif
 		public int Count {
-			get {
-				return rowCache.Length;
-			}
+			get { return rowCache.Length; }
 		}
 
 		[Browsable (false)]
@@ -208,20 +192,17 @@ namespace System.Data
 		[DataSysDescription ("This returns a pointer to back to the DataViewManager that owns this DataSet (if any).")]
 #endif
 		public DataViewManager DataViewManager {
-			get {
-				return dataViewManager;
-			}
+			get { return dataViewManager; }
 		}
 
 		// Item indexer
 		// the compiler creates a DefaultMemeberAttribute from
 		// this IndexerNameAttribute
 		[System.Runtime.CompilerServices.IndexerName("Item")]
-		public DataRowView this[int recordIndex] {
+		public DataRowView this [int recordIndex] {
 			get {
 				if (recordIndex > rowCache.Length)
-					throw new IndexOutOfRangeException ("There is no row at " +
-									    "position: " + recordIndex + ".");
+					throw new IndexOutOfRangeException ("There is no row at position: " + recordIndex + ".");
 				return rowCache [recordIndex];
 			}
 		}
@@ -242,12 +223,12 @@ namespace System.Data
 				}
 
 				CultureInfo info = (Table != null) ? Table.Locale : CultureInfo.CurrentCulture;
-				if (String.Compare(rowFilter, value, false, info) == 0)
+				if (String.Compare (rowFilter, value, false, info) == 0)
 					return;
 
-				if (value.Length == 0)
+				if (value.Length == 0) {
 					rowFilterExpr = null;
-				else {
+				} else {
 					Parser parser = new Parser ();
 					rowFilterExpr = parser.Compile (value);
 				}
@@ -314,7 +295,7 @@ namespace System.Data
 					sort = value;
 					//sortedColumns = SortableColumn.ParseSortString (dataTable, value, true);
 				}
-				
+
 				if (!inEndInit) {
 					UpdateIndex (true);
 					OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1, -1));
@@ -365,11 +346,11 @@ namespace System.Data
 #if NET_2_0
 		[Browsable (false)]
 		public bool IsInitialized {
-			get { return dataViewInitialized;}
+			get { return dataViewInitialized; }
 		}
 #endif
 		#endregion // PublicProperties
-		
+
 		#region	PublicMethods
 
 		public virtual DataRowView AddNew ()
@@ -378,7 +359,7 @@ namespace System.Data
 				throw new DataException ("DataView is not open.");
 			if (!AllowNew)
 				throw new DataException ("Cannot call AddNew on a DataView where AllowNew is false.");
-			
+
 			if (_lastAdded != null)
 				// FIXME : finish last added
 				CompleteLastAdded (true);
@@ -426,7 +407,7 @@ namespace System.Data
 #endif
 		}
 
-		public void CopyTo (Array array, int index) 
+		public void CopyTo (Array array, int index)
 		{
 			if (index + rowCache.Length > array.Length)
 				throw new IndexOutOfRangeException ();
@@ -448,10 +429,9 @@ namespace System.Data
 
 			if (!AllowDelete)
 				throw new DataException ("Cannot delete on a DataSource where AllowDelete is false.");
-			
+
 			if (index > rowCache.Length)
-				throw new IndexOutOfRangeException ("There is no row at " +
-						"position: " + index + ".");
+				throw new IndexOutOfRangeException ("There is no row at position: " + index + ".");
 			DataRowView row = rowCache [index];
 			row.Row.Delete ();
 		}
@@ -462,9 +442,9 @@ namespace System.Data
 			if (this == dv)
 				return true;
 			if (!(this.Table == dv.Table && this.Sort == dv.Sort &&
-				this.RowFilter == dv.RowFilter && 
+				this.RowFilter == dv.RowFilter &&
 				this.RowStateFilter == dv.RowStateFilter &&
-				this.AllowEdit == dv.AllowEdit && 
+				this.AllowEdit == dv.AllowEdit &&
 				this.AllowNew == dv.AllowNew &&
 				this.AllowDelete == dv.AllowDelete &&
 				this.Count == dv.Count))
@@ -523,7 +503,7 @@ namespace System.Data
 			}
 			return index;
 		}
-		
+
 		public DataRowView [] FindRows (object key)
 		{
 			return FindRows (new object[] {key});
@@ -553,7 +533,7 @@ namespace System.Data
 		}
 
 		#endregion // PublicMethods
-		
+
 		[DataCategory ("Data")]
 #if !NET_2_0
 		[DataSysDescription ("Indicates that the data returned by this DataView has somehow changed.")]
@@ -573,9 +553,7 @@ namespace System.Data
 		}
 
 		internal Index Index {
-			get {
-				return _index;
-			}
+			get { return _index; }
 			set {
 				if (_index != null) {
 					_index.RemoveRef ();
@@ -612,7 +590,7 @@ namespace System.Data
 
 		protected virtual void OnListChanged (ListChangedEventArgs e)
 		{
-			// Yes, under MS.NET, when it is overriden, the 
+			// Yes, under MS.NET, when it is overriden, the
 			// events are not fired (even if it is essential
 			// to internal processing).
 			try {
@@ -633,32 +611,32 @@ namespace System.Data
 			// I wonder if this comment is still valid, but keep
 			// in the meantime.
 
-			// FIXME: create the initial index cache to the DataTable, and 
+			// FIXME: create the initial index cache to the DataTable, and
 			//        only refresh the index when the DataTable
 			//        has changes via column, row, or constraint
 			//        changed events. the index cache is generally
 			//        a DataViewRow array that points to the actual
 			//        DataRows in the this DataTable's DataRowCollection;
-			//        this index is really a cache that gets 
-			//        created during Open(), gets Updated 
+			//        this index is really a cache that gets
+			//        created during Open(), gets Updated
 			//        when various properties of this view
-			//        changes, gets Updated when this DataTable's 
+			//        changes, gets Updated when this DataTable's
 			//        row, column, or constraint collections have changed.
 			//        I'm not sure what else.
 			//        The data view will know one of the DataTable's
-			//        collections have changed via one of 
+			//        collections have changed via one of
 			//        its changed events.
 			//        Otherwise, if getting a/the DataRowView(s),
 			//        Count, or other properties, then just use the
 			//        index cache.
 			//		dataTable.ColumnChanged  += new DataColumnChangeEventHandler(OnColumnChanged);
-			
+
 			UpdateIndex (true);
 			if (dataTable != null)
 				RegisterEventHandlers ();
 			isOpen = true;
 		}
-		
+
 		private void RegisterEventHandlers ()
 		{
 			//dataTable.ColumnChanging += new DataColumnChangeEventHandler(OnColumnChanging);
@@ -674,7 +652,7 @@ namespace System.Data
 
 			dataTable.Rows.ListChanged += new ListChangedEventHandler (OnRowCollectionChanged);
 		}
-		
+
 		private void OnRowCollectionChanged (object sender, ListChangedEventArgs args)
 		{
 			if (args.ListChangedType == ListChangedType.Reset) {
@@ -708,7 +686,7 @@ namespace System.Data
 		{	/* not used */
 			//UpdateIndex(true);
 		}
-		
+
 		private void OnRowChanged (object sender, DataRowChangeEventArgs args)
 		{
 			int oldIndex,newIndex;
@@ -738,7 +716,7 @@ namespace System.Data
 			UpdateIndex (true);
 			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, newIndex, -1));
 		}
-		
+
 #if NET_2_0
 		private void DataViewInitialized ()
 		{
@@ -746,7 +724,8 @@ namespace System.Data
 			OnDataViewInitialized (e);
 		}
 
-		private void OnDataViewInitialized (EventArgs e) {
+		private void OnDataViewInitialized (EventArgs e)
+		{
 			if (null != Initialized)
 				Initialized (this, e);
 		}
@@ -773,7 +752,7 @@ namespace System.Data
 		{
 			//	The Sort variable is set to the UniqueConstraint column.
 			//  if ApplyDefault Sort is true and Sort is null or is not set Explicitly
-			
+
 			// FIXME: The interal cache may change as result of change in Constraint collection
 			// one such scenerio is taken care.
 			// There may be more. I dont know what else can be done.
@@ -825,12 +804,12 @@ namespace System.Data
 		{
 			return this.ToTable (Table.TableName, isDistinct, columnNames);
 		}
-		
+
 		public DataTable ToTable (string tablename, bool isDistinct, params string[] columnNames)
 		{
 			if (columnNames == null)
 				throw new ArgumentNullException ("columnNames", "'columnNames' argument cannot be null.");
- 
+
 			DataTable newTable = new DataTable (tablename);
 
 			DataColumn[] columns;
@@ -859,7 +838,7 @@ namespace System.Data
 			ArrayList expressionCols = new ArrayList ();
 			for (int i = 0; i < columns.Length; ++i) {
 				DataColumn col = columns [i].Clone ();
-				if (col.Expression != String.Empty) { 
+				if (col.Expression != String.Empty) {
 					col.Expression = string.Empty;
 					expressionCols.Add (col);
 				}
@@ -873,7 +852,7 @@ namespace System.Data
 			if (isDistinct)
 				rows = index.GetDistinctRows ();
 			else
-				rows = index.GetAllRows (); 
+				rows = index.GetAllRows ();
 
 			foreach (DataRow row in rows) {
 				DataRow newRow = newTable.NewNotInitializedRow ();
@@ -897,7 +876,7 @@ namespace System.Data
 			UpdateIndex (false);
 		}
 
-		// This is method is internal to 
+		// This is method is internal to
 		// the Mono implementation of DataView; it
 		// is not to be used from your code.
 		//
@@ -928,9 +907,7 @@ namespace System.Data
 		}
 
 		internal virtual IExpression FilterExpression {
-			get {
-				return rowFilterExpr;
-			}
+			get { return rowFilterExpr; }
 		}
 
 		private void InitDataRowViewArray (int [] records, int size)
@@ -947,13 +924,13 @@ namespace System.Data
 				rowCache [size] = new DataRowView (this, _lastAdded, size);
 		}
 
-		PropertyDescriptorCollection ITypedList.GetItemProperties (PropertyDescriptor [] listAccessors) 
+		PropertyDescriptorCollection ITypedList.GetItemProperties (PropertyDescriptor [] listAccessors)
 		{
 			if (dataTable == null)
 				return new PropertyDescriptorCollection (new PropertyDescriptor [0]);
 
 			// FIXME: use listAccessors somehow
-			PropertyDescriptor [] descriptors = 
+			PropertyDescriptor [] descriptors =
 				new PropertyDescriptor [dataTable.Columns.Count + dataTable.ChildRelations.Count];
 
 			int d = 0;
@@ -961,8 +938,7 @@ namespace System.Data
 				DataColumn dataColumn = dataTable.Columns[col];
 				DataColumnPropertyDescriptor descriptor;
 
-				descriptor = new DataColumnPropertyDescriptor(
-					dataColumn.ColumnName, col, null);
+				descriptor = new DataColumnPropertyDescriptor (dataColumn.ColumnName, col, null);
 				descriptor.SetComponentType (typeof (System.Data.DataRowView));
 				descriptor.SetPropertyType (dataColumn.DataType);
 				descriptor.SetReadOnly (dataColumn.ReadOnly);
@@ -979,7 +955,7 @@ namespace System.Data
 			return new PropertyDescriptorCollection (descriptors);
 		}
 
-		
+
 		string ITypedList.GetListName (PropertyDescriptor [] listAccessors)
 		{
 			if (dataTable != null)
@@ -988,37 +964,25 @@ namespace System.Data
 		}
 
 		bool ICollection.IsSynchronized {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 
 		object ICollection.SyncRoot {
-			get {
-				return this;
-			}
+			get { return this; }
 		}
 
 		bool IList.IsFixedSize {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
-		
+
 		bool IList.IsReadOnly {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 
 		object IList.this [int recordIndex] {
-			get {
-				return this [recordIndex];
-			}
+			get { return this [recordIndex]; }
 			[MonoTODO]
-			set{
-				throw new InvalidOperationException ();
-			}
+			set { throw new InvalidOperationException (); }
 		}
 
 		int IList.Add (object value)
@@ -1062,9 +1026,9 @@ namespace System.Data
 			throw new ArgumentException ("Cannot remove external objects to this list.");
 		}
 
-		void IList.RemoveAt(int index)
+		void IList.RemoveAt (int index)
 		{
-			Delete(index);
+			Delete (index);
 		}
 
 		#region IBindingList implementation
@@ -1097,10 +1061,10 @@ namespace System.Data
 			Index index = Table.FindIndex (new DataColumn [] {dc}, sortOrder, RowStateFilter, FilterExpression);
 			if (index == null)
 				index = new Index (new Key (Table, new DataColumn [] {dc}, sortOrder, RowStateFilter, FilterExpression));
-			
+
 			return index.FindIndex (new object [] {key});
 		}
-		
+
 		[MonoTODO]
 		void IBindingList.RemoveIndex (PropertyDescriptor property)
 		{
@@ -1112,7 +1076,7 @@ namespace System.Data
 			sortProperty = null;
 			this.Sort = String.Empty;
 		}
-		
+
 		bool IBindingList.AllowEdit {
 			get { return AllowEdit; }
 		}
@@ -1160,7 +1124,7 @@ namespace System.Data
 		bool IBindingList.SupportsSorting {
 			get { return true; }
 		}
-		
+
 		#endregion // IBindingList implementation
 
 #if NET_2_0
@@ -1205,7 +1169,7 @@ namespace System.Data
 		{
 			((IBindingListView) this).Filter = string.Empty;
 		}
-		
+
 		#endregion //IBindingViewList implementation
 #endif
 
@@ -1216,7 +1180,7 @@ namespace System.Data
 				return i;
 			return -1;
 		}
-		
+
 		private void PopulateDefaultSort ()
 		{
 			sort = string.Empty;
@@ -1233,21 +1197,21 @@ namespace System.Data
 			if (isInitPhase)
 				return;
 
-			DataColumn[] columns = uc.Columns;
+			DataColumn [] columns = uc.Columns;
 			if (columns.Length == 0) {
 				sort = String.Empty;
 				return;
 			}
 
 			StringBuilder builder = new StringBuilder ();
-			builder.Append(columns[0].ColumnName);
-			for (int i = 1; i<columns.Length; i++) {
-				builder.Append(", ");
-				builder.Append(columns [i].ColumnName);
+			builder.Append (columns[0].ColumnName);
+			for (int i = 1; i < columns.Length; i++) {
+				builder.Append (", ");
+				builder.Append (columns [i].ColumnName);
 			}
 			sort = builder.ToString ();
 		}
-		
+
 		internal DataView CreateChildView (DataRelation relation, int index)
 		{
 			if (relation == null || relation.ParentTable != Table)
