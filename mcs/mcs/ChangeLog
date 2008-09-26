@@ -1,3 +1,9 @@
+2008-09-26  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #325326
+	* statement.cs: Check possible mistaken empty statement using
+	explicit blocks only.
+
 2008-09-25  Miguel de Icaza  <miguel@novell.com>
 
 	* eval.cs (LoadAssembly, ReferenceAssembly): Call

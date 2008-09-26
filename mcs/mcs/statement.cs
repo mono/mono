@@ -2210,7 +2210,7 @@ namespace Mono.CSharp {
 				// Check possible empty statement (CS0642)
 				if (Report.WarningLevel >= 3 &&
 					ix + 1 < statement_count &&
-						statements [ix + 1] is Block)
+						statements [ix + 1] is ExplicitBlock)
 					CheckPossibleMistakenEmptyStatement (s);
 
 				//
