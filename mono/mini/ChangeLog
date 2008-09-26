@@ -1,3 +1,7 @@
+2008-09-26  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Don't produce trampolines to delegate ctor icall
+	wrappers but compile them upfront.
 
 Fri Sep 26 17:00:46 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
