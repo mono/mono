@@ -1,3 +1,11 @@
+
+Fri Sep 26 16:34:37 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, mini.c, mini-trampolines.c, mini-exceptions.c: added
+	the support code for restoring stack protection after stack overflows
+	that happen in unmanaged code. Don't set the exec permission on the
+	soft overflow area.
+
 2008-09-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_delegate_trampoline): Add wrappers even if
