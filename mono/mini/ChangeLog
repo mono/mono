@@ -1,4 +1,11 @@
 
+Fri Sep 26 17:00:46 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini-amd64.c, mini-amd64.h, tramp-amd64.c: amd64 support code for calling a
+	runtime-set function when going back to managed code. Currently this
+	is used to set back the protection on the soft ovf pages and/or to
+	throw the stack overflow exception that happened in unmanaged code.
+
 Fri Sep 26 16:46:23 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* tramp-x86.c, mini-x86.h, mini-x86.c: x86 support code for calling a
