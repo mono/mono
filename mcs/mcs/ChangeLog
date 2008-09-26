@@ -1,3 +1,12 @@
+2008-09-25  Miguel de Icaza  <miguel@novell.com>
+
+	* eval.cs (LoadAssembly, ReferenceAssembly): Call
+	RootNamespace.ComputeNamespaces to update the internal list of
+	namespaces, this is no longer done for us.
+
+	(InteractiveBase): Use the Evaluator APIs instead of calling into
+	Driver directly
+
 2008-09-25  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #429264

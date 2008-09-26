@@ -1,3 +1,8 @@
+2008-09-25  Miguel de Icaza  <miguel@novell.com>
+
+	* eval-test.cs: Update tasty test, to prevent future generations
+	from wandering alone the bisecting space to track down a bug. 
+
 2008-09-24  Miguel de Icaza  <miguel@novell.com>
 
 	* eval-test.cs: Add an evaluation test, to test the basic

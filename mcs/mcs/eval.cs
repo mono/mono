@@ -641,6 +641,7 @@ namespace Mono.CSharp {
 		static public void LoadAssembly (string file)
 		{
 			Driver.LoadAssembly (file, true);
+			RootNamespace.ComputeNamespaces ();
 		}
 
 		/// <summary>
@@ -649,6 +650,7 @@ namespace Mono.CSharp {
 		static public void ReferenceAssembly (Assembly a)
 		{
 			RootNamespace.Global.AddAssemblyReference (a);
+			RootNamespace.ComputeNamespaces ();
 		}
 		
 	}
@@ -702,7 +704,7 @@ namespace Mono.CSharp {
 				if (s.StartsWith ("-r:") || s.StartsWith ("/r:") || s.StartsWith ("/reference:")){
 					string lib = s.Substring (s.IndexOf (':')+1);
 
-					Driver.LoadAssembly (lib, true);
+					Evaluator.LoadAssembly (lib);
 					continue;
 				}
 			}
@@ -711,7 +713,7 @@ namespace Mono.CSharp {
 
 		static public void LoadAssembly (string assembly)
 		{
-			Driver.LoadAssembly (assembly, true);
+			Evaluator.LoadAssembly (assembly);
 		}
 		
 		static public string help {

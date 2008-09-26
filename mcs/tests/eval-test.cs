@@ -1,7 +1,7 @@
 using System;
 using Mono.CSharp;
 
-class X {
+public class MyTest {
 	static void Run (string id, string stmt)
 	{
 		try {
@@ -40,6 +40,9 @@ class X {
 		Evaluator.Run ("using System; using System.Linq;");
 		Run ("LINQ-1", "var a = new int[]{1,2,3};\nfrom x in a select x;");
 		Run ("LINQ-2", "var a = from f in System.IO.Directory.GetFiles (\"/tmp\") where f == \"passwd\" select f;");
+
+		Evaluator.ReferenceAssembly (typeof (MyTest).Assembly);
+		Evaluate ("assembly reference test", "typeof (MyTest) != null;", true);
 	}
 	
 }
