@@ -443,10 +443,6 @@ namespace Mono.CSharp {
 
 		public void AddConstructor (Constructor c)
 		{
-			if (c.Name != MemberName.Name) {
-				Report.Error (1520, c.Location, "Class, struct, or interface method must have a return type");
-			}
-
 			bool is_static = (c.ModFlags & Modifiers.STATIC) != 0;
 			if (!AddToContainer (c, is_static ?
 				ConstructorBuilder.ConstructorName : ConstructorBuilder.TypeConstructorName))
@@ -2636,7 +2632,7 @@ namespace Mono.CSharp {
 			}
 
 			Constructor c = new Constructor (this, MemberName.Name, mods,
-				Parameters.EmptyReadOnlyParameters,
+				null, Parameters.EmptyReadOnlyParameters,
 				new GeneratedBaseInitializer (Location),
 				Location);
 			
@@ -4521,10 +4517,10 @@ namespace Mono.CSharp {
 		// The spec claims that static is not permitted, but
 		// my very own code has static constructors.
 		//
-		public Constructor (DeclSpace parent, string name, int mod, Parameters args,
+		public Constructor (DeclSpace parent, string name, int mod, Attributes attrs, Parameters args,
 				    ConstructorInitializer init, Location loc)
 			: base (parent, null, null, mod, AllowedModifiers,
-				new MemberName (name, loc), null, args)
+				new MemberName (name, loc), attrs, args)
 		{
 			Initializer = init;
 		}

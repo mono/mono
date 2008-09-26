@@ -1507,7 +1507,7 @@ namespace Mono.CSharp {
 	/// </remarks>
 	public class Block : Statement {
 		public Block    Parent;
-		public readonly Location  StartLocation;
+		public Location StartLocation;
 		public Location EndLocation = Location.Null;
 
 		public ExplicitBlock Explicit;

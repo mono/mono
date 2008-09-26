@@ -2005,34 +2005,15 @@ conversion_operator_declarator
 	;
 
 constructor_declaration
-	: opt_attributes
-	  opt_modifiers
-	  constructor_declarator
+	: constructor_declarator
 	  constructor_body
 	  { 
-		Constructor c = (Constructor) $3;
-		c.Block = (ToplevelBlock) $4;
-		c.OptAttributes = (Attributes) $1;
-		int mods = (int) $2;
+		Constructor c = (Constructor) $1;
+		c.Block = (ToplevelBlock) $2;
 		
 		if (RootContext.Documentation != null)
 			c.DocComment = ConsumeStoredComment ();
 
-		if ((mods & Modifiers.STATIC) != 0 && c.Name == current_container.MemberName.Name) {
-			if ((mods & Modifiers.Accessibility) != 0){
-				Report.Error (515, c.Location,
-					"`{0}': static constructor cannot have an access modifier",
-					c.GetSignatureForError ());
-			}
-	
-			if (c.Initializer != null){
-				Report.Error (514, c.Location,
-					"`{0}': static constructor cannot have an explicit `this' or `base' constructor call",
-					c.GetSignatureForError ());
-			}
-		}
-
-		c.ModFlags = Modifiers.Check (Constructor.AllowedModifiers, mods, Modifiers.PRIVATE, c.Location);
 		current_container.AddConstructor (c);
 
 		current_local_parameters = null;
@@ -2042,19 +2023,9 @@ constructor_declaration
 	;
 
 constructor_declarator
-	: constructor_header
-	  {
-		$$ = $1;
-	  }
-	| constructor_header constructor_initializer
-	  {
-		((Constructor)$1).Initializer = (ConstructorInitializer) $2;
-		$$ = $1;
-	  }
-	;
-
-constructor_header
-	: IDENTIFIER
+	: opt_attributes
+	  opt_modifiers
+	  IDENTIFIER
 	  {
 		if (RootContext.Documentation != null) {
 			tmpComment = Lexer.consume_doc_comment ();
@@ -2063,18 +2034,51 @@ constructor_header
 	  }
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
-		LocatedToken lt = (LocatedToken) $1;
-		current_local_parameters = (Parameters) $4;
-		current_block = new ToplevelBlock (null, current_local_parameters, null, lt.Location);
+		current_local_parameters = (Parameters) $6;  
+		
+		//
+		// start block here, so possible anonymous methods inside
+		// constructor initializer can get correct parent block
+		//
+	  	start_block (lexer.Location);
+	  }
+	  opt_constructor_initializer
+	  {
+		LocatedToken lt = (LocatedToken) $3;
+		int mods = (int) $2;
+		ConstructorInitializer ci = (ConstructorInitializer) $9;
 
-		$$ = new Constructor (current_class, lt.Value, 0, current_local_parameters,
-				      null, lt.Location);
+		Constructor c = new Constructor (current_class, lt.Value, mods,
+			(Attributes) $1, current_local_parameters, ci, lt.Location);
+		
+		if (lt.Value != current_container.MemberName.Name) {
+			Report.Error (1520, c.Location, "Class, struct, or interface method must have a return type");
+		} else if ((mods & Modifiers.STATIC) != 0) {
+			if ((mods & Modifiers.Accessibility) != 0){
+				Report.Error (515, c.Location,
+					"`{0}': static constructor cannot have an access modifier",
+					c.GetSignatureForError ());
+			}
+			if (ci != null) {
+				Report.Error (514, c.Location,
+					"`{0}': static constructor cannot have an explicit `this' or `base' constructor call",
+					c.GetSignatureForError ());
+			
+			}
+		}
+		
+		$$ = c;
 	  }
 	;
 
 constructor_body
 	: block_prepared
 	| SEMICOLON 		{ current_block = null; $$ = null; }
+	;
+
+opt_constructor_initializer
+	: /* Empty */
+	| constructor_initializer
 	;
 
 constructor_initializer
@@ -4182,6 +4186,7 @@ block_prepared
 	: OPEN_BRACE
 	  {
 		++lexer.parsing_block;
+		current_block.StartLocation = GetLocation ($1);
 	  }
 	  opt_statement_list CLOSE_BRACE 
 	  {
@@ -5603,7 +5608,7 @@ MakeName (MemberName class_name)
 {
 	Namespace ns = current_namespace.NS;
 
-	if (current_container.Name.Length == 0){
+	if (current_container == RootContext.ToplevelTypes) {
 		if (ns.Name.Length != 0)
 			return new MemberName (ns.MemberName, class_name);
 		else

@@ -1629,7 +1629,7 @@ namespace Mono.CSharp {
 				a_type.SetParameterInfo (null);
 
 			Constructor c = new Constructor (a_type, name, Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
-				new Parameters (ctor_params), null, loc);
+				null, new Parameters (ctor_params), null, loc);
 			c.Block = new ToplevelBlock (c.Parameters, loc);
 
 			// 
