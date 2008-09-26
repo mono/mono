@@ -1,3 +1,10 @@
+2008-09-26  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r114163.
+	
+	* mini-trampolines.c (mono_delegate_trampoline): Add wrappers even if
+	delegate->method_ptr is set. Fixes #428054.
+
 2008-09-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_wrapper_info): Omit the klass name from
