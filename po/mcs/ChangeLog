@@ -1,3 +1,8 @@
+2008-09-26  Daniel Nauck  <dna@mono-project.de>
+
+	* de.po : added german translation
+	* LINGUAS : added de
+
 2008-09-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ja.po : ongoing work.
