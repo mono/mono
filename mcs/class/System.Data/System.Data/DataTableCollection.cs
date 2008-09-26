@@ -19,10 +19,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -53,8 +53,7 @@ namespace System.Data
 #if NET_2_0
 	sealed
 #endif
-	class DataTableCollection : InternalDataCollectionBase
-	{
+	class DataTableCollection : InternalDataCollectionBase {
 		DataSet dataSet;
 		DataTable[] mostRecentTables;
 
@@ -65,31 +64,31 @@ namespace System.Data
 		{
 			this.dataSet = dataSet;
 		}
-		
+
 		#endregion
-		
+
 		#region Properties
 
-		public DataTable this[int index] {
+		public DataTable this [int index] {
 			get {
 				if (index < 0 || index >= List.Count)
-					throw new IndexOutOfRangeException(String.Format("Cannot find table {0}", index));
-				return (DataTable)(List[index]);
+					throw new IndexOutOfRangeException (String.Format ("Cannot find table {0}", index));
+				return (DataTable)(List [index]);
 			}
 		}
 
-		public DataTable this[string name] {
-			get { 
+		public DataTable this [string name] {
+			get {
 				int index = IndexOf (name, true);
-				return index < 0 ? null : (DataTable) List[index];
+				return index < 0 ? null : (DataTable) List [index];
 			}
 		}
 
 #if NET_2_0
 		public DataTable this [string name, string tbNamespace] {
-			get { 
+			get {
 				int index = IndexOf (name, tbNamespace, true);
-				return index < 0 ? null : (DataTable) List[index];
+				return index < 0 ? null : (DataTable) List [index];
 			}
 		}
 #endif
@@ -99,7 +98,7 @@ namespace System.Data
 		}
 
 		#endregion
-	
+
 		#region Methods
 
 		public
@@ -121,22 +120,22 @@ namespace System.Data
 		{
 			OnCollectionChanging (new CollectionChangeEventArgs (CollectionChangeAction.Add, table));
 			// check if the reference is a null reference
-			if(table == null)
-				throw new ArgumentNullException("table");
+			if (table == null)
+				throw new ArgumentNullException ("table");
 
 			// check if the list already contains this tabe.
-			if(List.Contains(table))
-				throw new ArgumentException("DataTable already belongs to this DataSet.");
+			if (List.Contains (table))
+				throw new ArgumentException ("DataTable already belongs to this DataSet.");
 
-			// check if table is part of another DataSet 
+			// check if table is part of another DataSet
 			if (table.DataSet != null && table.DataSet != this.dataSet)
 				throw new ArgumentException ("DataTable already belongs to another DataSet");
 
 			// if the table name is null or empty string.
-			// give her a name. 
+			// give her a name.
 			if (table.TableName == null || table.TableName == string.Empty)
 				NameTable (table);
-		    
+
 			// check if the collection has a table with the same name.
 #if !NET_2_0
 			int tmp = IndexOf (table.TableName);
@@ -146,11 +145,9 @@ namespace System.Data
 			// if we found a table with same name we have to check
 			// that it is the same case.
 			// indexof can return a table with different case letters.
-			if (tmp != -1)
-			{
-				if(table.TableName == this[tmp].TableName)
-					throw new DuplicateNameException("A DataTable named '" + table.TableName + "' already belongs to this DataSet.");
-			}
+			if (tmp != -1 &&
+			    table.TableName == this [tmp].TableName)
+				throw new DuplicateNameException ("A DataTable named '" + table.TableName + "' already belongs to this DataSet.");
 
 			List.Add (table);
 			table.dataSet = dataSet;
@@ -177,7 +174,7 @@ namespace System.Data
 		}
 #endif
 
-		public void AddRange (DataTable[] tables)
+		public void AddRange (DataTable [] tables)
 		{
 			if (dataSet != null && dataSet.InitInProgress) {
 				mostRecentTables = tables;
@@ -209,7 +206,7 @@ namespace System.Data
 
 		public bool CanRemove (DataTable table)
 		{
-			return CanRemove(table, false);
+			return CanRemove (table, false);
 		}
 
 		public void Clear ()
@@ -221,7 +218,7 @@ namespace System.Data
 		{
 			return (-1 != IndexOf (name, false));
 		}
-		
+
 #if NET_2_0
 		public bool Contains (string name, string tableNamespace)
 		{
@@ -265,10 +262,10 @@ namespace System.Data
 		public void Remove (DataTable table)
 		{
 			OnCollectionChanging (new CollectionChangeEventArgs (CollectionChangeAction.Remove, table));
-			if (CanRemove(table, true))
+			if (CanRemove (table, true))
 				table.dataSet = null;
 
-			List.Remove(table);
+			List.Remove (table);
 			table.dataSet = null;
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, table));
 		}
@@ -277,7 +274,7 @@ namespace System.Data
 		{
 			int index = IndexOf (name, false);
 			if (index == -1)
-				throw new ArgumentException ("Table " + name + " does not belong to this DataSet"); 
+				throw new ArgumentException ("Table " + name + " does not belong to this DataSet");
 			RemoveAt (index);
 		}
 
@@ -294,7 +291,7 @@ namespace System.Data
 
 		public void RemoveAt (int index)
 		{
-			Remove(this[index]);
+			Remove (this [index]);
 		}
 
 		#endregion
@@ -345,7 +342,7 @@ namespace System.Data
 					return index;
 
 			} while (index != -1 && index < Count);
-			
+
 			if (count == 1)
 				return match;
 
@@ -369,8 +366,7 @@ namespace System.Data
 		private int IndexOf (string name, bool error, int start)
 		{
 			int count = 0, match = -1;
-			for (int i = start; i < List.Count; i++)
-			{
+			for (int i = start; i < List.Count; i++) {
 				String name2 = ((DataTable) List[i]).TableName;
 				if (String.Compare (name, name2, false) == 0)
 					return i;
@@ -398,16 +394,16 @@ namespace System.Data
 
 			Table.TableName = Name + i;
 		}
-		
+
 		// check if a table can be removed from this collectiuon.
 		// if the table can not be remved act according to throwException parameter.
 		// if it is true throws an Exception, else return false.
-		private bool CanRemove(DataTable table, bool throwException)
+		private bool CanRemove (DataTable table, bool throwException)
 		{
 			// check if table is null reference
 			if (table == null) {
 				if (throwException)
-					throw new ArgumentNullException("table");
+					throw new ArgumentNullException ("table");
 				return false;
 			}
 
@@ -415,14 +411,14 @@ namespace System.Data
 			if (table.DataSet != this.dataSet) {
 				if (!throwException)
 					return false;
-				throw new ArgumentException("Table " + table.TableName + " does not belong to this DataSet.");
+				throw new ArgumentException ("Table " + table.TableName + " does not belong to this DataSet.");
 			}
-			
+
 			// check the table has a relation attached to it.
 			if (table.ParentRelations.Count > 0 || table.ChildRelations.Count > 0) {
 				if (!throwException)
 					return false;
-				throw new ArgumentException("Cannot remove a table that has existing relations. Remove relations first.");
+				throw new ArgumentException ("Cannot remove a table that has existing relations. Remove relations first.");
 			}
 
 			// now we check if any ForeignKeyConstraint is referncing 'table'.
