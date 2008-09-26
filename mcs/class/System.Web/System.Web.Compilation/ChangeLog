@@ -1,3 +1,9 @@
+2008-09-26  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: when creating a cache entry for a virtual path,
+	make it depend on a list of files built recursively from all the
+	virtual path's dependencies. Fixes bug #430114
+
 2008-09-24  Andreia Gaita <avidigal@novell.com> 
  
 	* AspParser.cs: When parsing text which contain xml tags that resemble

@@ -288,6 +288,11 @@ namespace System.Web.Compilation {
 		// Maps the virtual path of a non-page build to the assembly that contains the
 		// compiled type.
 		static Dictionary <string, Assembly> nonPagesCache;
+
+		// Keeps the cache dependencies of each item currently stored in the
+		// HttpRuntime.InternalCache. It is used to build a hierarchy of dependencies (for
+		// nested controls)
+		static Dictionary <string, List <string>> dependencyCache;
 		
 		static List <Assembly> referencedAssemblies = new List <Assembly> ();
 		
@@ -318,10 +323,9 @@ namespace System.Web.Compilation {
 
 			buildCache = new Dictionary <string, BuildCacheItem> (comparer);
 			nonPagesCache = new Dictionary <string, Assembly> (comparer);
+			dependencyCache = new Dictionary <string, List <string>> (comparer);
 			compilationTickets = new Dictionary <string, object> (comparer);
-
-			AppDomain domain = AppDomain.CurrentDomain;
-			hosted = (domain.GetData (ApplicationHost.MonoHostedDataKey) as string) == "yes";
+			hosted = (AppDomain.CurrentDomain.GetData (ApplicationHost.MonoHostedDataKey) as string) == "yes";
 		}
 		
 		internal static void ThrowNoProviderException (string extension)
@@ -1138,18 +1142,24 @@ namespace System.Web.Compilation {
 			int count;
 			
 			if (col != null && (count = col.Count) > 0) {
-				string[] files = new string [count];
-				int fileCount = 0;
+				List <string> files = new List <string> (), innerDeps;
 				string file;
 				
 				foreach (object o in col) {
 					file = o as string;
 					if (String.IsNullOrEmpty (file))
 						continue;
-					files [fileCount++] = req.MapPath (file);
+					
+					files.Add (req.MapPath (file));
+					if (dependencyCache.TryGetValue (file, out innerDeps)) {
+						foreach (string f in innerDeps)
+							if (!files.Contains (f))
+								files.Add (f);
+					}
 				}
 
-				dep = new CacheDependency (files);
+				dep = new CacheDependency (files.ToArray ());
+				dependencyCache.Add (virtualPath, files);
 			} else
 				dep = null;
 			
@@ -1177,6 +1187,9 @@ namespace System.Web.Compilation {
 				string vpAbsolute = virtualPath.Absolute;
 				if (buildCache.ContainsKey (vpAbsolute))
 					buildCache.Remove (vpAbsolute);
+
+				if (dependencyCache.ContainsKey (vpAbsolute))
+					dependencyCache.Remove (vpAbsolute);
 				
 				Assembly asm;
 				
@@ -1199,6 +1212,8 @@ namespace System.Web.Compilation {
 
 						if (buildCache.ContainsKey (key))
 							buildCache.Remove (key);
+						if (dependencyCache.ContainsKey (key))
+							dependencyCache.Remove (key);
 					}
 				}
 				
