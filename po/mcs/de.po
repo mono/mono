@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://www.mono-project.com/Bugs\n"
 "POT-Creation-Date: 2008-09-19 13:28-0400\n"
-"PO-Revision-Date: 2008-09-26 11:45+0100\n"
+"PO-Revision-Date: 2008-09-26 13:43+0100\n"
 "Last-Translator: Daniel Nauck <dna@mono-project.de>\n"
 "Language-Team: http://www.mono-project.de\n"
 "MIME-Version: 1.0\n"
@@ -162,12 +162,12 @@ msgstr ""
 #: ../mcs/mcs/attribute.cs:1809
 #, csharp-format
 msgid "`{0}' is obsolete: `{1}'"
-msgstr ""
+msgstr "`{0}' ist veraltet: `{1}'"
 
 #: ../mcs/mcs/cs-tokenizer.cs:1276
 #: ../mcs/mcs/cs-tokenizer.cs:1346
 msgid "Invalid number"
-msgstr "Ungültige Nummer"
+msgstr "Ungültige Zahl"
 
 #: ../mcs/mcs/cs-tokenizer.cs:1532
 #, csharp-format
@@ -190,21 +190,21 @@ msgstr ""
 
 #: ../mcs/mcs/cs-tokenizer.cs:2201
 msgid "Numeric constant too long"
-msgstr ""
+msgstr "Numerische Konstante ist zu lang"
 
 #: ../mcs/mcs/cs-tokenizer.cs:2206
 msgid "Invalid preprocessor directive"
-msgstr ""
+msgstr "Ungültige Präprozessor Direktive"
 
 #: ../mcs/mcs/cs-tokenizer.cs:2213
 #, csharp-format
 msgid "Unexpected processor directive ({0})"
-msgstr ""
+msgstr "Unerwartete Prozessor Direktive ({0})"
 
 #: ../mcs/mcs/cs-tokenizer.cs:2218
 #, csharp-format
 msgid "Expected `{0}'"
-msgstr ""
+msgstr "`{0}' erwartet"
 
 #: ../mcs/mcs/cs-tokenizer.cs:2224
 msgid "Cannot define or undefine preprocessor symbols after first token in file"
@@ -221,19 +221,19 @@ msgstr ""
 #: ../mcs/mcs/cs-tokenizer.cs:2280
 #: ../mcs/mcs/cs-tokenizer.cs:3003
 msgid "Expected `#endif' directive"
-msgstr ""
+msgstr "`#endif' Direktive erwartet"
 
 #: ../mcs/mcs/cs-tokenizer.cs:2313
 #: ../mcs/mcs/cs-tokenizer.cs:2334
 #: ../mcs/mcs/cs-tokenizer.cs:2365
 #: ../mcs/mcs/cs-tokenizer.cs:3001
 msgid "#endregion directive expected"
-msgstr ""
+msgstr "`#endregion' Direktive erwartet"
 
 #: ../mcs/mcs/cs-tokenizer.cs:2420
 #, csharp-format
 msgid "#error: '{0}'"
-msgstr ""
+msgstr "#Fehler: '{0}'"
 
 #: ../mcs/mcs/cs-tokenizer.cs:2440
 msgid "The line number specified for #line directive is missing or invalid"
@@ -241,7 +241,7 @@ msgstr ""
 
 #: ../mcs/mcs/cs-tokenizer.cs:2444
 msgid "Wrong preprocessor directive"
-msgstr ""
+msgstr "Falsche Präprozessor Direktive"
 
 #: ../mcs/mcs/cs-tokenizer.cs:2474
 #: ../mcs/mcs/cs-tokenizer.cs:2834
@@ -250,7 +250,7 @@ msgstr ""
 
 #: ../mcs/mcs/cs-tokenizer.cs:2490
 msgid "Unterminated string literal"
-msgstr ""
+msgstr "Nicht beendetes Zeichenfolgeliteral"
 
 #: ../mcs/mcs/cs-tokenizer.cs:2536
 msgid "The `partial' modifier can be used only immediately before `class', `struct', `interface', or `void' keyword"
@@ -258,7 +258,7 @@ msgstr ""
 
 #: ../mcs/mcs/cs-tokenizer.cs:2565
 msgid "Identifier too long (limit is 512 chars)"
-msgstr ""
+msgstr "Der Bezeichner ist zu lang. (Maximal 512 Zeichen)"
 
 #: ../mcs/mcs/cs-tokenizer.cs:2621
 #, csharp-format
@@ -267,7 +267,7 @@ msgstr ""
 
 #: ../mcs/mcs/cs-tokenizer.cs:2736
 msgid "End-of-file found, '*/' expected"
-msgstr ""
+msgstr "Dateiende gefunden. `*/' erwartet."
 
 #: ../mcs/mcs/cs-tokenizer.cs:2873
 msgid "Keyword, identifier, or string expected after verbatim specifier: @"
@@ -398,7 +398,7 @@ msgstr ""
 #: ../mcs/mcs/class.cs:2353
 #, csharp-format
 msgid "`{0}' cannot be both abstract and sealed"
-msgstr ""
+msgstr "`{0}' Eine Klasse kann nicht gleichzeitig statisch und versiegelt sein"
 
 #: ../mcs/mcs/class.cs:2358
 #, csharp-format
@@ -471,7 +471,7 @@ msgstr ""
 #: ../mcs/mcs/class.cs:2818
 #, csharp-format
 msgid "`{0}': Extension methods must be declared static"
-msgstr ""
+msgstr "`{0}': Erweiterungsmethoden müssen statisch sein"
 
 #: ../mcs/mcs/class.cs:2822
 #, csharp-format
@@ -678,7 +678,7 @@ msgstr ""
 #: ../mcs/mcs/class.cs:4256
 #, csharp-format
 msgid "`{0}': Extension methods must be defined in a non-generic static class"
-msgstr ""
+msgstr "`{0}': Erweiterungsmethoden müssen in einer nicht generischen statischen Klasse definiert werden"
 
 #: ../mcs/mcs/class.cs:4312
 #, csharp-format
@@ -862,7 +862,7 @@ msgstr ""
 #: ../mcs/mcs/class.cs:6392
 #, csharp-format
 msgid "`{0}': abstract properties cannot have private accessors"
-msgstr ""
+msgstr "`{0}': Abstrakte Eigenschaften können keine privaten-Accessoren haben"
 
 #: ../mcs/mcs/class.cs:6454
 #, csharp-format
@@ -1226,12 +1226,12 @@ msgstr ""
 
 #: ../mcs/mcs/delegate.cs:947
 msgid "Method name expected"
-msgstr ""
+msgstr "Methodennamen erwartet"
 
 #: ../mcs/mcs/doc.cs:1007
 #, csharp-format
 msgid "Error generating XML documentation file `{0}' (`{1}')"
-msgstr ""
+msgstr "Fehler beim erstellen der XML-Dokumentationsdatei `{0}' (`{1}')"
 
 #: ../mcs/mcs/driver.cs:152
 #: ../mcs/mcs/driver.cs:707
@@ -1252,7 +1252,7 @@ msgstr ""
 #: ../mcs/mcs/driver.cs:205
 #, csharp-format
 msgid "Compilation aborted in file `{0}', {1}"
-msgstr ""
+msgstr "Kompilierung abgebrochen in Datei `{0}', {1}"
 
 #: ../mcs/mcs/driver.cs:272
 msgid "Invalid target type for -target. Valid options are `exe', `winexe', `library' or `module'"
@@ -1284,7 +1284,7 @@ msgstr ""
 #: ../mcs/mcs/driver.cs:662
 #: ../mcs/mcs/driver.cs:672
 msgid "No files to compile were specified"
-msgstr ""
+msgstr "Es wurden keine Dateien zum kompilieren angegeben"
 
 #: ../mcs/mcs/driver.cs:802
 msgid "Warning level must be in the range 0-4"
@@ -1316,7 +1316,7 @@ msgstr ""
 
 #: ../mcs/mcs/driver.cs:892
 msgid "Missing argument to --linkres"
-msgstr ""
+msgstr "Fehlendes Argument bei --linkres"
 
 #: ../mcs/mcs/driver.cs:903
 msgid "Compatibility: Use -res:VALUE instead of --res VALUE"
@@ -1324,7 +1324,7 @@ msgstr ""
 
 #: ../mcs/mcs/driver.cs:906
 msgid "Missing argument to --resource"
-msgstr ""
+msgstr "Fehlendes Argument bei --resource"
 
 #: ../mcs/mcs/driver.cs:916
 msgid "Compatibility: Use -target:KIND instead of --target KIND"
@@ -1356,15 +1356,15 @@ msgstr ""
 
 #: ../mcs/mcs/driver.cs:1011
 msgid "--wlevel requires a value from 0 to 4"
-msgstr ""
+msgstr "--wlevel benötigt einen Wert zwischen 0 und 4"
 
 #: ../mcs/mcs/driver.cs:1020
 msgid "--mcs-debug requires an argument"
-msgstr ""
+msgstr "--mcs-debug benötigt ein Argument"
 
 #: ../mcs/mcs/driver.cs:1027
 msgid "Invalid argument to --mcs-debug"
-msgstr ""
+msgstr "Ungültiges Argument für --mcs-debug"
 
 #: ../mcs/mcs/driver.cs:1037
 msgid "Compatibility: Use -recurse:PATTERN option instead --recurse PATTERN"
@@ -1372,7 +1372,7 @@ msgstr ""
 
 #: ../mcs/mcs/driver.cs:1039
 msgid "--recurse requires an argument"
-msgstr ""
+msgstr "--recurse benötigt ein Argument"
 
 #: ../mcs/mcs/driver.cs:1051
 msgid "Compatibility: Use -debug option instead of -g or --debug"
@@ -1384,7 +1384,7 @@ msgstr ""
 
 #: ../mcs/mcs/driver.cs:1076
 msgid "Couldn't run pkg-config: "
-msgstr ""
+msgstr "Kann pkg-config nicht ausführen:"
 
 #: ../mcs/mcs/driver.cs:1084
 msgid "Specified package did not return any information"
@@ -1392,7 +1392,7 @@ msgstr ""
 
 #: ../mcs/mcs/driver.cs:1091
 msgid "Error running pkg-config. Check the above output."
-msgstr ""
+msgstr "Fehler beim ausführen von pkg-config. Bitte prüfen Sie die Ausgabe oben."
 
 #: ../mcs/mcs/driver.cs:1187
 #, csharp-format
@@ -1411,11 +1411,11 @@ msgstr ""
 
 #: ../mcs/mcs/driver.cs:1255
 msgid "-recurse requires an argument"
-msgstr ""
+msgstr "-recurse benötigt ein Argument"
 
 #: ../mcs/mcs/driver.cs:1264
 msgid "-reference requires an argument"
-msgstr ""
+msgstr "-reference benötigt ein Argument"
 
 #: ../mcs/mcs/driver.cs:1286
 #: ../mcs/mcs/driver.cs:1298
@@ -1425,20 +1425,20 @@ msgstr ""
 #: ../mcs/mcs/driver.cs:1445
 #: ../mcs/mcs/driver.cs:1452
 msgid " requires an argument"
-msgstr ""
+msgstr "benötigt ein Argument"
 
 #: ../mcs/mcs/driver.cs:1326
 msgid "/lib requires an argument"
-msgstr ""
+msgstr "/lib benötigt ein Argument"
 
 #: ../mcs/mcs/driver.cs:1388
 msgid "/nowarn requires an argument"
-msgstr ""
+msgstr "/nowarn benötigt ein Argument"
 
 #: ../mcs/mcs/driver.cs:1482
 #, csharp-format
 msgid "Invalid option `{0}' for /langversion. It must be either `ISO-1', `ISO-2' or `Default'"
-msgstr ""
+msgstr "Ungültige Option für /langversion. Es muss entweder `ISO-1', `ISO-2' oder `Default' sein"
 
 #: ../mcs/mcs/driver.cs:1498
 #, csharp-format
@@ -1452,11 +1452,11 @@ msgstr ""
 
 #: ../mcs/mcs/driver.cs:1540
 msgid "Invalid reference alias '"
-msgstr ""
+msgstr "Ungültiger Referenz Alias '"
 
 #: ../mcs/mcs/driver.cs:1545
 msgid "Invalid extern alias for /reference. Alias '"
-msgstr ""
+msgstr "Ungültiger externer Alias für /reference. Alias '"
 
 #: ../mcs/mcs/driver.cs:1611
 msgid "If no source files are specified you must specify the output file with -out:"
@@ -1831,7 +1831,7 @@ msgstr ""
 
 #: ../mcs/mcs/enum.cs:158
 msgid "Type byte, sbyte, short, ushort, int, uint, long or ulong expected"
-msgstr ""
+msgstr "Typ byte, sbyte, short, ushort, int, uint, long oder ulong erwartet"
 
 #: ../mcs/mcs/eval.cs:393
 msgid "Detection Parsing Error"
@@ -2024,12 +2024,12 @@ msgstr ""
 #: ../mcs/mcs/expression.cs:7269
 #, csharp-format
 msgid "Alias `{0}' not found"
-msgstr ""
+msgstr "Alias `{0}' wurde nicht gefunden"
 
 #: ../mcs/mcs/expression.cs:7280
 #, csharp-format
 msgid "Alias `{0}' cannot be used with '::' since it denotes a type. Consider replacing '::' with '.'"
-msgstr ""
+msgstr "Der Alias `{0}' kann nicht mit '::' verwendet werden, da der Alias auf einen Typ verweist. Verwenden Sie '.' stattdessen."
 
 #: ../mcs/mcs/expression.cs:7296
 #, csharp-format
@@ -2187,11 +2187,11 @@ msgstr ""
 
 #: ../mcs/mcs/flowanalysis.cs:1438
 msgid "Use of unassigned local variable `"
-msgstr ""
+msgstr "Verwendung der nicht zugewiesenen lokalen Variable `"
 
 #: ../mcs/mcs/flowanalysis.cs:1508
 msgid "Use of possibly unassigned field `"
-msgstr ""
+msgstr "Verwendung eines möglicherweise nicht zugewiesenen Feldes `"
 
 #: ../mcs/mcs/generic.cs:191
 msgid "The new() constraint must be the last constraint specified"
@@ -2283,7 +2283,7 @@ msgstr ""
 #: ../mcs/mcs/generic.cs:1365
 #, csharp-format
 msgid "Cannot find type `{0}'<...>"
-msgstr ""
+msgstr "Kann Typ `{0}'<...> nicht finden"
 
 #: ../mcs/mcs/generic.cs:1372
 #, csharp-format
@@ -2389,7 +2389,7 @@ msgstr ""
 #: ../mcs/mcs/literal.cs:79
 #, csharp-format
 msgid "Cannot convert null to `{0}' because it is a value type"
-msgstr ""
+msgstr "NULL kann nicht in `{0}' konvertiert werden, da dies ein Werttyp ist, der nicht auf NULL festgelegt werden kann"
 
 #: ../mcs/mcs/literal.cs:323
 #, csharp-format
@@ -2427,12 +2427,12 @@ msgstr ""
 #: ../mcs/mcs/namespace.cs:259
 #, csharp-format
 msgid "The type or namespace name `{0}' could not be found in the global namespace (are you missing an assembly reference?)"
-msgstr ""
+msgstr "Der Typ oder Namespacename `{0}' konnte im globalen Namesapce nicht gefunden werden. Fehlt ein Assemblyverweis?"
 
 #: ../mcs/mcs/namespace.cs:380
 #, csharp-format
 msgid "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?"
-msgstr ""
+msgstr "Der Typ oder Namespacename `{0}' existiert nicht im Namespace `{1}'. Fehlt ein Assemblyverweis?"
 
 #: ../mcs/mcs/namespace.cs:387
 #, csharp-format
@@ -2452,7 +2452,7 @@ msgstr ""
 #: ../mcs/mcs/namespace.cs:669
 #, csharp-format
 msgid "The extern alias `{0}' was not specified in -reference option"
-msgstr ""
+msgstr "Der externe Alias `{0}' wurde nicht in der -reference-Option angegeben."
 
 #: ../mcs/mcs/namespace.cs:878
 #: ../mcs/mcs/namespace.cs:900
@@ -2461,7 +2461,7 @@ msgstr ""
 
 #: ../mcs/mcs/namespace.cs:924
 msgid "An extern alias declaration must precede all other elements"
-msgstr ""
+msgstr "Eine externe Aliasdeklaration muss allen anderen Elementen vorangehen"
 
 #: ../mcs/mcs/namespace.cs:942
 #, csharp-format
@@ -2485,7 +2485,7 @@ msgstr ""
 #: ../mcs/mcs/namespace.cs:1157
 #, csharp-format
 msgid "The type or namespace name `{0}' could not be found. Are you missing a using directive or an assembly reference?"
-msgstr ""
+msgstr "Der Typ oder Namespacename `{0}' konnte nicht gefunden werden. Fehlt eine using-Direktive oder ein Assemblyverweis?"
 
 #: ../mcs/mcs/nullable.cs:980
 msgid "An expression tree cannot contain a coalescing operator with null left side"
@@ -2497,7 +2497,7 @@ msgstr ""
 
 #: ../mcs/mcs/parameter.cs:277
 msgid "Invalid parameter type `void'"
-msgstr ""
+msgstr "Ungültiger Parametertyp `void'"
 
 #: ../mcs/mcs/parameter.cs:288
 msgid "An out parameter cannot have the `In' attribute"
@@ -2572,7 +2572,7 @@ msgstr ""
 #: ../mcs/mcs/pending.cs:611
 #, csharp-format
 msgid "`{0}' does not implement interface member `{1}'"
-msgstr ""
+msgstr "`{0}' implementiert den Schnittstellenmember `{1}' nicht"
 
 #: ../mcs/mcs/pending.cs:615
 #, csharp-format
@@ -2582,7 +2582,7 @@ msgstr ""
 #: ../mcs/mcs/report.cs:574
 #, csharp-format
 msgid "Feature `{0}' is not available in Mono mcs1 compiler. Consider using the `gmcs' compiler instead"
-msgstr ""
+msgstr "Das Feature `{0}' ist im Mono mcs1 Kompiler nicht verfügbar. Benutzen Sie stattdessen bitte den `gmcs' Kompiler."
 
 #: ../mcs/mcs/report.cs:582
 #, csharp-format
@@ -2592,7 +2592,7 @@ msgstr ""
 #: ../mcs/mcs/report.cs:639
 #, csharp-format
 msgid "Your .NET Runtime does not support `{0}'. Please use the latest Mono runtime instead."
-msgstr ""
+msgstr "Ihre .NET Laufzeitumgebung unterstützt kein `{0}'. Bitte benutzen Sie die letzte aktuelle Mono Laufzeitumgebung stattdessen."
 
 #: ../mcs/mcs/rootcontext.cs:438
 msgid "Unsafe code requires the `unsafe' command line option to be specified"
