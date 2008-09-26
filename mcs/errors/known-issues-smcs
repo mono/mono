@@ -18,8 +18,6 @@ cs0419-4.cs NO ERROR
 cs0419.cs NO ERROR
 cs0457-2.cs
 cs0457.cs
-cs0547-2.cs # new in GMCS; grammar issue
-cs0547.cs
 cs0610.cs
 cs0611.cs
 cs0647-14.cs
@@ -34,7 +32,6 @@ cs0737-2.cs
 cs0737.cs
 cs1041.cs # new in GMCS; grammar issue
 cs1502-2.cs
-cs1521-3.cs
 cs1525.cs
 cs1528.cs
 cs1533.cs IGNORE
