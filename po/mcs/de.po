@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://www.mono-project.com/Bugs\n"
 "POT-Creation-Date: 2008-09-19 13:28-0400\n"
-"PO-Revision-Date: 2008-09-26 13:43+0100\n"
+"PO-Revision-Date: 2008-09-26 15:14+0100\n"
 "Last-Translator: Daniel Nauck <dna@mono-project.de>\n"
 "Language-Team: http://www.mono-project.de\n"
 "MIME-Version: 1.0\n"
@@ -946,11 +946,11 @@ msgstr ""
 
 #: ../mcs/mcs/class.cs:7853
 msgid "The return type for ++ or -- operator must be the containing type or derived from the containing type"
-msgstr ""
+msgstr "Der Rückgabetyp für die Operatoren ++ und -- muss der enthaltene Typ sein oder vom enthaltenen Typ abgeleitet sein"
 
 #: ../mcs/mcs/class.cs:7858
 msgid "The parameter type for ++ or -- operator must be the containing type"
-msgstr ""
+msgstr "Der Parameter für den ++ oder -- Operator muss der enthaltene Typ sein"
 
 #: ../mcs/mcs/class.cs:7865
 msgid "The parameter type of a unary operator must be the containing type"
@@ -1132,7 +1132,7 @@ msgstr ""
 
 #: ../mcs/mcs/decl.cs:1324
 msgid "Constraints are not allowed on non-generic declarations"
-msgstr ""
+msgstr "Einschränkungen sind nicht erlaubt für nicht generische Deklarationen"
 
 #: ../mcs/mcs/decl.cs:1368
 #, csharp-format
@@ -1615,7 +1615,7 @@ msgstr ""
 
 #: ../mcs/mcs/ecore.cs:1859
 msgid "Cannot modify the result of an unboxing conversion"
-msgstr ""
+msgstr "Das Ergebnis einer Unboxing-Konvertierung kann nicht geändert werden"
 
 #: ../mcs/mcs/ecore.cs:2427
 #, csharp-format
@@ -2195,15 +2195,15 @@ msgstr "Verwendung eines möglicherweise nicht zugewiesenen Feldes `"
 
 #: ../mcs/mcs/generic.cs:191
 msgid "The new() constraint must be the last constraint specified"
-msgstr ""
+msgstr "Die `new()'-Einschränkung muss als letzte Einschränkung definiert werden"
 
 #: ../mcs/mcs/generic.cs:204
 msgid "The `new()' constraint cannot be used with the `struct' constraint"
-msgstr ""
+msgstr "Die `new()'-Einschränkung kann nicht mit der `struct'-Einschränkung genutzt werden"
 
 #: ../mcs/mcs/generic.cs:210
 msgid "The `class' or `struct' constraint must be the first constraint specified"
-msgstr ""
+msgstr "Die `class'- oder `struct'-Einschränkung muss als erste Einschränkung definiert werden"
 
 #: ../mcs/mcs/generic.cs:249
 #, csharp-format
@@ -2218,7 +2218,7 @@ msgstr ""
 #: ../mcs/mcs/generic.cs:265
 #, csharp-format
 msgid "`{0}': cannot specify both a constraint class and the `class' or `struct' constraint"
-msgstr ""
+msgstr "`{0}': Eine Einschränkung kann nicht gleichzeitig mit einer `class'- oder `struct'-Einschränkung angegeben werden"
 
 #: ../mcs/mcs/generic.cs:282
 #: ../mcs/mcs/generic.cs:297
@@ -2249,12 +2249,12 @@ msgstr ""
 #: ../mcs/mcs/generic.cs:381
 #, csharp-format
 msgid "Type parameter `{0}' inherits conflicting constraints `{1}' and `{2}'"
-msgstr ""
+msgstr "Der Typparameter  `{0}' erbt die in Konflikt stehenden Einschränkungen  `{1}' und  `{2}'"
 
 #: ../mcs/mcs/generic.cs:395
 #, csharp-format
 msgid "Circular constraint dependency involving `{0}' and `{1}'"
-msgstr ""
+msgstr "Einschränkungsringabhängigkeit zwischen `{0}' und `{1}'"
 
 #: ../mcs/mcs/generic.cs:699
 #, csharp-format
@@ -2293,12 +2293,12 @@ msgstr ""
 #: ../mcs/mcs/generic.cs:1528
 #, csharp-format
 msgid "The type `{0}' must be a reference type in order to use it as type parameter `{1}' in the generic type or method `{2}'."
-msgstr ""
+msgstr "Der Typ `{0}' muss ein Referenztyp sein, damit er als `{1}'-Parameter in generischen Typ oder in der generischen Methode `{2}' verwendet werden kann."
 
 #: ../mcs/mcs/generic.cs:1537
 #, csharp-format
 msgid "The type `{0}' must be a non-nullable value type in order to use it as type parameter `{1}' in the generic type or method `{2}'."
-msgstr ""
+msgstr "Der Typ `{0}' darf keine NULL-Werte zulassen, wenn er als `{1}'-Parameter im generischen Typ oder in der generischen Methode `{2}' verwendet werden soll."
 
 #: ../mcs/mcs/generic.cs:1580
 #, csharp-format
