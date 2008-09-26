@@ -1,5 +1,10 @@
 2008-09-26  Mark Probst  <mark.probst@gmail.com>
 
+	* mini.c: Added comment explaining why delegate ctor icall
+	wrappers are compiled.
+
+2008-09-26  Mark Probst  <mark.probst@gmail.com>
+
 	* mini.c: Don't produce trampolines to delegate ctor icall
 	wrappers but compile them upfront.
 
