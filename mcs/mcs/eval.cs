@@ -36,6 +36,9 @@ namespace Mono.CSharp {
 	///   Evaluator.Interrupt method.
 	/// </remarks>
 	public class Evaluator {
+
+		static object evaluator_lock = new object ();
+		
 		static string current_debug_name;
 		static int count;
 		static Thread invoke_thread;
@@ -63,19 +66,21 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public static void Init (string [] args)
 		{
-			if (inited)
-				return;
-
-			RootContext.Version = LanguageVersion.Default;
-			driver = Driver.Create (args, false);
-			if (driver == null)
-				throw new Exception ("Failed to create compiler driver with the given arguments");
-
-			driver.ProcessDefaultConfig ();
-			CompilerCallableEntryPoint.Reset ();
-			Driver.LoadReferences ();
-			RootContext.EvalMode = true;
-			inited = true;
+			lock (evaluator_lock){
+				if (inited)
+					return;
+				
+				RootContext.Version = LanguageVersion.Default;
+				driver = Driver.Create (args, false);
+				if (driver == null)
+					throw new Exception ("Failed to create compiler driver with the given arguments");
+				
+				driver.ProcessDefaultConfig ();
+				CompilerCallableEntryPoint.Reset ();
+				Driver.LoadReferences ();
+				RootContext.EvalMode = true;
+				inited = true;
+			}
 		}
 
 		static void Init ()
@@ -126,8 +131,9 @@ namespace Mono.CSharp {
 			set {
 				if (value == null)
 					throw new ArgumentNullException ();
-				
-				interactive_base_class = value;
+
+				lock (evaluator_lock)
+					interactive_base_class = value;
 			}
 		}
 
@@ -175,41 +181,43 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public static string Evaluate (string input, out object result, out bool result_set)
 		{
-			result_set = false;
-			result = null;
-			
-			if (input == null || input.Length == 0)
-				return null;
-
-			if (!inited)
-				Init ();
-			
-			bool partial_input;
-			CSharpParser parser = ParseString (true, input, out partial_input);
-			if (parser == null){
-				if (partial_input)
-					return input;
+			lock (evaluator_lock){
+				result_set = false;
+				result = null;
 				
-				ParseString (false, input, out partial_input);
+				if (input == null || input.Length == 0)
+					return null;
+				
+				if (!inited)
+					Init ();
+				
+				bool partial_input;
+				CSharpParser parser = ParseString (true, input, out partial_input);
+				if (parser == null){
+					if (partial_input)
+						return input;
+					
+					ParseString (false, input, out partial_input);
+					return null;
+				}
+				
+				object parser_result = parser.InteractiveResult;
+				
+				if (!(parser_result is Class))
+					parser.CurrentNamespace.Extract (using_alias_list, using_list);
+				
+				result = ExecuteBlock (parser_result as Class, parser.undo);
+				//
+				// We use a reference to a compiler type, in this case
+				// Driver as a flag to indicate that this was a statement
+				//
+				if (result != typeof (NoValueSet))
+					result_set = true;
+				
 				return null;
 			}
-
-			object parser_result = parser.InteractiveResult;
-			
-			if (!(parser_result is Class))
-				parser.CurrentNamespace.Extract (using_alias_list, using_list);
-
-			result = ExecuteBlock (parser_result as Class, parser.undo);
-			//
-			// We use a reference to a compiler type, in this case
-			// Driver as a flag to indicate that this was a statement
-			//
-			if (result != typeof (NoValueSet))
-				result_set = true;
-
-			return null;
 		}
-
+			
 		/// <summary>
 		///   Executes the given expression or statement.
 		/// </summary>
@@ -222,10 +230,10 @@ namespace Mono.CSharp {
 		{
 			if (!inited)
 				Init ();
-			
+
 			object result;
 			bool result_set;
-			
+
 			bool ok = Evaluate (statement, out result, out result_set) == null;
 			
 			return ok;
@@ -557,10 +565,13 @@ namespace Mono.CSharp {
 			ns.Populate (using_alias_list, using_list);
 		}
 		
-		//
-		// Just a placeholder class, used as a sentinel to determine that the
-		// generated code did not set a value
-		class NoValueSet {
+		/// <summary>
+		///   A sentinel value used to indicate that no value was
+		///   was set by the compiled function.   This is used to
+		///   differentiate between a function not returning a
+		///   value and null.
+		/// </summary>
+		public class NoValueSet {
 		}
 
 		static internal FieldInfo LookupField (string name)
@@ -596,43 +607,47 @@ namespace Mono.CSharp {
 
 		static public string GetUsing ()
 		{
-			StringBuilder sb = new StringBuilder ();
-			
-			foreach (object x in using_alias_list)
-				sb.Append (String.Format ("using {0};\n", x));
-
-			foreach (object x in using_list)
-				sb.Append (String.Format ("using {0};\n", x));
-
-			return sb.ToString ();
+			lock (evaluator_lock){
+				StringBuilder sb = new StringBuilder ();
+				
+				foreach (object x in using_alias_list)
+					sb.Append (String.Format ("using {0};\n", x));
+				
+				foreach (object x in using_list)
+					sb.Append (String.Format ("using {0};\n", x));
+				
+				return sb.ToString ();
+			}
 		}
 
 		static public string GetVars ()
 		{
-			StringBuilder sb = new StringBuilder ();
-			
-			foreach (DictionaryEntry de in fields){
-				FieldInfo fi = LookupField ((string) de.Key);
-				object value = null;
-				bool error = false;
+			lock (evaluator_lock){
+				StringBuilder sb = new StringBuilder ();
 				
-				try {
-					if (value == null)
-						value = "null";
-					value = fi.GetValue (null);
-					if (value is string)
-						value = Quote ((string)value);
-				} catch {
-					error = true;
+				foreach (DictionaryEntry de in fields){
+					FieldInfo fi = LookupField ((string) de.Key);
+					object value = null;
+					bool error = false;
+					
+					try {
+						if (value == null)
+							value = "null";
+						value = fi.GetValue (null);
+						if (value is string)
+							value = Quote ((string)value);
+					} catch {
+						error = true;
+					}
+					
+					if (error)
+						sb.Append (String.Format ("{0} {1} <error reading value>", TypeManager.CSharpName(fi.FieldType), de.Key));
+					else
+						sb.Append (String.Format ("{0} {1} = {2}", TypeManager.CSharpName(fi.FieldType), de.Key, value));
 				}
-
-				if (error)
-					sb.Append (String.Format ("{0} {1} <error reading value>", TypeManager.CSharpName(fi.FieldType), de.Key));
-				else
-					sb.Append (String.Format ("{0} {1} = {2}", TypeManager.CSharpName(fi.FieldType), de.Key, value));
+				
+				return sb.ToString ();
 			}
-
-			return sb.ToString ();
 		}
 
 		/// <summary>
@@ -640,8 +655,10 @@ namespace Mono.CSharp {
 		/// </summary>
 		static public void LoadAssembly (string file)
 		{
-			Driver.LoadAssembly (file, true);
-			RootNamespace.ComputeNamespaces ();
+			lock (evaluator_lock){
+				Driver.LoadAssembly (file, true);
+				RootNamespace.ComputeNamespaces ();
+			}
 		}
 
 		/// <summary>
@@ -649,8 +666,10 @@ namespace Mono.CSharp {
 		/// </summary>
 		static public void ReferenceAssembly (Assembly a)
 		{
-			RootNamespace.Global.AddAssemblyReference (a);
-			RootNamespace.ComputeNamespaces ();
+			lock (evaluator_lock){
+				RootNamespace.Global.AddAssemblyReference (a);
+				RootNamespace.ComputeNamespaces ();
+			}
 		}
 		
 	}
