@@ -1,3 +1,7 @@
+2008-09-27  Mark Probst  <mark.probst@gmail.com>
+
+	* ppc/ppc-codegen.h: A few typecasts to fix compiler warnings.
+
 2008-09-07  Mark Probst  <mark.probst@gmail.com>
 
 	* ppc/ppc-codegen.h (ppc_load): Inserted cast to fix some

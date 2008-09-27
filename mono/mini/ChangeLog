@@ -1,5 +1,9 @@
 2008-09-27  Mark Probst  <mark.probst@gmail.com>
 
+	* mini-ppc.c: Compiler warning fixes.
+
+2008-09-27  Mark Probst  <mark.probst@gmail.com>
+
 	* mini-ppc.c: Special handling for 1/2 byte structs on Darwin only
 	for pinvokes.
 
