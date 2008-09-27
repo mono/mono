@@ -88,24 +88,28 @@ namespace Mono.Attach
 
 			if (!File.Exists (socket_file)) {
 				string trigger_file = "/tmp/.mono_attach_pid" + pid;
-				FileStream trigger = File.Create (trigger_file);
-				trigger.Close ();
+				FileStream trigger = null;
 
-				// Ask the vm to start the attach mechanism
-				Syscall.kill ((int)pid, Signum.SIGQUIT);
+				try {
+					trigger = File.Create (trigger_file);
+					trigger.Close ();
 
-				// Wait for the socket file to materialize
-				int i;
-				for (i = 0; i < 10; ++i) {
-					if (File.Exists (socket_file))
-						break;
-					Thread.Sleep (100);
+					// Ask the vm to start the attach mechanism
+					Syscall.kill ((int)pid, Signum.SIGQUIT);
+
+					// Wait for the socket file to materialize
+					int i;
+					for (i = 0; i < 10; ++i) {
+						if (File.Exists (socket_file))
+							break;
+						Thread.Sleep (100);
+					}
+
+					if (i == 10)
+						throw new Exception (String.Format ("Runtime failed to create attach socket '{0}'.", socket_file));
+				} finally {
+					File.Delete (trigger_file);
 				}
-
-				if (i == 10)
-					throw new Exception (String.Format ("Runtime failed to create attach socket '{0}'.", socket_file));
-
-				File.Delete (trigger_file);
 			}
 
 			/* 
