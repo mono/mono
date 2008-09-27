@@ -1,5 +1,10 @@
 2008-09-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Fix aot support for the
+	sharing of vtypes.
+
+	* ir-emit.h: Add a comment to NEW_PCONST.
+
 	* mini-exceptions.c (mono_altstack_restore_prot): Fix a warning.
 
 	* mini.h (MonoJitDomainInfo): Move some fields here from MonoDomain.
