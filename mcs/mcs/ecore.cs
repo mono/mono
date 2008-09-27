@@ -2709,7 +2709,7 @@ namespace Mono.CSharp {
 				if (RootContext.EvalMode){
 					FieldInfo fi = Evaluator.LookupField (Name);
 					if (fi != null)
-						return new FieldExpr (fi, loc);
+						return new FieldExpr (fi, loc).Resolve (ec);
 				}
 
 				if (almost_matched != null)
