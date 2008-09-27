@@ -1,3 +1,10 @@
+2008-09-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* domain-internals.h (struct _MonoDomain): Move most fields used only by
+	the JIT do MonoJitDomainInfo in ../mini/mini.h.
+
+	* domain.c: Remove initialization/cleanup of the removed fields.
+
 2008-09-27  Mark Probst  <mark.probst@gmail.com>
 
 	* class.c (mono_class_generic_sharing_enabled): Enable generic
