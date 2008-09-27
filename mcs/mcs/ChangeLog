@@ -1,5 +1,10 @@
 2008-09-27  Miguel de Icaza  <miguel@novell.com>
 
+	* eval.cs (Evaluator): Introduce Compile method, to allow compiled
+	code to be invoked without having to reparse.
+
+2008-09-27  Miguel de Icaza  <miguel@novell.com>
+
 	* ecore.cs: The recent changes to FieldExpr broke this as well.
 	Fixes LINQ queries in the interactive shell.
 
