@@ -25,19 +25,41 @@ using System.Reflection.Emit;
 using System.Threading;
 using System.Net;
 using System.Net.Sockets;
-using Mono.CSharp;
 
+using Mono.CSharp;
 using Mono.Attach;
 
 namespace Mono {
 
-	public static class CSharpShell {
+	public class Driver {
+		
+		static int Main (string [] args)
+		{
+			if (args.Length > 0 && args [0] == "--attach") {
+				new ClientCSharpShell (Int32.Parse (args [1])).Run ();
+				return 0;
+			} else if (args.Length > 0 && args [0].StartsWith ("--agent:")) {
+				new CSharpAgent (args [0]);
+				return 0;
+			} else {
+				try {
+					Evaluator.Init (args);
+				} catch {
+					return 1;
+				}
+			
+				return new CSharpShell ().Run ();
+			}
+		}
+	}
+	
+	public class CSharpShell {
 		static bool isatty = true;
 		
-		static Mono.Terminal.LineEditor editor;
-		static bool dumb;
+		Mono.Terminal.LineEditor editor;
+		bool dumb;
 
-		static void ConsoleInterrupt (object sender, ConsoleCancelEventArgs a)
+		protected virtual void ConsoleInterrupt (object sender, ConsoleCancelEventArgs a)
 		{
 			// Do not about our program
 			a.Cancel = true;
@@ -45,7 +67,7 @@ namespace Mono {
 			Mono.CSharp.Evaluator.Interrupt ();
 		}
 		
-		static void SetupConsole ()
+		void SetupConsole ()
 		{
 			string term = Environment.GetEnvironmentVariable ("TERM");
 			dumb = term == "dumb" || term == null || isatty == false;
@@ -54,7 +76,7 @@ namespace Mono {
 			Console.CancelKeyPress += ConsoleInterrupt;
 		}
 
-		static string GetLine (bool primary)
+		string GetLine (bool primary)
 		{
 			string prompt = primary ? InteractiveBase.Prompt : InteractiveBase.ContinuationPrompt;
 
@@ -70,12 +92,12 @@ namespace Mono {
 
 		delegate string ReadLiner (bool primary);
 
-		static void InitializeUsing ()
+		void InitializeUsing ()
 		{
 			Evaluate ("using System; using System.Linq; using System.Collections.Generic; using System.Collections;");
 		}
 
-		static void InitTerminal ()
+		void InitTerminal ()
 		{
 			isatty = UnixUtils.isatty (0) && UnixUtils.isatty (1);
 
@@ -91,7 +113,7 @@ namespace Mono {
 
 		}
 
-		static void LoadStartupFiles ()
+		protected virtual void LoadStartupFiles ()
 		{
 			string dir = Path.Combine (
 				Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData),
@@ -115,7 +137,7 @@ namespace Mono {
 			}
 		}
 
-		static void ReadEvalPrintLoopWith (ReadLiner readline)
+		void ReadEvalPrintLoopWith (ReadLiner readline)
 		{
 			string expr = null;
 			while (true){
@@ -132,7 +154,7 @@ namespace Mono {
 			} 
 		}
 
-		static public int ReadEvalPrintLoop ()
+		public int ReadEvalPrintLoop ()
 		{
 			InitTerminal ();
 
@@ -144,7 +166,7 @@ namespace Mono {
 			return 0;
 		}
 
-		static string Evaluate (string input)
+		protected virtual string Evaluate (string input)
 		{
 			bool result_set;
 			object result;
@@ -153,7 +175,7 @@ namespace Mono {
 				input = Evaluator.Evaluate (input, out result, out result_set);
 
 				if (result_set){
-					PrettyPrint (result);
+					PrettyPrint (Console.Out, result);
 					Console.WriteLine ();
 				}
 			} catch (Exception e){
@@ -164,9 +186,9 @@ namespace Mono {
 			return input;
 		}
 
-		static void p (string s)
+		static void p (TextWriter output, string s)
 		{
-			Console.Write (s);
+			output.Write (s);
 		}
 
 		static string EscapeString (string s)
@@ -174,227 +196,332 @@ namespace Mono {
 			return s.Replace ("\"", "\\\"");
 		}
 		
-		static void PrettyPrint (object result)
+		internal static void PrettyPrint (TextWriter output, object result)
 		{
 			if (result == null){
-				p ("null");
+				p (output, "null");
 				return;
 			}
 			
 			if (result is Array){
 				Array a = (Array) result;
 				
-				p ("{ ");
+				p (output, "{ ");
 				int top = a.GetUpperBound (0);
 				for (int i = a.GetLowerBound (0); i <= top; i++){
-					PrettyPrint (a.GetValue (i));
+					PrettyPrint (output, a.GetValue (i));
 					if (i != top)
-						p (", ");
+						p (output, ", ");
 				}
-				p (" }");
+				p (output, " }");
 			} else if (result is bool){
 				if ((bool) result)
-					p ("true");
+					p (output, "true");
 				else
-					p ("false");
+					p (output, "false");
 			} else if (result is string){
-				p (String.Format ("\"{0}\"", EscapeString ((string)result)));
+				p (output, String.Format ("\"{0}\"", EscapeString ((string)result)));
 			} else if (result is IDictionary){
 				IDictionary dict = (IDictionary) result;
 				int top = dict.Count, count = 0;
 				
-				p ("{");
+				p (output, "{");
 				foreach (DictionaryEntry entry in dict){
 					count++;
-					p ("{ ");
-					PrettyPrint (entry.Key);
-					p (", ");
-					PrettyPrint (entry.Value);
+					p (output, "{ ");
+					PrettyPrint (output, entry.Key);
+					p (output, ", ");
+					PrettyPrint (output, entry.Value);
 					if (count != top)
-						p (" }, ");
+						p (output, " }, ");
 					else
-						p (" }");
+						p (output, " }");
 				}
-				p ("}");
+				p (output, "}");
 			} else if (result is IEnumerable) {
 				int i = 0;
-				p ("{ ");
+				p (output, "{ ");
 				foreach (object item in (IEnumerable) result) {
 					if (i++ != 0)
-						p (", ");
+						p (output, ", ");
 
-					PrettyPrint (item);
+					PrettyPrint (output, item);
 				}
-				p (" }");
+				p (output, " }");
 			} else {
-				p (result.ToString ());
+				p (output, result.ToString ());
 			}
 		}
 
-		static int Main (string [] args)
+		public CSharpShell ()
 		{
-			if (args.Length > 0 && args [0] == "--attach") {
-				new AttachedCSharpShell (Int32.Parse (args [1]));
-				return 0;
-			} else if (args.Length > 0 && args [0].StartsWith ("--agent")) {
-				new CSharpAgent (args [0]);
-				return 0;
-			}
+		}
 
-			try {
-				Evaluator.Init (args);
-			} catch {
-				return 1;
-			}
-			
+		public virtual int Run ()
+		{
 			return ReadEvalPrintLoop ();
 		}
-	}
-}
-
-/*
- * A shell connected to a CSharpAgent running in a remote process.
- * FIXME:
- * - using NOT.EXISTS works, but leads to an error later when mcs tries to search
- *   that namespace.
- * - it would be nice to provide some kind of autocompletion even in remote mode.
- * - maybe add 'class_name' and 'method_name' arguments to LoadAgent.
- */
-class AttachedCSharpShell {
-
-	public AttachedCSharpShell (int pid) {
-		/* Create a server socket we listen on whose address is passed to the agent */
-		TcpListener listener = new TcpListener (new IPEndPoint (IPAddress.Loopback, 0));
-		listener.Start ();
-
-		string agent_assembly = typeof (AttachedCSharpShell).Assembly.Location;
-		string agent_arg = "--agent:" + ((IPEndPoint)listener.Server.LocalEndPoint).Port;
-
-		VirtualMachine vm = new VirtualMachine (pid);
-		vm.Attach (agent_assembly, agent_arg);
-
-		/* Wait for the client to connect */
-		TcpClient client = listener.AcceptTcpClient ();
-		NetworkStream s = client.GetStream ();
-		StreamReader sr = new StreamReader (s);
-		StreamWriter sw = new StreamWriter (s);
-
-		Console.WriteLine ("Connected.");
-
-		InitTerminal ();
-
-		sw.WriteLine ("using System; using System.Linq; using System.Collections.Generic; using System.Collections;");
-		sw.Flush ();
-		/* Read result */
-		while (true) {
-			string line = sr.ReadLine ();
-			if (line == "<END>")
-				break;
-		}
-
-		//LoadStartupFiles ();
-
-		string expr = "";
-		bool eof = false;
-		while (!eof) {
-			string input = GetLine (expr == "");
-			if (input == null)
-				break;
-
-			if (input == "")
-				continue;
-
-			sw.WriteLine (input);
-			sw.Flush ();
-
-			/* Read the (possible) error messages */
-			while (true) {
-				string line = sr.ReadLine ();
-				if (line == null) {
-					eof = true;
-					break;
-				}
-				if (line == "<RESULT>")
-					break;
-				else
-					// FIXME: Colorize
-					Console.WriteLine (line);
-			}
-			/* Read the result */
-			while (true) {
-				string line = sr.ReadLine ();
-				if (line == null) {
-					eof = true;
-					break;
-				}
-				if (line == "<INPUT>")
-					break;
-				else
-					Console.WriteLine (line);
-			}
-			/* Read the (possible) incomplete input */
-			expr = "";
-			while (true) {
-				string line = sr.ReadLine ();
-				if (line == null) {
-					eof = true;
-					break;
-				}
-				if (line == "<END>")
-					break;
-				else
-					expr += line;
-			}
-		}
+		
 	}
 
-	static bool isatty = true;
+	//
+	// A shell connected to a CSharpAgent running in a remote process.
+	//  - maybe add 'class_name' and 'method_name' arguments to LoadAgent.
+	//  - Support Gtk and Winforms main loops if detected, this should
+	//    probably be done as a separate agent in a separate place.
+	//
+	class ClientCSharpShell : CSharpShell {
+		NetworkStream ns, interrupt_stream;
 		
-	static Mono.Terminal.LineEditor editor;
-	static bool dumb;
-
-	static void ConsoleInterrupt (object sender, ConsoleCancelEventArgs a)
-	{
-		// Do not about our program
-		a.Cancel = true;
-
-		Mono.CSharp.Evaluator.Interrupt ();
-    }
+		public ClientCSharpShell (int pid)
+		{
+			// Create a server socket we listen on whose address is passed to the agent
+			TcpListener listener = new TcpListener (new IPEndPoint (IPAddress.Loopback, 0));
+			listener.Start ();
+			TcpListener interrupt_listener = new TcpListener (new IPEndPoint (IPAddress.Loopback, 0));
+			interrupt_listener.Start ();
+	
+			string agent_assembly = typeof (ClientCSharpShell).Assembly.Location;
+			string agent_arg = String.Format ("--agent:{0}:{1}" ,
+							  ((IPEndPoint)listener.Server.LocalEndPoint).Port,
+							  ((IPEndPoint)interrupt_listener.Server.LocalEndPoint).Port);
+	
+			VirtualMachine vm = new VirtualMachine (pid);
+			vm.Attach (agent_assembly, agent_arg);
+	
+			/* Wait for the client to connect */
+			TcpClient client = listener.AcceptTcpClient ();
+			ns = client.GetStream ();
+			TcpClient interrupt_client = interrupt_listener.AcceptTcpClient ();
+			interrupt_stream = interrupt_client.GetStream ();
+	
+			Console.WriteLine ("Connected.");
+		}
+	
+		//
+		// A remote version of Evaluate
+		//
+		protected override string Evaluate (string input)
+		{
+			ns.WriteString (input);
+			while (true) {
+				AgentStatus s = (AgentStatus) ns.ReadByte ();
+	
+				switch (s){
+				case AgentStatus.PARTIAL_INPUT:
+					return input;
+	
+				case AgentStatus.ERROR:
+					string err = ns.GetString ();
+					Console.Error.WriteLine (err);
+					break;
+	
+				case AgentStatus.RESULT_NOT_SET:
+					return null;
+	
+				case AgentStatus.RESULT_SET:
+					string res = ns.GetString ();
+					Console.WriteLine (res);
+					return null;
+				}
+			}
+		}
 		
-	static void SetupConsole ()
-	{
-		string term = Environment.GetEnvironmentVariable ("TERM");
-		dumb = term == "dumb" || term == null || isatty == false;
+		public override int Run ()
+		{
+			// The difference is that we do not call Evaluator.Init, that is done on the target
+			return ReadEvalPrintLoop ();
+		}
+	
+		protected override void ConsoleInterrupt (object sender, ConsoleCancelEventArgs a)
+		{
+			// Do not about our program
+			a.Cancel = true;
+	
+			interrupt_stream.WriteByte (0);
+			int c = interrupt_stream.ReadByte ();
+			if (c != -1)
+				Console.WriteLine ("Execution interrupted");
+		}
 			
-		editor = new Mono.Terminal.LineEditor ("csharp", 300);
-		Console.CancelKeyPress += ConsoleInterrupt;
-    }
+	}
 
-	static string GetLine (bool primary)
-	{
-		string prompt = primary ? InteractiveBase.Prompt : InteractiveBase.ContinuationPrompt;
-
-		if (dumb){
-			if (isatty)
-				Console.Write (prompt);
-
-			return Console.ReadLine ();
-		} else {
-			return editor.Edit (prompt, "");
+	//
+	// Stream helper extension methods
+	//
+	public static class StreamHelper {
+		static DataConverter converter = DataConverter.LittleEndian;
+		
+		public static int GetInt (this Stream stream)
+		{
+			byte [] b = new byte [4];
+			if (stream.Read (b, 0, 4) != 4)
+				throw new IOException ("End reached");
+			return converter.GetInt32 (b, 0);
 		}
-    }
-
-	static void InitTerminal ()
+		
+		public static string GetString (this Stream stream)
+		{
+			int len = stream.GetInt ();
+			byte [] b = new byte [len];
+			if (stream.Read (b, 0, len) != len)
+				throw new IOException ("End reached");
+			return Encoding.UTF8.GetString (b);
+		}
+	
+		public static void WriteInt (this Stream stream, int n)
+		{
+			byte [] bytes = converter.GetBytes (n);
+			stream.Write (bytes, 0, bytes.Length);
+		}
+	
+		public static void WriteString (this Stream stream, string s)
+		{
+			stream.WriteInt (s.Length);
+			byte [] bytes = Encoding.UTF8.GetBytes (s);
+			stream.Write (bytes, 0, bytes.Length);
+		}
+	}
+	
+	public enum AgentStatus : byte {
+		// Received partial input, complete
+		PARTIAL_INPUT  = 1,
+	
+		// The result was set, expect the string with the result
+		RESULT_SET     = 2,
+	
+		// No result was set, complete
+		RESULT_NOT_SET = 3,
+	
+		// Errors and warnings string follows
+		ERROR          = 4, 
+	}
+	
+	//
+	// This is the agent loaded into the target process when using --attach.
+	//
+	class CSharpAgent
 	{
-		isatty = UnixUtils.isatty (0) && UnixUtils.isatty (1);
+		NetworkStream interrupt_stream;
+		
+		public CSharpAgent (String arg)
+		{
+			new Thread (new ParameterizedThreadStart (Run)).Start (arg);
+		}
 
-		SetupConsole ();
+		public void InterruptListener ()
+		{
+			while (true){
+				int b = interrupt_stream.ReadByte();
+				if (b == -1)
+					return;
+				Evaluator.Interrupt ();
+				interrupt_stream.WriteByte (0);
+			}
+		}
+		
+		public void Run (object o)
+		{
+			string arg = (string)o;
+			string ports = arg.Substring (8);
+			int sp = ports.IndexOf (':');
+			int port = Int32.Parse (ports.Substring (0, sp));
+			int interrupt_port = Int32.Parse (ports.Substring (sp+1));
+	
+			Console.WriteLine ("csharp-agent: started, connecting to localhost:" + port);
+	
+			TcpClient client = new TcpClient ("127.0.0.1", port);
+			TcpClient interrupt_client = new TcpClient ("127.0.0.1", interrupt_port);
+			Console.WriteLine ("csharp-agent: connected.");
+	
+			NetworkStream s = client.GetStream ();
+			interrupt_stream = interrupt_client.GetStream ();
+			new Thread (InterruptListener).Start ();
+			
+			try {
+				Evaluator.Init (new string [0]);
+			} catch {
+				// TODO: send a result back.
+				Console.WriteLine ("csharp-agent: initialization failed");
+				return;
+			}
+	
+			try {
+				// Add all assemblies loaded later
+				AppDomain.CurrentDomain.AssemblyLoad += AssemblyLoaded;
+	
+				// Add all currently loaded assemblies
+				foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies ())
+					Evaluator.ReferenceAssembly (a);
+	
+				RunRepl (s);
+			} finally {
+				AppDomain.CurrentDomain.AssemblyLoad -= AssemblyLoaded;
+				client.Close ();
+				interrupt_client.Close ();
+				Console.WriteLine ("csharp-agent: disconnected.");			
+			}
+		}
+	
+		static void AssemblyLoaded (object sender, AssemblyLoadEventArgs e)
+		{
+			Evaluator.ReferenceAssembly (e.LoadedAssembly);
+		}
+	
+		public void RunRepl (NetworkStream s)
+		{
+			string input = null;
 
-		if (isatty)
-			Console.WriteLine ("Mono C# Shell, type \"help;\" for help\n\nEnter statements below.");
-    }
+			Console.WriteLine ("RUNNING REPL");
+			while (true) {
+				try {
+					string error_string;
+					StringWriter error_output = new StringWriter ();
+					Report.Stderr = error_output;
+					
+					string line = s.GetString ();
+					Console.WriteLine ("RECEIVED: " + line);
+	
+					bool result_set;
+					object result;
+	
+					if (input == null)
+						input = line;
+					else
+						input = input + "\n" + line;
+	
+	
+					input = Evaluator.Evaluate (input, out result, out result_set);
+					if (input != null){
+						s.WriteByte ((byte) AgentStatus.PARTIAL_INPUT);
+						continue;
+					}
+	
+					// Send warnings and errors back
+					error_string = error_output.ToString ();
+					if (error_string.Length != 0){
+						s.WriteByte ((byte) AgentStatus.ERROR);
+						s.WriteString (error_output.ToString ());
+					}
+	
+					if (result_set){
+						s.WriteByte ((byte) AgentStatus.RESULT_SET);
+						StringWriter sr = new StringWriter ();
+						CSharpShell.PrettyPrint (sr, result);
+						s.WriteString (sr.ToString ());
+					} else {
+						s.WriteByte ((byte) AgentStatus.RESULT_NOT_SET);
+					}
+				} catch (IOException) {
+					break;
+				} catch (Exception e){
+					Console.WriteLine (e);
+				}
+			}
+		}
+	}
 }
-
+	
 namespace Mono.Management
 {
 	interface IVirtualMachine {
@@ -402,96 +529,4 @@ namespace Mono.Management
 	}
 }
 
-/*
- * This is the agent loaded into the target process when using --attach.
- */
-class CSharpAgent
-{
-	public CSharpAgent (String arg) {
-		new Thread (new ParameterizedThreadStart (Run)).Start (arg);
-	}
 
-	public void Run (object o) {
-		string arg = (string)o;
-		int port = Int32.Parse (arg.Substring (arg.IndexOf (":") + 1));
-
-		Console.WriteLine ("csharp-agent: started, connecting to localhost:" + port);
-
-		TcpClient client = new TcpClient ("127.0.0.1", port);
-		Console.WriteLine ("csharp-agent: connected.");
-
-		NetworkStream s = client.GetStream ();
-
-		try {
-			Evaluator.Init (new string [0]);
-		} catch {
-			return;
-		}
-
-		try {
-			// Add all assemblies loaded later
-			AppDomain.CurrentDomain.AssemblyLoad += AssemblyLoaded;
-
-			// Add all currently loaded assemblies
-			foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies ())
-				Evaluator.ReferenceAssembly (a);
-
-			RunRepl (s);
-		} finally {
-			AppDomain.CurrentDomain.AssemblyLoad -= AssemblyLoaded;
-			client.Close ();
-			Console.WriteLine ("csharp-agent: disconnected.");			
-		}
-	}
-
-	static void AssemblyLoaded (object sender, AssemblyLoadEventArgs e) {
-		Evaluator.ReferenceAssembly (e.LoadedAssembly);
-	}
-
-	public void RunRepl (NetworkStream s) {
-		StreamReader r = new StreamReader (s);
-		StreamWriter w = new StreamWriter (s);
-		string input = null;
-
-		Report.Stderr = w;
-
-		while (true) {
-			try {
-				string line = r.ReadLine ();
-
-				bool result_set;
-				object result;
-
-				if (input == null)
-					input = line;
-				else
-					input = input + "\n" + line;
-
-				// This will print any error messages to w
-				input = Evaluator.Evaluate (input, out result, out result_set);
-
-				// FIXME: Emit XML
-
-				// This separates the result from the possible error messages
-				w.WriteLine ("<RESULT>");
-				if (result_set) {
-					if (result == null)
-						w.Write ("null");
-					else
-						w.Write (result.ToString ());
-					w.WriteLine ();
-				}
-				// FIXME: This might occur in the output as well.
-				w.WriteLine ("<INPUT>");
-				/* The rest of the input */
-				w.WriteLine (input);
-				w.WriteLine ("<END>");
-				w.Flush ();
-			} catch (IOException) {
-				break;
-			} catch (Exception e){
-				Console.WriteLine (e);
-			}
-		}
-	}
-}

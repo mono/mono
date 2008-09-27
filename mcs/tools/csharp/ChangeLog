@@ -1,3 +1,19 @@
+2008-09-27  Miguel de Icaza  <miguel@novell.com>
+
+	* repl.cs: Rename AttachedCSharpShell to ClientCSharpShell.
+
+	Make most of the CSharpShell code into instance code, so that we
+	can override the behavior on ClientCSharpShell and reuse most of
+	the logic there.
+
+	CSharpShell now has a virtual `Evaluate' that is used to implement
+	the evaluator. 
+
+	Implemented a new more robust protocol for sending the information
+	back and forth.
+
+	Now the results are show on the client, and come prettyprinted.
+
 2008-09-25  Miguel de Icaza  <miguel@novell.com>
 
 	* repl.cs: On errors, return null.
