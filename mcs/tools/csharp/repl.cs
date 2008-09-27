@@ -472,7 +472,6 @@ namespace Mono {
 		{
 			string input = null;
 
-			Console.WriteLine ("RUNNING REPL");
 			while (true) {
 				try {
 					string error_string;
@@ -480,7 +479,6 @@ namespace Mono {
 					Report.Stderr = error_output;
 					
 					string line = s.GetString ();
-					Console.WriteLine ("RECEIVED: " + line);
 	
 					bool result_set;
 					object result;
@@ -490,8 +488,15 @@ namespace Mono {
 					else
 						input = input + "\n" + line;
 	
-	
-					input = Evaluator.Evaluate (input, out result, out result_set);
+					try {
+						input = Evaluator.Evaluate (input, out result, out result_set);
+					} catch (Exception e) {
+						s.WriteByte ((byte) AgentStatus.ERROR);
+						s.WriteString (e.ToString ());
+						s.WriteByte ((byte) AgentStatus.RESULT_NOT_SET);
+						continue;
+					}
+					
 					if (input != null){
 						s.WriteByte ((byte) AgentStatus.PARTIAL_INPUT);
 						continue;

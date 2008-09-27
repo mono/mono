@@ -1,5 +1,8 @@
 2008-09-27  Miguel de Icaza  <miguel@novell.com>
 
+	* repl.cs (RunRepl): Catch exceptions, and send those as errors
+	back to the client.
+
 	* repl.cs: Rename AttachedCSharpShell to ClientCSharpShell.
 
 	Make most of the CSharpShell code into instance code, so that we
