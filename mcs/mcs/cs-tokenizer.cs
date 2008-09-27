@@ -476,35 +476,35 @@ namespace Mono.CSharp
 					// store identifiers array
 					parsing_generic_less_than = 1;
 					switch (xtoken ()) {
-						case Token.IDENTIFIER:
-						case Token.INT:
-						case Token.BOOL:
-						case Token.BYTE:
-						case Token.CHAR:
-						case Token.DECIMAL:
-						case Token.FLOAT:
-						case Token.LONG:
-						case Token.OBJECT:
-						case Token.STRING:
-						case Token.UINT:
-						case Token.ULONG:
-							int next_token = xtoken ();
-							if (next_token == Token.SEMICOLON || next_token == Token.COMMA || next_token == Token.EQUALS)
-								goto default;
-
-							++query_parsing;
-							if (RootContext.Version <= LanguageVersion.ISO_2)
-								Report.FeatureIsNotAvailable (Location, "query expressions");
-							break;
-						case Token.VOID:
-							Expression.Error_VoidInvalidInTheContext (Location);
-							break;
-						default:
-							PopPosition ();
-							// HACK: A token is not a keyword so we need to restore identifiers buffer
-							// which has been overwritten before we grabbed the identifier
-							id_builder [0] = 'f'; id_builder [1] = 'r'; id_builder [2] = 'o'; id_builder [3] = 'm';
-							return -1;
+					case Token.IDENTIFIER:
+					case Token.INT:
+					case Token.BOOL:
+					case Token.BYTE:
+					case Token.CHAR:
+					case Token.DECIMAL:
+					case Token.FLOAT:
+					case Token.LONG:
+					case Token.OBJECT:
+					case Token.STRING:
+					case Token.UINT:
+					case Token.ULONG:
+						int next_token = xtoken ();
+						if (next_token == Token.SEMICOLON || next_token == Token.COMMA || next_token == Token.EQUALS)
+							goto default;
+						
+						++query_parsing;
+						if (RootContext.Version <= LanguageVersion.ISO_2)
+							Report.FeatureIsNotAvailable (Location, "query expressions");
+						break;
+					case Token.VOID:
+						Expression.Error_VoidInvalidInTheContext (Location);
+						break;
+					default:
+						PopPosition ();
+						// HACK: A token is not a keyword so we need to restore identifiers buffer
+						// which has been overwritten before we grabbed the identifier
+						id_builder [0] = 'f'; id_builder [1] = 'r'; id_builder [2] = 'o'; id_builder [3] = 'm';
+						return -1;
 					}
 					PopPosition ();
 					return res;
@@ -565,42 +565,42 @@ namespace Mono.CSharp
 			int ntoken;
 			while ((ntoken = xtoken ()) != Token.EOF) {
 				switch (ntoken) {
-					case Token.CLOSE_PARENS:
-						return xtoken () == Token.ARROW;
-
-					case Token.STAR:
-					case Token.SEMICOLON:
-					case Token.OPEN_BRACE:
-					case Token.OPEN_PARENS:
-					case Token.LITERAL_STRING:
-					case Token.LITERAL_INTEGER:
-					case Token.LITERAL_FLOAT:
-					case Token.LITERAL_DOUBLE:
-					case Token.LITERAL_DECIMAL:
-					case Token.LITERAL_CHARACTER:
-					case Token.NULL:
-					case Token.FALSE:
-					case Token.TRUE:
-					case Token.OP_INC:
-					case Token.OP_DEC:
-					case Token.OP_SHIFT_LEFT:
-					case Token.OP_SHIFT_RIGHT:
-					case Token.OP_LE:
-					case Token.OP_GE:
-					case Token.OP_EQ:
-					case Token.OP_NE:
-					case Token.OP_AND:
-					case Token.OP_OR:
-					case Token.BITWISE_AND:
-					case Token.BITWISE_OR:
-					case Token.PLUS:
-					case Token.MINUS:
-					case Token.DIV:
-					case Token.NEW:
-					case Token.THIS:
-					case Token.BASE:
-					case Token.TYPEOF:
-						return false;
+				case Token.CLOSE_PARENS:
+					return xtoken () == Token.ARROW;
+					
+				case Token.STAR:
+				case Token.SEMICOLON:
+				case Token.OPEN_BRACE:
+				case Token.OPEN_PARENS:
+				case Token.LITERAL_STRING:
+				case Token.LITERAL_INTEGER:
+				case Token.LITERAL_FLOAT:
+				case Token.LITERAL_DOUBLE:
+				case Token.LITERAL_DECIMAL:
+				case Token.LITERAL_CHARACTER:
+				case Token.NULL:
+				case Token.FALSE:
+				case Token.TRUE:
+				case Token.OP_INC:
+				case Token.OP_DEC:
+				case Token.OP_SHIFT_LEFT:
+				case Token.OP_SHIFT_RIGHT:
+				case Token.OP_LE:
+				case Token.OP_GE:
+				case Token.OP_EQ:
+				case Token.OP_NE:
+				case Token.OP_AND:
+				case Token.OP_OR:
+				case Token.BITWISE_AND:
+				case Token.BITWISE_OR:
+				case Token.PLUS:
+				case Token.MINUS:
+				case Token.DIV:
+				case Token.NEW:
+				case Token.THIS:
+				case Token.BASE:
+				case Token.TYPEOF:
+					return false;
 				}
 			}
 
@@ -998,13 +998,13 @@ namespace Mono.CSharp
 			}
 
 			switch (current_token) {
-				case Token.CLOSE_PARENS:
-				case Token.TRUE:
-				case Token.FALSE:
-				case Token.NULL:
-				case Token.LITERAL_INTEGER:
-				case Token.LITERAL_STRING:
-					return Token.INTERR;
+			case Token.CLOSE_PARENS:
+			case Token.TRUE:
+			case Token.FALSE:
+			case Token.NULL:
+			case Token.LITERAL_INTEGER:
+			case Token.LITERAL_STRING:
+				return Token.INTERR;
 			}
 
 			if (d != ' ') {
@@ -1017,71 +1017,71 @@ namespace Mono.CSharp
 			PushPosition ();
 			int next_token;
 			switch (xtoken ()) {
-				case Token.LITERAL_INTEGER:
-				case Token.LITERAL_STRING:
-				case Token.LITERAL_CHARACTER:
-				case Token.LITERAL_DECIMAL:
-				case Token.LITERAL_DOUBLE:
-				case Token.LITERAL_FLOAT:
-				case Token.TRUE:
-				case Token.FALSE:
-				case Token.NULL:
-				case Token.THIS:
-					next_token = Token.INTERR;
-					break;
-
-				case Token.SEMICOLON:
-				case Token.COMMA:
-				case Token.CLOSE_PARENS:
-				case Token.OPEN_BRACKET:
-				case Token.OP_GENERICS_GT:
-					next_token = Token.INTERR_NULLABLE;
-					break;
-
-				default:
-					next_token = -1;
-					break;
+			case Token.LITERAL_INTEGER:
+			case Token.LITERAL_STRING:
+			case Token.LITERAL_CHARACTER:
+			case Token.LITERAL_DECIMAL:
+			case Token.LITERAL_DOUBLE:
+			case Token.LITERAL_FLOAT:
+			case Token.TRUE:
+			case Token.FALSE:
+			case Token.NULL:
+			case Token.THIS:
+				next_token = Token.INTERR;
+				break;
+				
+			case Token.SEMICOLON:
+			case Token.COMMA:
+			case Token.CLOSE_PARENS:
+			case Token.OPEN_BRACKET:
+			case Token.OP_GENERICS_GT:
+				next_token = Token.INTERR_NULLABLE;
+				break;
+				
+			default:
+				next_token = -1;
+				break;
 			}
 
 			if (next_token == -1) {
 				switch (xtoken ()) {
-					case Token.COMMA:
-					case Token.SEMICOLON:
-					case Token.OPEN_BRACE:
-					case Token.CLOSE_PARENS:
-					case Token.IN:
-						next_token = Token.INTERR_NULLABLE;
-						break;
-						
-					case Token.COLON:
-						next_token = Token.INTERR;
-						break;							
-
-					default:
-						int ntoken;
-						int interrs = 1;
-						int colons = 0;
-						//
-						// All shorcuts failed, do it hard way
-						//
-						while ((ntoken = xtoken ()) != Token.EOF) {
+				case Token.COMMA:
+				case Token.SEMICOLON:
+				case Token.OPEN_BRACE:
+				case Token.CLOSE_PARENS:
+				case Token.IN:
+					next_token = Token.INTERR_NULLABLE;
+					break;
+					
+				case Token.COLON:
+					next_token = Token.INTERR;
+					break;							
+					
+				default:
+					int ntoken;
+					int interrs = 1;
+					int colons = 0;
+					//
+					// All shorcuts failed, do it hard way
+					//
+					while ((ntoken = xtoken ()) != Token.EOF) {
 						if (ntoken == Token.SEMICOLON)
+							break;
+						
+						if (ntoken == Token.COLON) {
+							if (++colons == interrs)
 								break;
-
-							if (ntoken == Token.COLON) {
-								if (++colons == interrs)
-									break;
-								continue;
-							}
-
-							if (ntoken == Token.INTERR) {
-								++interrs;
-								continue;
-							}
+							continue;
 						}
-
-						next_token = colons != interrs ? Token.INTERR_NULLABLE : Token.INTERR;
-						break;
+						
+						if (ntoken == Token.INTERR) {
+							++interrs;
+							continue;
+						}
+					}
+					
+					next_token = colons != interrs ? Token.INTERR_NULLABLE : Token.INTERR;
+					break;
 				}
 			}
 			

@@ -1442,12 +1442,12 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("Variable is not readonly");
 
 			switch (ro_context) {
-				case ReadOnlyContext.Fixed:
-					return "fixed variable";
-				case ReadOnlyContext.Foreach:
-					return "foreach iteration variable";
-				case ReadOnlyContext.Using:
-					return "using variable";
+			case ReadOnlyContext.Fixed:
+				return "fixed variable";
+			case ReadOnlyContext.Foreach:
+				return "foreach iteration variable";
+			case ReadOnlyContext.Using:
+				return "using variable";
 			}
 			throw new NotImplementedException ();
 		}

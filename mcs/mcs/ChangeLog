@@ -1,5 +1,8 @@
 2008-09-27  Miguel de Icaza  <miguel@novell.com>
 
+	* Multiple files: indentation fixing for the Mono coding
+	guidelines for the switch statement.
+
 	* eval.cs: Make the Evaluator API thread safe.
 
 2008-09-26  Marek Safar  <marek.safar@gmail.com>

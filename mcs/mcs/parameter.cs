@@ -442,16 +442,16 @@ namespace Mono.CSharp {
 		public static string GetModifierSignature (Modifier mod)
 		{
 			switch (mod) {
-				case Modifier.OUT:
-					return "out";
-				case Modifier.PARAMS:
-					return "params";
-				case Modifier.REF:
-					return "ref";
-				case Modifier.This:
-					return "this";
-				default:
-					return "";
+			case Modifier.OUT:
+				return "out";
+			case Modifier.PARAMS:
+				return "params";
+			case Modifier.REF:
+				return "ref";
+			case Modifier.This:
+				return "this";
+			default:
+				return "";
 			}
 		}
 

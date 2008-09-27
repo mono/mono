@@ -595,57 +595,57 @@ namespace Mono.CSharp {
 				for (MemberCore mc = this; !same_access_restrictions && mc != null && mc.Parent != null; mc = mc.Parent) {
 					AccessLevel al = GetAccessLevelFromModifiers (mc.ModFlags);
 					switch (pAccess) {
-						case AccessLevel.Internal:
-							if (al == AccessLevel.Private || al == AccessLevel.Internal)
-								same_access_restrictions = TypeManager.IsThisOrFriendAssembly (p.Assembly);
-
+					case AccessLevel.Internal:
+						if (al == AccessLevel.Private || al == AccessLevel.Internal)
+							same_access_restrictions = TypeManager.IsThisOrFriendAssembly (p.Assembly);
+						
+						break;
+						
+					case AccessLevel.Protected:
+						if (al == AccessLevel.Protected) {
+							same_access_restrictions = mc.Parent.IsBaseType (p_parent);
 							break;
-
-						case AccessLevel.Protected:
-							if (al == AccessLevel.Protected) {
-								same_access_restrictions = mc.Parent.IsBaseType (p_parent);
-								break;
-							}
-
-							if (al == AccessLevel.Private) {
-								//
-								// When type is private and any of its parents derives from
-								// protected type then the type is accessible
-								//
-								while (mc.Parent != null) {
-									if (mc.Parent.IsBaseType (p_parent))
-										same_access_restrictions = true;
-									mc = mc.Parent; 
-								}
-							}
-
-							break;
-
-						case AccessLevel.ProtectedOrInternal:
-							if (al == AccessLevel.Protected)
-								same_access_restrictions = mc.Parent.IsBaseType (p_parent);
-							else if (al == AccessLevel.Internal)
-								same_access_restrictions = TypeManager.IsThisOrFriendAssembly (p.Assembly);
-							else if (al == AccessLevel.ProtectedOrInternal)
-								same_access_restrictions = mc.Parent.IsBaseType (p_parent) &&
-									TypeManager.IsThisOrFriendAssembly (p.Assembly);
-
-							break;
-
-						case AccessLevel.Private:
+						}
+						
+						if (al == AccessLevel.Private) {
 							//
-							// Both are private and share same parent
+							// When type is private and any of its parents derives from
+							// protected type then the type is accessible
 							//
-							if (al == AccessLevel.Private)
-								same_access_restrictions = TypeManager.IsEqual (mc.Parent.TypeBuilder, p_parent);
-
-							break;
-
-						default:
-							throw new InternalErrorException (al.ToString ());
+							while (mc.Parent != null) {
+								if (mc.Parent.IsBaseType (p_parent))
+									same_access_restrictions = true;
+								mc = mc.Parent; 
+							}
+						}
+						
+						break;
+						
+					case AccessLevel.ProtectedOrInternal:
+						if (al == AccessLevel.Protected)
+							same_access_restrictions = mc.Parent.IsBaseType (p_parent);
+						else if (al == AccessLevel.Internal)
+							same_access_restrictions = TypeManager.IsThisOrFriendAssembly (p.Assembly);
+						else if (al == AccessLevel.ProtectedOrInternal)
+							same_access_restrictions = mc.Parent.IsBaseType (p_parent) &&
+								TypeManager.IsThisOrFriendAssembly (p.Assembly);
+						
+						break;
+						
+					case AccessLevel.Private:
+						//
+						// Both are private and share same parent
+						//
+						if (al == AccessLevel.Private)
+							same_access_restrictions = TypeManager.IsEqual (mc.Parent.TypeBuilder, p_parent);
+						
+						break;
+						
+					default:
+						throw new InternalErrorException (al.ToString ());
 					}
 				}
-
+				
 				if (!same_access_restrictions)
 					return false;
 			}
@@ -2552,31 +2552,31 @@ namespace Mono.CSharp {
  
  					// TODO: Does anyone know easier way how to detect that member is internal ?
  					switch (member_entry.EntryType & EntryType.MaskType) {
- 						case EntryType.Constructor:
- 							continue;
- 
- 						case EntryType.Field:
- 							if ((((FieldInfo)member_entry.Member).Attributes & (FieldAttributes.Assembly | FieldAttributes.Public)) == FieldAttributes.Assembly)
- 								continue;
- 							break;
- 
- 						case EntryType.Method:
- 							if ((((MethodInfo)member_entry.Member).Attributes & (MethodAttributes.Assembly | MethodAttributes.Public)) == MethodAttributes.Assembly)
- 								continue;
- 							break;
- 
- 						case EntryType.Property:
- 							PropertyInfo pi = (PropertyInfo)member_entry.Member;
- 							if (pi.GetSetMethod () == null && pi.GetGetMethod () == null)
- 								continue;
- 							break;
- 
- 						case EntryType.Event:
- 							EventInfo ei = (EventInfo)member_entry.Member;
- 							MethodInfo mi = ei.GetAddMethod ();
- 							if ((mi.Attributes & (MethodAttributes.Assembly | MethodAttributes.Public)) == MethodAttributes.Assembly)
- 								continue;
- 							break;
+					case EntryType.Constructor:
+						continue;
+						
+					case EntryType.Field:
+						if ((((FieldInfo)member_entry.Member).Attributes & (FieldAttributes.Assembly | FieldAttributes.Public)) == FieldAttributes.Assembly)
+							continue;
+						break;
+						
+					case EntryType.Method:
+						if ((((MethodInfo)member_entry.Member).Attributes & (MethodAttributes.Assembly | MethodAttributes.Public)) == MethodAttributes.Assembly)
+							continue;
+						break;
+						
+					case EntryType.Property:
+						PropertyInfo pi = (PropertyInfo)member_entry.Member;
+						if (pi.GetSetMethod () == null && pi.GetGetMethod () == null)
+							continue;
+						break;
+						
+					case EntryType.Event:
+						EventInfo ei = (EventInfo)member_entry.Member;
+						MethodInfo mi = ei.GetAddMethod ();
+						if ((mi.Attributes & (MethodAttributes.Assembly | MethodAttributes.Public)) == MethodAttributes.Assembly)
+							continue;
+						break;
  					}
  					string lcase = ((string)entry.Key).ToLower (System.Globalization.CultureInfo.InvariantCulture);
  					locase_table [lcase] = member_entry.Member;
@@ -2627,12 +2627,16 @@ namespace Mono.CSharp {
  		
  				Report.SymbolRelatedToPreviousError (entry.Member);
 				switch (result) {
-					case AttributeTester.Result.RefOutArrayError:
-						Report.Warning (3006, 1, method.Location, "Overloaded method `{0}' differing only in ref or out, or in array rank, is not CLS-compliant", method.GetSignatureForError ());
-						continue;
-					case AttributeTester.Result.ArrayArrayError:
-						Report.Warning (3007, 1, method.Location, "Overloaded method `{0}' differing only by unnamed array types is not CLS-compliant", method.GetSignatureForError ());
-						continue;
+				case AttributeTester.Result.RefOutArrayError:
+					Report.Warning (3006, 1, method.Location,
+							"Overloaded method `{0}' differing only in ref or out, or in array rank, is not CLS-compliant",
+							method.GetSignatureForError ());
+					continue;
+				case AttributeTester.Result.ArrayArrayError:
+					Report.Warning (3007, 1, method.Location,
+							"Overloaded method `{0}' differing only by unnamed array types is not CLS-compliant",
+							method.GetSignatureForError ());
+					continue;
 				}
 
 				throw new NotImplementedException (result.ToString ());

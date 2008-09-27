@@ -7946,24 +7946,24 @@ namespace Mono.CSharp {
 		public OpType GetMatchingOperator ()
 		{
 			switch (OperatorType) {
-				case OpType.Equality:
-					return OpType.Inequality;
-				case OpType.Inequality:
-					return OpType.Equality;
-				case OpType.True:
-					return OpType.False;
-				case OpType.False:
-					return OpType.True;
-				case OpType.GreaterThan:
-					return OpType.LessThan;
-				case OpType.LessThan:
-					return OpType.GreaterThan;
-				case OpType.GreaterThanOrEqual:
-					return OpType.LessThanOrEqual;
-				case OpType.LessThanOrEqual:
-					return OpType.GreaterThanOrEqual;
-				default:
-					return OpType.TOP;
+			case OpType.Equality:
+				return OpType.Inequality;
+			case OpType.Inequality:
+				return OpType.Equality;
+			case OpType.True:
+				return OpType.False;
+			case OpType.False:
+				return OpType.True;
+			case OpType.GreaterThan:
+				return OpType.LessThan;
+			case OpType.LessThan:
+				return OpType.GreaterThan;
+			case OpType.GreaterThanOrEqual:
+				return OpType.LessThanOrEqual;
+			case OpType.LessThanOrEqual:
+				return OpType.GreaterThanOrEqual;
+			default:
+				return OpType.TOP;
 			}
 		}
 

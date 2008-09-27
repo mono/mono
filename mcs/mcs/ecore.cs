@@ -986,28 +986,28 @@ namespace Mono.CSharp {
 		{
 			get {
 				switch (eclass){
-					case ExprClass.Invalid:
-						return "Invalid";
-					case ExprClass.Value:
-						return "value";
-					case ExprClass.Variable:
-						return "variable";
-					case ExprClass.Namespace:
-						return "namespace";
-					case ExprClass.Type:
-						return "type";
-					case ExprClass.MethodGroup:
-						return "method group";
-					case ExprClass.PropertyAccess:
-						return "property access";
-					case ExprClass.EventAccess:
-						return "event access";
-					case ExprClass.IndexerAccess:
-						return "indexer access";
-					case ExprClass.Nothing:
-						return "null";
-					case ExprClass.TypeParameter:
-						return "type parameter";
+				case ExprClass.Invalid:
+					return "Invalid";
+				case ExprClass.Value:
+					return "value";
+				case ExprClass.Variable:
+					return "variable";
+				case ExprClass.Namespace:
+					return "namespace";
+				case ExprClass.Type:
+					return "type";
+				case ExprClass.MethodGroup:
+					return "method group";
+				case ExprClass.PropertyAccess:
+					return "property access";
+				case ExprClass.EventAccess:
+					return "event access";
+				case ExprClass.IndexerAccess:
+					return "indexer access";
+				case ExprClass.Nothing:
+					return "null";
+				case ExprClass.TypeParameter:
+					return "type parameter";
 				}
 				throw new Exception ("Should not happen");
 			}

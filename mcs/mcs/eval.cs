@@ -138,7 +138,7 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Interrupts the evaluation of an expression.
+		///   Interrupts the evaluation of an expression executing in Evaluate.
 		/// </summary>
 		/// <remarks>
 		///   Use this method to interrupt long-running invocations.
@@ -152,6 +152,98 @@ namespace Mono.CSharp {
 				invoke_thread.Abort ();
 		}
 
+		/// <summary>
+		///   Compiles the input string and returns a delegate that represents the compiled code.
+		/// </summary>
+		/// <remarks>
+		///
+		///   Compiles the input string as a C# expression or
+		///   statement, unlike the Evaluate method, the
+		///   resulting delegate can be invoked multiple times
+		///   without incurring in the compilation overhead.
+		///
+		///   If the return value of this function is null,
+		///   this indicates that the parsing was complete.
+		///   If the return value is a string it indicates
+		///   that the input string was partial and that the
+		///   invoking code should provide more code before
+		///   the code can be successfully compiled.
+		///
+		///   If you know that you will always get full expressions or
+		///   statements and do not care about partial input, you can use
+		///   the other Compile overload. 
+		///
+		///   On success, in addition to returning null, the
+		///   compiled parameter will be set to the delegate
+		///   that can be invoked to execute the code.
+		///
+	        /// </remarks>
+		static public string Compile (string input, out CompiledMethod compiled)
+		{
+			if (input == null || input.Length == 0){
+				compiled = null;
+				return null;
+			}
+			
+			lock (evaluator_lock){
+				if (!inited)
+					Init ();
+				
+				bool partial_input;
+				CSharpParser parser = ParseString (true, input, out partial_input);
+				if (parser == null){
+					compiled = null;
+					if (partial_input)
+						return input;
+					
+					ParseString (false, input, out partial_input);
+					return null;
+				}
+				
+				object parser_result = parser.InteractiveResult;
+				
+				if (!(parser_result is Class))
+					parser.CurrentNamespace.Extract (using_alias_list, using_list);
+
+				compiled = CompileBlock (parser_result as Class, parser.undo);
+			}
+			
+			return null;
+		}
+
+		/// <summary>
+		///   Compiles the input string and returns a delegate that represents the compiled code.
+		/// </summary>
+		/// <remarks>
+		///
+		///   Compiles the input string as a C# expression or
+		///   statement, unlike the Evaluate method, the
+		///   resulting delegate can be invoked multiple times
+		///   without incurring in the compilation overhead.
+		///
+		///   This method can only deal with fully formed input
+		///   strings and does not provide a completion mechanism.
+		///   If you must deal with partial input (for example for
+		///   interactive use) use the other overload. 
+		///
+		///   On success, a delegate is returned that can be used
+		///   to invoke the method.
+		///
+	        /// </remarks>
+		static public CompiledMethod Compile (string input)
+		{
+			CompiledMethod compiled;
+
+			// Ignore partial inputs
+			if (Compile (input, out compiled) != null){
+				// Error, the input was partial.
+				return null;
+			}
+
+			// Either null (on error) or the compiled method.
+			return compiled;
+		}
+		
 		//
 		// Todo: Should we handle errors, or expect the calling code to setup
 		// the recording themselves?
@@ -181,41 +273,44 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public static string Evaluate (string input, out object result, out bool result_set)
 		{
-			lock (evaluator_lock){
-				result_set = false;
-				result = null;
-				
-				if (input == null || input.Length == 0)
-					return null;
-				
-				if (!inited)
-					Init ();
-				
-				bool partial_input;
-				CSharpParser parser = ParseString (true, input, out partial_input);
-				if (parser == null){
-					if (partial_input)
-						return input;
-					
-					ParseString (false, input, out partial_input);
-					return null;
-				}
-				
-				object parser_result = parser.InteractiveResult;
-				
-				if (!(parser_result is Class))
-					parser.CurrentNamespace.Extract (using_alias_list, using_list);
-				
-				result = ExecuteBlock (parser_result as Class, parser.undo);
-				//
-				// We use a reference to a compiler type, in this case
-				// Driver as a flag to indicate that this was a statement
-				//
-				if (result != typeof (NoValueSet))
-					result_set = true;
-				
+			CompiledMethod compiled;
+
+			result_set = false;
+			result = null;
+
+			input = Compile (input, out compiled);
+			if (input != null)
+				return input;
+			
+			if (compiled == null)
 				return null;
+				
+			//
+			// The code execution does not need to keep the compiler lock
+			//
+			object retval = typeof (NoValueSet);
+			
+			try {
+				invoke_thread = System.Threading.Thread.CurrentThread;
+				invoking = true;
+				compiled (ref retval);
+			} catch (ThreadAbortException e){
+				Thread.ResetAbort ();
+				Console.WriteLine ("Interrupted!\n{0}", e);
+			} finally {
+				invoking = false;
 			}
+
+			//
+			// We use a reference to a compiler type, in this case
+			// Driver as a flag to indicate that this was a statement
+			//
+			if (retval != typeof (NoValueSet)){
+				result_set = true;
+				result = retval; 
+			}
+
+			return null;
 		}
 			
 		/// <summary>
@@ -448,7 +543,19 @@ namespace Mono.CSharp {
 			return parser;
 		}
 
-		delegate void HostSignature (ref object retvalue);
+		/// <summary>
+		///   A delegate that can be used to invoke the
+		///   compiled expression or statement.
+		/// </summary>
+		/// <remarks>
+		///   Since the Compile methods will compile
+		///   statements and expressions into the same
+		///   delegate, you can tell if a value was returned
+		///   by checking whether the returned value is of type
+		///   NoValueSet.   
+		/// </remarks>
+		
+		public delegate void CompiledMethod (ref object retvalue);
 
 		//
 		// Queue all the fields that we use, as we need to then go from FieldBuilder to FieldInfo
@@ -461,19 +568,19 @@ namespace Mono.CSharp {
 
 		static volatile bool invoking;
 		
-		static object ExecuteBlock (Class host, Undo undo)
+		static CompiledMethod CompileBlock (Class host, Undo undo)
 		{
 			RootContext.ResolveTree ();
 			if (Report.Errors != 0){
 				undo.ExecuteUndo ();
-				return typeof (NoValueSet);
+				return null;
 			}
 			
 			RootContext.PopulateTypes ();
 
 			if (Report.Errors != 0){
 				undo.ExecuteUndo ();
-				return typeof (NoValueSet);
+				return null;
 			}
 
 			TypeBuilder tb = null;
@@ -497,7 +604,7 @@ namespace Mono.CSharp {
 			
 			RootContext.EmitCode ();
 			if (Report.Errors != 0)
-				return typeof (NoValueSet);
+				return null;
 			
 			RootContext.CloseTypes ();
 
@@ -505,7 +612,7 @@ namespace Mono.CSharp {
 				CodeGen.Save (current_debug_name, false);
 
 			if (host == null)
-				return typeof (NoValueSet);
+				return null;
 			
 			//
 			// Unlike Mono, .NET requires that the MethodInfo is fetched, it cant
@@ -541,25 +648,9 @@ namespace Mono.CSharp {
 
 			queued_fields.Clear ();
 			
-			HostSignature invoker = (HostSignature) System.Delegate.CreateDelegate (typeof (HostSignature), mi);
-			object retval = typeof (NoValueSet);
-
-			try {
-				invoke_thread = System.Threading.Thread.CurrentThread;
-				invoking = true;
-				invoker (ref retval);
-			} catch (ThreadAbortException e){
-				Thread.ResetAbort ();
-				Console.WriteLine ("Interrupted!\n{0}", e);
-			} finally {
-				invoking = false;
-			}
-			
-			// d.DynamicInvoke  (new object [] { retval });
-
-			return retval;
+			return (CompiledMethod) System.Delegate.CreateDelegate (typeof (CompiledMethod), mi);
 		}
-
+		
 		static internal void LoadAliases (NamespaceEntry ns)
 		{
 			ns.Populate (using_alias_list, using_list);

@@ -1216,43 +1216,41 @@ namespace Mono.CSharp {
 					//       are loaded yet.
 					// TODO: Does not handle quoted attributes properly
 					switch (a.Name) {
-						case "AssemblyKeyFile":
-						case "AssemblyKeyFileAttribute":
-						case "System.Reflection.AssemblyKeyFileAttribute":
-							if (RootContext.StrongNameKeyFile != null) {
-								Report.SymbolRelatedToPreviousError (a.Location, a.Name);
-								Report.Warning (1616, 1, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
-                                    "keyfile", "System.Reflection.AssemblyKeyFileAttribute");
-							}
-							else {
-								string value = a.GetString ();
-								if (value.Length != 0)
-									RootContext.StrongNameKeyFile = value;
-							}
-							break;
-						case "AssemblyKeyName":
-						case "AssemblyKeyNameAttribute":
-						case "System.Reflection.AssemblyKeyNameAttribute":
-							if (RootContext.StrongNameKeyContainer != null) {
-								Report.SymbolRelatedToPreviousError (a.Location, a.Name);
-								Report.Warning (1616, 1, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
+					case "AssemblyKeyFile":
+					case "AssemblyKeyFileAttribute":
+					case "System.Reflection.AssemblyKeyFileAttribute":
+						if (RootContext.StrongNameKeyFile != null) {
+							Report.SymbolRelatedToPreviousError (a.Location, a.Name);
+							Report.Warning (1616, 1, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
+									"keyfile", "System.Reflection.AssemblyKeyFileAttribute");
+						} else {
+							string value = a.GetString ();
+							if (value.Length != 0)
+								RootContext.StrongNameKeyFile = value;
+						}
+						break;
+					case "AssemblyKeyName":
+					case "AssemblyKeyNameAttribute":
+					case "System.Reflection.AssemblyKeyNameAttribute":
+						if (RootContext.StrongNameKeyContainer != null) {
+							Report.SymbolRelatedToPreviousError (a.Location, a.Name);
+							Report.Warning (1616, 1, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
 									"keycontainer", "System.Reflection.AssemblyKeyNameAttribute");
-							}
-							else {
-								string value = a.GetString ();
-								if (value.Length != 0)
-									RootContext.StrongNameKeyContainer = value;
-							}
-							break;
-						case "AssemblyDelaySign":
-						case "AssemblyDelaySignAttribute":
-						case "System.Reflection.AssemblyDelaySignAttribute":
-							RootContext.StrongNameDelaySign = a.GetBoolean ();
-							break;
+						} else {
+							string value = a.GetString ();
+							if (value.Length != 0)
+								RootContext.StrongNameKeyContainer = value;
+						}
+						break;
+					case "AssemblyDelaySign":
+					case "AssemblyDelaySignAttribute":
+					case "System.Reflection.AssemblyDelaySignAttribute":
+						RootContext.StrongNameDelaySign = a.GetBoolean ();
+						break;
 					}
 				}
 			}
-
+			
 			AssemblyName an = new AssemblyName ();
 			an.Name = Path.GetFileNameWithoutExtension (name);
 
@@ -1640,18 +1638,18 @@ namespace Mono.CSharp {
 				has_default_charset = true;
 				DefaultCharSet = a.GetCharSetValue ();
 				switch (DefaultCharSet) {
-					case CharSet.Ansi:
-					case CharSet.None:
-						break;
-					case CharSet.Auto:
-						DefaultCharSetType = TypeAttributes.AutoClass;
-						break;
-					case CharSet.Unicode:
-						DefaultCharSetType = TypeAttributes.UnicodeClass;
-						break;
-					default:
-						Report.Error (1724, a.Location, "Value specified for the argument to 'System.Runtime.InteropServices.DefaultCharSetAttribute' is not valid");
-						break;
+				case CharSet.Ansi:
+				case CharSet.None:
+					break;
+				case CharSet.Auto:
+					DefaultCharSetType = TypeAttributes.AutoClass;
+					break;
+				case CharSet.Unicode:
+					DefaultCharSetType = TypeAttributes.UnicodeClass;
+					break;
+				default:
+					Report.Error (1724, a.Location, "Value specified for the argument to 'System.Runtime.InteropServices.DefaultCharSetAttribute' is not valid");
+					break;
 				}
 			}
 #endif

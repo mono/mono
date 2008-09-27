@@ -674,20 +674,20 @@ namespace Mono.CSharp {
 				Argument.AType atype_modifier;
 				Type atype = pd.Types [i];
 				switch (pd.FixedParameters [i].ModFlags) {
-					case Parameter.Modifier.REF:
-						atype_modifier = Argument.AType.Ref;
-						//atype = atype.GetElementType ();
-						break;
-					case Parameter.Modifier.OUT:
-						atype_modifier = Argument.AType.Out;
-						//atype = atype.GetElementType ();
-						break;
-					case Parameter.Modifier.ARGLIST:
-						// __arglist is not valid
-						throw new InternalErrorException ("__arglist modifier");
-					default:
-						atype_modifier = Argument.AType.Expression;
-						break;
+				case Parameter.Modifier.REF:
+					atype_modifier = Argument.AType.Ref;
+					//atype = atype.GetElementType ();
+					break;
+				case Parameter.Modifier.OUT:
+					atype_modifier = Argument.AType.Out;
+					//atype = atype.GetElementType ();
+					break;
+				case Parameter.Modifier.ARGLIST:
+					// __arglist is not valid
+					throw new InternalErrorException ("__arglist modifier");
+				default:
+					atype_modifier = Argument.AType.Expression;
+					break;
 				}
 				delegate_arguments.Add (new Argument (new TypeExpression (atype, loc), atype_modifier));
 			}

@@ -1228,24 +1228,24 @@ namespace Mono.CSharp
 				bool embeded = arg.StartsWith ("/r");
 				string[] s = value.Split (',');
 				switch (s.Length) {
-					case 1:
-						if (s[0].Length == 0)
-							goto default;
-						embedded_resources.Add (embeded, s [0], Path.GetFileName (s[0]));
-						break;
-					case 2:
-						embedded_resources.Add (embeded, s [0], s [1]);
-						break;
-					case 3:
-						if (s [2] != "public" && s [2] != "private") {
-							Report.Error (1906, "Invalid resource visibility option `{0}'. Use either `public' or `private' instead", s [2]);
-							return true;
-						}
-						embedded_resources.Add (embeded, s [0], s [1], s [2] == "private");
-						break;
-					default:
-						Report.Error (-2005, "Wrong number of arguments for option `{0}'", option);
-						break;
+				case 1:
+					if (s[0].Length == 0)
+						goto default;
+					embedded_resources.Add (embeded, s [0], Path.GetFileName (s[0]));
+					break;
+				case 2:
+					embedded_resources.Add (embeded, s [0], s [1]);
+					break;
+				case 3:
+					if (s [2] != "public" && s [2] != "private") {
+						Report.Error (1906, "Invalid resource visibility option `{0}'. Use either `public' or `private' instead", s [2]);
+						return true;
+					}
+					embedded_resources.Add (embeded, s [0], s [1], s [2] == "private");
+					break;
+				default:
+					Report.Error (-2005, "Wrong number of arguments for option `{0}'", option);
+					break;
 				}
 
 				return true;

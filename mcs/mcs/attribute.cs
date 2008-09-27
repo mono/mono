@@ -852,11 +852,11 @@ namespace Mono.CSharp {
 			// TODO: we can skip the first item
 			if (((IList) valid_targets).Contains (ExplicitTarget)) {
 				switch (ExplicitTarget) {
-					case "return": Target = AttributeTargets.ReturnValue; return true;
-					case "param": Target = AttributeTargets.Parameter; return true;
-					case "field": Target = AttributeTargets.Field; return true;
-					case "method": Target = AttributeTargets.Method; return true;
-					case "property": Target = AttributeTargets.Property; return true;
+				case "return": Target = AttributeTargets.ReturnValue; return true;
+				case "param": Target = AttributeTargets.Parameter; return true;
+				case "field": Target = AttributeTargets.Field; return true;
+				case "method": Target = AttributeTargets.Method; return true;
+				case "property": Target = AttributeTargets.Property; return true;
 				}
 				throw new InternalErrorException ("Unknown explicit target: " + ExplicitTarget);
 			}
@@ -982,15 +982,15 @@ namespace Mono.CSharp {
 			// IS is correct because for corlib we are using an instance from old corlib
 			if (!(perm is System.Security.CodeAccessPermission)) {
 				switch (action) {
-					case SecurityAction.Demand:
-						action = (SecurityAction)13;
-						break;
-					case SecurityAction.LinkDemand:
-						action = (SecurityAction)14;
-						break;
-					case SecurityAction.InheritanceDemand:
-						action = (SecurityAction)15;
-						break;
+				case SecurityAction.Demand:
+					action = (SecurityAction)13;
+					break;
+				case SecurityAction.LinkDemand:
+					action = (SecurityAction)14;
+					break;
+				case SecurityAction.InheritanceDemand:
+					action = (SecurityAction)15;
+					break;
 				}
 			}
 
