@@ -4888,16 +4888,13 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			if (panel.Text == String.Empty)
-					return;
-
 			string text = panel.Text;
 			StringFormat string_format = new StringFormat ();
 			string_format.Trimming = StringTrimming.Character;
 			string_format.FormatFlags = StringFormatFlags.NoWrap;
 
 			
-			if (text [0] == '\t') {
+			if (text != null && text.Length > 0 && text [0] == '\t') {
 				string_format.Alignment = StringAlignment.Center;
 				text = text.Substring (1);
 				if (text [0] == '\t') {
