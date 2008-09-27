@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <assemblies>
-  <assembly name="csharplib" version="2.1.0.0">
+  <assembly name="Mono.CSharp" version="2.1.0.0">
     <attributes>
       <attribute name="System.Runtime.CompilerServices.RuntimeCompatibilityAttribute">
         <properties>

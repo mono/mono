@@ -1,0 +1,4 @@
+2008-09-27  Miguel de Icaza  <miguel@novell.com>
+
+	* Abdicate: renamed csharplib.dll into Mono.CSharp.dll
+
