@@ -1,3 +1,10 @@
+2008-09-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mini_emit_check_array_type): Add support for generic
+	sharing.
+
+	* generics.cs: Add new test.
+
 2008-09-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.h driver.c: Print the fp model when using --version on arm. Also,
