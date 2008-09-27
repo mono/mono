@@ -1,5 +1,10 @@
 2008-09-27  Mark Probst  <mark.probst@gmail.com>
 
+	* mini-ppc.c: Special handling for 1/2 byte structs on Darwin only
+	for pinvokes.
+
+2008-09-27  Mark Probst  <mark.probst@gmail.com>
+
 	* exceptions-ppc.c, mini-ppc.h: Compile
 	mono_arch_handle_altstack_exception() on Darwin, too.
 
