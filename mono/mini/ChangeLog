@@ -1,3 +1,9 @@
+2008-09-27  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c (mono_emit_rgctx_method_call_full): Must also
+	work on archs which don't have generic sharing implemented, only
+	without the vtable_arg.
+
 2008-09-26  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c: Added comment explaining why delegate ctor icall
