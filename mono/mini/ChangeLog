@@ -1,3 +1,12 @@
+2008-09-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_altstack_restore_prot): Fix a warning.
+
+	* mini.h (MonoJitDomainInfo): Move some fields here from MonoDomain.
+
+	* mini.c aot-runtime.c method-to-ir.c driver.c mini-trampolines.c: Update
+	after the changes to MonoJitDomainInfo.
+
 2008-09-27  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc.c, tramp-ppc.c, mini-ppc.h: Implement generic code sharing.
