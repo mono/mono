@@ -1,5 +1,7 @@
 2008-09-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-exceptions.c: Fix build on non-altstack platforms.
+
 	* method-to-ir.c (mono_method_to_ir2): Fix aot support for the
 	sharing of vtypes.
 
