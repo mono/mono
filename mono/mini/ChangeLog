@@ -1,5 +1,9 @@
 2008-09-27  Mark Probst  <mark.probst@gmail.com>
 
+	* mini-ppc.c, tramp-ppc.c, mini-ppc.h: Implement generic code sharing.
+
+2008-09-27  Mark Probst  <mark.probst@gmail.com>
+
 	* mini-ppc.c: Compiler warning fixes.
 
 2008-09-27  Mark Probst  <mark.probst@gmail.com>
