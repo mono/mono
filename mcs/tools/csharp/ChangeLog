@@ -1,5 +1,7 @@
 2008-09-27  Miguel de Icaza  <miguel@novell.com>
 
+	* getline.cs: Add support for autocompletion.
+	
 	* repl.cs (RunRepl): Catch exceptions, and send those as errors
 	back to the client.
 

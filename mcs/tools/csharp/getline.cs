@@ -41,6 +41,9 @@ using System.Reflection;
 namespace Mono.Terminal {
 
 	public class LineEditor {
+
+		public delegate string [] AutoCompleteHandler (string text, int pos);
+		
 		//static StreamWriter log;
 		
 		// The text being edited.
@@ -125,6 +128,20 @@ namespace Mono.Terminal {
 			}
 		}
 
+		/// <summary>
+		///   Invoked when the user requests auto-completion using the tab character
+		/// </summary>
+		/// <remarks>
+		///    The result is null for no values found, an array with a single
+		///    string, in that case the string should be the text to be inserted
+		///    for example if the word at pos is "T", the result for a completion
+		///    of "ToString" should be "oString", not "ToString".
+		///
+		///    When there are multiple results, the result should be the full
+		///    text
+		/// </remarks>
+		public AutoCompleteHandler AutoCompleteEvent;
+		
 		static Handler [] handlers;
 
 		public LineEditor (string name) : this (name, 10) { }
@@ -141,6 +158,7 @@ namespace Mono.Terminal {
 				new Handler (ConsoleKey.Enter,      CmdDone),
 				new Handler (ConsoleKey.Backspace,  CmdBackspace),
 				new Handler (ConsoleKey.Delete,     CmdDeleteChar),
+				new Handler (ConsoleKey.Tab,        CmdTabOrComplete),
 				
 				// Emacs keys
 				Handler.Control ('A', CmdHome),
@@ -250,9 +268,12 @@ namespace Mono.Terminal {
 		int TextToRenderPos (int pos)
 		{
 			int p = 0;
-			
+
 			for (int i = 0; i < pos; i++){
-				int c = (int) text [i];
+				int c;
+
+				c = (int) text [i];
+				
 				if (c < 26){
 					if (c == 9)
 						p += 4;
@@ -261,6 +282,7 @@ namespace Mono.Terminal {
 				} else
 					p++;
 			}
+
 			return p;
 		}
 
@@ -329,6 +351,40 @@ namespace Mono.Terminal {
 			done = true;
 		}
 
+		void CmdTabOrComplete ()
+		{
+			bool complete = false;
+
+			if (AutoCompleteEvent != null){
+				for (int i = 0; i < cursor; i++){
+					if (!Char.IsWhiteSpace (text [i])){
+						complete = true;
+						break;
+					}
+				}
+				if (complete){
+					string [] completions = AutoCompleteEvent (text.ToString (), cursor);
+					if (completions == null || completions.Length == 0)
+						return;
+					
+					if (completions.Length == 1){
+						InsertTextAtCursor (completions [0]);
+					} else {
+						Console.WriteLine ();
+						foreach (string s in completions){
+							Console.Write (s);
+							Console.Write (' ');
+						}
+						Console.WriteLine ();
+						Render ();
+						ForceCursor (cursor);
+					}
+				} else
+					HandleChar ('\t');
+			} else
+				HandleChar ('t');
+		}
+		
 		void CmdHome ()
 		{
 			UpdateCursor (0);
@@ -538,22 +594,27 @@ namespace Mono.Terminal {
 
 		void CmdYank ()
 		{
+			InsertTextAtCursor (kill_buffer);
+		}
+
+		void InsertTextAtCursor (string str)
+		{
 			int prev_lines = LineCount;
-			text.Insert (cursor, kill_buffer);
+			text.Insert (cursor, str);
 			ComputeRendered ();
 			if (prev_lines != LineCount){
 				Console.SetCursorPosition (0, home_row);
 				Render ();
-				cursor += kill_buffer.Length;
+				cursor += str.Length;
 				ForceCursor (cursor);
 			} else {
 				RenderFrom (cursor);
-				cursor += kill_buffer.Length;
+				cursor += str.Length;
 				ForceCursor (cursor);
 				UpdateHomeRow (TextToScreenPos (cursor));
 			}
 		}
-
+		
 		void SetSearchPrompt (string s)
 		{
 			SetPrompt ("(reverse-i-search)`" + s + "': ");

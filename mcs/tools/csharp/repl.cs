@@ -73,6 +73,25 @@ namespace Mono {
 			dumb = term == "dumb" || term == null || isatty == false;
 			
 			editor = new Mono.Terminal.LineEditor ("csharp", 300);
+#if false
+			//
+			// This is a sample of how completions sould be implemented.
+			//
+			editor.AutoCompleteEvent += delegate (string s, int pos){
+
+				// Single match: "Substring": Sub-string
+				if (s.EndsWith ("Sub")){
+					return new string [] { "string" };
+				}
+
+				// Multiple matches: "ToString" and "ToLower"
+				if (s.EndsWith ("T")){
+					return new string [] { "ToString", "ToLower" };
+				}
+				return null;
+			};
+#endif
+			
 			Console.CancelKeyPress += ConsoleInterrupt;
 		}
 
