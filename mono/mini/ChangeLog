@@ -1,5 +1,8 @@
 2008-09-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.h driver.c: Print the fp model when using --version on arm. Also,
+	add a check that one of the ARM_FPU_ constants is defined.
+
 	* mini-exceptions.c (mono_handle_soft_stack_ovf): Really fix the build.
 	
 	* mini-exceptions.c: Fix build on non-altstack platforms.
