@@ -4,12 +4,8 @@ using Mono.CSharp;
 public class MyTest {
 	static void Run (string id, string stmt)
 	{
-		try {
-			Evaluator.Run (stmt);
-		} catch {
+		if (!Evaluator.Run (stmt))
 			Console.WriteLine ("Failed on test {0}", id);
-			throw;
-		}
 	}
 
 	static void Evaluate (string id, string expr, object expected)
@@ -32,7 +28,7 @@ public class MyTest {
 	static void Main ()
 	{
 		Run ("1",      "System.Console.WriteLine (100);");
-		Run ("Length", "var a = new int [] {1,2,3}; var b = a.Length");
+		Run ("Length", "var a = new int [] {1,2,3}; var b = a.Length;");
 		
 		Evaluate ("CompareString", "\"foo\" == \"bar\";", false);
 		Evaluate ("CompareInt", "var a = 1; a+2;", 3);
