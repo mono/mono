@@ -1,3 +1,7 @@
+2008-09-27  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Tango-fy SystemIcons.
+
 2008-04-23  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* AssemblyInfo.cs: Added missing attributes
