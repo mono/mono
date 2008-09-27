@@ -5,7 +5,9 @@ public class MyTest {
 	static void Run (string id, string stmt)
 	{
 		try {
+			Console.WriteLine ("Running {0} -> {1}", id, stmt);
 			Evaluator.Run (stmt);
+			Console.WriteLine ("Done");
 		} catch {
 			Console.WriteLine ("Failed on test {0}", id);
 			throw;
@@ -43,6 +45,9 @@ public class MyTest {
 
 		Evaluator.ReferenceAssembly (typeof (MyTest).Assembly);
 		Evaluate ("assembly reference test", "typeof (MyTest) != null;", true);
+
+		Run ("LINQ-3", "var first_scope = new int [] {1,2,3};");
+		Run ("LINQ-4", "var second_scope = from x in first_scope select x;");
 	}
 	
 }
