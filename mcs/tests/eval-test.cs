@@ -5,9 +5,7 @@ public class MyTest {
 	static void Run (string id, string stmt)
 	{
 		try {
-			Console.WriteLine ("Running {0} -> {1}", id, stmt);
 			Evaluator.Run (stmt);
-			Console.WriteLine ("Done");
 		} catch {
 			Console.WriteLine ("Failed on test {0}", id);
 			throw;
