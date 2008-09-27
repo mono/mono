@@ -427,25 +427,25 @@ namespace Mono.CSharp {
 		{
 			get {
 				switch (eclass) {
-					case ExprClass.Type:
-					case ExprClass.Namespace:
-						return ResolveFlags.Type;
-
-					case ExprClass.MethodGroup:
-						return ResolveFlags.MethodGroup;
-
-					case ExprClass.TypeParameter:
-						return ResolveFlags.TypeParameter;
-
-					case ExprClass.Value:
-					case ExprClass.Variable:
-					case ExprClass.PropertyAccess:
-					case ExprClass.EventAccess:
-					case ExprClass.IndexerAccess:
-						return ResolveFlags.VariableOrValue;
-
-					default:
-						throw new InternalErrorException (loc.ToString () + " " +  GetType () + " ExprClass is Invalid after resolve");
+				case ExprClass.Type:
+				case ExprClass.Namespace:
+					return ResolveFlags.Type;
+					
+				case ExprClass.MethodGroup:
+					return ResolveFlags.MethodGroup;
+					
+				case ExprClass.TypeParameter:
+					return ResolveFlags.TypeParameter;
+					
+				case ExprClass.Value:
+				case ExprClass.Variable:
+				case ExprClass.PropertyAccess:
+				case ExprClass.EventAccess:
+				case ExprClass.IndexerAccess:
+					return ResolveFlags.VariableOrValue;
+					
+				default:
+					throw new InternalErrorException (loc.ToString () + " " +  GetType () + " ExprClass is Invalid after resolve");
 				}
 			}
 		}
