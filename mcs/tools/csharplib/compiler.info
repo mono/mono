@@ -77,6 +77,21 @@
               </property>
             </properties>
             <methods>
+              <method name="Compile(System.String, out Mono.CSharp.Evaluator+CompiledMethod&amp;)" attrib="150" static="true" returntype="System.String">
+                <parameters>
+                  <parameter name="input" position="0" attrib="0" type="System.String" />
+                  <parameter name="compiled" position="1" attrib="2" type="Mono.CSharp.Evaluator+CompiledMethod&amp;" direction="out">
+                    <attributes>
+                      <attribute name="System.Runtime.InteropServices.OutAttribute" />
+                    </attributes>
+                  </parameter>
+                </parameters>
+              </method>
+              <method name="Compile(System.String)" attrib="150" static="true" returntype="Mono.CSharp.Evaluator+CompiledMethod">
+                <parameters>
+                  <parameter name="input" position="0" attrib="0" type="System.String" />
+                </parameters>
+              </method>
               <method name="Evaluate(System.String, out System.Object&amp;, out System.Boolean&amp;)" attrib="150" static="true" returntype="System.String">
                 <parameters>
                   <parameter name="input" position="0" attrib="0" type="System.String" />
@@ -127,6 +142,49 @@
                 </parameters>
               </method>
             </methods>
+            <classes>
+              <class name="CompiledMethod" type="delegate" base="System.MulticastDelegate" sealed="true" serializable="true" charset="Ansi" layout="Auto">
+                <interfaces>
+                  <interface name="System.ICloneable" />
+                  <interface name="System.Runtime.Serialization.ISerializable" />
+                </interfaces>
+                <constructors>
+                  <constructor name=".ctor(System.Object, System.IntPtr)" attrib="2182">
+                    <parameters>
+                      <parameter name="object" position="0" attrib="0" type="System.Object" />
+                      <parameter name="method" position="1" attrib="0" type="System.IntPtr" />
+                    </parameters>
+                  </constructor>
+                </constructors>
+                <methods>
+                  <method name="BeginInvoke(System.Object&amp;, System.AsyncCallback, System.Object)" attrib="454" virtual="true" returntype="System.IAsyncResult">
+                    <parameters>
+                      <parameter name="retvalue" position="0" attrib="0" type="System.Object&amp;" direction="ref" />
+                      <parameter name="callback" position="1" attrib="0" type="System.AsyncCallback" />
+                      <parameter name="object" position="2" attrib="0" type="System.Object" />
+                    </parameters>
+                  </method>
+                  <method name="EndInvoke(System.Object&amp;, System.IAsyncResult)" attrib="454" virtual="true" returntype="System.Void">
+                    <parameters>
+                      <parameter name="retvalue" position="0" attrib="0" type="System.Object&amp;" direction="ref" />
+                      <parameter name="result" position="1" attrib="0" type="System.IAsyncResult" />
+                    </parameters>
+                  </method>
+                  <method name="Invoke(System.Object&amp;)" attrib="454" virtual="true" returntype="System.Void">
+                    <parameters>
+                      <parameter name="retvalue" position="0" attrib="0" type="System.Object&amp;" direction="ref" />
+                    </parameters>
+                  </method>
+                </methods>
+              </class>
+              <class name="NoValueSet" type="class" base="System.Object" charset="Ansi" layout="Auto">
+                <constructors>
+                  <constructor name=".ctor()" attrib="2182">
+                    <parameters />
+                  </constructor>
+                </constructors>
+              </class>
+            </classes>
           </class>
           <class name="InteractiveBase" type="class" base="System.Object" charset="Ansi" layout="Auto">
             <fields>
