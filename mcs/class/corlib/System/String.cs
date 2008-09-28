@@ -1689,6 +1689,8 @@ namespace System
 					}
 					i = found + oldValue.length;
 				}
+				if (count == 0)
+					return this;
 				int nlen = this.length + ((newValue.length - oldValue.length) * count);
 				String tmp = InternalAllocateStr (nlen);
 

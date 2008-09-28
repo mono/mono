@@ -1,3 +1,8 @@
+2008-09-08  Juraj Skripsky  <js@hotfeet.ch>
+
+	* StringBuilder.cs (Replace): Return early when no oldValue was 
+	found. Avoid extra string allocations.
+
 2008-07-03  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* UTF8Encoding.cs: Fix parameter names, Remove unfounded TODO

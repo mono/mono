@@ -1,3 +1,8 @@
+2008-09-28  Juraj Skripsky  <js@hotfeet.ch>
+
+	* String.cs (ReplaceUnchecked): Avoid any unnecessary work and 
+	string allocations by returning early when no oldValue was found.
+
 2008-09-24  Marek Habersack  <mhabersack@novell.com>
 
 	* Double.cs: check whether decimal_separator, group_separator and

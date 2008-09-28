@@ -309,15 +309,22 @@ namespace System.Text {
 			if (oldValue.Length == 0)
 				throw new ArgumentException ("The old value cannot be zero length.");
 
-			// TODO: OPTIMIZE!
-			string replace = _str.Substring(startIndex, count).Replace(oldValue, newValue);
+			string substr = _str.Substring(startIndex, count);
+			string replace = substr.Replace(oldValue, newValue);
+			// return early if no oldValue was found
+			if ((object) replace == (object) substr)
+				return this;
 
 			InternalEnsureCapacity (replace.Length + (_length - count));
 
-			string end = _str.Substring (startIndex + count, _length - startIndex - count );
+			// shift end part
+			if (replace.Length < count)
+				String.CharCopy (_str, startIndex + replace.Length, _str, startIndex + count, _length - startIndex  - count);
+			else if (replace.Length > count)
+				String.CharCopyReverse (_str, startIndex + replace.Length, _str, startIndex + count, _length - startIndex  - count);
 
+			// copy middle part back into _str
 			String.CharCopy (_str, startIndex, replace, 0, replace.Length);
-			String.CharCopy (_str, startIndex + replace.Length, end, 0, end.Length);
 			
 			_length = replace.Length + (_length - count);
 
