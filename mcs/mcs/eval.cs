@@ -543,20 +543,6 @@ namespace Mono.CSharp {
 			return parser;
 		}
 
-		/// <summary>
-		///   A delegate that can be used to invoke the
-		///   compiled expression or statement.
-		/// </summary>
-		/// <remarks>
-		///   Since the Compile methods will compile
-		///   statements and expressions into the same
-		///   delegate, you can tell if a value was returned
-		///   by checking whether the returned value is of type
-		///   NoValueSet.   
-		/// </remarks>
-		
-		public delegate void CompiledMethod (ref object retvalue);
-
 		//
 		// Queue all the fields that we use, as we need to then go from FieldBuilder to FieldInfo
 		// or reflection gets confused (it basically gets confused, and variables override each
@@ -765,6 +751,20 @@ namespace Mono.CSharp {
 		
 	}
 
+	
+	/// <summary>
+	///   A delegate that can be used to invoke the
+	///   compiled expression or statement.
+	/// </summary>
+	/// <remarks>
+	///   Since the Compile methods will compile
+	///   statements and expressions into the same
+	///   delegate, you can tell if a value was returned
+	///   by checking whether the returned value is of type
+	///   NoValueSet.   
+	/// </remarks>
+	
+	public delegate void CompiledMethod (ref object retvalue);
 	/// <summary>
 	///   The default base class for every interaction line
 	/// </summary>

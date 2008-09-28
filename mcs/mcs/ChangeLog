@@ -1,3 +1,8 @@
+2008-09-28  Miguel de Icaza  <miguel@novell.com>
+
+	* eval.cs: CompiledMethod is now in Mono.CSharp, not nested inside
+	the Evaluator, it was inconvenient to use.
+
 2008-09-27  Miguel de Icaza  <miguel@novell.com>
 
 	* eval.cs (Evaluator): Introduce Compile method, to allow compiled
