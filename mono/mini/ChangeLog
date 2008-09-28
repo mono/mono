@@ -1,3 +1,7 @@
+2008-09-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (emit_optimized_ldloca_ir): Fix this.
+
 2008-09-28  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* method-to-ir.c (mono_method_to_ir2): Extract the ldloca + initobj
