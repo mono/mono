@@ -1,5 +1,9 @@
 2008-09-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* driver.c (mono_main): Add a workaround for shutdown crashes seen on
+	amd64, where the libc stack unwinder encounters stack frames referring to
+	native code in unmapped memory.
+
 	* method-to-ir.c (mini_emit_check_array_type): Add support for generic
 	sharing.
 
