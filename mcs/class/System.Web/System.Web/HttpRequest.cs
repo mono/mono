@@ -806,8 +806,8 @@ namespace System.Web {
 					ms.Write (buffer, 0, total);
 
 				buffer = new byte [INPUT_BUFFER_SIZE];
-				long maxlength = config.MaxRequestLength * 1024l;
-				long disk_th = config.RequestLengthDiskThreshold * 1024l;
+				long maxlength = config.MaxRequestLength * 1024L;
+				long disk_th = config.RequestLengthDiskThreshold * 1024L;
 				int n;
 				while (true) {
 					n = worker_request.ReadEntityBody (buffer, INPUT_BUFFER_SIZE);
