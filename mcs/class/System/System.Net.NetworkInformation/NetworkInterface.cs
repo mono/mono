@@ -215,6 +215,7 @@ namespace System.Net.NetworkInformation {
 									
 									case LinuxArpHardware.LOOPBACK:
 										type = NetworkInterfaceType.Loopback;
+										macAddress = null;
 										break;
 
 									case LinuxArpHardware.FDDI:
@@ -242,7 +243,7 @@ namespace System.Net.NetworkInformation {
 					if (!address.Equals (IPAddress.None))
 						iface.AddAddress (address);
 
-					if (macAddress != null)
+					if (macAddress != null || type == NetworkInterfaceType.Loopback)
 						iface.SetLinkLayerInfo (index, macAddress, type);
 
 					next = addr.ifa_next;

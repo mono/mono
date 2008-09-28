@@ -1,3 +1,9 @@
+2008-09-28 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
+
+	* NetworkInterface.cs: special case for loopback interfaces so that
+	their a physical interface address is PhysicalInterfaceAddress.None.
+	Fixes bug #422118.
+
 2008-08-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IPInterfaceProperties.cs, UnicastIPAddressInformation.cs,
