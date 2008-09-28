@@ -215,6 +215,51 @@ namespace Mono {
 			return s.Replace ("\"", "\\\"");
 		}
 		
+		static void EscapeChar (TextWriter output, char c)
+		{
+			if (c == '\''){
+				output.Write ("'\\''");
+				return;
+			}
+			if (c > 32){
+				output.Write ("'{0}'", c);
+				return;
+			}
+			switch (c){
+			case '\a':
+				output.Write ("'\\a'");
+				break;
+
+			case '\b':
+				output.Write ("'\\b'");
+				break;
+				
+			case '\n':
+				output.Write ("'\\n'");
+				break;
+				
+			case '\v':
+				output.Write ("'\\v'");
+				break;
+				
+			case '\r':
+				output.Write ("'\\r'");
+				break;
+				
+			case '\f':
+				output.Write ("'\\f'");
+				break;
+				
+			case '\t':
+				output.Write ("'\\t");
+				break;
+
+			default:
+				output.Write ("'\\x{0:x}", (int) c);
+				break;
+			}
+		}
+		
 		internal static void PrettyPrint (TextWriter output, object result)
 		{
 			if (result == null){
@@ -267,6 +312,8 @@ namespace Mono {
 					PrettyPrint (output, item);
 				}
 				p (output, " }");
+			} else if (result is char) {
+				EscapeChar (output, (char) result);
 			} else {
 				p (output, result.ToString ());
 			}

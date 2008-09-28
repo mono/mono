@@ -1,3 +1,8 @@
+2008-09-28  Miguel de Icaza  <miguel@novell.com>
+
+	* repl.cs (PrettyPrint): Add support for displaying characters
+	properly. 
+
 2008-09-27  Miguel de Icaza  <miguel@novell.com>
 
 	* getline.cs: Add support for autocompletion.
