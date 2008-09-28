@@ -175,7 +175,7 @@ namespace System.Web.UI.WebControls {
 				if (CacheExpirationPolicy == DataSourceCacheExpiry.Absolute)
 					absoluteExpiration = DateTime.Now.AddSeconds (CacheDuration);
 				else
-					slidindExpiraion = new TimeSpan (CacheDuration * 10000);
+					slidindExpiraion = new TimeSpan (CacheDuration * 10000L);
 			}
 
 			CacheDependency dependency = null;

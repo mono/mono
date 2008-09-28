@@ -1,3 +1,9 @@
+2008-09-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XmlDataSource.cs: Make sure the result of the multiplication is a
+	long (not an integer casted into a long since it could overflow).
+	[Found using Gendarme's ReviewCastOnIntegerMultiplicationRule]
+
 2008-09-17  Juraj Skripsky  <js@hotfeet.ch>
 
 	* RadioButton.cs (ValueAttribute, LoadPostData): Fixes bug #426959.
