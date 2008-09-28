@@ -1,3 +1,9 @@
+2008-09-28  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c (mono_method_to_ir2): Extract the ldloca + initobj
+	optimization to a new function (emit_optimized_ldloca_ir) and enable
+	it for both ldloca and ldloca_s.
+
 2008-09-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir2): Remove an unnecessary assert in the
