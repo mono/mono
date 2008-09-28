@@ -1,5 +1,8 @@
 2008-09-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Remove an unnecessary assert in the
+	gshared CASTCLASS code.
+
 	* driver.c (mono_main): Add a workaround for shutdown crashes seen on
 	amd64, where the libc stack unwinder encounters stack frames referring to
 	native code in unmapped memory.
