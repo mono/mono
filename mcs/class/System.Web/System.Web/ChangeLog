@@ -1,3 +1,9 @@
+2008-09-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpRequest.cs: Make sure the result of the multiplications are
+	longs (not integers casted into longs since they could overflow).
+	[Found using Gendarme's ReviewCastOnIntegerMultiplicationRule]
+
 2008-09-23  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpWorkerRequest.cs: implemented a SendCalculatedContentLength
