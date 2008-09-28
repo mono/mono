@@ -1,3 +1,8 @@
+2008-09-27  Miguel de Icaza  <miguel@novell.com>
+
+	* Turn off MONO_GENERIC_SHARING=all and go back to corlib as it
+	crashes MonoDevelop: #430455.
+
 2008-09-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* domain-internals.h (struct _MonoDomain): Move most fields used only by
