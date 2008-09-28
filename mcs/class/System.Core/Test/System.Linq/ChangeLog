@@ -1,3 +1,7 @@
+2008-09-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EnumerableTest.cs: Add test case for Average with nullable long.
+
 2008-08-08  Jb Evain  <jbevain@novell.com>
 
 	* EnumerableTest.cs: add test to ensure that Take doesn't consume

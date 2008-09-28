@@ -258,6 +258,15 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
+		public void TestAverageOnLongNullable ()
+		{
+			List<long?> list = new List<long?> ();
+			list.Add (2);
+			list.Add (3);
+			Assert.AreEqual (2.5d, list.Average ());
+		}
+
+		[Test]
 		public void TestRange ()
 		{
 			AssertAreSame (new [] {1, 2, 3, 4}, Enumerable.Range (1, 4));
