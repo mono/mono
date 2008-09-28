@@ -225,7 +225,7 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
-			return source.AverageNullable<long, long, double> ((a, b) => a + b, (a, b) => a / b);
+			return source.AverageNullable<long, long, double> ((a, b) => a + b, (a, b) => (double) a / b);
 		}
 
 		public static double? Average (this IEnumerable<double?> source)
