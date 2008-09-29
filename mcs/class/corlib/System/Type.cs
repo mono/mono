@@ -1190,11 +1190,11 @@ namespace System {
 				Type t = typeArguments [i];
 				if (t == null)
 					throw new ArgumentNullException ("typeArguments");
-
-				t = t.UnderlyingSystemType;
+				if (!(t is EnumBuilder || t is TypeBuilder))
+					t = t.UnderlyingSystemType;
 				if (t == null || !t.IsSystemType)
 					throw new ArgumentNullException ("typeArguments");
-				systemTypes [i] = typeArguments [i].UnderlyingSystemType;
+				systemTypes [i] = t;
 			}
 
 			Type res = MakeGenericType (this, systemTypes);
