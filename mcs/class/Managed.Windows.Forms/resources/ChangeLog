@@ -1,3 +1,7 @@
+2008-09-29  Jonathan Pobst  <monkey@jpobst.com>
+
+	* dialog-*.png: Remove unused images.  (Were used in MessageBoxes).
+
 2008-05-12  Jonathan Pobst  <monkey@jpobst.com>
 
 	* errorProvider.ico, mono.ico: Slightly better icons.
