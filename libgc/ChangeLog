@@ -1,3 +1,8 @@
+2008-09-29  Geoff Norton  <gnorton@novell.com>
+
+	* include/private/gcconfig.h: Make Darwin/ARM use mmap() instead of
+	sbrk() for its allocator implementation.
+
 2008-08-28  Geoff Norton  <gnorton@novell.com>
 
 	* darwin_stop_world.c:

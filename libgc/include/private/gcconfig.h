@@ -1896,8 +1896,9 @@
 #     define DATASTART ((ptr_t) get_etext())
 #     define DATAEND	((ptr_t) get_end())
 #     define STACKBOTTOM ((ptr_t) 0x30000000)
-#     undef USE_MMAP
-#     undef USE_MUNMAP
+#     define USE_MMAP
+#     define USE_MMAP_ANON
+#     define USE_MUNMAP
 #   endif
 #   ifdef NOSYS
       /* __data_start is usually defined in the target linker script.  */
