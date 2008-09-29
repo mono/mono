@@ -1,5 +1,10 @@
 2008-09-29  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* mini-codegen.c: Change asserts to use MONO_NUM_REGBANKS instead
+	of a hardcoded constant.
+
+2008-09-29  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* method-to-ir.c (type_from_stack_type): Fix typo.
 
 2008-09-29  Zoltan Varga  <vargaz@gmail.com>
