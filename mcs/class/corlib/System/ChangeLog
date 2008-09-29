@@ -1,3 +1,10 @@
+2008-09-29  Rodrigo Kumpera  <rkumpera@novell.com>
+
+       * Type.cs (MakeGenericType): Only use UnderlyingSystemType for user types.
+       This must exclude TypeBuilder and EnumBuilder. Fixes #430508.
+
+		Backported from trunk.
+
 2008-08-27  Miguel de Icaza  <miguel@novell.com>
 
 	* TermInfoDriver.cs: Adds support for the Insert and Delete keys
