@@ -967,10 +967,11 @@ namespace System.Web {
 
 		void async_handler_complete_cb (IAsyncResult ar)
 		{
-			IHttpAsyncHandler async_handler = ((IHttpAsyncHandler) ar.AsyncState);
+			IHttpAsyncHandler async_handler = ar != null ? ar.AsyncState as IHttpAsyncHandler : null;
 
 			try {
-				async_handler.EndProcessRequest (ar);
+				if (async_handler != null)
+					async_handler.EndProcessRequest (ar);
 			} catch (Exception e){
 				ProcessError (e);
 			}

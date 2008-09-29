@@ -1,3 +1,8 @@
+2008-09-29  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplication.cs: do not assume the passed IAsyncResult is a
+	is a valid object in async_handler_complete_cb. Fixes bug #430488
+
 2008-09-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpRequest.cs: Make sure the result of the multiplications are
