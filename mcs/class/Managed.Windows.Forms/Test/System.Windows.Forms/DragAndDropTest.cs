@@ -96,7 +96,7 @@ namespace MonoTests.System.Windows.Forms
 
 		void DragControl_QueryContinueDrag (object sender, QueryContinueDragEventArgs e)
 		{
-			DragControl c = (DragControl)sender;
+			DragDropControl c = (DragDropControl)sender;
 			DNDForm f = (DNDForm)c.Parent;
 			if (f.DropControl.EnterFiredCount == 0)
 				return;
@@ -140,7 +140,7 @@ namespace MonoTests.System.Windows.Forms
 
 		void DropControl_DragDrop (object sender, DragEventArgs e)
 		{
-			DropControl c = (DropControl)sender;
+			DragDropControl c = (DragDropControl)sender;
 			c.ResetEventCounters ();
 		}
 
@@ -250,6 +250,42 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void DropWithoutMovement ()
+		{
+			DNDForm form = new DNDForm ();
+			form.Text = MethodBase.GetCurrentMethod ().Name;
+			form.InstructionsText =
+				"Instructions:" + Environment.NewLine + Environment.NewLine +
+				"1. Click with left button on the control on the left, holding it, WITHOUT MOVING IT." + Environment.NewLine +
+				"2. Release the button." + Environment.NewLine + 
+				"3. Close the form.";
+			form.DragControl.DragData = "no movement";
+			form.DragControl.AllowDrop = true;
+			form.DragControl.AllowedEffects = DragDropEffects.Move;
+			form.DragControl.DropEffect = DragDropEffects.Move;
+
+			// Force to automatically do a dnd operation when mouse is pressed,
+			// instead of waiting for movement
+			form.DragControl.MouseDown += new MouseEventHandler (DragControl_MouseDown);
+
+			Application.Run (form);
+
+			Assert.AreEqual (1, form.DragControl.EnterFiredCount, "A1");
+			Assert.AreEqual (0, form.DragControl.LeaveFiredCount, "A2");
+			Assert.AreEqual (1, form.DragControl.DropFiredCount, "A3");
+			Assert.AreEqual (0, form.DragControl.DragOverFiredCount, "A4");
+			Assert.AreEqual (true, form.DragControl.Data != null, "A5");
+			// The assertion below is weird: We had a successfully drop, but the returned value is None
+			Assert.AreEqual (DragDropEffects.None, form.DragControl.PerformedEffect, "A6");
+		}
+
+		void DragControl_MouseDown (object sender, MouseEventArgs e)
+		{
+			DragDropControl ctrl = (DragDropControl)sender;
+			ctrl.DoDragDrop (ctrl.DragData, ctrl.AllowedEffects);
+		}
+
+		[Test]
 		public void DragDropInSameControl ()
 		{
 			DNDForm form = new DNDForm ();
@@ -260,8 +296,9 @@ namespace MonoTests.System.Windows.Forms
 				"2. Move the mouse inside left control. " + Environment.NewLine +
 				"3. Drop on left control (same)." + Environment.NewLine + Environment.NewLine +
 				"4. Click with left button on the control on the left again, holding it." + Environment.NewLine +
-				"5. Press ESC, release mouse button and move mouse pointer outside control." + Environment.NewLine +
-				"4. Close the form.";
+				"5. Move the mouse inside the left control. " + Environment.NewLine +
+				"6. Press ESC, release mouse button and move mouse pointer outside control." + Environment.NewLine +
+				"7. Close the form.";
 			form.DragControl.DragData = "SameControl";
 			form.DragControl.AllowDrop = true;
 			form.DragControl.AllowedEffects = DragDropEffects.Copy;
@@ -305,8 +342,8 @@ namespace MonoTests.System.Windows.Forms
 
 	public class DNDForm : Form
 	{
-		DragControl drag_control;
-		DropControl drop_control;
+		DragDropControl drag_control;
+		DragDropControl drop_control;
 		TextBox instructions_tb;
 		Label test_name;
 
@@ -324,13 +361,21 @@ namespace MonoTests.System.Windows.Forms
 			instructions_tb.Location = new Point (5, test_name.Bottom + 5);
 			instructions_tb.Size = new Size (460, 180);
 
-			drag_control = new DragControl ();
+			drag_control = new DragDropControl ();
 			drag_control.Location = new Point (5, instructions_tb.Bottom + 10);
 			drag_control.Size = new Size (220, 180);
+			drag_control.BackColor = Color.LightYellow;
+			drag_control.DragDropColor = Color.Yellow;
+			drag_control.Text = "Drag Control";
+			drag_control.DoDrag = true;
 
-			drop_control = new DropControl ();
+			drop_control = new DragDropControl ();
 			drop_control.Location = new Point (drag_control.Right + 20, instructions_tb.Bottom + 10);
 			drop_control.Size = new Size (220, 180);
+			drop_control.BackColor = Color.LightGreen;
+			drop_control.DragDropColor = Color.Green;
+			drop_control.Text = "Drop Control";
+			drop_control.AllowDrop = true;
 
 			Controls.AddRange (new Control [] { test_name, instructions_tb, drag_control, drop_control });
 
@@ -346,13 +391,13 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
-		public DragControl DragControl {
+		public DragDropControl DragControl {
 			get {
 				return drag_control;
 			}
 		}
 
-		public DropControl DropControl {
+		public DragDropControl DropControl {
 			get {
 				return drop_control;
 			}
@@ -365,23 +410,50 @@ namespace MonoTests.System.Windows.Forms
 		}
 	}
 
-	public class DragControl : Control
+	public class DragDropControl : Control
 	{
-		Rectangle drag_rect;
-		object drag_data;
+		DragDropEffects effect;
 		DragDropEffects allowed_effects;
 		DragDropEffects performed_effect;
-		Color drag_color;
+		object drag_data;
+		IDataObject data;
+		Color drop_color;
+		Color prev_color;
+		Rectangle drag_rect;
+		bool do_drag;
 
-		public DragControl ()
+		int drop_fired_count;
+		int leave_fired_count;
+		int drag_over_fired_count;
+		int enter_fired_count;
+
+		public DragDropControl ()
 		{
 			drag_rect = new Rectangle (new Point (-1, -1), SystemInformation.DragSize);
-			BackColor = Color.LightYellow;
-			drag_color = Color.Yellow;
 		}
 
-		public object DragData
-		{
+		// to call or not DoDragDrop when mouse movement is detected. Only handle dnd events otherwise.
+		public bool DoDrag {
+			get {
+				return do_drag;
+			}
+			set {
+				do_drag = value;
+			}
+		}
+
+		// Color of the control when an operation is having place
+		public Color DragDropColor {
+			get {
+				return drop_color;
+			} 
+			set {
+				drop_color = value;
+			}
+		}
+
+		// Data to pass to Control.DoDragDrop 
+		public object DragData {
 			get {
 				return drag_data;
 			}
@@ -390,6 +462,7 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
+		// Effects passed to Control.DoDragDrop
 		public DragDropEffects AllowedEffects {
 			get {
 				return allowed_effects;
@@ -399,76 +472,14 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
+		// Effect returned by Control.DoDragDrop
 		public DragDropEffects PerformedEffect {
 			get {
 				return performed_effect;
 			}
 		}
 
-		protected override void OnMouseMove (MouseEventArgs e)
-		{
-			base.OnMouseMove (e);
-
-			if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right) {
-
-				if (drag_rect.X == -1 && drag_rect.Y == -1)
-					drag_rect.Location = new Point (e.X, e.Y);
-				else {
-					if (!drag_rect.Contains (new Point (e.X, e.Y))) {
-						Color prev_color = BackColor;
-						BackColor = drag_color;
-
-						performed_effect = DoDragDrop (drag_data, allowed_effects);
-
-						drag_rect.Location = new Point (-1, -1);
-						BackColor = prev_color;
-					}
-				}
-
-			}
-		}
-
-		protected override void OnQueryContinueDrag (QueryContinueDragEventArgs qcdevent)
-		{
-			base.OnQueryContinueDrag (qcdevent);
-		}
-
-		protected override void OnPaint (PaintEventArgs e)
-		{
-			base.OnPaint (e);
-
-			Graphics g = e.Graphics;
-
-			StringFormat sf = new StringFormat ();
-			sf.Alignment = StringAlignment.Center;
-			sf.LineAlignment = StringAlignment.Center;
-
-			g.DrawString ("DragControl", SystemFonts.DefaultFont, SystemBrushes.ControlDark,
-				ClientRectangle, sf);
-
-			sf.Dispose ();
-		}
-	}
-
-	public class DropControl : Control
-	{
-		DragDropEffects effect;
-		IDataObject data;
-		Color drop_color;
-		Color prev_color;
-
-		int drop_fired_count;
-		int leave_fired_count;
-		int drag_over_fired_count;
-		int enter_fired_count;
-
-		public DropControl ()
-		{
-			AllowDrop = true;
-			BackColor = Color.LightGreen;
-			drop_color = Color.Green;
-		}
-
+		// The value DragEventArgs.Effect gets in DragEnter event
 		public DragDropEffects DropEffect {
 			get {
 				return effect;
@@ -478,6 +489,7 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
+		// The value in DragEventArgs.Data
 		public IDataObject Data {
 			get {
 				return data;
@@ -515,10 +527,12 @@ namespace MonoTests.System.Windows.Forms
 
 		protected override void OnDragEnter (DragEventArgs drgevent)
 		{
-			prev_color = BackColor;
-			BackColor = drop_color;
-			enter_fired_count++;
+			if (!do_drag) {
+				prev_color = BackColor;
+				BackColor = drop_color;
+			}
 
+			enter_fired_count++;
 			drgevent.Effect = effect;
 
 			base.OnDragEnter (drgevent);
@@ -526,14 +540,18 @@ namespace MonoTests.System.Windows.Forms
 
 		protected override void OnDragOver (DragEventArgs drgevent)
 		{
+			drag_over_fired_count++;
+
 			base.OnDragOver (drgevent);
 		}
 
 		protected override void OnDragLeave (EventArgs e)
 		{
 			data = null;
-			BackColor = prev_color;
 			leave_fired_count++;
+
+			if (!do_drag)
+				BackColor = prev_color;
 
 			base.OnDragLeave (e);
 		}
@@ -541,10 +559,38 @@ namespace MonoTests.System.Windows.Forms
 		protected override void OnDragDrop (DragEventArgs drgevent)
 		{
 			data = drgevent.Data;
-			BackColor = prev_color;
 			drop_fired_count++;
 
+			if (!do_drag)
+				BackColor = prev_color;
+
 			base.OnDragDrop (drgevent);
+		}
+
+		protected override void OnMouseMove (MouseEventArgs e)
+		{
+			base.OnMouseMove (e);
+
+			if (!do_drag)
+				return;
+
+			if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right) {
+
+				if (drag_rect.X == -1 && drag_rect.Y == -1)
+					drag_rect.Location = new Point (e.X, e.Y);
+				else {
+					if (!drag_rect.Contains (new Point (e.X, e.Y))) {
+						Color prev_color = BackColor;
+						BackColor = drop_color;
+
+						performed_effect = DoDragDrop (drag_data, allowed_effects);
+
+						drag_rect.Location = new Point (-1, -1);
+						BackColor = prev_color;
+					}
+				}
+
+			}
 		}
 
 		protected override void OnPaint (PaintEventArgs e)
@@ -557,7 +603,7 @@ namespace MonoTests.System.Windows.Forms
 			sf.Alignment = StringAlignment.Center;
 			sf.LineAlignment = StringAlignment.Center;
 
-			g.DrawString ("DropControl", SystemFonts.DefaultFont, SystemBrushes.ControlDark,
+			g.DrawString (Text, SystemFonts.DefaultFont, SystemBrushes.ControlDark,
 				ClientRectangle, sf);
 
 			sf.Dispose ();
