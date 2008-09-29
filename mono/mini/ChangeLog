@@ -1,3 +1,7 @@
+2008-09-29  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c (type_from_stack_type): Fix typo.
+
 2008-09-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ia64.c (emit_move_return_value): Convert float return values to
