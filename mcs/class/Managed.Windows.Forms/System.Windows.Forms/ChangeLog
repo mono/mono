@@ -1,3 +1,13 @@
+2008-09-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* X11Dnd.cs: We have to send a dnd enter event as soon as we start the
+	operation, instead of waiting until we get any movement - this will
+	help us to have the data available in case no movement was detected
+	and _still_ we have to fire DragEnter and DragLeave/DragDrop events.
+	Finally add a windows.forms-only fallback to fire the mentioned events
+	if no movement at all was detected, just like .net does.
+	Fixes #381876.
+
 2008-09-27  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ThemeWin32Classic.cs: When drawing a status bar panel, don't

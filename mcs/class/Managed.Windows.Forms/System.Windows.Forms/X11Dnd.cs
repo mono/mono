@@ -430,6 +430,10 @@ namespace System.Windows.Forms {
 			motion_poll = -1;
 			timer.Start ();
 
+			// Send Enter to the window initializing the dnd operation - which initializes the data
+			SendEnter (drag_data.Window, drag_data.Window, drag_data.SupportedTypes);
+			drag_data.LastTopLevel = toplevel;
+
 			while (tracking && XplatUI.GetMessage (queue_id, ref msg, IntPtr.Zero, 0, 0)) {
 
 				if (msg.message >= Msg.WM_KEYFIRST && msg.message <= Msg.WM_KEYLAST) {
@@ -500,6 +504,25 @@ namespace System.Windows.Forms {
 				motion_poll++;
 		}
 
+		// This routines helps us to have a DndEnter/DndLeave fallback when there wasn't any mouse movement
+		// as .Net does
+		private void DefaultEnterLeave (object user_data)
+		{
+			Control source_control = Control.FromHandle (drag_data.Window);
+			if (!source_control.AllowDrop)
+				return;
+
+			// `data' and other members are already available
+			Point pos = Control.MousePosition;
+			DragEventArgs drag_args = new DragEventArgs (data, 0, pos.X, pos.Y, drag_data.AllowedEffects, DragDropEffects.None);
+
+			source_control.DndEnter (drag_args);
+			if ((drag_args.Effect & drag_data.AllowedEffects) != 0)
+				source_control.DndDrop (drag_args);
+			else
+				source_control.DndLeave (EventArgs.Empty);
+		}
+
 		public void HandleButtonUpMsg ()
 		{
 			if (drag_data.State == DragState.Beginning) {
@@ -514,6 +537,10 @@ namespace System.Windows.Forms {
 
 					if (QueryContinue (false, DragAction.Cancel))
 						return;
+
+					// fallback if no movement was detected, as .net does.
+					if (motion_poll == -1)
+						DefaultEnterLeave (drag_data.Data);
 				}
 
 				drag_data.State = DragState.None;
@@ -903,7 +930,6 @@ namespace System.Windows.Forms {
 
 		private bool HandleStatusEvent (ref XEvent xevent)
 		{
-			
 			if (drag_data != null && drag_data.State == DragState.Entered) {
 
 				if (!QueryContinue (false, DragAction.Continue))
