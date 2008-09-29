@@ -1,3 +1,7 @@
+2008-09-29  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mcs.pot, *.po: Update messages from the mcs tree.
+
 2008-09-26  Daniel Nauck  <dna@mono-project.de>
 
 	* de.po : update
