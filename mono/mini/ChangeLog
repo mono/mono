@@ -1,5 +1,8 @@
 2008-09-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.c (mono_arch_allocate_vars): Disable fp elimination for
+	VARARG methods to fix an assert later.
+
 	* mini-mips.h mini-mips.c mini-ops.h cpu-mips.md: Update the mips back
 	end so it at least compiles.
 
