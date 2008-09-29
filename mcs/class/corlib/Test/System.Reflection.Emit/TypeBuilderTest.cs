@@ -89,6 +89,14 @@ namespace MonoTests.System.Reflection.Emit
 		{
 		}
 
+#if NET_2_0
+
+		public class Tuple <A,B> {
+			A a;
+			B b;
+		}
+#endif
+
 		private AssemblyBuilder assembly;
 
 		private ModuleBuilder module;
@@ -9862,6 +9870,27 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 #if NET_2_0
+		[Test] //bug #430508
+		public void MakeGenericTypeRespectBaseType ()
+		{
+            TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public, typeof (EmptyIfaceImpl));
+			EnumBuilder eb = module.DefineEnum (genTypeName (), TypeAttributes.Public, typeof (int));
+
+			MethodBuilder mb = tb.DefineMethod ("Test",
+												MethodAttributes.Public,
+												typeof (Tuple<,>).MakeGenericType (typeof (int), eb),
+												new Type [0]);
+			ILGenerator il = mb.GetILGenerator();
+			il.Emit (OpCodes.Ldnull);
+			il.Emit (OpCodes.Ret);
+	
+			Type e = eb.CreateType ();
+			Type c = tb.CreateType ();
+		
+			Assert.AreEqual (c.GetMethod ("Test").ReturnType.GetGenericArguments ()[1], e, "#1");
+		}
+
+
 		[Test]
 		public void GetCustomAttrOnFieldOfInflatedType ()
 		{
