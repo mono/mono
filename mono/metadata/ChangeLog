@@ -1,3 +1,7 @@
+2008-09-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* attach.c: Fix the previous change.
+
 2008-09-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* attach.c : quick w32 build fix.
