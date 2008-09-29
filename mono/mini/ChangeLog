@@ -1,3 +1,8 @@
+2008-09-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-mips.h mini-mips.c mini-ops.h cpu-mips.md: Update the mips back
+	end so it at least compiles.
+
 2008-09-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (emit_optimized_ldloca_ir): Fix this.
