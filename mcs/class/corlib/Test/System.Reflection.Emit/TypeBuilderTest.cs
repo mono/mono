@@ -89,11 +89,13 @@ namespace MonoTests.System.Reflection.Emit
 		public interface IDestroyable
 		{
 		}
+#if NET_2_0
 
 		public class Tuple <A,B> {
 			A a;
 			B b;
 		}
+#endif
 
 		private AssemblyBuilder assembly;
 
@@ -9982,6 +9984,8 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsTrue (typeof (EmptyInterface).IsAssignableFrom (t2));
 		}
 
+#if NET_2_0
+
 		[Test] //bug #430508
 		public void MakeGenericTypeRespectBaseType ()
 		{
@@ -10002,7 +10006,6 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual (c.GetMethod ("Test").ReturnType.GetGenericArguments ()[1], e, "#1");
 		}
 
-#if NET_2_0
 		[Test]
 		public void GetCustomAttrOnFieldOfInflatedType ()
 		{

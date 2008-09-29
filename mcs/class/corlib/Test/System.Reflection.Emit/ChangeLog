@@ -1,5 +1,9 @@
 2008-09-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* TypeBuilderTest.cs: Fix the 1.0 build.
+
+2008-09-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* TypeBuilderTest.cs: Add a test for MakeGenericType with EnumBuilder.
 	Tests #430508.
 
