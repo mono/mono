@@ -138,7 +138,7 @@ namespace Mono.CSharp {
 		{
 			Oper = op;
 			Expr = expr;
-			loc = loc;
+			this.loc = loc;
 		}
 
 		// <summary>
