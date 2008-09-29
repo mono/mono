@@ -1,3 +1,8 @@
+2008-09-29  Jonathan Pobst  <monkey@jpobst.com>
+
+	* MessageBox.cs: Use SystemIcons for graphics instead of keeping our
+	own copies of them.
+
 2008-09-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* X11Dnd.cs: source and related fields should be set to IntPtr.Zero,

@@ -53,7 +53,7 @@ namespace System.Windows.Forms
 
 			string			msgbox_text;
 			bool			size_known	= false;
-			Image			icon_image;
+			Icon			icon_image;
 			RectangleF		text_rect;
 			MessageBoxButtons	msgbox_buttons;
 			MessageBoxDefaultButton	msgbox_default;
@@ -81,22 +81,22 @@ namespace System.Windows.Forms
 					}
 
 					case MessageBoxIcon.Error: {		// Same as MessageBoxIcon.Hand and MessageBoxIcon.Stop
-						icon_image = ThemeEngine.Current.Images(UIIcon.MessageBoxError);
+						icon_image = SystemIcons.Error;
 						break;
 					}
 
 					case MessageBoxIcon.Question: {
- 						icon_image = ThemeEngine.Current.Images(UIIcon.MessageBoxQuestion);
+ 						icon_image = SystemIcons.Question;
 						break;
 					}
 
 					case MessageBoxIcon.Asterisk: {		// Same as MessageBoxIcon.Information
-						icon_image = ThemeEngine.Current.Images(UIIcon.MessageBoxInfo);
+						icon_image = SystemIcons.Information;
 						break;
 					}
 
 					case MessageBoxIcon.Warning: {		// Same as MessageBoxIcon.Exclamation:
-						icon_image = ThemeEngine.Current.Images(UIIcon.MessageBoxWarning);
+						icon_image = SystemIcons.Warning;
 						break;
 					}
 				}
@@ -195,7 +195,7 @@ namespace System.Windows.Forms
 			{
 				e.Graphics.DrawString (msgbox_text, this.Font, ThemeEngine.Current.ResPool.GetSolidBrush (Color.Black), text_rect);
 				if (icon_image != null) {
-					e.Graphics.DrawImage(icon_image, new Point(space_border, space_border));
+					e.Graphics.DrawIcon(icon_image, space_border, space_border);
 				}
 			}
 
