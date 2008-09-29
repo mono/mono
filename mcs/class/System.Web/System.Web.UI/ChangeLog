@@ -4,6 +4,9 @@
 	configuration. 
 	ViewState is saved only if EnableViewState is true for the page.
 	Optimized SavePageControlState implementation.
+	Implemented the UniqueFilePathSuffix and MaxPageStateFieldLength
+	properties.
+	Some coding style changes.
 
 2008-09-25  Marek Habersack  <mhabersack@novell.com>
 
