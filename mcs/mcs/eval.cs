@@ -773,7 +773,8 @@ namespace Mono.CSharp {
 		public static TextWriter Error = Console.Error;
 		public static string Prompt             = "csharp> ";
 		public static string ContinuationPrompt = "      > ";
-
+		public static bool QuitRequested;
+		
 		static public void ShowVars ()
 		{
 			Output.Write (Evaluator.GetVars ());
@@ -843,7 +844,7 @@ namespace Mono.CSharp {
 
 		static public object quit {
 			get {
-				Environment.Exit (0);
+				QuitRequested = true;
 				return null;
 			}
 		}
