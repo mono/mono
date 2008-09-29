@@ -1,3 +1,8 @@
+2008-09-29  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	cs-tokenizer.cs: Fix typo.
+
+
 2008-09-28  Miguel de Icaza  <miguel@novell.com>
 
 	* eval.cs (InteractiveBase): The quit command now just sets a

@@ -1808,7 +1808,7 @@ namespace Mono.CSharp
 		void PreProcessDefinition (bool is_define, string ident, bool caller_is_taking)
 		{
 			if (ident.Length == 0 || ident == "true" || ident == "false"){
-				Report.Error (1001, Location, "Missing identifer to pre-processor directive");
+				Report.Error (1001, Location, "Missing identifier to pre-processor directive");
 				return;
 			}
 
