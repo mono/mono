@@ -1,3 +1,8 @@
+2008-09-29  Jb Evain  <jbevain@novell.com>
+
+	* DictionaryTest.cs: test for null argument for ContainsKey.
+	Patch by Jonathan Anderson  <jonathan.l.anderson@gmail.com>
+
 2008-09-24  Jb Evain  <jbevain@novell.com>
 
 	* DictionaryTest.cs: add tests for bug #429530.

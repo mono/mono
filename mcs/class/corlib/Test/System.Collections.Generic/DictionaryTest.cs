@@ -287,6 +287,12 @@ namespace MonoTests.System.Collections.Generic {
 			contains = _dictionary.ContainsKey ("key5");
 			Assert.IsFalse (contains, "ContainsKey for non existant does not return correct value!");
 		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void ContainsKeyTest2 ()
+		{
+			_dictionary.ContainsKey (null);
+		}
 	
 		[Test]
 		public void ContainsValueTest ()
