@@ -1,5 +1,10 @@
 2008-09-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.c (emit_move_return_value): Convert float return values to
+	double.
+
+	* objects.cs: Add a new test.
+	
 	* mini-ia64.c (mono_arch_allocate_vars): Disable fp elimination for
 	VARARG methods to fix an assert later.
 
