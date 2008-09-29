@@ -91,8 +91,8 @@ namespace Mono.CSharp {
 
 		public ParenthesizedExpression (Expression expr)
 		{
-			this.Expr = expr;
-			this.loc = expr.Location;
+			Expr = expr;
+			loc = expr.Location;
 		}
 
 		public override Expression CreateExpressionTree (EmitContext ec)
@@ -136,9 +136,9 @@ namespace Mono.CSharp {
 
 		public Unary (Operator op, Expression expr, Location loc)
 		{
-			this.Oper = op;
-			this.Expr = expr;
-			this.loc = loc;
+			Oper = op;
+			Expr = expr;
+			loc = loc;
 		}
 
 		// <summary>
