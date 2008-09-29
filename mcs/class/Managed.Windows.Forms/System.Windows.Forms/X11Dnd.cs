@@ -22,6 +22,9 @@
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
 //
+// NOTE: We have some tests in Test/System.Windows.Forms/DragAndDropTest.cs, which I *highly* recommend
+// to run after any change made here, since those tests are interactive, and thus are not part of
+// the common tests.
 //
 
 
@@ -425,6 +428,7 @@ namespace System.Windows.Forms {
 
 			drag_data.State = DragState.Dragging;
 			drag_data.CurMousePos = new Point ();
+			source = toplevel = target = IntPtr.Zero;
 			dropped = false;
 			tracking = true;
 			motion_poll = -1;

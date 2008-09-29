@@ -1,3 +1,10 @@
+2008-09-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* X11Dnd.cs: source and related fields should be set to IntPtr.Zero,
+	as well as the other static fields, to avoid using their previous
+	values my mistake when handling the dnd events. This should avoid
+	handling any status event after the drop has been finalized/cancelled.
+
 2008-09-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* X11Dnd.cs: We have to send a dnd enter event as soon as we start the
