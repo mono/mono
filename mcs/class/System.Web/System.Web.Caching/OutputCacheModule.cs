@@ -43,7 +43,7 @@ namespace System.Web.Caching {
 	
 	internal sealed class OutputCacheModule : IHttpModule {
 
-		private CacheItemRemovedCallback response_removed;
+		CacheItemRemovedCallback response_removed;
 		
 #if NET_2_0
 		static object keysCacheLock = new object ();
@@ -182,7 +182,7 @@ namespace System.Web.Caching {
 
 		}
 
-		private void DoCacheInsert (HttpContext context)
+		void DoCacheInsert (HttpContext context)
 		{
 			string vary_key = context.Request.FilePath;
 			string key;
@@ -244,7 +244,7 @@ namespace System.Web.Caching {
 #endif
 		}
 
-		private void OnRawResponseRemoved (string key, object value, CacheItemRemovedReason reason)
+		void OnRawResponseRemoved (string key, object value, CacheItemRemovedReason reason)
 		{
 			CachedRawResponse c = (CachedRawResponse) value;
 
