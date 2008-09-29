@@ -1,3 +1,8 @@
+2008-09-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilderTest.cs: Add a test for MakeGenericType with EnumBuilder.
+	Tests #430508.
+
 2008-09-02 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilderTest.cs: New test for a field with initialized data
