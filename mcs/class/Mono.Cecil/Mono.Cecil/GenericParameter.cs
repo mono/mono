@@ -61,6 +61,17 @@ namespace Mono.Cecil {
 			}
 		}
 
+		public override IMetadataScope Scope {
+			get {
+				if (m_owner is TypeReference)
+					return ((TypeReference) m_owner).Scope;
+				if (m_owner is MethodReference)
+					return ((MethodReference) m_owner).DeclaringType.Scope;
+
+				throw new InvalidOperationException ();
+			}
+		}
+
 		public override string Name {
 			get {
 				if (m_name != null)
