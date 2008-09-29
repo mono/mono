@@ -1,3 +1,8 @@
+2008-09-29  Jb Evain  <jbevain@novell.com>
+
+	* Dictionary.cs: check for null argument in ContainsKey.
+	Patch by Jonathan Anderson  <jonathan.l.anderson@gmail.com>
+
 2008-09-24  Jb Evain  <jbevain@novell.com>
 
 	* Dictionary.cs: properly reset all compounds enumerators.

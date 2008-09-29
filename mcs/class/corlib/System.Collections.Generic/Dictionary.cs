@@ -398,6 +398,9 @@ namespace System.Collections.Generic {
 
 		public bool ContainsKey (TKey key)
 		{
+			if (key == null)
+				throw new ArgumentNullException ("key");
+
 			// get first item of linked list corresponding to given key
 			int hashCode = hcp.GetHashCode (key);
 			int cur = table [(hashCode & int.MaxValue) % table.Length] - 1;
