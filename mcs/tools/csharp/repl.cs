@@ -538,7 +538,7 @@ namespace Mono {
 		{
 			string input = null;
 
-			while (true) {
+			while (!InteractiveBase.QuitRequested) {
 				try {
 					string error_string;
 					StringWriter error_output = new StringWriter ();
