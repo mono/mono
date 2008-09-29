@@ -1361,7 +1361,7 @@ namespace System.Windows.Forms {
 					break;
 				case TabAlignment.Right:
 					r.Y -= ThemeEngine.Current.TabControlSelectedDelta.Y;
-					r.X += ThemeEngine.Current.TabControlSelectedDelta.X;
+					r.X -= ThemeEngine.Current.TabControlSelectedDelta.X;
 					break;
 			}
 

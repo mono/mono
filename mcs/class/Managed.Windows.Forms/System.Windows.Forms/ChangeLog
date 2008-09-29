@@ -1,3 +1,11 @@
+2008-09-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TabControl.cs: When expanding the tab -because it's selected now-,
+	using Right alignment, instead of adding some selected delta value to
+	the X origin, substract it, so it gets a location adjacent to the panel, 
+	instead of be more separated.
+	Fixes #409170.
+
 2008-09-29  Jonathan Pobst  <monkey@jpobst.com>
 
 	* MessageBox.cs: Use SystemIcons for graphics instead of keeping our
