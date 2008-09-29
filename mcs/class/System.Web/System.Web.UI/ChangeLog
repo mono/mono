@@ -1,3 +1,10 @@
+2008-09-29  Marek Habersack  <mhabersack@novell.com>
+
+	* Page.cs: EnableViewState is initialized from the web
+	configuration. 
+	ViewState is saved only if EnableViewState is true for the page.
+	Optimized SavePageControlState implementation.
+
 2008-09-25  Marek Habersack  <mhabersack@novell.com>
 
 	* Page.cs: make sure view state is loaded for PreviousPage during

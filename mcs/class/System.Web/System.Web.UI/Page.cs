@@ -82,7 +82,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	string _focusedControlID;
 	bool _hasEnabledControlArray;
 #endif
-	private bool _viewState = true;
+	private bool _viewState;
 	private bool _viewStateMac;
 	private string _errorPage;
 	private bool is_validated;
@@ -157,7 +157,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	bool isCrossPagePostBack;
 	bool isPostBack;
 	bool isCallback;
-	ArrayList requireStateControls;
+	List <Control> requireStateControls;
 	HtmlForm _form;
 
 	string _title;
@@ -177,7 +177,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	private bool controlRegisteredForViewStateEncryption = false;
 #endif
 
-	#region Constructor
+	#region Constructors	
 	public Page ()
 	{
 		scriptManager = new ClientScriptManager (this);
@@ -189,9 +189,11 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (ps != null) {
 			asyncTimeout = ps.AsyncTimeout;
 			viewStateEncryptionMode = ps.ViewStateEncryptionMode;
+			_viewState = ps.EnableViewState;
 		} else {
 			asyncTimeout = TimeSpan.FromSeconds (DefaultAsyncTimeout);
 			viewStateEncryptionMode = ViewStateEncryptionMode.Auto;
+			_viewState = true;
 		}
 #endif
 	}
@@ -1940,14 +1942,17 @@ public partial class Page : TemplateControl, IHttpHandler
 		object controlState = SavePageControlState ();
 #endif
 
-		object viewState = SaveViewStateRecursive ();
-		object reqPostback = (_requiresPostBack != null && _requiresPostBack.Count > 0) ? _requiresPostBack : null;
 		Pair vsr = null;
 
-		if (viewState != null || reqPostback != null)
-			vsr = new Pair (viewState, reqPostback);
-		Pair pair = new Pair ();
+		if (EnableViewState) {
+			object viewState = SaveViewStateRecursive ();
+			object reqPostback = (_requiresPostBack != null && _requiresPostBack.Count > 0) ? _requiresPostBack : null;
 
+			if (viewState != null || reqPostback != null)
+				vsr = new Pair (viewState, reqPostback);
+		}
+
+		Pair pair = new Pair ();
 		pair.First = vsr;
 #if NET_2_0
 		pair.Second = controlState;
@@ -1957,7 +1962,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (pair.First == null && pair.Second == null)
 			SavePageStateToPersistenceMedium (null);
 		else
-			SavePageStateToPersistenceMedium (pair);		
+			SavePageStateToPersistenceMedium (pair);
 
 	}
 
@@ -2675,9 +2680,10 @@ public partial class Page : TemplateControl, IHttpHandler
 			return;
 
 		if (requireStateControls == null)
-			requireStateControls = new ArrayList ();
-		int n = requireStateControls.Add (control);
-
+			requireStateControls = new List <Control> ();
+		requireStateControls.Add (control);
+		int n = requireStateControls.Count - 1;
+		
 		if (_savedControlState == null || n >= _savedControlState.Length) 
 			return;
 
@@ -2692,7 +2698,8 @@ public partial class Page : TemplateControl, IHttpHandler
 	
 	public bool RequiresControlState (Control control)
 	{
-		if (requireStateControls == null) return false;
+		if (requireStateControls == null)
+			return false;
 		return requireStateControls.Contains (control);
 	}
 	
@@ -2735,25 +2742,37 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	object SavePageControlState ()
 	{
-		if (requireStateControls == null) return null;
-		object[] state = new object [requireStateControls.Count];
-		object[] adapterState = new object [requireStateControls.Count];
+		int count = requireStateControls == null ? 0 : requireStateControls.Count;
+		if (count == 0)
+			return null;
+		
+		object state;
+		object[] controlStates = new object [count];
+		object[] adapterState = new object [count];
+		Control control;
+		ControlAdapter adapter;
 		bool allNull = true;
-		for (int n=0; n<requireStateControls.Count; n++) {
-			state [n] = ((Control) requireStateControls [n]).SaveControlState ();
-			if (state [n] != null) allNull = false;
+		TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
+		
+		for (int n = 0; n < count; n++) {
+			control = requireStateControls [n];
+			state = controlStates [n] = control.SaveControlState ();
+			if (state != null)
+				allNull = false;
 			
-			TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
 			if (trace != null)
-				trace.SaveControlState ((Control) requireStateControls [n], state [n]);
+				trace.SaveControlState (control, state);
 
-			ControlAdapter adapter = ((Control) requireStateControls [n]).Adapter;
-			if (adapter != null)
+			adapter = control.Adapter;
+			if (adapter != null) {
 				adapterState [n] = adapter.SaveAdapterControlState ();
-			if (adapterState [n] != null) allNull = false;
+				if (adapterState [n] != null) allNull = false;
+			}
 		}
-		if (allNull) return null;
-		else return new Pair (state, adapterState);
+		if (allNull)
+			return null;
+		else
+			return new Pair (controlStates, adapterState);
 	}
 	
 	void LoadPageControlState (object data)
