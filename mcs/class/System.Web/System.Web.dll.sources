@@ -48,6 +48,7 @@ System.Web.Compilation/AssemblyBuilder.cs
 System.Web.Compilation/BaseCompiler.cs
 System.Web.Compilation/BuildDependencySet.cs
 System.Web.Compilation/BuildManager.cs
+System.Web.Compilation/BuildManagerRemoveEntryEventHandler.cs
 System.Web.Compilation/BuildManagerHostUnloadEventArgs.cs
 System.Web.Compilation/BuildManagerHostUnloadEventHandler.cs
 System.Web.Compilation/BuildProviderAppliesToAttribute.cs

@@ -1,3 +1,10 @@
+2008-09-29  Marek Habersack  <mhabersack@novell.com>
+
+	* OutputCacheModule.cs: invalidate cache entries when the
+	corresponding source file (.as?x) is recompiled by hooking up to
+	System.Web.Compilation.BuildManager's build cache entry removal
+	event. Fixes bug #429926
+
 2008-09-26  Juraj Skripsky  <js@hotfeet.ch>
 
 	* OutputCacheModule.cs: Consistently use InternalCache for

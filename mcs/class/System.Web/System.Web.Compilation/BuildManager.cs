@@ -38,6 +38,7 @@ using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -311,6 +312,14 @@ namespace System.Web.Compilation {
 
 		static Dictionary <string, bool> virtualPathsToIgnore;
 		static bool haveVirtualPathsToIgnore;
+
+		static EventHandlerList events = new EventHandlerList ();
+		static object buildManagerRemoveEntryEvent = new object ();
+		
+		internal static event BuildManagerRemoveEntryEventHandler RemoveEntry {
+			add { events.AddHandler (buildManagerRemoveEntryEvent, value); }
+			remove { events.RemoveHandler (buildManagerRemoveEntryEvent, value); }
+		}
 		
 		static BuildManager ()
 		{
@@ -1173,6 +1182,14 @@ namespace System.Web.Compilation {
 						       
 		}
 
+		static void OnEntryRemoved (string vp)
+		{
+			BuildManagerRemoveEntryEventHandler eh = events [buildManagerRemoveEntryEvent] as BuildManagerRemoveEntryEventHandler;
+
+			if (eh != null)
+				eh (new BuildManagerRemoveEntryEventArgs (vp, HttpContext.Current));
+		}
+		
 		static int RemoveVirtualPathFromCaches (VirtualPath virtualPath)
 		{
 			lock (buildCacheLock) {
@@ -1185,9 +1202,11 @@ namespace System.Web.Compilation {
 					return 0;
 
 				string vpAbsolute = virtualPath.Absolute;
-				if (buildCache.ContainsKey (vpAbsolute))
+				if (buildCache.ContainsKey (vpAbsolute)) {
 					buildCache.Remove (vpAbsolute);
-
+					OnEntryRemoved (vpAbsolute);
+				}
+				
 				if (dependencyCache.ContainsKey (vpAbsolute))
 					dependencyCache.Remove (vpAbsolute);
 				
@@ -1210,13 +1229,16 @@ namespace System.Web.Compilation {
 					foreach (string key in keysToRemove) {
 						nonPagesCache.Remove (key);
 
-						if (buildCache.ContainsKey (key))
+						if (buildCache.ContainsKey (key)) {
 							buildCache.Remove (key);
+							OnEntryRemoved (key);
+						}
+						
 						if (dependencyCache.ContainsKey (key))
 							dependencyCache.Remove (key);
 					}
 				}
-				
+
 				return 1;
 			}
 		}
