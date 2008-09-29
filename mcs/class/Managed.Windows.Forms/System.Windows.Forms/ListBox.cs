@@ -2914,7 +2914,7 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 				// UIA Framework event: Selected item removed from selection
-				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, idx));
+				OnUIACollectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, index));
 #endif 
 
 
