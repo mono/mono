@@ -1,3 +1,7 @@
+2008-09-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* attach.c : quick w32 build fix.
+
 2008-09-27  Miguel de Icaza  <miguel@novell.com>
 
 	* Turn off MONO_GENERIC_SHARING=all and go back to corlib as it
