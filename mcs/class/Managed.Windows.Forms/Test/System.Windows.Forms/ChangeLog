@@ -1,3 +1,8 @@
+2008-09-30  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TreeNodeTest.cs: Test for ImageKey/ImageIndex plus flush some tests
+	sitting in my local tree.
+
 2008-09-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* DragAndDropTest.cs: Simplify some of the helper code, as well as

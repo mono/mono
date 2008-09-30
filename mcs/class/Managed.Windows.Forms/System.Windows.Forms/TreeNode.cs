@@ -397,6 +397,9 @@ namespace System.Windows.Forms
 				if (image_index == value)
 					return;
 				image_index = value;
+#if NET_2_0
+				image_key = string.Empty;
+#endif
 				TreeView tree = TreeView;
 				if (tree != null)
 					tree.UpdateNode (this);
@@ -416,6 +419,8 @@ namespace System.Windows.Forms
 				if (image_key == value)
 					return;
 				image_key = value;
+				image_index = -1;
+
 				TreeView tree = TreeView;
 				if (tree != null)
 				tree.UpdateNode(this);

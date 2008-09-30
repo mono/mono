@@ -2,6 +2,8 @@ using System;
 using NUnit.Framework;
 using System.Windows.Forms;
 using SystemDrawingNamespace = System.Drawing;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace MonoTests.System.Windows.Forms {
 
@@ -228,6 +230,88 @@ namespace MonoTests.System.Windows.Forms {
 	
 			tn.Name = null;
 			Assert.AreEqual (string.Empty, tn.Name, "A3");
+		}
+		
+		[Test]
+		public void PropertyLevel ()
+		{
+			TreeNode tn = new TreeNode ();
+			
+			Assert.AreEqual (0, tn.Level, "A1");
+			
+			TreeView tv = new TreeView ();
+			tv.Nodes.Add (tn);
+
+			Assert.AreEqual (0, tn.Level, "A2");
+
+			TreeNode tn1 = new TreeNode ();
+			tn.Nodes.Add (tn1);
+
+			Assert.AreEqual (1, tn1.Level, "A3");
+
+			TreeNode tn2 = new TreeNode ();
+			tn1.Nodes.Add (tn2);
+
+			Assert.AreEqual (2, tn2.Level, "A4");
+		}
+		
+		[Test]
+		public void PropertyToolTipText ()
+		{
+			TreeNode tn = new TreeNode ("test");
+			
+			Assert.AreEqual (string.Empty, tn.ToolTipText, "A1");
+			
+			tn.ToolTipText = "Woo";
+
+			Assert.AreEqual ("Woo", tn.ToolTipText, "A2");
+		}
+		
+#if NET_2_0
+		[Test]
+		public void ImageKeyIndex ()
+		{
+			TreeNode tn = new TreeNode ("Test");
+
+			Assert.AreEqual (-1, tn.ImageIndex, "A1");
+			Assert.AreEqual (string.Empty, tn.ImageKey, "A2");
+			
+			tn.ImageIndex = 2;
+
+			Assert.AreEqual (2, tn.ImageIndex, "A3");
+			Assert.AreEqual (string.Empty, tn.ImageKey, "A4");
+			
+			tn.ImageKey = "b";
+
+			Assert.AreEqual (-1, tn.ImageIndex, "A5");
+			Assert.AreEqual ("b", tn.ImageKey, "A6");
+			
+			tn.ImageIndex = 2;
+
+			Assert.AreEqual (2, tn.ImageIndex, "A7");
+			Assert.AreEqual (string.Empty, tn.ImageKey, "A8");
+		}
+#endif
+
+		//[Test]
+		//public void MethodSerialize ()
+		//{
+		//        PublicTreeNode tn = new PublicTreeNode ("test");
+
+		//        SerializationInfo si = new SerializationInfo (tn.GetType (), new BinaryFormatter ());
+		//        StreamingContext sc = new StreamingContext ();
+			
+		//        tn.PublicSerialize (si, sc);
+		//}
+		
+		private class PublicTreeNode : TreeNode
+		{
+			public PublicTreeNode (string text) : base (text) {}
+			
+			public void PublicSerialize (SerializationInfo si, StreamingContext context)
+			{
+				base.Serialize (si, context);
+			}
 		}
 #endif
 	}

@@ -1,3 +1,7 @@
+2008-09-30  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TreeNode.cs: Setting ImageIndex or ImageKey should reset the other.
+
 2008-09-29  Mario Carrion <mcarrion@novell.com>
 
 	* ListBox.cs: Index fixed.
