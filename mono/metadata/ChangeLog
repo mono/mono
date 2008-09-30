@@ -1,3 +1,7 @@
+2008-09-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* attach.c : should be correct build fix.
+
 2008-09-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* attach.c: Fix the previous change.
