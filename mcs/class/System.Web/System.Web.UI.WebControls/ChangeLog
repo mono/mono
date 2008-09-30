@@ -1,3 +1,8 @@
+2008-09-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* RoleGroupCollection.cs: Fix recursive calls (wrong target)
+	[Found using Gendarme's BadRecursiveInvocationRule]
+
 2008-09-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XmlDataSource.cs: Make sure the result of the multiplication is a

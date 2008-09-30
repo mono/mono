@@ -47,18 +47,18 @@ namespace System.Web.UI.WebControls {
 
 
 		public RoleGroup this [int index] {
-			get { return (RoleGroup) this [index]; }
+			get { return (RoleGroup) List [index]; }
 		}
 
 
 		public void Add (RoleGroup group)
 		{
-			((IList) this).Add (group);
+			List.Add (group);
 		}
 
 		public bool Contains (RoleGroup group)
 		{
-			return ((IList) this).Contains (group);
+			return List.Contains (group);
 		}
 
 		public void CopyTo (RoleGroup[] array, int index)
@@ -90,12 +90,12 @@ namespace System.Web.UI.WebControls {
 
 		public int IndexOf (RoleGroup group)
 		{
-			return ((IList) this).IndexOf (group);
+			return List.IndexOf (group);
 		}
 
 		public void Insert (int index, RoleGroup group)
 		{
-			((IList) this).Insert (index, group);
+			List.Insert (index, group);
 		}
 
 		public void Remove (RoleGroup group)
@@ -103,7 +103,7 @@ namespace System.Web.UI.WebControls {
 			// note: checks required or we'll throw more exceptions :(
 			if (group != null) {
 				if (Contains (group))
-					((IList) this).Remove (group);
+					List.Remove (group);
 			}
 		}
 	}
