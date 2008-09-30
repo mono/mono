@@ -1,3 +1,7 @@
+2008-09-30  Jb Evain  <jbevain@novell.com>
+
+	* QueryableEnumerable.cs: fix ElementType.
+
 2008-08-08  Jb Evain  <jbevain@novell.com>
 
 	* Enumerable.cs (Take): fix not too consume an uneeded item from
