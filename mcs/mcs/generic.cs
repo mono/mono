@@ -575,7 +575,6 @@ namespace Mono.CSharp {
 	{
 		static readonly string[] attribute_target = new string [] { "type parameter" };
 		
-		string name;
 		DeclSpace decl;
 		GenericConstraints gc;
 		Constraints constraints;
@@ -586,7 +585,6 @@ namespace Mono.CSharp {
 				      Constraints constraints, Attributes attrs, Location loc)
 			: base (parent, new MemberName (name, loc), attrs)
 		{
-			this.name = name;
 			this.decl = decl;
 			this.constraints = constraints;
 		}
@@ -913,11 +911,6 @@ namespace Mono.CSharp {
 				return constraints.IsSubclassOf (t);
 
 			return false;
-		}
-
-		public override string ToString ()
-		{
-			return "TypeParameter[" + name + "]";
 		}
 
 		public static string GetSignatureForError (TypeParameter[] tp)
