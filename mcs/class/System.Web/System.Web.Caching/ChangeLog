@@ -1,3 +1,8 @@
+2008-09-30  Juraj Skripsky  <js@hotfeet.ch>
+
+	* CachedRawResponse.cs: Don't allocate a 32k buffer that is never 
+	used. Fixes enhancement bug #430963.
+
 2008-09-29  Marek Habersack  <mhabersack@novell.com>
 
 	* OutputCacheModule.cs: invalidate cache entries when the
