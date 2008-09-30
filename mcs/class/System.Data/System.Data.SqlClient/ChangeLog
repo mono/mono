@@ -1,3 +1,9 @@
+2008-09-30  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlDataReader.cs (GetSqlXml): Handle the scenario when Sql
+	Server 2005 returns Xml column type as NTEXT when called from
+	clients that use < TDS 8.0 protocol.
+	
 2008-09-20  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlCommand.cs (DeriveParameters): Simplification of the if-else loop.
