@@ -1,3 +1,8 @@
+2008-09-30  Mark Probst  <mark.probst@gmail.com>
+
+	* loader.c (mono_get_method_constrained): Don't expand method with
+	the class's context, because it's already a method of that class.
+
 2008-09-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* attach.c : should be correct build fix.

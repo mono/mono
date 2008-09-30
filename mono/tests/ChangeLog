@@ -1,3 +1,10 @@
+2008-09-30  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-constrained.2.il: Test case for the constrained. prefix
+	with generic interfaces.
+
+	* Makefile.am: Test added.
+
 2008-09-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (PLATFORM_DISABLED_TESTS): Disable some tests on ia64.
