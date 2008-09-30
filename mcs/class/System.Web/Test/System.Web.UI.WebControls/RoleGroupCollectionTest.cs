@@ -207,6 +207,15 @@ namespace MonoTests.System.Web.UI.WebControls {
 			rgc.Remove (rg2);
 			rgc.Remove (rg2);
 		}
+
+		[Test]
+		public void ThisIndex ()
+		{
+			RoleGroupCollection rgc = new RoleGroupCollection ();
+			RoleGroup rg = new RoleGroup ();
+			rgc.Add (rg);
+			Assert.IsTrue (Object.ReferenceEquals (rg, rgc [0]));
+		}
 	}
 }
 

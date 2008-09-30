@@ -1,3 +1,7 @@
+2008-09-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RoleGroupCollectionTest.cs: Add test case this[int].
+
 2008-07-28  Marek Habersack  <mhabersack@novell.com>
 
 	* MasterPageTest.cs: added a test for situations when a page tries
