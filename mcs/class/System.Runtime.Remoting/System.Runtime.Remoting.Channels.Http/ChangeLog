@@ -1,3 +1,12 @@
+2008-09-30  Michael Hutchinson  <mhutchinson@novell.com>
+
+	* HttpServerChannel.cs: make sure the channel data object is set 
+	  when the port is auto-assigned.
+	* HttpClientTransportSink.cs: Use the __RequestUri header for the 
+	  request's URI. Includes workaround for bad __RequestUri values.
+	
+	Fixes Bug 378713 - [regression] Remoting - HttpChannel.
+
 2008-09-24  Michael Hutchinson  <mhutchinson@novell.com>
 
 	* HttpServerTransportSink.cs: Disable chunking on the server, as 

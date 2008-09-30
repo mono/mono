@@ -106,8 +106,21 @@ namespace System.Runtime.Remoting.Channels.Http
 
 		HttpWebRequest CreateRequest (ITransportHeaders requestHeaders)
 		{
-			//NOTE: on mono this seems to be set, but on .NET it's null. 
-			//Hence we shouldn't use it:  requestHeaders[CommonTransportKeys.RequestUri])
+			string url = this.url;
+			
+			
+			//FIXME: requestUri should contain the URL-less URI only when it's a CAO call; 
+			// at all other times it should be null. On Mono, whenever it should be null, it contains the full
+			// URL+URI, so we have a broken mixure of path types and we need to hack around it
+			string requestUri = requestHeaders[CommonTransportKeys.RequestUri] as string;
+			string objectURI;
+			if (requestUri != null && HttpChannel.ParseInternal (requestUri, out objectURI) == null) {
+				url = HttpChannel.ParseInternal (url, out objectURI);
+				if (!url.EndsWith ("/"))
+					url = url + "/";
+				url = url + requestUri;
+			}
+			
 			HttpWebRequest request = (HttpWebRequest)WebRequest.Create (url);
 			request.UserAgent = string.Format ("Mozilla/4.0+(compatible; Mono Remoting; Mono {0})",
 				System.Environment.Version);
@@ -159,7 +172,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			
 			foreach (DictionaryEntry entry in requestHeaders) {
 				string key = entry.Key.ToString ();
-				if (key != "__RequestVerb" && key != "Content-Type") {
+				if (key != "__RequestVerb" && key != "Content-Type" && key != CommonTransportKeys.RequestUri) {
 					request.Headers.Add (key, entry.Value.ToString ());
 				}
 			}
