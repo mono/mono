@@ -4,7 +4,7 @@
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2007 Novell, Inc
+// (C) 2007-2008 Novell, Inc
 //
 
 //
@@ -37,14 +37,18 @@ namespace System.Web.UI.WebControls
 		public ListViewCommandEventArgs (ListViewItem item, object commandSource, CommandEventArgs originalArgs)
 			: base (originalArgs)
 		{
+			this.CommandSource = commandSource;
+			this.Item = item;
 		}
 		
 		public object CommandSource {
-			get { throw new NotImplementedException (); }
+			get;
+			private set;
 		}
 		
 		public ListViewItem Item {
-			get { throw new NotImplementedException (); }
+			get;
+			private set;
 		}
 	}
 }

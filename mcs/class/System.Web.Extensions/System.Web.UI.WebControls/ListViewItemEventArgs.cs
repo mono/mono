@@ -36,10 +36,12 @@ namespace System.Web.UI.WebControls
 	{
 		public ListViewItemEventArgs (ListViewItem item)
 		{
+			Item = item;
 		}
 		
 		public ListViewItem Item {
-			get { throw new NotImplementedException (); }
+			get;
+			private set;
 		}
 	}
 }

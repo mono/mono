@@ -1,3 +1,21 @@
+2008-09-30  Marek Habersack  <mhabersack@novell.com>
+
+	* ListView.cs: implemented all the events.
+	CreateChildControls works with non-ICollection data sources now.
+	CreateItemsWithoutGroups now counts items placed in the container
+	and stores the container in a field, so that RemoveItems can
+	properly delete the child controls.
+	Implemented the RemoveItems method.
+	Implemented Load/SaveControlState.
+	Implemented LoadViewState.
+	Implemented OnBubbleEvent.
+	Implemented all the On* methods.
+
+	* ListViewCommandEventArgs.cs: implemented the CommandSource and
+	Item properties.
+
+	* ListViewItemEventArgs.cs: implemented the Item property.
+
 2008-09-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* LinqDataSource.cs, LinqDataSourceView.cs
