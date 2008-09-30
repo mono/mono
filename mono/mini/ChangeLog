@@ -1,9 +1,9 @@
 2008-09-30  Rodrigo Kumpera  <rkumpera@novell.com>
 
-		* mini-codegen.c: Make all bank macros depend on reg_bank.
+	* mini-codegen.c: Make all bank macros depend on reg_bank.
 
-        * mini-codegen.c (mono_local_regalloc): Make free mask
-        initialization regbank aware.
+	* mini-codegen.c (mono_local_regalloc): Make free mask
+	initialization regbank aware.
 
 2008-09-30  Rodrigo Kumpera  <rkumpera@novell.com>
 
