@@ -41,6 +41,15 @@ namespace MonoTests.System.Linq {
 	public class QueryableTest {
 
 		[Test]
+		public void TestElementType ()
+		{
+			var data = new int [] { 1, 2, 3 };
+			var queryable = data.AsQueryable ();
+
+			Assert.AreEqual (typeof (int), queryable.ElementType);
+		}
+
+		[Test]
 		public void TestCount ()
 		{
 			var q = CreateQueryable<string> ();
