@@ -1,5 +1,10 @@
 2008-09-30  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* mini-codegen.c (mono_local_regalloc): Extract callee
+	mask selection to a function and make it regbank aware.
+
+2008-09-30  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mini-codegen.c (mono_local_regalloc): Changed the cloberring
 	code to deal with many regbanks.
 
