@@ -1579,59 +1579,13 @@ namespace System.Windows.Forms {
 
 		private void DrawNodeImage (TreeNode node, Graphics dc, Rectangle clip, int x, int y)
 		{
-			// Rectangle r = new Rectangle (x, y + 2, ImageList.ImageSize.Width, ImageList.ImageSize.Height);
-
 			if (!RectsIntersect (clip, x, y, ImageList.ImageSize.Width, ImageList.ImageSize.Height))
 				return;
 
-			if (ImageList == null)
-				return;
+			int use_index = node.Image;
 
-			int use_index = -1;
-
-			if (!node.IsSelected) {
-				if (node.ImageIndex > -1 && node.ImageIndex < ImageList.Images.Count) {
-					use_index = node.ImageIndex;
-				} else if (ImageIndex > -1 && ImageIndex < ImageList.Images.Count) {
-					use_index = ImageIndex;
-				}
-			} else {
-				if (node.SelectedImageIndex > -1 && node.SelectedImageIndex < ImageList.Images.Count) {
-					use_index = node.SelectedImageIndex;
-				} else if (SelectedImageIndex > -1 && SelectedImageIndex < ImageList.Images.Count) {
-					use_index = SelectedImageIndex;
-				}
-			}
-
-#if NET_2_0
-
-			if (!node.IsSelected) {
-				if (use_index == -1 && !String.IsNullOrEmpty (node.ImageKey)) {
-					use_index = image_list.Images.IndexOfKey (node.ImageKey);
-				}
-
-				if (use_index == -1 && !String.IsNullOrEmpty (ImageKey)) {
-					use_index = image_list.Images.IndexOfKey (ImageKey);
-				}
-			} else {
-				if (use_index == -1 && !String.IsNullOrEmpty (node.SelectedImageKey)) {
-					use_index = image_list.Images.IndexOfKey (node.SelectedImageKey);
-				}
-
-				if (use_index == -1 && !String.IsNullOrEmpty (SelectedImageKey)) {
-					use_index = image_list.Images.IndexOfKey (SelectedImageKey);
-				}
-			}
-#endif
-
-			if (use_index == -1 && ImageList.Images.Count > 0) {
-				use_index = 0;
-			}
-
-			if (use_index != -1) {
-				ImageList.Draw (dc, x, y, ImageList.ImageSize.Width, 
-						ImageList.ImageSize.Height, use_index);
-			}
+			if (use_index != -1)
+				ImageList.Draw (dc, x, y, ImageList.ImageSize.Width, ImageList.ImageSize.Height, use_index);
 		}
 
 		private void LabelEditFinished (object sender, EventArgs e)

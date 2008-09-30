@@ -1096,6 +1096,46 @@ namespace System.Windows.Forms
 			}
 		}
 #endif
+
+		// Order of operation:
+		// 1) Node.Image[Key|Index]
+		// 2) TreeView.Image[Key|Index]
+		// 3) First image in TreeView.ImageList
+		internal int Image {
+			get {
+				if (TreeView == null || TreeView.ImageList == null)
+					return -1;
+					
+				if (IsSelected) {
+					if (selected_image_index >= 0)
+						return selected_image_index;
+#if NET_2_0
+					if (!string.IsNullOrEmpty (selected_image_key))
+						return TreeView.ImageList.Images.IndexOfKey (selected_image_key);
+					if (!string.IsNullOrEmpty (TreeView.SelectedImageKey))
+						return TreeView.ImageList.Images.IndexOfKey (TreeView.SelectedImageKey);
+#endif
+					if (TreeView.SelectedImageIndex >= 0)
+						return TreeView.SelectedImageIndex;
+				} else {
+					if (image_index >= 0)
+						return image_index;
+#if NET_2_0
+					if (!string.IsNullOrEmpty (image_key))
+						return TreeView.ImageList.Images.IndexOfKey (image_key);
+					if (!string.IsNullOrEmpty (TreeView.ImageKey))
+						return TreeView.ImageList.Images.IndexOfKey (TreeView.ImageKey);
+#endif
+					if (TreeView.ImageIndex >= 0)
+						return TreeView.ImageIndex;
+				}
+
+				if (TreeView.ImageList.Images.Count > 0)
+					return 0;
+					
+				return -1;
+			}
+		}
 		#endregion	// Internal & Private Methods and Properties
 	}
 }

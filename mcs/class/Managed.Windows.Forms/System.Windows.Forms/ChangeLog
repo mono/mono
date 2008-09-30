@@ -1,5 +1,11 @@
 2008-09-30  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TreeNode.cs, TreeView.cs: Move logic that determines the node
+	image to draw to TreeNode.  Give Index/Keys put on the node
+	precedence over the global one for the TreeView.
+
+2008-09-30  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TreeNode.cs: Setting ImageIndex or ImageKey should reset the other.
 
 2008-09-29  Mario Carrion <mcarrion@novell.com>
