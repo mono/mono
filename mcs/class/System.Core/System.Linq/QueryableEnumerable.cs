@@ -48,7 +48,7 @@ namespace System.Linq {
 		IEnumerable<TElement> enumerable;
 
 		public Type ElementType {
-			get { return expression.Type; }
+			get { return typeof (TElement); }
 		}
 
 		public Expression Expression {

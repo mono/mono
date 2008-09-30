@@ -1,3 +1,7 @@
+2008-09-30  Jb Evain  <jbevain@novell.com>
+
+	* QueryableEnumerable.cs: fix ElementType.
+
 2008-09-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Enumerable.cs: Add missing cast Average on IEnumerable<long?> to
