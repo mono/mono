@@ -1,3 +1,8 @@
+2008-09-30  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (LIB_MCS_FLAGS): added -define:NET_3_5 as the 3.5 parts
+	of the assembly are now built as part of the 2.0 profile.
+
 2008-09-19  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Web.Extensions.dll.sources: removed most of the

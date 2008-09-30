@@ -1,8 +1,11 @@
-thisdir = class/System.Web.Extensions
-SUBDIRS = Test
+thisdir = class/System.Web.Extensions_1.0
+SUBDIRS = 
 include ../../build/rules.make
 
-LIBRARY = System.Web.Extensions.dll
+NO_TEST = yes
+LIBRARY = System.Web.Extensions_1.0.dll
+LIBRARY_NAME = System.Web.Extensions.dll
+LIBRARY_COMPAT = yes
 
 RESOURCE_FILES= \
 	../MicrosoftAjaxLibrary/System.Web.Extensions/3.5.0.0/3.5.21022.8/MicrosoftAjax.debug.js	\
@@ -28,7 +31,6 @@ RESOURCE_FILES_DIST= \
 	
 LIB_MCS_FLAGS = \
 	-unsafe \
-	-define:NET_3_5			\
 	-define:SYSTEM_WEB_EXTENSIONS	\
 	-r:$(corlib)	 		\
 	-r:System.dll 			\
@@ -42,8 +44,6 @@ LIB_MCS_FLAGS = \
 	-r:System.EnterpriseServices.dll \
 	$(OTHER_LIB_MCS_FLAGS) 		\
 	$(RESOURCE_FILES:%=/resource:%)
-
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml)  -nowarn:219 -nowarn:169 $(NUNIT_RESOURCE_FILES:%=/resource:%)
 
 EXTRA_DISTFILES = $(RESOURCE_FILES_DIST) 
 

@@ -100,6 +100,8 @@ net_2_0_dirs := \
 	Microsoft.Build.Engine		\
 	Microsoft.Build.Tasks		\
 	System.Core			\
+	System.Web.Extensions_1.0	\
+	System.Web.Extensions.Design_1.0	\
 	System.Web.Extensions		\
 	System.Web.Extensions.Design	\
 	System.Xml.Linq			\
@@ -124,7 +126,6 @@ net_2_1_dirs := \
 	System.ServiceModel.Web
 
 net_3_5_dirs := \
-	System.Web.Extensions		\
 	System.Web.Extensions.Design
 
 default_SUBDIRS := $(common_dirs) $(default_dirs)

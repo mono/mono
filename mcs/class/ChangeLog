@@ -1,3 +1,10 @@
+2008-09-30  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (net_2_0_dirs): added System.Web.Extensions_1.0 and
+	System.Web.Extensions.Design_1.0
+	(net_3_5_dirs): removed System.Web.Extensions, the 3.5 version is
+	now built in the 2.0 profile.
+
 2008-09-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile (net_2_0_dirs): Add Mono.Management.
