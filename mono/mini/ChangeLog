@@ -1,3 +1,23 @@
+2008-09-30  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ir-emit.h (alloc_dreg): Write a warning before crashing.
+
+2008-09-30  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-codegen.c: More work on macros to make them
+	ready for multiple regbanks.
+
+2008-09-30  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to.ir.c (mono_type_to_regmove): Remove static modifier.
+
+	* mini.h: Export mono_type_to_regmove. Fix signature of mono_regname_full.
+
+2008-09-30  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-codegen.c (mono_spillvar_offset): Proper support for
+	multiple regbanks.
+
 2008-09-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_emit_epilog): Remove some duplicated code from
