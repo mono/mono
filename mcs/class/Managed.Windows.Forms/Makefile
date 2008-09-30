@@ -62,12 +62,8 @@ IMAGES_RESOURCES = \
 	resources/16_user-home.png		\
 	resources/32_user-home.png		\
 	resources/user-home.png		\
-	resources/dialog-error.png		\
 	resources/16_dialog-error.png		\
-	resources/dialog-information.png	\
 	resources/16_dialog-information.png	\
-	resources/dialog-question.png		\
-	resources/dialog-warning.png		\
 	resources/16_dialog-warning.png		\
 	resources/1-up.png			\
 	resources/2-up.png			\
