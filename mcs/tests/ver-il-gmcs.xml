@@ -10886,6 +10886,51 @@
       </method>
     </type>
   </test>
+  <test name="gtest-414.cs">
+    <type name="MonoTest.MainClass">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="MonoTest.ITest">
+      <method name="Void Get[T](System.Object)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="MonoTest.TestImpl">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void MonoTest.ITest.Get[T](System.Object)">
+        <size>1</size>
+      </method>
+      <method name="Void Get[T]()">
+        <size>1</size>
+      </method>
+      <method name="Void Get[T](System.Object)">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="MonoTest.IG`1[T]">
+      <method name="Void M()">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="MonoTest.C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void MonoTest.IG`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].M()">
+        <size>1</size>
+      </method>
+      <method name="Void MonoTest.IG`1[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].M()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-684.cs">
     <type name="C">
       <method name="Void .ctor()">
@@ -32319,6 +32364,16 @@
       </method>
       <method name="System.Double[][,] ReturnArray()">
         <size>62</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-685.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>28</size>
       </method>
     </type>
   </test>
