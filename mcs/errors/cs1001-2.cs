@@ -1,4 +1,4 @@
-// CS1001: Missing identifer to pre-processor directive
+// CS1001: Missing identifier to pre-processor directive
 // Line: 5
 
 #if false
