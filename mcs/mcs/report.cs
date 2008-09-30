@@ -671,8 +671,10 @@ namespace Mono.CSharp {
 					return;
 				}
 
+				// FIXME: Completely wrong, it has to use FindMembers
 				MemberCore mc = temp_ds.GetDefinition (mi.Name);
-				SymbolRelatedToPreviousError (mc);
+				if (mc != null)
+					SymbolRelatedToPreviousError (mc);
 			}
 		}
 

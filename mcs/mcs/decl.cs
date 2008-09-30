@@ -9,7 +9,6 @@
 // Copyright 2001 Ximian, Inc (http://www.ximian.com)
 // Copyright 2004-2008 Novell, Inc
 //
-// TODO: Move the method verification stuff from the class.cs and interface.cs here
 //
 
 using System;
@@ -27,6 +26,9 @@ using System.Xml;
 
 namespace Mono.CSharp {
 
+	//
+	// Better name would be DottenName
+	//
 	public class MemberName {
 		public readonly string Name;
 		public readonly TypeArguments TypeArguments;
@@ -95,6 +97,7 @@ namespace Mono.CSharp {
 			this.Left = (right.Left == null) ? left : new MemberName (left, right.Left);
 		}
 
+		// TODO: Remove
 		public string GetName ()
 		{
 			return GetName (false);
@@ -114,20 +117,10 @@ namespace Mono.CSharp {
 		public string GetName (bool is_generic)
 		{
 			string name = is_generic ? Basename : Name;
-			string connect = is_double_colon ? "::" : ".";
 			if (Left != null)
-				return Left.GetName (is_generic) + connect + name;
-			else
-				return name;
-		}
+				return Left.GetName (is_generic) + (is_double_colon ? "::" : ".") + name;
 
-		public string GetTypeName ()
-		{
-			string connect = is_double_colon ? "::" : ".";
-			if (Left != null)
-				return Left.GetTypeName () + connect + MakeName (Name, TypeArguments);
-			else
-				return MakeName (Name, TypeArguments);
+			return name;
 		}
 
 		public ATypeNameExpression GetTypeExpression ()
@@ -159,25 +152,8 @@ namespace Mono.CSharp {
 			get {
 				if (TypeArguments != null)
 					return MakeName (Name, TypeArguments);
-				else
-					return Name;
+				return Name;
 			}
-		}
-
-		public string MethodName {
-			get {
-				string connect = is_double_colon ? "::" : ".";
-				if (Left != null)
-					return Left.FullyQualifiedName + connect + Name;
-				else
-					return Name;
-			}
-		}
-
-		// Please use this only for error reporting.   For normal uses, just use the Equals and GetHashCode methods that make
-		// MemberName a proper hash key, and avoid tons of memory allocations
-		string FullyQualifiedName {
-			get { return TypeArguments == null ? MethodName : MethodName + "<" + TypeArguments.GetSignatureForError () + ">"; }
 		}
 
 		public string GetSignatureForError ()
@@ -265,6 +241,7 @@ namespace Mono.CSharp {
 		/// </summary>
 
 		protected string cached_name;
+		// TODO: Remove in favor of MemberName
 		public string Name {
 			get {
 				if (cached_name == null)
@@ -951,7 +928,7 @@ namespace Mono.CSharp {
 					((DeclSpace)symbol).NamespaceEntry.GetSignatureForError (), symbol.MemberName.Name);
 			} else if (symbol is TypeParameter) {
 				Report.Error (692, symbol.Location,
-					      "Duplicate type parameter `{0}'", name);
+					"Duplicate type parameter `{0}'", symbol.GetSignatureForError ());
 			} else {
 				Report.Error (102, symbol.Location,
 					      "The type `{0}' already contains a definition for `{1}'",
@@ -961,7 +938,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		protected virtual void RemoveFromContainer (string name)
+		protected void RemoveFromContainer (string name)
 		{
 			defined_names.Remove (name);
 		}
@@ -1848,9 +1825,10 @@ namespace Mono.CSharp {
 			AddMember (mi.MemberType, GetBindingFlags (mc.ModFlags), Container, mi.Name, mi);
 		}
 
-		public void AddGenericMember (MemberInfo mi, MemberCore mc)
+		public void AddGenericMember (MemberInfo mi, InterfaceMemberBase mc)
 		{
-			AddMember (mi.MemberType, GetBindingFlags (mc.ModFlags), Container, mc.MemberName.Basename, mi);
+			AddMember (mi.MemberType, GetBindingFlags (mc.ModFlags), Container,
+				MemberName.MakeName (mc.GetFullName (mc.MemberName), mc.MemberName.TypeArguments), mi);
 		}
 
 		public void AddNestedType (DeclSpace type)
@@ -2668,7 +2646,7 @@ namespace Mono.CSharp {
 					// twice with and without arity name
 					if (mb.IsGenericMethod && !member.MemberName.IsGeneric)
 						continue;
-#endif					
+#endif			
 					pd = TypeManager.GetParameterData (mb);
 					p_types = pd.Types;
 				}

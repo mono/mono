@@ -493,8 +493,6 @@ namespace Mono.CSharp {
 				AddMethod (new GetEnumeratorMethod (this, enumerator_type, name));
 #endif
 			}
-
-			DoResolveMembers ();
 		}
 
 		void Define_Current (bool is_generic)

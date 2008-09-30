@@ -1,7 +1,12 @@
+2008-09-30  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #352151
+	* decl.cs, iterators.cs, anonymous.cs, report.cs, namespace.cs,
+	class.cs: Fixed already defined explicit interface members check.
+
 2008-09-29  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	cs-tokenizer.cs: Fix typo.
-
 
 2008-09-28  Miguel de Icaza  <miguel@novell.com>
 

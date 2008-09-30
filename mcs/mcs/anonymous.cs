@@ -1223,7 +1223,6 @@ namespace Mono.CSharp {
 				}
 
 				if (MethodBuilder == null) {
-					ResolveMembers ();
 					Define ();
 				}
 
@@ -1469,7 +1468,6 @@ namespace Mono.CSharp {
 				// for unreachable blocks or expression trees
 				//
 				method = DoCreateMethodHost (ec);
-				method.ResolveMembers ();
 				method.Define ();
 			}
 
@@ -1687,11 +1685,6 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		protected override void RemoveFromContainer (string name)
-		{
-			defined_names.Remove (name);
-		}
-
 		void DefineOverrides ()
 		{
 			Location loc = Location;
@@ -1786,7 +1779,7 @@ namespace Mono.CSharp {
 			equals_block.AddStatement (new Return (equals_test, loc));
 
 			equals.Block = equals_block;
-			equals.ResolveMembers ();
+			equals.Define ();
 			AddMethod (equals);
 
 			//
@@ -1835,7 +1828,7 @@ namespace Mono.CSharp {
 
 			hashcode_block.AddStatement (new Return (hash_variable, loc));
 			hashcode.Block = hashcode_block;
-			hashcode.ResolveMembers ();
+			hashcode.Define ();
 			AddMethod (hashcode);
 
 			//
@@ -1845,15 +1838,16 @@ namespace Mono.CSharp {
 			ToplevelBlock tostring_block = new ToplevelBlock (loc);
 			tostring_block.AddStatement (new Return (string_concat, loc));
 			tostring.Block = tostring_block;
-			tostring.ResolveMembers ();
+			tostring.Define ();
 			AddMethod (tostring);
 		}
 
 		public override bool Define ()
 		{
-			DefineOverrides ();
+			if (base.Define ())
+				DefineOverrides ();
 
-			return base.Define ();
+			return true;
 		}
 
 		public override string GetSignatureForError ()
