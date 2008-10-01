@@ -1,5 +1,11 @@
 2008-10-01  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #421101
+	* expression.cs, statement.cs, ecore.cs: Use IFixedExpression
+	interface to check for fixed fixed-buffers.
+
+2008-10-01  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #429264
 	* assign.cs, anonymous.cs, ecore.cs: More type mutators added.
 	

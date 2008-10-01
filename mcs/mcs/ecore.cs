@@ -103,13 +103,22 @@ namespace Mono.CSharp {
 	//
 	// An expressions resolved as a direct variable reference
 	//
-	public interface IVariableReference {
-		bool IsFixedVariable { get; }
+	public interface IVariableReference : IFixedExpression
+	{
 		bool IsHoisted { get; }
 		string Name { get; }
 		VariableInfo VariableInfo { get; }
 
 		void SetHasAddressTaken ();
+	}
+
+	//
+	// Implemented by an expression which could be or is always
+	// fixed
+	//
+	public interface IFixedExpression
+	{
+		bool IsFixed { get; }
 	}
 
 	/// <remarks>
@@ -1388,7 +1397,7 @@ namespace Mono.CSharp {
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
-			type = storey.MutateType (type);			
+			type = storey.MutateType (type);
 			child.MutateHoistedGenericType (storey);
 		}
 
@@ -4813,7 +4822,8 @@ namespace Mono.CSharp {
 			IVariableReference var = InstanceExpression as IVariableReference;
 			
 			if (fb != null) {
-				if (!ec.InFixedInitializer && ec.ContainerType.IsValueType) {
+				IFixedExpression fe = InstanceExpression as IFixedExpression;
+				if (!ec.InFixedInitializer && (fe == null || !fe.IsFixed)) {
 					Report.Error (1666, loc, "You cannot use fixed size buffers contained in unfixed expressions. Try using the fixed statement");
 				}
 
@@ -4951,13 +4961,13 @@ namespace Mono.CSharp {
 			return FieldInfo.GetHashCode ();
 		}
 		
-		public bool IsFixedVariable {
+		public bool IsFixed {
 			get {
 				//
 				// A variable of the form V.I is fixed when V is a fixed variable of a struct type
 				//
 				IVariableReference variable = InstanceExpression as IVariableReference;
-				return variable != null && InstanceExpression.Type.IsValueType && variable.IsFixedVariable;
+				return variable != null && InstanceExpression.Type.IsValueType && variable.IsFixed;
 			}
 		}
 
@@ -5883,7 +5893,7 @@ namespace Mono.CSharp {
 			get { return li.HoistedVariableReference; }
 		}
 
-		public override bool IsFixedVariable {
+		public override bool IsFixed {
 			get { return true; }
 		}
 

@@ -615,7 +615,7 @@ namespace Mono.CSharp {
 					vi.SetAssigned (ec);
 				}
 
-				is_fixed = vr.IsFixedVariable;
+				is_fixed = vr.IsFixed;
 				vr.SetHasAddressTaken ();
 
 				if (vr.IsHoisted) {
@@ -753,7 +753,7 @@ namespace Mono.CSharp {
 	// after semantic analysis (this is so we can take the address
 	// of an indirection).
 	//
-	public class Indirection : Expression, IMemoryLocation, IAssignMethod {
+	public class Indirection : Expression, IMemoryLocation, IAssignMethod, IFixedExpression {
 		Expression expr;
 		LocalTemporary temporary;
 		bool prepared;
@@ -850,6 +850,10 @@ namespace Mono.CSharp {
 			type = TypeManager.GetElementType (expr.Type);
 			eclass = ExprClass.Variable;
 			return this;
+		}
+
+		public bool IsFixed {
+			get { return true; }
 		}
 
 		public override string ToString ()
@@ -3998,7 +4002,7 @@ namespace Mono.CSharp {
 
 		#region Abstract
 		public abstract HoistedVariable HoistedVariable { get; }
-		public abstract bool IsFixedVariable { get; }
+		public abstract bool IsFixed { get; }
 		public abstract bool IsRef { get; }
 		public abstract string Name { get; }
 		public abstract void SetHasAddressTaken ();
@@ -4175,7 +4179,7 @@ namespace Mono.CSharp {
 		//		
 		// A local variable is always fixed
 		//
-		public override bool IsFixedVariable {
+		public override bool IsFixed {
 			get { return true; }
 		}
 
@@ -4363,7 +4367,7 @@ namespace Mono.CSharp {
 		// A ref or out parameter is classified as a moveable variable, even 
 		// if the argument given for the parameter is a fixed variable
 		//		
-		public override bool IsFixedVariable {
+		public override bool IsFixed {
 			get { return !IsRef; }
 		}
 
@@ -6598,8 +6602,8 @@ namespace Mono.CSharp {
 			get { return variable_info; }
 		}
 
-		public override bool IsFixedVariable {
-			get { return !TypeManager.IsValueType (type); }
+		public override bool IsFixed {
+			get { return false; }
 		}
 
 		protected override bool IsHoistedEmitRequired (EmitContext ec)

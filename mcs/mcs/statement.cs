@@ -4448,7 +4448,7 @@ namespace Mono.CSharp {
 				Unary u = e as Unary;
 				if (u != null && u.Oper == Unary.Operator.AddressOf) {
 					IVariableReference vr = u.Expr as IVariableReference;
-					if (vr == null || !vr.IsFixedVariable) {
+					if (vr == null || !vr.IsFixed) {
 						data [i] = new ExpressionEmitter (e, vi);
 					}
 				}
