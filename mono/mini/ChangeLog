@@ -1,5 +1,16 @@
 2008-10-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* branch-opts.c (mono_if_conversion): Add back the 'optimize range checks'
+	optimization from the current JIT.
+
+	* method-to-ir.c (mini_emit_inst_for_method): Decompose String.Length
+	later in decompose_array_access_opts () to allow more optimizations.
+
+	* method-to-ir.c (mono_handle_soft_float): Rename this to 
+	mono_decompose_soft_float () for consistency.
+
+	* mini-ops.h: Fix arguments of OP_STRLEN.
+
 	* method-to-ir.c (save_cast_details): Extract the cast details saving code
 	into a separate function.
 	(reset_cast_details): Ditto.
