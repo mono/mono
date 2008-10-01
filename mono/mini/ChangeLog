@@ -1,5 +1,10 @@
 2008-10-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (save_cast_details): Extract the cast details saving code
+	into a separate function.
+	(reset_cast_details): Ditto.
+	(handle_unbox): Save cast details. Fixes #431254.
+
 	* method-to-ir.c: Remove some obsolete FIXMEs.
 
 	* mini-amd64.c mini-x86.c mini-arm.c mini-ppc.c method-to-ir.c: Remove
