@@ -1,5 +1,10 @@
 2008-10-01  Marek Safar  <marek.safar@gmail.com>
 
+	* anonymous.cs: Use full type parameters of parent generic
+	containers. Removed unnecessary AddParentStoreyReference call.
+
+2008-10-01  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #324702
 	* class.cs: Use better shorter names for explicit interface member
 	implementations.

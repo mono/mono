@@ -267,8 +267,8 @@ namespace Mono.CSharp {
 				// nested storeys use class type parameter (VAR)
 				//
 				TypeParameter[] tparams = ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod.Storey != null ?
-					ec.CurrentAnonymousMethod.Storey.CurrentTypeParameters :
-					ec.GenericDeclContainer.CurrentTypeParameters;
+					ec.CurrentAnonymousMethod.Storey.TypeParameters :
+					ec.GenericDeclContainer.TypeParameters;
 
 				if (tparams.Length != CountTypeParameters) {
 					TypeParameter [] full = new TypeParameter [CountTypeParameters];
@@ -1381,7 +1381,6 @@ namespace Mono.CSharp {
 				if (s == storey)
 					continue;
 
-				storey.AddParentStoreyReference (s);
 				s.HasHoistedVariables = true;
 				Block.Parent.Explicit.PropagateStoreyReference (s);
 			}
