@@ -70,8 +70,6 @@ namespace System.Windows.Forms
 
 		protected override void OnRenderButtonBackground (ToolStripItemRenderEventArgs e)
 		{
-			base.OnRenderButtonBackground (e);
-
 			if (e.Item.Enabled == false)
 				return;
 				
@@ -111,12 +109,12 @@ namespace System.Windows.Forms
 			else if (e.Item is ToolStripButton && (e.Item as ToolStripButton).Checked)
 				using (Pen p = new Pen (this.ColorTable.ButtonPressedBorder))
 					e.Graphics.DrawRectangle (p, paint_here);
+
+			base.OnRenderButtonBackground (e);
 		}
 
 		protected override void OnRenderDropDownButtonBackground (ToolStripItemRenderEventArgs e)
 		{
-			base.OnRenderDropDownButtonBackground (e);
-
 			Rectangle paint_here = new Rectangle (0, 0, e.Item.Width, e.Item.Height);
 
 			// Paint gradient background
@@ -137,12 +135,12 @@ namespace System.Windows.Forms
 			else if (e.Item.Pressed)
 				using (Pen p = new Pen (this.ColorTable.MenuBorder))
 					e.Graphics.DrawRectangle (p, paint_here);
+
+			base.OnRenderDropDownButtonBackground (e);
 		}
 
 		protected override void OnRenderGrip (ToolStripGripRenderEventArgs e)
 		{
-			base.OnRenderGrip (e);
-
 			if (e.GripStyle == ToolStripGripStyle.Hidden)
 				return;
 
@@ -176,23 +174,23 @@ namespace System.Windows.Forms
 					r2.Offset (4, 0);
 				}
 			}
+
+			base.OnRenderGrip (e);
 		}
 
 		protected override void OnRenderImageMargin (ToolStripRenderEventArgs e)
 		{
-			base.OnRenderImageMargin (e);
-
 			if (!(e.ToolStrip is ToolStripOverflow)) {
 				Rectangle side_gradient = new Rectangle (1, 2, 24, e.ToolStrip.Height - 3);
 				using (LinearGradientBrush b = new LinearGradientBrush (side_gradient, this.ColorTable.ToolStripGradientBegin, this.ColorTable.ToolStripGradientEnd, LinearGradientMode.Horizontal))
 					e.Graphics.FillRectangle (b, side_gradient);
 			}
+
+			base.OnRenderImageMargin (e);
 		}
 
 		protected override void OnRenderItemCheck (ToolStripItemImageRenderEventArgs e)
 		{
-			base.OnRenderItemCheck (e);
-			
 			if (e.Item.Selected)
 			{
 				e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (this.ColorTable.CheckPressedBackground), e.ImageRectangle);
@@ -210,6 +208,8 @@ namespace System.Windows.Forms
 			}
 			if (e.Item.Image == null)
 				ControlPaint.DrawMenuGlyph(e.Graphics, new Rectangle (6,5,7,6), MenuGlyph.Checkmark);
+			
+			base.OnRenderItemCheck (e);
 		}
 		
 		protected override void OnRenderItemImage (ToolStripItemImageRenderEventArgs e)
@@ -229,8 +229,6 @@ namespace System.Windows.Forms
 
 		protected override void OnRenderMenuItemBackground (ToolStripItemRenderEventArgs e)
 		{
-			base.OnRenderMenuItemBackground (e);
-			
 			ToolStripMenuItem tsmi = (ToolStripMenuItem)e.Item;
 			Rectangle paint_here;
 
@@ -270,12 +268,12 @@ namespace System.Windows.Forms
 							e.Graphics.DrawRectangle (p, paint_here);
 				}
 			}
+			
+			base.OnRenderMenuItemBackground (e);
 		}
 
 		protected override void OnRenderOverflowButtonBackground (ToolStripItemRenderEventArgs e)
 		{
-			base.OnRenderOverflowButtonBackground (e);
-
 			Rectangle paint_here;
 			LinearGradientMode gradient_direction = e.ToolStrip.Orientation == Orientation.Vertical ? LinearGradientMode.Horizontal : LinearGradientMode.Vertical;
 			
@@ -297,12 +295,12 @@ namespace System.Windows.Forms
 
 			// Paint the arrow
 			PaintOverflowArrow (e, paint_here);
+
+			base.OnRenderOverflowButtonBackground (e);
 		}
 
 		protected override void OnRenderSeparator (ToolStripSeparatorRenderEventArgs e)
 		{
-			base.OnRenderSeparator (e);
-
 			if (e.Vertical) {
 				Rectangle r = new Rectangle (4, 6, 1, e.Item.Height - 10);
 				e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (this.ColorTable.SeparatorLight), r);
@@ -327,12 +325,12 @@ namespace System.Windows.Forms
 					
 				e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (this.ColorTable.SeparatorDark), r3);
 			}
+
+			base.OnRenderSeparator (e);
 		}
 
 		protected override void OnRenderSplitButtonBackground (ToolStripItemRenderEventArgs e)
 		{
-			base.OnRenderSplitButtonBackground (e);
-
 			ToolStripSplitButton tssb = (ToolStripSplitButton)e.Item;
 			Rectangle paint_here = new Rectangle (0, 0, tssb.Width, tssb.Height);
 			Rectangle button_part = new Rectangle (0, 0, tssb.ButtonBounds.Width, tssb.ButtonBounds.Height);
@@ -358,12 +356,12 @@ namespace System.Windows.Forms
 			else if (e.Item.Pressed)
 				using (Pen p = new Pen (this.ColorTable.MenuBorder))
 					e.Graphics.DrawRectangle (p, paint_here);
+
+			base.OnRenderSplitButtonBackground (e);
 		}
 
 		protected override void OnRenderToolStripBackground (ToolStripRenderEventArgs e)
 		{
-			base.OnRenderToolStripBackground (e);
-
 			if (e.ToolStrip is ToolStripDropDown) {
 				e.Graphics.Clear (this.ColorTable.ToolStripDropDownBackground);
 				return;
@@ -379,12 +377,12 @@ namespace System.Windows.Forms
 					
 			if (e.ToolStrip is StatusStrip)
 				e.Graphics.DrawLine (Pens.White, e.AffectedBounds.Left, e.AffectedBounds.Top, e.AffectedBounds.Right, e.AffectedBounds.Top);
+
+			base.OnRenderToolStripBackground (e);
 		}
 
 		protected override void OnRenderToolStripBorder (ToolStripRenderEventArgs e)
 		{
-			base.OnRenderToolStripBorder (e);
-
 			if (e.ToolStrip is ToolStripDropDown) {
 				if (e.ToolStrip is ToolStripOverflow)
 					e.Graphics.DrawLines (ThemeEngine.Current.ResPool.GetPen (this.ColorTable.MenuBorder), new Point[] { e.AffectedBounds.Location, new Point (e.AffectedBounds.Left, e.AffectedBounds.Bottom - 1), new Point (e.AffectedBounds.Right - 1, e.AffectedBounds.Bottom - 1), new Point (e.AffectedBounds.Right - 1, e.AffectedBounds.Top), new Point (e.AffectedBounds.Left, e.AffectedBounds.Top) });
@@ -405,6 +403,8 @@ namespace System.Windows.Forms
 				else
 					e.Graphics.DrawLine (p, new Point (e.ToolStrip.Left, e.ToolStrip.Bottom - 1), new Point (e.ToolStrip.Width, e.ToolStrip.Bottom - 1));
 			}
+
+			base.OnRenderToolStripBorder (e);
 		}
 		
 		protected override void OnRenderToolStripContentPanelBackground (ToolStripContentPanelRenderEventArgs e)
@@ -414,10 +414,10 @@ namespace System.Windows.Forms
 		
 		protected override void OnRenderToolStripPanelBackground (ToolStripPanelRenderEventArgs e)
 		{
-			base.OnRenderToolStripPanelBackground (e);
-
 			using (LinearGradientBrush b = new LinearGradientBrush (e.ToolStripPanel.Bounds, this.ColorTable.MenuStripGradientBegin, this.ColorTable.MenuStripGradientEnd, e.ToolStripPanel.Orientation == Orientation.Horizontal ? LinearGradientMode.Horizontal : LinearGradientMode.Vertical))
 				e.Graphics.FillRectangle (b, e.ToolStripPanel.Bounds);
+
+			base.OnRenderToolStripPanelBackground (e);
 		}
 
 		protected override void OnRenderToolStripStatusLabelBackground (ToolStripItemRenderEventArgs e)

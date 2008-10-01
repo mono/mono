@@ -1,3 +1,9 @@
+2008-10-01  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripProfessionalRenderer.cs: Call overridden methods' bases
+	after our logic, so users can do painting by handling the events.
+	Currently, we draw over any user painting.
+
 2008-09-30  Everaldo Canuto  <ecanuto@novell.com>
 
 	* MenuAPI.cs: Prevent NRE when deactivate menu. Fixes #413636.
