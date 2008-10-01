@@ -63,6 +63,7 @@ scripts_1_0 = \
 	mcs$(SCRIPT_SUFFIX)			\
 	mjs$(SCRIPT_SUFFIX)			\
 	monolinker$(SCRIPT_SUFFIX)		\
+	mono-cil-strip$(SCRIPT_SUFFIX)		\
 	mono-api-diff$(SCRIPT_SUFFIX) 		\
 	mono-shlib-cop$(SCRIPT_SUFFIX) 		\
 	mono-xmltool$(SCRIPT_SUFFIX)		\
