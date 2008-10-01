@@ -229,6 +229,7 @@
     <Compile Include="Mono.Cecil\AssemblyNameDefinition.cs" />
     <Compile Include="Mono.Cecil\AssemblyNameReference.cs" />
     <Compile Include="Mono.Cecil\AssemblyNameReferenceCollection.cs" />
+    <Compile Include="Mono.Cecil\AssemblyStripper.cs" />
     <Compile Include="Mono.Cecil\BaseAssemblyResolver.cs" />
     <Compile Include="Mono.Cecil\BaseReflectionReader.cs" />
     <Compile Include="Mono.Cecil\BaseReflectionVisitor.cs" />

@@ -47,6 +47,13 @@ namespace Mono.Cecil.Cil {
 
 		IDictionary m_stackSizes;
 
+		bool stripped;
+
+		public bool Stripped {
+			get { return stripped; }
+			set { stripped = value; }
+		}
+
 		public CodeWriter (ReflectionWriter reflectWriter, MemoryBinaryWriter writer)
 		{
 			m_reflectWriter = reflectWriter;
@@ -333,7 +340,7 @@ namespace Mono.Cecil.Cil {
 		public override void VisitVariableDefinitionCollection (VariableDefinitionCollection variables)
 		{
 			MethodBody body = variables.Container as MethodBody;
-			if (body == null)
+			if (body == null || stripped)
 				return;
 
 			uint sig = m_reflectWriter.SignatureWriter.AddLocalVarSig (

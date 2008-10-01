@@ -12,6 +12,7 @@
 ./Mono.Cecil/AssemblyNameDefinition.cs
 ./Mono.Cecil/AssemblyNameReference.cs
 ./Mono.Cecil/AssemblyNameReferenceCollection.cs
+./Mono.Cecil/AssemblyStripper.cs
 ./Mono.Cecil/BaseAssemblyResolver.cs
 ./Mono.Cecil/BaseReflectionReader.cs
 ./Mono.Cecil/BaseReflectionVisitor.cs

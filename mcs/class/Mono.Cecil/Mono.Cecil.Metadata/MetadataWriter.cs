@@ -78,6 +78,22 @@ namespace Mono.Cecil.Metadata {
 			get { return m_cilWriter; }
 		}
 
+		public MemoryBinaryWriter StringWriter {
+			get { return m_stringWriter; }
+		}
+
+		public MemoryBinaryWriter GuidWriter {
+			get { return m_guidWriter; }
+		}
+
+		public MemoryBinaryWriter UserStringWriter {
+			get { return m_usWriter; }
+		}
+
+		public MemoryBinaryWriter BlobWriter {
+			get { return m_blobWriter; }
+		}
+
 		public uint DebugHeaderPosition {
 			get { return m_debugHeaderStart; }
 		}

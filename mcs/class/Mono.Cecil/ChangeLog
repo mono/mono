@@ -1,3 +1,13 @@
+2008-10-01  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.dll.sources
+	* Mono.Cecil.csproj
+	* Mono.Cecil/AssemblyStripper.cs
+	* Mono.Cecil.Cil/CodeWriter.cs
+	* Mono.Cecil.Metadata/MetadataWriter.cs: add a new AssemblyStripper
+	class to be used by a tool to empty method bodies for assemblies
+	that have been AOTed.
+
 2008-09-29  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/GenericParameter.cs: override TypeReference.Scope.
