@@ -35,7 +35,7 @@ using Mono.Cecil.Metadata;
 
 namespace Mono.Cecil {
 
-	public class AssemblyStripper {
+	class AssemblyStripper {
 
 		AssemblyDefinition assembly;
 		BinaryWriter writer;
