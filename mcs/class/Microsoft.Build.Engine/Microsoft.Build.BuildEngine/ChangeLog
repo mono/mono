@@ -1,3 +1,11 @@
+2008-10-01  Ankit Jain  <jankit@novell.com>
+
+	* BuildEngine.cs (.ctor): Replace 'projectFile' param with 'project'.
+	(BuildProjectFile): If filename is null (project.LoadXml) then use
+	engine.BuildProject
+	* BuildTask.cs (InitializeTask): Track api change.
+	* Expression.cs (Parse): Skip empty entries in the expression.
+
 2008-09-24  Ankit Jain  <jankit@novell.com>
 
 	* Engine.cs: Add argument checks.

@@ -28,6 +28,7 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 using System.IO;
 using Microsoft.Build.Framework;
 
@@ -45,7 +46,42 @@ namespace Microsoft.Build.Tasks {
 		[MonoTODO]
 		public override bool Execute ()
 		{
-			return false;
+			Hashtable targets_table = new Hashtable ();
+			targetOutputs = new ITaskItem [targets.Length];
+
+			if (!RunEachTargetSeparately) {
+				bool ret = BuildEngine.BuildProjectFile (BuildEngine.ProjectFileOfTaskNode,
+						targets, null, targets_table);
+				int i = 0;
+				foreach (ITaskItem[] items in targets_table.Values) {
+					//FIXME: can a target return multiple taskitems?
+					if (items != null && items.Length > 0)
+						targetOutputs [i ++] = items [0];
+				}
+
+				return ret;
+			}
+
+			// RunEachTargetSeparately
+			bool allPassed = true;
+			for (int i = 0; i < targets.Length; i ++) {
+				string target = targets [i];
+				bool result = BuildEngine.BuildProjectFile (BuildEngine.ProjectFileOfTaskNode,
+						new string[] { target }, null, targets_table);
+
+				if (allPassed && !result)
+					allPassed = false;
+
+				if (!targets_table.Contains (target))
+					continue;
+
+				ITaskItem [] items = (ITaskItem[]) targets_table [target];
+				if (items != null && items.Length > 0)
+					//FIXME:
+					targetOutputs [i] = items [0];
+			}
+
+			return allPassed;
 		}
 		
 		public bool RunEachTargetSeparately {

@@ -1,3 +1,8 @@
+2008-10-01  Ankit Jain  <jankit@novell.com>
+
+	* ProjectTest.cs: Refactor BuildProjectFile tests. Add tests for loading
+	project from files and xml string.
+
 2008-09-24  Ankit Jain  <jankit@novell.com>
 
 	* EngineTest.cs:

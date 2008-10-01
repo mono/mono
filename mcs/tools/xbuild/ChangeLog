@@ -1,3 +1,7 @@
+2008-10-01  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Common.tasks: Add CallTarget and AssignTargetPath task.
+
 2007-03-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* xbuild/Microsoft.Common.tasks: Added CombinePath task.

@@ -38,16 +38,16 @@ namespace Microsoft.Build.BuildEngine {
 		int	columnNumberOfTaskNode;
 		bool	continueOnError;
 		int	lineNumberOfTaskNode;
-		string	projectFileOfTaskNode;
+		Project project;
 		
-		public BuildEngine (Engine engine, int column, int line,
-				    bool continueOnError, string projectFile)
+		public BuildEngine (Engine engine, Project project, int column, int line,
+				    bool continueOnError)
 		{
 			this.engine = engine;
+			this.project = project;
 			this.columnNumberOfTaskNode = column;
 			this.continueOnError = continueOnError;
 			this.lineNumberOfTaskNode = line;
-			this.projectFileOfTaskNode = projectFile;
 		}
 	
 		// Initiates a build of a project file. If the build is
@@ -58,12 +58,16 @@ namespace Microsoft.Build.BuildEngine {
 				       IDictionary globalProperties,
 				       IDictionary targetOutputs)
 		{
-			BuildPropertyGroup bpg = new BuildPropertyGroup ();
-			if (globalProperties != null)
-				foreach (DictionaryEntry de in globalProperties)
-					bpg.AddNewProperty ((string) de.Key, (string) de.Value);
-			return engine.BuildProjectFile (projectFileName,
-				targetNames, bpg, targetOutputs);
+			if (String.IsNullOrEmpty (projectFileName)) {
+				return engine.BuildProject (project, targetNames, targetOutputs);
+			} else {
+				BuildPropertyGroup bpg = new BuildPropertyGroup ();
+				if (globalProperties != null)
+					foreach (DictionaryEntry de in globalProperties)
+						bpg.AddNewProperty ((string) de.Key, (string) de.Value);
+				return engine.BuildProjectFile (projectFileName,
+					targetNames, bpg, targetOutputs);
+			}
 		}
 
 		// Raises a custom event to all registered loggers.
@@ -103,7 +107,7 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		public string ProjectFileOfTaskNode {
-			get { return projectFileOfTaskNode; }
+			get { return project.FullFileName; }
 		}
 		
 	}

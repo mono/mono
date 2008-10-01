@@ -163,8 +163,7 @@ namespace Microsoft.Build.BuildEngine {
 			ITask task;
 			
 			task = (ITask)Activator.CreateInstance (this.Type);
-			task.BuildEngine = new BuildEngine (parentTarget.Project.ParentEngine, 0, 0, ContinueOnError,
-				parentTarget.Project.FullFileName);
+			task.BuildEngine = new BuildEngine (parentTarget.Project.ParentEngine, parentTarget.Project, 0, 0, ContinueOnError);
 			
 			return task;
 		}

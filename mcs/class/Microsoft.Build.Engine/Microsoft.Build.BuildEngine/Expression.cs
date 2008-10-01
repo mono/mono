@@ -53,7 +53,7 @@ namespace Microsoft.Build.BuildEngine {
 			expression = expression.Replace ('/', Path.DirectorySeparatorChar);
 			expression = expression.Replace ('\\', Path.DirectorySeparatorChar);
 		
-			string [] parts = expression.Split (';');
+			string [] parts = expression.Split (new char [] {';'}, StringSplitOptions.RemoveEmptyEntries);
 
 			List <ArrayList> p1 = new List <ArrayList> (parts.Length);
 			List <ArrayList> p2 = new List <ArrayList> (parts.Length);
