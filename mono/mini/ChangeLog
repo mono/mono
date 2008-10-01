@@ -1,5 +1,7 @@
 2008-10-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* objects.cs: Add a test for the range check optimization. Fix warnings.
+
 	* branch-opts.c (mono_if_conversion): Add back the 'optimize range checks'
 	optimization from the current JIT.
 
