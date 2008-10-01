@@ -1,3 +1,7 @@
+2008-10-01  Mario Carrion <mcarrion@novell.com>
+
+	* ScrollBar.cs: Internal property added: UIAThumbPosition.
+
 2008-10-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripOverflowButton.cs: Use InternalOwner instead of Owner.

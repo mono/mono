@@ -1646,6 +1646,11 @@ namespace System.Windows.Forms
 		internal Rectangle UIAThumbArea {
 			get { return thumb_area; }
 		}
+
+		internal Rectangle UIAThumbPosition {
+			get { return thumb_pos; }
+		}
+
 #endif
 
 		#endregion UIA Framework Section: Events, Methods and Properties.
