@@ -1,3 +1,9 @@
+2008-10-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c mini-x86.c mini-arm.c mini-ppc.c method-to-ir.c: Remove
+	the workaround for byref being set on sig->ret, this does not seem to
+	happen any more. Add an assert instead.
+
 2008-09-30  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ir-emit.h (alloc_dreg): Write a warning before crashing.
