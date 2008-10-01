@@ -1,5 +1,9 @@
 2008-10-01  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripOverflowButton.cs: Use InternalOwner instead of Owner.
+
+2008-10-01  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripItem.cs: When the user sets Owner, we need to remove
 	it from its previous owner and then add it to the new owner's
 	item collection.  Also, create InternalOwner, so we can set the owner

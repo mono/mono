@@ -41,7 +41,7 @@ namespace System.Windows.Forms
 		#region Internal Constructor
 		internal ToolStripOverflowButton (ToolStrip ts)
 		{
-			this.Owner = ts;
+			this.InternalOwner = ts;
 			this.Parent = ts;
 			this.Visible = false;
 		}
