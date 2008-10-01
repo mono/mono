@@ -1,3 +1,9 @@
+2008-10-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_string): Applied a variant of a patch by
+	tom hindle <tom_hindle@sil.org>. Fix byref native-to-managed string
+	marshalling. Fixes #431304.
+
 2008-10-01  Bill Holmes  <billholmes54@gmail.com>
 
 	* marshal.c (emit_marshal_variant) : Change the attribute checks to 
