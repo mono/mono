@@ -1,3 +1,7 @@
+2008-09-30  Everaldo Canuto  <ecanuto@novell.com>
+
+	* MenuAPI.cs: Prevent NRE when deactivate menu. Fixes #413636.
+
 2008-09-30  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TreeNode.cs, TreeView.cs: Move logic that determines the node
