@@ -1,3 +1,7 @@
+2008-10-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke3.cs libtest.c: Add test for byref string marshalling.
+
 2008-09-30  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-constrained.2.il: Test case for the constrained. prefix
