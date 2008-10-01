@@ -1,3 +1,10 @@
+2008-10-01  Bill Holmes  <billholmes54@gmail.com>
+
+	* marshal.c (emit_marshal_variant) : Change the attribute checks to 
+	  handle when ref is specified without In or Out.
+
+	Code is contributed under MIT/X11 license.
+
 2008-09-30  Mark Probst  <mark.probst@gmail.com>
 
 	* loader.c (mono_get_method_constrained): Don't expand method with
