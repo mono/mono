@@ -1,3 +1,21 @@
+2008-10-01  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c: When generic sharing is active, call
+	non-interface virtual generic methods via the standard trampoline.
+
+	* mini-trampolines.c: Handle virtual generic shared methods.
+
+	* mini.h, mini-x86.c, mini-x86.h: New argument for
+	mono_arch_build_imt_thunk() which is non-NULL for virtual generic
+	method thunks and which is the trampoline to call if the lookup
+	fails.  Enable the virtual generic method thunk for x86.
+
+	* mini-amd64.c, mini-arm.c, mini-ia64.c, mini-sparc.c,
+	mini-ppc.c (mono_arch_build_imt_thunk): Add the additional
+	argument but assert that it's NULL, because these archs don't yet
+	implement the virtual generic method thunk.  Changes in the IMT
+	thunk data structures.
+
 2008-10-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_globals): Avoid invalid characters in

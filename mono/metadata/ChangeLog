@@ -1,3 +1,14 @@
+2008-10-01  Mark Probst  <mark.probst@gmail.com>
+
+	* object.c, domain.c, object-internals.h, domain-internals.h:
+	Generalize IMT thunk machinery to also handle thunks for virtual
+	generic method invokes.  When a virtual generic method is invoked
+	more than a number of times we insert it into the thunk so that it
+	can be called without lookup in unmanaged code.
+
+	* generic-sharing.c, class-internals.h: Fetching a
+	MonoGenericInst* for a method from an (M)RGCTX.
+
 2008-10-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_marshal_string): Applied a variant of a patch by
