@@ -1,3 +1,7 @@
+2008-09-30  Everaldo Canuto  <ecanuto@novell.com>
+
+	* MenuAPI.cs: Prevent NRE when deactivate menu. Fixes #413636.
+
 2008-09-08  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ErrorProvider.cs: Unbreak my previous commit.

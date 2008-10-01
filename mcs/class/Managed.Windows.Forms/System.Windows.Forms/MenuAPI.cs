@@ -93,7 +93,8 @@ namespace System.Windows.Forms {
 			active = false;
 			popup_active = false;
 			hotkey_active = false;
-			GrabControl.ActiveTracker = null;
+			if (GrabControl != null)
+				GrabControl.ActiveTracker = null;
 			keynav_state = KeyNavState.Idle;
 			if (TopMenu is ContextMenu) {
 				PopUpWindow puw = TopMenu.Wnd as PopUpWindow;
