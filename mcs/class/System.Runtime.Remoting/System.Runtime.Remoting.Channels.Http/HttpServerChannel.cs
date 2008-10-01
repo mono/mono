@@ -154,17 +154,17 @@ namespace System.Runtime.Remoting.Channels.Http
 				sinkProvider.Next = new SoapServerFormatterSinkProvider ();
 				sinkProvider.Next.Next = new BinaryServerFormatterSinkProvider ();
 			}
-
-			if (port > 0) {
-				channelData = new ChannelDataStore (new string [] { this.GetChannelUri () } );
+			
+			//MS compat: channelData is null when port < 0
+			if (port >= 0) {
+				channelData = new ChannelDataStore (null);
 				IServerChannelSinkProvider provider = sinkProvider;
 				while (provider != null) {
 					provider.GetChannelData (channelData);
 					provider = provider.Next;
 				}
-				wantsToListen = false;
 			}
-
+			
 			//create the sink chain and add an HTTP sink
 			IServerChannelSink nextSink = ChannelServices.CreateServerChannelSinkChain (sinkProvider, this);
 			sink = new HttpServerTransportSink (nextSink);
@@ -251,6 +251,9 @@ namespace System.Runtime.Remoting.Channels.Http
 			
 			if (port == 0)
 				port = listener.AssignedPort;
+			
+			channelData.ChannelUris = new string [] { GetChannelUri () };
+			wantsToListen = false;
 		}
 
 		public void StopListening (object data)
