@@ -1,3 +1,7 @@
+2008-10-01  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: add cil-strip to the build.
+
 2008-09-21  Miguel de Icaza  <miguel@novell.com>
 
 	* csharplib/Makefile: Add a setup to build GMCS as a GAC assembly
