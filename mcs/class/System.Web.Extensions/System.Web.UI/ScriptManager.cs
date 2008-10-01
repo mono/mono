@@ -1269,11 +1269,30 @@ namespace System.Web.UI
 			if (scriptList == null)
 				return;
 			Hashtable registeredScripts = new Hashtable ();
+			Page controlPage;
+			Control control;
+			
 			for (int i = 0; i < scriptList.Count; i++) {
 				RegisteredScript scriptEntry = scriptList [i];
 				if (registeredScripts.ContainsKey (scriptEntry.Key))
 					continue;
-				if (Page == scriptEntry.Control || HasBeenRendered (scriptEntry.Control)) {
+
+				control = scriptEntry.Control;
+				if (control is Page)
+					controlPage = control as Page;
+				else if (control != null) {
+					Control parent = control.Parent;
+					controlPage = null;
+					while (parent != null) {
+						controlPage = parent as Page;
+						if (controlPage != null)
+							break;
+						parent = parent.Parent;
+					}
+				} else
+					controlPage = null;
+
+				if (Page == controlPage || HasBeenRendered (control)) {
 					registeredScripts.Add (scriptEntry.Key, scriptEntry);
 					switch (scriptEntry.ScriptType) {
 					case RegisteredScriptType.ClientScriptBlock:

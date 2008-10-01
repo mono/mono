@@ -1,3 +1,11 @@
+2008-10-01  Marek Habersack  <mhabersack@novell.com>
+
+	* ScriptManager.cs: be more careful when rendering script blocks
+	and checking if the control's page matches the current
+	page. Control passed to script registration methods doesn't
+	necessarily have to be a Page itself and if it's not we need to
+	find the owning page of a script block's control.
+
 2008-09-23  Marek Habersack  <mhabersack@novell.com>
 
 	* ScriptManager.cs: CultureInfoSerializer no longer derives from
