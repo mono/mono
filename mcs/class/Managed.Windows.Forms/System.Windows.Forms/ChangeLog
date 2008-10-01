@@ -1,3 +1,8 @@
+2008-10-01  Jonathan Pobst  <monkey@jpobst.com>
+
+	* SplitContainer.cs: Raise SplitterMoved when the splitter is
+	moved through code.
+
 2008-10-01  Mario Carrion <mcarrion@novell.com>
 
 	* ScrollBar.cs: Internal property added: UIAThumbPosition.

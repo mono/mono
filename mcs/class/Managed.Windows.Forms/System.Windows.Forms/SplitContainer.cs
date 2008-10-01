@@ -386,8 +386,10 @@ namespace System.Windows.Forms
 						updated = true;
 					}
 				}
-				if (updated)
+				if (updated) {
 					UpdateSplitter ();
+					OnSplitterMoved (new SplitterEventArgs (Left, Top, splitter_rectangle.X, splitter_rectangle.Y));
+				}
 			}
 		}
 
