@@ -577,6 +577,7 @@ namespace System.Web.Configuration.nBrowser
 					return false;
 			}
 
+			result.AddMatchingBrowserId (this.Id);
 			#region Browser Identification Successfull
 			//----------------------------------------------------------------------
 			//By reaching this point, it either means there were no Identification 

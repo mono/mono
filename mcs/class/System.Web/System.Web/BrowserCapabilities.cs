@@ -266,10 +266,10 @@ namespace System.Web {
 		public bool IsBrowser (string browserName) 
 		{
 			foreach (string browser in Browsers) {
-				if (0 == String.CompareOrdinal(browser, "Unknown")) {
+				if (0 == String.Compare (browser, "Unknown", StringComparison.OrdinalIgnoreCase)) {
 					continue;
 				}
-				if (0 == String.CompareOrdinal(browserName, browser)) {
+				if (0 == String.Compare (browserName, browser, StringComparison.OrdinalIgnoreCase)) {
 					return true;
 				}
 			}

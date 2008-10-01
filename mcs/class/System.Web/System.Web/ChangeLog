@@ -1,3 +1,8 @@
+2008-10-01  Marek Habersack  <mhabersack@novell.com>
+
+	* BrowserCapabilities.cs: IsBrowser needs to compare browser names
+	case insensitively.
+
 2008-09-29  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplication.cs: do not assume the passed IAsyncResult is a

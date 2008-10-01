@@ -24,6 +24,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace System.Web.Configuration
 {
 	using System;
+	using System.Collections;
 	using System.Collections.Generic;
 	using System.Text;
 	using System.Reflection;
@@ -43,6 +44,7 @@ namespace System.Web.Configuration
 			: base()
 		{
 			base.Capabilities = items;
+			Capabilities ["browsers"] = new ArrayList ();
 		}
 
 		static CapabilitiesResult () {
@@ -67,6 +69,14 @@ namespace System.Web.Configuration
 		{
 			this.Capabilities[name] = value;
 		}
+
+		internal void AddMatchingBrowserId (string id)
+		{
+			ArrayList al = Capabilities ["browsers"] as ArrayList;
+			if (al != null && !al.Contains (id))
+				al.Add (id);
+		}
+		
 		internal virtual string Replace(string item)
 		{
 			if (item.IndexOf("$") > -1)
