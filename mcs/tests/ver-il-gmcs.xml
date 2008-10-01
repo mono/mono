@@ -12527,6 +12527,30 @@
       </method>
     </type>
   </test>
+  <test name="gtest-anon-46.cs">
+    <type name="TheClass">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Foo[T](T, System.Func`2[T,T])">
+        <size>41</size>
+      </method>
+      <method name="Void Main()">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="TheClass+&lt;Foo&gt;c__AnonStorey0`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.Func`1[T] &lt;&gt;m__0()">
+        <size>31</size>
+      </method>
+      <method name="T &lt;&gt;m__1()">
+        <size>18</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-5.cs">
     <type name="X">
       <method name="Void .ctor()">
