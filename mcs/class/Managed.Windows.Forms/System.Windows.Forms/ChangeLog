@@ -1,5 +1,11 @@
 2008-10-01  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripItem.cs: Make Font, BackColor, and ForeColor be
+	ambient properties.  (Get their value from their parents if
+	values haven't been set.)
+
+2008-10-01  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripSystemRenderer.cs: Call overridden methods' bases
 	after our logic, so users can do painting by handling the events.
 	Currently, we draw over any user painting.

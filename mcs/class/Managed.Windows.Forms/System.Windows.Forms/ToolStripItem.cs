@@ -114,14 +114,13 @@ namespace System.Windows.Forms
 			this.auto_size = true;
 			this.auto_tool_tip = this.DefaultAutoToolTip;
 			this.available = true;
-			this.back_color = Control.DefaultBackColor;
+			this.back_color = Color.Empty;
 			this.background_image_layout = ImageLayout.Tile;
 			this.can_select = true;
 			this.display_style = this.DefaultDisplayStyle;
 			this.dock = DockStyle.None;
 			this.enabled = true;
-			this.font = new Font ("Tahoma", 8.25f);
-			this.fore_color = Control.DefaultForeColor;
+			this.fore_color = Color.Empty;
 			this.image = image;
 			this.image_align = ContentAlignment.MiddleCenter;
 			this.image_index = -1;
@@ -278,7 +277,15 @@ namespace System.Windows.Forms
 		}
 
 		public virtual Color BackColor {
-			get { return this.back_color; }
+			get {
+				if (back_color != Color.Empty)
+					return back_color;
+
+				if (Parent != null)
+					return parent.BackColor;
+
+				return Control.DefaultBackColor;
+			}
 			set {
 				if (this.back_color != value) {
 					back_color = value;
@@ -397,9 +404,16 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
-		public virtual Font Font
-		{
-			get { return this.font; }
+		public virtual Font Font {
+			get { 
+				if (font != null)
+					return font;
+					
+				if (Parent != null)
+					return Parent.Font;
+					
+				return DefaultFont;
+			}
 			set { 
 				if (this.font != value) {
 					this.font = value; 
@@ -411,7 +425,15 @@ namespace System.Windows.Forms
 		}
 
 		public virtual Color ForeColor {
-			get { return this.fore_color; }
+			get { 
+				if (fore_color != Color.Empty)
+					return fore_color;
+					
+				if (Parent != null)
+					return parent.ForeColor;
+					
+				return Control.DefaultForeColor;
+			}
 			set { 
 				if (this.fore_color != value) {
 					this.fore_color = value; 
@@ -868,16 +890,16 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public virtual void ResetBackColor () { this.BackColor = Control.DefaultBackColor; }
+		public virtual void ResetBackColor () { this.BackColor = Color.Empty; }
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual void ResetDisplayStyle () { this.display_style = this.DefaultDisplayStyle; }
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public virtual void ResetFont () { this.font = new Font ("Tahoma", 8.25f); }
+		public virtual void ResetFont () { this.font = null; }
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public virtual void ResetForeColor () { this.ForeColor = Control.DefaultForeColor; }
+		public virtual void ResetForeColor () { this.ForeColor = Color.Empty; }
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual void ResetImage () { this.image = null; }
@@ -1622,6 +1644,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		private static Font DefaultFont { get { return new Font ("Tahoma", 8.25f); } }
+		
 		internal virtual ToolStripTextDirection DefaultTextDirection { get { return ToolStripTextDirection.Inherit; } }
 
 		internal virtual void Dismiss (ToolStripDropDownCloseReason reason)
