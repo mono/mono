@@ -603,36 +603,48 @@ namespace Mono.CSharp {
 		if (t == null)
 			return "internal error";
 
-		return CSharpName (GetFullName (t));
+		return CSharpName (GetFullName (t), t);
 	}
 
 	static readonly char [] elements = new char [] { '*', '[' };
 
-	public static string CSharpName (string name)
+	public static string CSharpName (string name, Type type)
 	{
 		if (name.Length > 10) {
+			string s;
 			switch (name) {
-			case "System.Int32": return "int";
-			case "System.Int64": return "long";
-			case "System.String": return "string";
-			case "System.Boolean": return "bool";
-			case "System.Void": return "void";
-			case "System.Object": return "object";
-			case "System.UInt32": return "uint";
-			case "System.Int16": return "short";
-			case "System.UInt16": return "ushort";
-			case "System.UInt64": return "ulong";
-			case "System.Single": return "float";
-			case "System.Double": return "double";
-			case "System.Decimal": return "decimal";
-			case "System.Char": return "char";
-			case "System.Byte": return "byte";
-			case "System.SByte": return "sbyte";
+			case "System.Int32": s = "int"; break;
+			case "System.Int64": s = "long"; break;
+			case "System.String": s = "string"; break;
+			case "System.Boolean": s = "bool"; break;
+			case "System.Void": s = "void"; break;
+			case "System.Object": s = "object"; break;
+			case "System.UInt32": s = "uint"; break;
+			case "System.Int16": s = "short"; break;
+			case "System.UInt16": s = "ushort"; break;
+			case "System.UInt64": s = "ulong"; break;
+			case "System.Single": s = "float"; break;
+			case "System.Double": s = "double"; break;
+			case "System.Decimal": s = "decimal"; break;
+			case "System.Char": s = "char"; break;
+			case "System.Byte": s = "byte"; break;
+			case "System.SByte": s = "sbyte"; break;
+			default: s = null; break;
+			}
+
+			if (s != null) {
+				//
+				// Predefined names can come from mscorlib only
+				//
+				if (type == null || type.Module.Name == "mscorlib.dll" || !RootContext.StdLib)
+					return s;
+					
+				return name;
 			}
 
 			int idx = name.IndexOfAny (elements, 10);
 			if (idx > 0)
-				return CSharpName (name.Substring (0, idx)) + name.Substring (idx);
+				return CSharpName (name.Substring (0, idx), type) + name.Substring (idx);
 		}
 
 		if (name [0] == AnonymousTypeClass.ClassNamePrefix [0] && name.StartsWith (AnonymousTypeClass.ClassNamePrefix))

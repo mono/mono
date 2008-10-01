@@ -3071,7 +3071,7 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError ()
 		{
 			if (type == null)
-				return TypeManager.CSharpName (name);
+				return TypeManager.CSharpName (name, null);
 
 			return base.GetSignatureForError ();
 		}

@@ -1,4 +1,12 @@
 2008-10-01  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #324702
+	* class.cs: Use better shorter names for explicit interface member
+	implementations.
+
+	* ecore.cs, typemanager.cs: Convert only mscorlib predefined names.
+
+2008-10-01  Marek Safar  <marek.safar@gmail.com>
 	
 	* expression.cs: Use new interface to check fixed expression.
 

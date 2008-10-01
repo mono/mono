@@ -3595,12 +3595,23 @@ namespace Mono.CSharp {
 			set { SetMemberName (new MemberName (MemberName.Left, value, Location)); }
 		}
 		
+		//
+		// Returns full metadata method name
+		//
 		public string GetFullName (MemberName name)
 		{
 			if (!IsExplicitImpl)
 				return name.Name;
 
-			return InterfaceType.FullName.Replace ('+', '.') + "." + name.Name;
+			//
+			// When dealing with explicit members a full interface type
+			// name is added to member name to avoid possible name conflicts
+			//
+			// We use CSharpName which gets us full name with benefit of
+			// replacing predefined names which saves some space and name
+			// is still unique
+			//
+			return TypeManager.CSharpName (InterfaceType) + "." + name.Name;
 		}
 
 		protected override bool VerifyClsCompliance ()
@@ -6285,7 +6296,7 @@ namespace Mono.CSharp {
 				CheckForDuplications ();
 
 				if (IsDummy) {
-					if (method.InterfaceType != null && method.IsExplicitImpl) {
+					if (method.InterfaceType != null && parent.PartialContainer.PendingImplementations != null) {
 						MethodInfo mi = parent.PartialContainer.PendingImplementations.IsInterfaceMethod (
 							MethodName.Name, method.InterfaceType, new MethodData (method, ModFlags, flags, this));
 						if (mi != null) {
