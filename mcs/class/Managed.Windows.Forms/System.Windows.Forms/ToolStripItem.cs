@@ -1164,6 +1164,7 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected internal virtual void OnOwnerFontChanged (EventArgs e)
 		{
+			this.CalculateAutoSize ();
 		}
 		
 		protected virtual void OnPaint (PaintEventArgs e)
@@ -1184,6 +1185,8 @@ namespace System.Windows.Forms
 		
 		protected virtual void OnParentChanged (ToolStrip oldParent, ToolStrip newParent)
 		{
+			this.text_size = TextRenderer.MeasureText (this.Text == null ? string.Empty : this.text, this.Font, Size.Empty, TextFormatFlags.HidePrefix);
+			
 			if (oldParent != null)
 				oldParent.PerformLayout ();
 				

@@ -1,3 +1,10 @@
+2008-10-01  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripItem.cs: When our parent changes, recalculate our text
+	size, since we may be getting our Font from our parent.  When our
+	owner's Font changes, recalculate ourselves as we may be using
+	that font.
+
 2008-10-01  Everaldo Canuto  <ecanuto@novell.com>
 
 	* MenuAPI.cs: Select the first option of a popup when opening the popup via
