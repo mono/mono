@@ -781,7 +781,9 @@ namespace TestRunner {
 			bool success = true;
 			Type[] types = assembly.GetTypes ();
 			foreach (Type t in types) {
-				if (!t.IsClass && t.IsValueType)
+				
+				// Skip interfaces
+				if (!t.IsClass && !t.IsValueType)
 					continue;
 
 				if (test.VerificationProvider == null) {
@@ -880,7 +882,9 @@ namespace TestRunner {
 					break;
 
 				case TestResult.ILError:
-					LogFileLine (file, "IL REGRESSION: " + extra);
+					if (!update_verif_file) {
+						LogFileLine (file, "IL REGRESSION: " + extra);
+					}
 					extra = null;
 					break;
 			}

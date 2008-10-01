@@ -1,3 +1,7 @@
+2008-10-01  Marek Safar  <marek.safar@gmail.com>
+
+	* compiler-tester.cs: Fixed broken value type test.
+
 2008-09-10  Marek Safar  <marek.safar@gmail.com>
 
 	* compiler-tester.cs: Add non-varags LogLine overload.
