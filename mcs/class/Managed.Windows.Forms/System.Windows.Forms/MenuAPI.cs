@@ -787,20 +787,17 @@ namespace System.Windows.Forms {
 				break;
 
 			case Keys.Return:
-				if (CurrentMenu is MainMenu) {
-					if (CurrentMenu.SelectedItem != null && CurrentMenu.SelectedItem.IsPopup) {
-						keynav_state = KeyNavState.Navigating;
-						item = CurrentMenu.SelectedItem;
-						ShowSubPopup (CurrentMenu, item);
-						SelectItem (item, item.MenuItems [0], false);
-						CurrentMenu = item;
-						active = true;
-						GrabControl.ActiveTracker = this;
-					}
-					return true;
+				if (CurrentMenu.SelectedItem != null && CurrentMenu.SelectedItem.IsPopup) {
+					keynav_state = KeyNavState.Navigating;
+					item = CurrentMenu.SelectedItem;
+					ShowSubPopup (CurrentMenu, item);
+					SelectItem (item, item.MenuItems [0], false);
+					CurrentMenu = item;
+					active = true;
+					GrabControl.ActiveTracker = this;
+				} else {
+					ExecFocusedItem (CurrentMenu, CurrentMenu.SelectedItem);
 				}
-			
-				ExecFocusedItem (CurrentMenu, CurrentMenu.SelectedItem);
 				break;
 				
 			case Keys.Escape:

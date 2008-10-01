@@ -1,3 +1,8 @@
+2008-10-01  Everaldo Canuto  <ecanuto@novell.com>
+
+	* MenuAPI.cs: Select the first option of a popup when opening the popup via
+	return key. [Fixes bug #413792].
+
 2008-10-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripItem.cs: Make Font, BackColor, and ForeColor be
