@@ -1618,17 +1618,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Int32 System.Collections.Generic.IEnumerator`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>65</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>107</size>
@@ -1638,6 +1632,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()">
+        <size>65</size>
       </method>
     </type>
   </test>
@@ -1670,9 +1670,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="IHello`1 IFoo`1[T].GetHello()">
-        <size>7</size>
-      </method>
       <method name="Foo`1+Hello[T] GetHello()">
         <size>7</size>
       </method>
@@ -1688,6 +1685,11 @@
       </method>
       <method name="Void Main()">
         <size>1</size>
+      </method>
+    </type>
+    <type name="Foo`1[T]">
+      <method name="IHello`1 IFoo&lt;T&gt;.GetHello()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -1936,9 +1938,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -1955,6 +1954,11 @@
     <type name="Foo`1[T]">
       <method name="Void .ctor(T)">
         <size>8</size>
+      </method>
+    </type>
+    <type name="MyList`1+&lt;GetEnumerator&gt;c__Iterator0[T]">
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -1983,15 +1987,17 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void IExtensible`1[T].AddAll[U](U)">
-        <size>1</size>
-      </method>
     </type>
     <type name="X">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
       <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="ArrayList`1[T]">
+      <method name="Void IExtensible&lt;T&gt;.AddAll[U](U)">
         <size>1</size>
       </method>
     </type>
@@ -2035,9 +2041,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -2050,15 +2053,15 @@
       <method name="Void Reset()">
         <size>6</size>
       </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
     </type>
   </test>
   <test name="gtest-079.cs">
     <type name="A.ArrayList`1[T]">
       <method name="Void .ctor()">
         <size>7</size>
-      </method>
-      <method name="Void A.IExtensible`1[T].AddAll[U](U)">
-        <size>18</size>
       </method>
       <method name="Void InsertAll(T)">
         <size>1</size>
@@ -2097,6 +2100,11 @@
       </method>
       <method name="Void Main()">
         <size>1</size>
+      </method>
+    </type>
+    <type name="A.ArrayList`1[T]">
+      <method name="Void A.IExtensible&lt;T&gt;.AddAll[U](U)">
+        <size>18</size>
       </method>
     </type>
   </test>
@@ -2481,9 +2489,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="IDirectedEnumerable`1 IDirectedEnumerable`1[T].Backwards()">
-        <size>2</size>
-      </method>
       <method name="IDirectedCollectionValue`1 Backwards()">
         <size>2</size>
       </method>
@@ -2502,6 +2507,11 @@
       </method>
       <method name="Void Main()">
         <size>1</size>
+      </method>
+    </type>
+    <type name="GuardedCollectionValue`1[T]">
+      <method name="IDirectedEnumerable`1 IDirectedEnumerable&lt;T&gt;.Backwards()">
+        <size>2</size>
       </method>
     </type>
   </test>
@@ -2542,18 +2552,20 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void IBar`1[X].Test()">
-        <size>1</size>
-      </method>
-      <method name="Void IBar`2[Y,Z].Test()">
-        <size>1</size>
-      </method>
     </type>
     <type name="X">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
       <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="Bar`3[X,Y,Z]">
+      <method name="Void IBar&lt;X&gt;.Test()">
+        <size>1</size>
+      </method>
+      <method name="Void IBar&lt;Y,Z&gt;.Test()">
         <size>1</size>
       </method>
     </type>
@@ -2574,12 +2586,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void IBar`1[X].Test()">
-        <size>1</size>
-      </method>
-      <method name="Void IBar`2[Y,Z].Test()">
-        <size>1</size>
-      </method>
     </type>
     <type name="X">
       <method name="Void .ctor()">
@@ -2589,14 +2595,19 @@
         <size>1</size>
       </method>
     </type>
+    <type name="Bar`3[X,Y,Z]">
+      <method name="Void IBar&lt;X&gt;.Test()">
+        <size>1</size>
+      </method>
+      <method name="Void IBar&lt;Y,Z&gt;.Test()">
+        <size>1</size>
+      </method>
+    </type>
   </test>
   <test name="gtest-100.cs">
     <type name="C5.ArrayBase`1[T]">
       <method name="Void .ctor()">
         <size>7</size>
-      </method>
-      <method name="Void C5.ICollection`1[T].Test[U]()">
-        <size>1</size>
       </method>
     </type>
     <type name="C5.ArrayList`1[V]">
@@ -2610,6 +2621,11 @@
       </method>
       <method name="Void Main()">
         <size>7</size>
+      </method>
+    </type>
+    <type name="C5.ArrayBase`1[T]">
+      <method name="Void C5.ICollection&lt;T&gt;.Test[U]()">
+        <size>1</size>
       </method>
     </type>
   </test>
@@ -2858,9 +2874,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -2872,6 +2885,9 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -3450,10 +3466,10 @@
       </method>
     </type>
     <type name="FooCollection`1[T]">
-      <method name="T IFoo`1[T].get_Item(Int32)">
+      <method name="T IFoo&lt;T&gt;.get_Item(Int32)">
         <size>10</size>
       </method>
-      <method name="Void IFoo`1[T].set_Item(Int32, T)">
+      <method name="Void IFoo&lt;T&gt;.set_Item(Int32, T)">
         <size>1</size>
       </method>
     </type>
@@ -3935,10 +3951,10 @@
       </method>
     </type>
     <type name="Test1+Op">
-      <method name="UInt16 Test1.IOp`1[[System.UInt16, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].Func(UInt32)">
+      <method name="UInt16 Test1.IOp&lt;ushort&gt;.Func(UInt32)">
         <size>5</size>
       </method>
-      <method name="UInt32 Test1.IOp`1[[System.UInt32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].Func(UInt32)">
+      <method name="UInt32 Test1.IOp&lt;uint&gt;.Func(UInt32)">
         <size>4</size>
       </method>
     </type>
@@ -4085,15 +4101,17 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void a`1[[kv`2[k,v], gtest-157, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]].x()">
-        <size>1</size>
-      </method>
     </type>
     <type name="X">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
       <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="m`2[k,v]">
+      <method name="Void a&lt;kv&lt;k,v&gt;&gt;.x()">
         <size>1</size>
       </method>
     </type>
@@ -4225,9 +4243,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -4239,6 +4254,9 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -4277,9 +4295,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Int32 System.Collections.Generic.IEnumerator`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -4291,6 +4306,9 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -4324,17 +4342,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>213</size>
@@ -4347,6 +4359,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>53</size>
       </method>
     </type>
   </test>
@@ -4742,9 +4760,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -4762,17 +4777,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>147</size>
@@ -4782,6 +4791,19 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+    </type>
+    <type name="X+&lt;&gt;c__Iterator0">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;&gt;c__Iterator1">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>53</size>
       </method>
     </type>
   </test>
@@ -4827,17 +4849,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>84</size>
@@ -4847,6 +4863,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
+        <size>53</size>
       </method>
     </type>
   </test>
@@ -5079,17 +5101,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
-        <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>25</size>
@@ -5105,17 +5121,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
-        <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>25</size>
@@ -5131,17 +5141,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="KeyValuePair`2 System.Collections.Generic.IEnumerator`1[[System.Collections.Generic.KeyValuePair`2[S,T], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Collections.Generic.KeyValuePair`2[S,T], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>25</size>
@@ -5157,17 +5161,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
-        <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>25</size>
@@ -5183,17 +5181,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>70</size>
@@ -5209,17 +5201,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>82</size>
@@ -5235,17 +5221,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T[] System.Collections.Generic.IEnumerator`1[[T[], gtest-191, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[T[], gtest-191, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>82</size>
@@ -5255,6 +5235,62 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+    </type>
+    <type name="Test1.Test+&lt;Replace&gt;c__Iterator0`1[T]">
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
+        <size>39</size>
+      </method>
+    </type>
+    <type name="Test2.Test`1+&lt;Replace&gt;c__Iterator1`1[S,T]">
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
+        <size>39</size>
+      </method>
+    </type>
+    <type name="Test3.Test`1+&lt;Replace&gt;c__Iterator2`1[S,T]">
+      <method name="KeyValuePair`2 System.Collections.Generic.IEnumerator&lt;System.Collections.Generic.KeyValuePair&lt;S,T&gt;&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;S,T&gt;&gt;.GetEnumerator()">
+        <size>39</size>
+      </method>
+    </type>
+    <type name="Test4.Test+&lt;Replace&gt;c__Iterator3`1[T]">
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
+        <size>39</size>
+      </method>
+    </type>
+    <type name="Test5.Test+&lt;Replace&gt;c__Iterator4`1[T]">
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
+        <size>53</size>
+      </method>
+    </type>
+    <type name="Test6.Test+&lt;Replace&gt;c__Iterator5`1[T]">
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
+        <size>53</size>
+      </method>
+    </type>
+    <type name="Test7.Test+&lt;Replace&gt;c__Iterator6`1[T]">
+      <method name="T[] System.Collections.Generic.IEnumerator&lt;T[]&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T[]&gt;.GetEnumerator()">
+        <size>53</size>
       </method>
     </type>
   </test>
@@ -5311,9 +5347,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -5331,17 +5364,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="S System.Collections.Generic.IEnumerator`1[S].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[S].GetEnumerator()">
-        <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>25</size>
@@ -5351,6 +5378,19 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+    </type>
+    <type name="OrderedMultiDictionary`2+&lt;EnumerateKeys&gt;c__Iterator0[T,U]">
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="RedBlackTree`1+&lt;EnumerateRange&gt;c__Iterator1[S]">
+      <method name="S System.Collections.Generic.IEnumerator&lt;S&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;S&gt;.GetEnumerator()">
+        <size>39</size>
       </method>
     </type>
   </test>
@@ -5397,17 +5437,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="S System.Collections.Generic.IEnumerator`1[S].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[S].GetEnumerator()">
-        <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>25</size>
@@ -5423,9 +5457,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -5437,6 +5468,19 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+    </type>
+    <type name="RedBlackTree`1+&lt;EnumerateRange&gt;c__Iterator0[S]">
+      <method name="S System.Collections.Generic.IEnumerator&lt;S&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;S&gt;.GetEnumerator()">
+        <size>39</size>
+      </method>
+    </type>
+    <type name="OrderedMultiDictionary`2+&lt;EnumerateKeys&gt;c__Iterator1[T,U]">
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -5624,9 +5668,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Int64 System.Collections.Generic.IEnumerator`1[[System.Int64, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -5638,6 +5679,9 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="Int64 System.Collections.Generic.IEnumerator&lt;long&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -5993,17 +6037,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Rr System.Collections.Generic.IEnumerator`1[Rr].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[Rr].GetEnumerator()">
-        <size>65</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>205</size>
@@ -6019,17 +6057,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Int32 System.Collections.Generic.IEnumerator`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>65</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>118</size>
@@ -6039,6 +6071,22 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+    </type>
+    <type name="MyTest+&lt;Map&gt;c__Iterator0`4[Aa,Af,Rf,Rr]">
+      <method name="Rr System.Collections.Generic.IEnumerator&lt;Rr&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;Rr&gt;.GetEnumerator()">
+        <size>65</size>
+      </method>
+    </type>
+    <type name="MyTest+&lt;FromTo&gt;c__Iterator1">
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()">
+        <size>65</size>
       </method>
     </type>
   </test>
@@ -6340,17 +6388,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>117</size>
@@ -6360,6 +6402,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
+        <size>53</size>
       </method>
     </type>
   </test>
@@ -6496,16 +6544,16 @@
       </method>
     </type>
     <type name="MyClass">
-      <method name="Void IMyInterface`1[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].add_MyEvent(System.EventHandler)">
+      <method name="Void IMyInterface&lt;string&gt;.add_MyEvent(System.EventHandler)">
         <size>1</size>
       </method>
-      <method name="Void IMyInterface`1[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].remove_MyEvent(System.EventHandler)">
+      <method name="Void IMyInterface&lt;string&gt;.remove_MyEvent(System.EventHandler)">
         <size>1</size>
       </method>
-      <method name="Void IMyInterface`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].add_MyEvent(System.EventHandler)">
+      <method name="Void IMyInterface&lt;int&gt;.add_MyEvent(System.EventHandler)">
         <size>1</size>
       </method>
-      <method name="Void IMyInterface`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].remove_MyEvent(System.EventHandler)">
+      <method name="Void IMyInterface&lt;int&gt;.remove_MyEvent(System.EventHandler)">
         <size>1</size>
       </method>
     </type>
@@ -6727,9 +6775,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -6747,9 +6792,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -6761,6 +6803,16 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+    </type>
+    <type name="CircularQueue`1+&lt;GetEnumerator&gt;c__Iterator0[T]">
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="HashSet`1+&lt;GetEnumerator&gt;c__Iterator1[T]">
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -6822,9 +6874,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -6836,6 +6885,9 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -7017,9 +7069,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.String System.Collections.Generic.IEnumerator`1[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -7031,6 +7080,9 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.String System.Collections.Generic.IEnumerator&lt;string&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -7201,9 +7253,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -7215,6 +7264,9 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -7416,9 +7468,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -7436,9 +7485,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="V System.Collections.Generic.IEnumerator`1[V].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -7450,6 +7496,16 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+    </type>
+    <type name="Qux`2+GetEnumerator&gt;c__Iterator0[X,V]">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Qux`2+&lt;GetEnumerator&gt;c__Iterator1[X,V]">
+      <method name="V System.Collections.Generic.IEnumerator&lt;V&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -8168,9 +8224,6 @@
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>6</size>
       </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>8</size>
-      </method>
     </type>
     <type name="M">
       <method name="Void .ctor()">
@@ -8184,9 +8237,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Int32 System.Collections.Generic.IEnumerator`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -8198,6 +8248,16 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="Test+GetEnumerator&gt;c__Iterator0">
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -8605,9 +8665,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Temp`1+Foo[T] System.Collections.Generic.IEnumerator`1[[Temp`1.Foo[T], gtest-319, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -8619,6 +8676,9 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="Temp`1+Foo[T] System.Collections.Generic.IEnumerator&lt;Temp&lt;T&gt;.Foo&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -8884,9 +8944,6 @@
       <method name="Void .ctor()">
         <size>18</size>
       </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
-        <size>17</size>
-      </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>17</size>
       </method>
@@ -8907,6 +8964,11 @@
       </method>
       <method name="Void Main()">
         <size>64</size>
+      </method>
+    </type>
+    <type name="BaseCollection`1[T]">
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
+        <size>17</size>
       </method>
     </type>
   </test>
@@ -9098,9 +9160,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
-        <size>6</size>
-      </method>
       <method name="Int32 IndexOf(T)">
         <size>6</size>
       </method>
@@ -9140,6 +9199,9 @@
       <method name="IEnumerator GetEnumerator()">
         <size>6</size>
       </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
+        <size>6</size>
+      </method>
     </type>
   </test>
   <test name="gtest-339.cs">
@@ -9169,59 +9231,59 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void System.Collections.Generic.IDictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].Add(System.String, System.Object)">
-        <size>6</size>
-      </method>
-      <method name="Boolean System.Collections.Generic.IDictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].ContainsKey(System.String)">
-        <size>6</size>
-      </method>
-      <method name="Boolean System.Collections.Generic.IDictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].Remove(System.String)">
-        <size>6</size>
-      </method>
-      <method name="Boolean System.Collections.Generic.IDictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].TryGetValue(System.String, System.Object ByRef)">
-        <size>6</size>
-      </method>
-      <method name="Void System.Collections.Generic.ICollection`1[[System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].Add(KeyValuePair`2)">
-        <size>6</size>
-      </method>
-      <method name="Void System.Collections.Generic.ICollection`1[[System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].Clear()">
-        <size>6</size>
-      </method>
-      <method name="Boolean System.Collections.Generic.ICollection`1[[System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].Contains(KeyValuePair`2)">
-        <size>6</size>
-      </method>
-      <method name="Void System.Collections.Generic.ICollection`1[[System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].CopyTo(System.Collections.Generic.KeyValuePair`2[System.String,System.Object][], Int32)">
-        <size>6</size>
-      </method>
-      <method name="Boolean System.Collections.Generic.ICollection`1[[System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].Remove(KeyValuePair`2)">
-        <size>6</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>7</size>
-      </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
       </method>
       <method name="IEnumerator`1 GetEnumerator()">
         <size>0</size>
       </method>
-      <method name="ICollection`1 System.Collections.Generic.IDictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Keys()">
+      <method name="Void System.Collections.Generic.IDictionary&lt;string,object&gt;.Add(System.String, System.Object)">
         <size>6</size>
       </method>
-      <method name="ICollection`1 System.Collections.Generic.IDictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Values()">
+      <method name="Boolean System.Collections.Generic.IDictionary&lt;string,object&gt;.ContainsKey(System.String)">
         <size>6</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IDictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Item(System.String)">
+      <method name="ICollection`1 System.Collections.Generic.IDictionary&lt;string,object&gt;.get_Keys()">
         <size>6</size>
       </method>
-      <method name="Void System.Collections.Generic.IDictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].set_Item(System.String, System.Object)">
+      <method name="Boolean System.Collections.Generic.IDictionary&lt;string,object&gt;.Remove(System.String)">
         <size>6</size>
       </method>
-      <method name="Int32 System.Collections.Generic.ICollection`1[[System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Count()">
+      <method name="Boolean System.Collections.Generic.IDictionary&lt;string,object&gt;.TryGetValue(System.String, System.Object ByRef)">
         <size>6</size>
       </method>
-      <method name="Boolean System.Collections.Generic.ICollection`1[[System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_IsReadOnly()">
+      <method name="ICollection`1 System.Collections.Generic.IDictionary&lt;string,object&gt;.get_Values()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IDictionary&lt;string,object&gt;.get_Item(System.String)">
+        <size>6</size>
+      </method>
+      <method name="Void System.Collections.Generic.IDictionary&lt;string,object&gt;.set_Item(System.String, System.Object)">
+        <size>6</size>
+      </method>
+      <method name="Void System.Collections.Generic.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;string,object&gt;&gt;.Add(KeyValuePair`2)">
+        <size>6</size>
+      </method>
+      <method name="Void System.Collections.Generic.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;string,object&gt;&gt;.Clear()">
+        <size>6</size>
+      </method>
+      <method name="Boolean System.Collections.Generic.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;string,object&gt;&gt;.Contains(KeyValuePair`2)">
+        <size>6</size>
+      </method>
+      <method name="Void System.Collections.Generic.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;string,object&gt;&gt;.CopyTo(System.Collections.Generic.KeyValuePair`2[System.String,System.Object][], Int32)">
+        <size>6</size>
+      </method>
+      <method name="Int32 System.Collections.Generic.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;string,object&gt;&gt;.get_Count()">
+        <size>6</size>
+      </method>
+      <method name="Boolean System.Collections.Generic.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;string,object&gt;&gt;.get_IsReadOnly()">
+        <size>6</size>
+      </method>
+      <method name="Boolean System.Collections.Generic.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;string,object&gt;&gt;.Remove(KeyValuePair`2)">
+        <size>6</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;string,object&gt;&gt;.GetEnumerator()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -10096,17 +10158,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Boolean System.Collections.Generic.IEnumerator`1[[System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>106</size>
@@ -10122,17 +10178,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Boolean System.Collections.Generic.IEnumerator`1[[System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>176</size>
@@ -10142,6 +10192,22 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+    </type>
+    <type name="TestGoto+&lt;setX&gt;c__Iterator0">
+      <method name="Boolean System.Collections.Generic.IEnumerator&lt;bool&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;bool&gt;.GetEnumerator()">
+        <size>39</size>
+      </method>
+    </type>
+    <type name="TestGoto+&lt;test&gt;c__Iterator1">
+      <method name="Boolean System.Collections.Generic.IEnumerator&lt;bool&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;bool&gt;.GetEnumerator()">
+        <size>39</size>
       </method>
     </type>
   </test>
@@ -10856,10 +10922,10 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void MonoTest.IG`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].M()">
+      <method name="Void MonoTest.IG&lt;int&gt;.M()">
         <size>1</size>
       </method>
-      <method name="Void MonoTest.IG`1[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].M()">
+      <method name="Void MonoTest.IG&lt;string&gt;.M()">
         <size>1</size>
       </method>
     </type>
@@ -10897,6 +10963,29 @@
       </method>
       <method name="Void Main()">
         <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-418.cs">
+    <type name="N.Nested">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="N.Nested+C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 N.Nested.I&lt;int&gt;.get_P()">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="N.M">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>181</size>
       </method>
     </type>
   </test>
@@ -10954,17 +11043,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
-        <size>65</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>110</size>
@@ -10974,6 +11057,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
+        <size>65</size>
       </method>
     </type>
   </test>
@@ -12289,17 +12378,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Int32 System.Collections.Generic.IEnumerator`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>69</size>
@@ -12309,6 +12392,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()">
+        <size>39</size>
       </method>
     </type>
   </test>
@@ -12526,17 +12615,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Foo System.Collections.Generic.IEnumerator`1[[Foo, gtest-anon-5, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[Foo, gtest-anon-5, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]].GetEnumerator()">
-        <size>65</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>98</size>
@@ -12560,6 +12643,14 @@
       </method>
       <method name="System.String ToString()">
         <size>22</size>
+      </method>
+    </type>
+    <type name="Foo+&lt;Test&gt;c__Iterator0">
+      <method name="Foo System.Collections.Generic.IEnumerator&lt;Foo&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;Foo&gt;.GetEnumerator()">
+        <size>65</size>
       </method>
     </type>
   </test>
@@ -12631,17 +12722,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Int32 System.Collections.Generic.IEnumerator`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>180</size>
@@ -12651,6 +12736,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()">
+        <size>53</size>
       </method>
     </type>
   </test>
@@ -12738,17 +12829,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Int32 System.Collections.Generic.IEnumerator`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>65</size>
@@ -12764,17 +12849,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Test System.Collections.Generic.IEnumerator`1[[Test, gtest-anon-9, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[Test, gtest-anon-9, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]].GetEnumerator()">
-        <size>65</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>98</size>
@@ -12784,6 +12863,22 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+    </type>
+    <type name="Test+&lt;&gt;c__Iterator0">
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()">
+        <size>39</size>
+      </method>
+    </type>
+    <type name="Test+&lt;op_Addition&gt;c__Iterator1">
+      <method name="Test System.Collections.Generic.IEnumerator&lt;Test&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;Test&gt;.GetEnumerator()">
+        <size>65</size>
       </method>
     </type>
   </test>
@@ -15492,9 +15587,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -15506,6 +15598,9 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -15525,9 +15620,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="KeyValuePair`2 System.Collections.Generic.IEnumerator`1[[System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -15539,6 +15631,9 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="KeyValuePair`2 System.Collections.Generic.IEnumerator&lt;System.Collections.Generic.KeyValuePair&lt;string,object&gt;&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -15561,17 +15656,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>194</size>
@@ -15587,17 +15676,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>65</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>213</size>
@@ -15607,6 +15690,22 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Annotations&gt;c__Iterator0`1[T]">
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
+        <size>53</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Annotations&gt;c__Iterator1">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>65</size>
       </method>
     </type>
   </test>
@@ -15637,17 +15736,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>37</size>
@@ -15657,6 +15750,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>53</size>
       </method>
     </type>
   </test>
@@ -15684,17 +15783,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
-        <size>65</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>185</size>
@@ -15704,6 +15797,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
+        <size>65</size>
       </method>
     </type>
   </test>
@@ -15736,17 +15835,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="TResult System.Collections.Generic.IEnumerator`1[TResult].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[TResult].GetEnumerator()">
-        <size>65</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>183</size>
@@ -15756,6 +15849,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="TResult System.Collections.Generic.IEnumerator&lt;TResult&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;TResult&gt;.GetEnumerator()">
+        <size>65</size>
       </method>
     </type>
   </test>
@@ -15783,17 +15882,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.String System.Collections.Generic.IEnumerator`1[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>181</size>
@@ -15803,6 +15896,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.String System.Collections.Generic.IEnumerator&lt;string&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;string&gt;.GetEnumerator()">
+        <size>53</size>
       </method>
     </type>
   </test>
@@ -15822,17 +15921,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>84</size>
@@ -15852,6 +15945,14 @@
         <size>6</size>
       </method>
     </type>
+    <type name="App+&lt;QueryEnumerable&gt;c__Iterator0`1[T]">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>39</size>
+      </method>
+    </type>
   </test>
   <test name="gtest-iter-09.cs">
     <type name="Test">
@@ -15869,17 +15970,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[T].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>130</size>
@@ -15889,6 +15984,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
+        <size>53</size>
       </method>
     </type>
   </test>
@@ -16992,17 +17093,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="TR System.Collections.Generic.IEnumerator`1[TR].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[TR].GetEnumerator()">
-        <size>65</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>86</size>
@@ -17012,6 +17107,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="TR System.Collections.Generic.IEnumerator&lt;TR&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;TR&gt;.GetEnumerator()">
+        <size>65</size>
       </method>
     </type>
   </test>
@@ -26695,17 +26796,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>105</size>
@@ -26715,6 +26810,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>39</size>
       </method>
     </type>
   </test>
@@ -28274,9 +28375,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -28288,6 +28386,9 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -31213,17 +31314,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>39</size>
@@ -31233,6 +31328,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>39</size>
       </method>
     </type>
   </test>
@@ -31672,17 +31773,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>170</size>
@@ -31692,6 +31787,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>39</size>
       </method>
     </type>
   </test>
@@ -34286,17 +34387,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>195</size>
@@ -34306,6 +34401,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>53</size>
       </method>
     </type>
   </test>
@@ -34476,9 +34577,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -34490,6 +34588,9 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -34995,9 +35096,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -35009,6 +35107,9 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -35182,9 +35283,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -35196,6 +35294,9 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -35220,17 +35321,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>118</size>
@@ -35240,6 +35335,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>53</size>
       </method>
     </type>
   </test>
@@ -35305,9 +35406,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -35322,6 +35420,9 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -35806,9 +35907,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -35823,6 +35921,9 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -37463,9 +37564,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -37483,17 +37581,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>126</size>
@@ -37503,6 +37595,19 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+    </type>
+    <type name="X+&lt;GetIt&gt;c__Iterator0">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;GetIt2&gt;c__Iterator1">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>39</size>
       </method>
     </type>
   </test>
@@ -37522,9 +37627,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -37536,6 +37638,9 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -37563,17 +37668,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>163</size>
@@ -37589,17 +37688,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>238</size>
@@ -37609,6 +37702,22 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+    </type>
+    <type name="X+&lt;GetIt&gt;c__Iterator0">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>53</size>
+      </method>
+    </type>
+    <type name="X+&lt;GetMulti&gt;c__Iterator1">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>53</size>
       </method>
     </type>
   </test>
@@ -37628,17 +37737,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>65</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>123</size>
@@ -37648,6 +37751,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>65</size>
       </method>
     </type>
   </test>
@@ -37681,17 +37790,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>184</size>
@@ -37717,6 +37820,14 @@
         <size>8</size>
       </method>
     </type>
+    <type name="X+&lt;GetIt&gt;c__Iterator0">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>39</size>
+      </method>
+    </type>
   </test>
   <test name="test-iter-06.cs">
     <type name="X">
@@ -37737,17 +37848,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>65</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>183</size>
@@ -37763,17 +37868,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>136</size>
@@ -37789,17 +37888,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>131</size>
@@ -37815,17 +37908,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>136</size>
@@ -37843,6 +37930,38 @@
       </method>
       <method name="IEnumerable GetS(Int32)">
         <size>23</size>
+      </method>
+    </type>
+    <type name="S+&lt;Get&gt;c__Iterator0">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>65</size>
+      </method>
+    </type>
+    <type name="S+&lt;GetS&gt;c__Iterator1">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>53</size>
+      </method>
+    </type>
+    <type name="X+&lt;Get&gt;c__Iterator2">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>53</size>
+      </method>
+    </type>
+    <type name="X+&lt;GetS&gt;c__Iterator3">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>53</size>
       </method>
     </type>
   </test>
@@ -37867,17 +37986,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>253</size>
@@ -37887,6 +38000,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>53</size>
       </method>
     </type>
   </test>
@@ -37914,17 +38033,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>65</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>360</size>
@@ -37934,6 +38047,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>65</size>
       </method>
     </type>
   </test>
@@ -37958,9 +38077,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -37972,6 +38088,9 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -38000,9 +38119,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -38020,17 +38136,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>147</size>
@@ -38040,6 +38150,19 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+    </type>
+    <type name="X+&lt;&gt;c__Iterator0">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;&gt;c__Iterator1">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>53</size>
       </method>
     </type>
   </test>
@@ -38068,9 +38191,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
@@ -38082,6 +38202,9 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -38101,17 +38224,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>53</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>165</size>
@@ -38121,6 +38238,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>53</size>
       </method>
     </type>
   </test>
@@ -38151,17 +38274,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>27</size>
@@ -38171,6 +38288,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>39</size>
       </method>
     </type>
   </test>
@@ -38467,17 +38590,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>69</size>
@@ -38487,6 +38604,12 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>39</size>
       </method>
     </type>
   </test>
@@ -38556,17 +38679,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>36</size>
@@ -38582,17 +38699,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>36</size>
@@ -38608,17 +38719,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>7</size>
-      </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
         <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
-      </method>
-      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
-        <size>39</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>36</size>
@@ -38628,6 +38733,30 @@
       </method>
       <method name="Void Reset()">
         <size>6</size>
+      </method>
+    </type>
+    <type name="Foo.X+&lt;Attempts2&gt;c__Iterator0">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>39</size>
+      </method>
+    </type>
+    <type name="Foo.X+&lt;&gt;c__Iterator1">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>39</size>
+      </method>
+    </type>
+    <type name="Foo.X+&lt;&gt;c__Iterator2">
+      <method name="System.Object System.Collections.Generic.IEnumerator&lt;object&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
+        <size>39</size>
       </method>
     </type>
   </test>
