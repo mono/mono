@@ -622,10 +622,8 @@ namespace Mono.CSharp {
 					AnonymousMethodExpression.Error_AddressOfCapturedVar (vr, loc);
 				}
 			} else {
-				//
-				// A pointer-indirection is always fixed
-				//
-				is_fixed = Expr is Indirection;
+				IFixedExpression fe = Expr as IFixedExpression;
+				is_fixed = fe != null && fe.IsFixed;
 			}
 
 			if (!is_fixed && !ec.InFixedInitializer) {
