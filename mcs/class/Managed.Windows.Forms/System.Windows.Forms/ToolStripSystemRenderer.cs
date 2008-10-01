@@ -46,23 +46,23 @@ namespace System.Windows.Forms
 		#region Protected Methods
 		protected override void OnRenderButtonBackground (ToolStripItemRenderEventArgs e)
 		{
-			base.OnRenderButtonBackground (e);
-
 			ThemeElements.CurrentTheme.ToolStripPainter.OnRenderButtonBackground (e);
+
+			base.OnRenderButtonBackground (e);
 		}
 
 		protected override void OnRenderDropDownButtonBackground (ToolStripItemRenderEventArgs e)
 		{
-			base.OnRenderDropDownButtonBackground (e);
-
 			ThemeElements.CurrentTheme.ToolStripPainter.OnRenderDropDownButtonBackground (e);
+
+			base.OnRenderDropDownButtonBackground (e);
 		}
 
 		protected override void OnRenderGrip (ToolStripGripRenderEventArgs e)
 		{
-			base.OnRenderGrip (e);
-
 			ThemeElements.CurrentTheme.ToolStripPainter.OnRenderGrip (e);
+
+			base.OnRenderGrip (e);
 		}
 
 		protected override void OnRenderImageMargin (ToolStripRenderEventArgs e)
@@ -82,44 +82,44 @@ namespace System.Windows.Forms
 
 		protected override void OnRenderMenuItemBackground (ToolStripItemRenderEventArgs e)
 		{
-			base.OnRenderMenuItemBackground (e);
-			
 			ThemeElements.CurrentTheme.ToolStripPainter.OnRenderMenuItemBackground (e);
+			
+			base.OnRenderMenuItemBackground (e);
 		}
 
 		protected override void OnRenderOverflowButtonBackground (ToolStripItemRenderEventArgs e)
 		{
-			base.OnRenderOverflowButtonBackground (e);
-
 			ThemeElements.CurrentTheme.ToolStripPainter.OnRenderOverflowButtonBackground (e);
+
+			base.OnRenderOverflowButtonBackground (e);
 		}
 
 		protected override void OnRenderSeparator (ToolStripSeparatorRenderEventArgs e)
 		{
-			base.OnRenderSeparator (e);
-
 			ThemeElements.CurrentTheme.ToolStripPainter.OnRenderSeparator (e);
+
+			base.OnRenderSeparator (e);
 		}
 
 		protected override void OnRenderSplitButtonBackground (ToolStripItemRenderEventArgs e)
 		{
-			base.OnRenderSplitButtonBackground (e);
-
 			ThemeElements.CurrentTheme.ToolStripPainter.OnRenderSplitButtonBackground (e);
+
+			base.OnRenderSplitButtonBackground (e);
 		}
 
 		protected override void OnRenderToolStripBackground (ToolStripRenderEventArgs e)
 		{
-			base.OnRenderToolStripBackground (e);
-
 			ThemeElements.CurrentTheme.ToolStripPainter.OnRenderToolStripBackground (e);
+
+			base.OnRenderToolStripBackground (e);
 		}
 
 		protected override void OnRenderToolStripBorder (ToolStripRenderEventArgs e)
 		{
-			base.OnRenderToolStripBorder (e);
-
 			ThemeElements.CurrentTheme.ToolStripPainter.OnRenderToolStripBorder (e);
+
+			base.OnRenderToolStripBorder (e);
 		}
 
 		protected override void OnRenderToolStripStatusLabelBackground (ToolStripItemRenderEventArgs e)
