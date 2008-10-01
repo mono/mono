@@ -4302,7 +4302,7 @@ namespace System.Windows.Forms {
 					DataGridViewAdvancedBorderStyle intermediateBorderStyle = (DataGridViewAdvancedBorderStyle)((ICloneable)this.AdvancedColumnHeadersBorderStyle).Clone ();
 					DataGridViewAdvancedBorderStyle borderStyle = AdjustColumnHeaderBorderStyle (this.AdvancedColumnHeadersBorderStyle, intermediateBorderStyle, cell.ColumnIndex == 0, cell.ColumnIndex == columns.Count - 1);
 
-					cell.PaintWork (g, e.ClipRectangle, headerBounds, -1, cell.State, columnHeadersDefaultCellStyle, borderStyle, DataGridViewPaintParts.All);
+					cell.PaintWork (g, e.ClipRectangle, headerBounds, -1, cell.State, cell.InheritedStyle, borderStyle, DataGridViewPaintParts.All);
 					
 					headerBounds.X += col.Width;
 				}

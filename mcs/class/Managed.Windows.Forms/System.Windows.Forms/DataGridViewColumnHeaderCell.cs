@@ -60,17 +60,16 @@ namespace System.Windows.Forms {
 			return base.GetInheritedContextMenuStrip(rowIndex); //////////////////////////////
 		}
 
-		public override DataGridViewCellStyle GetInheritedStyle (DataGridViewCellStyle inheritedCellStyle, int rowIndex, bool includeColors) {
-			
-			DataGridViewCellStyle result;
-			
-			if (HasStyle) {
-				result = Style;
-			} else {
-				result = DataGridView.ColumnHeadersDefaultCellStyle;
-			}
-			
-			return result;			
+		public override DataGridViewCellStyle GetInheritedStyle (DataGridViewCellStyle inheritedCellStyle, int rowIndex, bool includeColors)
+		{
+			DataGridViewCellStyle result = DataGridView.DefaultCellStyle;
+	
+			result.ApplyStyle (DataGridView.ColumnHeadersDefaultCellStyle);
+	
+			if (HasStyle)
+				result.ApplyStyle (Style);
+
+			return result;
 		}
 
 		public override string ToString () {
