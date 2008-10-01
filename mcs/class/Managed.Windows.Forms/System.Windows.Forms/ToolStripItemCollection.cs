@@ -106,7 +106,7 @@ namespace System.Windows.Forms
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
-			value.Owner = owner;
+			value.InternalOwner = owner;
 				
 			if (value is ToolStripMenuItem && (value as ToolStripMenuItem).ShortcutKeys != Keys.None)
 				ToolStripManager.AddToolStripMenuItem ((ToolStripMenuItem)value);
@@ -237,7 +237,7 @@ namespace System.Windows.Forms
 			base.Insert (index, value);
 			
 			if (internal_created) {
-				value.Owner = owner;
+				value.InternalOwner = owner;
 				owner.OnItemAdded (new ToolStripItemEventArgs (value));
 			}
 			
@@ -253,7 +253,7 @@ namespace System.Windows.Forms
 			base.Remove (value);
 			
 			if (value != null && internal_created) {
-				value.Owner = null;
+				value.InternalOwner = null;
 				value.Parent = null;
 			}
 			

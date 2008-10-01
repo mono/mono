@@ -636,9 +636,13 @@ namespace System.Windows.Forms
 			get { return this.owner; }
 			set { 
 				if (this.owner != value) {
-					this.owner = value; 
-					this.CalculateAutoSize (); 
-					OnOwnerChanged (EventArgs.Empty);
+					if (this.owner != null)
+						this.owner.Items.Remove (this);
+					
+					if (value != null)	
+						value.Items.Add (this);
+					else
+						this.owner = null;
 				}
 			}
 		}
@@ -1862,7 +1866,15 @@ namespace System.Windows.Forms
 			get { return this.visible; }
 			set { this.visible = value; Invalidate (); }
 		}
-		
+
+		internal ToolStrip InternalOwner {
+			set {
+				this.owner = value;
+				this.CalculateAutoSize ();
+				OnOwnerChanged (EventArgs.Empty);
+			}
+		}
+
 		internal Point Location {
 			get { return this.bounds.Location; }
 			set {
