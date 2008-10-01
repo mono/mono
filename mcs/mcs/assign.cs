@@ -299,6 +299,11 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldloca, builder);
 		}
 
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			type = storey.MutateType (type);
+		}
+
 		public bool PointsToAddress {
 			get {
 				return is_address;

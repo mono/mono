@@ -1388,6 +1388,7 @@ namespace Mono.CSharp {
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
+			type = storey.MutateType (type);			
 			child.MutateHoistedGenericType (storey);
 		}
 
@@ -3295,6 +3296,12 @@ namespace Mono.CSharp {
 				arguments = new ArrayList (1);
 			arguments.Insert (0, extension_argument);
 			base.EmitCall (ec, arguments);
+		}
+
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			extension_argument.Expr.MutateHoistedGenericType (storey);
+			base.MutateHoistedGenericType (storey);
 		}
 
 		public override MethodGroupExpr OverloadResolve (EmitContext ec, ref ArrayList arguments, bool may_fail, Location loc)

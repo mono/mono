@@ -799,9 +799,11 @@ namespace Mono.CSharp {
 
 			if (!delegate_method.DeclaringType.IsSealed && delegate_method.IsVirtual && !method_group.IsBase) {
 				ec.ig.Emit (OpCodes.Dup);
-				ec.ig.Emit (OpCodes.Ldvirtftn, (MethodInfo) delegate_method);
-			} else
-				ec.ig.Emit (OpCodes.Ldftn, (MethodInfo) delegate_method);
+				ec.ig.Emit (OpCodes.Ldvirtftn, delegate_method);
+			} else {
+				ec.ig.Emit (OpCodes.Ldftn, delegate_method);
+			}
+
 			ec.ig.Emit (OpCodes.Newobj, constructor_method);
 		}
 

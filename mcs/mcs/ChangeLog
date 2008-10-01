@@ -1,3 +1,10 @@
+2008-10-01  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #429264
+	* assign.cs, anonymous.cs, ecore.cs: More type mutators added.
+	
+	* delegate.cs: Removed unnecessary casts.
+
 2008-09-30  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #352151

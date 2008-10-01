@@ -1531,7 +1531,19 @@ namespace Mono.CSharp {
 			MethodInfo delegate_method = method.MethodBuilder;
 #if GMCS_SOURCE
 			if (storey != null && storey.MemberName.IsGeneric) {
-				delegate_method = TypeBuilder.GetMethod (Storey.Instance.Type, delegate_method);
+				Type t = storey.Instance.Type;
+				
+				//
+				// Mutate anonymous method instance type if we are in nested
+				// hoisted generic anonymous method storey
+				//
+				if (ec.CurrentAnonymousMethod != null &&
+					ec.CurrentAnonymousMethod.Storey != null &&
+					ec.CurrentAnonymousMethod.Storey.IsGeneric) {
+					t = storey.GetGenericStorey ().MutateType (t);
+				}
+
+				delegate_method = TypeBuilder.GetMethod (t, delegate_method);
 			}
 #endif
 			ig.Emit (OpCodes.Ldftn, delegate_method);
