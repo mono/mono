@@ -403,13 +403,36 @@ namespace System.Web.UI
 			page.ClientScript.RegisterWebFormClientScript ();
 		}
 
+		UpdatePanel FindPanelWithId (string id)
+		{
+			if (_updatePanels == null)
+				return null;
+			foreach (UpdatePanel panel in _updatePanels) {
+				if (panel.ID == id)
+					return panel;
+			}
+			return null;
+		}
+		
 		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection) {
 			_isInAsyncPostBack = true;
 			string arg = postCollection [postDataKey];
 			if (!String.IsNullOrEmpty (arg)) {
 				string [] args = arg.Split ('|');
-				_panelToRefreshID = args [0];
-				_asyncPostBackSourceElementID = args [1];
+				switch (args.Length) {
+					case 1:
+						_asyncPostBackSourceElementID = args [0];
+						break;
+
+					case 2:
+						_panelToRefreshID = args [0];
+						_asyncPostBackSourceElementID = args [1];
+						break;
+
+					default: // "impossible situation"
+						throw new InvalidOperationException ("Unexpected format of post data.");
+				}
+				
 				return true;
 			}
 			return false;
@@ -541,6 +564,12 @@ namespace System.Web.UI
 					RegisterScriptReference (this, ajaxWebFormsExtensionScript, true);
 			}
 
+			if (!String.IsNullOrEmpty (_panelToRefreshID)) {
+				UpdatePanel panel = FindPanelWithId (_panelToRefreshID);
+				if (panel != null)
+					RegisterPanelForRefresh (panel);
+			}
+			
 			// Register Scripts
 			if (_scriptToRegister != null)
 				for (int i = 0; i < _scriptToRegister.Count; i++)
@@ -665,9 +694,10 @@ namespace System.Web.UI
 			if (control == null)
 				return false;
 
-			if (control is UpdatePanel && ((UpdatePanel) control).RequiresUpdate)
-				return true;
-
+			UpdatePanel panel = control as UpdatePanel;
+			if (panel != null && panel.RequiresUpdate)
+					return true;
+			
 			return HasBeenRendered (control.Parent);
 		}
 
@@ -1158,11 +1188,19 @@ namespace System.Web.UI
 			WriteCallbackOutput (output, pageRedirect, null, redirectUrl);
 		}
 
-		internal void WriteCallbackPanel (TextWriter output, UpdatePanel panel, StringBuilder panelOutput) {
+		void RegisterPanelForRefresh (UpdatePanel panel)
+		{
 			if (_panelsToRefresh == null)
 				_panelsToRefresh = new List<UpdatePanel> ();
-			_panelsToRefresh.Add (panel);
+			else if (_panelsToRefresh.Contains (panel))
+				return;
 
+			panel.Update ();
+			_panelsToRefresh.Add (panel);
+		}
+		
+		internal void WriteCallbackPanel (TextWriter output, UpdatePanel panel, StringBuilder panelOutput) {
+			RegisterPanelForRefresh (panel);
 			WriteCallbackOutput (output, updatePanel, panel.ClientID, panelOutput);
 		}
 
@@ -1268,8 +1306,7 @@ namespace System.Web.UI
 		void WriteScriptBlocks (HtmlTextWriter output, List<RegisteredScript> scriptList) {
 			if (scriptList == null)
 				return;
-			Hashtable registeredScripts = new Hashtable ();
-			Page controlPage;
+			var registeredScripts = new Dictionary <string, RegisteredScript> ();
 			Control control;
 			
 			for (int i = 0; i < scriptList.Count; i++) {
@@ -1277,22 +1314,8 @@ namespace System.Web.UI
 				if (registeredScripts.ContainsKey (scriptEntry.Key))
 					continue;
 
-				control = scriptEntry.Control;
-				if (control is Page)
-					controlPage = control as Page;
-				else if (control != null) {
-					Control parent = control.Parent;
-					controlPage = null;
-					while (parent != null) {
-						controlPage = parent as Page;
-						if (controlPage != null)
-							break;
-						parent = parent.Parent;
-					}
-				} else
-					controlPage = null;
-
-				if (Page == controlPage || HasBeenRendered (control)) {
+ 				control = scriptEntry.Control;
+				if (Page == control || HasBeenRendered (control)) {
 					registeredScripts.Add (scriptEntry.Key, scriptEntry);
 					switch (scriptEntry.ScriptType) {
 					case RegisteredScriptType.ClientScriptBlock:

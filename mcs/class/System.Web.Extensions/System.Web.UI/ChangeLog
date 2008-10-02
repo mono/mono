@@ -1,11 +1,11 @@
-2008-10-01  Marek Habersack  <mhabersack@novell.com>
+2008-10-02  Marek Habersack  <mhabersack@novell.com>
 
-	* ScriptManager.cs: be more careful when rendering script blocks
-	and checking if the control's page matches the current
-	page. Control passed to script registration methods doesn't
-	necessarily have to be a Page itself and if it's not we need to
-	find the owning page of a script block's control.
-
+	* ScriptManager.cs: reverting revision 114552 since the real bug
+	was somewhere else. The correct fix is to make sure UpdatePanels
+	which output something _or_ have been named in the POST request as
+	requiring a refresh are marked as such. Only in that situation
+	HasBeenRendered returns true (as it should for those panels)
+	
 2008-09-23  Marek Habersack  <mhabersack@novell.com>
 
 	* ScriptManager.cs: CultureInfoSerializer no longer derives from
