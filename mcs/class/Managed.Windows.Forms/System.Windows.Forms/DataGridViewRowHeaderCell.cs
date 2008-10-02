@@ -230,6 +230,25 @@ namespace System.Windows.Forms {
 			base.Paint (graphics, clipBounds, cellBounds, rowIndex, cellState, value, formattedValue, errorText, cellStyle, advancedBorderStyle, post);
 		}
 
+		protected override void PaintBorder (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle)
+		{
+			if (ThemeEngine.Current.DataGridViewRowHeaderCellDrawBorder (this, graphics, cellBounds))
+				return;
+
+			Pen p = GetBorderPen ();
+
+			graphics.DrawLine (p, cellBounds.Left, cellBounds.Top, cellBounds.Left, cellBounds.Bottom - 1);
+			graphics.DrawLine (p, cellBounds.Right - 1, cellBounds.Top, cellBounds.Right - 1, cellBounds.Bottom - 1);
+
+			if (RowIndex == DataGridView.Rows.Count - 1 || RowIndex == -1)
+				graphics.DrawLine (p, cellBounds.Left, cellBounds.Bottom - 1, cellBounds.Right - 1, cellBounds.Bottom - 1);
+			else
+				graphics.DrawLine (p, cellBounds.Left + 3, cellBounds.Bottom - 1, cellBounds.Right - 3, cellBounds.Bottom - 1);
+
+			if (RowIndex == -1)
+				graphics.DrawLine (p, cellBounds.Left, cellBounds.Top, cellBounds.Right - 1, cellBounds.Top);
+		}
+		
 		internal override void PaintPartBackground (Graphics graphics, Rectangle cellBounds, DataGridViewCellStyle style)
 		{
 			if (ThemeEngine.Current.DataGridViewRowHeaderCellDrawBackground (this, graphics, cellBounds))
@@ -242,13 +261,6 @@ namespace System.Windows.Forms {
 			if (ThemeEngine.Current.DataGridViewRowHeaderCellDrawSelectionBackground (this))
 				return;
 			base.PaintPartSelectionBackground (graphics, cellBounds, cellState, cellStyle);
-		}
-
-		internal override void PaintPartBorder (Graphics graphics, Rectangle cellBounds, int rowIndex)
-		{
-			if (ThemeEngine.Current.DataGridViewRowHeaderCellDrawBorder (this, graphics, cellBounds))
-				return;
-			base.PaintPartBorder (graphics, cellBounds, rowIndex);
 		}
 
 		private void DrawRightArrowGlyph (Graphics g, Pen p, int x, int y)

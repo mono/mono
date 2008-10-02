@@ -227,18 +227,35 @@ namespace System.Windows.Forms {
 			base.Paint (graphics, clipBounds, cellBounds, rowIndex, dataGridViewElementState, value, formattedValue, errorText, cellStyle, advancedBorderStyle, post);
 		}
 
+		protected override void PaintBorder (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle)
+		{
+			if (ThemeEngine.Current.DataGridViewColumnHeaderCellDrawBorder (this, graphics, cellBounds))
+				return;
+
+			Pen p = GetBorderPen ();
+
+			if (ColumnIndex == -1) {
+				graphics.DrawLine (p, cellBounds.Left, cellBounds.Top, cellBounds.Left, cellBounds.Bottom - 1);
+				graphics.DrawLine (p, cellBounds.Right - 1, cellBounds.Top, cellBounds.Right - 1, cellBounds.Bottom - 1);
+
+				graphics.DrawLine (p, cellBounds.Left, cellBounds.Bottom - 1, cellBounds.Right - 1, cellBounds.Bottom - 1);
+				graphics.DrawLine (p, cellBounds.Left, cellBounds.Top, cellBounds.Right - 1, cellBounds.Top);				
+			} else {
+				graphics.DrawLine (p, cellBounds.Left, cellBounds.Bottom - 1, cellBounds.Right - 1, cellBounds.Bottom - 1);
+				graphics.DrawLine (p, cellBounds.Left, cellBounds.Top, cellBounds.Right - 1, cellBounds.Top);
+
+				if (ColumnIndex == DataGridView.Columns.Count - 1 || ColumnIndex == -1)
+					graphics.DrawLine (p, cellBounds.Right - 1, cellBounds.Top, cellBounds.Right - 1, cellBounds.Bottom - 1);
+				else
+					graphics.DrawLine (p, cellBounds.Right - 1, cellBounds.Top + 3, cellBounds.Right - 1, cellBounds.Bottom - 3);
+			}
+		}
+		
 		internal override void PaintPartBackground (Graphics graphics, Rectangle cellBounds, DataGridViewCellStyle style)
 		{
 			if (ThemeEngine.Current.DataGridViewColumnHeaderCellDrawBackground (this, graphics, cellBounds))
 				return;
 			base.PaintPartBackground (graphics, cellBounds, style);
-		}
-
-		internal override void PaintPartBorder (Graphics graphics, Rectangle cellBounds, int rowIndex)
-		{
-			if (ThemeEngine.Current.DataGridViewColumnHeaderCellDrawBorder (this, graphics, cellBounds))
-				return;
-			base.PaintPartBorder (graphics, cellBounds, rowIndex);
 		}
 
 		protected override bool SetValue (int rowIndex, object value) {

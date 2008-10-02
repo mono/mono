@@ -1110,7 +1110,7 @@ namespace System.Windows.Forms {
 			if ((paintParts & DataGridViewPaintParts.ContentForeground) == DataGridViewPaintParts.ContentForeground)
 				PaintPartContent (graphics, cellBounds, rowIndex, cellState, cellStyle, formattedValue);
 			if ((paintParts & DataGridViewPaintParts.Border) == DataGridViewPaintParts.Border)
-				PaintPartBorder (graphics, cellBounds, rowIndex);
+				PaintBorder (graphics, clipBounds, cellBounds, cellStyle, advancedBorderStyle);
 			if ((paintParts & DataGridViewPaintParts.Focus) == DataGridViewPaintParts.Focus)
 				PaintPartFocus (graphics, cellBounds);
 			if ((paintParts & DataGridViewPaintParts.ErrorIcon) == DataGridViewPaintParts.ErrorIcon)
@@ -1118,92 +1118,52 @@ namespace System.Windows.Forms {
 					PaintErrorIcon (graphics, clipBounds, cellBounds, ErrorText);
 		}
 
-		protected virtual void PaintBorder (Graphics graphics, Rectangle clipBounds, Rectangle bounds, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle) {
-			Pen pen = new Pen(DataGridView.GridColor);
-			/*
-			switch (advancedBorderStyle.All) {
-				case DataGridViewAdvancedCellBorderStyle.None:
-					break;
+		protected virtual void PaintBorder (Graphics graphics, Rectangle clipBounds, Rectangle bounds, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle)
+		{
+			Pen pen = new Pen (DataGridView.GridColor);
+
+			// Paint the left border, if any
+			switch (advancedBorderStyle.Left) {
 				case DataGridViewAdvancedCellBorderStyle.Single:
-					graphics.DrawRectangle(pen, bounds);
+					graphics.DrawLine(pen, bounds.X, bounds.Y, bounds.X, bounds.Y + bounds.Height - 1);
 					break;
 				case DataGridViewAdvancedCellBorderStyle.Inset:
-					bounds.X += 1;
-					bounds.Y += 1;
-					bounds.Width -= 2;
-					bounds.Height -= 2;
-					graphics.DrawRectangle(pen, bounds);
+					graphics.DrawLine(pen, bounds.X + 2, bounds.Y, bounds.X + 2, bounds.Y + bounds.Height - 1);
 					break;
 				case DataGridViewAdvancedCellBorderStyle.InsetDouble:
 				case DataGridViewAdvancedCellBorderStyle.Outset:
 				case DataGridViewAdvancedCellBorderStyle.OutsetDouble:
-				case DataGridViewAdvancedCellBorderStyle.OutsetPartial:
+					graphics.DrawLine(pen, bounds.X, bounds.Y, bounds.X, bounds.Y + bounds.Height - 1);
+					graphics.DrawLine(pen, bounds.X + 2, bounds.Y, bounds.X + 2, bounds.Y + bounds.Height - 1);
 					break;
-				case DataGridViewAdvancedCellBorderStyle.NotSet:
-				*/
-					switch (advancedBorderStyle.Left) {
-						case DataGridViewAdvancedCellBorderStyle.None:
-							break;
-						case DataGridViewAdvancedCellBorderStyle.Single:
-							graphics.DrawLine(pen, bounds.X, bounds.Y, bounds.X, bounds.Y + bounds.Height - 1);
-							break;
-						case DataGridViewAdvancedCellBorderStyle.Inset:
-							graphics.DrawLine(pen, bounds.X + 2, bounds.Y, bounds.X + 2, bounds.Y + bounds.Height - 1);
-							break;
-						case DataGridViewAdvancedCellBorderStyle.InsetDouble:
-						case DataGridViewAdvancedCellBorderStyle.Outset:
-						case DataGridViewAdvancedCellBorderStyle.OutsetDouble:
-							graphics.DrawLine(pen, bounds.X, bounds.Y, bounds.X, bounds.Y + bounds.Height - 1);
-							graphics.DrawLine(pen, bounds.X + 2, bounds.Y, bounds.X + 2, bounds.Y + bounds.Height - 1);
-							break;
-						case DataGridViewAdvancedCellBorderStyle.OutsetPartial:
-							break;
-					}
-					switch (advancedBorderStyle.Right) {
-						case DataGridViewAdvancedCellBorderStyle.None:
-							break;
-						case DataGridViewAdvancedCellBorderStyle.Single:
-							graphics.DrawLine(pen, bounds.X + bounds.Width - 1, bounds.Y, bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 1);
-							break;
-						case DataGridViewAdvancedCellBorderStyle.Inset:
-							graphics.DrawLine(pen, bounds.X + bounds.Width + 1, bounds.Y, bounds.X + bounds.Width - 3, bounds.Y + bounds.Height - 1);
-							break;
-						case DataGridViewAdvancedCellBorderStyle.InsetDouble:
-						case DataGridViewAdvancedCellBorderStyle.Outset:
-						case DataGridViewAdvancedCellBorderStyle.OutsetDouble:
-						case DataGridViewAdvancedCellBorderStyle.OutsetPartial:
-							break;
-					}
-					switch (advancedBorderStyle.Top) {
-						case DataGridViewAdvancedCellBorderStyle.None:
-							break;
-						case DataGridViewAdvancedCellBorderStyle.Single:
-							graphics.DrawLine(pen, bounds.X, bounds.Y, bounds.X + bounds.Width - 1, bounds.Y);
-							break;
-						case DataGridViewAdvancedCellBorderStyle.Inset:
-							graphics.DrawLine(pen, bounds.X, bounds.Y + 2, bounds.X + bounds.Width - 1, bounds.Y + bounds.Height + 1);
-							break;
-						case DataGridViewAdvancedCellBorderStyle.InsetDouble:
-						case DataGridViewAdvancedCellBorderStyle.Outset:
-						case DataGridViewAdvancedCellBorderStyle.OutsetDouble:
-						case DataGridViewAdvancedCellBorderStyle.OutsetPartial:
-							break;
-					}
-					switch (advancedBorderStyle.Bottom) {
-						case DataGridViewAdvancedCellBorderStyle.None:
-							break;
-						case DataGridViewAdvancedCellBorderStyle.Single:
-							graphics.DrawLine(pen, bounds.X, bounds.Y + bounds.Height - 1, bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 1);
-							break;
-						case DataGridViewAdvancedCellBorderStyle.Inset:
-						case DataGridViewAdvancedCellBorderStyle.InsetDouble:
-						case DataGridViewAdvancedCellBorderStyle.Outset:
-						case DataGridViewAdvancedCellBorderStyle.OutsetDouble:
-						case DataGridViewAdvancedCellBorderStyle.OutsetPartial:
-							break;
-					}
-			//		break;
-			//}
+			}
+			
+			// Paint the right border, if any
+			switch (advancedBorderStyle.Right) {
+				case DataGridViewAdvancedCellBorderStyle.Single:
+					graphics.DrawLine(pen, bounds.X + bounds.Width - 1, bounds.Y, bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 1);
+					break;
+				case DataGridViewAdvancedCellBorderStyle.Inset:
+					graphics.DrawLine(pen, bounds.X + bounds.Width + 1, bounds.Y, bounds.X + bounds.Width - 3, bounds.Y + bounds.Height - 1);
+					break;
+			}
+			
+			// Paint the top border, if any
+			switch (advancedBorderStyle.Top) {
+				case DataGridViewAdvancedCellBorderStyle.Single:
+					graphics.DrawLine(pen, bounds.X, bounds.Y, bounds.X + bounds.Width - 1, bounds.Y);
+					break;
+				case DataGridViewAdvancedCellBorderStyle.Inset:
+					graphics.DrawLine(pen, bounds.X, bounds.Y + 2, bounds.X + bounds.Width - 1, bounds.Y + bounds.Height + 1);
+					break;
+			}
+			
+			// Paint the bottom border, if any
+			switch (advancedBorderStyle.Bottom) {
+				case DataGridViewAdvancedCellBorderStyle.Single:
+					graphics.DrawLine(pen, bounds.X, bounds.Y + bounds.Height - 1, bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 1);
+					break;
+			}
 		}
 
 		protected virtual void PaintErrorIcon (Graphics graphics, Rectangle clipBounds, Rectangle cellValueBounds, string errorText)
@@ -1235,35 +1195,6 @@ namespace System.Windows.Forms {
 		internal Pen GetBorderPen ()
 		{
 			return ThemeEngine.Current.ResPool.GetPen (DataGridView.GridColor);
-		}
-		
-		internal virtual void PaintPartBorder (Graphics graphics, Rectangle cellBounds, int rowIndex)
-		{
-			Pen p = GetBorderPen ();
-
-			if (columnIndex == -1) {
-				graphics.DrawLine (p, cellBounds.Left, cellBounds.Top, cellBounds.Left, cellBounds.Bottom - 1);
-				graphics.DrawLine (p, cellBounds.Right - 1, cellBounds.Top, cellBounds.Right - 1, cellBounds.Bottom - 1);
-
-				if (rowIndex == DataGridView.Rows.Count - 1 || rowIndex == -1)
-					graphics.DrawLine (p, cellBounds.Left, cellBounds.Bottom - 1, cellBounds.Right - 1, cellBounds.Bottom - 1);
-				else
-					graphics.DrawLine (p, cellBounds.Left + 3, cellBounds.Bottom - 1, cellBounds.Right - 3, cellBounds.Bottom - 1);
-					
-				if (rowIndex == -1)
-					graphics.DrawLine (p, cellBounds.Left, cellBounds.Top, cellBounds.Right - 1, cellBounds.Top);				
-			} else if (rowIndex == -1) {
-				graphics.DrawLine (p, cellBounds.Left, cellBounds.Bottom - 1, cellBounds.Right - 1, cellBounds.Bottom - 1);
-				graphics.DrawLine (p, cellBounds.Left, cellBounds.Top, cellBounds.Right - 1, cellBounds.Top);
-
-				if (columnIndex == DataGridView.Columns.Count - 1 || columnIndex == -1)
-					graphics.DrawLine (p, cellBounds.Right - 1, cellBounds.Top, cellBounds.Right - 1, cellBounds.Bottom - 1);
-				else
-					graphics.DrawLine (p, cellBounds.Right - 1, cellBounds.Top + 3, cellBounds.Right - 1, cellBounds.Bottom - 3);
-			} else {
-				graphics.DrawLine (p, cellBounds.Right - 1, cellBounds.Top, cellBounds.Right - 1, cellBounds.Bottom - 1);
-				graphics.DrawLine (p, cellBounds.Left, cellBounds.Bottom - 1, cellBounds.Right - 1, cellBounds.Bottom - 1);
-			}
 		}
 
 		internal virtual void PaintPartContent (Graphics graphics, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, DataGridViewCellStyle cellStyle, object formattedValue)

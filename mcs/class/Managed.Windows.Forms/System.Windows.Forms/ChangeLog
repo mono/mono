@@ -1,5 +1,11 @@
 2008-10-02  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewCell.cs, DataGridViewColumnHeaderCell.cs,
+	DataGridViewRowHeaderCell.cs: Remove PaintPartBorder and
+	use PaintBorder instead.	
+
+2008-10-02  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridView.cs: When CellBorderStyle is set, update the
 	AdvancedCellBorderStyle to match.
 
