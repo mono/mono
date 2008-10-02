@@ -1,5 +1,11 @@
 2008-10-02  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridView.cs: Make OnCellValueNeeded internal.
+	* DataGridViewCell.cs: Raise the CellValueNeeded event so the
+	user can supply their own value if they choose.
+
+2008-10-02  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewColumnHeaderCell.cs: Create a new style object
 	so the DefaultCellStyle doesn't get changed.
 

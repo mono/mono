@@ -911,6 +911,14 @@ namespace System.Windows.Forms {
 			if (DataGridView != null && (RowIndex < 0 || RowIndex >= DataGridView.Rows.Count))
 				throw new ArgumentOutOfRangeException ("rowIndex", "Specified argument was out of the range of valid values.");
 				
+			if (DataGridView != null) {
+				DataGridViewCellValueEventArgs dgvcvea = new DataGridViewCellValueEventArgs (columnIndex, rowIndex);
+				DataGridView.OnCellValueNeeded (dgvcvea);
+				
+				if (dgvcvea.Value != null)
+					return dgvcvea.Value;
+			}
+			
 			return valuex;
 		}
 

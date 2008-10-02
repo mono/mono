@@ -3509,7 +3509,7 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
-		protected virtual void OnCellValueNeeded (DataGridViewCellValueEventArgs e)
+		protected internal virtual void OnCellValueNeeded (DataGridViewCellValueEventArgs e)
 		{
 			DataGridViewCellValueEventHandler eh = (DataGridViewCellValueEventHandler)(Events [CellValueNeededEvent]);
 			if (eh != null)
