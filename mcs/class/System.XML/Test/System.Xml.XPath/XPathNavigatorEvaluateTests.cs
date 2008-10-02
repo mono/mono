@@ -47,18 +47,20 @@ namespace MonoTests.System.Xml
 
 		// Testing Core Funcetion Library functions defined at: http://www.w3.org/TR/xpath#corelib
 		[Test]
-#if NET_2_0
+#if !NET_2_0
 		// .NET 2.0 is fixed for last() to return 1 for the
-		// initial context position. We should follow the fix.
-		[Category ("NotWorking")]
+		// initial context position. Someone thinks we should follow
+		// the fix, but in reality we should just discard this
+		// pointless test. The positional value under those conditions
+		// does not make any sense.
 		[Category ("NotDotNet")]
 #endif
 		public void CoreFunctionNodeSetLast ()
 		{
 			expression = navigator.Compile("last()");
 			iterator = navigator.Select("/foo");
-			AssertEquals ("0", navigator.Evaluate ("last()").ToString());
-			AssertEquals ("0", navigator.Evaluate (expression, null).ToString ());
+			AssertEquals ("1", navigator.Evaluate ("last()").ToString());
+			AssertEquals ("1", navigator.Evaluate (expression, null).ToString ());
 			AssertEquals ("1", navigator.Evaluate (expression, iterator).ToString ());
 			iterator = navigator.Select("/foo/*");
 			AssertEquals ("4", navigator.Evaluate (expression, iterator).ToString ());
@@ -67,18 +69,21 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-#if NET_2_0
+#if !NET_2_0
 		// .NET 2.0 is fixed for position() to return 1 for the
-		// initial context position. We should follow the fix.
-		[Category ("NotWorking")]
+		// initial context position. Someone thinks we should follow
+		// the fix, but in reality we should just discard this
+		// pointless test. The positional value under those conditions
+		// does not make any sense.
+//		[Category ("NotWorking")]
 		[Category ("NotDotNet")]
 #endif
 		public void CoreFunctionNodeSetPosition ()
 		{
 			expression = navigator.Compile("position()");
 			iterator = navigator.Select("/foo");
-			AssertEquals ("#1", "0", navigator.Evaluate ("position()").ToString ());
-			AssertEquals ("#2", "0", navigator.Evaluate (expression, null).ToString ());
+			AssertEquals ("#1", "1", navigator.Evaluate ("position()").ToString ());
+			AssertEquals ("#2", "1", navigator.Evaluate (expression, null).ToString ());
 			AssertEquals ("#3", "0", navigator.Evaluate (expression, iterator).ToString ());
 			iterator = navigator.Select("/foo/*");
 			AssertEquals ("#4", "0", navigator.Evaluate (expression, iterator).ToString ());
