@@ -1,3 +1,8 @@
+2008-10-02  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ToolTip.cs: Display tooltips only for controls on the active form.
+	[Fixes bug #428115]
+
 2008-10-02  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridView.cs: Make OnCellValueNeeded internal.

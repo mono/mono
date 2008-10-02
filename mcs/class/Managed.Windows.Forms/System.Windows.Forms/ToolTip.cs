@@ -862,6 +862,10 @@ namespace System.Windows.Forms {
 			if (!is_active)
 				return;
 
+			// Display tooltips only for the controls in the active form
+			if (control.FindForm () != Form.ActiveForm)
+				return;
+
 			if (!show_always) {
 				IContainerControl cc = last_control.GetContainerControl ();
 				if ((cc == null) || (cc.ActiveControl == null)) {
