@@ -89,16 +89,13 @@ namespace Mono.Xml.Xsl.Operations {
 				}
 				return o;
 			} else if (content != null) {
-//				XmlNodeWriter w = new XmlNodeWriter (false);
-//				DTMXPathDocumentWriter w = new DTMXPathDocumentWriter (p.CurrentNode.NameTable, 200);
-				DTMXPathDocumentWriter2 w = new DTMXPathDocumentWriter2 (p.CurrentNode.NameTable, 200);
+				DTMXPathDocumentWriter2 w = new DTMXPathDocumentWriter2 (p.Root.NameTable, 200);
 				Outputter outputter = new GenericOutputter(w, p.Outputs, null, true);
 				p.PushOutput (outputter);
+				if (p.CurrentNodeset.CurrentPosition == 0)
+					p.NodesetMoveNext ();
 				content.Evaluate (p);
 				p.PopOutput ();
-//				return w.Document.CreateNavigator ().SelectChildren (XPathNodeType.All);
-//				return w.CreateDocument ().CreateNavigator ().SelectChildren (XPathNodeType.All);
-//				return w.Document.CreateNavigator ();
 				return w.CreateDocument ().CreateNavigator ();
 			} else {
 				return "";

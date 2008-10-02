@@ -194,16 +194,18 @@ namespace Mono.Xml.Xsl
 						prefix = existing;
 					if (attr.Namespace.Length > 0) {
 						if (prefix == null || prefix == String.Empty)
+						{ // ADD
 							// empty prefix is not allowed
 							// for non-local attributes.
 							prefix = "xp_" + _xpCount++;
-						if (existing != prefix) {
+						//if (existing != prefix) {
 							while (_nsManager.LookupNamespace (prefix) != null)
 								prefix = "xp_" + _xpCount++;
 							newNamespaces.Add (prefix);
 							_currentNamespaceDecls.Add (prefix, attr.Namespace);
 							_nsManager.AddNamespace (prefix, attr.Namespace);
-						}
+						//}
+						} // ADD
 					}
 					Emitter.WriteAttributeString (prefix, attr.LocalName, attr.Namespace, attr.Value);
 				}

@@ -1,3 +1,13 @@
+2008-10-02  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Iterator.cs, DefaultContext.cs, XPathNavigator.cs, Expression.cs:
+	  couple of refactoring: reduced presumption on BaseIterator (it is
+	  premised in not a few places, but it might change; see
+	  EnumerableIterator in XPathNavigator.cs).
+	  Now BaseIterator.Current is always null (to clean up ambiguous
+	  implementation state). Current property is now always moved to
+	  the current node in the iterator when returned.
+
 2008-09-19  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DefaultContext.cs, Expression.cs: do not premise BaseIterator.

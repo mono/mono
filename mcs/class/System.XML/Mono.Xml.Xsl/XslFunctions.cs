@@ -191,7 +191,8 @@ namespace Mono.Xml.Xsl
 
 		public override object Evaluate (BaseIterator iter)
 		{
-			return new SelfIterator ((iter.NamespaceManager as XsltCompiledContext).Processor.CurrentNode, null);
+			XsltCompiledContext ctx = (XsltCompiledContext) iter.NamespaceManager;
+			return new SelfIterator ((ctx).Processor.CurrentNode, ctx);
 		}
 
 		internal override bool Peer {
@@ -397,7 +398,7 @@ namespace Mono.Xml.Xsl
 				nm = XslNameUtil.FromString (arg2.EvaluateString (iter), ctx);
 			
 			try {
-				return (iter.NamespaceManager as XsltCompiledContext).Processor.CompiledStyle
+				return ((XsltCompiledContext) iter.NamespaceManager).Processor.CompiledStyle
 				.LookupDecimalFormat (nm).FormatNumber (d, s);
 			} catch (ArgumentException ex) {
 				throw new XsltException (ex.Message, ex, iter.Current);

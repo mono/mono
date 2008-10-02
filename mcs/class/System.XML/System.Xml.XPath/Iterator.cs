@@ -84,8 +84,14 @@ namespace System.Xml.XPath
 			get { return position; }
 		}
 
+		internal void SetPosition (int pos)
+		{
+			position = pos;
+		}
+
 		public override bool MoveNext ()
 		{
+if (CurrentPosition == 0 && Current != null) throw new Exception (GetType ().FullName);
 			if (!MoveNextCore ())
 				return false;
 			position++;
@@ -138,24 +144,44 @@ namespace System.Xml.XPath
 	{
 		protected readonly XPathNavigator _nav;
 		protected XPathNavigator _current;
+		bool skipfirst;
 
 		public SimpleIterator (BaseIterator iter) : base (iter.NamespaceManager)
 		{
-			_nav = iter.Current.Clone ();
+			if (iter.CurrentPosition == 0)
+				skipfirst = iter.MoveNext ();
+			if (iter.CurrentPosition > 0)
+				_nav = iter.Current.Clone ();
 		}
 		protected SimpleIterator (SimpleIterator other, bool clone) : base (other)
 		{
-			_nav = other._nav.Clone ();
+			if (other._nav != null)
+				_nav = clone ? other._nav.Clone () : other._nav;
+			skipfirst = other.skipfirst;
 		}
 		public SimpleIterator (XPathNavigator nav, NSResolver nsm) : base (nsm)
 		{
 			_nav = nav.Clone ();
 		}
 
+		public override bool MoveNext ()
+		{
+			if (skipfirst) {
+				skipfirst = false;
+				base.SetPosition (1);
+				return true;
+			} else {
+				return base.MoveNext ();
+			}
+		}
+
 		public override XPathNavigator Current {
 			get {
-				if (_current == null) // position == 0
+				if (CurrentPosition == 0)
+					return null;
+				if (_current == null)
 					_current = _nav.Clone ();
+				_current.MoveTo (_nav);
 				return _current;
 			}
 		}
@@ -180,7 +206,7 @@ namespace System.Xml.XPath
 		}
 
 		public override XPathNavigator Current {
-			get { return _nav; }
+			get { return CurrentPosition == 0 ? null : _nav; }
 		}
 	}
 
@@ -194,6 +220,10 @@ namespace System.Xml.XPath
 		public override bool MoveNextCore ()
 		{
 			return false;
+		}
+
+		public override int CurrentPosition {
+			get { return 1; }
 		}
 	}
 
@@ -226,11 +256,11 @@ namespace System.Xml.XPath
 		public ParentIterator (BaseIterator iter) : base (iter)
 		{
 			canMove = _nav.MoveToParent ();
-			_current = _nav;
+			//_current = _nav;
 		}
 		private ParentIterator (ParentIterator other, bool dummy) : base (other, true)
 		{
-			_current = _nav;
+			//_current = _nav;
 			canMove = other.canMove;
 		}
 		public ParentIterator (XPathNavigator nav, NSResolver nsm) : base (nav, nsm) {}
@@ -252,10 +282,18 @@ namespace System.Xml.XPath
 		public override bool MoveNextCore ()
 		{
 			bool fSuccess = (CurrentPosition == 0) ? _nav.MoveToFirstChild () : _nav.MoveToNext ();
-			if (fSuccess) {
-				Current.MoveTo (_nav);
-			}
+//			if (fSuccess) {
+//				Current.MoveTo (_nav);
+//			}
 			return fSuccess;
+		}
+
+		public override XPathNavigator Current {
+			get {
+				if (CurrentPosition > 0)
+					base.Current.MoveTo (_nav);
+				return base.Current;
+			}
 		}
 	}
 
@@ -274,7 +312,7 @@ namespace System.Xml.XPath
 			}
 			if (_nav.MoveToNext ())
 			{
-				Current.MoveTo (_nav);
+//				Current.MoveTo (_nav);
 				return true;
 			}
 			return false;
@@ -315,7 +353,7 @@ namespace System.Xml.XPath
 
 				_nav.MoveToFirst ();
 				if (!_nav.IsSamePosition (startPosition)) {
-					Current.MoveTo (_nav);
+//					Current.MoveTo (_nav);
 					return true;
 				}
 			} else {
@@ -329,7 +367,7 @@ namespace System.Xml.XPath
 				finished = true;
 				return false;
 			} else {
-				Current.MoveTo (_nav);
+//				Current.MoveTo (_nav);
 				return true;
 			}
 		}
@@ -380,7 +418,7 @@ namespace System.Xml.XPath
 			if (currentPosition == 0)
 				return false;
 			_nav.MoveTo ((XPathNavigator) navigators [--currentPosition]);
-			Current.MoveTo (_nav);
+//			Current.MoveTo (_nav);
 			return true;
 		}
 
@@ -443,7 +481,7 @@ namespace System.Xml.XPath
 				if (startPosition.NodeType != XPathNodeType.Root) {
 					// First time it returns Root
 					_nav.MoveToRoot ();
-					Current.MoveTo (_nav);
+//					Current.MoveTo (_nav);
 					return true;
 				}
 			}
@@ -451,11 +489,11 @@ namespace System.Xml.XPath
 				return false;
 			if (currentPosition-- == 0) {
 				_nav.MoveTo (startPosition);
-				Current.MoveTo (_nav);
+//				Current.MoveTo (_nav);
 				return true; // returns self.
 			}
 			_nav.MoveTo ((XPathNavigator) navigators [currentPosition]);
-			Current.MoveTo (_nav);
+//			Current.MoveTo (_nav);
 			return true;
 		}
 
@@ -495,14 +533,14 @@ namespace System.Xml.XPath
 			if (_nav.MoveToFirstChild ())
 			{
 				_depth ++;
-				Current.MoveTo (_nav);
+//				Current.MoveTo (_nav);
 				return true;
 			}
 			while (_depth != 0)
 			{
 				if (_nav.MoveToNext ())
 				{
-					Current.MoveTo (_nav);
+//					Current.MoveTo (_nav);
 					return true;
 				}
 				if (!_nav.MoveToParent ())	// should NEVER fail!
@@ -536,20 +574,20 @@ namespace System.Xml.XPath
 			if (CurrentPosition == 0)
 			{
 				// self
-				Current.MoveTo (_nav);
+//				Current.MoveTo (_nav);
 				return true;
 			}
 			if (_nav.MoveToFirstChild ())
 			{
 				_depth ++;
-				Current.MoveTo (_nav);
+//				Current.MoveTo (_nav);
 				return true;
 			}
 			while (_depth != 0)
 			{
 				if (_nav.MoveToNext ())
 				{
-					Current.MoveTo (_nav);
+//					Current.MoveTo (_nav);
 					return true;
 				}
 				if (!_nav.MoveToParent ())	// should NEVER fail!
@@ -584,12 +622,12 @@ namespace System.Xml.XPath
 				default:
 					if (_nav.MoveToNext ())
 					{
-						Current.MoveTo (_nav);
+//						Current.MoveTo (_nav);
 						return true;
 					} else {
 						while (_nav.MoveToParent ()) {
 							if (_nav.MoveToNext ()) {
-								Current.MoveTo (_nav);
+//								Current.MoveTo (_nav);
 								return true;
 							}
 						}
@@ -601,14 +639,14 @@ namespace System.Xml.XPath
 			{
 				if (_nav.MoveToFirstChild ())
 				{
-					Current.MoveTo (_nav);
+//					Current.MoveTo (_nav);
 					return true;
 				}
 				do
 				{
 					if (_nav.MoveToNext ())
 					{
-						Current.MoveTo (_nav);
+//						Current.MoveTo (_nav);
 						return true;
 					}
 				}
@@ -665,7 +703,7 @@ namespace System.Xml.XPath
 				finished = true;
 				return false;
 			} else {
-				Current.MoveTo (_nav);
+//				Current.MoveTo (_nav);
 				return true;
 			}
 		}
@@ -685,13 +723,13 @@ namespace System.Xml.XPath
 			{
 				if (_nav.MoveToFirstNamespace ())
 				{
-					Current.MoveTo (_nav);
+//					Current.MoveTo (_nav);
 					return true;
 				}
 			}
 			else if (_nav.MoveToNextNamespace ())
 			{
-				Current.MoveTo (_nav);
+//				Current.MoveTo (_nav);
 				return true;
 			}
 			return false;
@@ -709,13 +747,13 @@ namespace System.Xml.XPath
 			{
 				if (_nav.MoveToFirstAttribute ())
 				{
-					Current.MoveTo (_nav);
+//					Current.MoveTo (_nav);
 					return true;
 				}
 			}
 			else if (_nav.MoveToNextAttribute ())
 			{
-				Current.MoveTo (_nav);
+//				Current.MoveTo (_nav);
 				return true;
 			}
 			return false;			
@@ -756,14 +794,14 @@ namespace System.Xml.XPath
 		{
 			while (_iter.MoveNext ())
 			{
-				if (_test.Match (NamespaceManager, Current))
+				if (_test.Match (NamespaceManager, _iter.Current))
 				{
 					return true;
 				}
 			}
 			return false;
 		}
-		public override XPathNavigator Current { get { return _iter.Current; }}
+		public override XPathNavigator Current { get { return CurrentPosition == 0 ? null : _iter.Current; }}
 
 		public override bool ReverseAxis {
 			get { return _iter.ReverseAxis; }
@@ -1028,10 +1066,12 @@ namespace System.Xml.XPath
 			finished = true;
 			return false;
 		}
-		public override XPathNavigator Current { get { return _iter.Current; }}
+		public override XPathNavigator Current {
+			get { return CurrentPosition == 0 ? null : _iter.Current; }}
 		public override bool ReverseAxis {
 			get { return _iter.ReverseAxis; }
 		}
+public override string ToString () { return _iter.GetType ().FullName; }
 	}
 
 	internal class ListIterator : BaseIterator
@@ -1062,7 +1102,7 @@ namespace System.Xml.XPath
 		}
 		public override XPathNavigator Current {
 			get {
-				if (_list.Count == 0)
+				if (_list.Count == 0 || CurrentPosition == 0)
 					return null;
 				return (XPathNavigator) _list [CurrentPosition - 1]; 
 			}
@@ -1147,7 +1187,7 @@ namespace System.Xml.XPath
 
 		public override XPathNavigator Current
 		{
-			get { return _current; }
+			get { return CurrentPosition > 0 ? _current : null; }
 		}
 	}
 

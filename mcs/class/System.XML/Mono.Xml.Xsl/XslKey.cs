@@ -266,7 +266,7 @@ namespace Mono.Xml.Xsl
 							iter, result, tmp);
 				}
 			}
-			else {
+			else if (nav != null) {
 				ArrayList nodes = GetNodesByValue (
 					nav, XPathFunctions.ToString (o), ctx);
 				if (nodes != null)

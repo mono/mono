@@ -95,6 +95,9 @@ namespace System.Xml.XPath
 			if (_sorters != null)
 				return EvaluateNodeSet (iter);
 
+#if false
+			return _expr.Evaluate (iter);
+#else
 			try {
 				return _expr.Evaluate (iter);
 			}
@@ -107,6 +110,7 @@ namespace System.Xml.XPath
 			catch (Exception e) {
 				throw new XPathException ("Error during evaluation", e);
 			}
+#endif
 		}
 		public XPathNodeIterator EvaluateNodeSet (BaseIterator iter)
 		{
@@ -452,9 +456,14 @@ namespace System.Xml.XPath
 			case XPathResultType.Any:
 			case XPathResultType.Navigator: // FIXME: It may pass not-allowed use of RTF
 				object o = Evaluate (iter);
-				BaseIterator iterResult = o as BaseIterator;
-				if (iterResult != null)
+				XPathNodeIterator xi = o as XPathNodeIterator;
+				BaseIterator iterResult = null;
+				if (xi != null) {
+					iterResult = xi as BaseIterator;
+					if (iterResult == null)
+						iterResult = new WrapperIterator (xi, iter.NamespaceManager);
 					return iterResult;
+				}
 				XPathNavigator nav = o as XPathNavigator;
 				if (nav != null) {
 					XPathNodeIterator xiter = nav.SelectChildren (XPathNodeType.All);
@@ -1289,6 +1298,10 @@ namespace System.Xml.XPath
 		public override String ToString () { return ""; }
 		public override object Evaluate (BaseIterator iter)
 		{
+			if (iter.CurrentPosition == 0) {
+				iter = (BaseIterator) iter.Clone ();
+				iter.MoveNext ();
+			}
 			XPathNavigator navRoot = iter.Current.Clone ();
 			navRoot.MoveToRoot ();
 			return new SelfIterator (navRoot, iter.NamespaceManager);
@@ -1922,7 +1935,10 @@ namespace System.Xml.XPath
 		public override object Evaluate (BaseIterator iter)
 		{
 			object o = (_expr.Evaluate (iter));
-			BaseIterator predBase = o as BaseIterator;
+			XPathNodeIterator xi = o as XPathNodeIterator;
+			BaseIterator predBase = xi as BaseIterator;
+			if (predBase == null && xi != null)
+				predBase = new WrapperIterator (xi, iter.NamespaceManager);
 			if (predBase != null)
 				return new ParensIterator (predBase);
 			else

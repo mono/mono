@@ -282,7 +282,7 @@ namespace System.Xml.XPath
 			String strArgs;
 			object val = arg0.Evaluate (iter);
 			
-			BaseIterator valItr = val as BaseIterator;
+			XPathNodeIterator valItr = val as XPathNodeIterator;
 			if (valItr != null)
 			{
 				strArgs = "";

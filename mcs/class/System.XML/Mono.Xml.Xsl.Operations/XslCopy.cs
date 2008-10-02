@@ -67,14 +67,15 @@ namespace Mono.Xml.Xsl.Operations {
 			if (p.Debugger != null)
 				p.Debugger.DebugExecute (p, this.DebugInput);
 
-			switch (p.CurrentNode.NodeType)
+			XPathNavigator nav = p.CurrentNode;
+			switch (nav.NodeType)
 			{
 			case XPathNodeType.Root:
 				if (p.Out.CanProcessAttributes && useAttributeSets != null)
 					foreach (XmlQualifiedName s in useAttributeSets) {
 						XslAttributeSet attset = p.ResolveAttributeSet (s);
 						if (attset == null)
-							throw new XsltException ("Attribute set was not found", null, p.CurrentNode);
+							throw new XsltException ("Attribute set was not found", null, nav);
 						attset.Evaluate (p);
 					}
 
@@ -82,21 +83,21 @@ namespace Mono.Xml.Xsl.Operations {
 				break;
 			case XPathNodeType.Element:
 				bool isCData = p.InsideCDataElement;
-				string prefix = p.CurrentNode.Prefix;
-				p.PushElementState (prefix, p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI, true);
-				p.Out.WriteStartElement (prefix, p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI);
+				string prefix = nav.Prefix;
+				p.PushElementState (prefix, nav.LocalName, nav.NamespaceURI, true);
+				p.Out.WriteStartElement (prefix, nav.LocalName, nav.NamespaceURI);
 				
 				if (useAttributeSets != null)
 					foreach (XmlQualifiedName s in useAttributeSets)
 						p.ResolveAttributeSet (s).Evaluate (p);
 
-				if (p.CurrentNode.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml)) {
+				if (nav.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml)) {
 					do {
-						if (p.CurrentNode.LocalName == prefix)
+						if (nav.LocalName == prefix)
 							continue;
-						p.Out.WriteNamespaceDecl (p.CurrentNode.LocalName, p.CurrentNode.Value);
-					} while (p.CurrentNode.MoveToNextNamespace (XPathNamespaceScope.ExcludeXml));
-					p.CurrentNode.MoveToParent ();
+						p.Out.WriteNamespaceDecl (nav.LocalName, nav.Value);
+					} while (nav.MoveToNextNamespace (XPathNamespaceScope.ExcludeXml));
+					nav.MoveToParent ();
 				}
 
 				if (children != null) children.Evaluate (p);
@@ -105,35 +106,35 @@ namespace Mono.Xml.Xsl.Operations {
 				p.PopCDataState (isCData);
 				break;
 			case XPathNodeType.Attribute:
-				p.Out.WriteAttributeString (p.CurrentNode.Prefix, p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI, p.CurrentNode.Value);
+				p.Out.WriteAttributeString (nav.Prefix, nav.LocalName, nav.NamespaceURI, nav.Value);
 				break;
 			
 			case XPathNodeType.SignificantWhitespace:
 			case XPathNodeType.Whitespace:
 				bool cdata = p.Out.InsideCDataSection;
 				p.Out.InsideCDataSection = false;
-				p.Out.WriteString (p.CurrentNode.Value);
+				p.Out.WriteString (nav.Value);
 				p.Out.InsideCDataSection = cdata;
 				break;
 			case XPathNodeType.Text:
-				p.Out.WriteString (p.CurrentNode.Value);
+				p.Out.WriteString (nav.Value);
 				break;
 			
 			case XPathNodeType.Comment:
-				p.Out.WriteComment (p.CurrentNode.Value);
+				p.Out.WriteComment (nav.Value);
 				break;
 			
 			case XPathNodeType.ProcessingInstruction:
-				p.Out.WriteProcessingInstruction (p.CurrentNode.Name, p.CurrentNode.Value);
+				p.Out.WriteProcessingInstruction (nav.Name, nav.Value);
 				break;
 
 			case XPathNodeType.Namespace:
-				if (p.XPathContext.ElementPrefix != p.CurrentNode.Name)
-					p.Out.WriteNamespaceDecl (p.CurrentNode.Name, p.CurrentNode.Value);
+				if (p.XPathContext.ElementPrefix != nav.Name)
+					p.Out.WriteNamespaceDecl (nav.Name, nav.Value);
 				break;
 
 			default:
-//				Console.WriteLine ("unhandled node type {0}", p.CurrentNode.NodeType);
+//				Console.WriteLine ("unhandled node type {0}", nav.NodeType);
 				break;
 			}
 		}

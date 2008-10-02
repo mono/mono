@@ -1,3 +1,10 @@
+2008-10-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslVariable.cs : now XPathNodeIterator.Current is always null at
+	  position 0, so reduced dependency on it.
+	* XslCopy.cs : now CurrentNode property cannot be moved, so copy it
+	  to a local variable.
+
 2008-06-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslVariable.cs : In XslGeneralVariable.Evaluate(), always wrap
