@@ -1,3 +1,8 @@
+2008-10-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_exception_debug_info): Use jinfo->used_regs instead of
+	cfg->used_int_regs, since the two are different on arm.
+
 2008-10-02  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c, inssel.brg, mini-trampolines.c: Use
