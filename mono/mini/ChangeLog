@@ -1,5 +1,10 @@
 2008-10-02  Mark Probst  <mark.probst@gmail.com>
 
+	* method-to-ir.c, inssel.brg, mini-trampolines.c: Use
+	mono_method_get_vtable_index() to get the vtable index.
+
+2008-10-02  Mark Probst  <mark.probst@gmail.com>
+
 	* method-to-ir.c (mono_method_to_ir2): Don't create native
 	wrappers for array methods, because they're never called (and if
 	they were called they wouldn't work).

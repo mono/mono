@@ -1,3 +1,9 @@
+2008-10-02  Mark Probst  <mark.probst@gmail.com>
+
+	* class.c, class-internals.h (mono_method_get_vtable_index): New
+	function which returns the index into the vtable and properly
+	handles inflated virtual generic methods.
+
 2008-10-01  Mark Probst  <mark.probst@gmail.com>
 
 	* object.c, domain.c, object-internals.h, domain-internals.h:
