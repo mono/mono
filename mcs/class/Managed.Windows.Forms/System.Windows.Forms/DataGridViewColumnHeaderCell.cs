@@ -62,7 +62,7 @@ namespace System.Windows.Forms {
 
 		public override DataGridViewCellStyle GetInheritedStyle (DataGridViewCellStyle inheritedCellStyle, int rowIndex, bool includeColors)
 		{
-			DataGridViewCellStyle result = DataGridView.DefaultCellStyle;
+			DataGridViewCellStyle result = new DataGridViewCellStyle (DataGridView.DefaultCellStyle);
 	
 			result.ApplyStyle (DataGridView.ColumnHeadersDefaultCellStyle);
 	
