@@ -12412,7 +12412,7 @@
         <size>7</size>
       </method>
       <method name="Void Test1[R](R, Int32)">
-        <size>150</size>
+        <size>157</size>
       </method>
       <method name="Void Run()">
         <size>13</size>
@@ -12585,6 +12585,48 @@
       </method>
       <method name="T &lt;&gt;m__1()">
         <size>18</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-anon-47.cs">
+    <type name="C">
+      <method name="System.Func`2[T1,System.Func`2[T2,System.Action`1[T3]]] Curry[T1,T2,T3](System.Action`3[T1,T2,T3])">
+        <size>26</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>59</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__3(Int32, Int32, Int32)">
+        <size>23</size>
+      </method>
+    </type>
+    <type name="C+&lt;Curry&gt;c__AnonStorey0`3[T1,T2,T3]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.Func`2[T2,System.Action`1[T3]] &lt;&gt;m__0(T1)">
+        <size>33</size>
+      </method>
+    </type>
+    <type name="C+&lt;Curry&gt;c__AnonStorey0`3+&lt;Curry&gt;c__AnonStorey1`3[T1,T2,T3]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.Action`1[T3] &lt;&gt;m__1(T2)">
+        <size>45</size>
+      </method>
+    </type>
+    <type name="C+&lt;Curry&gt;c__AnonStorey0`3+&lt;Curry&gt;c__AnonStorey1`3+&lt;Curry&gt;c__AnonStorey2`3[T1,T2,T3]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__2(T3)">
+        <size>35</size>
       </method>
     </type>
   </test>
@@ -33568,7 +33610,7 @@
         <size>7</size>
       </method>
       <method name="Void Test()">
-        <size>111</size>
+        <size>118</size>
       </method>
       <method name="Int32 Main()">
         <size>66</size>
@@ -35165,7 +35207,7 @@
         <size>1</size>
       </method>
       <method name="Void Test(Int32)">
-        <size>143</size>
+        <size>150</size>
       </method>
     </type>
     <type name="X">
@@ -35218,7 +35260,7 @@
         <size>1</size>
       </method>
       <method name="Void Test(Int32)">
-        <size>205</size>
+        <size>226</size>
       </method>
     </type>
     <type name="X">
@@ -35638,7 +35680,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Test(Int32)">
-        <size>344</size>
+        <size>351</size>
       </method>
       <method name="Int32 Main()">
         <size>46</size>
@@ -35683,7 +35725,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Test(Int32)">
-        <size>515</size>
+        <size>538</size>
       </method>
       <method name="Int32 Main()">
         <size>46</size>
@@ -35733,7 +35775,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Test(Int32)">
-        <size>567</size>
+        <size>588</size>
       </method>
       <method name="Int32 Main()">
         <size>46</size>
@@ -35793,7 +35835,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Test()">
-        <size>344</size>
+        <size>351</size>
       </method>
       <method name="Int32 Main()">
         <size>59</size>
@@ -36397,7 +36439,7 @@
         <size>1</size>
       </method>
       <method name="Void TestMe()">
-        <size>160</size>
+        <size>167</size>
       </method>
       <method name="Boolean &lt;TestMe&gt;m__0()">
         <size>2</size>
