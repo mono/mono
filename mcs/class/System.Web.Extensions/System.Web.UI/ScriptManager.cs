@@ -1241,6 +1241,11 @@ namespace System.Web.UI
 			HtmlTextParser parser = new HtmlTextParser (output);
 			page.Form.RenderControl (parser);
 
+			Dictionary <string, string> pageHiddenFields = parser.HiddenFields;
+			if (pageHiddenFields != null)
+				foreach (KeyValuePair <string, string> kvp in pageHiddenFields)
+					WriteCallbackOutput (output, hiddenField, kvp.Key, kvp.Value);
+			
 			WriteCallbackOutput (output, asyncPostBackControlIDs, null, FormatListIDs (_asyncPostBackControls, false));
 			WriteCallbackOutput (output, postBackControlIDs, null, FormatListIDs (_postBackControls, false));
 			WriteCallbackOutput (output, updatePanelIDs, null, FormatUpdatePanelIDs (_updatePanels, false));
@@ -1411,10 +1416,29 @@ namespace System.Web.UI
 		{
 			bool _done;
 
+			public Dictionary <string, string> _hiddenFields;
+
+			public Dictionary <string, string> HiddenFields {
+				get { return _hiddenFields; }
+			}
+			
 			public HtmlTextParser (HtmlTextWriter responseOutput)
-				: base (new TextParser (responseOutput), responseOutput) {
+				: this (new TextParser (responseOutput), responseOutput) {
 			}
 
+			HtmlTextParser (TextParser parser, HtmlTextWriter responseOutput)
+				: base (parser, responseOutput)
+			{
+				parser.HiddenFieldParsed += new TextParser.TextParserHiddenFieldParsedEventHandler (OnHiddenFieldParsed);
+			}
+			
+			void OnHiddenFieldParsed (TextParser sender, TextParserHiddenFieldParsedEventArgs args)
+			{
+				if (_hiddenFields == null)
+					_hiddenFields = new Dictionary <string, string> ();
+				_hiddenFields [args.Name] = args.Value;
+			}
+			
 			public override void WriteAttribute (string name, string value) {
 				if (!_done && String.Compare ("action", name, StringComparison.OrdinalIgnoreCase) == 0) {
 					_done = true;
@@ -1425,8 +1449,31 @@ namespace System.Web.UI
 			}
 		}
 
+		sealed class TextParserHiddenFieldParsedEventArgs : EventArgs
+		{
+			public string Name {
+				get;
+				private set;
+			}
+
+			public string Value {
+				get;
+				private set;
+			}
+			
+			public TextParserHiddenFieldParsedEventArgs (string name, string value)
+			{
+				this.Name = name;
+				this.Value = value;
+			}
+		}
+		
 		sealed class TextParser : TextWriter
 		{
+			public delegate void TextParserHiddenFieldParsedEventHandler (TextParser sender, TextParserHiddenFieldParsedEventArgs args);
+
+			static object textParserHiddenFieldParsedEvent = new object ();
+			
 			int _state;
 			char _charState = (char) 255;
 			const char nullCharState = (char) 255;
@@ -1434,7 +1481,13 @@ namespace System.Web.UI
 			Dictionary<string, string> _currentField;
 			string _currentAttribute;
 			readonly HtmlTextWriter _responseOutput;
-
+			TextParserHiddenFieldParsedEventHandler _hiddenFieldParsedHandler;
+			
+			public event TextParserHiddenFieldParsedEventHandler HiddenFieldParsed {
+				add { _hiddenFieldParsedHandler = value; }
+				remove { _hiddenFieldParsedHandler = null; }
+			}
+			
 			public override Encoding Encoding {
 				get { return Encoding.UTF8; }
 			}
@@ -1556,7 +1609,10 @@ namespace System.Web.UI
 				if (value == null)
 					return;
 
-				ScriptManager.WriteCallbackOutput (_responseOutput, hiddenField, _currentField ["name"], HttpUtility.HtmlDecode (value));
+				if (_hiddenFieldParsedHandler != null)
+					_hiddenFieldParsedHandler (this, new TextParserHiddenFieldParsedEventArgs (_currentField ["name"], HttpUtility.HtmlDecode (value)));
+				else
+					ScriptManager.WriteCallbackOutput (_responseOutput, hiddenField, _currentField ["name"], HttpUtility.HtmlDecode (value));
 			}
 		}
 
