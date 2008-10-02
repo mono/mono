@@ -1,5 +1,10 @@
 2008-10-02  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridView.cs: When CellBorderStyle is set, update the
+	AdvancedCellBorderStyle to match.
+
+2008-10-02  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewCell.cs: Add helper methods to convert Alignment
 	to TextFormatFlags and align rectangles.
 	* DataGridViewTextBoxCell.cs: Use Alignment when painting text.

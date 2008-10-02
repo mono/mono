@@ -163,7 +163,7 @@ namespace System.Windows.Forms {
 			backColor = Control.DefaultBackColor;
 			backgroundColor = SystemColors.AppWorkspace;
 			borderStyle = BorderStyle.FixedSingle;
-			cellBorderStyle = DataGridViewCellBorderStyle.None;
+			cellBorderStyle = DataGridViewCellBorderStyle.Single;
 			clipboardCopyMode = DataGridViewClipboardCopyMode.EnableWithAutoHeaderText;
 			columnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
 			columnHeadersDefaultCellStyle = new DataGridViewCellStyle();
@@ -476,8 +476,60 @@ namespace System.Windows.Forms {
 			get { return cellBorderStyle; }
 			set {
 				if (cellBorderStyle != value) {
+					if (value == DataGridViewCellBorderStyle.Custom)
+						throw new ArgumentException ("CellBorderStyle cannot be set to Custom.");
+
 					cellBorderStyle = value;
-					OnCellBorderStyleChanged(EventArgs.Empty);
+
+					DataGridViewAdvancedBorderStyle border = new DataGridViewAdvancedBorderStyle ();
+
+					switch (cellBorderStyle) {
+						case DataGridViewCellBorderStyle.Single:
+							border.All = DataGridViewAdvancedCellBorderStyle.Single;
+							break;
+						case DataGridViewCellBorderStyle.Raised:
+						case DataGridViewCellBorderStyle.RaisedVertical:
+							border.Bottom = DataGridViewAdvancedCellBorderStyle.None;
+							border.Top = DataGridViewAdvancedCellBorderStyle.None;
+							border.Left = DataGridViewAdvancedCellBorderStyle.Outset;
+							border.Right = DataGridViewAdvancedCellBorderStyle.Outset;
+							break;
+						case DataGridViewCellBorderStyle.Sunken:
+							border.All = DataGridViewAdvancedCellBorderStyle.Inset;
+							break;
+						case DataGridViewCellBorderStyle.None:
+							border.All = DataGridViewAdvancedCellBorderStyle.None;
+							break;
+						case DataGridViewCellBorderStyle.SingleVertical:
+							border.Bottom = DataGridViewAdvancedCellBorderStyle.None;
+							border.Top = DataGridViewAdvancedCellBorderStyle.None;
+							border.Left = DataGridViewAdvancedCellBorderStyle.None;
+							border.Right = DataGridViewAdvancedCellBorderStyle.Single;
+							break;
+						case DataGridViewCellBorderStyle.SunkenVertical:
+							border.Bottom = DataGridViewAdvancedCellBorderStyle.None;
+							border.Top = DataGridViewAdvancedCellBorderStyle.None;
+							border.Left = DataGridViewAdvancedCellBorderStyle.Inset;
+							border.Right = DataGridViewAdvancedCellBorderStyle.Inset;
+							break;
+						case DataGridViewCellBorderStyle.SingleHorizontal:
+						case DataGridViewCellBorderStyle.SunkenHorizontal:
+							border.Bottom = DataGridViewAdvancedCellBorderStyle.Inset;
+							border.Top = DataGridViewAdvancedCellBorderStyle.Inset;
+							border.Left = DataGridViewAdvancedCellBorderStyle.None;
+							border.Right = DataGridViewAdvancedCellBorderStyle.None;
+							break;
+						case DataGridViewCellBorderStyle.RaisedHorizontal:
+							border.Bottom = DataGridViewAdvancedCellBorderStyle.Outset;
+							border.Top = DataGridViewAdvancedCellBorderStyle.Outset;
+							border.Left = DataGridViewAdvancedCellBorderStyle.None;
+							border.Right = DataGridViewAdvancedCellBorderStyle.None;
+							break;
+					}
+					
+					advancedCellBorderStyle = border;
+					
+					OnCellBorderStyleChanged (EventArgs.Empty);
 				}
 			}
 		}
