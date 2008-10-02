@@ -1,3 +1,9 @@
+2008-10-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* icall.c: changed the Type of the exception thrown when trying to
+	invoke a constructor on an abstract class. Part of the fix for bug
+	#324185.
+
 2008-10-02  Mark Probst  <mark.probst@gmail.com>
 
 	* class.c, class-internals.h (mono_method_get_vtable_index): New
