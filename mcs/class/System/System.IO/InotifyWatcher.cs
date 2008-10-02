@@ -453,11 +453,10 @@ namespace System.IO {
 			* Create
 			* Delete
 			* DeleteSelf
-			* CloseWrite
 		*/
 		static InotifyMask Interesting = InotifyMask.Modify | InotifyMask.Attrib | InotifyMask.MovedFrom |
 							InotifyMask.MovedTo | InotifyMask.Create | InotifyMask.Delete |
-							InotifyMask.DeleteSelf | InotifyMask.CloseWrite;
+							InotifyMask.DeleteSelf;
 
 		void ProcessEvents (byte [] buffer, int length)
 		{
