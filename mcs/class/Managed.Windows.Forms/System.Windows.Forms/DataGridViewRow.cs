@@ -555,7 +555,8 @@ namespace System.Windows.Forms
 				bounds.Width = col.Width;
 				DataGridViewCell cell = Cells[col.Index];
 				
-				graphics.FillRectangle (Brushes.White, bounds);
+				if ((paintParts & DataGridViewPaintParts.Background) == DataGridViewPaintParts.Background)
+					graphics.FillRectangle (Brushes.White, bounds);
 				
 				DataGridViewCellStyle style;
 
