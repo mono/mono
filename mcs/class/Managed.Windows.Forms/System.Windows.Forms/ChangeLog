@@ -1,3 +1,9 @@
+2008-10-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripItem.cs: Check to make sure the owner is actually
+	changing in InternalOwner before doing any work.  Fixes some
+	failing tests.
+
 2008-10-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewColumnHeaderCell.cs: Correctly calculate style.

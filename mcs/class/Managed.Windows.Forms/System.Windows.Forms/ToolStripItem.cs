@@ -1869,9 +1869,11 @@ namespace System.Windows.Forms
 
 		internal ToolStrip InternalOwner {
 			set {
-				this.owner = value;
-				this.CalculateAutoSize ();
-				OnOwnerChanged (EventArgs.Empty);
+				if (this.owner != value) {
+					this.owner = value;
+					this.CalculateAutoSize ();
+					OnOwnerChanged (EventArgs.Empty);
+				}
 			}
 		}
 
