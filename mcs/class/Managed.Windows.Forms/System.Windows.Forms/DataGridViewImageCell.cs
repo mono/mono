@@ -207,7 +207,7 @@ namespace System.Windows.Forms {
 			switch (imageLayout) {
 				case DataGridViewImageCellLayout.NotSet:
 				case DataGridViewImageCellLayout.Normal:
-					image_bounds = new Rectangle ((Size.Width - i.Width) / 2, (Size.Height - i.Height) / 2, i.Width, i.Height);
+					image_bounds = AlignInRectangle (new Rectangle (2, 2, cellBounds.Width - 4, cellBounds.Height - 4), i.Size, cellStyle.Alignment);
 					break;
 				case DataGridViewImageCellLayout.Stretch:
 					image_bounds = new Rectangle (Point.Empty, cellBounds.Size);

@@ -203,6 +203,7 @@ namespace System.Windows.Forms {
 				Color color = Selected ? cellStyle.SelectionForeColor : cellStyle.ForeColor;
 
 				TextFormatFlags flags = TextFormatFlags.EndEllipsis | TextFormatFlags.VerticalCenter | TextFormatFlags.TextBoxControl;
+				flags |= AlignmentToFlags (cellStyle.Alignment);
 
 				Rectangle contentbounds = cellBounds;
 				contentbounds.Height -= 2;

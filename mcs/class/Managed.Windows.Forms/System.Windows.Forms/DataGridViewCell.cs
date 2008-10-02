@@ -1274,7 +1274,8 @@ namespace System.Windows.Forms {
 			Color color = Selected ? cellStyle.SelectionForeColor : cellStyle.ForeColor;
 
 			TextFormatFlags flags = TextFormatFlags.EndEllipsis | TextFormatFlags.VerticalCenter | TextFormatFlags.TextBoxControl;
-
+			flags |= AlignmentToFlags (style.Alignment);
+			
 			cellBounds.Height -= 2;
 			cellBounds.Width -= 2;
 
@@ -1380,6 +1381,70 @@ namespace System.Windows.Forms {
 			if (DataGridView != null) {
 				DataGridView.OnCellErrorTextChanged(args);
 			}
+		}
+
+		internal TextFormatFlags AlignmentToFlags (DataGridViewContentAlignment align)
+		{
+			TextFormatFlags flags = TextFormatFlags.Default;
+
+			switch (align) {
+				case DataGridViewContentAlignment.BottomCenter:
+					flags |= TextFormatFlags.Bottom;
+					flags |= TextFormatFlags.HorizontalCenter;
+					break;
+				case DataGridViewContentAlignment.BottomLeft:
+					flags |= TextFormatFlags.Bottom;
+					break;
+				case DataGridViewContentAlignment.BottomRight:
+					flags |= TextFormatFlags.Bottom;
+					flags |= TextFormatFlags.Right;
+					break;
+				case DataGridViewContentAlignment.MiddleCenter:
+					flags |= TextFormatFlags.VerticalCenter;
+					flags |= TextFormatFlags.HorizontalCenter;
+					break;
+				case DataGridViewContentAlignment.MiddleLeft:
+					flags |= TextFormatFlags.VerticalCenter;
+					break;
+				case DataGridViewContentAlignment.MiddleRight:
+					flags |= TextFormatFlags.VerticalCenter;
+					flags |= TextFormatFlags.Right;
+					break;
+				case DataGridViewContentAlignment.TopLeft:
+					flags |= TextFormatFlags.Top;
+					break;
+				case DataGridViewContentAlignment.TopCenter:
+					flags |= TextFormatFlags.HorizontalCenter;
+					flags |= TextFormatFlags.Top;
+					break;
+				case DataGridViewContentAlignment.TopRight:
+					flags |= TextFormatFlags.Right;
+					flags |= TextFormatFlags.Top;
+					break;
+			}
+
+			return flags;
+		}
+
+		internal Rectangle AlignInRectangle (Rectangle outer, Size inner, DataGridViewContentAlignment align)
+		{
+			int x = 0;
+			int y = 0;
+
+			if (align == DataGridViewContentAlignment.BottomLeft || align == DataGridViewContentAlignment.MiddleLeft || align == DataGridViewContentAlignment.TopLeft)
+				x = outer.X;
+			else if (align == DataGridViewContentAlignment.BottomCenter || align == DataGridViewContentAlignment.MiddleCenter || align == DataGridViewContentAlignment.TopCenter)
+				x = Math.Max (outer.X + ((outer.Width - inner.Width) / 2), outer.Left);
+			else if (align == DataGridViewContentAlignment.BottomRight || align == DataGridViewContentAlignment.MiddleRight || align == DataGridViewContentAlignment.TopRight)
+				x = outer.Right - inner.Width;
+			if (align == DataGridViewContentAlignment.TopCenter || align == DataGridViewContentAlignment.TopLeft || align == DataGridViewContentAlignment.TopRight)
+				y = outer.Y;
+			else if (align == DataGridViewContentAlignment.MiddleCenter || align == DataGridViewContentAlignment.MiddleLeft || align == DataGridViewContentAlignment.MiddleRight)
+				y = outer.Y + (outer.Height - inner.Height) / 2;
+			else if (align == DataGridViewContentAlignment.BottomCenter || align == DataGridViewContentAlignment.BottomRight || align == DataGridViewContentAlignment.BottomLeft)
+				y = outer.Bottom - inner.Height;
+
+			return new Rectangle (x, y, Math.Min (inner.Width, outer.Width), Math.Min (inner.Height, outer.Height));
 		}
 
 		[ComVisibleAttribute(true)]
