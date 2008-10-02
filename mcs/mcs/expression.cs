@@ -6682,7 +6682,14 @@ namespace Mono.CSharp {
 					// this is hoisted to very top level block
 					//
 					if (ec.IsVariableCapturingRequired) {
-						// TODO: it could be optimized
+						//
+						// TODO: it should be optimized, see test-anon-75.cs
+						//
+						// `this' variable has its own scope which is mostly empty
+						// and causes creation of extraneous storey references.
+						// Also it's hard to remove `this' dependencies when we Undo
+						// this access.
+						//
 						AnonymousMethodStorey scope = TopToplevelBlock.Explicit.CreateAnonymousMethodStorey (ec);
 						if (HoistedVariable == null) {
 							TopToplevelBlock.HoistedThisVariable = scope.CaptureThis (ec, this);
