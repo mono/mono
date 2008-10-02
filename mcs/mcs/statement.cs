@@ -5086,108 +5086,56 @@ namespace Mono.CSharp {
 	///   Implementation of the foreach C# statement
 	/// </summary>
 	public class Foreach : Statement {
-		Expression type;
-		Expression variable;
-		Expression expr;
-		Statement statement;
-		
-		public Foreach (Expression type, LocalVariableReference var, Expression expr,
-				Statement stmt, Location l)
+
+		sealed class ArrayForeach : Statement
 		{
-			this.type = type;
-			this.variable = var;
-			this.expr = expr;
-			statement = stmt;
-			loc = l;
-		}
-
-		public Statement Statement {
-			get { return statement; }
-		}
-
-		public override bool Resolve (EmitContext ec)
-		{
-			expr = expr.Resolve (ec);
-			if (expr == null)
-				return false;
-
-			if (expr.IsNull) {
-				Report.Error (186, loc, "Use of null is not valid in this context");
-				return false;
-			}
-
-			if (expr.eclass == ExprClass.MethodGroup || expr is AnonymousMethodExpression) {
-				Report.Error (446, expr.Location, "Foreach statement cannot operate on a `{0}'",
-					expr.ExprClassName);
-				return false;
-			}
-
-			if (expr.Type.IsArray) {
-				statement = new ArrayForeach (type, variable, expr, statement, loc);
-			} else {
-				statement = new CollectionForeach (type, variable, expr, statement, loc);
-			}
-			
-			return statement.Resolve (ec);
-		}
-
-		protected override void DoEmit (EmitContext ec)
-		{
-			ILGenerator ig = ec.ig;
-			
-			Label old_begin = ec.LoopBegin, old_end = ec.LoopEnd;
-			ec.LoopBegin = ig.DefineLabel ();
-			ec.LoopEnd = ig.DefineLabel ();
-
-			statement.Emit (ec);
-			
-			ec.LoopBegin = old_begin;
-			ec.LoopEnd = old_end;
-		}
-
-		protected class ArrayCounter : TemporaryVariable
-		{
-			StatementExpression increment;
-
-			public ArrayCounter (Location loc)
-				: base (TypeManager.int32_type, loc)
+			class ArrayCounter : TemporaryVariable
 			{
+				StatementExpression increment;
+
+				public ArrayCounter (Location loc)
+					: base (TypeManager.int32_type, loc)
+				{
+				}
+
+				public void ResolveIncrement (EmitContext ec)
+				{
+					increment = new StatementExpression (new UnaryMutator (UnaryMutator.Mode.PostIncrement, this, loc));
+					increment.Resolve (ec);
+				}
+
+				public void EmitIncrement (EmitContext ec)
+				{
+					increment.Emit (ec);
+				}
 			}
 
-			public void ResolveIncrement (EmitContext ec)
-			{
-				increment = new StatementExpression (new UnaryMutator (UnaryMutator.Mode.PostIncrement, this, loc));
-				increment.Resolve (ec);
-			}
+			readonly Foreach for_each;
+			readonly Statement statement;
 
-			public void EmitIncrement (EmitContext ec)
-			{
-				increment.Emit (ec);
-			}
-		}
-
-		protected class ArrayForeach : Statement
-		{
-			Expression variable, expr, conv;
-			Statement statement;
-			Type array_type;
-			Expression var_type;
+			Expression conv;
 			TemporaryVariable[] lengths;
+			Expression [] length_exprs;
 			ArrayCounter[] counter;
-			int rank;
 
 			TemporaryVariable copy;
 			Expression access;
-			Expression[] length_exprs;
 
-			public ArrayForeach (Expression var_type, Expression var,
-					     Expression expr, Statement stmt, Location l)
+			public ArrayForeach (Foreach @foreach, int rank)
 			{
-				this.var_type = var_type;
-				this.variable = var;
-				this.expr = expr;
-				statement = stmt;
-				loc = l;
+				for_each = @foreach;
+				statement = for_each.statement;
+				loc = @foreach.loc;
+
+				counter = new ArrayCounter [rank];
+				length_exprs = new Expression [rank];
+
+				//
+				// Only use temporary length variables when dealing with
+				// multi-dimensional arrays
+				//
+				if (rank > 1)
+					lengths = new TemporaryVariable [rank];
 			}
 
 			protected override void CloneTo (CloneContext clonectx, Statement target)
@@ -5197,27 +5145,21 @@ namespace Mono.CSharp {
 
 			public override bool Resolve (EmitContext ec)
 			{
-				array_type = expr.Type;
-				rank = array_type.GetArrayRank ();
-
-				copy = new TemporaryVariable (array_type, loc);
+				copy = new TemporaryVariable (for_each.expr.Type, loc);
 				copy.Resolve (ec);
 
-				counter = new ArrayCounter [rank];
-				lengths = new TemporaryVariable [rank];
-				length_exprs = new Expression [rank];
-
+				int rank = length_exprs.Length;
 				ArrayList list = new ArrayList (rank);
 				for (int i = 0; i < rank; i++) {
 					counter [i] = new ArrayCounter (loc);
 					counter [i].ResolveIncrement (ec);					
 
-					lengths [i] = new TemporaryVariable (TypeManager.int32_type, loc);
-					lengths [i].Resolve (ec);
-
 					if (rank == 1) {
 						length_exprs [i] = new MemberAccess (copy, "Length").Resolve (ec);
 					} else {
+						lengths [i] = new TemporaryVariable (TypeManager.int32_type, loc);
+						lengths [i].Resolve (ec);
+
 						ArrayList args = new ArrayList (1);
 						args.Add (new Argument (new IntConstant (i, loc)));
 						length_exprs [i] = new Invocation (new MemberAccess (copy, "GetLength"), args).Resolve (ec);
@@ -5230,6 +5172,7 @@ namespace Mono.CSharp {
 				if (access == null)
 					return false;
 
+				Expression var_type = for_each.type;
 				VarExpr ve = var_type as VarExpr;
 				if (ve != null) {
 					// Infer implicitly typed local variable from foreach array type
@@ -5249,8 +5192,8 @@ namespace Mono.CSharp {
 				ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
 				ec.CurrentBranching.CreateSibling ();
 
-				variable = variable.ResolveLValue (ec, conv, loc);
-				if (variable == null)
+				for_each.variable = for_each.variable.ResolveLValue (ec, conv, loc);
+				if (for_each.variable == null)
 					ok = false;
 
 				ec.StartFlowBranching (FlowBranching.BranchingType.Embedded, loc);
@@ -5270,8 +5213,9 @@ namespace Mono.CSharp {
 			{
 				ILGenerator ig = ec.ig;
 
-				copy.EmitAssign (ec, expr);
+				copy.EmitAssign (ec, for_each.expr);
 
+				int rank = length_exprs.Length;
 				Label[] test = new Label [rank];
 				Label[] loop = new Label [rank];
 
@@ -5279,7 +5223,8 @@ namespace Mono.CSharp {
 					test [i] = ig.DefineLabel ();
 					loop [i] = ig.DefineLabel ();
 
-					lengths [i].EmitAssign (ec, length_exprs [i]);
+					if (lengths != null)
+						lengths [i].EmitAssign (ec, length_exprs [i]);
 				}
 
 				IntConstant zero = new IntConstant (0, loc);
@@ -5290,7 +5235,7 @@ namespace Mono.CSharp {
 					ig.MarkLabel (loop [i]);
 				}
 
-				((IAssignMethod) variable).EmitAssign (ec, conv, false, false);
+				((IAssignMethod) for_each.variable).EmitAssign (ec, conv, false, false);
 
 				statement.Emit (ec);
 
@@ -5301,7 +5246,12 @@ namespace Mono.CSharp {
 
 					ig.MarkLabel (test [i]);
 					counter [i].Emit (ec);
-					lengths [i].Emit (ec);
+
+					if (lengths != null)
+						lengths [i].Emit (ec);
+					else
+						length_exprs [i].Emit (ec);
+
 					ig.Emit (OpCodes.Blt, loop [i]);
 				}
 
@@ -5310,20 +5260,78 @@ namespace Mono.CSharp {
 
 			public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 			{
+				for_each.expr.MutateHoistedGenericType (storey);
+
 				copy.MutateHoistedGenericType (storey);
 				conv.MutateHoistedGenericType (storey);
-				variable.MutateHoistedGenericType (storey);
 				statement.MutateHoistedGenericType (storey);
 
-				for (int i = 0; i < rank; i++) {
+				for (int i = 0; i < counter.Length; i++) {
 					counter [i].MutateHoistedGenericType (storey);
-					lengths [i].MutateHoistedGenericType (storey);
+					if (lengths != null)
+						lengths [i].MutateHoistedGenericType (storey);
 				}
 			}
 		}
 
-		protected class CollectionForeach : Statement
+		sealed class CollectionForeach : Statement
 		{
+			class CollectionForeachStatement : Statement
+			{
+				Type type;
+				Expression variable, current, conv;
+				Statement statement;
+				Assign assign;
+
+				public CollectionForeachStatement (Type type, Expression variable,
+								   Expression current, Statement statement,
+								   Location loc)
+				{
+					this.type = type;
+					this.variable = variable;
+					this.current = current;
+					this.statement = statement;
+					this.loc = loc;
+				}
+
+				protected override void CloneTo (CloneContext clonectx, Statement target)
+				{
+					throw new NotImplementedException ();
+				}
+
+				public override bool Resolve (EmitContext ec)
+				{
+					current = current.Resolve (ec);
+					if (current == null)
+						return false;
+
+					conv = Convert.ExplicitConversion (ec, current, type, loc);
+					if (conv == null)
+						return false;
+
+					assign = new SimpleAssign (variable, conv, loc);
+					if (assign.Resolve (ec) == null)
+						return false;
+
+					if (!statement.Resolve (ec))
+						return false;
+
+					return true;
+				}
+
+				protected override void DoEmit (EmitContext ec)
+				{
+					assign.EmitStatement (ec);
+					statement.Emit (ec);
+				}
+
+				public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+				{
+					assign.MutateHoistedGenericType (storey);
+					statement.MutateHoistedGenericType (storey);
+				}
+			}
+
 			Expression variable, expr;
 			Statement statement;
 
@@ -5357,15 +5365,6 @@ namespace Mono.CSharp {
 			bool GetEnumeratorFilter (EmitContext ec, MethodInfo mi)
 			{
 				Type return_type = mi.ReturnType;
-
-				if ((return_type == TypeManager.ienumerator_type) && (mi.DeclaringType == TypeManager.string_type))
-					//
-					// Apply the same optimization as MS: skip the GetEnumerator
-					// returning an IEnumerator, and use the one returning a 
-					// CharEnumerator instead. This allows us to avoid the 
-					// try-finally block and the boxing.
-					//
-					return false;
 
 				//
 				// Ok, we can access it, now make sure that we can do something
@@ -5836,60 +5835,65 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected class CollectionForeachStatement : Statement
+		Expression type;
+		Expression variable;
+		Expression expr;
+		Statement statement;
+
+		public Foreach (Expression type, LocalVariableReference var, Expression expr,
+				Statement stmt, Location l)
 		{
-			Type type;
-			Expression variable, current, conv;
-			Statement statement;
-			Assign assign;
+			this.type = type;
+			this.variable = var;
+			this.expr = expr;
+			statement = stmt;
+			loc = l;
+		}
 
-			public CollectionForeachStatement (Type type, Expression variable,
-							   Expression current, Statement statement,
-							   Location loc)
-			{
-				this.type = type;
-				this.variable = variable;
-				this.current = current;
-				this.statement = statement;
-				this.loc = loc;
+		public Statement Statement {
+			get { return statement; }
+		}
+
+		public override bool Resolve (EmitContext ec)
+		{
+			expr = expr.Resolve (ec);
+			if (expr == null)
+				return false;
+
+			if (expr.IsNull) {
+				Report.Error (186, loc, "Use of null is not valid in this context");
+				return false;
 			}
 
-			protected override void CloneTo (CloneContext clonectx, Statement target)
-			{
-				throw new NotImplementedException ();
-			}
-
-			public override bool Resolve (EmitContext ec)
-			{
-				current = current.Resolve (ec);
-				if (current == null)
+			if (expr.Type == TypeManager.string_type) {
+				statement = new ArrayForeach (this, 1);
+			} else if (expr.Type.IsArray) {
+				statement = new ArrayForeach (this, expr.Type.GetArrayRank ());
+			} else {
+				if (expr.eclass == ExprClass.MethodGroup || expr is AnonymousMethodExpression) {
+					Report.Error (446, expr.Location, "Foreach statement cannot operate on a `{0}'",
+						expr.ExprClassName);
 					return false;
+				}
 
-				conv = Convert.ExplicitConversion (ec, current, type, loc);
-				if (conv == null)
-					return false;
-
-				assign = new SimpleAssign (variable, conv, loc);
-				if (assign.Resolve (ec) == null)
-					return false;
-
-				if (!statement.Resolve (ec))
-					return false;
-
-				return true;
+				statement = new CollectionForeach (type, variable, expr, statement, loc);
 			}
 
-			protected override void DoEmit (EmitContext ec)
-			{
-				assign.EmitStatement (ec);
-				statement.Emit (ec);
-			}
+			return statement.Resolve (ec);
+		}
 
-			public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
-			{
-				assign.MutateHoistedGenericType (storey);
-				statement.MutateHoistedGenericType (storey);
-			}
+		protected override void DoEmit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+
+			Label old_begin = ec.LoopBegin, old_end = ec.LoopEnd;
+			ec.LoopBegin = ig.DefineLabel ();
+			ec.LoopEnd = ig.DefineLabel ();
+
+			statement.Emit (ec);
+
+			ec.LoopBegin = old_begin;
+			ec.LoopEnd = old_end;
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)

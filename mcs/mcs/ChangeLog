@@ -1,5 +1,11 @@
 2008-10-02  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #375262
+	* statement.cs: Refactor ArrayForeach to be usable with string
+	indexer. Optimized single dimentional arrays foreach.
+
+2008-10-02  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #431255
 	* anonymous.cs, expression.cs: Removed broken optimization.
 
