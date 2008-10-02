@@ -1,3 +1,10 @@
+2008-10-02  Mark Probst  <mark.probst@gmail.com>
+
+	* bug-431413.2.cs: Test for bug #431413 (multidimensional generic
+	arrays).
+
+	* Makefile.am: Test added.
+
 2008-10-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke3.cs libtest.c: Add test for byref string marshalling.

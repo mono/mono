@@ -1,3 +1,9 @@
+2008-10-02  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir2): Array methods are
+	special-cased and must not be invoked indirectly via the (M)RGCTX
+	when generic sharing is turned on.  Fixes #431413.
+
 2008-10-01  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c: When generic sharing is active, call
