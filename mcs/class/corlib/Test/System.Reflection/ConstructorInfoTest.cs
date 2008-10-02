@@ -48,7 +48,6 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void InvokeAbstract ()
 		{
 			object obj = FormatterServices.GetUninitializedObject (typeof (Foo));

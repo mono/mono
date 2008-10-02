@@ -1,3 +1,10 @@
+2008-10-02 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
+
+	* MonoMethod.cs: throw a MemberAccessException when
+	trying to invoke a constructor creating an instance of an abstract
+	class. Return null when an instance of an object was passed as a
+	parameter when invoking a .ctor. Fixes bug #324185.
+
 2008-09-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* MonoField.cs: Add check to GetValue/SetValue () to avoid crashes when it is

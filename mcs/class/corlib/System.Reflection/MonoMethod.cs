@@ -423,6 +423,10 @@ namespace System.Reflection {
 				throw new MemberAccessException ("Cannot create an instance of " + DeclaringType + " because Type.ContainsGenericParameters is true.");
 #endif
 
+			if ((invokeAttr & BindingFlags.CreateInstance) != 0 && DeclaringType.IsAbstract) {
+				throw new MemberAccessException (String.Format ("Cannot create an instance of {0} because it is an abstract class", DeclaringType));
+			}
+
 			Exception exc = null;
 			object o = null;
 
@@ -438,7 +442,7 @@ namespace System.Reflection {
 
 			if (exc != null)
 				throw exc;
-			return o;
+			return (obj == null) ? o : null;
 		}
 
 		public override Object Invoke (BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {

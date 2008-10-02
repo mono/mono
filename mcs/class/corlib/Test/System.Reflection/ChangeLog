@@ -1,3 +1,7 @@
+2008-10-02 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
+
+	* ConstructorInfoTest.cs: enable abstract class test.
+
 2008-09-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* FieldInfoTest.cs (SetValueOpenGeneric): Fix copy-paste error.
