@@ -1,3 +1,7 @@
+2008-10-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_handle_soft_stack_ovf): Fix the previous
+	change.
 
 Fri Oct 3 16:03:22 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
