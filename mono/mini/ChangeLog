@@ -1,5 +1,8 @@
 2008-10-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-exceptions.c (mono_handle_soft_stack_ovf): Unprotect two pages
+	instead of one on 64 bit systems.
+
 	* method-to-ir.c: Remove unused includes.
 
 2008-10-02  Zoltan Varga  <vargaz@gmail.com>
