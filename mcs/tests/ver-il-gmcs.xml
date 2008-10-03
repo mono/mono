@@ -32287,7 +32287,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>12</size>
+        <size>14</size>
       </method>
     </type>
   </test>
@@ -32597,6 +32597,54 @@
       </method>
       <method name="Void Foo()">
         <size>145</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-687.cs">
+    <type name="XUnit">
+      <method name="Void .ctor(Double)">
+        <size>8</size>
+      </method>
+      <method name="XUnit op_Implicit(Double)">
+        <size>10</size>
+      </method>
+      <method name="Double op_Implicit(XUnit)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="Unit">
+      <method name="Void .ctor(Double)">
+        <size>8</size>
+      </method>
+      <method name="Unit op_Implicit(Double)">
+        <size>10</size>
+      </method>
+      <method name="Double op_Implicit(Unit)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>56</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-688.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.Byte* GetFoo()">
+        <size>7</size>
+      </method>
+      <method name="System.Byte* GetFoo2()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>46</size>
       </method>
     </type>
   </test>
