@@ -1,3 +1,8 @@
+2008-10-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir2): Add an !cfg->compile_aot assert
+	to the fast virtual generic method code until the aot case is fixed.
+
 2008-10-03  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc.c, mini-ppc.h: Implement generic virtual method thunks.
