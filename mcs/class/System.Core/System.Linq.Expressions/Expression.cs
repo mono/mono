@@ -1062,7 +1062,7 @@ namespace System.Linq.Expressions {
 			return new MethodCallExpression (instance, method, args);
 		}
 
-		static bool MethodMatch (MethodInfo method, string name, Type [] parameterTypes)
+		static bool MethodMatch (MethodInfo method, string name, Type [] parameterTypes, Type [] argumentTypes)
 		{
 			if (method.Name != name)
 				return false;
@@ -1072,8 +1072,13 @@ namespace System.Linq.Expressions {
 			if (parameters.Length != parameterTypes.Length)
 				return false;
 
-			if (method.IsGenericMethod) // if it's a generic method, when can't compare its parameters
-				return true;
+			if (method.IsGenericMethod && method.IsGenericMethodDefinition) {
+				var closed = TryMakeGeneric (method, argumentTypes);
+				if (closed == null)
+					return false;
+
+				return MethodMatch (closed, name, parameterTypes, argumentTypes);
+			}
 
 			for (int i = 0; i < parameters.Length; i++)
 				if (!IsAssignableToParameterType (parameterTypes [i], parameters [i]))
@@ -1085,7 +1090,7 @@ namespace System.Linq.Expressions {
 		static MethodInfo TryGetMethod (Type type, string methodName, BindingFlags flags, Type [] parameterTypes, Type [] argumentTypes)
 		{
 			var methods = from meth in type.GetMethods (flags)
-						  where MethodMatch (meth, methodName, parameterTypes)
+						  where MethodMatch (meth, methodName, parameterTypes, argumentTypes)
 						  select meth;
 
 			if (methods.Count () > 1)
