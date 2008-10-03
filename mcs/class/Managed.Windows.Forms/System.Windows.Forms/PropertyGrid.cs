@@ -104,6 +104,7 @@ namespace System.Windows.Forms
 
 			line_color = SystemColors.ScrollBar;
 			category_fore_color = line_color;
+			commands_visible = false;
 			commands_visible_if_available = false;
 			property_sort = PropertySort.CategorizedAlphabetical;
 			property_grid_view = new PropertyGridView(this);
@@ -148,6 +149,7 @@ namespace System.Windows.Forms
 			propertypages_toolbarbutton = new PropertyToolBarButton ();
 			separator_toolbarbutton = new PropertyToolBarSeparator ();
 			ContextMenu context_menu = new ContextMenu();
+			context_menu_default_location = Point.Empty;
 
 			categorized_image = new Bitmap (typeof (PropertyGrid), "propertygrid-categorized.png");
 			alphabetical_image = new Bitmap (typeof (PropertyGrid), "propertygrid-alphabetical.png");
@@ -1754,13 +1756,14 @@ namespace System.Windows.Forms
 		{
 		
 #if NET_2_0
-			bool flat;
+			ToolBarAppearance appearance;
 #endif
 			public PropertyToolBar ()
 			{
 				SetStyle (ControlStyles.ResizeRedraw, true);
 #if NET_2_0
 				GripStyle = ToolStripGripStyle.Hidden;
+				appearance = ToolBarAppearance.Normal;
 #endif
 			}
 
@@ -1777,7 +1780,7 @@ namespace System.Windows.Forms
 			}
 			
 			public ToolBarAppearance Appearance {
-				get { return flat ? ToolBarAppearance.Flat : ToolBarAppearance.Normal; }
+				get { return appearance; }
 				set { 
 					if (value == Appearance)
 						return;
@@ -1785,11 +1788,13 @@ namespace System.Windows.Forms
 					switch (value) {
 					case ToolBarAppearance.Flat:
 						Renderer = new ToolStripSystemRenderer ();
+						appearance = ToolBarAppearance.Flat;
 						break;
 					case ToolBarAppearance.Normal:
 						ProfessionalColorTable table = new ProfessionalColorTable ();
 						table.UseSystemColors = true;
 						Renderer = new ToolStripProfessionalRenderer (table);
+						appearance = ToolBarAppearance.Normal;
 						break;
 					}
 				}

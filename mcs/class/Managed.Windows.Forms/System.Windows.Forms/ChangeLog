@@ -1,3 +1,7 @@
+2008-10-03  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGrid.cs: Cleanup compilation warnings.
+
 2008-10-02  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewRow.cs: Only clear the row background if we
