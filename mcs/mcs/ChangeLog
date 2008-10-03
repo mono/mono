@@ -1,8 +1,14 @@
 2008-10-03  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #431827
+	* expression.cs: Fixed right based pointer arithmetic operations
+	emit.
+
+2008-10-03  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #353779
 	* assign.cs, expression.cs: Fixed compound assignment conversions.
-	
+
 2008-10-02  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #375262

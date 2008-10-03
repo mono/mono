@@ -1807,14 +1807,23 @@ namespace Mono.CSharp {
 				}
 
 				Type r_type = ReturnType;
+				Expression left_arg, right_arg;
 				if (r_type == null) {
-					if (left == null)
+					if (left == null) {
+						left_arg = b.left;
+						right_arg = b.right;
 						r_type = b.left.Type;
-					else 
+					} else {
+						left_arg = b.right;
+						right_arg = b.left;
 						r_type = b.right.Type;
+					}
+				} else {
+					left_arg = b.left;
+					right_arg = b.right;
 				}
 
-				return new PointerArithmetic (b.oper, b.left, b.right, r_type, b.loc).Resolve (ec);
+				return new PointerArithmetic (b.oper, left_arg, right_arg, r_type, b.loc).Resolve (ec);
 			}
 		}
 
@@ -3788,6 +3797,18 @@ namespace Mono.CSharp {
 				//
 				// handle + and - on (pointer op int)
 				//
+				Constant left_const = left as Constant;
+				if (left_const != null) {
+					//
+					// Optimize ((T*)null) pointer operations
+					//
+					if (left_const.IsDefaultValue) {
+						left = EmptyExpression.Null;
+					} else {
+						left_const = null;
+					}
+				}
+
 				left.Emit (ec);
 
 				Constant right_const = right as Constant;
@@ -3827,12 +3848,14 @@ namespace Mono.CSharp {
 					Binary.EmitOperatorOpcode (ec, Binary.Operator.Multiply, rtype);
 				}
 
-				if (rtype == TypeManager.int64_type)
-					ig.Emit (OpCodes.Conv_I);
-				else if (rtype == TypeManager.uint64_type)
-					ig.Emit (OpCodes.Conv_U);
+				if (left_const == null) {
+					if (rtype == TypeManager.int64_type)
+						ig.Emit (OpCodes.Conv_I);
+					else if (rtype == TypeManager.uint64_type)
+						ig.Emit (OpCodes.Conv_U);
 
-				Binary.EmitOperatorOpcode (ec, op, op_type);
+					Binary.EmitOperatorOpcode (ec, op, op_type);
+				}
 			}
 		}
 	}
