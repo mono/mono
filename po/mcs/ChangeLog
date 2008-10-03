@@ -1,3 +1,8 @@
+2008-10-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ja.po : ok, having pending translation could result
+	  in a mess when it is updated by other means.
+
 2008-09-29  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mcs.pot, *.po: Update messages from the mcs tree.

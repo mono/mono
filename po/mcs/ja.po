@@ -672,123 +672,123 @@ msgstr ""
 #: ../mcs/mcs/class.cs:3434
 #, csharp-format
 msgid "`{0}': type must be `{1}' to match overridden member `{2}'"
-msgstr ""
+msgstr "`{0}': オーバーライドされたメンバ `{2}' に適合するためには、型が `{1}' でなければなりません"
 
 #: ../mcs/mcs/class.cs:3438
 #, csharp-format
 msgid "`{0}': return type must be `{1}' to match overridden member `{2}'"
-msgstr ""
+msgstr "`{0}': オーバーライドされたメンバ `{2}' に適合するには、戻り値型は `{1}' でなければなりません"
 
 #: ../mcs/mcs/class.cs:3460
 #, csharp-format
 msgid "`{0}' hides inherited abstract member `{1}'"
-msgstr ""
+msgstr "`{0}' は継承されるabstractメンバ `{1}' を隠蔽してしまいます"
 
 #: ../mcs/mcs/class.cs:3520
 #, csharp-format
 msgid ""
 "Inconsistent accessibility: parameter type `{0}' is less accessible than "
 "indexer `{1}'"
-msgstr ""
+msgstr "一貫性の無いアクセス制限: パラメータ型 `{0}' はインデクサ '{1}' よりもアクセスが限られています"
 
 #: ../mcs/mcs/class.cs:3524
 #, csharp-format
 msgid ""
 "Inconsistent accessibility: parameter type `{0}' is less accessible than "
 "operator `{1}'"
-msgstr ""
+msgstr "一貫性の無いアクセス制限: パラメータ型 `{0}' は演算子 '{1}' よりもアクセスが限られています"
 
 #: ../mcs/mcs/class.cs:3528
 #, csharp-format
 msgid ""
 "Inconsistent accessibility: parameter type `{0}' is less accessible than "
 "method `{1}'"
-msgstr ""
+msgstr "一貫性の無いアクセス制限: パラメータ型 `{0}' はメソッド '{1}' よりもアクセスが限られています"
 
 #: ../mcs/mcs/class.cs:3548
 #, csharp-format
 msgid "`{0}' in explicit interface declaration is not an interface"
-msgstr ""
+msgstr "明示的なインターフェース実装で記述された `{0}' は、インターフェースではありません"
 
 #: ../mcs/mcs/class.cs:3587
 #, csharp-format
 msgid "A partial method `{0}' cannot explicitly implement an interface"
-msgstr ""
+msgstr "部分メソッド `{0}' はインターフェースを明示的に実装できません"
 
 #: ../mcs/mcs/class.cs:3595
 #, csharp-format
 msgid "'{0}' in explicit interface declaration is not an interface"
-msgstr ""
+msgstr "明示的なインターフェースの宣言で記述された `{0}' は、インターフェースではありません"
 
 #: ../mcs/mcs/class.cs:3614
 #, csharp-format
 msgid ""
 "`{0}' is marked as an external but has no DllImport attribute. Consider "
 "adding a DllImport attribute to specify the external implementation"
-msgstr ""
+msgstr "`{0}' はexternalとして宣言されていますが、DllImport属性をもちません。DllImport属性を追加して、外部実装を指定するようにしてください"
 
 #: ../mcs/mcs/class.cs:3631
 #, csharp-format
 msgid ""
 "`{0}': cannot change access modifiers when overriding `{1}' inherited member "
 "`{2}'"
-msgstr ""
+msgstr "`{0}': `{1}' の継承されたメンバー `{2}' をオーバーライドするとき、アクセス修飾子は変更できません"
 
 #: ../mcs/mcs/class.cs:3724
 msgid ""
 "The DllImport attribute must be specified on a method marked `static' and "
 "`extern'"
-msgstr ""
+msgstr "`static'かつ`extern'で宣言されたメソッドには、DllImport属性が指定されなければなりません"
 
 #: ../mcs/mcs/class.cs:3787
 #, csharp-format
 msgid "`{0}': A partial method parameters cannot use `out' modifier"
-msgstr ""
+msgstr "`{0}': 部分メソッドのパラメータで`out'修飾子は使用できません"
 
 #: ../mcs/mcs/class.cs:3867
 #, csharp-format
 msgid ""
 "Conditional not valid on `{0}' because it is a constructor, destructor, "
 "operator or explicit interface implementation"
-msgstr ""
+msgstr "Conditionalは コンストラクタ、デストラクタ、演算子または明示的なインターフェースの実装である `{0}'  では無効です"
 
 #: ../mcs/mcs/class.cs:3924
 msgid "Do not override object.Finalize. Instead, provide a destructor"
-msgstr ""
+msgstr "object.Finalizeをオーバーライドせず、代わりにデストラクタを提供してください"
 
 #: ../mcs/mcs/class.cs:4096
 #, csharp-format
 msgid "Program `{0}' has more than one entry point defined: `{1}'"
-msgstr ""
+msgstr "プログラム `{0}' には複数のエントリポイントが定義されています: `{1}'"
 
 #: ../mcs/mcs/class.cs:4127
 #, csharp-format
 msgid "Conditional not valid on `{0}' because its return type is not void"
-msgstr ""
+msgstr "Conditionalは戻り値型がvoidでない `{0}' では無効です"
 
 #: ../mcs/mcs/class.cs:4132
 #, csharp-format
 msgid "Conditional not valid on `{0}' because it is an override method"
-msgstr ""
+msgstr "Conditionalはオーバーライドメソッドである `{0}' では無効です"
 
 #: ../mcs/mcs/class.cs:4137
 msgid "Conditional not valid on interface members"
-msgstr ""
+msgstr "Conditionalはインターフェースメンバでは無効です"
 
 #: ../mcs/mcs/class.cs:4143
 #, csharp-format
 msgid "Conditional member `{0}' cannot implement interface member `{1}'"
-msgstr ""
+msgstr "Conditionalメンバ `{0}' はインターフェースメンバ `{1}' を実装できません"
 
 #: ../mcs/mcs/class.cs:4150
 #, csharp-format
 msgid "Conditional method `{0}' cannot have an out parameter"
-msgstr ""
+msgstr "Conditionalメソッド `{0}' ではoutパラメータを指定できません"
 
 #: ../mcs/mcs/class.cs:4218
 #, csharp-format
 msgid "`{0}': Extension methods cannot be defined in a nested class"
-msgstr ""
+msgstr "`{0}': 拡張メソッドはネストしたクラスの中では定義できません"
 
 #: ../mcs/mcs/class.cs:4223
 #, csharp-format
@@ -796,7 +796,7 @@ msgid ""
 "`{0}': Extension methods cannot be declared without a reference to System."
 "Core.dll assembly. Add the assembly reference or remove `this' modifer from "
 "the first parameter"
-msgstr ""
+msgstr "`{0}': 拡張メソッドはSystem.Core.dllアセンブリへの参照なしでは宣言できません。アセンブリ参照を追加するか、または最初のパラメータから `this' 修飾子を取り除いてください。"
 
 #: ../mcs/mcs/class.cs:4237
 #, csharp-format
