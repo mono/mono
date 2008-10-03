@@ -1,7 +1,78 @@
-2008-10-03  Zoltan Varga  <vargaz@gmail.com>
+2008-10-03  Rodrigo Kumpera  <rkumpera@novell.com>
+	
+	This patch land initial JIT support for simd intrinsics.
 
-	* mini-exceptions.c (mono_handle_soft_stack_ovf): Fix the previous
-	change.
+	* mini-x86.h: Added new define to make --enable_minimal work on x86.
+
+	* Makefile.am: Added simd-intrinsics.c
+
+	* simd-intrinsics.c: New file with simd instrinsic related
+	code.
+
+	* cfold.c (mono_constant_fold_ins2): Fold XZERO.
+
+	* cpu-x86.md: Add simd related instructions.
+
+	* driver.c: Added MONO_OPT_SIMD to the default set of optimizations.
+
+	* driver.c: Added two new --regression variants.
+
+	* ir-emit.h (MONO_EMIT_NEW_VZERO): Emit XZERO if the type is a simd intrinsic.
+
+	* local-propagation.c (mono_local_cprop2): Eliminate useless XMOVE.
+
+	* local-propagation.c (mono_local_deadce): Use new macro MONO_IS_NON_FP_MOVE and
+	extract some complicated logic to helper functions.
+
+	* method-to-ir.c (mono_type_to_regmove): Handle simd intrinsics.
+
+	* method-to-ir.c (mini_emit_inst_for_method): Emit simd intrinsics.
+
+	* method-to-ir.c (mono_handle_global_vregs): If a simd intrinsic was found, apply
+	the specialized simplification pass.
+
+	* method-to-ir.c (mono_spill_global_vars): Use new macro.
+
+	* mini-codegen.c: Added SIMD constants to all regbanks arrays.
+
+	* mini-codegen.c: Added reg_bank_table_init to initialize the reg desc -> bank
+	table.
+
+	* mini-codegen.c: Define a version of the reg_bank macro that uses desc_to_reg_type
+	if MONO_ARCH_NEED_SIMD_BANK is defined.
+
+	* mini-ops.h: Added the new simd ops.
+
+	* mini-x86.c: Added mono_arch_xregname.
+
+	* mini-x86.c (mono_arch_cpu_optimizazions): Disable MONO_OPT_SIMD if SSE3 is not detected.
+
+	* mini-x86.c (mono_arch_output_basic_block): Add simd related opcodes.
+
+	* mini-x86.h: Define simd related MONO_ARCH macros.
+
+	* mini.c (mono_type_to_load_membase): Handle simd intrinsics.
+
+	* mini.c (mono_type_to_store_membase): Handle simd intrinsics.
+
+	* mini.h: Added new macros MONO_IS_NON_FP_MOVE, MONO_IS_REAL_MOVE, MONO_IS_ZERO and
+	MONO_CLASS_IS_SIMD to deal with simd related IR.
+
+	* mini.h (MonoInst): Added spill_var to the backend union.
+
+	* mini.h (MonoCompile): Added uses_simd_intrinsics and iconv_raw_var.
+
+	* mini.h: Added forward declarations of the new simd fuctions.
+
+	* optflags-def.h: Added new optimization names SIMD.
+
+	* regalloc.c (mono_regstate_reset): Set next vreg to be the max value of the 3 reg banks.
+
+	* regalloc.h: Added support for working with 3 register banks.
+
+	* regalloc.h (MonoRegState): Added xsymbolic field if a third regbank is required.
+
+	* ssa2.c (mono_ssa_deadce2): Use new MONO_IS_ZERO macro.
 
 Fri Oct 3 16:03:22 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
