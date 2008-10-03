@@ -37,11 +37,11 @@ namespace System.Windows.Forms {
 		private DataGridView editingControlDataGridView;
 		private int rowIndex;
 		private bool editingControlValueChanged;
-		private Cursor editingPanelCursor;
 		private bool repositionEditingControlOnValueChange;
 
 		public DataGridViewTextBoxEditingControl ()
 		{
+			repositionEditingControlOnValueChange = false;
 		}
 
 		public virtual DataGridView EditingControlDataGridView {
@@ -65,7 +65,7 @@ namespace System.Windows.Forms {
 		}
 
 		public virtual Cursor EditingPanelCursor {
-			get { return editingPanelCursor; }
+			get { return Cursors.Default; }
 		}
 
 		public virtual bool RepositionEditingControlOnValueChange {

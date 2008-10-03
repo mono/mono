@@ -56,6 +56,7 @@ namespace System.Windows.Forms {
 		protected DataGridViewCell ()
 		{
 			columnIndex = -1;
+			dataGridViewOwner = null;
 			errorText = string.Empty;
 		}
 
@@ -1284,7 +1285,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal Rectangle InternalErrorIconsBounds {
+		internal virtual Rectangle InternalErrorIconsBounds {
 			get { return GetErrorIconBounds (null, null, -1); }
 		}
 

@@ -36,6 +36,7 @@ namespace System.Windows.Forms {
 
 		public DataGridViewHeaderCell ()
 		{
+			buttonState = ButtonState.Normal;
 		}
 
 		[Browsable (false)]

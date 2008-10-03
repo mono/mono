@@ -189,6 +189,8 @@ namespace System.Windows.Forms {
 			defaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
 			defaultCellStyle.WrapMode = DataGridViewTriState.False;
 			editMode = DataGridViewEditMode.EditOnKeystrokeOrF2;
+			firstDisplayedScrollingColumnHiddenWidth = 0;
+			isCurrentCellDirty = false;
 			multiSelect = true;
 			readOnly = false;
 			rowHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
@@ -6014,7 +6016,7 @@ namespace System.Windows.Forms {
 		[ComVisible (false)]
 		public class DataGridViewControlCollection : Control.ControlCollection
 		{
-			private new DataGridView owner;
+			private DataGridView owner;
 			
 			public DataGridViewControlCollection (DataGridView owner) : base (owner)
 			{

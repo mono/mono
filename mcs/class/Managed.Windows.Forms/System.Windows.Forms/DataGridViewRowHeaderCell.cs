@@ -280,7 +280,7 @@ namespace System.Windows.Forms {
 			g.DrawLine (p, x + 7, y + 1, x + 1, y + 7);
 		}
 
-		internal Rectangle InternalErrorIconsBounds {
+		internal override Rectangle InternalErrorIconsBounds {
 			get { return GetErrorIconBounds (null, null, RowIndex); }
 		}
 		

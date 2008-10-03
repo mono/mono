@@ -39,7 +39,6 @@ namespace System.Windows.Forms {
 		private object editingControlFormattedValue;
 		private int editingControlRowIndex;
 		private bool editingControlValueChanged;
-		private Cursor editingPanelCursor;
 
 		public DataGridViewComboBoxEditingControl () {
 			//tabStop = false;
@@ -67,7 +66,7 @@ namespace System.Windows.Forms {
 		}
 
 		public virtual Cursor EditingPanelCursor {
-			get { return editingPanelCursor; }
+			get { return Cursors.Default; }
 		}
 
 		public virtual bool RepositionEditingControlOnValueChange {

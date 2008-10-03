@@ -1,5 +1,13 @@
 2008-10-03  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs, DataGridViewCell.cs, 
+	DataGridViewCellValidatingEventArgs.cs, 
+	DataGridViewComboBoxEditingControl.cs, DataGridViewHeaderCell.cs, 
+	DataGridViewRow.cs, DataGridViewRowHeaderCell.cs, 
+	DataGridViewTextBoxEditingControl.cs: Cleanup compilation warnings.
+
+2008-10-03  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* HtmlElementEventArgs.cs, HtmlWindowCollection.cs: 
 	Cleanup compilation warnings.
 

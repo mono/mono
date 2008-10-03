@@ -40,6 +40,7 @@ namespace System.Windows.Forms {
 		{
 			this.columnIndex = columnIndex;
 			this.rowIndex = rowIndex;
+			this.formattedValue = formattedValue;
 		}
 
 		public int ColumnIndex {
