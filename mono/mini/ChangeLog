@@ -1,3 +1,8 @@
+
+Fri Oct 3 16:03:22 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini-exceptions.c: remove 64 bit related ifdef clutter.
+
 2008-10-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c (mono_handle_soft_stack_ovf): Unprotect two pages
