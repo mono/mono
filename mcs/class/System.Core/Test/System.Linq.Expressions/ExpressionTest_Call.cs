@@ -399,7 +399,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CallQueryableWhere ()
 		{
 			var queryable = new [] { 1, 2, 3 }.AsQueryable ();
