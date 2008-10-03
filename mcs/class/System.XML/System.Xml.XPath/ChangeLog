@@ -1,5 +1,10 @@
 2008-10-03  Atsushi Enomoto <atsushi@ximian.com>
 
+	* Iterator.cs : now we do not seem to need clone in
+	  SimpleIterator.Current.
+
+2008-10-03  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathNavigator.cs : enable EnumerableIterator with some fixes.
 	* Iterator.cs : reduce extra steps for empty simple iterator.
 

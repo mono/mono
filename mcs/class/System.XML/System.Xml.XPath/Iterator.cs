@@ -184,9 +184,7 @@ namespace System.Xml.XPath
 			get {
 				if (CurrentPosition == 0)
 					return null;
-				if (_current == null)
-					_current = _nav.Clone ();
-				_current.MoveTo (_nav);
+				_current = _nav;
 				return _current;
 			}
 		}
@@ -229,6 +227,10 @@ namespace System.Xml.XPath
 
 		public override int CurrentPosition {
 			get { return 1; }
+		}
+
+		public override XPathNavigator Current {
+			get { return _nav; }
 		}
 	}
 
