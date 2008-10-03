@@ -1,3 +1,9 @@
+
+Fri Oct 3 23:08:06 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* Dictionary.cs: by popular demand, return keys/values in insertion
+	order when possible.
+
 2008-09-29  Jb Evain  <jbevain@novell.com>
 
 	* Dictionary.cs: check for null argument in ContainsKey.
