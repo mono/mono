@@ -1,5 +1,9 @@
 2008-10-03  Mark Probst  <mark.probst@gmail.com>
 
+	* mini-ppc.c, mini-ppc.h: Implement generic virtual method thunks.
+
+2008-10-03  Mark Probst  <mark.probst@gmail.com>
+
 	* mini-amd64.c, mini-amd64.h: Implement generic virtual method
 	thunks.
 
