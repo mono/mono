@@ -5921,7 +5921,7 @@ namespace Mono.CSharp {
 			if (element == null)
 				return null;
 
-			if (element is CompoundAssign.Helper) {
+			if (element is CompoundAssign.TargetExpression) {
 				if (first_emit != null)
 					throw new InternalErrorException ("Can only handle one mutator at a time");
 				first_emit = element;

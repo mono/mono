@@ -606,10 +606,9 @@ namespace Mono.CSharp {
 			this.op = op;
 		}
 
-		// !!! What a stupid name
-		public class Helper : Expression {
+		public sealed class TargetExpression : Expression {
 			Expression child;
-			public Helper (Expression child)
+			public TargetExpression (Expression child)
 			{
 				this.child = child;
 				this.loc = child.Location;
@@ -662,44 +661,39 @@ namespace Mono.CSharp {
 			// into a tree, to guarantee that we do not have side
 			// effects.
 			//
-			source = new Binary (op, new Helper (target), original_source, true);
+			source = new Binary (op, new TargetExpression (target), original_source, true);
 			return base.DoResolve (ec);
 		}
 
 		protected override Expression ResolveConversions (EmitContext ec)
 		{
-			// source might have changed to BinaryDelegate
 			Type target_type = target.Type;
-			Type source_type = source.Type;
-			Binary b = source as Binary;
-			if (b == null)
-				return base.ResolveConversions (ec);
-
-			// FIXME: Restrict only to predefined operators
 
 			//
-			// 1. if the source is explicitly convertible to the
-			//    target_type
+			// 1. the return type is implicitly convertible to the type of target
 			//
-			source = Convert.ExplicitConversion (ec, source, target_type, loc);
-			if (source == null){
-				original_source.Error_ValueCannotBeConverted (ec, loc, target_type, true);
-				return null;
+			if (Convert.ImplicitConversionExists (ec, source, target_type)) {
+				source = Convert.ImplicitConversion (ec, source, target_type, loc);
+				return this;
 			}
 
 			//
-			// 2. and the original right side is implicitly convertible to
-			// the type of target
+			// Otherwise, if the selected operator is a predefined operator
 			//
-			if (Convert.ImplicitConversionExists (ec, original_source, target_type))
-				return this;
-
-			//
-			// In the spec 2.4 they added: or if type of the target is int
-			// and the operator is a shift operator...
-			//
-			if (source_type == TypeManager.int32_type && (b.Oper & Binary.Operator.ShiftMask) != 0)
-				return this;
+			Binary b = source as Binary;
+			if (b != null) {
+				//
+				// 2a. the operator is a shift operator
+				//
+				// 2b. the return type is explicitly convertible to the type of x, and
+				// y is implicitly convertible to the type of x
+				//
+				if ((b.Oper & Binary.Operator.ShiftMask) != 0 ||
+					Convert.ImplicitConversionExists (ec, original_source, target_type)) {
+					source = Convert.ExplicitConversion (ec, source, target_type, loc);
+					return this;
+				}
+			}
 
 			original_source.Error_ValueCannotBeConverted (ec, loc, target_type, false);
 			return null;
