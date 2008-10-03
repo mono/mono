@@ -4,9 +4,10 @@
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//      Marek Habersack (mhabersack@novell.com)
 //
 // (C) 2002,2003 Ximian, Inc. (http://www.ximian.com)
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,6 +36,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Security.Permissions;
+using System.Text;
 using System.Threading;
 using System.Web.Compilation;
 using System.Web.Configuration;
@@ -993,6 +995,61 @@ namespace System.Web.UI {
 #if NET_2_0
 		static long autoClassCounter = 0;
 #endif
+
+		internal string EncodeIdentifier (string value)
+		{
+			if (value == null || value.Length == 0 || CodeGenerator.IsValidLanguageIndependentIdentifier (value))
+				return value;
+
+			StringBuilder ret = new StringBuilder ();
+
+			char ch = value [0];
+			switch (Char.GetUnicodeCategory (ch)) {
+				case UnicodeCategory.LetterNumber:
+				case UnicodeCategory.LowercaseLetter:
+				case UnicodeCategory.TitlecaseLetter:
+				case UnicodeCategory.UppercaseLetter:
+				case UnicodeCategory.OtherLetter:
+				case UnicodeCategory.ModifierLetter:
+				case UnicodeCategory.ConnectorPunctuation:
+					ret.Append (ch);
+					break;
+
+				case UnicodeCategory.DecimalDigitNumber:
+					ret.Append ('_');
+					ret.Append (ch);
+					break;
+					
+				default:
+					ret.Append ('_');
+					break;
+			}
+
+			for (int i = 1; i < value.Length; i++) {
+				ch = value [i];
+				switch (Char.GetUnicodeCategory (ch)) {
+					case UnicodeCategory.LetterNumber:
+					case UnicodeCategory.LowercaseLetter:
+					case UnicodeCategory.TitlecaseLetter:
+					case UnicodeCategory.UppercaseLetter:
+					case UnicodeCategory.OtherLetter:
+					case UnicodeCategory.ModifierLetter:
+					case UnicodeCategory.ConnectorPunctuation:
+					case UnicodeCategory.DecimalDigitNumber:
+					case UnicodeCategory.NonSpacingMark:
+					case UnicodeCategory.SpacingCombiningMark:
+					case UnicodeCategory.Format:
+						ret.Append (ch);
+						break;
+						
+					default:
+						ret.Append ('_');
+						break;
+				}
+			}
+
+			return ret.ToString ();
+		}
 		
 		internal string ClassName {
 			get {
@@ -1023,20 +1080,12 @@ namespace System.Web.UI {
 					return className;
 				}
 				
-				if (StrUtils.StartsWith (inFile, physPath)) {
+				if (StrUtils.StartsWith (inFile, physPath))
 					className = inputFile.Substring (physPath.Length).ToLower (CultureInfo.InvariantCulture);
-					className = className.Replace ('.', '_');
-					className = className.Replace ('/', '_').Replace ('\\', '_');
-				} else
+				else
 #endif
-				className = Path.GetFileName (inputFile).Replace ('.', '_');
-				className = className.Replace ('-', '_'); 
-				className = className.Replace (' ', '_');
-
-				if (Char.IsDigit(className[0])) {
-					className = "_" + className;
-				}
-
+					className = Path.GetFileName (inputFile);
+				className = EncodeIdentifier (className);
 				return className;
 			}
 		}

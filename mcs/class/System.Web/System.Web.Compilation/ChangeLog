@@ -1,3 +1,9 @@
+2008-10-03  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: if an assembly fails to build out of a batch of
+	files, extract the virtual path that was requested by the client
+	and attempt to compile it alone.
+
 2008-09-29  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManagerRemoveEntryEventHandler.cs: added

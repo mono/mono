@@ -1,3 +1,8 @@
+2008-10-03  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateParser.cs: make sure the generated class name is a valid
+	language independent identifier. Fixes bug #431622
+
 2008-09-29  Marek Habersack  <mhabersack@novell.com>
 
 	* Page.cs: EnableViewState is initialized from the web

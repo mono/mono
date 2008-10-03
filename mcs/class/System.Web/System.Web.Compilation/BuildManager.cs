@@ -945,7 +945,7 @@ namespace System.Web.Compilation {
 		}
 		
 		static void AssignToAssemblyBuilder (string assemblyBaseName, VirtualPath virtualPath, BuildItem buildItem,
-						     Dictionary <Type, List <AssemblyBuilder>> assemblyBuilders)
+						     Dictionary <Type, List <AssemblyBuilder>> assemblyBuilders, bool forceOwnAssembly)
 		{
 			if (!buildItem.codeGenerated) {
 				buildItem.GenerateCode ();
@@ -960,16 +960,18 @@ namespace System.Web.Compilation {
 				assemblyBuilders.Add (buildItem.codeDomProviderType, builders);
 			}
 
-			// Put it in the first assembly builder that doesn't have conflicting
-			// partial types
-			foreach (AssemblyBuilder assemblyBuilder in builders) {
-				if (CanAcceptCode (assemblyBuilder, buildItem)) {
-					buildItem.assemblyBuilder = assemblyBuilder;
-					buildItem.StoreCodeUnit ();
-					return;
+			if (!forceOwnAssembly) {
+				// Put it in the first assembly builder that doesn't have conflicting
+				// partial types
+				foreach (AssemblyBuilder assemblyBuilder in builders) {
+					if (CanAcceptCode (assemblyBuilder, buildItem)) {
+						buildItem.assemblyBuilder = assemblyBuilder;
+						buildItem.StoreCodeUnit ();
+						return;
+					}
 				}
 			}
-
+			
 			// None of the existing builders can accept this unit, get it a new builder
 			builders.Add (CreateAssemblyBuilder (assemblyBaseName, virtualPath, buildItem));
 			buildItem.StoreCodeUnit ();
@@ -1027,6 +1029,9 @@ namespace System.Web.Compilation {
 				Dictionary <Type, List <AssemblyBuilder>> assemblyBuilders = new Dictionary <Type, List <AssemblyBuilder>> ();
 				bool checkForRecursion = buildKind == BuildKind.NonPages;
 				string buildItemVp;
+				BuildItem requestBuildItem = null;
+				AssemblyBuilder originalRequestAssemblyBuilder = null;
+				bool isRequestAssemblyBuilder = false;
 				
 				foreach (BuildItem buildItem in buildItems) {
 					buildItemVp = buildItem.VirtualPath;
@@ -1034,6 +1039,8 @@ namespace System.Web.Compilation {
 					if (buildItemVp == vpAbsolute) {
 						if (!buildItem.ProcessedFine)
 							throw buildItem.ProcessingException;
+						requestBuildItem = buildItem;
+						isRequestAssemblyBuilder = true;
 					} else if (!buildItem.ProcessedFine)
 						continue;
 
@@ -1048,8 +1055,8 @@ namespace System.Web.Compilation {
 					}
 
 					if (buildItem.assemblyBuilder == null)
-						AssignToAssemblyBuilder (assemblyBaseName, virtualPath, buildItem, assemblyBuilders);
-
+						AssignToAssemblyBuilder (assemblyBaseName, virtualPath, buildItem, assemblyBuilders, false);
+					
 					if (buildItem.assemblyBuilder == null && buildItemVp == vpAbsolute) {
 						Exception ex = buildItem.ProcessingException;
 						if (ex is HttpException)
@@ -1057,7 +1064,16 @@ namespace System.Web.Compilation {
 						else
 							throw new HttpException ("Error processing file at virtual path '" + virtualPath.Original + "'", ex);
 					}
+
+					if (isRequestAssemblyBuilder) {
+						isRequestAssemblyBuilder = false;
+						originalRequestAssemblyBuilder = buildItem.assemblyBuilder;
+					}
 				}
+
+				if (requestBuildItem != null)
+					AssignToAssemblyBuilder (assemblyBaseName, virtualPath, requestBuildItem, assemblyBuilders, true);
+				
 				CompilerResults results;
 				Assembly compiledAssembly;
 				string vp;
@@ -1066,7 +1082,16 @@ namespace System.Web.Compilation {
 				foreach (List <AssemblyBuilder> abuilders in assemblyBuilders.Values) {
 					foreach (AssemblyBuilder abuilder in abuilders) {
 						abuilder.AddAssemblyReference (GetReferencedAssemblies () as List <Assembly>);
-						results = abuilder.BuildAssembly (virtualPath);
+						try {
+							results = abuilder.BuildAssembly (virtualPath);
+						} catch (Exception ex) {
+							if (requestBuildItem != null && abuilder != originalRequestAssemblyBuilder)
+								throw;
+							// There will be another assembly containing
+							// just the requested virtual path, let's
+							// give it a chance
+							continue;
+						}
 						
 						// No results is not an error - it is possible that the assembly builder contained only .asmx and
 						// .ashx files which had no body, just the directive. In such case, no code unit or code file is added
