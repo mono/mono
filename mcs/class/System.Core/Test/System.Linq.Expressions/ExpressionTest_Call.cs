@@ -397,5 +397,29 @@ namespace MonoTests.System.Linq.Expressions {
 
 			Assert.AreEqual (42, lambda ().Invoke ());
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CallQueryableWhere ()
+		{
+			var queryable = new [] { 1, 2, 3 }.AsQueryable ();
+
+			var parameter = Expression.Parameter (typeof (int), "i");
+			var lambda = Expression.Lambda<Func<int, bool>> (
+				Expression.LessThan (parameter, Expression.Constant (2)),
+				parameter);
+
+			var selector = Expression.Quote (lambda);
+
+			var call = Expression.Call (
+				typeof (Queryable),
+				"Where",
+				new [] { typeof (int) },
+				queryable.Expression,
+				selector);
+
+			Assert.IsNotNull (call);
+			Assert.IsNotNull (call.Method);
+		}
 	}
 }
