@@ -1,5 +1,11 @@
 2008-10-03  Rodrigo Kumpera  <rkumpera@novell.com>
 	
+	* simd-intrinsics.c: Forgot to add this one.
+
+	* mini-codegen.c: Fix macro in case SIMD is not supported.
+
+2008-10-03  Rodrigo Kumpera  <rkumpera@novell.com>
+	
 	This patch land initial JIT support for simd intrinsics.
 
 	* mini-x86.h: Added new define to make --enable_minimal work on x86.
