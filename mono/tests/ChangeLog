@@ -1,5 +1,7 @@
 2008-10-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* invoke.cs: Fix this test after the ConstructorInfo changes.
+
 	* stack-overflow.cs: Fix warnings. Add unmanaged tests.
 
 2008-10-03  Mark Probst  <mark.probst@gmail.com>
