@@ -1,3 +1,10 @@
+2008-10-04  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-amd64.c (mono_arch_emit_call): Support stack arguments for
+	tail calls.
+
+	* iltests.il.in: Add test case for tail call with many arguments.
+
 2008-10-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir2): Add an !cfg->compile_aot assert
