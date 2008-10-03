@@ -404,7 +404,7 @@ namespace System.Windows.Forms
 
 		// XXX this should probably go away and it should call
 		// into Control.ImeMode instead.
-		new ImeMode ime_mode = ImeMode.Disable;
+		ImeMode ime_mode = ImeMode.Disable;
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]

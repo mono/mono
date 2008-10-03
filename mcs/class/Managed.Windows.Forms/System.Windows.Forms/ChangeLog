@@ -1,5 +1,13 @@
 2008-10-03  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* RTF.cs, Application.cs, BindingContext.cs, BindingSource.cs, 
+	ContextMenuStrip.cs, Control.cs, Hwnd.cs, Line.cs, MaskedTextBox.cs, 
+	ProgressBar.cs, SaveFileDialog.cs, TextControl.cs, Theme.cs, 
+	ToolBar.cs, ToolStripItemCollection.cs, TrackBar.cs: Cleanup 
+	compilation warnings.
+
+2008-10-03  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs, DataGridViewCell.cs, 
 	DataGridViewCellValidatingEventArgs.cs, 
 	DataGridViewComboBoxEditingControl.cs, DataGridViewHeaderCell.cs, 

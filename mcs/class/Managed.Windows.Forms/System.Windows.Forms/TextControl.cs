@@ -231,8 +231,6 @@ namespace System.Windows.Forms {
 		internal int		document_x;		// Width of the document
 		internal int		document_y;		// Height of the document
 
-		internal Rectangle	invalid;
-
 		internal int		crlf_size;		// 1 or 2, depending on whether we use \r\n or just \n
 
 		internal TextBoxBase	owner;			// Who's owning us?

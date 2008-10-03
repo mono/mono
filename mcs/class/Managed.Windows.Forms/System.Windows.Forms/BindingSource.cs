@@ -41,7 +41,6 @@ namespace System.Windows.Forms {
 		IList, ISupportInitializeNotification, ICollection,
 		IComponent, ICurrencyManagerProvider, IEnumerable 
 	{
-		ISite site;
 		bool is_initialized = true;
 
 		IList list;

@@ -202,6 +202,7 @@ namespace System.Windows.Forms
 #else
 			default_font = new Font (FontFamily.GenericSansSerif, 8.25f);
 #endif
+			syscolors = null;
 		}
 
 		private void SetSystemColors (KnownColor kc, Color value)

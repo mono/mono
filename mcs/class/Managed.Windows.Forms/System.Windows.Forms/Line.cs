@@ -58,7 +58,7 @@ namespace System.Windows.Forms
 		internal Line			left;			// Line with smaller line number
 		internal Line			right;			// Line with higher line number
 		internal LineColor		color;			// We're doing a black/red tree. this is the node color
-		internal int			DEFAULT_TEXT_LEN;	// 
+		static int			DEFAULT_TEXT_LEN = 0;	// 
 		internal bool			recalc;			// Line changed
 		#endregion	// Local Variables
 

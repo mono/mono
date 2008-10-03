@@ -264,7 +264,7 @@ namespace System.Windows.Forms
 				owner.PerformLayout ();
 		}
 
-		public new void RemoveAt (int index)
+		public void RemoveAt (int index)
 		{
 			if (this.IsReadOnly)
 				throw new NotSupportedException ("This collection is read-only");

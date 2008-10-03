@@ -52,7 +52,7 @@ namespace System.Windows.Forms {
 		
 		#region Public Instance Properties
 		[DefaultValue(false)]
-		public new bool CreatePrompt {
+		public bool CreatePrompt {
 			set {
 				createPrompt = value;
 			}
@@ -63,7 +63,7 @@ namespace System.Windows.Forms {
 		}
 		
 		[DefaultValue(true)]
-		public new bool OverwritePrompt {
+		public bool OverwritePrompt {
 			set {
 				overwritePrompt = value;
 			}

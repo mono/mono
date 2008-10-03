@@ -65,6 +65,7 @@ namespace System.Windows.Forms {
 		public BindingContext () 
 		{
 			managers = new Hashtable ();
+			onCollectionChangedHandler = null;
 		}
 
 		public bool IsReadOnly {

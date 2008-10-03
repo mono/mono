@@ -198,7 +198,7 @@ namespace System.Windows.Forms
 		}
 #endif
 #if NET_2_0
-		public new event EventHandler RightToLeftLayoutChanged {
+		public event EventHandler RightToLeftLayoutChanged {
 			add { Events.AddHandler (RightToLeftLayoutChangedEvent, value); }
 			remove { Events.RemoveHandler (RightToLeftLayoutChangedEvent, value); }
 		}

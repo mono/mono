@@ -812,9 +812,6 @@ namespace System.Windows.Forms
 				owner.UpdateChildrenZOrder ();
 			}
 
-#if NET_2_0
-			new
-#endif
 			public void RemoveAt (int index)
 			{
 				if (index < 0 || index >= list.Count)

@@ -100,6 +100,8 @@ namespace System.Windows.Forms.RTF {
 			line_pos = 0;
 			prev_char = unchecked((char)-1);
 			bump_line = false;
+			font_list = null;
+			charset_stack = null;
 
 			cur_charset = new Charset();
 

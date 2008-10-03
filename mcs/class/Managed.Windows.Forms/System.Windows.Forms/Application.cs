@@ -157,6 +157,7 @@ namespace System.Windows.Forms
 
 		private Application ()
 		{
+			browser_embedded = false;
 		}
 
 #if NET_2_0

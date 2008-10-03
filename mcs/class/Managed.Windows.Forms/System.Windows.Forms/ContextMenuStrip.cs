@@ -41,10 +41,12 @@ namespace System.Windows.Forms
 		#region Public Construtors
 		public ContextMenuStrip () : base ()
 		{
+			source_control = null;
 		}
 		
 		public ContextMenuStrip (IContainer container) : base ()
 		{
+			source_control = null;
 		}
 		#endregion
 

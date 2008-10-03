@@ -149,6 +149,7 @@ namespace System.Windows.Forms
 		{
 			BackColor = SystemColors.Window;
 			cut_copy_mask_format = MaskFormat.IncludeLiterals;
+			insert_key_overwriting = false;
 			UpdateVisibleText ();
 		}
 #endregion

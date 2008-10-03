@@ -121,6 +121,7 @@ namespace System.Windows.Forms {
 			drawing_stack = new Stack ();
 			children = new ArrayList ();
 			resizing_or_moving = false;
+			whacky_wm = false;
 		}
 
 		public void Dispose() {
