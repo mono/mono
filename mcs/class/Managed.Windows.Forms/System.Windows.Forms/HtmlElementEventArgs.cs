@@ -49,6 +49,19 @@ namespace System.Windows.Forms
 		#region Constructor
 		internal HtmlElementEventArgs ()
 		{
+			alt_key_pressed = false;
+			bubble_event = false;
+			client_mouse_position = Point.Empty;
+			ctrl_key_pressed = false;;
+			event_type = null;
+			from_element = null;
+			key_pressed_code = 0;
+			mouse_buttons_pressed = MouseButtons.None;
+			mouse_position = Point.Empty;
+			offset_mouse_position = Point.Empty;
+			return_value = false;
+			shift_key_pressed = false;
+			to_element = null;
 		}
 		#endregion
 

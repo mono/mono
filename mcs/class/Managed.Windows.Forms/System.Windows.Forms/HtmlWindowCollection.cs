@@ -35,8 +35,6 @@ namespace System.Windows.Forms
 	public class HtmlWindowCollection: ICollection, IEnumerable
 	{
 		private List<HtmlWindow> windows;
-		private Mono.WebBrowser.IWebBrowser webHost;
-		private WebBrowser owner;
 		
 
 		internal HtmlWindowCollection (WebBrowser owner, Mono.WebBrowser.IWebBrowser webHost, IWindowCollection col)
@@ -44,9 +42,6 @@ namespace System.Windows.Forms
 			windows = new List<HtmlWindow>();
 			foreach (IWindow window in col)
 				windows.Add (new HtmlWindow (owner, webHost, window));
-
-			this.webHost = webHost;
-			this.owner = owner;
 		}
 		
 		public int Count {

@@ -1,5 +1,10 @@
 2008-10-03  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* HtmlElementEventArgs.cs, HtmlWindowCollection.cs: 
+	Cleanup compilation warnings.
+
+2008-10-03  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* XplatUIWin32.cs: Cleanup compilation warnings.
 
 2008-10-03  Ivan N. Zlatev  <contact@i-nz.net>
