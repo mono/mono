@@ -1,3 +1,9 @@
+2008-10-03  Mark Probst  <mark.probst@gmail.com>
+
+	* object.c (mono_method_add_generic_virtual_invocation): Only add
+	instantiations to the thunk whose count is at least as large as
+	the threshold.
+
 2008-10-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* icall.c: changed the Type of the exception thrown when trying to
