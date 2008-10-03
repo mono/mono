@@ -634,7 +634,7 @@ namespace System.Web.Compilation {
 				SetCommonParameters (config, par);
 				return new CompilerType (info.CodeDomProviderType, par);
 			}
-			
+
 			throw new HttpException (String.Concat ("No compiler for language '", language, "'."));
 		}
 		
@@ -973,7 +973,9 @@ namespace System.Web.Compilation {
 			}
 			
 			// None of the existing builders can accept this unit, get it a new builder
-			builders.Add (CreateAssemblyBuilder (assemblyBaseName, virtualPath, buildItem));
+			AssemblyBuilder builder = CreateAssemblyBuilder (assemblyBaseName, virtualPath, buildItem);
+			if (!forceOwnAssembly)
+				builders.Add (builder);
 			buildItem.StoreCodeUnit ();
 		}
 
@@ -1071,62 +1073,24 @@ namespace System.Web.Compilation {
 					}
 				}
 
-				if (requestBuildItem != null)
-					AssignToAssemblyBuilder (assemblyBaseName, virtualPath, requestBuildItem, assemblyBuilders, true);
-				
-				CompilerResults results;
-				Assembly compiledAssembly;
-				string vp;
-				BuildProvider bp;
-
+				bool needToBuildRequestItemAlone = false;
 				foreach (List <AssemblyBuilder> abuilders in assemblyBuilders.Values) {
 					foreach (AssemblyBuilder abuilder in abuilders) {
-						abuilder.AddAssemblyReference (GetReferencedAssemblies () as List <Assembly>);
 						try {
-							results = abuilder.BuildAssembly (virtualPath);
+							GenerateAssembly (abuilder, buildItems, virtualPath, buildKind);
 						} catch (Exception ex) {
-							if (requestBuildItem != null && abuilder != originalRequestAssemblyBuilder)
+							if (requestBuildItem == null || abuilder != originalRequestAssemblyBuilder)
 								throw;
 							// There will be another assembly containing
 							// just the requested virtual path, let's
 							// give it a chance
-							continue;
+							needToBuildRequestItemAlone = true;
 						}
-						
-						// No results is not an error - it is possible that the assembly builder contained only .asmx and
-						// .ashx files which had no body, just the directive. In such case, no code unit or code file is added
-						// to the assembly builder and, in effect, no assembly is produced but there are STILL types that need
-						// to be added to the cache.
-						compiledAssembly = results != null ? results.CompiledAssembly : null;
-						
-						lock (buildCacheLock) {
-							switch (buildKind) {
-								case BuildKind.NonPages:
-									if (compiledAssembly != null)
-										AddToReferencedAssemblies (compiledAssembly);
-									break;
 
- 								case BuildKind.Application:
- 									globalAsaxAssembly = compiledAssembly;
- 									break;
-							}
-							
-							foreach (BuildItem buildItem in buildItems) {
-								if (!buildItem.ProcessedFine || buildItem.assemblyBuilder != abuilder)
-									continue;
-								
-								vp = buildItem.VirtualPath;
-								bp = buildItem.buildProvider;
-								buildItem.SetCompiledAssembly (abuilder, compiledAssembly);
-								
-								if (!buildCache.ContainsKey (vp)) {
-									AddToCache (vp, bp);
-									buildCache.Add (vp, new BuildCacheItem (compiledAssembly, bp, results));
-								}
-
-								if (compiledAssembly != null && !nonPagesCache.ContainsKey (vp))
-									nonPagesCache.Add (vp, compiledAssembly);
-							}
+						if (needToBuildRequestItemAlone) {
+							AssignToAssemblyBuilder (assemblyBaseName, virtualPath, requestBuildItem, assemblyBuilders, true);
+							GenerateAssembly (requestBuildItem.assemblyBuilder, buildItems, virtualPath, buildKind);
+							needToBuildRequestItemAlone = false;
 						}
 					}
 				}
@@ -1152,6 +1116,53 @@ namespace System.Web.Compilation {
 			}
 		}
 
+		static void GenerateAssembly (AssemblyBuilder abuilder, List <BuildItem> buildItems, VirtualPath virtualPath, BuildKind buildKind)
+		{
+			CompilerResults results;
+			Assembly compiledAssembly;
+			string vp;
+			BuildProvider bp;
+			
+			abuilder.AddAssemblyReference (GetReferencedAssemblies () as List <Assembly>);
+			results = abuilder.BuildAssembly (virtualPath);
+						
+			// No results is not an error - it is possible that the assembly builder contained only .asmx and
+			// .ashx files which had no body, just the directive. In such case, no code unit or code file is added
+			// to the assembly builder and, in effect, no assembly is produced but there are STILL types that need
+			// to be added to the cache.
+			compiledAssembly = results != null ? results.CompiledAssembly : null;
+						
+			lock (buildCacheLock) {
+				switch (buildKind) {
+					case BuildKind.NonPages:
+						if (compiledAssembly != null)
+							AddToReferencedAssemblies (compiledAssembly);
+						break;
+
+					case BuildKind.Application:
+						globalAsaxAssembly = compiledAssembly;
+						break;
+				}
+							
+				foreach (BuildItem buildItem in buildItems) {
+					if (!buildItem.ProcessedFine || buildItem.assemblyBuilder != abuilder)
+						continue;
+								
+					vp = buildItem.VirtualPath;
+					bp = buildItem.buildProvider;
+					buildItem.SetCompiledAssembly (abuilder, compiledAssembly);
+								
+					if (!buildCache.ContainsKey (vp)) {
+						AddToCache (vp, bp);
+						buildCache.Add (vp, new BuildCacheItem (compiledAssembly, bp, results));
+					}
+
+					if (compiledAssembly != null && !nonPagesCache.ContainsKey (vp))
+						nonPagesCache.Add (vp, compiledAssembly);
+				}
+			}
+		}
+		
 		internal static void AddToReferencedAssemblies (Assembly asm)
 		{
 			lock (buildCacheLock) {
