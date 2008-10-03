@@ -1,3 +1,8 @@
+2008-10-03  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-virtual.2.cs: Iterate the test to make the generic
+	virtual method chunks kick in.
+
 2008-10-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* invoke.cs: Fix this test after the ConstructorInfo changes.
