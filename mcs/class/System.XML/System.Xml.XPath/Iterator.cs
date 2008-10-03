@@ -91,7 +91,8 @@ namespace System.Xml.XPath
 
 		public override bool MoveNext ()
 		{
-if (CurrentPosition == 0 && Current != null) throw new Exception (GetType ().FullName);
+// FIXME: enable this line once I found the culprit of a breakage in WrapperIterator. And remove it again in the final stage.
+//if (CurrentPosition == 0 && Current != null) throw new Exception (GetType ().FullName);
 			if (!MoveNextCore ())
 				return false;
 			position++;
@@ -148,8 +149,10 @@ if (CurrentPosition == 0 && Current != null) throw new Exception (GetType ().Ful
 
 		public SimpleIterator (BaseIterator iter) : base (iter.NamespaceManager)
 		{
-			if (iter.CurrentPosition == 0)
-				skipfirst = iter.MoveNext ();
+			if (iter.CurrentPosition == 0) {
+				skipfirst = true;
+				iter.MoveNext ();
+			}
 			if (iter.CurrentPosition > 0)
 				_nav = iter.Current.Clone ();
 		}
@@ -167,6 +170,8 @@ if (CurrentPosition == 0 && Current != null) throw new Exception (GetType ().Ful
 		public override bool MoveNext ()
 		{
 			if (skipfirst) {
+				if (_nav == null)
+					return false; // empty
 				skipfirst = false;
 				base.SetPosition (1);
 				return true;

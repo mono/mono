@@ -1,3 +1,7 @@
+2008-10-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslTransformProcessor.cs : reduce BaseIterator dependency.
+
 2008-10-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* GenericOutputter.cs : fix dummy namespace generation. (It might be

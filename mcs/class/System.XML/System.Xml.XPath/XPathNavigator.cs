@@ -629,10 +629,13 @@ namespace System.Xml.XPath
 			n.MoveToParent ();
 			XPathNavigator nav = n.Clone ();
 			nav.MoveToFirstChild ();
-			XPathNavigator nav2 = nav.Clone ();
+			XPathNavigator nav2 = null;
 			do {
-				if (nav.NodeType == type) {
-					nav2.MoveTo (nav);
+				if (type == XPathNodeType.All || nav.NodeType == type) {
+					if (nav2 == null)
+						nav2 = nav.Clone ();
+					else
+						nav2.MoveTo (nav);
 					yield return nav2;
 				}
 			} while (nav.MoveToNext ());
@@ -640,11 +643,12 @@ namespace System.Xml.XPath
 
 		public virtual XPathNodeIterator SelectChildren (XPathNodeType type)
 		{
-#if true
+#if false
 			return SelectTest (new NodeTypeTest (Axes.Child, type));
 #else
-//			return new WrapperIterator (new EnumerableIterator (SelectTest (new NodeTypeTest (Axes.Child, type)), 0));
-			return new WrapperIterator (new EnumerableIterator (EnumerateChildren (this, type), 0), new XmlNamespaceManager (NameTable));
+			return new WrapperIterator (new EnumerableIterator (EnumerateChildren (this, type), 0), null);
+			// FIXME: make it work i.e. remove dependency on BaseIterator
+//			return new EnumerableIterator (EnumerateChildren (this, type), 0);
 #endif
 		}
 
@@ -671,12 +675,12 @@ namespace System.Xml.XPath
 			if (namespaceURI == null)
 				throw new ArgumentNullException ("namespaceURI");
 
-#if true
+#if false
 			Axes axis = Axes.Child;
 			XmlQualifiedName qname = new XmlQualifiedName (name, namespaceURI);
 			return SelectTest (new NodeNameTest (axis, qname, true));
 #else
-			return new WrapperIterator (new EnumerableIterator (EnumerateChildren (this, name, namespaceURI), 0), new XmlNamespaceManager (NameTable));
+			return new WrapperIterator (new EnumerableIterator (EnumerateChildren (this, name, namespaceURI), 0), null);
 #endif
 		}
 

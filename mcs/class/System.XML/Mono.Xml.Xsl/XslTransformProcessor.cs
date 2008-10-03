@@ -475,8 +475,10 @@ CurrentNodeset.MoveNext ();
 
 		public void PushNodeset (XPathNodeIterator itr)
 		{
-			((BaseIterator) itr).NamespaceManager = XPathContext;
-			nodesetStack.Add (itr);
+			BaseIterator bi = itr as BaseIterator;
+			bi = bi != null ? bi : new WrapperIterator (itr, null);
+			bi.NamespaceManager = XPathContext;
+			nodesetStack.Add (bi);
 		}
 		
 		public void PopNodeset ()
