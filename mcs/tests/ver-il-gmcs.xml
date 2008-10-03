@@ -1608,7 +1608,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerable`1 Test(Int32, Int64)">
-        <size>30</size>
+        <size>44</size>
       </method>
       <method name="Int32 Main()">
         <size>87</size>
@@ -1637,7 +1637,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()">
-        <size>65</size>
+        <size>52</size>
       </method>
     </type>
   </test>
@@ -4228,7 +4228,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 getEnumerator(Int32)">
-        <size>15</size>
+        <size>22</size>
       </method>
     </type>
     <type name="X">
@@ -4318,7 +4318,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerable GetIt(System.Int32[])">
-        <size>23</size>
+        <size>30</size>
       </method>
       <method name="Int32 Main()">
         <size>117</size>
@@ -4364,7 +4364,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
       </method>
     </type>
   </test>
@@ -4747,7 +4747,7 @@
         <size>1</size>
       </method>
       <method name="IEnumerable get_Item(Int32)">
-        <size>23</size>
+        <size>30</size>
       </method>
       <method name="Void set_Item(Int32, IEnumerable)">
         <size>1</size>
@@ -4803,7 +4803,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
       </method>
     </type>
   </test>
@@ -4834,7 +4834,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerable`1 Lookup(T)">
-        <size>23</size>
+        <size>30</size>
       </method>
     </type>
     <type name="test.Program">
@@ -4868,7 +4868,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
       </method>
     </type>
   </test>
@@ -5070,7 +5070,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerable`1 Replace[T](T)">
-        <size>23</size>
+        <size>30</size>
       </method>
     </type>
     <type name="Test6.Test">
@@ -5078,7 +5078,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerable`1 Replace[T](T)">
-        <size>23</size>
+        <size>30</size>
       </method>
     </type>
     <type name="Test7.Test">
@@ -5086,7 +5086,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerable`1 Replace[T](T[])">
-        <size>23</size>
+        <size>30</size>
       </method>
     </type>
     <type name="X">
@@ -5242,7 +5242,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
-        <size>39</size>
+        <size>26</size>
       </method>
     </type>
     <type name="Test2.Test`1+&lt;Replace&gt;c__Iterator1`1[S,T]">
@@ -5250,7 +5250,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
-        <size>39</size>
+        <size>26</size>
       </method>
     </type>
     <type name="Test3.Test`1+&lt;Replace&gt;c__Iterator2`1[S,T]">
@@ -5258,7 +5258,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;S,T&gt;&gt;.GetEnumerator()">
-        <size>39</size>
+        <size>26</size>
       </method>
     </type>
     <type name="Test4.Test+&lt;Replace&gt;c__Iterator3`1[T]">
@@ -5266,7 +5266,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
-        <size>39</size>
+        <size>26</size>
       </method>
     </type>
     <type name="Test5.Test+&lt;Replace&gt;c__Iterator4`1[T]">
@@ -5274,7 +5274,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
       </method>
     </type>
     <type name="Test6.Test+&lt;Replace&gt;c__Iterator5`1[T]">
@@ -5282,7 +5282,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
       </method>
     </type>
     <type name="Test7.Test+&lt;Replace&gt;c__Iterator6`1[T]">
@@ -5290,7 +5290,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T[]&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
       </method>
     </type>
   </test>
@@ -5310,7 +5310,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 EnumerateKeys(RedBlackTree`1+RangeTester[System.Collections.Generic.KeyValuePair`2[T,U]])">
-        <size>22</size>
+        <size>29</size>
       </method>
     </type>
     <type name="RedBlackTree`1[S]">
@@ -5390,7 +5390,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;S&gt;.GetEnumerator()">
-        <size>39</size>
+        <size>26</size>
       </method>
     </type>
   </test>
@@ -5408,7 +5408,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 EnumerateKeys(RedBlackTree`1+RangeTester[System.Collections.Generic.KeyValuePair`2[T,U]])">
-        <size>22</size>
+        <size>29</size>
       </method>
     </type>
     <type name="X">
@@ -5475,7 +5475,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;S&gt;.GetEnumerator()">
-        <size>39</size>
+        <size>26</size>
       </method>
     </type>
     <type name="OrderedMultiDictionary`2+&lt;EnumerateKeys&gt;c__Iterator1[T,U]">
@@ -6005,13 +6005,13 @@
         <size>7</size>
       </method>
       <method name="IEnumerable`1 Map[Aa,Af,Rf,Rr](Fun`2[Af,Rf], IEnumerable`1)">
-        <size>30</size>
+        <size>44</size>
       </method>
       <method name="Void Main(System.String[])">
         <size>100</size>
       </method>
       <method name="IEnumerable`1 FromTo(Int32, Int32)">
-        <size>30</size>
+        <size>44</size>
       </method>
     </type>
     <type name="Fun`2[A1,R]">
@@ -6078,7 +6078,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;Rr&gt;.GetEnumerator()">
-        <size>65</size>
+        <size>52</size>
       </method>
     </type>
     <type name="MyTest+&lt;FromTo&gt;c__Iterator1">
@@ -6086,7 +6086,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()">
-        <size>65</size>
+        <size>52</size>
       </method>
     </type>
   </test>
@@ -6378,7 +6378,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerable`1 Merge[T](IEnumerator`1)">
-        <size>23</size>
+        <size>30</size>
       </method>
       <method name="Void Main(System.String[])">
         <size>1</size>
@@ -6407,7 +6407,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
       </method>
     </type>
   </test>
@@ -7243,7 +7243,7 @@
     </type>
     <type name="ConvertHelper">
       <method name="IEnumerator`1 Test[S,T](S)">
-        <size>15</size>
+        <size>22</size>
       </method>
       <method name="Void Main()">
         <size>1</size>
@@ -10199,7 +10199,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;bool&gt;.GetEnumerator()">
-        <size>39</size>
+        <size>26</size>
       </method>
     </type>
     <type name="TestGoto+&lt;test&gt;c__Iterator1">
@@ -10207,7 +10207,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;bool&gt;.GetEnumerator()">
-        <size>39</size>
+        <size>26</size>
       </method>
     </type>
   </test>
@@ -11033,7 +11033,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerable`1 Test[T](T, T)">
-        <size>30</size>
+        <size>44</size>
       </method>
       <method name="Int32 Main()">
         <size>100</size>
@@ -11062,7 +11062,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
-        <size>65</size>
+        <size>52</size>
       </method>
     </type>
   </test>
@@ -12397,7 +12397,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()">
-        <size>39</size>
+        <size>26</size>
       </method>
     </type>
   </test>
@@ -12678,7 +12678,7 @@
         <size>8</size>
       </method>
       <method name="IEnumerable`1 Test(Foo)">
-        <size>35</size>
+        <size>42</size>
       </method>
       <method name="Void Hello(Int32)">
         <size>19</size>
@@ -12692,7 +12692,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;Foo&gt;.GetEnumerator()">
-        <size>65</size>
+        <size>52</size>
       </method>
     </type>
   </test>
@@ -12754,7 +12754,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerable`1 Test(Int32)">
-        <size>23</size>
+        <size>30</size>
       </method>
       <method name="Void Main()">
         <size>63</size>
@@ -12783,7 +12783,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
       </method>
     </type>
   </test>
@@ -12845,7 +12845,7 @@
         <size>30</size>
       </method>
       <method name="IEnumerable`1 op_Addition(Test, Test)">
-        <size>30</size>
+        <size>44</size>
       </method>
     </type>
     <type name="Foo">
@@ -12912,7 +12912,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()">
-        <size>39</size>
+        <size>26</size>
       </method>
     </type>
     <type name="Test+&lt;op_Addition&gt;c__Iterator1">
@@ -12920,7 +12920,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;Test&gt;.GetEnumerator()">
-        <size>65</size>
+        <size>52</size>
       </method>
     </type>
   </test>
@@ -15688,7 +15688,7 @@
         <size>23</size>
       </method>
       <method name="IEnumerable`1 Annotations(System.Type)">
-        <size>30</size>
+        <size>37</size>
       </method>
       <method name="Void Main()">
         <size>14</size>
@@ -15739,7 +15739,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
       </method>
     </type>
     <type name="Test+&lt;Annotations&gt;c__Iterator1">
@@ -15747,7 +15747,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>65</size>
+        <size>52</size>
       </method>
     </type>
   </test>
@@ -15797,7 +15797,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
       </method>
     </type>
   </test>
@@ -15807,7 +15807,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerable`1 TestRoutine[T](IEnumerable`1, Foo`1[T])">
-        <size>30</size>
+        <size>44</size>
       </method>
       <method name="Void Main()">
         <size>31</size>
@@ -15844,7 +15844,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
-        <size>65</size>
+        <size>52</size>
       </method>
     </type>
   </test>
@@ -15859,7 +15859,7 @@
         <size>8</size>
       </method>
       <method name="IEnumerable`1 CreateUnfoldrIterator[TSource,TResult](TSource, System.Func`2[TSource,System.Nullable`1[System.Collections.Generic.KeyValuePair`2[TResult,TSource]]])">
-        <size>30</size>
+        <size>44</size>
       </method>
     </type>
     <type name="Mono.Rocks.Test">
@@ -15896,7 +15896,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;TResult&gt;.GetEnumerator()">
-        <size>65</size>
+        <size>52</size>
       </method>
     </type>
   </test>
@@ -15943,7 +15943,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;string&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
       </method>
     </type>
   </test>
@@ -15992,7 +15992,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>39</size>
+        <size>26</size>
       </method>
     </type>
   </test>
@@ -16002,7 +16002,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerable`1 Create[T](T[,])">
-        <size>23</size>
+        <size>30</size>
       </method>
       <method name="Int32 Main()">
         <size>99</size>
@@ -16031,7 +16031,46 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-iter-10.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerable`1 FromTo(Int32, Int32)">
+        <size>44</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>168</size>
+      </method>
+    </type>
+    <type name="Test+&lt;FromTo&gt;c__Iterator0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>12</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()">
+        <size>52</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>103</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>8</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
       </method>
     </type>
   </test>
@@ -17114,7 +17153,7 @@
     </type>
     <type name="NameCollisionTest.Ex">
       <method name="IEnumerable`1 Foo[T,TR](IEnumerable`1, System.Func`2[T,TR])">
-        <size>30</size>
+        <size>44</size>
       </method>
     </type>
     <type name="NameCollisionTest.C">
@@ -17154,7 +17193,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;TR&gt;.GetEnumerator()">
-        <size>65</size>
+        <size>52</size>
       </method>
     </type>
   </test>
@@ -26857,7 +26896,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>39</size>
+        <size>26</size>
       </method>
     </type>
   </test>
@@ -31375,7 +31414,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>39</size>
+        <size>26</size>
       </method>
     </type>
   </test>
@@ -31834,7 +31873,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>39</size>
+        <size>26</size>
       </method>
     </type>
   </test>
@@ -34475,7 +34514,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerable testen(Int32)">
-        <size>23</size>
+        <size>30</size>
       </method>
     </type>
     <type name="reflect">
@@ -34509,7 +34548,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
       </method>
     </type>
   </test>
@@ -35409,7 +35448,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerable Foo(Int32)">
-        <size>23</size>
+        <size>30</size>
       </method>
     </type>
     <type name="X">
@@ -35443,7 +35482,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
       </method>
     </type>
   </test>
@@ -35485,7 +35524,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator GetIt(System.Int32[])">
-        <size>15</size>
+        <size>22</size>
       </method>
       <method name="Int32 Main()">
         <size>33</size>
@@ -35986,7 +36025,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator GetIt(System.Int32[])">
-        <size>15</size>
+        <size>22</size>
       </method>
       <method name="Int32 Main()">
         <size>34</size>
@@ -37710,7 +37749,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>39</size>
+        <size>26</size>
       </method>
     </type>
   </test>
@@ -37753,10 +37792,10 @@
         <size>7</size>
       </method>
       <method name="IEnumerable GetIt(System.Int32[])">
-        <size>23</size>
+        <size>30</size>
       </method>
       <method name="IEnumerable GetMulti(System.Int32[,])">
-        <size>23</size>
+        <size>30</size>
       </method>
       <method name="Int32 Main()">
         <size>237</size>
@@ -37812,7 +37851,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
       </method>
     </type>
     <type name="X+&lt;GetMulti&gt;c__Iterator1">
@@ -37820,7 +37859,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
       </method>
     </type>
   </test>
@@ -37830,7 +37869,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerable GetRange(Int32, Int32)">
-        <size>30</size>
+        <size>44</size>
       </method>
       <method name="Void Main()">
         <size>97</size>
@@ -37859,7 +37898,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>65</size>
+        <size>52</size>
       </method>
     </type>
   </test>
@@ -37928,7 +37967,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>39</size>
+        <size>26</size>
       </method>
     </type>
   </test>
@@ -37938,10 +37977,10 @@
         <size>7</size>
       </method>
       <method name="IEnumerable Get(Int32)">
-        <size>23</size>
+        <size>30</size>
       </method>
       <method name="IEnumerable GetS(Int32)">
-        <size>23</size>
+        <size>30</size>
       </method>
       <method name="Int32 Main()">
         <size>383</size>
@@ -38029,10 +38068,10 @@
     </type>
     <type name="S">
       <method name="IEnumerable Get(Int32)">
-        <size>35</size>
+        <size>42</size>
       </method>
       <method name="IEnumerable GetS(Int32)">
-        <size>23</size>
+        <size>30</size>
       </method>
     </type>
     <type name="S+&lt;Get&gt;c__Iterator0">
@@ -38040,7 +38079,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>65</size>
+        <size>52</size>
       </method>
     </type>
     <type name="S+&lt;GetS&gt;c__Iterator1">
@@ -38048,7 +38087,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
       </method>
     </type>
     <type name="X+&lt;Get&gt;c__Iterator2">
@@ -38056,7 +38095,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
       </method>
     </type>
     <type name="X+&lt;GetS&gt;c__Iterator3">
@@ -38064,7 +38103,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
       </method>
     </type>
   </test>
@@ -38074,7 +38113,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerable Foo(Int32)">
-        <size>23</size>
+        <size>30</size>
       </method>
     </type>
     <type name="X">
@@ -38108,7 +38147,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
       </method>
     </type>
   </test>
@@ -38126,7 +38165,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerable Test(Int32, Int32)">
-        <size>30</size>
+        <size>44</size>
       </method>
       <method name="Int32 Main()">
         <size>169</size>
@@ -38155,7 +38194,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>65</size>
+        <size>52</size>
       </method>
     </type>
   </test>
@@ -38209,7 +38248,7 @@
         <size>1</size>
       </method>
       <method name="IEnumerable get_Item(Int32)">
-        <size>23</size>
+        <size>30</size>
       </method>
       <method name="Void set_Item(Int32, IEnumerable)">
         <size>1</size>
@@ -38265,7 +38304,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
       </method>
     </type>
   </test>
@@ -38346,7 +38385,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>53</size>
+        <size>40</size>
       </method>
     </type>
   </test>
@@ -38396,7 +38435,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>39</size>
+        <size>26</size>
       </method>
     </type>
   </test>
@@ -38712,7 +38751,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>39</size>
+        <size>26</size>
       </method>
     </type>
   </test>
@@ -38843,7 +38882,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>39</size>
+        <size>26</size>
       </method>
     </type>
     <type name="Foo.X+&lt;&gt;c__Iterator1">
@@ -38851,7 +38890,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>39</size>
+        <size>26</size>
       </method>
     </type>
     <type name="Foo.X+&lt;&gt;c__Iterator2">
@@ -38859,7 +38898,7 @@
         <size>7</size>
       </method>
       <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;object&gt;.GetEnumerator()">
-        <size>39</size>
+        <size>26</size>
       </method>
     </type>
   </test>
