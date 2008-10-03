@@ -53,7 +53,6 @@ namespace System.Windows.Forms {
 		internal static Rectangle	grab_area;
 		internal static WndProc		wnd_proc;
 		internal static IntPtr		prev_mouse_hwnd;
-		internal static IntPtr		override_cursor;
 		internal static bool		caret_visible;
 
 		internal static bool		themes_enabled;
@@ -842,6 +841,9 @@ namespace System.Windows.Forms {
 
 			mouse_state = MouseButtons.None;
 			mouse_position = Point.Empty;
+
+			grab_confined = false;
+			grab_area = Rectangle.Empty;
 
 			message_queue = new Queue();
 
@@ -1941,10 +1943,6 @@ namespace System.Windows.Forms {
 
 		internal override void DoEvents() {
 			MSG msg = new MSG();
-
-			if (override_cursor != IntPtr.Zero) {
-				Cursor.Current = null;
-			}
 
 			while (GetMessage(ref msg, IntPtr.Zero, 0, 0, false)) {
 				XplatUI.TranslateMessage(ref msg);
