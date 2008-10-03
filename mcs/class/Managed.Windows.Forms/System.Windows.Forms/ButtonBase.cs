@@ -67,8 +67,8 @@ namespace System.Windows.Forms {
 		protected ButtonBase() : base()
 		{
 			flat_style	= FlatStyle.Standard;
-#if NET_2_0
 			flat_button_appearance = new FlatButtonAppearance (this);
+#if NET_2_0
 			this.image_key = string.Empty;
 			this.text_image_relation = TextImageRelation.Overlay;
 			this.use_mnemonic = true;

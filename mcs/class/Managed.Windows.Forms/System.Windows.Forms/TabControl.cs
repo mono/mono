@@ -213,7 +213,11 @@ namespace System.Windows.Forms {
 		}
 
 		[Localizable(true)]
-		public new Point Padding {
+		public
+#if NET_2_0
+		new
+#endif
+		Point Padding {
 			get { return padding; }
 			set {
 				if (value.X < 0 || value.Y < 0)

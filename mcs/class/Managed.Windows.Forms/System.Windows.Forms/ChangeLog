@@ -1,3 +1,9 @@
+2008-10-04  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ButtonBase.cs, Control.cs, Label.cs, PictureBox.cs, TabControl.cs, 
+	TextBoxBase.cs, ToolBar.cs, TrackBar.cs, TreeView.cs: Cleanup 
+	compilation warnings.
+
 2008-10-03  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* RTF.cs, Application.cs, BindingContext.cs, BindingSource.cs, 

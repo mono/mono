@@ -72,7 +72,11 @@ namespace System.Windows.Forms
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 #endif
-		public new event EventHandler AutoSizeChanged {
+		public
+#if NET_2_0
+		new
+#endif
+		event EventHandler AutoSizeChanged {
 			add { Events.AddHandler (AutoSizeChangedEvent, value); }
 			remove { Events.RemoveHandler (AutoSizeChangedEvent, value); }
 		}

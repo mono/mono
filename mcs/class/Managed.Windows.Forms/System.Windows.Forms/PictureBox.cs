@@ -68,6 +68,7 @@ namespace System.Windows.Forms {
 		public PictureBox ()
 		{
 			//recalc = true;
+			no_update = 0;
 #if NET_2_0
 			SetStyle (ControlStyles.OptimizedDoubleBuffer, true);
 #else

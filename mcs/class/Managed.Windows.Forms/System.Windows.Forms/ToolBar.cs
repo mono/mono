@@ -218,8 +218,6 @@ namespace System.Windows.Forms
 		public 
 #if NET_2_0
 		override
-#else
-		new
 #endif
 		bool AutoSize {
 			get { return autosize; }

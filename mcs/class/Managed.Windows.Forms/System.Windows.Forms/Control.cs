@@ -1053,6 +1053,7 @@ namespace System.Windows.Forms
 			use_compatible_text_rendering = true;
 			show_keyboard_cues = false;
 			show_focus_cues = SystemInformation.MenuAccessKeysUnderlined;
+			use_wait_cursor = false;
 
 #if NET_2_0
 			backgroundimage_layout = ImageLayout.Tile;

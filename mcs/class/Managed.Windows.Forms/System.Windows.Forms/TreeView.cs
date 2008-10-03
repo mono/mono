@@ -123,6 +123,7 @@ namespace System.Windows.Forms {
 			InternalBorderStyle = BorderStyle.Fixed3D;
 			base.background_color = ThemeEngine.Current.ColorWindow;
 			base.foreground_color = ThemeEngine.Current.ColorWindowText;
+			draw_mode = TreeViewDrawMode.Normal;
 
 			root_node = new TreeNode (this);
 			root_node.Text = "ROOT NODE";
