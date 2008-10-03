@@ -317,9 +317,7 @@ namespace Mono.CSharp {
 			ec.CurrentAnonymousMethod = null;
 
 			if (hoisted_params != null) {
-				foreach (HoistedParameter hp in hoisted_params) {
-					hp.EmitHoistingAssignment (ec);
-				}
+				EmitHoistedParameters (ec, hoisted_params);
 			}
 
 			if (hoisted_this != null) {
@@ -327,6 +325,13 @@ namespace Mono.CSharp {
 			}
 
 			ec.CurrentAnonymousMethod = ae;
+		}
+
+		protected virtual void EmitHoistedParameters (EmitContext ec, ArrayList hoisted)
+		{
+			foreach (HoistedParameter hp in hoisted) {
+				hp.EmitHoistingAssignment (ec);
+			}
 		}
 
 		public override void EmitType ()
@@ -691,7 +696,7 @@ namespace Mono.CSharp {
 
 	class HoistedParameter : HoistedVariable
 	{
-		class HoistedFieldAssign : Assign
+		sealed class HoistedFieldAssign : Assign
 		{
 			public HoistedFieldAssign (Expression target, Expression source)
 				: base (target, source, source.Location)
@@ -714,6 +719,12 @@ namespace Mono.CSharp {
 			: base (scope, par.Name, par.Type)
 		{
 			this.parameter = par;
+		}
+
+		public HoistedParameter (HoistedParameter hp, string name)
+			: base (hp.storey, name, hp.parameter.Type)
+		{
+			this.parameter = hp.parameter;
 		}
 
 		public void EmitHoistingAssignment (EmitContext ec)

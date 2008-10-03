@@ -207,7 +207,7 @@ namespace Mono.CSharp {
 				IteratorStorey host;
 				Expression type;
 
-				Expression cast;
+				Expression new_storey;
 
 				public GetEnumeratorStatement (IteratorStorey host, Expression type)
 				{
@@ -228,7 +228,6 @@ namespace Mono.CSharp {
 						return false;
 
 					TypeExpression storey_type_expr = new TypeExpression (host.TypeBuilder, loc);
-					Expression new_storey;
 					ArrayList init = null;
 					if (host.hoisted_this != null) {
 						init = new ArrayList (host.hoisted_params == null ? 1 : host.HoistedParameters.Count + 1);
@@ -242,9 +241,13 @@ namespace Mono.CSharp {
 						if (init == null)
 							init = new ArrayList (host.HoistedParameters.Count);
 
-						foreach (HoistedParameter hp in host.HoistedParameters) {
-							FieldExpr from = new FieldExpr (hp.Field.FieldBuilder, loc);
+						for (int i = 0; i < host.hoisted_params.Count; ++i) {
+							HoistedParameter hp = (HoistedParameter) host.hoisted_params [i];
+							HoistedParameter hp_cp = (HoistedParameter) host.hoisted_params_copy [i];
+
+							FieldExpr from = new FieldExpr (hp_cp.Field.FieldBuilder, loc);
 							from.InstanceExpression = CompilerGeneratedThis.Instance;
+
 							init.Add (new ElementInitializer (hp.Field.Name, from, loc));
 						}
 					}
@@ -258,7 +261,7 @@ namespace Mono.CSharp {
 
 					new_storey = new_storey.Resolve (ec);
 					if (new_storey != null)
-						cast = Convert.ImplicitConversionRequired (ec, new_storey, type.Type, loc);
+						new_storey = Convert.ImplicitConversionRequired (ec, new_storey, type.Type, loc);
 
 					if (TypeManager.int_interlocked_compare_exchange == null) {
 						Type t = TypeManager.CoreLookupType ("System.Threading", "Interlocked", Kind.Class, true);
@@ -280,19 +283,19 @@ namespace Mono.CSharp {
 
 					ig.Emit (OpCodes.Ldarg_0);
 					ig.Emit (OpCodes.Ldflda, host.PC.FieldBuilder);
-					ig.Emit (OpCodes.Ldc_I4, (int) Iterator.State.Start);
-					ig.Emit (OpCodes.Ldc_I4, (int) Iterator.State.Uninitialized);
+					IntConstant.EmitInt (ig, (int) Iterator.State.Start);
+					IntConstant.EmitInt (ig, (int) Iterator.State.Uninitialized);
 					ig.Emit (OpCodes.Call, TypeManager.int_interlocked_compare_exchange);
 
-					ig.Emit (OpCodes.Ldc_I4, (int) Iterator.State.Uninitialized);
-					ig.Emit (OpCodes.Bne_Un, label_init);
+					IntConstant.EmitInt (ig, (int) Iterator.State.Uninitialized);
+					ig.Emit (OpCodes.Bne_Un_S, label_init);
 
 					ig.Emit (OpCodes.Ldarg_0);
 					ig.Emit (OpCodes.Ret);
 
 					ig.MarkLabel (label_init);
 
-					cast.Emit (ec);
+					new_storey.Emit (ec);
 					ig.Emit (OpCodes.Ret);
 				}
 
@@ -390,6 +393,7 @@ namespace Mono.CSharp {
 		const TypeArguments generic_args = null;
 #endif
 
+		ArrayList hoisted_params_copy;
 		int local_name_idx;
 
 		public IteratorStorey (Iterator iterator)
@@ -463,6 +467,20 @@ namespace Mono.CSharp {
 			pc_field = AddCompilerGeneratedField ("$PC", TypeManager.system_int32_expr);
 			current_field = AddCompilerGeneratedField ("$current", iterator_type_expr);
 
+			if (hoisted_params != null) {
+				//
+				// Iterators are independent, each GetEnumerator call has to
+				// create same enumerator therefore we have to keep original values
+				// around for re-initialization
+				//
+				// TODO: Do it for assigned/modified parameters only
+				//
+				hoisted_params_copy = new ArrayList (hoisted_params.Count);
+				foreach (HoistedParameter hp in hoisted_params) {
+					hoisted_params_copy.Add (new HoistedParameter (hp, "<$>" + hp.Field.Name));
+				}
+			}
+
 #if GMCS_SOURCE
 			Define_Current (true);
 #endif
@@ -493,6 +511,12 @@ namespace Mono.CSharp {
 				AddMethod (new GetEnumeratorMethod (this, enumerator_type, name));
 #endif
 			}
+		}
+
+		protected override void EmitHoistedParameters (EmitContext ec, ArrayList hoisted)
+		{
+			base.EmitHoistedParameters (ec, hoisted);
+			base.EmitHoistedParameters (ec, hoisted_params_copy);
 		}
 
 		void Define_Current (bool is_generic)

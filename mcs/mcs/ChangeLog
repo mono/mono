@@ -1,5 +1,11 @@
 2008-10-03  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #431746
+	* iterators.cs, anonymous.cs: Re-initialize hoisted iterator
+	parameters when iterator is created.
+
+2008-10-03  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #431827
 	* expression.cs: Fixed right based pointer arithmetic operations
 	emit.
