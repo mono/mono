@@ -1,6 +1,13 @@
 2008-10-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ApplicationSettingsBase.cs: honor the IsSynchronized value in the
+	Context, Properties, PropertyValues and Providers. All of them might
+	initialize an instance field for the class. Hopefully this fixes some
+	nullrefs.
+
+2008-10-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ApplicationSettingsBase.cs: honor the IsSynchronized value in the
 	indexer.
 
 2008-09-15  Raja R Harinath  <harinath@hurrynot.org>
