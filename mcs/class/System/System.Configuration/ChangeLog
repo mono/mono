@@ -1,3 +1,8 @@
+2008-10-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ApplicationSettingsBase.cs: honor the IsSynchronized value in the
+	indexer.
+
 2008-09-15  Raja R Harinath  <harinath@hurrynot.org>
 
 	* ConfigXmlDocument.cs (Load): Fix build break in 1.1 profile.

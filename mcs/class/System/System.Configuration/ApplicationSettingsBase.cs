@@ -205,6 +205,12 @@ namespace System.Configuration {
 		[MonoTODO]
 		public override object this [ string propertyName ] {
 			get {
+				if (IsSynchronized) {
+					lock (this) {
+						return GetPropertyValue (propertyName);
+					}
+				}
+
 				return GetPropertyValue (propertyName);
 			}
 			set {
