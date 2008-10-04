@@ -1,3 +1,11 @@
+2008-10-04  Andreas Färber  <andreas.faerber@web.de>
+
+	* attach.c (mono_attach_init): Don't use
+	mono_gc_add_finalizer_thread_callback when compiling without GC.
+	Fixes #432306.
+	
+	Code is contributed under MIT/X11 license.
+
 2008-10-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_create_from_typedef): Remove the 
