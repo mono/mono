@@ -1,3 +1,9 @@
+2008-10-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpApplication.cs: make sure we release the resources used by the
+	request and/or the response at the end of the request.
+	Fixes bug #430040.
+
 2008-10-01  Marek Habersack  <mhabersack@novell.com>
 
 	* BrowserCapabilities.cs: IsBrowser needs to compare browser names
