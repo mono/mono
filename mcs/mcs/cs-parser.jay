@@ -370,19 +370,20 @@ opt_EOF
 	;
 
 outer_declarations
-        : outer_declaration
-        | outer_declarations outer_declaration
-        ;
+	: outer_declaration
+	| outer_declarations outer_declaration
+	;
  
 outer_declaration
 	: extern_alias_directive
-        | using_directive 
-        | namespace_member_declaration
-        ;
+	| using_directive 
+	| namespace_member_declaration
+	;
 
 extern_alias_directives
 	: extern_alias_directive
-	| extern_alias_directives extern_alias_directive;
+	| extern_alias_directives extern_alias_directive
+	;
 
 extern_alias_directive
 	: EXTERN IDENTIFIER IDENTIFIER SEMICOLON
@@ -1206,25 +1207,6 @@ method_declaration
 
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.Allowed;
-	  }
-	;
-
-opt_error_modifier
-	: /* empty */
-	| modifiers 
-	  {
-		int m = (int) $1;
-		int i = 1;
-
-		while (m != 0){
-			if ((i & m) != 0){
-				Report.Error (1585, lexer.Location,
-					"Member modifier `{0}' must precede the member type and name",
-					Modifiers.Name (i));
-			}
-			m &= ~i;
-			i = i << 1;
-		}
 	  }
 	;
 
@@ -2580,13 +2562,11 @@ namespace_or_type_name
 		LocatedToken lt = (LocatedToken) $1;
 		$$ = new MemberName (lt.Value, (TypeArguments) $2, lt.Location);
 	  }
-	| IDENTIFIER DOUBLE_COLON IDENTIFIER opt_type_argument_list {
+	| qualified_alias_member IDENTIFIER opt_type_argument_list {
 		LocatedToken lt1 = (LocatedToken) $1;
-		LocatedToken lt2 = (LocatedToken) $3;
-		if (RootContext.Version == LanguageVersion.ISO_1)
-			Report.FeatureIsNotAvailable (lt1.Location, "namespace alias qualifier");
+		LocatedToken lt2 = (LocatedToken) $2;
 		
-		$$ = new MemberName (lt1.Value, lt2.Value, (TypeArguments) $4, lt1.Location);
+		$$ = new MemberName (lt1.Value, lt2.Value, (TypeArguments) $3, lt1.Location);
 	  }
 	| namespace_or_type_name DOT IDENTIFIER opt_type_argument_list {
 		LocatedToken lt = (LocatedToken) $3;
@@ -2868,15 +2848,6 @@ primary_expression
 		MemberName mn = (MemberName) $1;
 		$$ = mn.GetTypeExpression ();
 	  }
-	| IDENTIFIER DOUBLE_COLON IDENTIFIER opt_type_argument_list
-	  {
-		LocatedToken lt1 = (LocatedToken) $1;
-		LocatedToken lt2 = (LocatedToken) $3;
-		if (RootContext.Version == LanguageVersion.ISO_1)
-			Report.FeatureIsNotAvailable (lt1.Location, "namespace alias qualifier");
-
-		$$ = new QualifiedAliasMember (lt1.Value, lt2.Value, (TypeArguments) $4, lt1.Location);
-	  }
 	| parenthesized_expression
 	| default_value_expression
 	| member_access
@@ -2973,6 +2944,13 @@ member_access
 		LocatedToken lt = (LocatedToken) $3;
 		// TODO: Location is wrong as some predefined types doesn't hold a location
 		$$ = new MemberAccess ((Expression) $1, lt.Value, (TypeArguments) $4, lt.Location);
+	  }
+	| qualified_alias_member IDENTIFIER opt_type_argument_list
+	  {
+		LocatedToken lt1 = (LocatedToken) $1;
+		LocatedToken lt2 = (LocatedToken) $2;
+
+		$$ = new QualifiedAliasMember (lt1.Value, lt2.Value, (TypeArguments) $3, lt1.Location);
 	  }
 	;
 
@@ -3100,10 +3078,6 @@ argument_list
 	  {
 	  	Report.Error (839, GetLocation ($1), "An argument is missing");
 	  	$$ = null;
-	  }
-	| argument_list error {
-		CheckToken (1026, yyToken, "Expected `,' or `)'", GetLocation ($2));
-		$$ = null;
 	  }
 	;
 
@@ -3424,7 +3398,7 @@ opt_array_initializer
 	  {
 		$$ = null;
 	  }
-        | array_initializer
+	| array_initializer
 	  {
 		$$ = $1;
 	  }
@@ -3487,48 +3461,62 @@ typeof_type_expression
 	| error
 	 {
 	 	Error_TypeExpected (lexer.Location);
+	 	$$ = null;
 	 }
 	;
 	
 unbound_type_name
-	: IDENTIFIER GENERIC_DIMENSION
-	  {
-		if (RootContext.Version < LanguageVersion.ISO_2)
-			Report.FeatureIsNotAvailable (lexer.Location, "generics");
-	  
+	: IDENTIFIER generic_dimension
+	  {  
 		LocatedToken lt = (LocatedToken) $1;
-		TypeArguments ta = new TypeArguments ((int)$2, lt.Location);
+		TypeArguments ta = (TypeArguments)$2;
 
 		$$ = new MemberName (lt.Value, ta, lt.Location);
 	  }
-	| IDENTIFIER DOUBLE_COLON IDENTIFIER GENERIC_DIMENSION
+	| qualified_alias_member IDENTIFIER generic_dimension
 	  {
-		LocatedToken lt = (LocatedToken) $1;
-		MemberName left = new MemberName (lt.Value, lt.Location);
-		lt = (LocatedToken) $3;
-		TypeArguments ta = new TypeArguments ((int)$4, lt.Location);
-		
-		if (RootContext.Version == LanguageVersion.ISO_1)
-			Report.FeatureIsNotAvailable (lt.Location, "namespace alias qualifier");
-		
-		$$ = new MemberName (left, lt.Value, ta, lt.Location);
+		LocatedToken lt1 = (LocatedToken) $1;
+		LocatedToken lt2 = (LocatedToken) $2;
+		TypeArguments ta = (TypeArguments)$3;
+
+		$$ = new MemberName (new MemberName (lt1.Value, lt1.Location), lt2.Value, ta, lt2.Location);
 	  }
-	| unbound_type_name DOT IDENTIFIER GENERIC_DIMENSION
+	| unbound_type_name DOT IDENTIFIER generic_dimension
 	  {
 		LocatedToken lt = (LocatedToken) $3;
-		TypeArguments ta = new TypeArguments ((int)$4, lt.Location);
+		TypeArguments ta = (TypeArguments)$4;
 		
 	  	$$ = new MemberName ((MemberName)$1, lt.Value, ta, lt.Location);
 	  }
-	| namespace_or_type_name DOT IDENTIFIER GENERIC_DIMENSION
+	| namespace_or_type_name DOT IDENTIFIER generic_dimension
 	  {
 		LocatedToken lt = (LocatedToken) $3;
-		TypeArguments ta = new TypeArguments ((int)$4, lt.Location);
+		TypeArguments ta = (TypeArguments)$4;
 		
-	  	$$ = new MemberName ((MemberName)$1, lt.Value, ta, lt.Location);
+	  	$$ = new MemberName ((MemberName)$1, lt.Value, ta, lt.Location);	  	
 	  }
 	;
+	
+generic_dimension
+	: GENERIC_DIMENSION
+	  {
+		if (RootContext.Version < LanguageVersion.ISO_2)
+			Report.FeatureIsNotAvailable (lexer.Location, "generics");
 
+		$$ = new TypeArguments ((int)$1, lexer.Location);
+	  }
+	;
+	
+qualified_alias_member
+	: IDENTIFIER DOUBLE_COLON
+	  {
+		LocatedToken lt = (LocatedToken) $1;
+		if (RootContext.Version == LanguageVersion.ISO_1)
+			Report.FeatureIsNotAvailable (lt.Location, "namespace alias qualifier");
+
+		$$ = lt;		
+	  }
+	;
 
 sizeof_expression
 	: SIZEOF OPEN_PARENS type CLOSE_PARENS { 
@@ -4410,19 +4398,19 @@ local_variable_pointer_type
 			$$ = expr;
 		}
 	  }
-        | builtin_types STAR
+	| builtin_types STAR
 	  {
 		$$ = new ComposedCast ((FullNamedExpression) $1, "*", lexer.Location);
 	  }
-        | VOID STAR
+	| VOID STAR
 	  {
 		$$ = new ComposedCast (TypeManager.system_void_expr, "*", (Location) $1);
 	  }
 	| local_variable_pointer_type STAR
-          {
+	  {
 		$$ = new ComposedCast ((FullNamedExpression) $1, "*");
 	  }
-        ;
+	;
 
 local_variable_declaration
 	: local_variable_type variable_declarators
@@ -4436,7 +4424,7 @@ local_variable_declaration
 		} else
 			$$ = null;
 	  }
-	| local_variable_pointer_type opt_rank_specifier_or_nullable variable_declarators
+	| local_variable_pointer_type opt_rank_specifier variable_declarators
 	  {
 		if ($1 != null){
 			Expression t;
@@ -4623,12 +4611,13 @@ switch_labels
 	;
 
 switch_label
-	: CASE constant_expression COLON 	{ $$ = new SwitchLabel ((Expression) $2, (Location) $1); }
-	| DEFAULT_COLON 			{ $$ = new SwitchLabel (null, (Location) $1); }
-	| error {
-		Report.Error (
-			1523, GetLocation ($1), 
-			"The keyword case or default must precede code in switch block");
+	: CASE constant_expression COLON
+	 {
+	 	$$ = new SwitchLabel ((Expression) $2, (Location) $1);
+	 }
+	| DEFAULT_COLON
+	  {
+		$$ = new SwitchLabel (null, (Location) $1);
 	  }
 	;
 
@@ -6144,6 +6133,7 @@ static public string GetTokenName (int token)
 	case Token.COMMA:
 		return ",";
 	case Token.DEFAULT_COLON:
+		return "default:";
 	case Token.COLON:
 		return ":";
 	case Token.SEMICOLON:
