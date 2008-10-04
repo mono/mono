@@ -1,3 +1,9 @@
+2008-10-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* gc.c: Define a dummy version of mono_gc_add_finalizer_thread_callback ()
+	for the no-gc case.
+	* attach.c (mono_attach_init): Remove the #ifdef.
+
 2008-10-04  Andreas Färber  <andreas.faerber@web.de>
 
 	* attach.c (mono_attach_init): Don't use
