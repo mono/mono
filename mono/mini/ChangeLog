@@ -1,3 +1,12 @@
+2008-10-04  Andreas Färber  <andreas.faerber@web.de>
+
+	* Makefile.am: Add build rules for ppc64.
+	This avoids the build failing at pedump with unresolved symbols
+	due to lack of arch_sources. Instead it will now fail earlier
+	due to lack of cpu-ppc64.md.
+
+	Contributed under MIT/X11 license.
+
 2008-10-04  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-amd64.c (mono_arch_emit_call): Support stack arguments for
