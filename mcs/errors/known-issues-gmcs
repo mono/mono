@@ -23,6 +23,10 @@ cs1586.cs
 cs0457-2.cs
 cs0457.cs
 
+# Parser
+cs1026.cs
+cs1523.cs
+
 # Errors fixed in version 2.0 only
 cs1533.cs IGNORE
 
