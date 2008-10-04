@@ -1,3 +1,13 @@
+2008-10-04  Raja R Harinath  <harinath@hurrynot.org>
+
+	Fix #398325
+	* flowanalysis.cs (MyBitvector.MakeShared): Rename from 'Shared'
+	property.  Add a 'count' hint about the use of the shared vector.
+	Ensure that we don't leak out dirty bits.
+	(UsageVector.MergeChild): Throw away information about variables
+	in child vectors.
+	Based on patch and analysis by Moritz Kroll <Moritz.Kroll@gmx.de>.
+
 2008-10-03  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #431746

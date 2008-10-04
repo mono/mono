@@ -314,6 +314,10 @@ namespace Mono.CSharp
 
 				locals |= child.locals;
 
+				// throw away un-necessary information about variables in child blocks
+				if (locals.Count != CountLocals)
+					locals = new MyBitVector (locals, CountLocals);
+
 				if (overwrite)
 					is_unreachable = new_isunr;
 				else
@@ -1577,21 +1581,27 @@ namespace Mono.CSharp
 		public MyBitVector (MyBitVector InheritsFrom, int Count)
 		{
 			if (InheritsFrom != null)
-				shared = InheritsFrom.Shared;
+				shared = InheritsFrom.MakeShared (Count);
 
 			this.Count = Count;
 		}
 
-		// Use this accessor to get a shareable copy of the underlying BitArray representation
-		BitArray Shared {
-			get {
-				// Post-condition: vector == null
-				if (shared == null) {
-					shared = vector;
-					vector = null;
-				}
-				return shared;
+		BitArray MakeShared (int new_count)
+		{
+			// Post-condition: vector == null
+
+			// ensure we don't leak out dirty bits from the BitVector we inherited from
+			if (new_count > Count &&
+			    ((shared != null && shared.Count > Count) ||
+			     (shared == null && vector == null)))
+				initialize_vector ();
+
+			if (vector != null) {
+				shared = vector;
+				vector = null;
 			}
+
+			return shared;
 		}
 
 		// <summary>
@@ -1690,7 +1700,7 @@ namespace Mono.CSharp
 			if (Count == o.Count) {
 				if (vector == null) {
 					if (shared == null) {
-						shared = new_vector.Shared;
+						shared = new_vector.MakeShared (Count);
 						return this;
 					}
 					initialize_vector ();
@@ -1776,7 +1786,7 @@ namespace Mono.CSharp
 			// Don't clobber Empty
 			if (Count == 0)
 				return;
-			shared = value ? null : Empty.Shared;
+			shared = value ? null : Empty.MakeShared (Count);
 			vector = null;
 		}
 
