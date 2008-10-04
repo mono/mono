@@ -163,8 +163,13 @@ namespace System.Configuration {
 					Monitor.Enter (this);
 
 				try {
-					if (context == null)
+					if (context == null) {
 						context = new SettingsContext ();
+						context ["SettingsKey"] = "";
+						Type type = GetType ();
+						context ["GroupName"] = type.FullName;
+						context ["SettingsClassType"] = type;
+					}
 
 					return context;
 				} finally {
