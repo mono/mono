@@ -1,3 +1,7 @@
+2008-10-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-<ARCH>.h mini-x86.c: Remove some unused defines.
+
 2008-10-04  Andreas Färber  <andreas.faerber@web.de>
 
 	* Makefile.am: Add build rules for ppc64.
