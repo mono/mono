@@ -1,5 +1,9 @@
 2008-10-05  Marek Safar  <marek.safar@gmail.com>
 
+	* cs-parser.jay: Allow parsing weird array creation construct.
+
+2008-10-05  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-parser.jay: Conflicts reduction.
 
 2008-10-04  Marek Safar  <marek.safar@gmail.com>

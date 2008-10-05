@@ -3134,6 +3134,11 @@ element_access
 	  {
 		$$ = new ElementAccess ((Expression) $1, (ArrayList) $3);
 	  }
+	| array_creation_expression OPEN_BRACKET expression_list CLOSE_BRACKET
+	  {
+	  	// LAMESPEC: Not allowed according to specification
+		$$ = new ElementAccess ((Expression) $1, (ArrayList) $3);
+	  }	
 	| primary_expression_no_array_creation rank_specifiers
 	  {
 		// So the super-trick is that primary_expression
