@@ -1,5 +1,8 @@
 2008-10-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Pass cil_method instead of cmethod
+	to save_token_info () since cmethod is inflated for constrained calls.
+
 	* mini-<ARCH>.h mini-x86.c: Remove some unused defines.
 
 2008-10-04  Andreas Färber  <andreas.faerber@web.de>
