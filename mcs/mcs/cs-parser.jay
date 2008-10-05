@@ -598,20 +598,20 @@ type_declaration
 
 global_attributes
 	: attribute_sections
-{
-	if ($1 != null) {
-		Attributes attrs = (Attributes)$1;
-		if (global_attrs_enabled) {
-			CodeGen.Assembly.AddAttributes (attrs.Attrs);
-		} else {
-			foreach (Attribute a in attrs.Attrs) {
-				Report.Error (1730, a.Location, "Assembly and module attributes must precede all other elements except using clauses and extern alias declarations");
+	  {
+		if ($1 != null) {
+			Attributes attrs = (Attributes)$1;
+			if (global_attrs_enabled) {
+				CodeGen.Assembly.AddAttributes (attrs.Attrs);
+			} else {
+				foreach (Attribute a in attrs.Attrs) {
+					Report.Error (1730, a.Location, "Assembly and module attributes must precede all other elements except using clauses and extern alias declarations");
+				}
 			}
 		}
-	}
-
-	$$ = $1;
-}
+		$$ = $1;
+	  }
+	;
 
 opt_attributes
 	: /* empty */ 
@@ -2689,7 +2689,7 @@ type
 
 type_expression_or_array
 	: type_expression
-	| array_type	  
+	| array_type
 	;
 	
 type_expression
@@ -2838,11 +2838,15 @@ predefined_type
 //
 // Expressions, section 7.5
 //
+
+
 primary_expression
+	: primary_expression_no_array_creation
+	| array_creation_expression
+	;
+
+primary_expression_no_array_creation
 	: literal
-	  {
-		// 7.5.1: Literals
-	  }
  	| type_name
 	  {
 		MemberName mn = (MemberName) $1;
@@ -2857,7 +2861,8 @@ primary_expression
 	| base_access
 	| post_increment_expression
 	| post_decrement_expression
-	| new_expression
+	| object_or_delegate_creation_expression
+	| anonymous_type_expression
 	| typeof_expression
 	| sizeof_expression
 	| checked_expression
@@ -3125,11 +3130,11 @@ variable_reference
 	;
 
 element_access
-	: primary_expression OPEN_BRACKET expression_list CLOSE_BRACKET	
+	: primary_expression_no_array_creation OPEN_BRACKET expression_list CLOSE_BRACKET	
 	  {
 		$$ = new ElementAccess ((Expression) $1, (ArrayList) $3);
 	  }
-	| primary_expression rank_specifiers
+	| primary_expression_no_array_creation rank_specifiers
 	  {
 		// So the super-trick is that primary_expression
 		// can only be either a SimpleName or a MemberAccess. 
@@ -3208,12 +3213,6 @@ post_decrement_expression
 		$$ = new UnaryMutator (UnaryMutator.Mode.PostDecrement,
 				       (Expression) $1, (Location) $2);
 	  }
-	;
-
-new_expression
-	: object_or_delegate_creation_expression
-	| array_creation_expression
-	| anonymous_type_expression
 	;
 
 object_or_delegate_creation_expression
