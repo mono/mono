@@ -1,3 +1,7 @@
+2008-10-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* NetworkInterface.cs: detect wireless 802.11 on linux.
+
 2008-09-28 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
 
 	* NetworkInterface.cs: special case for loopback interfaces so that

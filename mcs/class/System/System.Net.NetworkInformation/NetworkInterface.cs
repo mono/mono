@@ -279,6 +279,11 @@ namespace System.Net.NetworkInformation {
 		{
 			this.index = index;
 			this.macAddress = macAddress;
+			if (type == NetworkInterfaceType.Ethernet) {
+				if (Directory.Exists(iface_path + "wireless")) {
+					type = NetworkInterfaceType.Wireless80211;
+				}
+			}
 			this.type = type;
 		}
 
