@@ -37,6 +37,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -694,8 +695,11 @@ namespace System.Configuration
 				if (allowOverwrite)
 					values.Remove (element.Name);
 				values.Add (value);
-			} catch (ArgumentException) {
-				throw new ConfigurationErrorsException ();
+			} catch (ArgumentException ex) {
+				throw new ConfigurationErrorsException (string.Format (
+					CultureInfo.InvariantCulture,
+					"Failed to load value for '{0}'.",
+					element.Name), ex);
 			}
 		}
 

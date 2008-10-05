@@ -1,3 +1,8 @@
+2008-10-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CustomizableFileSettingsProvider.cs (LoadPropertyValue): Do not
+	hide ArgumentException.
+
 2008-10-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* CustomizableFileSettingsProvider.cs: when reading application or
