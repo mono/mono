@@ -1,3 +1,12 @@
+
+Mon Oct 6 16:10:02 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c, attach.h, attach.c: remove a bad pattern:
+	add_finalizer_callback () is not implemented correctly, it can't
+	without adding more overhead to the finalizer loop and it's not
+	even needed, since we know exactly what we need to call, so there is
+	no need to do so through an expensive function pointer.
+
 2008-10-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* gc.c: Define a dummy version of mono_gc_add_finalizer_thread_callback ()
