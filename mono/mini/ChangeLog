@@ -1,5 +1,12 @@
 2008-10-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (compile_method): Don't skip methods referencing 
+	generic methods without a corresponding entry in token_info_hash, since
+	encode_method_ref () can handle all generic methods now.
+
+	* method-to-ir.c (mono_save_token_info): Don't save the token info if a 
+	generic context is set.
+	
 	* method-to-ir.c (mono_method_to_ir2): Put back a disable_aot for
 	generic sharing of LDTOKEN.
 
