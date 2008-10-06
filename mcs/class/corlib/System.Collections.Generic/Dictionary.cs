@@ -60,6 +60,13 @@ namespace System.Collections.Generic {
 		// "keySlots" and "valueSlots" is the heap itself, it stores the data
 		// "linkSlots" contains information about how the slots in the heap
 		//             are connected into linked lists
+		//             In addition, the HashCode field can be used to check if the
+		//             corresponding key and value are present (HashCode has the
+		//             HASH_FLAG bit set in this case), so, to iterate over all the
+		//             items in the dictionary, simply iterate the linkSlots array
+		//             and check for the HASH_FLAG bit in the HashCode field.
+		//             For this reason, each time a hashcode is calculated, it needs
+		//             to be ORed with HASH_FLAG before comparing it with the save hashcode.
 		// "touchedSlots" and "emptySlot" manage the free space in the heap 
 
 		const int INITIAL_SIZE = 10;
