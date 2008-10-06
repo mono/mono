@@ -1,5 +1,9 @@
 2008-10-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c cfold.c graph.c ssa.c aot-runtime.c local-propagation.c
+	driver.c mini-codegen.c mini-amd64.c mini-arm.c: Add support for removing
+	the JIT using the --enable-minimal=jit configure option.
+
 	* inssel-sparc.brg: Remove an incorrect reg: CEE_LDIND_I8 (OP_REGVAR) rule.
 	Fixes #426264.
 

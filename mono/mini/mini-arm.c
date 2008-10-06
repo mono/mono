@@ -2177,6 +2177,8 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 	return code;
 }
 
+#ifndef DISABLE_JIT
+
 void
 mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 {
@@ -3255,6 +3257,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 	cfg->code_len = code - cfg->native_code;
 }
+
+#endif /* DISABLE_JIT */
 
 void
 mono_arch_register_lowlevel_calls (void)

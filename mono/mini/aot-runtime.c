@@ -485,7 +485,11 @@ load_aot_module_from_cache (MonoAssembly *assembly, char **aot_name)
 #endif
 			g_free (cmd);
 		} else {
+#ifndef DISABLE_JIT
 			res = mono_compile_assembly (assembly, mono_parse_default_optimizations (NULL), aot_options);
+#else
+			g_assert_not_reached ();
+#endif
 			if (!res) {
 				mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT failed.");
 			} else {

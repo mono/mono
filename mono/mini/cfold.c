@@ -9,6 +9,8 @@
  */
 #include "mini.h"
 
+#ifndef DISABLE_JIT
+
 int
 mono_is_power_of_two (guint32 val)
 {
@@ -313,3 +315,4 @@ mono_eval_cond_branch (MonoInst *ins)
 	return BRANCH_UNDEF;
 }
 
+#endif /* DISABLE_JIT */

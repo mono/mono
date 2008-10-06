@@ -932,7 +932,11 @@ static void main_thread_handler (gpointer user_data)
 				fprintf (stderr, "Can not open image %s\n", main_args->argv [i]);
 				exit (1);
 			}
+#ifndef DISABLE_JIT
 			res = mono_compile_assembly (assembly, main_args->opts, main_args->aot_options);
+#else
+			g_assert_not_reached ();
+#endif
 			if (res != 0) {
 				fprintf (stderr, "AOT of image %s failed.\n", main_args->argv [i]);
 				exit (1);
@@ -1420,6 +1424,13 @@ mono_main (int argc, char* argv[])
 			exit (1);
 	}
 
+#ifdef DISABLE_JIT
+	if (!mono_aot_only) {
+		fprintf (stderr, "This runtime has been configured with --enable-minimal=jit, so the --full-aot command line option is required.\n");
+		exit (1);
+	}
+#endif
+
 	if (action == DO_DEBUGGER) {
 		enable_debugging = TRUE;
 
@@ -1605,7 +1616,9 @@ mono_main (int argc, char* argv[])
 			g_warning ("no SSA info available (use -O=deadce)");
 			return 1;
 		}
+#ifndef DISABLE_JIT
 		mono_draw_graph (cfg, mono_graph_options);
+#endif
 		mono_destroy_compile (cfg);
 
 	} else if (action == DO_BENCH) {

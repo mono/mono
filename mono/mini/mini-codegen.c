@@ -331,7 +331,7 @@ typedef struct {
 	regmask_t preferred_mask; /* the hreg where the register should be allocated, or 0 */
 } RegTrack;
 
-#ifndef DISABLE_LOGGING
+#if !defined(DISABLE_LOGGING) && !defined(DISABLE_JIT)
 void
 mono_print_ins_index (int i, MonoInst *ins)
 {
@@ -709,6 +709,8 @@ assign_ireg (MonoCompile *cfg, MonoRegState *rs, int reg, int hreg)
 
 static gint8 desc_to_fixed_reg [256];
 static gboolean desc_to_fixed_reg_inited = FALSE;
+
+#ifndef DISABLE_JIT
 
 /*
  * Local register allocation.
@@ -1673,6 +1675,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	if (fspill_list)
 		g_list_free (fspill_list);
 }
+
+#endif /* DISABLE_JIT */
 
 CompRelation
 mono_opcode_to_cond (int opcode)

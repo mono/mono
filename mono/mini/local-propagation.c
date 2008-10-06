@@ -20,6 +20,7 @@
 #include <mono/metadata/opcodes.h>
 #include "mini.h"
 
+#ifndef DISABLE_JIT
 
 #define MONO_DEBUG_LOCAL_PROP 0
 #define MONO_DEBUG_TREE_MOVER 0
@@ -1225,3 +1226,5 @@ mono_local_cprop (MonoCompile *cfg) {
 		mono_mempool_destroy(tree_mover->pool);
 	}
 }
+
+#endif /* DISABLE_JIT */

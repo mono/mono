@@ -1601,6 +1601,7 @@ stelem_to_stind [] = {
 	CEE_STIND_REF
 };
 
+#define CODE_IS_STLOC(ip) (((ip) [0] >= CEE_STLOC_0 && (ip) [0] <= CEE_STLOC_3) || ((ip) [0] == CEE_STLOC_S))
 
 #ifdef MONO_ARCH_SOFT_FLOAT
 static void
@@ -2086,6 +2087,8 @@ mono_add_ins_to_end (MonoBasicBlock *bb, MonoInst *inst)
 	}
 }
 
+#ifndef DISABLE_JIT
+
 void
 mono_add_varcopy_to_end (MonoCompile *cfg, MonoBasicBlock *bb, int src, int dest)
 {
@@ -2240,6 +2243,8 @@ handle_stack_args (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **sp, int coun
 	}
 }
 
+#endif /* DISABLE_JIT */
+
 static int
 ret_type_to_call_opcode (MonoType *type, int calli, int virt, MonoGenericSharingContext *gsctx)
 {
@@ -2321,6 +2326,8 @@ mono_save_token_info (MonoCompile *cfg, MonoImage *image, guint32 token, gpointe
 		g_hash_table_insert (cfg->token_info_hash, key, jump_info_token);
 	}
 }
+
+#ifndef DISABLE_JIT
 
 /*
  * When we add a tree of instructions, we need to ensure the instructions currently
@@ -3426,8 +3433,6 @@ mono_emit_load_got_addr (MonoCompile *cfg)
 	MONO_ADD_INS (cfg->bb_exit, dummy_use);
 }
 
-#define CODE_IS_STLOC(ip) (((ip) [0] >= CEE_STLOC_0 && (ip) [0] <= CEE_STLOC_3) || ((ip) [0] == CEE_STLOC_S))
-
 static gboolean
 mini_class_is_system_array (MonoClass *klass)
 {
@@ -3609,6 +3614,8 @@ mini_get_ldelema_ins (MonoCompile *cfg, MonoBasicBlock *bblock, MonoMethod *cmet
 
 }
 
+#endif /* DISABLE_JIT */
+
 static MonoJitICallInfo **emul_opcode_map = NULL;
 
 MonoJitICallInfo *
@@ -3620,6 +3627,8 @@ mono_find_jit_opcode_emulation (int opcode)
 	else
 		return NULL;
 }
+
+#ifndef DISABLE_JIT
 
 static MonoInst*
 mini_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
@@ -4070,6 +4079,8 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	return 0;
 }
 
+#endif /* DISABLE_JIT */
+
 /*
  * Some of these comments may well be out-of-date.
  * Design decisions: we do a single pass over the IL code (and we do bblock 
@@ -4265,6 +4276,8 @@ mini_get_class (MonoMethod *method, guint32 token, MonoGenericContext *context)
 	return klass;
 }
 
+#ifndef DISABLE_JIT
+
 /*
  * Returns TRUE if the JIT should abort inlining because "callee"
  * is influenced by security attributes.
@@ -4378,6 +4391,8 @@ method_is_safe (MonoMethod *method)
 	*/
 	return TRUE;
 }
+
+#endif /* DISABLE_JIT */
 
 /*
  * Check that the IL instructions at ip are the array initialization
@@ -4573,6 +4588,8 @@ create_rgctx_lazy_fetch_trampoline (guint32 offset)
 	return ptr;
 }
 
+#ifndef DISABLE_JIT
+
 static MonoInst*
 get_runtime_generic_context_other_table_ptr (MonoCompile *cfg, MonoBasicBlock *bblock,
 	MonoInst *rgc_ptr, guint32 slot, const unsigned char *ip)
@@ -4683,6 +4700,8 @@ handle_box_nullable_from_inst (MonoCompile *cfg, MonoMethod *caller_method, int 
 	return dest;
 }
 
+#endif /* DISABLE_JIT */
+
 static MonoObject*
 mono_object_castclass (MonoObject *obj, MonoClass *klass)
 {
@@ -4697,6 +4716,8 @@ mono_object_castclass (MonoObject *obj, MonoClass *klass)
 
 	return NULL;
 }
+
+#ifndef DISABLE_JIT
 
 static int
 emit_castclass (MonoClass *klass, guint32 token, int context_used, gboolean inst_is_castclass, MonoCompile *cfg,
@@ -4858,6 +4879,8 @@ exception_exit:
 	goto do_return;
 }
 
+#endif /* DISABLE_JIT */
+
 static gboolean
 mini_assembly_can_skip_verification (MonoDomain *domain, MonoMethod *method)
 {
@@ -4923,6 +4946,8 @@ mini_method_verify (MonoCompile *cfg, MonoMethod *method)
 	method->verification_success = 1;
 	return FALSE;
 }
+
+#ifndef DISABLE_JIT
 
 /*
  * mono_method_to_ir: translates IL into basic blocks containing trees
@@ -9582,6 +9607,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	return -1;
 }
 
+#endif /* DISABLE_JIT */
+
+#ifndef DISABLE_JIT
+
 void
 mono_print_tree (MonoInst *tree) {
 	int arity;
@@ -9713,6 +9742,15 @@ mono_print_tree (MonoInst *tree) {
 		printf (")");
 }
 
+#else
+
+void
+mono_print_tree (MonoInst *tree) {
+	g_assert_not_reached ();
+}
+
+#endif /* DISABLE_JIT */
+
 void
 mono_print_tree_nl (MonoInst *tree)
 {
@@ -9807,6 +9845,8 @@ g_slist_prepend_mempool (MonoMemPool *mp, GSList   *list,
 
   return new_list;
 }
+
+#ifndef DISABLE_JIT
 
 /*
  *  mono_allocate_stack_slots_full:
@@ -10017,6 +10057,8 @@ mono_allocate_stack_slots (MonoCompile *m, guint32 *stack_size, guint32 *stack_a
 	return mono_allocate_stack_slots_full (m, TRUE, stack_size, stack_align);
 }
 
+#endif /* DISABLE_JIT */
+
 void
 mono_register_opcode_emulation (int opcode, const char *name, const char *sigstr, gpointer func, gboolean no_throw)
 {
@@ -10046,6 +10088,8 @@ register_icall (gpointer func, const char *name, const char *sigstr, gboolean sa
 
 	mono_register_jit_icall (func, name, sig, save);
 }
+
+#ifndef DISABLE_JIT
 
 static void
 decompose_foreach (MonoInst *tree, gpointer data) 
@@ -10234,6 +10278,8 @@ print_dfn (MonoCompile *cfg) {
 	g_print ("\n");
 }
 
+#endif /* DISABLE_JIT */
+
 void
 mono_bblock_add_inst (MonoBasicBlock *bb, MonoInst *inst)
 {
@@ -10244,7 +10290,9 @@ void
 mono_destroy_compile (MonoCompile *cfg)
 {
 	//mono_mempool_stats (cfg->mempool);
+#ifndef DISABLE_JIT
 	mono_free_loop_info (cfg);
+#endif
 	if (cfg->rs)
 		mono_regstate_free (cfg->rs);
 	if (cfg->spvars)
@@ -10819,6 +10867,8 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 
 	return (gpointer)target;
 }
+
+#ifndef DISABLE_JIT
 
 static void
 dec_foreach (MonoInst *tree, MonoCompile *cfg) {
@@ -11554,6 +11604,8 @@ mono_compile_create_vars (MonoCompile *cfg)
 	mono_arch_create_vars (cfg);
 }
 
+#endif /* DISABLE_JIT */
+
 void
 mono_print_code (MonoCompile *cfg)
 {
@@ -11572,6 +11624,8 @@ mono_print_code (MonoCompile *cfg)
 		}
 	}
 }
+
+#ifndef DISABLE_JIT
 
 extern const char * const mono_burg_rule_string [];
 
@@ -12762,6 +12816,16 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 	return cfg;
 }
+
+#else /* DISABLE_JIT */
+
+MonoCompile*
+mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gboolean run_cctors, gboolean compile_aot, int parts)
+{
+	g_assert_not_reached ();
+}
+
+#endif	
 
 static MonoJitInfo*
 lookup_generic_method (MonoDomain *domain, MonoMethod *method)
@@ -14019,7 +14083,9 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_jit_tls_id = TlsAlloc ();
 	setup_jit_tls_data ((gpointer)-1, mono_thread_abort);
 
+#ifndef DISABLE_JIT
 	mono_burg_init ();
+#endif
 
 	if (default_opt & MONO_OPT_AOT)
 		mono_aot_init ();

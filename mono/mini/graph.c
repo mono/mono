@@ -350,4 +350,3 @@ mono_draw_graph (MonoCompile *cfg, MonoGraphOptions draw_options)
 	system (com);
 	g_free (com);
 }
-

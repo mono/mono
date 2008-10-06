@@ -887,6 +887,8 @@ mono_arch_cpu_optimizazions (guint32 *exclude_mask)
 	return opts;
 }
 
+#ifndef DISABLE_JIT
+
 GList *
 mono_arch_get_allocatable_int_vars (MonoCompile *cfg)
 {
@@ -916,6 +918,8 @@ mono_arch_get_allocatable_int_vars (MonoCompile *cfg)
 
 	return vars;
 }
+
+#endif /* DISABLE_JIT */
 
 /**
  * mono_arch_compute_omit_fp:
@@ -1033,7 +1037,9 @@ mono_arch_regalloc_cost (MonoCompile *cfg, MonoMethodVar *vmv)
 		/* push+pop */
 		return (ins->opcode == OP_ARG) ? 1 : 2;
 }
- 
+
+#ifndef DISABLE_JIT
+
 void
 mono_arch_allocate_vars (MonoCompile *cfg)
 {
@@ -1585,6 +1591,8 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 	return call;
 }
 
+#endif /* DISABLE_JIT */
+
 #define EMIT_COND_BRANCH(ins,cond,sign) \
 if (ins->flags & MONO_INST_BRLABEL) { \
         if (ins->inst_i0->inst_c0) { \
@@ -1769,6 +1777,8 @@ store_membase_imm_to_store_membase_reg (int opcode)
 }
 
 #define INST_IGNORES_CFLAGS(opcode) (!(((opcode) == OP_ADC) || ((opcode) == OP_ADC_IMM) || ((opcode) == OP_IADC) || ((opcode) == OP_IADC_IMM) || ((opcode) == OP_SBB) || ((opcode) == OP_SBB_IMM) || ((opcode) == OP_ISBB) || ((opcode) == OP_ISBB_IMM)))
+
+#ifndef DISABLE_JIT
 
 /*
  * mono_arch_peephole_pass_1:
@@ -2010,6 +2020,8 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 
 	bb->max_vreg = cfg->rs->next_vreg;
 }
+
+#endif /* DISABLE_JIT */
 
 static const int 
 branch_cc_table [] = {
@@ -2331,6 +2343,8 @@ amd64_pop_reg (code, AMD64_RAX);
 /* benchmark and set based on cpu */
 #define LOOP_ALIGNMENT 8
 #define bb_is_loop_start(bb) ((bb)->loop_body_start && (bb)->nesting)
+
+#ifndef DISABLE_JIT
 
 void
 mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
@@ -3942,6 +3956,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	cfg->code_len = code - cfg->native_code;
 }
 
+#endif
+
 void
 mono_arch_register_lowlevel_calls (void)
 {
@@ -4044,6 +4060,8 @@ get_max_epilog_size (MonoCompile *cfg)
          cfg->arch.async_point_count ++; \
     } \
 } while (0)
+
+#ifndef DISABLE_JIT
 
 guint8 *
 mono_arch_emit_prolog (MonoCompile *cfg)
@@ -4946,6 +4964,8 @@ mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean ena
 
 	return code;
 }
+
+#endif /* DISABLE_JIT */
 
 void
 mono_arch_flush_icache (guint8 *code, gint size)
