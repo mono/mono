@@ -1,5 +1,9 @@
 2008-10-06  Atsushi Enomoto <atsushi@ximian.com>
 
+	* Expression.cs : unindend cases that do not match our coding style.
+
+2008-10-06  Atsushi Enomoto <atsushi@ximian.com>
+
 	* Expression.cs : fixed peer & subtree requirement and reduced extra
 	  dependency on RequireSorting property.
 
