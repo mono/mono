@@ -1,5 +1,11 @@
 2008-10-06  Zoltan Varga  <vargaz@gmail.com>
 
+	Backport of r114307.
+	
+	* driver.c (mono_main): Add a workaround for shutdown crashes seen on
+	amd64, where the libc stack unwinder encounters stack frames referring to
+	native code in unmapped memory.
+	
 	Backport of r114416.
 	
 	* mini-ia64.c (emit_move_return_value): Convert float return values to

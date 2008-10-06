@@ -158,6 +158,7 @@ extern MonoMethodDesc *mono_break_at_bb_method;
 extern int mono_break_at_bb_bb_num;
 extern gboolean check_for_pending_exc;
 extern gboolean mono_verify_all;
+extern gboolean mono_dont_free_global_codeman;
 
 struct MonoInstList {
 	struct MonoInstList *next, *prev;

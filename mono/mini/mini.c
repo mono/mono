@@ -211,6 +211,8 @@ mono_breakpoint_info_index [MONO_BREAKPOINT_ARRAY_SIZE];
 /* Whenever to check for pending exceptions in managed-to-native wrappers */
 gboolean check_for_pending_exc = TRUE;
 
+gboolean mono_dont_free_global_codeman;
+
 gboolean
 mono_running_on_valgrind (void)
 {
@@ -14480,7 +14482,8 @@ mini_cleanup (MonoDomain *domain)
 
 	mono_trampolines_cleanup ();
 
-	mono_code_manager_destroy (global_codeman);
+	if (!mono_dont_free_global_codeman)
+		mono_code_manager_destroy (global_codeman);
 	g_hash_table_destroy (jit_icall_name_hash);
 	g_free (emul_opcode_map);
 
