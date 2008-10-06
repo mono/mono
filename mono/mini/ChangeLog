@@ -1,5 +1,10 @@
 2008-10-06  Zoltan Varga  <vargaz@gmail.com>
 
+	Backport of r114617.
+	
+	* aot-compiler.c (emit_globals): Avoid invalid characters in
+	the static linking symbol.
+	
 	Backport of r114713.
 	
 	* aot-compiler.c (emit_exception_debug_info): Use jinfo->used_regs instead of
