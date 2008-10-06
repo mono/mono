@@ -1,5 +1,10 @@
 2008-10-06  Zoltan Varga  <vargaz@gmail.com>
 
+	Backport of r114713.
+	
+	* aot-compiler.c (emit_exception_debug_info): Use jinfo->used_regs instead of
+	cfg->used_int_regs, since the two are different on arm.
+
 	Backport of r114299.
 	
 	* mini-arm.h driver.c: Print the fp model when using --version on arm. Also,

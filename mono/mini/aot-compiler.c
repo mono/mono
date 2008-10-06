@@ -2643,6 +2643,7 @@ emit_exception_debug_info (MonoAotCompile *acfg, MonoCompile *cfg)
 	char *symbol;
 	MonoMethodHeader *header;
 	guint8 *p, *buf, *debug_info;
+	MonoJitInfo *jinfo = cfg->jit_info;
 
 	method = cfg->method;
 	code = cfg->native_code;
@@ -2658,8 +2659,8 @@ emit_exception_debug_info (MonoAotCompile *acfg, MonoCompile *cfg)
 	buf_size = header->num_clauses * 256 + debug_info_size + 128;
 	p = buf = g_malloc (buf_size);
 
-	encode_value (cfg->code_len, p, &p);
-	encode_value (cfg->used_int_regs, p, &p);
+	encode_value (jinfo->code_size, p, &p);
+	encode_value (jinfo->used_regs, p, &p);
 
 	/* Exception table */
 	if (header->num_clauses) {
