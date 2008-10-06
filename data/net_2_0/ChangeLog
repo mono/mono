@@ -1,3 +1,8 @@
+2008-10-06  Marek Habersack  <mhabersack@novell.com>
+
+	* machine.config: added entries to ignore the mobileControls and
+	deviceFilters sections.
+
 2008-09-02  Marek Habersack  <mhabersack@novell.com>
 
 	* web.config: removed System.Web.Extensions.dll from the assemblies
