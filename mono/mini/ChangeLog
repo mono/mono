@@ -1,5 +1,7 @@
 2008-10-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (add_wrappers): Add delegate-invoke wrappers.
+
 	* method-to-ir.c (check_inline_called_method_name_limit): Return TRUE
 	so inlining actually works.
 	(check_inline_caller_method_name_limit): Ditto.
