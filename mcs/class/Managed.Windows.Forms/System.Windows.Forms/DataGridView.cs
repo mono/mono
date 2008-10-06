@@ -3907,7 +3907,8 @@ namespace System.Windows.Forms {
 				horizontalScrollBar.Bounds = new Rectangle (BorderWidth, Height - BorderWidth - horizontalScrollBar.Height, Width - (2 * BorderWidth), horizontalScrollBar.Height);
 			else if (verticalScrollBar.Visible)
 				verticalScrollBar.Bounds = new Rectangle (Width - BorderWidth - verticalScrollBar.Width, BorderWidth, verticalScrollBar.Width,  Height - (2 * BorderWidth));
-				
+
+			AutoResizeColumnsInternal ();
 			Invalidate ();
 		}
 
@@ -5384,7 +5385,7 @@ namespace System.Windows.Forms {
 		{
 			float totalFillWeight = 0;
 			int FillCount = 0; // The number of columns that has AutoSizeMode.Fill set
-			int spaceLeft = ClientSize.Width;
+			int spaceLeft = ClientSize.Width - (verticalScrollBar.VisibleInternal ? verticalScrollBar.Width : 0);
 
 			if (RowHeadersVisible) {
 				spaceLeft -= RowHeadersWidth;

@@ -1,5 +1,10 @@
 2008-10-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridView.cs: Make sure we take the vertical scrollbar into
+	account when autosizing columns.
+
+2008-10-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridView.cs: Handle sorting datetimes.
 
 2008-10-04  Ivan N. Zlatev  <contact@i-nz.net>
