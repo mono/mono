@@ -292,7 +292,7 @@ namespace System.Drawing {
 				c.state = (short) (Color.ColorType.ARGB | Color.ColorType.Known | Color.ColorType.Named);
 				if ((n < 27) || (n > 169))
 					c.state |= (short) Color.ColorType.System;
-				c.value = ArgbValues [n];
+				c.Value = ArgbValues [n];
 #if ONLY_1_1
 				c.name = GetName (n);
 #endif

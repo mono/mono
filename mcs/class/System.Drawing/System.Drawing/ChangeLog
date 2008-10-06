@@ -1,5 +1,11 @@
-2008-10-06  Sebastien Pouliot  <sebastien@ximian.com>
+2008-10-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
+	* Color.cs: Fix Color serialization by changing 'value' visibility
+	to private and make everyone access it thru an internal property. 
+	This also simplify the A, R, G and B properties and probably covers 
+	a few other cases where a similar hack would have been required.
+	[Fix bug #410693]
+	* KnownColors.cs: Assign Color.Value property and not the value field.
 	* RectangleF.cs: Fix edge intersection. Path by Brian Browning.
 	[Fix bug #431587]
 

@@ -49,7 +49,7 @@ namespace System.Drawing
 	public struct Color {
 
 		// Private transparency (A) and R,G,B fields.
-		internal long value;
+		private long value;
 
 		// The specs also indicate that all three of these properties are true
 		// if created with FromKnownColor or FromNamedColor, false otherwise (FromARGB).
@@ -66,7 +66,7 @@ namespace System.Drawing
 		internal short state;
 		internal short knownColor;
 // #if ONLY_1_1
-// Mono bug #81465 is holding this change
+// Mono bug #324144 is holding this change
 		// MS 1.1 requires this member to be present for serialization (not so in 2.0)
 		// however it's bad to keep a string (reference) in a struct
 		internal string name;
@@ -97,7 +97,7 @@ namespace System.Drawing
 
 		public string Name {
 			get {
-#if NET_2_0_ONCE_MONO_BUG_81465_IS_FIXED
+#if NET_2_0_ONCE_MONO_BUG_324144_IS_FIXED
 				if (IsNamedColor)
 					return KnownColors.GetName (knownColor);
 				else
@@ -134,6 +134,17 @@ namespace System.Drawing
 			}
 		}
 
+		internal long Value {
+			get {
+				// Optimization for known colors that were deserialized
+				// from an MS serialized stream.  
+				if (value == 0 && IsKnownColor) {
+					value = KnownColors.FromKnownColor ((KnownColor)knownColor).ToArgb () & 0xFFFFFFFF;
+				}
+				return value;
+			}
+			set { this.value = value; }
+		}
 
 		public static Color FromArgb (int red, int green, int blue)
 		{
@@ -145,13 +156,13 @@ namespace System.Drawing
 			CheckARGBValues (alpha, red, green, blue);
 			Color color = new Color ();
 			color.state = (short) ColorType.ARGB;
-			color.value = (int)((uint) alpha << 24) + (red << 16) + (green << 8) + blue;
+			color.Value = (int)((uint) alpha << 24) + (red << 16) + (green << 8) + blue;
 			return color;
 		}
 
 		public int ToArgb()
 		{
-			return (int) value;
+			return (int) Value;
 		} 
 
 		public static Color FromArgb (int alpha, Color baseColor)
@@ -211,7 +222,7 @@ namespace System.Drawing
 
 		public static bool operator == (Color left, Color right)
 		{
-			if (left.value != right.value)
+			if (left.Value != right.Value)
 				return false;
 			if (left.IsNamedColor != right.IsNamedColor)
 				return false;
@@ -326,84 +337,20 @@ namespace System.Drawing
 			}
 		}
 
-		/// <summary>
-		///	A Property
-		/// </summary>
-		///
-		/// <remarks>
-		///	The transparancy of the Color.
-		/// </remarks>
-		
-		public byte A
-		{
-			get {
-				// Optimization for known colors that were deserialized
-				// from an MS serialized stream.  
-				if (value == 0 && IsKnownColor) {
-					value = KnownColors.FromKnownColor ((KnownColor)knownColor).ToArgb ();
-				}
-				return (byte) (value >> 24);
-			}
+		public byte A {
+			get { return (byte) (Value >> 24); }
 		}
 
-		/// <summary>
-		///	R Property
-		/// </summary>
-		///
-		/// <remarks>
-		///	The red value of the Color.
-		/// </remarks>
-		
-		public byte R
-		{
-			get {
-				// Optimization for known colors that were deserialized
-				// from an MS serialized stream.  
-				if (value == 0 && IsKnownColor) {
-					value = KnownColors.FromKnownColor ((KnownColor)knownColor).ToArgb ();
-				}
-				return (byte) (value >> 16);
-			}
+		public byte R {
+			get { return (byte) (Value >> 16); }
 		}
 
-		/// <summary>
-		///	G Property
-		/// </summary>
-		///
-		/// <remarks>
-		///	The green value of the Color.
-		/// </remarks>
-		
-		public byte G
-		{
-			get {
-				// Optimization for known colors that were deserialized
-				// from an MS serialized stream.  
-				if (value == 0 && IsKnownColor) {
-					value = KnownColors.FromKnownColor ((KnownColor)knownColor).ToArgb ();
-				}
-				return (byte) (value >> 8);
-			}
+		public byte G {
+			get { return (byte) (Value >> 8); }
 		}
 
-		/// <summary>
-		///	B Property
-		/// </summary>
-		///
-		/// <remarks>
-		///	The blue value of the Color.
-		/// </remarks>
-		
-		public byte B
-		{
-			get {
-				// Optimization for known colors that were deserialized
-				// from an MS serialized stream.  
-				if (value == 0 && IsKnownColor) {
-					value = KnownColors.FromKnownColor ((KnownColor)knownColor).ToArgb ();
-				}
-				return (byte) value;
-			}
+		public byte B {
+			get { return (byte) Value; }
 		}
 
 		/// <summary>
@@ -449,7 +396,7 @@ namespace System.Drawing
 		
 		public override int GetHashCode ()
 		{
-			int hc = (int)(value ^ (value >> 32) ^ state ^ (knownColor >> 16));
+			int hc = (int)(Value ^ (Value >> 32) ^ state ^ (knownColor >> 16));
 			if (IsNamedColor)
 				hc ^= Name.GetHashCode ();
 			return hc;
