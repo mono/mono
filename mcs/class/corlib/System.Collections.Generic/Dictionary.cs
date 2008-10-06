@@ -383,9 +383,10 @@ namespace System.Collections.Generic {
 			count = 0;
 			// clear the hash table
 			Array.Clear (table, 0, table.Length);
-			// clear key and value arrays
+			// clear arrays
 			Array.Clear (keySlots, 0, keySlots.Length);
 			Array.Clear (valueSlots, 0, valueSlots.Length);
+			Array.Clear (linkSlots, 0, linkSlots.Length);
 
 			// empty the "empty slots chain"
 			emptySlot = NO_SLOT;
