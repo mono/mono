@@ -1714,7 +1714,7 @@ namespace System
 			else if (value1 is IComparable)
 				return ((IComparable) value1).CompareTo (value2);
 
-			string msg = Locale.GetText ("No IComparable or IComparable<T> interface found for type '{0}'.");
+			string msg = Locale.GetText ("No IComparable or IComparable<{0}> interface found.");
 			throw new InvalidOperationException (String.Format (msg, typeof (T)));
 		}
 

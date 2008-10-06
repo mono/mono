@@ -1,3 +1,9 @@
+
+Mon Oct 6 15:12:25 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* Array.cs: better message when keys cannot be compared
+	when sorting (bug #368455).
+
 2008-09-29  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Type.cs (MakeGenericType): Only use UnderlyingSystemType for user types.
