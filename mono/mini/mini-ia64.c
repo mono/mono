@@ -782,6 +782,8 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		cfg->arch.omit_fp = FALSE;
 	if (cfg->param_area)
 		cfg->arch.omit_fp = FALSE;
+	if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG))
+		cfg->arch.omit_fp = FALSE;
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		ArgInfo *ainfo = &cinfo->args [i];
 
@@ -1951,6 +1953,8 @@ emit_move_return_value (MonoCompile *cfg, MonoInst *ins, Ia64CodegenState code)
 	case OP_FCALL_REG:
 	case OP_FCALL_MEMBASE:
 		g_assert (ins->dreg == 8);
+		if (((MonoCallInst*)ins)->signature->ret->type == MONO_TYPE_R4)
+			ia64_fnorm_d_sf (code, ins->dreg, ins->dreg, 0);
 		break;
 	case OP_VCALL:
 	case OP_VCALL_REG:

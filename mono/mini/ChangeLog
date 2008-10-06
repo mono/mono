@@ -1,5 +1,17 @@
 2008-10-06  Zoltan Varga  <vargaz@gmail.com>
 
+	Backport of r114416.
+	
+	* mini-ia64.c (emit_move_return_value): Convert float return values to
+	double.
+
+	* objects.cs: Add a new test.
+	
+	Backport of r114401.
+	
+	* mini-ia64.c (mono_arch_allocate_vars): Disable fp elimination for
+	VARARG methods to fix an assert later.
+
 	Backport of r114973.
 	
 	* aot-compiler.c (add_wrappers): Add delegate-invoke wrappers.
