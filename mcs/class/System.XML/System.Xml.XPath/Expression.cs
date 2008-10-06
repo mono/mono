@@ -44,6 +44,50 @@ using NSResolver = System.Xml.XmlNamespaceManager;
 
 namespace System.Xml.XPath
 {
+	internal static class ExpressionCache
+	{
+		static readonly Hashtable table_per_ctx = new Hashtable ();
+		static object dummy = new object ();
+
+		public static XPathExpression Get (string xpath, IStaticXsltContext ctx)
+		{
+			object ctxkey = ctx != null ? ctx : dummy;
+
+			WeakReference wr = table_per_ctx [ctxkey] as WeakReference;
+			if (wr == null)
+				return null;
+			if (!wr.IsAlive) {
+				table_per_ctx [ctxkey] = null;
+				return null;
+			}
+			Hashtable table = (Hashtable) wr.Target;
+
+			wr = table [xpath] as WeakReference;
+			if (wr != null) {
+				if (wr.IsAlive)
+					return (XPathExpression) wr.Target;
+				table [xpath] = null;
+			}
+			return null;
+		}
+
+		public static void Set (string xpath, IStaticXsltContext ctx, XPathExpression exp)
+		{
+			object ctxkey = ctx != null ? ctx : dummy;
+
+			Hashtable table = null;
+
+			WeakReference wr = table_per_ctx [ctxkey] as WeakReference;
+			if (wr != null && wr.IsAlive)
+				table = (Hashtable) wr.Target;
+			else {
+				table = new Hashtable ();
+				table_per_ctx [ctxkey] = new WeakReference (table);
+			}
+			table [xpath] = new WeakReference (exp);
+		}
+	}
+
 #if XPATH_DEBUG
 	internal class CompiledExpression : Test.Xml.XPath.XPathExpression
 #else

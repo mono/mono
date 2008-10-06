@@ -1,5 +1,10 @@
 2008-10-06  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathExpression.cs, Expression.cs : Cache compiled xpath
+	  expressions so that they don't have to be parsed repeatedly.
+
+2008-10-06  Atsushi Enomoto <atsushi@ximian.com>
+
 	* Expression.cs : unindend cases that do not match our coding style.
 
 2008-10-06  Atsushi Enomoto <atsushi@ximian.com>

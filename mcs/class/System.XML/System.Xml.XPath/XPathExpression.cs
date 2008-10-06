@@ -30,6 +30,7 @@
 
 using System.Collections;
 using Mono.Xml.XPath;
+using System.Xml.Xsl;
 
 #if NET_2_0
 using NSResolver = System.Xml.IXmlNamespaceResolver;
@@ -92,11 +93,14 @@ namespace System.Xml.XPath
 #endif
 
 		internal static XPathExpression Compile (string xpath,
-			NSResolver nsmgr, System.Xml.Xsl.IStaticXsltContext ctx)
+			NSResolver nsmgr, IStaticXsltContext ctx)
 		{
-			XPathParser parser = new XPathParser (ctx);
-			XPathExpression x = new CompiledExpression (
-				xpath, parser.Compile (xpath));
+			XPathExpression x = ExpressionCache.Get (xpath, ctx);
+			if (x == null) {
+				XPathParser parser = new XPathParser (ctx);
+				x = new CompiledExpression (xpath, parser.Compile (xpath));
+				ExpressionCache.Set (xpath, ctx, x);
+			}
 			x.SetContext (nsmgr);
 			return x;
 		}
