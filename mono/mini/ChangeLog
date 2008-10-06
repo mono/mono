@@ -1,3 +1,8 @@
+2008-10-06  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-amd64.h: Temporarily disabled fast virtual generic method
+	calls because it breaks the System.Runtime.Remoting tests.
+
 2008-10-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (add_wrappers): Add delegate-invoke wrappers.
