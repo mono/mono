@@ -1,3 +1,8 @@
+2008-10-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Expression.cs, Iterator.cs : ChildIterator is not a SimpleIterator
+	  now. And reduced extra clone when the context node has no child.
+
 2008-10-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Iterator.cs : now we do not seem to need clone in

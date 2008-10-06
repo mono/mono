@@ -101,6 +101,12 @@ namespace System.Xml.XPath
 
 		public abstract bool MoveNextCore ();
 
+		internal XPathNavigator PeekNext ()
+		{
+			XPathNodeIterator i = Clone ();
+			return i.MoveNext () ? i.Current : null;
+		}
+
 		public override string ToString ()
 		{
 			if (Current != null)
@@ -281,25 +287,38 @@ namespace System.Xml.XPath
 		}
 	}
 
-	internal class ChildIterator : SimpleIterator
+	internal class ChildIterator : BaseIterator
 	{
-		public ChildIterator (BaseIterator iter) : base (iter) {}
-		private ChildIterator (ChildIterator other) : base (other, true) {}
+		XPathNavigator _nav;
+
+		public ChildIterator (BaseIterator iter) : base (iter.NamespaceManager) 
+		{
+			_nav = iter.CurrentPosition == 0 ? iter.PeekNext () : iter.Current;
+			if (_nav != null && _nav.HasChildren)
+				_nav = _nav.Clone ();
+			else
+				_nav = null;
+		}
+		private ChildIterator (ChildIterator other) : base (other)
+		{
+			_nav = other._nav == null ? null : other._nav.Clone ();
+		}
+
 		public override XPathNodeIterator Clone () { return new ChildIterator (this); }
+
 		public override bool MoveNextCore ()
 		{
-			bool fSuccess = (CurrentPosition == 0) ? _nav.MoveToFirstChild () : _nav.MoveToNext ();
-//			if (fSuccess) {
-//				Current.MoveTo (_nav);
-//			}
-			return fSuccess;
+			if (_nav == null)
+				return false;
+
+			return (CurrentPosition == 0) ? _nav.MoveToFirstChild () : _nav.MoveToNext ();
 		}
 
 		public override XPathNavigator Current {
 			get {
-				if (CurrentPosition > 0)
-					base.Current.MoveTo (_nav);
-				return base.Current;
+				if (CurrentPosition == 0)
+					return null;
+				return _nav;
 			}
 		}
 	}
@@ -769,13 +788,13 @@ namespace System.Xml.XPath
 
 	internal class AxisIterator : BaseIterator
 	{
-		private SimpleIterator _iter;
+		private BaseIterator _iter;
 		private NodeTest _test;
 			
 		//string name, ns;
 		//XPathNodeType matchType;
 
-		public AxisIterator (SimpleIterator iter, NodeTest test) : base (iter.NamespaceManager)
+		public AxisIterator (BaseIterator iter, NodeTest test) : base (iter.NamespaceManager)
 		{
 			_iter = iter;
 			_test = test;
@@ -789,7 +808,7 @@ namespace System.Xml.XPath
 
 		private AxisIterator (AxisIterator other) : base (other)
 		{
-			_iter = (SimpleIterator) other._iter.Clone ();
+			_iter = (BaseIterator) other._iter.Clone ();
 			_test = other._test;
 			//name = other.name;
 			//ns = other.ns;

@@ -1394,7 +1394,7 @@ namespace System.Xml.XPath
 			}
 		}
 		public Axes Axis { get { return _axis; }}
-		public virtual SimpleIterator Evaluate (BaseIterator iter)
+		public BaseIterator Evaluate (BaseIterator iter)
 		{
 			switch (_axis)
 			{
@@ -1441,7 +1441,7 @@ namespace System.Xml.XPath
 		public AxisSpecifier Axis { get { return _axis; }}
 		public override object Evaluate (BaseIterator iter)
 		{
-			SimpleIterator iterAxis = _axis.Evaluate (iter);
+			BaseIterator iterAxis = _axis.Evaluate (iter);
 			return new AxisIterator (iterAxis, this);
 		}
 		
