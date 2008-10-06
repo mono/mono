@@ -1,5 +1,11 @@
 2008-10-06  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* basic-simd.cs: New test suite for SIMD intrinsics.
+
+	* Makefile.am: Added new tests.
+
+2008-10-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* cpu-x86.md: Added new instructions to handle float to int using SSE regs.
 
 	* mini-ops.h: Same.
