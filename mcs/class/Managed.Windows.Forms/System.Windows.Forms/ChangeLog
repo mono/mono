@@ -1,3 +1,13 @@
+2008-10-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* X11Dnd.cs: Don't check that that the window sending the dnd events
+	is the owner of the selection. Although Gtk+ sets it that way, it's
+	not a requirement of the XDnd protocol, and Qt doesn't seem to do it.
+	So, just as Gtk+ does, we set our window sending the dnd events as the
+	owner of the selection, but don't check it when receiving them. This
+	should fix interoperability with Qt/Kde.
+	Fixes #324251.
+
 2008-10-06  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridView.cs: Make sure we take the vertical scrollbar into

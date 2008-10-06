@@ -649,9 +649,6 @@ namespace System.Windows.Forms {
 
 		public bool HandleSelectionNotifyEvent (ref XEvent xevent)
 		{
-			if (source != XplatUIX11.XGetSelectionOwner (display, XdndSelection))
-				return false;
-
 			MimeHandler handler = FindHandler ((IntPtr) xevent.SelectionEvent.target);
 			if (handler == null)
 				return false;
@@ -983,10 +980,6 @@ namespace System.Windows.Forms {
 		private bool ConvertData (ref XEvent xevent)
 		{
 			bool match = false;
-
-			if (source != XplatUIX11.XGetSelectionOwner (display, XdndSelection)) {
-				return false;
-			}
 
 			Control mwfcontrol = MwfWindow (source);
 
