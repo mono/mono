@@ -287,8 +287,11 @@ namespace System
 					throw new NotSupportedException (msg);
 				}
 				object newOb = ActivationServices.CreateProxyFromAttributes (type, activationAttributes);
-				if (newOb != null)
-					return ctor.Invoke (newOb, bindingAttr, binder, args, culture);
+				if (newOb != null) {
+					// This returns null
+					ctor.Invoke (newOb, bindingAttr, binder, args, culture);
+					return newOb;
+				}
 			}
 
 			return ctor.Invoke (bindingAttr, binder, args, culture);

@@ -1,3 +1,7 @@
+2008-10-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* Activator.cs (CreateInstance): Don't return the return value of the
+	ctor.Invoke (object, ...) overload since it is null, return 'newOb' instead.
 
 Mon Oct 6 15:12:25 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
