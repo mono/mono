@@ -1,3 +1,8 @@
+2008-10-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel-sparc.brg: Remove an incorrect reg: CEE_LDIND_I8 (OP_REGVAR) rule.
+	Fixes #426264.
+
 2008-09-26  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r114163.

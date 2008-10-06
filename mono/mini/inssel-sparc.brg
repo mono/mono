@@ -14,10 +14,6 @@ stmt: CEE_STIND_I8 (OP_REGVAR, reg) {
 	MONO_EMIT_NEW_UNALU (s, OP_MOVE, state->left->tree->dreg, state->right->reg1);
 }
 
-reg: CEE_LDIND_I8 (OP_REGVAR) {
-	MONO_EMIT_NEW_UNALU (s, OP_MOVE, state->reg1, state->left->tree->dreg);
-}
-
 stmt: CEE_STIND_I8 (OP_REGVAR, lreg) {
 	/* this should only happen for methods returning a long */
 	MONO_EMIT_NEW_UNALU (s, OP_MOVE, state->left->tree->dreg, state->right->reg2);
