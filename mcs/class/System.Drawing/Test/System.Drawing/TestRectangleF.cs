@@ -237,5 +237,20 @@ namespace MonoTests.System.Drawing
 			Assert.AreEqual (10, r.Width, "Width");
 			Assert.AreEqual (-1, r.Height, "Height");
 		}
+
+		[Test]
+		public void EdgeIntersection ()
+		{
+			// https://bugzilla.novell.com/show_bug.cgi?id=431587
+			RectangleF one = new RectangleF(10, 10, 10, 10);
+			RectangleF two = new RectangleF(20, 10, 10, 10);
+
+			one.Intersect(two);
+			Assert.IsTrue (one.IsEmpty, "Empty");
+			Assert.AreEqual (20f, one.X, "X");
+			Assert.AreEqual (10f, one.Y, "Y");
+			Assert.AreEqual (0f, one.Width, "Width");
+			Assert.AreEqual (10f, one.Height, "Height");
+		}
 	}
 }

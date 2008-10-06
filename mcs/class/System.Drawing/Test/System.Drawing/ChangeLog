@@ -1,3 +1,7 @@
+2008-10-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestRectangleF.cs: Add test case for bug #431587
+
 2008-08-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TestIcon.cs: Add test case for bug #415581.
