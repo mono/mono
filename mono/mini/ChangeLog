@@ -1,3 +1,21 @@
+2008-10-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_aot_trampoline): Delegate processing to
+	mono_magic_trampoline () if aot_get_method_from_token () fails. Remove
+	unused virtual call support code.
+
+	* aot-runtime.c (decode_method_ref): Add a 'no_aot_trampoline' out argument.
+	
+	* aot-runtime.c (mono_aot_get_method_from_vt_slot): Return NULL for methods
+	which can't use aot trampolines.
+	(decode_patch): Don't create aot trampolines for methods which can't use
+	them.
+
+	* aot-compiler.c (encode_method_ref): Add a marker for methods which can't
+	use aot trampolines.
+
+	* mini.h: Bump AOT image format version.
+	
 2008-10-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir2): Pass cil_method instead of cmethod
