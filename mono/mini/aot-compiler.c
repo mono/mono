@@ -2159,6 +2159,24 @@ add_wrappers (MonoAotCompile *acfg)
 			add_method (acfg, m);
 		}
 	}
+
+	/* delegate-invoke wrappers */
+	for (i = 0; i < acfg->image->tables [MONO_TABLE_TYPEDEF].rows; ++i) {
+		MonoClass *klass;
+		MonoMethod *method;
+		guint32 token;
+		
+		token = MONO_TOKEN_TYPE_DEF | (i + 1);
+		klass = mono_class_get (acfg->image, token);
+
+		if (klass->delegate) {
+			method = mono_get_delegate_invoke (klass);
+
+			m = mono_marshal_get_delegate_invoke (method, NULL);
+
+			add_method (acfg, m);
+		}
+	}
 }
 
 static void

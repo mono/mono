@@ -1,5 +1,9 @@
 2008-10-06  Zoltan Varga  <vargaz@gmail.com>
 
+	Backport of r114973.
+	
+	* aot-compiler.c (add_wrappers): Add delegate-invoke wrappers.
+	
 	Backport of r114617.
 	
 	* aot-compiler.c (emit_globals): Avoid invalid characters in
