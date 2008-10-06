@@ -1,3 +1,8 @@
+2008-10-03  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs: make sure we properly test complex generic methods
+	as a Call candidate.
+
 2008-09-22  Jb Evain  <jbevain@novell.com>
 
 	* TypeBinaryExpression.cs: protect against testing void expressions.
