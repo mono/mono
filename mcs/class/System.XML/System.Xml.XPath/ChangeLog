@@ -1,5 +1,10 @@
 2008-10-06  Atsushi Enomoto <atsushi@ximian.com>
 
+	* Expression.cs, Iterator.cs : simplify SlashIterator by introducing
+	  SortedIterator.
+
+2008-10-06  Atsushi Enomoto <atsushi@ximian.com>
+
 	* Expression.cs, Iterator.cs : ChildIterator is not a SimpleIterator
 	  now. And reduced extra clone when the context node has no child.
 

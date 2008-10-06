@@ -878,23 +878,68 @@ namespace System.Xml.XPath
 		}
 	}
 
+	internal class SortedIterator : BaseIterator
+	{
+		ArrayList list;
+
+		public SortedIterator (BaseIterator iter) : base (iter.NamespaceManager)
+		{
+			list = new ArrayList ();
+			while (iter.MoveNext ())
+				list.Add (iter.Current.Clone ());
+
+			// sort
+			if (list.Count == 0)
+				return;
+			XPathNavigator prev = (XPathNavigator) list [0];
+			list.Sort (XPathNavigatorComparer.Instance);
+			for (int i = 1; i < list.Count; i++) {
+				XPathNavigator n = (XPathNavigator) list [i];
+				if (prev.IsSamePosition (n)) {
+					list.RemoveAt (i);
+					i--;
+				}
+				else
+					prev = n;
+			}
+		}
+
+		public SortedIterator (SortedIterator other) : base (other)
+		{
+			this.list = other.list;
+			SetPosition (other.CurrentPosition);
+		}
+
+		public override XPathNodeIterator Clone () { return new SortedIterator (this); }
+
+		public override bool MoveNextCore ()
+		{
+			return CurrentPosition < list.Count;
+		}
+
+		public override XPathNavigator Current {
+			get { return CurrentPosition == 0 ? null : (XPathNavigator) list [CurrentPosition - 1]; }
+		}
+
+		public override int Count {
+			get { return list.Count; }
+		}
+	}
+
+	// NOTE: it is *not* sorted. Do not directly use it without checking sorting requirement.
 	internal class SlashIterator : BaseIterator
 	{
 		private BaseIterator _iterLeft;
 		private BaseIterator _iterRight;
 		private NodeSet _expr;
-		ArrayList _navStore;
 		SortedList _iterList;
 		bool _finished;
 		BaseIterator _nextIterRight;
 
-		public SlashIterator (BaseIterator iter, NodeSet expr, bool requireSorting) : base (iter.NamespaceManager)
+		public SlashIterator (BaseIterator iter, NodeSet expr) : base (iter.NamespaceManager)
 		{
 			_iterLeft = iter;
 			_expr = expr;
-
-			if (requireSorting)
-				CollectResults ();
 		}
 
 		private SlashIterator (SlashIterator other) : base (other)
@@ -905,8 +950,6 @@ namespace System.Xml.XPath
 			_expr = other._expr;
 			if (other._iterList != null)
 				_iterList = (SortedList) other._iterList.Clone ();
-			if (other._navStore != null)
-				_navStore = (ArrayList) other._navStore.Clone ();
 			_finished = other._finished;
 			if (other._nextIterRight != null)
 				_nextIterRight = (BaseIterator) other._nextIterRight.Clone ();
@@ -917,24 +960,7 @@ namespace System.Xml.XPath
 		{
 			if (_finished)
 				return false;
-			if (_navStore != null) {
-				// Which requires sorting::
-				if (_navStore.Count < CurrentPosition + 1) {
-					_finished = true;
-					return false;
-				}
-				while (_navStore.Count > CurrentPosition + 1) {
-					if (((XPathNavigator) _navStore [CurrentPosition + 1]).IsSamePosition (
-						(XPathNavigator) _navStore [CurrentPosition]))
-						_navStore.RemoveAt (CurrentPosition + 1);
-					else
-						break;
-				}
 
-				return true;
-			}
-			// Which does not require sorting::
-			
 			if (_iterRight == null) { // First time
 				if (!_iterLeft.MoveNext ())
 					return false;
@@ -1006,34 +1032,11 @@ namespace System.Xml.XPath
 			}
 		}
 
-		private void CollectResults ()
-		{
-			_navStore = new ArrayList ();
-			while (true) {
-				while (_iterRight == null || !_iterRight.MoveNext ()) {
-					if (!_iterLeft.MoveNext ()) {
-						_navStore.Sort (XPathNavigatorComparer.Instance);
-						return;
-					}
-					_iterRight = _expr.EvaluateNodeSet (_iterLeft);
-				}
-				XPathNavigator nav = _iterRight.Current;
-				_navStore.Add (nav.Clone ());
-			}
-		}
-
 		public override XPathNavigator Current { 
 			get {
-				if (CurrentPosition <= 0) return null;
-				if (_navStore != null) {
-					return (XPathNavigator) _navStore [CurrentPosition - 1];
-				} else {
-					return _iterRight.Current;
-				}
+				return (CurrentPosition == 0) ? null : _iterRight.Current;
 			}
 		}
-
-		public override int Count { get { return _navStore == null ? base.Count : _navStore.Count; } }
 	}
 
 	internal class PredicateIterator : BaseIterator

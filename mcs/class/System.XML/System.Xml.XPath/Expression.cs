@@ -1193,7 +1193,8 @@ namespace System.Xml.XPath
 			BaseIterator iterLeft = left.EvaluateNodeSet (iter);
 			if (left.Peer && right.Subtree && !RequireSorting)
 				return new SimpleSlashIterator (iterLeft, right);
-			return new SlashIterator (iterLeft, right, RequireSorting);
+			BaseIterator si = new SlashIterator (iterLeft, right);
+			return RequireSorting ? new SortedIterator (si) : si;
 		}
 
 		public override bool RequireSorting { get { return left.RequireSorting || right.RequireSorting; } }
@@ -1259,16 +1260,13 @@ namespace System.Xml.XPath
 			if (left.Peer && !left.RequireSorting)
 				il = new SimpleSlashIterator (
 					il, DescendantOrSelfStar);
-			else
-				il = new SlashIterator (il,
-					DescendantOrSelfStar,
-					left.RequireSorting);
+			else {
+				BaseIterator bb = new SlashIterator (il, DescendantOrSelfStar);
+				il = left.RequireSorting ? new SortedIterator (bb) : bb;
+			}
 
-			return new SlashIterator (
-				il,
-				right,
-				DescendantOrSelfStar.RequireSorting || right.RequireSorting
-			);
+			SlashIterator b = new SlashIterator (il, right);
+			return RequireSorting ? (BaseIterator) new SortedIterator (b) : b;
 		}
 
 		public override bool RequireSorting { get { return left.RequireSorting || right.RequireSorting; } }
