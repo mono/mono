@@ -251,6 +251,19 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.AreEqual (0, _dictionary.Count, "Clear method failed!");
 			Assert.IsFalse (_dictionary.ContainsKey ("key2"));
 		}
+	
+		[Test] // bug 432441
+		public void Clear_Iterators ()
+		{
+			Dictionary<object, object> d = new Dictionary <object, object> ();
+
+			d [new object ()] = new object ();
+			d.Clear ();
+			int hash = 0;
+			foreach (object o in d) {
+				hash += o.GetHashCode ();
+			}
+		}
 
 		[Test]
 		[Category ("NotWorking")]

@@ -1,3 +1,7 @@
+2008-10-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* DictionaryTest.cs: Add a test for #432441.
+
 2008-09-29  Jb Evain  <jbevain@novell.com>
 
 	* DictionaryTest.cs: test for null argument for ContainsKey.
