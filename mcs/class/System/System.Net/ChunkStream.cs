@@ -278,7 +278,7 @@ namespace System.Net
 			// short path
 			if (trailerState == 2 && (char) buffer [offset] == '\r' && saved.Length == 0) {
 				offset++;
-				if ((char) buffer [offset] == '\n') {
+				if (offset < size && (char) buffer [offset] == '\n') {
 					offset++;
 					return State.None;
 				}

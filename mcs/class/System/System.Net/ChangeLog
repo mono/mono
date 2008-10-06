@@ -1,3 +1,8 @@
+2008-10-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ChunkStream.cs: (ReadTrailer) make sure the array access is not out
+	of bounds. Fixes bug #322715.
+
 2008-09-19 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
 
 	* WebConnectionStream.cs: when receiving a 0 content-length, free up
