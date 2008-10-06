@@ -1,3 +1,8 @@
+2008-10-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (check_inline_called_method_name_limit): Return TRUE
+	so inlining actually works.
+	(check_inline_caller_method_name_limit): Ditto.
 
 Mon Oct 6 11:04:38 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
@@ -5,7 +10,7 @@ Mon Oct 6 11:04:38 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	64 bit safety (from Olaf Hering and Andreas Färber).
 
 2008-10-06  Zoltan Varga  <vargaz@gmail.com>
-
+	
 	* mini-trampolines.c (mono_aot_trampoline): Delegate processing to
 	mono_magic_trampoline () if aot_get_method_from_token () fails. Remove
 	unused virtual call support code.
