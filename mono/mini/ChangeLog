@@ -1,3 +1,8 @@
+2008-10-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Disable the simd tests for now as Mono.Simd is not
+	yet checked in.
+
 2008-10-06  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* basic-simd.cs: New test suite for SIMD intrinsics.
