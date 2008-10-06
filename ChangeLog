@@ -1,3 +1,7 @@
+2008-10-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Add --enable-minimal=jit option.
+
 2008-08-28  Geoff Norton  <gnorton@novell.com>
 
 	* build-iphone.sh: iPhone lies about HAVE_MMAP as well.
