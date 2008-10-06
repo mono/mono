@@ -1,3 +1,22 @@
+2008-10-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* cpu-x86.md: Added new instructions to handle float to int using SSE regs.
+
+	* mini-ops.h: Same.
+
+	* mini-x86.h: Enable mono_arch_decompose_opts if simd intrinsics are enabled.
+
+	* mini-x86.c (mono_arch_decompose_opts): Decompose float to int conversion
+	using SSE2 aware opcodes.
+
+	* mini-x86.c (emit_float_to_int): Disable the SSE2 optimization if OPT_SIMD
+	is enabled, this code path is only reachable if conversion ops are emmited after
+	mono_method_to_ir.
+
+	* mini.h: Added MonoCompile::fconv_to_r8_x_var to hold the float to int var.
+
+	This optimization saves 6 bytes per conversion against the old version.
+
 2008-10-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (compile_method): Don't skip methods referencing 
