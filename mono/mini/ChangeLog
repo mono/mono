@@ -1,5 +1,10 @@
 2008-10-06  Zoltan Varga  <vargaz@gmail.com>
 
+	Backport of r114299.
+	
+	* mini-arm.h driver.c: Print the fp model when using --version on arm. Also,
+	add a check that one of the ARM_FPU_ constants is defined.
+	
 	* mini.c cfold.c graph.c ssa.c aot-runtime.c local-propagation.c
 	driver.c mini-codegen.c mini-amd64.c mini-arm.c: Add support for removing
 	the JIT using the --enable-minimal=jit configure option.
