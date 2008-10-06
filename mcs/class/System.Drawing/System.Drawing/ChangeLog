@@ -1,3 +1,8 @@
+2008-10-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RectangleF.cs: Fix edge intersection. Path by Brian Browning.
+	[Fix bug #431587]
+
 2008-08-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Icon.cs (InitFromStreamWithSize): Use temp ArrayList for IconDirEntry
