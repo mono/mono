@@ -1191,7 +1191,7 @@ namespace System.Xml.XPath
 			// Peer and subtree optimization. see
 			// http://idealliance.org/papers/dx_xmle04/papers/02-03-02/02-03-02.html
 			BaseIterator iterLeft = left.EvaluateNodeSet (iter);
-			if (left.Peer && right.Subtree && !RequireSorting)
+			if (left.Peer && right.Subtree)
 				return new SimpleSlashIterator (iterLeft, right);
 			BaseIterator si = new SlashIterator (iterLeft, right);
 			return RequireSorting ? new SortedIterator (si) : si;
@@ -1485,7 +1485,9 @@ namespace System.Xml.XPath
 				case Axes.Ancestor:
 				case Axes.AncestorOrSelf:
 				case Axes.Preceding:
+				case Axes.PrecedingSibling:
 				case Axes.Following:
+				case Axes.FollowingSibling:
 					return false;
 				default:
 					return true;
