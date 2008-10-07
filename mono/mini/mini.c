@@ -7500,6 +7500,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						   of all stack arguments at bb boundarie */
 						bblock = ebblock;
 
+						ins_flag = 0;
 						inline_costs += costs;
 						break;
 					} else {
@@ -7580,7 +7581,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						/* indicates start of a new block, and triggers a load of
 						   all stack arguments at bb boundarie */
 						bblock = ebblock;
-						
+
+						ins_flag = 0;						
 						inline_costs += costs;
 						break;
 					} else {
@@ -7618,6 +7620,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					}
 				}
 			}
+			ins_flag = 0;
 			ip += 5;
 			break;
 		}
@@ -7919,6 +7922,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					ins_flag = 0;
 				}
 			}
+			ins_flag = 0;
 			ip += 5;
 			break;
 		}

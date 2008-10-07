@@ -1,5 +1,12 @@
 2008-10-07  Zoltan Varga  <vargaz@gmail.com>
 
+	Backport of r115144.
+	
+	* mini.c (mono_method_to_ir): Clear ins_flag on all code paths
+	in the LDFLD/STFLD opcodes. Fixes #432673.
+
+2008-10-07  Zoltan Varga  <vargaz@gmail.com>
+
 	* aot-compiler.c (add_wrappers): Fix Delegate/MulticastDelegate classes
 	when adding delegate-invoke wrappers.
 
