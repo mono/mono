@@ -121,9 +121,6 @@ scripts_service = mono-service mono-service2
 scripts_nunit = nunit-console$(SCRIPT_SUFFIX) nunit-console2$(SCRIPT_SUFFIX)
 scripts_rpmhelpers = mono-find-provides mono-find-requires
 
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA= mono-nunit.pc
-
 CLEANFILES = $(scripts_1_0) $(scripts_1_0_umask) $(scripts_2_0) $(scripts_2_1) $(scripts_defaults) $(scripts_1_0_compat) mono-service mono-service2 nunit-console nunit-console2 mono-find-provides mono-find-requires 
 DISTCLEANFILES = $(pkgconfig_DATA) $(scripts_rpmhelpers)
 
