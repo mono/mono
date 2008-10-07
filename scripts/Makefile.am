@@ -132,7 +132,6 @@ EXTRA_DIST =			\
 	smcs.in			\
 	smcs.bat.in		\
 	mono-service.in		\
-	mono-nunit.pc.in	\
 	mono-find-provides.in	\
 	mono-find-requires.in	\
 	mono-test-install	\
