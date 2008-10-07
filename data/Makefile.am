@@ -14,10 +14,10 @@ if JIT_SUPPORTED
 if INTERP_SUPPORTED
 pkgconfig_DATA= mono.pc mint.pc dotnet.pc dotnet35.pc wcf.pc mono-nunit.pc mono-cairo.pc cecil.pc smcs.pc
 else
-pkgconfig_DATA= mono.pc dotnet.pc dotnet35.pc wcf.pc mono-cairo.pc cecil.pc smcs.pc
+pkgconfig_DATA= mono.pc dotnet.pc dotnet35.pc wcf.pc mono-nunit.pc mono-cairo.pc cecil.pc smcs.pc
 endif
 else
-pkgconfig_DATA= mint.pc mono-cairo.pc cecil.pc smcs.pc
+pkgconfig_DATA= mint.pc mono-nunit.pc mono-cairo.pc cecil.pc smcs.pc
 endif
 
 DISTCLEANFILES= mono.pc mint.pc dotnet.pc dotnet35.pc wcf.pc mono-nunit.pc mono-cairo.pc cecil.pc smcs.pc
