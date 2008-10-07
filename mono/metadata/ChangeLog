@@ -1,5 +1,11 @@
 2008-10-07  Bill Holmes  <billholmes54@gmail.com>
 
+	* marshal.c (cominterop_get_ccw) : Fixing a copy paste error from r115126.
+
+	Code is contributed under MIT/X11 license.
+
+2008-10-07  Bill Holmes  <billholmes54@gmail.com>
+
 	* marshal.c (cominterop_get_native_wrapper) : Adding a call to mono_class_setup_vtable
 	  if if the class vtable needs initialized.
 
