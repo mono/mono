@@ -1,3 +1,7 @@
+2008-10-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile (net_2_0_dirs): Add Mono.Simd.
+
 2008-09-30  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile (net_2_0_dirs): added System.Web.Extensions_1.0 and
