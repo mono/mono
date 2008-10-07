@@ -1,3 +1,8 @@
+2008-10-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ServicePointManager.cs: better handling of possible collisions of the
+	hash for schema/host/port. Fixes bug #417891.
+
 2008-10-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ChunkStream.cs: (ReadTrailer) make sure the array access is not out

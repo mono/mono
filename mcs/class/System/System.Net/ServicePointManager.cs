@@ -59,6 +59,37 @@ namespace System.Net
 {
 	public class ServicePointManager
 	{
+		class SPKey {
+			Uri uri; // schema/host/port
+			bool use_connect;
+
+			public SPKey (Uri uri, bool use_connect) {
+				this.uri = uri;
+				this.use_connect = use_connect;
+			}
+
+			public Uri Uri {
+				get { return uri; }
+			}
+
+			public bool UseConnect {
+				get { return use_connect; }
+			}
+
+			public override int GetHashCode () {
+				return uri.GetHashCode () + ((use_connect) ? 1 : 0);
+			}
+
+			public override bool Equals (object obj) {
+				SPKey other = obj as SPKey;
+				if (obj == null) {
+					return false;
+				}
+
+				return (uri.Equals (other.uri) && other.use_connect == use_connect);
+			}
+		}
+
 		private static HybridDictionary servicePoints = new HybridDictionary ();
 		
 		// Static properties
@@ -240,7 +271,7 @@ namespace System.Net
 		{
 			return FindServicePoint (new Uri(uriString), proxy);
 		}
-		
+
 		public static ServicePoint FindServicePoint (Uri address, IWebProxy proxy)
 		{
 			if (address == null)
@@ -265,7 +296,7 @@ namespace System.Net
 			
 			ServicePoint sp = null;
 			lock (servicePoints) {
-				int key = address.GetHashCode () + (int) ((useConnect) ? 1 : 0);
+				SPKey key = new SPKey (address, useConnect);
 				sp = servicePoints [key] as ServicePoint;
 				if (sp != null)
 					return sp;
