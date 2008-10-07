@@ -1,3 +1,13 @@
+2008-10-07  Marek Habersack  <mhabersack@novell.com>
+
+	* sysmath.h: changed the declaration of the
+	ves_icall_System_Math_Round2 icall by adding an extra
+	away_from_zero parameter.
+
+	* sysmath.c (ves_icall_System_Math_Round2): added support for
+	away from zero rounding. The icall now takes an extra boolean
+	parameter to signal that away from zero operation is requested.
+
 2008-10-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_delegate_begin_invoke): Put the wrapper in
