@@ -1,3 +1,12 @@
+2008-10-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* appdomain.c:
+	* icall.c: create a .ini file for shadow-copied assemblies that
+	contains the location of the original assembly. Use this to return the
+	proper CodeBase for shadow-copied assemblies. Fixes bug #323606.
+	Also fix the number of '/' for windows when returning the CodeBase.
+	Fixes bug #430920.
+
 2008-10-07  Bill Holmes  <billholmes54@gmail.com>
 
 	* marshal.c (cominterop_get_ccw) : Fixing a copy paste error from r115126.
