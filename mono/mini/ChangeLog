@@ -1,3 +1,15 @@
+2008-10-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
+        driver.c (opt_sets): Added combinations of simd, sse2 and sse3.
+
+        mini-x86.c (mono_arch_cpu_optimizazions): Detect sse3 and now
+        only disable simd intrinsics if no sse2 is detected.
+
+        * optflags-def.h: Added sse3.
+
+        * simd-intrinsics.c: Avoid generated sse3 intrinsics if the optimization
+        is disabled.
+
 2008-10-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (add_wrappers): Fix Delegate/MulticastDelegate classes
