@@ -143,18 +143,30 @@ namespace Mono.Cecil {
 				return null;
 
 			int index = (int) rid - 1;
-			TypeReference tspec = m_typeSpecs [index];
-			if (tspec != null)
-				return tspec;
 
 			TypeSpecTable tsTable = m_tableReader.GetTypeSpecTable ();
 			TypeSpecRow tsRow = tsTable [index];
 			TypeSpec ts = m_sigReader.GetTypeSpec (tsRow.Signature);
-			tspec = GetTypeRefFromSig (ts.Type, context);
-			tspec = GetModifierType (ts.CustomMods, tspec);
-			tspec.MetadataToken = MetadataToken.FromMetadataRow (TokenType.TypeSpec, index);
+
+			// don't cache generic instances
+			if (ts.Type.ElementType == ElementType.GenericInst)
+				return CreateTypeSpecFromSig (ts, index, context);
+
+			TypeReference tspec = m_typeSpecs[index];
+			if (tspec != null)
+				return tspec;
+
+			tspec = CreateTypeSpecFromSig (ts, index, context);
 			m_typeSpecs [index] = tspec;
 
+			return tspec;
+		}
+
+		TypeReference CreateTypeSpecFromSig (TypeSpec ts, int index, GenericContext context)
+		{
+			TypeReference tspec = GetTypeRefFromSig (ts.Type, context);
+			tspec = GetModifierType (ts.CustomMods, tspec);
+			tspec.MetadataToken = MetadataToken.FromMetadataRow (TokenType.TypeSpec, index);
 			return tspec;
 		}
 

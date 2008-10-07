@@ -1,3 +1,9 @@
+2008-10-07  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/ReflectionReader.cs: don't cache generic typespecs,
+	as some compiler reuse generic instance signatures with different
+	generic contexts.
+
 2008-10-01  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.dll.sources
