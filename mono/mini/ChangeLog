@@ -1,5 +1,10 @@
 2008-10-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (add_wrappers): Fix Delegate/MulticastDelegate classes
+	when adding delegate-invoke wrappers.
+
+2008-10-07  Zoltan Varga  <vargaz@gmail.com>
+
 	* Makefile.am: Reenable the simd tests.
 
 2008-10-07  Bill Holmes  <billholmes54@gmail.com>
