@@ -1,3 +1,8 @@
+2008-10-06  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewTextBoxCell.cs: Don't default to VerticalCenter font
+	drawing mode.  If we are top aligned, give ourselves some top padding.
+
 2008-10-06  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* X11Dnd.cs: When firing the default dnd enter/leave events, fire the

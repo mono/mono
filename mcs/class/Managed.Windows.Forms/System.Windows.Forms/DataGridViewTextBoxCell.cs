@@ -202,12 +202,19 @@ namespace System.Windows.Forms {
 			if (!IsInEditMode && (paintParts & DataGridViewPaintParts.ContentForeground) == DataGridViewPaintParts.ContentForeground) {
 				Color color = Selected ? cellStyle.SelectionForeColor : cellStyle.ForeColor;
 
-				TextFormatFlags flags = TextFormatFlags.EndEllipsis | TextFormatFlags.VerticalCenter | TextFormatFlags.TextBoxControl;
+				TextFormatFlags flags = TextFormatFlags.EndEllipsis | TextFormatFlags.TextBoxControl;
 				flags |= AlignmentToFlags (cellStyle.Alignment);
 
 				Rectangle contentbounds = cellBounds;
+				
 				contentbounds.Height -= 2;
 				contentbounds.Width -= 2;
+				
+				// If we are top aligned, give ourselves some padding from the top
+				if (((int)cellStyle.Alignment & 7) > 0) {
+					contentbounds.Offset (0, 2);
+					contentbounds.Height -= 2;
+				}
 
 				if (formattedValue != null)
 					TextRenderer.DrawText (graphics, formattedValue.ToString (), cellStyle.Font, contentbounds, color, flags);
