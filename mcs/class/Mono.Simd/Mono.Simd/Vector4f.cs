@@ -32,25 +32,46 @@ namespace Mono.Simd
 {
 	public enum ShuffleSel
 	{
-		X1 = 0x00,
-		Y1 = 0x01,
-		Z1 = 0x02,
-		W1 = 0x03,
+		XFromX,
+		XFromY,
+		XFromZ,
+		XFromW,
 
-		X2 = 0x00,
-		Y2 = 0x04,
-		Z2 = 0x08,
-		W2 = 0x0C,
+		YFromX = 0x00,
+		YFromY = 0x04,
+		YFromZ = 0x08,
+		YFromW = 0x0C,
 
-		X3 = 0x00,
-		Y3 = 0x10,
-		Z3 = 0x20,
-		W3 = 0x30,
+		ZFromX = 0x00,
+		ZFromY = 0x10,
+		ZFromZ = 0x20,
+		ZFromW = 0x30,
 
-		X4 = 0x00,
-		Y4 = 0x40,
-		Z4 = 0x80,
-		W4 = 0xC0,
+		WFromX = 0x00,
+		WFromY = 0x40,
+		WFromZ = 0x80,
+		WFromW = 0xC0,
+
+		/*Expand a single element into all elements*/
+		ExpandX = XFromX | YFromX | ZFromX | WFromX,
+		ExpandY = XFromY | YFromY | ZFromY | WFromY,
+		ExpandZ = XFromZ | YFromZ | ZFromZ | WFromZ,
+		ExpandW = XFromW | YFromW | ZFromW | WFromW,
+
+		/*Expand a pair of elements (x,y,z,w) -> (x,x,y,y)*/
+		ExpandXY = XFromX | YFromX | ZFromY | WFromY,
+		ExpandZW = XFromZ | YFromZ | ZFromW | WFromW,
+
+		/*Expand interleaving elements (x,y,z,w) -> (x,y,x,y)*/
+		ExpandInterleavedXY = XFromX | YFromY | ZFromX | WFromY,
+		ExpandInterleavedZW = XFromZ | YFromW | ZFromZ | WFromW,
+
+		/*Rotate elements*/
+		RotateRight = XFromY | YFromZ | ZFromW | WFromX,
+		RotateLeft = XFromW | YFromX | ZFromY | WFromZ,
+
+		/*Swap order*/
+		Swap = XFromW | YFromZ | ZFromY | WFromX,
 	};
 
 /*
@@ -164,6 +185,9 @@ namespace Mono.Simd
 			throw new Exception ("not reached"); 
 		}
 
+		/*
+		The sel argument must be a value combination of ShuffleSel flags.
+		*/
 		public static Vector4f Shuffle (Vector4f v1, ShuffleSel sel)
 		{
 			return new Vector4f (v1.select (0, sel), v1.select (1, sel), v1.select (2, sel), v1.select (3, sel));

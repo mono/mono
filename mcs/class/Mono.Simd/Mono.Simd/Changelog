@@ -1,3 +1,8 @@
+2008-10-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Vector4f.cs (ShuffleSel): Better naming for the constants.
+	Added some helper constants.
+
 2008-10-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Vector4u.cs: Mask type as not CLS compliant.
