@@ -1,5 +1,10 @@
 2008-10-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridView.cs: Always rebind to the datasource, as things may
+	have changed in it that we aren't capturing yet.
+
+2008-10-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewTextBoxCell.cs: Don't default to VerticalCenter font
 	drawing mode.  If we are top aligned, give ourselves some top padding.
 

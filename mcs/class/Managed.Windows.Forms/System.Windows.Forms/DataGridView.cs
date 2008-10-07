@@ -700,24 +700,21 @@ namespace System.Windows.Forms {
 		public object DataSource {
 			get { return dataSource; }
 			set {
-				if (dataSource != value) {
-					/* The System.Windows.Forms.DataGridView class supports the standard Windows Forms data-binding model. This means the data source can be of any type that implements:
-					 - the System.Collections.IList interface, including one-dimensional arrays.
-					 - the System.ComponentModel.IListSource interface, such as the System.Data.DataTable and System.Data.DataSet classes.
-					 - the System.ComponentModel.IBindingList interface, such as the System.ComponentModel.Collections.BindingList<> class.
-					 - the System.ComponentModel.IBindingListView interface, such as the System.Windows.Forms.BindingSource class.
-					*/
-					if (!(value == null || value is IList || value is IListSource || value is IBindingList || value is IBindingListView)) {
-						throw new NotSupportedException("Type cant be binded.");
-					}
-						
-					ClearBinding ();
+				/* The System.Windows.Forms.DataGridView class supports the standard Windows Forms data-binding model. This means the data source can be of any type that implements:
+				 - the System.Collections.IList interface, including one-dimensional arrays.
+				 - the System.ComponentModel.IListSource interface, such as the System.Data.DataTable and System.Data.DataSet classes.
+				 - the System.ComponentModel.IBindingList interface, such as the System.ComponentModel.Collections.BindingList<> class.
+				 - the System.ComponentModel.IBindingListView interface, such as the System.Windows.Forms.BindingSource class.
+				*/
+				if (!(value == null || value is IList || value is IListSource || value is IBindingList || value is IBindingListView))
+					throw new NotSupportedException ("Type cannot be bound.");
 					
-					dataSource = value;
-					OnDataSourceChanged (EventArgs.Empty);
-					
-					DoBinding ();
-				}
+				ClearBinding ();
+				
+				dataSource = value;
+				OnDataSourceChanged (EventArgs.Empty);
+				
+				DoBinding ();
 			}
 		}
 
