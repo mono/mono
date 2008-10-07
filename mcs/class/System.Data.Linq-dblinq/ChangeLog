@@ -1,0 +1,18 @@
+2008-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Data.Linq.dll.sources, Makefile, src/* :
+	  replace everything with DBLinq integration.
+
+	  Imported DBLinq tree is r899. Skipped: DbLinq.Localization,
+	  DbLinq.Ingres, DbLinq.MySql, DbLinq.Oracle, DbLinq.PostgreSql,
+	  DbLinq.Sqlite, DbMetal, VisualMetal directories.
+
+2008-05-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Data.Linq.dll.sources :
+	  added System.Data.Linq.SqlClient* stubs.
+
+2008-05-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile, System.Data.Linq.dll.sources : refresh stub checkin.
+

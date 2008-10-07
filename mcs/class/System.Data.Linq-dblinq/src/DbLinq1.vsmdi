@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestLists xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2006">
+  <TestList name="Lists of Tests" id="8c43106b-9dc1-4907-a29f-aa66a61bf5b6">
+    <RunConfiguration id="4bf8ab57-0a3e-42e7-8cf7-3cb20d6d9ec5" name="Local Test Run" storage="localtestrun.testrunconfig" type="Microsoft.VisualStudio.TestTools.Common.TestRunConfiguration, Microsoft.VisualStudio.QualityTools.Common,   PublicKeyToken=b03f5f7f11d50a3a" />
+  </TestList>
+  <TestList name="DbLinq" id="a2b83d72-4186-40c3-84bd-09c625474f62" parentListId="8c43106b-9dc1-4907-a29f-aa66a61bf5b6" />
+  <TestList name="Language" id="b851d048-e26c-47b7-8928-1f8715bd39f4" parentListId="c7ffa03c-62e4-425f-95ac-ea45ef122195">
+    <TestLinks>
+      <TestLink id="f777b698-cc00-d6c3-fdfe-1c54e16fa479" name="GetWords2Test" storage="tests\dblinqtest\bin\debug\dblinqtest.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="a8bbca70-ebf9-fd29-3fd3-5a6279739c17" name="GetWords1Test" storage="tests\dblinqtest\bin\debug\dblinqtest.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="c7c86682-cc53-5d37-ffb7-7573d3897985" name="GetWords5Test" storage="tests\dblinqtest\bin\debug\dblinqtest.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="ed9d4a44-3988-fff1-0474-6ea9dc5843cb" name="GetWords6Test" storage="tests\dblinqtest\bin\debug\dblinqtest.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="c8ba7616-1765-5ce5-4ac9-24cf514e3360" name="GetNote2Test" storage="tests\dblinqtest\bin\debug\dblinqtest.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="b2f691a4-2984-d4b5-1d37-3d6d375bcb06" name="GetWords3Test" storage="tests\dblinqtest\bin\debug\dblinqtest.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="93b87687-267f-1582-3546-7011e70bb13a" name="GetNote1Test" storage="tests\dblinqtest\bin\debug\dblinqtest.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="8f994ae8-d046-476f-10c9-ffd5a29cf272" name="GetNote3Test" storage="tests\dblinqtest\bin\debug\dblinqtest.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="45be5b64-474d-a6bc-8476-3638d1725ff9" name="GetWords8Test" storage="tests\dblinqtest\bin\debug\dblinqtest.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="b4701a35-1db5-87b3-85d2-24578ad5f600" name="GetWords7Test" storage="tests\dblinqtest\bin\debug\dblinqtest.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="c5c2a048-0174-a2e7-bd6e-bacb614186b1" name="GetWords0Test" storage="tests\dblinqtest\bin\debug\dblinqtest.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+    </TestLinks>
+  </TestList>
+  <TestList name="Util" id="c7ffa03c-62e4-425f-95ac-ea45ef122195" parentListId="a2b83d72-4186-40c3-84bd-09c625474f62" />
+</TestLists>

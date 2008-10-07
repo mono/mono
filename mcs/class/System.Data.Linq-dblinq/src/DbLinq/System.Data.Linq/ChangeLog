@@ -1,0 +1,9 @@
+2008-05-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Data.Linq.dll.sources :
+	  added System.Data.Linq.SqlClient* stubs.
+
+2008-05-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile, System.Data.Linq.dll.sources : refresh stub checkin.
+
