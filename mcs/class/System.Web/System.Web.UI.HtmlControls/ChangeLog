@@ -1,3 +1,9 @@
+2008-10-07  Christian Hergert  <christian.hergert@gmail.com>
+
+	* HtmlImage.cs: Do not render the src attribute if it is null or empty.
+	An empty src attribute makes browsers download the current page url as
+	the url of the image.
+
 2008-08-29  Marek Habersack  <mhabersack@novell.com>
 
 	* HtmlHead.cs: call base.OnInit ()

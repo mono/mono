@@ -1,3 +1,8 @@
+2008-10-07  Christian Hergert  <christian.hergert@gmail.com>
+
+	* HtmlImageTest.cs: Add test to make sure the src attribute is not
+	rendered when it is empty.
+
 2008-07-27  Dean Brettle <dean@brettle.com>
 
 	* HtmlInputButtonTest.cs, HtmlImageTest.cs, HtmlFormTest.cs, 

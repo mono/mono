@@ -112,6 +112,17 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		}
 
 		[Test]
+		public void EmptySrc ()
+		{
+			TestHtmlImage img = new TestHtmlImage ();
+
+			img.Src = String.Empty;
+
+			HtmlTextWriter writer = img.GetWriter ();
+			Assert.AreEqual (" /", writer.InnerWriter.ToString ());
+		}
+
+		[Test]
 		[Category ("NunitWeb")]
 		public void RenderAttributes ()
 		{

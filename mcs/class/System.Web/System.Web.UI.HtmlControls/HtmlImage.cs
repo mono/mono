@@ -201,6 +201,15 @@ namespace System.Web.UI.HtmlControls
 		protected override void RenderAttributes (HtmlTextWriter w)
 		{
 			PreProcessRelativeReference (w, "src");
+
+			/* MS does not seem to render the src attribute if it
+			 * is empty. Firefox, at least, will fetch the current
+			 * page as the src="" if other img attributes exist.
+			 */
+			string src = Attributes["src"];
+			if (src == null || src.Length == 0)
+				Attributes.Remove ("src");
+
 			base.RenderAttributes (w);
 
 			/* MS closes the HTML element at the end of
