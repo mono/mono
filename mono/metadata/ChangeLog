@@ -1,5 +1,12 @@
 2008-10-07  Bill Holmes  <billholmes54@gmail.com>
 
+	* marshal.c (cominterop_get_native_wrapper) : Adding a call to mono_class_setup_vtable
+	  if if the class vtable needs initialized.
+
+	Code is contributed under MIT/X11 license.
+
+2008-10-07  Bill Holmes  <billholmes54@gmail.com>
+
 	* marshal.c (cominterop_get_native_wrapper_adjusted, cominterop_get_ccw) : 
 	  Adding default MonoMarshalSpecs for COM methods.  OBJECT->STRUCT,
 	  STRING->BSTR, and CLASS->INTERFACE.
