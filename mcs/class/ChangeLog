@@ -1,3 +1,8 @@
+2008-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : changed some net_2_0_dirs orders; Sys.Web.Extensions
+	  will depend on Sys.Data.Linq (LinqDataSource).
+
 2008-10-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile (net_2_0_dirs): Add Mono.Simd.
