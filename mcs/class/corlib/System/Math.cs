@@ -412,11 +412,11 @@ namespace System
 			if (digits < 0 || digits > 15)
 				throw new ArgumentOutOfRangeException (Locale.GetText ("Value is too small or too big."));
 
-			return Round2(value, digits);
+			return Round2(value, digits, false);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static double Round2 (double value, int digits);
+		private extern static double Round2 (double value, int digits, bool away_from_zero);
 
 
 #if NET_2_0
@@ -433,7 +433,6 @@ namespace System
 				return Ceiling (value - 0.5);
 		}
 
-		[MonoTODO ("Not implemented")]
 		public static double Round (double value, int digits, MidpointRounding mode)
 		{
 			if ((mode != MidpointRounding.ToEven) && (mode != MidpointRounding.AwayFromZero))
@@ -441,9 +440,10 @@ namespace System
 
 			if (mode == MidpointRounding.ToEven)
 				return Round (value, digits);
-			throw new NotImplementedException ();
+			else
+				return Round2 (value, digits, true);
 		}
-
+		
 		public static double Truncate (double d)
 		{
 			if (d > 0D)

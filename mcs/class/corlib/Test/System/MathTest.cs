@@ -871,6 +871,102 @@ namespace MonoTests.System
 			Assert.AreEqual (-0.1, Math.Round (-0.123456789, 1), "#3");
 		}
 
+#if NET_2_0
+		[Test]
+		public void TestDoubleRound3 ()
+		{
+			Assert.AreEqual (1D, Math.Round (1D, 0, MidpointRounding.ToEven), "#1");
+			Assert.AreEqual (1D, Math.Round (1D, 0, MidpointRounding.AwayFromZero), "#2");
+
+			Assert.AreEqual (-1D, Math.Round (-1D, 0, MidpointRounding.ToEven), "#3");
+			Assert.AreEqual (-1D, Math.Round (-1D, 0, MidpointRounding.AwayFromZero), "#4");
+
+			Assert.AreEqual (1D, Math.Round (1D, 1, MidpointRounding.ToEven), "#5");
+			Assert.AreEqual (1D, Math.Round (1D, 1, MidpointRounding.AwayFromZero), "#6");
+
+			Assert.AreEqual (-1D, Math.Round (-1D, 1, MidpointRounding.ToEven), "#7");
+			Assert.AreEqual (-1D, Math.Round (-1D, 1, MidpointRounding.AwayFromZero), "#8");
+
+			Assert.AreEqual (1D, Math.Round (1.2345D, 0, MidpointRounding.ToEven), "#9");
+			Assert.AreEqual (1D, Math.Round (1.2345D, 0, MidpointRounding.AwayFromZero), "#A");
+
+			Assert.AreEqual (-1D, Math.Round (-1.2345D, 0, MidpointRounding.ToEven), "#B");
+			Assert.AreEqual (-1D, Math.Round (-1.2345D, 0, MidpointRounding.AwayFromZero), "#C");
+
+			Assert.AreEqual (1.2D, Math.Round (1.2345D, 1, MidpointRounding.ToEven), "#D");
+			Assert.AreEqual (1.2D, Math.Round (1.2345D, 1, MidpointRounding.AwayFromZero), "#E");
+
+			Assert.AreEqual (-1.2D, Math.Round (-1.2345D, 1, MidpointRounding.ToEven), "#F");
+			Assert.AreEqual (-1.2D, Math.Round (-1.2345D, 1, MidpointRounding.AwayFromZero), "#10");
+
+			Assert.AreEqual (1.23D, Math.Round (1.2345D, 2, MidpointRounding.ToEven), "#11");
+			Assert.AreEqual (1.23D, Math.Round (1.2345D, 2, MidpointRounding.AwayFromZero), "#12");
+
+			Assert.AreEqual (-1.23D, Math.Round (-1.2345D, 2, MidpointRounding.ToEven), "#13");
+			Assert.AreEqual (-1.23D, Math.Round (-1.2345D, 2, MidpointRounding.AwayFromZero), "#14");
+
+			Assert.AreEqual (1.234D, Math.Round (1.2345D, 3, MidpointRounding.ToEven), "#15");
+			Assert.AreEqual (1.235D, Math.Round (1.2345D, 3, MidpointRounding.AwayFromZero), "#16");
+
+			Assert.AreEqual (-1.234D, Math.Round (-1.2345D, 3, MidpointRounding.ToEven), "#17");
+			Assert.AreEqual (-1.235D, Math.Round (-1.2345D, 3, MidpointRounding.AwayFromZero), "#18");
+
+			Assert.AreEqual (1.2345D, Math.Round (1.2345D, 4, MidpointRounding.ToEven), "#19");
+			Assert.AreEqual (1.2345D, Math.Round (1.2345D, 4, MidpointRounding.AwayFromZero), "#1A");
+
+			Assert.AreEqual (-1.2345D, Math.Round (-1.2345D, 4, MidpointRounding.ToEven), "#1B");
+			Assert.AreEqual (-1.2345D, Math.Round (-1.2345D, 4, MidpointRounding.AwayFromZero), "#1C");
+
+			Assert.AreEqual (2D, Math.Round (1.5432D, 0, MidpointRounding.ToEven), "#1D");
+			Assert.AreEqual (2D, Math.Round (1.5432D, 0, MidpointRounding.AwayFromZero), "#1E");
+
+			Assert.AreEqual (-2D, Math.Round (-1.5432D, 0, MidpointRounding.ToEven), "#1F");
+			Assert.AreEqual (-2D, Math.Round (-1.5432D, 0, MidpointRounding.AwayFromZero), "#20");
+
+			Assert.AreEqual (1.5D, Math.Round (1.5432D, 1, MidpointRounding.ToEven), "#21");
+			Assert.AreEqual (1.5D, Math.Round (1.5432D, 1, MidpointRounding.AwayFromZero), "#22");
+
+			Assert.AreEqual (-1.5D, Math.Round (-1.5432D, 1, MidpointRounding.ToEven), "#23");
+			Assert.AreEqual (-1.5D, Math.Round (-1.5432D, 1, MidpointRounding.AwayFromZero), "#24");
+
+			Assert.AreEqual (1.54D, Math.Round (1.5432D, 2, MidpointRounding.ToEven), "#25");
+			Assert.AreEqual (1.54D, Math.Round (1.5432D, 2, MidpointRounding.AwayFromZero), "#26");
+
+			Assert.AreEqual (-1.54D, Math.Round (-1.5432D, 2, MidpointRounding.ToEven), "#27");
+			Assert.AreEqual (-1.54D, Math.Round (-1.5432D, 2, MidpointRounding.AwayFromZero), "#28");
+
+			Assert.AreEqual (1.543D, Math.Round (1.5432D, 3, MidpointRounding.ToEven), "#29");
+			Assert.AreEqual (1.543D, Math.Round (1.5432D, 3, MidpointRounding.AwayFromZero), "#2A");
+
+			Assert.AreEqual (-1.543D, Math.Round (-1.5432D, 3, MidpointRounding.ToEven), "#2B");
+			Assert.AreEqual (-1.543D, Math.Round (-1.5432D, 3, MidpointRounding.AwayFromZero), "#2C");
+
+			Assert.AreEqual (1.5432D, Math.Round (1.5432D, 4, MidpointRounding.ToEven), "#2D");
+			Assert.AreEqual (1.5432D, Math.Round (1.5432D, 4, MidpointRounding.AwayFromZero), "#2E");
+
+			Assert.AreEqual (-1.5432D, Math.Round (-1.5432D, 4, MidpointRounding.ToEven), "#2F");
+			Assert.AreEqual (-1.5432D, Math.Round (-1.5432D, 4, MidpointRounding.AwayFromZero), "#30");
+
+			Assert.AreEqual (63988D, Math.Round (63987.83593942D, 0, MidpointRounding.ToEven), "#31");
+			Assert.AreEqual (63988D, Math.Round (63987.83593942D, 0, MidpointRounding.AwayFromZero), "#32");
+
+			Assert.AreEqual (-63988D, Math.Round (-63987.83593942D, 0, MidpointRounding.ToEven), "#33");
+			Assert.AreEqual (-63988D, Math.Round (-63987.83593942D, 0, MidpointRounding.AwayFromZero), "#34");
+
+			Assert.AreEqual (63987.83594D, Math.Round (63987.83593942D, 5, MidpointRounding.ToEven), "#35");
+			Assert.AreEqual (63987.83594D, Math.Round (63987.83593942D, 5, MidpointRounding.AwayFromZero), "#36");
+
+			Assert.AreEqual (-63987.83594D, Math.Round (-63987.83593942D, 5, MidpointRounding.ToEven), "#37");
+			Assert.AreEqual (-63987.83594D, Math.Round (-63987.83593942D, 5, MidpointRounding.AwayFromZero), "#38");
+
+			Assert.AreEqual (63987.83593942D, Math.Round (63987.83593942D, 8, MidpointRounding.ToEven), "#39");
+			Assert.AreEqual (63987.83593942D, Math.Round (63987.83593942D, 8, MidpointRounding.AwayFromZero), "#3A");
+
+			Assert.AreEqual (-63987.83593942D, Math.Round (-63987.83593942D, 8, MidpointRounding.ToEven), "#3B");
+			Assert.AreEqual (-63987.83593942D, Math.Round (-63987.83593942D, 8, MidpointRounding.AwayFromZero), "#3C");
+		}
+#endif
+		
 		[Test]
 		public void TestDecimalSign ()
 		{

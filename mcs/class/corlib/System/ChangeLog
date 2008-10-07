@@ -1,3 +1,8 @@
+2008-10-07  Marek Habersack  <mhabersack@novell.com>
+
+	* Math.cs: implemented the away from zero rounding for the Round
+	(double, int, MidpointRounding) overload.
+
 2008-10-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* Activator.cs (CreateInstance): Don't return the return value of the
