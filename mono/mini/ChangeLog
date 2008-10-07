@@ -1,3 +1,11 @@
+2008-10-07  Bill Holmes  <billholmes54@gmail.com>
+
+	* mini-amd64.c (mono_arch_emit_outarg_vt) : In the ArgValuetypeAddrInIReg case,
+	  add a call to mono_call_inst_add_outarg_reg for the arg->dreg to make sure that no
+	  other vreg is allocated to that hreg.
+
+	Contributed under MIT/X11 license.
+
 2008-10-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am: Disable the simd tests for now as Mono.Simd is not
