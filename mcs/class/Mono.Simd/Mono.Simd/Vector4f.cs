@@ -169,6 +169,7 @@ namespace Mono.Simd
 			return new Vector4f (v1.select (0, sel), v1.select (1, sel), v1.select (2, sel), v1.select (3, sel));
 		}
 
+		[CLSCompliant(false)]
 		public static unsafe explicit operator Vector4u(Vector4f v)
 		{
 			Vector4u* p = (Vector4u*)&v;

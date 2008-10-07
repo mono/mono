@@ -38,6 +38,7 @@ namespace Mono.Simd
             Remaining SSE ops (add, sub, mul)
     */
 	[StructLayout(LayoutKind.Sequential, Pack = 0, Size = 16)]
+	[CLSCompliant(false)]
 	public struct Vector4u
 	{
 		private uint x;

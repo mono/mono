@@ -1,3 +1,9 @@
 2008-10-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Vector4u.cs: Mask type as not CLS compliant.
+
+	* Vector4c.cs: Mask methods returning Vector4u as not CLS compliant.
+
+2008-10-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Initial checking of the file layout
