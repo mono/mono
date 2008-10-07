@@ -2874,8 +2874,8 @@ namespace System.Windows.Forms {
 			// XXX: This is thrown too much, disable for now..
 			//if (DataSource != null && !dataGridViewColumn.IsDataBound)
 			//        throw new ArgumentException ("dataGridViewColumn");
-			if (VirtualMode && !dataGridViewColumn.IsDataBound)
-				throw new InvalidOperationException ();
+			//if (VirtualMode && !dataGridViewColumn.IsDataBound)
+			//        throw new InvalidOperationException ();
 
 			if (SortedColumn != null)
 				SortedColumn.HeaderCell.SortGlyphDirection = SortOrder.None;
