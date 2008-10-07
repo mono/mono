@@ -1,3 +1,7 @@
+2008-10-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Reenable the simd tests.
+
 2008-10-07  Bill Holmes  <billholmes54@gmail.com>
 
 	* mini-amd64.c (mono_arch_emit_outarg_vt) : In the ArgValuetypeAddrInIReg case,
