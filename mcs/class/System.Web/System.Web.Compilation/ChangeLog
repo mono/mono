@@ -1,3 +1,9 @@
+2008-10-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* AssemblyBuilder.cs: use CodeBase to get to the original assembly
+	path because Location might point the the shadow copy. Bug #409646
+	and others fixed.
+
 2008-10-03  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: if an assembly fails to build out of a batch of

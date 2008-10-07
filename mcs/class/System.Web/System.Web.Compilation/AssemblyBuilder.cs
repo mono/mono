@@ -571,9 +571,12 @@ namespace System.Web.Compilation {
 
 			foreach (KeyValuePair <string, string> de in resources)
 				options.EmbeddedResources.Add (de.Value);
+
 			AddAssemblyReference (BuildManager.GetReferencedAssemblies ());
-			foreach (Assembly refasm in ReferencedAssemblies)
-				options.ReferencedAssemblies.Add (refasm.Location);
+			foreach (Assembly refasm in ReferencedAssemblies) {
+				string path = new Uri (refasm.CodeBase).LocalPath;
+				options.ReferencedAssemblies.Add (path);
+			}
 			
 			results = provider.CompileAssemblyFromFile (options, files.ToArray ());
 
