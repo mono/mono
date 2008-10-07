@@ -1,3 +1,12 @@
+2008-10-06  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* X11Dnd.cs: When firing the default dnd enter/leave events, fire the
+	events on the control under the mouse pointer, instead of firing them
+	on the window generating the dnd operation. To achieve this re-use the
+	code used to get the window under the pointer when getting MouseMove
+	events.
+	Fixes #381876.
+
 2008-10-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* X11Dnd.cs: Don't check that that the window sending the dnd events

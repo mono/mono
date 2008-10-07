@@ -512,8 +512,13 @@ namespace System.Windows.Forms {
 		// as .Net does
 		private void DefaultEnterLeave (object user_data)
 		{
-			Control source_control = Control.FromHandle (drag_data.Window);
-			if (!source_control.AllowDrop)
+			IntPtr toplevel, window;
+			int x_root, y_root;
+
+			// The window generating the operation could be a different than the one under pointer
+			GetWindowsUnderPointer (out window, out toplevel, out x_root, out y_root);
+			Control source_control = Control.FromHandle (window);
+			if (source_control == null || !source_control.AllowDrop)
 				return;
 
 			// `data' and other members are already available
@@ -565,34 +570,10 @@ namespace System.Windows.Forms {
 
 		public bool HandleMouseOver ()
 		{
-			bool dnd_aware = false;
-			IntPtr toplevel = IntPtr.Zero;
-			IntPtr window = XplatUIX11.RootWindowHandle;
-
-			IntPtr root, child;
-			int x_temp, y_temp;
+			IntPtr toplevel, window;
 			int x_root, y_root;
-			int mask_return;
-			int x = x_root = drag_data.CurMousePos.X;
-			int y = y_root = drag_data.CurMousePos.Y;
 
-			while (XplatUIX11.XQueryPointer (display, window, out root, out child,
-					       out x_temp, out y_temp, out x, out y, out mask_return)) {
-					
-				if (!dnd_aware) {
-					dnd_aware = IsWindowDndAware (window);
-					if (dnd_aware) {
-						toplevel = window;
-						x_root = x_temp;
-						y_root = y_temp;
-					}
-				}
-
-				if (child == IntPtr.Zero)
-					break;
-					
-				window = child;
-			}
+			GetWindowsUnderPointer (out window, out toplevel, out x_root, out y_root);
 
 			if (window != drag_data.LastWindow && drag_data.State == DragState.Entered) {
 				drag_data.State = DragState.Dragging;
@@ -618,6 +599,37 @@ namespace System.Windows.Forms {
 			drag_data.LastTopLevel = toplevel;
 			drag_data.LastWindow = window;
 			return true;
+		}
+
+		void GetWindowsUnderPointer (out IntPtr window, out IntPtr toplevel, out int x_root, out int y_root)
+		{
+			toplevel = IntPtr.Zero;
+			window = XplatUIX11.RootWindowHandle;
+
+			IntPtr root, child;
+			bool dnd_aware = false;
+			int x_temp, y_temp;
+			int mask_return;
+			int x = x_root = drag_data.CurMousePos.X;
+			int y = y_root = drag_data.CurMousePos.Y;
+
+			while (XplatUIX11.XQueryPointer (display, window, out root, out child,
+					       out x_temp, out y_temp, out x, out y, out mask_return)) {
+					
+				if (!dnd_aware) {
+					dnd_aware = IsWindowDndAware (window);
+					if (dnd_aware) {
+						toplevel = window;
+						x_root = x_temp;
+						y_root = y_temp;
+					}
+				}
+
+				if (child == IntPtr.Zero)
+					break;
+					
+				window = child;
+			}
 		}
 
 		public void HandleKeyMessage (MSG msg)
