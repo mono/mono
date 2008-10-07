@@ -1,3 +1,9 @@
+
+Tue Oct 7 19:59:07 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c: attach the thread in unmanaged->managed transitions
+	using delegates (bug #433148).
+
 2008-10-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
        * basic-simd.cs: Use new ShuffleSel constants.
