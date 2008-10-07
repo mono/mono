@@ -152,7 +152,7 @@ namespace Mono.Cecil {
 			if (ts.Type.ElementType == ElementType.GenericInst)
 				return CreateTypeSpecFromSig (ts, index, context);
 
-			TypeReference tspec = m_typeSpecs[index];
+			TypeReference tspec = m_typeSpecs [index];
 			if (tspec != null)
 				return tspec;
 
