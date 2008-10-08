@@ -1,3 +1,8 @@
+2008-10-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (assembliesdir): Use $(libdir) instead of 
+	$(exec_prefix)/lib.
+
 2008-10-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* appdomain.c:
