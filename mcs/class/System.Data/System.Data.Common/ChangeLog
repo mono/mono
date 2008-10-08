@@ -1,3 +1,8 @@
+2008-10-07  Daniel Morgan  <monodanmorg@yahoo.com>
+
+	* DbConnectionStringBuilder.cs: fix setting and getting
+	the ConnectionString property
+
 2008-09-16  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes#421336 - Patch provided by <christian_hoff@gmx.net> 	

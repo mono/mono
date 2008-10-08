@@ -44,6 +44,7 @@ namespace System.Data.Common
         {
                 #region Fields
                 Dictionary<string, object> _dictionary = null;
+		bool useOdbcRules;
                 #endregion Fields
 
                 #region Constructors
@@ -52,9 +53,12 @@ namespace System.Data.Common
                         Init ();
                 }
 
-                public DbConnectionStringBuilder (bool useFirstKeyValue)
+                public DbConnectionStringBuilder (bool useOdbcRules)
                 {
-                        throw new NotImplementedException ();
+			// TODO: if true, quote values using curly braces instead of double-quotes
+			//       the default is false
+                        //this.useOdbcRules = useOdbcRules; 
+			throw new NotImplementedException ();
                 }
 
                 private void Init ()
@@ -82,23 +86,131 @@ namespace System.Data.Common
                         {
                                 IDictionary<string, object> dictionary = (IDictionary <string, object>) _dictionary;
                                 string conn = "";
+				string parm = "";
                                 foreach (string key in dictionary.Keys) {
-                                        conn += key + "=" + dictionary [key].ToString () + ";";
+					string val = dictionary [key].ToString (); 		
+					bool dquoteFound = (val.IndexOf ("\"") > -1);
+					bool squoteFound = (val.IndexOf ("\'") > -1);
+					bool semicolonFound = (val.IndexOf (";") > -1);
+					bool equalFound = (val.IndexOf ("=") > -1);
+					bool braceFound = (val.IndexOf ("{") > -1 || val.IndexOf ("}") > -1);
+					if (dquoteFound && squoteFound)
+						parm = "\"" + val.Replace ("\"", "\"\"") + "\"";
+					else if (squoteFound || braceFound || equalFound || semicolonFound)
+						parm = "\"" + val + "\"";
+					else if (dquoteFound)
+						parm = "\'" + val + "\'";
+					else
+						parm = val;
+						
+                                        conn += key + "=" + parm + ";";
                                 }
                                 conn = conn.TrimEnd (';');
                                 return conn;
                         }
                         set { 
+				Clear ();
 				if (value == null)
-					throw new ArgumentNullException ("ConnectionString cannot be null");
-				
-				string [] parameters = value.Split (new char [] {';'});
-				foreach (string args in parameters) {
-					string [] arg = args.Split (new char [] {'='}, 2);
-					if (arg.Length == 2) {
-						string key = arg [0].Trim ().ToUpper ();
-						string val = arg [1].Trim ();
-						this [key] = val;
+					return;
+				if (value.Trim ().Length == 0)
+					return;
+
+				string connectionString = value + ";";
+			
+				bool inQuote = false;
+				bool inDQuote = false;
+				bool inName = true;
+				int inParen = 0;
+				int inBraces = 0;
+
+				string name = String.Empty;
+				string val = String.Empty;
+				StringBuilder sb = new StringBuilder ();
+
+				for (int i = 0; i < connectionString.Length; i += 1) {
+					char c = connectionString [i];
+					char peek;
+					if (i == connectionString.Length - 1)
+						peek = '\0';
+					else
+						peek = connectionString [i + 1];
+
+					switch (c) {
+					case '\'':
+						if (inDQuote)
+							sb.Append (c);
+						else if (peek.Equals (c)) {
+							sb.Append (c);
+							i += 1;
+						}
+						else
+							inQuote = !inQuote;
+						break;
+					case '"':
+						if (inQuote)
+							sb.Append (c);
+						else if (peek.Equals (c)) {
+							sb.Append (c);
+							i += 1;
+						}
+						else
+							inDQuote = !inDQuote;
+						break;
+					case '(':
+						inParen++;
+						sb.Append (c);
+						break;
+					case ')':
+						inParen--;
+						sb.Append (c);
+						break;
+					case '{':
+						inBraces++;
+						sb.Append (c);
+						break;
+					case '}':
+						inBraces--;
+						sb.Append (c);
+						break;
+					case ';':
+						if (inDQuote || inQuote)
+							sb.Append (c);
+						else {
+							if (name != String.Empty && name != null) {
+								val = sb.ToString ();
+								name = name.ToLower ().Trim ();
+								this [name] = val;
+							}
+							else if (sb.Length != 0)
+								throw new ArgumentException ("Format of initialization string does not conform to specifications");
+							inName = true;
+							name = String.Empty;
+							value = String.Empty;
+							sb = new StringBuilder ();
+						}
+						break;
+					case '=':
+						if (inDQuote || inQuote || !inName || inParen > 0 || inBraces > 0)
+							sb.Append (c);
+						else if (peek.Equals (c)) {
+							sb.Append (c);
+							i += 1;
+						}
+						else {
+							name = sb.ToString ();
+							sb = new StringBuilder ();
+							inName = false;
+						}
+						break;
+					case ' ':
+						if (inQuote || inDQuote)
+							sb.Append (c);
+						else if (sb.Length > 0 && !peek.Equals (';'))
+							sb.Append (c);
+						break;
+					default:
+						sb.Append (c);
+						break;
 					}
 				}
 			}
