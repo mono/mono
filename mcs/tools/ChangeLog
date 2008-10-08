@@ -1,3 +1,7 @@
+2008-10-09 Daniel Nauck <dna@mono-project.de>
+
+        * Makefile: add Mono.CSharp to the build
+
 2008-10-01  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: add cil-strip to the build.
