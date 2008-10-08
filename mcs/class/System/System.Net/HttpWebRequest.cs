@@ -712,8 +712,12 @@ namespace System.Net
 		
 		public override Stream GetRequestStream()
 		{
-			IAsyncResult asyncResult = BeginGetRequestStream (null, null);
-			asyncWrite = (WebAsyncResult) asyncResult;
+			IAsyncResult asyncResult = asyncWrite;
+			if (asyncResult == null) {
+				asyncResult = BeginGetRequestStream (null, null);
+				asyncWrite = (WebAsyncResult) asyncResult;
+			}
+		
 			if (!asyncResult.AsyncWaitHandle.WaitOne (timeout, false)) {
 				Abort ();
 				throw new WebException ("The request timed out", WebExceptionStatus.Timeout);

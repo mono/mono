@@ -1,3 +1,9 @@
+2008-10-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebRequest.cs: if GetRequestStream has already been called,
+	return the same stream that we returned in the first call.
+	Fixes bug #429200.
+
 2008-10-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ServicePointManager.cs: better handling of possible collisions of the
