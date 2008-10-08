@@ -1,3 +1,7 @@
+2008-10-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Use 'net_1_1' instead of 'default'.
+
 2006-06-27  Wade Berrier <wberrier@novell.com>
 
 	* Makefile.am: Remove 'check-local' target so these tests don't get
