@@ -1,3 +1,8 @@
+2008-10-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-compiler.h (MONO_THREAD_VAR_OFFSET): Apply a patch from
+	the fedora packagers to the IA64 MONO_THREAD_VAR_OFFSET definition.
+
 2008-09-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-mmap.c (mono_shared_area_for_pid): Fix a warning.
