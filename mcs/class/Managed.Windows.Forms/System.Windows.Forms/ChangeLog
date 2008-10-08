@@ -1,3 +1,9 @@
+2008-10-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* BindingSource.cs: Make item_type internal so we can access it in DGV.
+	* DataGridView.cs: Add support for autogenerating columns from a
+	BindingSource.
+
 2008-10-07  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridView.cs: Comment out an exception that is getting thrown

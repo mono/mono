@@ -47,7 +47,7 @@ namespace System.Windows.Forms {
 		CurrencyManager currency_manager;
 		Dictionary<string,CurrencyManager> related_currency_managers = new Dictionary<string,CurrencyManager> ();
 		//bool list_defaulted;
-		Type item_type;
+		internal Type item_type;
 		bool item_has_default_ctor;
 		bool list_is_ibinding;
 
