@@ -5745,10 +5745,9 @@ namespace Mono.CSharp {
 			Modifiers.UNSAFE |
 			Modifiers.READONLY;
 
-		public Field (DeclSpace parent, FullNamedExpression type, int mod, string name,
-			      Attributes attrs, Location loc)
-			: base (parent, type, mod, AllowedModifiers, new MemberName (name, loc),
-				attrs)
+		public Field (DeclSpace parent, FullNamedExpression type, int mod, MemberName name,
+			      Attributes attrs)
+			: base (parent, type, mod, AllowedModifiers, name, attrs)
 		{
 		}
 
@@ -6641,7 +6640,7 @@ namespace Mono.CSharp {
 			Field field = new Field (
 				Parent, type_name,
 				Modifiers.BACKING_FIELD | Modifiers.PRIVATE | (ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
-			    "<" + Name + ">k__BackingField", null, Location);
+			    new MemberName ("<" + Name + ">k__BackingField", Location), null);
 			((TypeContainer)Parent).PartialContainer.AddField (field);
 
 			// Make get block

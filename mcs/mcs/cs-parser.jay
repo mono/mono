@@ -270,6 +270,7 @@ namespace Mono.CSharp
 %token ASSIGN
 %token OP_LT
 %token OP_GENERICS_LT
+%token OP_GENERICS_LT_DECL
 %token OP_GT
 %token OP_GENERICS_GT
 %token BITWISE_AND
@@ -420,8 +421,7 @@ using_directive
 	;
 
 using_alias_directive
-	: USING IDENTIFIER ASSIGN 
-	  namespace_or_type_name SEMICOLON
+	: USING IDENTIFIER ASSIGN namespace_or_type_name SEMICOLON
 	  {
 		LocatedToken lt = (LocatedToken) $2;
 		current_namespace.AddUsingAlias (lt.Value, (MemberName) $4, (Location) $1);
@@ -494,7 +494,8 @@ opt_comma
 	;
 
 namespace_name
-	: namespace_or_type_name {
+	: namespace_or_type_name
+	 {
 		MemberName name = (MemberName) $1;
 
 		if (name.TypeArguments != null)
@@ -898,7 +899,7 @@ struct_declaration
 	  {
 		lexer.ConstraintsParsing = true;
 	  }
-	  type_name
+	  type_declaration_name
 	  { 
 		MemberName name = MakeName ((MemberName) $6);
 		push_current_class (new Struct (current_namespace, current_class, name, (int) $2, (Attributes) $1), $3);
@@ -1037,7 +1038,7 @@ constant_initializer
 field_declaration
 	: opt_attributes
 	  opt_modifiers
-	  type_and_void
+	  member_type
 	  variable_declarators
 	  SEMICOLON
 	  { 
@@ -1049,9 +1050,8 @@ field_declaration
 
 		current_array_type = null;
 
-		foreach (VariableDeclaration var in (ArrayList) $4){
-			Field field = new Field (current_class, type, mod, var.identifier, 
-						 (Attributes) $1, var.Location);
+		foreach (VariableMemberDeclaration var in (ArrayList) $4){
+			Field field = new Field (current_class, type, mod, var.MemberName, (Attributes) $1);
 
 			field.Initializer = var.expression_or_array_initializer;
 
@@ -1066,7 +1066,7 @@ field_declaration
 	| opt_attributes
 	  opt_modifiers
 	  FIXED
-	  type_and_void
+	  member_type
 	  fixed_variable_declarators
 	  SEMICOLON
 	  { 
@@ -1091,7 +1091,7 @@ field_declaration
 	| opt_attributes
 	  opt_modifiers
 	  FIXED
-	  type_and_void
+	  member_type
 	  error
 	  {
 		Report.Error (1641, GetLocation ($4), "A fixed size buffer field must have the array size specifier after the field name");
@@ -1124,6 +1124,59 @@ fixed_variable_declarator
 		$$ = new VariableDeclaration ((LocatedToken) $1, null);
 	  }
 	;
+	
+	
+local_variable_declarators	
+	: local_variable_declarator 
+	  {
+		ArrayList decl = new ArrayList (4);
+		if ($1 != null)
+			decl.Add ($1);
+		$$ = decl;
+	  }
+	| local_variable_declarators COMMA local_variable_declarator
+	  {
+		ArrayList decls = (ArrayList) $1;
+		decls.Add ($3);
+		$$ = $1;
+	  }
+	;
+	
+local_variable_declarator
+	: IDENTIFIER ASSIGN local_variable_initializer
+	  {
+		$$ = new VariableDeclaration ((LocatedToken) $1, $3);
+	  }
+	| IDENTIFIER
+	  {
+		$$ = new VariableDeclaration ((LocatedToken) $1, null);
+	  }
+	| IDENTIFIER OPEN_BRACKET opt_expression CLOSE_BRACKET
+	  {
+		Report.Error (650, ((LocatedToken) $1).Location, "Syntax error, bad array declarator. To declare a managed array the rank specifier precedes the variable's identifier. " +
+			"To declare a fixed size buffer field, use the fixed keyword before the field type");
+		$$ = null;
+	  }
+	;
+
+local_variable_initializer
+	: expression
+	| array_initializer
+	| STACKALLOC type_expression OPEN_BRACKET expression CLOSE_BRACKET
+	  {
+		$$ = new StackAlloc ((Expression) $2, (Expression) $4, (Location) $1);
+	  }
+	| ARGLIST
+	  {
+		$$ = new ArglistAccess ((Location) $1);
+	  }
+	| STACKALLOC type
+	  {
+		Report.Error (1575, (Location) $1, "A stackalloc expression requires [] after type");
+                $$ = null;
+	  }
+	;
+
 
 variable_declarators
 	: variable_declarator 
@@ -1142,21 +1195,24 @@ variable_declarators
 	;
 
 variable_declarator
-	: IDENTIFIER ASSIGN
+	: member_declaration_name ASSIGN
 	  {
 	  	++lexer.parsing_block;
+	  	lexer.parsing_generic_declaration = false;
 	  }
 	  variable_initializer
 	  {
 	  	--lexer.parsing_block;
-		$$ = new VariableDeclaration ((LocatedToken) $1, $4);
+		$$ = new VariableMemberDeclaration ((MemberName) $1, $4);
 	  }
-	| IDENTIFIER
+	| member_declaration_name
 	  {
-		$$ = new VariableDeclaration ((LocatedToken) $1, null);
+	  	lexer.parsing_generic_declaration = false;
+		$$ = new VariableMemberDeclaration ((MemberName) $1, null);
 	  }
-	| IDENTIFIER OPEN_BRACKET opt_expression CLOSE_BRACKET
+	| member_declaration_name OPEN_BRACKET opt_expression CLOSE_BRACKET
 	  {
+		lexer.parsing_generic_declaration = false;	  
 		Report.Error (650, ((LocatedToken) $1).Location, "Syntax error, bad array declarator. To declare a managed array the rank specifier precedes the variable's identifier. " +
 			"To declare a fixed size buffer field, use the fixed keyword before the field type");
 		$$ = null;
@@ -1165,26 +1221,7 @@ variable_declarator
 
 variable_initializer
 	: expression
-	  {
-		$$ = $1;
-	  }
 	| array_initializer
-	  {
-		$$ = $1;
-	  }
-	| STACKALLOC type_expression OPEN_BRACKET expression CLOSE_BRACKET
-	  {
-		$$ = new StackAlloc ((Expression) $2, (Expression) $4, (Location) $1);
-	  }
-	| ARGLIST
-	  {
-		$$ = new ArglistAccess ((Location) $1);
-	  }
-	| STACKALLOC type
-	  {
-		Report.Error (1575, (Location) $1, "A stackalloc expression requires [] after type");
-                $$ = null;
-	  }
 	;
 
 method_declaration
@@ -1213,8 +1250,8 @@ method_declaration
 method_header
 	: opt_attributes
 	  opt_modifiers
-	  type_and_void member_name
-	  OPEN_PARENS
+	  member_type
+	  method_declaration_name OPEN_PARENS
 	  {
 		arglist_allowed = true;
 	  }
@@ -1256,7 +1293,7 @@ method_header
 	| opt_attributes
 	  opt_modifiers
 	  PARTIAL
-	  VOID member_name
+	  VOID method_declaration_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
 		lexer.ConstraintsParsing = true;
@@ -1312,8 +1349,8 @@ method_header
 	  }
 	| opt_attributes
 	  opt_modifiers
-	  type_and_void 
-	  modifiers member_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	  member_type
+	  modifiers method_declaration_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 		MemberName name = (MemberName) $5;
 		Report.Error (1585, name.Location, 
@@ -1586,8 +1623,8 @@ arglist_modifier
 property_declaration
 	: opt_attributes
 	  opt_modifiers
-	  type_and_void
-	  namespace_or_type_name
+	  member_type
+	  member_declaration_name
 	  {
 		if (RootContext.Documentation != null)
 			tmpComment = Lexer.consume_doc_comment ();
@@ -1612,9 +1649,6 @@ property_declaration
 
 		MemberName name = (MemberName) $4;
 		FullNamedExpression ptype = (FullNamedExpression) $3;
-
-		if (name.TypeArguments != null)
-			syntax_error (lexer.Location, "a property can't have type arguments");
 
 		prop = new Property (current_class, ptype, (int) $2,
 				     name, (Attributes) $1, get_block, set_block, order, current_block);
@@ -1749,7 +1783,7 @@ interface_declaration
 	  {
 		lexer.ConstraintsParsing = true;
 	  }
-	  type_name
+	  type_declaration_name
 	  {
 		MemberName name = MakeName ((MemberName) $6);
 		push_current_class (new Interface (current_namespace, current_class, name, (int) $2, (Attributes) $1), $3);
@@ -2122,14 +2156,10 @@ event_declaration
 	  EVENT type variable_declarators SEMICOLON
 	  {
 		current_array_type = null;
-		foreach (VariableDeclaration var in (ArrayList) $5) {
-
-			MemberName name = new MemberName (var.identifier,
-				var.Location);
+		foreach (VariableMemberDeclaration var in (ArrayList) $5) {
 
 			EventField e = new EventField (
-				current_class, (FullNamedExpression) $4, (int) $2, name,
-				(Attributes) $1);
+				current_class, (FullNamedExpression) $4, (int) $2, var.MemberName, (Attributes) $1);
 				
 			if (var.expression_or_array_initializer != null) {
 				if (current_container.Kind == Kind.Interface) {
@@ -2137,6 +2167,12 @@ event_declaration
 				}
 
 				e.Initializer = var.expression_or_array_initializer;
+			}
+			
+			if (var.MemberName.Left != null) {
+				Report.Error (71, e.Location,
+					"`{0}': An explicit interface implementation of an event must use property syntax",
+					e.GetSignatureForError ());
 			}
 
 			current_container.AddEvent (e);
@@ -2149,7 +2185,7 @@ event_declaration
 	  }
 	| opt_attributes
 	  opt_modifiers
-	  EVENT type namespace_or_type_name
+	  EVENT type member_declaration_name
 	  OPEN_BRACE
 	  {
 		implicit_value_parameter_type = (FullNamedExpression) $4;  
@@ -2178,9 +2214,6 @@ event_declaration
 		} else {
 			Accessors accessors = (Accessors) $8;
 			
-			if (name.TypeArguments != null)
-				syntax_error (lexer.Location, "an event can't have type arguments");
-
 			if (accessors.get_or_add == null || accessors.set_or_remove == null)
 				// CS0073 is already reported, so no CS0065 here.
 				$$ = null;
@@ -2199,16 +2232,17 @@ event_declaration
 		}
 		current_local_parameters = null;
 	  }
-	| opt_attributes opt_modifiers EVENT type namespace_or_type_name error {
+	| opt_attributes opt_modifiers EVENT type member_declaration_name error
+	  {
 		MemberName mn = (MemberName) $5;
-
 		if (mn.Left != null)
 			Report.Error (71, mn.Location, "An explicit interface implementation of an event must use property syntax");
-		else 
-			Report.Error (71, mn.Location, "Event declaration should use property syntax");
 
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.Allowed;
+
+		Report.Error (1002, GetLocation ($6), "Expecting {0}, got {1}", GetExpecting (), GetTokenName (yyToken));
+		$$ = null;
 	  }
 	;
 
@@ -2275,19 +2309,26 @@ remove_accessor_declaration
 	;
 
 indexer_declaration
-	: opt_attributes opt_modifiers indexer_declarator 
+	: opt_attributes opt_modifiers
+	  member_type indexer_declaration_name OPEN_BRACKET opt_parameter_list_no_mod CLOSE_BRACKET
 	  OPEN_BRACE
 	  {
-		IndexerDeclaration decl = (IndexerDeclaration) $3;
-
-		implicit_value_parameter_type = decl.type;
+		implicit_value_parameter_type = (FullNamedExpression) $3;
+		indexer_parameters = (Parameters) $6;
 		
+		if (indexer_parameters.IsEmpty)
+			Report.Error (1551, GetLocation ($5), "Indexers must have at least one parameter");
+
+		if (RootContext.Documentation != null) {
+			tmpComment = Lexer.consume_doc_comment ();
+			Lexer.doc_state = XmlCommentState.Allowed;
+		}
+
 		lexer.PropertyParsing = true;
 		parsing_indexer  = true;
 		
-		indexer_parameters = decl.param_list;
 	  }
-          accessor_declarations 
+	  accessor_declarations 
 	  {
 		  lexer.PropertyParsing = false;
 		  has_get = has_set = false;
@@ -2295,28 +2336,17 @@ indexer_declaration
 	  }
 	  CLOSE_BRACE
 	  { 
-		// The signature is computed from the signature of the indexer.  Look
-	 	// at section 3.6 on the spec
-		Indexer indexer;
-		IndexerDeclaration decl = (IndexerDeclaration) $3;
-		Location loc = decl.location;
-		Accessors accessors = (Accessors) $6;
+		Accessors accessors = (Accessors) $10;
 		Accessor get_block = accessors != null ? accessors.get_or_add : null;
 		Accessor set_block = accessors != null ? accessors.set_or_remove : null;
 		bool order = accessors != null ? accessors.declared_in_reverse : false;
 
-		MemberName name;
-		if (decl.interface_type != null)
-			name = new MemberName (decl.interface_type, TypeContainer.DefaultIndexerName, loc);
-		else
-			name = new MemberName (TypeContainer.DefaultIndexerName, loc);
-
-		indexer = new Indexer (current_class, decl.type, name,
-				       (int) $2, decl.param_list, (Attributes) $1,
-				       get_block, set_block, order);
+		Indexer indexer = new Indexer (current_class, (FullNamedExpression) $3,
+			(MemberName)$4, (int) $2, (Parameters) $6, (Attributes) $1,
+			get_block, set_block, order);
 				       
-		if (decl.type == TypeManager.system_void_expr)
-			Report.Error (620, loc, "`{0}': indexer return type cannot be `void'", indexer.GetSignatureForError ());
+		if ($3 == TypeManager.system_void_expr)
+			Report.Error (620, GetLocation ($3), "`{0}': indexer return type cannot be `void'", indexer.GetSignatureForError ());
 			
 		if (accessors == null)
 			Report.Error (548, indexer.Location, "`{0}': property or indexer must have at least one accessor", indexer.GetSignatureForError ());
@@ -2340,41 +2370,10 @@ indexer_declaration
 	  }
 	;
 
-indexer_declarator
-	: type_and_void THIS OPEN_BRACKET opt_parameter_list_no_mod CLOSE_BRACKET
-	  {
-		Parameters pars = (Parameters) $4;
-		if (pars.IsEmpty){
-			Report.Error (1551, (Location) $2, "Indexers must have at least one parameter");
-		}
-		if (RootContext.Documentation != null) {
-			tmpComment = Lexer.consume_doc_comment ();
-			Lexer.doc_state = XmlCommentState.Allowed;
-		}
-
-		$$ = new IndexerDeclaration ((FullNamedExpression) $1, null, pars, (Location) $2);
-	  }
-	| type_and_void namespace_or_type_name DOT THIS OPEN_BRACKET opt_formal_parameter_list CLOSE_BRACKET
-	  {
-		Parameters pars = (Parameters) $6;
-		if (pars.IsEmpty){
-			Report.Error (1551, (Location) $4, "Indexers must have at least one parameter");
-		}
-
-		MemberName name = (MemberName) $2;
-		$$ = new IndexerDeclaration ((FullNamedExpression) $1, name, pars, (Location) $4);
-
-		if (RootContext.Documentation != null) {
-			tmpComment = Lexer.consume_doc_comment ();
-			Lexer.doc_state = XmlCommentState.Allowed;
-		}
-	  }
-	;
-
 enum_declaration
 	: opt_attributes
 	  opt_modifiers
-	  ENUM type_name
+	  ENUM type_declaration_name
 	  opt_enum_base {
 		if (RootContext.Documentation != null)
 			enumTypeComment = Lexer.consume_doc_comment ();
@@ -2511,7 +2510,7 @@ delegate_declaration
 	: opt_attributes
 	  opt_modifiers
 	  DELEGATE
-	  type_and_void type_name
+	  member_type type_declaration_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 		MemberName name = MakeName ((MemberName) $5);
@@ -2557,30 +2556,19 @@ opt_nullable
 	;
 
 namespace_or_type_name
-	: IDENTIFIER opt_type_argument_list
+	: member_name
+	| qualified_alias_member IDENTIFIER opt_type_argument_list
 	  {
-		LocatedToken lt = (LocatedToken) $1;
-		$$ = new MemberName (lt.Value, (TypeArguments) $2, lt.Location);
-	  }
-	| qualified_alias_member IDENTIFIER opt_type_argument_list {
 		LocatedToken lt1 = (LocatedToken) $1;
 		LocatedToken lt2 = (LocatedToken) $2;
 		
 		$$ = new MemberName (lt1.Value, lt2.Value, (TypeArguments) $3, lt1.Location);
 	  }
-	| namespace_or_type_name DOT IDENTIFIER opt_type_argument_list {
-		LocatedToken lt = (LocatedToken) $3;
-		$$ = new MemberName ((MemberName) $1, lt.Value, (TypeArguments) $4, lt.Location);
-	  }
 	;
 
 member_name
-	: IDENTIFIER opt_type_parameter_list
-	  {
-		LocatedToken lt = (LocatedToken) $1;
-		$$ = new MemberName (lt.Value, (TypeArguments) $2, lt.Location);
-	  }
-	| namespace_or_type_name DOT IDENTIFIER opt_type_parameter_list 
+	: type_name
+	| namespace_or_type_name DOT IDENTIFIER opt_type_argument_list
 	  {
 		LocatedToken lt = (LocatedToken) $3;
 		$$ = new MemberName ((MemberName) $1, lt.Value, (TypeArguments) $4, lt.Location);
@@ -2588,17 +2576,16 @@ member_name
 	;
 
 type_name
-	: IDENTIFIER opt_type_parameter_list
+	: IDENTIFIER opt_type_argument_list
 	  {
 		LocatedToken lt = (LocatedToken) $1;
 		$$ = new MemberName (lt.Value, (TypeArguments)$2, lt.Location);	  
 	  }
 	;
-
+	
 //
 // Generics arguments  (any type, without attributes)
 //
-
 opt_type_argument_list
 	: /* empty */ 		     { $$ = null; } 
 	| OP_GENERICS_LT type_arguments OP_GENERICS_GT
@@ -2611,36 +2598,18 @@ opt_type_argument_list
 	| OP_GENERICS_LT error
 	  {
 		Error_TypeExpected (lexer.Location);
-	  }
-	;
-
-//
-// Generics parameters (identifiers only, with attributes), used in type, method declarations
-//
-
-opt_type_parameter_list
-	: /* empty */ 		     { $$ = null; } 
-	| OP_GENERICS_LT type_arguments OP_GENERICS_GT
-	  {
-		if (RootContext.Version < LanguageVersion.ISO_2)
-			Report.FeatureIsNotAvailable (GetLocation ($1), "generics");
-	  
-		$$ = $2;
-	  }
-	| OP_GENERICS_LT error
-	  {
-		Error_TypeExpected (lexer.Location);
+		$$ = new TypeParameterName ("", null, lexer.Location);
 	  }
 	;
 
 type_arguments
-	: type_argument
+	: type
 	  {
 		TypeArguments type_args = new TypeArguments (lexer.Location);
 		type_args.Add ((Expression) $1);
 		$$ = type_args;
 	  }
-	| type_arguments COMMA type_argument
+	| type_arguments COMMA type
 	  {
 		TypeArguments type_args = (TypeArguments) $1;
 		type_args.Add ((Expression) $3);
@@ -2648,19 +2617,115 @@ type_arguments
 	  }	  
 	;
 
-type_argument
-	: type
+//
+// Generics parameters (identifiers only, with attributes), used in type or method declarations
+//
+type_declaration_name
+	: IDENTIFIER
 	  {
-		$$ = $1;
+		lexer.parsing_generic_declaration = true;
+	  }
+	  opt_type_parameter_list
+	  {
+		lexer.parsing_generic_declaration = false;
+		LocatedToken lt = (LocatedToken) $1;
+		$$ = new MemberName (lt.Value, (TypeArguments)$3, lt.Location);	  
+	  }
+	;
+
+member_declaration_name
+	: method_declaration_name
+	  {
+	  	MemberName mn = (MemberName)$1;
+	  	if (mn.TypeArguments != null)
+	  		syntax_error (mn.Location, string.Format ("Member `{0}' cannot declare type arguments",
+	  			mn.GetSignatureForError ()));
+	  }
+	;
+
+method_declaration_name
+	: type_declaration_name
+	| explicit_interface IDENTIFIER opt_type_parameter_list
+	  {
+		lexer.parsing_generic_declaration = false;	  
+		LocatedToken lt = (LocatedToken) $2;
+		$$ = new MemberName ((MemberName) $1, lt.Value, (TypeArguments) $3, lt.Location);
+	  }
+	;
+	
+indexer_declaration_name
+	: THIS
+	  {
+		lexer.parsing_generic_declaration = false;	  
+		$$ = new MemberName (TypeContainer.DefaultIndexerName, GetLocation ($1));
+	  }
+	| explicit_interface THIS
+	  {
+		lexer.parsing_generic_declaration = false;
+		$$ = new MemberName ((MemberName) $1, TypeContainer.DefaultIndexerName, null, GetLocation ($1));
+	  }
+	;
+
+explicit_interface
+	: IDENTIFIER opt_type_argument_list DOT
+	  {
+		LocatedToken lt = (LocatedToken) $1;
+		$$ = new MemberName (lt.Value, (TypeArguments) $2, lt.Location);
+	  }
+	| qualified_alias_member IDENTIFIER opt_type_argument_list DOT
+	  {
+		LocatedToken lt1 = (LocatedToken) $1;
+		LocatedToken lt2 = (LocatedToken) $2;
+		
+		$$ = new MemberName (lt1.Value, lt2.Value, (TypeArguments) $3, lt1.Location);
+	  }
+	| explicit_interface IDENTIFIER opt_type_argument_list DOT
+	  {
+		LocatedToken lt = (LocatedToken) $2;
+		$$ = new MemberName ((MemberName) $1, lt.Value, (TypeArguments) $3, lt.Location);
+	  }
+	;
+	
+opt_type_parameter_list
+	: /* empty */ 		     { $$ = null; } 
+	| OP_GENERICS_LT_DECL type_parameters OP_GENERICS_GT
+	  {
+		if (RootContext.Version < LanguageVersion.ISO_2)
+			Report.FeatureIsNotAvailable (GetLocation ($1), "generics");
+	  
+		$$ = $2;
+	  }
+	;
+
+type_parameters
+	: type_parameter
+	  {
+		TypeArguments type_args = new TypeArguments (lexer.Location);
+		type_args.Add ((Expression)$1);
+		$$ = type_args;
+	  }
+	| type_parameters COMMA type_parameter
+	  {
+		TypeArguments type_args = (TypeArguments) $1;
+		type_args.Add ((Expression)$3);
+		$$ = type_args;
+	  }	  
+	;
+
+type_parameter
+	: opt_attributes IDENTIFIER
+	  {
+		LocatedToken lt = (LocatedToken)$2;
+		$$ = new TypeParameterName (lt.Value, (Attributes)$1, lt.Location);
   	  }
-	| attribute_sections type
+  	| error
   	  {
-		SimpleName sn = $2 as SimpleName;
-		if (sn == null)
-			Error_TypeExpected (GetLocation ($2));
+  	  	if (GetTokenName (yyToken) == "<type>")
+			Report.Error (81, GetLocation ($1), "Type parameter declaration must be an identifier not a type");
 		else
-			$2 = new TypeParameterName (sn.Name, (Attributes) $1, lexer.Location);
-		$$ = $2;  	  
+			Report.Error (1002, GetLocation ($1), "Expecting {0}, got {1}", GetExpecting (), GetTokenName (yyToken));
+			
+  	  	$$ = new TypeParameterName ("", null, lexer.Location);
   	  }
  	;
 
@@ -2672,6 +2737,13 @@ type_and_void
 	| VOID
 	  {
 		$$ = TypeManager.system_void_expr;
+	  }
+	;
+	
+member_type
+	: type_and_void
+	  {
+		lexer.parsing_generic_declaration = true;
 	  }
 	;
 
@@ -2847,10 +2919,10 @@ primary_expression
 
 primary_expression_no_array_creation
 	: literal
- 	| type_name
+	| IDENTIFIER opt_type_argument_list
 	  {
-		MemberName mn = (MemberName) $1;
-		$$ = mn.GetTypeExpression ();
+		LocatedToken lt = (LocatedToken) $1;
+		$$ = new SimpleName (MemberName.MakeName (lt.Value, (TypeArguments)$2), (TypeArguments)$2, lt.Location);	  
 	  }
 	| parenthesized_expression
 	| default_value_expression
@@ -4000,7 +4072,7 @@ class_declaration
 	  {
 		lexer.ConstraintsParsing = true;
 	  }
-	  type_name
+	  type_declaration_name
 	  {
 		MemberName name = MakeName ((MemberName) $6);
 		push_current_class (new Class (current_namespace, current_class, name, (int) $2, (Attributes) $1), $3);
@@ -4333,7 +4405,7 @@ declaration_statement
  * > The expressions are converted into types during semantic analysis.
  */
 local_variable_type
-	: primary_expression opt_rank_specifier_or_nullable
+	: primary_expression_no_array_creation opt_rank_specifier_or_nullable
 	  { 
 		// FIXME: Do something smart here regarding the composition of the type.
 
@@ -4391,7 +4463,7 @@ local_variable_type
 	;
 
 local_variable_pointer_type
-	: primary_expression STAR
+	: primary_expression_no_array_creation STAR
 	  {
 		ATypeNameExpression expr = $1 as ATypeNameExpression;
 
@@ -4417,7 +4489,7 @@ local_variable_pointer_type
 	;
 
 local_variable_declaration
-	: local_variable_type variable_declarators
+	: local_variable_type local_variable_declarators
 	  {
 		if ($1 != null) {
 			VarExpr ve = $1 as VarExpr;
@@ -4428,7 +4500,7 @@ local_variable_declaration
 		} else
 			$$ = null;
 	  }
-	| local_variable_pointer_type opt_rank_specifier variable_declarators
+	| local_variable_pointer_type opt_rank_specifier local_variable_declarators
 	  {
 		if ($1 != null){
 			Expression t;
@@ -5505,24 +5577,23 @@ public class VariableDeclaration {
 	}
 }
 
-// <summary>
-//   A class used to hold info about an indexer declarator
-// </summary>
-public class IndexerDeclaration {
-	public FullNamedExpression type;
-	public MemberName interface_type;
-	public Parameters param_list;
-	public Location location;
-
-	public IndexerDeclaration (FullNamedExpression type, MemberName interface_type,
-				   Parameters param_list, Location loc)
+class VariableMemberDeclaration
+{
+	public readonly MemberName MemberName;
+	public Expression expression_or_array_initializer;
+	
+	public VariableMemberDeclaration (MemberName mn, object initializer)
 	{
-		this.type = type;
-		this.interface_type = interface_type;
-		this.param_list = param_list;
-		this.location = loc;
+		MemberName = mn;
+		
+		if (initializer is ArrayList) {
+			this.expression_or_array_initializer = new ArrayCreation (CSharpParser.current_array_type, "", (ArrayList)initializer, mn.Location);
+		} else {
+			this.expression_or_array_initializer = (Expression)initializer;
+		}
 	}
 }
+
 
 // <summary>
 //  A class used to hold info about an operator declarator
@@ -5649,7 +5720,8 @@ Block declare_local_variables (Expression type, ArrayList variable_declarators, 
 					assign = new SimpleAssign (new SimpleName (decl.identifier, decl.Location), var);
 					current_block.AddStatement (new StatementExpression (assign));
 				} else {
-					Field f = new Field (current_container, (FullNamedExpression) type, Modifiers.PUBLIC | Modifiers.STATIC, decl.identifier, null, loc);
+					Field f = new Field (current_container, (FullNamedExpression) type, Modifiers.PUBLIC | Modifiers.STATIC,
+						new MemberName (decl.identifier, loc), null);
 					current_container.AddField (f);
 
 					// Register the field to be visible later as a global variable

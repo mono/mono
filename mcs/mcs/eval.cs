@@ -894,7 +894,7 @@ namespace Mono.CSharp {
 
 			Field f = new Field (container, new TypeExpression (ret.Type, Location),
 					     Modifiers.PUBLIC | Modifiers.STATIC,
-					     name, null, Location);
+					     new MemberName (name, Location), null);
 			container.AddField (f);
 			if (f.Define ())
 				Evaluator.QueueField (f);

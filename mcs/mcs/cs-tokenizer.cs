@@ -53,6 +53,11 @@ namespace Mono.CSharp
 		//
 		public int parsing_block;
 		internal int query_parsing;
+		
+		//
+		// Set when parsing generic declaration (type or method header)
+		//
+		public bool parsing_generic_declaration;
 
 		//
 		// The special character to inject on streams to trigger the EXPRESSION_PARSE
@@ -805,12 +810,19 @@ namespace Mono.CSharp
 				// Save current position and parse next token.
 				PushPosition ();
 				bool is_generic_lt = parse_less_than ();
-				PopPosition ();
-
 				if (is_generic_lt) {
-					return Token.OP_GENERICS_LT;
-				} else
-					parsing_generic_less_than = 0;
+					int rt;
+					if (parsing_generic_declaration && token () != Token.DOT) {
+						rt = Token.OP_GENERICS_LT_DECL;
+					} else {
+						rt = Token.OP_GENERICS_LT;
+					}
+					PopPosition ();
+					return rt;
+				}
+				
+				PopPosition ();
+				parsing_generic_less_than = 0;
 
 				d = peek_char ();
 				if (d == '<'){

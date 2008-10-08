@@ -3664,7 +3664,7 @@ namespace Mono.CSharp {
 #endif
 			Field field = new Field (ec.TypeContainer, string_dictionary_type,
 				Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED,
-				CompilerGeneratedClass.MakeName (null, "f", "switch$map", unique_counter++), null, loc);
+				new MemberName (CompilerGeneratedClass.MakeName (null, "f", "switch$map", unique_counter++), loc), null);
 			if (!field.Define ())
 				return;
 			ec.TypeContainer.PartialContainer.AddField (field);

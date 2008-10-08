@@ -81,7 +81,7 @@ namespace Mono.CSharp {
 		{
 			public HoistedGenericField (DeclSpace parent, FullNamedExpression type, int mod, string name,
 				  Attributes attrs, Location loc)
-				: base (parent, type, mod, name, attrs, loc)
+				: base (parent, type, mod, new MemberName (name, loc), attrs)
 			{
 			}
 
@@ -155,7 +155,7 @@ namespace Mono.CSharp {
 		protected Field AddCompilerGeneratedField (string name, FullNamedExpression type)
 		{
 			const int mod = Modifiers.INTERNAL | Modifiers.COMPILER_GENERATED;
-			Field f = new Field (this, type, mod, name, null, Location);
+			Field f = new Field (this, type, mod, new MemberName (name, Location), null);
 			AddField (f);
 			return f;
 		}
@@ -1482,7 +1482,7 @@ namespace Mono.CSharp {
 					int id = parent.Fields == null ? 0 : parent.Fields.Count;
 					am_cache = new Field (parent, new TypeExpression (type, loc),
 						Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED,
-						CompilerGeneratedClass.MakeName (null, "f", "am$cache", id), null, loc);
+						new MemberName (CompilerGeneratedClass.MakeName (null, "f", "am$cache", id), loc), null);
 					am_cache.Define ();
 					parent.AddField (am_cache);
 				} else {
@@ -1651,7 +1651,7 @@ namespace Mono.CSharp {
 				AnonymousTypeParameter p = (AnonymousTypeParameter) parameters [i];
 
 				Field f = new Field (a_type, t_args [i], Modifiers.PRIVATE | Modifiers.READONLY,
-					"<" + p.Name + ">", null, p.Location);
+					new MemberName ("<" + p.Name + ">", p.Location), null);
 
 				if (!a_type.AddField (f)) {
 					error = true;
