@@ -1,3 +1,8 @@
+2008-10-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayout.cs: If multiple controls are set to the same cell,
+	flow the additional ones to other empty cells.  [Fixes bug #433531]
+
 2008-09-12  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TableLayoutSettingsTypeConverter.cs: Don't create an instance of 

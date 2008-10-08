@@ -27,6 +27,9 @@
 //
 
 #if NET_2_0
+
+#undef TABLE_DEBUG
+
 using System;
 using System.Drawing;
 
@@ -54,6 +57,10 @@ namespace System.Windows.Forms.Layout
 			TableLayoutPanel panel = container as TableLayoutPanel;
 			TableLayoutSettings settings = panel.LayoutSettings;
 			
+#if TABLE_DEBUG
+			Console.WriteLine ("Beginning layout on panel: {0}, control count: {1}, col/row count: {2}x{3}", panel.Name, panel.Controls.Count, settings.ColumnCount, settings.RowCount);
+#endif
+
 			// STEP 1:
 			// - Figure out which row/column each control goes into
 			// - Store data in the TableLayoutPanel.actual_positions
@@ -67,6 +74,14 @@ namespace System.Windows.Forms.Layout
 			// STEP 3:
 			// - Size and position each control
 			LayoutControls(panel);
+
+#if TABLE_DEBUG
+			Console.WriteLine ("-- CalculatedPositions:");
+			OutputControlGrid (panel.actual_positions, panel);
+
+			Console.WriteLine ("Finished layout on panel: {0}", panel.Name);
+			Console.WriteLine ();
+#endif
 
 			return false;
 		}
@@ -129,7 +144,7 @@ namespace System.Windows.Forms.Layout
 				int col = settings.GetColumn (c);
 				int row = settings.GetRow (c);
 
-				if ((col >= 0 && col < columns) && (row >= 0 && row < rows))
+				if ((col >= 0 && col < columns) && (row >= 0 && row < rows) && grid[col, row] == c)
 					continue;
 
 				for (int y = y_pointer; y < rows; y++) {
@@ -480,6 +495,35 @@ namespace System.Windows.Forms.Layout
 				current_pos.Offset ((-1 * current_pos.X) + border_width + panel.DisplayRectangle.Left, panel.row_heights[y] + border_width);
 			}
 		}
+	
+#if TABLE_DEBUG
+		private void OutputControlGrid (Control[,] grid, TableLayoutPanel panel)
+		{
+			Console.WriteLine ("     Size: {0}x{1}", grid.GetLength (0), grid.GetLength (1));
+
+			Console.Write ("        ");
+
+			foreach (int i in panel.column_widths)
+				Console.Write (" {0}px  ", i.ToString ().PadLeft (3));
+
+			Console.WriteLine ();
+				
+			for (int y = 0; y < grid.GetLength (1); y++) {
+				Console.Write (" {0}px |", panel.row_heights[y].ToString ().PadLeft (3));
+				
+				for (int x = 0; x < grid.GetLength (0); x++) {
+					if (grid[x, y] == null)
+						Console.Write ("  ---  |");
+					else if (string.IsNullOrEmpty (grid[x, y].Name))
+						Console.Write ("  ???  |");
+					else
+						Console.Write (" {0} |", grid[x, y].Name.PadRight (5).Substring (0, 5));
+				}
+				
+				Console.WriteLine ();
+			}
+		}
+#endif
 	}
 }
 #endif
