@@ -104,6 +104,10 @@ namespace System.Net
 			if (sendChunked)
 				pending = new ManualResetEvent (true);
 		}
+
+		internal WebConnection Connection {
+			get { return cnc; }
+		}
 #if NET_2_0
 		public override bool CanTimeout {
 			get { return true; }

@@ -96,6 +96,7 @@ namespace System.Net
 		bool getResponseCalled;
 		Exception saved_exc;
 		object locker = new object ();
+		bool is_ntlm_auth;
 #if NET_1_1
 		int maxResponseHeadersLength;
 		static int defaultMaxResponseHeadersLength;
@@ -157,7 +158,11 @@ namespace System.Net
 		}
 		
 		// Properties
-		
+
+		internal bool UsesNtlmAuthentication {
+			get { return is_ntlm_auth; }
+		}
+
 		public string Accept {
 			get { return webHeaders ["Accept"]; }
 			set {
@@ -552,7 +557,6 @@ namespace System.Net
 
 #if NET_1_1
 		bool unsafe_auth_blah;
-		[MonoTODO]
 		public bool UnsafeAuthenticatedConnectionSharing
 		{
 			get { return unsafe_auth_blah; }
@@ -717,7 +721,7 @@ namespace System.Net
 				asyncResult = BeginGetRequestStream (null, null);
 				asyncWrite = (WebAsyncResult) asyncResult;
 			}
-		
+
 			if (!asyncResult.AsyncWaitHandle.WaitOne (timeout, false)) {
 				Abort ();
 				throw new WebException ("The request timed out", WebExceptionStatus.Timeout);
@@ -1144,6 +1148,27 @@ namespace System.Net
 			}
 		}
 
+		void HandleNtlmAuth (WebAsyncResult r)
+		{
+			WebConnectionStream wce = webResponse.GetResponseStream () as WebConnectionStream;
+			if (wce != null) {
+				WebConnection cnc = wce.Connection;
+				cnc.PriorityRequest = this;
+				bool isProxy = (proxy != null && !proxy.IsBypassed (actualUri));
+				ICredentials creds = (!isProxy) ? credentials : proxy.Credentials;
+				if (creds != null) {
+					cnc.NtlmCredential = creds.GetCredential (requestUri, "NTLM");
+#if NET_1_1
+					cnc.UnsafeAuthenticatedConnectionSharing = unsafe_auth_blah;
+#endif
+				}
+			}
+			r.Reset ();
+			haveResponse = false;
+			webResponse.ReadAll ();
+			webResponse = null;
+		}
+
 		internal void SetResponseData (WebConnectionData data)
 		{
 			if (aborted) {
@@ -1182,6 +1207,15 @@ namespace System.Net
 				try {
 					redirected = CheckFinalStatus (r);
 					if (!redirected) {
+						if (is_ntlm_auth && authCompleted && webResponse != null
+							&& (int)webResponse.StatusCode < 400) {
+							WebConnectionStream wce = webResponse.GetResponseStream () as WebConnectionStream;
+							if (wce != null) {
+								WebConnection cnc = wce.Connection;
+								cnc.NtlmAuthenticated = true;
+							}
+						}
+
 						// clear internal buffer so that it does not
 						// hold possible big buffer (bug #397627)
 						if (writeStream != null)
@@ -1191,8 +1225,11 @@ namespace System.Net
 						r.DoCallback ();
 					} else {
 						if (webResponse != null) {
+							if (is_ntlm_auth) {
+								HandleNtlmAuth (r);
+								return;
+							}
 							webResponse.Close ();
-							webResponse = null;
 						}
 						haveResponse = false;
 						webResponse = null;
@@ -1234,6 +1271,7 @@ namespace System.Net
 
 			webHeaders [(isProxy) ? "Proxy-Authorization" : "Authorization"] = auth.Message;
 			authCompleted = auth.Complete;
+			is_ntlm_auth = (auth.Module.AuthenticationType == "NTLM");
 			return true;
 		}
 
@@ -1258,10 +1296,8 @@ namespace System.Net
 						if (InternalAllowBuffering) {
 							bodyBuffer = writeStream.WriteBuffer;
 							bodyBufferLength = writeStream.WriteBufferLength;
-							webResponse.Close ();
 							return true;
 						} else if (method != "PUT" && method != "POST") {
-							webResponse.Close ();
 							return true;
 						}
 						

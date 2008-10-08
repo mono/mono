@@ -292,7 +292,7 @@ namespace System.Net
 			
 			lock (locker) {
 				WebConnectionGroup cncGroup = GetConnectionGroup (groupName);
-				cnc = cncGroup.GetConnection ();
+				cnc = cncGroup.GetConnection (request);
 			}
 			
 			return cnc.SendRequest (request);

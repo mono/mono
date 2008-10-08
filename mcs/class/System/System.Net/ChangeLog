@@ -1,5 +1,15 @@
 2008-10-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* WebConnection.cs:
+	* ServicePoint.cs:
+	* WebConnectionGroup.cs:
+	* HttpWebRequest.cs:
+	* WebConnectionStream.cs: reuse the same connection when doing NTLM
+	authentication. Fixes bug #323375.
+	Implemented support for UnsafeAuthenticatedConnectionSharing.
+
+2008-10-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* HttpConnection.cs:
 	* HttpListenerResponse.cs: fix typo that caused the "connection close"
 	header to be sent. Do not close the socket when the encoding is not

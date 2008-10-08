@@ -51,7 +51,7 @@ namespace System.Net
 			queue = new Queue ();
 		}
 
-		public WebConnection GetConnection ()
+		public WebConnection GetConnection (HttpWebRequest request)
 		{
 			WebConnection cnc = null;
 			lock (connections) {
@@ -76,13 +76,38 @@ namespace System.Net
 						connections.RemoveAt ((int) removed [i]);
 				}
 
-				cnc = CreateOrReuseConnection ();
+				cnc = CreateOrReuseConnection (request);
 			}
 
 			return cnc;
 		}
 
-		WebConnection CreateOrReuseConnection ()
+		static void PrepareSharingNtlm (WebConnection cnc, HttpWebRequest request)
+		{
+			if (!cnc.NtlmAuthenticated)
+				return;
+
+			bool needs_reset = false;
+			NetworkCredential cnc_cred = cnc.NtlmCredential;
+			NetworkCredential req_cred = request.Credentials.GetCredential (request.RequestUri, "NTLM");
+			if (cnc_cred.Domain != req_cred.Domain || cnc_cred.UserName != req_cred.UserName ||
+				cnc_cred.Password != req_cred.Password) {
+				needs_reset = true;
+			}
+#if NET_1_1
+			if (!needs_reset) {
+				bool req_sharing = request.UnsafeAuthenticatedConnectionSharing;
+				bool cnc_sharing = cnc.UnsafeAuthenticatedConnectionSharing;
+				needs_reset = (req_sharing == false || req_sharing != cnc_sharing);
+			}
+#endif
+			if (needs_reset) {
+				cnc.Close (false); // closes the authenticated connection
+				cnc.ResetNtlm ();
+			}
+		}
+
+		WebConnection CreateOrReuseConnection (HttpWebRequest request)
 		{
 			// lock is up there.
 			WebConnection cnc;
@@ -102,6 +127,7 @@ namespace System.Net
 				if (cnc.Busy)
 					continue;
 
+				PrepareSharingNtlm (cnc, request);
 				return cnc;
 			}
 
