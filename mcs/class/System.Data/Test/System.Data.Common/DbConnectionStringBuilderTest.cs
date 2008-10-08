@@ -3,9 +3,11 @@
 //
 // Author: 
 //      Sureshkumar T (tsureshkumar@novell.com)
+//	Daniel Morgan (monodanmorg@yahoo.com)
 //
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2008 Daniel Morgan
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -165,9 +167,8 @@ namespace MonoTests.System.Data.Common
                         builder.Add (SERVER, SERVER_VALUE);
                         builder.Add (SERVER + "1", SERVER_VALUE + "1");
 
-			// FIXME: gross hack
-			int i = dict [0].Key == SERVER ? 0 : 1;
-			int j = i == 0 ? 1 : 0;
+			int i = 0;
+			int j = 1;
 			((ICollection) builder).CopyTo (dict, 0);
                         Assert.AreEqual (SERVER, dict [i].Key, "not equal");
                         Assert.AreEqual (SERVER_VALUE, dict [i].Value, "not equal");
@@ -231,6 +232,181 @@ namespace MonoTests.System.Data.Common
                         Assert.IsNull (property, "");
 
                 }
+
+		[Test]
+		public void EmbeddedCharTest1 ()
+		{
+			// Notice how the keywords show up in the connection string
+			//  in the order they were added.
+			// And notice the case of the keyword when added is preserved
+			//  in the connection string.
+
+			DbConnectionStringBuilder sb = new DbConnectionStringBuilder ();
+
+			sb["Data Source"] = "testdb";
+			sb["User ID"] = "someuser";
+			sb["Password"] = "abcdef";
+			Assert.AreEqual ("Data Source=testdb;User ID=someuser;Password=abcdef", 
+				sb.ConnectionString, "cs#1");
+
+			sb["Password"] = "abcdef#";
+			Assert.AreEqual ("Data Source=testdb;User ID=someuser;Password=abcdef#", 
+				sb.ConnectionString, "cs#2");
+
+			// an embedded single-quote value will result in the value being delimieted with double quotes
+			sb["Password"] = "abc\'def";
+			Assert.AreEqual ("Data Source=testdb;User ID=someuser;Password=\"abc\'def\"", 
+				sb.ConnectionString, "cs#3");
+
+			// an embedded double-quote value will result in the value being delimieted with single quotes
+			sb["Password"] = "abc\"def";
+			Assert.AreEqual ("Data Source=testdb;User ID=someuser;Password=\'abc\"def\'", 
+				sb.ConnectionString, "cs#4");
+
+			// an embedded single-quote and double-quote in the value
+			// will result in the value being delimited by double-quotes
+			// with the embedded double quote being escaped with two double-quotes
+			sb["Password"] = "abc\"d\'ef";
+			Assert.AreEqual ("Data Source=testdb;User ID=someuser;Password=\"abc\"\"d\'ef\"", 
+				sb.ConnectionString, "cs#5");
+
+			sb = new DbConnectionStringBuilder ();
+			sb["PASSWORD"] = "abcdef1";
+			sb["user id"] = "someuser";
+			sb["Data Source"] = "testdb";
+			Assert.AreEqual ("PASSWORD=abcdef1;user id=someuser;Data Source=testdb", 
+				sb.ConnectionString, "cs#6");
+
+			// case is preserved for a keyword that was added the first time
+			sb = new DbConnectionStringBuilder ();
+			sb["PassWord"] = "abcdef2";
+			sb["uSER iD"] = "someuser";
+			sb["DaTa SoUrCe"] = "testdb";
+			Assert.AreEqual ("PassWord=abcdef2;uSER iD=someuser;DaTa SoUrCe=testdb", 
+				sb.ConnectionString, "cs#7");
+			sb["passWORD"] = "abc123";
+			Assert.AreEqual ("PassWord=abc123;uSER iD=someuser;DaTa SoUrCe=testdb", 
+				sb.ConnectionString, "cs#8");
+
+			// embedded equal sign in the value will cause the value to be
+			// delimited with double-quotes
+			sb = new DbConnectionStringBuilder ();
+			sb["Password"] = "abc=def";
+			sb["Data Source"] = "testdb";
+			sb["User ID"] = "someuser";
+			Assert.AreEqual ("Password=\"abc=def\";Data Source=testdb;User ID=someuser", 
+				sb.ConnectionString, "cs#9");
+
+			// embedded semicolon in the value will cause the value to be
+			// delimited with double-quotes
+			sb = new DbConnectionStringBuilder ();
+			sb["Password"] = "abc;def";
+			sb["Data Source"] = "testdb";
+			sb["User ID"] = "someuser";
+			Assert.AreEqual ("Password=\"abc;def\";Data Source=testdb;User ID=someuser", 
+				sb.ConnectionString, "cs#10");
+
+			// more right parentheses then left parentheses - happily takes it
+			sb = new DbConnectionStringBuilder();
+			sb.ConnectionString = "Data Source=(((Blah=Something))))))";
+			Assert.AreEqual ("data source=\"(((Blah=Something))))))\"", 
+				sb.ConnectionString, "cs#11");
+
+			// more left curly braces then right curly braces - happily takes it
+			sb = new DbConnectionStringBuilder();
+			sb.ConnectionString = "Data Source={{{{Blah=Something}}";
+			Assert.AreEqual ("data source=\"{{{{Blah=Something}}\"", 
+				sb.ConnectionString, "cs#12");
+
+			// spaces, empty string, null are treated like an empty string
+			// and any previous settings is cleared
+			sb.ConnectionString = "   ";
+			Assert.AreEqual (String.Empty, 
+				sb.ConnectionString, "cs#13");
+
+			sb.ConnectionString = " ";
+			Assert.AreEqual (String.Empty, 
+				sb.ConnectionString, "cs#14");
+
+			sb.ConnectionString = "";
+			Assert.AreEqual (String.Empty, 
+				sb.ConnectionString, "cs#15");
+
+			sb.ConnectionString = String.Empty;
+			Assert.AreEqual (String.Empty, 
+				sb.ConnectionString, "cs#16");
+
+			sb.ConnectionString = null;
+			Assert.AreEqual (String.Empty, 
+				sb.ConnectionString, "cs#17");
+
+			sb = new DbConnectionStringBuilder();
+			Assert.AreEqual (String.Empty, 
+				sb.ConnectionString, "cs#18");
+		}
+
+		[Test]
+		public void EmbeddedCharTest2 ()
+		{
+			DbConnectionStringBuilder sb = new DbConnectionStringBuilder();
+
+			// Odbc connection string can have a Driver keyword where the value is enclosed with { }
+			// the result has the value delimited with double-quotes and the keywords are lower case
+
+			sb.ConnectionString = "Driver={SQL Server};Server=(local);Trusted_Connection=Yes;" +
+				"Database=AdventureWorks;";
+			Assert.AreEqual ("{SQL Server}", 
+				sb["Driver"], "csp#1");
+			Assert.AreEqual ("(local)", 
+				sb["Server"], "csp#2");
+			Assert.AreEqual ("Yes", 
+				sb["Trusted_Connection"], "csp#3");
+			Assert.AreEqual ( 
+				"driver=\"{SQL Server}\";server=(local);trusted_connection=Yes;" +
+					"database=AdventureWorks", 
+				sb.ConnectionString, "csp#4");
+		}
+
+		[Test]
+		public void EmbeddedCharTest3 ()
+		{
+			DbConnectionStringBuilder sb = new DbConnectionStringBuilder();
+
+			// an oracle connection string which uses a TNS network description
+			// which has parentheses 
+			// the result has the data source value delimited with double-quotes
+			// yet the keywords are all lower case
+
+			string dataSource = "(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.1.101)" + 
+				"(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=TESTDB)))";
+			sb.ConnectionString = "User ID=SCOTT;Password=TIGER;Data Source=" + dataSource;
+			Assert.AreEqual (dataSource,
+				sb["Data Source"], "csp#5");
+			Assert.AreEqual ("SCOTT", 
+				sb["User ID"], "csp#6");
+			Assert.AreEqual ("TIGER", 
+				sb["Password"], "csp#7"); 
+			sb["Password"] = "secret";
+			Assert.AreEqual ( 
+				"user id=SCOTT;password=secret;data source=\"(DESCRIPTION=(ADDRESS=(PROTOCOL=" +
+				"TCP)(HOST=192.168.1.101)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)" +
+				"(SERVICE_NAME=TESTDB)))\"", 
+				sb.ConnectionString, "csp#8");
+		}
+
+		[Test]
+		public void EmbeddedCharTest4 ()
+		{
+			// Notice how the keywords parsed from the setting of the set property ConnectionString
+			// are lower case while the keyword added aftwareds has the case preserved
+
+			DbConnectionStringBuilder sb = new DbConnectionStringBuilder();
+			sb.ConnectionString = "PassWord=abcdef2;uSER iD=someuser;DaTa SoUrCe=testdb";
+			sb["Integrated Security"] = "False";
+			Assert.AreEqual ( 
+				"password=abcdef2;user id=someuser;data source=testdb;Integrated Security=False",
+				sb.ConnectionString, "csp#9");
+		}
         }
 }
 
