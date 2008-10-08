@@ -1,3 +1,8 @@
+2008-10-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (compile_method): Enable AOT for generic code.
+
+	* ir-emit.h (NEW_DOMAINCONST): Use domainvars in AOT code as well.
 
 Wed Oct 8 16:35:43 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
