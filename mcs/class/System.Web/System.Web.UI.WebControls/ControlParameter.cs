@@ -74,8 +74,10 @@ namespace System.Web.UI.WebControls {
 		
 		protected override object Evaluate (HttpContext ctx, Control control)
 		{
-			if (control == null) return null;
-			if (control.Page == null) return null;
+			if (control == null)
+				return null;
+			if (control.Page == null)
+				return null;
 			
 			if(String.IsNullOrEmpty(ControlID))
 				throw new ArgumentException ("The ControlID property is not set.");
@@ -98,12 +100,9 @@ namespace System.Web.UI.WebControls {
 					throw new ArgumentException ("The PropertyName property is not set and the Control identified by the ControlID property is not decorated with a ControlValuePropertyAttribute attribute.");
 				ControlValuePropertyAttribute attr = (ControlValuePropertyAttribute) attrs [0];
 				propName = attr.Name;
-			}
-			PropertyInfo prop = c.GetType ().GetProperty (propName);
-			if (prop == null)
-				throw new InvalidOperationException ("Property '" + propName + "' not found in type '" + c.GetType () + "'.");
+ 			}
 			
-			return prop.GetValue (c, null);
+			return DataBinder.Eval (c, propName);
 		}
 		
 		[WebCategoryAttribute ("Control")]

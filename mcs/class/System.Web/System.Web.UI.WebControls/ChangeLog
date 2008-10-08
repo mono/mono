@@ -1,3 +1,8 @@
+2008-10-08  Marek Habersack  <mhabersack@novell.com>
+
+	* ControlParameter.cs: Evaluate calls DataBinder.Eval to do the
+	evaluation now. This makes it support complex expressions.
+
 2008-09-30  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* RoleGroupCollection.cs: Fix recursive calls (wrong target)

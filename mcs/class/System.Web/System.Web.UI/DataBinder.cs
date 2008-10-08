@@ -58,7 +58,8 @@ namespace System.Web.UI {
 		
 		public static object Eval (object container, string expression)
 		{
-			if ((expression == null) || (expression.Length == 0))
+			expression = expression != null ? expression.Trim () : null;
+			if (expression == null || expression.Length == 0)
 				throw new ArgumentNullException ("expression");
 
 			object current = container;
@@ -144,12 +145,13 @@ namespace System.Web.UI {
 			}
 
 			Type t = container.GetType ();
+
 			// MS does not seem to look for any other than "Item"!!!
 			object [] atts = t.GetCustomAttributes (typeof (DefaultMemberAttribute), false);
 			if (atts.Length != 1)
-				throw new ArgumentException (expr + " indexer not found.");
-
-			property = ((DefaultMemberAttribute) atts [0]).MemberName;
+				property = "Item";
+			else
+				property = ((DefaultMemberAttribute) atts [0]).MemberName;
 
 			Type [] argTypes = new Type [] { (is_string) ? typeof (string) : typeof (int) };
 			PropertyInfo prop = t.GetProperty (property, argTypes);

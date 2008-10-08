@@ -1,3 +1,11 @@
+2008-10-08  Marek Habersack  <mhabersack@novell.com>
+
+	* DataBinder.cs: in Eval expression needs to be trimmed before
+	checking whether it's an empty string.
+	GetIndexedPropertyValue must explicitly look for the "Item"
+	property, the lack of the DefaultMember attribute on type must not
+	throw exceptions.
+
 2008-10-03  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateParser.cs: make sure the generated class name is a valid

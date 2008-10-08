@@ -1,3 +1,8 @@
+2008-10-08  Marek Habersack  <mhabersack@novell.com>
+
+	* ControlParameterTest.cs: added a test for ControlParameter
+	evaluating a complex property expression.
+
 2008-09-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RoleGroupCollectionTest.cs: Add test case this[int].

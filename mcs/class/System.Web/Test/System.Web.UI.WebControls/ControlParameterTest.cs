@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Text;
 using NUnit.Framework;
 using System.Web;
@@ -39,63 +40,77 @@ using System.Web.UI.WebControls;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
-    public class ControlParameterPoker : ControlParameter
-    {
-	    public ControlParameterPoker (ControlParameter control)
-		    : base (control)
-	    {
-	    }
+	public class ControlParameterPoker : ControlParameter
+	{
+		public ControlParameterPoker (ControlParameter control)
+			: base (control)
+		{
+		}
 	    
-	    public ControlParameterPoker (string name,TypeCode type, string controlID,string propertyName)
-		    :base(name,type,controlID,propertyName)
-	    {
-	    }
+		public ControlParameterPoker (string name,TypeCode type, string controlID,string propertyName)
+			:base(name,type,controlID,propertyName)
+		{
+		}
 
-            public ControlParameterPoker (string name, string controlId, string propertyName)
+		public ControlParameterPoker (string name, string controlId, string propertyName)
 			: base (name, controlId, propertyName)
-	    {
-	    }
+		{
+		}
 
 	
-	    public ControlParameterPoker (string name, string controlId)
+		public ControlParameterPoker (string name, string controlId)
 			: base (name, controlId)	
-	    {	
-	    }
+		{	
+		}
        
-	    public ControlParameterPoker() // constructor       
-	    {        
-		    TrackViewState ();       
-	    }
+		public ControlParameterPoker() // constructor       
+		{        
+			TrackViewState ();       
+		}
 
-	    public object DoEvaluate (HttpContext context,Control control)
-	    {
-		    return base.Evaluate (context,control);
-	    }
+		public object DoEvaluate (HttpContext context,Control control)
+		{
+			return base.Evaluate (context,control);
+		}
 
-	    public Parameter DoClone ()
-	    {
-		    return base.Clone ();
-	    }
+		public Parameter DoClone ()
+		{
+			return base.Clone ();
+		}
 	
-	    public object SaveState ()		
-	    {	
-		    return SaveViewState ();		
-	    }
+		public object SaveState ()		
+		{	
+			return SaveViewState ();		
+		}
 
        
-	    public void LoadState (object o)       
-	    {       
-		    LoadViewState (o);      
-	    }
+		public void LoadState (object o)       
+		{       
+			LoadViewState (o);      
+		}
        
-	    public StateBag StateBag       
-	    {       
-		    get { return base.ViewState; }      
-	    }
+		public StateBag StateBag       
+		{       
+			get { return base.ViewState; }      
+		}
        
-    }
+	}
 
-    [TestFixture]
+	class TestControl : Control 
+	{
+		DataKey _values;
+		
+		public DataKey Values {
+			get { return _values; }
+		}
+
+		public TestControl (DataKey values)
+		{
+			this._values = values;
+		}
+	}
+	
+	[TestFixture]
 	public class ControlParameterTest
 	{
 		[Test]
@@ -163,6 +178,23 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("TestNewValue", value, "EvaluateValue2");
 		}
 
+		[Test]
+		public void ControlParameter_EvaluateComplex ()
+		{
+			ControlParameterPoker ctrlParam = new ControlParameterPoker ("Test", "TestControl1", "Values['one']");
+			Page page = new Page ();
+			
+			OrderedDictionary dict = new OrderedDictionary ();
+			dict.Add ("one", "1");
+			
+			DataKey values = new DataKey (dict);
+			TestControl test = new TestControl (values);
+			test.ID = "TestControl1";
+			page.Controls.Add (test);
+			string value = ctrlParam.DoEvaluate (HttpContext.Current, test) as string;
+			Assert.AreEqual ("1", value, "#1");
+		}
+		
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void EvaluateArgumemtException ()
