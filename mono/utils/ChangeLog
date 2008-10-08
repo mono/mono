@@ -1,3 +1,10 @@
+2008-10-08  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r115182.
+	
+	* mono-compiler.h (MONO_THREAD_VAR_OFFSET): Apply a patch from
+	the fedora packagers to the IA64 MONO_THREAD_VAR_OFFSET definition.
+
 2008-07-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-codeman.c (mono_code_manager_new): Initialize the read-only field.
