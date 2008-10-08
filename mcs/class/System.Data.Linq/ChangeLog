@@ -1,5 +1,9 @@
 2008-10-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* System.Data.Linq.dll.sources : fix wrong reference to EntitySet.cs.
+
+2008-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* System.Data.Linq.dll.sources :
 	  SqlServer vendor sources were missing.
 

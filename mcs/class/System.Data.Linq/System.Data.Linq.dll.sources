@@ -12,6 +12,7 @@ src/DbLinq/Data/Linq/Database/Implementation/DatabaseContext.cs
 src/DbLinq/Data/Linq/Database/Implementation/DatabaseTransaction.cs
 src/DbLinq/Data/Linq/EntityList.cs
 src/DbLinq/Data/Linq/EntityRef.cs
+src/DbLinq/Data/Linq/EntitySet.cs
 src/DbLinq/Data/Linq/IEntityMap.cs
 src/DbLinq/Data/Linq/IExecuteResult.cs
 src/DbLinq/Data/Linq/IMemberModificationHandler.cs
@@ -181,7 +182,6 @@ src/DbLinq/System.Data.Linq/ConflictMode.cs
 src/DbLinq/System.Data.Linq/DBConvert.cs
 src/DbLinq/System.Data.Linq/DataLoadOptions.cs
 src/DbLinq/System.Data.Linq/DuplicateKeyException.cs
-src/DbLinq/System.Data.Linq/EntitySet.cs
 src/DbLinq/System.Data.Linq/ForeignKeyReferenceAlreadyHasValueException.cs
 src/DbLinq/System.Data.Linq/IFunctionResult.cs
 src/DbLinq/System.Data.Linq/IMultipleResults.cs
