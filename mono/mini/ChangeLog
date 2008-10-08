@@ -1,3 +1,9 @@
+
+Wed Oct 8 16:35:43 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: add a workaround for a common screwup that ends up blamed
+	to mono (other processes blocking signal delivery).
+
 2008-10-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir2): Clear ins_flag on all code paths
