@@ -56,28 +56,28 @@ package module which drives the compilation of this directory.
 You can build individual components in the hierarchy by running the command
 "make", and to install it use "make install".
 
-If you need to build a given component on the 2.x profile, you must use 
-the following command:
+By default, the 2.x profile is built, if you want to build the net 1.1 profile,
+use the following command:
 
-	make PROFILE=net_2_0
+	make PROFILE=net_1_1
 
 And to install:
 
-	make PROFILE=net_2_0 install
+	make PROFILE=net_1_1 install
 
 To turn on verbose mode in the build (for example to diagnose a
 problem), you can use the V=1 flag, like this:
 
-	make PROFILE=net_2_0 V=1
+	make V=1
 
 * Running Unit tests
 ====================
 
 You can run unit tests in individual components by running the command
 "make run-test".  If you want to run tests for a different profile (say
-'net_2_0')
+'net_1_1')
 
-	make run-test PROFILE=net_2_0
+	make run-test PROFILE=net_1_1
 
 If you want to only run the tests in a single fixture (say
 'MonoTests.System.TypeTest'), you can use
