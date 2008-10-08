@@ -65,6 +65,7 @@ namespace System.Xml.XPath
 			wr = table [xpath] as WeakReference;
 			if (wr != null) {
 				if (wr.IsAlive)
+					// it may return null (as it might be GC-ed), but we don't have to worrt about it here.
 					return (XPathExpression) wr.Target;
 				table [xpath] = null;
 			}
@@ -80,7 +81,7 @@ namespace System.Xml.XPath
 			WeakReference wr = table_per_ctx [ctxkey] as WeakReference;
 			if (wr != null && wr.IsAlive)
 				table = (Hashtable) wr.Target;
-			else {
+			if (table == null) {
 				table = new Hashtable ();
 				table_per_ctx [ctxkey] = new WeakReference (table);
 			}
