@@ -1,3 +1,7 @@
+2008-10-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebRequestTest.cs: mini-test case for NTLM auth.
+
 2008-08-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IPAddressTest.cs : added test strings for bug #411920 as well as

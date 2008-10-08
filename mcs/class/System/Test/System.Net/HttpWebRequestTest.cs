@@ -676,6 +676,69 @@ namespace MonoTests.System.Net
 			return Encoding.UTF8.GetBytes (sw.ToString ());
 		}
 
+		[Test]
+		public void NtlmAuthentication ()
+		{
+			NtlmServer server = new NtlmServer ();
+			server.Start ();
+
+			string url = String.Format ("http://{0}:{1}/nothing.html", server.IPAddress, server.Port);
+			HttpWebRequest request = (HttpWebRequest) WebRequest.Create (url);
+			request.Credentials = new NetworkCredential ("user", "password", "domain");
+			HttpWebResponse resp = (HttpWebResponse) request.GetResponse ();
+			string res = null;
+			using (StreamReader reader = new StreamReader (resp.GetResponseStream ())) {
+				res = reader.ReadToEnd ();	
+			}
+			resp.Close ();
+			server.Stop ();
+			Assert.AreEqual ("OK", res);
+		}
+
+		class NtlmServer : HttpServer {
+			protected override void Run ()
+			{
+				Socket client = sock.Accept ();
+				NetworkStream ns = new NetworkStream (client, false);
+				StreamReader reader = new StreamReader (ns, Encoding.ASCII);
+				string line;
+				while ((line = reader.ReadLine ()) != null) {
+					if (line.Trim () == String.Empty) {
+						break;
+					}
+				}
+				StreamWriter writer = new StreamWriter (ns, Encoding.ASCII);
+				writer.Write (  "HTTP/1.1 401 Unauthorized\r\n" +
+						"WWW-Authenticate: NTLM\r\n" +
+						"Content-Length: 5\r\n\r\nWRONG");
+
+				writer.Flush ();
+				while ((line = reader.ReadLine ()) != null) {
+					if (line.Trim () == String.Empty) {
+						break;
+					}
+				}
+				writer.Write (  "HTTP/1.1 401 Unauthorized\r\n" +
+						"WWW-Authenticate: NTLM TlRMTVNTUAACAAAAAAAAADgAAAABggAC8GDhqIONH3sAAAAAAAAAAAAAAAA4AAAABQLODgAAAA8=\r\n" +
+						"Content-Length: 5\r\n\r\nWRONG");
+				writer.Flush ();
+
+				while ((line = reader.ReadLine ()) != null) {
+					if (line.Trim () == String.Empty) {
+						break;
+					}
+				}
+				writer.Write (  "HTTP/1.1 200 OK\r\n" +
+						"Keep-Alive: true\r\n" +
+						"Content-Length: 2\r\n\r\nOK");
+				writer.Flush ();
+				Thread.Sleep (1000);
+				writer.Close ();
+				reader.Close ();
+				client.Close ();
+			}
+		}
+
 		class BadChunkedServer : HttpServer {
 			protected override void Run ()
 			{
