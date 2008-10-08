@@ -1,5 +1,11 @@
 2008-10-08  Bill Holmes  <billholmes54@gmail.com>
 
+	* Variant.cs (SetValue) : Adding code to handle enums.
+
+	Contributed under MIT/X11 license.
+
+2008-10-08  Bill Holmes  <billholmes54@gmail.com>
+
 	* Variant.cs : Cleaning up some tab formatting problems.
 
 	Contributed under MIT/X11 license.

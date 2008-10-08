@@ -97,6 +97,9 @@ namespace System
 				return;
 
 			Type t = obj.GetType();
+			if (t.IsEnum)
+				t = Enum.GetUnderlyingType (t);
+
 			if (t == typeof(sbyte))
 			{
 				vt = (short)VarEnum.VT_I1;
