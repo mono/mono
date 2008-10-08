@@ -253,3 +253,6 @@ src/DbLinq/Vendor/Implementation/Vendor.Name.cs
 src/DbLinq/Vendor/Implementation/Vendor.ProcedureResult.cs
 src/DbLinq/Vendor/Implementation/Vendor.cs
 src/DbLinq/Vendor/VendorAttribute.cs
+src/DbLinq.SqlServer/SqlServerSqlProvider.cs
+src/DbLinq.SqlServer/SqlServerTypeConversions.cs
+src/DbLinq.SqlServer/SqlServerVendor.cs
