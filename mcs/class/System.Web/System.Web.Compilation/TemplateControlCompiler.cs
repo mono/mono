@@ -210,6 +210,7 @@ namespace System.Web.Compilation
 						typeString = builder.ControlType.FullName;
 					else 
 						typeString = "System.Web.UI.Control";
+					ProcessTemplateChildren (builder);
 				}
 
 				method.Parameters.Add (new CodeParameterDeclarationExpression (typeString, "__ctrl"));
@@ -302,19 +303,7 @@ namespace System.Web.Compilation
 #endif
 
 				// Process template children before anything else
-				ArrayList templates = builder.TemplateChildren;
-				if (templates != null && templates.Count > 0) {
-					foreach (TemplateBuilder tb in templates) {
-						CreateControlTree (tb, true, false);
-#if NET_2_0
-						if (tb.BindingDirection == BindingDirection.TwoWay) {
-							string extractMethod = CreateExtractValuesMethod (tb);
-							AddBindableTemplateInvocation (builder, tb.TagName, tb.method.Name, extractMethod);
-						} else
-#endif
-							AddTemplateInvocation (builder, tb.TagName, tb.method.Name);
-					}
-				}
+				ProcessTemplateChildren (builder);
 
 				// process ID here. It should be set before any other attributes are
 				// assigned, since the control code may rely on ID being set. We
@@ -397,6 +386,23 @@ namespace System.Web.Compilation
 			mainClass.Members.Add (method);
 		}
 
+		void ProcessTemplateChildren (ControlBuilder builder)
+		{
+			ArrayList templates = builder.TemplateChildren;
+			if (templates != null && templates.Count > 0) {
+				foreach (TemplateBuilder tb in templates) {
+					CreateControlTree (tb, true, false);
+#if NET_2_0
+					if (tb.BindingDirection == BindingDirection.TwoWay) {
+						string extractMethod = CreateExtractValuesMethod (tb);
+						AddBindableTemplateInvocation (builder, tb.TagName, tb.method.Name, extractMethod);
+					} else
+#endif
+						AddTemplateInvocation (builder, tb.TagName, tb.method.Name);
+				}
+			}
+		}
+		
 #if NET_2_0
 		void SetCustomAttribute (CodeMemberMethod method, UnknownAttributeDescriptor uad)
 		{

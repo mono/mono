@@ -1,3 +1,8 @@
+2008-10-08  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: templates must be instantiated even
+	for builders which process children as properties.
+
 2008-10-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* AssemblyBuilder.cs: use CodeBase to get to the original assembly
