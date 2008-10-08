@@ -1,5 +1,5 @@
-// gcs0081.cs: Type parameter declaration must be an identifier not a type
-// Line: 4
+// CS1002: Expecting `,', or `>', got <
+// Line: 9
 
 interface IFoo<T>
 {

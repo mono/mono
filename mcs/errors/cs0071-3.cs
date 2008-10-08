@@ -1,7 +1,9 @@
-// cs0071-3.cs: An explicit interface implementation of an event must use property syntax
-// Line: 12
+// CS0071: `Test.IBlah.Foo': An explicit interface implementation of an event must use property syntax
+// Line: 14
 
 using System;
+
+delegate void Delegate ();
 
 interface IBlah
 {
@@ -9,7 +11,7 @@ interface IBlah
 }
 
 class Test : IBlah {
-	event MyEvent ITest.Foo;
+	event Delegate IBlah.Foo;
 
 	public static void Main ()
 	{
