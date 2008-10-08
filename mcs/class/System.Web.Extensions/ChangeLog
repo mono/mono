@@ -1,3 +1,7 @@
+2008-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile: add reference to S.D.Linq.
+
 2008-09-30  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile (LIB_MCS_FLAGS): added -define:NET_3_5 as the 3.5 parts

@@ -1,3 +1,8 @@
+2008-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* LinqDataSource.cs, LinqDataSourceView.cs :
+	  some more implementation.
+
 2008-09-30  Marek Habersack  <mhabersack@novell.com>
 
 	* ListView.cs: implemented all the events.

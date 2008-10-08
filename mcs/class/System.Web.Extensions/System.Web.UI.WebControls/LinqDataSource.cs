@@ -41,6 +41,8 @@ namespace System.Web.UI.WebControls
 //	[ToolboxBitmap (typeof (LinqDataSource), "LinqDataSource.ico")]
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[ParseChildren (true)]
+	[PersistChildren (false)]
 	public class LinqDataSource : DataSourceControl, IDynamicDataSource
 	{
 		static readonly string [] empty_names = new string [] { "DefaultView" };
@@ -136,14 +138,13 @@ namespace System.Web.UI.WebControls
 
 		[Category ("Data")]
 		[DefaultValue ("")]
-		[MonoTODO ("looks like we need System.Web.Query.Dynamic stuff or alternative")]
-		public string ContextTypeName {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
+		public string ContextTypeName { get; set; }
 
 		[MonoTODO ("looks like we need System.Web.Query.Dynamic stuff or alternative")]
-		Type IDynamicDataSource.ContextType { get; set; }
+		Type IDynamicDataSource.ContextType {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (value.FullName); }
+		}
 
 		string IDynamicDataSource.EntitySetName {
 			get { return TableName; }

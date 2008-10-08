@@ -28,10 +28,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if NET_3_5
+
+// FIXME: in general we should create something like
+// System.Web.Query,Dynamic.DynamicClass to execute DataContext operations.
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data.Linq;
 using System.Reflection;
 using System.Security.Permissions;
 using System.Web.DynamicData;
@@ -195,6 +200,15 @@ namespace System.Web.UI.WebControls
 			OnDataSourceViewChanged (EventArgs.Empty);
 		}
 
+		object data_context;
+
+		object GetDataContext ()
+		{
+			if (data_context == null)
+				data_context = CreateContext (ContextType);
+			return data_context;
+		}
+
 		public int Delete (IDictionary keys, IDictionary oldValues)
 		{
 			return ExecuteDelete (keys, oldValues);
@@ -221,10 +235,24 @@ namespace System.Web.UI.WebControls
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected override int ExecuteInsert (IDictionary values)
 		{
-			throw new NotImplementedException ();
+			var dc = (DataContext) GetDataContext ();
+			foreach (var mt in dc.Mapping.GetTables ()) {
+				if (mt.TableName != TableName)
+					continue;
+
+				var t = mt.RowType.Type;
+				ITable table = dc.GetTable (t);
+				object entity = Activator.CreateInstance (t);
+				// FIXME: merge InsertParameters
+				foreach (DictionaryEntry p in values)
+					t.GetProperty ((string) p.Key).GetSetMethod ().Invoke (entity, new object [] {p.Value});
+
+				InsertDataObject (dc, table, entity);
+				return 1;
+			}
+			throw new InvalidOperationException (String.Format ("Table '{0}' was not found on the data context '{1}'", TableName, ContextType));
 		}
 
 		[MonoTODO]
@@ -239,34 +267,38 @@ namespace System.Web.UI.WebControls
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected virtual void DeleteDataObject (object dataContext, object table, object oldDataObject)
 		{
-			throw new NotImplementedException ();
+			ITable itable = ((DataContext) dataContext).GetTable (table.GetType ());
+			itable.DeleteOnSubmit (oldDataObject);
 		}
 
-		[MonoTODO]
 		protected virtual void InsertDataObject (object dataContext, object table, object newDataObject)
 		{
-			throw new NotImplementedException ();
+			ITable itable = ((DataContext) dataContext).GetTable (table.GetType ());
+			itable.InsertOnSubmit (newDataObject);
 		}
 
 		[MonoTODO]
 		protected virtual void ResetDataObject (object table, object dataObject)
 		{
-			throw new NotImplementedException ();
+			var dc = GetDataContext ();
+			ITable itable = ((DataContext) dc).GetTable (table.GetType ());
+			UpdateDataObject (dc, table, dataObject, itable.GetOriginalEntityState (dataObject));
 		}
 
-		[MonoTODO]
 		protected virtual void UpdateDataObject (object dataContext, object table, object oldDataObject, object newDataObject)
 		{
-			throw new NotImplementedException ();
+			DeleteDataObject (dataContext, table, oldDataObject);
+			InsertDataObject (dataContext, table, newDataObject);
 		}
 
-		[MonoTODO]
 		protected virtual object CreateContext (Type contextType)
 		{
-			throw new NotImplementedException ();
+			OnContextCreating (new LinqDataSourceContextEventArgs ());
+			var o = Activator.CreateInstance (contextType);
+			OnContextCreated (new LinqDataSourceStatusEventArgs (o));
+			return o;
 		}
 
 		[MonoTODO]
@@ -275,10 +307,18 @@ namespace System.Web.UI.WebControls
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected virtual MemberInfo GetTableMemberInfo (Type contextType)
 		{
-			throw new NotImplementedException ();
+			if (contextType == null)
+				throw new ArgumentNullException ("contextType");
+			if (String.IsNullOrEmpty (TableName))
+				throw new InvalidOperationException (String.Format ("The TableName property of LinqDataSource '{0}' must specify a table property or field on the data context type.", source.ID));
+
+			var marr = contextType.GetMember (TableName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField | BindingFlags.GetProperty);
+			if (marr == null || marr.Length == 0)
+				throw new InvalidOperationException (String.Format ("Could not find a property or field called '{0}' on the data context type '{1}' of LinqDataSource '{2}'", TableName, contextType, source.ID));
+
+			return marr [0];
 		}
 
 		#region Validation
@@ -332,7 +372,10 @@ namespace System.Web.UI.WebControls
 		}
 
 		[MonoTODO]
-		public bool StoreOriginalValuesInViewState { get; set; }
+		public bool StoreOriginalValuesInViewState {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 
 		void IStateManager.LoadViewState (object savedState)
 		{

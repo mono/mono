@@ -35,6 +35,7 @@ LIB_MCS_FLAGS = \
 	-r:System.Core.dll		\
 	-r:System.Drawing.dll 		\
 	-r:System.Data.dll		\
+	-r:System.Data.Linq.dll		\
 	-r:System.Xml.dll		\
 	-r:System.Web.dll		\
 	-r:System.Web.Services.dll	\
