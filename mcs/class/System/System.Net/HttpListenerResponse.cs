@@ -447,7 +447,7 @@ namespace System.Net {
 				conn_close = (context.Request.Headers ["connection"] == "close");
 
 			// They sent both KeepAlive: true and Connection: close!?
-			if (!chunked || conn_close)
+			if (!keep_alive || conn_close)
 				headers.SetInternal ("Connection", "close");
 
 			if (chunked)

@@ -315,13 +315,20 @@ namespace System.Net {
 					return;
 				}
 
-				Socket s = sock;
-				sock = null;
-				try {
-					s.Shutdown (SocketShutdown.Both);
-				} finally {
-					s.Close ();
+				if (context.Response.Headers ["connection"] == "close") {
+					Socket s = sock;
+					sock = null;
+					try {
+						s.Shutdown (SocketShutdown.Both);
+					} finally {
+						s.Close ();
+					}
+				} else {
+					Init ();
+					BeginReadRequest ();
+					return;
 				}
+
 				if (context_bound)
 					epl.UnbindContext (context);
 			}

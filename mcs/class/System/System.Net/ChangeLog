@@ -1,5 +1,13 @@
 2008-10-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* HttpConnection.cs:
+	* HttpListenerResponse.cs: fix typo that caused the "connection close"
+	header to be sent. Do not close the socket when the encoding is not
+	chunked and reuse is possible.
+	Fixes bug #433371.
+
+2008-10-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* HttpWebRequest.cs: if GetRequestStream has already been called,
 	return the same stream that we returned in the first call.
 	Fixes bug #429200.
