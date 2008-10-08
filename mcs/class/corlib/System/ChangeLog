@@ -1,5 +1,12 @@
 2008-10-08  Bill Holmes  <billholmes54@gmail.com>
 
+	* Variant.cs : Adding the BRECORD field to ensure the right size on
+	  a 64-bit OS.  32-bit 16 bytes, 32-bit 24 bytes.
+
+	Contributed under MIT/X11 license.
+
+2008-10-08  Bill Holmes  <billholmes54@gmail.com>
+
 	* Variant.cs (SetValue) : Adding code to handle enums.
 
 	Contributed under MIT/X11 license.

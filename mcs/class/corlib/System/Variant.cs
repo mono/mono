@@ -31,7 +31,7 @@ using System.Runtime.InteropServices;
 
 namespace System
 {
-	[StructLayout(LayoutKind.Explicit, Size = 16)]
+	[StructLayout(LayoutKind.Explicit)]
 	internal unsafe struct Variant
 	{
 		[FieldOffset(0)]
@@ -90,6 +90,9 @@ namespace System
 
 		[FieldOffset(8)]
 		public IntPtr pdispVal;
+
+		[FieldOffset(8)]
+		public BRECORD bRecord;
 
 		public void SetValue(object obj) {
 			vt = (short)VarEnum.VT_EMPTY;
@@ -232,5 +235,12 @@ namespace System
 					Marshal.Release (pdispVal);
 			}
 		}
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal unsafe struct BRECORD
+	{
+		IntPtr pvRecord;
+		IntPtr pRecInfo;
 	}
 }
