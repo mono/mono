@@ -1,3 +1,9 @@
+2008-10-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* AppDomain.cs: (Load(AssemblyName)) Use the CodeBase after the Name
+	when both are provided.
+	Fixes bug #322228.
+
 2008-10-08  Bill Holmes  <billholmes54@gmail.com>
 
 	* Variant.cs : Adding the BRECORD field to ensure the right size on

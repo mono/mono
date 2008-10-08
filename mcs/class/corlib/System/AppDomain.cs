@@ -585,7 +585,46 @@ namespace System {
 					throw new ArgumentException (Locale.GetText ("assemblyRef.Name cannot be empty."), "assemblyRef");
 			}
 
-			return LoadAssembly (assemblyRef.FullName, assemblySecurity, false);
+			FileNotFoundException exc = null;
+			try {
+				return LoadAssembly (assemblyRef.FullName, assemblySecurity, false);
+			} catch (FileNotFoundException e) {
+				if (assemblyRef.CodeBase == null)
+					throw;
+				exc = e;
+			}
+
+			Assembly assembly = null;
+			string cb = assemblyRef.CodeBase;
+			if (cb.ToLower (CultureInfo.InvariantCulture).StartsWith ("file://"))
+				cb = new Mono.Security.Uri (cb).LocalPath;
+
+			try {
+				assembly = Assembly.LoadFrom (cb, assemblySecurity);
+			} catch {
+				throw exc;
+			}
+			AssemblyName aname = assembly.GetName ();
+			// Name, version, culture, publickeytoken. Anything else?
+			if (assemblyRef.Name != aname.Name)
+				throw exc;
+
+			if (assemblyRef.Version != new Version () && assemblyRef.Version != aname.Version)
+				throw exc;
+
+			if (assemblyRef.CultureInfo != null && assemblyRef.CultureInfo.Equals (aname))
+				throw exc;
+
+			byte [] pt = assemblyRef.GetPublicKeyToken ();
+			if (pt != null) {
+				byte [] loaded_pt = aname.GetPublicKeyToken ();
+				if (loaded_pt == null || (pt.Length != loaded_pt.Length))
+					throw exc;
+				for (int i = pt.Length - 1; i >= 0; i--)
+					if (loaded_pt [i] != pt [i])
+						throw exc;
+			}
+			return assembly;
 		}
 
 		public Assembly Load (string assemblyString)
