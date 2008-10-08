@@ -1,3 +1,9 @@
+2008-10-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir2): Clear ins_flag on all code paths
+	in the LDFLD/STFLD opcodes. Fixes #432673.
+
+	* iltests.il.in: Add a new test.
 
 Tue Oct 7 19:59:07 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
@@ -2706,7 +2712,7 @@ Tue Jun 3 13:07:03 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	* mini.c (mini_get_method): Disable the check for open generic classes when
 	using generic sharing.
 
-	* generics.cs: Add a test #387034.
+	* generics.cs: Add a test for #387034.
 
 	* mini.c (mini_get_method): Check whenever the method class is an open generic
 	type, and return NULL in that case, causing a verification error. Fixes
