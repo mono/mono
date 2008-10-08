@@ -1,3 +1,8 @@
+2008-10-09 Daniel Nauck <dna@mono-project.de>
+
+	* link.xml: follow up r114301 and rename csharplib
+		into Mono.CSharp
+
 2008-09-27  Miguel de Icaza  <miguel@novell.com>
 
 	* Abdicate: renamed csharplib.dll into Mono.CSharp.dll
