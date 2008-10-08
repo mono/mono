@@ -2236,7 +2236,7 @@ namespace System.Linq.Expressions {
 		//
 		internal virtual void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			throw new NotImplementedException (String.Format ("Emit method is not implemented in expression type {0}", GetType ()));
 		}
 	}
 }
