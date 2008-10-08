@@ -53,9 +53,10 @@ namespace System
 #if NET_2_0
 		Unix = 4,
 #endif
-#if NET_2_1
-		Xbox,
-		MacOSX,
+#if NET_2_0 || NET_2_1
+		// Since NET 3.5 SP1 or silverlight
+		Xbox = 5,
+		MacOSX = 6,
 #endif
 	}
 }

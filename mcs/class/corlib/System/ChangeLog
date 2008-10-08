@@ -1,3 +1,8 @@
+2008-10-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* PlatformID.cs: Define Xbox/MacOSX on the 2.0 profile too, since it
+	is part of NET 3.5 SP1.
+
 2008-10-07  Marek Habersack  <mhabersack@novell.com>
 
 	* Math.cs: implemented the away from zero rounding for the Round
