@@ -18,7 +18,7 @@ PLATFORMS = linux win32
 PROFILES = \
 	basic \
 	net_1_1_bootstrap \
-	default \
+	net_1_1	\
 	net_2_0_bootstrap \
 	net_2_0 \
 	net_2_1_bootstrap \

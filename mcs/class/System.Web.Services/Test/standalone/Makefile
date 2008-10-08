@@ -1,5 +1,5 @@
 MCS=mcs -g
-MONO=MONO_PATH=../../../lib/default mono
+MONO=MONO_PATH=../../../lib/net_1_1 mono
 sourcefile = proxies.sources
 
 tools: wstest.exe
@@ -71,7 +71,7 @@ test-clients: tests
 	rm -f somefile && touch somefile
 	(tail -f somefile | xsp --root server)&
 	sleep 2
-	-harness=../../../lib/default/nunit-console.exe; \
+	-harness=../../../lib/net_1_1/nunit-console.exe; \
 	if test -f $$harness; then :; else harness=../../../lib/nunit-console.exe; fi; \
 	$(MONO) $$harness System.Web.Services-standalone_test.dll
 	echo "" >> somefile

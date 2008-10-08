@@ -13,7 +13,7 @@ ifeq ($(PROFILE), net_2_0)
 	CSCOMPILE=gmcs
 	XSPSERVER=xsp2
 else
-	nunit_MONO_PATH="../../../../../class/lib/default"
+	nunit_MONO_PATH="../../../../../class/lib/net_1_1"
 	CSCOMPILE=mcs
 	XSPSERVER=xsp
 endif
@@ -26,7 +26,7 @@ $(TEST_PROG) :
 
 run-xsp : $(TEST_PROG)
 	$(XSPSERVER) --port 8088 --applications /MainsoftWebApp:./ --nonstop
-	
+
 clean :
 	rm -f $(TEST_PROG)
 

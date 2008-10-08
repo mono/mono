@@ -6,7 +6,7 @@ LIBRARY = System.EnterpriseServices.dll
 LIB_MCS_FLAGS = /nowarn:0168 /nowarn:0162 /r:$(corlib)
 NO_TEST = yes
 
-ifneq (default, $(PROFILE))
+ifneq (net_1_1, $(PROFILE))
 LIB_MCS_FLAGS += /r:System.Transactions.dll
 endif
 

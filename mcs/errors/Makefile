@@ -5,7 +5,7 @@ include ../build/rules.make
 with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 with_mono_path_n11b = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 
-ifeq (default, $(PROFILE))
+ifeq (net_1_1, $(PROFILE))
 # force this, we don't case if CSC is broken. This also
 # means we can use --options, yay.
 
@@ -45,7 +45,7 @@ TEST_SUPPORT_FILES = \
 # mention all targets
 all-local $(STD_TARGETS:=-local):
 
-VALID_PROFILE := $(filter default net_2_0 net_2_1, $(PROFILE))
+VALID_PROFILE := $(filter net_1_1 net_2_0 net_2_1, $(PROFILE))
 ifdef VALID_PROFILE
 
 test-local: $(TEST_SUPPORT_FILES)
@@ -56,7 +56,7 @@ test-local: $(TEST_SUPPORT_FILES)
 run-test-local: run-mcs-tests 
 
 test-everything:
-	$(MAKE) PROFILE=default run-test
+	$(MAKE) PROFILE=net_1_1 run-test
 	$(MAKE) PROFILE=net_2_0 run-test
 
 ifeq (net_2_1, $(PROFILE))
@@ -68,7 +68,7 @@ ifeq (net_2_0, $(PROFILE))
 COMPILER_NAME = gmcs
 TEST_PATTERN = '*cs*.cs'
 endif
-ifeq (default, $(PROFILE))
+ifeq (net_1_1, $(PROFILE))
 COMPILER_NAME = mcs
 TEST_PATTERN = 'cs*.cs'
 endif

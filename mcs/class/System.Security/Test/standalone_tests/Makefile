@@ -1,4 +1,4 @@
-PROFILE = default
+PROFILE = net_1_1
 RUNTIME = MONO_PATH=../../../lib/$(PROFILE) mono --debug 
 #XMLDSIG_EXE_OPTIONS =
 XMLDSIG_EXE_OPTIONS = --decent-reader

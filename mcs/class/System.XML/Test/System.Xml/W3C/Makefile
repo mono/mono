@@ -7,7 +7,7 @@ ifeq ($(PROFILE), net_2_0)
 	nunit_MONO_PATH="../../../../../class/lib/net_2_0"
 	CSCOMPILE=gmcs
 else
-	nunit_MONO_PATH="../../../../../class/lib/default"
+	nunit_MONO_PATH="../../../../../class/lib/net_1_1"
 	CSCOMPILE=mcs
 endif
 

@@ -1,4 +1,4 @@
-PROFILE = default
+PROFILE = net_1_1
 RUNTIME = MONO_PATH=../../../../lib/$(PROFILE) mono --debug
 ifeq ($(PROFILE), net_2_0)
 	MCS = gmcs

@@ -11,7 +11,7 @@ DISTFILES += $(wildcard *.cs) $(wildcard *.il) $(wildcard *.xml) $(wildcard *.in
 
 with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 
-ifeq (default, $(PROFILE))
+ifeq (net_1_1, $(PROFILE))
 # force this, we don't case if CSC is broken. This also
 # means we can use --options, yay.
 MCS = $(with_mono_path) $(INTERNAL_MCS)
@@ -28,7 +28,7 @@ USE_MCS_FLAGS :=
 # mention all targets
 all-local $(STD_TARGETS:=-local):
 
-VALID_PROFILE := $(filter default net_2_0 net_2_1, $(PROFILE))
+VALID_PROFILE := $(filter net_1_1 net_2_0 net_2_1, $(PROFILE))
 ifdef VALID_PROFILE
 # casts
 bootstrap-cast.exe: gen-cast-test.cs
@@ -67,7 +67,7 @@ TEST_PATTERN = '*test-*.cs'
 LOCAL_RUNTIME_FLAGS = --security=validil
 TOPTIONS += '-il:ver-il-gmcs.xml'
 endif
-ifeq (default, $(PROFILE))
+ifeq (net_1_1, $(PROFILE))
 COMPILER_NAME = mcs
 TEST_PATTERN = 'test-*.cs'
 LOCAL_RUNTIME_FLAGS = --security=validil
@@ -92,7 +92,7 @@ run-test-local: $(TEST_ILS:.il=.dll) eval-test
 	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TOPTIONS)
 
 test-everything:
-	$(MAKE) PROFILE=default run-test
+	$(MAKE) PROFILE=net_1_1 run-test
 	$(MAKE) PROFILE=net_2_0 run-test
 
 test-generics:
@@ -112,7 +112,7 @@ dist-local: dist-default
 %-lib.dll: %-lib.il
 	$(ILASM) /dll /out:$@ $<
 
-ifeq (default, $(PROFILE))
+ifeq (net_1_1, $(PROFILE))
 run-test-local: ilasm
 ilasm:
 	$(ILASM) /dll property-il.il

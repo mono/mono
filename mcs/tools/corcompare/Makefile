@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 ALL_PROGRAMS = $(topdir)/class/lib/$(PROFILE)/mono-api-info.exe
 
-ifeq (default, $(PROFILE))
+ifeq (net_1_1, $(PROFILE))
 ALL_PROGRAMS += CorCompare.exe mono-api-info.exe mono-api-diff.exe transform.exe
 endif
 
@@ -66,7 +66,7 @@ $(topdir)/class/lib/$(PROFILE)/mono-api-info.exe: $(APIINFO_SOURCES)
 mono-api-info.exe: $(topdir)/class/lib/$(PROFILE)/mono-api-info.exe
 	cp $< $@
 	-cp $<.mdb $@.mdb
-	
+
 transform.exe: transform.cs
 	$(CSCOMPILE) -out:$@ $^
-	
+

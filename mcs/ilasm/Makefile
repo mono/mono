@@ -20,7 +20,7 @@ ILParser.cs: parser/ILParser.jay $(topdir)/jay/skeleton.cs
 
 include ../build/executable.make
 
-ifeq (default, $(PROFILE))
+ifeq (net_1_1, $(PROFILE))
 # Utility rule to make debugging somewhat easier.
 all-local: ilasm.exe
 ilasm.exe: $(PROGRAM)
