@@ -36,21 +36,17 @@ namespace System.Windows.Forms.Theming.Default
 
 		public virtual void Draw (Graphics dc, Rectangle client_rectangle, Label label) 
 		{
-			Rectangle r;
+			Rectangle rect = label.PaddingClientRectangle;
 
-#if NET_2_0			
-			Padding p = label.Padding;
-			r = new Rectangle (client_rectangle.Left + p.Left, client_rectangle.Top + p.Top, client_rectangle.Width - p.Horizontal, client_rectangle.Height - p.Vertical);
-#else
-			r = client_rectangle;
-#endif
-
-			label.DrawImage (dc, label.Image, r, label.ImageAlign);
+			label.DrawImage (dc, label.Image, rect, label.ImageAlign);
 
 			if (label.Enabled) {
-				dc.DrawString (label.Text, label.Font, ThemeEngine.Current.ResPool.GetSolidBrush (label.ForeColor), r, label.string_format);
+				dc.DrawString (label.Text, label.Font,
+					ThemeEngine.Current.ResPool.GetSolidBrush (label.ForeColor),
+					rect, label.string_format);
 			} else {
-				ControlPaint.DrawStringDisabled (dc, label.Text, label.Font, label.BackColor, r, label.string_format);
+				ControlPaint.DrawStringDisabled (
+					dc, label.Text, label.Font, label.BackColor, rect, label.string_format);
 			}
 		}
 
