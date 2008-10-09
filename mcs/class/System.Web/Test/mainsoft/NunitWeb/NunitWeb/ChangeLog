@@ -1,3 +1,11 @@
+2008-10-09  Marek Habersack  <mhabersack@novell.com>
+
+	* WebTest.cs: made the Host property internal. It is used to
+	access the host's application domain when necessary in some
+	tests.
+
+	* MyTemplateControls.cs: added
+
 2008-07-28  Marek Habersack  <mhabersack@novell.com>
 
 	* StandardUrl.cs: added a new standard url -

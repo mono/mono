@@ -104,7 +104,7 @@ namespace MonoTests.SystemWeb.Framework
 		}
 
 		static MyHost host;
-		private static MyHost Host
+		internal static MyHost Host
 		{
 			get {
 				EnsureHosting ();

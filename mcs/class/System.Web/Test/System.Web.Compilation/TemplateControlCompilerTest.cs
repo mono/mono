@@ -1,5 +1,4 @@
-#if NET_2_0
-
+using System;
 using MonoTests.SystemWeb.Framework;
 using NUnit.Framework;
 using System.Web.UI.WebControls;
@@ -31,14 +30,33 @@ namespace MonoTests.System.Web.Compilation {
 			WebTest.CopyResource (GetType (), "ReadOnlyPropertyControl.ascx", "ReadOnlyPropertyControl.ascx");
 			new WebTest ("ReadOnlyPropertyBind.aspx").Run ();
 		}
+
+		[Test]
+		public void ChildTemplatesTest ()
+		{
+			try {
+				WebTest.Host.AppDomain.AssemblyResolve += new ResolveEventHandler (ResolveAssemblyHandler);
+				WebTest.CopyResource (GetType (), "TemplateControlParsingTest.aspx", "TemplateControlParsingTest.aspx");
+				new WebTest ("TemplateControlParsingTest.aspx").Run ();
+			} finally {
+				WebTest.Host.AppDomain.AssemblyResolve -= new ResolveEventHandler (ResolveAssemblyHandler);
+			}
+		}
+		
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{
 			Thread.Sleep (100);
 			WebTest.Unload ();
 		}
+
+		public static Assembly ResolveAssemblyHandler (object sender, ResolveEventArgs e)
+		{
+			if (e.Name != "System.Web_test")
+				return null;
+
+			return Assembly.GetExecutingAssembly ();
+		}
 	}
 }
-
-#endif
 

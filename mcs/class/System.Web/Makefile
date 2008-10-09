@@ -143,7 +143,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/RedirectOnError.aspx \
 	Test/mainsoft/NunitWebResources/TestCapability.browser \
 	Test/mainsoft/NunitWebResources/PageWithAdapter.aspx \
-	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml 
+	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml \
+	Test/mainsoft/NunitWebResources/TemplateControlParsingTest.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
 ifeq (net_2_0, $(PROFILE))

@@ -1,3 +1,8 @@
+2008-10-09  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompilerTest.cs: compile the file on 1.1 as well.
+	Added a test for template parsing in compound controls.
+
 2008-02-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AppSettingsExpressionBuilderTest.cs: Added and improved tests for
