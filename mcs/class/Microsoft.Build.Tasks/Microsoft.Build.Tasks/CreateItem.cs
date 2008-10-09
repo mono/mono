@@ -28,6 +28,7 @@
 #if NET_2_0
 
 using System;
+using System.Collections.Generic;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Tasks {
@@ -43,7 +44,24 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
-			throw new NotImplementedException ();
+			List<ITaskItem> output = new List<ITaskItem> ();
+			foreach (ITaskItem item in include) {
+				if (IsExcluded (item))
+					continue;
+
+				output.Add (item);
+				foreach (string metadata in AdditionalMetadata) {
+					//a=1
+					string [] parts = metadata.Split (new char [] {'='}, 2, StringSplitOptions.RemoveEmptyEntries);
+					if (parts.Length == 2)
+						item.SetMetadata (parts [0], parts [1]);
+				}
+			}
+
+			include = output.ToArray ();
+
+			//FIXME: when does this return false?
+			return true;
 		}
 
 		public string[] AdditionalMetadata {
@@ -60,6 +78,15 @@ namespace Microsoft.Build.Tasks {
 		public ITaskItem[] Include {
 			get { return include; }
 			set { include = value; }
+		}
+
+		bool IsExcluded (ITaskItem eitem)
+		{
+			foreach (ITaskItem item in exclude)
+				if (String.Compare (eitem.ItemSpec, item.ItemSpec) == 0)
+					return true;
+
+			return false;
 		}
 	}
 }

@@ -53,17 +53,23 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestExecution1 ()
 		{
 			Engine engine;
 			Project project;
 
 			string documentString = @"
-                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+								<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<ItemGroup>
-						<A Include='1;2;3;4'/>
-						<B Include='1;3' />
+						<A Include='1;2'>
+							<Sub>fooA</Sub>
+						</A>
+						<A Include='3;4'>
+							<Sub>fooC</Sub>
+						</A>
+						<B Include='1;3'>
+							<Sub>fooB</Sub>
+						</B>
 					</ItemGroup>
 					<Target Name='1'>
 						<CreateItem
@@ -73,7 +79,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 						>
 							<Output
 								TaskParameter='Include'
-								ItemName='Include'
+								ItemName='NewItem'
 							/>
 						</CreateItem>
 					</Target>
@@ -85,22 +91,78 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			project.LoadXml (documentString);
 			Assert.IsTrue (project.Build ("1"), "A1");
 
-			BuildItemGroup include = project.GetEvaluatedItemsByName ("Include");
+			BuildItemGroup include = project.GetEvaluatedItemsByName ("NewItem");
 			Assert.AreEqual (2, include.Count, "A2");
 
-			Assert.AreEqual ("Include", include [0].Name, "A3");
-			Assert.AreEqual ("1", include [0].GetMetadata ("a"), "A4");
-			Assert.AreEqual ("2", include [0].GetMetadata ("b"), "A5");
-			Assert.AreEqual ("1", include [0].GetEvaluatedMetadata ("a"), "A6");
-			Assert.AreEqual ("2", include [0].GetEvaluatedMetadata ("b"), "A7");
-			Assert.AreEqual ("2", include [0].FinalItemSpec, "A8");
+			string [,] metadata = new string [,] { { "a", "1" }, { "b", "2" }, { "Sub", "fooA" } };
+			CheckBuildItem (include [0], "NewItem", metadata, "2", "A");
 
-			Assert.AreEqual ("Include", include [0].Name, "A9");
-			Assert.AreEqual ("1", include [1].GetMetadata ("a"), "A10");
-			Assert.AreEqual ("2", include [1].GetMetadata ("b"), "A11");
-			Assert.AreEqual ("1", include [1].GetEvaluatedMetadata ("a"), "A12");
-			Assert.AreEqual ("2", include [1].GetEvaluatedMetadata ("b"), "A13");
-			Assert.AreEqual ("4", include [1].FinalItemSpec, "A14");
+			metadata = new string [,] { { "a", "1" }, { "b", "2" }, { "Sub", "fooC" } };
+			CheckBuildItem (include [1], "NewItem", metadata, "4", "B");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestExcludeAndCondition ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+					<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<A Include='1;2;5'>
+							<Sub>fooA</Sub>
+						</A>
+						<A Include='3;4'>
+							<Sub>fooC</Sub>
+						</A>
+						<B Include='1;3'>
+							<Sub>fooB</Sub>
+						</B>
+					</ItemGroup>
+					<Target Name='1'>
+						<CreateItem
+							AdditionalMetadata='a=1;b=2'
+							Include='@(A)'
+							Exclude='@(B)'
+							Condition=""'%(Sub)' == 'fooA'""
+						>
+							<Output
+								TaskParameter='Include'
+								ItemName='NewItem'
+							/>
+						</CreateItem>
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+			Assert.IsTrue (project.Build ("1"), "A1");
+
+			BuildItemGroup include = project.GetEvaluatedItemsByName ("NewItem");
+			Assert.AreEqual (3, include.Count, "A2");
+
+			string [,] metadata = new string [,] { { "a", "1" }, {"b", "2"}, {"Sub", "fooA" } };
+			CheckBuildItem (include [0], "NewItem", metadata, "1", "A");
+			CheckBuildItem (include [1], "NewItem", metadata, "2", "B");
+			CheckBuildItem (include [2], "NewItem", metadata, "5", "C");
+		}
+
+		void CheckBuildItem (BuildItem item, string name, string [,] metadata, string finalItemSpec, string prefix)
+		{
+			Assert.AreEqual (name, item.Name, prefix + "#1");
+			for (int i = 0; i < metadata.GetLength (0); i ++) {
+				string key = metadata [i, 0];
+				string val = metadata [i, 1];
+
+				Assert.IsTrue (item.HasMetadata (key), String.Format ("{0}#2: Expected metadata '{1}' not found", prefix, key));
+				Assert.AreEqual (val, item.GetMetadata (key), String.Format ("{0}#3: Value for metadata {1}", prefix, key));
+				Assert.AreEqual (val, item.GetEvaluatedMetadata (key), String.Format ("{0}#4: Value for evaluated metadata {1}", prefix, key));
+			}
+			Assert.AreEqual (finalItemSpec, item.FinalItemSpec, prefix + "#5");
 		}
 	}
 }

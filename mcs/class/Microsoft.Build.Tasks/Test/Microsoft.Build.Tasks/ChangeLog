@@ -1,3 +1,7 @@
+2008-10-09  Ankit Jain  <jankit@novell.com>
+
+	* CreateItemTest.cs (TestExcludeAndCondition): New. NotWorking.
+
 2008-08-06  Ankit Jain  <jankit@novell.com>
 
 	* CscTest.cs: Alter tests to checking for quoting in various switches.
