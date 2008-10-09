@@ -13,6 +13,8 @@ LIBRARY_NEEDS_POSTPROCESSING = yes
 
 LIBRARY = Mono.CSharp.dll
 
+EXTRA_DISTFILES = compiler.info link.xml
+
 include ../../build/library.make
 
 MONO_PATH=MONO_PATH="$(topdir)/class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$(topdir)/class/lib/net_1_1$(PLATFORM_PATH_SEPARATOR)../tuner$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
