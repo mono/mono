@@ -1,3 +1,11 @@
+2008-10-09  Marek Habersack  <mhabersack@novell.com>
+
+	* web.config: added the default monoSettings section which works around
+	an incompatibility between mcs and csc, mentioned in bug #433806
+
+	* machine.config: added definition of the monoSettings section to 
+	the system.web group
+
 2008-10-06  Marek Habersack  <mhabersack@novell.com>
 
 	* machine.config: added entries to ignore the mobileControls and
