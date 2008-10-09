@@ -1,3 +1,8 @@
+2008-10-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_create_from_typedef): Added Vector8u and Vector16u
+	as possible simd intrinsic types.
+	Optimized the test to check for the common prefix first.
 
 Thu Oct 9 17:38:24 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
