@@ -1,3 +1,8 @@
+2008-10-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* OdbcDataReader.cs: apply patch from Steve ? that fixes bug #433741.
+	GetBytes() was returning only the last byte.
+
 2008-08-26  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	Patch provided by Ernesto <equistango@gmail.com>
