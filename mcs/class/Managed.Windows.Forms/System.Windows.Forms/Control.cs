@@ -1144,7 +1144,22 @@ namespace System.Windows.Forms
 		#endregion 	// Public Constructors
 
 		#region Internal Properties
-		
+
+		internal Rectangle PaddingClientRectangle
+		{
+			get {
+#if NET_2_0
+				return new Rectangle (
+					ClientRectangle.Left   + padding.Left,
+					ClientRectangle.Top    + padding.Top, 
+					ClientRectangle.Width  - padding.Horizontal, 
+					ClientRectangle.Height - padding.Vertical);
+#else
+				return ClientRectangle;
+#endif
+			}
+		}
+
 		private MenuTracker active_tracker;
 		
 		internal MenuTracker ActiveTracker {

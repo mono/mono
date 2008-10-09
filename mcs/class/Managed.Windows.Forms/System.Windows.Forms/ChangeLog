@@ -1,3 +1,8 @@
+2008-10-08  Everaldo Canuto  <ecanuto@novell.com>
+
+	* Control.cs: Implement internal property PaddingClientRectangle, it will be
+	useful for drawing controls that must take care about Padding property.
+
 2008-10-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* BindingSource.cs: Make item_type internal so we can access it in DGV.
