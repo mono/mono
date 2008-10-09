@@ -118,6 +118,14 @@ namespace MonoTests.System.Text.RegularExpressions
 			Assert.IsTrue (r.Match(" \0").Success);
 		}
 
+		[Test] // bug #432172
+		public void NoBitmap ()
+		{
+			Regex rx =
+				new Regex ("([^a-zA-Z_0-9])+", RegexOptions.Compiled);
+			Assert.AreEqual ("--", rx.Match ("A--B-").Value);
+		}
+		
 		[Test]
 		public void MultipleMatches()
 		{
