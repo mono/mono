@@ -675,11 +675,15 @@ namespace System.Windows.Forms
 
 			Region[] regions = TextRenderer.MeasureCharacterRanges (Text,
 										 ThemeEngine.Current.GetLinkFont (this),
-										 ClientRectangle,
+										 PaddingClientRectangle,
 										 string_format);
 
-			for (int i = 0; i < pieces.Length; i ++)
+			for (int i = 0; i < pieces.Length; i ++) {
 				pieces[i].region = regions[i];
+#if NET_2_0
+				pieces[i].region.Translate (Padding.Left, Padding.Top);
+#endif
+			}
 
 			Invalidate ();
 		}
