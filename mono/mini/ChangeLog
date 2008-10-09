@@ -1,5 +1,11 @@
 2008-10-09  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* basic-simd.cs: Added tests for Vector8u and Vector16u.
+
+	* basic-simd.cs: Fixed test naming.
+
+2008-10-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mini-ops.h: Added ops for packed and saturated math, shifts
 	and packing/unpacking.
 
