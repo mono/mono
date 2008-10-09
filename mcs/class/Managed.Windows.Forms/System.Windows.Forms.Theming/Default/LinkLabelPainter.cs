@@ -56,7 +56,9 @@ namespace System.Windows.Forms.Theming.Default
 		
 		public virtual void Draw (Graphics dc, Rectangle clip_rectangle, LinkLabel label)
 		{
-			label.DrawImage (dc, label.Image, label.ClientRectangle, label.ImageAlign);
+			Rectangle client_rect = label.PaddingClientRectangle;
+
+			label.DrawImage (dc, label.Image, client_rect, label.ImageAlign);
 
 			if (label.pieces == null)
 				return;
@@ -64,7 +66,8 @@ namespace System.Windows.Forms.Theming.Default
 			// Paint all text as disabled.
 			if (!label.Enabled) {
 				dc.SetClip (clip_rectangle);
-				ThemeEngine.Current.CPDrawStringDisabled (dc, label.Text, label.Font, label.BackColor, label.ClientRectangle, label.string_format);
+				ThemeEngine.Current.CPDrawStringDisabled (
+					dc, label.Text, label.Font, label.BackColor, client_rect, label.string_format);
 				return;
 			}
 
@@ -94,7 +97,7 @@ namespace System.Windows.Forms.Theming.Default
 				dc.Clip.Intersect (clip_rectangle);
 				dc.DrawString (label.Text, font, 
 						ThemeEngine.Current.ResPool.GetSolidBrush (color), 
-						label.ClientRectangle, label.string_format);
+						client_rect, label.string_format);
 			
 				// Draw focus rectangle
 				if ((piece.link != null) && piece.link.Focused) {
@@ -110,7 +113,7 @@ namespace System.Windows.Forms.Theming.Default
 				if (!dc.Clip.IsEmpty (dc))
 					dc.DrawString(label.Text, label.Font, 
 						ThemeEngine.Current.ResPool.GetSolidBrush(label.ForeColor),
-						label.ClientRectangle, label.string_format);
+						client_rect, label.string_format);
 			}
 		}
 	}

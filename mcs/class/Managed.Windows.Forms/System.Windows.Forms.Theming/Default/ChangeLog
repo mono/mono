@@ -1,3 +1,8 @@
+2008-10-09  Everaldo Canuto  <ecanuto@novell.com>
+
+	* LinkLabelPainter.cs: Take Padding into account when drawing the linklabel
+	text.
+
 2008-10-08  Everaldo Canuto  <ecanuto@novell.com>
 
 	* LabelPainter.cs: Use control.PaddingClientRectangle instead of calculate
