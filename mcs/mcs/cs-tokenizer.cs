@@ -38,7 +38,6 @@ namespace Mono.CSharp
 		int current_token;
 		bool handle_get_set = false;
 		bool handle_remove_add = false;
-		bool handle_assembly = false;
 		bool handle_where = false;
 		bool handle_typeof = false;
 		bool lambda_arguments_parsing;
@@ -58,6 +57,12 @@ namespace Mono.CSharp
 		// Set when parsing generic declaration (type or method header)
 		//
 		public bool parsing_generic_declaration;
+		
+		//
+		// The value indicates that we have not reach any declaration or
+		// namespace yet
+		//
+		public int parsing_declaration;
 
 		//
 		// The special character to inject on streams to trigger the EXPRESSION_PARSE
@@ -152,11 +157,6 @@ namespace Mono.CSharp
 			get { return handle_get_set; }
 			set { handle_get_set = value; }
                 }
-
-		public bool AssemblyTargetParsing {
-			get { return handle_assembly; }
-			set { handle_assembly = value; }
-		}
 
 		public bool EventParsing {
 			get { return handle_remove_add; }
@@ -333,7 +333,6 @@ namespace Mono.CSharp
 			AddKeyword ("abstract", Token.ABSTRACT);
 			AddKeyword ("as", Token.AS);
 			AddKeyword ("add", Token.ADD);
-			AddKeyword ("assembly", Token.ASSEMBLY);
 			AddKeyword ("base", Token.BASE);
 			AddKeyword ("bool", Token.BOOL);
 			AddKeyword ("break", Token.BREAK);
@@ -467,9 +466,9 @@ namespace Mono.CSharp
 				return -1;
 			if (!handle_remove_add && (res == Token.REMOVE || res == Token.ADD))
 				return -1;
-			if (!handle_assembly && res == Token.ASSEMBLY)
-				return -1;
-			
+			if (parsing_declaration == 0 && res == Token.EXTERN)
+				return Token.EXTERN_ALIAS;
+
 			//
 			// A query expression is any expression that starts with `from identifier'
 			// followed by any token except ; , =

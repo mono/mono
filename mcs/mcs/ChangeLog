@@ -1,3 +1,7 @@
+2008-10-09  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-tokenizer.cs, cs-parser.jay: Fixed more subtle parser problems
+
 2008-10-08  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-tokenizer.cs, eval.cs, anonymous.cs, statement.cs, class.cs

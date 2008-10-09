@@ -148,7 +148,6 @@ namespace Mono.CSharp
 %token ABSTRACT	
 %token AS
 %token ADD
-%token ASSEMBLY
 %token BASE	
 %token BOOL	
 %token BREAK	
@@ -280,6 +279,7 @@ namespace Mono.CSharp
 %token DIV
 %token CARRET
 %token INTERR
+%token EXTERN_ALIAS
 
 /* C# multi-character operators. */
 %token DOUBLE_COLON
@@ -387,18 +387,22 @@ extern_alias_directives
 	;
 
 extern_alias_directive
-	: EXTERN IDENTIFIER IDENTIFIER SEMICOLON
+	: EXTERN_ALIAS IDENTIFIER IDENTIFIER SEMICOLON
 	  {
 		LocatedToken lt = (LocatedToken) $2;
 		string s = lt.Value;
 		if (s != "alias"){
-			Report.Error (1003, lt.Location, "'alias' expected");
+			syntax_error (lt.Location, "`alias' expected");
 		} else if (RootContext.Version == LanguageVersion.ISO_1) {
 			Report.FeatureIsNotAvailable (lt.Location, "external alias");
 		} else {
 			lt = (LocatedToken) $3; 
 			current_namespace.AddUsingExternalAlias (lt.Value, lt.Location);
 		}
+	  }
+	| EXTERN_ALIAS error
+	  {
+	  	syntax_error (GetLocation ($1), "`alias' expected");   // TODO: better
 	  }
 	;
  
@@ -580,8 +584,8 @@ namespace_member_declaration
 
 type_declaration
 	: class_declaration		
-	| struct_declaration		
-	| interface_declaration		
+	| struct_declaration
+	| interface_declaration
 	| enum_declaration		
 	| delegate_declaration
 //
@@ -697,7 +701,7 @@ attribute_section
 	  {
 		$$ = $3;
  	  }
-	  | OPEN_BRACKET attribute_list opt_comma CLOSE_BRACKET
+	| OPEN_BRACKET attribute_list opt_comma CLOSE_BRACKET
 	  {
 		$$ = $2;
 	  }
@@ -845,12 +849,12 @@ named_argument_list
 
 		$$ = args;
 	  }
-	  | named_argument_list COMMA expression
-	    {
-		  Report.Error (1016, ((Expression) $3).Location, "Named attribute argument expected");
-		  $$ = null;
-		}
-        ;
+	| named_argument_list COMMA expression
+	  {
+		Report.Error (1016, ((Expression) $3).Location, "Named attribute argument expected");
+		$$ = null;
+	  }
+	;
 
 named_argument
 	: IDENTIFIER ASSIGN expression
@@ -916,6 +920,7 @@ struct_declaration
 	  }
 	  struct_body
 	  {
+		--lexer.parsing_declaration;	  
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
@@ -1151,10 +1156,8 @@ local_variable_declarator
 	  {
 		$$ = new VariableDeclaration ((LocatedToken) $1, null);
 	  }
-	| IDENTIFIER OPEN_BRACKET opt_expression CLOSE_BRACKET
+	| IDENTIFIER variable_bad_array
 	  {
-		Report.Error (650, ((LocatedToken) $1).Location, "Syntax error, bad array declarator. To declare a managed array the rank specifier precedes the variable's identifier. " +
-			"To declare a fixed size buffer field, use the fixed keyword before the field type");
 		$$ = null;
 	  }
 	;
@@ -1162,7 +1165,7 @@ local_variable_declarator
 local_variable_initializer
 	: expression
 	| array_initializer
-	| STACKALLOC type_expression OPEN_BRACKET expression CLOSE_BRACKET
+	| STACKALLOC simple_type OPEN_BRACKET expression CLOSE_BRACKET
 	  {
 		$$ = new StackAlloc ((Expression) $2, (Expression) $4, (Location) $1);
 	  }
@@ -1170,13 +1173,12 @@ local_variable_initializer
 	  {
 		$$ = new ArglistAccess ((Location) $1);
 	  }
-	| STACKALLOC type
+	| STACKALLOC simple_type
 	  {
 		Report.Error (1575, (Location) $1, "A stackalloc expression requires [] after type");
-                $$ = null;
+		$$ = new StackAlloc ((Expression) $2, null, (Location) $1);		
 	  }
 	;
-
 
 variable_declarators
 	: variable_declarator 
@@ -1210,12 +1212,18 @@ variable_declarator
 	  	lexer.parsing_generic_declaration = false;
 		$$ = new VariableMemberDeclaration ((MemberName) $1, null);
 	  }
-	| member_declaration_name OPEN_BRACKET opt_expression CLOSE_BRACKET
+	| member_declaration_name variable_bad_array
 	  {
 		lexer.parsing_generic_declaration = false;	  
-		Report.Error (650, ((LocatedToken) $1).Location, "Syntax error, bad array declarator. To declare a managed array the rank specifier precedes the variable's identifier. " +
-			"To declare a fixed size buffer field, use the fixed keyword before the field type");
 		$$ = null;
+	  }
+	;
+	
+variable_bad_array
+	: OPEN_BRACKET opt_expression CLOSE_BRACKET
+	  {
+		Report.Error (650, GetLocation ($1), "Syntax error, bad array declarator. To declare a managed array the rank specifier precedes the variable's identifier. " +
+			"To declare a fixed size buffer field, use the fixed keyword before the field type");
 	  }
 	;
 
@@ -1802,6 +1810,7 @@ interface_declaration
 	  }
 	  interface_body
 	  {
+		--lexer.parsing_declaration;	  
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
@@ -2758,10 +2767,23 @@ type
 		$$ = TypeManager.system_void_expr;
 	  }	
 	;
+	
+simple_type
+	: type_expression
+	| VOID
+	  {
+	  	Expression.Error_VoidInvalidInTheContext (lexer.Location);
+		$$ = TypeManager.system_void_expr;
+	  }	
+	;		
 
 type_expression_or_array
 	: type_expression
-	| array_type
+	| type_expression rank_specifiers
+	  {
+		string rank_specifiers = (string) $2;
+		$$ = current_array_type = new ComposedCast ((FullNamedExpression) $1, rank_specifiers);
+	  }
 	;
 	
 type_expression
@@ -2889,14 +2911,6 @@ integral_type
 	| LONG		{ $$ = TypeManager.system_int64_expr; }
 	| ULONG		{ $$ = TypeManager.system_uint64_expr; }
 	| CHAR		{ $$ = TypeManager.system_char_expr; }
-	;
-
-array_type
-	: type_expression rank_specifiers
-	  {
-		string rank_specifiers = (string) $2;
-		$$ = current_array_type = new ComposedCast ((FullNamedExpression) $1, rank_specifiers);
-	  }
 	;
 
 predefined_type
@@ -3293,7 +3307,7 @@ post_decrement_expression
 	;
 
 object_or_delegate_creation_expression
-	: NEW type OPEN_PARENS opt_argument_list CLOSE_PARENS opt_object_or_collection_initializer
+	: NEW simple_type OPEN_PARENS opt_argument_list CLOSE_PARENS opt_object_or_collection_initializer
 	  {
 		if ($6 != null) {
 			if (RootContext.Version <= LanguageVersion.ISO_2)
@@ -3304,7 +3318,7 @@ object_or_delegate_creation_expression
 		else
 			$$ = new New ((Expression) $2, (ArrayList) $4, (Location) $1);
 	  }
-	| NEW type object_or_collection_initializer
+	| NEW simple_type object_or_collection_initializer
 	  {
 		if (RootContext.Version <= LanguageVersion.ISO_2)
 			Report.FeatureIsNotAvailable (GetLocation ($1), "collection initializers");
@@ -3314,13 +3328,13 @@ object_or_delegate_creation_expression
 	;
 
 array_creation_expression
-	: NEW type_expression OPEN_BRACKET expression_list CLOSE_BRACKET 
+	: NEW simple_type OPEN_BRACKET expression_list CLOSE_BRACKET 
 	  opt_rank_specifier
 	  opt_array_initializer
 	  {
 		$$ = new ArrayCreation ((FullNamedExpression) $2, (ArrayList) $4, (string) $6, (ArrayList) $7, (Location) $1);
 	  }
-	| NEW type_expression rank_specifiers array_initializer
+	| NEW simple_type rank_specifiers array_initializer
 	  {
 		$$ = new ArrayCreation ((FullNamedExpression) $2, (string) $3, (ArrayList) $4, (Location) $1);
 	  }
@@ -3333,7 +3347,7 @@ array_creation_expression
 		Report.Error (1031, (Location) $1, "Type expected");
 		$$ = null;
 	  }          
-	| NEW type_expression error
+	| NEW simple_type error
 	  {
 		Report.Error (1526, (Location) $1, "A new expression requires () or [] after type");
 		$$ = null;
@@ -4091,6 +4105,7 @@ class_declaration
 	  }
 	  class_body
 	  {
+		--lexer.parsing_declaration;	  
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
@@ -5533,6 +5548,7 @@ interactive_parsing
 		method.Block = (ToplevelBlock) end_block(lexer.Location);
 		current_container.AddMethod (method);
 
+		--lexer.parsing_declaration;
 		InteractiveResult = pop_current_class ();
 		current_local_parameters = null;
 	  } 
@@ -5649,7 +5665,7 @@ void push_current_class (TypeContainer tc, object partial_token)
 	else
 		current_container = current_container.AddTypeContainer (tc);
 
-
+	++lexer.parsing_declaration;
 	current_class = tc;
 }
 
@@ -6026,8 +6042,6 @@ static public string GetTokenName (int token)
 		return "as";
 	case Token.ADD:
 		return "add";
-	case Token.ASSEMBLY:
-		return "assembly";
 	case Token.BASE:
 		return "base";
 	case Token.BREAK:
