@@ -1,3 +1,8 @@
+2008-10-09  Marek Habersack  <mhabersack@novell.com>
+
+	* CompilerCollection.cs: use all the compiler information from
+	config file when adding new CompilerInfo. Fixes bug #433802
+
 2008-02-26  Marek Habersack  <mhabersack@novell.com>
 
 	* CompilerResults.cs: Output can be set internally.

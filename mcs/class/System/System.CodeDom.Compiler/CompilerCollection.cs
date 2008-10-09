@@ -119,6 +119,8 @@ namespace System.CodeDom.Compiler
 			ci.Extensions = compiler.Extension;
 			ci.TypeName = compiler.Type;
 			ci.ProviderOptions = compiler.ProviderOptionsDictionary;
+			ci.CompilerOptions = compiler.CompilerOptions;
+			ci.WarningLevel = compiler.WarningLevel;
 			AddCompilerInfo (ci);
 		}
 		
