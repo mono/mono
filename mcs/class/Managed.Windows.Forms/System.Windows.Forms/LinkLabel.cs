@@ -281,6 +281,7 @@ namespace System.Windows.Forms
 					return;
 
 				base.Padding = value;
+				CreateLinkPieces ();
 			}
 		}
 #endif

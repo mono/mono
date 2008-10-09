@@ -1,6 +1,11 @@
 2008-10-09  Everaldo Canuto  <ecanuto@novell.com>
 
+	* LinkLabel.cs: Recreate link pieces when change Padding.
+
+2008-10-09  Everaldo Canuto  <ecanuto@novell.com>
+
 	* LinkLabel.cs: Take Padding into account when recreate link pieces.
+	[Fixes bug #412530]
 
 2008-10-08  Everaldo Canuto  <ecanuto@novell.com>
 
