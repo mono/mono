@@ -1,3 +1,7 @@
+2008-10-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* web.config: default values for httpRuntime are different in 2.0
+
 2008-10-09  Marek Habersack  <mhabersack@novell.com>
 
 	* web.config: added the default monoSettings section which works around
