@@ -1,3 +1,7 @@
+2008-10-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile (DIST_ONLY_SUBDIRS): Add csharplib.
+
 2008-10-09 Daniel Nauck <dna@mono-project.de>
 
         * Makefile: add Mono.CSharp to the build
