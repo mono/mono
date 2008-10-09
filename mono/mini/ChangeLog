@@ -1,3 +1,14 @@
+2008-10-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-ops.h: Added ops for packed and saturated math, shifts
+	and packing/unpacking.
+
+	* cpu-x86.md: Added descriptors for the above ops.
+
+	* mini-x86.c: Added code to emmit the above ops.
+
+	* simd-intrinsics.c: Added support for Vector16u and Vector8u.
+
 2008-10-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (compile_method): Enable AOT for generic code.
