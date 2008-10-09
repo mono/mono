@@ -99,7 +99,7 @@ namespace Mono.CSharp {
 				throw new Exception ("Failed to InitCoreTypes");
 			TypeManager.InitOptionalCoreTypes ();
 			
-			Location.AddFile ("<interactive>");
+			Location.AddFile ("{interactive}");
 			Location.Initialize ();
 
 			current_debug_name = "interactive" + (count++) + ".dll";

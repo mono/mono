@@ -1,3 +1,9 @@
+2008-10-09  Miguel de Icaza  <miguel@novell.com>
+
+	* eval.cs: rename "<interactive>" to "{interactive}", to work
+	around a requirement in the compiler that this be a valid
+	filename, and in Windows it is not (433886).
+
 2008-10-09  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-tokenizer.cs, cs-parser.jay: Fixed more subtle parser problems
