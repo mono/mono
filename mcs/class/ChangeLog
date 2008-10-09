@@ -1,3 +1,7 @@
+2008-10-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile: add System.Web.Abstractions and System.Web.Routing.
+
 2008-10-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : changed some net_2_0_dirs orders; Sys.Web.Extensions

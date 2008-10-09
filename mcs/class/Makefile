@@ -103,6 +103,8 @@ net_2_0_dirs := \
 	System.Xml.Linq			\
 	System.Data.DataSetExtensions	\
 	System.Data.Linq		\
+	System.Web.Abstractions		\
+	System.Web.Routing		\
 	System.Web.Extensions_1.0	\
 	System.Web.Extensions.Design_1.0	\
 	System.Web.Extensions		\
