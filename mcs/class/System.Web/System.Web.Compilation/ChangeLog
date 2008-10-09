@@ -1,3 +1,10 @@
+2008-10-09  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: if monoSettings section is found in the
+	system.web section in web.config, use its contents to augment
+	compiler configuration. Used to work around the issue reported in
+	bug #433806
+
 2008-10-08  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: templates must be instantiated even

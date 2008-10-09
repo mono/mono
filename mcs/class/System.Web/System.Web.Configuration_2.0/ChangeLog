@@ -1,3 +1,8 @@
+2008-10-09  Marek Habersack  <mhabersack@novell.com>
+
+	* MonoSettingsSection.cs: added - a section for mono-specific
+	settings.
+
 2008-10-01  Marek Habersack  <mhabersack@novell.com>
 
 	* CapabilitiesResult.cs: added support for the "browsers"

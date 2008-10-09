@@ -600,9 +600,22 @@ namespace System.Web.Compilation {
 			return ret;
 		}
 
-		static void SetCommonParameters (CompilationSection config, CompilerParameters p)
+		static void SetCommonParameters (CompilationSection config, CompilerParameters p, Type compilerType, string language)
 		{
 			p.IncludeDebugInformation = config.Debug;
+			MonoSettingsSection mss = WebConfigurationManager.GetSection ("system.web/monoSettings") as MonoSettingsSection;
+			if (mss == null || !mss.UseCompilersCompatibility)
+				return;
+
+			Compiler compiler = mss.CompilersCompatibility.Get (language);
+			if (compiler == null)
+				return;
+
+			Type type = HttpApplication.LoadType (compiler.Type, false);
+			if (type != compilerType)
+				return;
+
+			p.CompilerOptions = String.Concat (p.CompilerOptions, " ", compiler.CompilerOptions);
 		}
 		
 		internal static CompilerType GetDefaultCompilerTypeForLanguage (string language, CompilationSection configSection)
@@ -619,20 +632,23 @@ namespace System.Web.Compilation {
 			
 			Compiler compiler = config.Compilers.Get (language);
 			CompilerParameters p;
+			Type type;
+			
 			if (compiler != null) {
-				Type type = HttpApplication.LoadType (compiler.Type, true);
+				type = HttpApplication.LoadType (compiler.Type, true);
 				p = new CompilerParameters ();
 				p.CompilerOptions = compiler.CompilerOptions;
 				p.WarningLevel = compiler.WarningLevel;
-				SetCommonParameters (config, p);
+				SetCommonParameters (config, p, type, language);
 				return new CompilerType (type, p);
 			}
 
 			if (CodeDomProvider.IsDefinedLanguage (language)) {
 				CompilerInfo info = CodeDomProvider.GetCompilerInfo (language);
-				CompilerParameters par = info.CreateDefaultCompilerParameters ();
-				SetCommonParameters (config, par);
-				return new CompilerType (info.CodeDomProviderType, par);
+				p = info.CreateDefaultCompilerParameters ();
+				type = info.CodeDomProviderType;
+				SetCommonParameters (config, p, type, language);
+				return new CompilerType (type, p);
 			}
 
 			throw new HttpException (String.Concat ("No compiler for language '", language, "'."));
