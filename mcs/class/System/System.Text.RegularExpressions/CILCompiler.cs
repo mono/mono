@@ -747,12 +747,17 @@ namespace System.Text.RegularExpressions {
 					break;
 				}
 				case RxOp.Bitmap:
-				case RxOp.BitmapIgnoreCase: {
-					bool ignore = (op == RxOp.BitmapIgnoreCase);
+				case RxOp.BitmapIgnoreCase:
+				case RxOp.NoBitmap:
+				case RxOp.NoBitmapIgnoreCase: {
+					bool ignore = (op == RxOp.BitmapIgnoreCase || op == RxOp.NoBitmapIgnoreCase);
+					bool negate = (op == RxOp.NoBitmap || op == RxOp.NoBitmapIgnoreCase);
+					bool reverse = false;
 
 					//if (strpos < string_end) {
 					Label l1 = ilgen.DefineLabel ();
 					Label l2 = ilgen.DefineLabel ();
+					Label l_match = ilgen.DefineLabel ();
 					ilgen.Emit (OpCodes.Ldarg_1);
 					ilgen.Emit (OpCodes.Ldarg_0);
 					ilgen.Emit (OpCodes.Ldfld, fi_string_end);
@@ -775,10 +780,10 @@ namespace System.Text.RegularExpressions {
 					//    return false;
 					ilgen.Emit (OpCodes.Ldloc, local_c);
 					ilgen.Emit (OpCodes.Ldc_I4_0);
-					ilgen.Emit (OpCodes.Blt, frame.label_fail);
+					ilgen.Emit (OpCodes.Blt, negate ? l_match : frame.label_fail);
 					ilgen.Emit (OpCodes.Ldloc, local_c);
 					ilgen.Emit (OpCodes.Ldc_I4, length << 3);
-					ilgen.Emit (OpCodes.Bge, frame.label_fail);
+					ilgen.Emit (OpCodes.Bge, negate ? l_match : frame.label_fail);
 					pc += 3;
 
 					// Optimized version for small bitmaps
@@ -798,7 +803,7 @@ namespace System.Text.RegularExpressions {
 						ilgen.Emit (OpCodes.Shr_Un);
 						ilgen.Emit (OpCodes.Ldc_I4_1);
 						ilgen.Emit (OpCodes.And);
-						ilgen.Emit (OpCodes.Brfalse, l1);
+						ilgen.Emit (negate ? OpCodes.Brtrue : OpCodes.Brfalse, l1);
 					} else {
 						//  if ((program [pc + (c >> 3)] & (1 << (c & 0x7))) != 0) {
 						ilgen.Emit (OpCodes.Ldarg_0);
@@ -816,13 +821,19 @@ namespace System.Text.RegularExpressions {
 						ilgen.Emit (OpCodes.Shl);
 						ilgen.Emit (OpCodes.And);
 						ilgen.Emit (OpCodes.Ldc_I4_0);
-						ilgen.Emit (OpCodes.Beq, l1);
+						ilgen.Emit (negate ? OpCodes.Bne_Un : OpCodes.Beq, l1);
 					}
-					//    strpos++;
-					ilgen.Emit (OpCodes.Ldarg_1);
-					ilgen.Emit (OpCodes.Ldc_I4_1);
-					ilgen.Emit (OpCodes.Add);
-					ilgen.Emit (OpCodes.Starg, 1);
+					ilgen.MarkLabel (l_match);
+					if (!no_bump) {
+						//  strpos++ / strpos--;
+						ilgen.Emit (OpCodes.Ldarg_1);
+						ilgen.Emit (OpCodes.Ldc_I4_1);
+						if (reverse)
+							ilgen.Emit (OpCodes.Sub);
+						else
+							ilgen.Emit (OpCodes.Add);
+						ilgen.Emit (OpCodes.Starg, 1);
+					}
 					//    continue;
 					ilgen.Emit (OpCodes.Br, l2);
 					//  }
@@ -835,12 +846,6 @@ namespace System.Text.RegularExpressions {
 
 					pc += length;
 					break;
-				}
-				case RxOp.NoBitmap:
-				case RxOp.NoBitmapIgnoreCase: {
-					// Not currently used
-					Console.WriteLine ("Opcode " + op + " not supported.");
-					return null;
 				}
 				case RxOp.String:
 				case RxOp.StringIgnoreCase:

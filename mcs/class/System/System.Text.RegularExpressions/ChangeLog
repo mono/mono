@@ -1,3 +1,7 @@
+2008-10-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* CILCompiler.cs: Implement NoBitmap/NoBitmapIgnoreCase. Fixes #432172.
+
 2008-09-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* gen-interp.cs: New file to generate the all variants of the character 
