@@ -665,20 +665,27 @@ namespace DbLinq.Data.Linq
         public System.IO.TextWriter Log { get; set; }
 
         /// <summary>
-        /// Writes the generated SQL on Log (if not null)
+        /// Writes text on Log (if not null)
         /// Internal helper
         /// </summary>
-        /// <param name="sql"></param>
-        internal void WriteLog(string sql)
+        /// <param name="text"></param>
+        internal void WriteLog(string text)
+        {
+            if (Log != null)
+                Log.WriteLine(text);
+        }
+
+        /// <summary>
+        /// Write an IDbCommand to Log (if non null)
+        /// </summary>
+        /// <param name="command"></param>
+        internal void WriteLog(IDbCommand command)
         {
             if (Log != null)
             {
-                // Log example:
-                //SELECT [t0].[FirstName] AS [Name], [t1].[FirstName] AS [ReportsTo]
-                //FROM [dbo].[Employees] AS [t0]
-                //LEFT OUTER JOIN [dbo].[Employees] AS [t1] ON [t1].[EmployeeID] = [t0].[ReportsTo]
-                //-- Context: SqlProvider(Sql2008) Model: AttributedMetaModel Build: 3.5.30729.1
-                Log.WriteLine(sql);
+                Log.WriteLine(command.CommandText);
+                foreach (IDbDataParameter parameter in command.Parameters)
+                    WriteLog(parameter);
                 Log.Write("--");
                 Log.Write(" Context: {0}", Vendor.VendorName);
                 Log.Write(" Model: {0}", Mapping.GetType().Name);
@@ -686,6 +693,23 @@ namespace DbLinq.Data.Linq
                 Log.WriteLine();
             }
         }
+
+        /// <summary>
+        /// Writes and IDbDataParameter to Log (if non null)
+        /// </summary>
+        /// <param name="parameter"></param>
+        internal void WriteLog(IDbDataParameter parameter)
+        {
+            if (Log != null)
+            {
+                // -- @p0: Input Int (Size = 0; Prec = 0; Scale = 0) [2]
+                // -- <name>: <direction> <type> (...) [<value>]
+                Log.WriteLine("-- {0}: {1} {2} (Size = {3}; Prec = {4}; Scale = {5}) [{6}]",
+                    parameter.ParameterName, parameter.Direction, parameter.DbType,
+                    parameter.Size, parameter.Precision, parameter.Scale, parameter.Value);
+            }
+        }
+
 
         [DbLinqToDo]
         public bool ObjectTrackingEnabled

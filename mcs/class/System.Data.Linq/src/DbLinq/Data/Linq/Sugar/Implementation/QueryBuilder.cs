@@ -401,7 +401,6 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 queryContext.DataContext.Logger.Write(Level.Debug, "Select Expression build: {0}ms", expressionBuildTime);
                 queryContext.DataContext.Logger.Write(Level.Debug, "Select SQL build:        {0}ms", sqlBuildTime);
                 queryContext.DataContext.Logger.Write(Level.Debug, "Select SQL: {0}", query.Sql);
-                queryContext.DataContext.WriteLog(query.Sql.ToString());
                 SetInSelectCache(expressions, query);
             }
             return query;

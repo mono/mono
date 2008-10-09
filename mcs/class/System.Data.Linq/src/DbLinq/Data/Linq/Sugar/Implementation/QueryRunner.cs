@@ -120,6 +120,10 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                     dbParameter.Value = parameter.GetValue();
                     dbCommand.Command.Parameters.Add(dbParameter);
                 }
+
+                // write query to log
+                selectQuery.DataContext.WriteLog(dbCommand.Command);
+
                 using (var reader = dbCommand.Command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -263,8 +267,9 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
 
         private void Upsert(object target, UpsertQuery insertQuery)
         {
-            var sqlProvider = insertQuery.DataContext.Vendor.SqlProvider;
-            using (var dbCommand = UseDbCommand(insertQuery.Sql, true, insertQuery.DataContext))
+            var dataContext = insertQuery.DataContext;
+            var sqlProvider = dataContext.Vendor.SqlProvider;
+            using (var dbCommand = UseDbCommand(insertQuery.Sql, true, dataContext))
             {
                 foreach (var inputParameter in insertQuery.InputParameters)
                 {
@@ -273,17 +278,25 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                     dbParameter.SetValue(inputParameter.GetValue(target), inputParameter.ValueType);
                     dbCommand.Command.Parameters.Add(dbParameter);
                 }
+
+                // log first command
+                dataContext.WriteLog(dbCommand.Command);
+
                 // we may have two commands
                 int rowsCount = dbCommand.Command.ExecuteNonQuery();
                 // the second reads output parameters
                 if (!string.IsNullOrEmpty(insertQuery.IdQuerySql.ToString()))
                 {
-                    IDbCommand outputCommand = dbCommand.Command.Connection.CreateCommand();
+                    var outputCommand = dbCommand.Command.Connection.CreateCommand();
 
                     // then run commands
                     outputCommand.Transaction = dbCommand.Command.Transaction;
                     outputCommand.CommandText = insertQuery.IdQuerySql.ToString();
-                    using (IDataReader dataReader = outputCommand.ExecuteReader())
+
+                    // log second command
+                    dataContext.WriteLog(outputCommand);
+
+                    using (var dataReader = outputCommand.ExecuteReader())
                     {
                         // TODO: check if this is needed
                         dataReader.Read();
@@ -340,6 +353,10 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                     dbParameter.SetValue(inputParameter.GetValue(target), inputParameter.ValueType);
                     dbCommand.Command.Parameters.Add(dbParameter);
                 }
+
+                // log command
+                deleteQuery.DataContext.WriteLog(dbCommand.Command);
+
                 int rowsCount = dbCommand.Command.ExecuteNonQuery();
                 dbCommand.Commit();
             }
@@ -373,6 +390,10 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             using (var dbCommand = UseDbCommand(directQuery.Sql, false, directQuery.DataContext))
             {
                 FeedParameters(dbCommand.Command, directQuery.Parameters, parameters);
+
+                // log command
+                directQuery.DataContext.WriteLog(dbCommand.Command);
+
                 var result = dbCommand.Command.ExecuteScalar();
                 if (result == null || result is DBNull)
                     return 0;
@@ -403,6 +424,10 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             using (var dbCommand = UseDbCommand(directQuery.Sql, false, directQuery.DataContext))
             {
                 FeedParameters(dbCommand.Command, directQuery.Parameters, parameters);
+
+                // log query
+                directQuery.DataContext.WriteLog(dbCommand.Command);
+
                 using (var dataReader = dbCommand.Command.ExecuteReader())
                 {
                     // Did you know? "return EnumerateResult(tableType, dataReader, dataContext);" disposes resources first

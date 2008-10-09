@@ -48,6 +48,7 @@ src/DbLinq/Data/Linq/Sql/SqlParameterPart.cs
 src/DbLinq/Data/Linq/Sql/SqlPart.cs
 src/DbLinq/Data/Linq/Sql/SqlStatement.cs
 src/DbLinq/Data/Linq/Sql/SqlStatementBuilder.cs
+src/DbLinq/Data/Linq/SqlClient/FirebirdProvider.cs
 src/DbLinq/Data/Linq/SqlClient/IngresProvider.cs
 src/DbLinq/Data/Linq/SqlClient/MySqlProvider.cs
 src/DbLinq/Data/Linq/SqlClient/OracleProvider.cs
@@ -256,3 +257,14 @@ src/DbLinq/Vendor/VendorAttribute.cs
 src/DbLinq.SqlServer/SqlServerSqlProvider.cs
 src/DbLinq.SqlServer/SqlServerTypeConversions.cs
 src/DbLinq.SqlServer/SqlServerVendor.cs
+src/DbLinq.Sqlite/SqliteSqlProvider.cs
+src/DbLinq.Sqlite/SqliteVendor.cs
+src/DbLinq.Sqlite/Schema/DataCommand.cs
+src/DbLinq.PostgreSql/PgsqlSqlProvider.cs
+src/DbLinq.MySql/MySqlVendor.cs
+src/DbLinq.MySql/MySqlSqlProvider.cs
+src/DbLinq.PostgreSql/PgsqlVendor.cs
+src/DbLinq.Ingres/IngresSqlProvider.cs
+src/DbLinq.Oracle/OracleVendor.cs
+src/DbLinq.Oracle/OracleSqlProvider.cs
+src/DbLinq.Ingres/IngresVendor.cs

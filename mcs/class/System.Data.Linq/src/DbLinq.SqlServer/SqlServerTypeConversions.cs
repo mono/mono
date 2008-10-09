@@ -35,7 +35,12 @@ namespace DbLinq.SqlServer
     /// helper class which help to convert Microsoft Sql's types to SqlClient .NET types,
     /// eg. 'smalldatetime' to SqlDbType.Date.
     /// </summary>
-    public static class SqlServerTypeConversions
+#if MONO_STRICT
+    internal
+#else
+    public
+#endif
+    static class SqlServerTypeConversions
     {
         static Dictionary<string, SqlDbType> s_typeMap = new Dictionary<string, SqlDbType>();
 

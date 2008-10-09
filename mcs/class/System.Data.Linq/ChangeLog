@@ -1,3 +1,10 @@
+2008-10-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* src/DbLinq.{Oracle|MySql|PostgreSql|Sqlite|Ingres}: new.
+	* src/DbLinq : updated to DbLinq r905.
+	* System.Data.Linq.dll.sources : added vendor-specific files and
+	  new files in r905.
+
 2008-10-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Data.Linq.dll.sources : fix wrong reference to EntitySet.cs.

@@ -98,6 +98,7 @@
     <Compile Include="Data\Linq\Mapping\AttributedMetaType.cs" />
     <Compile Include="Data\Linq\Mapping\AttributeMappingSource.cs" />
     <Compile Include="Data\Linq\Mapping\MappingContext.cs" />
+    <Compile Include="Data\Linq\SqlClient\FirebirdProvider.cs" />
     <Compile Include="Data\Linq\SqlClient\Sql2005Provider.cs" />
     <Compile Include="Data\Linq\SqlClient\Sql2000Provider.cs" />
     <Compile Include="Data\Linq\SqlClient\SqlServerProvider.cs" />
