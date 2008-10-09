@@ -140,10 +140,36 @@ namespace System.Web.UI.WebControls
 		[DefaultValue ("")]
 		public string ContextTypeName { get; set; }
 
+		Type context_type;
+
 		[MonoTODO ("looks like we need System.Web.Query.Dynamic stuff or alternative")]
 		Type IDynamicDataSource.ContextType {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (value.FullName); }
+			get {
+				if (context_type != null && context_type.FullName == ContextTypeName)
+					return context_type;
+
+				if (String.IsNullOrEmpty (ContextTypeName))
+					throw new ArgumentException ("ContextTypeName is not set");
+				// FIXME: retrieve type from BuildProvider or whatever.
+				context_type = LoadType (ContextTypeName);
+				if (context_type == null)
+					throw new ArgumentException (String.Format ("Type '{0}' cannot be loaded", ContextTypeName));
+				return context_type;
+			}
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				context_type = value;
+			}
+		}
+
+		private Type LoadType (string name)
+		{
+			foreach (var ass in AppDomain.CurrentDomain.GetAssemblies ())
+				foreach (var type in ass.GetTypes ())
+					if (type.FullName == name)
+						return type;
+			return null;
 		}
 
 		string IDynamicDataSource.EntitySetName {

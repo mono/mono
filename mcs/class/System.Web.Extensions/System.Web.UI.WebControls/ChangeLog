@@ -1,3 +1,9 @@
+2008-10-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* LinqDataSource.cs : implement ContextType/ContextTypeName.
+	* LinqDataSourceView.cs : some ExecuteSelect() implementation.
+	  Cache type members which are from reflection.
+
 2008-10-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* LinqDataSource.cs, LinqDataSourceView.cs :

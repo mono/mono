@@ -247,7 +247,7 @@ namespace System.Web.UI.WebControls
 				object entity = Activator.CreateInstance (t);
 				// FIXME: merge InsertParameters
 				foreach (DictionaryEntry p in values)
-					t.GetProperty ((string) p.Key).GetSetMethod ().Invoke (entity, new object [] {p.Value});
+					t.GetProperty ((string) p.Key).SetValue (entity, p.Value, null);
 
 				InsertDataObject (dc, table, entity);
 				return 1;
@@ -264,7 +264,31 @@ namespace System.Web.UI.WebControls
 		[MonoTODO]
 		protected internal override IEnumerable ExecuteSelect (DataSourceSelectArguments arguments)
 		{
-			throw new NotImplementedException ();
+			int max = arguments.MaximumRows;
+			max = max == 0 ? int.MaxValue : max;
+			int total = arguments.TotalRowCount;
+			total = total < 0 ? int.MaxValue : total;
+			int end = total == int.MaxValue ? total : arguments.StartRowIndex + total;
+
+			DataContext dc = Activator.CreateInstance (ContextType, true) as DataContext;
+			MemberInfo mi = GetTableMemberInfo (dc.GetType ());
+
+			// am totally not sure it is fine.
+			IEnumerable results;
+			if (source.Select != null) {
+				// FIXME: merge SelectParameters.
+				results = dc.ExecuteQuery (mi is FieldInfo ? ((FieldInfo) mi).FieldType : ((PropertyInfo) mi).PropertyType, source.Select, new object [0]);
+			} else {
+				results = (IEnumerable) (mi is FieldInfo ? ((FieldInfo) mi).GetValue (dc) : ((PropertyInfo) mi).GetValue (dc, null));
+			}
+
+			int i = 0;
+			foreach (var e in results) {
+				if (i++ < arguments.StartRowIndex)
+					continue; // skip rows before StartRowIndex.
+				if (i < end)
+					yield return e;
+			}
 		}
 
 		protected virtual void DeleteDataObject (object dataContext, object table, object oldDataObject)
@@ -307,6 +331,8 @@ namespace System.Web.UI.WebControls
 			throw new NotImplementedException ();
 		}
 
+		MemberInfo table_member;
+
 		protected virtual MemberInfo GetTableMemberInfo (Type contextType)
 		{
 			if (contextType == null)
@@ -314,11 +340,15 @@ namespace System.Web.UI.WebControls
 			if (String.IsNullOrEmpty (TableName))
 				throw new InvalidOperationException (String.Format ("The TableName property of LinqDataSource '{0}' must specify a table property or field on the data context type.", source.ID));
 
+			if (table_member != null && table_member.DeclaringType == contextType)
+				return table_member;
+
 			var marr = contextType.GetMember (TableName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField | BindingFlags.GetProperty);
 			if (marr == null || marr.Length == 0)
 				throw new InvalidOperationException (String.Format ("Could not find a property or field called '{0}' on the data context type '{1}' of LinqDataSource '{2}'", TableName, contextType, source.ID));
 
-			return marr [0];
+			table_member = marr [0];
+			return table_member;
 		}
 
 		#region Validation
