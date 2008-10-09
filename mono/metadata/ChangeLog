@@ -1,3 +1,9 @@
+2008-10-09  Mark Probst  <mark.probst@gmail.com>
+
+	* profiler.c (simple_shutdown): Don't call mono_thread_attach() on
+	Win32.  Should fix #432388 for most cases until we have the new
+	profiler on Win32.
+
 2008-10-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata.c (mono_metadata_generic_context_hash): Call generic_inst_hash
