@@ -18,12 +18,13 @@ prepending the @ symbol to the response file name.
 The 
 .I mcs
 compiler is used to compile against the 1.x profile and implements
-C# 1.0 and 2.0 with the exception of generics and nullable types.
+C# 1.0 and parts of C# 2.0 and C# 3.0 specification which do not depend
+on generics.
 .PP
 The
 .I gmcs
 compiler is used to compile against the 2.0 profile and implements
-the complete C# 2.0 specification including generics.
+the complete C# 3.0 specification.
 .PP
 The
 .I smcs
@@ -32,8 +33,7 @@ This profile is designed to be used for creating Silverlight/Moonlight
 applications that will run on a web browser.   The API exposed by this
 profile is a small subset of the 3.5 API (even if it is commonly
 referred as the 2.1 API, this API is a small subset of 2.0 with a few
-extensions), in addition this profile by default runs with
--langversion:linq which turns on the C# 3.0 language by default.
+extensions).
 .PP
 See the section on packages for more information.
 .PP
@@ -108,7 +108,7 @@ SYMBOL.  This can be tested in the source code by the pre-processor,
 or can be used by methods that have been tagged with the Conditional
 attribute. 
 .TP
-.I \-debug, \-debug+, \-g
+.I \-debug, \-debug+
 Generate debugging information.  To obtain stack traces with debugging
 information, you need to invoke the mono runtime with the `--debug'
 flag.  This debugging information is stored inside the assembly as a
@@ -136,10 +136,6 @@ precedence over the attributes.
 Extracts the C#/XML documentation from the source code and stores in in
 the given FILE.
 .TP
-.I \-\-expect-error X L
-The compiler will expect the code to generate an error 
-named `X' in line `L'.  This is only used by the test suite.
-.TP 
 .I \-\-fatal 
 This is used for debugging the compiler.  This makes the error emission
 generate an exception that can be caught by a debugger.
@@ -169,7 +165,7 @@ The possible values are:
 .TP
 .I "Default"
 Instruct compiler to use the latest version. Equivalent is to omit the
-switch (this currently defaults to the C# 2.0 language specification).
+switch (this currently defaults to the C# 3.0 language specification).
 .TP
 .I "ISO-1"
 Restrict compiler to use only first ISO standardized features.
@@ -180,11 +176,6 @@ methods will lead to error.
 Restrict compiler to use only the second ISO standardized features.
 This allows the use of generics, static classes, iterators and
 anonymous methods for example.
-.TP
-.I "linq"
-This enables the C# 3.0 support.   Only a few features of C# 3.0 have
-been implemented in the Mono C# compiler, so not everything is
-available. 
 .PP
 Notice that this flag only controls the language features available to
 the programmer, it does not control the kind of assemblies produced.
@@ -364,9 +355,6 @@ Enables compilation of unsafe code.
 .I \-v 
 Debugging. Turns on verbose yacc parsing.
 .TP
-.I \-v2
-Turns on C# 2.0 language features.
-.TP
 .I \-\-version
 Shows the compiler version.
 .TP
@@ -375,7 +363,7 @@ Treat warnings as errors.
 .TP
 .I \-warn:LEVEL
 Sets the warning level.  0 is the lowest warning level, and 4 is the
-highest.  The default is 2.
+highest.  The default is 4.
 .TP
 .I \-win32res:FILE
 Specifies a Win32 resource file (.res) to be bundled into the
