@@ -1,4 +1,25 @@
 2008-09-08  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c:
+	Added support for handling the stack trace of each allocation event.
+	- MonoProfilerDirectives: added directive to state that allocations
+	have stack traces (not strictly needed, but simplifirs the decoder).
+	- ProfilerEventData: gave one more bit to code (and one less to value).
+	- MonoProfilerEvents: Added "stack section" event to record stack state.
+	- ProfilerThreadStack: added last_saved_top to track what we just saved.
+	- _MonoProfiler::action_flags: Added save_allocation_caller and
+	save_allocation_stack to state what we do for allocations.
+	- All "thread_stack_..." functions: Track last_saved_top.
+	- Added thread_stack_count_unsaved_frames utilty function.
+	- write_directives_block: handle ALLOCATIONS_HAVE_STACK directive.
+	- Added write_stack_section_event function.
+	- write_event: also handle emission of stack sections.
+	- Reworked all the "STORE_EVENT_..." macros to work on arbitrary event
+	slots (needed for stack sections), and as a consequence fixed all the
+	functions that use them.
+	- object_allocated: save "delta" stack section if needed.
+	- setup_user_options: handle new "sas" option.
+
+2008-09-08  Massimiliano Mantione <massi@ximian.com>
 	* Makefile.am: Don't build the profilers if DISABLE_PROFILER is set.
 
 2008-09-08  Massimiliano Mantione <massi@ximian.com>
