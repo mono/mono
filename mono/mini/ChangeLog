@@ -1,3 +1,7 @@
+2008-10-10  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc.c: Handle integer stack arguments for tail calls.
+
 2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* optflags-def.h: Removed sse3 optimization.
