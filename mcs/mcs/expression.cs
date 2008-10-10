@@ -1394,7 +1394,7 @@ namespace Mono.CSharp {
 			if (!TypeManager.IsReferenceType (type) && !TypeManager.IsNullableType (type)) {
 				if (probe_type_expr is TypeParameterExpr) {
 					Report.Error (413, loc,
-						"The `as' operator cannot be used with a non-reference type parameter `{0}'",
+						"The `as' operator cannot be used with a non-reference type parameter `{0}'. Consider adding `class' or a reference type constraint",
 						probe_type_expr.GetSignatureForError ());
 				} else {
 					Report.Error (77, loc,
