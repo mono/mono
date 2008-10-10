@@ -66,10 +66,10 @@ namespace System.Web.Compilation
 		internal static CodeVariableReferenceExpression ctrlVar = new CodeVariableReferenceExpression ("__ctrl");
 		
 #if NET_2_0
-		static Regex bindRegex = new Regex (@"Bind\s*\([""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\)\s*%>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-		static Regex bindRegexInValue = new Regex (@"Bind\s*\([""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		static Regex bindRegex = new Regex (@"Bind\s*\(\s*[""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\s*\)\s*%>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		static Regex bindRegexInValue = new Regex (@"Bind\s*\(\s*[""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\s*\)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 #endif
-		static Regex evalRegexInValue = new Regex (@"Eval\s*\([""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		static Regex evalRegexInValue = new Regex (@"Eval\s*\(\s*[""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\s*\)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		
 		public TemplateControlCompiler (TemplateControlParser parser)
 			: base (parser)

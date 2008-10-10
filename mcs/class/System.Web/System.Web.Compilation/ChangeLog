@@ -1,3 +1,8 @@
+2008-10-10  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: allow whitespace around parentheses 
+	in the Bind and Eval expressions.
+
 2008-10-09  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: if monoSettings section is found in the
