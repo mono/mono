@@ -1,3 +1,7 @@
+2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_create_from_typedef): Retrofit to new type names.
+
 2008-10-09  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_create_from_typedef): Added Vector8u and Vector16u

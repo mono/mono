@@ -1,5 +1,9 @@
 2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* simd-intrinsics.c (emit_intrinsics): Retrofit to new type names.
+
+2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* basic-simd.cs: Retrofit for API changes.
 
 2008-10-10  Mark Probst  <mark.probst@gmail.com>
