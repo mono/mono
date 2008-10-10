@@ -1,3 +1,8 @@
+2008-10-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UrlRoutingModuleTest.cs , TestStubTypes.cs : added test for
+	  pipeline processing of requests.
+
 2008-09-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UrlRoutingModuleTest.cs, TestStubTypes.cs, RouteCollectionTest.cs:

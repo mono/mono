@@ -29,6 +29,7 @@
 //
 using System;
 using System.Security.Permissions;
+using System.Threading;
 using System.Web;
 
 namespace System.Web.Routing
@@ -38,6 +39,7 @@ namespace System.Web.Routing
 	public class UrlRoutingModule : IHttpModule
 	{
 		RouteCollection routes;
+		object module_identity = new object ();
 
 		public RouteCollection RouteCollection {
 			get {
@@ -80,10 +82,15 @@ namespace System.Web.Routing
 			PostResolveRequestCache (new HttpContextWrapper (app.Context));
 		}
 
-		[MonoTODO]
 		public virtual void PostMapRequestHandler (HttpContextBase context)
 		{
+			if (context == null)
+				throw new ArgumentNullException ("context");
+
 			// FIXME: find out what it actually does.
+			IHttpHandler h = (IHttpHandler) context.Items [module_identity];
+			if (h != null)
+				context.Handler = h;
 		}
 
 		[MonoTODO]
@@ -114,6 +121,8 @@ namespace System.Web.Routing
 
 			// default handler (forbidden in MVC/DynamicData projects)
 			context.RewritePath ("~/UrlRouting.axd");
+
+			context.Items [module_identity] = http;
 		}
 	}
 }

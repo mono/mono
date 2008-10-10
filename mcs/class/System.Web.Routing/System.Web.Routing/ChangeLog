@@ -1,3 +1,9 @@
+2008-10-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UrlRoutingModule.cs : implement PostMapRequestHandler() and 
+	  PostResolveRequestCache() to work correctly in order.
+	  Now it should practically work.
+
 2008-09-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UrlRoutingModule.cs, RouteCollection.cs :

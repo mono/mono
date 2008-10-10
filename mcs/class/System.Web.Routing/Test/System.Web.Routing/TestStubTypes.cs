@@ -100,10 +100,13 @@ namespace MonoTests.System.Web.Routing
 
 		public override object this [object key] {
 			get {
-				Console.Error.WriteLine (key);
+				//Console.Error.WriteLine ("Get: {0} {1}", key, key.GetHashCode ());
 				return base [key];
 			}
-			set { base [key] = value; }
+			set {
+				//Console.Error.WriteLine ("Set: {0} {1} = {2}", key, key.GetHashCode (), value);
+				base [key] = value; 
+			}
 		}
 	}
 
@@ -124,7 +127,7 @@ namespace MonoTests.System.Web.Routing
 			request = new HttpRequestStub2 (requestUrl, path, appPath);
 		}
 
-		Hashtable items = new Hashtable ();
+		Hashtable items = new MyDictionary ();
 		HttpRequestStub request;
 		HttpResponseBase response;
 
@@ -200,6 +203,35 @@ namespace MonoTests.System.Web.Routing
 		}
 	}
 
+	class HttpContextStub3 : HttpContextStub2
+	{
+		public HttpContextStub3 (string requestUrl, string path, string appPath, bool supportHandler)
+			: base (requestUrl, path, appPath)
+		{
+			this.support_handler = supportHandler;
+		}
+
+		public override void RewritePath (string path)
+		{
+			RewrittenPath = path;
+		}
+
+		bool support_handler;
+		public IHttpHandler HttpHandler { get; set; }
+
+		public override IHttpHandler Handler {
+			get { return support_handler ? HttpHandler : base.Handler; }
+			set {
+				if (support_handler)
+					HttpHandler = value;
+				else
+					base.Handler = value;
+			}
+		}
+
+		public string RewrittenPath { get; set; }
+	}
+
 	public class MyStopRoutingHandler : StopRoutingHandler
 	{
 		public IHttpHandler CallGetHttpHandler (RequestContext rc)
@@ -257,8 +289,13 @@ namespace MonoTests.System.Web.Routing
 
 		public void ProcessRequest (HttpContext ctx)
 		{
-			throw new Exception ("HOGE");
+			throw new MyException ("HOGE");
 		}
+	}
+
+	public class MyException : Exception
+	{
+		public MyException (string msg) : base (msg) {}
 	}
 
 	public class NullRouteHandler : IRouteHandler

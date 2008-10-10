@@ -74,23 +74,6 @@ namespace MonoTests.System.Web.Routing
 			m.PostMapRequestHandler (new HttpContextStub2 ("~/foo/bar", null));
 		}
 
-		[Test]
-		[Ignore ("It fails at #1. Isn't it expected to do something?")]
-		public void PostMapRequestHandlerModifiedPath ()
-		{
-			var m = new UrlRoutingModule ();
-			RouteTable.Routes.Add (new MyRoute ("{foo}/{bar}", new MyRouteHandler ()));
-			var hc = new HttpContextStub2 ("~/x/y", String.Empty, "apppath");
-			hc.SetResponse (new HttpResponseStub (2));
-			Assert.IsNotNull (m.RouteCollection.GetRouteData (hc), "#0");
-			try {
-				m.PostMapRequestHandler (hc);
-				Assert.Fail ("#1");
-			} catch (ApplicationException ex) {
-				Assert.AreEqual ("~/UrlRouting.axd", ex.Message, "#2");
-			}
-		}
-
 		// PostResolveRequestCache
 
 		[Test]
@@ -122,7 +105,7 @@ namespace MonoTests.System.Web.Routing
 		}
 
 		[Test]
-		public void PostResolveRequestCacheErrorHttpHandler ()
+		public void PostResolveRequestCacheCallRewritePath ()
 		{
 			var m = new UrlRoutingModule ();
 			RouteTable.Routes.Add (new MyRoute ("{foo}/{bar}", new MyRouteHandler ()));
@@ -151,16 +134,74 @@ namespace MonoTests.System.Web.Routing
 		}
 
 		[Test]
-		[Ignore ("looks like RouteExistingFiles ( = false) does not affect... so this test needs more investigation")]
-		public void PathToExistingFile ()
+		public void PostResolveRequestCache ()
 		{
 			var m = new UrlRoutingModule ();
 			RouteTable.Routes.Add (new MyRoute ("{foo}/{bar}", new MyRouteHandler ()));
-			var hc = new HttpContextStub2 ("~/Test/test.html", String.Empty, ".");
+			var hc = new HttpContextStub3 ("~/x/y", "z", "apppath", false);
+			hc.SetResponse (new HttpResponseStub (2));
+			m.PostResolveRequestCache (hc);
+			Assert.AreEqual ("~/UrlRouting.axd", hc.RewrittenPath, "#1");
+			// it internally stores the handler 
+		}
+
+		[Test]
+		[Ignore ("looks like RouteExistingFiles ( = false) does not affect... so this test needs more investigation")]
+		public void PostResolveRequestCachePathToExistingFile ()
+		{
+			var m = new UrlRoutingModule ();
+			RouteTable.Routes.Add (new MyRoute ("~/{foo}/{bar}", new MyRouteHandler ()));
+			var hc = new HttpContextStub2 ("~/hoge/fuga", String.Empty, ".");
 			// it tries to get HttpContextBase.Response, so set it.
 			hc.SetResponse (new HttpResponseStub (3));
 			try {
 				m.PostResolveRequestCache (hc);
+				Assert.Fail ("#1");
+			} catch (ApplicationException ex) {
+				Assert.AreEqual ("~/UrlRouting.axd", ex.Message, "#2");
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotImplementedException))]
+		public void Pipeline1 ()
+		{
+			var m = new UrlRoutingModule ();
+			RouteTable.Routes.Add (new MyRoute ("{foo}/{bar}", new MyRouteHandler ()));
+			var hc = new HttpContextStub3 ("~/x/y", "z", "apppath", false);
+			hc.SetResponse (new HttpResponseStub (2));
+			m.PostResolveRequestCache (hc);
+			Assert.AreEqual ("~/UrlRouting.axd", hc.RewrittenPath, "#1");
+			// It tries to set Handler and causes NIE
+			m.PostMapRequestHandler (hc);
+		}
+
+		[Test]
+		public void Pipeline2 ()
+		{
+			var m = new UrlRoutingModule ();
+			RouteTable.Routes.Add (new MyRoute ("{foo}/{bar}", new MyRouteHandler ()));
+			var hc = new HttpContextStub3 ("~/x/y", "z", "apppath", true);
+			hc.HttpHandler = new MyHttpHandler ();
+			hc.SetResponse (new HttpResponseStub (2));
+			m.PostResolveRequestCache (hc);
+			Assert.AreEqual ("~/UrlRouting.axd", hc.RewrittenPath, "#1");
+			// It tries to set Handler and causes NIE
+			m.PostMapRequestHandler (hc);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ApplicationException))]
+		public void Pipeline3 ()
+		{
+			var m = new UrlRoutingModule ();
+			RouteTable.Routes.Add (new MyRoute ("{foo}/{bar}", new MyRouteHandler ()));
+			var hc = new HttpContextStub2 ("~/x/y", String.Empty, "apppath");
+			hc.SetResponse (new HttpResponseStub (2));
+			Assert.IsNotNull (m.RouteCollection.GetRouteData (hc), "#0");
+			m.PostResolveRequestCache (hc);
+			try {
+				m.PostMapRequestHandler (hc);
 				Assert.Fail ("#1");
 			} catch (ApplicationException ex) {
 				Assert.AreEqual ("~/UrlRouting.axd", ex.Message, "#2");
