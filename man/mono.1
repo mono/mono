@@ -617,6 +617,15 @@ performed during JIT time).
 These information are also available when combining  the "a" and "c" options,
 but since "c" is much more intrusive "ts" should be preferred.
 .TP
+\fIsave-allocation-stack\fR, \fIsas\fR
+Save the execution stack at each allocation. While the "ts" option saves the
+direct caller, this one records the whole stack trace. Note that for technical
+reasons the decoder will correctly ignore wrapper methods only using the data
+saved by the "ts" option (the stack traces still contain all the wrappers).
+Anyway the "ts" and "sas" options can be combined, and the decoder will
+attribute the allocation to the correct method even if the wrapper is at the
+top of the stack trace.
+.TP
 \fIallocations-summary\fR or \fIas\fR
 At each collection dump a summary
 of the heap contents (for each class, the number and collective size of all
