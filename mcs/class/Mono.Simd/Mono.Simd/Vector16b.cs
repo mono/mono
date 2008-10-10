@@ -181,7 +181,7 @@ namespace Mono.Simd
 			byte *a = &va.v0;
 			byte *b = &res.v0;
 			for (int i = 0; i < 16; ++i)
-				*b++ = (byte)(((uint)(*a++)) >> amount);
+				*b++ = (byte)(((sbyte)(*a++)) >> amount);
 			return res;
 		}
 
@@ -205,15 +205,9 @@ namespace Mono.Simd
 			return res;
 		}
 
-		public static unsafe explicit operator Vector16b(Vector4f v)
+		public static unsafe explicit operator Vector4f(Vector16b v)
 		{
-			Vector16b* p = (Vector16b*)&v;
-			return *p;
-		}
-
-		public static unsafe explicit operator Vector16b(Vector8us v)
-		{
-			Vector16b* p = (Vector16b*)&v;
+			Vector4f* p = (Vector4f*)&v;
 			return *p;
 		}
 

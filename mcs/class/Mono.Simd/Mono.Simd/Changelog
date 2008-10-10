@@ -1,5 +1,18 @@
 2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Vector4ui.cs: Added common operations found in 
+	other unsigned int vector types.
+
+	* Vector8us.cs (ShiftRightArithmetic): Do proper sign extention.
+
+	* Vector8us.cs: Fix conversion operators.
+
+	* Vector16b.cs (ShiftRightArithmetic): Do proper sign extention.
+
+	* Vector16b.cs: Fix conversion operators.
+
+2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Vector16b.cs, Vector4f.cs, Vector4ui.cs,Vector8us.cs:
 	Type renaming adjustments.
 

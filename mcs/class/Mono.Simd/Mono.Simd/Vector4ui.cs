@@ -29,14 +29,6 @@ using System.Runtime.InteropServices;
 
 namespace Mono.Simd
 {
-    /*
-    TODO
-            Accessors
-            Basic ops
-            vector x scalar ops
-            Single uint constructor (expand 4x)
-            Remaining SSE ops (add, sub, mul)
-    */
 	[StructLayout(LayoutKind.Sequential, Pack = 0, Size = 16)]
 	[CLSCompliant(false)]
 	public struct Vector4ui
@@ -54,10 +46,36 @@ namespace Mono.Simd
 		public Vector4ui (uint x, uint y, uint z, uint w)
 		{
 			this.x = x;
-			this.y = x;
+			this.y = y;
 			this.z = z;
 			this.w = w;
 		}
+
+		public static Vector4ui operator + (Vector4ui v1, Vector4ui v2)
+		{
+			return new Vector4ui (v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, v1.w + v2.w);
+		}
+
+		public static Vector4ui operator - (Vector4ui v1, Vector4ui v2)
+		{
+			return new Vector4ui (v1.x - v2.x, v1.y - v2.y, v1.z - v2.z, v1.w - v2.w);
+		}
+
+		public static Vector4ui operator * (Vector4ui v1, Vector4ui v2)
+		{
+			return new Vector4ui (v1.x * v2.x, v1.y * v2.y, v1.z * v2.z, v1.w * v2.w);
+		}
+
+		public static unsafe Vector4ui operator << (Vector4ui v1, int amount)
+		{
+			return new Vector4ui (v1.x << amount, v1.y << amount, v1.z << amount, v1.w << amount);
+		}
+
+		public static unsafe Vector4ui operator >> (Vector4ui v1, int amount)
+		{
+			return new Vector4ui (v1.x >> amount, v1.y >> amount, v1.z >> amount, v1.w >> amount);
+		}
+
 
 		public static Vector4ui operator & (Vector4ui v1, Vector4ui v2)
 		{
@@ -74,10 +92,59 @@ namespace Mono.Simd
 			return new Vector4ui (v1.x ^ v2.x, v1.y ^ v2.y, v1.z ^ v2.z, v1.w ^ v2.w);
 		}
 
+		public static unsafe Vector4ui UnpackLow (Vector4ui v1, Vector4ui v2)
+		{
+			return new Vector4ui (v1.x, v2.x, v1.y, v2.y);
+		}
+
+		public static unsafe Vector4ui UnpackHigh (Vector4ui v1, Vector4ui v2)
+		{
+			return new Vector4ui (v1.z, v2.z, v1.w, v2.w);
+		}
+
+		public static unsafe Vector4ui ShiftRightArithmetic (Vector4ui v1, int amount)
+		{
+			Vector4ui res = new Vector4ui ();
+			uint *a = &v1.x;
+			uint *b = &res.x;
+			for (int i = 0; i < 4; ++i)
+				*b++ = (uint)((int)(*a++) >> amount);
+			return res;
+		}
+
+		/*
+         * NOTE: Thou packusdw states that it works with signed dwords, unsigned ones will do just fine.
+		 */
+		public static unsafe Vector8us PackWithUnsignedSaturation (Vector4ui va, Vector4ui vb)
+		{
+			Vector8us res = new Vector8us ();
+			ushort *r = (ushort*)&res;
+			uint *a = &va.x;
+			uint *b = &vb.x;
+			int i;
+			for (i = 0; i < 4; ++i)
+				*r++ = (ushort)System.Math.Min (*a++, ushort.MaxValue);
+			for (i = 0; i < 4; ++i)
+				*r++ = (ushort)System.Math.Min (*b++, ushort.MaxValue);
+
+			return res;
+		}
+
   		public static unsafe explicit operator Vector4f (Vector4ui v1)
 		{
 			Vector4f* p = (Vector4f*)&v1;
 			return *p;
 		}
+
+		public static Vector4ui LoadAligned (ref Vector4ui v)
+		{
+			return v;
+		}
+
+		public static void StoreAligned (ref Vector4ui res, Vector4ui val)
+		{
+			res = val;
+		}
+
 	}
 }

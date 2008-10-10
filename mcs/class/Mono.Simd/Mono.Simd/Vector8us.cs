@@ -156,17 +156,13 @@ namespace Mono.Simd
 			return new Vector8us (va.v4, vb.v4, va.v5, vb.v5, va.v6, vb.v6, va.v7, vb.v7);
 		}
 
-		/*
-		 * XXX Maybe this method doesn't make sense.
-		 * C# doesn't support explicit shifting mode, it is defined by the signed of the type.
-		 */
 		public static unsafe Vector8us ShiftRightArithmetic (Vector8us va, int amount)
 		{
 			Vector8us res = new Vector8us ();
 			ushort *a = &va.v0;
 			ushort *b = &res.v0;
 			for (int i = 0; i < 8; ++i)
-				*b++ = (ushort)(((uint)(*a++)) >> amount);
+				*b++ = (ushort)((short)(*a++) >> amount);
 			return res;
 		}
 
@@ -191,7 +187,7 @@ namespace Mono.Simd
 		}
 
 		/*
-         * NOTE: Thou packuswb states that it works with signed words, it works as expected with unsigned ones.
+         * NOTE: Thou packuswb states that it works with signed words, unsigned ones will do just fine
 		 */
 		public static unsafe Vector16b PackWithUnsignedSaturation (Vector8us va, Vector8us vb)
 		{
@@ -208,15 +204,9 @@ namespace Mono.Simd
 			return res;
 		}
 
-		public static unsafe explicit operator Vector8us(Vector4f v)
+		public static unsafe explicit operator Vector4f(Vector8us v)
 		{
-			Vector8us* p = (Vector8us*)&v;
-			return *p;
-		}
-
-		public static unsafe explicit operator Vector8us(Vector16b v)
-		{
-			Vector8us* p = (Vector8us*)&v;
+			Vector4f* p = (Vector4f*)&v;
 			return *p;
 		}
 
