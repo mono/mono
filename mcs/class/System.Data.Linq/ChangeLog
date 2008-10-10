@@ -1,3 +1,8 @@
+2008-10-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* src/DbLinq.Firebird, System.Data.Linq.dll.sources :
+	  added Firebird support sources (new in DbLinq).
+
 2008-10-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* src/DbLinq.{Oracle|MySql|PostgreSql|Sqlite|Ingres}: new.
