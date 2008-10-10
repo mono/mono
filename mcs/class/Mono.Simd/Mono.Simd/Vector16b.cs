@@ -190,10 +190,8 @@ namespace Mono.Simd
 			byte *a = &va.v0;
 			byte *b = &vb.v0;
 			byte *c = &res.v0;
-			for (int i = 0; i < 16; ++i) {
-				int r = (int)*a++ + (int)*b++;
-				*c++ = (byte)(r > byte.MaxValue ? byte.MaxValue : r);
-			}
+			for (int i = 0; i < 16; ++i)
+				*c++ = (byte) System.Math.Min (*a++ + *b++, byte.MaxValue);
 			return res;
 		}
 
@@ -202,32 +200,8 @@ namespace Mono.Simd
 			byte *a = &va.v0;
 			byte *b = &vb.v0;
 			byte *c = &res.v0;
-			for (int i = 0; i < 16; ++i) {
-				int r = (int)*a++ - (int)*b++;
-				*c++ = (byte)(r < 0 ? 0 : r);
-			}
-			return res;
-		}
-
-		static byte Sat8 (byte v) {
-			return (byte)(v > byte.MaxValue ? byte.MaxValue : v);
-		}
-
-		/*
-         * NOTE: Thou packuswb states that it works with signed words, it works as expected with unsgined ones.
-		 */
-		public static unsafe Vector16b PackWithUnsignedSaturation (Vector16b va, Vector16b vb)
-		{
-			Vector16b res = new Vector16b ();
-			byte *r = (byte*)&res;
-			byte *a = &va.v0;
-			byte *b = &vb.v0;
-			int i;
-			for (i = 0; i < 16; ++i)
-				*r++ = Sat8 (*a++);
-			for (i = 0; i < 16; ++i)
-				*r++ = Sat8 (*b++);
-
+			for (int i = 0; i < 16; ++i)
+				*c++ = (byte) System.Math.Max (*a++ - *b++, 0);
 			return res;
 		}
 

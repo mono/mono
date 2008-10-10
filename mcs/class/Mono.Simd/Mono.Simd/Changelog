@@ -1,5 +1,13 @@
 2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Vector8us.cs: Use Math.Min/Max instead of ?:.
+	Fixed PackWithUnsignedSaturation.
+
+	* Vector16b.cs: Use Math.Min/Max instead of ?:.
+	Removed unused PackWithUnsignedSaturation.
+
+2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Vector8us.cs
 	* Vector16b.cs: Added.
 

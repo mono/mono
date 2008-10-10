@@ -29,22 +29,6 @@ using System.Runtime.InteropServices;
 
 namespace Mono.Simd
 {
-    /*
-    TODO
-pxor, punpckhbw, punpcklbw, psubsw, pmullw, psraw, psubusb, psllw, psrlw, paddsw, packuswb, movdqa
-
-
-xor
-unpack high data
-unpack low data
-shift right arithmetic
-subtract packed
-shift left logical
-shift right logical
-add with saturation
-pack
-store aligned
-    */
 	[StructLayout(LayoutKind.Sequential, Pack = 0, Size = 16)]
 	[CLSCompliant(false)]
 	public struct Vector8us
@@ -191,10 +175,8 @@ store aligned
 			ushort *a = &va.v0;
 			ushort *b = &vb.v0;
 			ushort *c = &res.v0;
-			for (int i = 0; i < 8; ++i) {
-				int r = (int)*a++ + (int)*b++;
-				*c++ = (ushort)(r > ushort.MaxValue ? ushort.MaxValue : r);
-			}
+			for (int i = 0; i < 8; ++i)
+				*c++ = (ushort) System.Math.Min (*a++ + *b++, ushort.MaxValue);
 			return res;
 		}
 
@@ -203,19 +185,13 @@ store aligned
 			ushort *a = &va.v0;
 			ushort *b = &vb.v0;
 			ushort *c = &res.v0;
-			for (int i = 0; i < 8; ++i) {
-				int r = (int)*a++ - (int)*b++;
-				*c++ = (ushort)(r < 0 ? 0 : r);
-			}
+			for (int i = 0; i < 8; ++i)
+				*c++ = (ushort) System.Math.Max (*a++ - *b++, 0);
 			return res;
 		}
 
-		static byte Sat8 (ushort v) {
-			return (byte)(v > byte.MaxValue ? byte.MaxValue : v);
-		}
-
 		/*
-         * NOTE: Thou packuswb states that it works with signed words, it works as expected with unsgined ones.
+         * NOTE: Thou packuswb states that it works with signed words, it works as expected with unsigned ones.
 		 */
 		public static unsafe Vector16b PackWithUnsignedSaturation (Vector8us va, Vector8us vb)
 		{
@@ -225,9 +201,9 @@ store aligned
 			ushort *b = &vb.v0;
 			int i;
 			for (i = 0; i < 8; ++i)
-				*r++ = Sat8 (*a++);
+				*r++ = (byte)System.Math.Min (*a++, byte.MaxValue);
 			for (i = 0; i < 8; ++i)
-				*r++ = Sat8 (*b++);
+				*r++ = (byte)System.Math.Min (*b++, byte.MaxValue);
 
 			return res;
 		}
