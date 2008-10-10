@@ -1,3 +1,23 @@
+2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* optflags-def.h: Removed sse3 optimization.
+
+	* driver.c: Same.
+
+	* mini-x86.c (mono_arch_cpu_optimizazions): Remove detection of
+	sse3.
+
+	* mini-x86.c: Added mono_arch_cpu_enumerate_simd_versions.
+
+	* mini.h: Added enumeration with simd versions.
+
+	* simd-intrinsics.c (emit_intrinsics): Use the new static var
+	for detecting SSE3.
+
+	* simd-intrinsics.c: Added mono_simd_intrinsics_init.
+
+	* mini.c (mini_init): Call mono_simd_intrinsics_init.
+
 2008-10-09  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* basic-simd.cs: Added tests for Vector8u and Vector16u.
