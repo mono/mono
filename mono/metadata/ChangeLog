@@ -1,3 +1,9 @@
+2008-10-10  Mark Probst  <mark.probst@gmail.com>
+
+	* object.c, class-internals.h: Also create remoting trampolines
+	for generic methods.  Pass the domain to the remoting trampoline
+	creation function, too.
+
 2008-10-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_init): Fix+re-enable the finalize optimization.

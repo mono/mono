@@ -1,5 +1,19 @@
 2008-10-10  Mark Probst  <mark.probst@gmail.com>
 
+	* method-to-ir.c: Only do the fast virtual generic method call for
+	non-wrapper methods.
+
+	* mini.h, mini-trampolines.c: The new generic virtual remoting
+	trampoline handles virtual method calls via the vtable (as done by
+	the fast virtual generic method calls) to remoting proxies.
+
+	* mini.c (mono_jit_create_remoting_trampoline): For generic
+	methods reate a generic virtual remoting trampoline.
+
+	* mini-amd64.h: Enable fast virtual generic method calls again.
+
+2008-10-10  Mark Probst  <mark.probst@gmail.com>
+
 	* mini-ppc.c: Use SP (r1), not frame_reg (which might be r31) to
 	restore registers when doing tail calls.
 
