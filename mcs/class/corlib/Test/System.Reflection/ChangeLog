@@ -1,3 +1,8 @@
+2008-10-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* AssemblyTest.cs (LoadWithPartialName): Fix this test after the
+	'default' -> 'net_1_1' profile change.
+
 2008-10-02 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
 
 	* ConstructorInfoTest.cs: enable abstract class test.
