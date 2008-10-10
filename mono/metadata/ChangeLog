@@ -1,3 +1,8 @@
+2008-10-10  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r115477.
+	
+	* class.c (mono_class_init): Fix+re-enable the finalize optimization.
 
 Thu Oct 9 17:38:24 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
