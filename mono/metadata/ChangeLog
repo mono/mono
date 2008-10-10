@@ -1,4 +1,9 @@
 
+2008-10-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* assembly.c:
+	* locales.c: remove the use of g_strdown. Fixes bug #322313.
+
 Fri Oct 10 17:01:42 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* assembly.c: in mono_assembly_load_friends() take the assemblies lock
