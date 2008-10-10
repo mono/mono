@@ -1,4 +1,4 @@
-// cs1523.cs: The keyword case or default must precede code in switch block
+// CS1525: Unexpected symbol `i', expecting `}', `case', or `default:'
 // Line: 11
 
 class X {

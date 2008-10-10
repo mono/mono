@@ -1,4 +1,4 @@
-// cs1528.cs: Expected ; or = (cannot specify constructor arguments in declaration)
+// CS1525: Unexpected symbol `(', expecting `)', `,', `;', `[', or `='
 // Line: 13
 
 class X {

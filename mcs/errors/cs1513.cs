@@ -1,5 +1,5 @@
-// cs1513.cs: } expected
-// Line: 4
+// CS1513: Expected `}'
+// Line: 7
 
 namespace X  {
 

@@ -1,4 +1,4 @@
-// cs1031.cs: Type expected
+// CS1525: Unexpected symbol `this', expecting `[', `{', or `type'
 // Line: 8
 
 class M

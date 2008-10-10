@@ -1,4 +1,4 @@
-// CS1002: Expecting `,', or `>', got <
+// CS1525: Unexpected symbol `<', expecting `,', or `>'
 // Line: 9
 
 interface IFoo<T>

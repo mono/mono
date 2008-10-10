@@ -1,5 +1,5 @@
-// cs1525: Invalid expression term '}'
-// Line: 7
+// CS1525: Unexpected symbol `}'
+// Line: 8
 
 class X {
 	X ()
