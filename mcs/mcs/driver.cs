@@ -255,7 +255,7 @@ namespace Mono.CSharp
 				"                      KIND can be one of: exe, winexe, library, module\n" +
 				"   -unsafe[+|-]       Allows to compile code which uses unsafe keyword\n" +
 				"   -warnaserror[+|-]  Treats all warnings as errors\n" +
-				"   -warn:0-4          Sets warning level, the default is 3 (short -w:)\n" +
+				"   -warn:0-4          Sets warning level, the default is 4 (short -w:)\n" +
 				"   -help2             Shows internal compiler options\n" + 
 				"\n" +
 				"Resources:\n" +
