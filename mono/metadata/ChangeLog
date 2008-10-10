@@ -39,9 +39,6 @@ Thu Oct 9 17:38:24 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	* metadata.c (mono_metadata_generic_context_hash): Call generic_inst_hash
 	instead of using inst->id so the hash is stable for AOT.
 
-	* Makefile.am (assembliesdir): Use $(libdir) instead of 
-	$(exec_prefix)/lib.
-
 2008-10-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* appdomain.c:
