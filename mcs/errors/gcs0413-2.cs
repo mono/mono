@@ -1,4 +1,4 @@
-// CS0413: The `as' operator cannot be used with a non-reference type parameter `T'
+// CS0413: The `as' operator cannot be used with a non-reference type parameter `T'. Consider adding `class' or a reference type constraint
 // Line: 8
 
 public class SomeClass {
