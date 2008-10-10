@@ -1,3 +1,7 @@
+2008-10-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* versioninfo.c: remove the use of g_strdown.
+
 2008-09-25  Dick Porter  <dick@ximian.com>
 
 	* wait.c: Make sure we keep references to handles we're waiting
