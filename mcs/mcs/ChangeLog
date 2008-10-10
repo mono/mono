@@ -1,5 +1,9 @@
 2008-10-10  Marek Safar  <marek.safar@gmail.com>
 
+	* cs-parser.jay: Fixed missing accessor recovery.
+
+2008-10-10  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #433701
 	* expression.cs: Better error message.
 

@@ -1714,8 +1714,16 @@ accessor_declarations
 	 }
 	| error
 	  {
-		Report.Error (1014, GetLocation ($1), "A get or set accessor expected");
-		$$ = null;
+	  	if (yyToken == Token.CLOSE_BRACE) {
+	  		$$ = null;
+		} else {
+			if (yyToken == Token.SEMICOLON)
+				Report.Error (1597, lexer.Location, "Semicolon after method or accessor block is not valid");
+			else
+				Report.Error (1014, GetLocation ($1), "A get or set accessor expected");
+
+			$$ = new Accessors (null, null);
+		}
 	  }
 	;
 
