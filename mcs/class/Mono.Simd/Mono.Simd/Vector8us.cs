@@ -1,9 +1,9 @@
-// Vector4u.v2s
+// Vector8us.cs
 //
 // Author:
-//   Rodrigo Kumpera (rkumpera@novell.v2om)
+//   Rodrigo Kumpera (rkumpera@novell.com)
 //
-// (C) 2008 Novell, Inc. (http://www.novell.v2om)
+// (C) 2008 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the

@@ -1,5 +1,10 @@
 2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Vector16b.cs, Vector4f.cs, Vector4ui.cs,Vector8us.cs:
+	Type renaming adjustments.
+
+2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Vector4u.cs: Renamed to Vector4ui.cs.
 
 2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>

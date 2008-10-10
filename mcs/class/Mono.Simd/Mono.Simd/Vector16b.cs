@@ -1,4 +1,4 @@
-// Vector4u.cs
+// Vector16b.cs
 //
 // Author:
 //   Rodrigo Kumpera (rkumpera@novell.com)

@@ -194,9 +194,9 @@ namespace Mono.Simd
 		}
 
 		[CLSCompliant(false)]
-		public static unsafe explicit operator Vector4u(Vector4f v)
+		public static unsafe explicit operator Vector4ui(Vector4f v)
 		{
-			Vector4u* p = (Vector4u*)&v;
+			Vector4ui* p = (Vector4ui*)&v;
 			return *p;
 		}
 

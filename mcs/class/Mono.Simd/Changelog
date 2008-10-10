@@ -1,5 +1,9 @@
 2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Mono.Simd.dll.sources: Type renaming adjustments.
+
+2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Mono.Simd.dll.sources: Added Vector8us.cs and Vector16b.cs.
 
 2008-10-03  Rodrigo Kumpera  <rkumpera@novell.com>

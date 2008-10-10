@@ -1,4 +1,4 @@
-// Vector4u.cs
+// Vector4ui.cs
 //
 // Author:
 //   Rodrigo Kumpera (rkumpera@novell.com)
@@ -39,7 +39,7 @@ namespace Mono.Simd
     */
 	[StructLayout(LayoutKind.Sequential, Pack = 0, Size = 16)]
 	[CLSCompliant(false)]
-	public struct Vector4u
+	public struct Vector4ui
 	{
 		private uint x;
 		private uint y;
@@ -51,7 +51,7 @@ namespace Mono.Simd
 		public uint Z { get { return z; } set { z = value; } }
 		public uint W { get { return w; } set { w = value; } }
 
-		public Vector4u (uint x, uint y, uint z, uint w)
+		public Vector4ui (uint x, uint y, uint z, uint w)
 		{
 			this.x = x;
 			this.y = x;
@@ -59,22 +59,22 @@ namespace Mono.Simd
 			this.w = w;
 		}
 
-		public static Vector4u operator & (Vector4u v1, Vector4u v2)
+		public static Vector4ui operator & (Vector4ui v1, Vector4ui v2)
 		{
-			return new Vector4u (v1.x & v2.x, v1.y & v2.y, v1.z & v2.z, v1.w & v2.w);
+			return new Vector4ui (v1.x & v2.x, v1.y & v2.y, v1.z & v2.z, v1.w & v2.w);
 		}
 
-		public static Vector4u operator | (Vector4u v1, Vector4u v2)
+		public static Vector4ui operator | (Vector4ui v1, Vector4ui v2)
 		{
-			return new Vector4u (v1.x | v2.x, v1.y | v2.y, v1.z | v2.z, v1.w | v2.w);
+			return new Vector4ui (v1.x | v2.x, v1.y | v2.y, v1.z | v2.z, v1.w | v2.w);
 		}
 
-		public static Vector4u operator ^ (Vector4u v1, Vector4u v2)
+		public static Vector4ui operator ^ (Vector4ui v1, Vector4ui v2)
 		{
-			return new Vector4u (v1.x ^ v2.x, v1.y ^ v2.y, v1.z ^ v2.z, v1.w ^ v2.w);
+			return new Vector4ui (v1.x ^ v2.x, v1.y ^ v2.y, v1.z ^ v2.z, v1.w ^ v2.w);
 		}
 
-  		public static unsafe explicit operator Vector4f (Vector4u v1)
+  		public static unsafe explicit operator Vector4f (Vector4ui v1)
 		{
 			Vector4f* p = (Vector4f*)&v1;
 			return *p;
