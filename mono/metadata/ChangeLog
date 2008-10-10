@@ -1,3 +1,7 @@
+2008-10-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_init): Fix+re-enable the finalize optimization.
+
 2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_create_from_typedef): Vector4u was renamed to
