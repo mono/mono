@@ -1,3 +1,9 @@
+
+Fri Oct 10 17:01:42 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c: in mono_assembly_load_friends() take the assemblies lock
+	for the least possible amount of time (extending the fix in r113458).
+
 2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_create_from_typedef): Retrofit to new type names.
@@ -11,7 +17,7 @@
 Thu Oct 9 17:38:24 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: back out part of a broken optimization committed on
-	March 23th (bug #433908).
+	May 23th (bug #433908).
 
 2008-10-09  Mark Probst  <mark.probst@gmail.com>
 
