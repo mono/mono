@@ -5782,9 +5782,9 @@ namespace Mono.CSharp {
 			expect_initializers = true;
 		}
 
-		void Error_IncorrectArrayInitializer ()
+		public static void Error_IncorrectArrayInitializer (Location loc)
 		{
-			Error (178, "Invalid rank specifier: expected `,' or `]'");
+			Report.Error (178, loc, "Invalid rank specifier: expected `,' or `]'");
 		}
 
 		protected override void Error_NegativeArrayIndex (Location loc)
@@ -5813,7 +5813,7 @@ namespace Mono.CSharp {
 				int value = (int) c.GetValue ();
 				
 				if (value != probe.Count) {
-					Error_IncorrectArrayInitializer ();
+					Error_IncorrectArrayInitializer (loc);
 					return false;
 				}
 				
@@ -5832,7 +5832,7 @@ namespace Mono.CSharp {
 						child_bounds = current_bounds;
 
 					else if (child_bounds != current_bounds){
-						Error_IncorrectArrayInitializer ();
+						Error_IncorrectArrayInitializer (loc);
 						return false;
 					}
 					if (idx + 1 >= dimensions){
@@ -5845,7 +5845,7 @@ namespace Mono.CSharp {
 						return false;
 				} else {
 					if (child_bounds != -1){
-						Error_IncorrectArrayInitializer ();
+						Error_IncorrectArrayInitializer (loc);
 						return false;
 					}
 					
@@ -6041,7 +6041,7 @@ namespace Mono.CSharp {
 				return null;
 
 			if (arguments.Count != dimensions) {
-				Error_IncorrectArrayInitializer ();
+				Error_IncorrectArrayInitializer (loc);
 			}
 
 			foreach (Argument a in arguments){

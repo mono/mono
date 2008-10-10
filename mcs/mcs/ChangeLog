@@ -1,3 +1,11 @@
+2008-10-10  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-parser.jay, expression.cs: Start reporting real parser errors.
+	
+	* Makefile: Disabled unused debug symbols.
+
+	Also fixes: #320556, #321097, #321656, #321876, #351316
+
 2008-10-09  Miguel de Icaza  <miguel@novell.com>
 
 	* eval.cs: rename "<interactive>" to "{interactive}", to work

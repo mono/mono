@@ -533,7 +533,7 @@ namespace_body_body
 	  opt_namespace_member_declarations
 	  EOF
 	  {
-		Report.Error (1513, lexer.Location, "} expected");
+		Report.Error (1513, lexer.Location, "Expected `}'");
 	  }
 	;
 
@@ -893,6 +893,12 @@ class_member_declaration
 	| constructor_declaration		// done
 	| destructor_declaration		// done
 	| type_declaration
+	| error
+	  {
+		Report.Error (1519, lexer.Location, "Unexpected symbol `{0}' in class, struct, or interface member declaration",
+			GetSymbolName (yyToken));
+		$$ = null;
+	  }
 	;
 
 struct_declaration
@@ -1505,7 +1511,7 @@ fixed_parameter
 	  type
 	  {
 		Report.Error (1001, GetLocation ($3), "Identifier expected");
-		$$ = null;
+		$$ = new Parameter ((FullNamedExpression) $3, "NeedSomeGeneratorHere", (Parameter.Modifier) $2, (Attributes) $1, lexer.Location);		
 	  }
 	| opt_attributes
 	  opt_parameter_modifier
@@ -1780,7 +1786,15 @@ set_accessor_declaration
 
 accessor_body
 	: block 
-	| SEMICOLON		{ $$ = null; }
+	| SEMICOLON
+	  {
+	  	$$ = null;
+	  }
+	| error
+	  {
+	  	Error_SyntaxError (1043, yyToken);
+	  	$$ = null;
+	  }
 	;
 
 interface_declaration
@@ -2250,7 +2264,7 @@ event_declaration
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.Allowed;
 
-		Report.Error (1002, GetLocation ($6), "Expecting {0}, got {1}", GetExpecting (), GetTokenName (yyToken));
+		Error_SyntaxError (yyToken);
 		$$ = null;
 	  }
 	;
@@ -2607,7 +2621,7 @@ opt_type_argument_list
 	| OP_GENERICS_LT error
 	  {
 		Error_TypeExpected (lexer.Location);
-		$$ = new TypeParameterName ("", null, lexer.Location);
+		$$ = new TypeArguments (lexer.Location);
 	  }
 	;
 
@@ -2729,10 +2743,10 @@ type_parameter
   	  }
   	| error
   	  {
-  	  	if (GetTokenName (yyToken) == "<type>")
+  	  	if (GetTokenName (yyToken) == "type")
 			Report.Error (81, GetLocation ($1), "Type parameter declaration must be an identifier not a type");
 		else
-			Report.Error (1002, GetLocation ($1), "Expecting {0}, got {1}", GetExpecting (), GetTokenName (yyToken));
+			Error_SyntaxError (yyToken);
 			
   	  	$$ = new TypeParameterName ("", null, lexer.Location);
   	  }
@@ -3048,10 +3062,7 @@ member_access
 invocation_expression
 	: primary_expression OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
-		if ($1 == null)
-			Report.Error (1, (Location) $2, "Parse error");
-	        else
-			$$ = new Invocation ((Expression) $1, (ArrayList) $3);
+		$$ = new Invocation ((Expression) $1, (ArrayList) $3);
 	  }
 	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS OPEN_PARENS CLOSE_PARENS
 	  {
@@ -3327,26 +3338,25 @@ object_or_delegate_creation_expression
 	  }
 	;
 
+
 array_creation_expression
 	: NEW simple_type OPEN_BRACKET expression_list CLOSE_BRACKET 
-	  opt_rank_specifier
+	  opt_rank_specifier	// shift/reduce on OPEN_BRACE
 	  opt_array_initializer
 	  {
 		$$ = new ArrayCreation ((FullNamedExpression) $2, (ArrayList) $4, (string) $6, (ArrayList) $7, (Location) $1);
 	  }
-	| NEW simple_type rank_specifiers array_initializer
+	| NEW simple_type rank_specifiers opt_array_initializer
 	  {
+	  	if ($4 == null)
+	  		Report.Error (1586, GetLocation ($1), "Array creation must have array size or array initializer");
+
 		$$ = new ArrayCreation ((FullNamedExpression) $2, (string) $3, (ArrayList) $4, (Location) $1);
 	  }
 	| NEW rank_specifiers array_initializer
 	  {
 		$$ = new ImplicitlyTypedArrayCreation ((string) $2, (ArrayList) $3, (Location) $1);
 	  }
-	| NEW error
-	  {
-		Report.Error (1031, (Location) $1, "Type expected");
-		$$ = null;
-	  }          
 	| NEW simple_type error
 	  {
 		Report.Error (1526, (Location) $1, "A new expression requires () or [] after type");
@@ -3422,11 +3432,11 @@ anonymous_type_parameter
 opt_rank_specifier
 	: /* empty */
 	  {
-		  $$ = "";
+		$$ = "";
 	  }
 	| rank_specifiers
 	  {
-			$$ = $1;
+		$$ = $1;
 	  }
 	;
 
@@ -3448,28 +3458,27 @@ opt_rank_specifier_or_nullable
 	;
 
 rank_specifiers
-	: rank_specifier opt_rank_specifier
+	: rank_specifier
+	| rank_specifier rank_specifiers
 	  {
 		$$ = (string) $2 + (string) $1;
 	  }
 	;
 
 rank_specifier
-	: OPEN_BRACKET opt_dim_separators CLOSE_BRACKET
+	: OPEN_BRACKET CLOSE_BRACKET
+	  {
+		$$ = "[]";
+	  }
+	| OPEN_BRACKET dim_separators CLOSE_BRACKET
 	  {
 		$$ = "[" + (string) $2 + "]";
 	  }
-	;
-
-opt_dim_separators
-	: /* empty */
+	| OPEN_BRACKET error CLOSE_BRACKET
 	  {
-		$$ = "";
+		ArrayCreation.Error_IncorrectArrayInitializer (GetLocation ($1));
+		$$ = "[]";
 	  }
-	| dim_separators
-	  {
-		  $$ = $1;
-	  }		  
 	;
 
 dim_separators
@@ -3518,6 +3527,11 @@ variable_initializer_list
 		ArrayList list = (ArrayList) $1;
 		list.Add ($3);
 		$$ = list;
+	  }
+	| error
+	  {
+	  	Error_SyntaxError (yyToken);
+	  	$$ = new ArrayList ();
 	  }
 	;
 
@@ -4569,7 +4583,7 @@ statement_expression
 	  }
 	| error
 	  {
-		Report.Error (1002, GetLocation ($1), "Expecting {0}, got {1}", GetExpecting (), GetTokenName (yyToken));
+		Error_SyntaxError (yyToken);
 		$$ = null;
 	  }
 	;
@@ -4585,7 +4599,7 @@ interactive_statement_expression
 	  }
 	| error
 	  {
-		Report.Error (1002, GetLocation ($1), "Expecting {0}, got {1}", GetExpecting (), GetTokenName (yyToken));
+		Error_SyntaxError (yyToken);
 		$$ = null;
 	  }
 	;
@@ -6002,24 +6016,57 @@ public NamespaceEntry CurrentNamespace {
        }
 }
 
-public string GetExpecting ()
+
+void Error_SyntaxError (int token)
+{
+	Error_SyntaxError (1525, token);
+}
+
+void Error_SyntaxError (int error_code, int token)
+{
+	string symbol = GetSymbolName (token);
+	string expecting = GetExpecting ();
+	if (expecting != null)
+		Report.Error (error_code, lexer.Location, "Unexpected symbol `{0}', expecting {1}",
+			symbol, expecting);	  
+	else
+		Report.Error (error_code, lexer.Location, "Unexpected symbol `{0}'", symbol);
+}
+
+string GetExpecting ()
 {
 	int [] tokens = yyExpectingTokens (yyExpectingState);
 	if (tokens.Length == 1)
 		return "`" + GetTokenName (tokens [0]) + "'";
 	
-	StringBuilder sb = new StringBuilder ();
 	ArrayList names = new ArrayList ();
+	bool has_type = false;
+	bool has_identifier = false;
 	for (int i = 0; i < tokens.Length; i++){
-		string name = GetTokenName (tokens [i]);
+		int token = tokens [i];
+		has_identifier |= token == Token.IDENTIFIER;
+		
+		string name = GetTokenName (token);
 		if (name == "<internal>")
 			continue;
+			
+		has_type |= name == "type";
 		if (names.Contains (name))
 			continue;
 		
 		names.Add (name);
 	}
+	
+	//
+	// Too many tokens to enumerate
+	//
+	if (names.Count > 8)
+		return null;
 
+	if (has_type && has_identifier)
+		names.Remove ("identifier");
+
+	StringBuilder sb = new StringBuilder ();
 	names.Sort ();
 	int count = names.Count;
 	for (int i = 0; i < count; i++){
@@ -6033,7 +6080,58 @@ public string GetExpecting ()
 	return sb.ToString ();
 }
 
-static public string GetTokenName (int token)
+
+string GetSymbolName (int token)
+{
+	switch (token){
+	case Token.LITERAL_FLOAT:
+	case Token.LITERAL_INTEGER:
+	case Token.LITERAL_DOUBLE:
+	case Token.LITERAL_DECIMAL:
+	case Token.LITERAL_CHARACTER:
+	case Token.LITERAL_STRING:
+		return lexer.Value.ToString ();
+	case Token.IDENTIFIER:
+		return ((LocatedToken)lexer.Value).Value;
+
+	case Token.BOOL:
+		return "bool";
+	case Token.BYTE:
+		return "byte";
+	case Token.CHAR:
+		return "char";
+	case Token.VOID:
+		return "void";
+	case Token.DECIMAL:
+		return "decimal";
+	case Token.DOUBLE:
+		return "double";
+	case Token.FLOAT:
+		return "float";
+	case Token.INT:
+		return "int";
+	case Token.LONG:
+		return "long";
+	case Token.SBYTE:
+		return "sbyte";
+	case Token.SHORT:
+		return "short";
+	case Token.STRING:
+		return "string";
+	case Token.UINT:
+		return "uint";
+	case Token.ULONG:
+		return "ulong";
+	case Token.USHORT:
+		return "ushort";
+	case Token.OBJECT:
+		return "object";
+	}
+
+	return GetTokenName (token);
+}
+
+static string GetTokenName (int token)
 {
 	switch (token){
 	case Token.ABSTRACT:
@@ -6106,8 +6204,6 @@ static public string GetTokenName (int token)
 		return "new";
 	case Token.NULL:
 		return "null";
-	case Token.OBJECT:
-		return "object";
 	case Token.OPERATOR:
 		return "operator";
 	case Token.OUT:
@@ -6284,7 +6380,8 @@ static public string GetTokenName (int token)
 	case Token.UINT:
 	case Token.ULONG:
 	case Token.USHORT:
-		return "<type>";
+	case Token.OBJECT:
+		return "type";
 	
 	case Token.ASSIGN:
 		return "=";
