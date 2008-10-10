@@ -1,3 +1,8 @@
+2008-10-10  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc.c: Use SP (r1), not frame_reg (which might be r31) to
+	restore registers when doing tail calls.
+
 2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* simd-intrinsics.c (emit_intrinsics): Vector4u was renamed to
