@@ -1,3 +1,7 @@
+2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_create_from_typedef): Vector4u was renamed to
+	Vector4ui.
 
 2008-10-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

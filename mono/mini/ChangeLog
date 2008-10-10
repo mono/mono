@@ -1,5 +1,10 @@
 2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* simd-intrinsics.c (emit_intrinsics): Vector4u was renamed to
+	Vector4ui.
+
+2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* basic-simd.cs: Add test for Vecto16b.PackWithUnsignedSaturation.
 
 2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
