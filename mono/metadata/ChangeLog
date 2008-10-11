@@ -1,5 +1,11 @@
 2008-10-11  Zoltan Varga  <vargaz@gmail.com>
 
+	Backport of r115524.
+	
+	* reflection.c: Implement DISABLE_REFLECTION_EMIT, remove some
+	#ifdef DISABLE_REFLECTION_SAVE stuff, only the exported functions need to
+	be #ifdef-ed out, the linker will remove the rest.
+
 	Backport of r114976.
 
 	* marshal.c (mono_marshal_get_delegate_begin_invoke): Put the wrapper in
