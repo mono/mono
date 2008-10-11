@@ -1468,6 +1468,8 @@ reflection_methodbuilder_from_dynamic_method (ReflectionMethodBuilder *rmb, Mono
 	rmb->refs = NULL;
 }	
 
+#ifndef DISABLE_REFLECTION_EMIT_SAVE
+
 static void
 mono_image_add_methodimpl (MonoDynamicImage *assembly, MonoReflectionMethodBuilder *mb)
 {
@@ -1563,6 +1565,8 @@ mono_image_get_ctor_info (MonoDomain *domain, MonoReflectionCtorBuilder *mb, Mon
 	mono_image_basic_method (&rmb, assembly);
 	mb->table_idx = *rmb.table_idx;
 }
+
+#endif /* DISABLE_REFLECTION_EMIT_SAVE */
 
 static char*
 type_get_fully_qualified_name (MonoType *type)
@@ -1802,6 +1806,8 @@ encode_marshal_blob (MonoDynamicImage *assembly, MonoReflectionMarshal *minfo) {
 	return idx;
 }
 
+#ifndef DISABLE_REFLECTION_EMIT_SAVE
+
 static void
 mono_image_get_field_info (MonoReflectionFieldBuilder *fb, MonoDynamicImage *assembly)
 {
@@ -2005,6 +2011,8 @@ mono_image_get_event_info (MonoReflectionEventBuilder *eb, MonoDynamicImage *ass
 		values [MONO_METHOD_SEMA_ASSOCIATION] = (eb->table_idx << MONO_HAS_SEMANTICS_BITS) | MONO_HAS_SEMANTICS_EVENT;
 	}
 }
+
+#endif /* DISABLE_REFLECTION_EMIT_SAVE */
 
 static void
 encode_constraints (MonoReflectionGenericParam *gparam, guint32 owner, MonoDynamicImage *assembly)
@@ -2968,6 +2976,8 @@ mono_image_get_array_token (MonoDynamicImage *assembly, MonoReflectionArrayMetho
 	m->table_idx = am->token & 0xffffff;
 	return am->token;
 }
+
+#ifndef DISABLE_REFLECTION_EMIT_SAVE
 
 /*
  * Insert into the metadata tables all the info about the TypeBuilder tb.
@@ -4260,6 +4270,16 @@ mono_image_build_metadata (MonoReflectionModuleBuilder *moduleb)
 	fixup_cattrs (assembly);
 }
 
+#else /* DISABLE_REFLECTION_EMIT_SAVE */
+
+void
+mono_image_build_metadata (MonoReflectionModuleBuilder *moduleb)
+{
+	g_error ("This mono runtime was configured with --enable-minimal=reflection_emit_save, so saving of dynamic assemblies is not supported.");
+}
+
+#endif /* DISABLE_REFLECTION_EMIT_SAVE */
+
 /*
  * mono_image_insert_string:
  * @module: module builder object
@@ -4775,6 +4795,8 @@ mono_image_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
 	mono_assembly_invoke_load_hook ((MonoAssembly*)assembly);
 }
 
+#ifndef DISABLE_REFLECTION_EMIT_SAVE
+
 static int
 calc_section_size (MonoDynamicImage *assembly)
 {
@@ -5056,7 +5078,8 @@ checked_write_file (HANDLE f, gconstpointer buffer, guint32 numbytes)
  * assembly->pefile where it can be easily retrieved later in chunks.
  */
 void
-mono_image_create_pefile (MonoReflectionModuleBuilder *mb, HANDLE file) {
+mono_image_create_pefile (MonoReflectionModuleBuilder *mb, HANDLE file)
+{
 	MonoMSDOSHeader *msdos;
 	MonoDotNetHeader *header;
 	MonoSectionTable *section;
@@ -5407,6 +5430,16 @@ mono_image_create_pefile (MonoReflectionModuleBuilder *mb, HANDLE file) {
 	g_hash_table_destroy (assembly->blob_cache);
 	assembly->blob_cache = NULL;
 }
+
+#else /* DISABLE_REFLECTION_EMIT_SAVE */
+
+void
+mono_image_create_pefile (MonoReflectionModuleBuilder *mb, HANDLE file)
+{
+	g_assert_not_reached ();
+}
+
+#endif /* DISABLE_REFLECTION_EMIT_SAVE */
 
 MonoReflectionModule *
 mono_image_load_module_dynamic (MonoReflectionAssemblyBuilder *ab, MonoString *fileName)
