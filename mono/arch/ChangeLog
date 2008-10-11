@@ -1,3 +1,7 @@
+2008-10-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* amd64/amd64-codegen.h (amd64_jump_code_size): Fix the 64 bit support.
+
 2008-10-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* amd64/amd64-codegen.h (amd64_jump_code_size): Handle non 32-bit targets.
