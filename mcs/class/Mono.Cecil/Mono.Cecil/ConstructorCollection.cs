@@ -109,6 +109,9 @@ namespace Mono.Cecil {
 
 		internal MethodDefinition GetConstructorInternal (bool isStatic, IList parameters)
 		{
+			if (parameters == null)
+				parameters = Type.EmptyTypes;
+
 			foreach (MethodDefinition ctor in this) {
 				if (ctor.IsStatic != isStatic || ctor.Parameters.Count != parameters.Count)
 					continue;
