@@ -1,3 +1,10 @@
+2008-09-18  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r113381.
+	
+	* TcpConnectionPool.cs: Set the NoDelay flag on the socket to avoid 
+	excessive waiting by the tcp stack. Fixes #416462.
+
 2008-06-18  Robert Jordan  <robertj@gmx.net>
 
 	* TcpMessageIO.cs: Handle zero length streams. Fixes #398783.
