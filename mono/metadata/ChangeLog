@@ -1,4 +1,11 @@
 2008-10-11  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r114976.
+
+	* marshal.c (mono_marshal_get_delegate_begin_invoke): Put the wrapper in
+	the delegate klass so it can work with full-aot.
+	(mono_marshal_get_delegate_end_invoke): Ditto.
+	(mono_marshal_get_delegate_invoke): Ditto.
 	
 	Backport of r115519.
 	
