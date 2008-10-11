@@ -1,5 +1,7 @@
 2008-10-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c: Implement DISABLE_COM.
+
 	* reflection.c: Implement DISABLE_REFLECTION_EMIT_SAVE.
 
 2008-10-11  Miguel de Icaza  <miguel@novell.com>
