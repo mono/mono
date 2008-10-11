@@ -477,6 +477,11 @@ namespace System.Windows.Forms {
 
 			timer.Stop ();
 
+			// If the target is a mwf control, return until DragEnter/DragLeave has been fired,
+			// which means the respective -already sent- dnd ClientMessages have been received and handled.
+			if (control != null)
+				Application.DoEvents ();
+
 			if (!dropped)
 				return DragDropEffects.None;
 			if (drag_event != null)

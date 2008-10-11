@@ -1,3 +1,13 @@
+2008-10-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* X11Dnd.cs: Try to call Application.DoEvents before returning in a
+	call to StartDrag, since we must fire DragDrop/DragLeave *before*
+	that, as .net does - instead of firing DragDrop/DragLeave *after* the
+	call to Control.DoDragDrop has completed. This is needed since at the
+	point of returning, we have sent related dnd ClientMessages, but we
+	need to wait for them to fire the wmf respective ones.
+	Fixes #325076.
+
 2008-10-09  Everaldo Canuto  <ecanuto@novell.com>
 
 	* LinkLabel.cs: Recreate link pieces when change Padding.
