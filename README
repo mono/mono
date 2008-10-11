@@ -336,6 +336,9 @@ This is Mono.
 		large_code:
 			Disables support for large assemblies.
 
+		reflection_emit_save:
+			Drop support for saving dynamically created assemblies (AssemblyBuilderAccess.Save) in System.Reflection.Emit.
+
 		logging:
 	  		Disables support for debug logging.
 
