@@ -232,6 +232,8 @@ typedef struct {
 	MonoCCW* ccw;
 } MonoCCWInterface;
 
+#ifndef DISABLE_COM
+
 /* IUnknown */
 static int STDCALL cominterop_ccw_addref (MonoCCWInterface* ccwe);
 
@@ -541,6 +543,8 @@ cominterop_get_hresult_for_exception (MonoException* exc)
 	return hr;
 }
 
+#endif /* DISABLE_COM */
+
 void
 mono_marshal_init (void)
 {
@@ -607,6 +611,7 @@ mono_marshal_init (void)
 		register_icall (mono_upgrade_remote_class_wrapper, "mono_upgrade_remote_class_wrapper", "void object object", FALSE);
 		register_icall (type_from_handle, "type_from_handle", "object ptr", FALSE);
 		register_icall (mono_gc_wbarrier_generic_store, "wb_generic", "void ptr object", FALSE);
+#ifndef DISABLE_COM
 		register_icall (cominterop_get_method_interface, "cominterop_get_method_interface", "ptr ptr", FALSE);
 		register_icall (cominterop_get_function_pointer, "cominterop_get_function_pointer", "ptr ptr int32", FALSE);
 		register_icall (cominterop_object_is_rcw, "cominterop_object_is_rcw", "int32 object", FALSE);
@@ -614,6 +619,7 @@ mono_marshal_init (void)
 		register_icall (cominterop_get_ccw_object, "cominterop_get_ccw_object", "object ptr int32", FALSE);
 		register_icall (cominterop_get_hresult_for_exception, "cominterop_get_hresult_for_exception", "int32 object", FALSE);
 		register_icall (cominterop_get_interface, "cominterop_get_interface", "ptr object ptr int32", FALSE);
+#endif /* DISABLE_COM */
 	}
 }
 
@@ -1347,6 +1353,8 @@ mono_mb_emit_xdomain_check (MonoMethodBuilder *mb, int branch_code)
 	return pos;
 }
 
+#ifndef DISABLE_COM
+
 static void
 mono_mb_emit_cominterop_call (MonoMethodBuilder *mb, MonoMethodSignature *sig, MonoMethod* method)
 {
@@ -1361,6 +1369,8 @@ mono_mb_emit_cominterop_call (MonoMethodBuilder *mb, MonoMethodSignature *sig, M
 	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
 	mono_mb_emit_byte (mb, CEE_MONO_RESTORE_LMF);
 }
+
+#endif /* DISABLE_COM */
 
 static void
 mono_mb_emit_exception_marshal_directive (MonoMethodBuilder *mb, const char *msg)
@@ -1701,6 +1711,8 @@ emit_ptr_to_object_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 	case MONO_MARSHAL_CONV_ARRAY_LPARRAY:
 		g_error ("Structure field of type %s can't be marshalled as LPArray", mono_class_from_mono_type (type)->name);
 		break;
+
+#ifndef DISABLE_COM
 	case MONO_MARSHAL_CONV_OBJECT_INTERFACE:
 	case MONO_MARSHAL_CONV_OBJECT_IUNKNOWN:
 	case MONO_MARSHAL_CONV_OBJECT_IDISPATCH: {
@@ -1773,6 +1785,7 @@ emit_ptr_to_object_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 		mono_mb_patch_short_branch (mb, pos_null);
 		break;
 	}
+#endif /* DISABLE_COM */
 
 	case MONO_MARSHAL_CONV_SAFEHANDLE: {
 		/*
@@ -2074,6 +2087,8 @@ emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 		mono_mb_patch_branch (mb, pos);
 		break;
 	}
+
+#ifndef DISABLE_COM
 	case MONO_MARSHAL_CONV_OBJECT_INTERFACE:
 	case MONO_MARSHAL_CONV_OBJECT_IDISPATCH:
 	case MONO_MARSHAL_CONV_OBJECT_IUNKNOWN: {
@@ -2161,6 +2176,7 @@ emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 		mono_mb_patch_short_branch (mb, pos_null);
 		break;
 	}
+#endif /* DISABLE_COM */
 
 	case MONO_MARSHAL_CONV_SAFEHANDLE: {
 		int dar_release_slot, pos;
@@ -3135,6 +3151,8 @@ mono_remoting_wrapper (MonoMethod *method, gpointer *params)
 	return res;
 } 
 
+#ifndef DISABLE_COM
+
 /**
  * cominterop_get_native_wrapper_adjusted:
  * @method: managed COM Interop method
@@ -3379,6 +3397,9 @@ cominterop_get_invoke (MonoMethod *method)
 
 	return res;
 }
+
+#endif /* DISABLE_COM */
+
 /* Maps a managed object to its unmanaged representation 
  * i.e. it's COM Callable Wrapper (CCW). 
  * Key: MonoObject*
@@ -3414,8 +3435,13 @@ mono_marshal_get_remoting_invoke (MonoMethod *method)
 		return method;
 
 	/* this seems to be the best plase to put this, as all remoting invokes seem to get filtered through here */
-	if ((method->klass->is_com_object || method->klass == mono_defaults.com_object_class) && !mono_class_vtable (mono_domain_get (), method->klass)->remote)
+	if ((method->klass->is_com_object || method->klass == mono_defaults.com_object_class) && !mono_class_vtable (mono_domain_get (), method->klass)->remote) {
+#ifndef DISABLE_COM
 		return cominterop_get_invoke(method);
+#else
+		g_assert_not_reached ();
+#endif
+	}
 
 	sig = signature_no_pinvoke (method);
 
@@ -4261,12 +4287,17 @@ mono_marshal_get_xappdomain_invoke (MonoMethod *method)
 MonoMethod *
 mono_marshal_get_remoting_invoke_for_target (MonoMethod *method, MonoRemotingTarget target_type)
 {
-	if (target_type == MONO_REMOTING_TARGET_APPDOMAIN)
+	if (target_type == MONO_REMOTING_TARGET_APPDOMAIN) {
 		return mono_marshal_get_xappdomain_invoke (method);
-	else if (target_type == MONO_REMOTING_TARGET_COMINTEROP)
+	} else if (target_type == MONO_REMOTING_TARGET_COMINTEROP) {
+#ifndef DISABLE_COM
 		return cominterop_get_invoke (method);
-	else
+#else
+		g_assert_not_reached ();
+#endif
+	} else {
 		return mono_marshal_get_remoting_invoke (method);
+	}
 }
 
 G_GNUC_UNUSED static gpointer
@@ -7016,6 +7047,8 @@ emit_marshal_object (EmitMarshalContext *m, int argnum, MonoType *t,
 	return conv_arg;
 }
 
+#ifndef DISABLE_COM
+
 static int
 emit_marshal_com_interface (EmitMarshalContext *m, int argnum, MonoType *t,
 		     MonoMarshalSpec *spec, 
@@ -7330,6 +7363,8 @@ emit_marshal_com_interface (EmitMarshalContext *m, int argnum, MonoType *t,
 
 	return conv_arg;
 }
+
+#endif /* DISABLE_COM */
 
 static int
 emit_marshal_variant (EmitMarshalContext *m, int argnum, MonoType *t,
@@ -8297,10 +8332,12 @@ emit_marshal (EmitMarshalContext *m, int argnum, MonoType *t,
 		if (spec && spec->native == MONO_NATIVE_STRUCT)
 			return emit_marshal_variant (m, argnum, t, spec, conv_arg, conv_arg_type, action);
 
+#ifndef DISABLE_COM
 		if (spec && (spec->native == MONO_NATIVE_IUNKNOWN ||
 			spec->native == MONO_NATIVE_IDISPATCH ||
 			spec->native == MONO_NATIVE_INTERFACE))
 			return emit_marshal_com_interface (m, argnum, t, spec, conv_arg, conv_arg_type, action);
+#endif
 
 		if (mono_defaults.safehandle_class != NULL &&
 		    mono_class_is_subclass_of (t->data.klass,  mono_defaults.safehandle_class, FALSE))
@@ -8412,7 +8449,11 @@ mono_marshal_emit_native_wrapper (MonoImage *image, MonoMethodBuilder *mb, MonoM
 
 	/* call the native method */
 	if (MONO_CLASS_IS_IMPORT (mb->method->klass)) {
+#ifndef DISABLE_COM
 		mono_mb_emit_cominterop_call (mb, csig, &piinfo->method);
+#else
+		g_assert_not_reached ();
+#endif
 	}
 	else {
 		mono_mb_emit_native_call (mb, csig, func);
@@ -8560,8 +8601,13 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 	if ((res = mono_marshal_find_in_cache (cache, method)))
 		return res;
 
-	if (MONO_CLASS_IS_IMPORT (method->klass))
+	if (MONO_CLASS_IS_IMPORT (method->klass)) {
+#ifndef DISABLE_COM
 		return cominterop_get_native_wrapper (method);
+#else
+		g_assert_not_reached ();
+#endif
+	}
 
 	sig = mono_method_signature (method);
 
@@ -10390,6 +10436,8 @@ ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (gpointer pUnk)
 	return (*(MonoIUnknown**)pUnk)->Release(pUnk);
 }
 
+#ifndef DISABLE_COM
+
 static void*
 cominterop_get_idispatch_for_object (MonoObject* object)
 {
@@ -10405,9 +10453,12 @@ cominterop_get_idispatch_for_object (MonoObject* object)
 	}
 }
 
+#endif
+
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_GetIUnknownForObjectInternal (MonoObject* object)
 {
+#ifndef DISABLE_COM
 	if (!object)
 		return NULL;
 
@@ -10444,11 +10495,15 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetIUnknownForObjectInternal (M
 	else {
 		return cominterop_get_ccw (object, mono_defaults.iunknown_class);
 	}
+#else
+	g_assert_not_reached ();
+#endif
 }
 
 MonoObject*
 ves_icall_System_Runtime_InteropServices_Marshal_GetObjectForCCW (void* pUnk)
 {
+#ifndef DISABLE_COM
 	MonoObject* object = NULL;
 
 	if (!pUnk)
@@ -10458,17 +10513,25 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetObjectForCCW (void* pUnk)
 	object = cominterop_get_ccw_object ((MonoCCWInterface*)pUnk, TRUE);
 
 	return object;
+#else
+	g_assert_not_reached ();
+#endif
 }
 
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_GetIDispatchForObjectInternal (MonoObject* object)
 {
+#ifndef DISABLE_COM
 	return cominterop_get_idispatch_for_object (object);
+#else
+	g_assert_not_reached ();
+#endif
 }
 
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_GetCCW (MonoObject* object, MonoReflectionType* type)
 {
+#ifndef DISABLE_COM
 	MonoClass* klass = NULL;
 	void* itf = NULL;
 	g_assert (type);
@@ -10478,18 +10541,26 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetCCW (MonoObject* object, Mon
 	itf = cominterop_get_ccw (object, klass);
 	g_assert (itf);
 	return itf;
+#else
+	g_assert_not_reached ();
+#endif
 }
 
 
 MonoBoolean
 ves_icall_System_Runtime_InteropServices_Marshal_IsComObject (MonoObject* object)
 {
+#ifndef DISABLE_COM
 	return (MonoBoolean)cominterop_object_is_rcw (object);
+#else
+	g_assert_not_reached ();
+#endif
 }
 
 gint32
 ves_icall_System_Runtime_InteropServices_Marshal_ReleaseComObjectInternal (MonoObject* object)
 {
+#ifndef DISABLE_COM
 	MonoComInteropProxy* proxy = NULL;
 	gint32 ref_count = 0;
 
@@ -10506,6 +10577,9 @@ ves_icall_System_Runtime_InteropServices_Marshal_ReleaseComObjectInternal (MonoO
 		ves_icall_System_ComObject_ReleaseInterfaces (proxy->com_object);
 
 	return ref_count;
+#else
+	g_assert_not_reached ();
+#endif
 }
 
 guint32
@@ -10513,7 +10587,11 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetComSlotForMethodInfoInternal
 {
 	MONO_ARCH_SAVE_REGS;
 
+#ifndef DISABLE_COM
 	return cominterop_get_com_slot_for_method (m->method);
+#else
+	g_assert_not_reached ();
+#endif
 }
 
 guint32 
@@ -10949,12 +11027,17 @@ ves_icall_System_ComObject_ReleaseInterfaces (MonoComObject* obj)
 gpointer
 ves_icall_System_ComObject_GetInterfaceInternal (MonoComObject* obj, MonoReflectionType* type, MonoBoolean throw_exception)
 {
+#ifndef DISABLE_COM
 	return cominterop_get_interface (obj, mono_type_get_class (type->type), (gboolean)throw_exception);
+#else
+	g_assert_not_reached ();
+#endif
 }
 
 void
 ves_icall_Mono_Interop_ComInteropProxy_AddProxy (gpointer pUnk, MonoComInteropProxy* proxy)
 {
+#ifndef DISABLE_COM
 	guint32 gchandle = 0;
 	if (!rcw_hash) {
 		mono_cominterop_lock ();
@@ -10967,11 +11050,15 @@ ves_icall_Mono_Interop_ComInteropProxy_AddProxy (gpointer pUnk, MonoComInteropPr
 	mono_cominterop_lock ();
 	g_hash_table_insert (rcw_hash, pUnk, GUINT_TO_POINTER (gchandle));
 	mono_cominterop_unlock ();
+#else
+	g_assert_not_reached ();
+#endif
 }
 
 MonoComInteropProxy*
 ves_icall_Mono_Interop_ComInteropProxy_FindProxy (gpointer pUnk)
 {
+#ifndef DISABLE_COM
 	MonoComInteropProxy* proxy = NULL;
 	guint32 gchandle = 0;
 
@@ -10988,6 +11075,9 @@ ves_icall_Mono_Interop_ComInteropProxy_FindProxy (gpointer pUnk)
 		}
 	}
 	return proxy;
+#else
+	g_assert_not_reached ();
+#endif
 }
 
 /**
@@ -11554,6 +11644,8 @@ mono_win32_compat_ZeroMemory (gpointer dest, gsize length)
 
 /* Put COM Interop related stuff here */
 
+#ifndef DISABLE_COM
+
 /**
  * cominterop_get_ccw_object:
  * @ccw_entry: a pointer to the CCWEntry
@@ -12118,6 +12210,16 @@ cominterop_ccw_invoke (MonoCCWInterface* ccwe, guint32 dispIdMember,
 {
 	return MONO_E_NOTIMPL;
 }
+
+#else /* DISABLE_COM */
+
+gboolean
+mono_marshal_free_ccw (MonoObject* object)
+{
+	return FALSE;
+}
+
+#endif /* DISABLE_COM */
 
 void
 mono_marshal_find_nonzero_bit_offset (guint8 *buf, int len, int *byte_offset, guint8 *bitmask)

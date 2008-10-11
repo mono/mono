@@ -1,5 +1,9 @@
 2008-10-11  Zoltan Varga  <vargaz@gmail.com>
-
+	
+	Backport of r115519.
+	
+	* marshal.c: Implement DISABLE_COM.
+	
 	Backport of r115515.
 	
 	* reflection.c: Implement DISABLE_REFLECTION_EMIT_SAVE.
