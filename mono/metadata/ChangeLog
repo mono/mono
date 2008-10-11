@@ -1,3 +1,8 @@
+2008-10-11  Miguel de Icaza  <miguel@novell.com>
+
+	* locales.c (string_invariant_compare_char): Optimization: do not
+	call g_unichar_type unless we actually need the information.
+
 2008-10-10  Mark Probst  <mark.probst@gmail.com>
 
 	* object.c, class-internals.h: Also create remoting trampolines
