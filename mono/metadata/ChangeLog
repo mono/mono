@@ -1,5 +1,9 @@
 2008-10-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c: Implement DISABLE_REFLECTION_EMIT, remove some
+	#ifdef DISABLE_REFLECTION_SAVE stuff, only the exported functions need to
+	be #ifdef-ed out, the linker will remove the rest.
+
 	* marshal.c: Implement DISABLE_COM.
 
 	* reflection.c: Implement DISABLE_REFLECTION_EMIT_SAVE.
