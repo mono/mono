@@ -59,7 +59,7 @@ namespace MonoTests.System.Threading {
 			Assert.IsTrue(c > 20, "#1");
 			t.Change (100, 100);
 			Thread.Sleep (500);
-			Assert.IsTrue(bucket.count <= c + 6, "#2");
+			Assert.IsTrue(bucket.count <= c + 20, "#2");
 			t.Dispose ();
 		}
 
