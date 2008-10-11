@@ -1,5 +1,11 @@
-2008-10-06  Zoltan Varga  <vargaz@gmail.com>
+2008-10-11  Zoltan Varga  <vargaz@gmail.com>
 
+	Merge r115513 from HEAD.
+	
+	* configure.in: Add --enable-minimal=reflection_emit_save option.
+
+2008-10-6  Zoltan Varga  <vargaz@gmail.com>
+	
 	* configure.in: Add --enable-minimal=jit option.
 
 2008-08-28  Geoff Norton  <gnorton@novell.com>
