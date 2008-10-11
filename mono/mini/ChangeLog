@@ -1,3 +1,13 @@
+2008-10-11  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r111722. Fixes #434544.
+
+	2008-08-27  Bill Holmes  <billholmes54 at gmail.com>
+
+	* mini-amd64.c (mono_arch_output_basic_block) : Fix the OP_X86_PUSH_OBJ
+	  case to keep the stack aligned to 8.
+
+	Contributed under MIT/X11 license.
 
 Wed Oct 8 16:35:43 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
