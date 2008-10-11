@@ -1,5 +1,10 @@
 2008-10-11  Zoltan Varga  <vargaz@gmail.com>
 
+	Merge r115522 from HEAD.
+	
+	* configure.in: Make --enable-minimal=reflection_emit turn on
+	==enable-minimal=reflection_emit_save too.
+
 	Merge r115514 from HEAD.
 	
 	* README: Add docs for the option.
