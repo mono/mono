@@ -1,3 +1,9 @@
+
+Sat Oct 11 19:46:19 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c: use posix semaphores when possible so that
+	mono_gc_finalize_notify() is signal safe.
+
 2008-10-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c: Implement DISABLE_REFLECTION_EMIT, remove some
