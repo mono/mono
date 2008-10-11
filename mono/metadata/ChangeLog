@@ -1,5 +1,15 @@
 2008-10-11  Zoltan Varga  <vargaz@gmail.com>
 
+	Backport of r113969.
+	
+	* object.c (mono_object_get_virtual_method): Fix an assertion introduced
+	by the previous change.
+
+	Backport of r113166.
+	
+	* object.c (mono_object_get_virtual_method): Handle the case method->slot
+	is not set. Fixes #426309.
+	
 	Backport of r114585.
 	
 	* marshal.c (emit_marshal_string): Applied a variant of a patch by
