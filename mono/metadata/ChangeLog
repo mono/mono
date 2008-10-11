@@ -1,5 +1,11 @@
 2008-10-11  Zoltan Varga  <vargaz@gmail.com>
 
+	Backport of r114585.
+	
+	* marshal.c (emit_marshal_string): Applied a variant of a patch by
+	tom hindle <tom_hindle@sil.org>. Fix byref native-to-managed string
+	marshalling. Fixes #431304.
+
 	Backport of r115524.
 	
 	* reflection.c: Implement DISABLE_REFLECTION_EMIT, remove some
