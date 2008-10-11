@@ -1,3 +1,7 @@
+2008-10-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c: Implement DISABLE_REFLECTION_EMIT_SAVE.
+
 2008-10-11  Miguel de Icaza  <miguel@novell.com>
 
 	* locales.c (string_invariant_compare_char): Optimization: do not
