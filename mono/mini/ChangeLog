@@ -1,5 +1,10 @@
 2008-10-11  Zoltan Varga  <vargaz@gmail.com>
 
+	Backport of r113918.
+	
+	* inssel.brg (mini_emit_castclass): Avoid the szarray!=array checks for
+	arrays of arrays. Fixes #428406.
+
 	Backport of r111722. Fixes #434544.
 
 	2008-08-27  Bill Holmes  <billholmes54 at gmail.com>
