@@ -1,3 +1,10 @@
+2008-10-12  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r115495.
+	
+	* tramp-amd64.c (mono_arch_create_rgctx_lazy_fetch_trampoline_full): Increase
+	the max length to 64.
+
 2008-10-11  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r113918.
