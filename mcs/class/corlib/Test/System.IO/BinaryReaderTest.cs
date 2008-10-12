@@ -1310,7 +1310,22 @@ namespace MonoTests.System.IO
 			stream.Close ();
 		}
 	}
-	
+
+	[Test]
+	[ExpectedException (typeof (FormatException))]
+	public void ReadStringInvalidLength ()
+	{
+		int count = 1000;
+
+		byte[] x = new byte[count];
+
+		for (int i = 0; i < count; i++) 
+			x[i] = 0xFF;
+
+		BinaryReader reader = new BinaryReader (new MemoryStream (x));
+		reader.ReadString ();
+	}
+
 	[Test]
 	public void ReadUInt16 ()
 	{

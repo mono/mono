@@ -1,3 +1,7 @@
+2008-10-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* BinaryReaderTest.cs: Add a test for #434581.
+
 2008-08-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* StreamWriterTest.cs: Removed Constructor2_Path_Whitespace test, as
