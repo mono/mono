@@ -1,3 +1,9 @@
+2008-10-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Cecil.Cil/SymbolStoreHelper.cs: Change two "static readonly"
+	fields into const.
+	[Found using Gendarme PreferLiteralOverInitOnlyFieldsRule]
+
 2008-10-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Cecil/ConstructorCollection.cs: Fix a NRE if a null parameter
