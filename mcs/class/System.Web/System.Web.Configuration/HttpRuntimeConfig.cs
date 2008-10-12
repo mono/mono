@@ -42,21 +42,23 @@ namespace System.Web.Configuration
 {
 	sealed class HttpRuntimeConfig
 	{
-		public int ExecutionTimeout = 90; // seconds
-		public int MaxRequestLength = 4096; // KB
-		public int RequestLengthDiskThreshold = 256; // KB
-		public bool UseFullyQualifiedRedirectUrl = false;
-		public int MinFreeThreads = 8;
-		public int MinLocalRequestFreeThreads = 4;
+		public bool ApartmentThreading;
 		public int AppRequestQueueLimit = 100;
+		public int DelayNotificationTimeout = 5;
+		public bool EnableHeaderChecking = true;
 		public bool EnableKernelOutputCache = true;
 		public bool EnableVersionHeader = true;
-		public bool RequireRootedSaveAsPath = true;
-		public int IdleTimeout = 20; // minutes
-		public bool Enable = true;
-		public string VersionHeader;
-		public bool EnableHeaderChecking = true;
-		
+		public int ExecutionTimeout = 90; // seconds
+		public int MaxRequestLength = 4096; // KB
+		public int MaxWaitChangeNotification;
+		public int MinFreeThreads = 8;
+		public int MinLocalRequestFreeThreads = 4;
+		public int RequestLengthDiskThreshold = 256; // KB
+		public bool SendCacheControlHeader = true;
+		public int ShutdownTimeout = 20; // minutes
+		public bool UseFullyQualifiedRedirectUrl;
+		public int WaitChangeNotification;
+
 		/* Only the config. handler should create instances of this. Use GetInstance (context) */
 		public HttpRuntimeConfig (object p)
 		{
@@ -81,6 +83,13 @@ namespace System.Web.Configuration
 		
 		void Init (HttpRuntimeConfig parent)
 		{
+			ApartmentThreading = parent.ApartmentThreading;
+			DelayNotificationTimeout = parent.DelayNotificationTimeout;
+			MaxWaitChangeNotification = parent.MaxWaitChangeNotification;
+			SendCacheControlHeader = parent.SendCacheControlHeader;
+			ShutdownTimeout = parent.ShutdownTimeout;
+			UseFullyQualifiedRedirectUrl = parent.UseFullyQualifiedRedirectUrl;
+			WaitChangeNotification = parent.WaitChangeNotification;
 			ExecutionTimeout = parent.ExecutionTimeout;
 			MaxRequestLength = parent.MaxRequestLength;
 			RequestLengthDiskThreshold = parent.RequestLengthDiskThreshold;
@@ -90,9 +99,6 @@ namespace System.Web.Configuration
 			AppRequestQueueLimit = parent.AppRequestQueueLimit;
 			EnableKernelOutputCache = parent.EnableKernelOutputCache;
 			EnableVersionHeader = parent.EnableVersionHeader;
-			RequireRootedSaveAsPath = parent.RequireRootedSaveAsPath;
-			IdleTimeout = parent.IdleTimeout;
-			Enable = parent.Enable;
 			EnableHeaderChecking = parent.EnableHeaderChecking;
 		}
 	}

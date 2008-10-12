@@ -106,16 +106,13 @@ namespace System.Web {
 
 		static HttpResponse ()
 		{
-			string version = null;
 #if NET_2_0
 			HttpRuntimeSection config = WebConfigurationManager.GetSection ("system.web/httpRuntime") as HttpRuntimeSection;
 #else
 			HttpRuntimeConfig config = HttpContext.GetAppConfig ("system.web/httpRuntime") as HttpRuntimeConfig;
-			version = config.VersionHeader;
 #endif
 			if (config.EnableVersionHeader) {
-				if (version == null)
-					version = Environment.Version.ToString (3);
+				string version = Environment.Version.ToString (3);
 				version_header = new UnknownResponseHeader ("X-AspNet-Version", version);
 			}
 		}

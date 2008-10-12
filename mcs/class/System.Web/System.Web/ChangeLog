@@ -1,3 +1,9 @@
+2008-10-12  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* HttpResponse.cs: Simplify code for outputting ASP.NET version, as
+	version header cannot be configured. MS corrected this documenation
+	error in .NET 2.0 SDK.
+
 2008-10-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpApplication.cs: make sure we release the resources used by the

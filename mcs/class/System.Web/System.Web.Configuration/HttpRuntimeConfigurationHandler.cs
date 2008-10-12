@@ -45,23 +45,25 @@ namespace System.Web.Configuration
 
 			HttpRuntimeConfig config = new HttpRuntimeConfig (parent);
 
+			config.ApartmentThreading = AttBoolValue (section, "apartmentThreading", false);
+			config.AppRequestQueueLimit = AttUIntValue (section, "appRequestQueueLimit", 100);
+			config.DelayNotificationTimeout = AttUIntValue (section, "delayNotificationTimeout", 5);
+			config.EnableHeaderChecking = AttBoolValue (section, "enableHeaderChecking", true);
+			config.EnableKernelOutputCache = AttBoolValue (section, "enableKernelOutputCache", true);
+			config.EnableVersionHeader = AttBoolValue (section, "enableVersionHeader", true);
 			config.ExecutionTimeout = AttUIntValue (section, "executionTimeout", 90);
 			config.MaxRequestLength = AttUIntValue (section, "maxRequestLength", 4096);
-			config.UseFullyQualifiedRedirectUrl = AttBoolValue (section, "useFullyQualifiedRedirectUrl", false);
+			config.MaxWaitChangeNotification = AttUIntValue (section, "maxWaitChangeNotification", 0);
 			config.MinFreeThreads = AttUIntValue (section, "minFreeThreads", 8);
-			config.MinLocalRequestFreeThreads = AttUIntValue (section, "minFreeLocalRequestFreeThreads", 4);
-			config.AppRequestQueueLimit = AttUIntValue (section, "appRequestQueueLimit", 100);
-			config.VersionHeader = AttValue (section, "versionHeader");
+			config.MinLocalRequestFreeThreads = AttUIntValue (section, "minLocalRequestFreeThreads", 4);
 			config.RequestLengthDiskThreshold = AttUIntValue (section, "requestLengthDiskThreshold", 256);
-			config.RequireRootedSaveAsPath = AttBoolValue (section, "requireRootedSaveAsPath", true);
-			config.IdleTimeout = AttUIntValue (section, "idleTimeout", 20);
-			config.Enable = AttBoolValue (section, "enable", true);
-			config.EnableVersionHeader = AttBoolValue (section, "enableVersionHeader", true);
-
+			config.SendCacheControlHeader = AttBoolValue (section, "sendCacheControlHeader", true);
+			config.ShutdownTimeout = AttUIntValue (section, "shutdownTimeout", 90);
+			config.UseFullyQualifiedRedirectUrl = AttBoolValue (section, "useFullyQualifiedRedirectUrl", false);
+			config.WaitChangeNotification = AttUIntValue (section, "waitChangeNotification", 0);
 			return config;
 		}
 
-		//
 		static bool AttBoolValue (XmlNode node, string name, bool _default)
 		{
 			string v = AttValue (node, name);
@@ -91,7 +93,6 @@ namespace System.Web.Configuration
 			return result;
 		}
 
-
 		static string AttValue (XmlNode node, string name)
 		{
 			return HandlersUtil.ExtractAttributeValue (name, node, true);
@@ -101,7 +102,6 @@ namespace System.Web.Configuration
 		{
 			HandlersUtil.ThrowException (message, node);
 		}
-		//
 	}
 }
 
