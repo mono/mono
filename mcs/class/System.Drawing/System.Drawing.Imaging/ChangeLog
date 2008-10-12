@@ -1,3 +1,9 @@
+2008-10-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ColorPalette.cs, ImageFormat.cs: Remove unneeded field 
+	initialization to their default values.
+	[Found using Gendarme AvoidUnneededFieldInitializationRule]
+
 2008-08-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FrameDimension.cs: Fix double-cast in Equals (found using Gendarme).

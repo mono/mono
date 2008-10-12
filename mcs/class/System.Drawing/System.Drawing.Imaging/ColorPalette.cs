@@ -50,7 +50,6 @@ namespace System.Drawing.Imaging
 		//
 		internal ColorPalette ()
 		{
-			flags = 0;
 			entries = new Color [0];
 		}
 

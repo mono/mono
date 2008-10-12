@@ -71,7 +71,6 @@ namespace System.Drawing.Imaging {
 		// constructors
 		public ImageFormat (Guid guid)
 		{
-			this.name = null;
 			this.guid = guid;
 		}
 
