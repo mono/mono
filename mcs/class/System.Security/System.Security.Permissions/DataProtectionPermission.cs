@@ -44,8 +44,6 @@ namespace System.Security.Permissions {
 		{
 			if (PermissionHelper.CheckPermissionState (state, true) == PermissionState.Unrestricted)
 				_flags = DataProtectionPermissionFlags.AllFlags;
-			else
-				_flags = DataProtectionPermissionFlags.NoFlags;
 		}
 
 		public DataProtectionPermission (DataProtectionPermissionFlags flags) 

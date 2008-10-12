@@ -43,7 +43,6 @@ namespace System.Security.Permissions {
 		public DataProtectionPermissionAttribute (SecurityAction action)
 			: base (action) 
 		{
-			_flags = DataProtectionPermissionFlags.NoFlags;
 		}
 
 

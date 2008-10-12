@@ -1,3 +1,9 @@
+2008-10-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DataProtectionPermissionAttribute.cs, DataProtectionPermission.cs:
+	Remove unneeded field initialization to their default values.
+	[Found using Gendarme AvoidUnneededFieldInitializationRule]
+
 2005-10-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DataProtectionPermission.cs: Fixed Flags property to allow multiple 
