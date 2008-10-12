@@ -254,16 +254,22 @@ namespace System.IO {
 		protected int Read7BitEncodedInt() {
 			int ret = 0;
 			int shift = 0;
+			int len;
 			byte b;
 
-			do {
+			for (len = 0; len < 5; ++len) {
 				b = ReadByte();
 				
 				ret = ret | ((b & 0x7f) << shift);
 				shift += 7;
-			} while ((b & 0x80) == 0x80);
+				if ((b & 0x80) == 0)
+					break;
+			}
 
-			return ret;
+			if (len < 5)
+				return ret;
+			else
+				throw new FormatException ("Too many bytes in what should have been a 7 bit encoded Int32.");
 		}
 
 		public virtual bool ReadBoolean() {

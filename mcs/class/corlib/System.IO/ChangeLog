@@ -1,3 +1,8 @@
+2008-10-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* BinaryReader.cs (Read7BitEncodedInt): Check for an invalid encoding.
+	Fixes #434581.
+
 2008-08-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileStream.cs, MonoIO.cs: For Silverlight 2.0 (NET_2_1) we always
