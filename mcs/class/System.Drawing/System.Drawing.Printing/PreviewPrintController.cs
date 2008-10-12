@@ -43,7 +43,6 @@ namespace System.Drawing.Printing
 
 		public PreviewPrintController()
 		{
-			useantialias = false;
 			pageInfoList = new ArrayList ();
 		}
 #if NET_2_0

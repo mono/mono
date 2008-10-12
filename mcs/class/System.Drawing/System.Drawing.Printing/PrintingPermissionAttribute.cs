@@ -44,7 +44,6 @@ namespace System.Drawing.Printing {
 			: base (action)
 		{
 			// seems to always assign PrintingPermissionLevel.NoPrinting ...
-			_level = PrintingPermissionLevel.NoPrinting;
 		}
 		
 		public PrintingPermissionLevel Level {

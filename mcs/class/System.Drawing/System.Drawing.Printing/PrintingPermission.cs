@@ -46,8 +46,6 @@ namespace System.Drawing.Printing {
 		{
 			if (CheckPermissionState (state, true) == PermissionState.Unrestricted)
 				_Level = PrintingPermissionLevel.AllPrinting;
-			else
-				_Level = PrintingPermissionLevel.NoPrinting;
 		}
 
 		public PrintingPermission (PrintingPermissionLevel printingLevel) 

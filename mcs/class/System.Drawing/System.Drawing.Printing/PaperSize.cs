@@ -59,7 +59,6 @@ namespace System.Drawing.Printing
 			this.width = width;
 			this.height = height;
 			this.name = name;
-			this.kind = PaperKind.Custom;
 		}
 
 		internal PaperSize(string name, int width, int height, PaperKind kind, bool isDefault)
@@ -67,7 +66,6 @@ namespace System.Drawing.Printing
 			this.width = width;
 			this.height = height;
 			this.name = name;
-			this.kind = PaperKind.Custom;
 			this.is_default = isDefault;
 		}
 
