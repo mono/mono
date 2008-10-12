@@ -1,3 +1,9 @@
+2008-10-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EncryptedReference.cs, EncryptedType.cs: Remove unneeded field
+	initialization to their default values.
+	[Found using Gendarme AvoidUnneededFieldInitializationRule]
+
 2008-09-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SignedXmlTest.cs: Add support for signing XML using HMACSHA256,

@@ -48,7 +48,6 @@ namespace System.Security.Cryptography.Xml {
 
 		protected EncryptedReference ()
 		{
-			uri = null;
 			TransformChain = new TransformChain ();
 		}
 	

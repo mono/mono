@@ -53,13 +53,8 @@ namespace System.Security.Cryptography.Xml {
 		protected EncryptedType ()
 		{
 			cipherData = new CipherData ();
-			encoding = null;
-			encryptionMethod = null;
 			encryptionProperties = new EncryptionPropertyCollection ();
-			id = null;
 			keyInfo = new KeyInfo ();
-			mimeType = null;
-			type = null;
 		}
 	
 		#endregion // Constructors
