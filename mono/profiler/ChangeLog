@@ -1,4 +1,8 @@
-2008-09-08  Massimiliano Mantione <massi@ximian.com>
+2008-10-10  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c:
+	Added "aci" option to emit the object "id" at each allocation. 
+
+2008-10-10  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c:
 	Added support for handling the stack trace of each allocation event.
 	- MonoProfilerDirectives: added directive to state that allocations
