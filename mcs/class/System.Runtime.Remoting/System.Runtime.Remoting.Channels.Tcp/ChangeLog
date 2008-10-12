@@ -1,3 +1,8 @@
+2008-10-12  Robert Jordan  <robertj@gmx.net>
+
+	* TcpConnectionPool.cs: Fix the build and
+	set NoDelay on both profiles.
+
 2008-09-18  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r113381.

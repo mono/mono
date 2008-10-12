@@ -125,7 +125,12 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		public ReusableTcpClient (string host, int port): base (host, port)
 		{
 			// Avoid excessive waiting for data by the tcp stack in linux
+#if NET_2_0			
 			Client.NoDelay = true;
+#else
+			Client.SetSocketOption (SocketOptionLevel.Tcp,
+						SocketOptionName.NoDelay, 1);
+#endif			
 		}
 		
 		public bool IsAlive
