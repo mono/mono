@@ -1,3 +1,12 @@
+2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* simd-intrinsics.c: Fixed intrinsic name typo.
+
+  	* mini.h: Added missing simd exported function.
+
+	* basic-simd.cs: Added tests for Vector4ui.
+	Fixed broken test for Vector16b.
+
 2008-10-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-amd64.c (mono_arch_create_rgctx_lazy_fetch_trampoline_full): Increase
