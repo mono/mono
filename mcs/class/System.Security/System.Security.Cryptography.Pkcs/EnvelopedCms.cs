@@ -82,14 +82,16 @@ namespace System.Security.Cryptography.Pkcs {
 			: this (contentInfo) 
 		{
 			_idType = recipientIdentifierType;
-			_version = ((_idType == SubjectIdentifierType.SubjectKeyIdentifier) ? 2 : 0);
+			if (_idType == SubjectIdentifierType.SubjectKeyIdentifier)
+				_version = 2;
 		}
 
 		public EnvelopedCms (SubjectIdentifierType recipientIdentifierType, ContentInfo contentInfo, AlgorithmIdentifier encryptionAlgorithm)
 			: this (contentInfo, encryptionAlgorithm) 
 		{
 			_idType = recipientIdentifierType;
-			_version = ((_idType == SubjectIdentifierType.SubjectKeyIdentifier) ? 2 : 0);
+			if (_idType == SubjectIdentifierType.SubjectKeyIdentifier)
+				_version = 2;
 		}
 
 		// properties

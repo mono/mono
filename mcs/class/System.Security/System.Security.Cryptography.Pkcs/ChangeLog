@@ -1,3 +1,9 @@
+2008-10-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EnvelopedCms.cs, SignedCms.cs: Remove unneeded field 
+	initialization to their default values.
+	[Found using Gendarme AvoidUnneededFieldInitializationRule]
+
 2006-12-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SignedCms.cs: Add missing TODO. Some code exists but depends on 

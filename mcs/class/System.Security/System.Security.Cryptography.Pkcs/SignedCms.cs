@@ -73,21 +73,18 @@ namespace System.Security.Cryptography.Pkcs {
 		public SignedCms (SubjectIdentifierType signerIdentifierType) : this ()
 		{
 			_type = signerIdentifierType;
-			_version = 0;
 		}
 
 		public SignedCms (SubjectIdentifierType signerIdentifierType, ContentInfo content) 
 			: this (content, false) 
 		{
 			_type = signerIdentifierType;
-			_version = 0;
 		}
 
 		public SignedCms (SubjectIdentifierType signerIdentifierType, ContentInfo content, bool detached) 
 			: this (content, detached) 
 		{
 			_type = signerIdentifierType;
-			_version = 0;
 		}
 
 		// properties
