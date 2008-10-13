@@ -1,5 +1,9 @@
 2008-10-13  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* basic-simd.cs: Tests for recently added functionality.
+
+2008-10-13  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mini-ops.h: Add remaining sse1 fp ops.
 	
 	* cpu-x86.md: Add remaining sse1 fp ops.
