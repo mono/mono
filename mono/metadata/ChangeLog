@@ -1,4 +1,9 @@
 
+Mon Oct 13 14:38:01 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* icall-def.h, process.h, process.c: added an icall to get info about
+	processes using mono-proclib.
+
 Mon Oct 13 11:14:44 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* mono-perfcounters.c: use the mono-proclib functions to
