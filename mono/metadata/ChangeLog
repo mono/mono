@@ -1,4 +1,11 @@
 
+Mon Oct 13 11:00:49 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* domain.c, assembly.c, debug-mono-symfile.c, debug-mono-symfile.h,
+	monosn.c, Makefile.am, pedump.c, image.c, metadata-internals.h,
+	reflection.c: remove rawbuffer usage: mmap support is more sanely
+	provided by utils/mono-mmap.
+
 Sat Oct 11 19:46:19 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* gc.c: use posix semaphores when possible so that
