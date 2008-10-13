@@ -15,7 +15,7 @@
 
 	* HttpRuntimeConfig.cs: implemented the undocumented (but
 	supported in .NET 1.1) option EnableHeaderChecking to support fix
-	for bug #416620
+	for bug #418620
 
 2008-06-30  Marek Habersack  <mhabersack@novell.com>
 
