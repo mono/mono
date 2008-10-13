@@ -1,3 +1,10 @@
+2008-10-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Fix the changes to
+	OP_X86_PUSH_OBJ. Fixes #434620.
+
+	* objects.cs: Add a test.
+	
 2008-10-12  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* basic-simd.cs: Remove PackWithUnsignedSaturation tests as it turns out
