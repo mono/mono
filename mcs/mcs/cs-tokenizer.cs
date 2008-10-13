@@ -656,7 +656,7 @@ namespace Mono.CSharp
 					return Token.OPEN_PARENS;
 					
 				case Token.DOT:
-					if (ptoken != Token.IDENTIFIER)
+					if (ptoken != Token.IDENTIFIER && ptoken != Token.OP_GENERICS_GT)
 						goto default;
 					continue;
 

@@ -1,6 +1,7 @@
 2008-10-13  Marek Safar  <marek.safar@gmail.com>
 
-	* cs-tokenizer.cs: Add missing alias qualifier to type cast.
+	* cs-tokenizer.cs: Add missing alias qualifier and dotted generic
+	type to type cast.
 
 2008-10-13  Marek Safar  <marek.safar@gmail.com>
 
