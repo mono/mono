@@ -334,6 +334,10 @@ namespace System.Diagnostics {
 			}
 		}
 
+		/* data type is from the MonoProcessData enum in mono-proclib.h in the runtime */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static long GetProcessData (int pid, int data_type, out int error);
+
 		[MonoTODO]
 #if NET_2_0
 		[Obsolete ("Use NonpagedSystemMemorySize64")]
@@ -382,7 +386,6 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
 #if NET_2_0
 		[Obsolete ("Use PeakVirtualMemorySize64")]
 #endif
@@ -390,11 +393,11 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The maximum amount of virtual memory used by this process.")]
 		public int PeakVirtualMemorySize {
 			get {
-				return(0);
+				int error;
+				return (int)GetProcessData (pid, 8, out error);
 			}
 		}
 
-		[MonoTODO]
 #if NET_2_0
 		[Obsolete ("Use PeakWorkingSet64")]
 #endif
@@ -402,7 +405,8 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The maximum amount of system memory used by this process.")]
 		public int PeakWorkingSet {
 			get {
-				return(0);
+				int error;
+				return (int)GetProcessData (pid, 5, out error);
 			}
 		}
 
@@ -447,23 +451,23 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The maximum amount of virtual memory used by this process.")]
 		[ComVisible (false)]
 		public long PeakVirtualMemorySize64 {
 			get {
-				return(0);
+				int error;
+				return GetProcessData (pid, 8, out error);
 			}
 		}
 
-		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The maximum amount of system memory used by this process.")]
 		[ComVisible (false)]
 		public long PeakWorkingSet64 {
 			get {
-				return(0);
+				int error;
+				return GetProcessData (pid, 5, out error);
 			}
 		}
 #endif
@@ -514,7 +518,6 @@ namespace System.Diagnostics {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern bool SetPriorityClass (IntPtr handle, int priority, out int error);
 
-		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The amount of memory exclusively used by this process.")]
 #if NET_2_0
@@ -522,7 +525,8 @@ namespace System.Diagnostics {
 #endif
 		public int PrivateMemorySize {
 			get {
-				return(0);
+				int error;
+				return (int)GetProcessData (pid, 6, out error);
 			}
 		}
 
@@ -718,7 +722,6 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
 #if NET_2_0
 		[Obsolete ("Use VirtualMemorySize64")]
 #endif
@@ -726,11 +729,11 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The amount of virtual memory currently used for this process.")]
 		public int VirtualMemorySize {
 			get {
-				return(0);
+				int error;
+				return (int)GetProcessData (pid, 7, out error);
 			}
 		}
 
-		[MonoTODO]
 #if NET_2_0
 		[Obsolete ("Use WorkingSet64")]
 #endif
@@ -738,38 +741,39 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The amount of physical memory currently used for this process.")]
 		public int WorkingSet {
 			get {
-				return(0);
+				int error;
+				return (int)GetProcessData (pid, 4, out error);
 			}
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The amount of memory exclusively used by this process.")]
 		[ComVisible (false)]
 		public long PrivateMemorySize64 {
 			get {
-				return(0);
+				int error;
+				return GetProcessData (pid, 6, out error);
 			}
 		}
 
-		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The amount of virtual memory currently used for this process.")]
 		[ComVisible (false)]
 		public long VirtualMemorySize64 {
 			get {
-				return(0);
+				int error;
+				return GetProcessData (pid, 7, out error);
 			}
 		}
 
-		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The amount of physical memory currently used for this process.")]
 		[ComVisible (false)]
 		public long WorkingSet64 {
 			get {
-				return(0);
+				int error;
+				return GetProcessData (pid, 4, out error);
 			}
 		}
 #endif

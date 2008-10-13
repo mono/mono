@@ -1,3 +1,9 @@
+
+Mon Oct 13 14:39:52 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* Process.cs: added icall and implementation of many memory-related
+	query methods (bug #434473).
+
 2008-09-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* PerformanceCounter.cs:
