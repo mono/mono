@@ -17,6 +17,7 @@ public struct Sample
 	
 	public static void Main ()
 	{
+		int i = (global::System.Int32)1;
 	}
 }
 
