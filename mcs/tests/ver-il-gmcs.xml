@@ -32687,6 +32687,16 @@
       </method>
     </type>
   </test>
+  <test name="test-689.cs">
+    <type name="Sample">
+      <method name="Void Foo(System.Byte*, System.Byte*)">
+        <size>46</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="test-69.cs">
     <type name="Blah">
       <method name="Void .ctor()">
