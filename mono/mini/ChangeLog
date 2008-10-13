@@ -1,3 +1,12 @@
+2008-10-13  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r115632.
+	
+	* mini-amd64.c (mono_arch_output_basic_block): Fix the changes to
+	OP_X86_PUSH_OBJ. Fixes #434620.
+
+	* objects.cs: Add a test.
+
 2008-10-12  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r115495.

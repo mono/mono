@@ -387,6 +387,32 @@ class Tests {
 		return 0;
 	}
 
+	// Struct with unaligned size on 64 bit machines
+	struct Struct4 {
+        public int i, j, k, l, m;
+		public int i1, i2, i3, i4, i5, i6;
+	}
+
+	static int pass_struct4 (Struct4 s) {
+		if (s.i + s.j + s.k + s.l + s.m != 15)
+			return 1;
+		else
+			return 0;
+	}
+
+	public static int test_0_struct4_args () {
+		Struct4 s = new Struct4 ();
+		s.i = 1;
+		s.j = 2;
+		s.k = 3;
+		s.l = 4;
+		s.m = 5;
+
+		return pass_struct4 (s);
+	}
+
+
+
 	struct AStruct {
 		public int i;
 
