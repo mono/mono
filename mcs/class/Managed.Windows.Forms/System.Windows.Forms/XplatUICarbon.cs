@@ -486,8 +486,15 @@ namespace System.Windows.Forms {
 				for (int i = 0; i < TimerList.Count; i++) {
 					Timer timer = (Timer) TimerList [i];
 					if (timer.Enabled && timer.Expires <= now) {
-						timer.FireTick ();
-						timer.Update (now);
+						// Prevent the Timer from ticking before MainForm.OnLoad has 
+						// completed. This seems to be the case with Win32.
+						//
+						if (Application.MWFThread.Current.Context != null && 
+						    Application.MWFThread.Current.Context.MainForm != null && 
+						    Application.MWFThread.Current.Context.MainForm.IsLoaded) {
+							timer.FireTick ();
+							timer.Update (now);
+						}
 					}
 				}
 			}

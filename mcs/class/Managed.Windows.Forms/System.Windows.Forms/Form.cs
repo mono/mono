@@ -111,6 +111,10 @@ namespace System.Windows.Forms {
 			default_icon = ResourceImageLoader.GetIcon ("mono.ico");
 		}
 
+		internal bool IsLoaded {
+			get { return is_loaded; }
+		}
+
 		internal bool IsActive {
 			get {
 				return is_active;

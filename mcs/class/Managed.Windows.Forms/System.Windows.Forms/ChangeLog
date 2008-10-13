@@ -1,3 +1,9 @@
+2008-10-13  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* XplatUIX11.cs, XplatUICarbon.cs, Form.cs: Do not Timer.Tick before 
+	MainForm.OnLoad has completed.
+	[Fixes bug #412536]
+
 2008-10-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TextBox.cs: Apply an old-approved patch that adds autocomplete's
