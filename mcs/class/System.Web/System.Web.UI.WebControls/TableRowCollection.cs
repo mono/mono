@@ -36,16 +36,16 @@ namespace System.Web.UI.WebControls {
 #else
 	[Editor ("System.Web.UI.Design.WebControls.TableRowsCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 #endif
-	public sealed class TableRowCollection : IList, ICollection, IEnumerable {
-
-		private ControlCollection cc;
-
-
+	public sealed class TableRowCollection : IList, ICollection, IEnumerable
+	{
+		ControlCollection cc;
+		Table owner;
+		
 		internal TableRowCollection (Table table)
 		{
 			cc = table.Controls;
+			owner = table;
 		}
-
 
 		public int Count {
 			get { return cc.Count; }
@@ -67,9 +67,12 @@ namespace System.Web.UI.WebControls {
 			get { return this; }	// as documented
 		}
 
-
 		public int Add (TableRow row)
 		{
+#if NET_2_0
+			if (row.TableRowSectionSet)
+				owner.GenerateTableSections = true;
+#endif
 			int index = cc.IndexOf (row);
 			if (index < 0) {
 				cc.Add (row);
@@ -80,20 +83,33 @@ namespace System.Web.UI.WebControls {
 
 		public void AddAt (int index, TableRow row)
 		{
-			if (cc.IndexOf (row) < 0)
+			if (cc.IndexOf (row) < 0) {
+#if NET_2_0
+				if (row.TableRowSectionSet)
+					owner.GenerateTableSections = true;
+#endif
 				cc.AddAt (index, row);
+			}
 		}
 
 		public void AddRange (TableRow[] rows)
 		{
 			foreach (TableRow tr in rows) {
-				if (cc.IndexOf (tr) < 0)
+				if (cc.IndexOf (tr) < 0) {
+#if NET_2_0
+					if (tr.TableRowSectionSet)
+						owner.GenerateTableSections = true;
+#endif
 					cc.Add (tr);
+				}
 			}
 		}
 
 		public void Clear ()
 		{
+#if NET_2_0
+			owner.GenerateTableSections = false;
+#endif
 			cc.Clear ();
 		}
 

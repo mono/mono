@@ -1,3 +1,8 @@
+2008-10-13  Marek Habersack  <mhabersack@novell.com>
+
+	* Table.cs, TableRowCollection.cs, TableRow.cs: render table
+	sections when necessary. Fixes bug #434555
+
 2008-10-08  Marek Habersack  <mhabersack@novell.com>
 
 	* ControlParameter.cs: Evaluate calls DataBinder.Eval to do the

@@ -40,20 +40,28 @@ namespace System.Web.UI.WebControls {
 	[ParseChildren (true, "Rows")]
 #if NET_2_0
 	[SupportsEventValidation]
-	public class Table : WebControl, IPostBackEventHandler {
+	public class Table : WebControl, IPostBackEventHandler
+	{
 #else
-	public class Table : WebControl {
+	public class Table : WebControl
+	{
 #endif
-		private TableRowCollection rows;
-
+		TableRowCollection rows;
+#if NET_2_0
+		bool generateTableSections;
+#endif
 
 		public Table ()
 			: base (HtmlTextWriterTag.Table)
 		{
 		}
 
-
 #if NET_2_0
+		internal bool GenerateTableSections {
+			get { return generateTableSections; }
+			set { generateTableSections = value; }
+		}
+		
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[UrlProperty]
 #else
@@ -211,12 +219,55 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void RenderContents (HtmlTextWriter writer)
 		{
+#if NET_2_0
+			TableRowSection currentTableSection = TableRowSection.TableHeader;
+			TableRowSection rowSection;
+			bool sectionStarted = false;
+#endif
+			
 			if (Rows.Count > 0) {
-				writer.Indent++;
-				foreach (TableRow row in Rows)
+				foreach (TableRow row in Rows) {
+#if NET_2_0
+					if (generateTableSections) {
+						rowSection = row.TableSection;
+						if (rowSection < currentTableSection)
+							throw new HttpException ("The table " + ID + " must contain row sections in order of header, body, then footer.");
+
+						if (currentTableSection != rowSection) {
+							if (sectionStarted) {
+								writer.RenderEndTag ();
+								sectionStarted = false;
+							}
+							
+							currentTableSection = rowSection;
+						}
+						
+						if (!sectionStarted) {
+							switch (rowSection) {
+								case TableRowSection.TableHeader:
+									writer.RenderBeginTag (HtmlTextWriterTag.Thead);
+									break;
+
+								case TableRowSection.TableBody:
+									writer.RenderBeginTag (HtmlTextWriterTag.Tbody);
+									break;
+
+								case TableRowSection.TableFooter:
+									writer.RenderBeginTag (HtmlTextWriterTag.Tfoot);
+									break;
+							}
+							sectionStarted = true;
+						}
+					}
+#endif
 					if (row != null)
 						row.RenderControl (writer);
-				writer.Indent--;
+				}
+
+#if NET_2_0
+				if (sectionStarted)
+					writer.RenderEndTag ();
+#endif
 			}
 		}
 

@@ -42,18 +42,25 @@ namespace System.Web.UI.WebControls {
 	[Bindable (false)]
 	[Designer ("System.Web.UI.Design.WebControls.PreviewControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 #endif
-	public class TableRow : WebControl {
-
-		private TableCellCollection cells;
-
-
+	public class TableRow : WebControl
+	{
+		TableCellCollection cells;
+#if NET_2_0
+		bool tableRowSectionSet;
+#endif
+		
 		public TableRow ()
 			: base (HtmlTextWriterTag.Tr)
 		{
 			AutoID = false;
 		}
 
-
+#if NET_2_0
+		internal bool TableRowSectionSet {
+			get { return tableRowSectionSet; }
+		}
+#endif
+		
 		[MergableProperty (false)]
 		[PersistenceMode (PersistenceMode.InnerDefaultProperty)]
 		[WebSysDescription ("")]
@@ -121,6 +128,7 @@ namespace System.Web.UI.WebControls {
 				if ((value < TableRowSection.TableHeader) || (value > TableRowSection.TableFooter))
 					throw new ArgumentOutOfRangeException ("TableSection");
 				ViewState ["TableSection"] = (int) value;
+				tableRowSectionSet = true;
 			}
 		}
 #endif
