@@ -1,4 +1,9 @@
 
+Mon Oct 13 14:36:10 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mono-proclib.c, mono-proclib.h: added a function to deal with
+	error handling if the caller needs the info.
+
 Mon Oct 13 11:11:43 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am, mono-proclib.c, mono-proclib.h: utility functions to
