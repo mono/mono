@@ -562,54 +562,155 @@ namespace Mono.CSharp
 		}
 
 		//
-		// Tests whether '(' is beggining of lambda parameters
+		// Open parens micro parser. Detects both lambda and cast ambiguity.
 		//
-		bool IsLambdaOpenParens ()
+		
+		int TokenizeOpenParens ()
 		{
-			int ntoken;
-			while ((ntoken = xtoken ()) != Token.EOF) {
+			int ntoken = -1;
+			int ptoken;
+			bool cast_posible = false;
+			bool cast_not = false;
+			bool has_star = false;
+			
+			while (true) {
+				ptoken = ntoken;
+				ntoken = xtoken ();
+
 				switch (ntoken) {
 				case Token.CLOSE_PARENS:
-					return xtoken () == Token.ARROW;
+					ntoken = xtoken ();
 					
+					//
+					// Token is a lambda
+					//
+					if (ntoken == Token.ARROW) {
+						if (RootContext.Version <= LanguageVersion.ISO_2)
+							Report.FeatureIsNotAvailable (Location, "lambda expressions");
+
+						return Token.OPEN_PARENS_LAMBDA;
+					}
+
+					//
+					// Token is possible cast, parser will decide later
+					//
+					if (cast_posible && !cast_not) {
+						switch (ntoken) {
+						//
+						// Indirection is a special
+						// cast: (int*)&a;
+						// binary: (C)&a;
+						//
+						case Token.BITWISE_AND:
+						case Token.OP_INC:
+						case Token.OP_DEC:
+						case Token.PLUS:
+						case Token.MINUS:
+							if (!has_star)
+								break;
+							return Token.OPEN_PARENS_CAST;
+
+						case Token.OPEN_PARENS:
+						case Token.BANG:
+						case Token.TILDE:
+						case Token.IDENTIFIER:
+						case Token.LITERAL_INTEGER:
+						case Token.LITERAL_FLOAT:
+						case Token.LITERAL_DOUBLE:
+						case Token.LITERAL_DECIMAL:
+						case Token.LITERAL_CHARACTER:
+						case Token.LITERAL_STRING:
+						case Token.BASE:
+						case Token.CHECKED:
+						case Token.DELEGATE:
+						case Token.FALSE:
+						case Token.FIXED:
+						case Token.NEW:
+						case Token.NULL:
+						case Token.SIZEOF:
+						case Token.THIS:
+						case Token.THROW:
+						case Token.TRUE:
+						case Token.TYPEOF:
+						case Token.UNCHECKED:
+						case Token.UNSAFE:
+						case Token.DEFAULT:
+
+						//
+						// These can be part of a member access
+						//
+						case Token.INT:
+						case Token.UINT:
+						case Token.SHORT:
+						case Token.USHORT:
+						case Token.LONG:
+						case Token.ULONG:
+						case Token.DOUBLE:
+						case Token.FLOAT:
+						case Token.CHAR:
+						case Token.BYTE:
+						case Token.DECIMAL:	
+							return Token.OPEN_PARENS_CAST;
+						}
+					}
+					return Token.OPEN_PARENS;
+					
+				case Token.DOT:
+					if (ptoken != Token.IDENTIFIER)
+						goto default;
+					continue;
+
+				case Token.IDENTIFIER:
+					switch (ptoken) {
+					case Token.DOT:
+					case Token.OP_GENERICS_LT:
+					case Token.COMMA:
+					case -1:
+						cast_posible = true;
+						continue;
+					default:
+						cast_not = true;
+						continue;
+					}
+
 				case Token.STAR:
-				case Token.SEMICOLON:
-				case Token.OPEN_BRACE:
-				case Token.OPEN_PARENS:
-				case Token.LITERAL_STRING:
-				case Token.LITERAL_INTEGER:
-				case Token.LITERAL_FLOAT:
-				case Token.LITERAL_DOUBLE:
-				case Token.LITERAL_DECIMAL:
-				case Token.LITERAL_CHARACTER:
-				case Token.NULL:
-				case Token.FALSE:
-				case Token.TRUE:
-				case Token.OP_INC:
-				case Token.OP_DEC:
-				case Token.OP_SHIFT_LEFT:
-				case Token.OP_SHIFT_RIGHT:
-				case Token.OP_LE:
-				case Token.OP_GE:
-				case Token.OP_EQ:
-				case Token.OP_NE:
-				case Token.OP_AND:
-				case Token.OP_OR:
-				case Token.BITWISE_AND:
-				case Token.BITWISE_OR:
-				case Token.PLUS:
-				case Token.MINUS:
-				case Token.DIV:
-				case Token.NEW:
-				case Token.THIS:
-				case Token.BASE:
-				case Token.TYPEOF:
-					return false;
+					has_star = true;
+					continue;
+
+				case Token.OBJECT:
+				case Token.STRING:
+				case Token.BOOL:
+				case Token.DECIMAL:
+				case Token.FLOAT:
+				case Token.DOUBLE:
+				case Token.SBYTE:
+				case Token.BYTE:
+				case Token.SHORT:
+				case Token.USHORT:
+				case Token.INT:
+				case Token.UINT:
+				case Token.LONG:
+				case Token.ULONG:
+				case Token.CHAR:
+				case Token.VOID:
+				case Token.OP_GENERICS_GT:
+				case Token.OP_GENERICS_LT:
+				case Token.INTERR_NULLABLE:
+				case Token.OPEN_BRACKET:
+				case Token.CLOSE_BRACKET:
+				case Token.COMMA:				
+					cast_posible = true;
+					continue;
+
+				case Token.REF:
+				case Token.OUT:
+					cast_not = true;
+					continue;
+					
+				default:
+					return Token.OPEN_PARENS;
 				}
 			}
-
-			Error_TokenExpected (",' or `)");
-			return false;
 		}
 
 		public static bool IsValidIdentifier (string s)
@@ -740,45 +841,22 @@ namespace Mono.CSharp
 			case ']':
 				return Token.CLOSE_BRACKET;
 			case '(':
+				val = Location;
 				//
-				// A lambda expression can appear in block context only
+				// An expression versions of parens can appear in block context only
 				//
 				if (parsing_block != 0 && !lambda_arguments_parsing) {
 					lambda_arguments_parsing = true;
 					PushPosition ();
-					bool lambda_start = IsLambdaOpenParens ();
+					t = TokenizeOpenParens ();
 					PopPosition ();
 					lambda_arguments_parsing = false;
-					if (lambda_start) {
-						if (RootContext.Version <= LanguageVersion.ISO_2)
-							Report.FeatureIsNotAvailable (Location, "lambda expressions");
-						
-						return Token.OPEN_PARENS_LAMBDA;
-					}
+					return t;
 				}
+
 				return Token.OPEN_PARENS;
-			case ')': {
-				if (deambiguate_close_parens == 0)
-					return Token.CLOSE_PARENS;
-
-				--deambiguate_close_parens;
-
-				PushPosition ();
-
-				int new_token = xtoken ();
-
-				PopPosition ();
-
-				if (new_token == Token.OPEN_PARENS)
-					return Token.CLOSE_PARENS_OPEN_PARENS;
-				else if (new_token == Token.MINUS)
-					return Token.CLOSE_PARENS_MINUS;
-				else if (IsCastToken (new_token))
-					return Token.CLOSE_PARENS_CAST;
-				else
-					return Token.CLOSE_PARENS_NO_CAST;
-			}
-
+			case ')':
+				return Token.CLOSE_PARENS;
 			case ',':
 				return Token.COMMA;
 			case ';':
@@ -1098,21 +1176,6 @@ namespace Mono.CSharp
 			
 			PopPosition ();
 			return next_token;
-		}
-
-		int deambiguate_close_parens = 0;
-
-		public void Deambiguate_CloseParens (object expression)
-		{
-			putback (')');
-
-			// When any binary operation, a conditional is used we are sure it is not a cast
-			// maybe more.
-			
-			if (expression is Binary || expression is Conditional)
-				return;
-
-			deambiguate_close_parens++;
 		}
 
 		bool decimal_digits (int c)
@@ -1639,55 +1702,6 @@ namespace Mono.CSharp
 			return val;
 		}
 
-		static bool IsCastToken (int token)
-		{
-			switch (token) {
-			case Token.BANG:
-			case Token.TILDE:
-			case Token.IDENTIFIER:
-			case Token.LITERAL_INTEGER:
-			case Token.LITERAL_FLOAT:
-			case Token.LITERAL_DOUBLE:
-			case Token.LITERAL_DECIMAL:
-			case Token.LITERAL_CHARACTER:
-			case Token.LITERAL_STRING:
-			case Token.BASE:
-			case Token.CHECKED:
-			case Token.DELEGATE:
-			case Token.FALSE:
-			case Token.FIXED:
-			case Token.NEW:
-			case Token.NULL:
-			case Token.SIZEOF:
-			case Token.THIS:
-			case Token.THROW:
-			case Token.TRUE:
-			case Token.TYPEOF:
-			case Token.UNCHECKED:
-			case Token.UNSAFE:
-			case Token.DEFAULT:
-
-				//
-				// These can be part of a member access
-				//
-			case Token.INT:
-			case Token.UINT:
-			case Token.SHORT:
-			case Token.USHORT:
-			case Token.LONG:
-			case Token.ULONG:
-			case Token.DOUBLE:
-			case Token.FLOAT:
-			case Token.CHAR:
-			case Token.BYTE:
-			case Token.DECIMAL:			
-				return true;
-
-			default:
-				return false;
-			}
-		}
-
 		public int token ()
 		{
 			current_token = xtoken ();
@@ -1699,8 +1713,6 @@ namespace Mono.CSharp
 			int c = xtoken();
 			if (c == -1)
 				current_token = Token.ERROR;
-			else if (c == Token.OPEN_PARENS)
-				current_token = Token.DEFAULT_OPEN_PARENS;
 			else if (c == Token.COLON)
 				current_token = Token.DEFAULT_COLON;
 			else
@@ -2222,11 +2234,6 @@ namespace Mono.CSharp
 			Report.Error (
 				1028, Location,
 				"Unexpected processor directive ({0})", extra);
-		}
-
-		void Error_TokenExpected (string token)
-		{
-			Report.Error (1026, Location, "Expected `{0}'", token);
 		}
 
 		void Error_TokensSeen ()

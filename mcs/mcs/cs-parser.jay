@@ -243,6 +243,12 @@ namespace Mono.CSharp
 %token INTO
 %token QUERY_LAST_TOKEN
 %token INTERR_NULLABLE
+%token EXTERN_ALIAS
+
+/* Generics <,> tokens */
+%token OP_GENERICS_LT
+%token OP_GENERICS_LT_DECL
+%token OP_GENERICS_GT
 
 /* C# keywords which are not really keywords */
 %token GET
@@ -257,6 +263,7 @@ namespace Mono.CSharp
 %token CLOSE_BRACKET
 %token OPEN_PARENS
 %token CLOSE_PARENS
+
 %token DOT
 %token COMMA
 %token COLON
@@ -268,10 +275,7 @@ namespace Mono.CSharp
 %token BANG
 %token ASSIGN
 %token OP_LT
-%token OP_GENERICS_LT
-%token OP_GENERICS_LT_DECL
 %token OP_GT
-%token OP_GENERICS_GT
 %token BITWISE_AND
 %token BITWISE_OR
 %token STAR
@@ -279,7 +283,6 @@ namespace Mono.CSharp
 %token DIV
 %token CARRET
 %token INTERR
-%token EXTERN_ALIAS
 
 /* C# multi-character operators. */
 %token DOUBLE_COLON
@@ -316,11 +319,7 @@ namespace Mono.CSharp
 
 %token IDENTIFIER
 %token OPEN_PARENS_LAMBDA
-%token CLOSE_PARENS_CAST
-%token CLOSE_PARENS_NO_CAST
-%token CLOSE_PARENS_OPEN_PARENS
-%token CLOSE_PARENS_MINUS
-%token DEFAULT_OPEN_PARENS
+%token OPEN_PARENS_CAST
 %token GENERIC_DIMENSION
 %token DEFAULT_COLON
 
@@ -2520,6 +2519,7 @@ enum_member_declaration
 	  }
 	| opt_attributes IDENTIFIER
 	  {
+	  	++lexer.parsing_block;
 		if (RootContext.Documentation != null) {
 			tmpComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.NotAllowed;
@@ -2527,6 +2527,7 @@ enum_member_declaration
 	  }
 	  ASSIGN constant_expression
 	  { 
+		--lexer.parsing_block;	  
 		VariableDeclaration vd = new VariableDeclaration (
 			(LocatedToken) $2, $5, (Attributes) $1);
 
@@ -2843,44 +2844,6 @@ type_expression
 	  }	
 	;
 
-non_expression_type
-	: builtin_types opt_nullable
-	  {
-		if ($2 != null)
-			$$ = new ComposedCast ((FullNamedExpression) $1, "?", lexer.Location);
-	  }
-	| VOID
-	  {
-		$$ = TypeManager.system_void_expr;
-	  }
-	| non_expression_type rank_specifiers
-	  {
-		Location loc = GetLocation ($1);
-		if (loc.IsNull)
-			loc = lexer.Location;
-		$$ = new ComposedCast ((FullNamedExpression) $1, (string) $2, loc);
-	  }
-	| non_expression_type STAR
-	  {
-		Location loc = GetLocation ($1);
-		if (loc.IsNull)
-			loc = lexer.Location;
-		$$ = new ComposedCast ((FullNamedExpression) $1, "*", loc);
-	  }
-	//
-	// We need this because the parser will happily go and reduce IDENTIFIER STAR
-	// through this different path
-	//
-	| multiplicative_expression STAR 
-	  {
-		FullNamedExpression e = $1 as FullNamedExpression;
-		if (e != null)
-			$$ = new ComposedCast (e, "*");
-		else
-			Error_TypeExpected (GetLocation ($1));
-	  }
-	;
-
 type_list
 	: base_type_name
 	  {
@@ -3016,36 +2979,25 @@ boolean_literal
 	| FALSE			{ $$ = new BoolLiteral (false, lexer.Location); }
 	;
 
-parenthesized_expression_0
-	: OPEN_PARENS expression CLOSE_PARENS
-	  {
-		$$ = $2;
-		lexer.Deambiguate_CloseParens ($$);
-		// After this, the next token returned is one of
-		// CLOSE_PARENS_CAST, CLOSE_PARENS_NO_CAST (CLOSE_PARENS), CLOSE_PARENS_OPEN_PARENS
-		// or CLOSE_PARENS_MINUS.
-	  }
-	| OPEN_PARENS expression error { CheckToken (1026, yyToken, "Expecting ')'", lexer.Location); }
+
+//
+// Here is the trick, tokenizer may think that parens is a special but
+// parser is interested in open parens only, so we merge them.
+// Consider: if (a)foo ();
+//
+open_parens_any
+	: OPEN_PARENS
+	| OPEN_PARENS_CAST
+	| OPEN_PARENS_LAMBDA
 	;
 
 parenthesized_expression
-	: parenthesized_expression_0 CLOSE_PARENS_NO_CAST
+	: OPEN_PARENS expression CLOSE_PARENS
 	  {
-		$$ = $1;
-	  }  
-	| parenthesized_expression_0 CLOSE_PARENS
-	  {
-		$$ = $1;
-	  }
-	| parenthesized_expression_0 CLOSE_PARENS_MINUS
-	  {
-		// If a parenthesized expression is followed by a minus, we need to wrap
-		// the expression inside a ParenthesizedExpression for the CS0075 check
-		// in Binary.DoResolve().
-		$$ = new ParenthesizedExpression ((Expression) $1);
+		$$ = new ParenthesizedExpression ((Expression) $2);
 	  }
 	;
-
+	
 member_access
 	: primary_expression DOT IDENTIFIER opt_type_argument_list
 	  {
@@ -3068,29 +3020,9 @@ member_access
 	;
 
 invocation_expression
-	: primary_expression OPEN_PARENS opt_argument_list CLOSE_PARENS
+	: primary_expression open_parens_any opt_argument_list CLOSE_PARENS
 	  {
 		$$ = new Invocation ((Expression) $1, (ArrayList) $3);
-	  }
-	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS OPEN_PARENS CLOSE_PARENS
-	  {
-		$$ = new Invocation ((Expression) $1, new ArrayList ());
-	  }
-	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS primary_expression
-	  {
-		$$ = new InvocationOrCast ((Expression) $1, (Expression) $3);
-	  }
-	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS OPEN_PARENS non_simple_argument CLOSE_PARENS
-	  {
-		ArrayList args = new ArrayList (1);
-		args.Add ($4);
-		$$ = new Invocation ((Expression) $1, args);
-	  }
-	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS OPEN_PARENS argument_list COMMA argument CLOSE_PARENS
-	  {
-		ArrayList args = ((ArrayList) $4);
-		args.Add ($6);
-		$$ = new Invocation ((Expression) $1, args);
 	  }
 	;
 
@@ -3211,7 +3143,7 @@ non_simple_argument
 	  { 
 		$$ = new Argument ((Expression) $2, Argument.AType.Out);
 	  }
-	| ARGLIST OPEN_PARENS argument_list CLOSE_PARENS
+	| ARGLIST open_parens_any argument_list CLOSE_PARENS
 	  {
 		ArrayList list = (ArrayList) $3;
 		Argument[] args = new Argument [list.Count];
@@ -3220,7 +3152,7 @@ non_simple_argument
 		Expression expr = new Arglist (args, (Location) $1);
 		$$ = new Argument (expr, Argument.AType.Expression);
 	  }
-	| ARGLIST OPEN_PARENS CLOSE_PARENS
+	| ARGLIST open_parens_any CLOSE_PARENS
 	  {
 		$$ = new Argument (new Arglist ((Location) $1), Argument.AType.Expression);
 	  }	  
@@ -3326,7 +3258,7 @@ post_decrement_expression
 	;
 
 object_or_delegate_creation_expression
-	: NEW simple_type OPEN_PARENS opt_argument_list CLOSE_PARENS opt_object_or_collection_initializer
+	: NEW simple_type open_parens_any opt_argument_list CLOSE_PARENS opt_object_or_collection_initializer
 	  {
 		if ($6 != null) {
 			if (RootContext.Version <= LanguageVersion.ISO_2)
@@ -3549,7 +3481,7 @@ typeof_expression
 	  	pushed_current_array_type = current_array_type;
 	  	lexer.TypeOfParsing = true;
 	  }
-	  OPEN_PARENS typeof_type_expression CLOSE_PARENS
+	  open_parens_any typeof_type_expression CLOSE_PARENS
 	  {
 	  	lexer.TypeOfParsing = false;
 		Expression type = (Expression)$4;
@@ -3631,20 +3563,20 @@ qualified_alias_member
 	;
 
 sizeof_expression
-	: SIZEOF OPEN_PARENS type CLOSE_PARENS { 
+	: SIZEOF open_parens_any type CLOSE_PARENS { 
 		$$ = new SizeOf ((Expression) $3, (Location) $1);
 	  }
 	;
 
 checked_expression
-	: CHECKED OPEN_PARENS expression CLOSE_PARENS
+	: CHECKED open_parens_any expression CLOSE_PARENS
 	  {
 		$$ = new CheckedExpr ((Expression) $3, (Location) $1);
 	  }
 	;
 
 unchecked_expression
-	: UNCHECKED OPEN_PARENS expression CLOSE_PARENS
+	: UNCHECKED open_parens_any expression CLOSE_PARENS
 	  {
 		$$ = new UnCheckedExpr ((Expression) $3, (Location) $1);
 	  }
@@ -3690,12 +3622,12 @@ anonymous_method_signature
 	;
 
 default_value_expression
-	: DEFAULT_OPEN_PARENS type CLOSE_PARENS
+	: DEFAULT open_parens_any type CLOSE_PARENS
 	  {
 		if (RootContext.Version < LanguageVersion.ISO_2)
 			Report.FeatureIsNotAvailable (lexer.Location, "default value expression");
 
-		$$ = new DefaultValueExpression ((Expression) $2, lexer.Location);
+		$$ = new DefaultValueExpression ((Expression) $3, GetLocation ($1));
 	  }
 	;
 
@@ -3712,30 +3644,14 @@ unary_expression
 	| cast_expression
 	;
 
-cast_list
-	: parenthesized_expression_0 CLOSE_PARENS_CAST unary_expression
-	  {
-		$$ = new Cast ((Expression) $1, (Expression) $3);
-	  }
-	| parenthesized_expression_0 CLOSE_PARENS_NO_CAST default_value_expression
-	  {
-	  	$$ = new Cast ((Expression) $1, (Expression) $3);
-	  }
-	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS cast_expression
-	  {
-		$$ = new Cast ((Expression) $1, (Expression) $3);
-	  }	
-	;
-
 cast_expression
-	: cast_list
-	| OPEN_PARENS non_expression_type CLOSE_PARENS prefixed_unary_expression
+	: OPEN_PARENS_CAST type CLOSE_PARENS prefixed_unary_expression
 	  {
-	  	if ($2 == TypeManager.system_void_expr)
-	  		Expression.Error_VoidInvalidInTheContext (GetLocation ($2));
-
-		// TODO: wrong location
-		$$ = new Cast ((Expression) $2, (Expression) $4, lexer.Location);
+		$$ = new Cast ((Expression) $2, (Expression) $4, GetLocation ($1));
+	  }
+	| OPEN_PARENS predefined_type CLOSE_PARENS prefixed_unary_expression
+	  {
+		$$ = new Cast ((Expression) $2, (Expression) $4, GetLocation ($1));
 	  }
 	;
 
@@ -3801,9 +3717,13 @@ additive_expression
 	  }
 	| additive_expression MINUS multiplicative_expression
 	  {
-		$$ = new Binary (Binary.Operator.Subtraction, 
-			         (Expression) $1, (Expression) $3);
+		$$ = new Binary (Binary.Operator.Subtraction, (Expression) $1, (Expression) $3);
 	  }
+  	| parenthesized_expression MINUS multiplicative_expression
+	  {
+	  	// Shift/Reduce conflict
+		$$ = new Binary (Binary.Operator.Subtraction, (Expression) $1, (Expression) $3);
+  	  }
 	| additive_expression AS type
 	  {
 		$$ = new As ((Expression) $1, (Expression) $3, (Location) $2);
@@ -4618,7 +4538,7 @@ selection_statement
 	; 
 
 if_statement
-	: IF OPEN_PARENS boolean_expression CLOSE_PARENS 
+	: IF open_parens_any boolean_expression CLOSE_PARENS 
 	  embedded_statement
 	  { 
 		Location l = (Location) $1;
@@ -4630,7 +4550,7 @@ if_statement
 			Report.Warning (642, 3, l, "Possible mistaken empty statement");
 
 	  }
-	| IF OPEN_PARENS boolean_expression CLOSE_PARENS
+	| IF open_parens_any boolean_expression CLOSE_PARENS
 	  embedded_statement ELSE embedded_statement
 	  {
 		Location l = (Location) $1;
@@ -4646,7 +4566,7 @@ if_statement
 	;
 
 switch_statement
-	: SWITCH OPEN_PARENS
+	: SWITCH open_parens_any
 	  { 
 		if (switch_stack == null)
 			switch_stack = new Stack (2);
@@ -4742,7 +4662,7 @@ iteration_statement
 	;
 
 while_statement
-	: WHILE OPEN_PARENS boolean_expression CLOSE_PARENS embedded_statement
+	: WHILE open_parens_any boolean_expression CLOSE_PARENS embedded_statement
 	  {
 		Location l = (Location) $1;
 		$$ = new While ((Expression) $3, (Statement) $5, l);
@@ -4751,7 +4671,7 @@ while_statement
 
 do_statement
 	: DO embedded_statement 
-	  WHILE OPEN_PARENS boolean_expression CLOSE_PARENS SEMICOLON
+	  WHILE open_parens_any boolean_expression CLOSE_PARENS SEMICOLON
 	  {
 		Location l = (Location) $1;
 
@@ -4760,8 +4680,7 @@ do_statement
 	;
 
 for_statement
-	: FOR OPEN_PARENS 
-	  opt_for_initializer SEMICOLON
+	: FOR open_parens_any opt_for_initializer SEMICOLON
 	  {
 		Location l = lexer.Location;
 		start_block (l);  
@@ -4858,12 +4777,12 @@ statement_expression_list
 	;
 
 foreach_statement
-	: FOREACH OPEN_PARENS type IN expression CLOSE_PARENS
+	: FOREACH open_parens_any type IN expression CLOSE_PARENS
 	  {
 		Report.Error (230, (Location) $1, "Type and identifier are both required in a foreach statement");
 		$$ = null;
 	  }
-	| FOREACH OPEN_PARENS type IDENTIFIER IN
+	| FOREACH open_parens_any type IDENTIFIER IN
 	  expression CLOSE_PARENS 
 	  {
 		start_block (lexer.Location);
@@ -5082,11 +5001,11 @@ opt_catch_args
 	;	  
 
 catch_args 
-	: OPEN_PARENS type opt_identifier CLOSE_PARENS 
+	: open_parens_any type opt_identifier CLOSE_PARENS 
 	  {
 		$$ = new DictionaryEntry ($2, $3);
 	  }
-	| OPEN_PARENS CLOSE_PARENS 
+	| open_parens_any CLOSE_PARENS 
 	  {
 		Report.Error (1015, GetLocation ($1), "A type that derives from `System.Exception', `object', or `string' expected");
 	  }
@@ -5116,7 +5035,7 @@ unsafe_statement
 	;
 
 fixed_statement
-	: FIXED OPEN_PARENS 
+	: FIXED open_parens_any 
 	  type_and_void fixed_pointer_declarators 
 	  CLOSE_PARENS
 	  {
@@ -5184,7 +5103,7 @@ fixed_pointer_declarator
 	;
 
 lock_statement
-	: LOCK OPEN_PARENS expression CLOSE_PARENS 
+	: LOCK open_parens_any expression CLOSE_PARENS 
 	  {
 		//
  	  } 
@@ -5195,7 +5114,7 @@ lock_statement
 	;
 
 using_statement
-	: USING OPEN_PARENS local_variable_declaration CLOSE_PARENS
+	: USING open_parens_any local_variable_declaration CLOSE_PARENS
 	  {
 		start_block (lexer.Location);
 		Block assign_block = current_block;
@@ -5250,7 +5169,7 @@ using_statement
 		current_block.AddStatement (stmt);
 		$$ = end_block (lexer.Location);
 	  }
-	| USING OPEN_PARENS expression CLOSE_PARENS
+	| USING open_parens_any expression CLOSE_PARENS
 	  {
 		start_block (lexer.Location);
 	  }
@@ -6027,15 +5946,23 @@ public NamespaceEntry CurrentNamespace {
 
 void Error_SyntaxError (int token)
 {
-	Error_SyntaxError (1525, token);
+	Error_SyntaxError (0, token);
 }
 
 void Error_SyntaxError (int error_code, int token)
 {
 	string symbol = GetSymbolName (token);
 	string expecting = GetExpecting ();
+	
+	if (error_code == 0) {
+		if (expecting == "`)'")
+			error_code = 1026;
+		else
+			error_code = 1525;
+	}
+	
 	if (expecting != null)
-		Report.Error (error_code, lexer.Location, "Unexpected symbol `{0}', expecting {1}",
+		Report.Error (error_code, lexer.Location, "Unexpected symbol `{0}', expecting {1}", 
 			symbol, expecting);	  
 	else
 		Report.Error (error_code, lexer.Location, "Unexpected symbol `{0}'", symbol);
@@ -6044,10 +5971,7 @@ void Error_SyntaxError (int error_code, int token)
 string GetExpecting ()
 {
 	int [] tokens = yyExpectingTokens (yyExpectingState);
-	if (tokens.Length == 1)
-		return "`" + GetTokenName (tokens [0]) + "'";
-	
-	ArrayList names = new ArrayList ();
+	ArrayList names = new ArrayList (tokens.Length);
 	bool has_type = false;
 	bool has_identifier = false;
 	for (int i = 0; i < tokens.Length; i++){
@@ -6064,7 +5988,7 @@ string GetExpecting ()
 		
 		names.Add (name);
 	}
-	
+
 	//
 	// Too many tokens to enumerate
 	//
@@ -6074,6 +5998,9 @@ string GetExpecting ()
 	if (has_type && has_identifier)
 		names.Remove ("identifier");
 
+	if (names.Count == 1)
+		return "`" + GetTokenName (tokens [0]) + "'";
+	
 	StringBuilder sb = new StringBuilder ();
 	names.Sort ();
 	int count = names.Count;
@@ -6134,6 +6061,74 @@ string GetSymbolName (int token)
 		return "ushort";
 	case Token.OBJECT:
 		return "object";
+		
+	case Token.PLUS:
+		return "+";
+	case Token.UMINUS:
+	case Token.MINUS:
+		return "-";
+	case Token.BANG:
+		return "!";
+	case Token.BITWISE_AND:
+		return "&";
+	case Token.BITWISE_OR:
+		return "|";
+	case Token.STAR:
+		return "*";
+	case Token.PERCENT:
+		return "%";
+	case Token.DIV:
+		return "/";
+	case Token.CARRET:
+		return "^";
+	case Token.OP_INC:
+		return "++";
+	case Token.OP_DEC:
+		return "--";
+	case Token.OP_SHIFT_LEFT:
+		return "<<";
+	case Token.OP_SHIFT_RIGHT:
+		return ">>";
+	case Token.OP_LT:
+		return "<";
+	case Token.OP_GT:
+		return ">";
+	case Token.OP_LE:
+		return "<=";
+	case Token.OP_GE:
+		return ">=";
+	case Token.OP_EQ:
+		return "==";
+	case Token.OP_NE:
+		return "!=";
+	case Token.OP_AND:
+		return "&&";
+	case Token.OP_OR:
+		return "||";
+	case Token.OP_PTR:
+		return "->";
+	case Token.OP_COALESCING:	
+		return "??";
+	case Token.OP_MULT_ASSIGN:
+		return "*=";
+	case Token.OP_DIV_ASSIGN:
+		return "/=";
+	case Token.OP_MOD_ASSIGN:
+		return "%=";
+	case Token.OP_ADD_ASSIGN:
+		return "+=";
+	case Token.OP_SUB_ASSIGN:
+		return "-=";
+	case Token.OP_SHIFT_LEFT_ASSIGN:
+		return "<<=";
+	case Token.OP_SHIFT_RIGHT_ASSIGN:
+		return ">>=";
+	case Token.OP_AND_ASSIGN:
+		return "&=";
+	case Token.OP_XOR_ASSIGN:
+		return "^=";
+	case Token.OP_OR_ASSIGN:
+		return "|=";
 	}
 
 	return GetTokenName (token);
@@ -6312,14 +6307,10 @@ static string GetTokenName (int token)
 		return "[";
 	case Token.CLOSE_BRACKET:
 		return "]";
-	case Token.DEFAULT_OPEN_PARENS:
+	case Token.OPEN_PARENS_CAST:
 	case Token.OPEN_PARENS_LAMBDA:
 	case Token.OPEN_PARENS:
 		return "(";
-	case Token.CLOSE_PARENS_CAST:
-	case Token.CLOSE_PARENS_NO_CAST:
-	case Token.CLOSE_PARENS_OPEN_PARENS:
-	case Token.CLOSE_PARENS_MINUS:
 	case Token.CLOSE_PARENS:
 		return ")";
 	case Token.DOT:
@@ -6359,8 +6350,6 @@ static string GetTokenName (int token)
 	case Token.OP_OR:
 	case Token.OP_PTR:
 	case Token.OP_COALESCING:	
-		return "<operator>";
-	
 	case Token.OP_MULT_ASSIGN:
 	case Token.OP_DIV_ASSIGN:
 	case Token.OP_MOD_ASSIGN:

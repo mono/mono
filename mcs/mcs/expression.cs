@@ -106,6 +106,11 @@ namespace Mono.CSharp {
 			return Expr;
 		}
 
+		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			return Expr.DoResolveLValue (ec, right_side);
+		}
+
 		public override void Emit (EmitContext ec)
 		{
 			throw new Exception ("Should not happen");
@@ -5120,7 +5125,7 @@ namespace Mono.CSharp {
 			}
 		}
 	}
-
+/*
 	//
 	// It's either a cast or delegate invocation
 	//
@@ -5226,6 +5231,7 @@ namespace Mono.CSharp {
 			target.argument = argument.Clone (clonectx);
 		}
 	}
+*/
 
 	//
 	// This class is used to "disable" the code generation for the
