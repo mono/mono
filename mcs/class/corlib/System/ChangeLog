@@ -1,3 +1,9 @@
+
+Mon Oct 13 16:40:56 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* Environment.cs, OperatingSystem.cs: complete support for
+	PlatformID (bug #433108).
+
 2008-10-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* AppDomain.cs: (Load(AssemblyName)) Use the CodeBase after the Name

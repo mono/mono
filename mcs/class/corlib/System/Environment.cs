@@ -187,10 +187,6 @@ namespace System {
 				if (os == null) {
 					Version v = Version.CreateFromString (GetOSVersionString ());
 					PlatformID p = Platform;
-#if NET_2_0
-					if ((int) p == 128)
-						p = PlatformID.Unix;
-#endif
 					os = new OperatingSystem (p, v);
 				}
 				return os;
@@ -686,7 +682,7 @@ namespace System {
 		// private methods
 
 		internal static bool IsRunningOnWindows {
-			get { return ((int) Platform != 128); }
+			get { return ((int) Platform < 4); }
 		}
 
 		//

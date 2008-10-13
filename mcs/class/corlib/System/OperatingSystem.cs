@@ -116,6 +116,12 @@ namespace System {
 			case 128: /* reported for 1.1 mono */
 				str = "Unix";
 				break;
+			case 5:
+				str = "XBox";
+				break;
+			case 6:
+				str = "OSX";
+				break;
 			default:
 				str = Locale.GetText ("<unknown>");
 				break;
