@@ -1,3 +1,11 @@
+2008-10-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Control.cs: When updating z order in child controls, send to back
+	the implicit controls. Also, do it explicitly, instead of making
+	GetAllControls return the implicit controls in a specific order, and
+	thus avoid depending on that, which could change in the future.
+	Fixes #434304.
+
 2008-10-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* X11Dnd.cs: Try to call Application.DoEvents before returning in a

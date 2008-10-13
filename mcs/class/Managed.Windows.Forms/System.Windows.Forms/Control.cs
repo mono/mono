@@ -5252,7 +5252,16 @@ namespace System.Windows.Forms
 			// basically what we need to guard against is
 			// calling XplatUI.SetZOrder on an hwnd that
 			// corresponds to an unmapped X window.
-			controls = child_controls.GetAllControls ();
+			//
+			// Also, explicitly send implicit controls to the back.
+			if (child_controls.ImplicitControls == null) {
+				controls = new Control [child_controls.Count];
+				child_controls.CopyTo (controls, 0);
+			} else {
+				controls = new Control [child_controls.Count + child_controls.ImplicitControls.Count];
+				child_controls.CopyTo (controls, 0);
+				child_controls.ImplicitControls.CopyTo (controls, child_controls.Count);
+			}
 
 			ArrayList children_to_order = new ArrayList ();
 
