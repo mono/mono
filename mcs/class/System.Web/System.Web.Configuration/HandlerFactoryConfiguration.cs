@@ -42,7 +42,6 @@ namespace System.Web.Configuration {
 		public string OriginalPath;
 		
 		public string [] Verbs;
-		public FileMatchingInfo [] files;
 
 		// To support lazy loading we keep the name around.
 		public string TypeName;
@@ -86,7 +85,7 @@ namespace System.Web.Configuration {
 		public bool PathMatches (string p)
 		{
 			string [] paths = OriginalPath.Split (',');
-			files = new FileMatchingInfo [paths.Length];
+			FileMatchingInfo [] files = new FileMatchingInfo [paths.Length];
 
 			int i = 0;
 			foreach (string s in paths)
