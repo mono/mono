@@ -1,3 +1,8 @@
+2008-10-13  Marek Habersack  <mhabersack@novell.com>
+
+	* HandlerFactoryConfiguration.cs: do not store call-specific data
+	in a class field.
+
 2008-10-12  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpRuntimeConfig.cs: Added support for several undocumented options,
