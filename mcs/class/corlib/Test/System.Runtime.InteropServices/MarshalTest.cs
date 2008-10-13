@@ -670,11 +670,8 @@ namespace MonoTests.System.Runtime.InteropServices
 
 		bool RunningOnUnix {
 			get {
-#if NET_2_0
-				return Environment.OSVersion.Platform == PlatformID.Unix;
-#else
-				return (int) Environment.OSVersion.Platform == 128;
-#endif
+				int p = (int) Environment.OSVersion.Platform;
+				return ((p == 4) || (p == 128) || (p == 6));
 			}
 		}
 

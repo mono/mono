@@ -3170,12 +3170,8 @@ namespace MonoTests.Microsoft.Win32
 
 		private bool RunningOnUnix {
 			get {
-#if NET_2_0
-				return Environment.OSVersion.Platform == PlatformID.Unix;
-#else
 				int p = (int) Environment.OSVersion.Platform;
-				return ((p == 4) || (p == 128));
-#endif
+				return ((p == 4) || (p == 128) || (p == 6));
 			}
 		}
 	}
