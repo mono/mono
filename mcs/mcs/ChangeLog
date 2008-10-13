@@ -1,5 +1,9 @@
 2008-10-13  Marek Safar  <marek.safar@gmail.com>
 
+	* cs-tokenizer.cs: Add missing alias qualifier to type cast.
+
+2008-10-13  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-tokenizer.cs, expression.cs, cs-parser.jay: Reworked parens
 	parser and tokenizer. Fixes many ambiguities including #433258.
 

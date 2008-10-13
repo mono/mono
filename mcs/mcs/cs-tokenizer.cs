@@ -665,6 +665,7 @@ namespace Mono.CSharp
 					case Token.DOT:
 					case Token.OP_GENERICS_LT:
 					case Token.COMMA:
+					case Token.DOUBLE_COLON:
 					case -1:
 						cast_posible = true;
 						continue;
@@ -698,7 +699,8 @@ namespace Mono.CSharp
 				case Token.INTERR_NULLABLE:
 				case Token.OPEN_BRACKET:
 				case Token.CLOSE_BRACKET:
-				case Token.COMMA:				
+				case Token.COMMA:
+				case Token.DOUBLE_COLON:
 					cast_posible = true;
 					continue;
 
