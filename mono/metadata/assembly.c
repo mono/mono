@@ -1274,11 +1274,8 @@ mono_assembly_open_full (const char *filename, MonoImageOpenStatus *status, gboo
 	if (bundles != NULL)
 		image = mono_assembly_open_from_bundle (fname, status, refonly);
 
-	if (!image) {
-		mono_assemblies_lock ();
+	if (!image)
 		image = mono_image_open_full (fname, status, refonly);
-		mono_assemblies_unlock ();
-	}
 
 	if (!image){
 		if (*status == MONO_IMAGE_OK)
