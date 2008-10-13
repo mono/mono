@@ -1,3 +1,8 @@
+2008-10-14  Andreia Gaita  <avidigal@novell.com>
+
+	* xpidl2cs.pl: add option parsing. add support for choosing a specific
+	interface to process inside an idl which defines several interfaces
+
 2008-09-23  Andreia Gaita <avidigal@novell.com> 
 
 	* xpidl2cs.pl: whitespace clean up

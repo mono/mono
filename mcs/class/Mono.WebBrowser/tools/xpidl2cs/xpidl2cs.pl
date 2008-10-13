@@ -21,14 +21,16 @@
 # Boston, MA 02111-1307, USA.
 ##############################################################
 
-die "Usage: xpidl2cs.pl file.idl [/path/to/idl/]" if scalar(@ARGV) < 1;
 
-my $file = shift;
-my $path = shift if scalar(@ARGV) > 0;
-my $nosig = shift if scalar(@ARGV) > 0;
-$nosig = "" if !$nosig;
 
-open FILE, '<', $path.$file or die "Can't open file $path$file";
+
+my $file;
+my $path;
+my $nosig;
+my $_class;
+my %opt=();
+
+#open FILE, '<', $path.$file or die "Can't open file $path$file";
 
 my %interface = (
 		 properties => (), 
@@ -127,6 +129,39 @@ $names{"lock"} = {name => "_lock"};
 my %dependents;
    
 my $class_implementation;
+
+
+
+sub usage ()
+{
+	print STDERR << "EOF";
+    Usage: xpidl2cs.pl -f file -p path/to/idl [-nh -c class]
+    -h		: this help
+    -f		: idl file to parse, with extension
+    -p		: path to the idl file directory
+    -n		: generate files with no PreserveSig attribute (optional, defaults to adding the attribute)
+    -c		: specific class to use inside the idl file (optional)
+EOF
+	exit;
+}
+
+sub init ()
+{
+	use Getopt::Std;
+	my $opts = 'f:p:c:n';
+	getopts( "$opts", \%opt ) or usage();
+	usage if $opt{h};
+
+	usage() if !$opt{f} or !$opt{p};
+
+	$file = $opt{f};
+	$path = $opt{p};
+	open FILE, '<', $path.$file or die "Can't open file $path$file";
+	
+	$nosig = 1 if $opt{n};
+	$_class = $opt{c};
+}
+
 
 sub trim{
 #print "trim\n";
@@ -442,6 +477,19 @@ sub parse_file {
 				my $class = $line;
 				$class =~ s/interface ([^\:|\s]+)\s*:\s*(.*)/\1/;
 #		print "\t\tclass:$class\n";
+#		print "\t\t_class:$_class\n";
+				if ($_class && $_class !~ $class) {
+					$uuid = '';
+					$class = '';
+					$method = 0;
+					$mname = '';
+					$mtype = '';
+					$mparams = '';
+					$start = 0;
+					$comment = 0;
+					next;
+				}
+
 				my $parent = $line;
 				$parent =~ s/([^\:]+):\s*(.*)[\s|\{]/\2/;
 #		print "\t\tparent:$parent\n";
@@ -681,7 +729,9 @@ sub generate_dependents {
     for my $dependent (keys %dependents) {
 		if (! (-e "$dependent.cs") && -e "$path$dependent.idl" && $file != $dependent) {
 			print "generating $path$dependent.idl\n";
-			my $ret = `perl xpidl2cs.pl $dependent.idl $path $nosig`;
+			my $cmd = "perl xpidl2cs.pl -f $dependent.idl -p $path";
+			$cmd .= "-n" if $nosig;
+			my $ret = `$cmd`;
 			print "\n$ret";
 		}
     }
@@ -803,7 +853,7 @@ sub generate_class_implementation_example {
 	
 }
 
-
+&init();
 &parse_file ();
 &output ();
 &generate_dependents ();
