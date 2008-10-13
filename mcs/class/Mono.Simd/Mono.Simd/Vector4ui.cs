@@ -61,6 +61,9 @@ namespace Mono.Simd
 			return new Vector4ui (v1.x - v2.x, v1.y - v2.y, v1.z - v2.z, v1.w - v2.w);
 		}
 
+		/*
+		 * Requires SSE 4.1
+		 */
 		public static Vector4ui operator * (Vector4ui v1, Vector4ui v2)
 		{
 			return new Vector4ui (v1.x * v2.x, v1.y * v2.y, v1.z * v2.z, v1.w * v2.w);
@@ -109,24 +112,6 @@ namespace Mono.Simd
 			uint *b = &res.x;
 			for (int i = 0; i < 4; ++i)
 				*b++ = (uint)((int)(*a++) >> amount);
-			return res;
-		}
-
-		/*
-         * NOTE: Thou packusdw states that it works with signed dwords, unsigned ones will do just fine.
-		 */
-		public static unsafe Vector8us PackWithUnsignedSaturation (Vector4ui va, Vector4ui vb)
-		{
-			Vector8us res = new Vector8us ();
-			ushort *r = (ushort*)&res;
-			uint *a = &va.x;
-			uint *b = &vb.x;
-			int i;
-			for (i = 0; i < 4; ++i)
-				*r++ = (ushort)System.Math.Min (*a++, ushort.MaxValue);
-			for (i = 0; i < 4; ++i)
-				*r++ = (ushort)System.Math.Min (*b++, ushort.MaxValue);
-
 			return res;
 		}
 

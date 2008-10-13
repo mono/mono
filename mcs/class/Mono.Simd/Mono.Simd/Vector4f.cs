@@ -107,6 +107,45 @@ namespace Mono.Simd
 			this.w = w;
 		}
 
+		public static unsafe Vector4f operator & (Vector4f v1, Vector4f v2)
+		{
+			Vector4f res = new Vector4f ();
+			int *a = (int*)&v1;
+			int *b = (int*)&v2;
+			int *c = (int*)&res;
+			*c++ = *a++ & *b++;
+			*c++ = *a++ & *b++;
+			*c++ = *a++ & *b++;
+			*c = *a & *b;
+			return res;
+		}
+
+		public static unsafe Vector4f operator | (Vector4f v1, Vector4f v2)
+		{
+			Vector4f res = new Vector4f ();
+			int *a = (int*)&v1;
+			int *b = (int*)&v2;
+			int *c = (int*)&res;
+			*c++ = *a++ | *b++;
+			*c++ = *a++ | *b++;
+			*c++ = *a++ | *b++;
+			*c = *a | *b;
+			return res;
+		}
+
+		public static unsafe Vector4f operator ^ (Vector4f v1, Vector4f v2)
+		{
+			Vector4f res = new Vector4f ();
+			int *a = (int*)&v1;
+			int *b = (int*)&v2;
+			int *c = (int*)&res;
+			*c++ = *a++ ^ *b++;
+			*c++ = *a++ ^ *b++;
+			*c++ = *a++ ^ *b++;
+			*c = *a ^ *b;
+			return res;
+		}
+
 		public static Vector4f operator + (Vector4f v1, Vector4f v2)
 		{
 			return new Vector4f (v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, v1.w + v2.w);
@@ -127,6 +166,19 @@ namespace Mono.Simd
 			return new Vector4f (v1.x / v2.x, v1.y / v2.y, v1.z / v2.z, v1.w / v2.w);
 		}
 
+		public static unsafe Vector4f AndNot (Vector4f v1, Vector4f v2)
+		{
+			Vector4f res = new Vector4f ();
+			int *a = (int*)&v1;
+			int *b = (int*)&v2;
+			int *c = (int*)&res;
+			*c++ = ~*a++ & *b++;
+			*c++ = ~*a++ & *b++;
+			*c++ = ~*a++ & *b++;
+			*c = ~*a & *b;
+			return res;
+		}
+
 		public static Vector4f Sqrt (Vector4f v1)
 		{
 			return new Vector4f ((float)System.Math.Sqrt ((float)v1.x),
@@ -141,6 +193,11 @@ namespace Mono.Simd
 								(float)(1.0 / System.Math.Sqrt ((float)v1.y)),
 								(float)(1.0 / System.Math.Sqrt ((float)v1.z)),
 								(float)(1.0 / System.Math.Sqrt ((float)v1.w)));
+		}
+
+		public static Vector4f Reciprocal (Vector4f v1)
+		{
+			return new Vector4f (1.0f / v1.x, 1.0f / v1.y, 1.0f / v1.z, 1.0f / v1.w);
 		}
 
 		public static Vector4f Max (Vector4f v1, Vector4f v2)
@@ -174,23 +231,116 @@ namespace Mono.Simd
 			return new Vector4f (v1.x - v1.y, v1.z - v1.w, v2.x - v2.y, v2.z - v2.w);
 		}
 
-		float select (int pos, ShuffleSel sel) {
-			int idx = (((int)sel) >> (pos * 2)) & 0x3;
-			switch (idx) {
-			case 0: return x;
-			case 1: return y;
-			case 2: return z;
-			case 3: return w;
-			}
-			throw new Exception ("not reached"); 
+		public static Vector4f InterleaveHigh (Vector4f v1, Vector4f v2)
+		{
+			return new Vector4f (v1.z, v2.z, v1.w, v2.w);
 		}
+
+		public static Vector4f InterleaveLow (Vector4f v1, Vector4f v2)
+		{
+			return new Vector4f (v1.x, v2.x, v1.y, v2.y);
+		}
+
+		/*Same as a == b. */
+		public unsafe static Vector4f CompareEquals (Vector4f v1, Vector4f v2)
+		{
+			Vector4f res = new Vector4f ();
+			int *c = (int*)&res;
+			*c++ = v1.x == v2.x ? -1 : 0;
+			*c++ = v1.y == v2.y ? -1 : 0;
+			*c++ = v1.z == v2.z ? -1 : 0;
+			*c = v1.w == v2.w ? -1 : 0;
+			return res;		}
+
+		/*Same as a < b. */
+		public unsafe static Vector4f CompareLessThan (Vector4f v1, Vector4f v2)
+		{
+			Vector4f res = new Vector4f ();
+			int *c = (int*)&res;
+			*c++ = v1.x < v2.x ? -1 : 0;
+			*c++ = v1.y < v2.y ? -1 : 0;
+			*c++ = v1.z < v2.z ? -1 : 0;
+			*c = v1.w < v2.w ? -1 : 0;
+			return res;
+		}
+
+		/*Same as a <= b. */
+		public unsafe static Vector4f CompareLessEqual (Vector4f v1, Vector4f v2)
+		{
+			Vector4f res = new Vector4f ();
+			int *c = (int*)&res;
+			*c++ = v1.x <= v2.x ? -1 : 0;
+			*c++ = v1.y <= v2.y ? -1 : 0;
+			*c++ = v1.z <= v2.z ? -1 : 0;
+			*c = v1.w <= v2.w ? -1 : 0;
+			return res;		}
+
+		/*Same float.IsNaN (a) || float.IsNaN (b). */
+		public unsafe static Vector4f CompareUnordered (Vector4f v1, Vector4f v2)
+		{
+			Vector4f res = new Vector4f ();
+			int *c = (int*)&res;
+			*c++ = float.IsNaN (v1.x) || float.IsNaN (v2.x) ? -1 : 0;
+			*c++ = float.IsNaN (v1.y) || float.IsNaN (v2.y) ? -1 : 0;
+			*c++ = float.IsNaN (v1.z) || float.IsNaN (v2.z) ? -1 : 0;
+			*c = float.IsNaN (v1.w) || float.IsNaN (v2.w) ? -1 : 0;
+			return res;		}
+
+		/*Same as a != b. */
+		public unsafe static Vector4f CompareNotEqual (Vector4f v1, Vector4f v2)
+		{
+			Vector4f res = new Vector4f ();
+			int *c = (int*)&res;
+			*c++ = v1.x != v2.x ? -1 : 0;
+			*c++ = v1.y != v2.y ? -1 : 0;
+			*c++ = v1.z != v2.z ? -1 : 0;
+			*c = v1.w != v2.w ? -1 : 0;
+			return res;
+		}
+
+		/*Same as !(a < b). */
+		public unsafe static Vector4f CompareNotLessThan (Vector4f v1, Vector4f v2)
+		{
+			Vector4f res = new Vector4f ();
+			int *c = (int*)&res;
+			*c++ = v1.x < v2.x ? 0 : -1;
+			*c++ = v1.y < v2.y ? 0 : -1;
+			*c++ = v1.z < v2.z ? 0 : -1;
+			*c = v1.w < v2.w ? 0 : -1;
+			return res;
+		}
+
+		/*Same as !(a <= b). */
+		public unsafe static Vector4f CompareNotLessEqual (Vector4f v1, Vector4f v2)
+		{
+			Vector4f res = new Vector4f ();
+			int *c = (int*)&res;
+			*c++ = v1.x <= v2.x ? 0 : -1;
+			*c++ = v1.y <= v2.y ? 0 : -1;
+			*c++ = v1.z <= v2.z ? 0 : -1;
+			*c = v1.w <= v2.w ? 0 : -1;
+			return res;
+		}
+
+		/*Same !float.IsNaN (a) && !float.IsNaN (b). */
+		public unsafe static Vector4f CompareOrdered (Vector4f v1, Vector4f v2)
+		{
+			Vector4f res = new Vector4f ();
+			int *c = (int*)&res;
+			*c++ = !float.IsNaN (v1.x) && !float.IsNaN (v2.x) ? -1 : 0;
+			*c++ = !float.IsNaN (v1.y) && !float.IsNaN (v2.y) ? -1 : 0;
+			*c++ = !float.IsNaN (v1.z) && !float.IsNaN (v2.z) ? -1 : 0;
+			*c = !float.IsNaN (v1.w) && !float.IsNaN (v2.w) ? -1 : 0;
+			return res;		}
 
 		/*
 		The sel argument must be a value combination of ShuffleSel flags.
 		*/
-		public static Vector4f Shuffle (Vector4f v1, ShuffleSel sel)
+		public static unsafe Vector4f Shuffle (Vector4f v1, ShuffleSel sel)
 		{
-			return new Vector4f (v1.select (0, sel), v1.select (1, sel), v1.select (2, sel), v1.select (3, sel));
+			float *ptr = (float*)&v1;
+			int idx = (int)sel;
+			return new Vector4f (*(ptr + ((idx >> 0) & 0x3)),*(ptr + ((idx >> 2) & 0x3)),*(ptr + ((idx >> 4) & 0x3)),*(ptr + ((idx >> 6) & 0x3)));
 		}
 
 		[CLSCompliant(false)]

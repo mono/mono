@@ -186,24 +186,6 @@ namespace Mono.Simd
 			return res;
 		}
 
-		/*
-         * NOTE: Thou packuswb states that it works with signed words, unsigned ones will do just fine
-		 */
-		public static unsafe Vector16b PackWithUnsignedSaturation (Vector8us va, Vector8us vb)
-		{
-			Vector16b res = new Vector16b ();
-			byte *r = (byte*)&res;
-			ushort *a = &va.v0;
-			ushort *b = &vb.v0;
-			int i;
-			for (i = 0; i < 8; ++i)
-				*r++ = (byte)System.Math.Min (*a++, byte.MaxValue);
-			for (i = 0; i < 8; ++i)
-				*r++ = (byte)System.Math.Min (*b++, byte.MaxValue);
-
-			return res;
-		}
-
 		public static unsafe explicit operator Vector4f(Vector8us v)
 		{
 			Vector4f* p = (Vector4f*)&v;

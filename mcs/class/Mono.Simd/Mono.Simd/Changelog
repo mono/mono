@@ -1,3 +1,16 @@
+2008-10-13  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Vector4f.cs: Added bitwise ops, reciprocal, interleave
+	and all flavors of compare.
+	Optimized Shuffle.
+
+	* Vector8us.cs: It turns out that packuswb doesn't work with unsigned
+	numbers that binary equivalent to negative numbers in signed form.
+	Removed PackWithUnsignedSaturation.
+
+	* Vector4ui.cs: Added SSE4.1 comment to relevant method. Removed
+	PackWithUnsignedSaturation for the same reason as above.
+
 2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Vector4ui.cs: Added common operations found in 
