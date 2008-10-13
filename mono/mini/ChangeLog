@@ -1,3 +1,30 @@
+2008-10-12  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* basic-simd.cs: Remove PackWithUnsignedSaturation tests as it turns out
+	that the packuswb/packusdw don't work with unsigned numbers for what
+	would be negative numbers in signed format.
+
+	* cpu-x86.md: Add doubleword forms of many ops and packing ones.
+	Fix the len of fconv_to_r8_x and xconv_r8_to_i4.
+
+	* mini-ops.h: Add doubleword forms of many ops and packing ones.
+
+	* mini-x86.c: Emit doubleword forms of many ops and packing ones.
+
+	* simd-intrinsics.c (SimdIntrinsc): Rename the flags field to simd_version.
+
+	* simd-intrinsics.c (vector4f_intrinsics): Use simd_version field for sse3 ops.
+
+	* simd-intrinsics.c (vector4u_intrinsics): Rename to vector4ui_intrinsics and
+	add more ops.
+
+	* simd-intrinsics.c (simd_version_name): New function, returns the name of the
+	version as the enum in mini.h.
+
+	* simd-intrinsics.c (emit_intrinsics): Instead of having a special emit mode
+	for sse3 ops, check the simd_version field if present. This way the code
+	works with all versions of sse.
+
 2008-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* simd-intrinsics.c: Fixed intrinsic name typo.
