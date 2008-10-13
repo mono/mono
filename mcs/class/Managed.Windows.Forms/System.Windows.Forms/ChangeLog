@@ -1,3 +1,8 @@
+2008-10-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TextBox.cs: Apply an old-approved patch that adds autocomplete's
+	Append support to this controls. We need it to apply new patches.
+
 2008-10-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Control.cs: When updating z order in child controls, send to back
