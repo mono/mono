@@ -1,4 +1,19 @@
 2008-10-13  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-ops.h: Add remaining sse1 fp ops.
+	
+	* cpu-x86.md: Add remaining sse1 fp ops.
+
+	* mini-x86.c (mono_arch_output_basic_block): Same.
+
+	* mini.h: Add enum for simd FP compare conditions.
+
+	* simd-intrinsics.c (vector4f_intrinsics): Add all new ops.
+
+	* simd-intrinsics.c (simd_intrinsic_emit_binary): Set inst_c0 to flags
+	so the backed can generate the appropriate op.
+
+2008-10-13  Rodrigo Kumpera  <rkumpera@novell.com>
 	This patch squeese one more byte from the SimdIntrinsc struct.
 
 	* mini-x86.c (mono_arch_cpu_enumerate_simd_versions: Use the version number
