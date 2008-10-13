@@ -1,3 +1,18 @@
+2008-10-13  Rodrigo Kumpera  <rkumpera@novell.com>
+	This patch squeese one more byte from the SimdIntrinsc struct.
+
+	* mini-x86.c (mono_arch_cpu_enumerate_simd_versions: Use the version number
+	a a shift amount intead of simply or'ing it.
+
+	* mini.h: Change SIMD_VERSION_* values to be sequential intead of masks.
+
+	* simd-intrinsics.c (struct SimdIntrinsc): Squeese simd_version and simd_emit_mode into a single
+	byte so we can have an aditional flags field without increasing struct size.
+
+	* simd-intrinsics.c (emit_intrinsics): Use the value of simd_version as a shift amount before checking
+	against the simd_supported_versions bitmask.
+
+	* simd-intrinsics.c: Set SIMD_INTRINSIC_NAME_MAX to an appropriate value.
 
 Mon Oct 13 10:58:10 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
