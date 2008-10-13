@@ -107,7 +107,7 @@ namespace System.IO.Ports
 				return ports[0];
 			} else {
 				int p = (int)Environment.OSVersion.Platform;
-				if (p == 4 || p == 128)
+				if (p == 4 || p == 128 || p == 6)
 					return "ttyS0"; // Default for Unix
 				else
 					return "COM1"; // Default for Windows

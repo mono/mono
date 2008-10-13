@@ -267,13 +267,10 @@ namespace System.Diagnostics
 				if (ext == null)
 					return empty;
 
-#if NET_2_0				
-				const PlatformID unix_platform = PlatformID.Unix;
-#else
-				const PlatformID unix_platform = (PlatformID)4;
-#endif
 				switch (Environment.OSVersion.Platform) {
-				case unix_platform:
+				case (PlatformID)4:
+				case (PlatformID)6:
+				case (PlatformID)128:
 					return empty; // no verb on non-Windows
 				default:
 					RegistryKey rk = null, rk2 = null, rk3 = null;

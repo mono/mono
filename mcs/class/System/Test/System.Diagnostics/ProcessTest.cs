@@ -715,12 +715,8 @@ namespace MonoTests.System.Diagnostics
 
 		static bool RunningOnUnix {
 			get {
-				PlatformID platform = Environment.OSVersion.Platform;
-#if NET_2_0
-				return platform == PlatformID.Unix;
-#else
-				return ((int) platform) == 128;
-#endif
+				int p = (int)Environment.OSVersion.Platform;
+				return ((p == 128) || (p == 4) || (p == 6));
 			}
 		}
 

@@ -91,7 +91,7 @@ namespace System.Diagnostics
 				// we create an event source directory named after the event log.
 				// This matches what MS does with the registry-based registration.
 				Directory.CreateDirectory (Path.Combine (logDir, sourceData.LogName));
-				if (RunningOnLinux) {
+				if (RunningOnUnix) {
 					ModifyAccessPermissions (logDir, "777");
 					ModifyAccessPermissions (logDir, "+t");
 				}
@@ -345,14 +345,10 @@ namespace System.Diagnostics
 			return sourceDir;
 		}
 
-		private bool RunningOnLinux {
+		private bool RunningOnUnix {
 			get {
-				return ((int) Environment.OSVersion.Platform == 4 ||
-#if NET_2_0
-					Environment.OSVersion.Platform == PlatformID.Unix);
-#else
-					(int) Environment.OSVersion.Platform == 128);
-#endif
+				int p = (int) Environment.OSVersion.Platform;
+				return ((p == 4) || (p == 128) || (p == 6));
 			}
 		}
 
@@ -385,7 +381,7 @@ namespace System.Diagnostics
 				string eventLogType = Environment.GetEnvironmentVariable (EventLog.EVENTLOG_TYPE_VAR);
 				if (eventLogType != null && eventLogType.Length > EventLog.LOCAL_FILE_IMPL.Length + 1)
 					return eventLogType.Substring (EventLog.LOCAL_FILE_IMPL.Length + 1);
-				if (RunningOnLinux) {
+				if (RunningOnUnix) {
 					return "/var/lib/mono/eventlog";
 				} else {
 					return Path.Combine (Environment.GetFolderPath (
