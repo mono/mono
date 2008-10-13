@@ -144,7 +144,7 @@ namespace System.Windows.Forms.Layout
 				int col = settings.GetColumn (c);
 				int row = settings.GetRow (c);
 
-				if ((col >= 0 && col < columns) && (row >= 0 && row < rows) && grid[col, row] == c)
+				if ((col >= 0 && col < columns) && (row >= 0 && row < rows) && (grid[col, row] == c || grid[col, row] == dummy_control))
 					continue;
 
 				for (int y = y_pointer; y < rows; y++) {
