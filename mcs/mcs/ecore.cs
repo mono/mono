@@ -4760,7 +4760,7 @@ namespace Mono.CSharp {
 
 		public Expression CreateTypeOfExpression ()
 		{
-			return new TypeOfField (FieldInfo, loc);
+			return new TypeOfField (GetConstructedFieldInfo (), loc);
 		}
 
 		override public Expression DoResolve (EmitContext ec)

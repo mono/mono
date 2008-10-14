@@ -6745,9 +6745,11 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			ArrayList args = new ArrayList (2);
+			ArrayList args = new ArrayList (1);
 			args.Add (new Argument (this));
-			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+			
+			// Use typeless constant for ldarg.0 to save some
+			// space and avoid problems with anonymous stories
 			return CreateExpressionFactoryCall ("Constant", args);
 		}
 		
