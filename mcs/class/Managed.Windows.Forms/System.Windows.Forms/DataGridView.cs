@@ -3715,6 +3715,22 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
+		internal void OnColumnRemovedInternal (DataGridViewColumnEventArgs e)
+		{
+			if (e.Column.CellTemplate != null) {
+				int index = e.Column.Index;
+				
+				RowTemplate.Cells.RemoveAt (index);
+
+				foreach (DataGridViewRow row in Rows)
+					row.Cells.RemoveAt (index);
+			}
+
+			AutoResizeColumnsInternal ();
+			OnColumnRemoved (e);
+			PrepareEditingRow (false, true);
+		}
+
 		protected virtual void OnColumnRemoved (DataGridViewColumnEventArgs e)
 		{
 			DataGridViewColumnEventHandler eh = (DataGridViewColumnEventHandler)(Events [ColumnRemovedEvent]);
@@ -5358,10 +5374,10 @@ namespace System.Windows.Forms {
 		internal void OnColumnCollectionChanged (object sender, CollectionChangeEventArgs e) {
 			switch (e.Action) {
 				case CollectionChangeAction.Add:
-					OnColumnAdded(new DataGridViewColumnEventArgs(e.Element as DataGridViewColumn));
+					OnColumnAddedInternal(new DataGridViewColumnEventArgs(e.Element as DataGridViewColumn));
 					break;
 				case CollectionChangeAction.Remove:
-					OnColumnRemoved(new DataGridViewColumnEventArgs(e.Element as DataGridViewColumn));
+					OnColumnRemovedInternal(new DataGridViewColumnEventArgs(e.Element as DataGridViewColumn));
 					break;
 				case CollectionChangeAction.Refresh:
 					break;

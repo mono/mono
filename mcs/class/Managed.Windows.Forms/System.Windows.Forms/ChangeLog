@@ -1,3 +1,12 @@
+2008-10-14  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewColumnCollection.cs: Remove calls to OnColumnAddedInternal,
+	these will get called in DGV.OnCollectionChanged.  Make sure 
+	OnCollectionChanged always gets called.
+	* DataGridView.cs: Make a OnColumnRemovedInternal that removes the cells
+	from every row.  Call this in OnCollectionChanged.
+	[Fixes bug #433669]
+
 2008-10-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ComboBox.cs: WM_KEYDOWN and WM_KEYUP messages should be sent to the
