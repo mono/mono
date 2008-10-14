@@ -95,8 +95,14 @@ namespace Mono.Cecil {
 						return dec;
 					}
 
-					IPermission p = sa.CreatePermission ();
-					dec.PermissionSet.AddPermission (p);
+					try {
+						IPermission p = sa.CreatePermission ();
+						dec.PermissionSet.AddPermission (p);
+					} catch {
+						dec.Resolved = false;
+						dec.Blob = declaration;
+						return dec;
+					}
 				}
 
 				dec.Resolved = true;
