@@ -8,18 +8,18 @@
 //
 
 using System;
-using System.Windows.Forms;
-using System.Drawing;
-using System.Reflection;
-using System.ComponentModel;
-using NUnit.Framework;
-using System.Threading;
 using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Reflection;
+using System.Threading;
+using System.Windows.Forms;
 
+using NUnit.Framework;
 
 namespace MonoTests.System.Windows.Forms
 {
-
 	[TestFixture]
 	public class ImageListTest
 	{
@@ -169,22 +169,42 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("System.Windows.Forms.ImageList Images.Count: 0, ImageSize: {Width=16, Height=16}",
 					 myimagelist.ToString (), "#T3");
 		}
-		
-		[Test]
-		public void Bug409169 ()
+
+		[Test] // bug #409169
+		public void ICollection_CopyTo ()
 		{
 			ImageList imgList = new ImageList ();
 			ImageList.ImageCollection coll = imgList.Images;
-			Bitmap img1 = new Bitmap (10, 10);
-			coll.Add (img1);
+
+			Image gif = Image.FromFile ("M.gif");
+			coll.Add (gif);
+			Bitmap bmp = new Bitmap (10, 10);
+			coll.Add (bmp);
 
 			const int dstOffset = 5;
-			object[] dst = new object[dstOffset + coll.Count];
-			((IList)coll).CopyTo (dst, dstOffset);
-			
-			Assert.IsNotNull (dst[dstOffset], "A1");
+			object [] dst = new object [dstOffset + coll.Count + 1];
+			((ICollection) coll).CopyTo (dst, dstOffset);
+
+			Assert.IsNull (dst [0], "#1");
+			Assert.IsNull (dst [1], "#2");
+			Assert.IsNull (dst [2], "#3");
+			Assert.IsNull (dst [3], "#4");
+			Assert.IsNull (dst [4], "#5");
+			Assert.IsNotNull (dst [5], "#6a");
+			Assert.IsFalse (object.ReferenceEquals (gif, dst [5]), "#6b");
+			Assert.AreEqual (typeof (Bitmap), dst [5].GetType (), "#6c");
+			Assert.IsNotNull (dst [6], "#7a");
+			Assert.IsFalse (object.ReferenceEquals (bmp, dst [6]), "#7b");
+			Assert.AreEqual (typeof (Bitmap), dst [6].GetType (), "#7c");
+			Assert.IsNull (dst [7], "#8");
+
+			((Image) dst [5]).Dispose ();
+			((Image) dst [6]).Dispose ();
+
+			coll [0].RotateFlip (RotateFlipType.Rotate90FlipY);
+			coll [1].RotateFlip (RotateFlipType.Rotate90FlipY);
 		}
-		
+
 		[TestFixture]
 		public class ImageListRecreateHandleEventClass
 		{
@@ -203,7 +223,7 @@ namespace MonoTests.System.Windows.Forms
 				ImageList myimagelist = new ImageList ();
 				Image myImage =	Image.FromFile("M.gif");
 				myimagelist.Images.Add (myImage);
-	                        myimagelist.ColorDepth = ColorDepth.Depth8Bit;
+				myimagelist.ColorDepth = ColorDepth.Depth8Bit;
 				myimagelist.ImageSize = new Size (50,50);
 				myimagelist.RecreateHandle += new EventHandler (RecreateHandle_EventHandler);
 				mygraphics = Graphics.FromHwnd(myform.Handle);
@@ -216,7 +236,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual (true, eventhandled, "#2");
 				myform.Dispose ();
 			}
-
 		}
 	}
 }

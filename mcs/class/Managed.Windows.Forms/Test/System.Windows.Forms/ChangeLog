@@ -1,3 +1,7 @@
+2008-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ImageListTest.cs: Improved test for ICollection.CopyTo.
+
 2008-09-30  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TreeNodeTest.cs: Test for ImageKey/ImageIndex plus flush some tests
