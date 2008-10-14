@@ -118,10 +118,10 @@ namespace System.Windows.Forms
 			get { 
 				if (!this.navigated)
 					return String.Empty; 
-				return ((Mono.WebBrowser.DOM.IElement)WebHost.Document.FirstChild).OuterHTML;
+				return WebHost.Document.DocumentElement.OuterHTML;
 			}
 			set { 
-				((Mono.WebBrowser.DOM.IElement)WebHost.Document.FirstChild).OuterHTML = value;
+				WebHost.Document.DocumentElement.OuterHTML = value;
 			}
 		}
 
