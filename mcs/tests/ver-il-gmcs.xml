@@ -12299,7 +12299,7 @@
         <size>7</size>
       </method>
       <method name="Boolean &lt;&gt;m__0()">
-        <size>202</size>
+        <size>192</size>
       </method>
     </type>
     <type name="Foo`1+&lt;ContainsAll&gt;c__AnonStorey0`1+&lt;ContainsAll&gt;c__AnonStorey1`1[T,U]">
@@ -13503,7 +13503,7 @@
         <size>24</size>
       </method>
       <method name="System.Linq.Expressions.Expression`1[System.Func`1[System.Func`1[System.Boolean]]] GetEvent()">
-        <size>43</size>
+        <size>33</size>
       </method>
       <method name="Void set_MyTypeProperty(MyType)">
         <size>8</size>
@@ -13662,16 +13662,16 @@
         <size>138</size>
       </method>
       <method name="Void CallTest_2()">
-        <size>117</size>
+        <size>107</size>
       </method>
       <method name="Void CallTest_3()">
-        <size>217</size>
+        <size>207</size>
       </method>
       <method name="Void CallTest_4()">
-        <size>131</size>
+        <size>121</size>
       </method>
       <method name="Void CallTest_5()">
-        <size>109</size>
+        <size>99</size>
       </method>
       <method name="Void CallTest_6()">
         <size>70</size>
@@ -14727,7 +14727,7 @@
         <size>3</size>
       </method>
       <method name="Int32 Goo(Boolean)">
-        <size>209</size>
+        <size>199</size>
       </method>
       <method name="Int32 Main()">
         <size>14</size>
@@ -14763,7 +14763,7 @@
         <size>7</size>
       </method>
       <method name="Boolean ContainsAll[U](IEnumerable`1)">
-        <size>192</size>
+        <size>182</size>
       </method>
       <method name="Boolean Contains(T)">
         <size>2</size>
@@ -14797,7 +14797,7 @@
         <size>7</size>
       </method>
       <method name="Void Invalid(Int32)">
-        <size>134</size>
+        <size>124</size>
       </method>
       <method name="Void Other(System.Int32[])">
         <size>1</size>
@@ -14827,6 +14827,45 @@
       </method>
       <method name="Int32 Main()">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-etree-13.cs">
+    <type name="Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>58</size>
+      </method>
+      <method name="IEnumerable`1 Test[T](Int32)">
+        <size>30</size>
+      </method>
+    </type>
+    <type name="Program+&lt;Test&gt;c__Iterator0`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 System.Collections.Generic.IEnumerator&lt;int&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>12</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;int&gt;.GetEnumerator()">
+        <size>40</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>103</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>8</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
       </method>
     </type>
   </test>
@@ -17141,7 +17180,7 @@
         <size>7</size>
       </method>
       <method name="Void &lt;&gt;m__0()">
-        <size>127</size>
+        <size>117</size>
       </method>
     </type>
   </test>
