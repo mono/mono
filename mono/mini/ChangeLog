@@ -1,5 +1,21 @@
 2008-10-14  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* simd-intrinsics.c (get_simd_vreg): Drop the is_this_ptr, this function
+	no longer handles STACK_PTR input.
+
+	* simd-intrinsics.c (get_simd_vreg): Don't crash when MonoInst::klass == -1.
+
+	* simd-intrinsics.c (load_simd_vreg): New function that works like 
+	get_simd_vreg 	but handles STACK_PTR input.
+
+	* simd-intrinsics.c (simd_intrinsic_emit_getter): Use load_simd_vreg
+	as the input can be an arbitrary pointer.
+
+	* simd-intrinsics.c (simd_intrinsic_emit_ctor): Try the
+	LDADDR local optimization directly otherwise use a store op.
+
+2008-10-14  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* basic-simd.cs: Tests for dup low and dup high.
 
 2008-10-14  Rodrigo Kumpera  <rkumpera@novell.com>
