@@ -115,6 +115,7 @@ net_2_0_dirs := \
 	System.ServiceModel		\
 	System.ServiceModel.Web	\
 	Mono.Management	\
+	Mono.Options \
 	Mono.Simd
 
 net_2_1_dirs := \
