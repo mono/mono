@@ -2346,6 +2346,11 @@ namespace Mono.CSharp {
 		{
 			MutateVariables (storey);
 
+			if (scope_initializers != null) {
+				foreach (Statement s in scope_initializers)
+					s.MutateHoistedGenericType (storey);
+			}
+
 			foreach (Statement s in statements)
 				s.MutateHoistedGenericType (storey);
 		}

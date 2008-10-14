@@ -1,5 +1,9 @@
 2008-10-14  Marek Safar  <marek.safar@gmail.com>
 
+	* statement.cs: Mutate scope initializers.
+
+2008-10-14  Marek Safar  <marek.safar@gmail.com>
+
 	* expression.cs: Use typeless value for This constant.
 	
 	* ecore.cs: Access FieldInfo via GetConstructedFieldInfo.
