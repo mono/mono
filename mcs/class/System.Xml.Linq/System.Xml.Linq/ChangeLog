@@ -1,3 +1,7 @@
+2008-10-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XContainer.cs (AddFirst): Avoid stackoverflow (infinite recursion).
+
 2008-06-18  Nestor Salceda  <nestor.salceda@gmail.com>
 
 	* XUtil.cs: Support XText in Clone (). Fixes bug #401325.

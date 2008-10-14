@@ -102,7 +102,7 @@ namespace System.Xml.Linq
 			if (first == null)
 				Add (content);
 			else
-				AddFirst (XUtil.ExpandArray (content));
+				first.AddBeforeSelf (XUtil.ExpandArray (content));
 		}
 
 		public void AddFirst (params object [] content)
