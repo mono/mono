@@ -1,9 +1,7 @@
-assemblies_dir=@prefix@/lib/mono
-gac_dir=${assemblies_dir}/gac/Mono.Options/0.2.1.0__0738eb9f132ed756
-Libraries=${gac_dir}/Mono.Options.dll
-Sources=${gac_dir}/Options.cs
+prefix=${pcfiledir}/../..
+assemblies_dir=${prefix}/lib/mono-options
+Sources=${assemblies_dir}/Options.cs
 
-Name: Mono Internal -- Do not use.
-Description: Mono Internal Libraries -- Do not use 
-Version: @VERSION@
-Libs: -r:Mono.Options.dll
+Name: Mono.Options
+Description: Command Line Parsing Library
+Version: 0.2.1
