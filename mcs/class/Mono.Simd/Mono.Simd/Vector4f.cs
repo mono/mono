@@ -333,6 +333,16 @@ namespace Mono.Simd
 			*c = !float.IsNaN (v1.w) && !float.IsNaN (v2.w) ? -1 : 0;
 			return res;		}
 
+		public static Vector4f DuplicateLow (Vector4f v1)
+		{
+			return new Vector4f (v1.x, v1.x, v1.z, v1.z);
+		}
+
+		public static Vector4f DuplicateHigh (Vector4f v1)
+		{
+			return new Vector4f (v1.y, v1.y, v1.w, v1.w);
+		}
+
 		/*
 		The sel argument must be a value combination of ShuffleSel flags.
 		*/
