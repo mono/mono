@@ -14869,6 +14869,59 @@
       </method>
     </type>
   </test>
+  <test name="gtest-etree-14.cs">
+    <type name="Person">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 get_Age()">
+        <size>7</size>
+      </method>
+      <method name="Void set_Age(Int32)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="Repro">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>59</size>
+      </method>
+      <method name="IEnumerable`1 GetPersons[T](IEnumerable`1, Int32)">
+        <size>44</size>
+      </method>
+      <method name="Boolean Test[T](T, System.Linq.Expressions.Expression`1[System.Func`2[T,System.Boolean]])">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Repro+&lt;GetPersons&gt;c__Iterator0`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="T System.Collections.Generic.IEnumerator&lt;T&gt;.get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>12</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable&lt;T&gt;.GetEnumerator()">
+        <size>52</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>288</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>60</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-exmethod-01.cs">
     <type name="SimpleTest">
       <method name="System.String Prefix(System.String, System.String)">
