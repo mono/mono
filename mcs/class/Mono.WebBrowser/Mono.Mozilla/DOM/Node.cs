@@ -35,10 +35,13 @@ namespace Mono.Mozilla.DOM
 {
 	internal class Node: DOMObject, INode
 	{
+		internal nsIDOMNode nodeNoProxy;
 		private nsIDOMNode _node;
 		internal nsIDOMNode node {
 			get { return _node; }
 			set {
+				hashcode = value.GetHashCode ();
+				nodeNoProxy = _node;
 				if (!(value is nsIDOMHTMLDocument) && control.platform != control.enginePlatform)
 					_node = nsDOMNode.GetProxy (control, value);
 				else
@@ -52,7 +55,6 @@ namespace Mono.Mozilla.DOM
 			
 		public Node (WebBrowser control, nsIDOMNode domNode) : base (control)
 		{
-			hashcode = domNode.GetHashCode ();
 			this.control = control;
 			this.node = domNode;
 		}
@@ -70,6 +72,14 @@ namespace Mono.Mozilla.DOM
 		}		
 		#endregion
 
+
+		#region Internal
+		internal virtual nsIDOMNode XPComObject
+		{
+			get { return node; }
+		}
+		#endregion
+		
 		#region INode Members
 		public virtual IAttributeCollection Attributes
 		{

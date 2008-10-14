@@ -251,6 +251,15 @@ namespace Mono.Mozilla
 			return o;
 		}
 
+		public static nsIServiceManager GetServiceManager (IWebBrowser control)
+		{
+			if (!isInitialized ())
+				return null;
+			BindingInfo info = getBinding (control);
+					
+			return gluezilla_getServiceManager2 (info.gluezilla);
+		}		
+
 		public static string EvalScript (IWebBrowser control, string script)
 		{
 			if (!isInitialized ())
@@ -346,6 +355,10 @@ namespace Mono.Mozilla
 		[DllImport ("gluezilla")]
 		[return: MarshalAs (UnmanagedType.Interface)]
 		public static extern nsIServiceManager  gluezilla_getServiceManager ();
+
+		[DllImport ("gluezilla")]
+		[return: MarshalAs (UnmanagedType.Interface)]
+		public static extern nsIServiceManager  gluezilla_getServiceManager2 (IntPtr instance);
 
 		[DllImport ("gluezilla")]
 		private static extern IntPtr gluezilla_evalScript (IntPtr instance, string script);

@@ -154,8 +154,8 @@ namespace Mono.Mozilla
 		internal nsIServiceManager ServiceManager {
 			get {
 				if (servMan == null) {
-					servMan = Base.gluezilla_getServiceManager ();
-					servMan = nsServiceManager.GetProxy (this, servMan);
+					servMan = Base.GetServiceManager (this);
+					//servMan = nsServiceManager.GetProxy (this, servMan);
 				}
 				return servMan;
 			}

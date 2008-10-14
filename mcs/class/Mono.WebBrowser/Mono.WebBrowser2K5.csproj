@@ -88,6 +88,7 @@
     <Compile Include="Mono.Mozilla\DOM\NamedNodeMap.cs" />
     <Compile Include="Mono.Mozilla\DOM\Stylesheet.cs" />
     <Compile Include="Mono.Mozilla\DOM\StylesheetList.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\extras\DocumentEncoderFlags.cs" />
     <Compile Include="Mono.Mozilla\interfaces\extras\nsIReadSegmentFun.cs" />
     <Compile Include="Mono.Mozilla\interfaces\extras\nsITimerCallbackDelegate.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIAccessibilityService.cs" />
@@ -100,6 +101,8 @@
     <Compile Include="Mono.Mozilla\interfaces\nsICancelable.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIChannel.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIClassInfo.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDocumentEncoder.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDocumentEncoderNodeFixup.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMCounter.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMCSSPrimitiveValue.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMCSSRule.cs" />

@@ -9,6 +9,7 @@ Mono.Mozilla/DOM/EventListener.cs
 Mono.Mozilla/DOM/NamedNodeMap.cs
 Mono.Mozilla/DOM/Stylesheet.cs
 Mono.Mozilla/DOM/StylesheetList.cs
+Mono.Mozilla/interfaces/extras/DocumentEncoderFlags.cs
 Mono.Mozilla/interfaces/extras/nsIReadSegmentFun.cs
 Mono.Mozilla/interfaces/extras/nsITimerCallbackDelegate.cs
 Mono.Mozilla/interfaces/nsIAccessibilityService.cs
@@ -21,6 +22,8 @@ Mono.Mozilla/interfaces/nsIArray.cs
 Mono.Mozilla/interfaces/nsICancelable.cs
 Mono.Mozilla/interfaces/nsIChannel.cs
 Mono.Mozilla/interfaces/nsIClassInfo.cs
+Mono.Mozilla/interfaces/nsIDocumentEncoder.cs
+Mono.Mozilla/interfaces/nsIDocumentEncoderNodeFixup.cs
 Mono.Mozilla/interfaces/nsIDOMCounter.cs
 Mono.Mozilla/interfaces/nsIDOMCSSPrimitiveValue.cs
 Mono.Mozilla/interfaces/nsIDOMCSSRule.cs

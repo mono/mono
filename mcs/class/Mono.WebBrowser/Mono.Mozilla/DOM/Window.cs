@@ -34,7 +34,7 @@ namespace Mono.Mozilla.DOM
 {
 	internal class Window : DOMObject, IWindow
 	{
-		private nsIDOMWindow window;
+		internal nsIDOMWindow window;
 		private EventListener eventListener;
 		
 		public Window(WebBrowser control, nsIDOMWindow domWindow) : base (control)

@@ -1,3 +1,42 @@
+2008-10-14  Andreia Gaita  <avidigal@novell.com>
+
+	* Mono.WebBrowser2K5.csproj:
+	* Mono.WebBrowser.dll.sources:
+	* Mono.Mozilla/interfaces/nsIDocumentEncoder.cs:
+	* Mono.Mozilla/interfaces/extras/DocumentEncoderFlags.cs:
+	* Mono.Mozilla/interfaces/nsIDocumentEncoderNodeFixup.cs:
+	  Added new interfaces to support retrieving node contents (OuterHTML and probably
+	  others)
+
+	* Mono.WebBrowser/Exception.cs: New exception for the
+	  DocumentEncoder service
+
+	* Mono.Mozilla/DOM/HTMLElement.cs: Rewrite OuterHTML,
+	  looks like the old approach doesn't work on 1.9, but DocumentRange is
+	  not working properly when I use selectNode directly, so the silliness
+	  of recreating the current tag's html by going through all the
+	  properties is ongoing.
+
+	* Mono.Mozilla/DOM/Element.cs:
+	* Mono.Mozilla/DOM/Document.cs: 
+	* Mono.Mozilla/DOM/Node.cs:
+	* Mono.Mozilla/DOM/HTMLElement.cs: The Node class now
+	  always stores retrieved unmanaged nodes, regardless of type, and
+	  child classes only cast from it for easier access.
+
+	* Mono.Mozilla/DOM/Node.cs: The Node class now always
+	  stores retrieved unmanaged nodes, regardless of type, and child
+	  classes only cast from it for easier access. Added a reference to the
+	  original unmanaged object prior to proxying (Documentencoder only
+	  works with non-proxies objects, apparently)
+
+	* Mono.Mozilla/DOM/Window.cs: Expose the unmanaged
+	  window object internally, the selection api needs it.
+
+	* Mono.Mozilla/Base.cs:
+	* Mono.Mozilla/WebBrowser.cs: Get the service manager
+	  from the proper thread
+
 2008-09-23  Andreia Gaita <avidigal@novell.com> 
 
 	* Mono.Mozilla/interfaces/nsIServiceManager.cs: change signature to

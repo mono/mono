@@ -32,14 +32,14 @@ namespace Mono.Mozilla.DOM
 {
 	internal class Element : Node, IElement
 	{
-		internal nsIDOMElement element {
-			get { return node as nsIDOMElement;}
+		internal nsIDOMElement node {
+			get { return base.node as nsIDOMElement;}
 			set { base.node = value as nsIDOMNode; }
 		}
 		
 		public Element(WebBrowser control, nsIDOMElement domElement) : base (control, domElement as nsIDOMNode)
 		{
-			this.element = domElement;
+			this.node = domElement;
 		}
 
 		#region IDisposable Members
@@ -47,7 +47,7 @@ namespace Mono.Mozilla.DOM
 		{
 			if (!disposed) {
 				if (disposing) {
-					this.element = null;
+					this.node = null;
 				}
 			}
 			base.Dispose(disposing);
@@ -58,7 +58,7 @@ namespace Mono.Mozilla.DOM
 		public virtual IElement AppendChild (IElement child) {
 			nsIDOMNode newChild;
 			Element elem = (Element) child;
-			this.element.appendChild (elem.element, out newChild);
+			this.node.appendChild (elem.node, out newChild);
 			return new Element (control, newChild as nsIDOMElement);
 		}
 
@@ -66,17 +66,17 @@ namespace Mono.Mozilla.DOM
 		{
 			get
 			{
-				nsIDOMDocumentRange docRange = ((Document) control.Document).ComObject as nsIDOMDocumentRange;
+				nsIDOMDocumentRange docRange = ((Document) control.Document).XPComObject as nsIDOMDocumentRange;
 				nsIDOMRange range;
 				docRange.createRange (out range);
-				range.selectNodeContents (this.element);
+				range.selectNodeContents (this.node);
 				range.toString (storage);
 				return Base.StringGet (storage);
 			}
 			set
 			{
 				Base.StringSet (storage, value);
-				this.element.setNodeValue (storage);
+				this.node.setNodeValue (storage);
 			}
 		}
 		
@@ -84,11 +84,11 @@ namespace Mono.Mozilla.DOM
 		{
 			get
 			{
-				nsIDOMDocumentRange docRange = ((Document) control.Document).ComObject as nsIDOMDocumentRange;
+				nsIDOMDocumentRange docRange = ((Document) control.Document).XPComObject as nsIDOMDocumentRange;
 				nsIDOMRange range;
 				docRange.createRange (out range);
 				nsIDOMNode parent;
-				element.getParentNode (out parent);
+				node.getParentNode (out parent);
 				range.selectNodeContents (parent);
 				range.toString (storage);
 				return Base.StringGet (storage);
@@ -97,7 +97,7 @@ namespace Mono.Mozilla.DOM
 			{
 				Base.StringSet (storage, value);
 				nsIDOMNode parent;
-				element.getParentNode (out parent);
+				node.getParentNode (out parent);
 				parent.setNodeValue (storage);
 			}
 		}		
@@ -118,7 +118,7 @@ namespace Mono.Mozilla.DOM
 				if (!resources.Contains ("All")) {
 				
 					HTMLElementCollection col = new HTMLElementCollection (control);
-					Recurse (col, this.element); 
+					Recurse (col, this.node); 
 					resources.Add ("All", col);
 				}
 				return resources["All"] as IElementCollection;
@@ -149,7 +149,7 @@ namespace Mono.Mozilla.DOM
 			{
 				if (!resources.Contains ("Children")) {
 					nsIDOMNodeList children;
-					this.element.getChildNodes (out children);
+					this.node.getChildNodes (out children);
 					resources.Add ("Children", new HTMLElementCollection (control, children));
 				}
 				return resources["Children"] as IElementCollection;
@@ -164,7 +164,7 @@ namespace Mono.Mozilla.DOM
 		
 		public virtual string TagName {
 			get {
-				element.getTagName (storage);
+				node.getTagName (storage);
 				return Base.StringGet (storage);
 			}
 		}
@@ -177,7 +177,7 @@ namespace Mono.Mozilla.DOM
 
 		public virtual int ClientWidth { 
 			get {
-				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
 				int ret = 0;
 				e.getClientWidth (out ret);
 				return ret;
@@ -185,7 +185,7 @@ namespace Mono.Mozilla.DOM
 		}
 		public virtual int ClientHeight	{
 			get {
-				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
 				int ret = 0;
 				e.getClientHeight (out ret);
 				return ret;
@@ -193,7 +193,7 @@ namespace Mono.Mozilla.DOM
 		}
 		public virtual int ScrollHeight	{
 			get {
-				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
 				int ret = 0;
 				e.getScrollHeight(out ret);
 				return ret;
@@ -201,7 +201,7 @@ namespace Mono.Mozilla.DOM
 		}
 		public virtual int ScrollWidth	{
 			get {
-				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
 				int ret = 0;
 				e.getScrollWidth (out ret);
 				return ret;
@@ -209,31 +209,31 @@ namespace Mono.Mozilla.DOM
 		}
 		public virtual int ScrollLeft {
 			get {
-				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
 				int ret = 0;
 				e.getScrollLeft (out ret);
 				return ret;
 			}
 			set {
-				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
 				e.setScrollLeft (value);
 			}
 		}
 		public virtual int ScrollTop {
 			get {
-				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
 				int ret = 0;
 				e.getScrollTop (out ret);
 				return ret;
 			}
 			set {
-				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
 				e.setScrollTop (value);
 			}
 		}
 		public virtual int OffsetHeight {
 			get {
-				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
 				int ret = 0;
 				e.getOffsetHeight (out ret);
 				return ret;
@@ -241,7 +241,7 @@ namespace Mono.Mozilla.DOM
 		}
 		public virtual int OffsetWidth {
 			get {
-				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
 				int ret = 0;
 				e.getOffsetWidth (out ret);
 				return ret;
@@ -249,7 +249,7 @@ namespace Mono.Mozilla.DOM
 		}
 		public virtual int OffsetLeft {
 			get {
-				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
 				int ret = 0;
 				e.getOffsetLeft (out ret);
 				return ret;
@@ -257,7 +257,7 @@ namespace Mono.Mozilla.DOM
 		}
 		public virtual int OffsetTop {
 			get {
-				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
 				int ret = 0;
 				e.getOffsetTop (out ret);
 				return ret;
@@ -266,7 +266,7 @@ namespace Mono.Mozilla.DOM
 
 		public virtual IElement OffsetParent {
 			get {
-				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				nsIDOMNSHTMLElement e = this.node as nsIDOMNSHTMLElement;
 				nsIDOMElement ret;
 				e.getOffsetParent (out ret);
 				if ((ret as nsIDOMHTMLElement) != null)
@@ -281,7 +281,7 @@ namespace Mono.Mozilla.DOM
 		#region Methods
 
 		public void Blur () {
-			nsIDOMNSHTMLElement elm = element as nsIDOMNSHTMLElement;
+			nsIDOMNSHTMLElement elm = node as nsIDOMNSHTMLElement;
 			if (elm != null) {
 				elm.blur ();
 			}
@@ -289,11 +289,11 @@ namespace Mono.Mozilla.DOM
 
 		public bool Equals (IElement obj) {
 			Element doc = (Element) obj;
-			return doc.element == this.element;
+			return doc.node == this.node;
 		}
 
 		public void Focus () {
-			nsIDOMNSHTMLElement elm = element as nsIDOMNSHTMLElement;
+			nsIDOMNSHTMLElement elm = node as nsIDOMNSHTMLElement;
 			if (elm != null) {
 				elm.focus ();
 			}
@@ -303,7 +303,7 @@ namespace Mono.Mozilla.DOM
 		{
 			if (!resources.Contains ("GetElementsByTagName" + name)) {
 				nsIDOMNodeList nodes;
-				this.element.getElementsByTagName (storage, out nodes);
+				this.node.getElementsByTagName (storage, out nodes);
 				resources.Add ("GetElementsByTagName" + name, new HTMLElementCollection(control, nodes));
 			}
 			return resources["GetElementsByTagName" + name] as IElementCollection;
@@ -317,20 +317,20 @@ namespace Mono.Mozilla.DOM
 		{
 			bool ret;
 			Base.StringSet (storage, name);
-			element.hasAttribute (storage, out ret);
+			node.hasAttribute (storage, out ret);
 			return ret;
 		}
 
 		public virtual string GetAttribute (string name) {
 			UniString ret = new UniString (String.Empty);
 			Base.StringSet (storage, name);
-			element.getAttribute (storage, ret.Handle);
+			node.getAttribute (storage, ret.Handle);
 			return ret.ToString ();
 		}
 
 		public void ScrollIntoView (bool alignWithTop) 
 		{
-			nsIDOMNSHTMLElement elm = element as nsIDOMNSHTMLElement;
+			nsIDOMNSHTMLElement elm = node as nsIDOMNSHTMLElement;
 			if (elm != null) {
 				elm.scrollIntoView (alignWithTop);
 			}
@@ -339,7 +339,7 @@ namespace Mono.Mozilla.DOM
 		public virtual void SetAttribute (string name, string value) {
 			UniString strVal = new UniString (value);
 			Base.StringSet (storage, name);
-			element.setAttribute (storage, strVal.Handle);
+			node.setAttribute (storage, strVal.Handle);
 		}		
 		
 		#endregion
@@ -347,7 +347,7 @@ namespace Mono.Mozilla.DOM
 		internal int Top {
 			get {
 				int ret;
-				((nsIDOMNSHTMLElement)this.element).getOffsetTop (out ret);
+				((nsIDOMNSHTMLElement)this.node).getOffsetTop (out ret);
 				return ret;
 			}
 		}
@@ -355,7 +355,7 @@ namespace Mono.Mozilla.DOM
 		internal int Left {
 			get {
 				int ret;
-				((nsIDOMNSHTMLElement)this.element).getOffsetLeft (out ret);
+				((nsIDOMNSHTMLElement)this.node).getOffsetLeft (out ret);
 				return ret;
 			}
 		}
@@ -363,7 +363,7 @@ namespace Mono.Mozilla.DOM
 		internal int Width {
 			get {
 				int ret;
-				((nsIDOMNSHTMLElement)this.element).getOffsetWidth (out ret);
+				((nsIDOMNSHTMLElement)this.node).getOffsetWidth (out ret);
 				return ret;
 			}
 		}
@@ -371,7 +371,7 @@ namespace Mono.Mozilla.DOM
 		internal int Height {
 			get {
 				int ret;
-				((nsIDOMNSHTMLElement)this.element).getOffsetHeight (out ret);
+				((nsIDOMNSHTMLElement)this.node).getOffsetHeight (out ret);
 				return ret;
 			}
 		}		

@@ -33,14 +33,14 @@ namespace Mono.Mozilla.DOM
 {
 	internal class HTMLElement : Element, IElement
 	{
-		private nsIDOMHTMLElement element {
-			get { return base.element as nsIDOMHTMLElement; }
-			set { base.element = value as nsIDOMElement; }
+		protected nsIDOMHTMLElement node {
+			get { return base.node as nsIDOMHTMLElement; }
+			set { base.node = value as nsIDOMElement; }
 		}
 
 		public HTMLElement (WebBrowser control, nsIDOMHTMLElement domHtmlElement) : base (control, domHtmlElement as nsIDOMElement)
 		{
-			this.element = domHtmlElement;
+			this.node = domHtmlElement;
 		}
 
 		#region IDisposable Members
@@ -48,7 +48,7 @@ namespace Mono.Mozilla.DOM
 		{
 			if (!disposed) {
 				if (disposing) {
-					this.element = null;
+					this.node = null;
 				}
 			}
 			base.Dispose(disposing);
@@ -59,12 +59,12 @@ namespace Mono.Mozilla.DOM
 		public new string InnerHTML
 		{
 			get {
-				nsIDOMNSHTMLElement nsElem = this.element as nsIDOMNSHTMLElement;
+				nsIDOMNSHTMLElement nsElem = this.node as nsIDOMNSHTMLElement;
 				nsElem.getInnerHTML (storage);
 				return Base.StringGet (storage);
 			}
 			set {
-				nsIDOMNSHTMLElement nsElem = this.element as nsIDOMNSHTMLElement;
+				nsIDOMNSHTMLElement nsElem = this.node as nsIDOMNSHTMLElement;
 				Base.StringSet (storage, value);
 				nsElem.setInnerHTML (storage);
 			}
@@ -74,31 +74,73 @@ namespace Mono.Mozilla.DOM
 		{
 			// bad emulation of outerHTML since gecko doesn't support it :P
 			get {
-				string tag = this.TagName;
-				string str = "<" + tag;
-				foreach (IAttribute att in this.Attributes) {
-					str += " " + att.Name + "=\"" + att.Value + "\"";
+
+				nsIDocumentEncoder docEncoder;
+				IntPtr ptrDocEncoder;
+				ptrDocEncoder = this.control.ServiceManager.getServiceByContractID (
+										"@mozilla.org/layout/documentEncoder;1?type=text/html",
+				                        typeof (nsIDocumentEncoder).GUID);
+				if (ptrDocEncoder == IntPtr.Zero)
+						throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.DocumentEncoderService);
+
+				
+				try {
+					docEncoder = (nsIDocumentEncoder)Marshal.GetObjectForIUnknown (ptrDocEncoder);
+					docEncoder = nsDocumentEncoder.GetProxy (this.control, docEncoder);
+				} catch (System.Exception ex) {
+					throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.DocumentEncoderService, ex);
 				}
-				nsIDOMNSHTMLElement nsElem = this.element as nsIDOMNSHTMLElement;
-				nsElem.getInnerHTML (storage);
-				str += ">" + Base.StringGet (storage) + "</" + tag + ">";
-				return str;
+				
+				if (docEncoder == null)
+					return String.Empty;
+				UniString type = new UniString ("text/html");
+				
+				try {
+					docEncoder.init ((nsIDOMDocument)((Node)Owner).nodeNoProxy, 
+				    	             type.Handle, 
+				        	         (uint)DocumentEncoderFlags.OutputRaw);
+				} catch (System.Exception ex) {
+					throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.DocumentEncoderService, ex);
+				}
+
+				string content;
+				
+				if (this.Equals (Owner.DocumentElement)) {
+					docEncoder.encodeToString(storage);
+					content = Base.StringGet (storage);
+				} else {
+
+					docEncoder.setNode (this.nodeNoProxy);
+					docEncoder.encodeToString(storage);
+					content = Base.StringGet (storage);
+					
+					string tag = this.TagName;
+					string str = "<" + tag;
+					foreach (IAttribute att in this.Attributes) {
+						str += " " + att.Name + "=\"" + att.Value + "\"";
+					}
+					
+					str += ">" + content + "</" + tag + ">";
+					content = str;
+					
+				}
+				return content;
 			}
 			set {
-				nsIDOMDocumentRange docRange = ((Document) control.Document).ComObject as nsIDOMDocumentRange;
+				nsIDOMDocumentRange docRange = ((Document) control.Document).XPComObject as nsIDOMDocumentRange;
 				nsIDOMRange range;
 				docRange.createRange (out range);
-				range.setStartBefore (this.element);
+				range.setStartBefore (this.node);
 				nsIDOMNSRange nsRange = range as nsIDOMNSRange;
 				Base.StringSet (storage, value);
 				nsIDOMDocumentFragment fragment;
 				nsRange.createContextualFragment (storage, out fragment);
 				nsIDOMNode parent;
-				this.element.getParentNode (out parent);
+				this.node.getParentNode (out parent);
 				parent = nsDOMNode.GetProxy (this.control, parent);
 				nsIDOMNode newNode;
-				parent.replaceChild (fragment as nsIDOMNode, this.element as nsIDOMNode, out newNode);
-				this.element = newNode as Mono.Mozilla.nsIDOMHTMLElement;
+				parent.replaceChild (fragment as nsIDOMNode, this.node as nsIDOMNode, out newNode);
+				this.node = newNode as Mono.Mozilla.nsIDOMHTMLElement;
 			}
 		}
 		
@@ -121,11 +163,11 @@ namespace Mono.Mozilla.DOM
 		public override int TabIndex {
 			get { 
 				int tabIndex;
-				((nsIDOMNSHTMLElement)this.element).getTabIndex (out tabIndex);
+				((nsIDOMNSHTMLElement)this.node).getTabIndex (out tabIndex);
 				return tabIndex;
 			}
 			set { 
-				((nsIDOMNSHTMLElement)this.element).setTabIndex (value);
+				((nsIDOMNSHTMLElement)this.node).setTabIndex (value);
 			}
 		}
 
