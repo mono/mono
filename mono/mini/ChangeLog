@@ -1,3 +1,13 @@
+2008-10-14  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-ops.h: Add dup low and dup high ops.
+	
+	* cpu-x86.md: Same.
+
+	* mini-x86.c (mono_arch_output_basic_block): Same.
+
+	* simd-intrinsics.c (vector4f_intrinsics): Same.
+
 2008-10-13  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* basic-simd.cs: Tests for recently added functionality.
