@@ -1,5 +1,9 @@
 2008-10-14  Marek Safar  <marek.safar@gmail.com>
 
+	* cs-tokenizer.cs: Add bool type to the list of valid cast tokens.
+
+2008-10-14  Marek Safar  <marek.safar@gmail.com>
+
 	* statement.cs: Mutate scope initializers.
 
 2008-10-14  Marek Safar  <marek.safar@gmail.com>
