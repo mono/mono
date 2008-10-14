@@ -1,0 +1,17 @@
+2008-10-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AssociatedMetadataTypeTypeDescriptionProvider.cs
+	  DataType.cs
+	  DataTypeAttribute.cs
+	  DisplayColumnAttribute.cs
+	  DisplayFormatAttribute.cs
+	  MetadataTypeAttribute.cs
+	  RangeAttribute.cs
+	  RegularExpressionAttribute.cs
+	  RequiredAttribute.cs
+	  ScaffoldColumnAttribute.cs
+	  ScaffoldTableAttribute.cs
+	  StringLengthAttribute.cs
+	  UIHintAttribute.cs
+	  ValidationAttribute.cs
+	  ValidationException.cs: initial checkin. mostly stubs.

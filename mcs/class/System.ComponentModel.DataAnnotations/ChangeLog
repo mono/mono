@@ -1,0 +1,4 @@
+2008-10-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile, System.ComponentModel.DataAnnotations.dll :
+	  initial checkin.
