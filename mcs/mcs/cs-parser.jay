@@ -228,7 +228,6 @@ namespace Mono.CSharp
 %token ARGLIST
 %token PARTIAL
 %token ARROW
-%token QUERY_FIRST_TOKEN
 %token FROM
 %token JOIN
 %token ON
@@ -241,7 +240,6 @@ namespace Mono.CSharp
 %token ASCENDING
 %token DESCENDING
 %token INTO
-%token QUERY_LAST_TOKEN
 %token INTERR_NULLABLE
 %token EXTERN_ALIAS
 
@@ -6411,8 +6409,6 @@ static string GetTokenName (int token)
 	case Token.EVAL_USING_DECLARATIONS_UNIT_PARSER:
 	case Token.EVAL_STATEMENT_PARSER:
 	case Token.LOWPREC:
-	case Token.QUERY_LAST_TOKEN:
-	case Token.QUERY_FIRST_TOKEN:
 	case Token.LAST_KEYWORD:	
 		return "<internal>";
 

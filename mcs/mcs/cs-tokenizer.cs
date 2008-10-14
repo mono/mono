@@ -461,20 +461,42 @@ namespace Mono.CSharp
 				return -1;
 			
 			int res = (int) o;
+			switch (res) {
+			case Token.GET:
+			case Token.SET:
+				if (!handle_get_set)
+					res = -1;
+				break;
+			case Token.REMOVE:
+			case Token.ADD:
+				if (!handle_remove_add)
+					res = -1;
+				break;
+			case Token.EXTERN:
+				if (parsing_declaration == 0)
+					res = Token.EXTERN_ALIAS;
+				break;
+			case Token.DEFAULT:
+				if (peek_token () == Token.COLON) {
+					token ();
+					res = Token.DEFAULT_COLON;
+				}
+				break;
+			case Token.WHERE:
+				if (!handle_where && query_parsing == 0)
+					res = -1;
+				break;
+			case Token.FROM:
+				//
+				// A query expression is any expression that starts with `from identifier'
+				// followed by any token except ; , =
+				// 
+				if (query_parsing == 0) {
+					if (lambda_arguments_parsing) {
+						res = -1;
+						break;
+					}
 
-			if (!handle_get_set && (res == Token.GET || res == Token.SET))
-				return -1;
-			if (!handle_remove_add && (res == Token.REMOVE || res == Token.ADD))
-				return -1;
-			if (parsing_declaration == 0 && res == Token.EXTERN)
-				return Token.EXTERN_ALIAS;
-
-			//
-			// A query expression is any expression that starts with `from identifier'
-			// followed by any token except ; , =
-			// 
-			if (query_parsing == 0) {
-				if (res == Token.FROM && !lambda_arguments_parsing) {
 					PushPosition ();
 					// HACK: to disable generics micro-parser, because PushPosition does not
 					// store identifiers array
@@ -511,16 +533,24 @@ namespace Mono.CSharp
 						return -1;
 					}
 					PopPosition ();
-					return res;
 				}
-
-				if (res > Token.QUERY_FIRST_TOKEN && res < Token.QUERY_LAST_TOKEN)
-					return -1;
+				break;
+			case Token.JOIN:
+			case Token.ON:
+			case Token.EQUALS:
+			case Token.SELECT:
+			case Token.GROUP:
+			case Token.BY:
+			case Token.LET:
+			case Token.ORDERBY:
+			case Token.ASCENDING:
+			case Token.DESCENDING:
+			case Token.INTO:
+				if (query_parsing == 0)
+					res = -1;
+				break;
 			}
 
-			if (res == Token.WHERE && !handle_where && query_parsing == 0)
-				return -1;
-			
 			return res;
 		}
 
@@ -1707,19 +1737,6 @@ namespace Mono.CSharp
 		public int token ()
 		{
 			current_token = xtoken ();
-
-			if (current_token != Token.DEFAULT)
-				return current_token;
-
-			PushPosition();
-			int c = xtoken();
-			if (c == -1)
-				current_token = Token.ERROR;
-			else if (c == Token.COLON)
-				current_token = Token.DEFAULT_COLON;
-			else
-				PopPosition();
-			
 			return current_token;
 		}
 
