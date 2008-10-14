@@ -23,6 +23,14 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	// Note: GetInnerXml is protected in XmlDsigC14NTransform making it
 	// difficult to test properly. This class "open it up" :-)
 	public class UnprotectedXmlDsigC14NTransform : XmlDsigC14NTransform {
+		public UnprotectedXmlDsigC14NTransform ()
+		{
+		}
+
+		public UnprotectedXmlDsigC14NTransform (bool includeComments)
+			: base (includeComments)
+		{
+		}
 
 		public XmlNodeList UnprotectedGetInnerXml () {
 			return base.GetInnerXml ();
@@ -52,11 +60,27 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			catch {}
 		}
 
-		[Test]
-		public void Properties () 
+		[Test] // ctor ()
+		public void Constructor1 ()
 		{
 			AssertEquals ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315", transform.Algorithm);
+			CheckProperties (transform);
+		}
 
+		[Test] // ctor (Boolean)
+		public void Constructor2 ()
+		{
+			transform = new UnprotectedXmlDsigC14NTransform (true);
+			AssertEquals ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments", transform.Algorithm);
+			CheckProperties (transform);
+
+			transform = new UnprotectedXmlDsigC14NTransform (false);
+			AssertEquals ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315", transform.Algorithm);
+			CheckProperties (transform);
+		}
+
+		void CheckProperties (XmlDsigC14NTransform transform)
+		{
 			Type[] input = transform.InputTypes;
 			Assert ("Input #", (input.Length == 3));
 			// check presence of every supported input types

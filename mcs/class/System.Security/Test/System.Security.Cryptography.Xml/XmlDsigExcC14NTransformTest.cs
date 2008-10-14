@@ -34,6 +34,24 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	// Note: GetInnerXml is protected in XmlDsigExcC14NTransform making it
 	// difficult to test properly. This class "open it up" :-)
 	public class UnprotectedXmlDsigExcC14NTransform : XmlDsigExcC14NTransform {
+		public UnprotectedXmlDsigExcC14NTransform ()
+		{
+		}
+
+		public UnprotectedXmlDsigExcC14NTransform (bool includeComments)
+			: base (includeComments)
+		{
+		}
+
+		public UnprotectedXmlDsigExcC14NTransform (string inclusiveNamespacesPrefixList)
+			: base (inclusiveNamespacesPrefixList)
+		{
+		}
+
+		public UnprotectedXmlDsigExcC14NTransform (bool includeComments, string inclusiveNamespacesPrefixList)
+			: base (includeComments, inclusiveNamespacesPrefixList)
+		{
+		}
 
 		public XmlNodeList UnprotectedGetInnerXml () {
 			return base.GetInnerXml ();
@@ -63,11 +81,83 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			catch {}
 		}
 
-		[Test]
-		public void Properties () 
+		[Test] // ctor ()
+		public void Constructor1 ()
 		{
 			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm);
+			AssertNull ("InclusiveNamespacesPrefixList", transform.InclusiveNamespacesPrefixList);
+			CheckProperties (transform);
+		}
 
+		[Test] // ctor (Boolean)
+		public void Constructor2 ()
+		{
+			transform = new UnprotectedXmlDsigExcC14NTransform (true);
+			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#WithComments", transform.Algorithm);
+			AssertNull ("InclusiveNamespacesPrefixList", transform.InclusiveNamespacesPrefixList);
+			CheckProperties (transform);
+
+			transform = new UnprotectedXmlDsigExcC14NTransform (false);
+			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm);
+			AssertNull ("InclusiveNamespacesPrefixList", transform.InclusiveNamespacesPrefixList);
+			CheckProperties (transform);
+		}
+
+		[Test] // ctor (String)
+		public void Constructor3 ()
+		{
+			transform = new UnprotectedXmlDsigExcC14NTransform (null);
+			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm);
+			AssertNull ("InclusiveNamespacesPrefixList", transform.InclusiveNamespacesPrefixList);
+			CheckProperties (transform);
+
+			transform = new UnprotectedXmlDsigExcC14NTransform (string.Empty);
+			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm);
+			AssertEquals ("InclusiveNamespacesPrefixList", string.Empty, transform.InclusiveNamespacesPrefixList);
+			CheckProperties (transform);
+
+			transform = new UnprotectedXmlDsigExcC14NTransform ("#default xsd");
+			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm);
+			AssertEquals ("InclusiveNamespacesPrefixList", "#default xsd", transform.InclusiveNamespacesPrefixList);
+			CheckProperties (transform);
+		}
+
+		[Test] // ctor (Boolean, String)
+		public void Constructor4 ()
+		{
+			transform = new UnprotectedXmlDsigExcC14NTransform (true, null);
+			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#WithComments", transform.Algorithm);
+			AssertNull ("InclusiveNamespacesPrefixList", transform.InclusiveNamespacesPrefixList);
+			CheckProperties (transform);
+
+			transform = new UnprotectedXmlDsigExcC14NTransform (true, string.Empty);
+			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#WithComments", transform.Algorithm);
+			AssertEquals ("InclusiveNamespacesPrefixList", string.Empty, transform.InclusiveNamespacesPrefixList);
+			CheckProperties (transform);
+
+			transform = new UnprotectedXmlDsigExcC14NTransform (true, "#default xsd");
+			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#WithComments", transform.Algorithm);
+			AssertEquals ("InclusiveNamespacesPrefixList", "#default xsd", transform.InclusiveNamespacesPrefixList);
+			CheckProperties (transform);
+
+			transform = new UnprotectedXmlDsigExcC14NTransform (false, null);
+			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm);
+			AssertNull ("InclusiveNamespacesPrefixList", transform.InclusiveNamespacesPrefixList);
+			CheckProperties (transform);
+
+			transform = new UnprotectedXmlDsigExcC14NTransform (false, string.Empty);
+			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm);
+			AssertEquals ("InclusiveNamespacesPrefixList", string.Empty, transform.InclusiveNamespacesPrefixList);
+			CheckProperties (transform);
+
+			transform = new UnprotectedXmlDsigExcC14NTransform (false, "#default xsd");
+			AssertEquals ("Algorithm", "http://www.w3.org/2001/10/xml-exc-c14n#", transform.Algorithm);
+			AssertEquals ("InclusiveNamespacesPrefixList", "#default xsd", transform.InclusiveNamespacesPrefixList);
+			CheckProperties (transform);
+		}
+
+		void CheckProperties (XmlDsigExcC14NTransform transform)
+		{
 			Type[] input = transform.InputTypes;
 			Assert ("Input #", (input.Length == 3));
 			// check presence of every supported input types

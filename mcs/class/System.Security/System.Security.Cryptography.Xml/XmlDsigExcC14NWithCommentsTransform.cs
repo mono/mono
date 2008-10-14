@@ -37,7 +37,6 @@ namespace System.Security.Cryptography.Xml {
 		public XmlDsigExcC14NWithCommentsTransform ()
 			: base (true)
 		{
-			Algorithm = XmlSignature.AlgorithmNamespaces.XmlDsigExcC14NWithCommentsTransform;
 		}
 
 		public XmlDsigExcC14NWithCommentsTransform (string inclusiveNamespacesPrefixList)

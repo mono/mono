@@ -35,7 +35,6 @@ namespace System.Security.Cryptography.Xml {
 
 		public XmlDsigC14NWithCommentsTransform() : base (true) 
 		{
-			Algorithm = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments";
 		}
 	}
 }

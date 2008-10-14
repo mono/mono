@@ -48,14 +48,16 @@ namespace System.Security.Cryptography.Xml {
 		private XmlCanonicalizer canonicalizer;
 		private Stream s;
 		
-		public XmlDsigC14NTransform () 
+		public XmlDsigC14NTransform () : this (false)
 		{
-			Algorithm = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
-			canonicalizer = new XmlCanonicalizer (false, false, PropagatedNamespaces);
 		}
 
 		public XmlDsigC14NTransform (bool includeComments) 
 		{
+			if (includeComments)
+				Algorithm = XmlSignature.AlgorithmNamespaces.XmlDsigC14NWithCommentsTransform;
+			else
+				Algorithm = XmlSignature.AlgorithmNamespaces.XmlDsigC14NTransform;
 			canonicalizer = new XmlCanonicalizer (includeComments, false, PropagatedNamespaces);
 		}
 

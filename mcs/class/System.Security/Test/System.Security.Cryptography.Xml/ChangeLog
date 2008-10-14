@@ -1,3 +1,16 @@
+2008-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlDsigXsltTranformTest.cs: Added test for .ctor (bool).
+	* XmlDsigEnvelopedTransformTest.cs: Added test for .ctor (bool). Use
+	Assert class. Improved properties tests.
+	* XmlDsigC14TransformTest.cs: Added test for .ctor (bool).
+	* XmlDsigExcC14NTransformTest.cs: Added .ctor tests and added asserts
+	IncludsiveNamespacesPrefixList
+	* XmlDsigExcC14NWithCommentsTransformTest.cs: Added basic .ctor and
+	properties tests.
+	* XmlDsigC14NWithCommentsTransformTest.cs: Fixed line endings.
+	* XmlLicenseTransformTest.cs: Added basic .ctor and properties tests.
+
 2008-09-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SignedXmlTest.cs: Add test cases for HMACSHA[256|384|512] and

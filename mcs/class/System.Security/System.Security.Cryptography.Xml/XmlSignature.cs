@@ -105,6 +105,7 @@ namespace System.Security.Cryptography.Xml {
 			public const string XmlDsigExcC14NTransform = "http://www.w3.org/2001/10/xml-exc-c14n#";
 			public const string XmlDsigExcC14NWithCommentsTransform = "http://www.w3.org/2001/10/xml-exc-c14n#WithComments";
 			public const string XmlDecryptionTransform = "http://www.w3.org/2002/07/decrypt#XML";
+			public const string XmlLicenseTransform = "urn:mpeg:mpeg21:2003:01-REL-R-NS:licenseTransform";
 #endif
 		}
 

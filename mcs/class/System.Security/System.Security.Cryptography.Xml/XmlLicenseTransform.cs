@@ -40,6 +40,7 @@ namespace System.Security.Cryptography.Xml {
 
 		public XmlLicenseTransform ()
 		{
+			Algorithm = XmlSignature.AlgorithmNamespaces.XmlLicenseTransform;
 		}
 
 		public IRelDecryptor Decryptor {

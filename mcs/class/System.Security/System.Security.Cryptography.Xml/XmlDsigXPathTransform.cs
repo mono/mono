@@ -53,7 +53,7 @@ namespace System.Security.Cryptography.Xml
 
 		public XmlDsigXPathTransform () 
 		{
-			Algorithm = "http://www.w3.org/TR/1999/REC-xpath-19991116";
+			Algorithm = XmlSignature.AlgorithmNamespaces.XmlDsigXPathTransform;
 		}
 
 		public override Type [] InputTypes {

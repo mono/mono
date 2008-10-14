@@ -1,3 +1,8 @@
+2008-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Security_test.dll.sources: Added XmlLicenseTransformTest.cs
+	and XmlDsigExcC14NWithCommentsTransformTest.cs.
+
 2008-09-23  Marek Safar <marek.safar@gmail.com>
 
 	* Makefile: Don't override global debug flag.

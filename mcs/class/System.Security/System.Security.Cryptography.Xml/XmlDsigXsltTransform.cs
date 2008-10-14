@@ -55,7 +55,7 @@ namespace System.Security.Cryptography.Xml
 		public XmlDsigXsltTransform (bool includeComments) 
 		{
 			comments = includeComments;
-			Algorithm = "http://www.w3.org/TR/1999/REC-xslt-19991116";
+			Algorithm = XmlSignature.AlgorithmNamespaces.XmlDsigXsltTransform;
 		}
 
 		public override Type [] InputTypes {

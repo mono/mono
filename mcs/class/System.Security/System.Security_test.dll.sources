@@ -42,8 +42,10 @@ System.Security.Cryptography.Xml/XmlDsigEnvelopedSignatureTransformTest.cs
 System.Security.Cryptography.Xml/XmlDsigC14NTransformTest.cs
 System.Security.Cryptography.Xml/XmlDsigC14NWithCommentsTransformTest.cs
 System.Security.Cryptography.Xml/XmlDsigExcC14NTransformTest.cs
+System.Security.Cryptography.Xml/XmlDsigExcC14NWithCommentsTransformTest.cs
 System.Security.Cryptography.Xml/XmlDsigXPathTransformTest.cs
 System.Security.Cryptography.Xml/XmlDsigXsltTransformTest.cs
+System.Security.Cryptography.Xml/XmlLicenseTransformTest.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2UITest.cs
 System.Security.Permissions/DataProtectionPermissionAttributeTest.cs
 System.Security.Cryptography/CryptographicAttributeObjectCas.cs

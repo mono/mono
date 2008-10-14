@@ -45,7 +45,7 @@ namespace System.Security.Cryptography.Xml {
 
 		public XmlDsigBase64Transform () 
 		{
-			Algorithm = "http://www.w3.org/2000/09/xmldsig#base64";
+			Algorithm = XmlSignature.AlgorithmNamespaces.XmlDsigBase64Transform;
 		}
 
 		public override Type[] InputTypes {

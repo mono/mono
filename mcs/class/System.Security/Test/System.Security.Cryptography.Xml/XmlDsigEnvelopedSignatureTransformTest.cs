@@ -22,6 +22,14 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	// Note: GetInnerXml is protected in XmlDsigEnvelopedSignatureTransform making it
 	// difficult to test properly. This class "open it up" :-)
 	public class UnprotectedXmlDsigEnvelopedSignatureTransform : XmlDsigEnvelopedSignatureTransform {
+		public UnprotectedXmlDsigEnvelopedSignatureTransform ()
+		{
+		}
+
+		public UnprotectedXmlDsigEnvelopedSignatureTransform (bool includeComments)
+			: base (includeComments)
+		{
+		}
 
 		public XmlNodeList UnprotectedGetInnerXml () 
 		{
@@ -30,59 +38,73 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	}
 
 	[TestFixture]
-	public class XmlDsigEnvelopedSignatureTransformTest : Assertion {
-
-		protected UnprotectedXmlDsigEnvelopedSignatureTransform transform;
+	public class XmlDsigEnvelopedSignatureTransformTest {
+		private UnprotectedXmlDsigEnvelopedSignatureTransform transform;
 
 		[SetUp]
-		protected void SetUp () 
+		public void SetUp ()
 		{
 			transform = new UnprotectedXmlDsigEnvelopedSignatureTransform ();
 		}
 
-		[Test]
-		public void Properties () 
+		[Test] // ctor ()
+		public void Constructor1 ()
 		{
-			AssertEquals ("Algorithm", "http://www.w3.org/2000/09/xmldsig#enveloped-signature", transform.Algorithm);
+			CheckProperties (transform);
+		}
 
-			Type[] input = transform.InputTypes;
-			AssertEquals ("Input Length", 3, input.Length);
+		[Test] // ctor (Boolean)
+		public void Constructor2 ()
+		{
+			transform = new UnprotectedXmlDsigEnvelopedSignatureTransform (true);
+			CheckProperties (transform);
+			transform = new UnprotectedXmlDsigEnvelopedSignatureTransform (false);
+			CheckProperties (transform);
+		}
+
+		void CheckProperties (XmlDsigEnvelopedSignatureTransform transform)
+		{
+			Assert.AreEqual ("http://www.w3.org/2000/09/xmldsig#enveloped-signature",
+				transform.Algorithm, "Algorithm");
+
+			Type [] input = transform.InputTypes;
+			Assert.AreEqual (3, input.Length, "Input Length");
 			// check presence of every supported input types
 			bool istream = false;
 			bool ixmldoc = false;
 			bool ixmlnl = false;
 			foreach (Type t in input) {
-				if (t.ToString () == "System.Xml.XmlDocument")
+				if (t == typeof (XmlDocument))
 					ixmldoc = true;
-				if (t.ToString () == "System.Xml.XmlNodeList")
+				if (t == typeof (XmlNodeList))
 					ixmlnl = true;
+				if (t == typeof (Stream))
+					istream = true;
 			}
-			Assert ("No Input Stream", !istream);
-			Assert ("Input XmlDocument", ixmldoc);
-			Assert ("Input XmlNodeList", ixmlnl);
+			Assert.IsTrue (istream, "Input Stream");
+			Assert.IsTrue (ixmldoc, "Input XmlDocument");
+			Assert.IsTrue (ixmlnl, "Input XmlNodeList");
 
-			Type[] output = transform.OutputTypes;
-			AssertEquals ("Output Length", 2, output.Length);
+			Type [] output = transform.OutputTypes;
+			Assert.AreEqual (2, output.Length, "Output Length");
 			// check presence of every supported output types
 			bool oxmlnl = false;
 			bool oxmldoc = false;
 			foreach (Type t in output) {
-				if (t == null)
-					throw new InvalidOperationException ();
-				if (t.ToString () == "System.Xml.XmlNodeList")
+				if (t == typeof (XmlNodeList))
 					oxmlnl = true;
-				if (t.ToString () == "System.Xml.XmlDocument")
+				if (t == typeof (XmlDocument))
 					oxmldoc = true;
 			}
-			Assert ("Output XmlNodeList", oxmlnl);
-			Assert ("Output XmlDocument", oxmldoc);
+			Assert.IsTrue (oxmlnl, "Output XmlNodeList");
+			Assert.IsTrue (oxmldoc, "Output XmlDocument");
 		}
 
-		protected void AssertEquals (string msg, XmlNodeList expected, XmlNodeList actual) 
+		void AssertEquals (XmlNodeList expected, XmlNodeList actual, string msg)
 		{
-			for (int i=0; i < expected.Count; i++) {
+			for (int i = 0; i < expected.Count; i++) {
 				if (expected [i].OuterXml != actual [i].OuterXml)
-					Fail (msg + " [" + i + "] expected " + expected[i].OuterXml + " bug got " + actual[i].OuterXml);
+					Assert.Fail (msg + " [" + i + "] expected " + expected [i].OuterXml + " bug got " + actual [i].OuterXml);
 			}
 		}
 
@@ -90,7 +112,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		public void GetInnerXml () 
 		{
 			// Always returns null
-			AssertNull (transform.UnprotectedGetInnerXml ());
+			Assert.IsNull (transform.UnprotectedGetInnerXml ());
 		}
 
 		private XmlDocument GetDoc () 
@@ -108,7 +130,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDocument doc = GetDoc ();
 			transform.LoadInput (doc);
 			object o = transform.GetOutput ();
-			AssertEquals ("EnvelopedSignature result", doc, o);
+			Assert.AreEqual (doc, o, "EnvelopedSignature result");
 		}
 
 		[Test]
@@ -117,7 +139,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDocument doc = GetDoc ();
 			transform.LoadInput (doc.ChildNodes);
 			XmlNodeList xnl = (XmlNodeList) transform.GetOutput ();
-			AssertEquals ("EnvelopedSignature result", doc.ChildNodes, xnl);
+			AssertEquals (doc.ChildNodes, xnl, "EnvelopedSignature result");
 		}
 	}
 }

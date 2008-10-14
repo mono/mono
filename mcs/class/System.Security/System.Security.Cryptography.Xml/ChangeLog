@@ -1,3 +1,23 @@
+2008-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlDsigBase64Transform.cs: Use constant for Algorithm namespace.
+	* XmlDsigExcC14NTransform.cs: Fixed ctors to use WithComments
+	algorithm if includeComments is true. Assign includeNamespacesPrefixList
+	to instance field.
+	* XmlDsigExcC14NWithCommentsTransform.cs: Remove unnecessary
+	assignment to Algorithm now that base ctor is fixed.
+	* XmlDsigC14NWithCommentsTransform.cs: Remove unnecessary assignment
+	to Algorithm now that base ctor is fixed.
+	* XmlDsigC14NTransform.cs: In default ctor, just invoke .ctor (bool).
+	In .ctor (bool), assign WithComments algorithm if includeComments is
+	true. Use constants for Algorithm namespace.
+	* XmlDsigEnvelopedSignatureTransform.cs: Use constant for Algorithm
+	namespace.
+	* XmlDsigXPathTransform.cs: Use constant for Algorithm namespace.
+	* XmlDsigXsltTransform.cs: Use constant for Algorithm namespace.
+	* XmlLicenseTransform.cs: Assign Algorithm in ctor.
+	* XmlSignature.cs: Added constant for XmlLicenseTransform algorithm.
+
 2008-10-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EncryptedReference.cs, EncryptedType.cs: Remove unneeded field

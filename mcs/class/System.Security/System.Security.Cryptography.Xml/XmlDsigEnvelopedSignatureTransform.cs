@@ -51,7 +51,7 @@ namespace System.Security.Cryptography.Xml {
 
 		public XmlDsigEnvelopedSignatureTransform (bool includeComments) 
 		{
-			Algorithm = "http://www.w3.org/2000/09/xmldsig#enveloped-signature";
+			Algorithm = XmlSignature.AlgorithmNamespaces.XmlDsigEnvelopedSignatureTransform;
 			comments = includeComments;
 		}
 

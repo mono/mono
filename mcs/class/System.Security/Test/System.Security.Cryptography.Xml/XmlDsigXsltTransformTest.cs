@@ -24,6 +24,14 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	// Note: GetInnerXml is protected in XmlDsigXsltTransform making it
 	// difficult to test properly. This class "open it up" :-)
 	public class UnprotectedXmlDsigXsltTransform : XmlDsigXsltTransform {
+		public UnprotectedXmlDsigXsltTransform ()
+		{
+		}
+
+		public UnprotectedXmlDsigXsltTransform (bool includeComments)
+			: base (includeComments)
+		{
+		}
 
 		public XmlNodeList UnprotectedGetInnerXml () {
 			return base.GetInnerXml ();
@@ -41,8 +49,22 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform = new UnprotectedXmlDsigXsltTransform ();
 		}
 
-		[Test]
-		public void Properties () 
+		[Test] // ctor ()
+		public void Constructor1 ()
+		{
+			CheckProperties (transform);
+		}
+
+		[Test] // ctor (Boolean)
+		public void Constructor2 ()
+		{
+			transform = new UnprotectedXmlDsigXsltTransform (true);
+			CheckProperties (transform);
+			transform = new UnprotectedXmlDsigXsltTransform (false);
+			CheckProperties (transform);
+		}
+
+		void CheckProperties (XmlDsigXsltTransform transform)
 		{
 			AssertEquals ("Algorithm", "http://www.w3.org/TR/1999/REC-xslt-19991116", transform.Algorithm);
 
