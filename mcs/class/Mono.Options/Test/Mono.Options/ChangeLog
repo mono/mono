@@ -1,0 +1,6 @@
+2008-10-13  Jonathan Pryor  <jpryor@novell.com>
+
+	* ChangeLog: Started.
+	* OptionContextTest.cs, OptionSetTest.cs, OptionTest.cs, Utils.cs:
+	  Added; unit tests for Mono.Options 0.2.1.
+

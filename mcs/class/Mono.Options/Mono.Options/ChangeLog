@@ -1,0 +1,6 @@
+2008-10-13  Jonathan Pryor  <jpryor@novell.com>
+
+	* ChangeLog: Started.
+	* Options.cs: Added; Command line option parser.  A (renamed) copy of
+	  NDesk.Options 0.2.1 (see git repo for prior history).
+

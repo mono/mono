@@ -1,0 +1,8 @@
+2008-10-13  Jonathan Pryor  <jpryor@novell.com>
+
+	* ChangeLog: Started.
+	* Makefile: Added; build Mono.Options; do NOT install as an ABI-stable
+	  package.
+	* Mono.Options.dll.sources: Added; sources for Mono.Options.dll.
+	* Mono.Options_test.dll.sources: Added; Test sources.
+
