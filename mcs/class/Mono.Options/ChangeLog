@@ -1,5 +1,11 @@
 2008-10-14  Jonathan Pryor  <jpryor@novell.com>
 
+	* Makefile: Don't bother installing Mono.Options.dll into the GAC (or
+	  anywhere else), instead just follow a subset of the App Deployment 
+	  Guidelines and install just the source into $prefix/lib/mono-options.
+
+2008-10-14  Jonathan Pryor  <jpryor@novell.com>
+
 	* Makefile: Install Options.cs into the GAC, so that mono-options.pc
 	  can perform source install (as suggeted by App Deployment Guidelines).
 

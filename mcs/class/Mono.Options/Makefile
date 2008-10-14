@@ -8,12 +8,14 @@ LIBRARY_PACKAGE = none
 LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll
 TEST_MCS_FLAGS = /r:Mono.Posix.dll /r:System.dll
 
-gacdir   = $(GACROOT)/mono/gac/Mono.Options/0.2.1.0__0738eb9f132ed756
-gac_DATA = Mono.Options/Options.cs
+mono_options_DIR  = $(DESTDIR)$(mono_libdir)/mono-options
+mono_options_DATA = Mono.Options/Options.cs
 
 include ../../build/library.make
 
 do-install:
-	$(MAKE) install-local
-	$(INSTALL) -m 644 $(gac_DATA) $(gacdir)/
+	-$(MKINSTALLDIRS) $(mono_options_DIR)
+	$(INSTALL) -m 644 $(mono_options_DATA) $(mono_options_DIR)
 
+do-uninstall:
+	-rm -Rf $(mono_options_DIR)
