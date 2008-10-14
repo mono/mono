@@ -119,7 +119,15 @@ namespace System.Web.UI.WebControls {
 		// MSDN: The OnPagePreLoad method is overridden by the DataBoundControl class 
 		// to set the BaseDataBoundControl.RequiresDataBinding property to true in 
 		// cases where the HTTP request is a postback and view state is enabled but 
-		// the data-bound control has not yet been bound. 
+		// the data-bound control has not yet been bound.
+		//
+		// LAMESPEC: RequiresDataBinding is also set when http request is NOT a postback -
+		// no matter whether view state is enabled. The correct description should be:
+		//
+		// The OnPagePreLoad method is override by the DataBoundControl class 
+		// to set the BaseDataBoundControl.RequiresDataBinding property to true in 
+		// cases where the HTTP request is not a postback or it is a postback and view state
+		// is enabled but the data-bound control has not yet been bound.
 		protected override void OnPagePreLoad (object sender, EventArgs e)
 		{
 			base.OnPagePreLoad (sender, e);
@@ -127,12 +135,15 @@ namespace System.Web.UI.WebControls {
 			Initialize ();
 		}
 
-		private void Initialize ()
+		void Initialize ()
 		{
 			Page page = Page;
-			if (page != null)
-				if (!IsDataBound && !page.IsPostBack && IsViewStateEnabled)
+			if (page != null) {
+				// LAMESPEC: see the comment above OnPagePreLoad
+				if (!page.IsPostBack || (!IsDataBound && IsViewStateEnabled))
 					RequiresDataBinding = true;
+			}
+			
 		}
 		
 		void UpdateViewData ()

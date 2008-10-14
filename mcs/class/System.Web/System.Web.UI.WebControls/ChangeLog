@@ -1,3 +1,13 @@
+2008-10-14  Marek Habersack  <mhabersack@novell.com>
+
+	* CompositeDataBoundControl.cs: renamed the itemcount ViewState
+	item from "_ItemCount" to "_!ItemCount" for .NET
+	compatibility. This item is accessed and used by some commercial
+	ASP.NET controls.
+
+	* DataBoundControl.cs: OnPagePreLoad must force databinding also
+	when the request is not a postback.
+
 2008-10-13  Marek Habersack  <mhabersack@novell.com>
 
 	* Table.cs, TableRowCollection.cs, TableRow.cs: render table

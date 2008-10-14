@@ -1,3 +1,10 @@
+2008-10-14  Marek Habersack  <mhabersack@novell.com>
+
+	* Control.cs: SaveViewStateRecursive must return view state even
+	if EnableViewState is false. This is apparently what .NET does, as
+	some commercial ASP.NET controls take advantage of that via
+	reflection.
+
 2008-10-08  Marek Habersack  <mhabersack@novell.com>
 
 	* DataBinder.cs: in Eval expression needs to be trimmed before

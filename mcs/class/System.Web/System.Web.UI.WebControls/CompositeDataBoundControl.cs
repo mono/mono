@@ -53,7 +53,7 @@ namespace System.Web.UI.WebControls
 		{
 			Controls.Clear ();
 
-			object itemCount = ViewState ["_ItemCount"];
+			object itemCount = ViewState ["_!ItemCount"];
 			if (itemCount != null) {
 				object [] data = new object [(int) itemCount];
 				CreateChildControls (data, false);
@@ -64,8 +64,9 @@ namespace System.Web.UI.WebControls
 		
 		protected internal override void PerformDataBinding (IEnumerable data)
 		{
+			base.PerformDataBinding (data);
 			Controls.Clear ();
-			ViewState ["_ItemCount"] = CreateChildControls (data, true);
+			ViewState ["_!ItemCount"] = CreateChildControls (data, true);
 		}
 		
 		protected abstract int CreateChildControls (IEnumerable dataSource, bool dataBinding);

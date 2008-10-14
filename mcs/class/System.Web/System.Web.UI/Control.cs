@@ -1571,9 +1571,6 @@ namespace System.Web.UI
 
 		internal object SaveViewStateRecursive ()
 		{
-			if (!EnableViewState)
-				return null;
-
 			TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
 #if MONO_TRACE
 			string type_name = null;
@@ -1637,7 +1634,7 @@ namespace System.Web.UI
 
 		internal void LoadViewStateRecursive (object savedState)
 		{
-			if (!EnableViewState || savedState == null)
+			if (savedState == null)
 				return;
 
 #if MONO_TRACE
