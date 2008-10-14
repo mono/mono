@@ -1,3 +1,12 @@
+2008-10-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: WM_KEYDOWN and WM_KEYUP messages should be sent to the
+	textbox if auto complete is used, since we need to navigate over it.
+	And in this case don't pass this messages to the base impl. Also hide
+	the auto complete list box when displaying the drop down listbox.
+	* TextBox.cs: new internal members to expose some of the auto complete
+	functionality to combobox.
+
 2008-10-13  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* XplatUIX11.cs, XplatUICarbon.cs, Form.cs: Do not Timer.Tick before 

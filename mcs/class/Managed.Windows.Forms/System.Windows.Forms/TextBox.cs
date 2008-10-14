@@ -203,12 +203,29 @@ namespace System.Windows.Forms {
 			document.MoveCaret (CaretDirection.End);
 		}
 
+		internal void HideAutoCompleteList ()
+		{
+			if (auto_complete_listbox != null)
+				auto_complete_listbox.HideListBox (false);
+		}
+
 		internal ComboBox AutoCompleteInternalSource {
 			get {
 				return auto_complete_cb_source;
 			}
 			set {
 				auto_complete_cb_source = value;
+			}
+		}
+
+		internal int AutoCompleteMatchesCount {
+			get {
+				if (auto_complete_mode == AutoCompleteMode.None)
+					return -1;
+				if (auto_complete_matches == null)
+					return -1;
+
+				return auto_complete_matches.Count;
 			}
 		}
 

@@ -1390,6 +1390,13 @@ namespace System.Windows.Forms
 			case Msg.WM_KEYUP:
 			case Msg.WM_KEYDOWN:
 				Keys keys = (Keys) m.WParam.ToInt32 ();
+#if NET_2_0
+				// Don't pass the message to base if auto complete is being used and available.
+				if (textbox_ctrl != null && textbox_ctrl.AutoCompleteMatchesCount > 0) {
+					XplatUI.SendMessage (textbox_ctrl.Handle, (Msg) m.Msg, m.WParam, m.LParam);
+					return;
+				}
+#endif
 				if (keys == Keys.Up || keys == Keys.Down)
 					break;
 				goto case Msg.WM_CHAR;
@@ -1556,6 +1563,11 @@ namespace System.Windows.Forms
 			listbox_ctrl.Location = PointToScreen (new Point (text_area.X, text_area.Y + text_area.Height));
 
 			FindMatchOrSetIndex(SelectedIndex);
+
+#if NET_2_0
+			if (textbox_ctrl != null)
+				textbox_ctrl.HideAutoCompleteList ();
+#endif
 
 			if (listbox_ctrl.ShowWindow ())
 				dropped_down = true;
