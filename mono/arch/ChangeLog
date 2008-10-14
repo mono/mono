@@ -1,3 +1,7 @@
+2008-10-14  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* x86/x86-codegen.h: Add movsldup and movshdup.
+
 2008-10-13  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* x86/x86-codegen.h: Add remaining FP sse1 ops.
