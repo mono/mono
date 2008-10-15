@@ -66,26 +66,13 @@ Mono_Posix_Syscall_fcntl_lock (gint32 fd, gint32 cmd, struct Mono_Posix_Flock *l
 		return -1;
 	}
 
-	mph_return_if_off_t_overflow (lock->l_start);
-	mph_return_if_off_t_overflow (lock->l_len);
-
-	if (Mono_Posix_FromLockType (lock->l_type, &lock->l_type) == -1)
+	if (Mono_Posix_FromFlock (lock, &_lock) == -1)
 		return -1;
-	_lock.l_type   = lock->l_type;
-	_lock.l_whence = lock->l_whence;
-	_lock.l_start  = lock->l_start;
-	_lock.l_len    = lock->l_len;
-	_lock.l_pid    = lock->l_pid;
 
 	r = fcntl (fd, cmd, &_lock);
 
-	if (Mono_Posix_ToLockType (_lock.l_type, &_lock.l_type) == -1)
-		r = -1;
-	lock->l_type   = _lock.l_type;
-	lock->l_whence = _lock.l_whence;
-	lock->l_start  = _lock.l_start;
-	lock->l_len    = _lock.l_len;
-	lock->l_pid    = _lock.l_pid;
+	if (Mono_Posix_ToFlock (&_lock, lock) == -1)
+		return -1;
 
 	return r;
 }

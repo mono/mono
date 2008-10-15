@@ -1379,6 +1379,7 @@ struct Mono_Posix_Syscall__Fstab;
 struct Mono_Posix_Syscall__Group;
 struct Mono_Posix_Syscall__Passwd;
 struct Mono_Posix_Syscall__Utsname;
+struct Mono_Posix_Timespec;
 struct Mono_Posix_Timeval;
 struct Mono_Posix_Timezone;
 struct Mono_Posix_Utimbuf;
@@ -1388,8 +1389,10 @@ struct Mono_Unix_UnixSignal_SignalInfo;
  * Inferred Structure Declarations
  */
 
+struct flock;
 struct pollfd;
 struct stat;
+struct timespec;
 struct timeval;
 struct timezone;
 struct utimbuf;
@@ -1410,6 +1413,12 @@ struct Mono_Posix_Flock {
 	gint64 l_len;     /* off_t */
 	int    l_pid;     /* pid_t */
 };
+
+int
+Mono_Posix_FromFlock (struct Mono_Posix_Flock* from, struct flock *to);
+int
+Mono_Posix_ToFlock (struct flock *from, struct Mono_Posix_Flock* to);
+
 
 struct Mono_Posix_Pollfd {
 	int   fd;
@@ -1508,6 +1517,17 @@ struct Mono_Posix_Syscall__Utsname {
 	void* domainname;
 	void* _buf_;
 };
+
+struct Mono_Posix_Timespec {
+	gint64 tv_sec;   /* time_t */
+	gint64 tv_nsec;
+};
+
+int
+Mono_Posix_FromTimespec (struct Mono_Posix_Timespec* from, struct timespec *to);
+int
+Mono_Posix_ToTimespec (struct timespec *from, struct Mono_Posix_Timespec* to);
+
 
 struct Mono_Posix_Timeval {
 	gint64 tv_sec;   /* time_t      */
@@ -1663,6 +1683,7 @@ void* Mono_Posix_Syscall_mremap (void* old_address, guint64 old_size, guint64 ne
 int Mono_Posix_Syscall_msync (void* start, guint64 len, int flags);
 int Mono_Posix_Syscall_munlock (void* start, guint64 len);
 int Mono_Posix_Syscall_munmap (void* start, guint64 length);
+int Mono_Posix_Syscall_nanosleep (struct Mono_Posix_Timespec* req, struct Mono_Posix_Timespec* rem);
 int Mono_Posix_Syscall_open (const char* pathname, int flags);
 int Mono_Posix_Syscall_open_mode (const char* pathname, int flags, unsigned int mode);
 int Mono_Posix_Syscall_openlog (void* ident, int option, int facility);
