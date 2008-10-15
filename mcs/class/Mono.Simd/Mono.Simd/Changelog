@@ -1,3 +1,8 @@
+2008-10-15  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Vector8us.cs: Added Min, Max, Average, ExtractByteMask and
+	ShuffleLow/ShuffleHigh.
+
 2008-10-14  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Vector4f.cs: Added DuplicateLow and DuplicateHigh.
