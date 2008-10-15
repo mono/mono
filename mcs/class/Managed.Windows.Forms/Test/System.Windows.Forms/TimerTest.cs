@@ -156,7 +156,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #325033
-		[Category ("NotWorking")]
 		public void RunningThread ()
 		{
 			Application.Run (new Bug325033Form ());
