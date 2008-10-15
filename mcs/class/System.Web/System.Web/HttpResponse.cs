@@ -1024,34 +1024,31 @@ namespace System.Web {
 		}
 
 		internal bool IsCached {
-			get {
-				return cached_response != null;
+			get { return cached_response != null; }
+			set {
+				if (value)
+					cached_response = new CachedRawResponse (cache_policy);
+				else
+					cached_response = null;
 			}
 		}
 
 		public HttpCachePolicy Cache {
 			get {
-				if (cache_policy == null) {
+				if (cache_policy == null)
 					cache_policy = new HttpCachePolicy ();
-					cache_policy.CacheabilityUpdated += new CacheabilityUpdatedCallback (OnCacheabilityUpdated);
-				}
 				
 				return cache_policy;
 			}
-		}
-		
-		private void OnCacheabilityUpdated (object sender, CacheabilityUpdatedEventArgs e)
-		{
-			if (e.Cacheability >= HttpCacheability.Server && !IsCached)
-				cached_response = new CachedRawResponse (cache_policy);
-			else if (e.Cacheability <= HttpCacheability.Private)
-				cached_response = null;
-		}
+		}		
 
 		internal CachedRawResponse GetCachedResponse ()
 		{
-			cached_response.StatusCode = StatusCode;
-			cached_response.StatusDescription = StatusDescription;
+			if (cached_response != null) {
+				cached_response.StatusCode = StatusCode;
+				cached_response.StatusDescription = StatusDescription;
+			}
+			
 			return cached_response;
 		}
 

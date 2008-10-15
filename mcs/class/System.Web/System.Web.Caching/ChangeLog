@@ -1,3 +1,8 @@
+2008-10-15  Marek Habersack  <mhabersack@novell.com>
+
+	* OutputCacheModule.cs: do not take any action if Response returns
+	null from GetCachedResponse.
+
 2008-09-30  Juraj Skripsky  <js@hotfeet.ch>
 
 	* CachedRawResponse.cs: Don't allocate a 32k buffer that is never 

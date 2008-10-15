@@ -1,3 +1,13 @@
+2008-10-15  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpResponse.cs: CacheabilityUpdatedEvent is no longer
+	used. cached_response is allocated only when the IsCached property
+	is assigned the 'true' value. 
+
+	* HttpCachePolicy.cs: CacheabilityUpdatedEvent is no longer used,
+	removed all the traces of it. SetCacheability should not switch
+	output caching on.
+
 2008-10-12  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpResponse.cs: Simplify code for outputting ASP.NET version, as

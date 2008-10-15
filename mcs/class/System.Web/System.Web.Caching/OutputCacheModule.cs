@@ -216,22 +216,24 @@ namespace System.Web.Caching {
 			
 			if (prev == null) {
 				CachedRawResponse c = context.Response.GetCachedResponse ();
-				string [] files = new string [] { };
-				string [] keys = new string [] { vary_key };
-				bool sliding = context.Response.Cache.Sliding;
+				if (c != null) {
+					string [] files = new string [] { };
+					string [] keys = new string [] { vary_key };
+					bool sliding = context.Response.Cache.Sliding;
 
-				context.InternalCache.Insert (key, c, new CacheDependency (files, keys),
-							      (sliding ? Cache.NoAbsoluteExpiration :
-							       context.Response.Cache.Expires),
-							      (sliding ? TimeSpan.FromSeconds (
-								      context.Response.Cache.Duration) :
-							       Cache.NoSlidingExpiration),
-							      CacheItemPriority.Normal, response_removed);
-				c.VaryBy = varyby;
-				varyby.ItemList.Add (key);
+					context.InternalCache.Insert (key, c, new CacheDependency (files, keys),
+								      (sliding ? Cache.NoAbsoluteExpiration :
+								       context.Response.Cache.Expires),
+								      (sliding ? TimeSpan.FromSeconds (
+									      context.Response.Cache.Duration) :
+								       Cache.NoSlidingExpiration),
+								      CacheItemPriority.Normal, response_removed);
+					c.VaryBy = varyby;
+					varyby.ItemList.Add (key);
 #if NET_2_0
-				cacheValue = key;
+					cacheValue = key;
 #endif
+				}
 			}
 			
 #if NET_2_0

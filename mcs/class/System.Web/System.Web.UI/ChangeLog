@@ -1,3 +1,8 @@
+2008-10-15  Marek Habersack  <mhabersack@novell.com>
+
+	* Page.cs: Response caching is switched on only when output
+	caching is configured for this page instance. Fixes bug #435549.
+
 2008-10-14  Marek Habersack  <mhabersack@novell.com>
 
 	* Control.cs: SaveViewStateRecursive must return view state even

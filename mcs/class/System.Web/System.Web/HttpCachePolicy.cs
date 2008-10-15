@@ -38,24 +38,10 @@ using System.Web.Util;
 
 namespace System.Web
 {
-	class CacheabilityUpdatedEventArgs : EventArgs
-	{
-		public readonly HttpCacheability Cacheability;
-
-		public CacheabilityUpdatedEventArgs (HttpCacheability cacheability)
-		{
-			Cacheability = cacheability;
-		}
-	}
-	
-	internal delegate void CacheabilityUpdatedCallback (object sender, CacheabilityUpdatedEventArgs args);
-	
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HttpCachePolicy
 	{
-		static readonly object cacheabilityUpdatedEvent = new object ();
-		
 		internal HttpCachePolicy ()
 		{
 		}
@@ -98,13 +84,6 @@ namespace System.Web
 
 		// always false in 1.x
 		bool omit_vary_star;
-
-		EventHandlerList events = new EventHandlerList ();
-
-		internal event CacheabilityUpdatedCallback CacheabilityUpdated {
-			add { events.AddHandler (cacheabilityUpdatedEvent, value); }
-			remove { events.RemoveHandler (cacheabilityUpdatedEvent, value); }
-		}
 
 #if NET_2_0
 		public HttpCacheVaryByContentEncodings VaryByContentEncodings {
@@ -192,9 +171,6 @@ namespace System.Web
 				return;
 
 			Cacheability = cacheability;
-			CacheabilityUpdatedCallback eh = events [cacheabilityUpdatedEvent] as CacheabilityUpdatedCallback;
-			if (eh != null)
-				eh (this, new CacheabilityUpdatedEventArgs (cacheability));
 		}
 
 		public void SetCacheability (HttpCacheability cacheability, string field)
