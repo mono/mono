@@ -1,3 +1,21 @@
+2008-10-15  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-ops.h: Add ops for packed shuffle/max/avg and
+	extract mask.
+	
+	* cpu-x86.md: Same.
+
+	* mini-x86.c (mono_arch_output_basic_block): Same.
+
+	* simd-intrinsics.c (vector8us_intrinsics): Add avg, shuffle and
+	extract mask.
+
+	* simd-intrinsics.c (simd_intrinsic_emit_extract_mask): New function
+	to emit extract mask op.
+
+	* simd-intrinsics.c (simd_intrinsic_emit_shuffle): Retrofic this function
+	to emit word shuffles.
+
 2008-10-15  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c (mono_allocate_stack_slots_full): Align stack frame to
