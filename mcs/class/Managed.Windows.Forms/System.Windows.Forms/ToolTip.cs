@@ -876,7 +876,7 @@ namespace System.Windows.Forms {
 			string text = (string)tooltip_strings[control];
 			if (text != null && text.Length > 0) {
 				if (active_control == null) {
-					timer.Interval = initial_delay;
+					timer.Interval = Math.Max (initial_delay, 1);
 				} else {
 					timer.Interval = Math.Max (re_show_delay, 1);
 				}

@@ -1,5 +1,9 @@
 2008-10-15  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolTip.cs: Ensure that Timer.Internal cannot be set to 0.
+
+2008-10-15  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: Make our implementation of DrawToBitmap better 
 	match WmPaint.  [Fixes bug #435579]
 
