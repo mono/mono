@@ -982,7 +982,8 @@ public partial class Page : TemplateControl, IHttpHandler
 			     OutputCacheLocation location,
 			     string varyByParam)
 	{
-		HttpCachePolicy cache = Response.Cache;
+		HttpResponse response = Response;
+		HttpCachePolicy cache = response.Cache;
 		bool set_vary = false;
 		HttpContext ctx = Context;
 		DateTime timestamp = ctx != null ? ctx.Timestamp : DateTime.Now;
@@ -1044,7 +1045,8 @@ public partial class Page : TemplateControl, IHttpHandler
 			}
 #endif
 		}
-			
+
+		response.IsCached = true;
 		cache.Duration = duration;
 		cache.SetExpires (timestamp.AddSeconds (duration));
 	}
@@ -1459,7 +1461,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	{
 	}
 #endif
-
+	
 	void InternalProcessRequest ()
 	{
 #if NET_2_0

@@ -36,7 +36,7 @@ using System.Collections;
 namespace System.Web.Caching {
 
 	internal class CachedRawResponse {
-
+		static readonly byte[] emptyBuffer = new byte[0];
 		private HttpCachePolicy policy;
 		private CachedVaryBy varyby;
 		private int status_code;
@@ -48,7 +48,7 @@ namespace System.Web.Caching {
 		internal CachedRawResponse (HttpCachePolicy policy)
 		{
 			this.policy = policy;
-			this.buffer = new byte [32*1024];
+			this.buffer = emptyBuffer;
 		}
 
 		internal HttpCachePolicy Policy {
