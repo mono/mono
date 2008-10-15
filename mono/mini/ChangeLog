@@ -1,3 +1,9 @@
+2008-10-15  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c (mono_allocate_stack_slots_full): Align stack frame to
+	the largest alignment needed by a variable, but at least
+	sizeof(gpointer).
+
 2008-10-14  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* basic-simd.cs: Tests for the fixes in the last commit.
