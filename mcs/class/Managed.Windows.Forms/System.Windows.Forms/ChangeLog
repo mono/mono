@@ -1,3 +1,8 @@
+2008-10-15  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Make our implementation of DrawToBitmap better 
+	match WmPaint.  [Fixes bug #435579]
+
 2008-10-14  Andreia Gaita  <avidigal@novell.com>
 
 	* WebBrowser.cs: Use DocumentElement as the document's root for the

@@ -2747,15 +2747,25 @@ namespace System.Windows.Forms
 		
 		public void DrawToBitmap (Bitmap bitmap, Rectangle targetBounds)
 		{
-			Bitmap b = new Bitmap (Width, Height);
-			Graphics g = Graphics.FromImage (b);
+			Graphics g = Graphics.FromImage (bitmap);
 			
-			OnPaint (new PaintEventArgs (g, targetBounds));
+			// Only draw within the target bouds, and up to the size of the control
+			g.IntersectClip (targetBounds);
+			g.IntersectClip (Bounds);
 			
-			using (Graphics g2 = Graphics.FromImage (bitmap))
-				g2.DrawImage (b, targetBounds);
+			// Logic copied from WmPaint
+			PaintEventArgs pea = new PaintEventArgs (g, targetBounds);
 			
-			b.Dispose ();
+			if (!GetStyle (ControlStyles.Opaque))
+				OnPaintBackground (pea);
+
+			OnPaintBackgroundInternal (pea);
+
+			OnPaintInternal (pea);
+
+			if (!pea.Handled)
+				OnPaint (pea);
+			
 			g.Dispose ();
 		}
 #endif
