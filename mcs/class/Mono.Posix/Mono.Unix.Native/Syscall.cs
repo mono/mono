@@ -717,6 +717,7 @@ namespace Mono.Unix.Native {
 
 	#region Structures
 
+	[Map ("struct flock")]
 	public struct Flock
 #if NET_2_0
 		: IEquatable <Flock>
@@ -1092,6 +1093,44 @@ namespace Mono.Unix.Native {
 		}
 
 		public static bool operator!= (Utimbuf lhs, Utimbuf rhs)
+		{
+			return !lhs.Equals (rhs);
+		}
+	}
+
+	[Map ("struct timespec")]
+	public struct Timespec
+#if NET_2_0
+		: IEquatable <Timespec>
+#endif
+	{
+		[time_t] public long    tv_sec;   // Seconds.
+		public          long    tv_nsec;  // Nanoseconds.
+
+		public override int GetHashCode ()
+		{
+			return tv_sec.GetHashCode () ^ tv_nsec.GetHashCode ();
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || obj.GetType () != GetType ())
+				return false;
+			Timespec value = (Timespec) obj;
+			return value.tv_sec == tv_sec && value.tv_nsec == tv_nsec;
+		}
+
+		public bool Equals (Timespec value)
+		{
+			return value.tv_sec == tv_sec && value.tv_nsec == tv_nsec;
+		}
+
+		public static bool operator== (Timespec lhs, Timespec rhs)
+		{
+			return lhs.Equals (rhs);
+		}
+
+		public static bool operator!= (Timespec lhs, Timespec rhs)
 		{
 			return !lhs.Equals (rhs);
 		}
@@ -3139,6 +3178,12 @@ namespace Mono.Unix.Native {
 		//
 		// <time.h>
 		//
+
+		// nanosleep(2)
+		//    int nanosleep(const struct timespec *req, struct timespec *rem);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_nanosleep")]
+		public static extern int nanosleep (ref Timespec req, ref Timespec rem);
 
 		// stime(2)
 		//    int stime(time_t *t);
