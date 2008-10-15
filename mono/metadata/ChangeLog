@@ -1,8 +1,3 @@
-2008-10-15  Jb Evain  <jbevain@novell.com>
-
-	* reflection.c (build_compressed_metadata): sort the
-	MONO_TABLE_INTERFACEIMPL table as per the standard.
-
 2008-10-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* assembly.c (mono_assembly_open_full): Avoid loading images while holding
