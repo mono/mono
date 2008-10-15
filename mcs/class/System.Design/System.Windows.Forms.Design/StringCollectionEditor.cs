@@ -70,10 +70,11 @@ namespace System.Windows.Forms.Design
 																			 | System.Windows.Forms.AnchorStyles.Right)));
 				this.txtItems.Location = new System.Drawing.Point(12, 25);
 				this.txtItems.Multiline = true;
+				this.txtItems.AcceptsTab = true;
 				this.txtItems.Name = "txtItems";
 				this.txtItems.ScrollBars = System.Windows.Forms.ScrollBars.Both;
 				this.txtItems.Size = new System.Drawing.Size(378, 168);
-				this.txtItems.TabIndex = 0;
+				this.txtItems.TabIndex = 1;
 				// 
 				// label1
 				// 
@@ -81,8 +82,8 @@ namespace System.Windows.Forms.Design
 				this.label1.Location = new System.Drawing.Point(9, 9);
 				this.label1.Name = "label1";
 				this.label1.Size = new System.Drawing.Size(227, 13);
-				this.label1.TabIndex = 2;
-				this.label1.Text = "Enter the strings in the collection (one per line):";
+				this.label1.TabIndex = 0;
+				this.label1.Text = "&Enter the strings in the collection (one per line):";
 				// 
 				// butOk
 				// 
@@ -113,6 +114,7 @@ namespace System.Windows.Forms.Design
 				this.Controls.Add(this.butOk);
 				this.Controls.Add(this.label1);
 				this.Controls.Add(this.txtItems);
+				this.CancelButton = butCancel;
 				this.MaximizeBox = false;
 				this.MinimizeBox = false;
 				this.Name = "StringEditorForm";

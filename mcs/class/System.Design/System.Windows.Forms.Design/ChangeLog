@@ -1,3 +1,8 @@
+2008-10-15  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* StringCollectionEditor.cs: Minor fixes. 
+	Patch by Andy Hume.
+
 2008-09-01  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ParentControlDesigner.cs: Be nice with Components that are no 
