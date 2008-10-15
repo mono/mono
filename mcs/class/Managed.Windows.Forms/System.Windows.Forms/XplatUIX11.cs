@@ -217,7 +217,7 @@ namespace System.Windows.Forms {
 		// State
 		Point		mouse_position;		// Last position of mouse, in screen coords
 		internal static MouseButtons	MouseState;		// Last state of mouse buttons
-
+		internal static bool in_doevents;
 		// 'Constants'
 		private static int		DoubleClickInterval;	// msec; max interval between clicks to count as double click
 
@@ -240,6 +240,7 @@ namespace System.Windows.Forms {
 		private XplatUIX11() {
 			// Handle singleton stuff first
 			RefCount = 0;
+			in_doevents = false;
 
 			// Now regular initialization
 			XlibLock = new object ();
@@ -1393,12 +1394,14 @@ namespace System.Windows.Forms {
 				timer = (Timer) timers [i];
 
 				if (timer.Enabled && timer.Expires <= now && !timer.Busy) {
-					// Prevent the Timer from ticking before MainForm.OnLoad has 
-					// completed. This seems to be the case with Win32.
+					// Timer ticks:
+					//  - Before MainForm.OnLoad if DoEvents () is called.
+					//  - After MainForm.OnLoad if not.
 					//
-					if (Application.MWFThread.Current.Context != null && 
-					    Application.MWFThread.Current.Context.MainForm != null && 
-					    Application.MWFThread.Current.Context.MainForm.IsLoaded) {
+					if (in_doevents ||
+					    (Application.MWFThread.Current.Context != null && 
+					     Application.MWFThread.Current.Context.MainForm != null && 
+					     Application.MWFThread.Current.Context.MainForm.IsLoaded)) {
 						timer.Busy = true;
 						timer.Update (now);
 						timer.FireTick ();
@@ -3494,12 +3497,14 @@ namespace System.Windows.Forms {
 			queue = ThreadQueue(Thread.CurrentThread);
 
 			queue.DispatchIdle = false;
+			in_doevents = true;
 
 			while (PeekMessage(queue, ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)) {
 				TranslateMessage (ref msg);
 				DispatchMessage (ref msg);
 			}
 
+			in_doevents = false;
 			queue.DispatchIdle = true;
 		}
 
