@@ -414,7 +414,8 @@ namespace Mono.CSharp
 
 			if (o == null)
 				return -1;
-			
+
+			int next_token;
 			int res = (int) o;
 			switch (res) {
 			case Token.GET:
@@ -469,7 +470,7 @@ namespace Mono.CSharp
 					case Token.STRING:
 					case Token.UINT:
 					case Token.ULONG:
-						int next_token = xtoken ();
+						next_token = xtoken ();
 						if (next_token == Token.SEMICOLON || next_token == Token.COMMA || next_token == Token.EQUALS)
 							goto default;
 						
@@ -520,7 +521,7 @@ namespace Mono.CSharp
 				// Save current position and parse next token.
 				PushPosition ();
 
-				int next_token = token ();
+				next_token = token ();
 				bool ok = (next_token == Token.CLASS) ||
 					(next_token == Token.STRUCT) ||
 					(next_token == Token.INTERFACE) ||
