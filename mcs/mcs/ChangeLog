@@ -1,3 +1,9 @@
+2008-10-15  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-tokenizer.cs, nullable.cs, expression.cs, statement.cs,
+	cs-parser.jay: Tokenizer optimizations and memory reduction, saves
+	~5MB for corlib.
+
 2008-10-14  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-tokenizer.cs: Add bool type to the list of valid cast tokens.

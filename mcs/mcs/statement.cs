@@ -5105,7 +5105,7 @@ namespace Mono.CSharp {
 
 				public void ResolveIncrement (EmitContext ec)
 				{
-					increment = new StatementExpression (new UnaryMutator (UnaryMutator.Mode.PostIncrement, this, loc));
+					increment = new StatementExpression (new UnaryMutator (UnaryMutator.Mode.PostIncrement, this));
 					increment.Resolve (ec);
 				}
 

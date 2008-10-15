@@ -41,9 +41,9 @@ namespace Mono.CSharp
 		bool handle_where = false;
 		bool handle_typeof = false;
 		bool lambda_arguments_parsing;
-		Location current_location;
 		Location current_comment_location = Location.Null;
-		ArrayList escaped_identifiers = new ArrayList ();
+		ArrayList escaped_identifiers;
+		int parsing_generic_less_than;
 		
 		//
 		// Used mainly for parser optimizations. Some expressions for instance
@@ -101,62 +101,12 @@ namespace Mono.CSharp
 		//
 		bool any_token_seen = false;
 
-		static Hashtable token_values;
 		static readonly char[] simple_whitespaces = new char[] { ' ', '\t' };
-
-		private static Hashtable TokenValueName
-		{
-			get {
-				if (token_values == null)
-					token_values = GetTokenValueNameHash ();
-
-				return token_values;
-			}
-		}
-
-		private static Hashtable GetTokenValueNameHash ()
-		{
-			Type t = typeof (Token);
-			FieldInfo [] fields = t.GetFields ();
-			Hashtable hash = new Hashtable ();
-			foreach (FieldInfo field in fields) {
-				if (field.IsLiteral && field.IsStatic && field.FieldType == typeof (int))
-					hash.Add (field.GetValue (null), field.Name);
-			}
-			return hash;
-		}
-		
-		//
-		// Returns a verbose representation of the current location
-		//
-		public string location {
-			get {
-				string det;
-
-				if (current_token == Token.ERROR)
-					det = "detail: " + error_details;
-				else
-					det = "";
-				
-				// return "Line:     "+line+" Col: "+col + "\n" +
-				//       "VirtLine: "+ref_line +
-				//       " Token: "+current_token + " " + det;
-				string current_token_name = TokenValueName [current_token] as string;
-				if (current_token_name == null)
-					current_token_name = current_token.ToString ();
-
-				return String.Format ("{0} ({1},{2}), Token: {3} {4}", ref_name.Name,
-										       ref_line,
-										       col,
-										       current_token_name,
-										       det);
-			}
-		}
 
 		public bool PropertyParsing {
 			get { return handle_get_set; }
 			set { handle_get_set = value; }
-                }
+		}
 
 		public bool EventParsing {
 			get { return handle_remove_add; }
@@ -184,11 +134,22 @@ namespace Mono.CSharp
 			}
 		}
 
+		void AddEscapedIdentifier (LocatedToken lt)
+		{
+			if (escaped_identifiers == null)
+				escaped_identifiers = new ArrayList ();
+
+			escaped_identifiers.Add (lt);
+		}
+
 		public bool IsEscapedIdentifier (Location loc)
 		{
-			foreach (LocatedToken lt in escaped_identifiers)
-				if (lt.Location.Equals (loc))
-					return true;
+			if (escaped_identifiers != null) {
+				foreach (LocatedToken lt in escaped_identifiers)
+					if (lt.Location.Equals (loc))
+						return true;
+			}
+
 			return false;
 		}
 
@@ -244,12 +205,6 @@ namespace Mono.CSharp
 		public int Line {
 			get {
 				return ref_line;
-			}
-		}
-
-		public int Col {
-			get {
-				return col;
 			}
 		}
 
@@ -549,13 +504,58 @@ namespace Mono.CSharp
 				if (query_parsing == 0)
 					res = -1;
 				break;
+				
+			case Token.USING:
+			case Token.NAMESPACE:
+				// TODO: some explanation needed
+				check_incorrect_doc_comment ();
+				break;
+				
+			case Token.PARTIAL:
+				if (parsing_block > 0) {
+					res = -1;
+					break;
+				}
+
+				// Save current position and parse next token.
+				PushPosition ();
+
+				int next_token = token ();
+				bool ok = (next_token == Token.CLASS) ||
+					(next_token == Token.STRUCT) ||
+					(next_token == Token.INTERFACE) ||
+					(next_token == Token.VOID);
+
+				PopPosition ();
+
+				if (ok) {
+					if (next_token == Token.VOID) {
+						if (RootContext.Version == LanguageVersion.ISO_1 ||
+						    RootContext.Version == LanguageVersion.ISO_2)
+							Report.FeatureIsNotAvailable (Location, "partial methods");
+					} else if (RootContext.Version == LanguageVersion.ISO_1)
+						Report.FeatureIsNotAvailable (Location, "partial types");
+
+					return res;
+				}
+
+				if (next_token < Token.LAST_KEYWORD) {
+					Report.Error (267, Location,
+						"The `partial' modifier can be used only immediately before `class', `struct', `interface', or `void' keyword");
+					return token ();
+				}					
+
+				res = -1;
+				break;
 			}
 
 			return res;
 		}
 
 		public Location Location {
-			get { return current_location; }
+			get {
+				return new Location (ref_line, hidden ? -1 : col);
+			}
 		}
 
 		public Tokenizer (SeekableStreamReader input, CompilationUnit file)
@@ -575,9 +575,9 @@ namespace Mono.CSharp
 			Mono.CSharp.Location.Push (file, file);
 		}
 
-		static bool is_identifier_start_character (char c)
+		static bool is_identifier_start_character (int c)
 		{
-			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || Char.IsLetter (c);
+			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || Char.IsLetter ((char)c);
 		}
 
 		static bool is_identifier_part_character (char c)
@@ -850,256 +850,6 @@ namespace Mono.CSharp
 			return the_token;
 		}
 					
-		int parsing_generic_less_than = 0;
-		
-		int is_punct (char c, ref bool doread)
-		{
-			int d;
-			int t;
-
-			doread = false;
-
-			switch (c){
-			case '{':
-				val = Location;
-				return Token.OPEN_BRACE;
-			case '}':
-				val = Location;
-				return Token.CLOSE_BRACE;
-			case '[':
-				// To block doccomment inside attribute declaration.
-				if (doc_state == XmlCommentState.Allowed)
-					doc_state = XmlCommentState.NotAllowed;
-				return Token.OPEN_BRACKET;
-			case ']':
-				return Token.CLOSE_BRACKET;
-			case '(':
-				val = Location;
-				//
-				// An expression versions of parens can appear in block context only
-				//
-				if (parsing_block != 0 && !lambda_arguments_parsing) {
-					lambda_arguments_parsing = true;
-					PushPosition ();
-					t = TokenizeOpenParens ();
-					PopPosition ();
-					lambda_arguments_parsing = false;
-					return t;
-				}
-
-				return Token.OPEN_PARENS;
-			case ')':
-				return Token.CLOSE_PARENS;
-			case ',':
-				return Token.COMMA;
-			case ';':
-				val = Location;
-				return Token.SEMICOLON;
-			case '~':
-				val = Location;
-				return Token.TILDE;
-			case '?':
-				return TokenizePossibleNullableType ();
-			}
-
-			if (c == '<') {
-				if (parsing_generic_less_than++ > 0)
-					return Token.OP_GENERICS_LT;
-
-				if (handle_typeof) {
-					int dimension;
-					PushPosition ();
-					if (parse_generic_dimension (out dimension)) {
-						val = dimension;
-						DiscardPosition ();
-						return Token.GENERIC_DIMENSION;
-					}
-					PopPosition ();
-				}
-
-				// Save current position and parse next token.
-				PushPosition ();
-				bool is_generic_lt = parse_less_than ();
-				if (is_generic_lt) {
-					int rt;
-					if (parsing_generic_declaration && token () != Token.DOT) {
-						rt = Token.OP_GENERICS_LT_DECL;
-					} else {
-						rt = Token.OP_GENERICS_LT;
-					}
-					PopPosition ();
-					return rt;
-				}
-				
-				PopPosition ();
-				parsing_generic_less_than = 0;
-
-				d = peek_char ();
-				if (d == '<'){
-					get_char ();
-					d = peek_char ();
-
-					if (d == '='){
-						doread = true;
-						return Token.OP_SHIFT_LEFT_ASSIGN;
-					}
-					return Token.OP_SHIFT_LEFT;
-				} else if (d == '='){
-					doread = true;
-					return Token.OP_LE;
-				}
-				return Token.OP_LT;
-			} else if (c == '>') {
-				d = peek_char ();
-
-				if (d == '='){
-					doread = true;
-					return Token.OP_GE;
-				}
-
-				if (parsing_generic_less_than > 1 || (parsing_generic_less_than == 1 && d != '>')) {
-					parsing_generic_less_than--;
-					return Token.OP_GENERICS_GT;
-				}
-
-				if (d == '>') {
-					get_char ();
-					d = peek_char ();
-
-					if (d == '=') {
-						doread = true;
-						return Token.OP_SHIFT_RIGHT_ASSIGN;
-					}
-					return Token.OP_SHIFT_RIGHT;
-				}
-
-				return Token.OP_GT;
-			}
-			
-			d = peek_char ();
-			if (c == '+'){
-				
-				if (d == '+') {
-					val = Location;
-					t = Token.OP_INC;
-				}
-				else if (d == '=')
-					t = Token.OP_ADD_ASSIGN;
-				else {
-					val = Location;
-					return Token.PLUS;
-				}
-				doread = true;
-				return t;
-			}
-			if (c == '-'){
-				if (d == '-') {
-					val = Location;
-					t = Token.OP_DEC;
-				}
-				else if (d == '=')
-					t = Token.OP_SUB_ASSIGN;
-				else if (d == '>')
-					t = Token.OP_PTR;
-				else {
-					val = Location;
-					return Token.MINUS;
-				}
-				doread = true;
-				return t;
-			}
-
-			if (c == '!'){
-				if (d == '='){
-					doread = true;
-					return Token.OP_NE;
-				}
-				val = Location;
-				return Token.BANG;
-			}
-
-			if (c == '='){
-				if (d == '='){
-					doread = true;
-					return Token.OP_EQ;
-				}
-				if (d == '>'){
-					doread = true;
-					val = Location;
-					return Token.ARROW;
-				}
-
-				return Token.ASSIGN;
-			}
-
-			if (c == '&'){
-				if (d == '&'){
-					doread = true;
-					return Token.OP_AND;
-				} else if (d == '='){
-					doread = true;
-					return Token.OP_AND_ASSIGN;
-				}
-				val = Location;
-				return Token.BITWISE_AND;
-			}
-
-			if (c == '|'){
-				if (d == '|'){
-					doread = true;
-					return Token.OP_OR;
-				} else if (d == '='){
-					doread = true;
-					return Token.OP_OR_ASSIGN;
-				}
-				return Token.BITWISE_OR;
-			}
-
-			if (c == '*'){
-				if (d == '='){
-					doread = true;
-					return Token.OP_MULT_ASSIGN;
-				}
-				val = Location;
-				return Token.STAR;
-			}
-
-			if (c == '/'){
-				if (d == '='){
-					doread = true;
-					return Token.OP_DIV_ASSIGN;
-				}
-				return Token.DIV;
-			}
-
-			if (c == '%'){
-				if (d == '='){
-					doread = true;
-					return Token.OP_MOD_ASSIGN;
-				}
-				return Token.PERCENT;
-			}
-
-			if (c == '^'){
-				if (d == '='){
-					doread = true;
-					return Token.OP_XOR_ASSIGN;
-				}
-				return Token.CARRET;
-			}
-
-			if (c == ':'){
-				if (d == ':'){
-					doread = true;
-					return Token.DOUBLE_COLON;
-				}
-				val = Location;
-				return Token.COLON;
-			}
-
-			return Token.ERROR;
-		}
-
 		//
 		// Tonizes `?' using custom disambiguous rules to return one
 		// of following tokens: INTERR_NULLABLE, OP_COALESCING, INTERR
@@ -1686,9 +1436,8 @@ namespace Mono.CSharp
 
 		int peek_char ()
 		{
-			if (putback_char != -1)
-				return putback_char;
-			putback_char = reader.Read ();
+			if (putback_char == -1)
+				putback_char = reader.Read ();
 			return putback_char;
 		}
 
@@ -2430,21 +2179,21 @@ namespace Mono.CSharp
 					
 					return ret;
 				}
-				case "define":
-					if (any_token_seen){
-						Error_TokensSeen ();
-						return caller_is_taking;
-					}
-					PreProcessDefinition (true, arg, caller_is_taking);
+			case "define":
+				if (any_token_seen){
+					Error_TokensSeen ();
 					return caller_is_taking;
+				}
+				PreProcessDefinition (true, arg, caller_is_taking);
+				return caller_is_taking;
 
-				case "undef":
-					if (any_token_seen){
-						Error_TokensSeen ();
-						return caller_is_taking;
-					}
-					PreProcessDefinition (false, arg, caller_is_taking);
+			case "undef":
+				if (any_token_seen){
+					Error_TokensSeen ();
 					return caller_is_taking;
+				}
+				PreProcessDefinition (false, arg, caller_is_taking);
+				return caller_is_taking;
 			}
 
 			//
@@ -2535,50 +2284,6 @@ namespace Mono.CSharp
 
 			if (doc_state == XmlCommentState.Allowed)
 				doc_state = XmlCommentState.NotAllowed;
-			switch (res) {
-			case Token.USING:
-			case Token.NAMESPACE:
-				check_incorrect_doc_comment ();
-				break;
-			}
-
-			if (res == Token.PARTIAL) {
-				if (parsing_block > 0) {
-					val = new LocatedToken (Location, "partial");
-					return Token.IDENTIFIER;
-				}
-
-				// Save current position and parse next token.
-				PushPosition ();
-
-				int next_token = token ();
-				bool ok = (next_token == Token.CLASS) ||
-					(next_token == Token.STRUCT) ||
-					(next_token == Token.INTERFACE) ||
-					(next_token == Token.VOID);
-
-				PopPosition ();
-
-				if (ok) {
-					if (next_token == Token.VOID) {
-						if (RootContext.Version == LanguageVersion.ISO_1 ||
-						    RootContext.Version == LanguageVersion.ISO_2)
-							Report.FeatureIsNotAvailable (Location, "partial methods");
-					} else if (RootContext.Version == LanguageVersion.ISO_1)
-						Report.FeatureIsNotAvailable (Location, "partial types");
-
-					return res;
-				}
-
-				if (next_token < Token.LAST_KEYWORD) {
-					Report.Error (267, Location,
-						"The `partial' modifier can be used only immediately before `class', `struct', `interface', or `void' keyword");
-					return token ();
-				}					
-
-				val = new LocatedToken (Location, "partial");
-				return Token.IDENTIFIER;
-			}
 
 			return res;
 		}
@@ -2597,18 +2302,17 @@ namespace Mono.CSharp
 			}
 
 			id_builder [pos++] = (char) c;
-			current_location = new Location (ref_line, hidden ? -1 : Col);
+			Location loc = Location;
 
 			while ((c = get_char ()) != -1) {
 			loop:
 				if (is_identifier_part_character ((char) c)){
 					if (pos == max_id_size){
-						Report.Error (645, Location, "Identifier too long (limit is 512 chars)");
+						Report.Error (645, loc, "Identifier too long (limit is 512 chars)");
 						return Token.ERROR;
 					}
 					
 					id_builder [pos++] = (char) c;
-//					putback_char = -1;
 				} else if (c == '\\') {
 					int surrogate;
 					c = escape (c, out surrogate);
@@ -2619,7 +2323,6 @@ namespace Mono.CSharp
 					}
 					goto loop;
 				} else {
-//					putback_char = c;
 					putback (c);
 					break;
 				}
@@ -2632,7 +2335,8 @@ namespace Mono.CSharp
 			if (id_builder [0] >= '_' && !quoted) {
 				int keyword = GetKeyword (id_builder, pos);
 				if (keyword != -1) {
-					val = Location;
+					// TODO: No need to store location for keyword, required location cleanup
+					val = loc;
 					return keyword;
 				}
 			}
@@ -2641,60 +2345,61 @@ namespace Mono.CSharp
 			// Keep identifiers in an array of hashtables to avoid needless
 			// allocations
 			//
-
-			if (identifiers [pos] != null) {
-				val = identifiers [pos][id_builder];
+			CharArrayHashtable identifiers_group = identifiers [pos];
+			if (identifiers_group != null) {
+				val = identifiers_group [id_builder];
 				if (val != null) {
-					val = new LocatedToken (Location, (string) val);
+					val = new LocatedToken (loc, (string) val);
 					if (quoted)
-						escaped_identifiers.Add (val);
+						AddEscapedIdentifier ((LocatedToken) val);
 					return Token.IDENTIFIER;
 				}
-			}
-			else
-				identifiers [pos] = new CharArrayHashtable (pos);
-
-			val = new String (id_builder, 0, pos);
-			if (RootContext.Version == LanguageVersion.ISO_1) {
-				for (int i = 1; i < id_builder.Length; i += 3) {
-					if (id_builder [i] == '_' && (id_builder [i - 1] == '_' || id_builder [i + 1] == '_')) {
-						Report.Error (1638, Location, 
-							"`{0}': Any identifier with double underscores cannot be used when ISO language version mode is specified", val.ToString ());
-						break;
-					}
-				}
+			} else {
+				identifiers_group = new CharArrayHashtable (pos);
+				identifiers [pos] = identifiers_group;
 			}
 
 			char [] chars = new char [pos];
 			Array.Copy (id_builder, chars, pos);
 
-			identifiers [pos] [chars] = val;
+			val = new String (id_builder, 0, pos);
+			identifiers_group.Add (chars, val);
 
-			val = new LocatedToken (Location, (string) val);
+			if (RootContext.Version == LanguageVersion.ISO_1) {
+				for (int i = 1; i < chars.Length; i += 3) {
+					if (chars [i] == '_' && (chars [i - 1] == '_' || chars [i + 1] == '_')) {
+						Report.Error (1638, loc,
+							"`{0}': Any identifier with double underscores cannot be used when ISO language version mode is specified", val.ToString ());
+					}
+				}
+			}
+
+			val = new LocatedToken (loc, (string) val);
 			if (quoted)
-				escaped_identifiers.Add (val);
+				AddEscapedIdentifier ((LocatedToken) val);
 			return Token.IDENTIFIER;
 		}
 		
 		public int xtoken ()
 		{
-			int t;
-			bool doread = false;
-			int c;
+			int d, c;
 
 			// Whether we have seen comments on the current line
 			bool comments_seen = false;
-			val = null;
-			for (;(c = get_char ()) != -1;) {
-				if (c == '\t'){
+			while ((c = get_char ()) != -1) {
+				switch (c) {
+				case '\t':
 					col = ((col + 8) / 8) * 8;
 					continue;
-				}
-				
-				if (c == ' ' || c == '\f' || c == '\v' || c == 0xa0 || c == 0)
+
+				case ' ':
+				case '\f':
+				case '\v':
+				case 0xa0:
+				case 0:
 					continue;
 
-				if (c == '\r') {
+				case '\r':
 					if (peek_char () != '\n')
 						advance_line ();
 					else
@@ -2704,12 +2409,184 @@ namespace Mono.CSharp
 					tokens_seen = false;
 					comments_seen = false;
 					continue;
-				}
 
-				// Handle double-slash comments.
-				if (c == '/'){
-					int d = peek_char ();
+				case '\\':
+					tokens_seen = true;
+					return consume_identifier (c);
+
+				case '{':
+					val = Location;
+					return Token.OPEN_BRACE;
+				case '}':
+					val = Location;
+					return Token.CLOSE_BRACE;
+				case '[':
+					// To block doccomment inside attribute declaration.
+					if (doc_state == XmlCommentState.Allowed)
+						doc_state = XmlCommentState.NotAllowed;
+					return Token.OPEN_BRACKET;
+				case ']':
+					return Token.CLOSE_BRACKET;
+				case '(':
+					val = Location;
+					//
+					// An expression versions of parens can appear in block context only
+					//
+					if (parsing_block != 0 && !lambda_arguments_parsing) {
+						
+						//
+						// Optmize most common case where we know that parens
+						// is not special
+						//
+						switch (current_token) {
+						case Token.IDENTIFIER:
+						case Token.IF:
+						case Token.FOR:
+						case Token.FOREACH:
+						case Token.TYPEOF:
+						case Token.WHILE:
+						case Token.USING:
+						case Token.DEFAULT:
+							return Token.OPEN_PARENS;
+						}
+
+						lambda_arguments_parsing = true;
+						PushPosition ();
+						d = TokenizeOpenParens ();
+						PopPosition ();
+						lambda_arguments_parsing = false;
+						return d;
+					}
+
+					return Token.OPEN_PARENS;
+				case ')':
+					return Token.CLOSE_PARENS;
+				case ',':
+					return Token.COMMA;
+				case ';':
+					return Token.SEMICOLON;
+				case '~':
+					return Token.TILDE;
+				case '?':
+					return TokenizePossibleNullableType ();
+				case '<':
+					if (parsing_generic_less_than++ > 0)
+						return Token.OP_GENERICS_LT;
+
+					return TokenizeLessThan ();
+
+				case '>':
+					d = peek_char ();
+
+					if (d == '='){
+						get_char ();
+						return Token.OP_GE;
+					}
+
+					if (parsing_generic_less_than > 1 || (parsing_generic_less_than == 1 && d != '>')) {
+						parsing_generic_less_than--;
+						return Token.OP_GENERICS_GT;
+					}
+
+					if (d == '>') {
+						get_char ();
+						d = peek_char ();
+
+						if (d == '=') {
+							get_char ();
+							return Token.OP_SHIFT_RIGHT_ASSIGN;
+						}
+						return Token.OP_SHIFT_RIGHT;
+					}
+
+					return Token.OP_GT;
 				
+				case '+':
+					d = peek_char ();
+					if (d == '+') {
+						d = Token.OP_INC;
+					} else if (d == '=') {
+						d = Token.OP_ADD_ASSIGN;
+					} else {
+						return Token.PLUS;
+					}
+					get_char ();
+					return d;
+
+				case '-':
+					d = peek_char ();
+					if (d == '-') {
+						d = Token.OP_DEC;
+					} else if (d == '=')
+						d = Token.OP_SUB_ASSIGN;
+					else if (d == '>')
+						d = Token.OP_PTR;
+					else {
+						return Token.MINUS;
+					}
+					get_char ();
+					return d;
+
+				case '!':
+					if (peek_char () == '='){
+						get_char ();
+						return Token.OP_NE;
+					}
+					return Token.BANG;
+
+				case '=':
+					d = peek_char ();
+					if (d == '='){
+						get_char ();
+						return Token.OP_EQ;
+					}
+					if (d == '>'){
+						get_char ();
+						return Token.ARROW;
+					}
+
+					return Token.ASSIGN;
+
+				case '&':
+					d = peek_char ();
+					if (d == '&'){
+						get_char ();
+						return Token.OP_AND;
+					}
+					if (d == '='){
+						get_char ();
+						return Token.OP_AND_ASSIGN;
+					}
+					return Token.BITWISE_AND;
+
+				case '|':
+					d = peek_char ();
+					if (d == '|'){
+						get_char ();
+						return Token.OP_OR;
+					}
+					if (d == '='){
+						get_char ();
+						return Token.OP_OR_ASSIGN;
+					}
+					return Token.BITWISE_OR;
+
+				case '*':
+					if (peek_char () == '='){
+						get_char ();
+						return Token.OP_MULT_ASSIGN;
+					}
+					val = Location;
+					return Token.STAR;
+
+				case '/':
+					d = peek_char ();
+					if (d == '='){
+						get_char ();
+						return Token.OP_DIV_ASSIGN;
+					}
+
+					// Handle double-slash comments.
 					if (d == '/'){
 						get_char ();
 						if (RootContext.Documentation != null && peek_char () == '/') {
@@ -2752,8 +2629,6 @@ namespace Mono.CSharp
 							xml_comment_buffer.Append (Environment.NewLine);
 						}
 
-						Location start_location = Location;
-
 						while ((d = get_char ()) != -1){
 							if (d == '*' && peek_char () == '/'){
 								get_char ();
@@ -2774,53 +2649,54 @@ namespace Mono.CSharp
 							}
 						}
 						if (!comments_seen)
-							Report.Error (1035, start_location, "End-of-file found, '*/' expected");
+							Report.Error (1035, Location, "End-of-file found, '*/' expected");
 
 						if (docAppend)
 							update_formatted_doc_comment (current_comment_start);
 						continue;
 					}
-					goto is_punct_label;
-				}
+					return Token.DIV;
 
-				
-				if (c == '\\' || is_identifier_start_character ((char)c)){
-					tokens_seen = true;
-					return consume_identifier (c);
-				}
-
-			is_punct_label:
-				current_location = new Location (ref_line, hidden ? -1 : Col);
-				if ((t = is_punct ((char)c, ref doread)) != Token.ERROR){
-					tokens_seen = true;
-					if (doread){
+				case '%':
+					if (peek_char () == '='){
 						get_char ();
+						return Token.OP_MOD_ASSIGN;
 					}
-					return t;
-				}
+					return Token.PERCENT;
 
-				// white space
-				if (c == '\n'){
+				case '^':
+					if (peek_char () == '='){
+						get_char ();
+						return Token.OP_XOR_ASSIGN;
+					}
+					return Token.CARRET;
+
+				case ':':
+					if (peek_char () == ':') {
+						get_char ();
+						return Token.DOUBLE_COLON;
+					}
+					return Token.COLON;
+
+				case '0': case '1': case '2': case '3': case '4':
+				case '5': case '6': case '7': case '8': case '9':
+					tokens_seen = true;
+					return is_number (c);
+
+				case '\n': // white space
 					any_token_seen |= tokens_seen;
 					tokens_seen = false;
 					comments_seen = false;
 					continue;
-				}
 
-				if (c >= '0' && c <= '9'){
+				case '.':
 					tokens_seen = true;
-					return is_number (c);
-				}
-
-				if (c == '.'){
-					tokens_seen = true;
-					int peek = peek_char ();
-					if (peek >= '0' && peek <= '9')
+					d = peek_char ();
+					if (d >= '0' && d <= '9')
 						return is_number (c);
 					return Token.DOT;
-				}
 				
-				if (c == '#') {
+				case '#':
 					if (tokens_seen || comments_seen) {
 						Eror_WrongPreprocessorLocation ();
 						return Token.ERROR;
@@ -2858,76 +2734,130 @@ namespace Mono.CSharp
 					}
 
 					return Token.EOF;
-				}
 				
-				if (c == '"') 
+				case '"':
 					return consume_string (false);
 
-				if (c == '\''){
-					c = get_char ();
-					tokens_seen = true;
-					if (c == '\''){
-						error_details = "Empty character literal";
-						Report.Error (1011, Location, error_details);
-						return Token.ERROR;
-					}
-					if (c == '\r' || c == '\n') {
-						Report.Error (1010, Location, "Newline in constant");
-						return Token.ERROR;
-					}
-
-					int surrogate;
-					c = escape (c, out surrogate);
-					if (c == -1)
-						return Token.ERROR;
-					if (surrogate != 0)
-						throw new NotImplementedException ();
-
-					val = (char) c;
-					c = get_char ();
-
-					if (c != '\''){
-						error_details = "Too many characters in character literal";
-						Report.Error (1012, Location, error_details);
-
-						// Try to recover, read until newline or next "'"
-						while ((c = get_char ()) != -1){
-							if (c == '\n'){
-								break;
-							}
-							else if (c == '\'')
-								break;
-						}
-						return Token.ERROR;
-					}
-					return Token.LITERAL_CHARACTER;
-				}
+				case '\'':
+					return TokenizeBackslash ();
 				
-				if (c == '@') {
+				case '@':
 					c = get_char ();
 					if (c == '"') {
 						tokens_seen = true;
 						return consume_string (true);
-					} else if (is_identifier_start_character ((char) c)){
-						return consume_identifier (c, true);
-					} else {
-						Report.Error (1646, Location, "Keyword, identifier, or string expected after verbatim specifier: @");
 					}
+
+					if (is_identifier_start_character (c)){
+						return consume_identifier (c, true);
+					}
+
+					Report.Error (1646, Location, "Keyword, identifier, or string expected after verbatim specifier: @");
+					return Token.ERROR;
+
+				case EvalStatementParserCharacter:
+					return Token.EVAL_STATEMENT_PARSER;
+				case EvalCompilationUnitParserCharacter:
+					return Token.EVAL_COMPILATION_UNIT_PARSER;
+				case EvalUsingDeclarationsParserCharacter:
+					return Token.EVAL_USING_DECLARATIONS_UNIT_PARSER;
 				}
 
-				if (c == EvalStatementParserCharacter)
-					return Token.EVAL_STATEMENT_PARSER;
-				if (c == EvalCompilationUnitParserCharacter)
-					return Token.EVAL_COMPILATION_UNIT_PARSER;
-				if (c == EvalUsingDeclarationsParserCharacter)
-					return Token.EVAL_USING_DECLARATIONS_UNIT_PARSER;
-				
+				if (is_identifier_start_character (c)) {
+					tokens_seen = true;
+					return consume_identifier (c);
+				}
+
 				error_details = ((char)c).ToString ();
-				
 				return Token.ERROR;
 			}
 
 			return Token.EOF;
+		}
+
+		int TokenizeBackslash ()
+		{
+			int c = get_char ();
+			tokens_seen = true;
+			if (c == '\'') {
+				error_details = "Empty character literal";
+				Report.Error (1011, Location, error_details);
+				return Token.ERROR;
+			}
+			if (c == '\r' || c == '\n') {
+				Report.Error (1010, Location, "Newline in constant");
+				return Token.ERROR;
+			}
+
+			int d;
+			c = escape (c, out d);
+			if (c == -1)
+				return Token.ERROR;
+			if (d != 0)
+				throw new NotImplementedException ();
+
+			val = (char) c;
+			c = get_char ();
+
+			if (c != '\'') {
+				Report.Error (1012, Location, "Too many characters in character literal");
+
+				// Try to recover, read until newline or next "'"
+				while ((c = get_char ()) != -1) {
+					if (c == '\n' || c == '\'')
+						break;
+				}
+				return Token.ERROR;
+			}
+
+			return Token.LITERAL_CHARACTER;
+		}
+
+		int TokenizeLessThan ()
+		{
+			int d;
+			if (handle_typeof) {
+				PushPosition ();
+				if (parse_generic_dimension (out d)) {
+					val = d;
+					DiscardPosition ();
+					return Token.GENERIC_DIMENSION;
+				}
+				PopPosition ();
+			}
+
+			// Save current position and parse next token.
+			PushPosition ();
+			if (parse_less_than ()) {
+				if (parsing_generic_declaration && token () != Token.DOT) {
+					d = Token.OP_GENERICS_LT_DECL;
+				} else {
+					d = Token.OP_GENERICS_LT;
+				}
+				PopPosition ();
+				return d;
+			}
+
+			PopPosition ();
+			parsing_generic_less_than = 0;
+
+			d = peek_char ();
+			if (d == '<') {
+				get_char ();
+				d = peek_char ();
+
+				if (d == '=') {
+					get_char ();
+					return Token.OP_SHIFT_LEFT_ASSIGN;
+				}
+				return Token.OP_SHIFT_LEFT;
+			}
+
+			if (d == '=') {
+				get_char ();
+				return Token.OP_LE;
+			}
+			return Token.OP_LT;
 		}
 
 		//
@@ -3036,7 +2966,6 @@ namespace Mono.CSharp
 		public void cleanup ()
 		{
 			if (ifstack != null && ifstack.Count >= 1) {
-				current_location = new Location (ref_line, hidden ? -1 : Col);
 				int state = (int) ifstack.Pop ();
 				if ((state & REGION) != 0)
 					Report.Error (1038, Location, "#endregion directive expected");

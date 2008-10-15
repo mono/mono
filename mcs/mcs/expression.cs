@@ -139,11 +139,11 @@ namespace Mono.CSharp {
 		public Expression Expr;
 		Expression enum_conversion;
 
-		public Unary (Operator op, Expression expr, Location loc)
+		public Unary (Operator op, Expression expr)
 		{
 			Oper = op;
 			Expr = expr;
-			this.loc = loc;
+			loc = expr.Location;
 		}
 
 		// <summary>
@@ -455,7 +455,7 @@ namespace Mono.CSharp {
 				return null;
 
 			if (TypeManager.IsNullableValueType (Expr.Type))
-				return new Nullable.LiftedUnaryOperator (Oper, Expr, loc).Resolve (ec);
+				return new Nullable.LiftedUnaryOperator (Oper, Expr).Resolve (ec);
 
 			//
 			// Attempt to use a constant folding operation.
@@ -904,10 +904,10 @@ namespace Mono.CSharp {
 		//
 		UserOperatorCall method;
 
-		public UnaryMutator (Mode m, Expression e, Location l)
+		public UnaryMutator (Mode m, Expression e)
 		{
 			mode = m;
-			loc = l;
+			loc = e.Location;
 			expr = e;
 		}
 

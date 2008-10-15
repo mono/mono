@@ -3242,16 +3242,14 @@ base_access
 post_increment_expression
 	: primary_expression OP_INC
 	  {
-		$$ = new UnaryMutator (UnaryMutator.Mode.PostIncrement,
-				       (Expression) $1, (Location) $2);
+		$$ = new UnaryMutator (UnaryMutator.Mode.PostIncrement, (Expression) $1);
 	  }
 	;
 
 post_decrement_expression
 	: primary_expression OP_DEC
 	  {
-		$$ = new UnaryMutator (UnaryMutator.Mode.PostDecrement,
-				       (Expression) $1, (Location) $2);
+		$$ = new UnaryMutator (UnaryMutator.Mode.PostDecrement, (Expression) $1);
 	  }
 	;
 
@@ -3598,7 +3596,7 @@ anonymous_method_expression
 	  }
 	  block
 	  {
-		$$ = end_anonymous ((ToplevelBlock) $4, (Location) $1);
+		$$ = end_anonymous ((ToplevelBlock) $4);
 	}
 	;
 
@@ -3633,11 +3631,11 @@ unary_expression
 	: primary_expression
 	| BANG prefixed_unary_expression
 	  {
-		$$ = new Unary (Unary.Operator.LogicalNot, (Expression) $2, (Location) $1);
+		$$ = new Unary (Unary.Operator.LogicalNot, (Expression) $2);
 	  }
 	| TILDE prefixed_unary_expression
 	  {
-		$$ = new Unary (Unary.Operator.OnesComplement, (Expression) $2, (Location) $1);
+		$$ = new Unary (Unary.Operator.OnesComplement, (Expression) $2);
 	  }
 	| cast_expression
 	;
@@ -3661,29 +3659,27 @@ prefixed_unary_expression
 	: unary_expression
 	| PLUS prefixed_unary_expression
 	  { 
-	  	$$ = new Unary (Unary.Operator.UnaryPlus, (Expression) $2, (Location) $1);
+	  	$$ = new Unary (Unary.Operator.UnaryPlus, (Expression) $2);
 	  } 
 	| MINUS prefixed_unary_expression 
 	  { 
-		$$ = new Unary (Unary.Operator.UnaryNegation, (Expression) $2, (Location) $1);
+		$$ = new Unary (Unary.Operator.UnaryNegation, (Expression) $2);
 	  }
 	| OP_INC prefixed_unary_expression 
 	  {
-		$$ = new UnaryMutator (UnaryMutator.Mode.PreIncrement,
-				       (Expression) $2, (Location) $1);
+		$$ = new UnaryMutator (UnaryMutator.Mode.PreIncrement, (Expression) $2);
 	  }
 	| OP_DEC prefixed_unary_expression 
 	  {
-		$$ = new UnaryMutator (UnaryMutator.Mode.PreDecrement,
-				       (Expression) $2, (Location) $1);
+		$$ = new UnaryMutator (UnaryMutator.Mode.PreDecrement, (Expression) $2);
 	  }
 	| STAR prefixed_unary_expression
 	  {
-		$$ = new Indirection ((Expression) $2, (Location) $1);
+		$$ = new Indirection ((Expression) $2, GetLocation ($1));
 	  }
 	| BITWISE_AND prefixed_unary_expression
 	  {
-		$$ = new Unary (Unary.Operator.AddressOf, (Expression) $2, (Location) $1);
+		$$ = new Unary (Unary.Operator.AddressOf, (Expression) $2);
 	  }
 	;
 
@@ -3980,19 +3976,19 @@ lambda_expression
 	  {
 		LocatedToken lt = (LocatedToken) $1;
 		Parameter p = new ImplicitLambdaParameter (lt.Value, lt.Location);
-		start_anonymous (true, new Parameters (p), (Location) $2);
+		start_anonymous (true, new Parameters (p), GetLocation ($1));
 	  }
 	  lambda_expression_body
 	  {
-		$$ = end_anonymous ((ToplevelBlock) $4, (Location) $2);
+		$$ = end_anonymous ((ToplevelBlock) $4);
 	  }
 	| OPEN_PARENS_LAMBDA opt_lambda_parameter_list CLOSE_PARENS ARROW 
 	  {
-		start_anonymous (true, (Parameters) $2, (Location) $4);
+		start_anonymous (true, (Parameters) $2, GetLocation ($1));
 	  }
 	  lambda_expression_body 
 	  {
-		$$ = end_anonymous ((ToplevelBlock) $6, (Location) $4);
+		$$ = end_anonymous ((ToplevelBlock) $6);
 	  }
 	;
 
@@ -4431,7 +4427,7 @@ local_variable_pointer_type
 	  }
 	| builtin_types STAR
 	  {
-		$$ = new ComposedCast ((FullNamedExpression) $1, "*", lexer.Location);
+		$$ = new ComposedCast ((FullNamedExpression) $1, "*", GetLocation ($1));
 	  }
 	| VOID STAR
 	  {
@@ -5900,6 +5896,10 @@ end_block (Location loc)
 void
 start_anonymous (bool lambda, Parameters parameters, Location loc)
 {
+	if (RootContext.Version == LanguageVersion.ISO_1){
+		Report.FeatureIsNotAvailable (loc, "anonymous methods");
+	}
+
 	oob_stack.Push (current_anonymous_method);
 	oob_stack.Push (current_local_parameters);
 
@@ -5917,17 +5917,12 @@ start_anonymous (bool lambda, Parameters parameters, Location loc)
  * Completes the anonymous method processing, if lambda_expr is null, this
  * means that we have a Statement instead of an Expression embedded 
  */
-AnonymousMethodExpression end_anonymous (ToplevelBlock anon_block, Location loc)
+AnonymousMethodExpression end_anonymous (ToplevelBlock anon_block)
 {
 	AnonymousMethodExpression retval;
 
-	if (RootContext.Version == LanguageVersion.ISO_1){
-		Report.FeatureIsNotAvailable (loc, "anonymous methods");
-		retval = null;
-	} else  {
-		current_anonymous_method.Block = anon_block;
-		retval = current_anonymous_method;
-	}
+	current_anonymous_method.Block = anon_block;
+	retval = current_anonymous_method;
 
 	current_local_parameters = (Parameters) oob_stack.Pop ();
 	current_anonymous_method = (AnonymousMethodExpression) oob_stack.Pop ();

@@ -462,8 +462,8 @@ namespace Mono.CSharp.Nullable
 		Unwrap unwrap;
 		Expression user_operator;
 
-		public LiftedUnaryOperator (Unary.Operator op, Expression expr, Location loc)
-			: base (op, expr, loc)
+		public LiftedUnaryOperator (Unary.Operator op, Expression expr)
+			: base (op, expr)
 		{
 		}
 
@@ -1153,7 +1153,7 @@ namespace Mono.CSharp.Nullable
 			if (unwrap == null)
 				return null;
 
-			underlying = (UnaryMutator) new UnaryMutator (Mode, unwrap, loc).Resolve (ec);
+			underlying = (UnaryMutator) new UnaryMutator (Mode, unwrap).Resolve (ec);
 			if (underlying == null)
 				return null;
 
