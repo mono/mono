@@ -1,5 +1,19 @@
 2008-10-16  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* mini-ops.h: Add packed min/equal and sum of absolute differences.
+	
+	* cpu-x86.md: Same.
+
+	* mini-x86.c (mono_arch_output_basic_block): Same.
+
+	* simd-intrinsics.c (vector16b_intrinsics): Add average, compare equal,
+	extract mask, max, min and sum of absolute differences.
+
+	* simd-intrinsics.c: Increase SIMD_INTRINSIC_NAME_MAX due to new huge
+	method name.
+
+2008-10-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* basic-simd.cs: Test for the other mono_simd_simplify_indirection bug.
 	Renamed one test for consistency.
 
