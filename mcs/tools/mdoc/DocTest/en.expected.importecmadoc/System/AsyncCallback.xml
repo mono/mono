@@ -1,0 +1,23 @@
+<Type Name="AsyncCallback" FullName="System.AsyncCallback">
+  <TypeSignature Language="C#" Value="public delegate void AsyncCallback(IAsyncResult ar);" />
+  <AssemblyInfo>
+    <AssemblyName>DocTest</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Delegate</BaseTypeName>
+  </Base>
+  <Parameters>
+    <Parameter Name="ar" Type="System.IAsyncResult" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
+  <Docs>
+    <param name="ar">A <see cref="T:System.IAsyncResult" /> object containing information about the asynchronous operation that has completed.</param>
+    <summary>
+      <para> References one or more methods called when an asynchronous operation completes.</para>
+    </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

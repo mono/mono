@@ -1,0 +1,87 @@
+<Type Name="Environment" FullName="System.Environment">
+  <TypeSignature Language="C#" Value="public static class Environment" />
+  <AssemblyInfo>
+    <AssemblyName>DocTest</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+      <para> Provides the current settings for, and information about, the execution environment.</para>
+    </summary>
+    <remarks>
+      <block subset="none" type="note">
+        <para>Use this class to retrieve the following 
+ information:</para>
+        <list type="bullet">
+          <item>
+            <term>Command line arguments</term>
+          </item>
+          <item>
+            <term>Exit codes</term>
+          </item>
+          <item>
+            <term>Environment variable settings</term>
+          </item>
+          <item>
+            <term>Contents of the call stack</term>
+          </item>
+          <item>
+            <term>Time since last system boot</term>
+          </item>
+          <item>
+            <term>Version of the execution engine</term>
+          </item>
+        </list>
+      </block>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="GetFolderPath">
+      <MemberSignature Language="C#" Value="public static string GetFolderPath (Environment.SpecialFolder folder);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="folder" Type="System.Environment+SpecialFolder" />
+      </Parameters>
+      <Docs>
+        <param name="folder">
+          <para>A <see cref="T:System.Environment+SpecialFolder" />.</para>
+        </param>
+        <summary>
+          <para> Returns the arguments specified on the command
+      line.</para>
+        </summary>
+        <returns>
+          <para> Returns a <see cref="T:System.String" /> array. Each <see cref="T:System.String" /> in the array
+   contains a single command line argument.</para>
+        </returns>
+        <remarks>
+          <para>The first element in the array contains the filename of
+      the executing program. If the filename is not available, the first element is
+      equal to <see cref="F:System.String.Empty" />. The remaining elements contain any additional tokens
+      entered on the command line.</para>
+          <block subset="none" type="note">
+            <para>The program filename can, but is not required to,
+         include path information.</para>
+            <para>To obtain the command line as a single <see cref="T:System.String" />, use the <see cref="P:System.Environment.CommandLine" />
+   property.</para>
+          </block>
+        </remarks>
+        <exception cref="T:System.ArgumentException">foo</exception>
+        <permission cref="T:System.SomePermission">bar</permission>
+        <altmember cref="T:System.SomeMember">alt member</altmember>
+        <seealso cref="T:System.SomeMember">another member</seealso>
+        <unrecognized attribute="a-ko">should be appended to new docs</unrecognized>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

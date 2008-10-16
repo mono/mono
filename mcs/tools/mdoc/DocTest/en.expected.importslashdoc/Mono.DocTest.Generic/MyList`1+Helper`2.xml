@@ -1,0 +1,60 @@
+<Type Name="MyList&lt;T&gt;+Helper&lt;U,V&gt;" FullName="Mono.DocTest.Generic.MyList&lt;T&gt;+Helper&lt;U,V&gt;">
+  <TypeSignature Language="C#" Value="public class MyList&lt;T&gt;.Helper&lt;U,V&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>DocTest</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T" />
+    <TypeParameter Name="U" />
+    <TypeParameter Name="V" />
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <typeparam name="U">Seriously!</typeparam>
+    <typeparam name="V">Too <c>many</c> docs!</typeparam>
+    <summary>To be added.</summary>
+    <remarks>
+      <c>T:Mono.DocTest.MyList`1.Helper`2</c>.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Helper ();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UseT">
+      <MemberSignature Language="C#" Value="public void UseT (T a, U b, V c);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="T" />
+        <Parameter Name="b" Type="U" />
+        <Parameter Name="c" Type="V" />
+      </Parameters>
+      <Docs>
+        <param name="a">Ako</param>
+        <param name="b">bko</param>
+        <param name="c">cko</param>
+        <summary>To be added.</summary>
+        <remarks>
+          <c>M:Mono.DocTest.MyList`1.Helper`2.UseT(`0,`1,`2)</c>.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

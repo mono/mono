@@ -1,0 +1,154 @@
+<Type Name="Extensions" FullName="Mono.DocTest.Generic.Extensions">
+  <TypeSignature Language="C#" Value="public static class Extensions" />
+  <AssemblyInfo>
+    <AssemblyName>DocTest</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>extension methods!</summary>
+    <remarks>
+      <c>T:Mono.DocTest.Generic.Extensions</c>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Bar&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static void Bar&lt;T&gt; (this Mono.DocTest.Generic.IFoo&lt;T&gt; self, string s);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="self" Type="Mono.DocTest.Generic.IFoo&lt;T&gt;" RefType="this" />
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T">To be added.</typeparam>
+        <param name="self">To be added.</param>
+        <param name="s">To be added.</param>
+        <summary>
+          <see cref="T:Mono.DocTest.Generic.IFoo`1" /> extension method</summary>
+        <remarks>
+          <c>M:Mono.DocTest.Generic.Extensions.Bar``1</c>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ForEach&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static void ForEach&lt;T&gt; (this System.Collections.Generic.IEnumerable&lt;T&gt; self, Action&lt;T&gt; a);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="self" Type="System.Collections.Generic.IEnumerable&lt;T&gt;" RefType="this" />
+        <Parameter Name="a" Type="System.Action&lt;T&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T">To be added.</typeparam>
+        <param name="self">To be added.</param>
+        <param name="a">To be added.</param>
+        <summary>
+          <see cref="T:System.Collections.Generic.IEnumerable`1" /> extension method</summary>
+        <remarks>
+          <c>M:Mono.DocTest.Generic.Extensions.ForEach``1</c>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToDouble">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;double&gt; ToDouble (this System.Collections.Generic.IEnumerable&lt;int&gt; list);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Double&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="list" Type="System.Collections.Generic.IEnumerable&lt;System.Int32&gt;" RefType="this" />
+      </Parameters>
+      <Docs>
+        <param name="list">To be added.</param>
+        <summary>
+          <see cref="T:System.Collections.Generic.IEnumerable{System.Int32}" />
+            extension method.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>
+          <c>M:Mono.DocTest.Generic.Extensions.ToDouble</c>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToDouble&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static double ToDouble&lt;T&gt; (this T val) where T : Mono.DocTest.Generic.IFoo&lt;T&gt;;" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <InterfaceName>Mono.DocTest.Generic.IFoo&lt;T&gt;</InterfaceName>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="val" Type="T" RefType="this" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T">To be added.</typeparam>
+        <param name="val">To be added.</param>
+        <summary>
+          <see cref="T:Mono.DocTest.Generic.IFoo`1" /> extension method.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>
+          <c>M:Mono.DocTest.Generic.Extensions.ToDouble</c>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToEnumerable&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;T&gt; ToEnumerable&lt;T&gt; (this T self);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="self" Type="T" RefType="this" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T">To be added.</typeparam>
+        <param name="self">To be added.</param>
+        <summary>
+          <c>System.Object</c> extension method</summary>
+        <returns>To be added.</returns>
+        <remarks>
+          <c>M:Mono.DocTest.Generic.Extensions.ToEnumerable``1</c>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
