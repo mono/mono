@@ -654,7 +654,7 @@ namespace System.Web.Compilation
 		{
 			PropertyInfo pi = member as PropertyInfo;
 			if (pi != null)
-				return pi.CanWrite;
+				return pi.GetSetMethod (false) != null;
 			FieldInfo fi = member as FieldInfo;
 			if (fi != null)
 				return !fi.IsInitOnly;
