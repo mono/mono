@@ -1,3 +1,8 @@
+2008-10-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* x86/x86-codegen.h: Add packed int compare equals and
+	psabw.
+
 2008-10-15  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* x86/x86-codegen.h: Add packed int max/min/avg/shuffle and extract mask.
