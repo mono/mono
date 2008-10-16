@@ -95,3 +95,8 @@ check-man-provider-update: Test/man-provider-test.exe
 	$(my_mono) $< Test/man-test3.1 > Test/man-test3.html
 	$(my_mono) $< Test/man-test4.1 > Test/man-test4.html
 
+clean-local: cleanup
+
+cleanup:
+	-rm -f Test/man-provider-test.exe*
+

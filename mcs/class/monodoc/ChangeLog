@@ -1,5 +1,9 @@
 2008-10-16  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* Makefile: Improve `make clean` support.
+
+2008-10-16  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* Makefile: Add EXTRA_DISTFILES; monodoc.dll should depend upon
 	  Makefile (in case the /resource: lines change); shorten the .gif
 	  resource names.
