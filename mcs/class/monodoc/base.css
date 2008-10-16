@@ -1,0 +1,27 @@
+/*
+* base.css: CSS applied to all the docs 
+*
+* Author: Mario Sopena
+*/
+
+body, table {
+	font-family: @@FONT_FAMILY@@, sans-serif;
+	font-size: @@FONT_SIZE@@%;
+}
+
+div.header {
+	padding: 0.2em;
+}
+
+div.title {
+	font-size: 130%;
+	font-weight: bolder;
+	margin-top: 0.3em;
+	margin-left: 0.2em;
+	margin-bottom: 0.1em;
+}
+
+.subtitle {
+	font-style: italic;
+}
+
