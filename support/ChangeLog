@@ -1,5 +1,9 @@
 2008-10-15  Jonathan Pryor  <jpryor@novell.com>
 
+	* time.c: Add Mono_Posix_Syscall_nanosleep().
+
+2008-10-15  Jonathan Pryor  <jpryor@novell.com>
+
 	* fcntl.c: Use Mono_Posix_{From,To}Flock() for flock conversion.
 	* Makefile.am: Include <time.h> in map.c.
 	* map.c, map.h: Flush; adds Flock, Timespec support.
