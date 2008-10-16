@@ -1,3 +1,11 @@
+2008-10-16  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridView.cs: When a user begins an edit in the 'new row',
+	make that a real row, and add a new 'new row'.  If the user
+	cancels the edit, remove the new 'new row' and reset everything.
+	Also, ensure UserAddedRow and UserRemovedRow events are raised.
+	[Fixes bug #430954]
+
 2008-10-16  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TableLayoutSettings.cs: Fix NREs when deserializing and 

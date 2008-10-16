@@ -117,7 +117,8 @@ namespace System.Windows.Forms {
 		private HScrollBar horizontalScrollBar;
 		private VScrollBar verticalScrollBar;
 		private Control editingControl;
-
+		private bool new_row_commited = true;
+		
 		// These are used to implement selection behaviour with SHIFT pressed.
 		private int selected_row = -1;
 		private int selected_column = -1;
@@ -2234,7 +2235,13 @@ namespace System.Windows.Forms {
 
 			if (e.Cancel)
 				return false;
-				
+
+			// If the user begins an edit in the NewRow, add a new row
+			if (CurrentCell.RowIndex == NewRowIndex) {
+				new_row_commited = false;
+				OnUserAddedRow (new DataGridViewRowEventArgs (Rows[NewRowIndex]));
+			}
+		
 			cell.SetIsInEditMode (true);
 			
 			// The cell has an editing control we need to setup
@@ -2278,6 +2285,17 @@ namespace System.Windows.Forms {
 		public bool CancelEdit ()
 		{
 			if (currentCell != null && currentCell.IsInEditMode) {
+				// The user's typing caused a new row to be created, but
+				// now they are canceling that typing, we have to remove
+				// the new row we added.
+				if (!new_row_commited) {
+					DataGridViewRow delete_row = EditingRow;
+					Rows.Remove (delete_row);
+					editing_row = Rows[currentCell.RowIndex];
+					OnUserDeletedRow (new DataGridViewRowEventArgs (delete_row));
+					new_row_commited = true;
+				}
+
 				currentCell.SetIsInEditMode (false);
 				currentCell.DetachEditingControl ();
 				OnCellEndEdit (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
@@ -2351,6 +2369,7 @@ namespace System.Windows.Forms {
 					currentCell.SetIsInEditMode (false);
 				}
 
+				new_row_commited = true;
 				OnCellEndEdit (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
 			}
 			
@@ -4731,6 +4750,11 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnUserAddedRow (DataGridViewRowEventArgs e)
 		{
+			editing_row = null;
+			PrepareEditingRow (false, false);
+
+			e = new DataGridViewRowEventArgs (editing_row);
+			
 			DataGridViewRowEventHandler eh = (DataGridViewRowEventHandler)(Events [UserAddedRowEvent]);
 			if (eh != null) eh (this, e);
 		}
@@ -5286,9 +5310,6 @@ namespace System.Windows.Forms {
 		internal void InternalOnCellValueChanged (DataGridViewCellEventArgs e)
 		{
 			OnCellValueChanged (e);
-			
-			if (editing_row != null && e.RowIndex == editing_row.Index)
-				PrepareEditingRow (true, false);
 		}
 
 		internal void InternalOnDataError (DataGridViewDataErrorEventArgs e)
