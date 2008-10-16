@@ -1,4 +1,8 @@
 
+Thu Oct 16 16:12:23 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: remove the unused old vtable setup code.
+
 Thu Oct 16 12:53:29 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: don't depend on interface order in
