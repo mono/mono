@@ -4870,6 +4870,12 @@ namespace System.Windows.Forms {
 						return true;
 						
 					break;
+				case Keys.Enter:
+				case Keys.Escape:
+					if (ProcessDataGridViewKey (new KeyEventArgs (keyData)))
+						return true;
+						
+					break;
 			}
 			
 			return base.ProcessDialogKey(keyData);
@@ -4880,8 +4886,6 @@ namespace System.Windows.Forms {
 			int current_row = CurrentCellAddress.Y;
 			
 			if (current_row < Rows.Count - 1) {
-				EndEdit ();
-				
 				// Move to the last cell in the column
 				if ((keyData & Keys.Control) == Keys.Control)
 					MoveCurrentCell (CurrentCellAddress.X, Rows.Count - 1, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift, true);
@@ -4916,19 +4920,12 @@ namespace System.Windows.Forms {
 
 		protected bool ProcessEnterKey (Keys keyData)
 		{
-			if (!IsCurrentCellInEditMode)
-				return false;
-				
-			CommitEdit (DataGridViewDataErrorContexts.Commit);
+			if (ProcessDownKey (keyData))
+				return true;
 			
-			// Move one cell down
-			if ((keyData & Keys.Control) == 0) {
-				int current_row = CurrentCellAddress.Y;
-				
-				if (current_row < Rows.Count - 1)
-					MoveCurrentCell (CurrentCellAddress.X, current_row + 1, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift, true);
-			}
-			
+			// ProcessDown may fail if we are on the last row,
+			// but Enter should still EndEdit if this is the last row
+			EndEdit ();
 			return true;
 		}
 
@@ -5019,8 +5016,6 @@ namespace System.Windows.Forms {
 			int disp_index = ColumnIndexToDisplayIndex (currentCellAddress.X);
 
 			if (disp_index > 0) {
-				EndEdit ();
-				
 				// Move to the first cell in the row
 				if ((keyData & Keys.Control) == Keys.Control)
 					MoveCurrentCell (ColumnDisplayIndexToIndex (0), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift, true);
@@ -5040,8 +5035,6 @@ namespace System.Windows.Forms {
 			int current_row = CurrentCellAddress.Y;
 
 			if (current_row < Rows.Count - 1) {
-				EndEdit ();
-
 				// Move one "page" of cells down
 				int new_row = Math.Min (Rows.Count - 1, current_row + DisplayedRowCount (false));
 
@@ -5059,8 +5052,6 @@ namespace System.Windows.Forms {
 			int current_row = CurrentCellAddress.Y;
 
 			if (current_row > 0) {
-				EndEdit ();
-
 				// Move one "page" of cells up
 				int new_row = Math.Max (0, current_row - DisplayedRowCount (false));
 
@@ -5077,8 +5068,6 @@ namespace System.Windows.Forms {
 			int disp_index = ColumnIndexToDisplayIndex (currentCellAddress.X);
 
 			if (disp_index < Columns.Count - 1) {
-				EndEdit ();
-				
 				// Move to the last cell in the row
 				if ((keyData & Keys.Control) == Keys.Control)
 					MoveCurrentCell (ColumnDisplayIndexToIndex (Columns.Count - 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift, true);
@@ -5126,8 +5115,6 @@ namespace System.Windows.Forms {
 
 		protected bool ProcessTabKey (Keys keyData)
 		{
-			EndEdit ();
-			
 			Form f = FindForm ();
 			
 			if (f != null)
@@ -5171,8 +5158,6 @@ namespace System.Windows.Forms {
 			int current_row = CurrentCellAddress.Y;
 
 			if (current_row > 0) {
-				EndEdit ();
-
 				// Move to the first cell in the column
 				if ((keyData & Keys.Control) == Keys.Control)
 					MoveCurrentCell (CurrentCellAddress.X, 0, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift, true);
@@ -5788,6 +5773,14 @@ namespace System.Windows.Forms {
 			else if (mode == DataGridViewSelectionMode.ColumnHeaderSelect)
 				mode = DataGridViewSelectionMode.CellSelect;
 			
+			// End edit if the old cell was editing, and fire CellLeave for the old cell
+			if (currentCell != null) {
+				OnCellLeave (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
+					
+				if (currentCell.IsInEditMode)
+					EndEdit ();
+			}
+			
 			// Move CurrentCell
 			SetCurrentCellAddressCore (x, y, true, false, false);
 			
@@ -5853,6 +5846,9 @@ namespace System.Windows.Forms {
 					SetSelectedColumnCore (x, true);
 					break;
 			}
+			
+			// Raise CellEnter
+			OnCellEnter (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
 			
 			Invalidate ();
 		}
