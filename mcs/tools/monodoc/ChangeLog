@@ -1,5 +1,10 @@
 2008-10-16  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* Assmbly/AssemblyInfo.cs: Change location of mono.snk (since the 
+	  monodoc directory was moved from mcs/class to mcs/tools).
+
+2008-10-16  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* Makefile: Improve `make clean` support.
 
 2008-10-16  Jonathan Pryor  <jonpryor@vt.edu>
