@@ -1,3 +1,7 @@
+2008-10-16  Jb Evain  <jbevain@novell.com>
+
+	* WebResponse_2_1.cs: update API to SL2.
+
 2008-08-21  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* WebClient_2_1.cs: set the address on OpenReadCompletedEventArgs

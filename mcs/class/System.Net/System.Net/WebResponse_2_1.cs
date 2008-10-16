@@ -46,12 +46,11 @@ namespace System.Net {
 		}
 
 		public abstract void Close ();
-		public abstract void Dispose (bool disposing);
 		public abstract Stream GetResponseStream ();
 
 		void IDisposable.Dispose ()
 		{
-			Dispose (true);
+			Close ();
 		}
 	}
 }
