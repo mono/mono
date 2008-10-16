@@ -4,8 +4,13 @@
 
 	* inssel.brg: Add `OP_HARD_NOP'.
 
-	* mini.c: In `CEE_NOP': generate a `OP_HARD_NOP' instruction
-	when running inside the debugger.
+	* mini.h (MonoCompile): Added `keep_cil_nops' flag.
+
+	* mini.c (mono_method_to_ir): In `CEE_NOP': generate a
+	`OP_HARD_NOP' instruction when running inside the debugger.
+
+	* method-to-ir.c (mono_method_to_ir2): In `CEE_NOP': generate a
+	`OP_HARD_NOP' instruction when running inside the debugger.
 
 2008-10-15  Rodrigo Kumpera  <rkumpera@novell.com>
 
