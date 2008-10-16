@@ -1,4 +1,12 @@
 2008-10-15  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* simd-intrinsics.c (get_simd_vreg): Using sreg1 of OP_XMOVE
+	now works. The issue with the regalloc tripping up no longer
+	happens.
+
+	* simd-intrinsics.c (load_simd_vreg): Same.
+
+2008-10-15  Rodrigo Kumpera  <rkumpera@novell.com>
 	
 	* basic-simd.cs: Tests for new Vector8ui methods.
 
