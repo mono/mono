@@ -1,4 +1,4 @@
-thisdir = class/monodoc
+thisdir = tools/monodoc
 SUBDIRS = 
 include ../../build/rules.make
 
