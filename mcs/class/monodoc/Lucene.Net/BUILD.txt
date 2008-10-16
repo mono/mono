@@ -1,0 +1,113 @@
+Lucene Build Instructions
+
+$Id: BUILD.txt,v 1.8 2004/04/03 21:32:50 ehatcher Exp $
+
+Basic steps:
+  0) Install JDK 1.2 (or greater), Ant 1.6 (or greater), and the Ant
+     optional.jar
+  1) Download Lucene from Apache and unpack it
+  2) Connect to the top-level of your Lucene installation
+  3) Install JavaCC (optional)
+  4) Run ant
+
+Step 0) Set up your development environment (JDK 1.2 or greater,
+Ant 1.6 or greater)
+
+We'll assume that you know how to get and set up the JDK - if you
+don't, then we suggest starting at http://java.sun.com and learning
+more about Java, before returning to this README.
+
+Lucene runs with JDK 1.2 and later.  However, if you're going to work
+with the development version of Lucene, we recommend you stick with
+the most current version of Java (at the time of this writing, JDK
+1.4).  Also, note that if you're working with the Lucene source,
+you'll need to use Ant (see below) and Ant requires at least JDK 1.2.
+
+Like most of the Jakarta projects, Lucene uses Apache Ant for build
+control.  Specifically, you MUST use Ant version 1.6 or greater.
+
+Ant is "kind of like make without make's wrinkles".  Ant is
+implemented in java and uses XML-based configuration files.  You can
+get it at:
+
+  http://ant.apache.org
+
+You'll need to download both the Ant binary distribution and the
+"optional" jar file.  Install these according to the instructions at:
+
+  http://ant.apache.org/manual
+
+Step 1) Download Lucene from Apache
+
+We'll assume you already did this, or you wouldn't be reading this
+file.  However, you might have received this file by some alternate
+route, or you might have an incomplete copy of the Lucene, so: Lucene
+releases are available for download at:
+
+  http://jakarta.apache.org/builds/jakarta-lucene/release/
+
+Download either a zip or a tarred/gzipped version of the archive, and
+uncompress it into a directory of your choice.
+
+Step 2) Connect to the top-level of your Lucene installation
+
+Lucene's top-level directory contains the default.properties and
+build.xml files. By default, you do not need to change any of the
+settings in these files, but you do need to run ant from this location
+so it knows where to find them.
+
+If you would like to change the settings in the default.properties there
+is no need to edit the default.properties file, you can override the
+property settings by creating one or more of the following files and
+placing your own property settings in there:
+
+    ~/lucene.build.properties
+    ~/build.properties
+    jakarta-lucene/build.properties
+
+The first property which is found in the order with which the files are
+loaded becomes the property setting which is used by the Ant build
+system.
+
+NOTE: the ~ character represents your user account home directory.
+
+Step 3) Install JavaCC
+
+Building the Lucene distribution from the source does not require the JavaCC
+parser generator, but if you wish to regenerate any of the pre-generated
+parser pieces, you will need to install JavaCC.
+
+  http://javacc.dev.java.net
+
+Follow the download links and download the zip file to a temporary
+location on your file system.
+
+After JavaCC is installed, edit your build.properties
+(as in step 2), and add the line
+
+  javacc.home=/javacc/bin
+
+where this points to the bin directory of your javacc installation.
+
+Step 4) Run ant
+
+Assuming you have ant in your PATH and have set ANT_HOME to the
+location of your ant installation, typing "ant" at the shell prompt
+and command prompt should run ant.  Ant will by default look for the
+"build.xml" file in your current directory, and compile Lucene.
+
+To rebuild any of the JavaCC-based parsers, run "ant javacc".
+
+For further information on Lucene, go to:
+  http://jakarta.apache.org/lucene/
+
+Please join the Lucene-User mailing list by visiting this site:
+  http://jakarta.apache.org/site/mail.html
+
+Please post suggestions, questions, corrections or additions to this
+document to the lucene-user mailing list.
+
+This file was originally written by Steven J. Owens <puff@darksleep.com>.
+This file was modified by Jon S. Stevens <jon@latchkey.com>.
+
+Copyright (c) 2001-2004 The Apache Software Foundation.  All rights reserved.

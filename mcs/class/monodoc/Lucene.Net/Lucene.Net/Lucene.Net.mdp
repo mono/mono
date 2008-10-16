@@ -1,0 +1,206 @@
+<Project name="Lucene.Net" fileversion="2.0" language="C#" ctype="DotNetProject">
+  <Configurations active="Debug">
+    <Configuration name="Debug" ctype="DotNetProjectConfiguration">
+      <Output directory="../bin/Debug" assembly="Lucene.Net" />
+      <Build debugmode="True" target="Library" />
+      <Execution runwithwarnings="False" consolepause="True" runtime="MsNet" />
+      <CodeGeneration compiler="Csc" warninglevel="4" optimize="False" unsafecodeallowed="False" generateoverflowchecks="False" mainclass="" generatexmldocumentation="False" ctype="CSharpCompilerParameters" />
+    </Configuration>
+    <Configuration name="Release" ctype="DotNetProjectConfiguration">
+      <Output directory="../bin/Release" assembly="Lucene.Net" />
+      <Build debugmode="False" target="Library" />
+      <Execution runwithwarnings="False" consolepause="True" runtime="MsNet" />
+      <CodeGeneration compiler="Csc" warninglevel="4" optimize="True" unsafecodeallowed="False" generateoverflowchecks="False" mainclass="" generatexmldocumentation="False" ctype="CSharpCompilerParameters" />
+    </Configuration>
+  </Configurations>
+  <References>
+    <ProjectReference type="Gac" localcopy="True" refto="G:\WINNT\Microsoft.NET\Framework\v1.0.3705\System.dll" />
+    <ProjectReference type="Gac" localcopy="True" refto="D:\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.Runtime.Remoting.dll" />
+    <ProjectReference type="Gac" localcopy="True" refto="..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.Data.dll" />
+    <ProjectReference type="Gac" localcopy="True" refto="..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.XML.dll" />
+  </References>
+  <DeploymentInformation strategy="File">
+    <excludeFiles />
+  </DeploymentInformation>
+  <Contents>
+    <File name="./AssemblyInfo.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Lucene.Net.Search.RemoteSearchable.config" subtype="Code" buildaction="Exclude" />
+    <File name="./Lucene.Net.Search.TestSort.config" subtype="Code" buildaction="Exclude" />
+    <File name="./Lucene.Net.xml" subtype="Code" buildaction="Exclude" />
+    <File name="./Overview.html" subtype="Code" buildaction="Exclude" />
+    <File name="./SupportClass.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\Analyzer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\CharTokenizer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\LetterTokenizer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\LowerCaseFilter.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\LowerCaseTokenizer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\Package.html" subtype="Code" buildaction="Exclude" />
+    <File name="./Analysis\PerFieldAnalyzerWrapper.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\PorterStemFilter.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\PorterStemmer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\SimpleAnalyzer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\StopAnalyzer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\StopFilter.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\Token.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\TokenFilter.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\Tokenizer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\TokenStream.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\WhitespaceAnalyzer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\WhitespaceTokenizer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\DE\GermanAnalyzer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\DE\GermanStemFilter.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\DE\GermanStemmer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\DE\Package.html" subtype="Code" buildaction="Exclude" />
+    <File name="./Analysis\DE\WordlistLoader.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\RU\Package.html" subtype="Code" buildaction="Exclude" />
+    <File name="./Analysis\RU\RussianAnalyzer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\RU\RussianCharsets.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\RU\RussianLetterTokenizer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\RU\RussianLowerCaseFilter.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\RU\RussianStemFilter.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\RU\RussianStemmer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\Standard\CharStream.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\Standard\FastCharStream.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\Standard\Package.html" subtype="Code" buildaction="Exclude" />
+    <File name="./Analysis\Standard\ParseException.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\Standard\StandardAnalyzer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\Standard\StandardFilter.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\Standard\StandardTokenizer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\Standard\StandardTokenizer.jj" subtype="Code" buildaction="Exclude" />
+    <File name="./Analysis\Standard\StandardTokenizerConstants.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\Standard\StandardTokenizerTokenManager.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\Standard\Token.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Analysis\Standard\TokenMgrError.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Document\DateField.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Document\Document.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Document\Field.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Document\Package.html" subtype="Code" buildaction="Exclude" />
+    <File name="./Index\CompoundFileReader.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\CompoundFileWriter.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\DocumentWriter.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\FieldInfo.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\FieldInfos.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\FieldsReader.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\FieldsWriter.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\FilterIndexReader.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\IndexReader.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\IndexWriter.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\MultipleTermPositions.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\MultiReader.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\Package.html" subtype="Code" buildaction="Exclude" />
+    <File name="./Index\SegmentInfo.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\SegmentInfos.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\SegmentMergeInfo.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\SegmentMergeQueue.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\SegmentMerger.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\SegmentReader.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\SegmentTermDocs.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\SegmentTermEnum.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\SegmentTermPositions.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\SegmentTermVector.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\Term.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\TermDocs.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\TermEnum.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\TermFreqVector.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\TermInfo.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\TermInfosReader.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\TermInfosWriter.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\TermPositions.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\TermPositionVector.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\TermVectorsReader.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Index\TermVectorsWriter.cs" subtype="Code" buildaction="Compile" />
+    <File name="./QueryParser\CharStream.cs" subtype="Code" buildaction="Compile" />
+    <File name="./QueryParser\FastCharStream.cs" subtype="Code" buildaction="Compile" />
+    <File name="./QueryParser\MultiFieldQueryParser.cs" subtype="Code" buildaction="Compile" />
+    <File name="./QueryParser\Package.html" subtype="Code" buildaction="Exclude" />
+    <File name="./QueryParser\ParseException.cs" subtype="Code" buildaction="Compile" />
+    <File name="./QueryParser\QueryParser.cs" subtype="Code" buildaction="Compile" />
+    <File name="./QueryParser\QueryParser.JJ" subtype="Code" buildaction="Exclude" />
+    <File name="./QueryParser\QueryParserConstants.cs" subtype="Code" buildaction="Compile" />
+    <File name="./QueryParser\QueryParserTokenManager.cs" subtype="Code" buildaction="Compile" />
+    <File name="./QueryParser\Token.cs" subtype="Code" buildaction="Compile" />
+    <File name="./QueryParser\TokenMgrError.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\BooleanClause.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\BooleanQuery.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\BooleanScorer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\CachingWrapperFilter.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\ConjunctionScorer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\DateFilter.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\DefaultSimilarity.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\ExactPhraseScorer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\Explanation.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\FieldCache.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\FieldCacheImpl.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\FieldDoc.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\FieldDocSortedHitQueue.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\FieldSortedHitQueue.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\Filter.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\FilteredQuery.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\FilteredTermEnum.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\FuzzyQuery.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\FuzzyTermEnum.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\HitCollector.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\HitQueue.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\Hits.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\IndexSearcher.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\MultiSearcher.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\MultiTermQuery.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\Package.html" subtype="Code" buildaction="Exclude" />
+    <File name="./Search\ParallelMultiSearcher.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\PhrasePositions.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\PhrasePrefixQuery.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\PhraseQuery.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\PhraseQueue.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\PhraseScorer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\PrefixQuery.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\Query.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\QueryFilter.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\QueryTermVector.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\RangeQuery.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\RemoteSearchable.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\ScoreDoc.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\ScoreDocComparator.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\Scorer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\Searchable.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\Searcher.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\Similarity.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\SloppyPhraseScorer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\Sort.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\SortComparator.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\SortComparatorSource.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\SortField.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\TermQuery.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\TermScorer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\TopDocs.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\TopFieldDocs.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\Weight.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\WildcardQuery.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\WildcardTermEnum.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\Spans\NearSpans.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\Spans\Package.html" subtype="Code" buildaction="Exclude" />
+    <File name="./Search\Spans\SpanFirstQuery.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\Spans\SpanNearQuery.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\Spans\SpanNotQuery.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\Spans\SpanOrQuery.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\Spans\SpanQuery.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\Spans\Spans.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\Spans\SpanScorer.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\Spans\SpanTermQuery.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Search\Spans\SpanWeight.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Store\Directory.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Store\FSDirectory.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Store\InputStream.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Store\Lock.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Store\OutputStream.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Store\Package.html" subtype="Code" buildaction="Exclude" />
+    <File name="./Store\RAMDirectory.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Store\RAMFile.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Store\RAMInputStream.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Store\RAMOutputStream.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Util\BitVector.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Util\Constants.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Util\Package.html" subtype="Code" buildaction="Exclude" />
+    <File name="./Util\PriorityQueue.cs" subtype="Code" buildaction="Compile" />
+    <File name="./Util\StringHelper.cs" subtype="Code" buildaction="Compile" />
+  </Contents>
+</Project>

@@ -1,0 +1,425 @@
+/* ====================================================================
+ * The Apache Software License, Version 1.1
+ *
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
+ *
+ * 4. The names "Apache" and "Apache Software Foundation" and
+ *    "Apache Lucene" must not be used to endorse or promote products
+ *    derived from this software without prior written permission. For
+ *    written permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache",
+ *    "Apache Lucene", nor may "Apache" appear in their name, without
+ *    prior written permission of the Apache Software Foundation.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ */
+
+// HTMLParser.jj
+
+options {
+  STATIC = false;
+  OPTIMIZE_TOKEN_MANAGER = true;
+  //DEBUG_LOOKAHEAD = true;
+  //DEBUG_TOKEN_MANAGER = true;
+}
+
+PARSER_BEGIN(HTMLParser)
+
+package org.apache.lucene.demo.html;
+
+import java.io.*;
+import java.util.Properties;
+
+public class HTMLParser {
+  public static int SUMMARY_LENGTH = 200;
+
+  StringBuffer title = new StringBuffer(SUMMARY_LENGTH);
+  StringBuffer summary = new StringBuffer(SUMMARY_LENGTH * 2);
+  Properties metaTags=new Properties();
+  String currentMetaTag=null;
+  String currentMetaContent=null;
+  int length = 0;
+  boolean titleComplete = false;
+  boolean inTitle = false;
+  boolean inMetaTag = false;
+  boolean inStyle = false;
+  boolean afterTag = false;
+  boolean afterSpace = false;
+  String eol = System.getProperty("line.separator");
+  Reader pipeIn = null;
+  Writer pipeOut;
+  private MyPipedInputStream pipeInStream = null;
+  private PipedOutputStream pipeOutStream = null;
+  
+  private class MyPipedInputStream extends PipedInputStream{
+    
+    public MyPipedInputStream(){
+      super();
+    }
+    
+    public MyPipedInputStream(PipedOutputStream src) throws IOException{
+      super(src);
+    }
+    
+    public boolean full() throws IOException{
+      return this.available() >= PipedInputStream.PIPE_SIZE;
+    }
+  }
+
+  public HTMLParser(File file) throws FileNotFoundException {
+    this(new FileInputStream(file));
+  }
+
+  public String getTitle() throws IOException, InterruptedException {
+    if (pipeIn == null)
+      getReader();				  // spawn parsing thread
+    while (true) {
+      synchronized(this) {
+	if (titleComplete || pipeInStream.full())
+	  break;
+	wait(10);
+      }
+    }
+    return title.toString().trim();
+  }
+
+  public Properties getMetaTags() throws IOException,
+InterruptedException {
+    if (pipeIn == null)
+      getReader();				  // spawn parsing thread
+    while (true) {
+      synchronized(this) {
+	if (titleComplete || pipeInStream.full())
+	  break;
+	wait(10);
+      }
+    }
+    return metaTags;
+  }
+
+
+  public String getSummary() throws IOException, InterruptedException {
+    if (pipeIn == null)
+      getReader();				  // spawn parsing thread
+    while (true) {
+      synchronized(this) {
+	if (summary.length() >= SUMMARY_LENGTH || pipeInStream.full())
+	  break;
+	wait(10);
+      }
+    }
+    if (summary.length() > SUMMARY_LENGTH)
+      summary.setLength(SUMMARY_LENGTH);
+
+    String sum = summary.toString().trim();
+    String tit = getTitle();
+    if (sum.startsWith(tit) || sum.equals(""))
+      return tit;
+    else
+      return sum;
+  }
+
+  public Reader getReader() throws IOException {
+    if (pipeIn == null) {
+      pipeInStream = new MyPipedInputStream();
+      pipeOutStream = new PipedOutputStream(pipeInStream);
+      pipeIn = new InputStreamReader(pipeInStream);
+      pipeOut = new OutputStreamWriter(pipeOutStream);
+
+      Thread thread = new ParserThread(this);
+      thread.start();				  // start parsing
+    }
+
+    return pipeIn;
+  }
+
+  void addToSummary(String text) {
+    if (summary.length() < SUMMARY_LENGTH) {
+      summary.append(text);
+      if (summary.length() >= SUMMARY_LENGTH) {
+	synchronized(this) {
+	  notifyAll();
+	}
+      }
+    }
+  }
+
+  void addText(String text) throws IOException {
+    if (inStyle)
+      return;
+    if (inTitle)
+      title.append(text);
+    else {
+      addToSummary(text);
+      if (!titleComplete && !title.equals("")) {  // finished title
+	synchronized(this) {
+	  titleComplete = true;			  // tell waiting threads
+	  notifyAll();
+	}
+      }
+    }
+
+    length += text.length();
+    pipeOut.write(text);
+
+    afterSpace = false;
+  }
+  
+  void addMetaTag() throws IOException {
+      metaTags.setProperty(currentMetaTag, currentMetaContent);
+      currentMetaTag = null;
+      currentMetaContent = null;
+      return;
+  }
+
+  void addSpace() throws IOException {
+    if (!afterSpace) {
+      if (inTitle)
+	title.append(" ");
+      else
+	addToSummary(" ");
+
+      String space = afterTag ? eol : " ";
+      length += space.length();
+      pipeOut.write(space);
+      afterSpace = true;
+    }
+  }
+
+//    void handleException(Exception e) {
+//      System.out.println(e.toString());  // print the error message
+//      System.out.println("Skipping...");
+//      Token t;
+//      do {
+//        t = getNextToken();
+//      } while (t.kind != TagEnd);
+//    }
+}
+
+PARSER_END(HTMLParser)
+
+
+void HTMLDocument() throws IOException :
+{
+  Token t;
+}
+{
+//  try {
+    ( Tag()         { afterTag = true; }
+    | t=Decl()      { afterTag = true; }
+    | CommentTag()  { afterTag = true; }
+    | ScriptTag()  { afterTag = true; }
+    | t=<Word>      { addText(t.image); afterTag = false; }
+    | t=<Entity>    { addText(Entities.decode(t.image)); afterTag = false; }
+    | t=<Punct>     { addText(t.image); afterTag = false; }
+    | <Space>       { addSpace(); afterTag = false; }
+    )* <EOF>
+//  } catch (ParseException e) {
+//    handleException(e);
+//  }
+}
+
+void Tag() throws IOException :
+{
+  Token t1, t2;
+  boolean inImg = false;
+}
+{
+  t1=<TagName> {
+   String tagName = t1.image.toLowerCase();
+   if(Tags.WS_ELEMS.contains(tagName) ) {
+      addSpace();
+    }
+    inTitle = tagName.equalsIgnoreCase("<title"); // keep track if in <TITLE>
+    inMetaTag = tagName.equalsIgnoreCase("<META"); // keep track if in <META>
+    inStyle = tagName.equalsIgnoreCase("<STYLE"); // keep track if in <STYLE>
+    inImg = tagName.equalsIgnoreCase("<img");	  // keep track if in <IMG>
+  }
+  (t1=<ArgName>
+   (<ArgEquals>
+    (t2=ArgValue()				  // save ALT text in IMG tag
+     {
+       if (inImg && t1.image.equalsIgnoreCase("alt") && t2 != null)
+         addText("[" + t2.image + "]");
+
+    	if(inMetaTag &&
+			(  t1.image.equalsIgnoreCase("name") ||
+			   t1.image.equalsIgnoreCase("HTTP-EQUIV")
+			)
+	   && t2 != null)
+	{
+		currentMetaTag=t2.image.toLowerCase();
+		if(currentMetaTag != null && currentMetaContent != null) {
+        	addMetaTag();
+		}
+	}
+    	if(inMetaTag && t1.image.equalsIgnoreCase("content") && t2 !=
+null)
+	{
+		currentMetaContent=t2.image.toLowerCase();
+		if(currentMetaTag != null && currentMetaContent != null) {
+        	addMetaTag();
+		}
+	}
+     }
+    )?
+   )?
+  )*
+  <TagEnd>
+}
+
+Token ArgValue() :
+{
+  Token t = null;
+}
+{
+  t=<ArgValue>                              { return t; }
+| LOOKAHEAD(2)
+  <ArgQuote1> <CloseQuote1>                 { return t; }
+| <ArgQuote1> t=<Quote1Text> <CloseQuote1>  { return t; }
+| LOOKAHEAD(2)
+  <ArgQuote2> <CloseQuote2>                 { return t; }
+| <ArgQuote2> t=<Quote2Text> <CloseQuote2>  { return t; }
+}
+
+
+Token Decl() :
+{
+  Token t;
+}
+{
+  t=<DeclName> ( <ArgName> | ArgValue() | <ArgEquals> )* <TagEnd>
+  { return t; }
+}
+
+
+void CommentTag() :
+{}
+{
+  (<Comment1> ( <CommentText1> )* <CommentEnd1>)
+ |
+  (<Comment2> ( <CommentText2> )* <CommentEnd2>)
+}
+
+void ScriptTag() :
+{}
+{
+  <ScriptStart> ( <ScriptText> )* <ScriptEnd>
+}
+
+
+TOKEN :
+{
+  < ScriptStart: "<script" > : WithinScript
+| < TagName:  "<" ("/")? ["A"-"Z","a"-"z"] (<ArgName>)? > : WithinTag
+| < DeclName: "<"  "!"   ["A"-"Z","a"-"z"] (<ArgName>)? > : WithinTag
+
+| < Comment1:  "<!--" > : WithinComment1
+| < Comment2:  "<!" >   : WithinComment2
+
+| < Word:     ( <LET> | <LET> (["+","/"])+ | <NUM> ["\""] |
+                <LET> ["-","'"] <LET> | ("$")? <NUM> [",","."] <NUM> )+ >
+| < #LET:     ["A"-"Z","a"-"z","0"-"9"] >
+| < #NUM:     ["0"-"9"] >
+
+| < Entity:   ( "&" (["A"-"Z","a"-"z"])+ (";")? | "&" "#" (<NUM>)+ (";")? ) >
+
+| < Space:    (<SP>)+ >
+| < #SP:      [" ","\t","\r","\n"] >
+
+| < Punct:    ~[] > // Keep this last.  It is a catch-all.
+}
+
+<WithinScript> TOKEN:
+{
+  < ScriptText:  (~["<",">"])+ | "<" | ">" >
+| < ScriptEnd: "</script" (~["<",">"])* ">" > : DEFAULT
+}
+
+<WithinTag> TOKEN:
+{
+  < ArgName:   (~[" ","\t","\r","\n","=",">","'","\""])
+               (~[" ","\t","\r","\n","=",">"])* >
+| < ArgEquals: "=" >  : AfterEquals
+| < TagEnd:    ">" | "=>" >  : DEFAULT
+}
+
+<AfterEquals> TOKEN:
+{
+  < ArgValue:  (~[" ","\t","\r","\n","=",">","'","\""])
+	       (~[" ","\t","\r","\n",">"])* > : WithinTag
+}
+
+<WithinTag, AfterEquals> TOKEN:
+{
+  < ArgQuote1: "'"  > : WithinQuote1
+| < ArgQuote2: "\"" > : WithinQuote2
+}
+
+<WithinTag, AfterEquals> SKIP:
+{
+  < <Space> >
+}
+
+<WithinQuote1> TOKEN:
+{
+  < Quote1Text:  (~["'"])+ >
+| < CloseQuote1: <ArgQuote1> > : WithinTag
+}
+
+<WithinQuote2> TOKEN:
+{
+  < Quote2Text:  (~["\""])+ >
+| < CloseQuote2: <ArgQuote2> > : WithinTag
+}
+
+
+<WithinComment1> TOKEN :
+{
+  < CommentText1:  (~["-"])+ | "-" >
+| < CommentEnd1:   "-->" > : DEFAULT
+}
+
+<WithinComment2> TOKEN :
+{
+  < CommentText2:  (~[">"])+ >
+| < CommentEnd2:   ">" > : DEFAULT
+}

@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net", "Lucene.Net.csproj", "{F04CA2F4-E182-46A8-B914-F46AF5319E83}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{F04CA2F4-E182-46A8-B914-F46AF5319E83}.Debug.ActiveCfg = Debug|.NET
+		{F04CA2F4-E182-46A8-B914-F46AF5319E83}.Debug.Build.0 = Debug|.NET
+		{F04CA2F4-E182-46A8-B914-F46AF5319E83}.Release.ActiveCfg = Release|.NET
+		{F04CA2F4-E182-46A8-B914-F46AF5319E83}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
