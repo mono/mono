@@ -1,3 +1,10 @@
+2008-10-16  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplicationFactory.cs: when looking up application type
+	event handlers (the Application_* methods), look deep in the
+	parent chain - we must support private handler methods in base
+	types as well.
+
 2008-10-15  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpResponse.cs: CacheabilityUpdatedEvent is no longer
