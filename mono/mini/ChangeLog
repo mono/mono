@@ -1,5 +1,10 @@
 2008-10-16  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* basic-simd.cs: Test for the other mono_simd_simplify_indirection bug.
+	Renamed one test for consistency.
+
+2008-10-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* simd-intrinsics.c (mono_simd_simplify_indirection): Apply the previous
 	fix to the code that deal with other blocks.
 
