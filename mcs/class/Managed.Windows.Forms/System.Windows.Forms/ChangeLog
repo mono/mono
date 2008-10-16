@@ -1,5 +1,9 @@
 2008-10-16  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridView.cs: Invalidate after deleting a row.
+
+2008-10-16  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridView.cs: Handle Enter and Escape keys.
 	  - Move call to EndEdit to MoveCurrentCell.
 	  - Remove call to EndEdit from navigation key routines.

@@ -4845,7 +4845,8 @@ namespace System.Windows.Forms {
 				selected_columns.InternalClear ();
 
 			SetSelectedCellCore (0, Math.Min (index, Rows.Count - 1), true);
-				
+			Invalidate ();
+			
 			return true;
 		}
 
