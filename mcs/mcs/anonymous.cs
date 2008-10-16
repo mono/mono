@@ -106,6 +106,7 @@ namespace Mono.CSharp {
 
 		// A list of hoisted parameters
 		protected ArrayList hoisted_params;
+		protected ArrayList hoisted_locals;
 
 		// Hoisted this
 		protected HoistedThis hoisted_this;
@@ -181,6 +182,11 @@ namespace Mono.CSharp {
 			HoistedVariable var = new HoistedLocalVariable (this, local_info, GetVariableMangledName (local_info));
 			local_info.HoistedVariableReference = var;
 			has_hoisted_variable = true;
+
+			if (hoisted_locals == null)
+				hoisted_locals = new ArrayList ();
+
+			hoisted_locals.Add (var);
 		}
 
 		public void CaptureParameter (EmitContext ec, ParameterReference param_ref)
@@ -341,10 +347,9 @@ namespace Mono.CSharp {
 			if (hoisted_this != null)
 				hoisted_this.EmitSymbolInfo ();
 
-			foreach (LocalInfo li in OriginalSourceBlock.Variables.Values) {
-				HoistedVariable hv = li.HoistedVariableReference;
-				if (hv != null)
-					hv.EmitSymbolInfo ();
+			if (hoisted_locals != null) {
+				foreach (HoistedVariable local in hoisted_locals)
+					local.EmitSymbolInfo ();
 			}
 
 			if (hoisted_params != null) {

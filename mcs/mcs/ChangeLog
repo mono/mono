@@ -1,3 +1,8 @@
+2008-10-16  Martin Baulig  <martin@ximian.com>
+
+	* anonymous.cs (AnonymousMethodStorey): Put back the
+	`hoisted_locals' hashtable and use it in EmitType().
+
 2008-10-15  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-tokenizer.cs, nullable.cs, expression.cs, statement.cs,
