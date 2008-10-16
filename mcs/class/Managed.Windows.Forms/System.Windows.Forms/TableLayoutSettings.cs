@@ -97,7 +97,8 @@ namespace System.Windows.Forms
 					
 				if (column_count != value) {
 					column_count = value;
-					panel.PerformLayout (panel, "ColumnCount");
+					if (panel != null)
+						panel.PerformLayout (panel, "ColumnCount");
 				}
 			}
 		}
@@ -116,13 +117,18 @@ namespace System.Windows.Forms
 					
 				if (grow_style != value) {
 					grow_style = value;
-					panel.PerformLayout (panel, "GrowStyle");
+					if (panel != null)
+						panel.PerformLayout (panel, "GrowStyle");
 				}
 			}
 		}
 		
 		public override LayoutEngine LayoutEngine {
-			get { return this.panel.LayoutEngine; }
+			get {
+				if (panel != null)
+					return panel.LayoutEngine;
+				return base.LayoutEngine; 
+			}
 		}
 		
 		[DefaultValue (0)]

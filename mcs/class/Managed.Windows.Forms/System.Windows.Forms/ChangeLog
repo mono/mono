@@ -1,3 +1,9 @@
+2008-10-16  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TableLayoutSettings.cs: Fix NREs when deserializing and 
+	panel is not yet set.
+	[Fixes bug #436199]
+
 2008-10-16  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridView.cs: Invalidate after deleting a row.
