@@ -34,3 +34,29 @@ LIB_MCS_FLAGS = \
 
 include ../../build/library.make
 
+test: Test/man-provider-test.exe
+
+run-test-local: check-man-provider
+
+run-test-update: check-man-provider-update
+
+Test/man-provider-test.exe: Test/man-provider-test.cs $(the_lib)
+	$(CSCOMPILE) -target:exe -out:$@ $< /r:$(the_lib)
+
+my_mono = \
+	MONO_REGISTRY_PATH="$(HOME)/.mono/registry" \
+	$(TEST_RUNTIME) \
+	$(RUNTIME_FLAGS)
+
+check-man-provider: Test/man-provider-test.exe
+	$(my_mono) $< Test/man-test1.1 | diff - Test/man-test1.html
+	$(my_mono) $< Test/man-test2.1 | diff - Test/man-test2.html
+	$(my_mono) $< Test/man-test3.1 | diff - Test/man-test3.html
+	$(my_mono) $< Test/man-test4.1 | diff - Test/man-test4.html
+
+check-man-provider-update: Test/man-provider-test.exe
+	$(my_mono) $< Test/man-test1.1 > Test/man-test1.html
+	$(my_mono) $< Test/man-test2.1 > Test/man-test2.html
+	$(my_mono) $< Test/man-test3.1 > Test/man-test3.html
+	$(my_mono) $< Test/man-test4.1 > Test/man-test4.html
+

@@ -1,0 +1,10 @@
+2008-10-16  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Test (svn:ignore): Ignore generated files.
+	* Makefile: Add tests for man-provider.
+
+2008-10-16  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* ChangeLog: Added/Started.
+	* Makefile: Added; build monodoc.dll.
+
