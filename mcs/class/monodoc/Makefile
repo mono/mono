@@ -5,6 +5,39 @@ include ../../build/rules.make
 LIBRARY = monodoc.dll
 LIBRARY_PACKAGE = none
 
+RESOURCE_FILES = \
+	Resources/base.css                \
+	Resources/ecmaspec-html-css.xsl   \
+	Resources/ecmaspec-html.xsl       \
+	Resources/ecmaspec.css            \
+	Resources/helper.js               \
+	Resources/home.html               \
+	Resources/Lminus.gif              \
+	Resources/Lplus.gif               \
+	Resources/mdoc-html-utils.xsl     \
+	Resources/mdoc-sections-css.xsl   \
+	Resources/mdoc-sections.xsl       \
+	Resources/mono-ecma-css.js        \
+	Resources/mono-ecma-css.xsl       \
+	Resources/mono-ecma-impl.xsl      \
+	Resources/mono-ecma.css           \
+	Resources/mono-ecma.xsl
+
+TEST_FILES = \
+	Test/man-provider-test.cs   \
+	Test/man-test-1.1           \
+	Test/man-test-1.html        \
+	Test/man-test-2.1           \
+	Test/man-test-2.html        \
+	Test/man-test-3.1           \
+	Test/man-test-3.html        \
+	Test/man-test-4.1           \
+	Test/man-test-4.html
+
+EXTRA_DISTFILES = \
+	$(RESOURCE_FILES)   \
+	$(TEST_FILES)
+
 LIB_MCS_FLAGS = \
 	/codepage:utf8                                                    \
 	/nowarn:169,164,162,168,219                                       \
@@ -15,8 +48,8 @@ LIB_MCS_FLAGS = \
 	/resource:Resources/ecmaspec.css,ecmaspec.css                     \
 	/resource:Resources/helper.js,helper.js                           \
 	/resource:Resources/home.html,home.html                           \
-	/resource:Resources/Lminus.gif                                    \
-	/resource:Resources/Lplus.gif                                     \
+	/resource:Resources/Lminus.gif,Lminus.gif                         \
+	/resource:Resources/Lplus.gif,Lplus.gif                           \
 	/resource:Resources/mdoc-html-utils.xsl,mdoc-html-utils.xsl       \
 	/resource:Resources/mdoc-sections-css.xsl,mdoc-sections-css.xsl   \
 	/resource:Resources/mdoc-sections.xsl,mdoc-sections.xsl           \
@@ -33,6 +66,8 @@ LIB_MCS_FLAGS = \
 	/r:System.Xml.dll
 
 include ../../build/library.make
+
+$(the_lib) : Makefile
 
 test: Test/man-provider-test.exe
 
