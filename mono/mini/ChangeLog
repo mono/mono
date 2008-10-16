@@ -1,3 +1,9 @@
+2008-10-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* simd-intrinsics.c (mono_simd_simplify_indirection): Simplify the code
+	that deals with vreg interference. Explicitly check for OP_LDADDR to be
+	able to process the source reg.
+
 2008-10-16  Martin Baulig  <martin@ximian.com>
 
 	* mini-ops.h, cpu-amd64.md, cpu-x86.md: Added new `hard_nop' opcode.
