@@ -1,4 +1,8 @@
 
+Thu Oct 16 20:59:11 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.c: check for NULL setup before it's referenced.
+
 Thu Oct 16 16:12:23 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: remove the unused old vtable setup code.
