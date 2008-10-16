@@ -1,5 +1,13 @@
 2008-10-15  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* simd-intrinsics.c (get_simd_vreg): Simplify code and test
+	only for type. This fixes crashes where MonoInst::klass is checked
+	for ops of type != VTYPE or OBJ.
+
+	* simd-intrinsics.c (load_simd_vreg): Same.
+
+2008-10-15  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mini-ops.h: Add ops for packed shuffle/max/avg and
 	extract mask.
 	
