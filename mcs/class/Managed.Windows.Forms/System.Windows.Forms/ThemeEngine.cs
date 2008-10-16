@@ -45,7 +45,7 @@ namespace System.Windows.Forms
 				theme_var = theme_var.ToLower ();
 			}
 
-			if (theme_var == "visualstyles" && Application.VisualStylesEnabled) {
+			if (Application.VisualStylesEnabled) {
 				theme = new ThemeVisualStyles ();
 			} else {
 				theme = new ThemeWin32Classic ();
