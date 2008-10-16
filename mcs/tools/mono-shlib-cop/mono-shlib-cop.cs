@@ -2,12 +2,14 @@
 // mono-shlib-cop.cs: Check unmanaged dependencies
 //
 // Compile as:
-//    mcs mono-shlib-cop.cs -r:Mono.Posix -r:Mono.GetOptions
+//    mcs mono-shlib-cop.cs ../../class/Mono.Options/Mono.Options/Options.cs -r:Mono.Posix
 //
 // Authors:
 //  Jonathan Pryor (jonpryor@vt.edu)
+//  Jonathan Pryor (jpryor@novell.com)
 //
 // (C) 2005 Jonathan Pryor
+// (C) 2008 Novell, Inc.
 //
 
 //
@@ -63,13 +65,14 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Xml;
 
-using Mono.GetOptions;
+using Mono.Options;
 using Mono.Unix;
 
 [assembly: AssemblyTitle ("mono-shlib-cop")]
@@ -182,9 +185,9 @@ namespace Mono.Unmanaged.Check {
 		private XmlDocument[] mono_configs = new XmlDocument [0];
 		private IDictionary assembly_configs = new Hashtable ();
 
-		public void SetInstallationPrefixes (string[] prefixes)
+		public void SetInstallationPrefixes (IList<string> prefixes)
 		{
-			mono_configs = new XmlDocument [prefixes.Length];
+			mono_configs = new XmlDocument [prefixes.Count];
 			for (int i = 0; i < mono_configs.Length; ++i) {
 				mono_configs [i] = new XmlDocument ();
 				mono_configs [i].Load (Path.Combine (prefixes [i], "etc/mono/config"));
@@ -488,36 +491,37 @@ namespace Mono.Unmanaged.Check {
 		}
 	}
 
-	class MyOptions : Options {
-		[Option (int.MaxValue, "Assemblies to load by partial names (e.g. from the GAC)", 'r')]
-		public string[] references = new string[]{};
-
-		[Option (int.MaxValue, "Mono installation prefixes (for $prefix/etc/mono/config)", 'p')]
-		public string[] prefixes = new string[]{};
-	}
-
 	class Runner {
 
 		public static void Main (string[] args)
 		{
-			MyOptions o = new MyOptions ();
-			o.ProcessArgs (args);
+			var references = new List<string> ();
+			var prefixes   = new List<string> ();
+
+			List<string> files = new OptionSet {
+				{ "p|prefix|prefixes=",
+				  "Mono installation prefixes (for $prefix/etc/mono/config)",
+				  v => prefixes.Add (v) },
+				{ "r|reference|references=",
+				  "Assemblies to load by partial names (e.g. from the GAC)",
+					v => references.Add (v) },
+			}.Parse (args);
 
 			AssemblyChecker checker = new AssemblyChecker ();
 			AssemblyCheckInfo report = new AssemblyCheckInfo ();
-			if (o.prefixes.Length == 0) {
+			if (prefixes.Count == 0) {
 				// SystemConfigurationFile is $sysconfdir/mono/VERSION/machine.config
 				// We want $sysconfdir
 				DirectoryInfo configDir = 
 					new FileInfo (RuntimeEnvironment.SystemConfigurationFile).Directory.Parent.Parent.Parent;
-				o.prefixes = new string[]{configDir.ToString ()};
+				prefixes.Add (configDir.ToString ());
 			}
-			report.SetInstallationPrefixes (o.prefixes);
-			foreach (string assembly in o.RemainingArguments) {
+			report.SetInstallationPrefixes (prefixes);
+			foreach (string assembly in files) {
 				checker.CheckFile (assembly, report);
 			}
 
-			foreach (string assembly in o.references) {
+			foreach (string assembly in references) {
 				checker.CheckWithPartialName (assembly, report);
 			}
 

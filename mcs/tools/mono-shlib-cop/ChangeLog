@@ -1,3 +1,8 @@
+2008-10-16  Jonathan Pryor  <jpryor@novell.com>
+
+	* mono-shlib-cop.cs: Migrate from Mono.GetOptions to Mono.Options.
+	* mono-shlib-cop.exe.sources: Include Mono.Options source.
+
 2007-05-14  Wade Berrier  <wberrier@novell.com>
 
 	* mono-shlib-cop.exe.config: Remove "does-not-exist" dllmap
