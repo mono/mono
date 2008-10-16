@@ -1,5 +1,9 @@
 2008-10-16  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* basic-simd.cs: Test for the mono_simd_simplify_indirection bug.
+
+2008-10-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* simd-intrinsics.c (mono_simd_simplify_indirection): Simplify the code
 	that deals with vreg interference. Explicitly check for OP_LDADDR to be
 	able to process the source reg.
