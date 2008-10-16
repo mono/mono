@@ -1,3 +1,12 @@
+2008-10-16  Martin Baulig  <martin@ximian.com>
+
+	* mini-ops.h, cpu-amd64.md, cpu-x86.md: Added new `hard_nop' opcode.
+
+	* inssel.brg: Add `OP_HARD_NOP'.
+
+	* mini.c: In `CEE_NOP': generate a `OP_HARD_NOP' instruction
+	when running inside the debugger.
+
 2008-10-15  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* simd-intrinsics.c (get_simd_vreg): Using sreg1 of OP_XMOVE
