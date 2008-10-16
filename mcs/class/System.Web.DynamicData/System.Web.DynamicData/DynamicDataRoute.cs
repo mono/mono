@@ -47,18 +47,17 @@ namespace System.Web.DynamicData
 		public DynamicDataRoute (string url)
 			: base (url, null)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public string Action { get; set; }
-		[MonoTODO]
+
 		public MetaModel Model { get; set; }
+
 		[MonoTODO]
 		public DynamicDataRouteHandler RouteHandler { get; set; }
-		[MonoTODO]
+
 		public string Table { get; set; }
-		[MonoTODO]
+
 		public string ViewName { get; set; }
 
 		[MonoTODO]

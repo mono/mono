@@ -7,6 +7,7 @@ LIB_MCS_FLAGS = \
 	        /r:System.dll \
 	        /r:System.Core.dll \
 	        /r:System.ComponentModel.DataAnnotations.dll \
+		/r:System.Data.dll \
 		/r:System.Data.Linq.dll \
 	        /r:System.Drawing.dll \
 	        /r:System.Web.dll \

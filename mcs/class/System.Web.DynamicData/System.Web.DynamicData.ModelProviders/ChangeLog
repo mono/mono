@@ -1,3 +1,8 @@
+2008-10-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ColumnProvider.cs, TableProvider.cs : implemented constructors.
+	* DLinqDataModelProviders.cs : new, DLinq-based implementation.
+
 2008-10-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	*.cs : initial checkin. stubs.

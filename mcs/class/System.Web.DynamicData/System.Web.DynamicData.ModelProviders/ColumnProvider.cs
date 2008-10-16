@@ -38,10 +38,11 @@ namespace System.Web.DynamicData.ModelProviders
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class ColumnProvider
 	{
-		[MonoTODO]
 		protected ColumnProvider (TableProvider table)
 		{
-			throw new NotImplementedException ();
+			if (table == null)
+				throw new ArgumentNullException ("table");
+			this.Table = table;
 		}
 
 		[MonoTODO]

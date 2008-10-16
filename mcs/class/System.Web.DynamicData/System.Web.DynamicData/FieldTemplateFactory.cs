@@ -69,7 +69,10 @@ namespace System.Web.DynamicData
 		[MonoTODO]
 		public virtual void Initialize (MetaModel model)
 		{
-			throw new NotImplementedException ();
+			if (model == null)
+				throw new ArgumentNullException ("model");
+			Model = model;
+			// FIXME: do something more.
 		}
 
 		[MonoTODO]

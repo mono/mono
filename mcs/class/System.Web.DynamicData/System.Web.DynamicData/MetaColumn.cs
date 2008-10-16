@@ -46,8 +46,10 @@ namespace System.Web.DynamicData
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class MetaColumn : IFieldFormattingOptions
 	{
-		internal MetaColumn ()
+		internal MetaColumn (MetaTable table, ColumnProvider provider)
 		{
+			Table = table;
+			Provider = provider;
 		}
 
 		[MonoTODO]
@@ -56,8 +58,9 @@ namespace System.Web.DynamicData
 		[MonoTODO]
 		public AttributeCollection Attributes { get; private set; }
 
-		[MonoTODO]
-		public Type ColumnType { get; private set; }
+		public Type ColumnType {
+			get { return Provider.ColumnType; }
+		}
 
 		[MonoTODO]
 		public bool ConvertEmptyStringToNull { get; private set; }
@@ -77,8 +80,9 @@ namespace System.Web.DynamicData
 		[MonoTODO]
 		public string DisplayName { get; private set; }
 
-		[MonoTODO]
-		public PropertyInfo EntityTypeProperty { get; private set; }
+		public PropertyInfo EntityTypeProperty {
+			get { return Provider.EntityTypeProperty; }
+		}
 
 		[MonoTODO]
 		public bool HtmlEncode { get; private set; }
@@ -86,17 +90,20 @@ namespace System.Web.DynamicData
 		[MonoTODO]
 		public bool IsBinaryData { get; private set; }
 
-		[MonoTODO]
-		public bool IsCustomProperty { get; private set; }
+		public bool IsCustomProperty {
+			get { return Provider.IsCustomProperty; }
+		}
 
 		[MonoTODO]
 		public bool IsFloatingPoint { get; private set; }
 
-		[MonoTODO]
-		public bool IsForeignKeyComponent { get; private set; }
+		public bool IsForeignKeyComponent {
+			get { return Provider.IsForeignKeyComponent; }
+		}
 
-		[MonoTODO]
-		public bool IsGenerated { get; private set; }
+		public bool IsGenerated {
+			get { return Provider.IsGenerated; }
+		}
 
 		[MonoTODO]
 		public bool IsInteger { get; private set; }
@@ -104,8 +111,9 @@ namespace System.Web.DynamicData
 		[MonoTODO]
 		public bool IsLongString { get; private set; }
 
-		[MonoTODO]
-		public bool IsPrimaryKey { get; private set; }
+		public bool IsPrimaryKey {
+			get { return Provider.IsPrimaryKey; }
+		}
 
 		[MonoTODO]
 		public bool IsReadOnly { get; private set; }
@@ -116,19 +124,19 @@ namespace System.Web.DynamicData
 		[MonoTODO]
 		public bool IsString { get; private set; }
 
-		[MonoTODO]
-		public int MaxLength { get; private set; }
+		public int MaxLength {
+			get { return Provider.MaxLength; }
+		}
 
-		[MonoTODO]
 		public MetaModel Model { get; private set; }
 
-		[MonoTODO]
-		public string Name { get; private set; }
+		public string Name {
+			get { return Provider.Name; }
+		}
 
 		[MonoTODO]
 		public string NullDisplayText { get; private set; }
 
-		[MonoTODO]
 		public ColumnProvider Provider { get; private set; }
 
 		[MonoTODO]
@@ -140,7 +148,6 @@ namespace System.Web.DynamicData
 		[MonoTODO]
 		public string SortExpression { get; private set; }
 
-		[MonoTODO]
 		public MetaTable Table { get; private set; }
 
 		[MonoTODO]

@@ -44,7 +44,8 @@ namespace System.Web.DynamicData
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class MetaForeignKeyColumn : MetaColumn
 	{
-		internal MetaForeignKeyColumn ()
+		internal MetaForeignKeyColumn (MetaTable table, ColumnProvider provider)
+			: base (table, provider)
 		{
 		}
 

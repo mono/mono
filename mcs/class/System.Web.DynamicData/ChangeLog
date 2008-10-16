@@ -1,3 +1,8 @@
+2008-10-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : added -r:System.Data.
+	* System.Web.DynamicData_test.dll.sources : new file.
+
 2008-10-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile, System.Web.DynamicData.dll.sources : initial checkin.

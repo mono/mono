@@ -5,6 +5,7 @@ Assembly/AssemblyInfo.cs
 System.Web.DynamicData.ModelProviders/AssociationDirection.cs
 System.Web.DynamicData.ModelProviders/AssociationProvider.cs
 System.Web.DynamicData.ModelProviders/ColumnProvider.cs
+System.Web.DynamicData.ModelProviders/DLinqDataModelProviders.cs
 System.Web.DynamicData.ModelProviders/DataModelProvider.cs
 System.Web.DynamicData.ModelProviders/TableProvider.cs
 System.Web.DynamicData/ContextConfiguration.cs

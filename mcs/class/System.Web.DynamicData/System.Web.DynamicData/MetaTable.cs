@@ -47,9 +47,22 @@ namespace System.Web.DynamicData
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class MetaTable
 	{
-		internal MetaTable ()
+		internal MetaTable (MetaModel model, TableProvider provider, bool scaffold)
 		{
+			this.model = model;
+			Provider = provider;
+			Scaffold = scaffold;
+
+			var l = new List<MetaColumn> ();
+			foreach (var c in provider.Columns)
+				l.Add (new MetaColumn (this, c));
+			Columns = new ReadOnlyCollection<MetaColumn> (l);
+
+			DisplayName = Name;
+			ListActionPath = String.Concat (DisplayName, "/", PageAction.List, ".aspx");
 		}
+
+		MetaModel model;
 
 		[MonoTODO]
 		public AttributeCollection Attributes { get; private set; }
@@ -69,8 +82,9 @@ namespace System.Web.DynamicData
 		[MonoTODO]
 		public string DisplayName { get; private set; }
 
-		[MonoTODO]
-		public Type EntityType { get; private set; }
+		public Type EntityType {
+			get { return Provider.EntityType; }
+		}
 
 		[MonoTODO]
 		public string ForeignKeyColumnsNames { get; private set; }
@@ -84,19 +98,19 @@ namespace System.Web.DynamicData
 		[MonoTODO]
 		public string ListActionPath { get; private set; }
 
-		[MonoTODO]
-		public MetaModel Model { get; private set; }
+		public MetaModel Model {
+			get { return model; }
+		}
 
-		[MonoTODO]
-		public string Name { get; private set; }
+		public string Name {
+			get { return Provider.Name; }
+		}
 
 		[MonoTODO]
 		public ReadOnlyCollection<MetaColumn> PrimaryKeyColumns { get; private set; }
 
-		[MonoTODO]
 		public TableProvider Provider { get; private set; }
 
-		[MonoTODO]
 		public bool Scaffold { get; private set; }
 
 		[MonoTODO]
@@ -108,7 +122,7 @@ namespace System.Web.DynamicData
 		[MonoTODO]
 		public object CreateContext ()
 		{
-			throw new NotImplementedException ();
+			return Activator.CreateInstance (EntityType);
 		}
 
 		[MonoTODO]
@@ -147,10 +161,12 @@ namespace System.Web.DynamicData
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public MetaColumn GetColumn (string columnName)
 		{
-			throw new NotImplementedException ();
+			MetaColumn mc;
+			if (TryGetColumn (columnName, out mc))
+				return mc;
+			throw new ArgumentException (String.Format ("Column '{0}' does not exist in the meta table '{1}'", columnName, Name));
 		}
 
 		[MonoTODO]
@@ -177,10 +193,9 @@ namespace System.Web.DynamicData
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public IQueryable GetQuery ()
 		{
-			throw new NotImplementedException ();
+			return GetQuery (CreateContext ());
 		}
 
 		[MonoTODO]
@@ -195,10 +210,15 @@ namespace System.Web.DynamicData
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public bool TryGetColumn (string columnName, out MetaColumn column)
 		{
-			throw new NotImplementedException ();
+			foreach (var m in Columns)
+				if (m.Name == columnName) {
+					column = m;
+					return true;
+				}
+			column = null;
+			return false;
 		}
 	}
 }

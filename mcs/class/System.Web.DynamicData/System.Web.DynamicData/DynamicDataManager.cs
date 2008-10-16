@@ -1,5 +1,5 @@
 //
-// DynamicDataExtensions.cs
+// DynamicDataManager.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>

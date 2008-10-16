@@ -43,7 +43,8 @@ namespace System.Web.DynamicData
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class MetaChildrenColumn : MetaColumn
 	{
-		internal MetaChildrenColumn ()
+		internal MetaChildrenColumn (MetaTable table, ColumnProvider provider)
+			: base (table, provider)
 		{
 		}
 

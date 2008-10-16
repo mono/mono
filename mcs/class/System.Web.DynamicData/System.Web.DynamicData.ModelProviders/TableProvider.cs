@@ -42,9 +42,12 @@ namespace System.Web.DynamicData.ModelProviders
 	{
 		protected TableProvider (DataModelProvider model)
 		{
-			throw new NotImplementedException ();
+			if (model == null)
+				throw new ArgumentNullException ("model");
+			DataModel = model;
 		}
 
+		[MonoTODO]
 		public abstract ReadOnlyCollection<ColumnProvider> Columns { get; }
 		[MonoTODO]
 		public DataModelProvider DataModel { get; private set; }
@@ -59,6 +62,7 @@ namespace System.Web.DynamicData.ModelProviders
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public abstract IQueryable GetQuery (object context);
 
 		[MonoTODO]

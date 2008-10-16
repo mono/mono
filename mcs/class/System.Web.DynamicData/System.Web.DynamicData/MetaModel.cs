@@ -46,26 +46,11 @@ namespace System.Web.DynamicData
 	public class MetaModel
 	{
 		static MetaModel default_model;
+		static Exception registration_exception;
 
-		[MonoTODO]
 		public static MetaModel Default {
-			get { throw new NotImplementedException (); }
+			get { return default_model; }
 			internal set { default_model = value; }
-		}
-
-		[MonoTODO]
-		public string DynamicDataFolderVirtualPath { get; set; }
-		[MonoTODO]
-		public IFieldTemplateFactory FieldTemplateFactory { get; set; }
-		[MonoTODO]
-		public ReadOnlyCollection<MetaTable> Tables { get; private set; }
-		[MonoTODO]
-		public List<MetaTable> VisibleTables { get; private set; }
-
-		[MonoTODO]
-		public string GetActionPath (string tableName, string action, object row)
-		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -74,16 +59,70 @@ namespace System.Web.DynamicData
 			throw new NotImplementedException ();
 		}
 
+		public static void ResetRegistrationException ()
+		{
+			registration_exception = null;
+		}
+
+		public MetaModel ()
+		{
+			if (default_model == null)
+				default_model = this;
+
+			DynamicDataFolderVirtualPath = "~/DynamicData/";
+			FieldTemplateFactory = new FieldTemplateFactory ();
+			Tables = new ReadOnlyCollection<MetaTable> (new MetaTable [0]);
+			VisibleTables = new List<MetaTable> ();
+		}
+
+		DataModelProvider provider;
+
+
+		public string DynamicDataFolderVirtualPath { get; set; }
+
+		public IFieldTemplateFactory FieldTemplateFactory { get; set; }
+
+		public ReadOnlyCollection<MetaTable> Tables { get; private set; }
+
+		public List<MetaTable> VisibleTables { get; private set; }
+
 		[MonoTODO]
-		public MetaTable GetTable (string uniqueTableName)
+		public string GetActionPath (string tableName, string action, object row)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		public bool TryGetTable (string uniqueTableName, out MetaTable table)
+		{
+			if (uniqueTableName == null)
+				throw new ArgumentNullException ("uniqueTableName");
+			if (provider != null)
+				foreach (var t in Tables)
+					if (t.Name == uniqueTableName) {
+						table = t;
+						return true;
+					}
+			table = null;
+			return false;
+		}
+
+		public MetaTable GetTable (string uniqueTableName)
+		{
+			MetaTable mt;
+			if (TryGetTable (uniqueTableName, out mt))
+				return mt;
+			throw new ArgumentException (String.Format ("Table '{0}' does not exist in registered context", uniqueTableName));
+		}
+
 		public MetaTable GetTable (Type entityType)
 		{
-			throw new NotImplementedException ();
+			if (entityType == null)
+				throw new ArgumentNullException ("entityType");
+			if (provider != null)
+				foreach (var t in Tables)
+					if (t.EntityType == entityType)
+						return t;
+			throw new ArgumentException (String.Format ("Entity type '{0}' does not exist in registered context", entityType));
 		}
 
 		[MonoTODO]
@@ -92,52 +131,70 @@ namespace System.Web.DynamicData
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		void CheckRegistrationError ()
+		{
+			if (registration_exception != null)
+				throw new InvalidOperationException ("An error occured during context model registration", registration_exception);
+		}
+
 		public void RegisterContext (Func<object> contextFactory)
 		{
-			throw new NotImplementedException ();
+			RegisterContext (contextFactory, null);
 		}
 
-		[MonoTODO]
 		public void RegisterContext (Type contextType)
 		{
-			throw new NotImplementedException ();
+			RegisterContext (contextType, null);
 		}
 
-		[MonoTODO]
 		public void RegisterContext (DataModelProvider dataModelProvider)
 		{
-			throw new NotImplementedException ();
+			RegisterContext (dataModelProvider, null);
 		}
 
-		[MonoTODO]
-		public void RegisterContext (Func<object> contextFactory, ContextConfiguration configuration)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		public void RegisterContext (Type contextType, ContextConfiguration configuration)
 		{
-			throw new NotImplementedException ();
+			if (contextType == null)
+				throw new ArgumentNullException ("contextType");
+			CheckRegistrationError ();
+Activator.CreateInstance (contextType);
+			RegisterContext (() => Activator.CreateInstance (contextType), configuration);
 		}
 
-		[MonoTODO]
+		public void RegisterContext (Func<object> contextFactory, ContextConfiguration configuration)
+		{
+			if (contextFactory == null)
+				throw new ArgumentNullException ("contextFactory");
+			CheckRegistrationError ();
+			try {
+				// FIXME: entity framework support is not done.
+				RegisterContextCore (new DLinqDataModelProvider (contextFactory), configuration);
+			} catch (Exception ex) {
+				registration_exception = ex;
+				throw;
+			}
+		}
+
 		public void RegisterContext (DataModelProvider dataModelProvider, ContextConfiguration configuration)
 		{
-			throw new NotImplementedException ();
+			if (dataModelProvider == null)
+				throw new ArgumentNullException ("dataModelProvider");
+			CheckRegistrationError ();
+			try {
+				RegisterContextCore (dataModelProvider, configuration);
+			} catch (Exception ex) {
+				registration_exception = ex;
+				throw;
+			}
 		}
 
-		[MonoTODO]
-		public static void ResetRegistrationException ()
+		void RegisterContextCore (DataModelProvider dataModelProvider, ContextConfiguration configuration)
 		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public bool TryGetTable (string uniqueTableName, out MetaTable table)
-		{
-			throw new NotImplementedException ();
+			var l = new List<MetaTable> ();
+			foreach (var t in dataModelProvider.Tables)
+				l.Add (new MetaTable (this, t, configuration != null && configuration.ScaffoldAllTables));
+			Tables = new ReadOnlyCollection<MetaTable> (l);
+			VisibleTables = l;
 		}
 	}
 }
