@@ -55,12 +55,15 @@ namespace System.Web.Routing
 				Add (p.Key, p.Value);
 		}
 
-		public RouteValueDictionary (object values)
+		public RouteValueDictionary (object values) // anonymous type instance
 		{
 			if (values == null)
-				throw new ArgumentNullException ("values");
-			foreach (var p in (IEnumerable<KeyValuePair<string,object>>) values)
-				Add (p.Key, p.Value);
+				return;
+
+			foreach (var fi in values.GetType ().GetFields ())
+				Add (fi.Name, fi.GetValue (values));
+			foreach (var pi in values.GetType ().GetProperties ())
+				Add (pi.Name, pi.GetValue (values, null));
 		}
 
 		public int Count {
@@ -80,7 +83,7 @@ namespace System.Web.Routing
 		}
 
 		public object this [string key] {
-			get { return d [key]; }
+			get { object v; return d.TryGetValue (key, out v) ? v : null; }
 			set { d [key] = value; }
 		}
 
