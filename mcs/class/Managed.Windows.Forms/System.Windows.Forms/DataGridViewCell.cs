@@ -1126,10 +1126,11 @@ namespace System.Windows.Forms {
 			// Paint the left border, if any
 			switch (advancedBorderStyle.Left) {
 				case DataGridViewAdvancedCellBorderStyle.Single:
-					graphics.DrawLine(pen, bounds.X, bounds.Y, bounds.X, bounds.Y + bounds.Height - 1);
+					if (DataGridView.CellBorderStyle != DataGridViewCellBorderStyle.Single)
+						graphics.DrawLine (pen, bounds.X, bounds.Y, bounds.X, bounds.Y + bounds.Height - 1);
 					break;
 				case DataGridViewAdvancedCellBorderStyle.Inset:
-					graphics.DrawLine(pen, bounds.X + 2, bounds.Y, bounds.X + 2, bounds.Y + bounds.Height - 1);
+					graphics.DrawLine(pen, bounds.X, bounds.Y, bounds.X, bounds.Y + bounds.Height - 1);
 					break;
 				case DataGridViewAdvancedCellBorderStyle.InsetDouble:
 				case DataGridViewAdvancedCellBorderStyle.Outset:
@@ -1145,17 +1146,18 @@ namespace System.Windows.Forms {
 					graphics.DrawLine(pen, bounds.X + bounds.Width - 1, bounds.Y, bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 1);
 					break;
 				case DataGridViewAdvancedCellBorderStyle.Inset:
-					graphics.DrawLine(pen, bounds.X + bounds.Width + 1, bounds.Y, bounds.X + bounds.Width - 3, bounds.Y + bounds.Height - 1);
+					graphics.DrawLine(pen, bounds.X + bounds.Width, bounds.Y, bounds.X + bounds.Width, bounds.Y + bounds.Height - 1);
 					break;
 			}
 			
 			// Paint the top border, if any
 			switch (advancedBorderStyle.Top) {
 				case DataGridViewAdvancedCellBorderStyle.Single:
-					graphics.DrawLine(pen, bounds.X, bounds.Y, bounds.X + bounds.Width - 1, bounds.Y);
+					if (DataGridView.CellBorderStyle != DataGridViewCellBorderStyle.Single)
+						graphics.DrawLine(pen, bounds.X, bounds.Y, bounds.X + bounds.Width - 1, bounds.Y);
 					break;
 				case DataGridViewAdvancedCellBorderStyle.Inset:
-					graphics.DrawLine(pen, bounds.X, bounds.Y + 2, bounds.X + bounds.Width - 1, bounds.Y + bounds.Height + 1);
+					graphics.DrawLine(pen, bounds.X, bounds.Y, bounds.X + bounds.Width - 1, bounds.Y);
 					break;
 			}
 			
