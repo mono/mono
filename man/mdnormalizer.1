@@ -1,0 +1,37 @@
+.\" 
+.\" mdnormalizer manual page.
+.\" (C) 2006 Jonathan Pryor
+.\" Author:
+.\"   Jonathan Pryor (jonpryor@vt.edu)
+.\"
+.de Sp \" Vertical space (when we can't use .PP)
+.if t .sp .5v
+.if n .sp
+..
+.TH "mdnormalizer" 1
+.SH NAME
+mdnormalizer \- Normalize XML Documents
+.SH SYNOPSIS
+.B mdnormalizer
+[FILES]+
+.SH DESCRIPTION
+.I mdnormalizer
+is a program that normalizes the XML within the input documents.
+.PP
+.I Normalization
+consists of ensuring that the XML is well-formed.	 It is equivalent to the
+following C# fragment:
+.nf
+	XmlDocument doc = new XmlDocument ();
+	doc.Load (filename);
+	StreamWriter file = new StreamWriter (filename, false, 
+			new System.Text.UTF8Encoding (false));
+	doc.Save (writer);
+	writer.Close ();
+.fi
+.PP
+.SH MAILING LISTS
+.TP
+Visit http://lists.ximian.com/mailman/listinfo/mono-docs-list for details.
+.SH WEB SITE
+Visit http://www.mono-project.com for details
