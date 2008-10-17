@@ -1,0 +1,122 @@
+.\" 
+.\" mdoc-export-html manual page.
+.\" (C) 2008 Novell, Inc.
+.\" Author:
+.\"   Jonathan Pryor (jpryor@novell.com)
+.\"
+.de Sp \" Vertical space (when we can't use .PP)
+.if t .sp .5v
+.if n .sp
+..
+.TH "mdoc-export-html" 1
+.SH NAME
+mdoc export-html \- Convert \fBmdoc\fR(5) XML to HTML.
+.SH SYNOPSIS
+\fBmdoc export-html\fR [OPTION]* DIRECTORIES
+.SH DESCRIPTION
+\fBmdoc export-html\fR creates HTML files from the \fBmdoc\fR(5)-formatted
+documentation XML files within \fIDIRECTORIES\fR.
+.SH OPTIONS
+.TP
+\fB\-\-ext\fR=\fIEXTENSION\fR
+The file extension to use for created files.
+.Sp
+This defaults to \fIhtml\fR.
+.TP
+.B \-\-default\-template
+Writes the default XSLT used to \fIstdout\fR.
+.TP
+\fB\-\-template\fR=\fIFILE\fR
+An XSLT file to use to generate the created files.
+.Sp
+If not specified, uses the template produced by \fI\-\-dump\-template\fR.
+.Sp
+See the \fITEMPLATE FORMAT\fR section below for more information.
+.TP
+\fB\-o\fR, \fB\-\-out\fR=\fIDIRECTORY\fR
+Write the created files within directory \fIDIRECTORY\fR.
+.TP
+\fB\-h\fR, \fB\-?\fR, \fB\-\-help\fR
+Display a help message and exit.
+.SH TEMPLATE FORMAT
+The template file is an XSLT which needs to process the following input XML
+document:
+.nf
+
+  <Page>
+    <CollectionTitle>Collection Title</CollectionTitle>
+    <PageTitle>Page Title</PageTitle>
+    <Summary>Page Summary</Summary>
+    <Signature>Type Declaration</Signature>
+    <Remarks>Type Remarks</Remarks>
+    <Members>Type Members</Members>
+    <Copyright>Documentation Copyright</Copyright>
+  </Page>
+
+.fi
+The generated HTML also makes use of several CSS classes.  You can either use
+the \fIcreate-default-style\fR named template found within the
+\fI\-\-default\-template\fR output to generate these classes, or explicitly 
+define the following CSS classes:
+.RS
+.ne 8
+.TP
+.I .CollectionTitle
+.TP
+.I .PageTitle
+.TP
+.I .Summary
+.TP
+.I .Signature
+.TP
+.I .Remarks
+.TP
+.I .Members
+.TP
+.I .Copyright
+.TP
+.I .Section
+.TP
+.I .SectionBox
+.TP
+.I .NamespaceName
+.TP
+.I .NamespaceSummary
+.TP
+.I .MemberName
+.TP
+.I .MemberSignature
+.TP
+.I .MemberBox
+.TP
+.I .Subsection
+.TP
+.I .SubsectionBox
+.TP
+.I .SignatureTable
+.TP
+.I .EnumerationsTable
+.TP
+.I .CodeExampleTable
+.TP
+.I .MembersListing
+.TP
+.I .TypesListing
+.TP
+.I .InnerSignatureTable
+.TP
+.I .TypePermissionsTable
+.ne
+.RE
+.PP
+.SH HTML LINKS
+All members within the HTML file have an \fIid\fR 
+attribute to permit linking to a specific member.  The value of the 
+\fIid\fR attribute is the String ID of the specified member.
+.PP
+See the \fICREF FORMAT\fR section of \fBmdoc\fR(5) for more information.
+.SH MAILING LISTS
+.TP
+Visit http://lists.ximian.com/mailman/listinfo/mono-docs-list for details.
+.SH WEB SITE
+Visit http://www.mono-project.com/mdoc for details
