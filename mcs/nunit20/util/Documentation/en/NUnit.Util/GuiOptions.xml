@@ -51,7 +51,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>Codeblast.Option(Short=null, Value=null, Description="Project configuration to load")</AttributeName>
+          <AttributeName>Codeblast.Option(Description="Project configuration to load")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -70,7 +70,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>Codeblast.Option(Short=null, Value=null, Description="Fixture to test")</AttributeName>
+          <AttributeName>Codeblast.Option(Description="Fixture to test")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -105,7 +105,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>Codeblast.Option(Short="?", Value=null, Description="Display help")</AttributeName>
+          <AttributeName>Codeblast.Option(Short="?", Description="Display help")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -157,7 +157,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>Codeblast.Option(Short=null, Value=null, Description="Suppress loading of last project")</AttributeName>
+          <AttributeName>Codeblast.Option(Description="Suppress loading of last project")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -176,7 +176,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>Codeblast.Option(Short=null, Value=null, Description="Automatically run the loaded project")</AttributeName>
+          <AttributeName>Codeblast.Option(Description="Automatically run the loaded project")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>

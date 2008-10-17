@@ -5,6 +5,7 @@
     <AssemblyPublicKey>
     </AssemblyPublicKey>
     <AssemblyVersion>2.1.4.0</AssemblyVersion>
+    <AssemblyVersion>2.2.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -13,7 +14,7 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.Obsolete(Message="Use Assert class instead", IsError=False)</AttributeName>
+      <AttributeName>System.Obsolete("Use Assert class instead")</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>

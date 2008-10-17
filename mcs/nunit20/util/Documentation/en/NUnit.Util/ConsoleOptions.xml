@@ -36,7 +36,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>Codeblast.Option(Short=null, Value=null, Description="Project configuration to load")</AttributeName>
+          <AttributeName>Codeblast.Option(Description="Project configuration to load")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -55,7 +55,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>Codeblast.Option(Short=null, Value=null, Description="File to receive test error output")</AttributeName>
+          <AttributeName>Codeblast.Option(Description="File to receive test error output")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -74,7 +74,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>Codeblast.Option(Short=null, Value=null, Description="List of categories to exclude")</AttributeName>
+          <AttributeName>Codeblast.Option(Description="List of categories to exclude")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -108,7 +108,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>Codeblast.Option(Short=null, Value=null, Description="Fixture to test")</AttributeName>
+          <AttributeName>Codeblast.Option(Description="Fixture to test")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -157,7 +157,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>Codeblast.Option(Short="?", Value=null, Description="Display help")</AttributeName>
+          <AttributeName>Codeblast.Option(Short="?", Description="Display help")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -191,7 +191,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>Codeblast.Option(Short=null, Value=null, Description="List of categories to include")</AttributeName>
+          <AttributeName>Codeblast.Option(Description="List of categories to include")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -348,7 +348,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>Codeblast.Option(Short=null, Value=null, Description="Label each test in stdOut")</AttributeName>
+          <AttributeName>Codeblast.Option(Description="Label each test in stdOut")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -367,7 +367,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>Codeblast.Option(Short=null, Value=null, Description="Do not display the logo")</AttributeName>
+          <AttributeName>Codeblast.Option(Description="Do not display the logo")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -386,7 +386,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>Codeblast.Option(Short=null, Value=null, Description="Disable shadow copy")</AttributeName>
+          <AttributeName>Codeblast.Option(Description="Disable shadow copy")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -405,7 +405,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>Codeblast.Option(Short="out", Value=null, Description="File to receive test output")</AttributeName>
+          <AttributeName>Codeblast.Option(Short="out", Description="File to receive test output")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -424,7 +424,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>Codeblast.Option(Short=null, Value=null, Description="Run tests on a separate thread")</AttributeName>
+          <AttributeName>Codeblast.Option(Description="Run tests on a separate thread")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -443,7 +443,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>Codeblast.Option(Short=null, Value=null, Description="Name of transform file")</AttributeName>
+          <AttributeName>Codeblast.Option(Description="Name of transform file")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -478,7 +478,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>Codeblast.Option(Short=null, Value=null, Description="Wait for input before closing console window")</AttributeName>
+          <AttributeName>Codeblast.Option(Description="Wait for input before closing console window")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -497,7 +497,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>Codeblast.Option(Short=null, Value=null, Description="Name of XML output file")</AttributeName>
+          <AttributeName>Codeblast.Option(Description="Name of XML output file")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -516,7 +516,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>Codeblast.Option(Short=null, Value=null, Description="Display XML to the console")</AttributeName>
+          <AttributeName>Codeblast.Option(Description="Display XML to the console")</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>

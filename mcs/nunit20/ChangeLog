@@ -1,5 +1,9 @@
 2008-10-17  Jonathan Pryor  <jpryor@novell.com>
 
+	* */Documentation/**: Flush updated documentation.
+
+2008-10-17  Jonathan Pryor  <jpryor@novell.com>
+
 	* Documentation/en/**: Move to appropriate assembly-specific 
 	  directories.
 

@@ -5,6 +5,7 @@
     <AssemblyPublicKey>
     </AssemblyPublicKey>
     <AssemblyVersion>2.1.4.0</AssemblyVersion>
+    <AssemblyVersion>2.2.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement />
   <Base>
@@ -569,7 +570,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.ComponentModel.EditorBrowsable(State=System.ComponentModel.EditorBrowsableState.Never)</AttributeName>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)</AttributeName>
         </Attribute>
       </Attributes>
     </Member>

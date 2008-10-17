@@ -10,7 +10,7 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.AttributeUsage(AllowMultiple=False, Inherited=True, ValidOn=System.AttributeTargets.Field)</AttributeName>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Field)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>

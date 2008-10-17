@@ -5,6 +5,7 @@
     <AssemblyPublicKey>
     </AssemblyPublicKey>
     <AssemblyVersion>2.1.4.0</AssemblyVersion>
+    <AssemblyVersion>2.2.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
   <Base>
@@ -13,7 +14,7 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.AttributeUsage(AllowMultiple=False, Inherited=True, ValidOn=System.AttributeTargets.Method)</AttributeName>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Method, AllowMultiple=false)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>

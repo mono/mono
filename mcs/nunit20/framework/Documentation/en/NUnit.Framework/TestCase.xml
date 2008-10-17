@@ -5,6 +5,7 @@
     <AssemblyPublicKey>
     </AssemblyPublicKey>
     <AssemblyVersion>2.1.4.0</AssemblyVersion>
+    <AssemblyVersion>2.2.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
   <Base>
@@ -13,10 +14,10 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.Obsolete(Message="use TestFixture attribute instead of inheritance", IsError=False)</AttributeName>
+      <AttributeName>System.Obsolete("use TestFixture attribute instead of inheritance", false)</AttributeName>
     </Attribute>
     <Attribute>
-      <AttributeName>NUnit.Framework.TestFixture(Description=null)</AttributeName>
+      <AttributeName>NUnit.Framework.TestFixture</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
@@ -53,7 +54,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Obsolete(Message="use SetUp attribute instead of naming convention", IsError=False)</AttributeName>
+          <AttributeName>System.Obsolete("use SetUp attribute instead of naming convention", false)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>NUnit.Framework.SetUp</AttributeName>
@@ -76,7 +77,7 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Obsolete(Message="use TearDown attribute instead of naming convention", IsError=False)</AttributeName>
+          <AttributeName>System.Obsolete("use TearDown attribute instead of naming convention", false)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>NUnit.Framework.TearDown</AttributeName>
