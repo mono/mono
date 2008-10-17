@@ -1,0 +1,476 @@
+<Type Name="DirectorySearcher" FullName="System.DirectoryServices.DirectorySearcher">
+  <TypeSignature Language="C#" Value="public class DirectorySearcher : System.ComponentModel.Component, System.ComponentModel.IComponent, System.IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>System.DirectoryServices</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyCulture>
+    </AssemblyCulture>
+    <Attributes>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyKeyFile(KeyFile="../msfinal.pub")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyDelaySign(DelaySign=True)</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Runtime.InteropServices.ComVisible(Value=False)</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Resources.NeutralResourcesLanguage(CultureName="en-US")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyInformationalVersion(InformationalVersion="0.0.0.1")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyDefaultAlias(DefaultAlias="System.DirectoryServices.dll")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.CLSCompliant(IsCompliant=True)</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyTrademark(Trademark="")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyCopyright(Copyright="(c) 2003 Various Authors")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyProduct(Product="MONO CLI")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyCompany(Company="MONO development team")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyConfiguration(Configuration="Development version")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyDescription(Description="System.DirectoryServices.dll")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyTitle(Title="System.DirectoryServices.dll")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Resources.SatelliteContractVersion(Version="1.0.5000.0")</AttributeName>
+      </Attribute>
+    </Attributes>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ComponentModel.Component</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ComponentModel.IComponent</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DirectorySearcher()" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DirectorySearcher(System.DirectoryServices.DirectoryEntry searchRoot)" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="searchRoot" Type="System.DirectoryServices.DirectoryEntry" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="searchRoot">To be added.</param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DirectorySearcher(string filter)" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="filter" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="filter">To be added.</param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DirectorySearcher(System.DirectoryServices.DirectoryEntry searchRoot, string filter)" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="searchRoot" Type="System.DirectoryServices.DirectoryEntry" />
+        <Parameter Name="filter" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="searchRoot">To be added.</param>
+        <param name="filter">To be added.</param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DirectorySearcher(string filter, string[] propertiesToLoad)" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="filter" Type="System.String" />
+        <Parameter Name="propertiesToLoad" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="filter">To be added.</param>
+        <param name="propertiesToLoad">To be added.</param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DirectorySearcher(System.DirectoryServices.DirectoryEntry searchRoot, string filter, string[] propertiesToLoad)" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="searchRoot" Type="System.DirectoryServices.DirectoryEntry" />
+        <Parameter Name="filter" Type="System.String" />
+        <Parameter Name="propertiesToLoad" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="searchRoot">To be added.</param>
+        <param name="filter">To be added.</param>
+        <param name="propertiesToLoad">To be added.</param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DirectorySearcher(string filter, string[] propertiesToLoad, System.DirectoryServices.SearchScope scope)" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="filter" Type="System.String" />
+        <Parameter Name="propertiesToLoad" Type="System.String[]" />
+        <Parameter Name="scope" Type="System.DirectoryServices.SearchScope" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="filter">To be added.</param>
+        <param name="propertiesToLoad">To be added.</param>
+        <param name="scope">To be added.</param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public DirectorySearcher(System.DirectoryServices.DirectoryEntry searchRoot, string filter, string[] propertiesToLoad, System.DirectoryServices.SearchScope scope)" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="searchRoot" Type="System.DirectoryServices.DirectoryEntry" />
+        <Parameter Name="filter" Type="System.String" />
+        <Parameter Name="propertiesToLoad" Type="System.String[]" />
+        <Parameter Name="scope" Type="System.DirectoryServices.SearchScope" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="searchRoot">To be added.</param>
+        <param name="filter">To be added.</param>
+        <param name="propertiesToLoad">To be added.</param>
+        <param name="scope">To be added.</param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FindOne">
+      <MemberSignature Language="C#" Value="public System.DirectoryServices.SearchResult FindOne()" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DirectoryServices.SearchResult</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FindAll">
+      <MemberSignature Language="C#" Value="public System.DirectoryServices.SearchResultCollection FindAll()" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DirectoryServices.SearchResultCollection</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CacheResults">
+      <MemberSignature Language="C#" Value="public bool CacheResults { set; get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(Value=True)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.DirectoryServices.DSDescription(Description="The cacheability of results.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ClientTimeout">
+      <MemberSignature Language="C#" Value="public System.TimeSpan ClientTimeout { set; get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.DirectoryServices.DSDescription(Description="The maximum amount of time that the client waits for the server to return results.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Filter">
+      <MemberSignature Language="C#" Value="public string Filter { set; get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.TypeConverter(ConverterTypeName="System.Diagnostics.Design.StringValueConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.RecommendedAsConfigurable(RecommendedAsConfigurable=True)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(Value="(objectClass=*)")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.DirectoryServices.DSDescription(Description="The Lightweight Directory Access Protocol (Ldap) format filter string.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PageSize">
+      <MemberSignature Language="C#" Value="public int PageSize { set; get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(Value=0)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.DirectoryServices.DSDescription(Description="The page size in a paged search.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PropertiesToLoad">
+      <MemberSignature Language="C#" Value="public System.Collections.Specialized.StringCollection PropertiesToLoad { get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Editor(EditorBaseTypeName="System.Drawing.Design.UITypeEditor, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", EditorTypeName="System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(Visibility=System.ComponentModel.DesignerSerializationVisibility.Content)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.DirectoryServices.DSDescription(Description="The set of properties retrieved during the search.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Collections.Specialized.StringCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PropertyNamesOnly">
+      <MemberSignature Language="C#" Value="public bool PropertyNamesOnly { set; get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(Value=False)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.DirectoryServices.DSDescription(Description="A value indicating whether the search retrieves only the names of attributes to which values have been assigned.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReferralChasing">
+      <MemberSignature Language="C#" Value="public System.DirectoryServices.ReferralChasingOption ReferralChasing { set; get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(Value=1)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.DirectoryServices.DSDescription(Description="How referrals are chased.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.DirectoryServices.ReferralChasingOption</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SearchRoot">
+      <MemberSignature Language="C#" Value="public System.DirectoryServices.DirectoryEntry SearchRoot { set; get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(Value=null)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.DirectoryServices.DSDescription(Description="The node in the Ldap Directory hierarchy where the search starts.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.DirectoryServices.DirectoryEntry</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SearchScope">
+      <MemberSignature Language="C#" Value="public System.DirectoryServices.SearchScope SearchScope { set; get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.RecommendedAsConfigurable(RecommendedAsConfigurable=True)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(Value=2)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.DirectoryServices.DSDescription(Description="The scope of the search that is observed by the server.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.DirectoryServices.SearchScope</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ServerPageTimeLimit">
+      <MemberSignature Language="C#" Value="public System.TimeSpan ServerPageTimeLimit { set; get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.DirectoryServices.DSDescription(Description="The time limit the server should observe to search an individual page of results.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ServerTimeLimit">
+      <MemberSignature Language="C#" Value="public System.TimeSpan ServerTimeLimit { set; get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.DirectoryServices.DSDescription(Description="The time limit the server should observe to search.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SizeLimit">
+      <MemberSignature Language="C#" Value="public int SizeLimit { set; get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(Value=0)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.DirectoryServices.DSDescription(Description="The maximum number of objects the server returns in a search.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Sort">
+      <MemberSignature Language="C#" Value="public System.DirectoryServices.SortOption Sort { set; get; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.TypeConverter(ConverterTypeName="System.ComponentModel.ExpandableObjectConverter, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(Visibility=System.ComponentModel.DesignerSerializationVisibility.Content)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.DirectoryServices.DSDescription(Description="An object that defines how the data should be sorted.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.DirectoryServices.SortOption</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

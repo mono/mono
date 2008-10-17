@@ -1,0 +1,201 @@
+<Type Name="PropertyCollection" FullName="System.DirectoryServices.PropertyCollection">
+  <TypeSignature Language="C#" Value="public class PropertyCollection : System.Collections.IDictionary, System.Collections.ICollection, System.Collections.IEnumerable" />
+  <AssemblyInfo>
+    <AssemblyName>System.DirectoryServices</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyCulture>
+    </AssemblyCulture>
+    <Attributes>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyKeyFile(KeyFile="../msfinal.pub")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyDelaySign(DelaySign=True)</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Runtime.InteropServices.ComVisible(Value=False)</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Resources.NeutralResourcesLanguage(CultureName="en-US")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyInformationalVersion(InformationalVersion="0.0.0.1")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyDefaultAlias(DefaultAlias="System.DirectoryServices.dll")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.CLSCompliant(IsCompliant=True)</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyTrademark(Trademark="")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyCopyright(Copyright="(c) 2003 Various Authors")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyProduct(Product="MONO CLI")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyCompany(Company="MONO development team")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyConfiguration(Configuration="Development version")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyDescription(Description="System.DirectoryServices.dll")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyTitle(Title="System.DirectoryServices.dll")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Resources.SatelliteContractVersion(Version="1.0.5000.0")</AttributeName>
+      </Attribute>
+    </Attributes>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.IDictionary</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Collections.ICollection</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Collections.IEnumerable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Reflection.DefaultMember(MemberName="Item")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Members>
+    <Member MemberName="m_oKeys">
+      <MemberSignature Language="C#" Value="protected System.Collections.ArrayList m_oKeys" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.ArrayList</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="m_oValues">
+      <MemberSignature Language="C#" Value="protected System.Collections.Hashtable m_oValues" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.Hashtable</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="C#" Value="public void CopyTo(System.DirectoryServices.PropertyValueCollection[] array, int index)" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="array" Type="System.DirectoryServices.PropertyValueCollection[]" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="array">To be added.</param>
+        <param name="index">To be added.</param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Contains">
+      <MemberSignature Language="C#" Value="public bool Contains(string propertyName)" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="propertyName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="propertyName">To be added.</param>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="C#" Value="public System.Collections.IDictionaryEnumerator GetEnumerator()" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IDictionaryEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PropertyNames">
+      <MemberSignature Language="C#" Value="public System.Collections.ICollection PropertyNames { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.ICollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Values">
+      <MemberSignature Language="C#" Value="public System.Collections.ICollection Values { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.ICollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public System.DirectoryServices.PropertyValueCollection Item[string propertyName] { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DirectoryServices.PropertyValueCollection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="propertyName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="propertyName">To be added.</param>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

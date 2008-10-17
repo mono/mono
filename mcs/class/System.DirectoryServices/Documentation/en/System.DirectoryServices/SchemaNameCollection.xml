@@ -1,0 +1,276 @@
+<Type Name="SchemaNameCollection" FullName="System.DirectoryServices.SchemaNameCollection">
+  <TypeSignature Language="C#" Value="public class SchemaNameCollection : System.Collections.IList, System.Collections.ICollection, System.Collections.IEnumerable" />
+  <AssemblyInfo>
+    <AssemblyName>System.DirectoryServices</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyCulture>
+    </AssemblyCulture>
+    <Attributes>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyKeyFile(KeyFile="../msfinal.pub")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyDelaySign(DelaySign=True)</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Runtime.InteropServices.ComVisible(Value=False)</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Resources.NeutralResourcesLanguage(CultureName="en-US")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyInformationalVersion(InformationalVersion="0.0.0.1")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyDefaultAlias(DefaultAlias="System.DirectoryServices.dll")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.CLSCompliant(IsCompliant=True)</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyTrademark(Trademark="")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyCopyright(Copyright="(c) 2003 Various Authors")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyProduct(Product="MONO CLI")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyCompany(Company="MONO development team")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyConfiguration(Configuration="Development version")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyDescription(Description="System.DirectoryServices.dll")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyTitle(Title="System.DirectoryServices.dll")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Resources.SatelliteContractVersion(Version="1.0.5000.0")</AttributeName>
+      </Attribute>
+    </Attributes>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.IList</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Collections.ICollection</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Collections.IEnumerable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Reflection.DefaultMember(MemberName="Item")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Members>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public int Add(string value)" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="value">To be added.</param>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="C#" Value="public void Clear()" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAt">
+      <MemberSignature Language="C#" Value="public void RemoveAt(int index)" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="index">To be added.</param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="C#" Value="public System.Collections.IEnumerator GetEnumerator()" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddRange">
+      <MemberSignature Language="C#" Value="public void AddRange(System.DirectoryServices.SchemaNameCollection coll)" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="coll" Type="System.DirectoryServices.SchemaNameCollection" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="coll">To be added.</param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddRange">
+      <MemberSignature Language="C#" Value="public void AddRange(string[] coll)" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="coll" Type="System.String[]" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="coll">To be added.</param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Contains">
+      <MemberSignature Language="C#" Value="public bool Contains(string s)" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="s">To be added.</param>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="C#" Value="public void CopyTo(string[] copy_to, int pos)" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="copy_to" Type="System.String[]" />
+        <Parameter Name="pos" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="copy_to">To be added.</param>
+        <param name="pos">To be added.</param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IndexOf">
+      <MemberSignature Language="C#" Value="public int IndexOf(string s)" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="s">To be added.</param>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Insert">
+      <MemberSignature Language="C#" Value="public void Insert(int pos, string s)" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pos" Type="System.Int32" />
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="pos">To be added.</param>
+        <param name="s">To be added.</param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="C#" Value="public void Remove(string s)" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="s">To be added.</param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public string Item[int index] { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="index">To be added.</param>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

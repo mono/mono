@@ -1,0 +1,224 @@
+<Type Name="AuthenticationTypes" FullName="System.DirectoryServices.AuthenticationTypes">
+  <TypeSignature Language="C#" Value="public sealed enum AuthenticationTypes" />
+  <AssemblyInfo>
+    <AssemblyName>System.DirectoryServices</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyCulture>
+    </AssemblyCulture>
+    <Attributes>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyKeyFile(KeyFile="../msfinal.pub")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyDelaySign(DelaySign=True)</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Runtime.InteropServices.ComVisible(Value=False)</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Resources.NeutralResourcesLanguage(CultureName="en-US")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyInformationalVersion(InformationalVersion="0.0.0.1")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyDefaultAlias(DefaultAlias="System.DirectoryServices.dll")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.CLSCompliant(IsCompliant=True)</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyTrademark(Trademark="")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyCopyright(Copyright="(c) 2003 Various Authors")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyProduct(Product="MONO CLI")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyCompany(Company="MONO development team")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyConfiguration(Configuration="Development version")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyDescription(Description="System.DirectoryServices.dll")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyTitle(Title="System.DirectoryServices.dll")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Resources.SatelliteContractVersion(Version="1.0.5000.0")</AttributeName>
+      </Attribute>
+    </Attributes>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IComparable</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IConvertible</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IFormattable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Members>
+    <Member MemberName="value__">
+      <MemberSignature Language="C#" Value="public int value__" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Anonymous">
+      <MemberSignature Language="C#" Value="public static const System.DirectoryServices.AuthenticationTypes Anonymous" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DirectoryServices.AuthenticationTypes</ReturnType>
+      </ReturnValue>
+      <MemberValue>Anonymous</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Delegation">
+      <MemberSignature Language="C#" Value="public static const System.DirectoryServices.AuthenticationTypes Delegation" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DirectoryServices.AuthenticationTypes</ReturnType>
+      </ReturnValue>
+      <MemberValue>Delegation</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Encryption">
+      <MemberSignature Language="C#" Value="public static const System.DirectoryServices.AuthenticationTypes Encryption" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DirectoryServices.AuthenticationTypes</ReturnType>
+      </ReturnValue>
+      <MemberValue>SecureSocketsLayer</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FastBind">
+      <MemberSignature Language="C#" Value="public static const System.DirectoryServices.AuthenticationTypes FastBind" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DirectoryServices.AuthenticationTypes</ReturnType>
+      </ReturnValue>
+      <MemberValue>FastBind</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="public static const System.DirectoryServices.AuthenticationTypes None" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DirectoryServices.AuthenticationTypes</ReturnType>
+      </ReturnValue>
+      <MemberValue>None</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadonlyServer">
+      <MemberSignature Language="C#" Value="public static const System.DirectoryServices.AuthenticationTypes ReadonlyServer" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DirectoryServices.AuthenticationTypes</ReturnType>
+      </ReturnValue>
+      <MemberValue>ReadonlyServer</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Sealing">
+      <MemberSignature Language="C#" Value="public static const System.DirectoryServices.AuthenticationTypes Sealing" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DirectoryServices.AuthenticationTypes</ReturnType>
+      </ReturnValue>
+      <MemberValue>Sealing</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Secure">
+      <MemberSignature Language="C#" Value="public static const System.DirectoryServices.AuthenticationTypes Secure" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DirectoryServices.AuthenticationTypes</ReturnType>
+      </ReturnValue>
+      <MemberValue>Secure</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SecureSocketsLayer">
+      <MemberSignature Language="C#" Value="public static const System.DirectoryServices.AuthenticationTypes SecureSocketsLayer" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DirectoryServices.AuthenticationTypes</ReturnType>
+      </ReturnValue>
+      <MemberValue>SecureSocketsLayer</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ServerBind">
+      <MemberSignature Language="C#" Value="public static const System.DirectoryServices.AuthenticationTypes ServerBind" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DirectoryServices.AuthenticationTypes</ReturnType>
+      </ReturnValue>
+      <MemberValue>ServerBind</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Signing">
+      <MemberSignature Language="C#" Value="public static const System.DirectoryServices.AuthenticationTypes Signing" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DirectoryServices.AuthenticationTypes</ReturnType>
+      </ReturnValue>
+      <MemberValue>Signing</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>
