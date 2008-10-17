@@ -1,0 +1,79 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="System.Configuration.Install" Version="2.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComCompatibleVersion(1, 0, 3300, 0)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.CompilationRelaxations(System.Runtime.CompilerServices.CompilationRelaxations.NoStringInterning)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute+DebuggingModes.IgnoreSymbolStoreSequencePoints)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyFileVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.SatelliteContractVersion("2.0.0.0")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) various MONO Authors")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("MONO Common language infrastructure")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("MONO development team")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDefaultAlias("System.Configuration.Install.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("System.Configuration.Install.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("System.Configuration.Install.dll")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="System.Configuration.Install">
+      <Type Name="AssemblyInstaller" Kind="Class" />
+      <Type Name="ComponentInstaller" Kind="Class" />
+      <Type Name="IManagedInstaller" Kind="Interface" />
+      <Type Name="InstallContext" Kind="Class" />
+      <Type Name="Installer" Kind="Class" />
+      <Type Name="InstallerCollection" Kind="Class" />
+      <Type Name="InstallEventArgs" Kind="Class" />
+      <Type Name="InstallEventHandler" Kind="Delegate" />
+      <Type Name="InstallException" Kind="Class" />
+      <Type Name="ManagedInstallerClass" Kind="Class" />
+      <Type Name="TransactedInstaller" Kind="Class" />
+      <Type Name="UninstallAction" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.Diagnostics">
+      <Type Name="EventLogInstaller" Kind="Class" />
+      <Type Name="PerformanceCounterInstaller" Kind="Class" />
+    </Namespace>
+  </Types>
+  <Title>System.Configuration.Install</Title>
+</Overview>

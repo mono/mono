@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="utf-8"?>
+<masterdoc assembly="System.Configuration.Install">
+    <class name="Installer" namespace="System.Configuration.Install">
+        <constructor name="Installer" argnames="" />
+        <property name="Context" propertytype="System.Configuration.Install.InstallContext" />
+        <property name="HelpText" propertytype="System.String" />
+        <property name="Installers" propertytype="System.Configuration.Install.InstallerCollection" />
+        <property name="Parent" propertytype="System.Configuration.Install.Installer" />
+        <property name="Events" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.EventHandlerList" />
+        <property name="Site" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.ISite" />
+        <property name="Container" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.IContainer" />
+        <property name="DesignMode" inherited="System.ComponentModel.Component" propertytype="System.Boolean" />
+        <method name="Uninstall(System.Collections.IDictionary)" argnames="savedState" returntype="System.Void" />
+        <method name="Rollback(System.Collections.IDictionary)" argnames="savedState" returntype="System.Void" />
+        <method name="OnBeforeUninstall(System.Collections.IDictionary)" argnames="savedState" returntype="System.Void" />
+        <method name="OnBeforeRollback(System.Collections.IDictionary)" argnames="savedState" returntype="System.Void" />
+        <method name="OnBeforeInstall(System.Collections.IDictionary)" argnames="savedState" returntype="System.Void" />
+        <method name="OnCommitting(System.Collections.IDictionary)" argnames="savedState" returntype="System.Void" />
+        <method name="OnAfterUninstall(System.Collections.IDictionary)" argnames="savedState" returntype="System.Void" />
+        <method name="OnAfterRollback(System.Collections.IDictionary)" argnames="savedState" returntype="System.Void" />
+        <method name="OnAfterInstall(System.Collections.IDictionary)" argnames="savedState" returntype="System.Void" />
+        <method name="OnCommitted(System.Collections.IDictionary)" argnames="savedState" returntype="System.Void" />
+        <method name="Install(System.Collections.IDictionary)" argnames="stateSaver" returntype="System.Void" />
+        <method name="Commit(System.Collections.IDictionary)" argnames="savedState" returntype="System.Void" />
+        <method name="Dispose" argnames="" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="GetService(System.Type)" argnames="service" inherited="System.ComponentModel.Component" returntype="System.Object" />
+        <method name="Dispose(System.Boolean)" argnames="disposing" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="CreateObjRef(System.Type)" argnames="requestedType" inherited="System.MarshalByRefObject" returntype="System.Runtime.Remoting.ObjRef" />
+        <method name="InitializeLifetimeService" argnames="" inherited="System.MarshalByRefObject" returntype="System.Object" />
+        <method name="GetLifetimeService" argnames="" inherited="System.MarshalByRefObject" returntype="System.Object" />
+        <method name="Finalize" argnames="" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.ComponentModel.Component" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+        <event name="Committed" />
+        <event name="AfterInstall" />
+        <event name="AfterRollback" />
+        <event name="AfterUninstall" />
+        <event name="Committing" />
+        <event name="BeforeInstall" />
+        <event name="BeforeRollback" />
+        <event name="BeforeUninstall" />
+        <event name="Disposed" inherited="System.ComponentModel.Component" />
+    </class>
+    <class name="AssemblyInstaller" namespace="System.Configuration.Install">
+        <constructor name="AssemblyInstaller" argnames="" />
+        <constructor name="AssemblyInstaller(System.String, System.String[])" argnames="filename, commandLine" />
+        <constructor name="AssemblyInstaller(System.Reflection.Assembly, System.String[])" argnames="assembly, commandLine" />
+        <property name="Assembly" propertytype="System.Reflection.Assembly" />
+        <property name="CommandLine" propertytype="System.String[]" />
+        <property name="HelpText" propertytype="System.String" />
+        <property name="Path" propertytype="System.String" />
+        <property name="UseNewContext" propertytype="System.Boolean" />
+        <property name="Context" inherited="System.Configuration.Install.Installer" propertytype="System.Configuration.Install.InstallContext" />
+        <property name="Installers" inherited="System.Configuration.Install.Installer" propertytype="System.Configuration.Install.InstallerCollection" />
+        <property name="Parent" inherited="System.Configuration.Install.Installer" propertytype="System.Configuration.Install.Installer" />
+        <property name="Events" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.EventHandlerList" />
+        <property name="Site" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.ISite" />
+        <property name="Container" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.IContainer" />
+        <property name="DesignMode" inherited="System.ComponentModel.Component" propertytype="System.Boolean" />
+        <method name="Uninstall(System.Collections.IDictionary)" argnames="savedState" returntype="System.Void" />
+        <method name="Rollback(System.Collections.IDictionary)" argnames="savedState" returntype="System.Void" />
+        <method name="OnBeforeUninstall(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnBeforeRollback(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnBeforeInstall(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnCommitting(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnAfterUninstall(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnAfterRollback(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnAfterInstall(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnCommitted(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="Install(System.Collections.IDictionary)" argnames="savedState" returntype="System.Void" />
+        <method name="Commit(System.Collections.IDictionary)" argnames="savedState" returntype="System.Void" />
+        <method name="Dispose" argnames="" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="GetService(System.Type)" argnames="service" inherited="System.ComponentModel.Component" returntype="System.Object" />
+        <method name="Dispose(System.Boolean)" argnames="disposing" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="CreateObjRef(System.Type)" argnames="requestedType" inherited="System.MarshalByRefObject" returntype="System.Runtime.Remoting.ObjRef" />
+        <method name="InitializeLifetimeService" argnames="" inherited="System.MarshalByRefObject" returntype="System.Object" />
+        <method name="GetLifetimeService" argnames="" inherited="System.MarshalByRefObject" returntype="System.Object" />
+        <method name="Finalize" argnames="" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.ComponentModel.Component" returntype="System.String" />
+        <method name="CheckIfInstallable(System.String)" argnames="assemblyName" returntype="System.Void" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+        <event name="Committed" inherited="System.Configuration.Install.Installer" />
+        <event name="AfterInstall" inherited="System.Configuration.Install.Installer" />
+        <event name="AfterRollback" inherited="System.Configuration.Install.Installer" />
+        <event name="AfterUninstall" inherited="System.Configuration.Install.Installer" />
+        <event name="Committing" inherited="System.Configuration.Install.Installer" />
+        <event name="BeforeInstall" inherited="System.Configuration.Install.Installer" />
+        <event name="BeforeRollback" inherited="System.Configuration.Install.Installer" />
+        <event name="BeforeUninstall" inherited="System.Configuration.Install.Installer" />
+        <event name="Disposed" inherited="System.ComponentModel.Component" />
+    </class>
+    <class name="ComponentInstaller" namespace="System.Configuration.Install">
+        <constructor name="ComponentInstaller" argnames="" />
+        <property name="Context" inherited="System.Configuration.Install.Installer" propertytype="System.Configuration.Install.InstallContext" />
+        <property name="HelpText" inherited="System.Configuration.Install.Installer" propertytype="System.String" />
+        <property name="Installers" inherited="System.Configuration.Install.Installer" propertytype="System.Configuration.Install.InstallerCollection" />
+        <property name="Parent" inherited="System.Configuration.Install.Installer" propertytype="System.Configuration.Install.Installer" />
+        <property name="Events" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.EventHandlerList" />
+        <property name="Site" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.ISite" />
+        <property name="Container" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.IContainer" />
+        <property name="DesignMode" inherited="System.ComponentModel.Component" propertytype="System.Boolean" />
+        <method name="IsEquivalentInstaller(System.Configuration.Install.ComponentInstaller)" argnames="otherInstaller" returntype="System.Boolean" />
+        <method name="CopyFromComponent(System.ComponentModel.IComponent)" argnames="component" returntype="System.Void" />
+        <method name="Uninstall(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="Rollback(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnBeforeUninstall(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnBeforeRollback(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnBeforeInstall(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnCommitting(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnAfterUninstall(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnAfterRollback(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnAfterInstall(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnCommitted(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="Install(System.Collections.IDictionary)" argnames="stateSaver" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="Commit(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="Dispose" argnames="" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="GetService(System.Type)" argnames="service" inherited="System.ComponentModel.Component" returntype="System.Object" />
+        <method name="Dispose(System.Boolean)" argnames="disposing" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="CreateObjRef(System.Type)" argnames="requestedType" inherited="System.MarshalByRefObject" returntype="System.Runtime.Remoting.ObjRef" />
+        <method name="InitializeLifetimeService" argnames="" inherited="System.MarshalByRefObject" returntype="System.Object" />
+        <method name="GetLifetimeService" argnames="" inherited="System.MarshalByRefObject" returntype="System.Object" />
+        <method name="Finalize" argnames="" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.ComponentModel.Component" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+        <event name="Committed" inherited="System.Configuration.Install.Installer" />
+        <event name="AfterInstall" inherited="System.Configuration.Install.Installer" />
+        <event name="AfterRollback" inherited="System.Configuration.Install.Installer" />
+        <event name="AfterUninstall" inherited="System.Configuration.Install.Installer" />
+        <event name="Committing" inherited="System.Configuration.Install.Installer" />
+        <event name="BeforeInstall" inherited="System.Configuration.Install.Installer" />
+        <event name="BeforeRollback" inherited="System.Configuration.Install.Installer" />
+        <event name="BeforeUninstall" inherited="System.Configuration.Install.Installer" />
+        <event name="Disposed" inherited="System.ComponentModel.Component" />
+    </class>
+    <class name="InstallContext" namespace="System.Configuration.Install">
+        <constructor name="InstallContext" argnames="" />
+        <constructor name="InstallContext(System.String, System.String[])" argnames="logFilePath, commandLine" />
+        <property name="Parameters" propertytype="System.Collections.Specialized.StringDictionary" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="IsParameterTrue(System.String)" argnames="paramName" returntype="System.Boolean" />
+        <method name="LogMessage(System.String)" argnames="message" returntype="System.Void" />
+        <method name="ParseCommandLine(System.String[])" argnames="args" returntype="System.Collections.Specialized.StringDictionary" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="InstallerCollection" namespace="System.Configuration.Install">
+        <property name="Item" propertytype="System.Configuration.Install.Installer" />
+        <property name="InnerList" inherited="System.Collections.CollectionBase" propertytype="System.Collections.ArrayList" />
+        <property name="List" inherited="System.Collections.CollectionBase" propertytype="System.Collections.IList" />
+        <property name="Count" inherited="System.Collections.CollectionBase" propertytype="System.Int32" />
+        <method name="GetEnumerator" argnames="" inherited="System.Collections.CollectionBase" returntype="System.Collections.IEnumerator" />
+        <method name="RemoveAt(System.Int32)" argnames="index" inherited="System.Collections.CollectionBase" returntype="System.Void" />
+        <method name="Clear" argnames="" inherited="System.Collections.CollectionBase" returntype="System.Void" />
+        <method name="OnRemoveComplete(System.Int32, System.Object)" argnames="index, value" inherited="System.Collections.CollectionBase" returntype="System.Void" />
+        <method name="OnClearComplete" argnames="" inherited="System.Collections.CollectionBase" returntype="System.Void" />
+        <method name="OnInsertComplete(System.Int32, System.Object)" argnames="index, value" inherited="System.Collections.CollectionBase" returntype="System.Void" />
+        <method name="OnSetComplete(System.Int32, System.Object, System.Object)" argnames="index, oldValue, newValue" inherited="System.Collections.CollectionBase" returntype="System.Void" />
+        <method name="OnValidate(System.Object)" argnames="value" inherited="System.Collections.CollectionBase" returntype="System.Void" />
+        <method name="OnRemove(System.Int32, System.Object)" argnames="index, value" returntype="System.Void" />
+        <method name="OnClear" argnames="" inherited="System.Collections.CollectionBase" returntype="System.Void" />
+        <method name="OnInsert(System.Int32, System.Object)" argnames="index, value" returntype="System.Void" />
+        <method name="OnSet(System.Int32, System.Object, System.Object)" argnames="index, oldValue, newValue" returntype="System.Void" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="Add(System.Configuration.Install.Installer)" argnames="value" returntype="System.Int32" />
+        <method name="AddRange(System.Configuration.Install.InstallerCollection)" argnames="value" returntype="System.Void" />
+        <method name="AddRange(System.Configuration.Install.Installer[])" argnames="value" returntype="System.Void" />
+        <method name="Contains(System.Configuration.Install.Installer)" argnames="value" returntype="System.Boolean" />
+        <method name="CopyTo(System.Configuration.Install.Installer[], System.Int32)" argnames="array, index" returntype="System.Void" />
+        <method name="IndexOf(System.Configuration.Install.Installer)" argnames="value" returntype="System.Int32" />
+        <method name="Insert(System.Int32, System.Configuration.Install.Installer)" argnames="index, value" returntype="System.Void" />
+        <method name="Remove(System.Configuration.Install.Installer)" argnames="value" returntype="System.Void" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="InstallEventArgs" namespace="System.Configuration.Install">
+        <constructor name="InstallEventArgs" argnames="" />
+        <constructor name="InstallEventArgs(System.Collections.IDictionary)" argnames="savedState" />
+        <property name="SavedState" propertytype="System.Collections.IDictionary" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="InstallException" namespace="System.Configuration.Install">
+        <constructor name="InstallException" argnames="" />
+        <constructor name="InstallException(System.String)" argnames="message" />
+        <constructor name="InstallException(System.String, System.Exception)" argnames="message, innerException" />
+        <constructor name="InstallException(System.Runtime.Serialization.SerializationInfo, System.Runtime.Serialization.StreamingContext)" argnames="info, context" />
+        <property name="Message" inherited="System.Exception" propertytype="System.String" />
+        <property name="InnerException" inherited="System.Exception" propertytype="System.Exception" />
+        <property name="TargetSite" inherited="System.Exception" propertytype="System.Reflection.MethodBase" />
+        <property name="StackTrace" inherited="System.Exception" propertytype="System.String" />
+        <property name="HelpLink" inherited="System.Exception" propertytype="System.String" />
+        <property name="Source" inherited="System.Exception" propertytype="System.String" />
+        <property name="HResult" inherited="System.Exception" propertytype="System.Int32" />
+        <method name="GetObjectData(System.Runtime.Serialization.SerializationInfo, System.Runtime.Serialization.StreamingContext)" argnames="info, context" inherited="System.Exception" returntype="System.Void" />
+        <method name="GetBaseException" argnames="" inherited="System.Exception" returntype="System.Exception" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Exception" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="ManagedInstallerClass" namespace="System.Configuration.Install">
+        <constructor name="ManagedInstallerClass" argnames="" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="InstallHelper(System.String[])" argnames="args" returntype="System.Void" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </class>
+    <class name="TransactedInstaller" namespace="System.Configuration.Install">
+        <constructor name="TransactedInstaller" argnames="" />
+        <property name="Context" inherited="System.Configuration.Install.Installer" propertytype="System.Configuration.Install.InstallContext" />
+        <property name="HelpText" inherited="System.Configuration.Install.Installer" propertytype="System.String" />
+        <property name="Installers" inherited="System.Configuration.Install.Installer" propertytype="System.Configuration.Install.InstallerCollection" />
+        <property name="Parent" inherited="System.Configuration.Install.Installer" propertytype="System.Configuration.Install.Installer" />
+        <property name="Events" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.EventHandlerList" />
+        <property name="Site" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.ISite" />
+        <property name="Container" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.IContainer" />
+        <property name="DesignMode" inherited="System.ComponentModel.Component" propertytype="System.Boolean" />
+        <method name="Uninstall(System.Collections.IDictionary)" argnames="savedState" returntype="System.Void" />
+        <method name="Rollback(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnBeforeUninstall(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnBeforeRollback(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnBeforeInstall(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnCommitting(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnAfterUninstall(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnAfterRollback(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnAfterInstall(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnCommitted(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="Install(System.Collections.IDictionary)" argnames="savedState" returntype="System.Void" />
+        <method name="Commit(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="Dispose" argnames="" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="GetService(System.Type)" argnames="service" inherited="System.ComponentModel.Component" returntype="System.Object" />
+        <method name="Dispose(System.Boolean)" argnames="disposing" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="CreateObjRef(System.Type)" argnames="requestedType" inherited="System.MarshalByRefObject" returntype="System.Runtime.Remoting.ObjRef" />
+        <method name="InitializeLifetimeService" argnames="" inherited="System.MarshalByRefObject" returntype="System.Object" />
+        <method name="GetLifetimeService" argnames="" inherited="System.MarshalByRefObject" returntype="System.Object" />
+        <method name="Finalize" argnames="" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.ComponentModel.Component" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+        <event name="Committed" inherited="System.Configuration.Install.Installer" />
+        <event name="AfterInstall" inherited="System.Configuration.Install.Installer" />
+        <event name="AfterRollback" inherited="System.Configuration.Install.Installer" />
+        <event name="AfterUninstall" inherited="System.Configuration.Install.Installer" />
+        <event name="Committing" inherited="System.Configuration.Install.Installer" />
+        <event name="BeforeInstall" inherited="System.Configuration.Install.Installer" />
+        <event name="BeforeRollback" inherited="System.Configuration.Install.Installer" />
+        <event name="BeforeUninstall" inherited="System.Configuration.Install.Installer" />
+        <event name="Disposed" inherited="System.ComponentModel.Component" />
+    </class>
+    <interface name="IManagedInstaller" namespace="System.Configuration.Install">
+        <method name="ManagedInstall(System.String, System.Int32)" argnames="commandLine, hInstall" returntype="System.Int32" />
+    </interface>
+    <delegate name="InstallEventHandler" namespace="System.Configuration.Install">
+        <constructor name="InstallEventHandler(System.Object, System.IntPtr)" argnames="object, method" />
+        <property name="Method" inherited="System.Delegate" propertytype="System.Reflection.MethodInfo" />
+        <property name="Target" inherited="System.Delegate" propertytype="System.Object" />
+        <method name="EndInvoke(System.IAsyncResult)" argnames="result" returntype="System.Void" />
+        <method name="BeginInvoke(System.Object, System.Configuration.Install.InstallEventArgs, System.AsyncCallback, System.Object)" argnames="sender, e, callback, object" returntype="System.IAsyncResult" />
+        <method name="Invoke(System.Object, System.Configuration.Install.InstallEventArgs)" argnames="sender, e" returntype="System.Void" />
+        <method name="GetObjectData(System.Runtime.Serialization.SerializationInfo, System.Runtime.Serialization.StreamingContext)" argnames="info, context" inherited="System.MulticastDelegate" returntype="System.Void" />
+        <method name="Clone" argnames="" inherited="System.Delegate" returntype="System.Object" />
+        <method name="RemoveImpl(System.Delegate)" argnames="value" inherited="System.MulticastDelegate" returntype="System.Delegate" />
+        <method name="CombineImpl(System.Delegate)" argnames="follow" inherited="System.MulticastDelegate" returntype="System.Delegate" />
+        <method name="GetMethodImpl" argnames="" inherited="System.Delegate" returntype="System.Reflection.MethodInfo" />
+        <method name="GetInvocationList" argnames="" inherited="System.MulticastDelegate" returntype="System.Delegate[]" />
+        <method name="DynamicInvokeImpl(System.Object[])" argnames="args" inherited="System.MulticastDelegate" returntype="System.Object" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.MulticastDelegate" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.MulticastDelegate" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Object" returntype="System.String" />
+        <method name="DynamicInvoke(System.Object[])" argnames="args" inherited="System.Delegate" returntype="System.Object" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </delegate>
+    <enum name="UninstallAction" namespace="System.Configuration.Install">
+        <field name="Remove" />
+        <field name="NoAction" />
+        <method name="ToString(System.IFormatProvider)" argnames="provider" inherited="System.Enum" returntype="System.String" />
+        <method name="GetTypeCode" argnames="" inherited="System.Enum" returntype="System.TypeCode" />
+        <method name="ToString(System.String, System.IFormatProvider)" argnames="format, provider" inherited="System.Enum" returntype="System.String" />
+        <method name="CompareTo(System.Object)" argnames="target" inherited="System.Enum" returntype="System.Int32" />
+        <method name="Finalize" argnames="" inherited="System.Object" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Enum" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Enum" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.Enum" returntype="System.String" />
+        <method name="ToString(System.String)" argnames="format" inherited="System.Enum" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+    </enum>
+    <class name="EventLogInstaller" namespace="System.Diagnostics">
+        <constructor name="EventLogInstaller" argnames="" />
+        <property name="Log" propertytype="System.String" />
+        <property name="Source" propertytype="System.String" />
+        <property name="UninstallAction" propertytype="System.Configuration.Install.UninstallAction" />
+        <property name="Context" inherited="System.Configuration.Install.Installer" propertytype="System.Configuration.Install.InstallContext" />
+        <property name="HelpText" inherited="System.Configuration.Install.Installer" propertytype="System.String" />
+        <property name="Installers" inherited="System.Configuration.Install.Installer" propertytype="System.Configuration.Install.InstallerCollection" />
+        <property name="Parent" inherited="System.Configuration.Install.Installer" propertytype="System.Configuration.Install.Installer" />
+        <property name="Events" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.EventHandlerList" />
+        <property name="Site" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.ISite" />
+        <property name="Container" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.IContainer" />
+        <property name="DesignMode" inherited="System.ComponentModel.Component" propertytype="System.Boolean" />
+        <method name="IsEquivalentInstaller(System.Configuration.Install.ComponentInstaller)" argnames="otherInstaller" returntype="System.Boolean" />
+        <method name="CopyFromComponent(System.ComponentModel.IComponent)" argnames="component" returntype="System.Void" />
+        <method name="Uninstall(System.Collections.IDictionary)" argnames="savedState" returntype="System.Void" />
+        <method name="Rollback(System.Collections.IDictionary)" argnames="savedState" returntype="System.Void" />
+        <method name="OnBeforeUninstall(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnBeforeRollback(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnBeforeInstall(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnCommitting(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnAfterUninstall(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnAfterRollback(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnAfterInstall(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnCommitted(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="Install(System.Collections.IDictionary)" argnames="stateSaver" returntype="System.Void" />
+        <method name="Commit(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="Dispose" argnames="" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="GetService(System.Type)" argnames="service" inherited="System.ComponentModel.Component" returntype="System.Object" />
+        <method name="Dispose(System.Boolean)" argnames="disposing" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="CreateObjRef(System.Type)" argnames="requestedType" inherited="System.MarshalByRefObject" returntype="System.Runtime.Remoting.ObjRef" />
+        <method name="InitializeLifetimeService" argnames="" inherited="System.MarshalByRefObject" returntype="System.Object" />
+        <method name="GetLifetimeService" argnames="" inherited="System.MarshalByRefObject" returntype="System.Object" />
+        <method name="Finalize" argnames="" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.ComponentModel.Component" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+        <event name="Committed" inherited="System.Configuration.Install.Installer" />
+        <event name="AfterInstall" inherited="System.Configuration.Install.Installer" />
+        <event name="AfterRollback" inherited="System.Configuration.Install.Installer" />
+        <event name="AfterUninstall" inherited="System.Configuration.Install.Installer" />
+        <event name="Committing" inherited="System.Configuration.Install.Installer" />
+        <event name="BeforeInstall" inherited="System.Configuration.Install.Installer" />
+        <event name="BeforeRollback" inherited="System.Configuration.Install.Installer" />
+        <event name="BeforeUninstall" inherited="System.Configuration.Install.Installer" />
+        <event name="Disposed" inherited="System.ComponentModel.Component" />
+    </class>
+    <class name="PerformanceCounterInstaller" namespace="System.Diagnostics">
+        <constructor name="PerformanceCounterInstaller" argnames="" />
+        <property name="CategoryName" propertytype="System.String" />
+        <property name="CategoryHelp" propertytype="System.String" />
+        <property name="Counters" propertytype="System.Diagnostics.CounterCreationDataCollection" />
+        <property name="UninstallAction" propertytype="System.Configuration.Install.UninstallAction" />
+        <property name="Context" inherited="System.Configuration.Install.Installer" propertytype="System.Configuration.Install.InstallContext" />
+        <property name="HelpText" inherited="System.Configuration.Install.Installer" propertytype="System.String" />
+        <property name="Installers" inherited="System.Configuration.Install.Installer" propertytype="System.Configuration.Install.InstallerCollection" />
+        <property name="Parent" inherited="System.Configuration.Install.Installer" propertytype="System.Configuration.Install.Installer" />
+        <property name="Events" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.EventHandlerList" />
+        <property name="Site" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.ISite" />
+        <property name="Container" inherited="System.ComponentModel.Component" propertytype="System.ComponentModel.IContainer" />
+        <property name="DesignMode" inherited="System.ComponentModel.Component" propertytype="System.Boolean" />
+        <method name="IsEquivalentInstaller(System.Configuration.Install.ComponentInstaller)" argnames="otherInstaller" inherited="System.Configuration.Install.ComponentInstaller" returntype="System.Boolean" />
+        <method name="CopyFromComponent(System.ComponentModel.IComponent)" argnames="component" returntype="System.Void" />
+        <method name="Uninstall(System.Collections.IDictionary)" argnames="savedState" returntype="System.Void" />
+        <method name="Rollback(System.Collections.IDictionary)" argnames="savedState" returntype="System.Void" />
+        <method name="OnBeforeUninstall(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnBeforeRollback(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnBeforeInstall(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnCommitting(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnAfterUninstall(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnAfterRollback(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnAfterInstall(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="OnCommitted(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="Install(System.Collections.IDictionary)" argnames="stateSaver" returntype="System.Void" />
+        <method name="Commit(System.Collections.IDictionary)" argnames="savedState" inherited="System.Configuration.Install.Installer" returntype="System.Void" />
+        <method name="Dispose" argnames="" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="GetService(System.Type)" argnames="service" inherited="System.ComponentModel.Component" returntype="System.Object" />
+        <method name="Dispose(System.Boolean)" argnames="disposing" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="CreateObjRef(System.Type)" argnames="requestedType" inherited="System.MarshalByRefObject" returntype="System.Runtime.Remoting.ObjRef" />
+        <method name="InitializeLifetimeService" argnames="" inherited="System.MarshalByRefObject" returntype="System.Object" />
+        <method name="GetLifetimeService" argnames="" inherited="System.MarshalByRefObject" returntype="System.Object" />
+        <method name="Finalize" argnames="" inherited="System.ComponentModel.Component" returntype="System.Void" />
+        <method name="GetHashCode" argnames="" inherited="System.Object" returntype="System.Int32" />
+        <method name="Equals(System.Object)" argnames="obj" inherited="System.Object" returntype="System.Boolean" />
+        <method name="ToString" argnames="" inherited="System.ComponentModel.Component" returntype="System.String" />
+        <method name="GetType" argnames="" inherited="System.Object" returntype="System.Type" />
+        <method name="MemberwiseClone" argnames="" inherited="System.Object" returntype="System.Object" />
+        <event name="Committed" inherited="System.Configuration.Install.Installer" />
+        <event name="AfterInstall" inherited="System.Configuration.Install.Installer" />
+        <event name="AfterRollback" inherited="System.Configuration.Install.Installer" />
+        <event name="AfterUninstall" inherited="System.Configuration.Install.Installer" />
+        <event name="Committing" inherited="System.Configuration.Install.Installer" />
+        <event name="BeforeInstall" inherited="System.Configuration.Install.Installer" />
+        <event name="BeforeRollback" inherited="System.Configuration.Install.Installer" />
+        <event name="BeforeUninstall" inherited="System.Configuration.Install.Installer" />
+        <event name="Disposed" inherited="System.ComponentModel.Component" />
+    </class>
+</masterdoc>
