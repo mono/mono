@@ -1,0 +1,158 @@
+<Type Name="Asn1Tagged" FullName="Novell.Directory.Ldap.Asn1.Asn1Tagged">
+  <TypeSignature Language="C#" Value="public class Asn1Tagged : Novell.Directory.Ldap.Asn1.Asn1Object, System.Runtime.Serialization.ISerializable" />
+  <AssemblyInfo>
+    <AssemblyName>Novell.Directory.Ldap</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyCulture>
+    </AssemblyCulture>
+    <Attributes>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyKeyFile(KeyFile="../mono.pub")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyDelaySign(DelaySign=True)</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.CLSCompliant(IsCompliant=True)</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyCulture(Culture="")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyTrademark(Trademark="")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyCopyright(Copyright=" (C) 2003 Novell, Inc")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyProduct(Product="")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyCompany(Company="Novell, Inc")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyConfiguration(Configuration="")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyDescription(Description="Novell.Directory.Ldap")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyTitle(Title="C# LDAP")</AttributeName>
+      </Attribute>
+    </Attributes>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Novell.Directory.Ldap.Asn1.Asn1Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Runtime.Serialization.ISerializable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.CLSCompliant(IsCompliant=True)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Asn1Tagged(Novell.Directory.Ldap.Asn1.Asn1Identifier identifier, Novell.Directory.Ldap.Asn1.Asn1Object object_Renamed)" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="identifier" Type="Novell.Directory.Ldap.Asn1.Asn1Identifier" />
+        <Parameter Name="object_Renamed" Type="Novell.Directory.Ldap.Asn1.Asn1Object" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="identifier">To be added.</param>
+        <param name="object_Renamed">To be added.</param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Asn1Tagged(Novell.Directory.Ldap.Asn1.Asn1Identifier identifier, Novell.Directory.Ldap.Asn1.Asn1Object object_Renamed, bool explicit_Renamed)" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="identifier" Type="Novell.Directory.Ldap.Asn1.Asn1Identifier" />
+        <Parameter Name="object_Renamed" Type="Novell.Directory.Ldap.Asn1.Asn1Object" />
+        <Parameter Name="explicit_Renamed" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="identifier">To be added.</param>
+        <param name="object_Renamed">To be added.</param>
+        <param name="explicit_Renamed">To be added.</param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Asn1Tagged(Novell.Directory.Ldap.Asn1.Asn1Decoder dec, System.IO.Stream in_Renamed, int len, Novell.Directory.Ldap.Asn1.Asn1Identifier identifier)" />
+      <MemberType>Constructor</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(IsCompliant=False)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters>
+        <Parameter Name="dec" Type="Novell.Directory.Ldap.Asn1.Asn1Decoder" />
+        <Parameter Name="in_Renamed" Type="System.IO.Stream" />
+        <Parameter Name="len" Type="System.Int32" />
+        <Parameter Name="identifier" Type="Novell.Directory.Ldap.Asn1.Asn1Identifier" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="dec">To be added.</param>
+        <param name="in_Renamed">To be added.</param>
+        <param name="len">To be added.</param>
+        <param name="identifier">To be added.</param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="taggedValue">
+      <MemberSignature Language="C#" Value="public Novell.Directory.Ldap.Asn1.Asn1Object taggedValue()" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Novell.Directory.Ldap.Asn1.Asn1Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TaggedValue">
+      <MemberSignature Language="C#" Value="public virtual Novell.Directory.Ldap.Asn1.Asn1Object TaggedValue { set; }" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(IsCompliant=False)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Novell.Directory.Ldap.Asn1.Asn1Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Explicit">
+      <MemberSignature Language="C#" Value="public virtual bool Explicit { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>

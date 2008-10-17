@@ -1,0 +1,201 @@
+<Type Name="LdapSearchConstraints" FullName="Novell.Directory.Ldap.LdapSearchConstraints">
+  <TypeSignature Language="C#" Value="public class LdapSearchConstraints : Novell.Directory.Ldap.LdapConstraints, System.ICloneable" />
+  <AssemblyInfo>
+    <AssemblyName>Novell.Directory.Ldap</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyCulture>
+    </AssemblyCulture>
+    <Attributes>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyKeyFile(KeyFile="../mono.pub")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyDelaySign(DelaySign=True)</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.CLSCompliant(IsCompliant=True)</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyCulture(Culture="")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyTrademark(Trademark="")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyCopyright(Copyright=" (C) 2003 Novell, Inc")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyProduct(Product="")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyCompany(Company="Novell, Inc")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyConfiguration(Configuration="")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyDescription(Description="Novell.Directory.Ldap")</AttributeName>
+      </Attribute>
+      <Attribute>
+        <AttributeName>System.Reflection.AssemblyTitle(Title="C# LDAP")</AttributeName>
+      </Attribute>
+    </Attributes>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Novell.Directory.Ldap.LdapConstraints</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ICloneable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public LdapSearchConstraints()" />
+      <MemberType>Constructor</MemberType>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public LdapSearchConstraints(Novell.Directory.Ldap.LdapConstraints cons)" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="cons" Type="Novell.Directory.Ldap.LdapConstraints" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="cons">To be added.</param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public LdapSearchConstraints(int msLimit, int serverTimeLimit, int dereference, int maxResults, bool doReferrals, int batchSize, Novell.Directory.Ldap.LdapReferralHandler handler, int hop_limit)" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="msLimit" Type="System.Int32" />
+        <Parameter Name="serverTimeLimit" Type="System.Int32" />
+        <Parameter Name="dereference" Type="System.Int32" />
+        <Parameter Name="maxResults" Type="System.Int32" />
+        <Parameter Name="doReferrals" Type="System.Boolean" />
+        <Parameter Name="batchSize" Type="System.Int32" />
+        <Parameter Name="handler" Type="Novell.Directory.Ldap.LdapReferralHandler" />
+        <Parameter Name="hop_limit" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <summary>To be added.</summary>
+        <param name="msLimit">To be added.</param>
+        <param name="serverTimeLimit">To be added.</param>
+        <param name="dereference">To be added.</param>
+        <param name="maxResults">To be added.</param>
+        <param name="doReferrals">To be added.</param>
+        <param name="batchSize">To be added.</param>
+        <param name="handler">To be added.</param>
+        <param name="hop_limit">To be added.</param>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DEREF_NEVER">
+      <MemberSignature Language="C#" Value="public static const int DEREF_NEVER" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <MemberValue>0</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DEREF_SEARCHING">
+      <MemberSignature Language="C#" Value="public static const int DEREF_SEARCHING" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <MemberValue>1</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DEREF_FINDING">
+      <MemberSignature Language="C#" Value="public static const int DEREF_FINDING" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <MemberValue>2</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DEREF_ALWAYS">
+      <MemberSignature Language="C#" Value="public static const int DEREF_ALWAYS" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <MemberValue>3</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BatchSize">
+      <MemberSignature Language="C#" Value="public virtual int BatchSize { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dereference">
+      <MemberSignature Language="C#" Value="public virtual int Dereference { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxResults">
+      <MemberSignature Language="C#" Value="public virtual int MaxResults { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ServerTimeLimit">
+      <MemberSignature Language="C#" Value="public virtual int ServerTimeLimit { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+</Type>
