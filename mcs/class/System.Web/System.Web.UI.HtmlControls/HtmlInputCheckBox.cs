@@ -91,7 +91,7 @@ namespace System.Web.UI.HtmlControls
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
 			if (Page != null)
-				Page.ClientScript.RegisterForEventValidation (this.UniqueID);
+				Page.ClientScript.RegisterForEventValidation (UniqueID);
 			base.RenderAttributes (writer);
 		}
 #endif
@@ -149,6 +149,7 @@ namespace System.Web.UI.HtmlControls
 
 		protected virtual void RaisePostDataChangedEvent ()
 		{
+			ValidateEvent (UniqueID, String.Empty);
 			RaisePostDataChangedEventInternal ();
 		}
 #endif

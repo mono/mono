@@ -180,7 +180,7 @@ namespace System.Web.UI.WebControls {
 			foreach (ListItem i in Items) {
 #if NET_2_0
 				if (havePage)
-					Page.ClientScript.RegisterForEventValidation (this.UniqueID, i.Value);
+					Page.ClientScript.RegisterForEventValidation (UniqueID, i.Value);
 
 				if (i.HasAttributes)
 					i.Attributes.AddAttributes (writer);
@@ -203,6 +203,7 @@ namespace System.Web.UI.WebControls {
 			
 		protected virtual void RaisePostBackEvent (string eventArgument)
 		{
+			ValidateEvent (UniqueID, eventArgument);
 			if (CausesValidation)
 				Page.Validate (ValidationGroup);
 			

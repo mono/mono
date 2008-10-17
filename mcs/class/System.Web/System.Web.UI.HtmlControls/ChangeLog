@@ -1,3 +1,27 @@
+2008-10-17  Marek Habersack  <mhabersack@novell.com>
+
+	* HtmlInputHidden.cs: validate the event in LoadPostDataInternal.
+
+	* HtmlInputButton.cs: validate the event in
+	RaisePostBackEventInternal ().
+	Register for event validation in RenderAttributes ()
+
+	* HtmlTextArea.cs: validate the event in
+	RaisePostBackDataChangedEvent ().
+
+	* HtmlButton.cs: validate the event in RaisePostBackEvent ().
+	Register for event validation in RenderAttributes ()
+
+	* HtmlAnchor.cs: validate the event in RaisePostBackEvent ().
+	Register for event validation in RenderAttributes ().
+
+	* HtmlInputRadioButton.cs, HtmlSelect.cs: validate the event in
+	LoadPostData.
+
+	* HtmlInputText.cs, HtmlInputImage.cs, HtmlInputCheckBox.cs,
+	HtmlInputPassword.cs: validate the event in
+	RaisePostDataChangedEvent ().
+
 2008-10-07  Christian Hergert  <christian.hergert@gmail.com>
 
 	* HtmlImage.cs: Do not render the src attribute if it is null or empty.

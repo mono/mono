@@ -511,11 +511,11 @@ namespace System.Web.UI.WebControls {
 		protected internal override void RenderContents (HtmlTextWriter writer)
 		{
 			bool selected = false;
-			bool havePage = Page != null;
+			Page page = Page;
 			for (int i = 0; i < Items.Count; i++) {
 				ListItem item = Items [i];
-				if (havePage)
-					Page.ClientScript.RegisterForEventValidation (this.UniqueID, item.Value);
+				if (page != null)
+					page.ClientScript.RegisterForEventValidation (UniqueID, item.Value);
 				writer.WriteBeginTag ("option");
 				if (item.Selected) {
 					if (selected)

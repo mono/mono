@@ -189,6 +189,7 @@ namespace System.Web.UI.HtmlControls {
 
 		protected virtual void RaisePostDataChangedEvent ()
 		{
+			ValidateEvent (UniqueID, String.Empty);
 			RaisePostDataChangedEventInternal ();
 		}
 #endif		
@@ -250,7 +251,7 @@ namespace System.Web.UI.HtmlControls {
 		{
 #if NET_2_0
 			if (Page != null)
-				Page.ClientScript.RegisterForEventValidation (this.UniqueID);
+				Page.ClientScript.RegisterForEventValidation (UniqueID);
 			
 			if (CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup)) {
 				ClientScriptManager csm = Page.ClientScript;

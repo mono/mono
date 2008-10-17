@@ -48,7 +48,6 @@ namespace System.Web.UI.HtmlControls {
 		{
 		}
 
-
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
 			// make sure we don't render the password
@@ -69,6 +68,8 @@ namespace System.Web.UI.HtmlControls {
 
 		void IPostBackDataHandler.RaisePostDataChangedEvent ()
 		{
+			// We registered in the base class
+			ValidateEvent (UniqueID, String.Empty);
 			OnServerChange (EventArgs.Empty);
 		}
 	}

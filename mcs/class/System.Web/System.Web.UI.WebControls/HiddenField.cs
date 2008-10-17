@@ -96,6 +96,7 @@ namespace System.Web.UI.WebControls
 
 		protected virtual void RaisePostDataChangedEvent ()
 		{
+			ValidateEvent (UniqueID, String.Empty);
 			OnValueChanged (EventArgs.Empty);
 		}
 
@@ -111,13 +112,18 @@ namespace System.Web.UI.WebControls
 
 		protected internal override void Render (HtmlTextWriter writer)
 		{
+			Page page = Page;
+			string uniqueid = UniqueID;
+			if (page != null)
+				page.ClientScript.RegisterForEventValidation (uniqueid);
+			
 			writer.AddAttribute (HtmlTextWriterAttribute.Type, "hidden", false);
 
 			if (!String.IsNullOrEmpty (ClientID))
 				writer.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
 
-			if (!String.IsNullOrEmpty (UniqueID))
-				writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
+			if (!String.IsNullOrEmpty (uniqueid))
+				writer.AddAttribute (HtmlTextWriterAttribute.Name, uniqueid);
 
 			if (!String.IsNullOrEmpty (Value))
 				writer.AddAttribute (HtmlTextWriterAttribute.Value, Value);

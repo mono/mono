@@ -1702,19 +1702,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 	}
 	
-#if NET_2_0
-	bool CheckForValidationSupport (Control targetControl)
-	{
-		if (targetControl == null)
-			return false;
-		Type type = targetControl.GetType ();
-		object[] attributes = type.GetCustomAttributes (false);
-		foreach (object attr in attributes)
-			if (attr is SupportsEventValidationAttribute)
-				return true;
-		return false;
-	}
-#endif	
 	void RaisePostBackEvents ()
 	{
 #if NET_2_0
@@ -1771,11 +1758,6 @@ public partial class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	protected virtual void RaisePostBackEvent (IPostBackEventHandler sourceControl, string eventArgument)
 	{
-#if NET_2_0
-		Control targetControl = sourceControl as Control;
-		if (targetControl != null && CheckForValidationSupport (targetControl))
-			scriptManager.ValidateEvent (targetControl.UniqueID, eventArgument);
-#endif
 		sourceControl.RaisePostBackEvent (eventArgument);
 	}
 	
@@ -2058,7 +2040,7 @@ public partial class Page : TemplateControl, IHttpHandler
 #else
 	internal
 #endif
-		ClientScriptManager ClientScript {
+	ClientScriptManager ClientScript {
 		get { return scriptManager; }
 	}
 

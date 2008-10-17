@@ -1,3 +1,8 @@
+2008-10-17  Marek Habersack  <mhabersack@novell.com>
+
+	* MenuAdapterTest.cs: work around event validation failure in the
+	test environment.
+
 2008-01-15  Dean Brettle <dean@brettle.com> 
 
 	* MenuAdapterTest.cs: added

@@ -94,8 +94,9 @@ namespace System.Web.UI.WebControls {
 
 		protected override void AddAttributesToRender (HtmlTextWriter w)
 		{
-			if (Page != null)
-				Page.VerifyRenderingInServerForm (this);
+			Page page = Page;
+			if (page != null)
+				page.VerifyRenderingInServerForm (this);
 			
 			switch (TextMode) {
 			case TextBoxMode.MultiLine:
@@ -148,16 +149,20 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 			if (AutoPostBack) {
 				w.AddAttribute ("onkeypress", "if (WebForm_TextBoxKeyHandler(event) == false) return false;", false);
+
+				if (page != null) {
+					string onchange = page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true);
+					onchange = String.Concat ("setTimeout('", onchange.Replace ("\\", "\\\\").Replace ("'", "\\'"), "', 0)");
+					w.AddAttribute (HtmlTextWriterAttribute.Onchange, BuildScriptAttribute ("onchange", onchange));
+				}
+			} else if (page != null)
+				page.ClientScript.RegisterForEventValidation (UniqueID, String.Empty);
 				
-				string onchange = Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true);
-				onchange = String.Concat ("setTimeout('", onchange.Replace ("\\", "\\\\").Replace ("'", "\\'"), "', 0)");
-				w.AddAttribute (HtmlTextWriterAttribute.Onchange, BuildScriptAttribute ("onchange", onchange));
-			}
 #else		
-			if (AutoPostBack)
+			if (page != null && AutoPostBack)
 				w.AddAttribute (HtmlTextWriterAttribute.Onchange,
 						BuildScriptAttribute ("onchange",
-							Page.ClientScript.GetPostBackClientHyperlink (this, "")));
+							page.ClientScript.GetPostBackClientHyperlink (this, "")));
 #endif
 
 			if (ReadOnly)
@@ -188,9 +193,10 @@ namespace System.Web.UI.WebControls {
 			if (AutoPostBack) {
 				RegisterKeyHandlerClientScript ();
 			}
-			
-			if (Page != null && Enabled)
-				Page.RegisterEnabledControl (this);
+
+			Page page = Page;
+			if (page != null && Enabled)
+				page.RegisterEnabledControl (this);
 #endif
 		}
 
@@ -213,6 +219,9 @@ namespace System.Web.UI.WebControls {
 #endif
 		bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
+#if NET_2_0
+			ValidateEvent (postDataKey, String.Empty);
+#endif
 			if (Text != postCollection [postDataKey]) {
 				Text = postCollection [postDataKey];
 				return true;
@@ -257,10 +266,12 @@ namespace System.Web.UI.WebControls {
 			PostBackOptions options = new PostBackOptions (this);
 			options.ActionUrl = null;
 			options.ValidationGroup = null;
-			options.Argument = "";
+			options.Argument = String.Empty;
 			options.RequiresJavaScriptProtocol = false;
 			options.ClientSubmit = true;
-			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
+			
+			Page page = Page;
+			options.PerformValidation = CausesValidation && page != null && page.AreValidatorsUplevel (ValidationGroup);
 			if (options.PerformValidation)
 				options.ValidationGroup = ValidationGroup;
 

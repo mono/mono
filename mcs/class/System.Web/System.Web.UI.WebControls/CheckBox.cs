@@ -497,6 +497,7 @@ namespace System.Web.UI.WebControls {
 		void RaisePostDataChangedEvent ()
 		{
 #if NET_2_0
+			ValidateEvent (UniqueID, String.Empty);
 			if (CausesValidation)
 				Page.Validate (ValidationGroup);
 #endif
@@ -518,7 +519,7 @@ namespace System.Web.UI.WebControls {
 			PostBackOptions options = new PostBackOptions (this);
 			options.ActionUrl = null;
 			options.ValidationGroup = null;
-			options.Argument = "";
+			options.Argument = String.Empty;
 			options.RequiresJavaScriptProtocol = false;
 			options.ClientSubmit = true;
 			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);

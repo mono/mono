@@ -40,6 +40,7 @@ namespace System.Web.UI.WebControls
 	[DefaultEvent ("Click")]
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[SupportsEventValidation]
 	public class ImageMap: Image, IPostBackEventHandler
 	{
 		HotSpotCollection spots;
@@ -128,6 +129,7 @@ namespace System.Web.UI.WebControls
 		
 		public void RaisePostBackEvent (string eventArgument)
 		{
+			ValidateEvent (UniqueID, eventArgument);
 			HotSpot spot = HotSpots [int.Parse (eventArgument)];
 			OnClick (new ImageMapEventArgs (spot.PostBackValue));
 		}
@@ -174,7 +176,7 @@ namespace System.Web.UI.WebControls
 							writer.AddAttribute (HtmlTextWriterAttribute.Href, navUrl);
 							break;
 						case HotSpotMode.PostBack:
-							writer.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackClientHyperlink (this, n.ToString()));
+							writer.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackClientHyperlink (this, n.ToString(), true));
 							break;
 					}
 						

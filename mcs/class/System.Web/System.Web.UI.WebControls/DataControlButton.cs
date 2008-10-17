@@ -44,7 +44,8 @@ namespace System.Web.UI.WebControls
 		bool AllowCallback { get; set;}
 		ButtonType ButtonType { get;}
 	}
-	
+
+	[SupportsEventValidation]
 	internal class DataControlButton : Button, IDataControlButton
 	{
 		public static IDataControlButton CreateButton (ButtonType type, Control container, string text, string image, string command, string commandArg, bool allowCallback)

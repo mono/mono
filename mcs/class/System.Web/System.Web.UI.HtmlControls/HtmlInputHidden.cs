@@ -52,6 +52,9 @@ namespace System.Web.UI.HtmlControls {
 		{
 			string data = postCollection [postDataKey];
 			if (data != null && data != Value) {
+#if NET_2_0
+				ValidateEvent (postDataKey, String.Empty);
+#endif
 				Value = data;
 				return true;
 			}
@@ -97,8 +100,9 @@ namespace System.Web.UI.HtmlControls {
 #if NET_2_0
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
-			if (Page != null)
-				Page.ClientScript.RegisterForEventValidation (this.UniqueID);
+			Page page = Page;
+			if (page != null)
+				page.ClientScript.RegisterForEventValidation (Name);
 			base.RenderAttributes (writer);
 		}		
 

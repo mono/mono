@@ -107,6 +107,11 @@ namespace System.Web.UI.WebControls {
 
 		internal override void InternalAddAttributesToRender (HtmlTextWriter w) 
 		{
+#if NET_2_0
+			Page page = Page;
+			if (page != null)
+				page.ClientScript.RegisterForEventValidation (NameAttribute, ValueAttribute);
+#endif
 			base.InternalAddAttributesToRender (w);
 			w.AddAttribute (HtmlTextWriterAttribute.Value, ValueAttribute);
 		}
@@ -126,7 +131,11 @@ namespace System.Web.UI.WebControls {
 #endif
 		bool LoadPostData (string postDataKey, NameValueCollection postCollection) 
 		{
-			bool checkedOnClient = postCollection[NameAttribute] == ValueAttribute;
+			string value = postCollection [NameAttribute];
+			bool checkedOnClient = value == ValueAttribute;
+#if NET_2_0
+			ValidateEvent (NameAttribute, value);
+#endif
 			if (Checked == checkedOnClient)
 				return false;
 

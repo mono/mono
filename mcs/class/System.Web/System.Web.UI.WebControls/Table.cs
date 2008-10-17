@@ -300,6 +300,7 @@ namespace System.Web.UI.WebControls {
 
 		protected virtual void RaisePostBackEvent (string argument)
 		{
+			ValidateEvent (UniqueID, argument);
 		}
 #endif
 

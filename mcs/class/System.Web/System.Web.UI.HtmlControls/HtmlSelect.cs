@@ -638,7 +638,7 @@ namespace System.Web.UI.HtmlControls
 		{
 #if NET_2_0
 			if (Page != null)
-				Page.ClientScript.RegisterForEventValidation (this.UniqueID);
+				Page.ClientScript.RegisterForEventValidation (UniqueID);
 #endif
 			/* If there is no "name" attribute,
 			 * LoadPostData doesn't work...
@@ -805,7 +805,11 @@ namespace System.Web.UI.HtmlControls
 					}
 				}
 			}
-			
+
+#if NET_2_0
+			if (changed)
+				ValidateEvent (postDataKey, String.Empty);
+#endif
 			return (changed);
 		}
 

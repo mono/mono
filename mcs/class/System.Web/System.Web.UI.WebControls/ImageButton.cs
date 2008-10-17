@@ -247,7 +247,7 @@ namespace System.Web.UI.WebControls {
 #endif
 				: null);
 			options.ValidationGroup = null;
-			options.Argument = "";
+			options.Argument = String.Empty;
 			options.ClientSubmit = false;
 			options.RequiresJavaScriptProtocol = false;
 			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
@@ -297,6 +297,9 @@ namespace System.Web.UI.WebControls {
 #endif
 		void RaisePostBackEvent (string eventArgument)
 		{
+#if NET_2_0
+			ValidateEvent (UniqueID, eventArgument);
+#endif
 			if (CausesValidation)
 #if NET_2_0
 				Page.Validate (ValidationGroup);

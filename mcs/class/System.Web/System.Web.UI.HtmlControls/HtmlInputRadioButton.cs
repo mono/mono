@@ -139,6 +139,9 @@ namespace System.Web.UI.HtmlControls {
 			if (Checked == checkedOnClient)
 				return false;
 
+#if NET_2_0
+			ValidateEvent (UniqueID, Value);
+#endif
 			Checked = checkedOnClient;
 			return checkedOnClient;
 		}

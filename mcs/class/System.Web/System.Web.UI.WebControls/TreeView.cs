@@ -870,6 +870,7 @@ namespace System.Web.UI.WebControls
 
 		protected virtual void RaisePostBackEvent (string eventArgument)
 		{
+			ValidateEvent (UniqueID, eventArgument);
 			string[] args = eventArgument.Split ('|');
 			TreeNode node = FindNodeByPos (args[1]);
 			if (node == null) return;

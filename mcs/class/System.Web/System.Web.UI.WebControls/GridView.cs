@@ -1675,6 +1675,7 @@ namespace System.Web.UI.WebControls
 		
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
 		{
+			ValidateEvent (UniqueID, eventArgument);
 			RaisePostBackEvent (eventArgument);
 		}
 
@@ -2111,9 +2112,12 @@ namespace System.Web.UI.WebControls
 		
 		protected virtual string GetCallbackScript (IButtonControl control, string argument)
 		{
-			if (EnableSortingAndPagingCallbacks)
+			if (EnableSortingAndPagingCallbacks) {
+				Page page = Page;
+				if (page != null)
+					page.ClientScript.RegisterForEventValidation (UniqueID, argument);
 				return "javascript:GridView_ClientEvent (\"" + ClientID + "\",\"" + control.CommandName + "$" + control.CommandArgument + "\"); return false;";
-			else
+			} else
 				return null;
 		}
 		

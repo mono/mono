@@ -1,3 +1,36 @@
+2008-10-17  Marek Habersack  <mhabersack@novell.com>
+
+	* ImageMap.cs: added the SupportsEventValidation attribute to the
+	class.
+	Validate the event in RaisePostBackEvent ().
+	Register for event validation in Render ().
+
+	* DropDownList.cs, ListBox.cs: validate the event in LoadPostData ().
+
+	* TextBox.cs: validate the event in LoadPostData ().
+	Register for event validation in AddAttributesToRender ().
+
+	* HiddenField.cs: validate the event in RaisePostDataChangedEvent.
+	Register for event validation in Render ().
+
+	* RadioButton.cs: validate the event in LoadPostData ().
+	Register for event validation in InternalAddAttributesToRender.
+
+	* CheckBox.cs, RadioButtonList.cs: validate the event in
+	RaisePostDataChangedEvent.
+
+	* Menu.cs: added the SupportsEventValidation attribute to the
+	class.
+	Validate the event in RaisePostBackEvent ().
+	Register for event validation in GetClientEvent ().
+
+	* DetailsView.cs, GridView.cs: validate the event in
+	RaisePostBackEvent ().
+	Register for validation in GetCallbackScript () and in OnPreRender
+
+	* Button.cs, Table.cs, BulletedList.cs, Calendar.cs, LinkButton.cs,
+	ImageButton.cs, TreeView.cs: validate the event in RaisePostBackEvent ().
+
 2008-10-14  Marek Habersack  <mhabersack@novell.com>
 
 	* CompositeDataBoundControl.cs: renamed the itemcount ViewState

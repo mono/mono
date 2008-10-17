@@ -53,9 +53,8 @@ namespace System.Web.UI.WebControls {
 	, IButtonControl
 #endif
 	{
-
-		private static readonly object ClickEvent = new object ();
-		private static readonly object CommandEvent = new object ();
+		static readonly object ClickEvent = new object ();
+		static readonly object CommandEvent = new object ();
 
 		public Button () : base (HtmlTextWriterTag.Input)
 		{
@@ -225,7 +224,7 @@ namespace System.Web.UI.WebControls {
 #endif
 				: null);
 			options.ValidationGroup = null;
-			options.Argument = "";
+			options.Argument = String.Empty;
 			options.RequiresJavaScriptProtocol = false;
 			options.ClientSubmit = !UseSubmitBehavior;
 			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
@@ -266,6 +265,9 @@ namespace System.Web.UI.WebControls {
 #endif
 		void RaisePostBackEvent (string eventArgument)
 		{
+#if NET_2_0
+			ValidateEvent (UniqueID, eventArgument);
+#endif
 			if (CausesValidation)
 #if NET_2_0
 				Page.Validate (ValidationGroup);

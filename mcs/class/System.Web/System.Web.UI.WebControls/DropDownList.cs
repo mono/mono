@@ -152,7 +152,7 @@ namespace System.Web.UI.WebControls {
 			PostBackOptions options = new PostBackOptions (this);
 			options.ActionUrl = null;
 			options.ValidationGroup = null;
-			options.Argument = "";
+			options.Argument = String.Empty;
 			options.RequiresJavaScriptProtocol = false;
 			options.ClientSubmit = true;
 			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
@@ -224,6 +224,9 @@ namespace System.Web.UI.WebControls {
 			int	index;
 
 			index = Items.IndexOf(postCollection[postDataKey]);
+#if NET_2_0
+			ValidateEvent (postDataKey, postCollection [postDataKey]);
+#endif
 			if (index != this.SelectedIndex) {
 				SelectedIndex = index;
 				return true;

@@ -306,6 +306,7 @@ namespace System.Web.UI.WebControls {
 		void RaisePostDataChangedEvent ()
 		{
 #if NET_2_0
+			ValidateEvent (UniqueID, String.Empty);
 			if (CausesValidation)
 				Page.Validate (ValidationGroup);
 #endif
@@ -345,7 +346,7 @@ namespace System.Web.UI.WebControls {
 		{
 #if NET_2_0
 			if (Page != null)
-				Page.ClientScript.RegisterForEventValidation (this.UniqueID);
+				Page.ClientScript.RegisterForEventValidation (UniqueID);
 
 			if (Items.Count == 0)
 				return;

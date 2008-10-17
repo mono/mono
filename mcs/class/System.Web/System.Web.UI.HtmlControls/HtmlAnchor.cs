@@ -173,7 +173,7 @@ namespace System.Web.UI.HtmlControls {
 				PostBackOptions options = GetPostBackOptions ();
 				csm = Page.ClientScript;
 				csm.RegisterForEventValidation (options);
-				Attributes ["href"] = csm.GetPostBackEventReference (options);
+				Attributes ["href"] = csm.GetPostBackEventReference (options, true);
 #else
 				// a script
 				csm = new ClientScriptManager (Page);
@@ -200,6 +200,7 @@ namespace System.Web.UI.HtmlControls {
 #if NET_2_0
 		protected virtual void RaisePostBackEvent (string eventArgument)
 		{
+			ValidateEvent (UniqueID, eventArgument);
 			if (CausesValidation)
 				Page.Validate (ValidationGroup);
 			
@@ -211,7 +212,7 @@ namespace System.Web.UI.HtmlControls {
 			PostBackOptions options = new PostBackOptions (this);
 			options.ValidationGroup = null;
 			options.ActionUrl = null;
-			options.Argument = string.Empty;
+			options.Argument = String.Empty;
 			options.RequiresJavaScriptProtocol = true;
 			options.ClientSubmit = true;
 			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);

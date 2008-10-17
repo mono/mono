@@ -98,6 +98,9 @@ namespace System.Web.UI.HtmlControls {
 
 		void RaisePostBackEventInternal (string eventArgument)
 		{
+#if NET_2_0
+			ValidateEvent (UniqueID, eventArgument);
+#endif
 			if (CausesValidation) {
 #if NET_2_0
 				Page.Validate (ValidationGroup);
@@ -281,8 +284,7 @@ namespace System.Web.UI.HtmlControls {
 				}
 				if (Page != null) {
 					PostBackOptions options = GetPostBackOptions ();
-					Page.ClientScript.RegisterForEventValidation (options);
-					onclick += Page.ClientScript.GetPostBackEventReference (options);
+					onclick += Page.ClientScript.GetPostBackEventReference (options, true);
 				}
 
 				if (onclick.Length > 0) {
@@ -323,7 +325,7 @@ namespace System.Web.UI.HtmlControls {
 			PostBackOptions options = new PostBackOptions (this);
 			options.ValidationGroup = null;
 			options.ActionUrl = null;
-			options.Argument = "";
+			options.Argument = String.Empty;
 			options.RequiresJavaScriptProtocol = false;
 			options.ClientSubmit = (0 != String.Compare (Type, "submit", true, CultureInfo.InvariantCulture));
 			options.PerformValidation = CausesValidation && Page != null && Page.Validators.Count > 0;

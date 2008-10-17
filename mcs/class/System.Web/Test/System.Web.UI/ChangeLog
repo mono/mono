@@ -1,3 +1,9 @@
+2008-10-17  Marek Habersack  <mhabersack@novell.com>
+
+	* PageTest.cs: use a custom version of HtmlInputHidden control to
+	work around the new event validation code which doesn't work in
+	this instance.
+
 2008-07-22  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* LosFormatterTest.cs: Added test for Deserialize using non-seekable

@@ -453,7 +453,12 @@ namespace MonoTests.System.Web.UI {
 		
 		public static void DeterminePostBackMode_UsesAdapter_OnInit (Page p)
 		{
-			HtmlInputHidden h = new HtmlInputHidden();
+			// We need to use this special version of HtmlInputHidden because the
+			// original class registers itself for event validation in RenderAttributes
+			// which is not called by WebTest after this OnInit handler returns (WebTest
+			// performs a fake postback which bypasses the rendering phase) and it would
+			// result in an event validation failure.
+			HtmlInputHidden h = new TestHtmlInputHidden();
 			h.ID = "DeterminePostBackModeTestField";
 			p.Controls.Add(h);
 			p.Load += new EventHandler(DeterminePostBackMode_UsesAdapter_OnLoad);
@@ -1376,6 +1381,19 @@ namespace MonoTests.System.Web.UI {
 	}
 
 #if NET_2_0
+	class TestHtmlInputHidden : global::System.Web.UI.HtmlControls.HtmlInputHidden
+	{
+		protected override bool LoadPostData (string postDataKey, NameValueCollection postCollection)
+		{
+			string data = postCollection [postDataKey];
+			if (data != null && data != Value) {
+				Value = data;
+				return true;
+			}
+			return false;
+		}
+	}
+	
 	class TestAdapter : global::System.Web.UI.Adapters.PageAdapter
 	{
 		public override StringCollection CacheVaryByParams {

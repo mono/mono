@@ -113,7 +113,7 @@ namespace System.Web.UI.HtmlControls {
 #if NET_2_0
 		protected internal override void Render (HtmlTextWriter writer)
 		{
-			Page.ClientScript.RegisterForEventValidation (this.UniqueID);
+			Page.ClientScript.RegisterForEventValidation (UniqueID);
 			base.Render (writer);
 		}
 #endif
@@ -174,6 +174,7 @@ namespace System.Web.UI.HtmlControls {
 
 		protected virtual void RaisePostDataChangedEvent ()
 		{
+			ValidateEvent (UniqueID, String.Empty);
 			RaisePostDataChangedEventInternal ();
 		}
 #endif

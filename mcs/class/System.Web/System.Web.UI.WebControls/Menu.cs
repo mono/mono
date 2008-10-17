@@ -47,6 +47,7 @@ namespace System.Web.UI.WebControls
 	[DefaultEvent ("MenuItemClick")]
 	[ControlValueProperty ("SelectedValue")]
 	[Designer ("System.Web.UI.Design.WebControls.MenuDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+	[SupportsEventValidation]
 	public class Menu : HierarchicalDataBoundControl, IPostBackEventHandler, INamingContainer
 	{
 		MenuItemStyle dynamicMenuItemStyle;
@@ -901,6 +902,7 @@ namespace System.Web.UI.WebControls
 		
 		protected internal virtual void RaisePostBackEvent (string eventArgument)
 		{
+			ValidateEvent (UniqueID, eventArgument);
 			if (!Enabled)
 				return;
 
@@ -1990,10 +1992,10 @@ namespace System.Web.UI.WebControls
 		{
 			return ClientID + "_" + item.Path + sufix;
 		}
-							
+		
 		string GetClientEvent (MenuItem item)
 		{
-			return Page.ClientScript.GetPostBackClientHyperlink (this, item.Path);
+			return Page.ClientScript.GetPostBackClientHyperlink (this, item.Path, true);
 		}
 
 		class MenuTemplateWriter : TextWriter

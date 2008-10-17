@@ -502,6 +502,11 @@ namespace System.Web.UI
 			ValidateEvent (uniqueId, null);
 		}
 
+		ArgumentException InvalidPostBackException ()
+		{
+			return new ArgumentException ("Invalid postback or callback argument. Event validation is enabled using <pages enableEventValidation=\"true\"/> in configuration or <%@ Page EnableEventValidation=\"true\" %> in a page. For security purposes, this feature verifies that arguments to postback or callback events originate from the server control that originally rendered them. If the data is valid and expected, use the ClientScriptManager.RegisterForEventValidation method in order to register the postback or callback data for validation.");
+		}
+		
 		public void ValidateEvent (string uniqueId, string argument)
 		{
 			if (uniqueId == null || uniqueId.Length == 0)
@@ -509,15 +514,14 @@ namespace System.Web.UI
 			if (!page.EnableEventValidation)
 				return;
 			if (eventValidationValues == null)
-				goto bad;
+				throw InvalidPostBackException ();
 			
 			int hash = CalculateEventHash (uniqueId, argument);
 			for (int i = 0; i < eventValidationValues.Length; i++)
 				if (eventValidationValues [i] == hash)
 					return;
 			
-			bad:
-			throw new ArgumentException ("Invalid postback or callback argument. Event validation is enabled using <pages enableEventValidation=\"true\"/> in configuration or <%@ Page EnableEventValidation=\"true\" %> in a page. For security purposes, this feature verifies that arguments to postback or callback events originate from the server control that originally rendered them. If the data is valid and expected, use the ClientScriptManager.RegisterForEventValidation method in order to register the postback or callback data for validation.");
+			throw InvalidPostBackException ();
 		}
 #endif
 		void WriteScripts (HtmlTextWriter writer, ScriptEntry scriptList)

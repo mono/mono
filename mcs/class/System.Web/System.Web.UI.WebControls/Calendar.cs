@@ -50,8 +50,8 @@ namespace System.Web.UI.WebControls {
 	[ControlValueProperty ("SelectedDate", "1/1/0001 12:00:00 AM")]
 	[SupportsEventValidation]
 #endif		
-	public class Calendar : WebControl, IPostBackEventHandler {
-
+	public class Calendar : WebControl, IPostBackEventHandler
+	{
 		private TableItemStyle dayHeaderStyle;
 		private TableItemStyle dayStyle;
 		private TableItemStyle nextPrevStyle;
@@ -687,6 +687,9 @@ namespace System.Web.UI.WebControls {
 		void IPostBackEventHandler.RaisePostBackEvent (string arg)
 #endif
 		{
+#if NET_2_0
+			ValidateEvent (UniqueID, arg);
+#endif
 			if (arg.Length < 1)
 				return;
 

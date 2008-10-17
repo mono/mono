@@ -1477,6 +1477,7 @@ namespace System.Web.UI.WebControls
 		// TODO: This is prolly obsolete
 		protected virtual void RaisePostBackEvent (string eventArgument)
 		{
+			ValidateEvent (UniqueID, eventArgument);
 			int i = eventArgument.IndexOf ('$');
 			CommandEventArgs arg;
 			if (i != -1)
@@ -1881,9 +1882,12 @@ namespace System.Web.UI.WebControls
 
 		protected virtual string GetCallbackScript (IButtonControl buttonControl, string argument)
 		{
-			if (EnablePagingCallbacks)
+			if (EnablePagingCallbacks) {
+				Page page = Page;
+				if (page != null)
+					page.ClientScript.RegisterForEventValidation (UniqueID, argument);
 				return "javascript:DetailsView_ClientEvent (\"" + ClientID + "\",\"" + buttonControl.CommandName + "$" + buttonControl.CommandArgument + "\"); return false;";
-			else
+			} else
 				return null;
 		}
 		
@@ -1932,7 +1936,7 @@ namespace System.Web.UI.WebControls
 				
 				// Make sure the basic script infrastructure is rendered
 				Page.ClientScript.GetCallbackEventReference (this, "null", "", "null");
-				Page.ClientScript.GetPostBackClientHyperlink (this, "");
+				Page.ClientScript.GetPostBackClientHyperlink (this, String.Empty, true);
 			}
 		}
 		
@@ -1957,8 +1961,8 @@ namespace System.Web.UI.WebControls
 			table.Render (writer);
 		}
 
-        PostBackOptions IPostBackContainer.GetPostBackOptions(IButtonControl control)
-        {
+		PostBackOptions IPostBackContainer.GetPostBackOptions (IButtonControl control)
+		{
 			if (control == null)
 				throw new ArgumentNullException ("control");
 
