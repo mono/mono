@@ -1,5 +1,9 @@
 2008-10-17  Jonathan Pryor  <jpryor@novell.com>
 
+	* Makefile: Add mdoc, monodoc to the build.
+
+2008-10-17  Jonathan Pryor  <jpryor@novell.com>
+
 	* Makefile: Add doc-update target support.
 
 2008-10-17  Jb Evain  <jbevain@novell.com>

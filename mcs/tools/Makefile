@@ -26,6 +26,7 @@ net_1_1_dirs := \
 	mjs			\
 	prj2make	\
 	mono-service	\
+	monodoc		\
 	compiler-tester	\
 	mono-xmltool	\
 	installvst		\
@@ -41,6 +42,7 @@ net_2_0_dirs := \
 	monop		\
 	xbuild		\
 	resgen		\
+	mdoc		\
 	mono-service	\
 	mono-shlib-cop	\
 	mkbundle	\
