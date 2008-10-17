@@ -1,0 +1,106 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="Microsoft.Build.Framework" Version="2.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute+DebuggingModes.IgnoreSymbolStoreSequencePoints)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.CompilationRelaxations(System.Runtime.CompilerServices.CompilationRelaxations.NoStringInterning)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyFileVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.Guid("D8A9BA71-4724-481d-9CA7-0DA23A1D615C")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("2.0.50727.1433")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.SatelliteContractVersion("2.0.0.0")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) various MONO Authors")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("MONO Common language infrastructure")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("MONO development team")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDefaultAlias("Microsoft.Build.Framework.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("Microsoft.Build.Framework.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("Microsoft.Build.Framework.dll")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="Microsoft.Build.Framework">
+      <Type Name="AnyEventHandler" Kind="Delegate" />
+      <Type Name="BuildErrorEventArgs" Kind="Class" />
+      <Type Name="BuildErrorEventHandler" Kind="Delegate" />
+      <Type Name="BuildEventArgs" Kind="Class" />
+      <Type Name="BuildFinishedEventArgs" Kind="Class" />
+      <Type Name="BuildFinishedEventHandler" Kind="Delegate" />
+      <Type Name="BuildMessageEventArgs" Kind="Class" />
+      <Type Name="BuildMessageEventHandler" Kind="Delegate" />
+      <Type Name="BuildStartedEventArgs" Kind="Class" />
+      <Type Name="BuildStartedEventHandler" Kind="Delegate" />
+      <Type Name="BuildStatusEventArgs" Kind="Class" />
+      <Type Name="BuildStatusEventHandler" Kind="Delegate" />
+      <Type Name="BuildWarningEventArgs" Kind="Class" />
+      <Type Name="BuildWarningEventHandler" Kind="Delegate" />
+      <Type Name="CustomBuildEventArgs" Kind="Class" />
+      <Type Name="CustomBuildEventHandler" Kind="Delegate" />
+      <Type Name="ExternalProjectFinishedEventArgs" Kind="Class" />
+      <Type Name="ExternalProjectStartedEventArgs" Kind="Class" />
+      <Type Name="IBuildEngine" Kind="Interface" />
+      <Type Name="IEventSource" Kind="Interface" />
+      <Type Name="ILogger" Kind="Interface" />
+      <Type Name="ITask" Kind="Interface" />
+      <Type Name="ITaskHost" Kind="Interface" />
+      <Type Name="ITaskItem" Kind="Interface" />
+      <Type Name="LoadInSeparateAppDomainAttribute" Kind="Class" />
+      <Type Name="LoggerException" Kind="Class" />
+      <Type Name="LoggerVerbosity" Kind="Enumeration" />
+      <Type Name="MessageImportance" Kind="Enumeration" />
+      <Type Name="OutputAttribute" Kind="Class" />
+      <Type Name="ProjectFinishedEventArgs" Kind="Class" />
+      <Type Name="ProjectFinishedEventHandler" Kind="Delegate" />
+      <Type Name="ProjectStartedEventArgs" Kind="Class" />
+      <Type Name="ProjectStartedEventHandler" Kind="Delegate" />
+      <Type Name="RequiredAttribute" Kind="Class" />
+      <Type Name="TargetFinishedEventArgs" Kind="Class" />
+      <Type Name="TargetFinishedEventHandler" Kind="Delegate" />
+      <Type Name="TargetStartedEventArgs" Kind="Class" />
+      <Type Name="TargetStartedEventHandler" Kind="Delegate" />
+      <Type Name="TaskCommandLineEventArgs" Kind="Class" />
+      <Type Name="TaskFinishedEventArgs" Kind="Class" />
+      <Type Name="TaskFinishedEventHandler" Kind="Delegate" />
+      <Type Name="TaskStartedEventArgs" Kind="Class" />
+      <Type Name="TaskStartedEventHandler" Kind="Delegate" />
+    </Namespace>
+  </Types>
+  <Title>Microsoft.Build.Framework</Title>
+</Overview>

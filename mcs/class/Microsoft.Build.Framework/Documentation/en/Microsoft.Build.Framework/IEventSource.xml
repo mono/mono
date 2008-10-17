@@ -1,0 +1,225 @@
+<Type Name="IEventSource" FullName="Microsoft.Build.Framework.IEventSource">
+  <TypeSignature Language="C#" Value="public interface IEventSource" />
+  <AssemblyInfo>
+    <AssemblyName>Microsoft.Build.Framework</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version="2.0" />
+  </Docs>
+  <Members>
+    <Member MemberName="AnyEventRaised">
+      <MemberSignature Language="C#" Value="public event Microsoft.Build.Framework.AnyEventHandler AnyEventRaised;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.Framework.AnyEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BuildFinished">
+      <MemberSignature Language="C#" Value="public event Microsoft.Build.Framework.BuildFinishedEventHandler BuildFinished;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.Framework.BuildFinishedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BuildStarted">
+      <MemberSignature Language="C#" Value="public event Microsoft.Build.Framework.BuildStartedEventHandler BuildStarted;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.Framework.BuildStartedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CustomEventRaised">
+      <MemberSignature Language="C#" Value="public event Microsoft.Build.Framework.CustomBuildEventHandler CustomEventRaised;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.Framework.CustomBuildEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ErrorRaised">
+      <MemberSignature Language="C#" Value="public event Microsoft.Build.Framework.BuildErrorEventHandler ErrorRaised;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.Framework.BuildErrorEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MessageRaised">
+      <MemberSignature Language="C#" Value="public event Microsoft.Build.Framework.BuildMessageEventHandler MessageRaised;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.Framework.BuildMessageEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ProjectFinished">
+      <MemberSignature Language="C#" Value="public event Microsoft.Build.Framework.ProjectFinishedEventHandler ProjectFinished;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.Framework.ProjectFinishedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ProjectStarted">
+      <MemberSignature Language="C#" Value="public event Microsoft.Build.Framework.ProjectStartedEventHandler ProjectStarted;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.Framework.ProjectStartedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="StatusEventRaised">
+      <MemberSignature Language="C#" Value="public event Microsoft.Build.Framework.BuildStatusEventHandler StatusEventRaised;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.Framework.BuildStatusEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TargetFinished">
+      <MemberSignature Language="C#" Value="public event Microsoft.Build.Framework.TargetFinishedEventHandler TargetFinished;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.Framework.TargetFinishedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TargetStarted">
+      <MemberSignature Language="C#" Value="public event Microsoft.Build.Framework.TargetStartedEventHandler TargetStarted;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.Framework.TargetStartedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TaskFinished">
+      <MemberSignature Language="C#" Value="public event Microsoft.Build.Framework.TaskFinishedEventHandler TaskFinished;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.Framework.TaskFinishedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TaskStarted">
+      <MemberSignature Language="C#" Value="public event Microsoft.Build.Framework.TaskStartedEventHandler TaskStarted;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.Framework.TaskStartedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="WarningRaised">
+      <MemberSignature Language="C#" Value="public event Microsoft.Build.Framework.BuildWarningEventHandler WarningRaised;" />
+      <MemberType>Event</MemberType>
+      <ReturnValue>
+        <ReturnType>Microsoft.Build.Framework.BuildWarningEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version="2.0" />
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>
