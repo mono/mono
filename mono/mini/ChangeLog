@@ -1,3 +1,7 @@
+2008-10-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* basic-simd.cs: Tests for new methods in Vector8us.
+
 2008-10-17  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir2): "refanytype" produces a
