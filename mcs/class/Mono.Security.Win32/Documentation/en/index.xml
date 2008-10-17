@@ -1,0 +1,51 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="Mono.Security.Win32" Version="2.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("Mono.Security.Win32.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("MONO CLI")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("Mono.Security.Win32.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) 2003-2004 Various Authors")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("MONO development team")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="Mono.Security.Cryptography">
+      <Type Name="CapiContext" Kind="Class" />
+      <Type Name="CapiHash" Kind="Class" />
+      <Type Name="MD2" Kind="Class" />
+      <Type Name="MD2CryptoServiceProvider" Kind="Class" />
+      <Type Name="MD4" Kind="Class" />
+      <Type Name="MD4CryptoServiceProvider" Kind="Class" />
+      <Type Name="MD5CryptoServiceProvider" Kind="Class" />
+      <Type Name="RNGCryptoServiceProvider" Kind="Class" />
+      <Type Name="SHA1CryptoServiceProvider" Kind="Class" />
+    </Namespace>
+  </Types>
+  <Title>Mono.Security.Win32</Title>
+</Overview>
