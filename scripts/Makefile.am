@@ -35,6 +35,7 @@ bin_SCRIPTS = \
 	$(scripts_service)	\
 	$(scripts_nunit)	\
 	$(scripts_rpmhelpers)	\
+	$(MDOC_SUBCOMMANDS)	\
 	mod			\
 	mono-test-install
 
@@ -101,6 +102,13 @@ scripts_2_0 = \
 	sgen$(SCRIPT_SUFFIX)			\
 	xbuild$(SCRIPT_SUFFIX)
 
+MDOC_SUBCOMMANDS = \
+	mdoc-assemble \
+	mdoc-export-html \
+	mdoc-export-msxdoc \
+	mdoc-update \
+	mdoc-validate
+
 #
 # these are the new defaults, 2.0 profile-based commands
 #
@@ -123,7 +131,7 @@ scripts_service = mono-service mono-service2
 scripts_nunit = nunit-console$(SCRIPT_SUFFIX) nunit-console2$(SCRIPT_SUFFIX)
 scripts_rpmhelpers = mono-find-provides mono-find-requires
 
-CLEANFILES = $(scripts_1_0) $(scripts_1_0_umask) $(scripts_2_0) $(scripts_2_1) $(scripts_defaults) $(scripts_1_0_compat) mono-service mono-service2 nunit-console nunit-console2 mono-find-provides mono-find-requires mod
+CLEANFILES = $(scripts_1_0) $(scripts_1_0_umask) $(scripts_2_0) $(scripts_2_1) $(scripts_defaults) $(scripts_1_0_compat) mono-service mono-service2 nunit-console nunit-console2 mono-find-provides mono-find-requires mod $(MDOC_SUBCOMMANDS)
 DISTCLEANFILES = $(pkgconfig_DATA) $(scripts_rpmhelpers)
 
 EXTRA_DIST =			\
@@ -220,3 +228,11 @@ $(scripts_2_0): $(SCRIPT_IN) Makefile
 	n=`echo $@ | sed 's,$(COMPAT_2_0_SUFFIX)$$,,'`; \
 	$(REWRITE2) -e "s,@""exe_name@,$$n,g" $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
 	mv $@.tmp $@
+
+$(MDOC_SUBCOMMANDS): Makefile
+	for script in $(MDOC_SUBCOMMANDS) ; do                  \
+		cmd=`echo $$script | sed 's/mdoc-//'` ;         \
+		echo "#!/bin/sh" > $$script ;                   \
+		echo "exec mdoc $$cmd \"\$$@\"" >> $$script;    \
+	done
+
