@@ -12,11 +12,11 @@
       <InterfaceName>System.Collections.IEnumerable</InterfaceName>
     </Interface>
   </Interfaces>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Reflection.DefaultMember("Item")</AttributeName>
-    </Attribute>
-  </Attributes>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version="2.0" />
+  </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public BuildItemGroup ();" />
@@ -27,6 +27,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="AddNewItem">
       <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildItem AddNewItem (string itemName, string itemInclude);" />
@@ -46,6 +49,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="AddNewItem">
       <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildItem AddNewItem (string itemName, string itemInclude, bool treatItemIncludeAsLiteral);" />
@@ -67,6 +73,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Clear">
       <MemberSignature Language="C#" Value="public void Clear ();" />
@@ -80,6 +89,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Clone">
       <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildItemGroup Clone (bool deepClone);" />
@@ -97,9 +109,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Condition">
-      <MemberSignature Language="C#" Value="public string Condition { set; get; };" />
+      <MemberSignature Language="C#" Value="public string Condition { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -110,9 +125,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Count">
-      <MemberSignature Language="C#" Value="public int Count { get; };" />
+      <MemberSignature Language="C#" Value="public int Count { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -123,6 +141,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEnumerator">
       <MemberSignature Language="C#" Value="public System.Collections.IEnumerator GetEnumerator ();" />
@@ -137,9 +158,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="IsImported">
-      <MemberSignature Language="C#" Value="public bool IsImported { get; };" />
+      <MemberSignature Language="C#" Value="public bool IsImported { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -150,9 +174,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Item">
-      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildItem this[int index] { get; };" />
+      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildItem this[int index] { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>Microsoft.Build.BuildEngine.BuildItem</ReturnType>
@@ -167,6 +194,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveItem">
       <MemberSignature Language="C#" Value="public void RemoveItem (Microsoft.Build.BuildEngine.BuildItem itemToRemove);" />
@@ -183,6 +213,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveItemAt">
       <MemberSignature Language="C#" Value="public void RemoveItemAt (int index);" />
@@ -199,6 +232,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="ToArray">
       <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildItem[] ToArray ();" />
@@ -213,11 +249,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
   </Members>
-  <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
-    <since version="2.0" />
-  </Docs>
 </Type>

@@ -8,6 +8,11 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version="2.0" />
+  </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public BuildItem (string itemName, Microsoft.Build.Framework.ITaskItem taskItem);" />
@@ -23,6 +28,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public BuildItem (string itemName, string itemInclude);" />
@@ -38,6 +46,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Clone">
       <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildItem Clone ();" />
@@ -52,9 +63,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Condition">
-      <MemberSignature Language="C#" Value="public string Condition { set; get; };" />
+      <MemberSignature Language="C#" Value="public string Condition { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -65,6 +79,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="CopyCustomMetadataTo">
       <MemberSignature Language="C#" Value="public void CopyCustomMetadataTo (Microsoft.Build.BuildEngine.BuildItem destinationItem);" />
@@ -81,9 +98,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Exclude">
-      <MemberSignature Language="C#" Value="public string Exclude { set; get; };" />
+      <MemberSignature Language="C#" Value="public string Exclude { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -94,9 +114,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="FinalItemSpec">
-      <MemberSignature Language="C#" Value="public string FinalItemSpec { get; };" />
+      <MemberSignature Language="C#" Value="public string FinalItemSpec { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -107,6 +130,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEvaluatedMetadata">
       <MemberSignature Language="C#" Value="public string GetEvaluatedMetadata (string metadataName);" />
@@ -124,6 +150,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetMetadata">
       <MemberSignature Language="C#" Value="public string GetMetadata (string metadataName);" />
@@ -141,6 +170,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="HasMetadata">
       <MemberSignature Language="C#" Value="public bool HasMetadata (string metadataName);" />
@@ -158,9 +190,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Include">
-      <MemberSignature Language="C#" Value="public string Include { set; get; };" />
+      <MemberSignature Language="C#" Value="public string Include { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -171,9 +206,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="IsImported">
-      <MemberSignature Language="C#" Value="public bool IsImported { get; };" />
+      <MemberSignature Language="C#" Value="public bool IsImported { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -184,9 +222,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Name">
-      <MemberSignature Language="C#" Value="public string Name { set; get; };" />
+      <MemberSignature Language="C#" Value="public string Name { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -197,6 +238,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveMetadata">
       <MemberSignature Language="C#" Value="public void RemoveMetadata (string metadataName);" />
@@ -213,6 +257,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="SetMetadata">
       <MemberSignature Language="C#" Value="public void SetMetadata (string metadataName, string metadataValue);" />
@@ -231,6 +278,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="SetMetadata">
       <MemberSignature Language="C#" Value="public void SetMetadata (string metadataName, string metadataValue, bool treatMetadataValueAsLiteral);" />
@@ -251,11 +301,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
   </Members>
-  <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
-    <since version="2.0" />
-  </Docs>
 </Type>

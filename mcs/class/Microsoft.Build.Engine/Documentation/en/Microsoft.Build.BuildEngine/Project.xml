@@ -8,6 +8,11 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version="2.0" />
+  </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Project ();" />
@@ -18,6 +23,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Project (Microsoft.Build.BuildEngine.Engine engine);" />
@@ -31,6 +39,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="AddNewImport">
       <MemberSignature Language="C#" Value="public void AddNewImport (string importLocation, string importCondition);" />
@@ -49,6 +60,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="AddNewItem">
       <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildItem AddNewItem (string itemName, string itemInclude);" />
@@ -68,6 +82,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="AddNewItem">
       <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildItem AddNewItem (string itemName, string itemInclude, bool treatItemIncludeAsLiteral);" />
@@ -89,6 +106,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="AddNewItemGroup">
       <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildItemGroup AddNewItemGroup ();" />
@@ -103,6 +123,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="AddNewPropertyGroup">
       <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildPropertyGroup AddNewPropertyGroup (bool insertAtEndOfProject);" />
@@ -120,6 +143,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="AddNewUsingTaskFromAssemblyFile">
       <MemberSignature Language="C#" Value="public void AddNewUsingTaskFromAssemblyFile (string taskName, string assemblyFile);" />
@@ -138,6 +164,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="AddNewUsingTaskFromAssemblyName">
       <MemberSignature Language="C#" Value="public void AddNewUsingTaskFromAssemblyName (string taskName, string assemblyName);" />
@@ -156,6 +185,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Build">
       <MemberSignature Language="C#" Value="public bool Build ();" />
@@ -170,6 +202,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Build">
       <MemberSignature Language="C#" Value="public bool Build (string targetName);" />
@@ -187,6 +222,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Build">
       <MemberSignature Language="C#" Value="public bool Build (string[] targetNames);" />
@@ -204,6 +242,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Build">
       <MemberSignature Language="C#" Value="public bool Build (string[] targetNames, System.Collections.IDictionary targetOutputs);" />
@@ -223,6 +264,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Build">
       <MemberSignature Language="C#" Value="public bool Build (string[] targetNames, System.Collections.IDictionary targetOutputs, Microsoft.Build.BuildEngine.BuildSettings buildFlags);" />
@@ -244,9 +288,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="BuildEnabled">
-      <MemberSignature Language="C#" Value="public bool BuildEnabled { set; get; };" />
+      <MemberSignature Language="C#" Value="public bool BuildEnabled { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -257,9 +304,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="DefaultTargets">
-      <MemberSignature Language="C#" Value="public string DefaultTargets { set; get; };" />
+      <MemberSignature Language="C#" Value="public string DefaultTargets { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -270,9 +320,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Encoding">
-      <MemberSignature Language="C#" Value="public System.Text.Encoding Encoding { get; };" />
+      <MemberSignature Language="C#" Value="public System.Text.Encoding Encoding { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.Encoding</ReturnType>
@@ -283,9 +336,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="EvaluatedItems">
-      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildItemGroup EvaluatedItems { get; };" />
+      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildItemGroup EvaluatedItems { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>Microsoft.Build.BuildEngine.BuildItemGroup</ReturnType>
@@ -296,9 +352,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="EvaluatedItemsIgnoringCondition">
-      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildItemGroup EvaluatedItemsIgnoringCondition { get; };" />
+      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildItemGroup EvaluatedItemsIgnoringCondition { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>Microsoft.Build.BuildEngine.BuildItemGroup</ReturnType>
@@ -309,9 +368,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="EvaluatedProperties">
-      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildPropertyGroup EvaluatedProperties { get; };" />
+      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildPropertyGroup EvaluatedProperties { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>Microsoft.Build.BuildEngine.BuildPropertyGroup</ReturnType>
@@ -322,9 +384,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="FullFileName">
-      <MemberSignature Language="C#" Value="public string FullFileName { set; get; };" />
+      <MemberSignature Language="C#" Value="public string FullFileName { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -335,6 +400,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetConditionedPropertyValues">
       <MemberSignature Language="C#" Value="public string[] GetConditionedPropertyValues (string propertyName);" />
@@ -352,6 +420,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEvaluatedItemsByName">
       <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildItemGroup GetEvaluatedItemsByName (string itemName);" />
@@ -369,6 +440,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEvaluatedItemsByNameIgnoringCondition">
       <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildItemGroup GetEvaluatedItemsByNameIgnoringCondition (string itemName);" />
@@ -386,6 +460,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEvaluatedProperty">
       <MemberSignature Language="C#" Value="public string GetEvaluatedProperty (string propertyName);" />
@@ -403,6 +480,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetProjectExtensions">
       <MemberSignature Language="C#" Value="public string GetProjectExtensions (string id);" />
@@ -420,9 +500,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GlobalProperties">
-      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildPropertyGroup GlobalProperties { set; get; };" />
+      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildPropertyGroup GlobalProperties { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>Microsoft.Build.BuildEngine.BuildPropertyGroup</ReturnType>
@@ -433,9 +516,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Imports">
-      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.ImportCollection Imports { get; };" />
+      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.ImportCollection Imports { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>Microsoft.Build.BuildEngine.ImportCollection</ReturnType>
@@ -446,9 +532,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="InitialTargets">
-      <MemberSignature Language="C#" Value="public string InitialTargets { set; get; };" />
+      <MemberSignature Language="C#" Value="public string InitialTargets { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -459,9 +548,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="IsDirty">
-      <MemberSignature Language="C#" Value="public bool IsDirty { get; };" />
+      <MemberSignature Language="C#" Value="public bool IsDirty { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -472,9 +564,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="IsValidated">
-      <MemberSignature Language="C#" Value="public bool IsValidated { set; get; };" />
+      <MemberSignature Language="C#" Value="public bool IsValidated { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -485,9 +580,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="ItemGroups">
-      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildItemGroupCollection ItemGroups { get; };" />
+      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildItemGroupCollection ItemGroups { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>Microsoft.Build.BuildEngine.BuildItemGroupCollection</ReturnType>
@@ -498,6 +596,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Load">
       <MemberSignature Language="C#" Value="public void Load (System.IO.TextReader textReader);" />
@@ -514,6 +615,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Load">
       <MemberSignature Language="C#" Value="public void Load (string projectFileName);" />
@@ -530,6 +634,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="LoadXml">
       <MemberSignature Language="C#" Value="public void LoadXml (string projectXml);" />
@@ -546,6 +653,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="MarkProjectAsDirty">
       <MemberSignature Language="C#" Value="public void MarkProjectAsDirty ();" />
@@ -559,9 +669,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="ParentEngine">
-      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.Engine ParentEngine { get; };" />
+      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.Engine ParentEngine { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>Microsoft.Build.BuildEngine.Engine</ReturnType>
@@ -572,9 +685,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="PropertyGroups">
-      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildPropertyGroupCollection PropertyGroups { get; };" />
+      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildPropertyGroupCollection PropertyGroups { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>Microsoft.Build.BuildEngine.BuildPropertyGroupCollection</ReturnType>
@@ -585,6 +701,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveAllItemGroups">
       <MemberSignature Language="C#" Value="public void RemoveAllItemGroups ();" />
@@ -598,6 +717,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveAllPropertyGroups">
       <MemberSignature Language="C#" Value="public void RemoveAllPropertyGroups ();" />
@@ -611,6 +733,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveItem">
       <MemberSignature Language="C#" Value="public void RemoveItem (Microsoft.Build.BuildEngine.BuildItem itemToRemove);" />
@@ -627,6 +752,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveItemGroup">
       <MemberSignature Language="C#" Value="public void RemoveItemGroup (Microsoft.Build.BuildEngine.BuildItemGroup itemGroupToRemove);" />
@@ -643,6 +771,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveItemGroupsWithMatchingCondition">
       <MemberSignature Language="C#" Value="public void RemoveItemGroupsWithMatchingCondition (string matchingCondition);" />
@@ -659,6 +790,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveItemsByName">
       <MemberSignature Language="C#" Value="public void RemoveItemsByName (string itemName);" />
@@ -675,6 +809,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="RemovePropertyGroup">
       <MemberSignature Language="C#" Value="public void RemovePropertyGroup (Microsoft.Build.BuildEngine.BuildPropertyGroup propertyGroupToRemove);" />
@@ -691,6 +828,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="RemovePropertyGroupsWithMatchingCondition">
       <MemberSignature Language="C#" Value="public void RemovePropertyGroupsWithMatchingCondition (string matchCondition);" />
@@ -707,6 +847,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="ResetBuildStatus">
       <MemberSignature Language="C#" Value="public void ResetBuildStatus ();" />
@@ -720,6 +863,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Save">
       <MemberSignature Language="C#" Value="public void Save (System.IO.TextWriter outTextWriter);" />
@@ -736,6 +882,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Save">
       <MemberSignature Language="C#" Value="public void Save (string projectFileName);" />
@@ -752,6 +901,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Save">
       <MemberSignature Language="C#" Value="public void Save (string projectFileName, System.Text.Encoding encoding);" />
@@ -770,9 +922,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="SchemaFile">
-      <MemberSignature Language="C#" Value="public string SchemaFile { set; get; };" />
+      <MemberSignature Language="C#" Value="public string SchemaFile { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -783,6 +938,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="SetImportedProperty">
       <MemberSignature Language="C#" Value="public void SetImportedProperty (string propertyName, string propertyValue, string condition, Microsoft.Build.BuildEngine.Project importProject);" />
@@ -805,6 +963,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="SetImportedProperty">
       <MemberSignature Language="C#" Value="public void SetImportedProperty (string propertyName, string propertyValue, string condition, Microsoft.Build.BuildEngine.Project importedProject, Microsoft.Build.BuildEngine.PropertyPosition position);" />
@@ -829,6 +990,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="SetImportedProperty">
       <MemberSignature Language="C#" Value="public void SetImportedProperty (string propertyName, string propertyValue, string condition, Microsoft.Build.BuildEngine.Project importedProject, Microsoft.Build.BuildEngine.PropertyPosition position, bool treatPropertyValueAsLiteral);" />
@@ -855,6 +1019,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="SetProjectExtensions">
       <MemberSignature Language="C#" Value="public void SetProjectExtensions (string id, string xmlText);" />
@@ -873,6 +1040,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="SetProperty">
       <MemberSignature Language="C#" Value="public void SetProperty (string propertyName, string propertyValue);" />
@@ -891,6 +1061,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="SetProperty">
       <MemberSignature Language="C#" Value="public void SetProperty (string propertyName, string propertyValue, string condition);" />
@@ -911,6 +1084,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="SetProperty">
       <MemberSignature Language="C#" Value="public void SetProperty (string propertyName, string propertyValue, string condition, Microsoft.Build.BuildEngine.PropertyPosition position);" />
@@ -933,6 +1109,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="SetProperty">
       <MemberSignature Language="C#" Value="public void SetProperty (string propertyName, string propertyValue, string condition, Microsoft.Build.BuildEngine.PropertyPosition position, bool treatPropertyValueAsLiteral);" />
@@ -957,9 +1136,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Targets">
-      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.TargetCollection Targets { get; };" />
+      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.TargetCollection Targets { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>Microsoft.Build.BuildEngine.TargetCollection</ReturnType>
@@ -970,9 +1152,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="TimeOfLastDirty">
-      <MemberSignature Language="C#" Value="public DateTime TimeOfLastDirty { get; };" />
+      <MemberSignature Language="C#" Value="public DateTime TimeOfLastDirty { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
@@ -983,9 +1168,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="UsingTasks">
-      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.UsingTaskCollection UsingTasks { get; };" />
+      <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.UsingTaskCollection UsingTasks { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>Microsoft.Build.BuildEngine.UsingTaskCollection</ReturnType>
@@ -996,9 +1184,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Xml">
-      <MemberSignature Language="C#" Value="public string Xml { get; };" />
+      <MemberSignature Language="C#" Value="public string Xml { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -1009,11 +1200,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
   </Members>
-  <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
-    <since version="2.0" />
-  </Docs>
 </Type>

@@ -12,6 +12,11 @@
       <InterfaceName>System.Collections.IEnumerable</InterfaceName>
     </Interface>
   </Interfaces>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version="2.0" />
+  </Docs>
   <Members>
     <Member MemberName="AddNewTask">
       <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildTask AddNewTask (string taskName);" />
@@ -29,9 +34,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Condition">
-      <MemberSignature Language="C#" Value="public string Condition { set; get; };" />
+      <MemberSignature Language="C#" Value="public string Condition { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -42,9 +50,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="DependsOnTargets">
-      <MemberSignature Language="C#" Value="public string DependsOnTargets { set; get; };" />
+      <MemberSignature Language="C#" Value="public string DependsOnTargets { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -55,6 +66,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEnumerator">
       <MemberSignature Language="C#" Value="public System.Collections.IEnumerator GetEnumerator ();" />
@@ -69,9 +83,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="IsImported">
-      <MemberSignature Language="C#" Value="public bool IsImported { get; };" />
+      <MemberSignature Language="C#" Value="public bool IsImported { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -82,9 +99,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Name">
-      <MemberSignature Language="C#" Value="public string Name { get; };" />
+      <MemberSignature Language="C#" Value="public string Name { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -95,6 +115,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveTask">
       <MemberSignature Language="C#" Value="public void RemoveTask (Microsoft.Build.BuildEngine.BuildTask buildTask);" />
@@ -111,11 +134,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
   </Members>
-  <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
-    <since version="2.0" />
-  </Docs>
 </Type>

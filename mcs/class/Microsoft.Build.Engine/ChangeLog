@@ -1,3 +1,7 @@
+2008-10-17  Jonathan Pryor  <jpryor@novell.com>
+
+	* Documentation/**: Flush updated documentation.
+
 2008-05-28  Marek Safar  <marek.safar@gmail.com>
 	
 	* Makefile (EXTRA_DISTFILES): More test files.

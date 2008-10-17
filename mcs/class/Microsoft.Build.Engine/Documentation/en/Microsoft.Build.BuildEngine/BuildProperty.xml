@@ -8,6 +8,11 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version="2.0" />
+  </Docs>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public BuildProperty (string propertyName, string propertyValue);" />
@@ -23,6 +28,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Clone">
       <MemberSignature Language="C#" Value="public Microsoft.Build.BuildEngine.BuildProperty Clone (bool deepClone);" />
@@ -40,9 +48,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Condition">
-      <MemberSignature Language="C#" Value="public string Condition { set; get; };" />
+      <MemberSignature Language="C#" Value="public string Condition { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -53,9 +64,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="FinalValue">
-      <MemberSignature Language="C#" Value="public string FinalValue { get; };" />
+      <MemberSignature Language="C#" Value="public string FinalValue { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -66,9 +80,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="IsImported">
-      <MemberSignature Language="C#" Value="public bool IsImported { get; };" />
+      <MemberSignature Language="C#" Value="public bool IsImported { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -79,9 +96,12 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="Name">
-      <MemberSignature Language="C#" Value="public string Name { get; };" />
+      <MemberSignature Language="C#" Value="public string Name { get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -92,6 +112,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="op_Explicit">
       <MemberSignature Language="C#" Value="public static string op_Explicit (Microsoft.Build.BuildEngine.BuildProperty propertyToCast);" />
@@ -109,9 +132,28 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="Value">
-      <MemberSignature Language="C#" Value="public string Value { set; get; };" />
+      <MemberSignature Language="C#" Value="public string Value { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -122,11 +164,9 @@
         <remarks>To be added.</remarks>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
   </Members>
-  <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
-    <since version="2.0" />
-  </Docs>
 </Type>

@@ -7,6 +7,11 @@
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+    <since version="2.0" />
+  </Docs>
   <Members>
     <Member MemberName="UseExistingOrCreateAfterLastImport">
       <MemberSignature Language="C#" Value="UseExistingOrCreateAfterLastImport" />
@@ -18,6 +23,9 @@
         <summary>To be added.</summary>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
     <Member MemberName="UseExistingOrCreateAfterLastPropertyGroup">
       <MemberSignature Language="C#" Value="UseExistingOrCreateAfterLastPropertyGroup" />
@@ -29,11 +37,9 @@
         <summary>To be added.</summary>
         <since version="2.0" />
       </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
     </Member>
   </Members>
-  <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
-    <since version="2.0" />
-  </Docs>
 </Type>
