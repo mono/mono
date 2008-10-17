@@ -1,0 +1,147 @@
+<Type Name="MessageBase" FullName="Mono.Security.Protocol.Ntlm.MessageBase">
+  <TypeSignature Language="C#" Value="public abstract class MessageBase" Maintainer="auto" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Security</AssemblyName>
+    <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 79 15 99 77 D2 D0 3A 8E 6B EA 7A 2E 74 E8 D1 AF CC 93 E8 85 19 74 95 2B B4 80 A1 2C 91 34 47 4D 04 06 24 47 C3 7E 0E 68 C0 80 53 6F CF 3C 3F BE 2F F9 C9 79 CE 99 84 75 E5 06 E8 CE 82 DD 5B 0F 35 0D C1 0E 93 BF 2E EE CF 87 4B 24 77 0C 50 81 DB EA 74 47 FD DA FA 27 7B 22 DE 47 D6 FF EA 44 96 74 A4 F9 FC CF 84 D1 50 69 08 93 80 28 4D BD D3 5F 46 CD FF 12 A1 BD 78 E4 EF 00 65 D0 16 DF]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>The NTLM challenge response is a series of three messages exchanged between a client and a server. This class implements the basic and common functionalities for the three messages type.</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected MessageBase (int messageType);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="messageType" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="messageType">a <see cref="T:System.Int32" /> representing the message sequence number (1, 2 or 3).</param>
+        <summary>Initialize the message structure using the specified message number.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CheckHeader">
+      <MemberSignature Language="C#" Value="protected bool CheckHeader (byte[] message);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="message">an array of bytes containing the message to verify.</param>
+        <summary>Verify that the message header is valid for the message type.</summary>
+        <returns>True if the header is valid for the message type, false otherwise.</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Decode">
+      <MemberSignature Language="C#" Value="protected virtual void Decode (byte[] message);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="message">an array of bytes containing the message to decode. </param>
+        <summary>Decode the specified binrary message.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Flags">
+      <MemberSignature Language="C#" Value="public Mono.Security.Protocol.Ntlm.NtlmFlags Flags { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Security.Protocol.Ntlm.NtlmFlags</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Set or get the flags used by the message.</summary>
+        <value>a <see cref="T:Mono.Security.Protocol.Ntlm.NtlmFlags" /></value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="C#" Value="public abstract byte[] GetBytes ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Return the binary message.</summary>
+        <returns>an array of bytes containing the constructed message.</returns>
+        <remarks>Abstract method in MessageBase. All Type"X"Message class overrides the GetBytes method to return the binary message.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="PrepareMessage">
+      <MemberSignature Language="C#" Value="protected byte[] PrepareMessage (int messageSize);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="messageSize" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="messageSize">Total size of the message.</param>
+        <summary>Prepare the message structure with the specified size.</summary>
+        <returns>An empty message (as an array of bytes) of the specified size.</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Type">
+      <MemberSignature Language="C#" Value="public int Type { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>The message type (1, 2 or 3).</summary>
+        <value>1, 2 or 3 depending on the message.</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

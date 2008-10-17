@@ -1,0 +1,206 @@
+<Type Name="PrivateKey" FullName="Mono.Security.Authenticode.PrivateKey">
+  <TypeSignature Language="C#" Value="public class PrivateKey" Maintainer="auto" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Security</AssemblyName>
+    <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 79 15 99 77 D2 D0 3A 8E 6B EA 7A 2E 74 E8 D1 AF CC 93 E8 85 19 74 95 2B B4 80 A1 2C 91 34 47 4D 04 06 24 47 C3 7E 0E 68 C0 80 53 6F CF 3C 3F BE 2F F9 C9 79 CE 99 84 75 E5 06 E8 CE 82 DD 5B 0F 35 0D C1 0E 93 BF 2E EE CF 87 4B 24 77 0C 50 81 DB EA 74 47 FD DA FA 27 7B 22 DE 47 D6 FF EA 44 96 74 A4 F9 FC CF 84 D1 50 69 08 93 80 28 4D BD D3 5F 46 CD FF 12 A1 BD 78 E4 EF 00 65 D0 16 DF]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Support for the PVK (Private Key) file format.</summary>
+    <remarks>More details about the PVK file format can be found at http://www.drh-consultancy.demon.co.uk/pvk.html</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public PrivateKey ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>Construct an empty instance of PrivateKey.</summary>
+        <remarks>This constructor is normally used to create a new PVK file.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public PrivateKey (byte[] data, string password);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="data" Type="System.Byte[]" />
+        <Parameter Name="password" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="data">a byte array containing the content of a PVK file.</param>
+        <param name="password">the password to decrypt the private key file.</param>
+        <summary>Contruct a PrivateKey instance based on the data supplied.</summary>
+        <remarks>A null password will load the PVK file without trying to decrypt it.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateFromFile">
+      <MemberSignature Language="C#" Value="public static Mono.Security.Authenticode.PrivateKey CreateFromFile (string filename);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Security.Authenticode.PrivateKey</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="filename">a <see cref="T:System.String" /> representing the filename under which the private key will be loaded. </param>
+        <summary>Create a PrivateKey object from the specified file.</summary>
+        <returns>a <see cref="T:Mono.Security.Authenticode.PrivateKey" /> object containing the loaded private key.</returns>
+        <remarks>A <see cref="T:System.Security.Cryptography.CryptographicException" /> will be thrown if the file doesn't contain a valid private key. This can either be due to a bad, or missing, password or a bad file format.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateFromFile">
+      <MemberSignature Language="C#" Value="public static Mono.Security.Authenticode.PrivateKey CreateFromFile (string filename, string password);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Security.Authenticode.PrivateKey</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+        <Parameter Name="password" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="filename">a <see cref="T:System.String" /> representing the filename under which the private key will be loaded. </param>
+        <param name="password">the password to decrypt the private key file.</param>
+        <summary>Create a PrivateKey object from the specified file and password.</summary>
+        <returns>a <see cref="T:Mono.Security.Authenticode.PrivateKey" /> object containing the loaded and, if required, decrypted private key.</returns>
+        <remarks>A <see cref="T:System.Security.Cryptography.CryptographicException" /> will be thrown if the file doesn't contain a valid private key. This can either be due to a bad, or missing, password or a bad file format.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Encrypted">
+      <MemberSignature Language="C#" Value="public bool Encrypted { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Encryption state of the encoded private key.</summary>
+        <value>True if the PVK buffer was encrypted, false otherwise.</value>
+        <remarks>The private key is always decrypted when in memory.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="KeyType">
+      <MemberSignature Language="C#" Value="public int KeyType { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Get or set the intended key usage for the private key.</summary>
+        <value>a <see cref="T:System.Int32" /> indicating the private key intended usage.</value>
+        <remarks>Default to 2. The utility MakeCert requires the private keys inside PVK files to have a KeyType equals to 2 (signing).</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RSA">
+      <MemberSignature Language="C#" Value="public System.Security.Cryptography.RSA RSA { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.RSA</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>The RSA instance containing the private key.</summary>
+        <value>a <see cref="T:System.Security.Cryptography.RSA" /> instance containing the private key.</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (string filename);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="filename">a <see cref="T:System.String" /> representing the filename under which the private key will be saved.</param>
+        <summary>Save the current private key without a password.</summary>
+        <remarks>WARNING: Private keys saved without password aren't encrypted.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (string filename, string password);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+        <Parameter Name="password" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="filename">a <see cref="T:System.String" /> representing the filename under which the private key will be saved.</param>
+        <param name="password">a <see cref="T:System.String" /> representing the password used to encrypt the private key.</param>
+        <summary>Save the current private key encrypted with the specified password.</summary>
+        <remarks>
+          <para>The level of encryption will depends on the Weak property. If Weak is true then the encryption will be limited to 40 bits. By default Weak is false and the private keys are encrypted with a 128 bits key.</para>
+          <para>WARNING: A null password will result in no encryption.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Weak">
+      <MemberSignature Language="C#" Value="public bool Weak { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Return if the current encryption of the encoded private key is weak (40 bits or no encryption).</summary>
+        <value>True if the private key was encrypted using a 40 bits key (or not encrypted). False if the private key is encrypted using a 128 bits key.</value>
+        <remarks>Returns true if the private key isn't encrypted (as no encryption is a very weak encryption).</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

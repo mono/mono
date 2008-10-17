@@ -1,0 +1,1004 @@
+<Type Name="PKCS12" FullName="Mono.Security.X509.PKCS12">
+  <TypeSignature Language="C#" Value="public class PKCS12 : ICloneable" Maintainer="auto" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Security</AssemblyName>
+    <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 79 15 99 77 D2 D0 3A 8E 6B EA 7A 2E 74 E8 D1 AF CC 93 E8 85 19 74 95 2B B4 80 A1 2C 91 34 47 4D 04 06 24 47 C3 7E 0E 68 C0 80 53 6F CF 3C 3F BE 2F F9 C9 79 CE 99 84 75 E5 06 E8 CE 82 DD 5B 0F 35 0D C1 0E 93 BF 2E EE CF 87 4B 24 77 0C 50 81 DB EA 74 47 FD DA FA 27 7B 22 DE 47 D6 FF EA 44 96 74 A4 F9 FC CF 84 D1 50 69 08 93 80 28 4D BD D3 5F 46 CD FF 12 A1 BD 78 E4 EF 00 65 D0 16 DF]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ICloneable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>To be added</summary>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public PKCS12 ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public PKCS12 (byte[] data);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="data" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="data">a <see cref="T:System.Byte" /></param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public PKCS12 (byte[] data, byte[] password);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="data" Type="System.Byte[]" />
+        <Parameter Name="password" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="data">To be added.</param>
+        <param name="password">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public PKCS12 (byte[] data, string password);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="data" Type="System.Byte[]" />
+        <Parameter Name="password" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="data">a <see cref="T:System.Byte" /></param>
+        <param name="password">a <see cref="T:System.String" /></param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddCertificate">
+      <MemberSignature Language="C#" Value="public void AddCertificate (Mono.Security.X509.X509Certificate cert);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cert" Type="Mono.Security.X509.X509Certificate" />
+      </Parameters>
+      <Docs>
+        <param name="cert">a <see cref="T:Mono.Security.X509.X509Certificate" /></param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddCertificate">
+      <MemberSignature Language="C#" Value="public void AddCertificate (Mono.Security.X509.X509Certificate cert, System.Collections.IDictionary attributes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cert" Type="Mono.Security.X509.X509Certificate" />
+        <Parameter Name="attributes" Type="System.Collections.IDictionary" />
+      </Parameters>
+      <Docs>
+        <param name="cert">a <see cref="T:Mono.Security.X509.X509Certificate" /></param>
+        <param name="attributes">a <see cref="T:System.Collections.IDictionary" /></param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddKeyBag">
+      <MemberSignature Language="C#" Value="public void AddKeyBag (System.Security.Cryptography.AsymmetricAlgorithm aa);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="aa" Type="System.Security.Cryptography.AsymmetricAlgorithm" />
+      </Parameters>
+      <Docs>
+        <param name="aa">a <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /></param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddKeyBag">
+      <MemberSignature Language="C#" Value="public void AddKeyBag (System.Security.Cryptography.AsymmetricAlgorithm aa, System.Collections.IDictionary attributes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="aa" Type="System.Security.Cryptography.AsymmetricAlgorithm" />
+        <Parameter Name="attributes" Type="System.Collections.IDictionary" />
+      </Parameters>
+      <Docs>
+        <param name="aa">a <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /></param>
+        <param name="attributes">a <see cref="T:System.Collections.IDictionary" /></param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddPkcs8ShroudedKeyBag">
+      <MemberSignature Language="C#" Value="public void AddPkcs8ShroudedKeyBag (System.Security.Cryptography.AsymmetricAlgorithm aa);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="aa" Type="System.Security.Cryptography.AsymmetricAlgorithm" />
+      </Parameters>
+      <Docs>
+        <param name="aa">a <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /></param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddPkcs8ShroudedKeyBag">
+      <MemberSignature Language="C#" Value="public void AddPkcs8ShroudedKeyBag (System.Security.Cryptography.AsymmetricAlgorithm aa, System.Collections.IDictionary attributes);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="aa" Type="System.Security.Cryptography.AsymmetricAlgorithm" />
+        <Parameter Name="attributes" Type="System.Collections.IDictionary" />
+      </Parameters>
+      <Docs>
+        <param name="aa">a <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /></param>
+        <param name="attributes">a <see cref="T:System.Collections.IDictionary" /></param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="AddSecretBag">
+      <MemberSignature Language="C#" Value="public void AddSecretBag (byte[] secret);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="secret" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="secret">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddSecretBag">
+      <MemberSignature Language="C#" Value="public void AddSecretBag (byte[] secret, System.Collections.IDictionary attributes);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="secret" Type="System.Byte[]" />
+        <Parameter Name="attributes" Type="System.Collections.IDictionary" />
+      </Parameters>
+      <Docs>
+        <param name="secret">To be added.</param>
+        <param name="attributes">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="certBag">
+      <MemberSignature Language="C#" Value="public const string certBag;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Object Identifier (OID) for a certificate bag</summary>
+        <remarks>The OID value is 1.2.840.113549.1.12.10.1.3</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Certificates">
+      <MemberSignature Language="C#" Value="public Mono.Security.X509.X509CertificateCollection Certificates { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Security.X509.X509CertificateCollection</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>A collection of all the certificates present in the PKCS#12 structure.</summary>
+        <value>a <see cref="T:Mono.Security.X509.X509CertificateCollection" /></value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="C#" Value="public object Clone ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <returns>a <see cref="T:System.Object" /></returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="crlBag">
+      <MemberSignature Language="C#" Value="public const string crlBag;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Object Identifier (OID) for a Certificate Revocation List (CRL) bag</summary>
+        <remarks>The OID value is 1.2.840.113549.1.12.10.1.4</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CryptoApiPasswordLimit">
+      <MemberSignature Language="C#" Value="public const int CryptoApiPasswordLimit = 32;" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <MemberValue>32</MemberValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Decrypt">
+      <MemberSignature Language="C#" Value="public byte[] Decrypt (Mono.Security.PKCS7.EncryptedData ed);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ed" Type="Mono.Security.PKCS7+EncryptedData" />
+      </Parameters>
+      <Docs>
+        <param name="ed">a <see cref="T:Mono.Security.PKCS7+EncryptedData" /></param>
+        <summary>To be added</summary>
+        <returns>a <see cref="T:System.Byte[]" /></returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Decrypt">
+      <MemberSignature Language="C#" Value="public byte[] Decrypt (string algorithmOid, byte[] salt, int iterationCount, byte[] encryptedData);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="algorithmOid" Type="System.String" />
+        <Parameter Name="salt" Type="System.Byte[]" />
+        <Parameter Name="iterationCount" Type="System.Int32" />
+        <Parameter Name="encryptedData" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="algorithmOid">a <see cref="T:System.String" /></param>
+        <param name="salt">a <see cref="T:System.Byte" /></param>
+        <param name="iterationCount">a <see cref="T:System.Int32" /></param>
+        <param name="encryptedData">a <see cref="T:System.Byte" /></param>
+        <summary>To be added</summary>
+        <returns>a <see cref="T:System.Byte[]" /></returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Encrypt">
+      <MemberSignature Language="C#" Value="public byte[] Encrypt (string algorithmOid, byte[] salt, int iterationCount, byte[] data);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="algorithmOid" Type="System.String" />
+        <Parameter Name="salt" Type="System.Byte[]" />
+        <Parameter Name="iterationCount" Type="System.Int32" />
+        <Parameter Name="data" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="algorithmOid">a <see cref="T:System.String" /></param>
+        <param name="salt">a <see cref="T:System.Byte" /></param>
+        <param name="iterationCount">a <see cref="T:System.Int32" /></param>
+        <param name="data">a <see cref="T:System.Byte" /></param>
+        <summary>To be added</summary>
+        <returns>a <see cref="T:System.Byte[]" /></returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Finalize">
+      <MemberSignature Language="C#" Value="~PKCS12 ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Used to destroy private informations (like the keys).</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAsymmetricAlgorithm">
+      <MemberSignature Language="C#" Value="public System.Security.Cryptography.AsymmetricAlgorithm GetAsymmetricAlgorithm (System.Collections.IDictionary attrs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.AsymmetricAlgorithm</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="attrs" Type="System.Collections.IDictionary" />
+      </Parameters>
+      <Docs>
+        <param name="attrs">a <see cref="T:System.Collections.IDictionary" /></param>
+        <summary>To be added</summary>
+        <returns>a <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /></returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAttributes">
+      <MemberSignature Language="C#" Value="public System.Collections.IDictionary GetAttributes (Mono.Security.X509.X509Certificate cert);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IDictionary</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cert" Type="Mono.Security.X509.X509Certificate" />
+      </Parameters>
+      <Docs>
+        <param name="cert">a <see cref="T:Mono.Security.X509.X509Certificate" /></param>
+        <summary>To be added</summary>
+        <returns>a <see cref="T:System.Collections.IDictionary" /></returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetAttributes">
+      <MemberSignature Language="C#" Value="public System.Collections.IDictionary GetAttributes (System.Security.Cryptography.AsymmetricAlgorithm aa);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.IDictionary</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="aa" Type="System.Security.Cryptography.AsymmetricAlgorithm" />
+      </Parameters>
+      <Docs>
+        <param name="aa">a <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /></param>
+        <summary>To be added</summary>
+        <returns>a <see cref="T:System.Collections.IDictionary" /></returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="C#" Value="public byte[] GetBytes ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <returns>a <see cref="T:System.Byte[]" /></returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetCertificate">
+      <MemberSignature Language="C#" Value="public Mono.Security.X509.X509Certificate GetCertificate (System.Collections.IDictionary attrs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Security.X509.X509Certificate</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="attrs" Type="System.Collections.IDictionary" />
+      </Parameters>
+      <Docs>
+        <param name="attrs">a <see cref="T:System.Collections.IDictionary" /></param>
+        <summary>To be added</summary>
+        <returns>a <see cref="T:Mono.Security.X509.X509Certificate" /></returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetSecret">
+      <MemberSignature Language="C#" Value="public byte[] GetSecret (System.Collections.IDictionary attrs);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="attrs" Type="System.Collections.IDictionary" />
+      </Parameters>
+      <Docs>
+        <param name="attrs">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IterationCount">
+      <MemberSignature Language="C#" Value="public int IterationCount { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>The number of iterations used to derive a key from the password.</summary>
+        <value>a <see cref="T:System.Int32" /></value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="keyBag">
+      <MemberSignature Language="C#" Value="public const string keyBag;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Object Identifier (OID) for key bag</summary>
+        <remarks>The OID value is 1.2.840.113549.1.12.10.1.1</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Keys">
+      <MemberSignature Language="C#" Value="public System.Collections.ArrayList Keys { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Collections.ArrayList</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>A list of all the keys present in the PKCS#12 structure.</summary>
+        <value>a <see cref="T:System.Collections.ArrayList" /></value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LoadFromFile">
+      <MemberSignature Language="C#" Value="public static Mono.Security.X509.PKCS12 LoadFromFile (string filename);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Security.X509.PKCS12</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="filename">a <see cref="T:System.String" /></param>
+        <summary>To be added</summary>
+        <returns>a <see cref="T:Mono.Security.X509.PKCS12" /></returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LoadFromFile">
+      <MemberSignature Language="C#" Value="public static Mono.Security.X509.PKCS12 LoadFromFile (string filename, string password);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Security.X509.PKCS12</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+        <Parameter Name="password" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="filename">a <see cref="T:System.String" /></param>
+        <param name="password">a <see cref="T:System.String" /></param>
+        <summary>To be added</summary>
+        <returns>a <see cref="T:Mono.Security.X509.PKCS12" /></returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="MaximumPasswordLength">
+      <MemberSignature Language="C#" Value="public static int MaximumPasswordLength { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Password">
+      <MemberSignature Language="C#" Value="public string Password { set; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Password used to decrypt the encrypted content inside the PKCS#12 structure.</summary>
+        <value>Nothing. This property only has a setter.</value>
+        <remarks>Interoperability warning: Windows Certificate import wizard limits the password length to 31 characters. 
+This restriction also seems present in the CryptoAPI's PFXImportCertStore. So any password longer than 
+31 characters probably won't be able to install properly using any MS tools. Both Mono and OpenSSL
+supports unlimited length password.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="pbeWithSHAAnd128BitRC2CBC">
+      <MemberSignature Language="C#" Value="public const string pbeWithSHAAnd128BitRC2CBC;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Object Identifier (OID) for Password Based Encryption (PBE) with SHA1 and 128 bits RC2-CBC encryption</summary>
+        <remarks>The OID value is 1.2.840.113549.1.12.1.5</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="pbeWithSHAAnd128BitRC4">
+      <MemberSignature Language="C#" Value="public const string pbeWithSHAAnd128BitRC4;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Object Identifier (OID) for Password Based Encryption (PBE) with SHA1 and 128 bits RC4(tm) encryption</summary>
+        <remarks>The OID value is 1.2.840.113549.1.12.1.1</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="pbeWithSHAAnd2KeyTripleDESCBC">
+      <MemberSignature Language="C#" Value="public const string pbeWithSHAAnd2KeyTripleDESCBC;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Object Identifier (OID) for Password Based Encryption (PBE) with SHA1 and a double-key (128 bits) 3DES-CBC encryption</summary>
+        <remarks>The OID value is 1.2.840.113549.1.12.1.4</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="pbeWithSHAAnd3KeyTripleDESCBC">
+      <MemberSignature Language="C#" Value="public const string pbeWithSHAAnd3KeyTripleDESCBC;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Object Identifier (OID) for Password Based Encryption (PBE) with SHA1 and a triple-key (192 bits) 3DES-CBC encryption</summary>
+        <remarks>The OID value is 1.2.840.113549.1.12.1.3</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="pbeWithSHAAnd40BitRC2CBC">
+      <MemberSignature Language="C#" Value="public const string pbeWithSHAAnd40BitRC2CBC;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Object Identifier (OID) for Password Based Encryption (PBE) with SHA1 and 40 bits RC2-CBC encryption</summary>
+        <remarks>The OID value is 1.2.840.113549.1.12.1.6</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="pbeWithSHAAnd40BitRC4">
+      <MemberSignature Language="C#" Value="public const string pbeWithSHAAnd40BitRC4;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Object Identifier (OID) for Password Based Encryption (PBE) with SHA1 and 40 bits RC4(tm) encryption</summary>
+        <remarks>The OID value is 1.2.840.113549.1.12.1.2</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="pkcs8ShroudedKeyBag">
+      <MemberSignature Language="C#" Value="public const string pkcs8ShroudedKeyBag;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Object Identifier (OID) for PKCS#8 shrouded key bag</summary>
+        <remarks>The OID value is 1.2.840.113549.1.12.10.1.2</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RemoveCertificate">
+      <MemberSignature Language="C#" Value="public void RemoveCertificate (Mono.Security.X509.X509Certificate cert);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cert" Type="Mono.Security.X509.X509Certificate" />
+      </Parameters>
+      <Docs>
+        <param name="cert">a <see cref="T:Mono.Security.X509.X509Certificate" /></param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RemoveCertificate">
+      <MemberSignature Language="C#" Value="public void RemoveCertificate (Mono.Security.X509.X509Certificate cert, System.Collections.IDictionary attrs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cert" Type="Mono.Security.X509.X509Certificate" />
+        <Parameter Name="attrs" Type="System.Collections.IDictionary" />
+      </Parameters>
+      <Docs>
+        <param name="cert">a <see cref="T:Mono.Security.X509.X509Certificate" /></param>
+        <param name="attrs">a <see cref="T:System.Collections.IDictionary" /></param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RemoveKeyBag">
+      <MemberSignature Language="C#" Value="public void RemoveKeyBag (System.Security.Cryptography.AsymmetricAlgorithm aa);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="aa" Type="System.Security.Cryptography.AsymmetricAlgorithm" />
+      </Parameters>
+      <Docs>
+        <param name="aa">a <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /></param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RemovePkcs8ShroudedKeyBag">
+      <MemberSignature Language="C#" Value="public void RemovePkcs8ShroudedKeyBag (System.Security.Cryptography.AsymmetricAlgorithm aa);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="aa" Type="System.Security.Cryptography.AsymmetricAlgorithm" />
+      </Parameters>
+      <Docs>
+        <param name="aa">a <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /></param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="RemoveSecretBag">
+      <MemberSignature Language="C#" Value="public void RemoveSecretBag (byte[] secret);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="secret" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="secret">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="safeContentsBag">
+      <MemberSignature Language="C#" Value="public const string safeContentsBag;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Object Identifier (OID) for safe contents bag</summary>
+        <remarks>The OID value is 1.2.840.113549.1.12.10.1.6</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SaveToFile">
+      <MemberSignature Language="C#" Value="public void SaveToFile (string filename);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="filename">a <see cref="T:System.String" /></param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="sdsiCertificate">
+      <MemberSignature Language="C#" Value="public const string sdsiCertificate;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Object Identifier (OID) for Simple Public Key Infrastructure (SPKI) certificate</summary>
+        <remarks>The OID value is 1.2.840.113549.1.9.22.2</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="secretBag">
+      <MemberSignature Language="C#" Value="public const string secretBag;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Object Identifier (OID) for a secret bag</summary>
+        <remarks>The OID value is 1.2.840.113549.1.12.10.1.5</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Secrets">
+      <MemberSignature Language="C#" Value="public System.Collections.ArrayList Secrets { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ArrayList</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="x509Certificate">
+      <MemberSignature Language="C#" Value="public const string x509Certificate;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Object Identifier (OID) for a X.509 certificate</summary>
+        <remarks>The OID value is 1.2.840.113549.1.9.22.1</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="x509Crl">
+      <MemberSignature Language="C#" Value="public const string x509Crl;" />
+      <MemberType>Field</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+      </Parameters>
+      <Docs>
+        <summary>Object Identifier (OID) for a X.509 Certificate Revocation List (CRL)</summary>
+        <remarks>The OID value is 1.2.840.113549.1.9.23.1</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

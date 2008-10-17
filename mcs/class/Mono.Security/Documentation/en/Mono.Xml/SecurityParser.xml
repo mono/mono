@@ -1,0 +1,196 @@
+<Type Name="SecurityParser" FullName="Mono.Xml.SecurityParser">
+  <TypeSignature Language="C#" Maintainer="auto" Value="public class SecurityParser : Mono.Xml.MiniParser, Mono.Xml.MiniParser.IHandler, Mono.Xml.MiniParser.IReader" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Security</AssemblyName>
+    <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 79 15 99 77 D2 D0 3A 8E 6B EA 7A 2E 74 E8 D1 AF CC 93 E8 85 19 74 95 2B B4 80 A1 2C 91 34 47 4D 04 06 24 47 C3 7E 0E 68 C0 80 53 6F CF 3C 3F BE 2F F9 C9 79 CE 99 84 75 E5 06 E8 CE 82 DD 5B 0F 35 0D C1 0E 93 BF 2E EE CF 87 4B 24 77 0C 50 81 DB EA 74 47 FD DA FA 27 7B 22 DE 47 D6 FF EA 44 96 74 A4 F9 FC CF 84 D1 50 69 08 93 80 28 4D BD D3 5F 46 CD FF 12 A1 BD 78 E4 EF 00 65 D0 16 DF]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>Mono.Xml.MiniParser</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>Mono.Xml.MiniParser+IHandler</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>Mono.Xml.MiniParser+IReader</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.CLSCompliant(false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>An XML parser used chiefly to construct <see cref="T:System.Security.SecurityElement" /> objects as part of <see cref="T:Mono.Security.Cryptography.KeyPairPersistence." /></summary>
+    <remarks>This parser is mostly for internal use by the system libraries.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SecurityParser ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>A basic constructor.</summary>
+        <remarks>None.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="LoadXml">
+      <MemberSignature Language="C#" Value="public void LoadXml (string xml);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="xml" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="xml">a <see cref="T:System.String" /></param>
+        <summary>Loads an XML string into the parser and parses it.</summary>
+        <remarks>None.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OnChars">
+      <MemberSignature Language="C#" Value="public void OnChars (string ch);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ch" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="ch">a <see cref="T:System.String" /></param>
+        <summary>This method is invoked on the characters inside a given tag; SecurityParser saves them to the Text member of the current SecurityElement.</summary>
+        <remarks>None.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OnEndElement">
+      <MemberSignature Language="C#" Value="public void OnEndElement (string name);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">a <see cref="T:System.String" /></param>
+        <summary>An overridden method from MiniParser, called at the end of an XML element. It pops a SecurityElement off the internal parser stack, since the parser is no longer inside the corresponding XML element.</summary>
+        <remarks>None.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OnEndParsing">
+      <MemberSignature Language="C#" Value="public void OnEndParsing (Mono.Xml.MiniParser parser);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="parser" Type="Mono.Xml.MiniParser" />
+      </Parameters>
+      <Docs>
+        <param name="parser">a <see cref="T:Mono.Xml.MiniParser" /></param>
+        <summary>An overridden method from MiniParser; currently not used by SecurityParser.</summary>
+        <remarks>None</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OnStartElement">
+      <MemberSignature Language="C#" Value="public void OnStartElement (string name, Mono.Xml.MiniParser.IAttrList attrs);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="attrs" Type="Mono.Xml.MiniParser+IAttrList" />
+      </Parameters>
+      <Docs>
+        <param name="name">a <see cref="T:System.String" /></param>
+        <param name="attrs">a <see cref="T:Mono.Xml.MiniParser+IAttrList" /></param>
+        <summary>Overridden method from MiniParser. When the parser sees the beginning of a new element, it creates a SecurityElement to correspond to the XML element.</summary>
+        <remarks>None.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OnStartParsing">
+      <MemberSignature Language="C#" Value="public void OnStartParsing (Mono.Xml.MiniParser parser);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="parser" Type="Mono.Xml.MiniParser" />
+      </Parameters>
+      <Docs>
+        <param name="parser">a <see cref="T:Mono.Xml.MiniParser" /></param>
+        <summary>A handler method, meant to be overridden, called at the start of the parse phase. Currently not used by SecurityParser.</summary>
+        <remarks>Part of the IHandler interface implementation.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Read">
+      <MemberSignature Language="C#" Value="public int Read ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Returns the next character from the internal xmldoc data member.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>Implements the IReader interface.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToXml">
+      <MemberSignature Language="C#" Value="public System.Security.SecurityElement ToXml ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.SecurityElement</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Parses an XML string into a SecurityElement. For an example of how it's used, see the source to Mono.Security.Cryptography.KeyPairPersistence.</summary>
+        <returns>a <see cref="T:System.Security.SecurityElement" /></returns>
+        <remarks>None.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

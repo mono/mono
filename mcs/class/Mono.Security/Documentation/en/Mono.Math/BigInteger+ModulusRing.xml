@@ -1,0 +1,146 @@
+<Type Name="BigInteger+ModulusRing" FullName="Mono.Math.BigInteger+ModulusRing">
+  <TypeSignature Language="C#" Value="public sealed class BigInteger.ModulusRing" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Security</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ModulusRing (Mono.Math.BigInteger modulus);" />
+      <MemberType>Constructor</MemberType>
+      <Parameters>
+        <Parameter Name="modulus" Type="Mono.Math.BigInteger" />
+      </Parameters>
+      <Docs>
+        <param name="modulus">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="BarrettReduction">
+      <MemberSignature Language="C#" Value="public void BarrettReduction (Mono.Math.BigInteger x);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="x" Type="Mono.Math.BigInteger" />
+      </Parameters>
+      <Docs>
+        <param name="x">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Difference">
+      <MemberSignature Language="C#" Value="public Mono.Math.BigInteger Difference (Mono.Math.BigInteger a, Mono.Math.BigInteger b);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Math.BigInteger</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="Mono.Math.BigInteger" />
+        <Parameter Name="b" Type="Mono.Math.BigInteger" />
+      </Parameters>
+      <Docs>
+        <param name="a">To be added.</param>
+        <param name="b">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Multiply">
+      <MemberSignature Language="C#" Value="public Mono.Math.BigInteger Multiply (Mono.Math.BigInteger a, Mono.Math.BigInteger b);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Math.BigInteger</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="Mono.Math.BigInteger" />
+        <Parameter Name="b" Type="Mono.Math.BigInteger" />
+      </Parameters>
+      <Docs>
+        <param name="a">To be added.</param>
+        <param name="b">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Pow">
+      <MemberSignature Language="C#" Value="public Mono.Math.BigInteger Pow (Mono.Math.BigInteger a, Mono.Math.BigInteger k);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Math.BigInteger</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="Mono.Math.BigInteger" />
+        <Parameter Name="k" Type="Mono.Math.BigInteger" />
+      </Parameters>
+      <Docs>
+        <param name="a">To be added.</param>
+        <param name="k">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Pow">
+      <MemberSignature Language="C#" Value="public Mono.Math.BigInteger Pow (uint b, Mono.Math.BigInteger exp);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Math.BigInteger</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="b" Type="System.UInt32" />
+        <Parameter Name="exp" Type="Mono.Math.BigInteger" />
+      </Parameters>
+      <Docs>
+        <param name="b">To be added.</param>
+        <param name="exp">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Member>
+  </Members>
+</Type>

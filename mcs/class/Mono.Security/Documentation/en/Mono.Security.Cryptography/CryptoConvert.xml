@@ -1,0 +1,495 @@
+<Type Name="CryptoConvert" FullName="Mono.Security.Cryptography.CryptoConvert">
+  <TypeSignature Language="C#" Value="public sealed class CryptoConvert" Maintainer="auto" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Security</AssemblyName>
+    <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 79 15 99 77 D2 D0 3A 8E 6B EA 7A 2E 74 E8 D1 AF CC 93 E8 85 19 74 95 2B B4 80 A1 2C 91 34 47 4D 04 06 24 47 C3 7E 0E 68 C0 80 53 6F CF 3C 3F BE 2F F9 C9 79 CE 99 84 75 E5 06 E8 CE 82 DD 5B 0F 35 0D C1 0E 93 BF 2E EE CF 87 4B 24 77 0C 50 81 DB EA 74 47 FD DA FA 27 7B 22 DE 47 D6 FF EA 44 96 74 A4 F9 FC CF 84 D1 50 69 08 93 80 28 4D BD D3 5F 46 CD FF 12 A1 BD 78 E4 EF 00 65 D0 16 DF]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Cryptographic convertion helper.</summary>
+    <remarks>
+      <para>Converting private keys into byte arrays may cause security risks. You should always zeroize buffers with sensitive informations after their use.</para>
+      <example>
+        <code lang="C#">
+	// create a 1024 bits key pair
+	RSA rsa = RSA.Create ();
+	// convert the key pair into a CryptoAPI PRIVATEKEYBLOB
+	byte[] keypair = CryptoConvert.ToCapiKeyBlob (rsa, true);
+	// save the key pair to a file
+	using (FileStream fs = File.OpenWrite ("my.key")) {
+		fs.Write (keypair, 0, keypair.Length);
+	}
+	// zeroize the key pair from memory
+	Array.Clear (keypair, 0, keypair.Length);
+	// note: the private key still exists in the RSA instance!
+  </code>
+      </example>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="FromCapiKeyBlob">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.RSA FromCapiKeyBlob (byte[] blob);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.RSA</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="blob" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="blob">an array of bytes containing either a PUBLICKEYBLOB or a PRIVATEKEYBLOB structure.</param>
+        <summary>Convert the key from either a CryptoAPI PUBLICKEYBLOB structure or PRIVATEKEYBLOB structure to a RSA instance.</summary>
+        <returns>a <see cref="T:System.Security.Cryptography.RSA" /> instance containing the decoded key.</returns>
+        <remarks>Many formats, like PVK (private key files) and SNK (strongname key files), uses CryptoAPI structures.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromCapiKeyBlob">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.RSA FromCapiKeyBlob (byte[] blob, int offset);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.RSA</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="blob" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="blob">an array of bytes containing either a PUBLICKEYBLOB or a PRIVATEKEYBLOB structure.</param>
+        <param name="offset">a <see cref="T:System.Int32" /> representing the offset where the key blob starts in the specified buffer.</param>
+        <summary>Convert the key from either a CryptoAPI PUBLICKEYBLOB structure or PRIVATEKEYBLOB structure to a RSA instance. </summary>
+        <returns>a <see cref="T:System.Security.Cryptography.RSA" /> instance containing the decoded key.</returns>
+        <remarks>Many formats, like PVK (private key files) and SNK (strongname key files), uses CryptoAPI structures.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromCapiKeyBlobDSA">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.DSA FromCapiKeyBlobDSA (byte[] blob);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.DSA</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="blob" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="blob">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FromCapiKeyBlobDSA">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.DSA FromCapiKeyBlobDSA (byte[] blob, int offset);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.DSA</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="blob" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="blob">To be added.</param>
+        <param name="offset">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FromCapiPrivateKeyBlob">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.RSA FromCapiPrivateKeyBlob (byte[] blob);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.RSA</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="blob" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="blob">an array of bytes containing a PRIVATEKEYBLOB structure. </param>
+        <summary>Convert the key from the CryptoAPI PRIVATEKEYBLOB structure to a RSA instance.</summary>
+        <returns>a <see cref="T:System.Security.Cryptography.RSA" /> instance containing the decoded key.</returns>
+        <remarks>Many formats, like PVK (private key files) and SNK (strongname key files), uses CryptoAPI structures.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromCapiPrivateKeyBlob">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.RSA FromCapiPrivateKeyBlob (byte[] blob, int offset);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.RSA</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="blob" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="blob">an array of bytes containing a PRIVATEKEYBLOB structure. </param>
+        <param name="offset">a <see cref="T:System.Int32" /> representing the offset where the key blob starts in the specified buffer.</param>
+        <summary>Convert the key from the CryptoAPI PRIVATEKEYBLOB structure to a RSA instance.</summary>
+        <returns>a <see cref="T:System.Security.Cryptography.RSA" /> instance containing the decoded key.</returns>
+        <remarks>Many formats, like PVK (private key files) and SNK (strongname key files), uses CryptoAPI structures.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromCapiPrivateKeyBlobDSA">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.DSA FromCapiPrivateKeyBlobDSA (byte[] blob);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.DSA</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="blob" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="blob">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FromCapiPrivateKeyBlobDSA">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.DSA FromCapiPrivateKeyBlobDSA (byte[] blob, int offset);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.DSA</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="blob" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="blob">To be added.</param>
+        <param name="offset">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FromCapiPublicKeyBlob">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.RSA FromCapiPublicKeyBlob (byte[] blob);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.RSA</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="blob" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="blob">an array of bytes containing a PUBLICKEYBLOB structure. </param>
+        <summary>Convert the public key from the CryptoAPI PUBLICKEYBLOB structure to a RSA instance.</summary>
+        <returns>a <see cref="T:System.Security.Cryptography.RSA" /> instance containing the decoded key.</returns>
+        <remarks>Many formats, like PVK (private key files) and SNK (strongname key files), uses CryptoAPI structures.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromCapiPublicKeyBlob">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.RSA FromCapiPublicKeyBlob (byte[] blob, int offset);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.RSA</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="blob" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="blob">an array of bytes containing a PUBLICKEYBLOB structure. </param>
+        <param name="offset">a <see cref="T:System.Int32" /> representing the offset where the key blob starts in the specified buffer.</param>
+        <summary>Convert the public key from the CryptoAPI PUBLICKEYBLOB structure to a RSA instance.</summary>
+        <returns>a <see cref="T:System.Security.Cryptography.RSA" /> instance containing the decoded key.</returns>
+        <remarks>Many formats, like PVK (private key files) and SNK (strongname key files), uses CryptoAPI structures.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromCapiPublicKeyBlobDSA">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.DSA FromCapiPublicKeyBlobDSA (byte[] blob);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.DSA</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="blob" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="blob">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FromCapiPublicKeyBlobDSA">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.DSA FromCapiPublicKeyBlobDSA (byte[] blob, int offset);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.DSA</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="blob" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="blob">To be added.</param>
+        <param name="offset">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FromHex">
+      <MemberSignature Language="C#" Value="public static byte[] FromHex (string hex);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hex" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="hex">an hexadecimal <see cref="T:System.String" /> without any separator. The string length must be a multiple of 2.</param>
+        <summary>Convert an hexadecimal string to an array of bytes.</summary>
+        <returns>the converted data as an array of bytes.</returns>
+        <remarks>
+          <example>
+            <code lang="C#">
+	byte[] data = CryptoConvert.FromHex ("DEADC0DE");
+  </code>
+          </example>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToCapiKeyBlob">
+      <MemberSignature Language="C#" Value="public static byte[] ToCapiKeyBlob (System.Security.Cryptography.AsymmetricAlgorithm keypair, bool includePrivateKey);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="keypair" Type="System.Security.Cryptography.AsymmetricAlgorithm" />
+        <Parameter Name="includePrivateKey" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="keypair">the <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /> instance to be converted.</param>
+        <param name="includePrivateKey">True if the private key is to be converted, resulting in a PRIVATEKEYBLOB. False if only the public is to be converted, resulting in a PUBLICKEYBLOB.</param>
+        <summary>Convert an AsymmetricAlgorithm instance to a CryptoAPI blob structure.</summary>
+        <returns>an array of bytes containing either a PRIVATEKEYBLOB or a PUBLICKEYBLOB structure.</returns>
+        <remarks>
+          <para>This version only support RSA key.</para>
+          <para>Many formats, like PVK (private key files) and SNK (strongname key files), uses CryptoAPI structures.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToCapiKeyBlob">
+      <MemberSignature Language="C#" Value="public static byte[] ToCapiKeyBlob (System.Security.Cryptography.DSA dsa, bool includePrivateKey);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dsa" Type="System.Security.Cryptography.DSA" />
+        <Parameter Name="includePrivateKey" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="dsa">To be added.</param>
+        <param name="includePrivateKey">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToCapiKeyBlob">
+      <MemberSignature Language="C#" Value="public static byte[] ToCapiKeyBlob (System.Security.Cryptography.RSA rsa, bool includePrivateKey);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rsa" Type="System.Security.Cryptography.RSA" />
+        <Parameter Name="includePrivateKey" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="rsa">the <see cref="T:System.Security.Cryptography.RSA" /> instance to be converted.</param>
+        <param name="includePrivateKey">True if the private key is to be converted, resulting in a PRIVATEKEYBLOB. False if only the public is to be converted, resulting in a PUBLICKEYBLOB.</param>
+        <summary>Convert an RSA instance to a CryptoAPI blob structure.</summary>
+        <returns>an array of bytes containing either a PRIVATEKEYBLOB or a PUBLICKEYBLOB structure.</returns>
+        <remarks>Many formats, like PVK (private key files) and SNK (strongname key files), uses CryptoAPI structures.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToCapiPrivateKeyBlob">
+      <MemberSignature Language="C#" Value="public static byte[] ToCapiPrivateKeyBlob (System.Security.Cryptography.DSA dsa);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dsa" Type="System.Security.Cryptography.DSA" />
+      </Parameters>
+      <Docs>
+        <param name="dsa">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToCapiPrivateKeyBlob">
+      <MemberSignature Language="C#" Value="public static byte[] ToCapiPrivateKeyBlob (System.Security.Cryptography.RSA rsa);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rsa" Type="System.Security.Cryptography.RSA" />
+      </Parameters>
+      <Docs>
+        <param name="rsa">the <see cref="T:System.Security.Cryptography.RSA" /> instance to be converted.</param>
+        <summary>Convert an RSA instance to a CryptoAPI PRIVATEKEYBLOB structure.</summary>
+        <returns>an array of bytes containing a PRIVATEKEYBLOB structure.</returns>
+        <remarks>Many formats, like PVK (private key files) and SNK (strongname key files), uses CryptoAPI structures.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToCapiPublicKeyBlob">
+      <MemberSignature Language="C#" Value="public static byte[] ToCapiPublicKeyBlob (System.Security.Cryptography.DSA dsa);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dsa" Type="System.Security.Cryptography.DSA" />
+      </Parameters>
+      <Docs>
+        <param name="dsa">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToCapiPublicKeyBlob">
+      <MemberSignature Language="C#" Value="public static byte[] ToCapiPublicKeyBlob (System.Security.Cryptography.RSA rsa);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rsa" Type="System.Security.Cryptography.RSA" />
+      </Parameters>
+      <Docs>
+        <param name="rsa">the <see cref="T:System.Security.Cryptography.RSA" /> instance to be converted.</param>
+        <summary>Convert an RSA instance to a CryptoAPI PUBLICKEYBLOB structure.</summary>
+        <returns>an array of bytes containing a PUBLICKEYBLOB structure.</returns>
+        <remarks>
+          <para>The RSA instance may either be a key pair, with both it's private and public key, or only a public key.</para>
+          <para>Many formats, like PVK (private key files) and SNK (strongname key files), uses CryptoAPI structures.</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToHex">
+      <MemberSignature Language="C#" Value="public static string ToHex (byte[] input);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="input" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="input">an array of bytes to be converted.</param>
+        <summary>Convert an array of bytes to an hexadecimal string.</summary>
+        <returns>a <see cref="T:System.String" /> representing the specified data in hexadecimal. No separator is used.</returns>
+        <remarks>
+          <example>
+            <code lang="C#">
+	byte[] data = new byte[] { 0xDE, 0xAD, 0xC0, 0xDE };
+	string s = CryptoConvert.ToHex (data);
+	// s == "DEADC0DE"
+  </code>
+          </example>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,184 @@
+<Type Name="ASN1Convert" FullName="Mono.Security.ASN1Convert">
+  <TypeSignature Language="C#" Maintainer="auto" Value="public static class ASN1Convert" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Security</AssemblyName>
+    <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 79 15 99 77 D2 D0 3A 8E 6B EA 7A 2E 74 E8 D1 AF CC 93 E8 85 19 74 95 2B B4 80 A1 2C 91 34 47 4D 04 06 24 47 C3 7E 0E 68 C0 80 53 6F CF 3C 3F BE 2F F9 C9 79 CE 99 84 75 E5 06 E8 CE 82 DD 5B 0F 35 0D C1 0E 93 BF 2E EE CF 87 4B 24 77 0C 50 81 DB EA 74 47 FD DA FA 27 7B 22 DE 47 D6 FF EA 44 96 74 A4 F9 FC CF 84 D1 50 69 08 93 80 28 4D BD D3 5F 46 CD FF 12 A1 BD 78 E4 EF 00 65 D0 16 DF]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Utility class to perform various convertion between CLR types and ASN.1.</summary>
+    <remarks>ITU ASN.1 standards are freely available at http://www.itu.int/ITU-T/studygroups/com17/languages/</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="FromDateTime">
+      <MemberSignature Language="C#" Value="public static Mono.Security.ASN1 FromDateTime (DateTime dt);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Security.ASN1</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dt" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="dt">a <see cref="T:System.DateTime" /> to convert into an ASN.1 object.</param>
+        <summary>Convert a DateTime to an ASN.1 object.</summary>
+        <returns>an <see cref="T:Mono.Security.ASN1" /> object representing the date.</returns>
+        <remarks>
+          <para>Dates before 2050 are encoded using ASN.1's UTCTIME ("yyMMddHHmmss") while dates after 2050 are encoded with GENERALIZEDTIME ("yyyyMMddHHmmss"). This logic is implemented for compliance with RFC3280.</para>
+          <example>
+            <code lang="C#">
+	DateTime now = DateTime.UtcNow;
+	ASN1 asnNow = ASN1Convert.FromOid (now);
+  </code>
+          </example>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromInt32">
+      <MemberSignature Language="C#" Value="public static Mono.Security.ASN1 FromInt32 (int value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Security.ASN1</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="value">a <see cref="T:System.Int32" /> to convert into an ASN.1 object.</param>
+        <summary>Convert an integer to convert into an ASN.1 object.</summary>
+        <returns>an <see cref="T:Mono.Security.ASN1" /> object representing the integer.</returns>
+        <remarks>
+          <para>The encoded result doesn't contain a leading 0.</para>
+          <example>
+            <code lang="C#">
+	int i = 16;
+	ASN1 asnSixteen = ASN1Convert.FromOid (i);
+  </code>
+          </example>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromOid">
+      <MemberSignature Language="C#" Value="public static Mono.Security.ASN1 FromOid (string oid);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Security.ASN1</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="oid" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="oid">a OID string in the dotted (RFC) notation.</param>
+        <summary>Convert an OID string to an ASN.1 object.</summary>
+        <returns>an <see cref="T:Mono.Security.ASN1" /> object representing the OID.</returns>
+        <remarks>
+          <para>The convertion from a string OID to a binary one is done by <see cref="T:System.Security.Cryptography.CryptoConfig" />.<see cref="M:System.Security.Cryptography.CryptoConfig.EncodeOID" /> so the documented limitations applies.</para>
+          <example>
+            <code lang="C#">
+	string oidSha1 = "1.3.14.3.2.26";
+	ASN1 asnOidSha1 = ASN1Convert.FromOid (oidSha1);
+  </code>
+          </example>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="FromUnsignedBigInteger">
+      <MemberSignature Language="C#" Value="public static Mono.Security.ASN1 FromUnsignedBigInteger (byte[] big);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Security.ASN1</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="big" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="big">an array of bytes representing a big unsigned integer.</param>
+        <summary>Convert an unsigned big integer, represented as an array of bytes, to an ASN.1 object.</summary>
+        <returns>an <see cref="T:Mono.Security.ASN1" /> object representing a integer.</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToDateTime">
+      <MemberSignature Language="C#" Value="public static DateTime ToDateTime (Mono.Security.ASN1 time);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="time" Type="Mono.Security.ASN1" />
+      </Parameters>
+      <Docs>
+        <param name="time">an <see cref="T:Mono.Security.ASN1" /> object containing a date/time.</param>
+        <summary>Convert an ASN.1 object to a DateTime.</summary>
+        <returns>the <see cref="T:System.DateTime" /> decoded from the ASN.1 object.</returns>
+        <remarks>ASN.1 dates in UTCTIME format ("yyMMddHHmmss") are decoded as 19xx if "year" is bigger or equal to 50 or as 20xx if "year" is lesser than 50.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToInt32">
+      <MemberSignature Language="C#" Value="public static int ToInt32 (Mono.Security.ASN1 asn1);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asn1" Type="Mono.Security.ASN1" />
+      </Parameters>
+      <Docs>
+        <param name="asn1">an <see cref="T:Mono.Security.ASN1" /> object containing an integer.</param>
+        <summary>Convert an ASN.1 object to an integer.</summary>
+        <returns>an <see cref="T:System.Int32" /> decoded from the ASN.1 object.</returns>
+        <remarks>A <see cref="T:System.FormatException" /> is thrown if the ASN.1 object doesn't represent an integer (type 2).</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToOid">
+      <MemberSignature Language="C#" Value="public static string ToOid (Mono.Security.ASN1 asn1);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asn1" Type="Mono.Security.ASN1" />
+      </Parameters>
+      <Docs>
+        <param name="asn1">an <see cref="T:Mono.Security.ASN1" /> object containing an OID.</param>
+        <summary>Convert an ASN.1 object to a string OID (dotted notation).</summary>
+        <returns>an OID string decoded from the ASN.1 object and encoded in the dotted notation.</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

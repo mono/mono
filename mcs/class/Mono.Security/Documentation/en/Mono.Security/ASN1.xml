@@ -1,0 +1,367 @@
+<Type Name="ASN1" FullName="Mono.Security.ASN1">
+  <TypeSignature Language="C#" Value="public class ASN1" Maintainer="auto" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Security</AssemblyName>
+    <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 79 15 99 77 D2 D0 3A 8E 6B EA 7A 2E 74 E8 D1 AF CC 93 E8 85 19 74 95 2B B4 80 A1 2C 91 34 47 4D 04 06 24 47 C3 7E 0E 68 C0 80 53 6F CF 3C 3F BE 2F F9 C9 79 CE 99 84 75 E5 06 E8 CE 82 DD 5B 0F 35 0D C1 0E 93 BF 2E EE CF 87 4B 24 77 0C 50 81 DB EA 74 47 FD DA FA 27 7B 22 DE 47 D6 FF EA 44 96 74 A4 F9 FC CF 84 D1 50 69 08 93 80 28 4D BD D3 5F 46 CD FF 12 A1 BD 78 E4 EF 00 65 D0 16 DF]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>ASN.1 (Abstract Syntax Notation One) data representation object.</summary>
+    <remarks>ITU ASN.1 standards are freely available at http://www.itu.int/ITU-T/studygroups/com17/languages/</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ASN1 ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>Initializes a new instance of the <see cref="T:Mono.Security.ASN1" /> class.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ASN1 (byte tag);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="tag" Type="System.Byte" />
+      </Parameters>
+      <Docs>
+        <param name="tag">A <see cref="T:System.Byte" /> value indicating an ASN.1 tag ID.</param>
+        <summary>Initializes a new instance of the <see cref="T:Mono.Security.ASN1" /> class with a specified tag.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ASN1 (byte[] data);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="data" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="data">A <see cref="T:System.Byte" /> array consisting of the ASN.1 content data.</param>
+        <summary>Initializes a new instance of the <see cref="T:Mono.Security.ASN1" /> class defined by a provided byte array.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ASN1 (byte tag, byte[] data);" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters>
+        <Parameter Name="tag" Type="System.Byte" />
+        <Parameter Name="data" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="tag">A <see cref="T:System.Byte" /> value indicating an ASN.1 tag ID.</param>
+        <param name="data">A <see cref="T:System.Byte" /> array consisting of the ASN.1 content data.</param>
+        <summary>Initializes a new instance of the <see cref="T:Mono.Security.ASN1" /> class defined by a provided tag and byte array.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public Mono.Security.ASN1 Add (Mono.Security.ASN1 asn1);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Security.ASN1</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asn1" Type="Mono.Security.ASN1" />
+      </Parameters>
+      <Docs>
+        <param name="asn1">The <see cref="T:Mono.Security.ASN1" /> object to be added to the current instance's children elements.</param>
+        <summary>Adds a ASN.1 data representation instance to the children element list.</summary>
+        <returns>A reference to the <see cref="T:Mono.Security.ASN1" /> object added to the current instance.</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CompareValue">
+      <MemberSignature Language="C#" Value="public bool CompareValue (byte[] value);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="value">A byte array to compare against the current <see cref="T:Mono.Security.ASN1" /> instance's content.</param>
+        <summary>Determines if the current instance content is the same as the specified <see cref="T:System.Byte" /> array.</summary>
+        <returns>A <see cref="T:System.Boolean" /> value indicating if the current instance content is the same as the specified content.</returns>
+        <remarks>The Equal method differs from the CompareValue method as CompareValue only compares the ASN.1 content; where the Equals method also compares its children's element's content.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Gets the number of <see cref="T:Mono.Security.ASN1" /> children elements contained in the current instance.</summary>
+        <value>A <see cref="T:System.Int32" /> that specifies the number of <see cref="T:Mono.Security.ASN1" /> children elements contained in the current instance.</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Decode">
+      <MemberSignature Language="C#" Value="protected void Decode (byte[] asn1, ref int anPos, int anLength);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asn1" Type="System.Byte[]" />
+        <Parameter Name="anPos" Type="System.Int32&amp;" RefType="ref" />
+        <Parameter Name="anLength" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="asn1">a byte array containing the ASN.1 encoded data to decode.</param>
+        <param name="anPos">a <see cref="T:System.Int32" /></param>
+        <param name="anLength">a <see cref="T:System.Int32" /></param>
+        <summary>Populate the current <see cref="T:Mono.Security.ASN1" /> instance by recursively decoding the specified ASN.1 content <see cref="T:System.Byte" /> array.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="DecodeTLV">
+      <MemberSignature Language="C#" Value="protected void DecodeTLV (byte[] asn1, ref int pos, out byte tag, out int length, out byte[] content);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asn1" Type="System.Byte[]" />
+        <Parameter Name="pos" Type="System.Int32&amp;" RefType="ref" />
+        <Parameter Name="tag" Type="System.Byte&amp;" RefType="out" />
+        <Parameter Name="length" Type="System.Int32&amp;" RefType="out" />
+        <Parameter Name="content" Type="System.Byte[]&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="asn1">a <see cref="T:System.Byte" /></param>
+        <param name="pos">a <see cref="T:System.Int32" /></param>
+        <param name="tag">a <see cref="T:System.Byte" /></param>
+        <param name="length">a <see cref="T:System.Int32" /></param>
+        <param name="content">a <see cref="T:System.Byte[]" /></param>
+        <summary>Populate the current <see cref="T:Mono.Security.ASN1" /> instance by recursively decoding the specified ASN.1 content <see cref="T:System.Byte" /> array.</summary>
+        <remarks>Returns the ASN.1 type tag, length, and content to the calling function by parameter reference.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Element">
+      <MemberSignature Language="C#" Value="public Mono.Security.ASN1 Element (int index, byte anTag);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Security.ASN1</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="anTag" Type="System.Byte" />
+      </Parameters>
+      <Docs>
+        <param name="index">a <see cref="T:System.Int32" /></param>
+        <param name="anTag">a <see cref="T:System.Byte" /></param>
+        <summary>Locates the child <see cref="T:Mono.Security.ASN1" /> instance that matches the specified tag.</summary>
+        <returns>a <see cref="T:Mono.Security.ASN1" /></returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public bool Equals (byte[] asn1);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asn1" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="asn1">a <see cref="T:System.Byte" /> array.</param>
+        <summary>Determines if the current ASN.1 representation content, as well as its children's element's content, is equal to the specified <see cref="T:System.Byte" /> array.</summary>
+        <returns>a <see cref="T:System.Boolean" /></returns>
+        <remarks>The Equal method differs from the CompareValue method as CompareValue only compares the ASN.1 content; where the Equals method also compares its children's element's content.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="C#" Value="public virtual byte[] GetBytes ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Recursively gets the ASN.1 content as a <see cref="T:System.Byte" /> array.</summary>
+        <returns>a <see cref="T:System.Byte[]" /></returns>
+        <remarks>
+          <para>
+	The GetBytes funcation returns the content of the current instance's children elements recursively.
+</para>
+          <para>
+	The <see cref="T:System.Byte" /> array returned is encoded with ASN.1 standard-specific formatting.
+</para>
+        </remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public Mono.Security.ASN1 this[int index] { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>Mono.Security.ASN1</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">A <see cref="T:System.Int32" /> value that specifies the zero-based index of the element in the current instance to get.</param>
+        <summary>Gets the <see cref="T:Mono.Security.ASN1" /> class instance that is associated with the specified index.</summary>
+        <value>The <see cref="T:Mono.Security.ASN1" /> element instance associated with the specified index.</value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Length">
+      <MemberSignature Language="C#" Value="public int Length { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Gets the length (in bytes) of the ASN.1 content in the current instance.</summary>
+        <value>a <see cref="T:System.Int32" /></value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="SaveToFile">
+      <MemberSignature Language="C#" Value="public void SaveToFile (string filename);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="filename">The name of the file to save the current instance as.</param>
+        <summary>Saves the ASN.1 object contents to a file.</summary>
+        <remarks>The <see cref="T:System.Byte" /> array returned is encoded with ASN.1 standard-specific formatting.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Tag">
+      <MemberSignature Language="C#" Value="public byte Tag { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Gets the ASN.1 content tag (numeric).</summary>
+        <value>a <see cref="T:System.Byte" /></value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Returns the ASN.1 content to its equivalent <see cref="T:System.String" /> representation.</summary>
+        <returns>The ASN.1 content in <see cref="T:System.String" /> format.</returns>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Value">
+      <MemberSignature Language="C#" Value="public byte[] Value { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Gets of sets the ASN.1 content represented by the current instance.</summary>
+        <value>a <see cref="T:System.Byte[]" /></value>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

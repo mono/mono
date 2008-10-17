@@ -1,0 +1,289 @@
+<Type Name="ARC4Managed" FullName="Mono.Security.Cryptography.ARC4Managed">
+  <TypeSignature Language="C#" Maintainer="auto" Value="public class ARC4Managed : Mono.Security.Cryptography.RC4, System.Security.Cryptography.ICryptoTransform" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Security</AssemblyName>
+    <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 79 15 99 77 D2 D0 3A 8E 6B EA 7A 2E 74 E8 D1 AF CC 93 E8 85 19 74 95 2B B4 80 A1 2C 91 34 47 4D 04 06 24 47 C3 7E 0E 68 C0 80 53 6F CF 3C 3F BE 2F F9 C9 79 CE 99 84 75 E5 06 E8 CE 82 DD 5B 0F 35 0D C1 0E 93 BF 2E EE CF 87 4B 24 77 0C 50 81 DB EA 74 47 FD DA FA 27 7B 22 DE 47 D6 FF EA 44 96 74 A4 F9 FC CF 84 D1 50 69 08 93 80 28 4D BD D3 5F 46 CD FF 12 A1 BD 78 E4 EF 00 65 D0 16 DF]</AssemblyPublicKey>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the <link location="node:gtk-sharp/programming/threads">Gtk# Thread Programming</link> for details.</ThreadSafetyStatement>
+  <Base>
+    <BaseTypeName>Mono.Security.Cryptography.RC4</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Security.Cryptography.ICryptoTransform</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>Alleged RC4(tm) compatible symmetric stream cipher.</summary>
+    <remarks>
+      <para>The source code for the alleged RC4(tm) cipher has first appeared in usenet in 1994. The copy of the original document "Usenet 1994 - RC4 Algorithm revealed" is available at http://www.qrst.de/html/dsds/rc4.htm</para>
+      <para>RC4 is a trademark of RSA Security</para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ARC4Managed ();" />
+      <MemberType>Constructor</MemberType>
+      <ReturnValue />
+      <Parameters />
+      <Docs>
+        <summary>Construct a default ARCFOUR cipher instance.</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanReuseTransform">
+      <MemberSignature Language="C#" Value="public bool CanReuseTransform { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Specify if the current transform object can be reused.</summary>
+        <value>Always false.</value>
+        <remarks>See <see cref="T:System.Security.Cryptography.ICryptoTransform" />.<see cref="P:System.Security.Cryptography.ICryptoTransform.CanReuseTransform" /> for more details.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CanTransformMultipleBlocks">
+      <MemberSignature Language="C#" Value="public bool CanTransformMultipleBlocks { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Specify if the current transform object can process multiple blocks in a single call. </summary>
+        <value>Always true.</value>
+        <remarks>See <see cref="T:System.Security.Cryptography.ICryptoTransform" />.<see cref="P:System.Security.Cryptography.ICryptoTransform.CanTransformMultipleBlocks" /> for more details.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateDecryptor">
+      <MemberSignature Language="C#" Value="public override System.Security.Cryptography.ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgvIV);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.ICryptoTransform</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rgbKey" Type="System.Byte[]" />
+        <Parameter Name="rgvIV" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="rgbKey">Secret key to be used for the decryption transform.</param>
+        <param name="rgvIV">Initialization Vector (IV) to be used by the decryption transform.</param>
+        <summary>Creates a symmetric ARCFOUR decryptor transform.</summary>
+        <returns>a <see cref="T:System.Security.Cryptography.ICryptoTransform" /> that is ready to be used to decrypt data.</returns>
+        <remarks>Initialization vectors aren't used with ARCFOUR as this is a stream (i.e. not a block) cipher.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="CreateEncryptor">
+      <MemberSignature Language="C#" Value="public override System.Security.Cryptography.ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgvIV);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.ICryptoTransform</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rgbKey" Type="System.Byte[]" />
+        <Parameter Name="rgvIV" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="rgbKey">Secret key to be used for the encryption transform.</param>
+        <param name="rgvIV">Initialization Vector (IV) to be used by the encryption transform.</param>
+        <summary>Creates a symmetric ARCFOUR encryptor transform. </summary>
+        <returns>a <see cref="T:System.Security.Cryptography.ICryptoTransform" /> that is ready to be used to encrypt data.</returns>
+        <remarks>Initialization vectors aren't used with ARCFOUR as this is a stream (i.e. not a block) cipher.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="disposing">a <see cref="T:System.Boolean" /></param>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Finalize">
+      <MemberSignature Language="C#" Value="~ARC4Managed ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GenerateIV">
+      <MemberSignature Language="C#" Value="public override void GenerateIV ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Generate a new random Initialization Vector (IV) required for some block cipher modes.</summary>
+        <remarks>Initialization vectors aren't used with ARCFOUR as this is a stream (i.e. not a block) cipher.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="GenerateKey">
+      <MemberSignature Language="C#" Value="public override void GenerateKey ();" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Generate a new secret key.</summary>
+        <remarks>The new secret key length is based on the <see cref="P:System.Security.Cryptography.SymmetricAlgorithm.KeySize" /> property.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="InputBlockSize">
+      <MemberSignature Language="C#" Value="public int InputBlockSize { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Size of input blocks for the function in bytes.</summary>
+        <value>Always 1.</value>
+        <remarks>Stream ciphers operate on individual bytes not on blocks.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="Key">
+      <MemberSignature Language="C#" Value="public override byte[] Key { set; get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>The secret key for the symmetric algorithm.</summary>
+        <value>an array of bytes containing the secret key.</value>
+        <remarks>RC4 supports keys from 40 bits up to 2048 bits. Defaults to 128 bits.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="OutputBlockSize">
+      <MemberSignature Language="C#" Value="public int OutputBlockSize { get; }" />
+      <MemberType>Property</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Size of the output blocks of the function in bytes.</summary>
+        <value>Always 1.</value>
+        <remarks>Stream ciphers operate on individual bytes not on blocks.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TransformBlock">
+      <MemberSignature Language="C#" Value="public int TransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inputBuffer" Type="System.Byte[]" />
+        <Parameter Name="inputOffset" Type="System.Int32" />
+        <Parameter Name="inputCount" Type="System.Int32" />
+        <Parameter Name="outputBuffer" Type="System.Byte[]" />
+        <Parameter Name="outputOffset" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="inputBuffer">a <see cref="T:System.Byte" /></param>
+        <param name="inputOffset">a <see cref="T:System.Int32" /></param>
+        <param name="inputCount">a <see cref="T:System.Int32" /></param>
+        <param name="outputBuffer">a <see cref="T:System.Byte" /></param>
+        <param name="outputOffset">a <see cref="T:System.Int32" /></param>
+        <summary>Process a block of data.</summary>
+        <returns>a <see cref="T:System.Int32" /></returns>
+        <remarks>See <see cref="T:System.Security.Cryptography.ICryptoTransform" />.<see cref="M:System.Security.Cryptography.ICryptoTransform.TransformBlock" /> for more details.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+    <Member MemberName="TransformFinalBlock">
+      <MemberSignature Language="C#" Value="public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount);" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inputBuffer" Type="System.Byte[]" />
+        <Parameter Name="inputOffset" Type="System.Int32" />
+        <Parameter Name="inputCount" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="inputBuffer">a <see cref="T:System.Byte" /></param>
+        <param name="inputOffset">a <see cref="T:System.Int32" /></param>
+        <param name="inputCount">a <see cref="T:System.Int32" /></param>
+        <summary>Processes the final part of the data. Also finalizes the function if needed.</summary>
+        <returns>a <see cref="T:System.Byte[]" /></returns>
+        <remarks>See <see cref="T:System.Security.Cryptography.ICryptoTransform" />.<see cref="M:System.Security.Cryptography.ICryptoTransform.TransformFinalBlock" /> for more details.</remarks>
+      </Docs>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+    </Member>
+  </Members>
+</Type>

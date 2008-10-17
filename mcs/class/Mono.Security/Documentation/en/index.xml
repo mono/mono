@@ -1,0 +1,191 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="Mono.Security" Version="2.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("Mono.Security.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("MONO CLI")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("Mono.Security.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) 2003-2004 Various Authors")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("MONO development team")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="Mono.Math">
+      <Type Name="BigInteger" Kind="Class" />
+      <Type Name="BigInteger+ModulusRing" Kind="Class" />
+      <Type Name="BigInteger+Sign" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="Mono.Math.Prime">
+      <Type Name="ConfidenceFactor" Kind="Enumeration" />
+      <Type Name="PrimalityTest" Kind="Delegate" />
+      <Type Name="PrimalityTests" Kind="Class" />
+    </Namespace>
+    <Namespace Name="Mono.Math.Prime.Generator">
+      <Type Name="NextPrimeFinder" Kind="Class" />
+      <Type Name="PrimeGeneratorBase" Kind="Class" />
+      <Type Name="SequentialSearchPrimeGeneratorBase" Kind="Class" />
+    </Namespace>
+    <Namespace Name="Mono.Security">
+      <Type Name="ASN1" Kind="Class" />
+      <Type Name="ASN1Convert" Kind="Class" />
+      <Type Name="PKCS7" Kind="Class" />
+      <Type Name="PKCS7+ContentInfo" Kind="Class" />
+      <Type Name="PKCS7+EncryptedData" Kind="Class" />
+      <Type Name="PKCS7+EnvelopedData" Kind="Class" />
+      <Type Name="PKCS7+Oid" Kind="Class" />
+      <Type Name="PKCS7+RecipientInfo" Kind="Class" />
+      <Type Name="PKCS7+SignedData" Kind="Class" />
+      <Type Name="PKCS7+SignerInfo" Kind="Class" />
+      <Type Name="StrongName" Kind="Class" />
+    </Namespace>
+    <Namespace Name="Mono.Security.Authenticode">
+      <Type Name="AuthenticodeBase" Kind="Class" />
+      <Type Name="AuthenticodeDeformatter" Kind="Class" />
+      <Type Name="AuthenticodeFormatter" Kind="Class" />
+      <Type Name="Authority" Kind="Enumeration" />
+      <Type Name="PrivateKey" Kind="Class" />
+      <Type Name="SoftwarePublisherCertificate" Kind="Class" />
+    </Namespace>
+    <Namespace Name="Mono.Security.Cryptography">
+      <Type Name="ARC4Managed" Kind="Class" />
+      <Type Name="BlockProcessor" Kind="Class" />
+      <Type Name="CryptoConvert" Kind="Class" />
+      <Type Name="DHKeyGeneration" Kind="Enumeration" />
+      <Type Name="DHParameters" Kind="Structure" />
+      <Type Name="DiffieHellman" Kind="Class" />
+      <Type Name="DiffieHellmanManaged" Kind="Class" />
+      <Type Name="KeyBuilder" Kind="Class" />
+      <Type Name="KeyPairPersistence" Kind="Class" />
+      <Type Name="MD2" Kind="Class" />
+      <Type Name="MD2Managed" Kind="Class" />
+      <Type Name="MD4" Kind="Class" />
+      <Type Name="MD4Managed" Kind="Class" />
+      <Type Name="PKCS1" Kind="Class" />
+      <Type Name="PKCS8" Kind="Class" />
+      <Type Name="PKCS8+EncryptedPrivateKeyInfo" Kind="Class" />
+      <Type Name="PKCS8+KeyInfo" Kind="Enumeration" />
+      <Type Name="PKCS8+PrivateKeyInfo" Kind="Class" />
+      <Type Name="RC4" Kind="Class" />
+      <Type Name="RSAManaged" Kind="Class" />
+      <Type Name="RSAManaged+KeyGeneratedEventHandler" Kind="Delegate" />
+      <Type Name="SHA224" Kind="Class" />
+      <Type Name="SHA224Managed" Kind="Class" />
+    </Namespace>
+    <Namespace Name="Mono.Security.Protocol.Ntlm">
+      <Type Name="ChallengeResponse" Kind="Class" />
+      <Type Name="MessageBase" Kind="Class" />
+      <Type Name="NtlmFlags" Kind="Enumeration" />
+      <Type Name="Type1Message" Kind="Class" />
+      <Type Name="Type2Message" Kind="Class" />
+      <Type Name="Type3Message" Kind="Class" />
+    </Namespace>
+    <Namespace Name="Mono.Security.Protocol.Tls">
+      <Type Name="CertificateSelectionCallback" Kind="Delegate" />
+      <Type Name="CertificateValidationCallback" Kind="Delegate" />
+      <Type Name="CipherAlgorithmType" Kind="Enumeration" />
+      <Type Name="ExchangeAlgorithmType" Kind="Enumeration" />
+      <Type Name="HashAlgorithmType" Kind="Enumeration" />
+      <Type Name="PrivateKeySelectionCallback" Kind="Delegate" />
+      <Type Name="SecurityCompressionType" Kind="Enumeration" />
+      <Type Name="SecurityProtocolType" Kind="Enumeration" />
+      <Type Name="SslClientStream" Kind="Class" />
+      <Type Name="SslServerStream" Kind="Class" />
+      <Type Name="SslStreamBase" Kind="Class" />
+    </Namespace>
+    <Namespace Name="Mono.Security.X509">
+      <Type Name="DeriveBytes+Purpose" Kind="Enumeration" />
+      <Type Name="PKCS12" Kind="Class" />
+      <Type Name="PKCS12+DeriveBytes" Kind="Class" />
+      <Type Name="PKCS5" Kind="Class" />
+      <Type Name="PKCS9" Kind="Class" />
+      <Type Name="X501" Kind="Class" />
+      <Type Name="X509Builder" Kind="Class" />
+      <Type Name="X509Certificate" Kind="Class" />
+      <Type Name="X509CertificateBuilder" Kind="Class" />
+      <Type Name="X509CertificateCollection" Kind="Class" />
+      <Type Name="X509CertificateCollection+X509CertificateEnumerator" Kind="Class" />
+      <Type Name="X509Chain" Kind="Class" />
+      <Type Name="X509ChainStatusFlags" Kind="Enumeration" />
+      <Type Name="X509Crl" Kind="Class" />
+      <Type Name="X509Crl+X509CrlEntry" Kind="Class" />
+      <Type Name="X509Extension" Kind="Class" />
+      <Type Name="X509ExtensionCollection" Kind="Class" />
+      <Type Name="X509Store" Kind="Class" />
+      <Type Name="X509StoreManager" Kind="Class" />
+      <Type Name="X509Stores" Kind="Class" />
+      <Type Name="X509Stores+Names" Kind="Class" />
+      <Type Name="X520" Kind="Class" />
+      <Type Name="X520+AttributeTypeAndValue" Kind="Class" />
+      <Type Name="X520+CommonName" Kind="Class" />
+      <Type Name="X520+CountryName" Kind="Class" />
+      <Type Name="X520+DnQualifier" Kind="Class" />
+      <Type Name="X520+DomainComponent" Kind="Class" />
+      <Type Name="X520+EmailAddress" Kind="Class" />
+      <Type Name="X520+GivenName" Kind="Class" />
+      <Type Name="X520+Initial" Kind="Class" />
+      <Type Name="X520+LocalityName" Kind="Class" />
+      <Type Name="X520+Name" Kind="Class" />
+      <Type Name="X520+Oid" Kind="Class" />
+      <Type Name="X520+OrganizationalUnitName" Kind="Class" />
+      <Type Name="X520+OrganizationName" Kind="Class" />
+      <Type Name="X520+SerialNumber" Kind="Class" />
+      <Type Name="X520+StateOrProvinceName" Kind="Class" />
+      <Type Name="X520+Surname" Kind="Class" />
+      <Type Name="X520+Title" Kind="Class" />
+      <Type Name="X520+UserId" Kind="Class" />
+    </Namespace>
+    <Namespace Name="Mono.Security.X509.Extensions">
+      <Type Name="AuthorityKeyIdentifierExtension" Kind="Class" />
+      <Type Name="BasicConstraintsExtension" Kind="Class" />
+      <Type Name="CertificatePoliciesExtension" Kind="Class" />
+      <Type Name="CRLDistributionPointsExtension" Kind="Class" />
+      <Type Name="CRLDistributionPointsExtension+ReasonFlags" Kind="Enumeration" />
+      <Type Name="ExtendedKeyUsageExtension" Kind="Class" />
+      <Type Name="KeyAttributesExtension" Kind="Class" />
+      <Type Name="KeyUsageExtension" Kind="Class" />
+      <Type Name="KeyUsages" Kind="Enumeration" />
+      <Type Name="NetscapeCertTypeExtension" Kind="Class" />
+      <Type Name="NetscapeCertTypeExtension+CertTypes" Kind="Enumeration" />
+      <Type Name="PrivateKeyUsagePeriodExtension" Kind="Class" />
+      <Type Name="SubjectAltNameExtension" Kind="Class" />
+      <Type Name="SubjectKeyIdentifierExtension" Kind="Class" />
+    </Namespace>
+    <Namespace Name="Mono.Xml">
+      <Type Name="MiniParser" Kind="Class" />
+      <Type Name="MiniParser+AttrListImpl" Kind="Class" />
+      <Type Name="MiniParser+HandlerAdapter" Kind="Class" />
+      <Type Name="MiniParser+IAttrList" Kind="Interface" />
+      <Type Name="MiniParser+IHandler" Kind="Interface" />
+      <Type Name="MiniParser+IMutableAttrList" Kind="Interface" />
+      <Type Name="MiniParser+IReader" Kind="Interface" />
+      <Type Name="MiniParser+XMLError" Kind="Class" />
+      <Type Name="SecurityParser" Kind="Class" />
+    </Namespace>
+  </Types>
+  <Title>Mono.Security</Title>
+</Overview>
