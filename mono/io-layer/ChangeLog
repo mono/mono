@@ -1,3 +1,9 @@
+
+Fri Oct 17 15:23:00 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* processes.c: patch from Geoff Norton (gnorton@novell.com) to
+	strdup the open program on OSX (bug #431811).
+
 2008-09-25  Dick Porter  <dick@ximian.com>
 
 	* events.c (event_create): Revert previous kludge as it's no
