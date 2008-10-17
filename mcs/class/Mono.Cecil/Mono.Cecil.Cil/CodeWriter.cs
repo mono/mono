@@ -343,6 +343,11 @@ namespace Mono.Cecil.Cil {
 			if (body == null || stripped)
 				return;
 
+			if (variables.Count == 0) {
+				// don't create local var sig without local variables
+				return;
+			}
+
 			uint sig = m_reflectWriter.SignatureWriter.AddLocalVarSig (
 					GetLocalVarSig (variables));
 

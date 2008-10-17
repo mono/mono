@@ -64,7 +64,7 @@ namespace Mono.Cecil.Cil {
 			set { m_initLocals = value; }
 		}
 
-		internal int LocalVarToken {
+		public int LocalVarToken {
 			get { return m_localVarToken; }
 			set { m_localVarToken = value; }
 		}
