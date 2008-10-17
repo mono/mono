@@ -1,5 +1,10 @@
 2008-10-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* RouteValueDictionary.cs : its string comparison is case
+	  insensitive.
+
+2008-10-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UrlPattern.cs : fixed pattern match for such string that has
 	  suffix. (DynamicData uses it.)
 

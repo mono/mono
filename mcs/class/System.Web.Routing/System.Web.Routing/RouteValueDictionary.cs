@@ -30,6 +30,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Security.Permissions;
 using System.Web;
 
@@ -41,7 +42,22 @@ namespace System.Web.Routing
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class RouteValueDictionary : IDictionary<string, object>
 	{
-		Dictionary<string,object> d = new Dictionary<string,object> ();
+		internal class CaseInsensitiveStringComparer : IEqualityComparer<string>
+		{
+			public static readonly CaseInsensitiveStringComparer Instance = new CaseInsensitiveStringComparer ();
+
+			public int GetHashCode (string obj)
+			{
+				return obj.ToLower (CultureInfo.InvariantCulture).GetHashCode ();
+			}
+
+			public bool Equals (string obj1, string obj2)
+			{
+				return String.Equals (obj1, obj2, StringComparison.OrdinalIgnoreCase);
+			}
+		}
+
+		Dictionary<string,object> d = new Dictionary<string,object> (CaseInsensitiveStringComparer.Instance);
 
 		public RouteValueDictionary ()
 		{

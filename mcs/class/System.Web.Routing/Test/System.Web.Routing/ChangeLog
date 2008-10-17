@@ -1,5 +1,9 @@
 2008-10-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* RouteValueDictionaryTest.cs : test for case-insensitive comparison.
+
+2008-10-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* RouteTest.cs : added test for DynamicData default pattern.
 
 2008-10-16  Atsushi Enomoto  <atsushi@ximian.com>
